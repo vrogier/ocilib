@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: schema.c, v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: schema.c, v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -206,15 +206,19 @@ OCI_Schema * OCI_API OCI_SchemaGet(OCI_Connection *con, const mtext *name,
                            NULL, OCI_ATTR_PARAM, con->err)
             )
 
-            OCI_CALL2
-            (
-                res, con, 
-                
-                OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &schema->tcode, 
-                           NULL, OCI_ATTR_TYPECODE, con->err)
-            )
-
             /* do we need get more attributes for Collections ? */
+
+            if (type == OCI_SCHEMA_TYPE)
+            {
+                OCI_CALL2
+                (
+                    res, con, 
+                    
+                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &schema->tcode, 
+                               NULL, OCI_ATTR_TYPECODE, con->err)
+                )
+
+            }
 
             if (schema->tcode == SQLT_NCO)
             {      

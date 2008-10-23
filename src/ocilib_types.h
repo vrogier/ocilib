@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_types.h, v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: ocilib_types.h, v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 
@@ -307,18 +307,14 @@ typedef struct OCI_Buffer {
 } OCI_Buffer;
 
 /* 
- * OCI_Bind : Internal bind representation.
- *
- * A bind object is an object that holds all information about an Oracle
- * statement binding operation
+ * OCI_Bind object
  *
  */
 
-typedef struct OCI_Bind {
+struct OCI_Bind {
     OCI_Statement   *stmt;      /* pointer to statement object */
     void           **input;     /* input values */
     mtext           *name;      /* name of the bind */
-    ub1              mode;      /* in / out mode */
     ub1              type;      /* internal datatype */
     ub1              subtype;   /* internal subtype */
     ub1              alloc;     /* is buffer allocated or mapped to input */
@@ -329,7 +325,7 @@ typedef struct OCI_Bind {
     ub2             *plsizes;   /* PL/SQL tables element sizes */
     ub2             *plrcds;    /* PL/SQL tables return codes */
     ub4              nbelem;    /* PL/SQL tables nb elements */
-} OCI_Bind;
+};
 
 /*
  * OCI_Define : Internal Resultset column data implementation
@@ -375,9 +371,11 @@ struct OCI_Statement {
     OCI_Resultset  **rsts;          /* pointer to resultset list */
     OCI_Connection  *con;           /* pointer to connection object */
     mtext           *sql;           /* SQL statement */
-    OCI_Bind       **binds;         /* array of bind objects */
-    ub2              nb_binds;      /* number of elememts in the bind array */
-    ub2              nb_outbinds;   /* number of output binds */
+    OCI_Bind       **ubinds;        /* array of user bind objects */
+    OCI_Bind       **rbinds;        /* array of register bind objects */
+    OCI_HashTable   *map;           /* hash table handle for mapping bind name/index */
+    ub2              nb_ubinds;     /* number of elememts in the bind array */
+    ub2              nb_rbinds;     /* number of output binds */
     unsigned int     bind_mode;     /* type of binding */
     ub4              exec_mode;     /* type of execution */
     ub4              fetch_size;    /* fetch array size */

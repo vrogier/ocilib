@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: connection.c, v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -655,7 +655,7 @@ boolean OCI_API OCI_GetAutoCommit(OCI_Connection *con)
 
 boolean OCI_API OCI_IsConnected(OCI_Connection *con)
 {
-    boolean res = FALSE;
+    boolean res = TRUE;
     ub4 status  = 0;
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);

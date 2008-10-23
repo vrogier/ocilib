@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: statement.c, v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -45,33 +45,35 @@
 boolean OCI_BindFreeAll(OCI_Statement *stmt)
 {
     int i;
-    OCI_Bind *bnd;
 
     OCI_CHECK(stmt == NULL, FALSE);
-    OCI_CHECK(stmt->binds == NULL, TRUE);
 
-    for(i = 0; i < stmt->nb_binds; i++)
+    /* free user binds */
+
+    if (stmt->ubinds != NULL)
     {
-        bnd = stmt->binds[i];
+        for(i = 0; i < stmt->nb_ubinds; i++)
+        {
+            OCI_BindFree(stmt->ubinds[i]);
+        }
 
-        if (bnd->alloc == TRUE)
-            OCI_FREE(bnd->buf.data);
-
-        OCI_FREE(bnd->buf.inds);
-        OCI_FREE(bnd->buf.lens);
-        OCI_FREE(bnd->buf.temp);
-
-        OCI_FREE(bnd->plsizes);
-        OCI_FREE(bnd->plrcds);
-
-        OCI_FREE(bnd->name);
-        OCI_FREE(bnd);
+        OCI_FREE(stmt->ubinds);
     }
 
-    OCI_FREE(stmt->binds);
+    /* free register binds */
 
-    stmt->nb_binds    = 0;
-    stmt->nb_outbinds = 0;
+    if (stmt->rbinds != NULL)
+    {
+        for(i = 0; i < stmt->nb_rbinds; i++)
+        {
+            OCI_BindFree(stmt->rbinds[i]);
+        }
+
+        OCI_FREE(stmt->rbinds);
+    }
+
+    stmt->nb_ubinds = 0;
+    stmt->nb_rbinds = 0;
 
     return TRUE;
 }
@@ -88,17 +90,12 @@ boolean OCI_BindCheck(OCI_Statement *stmt)
     ub4 i, j;
 
     OCI_CHECK(stmt == NULL, FALSE)
-    OCI_CHECK(stmt->binds == NULL, TRUE);
+    OCI_CHECK(stmt->ubinds == NULL, TRUE);
 
-    for(i = 0; i < stmt->nb_binds; i++)
+    for(i = 0; i < stmt->nb_ubinds; i++)
     {
-        bnd = stmt->binds[i];
+        bnd = stmt->ubinds[i];
         ind = (sb2 *) bnd->buf.inds;
-
-        /* no check for output binds */
-
-        if (bnd->mode == OCI_BIND_OUTPUT)
-            continue;
 
         if (bnd->alloc == TRUE)
         {
@@ -229,18 +226,15 @@ boolean OCI_BindReset(OCI_Statement *stmt)
     int i, j;
 
     OCI_CHECK(stmt == NULL, FALSE)
-    OCI_CHECK(stmt->binds == NULL, FALSE);
+    OCI_CHECK(stmt->ubinds == NULL, FALSE);
 
     /* avoid unused param warning from compiler */
     
     i = j = 0;
 
-    for(i = 0; i < stmt->nb_binds; i++)
+    for(i = 0; i < stmt->nb_ubinds; i++)
     {
-        OCI_Bind *bnd = stmt->binds[i];
-
-        if (bnd->mode == OCI_BIND_OUTPUT)
-            continue;
+        OCI_Bind *bnd = stmt->ubinds[i];
 
         memset(bnd->buf.inds, 0, bnd->buf.count * sizeof(sb2));
 
@@ -287,10 +281,43 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
     /* check if we can handle another bind */
 
-    if (stmt->nb_binds >= OCI_BIND_MAX)
+    if (mode == OCI_BIND_INPUT)
     {
-        OCI_ExceptionMaxBind(stmt);
-        res = FALSE;
+        if (stmt->nb_ubinds >= OCI_BIND_MAX)
+        {
+            OCI_ExceptionMaxBind(stmt);
+            res = FALSE;
+        }
+
+        /* allocate user bind array if necessary */
+
+        if (stmt->ubinds == NULL)
+        {
+            stmt->ubinds = (OCI_Bind **) OCI_MemAlloc(OCI_IPC_BIND_ARRAY, 
+                                                      sizeof(*stmt->ubinds), 
+                                                      OCI_BIND_MAX, TRUE);
+        }
+
+        res = (stmt->ubinds != NULL);
+    }
+    else
+    {
+        if (stmt->nb_rbinds >= OCI_BIND_MAX)
+        {
+            OCI_ExceptionMaxBind(stmt);
+            res = FALSE;
+        }
+
+        /* allocate register bind array if necessary */
+
+        if (stmt->rbinds == NULL)
+        {
+            stmt->rbinds = (OCI_Bind **) OCI_MemAlloc(OCI_IPC_BIND_ARRAY, 
+                                                      sizeof(*stmt->rbinds), 
+                                                      OCI_BIND_MAX, TRUE);
+        }
+
+        res = (stmt->rbinds != NULL);
     }
 
     /* checks done */
@@ -308,17 +335,29 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         }
         else
             nbelem = stmt->nb_iters;
+    }
 
-        /* allocate bind array if necessary */
+    /* create hash table for mapping bind names / index */
 
-        if (stmt->binds == NULL)
+    if (stmt->map == NULL)
+    {
+        stmt->map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
+        
+        res = (stmt->map != NULL);
+
+    }
+
+    /* check if the bind name has already been used */
+
+    if (res == TRUE)
+    {
+        if (OCI_BindGetIndex(stmt, name) > 0)
         {
-            stmt->binds = (OCI_Bind **) OCI_MemAlloc(OCI_IPC_BIND_ARRAY, 
-                                                     sizeof(*stmt->binds), 
-                                                     OCI_BIND_MAX, TRUE);
-        }
 
-        res = (stmt->binds != NULL);
+            /* throw error */
+
+            res = FALSE;
+        }
     }
 
     /* allocate bind object */
@@ -414,7 +453,6 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         bnd->size      = size;
         bnd->name      = mtsdup(name);
         bnd->code      = (ub2) code;
-        bnd->mode      = (ub1) mode;
         bnd->subtype   = (ub1) subtype;
 
         /* initialize buffer */
@@ -430,7 +468,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
             stmt->long_size = size;
             exec_mode       = OCI_DATA_AT_EXEC;
         }
-        else if (bnd->mode == OCI_BIND_OUTPUT)
+        else if (mode == OCI_BIND_OUTPUT)
         {
             exec_mode = OCI_DATA_AT_EXEC;
         }
@@ -490,7 +528,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
             )
         }
 
-        if (bnd->mode == OCI_BIND_OUTPUT)
+        if (mode == OCI_BIND_OUTPUT)
         {
             /* register output placeholder */
 
@@ -555,22 +593,77 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
     }
 
-    /* on success, add the bind handle to the bind array */
+    /* on success, we :
+         - add the bind handle to the bind array 
+         - add the bnid index to the map
+    */
 
     if (res == TRUE)
     {
-        stmt->binds[stmt->nb_binds++] = bnd;
+        if (mode == OCI_BIND_INPUT)
+        {
+            stmt->ubinds[stmt->nb_ubinds++] = bnd;
 
-        /* this will allow resultset creation for statement with 
-           returning clause */
-        
-        if (bnd->mode == OCI_BIND_OUTPUT)
-            stmt->nb_outbinds++;
+            /* for user binds, add a positive index */
+            
+            OCI_HashAddInt(stmt->map, name, stmt->nb_ubinds);
+        }
+        else
+        {
+            int index;
+
+            /* for register binds, add a negative index */
+
+            stmt->rbinds[stmt->nb_rbinds++] = bnd;
+
+            index = (int) stmt->nb_rbinds;
+
+            OCI_HashAddInt(stmt->map, name, -index);
+        }
     }
 
     OCI_RESULT(res);
 
     return res;
+}
+
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindGetIndex
+ * ------------------------------------------------------------------------ */
+
+int OCI_BindGetIndex(OCI_Statement *stmt, const mtext *name)
+{
+    OCI_HashEntry *he = NULL;
+    int index         = -1;
+
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, -1);
+    OCI_CHECK_PTR(OCI_IPC_STRING, name, -1);
+
+    he = OCI_HashLookup(stmt->map, name, FALSE);
+
+    while (he != NULL)
+    {
+        /* no more entries or key matched => so we got it ! */
+
+        if (he->next == NULL || mtscasecmp(he->key, name) == 0)
+        {
+            /* in order to sue the same map for user binds and
+               register binds :
+                  - user binds are stored as positive values
+                  - registers binds are stored as negatives values
+            */
+            
+            index = he->values->value.num;
+            
+            if (index < 0)
+                index = -index;
+
+            break;
+        }
+    }
+
+    return index;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -876,12 +969,20 @@ boolean OCI_StatementReset(OCI_Statement *stmt)
 
     res = OCI_BindFreeAll(stmt);
 
+    /* free bind map */
+
+    if (stmt->map != NULL)
+    {
+        OCI_HashFree(stmt->map);
+    }
+
     /* free sql statement */
 
     OCI_FREE(stmt->sql);
 
     stmt->rsts        = NULL;
     stmt->sql         = NULL;
+    stmt->map         = NULL;
 
     stmt->status      = OCI_STMT_CLOSED;
     stmt->type        = OCI_UNKNOWN;
@@ -2292,15 +2393,25 @@ boolean OCI_API OCI_SetNullAtPos(OCI_Statement *stmt, unsigned int index,
 {
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
 
-    OCI_CHECK_BOUND(stmt->con, index   , 1, stmt->nb_binds, FALSE);
-    OCI_CHECK_BOUND(stmt->con, position, 1, stmt->nb_iters, FALSE);
+    OCI_CHECK_BOUND(stmt->con, index   , 1, stmt->nb_ubinds, FALSE);
+    OCI_CHECK_BOUND(stmt->con, position, 1, stmt->nb_iters,  FALSE);
 
-    if (stmt->binds[index-1]->buf.inds != NULL)
-        ((sb2*) stmt->binds[index-1]->buf.inds)[position-1] = -1;
+    if (stmt->ubinds[index-1]->buf.inds != NULL)
+        ((sb2*) stmt->ubinds[index-1]->buf.inds)[position-1] = -1;
 
     OCI_RESULT(TRUE);
 
     return TRUE;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_SetNullAtPos2
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_SetNullAtPos2(OCI_Statement *stmt, mtext *name, 
+                                  unsigned int position)
+{
+    return OCI_SetNullAtPos(stmt, OCI_BindGetIndex(stmt, name), position);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -2310,6 +2421,15 @@ boolean OCI_API OCI_SetNullAtPos(OCI_Statement *stmt, unsigned int index,
 boolean OCI_API OCI_SetNull(OCI_Statement *stmt, unsigned int index)
 {
   return OCI_SetNullAtPos(stmt, index, 1);
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_SetNullAtPos2
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_SetNull2(OCI_Statement *stmt, mtext *name)
+{
+    return OCI_SetNullAtPos2(stmt, name, 1);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -2617,4 +2737,55 @@ unsigned int OCI_API OCI_GetAffectedRows(OCI_Statement *stmt)
     OCI_RESULT(res);
 
     return count;
+}
+
+
+/* ------------------------------------------------------------------------ *
+ * OCI_GetBindCount
+ * ------------------------------------------------------------------------ */
+
+unsigned int OCI_API OCI_GetBindCount(OCI_Statement *stmt)
+{
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, 0);
+
+    OCI_RESULT(TRUE);
+
+    return (unsigned int) stmt->nb_ubinds;
+
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_GetBind
+ * ------------------------------------------------------------------------ */
+
+OCI_Bind * OCI_API OCI_GetBind(OCI_Statement *stmt, unsigned int index)
+{
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
+    OCI_CHECK_BOUND(stmt->con, index, 1, stmt->nb_ubinds, NULL);
+
+    OCI_RESULT(TRUE);
+
+    return stmt->ubinds[index-1];
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_GetBind2
+ * ------------------------------------------------------------------------ */
+
+OCI_Bind * OCI_API OCI_GetBind2(OCI_Statement *stmt, mtext *name)
+{
+    OCI_Bind *bnd = NULL;
+    int index     = -1;
+
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);
+
+    index =  OCI_BindGetIndex(stmt, name);
+
+    if (index > 0)
+        bnd = stmt->ubinds[index-1];
+
+    OCI_RESULT(bnd != NULL);
+
+    return bnd;
 }

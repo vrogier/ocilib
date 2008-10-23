@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: memory.c, v 3.1.0 2008/10/23 21:00 Vince $
+ * $Id: bind.c, v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -39,130 +39,117 @@
  * ************************************************************************ */
 
 /* ------------------------------------------------------------------------ *
- * OCI_MemAlloc
+ * OCI_BindFree
  * ------------------------------------------------------------------------ */
 
-void * OCI_MemAlloc(int ptr_type, int block_size, int block_count, 
-                    boolean zero_fill)
+boolean OCI_BindFree(OCI_Bind *bnd)
 {
-    void * ptr  = NULL;
-    size_t size = (size_t) (block_size * block_count);
+    if (bnd->alloc == TRUE)
+        OCI_FREE(bnd->buf.data);
 
-    ptr = (void *) malloc(size);
-     
-    if (ptr != NULL)                                        
+    OCI_FREE(bnd->buf.inds);
+    OCI_FREE(bnd->buf.lens);
+    OCI_FREE(bnd->buf.temp);
+
+    OCI_FREE(bnd->plsizes);
+    OCI_FREE(bnd->plrcds);
+
+    OCI_FREE(bnd->name);
+    OCI_FREE(bnd);
+
+    return TRUE;
+}
+
+/* ************************************************************************ *
+ *                            PUBLIC FUNCTIONS
+ * ************************************************************************ */
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindGetName
+ * ------------------------------------------------------------------------ */
+
+const mtext * OCI_API OCI_BindGetName(OCI_Bind *bnd)
+{
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, NULL);
+
+    OCI_RESULT(TRUE);
+
+    return (const mtext *) bnd->name; 
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindGetType
+ * ------------------------------------------------------------------------ */
+
+unsigned int OCI_API OCI_BindGetType(OCI_Bind *bnd)
+{
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, OCI_UNKNOWN);
+
+    OCI_RESULT(TRUE);
+
+    return (unsigned int) bnd->type; 
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindGetSubtype
+ * ------------------------------------------------------------------------ */
+
+unsigned int OCI_API OCI_BindGetSubtype(OCI_Bind *bnd)
+{
+    unsigned int type = OCI_UNKNOWN;
+
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, OCI_UNKNOWN);
+
+    OCI_RESULT(TRUE);
+
+    if (bnd->type == OCI_CDT_LONG      || 
+        bnd->type == OCI_CDT_LOB       ||
+        bnd->type == OCI_CDT_FILE      ||
+        bnd->type == OCI_CDT_TIMESTAMP ||
+        bnd->type == OCI_CDT_INTERVAL)
     {
-        if (zero_fill == TRUE)
-            memset(ptr, 0, size);
-    }
-    else
-        OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
-
-    return ptr;
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_MemRealloc
- * ------------------------------------------------------------------------ */
-
-void * OCI_MemRealloc(void * ptr_mem, int ptr_type, int block_size, 
-                      int block_count)
-{
-    void * ptr  = NULL;
-    size_t size = (size_t) (block_size * block_count);
-
-    ptr = (void *) realloc(ptr_mem, size);
-     
-    if (ptr == NULL)
-    {
-        OCI_MemFree(ptr_mem);
-
-        OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
+        type = bnd->subtype;
     }
 
-    return ptr;
+    return type;
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_MemFree
+ * OCI_BindGetElemCount
  * ------------------------------------------------------------------------ */
 
-void OCI_MemFree(void * ptr_mem)
+unsigned int OCI_API OCI_BindGetCount(OCI_Bind *bnd)
 {
-    if (ptr_mem != NULL)
-        free(ptr_mem);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, 0);
+
+    OCI_RESULT(TRUE);
+
+    return (unsigned int) bnd->nbelem; 
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_HandleAlloc
+ * OCI_BindGetData
  * ------------------------------------------------------------------------ */
 
-sword OCI_HandleAlloc(CONST dvoid *parenth, dvoid **hndlpp, CONST ub4 type,
-                      CONST size_t xtramem_sz, dvoid **usrmempp)
-{     
-    OCILib.nb_hndlp++;        
-    
-    return OCIHandleAlloc(parenth, hndlpp, type, xtramem_sz, usrmempp);           
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_HandleFree
- * ------------------------------------------------------------------------ */
-
-sword OCI_HandleFree(dvoid *hndlp, CONST ub4 type)
-{                
-    OCILib.nb_hndlp--;  
-
-    return OCIHandleFree(hndlp, type);
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_DescriptorAlloc
- * ------------------------------------------------------------------------ */
-
-sword OCI_DescriptorAlloc(CONST dvoid *parenth, dvoid **descpp, CONST ub4 type,
-                          CONST size_t xtramem_sz,  dvoid **usrmempp)
+void * OCI_API OCI_BindGetData(OCI_Bind *bnd)
 {
-    OCILib.nb_descp++;   
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, NULL);
 
-    return OCIDescriptorAlloc(parenth, descpp, type, xtramem_sz, usrmempp);
+    OCI_RESULT(TRUE);
+
+    return (void *) bnd->input; 
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_DescriptorFree
+ * OCI_BindGetStatement
  * ------------------------------------------------------------------------ */
 
-sword OCI_DescriptorFree(dvoid *descp, CONST ub4 type)
-{                                                    
-    OCILib.nb_descp--;        
-
-    return OCIDescriptorFree(descp, type);                  
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_fob
- * ------------------------------------------------------------------------ */
-
-sword OCI_ObjectNew(OCIEnv *env, OCIError *err, CONST OCISvcCtx *svc,
-                    OCITypeCode typecode, OCIType *tdo, dvoid *table, 
-                    OCIDuration duration, boolean value, 
-                    dvoid **instance)
+OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement(OCI_Bind *bnd)
 {
-    OCILib.nb_objinst++;        
-    
-    return OCIObjectNew(env, err, svc, typecode, tdo, table, duration, value, 
-                        instance);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, NULL);
+
+    OCI_RESULT(TRUE);
+
+    return bnd->stmt; 
 }
-
-/* ------------------------------------------------------------------------ *
- * OCI_OCIObjectFree
- * ------------------------------------------------------------------------ */
-
-sword OCI_OCIObjectFree(OCIEnv *env, OCIError *err, dvoid *instance, ub2 flags)
-{
-    OCILib.nb_objinst--;        
-
-    return OCIObjectFree(env, err, instance, flags);
-}
-
 

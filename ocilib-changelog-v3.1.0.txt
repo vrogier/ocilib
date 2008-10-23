@@ -1,0 +1,34 @@
+2008-xx-xx Version 3.1.0 Vincent Rogier vince.rogier@gmail.com
+
+    * Extended Bind informations
+
+      - Modified : OCI_Bind handles are now public and can be retrieved for public information
+      - Added OCI_GetBindCount()
+      - Added OCI_GetBind()
+      - Added OCI_GetBind2()
+      - Added OCI_BindGetName()
+      - Added OCI_BindGetType()
+      - Added OCI_BindGetSubtype()
+      - Added OCI_BindGetDataSize()
+      - Added OCI_BindGetCount()
+      - Added OCI_BindGetData()
+      - Added OCI_BindGetStatement()
+
+    * Miscellaneous modifications
+
+      - Added OCI_IsNull2()
+      - Added OCI_SetNull2()
+      - Added OCI_SetNullAtPos2()
+      - Added OCI_ResultsetGetStatement()
+      - Extended binds/registers limits :
+ 
+        * OCI implements the SQL returning clause through binds operations
+        * OCILIB wraps the result of the returning clause within OCI_Resultet object but has to use internal binds to create its resultset
+        * Prior to v3.1.0, OCI_BIND_MAX (default 512) was the maximum of OCI_bindxxx() including OCI_Registerxxx() that an OCI_Statement could handle
+        * With v3.1.0, OCILIB can handle OCI_BIND_MAX binds handle and OCI_BIND_MAX items in the returning clause
+
+    * Miscellaneous fixes
+
+      - OCI_IsConnected() was always returning FALSE since v3.0.0
+      - OCI_SchemaGet() with OCI_SCHEMA_TABLE was causing an ORA-24328 with Oracle 8 and 9 (working fine with Oracle 10) since v3.0.0
+      - Fixed demo file output.c

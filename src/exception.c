@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: exception.c, v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: exception.c, v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -68,9 +68,9 @@ static mtext * OCILib_TypeNames[] =
     MT("HashTable handle"),
     MT("Thread handle"),
     MT("Mutex handle"),
+    MT("Bind handle"),
     MT("Internal list handle"),
     MT("Internal list item handle"),
-    MT("Internal bind handle"),
     MT("Internal array of bind handles"),
     MT("Internal define handle"),
     MT("Internal array of define handles"),

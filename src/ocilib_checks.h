@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_checks.h v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: ocilib_checks.h v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_CHECKS_H_INCLUDED
@@ -428,7 +428,7 @@
 
 #define OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(st, ret)                         \
                                                                                \
-    if (((st)->nb_outbinds > 0) ||                                             \
+    if (((st)->nb_rbinds > 0) ||                                             \
         ((st)->exec_mode != OCI_STMT_SCROLLABLE_READONLY))                     \
     {                                                                          \
         OCI_ExceptionStatementNotScrollable(st);                               \

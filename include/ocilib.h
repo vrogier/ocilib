@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: include/ocilib.h, v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: include/ocilib.h, v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED 
@@ -679,6 +679,20 @@ typedef struct OCI_Connection OCI_Connection;
  */
 
 typedef struct OCI_Statement OCI_Statement;
+
+/* 
+ * @struct OCI_Bind
+ * 
+ * @brief
+ * Internal bind representation.
+ *
+ * A bind object is an object that holds all information about an Oracle
+ * statement binding operation
+ * 
+ *
+ */
+
+typedef struct OCI_Bind OCI_Bind;
 
 /**
  * @struct OCI_Resultset
@@ -3484,6 +3498,32 @@ OCI_EXPORT boolean OCI_API OCI_SetNull
 
 /**
  * @brief 
+ * Set the bind variable odf the given name to null
+ *
+ * @param stmt  - Statement handle
+ * @param name  - Bind variable name
+ * 
+ * @note
+ * There is no notion of null value in C. 
+ * it's necessary to explicitly tell Oracle that the bind has a null value. 
+ * It must be done before an OCI_Execute() call
+ *
+ * @note
+ * For handled based datatypes (non scalar types), OCILIB performs an extra 
+ * check on handles and set the bind status to null is the handle is null
+ *
+ * @return 
+ * TRUE on success otherwise FALSE
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetNull2
+(
+    OCI_Statement *stmt, 
+    mtext *name
+);
+
+/**
+ * @brief 
  * Set to null the bind variable at the given position in an input array
  *
  * @param stmt     - Statement handle
@@ -3511,6 +3551,180 @@ OCI_EXPORT boolean OCI_API OCI_SetNullAtPos
     OCI_Statement *stmt, 
     unsigned int index,
     unsigned int position
+);
+
+/**
+ * @brief 
+ * Set to null the bind variable of the given name in an input array
+ *
+ * @param stmt     - Statement handle
+ * @param name     - Bind variable name
+ * @param position - Position in the array
+ * 
+ * @note
+ * There is no notion of null value in C. 
+ * it's necessary to explicitly tell Oracle that the bind has a null value. 
+ * It must be done before an OCI_Execute() call
+ *
+ * @warning
+ * Position starts with 1
+ *
+ * @note
+ * For handled based datatypes (non scalar types), OCILIB performs an extra 
+ * check on handles and set the bind status to null is the handle is null 
+ *
+ * @return 
+ * TRUE on success otherwise FALSE
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetNullAtPos2
+(
+    OCI_Statement *stmt, 
+    mtext *name,
+    unsigned int position
+);
+
+/**
+ * @brief 
+ * Return the bind handle at the given index in the internal array of bind
+ * handle
+ *
+ * @param stmt  - Statement handle
+ * @param index - Bind position
+ * 
+ * @note
+ * Index starts at 1.
+ * 
+ * @note
+ * Bind handle are are created sequencially. By example, the third call to a 
+ * OCI_BindXXX() generates a bind handle of index 3.
+ *
+ * @return 
+ * The bind handle or NULL if index is out of bounds
+ * 
+ */
+
+OCI_EXPORT  OCI_Bind * OCI_API OCI_GetBind
+(
+    OCI_Statement *st, unsigned int index
+);
+
+/**
+ * @brief 
+ * Return a bind handle from its name
+ *
+ * @param stmt - Statement handle
+ * @param name - Bind variable name
+ * 
+ * @note
+ * Bind names must include a semicolon at the beginning.
+ *
+ * @return 
+ * The bind handle or NULL if not found
+ * 
+ */
+
+OCI_EXPORT  OCI_Bind * OCI_API OCI_GetBind2
+(
+    OCI_Statement *st, mtext *name
+);
+
+/**
+ * @brief 
+ * Return the name of the given bind
+ *
+ * @param bnd - Bind handle
+ * 
+ */
+
+OCI_EXPORT  const mtext * OCI_API OCI_BindGetName
+(
+    OCI_Bind *bnd
+);
+
+/**
+ * @brief 
+ * Return the type of the given bind
+ *
+ * @param bnd - Bind handle
+ *
+ * @note
+ * See OCI_GetColumnType() for possible values
+ *
+ * @return 
+ * The column type or OCI_CDT_UNKNOWN if index is out of bounds
+ * 
+ */
+
+OCI_EXPORT  unsigned int OCI_API OCI_BindGetType
+(   
+    OCI_Bind *bnd
+);
+
+/**
+ * @brief 
+ * Return the OCILIB object subtype of the given bind
+ *
+ * @param bnd - Bind handle
+ *
+ * @note
+ * See OCI_GetColumnSubType() for possible values
+ *
+ * @return 
+ * The column type or OCI_CDT_UNKNOWN if index is out of bounds
+ * 
+ */
+
+OCI_EXPORT  unsigned int OCI_API OCI_BindGetSubtype
+(
+    OCI_Bind *bnd
+);
+
+/**
+ * @brief 
+ * Return the number of elements of the bind handle 
+ *
+ * @param bnd - Bind handle
+ * 
+ * @return
+ * - For single binds, it returns 1
+ * - For array binds, it returns the number of element in the array
+ *
+ */
+
+OCI_EXPORT  unsigned int OCI_API OCI_BindGetCount
+(
+    OCI_Bind *bnd
+);
+
+/**
+ * @brief 
+ * Return the user defined data associated with a bind handle 
+ *
+ * @param bnd - Bind handle
+ * 
+ * @return
+ * - The pointer to variable/array passed to an OCIBindXXX() or 
+ *   OCI_BindArrayOfXXX() call
+ *
+ */
+
+OCI_EXPORT  void * OCI_API OCI_BindGetData
+(
+    OCI_Bind *bnd
+);
+
+/**
+ * @brief 
+ * Return the statement handle associated with a bind handle
+ *
+ * @param bnd - bind handle
+ *
+ */
+
+OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement
+(
+    OCI_Bind *bnd
 );
 
 /**
@@ -4119,7 +4333,7 @@ OCI_EXPORT OCI_Schema * OCI_API OCI_ColumnGetSchema
 
 /**
  * @brief 
- * Return the object subtype of a column
+ * Return the OCILIB object subtype of a column
  *
  * @param col - Column handle
  *
@@ -4958,6 +5172,38 @@ OCI_EXPORT boolean OCI_API OCI_IsNull
 (
     OCI_Resultset *rs,
     unsigned int index
+);
+
+/**
+ * @brief 
+ * Check if the current row value is null for the column of the given name
+ * in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param name  - Column name
+ * 
+ * @return 
+ * TRUE if it's null otherwise FALSE
+ * 
+ */
+
+OCI_EXPORT boolean OCI_API OCI_IsNull2
+(
+    OCI_Resultset *rs,
+    mtext *name
+);
+
+/**
+ * @brief 
+ * Return the statement handle associated with a resultset handle
+ *
+ * @param rs - resultset handle
+ *
+ */
+
+OCI_EXPORT OCI_Statement * OCI_API OCI_ResultsetGetStatement
+(
+    OCI_Resultset *rs
 );
 
 /**

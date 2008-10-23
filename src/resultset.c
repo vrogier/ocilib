@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: resultset.c, v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -83,7 +83,7 @@ OCI_Resultset * OCI_ResultsetCreate(OCI_Statement *stmt, int size)
         }
         else
         {
-            nb = stmt->nb_outbinds;
+            nb = stmt->nb_rbinds;
         }
 
         /* allocate columns array */
@@ -139,11 +139,11 @@ OCI_Resultset * OCI_ResultsetCreate(OCI_Statement *stmt, int size)
         }
         else
         {
-            /* get info from input binds */
+            /* get info from register binds */
 
-            for (i=0; i < stmt->nb_binds; i++)
+            for (i=0; i < stmt->nb_rbinds; i++)
             {
-                OCI_Bind   *bnd  = stmt->binds[i];
+                OCI_Bind   *bnd  = stmt->rbinds[i];
                 OCI_Define *def  = &rs->defs[bnd->dynpos];
 
                 def->buf.count   = size;
@@ -151,54 +151,51 @@ OCI_Resultset * OCI_ResultsetCreate(OCI_Statement *stmt, int size)
 
                 def->rs = rs;
 
-                if (bnd->mode == OCI_BIND_OUTPUT)
-                {
-                    rs->nb_defs++;
+                rs->nb_defs++;
 
-                    /* columns info */
+                /* columns info */
 
-                    def->col.ocode   = bnd->code;
-                    def->col.name    = mtsdup(bnd->name);
-                    def->col.size    = (ub2) bnd->size;
-                    def->col.type    = bnd->type;
-                    def->col.subtype = bnd->subtype;
+                def->col.ocode   = bnd->code;
+                def->col.name    = mtsdup(bnd->name);
+                def->col.size    = (ub2) bnd->size;
+                def->col.type    = bnd->type;
+                def->col.subtype = bnd->subtype;
 
-                    /* check national attribute for nclobs */
+                /* check national attribute for nclobs */
 
-                    if (bnd->type == OCI_CDT_LOB && bnd->subtype == OCI_NCLOB)
-                        def->col.csfrm = SQLCS_NCHAR;
+                if (bnd->type == OCI_CDT_LOB && bnd->subtype == OCI_NCLOB)
+                    def->col.csfrm = SQLCS_NCHAR;
 
-                    /* ajdust colum size from bind atrributes */
+                /* ajdust colum size from bind atrributes */
 
-                    if (def->col.type == OCI_CDT_TEXT)
-                        def->col.size = (ub2) (def->col.size / (sizeof(dtext)) - 1);
+                if (def->col.type == OCI_CDT_TEXT)
+                    def->col.size = (ub2) (def->col.size / (sizeof(dtext)) - 1);
 
-                    /* for integer types, set the bufsize here in order to 
-                       retreive later the integer type (short, integer, big_int)
-                       depending on the integer size */
-                    
-                    if (def->col.type == OCI_CDT_NUMERIC)
-                        def->col.bufsize = def->col.size;
-
-                    /* preset bufsize here to let OCI_ColumnMap() know we don't 
-                       want the column to mapped to SQLT_ODT */
-
-                    if (def->col.ocode == SQLT_DAT)
-                        def->col.bufsize = def->col.size;
-
-                    /* map column : failure means unsupported type */
-
-                    if (res == TRUE)
-                        res = OCI_ColumnMap(&def->col, rs->stmt);
-
-                    /* allocation of internal buffers for resultset content */
-                    
-                    if (res == TRUE)
-                        res = OCI_DefineAlloc(def);
+                /* for integer types, set the bufsize here in order to 
+                   retreive later the integer type (short, integer, big_int)
+                   depending on the integer size */
                 
-                    if (res == FALSE) 
-                        break;
-               }
+                if (def->col.type == OCI_CDT_NUMERIC)
+                    def->col.bufsize = def->col.size;
+
+                /* preset bufsize here to let OCI_ColumnMap() know we don't 
+                   want the column to mapped to SQLT_ODT */
+
+                if (def->col.ocode == SQLT_DAT)
+                    def->col.bufsize = def->col.size;
+
+                /* map column : failure means unsupported type */
+
+                if (res == TRUE)
+                    res = OCI_ColumnMap(&def->col, rs->stmt);
+
+                /* allocation of internal buffers for resultset content */
+                
+                if (res == TRUE)
+                    res = OCI_DefineAlloc(def);
+            
+                if (res == FALSE) 
+                    break;
             }
         }
     }
@@ -626,7 +623,7 @@ OCI_Resultset * OCI_API OCI_GetResultset(OCI_Statement *stmt)
     /* if the sql statement does not return a result, we just return NULL and not 
        throwing any exception */
 
-    if ((stmt->type != OCI_CST_SELECT) || (stmt->nb_outbinds == 0))
+    if ((stmt->type != OCI_CST_SELECT) || (stmt->nb_rbinds == 0))
     {
         /* if the resultset exists, let's use it */
 
@@ -846,8 +843,6 @@ boolean OCI_API OCI_FetchPrev(OCI_Resultset *rs)
             {
                 int offset = 1 - (rs->fetch_size + rs->row_fetched); 
  
-               // rs->fetch_status = OCI_SUCCESS;
-
                 if (OCI_FetchData(rs, OCI_SFD_RELATIVE, offset) == TRUE)
                 {
                     rs->row_cur = rs->fetch_size;  
@@ -885,7 +880,7 @@ boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)
 
     if (rs->eof == FALSE)
     {
-        if (rs->stmt->nb_outbinds == 0)
+        if (rs->stmt->nb_rbinds == 0)
         {
             /* for regular resultsets */
 
@@ -1870,4 +1865,26 @@ boolean OCI_API OCI_IsNull(OCI_Resultset *rs, unsigned int index)
     OCI_RESULT(def != NULL);
 
     return (OCI_NOT_NULL(def) == FALSE);
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_IsNull2
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_IsNull2(OCI_Resultset *rs, mtext *name)
+{
+    return OCI_IsNull(rs, OCI_GetDefineIndex(rs, name));
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ResultsetGetStatment
+ * ------------------------------------------------------------------------ */
+
+OCI_Statement * OCI_API OCI_ResultsetGetStatment(OCI_Resultset *rs)
+{
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
+
+    OCI_RESULT(TRUE);
+
+    return rs->stmt;
 }

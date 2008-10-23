@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: ocilib_internal.h, v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED 
@@ -46,6 +46,15 @@ extern "C"
 /* ************************************************************************ *
                          PRIVATE FUNCTIONS PROTOTYPES
  * ************************************************************************ */
+
+/* ------------------------------------------------------------------------ *
+ * bind.c
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_BindFree
+(
+    OCI_Bind *bnd
+);
 
 /* ------------------------------------------------------------------------ *
  * callback.c
@@ -730,12 +739,6 @@ boolean OCI_FetchCustom
     int offset
 );
 
-boolean OCI_FetchIntoUserVariables
-(
-    OCI_Statement *stmt, 
-    va_list args
-);
-
 #ifdef OCI_CHECK_DATASTRINGS 
 
 boolean OCI_ResultsetExpandStrings
@@ -785,6 +788,19 @@ boolean OCI_BindData
     unsigned int subtype,
     void *extra,
     unsigned int nbelem
+);
+
+int OCI_BindGetIndex
+(
+    OCI_Statement *stmt, 
+    const mtext *name
+);
+
+
+boolean OCI_FetchIntoUserVariables
+(
+    OCI_Statement *stmt, 
+    va_list args
 );
 
 

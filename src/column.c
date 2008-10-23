@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: column.c, v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: column.c, v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -1104,7 +1104,7 @@ unsigned int OCI_API OCI_ColumnGetSubType(OCI_Column *col)
 {
     unsigned int type = OCI_UNKNOWN;
 
-    OCI_CHECK_PTR(OCI_IPC_COLUMN, col, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_COLUMN, col, OCI_UNKNOWN);
 
     OCI_RESULT(TRUE);
 

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: define.c, v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: define.c, v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -56,6 +56,9 @@ OCI_Define * OCI_GetDefine(OCI_Resultset *rs, unsigned int index)
 
 int OCI_GetDefineIndex(OCI_Resultset *rs, const mtext *name)
 {
+    OCI_HashEntry *he = NULL;
+    int index         = -1;
+
     OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, -1);
     OCI_CHECK_PTR(OCI_IPC_STRING, name, -1);
 
@@ -81,7 +84,20 @@ int OCI_GetDefineIndex(OCI_Resultset *rs, const mtext *name)
 
     OCI_CHECK(rs->map == NULL, -1);
 
-    return OCI_HashGetInt(rs->map, name);
+    he = OCI_HashLookup(rs->map, name, FALSE);
+
+    while (he != NULL)
+    {
+        /* no more entries or key matched => so we got it ! */
+
+        if (he->next == NULL || mtscasecmp(he->key, name) == 0)
+        {
+            index = he->values->value.num;
+            break;
+        }
+    }
+
+    return index;
 }
 
 /* ------------------------------------------------------------------------ *

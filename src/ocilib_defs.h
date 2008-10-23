@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h v 3.0.1 2008/10/19 19:20 Vince $
+ * $Id: ocilib_defs.h v 3.1.0 2008/10/23 21:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -205,12 +205,12 @@
 #define OCI_IPC_HASHTABLE        26
 #define OCI_IPC_THREAD           27
 #define OCI_IPC_MUTEX            28
+#define OCI_IPC_BIND             29
 
 /* ---- Internal pointers ----- */
  
-#define OCI_IPC_LIST             29
-#define OCI_IPC_LIST_ITEM        30
-#define OCI_IPC_BIND             31
+#define OCI_IPC_LIST             30
+#define OCI_IPC_LIST_ITEM        31
 #define OCI_IPC_BIND_ARRAY       32
 #define OCI_IPC_DEFINE           33
 #define OCI_IPC_DEFINE_ARRAY     34
