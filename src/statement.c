@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.1.0 2008/10/23 21:00 Vince $
+ * $Id: statement.c, v 3.1.0 2008/10/26 07:50 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -277,47 +277,75 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
     ub4 exec_mode    = OCI_DEFAULT;
     boolean is_pltbl = FALSE;
     ub4 *pnbelem     = NULL;
+    int index        = 0;
     ub4 i;
+
+    /* check if the bind name has already been used */
+
+    if (OCI_BindGetIndex(stmt, name) > 0)
+    {
+        OCI_ExceptionBindAlreadyUsed(stmt, name);  
+        res = FALSE;
+    }
+
+    /* check index if necessary */
+
+    if (res == TRUE)
+    {
+        if (stmt->bind_mode == OCI_BIND_BY_POS)
+        {
+            index = (int) mtstol(&bnd->name[1], NULL, 10);
+
+            if (index <= 0 || index > OCI_BIND_MAX)
+            {
+                OCI_ExceptionOutOfBounds(stmt->con, index);  
+                res = FALSE;
+            }
+        }
+    }
 
     /* check if we can handle another bind */
 
-    if (mode == OCI_BIND_INPUT)
+    if (res == TRUE)
     {
-        if (stmt->nb_ubinds >= OCI_BIND_MAX)
+        if (mode == OCI_BIND_INPUT)
         {
-            OCI_ExceptionMaxBind(stmt);
-            res = FALSE;
+            if (stmt->nb_ubinds >= OCI_BIND_MAX)
+            {
+                OCI_ExceptionMaxBind(stmt);
+                res = FALSE;
+            }
+
+            /* allocate user bind array if necessary */
+
+            if (stmt->ubinds == NULL)
+            {
+                stmt->ubinds = (OCI_Bind **) OCI_MemAlloc(OCI_IPC_BIND_ARRAY, 
+                                                          sizeof(*stmt->ubinds), 
+                                                          OCI_BIND_MAX, TRUE);
+            }
+
+            res = (stmt->ubinds != NULL);
         }
-
-        /* allocate user bind array if necessary */
-
-        if (stmt->ubinds == NULL)
+        else
         {
-            stmt->ubinds = (OCI_Bind **) OCI_MemAlloc(OCI_IPC_BIND_ARRAY, 
-                                                      sizeof(*stmt->ubinds), 
-                                                      OCI_BIND_MAX, TRUE);
+            if (stmt->nb_rbinds >= OCI_BIND_MAX)
+            {
+                OCI_ExceptionMaxBind(stmt);
+                res = FALSE;
+            }
+
+            /* allocate register bind array if necessary */
+
+            if (stmt->rbinds == NULL)
+            {
+                stmt->rbinds = (OCI_Bind **) OCI_MemAlloc(OCI_IPC_BIND_ARRAY, 
+                                                          sizeof(*stmt->rbinds), 
+                                                          OCI_BIND_MAX, TRUE);
+            }
+
+            res = (stmt->rbinds != NULL);
         }
-
-        res = (stmt->ubinds != NULL);
-    }
-    else
-    {
-        if (stmt->nb_rbinds >= OCI_BIND_MAX)
-        {
-            OCI_ExceptionMaxBind(stmt);
-            res = FALSE;
-        }
-
-        /* allocate register bind array if necessary */
-
-        if (stmt->rbinds == NULL)
-        {
-            stmt->rbinds = (OCI_Bind **) OCI_MemAlloc(OCI_IPC_BIND_ARRAY, 
-                                                      sizeof(*stmt->rbinds), 
-                                                      OCI_BIND_MAX, TRUE);
-        }
-
-        res = (stmt->rbinds != NULL);
     }
 
     /* checks done */
@@ -339,24 +367,14 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
     /* create hash table for mapping bind names / index */
 
-    if (stmt->map == NULL)
-    {
-        stmt->map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
-        
-        res = (stmt->map != NULL);
-
-    }
-
-    /* check if the bind name has already been used */
-
     if (res == TRUE)
     {
-        if (OCI_BindGetIndex(stmt, name) > 0)
+        if (stmt->map == NULL)
         {
+            stmt->map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
+            
+            res = (stmt->map != NULL);
 
-            /* throw error */
-
-            res = FALSE;
         }
     }
 
@@ -480,8 +498,6 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
     {
         if (stmt->bind_mode == OCI_BIND_BY_POS)
         {
-            int index = (int) mtstol(&bnd->name[1], NULL, 10);
-
             OCI_CALL1
             (
                 res, stmt->con, stmt,
@@ -640,26 +656,29 @@ int OCI_BindGetIndex(OCI_Statement *stmt, const mtext *name)
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, -1);
     OCI_CHECK_PTR(OCI_IPC_STRING, name, -1);
 
-    he = OCI_HashLookup(stmt->map, name, FALSE);
-
-    while (he != NULL)
+    if (stmt->map != NULL)
     {
-        /* no more entries or key matched => so we got it ! */
+        he = OCI_HashLookup(stmt->map, name, FALSE);
 
-        if (he->next == NULL || mtscasecmp(he->key, name) == 0)
+        while (he != NULL)
         {
-            /* in order to sue the same map for user binds and
-               register binds :
-                  - user binds are stored as positive values
-                  - registers binds are stored as negatives values
-            */
-            
-            index = he->values->value.num;
-            
-            if (index < 0)
-                index = -index;
+            /* no more entries or key matched => so we got it ! */
 
-            break;
+            if (he->next == NULL || mtscasecmp(he->key, name) == 0)
+            {
+                /* in order to sue the same map for user binds and
+                   register binds :
+                      - user binds are stored as positive values
+                      - registers binds are stored as negatives values
+                */
+                
+                index = he->values->value.num;
+                
+                if (index < 0)
+                    index = -index;
+
+                break;
+            }
         }
     }
 

@@ -13,13 +13,13 @@
       - Added OCI_BindGetCount()
       - Added OCI_BindGetData()
       - Added OCI_BindGetStatement()
-
-    * Miscellaneous modifications
-
-      - Added OCI_IsNull2()
       - Added OCI_SetNull2()
       - Added OCI_SetNullAtPos2()
-      - Added OCI_ResultsetGetStatement()
+      - Extended OCIBindxxx() calls satefy : 
+
+        * An error OCI_ERR_BIND_ALREADY_USED is now raised if the bind name or position is already binded to the statement
+        * With the bind mode by position, provided bind indexes <= 0  and > OCI_BIND_MAX will cause an error OCI_ERR_OUT_OF_BOUNDS
+
       - Extended binds/registers limits :
  
         * OCI implements the SQL returning clause through binds operations
@@ -27,6 +27,11 @@
         * Prior to v3.1.0, OCI_BIND_MAX (default 512) was the maximum of OCI_bindxxx() including OCI_Registerxxx() that an OCI_Statement could handle
         * With v3.1.0, OCILIB can handle OCI_BIND_MAX binds handle and OCI_BIND_MAX items in the returning clause
 
+    * Miscellaneous modifications
+
+      - Added OCI_IsNull2()
+      - Added OCI_ResultsetGetStatement()
+ 
     * Miscellaneous fixes
 
       - OCI_IsConnected() was always returning FALSE since v3.0.0

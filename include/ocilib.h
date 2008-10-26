@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: include/ocilib.h, v 3.1.0 2008/10/23 21:00 Vince $
+ * $Id: include/ocilib.h, v 3.1.0 2008/10/26 07:50 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED 
@@ -1134,6 +1134,7 @@ typedef struct OCI_HashEntry {
 #define OCI_ERR_NOT_COMPATIBLE          16
 #define OCI_ERR_STMT_STATE              17
 #define OCI_ERR_STMT_NOT_SCROLLABLE     18
+#define OCI_ERR_BIND_ALREADY_USED       19
 
 /* binding */
 

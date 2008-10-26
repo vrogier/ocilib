@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h v 3.1.0 2008/10/23 21:00 Vince $
+ * $Id: ocilib_defs.h v 3.1.0 2008/10/26 07:50 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -206,6 +206,7 @@
 #define OCI_IPC_THREAD           27
 #define OCI_IPC_MUTEX            28
 #define OCI_IPC_BIND             29
+//#define OCI_IPC_DIRECTPATH       30
 
 /* ---- Internal pointers ----- */
  

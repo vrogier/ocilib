@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_import.h, v 3.1.0 2008/10/23 21:00 Vince $
+ * $Id: oci_import.h, v 3.1.0 2008/10/26 07:50 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED 
@@ -48,6 +48,7 @@ extern "C" {
 
 #include <oci.h>
 #include <orid.h>
+#include <oci8dp.h>
 
 #ifdef  __cplusplus
 }

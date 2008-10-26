@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.1.0 2008/10/23 21:00 Vince $
+ * $Id: ocilib_internal.h, v 3.1.0 2008/10/26 07:50 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED 
@@ -348,9 +348,7 @@ void OCI_ExceptionNotMultithreaded(void);
 void OCI_ExceptionOutOfBounds
 (
     OCI_Connection *con, 
-    int value,
-    int lb, 
-    int ub
+    int value
 );
 
 void OCI_ExceptionUnfreedData
@@ -393,6 +391,12 @@ void OCI_ExceptionStatementState
 void OCI_ExceptionStatementNotScrollable
 (
     OCI_Statement *stmt
+);
+
+void OCI_ExceptionBindAlreadyUsed
+(
+    OCI_Statement *stmt,
+    const mtext * bind
 );
 
 /* ------------------------------------------------------------------------ *

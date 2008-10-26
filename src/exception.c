@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: exception.c, v 3.1.0 2008/10/23 21:00 Vince $
+ * $Id: exception.c, v 3.1.0 2008/10/26 07:50 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -106,7 +106,7 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Oracle datatype not supported (sqlcode %d) "),
     MT("Unknown identifier %c while parsing SQL"), 
     MT("Unknown argument %d while retreiving data"),
-    MT("Index %d out of bounds. Must be between %d and %d"),
+    MT("Index %d out of bounds"),
     MT("Found %d unfreed %ls"),
     MT("Maximum number of binds (%d) already reached"),
     MT("Object attribute '%ls' not found"),
@@ -114,6 +114,7 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Elements are not compatibles (type 1 = %d, type 2 = %d)"),
     MT("Unable to perform this operation on a %ls statement"),
     MT("The statement is not scrollable"),
+    MT("Name or position '%ls' already binded to the statement"),
 };
 
 #else
@@ -131,7 +132,7 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Oracle datatype not supported (sqlcode %d) "),
     MT("Unknown identifier %c while parsing SQL : "), 
     MT("Unknown argument %d while retreiving data"),
-    MT("Index %d out of bounds. Must be between %d and %d"),
+    MT("Index %d out of bounds"),
     MT("Found %d unfreed %s"),
     MT("Maximum number of binds (%d) already reached"),
     MT("Object attribute '%s' not found"),
@@ -139,6 +140,7 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Elements are not compatibles (type 1 = %d, type 2 = %d)"),
     MT("Unable to perform this operation on a %s statement"),
     MT("The statement is not scrollable"),
+    MT("Name or position '%s' already binded to the statement"),
 };
 
 #endif
@@ -467,7 +469,7 @@ void OCI_ExceptionMappingArgument(OCI_Connection *con, OCI_Statement *stmt,
  * OCI_ExceptionOutOfBounds
  * ------------------------------------------------------------------------ */
 
-void OCI_ExceptionOutOfBounds(OCI_Connection *con, int value, int lb, int ub)
+void OCI_ExceptionOutOfBounds(OCI_Connection *con, int value)
 {
     OCI_Error *err = OCI_ExceptionGetError();
 
@@ -480,7 +482,7 @@ void OCI_ExceptionOutOfBounds(OCI_Connection *con, int value, int lb, int ub)
         mtsprintf(err->str,  
                   msizeof(err->str) - 1, 
                   OCILib_ErrorMsg[OCI_ERR_OUT_OF_BOUNDS], 
-                  value, lb, ub);
+                  value);
     }
 
     OCI_ExceptionRaise(err);
@@ -651,3 +653,28 @@ void OCI_ExceptionStatementNotScrollable(OCI_Statement *stmt)
     OCI_ExceptionRaise(err);
 }
 
+/* ------------------------------------------------------------------------ *
+ * OCI_ExceptionBindAlreadyUsed
+ * ------------------------------------------------------------------------ */
+
+void OCI_ExceptionBindAlreadyUsed(OCI_Statement *stmt, const mtext * bind)
+{
+    OCI_Error *err = OCI_ExceptionGetError();
+
+    if (err != NULL)
+    {
+        err->type  = OCI_ERR_OCILIB;
+        err->icode = OCI_ERR_BIND_ALREADY_USED;
+        err->stmt  = stmt;
+
+        if (stmt != NULL)
+            err->con =  stmt->con;
+
+        mtsprintf(err->str,  
+                  msizeof(err->str) - 1, 
+                  OCILib_ErrorMsg[OCI_ERR_BIND_ALREADY_USED], 
+                  bind);
+    }
+
+    OCI_ExceptionRaise(err);
+}

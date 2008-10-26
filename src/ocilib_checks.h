@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_checks.h v 3.1.0 2008/10/23 21:00 Vince $
+ * $Id: ocilib_checks.h v 3.1.0 2008/10/26 07:50 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_CHECKS_H_INCLUDED
@@ -319,7 +319,7 @@
                                                                                \
     if ((v < (b1)) || (v > (b2)))                                              \
     {                                                                          \
-        OCI_ExceptionOutOfBounds((con), (v), (b1),(b2));                       \
+        OCI_ExceptionOutOfBounds((con), (v));                                  \
                                                                                \
         return (ret);                                                          \
     } 
