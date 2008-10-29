@@ -1525,7 +1525,7 @@ unsigned int OCI_API OCI_GetRaw(OCI_Resultset *rs, unsigned int index,
 {
     OCI_Define *def = OCI_GetDefine(rs, index);
     boolean res     = TRUE;
-    ub4 count       = len;
+    ub2 count       = (ub2) len;
 
     OCI_CHECK_PTR(OCI_IPC_VOID, buffer, 0);
 
@@ -1533,8 +1533,10 @@ unsigned int OCI_API OCI_GetRaw(OCI_Resultset *rs, unsigned int index,
 
     if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_RAW))
     {
-        if (count > def->col.size)
-            count = def->col.size;
+        ub2 size = ((ub2*)def->buf.lens)[def->rs->row_cur-1];
+
+        if (count > size)
+            count = size;
 
         /* for RAWs, we copy the data in the destination buffer instead of 
            returning internal buffer as we do for strings */
@@ -1548,7 +1550,7 @@ unsigned int OCI_API OCI_GetRaw(OCI_Resultset *rs, unsigned int index,
     if (res == FALSE)
         count  = 0;
 
-    return count;
+    return (unsigned int) count;
 }
 
 /* ------------------------------------------------------------------------ *

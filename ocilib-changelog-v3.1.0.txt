@@ -9,10 +9,13 @@
       - Added OCI_BindGetName()
       - Added OCI_BindGetType()
       - Added OCI_BindGetSubtype()
-      - Added OCI_BindGetDataSize()
       - Added OCI_BindGetCount()
       - Added OCI_BindGetData()
       - Added OCI_BindGetStatement()
+      - Added OCI_BindGetDataLength()
+      - Added OCI_BindGetDataLengthAtPos()
+      - Added OCI_BindSetDataLength()
+      - Added OCI_BindSetDataLengthAtPos()
       - Added OCI_SetNull2()
       - Added OCI_SetNullAtPos2()
       - Extended OCIBindxxx() calls satefy : 
@@ -37,3 +40,4 @@
       - OCI_IsConnected() was always returning FALSE since v3.0.0
       - OCI_SchemaGet() with OCI_SCHEMA_TABLE was causing an ORA-24328 with Oracle 8 and 9 (working fine with Oracle 10) since v3.0.0
       - Fixed demo file output.c
+      - Fixed some preprocessor directives in oci_loader.h

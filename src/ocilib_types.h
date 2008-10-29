@@ -322,7 +322,7 @@ struct OCI_Bind {
     OCI_Buffer       buf;       /* place holder */
     ub2              code;      /* SQL datatype code */
     ub2              dynpos;    /* index of the bind for dynamic binds */
-    ub2             *plsizes;   /* PL/SQL tables element sizes */
+//    ub2             *plsizes;   /* PL/SQL tables element sizes */
     ub2             *plrcds;    /* PL/SQL tables return codes */
     ub4              nbelem;    /* PL/SQL tables nb elements */
 };

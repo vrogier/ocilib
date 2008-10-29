@@ -51,7 +51,6 @@ boolean OCI_BindFree(OCI_Bind *bnd)
     OCI_FREE(bnd->buf.lens);
     OCI_FREE(bnd->buf.temp);
 
-    OCI_FREE(bnd->plsizes);
     OCI_FREE(bnd->plrcds);
 
     OCI_FREE(bnd->name);
@@ -124,7 +123,7 @@ unsigned int OCI_API OCI_BindGetCount(OCI_Bind *bnd)
 
     OCI_RESULT(TRUE);
 
-    return (unsigned int) bnd->nbelem; 
+    return (unsigned int) bnd->buf.count; 
 }
 
 /* ------------------------------------------------------------------------ *
@@ -151,5 +150,69 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement(OCI_Bind *bnd)
     OCI_RESULT(TRUE);
 
     return bnd->stmt; 
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindSetLength
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_BindSetLength(OCI_Bind *bnd, unsigned int len)
+{
+    return OCI_BindSetLengthAtPos(bnd, 1, len);
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindSetLengthAtPos
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_BindSetLengthAtPos(OCI_Bind *bnd, unsigned int position, 
+                                       unsigned int len)
+{
+    boolean res   = FALSE;
+
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
+    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buf.count, FALSE);
+    OCI_CHECK_MIN(bnd->stmt->con, bnd->stmt, len, 1, FALSE);
+
+    if (bnd->buf.lens != NULL)
+    {
+        ((ub2 *) bnd->buf.lens)[position-1] = (ub2) len; 
+
+        res = TRUE;
+    }
+
+    OCI_RESULT(TRUE);
+
+    return res;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindGetLength
+ * ------------------------------------------------------------------------ */
+
+unsigned int OCI_API OCI_BindGetLength(OCI_Bind *bnd)
+{
+    return OCI_BindGetLengthAtPos(bnd, 1);
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindGetLengthAtPos
+ * ------------------------------------------------------------------------ */
+
+unsigned int OCI_API OCI_BindGetLengthAtPos(OCI_Bind *bnd, unsigned int position)
+{
+    ub2 size = 0;
+
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, 0);
+    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buf.count, 0);
+ 
+    if (bnd->buf.lens != NULL)
+    {
+        size = ((ub2 *) bnd->buf.lens)[position-1];
+    }
+
+    OCI_RESULT(TRUE);
+
+    return (unsigned int) size;
 }
 
