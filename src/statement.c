@@ -404,21 +404,6 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         bnd->nbelem = nbelem;
         pnbelem     = &bnd->nbelem;
 
-        /* allocate array of element sizes */
-
-        bnd->plsizes = (ub2 *) OCI_MemAlloc(OCI_IPC_PLS_SIZE_ARRAY, sizeof(ub2), 
-                                            nbelem, FALSE);
-
-        if (bnd->plsizes != NULL)
-        {
-            for(i = 0; i < nbelem; i++)
-                bnd->plsizes[i] = (ub2) size;
-
-            res = TRUE;
-        }
-        else
-            res = FALSE;
-    
         /* allocate array of returned codes */
      
         if (res == TRUE)
@@ -457,6 +442,27 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         }
         else
             bnd->buf.data = (void **) data;
+    }
+
+    /* setup data length array */
+
+    if (res == TRUE && ((is_pltbl == TRUE) || (type == OCI_CDT_RAW)))
+    {
+        bnd->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, sizeof(ub2),
+                                              nbelem, TRUE);
+
+        res = (bnd->buf.lens != NULL);
+
+       /* initialize length array with buffer default size */
+
+        if (res == TRUE)
+        {
+            for (i=0; i < nbelem; i++)
+            {
+                *(ub2*)(((ub1 *)bnd->buf.lens) + sizeof(ub2) * i) = (ub2) size;
+            }
+        }
+
     }
 
     /* initialize bind object */
@@ -504,7 +510,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
                 
                 OCIBindByPos(stmt->stmt, (OCIBind **) &bnd->buf.handle,
                              stmt->con->err, (ub4) index, (void *) bnd->buf.data,
-                             bnd->size, bnd->code, bnd->buf.inds,  bnd->plsizes, 
+                             bnd->size, bnd->code, bnd->buf.inds,  bnd->buf.lens, 
                              bnd->plrcds, (ub4) (is_pltbl == TRUE ? nbelem : 0),
                              pnbelem, exec_mode)
             )
@@ -523,7 +529,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
                 OCIBindByName(stmt->stmt, (OCIBind **) &bnd->buf.handle,
                               stmt->con->err, (OraText *) ostr, (sb4) osize, 
                               (void *) bnd->buf.data, bnd->size, bnd->code,
-                              bnd->buf.inds, bnd->plsizes, bnd->plrcds, 
+                              bnd->buf.inds, bnd->buf.lens, bnd->plrcds, 
                               (ub4) (is_pltbl == TRUE ? nbelem : 0),
                               pnbelem, exec_mode)
             )
@@ -2758,7 +2764,6 @@ unsigned int OCI_API OCI_GetAffectedRows(OCI_Statement *stmt)
     return count;
 }
 
-
 /* ------------------------------------------------------------------------ *
  * OCI_GetBindCount
  * ------------------------------------------------------------------------ */
@@ -2770,7 +2775,6 @@ unsigned int OCI_API OCI_GetBindCount(OCI_Statement *stmt)
     OCI_RESULT(TRUE);
 
     return (unsigned int) stmt->nb_ubinds;
-
 }
 
 /* ------------------------------------------------------------------------ *
