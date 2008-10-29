@@ -38,7 +38,7 @@
 
 #if defined(_AIX)
   #define  LIB_OPEN_FLAGS        RTLD_NOW | RTLD_GLOBAL | RTLD_MEMBER
-#elsif defined(__hpux)           
+#elif defined(__hpux)           
   #define  LIB_OPEN_FLAGS        BIND_DEFERRED |BIND_VERBOSE| DYNAMIC_PATH
 #else
   #define  LIB_OPEN_FLAGS        RTLD_NOW | RTLD_GLOBAL
