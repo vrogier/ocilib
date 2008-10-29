@@ -396,7 +396,6 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
 boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset)
 {
     boolean res  = TRUE;
-    //OCI_CHECK(rs->fetch_status == OCI_NO_DATA, FALSE);
 
     /* internal fetch */
 
@@ -843,7 +842,9 @@ boolean OCI_API OCI_FetchPrev(OCI_Resultset *rs)
             {
                 int offset = 1 - (rs->fetch_size + rs->row_fetched); 
  
-                if (OCI_FetchData(rs, OCI_SFD_RELATIVE, offset) == TRUE)
+                res = OCI_FetchData(rs, OCI_SFD_RELATIVE, offset);
+                
+                if (res == TRUE)
                 {
                     rs->row_cur = rs->fetch_size;  
                     rs->row_abs--;
@@ -858,7 +859,7 @@ boolean OCI_API OCI_FetchPrev(OCI_Resultset *rs)
 
         rs->eof = FALSE;
 
-        res = (rs->bof == FALSE);
+        res = ((res == TRUE) && (rs->bof == FALSE));
     }
     else
         res = FALSE;
@@ -890,12 +891,17 @@ boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)
                 {
                     rs->eof = TRUE;
                 }
-                else if (OCI_FetchData(rs, OCI_SFD_NEXT, 0) == TRUE)
+                else
                 {
-                    rs->bof     = FALSE;
-                    rs->row_cur = 1;
+                    res = OCI_FetchData(rs, OCI_SFD_NEXT, 0);
+                    
+                    if (res == TRUE)
+                    {
+                        rs->bof     = FALSE;
+                        rs->row_cur = 1;
 
-                    rs->row_abs++;
+                        rs->row_abs++;
+                    }
                 }
             }
             else
@@ -936,7 +942,7 @@ boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)
 
     OCI_RESULT(res);
 
-    return (rs->eof == FALSE);         
+    return ((res == TRUE) && (rs->eof == FALSE));         
 }
 
 /* ------------------------------------------------------------------------ *
@@ -962,7 +968,7 @@ boolean OCI_API OCI_FetchFirst(OCI_Resultset *rs)
 
     OCI_RESULT(res);
 
-    return (rs->bof == FALSE);  
+    return ((res == TRUE) && (rs->bof == FALSE));  
 }
 
 /* ------------------------------------------------------------------------ *
@@ -990,7 +996,7 @@ boolean OCI_API OCI_FetchLast(OCI_Resultset *rs)
 
     OCI_RESULT(res);
 
-    return (rs->eof != TRUE);  
+    return ((res == TRUE) && (rs->eof != TRUE));  
 }
 
 /* ------------------------------------------------------------------------ *

@@ -375,8 +375,10 @@
 
 #define OCI_IND(exp)                    (sb2) ((exp) ? 0 : -1)
 
-#define OCI_NOT_NULL(def)  \
-    ((def != NULL) && ((sb2) ((sb2*)def->buf.inds)[rs->row_cur-1] != -1))
+#define OCI_NOT_NULL(def)                                   \
+    ((def != NULL) &&                                       \
+     (rs->row_cur > 0) &&                                   \
+     ((sb2) ((sb2*)def->buf.inds)[rs->row_cur-1] != -1))
 
 #define OCI_NOT_USED(p)                 (p) = (p);
 

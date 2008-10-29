@@ -41,3 +41,5 @@
       - OCI_SchemaGet() with OCI_SCHEMA_TABLE was causing an ORA-24328 with Oracle 8 and 9 (working fine with Oracle 10) since v3.0.0
       - Fixed demo file output.c
       - Fixed some preprocessor directives in oci_loader.h
+      - OCI_Fetchxxx() functions could return TRUE even if the given SQL statement had some SQL conversion function that failed (like to_date(), etc..)
+      - OCI_Getxxx() functions could cause a segfault called before any OCI_Fetchxxx() calls 
