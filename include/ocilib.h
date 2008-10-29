@@ -198,7 +198,7 @@ extern "C" {
  * =>    Calling convention (WINDOWS ONLY)
  *
  *     - OCI_API = __cdecl or blank for C/C++ only ! <b>(default)</b>
- *     - OCI_API = __sdtcall to link OCILIB shared library with langage
+ *     - OCI_API = __stdcall to link OCILIB shared library with langage
  *       independance <b>(default with prebuilt OCILIB libraries on MS Windows)</b>
  *
  * @note
@@ -245,7 +245,8 @@ extern "C" {
  *
  * @note
  * --with-oracle-headers-path and --with-oracle-lib-path are meant to be used with 
- * Instant client only.
+ * Instant client only but can used for regular client of libs and headers are 
+ * not located in usual folders
  *
  * @par Installing OCILIB on Microsoft Windows 
  *
@@ -3729,6 +3730,98 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement
 );
 
 /**
+ * @brief 
+ * Set the actual length of the element holded by the given bind handle
+ *
+ * @param bnd - bind handle
+ * 
+ * @note
+ * This call is not mandatory  ans should only be called for RAWs binds to set 
+ * the real size of the given data if different from the expected column or
+ * parameter size
+ *
+ * @note
+ * It works as well with string based PL/SQL tables (in or in/out but NOT out) 
+ * even if it's not necessary.
+ *
+ * @return
+ * Data length if the bind type is listed above otherwise 0.
+ * 
+ */
+
+OCI_EXPORT boolean OCI_API OCI_BindSetLength
+(
+    OCI_Bind *bnd, 
+    unsigned int len
+);
+
+/**
+ * @brief 
+ * Set the length of the element at the given position in
+ * the bind input array
+ *
+ * @param bnd      - bind handle
+ * @param position - Position in the array
+ * @param len      - data length
+ *
+ * @note
+ * See OCI_BindSetLength() for supported types
+ *
+ * @return
+ * Data length if the bind type is listed above otherwise 0.
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_BindSetLengthAtPos
+(
+    OCI_Bind *bnd, 
+    unsigned int position, 
+    unsigned int len
+);
+
+/**
+ * @brief 
+ * Return the actual length of the element holded by the given bind handle
+ *
+ * @param bnd - bind handle
+ *
+ * @note
+ * See OCI_BindSetLength() for supported types
+ *
+ * @return
+ * Data length if the bind type is supported otherwise 0.
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_BindGetLength
+(
+    OCI_Bind *bnd
+);
+
+/**
+ * @brief 
+ * Return the actuel length of the element at the given position in
+ * the bind input array
+ *
+ * @param bnd      - bind handle
+ * @param position - Position in the array
+ *
+ * @note
+ * See OCI_BindSetLength() for supported types
+ *
+ * @return
+ * Data length if the bind type is supported otherwise 0.
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_BindGetLengthAtPos
+(
+    OCI_Bind *bnd, 
+    unsigned int position
+);
+
+
+/**
  * @}
  */
 
@@ -7054,7 +7147,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LobWrite
  * Truncate the given lob to a shorter length
  *
  * @param lob  - Lob handle
- * @param size - New lenght (in bytes or characters)
+ * @param size - New length (in bytes or characters)
  * 
  * @note
  * Length is expressed in :
@@ -7075,7 +7168,7 @@ OCI_EXPORT boolean OCI_API OCI_LobTruncate
 
 /**
  * @brief 
- * Return the actual lenght of a lob
+ * Return the actual length of a lob
  *
  * @param lob - Lob handle
  *
