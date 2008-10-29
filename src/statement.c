@@ -576,7 +576,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
             (
                 (bnd->type          == OCI_CDT_TEXT) && 
                 (stmt->con->ver_maj >= OCI_9)        &&
-                (bnd->plsizes       == NULL)
+                (bnd->buf.lens      == NULL)
             )
 #endif
            )
