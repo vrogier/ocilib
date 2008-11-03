@@ -294,48 +294,48 @@ extern "C" {
 /* Import mode */
 
 #ifdef OCI_IMPORT_RUNTIME
-#undef OCI_IMPORT_LINKAGE
+  #undef OCI_IMPORT_LINKAGE
 #endif
 
 #ifdef OCI_IMPORT_LINKAGE
-#undef OCI_IMPORT_RUNTIME
+  #undef OCI_IMPORT_RUNTIME
 #endif
 
 #if !defined(OCI_IMPORT_RUNTIME) && !defined(OCI_IMPORT_LINKAGE)
-#define OCI_IMPORT_LINKAGE
+  #define OCI_IMPORT_LINKAGE
 #endif
 
 /* Charset mode */
 
 #ifdef OCI_CHARSET_UNICODE
-#undef OCI_CHARSET_ANSI
-#undef OCI_CHARSET_MIXED
+  #undef OCI_CHARSET_ANSI
+  #undef OCI_CHARSET_MIXED
 #endif
 
 #ifdef OCI_CHARSET_MIXED
-#undef OCI_CHARSET_ANSI
-#undef OCI_CHARSET_UNICODE
+  #undef OCI_CHARSET_ANSI
+  #undef OCI_CHARSET_UNICODE
 #endif
 
 #ifdef OCI_CHARSET_ANSI
-#undef OCI_CHARSET_MIXED
-#undef OCI_CHARSET_UNICODE
+  #undef OCI_CHARSET_MIXED
+  #undef OCI_CHARSET_UNICODE
 #endif
 
 #if !defined(OCI_CHARSET_ANSI) && !defined(OCI_CHARSET_MIXED) && !defined(OCI_CHARSET_UNICODE)
-#define OCI_CHARSET_ANSI
+  #define OCI_CHARSET_ANSI
 #endif
 
 /* Calling convention */
 
 #ifndef OCI_API
-#define OCI_API 
+  #define OCI_API 
 #endif
 
 /* Build mode */
 
 #ifndef OCI_EXPORT
-#define OCI_EXPORT 
+  #define OCI_EXPORT 
 #endif
 
 /**
@@ -455,14 +455,14 @@ extern "C" {
 /* Unicode mode */
 
 #ifdef OCI_CHARSET_UNICODE
-    #define OCI_METADATA_UNICODE
-    #define OCI_USERDATA_UNICODE
-    #define OCI_INCLUDE_WCHAR
+  #define OCI_METADATA_UNICODE
+  #define OCI_USERDATA_UNICODE
+  #define OCI_INCLUDE_WCHAR
 #endif
 
 #ifdef OCI_CHARSET_MIXED
-    #define OCI_USERDATA_UNICODE
-    #define OCI_INCLUDE_WCHAR
+  #define OCI_USERDATA_UNICODE
+  #define OCI_INCLUDE_WCHAR
 #endif
 
 /* include wchar header if needed */
@@ -487,20 +487,27 @@ extern "C" {
 
 /* Charset macros */
 
+#define OCI_CHAR_ANSI     1
+#define OCI_CHAR_UNICODE  2
+
 #ifdef OCI_METADATA_UNICODE
-    #define MT(x)           L ## x
-    #define mtext           wchar_t
+  #define MT(x)           L ## x
+  #define mtext           wchar_t
+  #define OCI_CHAR_MTEXT  OCI_CHAR_UNICODE
 #else
-    #define MT(x)           x
-    #define mtext           char
+  #define MT(x)           x
+  #define mtext           char
+  #define OCI_CHAR_MTEXT  OCI_CHAR_ANSI
 #endif
 
 #ifdef OCI_USERDATA_UNICODE
-    #define DT(x)           L ## x
-    #define dtext           wchar_t
+  #define DT(x)           L ## x
+  #define dtext           wchar_t
+  #define OCI_CHAR_DTEXT  OCI_CHAR_UNICODE
 #else
-    #define DT(x)           x
-    #define dtext           char
+  #define DT(x)           x
+  #define dtext           char
+  #define OCI_CHAR_DTEXT  OCI_CHAR_ANSI
 #endif
 
 /*

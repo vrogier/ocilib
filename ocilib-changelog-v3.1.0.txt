@@ -34,7 +34,7 @@
 
       - Added OCI_IsNull2()
       - Added OCI_ResultsetGetStatement()
- 
+      - Added OCI_CHAR_DTEXT and OCI_CHAR_MTEXT macros that hold OCI_CHAR_ANSI / OCI_CHAR_UNICODE values in order to find out character types at runtime 
     * Miscellaneous fixes
 
       - OCI_IsConnected() was always returning FALSE since v3.0.0
