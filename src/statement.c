@@ -294,7 +294,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
     {
         if (stmt->bind_mode == OCI_BIND_BY_POS)
         {
-            index = (int) mtstol(&bnd->name[1], NULL, 10);
+            index = (int) mtstol(&name[1], NULL, 10);
 
             if (index <= 0 || index > OCI_BIND_MAX)
             {
