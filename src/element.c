@@ -500,6 +500,28 @@ OCI_File * OCI_API  OCI_ElemGetFile(OCI_Elem *elem)
 }
 
 /* ------------------------------------------------------------------------ *
+ * OCI_ElemGetRef
+ * ------------------------------------------------------------------------ */
+
+OCI_Ref * OCI_API  OCI_ElemGetRef(OCI_Elem *elem)
+{
+    OCI_Ref *ref = NULL;
+
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
+
+    if (elem->col->type == OCI_CDT_REF)
+    {
+        OCIRef *handle = *(OCIRef **) elem->handle;
+        
+        ref = OCI_RefInit(elem->con, NULL, (OCI_Ref **) &elem->obj, handle);
+    }
+
+    OCI_RESULT(ref != NULL);
+
+    return ref;
+}
+
+/* ------------------------------------------------------------------------ *
  * OCI_ElemGetObject
  * ------------------------------------------------------------------------ */
 

@@ -353,8 +353,7 @@
  * Checks if two expressions are compatible
  *
  * @param con - Connection handle
- * @param e1  - Expression 1
- * @param e2  - Expression 2
+ * @param exp - Equality expression 
  * @param ret - Return value
  *
  * @note
@@ -362,11 +361,11 @@
  *
  */
 
-#define OCI_CHECK_COMPAT(con, e1, e2, ret)                                     \
+#define OCI_CHECK_COMPAT(con, exp, ret)                                        \
                                                                                \
-    if ((e1) != (e2))                                                          \
+    if ((exp) == FALSE)                                                         \
     {                                                                          \
-        OCI_ExceptionTypeNotCompatible((con), (int) (e1), (int) (e2));         \
+        OCI_ExceptionTypeNotCompatible((con));                                 \
                                                                                \
         return (ret);                                                          \
     } 

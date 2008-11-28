@@ -1,5 +1,5 @@
 /*
-   +----------------------------------------------------------------------+   
+   +----------------------------------------------------------------------+
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
@@ -25,15 +25,15 @@
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
    |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
-   +----------------------------------------------------------------------+ 
+   +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
  * $Id: oci_import.h, v 3.1.0 2008/10/26 07:50 Vince $
  * ------------------------------------------------------------------------ */
 
-#ifndef OCILIB_OCI_IMPORT_H_INCLUDED 
-#define OCILIB_OCI_IMPORT_H_INCLUDED 
+#ifndef OCILIB_OCI_IMPORT_H_INCLUDED
+#define OCILIB_OCI_IMPORT_H_INCLUDED
 
 #ifdef OCI_IMPORT_LINKAGE
 
@@ -55,13 +55,15 @@ extern "C" {
 #endif
 
 #ifdef _MSC_VER
-#pragma comment(lib, "oci.lib") 
+#pragma comment(lib, "oci.lib")
 #endif
 
 #else
 
 #include "oci_loader.h"
 #include "oci_api.h"
+
+/* Setup Oracle shared library name if not provided */
 
 #ifndef OCI_DL
   #if defined(_WINDOWS)
@@ -75,27 +77,25 @@ extern "C" {
   #endif
 #endif
 
-#ifdef OCI_METADATA_UNICODE
-  #define OCI_DL_GET(l) L#l
-#else
-  #define OCI_DL_GET(l) #l
-#endif
+#define OCI_DL_GET(s) OCI_DL_CVT(s)
+#define OCI_DL_CVT(s) #s
 
-#define OCI_DL_CVT(l) OCI_DL_GET(l)
-#define OCI_DL_NAME   OCI_DL_CVT(OCI_DL)
+#define OCI_DL_NAME OCI_DL_GET(OCI_DL)
+
+/* symbol list */
 
 extern OCIENVCREATE                 OCIEnvCreate;
 extern OCISERVERATTACH              OCIServerAttach;
 extern OCISERVERDETACH              OCIServerDetach;
 extern OCIHANDLEALLOC               OCIHandleAlloc;
 extern OCIHANDLEFREE                OCIHandleFree;
-extern OCIDESCRIPTORALLOC           OCIDescriptorAlloc; 
+extern OCIDESCRIPTORALLOC           OCIDescriptorAlloc;
 extern OCIDESCRIPTORFREE            OCIDescriptorFree;
 extern OCISESSIONBEGIN              OCISessionBegin;
-extern OCISESSIONEND                OCISessionEnd; 
-extern OCIPASSWORDCHANGE            OCIPasswordChange; 
-extern OCIBINDBYPOS                 OCIBindByPos; 
-extern OCIBINDBYNAME                OCIBindByName; 
+extern OCISESSIONEND                OCISessionEnd;
+extern OCIPASSWORDCHANGE            OCIPasswordChange;
+extern OCIBINDBYPOS                 OCIBindByPos;
+extern OCIBINDBYNAME                OCIBindByName;
 extern OCIBINDDYNAMIC               OCIBindDynamic;
 extern OCIBINDOBJECT                OCIBindObject;
 extern OCIDEFINEBYPOS               OCIDefineByPos;
@@ -112,7 +112,7 @@ extern OCITRANSSTART                OCITransStart;
 extern OCITRANSDETACH               OCITransDetach;
 extern OCITRANSPREPARE              OCITransPrepare;
 extern OCITRANSFORGET               OCITransForget;
-extern OCITRANSCOMMIT               OCITransCommit; 
+extern OCITRANSCOMMIT               OCITransCommit;
 extern OCITRANSROLLBACK             OCITransRollback;
 extern OCIERRORGET                  OCIErrorGet;
 extern OCILOBCREATETEMPORARY        OCILobCreateTemporary;
@@ -190,51 +190,61 @@ extern OCICLIENTVERSION             OCIClientVersion;;
 extern OCITYPEBYNAME                OCITypeByName;
 extern OCINUMBERTOINT               OCINumberToInt;
 extern OCINUMBERFROMINT             OCINumberFromInt;
-extern OCINUMBERTOREAL              OCINumberToReal; 
+extern OCINUMBERTOREAL              OCINumberToReal;
 extern OCINUMBERFROMREAL            OCINumberFromReal;
-extern OCINUMBERTOTEXT              OCINumberToText; 
-extern OCINUMBERFROMTEXT            OCINumberFromText; 
-extern OCISTRINGPTR                 OCIStringPtr; 
-extern OCISTRINGASSIGNTEXT          OCIStringAssignText; 
-extern OCIRAWPTR                    OCIRawPtr; 
-extern OCIRAWASSIGNBYTES            OCIRawAssignBytes; 
-extern OCIRAWALLOCSIZE              OCIRawAllocSize; 
-extern OCIOBJECTNEW                 OCIObjectNew; 
-extern OCIOBJECTFREE                OCIObjectFree; 
-extern OCIOBJECTSETATTR             OCIObjectSetAttr; 
-extern OCIOBJECTGETATTR             OCIObjectGetAttr; 
-extern OCITHREADPROCESSINIT         OCIThreadProcessInit; 
-extern OCITHREADINIT                OCIThreadInit; 
+extern OCINUMBERTOTEXT              OCINumberToText;
+extern OCINUMBERFROMTEXT            OCINumberFromText;
+extern OCISTRINGPTR                 OCIStringPtr;
+extern OCISTRINGASSIGNTEXT          OCIStringAssignText;
+extern OCIRAWPTR                    OCIRawPtr;
+extern OCIRAWASSIGNBYTES            OCIRawAssignBytes;
+extern OCIRAWALLOCSIZE              OCIRawAllocSize;
+extern OCIOBJECTNEW                 OCIObjectNew;
+extern OCIOBJECTFREE                OCIObjectFree;
+extern OCIOBJECTSETATTR             OCIObjectSetAttr;
+extern OCIOBJECTGETATTR             OCIObjectGetAttr;
+extern OCIOBJECTPIN                 OCIObjectPin;
+extern OCIOBJECTUNPIN               OCIObjectUnpin;
+extern OCIOBJECTCOPY                OCIObjectCopy;
+extern OCIOBJECTGETOBJECTREF        OCIObjectGetObjectRef;
+extern OCIOBJECTGETPROPERTY         OCIObjectGetProperty;
+extern OCIREFASSIGN                 OCIRefAssign;
+extern OCIREFISNULL                 OCIRefIsNull;
+extern OCIREFCLEAR                  OCIRefClear;
+extern OCIREFTOHEX                  OCIRefToHex;
+extern OCIREFHEXSIZE                OCIRefHexSize;
+extern OCITHREADPROCESSINIT         OCIThreadProcessInit;
+extern OCITHREADINIT                OCIThreadInit;
 extern OCITHREADTERM                OCIThreadTerm;
-extern OCITHREADIDINIT              OCIThreadIdInit; 
-extern OCITHREADIDDESTROY           OCIThreadIdDestroy; 
-extern OCITHREADHNDINIT             OCIThreadHndInit; 
-extern OCITHREADHNDDESTROY          OCIThreadHndDestroy; 
-extern OCITHREADCREATE              OCIThreadCreate; 
-extern OCITHREADJOIN                OCIThreadJoin; 
-extern OCITHREADCLOSE               OCIThreadClose; 
-extern OCITHREADMUTEXINIT           OCIThreadMutexInit; 
-extern OCITHREADMUTEXDESTROY        OCIThreadMutexDestroy; 
-extern OCITHREADMUTEXACQUIRE        OCIThreadMutexAcquire; 
-extern OCITHREADMUTEXRELEASE        OCIThreadMutexRelease; 
-extern OCITHREADKEYINIT             OCIThreadKeyInit; 
-extern OCITHREADKEYDESTROY          OCIThreadKeyDestroy; 
-extern OCITHREADKEYSET              OCIThreadKeySet; 
-extern OCITHREADKEYGET              OCIThreadKeyGet; 
-extern OCICONNECTIONPOOLCREATE      OCIConnectionPoolCreate; 
-extern OCICONNECTIONPOOLDESTROY     OCIConnectionPoolDestroy; 
-extern OCICOLLSIZE                  OCICollSize; 
-extern OCICOLLMAX                   OCICollMax; 
-extern OCICOLLGETITEM               OCICollGetElem; 
-extern OCICOLLASSIGNELEM            OCICollAssignElem; 
-extern OCICOLLASSIGN                OCICollAssign; 
-extern OCICOLLAPPEND                OCICollAppend; 
-extern OCICOLLTRIM                  OCICollTrim; 
-extern OCIITERCREATE                OCIIterCreate; 
-extern OCIITERDELETE                OCIIterDelete; 
-extern OCIITERINIT                  OCIIterInit; 
-extern OCIITERNEXT                  OCIIterNext; 
-extern OCIITERPREV                  OCIIterPrev; 
+extern OCITHREADIDINIT              OCIThreadIdInit;
+extern OCITHREADIDDESTROY           OCIThreadIdDestroy;
+extern OCITHREADHNDINIT             OCIThreadHndInit;
+extern OCITHREADHNDDESTROY          OCIThreadHndDestroy;
+extern OCITHREADCREATE              OCIThreadCreate;
+extern OCITHREADJOIN                OCIThreadJoin;
+extern OCITHREADCLOSE               OCIThreadClose;
+extern OCITHREADMUTEXINIT           OCIThreadMutexInit;
+extern OCITHREADMUTEXDESTROY        OCIThreadMutexDestroy;
+extern OCITHREADMUTEXACQUIRE        OCIThreadMutexAcquire;
+extern OCITHREADMUTEXRELEASE        OCIThreadMutexRelease;
+extern OCITHREADKEYINIT             OCIThreadKeyInit;
+extern OCITHREADKEYDESTROY          OCIThreadKeyDestroy;
+extern OCITHREADKEYSET              OCIThreadKeySet;
+extern OCITHREADKEYGET              OCIThreadKeyGet;
+extern OCICONNECTIONPOOLCREATE      OCIConnectionPoolCreate;
+extern OCICONNECTIONPOOLDESTROY     OCIConnectionPoolDestroy;
+extern OCICOLLSIZE                  OCICollSize;
+extern OCICOLLMAX                   OCICollMax;
+extern OCICOLLGETITEM               OCICollGetElem;
+extern OCICOLLASSIGNELEM            OCICollAssignElem;
+extern OCICOLLASSIGN                OCICollAssign;
+extern OCICOLLAPPEND                OCICollAppend;
+extern OCICOLLTRIM                  OCICollTrim;
+extern OCIITERCREATE                OCIIterCreate;
+extern OCIITERDELETE                OCIIterDelete;
+extern OCIITERINIT                  OCIIterInit;
+extern OCIITERNEXT                  OCIIterNext;
+extern OCIITERPREV                  OCIIterPrev;
 
 #ifdef ORAXB8_DEFINED
 

@@ -206,29 +206,29 @@
 #define OCI_IPC_THREAD           27
 #define OCI_IPC_MUTEX            28
 #define OCI_IPC_BIND             29
-//#define OCI_IPC_DIRECTPATH       30
+#define OCI_IPC_REF              30
 
 /* ---- Internal pointers ----- */
  
-#define OCI_IPC_LIST             30
-#define OCI_IPC_LIST_ITEM        31
-#define OCI_IPC_BIND_ARRAY       32
-#define OCI_IPC_DEFINE           33
-#define OCI_IPC_DEFINE_ARRAY     34
-#define OCI_IPC_HASHENTRY        35
-#define OCI_IPC_HASHENTRY_ARRAY  36
-#define OCI_IPC_HASHVALUE        37
-#define OCI_IPC_THREADKEY        38
-#define OCI_IPC_OCIDATE          39
-#define OCI_IPC_TM               40
-#define OCI_IPC_RESULTSET_ARRAY  41
-#define OCI_IPC_PLS_SIZE_ARRAY   42
-#define OCI_IPC_PLS_RCODE_ARRAY  43
-#define OCI_IPC_SERVER_OUPUT     44
-#define OCI_IPC_INDICATOR_ARRAY  45
-#define OCI_IPC_LEN_ARRAY        46
-#define OCI_IPC_BUFF_ARRAY       47
-#define OCI_IPC_LONG_BUFFER      48
+#define OCI_IPC_LIST             31
+#define OCI_IPC_LIST_ITEM        32
+#define OCI_IPC_BIND_ARRAY       33
+#define OCI_IPC_DEFINE           34
+#define OCI_IPC_DEFINE_ARRAY     35
+#define OCI_IPC_HASHENTRY        36
+#define OCI_IPC_HASHENTRY_ARRAY  37
+#define OCI_IPC_HASHVALUE        38
+#define OCI_IPC_THREADKEY        39
+#define OCI_IPC_OCIDATE          40
+#define OCI_IPC_TM               41
+#define OCI_IPC_RESULTSET_ARRAY  42
+#define OCI_IPC_PLS_SIZE_ARRAY   43
+#define OCI_IPC_PLS_RCODE_ARRAY  44
+#define OCI_IPC_SERVER_OUPUT     45
+#define OCI_IPC_INDICATOR_ARRAY  46
+#define OCI_IPC_LEN_ARRAY        47
+#define OCI_IPC_BUFF_ARRAY       48
+#define OCI_IPC_LONG_BUFFER      49
 
 /* ------------------------------------------------------------------------ *
  * Oracle conditionnal features 

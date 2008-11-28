@@ -463,6 +463,7 @@ typedef struct OCIString        OCIString;
 typedef struct OCIRaw           OCIRaw;
 typedef struct OCIType          OCIType;
 typedef struct OCINumber        OCINumber;
+typedef struct OCIRef           OCIRef;   
 
 /*--------------------------- OBJECT INDICATOR ------------------------------*/
 
@@ -503,6 +504,40 @@ enum OCITypeGetOpt
   OCI_TYPEGET_ALL       /* load all attribute and method descriptors as well */
 };
 typedef enum OCITypeGetOpt OCITypeGetOpt;
+
+/*--------------------------- OBJECT PIN OPTION -----------------------------*/
+
+enum OCIPinOpt
+{
+  /* 0 = uninitialized */
+  OCI_PIN_DEFAULT = 1,                                 /* default pin option */
+  OCI_PIN_ANY = 3,                             /* pin any copy of the object */
+  OCI_PIN_RECENT = 4,                       /* pin recent copy of the object */
+  OCI_PIN_LATEST = 5                        /* pin latest copy of the object */
+};
+typedef enum OCIPinOpt OCIPinOpt;
+
+/*--------------------------- OBJECT LOCK OPTION ----------------------------*/
+
+enum OCILockOpt
+{
+  /* 0 = uninitialized */
+  OCI_LOCK_NONE = 1,                               /* null (same as no lock) */
+  OCI_LOCK_X = 2,                                          /* exclusive lock */
+  OCI_LOCK_X_NOWAIT = 3                      /* exclusive lock, do not wait  */
+};
+typedef enum OCILockOpt OCILockOpt;
+
+/*------------------------- OBJECT MODIFYING OPTION -------------------------*/
+
+enum OCIMarkOpt
+{
+  /* 0 = uninitialized */
+  OCI_MARK_DEFAULT = 1,               /* default (the same as OCI_MARK_NONE) */
+  OCI_MARK_NONE = OCI_MARK_DEFAULT,          /* object has not been modified */
+  OCI_MARK_UPDATE                                 /* object is to be updated */
+};
+typedef enum OCIMarkOpt OCIMarkOpt;
 
 /*------------------------------ TYPE CODE ----------------------------------*/
 
@@ -583,6 +618,44 @@ typedef ub2 OCIDuration;
 /*------------------------Piece Information----------------------------------*/
 #define OCI_PARAM_IN 0x01                                    /* in parameter */
 #define OCI_PARAM_OUT 0x02                                  /* out parameter */
+
+/*----------------------- OBJECT PROPERTY ID -------------------------------*/
+
+typedef ub1 OCIObjectPropId;
+#define OCI_OBJECTPROP_LIFETIME 1       /* persistent or transient or value */
+#define OCI_OBJECTPROP_SCHEMA 2   /* schema name of table containing object */
+#define OCI_OBJECTPROP_TABLE 3     /* table name of table containing object */
+#define OCI_OBJECTPROP_PIN_DURATION 4             /* pin duartion of object */
+#define OCI_OBJECTPROP_ALLOC_DURATION 5         /* alloc duartion of object */
+#define OCI_OBJECTPROP_LOCK 6                      /* lock status of object */
+#define OCI_OBJECTPROP_MARKSTATUS 7                /* mark status of object */
+#define OCI_OBJECTPROP_VIEW 8            /* is object a view object or not? */
+
+/*----------------------- OBJECT LIFETIME ----------------------------------*/
+
+enum OCIObjectLifetime
+{
+   /* 0 = uninitialized */
+   OCI_OBJECT_PERSISTENT = 1,                          /* persistent object */
+   OCI_OBJECT_TRANSIENT,                                /* transient object */
+   OCI_OBJECT_VALUE                                         /* value object */
+};
+typedef enum OCIObjectLifetime OCIObjectLifetime;
+
+/*----------------------- OBJECT MARK STATUS -------------------------------*/
+
+typedef uword OCIObjectMarkStatus;
+#define OCI_OBJECT_NEW     0x0001                             /* new object */
+#define OCI_OBJECT_DELETED 0x0002                  /* object marked deleted */
+#define OCI_OBJECT_UPDATED 0x0004                  /* object marked updated */
+
+/* macros to test the object mark status */ 
+#define OCI_OBJECT_IS_UPDATED(flag) bit((flag), OCI_OBJECT_UPDATED)
+#define OCI_OBJECT_IS_DELETED(flag) bit((flag), OCI_OBJECT_DELETED)
+#define OCI_OBJECT_IS_NEW(flag) bit((flag), OCI_OBJECT_NEW)
+#define OCI_OBJECT_IS_DIRTY(flag) \
+  bit((flag), OCI_OBJECT_UPDATED|OCI_OBJECT_NEW|OCI_OBJECT_DELETED)
+
 
 
 

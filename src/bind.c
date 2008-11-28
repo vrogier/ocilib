@@ -114,10 +114,10 @@ unsigned int OCI_API OCI_BindGetSubtype(OCI_Bind *bnd)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_BindGetElemCount
+ * OCI_BindGetDataCount
  * ------------------------------------------------------------------------ */
 
-unsigned int OCI_API OCI_BindGetCount(OCI_Bind *bnd)
+unsigned int OCI_API OCI_BindGetDataCount(OCI_Bind *bnd)
 {
     OCI_CHECK_PTR(OCI_IPC_BIND, bnd, 0);
 
@@ -153,30 +153,30 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement(OCI_Bind *bnd)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_BindSetLength
+ * OCI_BindSetDataSize
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_BindSetLength(OCI_Bind *bnd, unsigned int len)
+boolean OCI_API OCI_BindSetDataSize(OCI_Bind *bnd, unsigned int size)
 {
-    return OCI_BindSetLengthAtPos(bnd, 1, len);
+    return OCI_BindSetDataSizeAtPos(bnd, 1, size);
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_BindSetLengthAtPos
+ * OCI_BindSetDataSizeAtPos
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_BindSetLengthAtPos(OCI_Bind *bnd, unsigned int position, 
-                                       unsigned int len)
+boolean OCI_API OCI_BindSetDataSizeAtPos(OCI_Bind *bnd, unsigned int position, 
+                                         unsigned int size)
 {
     boolean res   = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
     OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buf.count, FALSE);
-    OCI_CHECK_MIN(bnd->stmt->con, bnd->stmt, len, 1, FALSE);
+    OCI_CHECK_MIN(bnd->stmt->con, bnd->stmt, size, 1, FALSE);
 
     if (bnd->buf.lens != NULL)
     {
-        ((ub2 *) bnd->buf.lens)[position-1] = (ub2) len; 
+        ((ub2 *) bnd->buf.lens)[position-1] = (ub2) size; 
 
         res = TRUE;
     }
@@ -187,19 +187,19 @@ boolean OCI_API OCI_BindSetLengthAtPos(OCI_Bind *bnd, unsigned int position,
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_BindGetLength
+ * OCI_BindGetDataSize
  * ------------------------------------------------------------------------ */
 
-unsigned int OCI_API OCI_BindGetLength(OCI_Bind *bnd)
+unsigned int OCI_API OCI_BindGetDataSize(OCI_Bind *bnd)
 {
-    return OCI_BindGetLengthAtPos(bnd, 1);
+    return OCI_BindGetDataSizeAtPos(bnd, 1);
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_BindGetLengthAtPos
+ * OCI_BindGetDataSizeAtPos
  * ------------------------------------------------------------------------ */
 
-unsigned int OCI_API OCI_BindGetLengthAtPos(OCI_Bind *bnd, unsigned int position)
+unsigned int OCI_API OCI_BindGetDataSizeAtPos(OCI_Bind *bnd, unsigned int position)
 {
     ub2 size = 0;
 

@@ -169,7 +169,6 @@ typedef struct OCI_Library {
     OCIEnv         *env;                    /* OCI environnement handle */
     OCIError       *err;                    /* OCI error handle */
     POCI_ERROR      error_handler;          /* user defined error handler */
-    mtext           path[OCI_SIZE_BUFFER];  /* Oracle shared lib path */
     ub1             ver_compile;            /* OCI version used at compile time */
     ub1             ver_runtime;            /* OCI version used at runtime */
     ub1             use_lob_ub8;            /* use 64 bits integers for lobs ? */
@@ -324,6 +323,7 @@ struct OCI_Bind {
     ub2              dynpos;    /* index of the bind for dynamic binds */
     ub2             *plrcds;    /* PL/SQL tables return codes */
     ub4              nbelem;    /* PL/SQL tables nb elements */
+    OCI_Schema      *nty;       /* for registerr of object, collection and ref */
 };
 
 /*
@@ -489,13 +489,14 @@ struct OCI_Interval {
  */
 
 struct OCI_Object { 
-    void            *handle;   /* OCI handle */
-    ub4              hstate;   /* object variable state */
-    OCI_Connection  *con;      /* pointer to connection object */
-    OCI_Schema      *nty;      /* pointer to schema object type */
-    void           **objs;     /* array of OCILIB sub objects */
-    void            *buf;      /* buffer to store converted out string attribute */ 
-    int              buflen;   /* buffer len */
+    void             *handle;   /* OCI handle */
+    ub4               hstate;   /* object variable state */
+    OCI_Connection   *con;      /* pointer to connection object */
+    OCI_Schema       *nty;      /* pointer to schema object type */
+    void            **objs;     /* array of OCILIB sub objects */
+    void             *buf;      /* buffer to store converted out string attribute */ 
+    int               buflen;   /* buffer len */
+    OCIObjectLifetime type;     /* object type */
 };
 
 /*
@@ -541,6 +542,20 @@ struct OCI_Iter {
     boolean            boc;      /* beginning of collection */
 };
 
+/*
+ * Oracle REF object 
+ *
+ */
+
+struct OCI_Ref { 
+    OCIRef            *handle;   /* OCI handle */
+    ub4                hstate;   /* object variable state */
+    OCI_Connection    *con;      /* pointer to connection object */
+    OCI_Schema        *nty;      /* pointer to schema object type */
+    OCI_Object        *obj;      /* Pinned object */
+    boolean            pinned;   /* is the reference pinned */
+};
+
 /* 
  * Schema object 
  *
@@ -555,7 +570,7 @@ struct OCI_Schema {
     ub2              ccode;      /* Oracle collection code */
     OCI_Column      *cols;       /* array of column datatype infos */
     ub2              nb_cols;    /* number of columns */
-    ub2              dummy;      /* for padding alignment */
+    ub2              refcount;   /* reference counter */
 };
 
 /* 

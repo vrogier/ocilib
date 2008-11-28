@@ -377,9 +377,7 @@ void OCI_ExceptionMinimumValue
 
 void OCI_ExceptionTypeNotCompatible
 (
-    OCI_Connection *con,
-    int type1,
-    int type2
+    OCI_Connection *con
 );
 
 void OCI_ExceptionStatementState
@@ -661,6 +659,11 @@ boolean OCI_NumberGetFromStr
  * object.c
  * ------------------------------------------------------------------------ */
 
+void OCI_ObjectReset
+(
+    OCI_Object *obj
+);
+
 boolean OCI_ObjectGetAttr
 (
     OCI_Object *obj, 
@@ -707,6 +710,28 @@ OCI_Object * OCI_ObjectInit
     OCI_Object **pobj,
     void *handle, 
     OCI_Schema *schema
+);
+
+/* ------------------------------------------------------------------------ *
+ * ref.c
+ * ------------------------------------------------------------------------ */
+
+OCI_Ref * OCI_RefInit
+(
+    OCI_Connection *con,
+    OCI_Schema *schema, 
+    OCI_Ref **pref, 
+    void *handle
+);
+
+boolean OCI_RefPin
+(
+    OCI_Ref *ref
+);
+
+boolean OCI_RefUnpin
+(
+    OCI_Ref *ref
 );
 
 /* ------------------------------------------------------------------------ *
@@ -790,7 +815,7 @@ boolean OCI_BindData
     unsigned int code, 
     unsigned int mode,
     unsigned int subtype,
-    void *extra,
+    OCI_Schema *nty,
     unsigned int nbelem
 );
 
@@ -864,9 +889,18 @@ void OCI_GetOutputString
     int size_char_out
 );
 
-void OCI_ConvertString
+void OCI_MoveString
 (
     void *src,
+    void *dst,
+    int char_count, 
+    int size_char_in,
+    int size_char_out
+);
+        
+void OCI_ConvertString
+(
+    void *str,
     int char_count, 
     int size_char_in,
     int size_char_out

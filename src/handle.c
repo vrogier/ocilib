@@ -217,6 +217,19 @@ const void * OCI_API OCI_HandleGetColl(OCI_Coll *coll)
 }
 
 /* ------------------------------------------------------------------------ *
+ * OCI_HandleGetRef
+ * ------------------------------------------------------------------------ */
+
+const void * OCI_API OCI_HandleGetRef(OCI_Ref *ref)
+{
+    OCI_CHECK_PTR(OCI_IPC_REF, ref, NULL);
+
+    OCI_RESULT(TRUE);
+
+    return ref->handle;
+}
+
+/* ------------------------------------------------------------------------ *
  * OCI_HandleGetMutex
  * ------------------------------------------------------------------------ */
 

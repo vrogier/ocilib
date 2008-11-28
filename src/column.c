@@ -258,7 +258,7 @@ boolean OCI_ColumnDescribe(OCI_Column *col, OCI_Connection *con,
 
     /* user type descriptor */
 
-    if (col->ocode == SQLT_NTY)
+    if (col->ocode == SQLT_NTY || col->ocode == SQLT_REF)
     {
         OCI_CALL1
         (
@@ -514,7 +514,7 @@ boolean OCI_ColumnMap(OCI_Column *col, OCI_Statement *stmt)
 #endif
 
         case SQLT_NTY:
-        {
+
             col->icode   = SQLT_NTY;
             col->bufsize = sizeof(void *);
 
@@ -524,14 +524,14 @@ boolean OCI_ColumnMap(OCI_Column *col, OCI_Statement *stmt)
                 col->type = OCI_CDT_OBJECT;                    
 
             break;
-        }
+
         case SQLT_REF:
 
-            /* not supported datatypes */
+            col->icode   = SQLT_REF;
+            col->bufsize = sizeof(OCIRef *);
+            col->type    = OCI_CDT_REF;                    
 
-            OCI_ExceptionNotSupported(stmt->con, stmt, col->ocode);
-
-            res = FALSE;
+            break;
 
         case SQLT_CHR:
         case SQLT_STR:

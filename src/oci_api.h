@@ -1235,6 +1235,92 @@ typedef sword (*OCIOBJECTSETATTR)
     CONST dvoid *attr_value    
 );
 
+typedef sword (*OCIOBJECTPIN)
+(
+    OCIEnv *env, 
+    OCIError *err, 
+    OCIRef *object_ref, 
+    OCIComplexObject *corhdl, 
+    OCIPinOpt pin_option, 
+    OCIDuration pin_duration, 
+    OCILockOpt lock_option, 
+    dvoid **object    
+);
+
+typedef sword (*OCIOBJECTUNPIN)
+(
+    OCIEnv *env, 
+    OCIError *err, 
+    dvoid *object    
+);
+
+typedef sword (*OCIOBJECTCOPY)
+(
+    OCIEnv *env, 
+    OCIError *err, 
+    CONST OCISvcCtx *svc, 
+    dvoid *source, 
+    dvoid *null_source,
+    dvoid *target, 
+    dvoid *null_target, 
+    OCIType *tdo,
+    OCIDuration duration, 
+    ub1 option    
+);
+
+typedef sword (*OCIOBJECTGETOBJECTREF)
+(
+    OCIEnv *env, 
+    OCIError *err, 
+    dvoid *object, 
+    OCIRef *object_ref    
+);
+
+typedef sword (*OCIOBJECTGETPROPERTY)
+( 
+    OCIEnv *envh,
+    OCIError *errh,
+    const void *obj,
+    OCIObjectPropId propertyId,
+    void *property,
+    ub4 *size 
+);
+
+typedef sword (*OCIREFASSIGN)
+(
+    OCIEnv *env, 
+    OCIError *err, 
+    CONST OCIRef *source, 
+    OCIRef **target    
+);
+
+typedef boolean (*OCIREFISNULL)
+(
+    OCIEnv *env, 
+    CONST OCIRef *ref    
+);
+
+typedef void (*OCIREFCLEAR)
+(
+    OCIEnv *env, 
+    OCIRef *ref    
+);
+
+typedef sword (*OCIREFTOHEX)
+(
+    OCIEnv *env, 
+    OCIError *err, 
+    CONST OCIRef *ref, 
+    oratext *hex, 
+    ub4 *hex_length    
+);
+
+typedef ub4 (*OCIREFHEXSIZE)
+(
+    OCIEnv *env,
+    const OCIRef *ref 
+);
+
 typedef sword (*OCINUMBERTOINT)
 (
     OCIError *err, 

@@ -49,7 +49,7 @@
   #include <windows.h>
 
   #define LIB_HANDLE               HMODULE
-  #define LIB_OPEN(l)              LoadLibrary(l)
+  #define LIB_OPEN(l)              LoadLibraryA(l)
   #define LIB_CLOSE                FreeLibrary
   #define LIB_SYMBOL(h, s, p, t)   p = (t) GetProcAddress(h, s)
  

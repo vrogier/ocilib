@@ -789,7 +789,7 @@ unsigned int OCI_API OCI_GetSessionMode(OCI_Connection *con)
 const mtext * OCI_API OCI_GetVersionServer(OCI_Connection *con)
 {
     boolean res = FALSE;
-
+ 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 
     if (con->version == NULL)
@@ -802,11 +802,11 @@ const mtext * OCI_API OCI_GetVersionServer(OCI_Connection *con)
             int osize  = OCI_SIZE_BUFFER * sizeof(mtext);
             void *ostr = NULL;
             mtext *p   = NULL;
-
+            
             res  = TRUE;
-
+ 
             ostr = OCI_GetInputMetaString(con->version, &osize);
-
+  
             OCI_CALL2
             (
                 res, con, 
@@ -815,8 +815,9 @@ const mtext * OCI_API OCI_GetVersionServer(OCI_Connection *con)
                                  (OraText *) ostr, (ub4) osize,
                                  (ub1) OCI_HTYPE_SVCCTX)
             )
-
+            
             OCI_GetOutputMetaString(ostr, con->version, &osize);
+                       
             OCI_ReleaseMetaString(ostr);
 
             if (res == TRUE)

@@ -110,9 +110,9 @@ OCI_Schema * OCI_API OCI_SchemaGet(OCI_Connection *con, const mtext *name,
     {
         schema = (OCI_Schema *) item->data;
      
-        if (schema != NULL && mtscasecmp(schema->name, name) == 0)
+        if ((schema != NULL) && (schema->type == type))
         {
-            if (schema->type == type)
+            if (mtscasecmp(schema->name, name) == 0)
             {
                 found = TRUE;
                 break;
@@ -300,6 +300,11 @@ OCI_Schema * OCI_API OCI_SchemaGet(OCI_Connection *con, const mtext *name,
 
     OCI_RESULT(res);
 
+    /* increment schema reference counter on success */
+
+    if (schema != NULL)
+        schema->refcount++;
+
     return schema; 
 }
 
@@ -313,12 +318,17 @@ boolean OCI_API OCI_SchemaFree(OCI_Schema *schema)
 
     OCI_CHECK_PTR(OCI_IPC_SCHEMA, schema, FALSE);
 
-    OCI_ListRemove(schema->con->sobjs, schema);
+    schema->refcount--;
 
-    res = OCI_SchemaClose(schema);
+    if (schema->refcount == 0)
+    {
+        OCI_ListRemove(schema->con->sobjs, schema);
 
-    OCI_FREE(schema);
- 
+        res = OCI_SchemaClose(schema);
+
+        OCI_FREE(schema);
+    }
+
     OCI_RESULT(res);
 
     return res;

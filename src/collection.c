@@ -1,5 +1,5 @@
 /*
-   +----------------------------------------------------------------------+   
+   +----------------------------------------------------------------------+
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
@@ -25,7 +25,7 @@
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
    |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
-   +----------------------------------------------------------------------+ 
+   +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
@@ -49,17 +49,17 @@ OCI_Coll * OCI_CollInit(OCI_Connection *con, OCI_Coll **pcoll, void *handle,
     boolean res    = TRUE;
 
     OCI_CHECK(pcoll == NULL, NULL);
-    
+
     if (*pcoll == NULL)
         *pcoll = (OCI_Coll *) OCI_MemAlloc(OCI_IPC_COLLECTION, sizeof(*coll), 1, TRUE);
 
     if (*pcoll != NULL)
     {
         coll = *pcoll;
-    
+
         coll->con    = con;
         coll->handle = handle;
-        coll->nty    = nty; 
+        coll->nty    = nty;
 
         if (coll->handle == NULL)
         {
@@ -69,8 +69,8 @@ OCI_Coll * OCI_CollInit(OCI_Connection *con, OCI_Coll **pcoll, void *handle,
 
             OCI_CALL2
             (
-                res, con, 
-                
+                res, con,
+
                 OCI_ObjectNew(OCILib.env, con->err, con->cxt, nty->ccode,
                               nty->tdo, (void *) NULL, OCI_DURATION_SESSION,
                               TRUE, (dvoid **) &coll->handle)
@@ -111,8 +111,8 @@ boolean OCI_CollGetInternalSize(OCI_Coll *coll)
 
     OCI_CALL2
     (
-        res, coll->con,  
-        
+        res, coll->con,
+
         OCICollSize(OCILib.env, coll->con->err, coll->handle, (sb4 *) &coll->size)
     )
 
@@ -153,7 +153,7 @@ boolean OCI_API OCI_CollFree(OCI_Coll *coll)
     OCI_CHECK_OBJECT_FETCHED(coll, FALSE);
 
     /* free data element accessor */
-    
+
     if (coll->elem != NULL)
     {
         coll->elem->hstate = OCI_OBJECT_FETCHED_DIRTY;
@@ -164,7 +164,7 @@ boolean OCI_API OCI_CollFree(OCI_Coll *coll)
     /* create collection for local object */
 
     if (coll->hstate == OCI_OBJECT_ALLOCATED)
-    {         
+    {
         OCI_OCIObjectFree(OCILib.env, coll->nty->con->err,
                           coll->handle, OCI_OBJECTFREE_NONULL);
     }
@@ -187,14 +187,14 @@ boolean OCI_API OCI_CollAssign(OCI_Coll *coll, OCI_Coll *coll_src)
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll,     FALSE);
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll_src, FALSE);
 
-    OCI_CHECK_COMPAT(coll->con, 
-                     coll->nty->cols[0].icode,
-                     coll_src->nty->cols[0].icode, FALSE);
+    OCI_CHECK_COMPAT(coll->con,
+                     coll->nty->cols[0].icode == coll_src->nty->cols[0].icode, 
+                     FALSE);
 
     OCI_CALL2
     (
         res, coll->con,
-        
+
         OCICollAssign(OCILib.env, coll->con->err, coll->handle, coll_src->handle)
     )
 
@@ -219,7 +219,7 @@ unsigned int OCI_API OCI_CollGetType(OCI_Coll *coll)
         type = OCI_COLL_NESTED_TABLE;
     else if(coll->nty->ccode == OCI_TYPECODE_VARRAY)
         type = OCI_COLL_VARRAY;
-    
+
     OCI_RESULT(TRUE);
 
     return type;
@@ -266,15 +266,15 @@ int OCI_API OCI_CollGetSize(OCI_Coll *coll)
 boolean OCI_API OCI_CollTrim(OCI_Coll *coll, int nb_elem)
 {
     boolean res = TRUE;
-    
+
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
-    
+
     OCI_CHECK_BOUND(coll->con, nb_elem, 1, coll->size, FALSE);
 
     OCI_CALL2
     (
-        res, coll->con,  
-        
+        res, coll->con,
+
         OCICollTrim(OCILib.env, coll->con->err, (sb4) nb_elem, coll->handle)
     )
 
@@ -299,19 +299,19 @@ OCI_Elem * OCI_API OCI_CollGetAt(OCI_Coll *coll, unsigned int index)
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, NULL);
     OCI_CHECK_BOUND(coll->con, (int) index, 1, coll->size, FALSE);
- 
+
     OCI_CALL2
     (
-        res, coll->con,  
-        
-        OCICollGetElem(OCILib.env, coll->con->err, coll->handle, (sb4) index-1, 
+        res, coll->con,
+
+        OCICollGetElem(OCILib.env, coll->con->err, coll->handle, (sb4) index-1,
                        &exists, &data, (void **) &p_ind)
     )
 
     if (res == TRUE && exists == TRUE && data != NULL)
     {
-        elem = coll->elem = OCI_ElemInit(coll->con, &coll->elem, 
-                                         (OCIColl *) data, 
+        elem = coll->elem = OCI_ElemInit(coll->con, &coll->elem,
+                                         (OCIColl *) data,
                                          p_ind, coll->nty->cols);
     }
 
@@ -330,12 +330,15 @@ boolean OCI_API OCI_CollSetAt(OCI_Coll *coll, unsigned int index, OCI_Elem *elem
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(coll->con, elem->col->icode, coll->nty->cols[0].icode, FALSE);
+
+    OCI_CHECK_COMPAT(coll->con, 
+                     elem->col->icode == coll->nty->cols[0].icode, 
+                     FALSE);
 
     OCI_CALL2
     (
-        res, coll->con,  
-        
+        res, coll->con,
+
         OCICollAssignElem(OCILib.env, coll->con->err, (sb4) index, elem->handle,
                           elem->ind,coll->handle)
     )
@@ -355,13 +358,16 @@ boolean OCI_API OCI_CollAppend(OCI_Coll *coll, OCI_Elem *elem)
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(coll->con, elem->col->icode, coll->nty->cols[0].icode, FALSE);
+    
+    OCI_CHECK_COMPAT(coll->con,
+                     elem->col->icode == coll->nty->cols[0].icode, 
+                     FALSE);
 
     OCI_CALL2
     (
-        res, coll->con,  
-        
-        OCICollAppend(OCILib.env, coll->con->err, elem->handle, elem->ind, 
+        res, coll->con,
+
+        OCICollAppend(OCILib.env, coll->con->err, elem->handle, elem->ind,
                       coll->handle)
     )
 
@@ -370,4 +376,17 @@ boolean OCI_API OCI_CollAppend(OCI_Coll *coll, OCI_Elem *elem)
     OCI_RESULT(res);
 
     return res;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_CollGetSchema
+ * ------------------------------------------------------------------------ */
+
+OCI_Schema * OCI_API OCI_CollGetSchema(OCI_Coll *coll)
+{
+    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, NULL);
+
+    OCI_RESULT(TRUE);
+
+    return coll->nty;
 }

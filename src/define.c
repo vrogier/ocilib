@@ -119,6 +119,7 @@ void * OCI_DefineGetData(OCI_Define *def)
         case OCI_CDT_FILE:
         case OCI_CDT_OBJECT:
         case OCI_CDT_COLLECTION:
+        case OCI_CDT_REF:
 
             /* handle based types */
 
@@ -191,7 +192,7 @@ boolean OCI_DefineAlloc(OCI_Define *def)
 
     /* Allocate null indicators array */
 
-    if (def->col.icode == SQLT_NTY)
+    if (def->col.ocode == SQLT_NTY || def->col.ocode == SQLT_REF)
         indsize = (ub4) sizeof(void*);
     else
         indsize = (ub4) sizeof(sb2);
@@ -327,7 +328,7 @@ boolean OCI_DefineDef(OCI_Define *def)
                        (ub4   ) fetch_mode)
     )
 
-    if (def->col.ocode == SQLT_NTY)
+    if (def->col.ocode == SQLT_NTY || def->col.ocode == SQLT_REF)
     {
         OCI_CALL1
         (

@@ -1,5 +1,5 @@
 /*
-   +----------------------------------------------------------------------+   
+   +----------------------------------------------------------------------+
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
@@ -25,7 +25,7 @@
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
    |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
-   +----------------------------------------------------------------------+ 
+   +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
@@ -38,7 +38,7 @@
  *                            STRINGS MESSAGES
  * ************************************************************************ */
 
-static mtext * OCILib_TypeNames[] = 
+static mtext * OCILib_TypeNames[] =
 {
     MT("generic pointer"),
     MT("short pointer"),
@@ -69,6 +69,7 @@ static mtext * OCILib_TypeNames[] =
     MT("Thread handle"),
     MT("Mutex handle"),
     MT("Bind handle"),
+    MT("Ref handle"),
     MT("Internal list handle"),
     MT("Internal list item handle"),
     MT("Internal array of bind handles"),
@@ -91,9 +92,9 @@ static mtext * OCILib_TypeNames[] =
 };
 
 
-#if defined(OCI_CHARSET_UNICODE) && !defined(_WINDOWS)
+#if defined(OCI_CHARSET_UNICODE) && !defined(_MSC_VER)
 
-static mtext * OCILib_ErrorMsg[] = 
+static mtext * OCILib_ErrorMsg[] =
 {
     MT("No error"),
     MT("OCILIB has not been initialized"),
@@ -104,22 +105,22 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Feature not available (%ls) "),
     MT("A null %ls has been provided"),
     MT("Oracle datatype not supported (sqlcode %d) "),
-    MT("Unknown identifier %c while parsing SQL"), 
+    MT("Unknown identifier %c while parsing SQL"),
     MT("Unknown argument %d while retreiving data"),
     MT("Index %d out of bounds"),
     MT("Found %d unfreed %ls"),
     MT("Maximum number of binds (%d) already reached"),
     MT("Object attribute '%ls' not found"),
     MT("The integer parameter value must be at least %d"),
-    MT("Elements are not compatibles (type 1 = %d, type 2 = %d)"),
+    MT("Elements are not compatible"),
     MT("Unable to perform this operation on a %ls statement"),
     MT("The statement is not scrollable"),
-    MT("Name or position '%ls' already binded to the statement"),
+    MT("Name or position '%ls' already binded to the statement")
 };
 
 #else
 
-static mtext * OCILib_ErrorMsg[] = 
+static mtext * OCILib_ErrorMsg[] =
 {
     MT("No error"),
     MT("OCILIB has not been initialized"),
@@ -130,36 +131,36 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Feature not available (%s) "),
     MT("A null %s has been provided"),
     MT("Oracle datatype not supported (sqlcode %d) "),
-    MT("Unknown identifier %c while parsing SQL : "), 
+    MT("Unknown identifier %c while parsing SQL : "),
     MT("Unknown argument %d while retreiving data"),
     MT("Index %d out of bounds"),
     MT("Found %d unfreed %s"),
     MT("Maximum number of binds (%d) already reached"),
     MT("Object attribute '%s' not found"),
     MT("The integer parameter value must be at least %d"),
-    MT("Elements are not compatibles (type 1 = %d, type 2 = %d)"),
+    MT("Elements are not compatible"),
     MT("Unable to perform this operation on a %s statement"),
     MT("The statement is not scrollable"),
-    MT("Name or position '%s' already binded to the statement"),
+    MT("Name or position '%s' already binded to the statement")
 };
 
 #endif
 
-static mtext * OCILib_OraFeatures[] = 
+static mtext * OCILib_OraFeatures[] =
 {
     MT("Oracle 9i support for Unicode data"),
     MT("Oracle 9i Timestamps and Intervals"),
     MT("Oracle 10g LOBs size extensions")
 };
 
-static mtext * OCILib_StmtStates[] = 
+static mtext * OCILib_StmtStates[] =
 {
     MT("closed"),
     MT("prepared"),
     MT("executed")
 };
 
-static mtext * OCILib_HandleNames[] = 
+static mtext * OCILib_HandleNames[] =
 {
     MT("OCI handle"),
     MT("OCI descriptors"),
@@ -217,7 +218,7 @@ void OCI_ExceptionOCI(OCIError *p_err, OCI_Connection *con, OCI_Statement *stmt)
         int osize  = -1;
         void *ostr = NULL;
 
-        err->type = OCI_ERR_ORACLE;  
+        err->type = OCI_ERR_ORACLE;
         err->con  = con;
         err->stmt = stmt;
 
@@ -227,7 +228,7 @@ void OCI_ExceptionOCI(OCIError *p_err, OCI_Connection *con, OCI_Statement *stmt)
 
         ostr  = OCI_GetInputMetaString(err->str, &osize);
 
-        OCIErrorGet((dvoid *) p_err, (ub4) 1, (OraText *) NULL, &err->ocode, 
+        OCIErrorGet((dvoid *) p_err, (ub4) 1, (OraText *) NULL, &err->ocode,
         (OraText *) ostr, (ub4) osize, (ub4) OCI_HTYPE_ERROR);
 
 
@@ -273,7 +274,7 @@ void OCI_ExceptionLoadingSharedLib(void)
         err->type  = OCI_ERR_OCILIB;
         err->icode = OCI_ERR_LOADING_SHARED_LIB;
 
-        mtsprintf(err->str, msizeof(err->str) - 1, 
+        mtsprintf(err->str, msizeof(err->str) - 1,
                   OCILib_ErrorMsg[OCI_ERR_LOADING_SHARED_LIB],
                   OCI_DL_NAME);
     }
@@ -335,7 +336,7 @@ void OCI_ExceptionNullPointer(int type)
         err->type  = OCI_ERR_OCILIB;
         err->icode = OCI_ERR_NULL_POINTER;
 
-        mtsprintf(err->str, msizeof(err->str) - 1, 
+        mtsprintf(err->str, msizeof(err->str) - 1,
                   OCILib_ErrorMsg[OCI_ERR_NULL_POINTER],
                   OCILib_TypeNames[type-1]);
     }
@@ -359,9 +360,9 @@ void OCI_ExceptionMemory(int type, size_t nb_bytes, OCI_Connection *con,
         err->con   = con;
         err->stmt  = stmt;
 
-        mtsprintf(err->str,  
-                  msizeof(err->str) - 1, 
-                  OCILib_ErrorMsg[OCI_ERR_MEMORY], 
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_MEMORY],
                   OCILib_TypeNames[type-1],
                   nb_bytes);
     }
@@ -383,9 +384,9 @@ void OCI_ExceptionNotAvailable(OCI_Connection *con, int feature)
         err->icode = OCI_ERR_NOT_AVAILABLE;
         err->con   = con;
 
-        mtsprintf(err->str,  
-                  msizeof(err->str) - 1, 
-                  OCILib_ErrorMsg[OCI_ERR_NOT_AVAILABLE], 
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_NOT_AVAILABLE],
                   OCILib_OraFeatures[feature-1]);
     }
 
@@ -407,9 +408,9 @@ void OCI_ExceptionNotSupported(OCI_Connection *con, OCI_Statement *stmt, int cod
         err->con   = con;
         err->stmt  = stmt;
 
-        mtsprintf(err->str,  
-                  msizeof(err->str) - 1, 
-                  OCILib_ErrorMsg[OCI_ERR_NOT_SUPPORTED], 
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_NOT_SUPPORTED],
                   code);
     }
 
@@ -431,9 +432,9 @@ void OCI_ExceptionParsingToken(OCI_Connection *con, OCI_Statement *stmt, mtext t
         err->con   = con;
         err->stmt  = stmt;
 
-        mtsprintf(err->str,  
-                  msizeof(err->str) - 1, 
-                  OCILib_ErrorMsg[OCI_ERR_PARSE_TOKEN], 
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_PARSE_TOKEN],
                   token);
     }
 
@@ -444,7 +445,7 @@ void OCI_ExceptionParsingToken(OCI_Connection *con, OCI_Statement *stmt, mtext t
  * OCI_ExceptionMappingArgument
  * ------------------------------------------------------------------------ */
 
-void OCI_ExceptionMappingArgument(OCI_Connection *con, OCI_Statement *stmt, 
+void OCI_ExceptionMappingArgument(OCI_Connection *con, OCI_Statement *stmt,
                                int arg)
 {
     OCI_Error *err = OCI_ExceptionGetError();
@@ -456,9 +457,9 @@ void OCI_ExceptionMappingArgument(OCI_Connection *con, OCI_Statement *stmt,
         err->con   = con;
         err->stmt  = stmt;
 
-        mtsprintf(err->str,  
-                  msizeof(err->str) - 1, 
-                  OCILib_ErrorMsg[OCI_ERR_MAP_ARGUMENT], 
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_MAP_ARGUMENT],
                   arg);
     }
 
@@ -479,9 +480,9 @@ void OCI_ExceptionOutOfBounds(OCI_Connection *con, int value)
         err->icode = OCI_ERR_OUT_OF_BOUNDS;
         err->con   = con;
 
-        mtsprintf(err->str,  
-                  msizeof(err->str) - 1, 
-                  OCILib_ErrorMsg[OCI_ERR_OUT_OF_BOUNDS], 
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_OUT_OF_BOUNDS],
                   value);
     }
 
@@ -501,9 +502,9 @@ void  OCI_ExceptionUnfreedData(int type_elem, int nb_elem)
         err->type  = OCI_ERR_OCILIB;
         err->icode = OCI_ERR_UNFREED_DATA;
 
-        mtsprintf(err->str,  
-                  msizeof(err->str) - 1, 
-                  OCILib_ErrorMsg[OCI_ERR_UNFREED_DATA], 
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_UNFREED_DATA],
                   nb_elem, OCILib_HandleNames[type_elem-1]);
     }
 
@@ -528,9 +529,9 @@ void OCI_ExceptionMaxBind(OCI_Statement *stmt)
             err->con =  stmt->con;
 
 
-        mtsprintf(err->str,  
-                  msizeof(err->str) - 1, 
-                  OCILib_ErrorMsg[OCI_ERR_MAX_BIND], 
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_MAX_BIND],
                   OCI_BIND_MAX);
     }
 
@@ -551,9 +552,9 @@ void OCI_ExceptionAttributeNotFound(OCI_Connection *con, const mtext *attr)
         err->icode = OCI_ERR_ATTR_NOT_FOUND;
         err->con   = con;
 
-        mtsprintf(err->str,  
-                  msizeof(err->str) - 1, 
-                  OCILib_ErrorMsg[OCI_ERR_ATTR_NOT_FOUND], 
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_ATTR_NOT_FOUND],
                   attr);
     }
 
@@ -585,7 +586,7 @@ void OCI_ExceptionMinimumValue(OCI_Connection *con, OCI_Statement *stmt, int min
  * OCI_ExceptionTypeNotCompatible
  * ------------------------------------------------------------------------ */
 
-void OCI_ExceptionTypeNotCompatible(OCI_Connection *con, int type1, int type2)
+void OCI_ExceptionTypeNotCompatible(OCI_Connection *con)
 {
     OCI_Error *err = OCI_ExceptionGetError();
 
@@ -595,8 +596,8 @@ void OCI_ExceptionTypeNotCompatible(OCI_Connection *con, int type1, int type2)
         err->icode = OCI_ERR_NOT_COMPATIBLE;
         err->con   = con;
 
-        mtsprintf(err->str, msizeof(err->str) - 1,
-                  OCILib_ErrorMsg[OCI_ERR_NOT_COMPATIBLE], type1, type2);
+        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_NOT_COMPATIBLE],
+                msizeof(err->str) - 1);
     }
 
     OCI_ExceptionRaise(err);
@@ -619,9 +620,9 @@ void OCI_ExceptionStatementState(OCI_Statement *stmt, int state)
         if (stmt != NULL)
             err->con =  stmt->con;
 
-        mtsprintf(err->str,  
-                  msizeof(err->str) - 1, 
-                  OCILib_ErrorMsg[OCI_ERR_STMT_STATE], 
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_STMT_STATE],
                   OCILib_StmtStates[state-1]);
     }
 
@@ -645,7 +646,7 @@ void OCI_ExceptionStatementNotScrollable(OCI_Statement *stmt)
         if (stmt != NULL)
             err->con =  stmt->con;
 
-        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_STMT_NOT_SCROLLABLE], 
+        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_STMT_NOT_SCROLLABLE],
                 msizeof(err->str) - 1);
 
     }
@@ -670,9 +671,9 @@ void OCI_ExceptionBindAlreadyUsed(OCI_Statement *stmt, const mtext * bind)
         if (stmt != NULL)
             err->con =  stmt->con;
 
-        mtsprintf(err->str,  
-                  msizeof(err->str) - 1, 
-                  OCILib_ErrorMsg[OCI_ERR_BIND_ALREADY_USED], 
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_BIND_ALREADY_USED],
                   bind);
     }
 
