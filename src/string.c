@@ -125,6 +125,7 @@ int OCI_StringCopy2to4bytes(const unsigned short* src, int src_size,
 
     while (src < src_end)
     {
+        
         c1 = *src++;
 
         if ((c1 >= UNI_SUR_HIGH_START) && (c1 <= UNI_SUR_HIGH_END))
@@ -304,22 +305,22 @@ void OCI_GetOutputString(void *src, void *dest, int *size, int size_char_in,
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_ConvertString
+ * OCI_MoveString
  * ------------------------------------------------------------------------ */
 
-void OCI_ConvertString(void *str, int char_count, int size_char_in, 
-                       int size_char_out)
+void OCI_MoveString(void *src, void *dst, int char_count,
+                    int size_char_in, int size_char_out)
 {
-    if (str == NULL)
+    if ((src == NULL) || (dst == NULL))
         return;
 
     if (size_char_out > size_char_in)
     {
         /* expand string */
          
-        unsigned int   *wcstr  = (unsigned int   *) str;
-        unsigned short *ustr   = (unsigned short *) str;
- 
+         unsigned short *ustr   = (unsigned short *) src;
+         unsigned int   *wcstr  = (unsigned int   *) dst;
+
         if (*ustr == 0)
             return;
 
@@ -331,8 +332,8 @@ void OCI_ConvertString(void *str, int char_count, int size_char_in,
     {
         /* pack string */
         
-        unsigned int   *ustr  = (unsigned int   *) str;
-        unsigned short *wcstr = (unsigned short *) str;
+        unsigned int   *ustr  = (unsigned int   *) src;
+        unsigned short *wcstr = (unsigned short *) dst;
         int i = 0;
 
         if (*wcstr == 0)
@@ -342,6 +343,16 @@ void OCI_ConvertString(void *str, int char_count, int size_char_in,
             ustr[char_count] = (unsigned int) wcstr[char_count];
 
     }
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ConvertString
+ * ------------------------------------------------------------------------ */
+
+void OCI_ConvertString(void *str, int char_count, int size_char_in, 
+                       int size_char_out)
+{
+    OCI_MoveString(str, str, char_count, size_char_in, size_char_out);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -393,6 +404,177 @@ void OCI_ReleaseDataString(void *str)
     free(str);
 
 #endif
+}
+
+
+/* ------------------------------------------------------------------------ *
+ * OCI_StringFromStringPtr
+ * ------------------------------------------------------------------------ */
+
+void * OCI_StringFromStringPtr(OCIString *str, void **buf, int *buflen)
+{
+    void *tmp = NULL;
+    void *ret = NULL;  
+  
+    int olen  = 0;
+    int osize = 0;
+    int esize = 0;
+    int msize = 0;
+
+    OCI_CHECK(buf    == NULL, NULL);
+    OCI_CHECK(buflen == NULL, NULL);
+
+    tmp = OCIStringPtr(OCILib.env, str);
+
+    if (tmp != NULL)
+    {
+
+#if defined(OCI_CHARSET_MIXED)
+
+        /* tmp is ansi and must be converted to utf16 */
+
+        esize  = 1;
+        msize  = (int) sizeof(dtext);
+        olen   = (int) strlen((char* ) tmp);
+        osize  = olen * esize;
+        
+#elif defined(OCI_CHECK_DATASTRINGS)
+
+        /* tmp is UTF16 and might be converted to utf32 on unixes */
+
+        
+        esize  = (int) sizeof(odtext);
+        msize  = (int) sizeof(dtext);
+        olen   = (int) OCI_StringLength(tmp, sizeof(odtext));
+        osize  = olen * esize;
+
+#else
+
+    OCI_NOT_USED(esize);
+
+#endif
+
+        /* do we need to use a buffer */
+
+        if (olen > 0)
+        {
+            /* do we need to allocate/reallocate the buffer */
+            
+            if ((*buf) == NULL)
+            {           
+                *buflen = (olen+1) * msize;
+                *buf    = OCI_MemAlloc(OCI_IPC_STRING, msize, olen+1, FALSE);
+            }
+            else if ((*buflen) < ((olen+1) * msize))
+            {
+                *buflen = (olen+1) * msize;
+                *buf    = OCI_MemRealloc(*buf, OCI_IPC_STRING, msize, olen+1);
+            }
+        }
+
+#if defined(OCI_CHARSET_MIXED)
+
+        mbstowcs(*buf, tmp, olen + OCI_CVT_CHAR);
+
+        memset( (void*) (((char*) *buf) + (olen*msize)), 0, msize);
+        
+        ret = *buf;
+
+#elif defined(OCI_CHECK_DATASTRINGS)
+  
+        OCI_GetOutputDataString(tmp, *buf, &osize);
+        
+        memset( (void*) (((char*) *buf) + (osize)), 0, msize);
+                
+        ret = *buf;
+
+#else
+
+        osize = 0;
+        ret   = tmp;
+
+#endif
+
+    }
+    else
+    {
+        ret = tmp;
+    }
+
+    return ret;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_StringFromStringPtr
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_StringToStringPtr(OCIString **str, OCIError *err, void *value, 
+                              void **buf, int *buflen)
+{
+    boolean res = TRUE;
+    void *ostr  = NULL;  
+    int osize   = 0;
+
+#ifdef OCI_CHARSET_MIXED
+
+    int olen    = 0;
+    int esize   = 0;
+
+#endif
+
+    OCI_CHECK(str    == NULL, FALSE);
+    OCI_CHECK(buf    == NULL, FALSE);
+    OCI_CHECK(buflen == NULL, FALSE);
+
+#ifdef OCI_CHARSET_MIXED
+
+    /* value is UTF16 and must be converted to ansi */
+ 
+    esize  = (int) 1;
+    olen   = (int) dtslen((dtext*) value);
+    osize  = olen;
+
+    /* do we need to use a buffer */
+
+    if (olen > 0)
+    {
+        /* do we need to allocate/reallocate the buffer */
+
+        if ((*buf) == NULL)
+        {           
+            *buflen = (olen+1) * esize;
+            *buf    = OCI_MemAlloc(OCI_IPC_STRING, esize, olen+1, FALSE);
+
+        }
+        else if ((*buflen) < ((olen+1) * esize))
+        {
+            *buflen = (olen+1) * esize;
+            *buf    = OCI_MemRealloc(*buf, OCI_IPC_STRING, esize, olen+1);
+        }
+
+    }    
+    
+    wcstombs((char *) *buf, (dtext *) value, olen + OCI_CVT_CHAR);
+
+    ostr = *buf;
+    
+#else
+    
+    osize  = -1;
+    ostr   = OCI_GetInputDataString(value, &osize);
+
+#endif
+
+    OCI_CALL3
+    (
+        res, err, 
+
+        OCIStringAssignText(OCILib.env, err, (oratext *) ostr, (ub4) osize, str)
+    )
+
+    OCI_ReleaseDataString(ostr);
+
+    return res;
 }
 
 /* ************************************************************************ *
@@ -508,160 +690,3 @@ int ociwcscasecmp(const wchar_t *str1, const wchar_t *str2)
 
 #endif
 
-/* ------------------------------------------------------------------------ *
- * OCI_StringFromStringPtr
- * ------------------------------------------------------------------------ */
-
-void * OCI_StringFromStringPtr(OCIString *str, void **buf, int *buflen)
-{
-    void *tmp = NULL;
-    void *ret = NULL;  
-  
-    int olen  = 0;
-    int osize = 0;
-    int esize = 0;
-
-    OCI_CHECK(buf    == NULL, NULL);
-    OCI_CHECK(buflen == NULL, NULL);
-
-    tmp = OCIStringPtr(OCILib.env, str);
-
-    if (tmp != NULL)
-    {
-
-#if defined(OCI_CHARSET_MIXED)
-
-        /* tmp is ansi and must be converted to utf16 */
-
-        esize  = (int) sizeof(dtext);
-        olen   = (int) strlen((char* ) tmp);
-        osize  = 0;
-
-#elif defined(OCI_CHECK_DATASTRINGS)
-
-        /* tmp is UTF16 and might be converted to utf32 on unixes */
-
-        esize  = sizeof(omtext);
-        olen   = OCI_StringLength(ret, sizeof(omtext));
-        osize  = olen * esize;
-
-#endif
-
-        /* do we need to use a buffer */
-
-        if (olen > 0)
-        {
-            /* do we need to allocate/reallocate the buffer */
-
-            if ((*buf) == NULL)
-            {           
-               *buflen = (olen+1) * esize;
-               *buf    = OCI_MemAlloc(OCI_IPC_STRING, esize, olen+1, FALSE);
-
-            }
-            else if ((*buflen) < ((olen+1) * esize))
-            {
-                *buflen = (olen+1) * esize;
-                *buf    = OCI_MemRealloc(*buf, OCI_IPC_STRING, esize, olen+1);
-            }
-
-        }
-
-#if defined(OCI_CHARSET_MIXED)
-
-        mbstowcs(*buf, tmp, olen + OCI_CVT_CHAR);
-
-        ret = *buf;
-
-#elif defined(OCI_CHECK_DATASTRINGS)
-
-        OCI_GetOutputDataString(tmp, *buf, &osize);
-
-#else
-
-        osize = 0;
-        ret   = tmp;
-
-#endif
-
-    }
-    else
-    {
-        ret = tmp;
-    }
-
-    return ret;
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_StringFromStringPtr
- * ------------------------------------------------------------------------ */
-
-boolean OCI_StringToStringPtr(OCIString **str, OCIError *err, void *value, 
-                              void **buf, int *buflen)
-{
-    boolean res = TRUE;
-    void *ostr  = NULL;  
-    int osize   = 0;
-
-#ifdef OCI_CHARSET_MIXED
-
-    int olen    = 0;
-    int esize   = 0;
-
-#endif
-
-    OCI_CHECK(str    == NULL, FALSE);
-    OCI_CHECK(buf    == NULL, FALSE);
-    OCI_CHECK(buflen == NULL, FALSE);
-
-#ifdef OCI_CHARSET_MIXED
-
-    /* value is UTF16 and must be converted to ansi */
- 
-    esize  = (int) 1;
-    olen   = (int) dtslen((dtext*) value);
-    osize  = olen;
-
-    /* do we need to use a buffer */
-
-    if (olen > 0)
-    {
-        /* do we need to allocate/reallocate the buffer */
-
-        if ((*buf) == NULL)
-        {           
-           *buflen = (olen+1) * esize;
-           *buf    = OCI_MemAlloc(OCI_IPC_STRING, esize, olen+1, FALSE);
-
-        }
-        else if ((*buflen) < ((olen+1) * esize))
-        {
-            *buflen = (olen+1) * esize;
-            *buf    = OCI_MemRealloc(*buf, OCI_IPC_STRING, esize, olen+1);
-        }
-
-    }    
-    
-    wcstombs((char *) *buf, (dtext *) value, olen + OCI_CVT_CHAR);
-
-    ostr = *buf;
-    
-#else
-    
-    osize  = -1;
-    ostr   = OCI_GetInputDataString(value, &osize);
-
-#endif
-
-    OCI_CALL3
-    (
-        res, err, 
-
-        OCIStringAssignText(OCILib.env, err, (oratext *) ostr, (ub4) osize, str)
-    )
-
-    OCI_ReleaseDataString(ostr);
-
-    return res;
-}
