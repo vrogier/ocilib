@@ -739,6 +739,11 @@ boolean OCI_ResultsetFree(OCI_Resultset *rs)
                     OCI_CollFree((OCI_Coll *) def->obj);
                     break;
 
+              case OCI_CDT_REF:
+
+                    OCI_RefFree((OCI_Ref *) def->obj);
+                    break;
+
                case OCI_CDT_TIMESTAMP:
 
                     OCI_TimestampFree((OCI_Timestamp *) def->obj);
