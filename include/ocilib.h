@@ -490,7 +490,11 @@ extern "C" {
       }
     #endif
 
-  #endif
+  #else
+
+    #include <wchar.h>
+
+#endif
 
 #endif
 

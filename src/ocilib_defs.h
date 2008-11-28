@@ -35,6 +35,7 @@
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
 #define OCILIB_OCILIB_DEFS_H_INCLUDED
 
+#include "ocilib.h"
 #include "oci_import.h"
 
 /* ************************************************************************ *

@@ -36,7 +36,6 @@
 #ifndef OCILIB_OCILIB_TYPES_H_INCLUDED 
 #define OCILIB_OCILIB_TYPES_H_INCLUDED 
 
-#include "ocilib.h"
 #include "ocilib_defs.h"
 
 /* ************************************************************************ *
