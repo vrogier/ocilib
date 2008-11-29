@@ -162,6 +162,13 @@ boolean OCI_RefUnpin(OCI_Ref *ref)
         ref->pinned = FALSE;
     }
 
+    if (ref->obj != NULL)
+    {
+        ref->obj->hstate = OCI_OBJECT_FETCHED_DIRTY;
+        OCI_ObjectFree(ref->obj);
+        ref->obj = NULL;
+    }
+
     return res;           
 }
 
@@ -199,11 +206,7 @@ boolean OCI_API OCI_RefFree(OCI_Ref *ref)
 
     OCI_CHECK_OBJECT_FETCHED(ref, FALSE);
 
-    if (ref->obj != NULL)
-    {
-        OCI_ObjectFree(ref->obj);
-        ref->obj = NULL;
-    }
+    OCI_RefUnpin(ref);
 
     if (ref->hstate == OCI_OBJECT_ALLOCATED)
     {
