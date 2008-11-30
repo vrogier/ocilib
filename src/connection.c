@@ -802,6 +802,8 @@ const mtext * OCI_API OCI_GetVersionServer(OCI_Connection *con)
             int osize  = OCI_SIZE_BUFFER * sizeof(mtext);
             void *ostr = NULL;
             mtext *p   = NULL;
+
+            con->version[0] = 0;
             
             res  = TRUE;
  
