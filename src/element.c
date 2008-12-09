@@ -410,7 +410,7 @@ OCI_Date * OCI_API  OCI_ElemGetDate(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->col->type == OCI_CDT_DATETIME, NULL);
 
-    if (elem->ind == OCI_IND_NOTNULL)
+    if (*(elem->ind) == OCI_IND_NOTNULL)
     {
         OCIDate *handle = (OCIDate *) elem->handle;
 
@@ -436,7 +436,7 @@ OCI_Timestamp * OCI_API  OCI_ElemGetTimeStamp(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->col->type == OCI_CDT_TIMESTAMP, NULL);
 
-    if (elem->ind == OCI_IND_NOTNULL)
+    if (*(elem->ind) == OCI_IND_NOTNULL)
     {
         OCIDateTime *handle = (OCIDateTime *) elem->handle;
 
@@ -464,7 +464,7 @@ OCI_Interval * OCI_API OCI_ElemGetInterval(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->col->type == OCI_CDT_INTERVAL, NULL);
 
-    if (elem->ind == OCI_IND_NOTNULL)
+    if (*(elem->ind) == OCI_IND_NOTNULL)
     {
         OCIInterval *handle = (OCIInterval *) elem->handle;
 
@@ -491,7 +491,7 @@ OCI_Lob * OCI_API  OCI_ElemGetLob(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->col->type == OCI_CDT_LOB, NULL);
 
-    if (elem->ind == OCI_IND_NOTNULL)
+    if (*(elem->ind) == OCI_IND_NOTNULL)
     {
         OCILobLocator *handle = *(OCILobLocator **) elem->handle;
         
@@ -518,7 +518,7 @@ OCI_File * OCI_API  OCI_ElemGetFile(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->col->type == OCI_CDT_FILE, NULL);
 
-    if (elem->ind == OCI_IND_NOTNULL)
+    if (*(elem->ind) == OCI_IND_NOTNULL)
     {
         OCILobLocator *handle = *(OCILobLocator **) elem->handle;
 
@@ -545,7 +545,7 @@ OCI_Ref * OCI_API  OCI_ElemGetRef(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->col->type == OCI_CDT_REF, NULL);
 
-    if (elem->ind == OCI_IND_NOTNULL)
+    if (*(elem->ind) == OCI_IND_NOTNULL)
     {
         OCIRef *handle = *(OCIRef **) elem->handle;
         
@@ -572,7 +572,7 @@ OCI_Object * OCI_API OCI_ElemGetObject(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->col->type == OCI_CDT_OBJECT, NULL);
 
-    if (elem->ind == OCI_IND_NOTNULL)
+    if (*(elem->ind) == OCI_IND_NOTNULL)
     {
         void * handle = elem->handle;
 
@@ -599,7 +599,7 @@ OCI_Coll * OCI_API OCI_ElemGetColl(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->col->type == OCI_CDT_COLLECTION, NULL);
 
-    if (elem->ind == OCI_IND_NOTNULL)
+    if (*(elem->ind) == OCI_IND_NOTNULL)
     {
         OCIColl *handle = (OCIColl *) elem->handle;
 
@@ -1045,7 +1045,7 @@ boolean OCI_API OCI_ElemIsNull(OCI_Elem *elem)
 
     if (elem->ind != NULL)
     {     
-        if (*elem->ind == OCI_IND_NULL)
+        if (*(elem->ind) == OCI_IND_NULL)
             null = TRUE;
 
         res = TRUE;
@@ -1068,7 +1068,7 @@ boolean OCI_API OCI_ElemSetNull(OCI_Elem *elem)
 
     if (elem->ind != NULL)
     {
-        *elem->ind = OCI_IND_NULL;
+        *(elem->ind) = OCI_IND_NULL;
         res = TRUE;
     }
 
