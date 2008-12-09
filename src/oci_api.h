@@ -1286,6 +1286,14 @@ typedef sword (*OCIOBJECTGETPROPERTY)
     ub4 *size 
 );
 
+typedef sword (*OCIOBJECTGETIND)
+(
+    OCIEnv *env, 
+    OCIError *err, 
+    dvoid *instance,
+    dvoid **null_struct    
+);
+
 typedef sword (*OCIREFASSIGN)
 (
     OCIEnv *env, 
