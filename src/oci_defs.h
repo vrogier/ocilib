@@ -234,13 +234,21 @@
 #define OCI_ATTR_TYPECODE              216           /* object or collection */
 #define OCI_ATTR_COLLECTION_TYPECODE   217         /* varray or nested table */
 
-
 #define OCI_ATTR_COLLECTION_ELEMENT    227     /* has a collection attribute */
 #define OCI_ATTR_NUM_TYPE_ATTRS        228      /* number of attribute types */
 #define OCI_ATTR_LIST_TYPE_ATTRS       229        /* list of type attributes */
 
+#define OCI_ATTR_CLIENT_IDENTIFIER     278       /* value of client id to set*/
+
 #define OCI_ATTR_CHAR_USED             285          /* char length semantics */
 #define OCI_ATTR_CHAR_SIZE             286                    /* char length */
+
+#define OCI_ATTR_MODULE                366             /* module for tracing */
+#define OCI_ATTR_ACTION                367             /* action for tracing */
+#define OCI_ATTR_CLIENT_INFO           368                    /* client info */
+
+#define OCI_ATTR_DRIVER_NAME           424                    /* Driver Name */
+
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */ 
 

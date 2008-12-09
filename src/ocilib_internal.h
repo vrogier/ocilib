@@ -704,12 +704,20 @@ int OCI_ObjectGetIndex
     int type
 );
 
+ub2 OCI_GetIndTabIndex
+(
+    OCI_Schema *nty, 
+    int index
+);
+
 OCI_Object * OCI_ObjectInit
 (
     OCI_Connection *con,
     OCI_Object **pobj,
     void *handle, 
-    OCI_Schema *schema
+    OCI_Schema *schema,
+    sb2 *tab_ind,
+    int index
 );
 
 /* ------------------------------------------------------------------------ *

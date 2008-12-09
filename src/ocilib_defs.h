@@ -46,7 +46,7 @@
 
   /* for runtime loading, set compile time version to the highest minimum
      version needed by OCILIB encapsulation of OCI */
-  #define OCI_VERSION_COMPILE OCI_10
+  #define OCI_VERSION_COMPILE OCI_11
   /* set runtime version to unknown, it will be guessed from symbols loading */
   #define OCI_VERSION_RUNTIME OCI_UNKNOWN
 
@@ -230,6 +230,7 @@
 #define OCI_IPC_LEN_ARRAY        47
 #define OCI_IPC_BUFF_ARRAY       48
 #define OCI_IPC_LONG_BUFFER      49
+#define OCI_IPC_TRACE_INFO       50
 
 /* ------------------------------------------------------------------------ *
  * Oracle conditionnal features 

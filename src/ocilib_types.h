@@ -92,6 +92,19 @@ typedef struct OCI_ServerOutput {
     OCI_Statement      *stmt;      /* pointer to statement object (dbms_output calls) */
 } OCI_ServerOutput;
 
+/* 
+ * Connection trace information
+ * 
+ */
+
+typedef struct OCI_TraceInfo {
+    mtext identifier[OCI_SIZE_TRACE_ID+1];
+    mtext module[OCI_SIZE_TRACE_MODULE+1];
+    mtext action[OCI_SIZE_TRACE_ACTION+1];
+    mtext info[OCI_SIZE_TRACE_INF0+1];
+} OCI_TraceInfo;
+
+
 
 /* ************************************************************************ *
  *                             PUBLIC TYPES
@@ -103,14 +116,14 @@ typedef struct OCI_ServerOutput {
  */
 
 struct OCI_Error {
-    boolean          raise;                 /* Error flag */
-    boolean          active;                /* to avoid recursive exceptions */
-    OCI_Connection  *con;                   /* pointer to connection object */
-    OCI_Statement   *stmt;                  /* pointer to statement object */
-    sb4              ocode;                 /* Oracle OCI error code */
-    int              icode;                 /* OCILIB internal error code */ 
-    mtext            str[OCI_SIZE_BUFFER];  /* error message */
-    unsigned int     type;                  /* OCILIB error type */
+    boolean          raise;                  /* Error flag */
+    boolean          active;                 /* to avoid recursive exceptions */
+    OCI_Connection  *con;                    /* pointer to connection object */
+    OCI_Statement   *stmt;                   /* pointer to statement object */
+    sb4              ocode;                  /* Oracle OCI error code */
+    int              icode;                  /* OCILIB internal error code */ 
+    mtext            str[OCI_SIZE_BUFFER+1]; /* error message */
+    unsigned int     type;                   /* OCILIB error type */
 };
 
 /* 
@@ -243,6 +256,7 @@ struct OCI_Connection {
     unsigned int        ver_maj;   /* server version major number */
     unsigned int        ver_min;   /* server version minor number */
     unsigned int        ver_rev;   /* server version revision number */
+    OCI_TraceInfo      *trace;    /* trace informations */
 };
 
 /* 
@@ -495,6 +509,8 @@ struct OCI_Object {
     void            **objs;     /* array of OCILIB sub objects */
     void             *buf;      /* buffer to store converted out string attribute */ 
     int               buflen;   /* buffer len */
+    sb2              *tab_ind;  /* indicators for root instance */
+    ub2               idx_ind;  /* instance indicator offset / indicator table */
     OCIObjectLifetime type;     /* object type */
 };
 
@@ -504,12 +520,12 @@ struct OCI_Object {
  */
 
 struct OCI_Elem { 
-    void            *handle;    /* OCI handle */
-    ub4              hstate;    /* object variable state */
-    OCI_Connection  *con;       /* pointer to connection object */
-    OCIInd          *ind;       /* data state indicator */
-    void            *obj;       /* OCILIB sub object */
-    OCI_Column      *col;       /* datatype infos */
+    void            *handle;   /* OCI handle */
+    ub4              hstate;   /* object variable state */
+    OCI_Connection  *con;      /* pointer to connection object */
+    OCIInd          *ind;      /* data state indicator */
+    void            *obj;      /* OCILIB sub object */
+    OCI_Column      *col;      /* datatype infos */
     void            *buf;      /* buffer to store converted out string attribute */ 
     int              buflen;   /* buffer len */
 };
