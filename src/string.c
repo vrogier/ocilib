@@ -356,7 +356,7 @@ void OCI_ConvertString(void *str, int char_count, int size_char_in,
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_CopyString
+ *  
  * ------------------------------------------------------------------------ */
 
 void OCI_CopyString(void *src, void *dest, int *size, int size_char_in,
@@ -368,7 +368,7 @@ void OCI_CopyString(void *src, void *dest, int *size, int size_char_in,
     if (size_char_out == size_char_in)
     {
         memcpy(dest, src, (size_t) *size);
-        ((char*) dest)[*size] = 0;
+        memset((void*) (((char*) dest) + (*size)), 0, size_char_out);
     }
     else
         OCI_GetOutputString(src, dest, size, size_char_in, size_char_out);
