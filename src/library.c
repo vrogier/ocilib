@@ -166,6 +166,7 @@ OCIOBJECTUNPIN               OCIObjectUnpin               = NULL;
 OCIOBJECTCOPY                OCIObjectCopy                = NULL;
 OCIOBJECTGETOBJECTREF        OCIObjectGetObjectRef        = NULL;
 OCIOBJECTGETPROPERTY         OCIObjectGetProperty         = NULL;
+OCIOBJECTGETIND              OCIObjectGetInd              = NULL;
 OCIREFASSIGN                 OCIRefAssign                 = NULL;
 OCIREFISNULL                 OCIRefIsNull                 = NULL;
 OCIREFCLEAR                  OCIRefClear                  = NULL;
@@ -295,7 +296,9 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
 #ifdef OCI_IMPORT_RUNTIME
 
-    char path[OCI_SIZE_BUFFER];
+    char path[OCI_SIZE_BUFFER+1];
+ 
+    size_t len = 0;
 
 #endif
 
@@ -334,15 +337,26 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 #if defined(OCI_CHARSET_UNICODE)
 
     if (home != NULL && home[0] != 0)
-        wcstombs(path, home, sizeof(path));
+        len = wcstombs(path, home, sizeof(path));
 
 #else
 
-    OCI_NOT_USED(home);
+    if (home != NULL && home[0] != 0)
+    {
+        strncat(path, home, sizeof(path));
+
+        len = strlen(path);
+    }
 
 #endif
 
-    strncat(path, OCI_DL_NAME, sizeof(path) - strlen(path));
+    if ((len > 0) && (len < sizeof(path)) && (path[len-1] != OCI_CHAR_SLASH))
+    {
+        path[len] = OCI_CHAR_SLASH;
+        len++;
+    }
+
+    strncat(path, OCI_DL_NAME, sizeof(path) - len);
 
     OCILib.lib_handle = LIB_OPEN(path);
 
@@ -644,6 +658,9 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
                    OCIOBJECTGETOBJECTREF);
         LIB_SYMBOL(OCILib.lib_handle, "OCIObjectGetProperty", OCIObjectGetProperty,
                    OCIOBJECTGETPROPERTY);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIObjectGetInd", OCIObjectGetInd,
+                   OCIOBJECTGETIND);
+
 
         LIB_SYMBOL(OCILib.lib_handle, "OCIRefAssign", OCIRefAssign,
                    OCIREFASSIGN);
@@ -861,6 +878,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
             res = (OCILib.pools != NULL);
         }
+
     }
 
     if (res == TRUE)
