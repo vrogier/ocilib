@@ -89,6 +89,7 @@ static mtext * OCILib_TypeNames[] =
     MT("Internal array of buffer length integers"),
     MT("Internal array of data buffers"),
     MT("Internal Long handle data buffer")
+    MT("Internal trace info structure")
 };
 
 
