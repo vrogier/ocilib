@@ -337,6 +337,29 @@ boolean OCI_ConnectionLogon(OCI_Connection *con)
         OCI_ReleaseMetaString(ostr);
     }
 
+    /* set OCILIB's driver layer namer attribute */
+
+#if OCI_VERSION_COMPILE >= OCI_11
+
+    if ((res == TRUE) && (OCILib.ver_runtime >= OCI_11))
+    {
+        osize = -1;
+        ostr  = OCI_GetInputMetaString(OCILIB_DRIVER_NAME, &osize);
+
+        OCI_CALL2
+        (
+            res, con,
+            
+            OCIAttrSet((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION, 
+                       (dvoid *) ostr, (ub4) osize, 
+                       (ub4) OCI_ATTR_DRIVER_NAME, con->err)
+        )
+
+        OCI_ReleaseMetaString(ostr);
+    }
+
+#endif
+
     /* start session */
     
     if (res == TRUE)
@@ -1211,3 +1234,177 @@ const dtext * OCI_API OCI_ServerGetOutput(OCI_Connection *con)
     return (const dtext *) str;
 }
 
+
+
+/* ------------------------------------------------------------------------ *
+ * OCI_SetTrace
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace, mtext *value)
+{
+    boolean res = TRUE;
+    mtext *str  = NULL;
+    ub4 attrib  = 0;
+
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
+
+    /* allocate trace infos structure only if trace functions are used */
+
+    if (con->trace == NULL)
+    {
+        con->trace = (OCI_TraceInfo *) OCI_MemAlloc(OCI_IPC_TRACE_INFO, 
+                                                    sizeof(*con->trace), 
+                                                    1, TRUE);
+        res = (con->trace != NULL);
+    }
+
+    /* set trace properties */
+
+    if (con->trace != NULL)
+    {
+        switch (trace)
+        {
+            case OCI_TRC_IDENTITY:
+
+#if OCI_VERSION_COMPILE >= OCI_10
+
+                attrib = OCI_ATTR_CLIENT_IDENTIFIER;
+
+#endif
+                con->trace->identifier[0] = 0;
+
+                mtsncat(con->trace->identifier, value,
+                        msizeof(con->trace->identifier));
+
+                str = con->trace->identifier;
+                
+                break;
+ 
+            case OCI_TRC_MODULE:
+
+ #if OCI_VERSION_COMPILE >= OCI_10
+
+                attrib = OCI_ATTR_MODULE;
+
+#endif
+                con->trace->module[0] = 0;
+
+                mtsncat(con->trace->module, value, msizeof(con->trace->module));
+
+                str = con->trace->module;
+                
+                break;
+
+            case OCI_TRC_ACTION:
+
+#if OCI_VERSION_COMPILE >= OCI_10
+
+                attrib = OCI_ATTR_ACTION;
+
+#endif
+                con->trace->action[0] = 0;
+
+                mtsncat(con->trace->action, value, msizeof(con->trace->action));
+
+                str = con->trace->action;
+                
+                break;
+
+            case OCI_TRC_DETAIL:
+
+#if OCI_VERSION_COMPILE >= OCI_10
+
+                attrib = OCI_ATTR_CLIENT_INFO;
+
+#endif
+                con->trace->info[0] = 0;
+
+                mtsncat(con->trace->info, value,  msizeof(con->trace->info));
+
+                str = con->trace->info;
+                
+                break;
+
+            default:
+
+                res = FALSE;
+        }
+    }
+
+#if OCI_VERSION_COMPILE >= OCI_10
+
+    /* On success, we give the value to Oracle to record it in system session view */
+
+    if (res == TRUE)
+    {
+        void *ostr  = NULL;
+        int osize   = -1;
+
+        ostr  = OCI_GetInputMetaString(str, &osize);
+
+        if (str == NULL)
+            osize = 0;
+
+        OCI_CALL2
+        (
+            res, con,
+            
+            OCIAttrSet((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION, 
+                       (dvoid *) ostr, (ub4) osize, attrib, con->err)
+        )
+
+        OCI_ReleaseMetaString(ostr);
+    }
+
+#endif
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_TraceGet
+ * ------------------------------------------------------------------------ */
+
+const mtext * OCI_API OCI_GetTrace(OCI_Connection *con, unsigned int trace)
+{
+    const mtext *str = NULL;
+    boolean res = TRUE;
+
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
+
+    if (con->trace != NULL)
+    {
+        switch (trace)
+        {
+            case OCI_TRC_IDENTITY:
+
+                str = con->trace->identifier;
+                break;
+
+            case OCI_TRC_MODULE:
+
+                str = con->trace->module;
+                break;
+
+            case OCI_TRC_ACTION:
+
+                str = con->trace->action;
+                break;
+
+            case OCI_TRC_DETAIL:
+
+                str = con->trace->info;
+                break;
+
+            default:
+
+                res = FALSE;
+        }
+    }
+
+    OCI_RESULT(res);
+
+    return str;
+}
