@@ -1327,6 +1327,20 @@ typedef struct OCI_HashEntry {
 #define OCI_SIZE_FORMAT_NUMS    40
 #define OCI_SIZE_FORMAT_NUML    65
 
+/* trace size constants */
+
+#define OCI_SIZE_TRACE_ID       64
+#define OCI_SIZE_TRACE_MODULE   48
+#define OCI_SIZE_TRACE_ACTION   32
+#define OCI_SIZE_TRACE_INF0     64 
+
+/* trace types */
+
+#define OCI_TRC_IDENTITY        1
+#define OCI_TRC_MODULE          2
+#define OCI_TRC_ACTION          3
+#define OCI_TRC_DETAIL          4
+
 /* hash tables support */
 
 #define OCI_HASH_STRING         1
@@ -1335,7 +1349,7 @@ typedef struct OCI_HashEntry {
 
 #define OCI_HASH_DEFAULT_SIZE   256
 
-/* Trancsaction types */
+/* Transaction types */
 
 #define OCI_TRS_NEW             0x00000001
 #define OCI_TRS_READONLY        0x00000100
@@ -1344,13 +1358,34 @@ typedef struct OCI_HashEntry {
 #define OCI_TRS_LOOSE           0x00010000
 #define OCI_TRS_TIGHT           0x00020000
 
+/* Transaction types */
+
+#define OCI_DBS_MOUNT           0x00000001
+#define OCI_DBS_OPEN            0x00000100
+#define OCI_DBS_CLOSE           0x00000200
+#define OCI_DBS_DISMOUNT        0x00000400
+
+#define OCI_TRS_LOOSE           0x00010000
+#define OCI_TRS_TIGHT           0x00020000
+
+#define OCI_DBS_MOUNT_OPEN      OCI_DBS_MOUNT | OCI_DBS_OPEN
+#define OCI_DBS_CLOSE_DISMOUNT  OCI_DBS_CLOSE | OCI_DBS_DISMOUNT
+
 /* string constants */
 
+#define OCILIB_DRIVER_NAME      MT("OCILIB")
 #define OCI_STRING_NULL         MT("NULL")
 #define OCI_STRING_FORMAT_DATE  MT("YYYY-MM-DD")
 #define OCI_STRING_DEFAULT_PREC 3
 #define OCI_STRING_FORMAT_NUM   \
        MT("FM99999999999999999999999999999999999990.999999999999999999999999")
+
+#ifdef _WINDOWS
+  #define OCI_CHAR_SLASH        '\\'
+#else
+  #define OCI_CHAR_SLASH        '/'
+#endif
+
 
 /**
  * @defgroup g_init Initializing the library
@@ -1900,7 +1935,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion
  * @param con    - Connection handle
  * @param format - Date format
  *
- * @ Note
+ * @note
  * Defauft format is  :
  * - 'YYYY-MM-DD'
  *
@@ -1943,7 +1978,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetDefaultFormatDate
  * Possible values are the string numeric format supported by Oracle.
  * See documentation of Oracle SQL to_number() function for more details
  *
- * @ Note
+ * @note
  * Defauft format is  :
  * - 'FM99999999999999999999999999999999999990.999999999999999999999999'
  *
@@ -2031,6 +2066,75 @@ OCI_EXPORT boolean OCI_API OCI_SetTransaction
 OCI_EXPORT unsigned int OCI_API OCI_GetVersionConnection
 (
     OCI_Connection *con
+);
+
+/**
+ * @brief
+ * Set tracing information to the session of the given connection
+ *
+ * @param con   - connection handle
+ * @param trace - trace type
+ * @param value - trace content
+ *
+ * Store current trace information to the given connection handle. 
+ * These informations :
+ * 
+ * - are stored in the system view V$SESSION
+ * - can be retrieved from the connection property of an OCI_Error handle
+ * 
+ * @note
+ * possible values of parameter 'trace type' :
+ *
+ * - OCI_TRC_IDENTITY : Specifies the user defined identifier in the session.
+ *                      It's recorded in the column CLIENT_IDENTIFIER of the
+ *                      system view V$SESSION
+ * - OCI_TRC_MODULE   : name of the current module in the client application.
+ *                      It's recorded in the column MODULE of the
+ *                      system view V$SESSION
+ * - OCI_TRC_ACTION   : name of the current action within the current module.
+ *                      It's recorded in the column ACTION of the
+ *                      system view V$SESSION
+ * - OCI_TRC_DETAIL   : Client application additional information.
+ *                      It's recorded in the column CLIENT_INFO of the
+ *                      system view V$SESSION
+ *
+ * @warning
+ * The system view V$SESSION is updated on Oracle versions >= 10g
+ *
+ * @warning
+ * Oracle limits the size of these traces content and thus OCILIB will truncate
+ * the given values if needed :
+ *  
+ * - OCI_TRC_IDENTITY : 64 bytes
+ * - OCI_TRC_MODULE   : 48 bytes
+ * - OCI_TRC_ACTION   : 32 bytes
+ * - OCI_TRC_DETAIL   : 64 bytes
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetTrace
+(
+    OCI_Connection *con, 
+    unsigned int trace,
+    mtext *value
+);
+
+/**
+ * @brief
+ * Get the current trace for the trace type from the given connection.
+ *
+ * @param con   - connection handle
+ * @param trace - trace type
+ *
+ * @note
+ * See OCI_SetTrace(à for more details.
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_GetTrace
+(
+    OCI_Connection *con, 
+    unsigned int trace
 );
 
 /**
@@ -6255,7 +6359,7 @@ OCI_EXPORT OCI_Ref * OCI_API OCI_ElemGetRef
 
 /**
  * @brief
- * Set a short value to an collection element
+ * Set a short value to a collection element
  *
  * @param elem   - Element handle
  * @param value  - Short value
@@ -6274,7 +6378,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetShort
 
 /**
  * @brief
- * Set a unsigned short value to an collection element
+ * Set a unsigned short value to a collection element
  *
  * @param elem   - Element handle
  * @param value  - Unsigned short value
@@ -6292,7 +6396,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetUnsignedShort
 
 /**
  * @brief
- * Set a int value to an collection element
+ * Set a int value to a collection element
  *
  * @param elem   - Element handle
  * @param value  - Int value
@@ -6310,7 +6414,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetInt
 
 /**
  * @brief
- * Set a unsigned int value to an collection element
+ * Set a unsigned int value to a collection element
  *
  * @param elem   - Element handle
  * @param value  - Unsigned int value
@@ -6328,7 +6432,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetUnsignedInt
 
 /**
  * @brief
- * Set a big int value to an collection element
+ * Set a big int value to a collection element
  *
  * @param elem   - Element handle
  * @param value  - big int value
@@ -6346,7 +6450,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetBigInt
 
 /**
  * @brief
- * Set a unsigned big_int value to an collection element
+ * Set a unsigned big_int value to a collection element
  *
  * @param elem   - Element handle
  * @param value  - Unsigned big int value
@@ -6364,7 +6468,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetUnsignedBigInt
 
 /**
  * @brief
- * Set a double value to an collection element
+ * Set a double value to a collection element
  *
  * @param elem   - Element handle
  * @param value  - Double value
@@ -6382,7 +6486,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetDouble
 
 /**
  * @brief
- * Set a string value to an collection element
+ * Set a string value to a collection element
  *
  * @param elem   - Element handle
  * @param value  - String value
@@ -6403,7 +6507,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetString
 
 /**
  * @brief
- * Set a RAW value to an collection element
+ * Set a RAW value to a collection element
  *
  * @param elem   - Element handle
  * @param value  - Raw value
@@ -6422,6 +6526,174 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetRaw
     OCI_Elem *elem,
     void* value,
     unsigned int len
+);
+
+/**
+ * @brief
+ * Assign a Date handle to a collection element
+ *
+ * @param elem   - Element handle
+ * @param value  - Date Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ElemSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ElemSetDate
+(
+    OCI_Elem *elem, 
+    OCI_Date *value
+);
+
+/**
+ * @brief
+ * Assign a Timestamp handle to a collection element
+ *
+ * @param elem   - Element handle
+ * @param value  - Timestamp Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ElemSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ElemSetTimestamp
+(
+    OCI_Elem *elem, 
+    OCI_Timestamp *value
+);
+
+/**
+ * @brief
+ * Assign an Interval handle to a collection element
+ *
+ * @param elem   - Element handle
+ * @param value  - Interval Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ElemSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ElemSetInterval
+(
+    OCI_Elem *elem, 
+    OCI_Interval *value
+);
+
+/**
+ * @brief
+ * Assign a Collection handle to a collection element
+ *
+ * @param elem   - Element handle
+ * @param value  - Collection Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ElemSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ElemSetColl
+(
+    OCI_Elem *elem, 
+    OCI_Coll *value
+);
+
+/**
+ * @brief
+ * Assign an Object handle to a collection element
+ *
+ * @param elem   - Element handle
+ * @param value  - Object Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ElemSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ElemSetObject
+(
+    OCI_Elem *elem, 
+    OCI_Object *value
+);
+
+/**
+ * @brief
+ * Assign a Lob handle to a collection element
+ *
+ * @param elem   - Element handle
+ * @param value  - Lob Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ElemSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ElemSetLob
+(
+    OCI_Elem *elem, 
+    OCI_Lob *value
+);
+
+/**
+ * @brief
+ * Assign a File handle to a collection element
+ *
+ * @param elem   - Element handle
+ * @param value  - File Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ElemSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ElemSetFile
+(
+    OCI_Elem *elem, 
+    OCI_File *value
+);
+
+/**
+ * @brief
+ * Assign a Ref handle to a collection element
+ *
+ * @param elem   - Element handle
+ * @param value  - Ref Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ElemSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ElemSetRef
+(
+    OCI_Elem *elem, 
+    OCI_Ref *value
 );
 
 /**
@@ -10206,6 +10478,208 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetRaw
     const mtext *attr,
     void *value,
     unsigned int len
+);
+
+/**
+ * @brief
+ * Set an object attribute of type Date
+ *
+ * @param obj    - Object handle
+ * @param attr   - Attribute name
+ * @param value  - Date Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ObjectSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectSetDate
+(
+    OCI_Object *obj, 
+    const mtext *attr, 
+    OCI_Date *value
+);
+
+/**
+ * @brief
+ * Set an object attribute of type Timestamp
+ *
+ * @param obj    - Object handle
+ * @param attr   - Attribute name
+ * @param value  - Timestamp Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ObjectSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectSetTimestamp
+(
+    OCI_Object *obj, 
+    const mtext *attr, 
+    OCI_Timestamp *value
+);
+
+/**
+ * @brief
+ * Set an object attribute of type Interval
+ *
+ * @param obj    - Object handle
+ * @param attr   - Attribute name
+ * @param value  - Interval Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ObjectSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectSetInterval
+(
+    OCI_Object *obj, 
+    const mtext *attr, 
+    OCI_Interval *value
+);
+
+/**
+ * @brief
+ * Set an object attribute of type Collection
+ *
+ * @param obj    - Object handle
+ * @param attr   - Attribute name
+ * @param value  - Collection Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ObjectSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectSetColl
+(
+    OCI_Object *obj, 
+    const mtext *attr, 
+    OCI_Coll *value
+);
+
+/**
+ * @brief
+ * Set an object attribute of type Object
+ *
+ * @param obj    - Object handle
+ * @param attr   - Attribute name
+ * @param value  - Object Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ObjectSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectSetObject
+(
+    OCI_Object *obj, 
+    const mtext *attr, 
+    OCI_Object *value
+);
+
+/**
+ * @brief
+ * Set an object attribute of type Lob
+ *
+ * @param obj    - Object handle
+ * @param attr   - Attribute name
+ * @param value  - Lob Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ObjectSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectSetLob
+(
+    OCI_Object *obj, 
+    const mtext *attr, 
+    OCI_Lob *value
+);
+
+/**
+ * @brief
+ * Set an object attribute of type File
+ *
+ * @param obj    - Object handle
+ * @param attr   - Attribute name
+ * @param value  - File Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ObjectSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectSetFile
+(
+    OCI_Object *obj, 
+    const mtext *attr, 
+    OCI_File *value
+);
+
+/**
+ * @brief
+ * Set an object attribute of type Ref
+ *
+ * @param obj    - Object handle
+ * @param attr   - Attribute name
+ * @param value  - Ref Handle
+ *
+ * @note
+ * passing a null pointer for value calls OCI_ObjectSetNull()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectSetRef
+(
+    OCI_Object *obj, 
+    const mtext *attr, 
+    OCI_Ref *value
+);
+
+/**
+ * @brief
+ * Check if an object attribute is null
+ *
+ * @param obj    - Object handle
+ * @param attr   - Attribute name
+ *
+ * @return
+ * FALSE if the attribute is not null otherwise TRUE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectIsNull
+(
+    OCI_Object *obj,
+    const mtext *attr
 );
 
 /**

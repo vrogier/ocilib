@@ -279,9 +279,9 @@ void create_tables(void)
     print_text("\n>>>>> CREATE TABLES FOR DEMO \n\n");
 
     /* create types for the demo */
-    OCI_ExecuteStmt(st, MT("create type t_type as OBJECT (code int, name varchar2(20))"));
+    OCI_ExecuteStmt(st, MT("create type type_t as OBJECT (id int, name varchar2(50))"));
 
-    OCI_ExecuteStmt(st, MT("create type t_test as object ")
+    OCI_ExecuteStmt(st, MT("create type test_t as object ")
                     MT("( ")
                     MT("    val_int  number, ")
                     MT("    val_flt  float, ")
@@ -289,7 +289,7 @@ void create_tables(void)
                     MT("    val_date date, ")
                     MT("    val_lob  clob, ")
                     MT("    val_file bfile, ")
-                    MT("    val_obj  t_type, ")
+                    MT("    val_obj  type_t, ")
                     MT("    val_raw  raw(20) ")
                     MT(")"));
 
@@ -301,23 +301,23 @@ void create_tables(void)
     OCI_ExecuteStmt(st, MT("create table test_fetch(code int, article ")
                         MT("varchar2(30), price float, creation date)"));
 
-    OCI_ExecuteStmt(st, MT("create table test_long_raw(code int, ")
-                        MT("content long raw)"));
+    OCI_ExecuteStmt(st, MT("create table test_long_raw(code int, content long raw)"));
 
-    OCI_ExecuteStmt(st, MT("create table test_long_str(code int, ")
-                        MT("content long)"));
+    OCI_ExecuteStmt(st, MT("create table test_long_str(code int, content long)"));
 
     OCI_ExecuteStmt(st, MT("create table test_lob(code int, content CLOB)"));
 
-    OCI_ExecuteStmt(st, MT("create table test_object(val T_TEST)"));
+    OCI_ExecuteStmt(st, MT("create table test_object(val test_t)"));
+
+    OCI_ExecuteStmt(st, MT("create table test_table_obj of type_t"));
 
     OCI_ExecuteStmt(st, MT("create table test_array ")
                         MT("( ")
-                        MT("    val_int number, ")
-                        MT("    val_flt float, ")
-                        MT("    val_str varchar2(30), ")
+                        MT("    val_int  number, ")
+                        MT("    val_flt  float, ")
+                        MT("    val_str  varchar2(30), ")
                         MT("    val_date date, ")
-                        MT("    val_lob clob, ")
+                        MT("    val_lob  clob, ")
                         MT("    val_file bfile ")
                         MT(")")
                     );
@@ -363,6 +363,9 @@ void create_tables(void)
     OCI_ExecuteStmt(st, MT("insert into test_coll_nested(departement,employees) ")
                         MT("values (2, t_tab2_emp('Paul', 'Sarah', 'Robert', 'Zoe'))"));
 
+    OCI_ExecuteStmt(st, MT("insert into test_table_obj values(type_t(1, 'shoes'))"));
+    OCI_ExecuteStmt(st, MT("insert into test_table_obj values(type_t(2, 'pen'))"));
+
     OCI_Commit(cn);
 }
 
@@ -382,9 +385,10 @@ void drop_tables(void)
     OCI_ExecuteStmt(st, MT("drop table test_object"));
     OCI_ExecuteStmt(st, MT("drop table test_coll_varray"));
     OCI_ExecuteStmt(st, MT("drop table test_coll_nested"));
+    OCI_ExecuteStmt(st, MT("drop table test_table_obj"));
 
-    OCI_ExecuteStmt(st, MT("drop type  t_test"));
-    OCI_ExecuteStmt(st, MT("drop type  t_type"));
+    OCI_ExecuteStmt(st, MT("drop type  test_t"));
+    OCI_ExecuteStmt(st, MT("drop type  type_t"));
     OCI_ExecuteStmt(st, MT("drop type  t_tab1_emp"));
     OCI_ExecuteStmt(st, MT("drop type  t_tab2_emp"));
 
@@ -720,8 +724,7 @@ void test_lob(void)
         lob  = OCI_GetLob(rs, 2);
 
         OCI_LobWrite(lob, DT("today, "), 7);
-        OCI_LobAppend(lob, DT("i'm going to the cinema !"), 25);
-        OCI_LobAppend(lob, DT(" See you later..."), 17);
+        OCI_LobAppend(lob, DT("i'm going to the cinema ! "), 26);
         OCI_LobSeek(lob, 0, OCI_SEEK_SET);
 
         temp[OCI_LobRead(lob, temp, SIZE_STR)] = 0;
@@ -983,7 +986,7 @@ void test_describe(void)
 
     print_text("\n>>>>> TEST DESCRIBING TYPE \n\n");
 
-    tbl = OCI_SchemaGet(cn, MT("T_TEST"), OCI_SCHEMA_TYPE);
+    tbl = OCI_SchemaGet(cn, MT("test_t"), OCI_SCHEMA_TYPE);
 
     if (tbl)
     {
@@ -1035,7 +1038,7 @@ void test_returning(void)
     {
         lob = OCI_GetLob(rs, 2);
 
-        OCI_LobAppend(lob, DT("(modified with OCILIB)"), 22);
+        OCI_LobAppend(lob, DT("(modified)"), 10);
         OCI_LobSeek(lob, 0, OCI_SEEK_SET);
 
         temp[OCI_LobRead(lob, temp, SIZE_STR)] = 0;
@@ -1206,11 +1209,11 @@ void test_returning_array(void)
 
 void test_object_insert(void)
 {
-
 #ifdef OCI_CHARSET_ANSI
 
     OCI_Date *date;
     OCI_File *file;
+    OCI_Lob  *lob;
     OCI_Object *obj;
     OCI_Object *obj2;
 
@@ -1218,22 +1221,29 @@ void test_object_insert(void)
 
     /* create types for the demo */
 
-    obj  = OCI_ObjectCreate(cn, OCI_SchemaGet(cn, MT("T_TEST"), OCI_SCHEMA_TYPE));
+    obj  = OCI_ObjectCreate(cn, OCI_SchemaGet(cn, MT("test_t"), OCI_SCHEMA_TYPE));
 
     OCI_ObjectSetInt(obj, MT("VAL_INT"), 1);
     OCI_ObjectSetDouble(obj, MT("VAL_FLT"), 3.14);
     OCI_ObjectSetString(obj, MT("VAL_STR"), DT("USB KEY 2go"));
     OCI_ObjectSetRaw(obj, MT("VAL_RAW"), DT("AAAAA"), 5 * sizeof(dtext));
 
-    date = OCI_ObjectGetDate(obj, MT("VAL_DATE"));
+    date = OCI_DateCreate(cn);
     OCI_DateSysDate(date);
+    OCI_ObjectSetDate(obj, MT("VAL_DATE"), date);
 
-    obj2 = OCI_ObjectGetObject(obj, MT("VAL_OBJ"));
-    OCI_ObjectSetInt(obj2, MT("CODE"), 1);
+    obj2 = OCI_ObjectCreate(cn, OCI_SchemaGet(cn, MT("TYPE_T"), OCI_SCHEMA_TYPE));
+    OCI_ObjectSetInt(obj2, MT("ID"), 1);
+
     OCI_ObjectSetString(obj2, MT("NAME"), DT("USB KEY 2go"));
+    OCI_ObjectSetObject(obj, MT("VAL_OBJ"), obj2);
 
-    file = OCI_ObjectGetFile(obj, MT("VAL_FILE"));
+    lob = OCI_LobCreate(cn, OCI_CLOB);
+    OCI_ObjectSetLob(obj, MT("VAL_LOB"), lob);
+
+    file = OCI_FileCreate(cn, OCI_BFILE);
     OCI_FileSetName(file, MT("mydir"), MT("myfile"));
+    OCI_ObjectSetFile(obj, MT("VAL_FILE"), file);
 
     OCI_Prepare(st, MT("insert into test_object values(:obj)"));
     OCI_BindObject(st, MT(":obj"), obj);
@@ -1243,6 +1253,10 @@ void test_object_insert(void)
 
     OCI_Commit(cn);
 
+    OCI_DateFree(date);
+    OCI_LobFree(lob);
+    OCI_FileFree(file);
+    OCI_ObjectFree(obj2);
     OCI_ObjectFree(obj);
 
 #endif
@@ -1304,7 +1318,7 @@ void test_object_fetch(void)
         print_text("\n");
 
         obj2 = OCI_ObjectGetObject(obj, MT("VAL_OBJ"));
-        print_frmt("val_obj.code   : %i\n", OCI_ObjectGetInt(obj2, MT("CODE")));
+        print_frmt("val_obj.code   : %i\n", OCI_ObjectGetInt(obj2, MT("ID")));
         print_text("val_obj.name   : "); print_dstr(OCI_ObjectGetString(obj2, MT("NAME")));
         print_text("\n");
 
@@ -1491,7 +1505,7 @@ void test_ref(void)
 
     print_text("\n>>>>> TEST REF FETCHING \n\n");
 
-    OCI_ExecuteStmt(st, MT("select ref(e) from table_obj e"));
+    OCI_ExecuteStmt(st, MT("select ref(e) from test_table_obj e"));
     rs = OCI_GetResultset(st);
 
     while (OCI_FetchNext(rs))
@@ -1507,10 +1521,10 @@ void test_ref(void)
 
     print_text("\n>>>>> TEST REF PL/SQL BINDING \n\n");
 
-    ref = OCI_RefCreate(cn, OCI_SchemaGet(cn, MT("ARTICLE_T"), OCI_SCHEMA_TYPE));
+    ref = OCI_RefCreate(cn, OCI_SchemaGet(cn, MT("type_t"), OCI_SCHEMA_TYPE));
 
     OCI_Prepare(st, MT("begin ")
-                    MT("  select ref(e) into :r from table_obj e where e.id = 1; ")
+                    MT("  select ref(e) into :r from test_table_obj e where e.id = 1; ")
                     MT("end; "));
     
     OCI_BindRef(st, MT(":r"), ref);

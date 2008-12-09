@@ -20,6 +20,52 @@
       - Added OCI_ObjectGetRef()
       - Added OCI_ObjectGetSelfRef()
 
+    * Added some tracing features
+
+      - Added OCI_SetTrace()
+      - Added OCI_GetTrace()
+
+    * Extended Object API
+
+      - Fixed internal handling of null attributes (it has been rewritten)
+      - Modified local (transients) objects creation. Now :
+
+        * By default, all attributes are set to NULL
+        * Non scalar attributes must be set by calling new functions OCI_ObjectSetXXX()
+
+      - Added setters functions for non scalar object attributes
+
+        * OCI_ObjectSetDate
+        * OCI_ObjectSetInterval
+        * OCI_ObjectSetTimestamp
+        * OCI_ObjectSetColl
+        * OCI_ObjectSetObject
+        * OCI_ObjectSetFile
+        * OCI_ObjectSetLob
+        * OCI_ObjectSetRef
+
+      - Added Miscellaneous Object functions
+
+        * Added OCI_ObjectIsNull()
+        * Added OCI_ObjectAssign()
+        * Added OCI_ObjectGetType()
+
+    * Extended Collection elements API
+
+      - Fixed : OCI_ElemSetNull() that was only udpating null indicator
+      - Fixed : some functions were not checking input elem handle nullity
+      - Added checks on element type in OCI_ElemGetXXX() calls that throw an exception if the element type is not the same type as the one requested
+      - Added setters functions for non scalar element base datatypes
+
+        * OCI_ElemSetDate()
+        * OCI_ElemSetInterval()
+        * OCI_ElemSetTimestamp()
+        * OCI_ElemSetColl()
+        * OCI_ElemSetObject()
+        * OCI_ElemSetFile()
+        * OCI_ElemSetLob()
+        * OCI_ElemSetRef()
+   
     * Extended Bind informations
 
       - Modified : OCI_Bind handles are now public and can be retrieved for public information
@@ -60,10 +106,8 @@
 
       - Added OCI_IsNull2()
       - Added OCI_ResultsetGetStatement()
-      - Added OCI_ObjectAssign()
-      - Added OCI_ObjectGetType()
       - Added OCI_BindArrayOfColls()
-
+  
       - Added functions to retrieve OCI_Schema object from various OCILIB object bases on Oracle object type :
 
         * Added OCI_ObjectGetSchema()
@@ -75,6 +119,11 @@
         * Added OCI_GetImportMode()
         * Added OCI_GetCharsetMetaData()
         * Added OCI_GetCharsetUserData()
+
+      - On Oracle versions >= 11g, OCILIB now sets the client driver layer name information
+
+        * Value set to the constant OCILIB_DRIVER_NAME (by default "OCILIB") 
+        * It's recorded in the system views V$SESSION_CONNECT_INFO and GV$SESSION_CONNECT_INFO
 
       - Modified ocilib demo to properly support MinGw and unix based unicode console output
 
@@ -97,3 +146,7 @@
       - Fixed OCI_Object reusability: internal sub object could not be freed when fetching next object and thus lead to memory leaks
       - Since v3.0.0, fetching LONG column with OCI_LONG_IMPLICIT mode was truncating data to its half length in Unicode and Mixed Builds 
       - Fixed some prepocessor directives for MinGw support
+      - Fixed runtime loading of oracle libs that might have not worked if the provided OCI library location ended with an existing slash
+      - Fixed internal OCI_CopyString() that might caused some troubles in unicode builds 
+      - Fixed some internal wrong arrays size used for memmory allocation
+
