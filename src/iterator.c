@@ -146,6 +146,8 @@ OCI_Elem * OCI_API OCI_IterGetNext(OCI_Iter *iter)
     
     OCI_CHECK(iter->eoc == TRUE, FALSE);
 
+    iter->elem->init = FALSE;
+
     OCI_CALL2
     (
         res, iter->coll->con,  
@@ -157,7 +159,7 @@ OCI_Elem * OCI_API OCI_IterGetNext(OCI_Iter *iter)
 
     if ((res == TRUE) && (iter->eoc == FALSE))
         elem = iter->elem;
-
+       
     OCI_RESULT(elem != NULL);
 
     return elem;
@@ -175,6 +177,8 @@ OCI_Elem * OCI_API OCI_IterGetPrev(OCI_Iter *iter)
     OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, FALSE);
     
     OCI_CHECK(iter->boc == TRUE, FALSE);
+
+    iter->elem->init = FALSE;
 
     OCI_CALL2
     (

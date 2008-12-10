@@ -61,6 +61,7 @@ OCI_Elem * OCI_ElemInit(OCI_Connection *con, OCI_Elem **pelem, void *handle,
         elem->handle = handle;
         elem->ind    = pind;
         elem->col    = col;
+        elem->init  = FALSE;
     
         if (elem->handle == NULL)
             elem->hstate = OCI_OBJECT_ALLOCATED;
@@ -414,10 +415,17 @@ OCI_Date * OCI_API  OCI_ElemGetDate(OCI_Elem *elem)
     {
         OCIDate *handle = (OCIDate *) elem->handle;
 
-        date = OCI_DateInit(elem->con, (OCI_Date **) &elem->obj, handle , 
-                            FALSE, FALSE);
+        if (elem->init == FALSE)
+        {
+            date = OCI_DateInit(elem->con, (OCI_Date **) &elem->obj, handle , 
+                                FALSE, FALSE);
 
-        res = (date != NULL);
+            elem->init = (date != NULL);
+        }
+        else
+            date = (OCI_Date *) elem->obj;
+
+        res = elem->init;
     }
 
     OCI_RESULT(res);
@@ -440,11 +448,17 @@ OCI_Timestamp * OCI_API  OCI_ElemGetTimeStamp(OCI_Elem *elem)
     {
         OCIDateTime *handle = (OCIDateTime *) elem->handle;
 
-        tmsp = OCI_TimestampInit(elem->con, (OCI_Timestamp **) &elem->obj, 
-                                 handle, elem->col->subtype);
+        if (elem->init == FALSE)
+        {
+            tmsp = OCI_TimestampInit(elem->con, (OCI_Timestamp **) &elem->obj, 
+                                     handle, elem->col->subtype);
 
-        res = (tmsp != NULL);
+            elem->init = (tmsp != NULL);
+        }
+        else
+            tmsp = (OCI_Timestamp *) elem->obj;
 
+        res = elem->init;
     }
 
     OCI_RESULT(res);
@@ -468,10 +482,17 @@ OCI_Interval * OCI_API OCI_ElemGetInterval(OCI_Elem *elem)
     {
         OCIInterval *handle = (OCIInterval *) elem->handle;
 
-        itv = OCI_IntervalInit(elem->con, (OCI_Interval **) &elem->obj, 
-                               handle, elem->col->subtype);
+        if (elem->init == FALSE)
+        {
+            itv = OCI_IntervalInit(elem->con, (OCI_Interval **) &elem->obj, 
+                                   handle, elem->col->subtype);
 
-        res = (itv != NULL);
+            elem->init = (itv != NULL);
+        }
+        else
+            itv = (OCI_Interval *) elem->obj;
+
+        res = elem->init;
     }
 
     OCI_RESULT(res);
@@ -495,10 +516,17 @@ OCI_Lob * OCI_API  OCI_ElemGetLob(OCI_Elem *elem)
     {
         OCILobLocator *handle = *(OCILobLocator **) elem->handle;
         
-        lob = OCI_LobInit(elem->con, (OCI_Lob **) &elem->obj, handle,
-                          elem->col->subtype);
+        if (elem->init == FALSE)
+        {
+            lob = OCI_LobInit(elem->con, (OCI_Lob **) &elem->obj, handle,
+                              elem->col->subtype);
 
-        res = (lob != NULL);
+            elem->init = (lob != NULL);
+        }
+        else
+            lob = (OCI_Lob *) elem->obj;
+
+        res = elem->init;
     }
 
     OCI_RESULT(res);
@@ -522,10 +550,17 @@ OCI_File * OCI_API  OCI_ElemGetFile(OCI_Elem *elem)
     {
         OCILobLocator *handle = *(OCILobLocator **) elem->handle;
 
-        file = OCI_FileInit(elem->con, (OCI_File **) &elem->obj, handle, 
-                            elem->col->subtype);
+        if (elem->init == FALSE)
+        {
+            file = OCI_FileInit(elem->con, (OCI_File **) &elem->obj, handle, 
+                                elem->col->subtype);
 
-        res = (file != NULL);
+            elem->init = (file != NULL);
+        }
+        else
+            file = (OCI_File *) elem->obj;
+
+        res = elem->init;
     }
 
     OCI_RESULT(res);
@@ -549,10 +584,17 @@ OCI_Ref * OCI_API  OCI_ElemGetRef(OCI_Elem *elem)
     {
         OCIRef *handle = *(OCIRef **) elem->handle;
         
-        ref = OCI_RefInit(elem->con, elem->col->nty, (OCI_Ref **) &elem->obj, 
-                          handle);
+        if (elem->init == FALSE)
+        {
+            ref = OCI_RefInit(elem->con, elem->col->nty, (OCI_Ref **) &elem->obj, 
+                              handle);
 
-        res = (ref != NULL);
+            elem->init = (ref != NULL);
+        }
+        else
+            ref = (OCI_Ref *) elem->obj;
+
+        res = elem->init;
     }
 
     OCI_RESULT(res);
@@ -576,10 +618,17 @@ OCI_Object * OCI_API OCI_ElemGetObject(OCI_Elem *elem)
     {
         void * handle = elem->handle;
 
-        obj = OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj,
-                             handle, elem->col->nty, NULL, -1);
+        if (elem->init == FALSE)
+        {
+            obj = OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj,
+                                 handle, elem->col->nty, NULL, -1);
 
-        res = (obj != NULL);
+            elem->init = (obj != NULL);
+        }
+        else
+            obj = (OCI_Object *) elem->obj;
+
+        res = elem->init;
     }
 
     OCI_RESULT(res);
@@ -603,10 +652,17 @@ OCI_Coll * OCI_API OCI_ElemGetColl(OCI_Elem *elem)
     {
         OCIColl *handle = (OCIColl *) elem->handle;
 
-        coll = OCI_CollInit(elem->con, (OCI_Coll **) &elem->obj, handle, 
-                            elem->col->nty);
+        if (elem->init == FALSE)
+        {
+            coll = OCI_CollInit(elem->con, (OCI_Coll **) &elem->obj, handle, 
+                                elem->col->nty);
 
-        res = (coll != NULL);
+            elem->init = (coll != NULL);
+        }
+        else
+            coll = (OCI_Coll *) elem->obj;
+
+        res = elem->init;
     }
 
     OCI_RESULT(res);

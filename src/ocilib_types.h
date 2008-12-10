@@ -528,6 +528,7 @@ struct OCI_Elem {
     OCI_Column      *col;      /* datatype infos */
     void            *buf;      /* buffer to store converted out string attribute */ 
     int              buflen;   /* buffer len */
+    boolean          init;     /* underlying object has been initialized ? */
 };
 
 /*
