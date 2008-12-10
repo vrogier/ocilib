@@ -486,6 +486,9 @@ boolean OCI_API OCI_TimestampGetDate(OCI_Timestamp *tmsp, int *year, int *month,
                                      int *day)
 {
     boolean res = TRUE;
+    sb2 yr = 0;
+    ub1 mt = 0;
+    ub1 dy = 0;
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
 
@@ -506,8 +509,12 @@ boolean OCI_API OCI_TimestampGetDate(OCI_Timestamp *tmsp, int *year, int *month,
         res, tmsp->err, tmsp->con,
         
         OCIDateTimeGetDate((dvoid *) OCILib.env, tmsp->err, tmsp->handle,
-                           (sb2 *) year, (ub1 *) month, (ub1 *) day)
+                           &yr, &mt, &dy)
     )
+
+    *year  = (int) yr;
+    *month = (int) mt;
+    *day   = (int) dy;
 
 #else
 
@@ -531,6 +538,11 @@ boolean OCI_API OCI_TimestampGetTime(OCI_Timestamp *tmsp, int *hour, int *min,
 {
     boolean res = TRUE;
 
+    ub1 hr = 0;
+    ub1 mn = 0;
+    ub1 sc = 0;
+    ub4 fs = 0;
+
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
 
     OCI_CHECK_PTR(OCI_IPC_INT, hour, FALSE);
@@ -552,8 +564,13 @@ boolean OCI_API OCI_TimestampGetTime(OCI_Timestamp *tmsp, int *hour, int *min,
         res, tmsp->err, tmsp->con,
         
         OCIDateTimeGetTime((dvoid *) OCILib.env, tmsp->err, tmsp->handle,
-                           (ub1*) hour, (ub1*) min, (ub1*) sec, (ub4*) fsec)
+                           &hr, &mn, &sc, &fs)
     )
+
+    *hour = (int) hr;
+    *min  = (int) mn;
+    *sec  = (int) sc;
+    *fsec = (int) fs;
 
 #else
 
