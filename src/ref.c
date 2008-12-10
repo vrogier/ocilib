@@ -128,7 +128,7 @@ boolean OCI_RefPin(OCI_Ref *ref)
         if (res == TRUE)
         {
             obj =  OCI_ObjectInit(ref->con, (OCI_Object **) &ref->obj,
-                                  obj_handle, ref->nty, NULL, -1);
+                                  obj_handle, ref->nty, NULL, -1, TRUE);
         }
 
         if (obj != NULL)

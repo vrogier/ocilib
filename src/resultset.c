@@ -1731,7 +1731,8 @@ OCI_Object * OCI_API OCI_GetObject(OCI_Resultset *rs, unsigned int index)
     {
         obj =  OCI_ObjectInit(rs->stmt->con,
                               (OCI_Object **) &def->obj,
-                              OCI_DefineGetData(def), def->col.nty, NULL, -1);
+                              OCI_DefineGetData(def), def->col.nty, NULL, -1,
+                              TRUE);
     }
 
     OCI_RESULT(obj != NULL);

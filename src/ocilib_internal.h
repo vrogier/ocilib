@@ -717,7 +717,8 @@ OCI_Object * OCI_ObjectInit
     void *handle, 
     OCI_Schema *schema,
     sb2 *tab_ind,
-    int index
+    int index,
+    boolean reset
 );
 
 /* ------------------------------------------------------------------------ *

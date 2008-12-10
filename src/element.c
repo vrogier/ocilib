@@ -61,7 +61,7 @@ OCI_Elem * OCI_ElemInit(OCI_Connection *con, OCI_Elem **pelem, void *handle,
         elem->handle = handle;
         elem->ind    = pind;
         elem->col    = col;
-        elem->init  = FALSE;
+        elem->init   = FALSE;
     
         if (elem->handle == NULL)
             elem->hstate = OCI_OBJECT_ALLOCATED;
@@ -621,7 +621,7 @@ OCI_Object * OCI_API OCI_ElemGetObject(OCI_Elem *elem)
         if (elem->init == FALSE)
         {
             obj = OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj,
-                                 handle, elem->col->nty, NULL, -1);
+                                 handle, elem->col->nty, NULL, -1, TRUE);
 
             elem->init = (obj != NULL);
         }
@@ -965,7 +965,7 @@ boolean OCI_API OCI_ElemSetObject(OCI_Elem *elem, OCI_Object *value)
         if (obj == NULL)
         {
             obj = OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj,
-                                 handle, elem->col->nty, NULL, -1);
+                                 handle, elem->col->nty, NULL, -1, TRUE);
         }
 
         if (obj != NULL)

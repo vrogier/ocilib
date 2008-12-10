@@ -65,7 +65,7 @@ ub2 OCI_GetIndTabIndex(OCI_Schema *nty, int index)
 
 OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
                             void *handle, OCI_Schema *schema, 
-                            sb2 *tab_ind, int index)
+                            sb2 *tab_ind, int index, boolean reset)
 {
     OCI_Object * obj = NULL;
     boolean res      = TRUE;
@@ -118,7 +118,7 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
                                  (void *) &obj->type, &size);
         }
 
-        if ((res == TRUE) && (obj->tab_ind == NULL))
+        if ((res == TRUE) && ((reset == TRUE) || (obj->tab_ind == NULL)))
         {
             if (tab_ind == NULL)
             {
@@ -393,7 +393,7 @@ OCI_Object * OCI_API OCI_ObjectCreate(OCI_Connection *con, OCI_Schema *schema)
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
     OCI_CHECK_PTR(OCI_IPC_SCHEMA, schema, NULL);
 
-    obj = OCI_ObjectInit(con, &obj, NULL, schema, NULL, -1);
+    obj = OCI_ObjectInit(con, &obj, NULL, schema, NULL, -1, TRUE);
 
     OCI_RESULT(obj != NULL);
 
@@ -798,7 +798,7 @@ OCI_Object * OCI_API OCI_ObjectGetObject(OCI_Object *obj, const mtext *attr)
         {
             obj2 = OCI_ObjectInit(obj->con, (OCI_Object **) &obj->objs[index],
                                   value, obj->nty->cols[index].nty, obj->tab_ind,
-                                  index);
+                                  index, FALSE);
 
        
 
@@ -1254,7 +1254,7 @@ boolean OCI_API OCI_ObjectSetObject(OCI_Object *obj, const mtext *attr,
             {
                 obj2 = OCI_ObjectInit(obj->con, (OCI_Object **) &obj->objs[index],
                                      NULL, obj->nty->cols[index].nty, obj->tab_ind,
-                                     index);
+                                     index, FALSE);
             }
 
             if (obj2 != NULL)
