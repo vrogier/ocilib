@@ -8,7 +8,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://ocilib.net                     |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2008 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Library General Public          |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.1.0 2008/10/26 07:50 Vince $
+ * $Id: statement.c, v 3.1.0 2009/01/23 21:45 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -574,8 +574,8 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 #ifdef OCI_USERDATA_UNICODE
             ||
             (
-                (bnd->type          == OCI_CDT_TEXT) &&
-                (stmt->con->ver_maj >= OCI_9)        &&
+                (bnd->type          == OCI_CDT_TEXT)           &&
+                (OCI_GetVersionConnection(stmt->con) >= OCI_9) &&
                 (bnd->buf.lens      == NULL)
             )
 #endif
@@ -590,6 +590,19 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
                 OCIAttrSet((dvoid *) bnd->buf.handle, (ub4) OCI_HTYPE_BIND,
                            (dvoid *) &csfrm, (ub4) sizeof(csfrm),
                            (ub4) OCI_ATTR_CHARSET_FORM,  bnd->stmt->con->err)
+            )
+        }
+
+
+        if (bnd->type == OCI_CDT_TEXT)
+        {
+            OCI_CALL1
+            (
+                res, stmt->con, stmt,
+
+                OCIAttrSet((dvoid *) bnd->buf.handle, (ub4) OCI_HTYPE_BIND,
+                           (dvoid *) &bnd->size, (ub4) sizeof(bnd->size),
+                           (ub4) OCI_ATTR_MAXDATA_SIZE,  bnd->stmt->con->err)
             )
         }
 
@@ -1868,6 +1881,7 @@ boolean OCI_API OCI_BindArrayOfTimestamps(OCI_Statement *stmt, const mtext *name
     OCI_NOT_USED(name);
     OCI_NOT_USED(type);
     OCI_NOT_USED(code);
+    OCI_NOT_USED(nbelem);
 
 #endif
 
@@ -1943,6 +1957,7 @@ boolean OCI_API OCI_BindArrayOfIntervals(OCI_Statement *stmt, const mtext *name,
     OCI_NOT_USED(name);
     OCI_NOT_USED(type);
     OCI_NOT_USED(code);
+    OCI_NOT_USED(nbelem);
 
 #endif
 
@@ -2491,7 +2506,7 @@ boolean OCI_API OCI_SetNullAtPos(OCI_Statement *stmt, unsigned int index,
  * OCI_SetNullAtPos2
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_SetNullAtPos2(OCI_Statement *stmt, mtext *name,
+boolean OCI_API OCI_SetNullAtPos2(OCI_Statement *stmt, const mtext *name,
                                   unsigned int position)
 {
     return OCI_SetNullAtPos(stmt, OCI_BindGetIndex(stmt, name), position);
@@ -2510,7 +2525,7 @@ boolean OCI_API OCI_SetNull(OCI_Statement *stmt, unsigned int index)
  * OCI_SetNullAtPos2
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_SetNull2(OCI_Statement *stmt, mtext *name)
+boolean OCI_API OCI_SetNull2(OCI_Statement *stmt, const mtext *name)
 {
     return OCI_SetNullAtPos2(stmt, name, 1);
 }
@@ -2853,7 +2868,7 @@ OCI_Bind * OCI_API OCI_GetBind(OCI_Statement *stmt, unsigned int index)
  * OCI_GetBind2
  * ------------------------------------------------------------------------ */
 
-OCI_Bind * OCI_API OCI_GetBind2(OCI_Statement *stmt, mtext *name)
+OCI_Bind * OCI_API OCI_GetBind2(OCI_Statement *stmt, const mtext *name)
 {
     OCI_Bind *bnd = NULL;
     int index     = -1;

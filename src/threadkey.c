@@ -8,7 +8,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://ocilib.net                     |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2008 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Library General Public          |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: threadkey.c, v 3.1.0 2008/10/26 07:50 Vince $
+ * $Id: threadkey.c, v 3.1.0 2009/01/23 21:45 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -166,7 +166,7 @@ boolean OCI_ThreadKeyGet(OCI_ThreadKey* key, void **value)
  * OCI_ThreadKeyCreate
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_ThreadKeyCreate(mtext *name, POCI_THREADKEYDEST destfunc)
+boolean OCI_API OCI_ThreadKeyCreate(const mtext *name, POCI_THREADKEYDEST destfunc)
 {
     OCI_ThreadKey *key = NULL;
     boolean res        = TRUE;
@@ -214,7 +214,7 @@ boolean OCI_API OCI_ThreadKeyCreate(mtext *name, POCI_THREADKEYDEST destfunc)
  * OCI_ThreadKeySetValue
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_ThreadKeySetValue(mtext *name, void *value)
+boolean OCI_API OCI_ThreadKeySetValue(const mtext *name, void *value)
 {
     boolean res        = TRUE;
     OCI_ThreadKey *key = NULL;
@@ -234,7 +234,7 @@ boolean OCI_API OCI_ThreadKeySetValue(mtext *name, void *value)
  * OCI_ThreadKeyGetValue
  * ------------------------------------------------------------------------ */
 
-void * OCI_API OCI_ThreadKeyGetValue(mtext *name)
+void * OCI_API OCI_ThreadKeyGetValue(const mtext *name)
 {
     boolean res        = TRUE;
     void * value       = NULL;

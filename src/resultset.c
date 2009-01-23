@@ -8,7 +8,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://ocilib.net                     |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2008 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Library General Public          |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.1.0 2008/10/26 07:50 Vince $
+ * $Id: resultset.c, v 3.1.0 2009/01/23 21:45 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -393,9 +393,13 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
  * OCI_FetchData
  * ------------------------------------------------------------------------ */
 
-boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset)
+boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset, boolean *err)
 {
     boolean res  = TRUE;
+
+    /* let's initiliaze the error flag to TRUE until the process completes */
+
+    *err = TRUE;
 
     /* internal fetch */
 
@@ -485,6 +489,12 @@ boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset)
         if (row_fetched > 0)
             rs->row_fetched = row_fetched;
 
+        /* so far, no OCI error occured, let's clear the error flag */
+
+        *err = FALSE;
+
+        /* check if internal fetch was successful */
+
         if ((rs->fetch_status == OCI_NO_DATA) && (row_fetched == 0))
         {
             if ((mode == OCI_SFD_NEXT) || (offset > 0))
@@ -496,8 +506,6 @@ boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset)
             res = FALSE;
         }
     }
-    else
-        res = FALSE;
 
     return res;
 }
@@ -506,7 +514,7 @@ boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset)
  * OCI_FetchCustom
  * ------------------------------------------------------------------------ */
 
-boolean OCI_FetchCustom(OCI_Resultset *rs, int mode, int offset)
+boolean OCI_FetchCustom(OCI_Resultset *rs, int mode, int offset, boolean *err)
 {
     boolean res = TRUE;
 
@@ -528,7 +536,7 @@ boolean OCI_FetchCustom(OCI_Resultset *rs, int mode, int offset)
                 offset      = offset - rs->row_fetched + rs->row_cur;
                 rs->row_cur = 1;
 
-                res = OCI_FetchData(rs, mode, offset);
+                res = OCI_FetchData(rs, mode, offset, err);
 
                 if (res == TRUE)
                     rs->row_abs += offset_save;
@@ -547,7 +555,7 @@ boolean OCI_FetchCustom(OCI_Resultset *rs, int mode, int offset)
                 rs->row_abs   = 1;
                 rs->row_cur   = 1;
 
-                res = OCI_FetchData(rs, mode, offset);
+                res = OCI_FetchData(rs, mode, offset, err);
 
                 if (res == TRUE)
                 {
@@ -830,10 +838,14 @@ boolean OCI_ResultsetFree(OCI_Resultset *rs)
 boolean OCI_API OCI_FetchPrev(OCI_Resultset *rs)
 {
     boolean res = TRUE;
+    boolean err = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
 
     OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
+
+#if OCI_VERSION_COMPILE >= OCI_9
+
     OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
 
     if (rs->bof == FALSE)
@@ -846,13 +858,22 @@ boolean OCI_API OCI_FetchPrev(OCI_Resultset *rs)
             }
             else
             {
-                int offset = 1 - (rs->fetch_size + rs->row_fetched);
+                int offset = 0;
+                
+                if (rs->fetch_size > rs->row_abs)
+                    offset = 1 - rs->row_abs;  
+                else
+                    offset = 1 - (rs->fetch_size + rs->row_fetched);
 
-                res = OCI_FetchData(rs, OCI_SFD_RELATIVE, offset);
+                res = OCI_FetchData(rs, OCI_SFD_RELATIVE, offset, &err);
 
                 if (res == TRUE)
                 {
-                    rs->row_cur = rs->fetch_size;
+                    if (rs->fetch_size > rs->row_abs)
+                        rs->row_cur = rs->row_abs-1;
+                    else
+                        rs->row_cur = rs->fetch_size;
+
                     rs->row_abs--;
                 }
             }
@@ -870,7 +891,13 @@ boolean OCI_API OCI_FetchPrev(OCI_Resultset *rs)
     else
         res = FALSE;
 
-    OCI_RESULT(res);
+#else
+
+    res = FALSE;
+
+#endif
+
+    OCI_RESULT(err);
 
     return res;
 }
@@ -882,6 +909,7 @@ boolean OCI_API OCI_FetchPrev(OCI_Resultset *rs)
 boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)
 {
     boolean res = TRUE;
+    boolean err = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
 
@@ -891,7 +919,7 @@ boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)
         {
             /* for regular resultsets */
 
-            if ((rs->bof == TRUE) || (rs->row_cur == rs->row_fetched))
+            if ((rs->row_cur == rs->row_fetched))
             {
                 if (rs->fetch_status == OCI_NO_DATA)
                 {
@@ -899,7 +927,7 @@ boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)
                 }
                 else
                 {
-                    res = OCI_FetchData(rs, OCI_SFD_NEXT, 0);
+                    res = OCI_FetchData(rs, OCI_SFD_NEXT, 0, &err);
 
                     if (res == TRUE)
                     {
@@ -946,7 +974,7 @@ boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)
     else
         res = FALSE;
 
-    OCI_RESULT(res);
+    OCI_RESULT(err);
 
     return ((res == TRUE) && (rs->eof == FALSE));
 }
@@ -958,10 +986,14 @@ boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)
 boolean OCI_API OCI_FetchFirst(OCI_Resultset *rs)
 {
     boolean res = TRUE;
+    boolean err = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
 
     OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
+
+#if OCI_VERSION_COMPILE >= OCI_9
+
     OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
 
     rs->bof       = FALSE;
@@ -970,9 +1002,16 @@ boolean OCI_API OCI_FetchFirst(OCI_Resultset *rs)
     rs->row_abs   = 1;
     rs->row_cur   = 1;
 
-    res = OCI_FetchData(rs, OCI_SFD_FIRST, 0);
+    res = OCI_FetchData(rs, OCI_SFD_FIRST, 0, &err);
 
-    OCI_RESULT(res);
+#else
+
+    res = FALSE;
+    err = TRUE;
+
+#endif
+
+    OCI_RESULT(err);
 
     return ((res == TRUE) && (rs->bof == FALSE));
 }
@@ -984,10 +1023,14 @@ boolean OCI_API OCI_FetchFirst(OCI_Resultset *rs)
 boolean OCI_API OCI_FetchLast(OCI_Resultset *rs)
 {
     boolean res = TRUE;
+    boolean err = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
 
     OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
+
+#if OCI_VERSION_COMPILE >= OCI_9
+
     OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
 
     rs->bof       = FALSE;
@@ -996,11 +1039,18 @@ boolean OCI_API OCI_FetchLast(OCI_Resultset *rs)
     rs->row_abs   = 0;
     rs->row_cur   = 1;
 
-    res = OCI_FetchData(rs, OCI_SFD_LAST, 0);
+    res = OCI_FetchData(rs, OCI_SFD_LAST, 0, &err);
 
     rs->row_abs = rs->row_count;
 
-    OCI_RESULT(res);
+#else
+
+    res = FALSE;
+    err = TRUE;
+
+#endif
+
+    OCI_RESULT(err);
 
     return ((res == TRUE) && (rs->eof != TRUE));
 }
@@ -1012,15 +1062,29 @@ boolean OCI_API OCI_FetchLast(OCI_Resultset *rs)
 boolean OCI_API OCI_FetchSeek(OCI_Resultset *rs, unsigned int mode, int offset)
 {
     boolean res = TRUE;
+    boolean err = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
 
     OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
+
+#if OCI_VERSION_COMPILE >= OCI_9
+
     OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
 
-    res = OCI_FetchCustom(rs, mode, offset);
+    res = OCI_FetchCustom(rs, mode, offset, &err);
 
-    OCI_RESULT(res);
+#else
+
+    OCI_NOT_USED(mode);
+    OCI_NOT_USED(offset);
+
+    res = FALSE;
+    err = TRUE;
+
+#endif
+
+    OCI_RESULT(err);
 
     return res;
 }
@@ -1952,7 +2016,7 @@ boolean OCI_API OCI_IsNull(OCI_Resultset *rs, unsigned int index)
  * OCI_IsNull2
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_IsNull2(OCI_Resultset *rs, mtext *name)
+boolean OCI_API OCI_IsNull2(OCI_Resultset *rs, const mtext *name)
 {
     return OCI_IsNull(rs, OCI_GetDefineIndex(rs, name));
 }
@@ -1961,11 +2025,32 @@ boolean OCI_API OCI_IsNull2(OCI_Resultset *rs, mtext *name)
  * OCI_ResultsetGetStatment
  * ------------------------------------------------------------------------ */
 
-OCI_Statement * OCI_API OCI_ResultsetGetStatment(OCI_Resultset *rs)
+OCI_Statement * OCI_API OCI_ResultsetGetStatement(OCI_Resultset *rs)
 {
     OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
 
     OCI_RESULT(TRUE);
 
     return rs->stmt;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_GetDataLength
+ * ------------------------------------------------------------------------ */
+
+unsigned int OCI_API OCI_GetDataLength(OCI_Resultset *rs, unsigned int index)
+{
+    OCI_Define *def     = OCI_GetDefine(rs, index);
+    unsigned int length = 0;
+    boolean res         = FALSE;
+
+    if ((def != NULL) && (rs->row_cur > 0)) 
+    {
+        length = (unsigned int) ((ub2 *) def->buf.lens)[rs->row_cur-1];
+        res    = TRUE;
+    }
+
+    OCI_RESULT(res);
+
+    return length;
 }

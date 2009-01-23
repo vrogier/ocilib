@@ -8,7 +8,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://ocilib.net                     |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2008 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Library General Public          |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.1.0 2008/10/26 07:50 Vince $
+ * $Id: ocilib_internal.h, v 3.1.0 2009/01/23 21:45 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED 
@@ -590,7 +590,7 @@ sword OCI_DescriptorAlloc
 
 sword OCI_DescriptorFree
 (
-    void *descp, const ub4 type
+    void *descp, CONST ub4 type
 );
 
 sword OCI_ObjectNew
@@ -767,14 +767,16 @@ boolean OCI_FetchData
 (
     OCI_Resultset *rs,
     int mode, 
-    int offset
+    int offset,
+    boolean *err
 );
 
 boolean OCI_FetchCustom
 (
     OCI_Resultset *rs,
     int mode, 
-    int offset
+    int offset,
+    boolean *err
 );
 
 #ifdef OCI_CHECK_DATASTRINGS 

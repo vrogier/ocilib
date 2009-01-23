@@ -8,7 +8,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://ocilib.net                     |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2008 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Library General Public          |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: include/ocilib.h, v 3.1.0 2008/10/26 07:50 Vince $
+ * $Id: include/ocilib.h, v 3.1.0 2009/01/23 21:45 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,13 +59,14 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.1.0 (2008-xx-xx)</b>
+ * <b>Current version : 3.1.0 (2009-01-23)</b>
  *
  * @section s_feats Main features
  *
  * - Data binding
  * - Integrated smart define and fetch mecanisms
  * - Full Unicode support on all platorms
+ * - Support for all Oracle SQL and PL/SQL datatypes
  * - Multi row fetching
  * - Binding array Interface for fast and massive bulk operations
  * - Reusable Statements
@@ -2116,7 +2117,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTrace
 (
     OCI_Connection *con, 
     unsigned int trace,
-    mtext *value
+    const mtext *value
 );
 
 /**
@@ -2127,7 +2128,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTrace
  * @param trace - trace type
  *
  * @note
- * See OCI_SetTrace(à for more details.
+ * See OCI_SetTrace() for more details.
  *
  */
 
@@ -3774,7 +3775,7 @@ OCI_EXPORT boolean OCI_API OCI_SetNull
 OCI_EXPORT boolean OCI_API OCI_SetNull2
 (
     OCI_Statement *stmt,
-    mtext *name
+    const mtext *name
 );
 
 /**
@@ -3835,7 +3836,7 @@ OCI_EXPORT boolean OCI_API OCI_SetNullAtPos
 OCI_EXPORT boolean OCI_API OCI_SetNullAtPos2
 (
     OCI_Statement *stmt,
-    mtext *name,
+    const mtext *name,
     unsigned int position
 );
 
@@ -3896,7 +3897,7 @@ OCI_EXPORT  OCI_Bind * OCI_API OCI_GetBind
 OCI_EXPORT  OCI_Bind * OCI_API OCI_GetBind2
 (
     OCI_Statement *stmt, 
-    mtext *name
+    const mtext *name
 );
 
 /**
@@ -5594,7 +5595,7 @@ OCI_EXPORT boolean OCI_API OCI_IsNull
 OCI_EXPORT boolean OCI_API OCI_IsNull2
 (
     OCI_Resultset *rs,
-    mtext *name
+    const mtext *name
 );
 
 /**
@@ -5608,6 +5609,28 @@ OCI_EXPORT boolean OCI_API OCI_IsNull2
 OCI_EXPORT OCI_Statement * OCI_API OCI_ResultsetGetStatement
 (
     OCI_Resultset *rs
+);
+
+/**
+ * @brief
+ * Return the current row data length of the column at the given index
+ * in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param index - Column position
+ *
+ * @note
+ * Column position starts at 1.
+ *
+ * @return
+ * The column current row data length or 0 if index is out of bounds
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetDataLength
+(
+    OCI_Resultset *rs, 
+    unsigned int index
 );
 
 /**
@@ -9099,8 +9122,8 @@ OCI_EXPORT boolean OCI_API OCI_TimestampConstruct
  * @brief
  * Convert one timestamp value from one type to another.
  *
- * @param tmsp  - Timestamp handle to convert
- * @param tmsp2 - Timestamp handle to use for the type conversion
+ * @param tmsp     - Timestamp handle to convert
+ * @param tmsp_src - Timestamp handle to use for the type conversion
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -9110,7 +9133,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampConstruct
 OCI_EXPORT boolean OCI_API OCI_TimestampConvert
 (
     OCI_Timestamp *tmsp,
-    OCI_Timestamp *tmsp2
+    OCI_Timestamp *tmsp_src
 );
 
 /**
@@ -11676,7 +11699,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadJoin
 
 OCI_EXPORT boolean OCI_API OCI_ThreadKeyCreate
 (
-    mtext *name,
+    const mtext *name,
     POCI_THREADKEYDEST destfunc
 );
 
@@ -11694,7 +11717,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadKeyCreate
 
 OCI_EXPORT boolean OCI_API OCI_ThreadKeySetValue
 (
-    mtext *name,
+    const mtext *name,
     void *value
 );
 
@@ -11711,7 +11734,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadKeySetValue
 
 OCI_EXPORT void * OCI_API OCI_ThreadKeyGetValue
 (
-    mtext *name
+    const mtext *name
 );
 
 /**

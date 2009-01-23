@@ -8,7 +8,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://ocilib.net                     |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2008 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Library General Public          |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: object.c, v 3.1.0 2008/10/26 07:50 Vince $
+ * $Id: object.c, v 3.1.0 2009/01/23 21:45 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -109,13 +109,28 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
         else
             obj->hstate = OCI_OBJECT_FETCHED_CLEAN;
 
+
         if ((res == TRUE) && (obj->type == 0))
         {
             ub4 size = sizeof(obj->type);
 
-            OCIObjectGetProperty(OCILib.env, con->err, obj->handle, 
-                                 (OCIObjectPropId) OCI_OBJECTPROP_LIFETIME,
-                                 (void *) &obj->type, &size);
+
+            /* calling OCIObjectGetProperty() on objects that are attributes of
+               parent objects leads to a segfault on MS Windows ! 
+               We need to report that to Oracle ! Because sub objects always are
+               values, if the parent indicator array is not nul, let's assign
+               the object type properties ourselves */
+
+            if (tab_ind == NULL)
+            {
+                OCIObjectGetProperty(OCILib.env, con->err, obj->handle, 
+                                     (OCIObjectPropId) OCI_OBJECTPROP_LIFETIME,
+                                     (void *) &obj->type, &size);
+            }
+            else
+            {
+                obj->type = OCI_OBJECT_VALUE;
+            }
         }
 
         if ((res == TRUE) && ((reset == TRUE) || (obj->tab_ind == NULL)))

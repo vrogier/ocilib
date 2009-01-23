@@ -10,7 +10,7 @@
    +----------------------------------------------------------------------+
    |              Website : http://orclib.sourceforge.net                 |
    +----------------------------------------------------------------------+
-   |    Copyright (c) 2007-2008 Vincent ROGIER <vince.rogier@gmail.com>   |
+   |    Copyright (c) 2007-2009 Vincent ROGIER <vince.rogier@gmail.com>   |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Library General Public          |
@@ -1498,10 +1498,10 @@ void test_collection(void)
 
 void test_ref(void)
 {
+#ifdef OCI_CHARSET_ANSI
+
     OCI_Ref    *ref;
     OCI_Object *obj;
-
-#ifdef OCI_CHARSET_ANSI
 
     print_text("\n>>>>> TEST REF FETCHING \n\n");
 

@@ -8,7 +8,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://ocilib.net                     |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2008 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Library General Public          |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: timestamp.c, v 3.1.0 2008/10/26 07:50 Vince $
+ * $Id: timestamp.c, v 3.1.0 2009/01/23 21:45 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -46,14 +46,16 @@ OCI_Timestamp * OCI_TimestampInit(OCI_Connection *con, OCI_Timestamp **ptmsp,
                                   OCIDateTime *buffer, ub4 type)
 {
     OCI_Timestamp *tmsp = NULL;
-    boolean res         = TRUE;
 
 #if OCI_VERSION_COMPILE >= OCI_9
+
+    boolean res         = TRUE;
 
     OCI_CHECK(ptmsp == NULL, NULL);
 
     if (*ptmsp == NULL)
-        *ptmsp = (OCI_Timestamp *) OCI_MemAlloc(OCI_IPC_TIMESTAMP, sizeof(*tmsp), 1, TRUE);
+        *ptmsp = (OCI_Timestamp *) OCI_MemAlloc(OCI_IPC_TIMESTAMP, sizeof(*tmsp), 
+                                                1, TRUE);
 
     if (*ptmsp != NULL)
     {
@@ -104,8 +106,10 @@ OCI_Timestamp * OCI_TimestampInit(OCI_Connection *con, OCI_Timestamp **ptmsp,
 
 #else
 
+    OCI_NOT_USED(con);
     OCI_NOT_USED(type);
     OCI_NOT_USED(buffer);
+    OCI_NOT_USED(ptmsp);
 
 #endif
 
@@ -336,12 +340,12 @@ boolean OCI_API OCI_TimestampConstruct(OCI_Timestamp *tmsp, int year,int month,
  * OCI_TimestampConvert
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_TimestampConvert(OCI_Timestamp *tmsp, OCI_Timestamp *tmsp2)
+boolean OCI_API OCI_TimestampConvert(OCI_Timestamp *tmsp, OCI_Timestamp *tmsp_src)
 {
     boolean res = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp,  FALSE);
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp,     FALSE);
+    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src, FALSE);
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
@@ -352,7 +356,7 @@ boolean OCI_API OCI_TimestampConvert(OCI_Timestamp *tmsp, OCI_Timestamp *tmsp2)
         res, tmsp->err, tmsp->con,
         
         OCIDateTimeConvert((dvoid *) OCILib.env, tmsp->err,
-                           tmsp->handle, tmsp2->handle)
+                           tmsp_src->handle, tmsp->handle)
     )
 
 #endif
@@ -521,6 +525,9 @@ boolean OCI_API OCI_TimestampGetDate(OCI_Timestamp *tmsp, int *year, int *month,
     OCI_NOT_USED(year);
     OCI_NOT_USED(month);
     OCI_NOT_USED(day);
+    OCI_NOT_USED(yr);
+    OCI_NOT_USED(mt);
+    OCI_NOT_USED(dy);
 
 #endif
 
@@ -578,12 +585,16 @@ boolean OCI_API OCI_TimestampGetTime(OCI_Timestamp *tmsp, int *hour, int *min,
     OCI_NOT_USED(min);
     OCI_NOT_USED(sec);
     OCI_NOT_USED(fsec);
+    OCI_NOT_USED(hr);
+    OCI_NOT_USED(mn);
+    OCI_NOT_USED(sc);
+    OCI_NOT_USED(fs);
 
 #endif
 
-   OCI_RESULT(res);
+    OCI_RESULT(res);
 
-   return res;
+    return res;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -643,9 +654,9 @@ boolean OCI_API OCI_TimestampGetTimeZoneName(OCI_Timestamp *tmsp, int size,
 
 #endif
 
-   OCI_RESULT(res);
+    OCI_RESULT(res);
 
-   return res;
+    return res;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -680,9 +691,9 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset(OCI_Timestamp *tmsp,
 
 #endif
 
-   OCI_RESULT(res);
+    OCI_RESULT(res);
 
-   return res;
+    return res;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -692,53 +703,52 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset(OCI_Timestamp *tmsp,
 boolean OCI_API OCI_TimestampIntervalAdd(OCI_Timestamp *tmsp, OCI_Interval *itv)
 {
     boolean res  = TRUE;
-    ub4 old_type = OCI_TIMESTAMP_TZ;
+    OCI_Timestamp *tmp = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv,  FALSE);
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-
 #if OCI_VERSION_COMPILE >= OCI_9
 
-    /* OCIDateTimeIntervalAdd()  fails if timestamps is not OCI_TIMESTAMP_TZ */
+    /* OCIDateTimeIntervalAdd() fails if timestamps is not OCI_TIMESTAMP_TZ */
 
     if ((res == TRUE) && (tmsp->type != OCI_TIMESTAMP_TZ))    
     {
-        OCI_Timestamp *tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
+        tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
-        old_type = tmsp->type;
-
-        res = OCI_TimestampAssign(tmp, tmsp) && OCI_TimestampConvert(tmp, tmsp);
-
-        OCI_TimestampFree(tmp);
+        res = OCI_TimestampConvert(tmp, tmsp);
     }
+    else
+        tmp = tmsp;
 
     OCI_CALL4
     (
         res, tmsp->err, tmsp->con,
         
-        OCIDateTimeIntervalAdd((dvoid *) OCILib.env, tmsp->err, tmsp->handle,
-                               itv->handle, tmsp->handle)
+        OCIDateTimeIntervalAdd((dvoid *) OCILib.env, tmp->err, tmp->handle,
+                               itv->handle, tmp->handle)
     )
 
-    /* restoring old timestamp type */
+    /* converting back */
 
-    if ((res == TRUE) && (old_type != OCI_TIMESTAMP_TZ))    
+    if ((res == TRUE) && (tmsp->type != OCI_TIMESTAMP_TZ))    
     {
-        OCI_Timestamp *tmp = OCI_TimestampCreate(tmsp->con, old_type);
-
-        res = OCI_TimestampAssign(tmp, tmsp) && OCI_TimestampConvert(tmp, tmsp);
+        res = OCI_TimestampConvert(tmsp, tmp);
 
         OCI_TimestampFree(tmp);
     }
 
+#else
+
+    OCI_NOT_USED(tmp);
+
 #endif
 
-   OCI_RESULT(res);
+    OCI_RESULT(res);
 
-   return res;
+    return res;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -749,7 +759,7 @@ boolean OCI_API OCI_TimestampIntervalSub(OCI_Timestamp *tmsp,
                                          OCI_Interval *itv)
 {
     boolean res  = TRUE;
-    ub4 old_type = OCI_TIMESTAMP_TZ;
+    OCI_Timestamp *tmp = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv,  FALSE);
@@ -762,39 +772,39 @@ boolean OCI_API OCI_TimestampIntervalSub(OCI_Timestamp *tmsp,
 
     if ((res == TRUE) && (tmsp->type != OCI_TIMESTAMP_TZ))    
     {
-        OCI_Timestamp *tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
+        tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
-        old_type = tmsp->type;
-
-        res = OCI_TimestampConvert(tmp, tmsp) && OCI_TimestampAssign(tmp, tmsp);
-
-        OCI_TimestampFree(tmp);
+        res = OCI_TimestampConvert(tmp, tmsp);
     }
+    else
+        tmp = tmsp;
 
     OCI_CALL4
     (
         res, tmsp->err, tmsp->con,
         
-        OCIDateTimeIntervalSub((dvoid *) OCILib.env, tmsp->err, tmsp->handle, 
-                               itv->handle, tmsp->handle)
+        OCIDateTimeIntervalSub((dvoid *) OCILib.env, tmp->err, tmp->handle, 
+                               itv->handle, tmp->handle)
     )
 
-    /* restoring old timestamp type */
+    /* converting back */
 
-    if ((res == TRUE)  && (old_type != OCI_TIMESTAMP_TZ))    
+    if ((res == TRUE) && (tmsp->type != OCI_TIMESTAMP_TZ))    
     {
-        OCI_Timestamp *tmp = OCI_TimestampCreate(tmsp->con, old_type);
-
-        res = OCI_TimestampConvert(tmp, tmsp) && OCI_TimestampAssign(tmp, tmsp);
+        res = OCI_TimestampConvert(tmsp, tmp);
 
         OCI_TimestampFree(tmp);
     }
 
+#else
+
+    OCI_NOT_USED(tmp);
+
 #endif
 
-   OCI_RESULT(res);
+    OCI_RESULT(res);
 
-   return res;
+    return res;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -836,6 +846,8 @@ boolean OCI_API OCI_TimestampSubtract(OCI_Timestamp *tmsp, OCI_Timestamp *tmsp2,
 boolean OCI_API OCI_TimestampSysTimeStamp(OCI_Timestamp *tmsp)
 {
     boolean res = TRUE;
+    OCI_Timestamp *tmp  = NULL;
+    OCIDateTime *handle = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
  
@@ -843,18 +855,46 @@ boolean OCI_API OCI_TimestampSysTimeStamp(OCI_Timestamp *tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9
 
+    /* Filling a timestamp handle of type OCI_TIMESTAMP with 
+       OCIDateTimeSysTimeStamp() can lead later to an error ORA-01483 when
+       binding the given timestamp to some SQL Statement (Oracle BUG).
+       The only way to avoid that is to pass to OCIDateTimeSysTimeStamp() 
+       a timestamp handle of type OCI_TIMESTAMP_TZ and convert it back to
+       OCI_TIMESTAMP if needed
+    */
+
+    if ((res == TRUE) && (tmsp->type == OCI_TIMESTAMP))    
+    {
+        tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
+
+        handle = tmp->handle;
+    }
+    else
+        handle = tmsp->handle;
+
     OCI_CALL4
     (
         res, tmsp->err, tmsp->con,
         
-        OCIDateTimeSysTimeStamp((dvoid *) OCILib.env, tmsp->err, tmsp->handle)
+        OCIDateTimeSysTimeStamp((dvoid *) OCILib.env, tmsp->err, handle)
     )
+
+    if ((res == TRUE) && (tmsp->type == OCI_TIMESTAMP))    
+    {
+        res = OCI_TimestampConvert(tmsp, tmp);
+
+        OCI_TimestampFree(tmp);
+    }
+
+#else
+
+    OCI_NOT_USED(tmp);
 
 #endif
 
-   OCI_RESULT(res);
+    OCI_RESULT(res);
 
-   return res;
+    return res;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -926,7 +966,7 @@ boolean OCI_API OCI_TimestampFromCTime(OCI_Timestamp *tmsp, struct tm *ptm,
                                   (int) 0,
                                   (const mtext *) NULL);
 
-   OCI_RESULT(res);
+    OCI_RESULT(res);
 
-   return res;
+    return res;
 }

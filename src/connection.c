@@ -8,7 +8,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://ocilib.net                     |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2008 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Library General Public          |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.1.0 2008/10/26 07:50 Vince $
+ * $Id: connection.c, v 3.1.0 2009/01/23 21:45 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -337,29 +337,6 @@ boolean OCI_ConnectionLogon(OCI_Connection *con)
         OCI_ReleaseMetaString(ostr);
     }
 
-    /* set OCILIB's driver layer namer attribute */
-
-#if OCI_VERSION_COMPILE >= OCI_11
-
-    if ((res == TRUE) && (OCILib.ver_runtime >= OCI_11))
-    {
-        osize = -1;
-        ostr  = OCI_GetInputMetaString(OCILIB_DRIVER_NAME, &osize);
-
-        OCI_CALL2
-        (
-            res, con,
-            
-            OCIAttrSet((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION, 
-                       (dvoid *) ostr, (ub4) osize, 
-                       (ub4) OCI_ATTR_DRIVER_NAME, con->err)
-        )
-
-        OCI_ReleaseMetaString(ostr);
-    }
-
-#endif
-
     /* start session */
     
     if (res == TRUE)
@@ -409,6 +386,31 @@ boolean OCI_ConnectionLogon(OCI_Connection *con)
         
         res = OCI_TransactionStart(con->trs);
     }
+
+
+    /* set OCILIB's driver layer namer attribute */
+
+#if OCI_VERSION_COMPILE >= OCI_11
+
+    if ((res == TRUE) && (OCILib.ver_runtime >= OCI_11) && (con->ver_maj >= OCI_11))
+    {
+        osize = -1;
+        ostr  = OCI_GetInputMetaString(OCILIB_DRIVER_NAME, &osize);
+
+        OCI_CALL2
+        (
+            res, con,
+            
+            OCIAttrSet((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION, 
+                       (dvoid *) ostr, (ub4) osize, 
+                       (ub4) OCI_ATTR_DRIVER_NAME, con->err)
+        )
+
+        OCI_ReleaseMetaString(ostr);
+    }
+
+#endif
+
 
    /* update internal status */
     
@@ -1240,11 +1242,15 @@ const dtext * OCI_API OCI_ServerGetOutput(OCI_Connection *con)
  * OCI_SetTrace
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace, mtext *value)
+boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace, 
+                             const mtext *value)
 {
     boolean res = TRUE;
     mtext *str  = NULL;
+
+#if OCI_VERSION_COMPILE >= OCI_10
     ub4 attrib  = 0;
+#endif
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
 
