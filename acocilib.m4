@@ -257,7 +257,7 @@ if test x"$OCILIB_IMPORT" = x"OCI_IMPORT_LINKAGE"; then
 	OCILIB_LD_FLAG=""	
 else
 	#check for oracle share lib name to define
-	ORACLE_LIBNAME="-DOCI_DL=$ac_lib_name"
+	ORACLE_LIBNAME="-DOCI_DL="$ac_lib_name""
 
 	AC_MSG_CHECKING([for Oracle lib define ])
 	AC_MSG_RESULT([$ORACLE_LIBNAME])

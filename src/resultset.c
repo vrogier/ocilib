@@ -2054,3 +2054,4 @@ unsigned int OCI_API OCI_GetDataLength(OCI_Resultset *rs, unsigned int index)
 
     return length;
 }
+
