@@ -1525,3 +1525,24 @@ boolean OCI_API OCI_ObjectGetSelfRef(OCI_Object *obj, OCI_Ref *ref)
 
     return res;
 }
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ObjectGetStruct
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_ObjectGetStruct(OCI_Object *obj, void **pp_struct, 
+                                    void** pp_ind)
+{
+    OCI_CHECK_PTR(OCI_IPC_OBJECT, obj, FALSE);
+
+    OCI_RESULT(TRUE);
+
+    *pp_struct = (void *) obj->handle;
+
+    if (pp_ind)
+        *pp_ind = (void *) obj->tab_ind;
+
+    OCI_RESULT(TRUE);
+
+    return TRUE;
+}
