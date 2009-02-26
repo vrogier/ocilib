@@ -379,14 +379,34 @@ boolean OCI_ColumnMap(OCI_Column *col, OCI_Statement *stmt)
             col->dtype    = OCI_HTYPE_STMT;
             break;
 
-        case SQLT_RDD:
         case SQLT_RID:
+        case SQLT_RDD:
 
             col->icode   = SQLT_STR;
             col->type    = OCI_CDT_TEXT;
-            col->bufsize = (OCI_SIZE_ROWID+1) * sizeof(dtext);
-            break;
 
+            if ((col->ocode == SQLT_RDD) || (col->size > sizeof(OCIRowid *)))
+            {
+                /* For Oracle 7 ROWIDs and regular ROWID descriptors, the 
+                   max size of the hex value is defined by the constant
+                   OCI_SIZE_ROWID 
+                */
+
+                col->bufsize = (OCI_SIZE_ROWID + 1) * sizeof(dtext);
+            }
+            else
+            {
+                /* For ROWID descriptor, if column size is bigger than the size
+                    of the descriptor, it means that an UROWID column and then 
+                    the column size is the maxixum size needed for representing
+                    its value as an hex string
+                */
+
+                col->bufsize = (col->size + 1) * sizeof(dtext);
+            }
+
+            break;
+ 
         case SQLT_BIN:
 
             col->type    = OCI_CDT_RAW;
