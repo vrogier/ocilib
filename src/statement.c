@@ -276,17 +276,10 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
     OCI_Bind *bnd    = NULL;
     ub4 exec_mode    = OCI_DEFAULT;
     boolean is_pltbl = FALSE;
+    boolean reused   = FALSE;
     ub4 *pnbelem     = NULL;
     int index        = 0;
     ub4 i;
-
-    /* check if the bind name has already been used */
-
-    if (OCI_BindGetIndex(stmt, name) > 0)
-    {
-        OCI_ExceptionBindAlreadyUsed(stmt, name);
-        res = FALSE;
-    }
 
     /* check index if necessary */
 
@@ -300,6 +293,32 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
             {
                 OCI_ExceptionOutOfBounds(stmt->con, index);
                 res = FALSE;
+            }
+        }
+    }
+
+    /* check if the bind name has already been used */
+
+    if (res == TRUE)
+    {
+        if (mode == OCI_BIND_INPUT)
+        {
+            int test_index = OCI_BindGetIndex(stmt, name);
+
+            if (test_index > 0) 
+            {
+                if (stmt->bind_reuse == FALSE)
+                {
+                    OCI_ExceptionBindAlreadyUsed(stmt, name);
+                    res = FALSE;
+                }
+                else
+                {
+                    bnd = stmt->ubinds[test_index-1];
+                    reused = TRUE;
+                }
+
+                index = test_index;
             }
         }
     }
@@ -382,7 +401,10 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
     if (res == TRUE)
     {
-        bnd = (OCI_Bind *) OCI_MemAlloc(OCI_IPC_BIND, sizeof(*bnd),  1, TRUE);
+        if (bnd == NULL)
+        {
+            bnd = (OCI_Bind *) OCI_MemAlloc(OCI_IPC_BIND, sizeof(*bnd),  1, TRUE);
+        }
 
         res = (bnd != NULL);
     }
@@ -391,8 +413,11 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
     if (res == TRUE)
     {
-        bnd->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(sb2),
-                                              nbelem, TRUE);
+        if (bnd->buf.inds == NULL)
+        {
+            bnd->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, 
+                                                  sizeof(sb2), nbelem, TRUE);
+        }
 
         res = (bnd->buf.inds != NULL);
     }
@@ -408,8 +433,11 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
         if (res == TRUE)
         {
-            bnd->plrcds = (ub2 *) OCI_MemAlloc(OCI_IPC_PLS_RCODE_ARRAY,
-                                               sizeof(ub2), nbelem, TRUE);
+            if (bnd->plrcds == NULL)
+            {
+                bnd->plrcds = (ub2 *) OCI_MemAlloc(OCI_IPC_PLS_RCODE_ARRAY,
+                                                   sizeof(ub2), nbelem, TRUE);
+            }
 
             res = (bnd->plrcds != NULL);
         }
@@ -434,9 +462,11 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         {
             bnd->alloc = TRUE;
 
-            bnd->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, size, 
-                                                   nbelem, TRUE);
-
+            if (bnd->buf.data == NULL)
+            {
+                bnd->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, size, 
+                                                       nbelem, TRUE);
+            }
 
             res = (bnd->buf.data != NULL);
         }
@@ -448,8 +478,11 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
     if (res == TRUE && ((is_pltbl == TRUE) || (type == OCI_CDT_RAW)))
     {
-        bnd->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, sizeof(ub2),
-                                              nbelem, TRUE);
+        if (bnd->buf.lens == NULL)
+        {
+            bnd->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, sizeof(ub2),
+                                                  nbelem, TRUE);
+        }
 
         res = (bnd->buf.lens != NULL);
 
@@ -475,9 +508,13 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         bnd->input     = (void **) data;
         bnd->type      = type;
         bnd->size      = size;
-        bnd->name      = mtsdup(name);
         bnd->code      = (ub2) code;
         bnd->subtype   = (ub1) subtype;
+
+        if (bnd->name == NULL)
+        {
+            bnd->name = mtsdup(name);
+        }
 
         /* initialize buffer */
 
@@ -637,16 +674,17 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
     {
         if (mode == OCI_BIND_INPUT)
         {
-            stmt->ubinds[stmt->nb_ubinds++] = bnd;
+            if (reused == FALSE)
+            {
+                stmt->ubinds[stmt->nb_ubinds++] = bnd;
 
-            /* for user binds, add a positive index */
+                /* for user binds, add a positive index */
 
-            OCI_HashAddInt(stmt->map, name, stmt->nb_ubinds);
+                OCI_HashAddInt(stmt->map, name, stmt->nb_ubinds);
+            }
         }
         else
         {
-            int index;
-
             /* for register binds, add a negative index */
 
             stmt->rbinds[stmt->nb_rbinds++] = bnd;
@@ -940,6 +978,7 @@ OCI_Statement * OCI_StatementInit(OCI_Connection *con, OCI_Statement **pstmt,
 
         stmt->exec_mode     = OCI_DEFAULT;
         stmt->long_size     = OCI_SIZE_LONG;
+        stmt->bind_reuse    = TRUE;
         stmt->bind_mode     = OCI_BIND_BY_NAME;
         stmt->long_mode     = OCI_LONG_EXPLICIT;
 
@@ -1532,6 +1571,21 @@ unsigned int OCI_API OCI_BindArrayGetSize(OCI_Statement *stmt)
     OCI_RESULT(TRUE);
 
     return stmt->nb_iters;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_AllowRebinding
+ * ------------------------------------------------------------------------ */
+
+OCI_EXPORT boolean OCI_API OCI_AllowRebinding(OCI_Statement *stmt, boolean value)
+{
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
+
+    OCI_RESULT(TRUE);
+
+    stmt->bind_reuse = value;
+
+    return TRUE;
 }
 
 /* ------------------------------------------------------------------------ *
