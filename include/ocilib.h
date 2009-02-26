@@ -2939,6 +2939,28 @@ OCI_EXPORT unsigned int OCI_API OCI_BindArrayGetSize
 
 /**
  * @brief
+ * Allow different host variables to be binded using the same bind name o
+ * position between execution of a prepared statement
+ *
+ * @param stmt  - Statement handle
+ * @param value - Rebinding mode allowed
+ *
+ *@note
+ * Default value is FALSE
+ * 
+ * @return
+ * TRUE on success otherwise FALSE
+ */
+
+OCI_EXPORT boolean OCI_API OCI_AllowRebinding
+(
+    OCI_Statement *stmt,
+    boolean value
+);
+
+
+/**
+ * @brief
  * Bind an short variable
  *
  * @param stmt - Statement handle
@@ -6070,9 +6092,10 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetPrev
 
 /**
  * @brief
- * Create a local and generic collection element instance
+ * Create a local collection element instance based on a collection type
+ * descriptor
  *
- * @param con  - Connection handle
+ * @param schema  - Schema handle
  *
  * @return
  * Return the collection element handle on success otherwise NULL on failure
@@ -6081,7 +6104,7 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetPrev
 
 OCI_EXPORT OCI_Elem * OCI_API OCI_ElemCreate
 (
-    OCI_Connection *con
+    OCI_Schema *schema
 );
 
 /**
@@ -10721,6 +10744,33 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetNull
 (
     OCI_Object *obj,
     const mtext *attr
+);
+
+/**
+ * @brief
+ * Retrieve the underlying C (OTT/OCI style) structure of an OCI_Object handle
+ *
+ * @param obj       - Object handle
+ * @param pp_struct - Adress of a pointer that reveive the C structure of data
+ * @param pp_ind    - Adress of a pointer that reveive the C structure of indicators
+ *
+ * @note
+ * See Oracle OCI programming guide for more details about OTT structures.
+ * The members of theses structures are OCI datatypes like OCINumber, OCIString
+ * that requires mixing OCILIB code and raw OCI code.
+ * OCI Object API headers have to be included to handle this datatypes using 
+ * OCI object functions
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectGetStruct
+(
+    OCI_Object *obj, 
+    void **pp_struct, 
+    void ** pp_ind
 );
 
 /**
