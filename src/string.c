@@ -137,7 +137,7 @@ int OCI_StringCopy2to4bytes(const unsigned short* src, int src_size,
                 if ((c2 >= UNI_SUR_LOW_START) && (c2 <= UNI_SUR_LOW_END))
                 {
                     c1 = ((c1 - UNI_SUR_HIGH_START) << UNI_SHIFT) + 
-                          (c1 - UNI_SUR_LOW_START )  + UNI_BASE;
+                          (c2 - UNI_SUR_LOW_START )  + UNI_BASE;
                     
                     ++src;
                 }
