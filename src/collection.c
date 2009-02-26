@@ -311,8 +311,7 @@ OCI_Elem * OCI_API OCI_CollGetAt(OCI_Coll *coll, unsigned int index)
     if (res == TRUE && exists == TRUE && data != NULL)
     {
         elem = coll->elem = OCI_ElemInit(coll->con, &coll->elem,
-                                         (OCIColl *) data,
-                                         p_ind, coll->nty->cols);
+                                         (OCIColl *) data, p_ind, coll->nty);
     }
 
     OCI_RESULT(res);
@@ -331,9 +330,7 @@ boolean OCI_API OCI_CollSetAt(OCI_Coll *coll, unsigned int index, OCI_Elem *elem
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
 
-    OCI_CHECK_COMPAT(coll->con, 
-                     elem->col->icode == coll->nty->cols[0].icode, 
-                     FALSE);
+    OCI_CHECK_COMPAT(coll->con, elem->nty->cols[0].type == coll->nty->cols[0].type, FALSE);
 
     OCI_CALL2
     (
@@ -359,9 +356,7 @@ boolean OCI_API OCI_CollAppend(OCI_Coll *coll, OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
     
-    OCI_CHECK_COMPAT(coll->con,
-                     elem->col->icode == coll->nty->cols[0].icode, 
-                     FALSE);
+    OCI_CHECK_COMPAT(coll->con, elem->nty->cols[0].type == coll->nty->cols[0].type, FALSE);
 
     OCI_CALL2
     (

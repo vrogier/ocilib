@@ -74,8 +74,8 @@ OCI_Iter * OCI_API OCI_IterCreate(OCI_Coll *coll)
         /* create data element accessor */
 
        if (res == TRUE)
-           iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL, NULL, 
-                                     coll->nty->cols);
+           iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL, 
+                                     (OCIInd *) NULL, coll->nty);
     
        if (res == TRUE)
            res = (iter->elem != NULL);

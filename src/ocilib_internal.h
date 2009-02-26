@@ -252,7 +252,7 @@ OCI_Elem * OCI_ElemInit
     OCI_Elem **pelem,
     void *handle, 
     OCIInd *pind, 
-    OCI_Column *col
+    OCI_Schema *nty
 );
 
 /* ------------------------------------------------------------------------ *

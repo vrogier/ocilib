@@ -448,6 +448,8 @@ typedef struct OCILobLocator    OCILobLocator; /* OCI Lob Locator descriptor */
 typedef struct OCIParam         OCIParam;        /* OCI PARameter descriptor */
 typedef struct OCIDateTime      OCIDateTime;      /* OCI DateTime descriptor */
 typedef struct OCIInterval      OCIInterval;      /* OCI Interval descriptor */
+typedef struct OCIRowid         OCIRowid;            /* OCI ROWID descriptor */
+
 
 /*----------------------------- OBJECT FREE OPTION --------------------------*/
 

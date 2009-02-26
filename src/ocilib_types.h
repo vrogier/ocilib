@@ -388,6 +388,7 @@ struct OCI_Statement {
     OCI_HashTable   *map;           /* hash table handle for mapping bind name/index */
     ub2              nb_ubinds;     /* number of elememts in the bind array */
     ub2              nb_rbinds;     /* number of output binds */
+    boolean          bind_reuse;    /* rebind data allowed ? */
     unsigned int     bind_mode;     /* type of binding */
     ub4              exec_mode;     /* type of execution */
     ub4              fetch_size;    /* fetch array size */
@@ -523,12 +524,12 @@ struct OCI_Elem {
     void            *handle;   /* OCI handle */
     ub4              hstate;   /* object variable state */
     OCI_Connection  *con;      /* pointer to connection object */
-    OCIInd          *ind;      /* data state indicator */
     void            *obj;      /* OCILIB sub object */
-    OCI_Column      *col;      /* datatype infos */
     void            *buf;      /* buffer to store converted out string attribute */ 
     int              buflen;   /* buffer len */
     boolean          init;     /* underlying object has been initialized ? */
+    OCI_Schema      *nty;      /* object type information */
+    OCIInd          *ind;      /* data state indicator */
 };
 
 /*
