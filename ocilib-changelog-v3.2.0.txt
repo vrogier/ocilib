@@ -1,0 +1,22 @@
+2009-03-XX Version 3.2.0 Vincent Rogier vince.rogier@gmail.com
+
+    * Extended binding possibilities
+
+      - Added OCI_AllowRebinding()
+      - Now different host variables can be rebinded to the same statement
+
+    * Extented Object API
+
+      - Added OCI_ObjectGetStruct()
+      - Now it's possible to retrieve the underlying C (OTT style) structure of an OCI_Object handle
+
+    * Fixed OCI_Element API
+
+      - Modified OCI_ElemCreate() that takes now an OCI_Schema handle instead of an OCI_Connection handle
+      - Fixed OCI_ElementFree() that could not free underlying sub objects OCI handles
+      - Fixed segfaults when using local instance of OCI_Elem created wit OCI_ElemCreate()
+
+    * Extended UROWID support
+
+      - Large UROWID hexadecimal strings where truncated to OCI_ROWID_SIZE (default 23) characters
+      - Now OCILIB handles correctly UROWID columns (size up to 4000 chars)
