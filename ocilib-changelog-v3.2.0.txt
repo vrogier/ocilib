@@ -11,7 +11,6 @@
       - Added OCI_DirPathSetColumn()
       - Added OCI_DirPathPrepare()
       - Added OCI_DirPathSetEntry()
-      - Added OCI_DirPathSetArray()
       - Added OCI_DirPathConvert()
       - Added OCI_DirPathLoad()
       - Added OCI_DirPathReset()
@@ -26,8 +25,8 @@
       - Added OCI_DirPathEnableCache()
       - Added OCI_DirPathSetCacheSize()
       - Added OCI_DirPathSetBufferSize()
-      - Added OCI_DirPathGetLoadedCount()
-      - Added OCI_DirPathGetProcessedCount()
+      - Added OCI_DirPathGetCountLoaded()
+      - Added OCI_DirPathGetCountProcessed()
       - Added OCI_DirPathGetErrorColumn()
       - Added OCI_DirPathGetErrorRow() 
 

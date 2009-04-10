@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: include/ocilib.h, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: include/ocilib.h, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,7 +59,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.1.0 (2009-01-23)</b>
+ * <b>Current version : 3.2.0 (2009-03-23)</b>
  *
  * @section s_feats Main features
  *
@@ -81,6 +81,7 @@ extern "C" {
  * - Full PL/SQL support (blocks, cursors, Index by Tables and Nested tables)
  * - LOB (BLOBs/ FILEs)
  * - Supports lobs > 4Go
+ * - Supports Direct Path API
  * - Long datatype (piecewise operations)
  * - Provides "All in one" Formatted functions (printf's like)
  * - Smallest possible memory usage
@@ -897,10 +898,10 @@ typedef struct OCI_Elem OCI_Elem;
 typedef struct OCI_Iter OCI_Iter;
 
 /**
- * @struct OCI_Schema
+ * @struct OCI_TypeInfo
  *
  * @brief
- * Schema metadata handle.
+ * Type info metadata handle.
  *
  */
 
@@ -915,7 +916,7 @@ typedef struct OCI_Iter OCI_Iter;
 typedef struct OCI_Ref OCI_Ref;
 
 
-typedef struct OCI_Schema OCI_Schema;
+typedef struct OCI_TypeInfo OCI_TypeInfo;
 
 /**
  * @struct OCI_HashTable
@@ -960,6 +961,16 @@ typedef struct OCI_Mutex OCI_Mutex;
  */
 
 typedef struct OCI_Thread OCI_Thread;
+
+/**
+ * @struct OCI_DirPath
+ *
+ * @brief
+ * OCILIB encapsulation of OCI Direct Path handle.
+ *
+ */
+
+typedef struct OCI_DirPath OCI_DirPath;
 
 /**
  * @}
@@ -1153,7 +1164,7 @@ typedef struct OCI_HashEntry {
 #define OCI_ERR_MEMORY                  5
 #define OCI_ERR_NOT_AVAILABLE           6
 #define OCI_ERR_NULL_POINTER            7
-#define OCI_ERR_NOT_SUPPORTED           8
+#define OCI_ERR_DATATYPE_NOT_SUPPORTED  8
 #define OCI_ERR_PARSE_TOKEN             9
 #define OCI_ERR_MAP_ARGUMENT            10
 #define OCI_ERR_OUT_OF_BOUNDS           11
@@ -1165,6 +1176,9 @@ typedef struct OCI_HashEntry {
 #define OCI_ERR_STMT_STATE              17
 #define OCI_ERR_STMT_NOT_SCROLLABLE     18
 #define OCI_ERR_BIND_ALREADY_USED       19
+#define OCI_ERR_BIND_ARRAY_SIZE         20
+#define OCI_ERR_COLUMN_NOT_FOUND        21
+#define OCI_ERR_DIRPATH_STATE           22
 
 /* binding */
 
@@ -1295,11 +1309,11 @@ typedef struct OCI_HashEntry {
 #define OCI_SEEK_END            2
 #define OCI_SEEK_CUR            3
 
-/* schema types */
+/* type info types */
 
-#define OCI_SCHEMA_TABLE        1
-#define OCI_SCHEMA_VIEW         2
-#define OCI_SCHEMA_TYPE         3
+#define OCI_TIF_TABLE           1
+#define OCI_TIF_VIEW            2
+#define OCI_TIF_TYPE            3
 
 /* object type */
 
@@ -1327,6 +1341,15 @@ typedef struct OCI_HashEntry {
 #define OCI_SIZE_FILENAME       255
 #define OCI_SIZE_FORMAT_NUMS    40
 #define OCI_SIZE_FORMAT_NUML    65
+#define OCI_SIZE_OBJ_NAME       30
+
+/* Direct path processing return status */
+
+#define OCI_DPR_COMPLETE        1
+#define OCI_DPR_ERROR           2
+#define OCI_DPR_FULL            3
+#define OCI_DPR_PARTIAL         4
+#define OCI_DPR_EMPTY           5
 
 /* trace size constants */
 
@@ -1358,19 +1381,6 @@ typedef struct OCI_HashEntry {
 #define OCI_TRS_SERIALIZABLE    0x00000400
 #define OCI_TRS_LOOSE           0x00010000
 #define OCI_TRS_TIGHT           0x00020000
-
-/* Transaction types */
-
-#define OCI_DBS_MOUNT           0x00000001
-#define OCI_DBS_OPEN            0x00000100
-#define OCI_DBS_CLOSE           0x00000200
-#define OCI_DBS_DISMOUNT        0x00000400
-
-#define OCI_TRS_LOOSE           0x00010000
-#define OCI_TRS_TIGHT           0x00020000
-
-#define OCI_DBS_MOUNT_OPEN      OCI_DBS_MOUNT | OCI_DBS_OPEN
-#define OCI_DBS_CLOSE_DISMOUNT  OCI_DBS_CLOSE | OCI_DBS_DISMOUNT
 
 /* string constants */
 
@@ -1404,7 +1414,7 @@ typedef struct OCI_HashEntry {
  * - Connections
  * - Connection pools
  * - Statements
- * - Schema objects
+ * - Type info objects
  * - Thread keys
  *
  * @warning
@@ -1718,6 +1728,10 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_ErrorGetStatement
  * - OCI_SESSION_DEFAULT
  * - OCI_SESSION_SYSDBA
  * - OCI_SESSION_SYSOPER
+ *
+ * @note
+ * External credentials are supported by supplying a null value for the 'user'
+ * and 'pwd' parameters 
  *
  * @note
  * On success, a transaction is automatically created and started
@@ -2910,7 +2924,21 @@ OCI_EXPORT unsigned int OCI_API OCI_GetAffectedRows
  *
  * @warning
  * Do not use OCI_BindArraySetSize() for PL/SQL tables binding
+ * 
+ * @note
+ * OCI_BindArraySetSize() is used to set the size of input bind array when using 
+ * arrays for DML statements.
+ * OCI_BindArraySetSize() MUST be called to set the maximum size of the arrays
+ * to bind to the statement before any of its execution. This initial call must
+ * be bone after OCI_Prepare() and any OCI_BindArrayOfxxx() call.
  *
+ * @note
+ * OCI_BindArraySetSize can optionnaly be called before any later OCI_Execute() 
+ * call in order to notify the statement of the exact number of elements
+ * populating the input arrays for the next execution. The array size passed to 
+ * later OCI_BindArraySetSize() calls cannot be greater than the initial size 
+ * otherwise an exeception will be thrown.
+ * 
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -2923,7 +2951,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArraySetSize
 
 /**
  * @brief
- * Return the input array size for bulk operations
+ * Return the current input array size for bulk operations
  *
  * @param stmt - Statement handle
  *
@@ -3593,7 +3621,7 @@ OCI_EXPORT boolean OCI_API OCI_BindObject
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of object handle
- * @param schema - type schema handle
+ * @param typinf - type info handle
  * @param nbelem - Number of element in the array
  *
  * @return
@@ -3606,7 +3634,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfObjects
     OCI_Statement *stmt,
     const mtext *name,
     OCI_Object **data,
-    OCI_Schema *schema,
+    OCI_TypeInfo *typinf,
     unsigned int nbelem
 );
 
@@ -3636,7 +3664,7 @@ OCI_EXPORT boolean OCI_API OCI_BindColl
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of Collection handle
- * @param schema - type schema handle
+ * @param typinf - type info handle
  * @param nbelem - Number of element in the array
  *
  * @note
@@ -3652,7 +3680,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfColls
     OCI_Statement *stmt, 
     const mtext *name, 
     OCI_Coll **data, 
-    OCI_Schema *schema, 
+    OCI_TypeInfo *typinf, 
     unsigned int nbelem
 );
 
@@ -3682,7 +3710,7 @@ OCI_EXPORT boolean OCI_API OCI_BindRef
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of Ref handle
- * @param schema - type schema handle
+ * @param typinf - type info handle
  * @param nbelem - Number of element in the array
  *
  * @return
@@ -3695,7 +3723,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfRefs
     OCI_Statement *stmt, 
     const mtext *name, 
     OCI_Ref **data, 
-    OCI_Schema *schema, 
+    OCI_TypeInfo *typinf, 
     unsigned int nbelem
 );
 
@@ -4702,7 +4730,7 @@ OCI_EXPORT boolean OCI_API OCI_ColumnGetCharUsed
 
 /**
  * @brief
- * Return the schema object associated to the column
+ * Return the type information object associated to the column
  *
  * @param col - Column handle
  *
@@ -4712,7 +4740,7 @@ OCI_EXPORT boolean OCI_API OCI_ColumnGetCharUsed
  *
  */
 
-OCI_EXPORT OCI_Schema * OCI_API OCI_ColumnGetSchema
+OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
 (
     OCI_Column *col
 );
@@ -5819,7 +5847,7 @@ OCI_EXPORT const dtext * OCI_API OCI_ServerGetOutput
  * @brief
  * Create a local collection instance
  *
- * @param schema - schema handle of the collection type descriptor
+ * @param typinf - type info handle of the collection type descriptor
  *
  * @return
  * Return the collection object handle on success otherwise NULL on failure
@@ -5828,7 +5856,7 @@ OCI_EXPORT const dtext * OCI_API OCI_ServerGetOutput
 
 OCI_EXPORT OCI_Coll * OCI_API OCI_CollCreate
 (
-    OCI_Schema *schema
+    OCI_TypeInfo *typinf
 );
 
 /**
@@ -5875,13 +5903,13 @@ OCI_EXPORT boolean OCI_API OCI_CollAssign
 
 /**
  * @brief
- * Return the schema object associated to the collection
+ * Return the typ_ info object associated to the collection
  *
  * @param coll - Collection handle
  *
  */
 
-OCI_EXPORT OCI_Schema * OCI_API OCI_CollGetSchema
+OCI_EXPORT OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo
 (
     OCI_Coll *coll
 );
@@ -6095,7 +6123,7 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetPrev
  * Create a local collection element instance based on a collection type
  * descriptor
  *
- * @param schema  - Schema handle
+ * @param typinf  - Type info handle
  *
  * @return
  * Return the collection element handle on success otherwise NULL on failure
@@ -6104,7 +6132,7 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetPrev
 
 OCI_EXPORT OCI_Elem * OCI_API OCI_ElemCreate
 (
-    OCI_Schema *schema
+    OCI_TypeInfo *typinf
 );
 
 /**
@@ -7084,7 +7112,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterInterval
  *
  * @param stmt   - Statement handle
  * @param name   - Output bind name
- * @param schema - Type schema handle
+ * @param typinf - Type info handle
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -7094,7 +7122,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterObject
 (
     OCI_Statement *stmt,
     const mtext *name,
-    OCI_Schema *schema
+    OCI_TypeInfo *typinf
 );
 
 /**
@@ -7147,7 +7175,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterFile
  *
  * @param stmt   - Statement handle
  * @param name   - Output bind name
- * @param schema - Type schema handle
+ * @param typinf - Type info handle
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -7157,7 +7185,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterRef
 (
     OCI_Statement *stmt, 
     const mtext *name, 
-    OCI_Schema *schema
+    OCI_TypeInfo *typinf
 );
 
 
@@ -9809,7 +9837,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalSubtract
  * Create a local object instance
  *
  * @param con    - Connection handle
- * @param schema - Object type (Shema handle)
+ * @param typinf - Object type (type info handle)
  *
  * @return
  * Return the object handle on success otherwise NULL on failure
@@ -9819,7 +9847,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalSubtract
 OCI_EXPORT OCI_Object * OCI_API OCI_ObjectCreate
 (
     OCI_Connection *con,
-    OCI_Schema *schema
+    OCI_TypeInfo *typinf
 );
 
 /**
@@ -9914,13 +9942,13 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetSelfRef
 
 /**
  * @brief
- * Return the schema object associated to the object
+ * Return the type info object associated to the object
  *
  * @param obj - Object handle
  *
  */
 
-OCI_EXPORT OCI_Schema * OCI_API OCI_ObjectGetSchema
+OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ObjectGetTypeInfo
 (
     OCI_Object *obj
 );
@@ -10778,7 +10806,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetStruct
  * Create a local Ref instance
  *
  * @param con    - Connection handle
- * @param schema - Ref type
+ * @param typinf - Ref type
  *
  * @return
  * Return the Ref handle on success otherwise NULL on failure
@@ -10788,7 +10816,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetStruct
 OCI_EXPORT OCI_Ref * OCI_API OCI_RefCreate
 (
     OCI_Connection *con,
-    OCI_Schema *schema
+    OCI_TypeInfo *typinf
 );
 
 /**
@@ -10834,13 +10862,13 @@ OCI_EXPORT boolean OCI_API OCI_RefAssign
 
 /**
  * @brief
- * Return the schema object associated to the Ref
+ * Return the type info object associated to the Ref
  *
  * @param ref - Ref handle
  *
  */
 
-OCI_EXPORT OCI_Schema * OCI_API OCI_RefGetSchema
+OCI_EXPORT OCI_TypeInfo * OCI_API OCI_RefGetTypeInfo
 (
     OCI_Ref *ref
 );
@@ -10999,7 +11027,7 @@ OCI_EXPORT boolean OCI_API OCI_Break
 
 /**
  * @brief
- * Retrieve the available schema information
+ * Retrieve the available type info information
  *
  * @param con  - Connection handle
  * @param name - Table/view name to query for
@@ -11009,18 +11037,18 @@ OCI_EXPORT boolean OCI_API OCI_Break
  * Possible values for parameter type are :
  *
  * - OCI_UNKNOWN
- * - OCI_SCHEMA_TABLE
- * - OCI_SCHEMA_VIEW
- * - OCI_SCHEMA_TYPE
+ * - OCI_TIF_TABLE
+ * - OCI_TIF_VIEW
+ * - OCI_TIF_TYPE
  *
  * @return
- * - Schema handle on success
+ * - Type info handle on success
  = - NULL if the object does not exist
  * - NULL on failure
  *
  */
 
-OCI_EXPORT OCI_Schema * OCI_API OCI_SchemaGet
+OCI_EXPORT OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 (
     OCI_Connection *con,
     const mtext *name,
@@ -11029,62 +11057,62 @@ OCI_EXPORT OCI_Schema * OCI_API OCI_SchemaGet
 
 /**
  * @brief
- * Return the type schema object
+ * Return the type of the type info object
  *
- * @param schema - Schema handle
+ * @param typinf - Type info handle
  *
  * @note
  * Possible values for parameter type are :
  *
  * - OCI_UNKNOWM
- * - OCI_SCHEMA_TABLE
- * - OCI_SCHEMA_VIEW
- * - OCI_SCHEMA_TYPE
+ * - OCI_TIF_TABLE
+ * - OCI_TIF_VIEW
+ * - OCI_TIF_TYPE
  *
  * @return
  * Object type or OCI_UNKNOWN the input handle is NULL
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_SchemaGetType
+OCI_EXPORT unsigned int OCI_API OCI_TypeInfoGetType
 (
-    OCI_Schema *schema
+    OCI_TypeInfo *typinf
 );
 
 /**
  * @brief
- * Free a schema object
+ * Free a type info object
  *
- * @param schema  - Schema object handle
+ * @param typinf  - Type info handle
  *
  * @return
  * TRUE on success otherwise FALSE
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SchemaFree
+OCI_EXPORT boolean OCI_API OCI_TypeInfoFree
 (
-    OCI_Schema *schema
+    OCI_TypeInfo *typinf
 );
 
 /**
  * @brief
  * Retruns the number of columns of a table/view/object
  *
- * @param schema - Schema handle
+ * @param typinf - Type info handle
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_SchemaGetColumnCount
+OCI_EXPORT unsigned int OCI_API OCI_TypeInfoGetColumnCount
 (
-    OCI_Schema *schema
+    OCI_TypeInfo *typinf
 );
 
 /**
  * @brief
  * Return the column object handle at the given index in the table
  *
- * @param schema - Schema handle
+ * @param typinf - Type info handle
  * @param index  - Column position
  *
  * @return
@@ -11093,25 +11121,25 @@ OCI_EXPORT unsigned int OCI_API OCI_SchemaGetColumnCount
  *
  */
 
-OCI_EXPORT OCI_Column * OCI_API OCI_SchemaGetColumn
+OCI_EXPORT OCI_Column * OCI_API OCI_TypeInfoGetColumn
 (
-    OCI_Schema *schema,
+    OCI_TypeInfo *typinf,
     unsigned int index
 );
 
 /**
  * @brief
- * Return the name described by the schema object
+ * Return the name described by the type info object
  *
- * @param schema - Schema handle
+ * @param typinf - Type info handle
  *
  * @return
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_SchemaGetName
+OCI_EXPORT const mtext * OCI_API OCI_TypeInfoGetName
 (
-    OCI_Schema *schema
+    OCI_TypeInfo *typinf
 );
 
 /**
@@ -11792,6 +11820,472 @@ OCI_EXPORT void * OCI_API OCI_ThreadKeyGetValue
  */
 
 /**
+ * @defgroup g_dirpath Direct Path loading
+ * @{
+ *
+ * OCILIB support the OCI direct Path API.
+ *
+ * @par Oracle direct API features (from Oracle Documentation)
+ * The direct path load interface allows an application to access the direct path 
+ * load engine of the Oracle database server to perform the functions of the 
+ * Oracle SQL*Loader utility. 
+ * This functionality provides the ability to load data from external files 
+ * into Oracle database objects, either a table or a partition of a partitioned
+ * table. 
+ * The OCI direct path load interface has the ability to load multiple rows by
+ * loading a direct path stream which contains data for multiple rows.
+ *
+ * @par Oracle direct API limitation (from Oracle Documentation)
+ * The direct path load interface has the following limitations which are the 
+ * same as SQL*Loader:
+ *   - triggers are not supported
+ *   - check constraints are not supported
+ *   - referential integrity constraints are not supported
+ *   - clustered tables are not supported
+ *   - loading of remote objects is not supported
+ *   - user-defined types are not supported
+ *   - LOBs must be specified after all scalar columns
+ *   - LONGs must be specified last 
+ *
+ * @par Example
+ * @include dirpath.c
+ *
+ */
+
+/**
+ * @brief
+ * 
+ *
+ * @param typinf    - 
+ * @param partition -
+ * @param nb_cols   - 
+ * @param nb_rows   - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT OCI_DirPath * OCI_API OCI_DirPathCreate
+(
+    OCI_TypeInfo *typinf, 
+    mtext *partition, 
+    unsigned int nb_cols, 
+    unsigned int nb_rows
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathFree
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp      -  
+ * @param index   - 
+ * @param name    - 
+ * @param maxsize - 
+ * @param format  - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathSetColumn
+(
+    OCI_DirPath *dp, 
+    unsigned int index, 
+    mtext *name, 
+    unsigned int maxsize,
+    mtext *format 
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp    - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathPrepare
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp        - 
+ * @param row       - 
+ * @param index     - 
+ * @param value     - 
+ * @param size      - 
+ * @param dcomplete - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathSetEntry
+(
+    OCI_DirPath *dp, 
+    unsigned int row,
+    unsigned int index, 
+    void *value,
+    unsigned size,
+    boolean complete
+);
+
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_DirPathConvert
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_DirPathLoad
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathReset
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathFinish
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathAbort
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathSave
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathFlushRow
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp      - 
+ * @param nr_rows -
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathSetSize
+(
+    OCI_DirPath *dp, 
+    unsigned int nb_rows
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp     - 
+ * @param format - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathSetDateFormat
+(
+    OCI_DirPath *dp, 
+    mtext *format
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp    - 
+ * @param value - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathSetParallel
+(
+    OCI_DirPath *dp, 
+    boolean value
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp    - 
+ * @param value - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathSetNoLog
+(
+    OCI_DirPath *dp, 
+    boolean value
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp    - 
+ * @param value - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathEnableCache
+(
+    OCI_DirPath *dp, 
+    boolean value
+);
+
+/**
+ * @brief
+ * 
+ *
+ * @param dp   - 
+ * @param size - 
+ *
+ * @return
+ * 
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathSetCacheSize
+(
+    OCI_DirPath *dp, 
+    unsigned int size
+);
+
+/**
+ * @brief
+ * Sets the size of the internal stream transfer buffer
+ *
+ * @param dp   - Direct path Handle 
+ * @param size - Buffer size
+ * 
+ * @note
+ * Default value is 64KB.
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathSetBufferSize
+(
+    OCI_DirPath *dp, 
+    unsigned int size
+);
+
+
+/**
+ * @brief
+ * Return the number of rows successfully loaded into the database so far
+ *
+ * @param dp - Direct path Handle 
+ *
+ * @note
+ * Insertions are committed with OCI_DirPathFinish()
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_DirPathGetCountLoaded
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * return the number of rows successfully processed during in the last
+ * conversion or loading call
+ *
+ * @param dp - Direct path Handle 
+ *
+ * @note
+ * This function called after :
+ *
+ * - OCI_DirPathConvert(), returns the number of converted rows
+ * - OCI_DirPathload(), returns the number of loaded rows
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_DirPathGetCountProcessed
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * Return the column index which caused an error during data conversion
+ *
+ * @param dp - Direct path Handle 
+ *
+ * @warning
+ * Direct path column indexes start at 1.
+ * 
+ * @note
+ * The internal value is reset to 0 when calling OCI_DirPathConvert()
+ *
+ * @return
+ * 0 is no error occurs otherwise the index of the given column which caused an
+ * error
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorColumn
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * Return the row index which caused an error during data conversion
+ *
+ * @param dp - Direct path Handle 
+ *
+ * @warning
+ * Direct path column indexes start at 1.
+ * 
+ * @note
+ * The internal value is reset to 0 when calling OCI_DirPathConvert()
+ *
+ * @return
+ * 0 is no error occurs otherwise the index of the given row which caused an
+ * error
+ *
+ */
+OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @}
+ */
+
+
+/**
  * @defgroup g_handles Using OCI Handles directly
  * @{
  *
@@ -12112,6 +12606,57 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetThread
 );
 
 /**
+ * @brief
+ * Return OCI DirectPath Context handle (OCIDirPathCtx *) of an OCILIB 
+ * OCI_DirPath object
+ *
+ * @param dp - DirectPath handle
+ *
+ * @return
+ * OCI DirectPath Context handle otherwise NULL
+ *
+ */
+
+OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathCtx
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * Return OCI DirectPath Column array handle (OCIDirPathColArray *) of an OCILIB 
+ * OCI_DirPath object
+ *
+ * @param dp - DirectPath handle
+ *
+ * @return
+ * OCI DirectPath Column array handle otherwise NULL
+ *
+ */
+
+OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathColArray
+(
+    OCI_DirPath *dp
+);
+
+/**
+ * @brief
+ * Return OCI DirectPath Stream handle (OCIDirPathStream *) of an OCILIB 
+ * OCI_DirPath object
+ *
+ * @param dp - DirectPath handle
+ *
+ * @return
+ * OCI DirectPath Stream handle otherwise NULL
+ *
+ */
+
+OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream
+(
+    OCI_DirPath *dp
+);
+
+/**
  * @}
  */
 
@@ -12166,7 +12711,24 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetThread
 #define OCI_GetFormatDate(s)                OCI_GetDefaultFormatDate(OCI_StatementGetConnection(s))
 #define OCI_SetFormatDate(s)                OCI_SetDefaultFormatDate(OCI_StatementGetConnection(s))
 
-#define OCI_ERR_API OCI_ERR_ORACLE
+#define OCI_ERR_API                         OCI_ERR_ORACLE
+
+
+/* macros added in version 3.2.0 */
+
+#define OCI_ERR_NOT_SUPPORTED               OCI_ERR_DATATYPE_NOT_SUPPORTED
+#define OCI_SCHEMA_TABLE                    OCI_TIF_TABLE
+#define OCI_SCHEMA_VIEW                     OCI_TIF_VIEW
+#define OCI_SCHEMA_TYPE                     OCI_TIF_TYPE
+
+#define OCI_Schema                          OCI_TypeInfo
+
+#define OCI_SchemaGet                       OCI_TypeInfoGet
+#define OCI_SchemaFree                      OCI_TypeInfoFree
+#define OCI_SchemaGetColumnCount            OCI_TypeInfoGetColumnCount
+#define OCI_SchemaGetColumn                 OCI_TypeInfoGetColumn
+#define OCI_SchemaGetName                   OCI_TypeInfoGetName
+
 
 #endif    /* OCILIB_H_INCLUDED */
 
