@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: column.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: column.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -110,7 +110,8 @@ boolean OCI_ColumnDescribe(OCI_Column *col, OCI_Connection *con,
         res, con, stmt,
         
         OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM, (dvoid *) &col->scale,
-                   (ub4 *) NULL, (ub4) OCI_ATTR_SCALE, con->err))
+                   (ub4 *) NULL, (ub4) OCI_ATTR_SCALE, con->err)
+    )
 
     /* precision */
 
@@ -138,7 +139,7 @@ boolean OCI_ColumnDescribe(OCI_Column *col, OCI_Connection *con,
 
     if ((OCILib.ver_runtime >= OCI_9) && (con->ver_maj >= OCI_9))
     {
-        /* char used - no error checking because the on Oracle 9.0, querying
+        /* char used - no error checking because on Oracle 9.0, querying
                        this param that is not char/varchar based will cause an 
                        error */
 
@@ -277,14 +278,19 @@ boolean OCI_ColumnDescribe(OCI_Column *col, OCI_Connection *con,
             if (tmp != NULL)
             {
                OCI_CopyString(ostr, tmp, &osize, sizeof(omtext), sizeof(mtext));
-               col->nty = OCI_SchemaGet(con, tmp, OCI_SCHEMA_TYPE);
+               col->typinf = OCI_TypeInfoGet(con, tmp, OCI_SCHEMA_TYPE);
             }
 
-            res = (col->nty != NULL);
+            res = (col->typinf != NULL);
             
             OCI_FREE(tmp);
         }
-     }
+    }
+
+    if (param != NULL)
+    {
+        res = (OCI_SUCCESS == OCIDescriptorFree(param, OCI_DTYPE_PARAM));
+    }
 
     return res;
 }
@@ -538,7 +544,7 @@ boolean OCI_ColumnMap(OCI_Column *col, OCI_Statement *stmt)
             col->icode   = SQLT_NTY;
             col->bufsize = sizeof(void *);
 
-            if (col->nty->tcode == SQLT_NCO)
+            if (col->typinf->tcode == SQLT_NCO)
                 col->type = OCI_CDT_COLLECTION;                    
             else
                 col->type = OCI_CDT_OBJECT;                    
@@ -879,8 +885,8 @@ const mtext * OCI_API OCI_ColumnGetSQLType(OCI_Column *col)
 
         case SQLT_NTY:
 
-            if (col->nty != NULL)
-                return col->nty->name;
+            if (col->typinf != NULL)
+                return col->typinf->name;
             else
                 return MT("NAMED TYPE");
 
@@ -1089,8 +1095,8 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType(OCI_Column *col, mtext *buffer,
 
         case SQLT_NTY:
  
-            if (col->nty != NULL)
-                len = mtsprintf(buffer, len, col->nty->name);
+            if (col->typinf != NULL)
+                len = mtsprintf(buffer, len, col->typinf->name);
             else
                 len = mtsprintf(buffer, len, MT("NAMED TYPE"));
             break;
@@ -1104,16 +1110,16 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType(OCI_Column *col, mtext *buffer,
 }
     
 /* ------------------------------------------------------------------------ *
- * OCI_ColumnGetFullSQLType
+ * OCI_ColumnGetTypeInfo
  * ------------------------------------------------------------------------ */
 
-OCI_Schema * OCI_API OCI_ColumnGetSchema(OCI_Column *col)
+OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo(OCI_Column *col)
 {
     OCI_CHECK_PTR(OCI_IPC_COLUMN, col, FALSE);
 
     OCI_RESULT(TRUE);
 
-    return col->nty;
+    return col->typinf;
 }
 
 /* ------------------------------------------------------------------------ *

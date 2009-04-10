@@ -12,7 +12,7 @@ void err_handler(OCI_Error *err)
            );
 }
 
-int main()
+int main(void)
 {
     OCI_Connection *cn;
 

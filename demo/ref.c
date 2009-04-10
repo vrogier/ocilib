@@ -22,7 +22,7 @@ void dump_ref(OCI_Ref *ref)
                            OCI_ObjectGetString(obj, "NAME"));
 }
 
-int main()
+int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement  *st;

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: mutex.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: mutex.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -69,6 +69,8 @@ OCI_Mutex * OCI_MutexCreateInternal(void)
             OCIThreadMutexInit(OCILib.env, mutex->err, &mutex->handle)
         )
     }
+    else
+        res = FALSE;
 
     if (res == FALSE)
     {

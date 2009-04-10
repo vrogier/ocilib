@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_import.h, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: oci_import.h, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
@@ -246,6 +246,19 @@ extern OCIITERDELETE                OCIIterDelete;
 extern OCIITERINIT                  OCIIterInit;
 extern OCIITERNEXT                  OCIIterNext;
 extern OCIITERPREV                  OCIIterPrev;
+
+extern OCIDIRPATHABORT              OCIDirPathAbort;
+extern OCIDIRPATHDATASAVE           OCIDirPathDataSave;
+extern OCIDIRPATHFINISH             OCIDirPathFinish;
+extern OCIDIRPATHPREPARE            OCIDirPathPrepare;
+extern OCIDIRPATHLOADSTREAM         OCIDirPathLoadStream;
+extern OCIDIRPATHCOLARRAYENTRYSET   OCIDirPathColArrayEntrySet;
+extern OCIDIRPATHCOLARRAYRESET      OCIDirPathColArrayReset;
+extern OCIDIRPATHCOLARRAYTOSTREAM   OCIDirPathColArrayToStream;
+extern OCIDIRPATHSTREAMRESET        OCIDirPathStreamReset;
+extern OCIDIRPATHFLUSHROW           OCIDirPathFlushRow;
+
+extern OCICACHEFREE                 OCICacheFree;
 
 #ifdef ORAXB8_DEFINED
 

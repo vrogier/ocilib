@@ -24,7 +24,7 @@ void worker(OCI_Thread *thread, void *data)
    printf(str);
 }
 
-int main()
+int main(void)
 {
     OCI_Thread *th[MAX_THREADS];
     int i;

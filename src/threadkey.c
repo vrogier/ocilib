@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: threadkey.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: threadkey.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -69,6 +69,8 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal(POCI_THREADKEYDEST destfunc)
             OCIThreadKeyInit(OCILib.env, key->err, &key->handle, destfunc)
         )
     }
+    else
+        res = FALSE;
 
     /* check errors */
 

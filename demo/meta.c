@@ -1,6 +1,6 @@
 #include "ocilib.h"
 
-int main()
+int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement *st;
@@ -12,7 +12,7 @@ int main()
         return EXIT_FAILURE;
 
     cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    st = OCI_CreateStatement(cn);
+    st = OCI_StatementCreate(cn);
  
     OCI_ExecuteStmt(st, "select * from test_fetch");
 

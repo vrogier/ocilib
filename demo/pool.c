@@ -22,7 +22,7 @@ void worker(OCI_Thread *thread, void *data)
     OCI_ConnectionFree(cn);
 }
 
-int main()
+int main(void)
 {
     OCI_Thread *th[MAX_THREADS];
     OCI_ConnPool *pool;

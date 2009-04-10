@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_checks.h v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: ocilib_checks.h, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_CHECKS_H_INCLUDED
@@ -547,6 +547,16 @@
 #define OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(con, ret)                          \
                                                                                \
         OCI_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9, ret)
+
+
+
+#define OCI_CHECK_DIRPATH_STATUS(dp, v, ret)                                   \
+                                                                               \
+    if ((dp)->status != (v))                                                   \
+    {                                                                          \
+        OCI_ExceptionDirPathState((dp), (dp)->status);                         \
+        return ret;                                                            \
+    } 
 
 
 #endif    /* OCILIB_OCILIB_CHECKS_H_INCLUDED */

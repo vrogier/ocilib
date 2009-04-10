@@ -32,7 +32,7 @@
    +----------------------------------------------------------------------+
    |                                                                      |
    | THIS FILE CONTAINS CONSTANTS AND STRUCTURES DECLARATIONS THAT WERE   |
-   | PICKED UP FROM ORACLE PUBLIC HEADER FILES 'OCI.H' AND 'ORO.H'.       |
+   | PICKED UP FROM ORACLE PUBLIC HEADER FILES.                           |
    |                                                                      |
    | SO THE CONTENT OF THIS FILE IS UNDER ORACLE COPYRIGHT AND THE        |
    | DECLARATIONS REPRODUCED HERE ARE ORIGINALLY WRITTEN BY ORACLE        | 
@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_api.h, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: oci_api.h, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_API_H_INCLUDED 
@@ -1678,6 +1678,87 @@ typedef sword (*OCIITERPREV)
     dvoid **elemind, 
     boolean *boc    
 );
+
+typedef sword (*OCIDIRPATHABORT)
+( 
+    OCIDirPathCtx *dpctx, 
+    OCIError *errhp 
+);
+
+typedef sword (*OCIDIRPATHDATASAVE)
+( 
+    OCIDirPathCtx *dpctx, 
+    OCIError *errhp, 
+    ub4 action 
+);
+
+typedef sword (*OCIDIRPATHFINISH)
+( 
+    OCIDirPathCtx *dpctx, 
+    OCIError  *errhp 
+);
+
+typedef sword (*OCIDIRPATHPREPARE)
+( 
+    OCIDirPathCtx *dpctx, 
+    OCISvcCtx *svchp,
+    OCIError  *errhp 
+);
+
+typedef sword (*OCIDIRPATHLOADSTREAM)
+( 
+    OCIDirPathCtx *dpctx, 
+    OCIDirPathStream *dpstr,
+    OCIError *errhp
+);
+
+typedef sword (*OCIDIRPATHCOLARRAYENTRYSET)
+( 
+    OCIDirPathColArray *dpca, 
+    OCIError *errhp,
+    ub4 rownum, 
+    ub2 colIdx, 
+    ub1 *cvalp, 
+    ub4 clen,
+    ub1 cflg 
+);
+
+typedef sword (*OCIDIRPATHCOLARRAYRESET)
+(
+    OCIDirPathColArray *dpca, 
+    OCIError *errhp 
+);
+
+typedef sword (*OCIDIRPATHCOLARRAYTOSTREAM)
+( 
+    OCIDirPathColArray *dpca,  
+    OCIDirPathCtx *dpctx,
+    OCIDirPathStream *dpstr, 
+    OCIError *errhp,
+    ub4 rowcnt, 
+    ub4 rowoff 
+);
+
+typedef sword (*OCIDIRPATHSTREAMRESET)
+(
+    OCIDirPathStream *dpstr, 
+    OCIError *errhp 
+);
+
+typedef sword (*OCIDIRPATHFLUSHROW)
+(
+    OCIDirPathCtx *dpctx,
+    OCIError *errhp 
+);
+
+typedef sword (*OCICACHEFREE)
+(
+    OCIEnv *env, 
+    OCIError *err, 
+    CONST OCISvcCtx *svc
+); 
+
+
 
 #endif /* OCILIB_OCI_API_H_INCLUDED */
 

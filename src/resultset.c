@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: resultset.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -53,11 +53,9 @@ OCI_Resultset * OCI_ResultsetCreate(OCI_Statement *stmt, int size)
 
     rs = (OCI_Resultset *) OCI_MemAlloc(OCI_IPC_RESULTSET, sizeof(*rs), 1, TRUE);
 
-    res = (rs != NULL);
-
     /* set attributes */
 
-    if (res == TRUE)
+    if (rs != NULL)
     {
         rs->stmt         = stmt;
         rs->bof          = TRUE;
@@ -1365,12 +1363,12 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                 {
                     case OCI_CDT_NUMERIC:
                     {
-                        mtext *buf  = NULL;
                         void *ostr1 = NULL;
                         void *ostr2 = NULL;
                         int  osize1 = OCI_SIZE_FORMAT_NUML * sizeof(mtext);
-                        int  osize2 = OCI_SIZE_BUFFER      * sizeof(mtext);
+                        int  osize2 = OCI_SIZE_BUFFER      * sizeof(dtext);
                         const mtext *fmt;
+                        int pos;
 
 #ifdef OCI_CHARSET_MIXED
 
@@ -1378,54 +1376,71 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
 
                         temp[0] = 0;
 
-                        buf = temp;
 #else
-                        buf = def->buf.temp;
+                        def->buf.temp[0] = 0;
 #endif
 
                         /* init output buffer in case of OCI failure */
 
-                        buf[0] = 0;
-
-                        fmt = OCI_GetDefaultFormatNumeric(rs->stmt->con);
-
+                        fmt   = OCI_GetDefaultFormatNumeric(rs->stmt->con);
                         ostr1 = OCI_GetInputMetaString(fmt, &osize1);
-                        ostr2 = OCI_GetInputDataString(buf, &osize2);
 
+#ifdef OCI_CHARSET_MIXED
+
+                        ostr2 = OCI_GetInputDataString(temp, &osize2);
+
+#else
+ 
+                        ostr2 = OCI_GetInputDataString(def->buf.temp, &osize2);
+
+#endif
                         /* check for decimal character */
 
                         OCI_CALL1
                         (
                             res, rs->stmt->con, rs->stmt,
 
-                            OCINumberToText(rs->stmt->con->err,
-                                            (OCINumber *) data,
-                                            (oratext *) ostr1,
-                                            (ub4) osize1,
-                                            (oratext *) NULL,
-                                            (ub4) 0,
-                                            (ub4 *) &osize2,
-                                            (oratext *) ostr2)
+                                OCINumberToText(rs->stmt->con->err,
+                                                (OCINumber *) data,
+                                                (oratext *) ostr1,
+                                                (ub4) osize1,
+                                                (oratext *) NULL,
+                                                (ub4) 0,
+                                                (ub4 *) &osize2,
+                                                (oratext *) ostr2)
                         )
 
-                        OCI_GetOutputDataString(ostr2, buf, &osize2);
+
+
+#ifdef OCI_CHARSET_MIXED
+
+                        OCI_GetOutputDataString(ostr2, temp, &osize2);
+
+                        mbstowcs(def->buf.temp, temp, strlen(temp) + OCI_CVT_CHAR);
+
+                        osize2 = osize2 * sizeof(dtext);
+#else
+
+                        OCI_GetOutputDataString(ostr2, def->buf.temp, &osize2);
+
+#endif
 
                         /* do we need to suppress last '.' or ',' from integers */
 
-                        if ((buf[osize2-1] == DT('.')) ||
-                            (buf[osize2-1] == DT(',')))
+                        pos = (osize2 / sizeof(dtext)) -1;
+
+                        if (pos >= 0)
                         {
-                            buf[osize2-1] = 0;
+                            if ((def->buf.temp[pos] == DT('.')) ||
+                                (def->buf.temp[pos] == DT(',')))
+                            {
+                                def->buf.temp[pos] = 0;
+                            }
                         }
 
                         OCI_ReleaseMetaString(ostr1);
                         OCI_ReleaseDataString(ostr2);
 
-#ifdef OCI_CHARSET_MIXED
-
-                        mbstowcs(def->buf.temp, temp, strlen(temp) + OCI_CVT_CHAR);
-
- #endif
                         if (res == TRUE)
                             str = def->buf.temp;
 
@@ -1795,7 +1810,7 @@ OCI_Object * OCI_API OCI_GetObject(OCI_Resultset *rs, unsigned int index)
     {
         obj =  OCI_ObjectInit(rs->stmt->con,
                               (OCI_Object **) &def->obj,
-                              OCI_DefineGetData(def), def->col.nty, NULL, -1,
+                              OCI_DefineGetData(def), def->col.typinf, NULL, -1,
                               TRUE);
     }
 
@@ -1825,7 +1840,7 @@ OCI_Coll * OCI_API OCI_GetColl(OCI_Resultset *rs, unsigned int index)
     if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_COLLECTION))
     {
             coll = OCI_CollInit(rs->stmt->con, (OCI_Coll **) &def->obj,
-                                OCI_DefineGetData(def), def->col.nty);
+                                OCI_DefineGetData(def), def->col.typinf);
     }
 
     OCI_RESULT(coll != NULL);
@@ -1853,17 +1868,17 @@ OCI_Ref * OCI_API OCI_GetRef(OCI_Resultset *rs, unsigned int index)
 
     if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_REF))
     {
-            ref = OCI_RefInit(rs->stmt->con, def->col.nty,
+            ref = OCI_RefInit(rs->stmt->con, def->col.typinf,
                               (OCI_Ref **) &def->obj, OCI_DefineGetData(def));
 
             /* if the ref object is retreived from an register bind that has no
-               no schema object associated, the schema object is retreived at the
-               first fetch call by pinning the ref and we affect the schema
-               object handle to the define object */
+               no type info object associated, the type info object is retreived
+               at the first fetch call by pinning the ref and we affect the type 
+               info object handle to the define object */
 
-            if ((def->col.nty == NULL) && (ref != NULL) && (ref->nty != NULL))
+            if ((def->col.typinf == NULL) && (ref != NULL) && (ref->typinf != NULL))
             {
-                def->col.nty = ref->nty;
+                def->col.typinf = ref->typinf;
             }
     }
 

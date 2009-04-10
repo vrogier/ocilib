@@ -1,6 +1,6 @@
 #include "ocilib.h"
 
-int main()
+int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement *st;
@@ -12,7 +12,7 @@ int main()
 
     cn = OCI_ConnectionCreate("db", "uer", pwd", OCI_SESSION_DEFAULT);
  
-    st = OCI_CreateStatement(cn);
+    st = OCI_StatementCreate(cn);
   
     OCI_Prepare(st, "delete from test_fetch where code = :code");
     OCI_BindInt(st, ":code", &code);

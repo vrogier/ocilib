@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: timestamp.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: timestamp.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -49,7 +49,7 @@ OCI_Timestamp * OCI_TimestampInit(OCI_Connection *con, OCI_Timestamp **ptmsp,
 
 #if OCI_VERSION_COMPILE >= OCI_9
 
-    boolean res         = TRUE;
+    boolean res = TRUE;
 
     OCI_CHECK(ptmsp == NULL, NULL);
 
@@ -95,6 +95,8 @@ OCI_Timestamp * OCI_TimestampInit(OCI_Connection *con, OCI_Timestamp **ptmsp,
         else
             tmsp->hstate = OCI_OBJECT_FETCHED_CLEAN;
     }
+    else
+        res = FALSE;
 
     /* check for failure */
 
@@ -917,8 +919,11 @@ boolean OCI_API OCI_TimestampToCTime(OCI_Timestamp *tmsp, struct tm *ptm,
                                          &t.tm_hour, &t.tm_min, &t.tm_sec, 
                                          &msec);
 
+
     if (res == TRUE)
     {
+        t.tm_year -= 1900;
+        t.tm_mon  -= 1;
         t.tm_wday  = 0;
         t.tm_yday  = 0;
         t.tm_isdst = -1;

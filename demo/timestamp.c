@@ -2,7 +2,7 @@
  
 #define SIZE_STR 260
 
-int main()
+int main(void)
 {
     OCI_Timestamp *tm;
     OCI_Interval *itv;

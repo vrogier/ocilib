@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: connection.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -50,7 +50,7 @@ OCI_Connection * OCI_ConnectionAllocate(OCI_ConnPool *pool, const mtext *db,
     OCI_Connection *con = NULL;
     OCI_List *list      = NULL;
     OCI_Item *item      = NULL;
-    boolean res         = FALSE;
+    boolean res         = TRUE;
 
     /* create connection object */
 
@@ -63,8 +63,6 @@ OCI_Connection * OCI_ConnectionAllocate(OCI_ConnPool *pool, const mtext *db,
  
     if (item != NULL)
     {
-        res = TRUE;
-
         con = (OCI_Connection *) item->data;
 
         /* create internal lists */
@@ -73,14 +71,14 @@ OCI_Connection * OCI_ConnectionAllocate(OCI_ConnPool *pool, const mtext *db,
         
         if (res == TRUE)
         {
-            con->sobjs = OCI_ListCreate(OCI_IPC_SCHEMA);    
-            res = (con->sobjs != NULL);
+            con->tinfs = OCI_ListCreate(OCI_IPC_TYPE_INFO);    
+            res = (con->tinfs != NULL);
         }
 
         if (res == TRUE)
         {
             con->trsns = OCI_ListCreate(OCI_IPC_TRANSACTION);
-            res = (con->sobjs != NULL);
+            res = (con->trsns != NULL);
         }
  
         /* set attributes */
@@ -136,6 +134,8 @@ OCI_Connection * OCI_ConnectionAllocate(OCI_ConnPool *pool, const mtext *db,
                                                   (ub4) OCI_HTYPE_SESSION,
                                                   (size_t) 0, (dvoid **) NULL));
     }
+    else
+        res = FALSE;
 
    /* update internal status */
     
@@ -441,15 +441,24 @@ boolean OCI_ConnectionLogOff(OCI_Connection *con)
     OCI_ListForEach(con->stmts, (boolean (*)(void *)) OCI_StatementClose);
     OCI_ListClear(con->stmts);
 
+    /* cleanup the cache */
+
+    OCI_CALL2
+    (
+        res, con, 
+
+        OCICacheFree(OCILib.env, con->err, con->cxt)
+    )
+
     /* free all transactions */
     
     OCI_ListForEach(con->trsns, (boolean (*)(void *)) OCI_TransactionClose);
     OCI_ListClear(con->trsns);
 
-    /* free all schema objects */
+    /* free all type info objects */
     
-    OCI_ListForEach(con->sobjs, (boolean (*)(void *)) OCI_SchemaClose);
-    OCI_ListClear(con->sobjs);
+    OCI_ListForEach(con->tinfs, (boolean (*)(void *)) OCI_TypeInfoClose);
+    OCI_ListClear(con->tinfs);
 
    /* close any server files not explicitly closed - no check of return code */
    
@@ -505,7 +514,7 @@ boolean OCI_ConnectionClose(OCI_Connection *con)
 
     OCI_ListFree(con->stmts);
     OCI_ListFree(con->trsns);
-    OCI_ListFree(con->sobjs);
+    OCI_ListFree(con->tinfs);
 
     if (con->pool == NULL)
     {
@@ -523,7 +532,7 @@ boolean OCI_ConnectionClose(OCI_Connection *con)
 
     con->stmts = NULL;
     con->trsns = NULL;
-    con->sobjs = NULL;
+    con->tinfs = NULL;
 
     return TRUE;
 }
@@ -582,7 +591,6 @@ boolean OCI_API OCI_ConnectionFree(OCI_Connection *con)
     if (err != NULL && err->con == con)
         err->con = NULL;
         
-   
     if (con->pool != NULL)
     {
         res = OCI_ConnectionLogOff(con);

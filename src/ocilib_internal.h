@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: ocilib_internal.h, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED 
@@ -98,7 +98,7 @@ OCI_Coll * OCI_CollInit
     OCI_Connection *con,                           
     OCI_Coll **pcoll,
     void *handle, 
-    OCI_Schema *nty
+    OCI_TypeInfo *typeinf
 );
 
 /* ------------------------------------------------------------------------ *
@@ -252,7 +252,7 @@ OCI_Elem * OCI_ElemInit
     OCI_Elem **pelem,
     void *handle, 
     OCIInd *pind, 
-    OCI_Schema *nty
+    OCI_TypeInfo *typeinf
 );
 
 /* ------------------------------------------------------------------------ *
@@ -316,7 +316,7 @@ void OCI_ExceptionNullPointer
     int type
 );
 
-void OCI_ExceptionNotSupported
+void OCI_ExceptionDatatypeNotSupported
 (
     OCI_Connection *con, 
     OCI_Statement *stmt, 
@@ -395,6 +395,27 @@ void OCI_ExceptionBindAlreadyUsed
 (
     OCI_Statement *stmt,
     const mtext * bind
+);
+
+void OCI_ExceptionBindArraySize
+(
+    OCI_Statement *stmt, 
+    unsigned int maxsize, 
+    unsigned int cursize, 
+    unsigned int newsize
+);
+
+void OCI_ExceptionDirPathColNotFound
+(
+    OCI_DirPath *dp, 
+    const mtext * column,
+    const mtext *table
+);
+
+void OCI_ExceptionDirPathState
+(
+    OCI_DirPath *dp, 
+    int state
 );
 
 /* ------------------------------------------------------------------------ *
@@ -643,6 +664,16 @@ boolean OCI_NumberSet
     uword flag
 );
 
+boolean OCI_NumberConvertStr
+(
+    OCI_Connection *con, 
+    OCINumber *num, 
+    const dtext *str, 
+    int str_size, 
+    const mtext* fmt, 
+    ub4 fmt_size
+);
+
 boolean OCI_NumberGetFromStr
     (
     OCI_Connection *con, 
@@ -706,7 +737,7 @@ int OCI_ObjectGetIndex
 
 ub2 OCI_GetIndTabIndex
 (
-    OCI_Schema *nty, 
+    OCI_TypeInfo *typeinf, 
     int index
 );
 
@@ -715,7 +746,7 @@ OCI_Object * OCI_ObjectInit
     OCI_Connection *con,
     OCI_Object **pobj,
     void *handle, 
-    OCI_Schema *schema,
+    OCI_TypeInfo *typeinf,
     sb2 *tab_ind,
     int index,
     boolean reset
@@ -728,7 +759,7 @@ OCI_Object * OCI_ObjectInit
 OCI_Ref * OCI_RefInit
 (
     OCI_Connection *con,
-    OCI_Schema *schema, 
+    OCI_TypeInfo *typeinf, 
     OCI_Ref **pref, 
     void *handle
 );
@@ -789,15 +820,6 @@ boolean OCI_ResultsetExpandStrings
 #endif  
 
 /* ------------------------------------------------------------------------ *
- * schema.c
- * ------------------------------------------------------------------------ */
-
-boolean OCI_SchemaClose
-(
-    OCI_Schema *schema
-);
-
-/* ------------------------------------------------------------------------ *
  * statement.c
  * ------------------------------------------------------------------------ */
 
@@ -826,7 +848,7 @@ boolean OCI_BindData
     unsigned int code, 
     unsigned int mode,
     unsigned int subtype,
-    OCI_Schema *nty,
+    OCI_TypeInfo *typinf,
     unsigned int nbelem
 );
 
@@ -836,13 +858,11 @@ int OCI_BindGetIndex
     const mtext *name
 );
 
-
 boolean OCI_FetchIntoUserVariables
 (
     OCI_Statement *stmt, 
     va_list args
 );
-
 
 boolean OCI_StatementReset
 (
@@ -1029,6 +1049,15 @@ OCI_Timestamp * OCI_TimestampInit
 boolean OCI_TransactionClose
 (
     OCI_Transaction * trans
+);
+
+/* ------------------------------------------------------------------------ *
+ * typeinf.c
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_TypeInfoClose
+(
+    OCI_TypeInfo *typeinf
 );
 
 

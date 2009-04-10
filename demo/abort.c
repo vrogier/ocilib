@@ -1,4 +1,4 @@
-  #include "windows.h"
+#include "windows.h"
 #include "process.h"
 #include "ocilib.h"
 
@@ -26,14 +26,14 @@ void long_oracle_call(void *data)
 }
 
 
-int main()
+int main(void)
 {
    OCI_Connection *cn;
 
    if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
         return EXIT_FAILURE;
 
-    cn = OCI_CreateConnection("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
     evt = CreateEvent(0, TRUE, FALSE, 0);
 
     _beginthread(long_oracle_call, 0, cn);

@@ -1,6 +1,6 @@
 #include "ocilib.h"
 
-int main()
+int main(void)
 {
     if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
         return EXIT_FAILURE;

@@ -33,7 +33,7 @@ libocilib_la_SOURCES=           \
 	library.c   	\
 	long.c    	\
 	number.c  	\
-	schema.c     	\
+	typeinfo.c     	\
 	thread.c     	\
 	transaction.c 	\
 	column.c      	\
@@ -47,7 +47,8 @@ libocilib_la_SOURCES=           \
 	statement.c  	\
 	threadkey.c \
   bind.c \
-  ref.c
+  ref.c \
+  dirpath.c
 
 libocilib_la_CFLAGS= -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)

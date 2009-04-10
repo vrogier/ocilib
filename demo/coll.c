@@ -1,6 +1,6 @@
 #include "ocilib.h"
 
-int main(int argc , char **argv)
+int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement *st;
@@ -12,11 +12,10 @@ int main(int argc , char **argv)
     OCI_Object *obj;
     int i, n;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
        return EXIT_FAILURE;
 
-    cn = OCI_ConnectionCreate(argv[ARG_DB], argv[ARG_USER], argv[ARG_PWD], 
-                              OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
 
 
     /* Varray binding -------------------------------------------------------- */

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: hash.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: hash.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -78,11 +78,9 @@ OCI_HashTable * OCI_API OCI_HashCreate(unsigned int size, unsigned int type)
 
     table = (OCI_HashTable *) OCI_MemAlloc(OCI_IPC_HASHTABLE, sizeof(*table), 1, TRUE);
 
-    res = (table != NULL);
-
     /* set up attributes and allocate internal array of hash entry pointers */
 
-    if (res == TRUE)
+    if (table != NULL)
     {
         table->size     = size;
         table->type     = type;
@@ -93,6 +91,8 @@ OCI_HashTable * OCI_API OCI_HashCreate(unsigned int size, unsigned int type)
                                                        size, TRUE);
         res = (table->items != NULL);
     }
+    else
+        res = FALSE;
 
     if (res == FALSE)
         OCI_HashFree(table);

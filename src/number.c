@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: number.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: number.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -118,16 +118,15 @@ boolean OCI_NumberSet(OCI_Connection *con,  OCINumber *data, void *value,
     return res;
 }
 
+
 /* ------------------------------------------------------------------------ *
- * OCI_NumberGet
+ * OCI_NumberConvertStr
  * ------------------------------------------------------------------------ */
 
-boolean OCI_NumberGetFromStr(OCI_Connection *con,  void *value, uword size,
-                             uword type, const dtext *str, int str_size, 
-                             const mtext* fmt, ub4 fmt_size)
+boolean OCI_NumberConvertStr(OCI_Connection *con,  OCINumber *num, 
+                            const dtext *str, int str_size, 
+                            const mtext* fmt, ub4 fmt_size)
 {
-    OCINumber num;
-
     boolean res = TRUE;
     void *ostr1 = NULL;
     int  osize1 = str_size;
@@ -141,7 +140,6 @@ boolean OCI_NumberGetFromStr(OCI_Connection *con,  void *value, uword size,
 #endif
 
     OCI_CHECK(con   == NULL, FALSE);
-    OCI_CHECK(value == NULL, FALSE);
     OCI_CHECK(str   == NULL, FALSE);
     OCI_CHECK(fmt   == NULL, FALSE);
 
@@ -161,7 +159,7 @@ boolean OCI_NumberGetFromStr(OCI_Connection *con,  void *value, uword size,
     ostr2 = OCI_GetInputMetaString(fmt, &osize2);
 
 
-    memset(&num, 0, sizeof(num));
+    memset(num, 0, sizeof(*num));
 
     OCI_CALL2
     (
@@ -169,7 +167,7 @@ boolean OCI_NumberGetFromStr(OCI_Connection *con,  void *value, uword size,
         
         OCINumberFromText(con->err, (oratext *) ostr1, (ub4) osize1,
                                     (oratext *) ostr2, (ub4) osize2, 
-                                    (oratext *) NULL,  (ub4) 0, &num)
+                                    (oratext *) NULL,  (ub4) 0, num)
     )
 
 #ifndef OCI_CHARSET_MIXED
@@ -180,8 +178,22 @@ boolean OCI_NumberGetFromStr(OCI_Connection *con,  void *value, uword size,
 
     OCI_ReleaseMetaString(ostr2);      
 
-    if (res == TRUE)
-        res = OCI_NumberGet(con, &num, value, size, type);
-
     return res;
+ }
+
+
+/* ------------------------------------------------------------------------ *
+ * OCI_NumberGetFromStr
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_NumberGetFromStr(OCI_Connection *con,  void *value, uword size,
+                             uword type, const dtext *str, int str_size, 
+                             const mtext* fmt, ub4 fmt_size)
+{
+    OCINumber num;
+  
+    OCI_CHECK(value == NULL, FALSE);
+  
+    return (OCI_NumberConvertStr(con, &num, str, str_size, fmt, fmt_size) &&
+            OCI_NumberGet(con, &num, value, size, type));
  }

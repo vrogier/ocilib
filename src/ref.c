@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ref.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: ref.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -42,7 +42,7 @@
  * OCI_RefInit
  * ------------------------------------------------------------------------ */
 
-OCI_Ref * OCI_RefInit(OCI_Connection *con, OCI_Schema *schema, OCI_Ref **pref, 
+OCI_Ref * OCI_RefInit(OCI_Connection *con, OCI_TypeInfo *typinf, OCI_Ref **pref, 
                       void *handle)
 {
     boolean res   = TRUE;
@@ -59,7 +59,7 @@ OCI_Ref * OCI_RefInit(OCI_Connection *con, OCI_Schema *schema, OCI_Ref **pref,
 
         ref->handle = handle;
         ref->con    = con;
-        ref->nty    = schema;
+        ref->typinf = typinf;
 
         if (ref->handle == NULL)
         {
@@ -87,6 +87,8 @@ OCI_Ref * OCI_RefInit(OCI_Connection *con, OCI_Schema *schema, OCI_Ref **pref,
             OCI_RefUnpin(ref);
         }
     }
+    else
+        res = FALSE;
 
     /* check for failure */
 
@@ -128,7 +130,7 @@ boolean OCI_RefPin(OCI_Ref *ref)
         if (res == TRUE)
         {
             obj =  OCI_ObjectInit(ref->con, (OCI_Object **) &ref->obj,
-                                  obj_handle, ref->nty, NULL, -1, TRUE);
+                                  obj_handle, ref->typinf, NULL, -1, TRUE);
         }
 
         if (obj != NULL)
@@ -180,16 +182,16 @@ boolean OCI_RefUnpin(OCI_Ref *ref)
  * OCI_RefCreate
  * ------------------------------------------------------------------------ */
 
-OCI_Ref * OCI_API OCI_RefCreate(OCI_Connection *con, OCI_Schema *schema)
+OCI_Ref * OCI_API OCI_RefCreate(OCI_Connection *con, OCI_TypeInfo *typinf)
 {
     OCI_Ref *ref = NULL;
     
     OCI_CHECK_INITIALIZED(NULL);
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
-    OCI_CHECK_PTR(OCI_IPC_SCHEMA, schema, NULL);
+    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf, NULL);
 
-    ref = OCI_RefInit(con, schema, &ref, NULL);
+    ref = OCI_RefInit(con, typinf, &ref, NULL);
 
     OCI_RESULT(ref != NULL);
 
@@ -254,7 +256,7 @@ boolean OCI_API OCI_RefAssign(OCI_Ref *ref, OCI_Ref *ref_src)
     OCI_CHECK_PTR(OCI_IPC_REF, ref,     FALSE);
     OCI_CHECK_PTR(OCI_IPC_REF, ref_src, FALSE);
 
-    OCI_CHECK_COMPAT(ref->con, ref->nty == ref_src->nty, FALSE);
+    OCI_CHECK_COMPAT(ref->con, ref->typinf == ref_src->typinf, FALSE);
 
     OCI_CALL2
     (
@@ -271,7 +273,7 @@ boolean OCI_API OCI_RefAssign(OCI_Ref *ref, OCI_Ref *ref_src)
             ref->obj = NULL;
         }
 
-        ref->nty    = ref_src->nty;
+        ref->typinf = ref_src->typinf;
         ref->pinned = ref_src->pinned;
 
     }
@@ -382,16 +384,16 @@ unsigned int OCI_API OCI_RefGetHexSize(OCI_Ref *ref)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_CollRefSchema
+ * OCI_CollRefGetTypeInfo
  * ------------------------------------------------------------------------ */
 
-OCI_Schema * OCI_API OCI_RefGetSchema(OCI_Ref *ref)
+OCI_TypeInfo * OCI_API OCI_RefGetTypeInfo(OCI_Ref *ref)
 {
     OCI_CHECK_PTR(OCI_IPC_REF, ref, NULL);
 
     OCI_RESULT(TRUE);
 
-    return ref->nty;
+    return ref->typinf;
 }
 
 

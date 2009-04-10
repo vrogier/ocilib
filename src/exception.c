@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: exception.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: exception.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -47,6 +47,7 @@ static mtext * OCILib_TypeNames[] =
     MT("double pointer"),
     MT("string pointer"),
     MT("function callback"),
+
     MT("Error handle"),
     MT("Schema handle"),
     MT("Connection handle"),
@@ -70,6 +71,8 @@ static mtext * OCILib_TypeNames[] =
     MT("Mutex handle"),
     MT("Bind handle"),
     MT("Ref handle"),
+    MT("DirectPath handle"),
+
     MT("Internal list handle"),
     MT("Internal list item handle"),
     MT("Internal array of bind handles"),
@@ -90,6 +93,7 @@ static mtext * OCILib_TypeNames[] =
     MT("Internal array of data buffers"),
     MT("Internal Long handle data buffer")
     MT("Internal trace info structure")
+    MT("Internal array of directpath columns"),
 };
 
 
@@ -105,7 +109,7 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Memory allocation failure (type %ls, size : %d)"),
     MT("Feature not available (%ls) "),
     MT("A null %ls has been provided"),
-    MT("Oracle datatype not supported (sqlcode %d) "),
+    MT("Oracle datatype (sqlcode %d) not supported for this operation "),
     MT("Unknown identifier %c while parsing SQL"),
     MT("Unknown argument %d while retreiving data"),
     MT("Index %d out of bounds"),
@@ -116,7 +120,10 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Elements are not compatible"),
     MT("Unable to perform this operation on a %ls statement"),
     MT("The statement is not scrollable"),
-    MT("Name or position '%ls' already binded to the statement")
+    MT("Name or position '%ls' already binded to the statement"),
+    MT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
+    MT("Column '%ls' not find in table '%ls'"),
+    MT("Unable to perform this operation on a %ls direct path process")
 };
 
 #else
@@ -131,7 +138,7 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Memory allocation failure (type %s, size : %d)"),
     MT("Feature not available (%s) "),
     MT("A null %s has been provided"),
-    MT("Oracle datatype not supported (sqlcode %d) "),
+    MT("Oracle datatype (sqlcode %d) not supported for this operation "),
     MT("Unknown identifier %c while parsing SQL : "),
     MT("Unknown argument %d while retreiving data"),
     MT("Index %d out of bounds"),
@@ -142,7 +149,10 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Elements are not compatible"),
     MT("Unable to perform this operation on a %s statement"),
     MT("The statement is not scrollable"),
-    MT("Name or position '%s' already binded to the statement")
+    MT("Name or position '%s' already binded to the statement"),
+    MT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
+    MT("Column '%s' not find in table '%s'"),
+    MT("Unable to perform this operation on a %s direct path process")
 };
 
 #endif
@@ -160,6 +170,15 @@ static mtext * OCILib_StmtStates[] =
     MT("prepared"),
     MT("executed")
 };
+
+static mtext * OCILib_DirPathStates[] =
+{
+    MT("non prepared"),
+    MT("prepared"),
+    MT("converted"),
+    MT("terminated")
+};
+
 
 static mtext * OCILib_HandleNames[] =
 {
@@ -395,23 +414,24 @@ void OCI_ExceptionNotAvailable(OCI_Connection *con, int feature)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_ExceptionNotSupported
+ * OCI_ExceptionDatatypeNotSupported
  * ------------------------------------------------------------------------ */
 
-void OCI_ExceptionNotSupported(OCI_Connection *con, OCI_Statement *stmt, int code)
+void OCI_ExceptionDatatypeNotSupported(OCI_Connection *con, OCI_Statement *stmt,
+                                       int code)
 {
     OCI_Error *err = OCI_ExceptionGetError();
 
     if (err != NULL)
     {
         err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_NOT_SUPPORTED;
+        err->icode = OCI_ERR_DATATYPE_NOT_SUPPORTED;
         err->con   = con;
         err->stmt  = stmt;
 
         mtsprintf(err->str,
                   msizeof(err->str) - 1,
-                  OCILib_ErrorMsg[OCI_ERR_NOT_SUPPORTED],
+                  OCILib_ErrorMsg[OCI_ERR_DATATYPE_NOT_SUPPORTED],
                   code);
     }
 
@@ -676,6 +696,87 @@ void OCI_ExceptionBindAlreadyUsed(OCI_Statement *stmt, const mtext * bind)
                   msizeof(err->str) - 1,
                   OCILib_ErrorMsg[OCI_ERR_BIND_ALREADY_USED],
                   bind);
+    }
+
+    OCI_ExceptionRaise(err);
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ExceptionBindArraySize
+ * ------------------------------------------------------------------------ */
+
+void OCI_ExceptionBindArraySize(OCI_Statement *stmt, unsigned int maxsize, 
+                                unsigned int cursize, unsigned int newsize)
+{
+    OCI_Error *err = OCI_ExceptionGetError();
+
+    if (err != NULL)
+    {
+        err->type  = OCI_ERR_OCILIB;
+        err->icode = OCI_ERR_BIND_ARRAY_SIZE;
+        err->stmt  = stmt;
+
+        if (stmt != NULL)
+            err->con =  stmt->con;
+
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_BIND_ARRAY_SIZE],
+                  maxsize, cursize, newsize);
+    }
+
+    OCI_ExceptionRaise(err);
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ExceptionDirPathColNotFound
+ * ------------------------------------------------------------------------ */
+
+void OCI_ExceptionDirPathColNotFound(OCI_DirPath *dp, const mtext * column,
+                                     const mtext *table)
+{
+    OCI_Error *err = OCI_ExceptionGetError();
+
+    if (err != NULL)
+    {
+        err->type  = OCI_ERR_OCILIB;
+        err->icode = OCI_ERR_DIRPATH_STATE;
+        err->stmt  = NULL;
+
+        if (dp != NULL)
+            dp->con =  dp->con;
+
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_COLUMN_NOT_FOUND],
+                  column, 
+                  table);
+    }
+
+    OCI_ExceptionRaise(err);
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ExceptionDirPathState
+ * ------------------------------------------------------------------------ */
+
+void OCI_ExceptionDirPathState(OCI_DirPath *dp, int state)
+{
+    OCI_Error *err = OCI_ExceptionGetError();
+
+    if (err != NULL)
+    {
+        err->type  = OCI_ERR_OCILIB;
+        err->icode = OCI_ERR_DIRPATH_STATE;
+        err->stmt  = NULL;
+
+        if (dp != NULL)
+            dp->con =  dp->con;
+
+        mtsprintf(err->str,
+                  msizeof(err->str) - 1,
+                  OCILib_ErrorMsg[OCI_ERR_DIRPATH_STATE],
+                  OCILib_DirPathStates[state-1]);
     }
 
     OCI_ExceptionRaise(err);

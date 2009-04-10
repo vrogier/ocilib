@@ -2,7 +2,7 @@
 
 #define FILENAME "data.lst"
 
-int main()
+int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement *st;

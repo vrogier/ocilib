@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: thread.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: thread.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -98,6 +98,8 @@ OCI_Thread * OCI_API OCI_ThreadCreate(void)
             OCIThreadIdInit(OCILib.env, thread->err, &thread->id)
         )    
     }
+    else
+        res = FALSE;
 
     if (res == FALSE)
     {

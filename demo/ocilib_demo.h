@@ -58,6 +58,20 @@
 #define SIZE_BUF   2048
 #define SIZE_TAB   5
 
+#define SIZE_ARRAY 1000
+#define SIZE_COL1  20
+#define SIZE_COL2  30
+#define SIZE_COL3  8
+#define NUM_COLS   3
+
+#define ARRAY_COUNT(t) (sizeof(t)/sizeof(t[0]))
+
+typedef struct test_t
+{
+        void (*proc)(void); /* test procedure */
+        int    execute;     /* do execute the procedure ? */
+}test_t;
+
 /* ------------------------------------------------------------------------ *
  * PlATFORMS
  * ------------------------------------------------------------------------ */

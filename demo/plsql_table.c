@@ -4,7 +4,7 @@
 #define SIZE_NAME  20
 #define SIZE_VALUE 100
 
-int main()
+int main(void)
 {
    OCI_Connection *cn;
    OCI_Statement *st;

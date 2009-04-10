@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: library.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: library.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -204,6 +204,18 @@ OCIITERDELETE                OCIIterDelete                = NULL;
 OCIITERINIT                  OCIIterInit                  = NULL;
 OCIITERNEXT                  OCIIterNext                  = NULL;
 OCIITERPREV                  OCIIterPrev                  = NULL;
+OCIDIRPATHABORT              OCIDirPathAbort              = NULL;
+OCIDIRPATHDATASAVE           OCIDirPathDataSave           = NULL;
+OCIDIRPATHFINISH             OCIDirPathFinish             = NULL;
+OCIDIRPATHPREPARE            OCIDirPathPrepare            = NULL;
+OCIDIRPATHLOADSTREAM         OCIDirPathLoadStream         = NULL;
+OCIDIRPATHCOLARRAYENTRYSET   OCIDirPathColArrayEntrySet   = NULL;
+OCIDIRPATHCOLARRAYRESET      OCIDirPathColArrayReset      = NULL;
+OCIDIRPATHCOLARRAYTOSTREAM   OCIDirPathColArrayToStream   = NULL;
+OCIDIRPATHSTREAMRESET        OCIDirPathStreamReset        = NULL;
+OCIDIRPATHFLUSHROW           OCIDirPathFlushRow           = NULL;
+
+OCICACHEFREE                 OCICacheFree                 = NULL;
 
 #ifdef ORAXB8_DEFINED
 
@@ -749,6 +761,30 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
                    OCIITERNEXT);
         LIB_SYMBOL(OCILib.lib_handle, "OCIIterPrev", OCIIterPrev,
                    OCIITERPREV);
+
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDirPathAbort", OCIDirPathAbort,
+                   OCIDIRPATHABORT);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDirPathDataSave", OCIDirPathDataSave,
+                   OCIDIRPATHDATASAVE);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDirPathFinish", OCIDirPathFinish,
+                   OCIDIRPATHFINISH);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDirPathPrepare", OCIDirPathPrepare,
+                   OCIDIRPATHPREPARE);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDirPathLoadStream", OCIDirPathLoadStream,
+                   OCIDIRPATHLOADSTREAM);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDirPathColArrayEntrySet", OCIDirPathColArrayEntrySet,
+                   OCIDIRPATHCOLARRAYENTRYSET);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDirPathColArrayReset", OCIDirPathColArrayReset,
+                   OCIDIRPATHCOLARRAYRESET);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDirPathColArrayToStream", OCIDirPathColArrayToStream,
+                   OCIDIRPATHCOLARRAYTOSTREAM);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDirPathStreamReset", OCIDirPathStreamReset,
+                   OCIDIRPATHSTREAMRESET);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDirPathFlushRow", OCIDirPathFlushRow,
+                   OCIDIRPATHFLUSHROW);
+
+        LIB_SYMBOL(OCILib.lib_handle, "OCICacheFree", OCICacheFree,
+                   OCICACHEFREE);
 
         /* API Version checking */
 

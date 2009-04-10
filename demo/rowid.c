@@ -1,6 +1,6 @@
 #include "ocilib.h"
 
-int main()
+int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement *st1, *st2;
@@ -12,10 +12,10 @@ int main()
     if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
         return EXIT_FAILURE;
 
-    cn  = OCI_ConnectionCreate("db", "usr", pwd", OCI_SESSION_DEFAULT);
+    cn  = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
  
-    st1 = OCI_CreateStatement(cn);
-    st2 = OCI_CreateStatement(cn);
+    st1 = OCI_StatementCreate(cn);
+    st2 = OCI_StatementCreate(cn);
 
     OCI_Prepare(st1, "update test_fetch set code = :i where rowid = :s");
     OCI_BindInt(st1, ":i", &value);
@@ -38,7 +38,7 @@ int main()
 
     OCI_Commit(cn);
 
-    OCI_Cleanup():
+    OCI_Cleanup();
 
     return EXIT_SUCCESS;
 }

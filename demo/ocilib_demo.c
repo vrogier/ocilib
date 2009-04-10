@@ -68,6 +68,36 @@ void test_object_fetch(void);
 void test_scrollable_cursor(void);
 void test_collection(void);
 void test_ref(void);
+void test_directpath(void);
+
+/* ocilib test functions array */
+
+test_t tab_test[] =
+{
+        {test_format,            TRUE},
+        {test_immediate,         TRUE},
+        {test_immediate_format,  TRUE},
+        {test_fetch,             TRUE},
+        {test_bind1,             TRUE},
+        {test_bind2,             TRUE},
+        {test_piecewise_insert,  TRUE},
+        {test_piecewise_fetch,   TRUE},
+        {test_lob,               TRUE},
+        {test_nested_table,      TRUE},
+        {test_ref_cursor,        TRUE},
+        {test_plsql,             TRUE},
+        {test_dates,             TRUE},
+        {test_timestamp,         TRUE},
+        {test_describe,          TRUE},
+        {test_returning,         TRUE},
+        {test_returning_array,   TRUE},
+        {test_object_insert,     TRUE},
+        {test_object_fetch,      TRUE},
+        {test_scrollable_cursor, TRUE},
+        {test_collection,        TRUE},
+        {test_ref,               TRUE},
+        {test_directpath,        TRUE}
+};
 
 /* ------------------------------------------------------------------------ *
  * variables
@@ -119,7 +149,9 @@ int mtmain(int argc, mtarg* argv[])
     mtext dbs [SIZE_STR] = MT("");
     mtext usr [SIZE_STR] = MT("");
     mtext pwd [SIZE_STR] = MT("");
-    
+
+    size_t i;
+
     /* CHECK COMMAND LINE --------------------------------------------------- */
 
     if (argc < (ARG_COUNT-1))
@@ -142,7 +174,7 @@ int mtmain(int argc, mtarg* argv[])
         return EXIT_FAILURE;
 
     /* CONNECTION TO SERVER ------------------------------------------------- */
-    
+
     print_text("Connecting to ");
     print_args(usr);
     print_text("/");
@@ -160,28 +192,12 @@ int mtmain(int argc, mtarg* argv[])
         print_version();
         create_tables();
 
-        test_format();
-        test_immediate();
-        test_immediate_format();
-        test_fetch();
-        test_bind1();
-        test_bind2();
-        test_piecewise_insert();
-        test_piecewise_fetch();
-        test_lob();
-        test_nested_table();
-        test_ref_cursor();
-        test_plsql();
-        test_dates();
-        test_timestamp();
-        test_describe();
-        test_returning();
-        test_returning_array();
-        test_object_insert();
-        test_object_fetch();
-        test_scrollable_cursor();
-        test_collection();
-        test_ref();
+        /* execute tests */
+
+        for (i = 0; i < ARRAY_COUNT(tab_test); i++)
+        {
+            tab_test[i].proc();
+        }
 
         drop_tables();
 
@@ -259,15 +275,15 @@ void print_version(void)
     print_frmt("Server revision version : %i\n\n", OCI_GetServerRevisionVersion(cn));
 
     print_frmt("Connection      version : %i\n\n", OCI_GetVersionConnection(cn));
-    
+
     print_text("\n>>>>> SERVER VERSION BANNER \n\n");
 
     /* print server string version */
 
-   print_mstr(OCI_GetVersionServer(cn));
-   
-   print_text("\n\n");   
-      
+    print_mstr(OCI_GetVersionServer(cn));
+
+    print_text("\n\n");
+
 }
 
 /* ------------------------------------------------------------------------ *
@@ -336,6 +352,9 @@ void create_tables(void)
                         MT(") nested table employees store as test_table_emp")
                     );
 
+    OCI_ExecuteStmt(st, MT("create table test_directpath(val_int number(8,4), ")
+                        MT(" val_str varchar2(30), val_date date)"));
+
     /* insert data into the demo tables */
     OCI_ExecuteStmt(st, MT("insert into test_fetch ")
                         MT("(code, article, price, creation) ")
@@ -386,6 +405,7 @@ void drop_tables(void)
     OCI_ExecuteStmt(st, MT("drop table test_coll_varray"));
     OCI_ExecuteStmt(st, MT("drop table test_coll_nested"));
     OCI_ExecuteStmt(st, MT("drop table test_table_obj"));
+    OCI_ExecuteStmt(st, MT("drop table test_directpath"));
 
     OCI_ExecuteStmt(st, MT("drop type  test_t"));
     OCI_ExecuteStmt(st, MT("drop type  type_t"));
@@ -943,34 +963,34 @@ void test_timestamp(void)
 
 void test_describe(void)
 {
-    OCI_Column *col;
-    OCI_Schema *tbl;
+    OCI_Column   *col;
+    OCI_TypeInfo *tbl;
 
     int i, n;
 
     print_text("\n>>>>> TEST DESCRIBING TABLE \n\n");
 
-    tbl = OCI_SchemaGet(cn, MT("test_fetch"), OCI_SCHEMA_TABLE);
+    tbl = OCI_TypeInfoGet(cn, MT("test_fetch"), OCI_TIF_TABLE);
 
     if (tbl)
     {
         print_text("Column Name         NULL ?  Type                        \n");
         print_text("--------------------------------------------------------\n");
 
-        n = OCI_SchemaGetColumnCount(tbl);
+        n = OCI_TypeInfoGetColumnCount(tbl);
 
         for(i = 1; i <= n; i++)
         {
-            col = OCI_SchemaGetColumn(tbl, i);
+            col = OCI_TypeInfoGetColumn(tbl, i);
 
             OCI_ColumnGetFullSQLType(col, str, SIZE_STR);
 
-#if defined(OCI_CHARSET_UNICODE)    
+#if defined(OCI_CHARSET_UNICODE)
   #if !defined(_WINDOWS)
             printf("%-20ls%-8ls%-30ls\n",
   #else
-            wprintf(MT("%-20s%-8s%-30s\n"),                   
-  #endif           
+            wprintf(MT("%-20s%-8s%-30s\n"),
+  #endif
 #else
             printf("%-20s%-8s%-30s\n",
 #endif
@@ -980,33 +1000,33 @@ void test_describe(void)
         }
     }
 
-    OCI_SchemaFree(tbl);
+    OCI_TypeInfoFree(tbl);
 
     /* TEST DESCRIBING TYPE ------------------------------------------------- */
 
     print_text("\n>>>>> TEST DESCRIBING TYPE \n\n");
 
-    tbl = OCI_SchemaGet(cn, MT("test_t"), OCI_SCHEMA_TYPE);
+    tbl = OCI_TypeInfoGet(cn, MT("test_t"), OCI_TIF_TYPE);
 
     if (tbl)
     {
         print_text("Column Name         Type                           \n");
         print_text("---------------------------------------------------\n");
 
-        n = OCI_SchemaGetColumnCount(tbl);
+        n = OCI_TypeInfoGetColumnCount(tbl);
 
         for(i = 1; i <= n; i++)
         {
-            col = OCI_SchemaGetColumn(tbl, i);
+            col = OCI_TypeInfoGetColumn(tbl, i);
 
             OCI_ColumnGetFullSQLType(col, str, SIZE_STR);
 
-#if defined(OCI_CHARSET_UNICODE)           
+#if defined(OCI_CHARSET_UNICODE)
   #if !defined(_WINDOWS)
             printf("%-20ls%-30ls\n",
   #else
             wprintf(MT("%-20s%-30s\n"),
-  #endif                                     
+  #endif
 #else
             printf("%-20s%-30s\n",
 #endif
@@ -1014,7 +1034,7 @@ void test_describe(void)
         }
     }
 
-    OCI_SchemaFree(tbl);
+    OCI_TypeInfoFree(tbl);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -1221,7 +1241,7 @@ void test_object_insert(void)
 
     /* create types for the demo */
 
-    obj  = OCI_ObjectCreate(cn, OCI_SchemaGet(cn, MT("test_t"), OCI_SCHEMA_TYPE));
+    obj  = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, MT("test_t"), OCI_TIF_TYPE));
 
     OCI_ObjectSetInt(obj, MT("VAL_INT"), 1);
     OCI_ObjectSetDouble(obj, MT("VAL_FLT"), 3.14);
@@ -1232,7 +1252,7 @@ void test_object_insert(void)
     OCI_DateSysDate(date);
     OCI_ObjectSetDate(obj, MT("VAL_DATE"), date);
 
-    obj2 = OCI_ObjectCreate(cn, OCI_SchemaGet(cn, MT("TYPE_T"), OCI_SCHEMA_TYPE));
+    obj2 = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, MT("TYPE_T"), OCI_TIF_TYPE));
     OCI_ObjectSetInt(obj2, MT("ID"), 1);
 
     OCI_ObjectSetString(obj2, MT("NAME"), DT("USB KEY 2go"));
@@ -1397,15 +1417,15 @@ void test_scrollable_cursor(void)
 
 void test_collection(void)
 {
-    OCI_Schema *type;
-    OCI_Coll *coll;
-    OCI_Iter *iter;
-    OCI_Elem *elem;
+    OCI_TypeInfo *type;
+    OCI_Coll     *coll;
+    OCI_Iter     *iter;
+    OCI_Elem     *elem;
     int i, n;
 
     print_text("\n>>>>> TEST VARRAY BINDING \n\n");
 
-    type = OCI_SchemaGet(cn, MT("T_TAB1_EMP"), OCI_SCHEMA_TYPE);
+    type = OCI_TypeInfoGet(cn, MT("T_TAB1_EMP"), OCI_TIF_TYPE);
     coll = OCI_CollCreate(type);
 
     OCI_Prepare(st, MT("begin")
@@ -1521,12 +1541,12 @@ void test_ref(void)
 
     print_text("\n>>>>> TEST REF PL/SQL BINDING \n\n");
 
-    ref = OCI_RefCreate(cn, OCI_SchemaGet(cn, MT("type_t"), OCI_SCHEMA_TYPE));
+    ref = OCI_RefCreate(cn, OCI_TypeInfoGet(cn, MT("type_t"), OCI_TIF_TYPE));
 
     OCI_Prepare(st, MT("begin ")
                     MT("  select ref(e) into :r from test_table_obj e where e.id = 1; ")
                     MT("end; "));
-    
+
     OCI_BindRef(st, MT(":r"), ref);
     OCI_Execute(st);
 
@@ -1540,3 +1560,74 @@ void test_ref(void)
 #endif
 }
 
+/* ------------------------------------------------------------------------ *
+ * test_directpath
+ * ------------------------------------------------------------------------ */
+
+void test_directpath(void)
+{
+    OCI_DirPath *dp;
+    OCI_TypeInfo *tbl;
+
+    dtext val1[SIZE_COL1+1];
+    dtext val2[SIZE_COL2+1];
+    dtext val3[SIZE_COL3+1];
+
+    int i;
+
+   /* commit any previous pending modifications */
+
+    OCI_Commit(cn);
+
+    print_text("\n>>>>> TEST DIRECT PATH \n\n");
+
+    tbl = OCI_TypeInfoGet(cn, MT("test_directpath"), OCI_TIF_TABLE);
+    dp  = OCI_DirPathCreate(tbl, NULL, NUM_COLS, SIZE_ARRAY);
+
+    /* optionnal attributes to set */
+
+    OCI_DirPathSetBufferSize(dp, 64000);
+    OCI_DirPathEnableCache(dp, TRUE);
+    OCI_DirPathSetCacheSize(dp, 100);
+    OCI_DirPathSetNoLog(dp, TRUE);
+    OCI_DirPathSetParallel(dp, TRUE);
+
+    /* describe the target table */
+
+    OCI_DirPathSetColumn(dp, 1, MT("VAL_INT"),  SIZE_COL1, MT("9999.9999"));
+    OCI_DirPathSetColumn(dp, 2, MT("VAL_STR"),  SIZE_COL2, NULL);
+    OCI_DirPathSetColumn(dp, 3, MT("VAL_DATE"), SIZE_COL3, MT("YYYYMMDD"));
+
+    /* prepare the load */
+
+    OCI_DirPathPrepare(dp);
+
+    for (i = 1; i <= SIZE_ARRAY; i++)
+    {
+        /* fill test values */
+
+        sprint_dt(val1, SIZE_COL1+1, DT("%4d.%04d"), i, i);
+        sprint_dt(val2, SIZE_COL2+1, DT("value %05d"), i);
+        sprint_dt(val3, SIZE_COL3+1, DT("%04d%02d%02d"), 2000 + (i%23)+1, (i%11)+1, (i%23)+1);
+
+        OCI_DirPathSetEntry(dp, i, 1, val1, dtslen(val1), TRUE);
+        OCI_DirPathSetEntry(dp, i, 2, val2, dtslen(val2), TRUE);
+        OCI_DirPathSetEntry(dp, i, 3, val3, dtslen(val3), TRUE);
+    }
+
+    /* load data to the server */
+
+    OCI_DirPathConvert(dp);
+    OCI_DirPathLoad(dp);
+
+    /* commits changes */
+
+    OCI_DirPathFinish(dp);
+
+    print_frmt("%04d row(s) processed\n", OCI_DirPathGetCountProcessed(dp));
+    print_frmt("%04d row(s) loaded\n", OCI_DirPathGetCountLoaded(dp));
+
+    /* free direct path object */
+
+    OCI_DirPathFree(dp);
+}

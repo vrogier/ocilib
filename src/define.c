@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: define.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: define.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -336,7 +336,7 @@ boolean OCI_DefineDef(OCI_Define *def)
 
             OCIDefineObject((OCIDefine *) def->buf.handle,
                             def->rs->stmt->con->err,
-                            def->col.nty->tdo,
+                            def->col.typinf->tdo,
                             (void **) def->buf.data,
                             (ub4   *) NULL,
                            (void **) def->buf.inds,

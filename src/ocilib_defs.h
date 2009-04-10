@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: ocilib_defs.h, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -186,7 +186,7 @@
 /* -- external OCILIB handles - */
 
 #define OCI_IPC_ERROR            8
-#define OCI_IPC_SCHEMA           9
+#define OCI_IPC_TYPE_INFO        9
 #define OCI_IPC_CONNECTION       10
 #define OCI_IPC_CONNPOOL         11
 #define OCI_IPC_TRANSACTION      12
@@ -208,29 +208,31 @@
 #define OCI_IPC_MUTEX            28
 #define OCI_IPC_BIND             29
 #define OCI_IPC_REF              30
+#define OCI_IPC_DIRPATH          31
 
 /* ---- Internal pointers ----- */
  
-#define OCI_IPC_LIST             31
-#define OCI_IPC_LIST_ITEM        32
-#define OCI_IPC_BIND_ARRAY       33
-#define OCI_IPC_DEFINE           34
-#define OCI_IPC_DEFINE_ARRAY     35
-#define OCI_IPC_HASHENTRY        36
-#define OCI_IPC_HASHENTRY_ARRAY  37
-#define OCI_IPC_HASHVALUE        38
-#define OCI_IPC_THREADKEY        39
-#define OCI_IPC_OCIDATE          40
-#define OCI_IPC_TM               41
-#define OCI_IPC_RESULTSET_ARRAY  42
-#define OCI_IPC_PLS_SIZE_ARRAY   43
-#define OCI_IPC_PLS_RCODE_ARRAY  44
-#define OCI_IPC_SERVER_OUPUT     45
-#define OCI_IPC_INDICATOR_ARRAY  46
-#define OCI_IPC_LEN_ARRAY        47
-#define OCI_IPC_BUFF_ARRAY       48
-#define OCI_IPC_LONG_BUFFER      49
-#define OCI_IPC_TRACE_INFO       50
+#define OCI_IPC_LIST             32
+#define OCI_IPC_LIST_ITEM        33
+#define OCI_IPC_BIND_ARRAY       34
+#define OCI_IPC_DEFINE           35
+#define OCI_IPC_DEFINE_ARRAY     36
+#define OCI_IPC_HASHENTRY        37
+#define OCI_IPC_HASHENTRY_ARRAY  38
+#define OCI_IPC_HASHVALUE        39
+#define OCI_IPC_THREADKEY        40
+#define OCI_IPC_OCIDATE          41
+#define OCI_IPC_TM               42
+#define OCI_IPC_RESULTSET_ARRAY  43
+#define OCI_IPC_PLS_SIZE_ARRAY   44
+#define OCI_IPC_PLS_RCODE_ARRAY  45
+#define OCI_IPC_SERVER_OUPUT     46
+#define OCI_IPC_INDICATOR_ARRAY  47
+#define OCI_IPC_LEN_ARRAY        48
+#define OCI_IPC_BUFF_ARRAY       49
+#define OCI_IPC_LONG_BUFFER      50
+#define OCI_IPC_TRACE_INFO       51
+#define OCI_IPC_DP_COL_ARRAY     52
 
 /* ------------------------------------------------------------------------ *
  * Oracle conditionnal features 
@@ -290,6 +292,15 @@
 #define OCI_DESC_COLLECTION             5
 
 /* ------------------------------------------------------------------------ *
+ * Direct path object status
+ * ------------------------------------------------------------------------ */
+
+#define OCI_DPS_NOT_PREPARED            1
+#define OCI_DPS_PREPARED                2
+#define OCI_DPS_CONVERTED               3
+#define OCI_DPS_TERMINATED              4
+
+/* ------------------------------------------------------------------------ *
  * internal statement fetch direction
  * ------------------------------------------------------------------------ */
 
@@ -297,6 +308,15 @@
 #define OCI_SFD_FIRST                   0x04
 #define OCI_SFD_LAST                    0x08
 #define OCI_SFD_PREV                    0x10
+
+/* ------------------------------------------------------------------------ *
+ * internal direct path column types
+ * ------------------------------------------------------------------------ */
+
+#define OCI_DDT_TEXT                    1
+#define OCI_DDT_BINARY                  2
+#define OCI_DDT_NUMBER                  3
+#define OCI_DDT_OTHERS                  4
 
 /* ------------------------------------------------------------------------ *
  * internal integer types

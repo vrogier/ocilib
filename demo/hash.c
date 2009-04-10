@@ -1,6 +1,6 @@
 #include "ocilib.h"
 
-int main()
+int main(void)
 {
     int i, n;
     OCI_Connection *cn;

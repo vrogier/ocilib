@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: collection.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: collection.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -43,7 +43,7 @@
  * ------------------------------------------------------------------------ */
 
 OCI_Coll * OCI_CollInit(OCI_Connection *con, OCI_Coll **pcoll, void *handle,
-                        OCI_Schema *nty)
+                        OCI_TypeInfo *typinf)
 {
     OCI_Coll *coll = NULL;
     boolean res    = TRUE;
@@ -59,7 +59,7 @@ OCI_Coll * OCI_CollInit(OCI_Connection *con, OCI_Coll **pcoll, void *handle,
 
         coll->con    = con;
         coll->handle = handle;
-        coll->nty    = nty;
+        coll->typinf = typinf;
 
         if (coll->handle == NULL)
         {
@@ -71,8 +71,8 @@ OCI_Coll * OCI_CollInit(OCI_Connection *con, OCI_Coll **pcoll, void *handle,
             (
                 res, con,
 
-                OCI_ObjectNew(OCILib.env, con->err, con->cxt, nty->ccode,
-                              nty->tdo, (void *) NULL, OCI_DURATION_SESSION,
+                OCI_ObjectNew(OCILib.env, con->err, con->cxt, typinf->ccode,
+                              typinf->tdo, (void *) NULL, OCI_DURATION_SESSION,
                               TRUE, (dvoid **) &coll->handle)
             )
         }
@@ -127,16 +127,16 @@ boolean OCI_CollGetInternalSize(OCI_Coll *coll)
  * OCI_CollCreate
  * ------------------------------------------------------------------------ */
 
-OCI_Coll * OCI_API OCI_CollCreate(OCI_Schema *schema)
+OCI_Coll * OCI_API OCI_CollCreate(OCI_TypeInfo *typinf)
 {
     OCI_Coll *coll = NULL;
 
     OCI_CHECK_INITIALIZED(NULL);
 
-    OCI_CHECK_PTR(OCI_IPC_SCHEMA, schema, NULL);
-    OCI_CHECK(schema->ccode == OCI_UNKNOWN, NULL)
+    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf, NULL);
+    OCI_CHECK(typinf->ccode == OCI_UNKNOWN, NULL)
 
-    coll = OCI_CollInit(schema->con, &coll, (OCIColl *) NULL, schema);
+    coll = OCI_CollInit(typinf->con, &coll, (OCIColl *) NULL, typinf);
 
     OCI_RESULT(coll != NULL);
 
@@ -165,7 +165,7 @@ boolean OCI_API OCI_CollFree(OCI_Coll *coll)
 
     if (coll->hstate == OCI_OBJECT_ALLOCATED)
     {
-        OCI_OCIObjectFree(OCILib.env, coll->nty->con->err,
+        OCI_OCIObjectFree(OCILib.env, coll->typinf->con->err,
                           coll->handle, OCI_OBJECTFREE_NONULL);
     }
 
@@ -188,7 +188,7 @@ boolean OCI_API OCI_CollAssign(OCI_Coll *coll, OCI_Coll *coll_src)
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll_src, FALSE);
 
     OCI_CHECK_COMPAT(coll->con,
-                     coll->nty->cols[0].icode == coll_src->nty->cols[0].icode, 
+                     coll->typinf->cols[0].icode == coll_src->typinf->cols[0].icode, 
                      FALSE);
 
     OCI_CALL2
@@ -215,9 +215,9 @@ unsigned int OCI_API OCI_CollGetType(OCI_Coll *coll)
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, OCI_UNKNOWN);
 
-    if (coll->nty->ccode == OCI_TYPECODE_TABLE)
+    if (coll->typinf->ccode == OCI_TYPECODE_TABLE)
         type = OCI_COLL_NESTED_TABLE;
-    else if(coll->nty->ccode == OCI_TYPECODE_VARRAY)
+    else if(coll->typinf->ccode == OCI_TYPECODE_VARRAY)
         type = OCI_COLL_VARRAY;
 
     OCI_RESULT(TRUE);
@@ -311,7 +311,7 @@ OCI_Elem * OCI_API OCI_CollGetAt(OCI_Coll *coll, unsigned int index)
     if (res == TRUE && exists == TRUE && data != NULL)
     {
         elem = coll->elem = OCI_ElemInit(coll->con, &coll->elem,
-                                         (OCIColl *) data, p_ind, coll->nty);
+                                         (OCIColl *) data, p_ind, coll->typinf);
     }
 
     OCI_RESULT(res);
@@ -330,7 +330,7 @@ boolean OCI_API OCI_CollSetAt(OCI_Coll *coll, unsigned int index, OCI_Elem *elem
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
 
-    OCI_CHECK_COMPAT(coll->con, elem->nty->cols[0].type == coll->nty->cols[0].type, FALSE);
+    OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].type == coll->typinf->cols[0].type, FALSE);
 
     OCI_CALL2
     (
@@ -356,7 +356,7 @@ boolean OCI_API OCI_CollAppend(OCI_Coll *coll, OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
     
-    OCI_CHECK_COMPAT(coll->con, elem->nty->cols[0].type == coll->nty->cols[0].type, FALSE);
+    OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].type == coll->typinf->cols[0].type, FALSE);
 
     OCI_CALL2
     (
@@ -374,14 +374,14 @@ boolean OCI_API OCI_CollAppend(OCI_Coll *coll, OCI_Elem *elem)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_CollGetSchema
+ * OCI_CollGetTypeInfo
  * ------------------------------------------------------------------------ */
 
-OCI_Schema * OCI_API OCI_CollGetSchema(OCI_Coll *coll)
+OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo(OCI_Coll *coll)
 {
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, NULL);
 
     OCI_RESULT(TRUE);
 
-    return coll->nty;
+    return coll->typinf;
 }

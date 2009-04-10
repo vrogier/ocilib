@@ -32,7 +32,7 @@
    +----------------------------------------------------------------------+
    |                                                                      |
    | THIS FILE CONTAINS CONSTANTS AND STRUCTURES DECLARATIONS THAT WERE   |
-   | PICKED UP FROM ORACLE PUBLIC HEADER FILES 'OCI.H' AND 'OCIDFN.H'.    |
+   | PICKED UP FROM ORACLE PUBLIC HEADER FILES.                           |
    |                                                                      |
    | SO THE CONTENT OF THIS FILE IS UNDER ORACLE COPYRIGHT AND THE        |
    | DECLARATIONS REPRODUCED HERE ARE ORIGINALLY WRITTEN BY ORACLE        | 
@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_defs.h, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: oci_defs.h, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_DEFS_H_INCLUDED 
@@ -142,9 +142,11 @@
 #define OCI_HTYPE_SERVER         8                          /* server handle */
 #define OCI_HTYPE_SESSION        9                  /* authentication handle */
 #define OCI_HTYPE_AUTHINFO      OCI_HTYPE_SESSION  /* SessionGet auth handle */
+#define OCI_HTYPE_DIRPATH_CTX   14                    /* direct path context */
+#define OCI_HTYPE_DIRPATH_COLUMN_ARRAY 15        /* direct path column array */
+#define OCI_HTYPE_DIRPATH_STREAM       16              /* direct path stream */
 #define OCI_HTYPE_TRANS         10                     /* transaction handle */
 #define OCI_HTYPE_CPOOL         26                 /* connection pool handle */
-
 
 /*-------------------------Descriptor Types----------------------------------*/
 
@@ -379,7 +381,9 @@
 #define OCI_ATTR_PRECISION      5                /* precision if number type */
 #define OCI_ATTR_SCALE          6                    /* scale if number type */
 #define OCI_ATTR_IS_NULL        7                            /* is it null ? */
-#define OCI_ATTR_TYPE_NAME      8
+#define OCI_ATTR_TYPE_NAME      8             /* name of the named data type */
+#define OCI_ATTR_SCHEMA_NAME    9                         /* the schema name */
+#define OCI_ATTR_SUB_NAME       10      /* type name if package private type */
 
 /*------------------------Other Constants------------------------------------*/
 
@@ -407,6 +411,11 @@ typedef struct OCISPool         OCISPool;             /* session pool handle */
 typedef struct OCIAuthInfo      OCIAuthInfo;                  /* auth handle */
 typedef struct OCIAdmin         OCIAdmin;                    /* admin handle */
 typedef struct OCIEvent         OCIEvent;                 /* HA event handle */
+
+
+typedef struct OCIDirPathCtx      OCIDirPathCtx;               /* DP context */
+typedef struct OCIDirPathColArray OCIDirPathColArray;     /* DP column array */
+typedef struct OCIDirPathStream   OCIDirPathStream;             /* DP stream */
 
 /*--------------------- OCI Thread Object Definitions------------------------*/
 
@@ -666,7 +675,27 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_OBJECT_IS_DIRTY(flag) \
   bit((flag), OCI_OBJECT_UPDATED|OCI_OBJECT_NEW|OCI_OBJECT_DELETED)
 
+/*----- values for cflg argument to OCIDirpathColArrayEntrySet --------------*/
 
+#define OCI_DIRPATH_COL_COMPLETE 0                /* column data is complete */
+#define OCI_DIRPATH_COL_NULL     1                         /* column is null */
+#define OCI_DIRPATH_COL_PARTIAL  2                 /* column data is partial */
+#define OCI_DIRPATH_COL_ERROR    3               /* column error, ignore row */
+
+/*----- values for action parameter to OCIDirPathDataSave -------------------*/
+#define OCI_DIRPATH_DATASAVE_SAVEONLY 0              /* data save point only */
+
+/*------------- Supported Values for Direct Path Date cache -----------------*/
+#define OCI_ATTR_DIRPATH_DCACHE_NUM         303        /* date cache entries */
+#define OCI_ATTR_DIRPATH_DCACHE_SIZE        304          /* date cache limit */
+#define OCI_ATTR_DIRPATH_DCACHE_MISSES      305         /* date cache misses */
+#define OCI_ATTR_DIRPATH_DCACHE_HITS        306           /* date cache hits */
+#define OCI_ATTR_DIRPATH_DCACHE_DISABLE     307 /* on set: disable datecache */
+
+/*------------- Supported Values for Direct Path Stream Version -------------*/
+
+#define OCI_ATTR_DIRPATH_NOLOG          79               /* nologging option */
+#define OCI_ATTR_DIRPATH_PARALLEL       80     /* parallel (temp seg) option */
 
 
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */

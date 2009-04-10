@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: transaction.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: transaction.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -61,10 +61,7 @@ OCI_Transaction * OCI_API OCI_TransactionCreate(OCI_Connection *con,
  
     if (item != NULL)
     {
-        res = TRUE;
-
         trans = (OCI_Transaction *) item->data;
-
 
         trans->con      = con;
         trans->mode     = mode;
@@ -106,6 +103,8 @@ OCI_Transaction * OCI_API OCI_TransactionCreate(OCI_Connection *con,
             )
         }
     }
+    else
+        res = FALSE;
 
    /* handle errors */
 

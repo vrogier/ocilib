@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connpool.c, v 3.1.0 2009/01/23 21:45 Vince $
+ * $Id: connpool.c, v 3.2.0 2009/04/20 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -116,7 +116,7 @@ OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user,
 {
     OCI_ConnPool *pool = NULL;
     OCI_Item     *item = NULL;
-    boolean res        = FALSE;
+    boolean res        = TRUE;
 
     OCI_CHECK_MIN(NULL, NULL, max_con, 1, FALSE);
 
@@ -130,8 +130,6 @@ OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user,
 
     if (item != NULL)
     {
-        res = TRUE;
-
         pool = (OCI_ConnPool *) item->data;
 
         /* create internal lists */
@@ -147,6 +145,8 @@ OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user,
             res = (pool->mutex != NULL);
         }
     }
+    else
+        res = FALSE;
 
     /* set attributes */
 
