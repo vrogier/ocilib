@@ -1,5 +1,5 @@
 /*
-   +----------------------------------------------------------------------+   
+   +----------------------------------------------------------------------+
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
@@ -25,7 +25,7 @@
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
    |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
-   +----------------------------------------------------------------------+ 
+   +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
@@ -49,7 +49,7 @@ boolean OCI_ConnPoolClose(OCI_ConnPool *pool)
     OCI_CHECK_PTR(OCI_IPC_CONNPOOL, pool, FALSE);
 
     /* free all connections */
-    
+
     OCI_ListForEach(pool->cons, (boolean (*)(void *)) OCI_ConnectionClose);
     OCI_ListClear(pool->cons);
     OCI_ListFree(pool->cons);
@@ -70,27 +70,27 @@ boolean OCI_ConnPoolClose(OCI_ConnPool *pool)
             OCI_CALL0
             (
                 res, pool->err,
-                
-                OCIConnectionPoolDestroy(pool->handle, pool->err, 
+
+                OCIConnectionPoolDestroy(pool->handle, pool->err,
                                           (ub4) OCI_DEFAULT)
             )
 
             OCI_HandleFree((void *) pool->handle, (ub4) OCI_HTYPE_CPOOL);
         }
-     
+
         /* close error handle */
-        
+
         if (pool->err != NULL)
             OCI_HandleFree((void *) pool->err, (ub4) OCI_HTYPE_ERROR);
     }
 
 #endif
- 
+
     pool->err    = NULL;
     pool->handle = NULL;
 
     /* free strings */
-    
+
     OCI_FREE(pool->name);
     OCI_FREE(pool->db);
     OCI_FREE(pool->user);
@@ -107,11 +107,11 @@ boolean OCI_ConnPoolClose(OCI_ConnPool *pool)
  * OCI_ConnPoolCreate
  * ------------------------------------------------------------------------ */
 
-OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user, 
-                                          const mtext *pwd, 
-                                          unsigned int mode, 
-                                          unsigned int min_con, 
-                                          unsigned int max_con, 
+OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user,
+                                          const mtext *pwd,
+                                          unsigned int mode,
+                                          unsigned int min_con,
+                                          unsigned int max_con,
                                           unsigned int incr_con)
 {
     OCI_ConnPool *pool = NULL;
@@ -134,7 +134,7 @@ OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user,
 
         /* create internal lists */
 
-        pool->cons = OCI_ListCreate(OCI_IPC_CONNECTION);    
+        pool->cons = OCI_ListCreate(OCI_IPC_CONNECTION);
 
         if (OCI_LIB_THREADED)
         {
@@ -178,21 +178,22 @@ OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user,
         void *ostr_user = NULL;
         void *ostr_pwd  = NULL;
 
-        /*  allocate error handle */
-        
+        /* allocate error handle */
+
         if (res == TRUE)
             res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
                                                   (dvoid **) (void *) &pool->err,
-                                                  (ub4) OCI_HTYPE_ERROR, 
-                                                  (size_t) 0, 
+                                                  (ub4) OCI_HTYPE_ERROR,
+                                                  (size_t) 0,
                                                   (dvoid **) NULL));
 
-       /*  allocate connection pool handle */
+        /* allocate connection pool handle */
+
         if (res == TRUE)
-            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env, 
+            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
                                                   (dvoid **) (void *) &pool->handle,
-                                                  (ub4) OCI_HTYPE_CPOOL, 
-                                                  (size_t) 0, 
+                                                  (ub4) OCI_HTYPE_CPOOL,
+                                                  (size_t) 0,
                                                   (dvoid **) NULL));
 
         /* create the pool */
@@ -206,13 +207,14 @@ OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user,
             OCI_CALL3
             (
                 res, pool->err,
-                
+
                 OCIConnectionPoolCreate(OCILib.env, pool->err, pool->handle,
-                                        (OraText **) &ostr_name, (sb4*) &osize_name, 
+                                        (OraText **) (dvoid *) &ostr_name,
+                                        (sb4*) &osize_name,
                                         (OraText *) ostr_db, (sb4) osize_db,
                                         (ub4) pool->min, (ub4) pool->max,
-                                        (ub4) pool->incr, (OraText *) ostr_user, 
-                                        (sb4) osize_user, (OraText *) ostr_pwd,  
+                                        (ub4) pool->incr, (OraText *) ostr_user,
+                                        (sb4) osize_user, (OraText *) ostr_pwd,
                                         (sb4) osize_pwd,  (ub4) OCI_DEFAULT)
             )
 
@@ -226,10 +228,10 @@ OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user,
             pool->name = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext),
                                                 (osize_name/sizeof(omtext)) + 1,
                                                 FALSE);
-      
+
             if (pool->name != NULL)
             {
-                OCI_CopyString(ostr_name, pool->name, &osize_name, 
+                OCI_CopyString(ostr_name, pool->name, &osize_name,
                                sizeof(omtext), sizeof(mtext));
             }
             else
@@ -239,16 +241,16 @@ OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user,
 
 #endif
 
-   /* on success, we allocate internal OCI connection objects for pool 
+   /* on success, we allocate internal OCI connection objects for pool
       minimum size */
-    
+
     if (res == TRUE)
     {
         OCI_Connection *cn;
 
         while ((min_con--) > 0)
         {
-            cn = OCI_ConnectionAllocate(pool, pool->db, pool->user, 
+            cn = OCI_ConnectionAllocate(pool, pool->db, pool->user,
                                         pool->pwd, pool->mode);
         }
     }
@@ -274,7 +276,7 @@ boolean OCI_API OCI_ConnPoolFree(OCI_ConnPool *pool)
     OCI_CHECK_PTR(OCI_IPC_CONNPOOL, pool, FALSE);
 
     res = OCI_ConnPoolClose(pool);
-    
+
     OCI_ListRemove(OCILib.pools, pool);
 
     OCI_FREE(pool);
@@ -300,7 +302,7 @@ OCI_Connection * OCI_API OCI_ConnPoolGetConnection(OCI_ConnPool *pool)
     if (OCI_LIB_THREADED)
         OCI_MutexAcquire(pool->mutex);
 
-    /* fist, try to find an unsued OCI_Connection in list */
+    /* fist, try to find an unused OCI_Connection in list */
 
     item = pool->cons->head;
 
@@ -319,14 +321,13 @@ OCI_Connection * OCI_API OCI_ConnPoolGetConnection(OCI_ConnPool *pool)
 
     if (found == FALSE)
     {
-        /* no available connection found !
-           try to allocate a new one... */
+        /* no available connection found ! Try to allocate a new one... */
 
         if (OCILib.ver_runtime >= OCI_9 || pool->cons->count < pool->max)
         {
             ub4 i, nb;
             OCI_Connection *c = NULL;
-            
+
             nb = pool->nb_opened + pool->incr;
 
             if (nb > pool->max)
@@ -334,7 +335,7 @@ OCI_Connection * OCI_API OCI_ConnPoolGetConnection(OCI_ConnPool *pool)
 
             for (i = 0; i < nb; i++)
             {
-                c = OCI_ConnectionAllocate(pool, pool->db, pool->user, 
+                c = OCI_ConnectionAllocate(pool, pool->db, pool->user,
                                            pool->pwd, pool->mode);
 
                 if (i == 0 && c != NULL)
@@ -398,8 +399,8 @@ boolean OCI_API OCI_ConnPoolSetTimeout(OCI_ConnPool *pool, unsigned int value)
 
         OCI_CALL3
         (
-            res, pool->err, 
-            
+            res, pool->err,
+
             OCIAttrSet((dvoid *) pool->handle, (ub4) OCI_HTYPE_CPOOL,
                        (dvoid *) &timeout,(ub4) sizeof(timeout),
                        (ub4) OCI_ATTR_CONN_TIMEOUT, pool->err)
@@ -448,7 +449,7 @@ boolean OCI_API OCI_ConnPoolSetNoWait(OCI_ConnPool *pool, boolean value)
         OCI_CALL3
         (
             res, pool->err,
-            
+
             OCIAttrSet((dvoid *) pool->handle, (ub4) OCI_HTYPE_CPOOL,
                        (dvoid *) &nowait, (ub4) sizeof(nowait),
                        (ub4) OCI_ATTR_CONN_NOWAIT, pool->err)
@@ -484,7 +485,7 @@ unsigned int OCI_API OCI_ConnPoolGetBusyCount(OCI_ConnPool *pool)
         OCI_CALL3
         (
             res, pool->err,
-            
+
             OCIAttrGet((dvoid *) pool->handle,(ub4) OCI_HTYPE_CPOOL,
                        (dvoid *) &value, (ub4 *) NULL,
                        (ub4) OCI_ATTR_CONN_BUSY_COUNT, pool->err)
@@ -520,9 +521,9 @@ unsigned int OCI_API OCI_ConnPoolGetOpenedCount(OCI_ConnPool *pool)
         OCI_CALL3
         (
             res, pool->err,
-            
-            OCIAttrGet((dvoid *) pool->handle, (ub4) OCI_HTYPE_CPOOL, 
-                       (dvoid *) &value, (ub4 *) NULL, 
+
+            OCIAttrGet((dvoid *) pool->handle, (ub4) OCI_HTYPE_CPOOL,
+                       (dvoid *) &value, (ub4 *) NULL,
                        (ub4) OCI_ATTR_CONN_OPEN_COUNT, pool->err)
         )
 
@@ -544,7 +545,7 @@ unsigned int OCI_API OCI_ConnPoolGetOpenedCount(OCI_ConnPool *pool)
 unsigned int OCI_API OCI_ConnPoolGetMin(OCI_ConnPool *pool)
 {
     OCI_CHECK_PTR(OCI_IPC_CONNPOOL, pool, 0);
-  
+
     OCI_RESULT(TRUE);
 
     return pool->min;

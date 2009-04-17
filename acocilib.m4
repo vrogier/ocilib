@@ -154,7 +154,7 @@ AC_ARG_WITH(oracle_lib_path,
 [  ac_oracle_lib_path="$withval" ], [ ac_oracle_lib_path="NO" ])
 
 AC_ARG_WITH(custom_loader,
-[  ---with-custom-loader=Custom loader flag.],
+[  --with-custom-loader=Custom loader flag.],
 [  ac_ocilib_ld="$withval" ], [ ac_ocilib_ld="NO" ])
 
 ac_lib_full_path=NO
@@ -188,9 +188,17 @@ if test x"$OCILIB_IMPORT" = x"OCI_IMPORT_LINKAGE"; then
 
 	# find out the Oracle public OCI headers path
 	if test "$ac_headers_path" = NO; then
-		if test "$ac_oracle_home" != NO; then
-			ac_headers_path=$ac_oracle_home/rdbms/public
-		fi
+		if test "$ac_oracle_home" != NO; then    
+      test_include_path=$ac_oracle_home/rdbms/public      
+      if test -d "$test_include_path"; then	  
+        ac_headers_path=$test_include_path		
+      else
+        test_include_path=$ac_oracle_home/rdbms/demo
+        if test -d "$test_include_path"; then       
+          ac_headers_path=$test_include_path          
+        fi  
+      fi
+    fi
 	fi
 
 	# find out the Oracle shared lib path

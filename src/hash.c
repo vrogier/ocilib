@@ -455,6 +455,3 @@ OCI_HashEntry * OCI_API OCI_HashLookup(OCI_HashTable *table, const mtext *key,
 
     return e;
 }
-
-
-

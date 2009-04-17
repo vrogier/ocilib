@@ -270,7 +270,7 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
 
                 pf++;
 
-                /* short ints pust be passed as int to va_args */
+                /* short ints must be passed as int to va_args */
 
                 if (*pf == 'i')
                 {

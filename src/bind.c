@@ -215,4 +215,3 @@ unsigned int OCI_API OCI_BindGetDataSizeAtPos(OCI_Bind *bnd, unsigned int positi
 
     return (unsigned int) size;
 }
-

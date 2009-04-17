@@ -55,6 +55,7 @@ boolean OCI_TypeInfoClose(OCI_TypeInfo *typinf)
 
     OCI_FREE(typinf->cols);
     OCI_FREE(typinf->name);
+    OCI_FREE(typinf->schema);
 
     return TRUE;
 }
@@ -111,7 +112,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
     {
         if (*str == MT('.'))
         {
-            mtsncat(obj_schema, name, min(str-name, OCI_SIZE_OBJ_NAME));
+            mtsncat(obj_schema, name, str-name);
             mtsncat(obj_name, ++str, OCI_SIZE_OBJ_NAME);
             break;
         }
@@ -139,6 +140,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
     item = con->tinfs->head;
 
     /* walk along the list to find the type */
+
     while (item != NULL)
     {
         typinf = (OCI_TypeInfo *) item->data;
@@ -266,7 +268,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
                            NULL, OCI_ATTR_PARAM, con->err)
             )
 
-            /* do we need get more attributes for Collections ? */
+            /* do we need get more attributes for collections ? */
 
             if (type == OCI_TIF_TYPE)
             {

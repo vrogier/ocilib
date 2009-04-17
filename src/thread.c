@@ -67,7 +67,7 @@ OCI_Thread * OCI_API OCI_ThreadCreate(void)
 
     OCI_CHECK_THREAD_ENABLED(FALSE);
 
-    /* allocate thread structure  */
+    /* allocate thread structure */
 
     thread = (OCI_Thread *) OCI_MemAlloc(OCI_IPC_THREAD, sizeof(*thread), 1, TRUE);
 

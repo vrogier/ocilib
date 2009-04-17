@@ -85,7 +85,7 @@ struct OCI_List
 typedef struct OCI_List OCI_List;
 
 /*
- * Server ouput object used to retreive server dbms.output buffers
+ * Server output object used to retrieve server dbms.output buffers
  *
  */
 
@@ -141,7 +141,7 @@ struct OCI_Error
  * Mutex object
  *
  * Mutexes have their own error handle to avoid conflict using OCIErrorGet()
- * from differents threads
+ * from different threads
  *
  */
 
@@ -195,15 +195,15 @@ struct OCI_Library
 {
     OCI_List       *cons;                   /* list of connection objects */
     OCI_List       *pools;                  /* list of pools objects */
-    OCIEnv         *env;                    /* OCI environnement handle */
+    OCIEnv         *env;                    /* OCI environment handle */
     OCIError       *err;                    /* OCI error handle */
     POCI_ERROR      error_handler;          /* user defined error handler */
     ub1             ver_compile;            /* OCI version used at compile time */
     ub1             ver_runtime;            /* OCI version used at runtime */
     ub1             use_lob_ub8;            /* use 64 bits integers for lobs ? */
     ub1             use_scrollable_cursors; /* use Oracle 9i fetch API */
-    ub4             env_mode;               /* default environnement mode */
-    boolean         loaded;                 /* OCILIB correclty loaded ? */
+    ub4             env_mode;               /* default environment mode */
+    boolean         loaded;                 /* OCILIB correctly loaded ? */
     OCI_Error       lib_err;                /* Error used when OCILIB is not loaded */
     OCI_HashTable  *key_map;                /* hash table for mapping name/key */
     OCI_ThreadKey  *key_errs;               /* Thread key to store thread errors */
@@ -228,7 +228,7 @@ struct OCI_ConnPool
 #if OCI_VERSION_COMPILE >= OCI_9
     OCICPool        *handle;    /* OCI pool handle */
 #else
-    void            *handle;    /* fake handle for aligment */
+    void            *handle;    /* fake handle for alignment */
 #endif
     OCIError        *err;       /* OCI context handle */
     mtext           *name;      /* pool name */
@@ -263,7 +263,7 @@ struct OCI_Connection
     OCI_Transaction    *trs;       /* pointer to current transaction object */
     OCI_ConnPool       *pool;      /* pointer to connection pool parent */
     OCI_ServerOutput   *svopt;     /* Pointer to server output object */
-    OCIServer          *svr;       /* OCI server  handle */
+    OCIServer          *svr;       /* OCI server handle */
     OCIError           *err;       /* OCI context handle */
     OCISession         *ses;       /* OCI session handle */
     OCISvcCtx          *cxt;       /* OCI context handle */
@@ -277,7 +277,7 @@ struct OCI_Connection
     unsigned int        ver_maj;   /* server version major number */
     unsigned int        ver_min;   /* server version minor number */
     unsigned int        ver_rev;   /* server version revision number */
-    OCI_TraceInfo      *trace;    /* trace informations */
+    OCI_TraceInfo      *trace;     /* trace information */
 };
 
 /*
@@ -292,7 +292,7 @@ struct OCI_Transaction
     unsigned int     timeout;   /* timeout */
     unsigned int     mode;      /* transaction mode */
     boolean          local;     /* is local transaction ? */
-    OCI_XID          xid;       /* global transaction identitifer */
+    OCI_XID          xid;       /* global transaction identifier */
 };
 
 /*
@@ -308,7 +308,7 @@ struct OCI_Column
     ub2              icode;     /* Internal translated Oracle SQL code */
     ub2              size;      /* SQL Size */
     sb2              prec;      /* SQL precision 1 (number prec, leading prec) */
-    sb2              prec2;     /* SQL precision 2 (fractionnal prec) */
+    sb2              prec2;     /* SQL precision 2 (fractional prec) */
     sb1              scale;     /* SQL scale */
     ub1              type;      /* internal datatype */
     ub1              null;      /* is nullable */
@@ -352,16 +352,16 @@ struct OCI_Bind
     OCI_Statement   *stmt;      /* pointer to statement object */
     void           **input;     /* input values */
     mtext           *name;      /* name of the bind */
-    ub1              type;      /* internal datatype */
-    ub1              subtype;   /* internal subtype */
-    ub1              alloc;     /* is buffer allocated or mapped to input */
     sb4              size;      /* data size */
     OCI_Buffer       buf;       /* place holder */
-    ub2              code;      /* SQL datatype code */
     ub2              dynpos;    /* index of the bind for dynamic binds */
     ub2             *plrcds;    /* PL/SQL tables return codes */
-    ub4              nbelem;    /* PL/SQL tables nb elements */
+    ub4              nbelem;    /* PL/SQL tables number of elements */
     OCI_TypeInfo    *typinf;    /* for object, collection and ref */
+    ub1              type;      /* internal datatype */
+    ub1              subtype;   /* internal subtype */
+    ub2              code;      /* SQL datatype code */
+    ub1              alloc;     /* is buffer allocated or mapped to input */
 };
 
 /*
@@ -391,7 +391,7 @@ struct OCI_Resultset
     OCI_Define      *defs;          /* array of define objects */
     ub4              nb_defs;       /* number of elements */
     ub4              row_cur;       /* actual position in the array of rows */
-    ub4              row_abs;       /* absolute position in the resulset */
+    ub4              row_abs;       /* absolute position in the resultset */
     ub4              row_count;     /* number of rows fetched so far */
     ub4              row_fetched;   /* rows fetched by last call (scrollable) */
     boolean          eof;           /* end of resultset reached ?  */
@@ -416,23 +416,24 @@ struct OCI_Statement
     OCI_Bind       **ubinds;        /* array of user bind objects */
     OCI_Bind       **rbinds;        /* array of register bind objects */
     OCI_HashTable   *map;           /* hash table handle for mapping bind name/index */
-    ub2              nb_ubinds;     /* number of elememts in the bind array */
+    ub2              nb_ubinds;     /* number of elements in the bind array */
     ub2              nb_rbinds;     /* number of output binds */
     boolean          bind_reuse;    /* rebind data allowed ? */
     unsigned int     bind_mode;     /* type of binding */
     ub4              exec_mode;     /* type of execution */
     ub4              fetch_size;    /* fetch array size */
-    ub4              prefetch_size; /* prefetch size */
-    ub4              prefetch_mem;  /* prefetch memory */
+    ub4              prefetch_size; /* pre-fetch size */
+    ub4              prefetch_mem;  /* pre-fetch memory */
     ub4              long_size;     /* default size for LONG columns */
     ub1              long_mode;     /* LONG datatype handling mode */
     ub1              status;        /* statement status */
     ub2              type;          /* type of SQL statement */
     ub4              nb_iters;      /* number of iterations for execution */
-    ub4              nb_rs;         /* number of resulsets */
-    ub2              cur_rs;        /* index of the current resulset */
+    ub4              nb_rs;         /* number of resultsets */
+    ub2              cur_rs;        /* index of the current resultset */
     ub2              dynidx;        /* bind index counter for dynamic exec */
     ub2              err_pos;       /* error position in sql statement */
+    ub2              bind_array;    /* has array binds ? */
 };
 
 /*
@@ -546,7 +547,7 @@ struct OCI_Object
     OCI_TypeInfo     *typinf;   /* pointer to type info object */
     void            **objs;     /* array of OCILIB sub objects */
     void             *buf;      /* buffer to store converted out string attribute */
-    int               buflen;   /* buffer len */
+    int               buflen;   /* buffer length */
     sb2              *tab_ind;  /* indicators for root instance */
     ub2               idx_ind;  /* instance indicator offset / indicator table */
     OCIObjectLifetime type;     /* object type */
@@ -564,7 +565,7 @@ struct OCI_Elem
     OCI_Connection  *con;      /* pointer to connection object */
     void            *obj;      /* OCILIB sub object */
     void            *buf;      /* buffer to store converted out string attribute */
-    int              buflen;   /* buffer len */
+    int              buflen;   /* buffer length */
     boolean          init;     /* underlying object has been initialized ? */
     OCI_TypeInfo    *typinf;   /* object type information */
     OCIInd          *ind;      /* data state indicator */
@@ -628,7 +629,7 @@ struct OCI_TypeInfo
     OCIType         *tdo;        /* datatype object type */
     ub2              tcode;      /* Oracle type code */
     ub2              ccode;      /* Oracle collection code */
-    OCI_Column      *cols;       /* array of column datatype infos */
+    OCI_Column      *cols;       /* array of column datatype info */
     ub2              nb_cols;    /* number of columns */
     ub2              refcount;   /* reference counter */
 };
@@ -666,8 +667,8 @@ struct OCI_DirPath
     OCIDirPathCtx       *ctx;       /* OCI DP context handle */
     OCIDirPathColArray  *arr;       /* OCI DP column array handle */
     OCIDirPathStream    *strm;      /* OCI DP stream handle */
-    OCI_DirPathColumn   *cols;      /* array of column infos */
-    ub4                  nb_cols;   /* number of colums to load */
+    OCI_DirPathColumn   *cols;      /* array of column info */
+    ub4                  nb_cols;   /* number of columns to load */
     ub4                  nb_rows;   /* maximum number of row to load per stream */
     ub4                  nb_cur;    /* current number of row to load per stream */
     ub4                  nb_loaded; /* number of row loaded so far */

@@ -268,3 +268,41 @@ const void * OCI_API OCI_HandleGetThread(OCI_Thread *thread)
     return thread->handle;
 }
 
+/* ------------------------------------------------------------------------ *
+ * OCI_HandleGetDirPathCtx
+ * ------------------------------------------------------------------------ */
+
+OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathCtx(OCI_DirPath *dp)
+{
+    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
+
+    OCI_RESULT(TRUE);
+
+    return dp->ctx;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_HandleGetDirPathColArray
+ * ------------------------------------------------------------------------ */
+
+OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathColArray(OCI_DirPath *dp)
+{
+    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
+
+    OCI_RESULT(TRUE);
+
+    return dp->arr;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_HandleGetDirPathStream
+ * ------------------------------------------------------------------------ */
+
+OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream(OCI_DirPath *dp)
+{
+    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
+
+    OCI_RESULT(TRUE);
+
+    return dp->strm;
+}

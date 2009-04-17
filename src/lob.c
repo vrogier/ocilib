@@ -69,7 +69,7 @@
         {
             ub4 empty = 0;
 
-            /* allocate handle for non fetched lob (temporay lob) */
+            /* allocate handle for non fetched lob (temporary lob) */
 
             lob->hstate = OCI_OBJECT_ALLOCATED;
 
@@ -682,7 +682,7 @@ unsigned int OCI_API OCI_LobAppend(OCI_Lob *lob, void *buffer, unsigned int len)
 
     /* OCILobWriteAppend() seems to cause problems on Oracle client 8.1 and 9.0 
        It's an Oracle known bug #886191
-       So we do e OCI_LobWrite(lob, bufferxplicitly seek and write calls instead */
+       So we use OCI_LobSeek() + OCI_LobWrite() instead */
 
     if (OCILib.ver_runtime < OCI_10)
     {
@@ -772,7 +772,7 @@ boolean OCI_API OCI_LobAppendLob(OCI_Lob *lob, OCI_Lob *lob_src)
 
     /* 
        this might cause an ORA-24805 on Oracle 8.1.x only !
-       I could'nt find a bug ID on Metalink, but Oracle 9i had many fixes for
+       I couldn’t find a bug ID on Metalink, but Oracle 9i had many fixes for
        lobs ! 
     */
 

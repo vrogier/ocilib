@@ -1144,4 +1144,3 @@ boolean OCI_API OCI_ElemSetNull(OCI_Elem *elem)
    
     return res;
 }
-

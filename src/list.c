@@ -241,7 +241,7 @@ boolean OCI_ListRemove(OCI_List *list, void *data)
         {
             if (temp) temp->next = item->next;
 
-            /* if item was the first entry, reajust the first list
+            /* if item was the first entry, readjust the first list
                entry to next element */
 
             if (item == list->head) list->head = item->next;

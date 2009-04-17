@@ -51,7 +51,7 @@ OCI_Iter * OCI_API OCI_IterCreate(OCI_Coll *coll)
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, NULL);
 
-    /* allocate iterator structure  */
+    /* allocate iterator structure */
 
     iter = (OCI_Iter *) OCI_MemAlloc(OCI_IPC_ITERATOR, sizeof(*iter), 1, TRUE);
 

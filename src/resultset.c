@@ -49,7 +49,7 @@ OCI_Resultset * OCI_ResultsetCreate(OCI_Statement *stmt, int size)
     ub4 nb            = 0;
     ub4 i;
 
-    /* allocate resulset structure */
+    /* allocate resultset structure */
 
     rs = (OCI_Resultset *) OCI_MemAlloc(OCI_IPC_RESULTSET, sizeof(*rs), 1, TRUE);
 
@@ -164,13 +164,13 @@ OCI_Resultset * OCI_ResultsetCreate(OCI_Statement *stmt, int size)
                 if (bnd->type == OCI_CDT_LOB && bnd->subtype == OCI_NCLOB)
                     def->col.csfrm = SQLCS_NCHAR;
 
-                /* ajdust colum size from bind atrributes */
+                /* adjust column size from bind attributes */
 
                 if (def->col.type == OCI_CDT_TEXT)
                     def->col.size = (ub2) (def->col.size / (sizeof(dtext)) - 1);
 
                 /* for integer types, set the bufsize here in order to
-                   retreive later the integer type (short, integer, big_int)
+                   retrieve later the integer type (short, integer, big_int)
                    depending on the integer size */
 
                 if (def->col.type == OCI_CDT_NUMERIC)
@@ -292,7 +292,7 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
 
                 res = (lg->buffer != NULL);
 
-                /* update piece infos */
+                /* update piece info */
 
                 if (res == TRUE)
                 {
@@ -395,7 +395,7 @@ boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset, boolean *err)
 {
     boolean res  = TRUE;
 
-    /* let's initiliaze the error flag to TRUE until the process completes */
+    /* let's initialize the error flag to TRUE until the process completes */
 
     *err = TRUE;
 
@@ -430,7 +430,7 @@ boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset, boolean *err)
     if (rs->fetch_status == OCI_NEED_DATA)
         res = OCI_FetchPieces(rs);
 
-    /* check string buffer for unicode builds that need buffer expansion */
+    /* check string buffer for Unicode builds that need buffer expansion */
 
 #ifdef OCI_CHECK_DATASTRINGS
 
@@ -444,7 +444,7 @@ boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset, boolean *err)
                              (rs->fetch_status == OCI_NO_DATA) ||
                              (rs->fetch_status == OCI_SUCCESS_WITH_INFO)));
 
-    /* update internal fecth status and variables */
+    /* update internal fetch status and variables */
 
     if (res == TRUE)
     {
@@ -487,7 +487,7 @@ boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset, boolean *err)
         if (row_fetched > 0)
             rs->row_fetched = row_fetched;
 
-        /* so far, no OCI error occured, let's clear the error flag */
+        /* so far, no OCI error occurred, let's clear the error flag */
 
         *err = FALSE;
 
@@ -948,7 +948,7 @@ boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)
 
             if (rs->row_abs == 0)
             {
-                /* check string buffer once for unicode build */
+                /* check string buffer once for Unicode build */
 
             #ifdef OCI_CHECK_DATASTRINGS
 
@@ -1330,9 +1330,9 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
         {
             str = (dtext *) data;
 
-            /* for long mapped to string, the zero ternimal character is not
+            /* for long mapped to string, the zero terminal character is not
                always added by Oracle ? or OCILIB issue ? Anyway we check the
-               length returned by Oracle et set it properly */
+               length returned by Oracle and set it properly */
 
             if (def->col.subtype == OCI_CLONG)
             {
@@ -1458,7 +1458,7 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                                                   (mtext *) def->buf.temp);
 #else
 
-                            /* mixed mode... hum conversion needed ! */
+                            /* mixed mode... conversion needed ! */
 
                             mtext temp[OCI_SIZE_BUFFER+1];
 
@@ -1487,7 +1487,7 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                                                 (mtext *) def->buf.temp,  0);
 #else
 
-                            /* mixed mode... hum conversion needed ! */
+                            /* mixed mode... conversion needed ! */
 
                             mtext temp[OCI_SIZE_BUFFER+1];
 
@@ -1517,7 +1517,7 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                                                 (mtext *) def->buf.temp);
 #else
 
-                            /* mixed mode... hum conversion needed ! */
+                            /* mixed mode... conversion needed ! */
 
                             mtext temp[OCI_SIZE_BUFFER+1];
 
@@ -1596,7 +1596,7 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                         OCI_RefToText(ref, OCI_SIZE_BUFFER, (mtext *) def->buf.temp);
 
 #else
-                            /* mixed mode... hum conversion needed ! */
+                            /* mixed mode... conversion needed ! */
 
                             mtext temp[OCI_SIZE_BUFFER+1];
 
@@ -1871,8 +1871,8 @@ OCI_Ref * OCI_API OCI_GetRef(OCI_Resultset *rs, unsigned int index)
             ref = OCI_RefInit(rs->stmt->con, def->col.typinf,
                               (OCI_Ref **) &def->obj, OCI_DefineGetData(def));
 
-            /* if the ref object is retreived from an register bind that has no
-               no type info object associated, the type info object is retreived
+            /* if the ref object is retrieved from a register bind that has 
+               no type info object associated, the type info object is retrieved
                at the first fetch call by pinning the ref and we affect the type 
                info object handle to the define object */
 

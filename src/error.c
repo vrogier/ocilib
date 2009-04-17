@@ -1,5 +1,5 @@
 /*
-   +----------------------------------------------------------------------+   
+   +----------------------------------------------------------------------+
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
@@ -25,7 +25,7 @@
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
    |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
-   +----------------------------------------------------------------------+ 
+   +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
@@ -87,7 +87,7 @@ OCI_Error * OCI_ErrorGet(boolean check)
 
     if (OCILib.loaded == TRUE)
     {
-        if (OCI_ThreadKeyGet(OCILib.key_errs, ( void **) &err) == TRUE)
+        if (OCI_ThreadKeyGet(OCILib.key_errs, ( void **) (dvoid *) &err) == TRUE)
         {
             if (err == NULL)
             {
@@ -108,7 +108,7 @@ OCI_Error * OCI_ErrorGet(boolean check)
         err = &OCILib.lib_err;
     }
 
-    return err; 
+    return err;
 }
 
 /* ************************************************************************ *

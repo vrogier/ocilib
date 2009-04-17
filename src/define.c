@@ -186,7 +186,7 @@ boolean OCI_DefineAlloc(OCI_Define *def)
     ub4 i;
 
     /* this function allocates internal buffers, handles, indicators, arrays, ...
-       for the given outpout define handle */
+       for the given output define handle */
 
     OCI_CHECK(def == NULL, FALSE);
 
@@ -243,7 +243,7 @@ boolean OCI_DefineAlloc(OCI_Define *def)
         res = (def->buf.data != NULL);
     }
 
-    /* Allocate descriptor for cursor, lob and file, interval and timestamp  */
+    /* Allocate descriptor for cursor, lob and file, interval and timestamp */
 
     if (res == TRUE)
     {

@@ -47,7 +47,7 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal(POCI_THREADKEYDEST destfunc)
     boolean  res       = TRUE;
     OCI_ThreadKey *key = NULL;
 
-    /* allocate key structure  */
+    /* allocate key structure */
 
     key = (OCI_ThreadKey *) OCI_MemAlloc(OCI_IPC_THREADKEY, sizeof(*key), 1, TRUE);
 
@@ -60,7 +60,7 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal(POCI_THREADKEYDEST destfunc)
                                               OCI_HTYPE_ERROR, 0,
                                               (dvoid **) NULL));
 
-        /* allocate mutex handle */
+        /* key initialization */
 
         OCI_CALL3
         (

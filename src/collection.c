@@ -188,7 +188,7 @@ boolean OCI_API OCI_CollAssign(OCI_Coll *coll, OCI_Coll *coll_src)
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll_src, FALSE);
 
     OCI_CHECK_COMPAT(coll->con,
-                     coll->typinf->cols[0].icode == coll_src->typinf->cols[0].icode, 
+                     coll->typinf->cols[0].icode == coll_src->typinf->cols[0].icode,
                      FALSE);
 
     OCI_CALL2
@@ -305,7 +305,7 @@ OCI_Elem * OCI_API OCI_CollGetAt(OCI_Coll *coll, unsigned int index)
         res, coll->con,
 
         OCICollGetElem(OCILib.env, coll->con->err, coll->handle, (sb4) index-1,
-                       &exists, &data, (void **) &p_ind)
+                       &exists, &data, (dvoid **) (dvoid *) &p_ind)
     )
 
     if (res == TRUE && exists == TRUE && data != NULL)
@@ -355,7 +355,7 @@ boolean OCI_API OCI_CollAppend(OCI_Coll *coll, OCI_Elem *elem)
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    
+
     OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].type == coll->typinf->cols[0].type, FALSE);
 
     OCI_CALL2

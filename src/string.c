@@ -40,6 +40,10 @@
 
 /* ------------------------------------------------------------------------ *
  *                    Widechar/Multibytes String functions
+ *
+ * StringCopy4to2bytes() and StringCopy2to4bytes() are based on the 
+ * ConvertUTF source file by Mark E. Davis - Copyright 2001 Unicode, Inc.
+ *
  * ------------------------------------------------------------------------ */
 
 /* ------------------------------------------------------------------------ *
@@ -431,7 +435,7 @@ void * OCI_StringFromStringPtr(OCIString *str, void **buf, int *buflen)
 
 #if defined(OCI_CHARSET_MIXED)
 
-        /* tmp is ansi and must be converted to utf16 */
+        /* tmp is ANSI and must be converted to UTF16 */
 
         esize  = 1;
         msize  = (int) sizeof(dtext);
@@ -440,7 +444,7 @@ void * OCI_StringFromStringPtr(OCIString *str, void **buf, int *buflen)
         
 #elif defined(OCI_CHECK_DATASTRINGS)
 
-        /* tmp is UTF16 and might be converted to utf32 on unixes */
+        /* tmp is UTF16 and might be converted to UTF32 on unixes */
 
         
         esize  = (int) sizeof(odtext);
@@ -528,7 +532,7 @@ boolean OCI_StringToStringPtr(OCIString **str, OCIError *err, void *value,
 
 #ifdef OCI_CHARSET_MIXED
 
-    /* value is UTF16 and must be converted to ansi */
+    /* value is UTF16 and must be converted to ANSI */
  
     esize  = (int) 1;
     olen   = (int) dtslen((dtext*) value);

@@ -847,7 +847,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
 #if defined(OCI_CHARSET_UNICODE)
 
-    /* Oracle 8i does not support full unicode mode */
+    /* Oracle 8i does not support full Unicode mode */
 
     if ((res == TRUE) && (OCILib.ver_runtime == OCI_8))
     {
@@ -987,7 +987,7 @@ boolean OCI_API OCI_Cleanup(void)
     if (OCILib.err != NULL)
        OCI_HandleFree(OCILib.err, OCI_HTYPE_ERROR);
 
-    /* close environnement handle
+    /* close environment handle
        => direct OCIHandleFree() because this handle was not allocated
        with OCI_HandleAlloc()
     */

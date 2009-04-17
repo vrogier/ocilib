@@ -626,4 +626,3 @@ boolean OCI_API OCI_FileAssign(OCI_File *file, OCI_File *file_src)
 
     return res;
 }
-

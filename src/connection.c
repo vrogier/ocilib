@@ -299,9 +299,7 @@ boolean OCI_ConnectionLogon(OCI_Connection *con)
 
     /* set session login attribute */
 
-    
-
-   if ((res == TRUE) && (con->user != NULL) && (con->user[0] != 0))
+    if ((res == TRUE) && (con->user != NULL) && (con->user[0] != 0))
     {
         osize = -1;
         ostr  = OCI_GetInputMetaString(con->user, &osize);
@@ -356,9 +354,9 @@ boolean OCI_ConnectionLogon(OCI_Connection *con)
             OCISessionBegin(con->cxt, con->err, con->ses, credt, con->mode)
         )
  
-    /* This call has moved after OCISessionBegin() call to enable connection
-       pooling (an error ORA-24324 was thrown is the session handle was set to
-       the service context handle before OCISessionBegin() */
+       /* This call has moved after OCISessionBegin() call to enable connection
+          pooling (an error ORA-24324 was thrown is the session handle was set to
+          the service context handle before OCISessionBegin() */
     
         OCI_CALL2
         (
@@ -368,7 +366,7 @@ boolean OCI_ConnectionLogon(OCI_Connection *con)
                        (dvoid *) con->ses, (ub4) sizeof(con->ses), 
                        (ub4) OCI_ATTR_SESSION, con->err))
 
-   }
+    }
     
     /* check for success */
 
@@ -388,7 +386,7 @@ boolean OCI_ConnectionLogon(OCI_Connection *con)
     }
 
 
-    /* set OCILIB's driver layer namer attribute */
+    /* set OCILIB's driver layer name attribute */
 
 #if OCI_VERSION_COMPILE >= OCI_11
 
@@ -500,7 +498,7 @@ boolean OCI_ConnectionClose(OCI_Connection *con)
 {
     OCI_CHECK(con == NULL, FALSE);
 
-    /* clear server output ressources */
+    /* clear server output resources */
 
     OCI_ServerDisableOutput(con);
 
@@ -1120,7 +1118,7 @@ boolean OCI_API OCI_ServerEnableOutput(OCI_Connection *con,
 
     if ((res == TRUE) && (con->svopt->arrbuf == NULL))
     {
-        /* check params ranges ( Oracle 10g increased the size of ouput line */
+        /* check params ranges ( Oracle 10g increased the size of output line */
 
         if (con->ver_maj > OCI_10 || (con->ver_maj == OCI_10 && con->ver_min >= 2))
         {
@@ -1262,7 +1260,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
 
-    /* allocate trace infos structure only if trace functions are used */
+    /* allocate trace info structure only if trace functions are used */
 
     if (con->trace == NULL)
     {

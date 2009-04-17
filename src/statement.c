@@ -99,7 +99,7 @@ boolean OCI_BindCheck(OCI_Statement *stmt)
 
         if (bnd->alloc == TRUE)
         {
-            if (bnd->buf.count == 1)
+            if (bnd->stmt->bind_array == FALSE)
             {
                 /* - For big integer (64 bits), we use an OCINumber.
 
@@ -371,7 +371,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
     if (res == TRUE)
     {
-        /* check out the number of element that the bind variable will hold */
+        /* check out the number of elements that the bind variable will hold */
 
         if (nbelem > 0)
         {
@@ -422,7 +422,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         res = (bnd->buf.inds != NULL);
     }
 
-    /* check need for PL/SQL table extra infos */
+    /* check need for PL/SQL table extra info */
 
     if ((res == TRUE) && (is_pltbl == TRUE))
     {
@@ -521,7 +521,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         bnd->buf.count   = nbelem;
         bnd->buf.sizelen = sizeof(ub2);
 
-        /* if we bind an OCI_Long or any outut bind, we need to change the
+        /* if we bind an OCI_Long or any output bind, we need to change the
            execution mode to provide data at execute time */
 
         if (bnd->type == OCI_CDT_LONG)
@@ -601,7 +601,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
             )
         }
 
-        /* setup national charset from flag if needded */
+        /* setup national charset from flag if needed */
 
         if (
             (
@@ -666,7 +666,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
     /* on success, we :
          - add the bind handle to the bind array
-         - add the bnid index to the map
+         - add the bind index to the map
     */
 
     if (res == TRUE)
@@ -987,7 +987,7 @@ OCI_Statement * OCI_StatementInit(OCI_Connection *con, OCI_Statement **pstmt,
 
         if (def == NULL)
         {
-            /* allocate handle for non fetched lob (temporay lob) */
+            /* allocate handle for non fetched lob (temporary lob) */
 
             stmt->hstate = OCI_OBJECT_ALLOCATED;
 
@@ -1062,6 +1062,7 @@ boolean OCI_StatementReset(OCI_Statement *stmt)
 
     stmt->status      = OCI_STMT_CLOSED;
     stmt->type        = OCI_UNKNOWN;
+    stmt->bind_array  = FALSE;
 
     stmt->nb_iters     = 1;
     stmt->dynidx       = 0;
@@ -1564,13 +1565,12 @@ boolean OCI_API OCI_BindArraySetSize(OCI_Statement *stmt, unsigned int size)
                                          stmt->nb_iters, size);
 
         res = FALSE;
-
     }
     else
     {
-        stmt->nb_iters = size;
+        stmt->nb_iters   = size;
+        stmt->bind_array = TRUE;
     }
-
 
     OCI_RESULT(res);
 
@@ -2228,7 +2228,7 @@ boolean OCI_API OCI_BindStatement(OCI_Statement *stmt, const mtext *name,
 
     if (res == TRUE)
     {
-        /* Once stmt is exectuted, Oracle provides a statemment handle
+        /* Once stmt is executed, Oracle provides a statement handle
            ready to be fetched  */
 
         data->status  = OCI_STMT_EXECUTED;

@@ -60,18 +60,18 @@ static mtext * OCILib_TypeNames[] =
     MT("Timestamp handle"),
     MT("Interval handle"),
     MT("Lob handle"),
-    MT("File hande"),
+    MT("File handle"),
     MT("Long handle"),
     MT("Object handle"),
     MT("Collection handle"),
     MT("Collection iterator handle"),
     MT("Collection element handle"),
-    MT("HashTable handle"),
+    MT("Hash Table handle"),
     MT("Thread handle"),
     MT("Mutex handle"),
     MT("Bind handle"),
     MT("Ref handle"),
-    MT("DirectPath handle"),
+    MT("Direct Path handle"),
 
     MT("Internal list handle"),
     MT("Internal list item handle"),
@@ -81,8 +81,8 @@ static mtext * OCILib_TypeNames[] =
     MT("Internal hash entry handle"),
     MT("Internal array of hash entry handles"),
     MT("Internal hash value handle"),
-    MT("Internal threadkey handle"),
-    MT("Internal OCIDate handle"),
+    MT("Internal thread key handle"),
+    MT("Internal Oracle date handle"),
     MT("Internal C tm structure"),
     MT("Internal array of resultset handles"),
     MT("Internal array of PL/SQL sizes integers"),
@@ -93,7 +93,7 @@ static mtext * OCILib_TypeNames[] =
     MT("Internal array of data buffers"),
     MT("Internal Long handle data buffer")
     MT("Internal trace info structure")
-    MT("Internal array of directpath columns"),
+    MT("Internal array of direct path columns"),
 };
 
 
@@ -111,7 +111,7 @@ static mtext * OCILib_ErrorMsg[] =
     MT("A null %ls has been provided"),
     MT("Oracle datatype (sqlcode %d) not supported for this operation "),
     MT("Unknown identifier %c while parsing SQL"),
-    MT("Unknown argument %d while retreiving data"),
+    MT("Unknown argument %d while retrieving data"),
     MT("Index %d out of bounds"),
     MT("Found %d unfreed %ls"),
     MT("Maximum number of binds (%d) already reached"),
@@ -140,7 +140,7 @@ static mtext * OCILib_ErrorMsg[] =
     MT("A null %s has been provided"),
     MT("Oracle datatype (sqlcode %d) not supported for this operation "),
     MT("Unknown identifier %c while parsing SQL : "),
-    MT("Unknown argument %d while retreiving data"),
+    MT("Unknown argument %d while retrieving data"),
     MT("Index %d out of bounds"),
     MT("Found %d unfreed %s"),
     MT("Maximum number of binds (%d) already reached"),
@@ -161,6 +161,7 @@ static mtext * OCILib_OraFeatures[] =
 {
     MT("Oracle 9i support for Unicode data"),
     MT("Oracle 9i Timestamps and Intervals"),
+    MT("Oracle 9i Direct path date caching"),
     MT("Oracle 10g LOBs size extensions")
 };
 

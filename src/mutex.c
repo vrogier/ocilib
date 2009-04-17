@@ -47,7 +47,7 @@ OCI_Mutex * OCI_MutexCreateInternal(void)
     OCI_Mutex *mutex = NULL;
     boolean res      = TRUE;
 
-    /* allocate mutex structure  */
+    /* allocate mutex structure */
 
     mutex = (OCI_Mutex *) OCI_MemAlloc(OCI_IPC_MUTEX, sizeof(*mutex), 1, TRUE);
 

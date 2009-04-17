@@ -1566,68 +1566,87 @@ void test_ref(void)
 
 void test_directpath(void)
 {
-    OCI_DirPath *dp;
-    OCI_TypeInfo *tbl;
+   /* Some OCI Direct path function fails (segfault) if the OCI version of the
+      client is different than the server one.
+      It happens with OCI 8i and 9i client. Apparently Oracle 10g and 11g seems to
+      have fixed these problems.
+      Anyway, we run this test case only if the major versions of client and server
+      match
+   */
 
-    dtext val1[SIZE_COL1+1];
-    dtext val2[SIZE_COL2+1];
-    dtext val3[SIZE_COL3+1];
+   if (OCI_GetOCIRuntimeVersion() == OCI_GetServerMajorVersion(cn))
+   {
+        OCI_DirPath *dp;
+        OCI_TypeInfo *tbl;
 
-    int i;
+        dtext val1[SIZE_COL1+1];
+        dtext val2[SIZE_COL2+1];
+        dtext val3[SIZE_COL3+1];
 
-   /* commit any previous pending modifications */
+        int i = 0, nb_rows = SIZE_ARRAY;
 
-    OCI_Commit(cn);
+       /* commit any previous pending modifications */
 
-    print_text("\n>>>>> TEST DIRECT PATH \n\n");
+        OCI_Commit(cn);
 
-    tbl = OCI_TypeInfoGet(cn, MT("test_directpath"), OCI_TIF_TABLE);
-    dp  = OCI_DirPathCreate(tbl, NULL, NUM_COLS, SIZE_ARRAY);
+        print_text("\n>>>>> TEST DIRECT PATH \n\n");
 
-    /* optionnal attributes to set */
+        tbl = OCI_TypeInfoGet(cn, MT("test_directpath"), OCI_TIF_TABLE);
+        dp  = OCI_DirPathCreate(tbl, NULL, NUM_COLS, nb_rows);
 
-    OCI_DirPathSetBufferSize(dp, 64000);
-    OCI_DirPathEnableCache(dp, TRUE);
-    OCI_DirPathSetCacheSize(dp, 100);
-    OCI_DirPathSetNoLog(dp, TRUE);
-    OCI_DirPathSetParallel(dp, TRUE);
+        /* optional attributes to set */
 
-    /* describe the target table */
+        OCI_DirPathSetBufferSize(dp, 64000);
+        OCI_DirPathSetNoLog(dp, TRUE);
+        OCI_DirPathSetParallel(dp, TRUE);
 
-    OCI_DirPathSetColumn(dp, 1, MT("VAL_INT"),  SIZE_COL1, MT("9999.9999"));
-    OCI_DirPathSetColumn(dp, 2, MT("VAL_STR"),  SIZE_COL2, NULL);
-    OCI_DirPathSetColumn(dp, 3, MT("VAL_DATE"), SIZE_COL3, MT("YYYYMMDD"));
+        if(OCI_GetOCIRuntimeVersion() >= OCI_9)
+        {
+            OCI_DirPathSetCacheSize(dp, 100);
+        }
 
-    /* prepare the load */
+        /* describe the target table */
 
-    OCI_DirPathPrepare(dp);
+        OCI_DirPathSetColumn(dp, 1, MT("VAL_INT"),  SIZE_COL1, NULL);
+        OCI_DirPathSetColumn(dp, 2, MT("VAL_STR"),  SIZE_COL2, NULL);
+        OCI_DirPathSetColumn(dp, 3, MT("VAL_DATE"), SIZE_COL3, MT("YYYYMMDD"));
 
-    for (i = 1; i <= SIZE_ARRAY; i++)
-    {
-        /* fill test values */
+        /* prepare the load */
 
-        sprint_dt(val1, SIZE_COL1+1, DT("%4d.%04d"), i, i);
-        sprint_dt(val2, SIZE_COL2+1, DT("value %05d"), i);
-        sprint_dt(val3, SIZE_COL3+1, DT("%04d%02d%02d"), 2000 + (i%23)+1, (i%11)+1, (i%23)+1);
+        OCI_DirPathPrepare(dp);
 
-        OCI_DirPathSetEntry(dp, i, 1, val1, dtslen(val1), TRUE);
-        OCI_DirPathSetEntry(dp, i, 2, val2, dtslen(val2), TRUE);
-        OCI_DirPathSetEntry(dp, i, 3, val3, dtslen(val3), TRUE);
-    }
+        nb_rows = OCI_DirPathGetMaxRows(dp);
 
-    /* load data to the server */
+        for (i = 1; i <= nb_rows; i++)
+        {
+            /* fill test values */
 
-    OCI_DirPathConvert(dp);
-    OCI_DirPathLoad(dp);
+            sprint_dt(val1, SIZE_COL1+1, DT("%04d"), i);
+            sprint_dt(val2, SIZE_COL2+1, DT("value %05d"), i);
+            sprint_dt(val3, SIZE_COL3+1, DT("%04d%02d%02d"), (i%23)+1 + 2000,
+                                                             (i%11)+1,
+                                                             (i%23)+1);
 
-    /* commits changes */
+            OCI_DirPathSetEntry(dp, i, 1, val1, (unsigned int) dtslen(val1), TRUE);
+            OCI_DirPathSetEntry(dp, i, 2, val2, (unsigned int) dtslen(val2), TRUE);
+            OCI_DirPathSetEntry(dp, i, 3, val3, (unsigned int) dtslen(val3), TRUE);
+        }
 
-    OCI_DirPathFinish(dp);
+        /* load data to the server */
 
-    print_frmt("%04d row(s) processed\n", OCI_DirPathGetCountProcessed(dp));
-    print_frmt("%04d row(s) loaded\n", OCI_DirPathGetCountLoaded(dp));
+        OCI_DirPathConvert(dp);
+        OCI_DirPathLoad(dp);
 
-    /* free direct path object */
+        /* commits changes */
 
-    OCI_DirPathFree(dp);
+        OCI_DirPathFinish(dp);
+
+        print_frmt("%03d row(s) processed\n", OCI_DirPathGetAffectedRows(dp));
+        print_frmt("%03d row(s) loaded\n", OCI_DirPathGetRowCount(dp));
+
+        /* free direct path object */
+
+        OCI_DirPathFree(dp);
+   }
 }
+

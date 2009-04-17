@@ -67,7 +67,7 @@
 
 /**
  * @brief 
- * Conditionnal OCI call with return value checking
+ * Conditional OCI call with return value checking
  *
  * @param res   - OCI call result
  * @param con   - OCILIB connection objet
@@ -99,7 +99,7 @@
 
 /**
  * @brief 
- * Conditionnal OCI call with return value checking
+ * Conditional OCI call with return value checking
  *
  * @param res   - OCI call result
  * @param con   - OCILIB connection objet
@@ -130,7 +130,7 @@
     
 /**
  * @brief 
- * Conditionnal OCI call with return value checking
+ * Conditional OCI call with return value checking
  *
  * @param res   - OCI call result
  * @param err   - OCI error handle
@@ -159,7 +159,7 @@
     
 /**
  * @brief 
- * Conditionnal OCI call with return value checking
+ * Conditional OCI call with return value checking
  *
  * @param res   - OCI call result
  * @param err   - OCI error handle
@@ -262,7 +262,7 @@
  * Checks if the parameters of a bind call are valid
  *
  * @param stmt  - Statement handle
- * @param name  - Bind name/litteral positon
+ * @param name  - Bind name/literal position
  * @param data  - Input pointer to bind
  * @param type  - Input pointer type
  *
@@ -284,7 +284,7 @@
  * Checks if the parameters of a register call are valid
  *
  * @param stmt  - Statement handle
- * @param name  - Bind name/litteral positon
+ * @param name  - Bind name/literal position
  *
  * @note
  * Throws an exception if one of the parameters is invalid and returns FALSE.
@@ -326,7 +326,7 @@
 
 /**
  * @brief 
- * Checks if an integer parameter value is >= minumum provided value
+ * Checks if an integer parameter value is >= minimum provided value
  *
  * @param con  - Connection handle
  * @param stmt - Statement handle
@@ -383,7 +383,7 @@
  * @param ret - Return value
  *
  * @note
- * Returns the value 'ret' if the object was fechted from a sql statement
+ * Returns the value 'ret' if the object was fetched from a sql statement
  *
  */
 
@@ -433,6 +433,29 @@
         OCI_ExceptionStatementNotScrollable(st);                               \
         return ret;                                                            \
     }
+
+/**
+ * @brief 
+ * Checks if the status of a OCILIB direct path handle is compatible with the
+ * given one
+ *
+ * @param st  - Direct path handle
+ * @param v   - Status to compare
+ * @param ret - Return value
+ *
+ * @note
+ * Throws an exception if the status of the direct path handle is different than
+ * the provided one.
+ *
+ */
+#define OCI_CHECK_DIRPATH_STATUS(dp, v, ret)                                   \
+                                                                               \
+    if ((dp)->status != (v))                                                   \
+    {                                                                          \
+        OCI_ExceptionDirPathState((dp), (dp)->status);                         \
+        return ret;                                                            \
+    } 
+
 
 /* ************************************************************************ *
                     INTERNAL FEATURES AVAILABILITY CHECKING MACROS
@@ -486,7 +509,7 @@
  * @param ret - Return value
  *
  * @note
- * Throws an exception the library has not been initiazed with multithreading
+ * Throws an exception the library has not been initialized with multithreading
  * mode
  *
  */
@@ -549,14 +572,25 @@
         OCI_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9, ret)
 
 
+/**
+ * @brief 
+ * Checks if the direct path date caching is available
+ *
+ * @param con - Connection handle
+ * @param ret - Return value
+ *
+ * @note
+ * Throws an exception if the Oracle client does not support date caching
+ *
+ */
 
-#define OCI_CHECK_DIRPATH_STATUS(dp, v, ret)                                   \
+#define OCI_CHECK_DIRPATH_DATE_CACHE_ENABLED(dp,  ret)                         \
                                                                                \
-    if ((dp)->status != (v))                                                   \
+    if (OCILib.ver_runtime < OCI_9)                                            \
     {                                                                          \
-        OCI_ExceptionDirPathState((dp), (dp)->status);                         \
+        OCI_ExceptionNotAvailable((dp)->con, OCI_FEATURE_DIRPATH_DATE_CACHE);  \
         return ret;                                                            \
-    } 
+    }
 
 
 #endif    /* OCILIB_OCILIB_CHECKS_H_INCLUDED */

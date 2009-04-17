@@ -53,7 +53,7 @@ boolean OCI_ColumnDescribe(OCI_Column *col, OCI_Connection *con,
     ub4         htype    = 0;
     ub4         attrname = 0;
 
-    /* get descriptor  */
+    /* get descriptor */
 
     if (ptype == OCI_DESC_COLLECTION)
     {
@@ -169,7 +169,7 @@ boolean OCI_ColumnDescribe(OCI_Column *col, OCI_Connection *con,
 
     if ((OCILib.ver_runtime >= OCI_9) && (con->ver_maj >= OCI_9))
     {
-        /* fractionnal time precision for timestamps */
+        /* fractional time precision for timestamps */
 
          if (col->ocode == SQLT_TIMESTAMP    ||
              col->ocode == SQLT_TIMESTAMP_TZ ||
@@ -185,7 +185,7 @@ boolean OCI_ColumnDescribe(OCI_Column *col, OCI_Connection *con,
             )
         }
 
-        /* leading and fractionnal precision for interval */
+        /* leading and fractional precision for interval */
 
         if (col->ocode == SQLT_INTERVAL_DS ||
             col->ocode == SQLT_INTERVAL_YM)
@@ -404,7 +404,7 @@ boolean OCI_ColumnMap(OCI_Column *col, OCI_Statement *stmt)
             {
                 /* For ROWID descriptor, if column size is bigger than the size
                     of the descriptor, it means that an UROWID column and then 
-                    the column size is the maxixum size needed for representing
+                    the column size is the maximum size needed for representing
                     its value as an hex string
                 */
 
@@ -637,7 +637,7 @@ unsigned int OCI_API OCI_ColumnGetSize(OCI_Column *col)
 
     /* Oracle 9i introduced CHAR attribute on string columns to indicate the 
        size of the column is not in bytes (default) but in chars
-       OCI_ColumnDescribe() already dealed with the Oracle compatibily
+       OCI_ColumnDescribe() already managed the Oracle compatibly
        version, so if col->charsize is zero it means :
        - the column is not a string column 
        - the size is not in char
@@ -679,10 +679,10 @@ int OCI_API OCI_ColumnGetPrecision(OCI_Column *col)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_ColumnGetFractionnalPrecision
+ * OCI_ColumnGetFractionalPrecision
  * ------------------------------------------------------------------------ */
 
-int OCI_API OCI_ColumnGetFractionnalPrecision(OCI_Column *col)
+int OCI_API OCI_ColumnGetFractionalPrecision(OCI_Column *col)
 {
     OCI_CHECK_PTR(OCI_IPC_COLUMN, col, 0);
 
@@ -915,7 +915,7 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType(OCI_Column *col, mtext *buffer,
     /* ISO C functions are supposed to be "standard", but we still see specific
        implementations that make some usage not portable and worse not compatible.
        MS Windows is implementing string conversion characters (%s/%ls) of the 
-       printf/wprintf family diffently from unixes !
+       printf/wprintf family differently from unixes !
     */
 
     /* This function returns the same strings as Sql*Plus DESC command */
@@ -1145,4 +1145,3 @@ unsigned int OCI_API OCI_ColumnGetSubType(OCI_Column *col)
 
     return type;
 }
-

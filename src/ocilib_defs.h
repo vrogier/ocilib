@@ -240,7 +240,8 @@
 
 #define OCI_FEATURE_UNICODE_USERDATA    1
 #define OCI_FEATURE_TIMESTAMP           2
-#define OCI_FEATURE_SCROLLABLE_CURSOR   3
+#define OCI_FEATURE_DIRPATH_DATE_CACHE  3
+#define OCI_FEATURE_SCROLLABLE_CURSOR   4
 
 /* ------------------------------------------------------------------------ *
  * Oracle conditionnal features 
@@ -267,7 +268,7 @@
 #define OCI_CONN_LOGGED                 3
 
 /* ------------------------------------------------------------------------ *
- * objects statuss
+ * objects status
  * ------------------------------------------------------------------------ */
 
 #define OCI_OBJECT_ALLOCATED            1
