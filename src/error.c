@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: error.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: error.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -106,6 +106,9 @@ OCI_Error * OCI_ErrorGet(boolean check)
     else
     {
         err = &OCILib.lib_err;
+
+        if (err != NULL && err->active == TRUE)
+            err = NULL;
     }
 
     return err;
@@ -180,3 +183,15 @@ OCI_Statement * OCI_API OCI_ErrorGetStatement(OCI_Error *err)
 
     return err->stmt;
 }
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ErrorGetRow
+ * ------------------------------------------------------------------------ */
+
+unsigned int OCI_API OCI_ErrorGetRow(OCI_Error *err)
+{
+    OCI_CHECK(err == NULL, 0);
+
+    return err->row;
+}
+

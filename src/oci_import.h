@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_import.h, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: oci_import.h, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
@@ -77,10 +77,23 @@ extern "C" {
   #endif
 #endif
 
-#define OCI_DL_GET(s) OCI_DL_CVT(s)
-#define OCI_DL_CVT(s) #s
+/* ANSI string version of Oracle shared lib */
 
-#define OCI_DL_NAME OCI_DL_GET(OCI_DL)
+#define OCI_DL_ANSI_GET(s) OCI_DL_ANSI_CVT(s)
+#define OCI_DL_ANSI_CVT(s) #s
+#define OCI_DL_ANSI_NAME OCI_DL_ANSI_GET(OCI_DL)
+
+/* Meta string version of Oracle shared lib */
+
+#define OCI_DL_META_GET(s) OCI_DL_META_CVT(s)
+
+#ifdef OCI_METADATA_UNICODE
+  #define OCI_DL_META_CVT(s) L#s
+#else
+  #define OCI_DL_META_CVT(s) #s
+#endif
+
+#define OCI_DL_META_NAME OCI_DL_META_GET(OCI_DL)
 
 /* symbol list */
 
@@ -130,6 +143,8 @@ extern OCILOBCLOSE                  OCILobClose;
 extern OCILOBLOCATORASSIGN          OCILobLocatorAssign;
 extern OCILOBASSIGN                 OCILobAssign;
 extern OCILOBISEQUAL                OCILobIsEqual;
+extern OCILOBFLUSHBUFFER            OCILobFlushBuffer;
+extern OCILOBGETSTORAGELIMIT        OCILobGetStorageLimit;
 extern OCILOBFILEOPEN               OCILobFileOpen;
 extern OCILOBFILECLOSE              OCILobFileClose;
 extern OCILOBFILECLOSEALL           OCILobFileCloseAll;
@@ -259,6 +274,8 @@ extern OCIDIRPATHSTREAMRESET        OCIDirPathStreamReset;
 extern OCIDIRPATHFLUSHROW           OCIDirPathFlushRow;
 
 extern OCICACHEFREE                 OCICacheFree;
+
+extern OCIPING                      OCIPing;
 
 #ifdef ORAXB8_DEFINED
 

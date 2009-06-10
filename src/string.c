@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: string.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: string.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -112,7 +112,7 @@ int OCI_StringCopy4to2bytes(const unsigned int* src, int src_size,
  * ------------------------------------------------------------------------ */
 
 int OCI_StringCopy2to4bytes(const unsigned short* src, int src_size, 
-                             unsigned int* dst, int dst_size)
+                            unsigned int* dst, int dst_size)
 {
     int cp_size = 0;
 
@@ -166,6 +166,8 @@ int OCI_StringCopy2to4bytes(const unsigned short* src, int src_size,
 
 int OCI_StringLength(void *ptr, int size_elem)
 {
+    int size = 0;
+
     OCI_CHECK(ptr == NULL, 0);
     
     if (size_elem == sizeof(char))
@@ -175,7 +177,7 @@ int OCI_StringLength(void *ptr, int size_elem)
 
         while (*e++) ;
 
-        return (int) (e - s - 1);
+        size = (int) (e - s - 1);
     }
     else if (size_elem == sizeof(short))
     {
@@ -184,7 +186,7 @@ int OCI_StringLength(void *ptr, int size_elem)
 
         while (*e++) ;
 
-        return (int) (e - s - 1);
+        size = (int) (e - s - 1);
     }
     else if (size_elem == sizeof(int))
     {
@@ -193,10 +195,10 @@ int OCI_StringLength(void *ptr, int size_elem)
 
         while (*e++) ;
 
-        return (int) (e - s - 1);
+        size = (int) (e - s - 1);
     }
 
-    return 0;
+    return size;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -240,19 +242,43 @@ void * OCI_GetInputString(void *src, int *size, int size_char_in,
             {
                 if (size_char_in > size_char_out)
                 {
-                    char_count = OCI_StringCopy4to2bytes
-                                 (
-                                    (unsigned int   *)  src, char_count,
-                                    (unsigned short *) dest, char_count
-                                 );
+                    if ((size_char_in  == sizeof(int  )) &&
+                        (size_char_out == sizeof(short)))
+                    {
+                        /* UTF32 to UTF16 */
+
+                        char_count = OCI_StringCopy4to2bytes
+                                     (
+                                        (unsigned int   *)  src, char_count,
+                                        (unsigned short *) dest, char_count
+                                     );
+                    }
+                    else
+                    {
+                        /* widechar to multibytes */
+
+                        char_count = (int) wcstombs(dest, src, char_count+1);
+                    }
                 }
                 else
                 {                
-                    char_count = OCI_StringCopy2to4bytes
-                                 (
-                                    (unsigned short *) src,  char_count, 
-                                    (unsigned int   *) dest, char_count
-                                 );
+                    if ((size_char_in  == sizeof(short)) &&
+                        (size_char_out == sizeof(int  )))
+                    {
+                        /* UTF16 to UTF32 */
+                  
+                        char_count = OCI_StringCopy2to4bytes
+                                     (
+                                        (unsigned short *) src,  char_count, 
+                                        (unsigned int   *) dest, char_count
+                                     );
+                    }
+                    else
+                    {
+                        /* multibytes to widechar */
+
+                        char_count = (int) mbstowcs(dest, src, char_count+1);
+                    }
                 }
            }
                 
@@ -288,20 +314,43 @@ void OCI_GetOutputString(void *src, void *dest, int *size, int size_char_in,
            
         if (size_char_in > size_char_out)
         {
-            char_count = OCI_StringCopy4to2bytes
-                         (
-                            (unsigned int   *)  src, char_count,
-                            (unsigned short *) dest, char_count
-                         );
+            if ((size_char_in  == sizeof(int  )) &&
+                (size_char_out == sizeof(short)))
+            {
+                /* UTF32 to UTF16 */
 
+                char_count = OCI_StringCopy4to2bytes
+                             (
+                                (unsigned int   *)  src, char_count,
+                                (unsigned short *) dest, char_count
+                             );
+            }
+            else
+            {
+                /* widechar to multibytes */
+
+                char_count = (int) wcstombs(dest, src, char_count+1);
+            }
         }
         else
         {
-            char_count = OCI_StringCopy2to4bytes
-                         (
-                            (unsigned short *)  src, char_count,
-                            (unsigned int   *) dest, char_count
-                         );
+           if ((size_char_in  == sizeof(short)) &&
+               (size_char_out == sizeof(int  )))
+            {
+                /* UTF16 to UTF32 */
+          
+                char_count = OCI_StringCopy2to4bytes
+                             (
+                                (unsigned short *) src,  char_count, 
+                                (unsigned int   *) dest, char_count
+                             );
+            }
+            else
+            {
+                /* multibytes to widechar */
+
+                char_count = (int) mbstowcs(dest, src, char_count+1);
+            }
         }
 
         *size = char_count * size_char_out;
@@ -317,35 +366,100 @@ void OCI_MoveString(void *src, void *dst, int char_count,
 {
     if ((src == NULL) || (dst == NULL))
         return;
+ 
+    /* raw string packing/expansion without charset conversion */
 
     if (size_char_out > size_char_in)
     {
         /* expand string */
+
+        if ((size_char_in == sizeof(short)) && (size_char_out == sizeof(int)))
+        {            
+            /* 2 => 4 bytes */
+
+            unsigned short *str1  = (unsigned short *) src;
+            unsigned int   *str2  = (unsigned int   *) dst;
+
+            if (*str1 == 0)
+                return;
+
+            while (char_count--)
+                str2[char_count] = (unsigned int) str1[char_count];
+        }
          
-         unsigned short *ustr   = (unsigned short *) src;
-         unsigned int   *wcstr  = (unsigned int   *) dst;
+        else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(short)))
+        {            
+            /* 1 => 2 bytes */
 
-        if (*ustr == 0)
-            return;
+            unsigned char  *str1  = (unsigned char  *) src;
+            unsigned short *str2  = (unsigned short *) dst;
 
-        while (char_count--)
-            wcstr[char_count] = (unsigned int) ustr[char_count];
+            if (*str1 == 0)
+                return;
 
+            while (char_count--)
+                str2[char_count] = (unsigned short) str1[char_count];
+        }
+        else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(int)))
+        {            
+            /* 1 => 4 bytes */
+
+            unsigned char *str1  = (unsigned char *) src;
+            unsigned int  *str2  = (unsigned int  *) dst;
+         
+            if (*str1 == 0)
+                return;
+
+            while (char_count--)
+                 str2[char_count] = (unsigned int) str1[char_count];
+         }
     }
     else if (size_char_out < size_char_in)
     {
         /* pack string */
-        
-        unsigned int   *ustr  = (unsigned int   *) src;
-        unsigned short *wcstr = (unsigned short *) dst;
-        int i = 0;
 
-        if (*wcstr == 0)
-            return;
+        if ((size_char_in == sizeof(int)) && (size_char_out == sizeof(short)))
+        {
+            /* 4 => 2 bytes */
 
-        while (++i < char_count)
-            ustr[char_count] = (unsigned int) wcstr[char_count];
+            unsigned int   *str1  = (unsigned int   *) src;
+            unsigned short *str2 = (unsigned short *) dst;
+            int i = 0;
 
+            if (*str1 == 0)
+                return;
+
+            while (++i < char_count)
+                str2[i] = (unsigned short) str1[i];
+        }
+        else if ((size_char_in == sizeof(short)) && (size_char_out == sizeof(char)))
+        {
+            /* 2 => 1 bytes */
+
+            unsigned short *str1 = (unsigned short *) src;
+            unsigned char  *str2 = (unsigned char  *) dst;
+            int i = 0;
+
+            if (*str1 == 0)
+                return;
+
+            while (++i < char_count)
+                str2[i] = (unsigned char) str1[i];
+        }
+        else if ((size_char_in == sizeof(int)) && (size_char_out == sizeof(char)))
+        {
+            /* 4 => 1 bytes */
+
+            unsigned int  *str1 = (unsigned int  *) src;
+            unsigned char *str2 = (unsigned char *) dst;
+            int i = 0;
+
+            if (*str1 == 0)
+                return;
+
+            while (++i < char_count)
+                str2[i] = (unsigned char) str1[i];
+        }
     }
 }
 
@@ -356,6 +470,8 @@ void OCI_MoveString(void *src, void *dst, int char_count,
 void OCI_ConvertString(void *str, int char_count, int size_char_in, 
                        int size_char_out)
 {
+    /* inplace string packing / expansion */
+
     OCI_MoveString(str, str, char_count, size_char_in, size_char_out);
 }
 
@@ -409,7 +525,6 @@ void OCI_ReleaseDataString(void *str)
 
 #endif
 }
-
 
 /* ------------------------------------------------------------------------ *
  * OCI_StringFromStringPtr

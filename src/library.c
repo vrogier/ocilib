@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: library.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: library.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -40,7 +40,138 @@
 
 OCI_Library OCILib;
 
+OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
+{
+    {OCI_SFC_CREATE_TABLE               , MT("CREATE TABLE")                },
+    {OCI_SFC_SET_ROLE                   , MT("SET ROLE")                    },
+    {OCI_SFC_INSERT                     , MT("INSERT")                      },
+    {OCI_SFC_SELECT                     , MT("SELECT")                      },
+    {OCI_SFC_UPDATE                     , MT("UPDATE")                      },
+    {OCI_SFC_DROP_ROLE                  , MT("DROP ROLE")                   },
+    {OCI_SFC_DROP_VIEW                  , MT("DROP VIEW")                   },
+    {OCI_SFC_DROP_TABLE                 , MT("DROP TABLE")                  },
+    {OCI_SFC_DELETE                     , MT("DELETE")                      },
+    {OCI_SFC_CREATE_VIEW                , MT("CREATE VIEW")                 },
+    {OCI_SFC_DROP_USER                  , MT("DROP USER")                   },
+    {OCI_SFC_CREATE_ROLE                , MT("CREATE ROLE")                 },
+    {OCI_SFC_CREATE_SEQUENCE            , MT("CREATE SEQUENCE")             },
+    {OCI_SFC_ALTER_SEQUENCE             , MT("ALTER SEQUENCE")              },
+    {OCI_SFC_DROP_SEQUENCE              , MT("DROP SEQUENCE")               },
+    {OCI_SFC_CREATE_SCHEMA              , MT("CREATE SCHEMA")               },
+    {OCI_SFC_CREATE_CLUSTER             , MT("CREATE CLUSTER")              },
+    {OCI_SFC_CREATE_USER                , MT("CREATE USER")                 },
+    {OCI_SFC_CREATE_INDEX               , MT("CREATE INDEX")                },
+    {OCI_SFC_DROP_INDEX                 , MT("DROP INDEX")                  },
+    {OCI_SFC_DROP_CLUSTER               , MT("DROP CLUSTER")                },
+    {OCI_SFC_VALIDATE_INDEX             , MT("VALIDATE INDEX")              },
+    {OCI_SFC_CREATE_PROCEDURE           , MT("CREATE PROCEDURE")            },
+    {OCI_SFC_ALTER_PROCEDURE            , MT("ALTER PROCEDURE")             },
+    {OCI_SFC_ALTER_TABLE                , MT("ALTER TABLE")                 },
+    {OCI_SFC_EXPLAIN                    , MT("EXPLAIN")                     },
+    {OCI_SFC_GRANT                      , MT("GRANT")                       },
+    {OCI_SFC_REVOKE                     , MT("REVOKE")                      },
+    {OCI_SFC_CREATE_SYNONYM             , MT("CREATE SYNONYM")              },
+    {OCI_SFC_DROP_SYNONYM               , MT("DROP SYNONYM")                },
+    {OCI_SFC_ALTER_SYSTEM_SWITCHLOG     , MT("ALTER SYSTEM SWITCHLOG")      },
+    {OCI_SFC_SET_TRANSACTION            , MT("SET TRANSACTION")             },
+    {OCI_SFC_PLSQL_EXECUTE              , MT("PL/SQL EXECUTE")              },
+    {OCI_SFC_LOCK                       , MT("LOCK")                        },
+    {OCI_SFC_NOOP                       , MT("NOOP")                        },
+    {OCI_SFC_RENAME                     , MT("RENAME")                      },
+    {OCI_SFC_COMMENT                    , MT("COMMENT")                     },
+    {OCI_SFC_AUDIT                      , MT("AUDIT")                       },
+    {OCI_SFC_NO_AUDIT                   , MT("NO AUDIT")                    },
+    {OCI_SFC_ALTER_INDEX                , MT("ALTER INDEX")                 },
+    {OCI_SFC_CREATE_EXTERNAL_DATABASE   , MT("CREATE EXTERNAL DATABASE")    },
+    {OCI_SFC_DROP_EXTERNALDATABASE      , MT("DROP EXTERNALDATABASE")       },
+    {OCI_SFC_CREATE_DATABASE            , MT("CREATE DATABASE")             },
+    {OCI_SFC_ALTER_DATABASE             , MT("ALTER DATABASE")              },
+    {OCI_SFC_CREATE_ROLLBACK_SEGMENT    , MT("CREATE ROLLBACK SEGMENT")     },
+    {OCI_SFC_ALTER_ROLLBACK_SEGMENT     , MT("ALTER ROLLBACK SEGMENT")      },
+    {OCI_SFC_DROP_ROLLBACK_SEGMENT      , MT("DROP ROLLBACK SEGMENT")       },
+    {OCI_SFC_CREATE_TABLESPACE          , MT("CREATE TABLESPACE")           },
+    {OCI_SFC_ALTER_TABLESPACE           , MT("ALTER TABLESPACE")            },
+    {OCI_SFC_DROP_TABLESPACE            , MT("DROP TABLESPACE")             },
+    {OCI_SFC_ALTER_SESSION              , MT("ALTER SESSION")               },
+    {OCI_SFC_ALTER_USER                 , MT("ALTER USER")                  },
+    {OCI_SFC_COMMIT_WORK                , MT("COMMIT (WORK)")               },
+    {OCI_SFC_ROLLBACK                   , MT("ROLLBACK")                    },
+    {OCI_SFC_SAVEPOINT                  , MT("SAVEPOINT")                   },
+    {OCI_SFC_CREATE_CONTROL_FILE        , MT("CREATE CONTROL FILE")         },
+    {OCI_SFC_ALTER_TRACING              , MT("ALTER TRACING")               },
+    {OCI_SFC_CREATE_TRIGGER             , MT("CREATE TRIGGER")              },
+    {OCI_SFC_ALTER_TRIGGER              , MT("ALTER TRIGGER")               },
+    {OCI_SFC_DROP_TRIGGER               , MT("DROP TRIGGER")                },
+    {OCI_SFC_ANALYZE_TABLE              , MT("ANALYZE TABLE")               },
+    {OCI_SFC_ANALYZE_INDEX              , MT("ANALYZE INDEX")               },
+    {OCI_SFC_ANALYZE_CLUSTER            , MT("ANALYZE CLUSTER")             },
+    {OCI_SFC_CREATE_PROFILE             , MT("CREATE PROFILE")              },
+    {OCI_SFC_DROP_PROFILE               , MT("DROP PROFILE")                },
+    {OCI_SFC_ALTER_PROFILE              , MT("ALTER PROFILE")               },
+    {OCI_SFC_DROP_PROCEDURE             , MT("DROP PROCEDURE")              },
+    {OCI_SFC_ALTER_RESOURCE_COST        , MT("ALTER RESOURCE COST")         },
+    {OCI_SFC_CREATE_SNAPSHOT_LOG        , MT("CREATE SNAPSHOT LOG")         },
+    {OCI_SFC_ALTER_SNAPSHOT_LOG         , MT("ALTER SNAPSHOT LOG")          },
+    {OCI_SFC_DROP_SNAPSHOT_LOG          , MT("DROP SNAPSHOT LOG")           },
+    {OCI_SFC_DROP_SUMMARY               , MT("DROP SUMMARY")                },
+    {OCI_SFC_CREATE_SNAPSHOT            , MT("CREATE SNAPSHOT")             },
+    {OCI_SFC_ALTER_SNAPSHOT             , MT("ALTER SNAPSHOT")              },
+    {OCI_SFC_DROP_SNAPSHOT              , MT("DROP SNAPSHOT")               },
+    {OCI_SFC_CREATE_TYPE                , MT("CREATE TYPE")                 },
+    {OCI_SFC_DROP_TYPE                  , MT("DROP TYPE")                   },
+    {OCI_SFC_ALTER_ROLE                 , MT("ALTER ROLE")                  },
+    {OCI_SFC_ALTER_TYPE                 , MT("ALTER TYPE")                  },
+    {OCI_SFC_CREATE_TYPE_BODY           , MT("CREATE TYPE BODY")            },
+    {OCI_SFC_ALTER_TYPE_BODY            , MT("ALTER TYPE BODY")             },
+    {OCI_SFC_DROP_TYPE_BODY             , MT("DROP TYPE BODY")              },
+    {OCI_SFC_DROP_LIBRARY               , MT("DROP LIBRARY")                },
+    {OCI_SFC_TRUNCATE_TABLE             , MT("TRUNCATE TABLE")              },
+    {OCI_SFC_TRUNCATE_CLUSTER           , MT("TRUNCATE CLUSTER")            },
+    {OCI_SFC_CREATE_BITMAPFILE          , MT("CREATE BITMAPFILE")           },
+    {OCI_SFC_ALTER_VIEW                 , MT("ALTER VIEW")                  },
+    {OCI_SFC_DROP_BITMAPFILE            , MT("DROP BITMAPFILE")             },
+    {OCI_SFC_SET_CONSTRAINTS            , MT("SET CONSTRAINTS")             },
+    {OCI_SFC_CREATE_FUNCTION            , MT("CREATE FUNCTION")             },
+    {OCI_SFC_ALTER_FUNCTION             , MT("ALTER FUNCTION")              },
+    {OCI_SFC_DROP_FUNCTION              , MT("DROP FUNCTION")               },
+    {OCI_SFC_CREATE_PACKAGE             , MT("CREATE PACKAGE")              },
+    {OCI_SFC_ALTER_PACKAGE              , MT("ALTER PACKAGE")               },
+    {OCI_SFC_DROP_PACKAGE               , MT("DROP PACKAGE")                },
+    {OCI_SFC_CREATE_PACKAGE_BODY        , MT("CREATE PACKAGE BODY")         },
+    {OCI_SFC_ALTER_PACKAGE_BODY         , MT("ALTER PACKAGE BODY")          },
+    {OCI_SFC_DROP_PACKAGE_BODY          , MT("DROP PACKAGE BODY")           },
+    {OCI_SFC_CREATE_DIRECTORY           , MT("CREATE DIRECTORY")            },
+    {OCI_SFC_DROP_DIRECTORY             , MT("DROP DIRECTORY")              },
+    {OCI_SFC_CREATE_LIBRARY             , MT("CREATE LIBRARY")              },
+    {OCI_SFC_CREATE_JAVA                , MT("CREATE JAVA")                 },
+    {OCI_SFC_ALTER_JAVA                 , MT("ALTER JAVA")                  },
+    {OCI_SFC_DROP_JAVA                  , MT("DROP JAVA")                   },
+    {OCI_SFC_CREATE_OPERATOR            , MT("CREATE OPERATOR")             },
+    {OCI_SFC_CREATE_INDEXTYPE           , MT("CREATE INDEXTYPE")            },
+    {OCI_SFC_DROP_INDEXTYPE             , MT("DROP INDEXTYPE")              },
+    {OCI_SFC_ALTER_INDEXTYPE            , MT("ALTER INDEXTYPE")             },
+    {OCI_SFC_DROP_OPERATOR              , MT("DROP OPERATOR")               },
+    {OCI_SFC_ASSOCIATE_STATISTICS       , MT("ASSOCIATE STATISTICS")        },
+    {OCI_SFC_DISASSOCIATE_STATISTICS    , MT("DISASSOCIATE STATISTICS")     },
+    {OCI_SFC_CALL_METHOD                , MT("CALL METHOD")                 },
+    {OCI_SFC_CREATE_SUMMARY             , MT("CREATE SUMMARY")              },
+    {OCI_SFC_ALTER_SUMMARY              , MT("ALTER SUMMARY")               },
+    {OCI_SFC_CREATE_DIMENSION           , MT("CREATE DIMENSION")            },
+    {OCI_SFC_ALTER_DIMENSION            , MT("ALTER DIMENSION")             },
+    {OCI_SFC_DROP_DIMENSION             , MT("DROP DIMENSION")              },
+    {OCI_SFC_CREATE_CONTEXT             , MT("CREATE CONTEXT")              },
+    {OCI_SFC_DROP_CONTEXT               , MT("DROP CONTEXT")                },
+    {OCI_SFC_ALTER_OUTLINE              , MT("ALTER OUTLINE")               },
+    {OCI_SFC_CREATE_OUTLINE             , MT("CREATE OUTLINE")              },
+    {OCI_SFC_DROP_OUTLINE               , MT("DROP OUTLINE")                },
+    {OCI_SFC_UPDATE_INDEXES             , MT("UPDATE INDEXES")              },
+    {OCI_SFC_ALTER_OPERATOR             , MT("ALTER OPERATOR")              }
+};
+
+
 #ifdef OCI_IMPORT_RUNTIME
+
+/* OCI function pointers */
 
 OCIENVCREATE                 OCIEnvCreate                 = NULL;
 OCISERVERATTACH              OCIServerAttach              = NULL;
@@ -88,6 +219,8 @@ OCILOBCLOSE                  OCILobClose                  = NULL;
 OCILOBLOCATORASSIGN          OCILobLocatorAssign          = NULL;
 OCILOBASSIGN                 OCILobAssign                 = NULL;
 OCILOBISEQUAL                OCILobIsEqual                = NULL;
+OCILOBFLUSHBUFFER            OCILobFlushBuffer            = NULL;
+OCILOBGETSTORAGELIMIT        OCILobGetStorageLimit        = NULL;
 OCILOBFILEOPEN               OCILobFileOpen               = NULL;
 OCILOBFILECLOSE              OCILobFileClose              = NULL;
 OCILOBFILECLOSEALL           OCILobFileCloseAll           = NULL;
@@ -214,8 +347,8 @@ OCIDIRPATHCOLARRAYRESET      OCIDirPathColArrayReset      = NULL;
 OCIDIRPATHCOLARRAYTOSTREAM   OCIDirPathColArrayToStream   = NULL;
 OCIDIRPATHSTREAMRESET        OCIDirPathStreamReset        = NULL;
 OCIDIRPATHFLUSHROW           OCIDirPathFlushRow           = NULL;
-
 OCICACHEFREE                 OCICacheFree                 = NULL;
+OCIPING                      OCIPing                      = NULL;
 
 #ifdef ORAXB8_DEFINED
 
@@ -368,7 +501,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
         len++;
     }
 
-    strncat(path, OCI_DL_NAME, sizeof(path) - len);
+    strncat(path, OCI_DL_ANSI_NAME, sizeof(path) - len);
 
     OCILib.lib_handle = LIB_OPEN(path);
 
@@ -534,6 +667,10 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
                    OCILOBASSIGN);
         LIB_SYMBOL(OCILib.lib_handle, "OCILobLocatorAssign", OCILobLocatorAssign,
                    OCILOBLOCATORASSIGN);
+        LIB_SYMBOL(OCILib.lib_handle, "OCILobFlushBuffer", OCILobFlushBuffer,
+                   OCILOBFLUSHBUFFER);
+        LIB_SYMBOL(OCILib.lib_handle, "OCILobGetStorageLimit", OCILobGetStorageLimit,
+                   OCILOBGETSTORAGELIMIT);
 
         LIB_SYMBOL(OCILib.lib_handle, "OCIDateAssign", OCIDateAssign,
                    OCIDATEASSIGN);
@@ -873,6 +1010,11 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
                                                   (dvoid *) NULL, NULL, NULL, NULL,
                                                   (size_t) 0, (dvoid **) NULL));
 
+        if (res == FALSE)
+        {
+            OCI_ExceptionOCIEnvironment();
+        }
+
         /*  allocate error handle */
 
         res = res && (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
@@ -1097,3 +1239,4 @@ OCI_Error * OCI_API OCI_GetLastError(void)
 
     return err;
 }
+

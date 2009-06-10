@@ -3,14 +3,15 @@
 int main(void)
 {
     OCI_Connection *cn;
-    OCI_Statement *st;
+    OCI_Statement  *st;
+    OCI_Error      *err;
 
     int tab_int[1000];
     char tab_str[1000][21];
 
     int i;
 
-    if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
+    if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT | OCI_ENV_CONTEXT))
         return EXIT_FAILURE;
 
     /* ... create connection and statement ... */
@@ -35,7 +36,19 @@ int main(void)
 
     /* execute */
 
-    OCI_Execute(st);
+    if (!OCI_Execute(st))
+    {
+        printf("Number of DML array errors : %d\n", OCI_GetBatchErrorCount(st));       
+
+        err = OCI_GetBatchError(st);
+
+        while (err)
+        {
+            printf("Error at row %d : %s\n", OCI_ErrorGetRow(err), OCI_ErrorGetString(err));       
+
+            err = OCI_GetBatchError(st);
+        }
+    }
  
     printf("row processed : %d\n", OCI_GetAffectedRows(st));
 

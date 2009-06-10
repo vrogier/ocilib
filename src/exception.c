@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: exception.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: exception.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -91,9 +91,10 @@ static mtext * OCILib_TypeNames[] =
     MT("Internal array of indicator integers"),
     MT("Internal array of buffer length integers"),
     MT("Internal array of data buffers"),
-    MT("Internal Long handle data buffer")
-    MT("Internal trace info structure")
+    MT("Internal Long handle data buffer"),
+    MT("Internal trace info structure"),
     MT("Internal array of direct path columns"),
+    MT("Internal array of batch error objects")
 };
 
 
@@ -123,7 +124,8 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Name or position '%ls' already binded to the statement"),
     MT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
     MT("Column '%ls' not find in table '%ls'"),
-    MT("Unable to perform this operation on a %ls direct path process")
+    MT("Unable to perform this operation on a %ls direct path process"),
+    MT("Cannot create OCI environment")
 };
 
 #else
@@ -152,7 +154,8 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Name or position '%s' already binded to the statement"),
     MT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
     MT("Column '%s' not find in table '%s'"),
-    MT("Unable to perform this operation on a %s direct path process")
+    MT("Unable to perform this operation on a %s direct path process"),
+    MT("Cannot create OCI environment")
 };
 
 #endif
@@ -225,7 +228,6 @@ void OCI_ExceptionRaise(OCI_Error *err)
     }
 }
 
-
 /* ------------------------------------------------------------------------ *
  * OCI_ExceptionOCI
  * ------------------------------------------------------------------------ */
@@ -297,7 +299,7 @@ void OCI_ExceptionLoadingSharedLib(void)
 
         mtsprintf(err->str, msizeof(err->str) - 1,
                   OCILib_ErrorMsg[OCI_ERR_LOADING_SHARED_LIB],
-                  OCI_DL_NAME);
+                  OCI_DL_META_NAME);
     }
 
     OCI_ExceptionRaise(err);
@@ -782,3 +784,24 @@ void OCI_ExceptionDirPathState(OCI_DirPath *dp, int state)
 
     OCI_ExceptionRaise(err);
 }
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ExceptionOCIEnvironment
+ * ------------------------------------------------------------------------ */
+
+void OCI_ExceptionOCIEnvironment(void)
+{
+    OCI_Error *err = OCI_ExceptionGetError();
+
+    if (err != NULL)
+    {
+        err->type  = OCI_ERR_OCILIB;
+        err->icode = OCI_ERR_CREATE_OCI_ENVIRONMENT;
+
+        mtsncat(err->str,  OCILib_ErrorMsg[OCI_ERR_CREATE_OCI_ENVIRONMENT],
+                msizeof(err->str) - 1);
+    }
+
+    OCI_ExceptionRaise(err);
+}
+

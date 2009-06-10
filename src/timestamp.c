@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: timestamp.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: timestamp.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -891,6 +891,7 @@ boolean OCI_API OCI_TimestampSysTimeStamp(OCI_Timestamp *tmsp)
 #else
 
     OCI_NOT_USED(tmp);
+    OCI_NOT_USED(handle);
 
 #endif
 

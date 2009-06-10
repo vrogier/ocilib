@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: resultset.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -1370,30 +1370,23 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                         const mtext *fmt;
                         int pos;
 
-#ifdef OCI_CHARSET_MIXED
-
-                        mtext temp[OCI_SIZE_BUFFER+1];
-
-                        temp[0] = 0;
-
-#else
                         def->buf.temp[0] = 0;
-#endif
 
                         /* init output buffer in case of OCI failure */
 
                         fmt   = OCI_GetDefaultFormatNumeric(rs->stmt->con);
                         ostr1 = OCI_GetInputMetaString(fmt, &osize1);
+                        
+#ifndef OCI_CHARSET_MIXED
 
-#ifdef OCI_CHARSET_MIXED
-
-                        ostr2 = OCI_GetInputDataString(temp, &osize2);
-
+                        ostr2 = OCI_GetInputString(def->buf.temp, &osize2,
+                                                   sizeof(dtext), sizeof(omtext));
 #else
- 
-                        ostr2 = OCI_GetInputDataString(def->buf.temp, &osize2);
+
+                        ostr2 = (void* ) def->buf.temp;
 
 #endif
+
                         /* check for decimal character */
 
                         OCI_CALL1
@@ -1410,24 +1403,22 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                                                 (oratext *) ostr2)
                         )
 
+#ifndef OCI_CHARSET_MIXED
 
+                        OCI_GetOutputString(ostr2, def->buf.temp, &osize2,
+                                            sizeof(omtext), sizeof(dtext));
 
-#ifdef OCI_CHARSET_MIXED
-
-                        OCI_GetOutputDataString(ostr2, temp, &osize2);
-
-                        mbstowcs(def->buf.temp, temp, strlen(temp) + OCI_CVT_CHAR);
-
-                        osize2 = osize2 * sizeof(dtext);
 #else
+                        
+                        OCI_ConvertString(ostr2, osize2/sizeof(omtext)+1,
+                                          sizeof(omtext), sizeof(dtext));
 
-                        OCI_GetOutputDataString(ostr2, def->buf.temp, &osize2);
+                        osize2 = (osize2/sizeof(omtext)) * sizeof(dtext);                   
 
 #endif
-
                         /* do we need to suppress last '.' or ',' from integers */
 
-                        pos = (osize2 / sizeof(dtext)) -1;
+                        pos = (osize2 / sizeof(dtext)) - 1;
 
                         if (pos >= 0)
                         {
@@ -1439,8 +1430,10 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                         }
 
                         OCI_ReleaseMetaString(ostr1);
+                        
+#ifndef OCI_CHARSET_MIXED
                         OCI_ReleaseDataString(ostr2);
-
+#endif
                         if (res == TRUE)
                             str = def->buf.temp;
 
@@ -1593,7 +1586,7 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
 
 #ifndef OCI_CHARSET_MIXED
 
-                        OCI_RefToText(ref, OCI_SIZE_BUFFER, (mtext *) def->buf.temp);
+                            OCI_RefToText(ref, OCI_SIZE_BUFFER, (mtext *) def->buf.temp);
 
 #else
                             /* mixed mode... conversion needed ! */

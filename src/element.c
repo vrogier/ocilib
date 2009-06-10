@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: element.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: element.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -89,10 +89,17 @@ OCI_Elem * OCI_ElemInit(OCI_Connection *con, OCI_Elem **pelem, void *handle,
 boolean OCI_ElemSetNumber(OCI_Elem  *elem, void *value, uword size, uword flag)
 {
     boolean res = FALSE;
-        
+
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
     OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_NUMERIC, FALSE);
   
+    if (elem->init == FALSE)
+    {
+        elem->handle  = OCI_MemAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
+
+        elem->init = (elem->handle != NULL);
+    }
+
     res = OCI_NumberSet(elem->con, (OCINumber *) elem->handle, value, size, flag);
 
     OCI_RESULT(res);
@@ -214,6 +221,10 @@ boolean OCI_API OCI_ElemFree(OCI_Elem *elem)
                 OCI_IntervalFree((OCI_Interval *) elem->obj);
                 break;
         }
+    }
+    else if (elem->init == TRUE)
+    {
+        OCI_FREE(elem->handle);
     }
 
     OCI_FREE(elem->buf);
@@ -411,7 +422,7 @@ OCI_Date * OCI_API  OCI_ElemGetDate(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_DATETIME, NULL);
 
-    if (*(elem->ind) == OCI_IND_NOTNULL)
+    if ((elem->ind != NULL) && (*(elem->ind) == OCI_IND_NOTNULL))
     {
         OCIDate *handle = (OCIDate *) elem->handle;
 
@@ -444,7 +455,7 @@ OCI_Timestamp * OCI_API  OCI_ElemGetTimeStamp(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_TIMESTAMP, NULL);
 
-    if (*(elem->ind) == OCI_IND_NOTNULL)
+    if ((elem->ind != NULL) && (*(elem->ind) == OCI_IND_NOTNULL))
     {
         OCIDateTime *handle = (OCIDateTime *) elem->handle;
 
@@ -478,7 +489,7 @@ OCI_Interval * OCI_API OCI_ElemGetInterval(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_INTERVAL, NULL);
 
-    if (*(elem->ind) == OCI_IND_NOTNULL)
+    if ((elem->ind != NULL) && (*(elem->ind) == OCI_IND_NOTNULL))
     {
         OCIInterval *handle = (OCIInterval *) elem->handle;
 
@@ -512,7 +523,7 @@ OCI_Lob * OCI_API  OCI_ElemGetLob(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_LOB, NULL);
 
-    if (*(elem->ind) == OCI_IND_NOTNULL)
+    if ((elem->ind != NULL) && (*(elem->ind) == OCI_IND_NOTNULL))
     {
         OCILobLocator *handle = *(OCILobLocator **) elem->handle;
         
@@ -546,7 +557,7 @@ OCI_File * OCI_API  OCI_ElemGetFile(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_FILE, NULL);
 
-    if (*(elem->ind) == OCI_IND_NOTNULL)
+    if ((elem->ind != NULL) && (*(elem->ind) == OCI_IND_NOTNULL))
     {
         OCILobLocator *handle = *(OCILobLocator **) elem->handle;
 
@@ -580,7 +591,7 @@ OCI_Ref * OCI_API  OCI_ElemGetRef(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_REF, NULL);
 
-    if (*(elem->ind) == OCI_IND_NOTNULL)
+    if ((elem->ind != NULL) && (*(elem->ind) == OCI_IND_NOTNULL))
     {
         OCIRef *handle = *(OCIRef **) elem->handle;
         
@@ -614,7 +625,7 @@ OCI_Object * OCI_API OCI_ElemGetObject(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_OBJECT, NULL);
 
-    if (*(elem->ind) == OCI_IND_NOTNULL)
+    if ((elem->ind != NULL) && (*(elem->ind) == OCI_IND_NOTNULL))
     {
         void * handle = elem->handle;
 
@@ -648,7 +659,7 @@ OCI_Coll * OCI_API OCI_ElemGetColl(OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
     OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_COLLECTION, NULL);
 
-    if (*(elem->ind) == OCI_IND_NOTNULL)
+    if ((elem->ind != NULL) && (*(elem->ind) == OCI_IND_NOTNULL))
     {
         OCIColl *handle = (OCIColl *) elem->handle;
 

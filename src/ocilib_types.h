@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_types.h, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: ocilib_types.h, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 
@@ -127,14 +127,15 @@ typedef struct OCI_TraceInfo OCI_TraceInfo;
 
 struct OCI_Error
 {
-    boolean          raise;                  /* Error flag */
-    boolean          active;                 /* to avoid recursive exceptions */
-    OCI_Connection  *con;                    /* pointer to connection object */
-    OCI_Statement   *stmt;                   /* pointer to statement object */
-    sb4              ocode;                  /* Oracle OCI error code */
-    int              icode;                  /* OCILIB internal error code */
-    mtext            str[OCI_SIZE_BUFFER+1]; /* error message */
-    unsigned int     type;                   /* OCILIB error type */
+    boolean          raise;                   /* Error flag */
+    boolean          active;                  /* to avoid recursive exceptions */
+    OCI_Connection  *con;                     /* pointer to connection object */
+    OCI_Statement   *stmt;                    /* pointer to statement object */
+    sb4              ocode;                   /* Oracle OCI error code */
+    int              icode;                   /* OCILIB internal error code */
+    mtext            str[OCI_ERR_MSG_SIZE+1]; /* error message */
+    unsigned int     type;                    /* OCILIB error type */
+    ub4              row;                     /* Error row offset (array DML) */
 };
 
 /*
@@ -210,6 +211,7 @@ struct OCI_Library
     unsigned int    nb_hndlp;               /* number of OCI handles allocated */
     unsigned int    nb_descp;               /* number of OCI descriptors allocated */
     unsigned int    nb_objinst;             /* number of OCI objects allocated */
+    OCI_HashTable  *sql_funcs;              /* hash table handle for sql function names */
 #ifdef OCI_IMPORT_RUNTIME
     LIB_HANDLE      lib_handle;             /* handle of runtime shared library */
 #endif
@@ -402,6 +404,20 @@ struct OCI_Resultset
 };
 
 /*
+ * OCI_Define : Internal Resultset column data implementation
+ *
+ */
+
+struct OCI_BatchErrors
+{
+    OCI_Error       *errs;         /* sub array of OCILIB errors(array DML) */
+    ub4              cur;          /* current sub error index (array DML) */
+    ub4              count;        /* number of errors (array DML) */
+};
+
+typedef struct OCI_BatchErrors OCI_BatchErrors;
+
+/*
  * Statement object
  *
  */
@@ -434,6 +450,7 @@ struct OCI_Statement
     ub2              dynidx;        /* bind index counter for dynamic exec */
     ub2              err_pos;       /* error position in sql statement */
     ub2              bind_array;    /* has array binds ? */
+    OCI_BatchErrors *batch;         /* error handling for array DML */
 };
 
 /*
@@ -706,9 +723,23 @@ struct OCI_HashTable
 typedef struct OCI_Datatype OCI_Datatype;
 
 
+/*
+ * OCI_SQLCmdInfo : Oracle SQL commands code and verbs
+ *
+ */
+
+ struct OCI_SQLCmdInfo
+{
+    unsigned int code; /* SQL command code */
+    mtext *verb;       /* SQL command verb */
+};
+
+typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;
+
 /* static and unique OCI_Library object */
 
 extern OCI_Library OCILib;
+extern OCI_SQLCmdInfo SQLCmds[];
 
 #endif /* OCILIB_OCILIB_TYPES_H_INCLUDED */
 

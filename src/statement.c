@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: statement.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -229,18 +229,25 @@ boolean OCI_BindReset(OCI_Statement *stmt)
     OCI_CHECK(stmt->ubinds == NULL, FALSE);
 
     /* avoid unused param warning from compiler */
-
+    
     i = j = 0;
 
     for(i = 0; i < stmt->nb_ubinds; i++)
     {
         OCI_Bind *bnd = stmt->ubinds[i];
 
-        memset(bnd->buf.inds, 0, bnd->buf.count * sizeof(sb2));
-
+        /* only reset bind indicators if bind was not a PL/SQL bind
+           that can have oupout values
+        */
+             
+        if (stmt->type != OCI_CST_BEGIN && stmt->type != OCI_CST_DECLARE)
+        {
+            memset(bnd->buf.inds, 0, bnd->buf.count * sizeof(sb2));
+        }
+               
 #ifdef OCI_CHECK_DATASTRINGS
 
-        if (stmt->ubinds[i]->type == OCI_CDT_TEXT)
+        if (bnd->type == OCI_CDT_TEXT)
         {
             for (j = 0; j < bnd->buf.count; j++)
             {
@@ -250,12 +257,25 @@ boolean OCI_BindReset(OCI_Statement *stmt)
                 int offset1 = (bnd->size/sizeof(odtext))*sizeof(dtext);
                 int offset2 = bnd->size;
 
+                if (bnd->buf.lens != NULL)
+                    osize = (int) ((ub2 *) bnd->buf.lens)[j];
+                
                 OCI_GetOutputString(((ub1 *) bnd->buf.data) + (j*offset2),
                                     ((ub1 *) bnd->input)    + (j*offset1),
                                     &osize, sizeof(odtext), sizeof(dtext));
+
+                /* set zero terminal null character (sometimes it is not set 
+                   by OCI and causes problems if the string has been modified 
+                   and its length reduced */
+
+                {
+                    dtext *str = (dtext *) (((ub1 *) bnd->input) + (j*offset1));
+
+                    if (osize> 0)
+                        str[osize/sizeof(dtext)] = 0;
+                }
             }
         }
-
 #endif
 
     }
@@ -305,7 +325,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         {
             int test_index = OCI_BindGetIndex(stmt, name);
 
-            if (test_index > 0) 
+            if (test_index > 0)
             {
                 if (stmt->bind_reuse == FALSE)
                 {
@@ -378,7 +398,10 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
             /* is it a pl/sql table bind ? */
 
             if (stmt->type == OCI_CST_BEGIN || stmt->type == OCI_CST_DECLARE)
-                is_pltbl = TRUE;
+            {
+                is_pltbl          = TRUE;
+                stmt->bind_array  = TRUE;
+            }
         }
         else
             nbelem = stmt->nb_iters;
@@ -415,7 +438,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
     {
         if (bnd->buf.inds == NULL)
         {
-            bnd->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, 
+            bnd->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY,
                                                   sizeof(sb2), nbelem, TRUE);
         }
 
@@ -464,7 +487,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
             if (bnd->buf.data == NULL)
             {
-                bnd->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, size, 
+                bnd->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, size,
                                                        nbelem, TRUE);
             }
 
@@ -476,7 +499,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
     /* setup data length array */
 
-    if (res == TRUE && ((is_pltbl == TRUE) || (type == OCI_CDT_RAW)))
+    if ((res == TRUE) && ((type == OCI_CDT_RAW) || (type == OCI_CDT_TEXT)))
     {
         if (bnd->buf.lens == NULL)
         {
@@ -1035,7 +1058,9 @@ boolean OCI_StatementReset(OCI_Statement *stmt)
 {
     boolean res = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
+    /* reset batch errors */
+
+    res = OCI_BatchErrorClear(stmt);
 
     /* free resultsets */
 
@@ -1059,6 +1084,7 @@ boolean OCI_StatementReset(OCI_Statement *stmt)
     stmt->rsts        = NULL;
     stmt->sql         = NULL;
     stmt->map         = NULL;
+    stmt->batch       = NULL;
 
     stmt->status      = OCI_STMT_CLOSED;
     stmt->type        = OCI_UNKNOWN;
@@ -1096,6 +1122,145 @@ boolean OCI_StatementClose(OCI_Statement *stmt)
     if (stmt->stmt != NULL && stmt->hstate == OCI_OBJECT_ALLOCATED)
     {
         OCI_HandleFree((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT);
+    }
+
+    return res;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BatchErrorClear
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_BatchErrorClear(OCI_Statement *stmt)
+{
+    if (stmt->batch != NULL)
+    {
+        /* free internal array of OCI_Errors */
+
+        OCI_FREE(stmt->batch->errs);
+
+        /* free batch structure */
+
+        OCI_FREE(stmt->batch);
+
+        stmt->batch = NULL;
+    }
+
+    return TRUE;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BatchErrorsInit
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_BatchErrorInit(OCI_Statement *stmt)
+{
+    boolean res   = TRUE;
+    ub4 err_count = 0;
+
+    OCI_BatchErrorClear(stmt);
+
+    /* all OCI call here are not checked for errors as we already dealing
+       with an array DML error */
+
+    OCIAttrGet((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT,
+               (dvoid *) &err_count, (ub4 *) NULL,
+               (ub4) OCI_ATTR_NUM_DML_ERRORS, stmt->con->err);
+
+    if (err_count > 0)
+    {
+        OCIError *hndl = NULL;
+
+        /* allocate batch error structure */
+
+        stmt->batch = (OCI_BatchErrors *) OCI_MemAlloc(OCI_IPC_BATCH_ERRORS,
+                                                       sizeof(*stmt->batch),
+                                                       1, TRUE);
+
+        res = (stmt->batch != NULL);
+
+         /* allocate array of error objects */
+
+        if (res == TRUE)
+        {
+            stmt->batch->errs = (OCI_Error *) OCI_MemAlloc(OCI_IPC_ERROR,
+                                                           sizeof(*stmt->batch->errs),
+                                                           err_count, TRUE);
+
+            res = (stmt->batch->errs != NULL);
+        }
+
+        if (res == TRUE)
+        {
+            /* allocate OCI error handle */
+
+            OCI_HandleAlloc((dvoid  *) OCILib.env,
+                            (dvoid **) (void *) &hndl,
+                            (ub4) OCI_HTYPE_ERROR,
+                            (size_t) 0, (dvoid **) NULL);
+
+            res = (hndl != NULL);
+        }
+
+        /* loop on the OCI errors to fill OCILIB error objects */
+
+        if (res == TRUE)
+        {
+            ub4 i;
+
+            stmt->batch->count = err_count;
+
+            for (i = 0; i < stmt->batch->count; i++)
+            {
+                int osize  = -1;
+                void *ostr = NULL;
+
+                OCI_Error *err = &stmt->batch->errs[i];
+
+                OCIParamGet((dvoid *) stmt->con->err, OCI_HTYPE_ERROR,
+                            stmt->con->err, (dvoid **) (void *) &hndl, i);
+
+                /* get row offset */
+
+                OCIAttrGet((dvoid *) hndl, (ub4) OCI_HTYPE_ERROR,
+                           (void *) &err->row, (ub4 *) NULL,
+                           (ub4) OCI_ATTR_DML_ROW_OFFSET, stmt->con->err);
+
+                /* fill error attributes */
+
+                err->type = OCI_ERR_ORACLE;
+                err->con  = stmt->con;
+                err->stmt = stmt;
+
+                /* OCILIB indexes start at 1 */
+
+                err->row++;
+
+                /* get error string */
+
+                osize = msizeof(err->str) - 1;
+
+                ostr  = OCI_GetInputMetaString(err->str, &osize);
+
+                OCIErrorGet((dvoid *) hndl,
+                            (ub4) 1,
+                            (OraText *) NULL, &err->ocode,
+                            (OraText *) ostr,
+                            (ub4) osize,
+                            (ub4) OCI_HTYPE_ERROR);
+
+
+                OCI_GetOutputMetaString(ostr, err->str, &osize);
+                OCI_ReleaseMetaString(ostr);
+            }
+        }
+
+        /* release error handle */
+
+        if (hndl != NULL)
+        {
+            OCI_HandleFree(hndl, OCI_HTYPE_ERROR);
+        }
     }
 
     return res;
@@ -1263,7 +1428,20 @@ boolean OCI_API OCI_Execute(OCI_Statement *stmt)
     if (stmt->type == OCI_CST_SELECT)
         mode  = stmt->exec_mode;
     else
+    {
         iters = stmt->nb_iters;
+
+        /* for array DML, use batch error mode */
+
+        if (iters > 1)
+        {
+            mode = mode | OCI_BATCH_ERRORS;
+        }
+    }
+
+    /* reset batch errors */
+
+    res = OCI_BatchErrorClear(stmt);
 
     /* check bind objects for updating their null indicator status */
 
@@ -1313,6 +1491,13 @@ boolean OCI_API OCI_Execute(OCI_Statement *stmt)
         /* raise exception */
 
         OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt);
+
+        /* build batch error list if the statement is array DML */
+
+        if (mode & OCI_BATCH_ERRORS)
+        {
+            OCI_BatchErrorInit(stmt);
+        }
     }
 
     OCI_RESULT(res);
@@ -1561,7 +1746,7 @@ boolean OCI_API OCI_BindArraySetSize(OCI_Statement *stmt, unsigned int size)
 
     if ((stmt->nb_ubinds > 0) && (size > stmt->ubinds[0]->buf.count))
     {
-        OCI_ExceptionBindArraySize(stmt, stmt->ubinds[0]->buf.count, 
+        OCI_ExceptionBindArraySize(stmt, stmt->ubinds[0]->buf.count,
                                          stmt->nb_iters, size);
 
         res = FALSE;
@@ -2554,55 +2739,6 @@ boolean OCI_API OCI_RegisterRef(OCI_Statement *stmt, const mtext *name,
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_SetNullAtPos
- * ------------------------------------------------------------------------ */
-
-boolean OCI_API OCI_SetNullAtPos(OCI_Statement *stmt, unsigned int index,
-                                 unsigned int position)
-{
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
-
-    OCI_CHECK_BOUND(stmt->con, index   , 1, stmt->nb_ubinds, FALSE);
-    OCI_CHECK_BOUND(stmt->con, position, 1, stmt->ubinds[index-1]->buf.count, FALSE);
-
-
-    if (stmt->ubinds[index-1]->buf.inds != NULL)
-        ((sb2*) stmt->ubinds[index-1]->buf.inds)[position-1] = -1;
-
-    OCI_RESULT(TRUE);
-
-    return TRUE;
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_SetNullAtPos2
- * ------------------------------------------------------------------------ */
-
-boolean OCI_API OCI_SetNullAtPos2(OCI_Statement *stmt, const mtext *name,
-                                  unsigned int position)
-{
-    return OCI_SetNullAtPos(stmt, OCI_BindGetIndex(stmt, name), position);
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_SetNull
- * ------------------------------------------------------------------------ */
-
-boolean OCI_API OCI_SetNull(OCI_Statement *stmt, unsigned int index)
-{
-  return OCI_SetNullAtPos(stmt, index, 1);
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_SetNullAtPos2
- * ------------------------------------------------------------------------ */
-
-boolean OCI_API OCI_SetNull2(OCI_Statement *stmt, const mtext *name)
-{
-    return OCI_SetNullAtPos2(stmt, name, 1);
-}
-
-/* ------------------------------------------------------------------------ *
  * OCI_GetStatementType
  * ------------------------------------------------------------------------ */
 
@@ -2956,4 +3092,91 @@ OCI_Bind * OCI_API OCI_GetBind2(OCI_Statement *stmt, const mtext *name)
     OCI_RESULT(bnd != NULL);
 
     return bnd;
+}
+
+
+/* ------------------------------------------------------------------------ *
+ * OCI_GetSQLCommand
+ * ------------------------------------------------------------------------ */
+
+unsigned int OCI_API OCI_GetSQLCommand(OCI_Statement *stmt)
+{
+    boolean res = TRUE;
+    ub2 code    = OCI_UNKNOWN;
+
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, OCI_UNKNOWN);
+
+    OCI_CALL1
+    (
+        res, stmt->con, stmt,
+
+        OCIAttrGet((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT,
+                   (dvoid *) &code, (ub4 *) NULL,
+                   (ub4) OCI_ATTR_SQLFNCODE, stmt->con->err)
+    )
+
+    OCI_RESULT(res);
+
+    return (unsigned int) code;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_GetSQLVerb
+ * ------------------------------------------------------------------------ */
+
+const mtext * OCI_API OCI_GetSQLVerb(OCI_Statement *stmt)
+{
+    mtext * desc       = NULL;
+    unsigned int code  = OCI_UNKNOWN;
+
+    int i;
+
+    code = OCI_GetSQLCommand(stmt);
+
+    if (code != OCI_UNKNOWN)
+    {
+        for (i = 0; i < OCI_SQLCMD_COUNT; i++)
+        {
+            if (code == SQLCmds[i].code)
+            {
+                desc = SQLCmds[i].verb;
+                break;
+            }
+        }
+    }
+
+    return desc;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_GetBatchError
+ * ------------------------------------------------------------------------ */
+
+OCI_Error * OCI_API OCI_GetBatchError(OCI_Statement *stmt)
+{
+    OCI_Error *err = NULL;
+
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, OCI_UNKNOWN);
+
+    if (stmt->batch->cur < stmt->batch->count)
+    {
+        err = &stmt->batch->errs[stmt->batch->cur++];
+    }
+
+    OCI_RESULT(TRUE);
+
+    return err;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_GetBatchErrorCount
+ * ------------------------------------------------------------------------ */
+
+unsigned int OCI_API OCI_GetBatchErrorCount(OCI_Statement *stmt)
+{
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, 0);
+
+    OCI_RESULT(TRUE);
+
+    return stmt->batch->count;
 }

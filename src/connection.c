@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: connection.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -1419,4 +1419,37 @@ const mtext * OCI_API OCI_GetTrace(OCI_Connection *con, unsigned int trace)
     OCI_RESULT(res);
 
     return str;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_Ping
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_Ping(OCI_Connection *con)
+{
+    boolean res = TRUE;
+    boolean ret = FALSE;
+
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
+
+#if OCI_VERSION_COMPILE >= OCI_10
+
+    if (OCILib.ver_runtime >= 10)
+    {
+        OCI_CALL2
+        (
+            res, con, 
+            
+            OCIPing(con->cxt, con->err, (ub4) OCI_DEFAULT)
+
+        )
+
+        ret = res;
+    }
+
+#endif
+
+    OCI_RESULT(res);
+
+    return ret;
 }

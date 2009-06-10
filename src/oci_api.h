@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_api.h, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: oci_api.h, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_API_H_INCLUDED 
@@ -706,6 +706,22 @@ typedef sword (*OCILOBISEQUAL)
     CONST OCILobLocator *x, 
     CONST OCILobLocator *y, 
     boolean *is_equal
+);
+
+typedef sword (*OCILOBFLUSHBUFFER)
+(
+    OCISvcCtx *svchp,
+    OCIError *errhp,
+    OCILobLocator *locp,
+    ub4 flag
+);
+
+typedef sword (*OCILOBGETSTORAGELIMIT)
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp,
+    OCILobLocator *lobp, 
+    oraub8 *limitp
 );
 
 typedef sword (*OCISERVERVERSION)  
@@ -1758,6 +1774,12 @@ typedef sword (*OCICACHEFREE)
     CONST OCISvcCtx *svc
 ); 
 
+typedef sword (*OCIPING)
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp, 
+    ub4 mode
+);
 
 
 #endif /* OCILIB_OCI_API_H_INCLUDED */

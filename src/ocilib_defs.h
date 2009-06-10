@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: ocilib_defs.h, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -233,6 +233,7 @@
 #define OCI_IPC_LONG_BUFFER      50
 #define OCI_IPC_TRACE_INFO       51
 #define OCI_IPC_DP_COL_ARRAY     52
+#define OCI_IPC_BATCH_ERRORS     53
 
 /* ------------------------------------------------------------------------ *
  * Oracle conditionnal features 
@@ -420,10 +421,14 @@
             OCI_SetStatus(res);                                                \
 
 #ifdef _WINDOWS
-  #define OCI_CVT_CHAR 1
+  #define OCI_CVT_CHAR                  1
 #else
-  #define OCI_CVT_CHAR 0
+  #define OCI_CVT_CHAR                  0
 #endif
+
+#define OCI_SQLCMD_COUNT                126
+
+#define OCI_ERR_MSG_SIZE                512
 
 #endif    /* OCILIB_OCILIB_DEFS_H_INCLUDED */
 

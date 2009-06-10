@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: ocilib_internal.h, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED 
@@ -417,6 +417,9 @@ void OCI_ExceptionDirPathState
     OCI_DirPath *dp, 
     int state
 );
+
+void OCI_ExceptionOCIEnvironment(void);
+
 
 /* ------------------------------------------------------------------------ *
  * file.c
@@ -881,6 +884,17 @@ OCI_Statement * OCI_StatementInit
     OCIStmt *handle,  
     OCI_Define *def
 );
+
+boolean OCI_BatchErrorClear
+(
+    OCI_Statement *stmt
+);
+
+boolean OCI_BatchErrorInit
+(
+    OCI_Statement *stmt
+);
+
 
 /* ------------------------------------------------------------------------ *
  * string.c

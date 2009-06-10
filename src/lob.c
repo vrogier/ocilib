@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: lob.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: lob.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -914,6 +914,55 @@ boolean OCI_API OCI_LobAssign(OCI_Lob *lob, OCI_Lob *lob_src)
                          lob_src->handle, &lob->handle)
         )
     }
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_LobGetMaxSize
+ * ------------------------------------------------------------------------ */
+
+big_uint OCI_API OCI_LobGetMaxSize(OCI_Lob *lob)
+{
+    boolean res   = TRUE;
+    big_uint size = 0;
+
+    OCI_CHECK_PTR(OCI_IPC_LOB, lob, 0);
+
+#if OCI_VERSION_COMPILE >= OCI_10
+
+    OCI_CALL2
+    (
+        res, lob->con, 
+        
+        OCILobGetStorageLimit(lob->con->cxt, lob->con->err, lob->handle, (ub8 *) &size)
+    )
+
+#endif 
+
+    OCI_RESULT(res);
+
+    return size;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_LobFlush
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_LobFlush(OCI_Lob *lob)
+{
+    boolean res   = TRUE;
+
+    OCI_CHECK_PTR(OCI_IPC_LOB, lob, FALSE);
+
+    OCI_CALL2
+    (
+        res, lob->con, 
+        
+        OCILobFlushBuffer(lob->con->cxt, lob->con->err, lob->handle, (ub4) OCI_DEFAULT)
+    )
 
     OCI_RESULT(res);
 

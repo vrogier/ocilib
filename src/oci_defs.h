@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_defs.h, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: oci_defs.h, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_DEFS_H_INCLUDED 
@@ -173,11 +173,13 @@
 
 
 #define OCI_ATTR_OBJECT   2 /* is the environment initialized in object mode */
+#define OCI_ATTR_SQLCODE  4                                  /* the SQL verb */
 #define OCI_ATTR_ENV  5                            /* the environment handle */
 #define OCI_ATTR_SERVER 6                               /* the server handle */
 #define OCI_ATTR_SESSION 7                        /* the user session handle */
 #define OCI_ATTR_TRANS   8                         /* the transaction handle */
 #define OCI_ATTR_ROW_COUNT   9                  /* the rows processed so far */
+#define OCI_ATTR_SQLFNCODE 10               /* the SQL verb of the statement */
 #define OCI_ATTR_PREFETCH_ROWS  11    /* sets the number of rows to prefetch */
 #define OCI_ATTR_NESTED_PREFETCH_ROWS 12 /* the prefetch rows of nested table*/
 #define OCI_ATTR_PREFETCH_MEMORY 13         /* memory limit for rows fetched */
@@ -329,6 +331,10 @@
 #define OCI_DATA_AT_EXEC      0x00000002             /* data at execute time */
 #define OCI_DYNAMIC_FETCH     0x00000002                /* fetch dynamically */
 #define OCI_PIECEWISE         0x00000004          /* piecewise DMLs or fetch */
+
+/*----------------------- Execution Modes -----------------------------------*/
+
+#define OCI_BATCH_ERRORS      0x80             /* batch errors in array dmls */
 #define OCI_STMT_SCROLLABLE_READONLY 0x08     /* if result set is scrollable */
 
 

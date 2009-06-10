@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: dirpath.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: dirpath.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -42,8 +42,10 @@
  * OCI_DirPathCreate
  * ------------------------------------------------------------------------ */
 
-OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,  mtext *partition,
-                                        unsigned int nb_cols, unsigned int nb_rows)
+OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,  
+                                        const mtext *partition,
+                                        unsigned int nb_cols,
+                                        unsigned int nb_rows)
 {
     OCI_DirPath *dp = NULL;
 
@@ -228,8 +230,8 @@ boolean OCI_API OCI_DirPathFree(OCI_DirPath *dp)
  * ------------------------------------------------------------------------ */
 
 boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
-                                     mtext *name, unsigned int maxsize,
-                                     mtext *format)
+                                     const mtext *name, unsigned int maxsize,
+                                     const mtext *format)
 {
     OCI_DirPathColumn *dpcol = NULL;
     OCI_Column *col = NULL;
@@ -1122,7 +1124,7 @@ unsigned int OCI_API OCI_DirPathGetMaxRows(OCI_DirPath *dp)
  * OCI_DirPathSetDateFormat
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_DirPathSetDateFormat(OCI_DirPath *dp, mtext *format)
+boolean OCI_API OCI_DirPathSetDateFormat(OCI_DirPath *dp, const mtext *format)
 {
     boolean res = TRUE;
     void *ostr  = NULL;
@@ -1220,6 +1222,8 @@ boolean OCI_API OCI_DirPathSetCacheSize(OCI_DirPath *dp, unsigned int size)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED, FALSE);
 
+#if OCI_VERSION_COMPILE >= OCI_9
+
     OCI_CALL2
     (
         res, dp->con,
@@ -1237,6 +1241,13 @@ boolean OCI_API OCI_DirPathSetCacheSize(OCI_DirPath *dp, unsigned int size)
                    (dvoid *) &enabled, (ub4) sizeof(enabled),
                    (ub4) OCI_ATTR_DIRPATH_DCACHE_DISABLE, dp->con->err)
     )
+
+#else
+
+    OCI_NOT_USED(cache_size);
+    OCI_NOT_USED(enabled);
+
+#endif
 
     OCI_RESULT(res);
 

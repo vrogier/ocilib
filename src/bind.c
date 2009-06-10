@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: bind.c, v 3.2.0 2009/04/20 00:00 Vince $
+ * $Id: bind.c, v 3.3.0 2009/06/15 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -215,3 +215,60 @@ unsigned int OCI_API OCI_BindGetDataSizeAtPos(OCI_Bind *bnd, unsigned int positi
 
     return (unsigned int) size;
 }
+
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindSetNullAtPos
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_BindSetNullAtPos(OCI_Bind *bnd, unsigned int position)
+{
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
+    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buf.count, FALSE);
+
+    if (bnd->buf.inds != NULL)
+        ((sb2*) bnd->buf.inds)[position-1] = -1;
+
+    OCI_RESULT(TRUE);
+
+    return TRUE;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindSetNull
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_BindSetNull(OCI_Bind *bnd)
+{
+  return OCI_BindSetNullAtPos(bnd, 1);
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindIsNullAtPos
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_BindIsNullAtPos(OCI_Bind *bnd, unsigned int position)
+{
+    boolean ret = TRUE;
+
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
+    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buf.count, FALSE);
+
+    if (bnd->buf.inds != NULL)
+        ret = (((sb2*) bnd->buf.inds)[position-1] == -1);
+
+    OCI_RESULT(TRUE);
+
+    return ret;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_BindIsNull
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_BindIsNull(OCI_Bind *bnd)
+{
+  return OCI_BindIsNullAtPos(bnd, 1);
+}
+
+
