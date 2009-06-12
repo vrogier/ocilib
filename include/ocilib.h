@@ -13266,7 +13266,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream
  */
 
 #define OCI_SetNullAtPos(stmt, index, position)                                \
-        OCI_BindSetNullAtPos(OCI_GetBind(stmt, index), postion)
+        OCI_BindSetNullAtPos(OCI_GetBind(stmt, index), position)
 
 /**
  * @brief
