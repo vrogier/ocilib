@@ -13266,7 +13266,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream
  */
 
 #define OCI_SetNullAtPos(stmt, index, position)                                \
-        OCI_BindSetNullAtPos(stmt, OCI_GetBind(stmt, index), postion)
+        OCI_BindSetNullAtPos(OCI_GetBind(stmt, index), postion)
 
 /**
  * @brief
@@ -13296,7 +13296,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream
  */
 
 #define OCI_SetNullAtPos2(stmt, name, position)                                \
-        OCI_BindSetNullAtPos(stmt, OCI_GetBind2(stmt, name), position)
+        OCI_BindSetNullAtPos(OCI_GetBind2(stmt, name), position)
 
 
 #endif    /* OCILIB_H_INCLUDED */
