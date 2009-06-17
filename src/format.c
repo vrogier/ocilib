@@ -304,6 +304,33 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
 
                 break;
             }
+            case MT('r'):
+            {
+                mtext temp[128];
+
+                OCI_Ref *ref = (OCI_Ref *) va_arg(*pargs, OCI_Ref *);
+
+                temp[0] = 0;
+
+                if (ref != NULL)
+                {
+                    OCI_RefToText(ref, msizeof(temp)-1, temp);
+                    
+                    len = (int) mtslen(temp);
+
+                    if ((buf != NULL) && (len > 0)) 
+                        mtscpy(pb, temp);
+                }
+                else
+                {
+                    len = OCI_SIZE_NULL;
+                    
+                    if ((buf != NULL) && (len > 0)) 
+                        mtscpy(pb, OCI_STRING_NULL);
+                }
+  
+                break;
+            }
             default:
             {
                 OCI_ExceptionParsingToken(stmt->con, stmt, *pf);

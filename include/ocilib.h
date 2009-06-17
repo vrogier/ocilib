@@ -1258,6 +1258,9 @@ typedef struct OCI_HashEntry {
 #define OCI_ARG_TIMESTAMP       12
 #define OCI_ARG_INTERVAL        13
 #define OCI_ARG_RAW             14
+#define OCI_ARG_OBJECT          15
+#define OCI_ARG_COLLECTION      16
+#define OCI_ARG_REF             17
 
 /* statement types */
 
@@ -11466,6 +11469,9 @@ OCI_EXPORT const mtext * OCI_API OCI_TypeInfoGetName
  * - OCI_ARG_FILE -------> OCI_File *
  * - OCI_ARG_TIMESTAMP --> OCI_Timstamp *
  * - OCI_ARG_INTERVAL ---> OCI_Interval *
+ * - OCI_ARG_OBJECT -----> OCI_Object *
+ * - OCI_ARG_COLLECTION -> OCI_Coll *
+ * - OCI_ARG_REF --------> OCI_Ref *
  *
  * @note
  * For output strings and Raws, returned data is copied to the given buffer
@@ -11494,6 +11500,9 @@ OCI_EXPORT const mtext * OCI_API OCI_TypeInfoGetName
  * - '%hi' : (short) ------------> signed 16 bits integer
  * - '%hu' : (unsigned short) ---> unsigned 16 bits integer
  * - '%g'  : (double ) ----------> Numerics
+ * - '%r'  : (OCI_Ref *) --------> Reference
+ * - '%o'  : (OCI_Object *) -----> Object  (not implemented yet)
+ * - '%c'  : (OCI_Coll *) -------> collection  (not implemented yet)
  *
  * @par Example
  * @include format.c

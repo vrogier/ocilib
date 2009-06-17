@@ -31,8 +31,18 @@
       - Added OCI_BindIsNull()
       - Added OCI_BindIsNullAtPos()
       - Modified OCI_SetNullxxx() calls that are now defined as obsolete macros around OCI_BindSetxxx() calls
+
+    * Extended OCI_ImmediateXXX() API
+
+     - Added missing support for Objects, Collection and REF
+     - Added OCI_ARG_OBJECT, OCI_ARG_COLLECTION and OCI_ARG_REF
+
+    * Extended OCI_XXXFmt() API
+
+     - Added support for REFs
+     - Added token identifier '%r' for REFs
    
-   * Miscellaneous changes
+    * Miscellaneous changes
 
       - Added OCI_Ping()
       - Added Exception type OCI_ERR_CREATE_OCI_ENVIRONMENT if internal Oracle OCI environment handle cannot be allocated
@@ -47,7 +57,9 @@
       - Fixed Error message if Oracle shared lib was not found : libray name was not correct on unicode builds
       - Fixed OCI_GetString() : in mixed charset builds, the returned string was truncated for numeric columns 
       - Fixed internal function OCI_MoveString() for inplace string buffers packing/expansion
-      - Fixed in/out or string binds :
-        * wide string binds on Unixes platforms (Mixed and Unicode builds) : the trailing null character was missing if the binded string had been shortened by some PL/SQL code or user
+      - Fixed in/out or out string binds :
         * bind indicator is now not reset to "not null" after an execute call if the statement is PL/SQL code
+        * wide string binds on Unixes platforms (Mixed and Unicode builds) : 
+          - the trailing null character was missing if the binded string had been shortened by some PL/SQL code or user
+          - internal initialization of bind array of data lens : the len was including null terminator character and could lead to some memory corruptions
        

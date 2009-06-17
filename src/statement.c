@@ -515,10 +515,14 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         {
             for (i=0; i < nbelem; i++)
             {
-                *(ub2*)(((ub1 *)bnd->buf.lens) + sizeof(ub2) * i) = (ub2) size;
+                ub2 datalen = (ub2) size;
+
+                if (type == OCI_CDT_TEXT) 
+                    datalen -= sizeof(odtext);
+
+                *(ub2*)(((ub1 *)bnd->buf.lens) + sizeof(ub2) * i) = (ub2) datalen;
             }
         }
-
     }
 
     /* initialize bind object */
@@ -957,6 +961,42 @@ boolean OCI_FetchIntoUserVariables(OCI_Statement *stmt, va_list args)
 
                     if (src != NULL && dst != NULL)
                         res =OCI_IntervalAssign(dst, src);
+
+                    break;
+                }
+                case OCI_ARG_OBJECT:
+                {
+                    OCI_Object *src, *dst;
+
+                    src = OCI_GetObject(rs, i);
+                    dst = (OCI_Object *) va_arg(args, OCI_Object *);
+
+                    if (src != NULL && dst != NULL)
+                        res =OCI_ObjectAssign(dst, src);
+
+                    break;
+                }
+                case OCI_ARG_COLLECTION:
+                {
+                    OCI_Coll *src, *dst;
+
+                    src = OCI_GetColl(rs, i);
+                    dst = (OCI_Coll *) va_arg(args, OCI_Coll *);
+
+                    if (src != NULL && dst != NULL)
+                        res =OCI_CollAssign(dst, src);
+
+                    break;
+                }
+                case OCI_ARG_REF:
+                {
+                    OCI_Ref *src, *dst;
+
+                    src = OCI_GetRef(rs, i);
+                    dst = (OCI_Ref *) va_arg(args, OCI_Ref *);
+
+                    if (src != NULL && dst != NULL)
+                        res =OCI_RefAssign(dst, src);
 
                     break;
                 }

@@ -1557,3 +1557,4 @@ boolean OCI_API OCI_ObjectGetStruct(OCI_Object *obj, void **pp_struct,
 
     return TRUE;
 }
+
