@@ -8,7 +8,7 @@ static HANDLE evt;
 
 void long_oracle_call(void *data)
 {
-    OCI_Statement *st  = OCI_CreateStatement((OCI_Connection *) data); 
+    OCI_Statement *st  = OCI_StatementCreate((OCI_Connection *) data); 
     OCI_Resultset *rs;
 
     /* execute a query that takes a long time to process */

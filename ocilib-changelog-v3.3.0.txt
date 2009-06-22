@@ -62,4 +62,8 @@
         * wide string binds on Unixes platforms (Mixed and Unicode builds) : 
           - the trailing null character was missing if the binded string had been shortened by some PL/SQL code or user
           - internal initialization of bind array of data lens : the len was including null terminator character and could lead to some memory corruptions
-       
+      - Fixed some demo example codes 
+      - Fixed problems with OCI_Elem internal null indicators :
+          - In some cases, a segfault caused by a null pointer could happened
+          - For OCI_Objects handle holded by an OCI_Elem handle, the object internal indicator strucure was not properly set/retreived
+      

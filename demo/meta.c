@@ -24,8 +24,8 @@ int main(void)
         OCI_Column *col = OCI_GetColumn(rs, i);
 
         printf("Field #%i : name '%s' - size %i\n", i,
-                OCI_GetColumnName(col),
-                OCI_GetColumnSize(col));
+                OCI_ColumnGetName(col),
+                OCI_ColumnGetSize(col));
     }
 
     OCI_Cleanup();

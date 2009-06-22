@@ -1,14 +1,16 @@
 #include "ocilib.h"
 
 #define FILENAME "data.lst"
+#define SIZE_BUF 512
 
 int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement *st;
+    OCI_Resultset *rs;
     OCI_Long *lg;
     FILE *f;
-    char buffer[2048];
+    char buffer[SIZE_BUF];
     int n;
 
     if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
@@ -17,7 +19,7 @@ int main(void)
     cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
  
-     /* open the app file */
+     /* open the data file */
 
     f = fopen(FILENAME, "rb");
 
@@ -35,7 +37,8 @@ int main(void)
         OCI_BindLong(st, ":data", lg, n);
         OCI_Execute(st);
 
-        /* write data into table by chunks of 2048 bytes */       
+        /* write data into table by chunks of SIZE_BUF bytes */       
+
         while ((n = fread(buffer, 1, sizeof(buffer), f)))
         {
             OCI_LongWrite(lg, buffer, n);
@@ -52,7 +55,7 @@ int main(void)
 
  
     OCI_ExecuteStmt(st, "select content from test_long_raw where code = 1");
-    OCI_SetLongMaxSize(st, 1000000);
+    OCI_SetLongMaxSize(st, 10000);
 
     rs = OCI_GetResultset(st);
 

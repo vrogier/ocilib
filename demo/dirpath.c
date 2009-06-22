@@ -47,11 +47,11 @@ int main(void)
     {
         /* fill test values */
 
-        sprint_dt(val1, SIZE_COL1+1, "%04d", i);
-        sprint_dt(val2, SIZE_COL2+1, "value %05d", i);
-        sprint_dt(val3, SIZE_COL3+1, "%04d%02d%02d", (i%23)+1 + 2000, 
-                                                     (i%11)+1,
-                                                     (i%23)+1);
+        ocisprintf(val1, SIZE_COL1+1, "%04d", i);
+        ocisprintf(val2, SIZE_COL2+1, "value %05d", i);
+        ocisprintf(val3, SIZE_COL3+1, "%04d%02d%02d", (i%23)+1 + 2000, 
+                                                      (i%11)+1,
+                                                      (i%23)+1);
 
         OCI_DirPathSetEntry(dp, i, 1, val1, (unsigned int) dtslen(val1), TRUE);
         OCI_DirPathSetEntry(dp, i, 2, val2, (unsigned int) dtslen(val2), TRUE);
@@ -68,7 +68,7 @@ int main(void)
     OCI_DirPathFinish(dp);
 
     printf("%04d row(s) processed\n", OCI_DirPathGetAffectedRows(dp));
-    printf("%04d row(s) loaded\n",  OCI_DirPathGetRowCount(dp));
+    printf("%04d row(s) loaded\n",    OCI_DirPathGetRowCount(dp));
 
     /* free direct path object */
 

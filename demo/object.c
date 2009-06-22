@@ -30,13 +30,13 @@ int main(void)
     OCI_Object *obj, *obj2;
     OCI_Date *date;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
         return EXIT_FAILURE;
 
     cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
-    obj  = OCI_ObjectCreate(cn, OCI_SchemaGet(cn, "t_sale", OCI_SCHEMA_TYPE));
+    obj  = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, "t_sale", OCI_TIF_TYPE));
 
     OCI_ObjectSetInt(obj, "CODE", 1);
     OCI_ObjectSetDouble(obj, "PRICE", 12.99);

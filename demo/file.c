@@ -4,11 +4,12 @@ int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement *st;
+    OCI_Resultset *rs;
     OCI_File *file;
     char buffer[256];
     int n;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
         return EXIT_FAILURE;
 
     cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.3.0 2009/06/15 00:00 Vince $
+ * $Id: ocilib_internal.h, v 3.3.0 2009/06/22 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED 
@@ -253,6 +253,12 @@ OCI_Elem * OCI_ElemInit
     void *handle, 
     OCIInd *pind, 
     OCI_TypeInfo *typeinf
+);
+
+boolean OCI_ElemSetNullIndicator
+(
+    OCI_Elem *elem, 
+    OCIInd value
 );
 
 /* ------------------------------------------------------------------------ *

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: collection.c, v 3.3.0 2009/06/15 00:00 Vince $
+ * $Id: collection.c, v 3.3.0 2009/06/22 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -269,11 +269,7 @@ boolean OCI_API OCI_CollTrim(OCI_Coll *coll, unsigned int nb_elem)
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
 
-    OCI_CHECK_BOUND(coll->con,
-                    nb_elem, 
-                    (unsigned int) 0,
-                    (unsigned int) coll->size, 
-                    FALSE);
+    OCI_CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) coll->size, FALSE);
 
     OCI_CALL2
     (
@@ -315,7 +311,7 @@ OCI_Elem * OCI_API OCI_CollGetAt(OCI_Coll *coll, unsigned int index)
     if (res == TRUE && exists == TRUE && data != NULL)
     {
         elem = coll->elem = OCI_ElemInit(coll->con, &coll->elem,
-                                         (OCIColl *) data, p_ind, coll->typinf);
+                                         data, p_ind, coll->typinf);
     }
 
     OCI_RESULT(res);
@@ -336,12 +332,14 @@ boolean OCI_API OCI_CollSetAt(OCI_Coll *coll, unsigned int index, OCI_Elem *elem
 
     OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].type == coll->typinf->cols[0].type, FALSE);
 
+    OCI_CHECK_BOUND(coll->con, (int) index, 1, coll->size, FALSE);
+
     OCI_CALL2
     (
         res, coll->con,
 
-        OCICollAssignElem(OCILib.env, coll->con->err, (sb4) index, elem->handle,
-                          elem->ind,coll->handle)
+        OCICollAssignElem(OCILib.env, coll->con->err, (sb4) index-1, elem->handle,
+                          elem->pind,coll->handle)
     )
 
     OCI_RESULT(res);
@@ -366,7 +364,7 @@ boolean OCI_API OCI_CollAppend(OCI_Coll *coll, OCI_Elem *elem)
     (
         res, coll->con,
 
-        OCICollAppend(OCILib.env, coll->con->err, elem->handle, elem->ind,
+        OCICollAppend(OCILib.env, coll->con->err, elem->handle, elem->pind,
                       coll->handle)
     )
 
@@ -399,7 +397,7 @@ boolean OCI_API OCI_CollClear(OCI_Coll *coll)
     boolean res = TRUE;
 
     unsigned int size = OCI_CollGetSize(coll);
-    
+
     if (size > 0)
     {
         res = OCI_CollTrim(coll, size);

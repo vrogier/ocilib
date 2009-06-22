@@ -6,6 +6,8 @@ int main(void)
 {
     OCI_Timestamp *tm;
     OCI_Interval *itv;
+
+    char str[SIZE_STR+1];
    
     if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
         return EXIT_FAILURE;

@@ -5,6 +5,8 @@
 int main(void)
 {
     OCI_Date *d1, *d2;
+
+    char str[SIZE_STR+1];
    
     if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
         return EXIT_FAILURE;

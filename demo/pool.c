@@ -7,7 +7,7 @@
 void worker(OCI_Thread *thread, void *data)
 {
     OCI_Connection *cn = OCI_ConnPoolGetConnection(data);
-    char str[SIZE_STR];
+    char str[SIZE_STR+1];
 
     /* application work here */
 

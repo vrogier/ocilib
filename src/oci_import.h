@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_import.h, v 3.3.0 2009/06/15 00:00 Vince $
+ * $Id: oci_import.h, v 3.3.0 2009/06/22 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
@@ -201,7 +201,7 @@ extern OCIDATETIMEINTERVALSUB       OCIDateTimeIntervalSub;
 extern OCIDATETIMESUBTRACT          OCIDateTimeSubtract;
 extern OCIDATETIMESYSTIMESTAMP      OCIDateTimeSysTimeStamp;
 extern OCIARRAYDESCRIPTORFREE       OCIArrayDescriptorFree;
-extern OCICLIENTVERSION             OCIClientVersion;;
+extern OCICLIENTVERSION             OCIClientVersion;
 extern OCITYPEBYNAME                OCITypeByName;
 extern OCINUMBERTOINT               OCINumberToInt;
 extern OCINUMBERFROMINT             OCINumberFromInt;

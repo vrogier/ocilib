@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_types.h, v 3.3.0 2009/06/15 00:00 Vince $
+ * $Id: ocilib_types.h, v 3.3.0 2009/06/22 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 
@@ -585,7 +585,8 @@ struct OCI_Elem
     int              buflen;   /* buffer length */
     boolean          init;     /* underlying object has been initialized ? */
     OCI_TypeInfo    *typinf;   /* object type information */
-    OCIInd          *ind;      /* data state indicator */
+    OCIInd          *pind;     /* indicator  pointer */
+    OCIInd           ind;      /* internal temporary data state indicator */
 };
 
 /*

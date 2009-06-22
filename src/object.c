@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: object.c, v 3.3.0 2009/06/15 00:00 Vince $
+ * $Id: object.c, v 3.3.0 2009/06/22 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -153,7 +153,7 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
                                     (dvoid *) obj->handle,
                                     (dvoid **) &obj->tab_ind)
                 )
-            }
+           }
             else
             {
                 obj->tab_ind = tab_ind;
@@ -174,7 +174,6 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
 
     return obj;
 }
-
 
 /* ------------------------------------------------------------------------ *
  * OCI_ObjectReset
@@ -290,12 +289,12 @@ boolean OCI_ObjectGetAttr(OCI_Object *obj, const mtext *attr, void ** p_value,
         res, obj->con,
 
         OCIObjectGetAttr(OCILib.env, obj->con->err,  (dvoid *) obj->handle,
-                        (dvoid *) (obj->tab_ind + obj->idx_ind),
-                        (OCIType *) obj->typinf->tdo,
-                        (CONST oratext **) (dvoid *) &ostr,
-                        (ub4 *) &osize, (ub4) 1, (ub4 *) NULL, (ub4) 0,
-                        (OCIInd *) p_ind, (dvoid **) NULL, (dvoid **) p_value,
-                        (OCIType **) p_tdo)
+                         (dvoid *) (obj->tab_ind + obj->idx_ind),
+                         (OCIType *) obj->typinf->tdo,
+                         (CONST oratext **) (dvoid *) &ostr,
+                         (ub4 *) &osize, (ub4) 1, (ub4 *) NULL, (ub4) 0,
+                         (OCIInd *) p_ind, (dvoid **) NULL, (dvoid **) p_value,
+                         (OCIType **) p_tdo)
     )
 
     OCI_ReleaseMetaString(ostr);
@@ -322,11 +321,11 @@ boolean OCI_ObjectSetAttr(OCI_Object *obj, const mtext *attr, void * value,
         res, obj->con,
 
         OCIObjectSetAttr(OCILib.env, obj->con->err, (dvoid *) obj->handle,
-                        (dvoid *) (obj->tab_ind + obj->idx_ind),
-                        (OCIType *) obj->typinf->tdo,
-                        (CONST oratext**) (dvoid *) &ostr,
-                        (ub4 *) &osize, (ub4) 1, (ub4 *) NULL, (ub4) 0,
-                        (OCIInd) ind, (dvoid *) NULL, (dvoid *) value)
+                         (dvoid *) (obj->tab_ind + obj->idx_ind),
+                         (OCIType *) obj->typinf->tdo,
+                         (CONST oratext**) (dvoid *) &ostr,
+                         (ub4 *) &osize, (ub4) 1, (ub4 *) NULL, (ub4) 0,
+                         (OCIInd) ind, (dvoid *) NULL, (dvoid *) value)
     )
 
     OCI_ReleaseMetaString(ostr);
@@ -382,7 +381,7 @@ boolean OCI_ObjectGetNumber(OCI_Object *obj, const mtext *attr, void *value,
         OCINumber *num  = NULL;
 
         if (OCI_ObjectGetAttr(obj, attr, (dvoid **) (dvoid *) &num, &ind, &tdo) &&
-            num && (ind == OCI_IND_NOTNULL))
+            num && (ind != OCI_IND_NULL))
         {
             res = OCI_NumberGet(obj->con, num, value, size, flag);
         }
@@ -606,7 +605,7 @@ const dtext * OCI_API OCI_ObjectGetString(OCI_Object *obj, const mtext *attr)
 
         res = OCI_ObjectGetAttr(obj, attr, (dvoid **) (dvoid *) &value, &ind, &tdo);
 
-        if ((res == TRUE) && (value != NULL) && (ind == OCI_IND_NOTNULL))
+        if ((res == TRUE) && (value != NULL) && (ind != OCI_IND_NULL))
         {
             str = (dtext *) OCI_StringFromStringPtr(*value, &obj->buf, &obj->buflen);
         }
@@ -636,7 +635,7 @@ int OCI_API OCI_ObjectGetRaw(OCI_Object *obj, const mtext *attr, void *buffer,
 
         res = OCI_ObjectGetAttr(obj, attr, (dvoid **) (dvoid *) &value, &ind, &tdo);
 
-        if ((res == TRUE) && (value != NULL) && (ind == OCI_IND_NOTNULL))
+        if ((res == TRUE) && (value != NULL) && (ind != OCI_IND_NULL))
         {
             OCI_CALL2
             (
@@ -678,7 +677,7 @@ OCI_Date * OCI_API OCI_ObjectGetDate(OCI_Object *obj, const mtext *attr)
 
         res = OCI_ObjectGetAttr(obj, attr, (dvoid **) (dvoid *) &value, &ind, &tdo);
 
-        if ((res == TRUE) && (value != NULL) && (ind == OCI_IND_NOTNULL))
+        if ((res == TRUE) && (value != NULL) && (ind != OCI_IND_NULL))
         {
             date = OCI_DateInit(obj->con, (OCI_Date **) &obj->objs[index],
                                 NULL, FALSE, FALSE);
@@ -718,7 +717,7 @@ OCI_Timestamp * OCI_API OCI_ObjectGetTimeStamp(OCI_Object *obj,
 
         res = OCI_ObjectGetAttr(obj, attr, (dvoid **) (dvoid *) &value, &ind, &tdo);
 
-        if ((res == TRUE) && (value != NULL) && (ind == OCI_IND_NOTNULL))
+        if ((res == TRUE) && (value != NULL) && (ind != OCI_IND_NULL))
         {
            tmsp = OCI_TimestampInit(obj->con,
                                     (OCI_Timestamp **) &obj->objs[index],
@@ -752,7 +751,7 @@ OCI_Interval * OCI_API OCI_ObjectGetInterval(OCI_Object *obj, const mtext *attr)
 
         res = OCI_ObjectGetAttr(obj, attr, (dvoid **) (dvoid *) &value, &ind, &tdo);
 
-        if ((res == TRUE) && (value != NULL) && (ind == OCI_IND_NOTNULL))
+        if ((res == TRUE) && (value != NULL) && (ind != OCI_IND_NULL))
         {
             itv = OCI_IntervalInit(obj->con,
                                    (OCI_Interval **) &obj->objs[index],
@@ -786,7 +785,7 @@ OCI_Coll * OCI_API OCI_ObjectGetColl(OCI_Object *obj, const mtext *attr)
 
         res = OCI_ObjectGetAttr(obj, attr, (dvoid **) (dvoid *) &value, &ind, &tdo);
 
-        if ((res == TRUE) && (value != NULL) && (ind == OCI_IND_NOTNULL))
+        if ((res == TRUE) && (value != NULL) && (ind != OCI_IND_NULL))
         {
             coll = OCI_CollInit(obj->con,
                                 (OCI_Coll **) &obj->objs[index],
@@ -820,7 +819,7 @@ OCI_Object * OCI_API OCI_ObjectGetObject(OCI_Object *obj, const mtext *attr)
 
         res = OCI_ObjectGetAttr(obj, attr, (void **) &value, &ind, &tdo);
 
-        if ((res == TRUE) && (value != NULL) && (ind == OCI_IND_NOTNULL))
+        if ((res == TRUE) && (value != NULL) && (ind != OCI_IND_NULL))
         {
             obj2 = OCI_ObjectInit(obj->con, (OCI_Object **) &obj->objs[index],
                                   value, obj->typinf->cols[index].typinf,
@@ -855,7 +854,7 @@ OCI_Lob * OCI_API OCI_ObjectGetLob(OCI_Object *obj, const mtext *attr)
 
         res = OCI_ObjectGetAttr(obj, attr, (dvoid **) (dvoid *) &value, &ind, &tdo);
 
-        if ((res == TRUE) && (value != NULL) && (ind == OCI_IND_NOTNULL))
+        if ((res == TRUE) && (value != NULL) && (ind != OCI_IND_NULL))
         {
             lob = OCI_LobInit(obj->con, (OCI_Lob **) &obj->objs[index],
                               *value, obj->typinf->cols[index].subtype);
@@ -887,7 +886,7 @@ OCI_File * OCI_API OCI_ObjectGetFile(OCI_Object *obj, const mtext *attr)
 
         res = OCI_ObjectGetAttr(obj, attr, (dvoid **) (dvoid *) &value, &ind, &tdo);
 
-        if ((res == TRUE) && (value != NULL) && (ind == OCI_IND_NOTNULL))
+        if ((res == TRUE) && (value != NULL) && (ind != OCI_IND_NULL))
         {
             file = OCI_FileInit(obj->con, (OCI_File **) &obj->objs[index],
                                 *value, obj->typinf->cols[index].subtype);
@@ -919,7 +918,7 @@ OCI_Ref * OCI_API OCI_ObjectGetRef(OCI_Object *obj, const mtext *attr)
 
         res = OCI_ObjectGetAttr(obj, attr, (dvoid **) (dvoid *) &value, &ind, &tdo);
 
-        if ((res == TRUE) && (value != NULL) && (ind == OCI_IND_NOTNULL))
+        if ((res == TRUE) && (value != NULL) && (ind != OCI_IND_NULL))
         {
             ref = OCI_RefInit(obj->con, NULL, (OCI_Ref **) &obj->objs[index],
                               *value);
@@ -1436,7 +1435,7 @@ boolean OCI_API OCI_ObjectSetNull(OCI_Object *obj, const mtext *attr)
 
     if (index >= 0)
     {
-        res = OCI_ObjectSetAttr(obj, attr, NULL, OCI_IND_NULL);
+        res = OCI_ObjectSetAttr(obj, attr, NULL, OCI_IND_NULL);  
     }
     else
         res = FALSE;

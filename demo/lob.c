@@ -1,11 +1,15 @@
 #include "ocilib.h"
 
+#define SIZE_BUF 512
+
 int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement *st;
+    OCI_Resultset *rs;
     OCI_Lob *lob1, *lob2;
 
+    char temp[SIZE_BUF+1];
     int code, n;
 
     if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
@@ -32,7 +36,7 @@ int main(void)
         OCI_LobAppendLob(lob1, lob2);
         OCI_LobSeek(lob1, 0, OCI_SEEK_SET);
         
-        n = OCI_LobRead(lob1, temp, 100);
+        n = OCI_LobRead(lob1, temp, SIZE_BUF);
         temp[n] = 0;
 
         printf("code: %i, action : %s\n", code, temp);

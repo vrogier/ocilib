@@ -145,10 +145,10 @@ void err_handler(OCI_Error *err)
 
 int mtmain(int argc, mtarg* argv[])
 {
-    mtext home[SIZE_STR] = MT("");
-    mtext dbs [SIZE_STR] = MT("");
-    mtext usr [SIZE_STR] = MT("");
-    mtext pwd [SIZE_STR] = MT("");
+    mtext home[SIZE_STR+1] = MT("");
+    mtext dbs [SIZE_STR+1] = MT("");
+    mtext usr [SIZE_STR+1] = MT("");
+    mtext pwd [SIZE_STR+1] = MT("");
 
     size_t i;
 

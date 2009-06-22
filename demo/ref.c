@@ -47,7 +47,7 @@ int main(void)
 
     printf("\n\n=> bind a local ref object to a PL/SQL statement\n\n");
 
-    ref = OCI_RefCreate(cn, OCI_SchemaGet(cn, "ARTICLE_T", OCI_SCHEMA_TYPE));
+    ref = OCI_RefCreate(cn, OCI_TypeInfoGet(cn, "ARTICLE_T", OCI_TIF_TYPE));
 
     OCI_Prepare(st, "begin "
                     "  select ref(e) into :r from table_obj e where e.id = 1; "

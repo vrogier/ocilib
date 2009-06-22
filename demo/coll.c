@@ -8,7 +8,7 @@ int main(void)
     OCI_Coll *coll;
     OCI_Iter *iter;
     OCI_Elem *elem;
-    OCI_Schema *type;
+    OCI_TypeInfo *type;
     OCI_Object *obj;
     int i, n;
 
@@ -24,7 +24,7 @@ int main(void)
 
     /* create the collection */
 
-    type = OCI_SchemaGet(cn, "Varray_type", OCI_SCHEMA_TYPE);
+    type = OCI_TypeInfoGet(cn, "Varray_type", OCI_TIF_TYPE);
     coll = OCI_CollCreate(type);
 
     /* bind the local collection to a PL/SQL procedure */
