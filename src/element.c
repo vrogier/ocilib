@@ -65,8 +65,8 @@ OCI_Elem * OCI_ElemInit(OCI_Connection *con, OCI_Elem **pelem, void *handle,
    
         if (pind != NULL)
         {
-            elem->ind  = *elem->pind;
             elem->pind = pind;
+            elem->ind  = *elem->pind;
         }
         else
         {
