@@ -11,16 +11,16 @@
    |               Copyright (c) 2007-2009 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Library General Public          |
+   | modify it under the terms of the GNU Lesser General Public           |
    | License as published by the Free Software Foundation; either         |
    | version 2 of the License, or (at your option) any later version.     |
    |                                                                      |
    | This library is distributed in the hope that it will be useful,      |
    | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
    | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Library General Public License for more details.                     |
+   | Lesser General Public License for more details.                      |
    |                                                                      |
-   | You should have received a copy of the GNU Library General Public    |
+   | You should have received a copy of the GNU Lesser General Public     |
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: object.c, v 3.3.0 2009/06/22 00:00 Vince $
+ * $Id: object.c, v 3.3.0 2009-06-30 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -41,7 +41,7 @@
 ub2 OCI_GetIndTabIndex(OCI_TypeInfo *typinf, int index)
 {
     ub2 i, j;
-
+   
     j = 1;
 
     for (i = 0; i < index; i++)
@@ -54,6 +54,7 @@ ub2 OCI_GetIndTabIndex(OCI_TypeInfo *typinf, int index)
         {
             j++;
         }
+
     }
 
     return j;
@@ -65,11 +66,11 @@ ub2 OCI_GetIndTabIndex(OCI_TypeInfo *typinf, int index)
 
 OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
                             void *handle, OCI_TypeInfo *typinf,
-                            sb2 *tab_ind, int index, boolean reset)
+                            OCI_Object *parent, int index, boolean reset)
 {
     OCI_Object * obj = NULL;
     boolean res      = TRUE;
-
+  
     OCI_CHECK(pobj == NULL, NULL);
 
     if (*pobj == NULL)
@@ -117,7 +118,6 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
         else
             obj->hstate = OCI_OBJECT_FETCHED_CLEAN;
 
-
         if ((res == TRUE) && (obj->type == 0))
         {
             ub4 size = sizeof(obj->type);
@@ -129,7 +129,7 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
                values, if the parent indicator array is not null, let's assign
                the object type properties ourselves */
 
-            if (tab_ind == NULL)
+            if (parent == NULL)
             {
                 OCIObjectGetProperty(OCILib.env, con->err, obj->handle,
                                      (OCIObjectPropId) OCI_OBJECTPROP_LIFETIME,
@@ -143,7 +143,7 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
 
         if ((res == TRUE) && ((reset == TRUE) || (obj->tab_ind == NULL)))
         {
-            if (tab_ind == NULL)
+            if (parent == NULL)
             {
                 OCI_CALL2
                 (
@@ -153,17 +153,17 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
                                     (dvoid *) obj->handle,
                                     (dvoid **) &obj->tab_ind)
                 )
-           }
-            else
+            }
+            else 
             {
-                obj->tab_ind = tab_ind;
-                obj->idx_ind = OCI_GetIndTabIndex(obj->typinf, index);
+                obj->tab_ind = parent->tab_ind;
+                obj->idx_ind = parent->idx_ind + OCI_GetIndTabIndex(parent->typinf, index);
             }
         }
     }
     else
         res = FALSE;
-
+ 
     /* check for failure */
 
     if (res == FALSE)
@@ -488,7 +488,6 @@ boolean OCI_API OCI_ObjectAssign(OCI_Object *obj, OCI_Object *obj_src)
 
         OCI_ObjectReset(obj);
     }
-
 
     OCI_RESULT(res);
 
@@ -823,7 +822,7 @@ OCI_Object * OCI_API OCI_ObjectGetObject(OCI_Object *obj, const mtext *attr)
         {
             obj2 = OCI_ObjectInit(obj->con, (OCI_Object **) &obj->objs[index],
                                   value, obj->typinf->cols[index].typinf,
-                                  obj->tab_ind, index, FALSE);
+                                  obj, index, FALSE);
 
 
 
@@ -1279,7 +1278,7 @@ boolean OCI_API OCI_ObjectSetObject(OCI_Object *obj, const mtext *attr,
             {
                 obj2 = OCI_ObjectInit(obj->con, (OCI_Object **) &obj->objs[index],
                                      NULL, obj->typinf->cols[index].typinf,
-                                     obj->tab_ind, index, FALSE);
+                                     obj, index, FALSE);
             }
 
             if (obj2 != NULL)

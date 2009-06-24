@@ -1,4 +1,4 @@
-2009-06-15 Version 3.3.0 Vincent Rogier vince.rogier@gmail.com
+2009-06-30 Version 3.3.0 Vincent Rogier vince.rogier@gmail.com
 
     * Added SQL command and verb retrieving
 
@@ -46,7 +46,9 @@
 
       - Added OCI_Ping()
       - Added Exception type OCI_ERR_CREATE_OCI_ENVIRONMENT if internal Oracle OCI environment handle cannot be allocated
-   
+      - Updated documentation (page <modules> <Installing OCILIB>)
+      - Modified GNU configure script : the Oracle OCI library folder search sequence is now : lib32, lib, lib64
+
     * Miscellaneous fixes
 
       - Fixed OCI_CollAssign() that was assigning destination collection to source collection
@@ -63,7 +65,7 @@
           - the trailing null character was missing if the binded string had been shortened by some PL/SQL code or user
           - internal initialization of bind array of data lens : the len was including null terminator character and could lead to some memory corruptions
       - Fixed some demo example codes 
+      - Fixed computation of internal OCI_Object sub objects offsets in their parents indicator array (could have caused segfaults and/or bad indicator values)
       - Fixed problems with OCI_Elem internal null indicators :
           - In some cases, a segfault caused by a null pointer could happened
-          - For OCI_Objects handle holded by an OCI_Elem handle, the object internal indicator strucure was not properly set/retreived
-      
+          - For OCI_Object handles holded by an OCI_Elem handle, the object internal indicator strucure was not properly set/retreived

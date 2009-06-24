@@ -11,16 +11,16 @@
    |               Copyright (c) 2007-2009 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Library General Public          |
+   | modify it under the terms of the GNU Lesser General Public           |
    | License as published by the Free Software Foundation; either         |
    | version 2 of the License, or (at your option) any later version.     |
    |                                                                      |
    | This library is distributed in the hope that it will be useful,      |
    | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
    | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Library General Public License for more details.                     |
+   | Lesser General Public License for more details.                      |
    |                                                                      |
-   | You should have received a copy of the GNU Library General Public    |
+   | You should have received a copy of the GNU Lesser General Public     |
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: include/ocilib.h, v 3.3.0 2009/06/22 00:00 Vince $
+ * $Id: ocilib.h, v 3.3.0 2009-06-30 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,7 +59,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.3.0 (2009-06-15)</b>
+ * <b>Current version : 3.3.0 (2009-06-30)</b>
  *
  * @section s_feats Main features
  *
@@ -94,7 +94,7 @@ extern "C" {
  * - Hash tables API
  * - Portable Threads and mutexes API
  * - Supports static / shared oracle linkage
- * - Support runtime loading (no OCI libs required at compile / time)
+ * - Support runtime loading (no OCI libs required at compile time)
  *
  * @section s_down Download
  *
@@ -204,7 +204,7 @@ extern "C" {
  *       independence <b>(default with prebuilt OCILIB libraries on MS Windows)</b>
  *
  * @note
- * On Windows, OCI_API MUST be set to use prebuilt libraries
+ * On Windows, OCI_API MUST be set to __stdcall in order to use prebuilt libraries
  *
  * @par Installing OCIB on UNIX like systems
  *
@@ -250,6 +250,18 @@ extern "C" {
  * Instant client only but can used for regular client of libs and headers are
  * not located in usual folders
  *
+ * @note
+ * If the Oracle OCI linkage mode is set to 'linkage' (default) and no Oracle lib
+ * path is provided, OCILIB configure script tries to located the Oracle library
+ * folder following this sequence :
+ *  - $ORACLE_HOME/lib32 (32 bits libs)
+ *  - $ORACLE_HOME/lib   (32 or 64 bits libs)
+ *  - $ORACLE_HOME/lib64 (64 bits libs)
+ *
+ * @note
+ * To compile native 64 bits versions of OCILIB, you need pass your compiler 
+ * specifics flags to the configure script.
+ *
  * To use OCILIB in a project :
  * 
  * - include "ocilib.h" in your application 
@@ -263,6 +275,10 @@ extern "C" {
  * where :
  * - $USER_LIBS is the folder where OCILIB was installed
  * - $ORACLE_LIB_PATH is Oracle client shared library path
+ *
+ * Some older version of Oracle 8 have direct path symbols located in the
+ * library libclient8. So with theses versions, you must include as well the
+ * linker flag -lclient8 to use Direct Path API.
  *
  * @par Installing and using OCILIB on Microsoft Windows
  *
@@ -282,16 +298,20 @@ extern "C" {
  * To use OCILIB in a project :
  * 
  * - include "ocilib.h" in your application 
- * - define OCILIB call convention (OCI_API) __sdtcall 
- * - define OCILIB charset mode (OCI_API) __sdtcall
- * - define OCILIB import mode (OCI_API) __sdtcall
+ * - define OCILIB call convention (OCI_API) to __stdcall
+ * - define OCILIB charset mode (OCI_CHARSET_ANSI | OCI_CHARSET_MIXED| OCI_CHARSET_UNICODE)
  *
  * Note for MinGW users :
  * - Precompiled 32bits static libraries libocilib[x].a are provided
  * - To use OCILIB dll's, copy/rename import libraries ocilib[x].lib to 
- *   libocilib[X].lib and add the desired version of the library to the linker
- *   options 
+ *   libocilib[x].lib 
+ * - Add the desired version (static/shared + charset) of the library to the
+ *   linker options 
  *
+ * @note
+ * The OCI import mode (OCI_IMPORT_LINKAGE or OCI_IMPORT_RUNTIME is onbly used when
+ * compliing OCILIB source code
+
  * @par Oracle Instant Client Support
  *
  * OCILIB supports Oracle Instant Client.
@@ -3053,7 +3073,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetAffectedRows
  *
  * @param stmt - Statement handle
  *
- * @war
+ * @warning
  * OCI_GetSQLCommand() must be called after the statement has be executed 
  * because that's the server engine that computes the SQL command code
  *

@@ -11,16 +11,16 @@
    |               Copyright (c) 2007-2009 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Library General Public          |
+   | modify it under the terms of the GNU Lesser General Public           |
    | License as published by the Free Software Foundation; either         |
    | version 2 of the License, or (at your option) any later version.     |
    |                                                                      |
    | This library is distributed in the hope that it will be useful,      |
    | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
    | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Library General Public License for more details.                     |
+   | Lesser General Public License for more details.                      |
    |                                                                      |
-   | You should have received a copy of the GNU Library General Public    |
+   | You should have received a copy of the GNU Lesser General Public     |
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_import.h, v 3.3.0 2009/06/22 00:00 Vince $
+ * $Id: oci_import.h, v 3.3.0 2009-06-30 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
@@ -79,21 +79,16 @@ extern "C" {
 
 /* ANSI string version of Oracle shared lib */
 
-#define OCI_DL_ANSI_GET(s) OCI_DL_ANSI_CVT(s)
-#define OCI_DL_ANSI_CVT(s) #s
-#define OCI_DL_ANSI_NAME OCI_DL_ANSI_GET(OCI_DL)
+#define OCI_DL_ANSI_GET(s)  OCI_DL_ANSI_CVT(s)
+#define OCI_DL_ANSI_CVT(s)  #s
+#define OCI_DL_ANSI_NAME    OCI_DL_ANSI_GET(OCI_DL)
+
 
 /* Meta string version of Oracle shared lib */
 
-#define OCI_DL_META_GET(s) OCI_DL_META_CVT(s)
-
-#ifdef OCI_METADATA_UNICODE
-  #define OCI_DL_META_CVT(s) L#s
-#else
-  #define OCI_DL_META_CVT(s) #s
-#endif
-
-#define OCI_DL_META_NAME OCI_DL_META_GET(OCI_DL)
+#define OCI_DL_META_GET(s)  OCI_DL_META_CVT(s)
+#define OCI_DL_META_CVT(s)  MT(#s)
+#define OCI_DL_META_NAME    OCI_DL_META_GET(OCI_DL)
 
 /* symbol list */
 
