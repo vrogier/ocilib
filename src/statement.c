@@ -192,6 +192,14 @@ boolean OCI_BindCheck(OCI_Statement *stmt)
                                             ((ub1 *) bnd->buf.data) + (j*offset2),
                                             &osize, sizeof(dtext), sizeof(odtext));
 
+                        /* set zero terminal null character */
+
+                        {
+                            odtext *str = (odtext *) (((ub1 *) bnd->buf.data) + (j*offset2));
+
+                            if (osize> 0)
+                                str[osize/sizeof(odtext)] = 0;
+                        }
                     }
 
 #endif
