@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_types.h, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: ocilib_types.h, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 
@@ -199,8 +199,8 @@ struct OCI_Library
     OCIEnv         *env;                    /* OCI environment handle */
     OCIError       *err;                    /* OCI error handle */
     POCI_ERROR      error_handler;          /* user defined error handler */
-    ub1             ver_compile;            /* OCI version used at compile time */
-    ub1             ver_runtime;            /* OCI version used at runtime */
+    unsigned int    version_compile;        /* OCI version used at compile time */
+    unsigned int    version_runtime;        /* OCI version used at runtime */
     ub1             use_lob_ub8;            /* use 64 bits integers for lobs ? */
     ub1             use_scrollable_cursors; /* use Oracle 9i fetch API */
     ub4             env_mode;               /* default environment mode */
@@ -227,7 +227,7 @@ typedef struct OCI_Library OCI_Library;
 struct OCI_ConnPool
 {
     OCI_List        *cons;      /* list of connection objects */
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
     OCICPool        *handle;    /* OCI pool handle */
 #else
     void            *handle;    /* fake handle for alignment */
@@ -258,7 +258,6 @@ struct OCI_Connection
     mtext              *db;        /* database */
     mtext              *user;      /* user */
     mtext              *pwd;       /* password */
-    mtext              *version;   /* server version */
     OCI_List           *stmts;     /* list of statements */
     OCI_List           *trsns;     /* list of transactions */
     OCI_List           *tinfs;     /* list of type info objects */
@@ -276,9 +275,8 @@ struct OCI_Connection
     void               *usrdata;   /* user data */
     mtext              *fmt_date;  /* date string format for conversion */
     mtext              *fmt_num;   /* numeric string format for conversion */
-    unsigned int        ver_maj;   /* server version major number */
-    unsigned int        ver_min;   /* server version minor number */
-    unsigned int        ver_rev;   /* server version revision number */
+    mtext              *ver_str;   /* string  server version*/
+    unsigned int        ver_num;   /* numeric server version */
     OCI_TraceInfo      *trace;     /* trace information */
 };
 
@@ -522,7 +520,7 @@ struct OCI_Date
 
 struct OCI_Timestamp
 {
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
     OCIDateTime     *handle;    /* OCI handle */
 #else
     void            *handle;    /* fake handle for alignment */
@@ -540,7 +538,7 @@ struct OCI_Timestamp
 
 struct OCI_Interval
 {
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
     OCIInterval     *handle;    /* OCI handle */
 #else
     void            *handle;    /* fake handle for alignment */
@@ -601,7 +599,6 @@ struct OCI_Coll
     OCI_Connection    *con;      /* pointer to connection object */
     OCI_TypeInfo      *typinf;   /* pointer to type info object */
     OCI_Elem          *elem;     /* item object */
-    sb4                size;     /* collection size */
 };
 
 /*

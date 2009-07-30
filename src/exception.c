@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: exception.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: exception.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -166,6 +166,7 @@ static mtext * OCILib_OraFeatures[] =
     MT("Oracle 9i Timestamps and Intervals"),
     MT("Oracle 9i Direct path date caching"),
     MT("Oracle 10g LOBs size extensions")
+    MT("Oracle 11g remote database startup/shutdown")
 };
 
 static mtext * OCILib_StmtStates[] =

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib.h, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: ocilib.h, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,7 +59,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.3.0 (2009-06-30)</b>
+ * <b>Current version : 3.4.0 (2009-07-30)</b>
  *
  * @section s_feats Main features
  *
@@ -95,6 +95,7 @@ extern "C" {
  * - Portable Threads and mutexes API
  * - Supports static / shared oracle linkage
  * - Support runtime loading (no OCI libs required at compile time)
+ * - Remote Instances Startup/Shutdown
  *
  * @section s_down Download
  *
@@ -157,7 +158,7 @@ extern "C" {
  * ------------------------------------------------------------------------ */
 
 #define OCILIB_MAJOR_VERSION     3
-#define OCILIB_MINOR_VERSION     3
+#define OCILIB_MINOR_VERSION     4
 #define OCILIB_REVISION_VERSION  0
 
 /* ------------------------------------------------------------------------ *
@@ -1188,18 +1189,28 @@ typedef struct OCI_HashEntry {
   #define boolean int
 #endif
 
-/* oracle versions*/
+/* oracle OCI key versions*/
 
-#define OCI_UNKNOWN             0
-#define OCI_8                   8
-#define OCI_9                   9
-#define OCI_10                  10
-#define OCI_11                  11
+#define OCI_8_0                         800
+#define OCI_8_1                         810
+#define OCI_9_0                         900
+#define OCI_9_2                         920
+#define OCI_10_1                       1010
+#define OCI_10_2                       1020
+#define OCI_11_1                       1110
+#define OCI_11_2                       1120
+
+/* versions extract macros */
+
+
+#define OCI_VER_MAJ(v)                 (unsigned int) (v/100)
+#define OCI_VER_MIN(v)                 (unsigned int) ((v/10) - ((v/100)*10))
+#define OCI_VER_REV(v)                 (unsigned int) ((v) - ((v/10)*10))
 
 /* OCILIB Error types */
 
-#define OCI_ERR_ORACLE          1
-#define OCI_ERR_OCILIB          2
+#define OCI_ERR_ORACLE                  1
+#define OCI_ERR_OCILIB                  2
 
 /* OCILIB Error codes */
 
@@ -1300,11 +1311,40 @@ typedef struct OCI_HashEntry {
 #define OCI_ENV_THREADED        1
 #define OCI_ENV_CONTEXT         2
 
-    /* sessions modes */
+/* sessions modes */
 
 #define OCI_SESSION_DEFAULT     0
 #define OCI_SESSION_SYSDBA      2
 #define OCI_SESSION_SYSOPER     4
+#define OCI_SESSION_PRELIM_AUTH 8
+
+/* database startup modes */
+
+#define OCI_DB_SPM_START        1
+#define OCI_DB_SPM_MOUNT        2
+#define OCI_DB_SPM_OPEN         4
+#define OCI_DB_SPM_FULL         OCI_DB_SPM_START | OCI_DB_SPM_MOUNT | OCI_DB_SPM_OPEN
+
+/* database startup flags */
+
+#define OCI_DB_SPF_DEFAULT      0
+#define OCI_DB_SPF_FORCE        1
+#define OCI_DB_SPF_RESTRICT     2
+
+/* database shutdown modes */
+ 
+#define OCI_DB_SDM_SHUTDOWN     1
+#define OCI_DB_SDM_CLOSE        2
+#define OCI_DB_SDM_DISMOUNT     4
+#define OCI_DB_SDM_FULL         OCI_DB_SDM_SHUTDOWN | OCI_DB_SDM_CLOSE | OCI_DB_SDM_DISMOUNT
+
+/* database shutdown flags */
+
+#define OCI_DB_SDF_DEFAULT      0
+#define OCI_DB_SDF_TRANS        1
+#define OCI_DB_SDF_TRANS_LOCAL  2
+#define OCI_DB_SDF_IMMEDIATE    3
+#define OCI_DB_SDF_ABORT        4
 
 /* charsetform types */
 
@@ -1660,7 +1700,7 @@ OCI_EXPORT boolean OCI_API OCI_Cleanup(void);
 
 /**
  * @brief
- * Return the major version of OCI used for compilation
+ * Return the version of OCI used for compilation
  *
  * @note
  * - with linkage build option, the version is determined from the oci.h header
@@ -1674,7 +1714,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetOCICompileVersion(void);
 
 /**
  * @brief
- * Return the major version of OCI used for compilation
+ * Return the version of OCI used at runtime
  *
  * @note
  * - with linkage build option, the version is determined from the oci.h header
@@ -1685,7 +1725,6 @@ OCI_EXPORT unsigned int OCI_API OCI_GetOCICompileVersion(void);
  */
 
 OCI_EXPORT unsigned int OCI_API OCI_GetOCIRuntimeVersion(void);
-
 
 /**
  * @brief
@@ -1936,6 +1975,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
  * @note
  * External credentials are supported by supplying a null value for the 'user'
  * and 'pwd' parameters
+ * If the param 'db' is NULL then a connection to the default local DB is done
  *
  * @note
  * On success, a transaction is automatically created and started
@@ -2274,11 +2314,14 @@ OCI_EXPORT boolean OCI_API OCI_SetTransaction
  * Returns one of the following values :
  *
  * - OCI_UNKNOWN
- * - OCI_8
- * - OCI_9
- * - OCI_10
- * - OCI_8
- * - OCI_11
+ * - OCI_8_0
+ * - OCI_8_1
+ * - OCI_9_0
+ * - OCI_9_2
+ * - OCI_10_1
+ * - OCI_10_2
+ * - OCI_11_1
+ * - OCI_11_2
  *
  */
 
@@ -2411,6 +2454,11 @@ OCI_EXPORT boolean OCI_API OCI_Ping
  * - OCI_SESSION_DEFAULT
  * - OCI_SESSION_SYSDBA
  * - OCI_SESSION_SYSOPER
+ *
+ * @note
+ * External credentials are supported by supplying a null value for the 'user'
+ * and 'pwd' parameters
+ * If the param 'db' is NULL then a connection to the default local DB is done
  *
  * @note
  *
@@ -4230,13 +4278,17 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement
  * @param size - data size
  *
  * @note
- * This call is not mandatory  and should only be called for RAWs binds to set
+ * This call is not mandatory and should ONLY be called for RAWs binds to set
  * the real size of the given data if different from the expected column or
  * parameter size
  *
  * @note
  * It works as well with string based PL/SQL tables (in or in/out but NOT out)
  * even if it's not necessary.
+ *
+ * @warning
+ * For binds of type OCI_CDT_TEXT (strings), the parameter 'size' is expressed in 
+ * number of characters.
  *
  * @return
  * Data size if the bind type is listed above otherwise 0.
@@ -4261,6 +4313,15 @@ OCI_EXPORT boolean OCI_API OCI_BindSetDataSize
  * @note
  * See OCI_BindSetDataSize() for supported datatypes
  *
+ * @warning
+ * Before execution, it returns the max default size for the bind and not the real
+ * data size, unless a custom size has been set with OCI_BindSetDataSizeXXX()
+ * After execution, it returns the real data size.
+ *
+ * @warning
+ * For binds of type OCI_CDT_TEXT (strings), the parameter 'size' is expressed in 
+ * number of characters.
+ *
  * @return
  * Data size if the bind type is listed above otherwise 0.
  *
@@ -4282,8 +4343,9 @@ OCI_EXPORT boolean OCI_API OCI_BindSetDataSizeAtPos
  * @note
  * See OCI_BindSetDataSize() for supported datatypes
  *
- * @return
- * Data size if the bind type is supported otherwise 0.
+ * @warning
+ * For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in 
+ * number of characters.
  *
  */
 
@@ -4303,8 +4365,9 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetDataSize
  * @note
  * See OCI_BindSetDataSize() for supported datatypes
  *
- * @return
- * Data size if the bind type is supported otherwise 0.
+ * @warning
+ * For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in 
+ * number of characters.
  *
  */
 
@@ -6268,6 +6331,12 @@ OCI_EXPORT boolean OCI_API OCI_CollClear
  * @note
  * Collection indexes start at position 1.
  *
+ * @note
+ * Up to 3.3.0, the library checked that the input index was fitting into the 
+ * collection bounds. From 3.3.1, this check has been removed for some internal
+ * reasons. An exception will be still thrown in case of out of bounds index but
+ * the exception type is now an OCI exception instead of an OCILIB one.
+ * 
  * @return
  * Element handle on success otherwise FALSE
  *
@@ -6291,6 +6360,12 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_CollGetAt
  * @note
  * Collection indexes start at position 1.
  *
+ * @note
+ * Up to 3.3.0, the library checked that the input index was fitting into the 
+ * collection bounds. From 3.3.1, this check has been removed for some internal
+ * reasons. An exception will be still thrown in case of out of bounds index but
+ * the exception type is now an OCI exception instead of an OCILIB one.
+ * 
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -12763,6 +12838,149 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  * @}
  */
 
+/**
+ * @defgroup g_instances Remote Instance startup/shutdown
+ * @{
+ *
+ * OCILIB, from version 3.4.0, supports Oracle 11g client features for 
+ * manuipulating remote Oracle instances.
+ *
+ * Oracle instances (on the same computer or on a remote server) can be
+ *
+ * - started with OCI_DatabaseStartup()
+ * - shutdown with OCI_DatabaseShutdown()
+ *
+ * Several options are handled for this actions
+ *
+ * @par Example
+ * @include instance.c
+ *
+ */
+
+
+/**
+ * @brief
+ * Start a database instance
+ *
+ * @param db         - Oracle Service Name
+ * @param user       - Oracle User name
+ * @param pwd        - Oracle User password
+ * @param sess_mode  - Session mode
+ * @param start_mode - Start mode
+ * @param start_flag - Start flags
+ * @param spfile     - Client-side spfile to start up the database (optionnal)
+ *
+ * Possible values for parameter sess_mode :
+ * - OCI_SESSION_SYSDBA
+ * - OCI_SESSION_SYSOPER
+ *
+ * @note
+ * External credentials are supported by supplying a null value for the 'user'
+ * and 'pwd' parameters
+ * If the param 'db' is NULL then a connection to the default local DB is done
+ *
+ * Possible (combined) values for parameter start_mode :
+ * - OCI_DB_SPM_START : start the instance
+ * - OCI_DB_SPM_MOUNT : mount the instance
+ * - OCI_DB_SPM_OPEN  : open the instance
+ * - OCI_DB_SPM_FULL  : start, mount and open the instance
+ *
+ * Possible (combined) values for parameter start_flag :
+ * - OCI_DB_SPF_DEFAULT  : default startup
+ * - OCI_DB_SPF_FORCE    : shuts down a running instance (if needed) using 
+ *                         ABORT command and starts a new instance  
+ * - OCI_DB_SPF_RESTRICT : allows database access only to users with both
+ *                         CREATE SESSION and RESTRICTED SESSION privileges
+ *
+ * @note
+ * If the client side spfile is not provided, the database is started with its
+ * server-side spfile
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DatabaseStartup
+(
+    const mtext *db,
+    const mtext *user,
+    const mtext *pwd,
+    unsigned int sess_mode,
+    unsigned int start_mode,
+    unsigned int start_flag,
+    const mtext *spfile
+);
+
+/**
+ * @brief
+ * Shutdown a database instance
+ *
+ * @param db         - Oracle Service Name
+ * @param user       - Oracle User name
+ * @param pwd        - Oracle User password
+ * @param sess_mode  - Session mode
+ * @param shut_mode  - Shutdown mode
+ * @param shut_flag  - Shutdown flag
+ *
+ *
+ * @warning
+ * Possible values for parameter sess_mode :
+ * - OCI_SESSION_SYSDBA
+ * - OCI_SESSION_SYSOPER
+ *
+ * @note
+ * External credentials are supported by supplying a null value for the 'user'
+ * and 'pwd' parameters
+ * If the param 'db' is NULL then a connection to the default local DB is done
+ *
+ * Possible (combined) values for parameter shut_mode :
+ * - OCI_DB_SDM_SHUTDOWN : shutdown the instance
+ * - OCI_DB_SDM_CLOSE    : close the instance
+ * - OCI_DB_SDM_DISMOUNT : dismount the instance
+ * - OCI_DB_SDM_FULL     : shutdown, close and dismount the instance
+ *
+ * Possible (exclusive) value for parameter shut_flag (from Oracle documentation) :
+ * - OCI_DB_SDF_DEFAULT     : 
+ *   - Further connects are prohibited. 
+ *   - Waits for users to disconnect from the database
+ * - OCI_DB_SDF_TRANS       : 
+ *   - Further connects are prohibited 
+ *   - No new transactions are allowed. 
+ *   - Waits for active transactions to complete
+ * - OCI_DB_SDF_TRANS_LOCAL : 
+ *   - Further connects are prohibited 
+ *   - No new transactions are allowed. 
+ *   - Waits only for local transactions to complete
+ * - OCI_DB_SDF_IMMEDIATE   : 
+ *   - Does not wait for current calls to complete or users to disconnect from the database.
+ *   - All uncommitted transactions are terminated and rolled back
+ * - OCI_DB_SDF_ABORT       : 
+ *   - Does not wait for current calls to complete or users to disconnect from the database. 
+ *   - All uncommitted transactions are terminated and are not rolled back. 
+ *   - This is the fastest possible way to shut down the database, but the next
+ *     database startup may require instance recovery. 
+ *   - Therefore, this option should be used only in unusual circumstances
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DatabaseShutdown
+(
+    const mtext *db,
+    const mtext *user,
+    const mtext *pwd,
+    unsigned int sess_mode,
+    unsigned int shut_mode,
+    unsigned int shut_flag
+);
+
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup g_handles Using OCI Handles directly
@@ -13327,6 +13545,14 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream
 #define OCI_SetNullAtPos2(stmt, name, position)                                \
         OCI_BindSetNullAtPos(OCI_GetBind2(stmt, name), position)
 
+/* macro added in version 3.4.0 */
+
+#define OCI_8  OCI_8_1
+#define OCI_9  OCI_9_0
+#define OCI_10 OCI_10_1
+#define OCI_11 OCI_11_1
 
 #endif    /* OCILIB_H_INCLUDED */
+
+
 

@@ -266,8 +266,8 @@ void print_version(void)
     print_frmt("OCILIB revision version : %i\n\n", OCILIB_REVISION_VERSION);
 
     /* print all versions */
-    print_frmt("OCI compile     version : %i\n",   OCI_GetOCICompileVersion());
-    print_frmt("OCI runtime     version : %i\n\n", OCI_GetOCIRuntimeVersion());
+    print_frmt("OCI compile     version : %i\n",   OCI_VER_MAJ(OCI_GetOCICompileVersion()));
+    print_frmt("OCI runtime     version : %i\n\n", OCI_VER_MAJ(OCI_GetOCIRuntimeVersion()));
 
     print_frmt("Server major    version : %i\n",   OCI_GetServerMajorVersion(cn));
     print_frmt("Server minor    version : %i\n",   OCI_GetServerMinorVersion(cn));
@@ -903,14 +903,16 @@ void test_timestamp(void)
 {
 #ifndef OCI_CHARSET_ANSI
 
+    unsigned int version = OCI_GetOCIRuntimeVersion();
+
     /* Oracle 9i has some troubles with formatting Intervals/timestamps in
        an UTF16 context... */
 
-    if (OCI_GetOCIRuntimeVersion() == OCI_9)
+    if ((version >= OCI_9_0) || (version < OCI_10_1))
         return;
 #endif
 
-    if (OCI_GetOCIRuntimeVersion() >= OCI_9)
+    if (OCI_GetOCIRuntimeVersion() >= OCI_9_0)
     {
         OCI_Timestamp *tmsp;
 
@@ -928,7 +930,7 @@ void test_timestamp(void)
         /* intervals raw oci functions have some troubles with Oracle 9i. So let's
            use it for the demo only if we're using 10g or above */
 
-        if (OCI_GetOCIRuntimeVersion() > OCI_9)
+        if (OCI_GetOCIRuntimeVersion() >= OCI_10_1)
         {
             OCI_Interval *itv;
 
@@ -1091,7 +1093,7 @@ void test_returning_array(void)
     OCI_Lob*  tab_lob [SIZE_TAB];
     OCI_File* tab_file[SIZE_TAB];
 
-    print_text("\n>>>>> TEST ARRAY BINDING WITH RETURING CLAUSE \n\n");
+    print_text("\n>>>>> TEST ARRAY BINDING WITH RETURNING CLAUSE \n\n");
 
     /* prepare SQL */
 
@@ -1357,7 +1359,7 @@ void test_object_fetch(void)
 
 void test_scrollable_cursor(void)
 {
-    if (OCI_GetVersionConnection(cn) >= OCI_9)
+    if (OCI_GetVersionConnection(cn) >= OCI_9_0)
     {
         print_text("\n>>>>> TEST SCROLLABLE CURSORS \n\n");
 
@@ -1573,7 +1575,7 @@ void test_directpath(void)
       match
    */
 
-   if (OCI_GetOCIRuntimeVersion() == OCI_GetServerMajorVersion(cn))
+   if (OCI_VER_MAJ(OCI_GetOCIRuntimeVersion()) == OCI_GetServerMajorVersion(cn))
    {
         OCI_DirPath *dp;
         OCI_TypeInfo *tbl;
@@ -1599,7 +1601,7 @@ void test_directpath(void)
         OCI_DirPathSetNoLog(dp, TRUE);
         OCI_DirPathSetParallel(dp, TRUE);
 
-        if(OCI_GetOCIRuntimeVersion() >= OCI_9)
+        if(OCI_GetOCIRuntimeVersion() >= OCI_9_2)
         {
             OCI_DirPathSetCacheSize(dp, 100);
         }

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_checks.h, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: ocilib_checks.h, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_CHECKS_H_INCLUDED
@@ -144,7 +144,7 @@
 #define OCI_CALL3(res, err, fct)                                               \
                                                                                \
     {                                                                          \
-         if ((res) == TRUE)                                                    \
+        if ((res) == TRUE)                                                     \
         {                                                                      \
            (res) = (boolean) fct;                                              \
             if (OCI_NO_ERROR((res)) == FALSE)                                  \
@@ -494,12 +494,12 @@
  *
  */
 
-#define OCI_CHECK_FEATURE(con, feat, ver,  ret)                                \
-                                                                               \
-    if (OCILib.ver_runtime < ver || (((con) != NULL) && (con)->ver_maj < ver)) \
-    {                                                                          \
-        OCI_ExceptionNotAvailable(con, feat);                                  \
-        return ret;                                                            \
+#define OCI_CHECK_FEATURE(con, feat, ver,  ret)                                    \
+                                                                                   \
+    if (OCILib.version_runtime < ver || (((con) != NULL) && (con)->ver_num < ver)) \
+    {                                                                              \
+        OCI_ExceptionNotAvailable(con, feat);                                      \
+        return ret;                                                                \
     }
 
 /**
@@ -537,7 +537,7 @@
 
 #define OCI_CHECK_TIMESTAMP_ENABLED(con,  ret)                                 \
                                                                                \
-        OCI_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9, ret)
+        OCI_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0, ret)
 
 /**
  * @brief 
@@ -569,7 +569,7 @@
 
 #define OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(con, ret)                          \
                                                                                \
-        OCI_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9, ret)
+        OCI_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9_0, ret)
 
 
 /**
@@ -586,12 +586,30 @@
 
 #define OCI_CHECK_DIRPATH_DATE_CACHE_ENABLED(dp,  ret)                         \
                                                                                \
-    if (OCILib.ver_runtime < OCI_9)                                            \
+    if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
         OCI_ExceptionNotAvailable((dp)->con, OCI_FEATURE_DIRPATH_DATE_CACHE);  \
         return ret;                                                            \
     }
 
+/**
+ * @brief 
+ * Checks if the current OCI client supports remote database startup/shutdown
+ *
+ * @param ret - Return value
+ *
+ * @note
+ * Throws an exception if the Oracle client is < 11g
+ *
+ */
+
+#define OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED(ret)                              \
+                                                                               \
+    if (OCILib.version_runtime < OCI_10_2)                                         \
+    {                                                                          \
+        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_DIRPATH_DATE_CACHE);       \
+        return ret;                                                            \
+    }
 
 #endif    /* OCILIB_OCILIB_CHECKS_H_INCLUDED */
 

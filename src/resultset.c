@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: resultset.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -842,7 +842,7 @@ boolean OCI_API OCI_FetchPrev(OCI_Resultset *rs)
 
     OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
 
@@ -990,7 +990,7 @@ boolean OCI_API OCI_FetchFirst(OCI_Resultset *rs)
 
     OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
 
@@ -1027,7 +1027,7 @@ boolean OCI_API OCI_FetchLast(OCI_Resultset *rs)
 
     OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
 
@@ -1066,7 +1066,7 @@ boolean OCI_API OCI_FetchSeek(OCI_Resultset *rs, unsigned int mode, int offset)
 
     OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
 

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: define.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: define.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -346,7 +346,7 @@ boolean OCI_DefineDef(OCI_Define *def)
 
     if (def->col.csfrm == SQLCS_NCHAR
 #ifdef OCI_USERDATA_UNICODE
-        || (def->col.type == OCI_CDT_TEXT && OCILib.ver_runtime >= OCI_9)
+        || (def->col.type == OCI_CDT_TEXT && OCILib.version_runtime >= OCI_9_0)
 #endif
         )
     {

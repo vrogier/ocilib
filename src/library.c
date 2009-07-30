@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: library.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: library.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -350,6 +350,13 @@ OCIDIRPATHFLUSHROW           OCIDirPathFlushRow           = NULL;
 OCICACHEFREE                 OCICacheFree                 = NULL;
 OCIPING                      OCIPing                      = NULL;
 
+OCIDBSTARTUP                 OCIDBStartup                 = NULL;
+OCIDBSHUTDOWN                OCIDBShutdown                = NULL; 
+
+
+OCISTMTPREPARE2              OCIStmtPrepare2              = NULL; 
+OCISTMTRELEASE               OCIStmtRelease               = NULL; 
+
 #ifdef ORAXB8_DEFINED
 
 OCILOBCOPY2                  OCILobCopy2                  = NULL;
@@ -454,10 +461,12 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
     memset(&OCILib, 0, sizeof(OCI_Library));
 
-    OCILib.error_handler  = err_handler;
-    OCILib.ver_compile    = OCI_VERSION_COMPILE;
-    OCILib.ver_runtime    = OCI_VERSION_RUNTIME;
-    OCILib.env_mode       = mode;
+    OCILib.error_handler      = err_handler;
+
+    OCILib.version_compile    = OCI_VERSION_COMPILE;
+    OCILib.version_runtime    = OCI_VERSION_RUNTIME;
+
+    OCILib.env_mode           = mode;
 
 #ifdef OCI_IMPORT_LINKAGE
 
@@ -923,23 +932,45 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
         LIB_SYMBOL(OCILib.lib_handle, "OCICacheFree", OCICacheFree,
                    OCICACHEFREE);
 
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDBStartup", OCIDBStartup,
+                   OCIDBSTARTUP);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDBShutdown", OCIDBShutdown,
+                   OCIDBSHUTDOWN);
+
+        LIB_SYMBOL(OCILib.lib_handle, "OCIStmtPrepare2", OCIStmtPrepare2,
+                   OCISTMTPREPARE2);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIStmtRelease", OCIStmtRelease,
+                   OCISTMTRELEASE);
+
         /* API Version checking */
 
         if (OCIArrayDescriptorFree != NULL)
         {
-            OCILib.ver_runtime = OCI_11;
+            OCILib.version_runtime = OCI_11_1;
         }
         else if (OCIClientVersion != NULL)
         {
-            OCILib.ver_runtime = OCI_10;
+            OCILib.version_runtime = OCI_10_2;
+        }
+        else if (OCILobWrite2 != NULL)
+        {
+            OCILib.version_runtime = OCI_10_1;
+        }
+        else if (OCIStmtPrepare2  != NULL)
+        {
+            OCILib.version_runtime = OCI_9_2;
         }
         else if (OCIDateTimeGetTimeZoneName != NULL)
         {
-            OCILib.ver_runtime = OCI_9;
+            OCILib.version_runtime = OCI_9_0;
+        }
+        else if (OCIThreadProcessInit != NULL)
+        {
+            OCILib.version_runtime = OCI_8_1;
         }
         else if (OCIEnvCreate != NULL)
         {
-            OCILib.ver_runtime = OCI_8;
+            OCILib.version_runtime = OCI_8_0;
         }
         else
         {
@@ -962,7 +993,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
 #if defined(OCI_BIG_UINT_ENABLED)
 
-        if ((OCILib.ver_runtime >= 10) && (OCILobCopy2 != NULL))
+        if ((OCILib.version_runtime >= OCI_10_1) && (OCILobCopy2 != NULL))
         {
             OCILib.use_lob_ub8 = TRUE;
         }
@@ -971,7 +1002,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
 #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
-        if ((OCILib.ver_runtime >= 9) && (OCIStmtFetch2 != NULL))
+        if ((OCILib.version_runtime >= OCI_9_0) && (OCIStmtFetch2 != NULL))
         {
             OCILib.use_scrollable_cursors = TRUE;
         }
@@ -986,7 +1017,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
     /* Oracle 8i does not support full Unicode mode */
 
-    if ((res == TRUE) && (OCILib.ver_runtime == OCI_8))
+    if ((res == TRUE) && (OCILib.version_runtime < OCI_9_0))
     {
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_UNICODE_USERDATA);
 
@@ -1179,7 +1210,7 @@ boolean OCI_API OCI_Cleanup(void)
 
 unsigned int OCI_API OCI_GetOCICompileVersion(void)
 {
-    return (unsigned int) OCILib.ver_compile;
+    return (unsigned int) OCILib.version_compile;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -1188,7 +1219,7 @@ unsigned int OCI_API OCI_GetOCICompileVersion(void)
 
 unsigned int OCI_API OCI_GetOCIRuntimeVersion(void)
 {
-    return (unsigned int) OCILib.ver_runtime;
+    return (unsigned int) OCILib.version_runtime;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -1238,5 +1269,240 @@ OCI_Error * OCI_API OCI_GetLastError(void)
     }
 
     return err;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_DatabaseStartup
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_DatabaseStartup(const mtext *db,  const mtext *user,
+                                    const mtext *pwd, unsigned int sess_mode,
+                                    unsigned int start_mode, unsigned int start_flag,
+                                    const mtext *spfile
+)
+{
+    boolean         res = TRUE;
+    OCI_Connection *con = NULL;
+
+    OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED(FALSE);
+
+#if OCI_VERSION_COMPILE >= OCI_10_2
+
+    if (start_mode & OCI_DB_SPM_START)
+    {
+        OCIAdmin *adm = NULL;
+
+        /* connect with prelim authenfication mode */
+
+        con = OCI_ConnectionCreate(db, user, pwd, sess_mode | OCI_PRELIM_AUTH);
+    
+        res = (con != NULL);
+  
+        /* allocate admin handle */
+
+        if (res == TRUE)
+        {
+            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
+                                                  (dvoid **) (void *) &adm,
+                                                  (ub4) OCI_HTYPE_ADMIN,
+                                                  (size_t) 0, (dvoid **) NULL));
+        }
+       
+        /* set client spfile if provided */
+
+        if ((res == TRUE) && (spfile != NULL) && (spfile[0] != 0))
+        {
+            void *ostr  = NULL;
+            int osize   = -1;
+
+            ostr  = OCI_GetInputMetaString(spfile, &osize);
+
+            OCI_CALL2
+            (
+                res, con,
+
+                OCIAttrSet((dvoid *) adm, (ub4) OCI_HTYPE_ADMIN,
+                           (dvoid *) ostr, (ub4) osize,
+                           (ub4) OCI_ATTR_ADMIN_PFILE, con->err)
+            )
+
+            OCI_ReleaseMetaString(ostr);
+        }
+
+        /* startup DB */
+
+        OCI_CALL2
+        (
+            res, con,
+            
+            OCIDBStartup(con->cxt, con->err, (OCIAdmin *) adm,
+                         OCI_DEFAULT, start_flag)
+        )
+
+        /* release security admin handle */
+
+        if (adm != NULL)
+        {
+            OCI_HandleFree(OCILib.err, OCI_HTYPE_ADMIN);
+        }
+
+        /* disconnect */
+
+        OCI_ConnectionFree(con);
+    }
+
+    /* connect without prelim mode */
+
+    con = OCI_ConnectionCreate(db, user, pwd, sess_mode);
+
+    res = (con != NULL);
+
+    /* alter database */
+
+    if (res == TRUE)
+    {
+        OCI_Statement *stmt = OCI_StatementCreate(con);
+
+        /* mount database */
+
+        if (start_mode & OCI_DB_SPM_MOUNT)
+            res = (res && OCI_ExecuteStmt(stmt, MT("ALTER DATABASE MOUNT")));
+
+        /* open database */
+
+        if (start_mode & OCI_DB_SPM_OPEN)
+            res = (res && OCI_ExecuteStmt(stmt, MT("ALTER DATABASE OPEN")));
+
+        OCI_StatementFree(stmt);
+    }
+
+    /* disconnect */
+
+    OCI_ConnectionFree(con);
+
+#else
+
+    res = FALSE;
+
+    OCI_NOT_USED(db);
+    OCI_NOT_USED(user);
+    OCI_NOT_USED(pwd);
+    OCI_NOT_USED(sess_mode);
+    OCI_NOT_USED(start_mode);
+    OCI_NOT_USED(start_flag);
+    OCI_NOT_USED(spfile);
+    OCI_NOT_USED(con);
+
+#endif
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_DatabaseShutdown
+ * ------------------------------------------------------------------------ */
+
+
+boolean OCI_API OCI_DatabaseShutdown(const mtext *db, const mtext *user,
+                                     const mtext *pwd, unsigned int sess_mode,
+                                     unsigned int shut_mode, unsigned int shut_flag
+)
+{
+    boolean         res = TRUE;
+    OCI_Connection *con = NULL;
+
+    OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED(FALSE);
+
+#if OCI_VERSION_COMPILE >= OCI_10_2
+
+    /* connect to server */
+
+    con = OCI_ConnectionCreate(db, user, pwd, sess_mode);
+
+    if (con != NULL);
+    {
+        /* delete current transaction before the abort */
+
+        if ((con->trs != NULL) && (shut_flag == OCI_DB_SDF_ABORT))
+        {
+            OCI_TransactionFree(con->trs);
+           
+            con->trs = NULL;
+        }
+
+        /* start shutdown */
+
+        if (shut_mode & OCI_DB_SDM_SHUTDOWN)
+        {
+            /* start shutdown process */
+
+            OCI_CALL2
+            (
+                res, con,
+                
+                OCIDBShutdown(con->cxt, con->err, (OCIAdmin *) NULL, shut_flag)
+            )
+        }
+
+        /* alter database if we are not in abort mode */
+
+        if ((res == TRUE) && (shut_flag != OCI_DB_SDF_ABORT))
+        {
+            OCI_Statement *stmt = OCI_StatementCreate(con);
+
+            /* close database */
+
+            if (shut_mode & OCI_DB_SDM_CLOSE)
+                res = (res && OCI_ExecuteStmt(stmt, MT("ALTER DATABASE CLOSE NORMAL")));
+   
+            /* unmount database */
+    
+            if (shut_mode & OCI_DB_SDM_DISMOUNT)
+                res = (res && OCI_ExecuteStmt(stmt,MT( "ALTER DATABASE DISMOUNT")));
+
+            OCI_StatementFree(stmt);
+      
+            /* delete current transaction before the shutdown */
+
+            if (con->trs != NULL)
+            {
+                OCI_TransactionFree(con->trs);
+               
+                con->trs = NULL;
+            }
+
+            /* do the final shutdown if we are not in abort mode */
+        
+            OCI_CALL2
+            (
+                res, con,
+                
+                OCIDBShutdown(con->cxt, con->err, (OCIAdmin *) 0, OCI_DBSHUTDOWN_FINAL)
+            )
+        }
+
+        /* disconnect */
+
+        OCI_ConnectionFree(con);
+    }
+
+#else
+
+    res = FALSE;
+
+    OCI_NOT_USED(db);
+    OCI_NOT_USED(user);
+    OCI_NOT_USED(pwd);
+    OCI_NOT_USED(sess_mode);
+    OCI_NOT_USED(shut_mode);
+    OCI_NOT_USED(shut_flag);
+    OCI_NOT_USED(con);
+#endif
+
+    OCI_RESULT(res);
+
+    return res;
 }
 

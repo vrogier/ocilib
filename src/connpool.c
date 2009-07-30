@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connpool.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: connpool.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -59,9 +59,9 @@ boolean OCI_ConnPoolClose(OCI_ConnPool *pool)
     if (OCI_LIB_THREADED)
         OCI_MutexFree(pool->mutex);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.ver_runtime >= OCI_9)
+    if (OCILib.version_runtime >= OCI_9_0)
     {
         /* close connection pool handle */
 
@@ -164,9 +164,9 @@ OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user,
     }
 
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.ver_runtime >= OCI_9)
+    if (OCILib.version_runtime >= OCI_9_0)
     {
         int osize_name  = -1;
         int osize_db    = -1;
@@ -323,7 +323,7 @@ OCI_Connection * OCI_API OCI_ConnPoolGetConnection(OCI_ConnPool *pool)
     {
         /* no available connection found ! Try to allocate a new one... */
 
-        if (OCILib.ver_runtime >= OCI_9 || pool->cons->count < pool->max)
+        if (OCILib.version_runtime >= OCI_9_0 || pool->cons->count < pool->max)
         {
             ub4 i, nb;
             OCI_Connection *c = NULL;
@@ -391,9 +391,9 @@ boolean OCI_API OCI_ConnPoolSetTimeout(OCI_ConnPool *pool, unsigned int value)
 
     OCI_CHECK_PTR(OCI_IPC_CONNPOOL, pool, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.ver_runtime >= OCI_9)
+    if (OCILib.version_runtime >= OCI_9_0)
     {
         ub4 timeout = value;
 
@@ -440,9 +440,9 @@ boolean OCI_API OCI_ConnPoolSetNoWait(OCI_ConnPool *pool, boolean value)
 
     OCI_CHECK_PTR(OCI_IPC_CONNPOOL, pool, 0);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.ver_runtime >= OCI_9)
+    if (OCILib.version_runtime >= OCI_9_0)
     {
         ub1 nowait = (ub1) value;
 
@@ -476,9 +476,9 @@ unsigned int OCI_API OCI_ConnPoolGetBusyCount(OCI_ConnPool *pool)
 
     OCI_CHECK_PTR(OCI_IPC_CONNPOOL, pool, 0);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.ver_runtime >= OCI_9)
+    if (OCILib.version_runtime >= OCI_9_0)
     {
         ub4 value = 0;
 
@@ -512,9 +512,9 @@ unsigned int OCI_API OCI_ConnPoolGetOpenedCount(OCI_ConnPool *pool)
 
     OCI_CHECK_PTR(OCI_IPC_CONNPOOL, pool, 0);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.ver_runtime >= OCI_9)
+    if (OCILib.version_runtime >= OCI_9_0)
     {
         ub4 value = 0;
 

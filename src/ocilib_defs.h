@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: ocilib_defs.h, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -46,29 +46,51 @@
 
   /* for runtime loading, set compile time version to the highest minimum
      version needed by OCILIB encapsulation of OCI */
-  #define OCI_VERSION_COMPILE OCI_11
+  #define OCI_VERSION_COMPILE OCI_11_1
   /* set runtime version to unknown, it will be guessed from symbols loading */
   #define OCI_VERSION_RUNTIME OCI_UNKNOWN
 
 #else
 
-  /* oracle 10g introduced in oci.h this constant, so it means >= 10g */
-  #ifdef OCI_MAJOR_VERSION
+  #if   defined(OCI_LOB_OPT_COMPRESS)       /* = OCI_11_1 */
 
-    #define OCI_VERSION_COMPILE OCI_MAJOR_VERSION
-    #define OCI_VERSION_RUNTIME OCI_MAJOR_VERSION
+    #define OCI_VERSION_COMPILE OCI_11_1
+    #define OCI_VERSION_RUNTIME OCI_11_1
 
-  #elif defined(SQLT_PNTY)
+  #elif defined(OCI_DBSHUTDOWN_ABORT)       /* = OCI_10_2 */
 
-    /* if version < 10g and if SQLT_PNTY is defined, it means 9i */
-    #define OCI_VERSION_COMPILE OCI_9
-    #define OCI_VERSION_RUNTIME OCI_9
+    #define OCI_VERSION_COMPILE OCI_10_2
+    #define OCI_VERSION_RUNTIME OCI_10_2
 
-  #else
+  #elif defined(OCI_ATTR_DB_CHARSET_ID)     /* = OCI_10_1 */
 
-    /* so it must be 8i */
-    #define OCI_VERSION_COMPILE OCI_8
-    #define OCI_VERSION_RUNTIME OCI_8
+    #define OCI_VERSION_COMPILE OCI_10_1
+    #define OCI_VERSION_RUNTIME OCI_10_1
+
+  #elif defined(OCI_ATTR_STMTCACHESIZE)     /* = OCI_9_2 */
+
+    #define OCI_VERSION_COMPILE OCI_9_2
+    #define OCI_VERSION_RUNTIME OCI_9_2
+
+  #elif defined(SQLT_PNTY)                  /* = OCI_9_0 */
+
+    #define OCI_VERSION_COMPILE OCI_9_0
+    #define OCI_VERSION_RUNTIME OCI_9_0
+
+  #elif defined(OCIThreadHandle)             /* = OCI_8_1 */
+
+    #define OCI_VERSION_COMPILE OCI_8_1
+    #define OCI_VERSION_RUNTIME OCI_8_1
+
+  #elif defined(OCIEnv)                      /* = OCI_8_0 */
+
+    #define OCI_VERSION_COMPILE OCI_8_0
+    #define OCI_VERSION_RUNTIME OCI_8_0
+
+  #else                                      /* OCI_UNKNOWN */
+
+    #define OCI_VERSION_COMPILE OCI_UNKNOWN
+    #define OCI_VERSION_RUNTIME OCI_UNKNOWN
 
   #endif
 
@@ -243,6 +265,7 @@
 #define OCI_FEATURE_TIMESTAMP           2
 #define OCI_FEATURE_DIRPATH_DATE_CACHE  3
 #define OCI_FEATURE_SCROLLABLE_CURSOR   4
+#define OCI_FEATURE_REMOTE_DBS_CONTROL  5
 
 /* ------------------------------------------------------------------------ *
  * Oracle conditionnal features 

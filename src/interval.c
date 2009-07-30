@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: interval.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: interval.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -47,7 +47,7 @@ OCI_Interval * OCI_IntervalInit(OCI_Connection *con, OCI_Interval **pitv,
 {
     OCI_Interval *itv = NULL;
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     boolean res       = TRUE;
 
@@ -131,7 +131,7 @@ OCI_Interval * OCI_API OCI_IntervalCreate(OCI_Connection *con, unsigned int type
 
     OCI_CHECK_INTERVAL_ENABLED(con, NULL);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     itv = OCI_IntervalInit(con, &itv, NULL, type);
 
@@ -156,7 +156,7 @@ boolean OCI_API OCI_IntervalFree(OCI_Interval *itv)
     
     OCI_CHECK_INTERVAL_ENABLED(itv->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CHECK_OBJECT_FETCHED(itv, FALSE);
 
@@ -209,7 +209,7 @@ boolean OCI_API OCI_IntervalAssign(OCI_Interval *itv,  OCI_Interval *itv_src)
     
     OCI_CHECK_INTERVAL_ENABLED(itv->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -239,7 +239,7 @@ int OCI_API OCI_IntervalCheck(OCI_Interval *itv)
     
     OCI_CHECK_INTERVAL_ENABLED(itv->con, OCI_ERROR);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -271,7 +271,7 @@ int OCI_API OCI_IntervalCompare(OCI_Interval *itv, OCI_Interval *itv2)
     
     OCI_CHECK_INTERVAL_ENABLED(itv->con, value);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -303,7 +303,7 @@ boolean OCI_API OCI_IntervalFromText(OCI_Interval *itv, const mtext * str)
     
     OCI_CHECK_INTERVAL_ENABLED(itv->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     ostr = OCI_GetInputMetaString(str, &osize);
  
@@ -351,7 +351,7 @@ boolean OCI_API OCI_IntervalToText(OCI_Interval *itv, int leading_prec,
     
     str[0] = 0;
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     ostr = OCI_GetInputMetaString(str, &osize);
  
@@ -404,7 +404,7 @@ boolean OCI_API OCI_IntervalFromTimeZone(OCI_Interval *itv, const mtext * str)
     
     OCI_CHECK_INTERVAL_ENABLED(itv->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     ostr = OCI_GetInputMetaString(str, &osize);
   
@@ -454,7 +454,7 @@ boolean OCI_API OCI_IntervalGetDaySecond(OCI_Interval *itv, int *day, int *hour,
     *sec  = 0;
     *fsec = 0;
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -497,7 +497,7 @@ boolean OCI_API OCI_IntervalGetYearMonth(OCI_Interval *itv, int *year, int *mont
     *year  = 0;
     *month = 0;
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -532,7 +532,7 @@ boolean OCI_API OCI_IntervalSetDaySecond(OCI_Interval *itv, int day,int hour,
     
     OCI_CHECK_INTERVAL_ENABLED(itv->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -570,7 +570,7 @@ boolean OCI_API OCI_IntervalSetYearMonth(OCI_Interval *itv, int year, int month)
     
     OCI_CHECK_INTERVAL_ENABLED(itv->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -605,7 +605,7 @@ boolean OCI_API OCI_IntervalAdd(OCI_Interval *itv, OCI_Interval *itv2)
 
     OCI_CHECK_INTERVAL_ENABLED(itv->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -635,7 +635,7 @@ boolean OCI_API OCI_IntervalSubtract(OCI_Interval *itv, OCI_Interval *itv2)
     
     OCI_CHECK_INTERVAL_ENABLED(itv->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (

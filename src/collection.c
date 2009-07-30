@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: collection.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: collection.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -89,34 +89,8 @@ OCI_Coll * OCI_CollInit(OCI_Connection *con, OCI_Coll **pcoll, void *handle,
         OCI_CollFree(coll);
         coll = NULL;
     }
-    else
-    {
-       /* on success, get the collection size */
-
-        OCI_CollGetInternalSize(coll);
-    }
 
     return coll;
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_CollGetInternalSize
- * ------------------------------------------------------------------------ */
-
-boolean OCI_CollGetInternalSize(OCI_Coll *coll)
-{
-    boolean res = TRUE;
-
-    /* no check */
-
-    OCI_CALL2
-    (
-        res, coll->con,
-
-        OCICollSize(OCILib.env, coll->con->err, coll->handle, (sb4 *) &coll->size)
-    )
-
-    return res;
 }
 
 /* ************************************************************************ *
@@ -198,8 +172,6 @@ boolean OCI_API OCI_CollAssign(OCI_Coll *coll, OCI_Coll *coll_src)
         OCICollAssign(OCILib.env, coll->con->err, coll_src->handle, coll->handle)
     )
 
-    OCI_CollGetInternalSize(coll);
-
     OCI_RESULT(res);
 
     return res;
@@ -248,13 +220,19 @@ unsigned int OCI_API OCI_CollGetMax(OCI_Coll *coll)
 
 unsigned int OCI_API OCI_CollGetSize(OCI_Coll *coll)
 {
-    int size = 0;
+    boolean res = TRUE;
+    sb4 size    = 0;
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, 0);
 
-    size = coll->size;
+    OCI_CALL2
+    (
+        res, coll->con,
 
-    OCI_RESULT(TRUE);
+        OCICollSize(OCILib.env, coll->con->err, coll->handle, &size)
+    )
+
+    OCI_RESULT(res);
 
     return (unsigned int) size;
 }
@@ -265,11 +243,14 @@ unsigned int OCI_API OCI_CollGetSize(OCI_Coll *coll)
 
 boolean OCI_API OCI_CollTrim(OCI_Coll *coll, unsigned int nb_elem)
 {
-    boolean res = TRUE;
+    boolean res      = TRUE;
+    unsigned int size = 0;
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
 
-    OCI_CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) coll->size, FALSE);
+    size = OCI_CollGetSize(coll);
+
+    OCI_CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) size, FALSE);
 
     OCI_CALL2
     (
@@ -277,8 +258,6 @@ boolean OCI_API OCI_CollTrim(OCI_Coll *coll, unsigned int nb_elem)
 
         OCICollTrim(OCILib.env, coll->con->err, (sb4) nb_elem, coll->handle)
     )
-
-    OCI_CollGetInternalSize(coll);
 
     OCI_RESULT(res);
 
@@ -298,7 +277,6 @@ OCI_Elem * OCI_API OCI_CollGetAt(OCI_Coll *coll, unsigned int index)
     OCI_Elem *elem = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, NULL);
-    OCI_CHECK_BOUND(coll->con, (int) index, 1, coll->size, FALSE);
 
     OCI_CALL2
     (
@@ -331,8 +309,6 @@ boolean OCI_API OCI_CollSetAt(OCI_Coll *coll, unsigned int index, OCI_Elem *elem
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
 
     OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].type == coll->typinf->cols[0].type, FALSE);
-
-    OCI_CHECK_BOUND(coll->con, (int) index, 1, coll->size, FALSE);
 
     OCI_CALL2
     (
@@ -367,8 +343,6 @@ boolean OCI_API OCI_CollAppend(OCI_Coll *coll, OCI_Elem *elem)
         OCICollAppend(OCILib.env, coll->con->err, elem->handle, elem->pind,
                       coll->handle)
     )
-
-    OCI_CollGetInternalSize(coll);
 
     OCI_RESULT(res);
 
@@ -407,3 +381,4 @@ boolean OCI_API OCI_CollClear(OCI_Coll *coll)
 
     return res;
 }
+

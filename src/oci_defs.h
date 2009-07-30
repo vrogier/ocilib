@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_defs.h, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: oci_defs.h, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_DEFS_H_INCLUDED 
@@ -147,6 +147,7 @@
 #define OCI_HTYPE_DIRPATH_STREAM       16              /* direct path stream */
 #define OCI_HTYPE_TRANS         10                     /* transaction handle */
 #define OCI_HTYPE_CPOOL         26                 /* connection pool handle */
+#define OCI_HTYPE_ADMIN         28                           /* admin handle */
 
 /*-------------------------Descriptor Types----------------------------------*/
 
@@ -224,6 +225,7 @@
 #define OCI_ATTR_SERVER_STATUS		   143        /* state of the server hdl */
 
 #define OCI_ATTR_CURRENT_POSITION      164      /* for scrollable result sets*/
+#define OCI_ATTR_STMTCACHESIZE         176         /* size of the stmt cache */
 
 #define OCI_ATTR_CONN_NOWAIT           178
 #define OCI_ATTR_CONN_BUSY_COUNT       179
@@ -247,12 +249,13 @@
 #define OCI_ATTR_CHAR_USED             285          /* char length semantics */
 #define OCI_ATTR_CHAR_SIZE             286                    /* char length */
 
+#define OCI_ATTR_ADMIN_PFILE           389         /* client-side param file */
+
 #define OCI_ATTR_MODULE                366             /* module for tracing */
 #define OCI_ATTR_ACTION                367             /* action for tracing */
 #define OCI_ATTR_CLIENT_INFO           368                    /* client info */
 
 #define OCI_ATTR_DRIVER_NAME           424                    /* Driver Name */
-
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */ 
 
@@ -347,7 +350,7 @@
 /*------------------------Authentication Modes-------------------------------*/
 #define OCI_SYSDBA          0x00000002           /* for SYSDBA authorization */
 #define OCI_SYSOPER         0x00000004          /* for SYSOPER authorization */
-
+#define OCI_PRELIM_AUTH     0x00000008      /* for preliminary authorization */
 
 /*------------------------ Transaction Start Flags --------------------------*/
 
@@ -702,6 +705,17 @@ typedef uword OCIObjectMarkStatus;
 
 #define OCI_ATTR_DIRPATH_NOLOG          79               /* nologging option */
 #define OCI_ATTR_DIRPATH_PARALLEL       80     /* parallel (temp seg) option */
+
+/*------------------------- Database Startup Flags --------------------------*/
+#define OCI_DBSTARTUPFLAG_FORCE 0x00000001  /* Abort running instance, start */
+#define OCI_DBSTARTUPFLAG_RESTRICT 0x00000002      /* Restrict access to DBA */
+
+/*------------------------- Database Shutdown Modes -------------------------*/
+#define OCI_DBSHUTDOWN_TRANSACTIONAL      1 /* Wait for all the transactions */
+#define OCI_DBSHUTDOWN_TRANSACTIONAL_LOCAL 2  /* Wait for local transactions */
+#define OCI_DBSHUTDOWN_IMMEDIATE           3      /* Terminate and roll back */
+#define OCI_DBSHUTDOWN_ABORT              4 /* Terminate and don't roll back */
+#define OCI_DBSHUTDOWN_FINAL              5              /* Orderly shutdown */
 
 
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: bind.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: bind.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -176,6 +176,14 @@ boolean OCI_API OCI_BindSetDataSizeAtPos(OCI_Bind *bnd, unsigned int position,
 
     if (bnd->buf.lens != NULL)
     {
+        if (bnd->type == OCI_CDT_TEXT)
+        {
+            if (bnd->size == (sb4) size)
+                size += sizeof(odtext);
+
+            size *= sizeof(odtext);
+        }
+
         ((ub2 *) bnd->buf.lens)[position-1] = (ub2) size; 
 
         res = TRUE;
@@ -201,19 +209,27 @@ unsigned int OCI_API OCI_BindGetDataSize(OCI_Bind *bnd)
 
 unsigned int OCI_API OCI_BindGetDataSizeAtPos(OCI_Bind *bnd, unsigned int position)
 {
-    ub2 size = 0;
+    unsigned int size = 0;
 
     OCI_CHECK_PTR(OCI_IPC_BIND, bnd, 0);
     OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buf.count, 0);
  
     if (bnd->buf.lens != NULL)
     {
-        size = ((ub2 *) bnd->buf.lens)[position-1];
+        size = (unsigned int) ((ub2 *) bnd->buf.lens)[position-1];
+
+        if (bnd->type == OCI_CDT_TEXT)
+        {
+            if (bnd->size == (sb4) size)
+                size -= sizeof(odtext);
+
+            size /= sizeof(odtext);
+        }
     }
 
     OCI_RESULT(TRUE);
 
-    return (unsigned int) size;
+    return size;
 }
 
 

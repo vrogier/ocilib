@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: statement.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -96,6 +96,20 @@ boolean OCI_BindCheck(OCI_Statement *stmt)
     {
         bnd = stmt->ubinds[i];
         ind = (sb2 *) bnd->buf.inds;
+
+        /* for strings, re-initialize length array with buffer default size */
+
+        if (bnd->type == OCI_CDT_TEXT)
+        {
+            unsigned int i;
+
+            for (i=0; i < bnd->buf.count; i++)
+            {
+                *(ub2*)(((ub1 *)bnd->buf.lens) + sizeof(ub2) * i) = (ub2) bnd->size;
+            }
+        }
+
+        /* extra work for internal allocated binds buffers */
 
         if (bnd->alloc == TRUE)
         {
@@ -252,7 +266,7 @@ boolean OCI_BindReset(OCI_Statement *stmt)
         {
             memset(bnd->buf.inds, 0, bnd->buf.count * sizeof(sb2));
         }
-               
+
 #ifdef OCI_CHECK_DATASTRINGS
 
         if (bnd->type == OCI_CDT_TEXT)
@@ -267,6 +281,9 @@ boolean OCI_BindReset(OCI_Statement *stmt)
 
                 if (bnd->buf.lens != NULL)
                     osize = (int) ((ub2 *) bnd->buf.lens)[j];
+
+                if (bnd->size == (sb4) osize)
+                    osize -= sizeof(odtext);
                 
                 OCI_GetOutputString(((ub1 *) bnd->buf.data) + (j*offset2),
                                     ((ub1 *) bnd->input)    + (j*offset1),
@@ -307,7 +324,6 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
     boolean reused   = FALSE;
     ub4 *pnbelem     = NULL;
     int index        = 0;
-    ub4 i;
 
     /* check index if necessary */
 
@@ -424,7 +440,6 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
             stmt->map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
 
             res = (stmt->map != NULL);
-
         }
     }
 
@@ -517,18 +532,15 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
         res = (bnd->buf.lens != NULL);
 
-       /* initialize length array with buffer default size */
+        /* initialize length array with buffer default size */
 
         if (res == TRUE)
         {
+            unsigned int i;
+
             for (i=0; i < nbelem; i++)
             {
-                ub2 datalen = (ub2) size;
-
-                if (type == OCI_CDT_TEXT) 
-                    datalen -= sizeof(odtext);
-
-                *(ub2*)(((ub1 *)bnd->buf.lens) + sizeof(ub2) * i) = (ub2) datalen;
+                *(ub2*)(((ub1 *)bnd->buf.lens) + sizeof(ub2) * i) = (ub2) size;
             }
         }
     }
@@ -646,8 +658,8 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 #ifdef OCI_USERDATA_UNICODE
             ||
             (
-                (bnd->type          == OCI_CDT_TEXT)           &&
-                (OCI_GetVersionConnection(stmt->con) >= OCI_9) &&
+                (bnd->type          == OCI_CDT_TEXT)             &&
+                (OCI_GetVersionConnection(stmt->con) >= OCI_9_0) &&
                 (bnd->buf.lens      == NULL)
             )
 #endif
@@ -2125,7 +2137,7 @@ boolean OCI_API OCI_BindTimestamp(OCI_Statement *stmt, const mtext *name,
 
     OCI_CHECK_TIMESTAMP_ENABLED(stmt->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     /* map oracle internal type */
 
@@ -2166,7 +2178,7 @@ boolean OCI_API OCI_BindArrayOfTimestamps(OCI_Statement *stmt, const mtext *name
 
     OCI_CHECK_TIMESTAMP_ENABLED(stmt->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     /* map oracle internal type */
 
@@ -2206,7 +2218,7 @@ boolean OCI_API OCI_BindInterval(OCI_Statement *stmt, const mtext *name,
 
     OCI_CHECK_INTERVAL_ENABLED(stmt->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     /* map oracle internal type */
 
@@ -2244,7 +2256,7 @@ boolean OCI_API OCI_BindArrayOfIntervals(OCI_Statement *stmt, const mtext *name,
 
     OCI_CHECK_INTERVAL_ENABLED(stmt->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     /* map oracle internal type */
 
@@ -2625,7 +2637,7 @@ boolean OCI_API OCI_RegisterDate(OCI_Statement *stmt, const mtext *name)
        data with returning clause.
        It's an Oracle known bug #3269146 */
 
-    if (OCI_GetVersionConnection(stmt->con) < OCI_11)
+    if (OCI_GetVersionConnection(stmt->con) < OCI_10_2)
     {
         code = SQLT_DAT;
         size = 7;
@@ -2649,7 +2661,7 @@ boolean OCI_API OCI_RegisterTimestamp(OCI_Statement *stmt, const mtext *name,
 
     OCI_CHECK_TIMESTAMP_ENABLED(stmt->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     /* map oracle internal type */
 
@@ -2688,7 +2700,7 @@ boolean OCI_API OCI_RegisterInterval(OCI_Statement *stmt, const mtext *name,
 
     OCI_CHECK_INTERVAL_ENABLED(stmt->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     /* map oracle internal type */
 

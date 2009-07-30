@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_api.h, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: oci_api.h, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_API_H_INCLUDED 
@@ -58,6 +58,8 @@
 /* ************************************************************************ *
  *                         PUBLIC OCI API PROTOTYPES
  * ************************************************************************ */
+
+/* API introduced in 8.0 */
 
 typedef sword (*OCIENVCREATE) 
 (
@@ -295,16 +297,6 @@ typedef sword (*OCISTMTFETCH )
     ub4 mode
 );
 
-typedef sword (*OCISTMTFETCH2 ) 
-(
-    OCIStmt *stmtp, 
-    OCIError *errhp,
-    ub4 nrows, 
-    ub2 orientation, 
-    sb4 fetchOffset,
-    ub4 mode
-);
-
 typedef sword (*OCIPARAMGET)
 (
     const void *hndlp,
@@ -511,110 +503,6 @@ typedef sword (*OCILOBASSIGN)
     OCILobLocator **dst_locpp
 );
 
-#ifdef ORAXB8_DEFINED
-
-typedef sword (*OCILOBCOPY2)
-(
-    OCISvcCtx *svchp, 
-    OCIError *errhp, 
-    OCILobLocator *dst_locp,                
-    OCILobLocator *src_locp,
-    oraub8 amount, 
-    oraub8 dst_offset, 
-    oraub8 src_offset
-);
-
-typedef sword (*OCILOBERASE2)
-(
-    OCISvcCtx *svchp, 
-    OCIError *errhp, 
-    OCILobLocator *locp,
-    oraub8 *amount, 
-    oraub8 offset
-);
-
-typedef sword (*OCILOBGETLENGTH2)
-(
-    OCISvcCtx *svchp, 
-    OCIError *errhp, 
-    OCILobLocator *locp, 
-    oraub8 *lenp
-);
-
-typedef sword (*OCILOBLOADFROMFILE2)
-(
-    OCISvcCtx *svchp, 
-    OCIError *errhp, 
-    OCILobLocator *dst_locp,
-    OCILobLocator *src_filep, 
-    oraub8 amount, 
-    oraub8 dst_offset, 
-    oraub8 src_offset
-);
-
-typedef sword (*OCILOBREAD2)
-(
-    OCISvcCtx *svchp, 
-    OCIError *errhp, 
-    OCILobLocator *locp,
-    oraub8 *byte_amtp, 
-    oraub8 *char_amtp, 
-    oraub8 offset,
-    dvoid *bufp, 
-    oraub8 bufl,
-    ub1 piece, 
-    dvoid *ctxp,
-    sb4 (*cbfp)(dvoid *ctxp, CONST dvoid *bufp, oraub8 len, ub1 piece, 
-                dvoid **changed_bufpp, oraub8 *changed_lenp),
-    ub2 csid, 
-    ub1 csfrm
-);
-
-typedef sword (*OCILOBTRIM2) 
-(
-    OCISvcCtx *svchp, 
-    OCIError *errhp, 
-    OCILobLocator *locp,
-    oraub8 newlen
-);
-
-typedef sword (*OCILOBWRITE2) 
-(
-    OCISvcCtx *svchp, 
-    OCIError *errhp, 
-    OCILobLocator *locp,
-    oraub8 *byte_amtp, 
-    oraub8 *char_amtp, 
-    oraub8 offset,
-    dvoid *bufp, 
-    oraub8 buflen, 
-    ub1 piece, 
-    dvoid *ctxp, 
-    sb4 (*cbfp)(dvoid *ctxp, CONST dvoid *bufp, oraub8 len, ub1 piece, 
-                dvoid **changed_bufpp, oraub8 *changed_lenp),
-    ub2 csid, 
-    ub1 csfrm
-);
-
-typedef sword (*OCILOBWRITEAPPEND2)
-(
-    OCISvcCtx *svchp, 
-    OCIError *errhp, 
-    OCILobLocator *lobp,
-    oraub8 *byte_amtp, 
-    oraub8 *char_amtp, 
-    dvoid *bufp,
-    oraub8 bufl, 
-    ub1 piece, 
-    dvoid *ctxp,
-    sb4 (*cbfp)(dvoid *ctxp, dvoid *bufp, oraub8 *lenp, ub1 *piece, 
-                dvoid **changed_bufpp, oraub8 *changed_lenp),
-    ub2 csid, 
-    ub1 csfrm
-);
-
-#endif
-
 typedef sword (*OCILOBFILEOPEN) 
 (
     OCISvcCtx *svchp, 
@@ -716,13 +604,7 @@ typedef sword (*OCILOBFLUSHBUFFER)
     ub4 flag
 );
 
-typedef sword (*OCILOBGETSTORAGELIMIT)
-(
-    OCISvcCtx *svchp, 
-    OCIError *errhp,
-    OCILobLocator *lobp, 
-    oraub8 *limitp
-);
+
 
 typedef sword (*OCISERVERVERSION)  
 (
@@ -1441,131 +1323,6 @@ typedef sword (*OCIRAWALLOCSIZE)
     ub4 *allocsize    
 );
 
-typedef void (*OCITHREADPROCESSINIT)();
-
-typedef sword (*OCITHREADINIT)
-(
-    dvoid *hndl, 
-    OCIError *err
-);
-
-typedef sword (*OCITHREADTERM)
-(
-    dvoid *hndl, 
-    OCIError *err
-);
-
-typedef sword (*OCITHREADIDINIT)
-(
-    dvoid *hndl, 
-    OCIError *err, 
-    OCIThreadId **tid
-);
-
-typedef sword (*OCITHREADIDDESTROY)
-(
-    dvoid *hndl, 
-    OCIError *err, 
-    OCIThreadId **tid
-);
-
-typedef sword (*OCITHREADHNDINIT)
-(
-    dvoid *hndl, 
-    OCIError *err, 
-    OCIThreadHandle **thnd
-);
-
-typedef sword (*OCITHREADHNDDESTROY)
-(
-    dvoid *hndl, 
-    OCIError *err, 
-    OCIThreadHandle **thnd
-);
-
-typedef sword (*OCITHREADCREATE)
-(
-    dvoid *hndl, 
-    OCIError *err,
-    void (*start)(dvoid *), 
-    dvoid *arg,
-    OCIThreadId *tid, 
-    OCIThreadHandle *tHnd
-);
-
-typedef sword (*OCITHREADJOIN)
-(
-    dvoid *hndl, 
-    OCIError *err, 
-    OCIThreadHandle *tHnd
-);
-
-typedef sword (*OCITHREADCLOSE)
-(
-    dvoid *hndl, 
-    OCIError *err, 
-    OCIThreadHandle *tHnd
-);
-
-typedef sword (*OCITHREADMUTEXINIT)
-(
-    dvoid *hndl, 
-    OCIError *err,  
-    OCIThreadMutex **mutex
-); 
-
-typedef sword (*OCITHREADMUTEXDESTROY)
-(
-    dvoid *hndl, 
-    OCIError *err, 
-    OCIThreadMutex **mutex
-);
-
-typedef sword (*OCITHREADMUTEXACQUIRE)
-(
-    dvoid *hndl, 
-    OCIError *err,
-    OCIThreadMutex *mutex
-);
-
-typedef sword (*OCITHREADMUTEXRELEASE)
-(
-    dvoid *hndl, 
-    OCIError *err,
-    OCIThreadMutex *mutex
-);
-
-typedef sword (*OCITHREADKEYINIT)
-(
-    dvoid *hndl, 
-    OCIError *err, 
-    OCIThreadKey **key,
-    void (*destFn) (void *)
-); 
-
-typedef sword (*OCITHREADKEYDESTROY)
-(
-    dvoid *hndl, 
-    OCIError *err, 
-    OCIThreadKey **key
-);
-
-typedef sword (*OCITHREADKEYSET)
-(
-    dvoid *hndl, 
-    OCIError *err, 
-    OCIThreadKey *key,
-    dvoid **pValue
-);
-
-typedef sword (*OCITHREADKEYGET)
-(
-    dvoid *hndl, 
-    OCIError *err, 
-    OCIThreadKey *key,
-    dvoid *value
-);
-
 typedef sword (*OCICONNECTIONPOOLCREATE)
 (
     OCIEnv *envhp, 
@@ -1695,6 +1452,133 @@ typedef sword (*OCIITERPREV)
     boolean *boc    
 );
 
+/* API introduced in 8.1 */
+
+typedef void (*OCITHREADPROCESSINIT)();
+
+typedef sword (*OCITHREADINIT)
+(
+    dvoid *hndl, 
+    OCIError *err
+);
+
+typedef sword (*OCITHREADTERM)
+(
+    dvoid *hndl, 
+    OCIError *err
+);
+
+typedef sword (*OCITHREADIDINIT)
+(
+    dvoid *hndl, 
+    OCIError *err, 
+    OCIThreadId **tid
+);
+
+typedef sword (*OCITHREADIDDESTROY)
+(
+    dvoid *hndl, 
+    OCIError *err, 
+    OCIThreadId **tid
+);
+
+typedef sword (*OCITHREADHNDINIT)
+(
+    dvoid *hndl, 
+    OCIError *err, 
+    OCIThreadHandle **thnd
+);
+
+typedef sword (*OCITHREADHNDDESTROY)
+(
+    dvoid *hndl, 
+    OCIError *err, 
+    OCIThreadHandle **thnd
+);
+
+typedef sword (*OCITHREADCREATE)
+(
+    dvoid *hndl, 
+    OCIError *err,
+    void (*start)(dvoid *), 
+    dvoid *arg,
+    OCIThreadId *tid, 
+    OCIThreadHandle *tHnd
+);
+
+typedef sword (*OCITHREADJOIN)
+(
+    dvoid *hndl, 
+    OCIError *err, 
+    OCIThreadHandle *tHnd
+);
+
+typedef sword (*OCITHREADCLOSE)
+(
+    dvoid *hndl, 
+    OCIError *err, 
+    OCIThreadHandle *tHnd
+);
+
+typedef sword (*OCITHREADMUTEXINIT)
+(
+    dvoid *hndl, 
+    OCIError *err,  
+    OCIThreadMutex **mutex
+); 
+
+typedef sword (*OCITHREADMUTEXDESTROY)
+(
+    dvoid *hndl, 
+    OCIError *err, 
+    OCIThreadMutex **mutex
+);
+
+typedef sword (*OCITHREADMUTEXACQUIRE)
+(
+    dvoid *hndl, 
+    OCIError *err,
+    OCIThreadMutex *mutex
+);
+
+typedef sword (*OCITHREADMUTEXRELEASE)
+(
+    dvoid *hndl, 
+    OCIError *err,
+    OCIThreadMutex *mutex
+);
+
+typedef sword (*OCITHREADKEYINIT)
+(
+    dvoid *hndl, 
+    OCIError *err, 
+    OCIThreadKey **key,
+    void (*destFn) (void *)
+); 
+
+typedef sword (*OCITHREADKEYDESTROY)
+(
+    dvoid *hndl, 
+    OCIError *err, 
+    OCIThreadKey **key
+);
+
+typedef sword (*OCITHREADKEYSET)
+(
+    dvoid *hndl, 
+    OCIError *err, 
+    OCIThreadKey *key,
+    dvoid **pValue
+);
+
+typedef sword (*OCITHREADKEYGET)
+(
+    dvoid *hndl, 
+    OCIError *err, 
+    OCIThreadKey *key,
+    dvoid *value
+);
+
 typedef sword (*OCIDIRPATHABORT)
 ( 
     OCIDirPathCtx *dpctx, 
@@ -1774,12 +1658,186 @@ typedef sword (*OCICACHEFREE)
     CONST OCISvcCtx *svc
 ); 
 
+/* API introduced in 9.1 */
+
+typedef sword (*OCISTMTFETCH2 ) 
+(
+    OCIStmt *stmtp, 
+    OCIError *errhp,
+    ub4 nrows, 
+    ub2 orientation, 
+    sb4 fetchOffset,
+    ub4 mode
+);
+
+/* API introduced in 9.2 */
+
+typedef sword (*OCISTMTPREPARE2)
+( 
+    OCISvcCtx *svchp, 
+    OCIStmt **stmtp, 
+    OCIError *errhp,                     
+    CONST OraText *stmt, 
+    ub4 stmt_len, 
+    CONST OraText *key,                     
+    ub4 key_len, 
+    ub4 language, 
+    ub4 mode
+);
+
+typedef sword (*OCISTMTRELEASE) 
+( 
+    OCIStmt *stmtp, 
+    OCIError *errhp, 
+    CONST OraText *key,                       
+    ub4 key_len, 
+    ub4 mode
+);
+
+/* API introduced in 10.1 */
+
+#ifdef ORAXB8_DEFINED
+
+typedef sword (*OCILOBGETSTORAGELIMIT)
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp,
+    OCILobLocator *lobp, 
+    oraub8 *limitp
+);
+
+typedef sword (*OCILOBCOPY2)
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp, 
+    OCILobLocator *dst_locp,                
+    OCILobLocator *src_locp,
+    oraub8 amount, 
+    oraub8 dst_offset, 
+    oraub8 src_offset
+);
+
+typedef sword (*OCILOBERASE2)
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp, 
+    OCILobLocator *locp,
+    oraub8 *amount, 
+    oraub8 offset
+);
+
+typedef sword (*OCILOBGETLENGTH2)
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp, 
+    OCILobLocator *locp, 
+    oraub8 *lenp
+);
+
+typedef sword (*OCILOBLOADFROMFILE2)
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp, 
+    OCILobLocator *dst_locp,
+    OCILobLocator *src_filep, 
+    oraub8 amount, 
+    oraub8 dst_offset, 
+    oraub8 src_offset
+);
+
+typedef sword (*OCILOBREAD2)
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp, 
+    OCILobLocator *locp,
+    oraub8 *byte_amtp, 
+    oraub8 *char_amtp, 
+    oraub8 offset,
+    dvoid *bufp, 
+    oraub8 bufl,
+    ub1 piece, 
+    dvoid *ctxp,
+    sb4 (*cbfp)(dvoid *ctxp, CONST dvoid *bufp, oraub8 len, ub1 piece, 
+                dvoid **changed_bufpp, oraub8 *changed_lenp),
+    ub2 csid, 
+    ub1 csfrm
+);
+
+typedef sword (*OCILOBTRIM2) 
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp, 
+    OCILobLocator *locp,
+    oraub8 newlen
+);
+
+typedef sword (*OCILOBWRITE2) 
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp, 
+    OCILobLocator *locp,
+    oraub8 *byte_amtp, 
+    oraub8 *char_amtp, 
+    oraub8 offset,
+    dvoid *bufp, 
+    oraub8 buflen, 
+    ub1 piece, 
+    dvoid *ctxp, 
+    sb4 (*cbfp)(dvoid *ctxp, CONST dvoid *bufp, oraub8 len, ub1 piece, 
+                dvoid **changed_bufpp, oraub8 *changed_lenp),
+    ub2 csid, 
+    ub1 csfrm
+);
+
+typedef sword (*OCILOBWRITEAPPEND2)
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp, 
+    OCILobLocator *lobp,
+    oraub8 *byte_amtp, 
+    oraub8 *char_amtp, 
+    dvoid *bufp,
+    oraub8 bufl, 
+    ub1 piece, 
+    dvoid *ctxp,
+    sb4 (*cbfp)(dvoid *ctxp, dvoid *bufp, oraub8 *lenp, ub1 *piece, 
+                dvoid **changed_bufpp, oraub8 *changed_lenp),
+    ub2 csid, 
+    ub1 csfrm
+);
+
+#endif /* ORAXB8_DEFINED */
+
+/* API introduced in 10.2 */
+
+typedef sword (*OCIDBSTARTUP)
+( 
+    OCISvcCtx *svchp,
+    OCIError *errhp,
+    OCIAdmin *admhp,
+    ub4 mode,
+    ub4 flags
+);
+
+typedef sword (*OCIDBSHUTDOWN)
+(
+    OCISvcCtx *svchp,
+    OCIError *errhp,
+    OCIAdmin *admhp,
+    ub4 mode
+);
+
 typedef sword (*OCIPING)
 (
     OCISvcCtx *svchp, 
     OCIError *errhp, 
     ub4 mode
 );
+
+/* API introduced in 11.1 */
+
+
+/* API introduced in 11.2 */
 
 
 #endif /* OCILIB_OCI_API_H_INCLUDED */

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: dirpath.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: dirpath.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -142,7 +142,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
             OCI_ReleaseMetaString(ostr);
         }
 
-        if (OCILib.ver_runtime >= OCI_9)
+        if (OCILib.version_runtime >= OCI_9_0)
         {
             /* set array size attribute */
 
@@ -1222,7 +1222,7 @@ boolean OCI_API OCI_DirPathSetCacheSize(OCI_DirPath *dp, unsigned int size)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_2
 
     OCI_CALL2
     (

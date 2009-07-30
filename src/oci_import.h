@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_import.h, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: oci_import.h, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
@@ -282,6 +282,12 @@ extern OCILOBREAD2                  OCILobRead2;
 extern OCILOBTRIM2                  OCILobTrim2;
 extern OCILOBWRITE2                 OCILobWrite2;
 extern OCILOBWRITEAPPEND2           OCILobWriteAppend2;
+
+extern OCIDBSTARTUP                 OCIDBStartup;
+extern OCIDBSHUTDOWN                OCIDBShutdown;
+
+extern OCISTMTPREPARE2              OCIStmtPrepare2;
+extern OCISTMTRELEASE               OCIStmtRelease;
 
 #endif
 

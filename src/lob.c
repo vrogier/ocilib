@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: lob.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: lob.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -684,7 +684,7 @@ unsigned int OCI_API OCI_LobAppend(OCI_Lob *lob, void *buffer, unsigned int len)
        It's an Oracle known bug #886191
        So we use OCI_LobSeek() + OCI_LobWrite() instead */
 
-    if (OCILib.ver_runtime < OCI_10)
+    if (OCILib.version_runtime < OCI_10_1)
     {
        return OCI_LobSeek(lob, OCI_LobGetLength(lob), OCI_SEEK_SET) &&
               OCI_LobWrite(lob, buffer, len);
@@ -931,7 +931,7 @@ big_uint OCI_API OCI_LobGetMaxSize(OCI_Lob *lob)
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, 0);
 
-#if OCI_VERSION_COMPILE >= OCI_10
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
     OCI_CALL2
     (

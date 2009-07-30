@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: connection.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -204,9 +204,9 @@ boolean OCI_ConnectionAttach(OCI_Connection *con)
 
     /* attach server handle to service name */
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.ver_runtime >= OCI_9 && con->pool != NULL)
+    if (OCILib.version_runtime >= OCI_9_0 && con->pool != NULL)
     {
         ostr  = OCI_GetInputMetaString(con->pool->name, &osize);
         cmode = OCI_CPOOL;
@@ -232,7 +232,7 @@ boolean OCI_ConnectionAttach(OCI_Connection *con)
 
     if (res == TRUE)
     {
-        if (OCILib.ver_runtime < OCI_9 && con->pool != NULL)
+        if (OCILib.version_runtime < OCI_9_0 && con->pool != NULL)
             con->pool->nb_opened++;
 
         con->cstate = OCI_CONN_ATTACHED;
@@ -265,7 +265,7 @@ boolean OCI_ConnectionDetach(OCI_Connection *con)
 
     if (res == TRUE)
     {
-        if (OCILib.ver_runtime < OCI_9 && con->pool != NULL)
+        if (OCILib.version_runtime < OCI_9_0 && con->pool != NULL)
             con->pool->nb_opened--;
 
         con->cstate = OCI_CONN_ALLOCATED;
@@ -376,21 +376,23 @@ boolean OCI_ConnectionLogon(OCI_Connection *con)
 
         OCI_GetVersionServer(con);
 
-        /* create default transaction object */
+        if (!(con->mode & OCI_PRELIM_AUTH))
+        {
+            /* create default transaction object */
+    
+            con->trs  = OCI_TransactionCreate(con, 1, OCI_TRANS_READWRITE, NULL);
 
-        con->trs  = OCI_TransactionCreate(con, 1, OCI_TRANS_READWRITE, NULL);
+            /* start transaction */
 
-        /* start transaction */
-
-        res = OCI_TransactionStart(con->trs);
+            res = OCI_TransactionStart(con->trs);
+        }
     }
-
 
     /* set OCILIB's driver layer name attribute */
 
-#if OCI_VERSION_COMPILE >= OCI_11
+#if OCI_VERSION_COMPILE >= OCI_11_1
 
-    if ((res == TRUE) && (OCILib.ver_runtime >= OCI_11) && (con->ver_maj >= OCI_11))
+    if ((res == TRUE) && (OCILib.version_runtime >= OCI_11_1) && (con->ver_num >= OCI_11_1))
     {
         osize = -1;
         ostr  = OCI_GetInputMetaString(OCILIB_DRIVER_NAME, &osize);
@@ -414,7 +416,7 @@ boolean OCI_ConnectionLogon(OCI_Connection *con)
 
     if (res == TRUE)
     {
-        if (OCILib.ver_runtime < OCI_9 && con->pool != NULL)
+        if (OCILib.version_runtime < OCI_9_0 && con->pool != NULL)
             con->pool->nb_busy++;
 
         con->cstate = OCI_CONN_LOGGED;
@@ -483,7 +485,7 @@ boolean OCI_ConnectionLogOff(OCI_Connection *con)
     {
         con->cstate = OCI_CONN_ATTACHED;
 
-        if (OCILib.ver_runtime < OCI_9 && con->pool != NULL)
+        if (OCILib.version_runtime < OCI_9_0 && con->pool != NULL)
             con->pool->nb_busy--;
     }
 
@@ -526,7 +528,7 @@ boolean OCI_ConnectionClose(OCI_Connection *con)
 
     OCI_FREE(con->fmt_date);
     OCI_FREE(con->fmt_num);
-    OCI_FREE(con->version);
+    OCI_FREE(con->ver_str);
 
     con->stmts = NULL;
     con->trsns = NULL;
@@ -593,7 +595,7 @@ boolean OCI_API OCI_ConnectionFree(OCI_Connection *con)
     {
         res = OCI_ConnectionLogOff(con);
 
-        if (OCILib.ver_runtime >= OCI_9)
+        if (OCILib.version_runtime >= OCI_9_0)
             OCI_ConnectionDetach(con);
     }
     else
@@ -819,26 +821,30 @@ unsigned int OCI_API OCI_GetSessionMode(OCI_Connection *con)
 
 const mtext * OCI_API OCI_GetVersionServer(OCI_Connection *con)
 {
-    boolean res = FALSE;
+    boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 
-    if (con->version == NULL)
+    /* no version available in prelim mode */
+
+    if ((con->ver_str == NULL) && (!(con->mode & OCI_PRELIM_AUTH)))
     {
-        con->version = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext),
+        res = FALSE;
+
+        con->ver_str = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext),
                                               OCI_SIZE_BUFFER + 1, FALSE);
 
-        if (con->version != NULL)
+        if (con->ver_str != NULL)
         {
             int osize  = OCI_SIZE_BUFFER * sizeof(mtext);
             void *ostr = NULL;
             mtext *p   = NULL;
 
-            con->version[0] = 0;
+            con->ver_str[0] = 0;
 
             res  = TRUE;
 
-            ostr = OCI_GetInputMetaString(con->version, &osize);
+            ostr = OCI_GetInputMetaString(con->ver_str, &osize);
 
             OCI_CALL2
             (
@@ -849,32 +855,32 @@ const mtext * OCI_API OCI_GetVersionServer(OCI_Connection *con)
                                  (ub1) OCI_HTYPE_SVCCTX)
             )
 
-            OCI_GetOutputMetaString(ostr, con->version, &osize);
+            OCI_GetOutputMetaString(ostr, con->ver_str, &osize);
 
             OCI_ReleaseMetaString(ostr);
 
             if (res == TRUE)
             {
-                con->version[osize / sizeof(mtext)] = 0;
+                int ver_maj, ver_min, ver_rev;
+
+                ver_maj = ver_min = ver_rev = 0;
+
+                con->ver_str[osize / sizeof(mtext)] = 0;
 
                 /* parse server version string to find the version information */
 
-                for (p = con->version; (p != NULL) && (*p != 0); p++)
+                for (p = con->ver_str; (p != NULL) && (*p != 0); p++)
                 {
                     if (mtisdigit(*p) &&
                         (*(p+1) != 0) &&
                         (*(p+1) == MT('.') || (*(p+2) == MT('.') )))
                     {
-                        if (OCI_NB_ARG_VERSION != mtsscanf(p, MT("%d.%d.%d"),
-                                                           (int *) &con->ver_maj,
-                                                           (int *) &con->ver_min,
-                                                           (int *) &con->ver_rev))
+                        if (OCI_NB_ARG_VERSION == mtsscanf(p, MT("%d.%d.%d"),
+                                                           (int *) &ver_maj,
+                                                           (int *) &ver_min,
+                                                           (int *) &ver_rev))
                         {
-                            /* extracting version info failed ! */
-
-                            con->ver_maj = 0;
-                            con->ver_min = 0;
-                            con->ver_rev = 0;
+                            con->ver_num = ver_maj*100 + ver_min*10 + ver_rev;
                         }
 
                         break;
@@ -882,13 +888,13 @@ const mtext * OCI_API OCI_GetVersionServer(OCI_Connection *con)
                 }
             }
             else
-                OCI_FREE(con->version);
+                OCI_FREE(con->ver_str);
         }
     }
 
     OCI_RESULT(res);
 
-    return con->version;
+    return con->ver_str;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -899,12 +905,12 @@ unsigned int OCI_API OCI_GetServerMajorVersion(OCI_Connection *con)
 {
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, OCI_UNKNOWN);
 
-    if (con->ver_maj == 0)
+    if (con->ver_num == OCI_UNKNOWN)
         OCI_GetVersionServer(con);
 
-    OCI_RESULT(con->ver_maj != OCI_UNKNOWN);
+    OCI_RESULT(con->ver_num != OCI_UNKNOWN);
 
-    return con->ver_maj;
+    return (unsigned int) OCI_VER_MAJ(con->ver_num);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -915,12 +921,12 @@ unsigned int OCI_API OCI_GetServerMinorVersion(OCI_Connection *con)
 {
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, OCI_UNKNOWN);
 
-    if (con->ver_min == 0)
+    if (con->ver_num == OCI_UNKNOWN)
         OCI_GetVersionServer(con);
 
-    OCI_RESULT(con->ver_min != OCI_UNKNOWN);
+    OCI_RESULT(con->ver_num != OCI_UNKNOWN);
 
-    return con->ver_min;
+    return OCI_VER_MIN(con->ver_num);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -931,12 +937,12 @@ unsigned int OCI_API OCI_GetServerRevisionVersion(OCI_Connection *con)
 {
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, OCI_UNKNOWN);
 
-    if (con->ver_rev == 0)
+    if (con->ver_num == OCI_UNKNOWN)
         OCI_GetVersionServer(con);
 
-    OCI_RESULT(con->ver_rev != OCI_UNKNOWN);
+    OCI_RESULT(con->ver_num != OCI_UNKNOWN);
 
-    return con->ver_rev;
+    return (unsigned int) OCI_VER_MAJ(con->ver_num);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -990,7 +996,7 @@ boolean OCI_API OCI_SetTransaction(OCI_Connection *con, OCI_Transaction *trans)
 
     /* return the minimum supported version */
 
-    return (v1 > v2) ? v2 : v1;
+    return (OCILib.version_runtime > con->ver_num) ? con->ver_num : OCILib.version_runtime;
 }
 
 
@@ -1120,7 +1126,7 @@ boolean OCI_API OCI_ServerEnableOutput(OCI_Connection *con,
     {
         /* check params ranges ( Oracle 10g increased the size of output line */
 
-        if (con->ver_maj > OCI_10 || (con->ver_maj == OCI_10 && con->ver_min >= 2))
+        if (con->ver_num >= OCI_10_2)
         {
             if (lnsize < OCI_OUPUT_LSIZE)
                 lnsize = OCI_OUPUT_LSIZE;
@@ -1254,7 +1260,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
     boolean res = TRUE;
     mtext *str  = NULL;
 
-#if OCI_VERSION_COMPILE >= OCI_10
+#if OCI_VERSION_COMPILE >= OCI_10_1
     ub4 attrib  = 0;
 #endif
 
@@ -1278,7 +1284,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
         {
             case OCI_TRC_IDENTITY:
 
-#if OCI_VERSION_COMPILE >= OCI_10
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
                 attrib = OCI_ATTR_CLIENT_IDENTIFIER;
 
@@ -1294,7 +1300,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
 
             case OCI_TRC_MODULE:
 
- #if OCI_VERSION_COMPILE >= OCI_10
+ #if OCI_VERSION_COMPILE >= OCI_10_1
 
                 attrib = OCI_ATTR_MODULE;
 
@@ -1309,7 +1315,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
 
             case OCI_TRC_ACTION:
 
-#if OCI_VERSION_COMPILE >= OCI_10
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
                 attrib = OCI_ATTR_ACTION;
 
@@ -1324,7 +1330,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
 
             case OCI_TRC_DETAIL:
 
-#if OCI_VERSION_COMPILE >= OCI_10
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
                 attrib = OCI_ATTR_CLIENT_INFO;
 
@@ -1343,7 +1349,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
         }
     }
 
-#if OCI_VERSION_COMPILE >= OCI_10
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
     /* On success, we give the value to Oracle to record it in system session view */
 
@@ -1432,9 +1438,9 @@ boolean OCI_API OCI_Ping(OCI_Connection *con)
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_10
+#if OCI_VERSION_COMPILE >= OCI_10_2
 
-    if (OCILib.ver_runtime >= 10)
+    if (OCILib.version_runtime >= OCI_10_2)
     {
         OCI_CALL2
         (

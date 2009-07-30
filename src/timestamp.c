@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: timestamp.c, v 3.3.0 2009-06-30 23:05 Vince $
+ * $Id: timestamp.c, v 3.4.0 2009-07-30 17:40 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -47,7 +47,7 @@ OCI_Timestamp * OCI_TimestampInit(OCI_Connection *con, OCI_Timestamp **ptmsp,
 {
     OCI_Timestamp *tmsp = NULL;
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     boolean res = TRUE;
 
@@ -135,7 +135,7 @@ OCI_Timestamp * OCI_API OCI_TimestampCreate(OCI_Connection *con,
 
     OCI_CHECK_TIMESTAMP_ENABLED(con, NULL);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     tmsp = OCI_TimestampInit(con, &tmsp, NULL, type);
 
@@ -160,7 +160,7 @@ boolean OCI_API OCI_TimestampFree(OCI_Timestamp *tmsp)
     
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CHECK_OBJECT_FETCHED(tmsp, FALSE);
 
@@ -215,7 +215,7 @@ boolean OCI_API OCI_TimestampAssign(OCI_Timestamp *tmsp, OCI_Timestamp *tmsp_src
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -245,7 +245,7 @@ int OCI_API OCI_TimestampCheck(OCI_Timestamp *tmsp)
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, value);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -275,7 +275,7 @@ int OCI_API OCI_TimestampCompare(OCI_Timestamp *tmsp, OCI_Timestamp *tmsp2)
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -306,7 +306,7 @@ boolean OCI_API OCI_TimestampConstruct(OCI_Timestamp *tmsp, int year,int month,
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -351,7 +351,7 @@ boolean OCI_API OCI_TimestampConvert(OCI_Timestamp *tmsp, OCI_Timestamp *tmsp_sr
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -387,7 +387,7 @@ boolean OCI_API OCI_TimestampFromText(OCI_Timestamp *tmsp, const mtext *str,
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     ostr1 = OCI_GetInputMetaString(str, &osize1);
     ostr2 = OCI_GetInputMetaString(fmt, &osize2);
@@ -443,7 +443,7 @@ boolean OCI_API OCI_TimestampToText(OCI_Timestamp *tmsp, const mtext *fmt,
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     ostr1 = OCI_GetInputMetaString(str, &osize1);
     ostr2 = OCI_GetInputMetaString(fmt, &osize2);
@@ -508,7 +508,7 @@ boolean OCI_API OCI_TimestampGetDate(OCI_Timestamp *tmsp, int *year, int *month,
     *month = 0;
     *day   = 0;
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -566,7 +566,7 @@ boolean OCI_API OCI_TimestampGetTime(OCI_Timestamp *tmsp, int *hour, int *min,
     *sec  = 0;
     *fsec = 0;
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -627,7 +627,7 @@ boolean OCI_API OCI_TimestampGetTimeZoneName(OCI_Timestamp *tmsp, int size,
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     ostr = OCI_GetInputMetaString(str, &osize);
 
@@ -676,7 +676,7 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset(OCI_Timestamp *tmsp,
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -712,7 +712,7 @@ boolean OCI_API OCI_TimestampIntervalAdd(OCI_Timestamp *tmsp, OCI_Interval *itv)
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     /* OCIDateTimeIntervalAdd() fails if timestamps is not OCI_TIMESTAMP_TZ */
 
@@ -768,7 +768,7 @@ boolean OCI_API OCI_TimestampIntervalSub(OCI_Timestamp *tmsp,
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     /* OCIDateTimeIntervalSub() fails if timestamps is not OCI_TIMESTAMP_TZ */
 
@@ -824,7 +824,7 @@ boolean OCI_API OCI_TimestampSubtract(OCI_Timestamp *tmsp, OCI_Timestamp *tmsp2,
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_CALL4
     (
@@ -855,7 +855,7 @@ boolean OCI_API OCI_TimestampSysTimeStamp(OCI_Timestamp *tmsp)
  
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     /* Filling a timestamp handle of type OCI_TIMESTAMP with 
        OCIDateTimeSysTimeStamp() can lead later to an error ORA-01483 when
