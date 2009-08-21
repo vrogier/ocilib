@@ -42,7 +42,7 @@
  * OCI_MemAlloc
  * ------------------------------------------------------------------------ */
 
-void * OCI_MemAlloc(int ptr_type, int block_size, int block_count, 
+void * OCI_MemAlloc(int ptr_type, size_t block_size, size_t block_count, 
                     boolean zero_fill)
 {
     void * ptr  = NULL;
@@ -65,8 +65,8 @@ void * OCI_MemAlloc(int ptr_type, int block_size, int block_count,
  * OCI_MemRealloc
  * ------------------------------------------------------------------------ */
 
-void * OCI_MemRealloc(void * ptr_mem, int ptr_type, int block_size, 
-                      int block_count)
+void * OCI_MemRealloc(void * ptr_mem, int ptr_type, size_t block_size, 
+                      size_t block_count)
 {
     void * ptr  = NULL;
     size_t size = (size_t) (block_size * block_count);

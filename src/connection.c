@@ -690,6 +690,7 @@ boolean OCI_API OCI_IsConnected(OCI_Connection *con)
 {
     boolean res = TRUE;
     ub4 status  = 0;
+    ub4 size    = (ub4) sizeof(status);
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
 
@@ -698,7 +699,7 @@ boolean OCI_API OCI_IsConnected(OCI_Connection *con)
         res, con,
 
         OCIAttrGet((dvoid **) con->svr, (ub4) OCI_HTYPE_SERVER,
-                   (dvoid *) &status, (ub4 *) NULL,
+                   (dvoid *) &status, (ub4 *) &size,
                    (ub4) OCI_ATTR_SERVER_STATUS, con->err)
 
     )
@@ -832,11 +833,11 @@ const mtext * OCI_API OCI_GetVersionServer(OCI_Connection *con)
         res = FALSE;
 
         con->ver_str = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext),
-                                              OCI_SIZE_BUFFER + 1, FALSE);
+                                              (size_t) (OCI_SIZE_BUFFER + 1), FALSE);
 
         if (con->ver_str != NULL)
         {
-            int osize  = OCI_SIZE_BUFFER * sizeof(mtext);
+            int osize  = OCI_SIZE_BUFFER * (int) sizeof(mtext);
             void *ostr = NULL;
             mtext *p   = NULL;
 
@@ -865,15 +866,15 @@ const mtext * OCI_API OCI_GetVersionServer(OCI_Connection *con)
 
                 ver_maj = ver_min = ver_rev = 0;
 
-                con->ver_str[osize / sizeof(mtext)] = 0;
+                con->ver_str[osize / (int) sizeof(mtext)] = 0;
 
                 /* parse server version string to find the version information */
 
                 for (p = con->ver_str; (p != NULL) && (*p != 0); p++)
                 {
                     if (mtisdigit(*p) &&
-                        (*(p+1) != 0) &&
-                        (*(p+1) == MT('.') || (*(p+2) == MT('.') )))
+                        (*(p + (size_t) 1) != 0) &&
+                        (*(p + (size_t) 1) == MT('.') || (*(p + (size_t) 2) == MT('.') )))
                     {
                         if (OCI_NB_ARG_VERSION == mtsscanf(p, MT("%d.%d.%d"),
                                                            (int *) &ver_maj,
@@ -1115,7 +1116,7 @@ boolean OCI_API OCI_ServerEnableOutput(OCI_Connection *con,
     {
         con->svopt  = (OCI_ServerOutput *) OCI_MemAlloc(OCI_IPC_SERVER_OUPUT,
                                                         sizeof(*con->svopt),
-                                                        1, TRUE);
+                                                        (size_t) 1, TRUE);
 
         res = (con->svopt != NULL);
     }
@@ -1145,8 +1146,8 @@ boolean OCI_API OCI_ServerEnableOutput(OCI_Connection *con,
         /* allocate internal string (line) array */
 
         con->svopt->arrbuf = (ub1 *) OCI_MemAlloc(OCI_IPC_STRING,
-                                                  (con->svopt->lnsize + 1) * sizeof(dtext),
-                                                  con->svopt->arrsize, TRUE
+                                                  ((size_t)(con->svopt->lnsize + 1)) * sizeof(dtext),
+                                                  (size_t) con->svopt->arrsize, TRUE
                                                   );
 
         res = (con->svopt->arrbuf != NULL);
@@ -1240,9 +1241,16 @@ const dtext * OCI_API OCI_ServerGetOutput(OCI_Connection *con)
         res = OCI_Execute(con->svopt->stmt);
 
     if (con->svopt->cursize > 0)
-        str = (dtext*) (con->svopt->arrbuf +
-                        (((con->svopt->lnsize + 1) * sizeof(dtext)) * con->svopt->curpos++));
-
+    {
+        str = (dtext*) (con->svopt->arrbuf + 
+              (size_t) (((con->svopt->lnsize + 1) * (unsigned int) sizeof(dtext)) * con->svopt->curpos++));
+    }
+    else
+    {
+        con->svopt->curpos = 0;
+        con->svopt->cursize = con->svopt->arrsize;
+    }
+    
     OCI_RESULT(res);
 
     return (const dtext *) str;
@@ -1272,7 +1280,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
     {
         con->trace = (OCI_TraceInfo *) OCI_MemAlloc(OCI_IPC_TRACE_INFO,
                                                     sizeof(*con->trace),
-                                                    1, TRUE);
+                                                    (size_t) 1, TRUE);
         res = (con->trace != NULL);
     }
 

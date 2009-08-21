@@ -51,7 +51,8 @@ OCI_Date * OCI_DateInit(OCI_Connection *con, OCI_Date **pdate, OCIDate *buffer,
     OCI_CHECK(pdate == NULL, NULL);
 
     if (*pdate == NULL)
-        *pdate = (OCI_Date *) OCI_MemAlloc(OCI_IPC_DATE, sizeof(*date), 1, TRUE);
+        *pdate = (OCI_Date *) OCI_MemAlloc(OCI_IPC_DATE, sizeof(*date), 
+                                           (size_t) 1, TRUE);
 
     if (*pdate != NULL)
     {
@@ -77,7 +78,7 @@ OCI_Date * OCI_DateInit(OCI_Connection *con, OCI_Date **pdate, OCIDate *buffer,
 
             date->handle = (OCIDate *) OCI_MemAlloc(OCI_IPC_OCIDATE, 
                                                     sizeof(*date->handle), 
-                                                    1, TRUE);
+                                                    (size_t) 1, TRUE);
 
             res = (date->handle != NULL);
         }
@@ -521,7 +522,7 @@ boolean OCI_API OCI_DateToText(OCI_Date *date, const mtext *fmt, int size,
 {
     void *ostr1 = NULL;
     void *ostr2 = NULL;
-    int  osize1 = size*sizeof(mtext);
+    int  osize1 = size * (int) sizeof(mtext);
     int  osize2 = -1;
     boolean res = TRUE;
 
@@ -552,7 +553,7 @@ boolean OCI_API OCI_DateToText(OCI_Date *date, const mtext *fmt, int size,
 
     /* set null string terminator*/
 
-    str[osize1/sizeof(mtext)] = 0;
+    str[osize1/ (int) sizeof(mtext)] = 0;
 
     OCI_RESULT(res);
 
@@ -603,7 +604,7 @@ boolean OCI_API OCI_DateZoneToZone(OCI_Date *date, const mtext *zone1,
 
 boolean OCI_API OCI_DateToCTime(OCI_Date *date, struct tm *ptm, time_t *pt)
 {
-    time_t time = -1;
+    time_t time = (time_t) -1;
     struct tm t;
 
     OCI_CHECK_PTR(OCI_IPC_DATE, date, FALSE);
@@ -630,7 +631,7 @@ boolean OCI_API OCI_DateToCTime(OCI_Date *date, struct tm *ptm, time_t *pt)
 
     OCI_RESULT(TRUE);
 
-    return (time != -1);
+    return (time != (time_t) -1);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -641,7 +642,7 @@ boolean OCI_API OCI_DateFromCTime(OCI_Date *date, struct tm *ptm, time_t t)
 {
     OCI_CHECK_PTR(OCI_IPC_DATE, date, FALSE);
 
-    if (ptm == NULL && t == 0)
+    if ((ptm == NULL) && (t == (time_t) 0))
         OCI_ExceptionNullPointer(OCI_IPC_TM);
 
     if (ptm == NULL)

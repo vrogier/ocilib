@@ -11335,7 +11335,7 @@ OCI_EXPORT unsigned int OCI_API OCI_RefGetHexSize
 OCI_EXPORT boolean OCI_API OCI_RefToText
 (
     OCI_Ref *ref,
-    int size,
+    unsigned int size,
     mtext *str
 );
 

@@ -113,7 +113,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
         if (*str == MT('.'))
         {
             mtsncat(obj_schema, name, str-name);
-            mtsncat(obj_name, ++str, OCI_SIZE_OBJ_NAME);
+            mtsncat(obj_name, ++str, (size_t) OCI_SIZE_OBJ_NAME);
             break;
         }
     }
@@ -122,7 +122,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
 
     if (obj_name[0] == 0)
     {
-        mtsncat(obj_name, name, OCI_SIZE_OBJ_NAME);
+        mtsncat(obj_name, name, (size_t) OCI_SIZE_OBJ_NAME);
     }
 
     /* type name must be uppercase */
@@ -177,7 +177,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
 
             res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
                                                   (dvoid **) (void *) &dschp, 
-                                                  OCI_HTYPE_DESCRIBE, 0, 
+                                                  OCI_HTYPE_DESCRIBE, (size_t) 0, 
                                                   (dvoid **) NULL));
         }
 
@@ -241,7 +241,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
                     str = mtsncat(buffer, typinf->schema, size);
                     size -= mtslen(typinf->schema);
                     str = mtsncat(str, MT("."), size);
-                    size -= 1;
+                    size -= (size_t) 1;
                 }
 
                 mtsncat(str, typinf->name, size);
@@ -323,7 +323,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
             {
                 typinf->cols = (OCI_Column *) OCI_MemAlloc(OCI_IPC_COLUMN,
                                                            sizeof(*typinf->cols),
-                                                           typinf->nb_cols,
+                                                           (size_t) typinf->nb_cols,
                                                            TRUE);
 
                 /* describe children */

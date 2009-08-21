@@ -51,7 +51,8 @@ OCI_Resultset * OCI_ResultsetCreate(OCI_Statement *stmt, int size)
 
     /* allocate resultset structure */
 
-    rs = (OCI_Resultset *) OCI_MemAlloc(OCI_IPC_RESULTSET, sizeof(*rs), 1, TRUE);
+    rs = (OCI_Resultset *) OCI_MemAlloc(OCI_IPC_RESULTSET, sizeof(*rs),
+                                        (size_t) 1, TRUE);
 
     /* set attributes */
 
@@ -88,8 +89,9 @@ OCI_Resultset * OCI_ResultsetCreate(OCI_Statement *stmt, int size)
 
         if (res == TRUE)
         {
-            rs->defs = (OCI_Define *) OCI_MemAlloc(OCI_IPC_DEFINE, sizeof(*rs->defs),
-                                                   nb, TRUE);
+            rs->defs = (OCI_Define *) OCI_MemAlloc(OCI_IPC_DEFINE, 
+                                                   sizeof(*rs->defs),
+                                                   (size_t) nb, TRUE);
 
             res = (rs->defs != NULL);
         }
@@ -167,7 +169,7 @@ OCI_Resultset * OCI_ResultsetCreate(OCI_Statement *stmt, int size)
                 /* adjust column size from bind attributes */
 
                 if (def->col.type == OCI_CDT_TEXT)
-                    def->col.size = (ub2) (def->col.size / (sizeof(dtext)) - 1);
+                    def->col.size = (ub2) (def->col.size / ((ub2) sizeof(dtext)) - 1);
 
                 /* for integer types, set the bufsize here in order to
                    retrieve later the integer type (short, integer, big_int)
@@ -268,7 +270,7 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
                 ub4 bufsize = rs->stmt->long_size;
 
                 if (lg->type == OCI_CLONG)
-                    bufsize += sizeof(dtext);
+                    bufsize += (ub4) sizeof(dtext);
 
                 /* check buffer */
 
@@ -277,7 +279,8 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
                     lg->maxsize = bufsize;
 
                     lg->buffer  = (ub1 *) OCI_MemAlloc(OCI_IPC_LONG_BUFFER,
-                                                       lg->maxsize, 1, FALSE);
+                                                       (size_t) lg->maxsize,
+                                                       (size_t) 1, FALSE);
 
                     lg->buffer[0] = 0;
                 }
@@ -286,8 +289,8 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
                     lg->maxsize = lg->size + bufsize;
 
                     lg->buffer  = (ub1 *) OCI_MemRealloc(lg->buffer,
-                                                         OCI_IPC_LONG_BUFFER,
-                                                         lg->maxsize, 1);
+                                                         (size_t) OCI_IPC_LONG_BUFFER,
+                                                         (size_t) lg->maxsize, 1);
                 }
 
                 res = (lg->buffer != NULL);
@@ -305,7 +308,7 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
                         OCIStmtSetPieceInfo((dvoid *) handle,
                                             (ub4) OCI_HTYPE_DEFINE,
                                             lg->stmt->con->err,
-                                            (dvoid *) (lg->buffer + lg->size),
+                                            (dvoid *) (lg->buffer + (size_t) lg->size),
                                             &lg->piecesize, piece,
                                             lg->def->buf.inds, (ub2 *) NULL)
                      )
@@ -646,7 +649,7 @@ OCI_Resultset * OCI_API OCI_GetResultset(OCI_Statement *stmt)
 
             stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY,
                                                          sizeof(*stmt->rsts),
-                                                         1, TRUE);
+                                                         (size_t) 1, TRUE);
             if (stmt->rsts != NULL)
             {
                 stmt->nb_rs   = 1;
@@ -1349,7 +1352,7 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
             {
                 def->buf.temp = (dtext *) OCI_MemAlloc(OCI_IPC_STRING,
                                                        sizeof(dtext),
-                                                       (OCI_SIZE_BUFFER+1),
+                                                       (size_t) (OCI_SIZE_BUFFER+1),
                                                        FALSE);
 
                 res = (def->buf.temp != NULL);
@@ -1365,8 +1368,8 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                     {
                         void *ostr1 = NULL;
                         void *ostr2 = NULL;
-                        int  osize1 = OCI_SIZE_FORMAT_NUML * sizeof(mtext);
-                        int  osize2 = OCI_SIZE_BUFFER      * sizeof(dtext);
+                        int  osize1 = OCI_SIZE_FORMAT_NUML * (int) sizeof(mtext);
+                        int  osize2 = OCI_SIZE_BUFFER      * (int) sizeof(dtext);
                         const mtext *fmt;
                         int pos;
 
@@ -1418,7 +1421,7 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
 #endif
                         /* do we need to suppress last '.' or ',' from integers */
 
-                        pos = (osize2 / sizeof(dtext)) - 1;
+                        pos = (osize2 / (int) sizeof(dtext)) - 1;
 
                         if (pos >= 0)
                         {
@@ -1653,7 +1656,7 @@ unsigned int OCI_API OCI_GetRaw(OCI_Resultset *rs, unsigned int index,
         /* for RAWs, we copy the data in the destination buffer instead of
            returning internal buffer as we do for strings */
 
-        memcpy(buffer, OCI_DefineGetData(def), count);
+        memcpy(buffer, OCI_DefineGetData(def), (size_t) count);
 
     }
 

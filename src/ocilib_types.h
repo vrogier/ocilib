@@ -683,14 +683,14 @@ struct OCI_DirPath
     OCIDirPathColArray  *arr;       /* OCI DP column array handle */
     OCIDirPathStream    *strm;      /* OCI DP stream handle */
     OCI_DirPathColumn   *cols;      /* array of column info */
-    ub4                  nb_cols;   /* number of columns to load */
-    ub4                  nb_rows;   /* maximum number of row to load per stream */
-    ub4                  nb_cur;    /* current number of row to load per stream */
+    ub2                  nb_cur;    /* current number of row to load per stream */
+    ub2                  nb_prcsd;  /* number of row processed at last call */
     ub4                  nb_loaded; /* number of row loaded so far */
-    ub4                  nb_prcsd;  /* number of row processed at last call */
+    ub4                  status;    /* internal status */
     sb2                  err_col;   /* index of the column not processed at last call */
     sb2                  err_row;   /* index of the row not processed at last call */
-    ub4                  status;    /* internal status */
+    ub2                  nb_cols;   /* number of columns to load */
+    ub2                  nb_rows;   /* maximum number of row to load per stream */
 };
 
 /*

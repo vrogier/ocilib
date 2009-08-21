@@ -55,7 +55,7 @@ OCI_Timestamp * OCI_TimestampInit(OCI_Connection *con, OCI_Timestamp **ptmsp,
 
     if (*ptmsp == NULL)
         *ptmsp = (OCI_Timestamp *) OCI_MemAlloc(OCI_IPC_TIMESTAMP, sizeof(*tmsp), 
-                                                1, TRUE);
+                                                (size_t) 1, TRUE);
 
     if (*ptmsp != NULL)
     {
@@ -430,7 +430,7 @@ boolean OCI_API OCI_TimestampToText(OCI_Timestamp *tmsp, const mtext *fmt,
     boolean res = TRUE;
     void *ostr1 = NULL;
     void *ostr2 = NULL;
-    int  osize1 = size*sizeof(mtext);
+    int  osize1 = size * (int) sizeof(mtext);
     int  osize2 = -1;
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
@@ -467,7 +467,7 @@ boolean OCI_API OCI_TimestampToText(OCI_Timestamp *tmsp, const mtext *fmt,
 
     /* set null string terminator */
 
-    str[osize1/sizeof(mtext)] = 0;
+    str[osize1/ (int) sizeof(mtext)] = 0;
 
 #else
 
@@ -620,7 +620,7 @@ boolean OCI_API OCI_TimestampGetTimeZoneName(OCI_Timestamp *tmsp, int size,
 {
     boolean res = TRUE;
     void *ostr  = NULL;
-    int osize   = size*sizeof(mtext);
+    int osize   = size * (int) sizeof(mtext);
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
@@ -645,7 +645,7 @@ boolean OCI_API OCI_TimestampGetTimeZoneName(OCI_Timestamp *tmsp, int size,
 
     /* set null string terminator */
 
-    str[osize/sizeof(mtext)] = 0;
+    str[osize/ (int) sizeof(mtext)] = 0;
 
 #else
 
@@ -908,7 +908,7 @@ boolean OCI_API OCI_TimestampToCTime(OCI_Timestamp *tmsp, struct tm *ptm,
                                      time_t *pt)
 {
     boolean res = TRUE;
-    time_t time = -1;
+    time_t time = (time_t) -1;
     int msec    = 0;
     struct tm t;
 
@@ -940,7 +940,7 @@ boolean OCI_API OCI_TimestampToCTime(OCI_Timestamp *tmsp, struct tm *ptm,
 
     OCI_RESULT(res);
 
-    return (time != -1);
+    return (time != (time_t) -1);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -956,7 +956,7 @@ boolean OCI_API OCI_TimestampFromCTime(OCI_Timestamp *tmsp, struct tm *ptm,
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-    if (ptm == NULL && t == 0)
+    if (ptm == NULL && t == (time_t) 0)
         return FALSE;
 
     if (ptm == NULL)

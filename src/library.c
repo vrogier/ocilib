@@ -450,7 +450,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
     char path[OCI_SIZE_BUFFER+1];
  
-    size_t len = 0;
+    size_t len = (size_t) 0;
 
 #endif
 
@@ -504,7 +504,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
 #endif
 
-    if ((len > 0) && (len < sizeof(path)) && (path[len-1] != OCI_CHAR_SLASH))
+    if ((len > (size_t) 0) && (len < sizeof(path)) && (path[len - (size_t) 1] != OCI_CHAR_SLASH))
     {
         path[len] = OCI_CHAR_SLASH;
         len++;

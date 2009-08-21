@@ -129,7 +129,7 @@ void * OCI_DefineGetData(OCI_Define *def)
 
             /* scalar types */
 
-            return (((ub1*)def->buf.data) + (def->col.bufsize  * (def->rs->row_cur-1)));
+            return (((ub1*)def->buf.data) + (size_t) (def->col.bufsize  * (def->rs->row_cur-1)));
     }
 }
 
@@ -200,7 +200,8 @@ boolean OCI_DefineAlloc(OCI_Define *def)
     if (res == TRUE)
     {
         def->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY,
-                                              (int) indsize, def->buf.count, TRUE);
+                                              (size_t) indsize,
+                                              (size_t) def->buf.count, TRUE);
         res = (def->buf.inds != NULL);
     }
 
@@ -208,8 +209,9 @@ boolean OCI_DefineAlloc(OCI_Define *def)
 
     if (res == TRUE)
     {
-        def->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, def->buf.sizelen,
-                                              def->buf.count, TRUE);
+        def->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, 
+                                              (size_t) def->buf.sizelen,
+                                              (size_t) def->buf.count, TRUE);
 
         res = (def->buf.lens != NULL);
     }
@@ -221,10 +223,10 @@ boolean OCI_DefineAlloc(OCI_Define *def)
     {
         for (i=0; i < def->buf.count; i++)
         {
-            if (def->buf.sizelen == sizeof(ub2))
-                *(ub2*)(((ub1 *)def->buf.lens) + def->buf.sizelen*(i)) = (ub2) def->col.bufsize;
-            else if (def->buf.sizelen == sizeof(ub4))
-                *(ub4*)(((ub1 *)def->buf.lens) + def->buf.sizelen*(i)) = (ub4) def->col.bufsize;
+            if (def->buf.sizelen == (int) sizeof(ub2))
+                *(ub2*)(((ub1 *)def->buf.lens) + (size_t) (def->buf.sizelen*i)) = (ub2) def->col.bufsize;
+            else if (def->buf.sizelen == (int) sizeof(ub4))
+                *(ub4*)(((ub1 *)def->buf.lens) + (size_t) (def->buf.sizelen*i)) = (ub4) def->col.bufsize;
        }
     }
 
@@ -237,8 +239,8 @@ boolean OCI_DefineAlloc(OCI_Define *def)
         else
             bufsize = def->col.bufsize;
 
-        def->buf.data = (void *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (int) bufsize,
-                                              def->buf.count, TRUE);
+        def->buf.data = (void *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (size_t) bufsize,
+                                              (size_t) def->buf.count, TRUE);
 
         res = (def->buf.data != NULL);
     }

@@ -69,7 +69,8 @@ OCI_Thread * OCI_API OCI_ThreadCreate(void)
 
     /* allocate thread structure */
 
-    thread = (OCI_Thread *) OCI_MemAlloc(OCI_IPC_THREAD, sizeof(*thread), 1, TRUE);
+    thread = (OCI_Thread *) OCI_MemAlloc(OCI_IPC_THREAD, sizeof(*thread),
+                                         (size_t) 1, TRUE);
 
     if (thread != NULL)
     {
@@ -77,7 +78,7 @@ OCI_Thread * OCI_API OCI_ThreadCreate(void)
 
         res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env, 
                                               (dvoid **) (void *) &thread->err,
-                                              OCI_HTYPE_ERROR, 0,
+                                              OCI_HTYPE_ERROR, (size_t) 0,
                                               (dvoid **) NULL));
 
         /* allocate thread handle */

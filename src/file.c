@@ -51,7 +51,8 @@
     OCI_CHECK(pfile == NULL, NULL);
 
     if (*pfile == NULL)
-        *pfile = (OCI_File *) OCI_MemAlloc(OCI_IPC_FILE, sizeof(*file), 1, TRUE);
+        *pfile = (OCI_File *) OCI_MemAlloc(OCI_IPC_FILE, sizeof(*file),
+                                           (size_t) 1, TRUE);
 
     if (*pfile != NULL)
     {
@@ -121,7 +122,8 @@ boolean OCI_FileGetInfo(OCI_File *file)
         if (res == TRUE)
         {
             file->dir = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext),
-                                               OCI_SIZE_DIRECTORY + 1, TRUE);
+                                               (size_t) (OCI_SIZE_DIRECTORY + 1), 
+                                               TRUE);
 
             res = (file->dir != NULL);
          }
@@ -136,7 +138,8 @@ boolean OCI_FileGetInfo(OCI_File *file)
         if (res == TRUE)
         {
             file->name = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext),
-                                                OCI_SIZE_FILENAME + 1, TRUE);
+                                                (size_t)( OCI_SIZE_FILENAME + 1),
+                                                TRUE);
 
             res = (file->name != NULL);
         }
@@ -148,11 +151,11 @@ boolean OCI_FileGetInfo(OCI_File *file)
 
     if (res == TRUE)
     {
-        osize1 = OCI_SIZE_DIRECTORY  * sizeof(mtext);
-        ostr1  = OCI_GetInputMetaString(file->dir, &osize1);
+        osize1 = (int   ) OCI_SIZE_DIRECTORY  * (int) sizeof(mtext);
+        ostr1  = (void *) OCI_GetInputMetaString(file->dir, &osize1);
 
-        osize2 = OCI_SIZE_FILENAME  * sizeof(mtext);
-        ostr2  = OCI_GetInputMetaString(file->name, &osize1);
+        osize2 = (int   ) OCI_SIZE_FILENAME  * (int) sizeof(mtext);
+        ostr2  = (void *) OCI_GetInputMetaString(file->name, &osize1);
      
         usize1 = (ub2) osize1;
         usize2 = (ub2) osize2;

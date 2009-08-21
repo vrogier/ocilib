@@ -83,7 +83,7 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
             case MT('s'):
             case MT('m'):
             {
-                const mtext *str = va_arg(*pargs, const mtext *);
+                const mtext *str = (const mtext *) va_arg(*pargs, const mtext *);
 
                 if (str != NULL && str[0] != 0)
                 {
@@ -94,8 +94,8 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
                         if (buf != NULL)
                         {
                             *pb = 39;
-                            mtscpy(pb + 1, str);
-                            *(pb + len + 1) = MT('\'');
+                            mtscpy(pb + (size_t) 1, str);
+                            *(pb + (size_t) (len + 1)) = MT('\'');
                         }
 
                         len+=2;
@@ -160,7 +160,7 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
                                                  &hh, &mi, &ss, &ff);
 
                         if (ff > 0)
-                            mtsprintf(str_ff, msizeof(str_ff)-1, MT("%i"), ff);
+                            mtsprintf(str_ff, (int) msizeof(str_ff)- 1, MT("%i"), ff);
                         else
                             mtscpy(str_ff, MT("00"));
 
@@ -191,7 +191,7 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
 
                 if (itv != NULL)
                 {
-                    OCI_IntervalToText(itv, 3, 3, msizeof(temp)-1, temp);
+                    OCI_IntervalToText(itv, 3, 3, (int) msizeof(temp)- 1, temp);
                     
                     len = (int) mtslen(temp);
 
@@ -214,8 +214,8 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
        
                 temp[0] = 0;
 
-                len = mtsprintf(temp, msizeof(temp)-1, MT("%i"),
-                                va_arg(*pargs, int));
+                len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%i"),
+                                      va_arg(*pargs, int));
 
                 if ((buf != NULL) && (len > 0)) 
                     mtscpy(pb, temp);
@@ -228,8 +228,8 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
   
                 temp[0] = 0;
 
-                len = mtsprintf(temp, msizeof(temp)-1, MT("%u"),
-                                va_arg(*pargs, unsigned int));
+                len = (int) mtsprintf(temp, (int)  msizeof(temp) - 1, MT("%u"),
+                                      va_arg(*pargs, unsigned int));
 
                 if ((buf != NULL) && (len > 0)) 
                     mtscpy(pb, temp);
@@ -246,13 +246,13 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
 
                 if (*pf == MT('i'))
                 {
-                    len = mtsprintf(temp, msizeof(temp)-1, MT("%lld"),
-                                    va_arg(*pargs, big_int));
+                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%lld"),
+                                          va_arg(*pargs, big_int));
                 }
                 else if (*pf == MT('u'))
                 {
-                    len = mtsprintf(temp, msizeof(temp)-1, MT("%llu"),
-                                    va_arg(*pargs, big_uint));
+                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%llu"),
+                                          va_arg(*pargs, big_uint));
                 }
                 else
                     len = 0;
@@ -274,13 +274,13 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
 
                 if (*pf == 'i')
                 {
-                    len = mtsprintf(temp, msizeof(temp)-1, MT("%hd"),
-                                    va_arg(*pargs, int));
+                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%hd"),
+                                          va_arg(*pargs, int));
                 }
                 else if (*pf == 'u')
                 {
-                    len = mtsprintf(temp, msizeof(temp)-1, MT("%hu"),
-                                    va_arg(*pargs, unsigned int));
+                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%hu"),
+                                          va_arg(*pargs, unsigned int));
                 }
                 else
                     len = 0;
@@ -296,8 +296,8 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
       
                 temp[0] = 0;
 
-                len = mtsprintf(temp, msizeof(temp)-1, MT("%f"),
-                                va_arg(*pargs, double));
+                len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%f"),
+                                      va_arg(*pargs, double));
 
                 if ((buf != NULL) && (len > 0)) 
                     mtscpy(pb, temp);
@@ -314,7 +314,7 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
 
                 if (ref != NULL)
                 {
-                    OCI_RefToText(ref, msizeof(temp)-1, temp);
+                    OCI_RefToText(ref, (unsigned int) msizeof(temp) - 1, temp);
                     
                     len = (int) mtslen(temp);
 
@@ -341,7 +341,7 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
         }
 
         if (buf != NULL)
-            pb += len;
+            pb += (size_t) len;
 
         size += len;
     }

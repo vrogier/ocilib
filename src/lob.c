@@ -54,7 +54,7 @@
     OCI_CHECK(plob == NULL, NULL);
 
     if (*plob == NULL)
-        *plob = (OCI_Lob *) OCI_MemAlloc(OCI_IPC_LOB, sizeof(*lob), 1, TRUE);
+        *plob = (OCI_Lob *) OCI_MemAlloc(OCI_IPC_LOB, sizeof(*lob), (size_t) 1, TRUE);
 
     if (*plob != NULL)
     {
@@ -265,7 +265,7 @@ unsigned int OCI_API OCI_LobRead(OCI_Lob *lob, void *buffer, unsigned int len)
 
 #endif        
         
-        size_in *= sizeof(odtext);
+        size_in *= (ub4) sizeof(odtext);
     }
 
     if (lob->type == OCI_NCLOB)
@@ -356,7 +356,7 @@ unsigned int OCI_API OCI_LobWrite(OCI_Lob *lob, void *buffer, unsigned int len)
 
 #endif
 
-        size_in *= sizeof(dtext);
+        size_in *= (ub4)  sizeof(dtext);
         obuf     = OCI_GetInputDataString(buffer, (int *) &size_in);
     }
     else
@@ -694,7 +694,7 @@ unsigned int OCI_API OCI_LobAppend(OCI_Lob *lob, void *buffer, unsigned int len)
     
     if (lob->type != OCI_BLOB)
     {
-        size_in *= sizeof(dtext);
+        size_in *= (ub4) sizeof(dtext);
         obuf  = OCI_GetInputDataString(buffer, (int *) &size_in);
     }
     else
@@ -931,14 +931,18 @@ big_uint OCI_API OCI_LobGetMaxSize(OCI_Lob *lob)
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, 0);
 
-#if OCI_VERSION_COMPILE >= OCI_10_1
+#ifdef OCI_LOB2_API_ENABLED
 
-    OCI_CALL2
-    (
-        res, lob->con, 
-        
-        OCILobGetStorageLimit(lob->con->cxt, lob->con->err, lob->handle, (ub8 *) &size)
-    )
+    if (OCILib.use_lob_ub8)
+    {
+        OCI_CALL2
+        (
+            res, lob->con, 
+            
+            OCILobGetStorageLimit(lob->con->cxt, lob->con->err, lob->handle,
+                                  (ub8 *) &size)
+        )
+    }
 
 #endif 
 

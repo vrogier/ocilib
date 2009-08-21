@@ -76,7 +76,8 @@ OCI_HashTable * OCI_API OCI_HashCreate(unsigned int size, unsigned int type)
     
     /* allocate table structure */
 
-    table = (OCI_HashTable *) OCI_MemAlloc(OCI_IPC_HASHTABLE, sizeof(*table), 1, TRUE);
+    table = (OCI_HashTable *) OCI_MemAlloc(OCI_IPC_HASHTABLE, sizeof(*table), 
+                                           (size_t) 1, TRUE);
 
     /* set up attributes and allocate internal array of hash entry pointers */
 
@@ -88,7 +89,7 @@ OCI_HashTable * OCI_API OCI_HashCreate(unsigned int size, unsigned int type)
 
         table->items = (OCI_HashEntry **) OCI_MemAlloc(OCI_IPC_HASHENTRY_ARRAY,
                                                        sizeof(*table->items),
-                                                       size, TRUE);
+                                                       (size_t) size, TRUE);
         res = (table->items != NULL);
     }
     else
@@ -308,7 +309,8 @@ boolean OCI_HashAdd(OCI_HashTable *table, const mtext *key, OCI_Variant value,
 
     if (e != NULL)
     {
-        v = (OCI_HashValue *) OCI_MemAlloc(OCI_IPC_HASHVALUE, sizeof(*v), 1, TRUE);
+        v = (OCI_HashValue *) OCI_MemAlloc(OCI_IPC_HASHVALUE, sizeof(*v), 
+                                           (size_t) 1, TRUE);
 
         if (v != NULL)
         {
@@ -429,7 +431,8 @@ OCI_HashEntry * OCI_API OCI_HashLookup(OCI_HashTable *table, const mtext *key,
 
         if ((e == NULL) && (create == TRUE))
         {
-            e = (OCI_HashEntry *) OCI_MemAlloc(OCI_IPC_HASHENTRY, sizeof(*e), 1, TRUE);
+            e = (OCI_HashEntry *) OCI_MemAlloc(OCI_IPC_HASHENTRY, sizeof(*e),
+                                               (size_t) 1, TRUE);
 
             if (e != NULL)
             {

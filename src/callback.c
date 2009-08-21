@@ -125,7 +125,8 @@ sb4 OCI_ProcOutBind(dvoid *octxp, OCIBind *bindp, ub4 iter, ub4 index,
         {
             bnd->stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY, 
                                                               sizeof(*bnd->stmt->rsts),
-                                                              bnd->stmt->nb_rs, TRUE);
+                                                              (size_t) bnd->stmt->nb_rs,
+                                                              TRUE);
  
             if (bnd->stmt->rsts == NULL)
                 res = FALSE;
@@ -182,11 +183,11 @@ sb4 OCI_ProcOutBind(dvoid *octxp, OCIBind *bindp, ub4 iter, ub4 index,
 
             default:
 
-                *bufpp = (((ub1*)def->buf.data) + (def->col.bufsize * index));
+                *bufpp = (((ub1*)def->buf.data) + (size_t) (def->col.bufsize * index));
         }
 
-        *alenp  = (ub4   *) (((ub1 *) def->buf.lens) + (def->buf.sizelen * index));
-        *indp   = (dvoid *) (((ub1 *) def->buf.inds) + (sizeof(sb2) * index));
+        *alenp  = (ub4   *) (((ub1 *) def->buf.lens) + (size_t) ((ub4) def->buf.sizelen * index));
+        *indp   = (dvoid *) (((ub1 *) def->buf.inds) + (size_t) ((ub4) sizeof(sb2)      * index));
         *piecep = (ub1    ) OCI_ONE_PIECE;
         *rcodep = (ub2   *) NULL;                
     }

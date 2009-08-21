@@ -179,9 +179,9 @@ boolean OCI_API OCI_BindSetDataSizeAtPos(OCI_Bind *bnd, unsigned int position,
         if (bnd->type == OCI_CDT_TEXT)
         {
             if (bnd->size == (sb4) size)
-                size += sizeof(odtext);
+                size += (unsigned int) (size_t) sizeof(odtext);
 
-            size *= sizeof(odtext);
+            size *= (unsigned int) sizeof(odtext);
         }
 
         ((ub2 *) bnd->buf.lens)[position-1] = (ub2) size; 
@@ -221,9 +221,9 @@ unsigned int OCI_API OCI_BindGetDataSizeAtPos(OCI_Bind *bnd, unsigned int positi
         if (bnd->type == OCI_CDT_TEXT)
         {
             if (bnd->size == (sb4) size)
-                size -= sizeof(odtext);
+                size -= (unsigned int) sizeof(odtext);
 
-            size /= sizeof(odtext);
+            size /= (unsigned int) sizeof(odtext);
         }
     }
 

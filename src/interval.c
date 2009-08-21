@@ -54,7 +54,8 @@ OCI_Interval * OCI_IntervalInit(OCI_Connection *con, OCI_Interval **pitv,
     OCI_CHECK(pitv == NULL, NULL);
 
     if (*pitv == NULL)
-        *pitv = (OCI_Interval *) OCI_MemAlloc(OCI_IPC_INTERVAL, sizeof(*itv), 1, TRUE);
+        *pitv = (OCI_Interval *) OCI_MemAlloc(OCI_IPC_INTERVAL, sizeof(*itv), 
+                                              (size_t) 1, TRUE);
 
     if (*pitv != NULL)
     {
@@ -340,7 +341,8 @@ boolean OCI_API OCI_IntervalToText(OCI_Interval *itv, int leading_prec,
 {
     boolean res = TRUE;
     void *ostr  = NULL;
-    int osize   = size * sizeof(mtext);
+    int osize   = size * (int)   sizeof(mtext);
+    size_t len  = 0;
 
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
@@ -354,6 +356,8 @@ boolean OCI_API OCI_IntervalToText(OCI_Interval *itv, int leading_prec,
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     ostr = OCI_GetInputMetaString(str, &osize);
+
+    len = (size_t) osize;
  
     OCI_CALL4
     (
@@ -363,15 +367,17 @@ boolean OCI_API OCI_IntervalToText(OCI_Interval *itv, int leading_prec,
                           (OCIInterval *) itv->handle,
                           (ub1) leading_prec, (ub1) fraction_prec,
                           (OraText *) ostr, (size_t) osize, 
-                          (size_t *) &osize)
+                          (size_t *) &len)
     )
+
+    osize = (int) len;
  
     OCI_GetOutputMetaString(ostr, str, &osize);
     OCI_ReleaseMetaString(ostr);
 
     /* set null string terminator */
 
-    str[osize/sizeof(mtext)] = 0;
+    str[osize/ (int) sizeof(mtext)] = 0;
 
 #else
 
@@ -412,7 +418,7 @@ boolean OCI_API OCI_IntervalFromTimeZone(OCI_Interval *itv, const mtext * str)
     (
         res, itv->err, itv->con,
         
-        OCIIntervalFromTZ((dvoid *) OCILib.env, itv->err,  (OraText *) ostr,
+        OCIIntervalFromTZ((dvoid *) OCILib.env, itv->err,  (CONST OraText *) ostr,
                           (size_t) osize, itv->handle)
     )
 

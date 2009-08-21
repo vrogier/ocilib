@@ -51,7 +51,8 @@ OCI_Long * OCI_LongInit(OCI_Statement *stmt, OCI_Long **plg,
     OCI_CHECK(plg == NULL, NULL);
 
     if (*plg == NULL)
-        *plg = (OCI_Long *) OCI_MemAlloc(OCI_IPC_LONG, sizeof(*lg), 1, TRUE);
+        *plg = (OCI_Long *) OCI_MemAlloc(OCI_IPC_LONG, sizeof(*lg), 
+                                         (size_t) 1, TRUE);
 
     if (*plg != NULL)
     {
@@ -145,7 +146,7 @@ unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer,
     OCI_CHECK(lg->offset > lg->size, 0);
 
     if (lg->type == OCI_CLONG)
-        len *= sizeof(dtext);
+        len *= (unsigned int) sizeof(dtext);
 
    /* check buffer size to read */
 
@@ -154,12 +155,12 @@ unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer,
 
    /* copy buffer */
 
-    memcpy(buffer, lg->buffer + lg->offset, len);
+    memcpy(buffer, lg->buffer + (size_t) lg->offset, (size_t) len);
 
     lg->offset += len;
 
     if (lg->type == OCI_CLONG)
-        len /= sizeof(dtext);
+        len /= (unsigned int) sizeof(dtext);
 
     OCI_RESULT(TRUE);
 
@@ -190,7 +191,7 @@ unsigned int OCI_API OCI_LongWrite(OCI_Long *lg, void *buffer,
     OCI_CHECK_MIN(lg->stmt->con, lg->stmt, len, 1, 0);
 
     if (lg->type == OCI_CLONG)
-        len *= sizeof(odtext);
+        len *= (unsigned int) sizeof(odtext);
 
     if (lg->type == OCI_CLONG)
         obuf = OCI_GetInputDataString(buffer, (int *) &len);
@@ -257,7 +258,7 @@ unsigned int OCI_API OCI_LongWrite(OCI_Long *lg, void *buffer,
         lg->size += count;
 
         if (lg->type == OCI_CLONG)
-            count /= sizeof(odtext);
+            count /= (ub4) sizeof(odtext);
     }
 
     OCI_RESULT(res);
@@ -278,7 +279,7 @@ unsigned int OCI_API OCI_LongGetSize(OCI_Long *lg)
     size = lg->size;
 
     if (lg->type == OCI_CLONG)
-        size /= sizeof(dtext);
+        size /= (unsigned int) sizeof(dtext);
 
     OCI_RESULT(TRUE);
 

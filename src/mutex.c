@@ -49,7 +49,8 @@ OCI_Mutex * OCI_MutexCreateInternal(void)
 
     /* allocate mutex structure */
 
-    mutex = (OCI_Mutex *) OCI_MemAlloc(OCI_IPC_MUTEX, sizeof(*mutex), 1, TRUE);
+    mutex = (OCI_Mutex *) OCI_MemAlloc(OCI_IPC_MUTEX, sizeof(*mutex), 
+                                       (size_t) 1, TRUE);
 
     if (mutex != NULL)
     {
@@ -57,7 +58,7 @@ OCI_Mutex * OCI_MutexCreateInternal(void)
 
         res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env, 
                                               (dvoid **) (void *) &mutex->err,
-                                              OCI_HTYPE_ERROR, 0,
+                                              OCI_HTYPE_ERROR, (size_t) 0,
                                               (dvoid **) NULL));
 
         /* allocate mutex handle */

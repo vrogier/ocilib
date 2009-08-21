@@ -48,7 +48,7 @@ OCI_List * OCI_ListCreate(int type)
     
     /* allocate list */
 
-    list = (OCI_List *) OCI_MemAlloc(OCI_IPC_LIST, sizeof(*list), 1, TRUE);
+    list = (OCI_List *) OCI_MemAlloc(OCI_IPC_LIST, sizeof(*list), (size_t) 1, TRUE);
 
     /* create a mutex on multithreaded environments */
 
@@ -98,13 +98,14 @@ OCI_Item * OCI_ListCreateItem(int type, int size)
 
     /* allocate list item entry */
 
-    item = (OCI_Item *) OCI_MemAlloc(OCI_IPC_LIST_ITEM, sizeof(*item), 1, TRUE);
+    item = (OCI_Item *) OCI_MemAlloc(OCI_IPC_LIST_ITEM, sizeof(*item),
+                                     (size_t) 1, TRUE);
 
     if (item != NULL)
     {
         /* allocate item data buffer */
 
-        item->data = (void *) OCI_MemAlloc(type, size, 1, TRUE);
+        item->data = (void *) OCI_MemAlloc(type, (size_t) size, (size_t) 1, TRUE);
 
         if (item->data == NULL)
             OCI_FREE(item);

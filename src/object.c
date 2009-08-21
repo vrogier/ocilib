@@ -74,7 +74,8 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
     OCI_CHECK(pobj == NULL, NULL);
 
     if (*pobj == NULL)
-        *pobj = (OCI_Object *) OCI_MemAlloc(OCI_IPC_OBJECT, sizeof(*obj), 1, TRUE);
+        *pobj = (OCI_Object *) OCI_MemAlloc(OCI_IPC_OBJECT, sizeof(*obj),
+                                            (size_t) 1, TRUE);
 
     if (*pobj != NULL)
     {
@@ -88,7 +89,8 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
         {
             obj->objs = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY,
                                                sizeof(void *),
-                                               typinf->nb_cols, TRUE);
+                                               (size_t) typinf->nb_cols, 
+                                               TRUE);
         }
         else
         {
@@ -648,7 +650,7 @@ int OCI_API OCI_ObjectGetRaw(OCI_Object *obj, const mtext *attr, void *buffer,
                 if (len > raw_len)
                     len = raw_len;
 
-                memcpy(buffer, OCIRawPtr(OCILib.env, *value), len);
+                memcpy(buffer, OCIRawPtr(OCILib.env, *value), (size_t) len);
             }
         }
     }

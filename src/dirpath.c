@@ -61,16 +61,16 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
 
     /* allocate direct path structure */
 
-    dp = (OCI_DirPath *) OCI_MemAlloc(OCI_IPC_DIRPATH, sizeof(*dp), 1, TRUE);
+    dp = (OCI_DirPath *) OCI_MemAlloc(OCI_IPC_DIRPATH, sizeof(*dp), (size_t) 1, TRUE);
 
     if (dp != NULL)
     {
         dp->con       = typinf->con;
         dp->status    = OCI_DPS_NOT_PREPARED;
         dp->typinf    = typinf;
-        dp->nb_rows   = (ub4) nb_rows;
-        dp->nb_cols   = (ub4) nb_cols;
-        dp->nb_cur    = (ub4) dp->nb_rows;
+        dp->nb_rows   = (ub2) nb_rows;
+        dp->nb_cols   = (ub2) nb_cols;
+        dp->nb_cur    = (ub2) dp->nb_rows;
         dp->err_col   = -1;
         dp->err_row   = -1;
         dp->nb_prcsd  =  0;
@@ -92,7 +92,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
             osize = -1;
             ostr  = OCI_GetInputMetaString(dp->typinf->name, &osize);
 
-            OCI_CALL2
+			OCI_CALL2
             (
                 res, dp->con,
 
@@ -111,7 +111,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
             osize = -1;
             ostr  = OCI_GetInputMetaString(dp->typinf->schema, &osize);
 
-            OCI_CALL2
+			OCI_CALL2
             (
                 res, dp->con,
 
@@ -144,16 +144,18 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
 
         if (OCILib.version_runtime >= OCI_9_0)
         {
-            /* set array size attribute */
+            ub4 num_rows = dp->nb_rows;
 
+            /* set array size attribute */
+            
             OCI_CALL2
             (
                 res, dp->con,
 
                 OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                           (dvoid *) &dp->nb_rows, (ub4) sizeof(ub4),
+                           (dvoid *) &num_rows, (ub4) sizeof(num_rows),
                            (ub4) OCI_ATTR_NUM_ROWS, dp->con->err)
-            )
+            ) 
         }
 
         /* set columns count attribute */
@@ -163,7 +165,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
             res, dp->con,
 
             OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                       (dvoid *) &dp->nb_cols, (ub4) sizeof(ub4),
+                       (dvoid *) &dp->nb_cols, (ub4) sizeof(dp->nb_cols),
                        (ub4) OCI_ATTR_NUM_COLS, dp->con->err)
         )
 
@@ -173,7 +175,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
         {
             dp->cols = (void *) OCI_MemAlloc(OCI_IPC_DP_COL_ARRAY,
                                              sizeof(OCI_DirPathColumn),
-                                             dp->nb_cols, TRUE);
+                                             (size_t) dp->nb_cols, TRUE);
 
             res = (dp->cols != NULL);
         }
@@ -200,7 +202,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
 
 boolean OCI_API OCI_DirPathFree(OCI_DirPath *dp)
 {
-    ub4 i;
+    ub2 i;
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
 
@@ -375,17 +377,17 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
                        NULL, OCI_ATTR_LIST_COLUMNS, dp->con->err)
         )
 
-       /* get colum attribute handle */
+        /* get colum attribute handle */
 
-        OCI_CALL2
+		OCI_CALL2
         (
             res, dp->con,
 
             OCIParamGet((dvoid *) hlist, OCI_DTYPE_PARAM, dp->con->err,
                         (dvoid** ) (dvoid *) &hattr, (ub4) index)
         )
-
-        /* set column name */
+        
+	    /* set column name */
 
         if (res == TRUE)
         {
@@ -499,7 +501,6 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
         OCIDescriptorFree(hattr, OCI_DTYPE_PARAM);
     }
 
-
     OCI_RESULT(res);
 
     return res;
@@ -512,8 +513,8 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
 boolean OCI_API OCI_DirPathPrepare(OCI_DirPath *dp)
 {
     boolean res = TRUE;
-    ub4 i;
-
+    ub2 i;
+ 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED, FALSE);
 
@@ -550,17 +551,19 @@ boolean OCI_API OCI_DirPathPrepare(OCI_DirPath *dp)
 
     if (res == TRUE)
     {
-        ub4 size = sizeof(dp->nb_rows);
+        ub4 num_rows = 0;
+        ub4 size     = sizeof(num_rows);
 
         OCI_CALL2
         (
             res, dp->con,
 
-            OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &dp->nb_rows,
+            OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &num_rows,
                        &size, OCI_ATTR_NUM_ROWS, dp->con->err)
         )
 
-        dp->nb_cur = dp->nb_rows;
+        dp->nb_cur  = (ub2) num_rows;
+        dp->nb_rows = (ub2) num_rows;
     }
 
     /* now, we need to allocate internal buffers */
@@ -574,8 +577,9 @@ boolean OCI_API OCI_DirPathPrepare(OCI_DirPath *dp)
 
             /* data buffers */
 
-            col->data = (ub1 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, col->bufsize,
-                                             dp->nb_cur, TRUE);
+            col->data = (ub1 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, 
+                                             (size_t) col->bufsize,
+                                             (size_t) dp->nb_cur, TRUE);
 
             if (col->data == NULL)
             {
@@ -585,8 +589,8 @@ boolean OCI_API OCI_DirPathPrepare(OCI_DirPath *dp)
 
             /* data sizes */
 
-            col->lens = (ub4 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY,sizeof(ub4),
-                                             dp->nb_cur, TRUE);
+            col->lens = (ub4 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(ub4),
+                                             (size_t) dp->nb_cur, TRUE);
 
             if (col->lens == NULL)
             {
@@ -597,7 +601,7 @@ boolean OCI_API OCI_DirPathPrepare(OCI_DirPath *dp)
             /* data flags */
 
             col->flags = (ub1 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(ub1),
-                                              dp->nb_cur, TRUE);
+                                              (size_t) dp->nb_cur, TRUE);
 
             if (col->flags == NULL)
             {
@@ -663,12 +667,12 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
 
     if (dpcol->sqlcode == SQLT_CHR)
     {
-       size *= sizeof(dtext);
+       size *= (unsigned int) sizeof(dtext);
     }
 
     /* get internal data cell */
 
-    data = ((ub1 *) dpcol->data) + ((row-1) * dpcol->bufsize);
+    data = ((ub1 *) dpcol->data) + (size_t) ((row-1) * dpcol->bufsize);
 
 #if defined(OCI_CHECK_DATASTRINGS)
 
@@ -690,7 +694,7 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
 
     if (dpcol->type == OCI_DDT_OTHERS)
     {
-        size = (int) wcstombs((char *) data, value, dpcol->bufsize - 1);
+        size = (unsigned int) wcstombs((char *) data, value, dpcol->bufsize - 1);
     }
     else
 #endif
@@ -724,12 +728,12 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
 
         if (dpcol->type == OCI_DDT_TEXT)
         {
-            size = (int) wcstombs((char *) data, value, dpcol->bufsize - 1);
+            size = (unsigned int) wcstombs((char *) data, value, dpcol->bufsize - 1);
         }
         else
 #endif
         {
-            memcpy(data, value, size);
+            memcpy(data, value, (size_t) size);
         }
 
     }
@@ -787,7 +791,7 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
     ub1 *data;
     ub4 size;
     ub1 flag;
-    ub4 i, j;
+    ub2 i, j;
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
 
@@ -806,7 +810,7 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
         {
             /* get internal data cell */
 
-            data = ((ub1 *) dpcol->data) + (j * dpcol->bufsize);
+            data = ((ub1 *) dpcol->data) +  (size_t) (j * dpcol->bufsize);
             size = dpcol->lens[j];
             flag = dpcol->flags[j];
 
@@ -916,7 +920,7 @@ unsigned int OCI_API OCI_DirPathLoad(OCI_DirPath *dp)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_CONVERTED, FALSE);
 
-    dp->nb_prcsd =  0;
+    dp->nb_prcsd =   0;
     dp->err_col  =  -1;
 
     ret = OCIDirPathLoadStream(dp->ctx, dp->strm, dp->con->err);
@@ -1088,7 +1092,7 @@ boolean OCI_API OCI_DirPathSetCurrentRows(OCI_DirPath *dp, unsigned int nb_rows)
 
     OCI_CHECK_BOUND(dp->con, nb_rows, 1, dp->nb_rows, FALSE);
 
-    dp->nb_cur = nb_rows;
+    dp->nb_cur = (ub2) nb_rows;
 
     OCI_RESULT(res);
 

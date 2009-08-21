@@ -61,8 +61,8 @@ int OCI_StringCopy4to2bytes(const unsigned int* src, int src_size,
     OCI_CHECK(src == NULL, 0);
     OCI_CHECK(dst == NULL, 0);
 
-    src_end = src + src_size;
-    dst_end = dst + dst_size;
+    src_end = src + (size_t) src_size;
+    dst_end = dst + (size_t) dst_size;
 
     while (src < src_end)
     {
@@ -89,7 +89,7 @@ int OCI_StringCopy4to2bytes(const unsigned int* src, int src_size,
         } 
         else
         {
-            if ((dst + 1) >= dst_end) return -2; 
+            if ((dst +  (size_t) 1) >= dst_end) return -2; 
 
             c -= UNI_BASE;
             
@@ -124,12 +124,11 @@ int OCI_StringCopy2to4bytes(const unsigned short* src, int src_size,
     OCI_CHECK(src == NULL, 0);
     OCI_CHECK(dst == NULL, 0);
 
-    src_end = src + src_size;
-    dst_end = dst + dst_size;
+    src_end = src + (size_t) src_size;
+    dst_end = dst + (size_t) dst_size;
 
     while (src < src_end)
-    {
-        
+    {        
         c1 = *src++;
 
         if ((c1 >= UNI_SUR_HIGH_START) && (c1 <= UNI_SUR_HIGH_END))
@@ -170,32 +169,32 @@ int OCI_StringLength(void *ptr, int size_elem)
 
     OCI_CHECK(ptr == NULL, 0);
     
-    if (size_elem == sizeof(char))
+    if (size_elem == (int) sizeof(char))
     {
         const char *s = (const char *) ptr;
         const char *e = (const char *) ptr;
 
         while (*e++) ;
 
-        size = (int) (e - s - 1);
+        size = (int) (e - s - (size_t) 1);
     }
-    else if (size_elem == sizeof(short))
+    else if (size_elem == (int) sizeof(short))
     {
         const short *s = (const short *) ptr;
         const short *e = (const short *) ptr;
 
         while (*e++) ;
 
-        size = (int) (e - s - 1);
+        size = (int) (e - s - (size_t) 1);
     }
-    else if (size_elem == sizeof(int))
+    else if (size_elem == (int) sizeof(int))
     {
         const int *s = (const int *) ptr;
         const int *e = (const int *) ptr;
 
         while (*e++) ;
 
-        size = (int) (e - s - 1);
+        size = (int) (e - s - (size_t) 1);
     }
 
     return size;
@@ -234,7 +233,7 @@ void * OCI_GetInputString(void *src, int *size, int size_char_in,
 
         *size = 0;
 
-        dest = malloc((size_t) ((char_count+1)*sizeof(size_char_out)));
+        dest = malloc(((size_t)(char_count+1)) * sizeof(size_char_out));
 
         if (dest != NULL)
         {
@@ -242,8 +241,8 @@ void * OCI_GetInputString(void *src, int *size, int size_char_in,
             {
                 if (size_char_in > size_char_out)
                 {
-                    if ((size_char_in  == sizeof(int  )) &&
-                        (size_char_out == sizeof(short)))
+                    if ((size_char_in  == (int) sizeof(int  )) &&
+                        (size_char_out == (int) sizeof(short)))
                     {
                         /* UTF32 to UTF16 */
 
@@ -257,13 +256,13 @@ void * OCI_GetInputString(void *src, int *size, int size_char_in,
                     {
                         /* widechar to multibytes */
 
-                        char_count = (int) wcstombs(dest, src, char_count+1);
+                        char_count = (int) wcstombs(dest, src, (size_t) (char_count+1));
                     }
                 }
                 else
                 {                
-                    if ((size_char_in  == sizeof(short)) &&
-                        (size_char_out == sizeof(int  )))
+                    if ((size_char_in  == (int) sizeof(short)) &&
+                        (size_char_out == (int) sizeof(int  )))
                     {
                         /* UTF16 to UTF32 */
                   
@@ -277,14 +276,14 @@ void * OCI_GetInputString(void *src, int *size, int size_char_in,
                     {
                         /* multibytes to widechar */
 
-                        char_count = (int) mbstowcs(dest, src, char_count+1);
+                        char_count = (int) mbstowcs(dest, src, (size_t) (char_count+1));
                     }
                 }
            }
                 
             *size = char_count * size_char_out;
 
-            memset( (void*) (((char*) dest) + *size), 0, sizeof(size_char_out));
+            memset( (void*) (((char*) dest) + (size_t) (*size)), 0, sizeof(size_char_out));
         }
 
         return dest;
@@ -314,8 +313,8 @@ void OCI_GetOutputString(void *src, void *dest, int *size, int size_char_in,
            
         if (size_char_in > size_char_out)
         {
-            if ((size_char_in  == sizeof(int  )) &&
-                (size_char_out == sizeof(short)))
+            if ((size_char_in  == (int) sizeof(int  )) &&
+                (size_char_out == (int) sizeof(short)))
             {
                 /* UTF32 to UTF16 */
 
@@ -329,13 +328,13 @@ void OCI_GetOutputString(void *src, void *dest, int *size, int size_char_in,
             {
                 /* widechar to multibytes */
 
-                char_count = (int) wcstombs(dest, src, char_count+1);
+                char_count = (int) wcstombs(dest, src, (size_t) (char_count+1));
             }
         }
         else
         {
-           if ((size_char_in  == sizeof(short)) &&
-               (size_char_out == sizeof(int  )))
+           if ((size_char_in  == (int) sizeof(short)) &&
+               (size_char_out == (int) sizeof(int  )))
             {
                 /* UTF16 to UTF32 */
           
@@ -349,7 +348,7 @@ void OCI_GetOutputString(void *src, void *dest, int *size, int size_char_in,
             {
                 /* multibytes to widechar */
 
-                char_count = (int) mbstowcs(dest, src, char_count+1);
+                char_count = (int) mbstowcs(dest, src, (size_t) (char_count+1));
             }
         }
 
@@ -373,7 +372,8 @@ void OCI_MoveString(void *src, void *dst, int char_count,
     {
         /* expand string */
 
-        if ((size_char_in == sizeof(short)) && (size_char_out == sizeof(int)))
+        if ((size_char_in  == (int) sizeof(short)) && 
+            (size_char_out == (int) sizeof(int)))
         {            
             /* 2 => 4 bytes */
 
@@ -387,7 +387,8 @@ void OCI_MoveString(void *src, void *dst, int char_count,
                 str2[char_count] = (unsigned int) str1[char_count];
         }
          
-        else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(short)))
+        else if ((size_char_in  == (int) sizeof(char)) &&
+                 (size_char_out == (int) sizeof(short)))
         {            
             /* 1 => 2 bytes */
 
@@ -400,7 +401,8 @@ void OCI_MoveString(void *src, void *dst, int char_count,
             while (char_count--)
                 str2[char_count] = (unsigned short) str1[char_count];
         }
-        else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(int)))
+        else if ((size_char_in  == (int) sizeof(char)) && 
+                 (size_char_out == (int) sizeof(int)))
         {            
             /* 1 => 4 bytes */
 
@@ -418,12 +420,13 @@ void OCI_MoveString(void *src, void *dst, int char_count,
     {
         /* pack string */
 
-        if ((size_char_in == sizeof(int)) && (size_char_out == sizeof(short)))
+        if ((size_char_in == (int) sizeof(int)) &&
+            (size_char_out ==(int) sizeof(short)))
         {
             /* 4 => 2 bytes */
 
             unsigned int   *str1  = (unsigned int   *) src;
-            unsigned short *str2 = (unsigned short *) dst;
+            unsigned short *str2  = (unsigned short *) dst;
             int i = 0;
 
             if (*str1 == 0)
@@ -432,7 +435,8 @@ void OCI_MoveString(void *src, void *dst, int char_count,
             while (++i < char_count)
                 str2[i] = (unsigned short) str1[i];
         }
-        else if ((size_char_in == sizeof(short)) && (size_char_out == sizeof(char)))
+        else if ((size_char_in  == (int) sizeof(short)) && 
+                 (size_char_out == (int) sizeof(char)))
         {
             /* 2 => 1 bytes */
 
@@ -446,7 +450,8 @@ void OCI_MoveString(void *src, void *dst, int char_count,
             while (++i < char_count)
                 str2[i] = (unsigned char) str1[i];
         }
-        else if ((size_char_in == sizeof(int)) && (size_char_out == sizeof(char)))
+        else if ((size_char_in  == (int) sizeof(int)) && 
+                 (size_char_out == (int) sizeof(char)))
         {
             /* 4 => 1 bytes */
 
@@ -488,7 +493,7 @@ void OCI_CopyString(void *src, void *dest, int *size, int size_char_in,
     if (size_char_out == size_char_in)
     {
         memcpy(dest, src, (size_t) *size);
-        memset((void*) (((char*) dest) + (*size)), 0, size_char_out);
+        memset((void*) (((char*) dest) + (size_t)    (*size)), 0, (size_t) size_char_out);
     }
     else
         OCI_GetOutputString(src, dest, size, size_char_in, size_char_out);
@@ -582,12 +587,14 @@ void * OCI_StringFromStringPtr(OCIString *str, void **buf, int *buflen)
             if ((*buf) == NULL)
             {           
                 *buflen = (olen+1) * msize;
-                *buf    = OCI_MemAlloc(OCI_IPC_STRING, msize, olen+1, FALSE);
+                *buf    = OCI_MemAlloc(OCI_IPC_STRING, (size_t) msize,
+                                       (size_t) (olen+1), FALSE);
             }
             else if ((*buflen) < ((olen+1) * msize))
             {
                 *buflen = (olen+1) * msize;
-                *buf    = OCI_MemRealloc(*buf, OCI_IPC_STRING, msize, olen+1);
+                *buf    = OCI_MemRealloc(*buf, OCI_IPC_STRING, (size_t) msize,
+                                         (size_t) (olen+1));
             }
         }
 
@@ -710,7 +717,7 @@ char * ocistrdup(const char * src)
 
     OCI_CHECK(src == NULL, NULL)
 
-    dst = (char *) malloc((strlen(src) + 1) * sizeof(*dst));
+    dst = (char *) malloc((strlen(src) + (size_t) 1) * sizeof(*dst));
 
     if (dst != NULL)
         strcpy(dst, src);
@@ -755,7 +762,7 @@ int ocisprintf(char *str, int size, const char *format, ...)
 
     va_start(args, format);
 
-    n = vsnprintf(str, (size_t) size, format, args);
+    n = (int) vsnprintf(str, (size_t) size, format, args);
 
     va_end(args);
 

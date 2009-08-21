@@ -51,7 +51,7 @@ OCI_Ref * OCI_RefInit(OCI_Connection *con, OCI_TypeInfo *typinf, OCI_Ref **pref,
     OCI_CHECK(pref == NULL, NULL);
 
     if (*pref == NULL)
-        *pref = (OCI_Ref *) OCI_MemAlloc(OCI_IPC_REF, sizeof(*ref), 1, TRUE);
+        *pref = (OCI_Ref *) OCI_MemAlloc(OCI_IPC_REF, sizeof(*ref), (size_t) 1, TRUE);
 
     if (*pref != NULL)
     {
@@ -329,11 +329,11 @@ boolean OCI_API OCI_RefSetNull(OCI_Ref *ref)
  * OCI_RefToText
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_RefToText(OCI_Ref *ref, int size, mtext *str)
+boolean OCI_API OCI_RefToText(OCI_Ref *ref, unsigned int size, mtext *str)
 {
     boolean res = TRUE;
     void *ostr  = NULL;
-    int osize   = size * sizeof(mtext);
+    int osize   = (int) size * (int) sizeof(mtext);
 
     OCI_CHECK_PTR(OCI_IPC_REF, ref, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
@@ -357,7 +357,7 @@ boolean OCI_API OCI_RefToText(OCI_Ref *ref, int size, mtext *str)
 
     /* set null string terminator */
 
-    str[osize/sizeof(mtext)] = 0;
+    str[osize/ (int) sizeof(mtext)] = 0;
 
     OCI_RESULT(res);
    
@@ -376,7 +376,7 @@ unsigned int OCI_API OCI_RefGetHexSize(OCI_Ref *ref)
 
     size = OCIRefHexSize(OCILib.env, (const OCIRef *) ref->handle);
 
-    size /= sizeof(mtext);
+    size /= (ub4) sizeof(mtext);
 
     OCI_RESULT(TRUE);
 

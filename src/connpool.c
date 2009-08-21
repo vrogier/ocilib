@@ -226,7 +226,7 @@ OCI_ConnPool * OCI_API OCI_ConnPoolCreate(const mtext *db, const mtext *user,
         if ((res == TRUE) && (ostr_name != NULL))
         {
             pool->name = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext),
-                                                (osize_name/sizeof(omtext)) + 1,
+                                                (osize_name / (int) sizeof(omtext)) + 1,
                                                 FALSE);
 
             if (pool->name != NULL)

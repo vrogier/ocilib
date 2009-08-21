@@ -51,7 +51,8 @@ OCI_Coll * OCI_CollInit(OCI_Connection *con, OCI_Coll **pcoll, void *handle,
     OCI_CHECK(pcoll == NULL, NULL);
 
     if (*pcoll == NULL)
-        *pcoll = (OCI_Coll *) OCI_MemAlloc(OCI_IPC_COLLECTION, sizeof(*coll), 1, TRUE);
+        *pcoll = (OCI_Coll *) OCI_MemAlloc(OCI_IPC_COLLECTION, sizeof(*coll),
+                                           (size_t) 1, TRUE);
 
     if (*pcoll != NULL)
     {

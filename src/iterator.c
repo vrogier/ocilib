@@ -53,7 +53,8 @@ OCI_Iter * OCI_API OCI_IterCreate(OCI_Coll *coll)
 
     /* allocate iterator structure */
 
-    iter = (OCI_Iter *) OCI_MemAlloc(OCI_IPC_ITERATOR, sizeof(*iter), 1, TRUE);
+    iter = (OCI_Iter *) OCI_MemAlloc(OCI_IPC_ITERATOR, sizeof(*iter), 
+                                     (size_t) 1, TRUE);
 
     if (iter != NULL)
     {

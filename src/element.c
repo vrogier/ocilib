@@ -51,7 +51,8 @@ OCI_Elem * OCI_ElemInit(OCI_Connection *con, OCI_Elem **pelem, void *handle,
     OCI_CHECK(pelem == NULL, NULL);
 
     if (*pelem == NULL)
-        *pelem = (OCI_Elem *) OCI_MemAlloc(OCI_IPC_ELEMENT, sizeof(*elem), 1, TRUE);
+        *pelem = (OCI_Elem *) OCI_MemAlloc(OCI_IPC_ELEMENT, sizeof(*elem),
+                                           (size_t) 1, TRUE);
 
     if (*pelem != NULL)
     {
@@ -130,7 +131,8 @@ boolean OCI_ElemSetNumber(OCI_Elem  *elem, void *value, uword size, uword flag)
   
     if (elem->init == FALSE)
     {
-        elem->handle  = OCI_MemAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
+        elem->handle  = OCI_MemAlloc(OCI_IPC_VOID, sizeof(OCINumber),
+                                     (size_t) 1, TRUE);
 
         elem->init = (elem->handle != NULL);
     }
@@ -438,7 +440,7 @@ unsigned int OCI_API OCI_ElemGetRaw(OCI_Elem *elem, void *value, unsigned int le
             if (len > raw_len)
                 len = raw_len;
 
-            memcpy(value, OCIRawPtr(OCILib.env, raw), len);
+            memcpy(value, OCIRawPtr(OCILib.env, raw), (size_t) len);
         }
     }
 

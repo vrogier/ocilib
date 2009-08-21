@@ -1,0 +1,11 @@
+2009-09-07 Version 3.4.1 Vincent Rogier vince.rogier@gmail.com
+
+    * Improved native 64 bits support
+
+      - Fixed Direct Path API
+      - Added casts + modified some variables types
+
+    * Miscellaneous fixes
+
+      - Fixed OCI_ServerGetOutput()  : ouput was broken if statements PL/LSQL statmeent/blocks were re-executed
+      - Modified OCI_RefToText() : parameter size is now if type <unsigned int> instead of <int>
