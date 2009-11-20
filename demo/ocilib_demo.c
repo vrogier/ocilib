@@ -1579,12 +1579,14 @@ void test_directpath(void)
    {
         OCI_DirPath *dp;
         OCI_TypeInfo *tbl;
+        boolean res = TRUE;
 
         dtext val1[SIZE_COL1+1];
         dtext val2[SIZE_COL2+1];
         dtext val3[SIZE_COL3+1];
 
         int i = 0, nb_rows = SIZE_ARRAY;
+        int state;
 
        /* commit any previous pending modifications */
 
@@ -1597,57 +1599,72 @@ void test_directpath(void)
 
         /* optional attributes to set */
 
-        OCI_DirPathSetBufferSize(dp, 64000);
-        OCI_DirPathSetNoLog(dp, TRUE);
-        OCI_DirPathSetParallel(dp, TRUE);
+        res = res && OCI_DirPathSetBufferSize(dp, 64000);
+        res = res && OCI_DirPathSetNoLog(dp, TRUE);
+        res = res && OCI_DirPathSetParallel(dp, TRUE);
 
         if(OCI_GetOCIRuntimeVersion() >= OCI_9_2)
         {
-            OCI_DirPathSetCacheSize(dp, 100);
+            res = res && OCI_DirPathSetCacheSize(dp, 100);
         }
 
         /* describe the target table */
 
-        OCI_DirPathSetColumn(dp, 1, MT("VAL_INT"),  SIZE_COL1, NULL);
-        OCI_DirPathSetColumn(dp, 2, MT("VAL_STR"),  SIZE_COL2, NULL);
-        OCI_DirPathSetColumn(dp, 3, MT("VAL_DATE"), SIZE_COL3, MT("YYYYMMDD"));
+        res = res && OCI_DirPathSetColumn(dp, 1, MT("VAL_INT"),  SIZE_COL1, NULL);
+        res = res && OCI_DirPathSetColumn(dp, 2, MT("VAL_STR"),  SIZE_COL2, NULL);
+        res = res && OCI_DirPathSetColumn(dp, 3, MT("VAL_DATE"), SIZE_COL3, MT("YYYYMMDD"));
 
         /* prepare the load */
 
-        OCI_DirPathPrepare(dp);
+        res = res && OCI_DirPathPrepare(dp);
 
-        nb_rows = OCI_DirPathGetMaxRows(dp);
-
-        for (i = 1; i <= nb_rows; i++)
+        if (res)
         {
-            /* fill test values */
+            nb_rows = OCI_DirPathGetMaxRows(dp);
 
-            sprint_dt(val1, SIZE_COL1+1, DT("%04d"), i);
-            sprint_dt(val2, SIZE_COL2+1, DT("value %05d"), i);
-            sprint_dt(val3, SIZE_COL3+1, DT("%04d%02d%02d"), (i%23)+1 + 2000,
-                                                             (i%11)+1,
-                                                             (i%23)+1);
+            for (i = 1; i <= nb_rows && res; i++)
+            {
+                /* fill test values */
 
-            OCI_DirPathSetEntry(dp, i, 1, val1, (unsigned int) dtslen(val1), TRUE);
-            OCI_DirPathSetEntry(dp, i, 2, val2, (unsigned int) dtslen(val2), TRUE);
-            OCI_DirPathSetEntry(dp, i, 3, val3, (unsigned int) dtslen(val3), TRUE);
+                sprint_dt(val1, SIZE_COL1+1, DT("%04d"), i);
+                sprint_dt(val2, SIZE_COL2+1, DT("value %05d"), i);
+                sprint_dt(val3, SIZE_COL3+1, DT("%04d%02d%02d"), (i%23)+1 + 2000,
+                                                                 (i%11)+1,
+                                                                 (i%23)+1);
+
+                res = res && OCI_DirPathSetEntry(dp, i, 1, val1, (unsigned int) dtslen(val1), TRUE);
+                res = res && OCI_DirPathSetEntry(dp, i, 2, val2, (unsigned int) dtslen(val2), TRUE);
+                res = res && OCI_DirPathSetEntry(dp, i, 3, val3, (unsigned int) dtslen(val3), TRUE);
+            }
+
+           /* load data to the server */
+
+            while (res == TRUE)
+            {
+                state = OCI_DirPathConvert(dp);
+
+                if ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))
+                    res = OCI_DirPathLoad(dp);
+                
+                if (state == OCI_DPR_COMPLETE)
+                    break;
+            }          
+
+            /* commits changes */
+
+            res = res && OCI_DirPathFinish(dp);
+
+            if (res)
+            {
+                print_frmt("%03d row(s) processed\n", OCI_DirPathGetAffectedRows(dp));
+                print_frmt("%03d row(s) loaded\n", OCI_DirPathGetRowCount(dp));
+            }
+
+            /* free direct path object */
         }
-
-        /* load data to the server */
-
-        OCI_DirPathConvert(dp);
-        OCI_DirPathLoad(dp);
-
-        /* commits changes */
-
-        OCI_DirPathFinish(dp);
-
-        print_frmt("%03d row(s) processed\n", OCI_DirPathGetAffectedRows(dp));
-        print_frmt("%03d row(s) loaded\n", OCI_DirPathGetRowCount(dp));
-
-        /* free direct path object */
 
         OCI_DirPathFree(dp);
    }
 }
+
 
