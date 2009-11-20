@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: date.c, v 3.4.0 2009-07-30 17:40 Vince $
+ * $Id: date.c, v 3.4.1 2009-11-23 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -433,17 +433,23 @@ boolean OCI_API OCI_DateLastDay(OCI_Date *date)
 boolean OCI_API OCI_DateNextDay(OCI_Date *date, const mtext *day)
 {
     boolean res = TRUE;
+    void *ostr  = NULL;
+    int  osize  = -1;
 
     OCI_CHECK_PTR(OCI_IPC_DATE, date, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, day,  FALSE);
+
+    ostr = OCI_GetInputMetaString(day, &osize);
 
     OCI_CALL4
     (
         res, date->err, date->con, 
         
-        OCIDateNextDay(date->err, date->handle, (oratext *) day,
-                       (ub4) mtextsize(day), date->handle)
+        OCIDateNextDay(date->err, date->handle, (oratext *) ostr,
+                       (ub4) osize, date->handle)
     )
+
+    OCI_ReleaseMetaString(ostr);
 
     OCI_RESULT(res);
 

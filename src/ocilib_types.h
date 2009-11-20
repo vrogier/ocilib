@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_types.h, v 3.4.0 2009-07-30 17:40 Vince $
+ * $Id: ocilib_types.h, v 3.4.1 2009-11-23 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 
@@ -361,6 +361,7 @@ struct OCI_Bind
     ub1              type;      /* internal datatype */
     ub1              subtype;   /* internal subtype */
     ub2              code;      /* SQL datatype code */
+    boolean          is_array;  /* is it an array bind ? */
     ub1              alloc;     /* is buffer allocated or mapped to input */
 };
 
@@ -447,7 +448,7 @@ struct OCI_Statement
     ub2              cur_rs;        /* index of the current resultset */
     ub2              dynidx;        /* bind index counter for dynamic exec */
     ub2              err_pos;       /* error position in sql statement */
-    ub2              bind_array;    /* has array binds ? */
+    boolean          bind_array;    /* has array binds ? */
     OCI_BatchErrors *batch;         /* error handling for array DML */
 };
 

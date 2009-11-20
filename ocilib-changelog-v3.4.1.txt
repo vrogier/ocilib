@@ -1,11 +1,24 @@
-2009-09-07 Version 3.4.1 Vincent Rogier vince.rogier@gmail.com
+2009-11-23 Version 3.4.1 Vincent Rogier vince.rogier@gmail.com
 
-    * Improved native 64 bits support
+    * Native 64 bits fixes
 
       - Fixed Direct Path API
       - Added casts + modified some variables types
 
+    * PL/SQL support fixes
+      - Segmentation fault could happen when using OCI_Date binds in PL/SQL statements
+      - Binds values for OCI_Date and big_int variable where not updated after OCI_Execute for PL/SQL
+      - OCI_ServerGetOutput() : ouput was broken if statements PL/LSQL statmeent/blocks were re-executed
+      - OCI_ServerGetOutput() : trash string was returned if the number of amonut of output lines was greater than the value of the  <arrsize> parameter of OCI_ServerEnableOutput()
+       
     * Miscellaneous fixes
 
-      - Fixed OCI_ServerGetOutput()  : ouput was broken if statements PL/LSQL statmeent/blocks were re-executed
-      - Modified OCI_RefToText() : parameter size is now if type <unsigned int> instead of <int>
+      - OCI_ImmediateFmt(), OCI_PrepareFmt(), OCI_ExecuteStmtFmt():  trailing character of formatted string representation of dates was missing on non windows plaftorms
+      - OCI_ObjectGetColl() : the internal OCI Collection handle of the returned OCI_Coll object was invalid and thus caused segfault when calling OCI_Coll functions afterward for these objects
+      - OCI_DateNextDay() : On unixes platforms+Unicode builds -> wrong value passed to the OCI internal call
+      
+    * Miscellaneous  changes
+    
+      - OCI_RefToText() : parameter size is now if type <unsigned int> instead of <int>
+      - Modified : OCI_BIND_MAX (maximum number of binds for a statement) is now 1024 by default instead of 512
+      - Added Oracle spatial demo source (demo/geometry.c)

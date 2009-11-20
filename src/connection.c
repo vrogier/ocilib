@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.4.0 2009-07-30 17:40 Vince $
+ * $Id: connection.c, v 3.4.1 2009-11-23 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -1238,19 +1238,17 @@ const dtext * OCI_API OCI_ServerGetOutput(OCI_Connection *con)
     OCI_CHECK(con->svopt == NULL, FALSE);
 
     if (con->svopt->curpos == 0 || con->svopt->curpos >= con->svopt->cursize)
+    {
         res = OCI_Execute(con->svopt->stmt);
+        con->svopt->curpos = 0;
+    }
 
     if (con->svopt->cursize > 0)
     {
         str = (dtext*) (con->svopt->arrbuf + 
               (size_t) (((con->svopt->lnsize + 1) * (unsigned int) sizeof(dtext)) * con->svopt->curpos++));
     }
-    else
-    {
-        con->svopt->curpos = 0;
-        con->svopt->cursize = con->svopt->arrsize;
-    }
-    
+
     OCI_RESULT(res);
 
     return (const dtext *) str;

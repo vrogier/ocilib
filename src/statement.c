@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.4.0 2009-07-30 17:40 Vince $
+ * $Id: statement.c, v 3.4.1 2009-11-23 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -113,7 +113,7 @@ boolean OCI_BindCheck(OCI_Statement *stmt)
 
         if (bnd->alloc == TRUE)
         {
-            if (bnd->stmt->bind_array == FALSE)
+            if (bnd->is_array == FALSE)
             {
                 /* - For big integer (64 bits), we use an OCINumber.
 
@@ -247,6 +247,7 @@ boolean OCI_BindCheck(OCI_Statement *stmt)
 boolean OCI_BindReset(OCI_Statement *stmt)
 {
     ub4 i, j;
+    boolean res = TRUE;
 
     OCI_CHECK(stmt == NULL, FALSE)
     OCI_CHECK(stmt->ubinds == NULL, FALSE);
@@ -267,6 +268,67 @@ boolean OCI_BindReset(OCI_Statement *stmt)
         {
             memset(bnd->buf.inds, 0, ((size_t) bnd->buf.count) * sizeof(sb2));
         }       
+        else
+        {
+            /* extra work for internal allocated binds buffers with PL/SQL */
+
+            if (bnd->alloc == TRUE)
+            {
+                if (bnd->is_array == FALSE)
+                {
+                    /* - For big integer (64 bits), we use an OCINumber.
+
+                       - Oracle date/time type is the only non scalar type
+                         implemented by oracle through a public structure instead
+                         of using a handle. So we need to copy the value
+                    */
+
+                    if (bnd->type == OCI_CDT_NUMERIC)
+                    {
+                        res = OCI_NumberGet(stmt->con,
+                                            (OCINumber *) bnd->buf.data,
+                                            (void *) bnd->input,
+                                            (uword) sizeof(big_int),
+                                            bnd->subtype);
+                    }
+                    else if (bnd->type == OCI_CDT_DATETIME)
+                    {
+                        memcpy(((OCI_Date *) bnd->input)->handle,
+                               (void *) bnd->buf.data,
+                               sizeof(OCIDate));
+                    }
+
+                }
+                else
+                {
+                    for (j = 0; j < bnd->buf.count; j++)
+                    {
+
+                        /* - For big integer (64 bits), we use an OCINumber.
+
+                           - Oracle date/time type is the only non scalar type
+                             implemented by oracle through a public structure instead
+                             of using a handle. So we need to copy the value
+                        */
+
+                        if (bnd->type == OCI_CDT_NUMERIC)
+                        {
+
+                            res = OCI_NumberGet(stmt->con,
+                                               (OCINumber *) ((ub1 *) bnd->buf.data + (size_t) (j*bnd->size)),
+                                               (void *) (((ub1 *) bnd->input) +  (((size_t)j)*sizeof(big_int))),
+                                               (uword) sizeof(big_int), bnd->subtype);
+                        }
+                        else  if (bnd->type == OCI_CDT_DATETIME)
+                        {
+                            memcpy(((OCI_Date *) bnd->input[j])->handle,
+                                   ((ub1 *) bnd->buf.data) + (size_t) (j*bnd->size),
+                                   sizeof(OCIDate));
+                        }
+                    }
+                }
+            }
+        }
 
 #ifdef OCI_CHECK_DATASTRINGS
 
@@ -306,7 +368,7 @@ boolean OCI_BindReset(OCI_Statement *stmt)
 
     }
 
-    return TRUE;
+    return res;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -322,6 +384,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
     OCI_Bind *bnd    = NULL;
     ub4 exec_mode    = OCI_DEFAULT;
     boolean is_pltbl = FALSE;
+    boolean is_array = FALSE;
     boolean reused   = FALSE;
     ub4 *pnbelem     = NULL;
     int index        = 0;
@@ -426,12 +489,15 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
             if (stmt->type == OCI_CST_BEGIN || stmt->type == OCI_CST_DECLARE)
             {
-                is_pltbl          = TRUE;
-                stmt->bind_array  = TRUE;
+                is_pltbl = TRUE;
+                is_array = TRUE;
             }
         }
         else
-            nbelem = stmt->nb_iters;
+        {
+            nbelem   = stmt->nb_iters;
+            is_array = stmt->bind_array;
+        }
     }
 
     /* create hash table for mapping bind names / index */
@@ -565,6 +631,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         bnd->size      = size;
         bnd->code      = (ub2) code;
         bnd->subtype   = (ub1) subtype;
+        bnd->is_array  = is_array;
 
         if (bnd->name == NULL)
         {

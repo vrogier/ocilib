@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib.h, v 3.4.0 2009-07-30 17:40 Vince $
+ * $Id: ocilib.h, v 3.4.1 2009-11-23 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,7 +59,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.4.0 (2009-07-30)</b>
+ * <b>Current version : 3.4.1 (2009-11-23)</b>
  *
  * @section s_feats Main features
  *
@@ -159,7 +159,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     3
 #define OCILIB_MINOR_VERSION     4
-#define OCILIB_REVISION_VERSION  0
+#define OCILIB_REVISION_VERSION  1
 
 /* ------------------------------------------------------------------------ *
  * Installing OCILIB
@@ -1422,8 +1422,8 @@ typedef struct OCI_HashEntry {
 #define OCI_SIZE_FORMAT         64
 #define OCI_SIZE_BUFFER         512
 #define OCI_SIZE_LONG           (64*1024)-1
-#define OCI_SIZE_DATE           44
-#define OCI_SIZE_TIMESTAMP      60
+#define OCI_SIZE_DATE           45
+#define OCI_SIZE_TIMESTAMP      54
 #define OCI_SIZE_FORMAT_TODATE  14
 #define OCI_SIZE_NULL           4
 #define OCI_SIZE_PRECISION      10

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: object.c, v 3.4.0 2009-07-30 17:40 Vince $
+ * $Id: object.c, v 3.4.1 2009-11-23 00:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -790,7 +790,7 @@ OCI_Coll * OCI_API OCI_ObjectGetColl(OCI_Object *obj, const mtext *attr)
         {
             coll = OCI_CollInit(obj->con,
                                 (OCI_Coll **) &obj->objs[index],
-                                (OCIColl *) value,
+                                (OCIColl *) *value,
                                 obj->typinf->cols[index].typinf);
 
             res = (coll != NULL);
