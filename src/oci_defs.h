@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_defs.h, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: oci_defs.h, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_DEFS_H_INCLUDED 
@@ -716,6 +716,9 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_DBSHUTDOWN_IMMEDIATE           3      /* Terminate and roll back */
 #define OCI_DBSHUTDOWN_ABORT              4 /* Terminate and don't roll back */
 #define OCI_DBSHUTDOWN_FINAL              5              /* Orderly shutdown */
+
+/*---------------------------OCIPasswordChange-------------------------------*/
+#define OCI_AUTH         0x08        /* Change the password but do not login */
 
 
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */

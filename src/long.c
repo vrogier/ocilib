@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: long.c, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: long.c, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -245,7 +245,15 @@ unsigned int OCI_API OCI_LongWrite(OCI_Long *lg, void *buffer,
      
     if ((code != OCI_SUCCESS) && (code != OCI_NEED_DATA))
     {
-        OCI_ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt);
+        if (code == OCI_SUCCESS_WITH_INFO)
+        {
+            OCI_ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt, TRUE);
+        }
+        else
+        {
+            OCI_ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt, FALSE);
+            res = FALSE;
+        }
     }
 
     if (lg->type == OCI_CLONG)

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: connection.c, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -278,7 +278,7 @@ boolean OCI_ConnectionDetach(OCI_Connection *con)
  * OCI_ConnectionLogon
  * ------------------------------------------------------------------------ */
 
-boolean OCI_ConnectionLogon(OCI_Connection *con)
+boolean OCI_ConnectionLogon(OCI_Connection *con, const mtext *new_pwd)
 {
     void *ostr  = NULL;
     int osize   = -1;
@@ -297,66 +297,10 @@ boolean OCI_ConnectionLogon(OCI_Connection *con)
                    (ub4) OCI_ATTR_SERVER, con->err)
     )
 
-    /* set session login attribute */
+    /* modifiy user password if needed */
 
-    if ((res == TRUE) && (con->user != NULL) && (con->user[0] != 0))
+    if (new_pwd && new_pwd[0])
     {
-        osize = -1;
-        ostr  = OCI_GetInputMetaString(con->user, &osize);
-
-        OCI_CALL2
-        (
-            res, con,
-
-            OCIAttrSet((dvoid *) con->ses,(ub4)  OCI_HTYPE_SESSION,
-                       (dvoid *) ostr, (ub4) osize,
-                       (ub4) OCI_ATTR_USERNAME, con->err)
-        )
-
-        OCI_ReleaseMetaString(ostr);
-    }
-
-    /* set session password attribute */
-
-    if ((res == TRUE) && (con->pwd != NULL) && (con->pwd[0] != 0))
-    {
-        osize = -1;
-        ostr  = OCI_GetInputMetaString(con->pwd, &osize);
-
-        OCI_CALL2
-        (
-            res, con,
-
-            OCIAttrSet((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION,
-                       (dvoid *) ostr, (ub4) osize,
-                       (ub4) OCI_ATTR_PASSWORD, con->err)
-        )
-
-        OCI_ReleaseMetaString(ostr);
-    }
-
-    /* start session */
-
-    if (res == TRUE)
-    {
-        ub4 credt = OCI_CRED_RDBMS;
-
-        if  (((con->user == NULL) || (con->user[0] == 0)) &&
-             ((con->pwd  == NULL) || (con->pwd[0]  == 0)))
-        {
-            credt = OCI_CRED_EXT;
-        }
-
-        OCI_CALL2
-        (
-            res, con,
-
-            OCISessionBegin(con->cxt, con->err, con->ses, credt, con->mode)
-        )
-
-       /* This call has moved after OCISessionBegin() call to enable connection
-          pooling (an error ORA-24324 was thrown is the session handle was set to
-          the service context handle before OCISessionBegin() */
 
         OCI_CALL2
         (
@@ -364,8 +308,99 @@ boolean OCI_ConnectionLogon(OCI_Connection *con)
 
             OCIAttrSet((dvoid *) con->cxt, (ub4) OCI_HTYPE_SVCCTX,
                        (dvoid *) con->ses, (ub4) sizeof(con->ses),
-                       (ub4) OCI_ATTR_SESSION, con->err))
+                       (ub4) OCI_ATTR_SESSION, con->err)
+        )
 
+        OCI_CALL2
+        (
+            res, con,
+
+            OCIPasswordChange(con->cxt, con->err,
+                              (OraText *) con->user, (ub4) mtextsize(con->user),
+                              (OraText *) con->pwd,  (ub4) mtextsize(con->pwd),
+                              (OraText *) new_pwd,   (ub4) mtextsize(new_pwd),
+                              OCI_AUTH)
+        )
+
+        if (res == TRUE)
+        {
+            OCI_FREE(con->pwd);
+
+            con->pwd = mtsdup(new_pwd);
+        }
+    }
+    else
+    {
+        /* set session login attribute */
+
+        if ((res == TRUE) && (con->user != NULL) && (con->user[0] != 0))
+        {
+            osize = -1;
+            ostr  = OCI_GetInputMetaString(con->user, &osize);
+
+            OCI_CALL2
+            (
+                res, con,
+
+                OCIAttrSet((dvoid *) con->ses,(ub4)  OCI_HTYPE_SESSION,
+                           (dvoid *) ostr, (ub4) osize,
+                           (ub4) OCI_ATTR_USERNAME, con->err)
+            )
+
+            OCI_ReleaseMetaString(ostr);
+        }
+
+        /* set session password attribute */
+
+        if ((res == TRUE) && (con->pwd != NULL) && (con->pwd[0] != 0))
+        {
+            osize = -1;
+            ostr  = OCI_GetInputMetaString(con->pwd, &osize);
+
+            OCI_CALL2
+            (
+                res, con,
+
+                OCIAttrSet((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION,
+                           (dvoid *) ostr, (ub4) osize,
+                           (ub4) OCI_ATTR_PASSWORD, con->err)
+            )
+
+            OCI_ReleaseMetaString(ostr);
+        }
+
+        /* start session */
+
+        if (res == TRUE)
+        {
+            ub4 credt = OCI_CRED_RDBMS;
+
+            if  (((con->user == NULL) || (con->user[0] == 0)) &&
+                 ((con->pwd  == NULL) || (con->pwd[0]  == 0)))
+            {
+                credt = OCI_CRED_EXT;
+            }
+
+            OCI_CALL2
+            (
+                res, con,
+
+                OCISessionBegin(con->cxt, con->err, con->ses, credt, con->mode)
+            )
+
+            /* This call has moved after OCISessionBegin() call to enable connection
+               pooling (an error ORA-24324 was thrown is the session handle was set to
+               the service context handle before OCISessionBegin() */
+
+            OCI_CALL2
+            (
+                res, con,
+
+                OCIAttrSet((dvoid *) con->cxt, (ub4) OCI_HTYPE_SVCCTX,
+                           (dvoid *) con->ses, (ub4) sizeof(con->ses),
+                           (ub4) OCI_ATTR_SESSION, con->err)
+            )
+        }
     }
 
     /* check for success */
@@ -560,8 +595,8 @@ OCI_Connection * OCI_API OCI_ConnectionCreate(const mtext *db,
 
     if (con != NULL)
     {
-        if (OCI_ConnectionAttach(con) == FALSE ||
-            OCI_ConnectionLogon(con)  == FALSE)
+        if (OCI_ConnectionAttach(con)        == FALSE ||
+            OCI_ConnectionLogon(con, NULL)   == FALSE)
         {
             OCI_ConnectionFree(con);
             con = NULL;
@@ -586,7 +621,7 @@ boolean OCI_API OCI_ConnectionFree(OCI_Connection *con)
 
     /* clear connection reference from current error object */
 
-    err = OCI_ErrorGet(FALSE);
+    err = OCI_ErrorGet(FALSE, FALSE);
 
     if (err != NULL && err->con == con)
         err->con = NULL;
@@ -783,20 +818,67 @@ const mtext * OCI_API OCI_GetPassword(OCI_Connection *con)
 boolean OCI_API OCI_SetPassword(OCI_Connection *con, const mtext *password)
 {
     boolean res = TRUE;
+    ub4 mode = OCI_DEFAULT;
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, password, FALSE);
 
-    OCI_CALL2
-    (
-        res, con,
+    if (con->cstate != OCI_CONN_LOGGED)
+    {
+        OCI_ConnectionLogon(con, password);
+    }
+    else
+    {
+        OCI_CALL2
+        (
+            res, con,
 
-        OCIPasswordChange(con->cxt, con->err,
-                          (OraText *) con->user, (ub4) mtextsize(con->user),
-                          (OraText *) con->pwd,  (ub4) mtextsize(con->pwd),
-                          (OraText *) password,  (ub4) mtextsize(password),
-                          (ub4) OCI_DEFAULT)
-    )
+            OCIPasswordChange(con->cxt, con->err,
+                              (OraText *) con->user, (ub4) mtextsize(con->user),
+                              (OraText *) con->pwd,  (ub4) mtextsize(con->pwd),
+                              (OraText *) password,  (ub4) mtextsize(password),
+                              mode)
+        )
+    }
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_SetUserPassword
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_SetUserPassword(const mtext *db, const mtext *user,
+                                    const mtext *pwd, const mtext *new_pwd)
+{
+    OCI_Connection * con = NULL;
+    boolean          res = FALSE;
+
+    /* let's be sure OCI_Initialize() has been called */
+
+    OCI_CHECK_INITIALIZED(FALSE);
+
+    con = OCI_ConnectionAllocate(NULL, db, user, pwd, OCI_AUTH);
+
+    if (con != NULL)
+    {
+        if (OCI_ConnectionAttach(con)           == FALSE ||
+            OCI_ConnectionLogon(con, new_pwd)   == FALSE)
+        {
+            OCI_ConnectionFree(con);
+            con = NULL;
+        }
+    }
+
+    if (con != NULL)
+    {
+        res = TRUE;
+        OCI_ConnectionFree(con);
+    }
+    else
+        res = FALSE;
 
     OCI_RESULT(res);
 
@@ -1465,3 +1547,4 @@ boolean OCI_API OCI_Ping(OCI_Connection *con)
 
     return ret;
 }
+

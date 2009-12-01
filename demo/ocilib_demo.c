@@ -109,7 +109,8 @@ static OCI_Resultset  *rs = NULL;
 static mtext str[SIZE_STR+1];
 static dtext temp[SIZE_STR+1];
 
-static int nb_err = 0;
+static int nb_err  = 0;
+static int nb_warn = 0;
 
 /* ------------------------------------------------------------------------ *
  * err_handler
@@ -117,26 +118,24 @@ static int nb_err = 0;
 
 void err_handler(OCI_Error *err)
 {
+    int err_type = OCI_ErrorGetType(err);
+
     print_text("\n");
 
-    if (OCI_ErrorGetType(err) == OCI_ERR_ORACLE)
+    if (err_type == OCI_ERR_WARNING)
     {
-        const mtext *sql = OCI_GetSql(OCI_ErrorGetStatement(err));
-
-        if (sql != NULL)
-        {
-            print_text("> ERROR - SQL : "); print_mstr(sql);
-            print_text("\n");
-        }
+        print_text("> ERROR   : ");
+        nb_warn++;
+    }
+    else
+    {
+        print_text("> WARNING : ");
+        nb_err++;
     }
 
-    print_text("> ERROR - MSG : ");
     print_mstr(OCI_ErrorGetString(err));
     print_text("\n");
-
-    nb_err++;
 }
-
 
 /* ------------------------------------------------------------------------ *
  * main
@@ -172,6 +171,8 @@ int mtmain(int argc, mtarg* argv[])
     if (!OCI_Initialize(err_handler, home, OCI_ENV_DEFAULT))
         return EXIT_FAILURE;
 
+    OCI_EnableWarnings(TRUE);
+
     /* CONNECTION TO SERVER ------------------------------------------------- */
 
     print_text("Connecting to ");
@@ -195,7 +196,8 @@ int mtmain(int argc, mtarg* argv[])
 
         for (i = 0; i < ARRAY_COUNT(tab_test); i++)
         {
-            tab_test[i].proc();
+            if (tab_test[i].execute)
+                tab_test[i].proc();
         }
 
         drop_tables();
@@ -224,7 +226,8 @@ void cleanup(void)
 {
     OCI_Cleanup();
 
-    print_frmt("\n%i errors encountered\n\n", nb_err);
+    print_frmt("\n%i errors   \n", nb_err);
+    print_frmt("\n%i warnings \n\n", nb_warn);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -1666,5 +1669,3 @@ void test_directpath(void)
         OCI_DirPathFree(dp);
    }
 }
-
-

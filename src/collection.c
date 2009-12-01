@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: collection.c, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: collection.c, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -296,6 +296,44 @@ OCI_Elem * OCI_API OCI_CollGetAt(OCI_Coll *coll, unsigned int index)
     OCI_RESULT(res);
 
     return elem;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_CollGetAt2
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_CollGetAt2(OCI_Coll *coll, unsigned int index, OCI_Elem *elem)
+{
+    boolean res    = TRUE;
+    boolean exists = FALSE;
+    void *data     = NULL;
+    OCIInd *p_ind  = NULL;
+
+    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
+
+    OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].type == coll->typinf->cols[0].type, FALSE);
+
+    OCI_CALL2
+    (
+        res, coll->con,
+
+        OCICollGetElem(OCILib.env, coll->con->err, coll->handle, (sb4) index-1,
+                       &exists, &data, (dvoid **) (dvoid *) &p_ind)
+    )
+
+    if (res == TRUE && exists == TRUE && data != NULL)
+    {
+        res = (OCI_ElemInit(coll->con, &elem, data, p_ind, coll->typinf) != NULL);
+    }
+    else
+    {
+        OCI_ElemSetNullIndicator(elem, OCI_IND_NULL);
+    }
+
+    OCI_RESULT(res);
+
+    return res;
 }
 
 /* ------------------------------------------------------------------------ *

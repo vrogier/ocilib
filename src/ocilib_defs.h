@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: ocilib_defs.h, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -410,8 +410,7 @@
 
 /* check OCI status */
 
-#define OCI_NO_ERROR(res)   (((res) == OCI_SUCCESS) ||  \
-                             ((res) == OCI_SUCCESS_WITH_INFO))
+#define OCI_NO_ERROR(res)   ((res) == OCI_SUCCESS)
 
 
 /* memory management helpers */

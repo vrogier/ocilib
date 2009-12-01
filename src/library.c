@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: library.c, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: library.c, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -424,7 +424,7 @@ boolean OCI_KeyMapFree(void)
 
 void OCI_SetStatus(boolean res)
 {
-    OCI_Error *err = OCI_ErrorGet(FALSE);
+    OCI_Error *err = OCI_ErrorGet(FALSE, FALSE);
 
     if (err != NULL)
     {
@@ -1065,10 +1065,10 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
             res = (OCI_SUCCESS == OCIThreadInit(OCILib.env, OCILib.err));
         }
 
-        /* create thread for thread errors */
+        /* create thread key for thread errors */
 
-        OCILib.key_errs = OCI_ThreadKeyCreateInternal((POCI_THREADKEYDEST) OCI_ErrorFree);
-
+        OCILib.key_errs  = OCI_ThreadKeyCreateInternal((POCI_THREADKEYDEST) OCI_ErrorFree);
+    
         /* allocate connections internal list */
 
         if (res == TRUE)
@@ -1142,7 +1142,7 @@ boolean OCI_API OCI_Cleanup(void)
     if (OCILib.key_errs != NULL)
     {
         OCI_ThreadKey *key = OCILib.key_errs;
-        OCI_Error *err     = OCI_ErrorGet(FALSE);
+        OCI_Error *err     = OCI_ErrorGet(FALSE, FALSE);
 
         OCILib.key_errs = NULL;
 
@@ -1259,7 +1259,7 @@ OCI_Error * OCI_API OCI_GetLastError(void)
 
     if ((OCILib.loaded == FALSE) || (OCI_LIB_CONTEXT))
     {
-        err = OCI_ErrorGet(TRUE);
+        err = OCI_ErrorGet(TRUE, FALSE);
 
         if (err != NULL)
         {
@@ -1269,6 +1269,24 @@ OCI_Error * OCI_API OCI_GetLastError(void)
     }
 
     return err;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_EnableWarnings
+ * ------------------------------------------------------------------------ */
+
+void OCI_API OCI_EnableWarnings(boolean value)
+{
+    OCILib.warnings_on = value;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_SetErrorHandler
+ * ------------------------------------------------------------------------ */
+
+void OCI_API OCI_SetErrorHandler(POCI_ERROR handler)
+{
+    OCILib.error_handler = handler;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -1404,7 +1422,6 @@ boolean OCI_API OCI_DatabaseStartup(const mtext *db,  const mtext *user,
  * OCI_DatabaseShutdown
  * ------------------------------------------------------------------------ */
 
-
 boolean OCI_API OCI_DatabaseShutdown(const mtext *db, const mtext *user,
                                      const mtext *pwd, unsigned int sess_mode,
                                      unsigned int shut_mode, unsigned int shut_flag
@@ -1505,4 +1522,3 @@ boolean OCI_API OCI_DatabaseShutdown(const mtext *db, const mtext *user,
 
     return res;
 }
-

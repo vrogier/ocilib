@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connpool.c, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: connpool.c, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -351,7 +351,7 @@ OCI_Connection * OCI_API OCI_ConnPoolGetConnection(OCI_ConnPool *pool)
         if (con->cstate == OCI_CONN_ALLOCATED)
             res = res && OCI_ConnectionAttach(con);
 
-        res  = res &&  OCI_ConnectionLogon(con);
+        res  = res &&  OCI_ConnectionLogon(con, NULL);
 
         if (res == FALSE)
         {

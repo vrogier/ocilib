@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: error.c, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: error.c, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -42,7 +42,7 @@
  * OCI_ErrorCreate
  * ------------------------------------------------------------------------ */
 
-OCI_Error * OCI_ErrorCreate()
+OCI_Error * OCI_ErrorCreate(void)
 {
     OCI_Error *err = calloc(1, sizeof(*err));
 
@@ -66,14 +66,15 @@ void OCI_ErrorReset(OCI_Error *err)
 {
     if (err != NULL)
     {
-        err->raise  = TRUE;
-        err->active = FALSE;
-        err->con    = NULL;
-        err->stmt   = NULL;
-        err->ocode  = 0;
-        err->icode  = 0;
-        err->type   = 0;
-        err->str[0] = 0;
+        err->warning = FALSE;
+        err->raise   = TRUE;
+        err->active  = FALSE;
+        err->con     = NULL;
+        err->stmt    = NULL;
+        err->ocode   = 0;
+        err->icode   = 0;
+        err->type    = 0;
+        err->str[0]  = 0;
     }
 }
 
@@ -81,9 +82,12 @@ void OCI_ErrorReset(OCI_Error *err)
  * OCI_ErrorGet
  * ------------------------------------------------------------------------ */
 
-OCI_Error * OCI_ErrorGet(boolean check)
+OCI_Error * OCI_ErrorGet(boolean check, boolean warning)
 {
     OCI_Error *err = NULL;
+
+    if ((warning == TRUE) && (OCILib.warnings_on == FALSE))
+        return NULL;
 
     if (OCILib.loaded == TRUE)
     {
@@ -96,10 +100,10 @@ OCI_Error * OCI_ErrorGet(boolean check)
                 if (err != NULL)
                     OCI_ThreadKeySet(OCILib.key_errs, err);
             }
-            else
+            else  if (check == TRUE) 
             {
-                if ((check == TRUE) && (err->active == TRUE))
-                    err = NULL;
+                if ((err->active == TRUE) || (err->warning != warning))
+                err = NULL;
             }
         }
     }
@@ -107,8 +111,11 @@ OCI_Error * OCI_ErrorGet(boolean check)
     {
         err = &OCILib.lib_err;
 
-        if (err != NULL && err->active == TRUE)
-            err = NULL;
+        if (err != NULL)
+        {
+            if ((err->active == TRUE) || (err->warning != warning))
+                err = NULL;
+        }
     }
 
     return err;
@@ -194,4 +201,3 @@ unsigned int OCI_API OCI_ErrorGetRow(OCI_Error *err)
 
     return err->row;
 }
-

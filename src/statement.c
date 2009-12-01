@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: statement.c, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -1245,7 +1245,7 @@ boolean OCI_StatementClose(OCI_Statement *stmt)
 
     /* clear statement reference from current error object */
 
-    err = OCI_ErrorGet(FALSE);
+    err = OCI_ErrorGet(FALSE, FALSE);
 
     if (err != NULL && err->stmt == stmt)
         err->stmt = NULL;
@@ -1599,7 +1599,14 @@ boolean OCI_API OCI_Execute(OCI_Statement *stmt)
 
     /* check result */
 
-    res = ((status == OCI_SUCCESS) || (status == OCI_NEED_DATA));
+    res = ((status == OCI_SUCCESS) ||
+           (status == OCI_SUCCESS_WITH_INFO) || 
+           (status == OCI_NEED_DATA));
+
+    if (status == OCI_SUCCESS_WITH_INFO)
+    {
+        OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt, TRUE);
+    }
 
     /* update status on success */
 
@@ -1625,7 +1632,7 @@ boolean OCI_API OCI_Execute(OCI_Statement *stmt)
 
         /* raise exception */
 
-        OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt);
+        OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt, FALSE);
 
         /* build batch error list if the statement is array DML */
 
@@ -1772,17 +1779,20 @@ boolean OCI_Immediate(OCI_Connection *con, const mtext *sql, ...)
 
     stmt = OCI_StatementCreate(con);
 
-    if ((stmt != NULL) &&OCI_ExecuteStmt(stmt, sql))
+    if (stmt != NULL) 
     {
-        /* get resultset and set up variables */
-
-        if (OCI_GetStatementType(stmt) == OCI_CST_SELECT)
+        if (OCI_ExecuteStmt(stmt, sql))
         {
-            va_start(args, sql);
+            /* get resultset and set up variables */
 
-            res = OCI_FetchIntoUserVariables(stmt, args);
+            if (OCI_GetStatementType(stmt) == OCI_CST_SELECT)
+            {
+                va_start(args, sql);
 
-            va_end(args);
+                res = OCI_FetchIntoUserVariables(stmt, args);
+
+                va_end(args);
+            }
         }
 
         OCI_StatementFree(stmt);

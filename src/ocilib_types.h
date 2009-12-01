@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_types.h, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: ocilib_types.h, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 
@@ -136,6 +136,7 @@ struct OCI_Error
     mtext            str[OCI_ERR_MSG_SIZE+1]; /* error message */
     unsigned int     type;                    /* OCILIB error type */
     ub4              row;                     /* Error row offset (array DML) */
+    boolean          warning;                 /* is it a warning */
 };
 
 /*
@@ -205,6 +206,7 @@ struct OCI_Library
     ub1             use_scrollable_cursors; /* use Oracle 9i fetch API */
     ub4             env_mode;               /* default environment mode */
     boolean         loaded;                 /* OCILIB correctly loaded ? */
+    boolean         warnings_on;            /* warnings enabled ? */
     OCI_Error       lib_err;                /* Error used when OCILIB is not loaded */
     OCI_HashTable  *key_map;                /* hash table for mapping name/key */
     OCI_ThreadKey  *key_errs;               /* Thread key to store thread errors */

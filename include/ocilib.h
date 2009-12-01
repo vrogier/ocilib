@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib.h, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: ocilib.h, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,7 +59,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.4.1 (2009-11-23)</b>
+ * <b>Current version : 3.5.0 (2009-12-02)</b>
  *
  * @section s_feats Main features
  *
@@ -96,6 +96,7 @@ extern "C" {
  * - Supports static / shared oracle linkage
  * - Support runtime loading (no OCI libs required at compile time)
  * - Remote Instances Startup/Shutdown
+ * - Oracle warnings support
  *
  * @section s_down Download
  *
@@ -158,8 +159,8 @@ extern "C" {
  * ------------------------------------------------------------------------ */
 
 #define OCILIB_MAJOR_VERSION     3
-#define OCILIB_MINOR_VERSION     4
-#define OCILIB_REVISION_VERSION  1
+#define OCILIB_MINOR_VERSION     5
+#define OCILIB_REVISION_VERSION  0
 
 /* ------------------------------------------------------------------------ *
  * Installing OCILIB
@@ -200,9 +201,10 @@ extern "C" {
  *
  * => Calling convention (WINDOWS ONLY)
  *
- *     - OCI_API = __cdecl or blank for C/C++ only ! <b>(default)</b>
+ *     - OCI_API = __cdecl or blank for C/C++ only ! <b>(default on unixes and 
+ *                 non MSVC projects </b>
  *     - OCI_API = __stdcall to link OCILIB shared library with language
- *       independence <b>(default with prebuilt OCILIB libraries on MS Windows)</b>
+ *       independence <b>(default on MSVC projects)</b>
  *
  * @note
  * On Windows, OCI_API MUST be set to __stdcall in order to use prebuilt libraries
@@ -388,7 +390,11 @@ extern "C" {
 /* Calling convention */
 
 #ifndef OCI_API
-#define OCI_API
+  #ifdef _MSC_VER
+    #define OCI_API __stdcall
+  #else
+    #define OCI_API
+  #endif
 #endif
 
 /* Build mode */
@@ -1211,6 +1217,7 @@ typedef struct OCI_HashEntry {
 
 #define OCI_ERR_ORACLE                  1
 #define OCI_ERR_OCILIB                  2
+#define OCI_ERR_WARNING                 3
 
 /* OCILIB Error codes */
 
@@ -1768,10 +1775,21 @@ OCI_EXPORT unsigned int OCI_API OCI_GetCharsetMetaData(void);
 
 OCI_EXPORT unsigned int OCI_API OCI_GetCharsetUserData(void);
 
+/**
+ * @brief
+ * Enable or disable Oracle warning notifications
+ *
+ * @param value  - enable/disable warnings
+ *
+ * @note
+ * Default value is FALSE
+ *
+ */
 
-OCI_EXPORT boolean OCI_API OCI_SetTemporayBufferSize(unsigned int size);
-
-OCI_EXPORT unsigned int OCI_API OCI_GetTemporayBufferSize(void);
+OCI_EXPORT void OCI_API OCI_EnableWarnings
+(
+    boolean value
+);
 
 /**
  * @}
@@ -1791,6 +1809,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetTemporayBufferSize(void);
  * - On Oracle OCI API call error
  * - On Oracle SQL statement error
  * - On Internal OCILIB error (type checking, memory allocations, ...)
+ * - ON Oracle warnings (OCI API or SQL) from v3.5.0 is warnings are enabled
  *
  * If an error handler was provided to OCI_Initialize(), when an error occurs, the
  * library generates an OCI_Error handle and pass it to the error handler.
@@ -1808,11 +1827,21 @@ OCI_EXPORT unsigned int OCI_API OCI_GetTemporayBufferSize(void);
  * @note
  * Thread contextual error is also available for single thread based applications
  *
+ * @par Oracle Warnings
+ * Oracle warnings are raised through OCI_Error API. 
+ * Such error handles have their error type property (OCI_ErrorGetType()) set to
+ * OCI_ERR_WARNING.
+ * Warning handing is disabled by default. To activate/desactivate this feature,
+ * use OCI_EnableWarnings()
+ *
  * @par Example with callbacks
  * @include err.c
  *
  * @par Example with thread context
  * @include err_ctx.c
+ * 
+ *@par Example of warning handling
+ * @include err_warning.c
  *
  */
 
@@ -1852,6 +1881,7 @@ OCI_EXPORT const mtext * OCI_API OCI_ErrorGetString
  *
  * - OCI_ERR_ORACLE
  * - OCI_ERR_OCILIB
+ * - OCI_ERR_WARNING
  *
  * @return
  * Object type or OCI_UNKNOWN the input handle is NULL
@@ -2108,6 +2138,28 @@ OCI_EXPORT boolean OCI_API OCI_SetPassword
 (
     OCI_Connection *con,
     const mtext *password
+);
+
+/**
+ * @brief
+ * Change the password of the given user on the given database
+ *
+ * @param db      - Oracle Service Name
+ * @param user    - Oracle User name
+ * @param pwd     - Oracle User password
+ * @param new_pwd - Oracle User New password
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetUserPassword
+(
+    const mtext *db,
+    const mtext *user,
+    const mtext *pwd, 
+    const mtext *new_pwd
 );
 
 /**
@@ -3216,6 +3268,9 @@ OCI_EXPORT const mtext * OCI_API OCI_GetSQLVerb
  * through the name parameter. Within this mode the bind name must be the
  * position preceded by a semicolon like ':1', ':2', ....
  *
+ * @note
+ * Rebinding is disabled by default (see OCI_AllowRebinding())
+ *
  * @par Basic input bind Example
  * @include bind.c
  *
@@ -3282,7 +3337,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindArrayGetSize
  * @param stmt  - Statement handle
  * @param value - Rebinding mode allowed
  *
- *@note
+ * @note
  * Default value is FALSE
  *
  * @return
@@ -6346,6 +6401,36 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_CollGetAt
 (
     OCI_Coll *coll,
     unsigned int index
+);
+
+
+/**
+ * @brief
+ * Return the element at the given position in the collection
+ *
+ * @param coll  - Collection handle
+ * @param index - Index of the destination element
+ * @param elem  - Element handle to hold the collection item data
+ *
+ * @note
+ * Collection indexes start at position 1.
+ *
+ * @note
+ * Up to 3.3.0, the library checked that the input index was fitting into the 
+ * collection bounds. From 3.3.1, this check has been removed for some internal
+ * reasons. An exception will be still thrown in case of out of bounds index but
+ * the exception type is now an OCI exception instead of an OCILIB one.
+ * 
+ * @return
+ * Element handle on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_CollGetAt2
+(
+    OCI_Coll *coll,
+    unsigned int index,
+    OCI_Elem *elem
 );
 
 /**
@@ -13551,6 +13636,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream
 #define OCI_9  OCI_9_0
 #define OCI_10 OCI_10_1
 #define OCI_11 OCI_11_1
+
 
 #endif    /* OCILIB_H_INCLUDED */
 

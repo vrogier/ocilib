@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: dirpath.c, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: dirpath.c, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -870,18 +870,18 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
             {
                 res = OCI_DPR_ERROR;
 
-                OCI_ExceptionOCI(dp->con->err, dp->con, NULL);
+                OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
 
                 break;
-           }
-           case OCI_CONTINUE:
+            }
+            case OCI_CONTINUE:
             {
                 dp->status = OCI_DPS_CONVERTED;
                 res        = OCI_DPR_FULL;
 
                 break;
             }
-           case OCI_NEED_DATA:
+            case OCI_NEED_DATA:
             {
                 res = OCI_DPR_PARTIAL;
 
@@ -956,17 +956,17 @@ unsigned int OCI_API OCI_DirPathLoad(OCI_DirPath *dp)
         {
             res = OCI_DPR_ERROR;
 
-            OCI_ExceptionOCI(dp->con->err, dp->con, NULL);
+            OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
 
             break;
-       }
-       case OCI_NO_DATA:
+        }
+        case OCI_NO_DATA:
         {
             res = OCI_DPR_EMPTY;
 
             break;
         }
-       case OCI_NEED_DATA:
+        case OCI_NEED_DATA:
         {
             res = OCI_DPR_PARTIAL;
 

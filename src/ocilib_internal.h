@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: ocilib_internal.h, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED 
@@ -141,7 +141,8 @@ boolean OCI_ConnectionAttach
 
 boolean OCI_ConnectionLogon
 (
-    OCI_Connection *con
+    OCI_Connection *con, 
+    const mtext *password
 );
 
 boolean OCI_ConnectionDetach
@@ -272,7 +273,8 @@ void OCI_ErrorReset
 
 OCI_Error * OCI_ErrorGet
 (
-    boolean check
+    boolean check,
+    boolean warning 
 );
 
 OCI_Error * OCI_ErrorCreate
@@ -284,7 +286,10 @@ OCI_Error * OCI_ErrorCreate
  * exception.c
  * ------------------------------------------------------------------------ */
 
-OCI_Error * OCI_ExceptionGetError(void);
+OCI_Error * OCI_ExceptionGetError
+(
+    boolean warning
+);
 
 void OCI_ExceptionRaise
 (
@@ -295,7 +300,8 @@ void OCI_ExceptionOCI
 (
     OCIError *p_err, 
     OCI_Connection *con,
-    OCI_Statement *stmt
+    OCI_Statement *stmt,
+    boolean warning
 );
 
 void OCI_ExceptionMemory
@@ -1074,7 +1080,6 @@ boolean OCI_TypeInfoClose
 (
     OCI_TypeInfo *typeinf
 );
-
 
 #ifdef  __cplusplus
 }

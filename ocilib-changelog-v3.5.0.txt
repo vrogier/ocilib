@@ -1,4 +1,15 @@
-2009-11-23 Version 3.4.1 Vincent Rogier vince.rogier@gmail.com
+2009-12-02 Version 3.5.0 Vincent Rogier vince.rogier@gmail.com
+
+    * Added support for Oracle warning (grace periode notication, SQL truncation, etc ...)
+
+      - Added OCI_EnableWarnings()
+      - Added OCI_ERR_WARNING
+      - Updated documentation (page <modules> <error handling>)
+
+    * New functions 
+
+      - OCI_CollGetAt2()
+      - OCI_SetUserPassword() to renew password
 
     * Native 64 bits fixes
 
@@ -16,9 +27,11 @@
       - OCI_ImmediateFmt(), OCI_PrepareFmt(), OCI_ExecuteStmtFmt():  trailing character of formatted string representation of dates was missing on non windows plaftorms
       - OCI_ObjectGetColl() : the internal OCI Collection handle of the returned OCI_Coll object was invalid and thus caused segfault when calling OCI_Coll functions afterward for these objects
       - OCI_DateNextDay() : On unixes platforms+Unicode builds -> wrong value passed to the OCI internal call
-      
-    * Miscellaneous  changes
+      - OCI_Immediate() : if execution failed, internal OCI_Statement (and thus serveur cursor) was not deallocated 
+
+    * Miscellaneous changes
     
       - OCI_RefToText() : parameter size is now if type <unsigned int> instead of <int>
       - Modified : OCI_BIND_MAX (maximum number of binds for a statement) is now 1024 by default instead of 512
       - Added Oracle spatial demo source (demo/geometry.c)
+      - Now, OCI_API is by default set to __stdcall when using MS visual studio if it's not already defined

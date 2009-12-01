@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.4.1 2009-11-23 00:00 Vince $
+ * $Id: resultset.c, v 3.5.0 2009-12 02 22:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -337,15 +337,17 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
                                             (ub4) OCI_DEFAULT);
         }
 
-        if (rs->fetch_status == OCI_NO_DATA)
-            rs->fetch_status = rs->fetch_status;
-
         /* check for return value of fetch call */
 
         if (rs->fetch_status == OCI_ERROR)
         {
-              OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt);
+              OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, FALSE);
               res = FALSE;
+        }
+        else if (rs->fetch_status == OCI_SUCCESS_WITH_INFO)
+        {
+              OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, TRUE);
+              res = TRUE;
         }
         else
         {
@@ -424,8 +426,13 @@ boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset, boolean *err)
 
     if (rs->fetch_status == OCI_ERROR)
     {
-          OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt);
+          OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, FALSE);
           res = FALSE;
+    }
+    else if (rs->fetch_status == OCI_SUCCESS_WITH_INFO)
+    {
+          OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, TRUE);
+          res = TRUE;
     }
 
     /* do we need to do a piecewise fetch */
@@ -453,6 +460,11 @@ boolean OCI_FetchData(OCI_Resultset *rs, int mode, int offset, boolean *err)
     {
         ub4 row_count      = 0;
         ub4 row_fetched    = 0;
+
+        if (rs->fetch_status == OCI_SUCCESS_WITH_INFO)
+        {
+            OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, TRUE);
+        }
 
 #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
