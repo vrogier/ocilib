@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_api.h, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: oci_api.h, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_API_H_INCLUDED 
@@ -1042,25 +1042,6 @@ typedef sword (*OCIDATETIMESYSTIMESTAMP)
     OCIDateTime *sys_date
 );
 
-/* Oracle 10g test */
-
-typedef void (*OCICLIENTVERSION)
-(
-    sword *major_version,
-    sword *minor_version,
-    sword *update_num,
-    sword *patch_num,
-    sword *port_update_num
-);
-
-/* Oracle 11g test */
-
-typedef sword (*OCIARRAYDESCRIPTORFREE)
-(
-    void  **descp, 
-    const ub4 type
-);
-
 typedef sword (*OCITYPEBYNAME)
 ( 
     OCIEnv *env,
@@ -1658,6 +1639,25 @@ typedef sword (*OCICACHEFREE)
     CONST OCISvcCtx *svc
 ); 
 
+typedef sword (*OCISUBSCRIPTIONREGISTER)
+(
+    OCISvcCtx *svchp, 
+    OCISubscription **subscrhpp,
+    ub2 count, 
+    OCIError *errhp, 
+    ub4 mode
+);
+
+typedef sword (*OCISUBSCRIPTIONUNREGISTER)
+(
+    OCISvcCtx *svchp, 
+    OCISubscription *subscrhp, 
+    OCIError *errhp, 
+    ub4 mode
+);
+
+
+
 /* API introduced in 9.1 */
 
 typedef sword (*OCISTMTFETCH2 ) 
@@ -1810,6 +1810,17 @@ typedef sword (*OCILOBWRITEAPPEND2)
 
 /* API introduced in 10.2 */
 
+/* Oracle 10g test */
+
+typedef void (*OCICLIENTVERSION)
+(
+    sword *major_version,
+    sword *minor_version,
+    sword *update_num,
+    sword *patch_num,
+    sword *port_update_num
+);
+
 typedef sword (*OCIDBSTARTUP)
 ( 
     OCISvcCtx *svchp,
@@ -1836,6 +1847,11 @@ typedef sword (*OCIPING)
 
 /* API introduced in 11.1 */
 
+typedef sword (*OCIARRAYDESCRIPTORFREE)
+(
+    void  **descp, 
+    const ub4 type
+);
 
 /* API introduced in 11.2 */
 

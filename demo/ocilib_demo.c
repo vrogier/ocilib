@@ -124,12 +124,12 @@ void err_handler(OCI_Error *err)
 
     if (err_type == OCI_ERR_WARNING)
     {
-        print_text("> ERROR   : ");
-        nb_warn++;
+         print_text("> WARNING : ");
+         nb_warn++;
     }
     else
     {
-        print_text("> WARNING : ");
+        print_text("> ERROR   : ");
         nb_err++;
     }
 
@@ -1233,8 +1233,6 @@ void test_returning_array(void)
 
 void test_object_insert(void)
 {
-#ifdef OCI_CHARSET_ANSI
-
     OCI_Date *date;
     OCI_File *file;
     OCI_Lob  *lob;
@@ -1282,8 +1280,6 @@ void test_object_insert(void)
     OCI_FileFree(file);
     OCI_ObjectFree(obj2);
     OCI_ObjectFree(obj);
-
-#endif
 }
 
 /* ------------------------------------------------------------------------ *
@@ -1292,8 +1288,6 @@ void test_object_insert(void)
 
 void test_object_fetch(void)
 {
-#ifdef OCI_CHARSET_ANSI
-
     OCI_Lob *lob;
     OCI_Date *date;
     OCI_File *file;
@@ -1351,9 +1345,6 @@ void test_object_fetch(void)
     }
 
     OCI_Commit(cn);
-
-#endif
-
 }
 
 /* ------------------------------------------------------------------------ *
@@ -1522,8 +1513,6 @@ void test_collection(void)
 
 void test_ref(void)
 {
-#ifdef OCI_CHARSET_ANSI
-
     OCI_Ref    *ref;
     OCI_Object *obj;
 
@@ -1539,7 +1528,7 @@ void test_ref(void)
         obj = OCI_RefGetObject(ref);
 
         print_frmt("%i - ", OCI_ObjectGetInt(obj, MT("ID")));
-        print_mstr(OCI_ObjectGetString(obj, MT("NAME")));
+        print_dstr(OCI_ObjectGetString(obj, MT("NAME")));
         print_text("\n");
     }
 
@@ -1556,12 +1545,10 @@ void test_ref(void)
 
     obj = OCI_RefGetObject(ref);
     print_frmt("%i - ", OCI_ObjectGetInt(obj, MT("ID")));
-    print_mstr(OCI_ObjectGetString(obj, MT("NAME")));
+    print_dstr(OCI_ObjectGetString(obj, MT("NAME")));
     print_text("\n");
 
     OCI_RefFree(ref);
-
-#endif
 }
 
 /* ------------------------------------------------------------------------ *
@@ -1648,10 +1635,10 @@ void test_directpath(void)
 
                 if ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))
                     res = OCI_DirPathLoad(dp);
-                
+
                 if (state == OCI_DPR_COMPLETE)
                     break;
-            }          
+            }
 
             /* commits changes */
 

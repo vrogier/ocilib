@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: element.c, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: element.c, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -282,8 +282,6 @@ short OCI_API OCI_ElemGetShort(OCI_Elem *elem)
 {
     short value = 0;
     
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, 0);
-
     OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(short), 
                       (uword) OCI_NUM_SHORT);
   
@@ -298,8 +296,6 @@ unsigned short OCI_API OCI_ElemGetUnsignedShort(OCI_Elem *elem)
 {
     unsigned short value = 0;
     
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, 0);
-
     OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(unsigned short),
                       (uword) OCI_NUM_USHORT);
  
@@ -314,8 +310,6 @@ int OCI_API OCI_ElemGetInt(OCI_Elem *elem)
 {
     int value = 0;
     
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, 0);
-
     OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(value),
                       (uword) OCI_NUM_INT);
  
@@ -330,8 +324,6 @@ unsigned int OCI_API OCI_ElemGetUnsignedInt(OCI_Elem *elem)
 {
     unsigned int value = 0;
     
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, 0);
-
     OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(value),
                       (uword) OCI_NUM_UINT);
  
@@ -346,8 +338,6 @@ big_int OCI_API OCI_ElemGetBigInt(OCI_Elem *elem)
 {
     big_int value = 0;
     
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, 0);
-
     OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(big_int),
                       (uword) OCI_NUM_BIGINT);
  
@@ -359,10 +349,8 @@ big_int OCI_API OCI_ElemGetBigInt(OCI_Elem *elem)
  * ------------------------------------------------------------------------ */
 
 big_uint OCI_API OCI_ElemGetUnsignedBigInt(OCI_Elem *elem)
-{
+{   
     big_uint value = 0;
-    
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, 0);
 
     OCI_ElemGetNumber(elem, (void *) &value,  (uword) sizeof(big_uint),
                       (uword) OCI_NUM_BIGUINT);
@@ -378,8 +366,6 @@ double OCI_API OCI_ElemGetDouble(OCI_Elem *elem)
 {
     double value = 0.0;
     
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, 0.0);
-
     OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(double),
                       (uword) OCI_NUM_DOUBLE);
 

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_import.h, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: oci_import.h, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
@@ -288,6 +288,9 @@ extern OCIDBSHUTDOWN                OCIDBShutdown;
 
 extern OCISTMTPREPARE2              OCIStmtPrepare2;
 extern OCISTMTRELEASE               OCIStmtRelease;
+
+extern OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister;
+extern OCISUBSCRIPTIONUNREGISTER    OCISubscriptionUnRegister;
 
 #endif
 

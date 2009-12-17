@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: ocilib_defs.h, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -231,31 +231,33 @@
 #define OCI_IPC_BIND             29
 #define OCI_IPC_REF              30
 #define OCI_IPC_DIRPATH          31
+#define OCI_IPC_NOTIFY           32
+#define OCI_IPC_EVENT            33
 
 /* ---- Internal pointers ----- */
  
-#define OCI_IPC_LIST             32
-#define OCI_IPC_LIST_ITEM        33
-#define OCI_IPC_BIND_ARRAY       34
-#define OCI_IPC_DEFINE           35
-#define OCI_IPC_DEFINE_ARRAY     36
-#define OCI_IPC_HASHENTRY        37
-#define OCI_IPC_HASHENTRY_ARRAY  38
-#define OCI_IPC_HASHVALUE        39
-#define OCI_IPC_THREADKEY        40
-#define OCI_IPC_OCIDATE          41
-#define OCI_IPC_TM               42
-#define OCI_IPC_RESULTSET_ARRAY  43
-#define OCI_IPC_PLS_SIZE_ARRAY   44
-#define OCI_IPC_PLS_RCODE_ARRAY  45
-#define OCI_IPC_SERVER_OUPUT     46
-#define OCI_IPC_INDICATOR_ARRAY  47
-#define OCI_IPC_LEN_ARRAY        48
-#define OCI_IPC_BUFF_ARRAY       49
-#define OCI_IPC_LONG_BUFFER      50
-#define OCI_IPC_TRACE_INFO       51
-#define OCI_IPC_DP_COL_ARRAY     52
-#define OCI_IPC_BATCH_ERRORS     53
+#define OCI_IPC_LIST             34
+#define OCI_IPC_LIST_ITEM        35
+#define OCI_IPC_BIND_ARRAY       36
+#define OCI_IPC_DEFINE           37
+#define OCI_IPC_DEFINE_ARRAY     38
+#define OCI_IPC_HASHENTRY        39
+#define OCI_IPC_HASHENTRY_ARRAY  40
+#define OCI_IPC_HASHVALUE        41
+#define OCI_IPC_THREADKEY        42
+#define OCI_IPC_OCIDATE          43
+#define OCI_IPC_TM               44
+#define OCI_IPC_RESULTSET_ARRAY  45
+#define OCI_IPC_PLS_SIZE_ARRAY   46
+#define OCI_IPC_PLS_RCODE_ARRAY  47
+#define OCI_IPC_SERVER_OUPUT     48
+#define OCI_IPC_INDICATOR_ARRAY  49
+#define OCI_IPC_LEN_ARRAY        50
+#define OCI_IPC_BUFF_ARRAY       51
+#define OCI_IPC_LONG_BUFFER      52
+#define OCI_IPC_TRACE_INFO       53
+#define OCI_IPC_DP_COL_ARRAY     54
+#define OCI_IPC_BATCH_ERRORS     55
 
 /* ------------------------------------------------------------------------ *
  * Oracle conditionnal features 
@@ -265,7 +267,8 @@
 #define OCI_FEATURE_TIMESTAMP           2
 #define OCI_FEATURE_DIRPATH_DATE_CACHE  3
 #define OCI_FEATURE_SCROLLABLE_CURSOR   4
-#define OCI_FEATURE_REMOTE_DBS_CONTROL  5
+#define OCI_FEATURE_DATABASE_NOTIFY     5
+#define OCI_FEATURE_REMOTE_DBS_CONTROL  6
 
 /* ------------------------------------------------------------------------ *
  * Oracle conditionnal features 
@@ -452,6 +455,14 @@
 #define OCI_SQLCMD_COUNT                126
 
 #define OCI_ERR_MSG_SIZE                512
+
+#define DEF_ALIGN sizeof(size_t)
+
+#define ROUNDUP(amount) (((unsigned long)(amount)+((DEF_ALIGN)-1))&~((DEF_ALIGN)-1))
+
+#define OCI_SIZEOF_NUMBER               22
+#define OCI_SIZEOF_DATE                 7
+
 
 #endif    /* OCILIB_OCILIB_DEFS_H_INCLUDED */
 

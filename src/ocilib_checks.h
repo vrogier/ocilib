@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_checks.h, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: ocilib_checks.h, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_CHECKS_H_INCLUDED
@@ -599,17 +599,35 @@
  * @param ret - Return value
  *
  * @note
- * Throws an exception if the Oracle client is < 11g
+ * Throws an exception if the Oracle client is < 10g R2
  *
  */
 
 #define OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED(ret)                              \
                                                                                \
-    if (OCILib.version_runtime < OCI_10_2)                                         \
+    if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_DIRPATH_DATE_CACHE);       \
         return ret;                                                            \
     }
 
+/**
+ * @brief 
+ * Checks if the current OCI client supports database notifications
+ *
+ * @param ret - Return value
+ *
+ * @note
+ * Throws an exception if the Oracle client is < 10g R2
+ *
+ */
+
+#define OCI_CHECK_DATABASE_NOTIFY_ENABLED(ret)                                 \
+                                                                               \
+    if (OCILib.version_runtime < OCI_10_2)                                     \
+    {                                                                          \
+        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_DATABASE_NOTIFY);          \
+        return ret;                                                            \
+    }
 #endif    /* OCILIB_OCILIB_CHECKS_H_INCLUDED */
 

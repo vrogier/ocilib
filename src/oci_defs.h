@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_defs.h, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: oci_defs.h, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_DEFS_H_INCLUDED 
@@ -142,12 +142,14 @@
 #define OCI_HTYPE_SERVER         8                          /* server handle */
 #define OCI_HTYPE_SESSION        9                  /* authentication handle */
 #define OCI_HTYPE_AUTHINFO      OCI_HTYPE_SESSION  /* SessionGet auth handle */
+#define OCI_HTYPE_SUBSCRIPTION  13                    /* subscription handle */
 #define OCI_HTYPE_DIRPATH_CTX   14                    /* direct path context */
 #define OCI_HTYPE_DIRPATH_COLUMN_ARRAY 15        /* direct path column array */
 #define OCI_HTYPE_DIRPATH_STREAM       16              /* direct path stream */
 #define OCI_HTYPE_TRANS         10                     /* transaction handle */
 #define OCI_HTYPE_CPOOL         26                 /* connection pool handle */
 #define OCI_HTYPE_ADMIN         28                           /* admin handle */
+
 
 /*-------------------------Descriptor Types----------------------------------*/
 
@@ -162,7 +164,10 @@
 #define OCI_DTYPE_TIMESTAMP 68                                  /* Timestamp */
 #define OCI_DTYPE_TIMESTAMP_TZ 69                 /* Timestamp with timezone */
 #define OCI_DTYPE_TIMESTAMP_LTZ 70                /* Timestamp with local tz */
-#
+#define OCI_DTYPE_CHDES         77          /* Top level change notification desc */
+#define OCI_DTYPE_TABLE_CHDES   78          /* Table change descriptor           */
+#define OCI_DTYPE_ROW_CHDES     79          /* Row change descriptor            */
+
 /*---------------------------------------------------------------------------*/
 
 /*--------------------------------LOB types ---------------------------------*/
@@ -216,6 +221,13 @@
 #define OCI_ATTR_NUM_ROWS               81 /* number of rows in column array */                                 
 #define OCI_ATTR_COL_COUNT              82 /* columns of column array
                                                      processed so far.       */
+
+#define OCI_ATTR_SUBSCR_NAME            94           /* name of subscription */
+#define OCI_ATTR_SUBSCR_CALLBACK        95            /* associated callback */
+#define OCI_ATTR_SUBSCR_CTX             96    /* associated callback context */
+#define OCI_ATTR_SUBSCR_PAYLOAD         97             /* associated payload */
+#define OCI_ATTR_SUBSCR_NAMESPACE       98           /* associated namespace */
+
 #define OCI_ATTR_NUM_COLS              102              /* number of columns */
 #define OCI_ATTR_LIST_COLUMNS          103   /* parameter of the column list */
 
@@ -240,6 +252,8 @@
 #define OCI_ATTR_TYPECODE              216           /* object or collection */
 #define OCI_ATTR_COLLECTION_TYPECODE   217         /* varray or nested table */
 
+#define OCI_ATTR_SUBSCR_TIMEOUT        227                        /* Timeout */
+
 #define OCI_ATTR_COLLECTION_ELEMENT    227     /* has a collection attribute */
 #define OCI_ATTR_NUM_TYPE_ATTRS        228      /* number of attribute types */
 #define OCI_ATTR_LIST_TYPE_ATTRS       229        /* list of type attributes */
@@ -254,6 +268,8 @@
 #define OCI_ATTR_MODULE                366             /* module for tracing */
 #define OCI_ATTR_ACTION                367             /* action for tracing */
 #define OCI_ATTR_CLIENT_INFO           368                    /* client info */
+
+#define OCI_ATTR_SUBSCR_PORTNO         390       /* port no to listen        */
 
 #define OCI_ATTR_DRIVER_NAME           424                    /* Driver Name */
 
@@ -345,6 +361,7 @@
 #define OCI_DEFAULT         0x00000000 
 #define OCI_THREADED        0x00000001      /* appl. in threaded environment */
 #define OCI_OBJECT          0x00000002  /* application in object environment */
+#define OCI_EVENTS          0x00000004  /* application is enabled for events */
 #define OCI_UTF16           0x00004000        /* mode for all UTF16 metadata */
 
 /*------------------------Authentication Modes-------------------------------*/
@@ -720,6 +737,51 @@ typedef uword OCIObjectMarkStatus;
 /*---------------------------OCIPasswordChange-------------------------------*/
 #define OCI_AUTH         0x08        /* Change the password but do not login */
 
+/* ------------- DB Change Notification reg handle attributes ---------------*/
+#define OCI_ATTR_CHNF_TABLENAMES          401     /* out: array of table names     */
+#define OCI_ATTR_CHNF_ROWIDS              402     /* in: rowids needed */ 
+#define OCI_ATTR_CHNF_OPERATIONS          403  /* in: notification operation filter*/ 
+#define OCI_ATTR_CHNF_CHANGELAG           404  /* txn lag between notifications  */
+
+/* DB Change: Notification Descriptor attributes -----------------------*/
+#define OCI_ATTR_CHDES_DBNAME            405    /* source database    */
+#define OCI_ATTR_CHDES_NFYTYPE           406    /* notification type flags */
+#define OCI_ATTR_CHDES_XID               407    /* XID  of the transaction */
+#define OCI_ATTR_CHDES_TABLE_CHANGES     408    /* array of table chg descriptors */
+
+#define OCI_ATTR_CHDES_TABLE_NAME        409    /* table name */
+#define OCI_ATTR_CHDES_TABLE_OPFLAGS     410    /* table operation flags */
+#define OCI_ATTR_CHDES_TABLE_ROW_CHANGES 411   /* array of changed rows   */
+#define OCI_ATTR_CHDES_ROW_ROWID         412   /* rowid of changed row    */
+#define OCI_ATTR_CHDES_ROW_OPFLAGS       413   /* row operation flags     */
+
+/* Statement handle attribute for db change notification */
+#define OCI_ATTR_CHNF_REGHANDLE          414   /* IN: subscription handle  */
+
+/* DB Change: Event types ---------------*/
+#define OCI_EVENT_NONE 0x0                      /* None */
+#define OCI_EVENT_STARTUP 0x1                   /* Startup database */
+#define OCI_EVENT_SHUTDOWN 0x2                  /* Shutdown database */
+#define OCI_EVENT_SHUTDOWN_ANY 0x3              /* Startup instance */
+#define OCI_EVENT_DROP_DB 0x4                   /* Drop database    */
+#define OCI_EVENT_DEREG 0x5                     /* Subscription deregistered */
+#define OCI_EVENT_OBJCHANGE 0x6                 /* Object change notification */
+
+/* DB Change: Operation types -----------*/
+#define OCI_OPCODE_ALLROWS 0x1                 /* all rows invalidated  */
+#define OCI_OPCODE_ALLOPS 0x0                  /* interested in all operations */
+#define OCI_OPCODE_INSERT 0x2                 /*  INSERT */
+#define OCI_OPCODE_UPDATE 0x4                 /*  UPDATE */
+#define OCI_OPCODE_DELETE 0x8                 /* DELETE */
+#define OCI_OPCODE_ALTER 0x10                 /* ALTER */
+#define OCI_OPCODE_DROP 0x20                  /* DROP TABLE */
+#define OCI_OPCODE_UNKNOWN 0x40               /* GENERIC/ UNKNOWN*/
+
+/*------------------------- Supported Namespaces  ---------------------------*/
+#define OCI_SUBSCR_NAMESPACE_ANONYMOUS   0            /* Anonymous Namespace */
+#define OCI_SUBSCR_NAMESPACE_AQ          1                /* Advanced Queues */
+#define OCI_SUBSCR_NAMESPACE_DBCHANGE    2            /* change notification */
+#define OCI_SUBSCR_NAMESPACE_MAX         3          /* Max Name Space Number */
 
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */
 

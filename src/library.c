@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: library.c, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: library.c, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -356,6 +356,9 @@ OCIDBSHUTDOWN                OCIDBShutdown                = NULL;
 
 OCISTMTPREPARE2              OCIStmtPrepare2              = NULL; 
 OCISTMTRELEASE               OCIStmtRelease               = NULL; 
+
+OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister      = NULL;
+OCISUBSCRIPTIONUNREGISTER    OCISubscriptionUnRegister    = NULL;
 
 #ifdef ORAXB8_DEFINED
 
@@ -942,6 +945,11 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
         LIB_SYMBOL(OCILib.lib_handle, "OCIStmtRelease", OCIStmtRelease,
                    OCISTMTRELEASE);
 
+        LIB_SYMBOL(OCILib.lib_handle, "OCISubscriptionRegister", OCISubscriptionRegister,
+                   OCISUBSCRIPTIONREGISTER);
+        LIB_SYMBOL(OCILib.lib_handle, "OCISubscriptionUnRegister", OCISubscriptionUnRegister,
+                   OCISUBSCRIPTIONUNREGISTER);
+
         /* API Version checking */
 
         if (OCIArrayDescriptorFree != NULL)
@@ -1035,7 +1043,10 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
         if (mode & OCI_ENV_THREADED)
             oci_mode |= OCI_THREADED;
 
-        /* create environment on success */
+        if (mode & OCI_ENV_EVENTS)
+            oci_mode |= OCI_EVENTS;
+
+       /* create environment on success */
 
         res = res && (OCI_SUCCESS == OCIEnvCreate(&OCILib.env, oci_mode,
                                                   (dvoid *) NULL, NULL, NULL, NULL,
@@ -1087,6 +1098,19 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
             res = (OCILib.pools != NULL);
         }
+       
+#if OCI_VERSION_COMPILE >= OCI_10_2
+
+        /* allocate connection pools internal list */
+
+        if (res == TRUE)
+        {
+
+            OCILib.subs = OCI_ListCreate(OCI_IPC_NOTIFY);
+
+            res = (OCILib.subs != NULL);
+        }
+#endif 
 
     }
 
@@ -1104,6 +1128,11 @@ boolean OCI_API OCI_Cleanup(void)
 {
     boolean res = TRUE;
 
+    /* free all subscriptions */
+
+    OCI_ListForEach(OCILib.subs, (boolean (*)(void *)) OCI_SubscriptionClose);
+    OCI_ListClear(OCILib.subs);
+
     /* free all connections */
 
     OCI_ListForEach(OCILib.cons, (boolean (*)(void *)) OCI_ConnectionClose);
@@ -1120,9 +1149,11 @@ boolean OCI_API OCI_Cleanup(void)
 
     OCI_ListFree(OCILib.cons);
     OCI_ListFree(OCILib.pools);
+    OCI_ListFree(OCILib.subs);
 
     OCILib.cons    = NULL;
     OCILib.pools   = NULL;
+    OCILib.subs    = NULL;
     OCILib.key_map = NULL;
 
     /* finalize OCIThread object support */
@@ -1296,8 +1327,7 @@ void OCI_API OCI_SetErrorHandler(POCI_ERROR handler)
 boolean OCI_API OCI_DatabaseStartup(const mtext *db,  const mtext *user,
                                     const mtext *pwd, unsigned int sess_mode,
                                     unsigned int start_mode, unsigned int start_flag,
-                                    const mtext *spfile
-)
+                                    const mtext *spfile)
 {
     boolean         res = TRUE;
     OCI_Connection *con = NULL;
@@ -1516,6 +1546,7 @@ boolean OCI_API OCI_DatabaseShutdown(const mtext *db, const mtext *user,
     OCI_NOT_USED(shut_mode);
     OCI_NOT_USED(shut_flag);
     OCI_NOT_USED(con);
+
 #endif
 
     OCI_RESULT(res);

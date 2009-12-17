@@ -1,5 +1,5 @@
 /*
-   +----------------------------------------------------------------------+   
+   +----------------------------------------------------------------------+
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
@@ -25,11 +25,11 @@
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
    |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
-   +----------------------------------------------------------------------+ 
+   +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: callback.c, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: callback.c, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -123,24 +123,24 @@ sb4 OCI_ProcOutBind(dvoid *octxp, OCIBind *bindp, ub4 iter, ub4 index,
 
         if (bnd->stmt->rsts == NULL)
         {
-            bnd->stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY, 
+            bnd->stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY,
                                                               sizeof(*bnd->stmt->rsts),
                                                               (size_t) bnd->stmt->nb_rs,
                                                               TRUE);
- 
+
             if (bnd->stmt->rsts == NULL)
                 res = FALSE;
         }
-        
+
         /* create resultset as needed */
 
         if (bnd->stmt->rsts[iter] == NULL)
         {
             OCI_CALL1
-            (   
+            (
                 res, bnd->stmt->con, bnd->stmt,
-                
-                OCIAttrGet(bnd->buf.handle, (ub4) OCI_HTYPE_BIND, (void *) &rows, 
+
+                OCIAttrGet(bnd->buf.handle, (ub4) OCI_HTYPE_BIND, (void *) &rows,
                            (ub4 *) NULL, (ub4) OCI_ATTR_ROWS_RETURNED,
                            bnd->stmt->con->err)
             )
@@ -156,11 +156,11 @@ sb4 OCI_ProcOutBind(dvoid *octxp, OCIBind *bindp, ub4 iter, ub4 index,
     }
 
     OCI_CHECK(bnd->stmt->rsts == NULL, OCI_ERROR);
-    
+
     rs = bnd->stmt->rsts[iter];
 
     OCI_CHECK(rs == NULL, OCI_ERROR);
- 
+
     /* ok.. let's Oracle update its buffers */
 
     if (res == TRUE)
@@ -189,8 +189,313 @@ sb4 OCI_ProcOutBind(dvoid *octxp, OCIBind *bindp, ub4 iter, ub4 index,
         *alenp  = (ub4   *) (((ub1 *) def->buf.lens) + (size_t) ((ub4) def->buf.sizelen * index));
         *indp   = (dvoid *) (((ub1 *) def->buf.inds) + (size_t) ((ub4) sizeof(sb2)      * index));
         *piecep = (ub1    ) OCI_ONE_PIECE;
-        *rcodep = (ub2   *) NULL;                
+        *rcodep = (ub2   *) NULL;
     }
 
     return ((res == TRUE) ? OCI_CONTINUE : OCI_ERROR);
 }
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ProcNotify
+ * ------------------------------------------------------------------------ */
+
+ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
+                   ub4 paylen, void *desc, ub4 mode)
+{
+    OCI_Subscription *sub = (OCI_Subscription *) ctx;
+    boolean res = TRUE;
+    void *ostr  = NULL;
+    int osize   = 0;
+    ub4 type    = 0;
+
+    OCI_NOT_USED(paylen);
+    OCI_NOT_USED(payload);
+    OCI_NOT_USED(mode);
+    OCI_NOT_USED(subscrhp);
+
+    OCI_CHECK(sub == NULL, OCI_SUCCESS);
+
+    OCI_EventReset(&sub->event);
+
+#if OCI_VERSION_COMPILE >= OCI_10_2
+
+    /* get database that generated the notification */
+
+    OCI_CALL3
+    (
+        res, sub->err,
+
+        OCIAttrGet((dvoid *) desc, (ub4) OCI_DTYPE_CHDES,
+                   (dvoid *) &ostr, (ub4 *) &osize,
+                   (ub4) OCI_ATTR_CHDES_DBNAME,
+                   sub->err)
+    )
+
+    if ((res == TRUE) && (osize > (int) sub->event.dbname_size))
+    {
+        sub->event.dbname =
+
+        (dtext *) OCI_MemRealloc(sub->event.dbname,  OCI_IPC_STRING, sizeof(dtext),
+                                (size_t) ((osize / (int) sizeof(omtext)) + 1));
+
+        sub->event.dbname_size = osize;
+    }
+
+    OCI_CopyString(ostr, sub->event.dbname, &osize, sizeof(omtext), sizeof(dtext));
+
+    /* get notification type */
+
+    OCI_CALL3
+    (
+        res, sub->err,
+
+        OCIAttrGet((dvoid *) desc, (ub4) OCI_DTYPE_CHDES,
+                   (dvoid *) &type, (ub4 *) NULL,
+                   (ub4) OCI_ATTR_CHDES_NFYTYPE, sub->err)
+    )
+
+    switch(type)
+    {
+        case OCI_EVENT_STARTUP:
+        case OCI_EVENT_SHUTDOWN:
+        case OCI_EVENT_SHUTDOWN_ANY:
+        {
+            if (sub->type & OCI_CNT_DATABASES)
+            {
+                sub->event.type = type;
+            }
+
+            break;
+        }
+        case OCI_EVENT_DEREG:
+        {
+            sub->event.type = type;
+            break;
+        }
+        case OCI_EVENT_OBJCHANGE:
+        {
+            if (sub->type & OCI_CNT_OBJECTS)
+            {
+                sub->event.type = type;
+            }
+
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+
+    /* for object, much work to do for retrieving data */
+
+    if (sub->event.type == OCI_EVENT_OBJCHANGE)
+    {
+        OCIColl *tables = 0;
+        sb4 nb_tables   = 0;
+        sb4 i;
+
+         /* get collection of modified tables */
+
+        OCI_CALL3
+        (
+            res, sub->err,
+
+            OCIAttrGet((dvoid *) desc, (ub4) OCI_DTYPE_CHDES,
+                       (dvoid *) &tables, (ub4 *) NULL,
+                       (ub4) OCI_ATTR_CHDES_TABLE_CHANGES,
+                       sub->err)
+        )
+
+        if (tables != NULL)
+        {
+            dvoid   **elem_tbl = NULL;
+            dvoid    *ind_tbl  = NULL;
+            boolean   exist    = FALSE;
+            sb4       nb_rows  = 0;
+
+             /* get number of tables in the collection */
+
+            OCI_CALL3
+            (
+                res, sub->err,
+
+                OCICollSize(OCILib.env, sub->err, tables, &nb_tables)
+            )
+
+            for(i = 0; i < nb_tables; i++)
+            {
+                nb_rows = 0;
+
+                /* partial reset of the event object  */
+
+                if (sub->event.objname != NULL)
+                    sub->event.objname[0] = 0;
+
+                if (sub->event.rowid != NULL)
+                    sub->event.rowid[0] = 0;
+
+                /* get table element */
+
+                OCI_CALL3
+                (
+                    res, sub->err,
+
+                    OCICollGetElem(OCILib.env, sub->err, tables, i, &exist,
+                                   (dvoid**) (dvoid*) &elem_tbl,(dvoid**) &ind_tbl)
+                )
+
+                 /* get table name */
+
+                OCI_CALL3
+                (
+                    res, sub->err,
+
+                    OCIAttrGet((dvoid *) *elem_tbl, (ub4) OCI_DTYPE_TABLE_CHDES,
+                               (dvoid *) &ostr, (ub4 *) &osize,
+                               (ub4) OCI_ATTR_CHDES_TABLE_NAME,
+                               sub->err)
+                )
+
+                if(osize > (int) sub->event.objname_size)
+                {
+                    sub->event.objname =
+
+                    (dtext *) OCI_MemRealloc(sub->event.objname,  OCI_IPC_STRING, sizeof(dtext),
+                                            (size_t) ((osize / (int) sizeof(omtext)) + 1));
+
+                    sub->event.objname_size = osize;
+                }
+
+                OCI_CopyString(ostr, sub->event.objname, &osize, sizeof(omtext), sizeof(dtext));
+
+                /* get table modification type */
+
+                OCI_CALL3
+                (
+                    res, sub->err,
+
+                    OCIAttrGet((dvoid *) *elem_tbl, (ub4) OCI_DTYPE_TABLE_CHDES,
+                               (dvoid *) &sub->event.op, (ub4*) NULL,
+                               (ub4) OCI_ATTR_CHDES_TABLE_OPFLAGS,
+                               sub->err)
+                )
+
+                sub->event.op = sub->event.op & (~OCI_OPCODE_ALLROWS);
+                sub->event.op = sub->event.op & (~OCI_OPCODE_ALLOPS);
+
+                /* if requested, get row details */
+
+                if (sub->type & OCI_CNT_ROWS)
+                {
+                    OCIColl *rows = 0;
+
+                    /* get collection of modified rows */
+
+                    OCI_CALL3
+                    (
+                        res, sub->err,
+
+                        OCIAttrGet((dvoid *) *elem_tbl, (ub4) OCI_DTYPE_TABLE_CHDES,
+                                   (dvoid *) &rows, (ub4 *) NULL,
+                                   (ub4) OCI_ATTR_CHDES_TABLE_ROW_CHANGES,
+                                   sub->err)
+                    )
+
+                    if (rows != NULL)
+                    {
+                        dvoid   **elem_row = NULL;
+                        dvoid    *ind_row  = NULL;
+                        boolean   exist    = FALSE;
+                        sb4 j;
+
+                        /* get number of rows */
+
+                        OCI_CALL3
+                        (
+                            res, sub->err,
+
+                            OCICollSize(OCILib.env, sub->err, rows, &nb_rows)
+                        )
+
+                        for (j = 0; j < nb_rows; j++)
+                        {
+                            /* partial reset of the event  */
+
+                            if (sub->event.rowid != NULL)
+                                sub->event.rowid[0] = 0;
+
+                            /* get row element */
+
+                            OCI_CALL3
+                            (
+                                res, sub->err,
+
+                                OCICollGetElem(OCILib.env, sub->err, rows, j, &exist,
+                                              (dvoid**) (dvoid*) &elem_row, (dvoid**) &ind_row)
+                            )
+
+                            /* get rowid  */
+
+                            OCI_CALL3
+                            (
+                                res, sub->err,
+
+                                OCIAttrGet((dvoid *) *elem_row, (ub4) OCI_DTYPE_ROW_CHDES,
+                                           (dvoid *) &ostr, (ub4 *) &osize,
+                                           (ub4) OCI_ATTR_CHDES_ROW_ROWID,
+                                           sub->err)
+                            )
+
+                            /* get opcode  */
+
+                            OCI_CALL3
+                            (
+                                res, sub->err,
+
+                                OCIAttrGet((dvoid *) *elem_row, (ub4) OCI_DTYPE_ROW_CHDES,
+                                           &sub->event.op, (ub4*) NULL,
+                                           (ub4) OCI_ATTR_CHDES_ROW_OPFLAGS,
+                                           sub->err)
+                            )
+
+                            if(osize > (int) sub->event.rowid_size)
+                            {
+                                sub->event.rowid =
+
+                                (dtext *) OCI_MemRealloc(sub->event.rowid, OCI_IPC_STRING, sizeof(dtext),
+                                                         (size_t) ((osize / (int) sizeof(omtext)) + 1));
+
+                                sub->event.rowid_size = osize;
+                            }
+
+                            OCI_CopyString(ostr, sub->event.rowid, &osize, sizeof(omtext), sizeof(dtext));
+
+                            sub->handler(&sub->event);
+                        }
+                    }
+                }
+
+                if (nb_rows == 0)
+                {
+                    sub->handler(&sub->event);
+                }
+            }
+        }
+     }
+     else if (sub->event.type > 0)
+     {
+        sub->handler(&sub->event);
+     }
+
+#else
+
+    OCI_NOT_USED(ctx);
+    OCI_NOT_USED(desc);
+    OCI_NOT_USED(subscrhp);
+
+#endif
+
+     return OCI_SUCCESS;
+}
+

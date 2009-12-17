@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: connection.c, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -471,19 +471,14 @@ boolean OCI_ConnectionLogOff(OCI_Connection *con)
     OCI_CHECK(con == NULL, FALSE);
     OCI_CHECK(con->cstate != OCI_CONN_LOGGED, FALSE);
 
+    /* deassociate connection from existing subscriptions */
+
+    OCI_SubscriptionDetachConnection(con);
+
     /* free all statements */
 
     OCI_ListForEach(con->stmts, (boolean (*)(void *)) OCI_StatementClose);
     OCI_ListClear(con->stmts);
-
-    /* cleanup the cache */
-
-    OCI_CALL2
-    (
-        res, con,
-
-        OCICacheFree(OCILib.env, con->err, con->cxt)
-    )
 
     /* free all transactions */
 

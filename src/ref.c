@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ref.c, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: ref.c, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -275,9 +275,7 @@ boolean OCI_API OCI_RefAssign(OCI_Ref *ref, OCI_Ref *ref_src)
 
         ref->typinf = ref_src->typinf;
         ref->pinned = ref_src->pinned;
-
     }
-
 
     OCI_RESULT(res);
 

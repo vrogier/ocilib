@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: ocilib_internal.h, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED 
@@ -72,7 +72,8 @@ sb4 OCI_ProcInBind
     dvoid **indp
 );
 
-sb4 OCI_ProcOutBind(
+sb4 OCI_ProcOutBind
+(
     dvoid *octxp, 
     OCIBind *bindp,
     ub4 iter, 
@@ -82,6 +83,16 @@ sb4 OCI_ProcOutBind(
     ub1 *piecep, 
     void **indp,
     ub2 **rcodep
+);
+
+ub4 OCI_ProcNotify
+(
+    void *ctx, 
+    OCISubscription *subscrhp,
+    void *payload, 
+    ub4 paylen, 
+    void *desc, 
+    ub4 mode
 );
 
 /* ------------------------------------------------------------------------ *
@@ -280,6 +291,15 @@ OCI_Error * OCI_ErrorGet
 OCI_Error * OCI_ErrorCreate
 (
     void
+);
+
+/* ------------------------------------------------------------------------ *
+ * event.c
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_EventReset
+(
+    OCI_Event *event
 );
 
 /* ------------------------------------------------------------------------ *
@@ -700,26 +720,51 @@ boolean OCI_NumberGetFromStr
  * object.c
  * ------------------------------------------------------------------------ */
 
+size_t OCI_ObjectGetAttrSize
+(
+    OCI_TypeInfo *typinf, 
+    int index
+);
+
+size_t OCI_ObjectGetStructSize
+(
+    OCI_TypeInfo *typinf
+);
+
+ub2 OCI_ObjectGetIndOffset
+(
+    OCI_TypeInfo *typinf, 
+    int index
+);
+
+OCI_Object * OCI_ObjectInit
+(
+    OCI_Connection *con,
+    OCI_Object **pobj,
+    void *handle, 
+    OCI_TypeInfo *typinf,
+    OCI_Object *parent,
+    int index,
+    boolean reset
+);
+
 void OCI_ObjectReset
 (
     OCI_Object *obj
 );
 
-boolean OCI_ObjectGetAttr
+int OCI_ObjectGetAttrIndex
 (
-    OCI_Object *obj, 
-    const mtext *attr, 
-    void ** p_value, 
-    OCIInd* p_ind, 
-    OCIType **p_tdo
+    OCI_Object *obj,
+    const mtext *attr,
+    int type
 );
 
-boolean OCI_ObjectSetAttr
+void * OCI_ObjectGetAttr
 (
     OCI_Object *obj, 
-    const mtext *attr, 
-    void * value, 
-    OCIInd ind
+    unsigned int index,
+    OCIInd **pind
 );
 
 boolean OCI_ObjectSetNumber
@@ -738,29 +783,8 @@ boolean OCI_ObjectGetNumber
     uword size, uword flag
 );
 
-int OCI_ObjectGetIndex
-(
-    OCI_Object *obj,
-    const mtext *attr,
-    int type
-);
 
-ub2 OCI_GetIndTabIndex
-(
-    OCI_TypeInfo *typeinf, 
-    int index
-);
 
-OCI_Object * OCI_ObjectInit
-(
-    OCI_Connection *con,
-    OCI_Object **pobj,
-    void *handle, 
-    OCI_TypeInfo *typinf,
-    OCI_Object *parent,
-    int index,
-    boolean reset
-);
 
 /* ------------------------------------------------------------------------ *
  * ref.c
@@ -1014,6 +1038,20 @@ boolean OCI_StringToStringPtr
     void *value, 
     void **buf, 
     int *buflen
+);
+
+/* ------------------------------------------------------------------------ *
+ * subscription.c
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_SubscriptionClose
+(
+    OCI_Subscription *sub
+);
+
+boolean OCI_SubscriptionDetachConnection
+(
+    OCI_Connection *con
 );
 
 /* ------------------------------------------------------------------------ *

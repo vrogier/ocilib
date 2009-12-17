@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_types.h, v 3.5.0 2009-12 02 22:00 Vince $
+ * $Id: ocilib_types.h, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 
@@ -197,6 +197,7 @@ struct OCI_Library
 {
     OCI_List       *cons;                   /* list of connection objects */
     OCI_List       *pools;                  /* list of pools objects */
+    OCI_List       *subs;                   /* list of subscription objects */
     OCIEnv         *env;                    /* OCI environment handle */
     OCIError       *err;                    /* OCI error handle */
     POCI_ERROR      error_handler;          /* user defined error handler */
@@ -207,6 +208,7 @@ struct OCI_Library
     ub4             env_mode;               /* default environment mode */
     boolean         loaded;                 /* OCILIB correctly loaded ? */
     boolean         warnings_on;            /* warnings enabled ? */
+    unsigned int    strlght_mode;
     OCI_Error       lib_err;                /* Error used when OCILIB is not loaded */
     OCI_HashTable  *key_map;                /* hash table for mapping name/key */
     OCI_ThreadKey  *key_errs;               /* Thread key to store thread errors */
@@ -694,6 +696,45 @@ struct OCI_DirPath
     ub2                  err_col;   /* index of the column not processed at last call */
     ub2                  nb_cols;   /* number of columns to load */
     ub2                  nb_rows;   /* maximum number of row to load per stream */
+};
+
+/*
+ * Oracle Event object
+ *
+ */
+
+struct OCI_Event
+{
+    OCI_Subscription    *sub;           /* OCILIB subcription handle */
+    unsigned int         objname_size;  /* cached size of altered object name */
+    unsigned int         rowid_size;    /* cached size of altered object row id */
+    unsigned int         dbname_size;   /* cached size of the database name */
+    unsigned int         type;          /* event type */
+    ub4                  op;            /* event object operation */
+    dtext               *objname;       /* altered object name */
+    dtext               *rowid;         /* altered row id */
+    dtext               *dbname;        /* database name */
+};
+
+/*
+ * Oracle Notification object
+ *
+ */
+
+struct OCI_Subscription
+{
+    OCI_Connection      *con;        /* OCILIB connection handle */
+    OCISubscription     *subhp;      /* OCI subcroption handle */
+    OCIError            *err;        /* OCI error handle  */
+    mtext               *name;       /* notification name */
+    unsigned int         type;       /* notification type */
+    POCI_NOTIFY          handler;    /* user callback */
+    ub4                  timeout;    /* notification timetout */
+    ub4                  port;       /* port to use  */
+    mtext               *saved_db;   /* database for reconnection if needed */
+    mtext               *saved_user; /* user for reconnection if needed */
+    mtext               *saved_pwd;  /* password for reconnection if needed */
+    OCI_Event            event;      /* event object for user callback */
 };
 
 /*

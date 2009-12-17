@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: memory.c, v 3.5.0 2009-12-17 23:00 Vince $
+ * $Id: event.c, v 3.5.0 2009-12-17 23:00 Vince $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -39,171 +39,108 @@
  * ************************************************************************ */
 
 /* ------------------------------------------------------------------------ *
- * OCI_MemAlloc
+ * OCI_EventReset
  * ------------------------------------------------------------------------ */
 
-void * OCI_MemAlloc(int ptr_type, size_t block_size, size_t block_count, 
-                    boolean zero_fill)
+boolean OCI_EventReset(OCI_Event *event)
 {
-    void * ptr  = NULL;
-    size_t size = (size_t) (block_size * block_count);
+    OCI_CHECK(event == NULL, FALSE);
 
-    ptr = (void *) malloc(size);
-     
-    if (ptr != NULL)                                        
-    {
-        if (zero_fill == TRUE)
-            memset(ptr, 0, size);
-    }
-    else
-        OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
+    event->op   = OCI_UNKNOWN;
+    event->type = OCI_UNKNOWN;
 
-    return ptr;
+    if (event->dbname != NULL)
+        event->dbname[0] = 0;
+
+    if (event->objname != NULL)
+        event->objname[0] = 0;
+
+    if (event->rowid != NULL)
+        event->rowid[0] = 0;
+
+    return TRUE;
 }
 
+/* ************************************************************************ *
+ *                            PUBLIC FUNCTIONS
+ * ************************************************************************ */
+
 /* ------------------------------------------------------------------------ *
- * OCI_MemRealloc
+ * OCI_EventGetType
  * ------------------------------------------------------------------------ */
 
-void * OCI_MemRealloc(void * ptr_mem, int ptr_type, size_t block_size, 
-                      size_t block_count)
+unsigned int OCI_API OCI_EventGetType(OCI_Event *event)
 {
-    void * ptr  = NULL;
-    size_t size = (size_t) (block_size * block_count);
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event, OCI_UNKNOWN);
 
-    ptr = (void *) realloc(ptr_mem, size);
-     
-    if (ptr == NULL)
-    {
-        OCI_MemFree(ptr_mem);
+    OCI_RESULT(TRUE);
 
-        OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
-    }
-
-    return ptr;
+    return event->type;
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_MemFree
+ * OCI_EventGetType
  * ------------------------------------------------------------------------ */
 
-void OCI_MemFree(void * ptr_mem)
+unsigned int OCI_API OCI_EventGetOperation(OCI_Event *event)
 {
-    if (ptr_mem != NULL)
-        free(ptr_mem);
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event, OCI_UNKNOWN);
+
+    OCI_RESULT(TRUE);
+
+    return event->op;
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_HandleAlloc
+ * OCI_EventGetObject
  * ------------------------------------------------------------------------ */
 
-sword OCI_HandleAlloc(CONST dvoid *parenth, dvoid **hndlpp, CONST ub4 type,
-                      CONST size_t xtramem_sz, dvoid **usrmempp)
-{     
-    sword ret = OCI_SUCCESS;
-
-    ret = OCIHandleAlloc(parenth, hndlpp, type, xtramem_sz, usrmempp);
-
-    if (ret == OCI_SUCCESS)
-    {
-        OCILib.nb_hndlp++;   
-    }
-
-    return ret;
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_HandleFree
- * ------------------------------------------------------------------------ */
-
-sword OCI_HandleFree(dvoid *hndlp, CONST ub4 type)
-{                
-    sword ret = OCI_SUCCESS;
-
-    if (hndlp != NULL)
-    {
-        OCILib.nb_hndlp--;  
-
-        ret = OCIHandleFree(hndlp, type);
-    }
-
-    return ret;
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_DescriptorAlloc
- * ------------------------------------------------------------------------ */
-
-sword OCI_DescriptorAlloc(CONST dvoid *parenth, dvoid **descpp, CONST ub4 type,
-                          CONST size_t xtramem_sz,  dvoid **usrmempp)
+const dtext * OCI_API OCI_EventGetDatabase(OCI_Event *event)
 {
-    sword ret = OCI_SUCCESS;
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
 
-    ret = OCIDescriptorAlloc(parenth, descpp, type, xtramem_sz, usrmempp);
+    OCI_RESULT(TRUE);
 
-    if (ret == OCI_SUCCESS)
-    {
-        OCILib.nb_descp++;   
-    }
-
-    return ret;
+    return event->dbname;
 }
 
-/* ------------------------------------------------------------------------ *
- * OCI_DescriptorFree
- * ------------------------------------------------------------------------ */
-
-sword OCI_DescriptorFree(dvoid *descp, CONST ub4 type)
-{                                                    
-    sword ret = OCI_SUCCESS;
-
-    if (descp != NULL)
-    {
-        OCILib.nb_descp--;  
-
-        ret = OCIDescriptorFree(descp, type);
-    }
-
-    return ret;
-}
 
 /* ------------------------------------------------------------------------ *
- * OCI_fob
+ * OCI_EventGetObject
  * ------------------------------------------------------------------------ */
 
-sword OCI_ObjectNew(OCIEnv *env, OCIError *err, CONST OCISvcCtx *svc,
-                    OCITypeCode typecode, OCIType *tdo, dvoid *table, 
-                    OCIDuration duration, boolean value, 
-                    dvoid **instance)
+const dtext * OCI_API OCI_EventGetObject(OCI_Event *event)
 {
-    sword ret = OCI_SUCCESS;
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
 
-    ret = OCIObjectNew(env, err, svc, typecode, tdo, table, duration, value, instance);
+    OCI_RESULT(TRUE);
 
-    if (ret == OCI_SUCCESS)
-    {
-        OCILib.nb_objinst++;  
-    }
-
-    return ret;
+    return event->objname;
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_OCIObjectFree
+ * OCI_EventGetRowid
  * ------------------------------------------------------------------------ */
 
-sword OCI_OCIObjectFree(OCIEnv *env, OCIError *err, dvoid *instance, ub2 flags)
+const dtext * OCI_API OCI_EventGetRowid(OCI_Event *event)
 {
-    sword ret = OCI_SUCCESS;
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
 
-    if (instance != NULL)
-    {
-        OCILib.nb_objinst--;  
+    OCI_RESULT(TRUE);
 
-        ret = OCIObjectFree(env, err, instance, flags);
-    }
-
-    return ret;
+    return event->rowid;
 }
 
+/* ------------------------------------------------------------------------ *
+ * OCI_EventGetSubscription
+ * ------------------------------------------------------------------------ */
+
+OCI_Subscription * OCI_API OCI_EventGetSubscription(OCI_Event *event)
+{
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
+
+    OCI_RESULT(TRUE);
+
+    return event->sub;
+}
 
