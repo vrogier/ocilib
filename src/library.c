@@ -1346,19 +1346,19 @@ boolean OCI_API OCI_DatabaseStartup(const mtext *db,  const mtext *user,
     
         if (con != NULL)
         {  
-            /* allocate admin handle */
-      
-            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
-                                                  (dvoid **) (void *) &adm,
-                                                  (ub4) OCI_HTYPE_ADMIN,
-                                                  (size_t) 0, (dvoid **) NULL));
-           
-            /* set client spfile if provided */
-
             if ((res == TRUE) && (spfile != NULL) && (spfile[0] != 0))
             {
                 void *ostr  = NULL;
                 int osize   = -1;
+
+                /* allocate admin handle */
+
+                res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
+                                                      (dvoid **) (void *) &adm,
+                                                      (ub4) OCI_HTYPE_ADMIN,
+                                                      (size_t) 0, (dvoid **) NULL));
+
+                /* set client spfile if provided */
 
                 ostr  = OCI_GetInputMetaString(spfile, &osize);
 
