@@ -233,15 +233,17 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
 
     if ((res == TRUE) && (osize > (int) sub->event.dbname_size))
     {
+        /* buffer is ANSI  */
+
         sub->event.dbname =
 
         (dtext *) OCI_MemRealloc(sub->event.dbname,  OCI_IPC_STRING, sizeof(dtext),
-                                (size_t) ((osize / (int) sizeof(omtext)) + 1));
+                                (size_t) (osize + 1));
 
         sub->event.dbname_size = osize;
     }
 
-    OCI_CopyString(ostr, sub->event.dbname, &osize, sizeof(omtext), sizeof(dtext));
+    OCI_CopyString(ostr, sub->event.dbname, &osize, sizeof(char), sizeof(dtext));
 
     /* get notification type */
 
@@ -359,15 +361,17 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
 
                 if(osize > (int) sub->event.objname_size)
                 {
+                    /* buffer is ANSI  */
+
                     sub->event.objname =
 
                     (dtext *) OCI_MemRealloc(sub->event.objname,  OCI_IPC_STRING, sizeof(dtext),
-                                            (size_t) ((osize / (int) sizeof(omtext)) + 1));
+                                            (size_t) (osize + 1));
 
                     sub->event.objname_size = osize;
                 }
 
-                OCI_CopyString(ostr, sub->event.objname, &osize, sizeof(omtext), sizeof(dtext));
+                OCI_CopyString(ostr, sub->event.objname, &osize, sizeof(char), sizeof(dtext));
 
                 /* get table modification type */
 
@@ -461,15 +465,17 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
 
                             if(osize > (int) sub->event.rowid_size)
                             {
+                                /* buffer is ANSI  */
+
                                 sub->event.rowid =
 
                                 (dtext *) OCI_MemRealloc(sub->event.rowid, OCI_IPC_STRING, sizeof(dtext),
-                                                         (size_t) ((osize / (int) sizeof(omtext)) + 1));
+                                                         (size_t) (osize + 1));
 
                                 sub->event.rowid_size = osize;
                             }
 
-                            OCI_CopyString(ostr, sub->event.rowid, &osize, sizeof(omtext), sizeof(dtext));
+                            OCI_CopyString(ostr, sub->event.rowid, &osize, sizeof(char), sizeof(dtext));
 
                             sub->handler(&sub->event);
                         }

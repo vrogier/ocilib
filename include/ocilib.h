@@ -81,7 +81,6 @@ extern "C" {
  * - Describe database schema objects
  * - Hash tables API
  * - Portable Threads and mutexes API
- * - 'All in one' formatted functions (printf's like)
  *
  * @section s_down Download
  *

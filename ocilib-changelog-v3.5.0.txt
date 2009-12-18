@@ -66,3 +66,5 @@
       - Added Oracle spatial demo source (demo/geometry.c)
       - Now, OCI_API is by default set to __stdcall when using MS visual studio if it's not already defined
 
+    * Information : OCI_DatabaseStartup() fails on Unicode builds because OCI function OCIDBStartup() fails if OCI is initialized in UTF16 mode ! Another bug to report to Oracle !
+
