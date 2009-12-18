@@ -16,7 +16,7 @@
       - Added OCI_EventGetDatabase()
       - Added OCI_EventGetObject()
       - Added OCI_EventGetRowid()
-      - Added OCI_EventGetNotification()
+      - Added OCI_EventGetSubscription()
       
       - Added new environment mode OCI_ENV_EVENTS to enable events
       - Updated documentation (new page <modules> <Database Change Notification>)
@@ -57,6 +57,7 @@
       - OCI_DateNextDay() : On unixes platforms+Unicode builds -> wrong value passed to the OCI internal call
       - OCI_Immediate() : if execution failed, internal OCI_Statement (and thus server cursor) was not deallocated 
       - OCI_ConnectionFree() : removed internal call to object cache cleanup routine
+      - OCI_DatabaseShutdown() : a segfault happened if the connection to the server could not be done 
       - fixed typos in OCILIB documentation (generated from OCILIB main header file: ocilib.h)
 
     * Miscellaneous changes
@@ -67,4 +68,3 @@
       - Now, OCI_API is by default set to __stdcall when using MS visual studio if it's not already defined
 
     * Information : OCI_DatabaseStartup() fails on Unicode builds because OCI function OCIDBStartup() fails if OCI is initialized in UTF16 mode ! Another bug to report to Oracle !
-

@@ -1344,89 +1344,92 @@ boolean OCI_API OCI_DatabaseStartup(const mtext *db,  const mtext *user,
 
         con = OCI_ConnectionCreate(db, user, pwd, sess_mode | OCI_PRELIM_AUTH);
     
-        res = (con != NULL);
-  
-        /* allocate admin handle */
-
-        if (res == TRUE)
-        {
+        if (con != NULL)
+        {  
+            /* allocate admin handle */
+      
             res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
                                                   (dvoid **) (void *) &adm,
                                                   (ub4) OCI_HTYPE_ADMIN,
                                                   (size_t) 0, (dvoid **) NULL));
-        }
-       
-        /* set client spfile if provided */
+           
+            /* set client spfile if provided */
 
-        if ((res == TRUE) && (spfile != NULL) && (spfile[0] != 0))
-        {
-            void *ostr  = NULL;
-            int osize   = -1;
+            if ((res == TRUE) && (spfile != NULL) && (spfile[0] != 0))
+            {
+                void *ostr  = NULL;
+                int osize   = -1;
 
-            ostr  = OCI_GetInputMetaString(spfile, &osize);
+                ostr  = OCI_GetInputMetaString(spfile, &osize);
+
+                OCI_CALL2
+                (
+                    res, con,
+
+                    OCIAttrSet((dvoid *) adm, (ub4) OCI_HTYPE_ADMIN,
+                               (dvoid *) ostr, (ub4) osize,
+                               (ub4) OCI_ATTR_ADMIN_PFILE, con->err)
+                )
+
+                OCI_ReleaseMetaString(ostr);
+            }
+
+            /* startup DB */
 
             OCI_CALL2
             (
                 res, con,
-
-                OCIAttrSet((dvoid *) adm, (ub4) OCI_HTYPE_ADMIN,
-                           (dvoid *) ostr, (ub4) osize,
-                           (ub4) OCI_ATTR_ADMIN_PFILE, con->err)
+                
+                OCIDBStartup(con->cxt, con->err, (OCIAdmin *) adm,
+                             OCI_DEFAULT, start_flag)
             )
 
-            OCI_ReleaseMetaString(ostr);
+            /* release security admin handle */
+
+            if (adm != NULL)
+            {
+                OCI_HandleFree(OCILib.err, OCI_HTYPE_ADMIN);
+            }
+
+            /* disconnect */
+
+            OCI_ConnectionFree(con);
         }
-
-        /* startup DB */
-
-        OCI_CALL2
-        (
-            res, con,
-            
-            OCIDBStartup(con->cxt, con->err, (OCIAdmin *) adm,
-                         OCI_DEFAULT, start_flag)
-        )
-
-        /* release security admin handle */
-
-        if (adm != NULL)
-        {
-            OCI_HandleFree(OCILib.err, OCI_HTYPE_ADMIN);
-        }
-
-        /* disconnect */
-
-        OCI_ConnectionFree(con);
+        else
+            res = FALSE;
     }
-
-    /* connect without prelim mode */
-
-    con = OCI_ConnectionCreate(db, user, pwd, sess_mode);
-
-    res = (con != NULL);
-
-    /* alter database */
 
     if (res == TRUE)
     {
-        OCI_Statement *stmt = OCI_StatementCreate(con);
+        /* connect without prelim mode */
 
-        /* mount database */
+        con = OCI_ConnectionCreate(db, user, pwd, sess_mode);
 
-        if (start_mode & OCI_DB_SPM_MOUNT)
-            res = (res && OCI_ExecuteStmt(stmt, MT("ALTER DATABASE MOUNT")));
+        /* alter database */
 
-        /* open database */
+        if (con != NULL)
+        {
+            OCI_Statement *stmt = OCI_StatementCreate(con);
 
-        if (start_mode & OCI_DB_SPM_OPEN)
-            res = (res && OCI_ExecuteStmt(stmt, MT("ALTER DATABASE OPEN")));
+            /* mount database */
 
-        OCI_StatementFree(stmt);
+            if (start_mode & OCI_DB_SPM_MOUNT)
+                res = (res && OCI_ExecuteStmt(stmt, MT("ALTER DATABASE MOUNT")));
+
+            /* open database */
+
+            if (start_mode & OCI_DB_SPM_OPEN)
+                res = (res && OCI_ExecuteStmt(stmt, MT("ALTER DATABASE OPEN")));
+
+            OCI_StatementFree(stmt);
+
+            /* disconnect */
+
+            OCI_ConnectionFree(con);
+        }
+        else
+            res = FALSE;
     }
-
-    /* disconnect */
-
-    OCI_ConnectionFree(con);
 
 #else
 
@@ -1468,7 +1471,7 @@ boolean OCI_API OCI_DatabaseShutdown(const mtext *db, const mtext *user,
 
     con = OCI_ConnectionCreate(db, user, pwd, sess_mode);
 
-    if (con != NULL);
+    if (con != NULL)
     {
         /* delete current transaction before the abort */
 
@@ -1534,6 +1537,8 @@ boolean OCI_API OCI_DatabaseShutdown(const mtext *db, const mtext *user,
 
         OCI_ConnectionFree(con);
     }
+    else
+        res = FALSE;
 
 #else
 
