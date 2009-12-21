@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.5.0 2009-12-17 23:00 Vince $
+ * $Id: ocilib_internal.h, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED 
@@ -639,10 +639,29 @@ sword OCI_DescriptorAlloc
     dvoid **usrmempp
 );
 
+sword OCI_DescriptorArrayAlloc
+(
+    CONST dvoid *parenth, 
+    dvoid **descpp,
+    CONST ub4 type, 
+    ub4 nb_elem,
+    CONST size_t xtramem_sz,
+    dvoid **usrmempp
+);
+
 sword OCI_DescriptorFree
 (
-    void *descp, CONST ub4 type
+    void *descp, 
+    CONST ub4 type
 );
+
+sword OCI_DescriptorArrayFree
+(
+    void **descp, 
+    CONST ub4 type, 
+    ub4 nb_elem
+);
+
 
 sword OCI_ObjectNew
 (

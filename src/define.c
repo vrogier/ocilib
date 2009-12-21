@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: define.c, v 3.5.0 2009-12-17 23:00 Vince $
+ * $Id: define.c, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -251,26 +251,34 @@ boolean OCI_DefineAlloc(OCI_Define *def)
     {
         if (def->col.dtype != 0)
         {
-            for (i = 0; i < def->buf.count; i++)
+            if (def->col.type == OCI_CDT_CURSOR)
             {
-                if (def->col.type == OCI_CDT_CURSOR)
+                for (i = 0; (i < def->buf.count) && (res == TRUE); i++)
                 {
-                    res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid  *) OCILib.env,
+                     res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid  *) OCILib.env,
                                                           (dvoid **) &(def->buf.data[i]),
                                                           (ub4) def->col.dtype,
                                                           (size_t) 0, (dvoid **) NULL));
-                }
-                else
+               }
+            }
+            else
+            {
+                res = (OCI_SUCCESS == OCI_DescriptorArrayAlloc
+                                      (
+                                          (dvoid  *) OCILib.env,
+                                          (dvoid **) def->buf.data,
+                                          (ub4) def->col.dtype,
+                                          (ub4) def->buf.count,
+                                          (size_t) 0, (dvoid **) NULL
+                                      )
+                       );
+            
+                if ((res == TRUE) && (def->col.type == OCI_CDT_LOB))
                 {
-                    res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid  *) OCILib.env,
-                                                              (dvoid **) &(def->buf.data[i]),
-                                                              (ub4) def->col.dtype,
-                                                              (size_t) 0, (dvoid **) NULL));
-
-                    if ((res == TRUE) && (def->col.type == OCI_CDT_LOB))
+                    ub4 empty = 0;
+                   
+                    for (i = 0; (i < def->buf.count) && (res == TRUE); i++)
                     {
-                        ub4 empty = 0;
-
                         OCI_CALL1
                         (
                             res, def->rs->stmt->con, def->rs->stmt,
@@ -283,9 +291,6 @@ boolean OCI_DefineAlloc(OCI_Define *def)
                         )
                     }
                 }
-
-                if (res == FALSE)
-                    break;
             }
         }
     }

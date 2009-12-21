@@ -38,6 +38,11 @@
       - Speed improvements
       - Now works on Unicode builds (tired to wait after Oracle fixes that never come, so i've reimplemented some buggy OCI calls)
       - Smarter code
+
+    * Extended Lob Support
+
+      - Added OCI_LobEnableBuffering()
+      - Added OCI_LobGetChunkSize()
       
     * Native 64 bits fixes
 
@@ -66,5 +71,7 @@
       - Modified : OCI_BIND_MAX (maximum number of binds for a statement) is now 1024 by default instead of 512
       - Added Oracle spatial demo source (demo/geometry.c)
       - Now, OCI_API is by default set to __stdcall when using MS visual studio if it's not already defined
-
+      - If client version >= 11.1, OCILIB Resultsets allocate internal OCI descriptors array in one call (lobs, files, timestamp and interval)
+ 
     * Information : OCI_DatabaseStartup() fails on Unicode builds because OCI function OCIDBStartup() fails if OCI is initialized in UTF16 mode ! Another bug to report to Oracle !
+

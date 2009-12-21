@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: library.c, v 3.5.0 2009-12-17 23:00 Vince $
+ * $Id: library.c, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -210,6 +210,7 @@ OCILOBISTEMPORARY            OCILobIsTemporary            = NULL;
 OCILOBAPPEND                 OCILobAppend                 = NULL;
 OCILOBCOPY                   OCILobCopy                   = NULL;
 OCILOBGETLENGTH              OCILobGetLength              = NULL;
+OCILOBGETCHUNKSIZE           OCILobGetChunkSize           = NULL;
 OCILOBREAD                   OCILobRead                   = NULL;
 OCILOBWRITE                  OCILobWrite                  = NULL;
 OCILOBTRIM                   OCILobTrim                   = NULL;
@@ -220,6 +221,8 @@ OCILOBLOCATORASSIGN          OCILobLocatorAssign          = NULL;
 OCILOBASSIGN                 OCILobAssign                 = NULL;
 OCILOBISEQUAL                OCILobIsEqual                = NULL;
 OCILOBFLUSHBUFFER            OCILobFlushBuffer            = NULL;
+OCILOBENABLEBUFFERING        OCILobEnableBuffering        = NULL;
+OCILOBDISABLEBUFFERING       OCILobDisableBuffering       = NULL;
 OCILOBGETSTORAGELIMIT        OCILobGetStorageLimit        = NULL;
 OCILOBFILEOPEN               OCILobFileOpen               = NULL;
 OCILOBFILECLOSE              OCILobFileClose              = NULL;
@@ -276,6 +279,7 @@ OCIDATETIMEINTERVALADD       OCIDateTimeIntervalAdd       = NULL;
 OCIDATETIMEINTERVALSUB       OCIDateTimeIntervalSub       = NULL;
 OCIDATETIMESUBTRACT          OCIDateTimeSubtract          = NULL;
 OCIDATETIMESYSTIMESTAMP      OCIDateTimeSysTimeStamp      = NULL;
+OCIARRAYDESCRIPTORALLOC      OCIArrayDescriptorAlloc      = NULL;
 OCIARRAYDESCRIPTORFREE       OCIArrayDescriptorFree       = NULL;
 OCICLIENTVERSION             OCIClientVersion             = NULL;
 OCITYPEBYNAME                OCITypeByName                = NULL;
@@ -629,6 +633,8 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
                    OCILOBAPPEND);
         LIB_SYMBOL(OCILib.lib_handle, "OCILobGetLength", OCILobGetLength,
                    OCILOBGETLENGTH);
+        LIB_SYMBOL(OCILib.lib_handle, "OCILobGetChunkSize", OCILobGetChunkSize,
+                   OCILOBGETCHUNKSIZE);
         LIB_SYMBOL(OCILib.lib_handle, "OCILobOpen", OCILobOpen,
                    OCILOBOPEN);
         LIB_SYMBOL(OCILib.lib_handle, "OCILobClose", OCILobClose,
@@ -683,6 +689,10 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
                    OCILOBFLUSHBUFFER);
         LIB_SYMBOL(OCILib.lib_handle, "OCILobGetStorageLimit", OCILobGetStorageLimit,
                    OCILOBGETSTORAGELIMIT);
+        LIB_SYMBOL(OCILib.lib_handle, "OCILobEnableBuffering", OCILobEnableBuffering,
+                   OCILOBENABLEBUFFERING);
+        LIB_SYMBOL(OCILib.lib_handle, "OCILobDisableBuffering", OCILobDisableBuffering,
+                   OCILOBDISABLEBUFFERING);
 
         LIB_SYMBOL(OCILib.lib_handle, "OCIDateAssign", OCIDateAssign,
                    OCIDATEASSIGN);
@@ -834,6 +844,8 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
         LIB_SYMBOL(OCILib.lib_handle, "OCIRefHexSize", OCIRefHexSize,
                    OCIREFHEXSIZE);
 
+        LIB_SYMBOL(OCILib.lib_handle, "OCIArrayDescriptorAlloc", OCIArrayDescriptorAlloc,
+                   OCIARRAYDESCRIPTORALLOC);
         LIB_SYMBOL(OCILib.lib_handle, "OCIArrayDescriptorFree", OCIArrayDescriptorFree,
                    OCIARRAYDESCRIPTORFREE);
 

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: lob.c, v 3.5.0 2009-12-17 23:00 Vince $
+ * $Id: lob.c, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -556,6 +556,29 @@ big_uint OCI_API OCI_LobGetLength(OCI_Lob *lob)
 }
 
 /* ------------------------------------------------------------------------ *
+ * OCI_LobGetChunkSize
+ * ------------------------------------------------------------------------ */
+
+unsigned int OCI_API OCI_LobGetChunkSize(OCI_Lob *lob)
+{
+    boolean res = TRUE;
+    ub4    size = 0;
+
+    OCI_CHECK_PTR(OCI_IPC_LOB, lob, 0);
+ 
+    OCI_CALL2
+    (
+        res, lob->con, 
+        
+        OCILobGetChunkSize(lob->con->cxt, lob->con->err, lob->handle, &size)
+    )
+
+    OCI_RESULT(res);
+
+    return (unsigned int) size;
+}
+
+/* ------------------------------------------------------------------------ *
  * OCI_LobCopy
  * ------------------------------------------------------------------------ */
 
@@ -967,6 +990,41 @@ boolean OCI_API OCI_LobFlush(OCI_Lob *lob)
         
         OCILobFlushBuffer(lob->con->cxt, lob->con->err, lob->handle, (ub4) OCI_DEFAULT)
     )
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_LobFlush
+ * ------------------------------------------------------------------------ */
+
+
+boolean OCI_API OCI_LobEnableBuffering(OCI_Lob *lob, boolean value)
+{
+    boolean res   = TRUE;
+
+    OCI_CHECK_PTR(OCI_IPC_LOB, lob, FALSE);
+
+    if (value == TRUE)
+    {
+        OCI_CALL2
+        (
+            res, lob->con, 
+            
+            OCILobEnableBuffering(lob->con->cxt, lob->con->err, lob->handle)
+        )
+    }
+    else
+    {
+        OCI_CALL2
+        (
+            res, lob->con, 
+            
+            OCILobDisableBuffering(lob->con->cxt, lob->con->err, lob->handle)
+        )
+    }
 
     OCI_RESULT(res);
 

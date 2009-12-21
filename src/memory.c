@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: memory.c, v 3.5.0 2009-12-17 23:00 Vince $
+ * $Id: memory.c, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -150,6 +150,45 @@ sword OCI_DescriptorAlloc(CONST dvoid *parenth, dvoid **descpp, CONST ub4 type,
 }
 
 /* ------------------------------------------------------------------------ *
+ * OCI_DescriptorArrayAlloc
+ * ------------------------------------------------------------------------ */
+
+sword OCI_DescriptorArrayAlloc(CONST dvoid *parenth, dvoid **descpp, 
+                               CONST ub4 type, ub4 nb_elem, 
+                               CONST size_t xtramem_sz, dvoid **usrmempp)
+{
+    sword ret = OCI_SUCCESS;
+
+#if OCI_VERSION_COMPILE >= OCI_11_1
+
+    if (OCILib.version_runtime >= OCI_11_1)
+    {
+        ret = OCIArrayDescriptorAlloc(parenth, descpp, type, nb_elem,
+                                      xtramem_sz, usrmempp);
+
+    }
+    else
+
+#endif
+
+    {
+        ub4 i;
+
+        for(i = 0; (i < nb_elem) && (ret == OCI_SUCCESS); i++)
+        {
+            ret = OCIDescriptorAlloc(parenth, &descpp[i], type, xtramem_sz, usrmempp);
+        }
+    }
+
+    if (ret == OCI_SUCCESS)
+    {
+        OCILib.nb_descp += nb_elem;   
+    }
+
+    return ret;
+}
+
+/* ------------------------------------------------------------------------ *
  * OCI_DescriptorFree
  * ------------------------------------------------------------------------ */
 
@@ -162,6 +201,43 @@ sword OCI_DescriptorFree(dvoid *descp, CONST ub4 type)
         OCILib.nb_descp--;  
 
         ret = OCIDescriptorFree(descp, type);
+    }
+
+    return ret;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_DescriptorFree
+ * ------------------------------------------------------------------------ */
+
+sword OCI_DescriptorArrayFree(dvoid **descp, CONST ub4 type, ub4 nb_elem)
+{            
+    sword ret = OCI_SUCCESS;
+
+    if (descp != NULL)
+    {
+    #if OCI_VERSION_COMPILE >= OCI_11_1
+
+        if (OCILib.version_runtime >= OCI_11_1)
+        {
+            ret = OCIArrayDescriptorFree(descp, type);
+
+        }
+        else
+
+    #endif
+
+        {
+            ub4 i;
+
+            for(i = 0; (i < nb_elem) && (ret == OCI_SUCCESS); i++)
+            {
+                ret = OCIDescriptorFree(&descp[i], type);
+            }
+        }
+
+  
+        OCILib.nb_descp -= nb_elem;  
     }
 
     return ret;

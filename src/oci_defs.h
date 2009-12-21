@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_defs.h, v 3.5.0 2009-12-17 23:00 Vince $
+ * $Id: oci_defs.h, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_DEFS_H_INCLUDED 
@@ -257,6 +257,8 @@
 #define OCI_ATTR_COLLECTION_ELEMENT    227     /* has a collection attribute */
 #define OCI_ATTR_NUM_TYPE_ATTRS        228      /* number of attribute types */
 #define OCI_ATTR_LIST_TYPE_ATTRS       229        /* list of type attributes */
+
+#define OCI_ATTR_CQ_QUERYID            304
 
 #define OCI_ATTR_CLIENT_IDENTIFIER     278       /* value of client id to set*/
 

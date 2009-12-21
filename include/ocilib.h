@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib.h, v 3.5.0 2009-12-17 23:00 Vince $
+ * $Id: ocilib.h, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -1832,6 +1832,23 @@ OCI_EXPORT unsigned int OCI_API OCI_GetCharsetUserData(void);
 OCI_EXPORT void OCI_API OCI_EnableWarnings
 (
     boolean value
+);
+
+/**
+ * @brief
+ * Set the global error user handler
+ *
+ * @param handler  - Pointer to error handler procedure
+ *
+ * @note
+ * Use this call to change or remove the user callback 
+ * error handler passed to OCI_Initialize()
+ *
+ */
+
+OCI_EXPORT void OCI_API OCI_SetErrorHandler
+(
+    POCI_ERROR handler
 );
 
 /**
@@ -8266,6 +8283,28 @@ OCI_EXPORT big_uint OCI_API OCI_LobGetLength
 
 /**
  * @brief
+ * Returns the chunk size of a LOB
+ *
+ * @param lob - Lob handle
+ *
+ * @note
+ * This chunk size corresponds to the chunk size used by the LOB data layer 
+ * when accessing and modifying the LOB value. According to Oracle
+ * documentation, performance will be improved if the application issues 
+ * read or write requests using a multiple of this chunk size
+ *
+ * @note
+ * The returned value is in bytes for BLOBS and characters for CLOBS/NCLOBs
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_LobGetChunkSize
+(
+    OCI_Lob *lob
+);
+
+/**
+ * @brief
  * Erase a portion of the lob at a given position
  *
  * @param lob    - Lob handle
@@ -8519,6 +8558,36 @@ OCI_EXPORT big_uint OCI_API OCI_LobGetMaxSize
 OCI_EXPORT boolean OCI_API OCI_LobFlush
 (
     OCI_Lob *lob
+);
+
+/**
+ * @brief
+ * Enable / disable buffering mode on the given lob handle
+ *
+ * @param lob    - Lob handle
+ * @param value  - Enable/disable buffering mode
+ *
+ * @note
+ * Oracle "LOB Buffering Subsystem" allows client applications
+ * to speedup read/write of small buffers on Lobs Objects.
+ * Check Oracle Documentation for more details on "LOB Buffering Subsystem".
+ * This reduces the number of network round trips and LOB versions, thereby
+ * improving LOB performance significantly.
+ *
+ * @warning
+ * According to Oracle documentation the following operations are not permitted 
+ * on Lobs when buffering is on : OCI_LobCopy(), OCI_LobAppend, OCI_LobErase(),
+ * OCI_LobGetLength(), OCI_LobTrim()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_LobEnableBuffering
+(
+    OCI_Lob *lob,
+    boolean value
 );
 
 /**
@@ -13029,6 +13098,10 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  * For Object changes, the notification can be at :
  *  - At Object level : only the object name (schema + object) is given
  *  - At row level : same that object level + RowID of the altered row
+ *
+ * @warning
+ * Trying to use this features with a client/server version < 10gR2 will 
+ * raise an error
  *
  * @par Example
  * @include notification.c

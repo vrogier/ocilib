@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_api.h, v 3.5.0 2009-12-17 23:00 Vince $
+ * $Id: oci_api.h, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_API_H_INCLUDED 
@@ -472,6 +472,15 @@ typedef sword (*OCILOBGETLENGTH)
     ub4 *lenp
 );
 
+
+typedef sword (*OCILOBGETCHUNKSIZE)
+(
+ OCISvcCtx         *svchp,
+ OCIError          *errhp,
+ OCILobLocator     *locp,
+ ub4               *chunksizep
+);
+
 typedef sword (*OCILOBOPEN)
 ( 
     OCISvcCtx *svchp,
@@ -501,6 +510,21 @@ typedef sword (*OCILOBASSIGN)
     OCIError *errhp, 
     CONST OCILobLocator *src_locp, 
     OCILobLocator **dst_locpp
+);
+
+
+typedef sword (*OCILOBENABLEBUFFERING)
+(
+    OCISvcCtx      *svchp,
+    OCIError       *errhp,
+    OCILobLocator  *locp
+);
+
+typedef sword (*OCILOBDISABLEBUFFERING)
+(
+    OCISvcCtx      *svchp,
+    OCIError       *errhp,
+    OCILobLocator  *locp
 );
 
 typedef sword (*OCILOBFILEOPEN) 
@@ -1846,6 +1870,16 @@ typedef sword (*OCIPING)
 );
 
 /* API introduced in 11.1 */
+
+typedef sword (*OCIARRAYDESCRIPTORALLOC)
+(
+    const void  *parenth, 
+    void  **descpp, 
+    const ub4 type, 
+    ub4 array_size, 
+    const size_t xtramem_sz, 
+    void  **usrmempp
+);
 
 typedef sword (*OCIARRAYDESCRIPTORFREE)
 (

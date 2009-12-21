@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.5.0 2009-12-17 23:00 Vince $
+ * $Id: resultset.c, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -783,19 +783,19 @@ boolean OCI_ResultsetFree(OCI_Resultset *rs)
 
         if (def->col.dtype != 0)
         {
-            for(j=0; j < def->buf.count; j++)
+            if (def->col.type == OCI_CDT_CURSOR)
             {
-                if (def->col.type == OCI_CDT_CURSOR)
+                for(j=0; j < def->buf.count; j++)
                 {
-                    OCI_HandleFree((dvoid *) def->buf.data[j],
-                                   (ub4    ) def->col.dtype);
-                }
-                else
-                {
-                    OCI_DescriptorFree((dvoid *) def->buf.data[j],
+                        OCI_HandleFree((dvoid *) def->buf.data[j],
                                        (ub4    ) def->col.dtype);
                 }
-
+            }
+            else
+            {
+                OCI_DescriptorArrayFree((dvoid *) def->buf.data,
+                                        (ub4    ) def->col.dtype,
+                                        (ub4    ) def->buf.count);
             }
         }
 

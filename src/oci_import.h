@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_import.h, v 3.5.0 2009-12-17 23:00 Vince $
+ * $Id: oci_import.h, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
@@ -129,6 +129,7 @@ extern OCILOBISTEMPORARY            OCILobIsTemporary;
 extern OCILOBAPPEND                 OCILobAppend;
 extern OCILOBCOPY                   OCILobCopy;
 extern OCILOBGETLENGTH              OCILobGetLength;
+extern OCILOBGETCHUNKSIZE           OCILobGetChunkSize;
 extern OCILOBREAD                   OCILobRead;
 extern OCILOBWRITE                  OCILobWrite;
 extern OCILOBTRIM                   OCILobTrim;
@@ -140,6 +141,8 @@ extern OCILOBASSIGN                 OCILobAssign;
 extern OCILOBISEQUAL                OCILobIsEqual;
 extern OCILOBFLUSHBUFFER            OCILobFlushBuffer;
 extern OCILOBGETSTORAGELIMIT        OCILobGetStorageLimit;
+extern OCILOBENABLEBUFFERING        OCILobEnableBuffering;
+extern OCILOBDISABLEBUFFERING       OCILobDisableBuffering;
 extern OCILOBFILEOPEN               OCILobFileOpen;
 extern OCILOBFILECLOSE              OCILobFileClose;
 extern OCILOBFILECLOSEALL           OCILobFileCloseAll;
@@ -195,6 +198,7 @@ extern OCIDATETIMEINTERVALADD       OCIDateTimeIntervalAdd;
 extern OCIDATETIMEINTERVALSUB       OCIDateTimeIntervalSub;
 extern OCIDATETIMESUBTRACT          OCIDateTimeSubtract;
 extern OCIDATETIMESYSTIMESTAMP      OCIDateTimeSysTimeStamp;
+extern OCIARRAYDESCRIPTORALLOC      OCIArrayDescriptorAlloc;
 extern OCIARRAYDESCRIPTORFREE       OCIArrayDescriptorFree;
 extern OCICLIENTVERSION             OCIClientVersion;
 extern OCITYPEBYNAME                OCITypeByName;
