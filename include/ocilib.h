@@ -8,7 +8,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://www.ocilib.net                 |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Lesser General Public           |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib.h, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
+ * $Id: ocilib.h, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,7 +59,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.5.0 (2009-12-21)</b>
+ * <b>Current version : 3.5.1 (2010-02-30)</b>
  *
  * @section s_feats Main features
  *
@@ -144,7 +144,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     3
 #define OCILIB_MINOR_VERSION     5
-#define OCILIB_REVISION_VERSION  0
+#define OCILIB_REVISION_VERSION  1
 
 /* ------------------------------------------------------------------------ *
  * Installing OCILIB
@@ -159,10 +159,13 @@ extern "C" {
  *
  * Actual version of OCILIB has been validated on :
  *
- * - Platforms: Windows, HP/UX, Linux, Mac OS, Solaris, AIX, OpenVMS
+ * - Platforms: Windows, HP/UX, Linux, Mac OS, Solaris, AIX
  * - Architectures: 32/64bits
  * - Compilers: GCC / MinGW, MS Compilers, IBM XLC, CCs, LabView
  * - Oracle versions: 8i, 9i, 10g, 11g
+ *
+ * @note
+ * The validation of OCILIB on OpenVMS is still pending.
  *
  * Please, contact the author if you have validated OCILIB on platforms or
  * compilers not listed here.
@@ -192,6 +195,7 @@ extern "C" {
  *
  * @note
  * On Windows, OCI_API MUST be set to __stdcall in order to use prebuilt libraries
+ * From v3.5.0, ocilib.h automatically sets OCI_API to  __stdcall with MS compilers
  *
  * @par Installing OCILIB on UNIX like systems
  *
@@ -223,7 +227,6 @@ extern "C" {
  *   - --with-oracle-import=(linkage|runtime)
  *   - --with-oracle-charset=(ansi|unicode|mixed)
  *   - --with-oracle-home=(custom oracle regular client directory)
- *   - --with-oracle-lib64=(yes|no - check out folders on mixed 32/64bits platforms)
  *   - --with-oracle-headers-path=(oracle header files directory)
  *   - --with-oracle-lib-path=(oracle shared lib directory)
  *   - --with-oracle-lib-name=(oracle shared lib name)
@@ -245,7 +248,7 @@ extern "C" {
  *  - $ORACLE_HOME/lib   (32 or 64 bits libs)
  *  - $ORACLE_HOME/lib64 (64 bits libs)
  *
- * @note
+ * @note 
  * To compile native 64 bits versions of OCILIB, you need pass your compiler 
  * specifics flags to the configure script.
  *
@@ -263,13 +266,13 @@ extern "C" {
  * - $USER_LIBS is the folder where OCILIB was installed
  * - $ORACLE_LIB_PATH is Oracle client shared library path
  *
- * Some older version of Oracle 8 have direct path symbols located in the
- * library libclient8. So with theses versions, you must include as well the
+ * Some older version of Oracle 8 have direct path API symbols located in the
+ * library libclient8. With theses versions, you must include as well the
  * linker flag -lclient8 to use Direct Path API.
  *
  * @par Installing and using OCILIB on Microsoft Windows
  *
- * 32bits and 64bits DLLs are provided.
+ * 32bits and 64bits DLLs are provided for x86 architectures.
  * Visual .NET (2005/2008) solutions are also provided to recompile the Dlls and
  * the demo.
  *
@@ -565,9 +568,11 @@ extern "C" {
 
 /*
    For ISO conformance, strdup/wcsdup/stricmp/strncasecmp are not used.
-   All wide char routines are 'officially' C99.
-   but we weed an ANSI equivalent to swprintf => ocisprintf
-   OCILIB exports the following helper functions
+   All wide char routines are part of the 1995 Normative Addendum 1 to the
+   ISO C90 standard. These routines are not considered as part of the 
+   ISO C90 standard by OCILIB author.
+   OCILIB also weeds an ANSI equivalent to swprintf => ocisprintf
+   Thus OCILIB exports the following helper functions
 
 */
 
@@ -719,6 +724,7 @@ typedef struct OCI_ConnPool OCI_ConnPool;
  * associated statements, ...
  * Error handling and transactions are embedded within a connection object.
  *
+ * @warning
  * Multithreaded applications that use multiple connections should
  * use one connection per thread as all statements associated with a
  * connection share the same context.
@@ -1720,9 +1726,13 @@ typedef struct OCI_HashEntry {
  * If the parameter 'home' is NULL, the Oracle library is loaded from system
  * environment variables
  *
+ * @warning
+ * OCI_Initialize() should be called <b>ONCE</b> per application
+ *
  * @return
  * TRUE on success otherwise FALSE (only with Oracle runtime loading mode
- * if the oracle shared libraries can't be loaded)
+ * if the oracle shared libraries can't be loaded or if OCI subsystem cannot
+ * be initialized)
  *
  */
 
@@ -1743,6 +1753,9 @@ OCI_EXPORT boolean OCI_API OCI_Initialize
  * - It deallocates objects not explicitly freed by the program (connections,
  *  statements, ...)
  * - It unloads the Oracle shared library
+ *
+ * @warning
+ * OCI_Cleanup() should be called <b>ONCE</b> per application
  *
  * @return TRUE
  */
@@ -1843,7 +1856,7 @@ OCI_EXPORT void OCI_API OCI_EnableWarnings
  *
  * @note
  * Use this call to change or remove the user callback 
- * error handler passed to OCI_Initialize()
+ * error handler installed by OCI_Initialize()
  *
  */
 
@@ -2069,7 +2082,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
  * If the param 'db' is NULL then a connection to the default local DB is done
  *
  * @note
- * On success, a transaction is automatically created and started
+ * On success, a local transaction is automatically created and started
  *
  * @return
  * Connection handle on success or NULL on failure
@@ -2115,7 +2128,7 @@ OCI_EXPORT boolean OCI_API OCI_IsConnected
 
 /**
  * @brief
- * Return the previously pointer to user data associated with the connection
+ * Return the pointer to user data previously associated with the connection
  *
  * @param con - Connection handle
  *
@@ -2128,7 +2141,7 @@ OCI_EXPORT void * OCI_API OCI_GetUserData
 
 /**
  * @brief
- * Associate to the given connection a pointer to user data
+ * Associate a pointer to user data to the given connection
  *
  * @param con  - Connection handle
  * @param data - User data pointer
@@ -2309,7 +2322,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion
  *
  * @note
  * Default format is:
- * - 'YYYY-MM-DD'
+ * - 'YYYY-MM-DD' defined by the public constant OCI_STRING_FORMAT_DATE
  *
   * @note
  * Possible values are the string date format supported by Oracle.
@@ -2353,6 +2366,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetDefaultFormatDate
  * @note
  * Default format is:
  * - 'FM99999999999999999999999999999999999990.999999999999999999999999'
+ * defined by the public constant OCI_STRING_FORMAT_NUM
  *
  * @warning
  * If data fetched from a string column cannot be converted to a number value
@@ -2809,6 +2823,9 @@ OCI_EXPORT unsigned int OCI_API OCI_ConnPoolGetIncrement
  * - Creating/Destroying explicitly a transaction object
  * - Starting/Stopping/Resuming explicitly the transaction
  * - Preparing the transaction for specific calls
+ *
+ * @note
+ * OCILIB does not yet suppport  XA environments
  *
  */
 
@@ -4951,8 +4968,11 @@ OCI_EXPORT OCI_Column * OCI_API OCI_GetColumn2
  * @note
  * The column name is case insensitive
  *
+ * @note
+ * Column indexes start with 1 in OCILIB
+ *
  * @return
- * Column index on success or -1 on error
+ * Column index on success or zero on error
  *
  */
 
@@ -10398,13 +10418,11 @@ OCI_EXPORT boolean OCI_API OCI_IntervalSubtract
  * See Oracle Database SQL Language Reference for more details about REF datatype
  *
  * @warning
- * There is a known bug in Oracle OCI when setting an object attribute if
- * OCI is initialized in Unicode mode (UTF16).
- * This bug has been marked as fixed for in the current Oracle 12g development
- * status.
- * So, DO NOT try to set Objects attributes in Unicode builds with versions
- * <= 11g because OCI will overwrite internal buffers and later calls to
- * object attributes handles will lead to an OCI crash.
+ * Prior to v3.5.0, OCILIB relied on some OCI routines to set/get objects 
+ * attributes. Theses OCI calls had known bugs in Unicode mode that has been
+ * fixed in Oracle 11gR2.
+ * From v3.5.0, OCILIB directly sets objects attributes and thus OCILIB objects 
+ * can now be used in Unicode mode.
  *
  * @par Example : Inserting a local object into a table
  * @include object.c

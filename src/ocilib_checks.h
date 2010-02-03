@@ -8,7 +8,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://www.ocilib.net                 |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Lesser General Public           |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_checks.h, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
+ * $Id: ocilib_checks.h, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_CHECKS_H_INCLUDED

@@ -1,0 +1,10 @@
+2010-02-03 Version 3.5.1 Vincent Rogier vince.rogier@gmail.com
+
+    * Miscellaneous fixes
+
+      - fixed reinitialization of OCI_Statement objects binded to other statements
+      - fixed endianness problem with precision attribute of sub columns of objects retrieved with OCI_TypeInfoGet()
+      - fixed compilation error with Oracle client < 10gR2 when using build mode OCI_IMPORT_LINKAGE
+      - fixed returned value of OCI_GetColumnIndex()
+
+    * Documentation updates / fixes

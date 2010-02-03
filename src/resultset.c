@@ -8,7 +8,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://www.ocilib.net                 |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Lesser General Public           |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.5.0 2009-12-21 00:00 Vincent Rogier $
+ * $Id: resultset.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -1186,11 +1186,14 @@ OCI_Column * OCI_API OCI_GetColumn2(OCI_Resultset *rs, const mtext *name)
 
 unsigned int OCI_API OCI_GetColumnIndex(OCI_Resultset *rs, const mtext *name)
 {
-   unsigned int index = OCI_GetDefineIndex(rs, name);
+   int index = OCI_GetDefineIndex(rs, name);
 
    OCI_RESULT(index >= 1);
 
-   return index;
+   if (index <= 0)
+       index = 0;
+
+   return (unsigned int) index;
 }
 
 /* ------------------------------------------------------------------------ *
