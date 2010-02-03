@@ -1708,6 +1708,7 @@ typedef struct OCI_HashEntry {
  * - OCI_ENV_DEFAULT  : default mode
  * - OCI_ENV_THREADED : multithreading support
  * - OCI_ENV_CONTEXT  : thread contextual error handling
+ * - OCI_ENV_EVENTS   : enables events for subscription
  *
  * @note
  * This function must be called before any OCILIB library function.
