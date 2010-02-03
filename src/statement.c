@@ -97,6 +97,13 @@ boolean OCI_BindCheck(OCI_Statement *stmt)
         bnd = stmt->ubinds[i];
         ind = (sb2 *) bnd->buf.inds;
 
+        if (bnd->type == OCI_CDT_CURSOR)
+        {
+            OCI_Statement *bnd_stmt = (OCI_Statement *) bnd->buf.data;
+            
+            OCI_StatementReset(bnd_stmt);
+        }
+
         /* for strings, re-initialize length array with buffer default size */
 
         if (bnd->type == OCI_CDT_TEXT)
@@ -259,6 +266,14 @@ boolean OCI_BindReset(OCI_Statement *stmt)
     for(i = 0; i < stmt->nb_ubinds; i++)
     {
         OCI_Bind *bnd = stmt->ubinds[i];
+
+        if (bnd->type == OCI_CDT_CURSOR)
+        {
+            OCI_Statement *bnd_stmt = (OCI_Statement *) bnd->buf.data;
+            
+            bnd_stmt->status  = OCI_STMT_EXECUTED;
+            bnd_stmt->type    = OCI_CST_SELECT;
+        }
 
         /* only reset bind indicators if bind was not a PL/SQL bind
            that can have oupout values
@@ -1145,7 +1160,7 @@ OCI_Statement * OCI_StatementInit(OCI_Connection *con, OCI_Statement **pstmt,
 
         if (def == NULL)
         {
-            /* allocate handle for non fetched lob (temporary lob) */
+            /* allocate handle for non fetched cursor */
 
             stmt->hstate = OCI_OBJECT_ALLOCATED;
 
