@@ -115,13 +115,34 @@ boolean OCI_ColumnDescribe(OCI_Column *col, OCI_Connection *con,
 
     /* precision */
 
-    OCI_CALL1
-    (
-        res, con, stmt,
-        
-        OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM, (dvoid *) &col->prec,
-                   (ub4 *) NULL, (ub4) OCI_ATTR_PRECISION, con->err)
-    )
+    if (ptype == OCI_DESC_RESULTSET)
+    {
+        sb2 prec = 0;
+
+        OCI_CALL1
+        (
+            res, con, stmt,
+            
+            OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM, (dvoid *) &prec,
+                       (ub4 *) NULL, (ub4) OCI_ATTR_PRECISION, con->err)
+        )
+
+        col->prec = (sb2) prec;
+    }
+    else
+    {
+        ub1 prec = 0;
+
+        OCI_CALL1
+        (
+            res, con, stmt,
+            
+            OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM, (dvoid *) &prec,
+                       (ub4 *) NULL, (ub4) OCI_ATTR_PRECISION, con->err)
+        )
+
+        col->prec = (sb2) prec;
+    }
 
     /* charset form */
 
