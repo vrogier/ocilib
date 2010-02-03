@@ -356,7 +356,6 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
     res = FALSE;
 
     OCI_NOT_USED(name);
-    OCI_NOT_USED(query);
     OCI_NOT_USED(type);
     OCI_NOT_USED(handler);
     OCI_NOT_USED(port);
@@ -392,7 +391,7 @@ boolean OCI_API OCI_SubscriptionUnregister(OCI_Subscription *sub)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_SubscriptionAddQuery
+ * OCI_SubscriptionAddStatement
  * ------------------------------------------------------------------------ */
 
 boolean OCI_API OCI_SubscriptionAddStatement(OCI_Subscription *sub,
@@ -405,6 +404,8 @@ boolean OCI_API OCI_SubscriptionAddStatement(OCI_Subscription *sub,
     
     OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_CLOSED, FALSE);
     OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_EXECUTED, FALSE);
+
+#if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* register the statement query if provided */
 
@@ -421,6 +422,8 @@ boolean OCI_API OCI_SubscriptionAddStatement(OCI_Subscription *sub,
 
         res = res && OCI_Execute(stmt) && (OCI_GetResultset(stmt) != NULL);
     }
+
+#endif
 
     OCI_RESULT(res);
 
