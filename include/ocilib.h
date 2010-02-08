@@ -1706,7 +1706,7 @@ typedef struct OCI_HashEntry {
  * Initializes the library
  *
  * @param err_handler  - Pointer to error handler procedure (optional)
- * @param home         - Oracle home path (optional)
+ * @param home         - Oracle shared library path (optional)
  * @param mode         - Environment mode
  *
  * Possible values for parameter mode:
@@ -1722,6 +1722,10 @@ typedef struct OCI_HashEntry {
  * - It installs the error handler
  * - It loads the Oracle shared library located in the path pointed by 'home'
  *
+ * @warning
+ * The parameter 'home' is only used if OCILIB has been built with the option
+ * OCI_IMPORT_RUNTIME (default on MS windows but NOT on Unixes
+ * 
  * @warning
  * If the parameter 'home' is NULL, the Oracle library is loaded from system
  * environment variables
