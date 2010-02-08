@@ -1182,7 +1182,7 @@ typedef struct OCI_HashEntry {
 
 /* check for long long support */
 
-#if defined(LLONG_MAX)
+#if defined(_LONGLONG) || defined(LONG_LONG_MAX) || defined(LLONG_MAX)
 
  /* C99 long long supported */
 
