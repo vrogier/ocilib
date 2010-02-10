@@ -138,33 +138,51 @@ unsigned int OCI_API OCI_LongGetType(OCI_Long *lg)
 unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer,
                                   unsigned int len)
 {
+    unsigned int size = len;
+
     OCI_CHECK_PTR(OCI_IPC_LONG, lg, 0);
     OCI_CHECK_PTR(OCI_IPC_VOID, buffer, 0);
     
-    OCI_CHECK_MIN(lg->stmt->con, lg->stmt, len, 1, 0);
+    OCI_CHECK_MIN(lg->stmt->con, lg->stmt, size, 1, 0);
 
-    OCI_CHECK(lg->offset > lg->size, 0);
+    OCI_CHECK(lg->offset >= lg->size, 0);
 
     if (lg->type == OCI_CLONG)
-        len *= (unsigned int) sizeof(dtext);
+    {
+        size  *= (unsigned int) sizeof(dtext);
+    }
 
-   /* check buffer size to read */
+    /* check buffer size to read */
 
-   if ((len + lg->offset) > lg->size)
-        len = lg->size - lg->offset;
+    if ((size + lg->offset) > lg->size)
+    {
+       size = lg->size - lg->offset;
+    }
+
+    if (lg->type == OCI_CLONG)
+    {
+        size  +=  sizeof(dtext);
+    }
 
    /* copy buffer */
 
-    memcpy(buffer, lg->buffer + (size_t) lg->offset, (size_t) len);
-
-    lg->offset += len;
+    memcpy(buffer, lg->buffer + (size_t) lg->offset, (size_t) size);
 
     if (lg->type == OCI_CLONG)
-        len /= (unsigned int) sizeof(dtext);
+    {
+        size  -=  sizeof(dtext);
+    }
+
+    lg->offset += size;
+
+    if (lg->type == OCI_CLONG)
+    {
+        size /= (unsigned int) sizeof(dtext);
+    }
 
     OCI_RESULT(TRUE);
 
-    return len;
+    return size;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -287,7 +305,7 @@ unsigned int OCI_API OCI_LongGetSize(OCI_Long *lg)
     size = lg->size;
 
     if (lg->type == OCI_CLONG)
-        size /= (unsigned int) sizeof(dtext);
+        size /= (unsigned int) sizeof(odtext);
 
     OCI_RESULT(TRUE);
 

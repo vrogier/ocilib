@@ -1316,6 +1316,7 @@ const dtext * OCI_API OCI_ServerGetOutput(OCI_Connection *con)
 
     if (con->svopt->curpos == 0 || con->svopt->curpos >= con->svopt->cursize)
     {
+        con->svopt->cursize = con->svopt->arrsize;
         res = OCI_Execute(con->svopt->stmt);
         con->svopt->curpos = 0;
     }

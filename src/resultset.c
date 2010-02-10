@@ -265,12 +265,20 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
 
                 OCI_Long *lg = (OCI_Long *) def->buf.data[iter];
 
+                unsigned int nb_alloc      = 0;
+                unsigned int trailing_size = 0;
+
                 /* setup up piece size */
 
                 ub4 bufsize = rs->stmt->long_size;
 
                 if (lg->type == OCI_CLONG)
                     bufsize += (ub4) sizeof(dtext);
+
+                nb_alloc      = (lg->maxsize / bufsize);
+
+                if (lg->type == OCI_CLONG)
+                    trailing_size = sizeof(dtext) * nb_alloc;
 
                 /* check buffer */
 
@@ -284,9 +292,9 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
 
                     lg->buffer[0] = 0;
                 }
-                else if (lg->size >= lg->maxsize)
+                else if ((lg->size) >= (lg->maxsize - trailing_size))
                 {
-                    lg->maxsize = lg->size + bufsize;
+                    lg->maxsize = lg->size + trailing_size + bufsize;
 
                     lg->buffer  = (ub1 *) OCI_MemRealloc(lg->buffer,
                                                          (size_t) OCI_IPC_LONG_BUFFER,
@@ -299,7 +307,11 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
 
                 if (res == TRUE)
                 {
+
                     lg->piecesize = bufsize;
+       
+                    if (lg->type == OCI_CLONG)
+                        lg->piecesize -= (ub4) sizeof(dtext);
 
                     OCI_CALL1
                     (
@@ -384,7 +396,9 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
                 OCI_Long *lg = (OCI_Long *) def->buf.data[j];
 
                 if (lg->buffer != NULL)
-                    lg->buffer[lg->size] = 0;
+                   ((odtext *)lg->buffer)[lg->size/sizeof(odtext)] = 0;
+
+                OCI_ConvertString(lg->buffer, lg->size / sizeof(odtext), sizeof(odtext), sizeof(dtext));
             }
         }
     }
@@ -1158,7 +1172,6 @@ OCI_Column * OCI_API OCI_GetColumn(OCI_Resultset *rs, unsigned int index)
     OCI_RESULT(col != NULL);
 
     return col;
-
 }
 
 /* ------------------------------------------------------------------------ *

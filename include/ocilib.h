@@ -8970,16 +8970,22 @@ OCI_EXPORT boolean OCI_API OCI_FileAssign
  * OCILIB provides a set of API for manipulating LONGs that is really close to
  * the one provided for LOBs.
  *
- * OCILIB currently supports 3 types of Long Objects:
+ * OCILIB currently supports 2 types of Long Objects:
  *
  * - OCI_BLONG : LONG RAW columns
  * - OCI_CLONG : LONG columns
  *
- * OCI_Lob objects can be :
+ * @Warning
+ * Read / write operations have to follow some rules :
+ * - read  : ONLY possible on OCI_Long object fetched from an OCI_Resultset object
+ * - write : ONLY possible on oCI_Long object binded to an OCI_Statement object
  *
- * - Created as standalone instances
- * - Used for in/out binding
- * - Retrieved from select statement
+ * @warning
+ * To write into an OCI_Long object, you MUST follow this sequence :
+ * - Prepare a statement
+ * - bind the OCI_LOng object to the statement
+ * - Execute the statement
+ * - Perform write calls
  *
  * @par Example
  * @include long.c
@@ -8993,13 +8999,13 @@ OCI_EXPORT boolean OCI_API OCI_FileAssign
  * @param stmt - Statement handle
  * @param type - Long type
  *
- * Supported lob types :
+ * Supported long types :
  *
  * - OCI_BLONG : Binary Long
  * - OCI_CLONG : Character Long
  *
  * @return
- * Return the long handle on success otherwise NULL on failure
+ * Return the OCI_Long object handle on success otherwise NULL on failure
  *
  */
 
@@ -9016,7 +9022,7 @@ OCI_EXPORT OCI_Long * OCI_API OCI_LongCreate
  * @param lg - Long handle
  *
  * @warning
- * Only lobs created with OCI_LongCreate() should be freed by OCI_LongFree()
+ * Only OCI_Long objects created with OCI_LongCreate() should be freed by OCI_LongFree()
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -9035,7 +9041,7 @@ OCI_EXPORT boolean OCI_API OCI_LongFree
  * @param lg - Long handle
  *
  * @note
- * For possible values, see OCI_LobCreate()
+ * For possible values, see OCI_LongCreate()
  *
  * @return
  * Object type or OCI_UNKNOWN the input handle is NULL
@@ -9049,7 +9055,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LongGetType
 
 /**
  * @brief
- * Read a portion of a long into the given buffer [Obsolete]
+ * Read a portion of an OCI_Long object into the given buffer [Obsolete]
  *
  * @param lg     - Long handle
  * @param buffer - Pointer to a buffer
@@ -9081,7 +9087,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LongRead
 
 /**
  * @brief
- * Write a buffer into a Long
+ * Write a buffer into an OCI_Long object
  *
  * @param lg     - Long handle
  * @param buffer - the pointer to a buffer
@@ -9104,7 +9110,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LongWrite
 
 /**
  * @brief
- * Return the buffer size of a long object in bytes (OCI_BLONG) or
+ * Return the buffer size of an OCI_Long object in bytes (OCI_BLONG) or
  * character (OCI_CLONG)
  *
  * @param lg - Long handle
