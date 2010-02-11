@@ -376,8 +376,8 @@ boolean OCI_DefineDef(OCI_Define *def)
 
     /* setup Unicode mode for user data on mixed builds */
     if(( def->col.type == OCI_CDT_TEXT)  || 
-       ((def->col.type == OCI_CDT_LOB)   && (def->col.subtype != OCI_BLOB))  &&
-       ((def->col.type == OCI_CDT_FILE)  && (def->col.subtype != OCI_BFILE)) &&
+       ((def->col.type == OCI_CDT_LOB)   && (def->col.subtype != OCI_BLOB))  ||
+       ((def->col.type == OCI_CDT_FILE)  && (def->col.subtype != OCI_BFILE)) ||
        ((def->col.type == OCI_CDT_LONG)  && (def->col.subtype != OCI_BLONG)))
     {
         ub2 csid = OCI_UTF16ID;
