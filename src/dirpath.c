@@ -92,7 +92,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
             osize = -1;
             ostr  = OCI_GetInputMetaString(dp->typinf->name, &osize);
 
-			OCI_CALL2
+            OCI_CALL2
             (
                 res, dp->con,
 
@@ -111,7 +111,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
             osize = -1;
             ostr  = OCI_GetInputMetaString(dp->typinf->schema, &osize);
 
-			OCI_CALL2
+            OCI_CALL2
             (
                 res, dp->con,
 
@@ -379,7 +379,7 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
 
         /* get colum attribute handle */
 
-		OCI_CALL2
+        OCI_CALL2
         (
             res, dp->con,
 
@@ -387,7 +387,7 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
                         (dvoid** ) (dvoid *) &hattr, (ub4) index)
         )
         
-	    /* set column name */
+        /* set column name */
 
         if (res == TRUE)
         {
@@ -823,7 +823,7 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
 
             /* set entry value */
 
-	        OCI_CALL2
+            OCI_CALL2
             (
                 res, dp->con,
 
@@ -1000,7 +1000,7 @@ boolean OCI_API OCI_DirPathFinish(OCI_DirPath *dp)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
 
-	OCI_CALL2
+    OCI_CALL2
     (
         res, dp->con,
 
@@ -1027,7 +1027,7 @@ boolean OCI_API OCI_DirPathAbort(OCI_DirPath *dp)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
 
-	OCI_CALL2
+    OCI_CALL2
     (
         res, dp->con,
 
@@ -1056,7 +1056,7 @@ boolean OCI_API OCI_DirPathSave(OCI_DirPath *dp)
 
     OCI_DirPathReset(dp);
 
-	OCI_CALL2
+    OCI_CALL2
     (
         res, dp->con,
 
@@ -1080,7 +1080,7 @@ boolean OCI_API OCI_DirPathFlushRow(OCI_DirPath *dp)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
 
-	OCI_CALL2
+    OCI_CALL2
     (
         res, dp->con,
 

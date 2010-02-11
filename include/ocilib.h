@@ -426,27 +426,27 @@ extern "C" {
  *
  * @par Option OCI_CHARSET_ANSI
  *
- *  - dtext	-->	char
- *  - DT(x)	-->	x
+ *  - dtext    -->    char
+ *  - DT(x)    -->    x
  *
- *  - mtext	-->	char
- *  - MT(x)	-->	x
+ *  - mtext    -->    char
+ *  - MT(x)    -->    x
  *
  * @par Option OCI_CHARSET_UNICODE
  *
- *  - dtext	-->	wchar_t
- *  - DT(x)	-->	L ## x
+ *  - dtext    -->    wchar_t
+ *  - DT(x)    -->    L ## x
  *
- *  - mtext	-->	wchar_t
- *  --MT(x)	-->	L ## x
+ *  - mtext    -->    wchar_t
+ *  - MT(x)    -->    L ## x
  *
  * @par Option OCI_CHARSET_MIXED
  *
- *  - dtext	-->	wchar_t
- *  - DT(x)	-->	L ## x
+ *  - dtext    -->    wchar_t
+ *  - DT(x)    -->    L ## x
  *
- *  - mtext	-->	char
- *  - MT(x)	-->	x
+ *  - mtext    -->    char
+ *  - MT(x)    -->    x
  *
  *
  * @par Unicode and ISO C
@@ -1097,10 +1097,10 @@ typedef void (*POCI_NOTIFY) (OCI_Event *event);
  */
 
 typedef struct OCI_XID {
-	long formatID;
-	long gtrid_length;
-	long bqual_length;
-	char data[128];
+    long formatID;
+    long gtrid_length;
+    long bqual_length;
+    char data[128];
 } OCI_XID;
 
 /**

@@ -242,7 +242,7 @@ OCI_Object * OCI_API OCI_RefGetObject(OCI_Ref *ref)
         obj = ref->obj;
     }
 
-	return obj;
+    return obj;
 }
 
 /* ------------------------------------------------------------------------ *

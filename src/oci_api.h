@@ -967,7 +967,7 @@ typedef sword (*OCIDATETIMETOARRAY)
 );
 
 typedef sword (*OCIDATETIMEFROMTEXT) 
-( 	
+(
     dvoid *hndl,
     OCIError *err,
     CONST OraText *date_str,
@@ -1051,7 +1051,7 @@ typedef sword (*OCIDATETIMEINTERVALSUB)
 );
 
 typedef sword (*OCIDATETIMESUBTRACT) 
-(	
+(
     dvoid *hndl,
     OCIError *err,
     OCIDateTime *indate1,

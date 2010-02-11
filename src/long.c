@@ -139,6 +139,7 @@ unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer,
                                   unsigned int len)
 {
     unsigned int size = len;
+    unsigned int fact = sizeof(dtext)/sizeof(odtext);
 
     OCI_CHECK_PTR(OCI_IPC_LONG, lg, 0);
     OCI_CHECK_PTR(OCI_IPC_VOID, buffer, 0);
@@ -147,9 +148,16 @@ unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer,
 
     OCI_CHECK(lg->offset >= lg->size, 0);
 
+    /* lg->size and lg offset are still expressed in odtext units even
+       if the buffer had been expanded
+    */
+
+    if (fact == 0)
+        fact = 1;
+
     if (lg->type == OCI_CLONG)
     {
-        size  *= (unsigned int) sizeof(dtext);
+        size  *= (unsigned int) sizeof(odtext);
     }
 
     /* check buffer size to read */
@@ -159,25 +167,17 @@ unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer,
        size = lg->size - lg->offset;
     }
 
-    if (lg->type == OCI_CLONG)
-    {
-        size  +=  sizeof(dtext);
-    }
+    /* copy buffer */
 
-   /* copy buffer */
-
-    memcpy(buffer, lg->buffer + (size_t) lg->offset, (size_t) size);
-
-    if (lg->type == OCI_CLONG)
-    {
-        size  -=  sizeof(dtext);
-    }
-
+    memcpy(buffer, lg->buffer + (size_t) lg->offset*fact, (size_t) (size*fact));
+ 
     lg->offset += size;
 
     if (lg->type == OCI_CLONG)
     {
-        size /= (unsigned int) sizeof(dtext);
+        size /= (unsigned int) sizeof(odtext);
+
+        ((dtext *) buffer)[size] = 0;
     }
 
     OCI_RESULT(TRUE);

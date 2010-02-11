@@ -267,18 +267,22 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
 
                 unsigned int nb_alloc      = 0;
                 unsigned int trailing_size = 0;
+                unsigned int char_fact     = sizeof(dtext)/sizeof(odtext);
 
                 /* setup up piece size */
 
                 ub4 bufsize = rs->stmt->long_size;
 
+                if (char_fact == 0)
+                    char_fact = 1;
+
                 if (lg->type == OCI_CLONG)
-                    bufsize += (ub4) sizeof(dtext);
+                    bufsize += (ub4) sizeof(odtext);
 
                 nb_alloc      = (lg->maxsize / bufsize);
 
                 if (lg->type == OCI_CLONG)
-                    trailing_size = sizeof(dtext) * nb_alloc;
+                    trailing_size = sizeof(odtext) * nb_alloc;
 
                 /* check buffer */
 
@@ -292,9 +296,9 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
 
                     lg->buffer[0] = 0;
                 }
-                else if ((lg->size) >= (lg->maxsize - trailing_size))
+                else if ((lg->size*char_fact) >= (lg->maxsize - trailing_size))
                 {
-                    lg->maxsize = lg->size + trailing_size + bufsize;
+                    lg->maxsize = (lg->size*char_fact) + trailing_size + bufsize;
 
                     lg->buffer  = (ub1 *) OCI_MemRealloc(lg->buffer,
                                                          (size_t) OCI_IPC_LONG_BUFFER,
@@ -306,12 +310,11 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
                 /* update piece info */
 
                 if (res == TRUE)
-                {
-
-                    lg->piecesize = bufsize;
-       
+                {       
                     if (lg->type == OCI_CLONG)
-                        lg->piecesize -= (ub4) sizeof(dtext);
+                        lg->piecesize -= (ub4) sizeof(odtext);
+
+                    lg->piecesize = (bufsize / sizeof(dtext)) * sizeof(odtext);
 
                     OCI_CALL1
                     (
@@ -394,11 +397,11 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
             for (j = 0; j < def->buf.count; j++)
             {
                 OCI_Long *lg = (OCI_Long *) def->buf.data[j];
-
+   
                 if (lg->buffer != NULL)
                    ((odtext *)lg->buffer)[lg->size/sizeof(odtext)] = 0;
 
-                OCI_ConvertString(lg->buffer, lg->size / sizeof(odtext), sizeof(odtext), sizeof(dtext));
+                OCI_ConvertString(lg->buffer, (lg->size / sizeof(odtext))+1, sizeof(odtext), sizeof(dtext));
             }
         }
     }
