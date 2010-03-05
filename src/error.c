@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: error.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: error.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -131,9 +131,9 @@ OCI_Error * OCI_ErrorGet(boolean check, boolean warning)
 
 const mtext * OCI_API OCI_ErrorGetString(OCI_Error *err)
 {
-    OCI_CHECK(err == NULL, NULL);
+    OCI_CHECK(err == NULL, OCI_GET_NULL_MSTR(NULL));
 
-    return err->str;
+    return OCI_GET_NULL_MSTR(err->str);
 }
 
 /* ------------------------------------------------------------------------ *

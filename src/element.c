@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+ 
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: element.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: element.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -381,8 +381,9 @@ const dtext * OCI_API OCI_ElemGetString(OCI_Elem *elem)
     const dtext *str  = NULL;
     boolean res       = FALSE;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_TEXT, NULL);
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, OCI_GET_NULL_DSTR(NULL));
+    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_TEXT, 
+                     OCI_GET_NULL_DSTR(NULL));
 
     if (elem->handle != NULL)
     {
@@ -394,7 +395,7 @@ const dtext * OCI_API OCI_ElemGetString(OCI_Elem *elem)
 
     OCI_RESULT(res);
 
-    return str;    
+    return OCI_GET_NULL_DSTR(str);    
 }
 
 

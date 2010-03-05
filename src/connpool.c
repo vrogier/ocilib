@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connpool.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: connpool.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -418,10 +418,10 @@ boolean OCI_API OCI_ConnPoolSetTimeout(OCI_ConnPool *pool, unsigned int value)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_ConnPoolGetlGetNoWait
+ * OCI_ConnPoolGetNoWait
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_ConnPoolGetlGetNoWait(OCI_ConnPool *pool)
+boolean OCI_API OCI_ConnPoolGetNoWait(OCI_ConnPool *pool)
 {
     OCI_CHECK_PTR(OCI_IPC_CONNPOOL, pool, FALSE);
 

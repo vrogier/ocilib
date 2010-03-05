@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+ 
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: hash.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: hash.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -228,8 +228,8 @@ const mtext * OCI_API OCI_HashGetString(OCI_HashTable *table, const mtext *key)
     OCI_HashValue *v   = NULL;
     const mtext *value = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, NULL);
-    OCI_CHECK(table->type != OCI_HASH_STRING, NULL);
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table,   OCI_GET_NULL_MSTR(NULL));
+    OCI_CHECK(table->type != OCI_HASH_STRING, OCI_GET_NULL_MSTR(NULL));
 
     v = OCI_HashGetValue(table, key);
 
@@ -240,7 +240,7 @@ const mtext * OCI_API OCI_HashGetString(OCI_HashTable *table, const mtext *key)
 
     OCI_RESULT(v != NULL);
 
-    return value;
+    return OCI_GET_NULL_MSTR(value);
 }
 
 /* ------------------------------------------------------------------------ *

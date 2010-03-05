@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+ 
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: ocilib_defs.h, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -407,6 +407,13 @@
 #define UNI_SUR_LOW_START     ((unsigned int) 0xDC00)
 #define UNI_SUR_LOW_END       ((unsigned int) 0xDFFF)
 
+#define CVT_SRC_ILLEGAL		  0
+#define CVT_SRC_EXHAUSTED	  -1
+#define CVT_DST_EXHAUSTED	  -2	
+
+#define CVT_STRICT	          0
+#define CVT_LENIENT           1
+
 /* ------------------------------------------------------------------------ *
  * Local helper macros
  * ------------------------------------------------------------------------ */
@@ -462,6 +469,14 @@
 
 #define OCI_SIZEOF_NUMBER               22
 #define OCI_SIZEOF_DATE                 7
+
+#define  OCI_GET_NULL_MSTR(s)                                                  \
+                                                                               \
+    ((s) ? (s) : ((OCILib.null_str_mode == OCI_NSM_EMPTY) ? MT("") : NULL))
+
+#define  OCI_GET_NULL_DSTR(s)                                                  \
+                                                                               \
+    ((s) ? (s) : ((OCILib.null_str_mode == OCI_NSM_EMPTY) ? DT("") : NULL))
 
 
 #endif    /* OCILIB_OCILIB_DEFS_H_INCLUDED */

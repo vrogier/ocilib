@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_types.h, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: ocilib_types.h, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 
@@ -203,12 +203,9 @@ struct OCI_Library
     POCI_ERROR      error_handler;          /* user defined error handler */
     unsigned int    version_compile;        /* OCI version used at compile time */
     unsigned int    version_runtime;        /* OCI version used at runtime */
-    ub1             use_lob_ub8;            /* use 64 bits integers for lobs ? */
-    ub1             use_scrollable_cursors; /* use Oracle 9i fetch API */
     ub4             env_mode;               /* default environment mode */
     boolean         loaded;                 /* OCILIB correctly loaded ? */
     boolean         warnings_on;            /* warnings enabled ? */
-    unsigned int    strlght_mode;
     OCI_Error       lib_err;                /* Error used when OCILIB is not loaded */
     OCI_HashTable  *key_map;                /* hash table for mapping name/key */
     OCI_ThreadKey  *key_errs;               /* Thread key to store thread errors */
@@ -216,6 +213,10 @@ struct OCI_Library
     unsigned int    nb_descp;               /* number of OCI descriptors allocated */
     unsigned int    nb_objinst;             /* number of OCI objects allocated */
     OCI_HashTable  *sql_funcs;              /* hash table handle for sql function names */
+    ub1             use_lob_ub8;            /* use 64 bits integers for lobs ? */
+    ub1             use_scrollable_cursors; /* use Oracle 9i fetch API */
+    ub1             null_str_mode;          /* null string mode */
+    ub1             length_str_mode;        /* length string mode */
 #ifdef OCI_IMPORT_RUNTIME
     LIB_HANDLE      lib_handle;             /* handle of runtime shared library */
 #endif
@@ -447,7 +448,8 @@ struct OCI_Statement
     ub1              long_mode;     /* LONG datatype handling mode */
     ub1              status;        /* statement status */
     ub2              type;          /* type of SQL statement */
-    ub4              nb_iters;      /* number of iterations for execution */
+    ub4              nb_iters;      /* current number of iterations for execution */
+    ub4              nb_iters_init; /* initial number of iterations for execution */
     ub4              nb_rs;         /* number of resultsets */
     ub2              cur_rs;        /* index of the current resultset */
     ub2              dynidx;        /* bind index counter for dynamic exec */

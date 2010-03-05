@@ -10,7 +10,7 @@
    +----------------------------------------------------------------------+
    |                      Website : http://www.ocilib.net                 |
    +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2009 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
    | This library is free software; you can redistribute it and/or        |
    | modify it under the terms of the GNU Lesser General Public           |
@@ -26,7 +26,7 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net             |
    +----------------------------------------------------------------------+
 */
 

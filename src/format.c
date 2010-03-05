@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+ 
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: format.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: format.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -123,23 +123,24 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
                 {
                     if (date != NULL)
                     {
-                        mtsprintf(pb, OCI_SIZE_DATE,
-                                  MT("to_date(\'%02i%02i%04i%02i%02i%02i\',")
-                                  MT("\'DDMMYYYYHH24MISS\')"),
-                                  date->handle->OCIDateDD,
-                                  date->handle->OCIDateMM,
-                                  date->handle->OCIDateYYYY ,
-                                  date->handle->OCIDateTime.OCITimeHH,
-                                  date->handle->OCIDateTime.OCITimeMI,
-                                  date->handle->OCIDateTime.OCITimeSS);
+                        len = mtsprintf(pb, OCI_SIZE_DATE,
+                                        MT("to_date('%02i%02i%04i%02i%02i%02i',")
+                                        MT("'DDMMYYYYHH24MISS')"),
+                                        date->handle->OCIDateDD,
+                                        date->handle->OCIDateMM,
+                                        date->handle->OCIDateYYYY ,
+                                        date->handle->OCIDateTime.OCITimeHH,
+                                        date->handle->OCIDateTime.OCITimeMI,
+                                        date->handle->OCIDateTime.OCITimeSS);
                     }
                     else
                     {
                         mtscpy(pb, OCI_STRING_NULL);
+                        len = OCI_SIZE_NULL;
                     }
                 }
-
-                len = ((date != NULL) ? OCI_SIZE_DATE : OCI_SIZE_NULL);
+                else
+                    len = ((date != NULL) ? OCI_SIZE_TIMESTAMP : OCI_SIZE_NULL);
 
                 break;
             }
@@ -167,13 +168,14 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
                         str_ff[2] = 0;
 
                         len = mtsprintf(pb, OCI_SIZE_TIMESTAMP,
-                                        MT("to_timestamp(\'%02i%02i%04i%02i%02i%02i%s\',")
-                                        MT("\'DDMMYYYYHH24MISSFF\')"),
+                                        MT("to_timestamp(%02i%02i%04i%02i%02i%02i%s,")
+                                        MT("DDMMYYYYHH24MISSFF)"),
                                         dd, mm, yy, hh, mi, ss, str_ff);
                     }
                     else
                     {
                         mtscpy(pb, OCI_STRING_NULL);
+                        len = OCI_SIZE_NULL;
                     }
                 }
                 else

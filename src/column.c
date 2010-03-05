@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+ 
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: column.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: column.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -915,7 +915,9 @@ const mtext * OCI_API OCI_ColumnGetSQLType(OCI_Column *col)
 
        default:
 
-            /* for all other types not supported */
+            /* unknown datatype ? Should not happen because all
+               datatypes are supported */
+
             return MT("?");
     }
 }
@@ -934,6 +936,9 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType(OCI_Column *col, mtext *buffer,
     OCI_RESULT(TRUE);
 
     buffer[0] = 0;
+
+    if (OCILib.length_str_mode == OCI_LSM_BYTE)
+        len /= sizeof(mtext);
 
     /* ISO C functions are supposed to be "standard", but we still see specific
        implementations that make some usage not portable and worse not compatible.
@@ -1128,6 +1133,9 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType(OCI_Column *col, mtext *buffer,
 
             mtsncat(buffer, MT("?"), (size_t) len);
     }
+
+    if (OCILib.length_str_mode == OCI_LSM_BYTE)
+        len *= sizeof(mtext);
 
     return len;
 }

@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: statement.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -1231,18 +1231,19 @@ boolean OCI_StatementReset(OCI_Statement *stmt)
 
     OCI_FREE(stmt->sql);
 
-    stmt->rsts        = NULL;
-    stmt->sql         = NULL;
-    stmt->map         = NULL;
-    stmt->batch       = NULL;
+    stmt->rsts          = NULL;
+    stmt->sql           = NULL;
+    stmt->map           = NULL;
+    stmt->batch         = NULL;
 
-    stmt->status      = OCI_STMT_CLOSED;
-    stmt->type        = OCI_UNKNOWN;
-    stmt->bind_array  = FALSE;
+    stmt->status        = OCI_STMT_CLOSED;
+    stmt->type          = OCI_UNKNOWN;
+    stmt->bind_array    = FALSE;
 
-    stmt->nb_iters     = 1;
-    stmt->dynidx       = 0;
-    stmt->err_pos      = 0;
+    stmt->nb_iters      = 1;
+    stmt->nb_iters_init = 0;
+    stmt->dynidx        = 0;
+    stmt->err_pos       = 0;
 
     return res;
 }
@@ -1904,9 +1905,9 @@ boolean OCI_API OCI_BindArraySetSize(OCI_Statement *stmt, unsigned int size)
        not greater than the initial size
     */
 
-    if ((stmt->nb_ubinds > 0) && (size > stmt->ubinds[0]->buf.count))
+    if ((stmt->nb_ubinds > 0) && (size > stmt->nb_iters_init))
     {
-        OCI_ExceptionBindArraySize(stmt, stmt->ubinds[0]->buf.count,
+        OCI_ExceptionBindArraySize(stmt, stmt->nb_iters_init,
                                          stmt->nb_iters, size);
 
         res = FALSE;
@@ -1915,6 +1916,10 @@ boolean OCI_API OCI_BindArraySetSize(OCI_Statement *stmt, unsigned int size)
     {
         stmt->nb_iters   = size;
         stmt->bind_array = TRUE;
+
+        if (stmt->nb_iters_init == 0)
+            stmt->nb_iters_init = stmt->nb_iters;
+            
     }
 
     OCI_RESULT(res);
@@ -2120,8 +2125,20 @@ boolean OCI_API OCI_BindString(OCI_Statement *stmt, const mtext *name,
     if (len == 0 || len == UINT_MAX)
         len = (unsigned int) dtslen(data);
 
-    return OCI_BindData(stmt, data, (len + 1) * (ub4) sizeof(odtext), name,
-                        OCI_CDT_TEXT, SQLT_STR, OCI_BIND_INPUT, 0, NULL, 0);
+    len++;
+
+    if (OCILib.length_str_mode == OCI_LSM_CHAR)
+    {
+        len *= (ub4) sizeof(odtext);
+    }
+    else
+    {
+        len /= (ub4) sizeof(dtext);
+        len *= (ub4) sizeof(odtext);
+    }
+
+    return OCI_BindData(stmt, data, len, name,  OCI_CDT_TEXT, SQLT_STR, 
+                        OCI_BIND_INPUT, 0, NULL, 0);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -2136,8 +2153,20 @@ boolean OCI_API OCI_BindArrayOfStrings(OCI_Statement *stmt, const mtext *name,
 
     OCI_CHECK_MIN(stmt->con, stmt, len, 1, FALSE);
 
-    return OCI_BindData(stmt, data, (len + 1) * (ub4) sizeof(odtext), name, 
-                        OCI_CDT_TEXT, SQLT_STR, OCI_BIND_INPUT, 0, NULL, nbelem);
+    len++;
+
+    if (OCILib.length_str_mode == OCI_LSM_CHAR)
+    {
+        len *= (ub4) sizeof(odtext);
+    }
+    else
+    {
+        len /= (ub4) sizeof(dtext);
+        len *= (ub4) sizeof(odtext);
+    }
+
+    return OCI_BindData(stmt, data, len, name, OCI_CDT_TEXT, SQLT_STR, 
+                        OCI_BIND_INPUT, 0, NULL, nbelem);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -2601,8 +2630,10 @@ boolean OCI_API OCI_BindLong(OCI_Statement *stmt, const mtext *name,
     else
         code = SQLT_LBI;
 
-    if (data->type == OCI_CLONG)
-        size *= (unsigned int) sizeof(dtext);
+    if ((data->type == OCI_CLONG) && (OCILib.length_str_mode == OCI_LSM_CHAR))
+    {
+        size *= (unsigned int) sizeof(odtext);
+    }
 
     return OCI_BindData(stmt, data, size, name, OCI_CDT_LONG,
                         code, OCI_BIND_INPUT, data->type, NULL, 0);
@@ -2691,8 +2722,21 @@ boolean OCI_API OCI_RegisterString(OCI_Statement *stmt, const mtext *name,
 
     OCI_CHECK_MIN(stmt->con, stmt, len, 1, FALSE);
 
-    return OCI_BindData(stmt, NULL, (len + 1) * (ub4) sizeof(odtext), name,
-                        OCI_CDT_TEXT, SQLT_STR, OCI_BIND_OUTPUT, 0, NULL, 0);
+    len++;
+
+    if (OCILib.length_str_mode == OCI_LSM_CHAR)
+    {
+        len *= (ub4) sizeof(odtext);
+    }
+    else
+    {
+        len /= (ub4) sizeof(dtext);
+        len *= (ub4) sizeof(odtext);
+    }
+
+
+    return OCI_BindData(stmt, NULL, len, name,  OCI_CDT_TEXT, SQLT_STR,
+                        OCI_BIND_OUTPUT, 0, NULL, 0);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -3305,7 +3349,7 @@ const mtext * OCI_API OCI_GetSQLVerb(OCI_Statement *stmt)
         }
     }
 
-    return desc;
+    return OCI_GET_NULL_MSTR(desc);
 }
 
 /* ------------------------------------------------------------------------ *

@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: connection.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -1255,6 +1255,9 @@ boolean OCI_API OCI_ServerEnableOutput(OCI_Connection *con,
 
             res = res && OCI_Prepare(con->svopt->stmt,
                                      MT("BEGIN DBMS_OUTPUT.GET_LINES(:s, :i); END;"));
+
+            if (OCILib.length_str_mode == OCI_LSM_BYTE)
+                lnsize *= sizeof(dtext);
 
             res = res && OCI_BindArrayOfStrings(con->svopt->stmt,
                                                 MT(":s"),

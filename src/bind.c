@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+ 
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: bind.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: bind.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -181,7 +181,8 @@ boolean OCI_API OCI_BindSetDataSizeAtPos(OCI_Bind *bnd, unsigned int position,
             if (bnd->size == (sb4) size)
                 size += (unsigned int) (size_t) sizeof(odtext);
 
-            size *= (unsigned int) sizeof(odtext);
+            if (OCILib.length_str_mode == OCI_LSM_CHAR)
+                size *= (unsigned int) sizeof(odtext);
         }
 
         ((ub2 *) bnd->buf.lens)[position-1] = (ub2) size; 
@@ -223,7 +224,8 @@ unsigned int OCI_API OCI_BindGetDataSizeAtPos(OCI_Bind *bnd, unsigned int positi
             if (bnd->size == (sb4) size)
                 size -= (unsigned int) sizeof(odtext);
 
-            size /= (unsigned int) sizeof(odtext);
+            if (OCILib.length_str_mode == OCI_LSM_CHAR)
+                size /= (unsigned int) sizeof(odtext);
         }
     }
 

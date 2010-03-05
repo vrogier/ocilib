@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+ 
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: lob.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: lob.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -206,9 +206,18 @@ boolean OCI_API OCI_LobSeek(OCI_Lob *lob, big_uint offset, unsigned int mode)
     boolean res   = TRUE;
     big_uint size = 0;
 
-    OCI_CHECK_PTR(OCI_IPC_LOB, lob, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_LOB, lob, FALSE); 
 
     size = OCI_LobGetLength(lob);
+
+    if (lob->type != OCI_BLOB)
+    {
+        if (OCILib.length_str_mode == OCI_LSM_BYTE)
+        {
+            size   /= (big_uint) sizeof(dtext);
+            offset /= (big_uint) sizeof(dtext);
+        }
+    }
 
     if ((mode == OCI_SEEK_CUR && (offset + lob->offset-1) > size))
         res = FALSE;
@@ -245,16 +254,16 @@ big_uint OCI_API OCI_LobGetOffset(OCI_Lob *lob)
 
 unsigned int OCI_API OCI_LobRead(OCI_Lob *lob, void *buffer, unsigned int len)
 {
-    boolean res  = TRUE;
-    ub4 size_in  = 0;
-    ub4 size_out = 0;
-    ub2 csid     = 0;
-    ub1 csfrm    = 0;
+    boolean res       = TRUE;
+    ub4 size_in_char  = 0;
+    ub4 size_in_byte  = 0;
+    ub4 size_out_char = 0;
+    ub4 size_out_byte = 0;
+    ub2 csid          = 0;
+    ub1 csfrm         = 0;
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, 0);
     OCI_CHECK_MIN(lob->con, NULL, len, 1, 0);
-
-    size_out = size_in = len;
 
     if (lob->type != OCI_BLOB)
     {
@@ -264,8 +273,23 @@ unsigned int OCI_API OCI_LobRead(OCI_Lob *lob, void *buffer, unsigned int len)
         csid = OCI_UTF16ID;
 
 #endif        
-        
-        size_in *= (ub4) sizeof(odtext);
+
+        if (OCILib.length_str_mode == OCI_LSM_BYTE)
+        {
+            size_in_byte = len;
+            size_in_char = (ub4) len / (ub4) sizeof(odtext);            
+        }
+        else
+        {
+            size_in_char = len;
+            size_in_byte = (ub4) len * (ub4) sizeof(odtext);            
+        }
+
+    }
+    else
+    {
+        size_in_byte = len;
+        size_in_char = len;
     }
 
     if (lob->type == OCI_NCLOB)
@@ -277,25 +301,30 @@ unsigned int OCI_API OCI_LobRead(OCI_Lob *lob, void *buffer, unsigned int len)
 
     if (OCILib.use_lob_ub8)
     {
-        ub8 size_char = (ub8) len;
-        ub8 size_byte = (ub8) size_in;
+        ub8 size_in_out_char = (ub8) size_in_char;
+        ub8 size_in_out_byte = (ub8) size_in_byte;
         
         OCI_CALL2
         (
             res, lob->con, 
             
-            OCILobRead2(lob->con->cxt, lob->con->err,
-                        lob->handle, &size_byte,
-                        &size_char,  (ub8) lob->offset, 
-                        buffer,(ub8) size_in, 
-                        (ub1) OCI_ONE_PIECE,  (void *) NULL, 
+            OCILobRead2(lob->con->cxt, lob->con->err, lob->handle,
+                        &size_in_out_byte, &size_in_out_char,  
+                        (ub8) lob->offset, buffer,(ub8) size_in_byte, 
+                        (ub1) OCI_ONE_PIECE, (void *) NULL, 
                         NULL, csid, csfrm)
         )
 
+        size_out_byte = (ub4) size_in_out_byte;
+
         if (lob->type == OCI_BLOB)
-            size_out = (ub4) size_byte;
+        {
+            size_out_char = (ub4) size_in_out_byte;
+        }
         else
-            size_out = (ub4) size_char;
+        {
+            size_out_char = (ub4) size_in_out_char;
+        }
     }
 
     else
@@ -303,30 +332,61 @@ unsigned int OCI_API OCI_LobRead(OCI_Lob *lob, void *buffer, unsigned int len)
 #endif
 
     {
-        ub4 offset = (ub4) lob->offset;
+        ub4 size_in_out_char_byte = 0;
+
+        if (lob->type == OCI_BLOB)
+        {
+            size_in_out_char_byte = size_in_byte;
+        }
+        else
+        {
+            size_in_out_char_byte = size_in_char;
+        }
 
         OCI_CALL2
         (
             res, lob->con, 
             
-            OCILobRead(lob->con->cxt, lob->con->err,
-                       lob->handle,  &size_out, offset,
-                       buffer, size_in, (void *) NULL,
+            OCILobRead(lob->con->cxt, lob->con->err, lob->handle,  
+                       &size_in_out_char_byte, (ub4) lob->offset,
+                       buffer, size_in_byte, (void *) NULL,
                        NULL, csid, csfrm)
         )
+
+        if (lob->type == OCI_BLOB)
+        {
+            size_out_char = size_in_out_char_byte;
+            size_out_byte = size_in_out_char_byte;
+        }
+        else
+        {
+            size_out_char = size_in_out_char_byte;
+            size_out_byte = size_in_out_char_byte * sizeof(dtext);
+        }
     }
 
     if (res == TRUE)
     {
+        lob->offset += (big_uint) size_out_char;
+
         if (lob->type != OCI_BLOB)
-            OCI_ConvertString(buffer, (int) size_out, sizeof(odtext), sizeof(dtext));
-        
-        lob->offset += (big_uint) size_out;
+        {
+            OCI_ConvertString(buffer, (int) size_out_char, sizeof(odtext), sizeof(dtext));
+            
+            len = (unsigned int) size_out_char;
+ 
+            if (OCILib.length_str_mode == OCI_LSM_BYTE)
+                len *= (unsigned int) sizeof(dtext);
+        }
+        else
+            len = (unsigned int) size_out_byte;     
     }
+    else
+        len = 0;
 
     OCI_RESULT(res);
 
-    return size_out;
+    return len;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -335,18 +395,18 @@ unsigned int OCI_API OCI_LobRead(OCI_Lob *lob, void *buffer, unsigned int len)
 
 unsigned int OCI_API OCI_LobWrite(OCI_Lob *lob, void *buffer, unsigned int len)
 {
-    boolean res  = TRUE;
-    ub4 size_in  = 0;
-    ub4 size_out = 0;
-    ub2 csid     = 0;
-    ub1 csfrm    = 0;
-    void *obuf   = NULL;
+    boolean res       = TRUE;
+    ub4 size_in_char  = 0;
+    ub4 size_in_byte  = 0;
+    ub4 size_out_char = 0;
+    ub4 size_out_byte = 0;
+    ub2 csid          = 0;
+    ub1 csfrm         = 0;
+    void *obuf        = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, 0);
     OCI_CHECK_MIN(lob->con, NULL, len, 1, 0);
-
-    size_out = size_in = len;
-    
+ 
     if (lob->type != OCI_BLOB)
     {
 
@@ -356,12 +416,28 @@ unsigned int OCI_API OCI_LobWrite(OCI_Lob *lob, void *buffer, unsigned int len)
 
 #endif
 
-        size_in *= (ub4)  sizeof(dtext);
-        obuf     = OCI_GetInputDataString(buffer, (int *) &size_in);
+        if (OCILib.length_str_mode == OCI_LSM_BYTE)
+        {
+            size_in_byte = len;
+            size_in_char = (ub4) len / (ub4) sizeof(dtext);            
+        }
+        else
+        {
+            size_in_char = len;
+            size_in_byte = (ub4) len * (ub4) sizeof(dtext);            
+        }
+
+        obuf = OCI_GetInputDataString(buffer, (int *) &size_in_byte);
+
     }
     else
+    {
+        size_in_byte = len;
+        size_in_char = len;
+        
         obuf = buffer;
-
+    }
+ 
     if (lob->type == OCI_NCLOB)
         csfrm = SQLCS_NCHAR;
     else
@@ -371,25 +447,30 @@ unsigned int OCI_API OCI_LobWrite(OCI_Lob *lob, void *buffer, unsigned int len)
 
     if (OCILib.use_lob_ub8)
     {
-        ub8 size_char = (ub8) len;
-        ub8 size_byte = (ub8) size_in;
+        ub8 size_in_out_char = (ub8) size_in_char;
+        ub8 size_in_out_byte = (ub8) size_in_byte;
         
         OCI_CALL2
         (
             res, lob->con, 
             
-            OCILobWrite2(lob->con->cxt, lob->con->err, 
-                         lob->handle, &size_byte,
-                         &size_char, (ub8) lob->offset, 
-                         obuf, (ub8) size_in,
+            OCILobWrite2(lob->con->cxt, lob->con->err, lob->handle, 
+                         &size_in_out_byte, &size_in_out_char, 
+                         (ub8) lob->offset, obuf, (ub8) size_in_byte,
                          (ub1) OCI_ONE_PIECE, (void *) NULL,
                          NULL , csid, csfrm)
         )
 
+        size_out_byte = (ub4) size_in_out_byte;
+
         if (lob->type == OCI_BLOB)
-            size_out = (ub4) size_byte;
+        {
+            size_out_char = (ub4) size_in_out_byte;
+        }
         else
-            size_out = (ub4) size_char;
+        {
+            size_out_char = (ub4) size_in_out_char;
+        }
     }
 
     else
@@ -397,29 +478,62 @@ unsigned int OCI_API OCI_LobWrite(OCI_Lob *lob, void *buffer, unsigned int len)
 #endif
 
     {
-        ub4 offset = (ub4) lob->offset;
-   
+        ub4 size_in_out_char_byte = 0;
+
+        if (lob->type == OCI_BLOB)
+        {
+            size_in_out_char_byte = size_in_byte;
+        }
+        else
+        {
+            size_in_out_char_byte = size_in_char;
+        }
+
         OCI_CALL2
         (
             res, lob->con, 
             
-            OCILobWrite(lob->con->cxt, lob->con->err,
-                        lob->handle, &size_out,
-                        offset, obuf, size_in, 
-                        (ub1) OCI_ONE_PIECE, (void *) NULL, 
-                        NULL, csid, csfrm)
+            OCILobWrite(lob->con->cxt, lob->con->err, lob->handle, 
+                        &size_in_out_char_byte, (ub4) lob->offset, 
+                        obuf, size_in_byte, (ub1) OCI_ONE_PIECE,
+                        (void *) NULL, NULL, csid, csfrm)
         )
+
+        if (lob->type == OCI_BLOB)
+        {
+            size_out_char = size_in_out_char_byte;
+            size_out_byte = size_in_out_char_byte;
+        }
+        else
+        {
+            size_out_char = size_in_out_char_byte;
+            size_out_byte = size_in_out_char_byte * sizeof(dtext);
+        }
     }
 
     if (lob->type != OCI_BLOB)
         OCI_ReleaseDataString(obuf);
 
     if (res == TRUE)
-        lob->offset += (big_uint) size_out;
+    {
+        lob->offset += (big_uint) size_out_char;
+
+        if (lob->type != OCI_BLOB)
+        {           
+            len = (unsigned int) size_out_char;
+ 
+            if (OCILib.length_str_mode == OCI_LSM_BYTE)
+                len *= (unsigned int) sizeof(dtext);
+        }
+        else
+            len = (unsigned int) size_out_byte;     
+    }
+    else
+        len = 0;
 
     OCI_RESULT(res);
 
-    return size_out;
+    return len;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -431,6 +545,11 @@ boolean OCI_API OCI_LobTruncate(OCI_Lob *lob, big_uint size)
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, FALSE);
+
+    if ((lob->type != OCI_BLOB) && (OCILib.length_str_mode == OCI_LSM_BYTE))
+    {
+        size /= (unsigned int) sizeof(dtext);
+    }
 
 #ifdef OCI_LOB2_API_ENABLED
 
@@ -448,13 +567,11 @@ boolean OCI_API OCI_LobTruncate(OCI_Lob *lob, big_uint size)
 #endif
  
     {
-        ub4 size32 = (ub4) size;
-
         OCI_CALL2
         (
             res, lob->con, 
             
-            OCILobTrim(lob->con->cxt, lob->con->err, lob->handle, size32)
+            OCILobTrim(lob->con->cxt, lob->con->err, lob->handle, (ub4) size)
         )
     }
 
@@ -474,37 +591,55 @@ big_uint OCI_API OCI_LobErase(OCI_Lob *lob, big_uint offset, big_uint size)
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, 0);
     OCI_CHECK_MIN(lob->con, NULL, size, 1, 0);
 
+    if ((lob->type != OCI_BLOB) && (OCILib.length_str_mode == OCI_LSM_BYTE))
+    {
+        size /= (unsigned int) sizeof(dtext);
+    }
+
  #ifdef OCI_LOB2_API_ENABLED
 
     if (OCILib.use_lob_ub8)
     {
+        ub8 lob_size = (ub8) size;
+
         OCI_CALL2
         (
             res, lob->con, 
             
             OCILobErase2(lob->con->cxt, lob->con->err, lob->handle, 
-                         (ub8 *) &size, (ub8) (offset + 1))
-         )
+                         (ub8 *) &lob_size, (ub8) (offset + 1))
+        )
+        
+        size = (big_uint) lob_size;
     }
     else
 
 #endif
  
     {
-        ub4 size32   = (ub4) size;
-        ub4 offset32 = (ub4) offset;
+        ub4 lob_size = (ub4) size;
 
         OCI_CALL2
         (
             res, lob->con, 
             
             OCILobErase(lob->con->cxt, lob->con->err, lob->handle, 
-                        &size32, offset32 + 1)
+                        &lob_size, (ub4) offset + 1)
         )
 
-        size = (big_uint) size32;
+        size = (big_uint) lob_size;
     }
                             
+    if (res == TRUE)
+    {
+        if ((lob->type != OCI_BLOB) && (OCILib.length_str_mode == OCI_LSM_BYTE))
+        {
+            size *= (unsigned int) sizeof(dtext);
+        }
+    }
+    else
+        size = 0;
+
     OCI_RESULT(res);
 
     return size;
@@ -525,30 +660,44 @@ big_uint OCI_API OCI_LobGetLength(OCI_Lob *lob)
 
     if (OCILib.use_lob_ub8)
     {
+        ub8 lob_size = 0;
+
         OCI_CALL2
         (
             res, lob->con, 
             
             OCILobGetLength2(lob->con->cxt, lob->con->err, lob->handle, 
-                             (ub8 *) &size)
+                             (ub8 *) &lob_size)
         )
+
+        size = (big_uint) lob_size;
     }
     else
 
 #endif
  
     {
-        ub4 size32 = (ub4) size;
+        ub4 lob_size = 0;
    
         OCI_CALL2
         (
             res, lob->con, 
             
-            OCILobGetLength(lob->con->cxt, lob->con->err, lob->handle, &size32)
+            OCILobGetLength(lob->con->cxt, lob->con->err, lob->handle, &lob_size)
         )
 
-        size = (big_uint) size32;
+        size = (big_uint) lob_size;
     }
+
+    if (res == TRUE)
+    {
+        if ((lob->type != OCI_BLOB) && (OCILib.length_str_mode == OCI_LSM_BYTE))
+        {
+            size *= (unsigned int) sizeof(dtext);
+        }
+    }
+    else
+        size = 0;
 
     OCI_RESULT(res);
 
@@ -573,6 +722,16 @@ unsigned int OCI_API OCI_LobGetChunkSize(OCI_Lob *lob)
         OCILobGetChunkSize(lob->con->cxt, lob->con->err, lob->handle, &size)
     )
 
+    if (res == TRUE)
+    {
+        if ((lob->type != OCI_BLOB) && (OCILib.length_str_mode == OCI_LSM_BYTE))
+        {
+            size *= (unsigned int) sizeof(dtext);
+        }
+    }
+    else
+        size = 0;
+
     OCI_RESULT(res);
 
     return (unsigned int) size;
@@ -589,6 +748,13 @@ boolean OCI_API OCI_LobCopy(OCI_Lob *lob, OCI_Lob *lob_src, big_uint offset_dst,
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob,     FALSE);
     OCI_CHECK_PTR(OCI_IPC_LOB, lob_src, FALSE);
+
+    if ((lob->type != OCI_BLOB) && (OCILib.length_str_mode == OCI_LSM_BYTE))
+    {
+        offset_dst /= (big_uint) sizeof(dtext);
+        offset_src /= (big_uint) sizeof(dtext);
+        count      /= (big_uint) sizeof(dtext);
+    }
 
 #ifdef OCI_LOB2_API_ENABLED
 
@@ -610,18 +776,14 @@ boolean OCI_API OCI_LobCopy(OCI_Lob *lob, OCI_Lob *lob_src, big_uint offset_dst,
 #endif
  
     {
-       ub4 count32      = (ub4) count;
-       ub4 offset_src32 = (ub4) offset_src;
-       ub4 offset_dst32 = (ub4) offset_dst;
-
-
         OCI_CALL2
         (
             res, lob->con, 
             
             OCILobCopy(lob->con->cxt, lob->con->err, lob->handle,
-                       lob_src->handle, count32, offset_dst32 + 1,
-                       offset_src32 + 1)
+                       lob_src->handle, (ub4) count,
+                       (ub4) (offset_dst + 1),
+                       (ub4) (offset_src + 1))
          )
     }
     
@@ -644,6 +806,11 @@ boolean OCI_API OCI_LobCopyFromFile(OCI_Lob *lob, OCI_File *file,
     OCI_CHECK_PTR(OCI_IPC_LOB, lob,   FALSE);
     OCI_CHECK_PTR(OCI_IPC_FILE, file, FALSE);
 
+    if ((lob->type != OCI_BLOB) && (OCILib.length_str_mode == OCI_LSM_BYTE))
+    {
+        offset_dst /= (big_uint) sizeof(dtext);
+    }
+
 #ifdef OCI_LOB2_API_ENABLED
 
     if (OCILib.use_lob_ub8)
@@ -664,17 +831,15 @@ boolean OCI_API OCI_LobCopyFromFile(OCI_Lob *lob, OCI_File *file,
 #endif
  
     {
-        ub4 count32      = (ub4) count;
-        ub4 offset_src32 = (ub4) offset_src;
-        ub4 offset_dst32 = (ub4) offset_dst;
-
         OCI_CALL2
         (
             res, lob->con, 
             
             OCILobLoadFromFile(lob->con->cxt, lob->con->err,
-                               lob->handle, file->handle, count32,
-                               offset_dst32 + 1, offset_src32 + 1)
+                               lob->handle, file->handle, 
+                               (ub4) count,
+                               (ub4) (offset_dst + 1),
+                               (ub4) (offset_src + 1))
         )
     }
 
@@ -689,19 +854,17 @@ boolean OCI_API OCI_LobCopyFromFile(OCI_Lob *lob, OCI_File *file,
 
 unsigned int OCI_API OCI_LobAppend(OCI_Lob *lob, void *buffer, unsigned int len)
 { 
-    ub4 size_in  = 0;
-    ub4 size_out = 0;
-    ub2 csid     = 0;
-    ub1 csfrm    = 0;
-    void *obuf   = NULL;
-    boolean res  = TRUE;
+    ub4 size_in_char  = 0;
+    ub4 size_in_byte  = 0;
+    ub4 size_out_char = 0;
+    ub4 size_out_byte = 0;
+    ub2 csid          = 0;
+    ub1 csfrm         = 0;
+    void *obuf        = NULL;
+    boolean res       = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, 0);
     OCI_CHECK_MIN(lob->con, NULL, len, 1, 0);
-
-#ifndef OCI_CHARSET_ANSI
-    csid = OCI_UTF16ID;
-#endif
 
     /* OCILobWriteAppend() seems to cause problems on Oracle client 8.1 and 9.0 
        It's an Oracle known bug #886191
@@ -713,16 +876,37 @@ unsigned int OCI_API OCI_LobAppend(OCI_Lob *lob, void *buffer, unsigned int len)
               OCI_LobWrite(lob, buffer, len);
     }        
 
-    size_out = size_in = len;
-    
     if (lob->type != OCI_BLOB)
     {
-        size_in *= (ub4) sizeof(dtext);
-        obuf  = OCI_GetInputDataString(buffer, (int *) &size_in);
+
+#ifndef OCI_CHARSET_ANSI
+
+        csid = OCI_UTF16ID;
+
+#endif
+
+        if (OCILib.length_str_mode == OCI_LSM_BYTE)
+        {
+            size_in_byte = len;
+            size_in_char = (ub4) len / (ub4) sizeof(dtext);            
+        }
+        else
+        {
+            size_in_char = len;
+            size_in_byte = (ub4) len * (ub4) sizeof(dtext);            
+        }
+
+        obuf = OCI_GetInputDataString(buffer, (int *) &size_in_byte);
+
     }
     else
-       obuf = buffer;
-
+    {
+        size_in_byte = len;
+        size_in_char = len;
+        
+        obuf = buffer;
+    }
+ 
     if (lob->type == OCI_NCLOB)
         csfrm = SQLCS_NCHAR;
     else
@@ -732,25 +916,29 @@ unsigned int OCI_API OCI_LobAppend(OCI_Lob *lob, void *buffer, unsigned int len)
 
     if (OCILib.use_lob_ub8)
     {
-        ub8 size_char = (ub8) len;
-        ub8 size_byte = (ub8) size_in;
+        ub8 size_in_out_char = (ub8) size_in_char;
+        ub8 size_in_out_byte = (ub8) size_in_byte;
         
         OCI_CALL2
         (
             res, lob->con, 
             
-            OCILobWriteAppend2(lob->con->cxt, lob->con->err, 
-                               lob->handle, &size_byte,
-                               &size_char, obuf, (ub8) size_in, 
-                               (ub1) OCI_ONE_PIECE, 
-                               (dvoid *) NULL,
-                               NULL, csid, csfrm)
+            OCILobWriteAppend2(lob->con->cxt, lob->con->err, lob->handle, 
+                               &size_in_out_byte, &size_in_out_char,
+                               obuf, (ub8) size_in_byte, (ub1) OCI_ONE_PIECE, 
+                               (dvoid *) NULL, NULL, csid, csfrm)
         )
 
+        size_out_byte = (ub4) size_in_out_byte;
+
         if (lob->type == OCI_BLOB)
-            size_out = (ub4) size_byte;
+        {
+            size_out_char = (ub4) size_in_out_byte;
+        }
         else
-            size_out = (ub4) size_char;
+        {
+            size_out_char = (ub4) size_in_out_char;
+        }
     }
 
     else
@@ -758,28 +946,61 @@ unsigned int OCI_API OCI_LobAppend(OCI_Lob *lob, void *buffer, unsigned int len)
 #endif
 
     {
+        ub4 size_in_out_char_byte = 0;
+
+        if (lob->type == OCI_BLOB)
+        {
+            size_in_out_char_byte = size_in_byte;
+        }
+        else
+        {
+            size_in_out_char_byte = size_in_char;
+        }
+
         OCI_CALL2
         (
             res, lob->con, 
             
-            OCILobWriteAppend(lob->con->cxt, lob->con->err,
-                              lob->handle, &size_out,
-                              obuf, size_in, 
-                              (ub1) OCI_ONE_PIECE,
-                              (dvoid *) NULL,
-                              NULL, csid, csfrm)
+            OCILobWriteAppend(lob->con->cxt, lob->con->err, lob->handle,
+                              &size_in_out_char_byte, obuf, size_in_byte, 
+                              (ub1) OCI_ONE_PIECE, (dvoid *) NULL, NULL, csid, csfrm)
         )
+
+        if (lob->type == OCI_BLOB)
+        {
+            size_out_char = size_in_out_char_byte;
+            size_out_byte = size_in_out_char_byte;
+        }
+        else
+        {
+            size_out_char = size_in_out_char_byte;
+            size_out_byte = size_in_out_char_byte * sizeof(dtext);
+        }
     }
 
     if (lob->type != OCI_BLOB)
         OCI_ReleaseDataString(obuf);
 
     if (res == TRUE)
-        lob->offset += (big_uint) size_out;
+    {
+        lob->offset += (big_uint) size_out_char;
+
+        if (lob->type != OCI_BLOB)
+        {           
+            len = (unsigned int) size_out_char;
+ 
+            if (OCILib.length_str_mode == OCI_LSM_BYTE)
+                len *= (unsigned int) sizeof(dtext);
+        }
+        else
+            len = (unsigned int) size_out_byte;     
+    }
+    else
+        len = 0;
 
     OCI_RESULT(res);
 
-    return size_out;
+    return len;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -788,7 +1009,8 @@ unsigned int OCI_API OCI_LobAppend(OCI_Lob *lob, void *buffer, unsigned int len)
 
 boolean OCI_API OCI_LobAppendLob(OCI_Lob *lob, OCI_Lob *lob_src)
 {
-    boolean res  = TRUE;
+    boolean  res    = TRUE;
+    big_uint length = 0;
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob,     FALSE);
     OCI_CHECK_PTR(OCI_IPC_LOB, lob_src, FALSE);
@@ -807,7 +1029,16 @@ boolean OCI_API OCI_LobAppendLob(OCI_Lob *lob, OCI_Lob *lob_src)
     )
 
     if (res == TRUE)
-        lob->offset = OCI_LobGetLength(lob);
+    {
+        length = OCI_LobGetLength(lob);
+
+        if ((lob->type != OCI_BLOB) && (OCILib.length_str_mode == OCI_LSM_BYTE))
+        {
+            length /= sizeof(dtext);
+        }
+
+        lob->offset += length;
+    }
 
     OCI_RESULT(res);
 
@@ -925,7 +1156,6 @@ boolean OCI_API OCI_LobAssign(OCI_Lob *lob, OCI_Lob *lob_src)
             OCILobLocatorAssign(lob->con->cxt, lob->con->err,
                                 lob_src->handle, &lob->handle)
         )
-  
     }
     else
     {

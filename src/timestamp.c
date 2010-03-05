@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+ 
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: timestamp.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: timestamp.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -430,12 +430,15 @@ boolean OCI_API OCI_TimestampToText(OCI_Timestamp *tmsp, const mtext *fmt,
     boolean res = TRUE;
     void *ostr1 = NULL;
     void *ostr2 = NULL;
-    int  osize1 = size * (int) sizeof(mtext);
+    int  osize1 = size;
     int  osize2 = -1;
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str,  FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, fmt,  FALSE);
+
+    if (OCILib.length_str_mode == OCI_LSM_CHAR)
+         osize1 *= (int) sizeof(mtext);
 
     /* init output buffer in case of OCI failure */
  
@@ -620,14 +623,17 @@ boolean OCI_API OCI_TimestampGetTimeZoneName(OCI_Timestamp *tmsp, int size,
 {
     boolean res = TRUE;
     void *ostr  = NULL;
-    int osize   = size * (int) sizeof(mtext);
-
+    int osize   = size;
+    
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
+
+    if (OCILib.length_str_mode == OCI_LSM_CHAR)
+      osize *= (int) sizeof(mtext);
 
     ostr = OCI_GetInputMetaString(str, &osize);
 

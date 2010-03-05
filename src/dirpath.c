@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: dirpath.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: dirpath.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -288,8 +288,11 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
         {
             case OCI_CDT_TEXT :
 
-                dpcol->maxsize *= sizeof(dtext);
-                dpcol->bufsize *= sizeof(dtext);
+                if (OCILib.length_str_mode == OCI_LSM_CHAR)
+                {
+                    dpcol->maxsize *= sizeof(dtext);
+                    dpcol->bufsize *= sizeof(dtext);
+                }
 
                 break;
 
@@ -322,7 +325,9 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
                     dpcol->format       = mtsdup(format);
                     dpcol->format_size  = (ub4) mtslen(format);
                     dpcol->maxsize      = (ub2) dpcol->format_size;
-                    dpcol->bufsize     *= sizeof(dtext);
+
+                    if (OCILib.length_str_mode == OCI_LSM_CHAR)              
+                        dpcol->bufsize     *= sizeof(dtext);
                 }
 
                 break;
@@ -665,7 +670,7 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
 
     /* for character based column, parameter size was the number of characters */
 
-    if (dpcol->sqlcode == SQLT_CHR)
+    if ((dpcol->sqlcode == SQLT_CHR) && (OCILib.length_str_mode == OCI_LSM_CHAR))
     {
        size *= (unsigned int) sizeof(dtext);
     }

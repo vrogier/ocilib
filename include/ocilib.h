@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib.h, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: ocilib.h, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,7 +59,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.5.1 (2010-02-30)</b>
+ * <b>Current version : 3.6.0 (2010-03-08)</b>
  *
  * @section s_feats Main features
  *
@@ -89,7 +89,7 @@ extern "C" {
  *
  * @section s_author Author
  *
- * OCILIB is developed by <a href="mailto:vince.rogier@gmail.com">Vincent Rogier</a>
+ * OCILIB is developed by <a href="mailto:vince.rogier@ocilib.net">Vincent Rogier</a>
  *
  * @section s_changelog ChangeLog
  *
@@ -143,8 +143,8 @@ extern "C" {
  * ------------------------------------------------------------------------ */
 
 #define OCILIB_MAJOR_VERSION     3
-#define OCILIB_MINOR_VERSION     5
-#define OCILIB_REVISION_VERSION  1
+#define OCILIB_MINOR_VERSION     6
+#define OCILIB_REVISION_VERSION  0
 
 /* ------------------------------------------------------------------------ *
  * Installing OCILIB
@@ -1418,6 +1418,17 @@ typedef struct OCI_HashEntry {
 #define OCI_SFD_ABSOLUTE        0x20
 #define OCI_SFD_RELATIVE        0x40
 
+/* null string mode */
+
+#define OCI_NSM_NULL            1
+#define OCI_NSM_EMPTY           2
+
+/* length string mode */
+
+#define OCI_LSM_CHAR            1
+#define OCI_LSM_BYTE            2
+
+
 /* timestamp types */
 
 #define OCI_TIMESTAMP           1
@@ -1706,7 +1717,7 @@ typedef struct OCI_HashEntry {
  * Initializes the library
  *
  * @param err_handler  - Pointer to error handler procedure (optional)
- * @param home         - Oracle shared library path (optional)
+ * @param lib_path     - Oracle shared library path (optional)
  * @param mode         - Environment mode
  *
  * Possible values for parameter mode:
@@ -1727,7 +1738,7 @@ typedef struct OCI_HashEntry {
  * OCI_IMPORT_RUNTIME (default on MS windows but NOT on Unixes
  * 
  * @warning
- * If the parameter 'home' is NULL, the Oracle library is loaded from system
+ * If the parameter 'lib_path' is NULL, the Oracle library is loaded from system
  * environment variables
  *
  * @warning
@@ -1743,7 +1754,7 @@ typedef struct OCI_HashEntry {
 OCI_EXPORT boolean OCI_API OCI_Initialize
 (
     POCI_ERROR err_handler,
-    const mtext *home,
+    const mtext *lib_path,
     unsigned int mode
 );
 
@@ -1868,6 +1879,79 @@ OCI_EXPORT void OCI_API OCI_SetErrorHandler
 (
     POCI_ERROR handler
 );
+
+
+/**
+ * @brief
+ * Set the null string handling mode
+ *
+ * @param mode  - null string mode
+ *
+ * @note
+ * This call allows to customize the way NULL strings
+ * are returned to the application
+ *
+ * @note
+ * Possible values for parameter mode :
+ * - OCI_NSM_NULL  : value NULL (null string)  is returned
+ * - OCI_NSM_EMPTY : value ""   (empty string) is returned
+ *
+ * @warning
+ * Default value is OCI_NSM_NULL
+ *
+ */
+
+OCI_EXPORT void OCI_API OCI_SetNullStringMode
+(
+    unsigned int mode
+);
+
+/**
+ * @brief
+ * returns the null string handling mode
+ *
+ * @note
+ * see OCI_SetNullStringMode() for possible values
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetNullStringMode(void);
+
+/**
+ * @brief
+ * Set the string lengths mode
+ *
+ * @param mode  - string lengths mode
+ *
+ * @note
+ * This call allows to customize how strings lengths are computed 
+ *
+ * @note
+ * Possible values for parameter mode :
+ * - OCI_LSM_CHAR : length expressed in characters (or codepoints)
+ * - OCI_LSM_BYTE : length expressed in bytes
+ *
+ * @warning
+ * Default value is OCI_LSM_CHAR
+ *
+ */
+
+OCI_EXPORT void OCI_API OCI_SetStringLengthMode
+(   
+    unsigned int mode
+);
+
+/**
+ * @brief
+ * returns the string lengths mode
+ *
+ * @note
+ * see OCI_SetStringLengthMode() for possible values
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetStringLengthMode(void);
+
 
 /**
  * @}
@@ -2699,7 +2783,7 @@ OCI_EXPORT boolean OCI_API OCI_ConnPoolSetTimeout
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ConnPoolGetlGetNoWait
+OCI_EXPORT boolean OCI_API OCI_ConnPoolGetNoWait
 (
     OCI_ConnPool *pool
 );
@@ -3211,8 +3295,8 @@ OCI_EXPORT const mtext * OCI_API OCI_GetSql
 
 /**
  * @brief
- * Return the error position in the SQL statement where the error occurred in
- * case of SQL parsing error
+ * Return the error position (in terms of characters) in the SQL statement 
+ * where the error occurred in case of SQL parsing error
  *
  * @param stmt - Statement handle
  *
@@ -3376,7 +3460,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetSQLVerb
  * arrays for DML statements.
  * OCI_BindArraySetSize() MUST be called to set the maximum size of the arrays
  * to bind to the statement before any of its execution. This initial call must
- * be bone after OCI_Prepare() and any OCI_BindArrayOfxxx() call.
+ * be bone AFTER OCI_Prepare() and BEFORE any OCI_BindArrayOfxxx() call.
  *
  * @note
  * OCI_BindArraySetSize can optionally be called before any later OCI_Execute()
@@ -3459,7 +3543,11 @@ OCI_EXPORT boolean OCI_API OCI_BindShort
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of shorts
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -3499,7 +3587,11 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedShort
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of unsigned shorts
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -3539,7 +3631,11 @@ OCI_EXPORT boolean OCI_API OCI_BindInt
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of int
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -3579,7 +3675,11 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedInt
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of unsigned int
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -3619,7 +3719,11 @@ OCI_EXPORT boolean OCI_API OCI_BindBigInt
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of big int
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -3659,7 +3763,11 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedBigInt
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Array of unsigned big int
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -3680,8 +3788,10 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedBigInts
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - String to bind
- * @param len  - Max length of the string (in character without
- *               the zero null terminal character)
+ * @param len  - Max length of the string (in character/bytes depending
+ *               on the current string length mode (see 
+ *               OCI_SetStringLengthMode()) without the zero null
+ *               terminal character)
  *
  * @note
  * if len == 0, len is set to the string size
@@ -3705,9 +3815,15 @@ OCI_EXPORT boolean OCI_API OCI_BindString
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of string
- * @param len    - Max length of a single string element (in character without
- *                 the zero null terminal character)
- * @param nbelem - Number of element in the array
+ * @param len    - Max length of a single string element (in character/bytes 
+ *                 depending on the current string length mode (see 
+ *                 OCI_SetStringLengthMode()) without the zero null
+ *                 terminal character)
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @note
  * if len <= 0, it returns FALSE
@@ -3757,7 +3873,11 @@ OCI_EXPORT boolean OCI_API OCI_BindRaw
  * @param name   - Variable name
  * @param data   - Array of buffers
  * @param len    - Size in bytes on a single RAW array element
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @note
  * The buffer must be a contiguous block of data elements
@@ -3804,7 +3924,11 @@ OCI_EXPORT boolean OCI_API OCI_BindDouble
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of double
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -3844,7 +3968,11 @@ OCI_EXPORT boolean OCI_API OCI_BindDate
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of date handle
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -3885,7 +4013,11 @@ OCI_EXPORT boolean OCI_API OCI_BindTimestamp
  * @param name   - Variable name
  * @param data   - Array of Timestamp handle
  * @param type   - Timestamp type
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @note
  * See OCI_TimestampCreate() for possible values of parameter 'type'
@@ -3931,7 +4063,11 @@ OCI_EXPORT boolean OCI_API OCI_BindInterval
  * @param name   - Variable name
  * @param data   - Array of Interval handle
  * @param type   - Interval type
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @note
  * See OCI_IntervalCreate() for possible values of parameter 'type'
@@ -3977,7 +4113,11 @@ OCI_EXPORT boolean OCI_API OCI_BindLob
  * @param name   - Variable name
  * @param data   - Array of Lob handle
  * @param type   - Lob type
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @note
  * See OCI_LobCreate() for possible values of parameter 'type'
@@ -4022,7 +4162,11 @@ OCI_EXPORT boolean OCI_API OCI_BindFile
  * @param name   - Variable name
  * @param data   - Array of File handle
  * @param type   - File type
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @note
  * See OCI_FileCreate() for possible values of parameter 'type'
@@ -4068,7 +4212,11 @@ OCI_EXPORT boolean OCI_API OCI_BindObject
  * @param name   - Variable name
  * @param data   - Array of object handle
  * @param typinf - type info handle
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4111,7 +4259,11 @@ OCI_EXPORT boolean OCI_API OCI_BindColl
  * @param name   - Variable name
  * @param data   - Array of Collection handle
  * @param typinf - Type info handle
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @note
  * See OCI_CollCreate() for possible values of parameter 'type'
@@ -4157,7 +4309,11 @@ OCI_EXPORT boolean OCI_API OCI_BindRef
  * @param name   - Variable name
  * @param data   - Array of Ref handle
  * @param typinf - type info handle
- * @param nbelem - Number of element in the array
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. 
+ * For regular DML array operations, pass the value 0.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4204,7 +4360,8 @@ OCI_EXPORT boolean OCI_API OCI_BindStatement
  * @note
  * Size is expressed in:
  * - Bytes for BLONGs
- * - Characters for CLONGs
+ * - Characters or bytes for CLONGs depending on the current
+ *   string length mode (see OCI_SetStringLengthMode())
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4424,8 +4581,9 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement
  * even if it's not necessary.
  *
  * @warning
- * For binds of type OCI_CDT_TEXT (strings), the parameter 'size' is expressed in 
- * number of characters.
+ * For string binds, the parameter 'size' is expressed in number of characters
+ * or bytes depending on the current string length mode
+ * (see OCI_SetStringLengthMode())
  *
  * @return
  * Data size if the bind type is listed above otherwise 0.
@@ -4456,8 +4614,9 @@ OCI_EXPORT boolean OCI_API OCI_BindSetDataSize
  * After execution, it returns the real data size.
  *
  * @warning
- * For binds of type OCI_CDT_TEXT (strings), the parameter 'size' is expressed in 
- * number of characters.
+ * For string binds, the parameter 'size' is expressed in number of characters
+ * or bytes depending on the current string length mode
+ * (see OCI_SetStringLengthMode())
  *
  * @return
  * Data size if the bind type is listed above otherwise 0.
@@ -4481,8 +4640,9 @@ OCI_EXPORT boolean OCI_API OCI_BindSetDataSizeAtPos
  * See OCI_BindSetDataSize() for supported datatypes
  *
  * @warning
- * For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in 
- * number of characters.
+ * For string binds, the returned value is expressed in number of characters
+ * or bytes depending on the current string length mode
+ * (see OCI_SetStringLengthMode())
  *
  */
 
@@ -4503,8 +4663,9 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetDataSize
  * See OCI_BindSetDataSize() for supported datatypes
  *
  * @warning
- * For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in 
- * number of characters.
+ * For string binds, the returned value is expressed in number of characters
+ * or bytes depending on the current string length mode
+ * (see OCI_SetStringLengthMode())
  *
  */
 
@@ -5073,7 +5234,9 @@ OCI_EXPORT const mtext * OCI_API OCI_ColumnGetSQLType
  *
  * @param col    - Column handle
  * @param buffer - buffer to store the full column type name and size
- * @param len    - max size of the buffer in characters
+ * @param len    - max size of the buffer in characters or bytes depending 
+ *                 on the current string length mode 
+ *                 (see OCI_SetStringLengthMode())
  *
  * @note
  * This function returns a description that matches the one given by SQL*Plus
@@ -6129,7 +6292,7 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_ResultsetGetStatement
 
 /**
  * @brief
- * Return the current row data length of the column at the given index
+ * Return the current row data length in BYTES of the column at the given index
  * in the resultset
  *
  * @param rs    - Resultset handle
@@ -6139,7 +6302,7 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_ResultsetGetStatement
  * Column position starts at 1.
  *
  * @return
- * The column current row data length or 0 if index is out of bounds
+ * The column current row data length in BYTES or 0 if index is out of bounds
  *
  */
 
@@ -6205,6 +6368,10 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDataLength
  *
  * @note
  * 'lnsize' maximum value is 255 with Oracle < 10g R2 and 32767 above
+ *
+ * @warning
+ * 'lnsize' is expressed bytes and is not affected by the current 
+ * string length mode (see OCI_SetStringLengthMode())
  *
  * @warning
  * If OCI_ServerEnableOutput() is not called, OCI_ServerGetOutput() will return
@@ -8184,7 +8351,8 @@ OCI_EXPORT unsigned int OCI_API OCI_LobGetType
  *                  characters given by parameter 'offset'
  *
  * @note
- * - For CLOB and CLOB, offset in in characters
+ * - For CLOB and CLOB, offset in characters or bytes depending on the current
+ *   string length mode (see OCI_SetStringLengthMode())
  * - For BLOB and BFILE, offset is in bytes
  *
  * @note
@@ -8228,7 +8396,8 @@ OCI_EXPORT big_uint OCI_API OCI_LobGetOffset
  * @note
  * Length is expressed in :
  * - Bytes for BLOBs
- * - Characters for CLOBs/NCLOBS
+ * - Characters or bytes for CLOBs/NCLOBS depending on the current
+ *   string length mode (see OCI_SetStringLengthMode())
  *
  * @return
  * Number of bytes/characters read on success otherwise 0 on failure
@@ -8253,7 +8422,8 @@ OCI_EXPORT unsigned int OCI_API OCI_LobRead
  * @note
  * Length is expressed in :
  * - Bytes for BLOBs
- * - Characters for CLOBs/NCLOBs
+ * - Characters or bytes for CLOBs/NCLOBs depending on the current
+ *   string length mode (see OCI_SetStringLengthMode())
  *
  * @return
  * Number of bytes / characters written on success otherwise 0 on failure
@@ -8277,7 +8447,8 @@ OCI_EXPORT unsigned int OCI_API OCI_LobWrite
  * @note
  * Length is expressed in :
  * - Bytes for BLOBs
- * - Characters for CLOBs/NCLOBs
+ * - Characters or bytes for CLOBs/NCLOBs depending on the current
+ *   string length mode (see OCI_SetStringLengthMode())
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -8297,7 +8468,10 @@ OCI_EXPORT boolean OCI_API OCI_LobTruncate
  * @param lob - Lob handle
  *
  * @note
- * The returned value is in bytes for BLOBS and characters for CLOBS/NCLOBs
+ * The returned value is a number of :
+ * - bytes for BLOBS
+ * - characters or bytes for CLOBS/NCLOBs depending on the current
+ *   string length mode (see OCI_SetStringLengthMode())
  *
  */
 
@@ -8319,7 +8493,10 @@ OCI_EXPORT big_uint OCI_API OCI_LobGetLength
  * read or write requests using a multiple of this chunk size
  *
  * @note
- * The returned value is in bytes for BLOBS and characters for CLOBS/NCLOBs
+ * The returned value is a number of :
+ * - bytes for BLOBS
+ * - characters or bytes for CLOBS/NCLOBs depending on the current
+ *   string length mode (see OCI_SetStringLengthMode())
  *
  */
 
@@ -8340,8 +8517,9 @@ OCI_EXPORT unsigned int OCI_API OCI_LobGetChunkSize
  * Absolute position starts at 1.
  *
  * @return
- * Number of bytes (BLOB) or characters (CLOB/NCLOB) erased on success
- * otherwise 0 on failure
+ * Number of bytes for BLOBs or characters/bytes for CLOBs/NCLOBs
+ * (depending on the current string length mode - see
+ * OCI_SetStringLengthMode()) erased on success otherwise 0 on failure
  *
  */
 
@@ -8363,7 +8541,8 @@ OCI_EXPORT big_uint OCI_API OCI_LobErase
  * @note
  * Length is expressed in :
  * - Bytes for BLOBs
- * - Characters for CLOBs
+ * - Characters or bytes for CLOBs depending on the current
+ *   string length mode (see OCI_SetStringLengthMode())
  *
  * @return
  * Number of bytes / characters written on success otherwise 0 on failure
@@ -8423,7 +8602,8 @@ OCI_EXPORT boolean OCI_API OCI_LobIsTemporary
  *
  * @note
  * For character LOB (CLOB/NCLOBS) the parameters count, offset_dst and
- * offset_src are expressed in characters and not in bytes.
+ * offset_src are expressed in characters or bytes depending on the current
+ * string length mode (see OCI_SetStringLengthMode())
  *
  * @note
  * Absolute position starts at 1.
@@ -8450,8 +8630,9 @@ OCI_EXPORT boolean OCI_API OCI_LobCopy
  * @param count      - Number of bytes to copy
  *
  * @note
- * - For character LOB (CLOB/NCLOB) the parameter offset_src are expressed in
- *   characters and not in bytes.
+ * - For character LOB (CLOB/NCLOB) the parameter offset_dst are expressed in
+ *   characters or bytes depending on the current
+ *   string length mode (see OCI_SetStringLengthMode())
  * - Offset_src is always in bytes
  *
  * @note
@@ -8555,12 +8736,9 @@ OCI_EXPORT boolean OCI_API OCI_LobAssign
 
 /**
  * @brief
- * Return the maximum size that the lob can contain
+ * Return the maximum size in bytes that the lob can contain
  *
  * @param lob - Lob handle
- *
- * @return
- * TRUE on success otherwise FALSE
  *
  */
 
@@ -8729,7 +8907,7 @@ OCI_EXPORT unsigned int OCI_API OCI_FileGetType
  * Mode parameter can be one of the following value :
  *
  * - OCI_SEEK_SET : set the file current offset to the given absolute offset
- * - OCI_SEEK_END : set the file current offset to the end of the lob
+ * - OCI_SEEK_END : set the file current offset to the end of the file
  * - OCI_SEEK_CUR : move the file current offset to the number of bytes given by
  *                  parameter 'offset'
  *
@@ -9069,6 +9247,8 @@ OCI_EXPORT unsigned int OCI_API OCI_LongGetType
  *
  * @note
  * - For OCI_CLONG, parameter 'len' and returned value are expressed in characters
+ *   or bytes depending on the current string length mode 
+     (see OCI_SetStringLengthMode())
  * - For OCI_BLONG, parameter 'len' and returned value are expressed in bytes
  *
  * @return
@@ -9092,10 +9272,13 @@ OCI_EXPORT unsigned int OCI_API OCI_LongRead
  * @param lg     - Long handle
  * @param buffer - the pointer to a buffer
  * @param len    - the length of the buffer in bytes (OCI_BLONG) or
- *                  character (OCI_CLONG)
+ *                 character/ bytes (OCI_CLONG) depending on the current
+ *                 string length mode (see OCI_SetStringLengthMode())
  *
  * @return
- * Number of bytes (OCI_BLONG) / character (OCI_CLONG) written on success
+ * Number of bytes (OCI_BLONG) or character/bytes (OCI_CLONG), depending on
+ * the current string length mode (see OCI_SetStringLengthMode()), written
+ * on success or :
  * - 0 if there is nothing more to read
  * - 0 on failure
  *
@@ -9111,7 +9294,8 @@ OCI_EXPORT unsigned int OCI_API OCI_LongWrite
 /**
  * @brief
  * Return the buffer size of an OCI_Long object in bytes (OCI_BLONG) or
- * character (OCI_CLONG)
+ * character / bytes (OCI_CLONG) depending on the current string length
+ * mode (see OCI_SetStringLengthMode())
  *
  * @param lg - Long handle
  *
@@ -9127,6 +9311,9 @@ OCI_EXPORT unsigned int OCI_API OCI_LongGetSize
  * Return the internal buffer of an OCI_Long object read from a fetch sequence
  *
  * @param lg - Long handle
+ * 
+ * @warning
+ * Do not use this call for an OCI_Long object used to write data in to the DB
  *
  */
 
@@ -9326,7 +9513,9 @@ OCI_EXPORT boolean OCI_API OCI_DateFromText
  *
  * @param date - source Date handle
  * @param fmt  - Date format
- * @param size - Destination string size in characters
+ * @param size - Destination string size in characters or bytes depending 
+ *               on the current string length mode 
+ *               (see OCI_SetStringLengthMode())
  * @param str  - Destination date string
  *
  * @return
@@ -11560,7 +11749,8 @@ OCI_EXPORT unsigned int OCI_API OCI_RefGetHexSize
  * Converts a Ref handle value to a hexadecimal string.
  *
  * @param ref   - Ref handle
- * @param size - Destination string size in characters
+ * @param size - Destination string max size in characters or bytes depending on
+ *               the current string length mode (see OCI_SetStringLengthMode())
  * @param str  - Destination string
  *
  * @return
@@ -12562,6 +12752,12 @@ OCI_EXPORT boolean OCI_API OCI_DirPathFree
  * @param format  - Date or numeric format to use
  *
  * @note
+ * The 'maxsize' parameter is expressed in number of :
+ * - bytes for binary columns
+ * - characters or bytes for other columns depending on the current
+ *   string length mode (see OCI_SetStringLengthMode())
+ *
+ * @note
  * An error is thrown if :
  * - If the column specified by the 'name' parameter is not found in the table
  *   referenced by the type info handle passed to OCI_DirPathCreate()
@@ -12615,7 +12811,8 @@ OCI_EXPORT boolean OCI_API OCI_DirPathPrepare
  * @note
  * The 'size' parameter is expressed in number of :
  * - bytes for binary columns
- * - characters for other columns
+ * - characters or bytes for other columns depending on the current
+ *   string length mode (see OCI_SetStringLengthMode())
  *
  * @note
  * Direct path support piece loading for LONGs and LOBs columns. When filling
@@ -13910,6 +14107,24 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream
 );
 
 /**
+ * @brief
+ * Return OCI Subscription handle (OCISubscription *) of an OCILIB
+ * OCI_Subscription object
+ *
+ * @param sub - Subscription handle
+ *
+ * @return
+ * OCI Subscription otherwise NULL
+ *
+ */
+
+OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
+(
+    OCI_Subscription *sub
+);
+
+
+/**
  * @}
  */
 
@@ -14107,7 +14322,6 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream
 #define OCI_9  OCI_9_0
 #define OCI_10 OCI_10_1
 #define OCI_11 OCI_11_1
-
 
 #endif    /* OCILIB_H_INCLUDED */
 

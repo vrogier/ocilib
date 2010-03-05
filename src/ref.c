@@ -24,12 +24,12 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
+   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+ 
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ref.c, v 3.5.1 2010-02-03 18:00 Vincent Rogier $
+ * $Id: ref.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -331,11 +331,14 @@ boolean OCI_API OCI_RefToText(OCI_Ref *ref, unsigned int size, mtext *str)
 {
     boolean res = TRUE;
     void *ostr  = NULL;
-    int osize   = (int) size * (int) sizeof(mtext);
-
+    int osize   = (int) size;
+    
     OCI_CHECK_PTR(OCI_IPC_REF, ref, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
- 
+
+    if (OCILib.length_str_mode == OCI_LSM_CHAR)
+         osize *= (int) sizeof(mtext);
+
     /* init output buffer in case of OCI failure */
     
     str[0] = 0;
