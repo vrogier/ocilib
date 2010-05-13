@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_types.h, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: ocilib_types.h, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 
@@ -198,13 +198,17 @@ struct OCI_Library
     OCI_List       *cons;                   /* list of connection objects */
     OCI_List       *pools;                  /* list of pools objects */
     OCI_List       *subs;                   /* list of subscription objects */
+    OCI_List       *arrs;                   /* list of arrays objects */
     OCIEnv         *env;                    /* OCI environment handle */
     OCIError       *err;                    /* OCI error handle */
     POCI_ERROR      error_handler;          /* user defined error handler */
     unsigned int    version_compile;        /* OCI version used at compile time */
     unsigned int    version_runtime;        /* OCI version used at runtime */
+    boolean         use_lob_ub8;            /* use 64 bits integers for lobs ? */
+    boolean         use_scrollable_cursors; /* use Oracle 9i fetch API */
     ub4             env_mode;               /* default environment mode */
     boolean         loaded;                 /* OCILIB correctly loaded ? */
+    boolean         nls_utf8;               /* is UFT8 enabled for data strings ? */
     boolean         warnings_on;            /* warnings enabled ? */
     OCI_Error       lib_err;                /* Error used when OCILIB is not loaded */
     OCI_HashTable  *key_map;                /* hash table for mapping name/key */
@@ -213,10 +217,6 @@ struct OCI_Library
     unsigned int    nb_descp;               /* number of OCI descriptors allocated */
     unsigned int    nb_objinst;             /* number of OCI objects allocated */
     OCI_HashTable  *sql_funcs;              /* hash table handle for sql function names */
-    ub1             use_lob_ub8;            /* use 64 bits integers for lobs ? */
-    ub1             use_scrollable_cursors; /* use Oracle 9i fetch API */
-    ub1             null_str_mode;          /* null string mode */
-    ub1             length_str_mode;        /* length string mode */
 #ifdef OCI_IMPORT_RUNTIME
     LIB_HANDLE      lib_handle;             /* handle of runtime shared library */
 #endif
@@ -340,7 +340,8 @@ struct OCI_Buffer
     void           **data;     /* data / array of data */
     void            *inds;     /* array of indicators */
     void            *lens;     /* array of lengths */
-    dtext           *temp;     /* temporary buffer for string conversion */
+    dtext           *tmpbuf;   /* temporary buffer for string conversion */
+    unsigned int     tmpsize;  /* size of temporary buffer */
     ub4              count;    /* number of elements in the buffer */
     int              sizelen;  /* size of an element in the lens array */
 };
@@ -368,7 +369,9 @@ struct OCI_Bind
     ub2              code;      /* SQL datatype code */
     boolean          is_array;  /* is it an array bind ? */
     ub1              alloc;     /* is buffer allocated or mapped to input */
-};
+    ub1              csfrm;     /* charset form */
+}
+;
 
 /*
  * OCI_Define : Internal Resultset column data implementation
@@ -465,11 +468,11 @@ struct OCI_Statement
 
 struct OCI_Lob
 {
-    OCILobLocator   *handle;    /* OCI handle */
-    ub4              hstate;    /* object variable state */
-    OCI_Connection  *con;       /* pointer to connection object */
-    ub4              type;      /* type of lob */
-    big_uint         offset;    /* current offset for R/W */
+    OCILobLocator   *handle;        /* OCI handle */
+    ub4              hstate;        /* object variable state */
+    OCI_Connection  *con;           /* pointer to connection object */
+    ub4              type;          /* type of lob */
+    big_uint         offset;        /* current offset for R/W */
 };
 
 /*
@@ -738,6 +741,26 @@ struct OCI_Subscription
     mtext               *saved_pwd;  /* password for reconnection if needed */
     OCI_Event            event;      /* event object for user callback */
 };
+
+/*
+ * oCILIB array
+ *
+ */
+
+struct OCI_Array
+{
+    OCI_Connection *con;
+    unsigned int type;
+    unsigned int subtype;
+    unsigned int nb_elem;
+    void  ** tab_obj;
+    void   * mem_handle;
+    void   * mem_struct;
+ 
+};
+
+typedef struct OCI_Array OCI_Array;
+
 
 /*
  * Hash table object

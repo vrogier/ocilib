@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: element.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: element.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -381,9 +381,8 @@ const dtext * OCI_API OCI_ElemGetString(OCI_Elem *elem)
     const dtext *str  = NULL;
     boolean res       = FALSE;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, OCI_GET_NULL_DSTR(NULL));
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_TEXT, 
-                     OCI_GET_NULL_DSTR(NULL));
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
+    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_TEXT, NULL);
 
     if (elem->handle != NULL)
     {
@@ -395,7 +394,7 @@ const dtext * OCI_API OCI_ElemGetString(OCI_Elem *elem)
 
     OCI_RESULT(res);
 
-    return OCI_GET_NULL_DSTR(str);    
+    return str;    
 }
 
 

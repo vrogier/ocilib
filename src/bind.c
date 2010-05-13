@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: bind.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: bind.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -49,7 +49,7 @@ boolean OCI_BindFree(OCI_Bind *bnd)
 
     OCI_FREE(bnd->buf.inds);
     OCI_FREE(bnd->buf.lens);
-    OCI_FREE(bnd->buf.temp);
+    OCI_FREE(bnd->buf.tmpbuf);
 
     OCI_FREE(bnd->plrcds);
 
@@ -176,13 +176,13 @@ boolean OCI_API OCI_BindSetDataSizeAtPos(OCI_Bind *bnd, unsigned int position,
 
     if (bnd->buf.lens != NULL)
     {
+
         if (bnd->type == OCI_CDT_TEXT)
         {
             if (bnd->size == (sb4) size)
                 size += (unsigned int) (size_t) sizeof(odtext);
 
-            if (OCILib.length_str_mode == OCI_LSM_CHAR)
-                size *= (unsigned int) sizeof(odtext);
+            size *= (unsigned int) sizeof(odtext);
         }
 
         ((ub2 *) bnd->buf.lens)[position-1] = (ub2) size; 
@@ -224,8 +224,7 @@ unsigned int OCI_API OCI_BindGetDataSizeAtPos(OCI_Bind *bnd, unsigned int positi
             if (bnd->size == (sb4) size)
                 size -= (unsigned int) sizeof(odtext);
 
-            if (OCILib.length_str_mode == OCI_LSM_CHAR)
-                size /= (unsigned int) sizeof(odtext);
+            size /= (unsigned int) sizeof(odtext);
         }
     }
 
@@ -290,3 +289,37 @@ boolean OCI_API OCI_BindIsNull(OCI_Bind *bnd)
 }
 
 
+/* ------------------------------------------------------------------------ *
+ * OCI_BindSetCharsetForm
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_BindSetCharsetForm(OCI_Bind *bnd, unsigned int csfrm)
+{
+    boolean res = TRUE;
+
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
+
+    if ((bnd->type == OCI_CDT_TEXT) || (bnd->type == OCI_CDT_LONG))
+    {
+        if (csfrm == OCI_CSF_NATIONAL)
+            bnd->csfrm = SQLCS_NCHAR;
+        else if (csfrm == OCI_CSF_CHARSET)
+            bnd->csfrm = SQLCS_IMPLICIT;
+
+        OCI_CALL1
+        (
+            res, bnd->stmt->con, bnd->stmt,
+
+            OCIAttrSet((dvoid *) bnd->buf.handle,
+                       (ub4    ) OCI_HTYPE_BIND,
+                       (dvoid *) &bnd->csfrm,
+                       (ub4    ) sizeof(bnd->csfrm),
+                       (ub4    ) OCI_ATTR_CHARSET_FORM,
+                       bnd->stmt->con->err)
+        )
+    }
+    
+    OCI_RESULT(res);
+    
+    return res;
+}

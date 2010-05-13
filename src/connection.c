@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: connection.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -316,9 +316,9 @@ boolean OCI_ConnectionLogon(OCI_Connection *con, const mtext *new_pwd)
             res, con,
 
             OCIPasswordChange(con->cxt, con->err,
-                              (OraText *) con->user, (ub4) mtextsize(con->user),
-                              (OraText *) con->pwd,  (ub4) mtextsize(con->pwd),
-                              (OraText *) new_pwd,   (ub4) mtextsize(new_pwd),
+                              (OraText *) con->user, (ub4) mtslen(con->user),
+                              (OraText *) con->pwd,  (ub4) mtslen(con->pwd),
+                              (OraText *) new_pwd,   (ub4) mtslen(new_pwd),
                               OCI_AUTH)
         )
 
@@ -829,9 +829,9 @@ boolean OCI_API OCI_SetPassword(OCI_Connection *con, const mtext *password)
             res, con,
 
             OCIPasswordChange(con->cxt, con->err,
-                              (OraText *) con->user, (ub4) mtextsize(con->user),
-                              (OraText *) con->pwd,  (ub4) mtextsize(con->pwd),
-                              (OraText *) password,  (ub4) mtextsize(password),
+                              (OraText *) con->user, (ub4) mtslen(con->user),
+                              (OraText *) con->pwd,  (ub4) mtslen(con->pwd),
+                              (OraText *) password,  (ub4) mtslen(password),
                               mode)
         )
     }
@@ -1202,6 +1202,8 @@ boolean OCI_API OCI_ServerEnableOutput(OCI_Connection *con,
 
     if ((res == TRUE) && (con->svopt->arrbuf == NULL))
     {
+        unsigned int charsize = sizeof(dtext);
+
         /* check params ranges ( Oracle 10g increased the size of output line */
 
         if (con->ver_num >= OCI_10_2)
@@ -1223,7 +1225,7 @@ boolean OCI_API OCI_ServerEnableOutput(OCI_Connection *con,
         /* allocate internal string (line) array */
 
         con->svopt->arrbuf = (ub1 *) OCI_MemAlloc(OCI_IPC_STRING,
-                                                  ((size_t)(con->svopt->lnsize + 1)) * sizeof(dtext),
+                                                  ((size_t)(con->svopt->lnsize + 1)) * charsize,
                                                   (size_t) con->svopt->arrsize, TRUE
                                                   );
 
@@ -1255,9 +1257,6 @@ boolean OCI_API OCI_ServerEnableOutput(OCI_Connection *con,
 
             res = res && OCI_Prepare(con->svopt->stmt,
                                      MT("BEGIN DBMS_OUTPUT.GET_LINES(:s, :i); END;"));
-
-            if (OCILib.length_str_mode == OCI_LSM_BYTE)
-                lnsize *= sizeof(dtext);
 
             res = res && OCI_BindArrayOfStrings(con->svopt->stmt,
                                                 MT(":s"),
@@ -1324,10 +1323,12 @@ const dtext * OCI_API OCI_ServerGetOutput(OCI_Connection *con)
         con->svopt->curpos = 0;
     }
 
-    if (con->svopt->cursize > 0)
+    if ((res == TRUE) & (con->svopt->cursize > 0))
     {
+        unsigned int charsize = sizeof(dtext);
+
         str = (dtext*) (con->svopt->arrbuf + 
-              (size_t) (((con->svopt->lnsize + 1) * (unsigned int) sizeof(dtext)) * con->svopt->curpos++));
+              (size_t) (((con->svopt->lnsize + 1) * charsize) * con->svopt->curpos++));
     }
 
     OCI_RESULT(res);
@@ -1378,8 +1379,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
 #endif
                 con->trace->identifier[0] = 0;
 
-                mtsncat(con->trace->identifier, value,
-                        msizeof(con->trace->identifier));
+                mtsncat(con->trace->identifier, value, OCI_SIZE_TRACE_ID);
 
                 str = con->trace->identifier;
 
@@ -1394,7 +1394,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
 #endif
                 con->trace->module[0] = 0;
 
-                mtsncat(con->trace->module, value, msizeof(con->trace->module));
+                mtsncat(con->trace->module, value, OCI_SIZE_TRACE_MODULE);
 
                 str = con->trace->module;
 
@@ -1409,7 +1409,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
 #endif
                 con->trace->action[0] = 0;
 
-                mtsncat(con->trace->action, value, msizeof(con->trace->action));
+                mtsncat(con->trace->action, value, OCI_SIZE_TRACE_ACTION);
 
                 str = con->trace->action;
 
@@ -1424,7 +1424,7 @@ boolean OCI_API OCI_SetTrace(OCI_Connection *con, unsigned int trace,
 #endif
                 con->trace->info[0] = 0;
 
-                mtsncat(con->trace->info, value,  msizeof(con->trace->info));
+                mtsncat(con->trace->info, value,  OCI_SIZE_TRACE_INF0);
 
                 str = con->trace->info;
 

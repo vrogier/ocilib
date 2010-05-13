@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: collection.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: collection.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -62,11 +62,14 @@ OCI_Coll * OCI_CollInit(OCI_Connection *con, OCI_Coll **pcoll, void *handle,
         coll->handle = handle;
         coll->typinf = typinf;
 
-        if (coll->handle == NULL)
+        if ((coll->handle == NULL) || (coll->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
         {
             /* allocates handle for non fetched collection */
 
-            coll->hstate = OCI_OBJECT_ALLOCATED;
+            if (coll->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+            {
+                coll->hstate = OCI_OBJECT_ALLOCATED;
+            }
 
             OCI_CALL2
             (
@@ -136,19 +139,53 @@ boolean OCI_API OCI_CollFree(OCI_Coll *coll)
         coll->elem = NULL;
     }
 
-    /* create collection for local object */
+    /* free collection for local object */
 
-    if (coll->hstate == OCI_OBJECT_ALLOCATED)
+    if ((coll->hstate == OCI_OBJECT_ALLOCATED      ) ||
+        (coll->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
     {
         OCI_OCIObjectFree(OCILib.env, coll->typinf->con->err,
                           coll->handle, OCI_OBJECTFREE_NONULL);
     }
 
-    OCI_FREE(coll);
+    if (coll->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+    {
+        OCI_FREE(coll);
+    }
 
     OCI_RESULT(TRUE);
 
     return TRUE;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_CollArrayCreate
+ * ------------------------------------------------------------------------ */
+
+OCI_Coll ** OCI_API OCI_CollArrayCreate(OCI_Connection *con,
+                                        OCI_TypeInfo *typinf,
+                                        unsigned int nbelem)
+{
+    OCI_Array   *arr   = NULL;
+    OCI_Coll   **colls = NULL;
+
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, typinf);
+
+    if (arr != NULL)
+    {
+        colls = (OCI_Coll **) arr->tab_obj;
+    }
+
+    return colls;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_CollArrayFree
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_CollArrayFree(OCI_Coll **colls)
+{
+    return OCI_ArrayFreeFromHandles((void **) colls);
 }
 
 /* ------------------------------------------------------------------------ *

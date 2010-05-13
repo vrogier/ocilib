@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: library.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: library.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -355,11 +355,11 @@ OCICACHEFREE                 OCICacheFree                 = NULL;
 OCIPING                      OCIPing                      = NULL;
 
 OCIDBSTARTUP                 OCIDBStartup                 = NULL;
-OCIDBSHUTDOWN                OCIDBShutdown                = NULL;
+OCIDBSHUTDOWN                OCIDBShutdown                = NULL; 
 
 
-OCISTMTPREPARE2              OCIStmtPrepare2              = NULL;
-OCISTMTRELEASE               OCIStmtRelease               = NULL;
+OCISTMTPREPARE2              OCIStmtPrepare2              = NULL; 
+OCISTMTRELEASE               OCIStmtRelease               = NULL; 
 
 OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister      = NULL;
 OCISUBSCRIPTIONUNREGISTER    OCISubscriptionUnRegister    = NULL;
@@ -447,7 +447,7 @@ void OCI_SetStatus(boolean res)
  * OCI_Initialize
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
+boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *lib_path,
                                unsigned int mode)
 {
     boolean res  = TRUE;
@@ -456,7 +456,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 #ifdef OCI_IMPORT_RUNTIME
 
     char path[OCI_SIZE_BUFFER+1];
-
+ 
     size_t len = (size_t) 0;
 
 #endif
@@ -473,47 +473,65 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
     OCILib.version_compile    = OCI_VERSION_COMPILE;
     OCILib.version_runtime    = OCI_VERSION_RUNTIME;
 
-    OCILib.length_str_mode    = OCI_LSM_CHAR;
-    OCILib.null_str_mode      = OCI_NSM_NULL;
-
-
     OCILib.env_mode           = mode;
+
+#ifdef OCI_CHARSET_ANSI
+   
+    /* test for UTF8 environment */
+
+    {
+        char *str = getenv("NLS_LANG");
+
+        if (str != NULL)
+        {
+            char nls_lang[OCI_SIZE_OBJ_NAME+1] = "";
+            
+            strncat(nls_lang, str, OCI_SIZE_OBJ_NAME);
+
+            for (str = nls_lang; *str != 0; str++)
+                *str = (char) toupper(*str);
+           
+            OCILib.nls_utf8 = (strstr(nls_lang, "UTF8") != NULL);
+        }
+    }
+
+#endif 
 
 #ifdef OCI_IMPORT_LINKAGE
 
-    OCI_NOT_USED(home);
+    OCI_NOT_USED(lib_path);
 
-#if defined(OCI_BIG_UINT_ENABLED)
+  #if defined(OCI_BIG_UINT_ENABLED)
 
     OCILib.use_lob_ub8 = TRUE;
 
-#endif
+  #endif
 
-#if defined(OCI_STMT_SCROLLABLE_READONLY)
-
+  #if defined(OCI_STMT_SCROLLABLE_READONLY)
+  
     OCILib.use_scrollable_cursors = TRUE;
 
-#endif
+  #endif
 
 #else
 
     memset(path, 0, sizeof(path));
 
-#if defined(OCI_CHARSET_UNICODE)
+  #if defined(OCI_CHARSET_WIDE)
 
-    if (home != NULL && home[0] != 0)
-        len = wcstombs(path, home, sizeof(path));
+    if (lib_path != NULL && lib_path[0] != 0)
+        len = wcstombs(path, lib_path, sizeof(path));
 
-#else
+  #else
 
-    if (home != NULL && home[0] != 0)
+    if (lib_path != NULL && lib_path[0] != 0)
     {
-        strncat(path, home, sizeof(path));
+        strncat(path, lib_path, sizeof(path));
 
         len = strlen(path);
     }
 
-#endif
+  #endif
 
     if ((len > (size_t) 0) && (len < sizeof(path)) && (path[len - (size_t) 1] != OCI_CHAR_SLASH))
     {
@@ -644,7 +662,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
         LIB_SYMBOL(OCILib.lib_handle, "OCILobClose", OCILobClose,
                    OCILOBCLOSE);
 
-#ifdef ORAXB8_DEFINED
+  #ifdef ORAXB8_DEFINED
 
         LIB_SYMBOL(OCILib.lib_handle, "OCILobCopy2", OCILobCopy2,
                    OCILOBCOPY2);
@@ -663,7 +681,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
         LIB_SYMBOL(OCILib.lib_handle, "OCILobWriteAppend2", OCILobWriteAppend2,
                    OCILOBWRITEAPPEND2);
 
-#endif
+  #endif
 
         LIB_SYMBOL(OCILib.lib_handle, "OCILobFileOpen", OCILobFileOpen,
                    OCILOBFILEOPEN);
@@ -1015,35 +1033,35 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
     if (res == TRUE)
     {
 
-#if defined(OCI_BIG_UINT_ENABLED)
+  #if defined(OCI_BIG_UINT_ENABLED)
 
         if ((OCILib.version_runtime >= OCI_10_1) && (OCILobCopy2 != NULL))
         {
             OCILib.use_lob_ub8 = TRUE;
         }
 
-#endif
+  #endif
 
-#if defined(OCI_STMT_SCROLLABLE_READONLY)
+  #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
         if ((OCILib.version_runtime >= OCI_9_0) && (OCIStmtFetch2 != NULL))
         {
             OCILib.use_scrollable_cursors = TRUE;
         }
 
-#endif
+  #endif
 
     }
 
 #endif
 
-#if defined(OCI_CHARSET_UNICODE)
+#if defined(OCI_CHARSET_WIDE)
 
     /* Oracle 8i does not support full Unicode mode */
 
     if ((res == TRUE) && (OCILib.version_runtime < OCI_9_0))
     {
-        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_UNICODE_USERDATA);
+        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_WIDE_USERDATA);
 
         res = FALSE;
     }
@@ -1095,7 +1113,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
         /* create thread key for thread errors */
 
         OCILib.key_errs  = OCI_ThreadKeyCreateInternal((POCI_THREADKEYDEST) OCI_ErrorFree);
-
+    
         /* allocate connections internal list */
 
         if (res == TRUE)
@@ -1114,7 +1132,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
             res = (OCILib.pools != NULL);
         }
-
+       
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
         /* allocate connection pools internal list */
@@ -1126,8 +1144,15 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 
             res = (OCILib.subs != NULL);
         }
-#endif
+#endif 
 
+        if (res == TRUE)
+        {
+
+            OCILib.arrs = OCI_ListCreate(OCI_IPC_ARRAY);
+
+            res = (OCILib.arrs != NULL);
+        }
     }
 
     if (res == TRUE)
@@ -1143,6 +1168,11 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *home,
 boolean OCI_API OCI_Cleanup(void)
 {
     boolean res = TRUE;
+
+    /* free all arrays */
+
+    OCI_ListForEach(OCILib.arrs, (boolean (*)(void *)) OCI_ArrayClose);
+    OCI_ListClear(OCILib.arrs);
 
     /* free all subscriptions */
 
@@ -1359,9 +1389,9 @@ boolean OCI_API OCI_DatabaseStartup(const mtext *db,  const mtext *user,
         /* connect with prelim authenfication mode */
 
         con = OCI_ConnectionCreate(db, user, pwd, sess_mode | OCI_PRELIM_AUTH);
-
+    
         if (con != NULL)
-        {
+        {  
             if ((res == TRUE) && (spfile != NULL) && (spfile[0] != 0))
             {
                 void *ostr  = NULL;
@@ -1395,7 +1425,7 @@ boolean OCI_API OCI_DatabaseStartup(const mtext *db,  const mtext *user,
             OCI_CALL2
             (
                 res, con,
-
+                
                 OCIDBStartup(con->cxt, con->err, (OCIAdmin *) adm,
                              OCI_DEFAULT, start_flag)
             )
@@ -1494,7 +1524,7 @@ boolean OCI_API OCI_DatabaseShutdown(const mtext *db, const mtext *user,
         if ((con->trs != NULL) && (shut_flag == OCI_DB_SDF_ABORT))
         {
             OCI_TransactionFree(con->trs);
-
+           
             con->trs = NULL;
         }
 
@@ -1507,7 +1537,7 @@ boolean OCI_API OCI_DatabaseShutdown(const mtext *db, const mtext *user,
             OCI_CALL2
             (
                 res, con,
-
+                
                 OCIDBShutdown(con->cxt, con->err, (OCIAdmin *) NULL, shut_flag)
             )
         }
@@ -1522,29 +1552,29 @@ boolean OCI_API OCI_DatabaseShutdown(const mtext *db, const mtext *user,
 
             if (shut_mode & OCI_DB_SDM_CLOSE)
                 res = (res && OCI_ExecuteStmt(stmt, MT("ALTER DATABASE CLOSE NORMAL")));
-
+   
             /* unmount database */
-
+    
             if (shut_mode & OCI_DB_SDM_DISMOUNT)
                 res = (res && OCI_ExecuteStmt(stmt,MT( "ALTER DATABASE DISMOUNT")));
 
             OCI_StatementFree(stmt);
-
+      
             /* delete current transaction before the shutdown */
 
             if (con->trs != NULL)
             {
                 OCI_TransactionFree(con->trs);
-
+               
                 con->trs = NULL;
             }
 
             /* do the final shutdown if we are not in abort mode */
-
+        
             OCI_CALL2
             (
                 res, con,
-
+                
                 OCIDBShutdown(con->cxt, con->err, (OCIAdmin *) 0, OCI_DBSHUTDOWN_FINAL)
             )
         }
@@ -1574,40 +1604,3 @@ boolean OCI_API OCI_DatabaseShutdown(const mtext *db, const mtext *user,
 
     return res;
 }
-
-/* ------------------------------------------------------------------------ *
- * OCI_SetNullStringMode
- * ------------------------------------------------------------------------ */
-
-void OCI_API OCI_SetNullStringMode(unsigned int mode)
-{
-    OCILib.null_str_mode = (ub1) mode;
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_GetNullStringMode
- * ------------------------------------------------------------------------ */
-
-unsigned int OCI_API OCI_GetNullStringMode(void)
-{
-    return (unsigned int) OCILib.null_str_mode;
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_SetLengthStringMode
- * ------------------------------------------------------------------------ */
-
-void OCI_API OCI_SetStringLengthMode(unsigned int mode)
-{
-    OCILib.length_str_mode = (ub1) mode;
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_GetLengthStringMode
- * ------------------------------------------------------------------------ */
-
-unsigned int OCI_API OCI_GetStringLengthMode(void)
-{
-    return (unsigned int) OCILib.length_str_mode;
-}
-

@@ -8,7 +8,7 @@
    |                         DEMO SOURCE FILE                             |
    |                                                                      |
    +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
+   |                      Website : http://ocilib.net                     |
    +----------------------------------------------------------------------+
    |               Copyright (c) 2007-2010 Vincent ROGIER                 |
    +----------------------------------------------------------------------+
@@ -26,7 +26,7 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net             |
+   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
    +----------------------------------------------------------------------+
 */
 
@@ -68,6 +68,7 @@ void test_scrollable_cursor(void);
 void test_collection(void);
 void test_ref(void);
 void test_directpath(void);
+
 
 /* ocilib test functions array */
 
@@ -255,12 +256,12 @@ void print_version(void)
     if (OCI_GetCharsetMetaData() == OCI_CHAR_ANSI)
         print_text("MetaData  char type     : ANSI\n");
     else
-        print_text("MetaData  char type     : UNICODE\n");
+        print_text("MetaData  char type     : WIDE\n");
 
     if (OCI_GetCharsetUserData() == OCI_CHAR_ANSI)
         print_text("UserData  char type     : ANSI\n");
     else
-        print_text("UserData  char type     : UNICODE\n");
+        print_text("UserData  char type     : WIDE\n");
 
     print_text("\n>>>>> VERSIONS INFORMATION \n\n");
 
@@ -323,7 +324,7 @@ void create_tables(void)
 
     OCI_ExecuteStmt(st, MT("create table test_long_str(code int, content long)"));
 
-    OCI_ExecuteStmt(st, MT("create table test_lob(code int, content CLOB)"));
+    OCI_ExecuteStmt(st, MT("create table test_lob(code int, content clob)"));
 
     OCI_ExecuteStmt(st, MT("create table test_object(val test_t)"));
 
@@ -586,7 +587,7 @@ void test_bind2(void)
     /* lob */
     lob = OCI_LobCreate(cn, OCI_CLOB);
     sprint_dt(temp, SIZE_STR, DT("lob value00"));
-    OCI_LobWrite(lob, temp, (unsigned int) dtslen(temp)+1);
+    OCI_LobWrite(lob, temp, (unsigned int) dtslen(temp));
 
     /* file */
     file = OCI_FileCreate(cn, OCI_BFILE);
@@ -989,7 +990,7 @@ void test_describe(void)
 
             OCI_ColumnGetFullSQLType(col, str, SIZE_STR);
 
-#if defined(OCI_CHARSET_UNICODE)
+#if defined(OCI_CHARSET_WIDE)
   #if !defined(_WINDOWS)
             printf("%-20ls%-8ls%-30ls\n",
   #else
@@ -1025,7 +1026,7 @@ void test_describe(void)
 
             OCI_ColumnGetFullSQLType(col, str, SIZE_STR);
 
-#if defined(OCI_CHARSET_UNICODE)
+#if defined(OCI_CHARSET_WIDE)
   #if !defined(_WINDOWS)
             printf("%-20ls%-30ls\n",
   #else
@@ -1092,9 +1093,10 @@ void test_returning_array(void)
     int       tab_int [SIZE_TAB];
     dtext     tab_str [SIZE_TAB][31];
     double    tab_flt [SIZE_TAB];
-    OCI_Date* tab_date[SIZE_TAB];
-    OCI_Lob*  tab_lob [SIZE_TAB];
-    OCI_File* tab_file[SIZE_TAB];
+
+    OCI_Date  **tab_date = OCI_DateArrayCreate(cn, SIZE_TAB);
+    OCI_Lob   **tab_lob  = OCI_LobArrayCreate(cn,  OCI_CLOB, SIZE_TAB);
+    OCI_File  **tab_file = OCI_FileArrayCreate(cn, OCI_BFILE, SIZE_TAB);
 
     print_text("\n>>>>> TEST ARRAY BINDING WITH RETURNING CLAUSE \n\n");
 
@@ -1155,16 +1157,13 @@ void test_returning_array(void)
         sprint_dt(tab_str[i], 30, DT("Name%02i"), i+1);
 
         /* date */
-        tab_date[i] = OCI_DateCreate(cn);
         OCI_DateSysDate(tab_date[i]);
 
         /* lob */
-        tab_lob[i] = OCI_LobCreate(cn, OCI_CLOB);
         sprint_dt(temp, SIZE_STR, DT("lob value%02i"), i+1);
-        OCI_LobWrite(tab_lob[i], temp, (unsigned int) dtslen(temp)+1);
+        OCI_LobWrite(tab_lob[i], temp, (unsigned int) dtslen(temp));
 
         /* file */
-        tab_file[i] = OCI_FileCreate(cn, OCI_BFILE);
         sprint_mt(str, SIZE_STR, MT("file%02i.txt"), i+1);
         OCI_FileSetName(tab_file[i], MT("mydir"), str);
     }
@@ -1175,12 +1174,9 @@ void test_returning_array(void)
 
     /* free objects */
 
-    for(i=0;i<SIZE_TAB;i++)
-    {
-        OCI_DateFree(tab_date[i]);
-        OCI_LobFree(tab_lob[i]);
-        OCI_FileFree(tab_file[i]);
-    }
+    OCI_DateArrayFree(tab_date);
+    OCI_LobArrayFree(tab_lob);
+    OCI_FileArrayFree(tab_file);
 
     /* Get back data  from the returning clause
        Obviously, each entry of the array will return a resultset containing
@@ -1326,7 +1322,7 @@ void test_object_fetch(void)
 
         temp[OCI_LobRead(lob, temp, SIZE_STR)]=0;
 
-        print_text("val_clob       : "); print_dstr(temp);
+        print_text("val_lob        : "); print_dstr(temp);
         print_text("\n");
 
         file = OCI_ObjectGetFile(obj, MT("VAL_FILE"));
@@ -1565,6 +1561,7 @@ void test_directpath(void)
       match
    */
 
+   // return;
    if (OCI_VER_MAJ(OCI_GetOCIRuntimeVersion()) == OCI_GetServerMajorVersion(cn))
    {
         OCI_DirPath *dp;
@@ -1656,3 +1653,4 @@ void test_directpath(void)
         OCI_DirPathFree(dp);
    }
 }
+

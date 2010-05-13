@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: statement.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -512,6 +512,9 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         {
             nbelem   = stmt->nb_iters;
             is_array = stmt->bind_array;
+
+            if (nbelem < stmt->nb_iters_init)
+                nbelem = stmt->nb_iters_init;
         }
     }
 
@@ -647,6 +650,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         bnd->code      = (ub2) code;
         bnd->subtype   = (ub1) subtype;
         bnd->is_array  = is_array;
+        bnd->csfrm     = OCI_CSF_NONE;
 
         if (bnd->name == NULL)
         {
@@ -737,70 +741,69 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
                                (dvoid *) bnd, OCI_ProcOutBind)
             )
         }
+    }
+    
+    /* set charset form */
 
-        /* setup national charset from flag if needed */
+    if ((bnd->type == OCI_CDT_LOB) && (bnd->subtype == OCI_NCLOB))
+    {
+        ub1 csfrm = SQLCS_NCHAR;
 
-        if (
-            (
-                (bnd->type    == OCI_CDT_LOB) &&
-                (bnd->subtype == OCI_NCLOB)
-            )
-#ifdef OCI_USERDATA_UNICODE
-            ||
-            (
-                (bnd->type          == OCI_CDT_TEXT)             &&
-                (OCI_GetVersionConnection(stmt->con) >= OCI_9_0) &&
-                (bnd->buf.lens      == NULL)
-            )
-#endif
-           )
-        {
-            ub1 csfrm = SQLCS_NCHAR;
+        OCI_CALL1
+        (
+            res, bnd->stmt->con, bnd->stmt,
 
-            OCI_CALL1
-            (
-                res, stmt->con, stmt,
+            OCIAttrSet((dvoid *) bnd->buf.handle,
+                       (ub4    ) OCI_HTYPE_BIND,
+                       (dvoid *) &csfrm,
+                       (ub4    ) sizeof(csfrm),
+                       (ub4    ) OCI_ATTR_CHARSET_FORM,
+                       bnd->stmt->con->err)
+        )
+    }
 
-                OCIAttrSet((dvoid *) bnd->buf.handle, (ub4) OCI_HTYPE_BIND,
-                           (dvoid *) &csfrm, (ub4) sizeof(csfrm),
-                           (ub4) OCI_ATTR_CHARSET_FORM,  bnd->stmt->con->err)
-            )
-        }
+    /* set charset ID */
 
+    if ((bnd->type == OCI_CDT_TEXT)  || 
+       ((bnd->type == OCI_CDT_LOB)   && (bnd->subtype != OCI_BLOB))  ||
+       ((bnd->type == OCI_CDT_LONG)  && (bnd->subtype != OCI_BLONG)))
+    {
 
-        if (bnd->type == OCI_CDT_TEXT)
-        {
-            OCI_CALL1
-            (
-                res, stmt->con, stmt,
+     #ifdef OCI_CHARSET_MIXED
 
-                OCIAttrSet((dvoid *) bnd->buf.handle, (ub4) OCI_HTYPE_BIND,
-                           (dvoid *) &bnd->size, (ub4) sizeof(bnd->size),
-                           (ub4) OCI_ATTR_MAXDATA_SIZE,  bnd->stmt->con->err)
-            )
-        }
-
-#ifdef OCI_CHARSET_MIXED
-
-        /* setup Unicode mode for user data in mixed builds */
-
+        /* setup Unicode mode for user data on mixed builds */
         {
             ub2 csid = OCI_UTF16ID;
 
             OCI_CALL1
             (
-                res, stmt->con, stmt,
+                res, bnd->stmt->con, bnd->stmt,
 
-                OCIAttrSet((dvoid *) bnd->buf.handle, (ub4) OCI_HTYPE_BIND,
-                           (dvoid *) &csid,  (ub4) sizeof(csid),
-                           (ub4) OCI_ATTR_CHARSET_ID,  stmt->con->err)
+                OCIAttrSet((dvoid *) bnd->buf.handle,
+                           (ub4    ) OCI_HTYPE_BIND,
+                           (dvoid *) &csid,
+                           (ub4    ) sizeof(csid),
+                           (ub4    ) OCI_ATTR_CHARSET_ID,
+                           bnd->stmt->con->err)
             )
         }
 
-#endif
+    #endif
 
     }
+/*
+    if (bnd->type == OCI_CDT_TEXT)
+    {
+        OCI_CALL1
+        (
+            res, stmt->con, stmt,
 
+            OCIAttrSet((dvoid *) bnd->buf.handle, (ub4) OCI_HTYPE_BIND,
+                       (dvoid *) &bnd->size, (ub4) sizeof(bnd->size),
+                       (ub4) OCI_ATTR_MAXDATA_SIZE,  bnd->stmt->con->err)
+        )
+    }
+*/
     /* on success, we :
          - add the bind handle to the bind array
          - add the bind index to the map
@@ -1231,14 +1234,14 @@ boolean OCI_StatementReset(OCI_Statement *stmt)
 
     OCI_FREE(stmt->sql);
 
-    stmt->rsts          = NULL;
-    stmt->sql           = NULL;
-    stmt->map           = NULL;
-    stmt->batch         = NULL;
+    stmt->rsts        = NULL;
+    stmt->sql         = NULL;
+    stmt->map         = NULL;
+    stmt->batch       = NULL;
 
-    stmt->status        = OCI_STMT_CLOSED;
-    stmt->type          = OCI_UNKNOWN;
-    stmt->bind_array    = FALSE;
+    stmt->status      = OCI_STMT_CLOSED;
+    stmt->type        = OCI_UNKNOWN;
+    stmt->bind_array  = FALSE;
 
     stmt->nb_iters      = 1;
     stmt->nb_iters_init = 0;
@@ -2125,20 +2128,8 @@ boolean OCI_API OCI_BindString(OCI_Statement *stmt, const mtext *name,
     if (len == 0 || len == UINT_MAX)
         len = (unsigned int) dtslen(data);
 
-    len++;
-
-    if (OCILib.length_str_mode == OCI_LSM_CHAR)
-    {
-        len *= (ub4) sizeof(odtext);
-    }
-    else
-    {
-        len /= (ub4) sizeof(dtext);
-        len *= (ub4) sizeof(odtext);
-    }
-
-    return OCI_BindData(stmt, data, len, name,  OCI_CDT_TEXT, SQLT_STR, 
-                        OCI_BIND_INPUT, 0, NULL, 0);
+    return OCI_BindData(stmt, data, (len + 1) * (ub4) sizeof(odtext), name,
+                        OCI_CDT_TEXT, SQLT_STR, OCI_BIND_INPUT, 0, NULL, 0);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -2153,20 +2144,8 @@ boolean OCI_API OCI_BindArrayOfStrings(OCI_Statement *stmt, const mtext *name,
 
     OCI_CHECK_MIN(stmt->con, stmt, len, 1, FALSE);
 
-    len++;
-
-    if (OCILib.length_str_mode == OCI_LSM_CHAR)
-    {
-        len *= (ub4) sizeof(odtext);
-    }
-    else
-    {
-        len /= (ub4) sizeof(dtext);
-        len *= (ub4) sizeof(odtext);
-    }
-
-    return OCI_BindData(stmt, data, len, name, OCI_CDT_TEXT, SQLT_STR, 
-                        OCI_BIND_INPUT, 0, NULL, nbelem);
+    return OCI_BindData(stmt, data, (len + 1) * (ub4) sizeof(odtext), name, 
+                        OCI_CDT_TEXT, SQLT_STR, OCI_BIND_INPUT, 0, NULL, nbelem);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -2630,10 +2609,8 @@ boolean OCI_API OCI_BindLong(OCI_Statement *stmt, const mtext *name,
     else
         code = SQLT_LBI;
 
-    if ((data->type == OCI_CLONG) && (OCILib.length_str_mode == OCI_LSM_CHAR))
-    {
-        size *= (unsigned int) sizeof(odtext);
-    }
+    if (data->type == OCI_CLONG)
+        size *= (unsigned int) sizeof(dtext);
 
     return OCI_BindData(stmt, data, size, name, OCI_CDT_LONG,
                         code, OCI_BIND_INPUT, data->type, NULL, 0);
@@ -2722,21 +2699,8 @@ boolean OCI_API OCI_RegisterString(OCI_Statement *stmt, const mtext *name,
 
     OCI_CHECK_MIN(stmt->con, stmt, len, 1, FALSE);
 
-    len++;
-
-    if (OCILib.length_str_mode == OCI_LSM_CHAR)
-    {
-        len *= (ub4) sizeof(odtext);
-    }
-    else
-    {
-        len /= (ub4) sizeof(dtext);
-        len *= (ub4) sizeof(odtext);
-    }
-
-
-    return OCI_BindData(stmt, NULL, len, name,  OCI_CDT_TEXT, SQLT_STR,
-                        OCI_BIND_OUTPUT, 0, NULL, 0);
+    return OCI_BindData(stmt, NULL, (len + 1) * (ub4) sizeof(odtext), name,
+                        OCI_CDT_TEXT, SQLT_STR, OCI_BIND_OUTPUT, 0, NULL, 0);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -3349,7 +3313,7 @@ const mtext * OCI_API OCI_GetSQLVerb(OCI_Statement *stmt)
         }
     }
 
-    return OCI_GET_NULL_MSTR(desc);
+    return desc;
 }
 
 /* ------------------------------------------------------------------------ *

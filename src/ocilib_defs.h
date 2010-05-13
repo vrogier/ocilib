@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: ocilib_defs.h, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -118,29 +118,27 @@
    The following checks find out the real types and sizes of omtext and odtext
 */
    
-#ifdef OCI_CHARSET_ANSI
+#if  defined (OCI_CHARSET_ANSI)
 
-  /* easy ! */
-  #define omtext mtext
-  #define odtext dtext
+  #define omtext         mtext
+  #define odtext         dtext
+
+#elif defined (OCI_CHARSET_UTF8)
+
+  #define omtext         mtext
+  #define odtext         dtext
 
 #else
 
-  #define WCHAR_2_BYTES 0xFFFF
-  #define WCHAR_4_BYTES 0x7FFFFFFF
-
-  /* 
-     Actually, the only need to use string conversion is when using wchar_t
-     on unixes systems. This test will probably change in future releases to
-     handle internally UTF8, by example
-  */
+  #define WCHAR_2_BYTES  0xFFFF
+  #define WCHAR_4_BYTES  0x7FFFFFFF
 
   #if WCHAR_MAX == WCHAR_4_BYTES
     /* so, input/output conversion will be needed */
     #define OCI_CHECK_STRINGS
   #endif
 
-  #ifdef OCI_METADATA_UNICODE
+  #ifdef OCI_METADATA_WIDE
 
     #ifdef OCI_CHECK_STRINGS
       /* conversion for meta string needed */
@@ -157,7 +155,7 @@
 
   #endif
 
-  #ifdef OCI_USERDATA_UNICODE
+  #ifdef OCI_USERDATA_WIDE
 
     #ifdef OCI_CHECK_STRINGS
       /* conversion for data string needed */
@@ -185,7 +183,7 @@
  * DEfault environnement mode
  * ------------------------------------------------------------------------ */
 
-#ifdef OCI_METADATA_UNICODE
+#ifdef OCI_METADATA_WIDE
     #define OCI_ENV_MODE    OCI_UTF16 
 #else
     #define OCI_ENV_MODE    OCI_DEFAULT
@@ -233,37 +231,38 @@
 #define OCI_IPC_DIRPATH          31
 #define OCI_IPC_NOTIFY           32
 #define OCI_IPC_EVENT            33
+#define OCI_IPC_ARRAY            34
 
 /* ---- Internal pointers ----- */
  
-#define OCI_IPC_LIST             34
-#define OCI_IPC_LIST_ITEM        35
-#define OCI_IPC_BIND_ARRAY       36
-#define OCI_IPC_DEFINE           37
-#define OCI_IPC_DEFINE_ARRAY     38
-#define OCI_IPC_HASHENTRY        39
-#define OCI_IPC_HASHENTRY_ARRAY  40
-#define OCI_IPC_HASHVALUE        41
-#define OCI_IPC_THREADKEY        42
-#define OCI_IPC_OCIDATE          43
-#define OCI_IPC_TM               44
-#define OCI_IPC_RESULTSET_ARRAY  45
-#define OCI_IPC_PLS_SIZE_ARRAY   46
-#define OCI_IPC_PLS_RCODE_ARRAY  47
-#define OCI_IPC_SERVER_OUPUT     48
-#define OCI_IPC_INDICATOR_ARRAY  49
-#define OCI_IPC_LEN_ARRAY        50
-#define OCI_IPC_BUFF_ARRAY       51
-#define OCI_IPC_LONG_BUFFER      52
-#define OCI_IPC_TRACE_INFO       53
-#define OCI_IPC_DP_COL_ARRAY     54
-#define OCI_IPC_BATCH_ERRORS     55
+#define OCI_IPC_LIST             35
+#define OCI_IPC_LIST_ITEM        36
+#define OCI_IPC_BIND_ARRAY       37
+#define OCI_IPC_DEFINE           38
+#define OCI_IPC_DEFINE_ARRAY     39
+#define OCI_IPC_HASHENTRY        40
+#define OCI_IPC_HASHENTRY_ARRAY  41
+#define OCI_IPC_HASHVALUE        42
+#define OCI_IPC_THREADKEY        43
+#define OCI_IPC_OCIDATE          44
+#define OCI_IPC_TM               45
+#define OCI_IPC_RESULTSET_ARRAY  46
+#define OCI_IPC_PLS_SIZE_ARRAY   47
+#define OCI_IPC_PLS_RCODE_ARRAY  48
+#define OCI_IPC_SERVER_OUPUT     49
+#define OCI_IPC_INDICATOR_ARRAY  50
+#define OCI_IPC_LEN_ARRAY        51
+#define OCI_IPC_BUFF_ARRAY       52
+#define OCI_IPC_LONG_BUFFER      53
+#define OCI_IPC_TRACE_INFO       54
+#define OCI_IPC_DP_COL_ARRAY     55
+#define OCI_IPC_BATCH_ERRORS     56
 
 /* ------------------------------------------------------------------------ *
  * Oracle conditionnal features 
  * ------------------------------------------------------------------------ */
 
-#define OCI_FEATURE_UNICODE_USERDATA    1
+#define OCI_FEATURE_WIDE_USERDATA       1
 #define OCI_FEATURE_TIMESTAMP           2
 #define OCI_FEATURE_DIRPATH_DATE_CACHE  3
 #define OCI_FEATURE_SCROLLABLE_CURSOR   4
@@ -301,6 +300,7 @@
 #define OCI_OBJECT_ALLOCATED            1
 #define OCI_OBJECT_FETCHED_CLEAN        2
 #define OCI_OBJECT_FETCHED_DIRTY        3
+#define OCI_OBJECT_ALLOCATED_ARRAY      4
 
 /* ------------------------------------------------------------------------ *
  * bind type
@@ -347,21 +347,6 @@
 #define OCI_DDT_OTHERS                  4
 
 /* ------------------------------------------------------------------------ *
- * internal integer types
- * ------------------------------------------------------------------------ */
-
-#define OCI_NUM_UNSIGNED               2
-#define OCI_NUM_SHORT                  4
-#define OCI_NUM_INT                    8
-#define OCI_NUM_BIGINT                 16
-#define OCI_NUM_NUMBER                 32
-#define OCI_NUM_DOUBLE                 64
-
-#define OCI_NUM_USHORT                 (OCI_NUM_SHORT  | OCI_NUM_UNSIGNED)
-#define OCI_NUM_UINT                   (OCI_NUM_INT    | OCI_NUM_UNSIGNED)
-#define OCI_NUM_BIGUINT                (OCI_NUM_BIGINT | OCI_NUM_UNSIGNED)
-
-/* ------------------------------------------------------------------------ *
  *  output buffer server line size
  * ------------------------------------------------------------------------ */
 
@@ -372,7 +357,7 @@
  *  string functions mapping
  * ------------------------------------------------------------------------ */
 
-#ifdef OCI_METADATA_UNICODE
+#ifdef OCI_METADATA_WIDE
   #define mttoupper           towupper
   #define mtisdigit           iswdigit
   #define mtsscanf            swscanf
@@ -407,12 +392,14 @@
 #define UNI_SUR_LOW_START     ((unsigned int) 0xDC00)
 #define UNI_SUR_LOW_END       ((unsigned int) 0xDFFF)
 
-#define CVT_SRC_ILLEGAL		  0
-#define CVT_SRC_EXHAUSTED	  -1
-#define CVT_DST_EXHAUSTED	  -2	
+#define CVT_SRC_ILLEGAL         0
+#define CVT_SRC_EXHAUSTED      -1
+#define CVT_DST_EXHAUSTED      -2
 
-#define CVT_STRICT	          0
-#define CVT_LENIENT           1
+#define CVT_STRICT              0
+#define CVT_LENIENT             1
+
+#define UTF8_BYTES_PER_CHAR     4
 
 /* ------------------------------------------------------------------------ *
  * Local helper macros
@@ -463,20 +450,19 @@
 
 #define OCI_ERR_MSG_SIZE                512
 
-#define DEF_ALIGN sizeof(size_t)
+#define OCI_DEF_ALIGN                   sizeof(size_t)
 
-#define ROUNDUP(amount) (((unsigned long)(amount)+((DEF_ALIGN)-1))&~((DEF_ALIGN)-1))
+#define ROUNDUP(amount)                                                        \
+                                                                               \
+    (((unsigned long)(amount)+((OCI_DEF_ALIGN)-1))&~((OCI_DEF_ALIGN)-1))
 
 #define OCI_SIZEOF_NUMBER               22
 #define OCI_SIZEOF_DATE                 7
 
-#define  OCI_GET_NULL_MSTR(s)                                                  \
-                                                                               \
-    ((s) ? (s) : ((OCILib.null_str_mode == OCI_NSM_EMPTY) ? MT("") : NULL))
 
-#define  OCI_GET_NULL_DSTR(s)                                                  \
-                                                                               \
-    ((s) ? (s) : ((OCILib.null_str_mode == OCI_NSM_EMPTY) ? DT("") : NULL))
+
+#define msizeof(s) (sizeof(s) / sizeof(mtext))
+#define dsizeof(s) (sizeof(s) / sizeof(dtext))
 
 
 #endif    /* OCILIB_OCILIB_DEFS_H_INCLUDED */

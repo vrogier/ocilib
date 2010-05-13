@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: memory.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: memory.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -232,7 +232,7 @@ sword OCI_DescriptorArrayFree(dvoid **descp, CONST ub4 type, ub4 nb_elem)
 
             for(i = 0; (i < nb_elem) && (ret == OCI_SUCCESS); i++)
             {
-                ret = OCIDescriptorFree(&descp[i], type);
+                ret = OCIDescriptorFree(descp[i], type);
             }
         }
 

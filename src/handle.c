@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: handle.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: handle.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -272,7 +272,7 @@ const void * OCI_API OCI_HandleGetThread(OCI_Thread *thread)
  * OCI_HandleGetDirPathCtx
  * ------------------------------------------------------------------------ */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathCtx(OCI_DirPath *dp)
+const void * OCI_API OCI_HandleGetDirPathCtx(OCI_DirPath *dp)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
 
@@ -285,7 +285,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathCtx(OCI_DirPath *dp)
  * OCI_HandleGetDirPathColArray
  * ------------------------------------------------------------------------ */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathColArray(OCI_DirPath *dp)
+const void * OCI_API OCI_HandleGetDirPathColArray(OCI_DirPath *dp)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
 
@@ -298,7 +298,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathColArray(OCI_DirPath *dp)
  * OCI_HandleGetDirPathStream
  * ------------------------------------------------------------------------ */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream(OCI_DirPath *dp)
+const void * OCI_API OCI_HandleGetDirPathStream(OCI_DirPath *dp)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
 
@@ -311,7 +311,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream(OCI_DirPath *dp)
  * OCI_HandleGetSubscription
  * ------------------------------------------------------------------------ */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription(OCI_Subscription *sub)
+const void * OCI_API OCI_HandleGetSubscription(OCI_Subscription *sub)
 {
     OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, NULL);
 

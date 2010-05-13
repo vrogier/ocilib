@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: error.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: error.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -131,9 +131,9 @@ OCI_Error * OCI_ErrorGet(boolean check, boolean warning)
 
 const mtext * OCI_API OCI_ErrorGetString(OCI_Error *err)
 {
-    OCI_CHECK(err == NULL, OCI_GET_NULL_MSTR(NULL));
+    OCI_CHECK(err == NULL, NULL);
 
-    return OCI_GET_NULL_MSTR(err->str);
+    return err->str;
 }
 
 /* ------------------------------------------------------------------------ *

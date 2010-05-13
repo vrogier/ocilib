@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib.h, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: ocilib.h, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,11 +59,11 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.6.0 (2010-03-08)</b>
+ * <b>Current version : 3.6.0 (2010-05-18)</b>
  *
  * @section s_feats Main features
  *
- * - Full Ansi and Unicode support on all platforms
+ * - Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
  * - Builtin error handling (global and thread context)
  * - Support for ALL Oracle SQL and PL/SQL datatypes (scalars, objects, refs, collections, ..)
  * - Support for non scalar datatype with trough library objects
@@ -174,24 +174,28 @@ extern "C" {
  *
  * OCILIB supports the following global build options:
  *
- * => Oracle import:
+ * => Oracle import modes
  *
- *     - OCI_IMPORT_LINKAGE for linkage at compile time <b>(default on unixes)</b>
- *     - OCI_IMPORT_RUNTIME for runtime loading <b>(default with prebuilt
- *        OCILIB libraries on MS Windows)</b>
+ *     - OCI_IMPORT_LINKAGE for linkage at compile time (default on Unix systems)
+ *     - OCI_IMPORT_RUNTIME for runtime loading (default with prebuilt OCILIB libraries on MS Windows)
+
  *
- * => Oracle charset
+ * => Oracle charset modes 
  *
- *     - OCI_CHARSET_ANSI for ANSI <b>(default)</b>
- *     - OCI_CHARSET_UNICODE for Unicode
- *     - OCI_CHARSET_MIXED (ANSI for metadata, Unicode for user data)
+ *     - OCI_CHARSET_ANSI  : ANSI strings (default)
+ *     - OCI_CHARSET_WIDE  : wide strings using ISO C wide character
+ *     - OCI_CHARSET_MIXED : ANSI for meta data and wide characters for user data
+ *     - OCI_CHARSET_UFT8  : UFT8 strings 
+ * 
+ * From v3.6.0, OCI_CHARSET_WIDE replaces OCI_CHARSET_UNICODE
+ * OCI_CHARSET_UNICODE remains a valid identifier for backward compatibility
  *
  * => Calling convention (WINDOWS ONLY)
- *
- *     - OCI_API = __cdecl or blank for C/C++ only ! <b>(default on unixes and 
- *                 non MSVC projects </b>
+*
+ *     - OCI_API = __cdecl or blank for C/C++ only ! (default on Unix systems and 
+ *                 non MSVC projects 
  *     - OCI_API = __stdcall to link OCILIB shared library with language
- *       independence <b>(default on MSVC projects)</b>
+ *       independence (default on MSVC projects)
  *
  * @note
  * On Windows, OCI_API MUST be set to __stdcall in order to use prebuilt libraries
@@ -213,7 +217,7 @@ extern "C" {
  *  - it must include the path where OCILIB has been installed
  *    (by example, typically /usr/local/lib under Linux)
  *
- * In order to get theses values loaded at logon time, export theses values in
+ * In order to get these values loaded at logon time, export these values in
  * your .profile configuration file :
  *  - > export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib:/usr/local/lib
  *
@@ -225,7 +229,7 @@ extern "C" {
  * List of available options:
  *
  *   - --with-oracle-import=(linkage|runtime)
- *   - --with-oracle-charset=(ansi|unicode|mixed)
+ *   - --with-oracle-charset=(ansi|wide|mixed) (old mode 'unicode' mapped to 'wide')
  *   - --with-oracle-home=(custom oracle regular client directory)
  *   - --with-oracle-headers-path=(oracle header files directory)
  *   - --with-oracle-lib-path=(oracle shared lib directory)
@@ -257,8 +261,9 @@ extern "C" {
  * - include "ocilib.h" in your application 
  * - Add the flag -I$USER_LIBS/include to your compiler
  * - Defines OCILIB modes:
- *    - OCI import  mode (-DOCI_IMPORT_LINKAGE or -DOCI_IMPORT_RUNTIME)
- *    - OCI charset mode (-DOCI_CHARSET_ANSI, or DOCI_IMPORT_UNICODE or -DOCI_CHARSET_MIXED)
+ *    - OCI import  mode (-DOCI_IMPORT_LINKAGE | -DOCI_IMPORT_RUNTIME)
+ *    - OCI charset mode (-DOCI_CHARSET_ANSI   | -DOCI_CHARSET_WIDE  | 
+*                         -DOCI_CHARSET_MIXED)
  * - Add the flag -L/$ORACLE_HOME/[lib|lib32|lib64] -lclntsh to the linker
  * - Add the flag -L$USER_LIBS/lib -locilib to the linker
  * 
@@ -267,7 +272,7 @@ extern "C" {
  * - $ORACLE_LIB_PATH is Oracle client shared library path
  *
  * Some older version of Oracle 8 have direct path API symbols located in the
- * library libclient8. With theses versions, you must include as well the
+ * library libclient8. With these versions, you must include as well the
  * linker flag -lclient8 to use Direct Path API.
  *
  * @par Installing and using OCILIB on Microsoft Windows
@@ -289,7 +294,8 @@ extern "C" {
  * 
  * - include "ocilib.h" in your application 
  * - define OCILIB call convention (OCI_API) to __stdcall
- * - define OCILIB charset mode (OCI_CHARSET_ANSI | OCI_CHARSET_MIXED| OCI_CHARSET_UNICODE)
+ * - define OCILIB charset mode (OCI_CHARSET_ANSI | OCI_CHARSET_MIXED| 
+ *                               OCI_CHARSET_WIDE | OCI_CHARSET_UFT8)
  *
  * Note for MinGW users:
  * - Precompiled 32bits static libraries libocilib[x].a are provided
@@ -336,15 +342,15 @@ extern "C" {
 #define OCI_IMPORT_MODE_RUNTIME  2
 
 #ifdef OCI_IMPORT_RUNTIME
-#undef OCI_IMPORT_LINKAGE
+  #undef OCI_IMPORT_LINKAGE
 #endif
 
 #ifdef OCI_IMPORT_LINKAGE
-#undef OCI_IMPORT_RUNTIME
+  #undef OCI_IMPORT_RUNTIME
 #endif
 
 #if !defined(OCI_IMPORT_RUNTIME) && !defined(OCI_IMPORT_LINKAGE)
-#define OCI_IMPORT_LINKAGE
+  #define OCI_IMPORT_LINKAGE
 #endif
 
 #ifdef OCI_IMPORT_RUNTIME
@@ -353,24 +359,29 @@ extern "C" {
   #define OCI_IMPORT_MODE OCI_IMPORT_MODE_LINKAGE
 #endif
 
-/* Charset mode */
+/* Charset modes */
 
-#ifdef OCI_CHARSET_UNICODE
-#undef OCI_CHARSET_ANSI
-#undef OCI_CHARSET_MIXED
+#ifdef  OCI_CHARSET_UNICODE
+  #define OCI_CHARSET_WIDE
+#endif
+
+#ifdef OCI_CHARSET_WIDE
+  #undef OCI_CHARSET_ANSI
+  #undef OCI_CHARSET_MIXED
 #endif
 
 #ifdef OCI_CHARSET_MIXED
-#undef OCI_CHARSET_ANSI
-#undef OCI_CHARSET_UNICODE
+  #undef OCI_CHARSET_ANSI
+  #undef OCI_CHARSET_WIDE
 #endif
 
 #ifdef OCI_CHARSET_ANSI
-#undef OCI_CHARSET_MIXED
-#undef OCI_CHARSET_UNICODE
+  #undef OCI_CHARSET_MIXED
+  #undef OCI_CHARSET_WIDE
 #endif
 
-#if !defined(OCI_CHARSET_ANSI) && !defined(OCI_CHARSET_MIXED) && !defined(OCI_CHARSET_UNICODE)
+#if !defined(OCI_CHARSET_ANSI)  && !defined(OCI_CHARSET_MIXED) && \
+    !defined(OCI_CHARSET_WIDE)
 #define OCI_CHARSET_ANSI
 #endif
 
@@ -410,6 +421,7 @@ extern "C" {
  * - ANSI (char)
  * - Unicode (wchar_t)
  * - Mixed charset: ANSI for metadata, Unicode for user data
+ * - UTF8 strings
  *
  * OCILIB uses two types of strings:
  *
@@ -426,28 +438,27 @@ extern "C" {
  *
  * @par Option OCI_CHARSET_ANSI
  *
- *  - dtext    -->    char
- *  - DT(x)    -->    x
+ *  - dtext	-->	char
+ *  - DT(x)	-->	x
  *
- *  - mtext    -->    char
- *  - MT(x)    -->    x
+ *  - mtext	-->	char
+ *  - MT(x)	-->	x
  *
- * @par Option OCI_CHARSET_UNICODE
+ * @par Option OCI_CHARSET_WIDE
  *
- *  - dtext    -->    wchar_t
- *  - DT(x)    -->    L ## x
+ *  - dtext	-->	wchar_t
+ *  - DT(x)	-->	L ## x
  *
- *  - mtext    -->    wchar_t
- *  - MT(x)    -->    L ## x
+ *  - mtext	-->	wchar_t
+ *  - MT(x)	-->	L ## x
  *
  * @par Option OCI_CHARSET_MIXED
  *
- *  - dtext    -->    wchar_t
- *  - DT(x)    -->    L ## x
+ *  - dtext	-->	wchar_t
+ *  - DT(x)	-->	L ## x
  *
- *  - mtext    -->    char
- *  - MT(x)    -->    x
- *
+ *  - mtext	-->	char
+ *  - MT(x)	-->	x
  *
  * @par Unicode and ISO C
  *
@@ -464,7 +475,7 @@ extern "C" {
  * So, on systems implementing wchar_t as 2 bytes based UTF16 (e.g. Ms Windows),
  * input strings are directly passed to Oracle and taken back from it.
  *
- * On other systems (most of the unixes) that use UTF32 as encoding
+ * On other systems (most of the Unix systems) that use UTF32 as encoding
  * (4 bytes based wchar_t), OCILIB uses:
  * - temporary buffers to pass string to OCI for metadata strings
  * - buffer expansion from UTF16 to UTF32 for user data string:
@@ -474,15 +485,20 @@ extern "C" {
  *
  * The buffer expansion is done in place and has the advantage of not requiring
  * extra buffer.
- * That reduces the cost of the Unicode/ISO C handling overhead on Unixes.
+ * That reduces the cost of the Unicode/ISO C handling overhead on Unix systems.
  *
+ * @par UTF8 strings
+ *
+ * From version 3.6.0, OCILIB fully supports UTF8 strings for all data in 
+ * OCI_CHARSET_ANSI mode if NLS_LANG environment variable is set to an valid
+ * UTF8 Oracle charset string
  *
  * @par Charset mapping macros
  *
  * OCILIB main header file provides macro around most common string functions of
  * the C standard library.
  *
- * Theses macros are based on the model:
+ * these macros are based on the model:
  *
  * - mtsxxx() for mtext * typed strings
  * - dtsxxx() for dtext * typed strings
@@ -506,14 +522,14 @@ extern "C" {
 
 /* Unicode mode */
 
-#ifdef OCI_CHARSET_UNICODE
-    #define OCI_METADATA_UNICODE
-    #define OCI_USERDATA_UNICODE
+#ifdef OCI_CHARSET_WIDE
+    #define OCI_METADATA_WIDE
+    #define OCI_USERDATA_WIDE
     #define OCI_INCLUDE_WCHAR
 #endif
 
 #ifdef OCI_CHARSET_MIXED
-    #define OCI_USERDATA_UNICODE
+    #define OCI_USERDATA_WIDE
     #define OCI_INCLUDE_WCHAR
 #endif
 
@@ -543,23 +559,23 @@ extern "C" {
 
 /* Charset macros */
 
-#define OCI_CHAR_ANSI     1
-#define OCI_CHAR_UNICODE  2
+#define OCI_CHAR_ANSI       1
+#define OCI_CHAR_WIDE       2
 
-#ifdef OCI_METADATA_UNICODE
+#ifdef OCI_METADATA_WIDE
   #define MT(x)           L ## x
   #define mtext           wchar_t
-  #define OCI_CHAR_MTEXT  OCI_CHAR_UNICODE
+  #define OCI_CHAR_MTEXT  OCI_CHAR_WIDE
 #else
   #define MT(x)           x
   #define mtext           char
   #define OCI_CHAR_MTEXT  OCI_CHAR_ANSI
 #endif
-
-#ifdef OCI_USERDATA_UNICODE
+  
+#ifdef OCI_USERDATA_WIDE 
   #define DT(x)           L ## x
   #define dtext           wchar_t
-  #define OCI_CHAR_DTEXT  OCI_CHAR_UNICODE
+  #define OCI_CHAR_DTEXT  OCI_CHAR_WIDE 
 #else
   #define DT(x)           x
   #define dtext           char
@@ -569,9 +585,8 @@ extern "C" {
 /*
    For ISO conformance, strdup/wcsdup/stricmp/strncasecmp are not used.
    All wide char routines are part of the 1995 Normative Addendum 1 to the
-   ISO C90 standard. These routines are not considered as part of the 
-   ISO C90 standard by OCILIB author.
-   OCILIB also weeds an ANSI equivalent to swprintf => ocisprintf
+   ISO C90 standard. 
+   OCILIB also needs an ANSI equivalent to swprintf => ocisprintf
    Thus OCILIB exports the following helper functions
 
 */
@@ -599,7 +614,7 @@ OCI_EXPORT int       ociwcscasecmp(const wchar_t *str1, const wchar_t *str2);
 
 /* helpers mapping macros */
 
-#ifdef OCI_METADATA_UNICODE
+#ifdef OCI_METADATA_WIDE
     #define mtsdup          ociwcsdup
     #define mtscpy          wcscpy
     #define mtsncpy         wcsncpy
@@ -623,7 +638,7 @@ OCI_EXPORT int       ociwcscasecmp(const wchar_t *str1, const wchar_t *str2);
     #define mtstol          strtol
 #endif
 
-#ifdef OCI_USERDATA_UNICODE
+#ifdef OCI_USERDATA_WIDE
     #define dtsdup          ociwcsdup
     #define dtscpy          wcscpy
     #define dtsncpy         wcsncpy
@@ -652,9 +667,6 @@ OCI_EXPORT int       ociwcscasecmp(const wchar_t *str1, const wchar_t *str2);
 
 #define mtextsize(s) (mtslen(s) * sizeof(mtext))
 #define dtextsize(s) (dtslen(s) * sizeof(dtext))
-
-#define msizeof(s) (sizeof(s) / sizeof(mtext))
-#define dsizeof(s) (sizeof(s) / sizeof(dtext))
 
 /**
  * @}
@@ -1097,10 +1109,10 @@ typedef void (*POCI_NOTIFY) (OCI_Event *event);
  */
 
 typedef struct OCI_XID {
-    long formatID;
-    long gtrid_length;
-    long bqual_length;
-    char data[128];
+	long formatID;
+	long gtrid_length;
+	long bqual_length;
+	char data[128];
 } OCI_XID;
 
 /**
@@ -1405,7 +1417,7 @@ typedef struct OCI_HashEntry {
 /* charset form types */
 
 #define OCI_CSF_NONE            0
-#define OCI_CSF_CHARSET         1
+#define OCI_CSF_DEFAULT         1
 #define OCI_CSF_NATIONAL        2
 
 /* statement fetch mode */
@@ -1418,15 +1430,19 @@ typedef struct OCI_HashEntry {
 #define OCI_SFD_ABSOLUTE        0x20
 #define OCI_SFD_RELATIVE        0x40
 
-/* null string mode */
 
-#define OCI_NSM_NULL            1
-#define OCI_NSM_EMPTY           2
+/* Integer types */
 
-/* length string mode */
+#define OCI_NUM_UNSIGNED               2
+#define OCI_NUM_SHORT                  4
+#define OCI_NUM_INT                    8
+#define OCI_NUM_BIGINT                 16
+#define OCI_NUM_NUMBER                 32
+#define OCI_NUM_DOUBLE                 64
 
-#define OCI_LSM_CHAR            1
-#define OCI_LSM_BYTE            2
+#define OCI_NUM_USHORT                 (OCI_NUM_SHORT  | OCI_NUM_UNSIGNED)
+#define OCI_NUM_UINT                   (OCI_NUM_INT    | OCI_NUM_UNSIGNED)
+#define OCI_NUM_BIGUINT                (OCI_NUM_BIGINT | OCI_NUM_UNSIGNED)
 
 
 /* timestamp types */
@@ -1682,7 +1698,7 @@ typedef struct OCI_HashEntry {
 #define OCI_SFC_CREATE_OUTLINE              180
 #define OCI_SFC_DROP_OUTLINE                181
 #define OCI_SFC_UPDATE_INDEXES              182
-#define OCI_SFC_ALTER_OPERATOR              183
+#define OCI_SFC_ALTER_OPERATOR              183                                    
 
 /**
  * @defgroup g_init Initializing the library
@@ -1733,9 +1749,9 @@ typedef struct OCI_HashEntry {
  * - It installs the error handler
  * - It loads the Oracle shared library located in the path pointed by 'home'
  *
- * @warning
+* @warning
  * The parameter 'home' is only used if OCILIB has been built with the option
- * OCI_IMPORT_RUNTIME (default on MS windows but NOT on Unixes
+ * OCI_IMPORT_RUNTIME (default on MS windows but NOT on Unix systems
  * 
  * @warning
  * If the parameter 'lib_path' is NULL, the Oracle library is loaded from system
@@ -1756,6 +1772,15 @@ OCI_EXPORT boolean OCI_API OCI_Initialize
     POCI_ERROR err_handler,
     const mtext *lib_path,
     unsigned int mode
+);
+
+OCI_EXPORT boolean OCI_API OCI_Initialize2
+(
+    POCI_ERROR err_handler,
+    const mtext *lib_path,
+    unsigned int mode,
+    unsigned int csid,
+    unsigned int ncsid
 );
 
 /**
@@ -1827,7 +1852,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetImportMode(void);
  * Possible values are:
  *
  * - OCI_CHAR_ANSI
- * - OCI_CHAR_UNICODE
+ * - OCI_CHAR_WIDE
  *
  */
 
@@ -1841,7 +1866,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetCharsetMetaData(void);
  * Possible values are:
  *
  * - OCI_CHAR_ANSI
- * - OCI_CHAR_UNICODE
+ * - OCI_CHAR_WIDE
  *
  */
 
@@ -1879,79 +1904,6 @@ OCI_EXPORT void OCI_API OCI_SetErrorHandler
 (
     POCI_ERROR handler
 );
-
-
-/**
- * @brief
- * Set the null string handling mode
- *
- * @param mode  - null string mode
- *
- * @note
- * This call allows to customize the way NULL strings
- * are returned to the application
- *
- * @note
- * Possible values for parameter mode :
- * - OCI_NSM_NULL  : value NULL (null string)  is returned
- * - OCI_NSM_EMPTY : value ""   (empty string) is returned
- *
- * @warning
- * Default value is OCI_NSM_NULL
- *
- */
-
-OCI_EXPORT void OCI_API OCI_SetNullStringMode
-(
-    unsigned int mode
-);
-
-/**
- * @brief
- * returns the null string handling mode
- *
- * @note
- * see OCI_SetNullStringMode() for possible values
- *
- */
-
-OCI_EXPORT unsigned int OCI_API OCI_GetNullStringMode(void);
-
-/**
- * @brief
- * Set the string lengths mode
- *
- * @param mode  - string lengths mode
- *
- * @note
- * This call allows to customize how strings lengths are computed 
- *
- * @note
- * Possible values for parameter mode :
- * - OCI_LSM_CHAR : length expressed in characters (or codepoints)
- * - OCI_LSM_BYTE : length expressed in bytes
- *
- * @warning
- * Default value is OCI_LSM_CHAR
- *
- */
-
-OCI_EXPORT void OCI_API OCI_SetStringLengthMode
-(   
-    unsigned int mode
-);
-
-/**
- * @brief
- * returns the string lengths mode
- *
- * @note
- * see OCI_SetStringLengthMode() for possible values
- *
- */
-
-OCI_EXPORT unsigned int OCI_API OCI_GetStringLengthMode(void);
-
 
 /**
  * @}
@@ -2783,7 +2735,7 @@ OCI_EXPORT boolean OCI_API OCI_ConnPoolSetTimeout
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ConnPoolGetNoWait
+OCI_EXPORT boolean OCI_API OCI_ConnPoolGetGetNoWait
 (
     OCI_ConnPool *pool
 );
@@ -3788,10 +3740,8 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedBigInts
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - String to bind
- * @param len  - Max length of the string (in character/bytes depending
- *               on the current string length mode (see 
- *               OCI_SetStringLengthMode()) without the zero null
- *               terminal character)
+ * @param len  - Max length of the string (in character without
+ *               the zero null terminal character)
  *
  * @note
  * if len == 0, len is set to the string size
@@ -3815,10 +3765,9 @@ OCI_EXPORT boolean OCI_API OCI_BindString
  * @param stmt   - Statement handle
  * @param name   - Variable name
  * @param data   - Array of string
- * @param len    - Max length of a single string element (in character/bytes 
- *                 depending on the current string length mode (see 
- *                 OCI_SetStringLengthMode()) without the zero null
- *                 terminal character)
+ * @param len    - Max length of a single string element (in character without
+ *                 the zero null terminal character)
+ * @param nbelem - Number of element in the array
  * @param nbelem - Number of element in the array (PL/SQL table only)
  *
  * @warning
@@ -4360,8 +4309,7 @@ OCI_EXPORT boolean OCI_API OCI_BindStatement
  * @note
  * Size is expressed in:
  * - Bytes for BLONGs
- * - Characters or bytes for CLONGs depending on the current
- *   string length mode (see OCI_SetStringLengthMode())
+ * - Characters for CLONGs
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4581,9 +4529,8 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement
  * even if it's not necessary.
  *
  * @warning
- * For string binds, the parameter 'size' is expressed in number of characters
- * or bytes depending on the current string length mode
- * (see OCI_SetStringLengthMode())
+ * For binds of type OCI_CDT_TEXT (strings), the parameter 'size' is expressed in 
+ * number of characters.
  *
  * @return
  * Data size if the bind type is listed above otherwise 0.
@@ -4614,9 +4561,8 @@ OCI_EXPORT boolean OCI_API OCI_BindSetDataSize
  * After execution, it returns the real data size.
  *
  * @warning
- * For string binds, the parameter 'size' is expressed in number of characters
- * or bytes depending on the current string length mode
- * (see OCI_SetStringLengthMode())
+ * For binds of type OCI_CDT_TEXT (strings), the parameter 'size' is expressed in 
+ * number of characters.
  *
  * @return
  * Data size if the bind type is listed above otherwise 0.
@@ -4640,9 +4586,8 @@ OCI_EXPORT boolean OCI_API OCI_BindSetDataSizeAtPos
  * See OCI_BindSetDataSize() for supported datatypes
  *
  * @warning
- * For string binds, the returned value is expressed in number of characters
- * or bytes depending on the current string length mode
- * (see OCI_SetStringLengthMode())
+ * For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in 
+ * number of characters.
  *
  */
 
@@ -4663,9 +4608,8 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetDataSize
  * See OCI_BindSetDataSize() for supported datatypes
  *
  * @warning
- * For string binds, the returned value is expressed in number of characters
- * or bytes depending on the current string length mode
- * (see OCI_SetStringLengthMode())
+ * For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in 
+ * number of characters.
  *
  */
 
@@ -4757,6 +4701,7 @@ OCI_EXPORT boolean OCI_API OCI_BindIsNull
  *
  * @return
  * TRUE on success otherwise FALSE
+ *
  */
 
 OCI_EXPORT boolean OCI_API OCI_BindIsNullAtPos
@@ -4764,6 +4709,39 @@ OCI_EXPORT boolean OCI_API OCI_BindIsNullAtPos
     OCI_Bind *bnd, 
     unsigned int position
 );
+
+/**
+ * @brief
+ * Set the charset form of the given character based bind variable
+ *
+ * @param bnd   - Bind handle
+ * @param csfrm - charset form
+ *
+ * @note
+ * Possible values are :
+ *
+ * - OCI_CSF_DEFAULT : the column has default charset
+ * - OCI_CSF_NATIONAL: the column has national charset
+ *
+ * @note
+ * This call has to be made after OCI_Prepare() but before OCI_Execute()
+ *
+ * @warning
+ * This call does nothing :
+ *  - if the csform is out of range 
+ *  - if the bind type is not OCI_CFT_TEXT or OCI_CDT_LONG
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+boolean OCI_API OCI_BindSetCharsetForm
+(
+    OCI_Bind *bnd, 
+    unsigned int csfrm
+);
+
 
 /**
  * @}
@@ -5202,8 +5180,8 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetType
  * @note
  * Possible values are :
  * - OCI_CSF_NONE     : the column is not an character or lob column
- * - OCI_CSF_CHARSET: the column has server default charset
- * - OCI_CSF_NATIONAL: the column has national server charset
+ * - OCI_CSF_DEFAULT  : the column has server default charset
+ * - OCI_CSF_NATIONAL : the column has national server charset
  */
 
 OCI_EXPORT unsigned int OCI_API OCI_ColumnGetCharsetForm
@@ -5234,9 +5212,7 @@ OCI_EXPORT const mtext * OCI_API OCI_ColumnGetSQLType
  *
  * @param col    - Column handle
  * @param buffer - buffer to store the full column type name and size
- * @param len    - max size of the buffer in characters or bytes depending 
- *                 on the current string length mode 
- *                 (see OCI_SetStringLengthMode())
+ * @param len    - max size of the buffer in characters
  *
  * @note
  * This function returns a description that matches the one given by SQL*Plus
@@ -6292,7 +6268,7 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_ResultsetGetStatement
 
 /**
  * @brief
- * Return the current row data length in BYTES of the column at the given index
+ * Return the current row data length of the column at the given index
  * in the resultset
  *
  * @param rs    - Resultset handle
@@ -6302,7 +6278,7 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_ResultsetGetStatement
  * Column position starts at 1.
  *
  * @return
- * The column current row data length in BYTES or 0 if index is out of bounds
+ * The column current row data length or 0 if index is out of bounds
  *
  */
 
@@ -6368,10 +6344,6 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDataLength
  *
  * @note
  * 'lnsize' maximum value is 255 with Oracle < 10g R2 and 32767 above
- *
- * @warning
- * 'lnsize' is expressed bytes and is not affected by the current 
- * string length mode (see OCI_SetStringLengthMode())
  *
  * @warning
  * If OCI_ServerEnableOutput() is not called, OCI_ServerGetOutput() will return
@@ -6506,10 +6478,52 @@ OCI_EXPORT OCI_Coll * OCI_API OCI_CollCreate
  *
  */
 
-
 OCI_EXPORT boolean OCI_API OCI_CollFree
 (
    OCI_Coll *coll
+);
+
+/**
+ * @brief
+ * Create an array of Collection object
+ *
+ * @param con    - Connection handle
+ * @param typinf - Object type (type info handle)
+ * @param nbelem - number of elements in the array
+ *
+ * @note
+ * see OCI_ObjectCreate() for more details
+ *
+ * @return
+ * Return the Collection handle array on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT OCI_Coll ** OCI_API OCI_CollArrayCreate
+(
+    OCI_Connection *con,
+    OCI_TypeInfo *typinf,
+    unsigned int nbelem
+);
+
+/**
+ * @brief
+ * Free an arrray of Collection objects
+ *
+ * @param colls - Array of Collection objects    
+ *
+ * @warning
+ * Only arrays of Collection created with OCI_CollArrayCreate()
+ * should be freed by OCI_CollArrayFree()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_CollArrayFree
+(
+    OCI_Coll **colls
 );
 
 /**
@@ -8318,6 +8332,49 @@ OCI_EXPORT boolean OCI_API OCI_LobFree
 
 /**
  * @brief
+ * Create an array of lob object
+ *
+ * @param con    - Connection handle
+ * @param type   - Lob type
+ * @param nbelem - number of elements in the array
+ *
+ * @note
+ * see OCI_LobCreate() for more details
+ *
+ * @return
+ * Return the lob handle array on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT OCI_Lob ** OCI_API OCI_LobArrayCreate
+(
+    OCI_Connection *con,
+    unsigned int type,
+    unsigned int nbelem
+);
+
+ /**
+ * @brief
+ * Free an arrray of lob objects
+ *
+ * @param lobs - Array of lob objects
+ *
+ * @warning
+ * Only arrays of lobs created with OCI_LobArrayCreate() should be freed 
+ * by OCI_LobArrayFree()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_LobArrayFree
+(
+    OCI_Lob **lobs
+);
+
+/**
+ * @brief
  * Return the type of the given Lob object
  *
  * @param lob - Lob handle
@@ -8351,8 +8408,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LobGetType
  *                  characters given by parameter 'offset'
  *
  * @note
- * - For CLOB and CLOB, offset in characters or bytes depending on the current
- *   string length mode (see OCI_SetStringLengthMode())
+ * - For CLOB and CLOB, offset in in characters
  * - For BLOB and BFILE, offset is in bytes
  *
  * @note
@@ -8387,7 +8443,7 @@ OCI_EXPORT big_uint OCI_API OCI_LobGetOffset
 
 /**
  * @brief
- * Read a portion of a lob into the given buffer
+ * [OBSOLETE] Read a portion of a lob into the given buffer
  *
  * @param lob    - Lob handle
  * @param buffer - Pointer to a buffer
@@ -8396,8 +8452,10 @@ OCI_EXPORT big_uint OCI_API OCI_LobGetOffset
  * @note
  * Length is expressed in :
  * - Bytes for BLOBs
- * - Characters or bytes for CLOBs/NCLOBS depending on the current
- *   string length mode (see OCI_SetStringLengthMode())
+ * - Characters for CLOBs/NCLOBS
+ *
+ * @warning
+ * This call is obsolete ! Use OCI_LobRead2() instead.
  *
  * @return
  * Number of bytes/characters read on success otherwise 0 on failure
@@ -8413,7 +8471,40 @@ OCI_EXPORT unsigned int OCI_API OCI_LobRead
 
 /**
  * @brief
- * Write a buffer into a LOB
+ * Read a portion of a lob into the given buffer
+ *
+ * @param lob        - Lob handle
+ * @param buffer     - Pointer to a buffer
+ * @param char_count - [in/out] Pointer to maximum number of characters 
+ * @param byte_count - [in/out] Pointer to maximum number of bytes
+ *
+ * @note 
+ * In input,  'char_count' and 'byte_count' are values to read into the buffer
+ * In output, 'char_count' and 'byte_count' are values read into the buffer
+ * 
+ * @note 
+ * For BLOBs, only the parameter 'byte_count' is used
+ * For CLOBs, both parameters can be used :
+ * In input :
+ *  - if 'byte_count' is set to zero, it is computed from 'char_count'
+ *  - if 'char_count' is set to zero, it is computed from 'byte_count'
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_LobRead2
+(
+    OCI_Lob *lob,
+    void *buffer,
+    unsigned int *char_count,
+    unsigned int *byte_count
+);
+
+/**
+ * @brief
+ * [OBSOLETE] Write a buffer into a LOB 
  *
  * @param lob    - Lob handle
  * @param buffer - Pointer to a buffer
@@ -8422,8 +8513,10 @@ OCI_EXPORT unsigned int OCI_API OCI_LobRead
  * @note
  * Length is expressed in :
  * - Bytes for BLOBs
- * - Characters or bytes for CLOBs/NCLOBs depending on the current
- *   string length mode (see OCI_SetStringLengthMode())
+ * - Characters for CLOBs/NCLOBs
+ *
+ * @warning
+ * This call is obsolete ! Use OCI_LobWrite2() instead.
  *
  * @return
  * Number of bytes / characters written on success otherwise 0 on failure
@@ -8439,6 +8532,40 @@ OCI_EXPORT unsigned int OCI_API OCI_LobWrite
 
 /**
  * @brief
+ * Write a buffer into a LOB 
+ *
+ * @param lob        - Lob handle
+ * @param buffer     - Pointer to a buffer
+ * @param char_count - [in/out] Pointer to maximum number of characters 
+ * @param byte_count - [in/out] Pointer to maximum number of bytes
+ *
+ * @note 
+ * In input,  'char_count' and 'byte_count' are values to write from the buffer
+ * In output, 'char_count' and 'byte_count' are values written from the buffer
+ * 
+ * @note 
+ * For BLOBs, only the parameter 'byte_count' is used
+ * For CLOBs, both parameters can be used :
+ * In input :
+ *  - if 'byte_count' is set to zero, it is computed from 'char_count'
+ *  - if 'char_count' is set to zero, it is computed from 'byte_count'
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+
+OCI_EXPORT boolean OCI_API OCI_LobWrite2
+(
+    OCI_Lob *lob,
+    void *buffer,
+    unsigned int *char_count,
+    unsigned int *byte_count
+);
+
+/**
+ * @brief
  * Truncate the given lob to a shorter length
  *
  * @param lob  - Lob handle
@@ -8447,8 +8574,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LobWrite
  * @note
  * Length is expressed in :
  * - Bytes for BLOBs
- * - Characters or bytes for CLOBs/NCLOBs depending on the current
- *   string length mode (see OCI_SetStringLengthMode())
+ * - Characters for CLOBs/NCLOBs
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -8468,10 +8594,7 @@ OCI_EXPORT boolean OCI_API OCI_LobTruncate
  * @param lob - Lob handle
  *
  * @note
- * The returned value is a number of :
- * - bytes for BLOBS
- * - characters or bytes for CLOBS/NCLOBs depending on the current
- *   string length mode (see OCI_SetStringLengthMode())
+ * The returned value is in bytes for BLOBS and characters for CLOBS/NCLOBs
  *
  */
 
@@ -8493,10 +8616,7 @@ OCI_EXPORT big_uint OCI_API OCI_LobGetLength
  * read or write requests using a multiple of this chunk size
  *
  * @note
- * The returned value is a number of :
- * - bytes for BLOBS
- * - characters or bytes for CLOBS/NCLOBs depending on the current
- *   string length mode (see OCI_SetStringLengthMode())
+ * The returned value is in bytes for BLOBS and characters for CLOBS/NCLOBs
  *
  */
 
@@ -8517,9 +8637,8 @@ OCI_EXPORT unsigned int OCI_API OCI_LobGetChunkSize
  * Absolute position starts at 1.
  *
  * @return
- * Number of bytes for BLOBs or characters/bytes for CLOBs/NCLOBs
- * (depending on the current string length mode - see
- * OCI_SetStringLengthMode()) erased on success otherwise 0 on failure
+ * Number of bytes (BLOB) or characters (CLOB/NCLOB) erased on success
+ * otherwise 0 on failure
  *
  */
 
@@ -8541,8 +8660,7 @@ OCI_EXPORT big_uint OCI_API OCI_LobErase
  * @note
  * Length is expressed in :
  * - Bytes for BLOBs
- * - Characters or bytes for CLOBs depending on the current
- *   string length mode (see OCI_SetStringLengthMode())
+ * - Characters for CLOBs
  *
  * @return
  * Number of bytes / characters written on success otherwise 0 on failure
@@ -8554,6 +8672,40 @@ OCI_EXPORT unsigned int OCI_API OCI_LobAppend
     OCI_Lob *lob,
     void *buffer,
     unsigned int len
+);
+
+/**
+ * @brief
+ * Append a buffer at the end of a LOB
+ *
+ * @param lob        - Lob handle
+ * @param buffer     - Pointer to a buffer
+ * @param char_count - [in/out] Pointer to maximum number of characters 
+ * @param byte_count - [in/out] Pointer to maximum number of bytes
+ *
+ * @note 
+ * In input,  'char_count' and 'byte_count' are values to write from the buffer
+ * In output, 'char_count' and 'byte_count' are values written from the buffer
+ * 
+ * @note 
+ * For BLOBs, only the parameter 'byte_count' is used
+ * For CLOBs, both parameters can be used :
+ * In input :
+ *  - if 'byte_count' is set to zero, it is computed from 'char_count'
+ *  - if 'char_count' is set to zero, it is computed from 'byte_count'
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+
+OCI_EXPORT boolean OCI_API OCI_LobAppend2
+(
+    OCI_Lob *lob,
+    void *buffer,
+    unsigned int *char_count,
+    unsigned int *byte_count
 );
 
 /**
@@ -8602,8 +8754,7 @@ OCI_EXPORT boolean OCI_API OCI_LobIsTemporary
  *
  * @note
  * For character LOB (CLOB/NCLOBS) the parameters count, offset_dst and
- * offset_src are expressed in characters or bytes depending on the current
- * string length mode (see OCI_SetStringLengthMode())
+ * offset_src are expressed in characters and not in bytes.
  *
  * @note
  * Absolute position starts at 1.
@@ -8630,9 +8781,8 @@ OCI_EXPORT boolean OCI_API OCI_LobCopy
  * @param count      - Number of bytes to copy
  *
  * @note
- * - For character LOB (CLOB/NCLOB) the parameter offset_dst are expressed in
- *   characters or bytes depending on the current
- *   string length mode (see OCI_SetStringLengthMode())
+ * - For character LOB (CLOB/NCLOB) the parameter offset_src are expressed in
+ *   characters and not in bytes.
  * - Offset_src is always in bytes
  *
  * @note
@@ -8736,9 +8886,12 @@ OCI_EXPORT boolean OCI_API OCI_LobAssign
 
 /**
  * @brief
- * Return the maximum size in bytes that the lob can contain
+ * Return the maximum size that the lob can contain
  *
  * @param lob - Lob handle
+ *
+ * @return
+ * TRUE on success otherwise FALSE
  *
  */
 
@@ -8879,6 +9032,49 @@ OCI_EXPORT boolean OCI_API OCI_FileFree
 
 /**
  * @brief
+ * Create an array of file object
+ *
+ * @param con    - Connection handle
+ * @param type   - File type
+ * @param nbelem - number of elements in the array
+ *
+ * @note
+ * see OCI_FileCreate() for more details
+ *
+ * @return
+ * Return the file handle array on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT OCI_File ** OCI_API OCI_FileArrayCreate
+(
+    OCI_Connection *con,
+    unsigned int type,
+    unsigned int nbelem
+);
+
+ /**
+ * @brief
+ * Free an array of file objects
+ *
+ * @param files - Array of file objects
+ *
+ * @warning
+ * Only arrays of lobs created with OCI_FileArrayCreate() should be freed 
+ * by OCI_FileArrayFree()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_FileArrayFree
+(
+    OCI_File **files
+);
+
+/**
+ * @brief
  * Return the type of the given File object
  *
  * @param file - File handle
@@ -8907,7 +9103,7 @@ OCI_EXPORT unsigned int OCI_API OCI_FileGetType
  * Mode parameter can be one of the following value :
  *
  * - OCI_SEEK_SET : set the file current offset to the given absolute offset
- * - OCI_SEEK_END : set the file current offset to the end of the file
+ * - OCI_SEEK_END : set the file current offset to the end of the lob
  * - OCI_SEEK_CUR : move the file current offset to the number of bytes given by
  *                  parameter 'offset'
  *
@@ -9148,22 +9344,16 @@ OCI_EXPORT boolean OCI_API OCI_FileAssign
  * OCILIB provides a set of API for manipulating LONGs that is really close to
  * the one provided for LOBs.
  *
- * OCILIB currently supports 2 types of Long Objects:
+ * OCILIB currently supports 3 types of Long Objects:
  *
  * - OCI_BLONG : LONG RAW columns
  * - OCI_CLONG : LONG columns
  *
- * @Warning
- * Read / write operations have to follow some rules :
- * - read  : ONLY possible on OCI_Long object fetched from an OCI_Resultset object
- * - write : ONLY possible on oCI_Long object binded to an OCI_Statement object
+ * OCI_Lob objects can be :
  *
- * @warning
- * To write into an OCI_Long object, you MUST follow this sequence :
- * - Prepare a statement
- * - bind the OCI_LOng object to the statement
- * - Execute the statement
- * - Perform write calls
+ * - Created as standalone instances
+ * - Used for in/out binding
+ * - Retrieved from select statement
  *
  * @par Example
  * @include long.c
@@ -9177,13 +9367,13 @@ OCI_EXPORT boolean OCI_API OCI_FileAssign
  * @param stmt - Statement handle
  * @param type - Long type
  *
- * Supported long types :
+ * Supported lob types :
  *
  * - OCI_BLONG : Binary Long
  * - OCI_CLONG : Character Long
  *
  * @return
- * Return the OCI_Long object handle on success otherwise NULL on failure
+ * Return the long handle on success otherwise NULL on failure
  *
  */
 
@@ -9200,7 +9390,7 @@ OCI_EXPORT OCI_Long * OCI_API OCI_LongCreate
  * @param lg - Long handle
  *
  * @warning
- * Only OCI_Long objects created with OCI_LongCreate() should be freed by OCI_LongFree()
+ * Only lobs created with OCI_LongCreate() should be freed by OCI_LongFree()
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -9219,7 +9409,7 @@ OCI_EXPORT boolean OCI_API OCI_LongFree
  * @param lg - Long handle
  *
  * @note
- * For possible values, see OCI_LongCreate()
+ * For possible values, see OCI_LobCreate()
  *
  * @return
  * Object type or OCI_UNKNOWN the input handle is NULL
@@ -9233,7 +9423,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LongGetType
 
 /**
  * @brief
- * Read a portion of an OCI_Long object into the given buffer [Obsolete]
+ * Read a portion of a long into the given buffer [Obsolete]
  *
  * @param lg     - Long handle
  * @param buffer - Pointer to a buffer
@@ -9247,8 +9437,6 @@ OCI_EXPORT unsigned int OCI_API OCI_LongGetType
  *
  * @note
  * - For OCI_CLONG, parameter 'len' and returned value are expressed in characters
- *   or bytes depending on the current string length mode 
-     (see OCI_SetStringLengthMode())
  * - For OCI_BLONG, parameter 'len' and returned value are expressed in bytes
  *
  * @return
@@ -9267,18 +9455,15 @@ OCI_EXPORT unsigned int OCI_API OCI_LongRead
 
 /**
  * @brief
- * Write a buffer into an OCI_Long object
+ * Write a buffer into a Long
  *
  * @param lg     - Long handle
  * @param buffer - the pointer to a buffer
  * @param len    - the length of the buffer in bytes (OCI_BLONG) or
- *                 character/ bytes (OCI_CLONG) depending on the current
- *                 string length mode (see OCI_SetStringLengthMode())
+ *                  character (OCI_CLONG)
  *
  * @return
- * Number of bytes (OCI_BLONG) or character/bytes (OCI_CLONG), depending on
- * the current string length mode (see OCI_SetStringLengthMode()), written
- * on success or :
+ * Number of bytes (OCI_BLONG) / character (OCI_CLONG) written on success
  * - 0 if there is nothing more to read
  * - 0 on failure
  *
@@ -9293,9 +9478,8 @@ OCI_EXPORT unsigned int OCI_API OCI_LongWrite
 
 /**
  * @brief
- * Return the buffer size of an OCI_Long object in bytes (OCI_BLONG) or
- * character / bytes (OCI_CLONG) depending on the current string length
- * mode (see OCI_SetStringLengthMode())
+ * Return the buffer size of a long object in bytes (OCI_BLONG) or
+ * character (OCI_CLONG)
  *
  * @param lg - Long handle
  *
@@ -9311,9 +9495,6 @@ OCI_EXPORT unsigned int OCI_API OCI_LongGetSize
  * Return the internal buffer of an OCI_Long object read from a fetch sequence
  *
  * @param lg - Long handle
- * 
- * @warning
- * Do not use this call for an OCI_Long object used to write data in to the DB
  *
  */
 
@@ -9361,7 +9542,7 @@ OCI_EXPORT OCI_Date * OCI_API OCI_DateCreate
 
 /**
  * @brief
- * Free an OCI_Date handle
+ * Free a date object
  *
  * @param date - Date handle
  *
@@ -9376,6 +9557,47 @@ OCI_EXPORT OCI_Date * OCI_API OCI_DateCreate
 OCI_EXPORT boolean OCI_API OCI_DateFree
 (
     OCI_Date *date
+);
+
+/**
+ * @brief
+ * Create an array of date object
+ *
+ * @param con    - Connection handle
+ * @param nbelem - number of elements in the array
+ *
+ * @note
+ * see OCI_DateCreate() for more details
+ *
+ * @return
+ * Return the date handle array on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT OCI_Date ** OCI_API OCI_DateArrayCreate
+(
+    OCI_Connection *con,
+    unsigned int nbelem
+);
+
+/**
+ * @brief
+ * Free an arrray of date objects
+ *
+ * @param dates - Array of date objects
+ *
+ * @warning
+ * Only arrays of dates created with OCI_DateArrayCreate() should be freed 
+ * by OCI_DateArrayFree()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DateArrayFree
+(
+    OCI_Date **dates
 );
 
 /**
@@ -9513,9 +9735,7 @@ OCI_EXPORT boolean OCI_API OCI_DateFromText
  *
  * @param date - source Date handle
  * @param fmt  - Date format
- * @param size - Destination string size in characters or bytes depending 
- *               on the current string length mode 
- *               (see OCI_SetStringLengthMode())
+ * @param size - Destination string size in characters
  * @param str  - Destination date string
  *
  * @return
@@ -9862,6 +10082,49 @@ OCI_EXPORT OCI_Timestamp * OCI_API OCI_TimestampCreate
 OCI_EXPORT boolean OCI_API OCI_TimestampFree
 (
     OCI_Timestamp *tmsp
+);
+
+/**
+ * @brief
+ * Create an array of timestamp object
+ *
+ * @param con    - Connection handle
+ * @param type   - Timestamp type
+ * @param nbelem - number of elements in the array
+ *
+ * @note
+ * see OCI_TimestampCreate() for more details
+ *
+ * @return
+ * Return the timestamp handle array on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
+(
+    OCI_Connection *con,
+    unsigned int type,
+    unsigned int nbelem
+);
+
+/**
+ * @brief
+ * Free an arrray of timestamp objects
+ *
+ * @param tmsps - Array of timestamp objects    
+ *
+ * @warning
+ * Only arrays of timestamp created with OCI_TimestampArrayCreate()
+ * should be freed by OCI_TimestampArrayFree()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_TimestampArrayFree
+(
+    OCI_Timestamp **tmsps
 );
 
 /**
@@ -10323,6 +10586,49 @@ OCI_EXPORT boolean OCI_API OCI_IntervalFree
 
 /**
  * @brief
+ * Create an array of Interval object
+ *
+ * @param con    - Connection handle
+ * @param type   - Type of Interval
+ * @param nbelem - number of elements in the array
+ *
+ * @note
+ * see OCI_IntervalCreate() for more details
+ *
+ * @return
+ * Return the Interval handle array on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT OCI_Interval ** OCI_API OCI_IntervalArrayCreate
+(
+    OCI_Connection *con,
+    unsigned int type,
+    unsigned int nbelem
+);
+
+/**
+ * @brief
+ * Free an arrray of Interval objects
+ *
+ * @param itvs - Array of Interval objects    
+ *
+ * @warning
+ * Only arrays of Interval created with OCI_IntervalArrayCreate()
+ * should be freed by OCI_IntervalArrayFree()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_IntervalArrayFree
+(
+    OCI_Interval **itvs
+);
+
+/**
+ * @brief
  * Return the type of the given Interval object
  *
  * @param itv - Interval handle
@@ -10618,7 +10924,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalSubtract
  *
  * @warning
  * Prior to v3.5.0, OCILIB relied on some OCI routines to set/get objects 
- * attributes. Theses OCI calls had known bugs in Unicode mode that has been
+ * attributes. these OCI calls had known bugs in Unicode mode that has been
  * fixed in Oracle 11gR2.
  * From v3.5.0, OCILIB directly sets objects attributes and thus OCILIB objects 
  * can now be used in Unicode mode.
@@ -10667,6 +10973,49 @@ OCI_EXPORT OCI_Object * OCI_API OCI_ObjectCreate
 OCI_EXPORT boolean OCI_API OCI_ObjectFree
 (
     OCI_Object *obj
+);
+
+/**
+ * @brief
+ * Create an array of Object object
+ *
+ * @param con    - Connection handle
+ * @param typinf - Object type (type info handle)
+ * @param nbelem - number of elements in the array
+ *
+ * @note
+ * see OCI_ObjectCreate() for more details
+ *
+ * @return
+ * Return the Object handle array on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT OCI_Object ** OCI_API OCI_ObjectArrayCreate
+(
+    OCI_Connection *con,
+    OCI_TypeInfo *typinf,
+    unsigned int nbelem
+);
+
+/**
+ * @brief
+ * Free an arrray of Object objects
+ *
+ * @param objs - Array of Object objects    
+ *
+ * @warning
+ * Only arrays of Object created with OCI_ObjectArrayCreate()
+ * should be freed by OCI_ObjectArrayFree()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectArrayFree
+(
+    OCI_Object **objs
 );
 
 /**
@@ -11588,7 +11937,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetNull
  *
  * @note
  * See Oracle OCI programming guide for more details about OTT structures.
- * The members of theses structures are OCI datatypes like OCINumber, OCIString
+ * The members of these structures are OCI datatypes like OCINumber, OCIString
  * that requires mixing OCILIB code and raw OCI code.
  * OCI Object API headers have to be included to handle this datatypes using
  * OCI object functions
@@ -11641,6 +11990,49 @@ OCI_EXPORT OCI_Ref * OCI_API OCI_RefCreate
 OCI_EXPORT boolean OCI_API OCI_RefFree
 (
     OCI_Ref *ref
+);
+
+/**
+ * @brief
+ * Create an array of Ref object
+ *
+ * @param con    - Connection handle
+ * @param typinf - Object type (type info handle)
+ * @param nbelem - number of elements in the array
+ *
+ * @note
+ * see OCI_RefCreate() for more details
+ *
+ * @return
+ * Return the Ref handle array on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT OCI_Ref ** OCI_API OCI_RefArrayCreate
+(
+    OCI_Connection *con,
+    OCI_TypeInfo *typinf,
+    unsigned int nbelem
+);
+
+/**
+ * @brief
+ * Free an arrray of Ref objects
+ *
+ * @param refs - Array of Ref objects    
+ *
+ * @warning
+ * Only arrays of Ref created with OCI_RefArrayCreate()
+ * should be freed by OCI_RefArrayFree()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_RefArrayFree
+(
+    OCI_Ref **refs
 );
 
 /**
@@ -11749,8 +12141,7 @@ OCI_EXPORT unsigned int OCI_API OCI_RefGetHexSize
  * Converts a Ref handle value to a hexadecimal string.
  *
  * @param ref   - Ref handle
- * @param size - Destination string max size in characters or bytes depending on
- *               the current string length mode (see OCI_SetStringLengthMode())
+ * @param size - Destination string size in characters
  * @param str  - Destination string
  *
  * @return
@@ -11997,7 +12388,7 @@ OCI_EXPORT const mtext * OCI_API OCI_TypeInfoGetName
  * @note
  * For output strings and Raws, returned data is copied to the given buffer
  * instead of returning a pointer the real data.
- * So theses buffers must be big enough to hold the column content. No size check
+ * So these buffers must be big enough to hold the column content. No size check
  * is performed.
  *
  * - For strings, only the real string is copied.
@@ -12436,7 +12827,7 @@ OCI_EXPORT OCI_HashEntry * OCI_API OCI_HashGetEntry
  * - On Microsoft Windows, a thread can call OCI_MutexAcquire() more than once
  * wihtout any blocking. Just be sure that there is an OCI_MutexRelease() for
  * every OCI_MutexAcquire() call
- * - On Unixes, a thread MUST call OCI_MutexRelease() after every call to
+ * - On Unix systems, a thread MUST call OCI_MutexRelease() after every call to
  * OCI_MutexAcquire() in order to be able to call OCI_MutexAcquire() again. If
  * not, it will be blocked...
  *
@@ -12752,12 +13143,6 @@ OCI_EXPORT boolean OCI_API OCI_DirPathFree
  * @param format  - Date or numeric format to use
  *
  * @note
- * The 'maxsize' parameter is expressed in number of :
- * - bytes for binary columns
- * - characters or bytes for other columns depending on the current
- *   string length mode (see OCI_SetStringLengthMode())
- *
- * @note
  * An error is thrown if :
  * - If the column specified by the 'name' parameter is not found in the table
  *   referenced by the type info handle passed to OCI_DirPathCreate()
@@ -12811,8 +13196,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathPrepare
  * @note
  * The 'size' parameter is expressed in number of :
  * - bytes for binary columns
- * - characters or bytes for other columns depending on the current
- *   string length mode (see OCI_SetStringLengthMode())
+ * - characters for other columns
  *
  * @note
  * Direct path support piece loading for LONGs and LOBs columns. When filling
@@ -14123,7 +14507,6 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
     OCI_Subscription *sub
 );
 
-
 /**
  * @}
  */
@@ -14322,6 +14705,12 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 #define OCI_9  OCI_9_0
 #define OCI_10 OCI_10_1
 #define OCI_11 OCI_11_1
+
+/* macro added in version 3.6.0 */
+
+#define OCI_CHAR_UNICODE  OCI_CHAR_WIDE
+#define OCI_CSF_CHARSET   OCI_CSF_DEFAULT
+
 
 #endif    /* OCILIB_H_INCLUDED */
 

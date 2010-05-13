@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: hash.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: hash.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -228,8 +228,8 @@ const mtext * OCI_API OCI_HashGetString(OCI_HashTable *table, const mtext *key)
     OCI_HashValue *v   = NULL;
     const mtext *value = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table,   OCI_GET_NULL_MSTR(NULL));
-    OCI_CHECK(table->type != OCI_HASH_STRING, OCI_GET_NULL_MSTR(NULL));
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, NULL);
+    OCI_CHECK(table->type != OCI_HASH_STRING, NULL);
 
     v = OCI_HashGetValue(table, key);
 
@@ -240,7 +240,7 @@ const mtext * OCI_API OCI_HashGetString(OCI_HashTable *table, const mtext *key)
 
     OCI_RESULT(v != NULL);
 
-    return OCI_GET_NULL_MSTR(value);
+    return value;
 }
 
 /* ------------------------------------------------------------------------ *

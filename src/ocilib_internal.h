@@ -1,5 +1,5 @@
 /*
-   +----------------------------------------------------------------------+   
+   +----------------------------------------------------------------------+
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
@@ -25,15 +25,15 @@
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
    |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+   +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: ocilib_internal.h, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
-#ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED 
-#define OCILIB_OCILIB_INTERNAL_H_INCLUDED 
+#ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED
+#define OCILIB_OCILIB_INTERNAL_H_INCLUDED
 
 #include "ocilib_types.h"
 #include "ocilib_checks.h"
@@ -46,6 +46,52 @@ extern "C"
 /* ************************************************************************ *
                          PRIVATE FUNCTIONS PROTOTYPES
  * ************************************************************************ */
+
+
+/* ------------------------------------------------------------------------ *
+ * array.c
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_ArrayInit
+(
+    OCI_Array *arr,
+    size_t struct_size,
+    size_t handle_size,
+    OCI_TypeInfo *typinf
+);
+
+boolean OCI_ArrayCleanup
+(
+    OCI_Array *arr
+);
+
+boolean OCI_ArrayGetDatatypeInfo
+(
+    unsigned int type,
+    unsigned int subtype,
+    unsigned int *handle_type,
+    size_t *struct_size,
+    size_t *handle_size
+);
+
+OCI_Array * OCI_ArrayCreate
+(
+    OCI_Connection *con,
+    unsigned int nb_elem,
+    unsigned int type,
+    unsigned int subtype,
+    OCI_TypeInfo *typinf
+);
+
+boolean OCI_ArrayClose
+(
+    OCI_Array *arr
+);
+
+boolean OCI_ArrayFreeFromHandles
+(
+    void ** handles
+);
 
 /* ------------------------------------------------------------------------ *
  * bind.c
@@ -62,36 +108,36 @@ boolean OCI_BindFree
 
 sb4 OCI_ProcInBind
 (
-    dvoid *ictxp, 
-    OCIBind *bindp, 
-    ub4 iter, 
+    dvoid *ictxp,
+    OCIBind *bindp,
+    ub4 iter,
     ub4 index,
-    dvoid **bufpp, 
-    ub4 *alenp,  
-    ub1 *piecep, 
+    dvoid **bufpp,
+    ub4 *alenp,
+    ub1 *piecep,
     dvoid **indp
 );
 
 sb4 OCI_ProcOutBind
 (
-    dvoid *octxp, 
+    dvoid *octxp,
     OCIBind *bindp,
-    ub4 iter, 
+    ub4 iter,
     ub4 index,
-    dvoid **bufpp, 
-    ub4 **alenp, 
-    ub1 *piecep, 
+    dvoid **bufpp,
+    ub4 **alenp,
+    ub1 *piecep,
     void **indp,
     ub2 **rcodep
 );
 
 ub4 OCI_ProcNotify
 (
-    void *ctx, 
+    void *ctx,
     OCISubscription *subscrhp,
-    void *payload, 
-    ub4 paylen, 
-    void *desc, 
+    void *payload,
+    ub4 paylen,
+    void *desc,
     ub4 mode
 );
 
@@ -101,9 +147,9 @@ ub4 OCI_ProcNotify
 
 OCI_Coll * OCI_CollInit
 (
-    OCI_Connection *con,                           
+    OCI_Connection *con,
     OCI_Coll **pcoll,
-    void *handle, 
+    void *handle,
     OCI_TypeInfo *typeinf
 );
 
@@ -113,17 +159,17 @@ OCI_Coll * OCI_CollInit
 
 boolean OCI_ColumnMap
 (
-    OCI_Column *col, 
+    OCI_Column *col,
     OCI_Statement *stmt
 );
 
 boolean OCI_ColumnDescribe
 (
-    OCI_Column *col, 
+    OCI_Column *col,
     OCI_Connection *con,
-    OCI_Statement *stmt,  
-    void *handle, 
-    int index, 
+    OCI_Statement *stmt,
+    void *handle,
+    int index,
     int ptype
 );
 
@@ -134,9 +180,9 @@ boolean OCI_ColumnDescribe
 OCI_Connection * OCI_ConnectionAllocate
 (
     OCI_ConnPool *pool,
-    const mtext *db, 
+    const mtext *db,
     const mtext *user,
-    const mtext *pwd, 
+    const mtext *pwd,
     unsigned int mode
 );
 
@@ -152,7 +198,7 @@ boolean OCI_ConnectionAttach
 
 boolean OCI_ConnectionLogon
 (
-    OCI_Connection *con, 
+    OCI_Connection *con,
     const mtext *password
 );
 
@@ -186,10 +232,10 @@ boolean OCI_ConnPoolClose
 
 OCI_Date * OCI_DateInit
 (
-    OCI_Connection *con,  
+    OCI_Connection *con,
     OCI_Date **pdate,
     OCIDate *buffer,
-    boolean allocate, 
+    boolean allocate,
     boolean ansi
 );
 
@@ -199,7 +245,7 @@ OCI_Date * OCI_DateInit
 
 OCI_Define * OCI_GetDefine
 (
-    OCI_Resultset *rs, 
+    OCI_Resultset *rs,
     unsigned int index
 );
 
@@ -211,9 +257,9 @@ int OCI_GetDefineIndex
 
 boolean OCI_DefineGetNumber
 (
-    OCI_Resultset *rs, 
+    OCI_Resultset *rs,
     unsigned int index,
-    void *value, 
+    void *value,
     uword type,
     uword size
 );
@@ -233,38 +279,44 @@ void *  OCI_DefineGetData
     OCI_Define *def
 );
 
+boolean OCI_DefineRequestBuffer
+(
+    OCI_Define *def,
+    unsigned int size
+);
+
 /* ------------------------------------------------------------------------ *
  * element.c
  * ------------------------------------------------------------------------ */
 
 boolean OCI_ElemGetNumber
 (
-    OCI_Elem *elem, 
-    void *value, 
-    uword size, 
+    OCI_Elem *elem,
+    void *value,
+    uword size,
     uword flag
 );
 
 boolean OCI_ElemSetNumber
 (
-    OCI_Elem  *elem, 
-    void *value, 
-    uword size, 
+    OCI_Elem  *elem,
+    void *value,
+    uword size,
     uword flag
 );
 
 OCI_Elem * OCI_ElemInit
 (
-    OCI_Connection *con, 
+    OCI_Connection *con,
     OCI_Elem **pelem,
-    void *handle, 
-    OCIInd *pind, 
+    void *handle,
+    OCIInd *pind,
     OCI_TypeInfo *typeinf
 );
 
 boolean OCI_ElemSetNullIndicator
 (
-    OCI_Elem *elem, 
+    OCI_Elem *elem,
     OCIInd value
 );
 
@@ -285,7 +337,7 @@ void OCI_ErrorReset
 OCI_Error * OCI_ErrorGet
 (
     boolean check,
-    boolean warning 
+    boolean warning
 );
 
 OCI_Error * OCI_ErrorCreate
@@ -318,7 +370,7 @@ void OCI_ExceptionRaise
 
 void OCI_ExceptionOCI
 (
-    OCIError *p_err, 
+    OCIError *p_err,
     OCI_Connection *con,
     OCI_Statement *stmt,
     boolean warning
@@ -326,15 +378,15 @@ void OCI_ExceptionOCI
 
 void OCI_ExceptionMemory
 (
-    int type, 
-    size_t nb_bytes, 
+    int type,
+    size_t nb_bytes,
     OCI_Connection *con,
     OCI_Statement *stmt
 );
 
 void OCI_ExceptionNotAvailable
 (
-    OCI_Connection *con, 
+    OCI_Connection *con,
     int feature
 );
 
@@ -345,22 +397,22 @@ void OCI_ExceptionNullPointer
 
 void OCI_ExceptionDatatypeNotSupported
 (
-    OCI_Connection *con, 
-    OCI_Statement *stmt, 
+    OCI_Connection *con,
+    OCI_Statement *stmt,
     int code
 );
 
 void OCI_ExceptionParsingToken
 (
-    OCI_Connection *con, 
-    OCI_Statement *stmt, 
+    OCI_Connection *con,
+    OCI_Statement *stmt,
     mtext token
 );
 
 void OCI_ExceptionMappingArgument
 (
-    OCI_Connection *con, 
-    OCI_Statement *stmt, 
+    OCI_Connection *con,
+    OCI_Statement *stmt,
     int arg
 );
 
@@ -374,7 +426,7 @@ void OCI_ExceptionNotMultithreaded(void);
 
 void OCI_ExceptionOutOfBounds
 (
-    OCI_Connection *con, 
+    OCI_Connection *con,
     int value
 );
 
@@ -397,7 +449,7 @@ void OCI_ExceptionAttributeNotFound
 
 void OCI_ExceptionMinimumValue
 (
-    OCI_Connection *con, 
+    OCI_Connection *con,
     OCI_Statement *stmt,
     int min
 );
@@ -426,22 +478,22 @@ void OCI_ExceptionBindAlreadyUsed
 
 void OCI_ExceptionBindArraySize
 (
-    OCI_Statement *stmt, 
-    unsigned int maxsize, 
-    unsigned int cursize, 
+    OCI_Statement *stmt,
+    unsigned int maxsize,
+    unsigned int cursize,
     unsigned int newsize
 );
 
 void OCI_ExceptionDirPathColNotFound
 (
-    OCI_DirPath *dp, 
+    OCI_DirPath *dp,
     const mtext * column,
     const mtext *table
 );
 
 void OCI_ExceptionDirPathState
 (
-    OCI_DirPath *dp, 
+    OCI_DirPath *dp,
     int state
 );
 
@@ -454,9 +506,9 @@ void OCI_ExceptionOCIEnvironment(void);
 
 OCI_File * OCI_FileInit
 (
-    OCI_Connection *con,                              
+    OCI_Connection *con,
     OCI_File **pfile,
-    OCILobLocator *handle, 
+    OCILobLocator *handle,
     ub4 type
 );
 
@@ -472,7 +524,7 @@ boolean OCI_FileGetInfo
 int OCI_ParseSqlFmt
 (
     OCI_Statement *stmt,
-    mtext *buffer, 
+    mtext *buffer,
     const mtext *format,
     va_list *pargs
 );
@@ -483,15 +535,15 @@ int OCI_ParseSqlFmt
 
 unsigned int OCI_HashCompute
 (
-    OCI_HashTable *table, 
+    OCI_HashTable *table,
     const mtext *str
 );
 
 boolean OCI_HashAdd
 (
-    OCI_HashTable *table, 
-    const mtext *key, 
-    OCI_Variant value, 
+    OCI_HashTable *table,
+    const mtext *key,
+    OCI_Variant value,
     unsigned int type
 );
 
@@ -501,9 +553,9 @@ boolean OCI_HashAdd
 
 OCI_Interval  * OCI_IntervalInit
 (
-    OCI_Connection *con,                              
+    OCI_Connection *con,
     OCI_Interval **pitv,
-    OCIInterval *buffer, 
+    OCIInterval *buffer,
     ub4 type
 );
 
@@ -562,7 +614,7 @@ boolean OCI_ListForEach
 
 boolean OCI_ListRemove
 (
-    OCI_List *list, 
+    OCI_List *list,
     void *data
 );
 
@@ -586,7 +638,7 @@ OCI_Long * OCI_LongInit
 (
     OCI_Statement *stmt,
     OCI_Long **plg,
-    OCI_Define *def, 
+    OCI_Define *def,
     unsigned int type
 );
 
@@ -596,17 +648,17 @@ OCI_Long * OCI_LongInit
 
 void * OCI_MemAlloc
 (
-    int ptr_type, 
-    size_t block_size, 
-    size_t block_count,     
+    int ptr_type,
+    size_t block_size,
+    size_t block_count,
     boolean zero_fill
 );
 
 void * OCI_MemRealloc
 (
-    void * ptr_mem, 
-    int ptr_type, 
-    size_t block_size, 
+    void * ptr_mem,
+    int ptr_type,
+    size_t block_size,
     size_t block_count
 );
 
@@ -617,33 +669,33 @@ void OCI_MemFree
 
 sword OCI_HandleAlloc
 (
-    CONST dvoid *parenth, 
-    dvoid **hndlpp, 
-    CONST ub4 type, 
+    CONST dvoid *parenth,
+    dvoid **hndlpp,
+    CONST ub4 type,
     CONST size_t xtramem_sz,
     dvoid **usrmempp
 );
 
 sword OCI_HandleFree
 (
-    dvoid *hndlp, 
+    dvoid *hndlp,
     CONST ub4 type
 );
 
 sword OCI_DescriptorAlloc
 (
-    CONST dvoid *parenth, 
+    CONST dvoid *parenth,
     dvoid **descpp,
-    CONST ub4 type, 
+    CONST ub4 type,
     CONST size_t xtramem_sz,
     dvoid **usrmempp
 );
 
 sword OCI_DescriptorArrayAlloc
 (
-    CONST dvoid *parenth, 
+    CONST dvoid *parenth,
     dvoid **descpp,
-    CONST ub4 type, 
+    CONST ub4 type,
     ub4 nb_elem,
     CONST size_t xtramem_sz,
     dvoid **usrmempp
@@ -651,14 +703,14 @@ sword OCI_DescriptorArrayAlloc
 
 sword OCI_DescriptorFree
 (
-    void *descp, 
+    void *descp,
     CONST ub4 type
 );
 
 sword OCI_DescriptorArrayFree
 (
-    void **descp, 
-    CONST ub4 type, 
+    void **descp,
+    CONST ub4 type,
     ub4 nb_elem
 );
 
@@ -668,18 +720,18 @@ sword OCI_ObjectNew
     OCIEnv *env,
     OCIError *err,
     CONST OCISvcCtx *svc,
-    OCITypeCode typecode, 
+    OCITypeCode typecode,
     OCIType *tdo,
-    dvoid *table, 
-    OCIDuration duration, 
-    boolean value, 
+    dvoid *table,
+    OCIDuration duration,
+    boolean value,
     dvoid **instance
 );
 
 sword OCI_OCIObjectFree
 (
     OCIEnv *env,
-    OCIError *err, 
+    OCIError *err,
     dvoid *instance,
     ub2 flags
 );
@@ -706,32 +758,32 @@ boolean OCI_NumberGet
 
 boolean OCI_NumberSet
 (
-    OCI_Connection *con, 
+    OCI_Connection *con,
     OCINumber *data,
-    void *value, 
-    uword size, 
+    void *value,
+    uword size,
     uword flag
 );
 
 boolean OCI_NumberConvertStr
 (
-    OCI_Connection *con, 
-    OCINumber *num, 
-    const dtext *str, 
-    int str_size, 
-    const mtext* fmt, 
+    OCI_Connection *con,
+    OCINumber *num,
+    const dtext *str,
+    int str_size,
+    const mtext* fmt,
     ub4 fmt_size
 );
 
 boolean OCI_NumberGetFromStr
     (
-    OCI_Connection *con, 
-    void *value, 
+    OCI_Connection *con,
+    void *value,
     uword size,
     uword type,
     const dtext *str,
-    int str_size, 
-    const mtext* fmt, 
+    int str_size,
+    const mtext* fmt,
     ub4 fmt_size
 );
 
@@ -741,7 +793,7 @@ boolean OCI_NumberGetFromStr
 
 size_t OCI_ObjectGetAttrSize
 (
-    OCI_TypeInfo *typinf, 
+    OCI_TypeInfo *typinf,
     int index
 );
 
@@ -752,7 +804,7 @@ size_t OCI_ObjectGetStructSize
 
 ub2 OCI_ObjectGetIndOffset
 (
-    OCI_TypeInfo *typinf, 
+    OCI_TypeInfo *typinf,
     int index
 );
 
@@ -760,7 +812,7 @@ OCI_Object * OCI_ObjectInit
 (
     OCI_Connection *con,
     OCI_Object **pobj,
-    void *handle, 
+    void *handle,
     OCI_TypeInfo *typinf,
     OCI_Object *parent,
     int index,
@@ -781,23 +833,23 @@ int OCI_ObjectGetAttrIndex
 
 void * OCI_ObjectGetAttr
 (
-    OCI_Object *obj, 
+    OCI_Object *obj,
     unsigned int index,
     OCIInd **pind
 );
 
 boolean OCI_ObjectSetNumber
 (
-    OCI_Object *obj, 
-    const mtext *attr, 
+    OCI_Object *obj,
+    const mtext *attr,
     void *value,
     uword size, uword flag
 );
 
 boolean OCI_ObjectGetNumber
 (
-    OCI_Object *obj, 
-    const mtext *attr, 
+    OCI_Object *obj,
+    const mtext *attr,
     void *value,
     uword size, uword flag
 );
@@ -812,8 +864,8 @@ boolean OCI_ObjectGetNumber
 OCI_Ref * OCI_RefInit
 (
     OCI_Connection *con,
-    OCI_TypeInfo *typeinf, 
-    OCI_Ref **pref, 
+    OCI_TypeInfo *typeinf,
+    OCI_Ref **pref,
     void *handle
 );
 
@@ -833,7 +885,7 @@ boolean OCI_RefUnpin
 
 OCI_Resultset * OCI_ResultsetCreate
 (
-    OCI_Statement *stmt, 
+    OCI_Statement *stmt,
     int size
 );
 
@@ -850,7 +902,7 @@ boolean OCI_FetchPieces
 boolean OCI_FetchData
 (
     OCI_Resultset *rs,
-    int mode, 
+    int mode,
     int offset,
     boolean *err
 );
@@ -858,19 +910,19 @@ boolean OCI_FetchData
 boolean OCI_FetchCustom
 (
     OCI_Resultset *rs,
-    int mode, 
+    int mode,
     int offset,
     boolean *err
 );
 
-#ifdef OCI_CHECK_DATASTRINGS 
+#ifdef OCI_CHECK_DATASTRINGS
 
 boolean OCI_ResultsetExpandStrings
 (
     OCI_Resultset *rs
 );
 
-#endif  
+#endif
 
 /* ------------------------------------------------------------------------ *
  * statement.c
@@ -893,12 +945,12 @@ boolean OCI_BindReset
 
 boolean OCI_BindData
 (
-    OCI_Statement *stmt, 
-    void *data, 
+    OCI_Statement *stmt,
+    void *data,
     ub4 size,
-    const mtext *name, 
-    ub1 type, 
-    unsigned int code, 
+    const mtext *name,
+    ub1 type,
+    unsigned int code,
     unsigned int mode,
     unsigned int subtype,
     OCI_TypeInfo *typinf,
@@ -907,13 +959,13 @@ boolean OCI_BindData
 
 int OCI_BindGetIndex
 (
-    OCI_Statement *stmt, 
+    OCI_Statement *stmt,
     const mtext *name
 );
 
 boolean OCI_FetchIntoUserVariables
 (
-    OCI_Statement *stmt, 
+    OCI_Statement *stmt,
     va_list args
 );
 
@@ -929,9 +981,9 @@ boolean OCI_StatementClose
 
 OCI_Statement * OCI_StatementInit
 (
-    OCI_Connection *con,                                  
+    OCI_Connection *con,
     OCI_Statement **pstmt,
-    OCIStmt *handle,  
+    OCIStmt *handle,
     OCI_Define *def
 );
 
@@ -953,15 +1005,15 @@ boolean OCI_BatchErrorInit
 int OCI_StringCopy4to2bytes
 (
     const unsigned int* src,
-    int src_size, 
-    unsigned short* dst, 
+    int src_size,
+    unsigned short* dst,
     int dst_size
 );
 
 int OCI_StringCopy2to4bytes
 (
     const unsigned short* src,
-    int src_size, 
+    int src_size,
     unsigned int* dst,
     int dst_size
 );
@@ -969,18 +1021,18 @@ int OCI_StringCopy2to4bytes
 
 void * OCI_GetInputString
 (
-    void *src, 
-    int *size, 
-    int size_char_in, 
+    void *src,
+    int *size,
+    int size_char_in,
     int size_char_out
 );
 
 void OCI_GetOutputString
 (
-    void *src, 
+    void *src,
     void *dest,
     int *size,
-    int size_char_in, 
+    int size_char_in,
     int size_char_out
 );
 
@@ -988,22 +1040,22 @@ void OCI_MoveString
 (
     void *src,
     void *dst,
-    int char_count, 
+    int char_count,
     int size_char_in,
     int size_char_out
 );
-        
+
 void OCI_ConvertString
 (
     void *str,
-    int char_count, 
+    int char_count,
     int size_char_in,
     int size_char_out
 );
 
 void OCI_CopyString
 (
-    void *src, 
+    void *src,
     void *dest,
     int *size,
     int size_char_in,
@@ -1026,6 +1078,11 @@ int OCI_StringLength
     int size_elem
 );
 
+int OCI_StringUTF8Length
+(
+   const char *str
+);
+
 
 #define OCI_GetInputMetaString(s, n)     OCI_GetInputString((void *) s, n,     \
                                                              sizeof(mtext),    \
@@ -1033,7 +1090,7 @@ int OCI_StringLength
 
 #define OCI_GetOutputMetaString(s, d, n) OCI_GetOutputString((void *) s, d, n, \
                                                              sizeof(omtext),   \
-                                                             sizeof(mtext)) 
+                                                             sizeof(mtext))
 
 #define OCI_GetInputDataString(s, n)     OCI_GetInputString((void *) s, n,     \
                                                              sizeof(dtext),    \
@@ -1045,17 +1102,17 @@ int OCI_StringLength
 
 void * OCI_StringFromStringPtr
 (
-    OCIString *str, 
-    void ** buf, 
+    OCIString *str,
+    void ** buf,
     int *buflen
 );
 
 boolean OCI_StringToStringPtr
 (
-    OCIString **str, 
-    OCIError *err, 
-    void *value, 
-    void **buf, 
+    OCIString **str,
+    OCIError *err,
+    void *value,
+    void **buf,
     int *buflen
 );
 
@@ -1104,7 +1161,7 @@ boolean OCI_ThreadKeySet
 
 boolean OCI_ThreadKeyGet
 (
-    OCI_ThreadKey* key, 
+    OCI_ThreadKey* key,
     void **value
 );
 
@@ -1114,9 +1171,9 @@ boolean OCI_ThreadKeyGet
 
 OCI_Timestamp * OCI_TimestampInit
 (
-    OCI_Connection *con, 
+    OCI_Connection *con,
     OCI_Timestamp **ptmsp,
-    OCIDateTime *buffer, 
+    OCIDateTime *buffer,
     ub4 type
 );
 

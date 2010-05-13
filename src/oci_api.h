@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_api.h, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: oci_api.h, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_API_H_INCLUDED 
@@ -967,7 +967,7 @@ typedef sword (*OCIDATETIMETOARRAY)
 );
 
 typedef sword (*OCIDATETIMEFROMTEXT) 
-(
+( 	
     dvoid *hndl,
     OCIError *err,
     CONST OraText *date_str,
@@ -1051,7 +1051,7 @@ typedef sword (*OCIDATETIMEINTERVALSUB)
 );
 
 typedef sword (*OCIDATETIMESUBTRACT) 
-(
+(	
     dvoid *hndl,
     OCIError *err,
     OCIDateTime *indate1,

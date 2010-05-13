@@ -1,22 +1,59 @@
-2010-03-08 Version 3.6.0 Vincent Rogier vince.rogier@ocilib.net
+2010-05-18 Version 3.6.0 Vincent Rogier vince.rogier@ocilib.net
 
-    * Extended String handling
-
-      - It's now possible to set how NULL strings are returned to application (NULL or "")
+    * Improved Array interface
     
-        - Added OCI_SetNullStringMode()
-        - Added OCI_GetNullStringMode()
+      - Arrays of non scalar datatypes (based on handles) previously had to be initialized element by element and could be time consuming
+      - It is now possible to allocate arrays in one step and thus improve performance (especially with Oracle 11g), internal OCILIB stuctures and OCI handles are allocated in one step
+      - Added OCI_DateArrayCreate()
+      - Added OCI_DateArrayFree()
+      - Added OCI_TimestampArrayCreate()
+      - Added OCI_TimestampArrayFree()
+      - Added OCI_IntervalArrayCreate()
+      - Added OCI_IntervalArrayFree()
+      - Added OCI_LobArrayCreate()
+      - Added OCI_LobArrayFree()
+      - Added OCI_FileArrayCreate()
+      - Added OCI_FileArrayFree()
+      - Added OCI_ObjectArrayCreate()
+      - Added OCI_ObjectArrayFree()
+      - Added OCI_RefArrayCreate()
+      - Added OCI_RefArrayFree()
+      - Added OCI_CollArrayCreate()
+      - Added OCI_CollArrayFree()
+      
+    * Added proper support for UTF8 strings
 
-      - It's now possible to set how string lengths are compute (bytes or characters)
+      - Use OCI_CHARSET_ANSI mode
+      - Set the environment variable NLS_LANG to value that contains the substring 'UTF8'
+      - Depending on the database charset :
     
-        - Added OCI_SetStringLengthMode()
-        - Added OCI_GetStringLengthMode()
+          - UTF8 : UTF8 strings are used for any text based binds or retrieved columns values
+          - Other charsets : UTF8 strings can be used only with national strings (NCHAR/NVARCHAR/NCLOB)
+
+    * Exented String support
+
+      - Added OCI_BindSetCharsetForm() to enable the use of national charset on binded strings
+
+    * Extended LOB API
+
+      - It is now possible to specify for CLOB/NCLOB buffer lengths in characters and/or bytes for R/W operations
+      - Added OCI_LobRead2()
+      - Added OCI_LobWrite2()
+      - Added OCI_LobAppend2()
+
+    * Modified native CHARSET modes
+
+      - OCI_CHARSET_UNICODE replaced by OCI_CHARSET_WIDE 
+      - OCI_CHAR_UNICODE replaced by OCI_CHAR_WIDE
+      - OCI_XXX_UNICODE symbols are still supported for backward compatibility
 
     * Miscellaneous changes
 
       - Added OCI_HandleGetSubscription()
-      - Modified OCI_Initialize() : remaned parameter 'home' to 'lib_path' 
+      - Modified OCI_Initialize() : renamed parameter 'home' to 'lib_path' 
+      - OCI_GetString() : when column base type is not string based, the implicit conversion uses now now dynamic memory allocation to return full data content instead of truncating to OCI_BUFFER_SIZE limit    
       - Various documentation updates
+      - Modified OCI_LobRead() (and thus OCI_LobRead2()) to set a trailing null character 
 
     * Miscellaneous fixes
 
@@ -29,6 +66,9 @@
       - fixed OCI_BindArraySetSize() when called many times with a new size > initial size
       - fixed endianness problem on big endian platforms when a string buffer had to be converted
       - fixed internal lengths used in implicit conversions in OCI_GetString() for some datatypes
+      - Improved long long support detection
+      - fixed national charset attribute detection for NCLOB binds
+      - Fixed memory leak appeared in v3.5.0 when deallocating internal fetched LOBs
 
     * Modified developer and support contacts
 

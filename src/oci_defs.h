@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_defs.h, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: oci_defs.h, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_DEFS_H_INCLUDED 
@@ -234,7 +234,7 @@
 #define OCI_ATTR_PARAM                 124           /* parameter descriptor */
 #define OCI_ATTR_PARSE_ERROR_OFFSET    129             /* Parse Error offset */
 
-#define OCI_ATTR_SERVER_STATUS         143        /* state of the server hdl */
+#define OCI_ATTR_SERVER_STATUS		   143        /* state of the server hdl */
 
 #define OCI_ATTR_CURRENT_POSITION      164      /* for scrollable result sets*/
 #define OCI_ATTR_STMTCACHESIZE         176         /* size of the stmt cache */
@@ -298,8 +298,8 @@
 
 /*---------------- Server Handle Attribute Values ---------------------------*/
 
-#define OCI_SERVER_NOT_CONNECTED    0x0 
-#define OCI_SERVER_NORMAL           0x1 
+#define OCI_SERVER_NOT_CONNECTED	0x0 
+#define OCI_SERVER_NORMAL      		0x1 
 
 /*--------------------- User Callback Return Values -------------------------*/
 #define OCI_CONTINUE -24200    /* Continue with the body of the OCI function */

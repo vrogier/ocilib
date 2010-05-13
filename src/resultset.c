@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: resultset.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -273,7 +273,7 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
 
                 ub4 bufsize = rs->stmt->long_size;
 
-                if (char_fact == 0)
+               if (char_fact == 0)
                     char_fact = 1;
 
                 if (lg->type == OCI_CLONG)
@@ -281,7 +281,7 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
 
                 nb_alloc      = (lg->maxsize / bufsize);
 
-                if (lg->type == OCI_CLONG)
+               if (lg->type == OCI_CLONG)
                     trailing_size = sizeof(odtext) * nb_alloc;
 
                 /* check buffer */
@@ -310,7 +310,7 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
                 /* update piece info */
 
                 if (res == TRUE)
-                {       
+                {
                     if (lg->type == OCI_CLONG)
                         lg->piecesize -= (ub4) sizeof(odtext);
 
@@ -397,7 +397,7 @@ boolean OCI_FetchPieces(OCI_Resultset *rs)
             for (j = 0; j < def->buf.count; j++)
             {
                 OCI_Long *lg = (OCI_Long *) def->buf.data[j];
-   
+
                 if (lg->buffer != NULL)
                    ((odtext *)lg->buffer)[lg->size/sizeof(odtext)] = 0;
 
@@ -840,7 +840,7 @@ boolean OCI_ResultsetFree(OCI_Resultset *rs)
         OCI_FREE(def->buf.data);
         OCI_FREE(def->buf.inds);
         OCI_FREE(def->buf.lens);
-        OCI_FREE(def->buf.temp);
+        OCI_FREE(def->buf.tmpbuf);
    }
 
     /* free column map */
@@ -1175,6 +1175,7 @@ OCI_Column * OCI_API OCI_GetColumn(OCI_Resultset *rs, unsigned int index)
     OCI_RESULT(col != NULL);
 
     return col;
+
 }
 
 /* ------------------------------------------------------------------------ *
@@ -1357,16 +1358,8 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
     res = (def != NULL);
 
     if ((res == TRUE) && (OCI_NOT_NULL(def) == TRUE))
-    { 
+    {
         void *data   = OCI_DefineGetData(def);
-        int bufmsize = OCI_SIZE_BUFFER;
-        int bufdsize = OCI_SIZE_BUFFER;
-             
-        if (OCILib.length_str_mode  == OCI_LSM_BYTE)
-        {
-            bufmsize *= (int) sizeof(mtext *);                       
-            bufmsize *= (int) sizeof(dtext *); 
-        }
 
         if (def->col.type == OCI_CDT_TEXT)
         {
@@ -1387,20 +1380,8 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
         {
             /* tries an implicit conversion if possible */
 
-            if (def->buf.temp == NULL)
-            {
-                def->buf.temp = (dtext *) OCI_MemAlloc(OCI_IPC_STRING,
-                                                       sizeof(dtext),
-                                                       (size_t) (OCI_SIZE_BUFFER+1),
-                                                       FALSE);
-
-                res = (def->buf.temp != NULL);
-            }
-
             if (res == TRUE)
             {
-                def->buf.temp[0] = 0;
-
                 switch (def->col.type)
                 {
                     case OCI_CDT_NUMERIC:
@@ -1412,73 +1393,79 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                         const mtext *fmt;
                         int pos;
 
-                        def->buf.temp[0] = 0;
+                        res = OCI_DefineRequestBuffer(def, OCI_SIZE_BUFFER);
 
-                        /* init output buffer in case of OCI failure */
-
-                        fmt   = OCI_GetDefaultFormatNumeric(rs->stmt->con);
-                        ostr1 = OCI_GetInputMetaString(fmt, &osize1);
-                        
-#ifndef OCI_CHARSET_MIXED
-
-                        ostr2 = OCI_GetInputString(def->buf.temp, &osize2,
-                                                   sizeof(dtext), sizeof(omtext));
-#else
-
-                        ostr2 = (void* ) def->buf.temp;
-
-#endif
-
-                        /* check for decimal character */
-
-                        OCI_CALL1
-                        (
-                            res, rs->stmt->con, rs->stmt,
-
-                                OCINumberToText(rs->stmt->con->err,
-                                                (OCINumber *) data,
-                                                (oratext *) ostr1,
-                                                (ub4) osize1,
-                                                (oratext *) NULL,
-                                                (ub4) 0,
-                                                (ub4 *) &osize2,
-                                                (oratext *) ostr2)
-                        )
-
-#ifndef OCI_CHARSET_MIXED
-
-                        OCI_GetOutputString(ostr2, def->buf.temp, &osize2,
-                                            sizeof(omtext), sizeof(dtext));
-
-#else
-                        
-                        OCI_ConvertString(ostr2, osize2/sizeof(omtext)+1,
-                                          sizeof(omtext), sizeof(dtext));
-
-                        osize2 = (osize2/sizeof(omtext)) * sizeof(dtext);                   
-
-#endif
-                        /* do we need to suppress last '.' or ',' from integers */
-
-                        pos = (osize2 / (int) sizeof(dtext)) - 1;
-
-                        if (pos >= 0)
-                        {
-                            if ((def->buf.temp[pos] == DT('.')) ||
-                                (def->buf.temp[pos] == DT(',')))
-                            {
-                                def->buf.temp[pos] = 0;
-                            }
-                        }
-
-                        OCI_ReleaseMetaString(ostr1);
-                        
-#ifndef OCI_CHARSET_MIXED
-                        OCI_ReleaseDataString(ostr2);
-#endif
                         if (res == TRUE)
-                            str = def->buf.temp;
+                        {
+                            /* init output buffer in case of OCI failure */
 
+                            fmt   = OCI_GetDefaultFormatNumeric(rs->stmt->con);
+                            ostr1 = OCI_GetInputMetaString(fmt, &osize1);
+                            
+                        #ifndef OCI_CHARSET_MIXED
+
+                            ostr2 = OCI_GetInputString(def->buf.tmpbuf, &osize2,
+                                                       sizeof(dtext), sizeof(omtext));
+                        #else
+
+                            ostr2 = (void* ) def->buf.tmpbuf;
+
+                        #endif
+
+                            /* check for decimal character */
+
+                            OCI_CALL1
+                            (
+                                res, rs->stmt->con, rs->stmt,
+
+                                    OCINumberToText(rs->stmt->con->err,
+                                                    (OCINumber *) data,
+                                                    (oratext *) ostr1,
+                                                    (ub4) osize1,
+                                                    (oratext *) NULL,
+                                                    (ub4) 0,
+                                                    (ub4 *) &osize2,
+                                                    (oratext *) ostr2)
+                            )
+
+                        #ifndef OCI_CHARSET_MIXED
+
+                            OCI_GetOutputString(ostr2, def->buf.tmpbuf, &osize2,
+                                                sizeof(omtext), sizeof(dtext));
+
+                        #else
+                            
+                            OCI_ConvertString(ostr2, osize2/sizeof(omtext)+1,
+                                              sizeof(omtext), sizeof(dtext));
+
+                            osize2 = (osize2/sizeof(omtext)) * sizeof(dtext);                   
+
+                        #endif
+
+                            /* do we need to suppress last '.' or ',' from integers */
+
+                            pos = (osize2 / (int) sizeof(dtext)) - 1;
+
+                            if (pos >= 0)
+                            {
+                                if ((def->buf.tmpbuf[pos] == DT('.')) ||
+                                    (def->buf.tmpbuf[pos] == DT(',')))
+                                {
+                                    def->buf.tmpbuf[pos] = 0;
+                                }
+                            }
+
+                            OCI_ReleaseMetaString(ostr1);
+                            
+                        #ifndef OCI_CHARSET_MIXED
+
+                            OCI_ReleaseDataString(ostr2);
+
+                        #endif
+                           
+                            str = def->buf.tmpbuf;
+                        }
+                        
                         break;
                     }
                     case OCI_CDT_DATETIME:
@@ -1488,22 +1475,31 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
 
                         if (date != NULL)
                         {
-#ifndef OCI_CHARSET_MIXED
-                             res = OCI_DateToText(date, fmt, bufmsize, (mtext *) def->buf.temp);
-#else
+                            res = OCI_DefineRequestBuffer(def, OCI_SIZE_BUFFER);
 
-                            /* mixed mode... conversion needed ! */
+                            if (res == TRUE)
+                            {
+                        
+                            #ifndef OCI_CHARSET_MIXED
+                             
+                                res = OCI_DateToText(date, fmt, OCI_SIZE_BUFFER,
+                                                     (mtext *) def->buf.tmpbuf);
+                            #else
 
-                            mtext temp[OCI_SIZE_BUFFER+1];
+                                /* mixed mode... conversion needed ! */
 
-                            temp[0] = 0;
+                                mtext temp[OCI_SIZE_BUFFER+1];
 
-                            res = OCI_DateToText(date, fmt, bufmsize, temp);
+                                temp[0] = 0;
 
-                            mbstowcs(def->buf.temp, temp, strlen(temp) + OCI_CVT_CHAR);
- #endif
+                                res = OCI_DateToText(date, fmt, OCI_SIZE_BUFFER, temp);
 
-                            str = def->buf.temp;
+                                mbstowcs(def->buf.tmpbuf, temp, strlen(temp) + OCI_CVT_CHAR);
+
+                            #endif
+
+                                str = def->buf.tmpbuf;
+                            }
                         }
 
                         break;
@@ -1515,53 +1511,74 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
 
                         if (tmsp != NULL)
                         {
-#ifndef OCI_CHARSET_MIXED
+                            res = OCI_DefineRequestBuffer(def, OCI_SIZE_BUFFER);
 
-                            OCI_TimestampToText(tmsp, fmt, bufmsize, (mtext *) def->buf.temp, 0);
-#else
+                            if (res == TRUE)
+                            {
 
-                            /* mixed mode... conversion needed ! */
+                            #ifndef OCI_CHARSET_MIXED
 
-                            mtext temp[OCI_SIZE_BUFFER+1];
+                                OCI_TimestampToText(tmsp, fmt, OCI_SIZE_BUFFER,
+                                                  (mtext *) def->buf.tmpbuf,  0);
 
-                            temp[0] = 0;
+                            #else
 
-                            OCI_TimestampToText(tmsp, fmt, bufmsize, (mtext *) temp, 0);
+                                /* mixed mode... conversion needed ! */
 
-                            mbstowcs(def->buf.temp, temp, strlen(temp) + OCI_CVT_CHAR);
-         #endif
-                            str = def->buf.temp;
+                                mtext temp[OCI_SIZE_BUFFER+1];
+
+                                temp[0] = 0;
+
+                                OCI_TimestampToText(tmsp, fmt, OCI_SIZE_BUFFER,
+                                                    (mtext *) temp, 0);
+
+                                mbstowcs(def->buf.tmpbuf, temp, strlen(temp) + OCI_CVT_CHAR);
+
+                            #endif
+
+                                str = def->buf.tmpbuf;
+                            }
                         }
 
                         break;
                     }
                     case OCI_CDT_INTERVAL:
                     {
-                         OCI_Interval *itv = OCI_GetInterval(rs, index);
+                        OCI_Interval *itv = OCI_GetInterval(rs, index);
 
-                         if (itv != NULL)
-                         {
-#ifndef OCI_CHARSET_MIXED
-                             OCI_IntervalToText(OCI_GetInterval(rs, index),
-                                                OCI_STRING_DEFAULT_PREC,
-                                                OCI_STRING_DEFAULT_PREC,
-                                                bufmsize, (mtext *) def->buf.temp);
-#else
+                        if (itv != NULL)
+                        {
+                            res = OCI_DefineRequestBuffer(def, OCI_SIZE_BUFFER);
 
-                            /* mixed mode... conversion needed ! */
+                            if (res == TRUE)
+                            {
 
-                            mtext temp[OCI_SIZE_BUFFER+1];
+                            #ifndef OCI_CHARSET_MIXED
+                            
+                                OCI_IntervalToText(OCI_GetInterval(rs, index),
+                                                   OCI_STRING_DEFAULT_PREC,
+                                                   OCI_STRING_DEFAULT_PREC,
+                                                   OCI_SIZE_BUFFER,
+                                                   (mtext *) def->buf.tmpbuf);
+                            #else
 
-                            temp[0] = 0;
+                                /* mixed mode... conversion needed ! */
 
-                            OCI_IntervalToText(OCI_GetInterval(rs, index),
-                                               OCI_STRING_DEFAULT_PREC,
-                                               OCI_STRING_DEFAULT_PREC,
-                                               bufmsize, (mtext *) temp);
+                                mtext temp[OCI_SIZE_BUFFER+1];
 
-                            mbstowcs(def->buf.temp, temp, strlen(temp) + OCI_CVT_CHAR);
- #endif
-                           str = def->buf.temp;
+                                temp[0] = 0;
+
+                                OCI_IntervalToText(OCI_GetInterval(rs, index),
+                                                   OCI_STRING_DEFAULT_PREC,
+                                                   OCI_STRING_DEFAULT_PREC,
+                                                   OCI_SIZE_BUFFER, (mtext *) temp);
+
+                                mbstowcs(def->buf.tmpbuf, temp, strlen(temp) + OCI_CVT_CHAR);
+                            
+                            #endif
+                          
+                                str = def->buf.tmpbuf;
+                            }
                         }
 
                         break;
@@ -1571,7 +1588,9 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                         OCI_Long *lg = OCI_GetLong(rs, index);
 
                         if (lg != NULL)
+                        {
                             str = OCI_LongGetBuffer(lg);
+                        }
 
                         break;
 
@@ -1585,24 +1604,26 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                     }
                     case OCI_CDT_LOB:
                     {
-                        OCI_Lob     *lob = OCI_GetLob(rs, index);
-                        unsigned int len = 0;
+                        OCI_Lob *lob = OCI_GetLob(rs, index);
 
                         if (lob != NULL)
                         {
-                            len = OCI_LobRead(lob, def->buf.temp, bufdsize);
+                            big_uint len = OCI_LobGetLength(lob);
 
-                            if ((OCI_CLOB     == lob->type) && 
-                                (OCI_LSM_BYTE == OCILib.length_str_mode))
+                            if (lob->type == OCI_BLOB)
                             {
                                 len /= sizeof(dtext);
                             }
 
-                            def->buf.temp[len] = 0;
+                            res = OCI_DefineRequestBuffer(def, (unsigned int) len);
 
-                            OCI_LobSeek(lob, 0, OCI_SEEK_SET);
+                            if (res == TRUE)
+                            {                           
+                                res = OCI_LobRead(lob, def->buf.tmpbuf, (unsigned int) len) &&
+                                      OCI_LobSeek(lob, 0, OCI_SEEK_SET);
 
-                            str = def->buf.temp;
+                                str = def->buf.tmpbuf;
+                            }
                         }
 
                         break;
@@ -1610,18 +1631,23 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                     }
                     case OCI_CDT_FILE:
                     {
-                        OCI_File    *file = OCI_GetFile(rs, index);
-                        unsigned int len  = 0;
+                        OCI_File *file = OCI_GetFile(rs, index);
 
                         if (file != NULL)
                         {
-                            len = OCI_FileRead(file, def->buf.temp, bufdsize);
+                            big_uint len = OCI_FileGetSize(file) / sizeof(dtext);
 
-                            memset(((char*) def->buf.temp) + len, 0, sizeof(dtext));
+                            res = OCI_DefineRequestBuffer(def, (unsigned int) len);
 
-                            OCI_FileSeek(file, 0, OCI_SEEK_SET);
+                            if (res == TRUE)
+                            {
+                                res = OCI_FileRead(file, def->buf.tmpbuf, (unsigned int) len) &&
+                                      OCI_FileSeek(file, 0, OCI_SEEK_SET);
 
-                            str = def->buf.temp;
+                                memset(((char*) def->buf.tmpbuf) + len, 0, sizeof(dtext));
+
+                                str = def->buf.tmpbuf;
+                            }
                         }
 
                         break;
@@ -1633,24 +1659,31 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
 
                         if (ref != NULL)
                         {
+                            res = OCI_DefineRequestBuffer(def, OCI_SIZE_BUFFER);
 
-#ifndef OCI_CHARSET_MIXED
+                            if (res == TRUE)
+                            {
 
-                            OCI_RefToText(ref, bufmsize, (mtext *) def->buf.temp);
+                            #ifndef OCI_CHARSET_MIXED
 
-#else
-                            /* mixed mode... conversion needed ! */
+                                OCI_RefToText(ref, OCI_SIZE_BUFFER, (mtext *) def->buf.tmpbuf);
 
-                            mtext temp[OCI_SIZE_BUFFER+1];
+                            #else
+                                
+                                /* mixed mode... conversion needed ! */
 
-                            temp[0] = 0;
+                                mtext temp[OCI_SIZE_BUFFER+1];
 
-                            OCI_RefToText(ref, bufmsize, (mtext *) temp);
+                                temp[0] = 0;
 
-                            mbstowcs(def->buf.temp, temp, strlen(temp) + OCI_CVT_CHAR);
- #endif
+                                OCI_RefToText(ref, OCI_SIZE_BUFFER, (mtext *) temp);
 
-                           str = def->buf.temp;
+                                mbstowcs(def->buf.tmpbuf, temp, strlen(temp) + OCI_CVT_CHAR);
+
+                            #endif
+
+                               str = def->buf.tmpbuf;
+                            }
                         }
 
                         break;
@@ -1666,7 +1699,7 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
 
     OCI_RESULT(res);
 
-    return OCI_GET_NULL_DSTR(str);
+    return str;
 }
 
 /* ------------------------------------------------------------------------ *

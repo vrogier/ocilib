@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: format.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: format.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -140,7 +140,7 @@ int OCI_ParseSqlFmt(OCI_Statement *stmt, mtext *buf, const mtext *format,
                     }
                 }
                 else
-                    len = ((date != NULL) ? OCI_SIZE_TIMESTAMP : OCI_SIZE_NULL);
+                    len = ((date != NULL) ? OCI_SIZE_DATE : OCI_SIZE_NULL);
 
                 break;
             }

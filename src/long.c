@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: long.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: long.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -135,7 +135,8 @@ unsigned int OCI_API OCI_LongGetType(OCI_Long *lg)
  * OCI_LongRead
  * ------------------------------------------------------------------------ */
 
-unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer, unsigned int len)
+unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer,
+                                  unsigned int len)
 {
     unsigned int size = len;
     unsigned int fact = 1;
@@ -152,20 +153,13 @@ unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer, unsigned int len)
     */
 
     if (lg->type == OCI_CLONG)
-    {
-        fact = sizeof(dtext)/sizeof(odtext);
+        len *= (unsigned int) sizeof(odtext);
 
-        if (OCILib.length_str_mode == OCI_LSM_CHAR)
-        {
-             size  *= (unsigned int) sizeof(odtext); 
-        }
-    }
-
-    /* check buffer size to read */
+   /* check buffer size to read */
 
     if ((size + lg->offset) > lg->size)
     {
-       size = lg->size - lg->offset;
+        size = lg->size - lg->offset;
     }
 
     /* copy buffer */
@@ -176,15 +170,8 @@ unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer, unsigned int len)
 
     if (lg->type == OCI_CLONG)
     {
-        size /= (unsigned int) sizeof(odtext);
-
         ((dtext *) buffer)[size] = 0;
-
-        if (OCILib.length_str_mode == OCI_LSM_BYTE)
-        {
-            size *= (unsigned int) sizeof(dtext);
-
-        }
+        size /= (unsigned int) sizeof(dtext);
     }
 
     OCI_RESULT(TRUE);
@@ -196,7 +183,8 @@ unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer, unsigned int len)
  * OCI_LongWrite
  * ------------------------------------------------------------------------ */
 
-unsigned int OCI_API OCI_LongWrite(OCI_Long *lg, void *buffer, unsigned int len)
+unsigned int OCI_API OCI_LongWrite(OCI_Long *lg, void *buffer,
+                                   unsigned int len)
 {
     boolean res  = TRUE;
     sword code   = OCI_SUCCESS;
@@ -215,15 +203,10 @@ unsigned int OCI_API OCI_LongWrite(OCI_Long *lg, void *buffer, unsigned int len)
     OCI_CHECK_MIN(lg->stmt->con, lg->stmt, len, 1, 0);
 
     if (lg->type == OCI_CLONG)
-    {
-        if (OCILib.length_str_mode == OCI_LSM_CHAR)
-        {
-            len *= (unsigned int) sizeof(dtext);
-        }
+        len *= (unsigned int) sizeof(dtext);
 
+    if (lg->type == OCI_CLONG)
         obuf = OCI_GetInputDataString(buffer, (int *) &len);
-
-    }   
     else
         obuf = buffer;
 
@@ -297,14 +280,8 @@ unsigned int OCI_API OCI_LongWrite(OCI_Long *lg, void *buffer, unsigned int len)
         /* at this point, count is expressed in odtext bytes for character LONGs */
 
         if (lg->type == OCI_CLONG)
-        {
             count /= (unsigned int) sizeof(odtext);
 
-            if (OCILib.length_str_mode == OCI_LSM_BYTE)
-            {
-                count *= (unsigned int) sizeof(dtext);
-            }
-        }
     }
 
     OCI_RESULT(res);
@@ -325,15 +302,8 @@ unsigned int OCI_API OCI_LongGetSize(OCI_Long *lg)
     size = lg->size;
 
     if (lg->type == OCI_CLONG)
-    {
         size /= (unsigned int) sizeof(odtext);
 
-        if (OCILib.length_str_mode == OCI_LSM_BYTE)
-        {
-            size *= (unsigned int) sizeof(dtext);
-        }
-    }    
-    
     OCI_RESULT(TRUE);
 
     return size;

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: string.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: string.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -197,6 +197,25 @@ int OCI_StringLength(void *ptr, int size_elem)
         size = (int) (e - s - (size_t) 1);
     }
 
+    return size;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_StringUTF8Length
+ * ------------------------------------------------------------------------ */
+
+int OCI_StringUTF8Length(const char *str)
+{
+    int i    = 0;
+    int size = 0;
+
+    while (*str) 
+    {
+        if ((*str & 0xc0) != 0x80)
+            size++;
+        i++;
+    }
+    
     return size;
 }
 

@@ -1,5 +1,5 @@
 /*
-   +----------------------------------------------------------------------+   
+   +----------------------------------------------------------------------+
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
@@ -25,11 +25,11 @@
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
    |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+   +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ref.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: ref.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -42,12 +42,12 @@
  * OCI_RefInit
  * ------------------------------------------------------------------------ */
 
-OCI_Ref * OCI_RefInit(OCI_Connection *con, OCI_TypeInfo *typinf, OCI_Ref **pref, 
+OCI_Ref * OCI_RefInit(OCI_Connection *con, OCI_TypeInfo *typinf, OCI_Ref **pref,
                       void *handle)
 {
     boolean res   = TRUE;
     OCI_Ref * ref = NULL;
-    
+
     OCI_CHECK(pref == NULL, NULL);
 
     if (*pref == NULL)
@@ -61,29 +61,32 @@ OCI_Ref * OCI_RefInit(OCI_Connection *con, OCI_TypeInfo *typinf, OCI_Ref **pref,
         ref->con    = con;
         ref->typinf = typinf;
 
-        if (ref->handle == NULL)
+        if ((ref->handle == NULL) || (ref->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
         {
             /* allocates handle for non fetched object */
 
-            ref->hstate = OCI_OBJECT_ALLOCATED;
+            if (ref->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+            {
+                ref->hstate = OCI_OBJECT_ALLOCATED;
+            }
 
             OCI_CALL2
             (
-                res, ref->con, 
-                
-                OCI_ObjectNew(OCILib.env,  con->err, con->cxt, 
-                              (OCITypeCode) SQLT_REF, 
+                res, ref->con,
+
+                OCI_ObjectNew(OCILib.env,  con->err, con->cxt,
+                              (OCITypeCode) SQLT_REF,
                               (OCIType*) NULL,
-                              (dvoid *) NULL, 
+                              (dvoid *) NULL,
                               (OCIDuration) OCI_DURATION_SESSION,
-                              (boolean) FALSE, 
+                              (boolean) FALSE,
                               (dvoid **) &ref->handle)
            )
         }
         else
         {
             ref->hstate = OCI_OBJECT_FETCHED_CLEAN;
-            
+
             OCI_RefUnpin(ref);
         }
     }
@@ -116,8 +119,8 @@ boolean OCI_RefPin(OCI_Ref *ref)
 
     OCI_CALL2
     (
-        res, ref->con, 
-        
+        res, ref->con,
+
         OCIObjectPin(OCILib.env, ref->con->err, ref->handle,
                      (OCIComplexObject *) 0, OCI_PIN_ANY, OCI_DURATION_SESSION,
                      OCI_LOCK_NONE, &obj_handle)
@@ -156,8 +159,8 @@ boolean OCI_RefUnpin(OCI_Ref *ref)
     {
         OCI_CALL2
         (
-            res, ref->con, 
-            
+            res, ref->con,
+
             OCIObjectUnpin(OCILib.env, ref->con->err, ref->obj->handle)
         )
 
@@ -171,7 +174,7 @@ boolean OCI_RefUnpin(OCI_Ref *ref)
         ref->obj = NULL;
     }
 
-    return res;           
+    return res;
 }
 
 /* ************************************************************************ *
@@ -185,7 +188,7 @@ boolean OCI_RefUnpin(OCI_Ref *ref)
 OCI_Ref * OCI_API OCI_RefCreate(OCI_Connection *con, OCI_TypeInfo *typinf)
 {
     OCI_Ref *ref = NULL;
-    
+
     OCI_CHECK_INITIALIZED(NULL);
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
@@ -210,17 +213,51 @@ boolean OCI_API OCI_RefFree(OCI_Ref *ref)
 
     OCI_RefUnpin(ref);
 
-    if (ref->hstate == OCI_OBJECT_ALLOCATED)
+    if ((ref->hstate == OCI_OBJECT_ALLOCATED      ) ||
+        (ref->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
     {
-        OCI_OCIObjectFree(OCILib.env, ref->con->err,  ref->handle, 
+        OCI_OCIObjectFree(OCILib.env, ref->con->err,  ref->handle,
                           OCI_OBJECTFREE_NONULL);
     }
 
-    OCI_FREE(ref);
+    if (ref->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+    {
+        OCI_FREE(ref);
+    }
 
     OCI_RESULT(TRUE);
 
     return TRUE;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_RefArrayCreate
+ * ------------------------------------------------------------------------ */
+
+OCI_Ref ** OCI_API OCI_RefArrayCreate(OCI_Connection *con,
+                                      OCI_TypeInfo *typinf,
+                                      unsigned int nbelem)
+{
+    OCI_Array   *arr  = NULL;
+    OCI_Ref    **refs = NULL;
+
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0, typinf);
+
+    if (arr != NULL)
+    {
+        refs = (OCI_Ref **) arr->tab_obj;
+    }
+
+    return refs;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_RefArrayFree
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_RefArrayFree(OCI_Ref **refs)
+{
+    return OCI_ArrayFreeFromHandles((void **) refs);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -238,11 +275,11 @@ OCI_Object * OCI_API OCI_RefGetObject(OCI_Ref *ref)
         res = OCI_RefPin(ref);
 
         OCI_RESULT(res);
-    
+
         obj = ref->obj;
     }
 
-    return obj;
+	return obj;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -260,7 +297,7 @@ boolean OCI_API OCI_RefAssign(OCI_Ref *ref, OCI_Ref *ref_src)
 
     OCI_CALL2
     (
-        res, ref->con, 
+        res, ref->con,
 
         OCIRefAssign(OCILib.env, ref->con->err, ref_src->handle, &ref->handle)
     )
@@ -319,7 +356,7 @@ boolean OCI_API OCI_RefSetNull(OCI_Ref *ref)
     }
 
     OCI_RESULT(res);
-   
+
     return res;
 }
 
@@ -331,28 +368,25 @@ boolean OCI_API OCI_RefToText(OCI_Ref *ref, unsigned int size, mtext *str)
 {
     boolean res = TRUE;
     void *ostr  = NULL;
-    int osize   = (int) size;
-    
+    int osize   = (int) size * (int) sizeof(mtext);
+
     OCI_CHECK_PTR(OCI_IPC_REF, ref, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
 
-    if (OCILib.length_str_mode == OCI_LSM_CHAR)
-         osize *= (int) sizeof(mtext);
-
     /* init output buffer in case of OCI failure */
-    
+
     str[0] = 0;
 
     ostr = OCI_GetInputMetaString(str, &osize);
- 
+
     OCI_CALL2
     (
         res, ref->con,
-        
-        OCIRefToHex((dvoid *) OCILib.env, ref->con->err, ref->handle, 
+
+        OCIRefToHex((dvoid *) OCILib.env, ref->con->err, ref->handle,
                     (OraText *) ostr, (ub4 *) &osize)
     )
- 
+
     OCI_GetOutputMetaString(ostr, str, &osize);
     OCI_ReleaseMetaString(ostr);
 
@@ -361,7 +395,7 @@ boolean OCI_API OCI_RefToText(OCI_Ref *ref, unsigned int size, mtext *str)
     str[osize/ (int) sizeof(mtext)] = 0;
 
     OCI_RESULT(res);
-   
+
     return res;
 }
 

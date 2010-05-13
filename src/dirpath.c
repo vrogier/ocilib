@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: dirpath.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: dirpath.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -92,7 +92,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
             osize = -1;
             ostr  = OCI_GetInputMetaString(dp->typinf->name, &osize);
 
-            OCI_CALL2
+			OCI_CALL2
             (
                 res, dp->con,
 
@@ -111,7 +111,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
             osize = -1;
             ostr  = OCI_GetInputMetaString(dp->typinf->schema, &osize);
 
-            OCI_CALL2
+			OCI_CALL2
             (
                 res, dp->con,
 
@@ -288,10 +288,12 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
         {
             case OCI_CDT_TEXT :
 
-                if (OCILib.length_str_mode == OCI_LSM_CHAR)
+                dpcol->maxsize *= sizeof(dtext);
+                dpcol->bufsize *= sizeof(dtext);
+
+                if (OCILib.nls_utf8 == TRUE)
                 {
-                    dpcol->maxsize *= sizeof(dtext);
-                    dpcol->bufsize *= sizeof(dtext);
+                    dpcol->bufsize *= UTF8_BYTES_PER_CHAR;
                 }
 
                 break;
@@ -325,9 +327,7 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
                     dpcol->format       = mtsdup(format);
                     dpcol->format_size  = (ub4) mtslen(format);
                     dpcol->maxsize      = (ub2) dpcol->format_size;
-
-                    if (OCILib.length_str_mode == OCI_LSM_CHAR)              
-                        dpcol->bufsize     *= sizeof(dtext);
+                    dpcol->bufsize     *= sizeof(dtext);
                 }
 
                 break;
@@ -384,7 +384,7 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
 
         /* get colum attribute handle */
 
-        OCI_CALL2
+		OCI_CALL2
         (
             res, dp->con,
 
@@ -392,7 +392,7 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
                         (dvoid** ) (dvoid *) &hattr, (ub4) index)
         )
         
-        /* set column name */
+	    /* set column name */
 
         if (res == TRUE)
         {
@@ -481,7 +481,7 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
             OCI_ReleaseMetaString(ostr);
         }
 
-    #ifdef OCI_CHARSET_UNICODE
+    #ifdef OCI_CHARSET_WIDE
 
         /* setup Unicode mode for Unicode user data */
 
@@ -670,7 +670,7 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
 
     /* for character based column, parameter size was the number of characters */
 
-    if ((dpcol->sqlcode == SQLT_CHR) && (OCILib.length_str_mode == OCI_LSM_CHAR))
+    if (dpcol->sqlcode == SQLT_CHR)
     {
        size *= (unsigned int) sizeof(dtext);
     }
@@ -690,9 +690,10 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
         OCI_GetOutputString(value, data, &size, sizeof(dtext), sizeof(odtext));
     }
     else
+
 #endif
 
-#if defined(OCI_USERDATA_UNICODE)
+#if defined(OCI_USERDATA_WIDE)
 
     /* input Unicode numeric values causes oracle conversion error.
        so, let's convert them to ansi */
@@ -702,6 +703,7 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
         size = (unsigned int) wcstombs((char *) data, value, dpcol->bufsize - 1);
     }
     else
+
 #endif
 
     /* if a format was provided for a numeric column, we convert the input
@@ -828,7 +830,7 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
 
             /* set entry value */
 
-            OCI_CALL2
+	        OCI_CALL2
             (
                 res, dp->con,
 
@@ -1005,7 +1007,7 @@ boolean OCI_API OCI_DirPathFinish(OCI_DirPath *dp)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
 
-    OCI_CALL2
+	OCI_CALL2
     (
         res, dp->con,
 
@@ -1032,7 +1034,7 @@ boolean OCI_API OCI_DirPathAbort(OCI_DirPath *dp)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
 
-    OCI_CALL2
+	OCI_CALL2
     (
         res, dp->con,
 
@@ -1061,7 +1063,7 @@ boolean OCI_API OCI_DirPathSave(OCI_DirPath *dp)
 
     OCI_DirPathReset(dp);
 
-    OCI_CALL2
+	OCI_CALL2
     (
         res, dp->con,
 
@@ -1085,7 +1087,7 @@ boolean OCI_API OCI_DirPathFlushRow(OCI_DirPath *dp)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
 
-    OCI_CALL2
+	OCI_CALL2
     (
         res, dp->con,
 

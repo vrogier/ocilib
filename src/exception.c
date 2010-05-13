@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: exception.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: exception.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -74,6 +74,7 @@ static mtext * OCILib_TypeNames[] =
     MT("Direct Path handle"),
     MT("Subscription handle"),
     MT("Event handle"),
+    MT("Array handle"),
 
     MT("Internal list handle"),
     MT("Internal list item handle"),
@@ -100,7 +101,7 @@ static mtext * OCILib_TypeNames[] =
 };
 
 
-#if defined(OCI_CHARSET_UNICODE) && !defined(_MSC_VER)
+#if defined(OCI_CHARSET_WIDE) && !defined(_MSC_VER)
 
 static mtext * OCILib_ErrorMsg[] =
 {

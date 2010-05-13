@@ -1,5 +1,5 @@
 /*
-   +----------------------------------------------------------------------+   
+   +----------------------------------------------------------------------+
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: define.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: define.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -209,7 +209,7 @@ boolean OCI_DefineAlloc(OCI_Define *def)
 
     if (res == TRUE)
     {
-        def->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, 
+        def->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY,
                                               (size_t) def->buf.sizelen,
                                               (size_t) def->buf.count, TRUE);
 
@@ -272,11 +272,11 @@ boolean OCI_DefineAlloc(OCI_Define *def)
                                           (size_t) 0, (dvoid **) NULL
                                       )
                        );
-            
+
                 if ((res == TRUE) && (def->col.type == OCI_CDT_LOB))
                 {
                     ub4 empty = 0;
-                   
+
                     for (i = 0; (i < def->buf.count) && (res == TRUE); i++)
                     {
                         OCI_CALL1
@@ -351,51 +351,85 @@ boolean OCI_DefineDef(OCI_Define *def)
         )
     }
 
-    if (def->col.csfrm == SQLCS_NCHAR
-#ifdef OCI_USERDATA_UNICODE
-        || (def->col.type == OCI_CDT_TEXT && OCILib.version_runtime >= OCI_9_0)
-#endif
-        )
-    {
-        ub1 csfrm = SQLCS_NCHAR;
-
-        OCI_CALL1
-        (
-            res, def->rs->stmt->con, def->rs->stmt,
-
-            OCIAttrSet((dvoid *) def->buf.handle,
-                       (ub4    ) OCI_HTYPE_DEFINE,
-                       (dvoid *) &csfrm,
-                       (ub4    ) sizeof(csfrm),
-                       (ub4    ) OCI_ATTR_CHARSET_FORM,
-                       def->rs->stmt->con->err)
-        )
-    }
-
-#ifdef OCI_CHARSET_MIXED
-
-    /* setup Unicode mode for user data on mixed builds */
-    if(( def->col.type == OCI_CDT_TEXT)  || 
+    if(( def->col.type == OCI_CDT_TEXT)  ||
        ((def->col.type == OCI_CDT_LOB)   && (def->col.subtype != OCI_BLOB))  ||
        ((def->col.type == OCI_CDT_FILE)  && (def->col.subtype != OCI_BFILE)) ||
        ((def->col.type == OCI_CDT_LONG)  && (def->col.subtype != OCI_BLONG)))
     {
-        ub2 csid = OCI_UTF16ID;
 
-        OCI_CALL1
-        (
-            res, def->rs->stmt->con, def->rs->stmt,
+        if ((def->col.csfrm == SQLCS_NCHAR) || (OCILib.nls_utf8 == TRUE))
+        {
+            ub1 csfrm = SQLCS_NCHAR;
 
-            OCIAttrSet((dvoid *) def->buf.handle,
-                       (ub4    ) OCI_HTYPE_DEFINE,
-                       (dvoid *) &csid,
-                       (ub4    ) sizeof(csid),
-                       (ub4    ) OCI_ATTR_CHARSET_ID,
-                       def->rs->stmt->con->err)
-        )
+            OCI_CALL1
+            (
+                res, def->rs->stmt->con, def->rs->stmt,
+
+                OCIAttrSet((dvoid *) def->buf.handle,
+                           (ub4    ) OCI_HTYPE_DEFINE,
+                           (dvoid *) &csfrm,
+                           (ub4    ) sizeof(csfrm),
+                           (ub4    ) OCI_ATTR_CHARSET_FORM,
+                           def->rs->stmt->con->err)
+            )
+        }
+
+    #ifdef OCI_CHARSET_MIXED
+
+        /* setup Unicode mode for user data on mixed builds */
+        {
+            ub2 csid = OCI_UTF16ID;
+
+            OCI_CALL1
+            (
+                res, def->rs->stmt->con, def->rs->stmt,
+
+                OCIAttrSet((dvoid *) def->buf.handle,
+                           (ub4    ) OCI_HTYPE_DEFINE,
+                           (dvoid *) &csid,
+                           (ub4    ) sizeof(csid),
+                           (ub4    ) OCI_ATTR_CHARSET_ID,
+                           def->rs->stmt->con->err)
+            )
+        }
+
+    #endif
+
     }
 
-#endif
+    return res;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_DefineRequestBuffer
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_DefineRequestBuffer(OCI_Define *def, unsigned int size)
+{
+    boolean res = TRUE;
+
+    size++;
+
+    if (OCILib.nls_utf8 == TRUE)
+        size *= UTF8_BYTES_PER_CHAR;
+    else
+        size *= sizeof(dtext);
+
+    if (def->buf.tmpbuf == NULL || def->buf.tmpsize < size)
+    {
+        def->buf.tmpbuf = (dtext *) OCI_MemRealloc(def->buf.tmpbuf,
+                                                   OCI_IPC_STRING,
+                                                   (size_t) size,
+                                                   (size_t) 1);
+
+        if (def->buf.tmpbuf != NULL)
+            def->buf.tmpsize = size;
+        else
+            res = FALSE;
+    }
+
+
+    def->buf.tmpbuf[0] = 0;
 
     return res;
 }

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: column.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: column.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -488,9 +488,14 @@ boolean OCI_ColumnMap(OCI_Column *col, OCI_Statement *stmt)
             if ((col->icode == SQLT_LNG || col->icode == SQLT_LVC) &&
                 (stmt != NULL && stmt->long_mode == OCI_LONG_IMPLICIT))
             {
-                 col->type    = OCI_CDT_TEXT;
-                 col->bufsize = (OCI_SIZE_LONG+1);
-                 col->subtype = OCI_CLONG;
+                col->type     = OCI_CDT_TEXT;
+                col->bufsize  = (OCI_SIZE_LONG+1) * ((ub2) sizeof(dtext));
+                col->subtype  = OCI_CLONG;
+
+                if (OCILib.nls_utf8 == TRUE)
+                {
+                    col->bufsize *= UTF8_BYTES_PER_CHAR;
+                }
             }
             else
             {
@@ -593,9 +598,15 @@ boolean OCI_ColumnMap(OCI_Column *col, OCI_Statement *stmt)
         case SQLT_SLS:
         default:
 
-            col->icode   = SQLT_STR;
-            col->type    = OCI_CDT_TEXT;
-            col->bufsize = (ub4) ((col->size + 1) * (ub2) sizeof(dtext));
+            col->icode    = SQLT_STR;
+            col->type     = OCI_CDT_TEXT;
+            col->bufsize  = (ub4) ((col->size + 1) * (ub2) sizeof(dtext));
+
+            if (OCILib.nls_utf8 == TRUE)
+            {
+                col->bufsize *= UTF8_BYTES_PER_CHAR;
+            }
+
             break;
     }
 
@@ -915,7 +926,7 @@ const mtext * OCI_API OCI_ColumnGetSQLType(OCI_Column *col)
 
        default:
 
-            /* unknown datatype ? Should not happen because all
+          /* unknown datatype ? Should not happen because all
                datatypes are supported */
 
             return MT("?");
@@ -937,9 +948,6 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType(OCI_Column *col, mtext *buffer,
 
     buffer[0] = 0;
 
-    if (OCILib.length_str_mode == OCI_LSM_BYTE)
-        len /= sizeof(mtext);
-
     /* ISO C functions are supposed to be "standard", but we still see specific
        implementations that make some usage not portable and worse not compatible.
        MS Windows is implementing string conversion characters (%s/%ls) of the 
@@ -952,7 +960,7 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType(OCI_Column *col, mtext *buffer,
     {
         case SQLT_AFC:
 
-#if defined(OCI_METADATA_UNICODE) && !defined(_WINDOWS)
+#if defined(OCI_METADATA_WIDE) && !defined(_WINDOWS)
             len = mtsprintf(buffer, len, MT("%lsCHAR(%i%ls)"), 
 #else
             len = mtsprintf(buffer, len, MT("%sCHAR(%i%s)"), 
@@ -967,7 +975,7 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType(OCI_Column *col, mtext *buffer,
         case SQLT_STR:
         case SQLT_CHR:
  
-#if defined(OCI_METADATA_UNICODE) && !defined(_WINDOWS)
+#if defined(OCI_METADATA_WIDE) && !defined(_WINDOWS)
             len = mtsprintf(buffer, len, MT("%lsVARCHAR(%i%ls)"), 
 #else
             len = mtsprintf(buffer, len, MT("%sVARCHAR(%i%s)"), 
@@ -1133,9 +1141,6 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType(OCI_Column *col, mtext *buffer,
 
             mtsncat(buffer, MT("?"), (size_t) len);
     }
-
-    if (OCILib.length_str_mode == OCI_LSM_BYTE)
-        len *= sizeof(mtext);
 
     return len;
 }

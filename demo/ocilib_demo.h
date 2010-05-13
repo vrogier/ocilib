@@ -26,7 +26,7 @@
    | License along with this library; if not, write to the Free           |
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net             |
+   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
    +----------------------------------------------------------------------+
 */
 
@@ -37,7 +37,7 @@
  * SO, WE NEED A LITTLE EFFORT TO KEEP THE SAME SOURCE CODE FOR :
  *
  *    - MS WINDOWS AND UNIXES
- *    - ANSI / MIXED / UNICODE BUILDS
+ *    - ANSI / MIXED / WIDE BUILDS
  *
  * SOME DEFINES FOLLOW IN ORDER TO HANDLE ALL THOSE STUFF
  *
@@ -94,7 +94,7 @@ typedef struct test_t
 
 #ifdef _MSC_VER
 
-  #if defined(OCI_CHARSET_UNICODE)
+  #if defined(OCI_CHARSET_WIDE)
       #pragma comment(lib, "ocilibw.lib")
   #elif defined(OCI_CHARSET_MIXED)
       #pragma comment(lib, "ocilibm.lib")
@@ -117,13 +117,12 @@ typedef struct test_t
 #define print_text(x)       printf(x)
 #define print_frmt(f, x)    printf(f, x)
 
-#if defined(OCI_CHARSET_UNICODE)
+#if defined(OCI_CHARSET_WIDE)
 
   #define print_mt  wprintf
   #define print_dt  wprintf
   #define sprint_mt swprintf
   #define sprint_dt swprintf
-  #define dtslen    wcslen
 
 #elif defined(OCI_CHARSET_MIXED)
 
@@ -131,7 +130,6 @@ typedef struct test_t
   #define print_dt  wprintf
   #define sprint_mt ocisprintf
   #define sprint_dt swprintf
-  #define dtslen    wcslen
 
 #else
 
@@ -139,7 +137,6 @@ typedef struct test_t
   #define print_dt  printf
   #define sprint_mt ocisprintf
   #define sprint_dt ocisprintf
-  #define dtslen    strlen
 
 #endif
 
@@ -157,7 +154,7 @@ typedef struct test_t
 
 /* print metadata text */
 
-#if defined(OCI_CHARSET_UNICODE) && !defined(_WINDOWS)
+#if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
 
   #define print_mstr(x)   printf("%ls", x)
 
@@ -171,7 +168,7 @@ typedef struct test_t
  * PROGRAM ARGUMENTS
  * ------------------------------------------------------------------------ */
 
-#if defined(OCI_CHARSET_UNICODE)
+#if defined(OCI_CHARSET_WIDE)
 
   #if defined(_MSC_VER)
 

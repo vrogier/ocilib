@@ -1,5 +1,5 @@
 /*
-   +----------------------------------------------------------------------+   
+   +----------------------------------------------------------------------+
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
@@ -25,11 +25,11 @@
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
    |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+   +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: date.c, v 3.6.0 2010-03-08 00:00 Vincent Rogier $
+ * $Id: date.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -51,7 +51,7 @@ OCI_Date * OCI_DateInit(OCI_Connection *con, OCI_Date **pdate, OCIDate *buffer,
     OCI_CHECK(pdate == NULL, NULL);
 
     if (*pdate == NULL)
-        *pdate = (OCI_Date *) OCI_MemAlloc(OCI_IPC_DATE, sizeof(*date), 
+        *pdate = (OCI_Date *) OCI_MemAlloc(OCI_IPC_DATE, sizeof(*date),
                                            (size_t) 1, TRUE);
 
     if (*pdate != NULL)
@@ -76,16 +76,20 @@ OCI_Date * OCI_DateInit(OCI_Connection *con, OCI_Date **pdate, OCIDate *buffer,
             if (allocate == TRUE)
                 date->hstate = OCI_OBJECT_ALLOCATED;
 
-            date->handle = (OCIDate *) OCI_MemAlloc(OCI_IPC_OCIDATE, 
-                                                    sizeof(*date->handle), 
+            date->handle = (OCIDate *) OCI_MemAlloc(OCI_IPC_OCIDATE,
+                                                    sizeof(*date->handle),
                                                     (size_t) 1, TRUE);
 
             res = (date->handle != NULL);
         }
         else
         {
-            date->hstate  = OCI_OBJECT_FETCHED_CLEAN;
-            date->handle  = buffer;
+            if (date->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+            {
+                date->hstate = OCI_OBJECT_FETCHED_CLEAN;
+            }
+
+            date->handle = buffer;
         }
 
         /* if the input buffer is an SQLT_DAT buffer, we need to convert it */
@@ -93,7 +97,7 @@ OCI_Date * OCI_DateInit(OCI_Connection *con, OCI_Date **pdate, OCIDate *buffer,
         if ((ansi == TRUE) && (buffer != NULL))
         {
             unsigned char *d = (unsigned char *) buffer;
-            
+
             date->handle->OCIDateYYYY = (sb2) (((d[0] - 100) * 100) + (d[1] - 100));
             date->handle->OCIDateMM   = (ub1) d[2];
             date->handle->OCIDateDD   = (ub1) d[3];
@@ -113,7 +117,7 @@ OCI_Date * OCI_DateInit(OCI_Connection *con, OCI_Date **pdate, OCIDate *buffer,
         OCI_DateFree(date);
         date = NULL;
     }
-    
+
     return date;
 }
 
@@ -128,7 +132,7 @@ OCI_Date * OCI_DateInit(OCI_Connection *con, OCI_Date **pdate, OCIDate *buffer,
 OCI_Date * OCI_API OCI_DateCreate(OCI_Connection *con)
 {
     OCI_Date *date = NULL;
-    
+
     OCI_CHECK_INITIALIZED(NULL);
 
     date = OCI_DateInit(con, &date, NULL, TRUE, FALSE);
@@ -149,13 +153,46 @@ boolean OCI_API OCI_DateFree(OCI_Date *date)
     OCI_CHECK_OBJECT_FETCHED(date, FALSE);
 
     if (date->allocated == TRUE)
+    {
         OCI_FREE(date->handle);
+    }
 
-    OCI_FREE(date);
+    if (date->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+    {
+        OCI_FREE(date);
+    }
 
     OCI_RESULT(TRUE);
 
     return TRUE;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_DateArrayCreate
+ * ------------------------------------------------------------------------ */
+
+OCI_Date ** OCI_API OCI_DateArrayCreate(OCI_Connection *con, unsigned int nbelem)
+{
+    OCI_Array  *arr   = NULL;
+    OCI_Date  **dates = NULL;
+
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, NULL);
+
+    if (arr != NULL)
+    {
+        dates = (OCI_Date **) arr->tab_obj;
+    }
+
+    return dates;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_DateArrayFree
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_DateArrayFree(OCI_Date **dates)
+{
+    return OCI_ArrayFreeFromHandles((void **) dates);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -171,7 +208,7 @@ boolean OCI_API OCI_DateAddDays(OCI_Date *date, int nb)
     OCI_CALL4
     (
         res, date->err, date->con,
-        
+
         OCIDateAddDays(date->err, date->handle, (sb4) nb, date->handle)
     )
 
@@ -193,7 +230,7 @@ boolean OCI_API OCI_DateAddMonths(OCI_Date *date, int nb)
     OCI_CALL4
     (
         res, date->err, date->con,
-        
+
         OCIDateAddMonths(date->err, date->handle, (sb4) nb, date->handle)
     )
 
@@ -215,7 +252,7 @@ boolean OCI_API OCI_DateAssign(OCI_Date *date, OCI_Date *date_src)
 
     OCI_CALL4
     (
-        res, date->err, date->con, 
+        res, date->err, date->con,
 
         OCIDateAssign(date->err, date_src->handle, date->handle)
     )
@@ -238,8 +275,8 @@ int OCI_API OCI_DateCheck(OCI_Date *date)
 
     OCI_CALL4
     (
-        res, date->err, date->con, 
-        
+        res, date->err, date->con,
+
         OCIDateCheck(date->err, date->handle, &valid)
     )
 
@@ -262,7 +299,7 @@ int OCI_API OCI_DateCompare(OCI_Date *date, OCI_Date *date2)
     OCI_CALL4
     (
         res, date->err, date->con,
-        
+
         OCIDateCompare(date->err, date->handle, date2->handle, &value)
     )
 
@@ -285,8 +322,8 @@ int OCI_API OCI_DateDaysBetween(OCI_Date *date, OCI_Date *date2)
 
     OCI_CALL4
     (
-        res, date->err, date->con, 
-        
+        res, date->err, date->con,
+
         OCIDateDaysBetween(date->err, date->handle, date2->handle, &nb)
     )
 
@@ -299,7 +336,7 @@ int OCI_API OCI_DateDaysBetween(OCI_Date *date, OCI_Date *date2)
  * OCI_DateFromText
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_DateFromText(OCI_Date *date, const mtext *str, 
+boolean OCI_API OCI_DateFromText(OCI_Date *date, const mtext *str,
                                  const mtext *fmt)
 {
     void *ostr1 = NULL;
@@ -318,7 +355,7 @@ boolean OCI_API OCI_DateFromText(OCI_Date *date, const mtext *str,
     OCI_CALL4
     (
         res, date->err, date->con,
-        
+
         OCIDateFromText(date->err,
                         (oratext *) ostr1, (ub4) osize1,
                         (oratext *) ostr2, (ub1) osize2,
@@ -397,7 +434,7 @@ boolean OCI_API OCI_DateGetTime(OCI_Date *date, int *hour, int *min, int *sec)
  * OCI_DateGetDateTime
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_DateGetDateTime(OCI_Date *date, int *year, int *month, 
+boolean OCI_API OCI_DateGetDateTime(OCI_Date *date, int *year, int *month,
                                     int *day, int *hour, int *min, int *sec)
 {
     return (OCI_DateGetDate(date, year, month, day) &&
@@ -416,8 +453,8 @@ boolean OCI_API OCI_DateLastDay(OCI_Date *date)
 
     OCI_CALL4
     (
-        res, date->err, date->con, 
-        
+        res, date->err, date->con,
+
         OCIDateLastDay(date->err, date->handle, date->handle)
     )
 
@@ -443,8 +480,8 @@ boolean OCI_API OCI_DateNextDay(OCI_Date *date, const mtext *day)
 
     OCI_CALL4
     (
-        res, date->err, date->con, 
-        
+        res, date->err, date->con,
+
         OCIDateNextDay(date->err, date->handle, (oratext *) ostr,
                        (ub4) osize, date->handle)
     )
@@ -490,7 +527,7 @@ boolean OCI_API OCI_DateSetTime(OCI_Date *date, int hour, int min, int sec)
  * OCI_DateSetDateTime
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_DateSetDateTime(OCI_Date *date, int year, int month, 
+boolean OCI_API OCI_DateSetDateTime(OCI_Date *date, int year, int month,
                                     int day, int hour, int min, int sec)
 {
     return (OCI_DateSetDate(date, year, month, day) &&
@@ -509,8 +546,8 @@ boolean OCI_API OCI_DateSysDate(OCI_Date *date)
 
     OCI_CALL4
     (
-        res, date->err, date->con, 
-        
+        res, date->err, date->con,
+
         OCIDateSysDate(date->err, date->handle)
     )
 
@@ -523,12 +560,12 @@ boolean OCI_API OCI_DateSysDate(OCI_Date *date)
  * OCI_DateToText
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_DateToText(OCI_Date *date, const mtext *fmt, int size, 
+boolean OCI_API OCI_DateToText(OCI_Date *date, const mtext *fmt, int size,
                                mtext *str)
 {
     void *ostr1 = NULL;
     void *ostr2 = NULL;
-    int  osize1 = size;
+    int  osize1 = size * (int) sizeof(mtext);
     int  osize2 = -1;
     boolean res = TRUE;
 
@@ -536,11 +573,8 @@ boolean OCI_API OCI_DateToText(OCI_Date *date, const mtext *fmt, int size,
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, fmt, FALSE);
 
-    if (OCILib.length_str_mode == OCI_LSM_CHAR)
-         osize1 *= (int) sizeof(mtext);
-
     /* init output buffer in case of OCI failure */
- 
+
     str[0] = 0;
 
     ostr1 = OCI_GetInputMetaString(str, &osize1);
@@ -548,9 +582,9 @@ boolean OCI_API OCI_DateToText(OCI_Date *date, const mtext *fmt, int size,
 
     OCI_CALL4
     (
-        res, date->err, date->con, 
-        
-        OCIDateToText(date->err, date->handle, (oratext *) ostr2, 
+        res, date->err, date->con,
+
+        OCIDateToText(date->err, date->handle, (oratext *) ostr2,
                       (ub1) osize2, (oratext *) NULL, (ub4) 0,
                       (ub4*) &osize1, (oratext *) ostr1)
     )
@@ -562,7 +596,9 @@ boolean OCI_API OCI_DateToText(OCI_Date *date, const mtext *fmt, int size,
 
     /* set null string terminator*/
 
-    str[osize1/ (int) sizeof(mtext)] = 0;
+    osize1 /= (int) sizeof(mtext);
+
+    str[osize1] = 0;
 
     OCI_RESULT(res);
 
@@ -573,7 +609,7 @@ boolean OCI_API OCI_DateToText(OCI_Date *date, const mtext *fmt, int size,
  * OCI_DateZoneToZone
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_DateZoneToZone(OCI_Date *date, const mtext *zone1, 
+boolean OCI_API OCI_DateZoneToZone(OCI_Date *date, const mtext *zone1,
                                    const mtext *zone2)
 {
     void *ostr1 = NULL;
@@ -588,11 +624,11 @@ boolean OCI_API OCI_DateZoneToZone(OCI_Date *date, const mtext *zone1,
 
     ostr1 = OCI_GetInputMetaString(zone1, &osize1);
     ostr2 = OCI_GetInputMetaString(zone2, &osize2);
-   
+
     OCI_CALL4
     (
-        res, date->err, date->con, 
-        
+        res, date->err, date->con,
+
         OCIDateZoneToZone(date->err, date->handle,
                           (oratext *) ostr1, (ub4) osize1,
                           (oratext *) ostr2, (ub4) osize2,
