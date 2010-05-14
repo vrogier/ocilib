@@ -1566,7 +1566,6 @@ void test_directpath(void)
       match
    */
 
-   // return;
    if (OCI_VER_MAJ(OCI_GetOCIRuntimeVersion()) == OCI_GetServerMajorVersion(cn))
    {
         OCI_DirPath *dp;
@@ -1577,14 +1576,14 @@ void test_directpath(void)
         dtext val2[SIZE_COL2+1];
         dtext val3[SIZE_COL3+1];
 
-        int i = 0, nb_rows = SIZE_ARRAY;
+        int i = 0, j = 0, nb_rows = SIZE_ARRAY;
         int state;
 
        /* commit any previous pending modifications */
 
         OCI_Commit(cn);
 
-        print_text("\n>>>>> TEST DIRECT PATH \n\n");
+        print_text("\n>>>>> TEST DIRECT PATH (10 loads of 100 rows) \n\n");
 
         tbl = OCI_TypeInfoGet(cn, MT("test_directpath"), OCI_TIF_TABLE);
         dp  = OCI_DirPathCreate(tbl, NULL, NUM_COLS, nb_rows);
@@ -1612,34 +1611,39 @@ void test_directpath(void)
 
         if (res)
         {
-            nb_rows = OCI_DirPathGetMaxRows(dp);
-
-            for (i = 1; i <= nb_rows && res; i++)
+            nb_rows = OCI_DirPathGetMaxRows(dp);          
+            
+            for (i = 0; i < NB_LOAD ; i++)
             {
-                /* fill test values */
+                OCI_DirPathReset(dp);
 
-                sprint_dt(val1, SIZE_COL1+1, DT("%04d"), i);
-                sprint_dt(val2, SIZE_COL2+1, DT("value %05d"), i);
-                sprint_dt(val3, SIZE_COL3+1, DT("%04d%02d%02d"), (i%23)+1 + 2000,
-                                                                 (i%11)+1,
-                                                                 (i%23)+1);
+                for (j = 1; j <= nb_rows && res; j++)
+                {
+                    /* fill test values */
 
-                res = res && OCI_DirPathSetEntry(dp, i, 1, val1, (unsigned int) dtslen(val1), TRUE);
-                res = res && OCI_DirPathSetEntry(dp, i, 2, val2, (unsigned int) dtslen(val2), TRUE);
-                res = res && OCI_DirPathSetEntry(dp, i, 3, val3, (unsigned int) dtslen(val3), TRUE);
-            }
+                    sprint_dt(val1, SIZE_COL1+1, DT("%04d"), i + (i*100));
+                    sprint_dt(val2, SIZE_COL2+1, DT("value %05d"), j + (i*100));
+                    sprint_dt(val3, SIZE_COL3+1, DT("%04d%02d%02d"), (j%23)+1 + 2000,
+                                                                     (j%11)+1,
+                                                                     (j%23)+1);
 
-           /* load data to the server */
+                    res = res && OCI_DirPathSetEntry(dp, j, 1, val1, (unsigned int) dtslen(val1), TRUE);
+                    res = res && OCI_DirPathSetEntry(dp, j, 2, val2, (unsigned int) dtslen(val2), TRUE);
+                    res = res && OCI_DirPathSetEntry(dp, j, 3, val3, (unsigned int) dtslen(val3), TRUE);
+                }
 
-            while (res == TRUE)
-            {
-                state = OCI_DirPathConvert(dp);
+               /* load data to the server */
 
-                if ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))
-                    res = OCI_DirPathLoad(dp);
+                while (res == TRUE)
+                {
+                    state = OCI_DirPathConvert(dp);
 
-                if (state == OCI_DPR_COMPLETE)
-                    break;
+                    if ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))
+                        res = OCI_DirPathLoad(dp);
+
+                    if (state == OCI_DPR_COMPLETE)
+                        break;
+                }
             }
 
             /* commits changes */
@@ -1648,8 +1652,7 @@ void test_directpath(void)
 
             if (res)
             {
-                print_frmt("%03d row(s) processed\n", OCI_DirPathGetAffectedRows(dp));
-                print_frmt("%03d row(s) loaded\n", OCI_DirPathGetRowCount(dp));
+                print_frmt("%04d row(s) loaded\n", OCI_DirPathGetRowCount(dp));
             }
 
             /* free direct path object */

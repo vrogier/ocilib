@@ -58,7 +58,8 @@
 #define SIZE_BUF   2048
 #define SIZE_TAB   5
 
-#define SIZE_ARRAY 1000
+#define SIZE_ARRAY 100
+#define NB_LOAD    10
 #define SIZE_COL1  20
 #define SIZE_COL2  30
 #define SIZE_COL3  8

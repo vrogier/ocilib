@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: dirpath.c, v 3.6.0 2010-05-14 11:07 Vincent Rogier $
+ * $Id: dirpath.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -795,7 +795,6 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
     unsigned int res = OCI_DPR_COMPLETE;
     OCI_DirPathColumn *dpcol = NULL;
     sword ret = OCI_SUCCESS;
-    ub4 nb_prcsd = 0;
     ub1 *data;
     ub4 size;
     ub1 flag;
@@ -806,6 +805,7 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
 
     dp->err_col  = 0;
+    dp->nb_prcsd = 0;
 
     /* set entries */
 
@@ -813,7 +813,7 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
     {
         dpcol = &(dp->cols[i]);
 
-        for (j = (ub2) dp->nb_prcsd; (j < dp->nb_cur) && (res == TRUE); j++)
+        for (j = (ub2) 0; (j < dp->nb_cur) && (res == TRUE); j++)
         {
             /* get internal data cell */
 
@@ -843,30 +843,16 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
 
     if (res == TRUE)
     {
-        if (dp->nb_prcsd > 0)
-        {
-               /* reset stream */
-
-                OCI_CALL2
-                (
-                    res, dp->con,
-
-                    OCIDirPathStreamReset(dp->strm, dp->con->err)
-                )
-
-        }
-
         /* conversion */
 
         ret = OCIDirPathColArrayToStream(dp->arr, dp->ctx,  dp->strm, dp->con->err,
-                                         (ub4) dp->nb_cur, (ub4) dp->nb_prcsd);
+                                         (ub4) dp->nb_cur, (ub4) 0);
 
         switch (ret)
         {
             case OCI_SUCCESS:
             {
                 dp->status    = OCI_DPS_CONVERTED;
-                dp->nb_prcsd  = dp->nb_cur;
                 dp->err_col   = 0;
                 dp->err_row   = 0;
                 res           = OCI_DPR_COMPLETE;
@@ -899,11 +885,6 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
 
         if (ret != OCI_SUCCESS)
         {
-            size = sizeof(dp->nb_prcsd);
-
-            OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &nb_prcsd,
-                       &size, OCI_ATTR_NUM_ROWS, dp->con->err);
-
             size = sizeof(dp->err_col);
 
             OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &dp->err_col,
@@ -914,11 +895,11 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
             OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &dp->err_row,
                        &size, OCI_ATTR_ROW_COUNT, dp->con->err);
           
-            dp->nb_prcsd  += (ub4) dp->err_row;
+            dp->nb_prcsd  = dp->err_row;
         }
         else
         {
-            dp->nb_prcsd  += nb_prcsd;
+            dp->nb_prcsd  = dp->nb_cur;
         }
 
     }
@@ -945,7 +926,8 @@ unsigned int OCI_API OCI_DirPathLoad(OCI_DirPath *dp)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_CONVERTED, FALSE);
 
-    dp->err_col  =  0;
+    dp->err_col  = 0;
+    dp->nb_prcsd = 0;
 
     ret = OCIDirPathLoadStream(dp->ctx, dp->strm, dp->con->err);
 
@@ -954,7 +936,8 @@ unsigned int OCI_API OCI_DirPathLoad(OCI_DirPath *dp)
         case OCI_SUCCESS:
         {
             dp->status     = OCI_DPS_PREPARED;
-            dp->nb_loaded  = dp->nb_prcsd;
+            dp->nb_prcsd   = dp->nb_cur;
+            dp->nb_loaded += dp->nb_prcsd;
             res            = OCI_DPR_COMPLETE;
 
             break;
@@ -1059,9 +1042,7 @@ boolean OCI_API OCI_DirPathSave(OCI_DirPath *dp)
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
 
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
-
-    OCI_DirPathReset(dp);
+    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_CONVERTED, FALSE);
 
 	OCI_CALL2
     (
@@ -1100,7 +1081,7 @@ boolean OCI_API OCI_DirPathFlushRow(OCI_DirPath *dp)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_DirPathSetSize
+ * OCI_DirPathSetCurrentRows
  * ------------------------------------------------------------------------ */
 
 boolean OCI_API OCI_DirPathSetCurrentRows(OCI_DirPath *dp, unsigned int nb_rows)
@@ -1121,7 +1102,7 @@ boolean OCI_API OCI_DirPathSetCurrentRows(OCI_DirPath *dp, unsigned int nb_rows)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_DirPathGetCurrentSize
+ * OCI_DirPathGetCurrentRows
  * ------------------------------------------------------------------------ */
 
 unsigned int OCI_API OCI_DirPathGetCurrentRows(OCI_DirPath *dp)
@@ -1134,7 +1115,7 @@ unsigned int OCI_API OCI_DirPathGetCurrentRows(OCI_DirPath *dp)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_DirPathGetMaxSize
+ * OCI_DirPathGetMaxRows
  * ------------------------------------------------------------------------ */
 
 unsigned int OCI_API OCI_DirPathGetMaxRows(OCI_DirPath *dp)

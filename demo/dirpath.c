@@ -1,10 +1,11 @@
 #include "ocilib.h"
 
-#define SIZE_ARRAY  1000
-#define SIZE_COL1   20
-#define SIZE_COL2   30
-#define SIZE_COL3   8
-#define NUM_COLS    3
+#define SIZE_ARRAY 100
+#define NB_LOAD    10
+#define SIZE_COL1  20
+#define SIZE_COL2  30
+#define SIZE_COL3  8
+#define NUM_COLS   3
 
 int main(void)
 { 
@@ -16,8 +17,9 @@ int main(void)
     dtext val2[SIZE_COL2+1];
     dtext val3[SIZE_COL3+1];
 
-    int i = 0, nb_rows = SIZE_ARRAY;
-
+    int i = 0, j = 0, nb_rows = SIZE_ARRAY;
+    boolean res = TRUE;
+    
     if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
        return EXIT_FAILURE;
 
@@ -41,34 +43,44 @@ int main(void)
 
     OCI_DirPathPrepare(dp);
 
-    nb_rows = OCI_DirPathGetMaxRows(dp);
-
-    for (i = 1; i <= nb_rows; i++)
+    nb_rows = OCI_DirPathGetMaxRows(dp);          
+    
+    for (i = 0; i < NB_LOAD ; i++)
     {
-        /* fill test values */
+        OCI_DirPathReset(dp);
 
-        ocisprintf(val1, SIZE_COL1+1, "%04d", i);
-        ocisprintf(val2, SIZE_COL2+1, "value %05d", i);
-        ocisprintf(val3, SIZE_COL3+1, "%04d%02d%02d", (i%23)+1 + 2000, 
-                                                      (i%11)+1,
-                                                      (i%23)+1);
+        for (j = 1; j <= nb_rows; j++)
+        {
+            /* fill test values */
 
-        OCI_DirPathSetEntry(dp, i, 1, val1, (unsigned int) dtslen(val1), TRUE);
-        OCI_DirPathSetEntry(dp, i, 2, val2, (unsigned int) dtslen(val2), TRUE);
-        OCI_DirPathSetEntry(dp, i, 3, val3, (unsigned int) dtslen(val3), TRUE);
+            sprintf(val1, "%04d", i + (i*100));
+            sprintf(val2, "value %05d", j + (i*100));
+            sprintf(val3, "%04d%02d%02d", (j%23)+1 + 2000, (j%11)+1, (j%23)+1);
+
+            OCI_DirPathSetEntry(dp, j, 1, val1, (unsigned int) strlen(val1), TRUE);
+            OCI_DirPathSetEntry(dp, j, 2, val2, (unsigned int) strlen(val2), TRUE);
+            OCI_DirPathSetEntry(dp, j, 3, val3, (unsigned int) strlen(val3), TRUE);
+        }
+        
+       /* load data to the server */
+
+        while (res)
+        {
+            int state = OCI_DirPathConvert(dp);
+
+            if ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))
+                res = OCI_DirPathLoad(dp);
+
+            if (state == OCI_DPR_COMPLETE)
+                break;
+        }
     }
-
-    /* load data to the server */
-
-    OCI_DirPathConvert(dp);
-    OCI_DirPathLoad(dp);
 
     /* commits changes */
 
     OCI_DirPathFinish(dp);
 
-    printf("%04d row(s) processed\n", OCI_DirPathGetAffectedRows(dp));
-    printf("%04d row(s) loaded\n",    OCI_DirPathGetRowCount(dp));
+    printf("%04d row(s) loaded\n", OCI_DirPathGetRowCount(dp));
 
     /* free direct path object */
 

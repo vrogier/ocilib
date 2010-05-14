@@ -46,6 +46,11 @@
       - OCI_CHARSET_UNICODE replaced by OCI_CHARSET_WIDE 
       - OCI_CHAR_UNICODE replaced by OCI_CHAR_WIDE
       - OCI_XXX_UNICODE symbols are still supported for backward compatibility
+   
+    * Fixed Multiple loads in Direct path mode
+
+      - Fixed the API to enable multiple load
+      - Updated direct path demo
 
     * Miscellaneous changes
 
