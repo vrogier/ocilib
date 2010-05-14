@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
+ * $Id: ocilib_internal.h, v 3.6.0 2010-05-14 11:07 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED
@@ -1005,17 +1005,17 @@ boolean OCI_BatchErrorInit
 int OCI_StringCopy4to2bytes
 (
     const unsigned int* src,
-    int src_size,
+    size_t src_size,
     unsigned short* dst,
-    int dst_size
+    size_t dst_size
 );
 
 int OCI_StringCopy2to4bytes
 (
     const unsigned short* src,
-    int src_size,
+    size_t src_size,
     unsigned int* dst,
-    int dst_size
+    size_t dst_size
 );
 
 
@@ -1023,8 +1023,8 @@ void * OCI_GetInputString
 (
     void *src,
     int *size,
-    int size_char_in,
-    int size_char_out
+    size_t size_char_in,
+    size_t size_char_out
 );
 
 void OCI_GetOutputString
@@ -1032,8 +1032,8 @@ void OCI_GetOutputString
     void *src,
     void *dest,
     int *size,
-    int size_char_in,
-    int size_char_out
+    size_t size_char_in,
+    size_t size_char_out
 );
 
 void OCI_MoveString
@@ -1041,16 +1041,16 @@ void OCI_MoveString
     void *src,
     void *dst,
     int char_count,
-    int size_char_in,
-    int size_char_out
+    size_t size_char_in,
+    size_t size_char_out
 );
 
 void OCI_ConvertString
 (
     void *str,
     int char_count,
-    int size_char_in,
-    int size_char_out
+    size_t size_char_in,
+    size_t size_char_out
 );
 
 void OCI_CopyString
@@ -1058,8 +1058,8 @@ void OCI_CopyString
     void *src,
     void *dest,
     int *size,
-    int size_char_in,
-    int size_char_out
+    size_t size_char_in,
+    size_t size_char_out
 );
 
 void OCI_ReleaseMetaString
@@ -1072,10 +1072,10 @@ void OCI_ReleaseDataString
     void *ptr
 );
 
-int OCI_StringLength
+size_t OCI_StringLength
 (
     void *ptr,
-    int size_elem
+    size_t size_elem
 );
 
 int OCI_StringUTF8Length

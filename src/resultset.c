@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
+ * $Id: resultset.c, v 3.6.0 2010-05-14 11:07 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -1479,24 +1479,17 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
 
                             if (res == TRUE)
                             {
-                        
-                            #ifndef OCI_CHARSET_MIXED
-                             
                                 res = OCI_DateToText(date, fmt, OCI_SIZE_BUFFER,
                                                      (mtext *) def->buf.tmpbuf);
-                            #else
 
-                                /* mixed mode... conversion needed ! */
+                           #ifdef OCI_CHARSET_MIXED
+                                
+                                OCI_ConvertString(def->buf.tmpbuf,
+                                                  (int) mtslen((mtext*) def->buf.tmpbuf), 
+                                                  sizeof(mtext),  
+                                                  sizeof(dtext));
 
-                                mtext temp[OCI_SIZE_BUFFER+1];
-
-                                temp[0] = 0;
-
-                                res = OCI_DateToText(date, fmt, OCI_SIZE_BUFFER, temp);
-
-                                mbstowcs(def->buf.tmpbuf, temp, strlen(temp) + OCI_CVT_CHAR);
-
-                            #endif
+                           #endif
 
                                 str = def->buf.tmpbuf;
                             }
@@ -1515,26 +1508,17 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
 
                             if (res == TRUE)
                             {
-
-                            #ifndef OCI_CHARSET_MIXED
-
                                 OCI_TimestampToText(tmsp, fmt, OCI_SIZE_BUFFER,
                                                   (mtext *) def->buf.tmpbuf,  0);
 
-                            #else
+                           #ifdef OCI_CHARSET_MIXED
+                                
+                                OCI_ConvertString(def->buf.tmpbuf,
+                                                  (int) mtslen((mtext*) def->buf.tmpbuf), 
+                                                  sizeof(mtext),  
+                                                  sizeof(dtext));
 
-                                /* mixed mode... conversion needed ! */
-
-                                mtext temp[OCI_SIZE_BUFFER+1];
-
-                                temp[0] = 0;
-
-                                OCI_TimestampToText(tmsp, fmt, OCI_SIZE_BUFFER,
-                                                    (mtext *) temp, 0);
-
-                                mbstowcs(def->buf.tmpbuf, temp, strlen(temp) + OCI_CVT_CHAR);
-
-                            #endif
+                           #endif
 
                                 str = def->buf.tmpbuf;
                             }
@@ -1551,31 +1535,20 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
                             res = OCI_DefineRequestBuffer(def, OCI_SIZE_BUFFER);
 
                             if (res == TRUE)
-                            {
-
-                            #ifndef OCI_CHARSET_MIXED
-                            
+                            {                            
                                 OCI_IntervalToText(OCI_GetInterval(rs, index),
                                                    OCI_STRING_DEFAULT_PREC,
                                                    OCI_STRING_DEFAULT_PREC,
                                                    OCI_SIZE_BUFFER,
                                                    (mtext *) def->buf.tmpbuf);
-                            #else
 
-                                /* mixed mode... conversion needed ! */
-
-                                mtext temp[OCI_SIZE_BUFFER+1];
-
-                                temp[0] = 0;
-
-                                OCI_IntervalToText(OCI_GetInterval(rs, index),
-                                                   OCI_STRING_DEFAULT_PREC,
-                                                   OCI_STRING_DEFAULT_PREC,
-                                                   OCI_SIZE_BUFFER, (mtext *) temp);
-
-                                mbstowcs(def->buf.tmpbuf, temp, strlen(temp) + OCI_CVT_CHAR);
-                            
-                            #endif
+                             #ifdef OCI_CHARSET_MIXED
+                                
+                                OCI_ConvertString(def->buf.tmpbuf,
+                                                  (int) mtslen((mtext*) def->buf.tmpbuf), 
+                                                  sizeof(mtext),  
+                                                  sizeof(dtext));
+                             #endif
                           
                                 str = def->buf.tmpbuf;
                             }
@@ -1663,24 +1636,16 @@ const dtext * OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)
 
                             if (res == TRUE)
                             {
-
-                            #ifndef OCI_CHARSET_MIXED
-
                                 OCI_RefToText(ref, OCI_SIZE_BUFFER, (mtext *) def->buf.tmpbuf);
 
-                            #else
+                            #ifdef OCI_CHARSET_MIXED
                                 
-                                /* mixed mode... conversion needed ! */
+                                OCI_ConvertString(def->buf.tmpbuf,
+                                                  (int) mtslen((mtext*) def->buf.tmpbuf), 
+                                                  sizeof(mtext),  
+                                                  sizeof(dtext));
 
-                                mtext temp[OCI_SIZE_BUFFER+1];
-
-                                temp[0] = 0;
-
-                                OCI_RefToText(ref, OCI_SIZE_BUFFER, (mtext *) temp);
-
-                                mbstowcs(def->buf.tmpbuf, temp, strlen(temp) + OCI_CVT_CHAR);
-
-                            #endif
+                           #endif
 
                                str = def->buf.tmpbuf;
                             }

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: lob.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
+ * $Id: lob.c, v 3.6.0 2010-05-14 11:07 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -379,7 +379,7 @@ boolean OCI_API OCI_LobRead2(OCI_Lob *lob, void *buffer,
 #ifndef OCI_LOB2_API_ENABLED
 
         if (OCILib.nls_utf8 == TRUE)
-            (*char_count) = OCI_StringUTF8Length((const char *) buffer, sizeof(odtext));
+            (*char_count) = OCI_StringUTF8Length((const char *) buffer);
 
 #endif
 
@@ -465,15 +465,35 @@ boolean OCI_API OCI_LobWrite2(OCI_Lob *lob, void *buffer,
         {
             if (OCILib.nls_utf8 == TRUE)
             {
-                (*byte_count) = (unsigned int) strlen(buffer);
+               (*byte_count) = (unsigned int) strlen(buffer);
             }
             else
             {
-                (*byte_count) = (*char_count) * (ub4) sizeof(odtext);
+               (*byte_count) = (*char_count) * (ub4) sizeof(dtext);
+            }
+        }
+
+        if (((*char_count) == 0) && ((*byte_count) > 0))
+        {
+            if (OCILib.nls_utf8 == TRUE)
+            {
+
+#ifndef OCI_LOB2_API_ENABLED
+
+                (*char_count) = OCI_StringUTF8Length((const char *) buffer);
+
+#endif
+
+            }
+            else
+            {
+                (*char_count) = (*byte_count) / (ub4) sizeof(dtext);
             }
         }
 
         obuf = OCI_GetInputDataString(buffer, (int *) byte_count);
+
+	    (*byte_count) *= sizeof(odtext);
     }
     else
     {
@@ -521,7 +541,7 @@ boolean OCI_API OCI_LobWrite2(OCI_Lob *lob, void *buffer,
             size_in_out_char_byte = (*byte_count);
         else
             size_in_out_char_byte = (*char_count);
-
+        
         OCI_CALL2
         (
             res, lob->con,
@@ -892,11 +912,31 @@ boolean OCI_API OCI_LobAppend2(OCI_Lob *lob, void *buffer,
             }
             else
             {
-                (*byte_count) = (*char_count) * (ub4) sizeof(odtext);
+                (*byte_count) = (*char_count) * (ub4) sizeof(dtext);
+            }
+        }
+
+        if (((*char_count) == 0) && ((*byte_count) > 0))
+        {
+            if (OCILib.nls_utf8 == TRUE)
+            {
+
+#ifndef OCI_LOB2_API_ENABLED
+
+                (*char_count) = OCI_StringUTF8Length((const char *) buffer);
+
+#endif
+
+            }
+            else
+            {
+                (*char_count) = (*byte_count) / (ub4) sizeof(dtext);
             }
         }
 
         obuf = OCI_GetInputDataString(buffer, (int *) byte_count);
+
+	(*byte_count) *= sizeof(odtext);
     }
     else
     {

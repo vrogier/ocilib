@@ -14,6 +14,8 @@ lib_LTLIBRARIES= libocilib.la
 
 libocilib_la_LIBADD= @ORACLE_LIBADD@ 
 libocilib_la_SOURCES=           \
+	array.c         \
+	bind.c          \
 	callback.c     	\
 	connection.c   	\
 	define.c   	\
@@ -45,12 +47,11 @@ libocilib_la_SOURCES=           \
 	memory.c  	\
 	object.c  	\
 	statement.c  	\
-	threadkey.c \
-  bind.c \
-  ref.c \
-  dirpath.c \
-  event.c \
-  subscription.c 
+	ref.c           \
+	threadkey.c     \
+	dirpath.c       \
+	event.c         \
+	subscription.c
 
 libocilib_la_CFLAGS= -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)

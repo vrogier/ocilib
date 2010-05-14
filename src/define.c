@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: define.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
+ * $Id: define.c, v 3.6.0 2010-05-14 11:07 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -415,7 +415,20 @@ boolean OCI_DefineRequestBuffer(OCI_Define *def, unsigned int size)
     else
         size *= sizeof(dtext);
 
-    if (def->buf.tmpbuf == NULL || def->buf.tmpsize < size)
+    if (def->buf.tmpbuf == NULL)
+    {
+        def->buf.tmpbuf = (dtext *) OCI_MemAlloc(OCI_IPC_STRING,
+                                                 (size_t) size,
+                                                 (size_t) 1,
+                                                 TRUE);
+
+        if (def->buf.tmpbuf != NULL)
+            def->buf.tmpsize = size;
+        else
+            res = FALSE;
+ 
+    }
+    else if (def->buf.tmpsize < size)
     {
         def->buf.tmpbuf = (dtext *) OCI_MemRealloc(def->buf.tmpbuf,
                                                    OCI_IPC_STRING,

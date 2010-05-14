@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: element.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
+ * $Id: element.c, v 3.6.0 2010-05-14 11:07 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -414,20 +414,12 @@ unsigned int OCI_API OCI_ElemGetRaw(OCI_Elem *elem, void *value, unsigned int le
         OCIRaw *raw = *(OCIRaw **) elem->handle;
         ub4 raw_len = 0;
     
-        OCI_CALL2
-        (
-            res, elem->con, 
-            
-            OCIRawAllocSize(OCILib.env, elem->con->err, raw, (ub4*) &raw_len)
-        )
+        raw_len = OCIRawSize(OCILib.env, raw);
 
-        if (res == TRUE)
-        {
-            if (len > raw_len)
-                len = raw_len;
+        if (len > raw_len)
+            len = raw_len;
 
-            memcpy(value, OCIRawPtr(OCILib.env, raw), (size_t) len);
-        }
+        memcpy(value, OCIRawPtr(OCILib.env, raw), (size_t) len);
     }
 
     OCI_RESULT(res);

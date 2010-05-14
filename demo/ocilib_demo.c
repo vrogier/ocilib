@@ -309,7 +309,7 @@ void create_tables(void)
                     MT("    val_lob  clob, ")
                     MT("    val_file bfile, ")
                     MT("    val_obj  type_t, ")
-                    MT("    val_raw  raw(20) ")
+                    MT("    val_raw  raw(10) ")
                     MT(")"));
 
     OCI_ExecuteStmt(st, MT("create type t_tab1_emp as VARRAY(100) of varchar2(50)"));
@@ -1235,6 +1235,10 @@ void test_object_insert(void)
     OCI_Object *obj;
     OCI_Object *obj2;
 
+    char rawbuf[11];
+
+    strcpy(rawbuf, "0123456789");
+
     print_text("\n>>>>> TEST OBJECT BINDING \n\n");
 
     /* create types for the demo */
@@ -1244,7 +1248,7 @@ void test_object_insert(void)
     OCI_ObjectSetInt(obj, MT("VAL_INT"), 1);
     OCI_ObjectSetDouble(obj, MT("VAL_FLT"), 3.14);
     OCI_ObjectSetString(obj, MT("VAL_STR"), DT("USB KEY 2go"));
-    OCI_ObjectSetRaw(obj, MT("VAL_RAW"), DT("AAAAA"), 5 * sizeof(dtext));
+    OCI_ObjectSetRaw(obj, MT("VAL_RAW"), rawbuf, 10);
 
     date = OCI_DateCreate(cn);
     OCI_DateSysDate(date);
@@ -1289,6 +1293,7 @@ void test_object_fetch(void)
     OCI_File *file;
     OCI_Object *obj;
     OCI_Object *obj2;
+    char rawbuf[11] = "";
 
     print_text("\n>>>>> TEST OBJECT FETCHING \n\n");
 
@@ -1306,8 +1311,8 @@ void test_object_fetch(void)
         print_text("val_str        : "); print_dstr(OCI_ObjectGetString(obj, MT("VAL_STR")));
         print_text("\n");
 
-        temp[OCI_ObjectGetRaw(obj, MT("VAL_RAW"), temp, 20)] = 0;
-        print_text("val_raw        : "); print_dstr(temp);
+        temp[OCI_ObjectGetRaw(obj, MT("VAL_RAW"), rawbuf, 10)] = 0;
+        print_text("val_raw        : "); printf(rawbuf);
         print_text("\n");
 
         date = OCI_ObjectGetDate(obj, MT("VAL_DATE"));

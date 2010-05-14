@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: object.c, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
+ * $Id: object.c, v 3.6.0 2010-05-14 11:07 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -710,20 +710,12 @@ int OCI_API OCI_ObjectGetRaw(OCI_Object *obj, const mtext *attr, void *buffer,
 
         if ((value != NULL) && (*ind != OCI_IND_NULL))
         {
-            OCI_CALL2
-            (
-                res, obj->con,
+           raw_len = OCIRawSize(OCILib.env, *value);
 
-                OCIRawAllocSize(OCILib.env, obj->con->err, *value, (ub4*) &raw_len)
-            )
+            if (len > raw_len)
+                len = raw_len;
 
-            if (res == TRUE)
-            {
-                if (len > raw_len)
-                    len = raw_len;
-
-                memcpy(buffer, OCIRawPtr(OCILib.env, *value), (size_t) len);
-            }
+            memcpy(buffer, OCIRawPtr(OCILib.env, *value), (size_t) len);
         }
     }
 

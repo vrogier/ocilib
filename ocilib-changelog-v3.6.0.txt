@@ -53,11 +53,15 @@
       - Modified OCI_Initialize() : renamed parameter 'home' to 'lib_path' 
       - OCI_GetString() : when column base type is not string based, the implicit conversion uses now now dynamic memory allocation to return full data content instead of truncating to OCI_BUFFER_SIZE limit    
       - Various documentation updates
-      - Modified OCI_LobRead() (and thus OCI_LobRead2()) to set a trailing null character 
+      - Modified OCI_LobRead() (and thus OCI_LobRead2()) to set a trailing null character
+      - Replaced few left direct malloc() calls by OCI_MemAlloc()
 
     * Miscellaneous fixes
 
       - fixed prototype of OCI_ConnPoolGetlGetNoWait() => OCI_ConnPoolGetGetNoWait()
+      - fixed internal raw size retrieving in OCI_ObjectGetRaw() and OCI_ElemSetRaw()
+      - fixed OCI_ObjectSetString() in OCI_CHARSET_MIXED mode that could cause a segfault
+      - fixed internal string conversions in OCI_CHARSET_MIXED mode on Unix systems that could cause a segfault
       - fixed various problems of RAW and LONG handling in OCI_MIXED_CHARSET mode
       - fixed OCI_ServerGetOutput() when statements are reprepared
       - fixed computation of objects members offsets (in the internal object opaque structure) which caused misaligned pointer and lead to segfault depending on the members datatype

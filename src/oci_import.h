@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_import.h, v 3.6.0 2010-05-18 00:00 Vincent Rogier $
+ * $Id: oci_import.h, v 3.6.0 2010-05-14 11:07 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
@@ -213,6 +213,7 @@ extern OCISTRINGASSIGNTEXT          OCIStringAssignText;
 extern OCIRAWPTR                    OCIRawPtr;
 extern OCIRAWASSIGNBYTES            OCIRawAssignBytes;
 extern OCIRAWALLOCSIZE              OCIRawAllocSize;
+extern OCIRAWSIZE                   OCIRawSize;
 extern OCIOBJECTNEW                 OCIObjectNew;
 extern OCIOBJECTFREE                OCIObjectFree;
 extern OCIOBJECTSETATTR             OCIObjectSetAttr;
