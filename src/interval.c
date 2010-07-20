@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: interval.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: interval.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -198,8 +198,20 @@ OCI_Interval ** OCI_API OCI_IntervalArrayCreate(OCI_Connection *con,
 {
     OCI_Array      *arr = NULL;
     OCI_Interval **itvs = NULL;
+    unsigned int    htype = 0;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type, NULL);
+    if (type == OCI_INTERVAL_YM)
+    {
+        htype = OCI_INTERVAL_YM;
+    }
+    else if (type == OCI_INTERVAL_DS)
+    {
+        htype = OCI_INTERVAL_DS;
+    }
+
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type, 
+                          sizeof(OCIInterval *), sizeof(OCI_Interval), 
+                          htype, NULL);
 
     if (arr != NULL)
     {
@@ -423,6 +435,7 @@ boolean OCI_API OCI_IntervalToText(OCI_Interval *itv, int leading_prec,
     OCI_NOT_USED(osize);
     OCI_NOT_USED(leading_prec);
     OCI_NOT_USED(fraction_prec);
+    OCI_NOT_USED(len);
 
 #endif
 

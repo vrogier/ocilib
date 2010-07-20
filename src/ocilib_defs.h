@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: ocilib_defs.h, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -208,7 +208,7 @@
 #define OCI_IPC_ERROR            8
 #define OCI_IPC_TYPE_INFO        9
 #define OCI_IPC_CONNECTION       10
-#define OCI_IPC_CONNPOOL         11
+#define OCI_IPC_POOL             11
 #define OCI_IPC_TRANSACTION      12
 #define OCI_IPC_STATEMENT        13 
 #define OCI_IPC_RESULTSET        14
@@ -232,31 +232,35 @@
 #define OCI_IPC_NOTIFY           32
 #define OCI_IPC_EVENT            33
 #define OCI_IPC_ARRAY            34
+#define OCI_IPC_MSG              35
+#define OCI_IPC_ENQUEUE          36
+#define OCI_IPC_DEQUEUE          36
+#define OCI_IPC_AGENT            36
 
 /* ---- Internal pointers ----- */
  
-#define OCI_IPC_LIST             35
-#define OCI_IPC_LIST_ITEM        36
-#define OCI_IPC_BIND_ARRAY       37
-#define OCI_IPC_DEFINE           38
-#define OCI_IPC_DEFINE_ARRAY     39
-#define OCI_IPC_HASHENTRY        40
-#define OCI_IPC_HASHENTRY_ARRAY  41
-#define OCI_IPC_HASHVALUE        42
-#define OCI_IPC_THREADKEY        43
-#define OCI_IPC_OCIDATE          44
-#define OCI_IPC_TM               45
-#define OCI_IPC_RESULTSET_ARRAY  46
-#define OCI_IPC_PLS_SIZE_ARRAY   47
-#define OCI_IPC_PLS_RCODE_ARRAY  48
-#define OCI_IPC_SERVER_OUPUT     49
-#define OCI_IPC_INDICATOR_ARRAY  50
-#define OCI_IPC_LEN_ARRAY        51
-#define OCI_IPC_BUFF_ARRAY       52
-#define OCI_IPC_LONG_BUFFER      53
-#define OCI_IPC_TRACE_INFO       54
-#define OCI_IPC_DP_COL_ARRAY     55
-#define OCI_IPC_BATCH_ERRORS     56
+#define OCI_IPC_LIST             37
+#define OCI_IPC_LIST_ITEM        38
+#define OCI_IPC_BIND_ARRAY       39
+#define OCI_IPC_DEFINE           40
+#define OCI_IPC_DEFINE_ARRAY     41
+#define OCI_IPC_HASHENTRY        42
+#define OCI_IPC_HASHENTRY_ARRAY  43
+#define OCI_IPC_HASHVALUE        44
+#define OCI_IPC_THREADKEY        45
+#define OCI_IPC_OCIDATE          46
+#define OCI_IPC_TM               47
+#define OCI_IPC_RESULTSET_ARRAY  48
+#define OCI_IPC_PLS_SIZE_ARRAY   49
+#define OCI_IPC_PLS_RCODE_ARRAY  50
+#define OCI_IPC_SERVER_OUPUT     51
+#define OCI_IPC_INDICATOR_ARRAY  52
+#define OCI_IPC_LEN_ARRAY        53
+#define OCI_IPC_BUFF_ARRAY       54
+#define OCI_IPC_LONG_BUFFER      55
+#define OCI_IPC_TRACE_INFO       56
+#define OCI_IPC_DP_COL_ARRAY     57
+#define OCI_IPC_BATCH_ERRORS     58
 
 /* ------------------------------------------------------------------------ *
  * Oracle conditionnal features 
@@ -354,6 +358,24 @@
 #define OCI_OUPUT_LSIZE_10G             32767
 
 /* ------------------------------------------------------------------------ *
+ *  offset for alignment computation
+ * ------------------------------------------------------------------------ */
+
+#define OCI_OFT_POINTER                 1
+#define OCI_OFT_NUMBER                  2
+#define OCI_OFT_DATE                    4
+#define OCI_OFT_OBJECT                  8
+
+#define OCI_OFFSET_PAIR(a, b)           (a + (b << 16))
+
+
+/* ------------------------------------------------------------------------ *
+ *  AQ queues defines
+ * ------------------------------------------------------------------------ */
+
+#define OCI_RAW_OCJECT_TYPE   MT("SYS.RAW")
+
+/* ------------------------------------------------------------------------ *
  *  string functions mapping
  * ------------------------------------------------------------------------ */
 
@@ -366,6 +388,12 @@
   #define mtisdigit           isdigit
   #define mtsscanf            sscanf
 #endif
+
+/* ------------------------------------------------------------------------ *
+ *  Internal integer types 
+ * ------------------------------------------------------------------------ */
+
+#define OCI_NUM_NUMBER        32
 
 /* ------------------------------------------------------------------------ *
  *  Unicode constants
@@ -419,9 +447,9 @@
 #define OCI_IND(exp)                    (sb2) ((exp) ? 0 : -1)
 
 #define OCI_NOT_NULL(def)                                   \
-    ((def != NULL) &&                                       \
+    (((def) != NULL) &&                                     \
      (rs->row_cur > 0) &&                                   \
-     ((sb2) ((sb2*)def->buf.inds)[rs->row_cur-1] != -1))
+     ((sb2) ((sb2*)(def)->buf.inds)[rs->row_cur-1] != -1))
 
 
 #define OCI_NOT_USED(p)                 (p) = (p);
@@ -450,7 +478,7 @@
 
 #define OCI_ERR_MSG_SIZE                512
 
-#define OCI_DEF_ALIGN                   sizeof(size_t)
+#define OCI_DEF_ALIGN                   sizeof(void *)
 
 #define ROUNDUP(amount)                                                        \
                                                                                \

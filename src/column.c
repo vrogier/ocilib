@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: column.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: column.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -83,7 +83,7 @@ boolean OCI_ColumnDescribe(OCI_Column *col, OCI_Connection *con,
         )
     }
 
-    /* sql code */
+   /* sql code */
 
     OCI_CALL1
     (
@@ -245,9 +245,17 @@ boolean OCI_ColumnDescribe(OCI_Column *col, OCI_Connection *con,
                        (dvoid *) &col->null, (ub4 *) NULL, 
                        (ub4) OCI_ATTR_IS_NULL, con->err)
         )
-   }
-   else
-       col->null = TRUE;
+    }
+    else
+        col->null = TRUE;
+
+
+    /* name */
+
+    if (ptype == OCI_DESC_COLLECTION) 
+        attrname = OCI_ATTR_TYPE_NAME;
+    else
+        attrname = OCI_ATTR_NAME;
 
     /* name */
 

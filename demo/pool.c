@@ -6,7 +6,7 @@
 
 void worker(OCI_Thread *thread, void *data)
 {
-    OCI_Connection *cn = OCI_ConnPoolGetConnection(data);
+    OCI_Connection *cn = OCI_PoolGetConnection(data, NULL);
     char str[SIZE_STR+1];
 
     /* application work here */
@@ -34,7 +34,7 @@ int main(void)
 
     /* create pool */
 
-    pool = OCI_ConnPoolCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT, 0, MAX_CONN, 1);
+    pool = OCI_PoolCreate("db", "usr", "pwd", OCI_POOL_CONNECTION, OCI_SESSION_DEFAULT, 0, MAX_CONN, 1);
 
     /* create threads */
 
@@ -52,7 +52,7 @@ int main(void)
        OCI_ThreadFree(th[i]);
     }
 
-    OCI_ConnPoolFree(pool);
+    OCI_PoolFree(pool);
 
     OCI_Cleanup();
 

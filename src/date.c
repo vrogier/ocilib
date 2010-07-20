@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: date.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: date.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -176,7 +176,9 @@ OCI_Date ** OCI_API OCI_DateArrayCreate(OCI_Connection *con, unsigned int nbelem
     OCI_Array  *arr   = NULL;
     OCI_Date  **dates = NULL;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, NULL);
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, 
+                          sizeof(OCIDate), sizeof(OCI_Date), 
+                          0, NULL);
 
     if (arr != NULL)
     {

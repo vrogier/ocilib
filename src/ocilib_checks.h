@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_checks.h, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: ocilib_checks.h, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_CHECKS_H_INCLUDED
@@ -276,7 +276,8 @@
                                                                                \
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);                             \
     OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);                                \
-    OCI_CHECK_PTR(type, data, FALSE);                                          \
+    if (stmt->bind_alloc_mode == OCI_BAM_EXTERNAL)                             \
+        OCI_CHECK_PTR(type, data, FALSE);                                      \
 
 
 /**
@@ -629,5 +630,6 @@
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_DATABASE_NOTIFY);          \
         return ret;                                                            \
     }
+
 #endif    /* OCILIB_OCILIB_CHECKS_H_INCLUDED */
 

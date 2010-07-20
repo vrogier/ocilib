@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: lob.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: lob.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -200,7 +200,9 @@ OCI_Lob ** OCI_API OCI_LobArrayCreate(OCI_Connection *con, unsigned int type,
     OCI_Array  *arr  = NULL;
     OCI_Lob   **lobs = NULL;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_LOB, type, NULL);
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_LOB, type, 
+                          sizeof(OCILobLocator *), sizeof(OCI_Lob), 
+                          OCI_DTYPE_LOB, NULL);
 
     if (arr != NULL)
     {

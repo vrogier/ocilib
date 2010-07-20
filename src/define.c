@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: define.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: define.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -205,6 +205,15 @@ boolean OCI_DefineAlloc(OCI_Define *def)
         res = (def->buf.inds != NULL);
     }
 
+    if (def->col.type == OCI_CDT_OBJECT)
+    {
+        def->buf.obj_inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY,
+                                                  sizeof(void *), 
+                                                  (size_t) def->buf.count, 
+                                                  TRUE);
+        res = (def->buf.obj_inds != NULL);
+    }
+
     /* Allocate row data sizes array */
 
     if (res == TRUE)
@@ -346,7 +355,7 @@ boolean OCI_DefineDef(OCI_Define *def)
                             def->col.typinf->tdo,
                             (void **) def->buf.data,
                             (ub4   *) NULL,
-                           (void **) def->buf.inds,
+                           (void **) def->buf.obj_inds,
                             (ub4   *) NULL)
         )
     }

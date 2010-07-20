@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: exception.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: exception.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -51,7 +51,7 @@ static mtext * OCILib_TypeNames[] =
     MT("Error handle"),
     MT("Schema handle"),
     MT("Connection handle"),
-    MT("Connection pool handle"),
+    MT("Pool handle"),
     MT("Transaction handle"),
     MT("Statement handle"),
     MT("Resultset handle"),

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_import.h, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: oci_import.h, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
@@ -249,6 +249,10 @@ extern OCITHREADKEYSET              OCIThreadKeySet;
 extern OCITHREADKEYGET              OCIThreadKeyGet;
 extern OCICONNECTIONPOOLCREATE      OCIConnectionPoolCreate;
 extern OCICONNECTIONPOOLDESTROY     OCIConnectionPoolDestroy;
+extern OCISESSIONPOOLCREATE         OCISessionPoolCreate ;
+extern OCISESSIONPOOLDESTROY        OCISessionPoolDestroy;
+extern OCISESSIONGET                OCISessionGet;
+extern OCISESSIONRELEASE            OCISessionRelease;
 extern OCICOLLSIZE                  OCICollSize;
 extern OCICOLLMAX                   OCICollMax;
 extern OCICOLLGETITEM               OCICollGetElem;

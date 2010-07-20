@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_types.h, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: ocilib_types.h, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 
@@ -119,11 +119,6 @@ typedef struct OCI_TraceInfo OCI_TraceInfo;
 /* ************************************************************************ *
  *                             PUBLIC TYPES
  * ************************************************************************ */
-
-/*
- * Error object
- *
- */
 
 struct OCI_Error
 {
@@ -225,18 +220,15 @@ struct OCI_Library
 typedef struct OCI_Library OCI_Library;
 
 /*
- * Connection Pool object
+ * Pool object
  *
  */
 
-struct OCI_ConnPool
+struct OCI_Pool
 {
     OCI_List        *cons;      /* list of connection objects */
-#if OCI_VERSION_COMPILE >= OCI_9_0
-    OCICPool        *handle;    /* OCI pool handle */
-#else
-    void            *handle;    /* fake handle for alignment */
-#endif
+    void           *handle;     /* OCI pool handle */
+    void           *authp;      /* OCI authentification handle */
     OCIError        *err;       /* OCI context handle */
     mtext           *name;      /* pool name */
     mtext           *db;        /* database */
@@ -244,13 +236,14 @@ struct OCI_ConnPool
     mtext           *pwd;       /* password */
     OCI_Mutex       *mutex;     /* mutex handle */
     ub4              mode;      /* session mode */
-    ub4              min;       /* minimum of connections */
-    ub4              max;       /* maximum of connections */
-    ub4              incr;      /* increment step of connections */
-    unsigned int     nb_busy;   /* number of busy connections */
-    unsigned int     nb_opened; /* number of opened connections */
+    ub4              min;       /* minimum of objects */
+    ub4              max;       /* maximum of objects */
+    ub4              incr;      /* increment step of objects */
+    unsigned int     nb_busy;   /* number of busy objects */
+    unsigned int     nb_opened; /* number of opened objects */
     unsigned int     timeout;   /* connection idle timeout */
-    boolean          nowait;    /* wait for new connection */
+    boolean          nowait;    /* wait to retrieve object from pool ? */
+    ub4              htype;     /* handle type of pool : connection / session */
 };
 
 /*
@@ -267,7 +260,7 @@ struct OCI_Connection
     OCI_List           *trsns;     /* list of transactions */
     OCI_List           *tinfs;     /* list of type info objects */
     OCI_Transaction    *trs;       /* pointer to current transaction object */
-    OCI_ConnPool       *pool;      /* pointer to connection pool parent */
+    OCI_Pool           *pool;      /* pointer to parent pool object */
     OCI_ServerOutput   *svopt;     /* Pointer to server output object */
     OCIServer          *svr;       /* OCI server handle */
     OCIError           *err;       /* OCI context handle */
@@ -283,6 +276,7 @@ struct OCI_Connection
     mtext              *ver_str;   /* string  server version*/
     unsigned int        ver_num;   /* numeric server version */
     OCI_TraceInfo      *trace;     /* trace information */
+    mtext              *sess_tag;  /* session tag */
 };
 
 /*
@@ -344,6 +338,7 @@ struct OCI_Buffer
     unsigned int     tmpsize;  /* size of temporary buffer */
     ub4              count;    /* number of elements in the buffer */
     int              sizelen;  /* size of an element in the lens array */
+    void           **obj_inds; /* array of indicators structure object */
 };
 
 typedef struct OCI_Buffer OCI_Buffer;
@@ -407,7 +402,6 @@ struct OCI_Resultset
     boolean          bof;           /* beginning of resultset reached ?  */
     ub4              fetch_size;    /* internal array size */
     sword            fetch_status;  /* internal fetch status */
-
 };
 
 /*
@@ -431,34 +425,35 @@ typedef struct OCI_BatchErrors OCI_BatchErrors;
 
 struct OCI_Statement
 {
-    OCIStmt         *stmt;          /* OCI statement handle */
-    ub4              hstate;        /* object variable state */
-    OCI_Resultset  **rsts;          /* pointer to resultset list */
-    OCI_Connection  *con;           /* pointer to connection object */
-    mtext           *sql;           /* SQL statement */
-    OCI_Bind       **ubinds;        /* array of user bind objects */
-    OCI_Bind       **rbinds;        /* array of register bind objects */
-    OCI_HashTable   *map;           /* hash table handle for mapping bind name/index */
-    ub2              nb_ubinds;     /* number of elements in the bind array */
-    ub2              nb_rbinds;     /* number of output binds */
-    boolean          bind_reuse;    /* rebind data allowed ? */
-    unsigned int     bind_mode;     /* type of binding */
-    ub4              exec_mode;     /* type of execution */
-    ub4              fetch_size;    /* fetch array size */
-    ub4              prefetch_size; /* pre-fetch size */
-    ub4              prefetch_mem;  /* pre-fetch memory */
-    ub4              long_size;     /* default size for LONG columns */
-    ub1              long_mode;     /* LONG datatype handling mode */
-    ub1              status;        /* statement status */
-    ub2              type;          /* type of SQL statement */
-    ub4              nb_iters;      /* current number of iterations for execution */
-    ub4              nb_iters_init; /* initial number of iterations for execution */
-    ub4              nb_rs;         /* number of resultsets */
-    ub2              cur_rs;        /* index of the current resultset */
-    ub2              dynidx;        /* bind index counter for dynamic exec */
-    ub2              err_pos;       /* error position in sql statement */
-    boolean          bind_array;    /* has array binds ? */
-    OCI_BatchErrors *batch;         /* error handling for array DML */
+    OCIStmt         *stmt;              /* OCI statement handle */
+    ub4              hstate;            /* object variable state */
+    OCI_Resultset  **rsts;              /* pointer to resultset list */
+    OCI_Connection  *con;               /* pointer to connection object */
+    mtext           *sql;               /* SQL statement */
+    OCI_Bind       **ubinds;            /* array of user bind objects */
+    OCI_Bind       **rbinds;            /* array of register bind objects */
+    OCI_HashTable   *map;               /* hash table handle for mapping bind name/index */
+    ub2              nb_ubinds;         /* number of elements in the bind array */
+    ub2              nb_rbinds;         /* number of output binds */
+    boolean          bind_reuse;        /* rebind data allowed ? */
+    unsigned int     bind_mode;         /* type of binding */
+    unsigned int     bind_alloc_mode;   /* type of bind allocation */
+    ub4              exec_mode;         /* type of execution */
+    ub4              fetch_size;        /* fetch array size */
+    ub4              prefetch_size;     /* pre-fetch size */
+    ub4              prefetch_mem;      /* pre-fetch memory */
+    ub4              long_size;         /* default size for LONG columns */
+    ub1              long_mode;         /* LONG datatype handling mode */
+    ub1              status;            /* statement status */
+    ub2              type;              /* type of SQL statement */
+    ub4              nb_iters;          /* current number of iterations for execution */
+    ub4              nb_iters_init;     /* initial number of iterations for execution */
+    ub4              nb_rs;             /* number of resultsets */
+    ub2              cur_rs;            /* index of the current resultset */
+    ub2              dynidx;            /* bind index counter for dynamic exec */
+    ub2              err_pos;           /* error position in sql statement */
+    boolean          bind_array;        /* has array binds ? */
+    OCI_BatchErrors *batch;             /* error handling for array DML */
 };
 
 /*
@@ -657,6 +652,8 @@ struct OCI_TypeInfo
     OCI_Column      *cols;       /* array of column datatype info */
     ub2              nb_cols;    /* number of columns */
     ub2              refcount;   /* reference counter */
+    int             *offsets;    /* cached offsets */
+    size_t           struct_size;/* cached structure size */
 };
 
 /*
@@ -729,7 +726,7 @@ struct OCI_Event
 struct OCI_Subscription
 {
     OCI_Connection      *con;        /* OCILIB connection handle */
-    OCISubscription     *subhp;      /* OCI subcroption handle */
+    OCISubscription     *subhp;      /* OCI subscription handle */
     OCIError            *err;        /* OCI error handle  */
     mtext               *name;       /* notification name */
     unsigned int         type;       /* notification type */
@@ -740,7 +737,7 @@ struct OCI_Subscription
     mtext               *saved_user; /* user for reconnection if needed */
     mtext               *saved_pwd;  /* password for reconnection if needed */
     OCI_Event            event;      /* event object for user callback */
-};
+};  
 
 /*
  * oCILIB array
@@ -750,9 +747,12 @@ struct OCI_Subscription
 struct OCI_Array
 {
     OCI_Connection *con;
-    unsigned int type;
-    unsigned int subtype;
+    unsigned int elem_type;
+    unsigned int elem_subtype;
+    unsigned int elem_size;
     unsigned int nb_elem;
+    unsigned int struct_size;
+    unsigned int handle_type;
     void  ** tab_obj;
     void   * mem_handle;
     void   * mem_struct;

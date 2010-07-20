@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ref.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: ref.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -241,7 +241,9 @@ OCI_Ref ** OCI_API OCI_RefArrayCreate(OCI_Connection *con,
     OCI_Array   *arr  = NULL;
     OCI_Ref    **refs = NULL;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0, typinf);
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0, 
+                          sizeof(OCIRef *), sizeof(OCI_Ref), 
+                          0, typinf);
 
     if (arr != NULL)
     {

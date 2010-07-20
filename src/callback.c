@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: callback.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: callback.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -499,6 +499,11 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
     OCI_NOT_USED(ctx);
     OCI_NOT_USED(desc);
     OCI_NOT_USED(subscrhp);
+
+    OCI_NOT_USED(res);
+    OCI_NOT_USED(type);
+    OCI_NOT_USED(ostr);
+    OCI_NOT_USED(osize);
 
 #endif
 

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: connection.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -43,8 +43,10 @@
  * OCI_ConnectionAllocate
  * ------------------------------------------------------------------------ */
 
-OCI_Connection * OCI_ConnectionAllocate(OCI_ConnPool *pool, const mtext *db,
-                                        const mtext *user,  const mtext *pwd,
+OCI_Connection * OCI_ConnectionAllocate(OCI_Pool    *pool,
+                                        const mtext *db,
+                                        const mtext *user,
+                                        const mtext *pwd,
                                         unsigned int mode)
 {
     OCI_Connection *con = NULL;
@@ -85,8 +87,9 @@ OCI_Connection * OCI_ConnectionAllocate(OCI_ConnPool *pool, const mtext *db,
 
         if (res == TRUE)
         {
-            con->mode = mode;
-            con->pool = pool;
+            con->mode     = mode;
+            con->pool     = pool;
+            con->sess_tag = NULL;
 
             if (con->pool != NULL)
             {
@@ -108,30 +111,6 @@ OCI_Connection * OCI_ConnectionAllocate(OCI_ConnPool *pool, const mtext *db,
             res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
                                                   (dvoid **) (void *) &con->err,
                                                   (ub4) OCI_HTYPE_ERROR,
-                                                  (size_t) 0, (dvoid **) NULL));
-
-        /* allocate server handle */
-
-        if (res == TRUE)
-            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
-                                                  (dvoid **) (void *) &con->svr,
-                                                  (ub4) OCI_HTYPE_SERVER,
-                                                  (size_t) 0, (dvoid **) NULL));
-
-        /* allocate context handle */
-
-        if (res == TRUE)
-            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
-                                                  (dvoid **) (void *) &con->cxt,
-                                                  (ub4) OCI_HTYPE_SVCCTX,
-                                                  (size_t) 0, (dvoid **) NULL));
-
-        /* allocate session handle */
-
-        if (res == TRUE)
-            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
-                                                  (dvoid **) (void *) &con->ses,
-                                                  (ub4) OCI_HTYPE_SESSION,
                                                   (size_t) 0, (dvoid **) NULL));
     }
     else
@@ -161,20 +140,6 @@ boolean OCI_ConnectionDeallocate(OCI_Connection *con)
     OCI_CHECK(con == NULL, FALSE);
     OCI_CHECK(con->cstate != OCI_CONN_ALLOCATED, FALSE);
 
-    /* close context handle */
-
-    if (con->cxt != NULL)
-       OCI_HandleFree((dvoid *) con->cxt, (ub4) OCI_HTYPE_SVCCTX);
-
-    /* close session handle */
-
-    if (con->ses != NULL)
-        OCI_HandleFree((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION);
-
-    /* close server handle */
-    if (con->svr != NULL)
-        OCI_HandleFree((dvoid *) con->svr, (ub4) OCI_HTYPE_SERVER);
-
      /* close error handle */
 
     if (con->err != NULL)
@@ -202,31 +167,41 @@ boolean OCI_ConnectionAttach(OCI_Connection *con)
     OCI_CHECK(con == NULL, FALSE);
     OCI_CHECK(con->cstate != OCI_CONN_ALLOCATED, FALSE);
 
-    /* attach server handle to service name */
+    /* allocate server handle for non pooled conenction */
 
-#if OCI_VERSION_COMPILE >= OCI_9_0
-
-    if (OCILib.version_runtime >= OCI_9_0 && con->pool != NULL)
+    if (con->pool == NULL)
     {
-        ostr  = OCI_GetInputMetaString(con->pool->name, &osize);
-        cmode = OCI_CPOOL;
+        res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
+                                              (dvoid **) (void *) &con->svr,
+                                              (ub4) OCI_HTYPE_SERVER,
+                                              (size_t) 0, (dvoid **) NULL));
+
+        /* attach server handle to service name */
+
+    #if OCI_VERSION_COMPILE >= OCI_9_0
+
+        if (OCILib.version_runtime >= OCI_9_0 && con->pool != NULL)
+        {
+            ostr  = OCI_GetInputMetaString(con->pool->name, &osize);
+            cmode = OCI_CPOOL;
+        }
+        else
+
+    #endif
+
+        {
+            ostr  = OCI_GetInputMetaString(con->db, &osize);
+        }
+
+        OCI_CALL2
+        (
+            res, con,
+
+            OCIServerAttach(con->svr, con->err,(OraText *) ostr, (sb4) osize, cmode)
+        )
+
+        OCI_ReleaseMetaString(ostr);
     }
-    else
-
-#endif
-
-    {
-        ostr  = OCI_GetInputMetaString(con->db, &osize);
-    }
-
-    OCI_CALL2
-    (
-        res, con,
-
-        OCIServerAttach(con->svr, con->err,(OraText *) ostr, (sb4) osize, cmode)
-    )
-
-    OCI_ReleaseMetaString(ostr);
 
     /* handle errors */
 
@@ -252,14 +227,23 @@ boolean OCI_ConnectionDetach(OCI_Connection *con)
     OCI_CHECK(con == NULL, FALSE);
     OCI_CHECK(con->cstate != OCI_CONN_ATTACHED, FALSE);
 
-    /* detach from the oracle server */
+    if (con->svr != NULL)
+    {
+        /* detach from the oracle server */
 
-    OCI_CALL2
-    (
-        res, con,
+        OCI_CALL2
+        (
+            res, con,
 
-        OCIServerDetach(con->svr, con->err, (ub4) OCI_DEFAULT)
-    )
+            OCIServerDetach(con->svr, con->err, (ub4) OCI_DEFAULT)
+        )
+
+        /* close server handle */
+
+        OCI_HandleFree((dvoid *) con->svr, (ub4) OCI_HTYPE_SERVER);
+
+        con->svr = NULL;
+    }
 
    /* update internal status */
 
@@ -278,7 +262,9 @@ boolean OCI_ConnectionDetach(OCI_Connection *con)
  * OCI_ConnectionLogon
  * ------------------------------------------------------------------------ */
 
-boolean OCI_ConnectionLogon(OCI_Connection *con, const mtext *new_pwd)
+boolean OCI_ConnectionLogon(OCI_Connection *con,
+                            const mtext *new_pwd,
+                            const mtext *tag)
 {
     void *ostr  = NULL;
     int osize   = -1;
@@ -286,111 +272,48 @@ boolean OCI_ConnectionLogon(OCI_Connection *con, const mtext *new_pwd)
 
     OCI_CHECK(con == NULL, FALSE);
 
-    /* set context server attribute */
+#if OCI_VERSION_COMPILE < OCI_9_2
 
-    OCI_CALL2
-    (
-        res, con,
+    OCI_NOT_USED(tag)
 
-        OCIAttrSet((dvoid *) con->cxt, (ub4) OCI_HTYPE_SVCCTX,
-                   (dvoid *) con->svr, (ub4) sizeof (con->svr),
-                   (ub4) OCI_ATTR_SERVER, con->err)
-    )
+#endif
 
-    /* modifiy user password if needed */
+#if OCI_VERSION_COMPILE >= OCI_9_2
 
-    if (new_pwd && new_pwd[0])
+    if (con->pool == NULL)
     {
+
+#endif
+        /* allocate session handle */
+
+        if (res == TRUE)
+            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
+                                                  (dvoid **) (void *) &con->ses,
+                                                  (ub4) OCI_HTYPE_SESSION,
+                                                  (size_t) 0, (dvoid **) NULL));
+        /* allocate context handle */
+
+        if (res == TRUE)
+            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
+                                                  (dvoid **) (void *) &con->cxt,
+                                                  (ub4) OCI_HTYPE_SVCCTX,
+                                                  (size_t) 0, (dvoid **) NULL));
+
+        /* set context server attribute */
 
         OCI_CALL2
         (
             res, con,
 
             OCIAttrSet((dvoid *) con->cxt, (ub4) OCI_HTYPE_SVCCTX,
-                       (dvoid *) con->ses, (ub4) sizeof(con->ses),
-                       (ub4) OCI_ATTR_SESSION, con->err)
+                       (dvoid *) con->svr, (ub4) sizeof (con->svr),
+                       (ub4) OCI_ATTR_SERVER, con->err)
         )
 
-        OCI_CALL2
-        (
-            res, con,
+        /* modifiy user password if needed */
 
-            OCIPasswordChange(con->cxt, con->err,
-                              (OraText *) con->user, (ub4) mtslen(con->user),
-                              (OraText *) con->pwd,  (ub4) mtslen(con->pwd),
-                              (OraText *) new_pwd,   (ub4) mtslen(new_pwd),
-                              OCI_AUTH)
-        )
-
-        if (res == TRUE)
+        if (new_pwd && new_pwd[0])
         {
-            OCI_FREE(con->pwd);
-
-            con->pwd = mtsdup(new_pwd);
-        }
-    }
-    else
-    {
-        /* set session login attribute */
-
-        if ((res == TRUE) && (con->user != NULL) && (con->user[0] != 0))
-        {
-            osize = -1;
-            ostr  = OCI_GetInputMetaString(con->user, &osize);
-
-            OCI_CALL2
-            (
-                res, con,
-
-                OCIAttrSet((dvoid *) con->ses,(ub4)  OCI_HTYPE_SESSION,
-                           (dvoid *) ostr, (ub4) osize,
-                           (ub4) OCI_ATTR_USERNAME, con->err)
-            )
-
-            OCI_ReleaseMetaString(ostr);
-        }
-
-        /* set session password attribute */
-
-        if ((res == TRUE) && (con->pwd != NULL) && (con->pwd[0] != 0))
-        {
-            osize = -1;
-            ostr  = OCI_GetInputMetaString(con->pwd, &osize);
-
-            OCI_CALL2
-            (
-                res, con,
-
-                OCIAttrSet((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION,
-                           (dvoid *) ostr, (ub4) osize,
-                           (ub4) OCI_ATTR_PASSWORD, con->err)
-            )
-
-            OCI_ReleaseMetaString(ostr);
-        }
-
-        /* start session */
-
-        if (res == TRUE)
-        {
-            ub4 credt = OCI_CRED_RDBMS;
-
-            if  (((con->user == NULL) || (con->user[0] == 0)) &&
-                 ((con->pwd  == NULL) || (con->pwd[0]  == 0)))
-            {
-                credt = OCI_CRED_EXT;
-            }
-
-            OCI_CALL2
-            (
-                res, con,
-
-                OCISessionBegin(con->cxt, con->err, con->ses, credt, con->mode)
-            )
-
-            /* This call has moved after OCISessionBegin() call to enable connection
-               pooling (an error ORA-24324 was thrown is the session handle was set to
-               the service context handle before OCISessionBegin() */
 
             OCI_CALL2
             (
@@ -400,8 +323,155 @@ boolean OCI_ConnectionLogon(OCI_Connection *con, const mtext *new_pwd)
                            (dvoid *) con->ses, (ub4) sizeof(con->ses),
                            (ub4) OCI_ATTR_SESSION, con->err)
             )
+
+            OCI_CALL2
+            (
+                res, con,
+
+                OCIPasswordChange(con->cxt, con->err,
+                                  (OraText *) con->user, (ub4) mtslen(con->user),
+                                  (OraText *) con->pwd,  (ub4) mtslen(con->pwd),
+                                  (OraText *) new_pwd,   (ub4) mtslen(new_pwd),
+                                  OCI_AUTH)
+            )
+
+            if (res == TRUE)
+            {
+                OCI_FREE(con->pwd);
+
+                con->pwd = mtsdup(new_pwd);
+            }
+        }
+        else
+        {
+            /* set session login attribute */
+
+            if ((res == TRUE) && (con->user != NULL) && (con->user[0] != 0))
+            {
+                osize = -1;
+                ostr  = OCI_GetInputMetaString(con->user, &osize);
+
+                OCI_CALL2
+                (
+                    res, con,
+
+                    OCIAttrSet((dvoid *) con->ses,(ub4)  OCI_HTYPE_SESSION,
+                               (dvoid *) ostr, (ub4) osize,
+                               (ub4) OCI_ATTR_USERNAME, con->err)
+                )
+
+                OCI_ReleaseMetaString(ostr);
+            }
+
+            /* set session password attribute */
+
+            if ((res == TRUE) && (con->pwd != NULL) && (con->pwd[0] != 0))
+            {
+                osize = -1;
+                ostr  = OCI_GetInputMetaString(con->pwd, &osize);
+
+                OCI_CALL2
+                (
+                    res, con,
+
+                    OCIAttrSet((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION,
+                               (dvoid *) ostr, (ub4) osize,
+                               (ub4) OCI_ATTR_PASSWORD, con->err)
+                )
+
+                OCI_ReleaseMetaString(ostr);
+            }
+
+            /* start session */
+
+            if (res == TRUE)
+            {
+                ub4 credt = OCI_CRED_RDBMS;
+
+                if  (((con->user == NULL) || (con->user[0] == 0)) &&
+                     ((con->pwd  == NULL) || (con->pwd[0]  == 0)))
+                {
+                    credt = OCI_CRED_EXT;
+                }
+
+                OCI_CALL2
+                (
+                    res, con,
+
+                    OCISessionBegin(con->cxt, con->err, con->ses, credt, con->mode)
+                )
+
+                /* This call has moved after OCISessionBegin() call to enable connection
+                   pooling (an error ORA-24324 was thrown is the session handle was set to
+                   the service context handle before OCISessionBegin() */
+
+                OCI_CALL2
+                (
+                    res, con,
+
+                    OCIAttrSet((dvoid *) con->cxt, (ub4) OCI_HTYPE_SVCCTX,
+                               (dvoid *) con->ses, (ub4) sizeof(con->ses),
+                               (ub4) OCI_ATTR_SESSION, con->err)
+                )
+            }
+        }
+
+#if OCI_VERSION_COMPILE >= OCI_9_2
+
+    }
+    else
+    {
+        if (OCILib.version_runtime >= OCI_9_0)
+        {
+
+            ub4      mode      = OCI_DEFAULT;
+            boolean  found     = FALSE;
+            void    *ostr_tag  = NULL;
+            int      osize_tag = 0;
+
+            OraText *ostr_ret  = NULL;
+            ub4      osize_ret = 0;
+
+            osize = -1;
+            ostr  = OCI_GetInputMetaString(con->pool->name, &osize);
+
+            if (con->pool->htype == OCI_HTYPE_CPOOL)
+            {
+                mode = OCI_SESSGET_CPOOL;
+            }
+            else
+            {
+                mode = OCI_SESSGET_SPOOL;
+
+                if (tag != NULL)
+                {
+                    osize_tag = -1;
+                    ostr_tag  = OCI_GetInputMetaString(tag, &osize_tag);
+                }
+            }
+
+            OCI_CALL2
+            (
+                res, con,
+
+                OCISessionGet(OCILib.env, con->err, &con->cxt, con->pool->authp,
+                              (dvoid *) ostr, (ub4) osize, ostr_tag, osize_tag,
+                              &ostr_ret, &osize_ret, &found, mode)
+            )
+
+            if (res == TRUE)
+            {
+                con->ses = (OCISession *) con->pool->authp;
+
+                if (found == TRUE)
+                {
+                    OCI_SetSessionTag(con, tag);
+                }
+            }
         }
     }
+
+#endif
 
     /* check for success */
 
@@ -414,7 +484,7 @@ boolean OCI_ConnectionLogon(OCI_Connection *con, const mtext *new_pwd)
         if (!(con->mode & OCI_PRELIM_AUTH))
         {
             /* create default transaction object */
-    
+
             con->trs  = OCI_TransactionCreate(con, 1, OCI_TRANS_READWRITE, NULL);
 
             /* start transaction */
@@ -490,7 +560,7 @@ boolean OCI_ConnectionLogOff(OCI_Connection *con)
     OCI_ListForEach(con->tinfs, (boolean (*)(void *)) OCI_TypeInfoClose);
     OCI_ListClear(con->tinfs);
 
-   /* close any server files not explicitly closed - no check of return code */
+    /* close opened files */
 
     if (con->nb_files > 0)
     {
@@ -499,15 +569,85 @@ boolean OCI_ConnectionLogOff(OCI_Connection *con)
 
     /* close session */
 
-    if ((con->cxt != NULL) && (con->err != NULL) && (con->ses != NULL))
-    {
-         OCI_CALL2
-         (
-            res, con,
+#if OCI_VERSION_COMPILE >= OCI_9_2
 
-            OCISessionEnd(con->cxt, con->err, con->ses, (ub4) OCI_DEFAULT)
-         )
+    if (con->pool == NULL)
+    {
+
+#endif
+        /* close any server files not explicitly closed - no check of return code */
+
+        if ((con->cxt != NULL) && (con->err != NULL) && (con->ses != NULL))
+        {
+             OCI_CALL2
+             (
+                res, con,
+
+                OCISessionEnd(con->cxt, con->err, con->ses, (ub4) OCI_DEFAULT)
+             )
+
+            /* close session handle */
+
+            if (con->ses != NULL)
+            {
+                OCI_HandleFree((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION);
+
+                con->ses = NULL;
+            }
+
+             /* close context handle */
+
+            if (con->cxt != NULL)
+            {
+                OCI_HandleFree((dvoid *) con->cxt, (ub4) OCI_HTYPE_SVCCTX);
+
+                con->cxt = NULL;
+            }
+       }
+
+#if OCI_VERSION_COMPILE >= OCI_9_2
+
     }
+    else
+    {
+        if (OCILib.version_runtime >= OCI_9_0)
+        {
+            void    *ostr  = NULL;
+            int      osize = 0;
+            ub4      mode  = OCI_DEFAULT;
+
+            if ((con->sess_tag != NULL) && (con->pool->htype == (ub4) OCI_HTYPE_SPOOL))
+            {
+                osize = -1;
+                ostr  = OCI_GetInputMetaString(con->sess_tag, &osize);
+                mode  = OCI_SESSRLS_RETAG;
+            }
+
+            /* set context transaction attribute to NULL
+               If not done, OCISessionRelease() genarerate a segfault if
+               a transaction to set on the service context handle */
+
+            OCI_CALL2
+            (
+                res, con,
+
+                OCIAttrSet((dvoid *) con->cxt, (ub4) OCI_HTYPE_SVCCTX,
+                           (dvoid *) NULL, (ub4) 0,
+                           (ub4) OCI_ATTR_TRANS,con->err)
+            )
+
+            OCI_CALL2
+            (
+                res, con,
+
+                OCISessionRelease(con->cxt, con->err, ostr, (ub4) osize, mode)
+            )
+
+            con->cxt = NULL;
+        }
+    }
+
+#endif
 
     /* update internal status */
 
@@ -555,10 +695,10 @@ boolean OCI_ConnectionClose(OCI_Connection *con)
         OCI_FREE(con->pwd);
     }
 
-
     OCI_FREE(con->fmt_date);
     OCI_FREE(con->fmt_num);
     OCI_FREE(con->ver_str);
+    OCI_FREE(con->sess_tag);
 
     con->stmts = NULL;
     con->trsns = NULL;
@@ -590,8 +730,8 @@ OCI_Connection * OCI_API OCI_ConnectionCreate(const mtext *db,
 
     if (con != NULL)
     {
-        if (OCI_ConnectionAttach(con)        == FALSE ||
-            OCI_ConnectionLogon(con, NULL)   == FALSE)
+        if (OCI_ConnectionAttach(con)            == FALSE ||
+            OCI_ConnectionLogon(con, NULL, NULL) == FALSE)
         {
             OCI_ConnectionFree(con);
             con = NULL;
@@ -620,6 +760,8 @@ boolean OCI_API OCI_ConnectionFree(OCI_Connection *con)
 
     if (err != NULL && err->con == con)
         err->con = NULL;
+
+    OCI_FREE(con->sess_tag);
 
     if (con->pool != NULL)
     {
@@ -768,6 +910,56 @@ boolean OCI_API OCI_SetUserData(OCI_Connection *con, void * data)
 }
 
 /* ------------------------------------------------------------------------ *
+ * OCI_SetSessionTag
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_SetSessionTag(OCI_Connection *con, const mtext *tag)
+{
+    boolean res = TRUE;
+
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
+
+    OCI_RESULT(TRUE);
+
+    OCI_FREE(con->sess_tag);
+
+#if OCI_VERSION_COMPILE >= OCI_9_2
+
+    if ((tag              != NULL                 ) &&
+        (con->pool        != NULL                 ) &&
+        (con->pool->htype == (ub4) OCI_HTYPE_SPOOL))
+    {
+        con->sess_tag = mtsdup(tag);
+
+        res = (con->sess_tag != NULL);
+    }
+
+#else
+
+    OCI_NOT_USED(tag)
+
+#endif
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+
+/* ------------------------------------------------------------------------ *
+ * OCI_GetUserData
+ * ------------------------------------------------------------------------ */
+
+const mtext * OCI_API OCI_GetSessionData(OCI_Connection *con)
+{
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
+
+    OCI_RESULT(TRUE);
+
+    return con->sess_tag;
+}
+
+/* ------------------------------------------------------------------------ *
  * OCI_GetDatabase
  * ------------------------------------------------------------------------ */
 
@@ -820,7 +1012,7 @@ boolean OCI_API OCI_SetPassword(OCI_Connection *con, const mtext *password)
 
     if (con->cstate != OCI_CONN_LOGGED)
     {
-        OCI_ConnectionLogon(con, password);
+        OCI_ConnectionLogon(con, password, NULL);
     }
     else
     {
@@ -859,8 +1051,8 @@ boolean OCI_API OCI_SetUserPassword(const mtext *db, const mtext *user,
 
     if (con != NULL)
     {
-        if (OCI_ConnectionAttach(con)           == FALSE ||
-            OCI_ConnectionLogon(con, new_pwd)   == FALSE)
+        if (OCI_ConnectionAttach(con)               == FALSE ||
+            OCI_ConnectionLogon(con, new_pwd, NULL) == FALSE)
         {
             OCI_ConnectionFree(con);
             con = NULL;
@@ -1327,7 +1519,7 @@ const dtext * OCI_API OCI_ServerGetOutput(OCI_Connection *con)
     {
         unsigned int charsize = sizeof(dtext);
 
-        str = (dtext*) (con->svopt->arrbuf + 
+        str = (dtext*) (con->svopt->arrbuf +
               (size_t) (((con->svopt->lnsize + 1) * charsize) * con->svopt->curpos++));
     }
 

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: resultset.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -640,6 +640,79 @@ boolean OCI_ResultsetExpandStrings(OCI_Resultset *rs)
 
 #endif
 
+/* ------------------------------------------------------------------------ *
+ * OCI_ResultsetGetAttrSize
+ * ------------------------------------------------------------------------ */
+
+size_t OCI_ResultsetGetAttrSize(OCI_Resultset *rs, unsigned int index)
+{
+    size_t size = 0;
+
+    if (index >= rs->nb_defs)
+        return 0;
+
+    switch (rs->defs[index].col.type)
+    {
+        case OCI_CDT_NUMERIC         :
+        {
+            unsigned int type = rs->defs[index].col.subtype;
+
+            if (type & OCI_NUM_SHORT)
+                size = sizeof(short);
+            else if (type & OCI_NUM_INT)
+                size = sizeof(int);
+            else if (type & OCI_NUM_DOUBLE)
+                size = sizeof(double);
+            else
+                size = sizeof(big_int);
+           
+            break;
+        }
+        case OCI_CDT_TEXT            :
+        case OCI_CDT_RAW             :
+        case OCI_CDT_LONG            :
+        case OCI_CDT_DATETIME        :
+        case OCI_CDT_CURSOR          :
+        case OCI_CDT_LOB             :
+        case OCI_CDT_FILE            :
+        case OCI_CDT_TIMESTAMP       :
+        case OCI_CDT_INTERVAL        :
+        case OCI_CDT_OBJECT          :
+        case OCI_CDT_COLLECTION      :
+        case OCI_CDT_REF             :
+            size = sizeof(void *);
+            break;
+    }
+
+    return size;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ResultsetGetStructSize
+ * ------------------------------------------------------------------------ */
+
+size_t OCI_ResultsetGetStructSize(OCI_Resultset *rs)
+{
+    size_t size1   = 0;
+    size_t offset  = 0;
+    size_t size2   = 0;
+    ub2 i;
+
+    for (i = 0; i < rs->nb_defs; i++)
+    {
+        size1 = OCI_ResultsetGetAttrSize(rs, i);
+        size2 = OCI_ResultsetGetAttrSize(rs, i+1);
+
+        offset += size1;
+
+        if ((size1 != size2) && (size2 == sizeof(void *)))
+            offset = ROUNDUP(offset);
+    }
+
+    return offset;
+}
+
+
 /* ************************************************************************ *
  *                            PUBLIC FUNCTIONS
  * ************************************************************************ */
@@ -719,6 +792,23 @@ OCI_Resultset * OCI_API OCI_GetNextResultset(OCI_Statement *stmt)
     OCI_RESULT(TRUE);
 
     return rs;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ResultsetInit
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_ResultsetInit(OCI_Resultset *rs)
+{
+    rs->bof          = TRUE;
+    rs->eof          = FALSE;
+    rs->fetch_status = OCI_SUCCESS;
+    rs->row_count    = 0;
+    rs->row_cur      = 0;
+    rs->row_abs      = 0;
+    rs->row_fetched  = 0;
+
+    return TRUE;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -839,6 +929,7 @@ boolean OCI_ResultsetFree(OCI_Resultset *rs)
 
         OCI_FREE(def->buf.data);
         OCI_FREE(def->buf.inds);
+        OCI_FREE(def->buf.obj_inds);
         OCI_FREE(def->buf.lens);
         OCI_FREE(def->buf.tmpbuf);
    }
@@ -1211,6 +1302,188 @@ unsigned int OCI_API OCI_GetColumnIndex(OCI_Resultset *rs, const mtext *name)
        index = 0;
 
    return (unsigned int) index;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_SetStructNumericType
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_SetStructNumericType(OCI_Resultset *rs,
+                                         unsigned int   index,
+                                         unsigned int   type)
+{
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
+    
+    OCI_CHECK_BOUND(rs->stmt->con, index,  1,  rs->nb_defs, FALSE);
+    
+    OCI_CHECK_COMPAT(rs->stmt->con, rs->defs[index-1].col.type == OCI_CDT_NUMERIC, FALSE);
+
+    rs->defs[index-1].col.subtype = type;
+
+    OCI_RESULT(TRUE);
+
+    return TRUE;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_SetStructNumericType2
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_SetStructNumericType2(OCI_Resultset *rs,
+                                          const mtext   *name,
+                                          unsigned int   type)
+{
+    return OCI_SetStructNumericType(rs, OCI_GetDefineIndex(rs, name), type);
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_GetStruct
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_GetStruct(OCI_Resultset *rs, 
+                              void *row_struct,
+                              void *row_struct_ind)
+{
+    char    *ptr  = NULL;
+    boolean *inds = NULL;
+    boolean  res  = TRUE;
+    size_t   size = 0;
+    ub4 i;   
+
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_VOID, row_struct, FALSE);
+
+    ptr  = row_struct;
+    inds = row_struct_ind;
+
+    if (ptr != NULL)
+    {
+        for (i = 1; i <= rs->nb_defs; i++)
+        {
+            size = OCI_ResultsetGetAttrSize(rs, i-1);
+
+            switch (rs->defs[i-1].col.type)
+            {
+                case OCI_CDT_NUMERIC :
+                {
+                    OCI_DefineGetNumber(rs, i, ptr, 
+                                        rs->defs[i-1].col.subtype, 
+                                        (uword) size);
+
+                    break;
+                }
+                case OCI_CDT_TEXT :
+                {
+                    dtext **str = (dtext **) ptr;
+
+                    *str =  (dtext * ) OCI_GetString(rs, i);
+
+                    break;
+                }
+                case OCI_CDT_RAW :
+                {
+                    void **buf = (void **) ptr;
+
+                    *buf = OCI_DefineGetData(&rs->defs[i]);
+
+                    break;
+                }
+                case OCI_CDT_LONG :
+                {
+                    OCI_Long **lg = (OCI_Long **) ptr;
+
+                    *lg = OCI_GetLong(rs, i);
+
+                    break;
+                }   
+                case OCI_CDT_DATETIME :
+                {
+                    OCI_Date **date = (OCI_Date **) ptr;
+
+                    *date = OCI_GetDate(rs, i);
+
+                    break;
+                }   
+                case OCI_CDT_CURSOR :
+                {
+                    OCI_Statement **stmt = (OCI_Statement **) ptr;
+
+                    *stmt = OCI_GetStatement(rs, i);
+
+                    break;
+                }        
+                case OCI_CDT_LOB :
+                {
+                    OCI_Lob **lob = (OCI_Lob **) ptr;
+
+                    *lob = OCI_GetLob(rs, i);
+
+                    break;
+                } 
+                case OCI_CDT_FILE :
+                {
+                    OCI_File **file = (OCI_File **) ptr;
+
+                    *file = OCI_GetFile(rs, i);
+
+                    break;
+                }
+                case OCI_CDT_TIMESTAMP :
+                {
+                    OCI_Timestamp **tmsp = (OCI_Timestamp **) ptr;
+
+                    *tmsp = OCI_GetTimestamp(rs, i);
+
+                    break;
+                }
+                case OCI_CDT_INTERVAL :
+                {
+                    OCI_Interval **itv = (OCI_Interval **) ptr;
+
+                    *itv = OCI_GetInterval(rs, i);
+
+                    break;
+                }
+                case OCI_CDT_OBJECT :
+                {
+                    OCI_Object **obj = (OCI_Object **) ptr;
+
+                    *obj = OCI_GetObject(rs, i);
+
+                    break;
+                }
+                case OCI_CDT_COLLECTION :
+                {
+                    OCI_Coll **coll = (OCI_Coll **) ptr;
+
+                    *coll = OCI_GetColl(rs, i);
+
+                    break;
+                }
+                case OCI_CDT_REF :
+                {
+                    OCI_Ref **ref = (OCI_Ref **) ptr;
+
+                    *ref = OCI_GetRef(rs, i);
+
+                    break;
+                }
+            }
+
+            ptr += size;
+
+            if (inds != NULL)
+            {
+                *inds = OCI_NOT_NULL(&rs->defs[i-1]);
+
+                inds++;
+            }
+        }
+    }
+
+    OCI_RESULT(res);
+
+    return res;    
 }
 
 /* ------------------------------------------------------------------------ *

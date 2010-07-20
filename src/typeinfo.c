@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: typeinfo.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: typeinfo.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -56,6 +56,7 @@ boolean OCI_TypeInfoClose(OCI_TypeInfo *typinf)
     OCI_FREE(typinf->cols);
     OCI_FREE(typinf->name);
     OCI_FREE(typinf->schema);
+    OCI_FREE(typinf->offsets);
 
     return TRUE;
 }
@@ -170,10 +171,11 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
         {
             typinf = (OCI_TypeInfo *) item->data;
 
-            typinf->type   = type;
-            typinf->con    = con;
-            typinf->name   = mtsdup(obj_name);
-            typinf->schema = mtsdup(obj_schema);
+            typinf->type        = type;
+            typinf->con         = con;
+            typinf->name        = mtsdup(obj_name);
+            typinf->schema      = mtsdup(obj_schema);
+            typinf->struct_size = 0;
 
             res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
                                                   (dvoid **) (void *) &dschp, 
@@ -315,6 +317,23 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
                     OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->nb_cols,
                                NULL, num_type, con->err)
                 )
+            }
+         
+            /* allocates memory for cached offsets */
+
+            if (typinf->nb_cols > 0)
+            {
+                typinf->offsets = (int *) OCI_MemAlloc(OCI_IPC_ARRAY,
+                                                       sizeof(*typinf->offsets),
+                                                       (size_t) typinf->nb_cols,
+                                                       FALSE);
+
+                res = (typinf->offsets != NULL);
+
+                if (res == TRUE)
+                {
+                    memset(typinf->offsets, -1, sizeof(*typinf->offsets) * typinf->nb_cols);
+                }
             }
 
             /* allocates memory for children */

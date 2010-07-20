@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: iterator.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: iterator.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -145,6 +145,8 @@ OCI_Elem * OCI_API OCI_IterGetNext(OCI_Iter *iter)
 {
     boolean res    = TRUE;
     OCI_Elem *elem = NULL;
+    void * data    = NULL;
+    OCIInd *p_ind  = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, FALSE);
     
@@ -157,14 +159,13 @@ OCI_Elem * OCI_API OCI_IterGetNext(OCI_Iter *iter)
         res, iter->coll->con,  
 
         OCIIterNext(OCILib.env, iter->coll->con->err, iter->handle,
-                    &iter->elem->handle, (dvoid **) &iter->elem->pind,
-                    &iter->eoc)
+                    &data, (dvoid **) &p_ind, &iter->eoc)
     )
 
     if ((res == TRUE) && (iter->eoc == FALSE))
     {
-        elem = iter->elem;
-        elem->ind = *elem->pind;
+        elem = OCI_ElemInit(iter->coll->con, &iter->elem,
+                            data, p_ind, iter->coll->typinf);
     }
        
     OCI_RESULT(elem != NULL);
@@ -180,6 +181,8 @@ OCI_Elem * OCI_API OCI_IterGetPrev(OCI_Iter *iter)
 {
     boolean res    = TRUE;
     OCI_Elem *elem = NULL;
+    void * data    = NULL;
+    OCIInd *p_ind  = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, FALSE);
     
@@ -192,14 +195,13 @@ OCI_Elem * OCI_API OCI_IterGetPrev(OCI_Iter *iter)
         res, iter->coll->con,  
 
         OCIIterPrev(OCILib.env, iter->coll->con->err, iter->handle, 
-                    &iter->elem->handle, (dvoid **) &iter->elem->pind, 
-                    &iter->boc)
+                    &data, (dvoid **) &p_ind, &iter->boc)
     )
 
     if ((res == TRUE) && (iter->boc == FALSE))
     {
-        elem = iter->elem;
-        elem->ind = *elem->pind;
+        elem = OCI_ElemInit(iter->coll->con, &iter->elem,
+                            data, p_ind, iter->coll->typinf);
     }
 
     OCI_RESULT(elem != NULL);

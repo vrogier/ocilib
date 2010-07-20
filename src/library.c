@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: library.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: library.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -330,6 +330,10 @@ OCITHREADKEYSET              OCIThreadKeySet              = NULL;
 OCITHREADKEYGET              OCIThreadKeyGet              = NULL;
 OCICONNECTIONPOOLCREATE      OCIConnectionPoolCreate      = NULL;
 OCICONNECTIONPOOLDESTROY     OCIConnectionPoolDestroy     = NULL;
+OCISESSIONPOOLCREATE         OCISessionPoolCreate         = NULL;
+OCISESSIONPOOLDESTROY        OCISessionPoolDestroy        = NULL;
+OCISESSIONGET                OCISessionGet                = NULL;
+OCISESSIONRELEASE            OCISessionRelease            = NULL;
 OCICOLLSIZE                  OCICollSize                  = NULL;
 OCICOLLMAX                   OCICollMax                   = NULL;
 OCICOLLGETITEM               OCICollGetElem               = NULL;
@@ -922,6 +926,16 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *lib_path,
         LIB_SYMBOL(OCILib.lib_handle, "OCIConnectionPoolDestroy", OCIConnectionPoolDestroy,
                    OCICONNECTIONPOOLDESTROY);
 
+        LIB_SYMBOL(OCILib.lib_handle, "OCISessionPoolCreate", OCISessionPoolCreate,
+                   OCISESSIONPOOLCREATE);
+        LIB_SYMBOL(OCILib.lib_handle, "OCISessionPoolDestroy", OCISessionPoolDestroy,
+                   OCISESSIONPOOLDESTROY);
+    
+        LIB_SYMBOL(OCILib.lib_handle, "OCISessionGet", OCISessionGet,
+                   OCISESSIONGET);
+        LIB_SYMBOL(OCILib.lib_handle, "OCISessionRelease", OCISessionRelease,
+                   OCISESSIONRELEASE);
+
         LIB_SYMBOL(OCILib.lib_handle, "OCICollSize", OCICollSize,
                    OCICOLLSIZE);
         LIB_SYMBOL(OCILib.lib_handle, "OCICollMax", OCICollMax,
@@ -1092,7 +1106,7 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *lib_path,
         if (res == FALSE)
         {
             OCI_ExceptionOCIEnvironment();
-        }
+        }       
 
         /*  allocate error handle */
 
@@ -1126,16 +1140,16 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *lib_path,
             res = (OCILib.cons != NULL);
         }
 
-        /* allocate connection pools internal list */
+        /* allocate pools internal list */
 
         if (res == TRUE)
         {
 
-            OCILib.pools = OCI_ListCreate(OCI_IPC_CONNPOOL);
+            OCILib.pools = OCI_ListCreate(OCI_IPC_POOL);
 
             res = (OCILib.pools != NULL);
         }
-       
+
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
         /* allocate connection pools internal list */
@@ -1172,11 +1186,6 @@ boolean OCI_API OCI_Cleanup(void)
 {
     boolean res = TRUE;
 
-    /* free all arrays */
-
-    OCI_ListForEach(OCILib.arrs, (boolean (*)(void *)) OCI_ArrayClose);
-    OCI_ListClear(OCILib.arrs);
-
     /* free all subscriptions */
 
     OCI_ListForEach(OCILib.subs, (boolean (*)(void *)) OCI_SubscriptionClose);
@@ -1189,8 +1198,13 @@ boolean OCI_API OCI_Cleanup(void)
 
     /* free all pools */
 
-    OCI_ListForEach(OCILib.pools, (boolean (*)(void *)) OCI_ConnPoolClose);
+    OCI_ListForEach(OCILib.pools, (boolean (*)(void *)) OCI_PoolClose);
     OCI_ListClear(OCILib.pools);
+
+    /* free all arrays */
+
+    OCI_ListForEach(OCILib.arrs, (boolean (*)(void *)) OCI_ArrayClose);
+    OCI_ListClear(OCILib.arrs);
 
     /* free objects */
 

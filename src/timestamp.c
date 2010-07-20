@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: timestamp.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: timestamp.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -203,8 +203,24 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate(OCI_Connection *con,
 {
     OCI_Array      *arr   = NULL;
     OCI_Timestamp **tmsps = NULL;
+    unsigned int    htype = 0;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type, NULL);
+    if (type == OCI_TIMESTAMP)
+    {
+        htype = OCI_DTYPE_TIMESTAMP;
+    }
+    else if (type == OCI_TIMESTAMP_TZ)
+    {
+        htype = OCI_DTYPE_TIMESTAMP_TZ;
+    }
+    else if (type == OCI_TIMESTAMP_LTZ)
+    {
+        htype = OCI_DTYPE_TIMESTAMP_LTZ;
+    }
+
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type, 
+                          sizeof(OCIDateTime *), sizeof(OCI_Timestamp), 
+                          htype, NULL);
 
     if (arr != NULL)
     {

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: subscriptions.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: subscriptions.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -178,7 +178,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    /* create connection pool object */
+    /* create subscription object */
 
     item = OCI_ListAppend(OCILib.subs, sizeof(*sub));
 
@@ -361,6 +361,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
     OCI_NOT_USED(port);
     OCI_NOT_USED(timeout);
     OCI_NOT_USED(con);
+    OCI_NOT_USED(item);
 
 #endif
 

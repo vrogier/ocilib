@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_api.h, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: oci_api.h, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_API_H_INCLUDED 
@@ -1358,6 +1358,57 @@ typedef sword (*OCICONNECTIONPOOLDESTROY)
 (
     OCICPool *poolhp,
     OCIError *errhp, 
+    ub4 mode
+);
+
+typedef sword (*OCISESSIONPOOLCREATE)
+(
+    OCIEnv *envhp, 
+    OCIError *errhp, 
+    OCISPool *spoolhp, 
+    OraText **poolName, 
+    ub4 *poolNameLen, 
+    CONST OraText *connStr, 
+    ub4 connStrLen,
+    ub4 sessMin, 
+    ub4 sessMax, 
+    ub4 sessIncr,
+    OraText *userid, 
+    ub4 useridLen,
+    OraText *password,
+    ub4 passwordLen,
+    ub4 mode
+);
+
+typedef sword (*OCISESSIONPOOLDESTROY)
+(
+    OCISPool *spoolhp,
+    OCIError *errhp,
+    ub4 mode
+);
+
+typedef sword (*OCISESSIONGET)
+(
+    OCIEnv *envhp, 
+    OCIError *errhp, 
+    OCISvcCtx **svchp,
+    OCIAuthInfo *authhp,
+    OraText *poolName, 
+    ub4 poolName_len, 
+    CONST OraText *tagInfo, 
+    ub4 tagInfo_len,
+    OraText **retTagInfo, 
+    ub4 *retTagInfo_len,
+    boolean *found, 
+    ub4 mode
+);
+
+typedef sword (*OCISESSIONRELEASE)
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp,
+    OraText *tag, 
+    ub4 tag_len,
     ub4 mode
 );
 

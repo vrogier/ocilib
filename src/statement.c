@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: statement.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -118,33 +118,35 @@ boolean OCI_BindCheck(OCI_Statement *stmt)
 
         /* extra work for internal allocated binds buffers */
 
-        if (bnd->alloc == TRUE)
+        if (bnd->is_array == FALSE)
         {
-            if (bnd->is_array == FALSE)
+            /* - For big integer (64 bits), we use an OCINumber.
+
+               - Oracle date/time type is the only non scalar type
+                 implemented by oracle through a public structure instead
+                 of using a handle. So we need to copy the value
+            */
+
+            if ((bnd->type == OCI_CDT_NUMERIC) && (bnd->code == SQLT_VNU))
             {
-                /* - For big integer (64 bits), we use an OCINumber.
-
-                   - Oracle date/time type is the only non scalar type
-                     implemented by oracle through a public structure instead
-                     of using a handle. So we need to copy the value
-                */
-
-                if (bnd->type == OCI_CDT_NUMERIC)
+                res = OCI_NumberSet(stmt->con,
+                                    (OCINumber *) bnd->buf.data,
+                                    (void *) bnd->input,
+                                    (uword) sizeof(big_int),
+                                    bnd->subtype);
+            }
+            else if (bnd->alloc == TRUE)
+            {
+                if (bnd->type == OCI_CDT_DATETIME)
                 {
-                    res = OCI_NumberSet(stmt->con,
-                                        (OCINumber *) bnd->buf.data,
-                                        (void *) bnd->input,
-                                        (uword) sizeof(big_int),
-                                        bnd->subtype);
-                }
-                else if (bnd->type == OCI_CDT_DATETIME)
-                {
-                    memcpy((void *) bnd->buf.data,
-                           ((OCI_Date *) bnd->input)->handle,
-                           sizeof(OCIDate));
+                    if (bnd->input != NULL)
+                    {
+                        memcpy((void *) bnd->buf.data,
+                               ((OCI_Date *) bnd->input)->handle, sizeof(OCIDate));
+                    }
                 }
 
-#ifdef OCI_CHECK_DATASTRINGS
+            #ifdef OCI_CHECK_DATASTRINGS
 
                 else if (bnd->type == OCI_CDT_TEXT)
                 {
@@ -156,49 +158,71 @@ boolean OCI_BindCheck(OCI_Statement *stmt)
                                         sizeof(dtext), sizeof(odtext));
                 }
 
-#endif
+            #endif
 
                 else
                 {
-                    bnd->buf.data[0] = ((OCI_Datatype *) bnd->input)->handle;
-
-                    /* for handles, check anyway the value for null data */
-
-                    if (ind != NULL && *ind != -1)
-                        *ind = OCI_IND(bnd->buf.data);
+                    if (bnd->input != NULL)
+                    {
+                        bnd->buf.data[0] = ((OCI_Datatype *) bnd->input)->handle;
+                    }
                 }
-
-                if (res == FALSE)
-                    break;
             }
-            else
+
+            /* for handles, check anyway the value for null data */
+
+            if ((bnd->type != OCI_CDT_NUMERIC) &&
+                (bnd->type != OCI_CDT_TEXT   ) &&
+                (bnd->type != OCI_CDT_RAW    ))
             {
-                for (j = 0; j < bnd->buf.count; j++, ind++)
+                if (ind != NULL && *ind != -1)
+                {
+                    *ind = OCI_IND(bnd->buf.data);
+                }
+            }
+
+            /* update bind object indicator pointer with object indicator */
+
+            if (bnd->type == OCI_CDT_OBJECT)
+            {
+                bnd->buf.obj_inds[0] = ((OCI_Object *) bnd->input)->tab_ind;
+            }
+
+            if (res == FALSE)
+                break;
+        }
+        else
+        {
+            for (j = 0; j < bnd->buf.count; j++, ind++)
+            {
+
+                /* - For big integer (64 bits), we use an OCINumber.
+
+                   - Oracle date/time type is the only non scalar type
+                     implemented by oracle through a public structure instead
+                     of using a handle. So we need to copy the value
+                */
+
+                if ((bnd->type == OCI_CDT_NUMERIC) && (bnd->code == SQLT_VNU))
                 {
 
-                    /* - For big integer (64 bits), we use an OCINumber.
-
-                       - Oracle date/time type is the only non scalar type
-                         implemented by oracle through a public structure instead
-                         of using a handle. So we need to copy the value
-                    */
-
-                    if (bnd->type == OCI_CDT_NUMERIC)
+                    res = OCI_NumberSet(stmt->con,
+                                       (OCINumber *) ((ub1 *) bnd->buf.data + (size_t) (j*bnd->size)),
+                                       (void *) (((ub1 *) bnd->input) +  (((size_t)j)*sizeof(big_int))),
+                                       (uword) sizeof(big_int), bnd->subtype);
+                }
+                else if (bnd->alloc == TRUE)
+                {
+                    if (bnd->type == OCI_CDT_DATETIME)
                     {
-
-                        res = OCI_NumberSet(stmt->con,
-                                           (OCINumber *) ((ub1 *) bnd->buf.data + (size_t) (j*bnd->size)),
-                                           (void *) (((ub1 *) bnd->input) +  (((size_t)j)*sizeof(big_int))),
-                                           (uword) sizeof(big_int), bnd->subtype);
-                    }
-                    else  if (bnd->type == OCI_CDT_DATETIME)
-                    {
-                        memcpy(((ub1 *) bnd->buf.data) + (size_t) (j*bnd->size),
-                               ((OCI_Date *) bnd->input[j])->handle,
-                               sizeof(OCIDate));
+                        if (bnd->input[j] != NULL)
+                        {
+                            memcpy(((ub1 *) bnd->buf.data) + (size_t) (j*bnd->size),
+                                   ((OCI_Date *) bnd->input[j])->handle, sizeof(OCIDate));
+                        }
                     }
 
-#ifdef OCI_CHECK_DATASTRINGS
+                #ifdef OCI_CHECK_DATASTRINGS
 
                     else if (bnd->type == OCI_CDT_TEXT)
                     {
@@ -224,22 +248,39 @@ boolean OCI_BindCheck(OCI_Statement *stmt)
                         }
                     }
 
-#endif
+                #endif
 
                     else
                     {
-                        bnd->buf.data[j] = ((OCI_Datatype *) bnd->input[j])->handle;
-
-                        /* for handles, check anyway the value for null data */
-
-                        if (ind != NULL && *ind != -1)
-                            *ind = OCI_IND(bnd->buf.data[j]);
+                         if (bnd->input[j] != NULL)
+                         {
+                             bnd->buf.data[j] = ((OCI_Datatype *) bnd->input[j])->handle;
+                         }
                     }
-
-
-                    if (res == FALSE)
-                        break;
                 }
+
+
+                /* for handles, check anyway the value for null data */
+
+                if ((bnd->type != OCI_CDT_NUMERIC) &&
+                    (bnd->type != OCI_CDT_TEXT   ) &&
+                    (bnd->type != OCI_CDT_RAW    ))
+                {
+                    if (ind != NULL && *ind != -1)
+                    {
+                        *ind = OCI_IND(bnd->buf.data[j]);
+                    }
+                }
+
+                /* update bind object indicator pointer with object indicator */
+
+                if (bnd->type == OCI_CDT_OBJECT)
+                {
+                    bnd->buf.obj_inds[j] = ((OCI_Object *) bnd->input[j])->tab_ind;
+                }
+                
+                if (res == FALSE)
+                    break;
             }
         }
     }
@@ -287,10 +328,51 @@ boolean OCI_BindReset(OCI_Statement *stmt)
         {
             /* extra work for internal allocated binds buffers with PL/SQL */
 
-            if (bnd->alloc == TRUE)
+            if (bnd->is_array == FALSE)
             {
-                if (bnd->is_array == FALSE)
+                /* - For big integer (64 bits), we use an OCINumber.
+
+                   - Oracle date/time type is the only non scalar type
+                     implemented by oracle through a public structure instead
+                     of using a handle. So we need to copy the value
+                */
+
+                if ((bnd->type == OCI_CDT_NUMERIC) && (bnd->code == SQLT_VNU))
                 {
+                    res = OCI_NumberGet(stmt->con,
+                                        (OCINumber *) bnd->buf.data,
+                                        (void *) bnd->input,
+                                        (uword) sizeof(big_int),
+                                        bnd->subtype);
+                }
+                else if (bnd->alloc == TRUE)
+                {
+
+                    if (bnd->type == OCI_CDT_DATETIME)
+                    {
+                        if (bnd->input != NULL)
+                        {
+                            memcpy(((OCI_Date *) bnd->input)->handle,
+                                   (void *) bnd->buf.data, sizeof(OCIDate));
+                        }
+                    }
+                    
+                    /* update object indicator with bind object indicator pointer */
+
+                    if (bnd->type == OCI_CDT_OBJECT)
+                    {
+                        if (bnd->input != NULL)
+                        {
+                            ((OCI_Object *) bnd->input)->tab_ind = bnd->buf.obj_inds[0];
+                        }
+                    }   
+                }
+            }
+            else
+            {
+                for (j = 0; j < bnd->buf.count; j++)
+                {
+
                     /* - For big integer (64 bits), we use an OCINumber.
 
                        - Oracle date/time type is the only non scalar type
@@ -298,48 +380,35 @@ boolean OCI_BindReset(OCI_Statement *stmt)
                          of using a handle. So we need to copy the value
                     */
 
-                    if (bnd->type == OCI_CDT_NUMERIC)
+                    if ((bnd->type == OCI_CDT_NUMERIC) && (bnd->code == SQLT_VNU))
                     {
+
                         res = OCI_NumberGet(stmt->con,
-                                            (OCINumber *) bnd->buf.data,
-                                            (void *) bnd->input,
-                                            (uword) sizeof(big_int),
-                                            bnd->subtype);
+                                           (OCINumber *) ((ub1 *) bnd->buf.data + (size_t) (j*bnd->size)),
+                                           (void *) (((ub1 *) bnd->input) +  (((size_t)j)*sizeof(big_int))),
+                                           (uword) sizeof(big_int), bnd->subtype);
                     }
-                    else if (bnd->type == OCI_CDT_DATETIME)
+                    else if (bnd->alloc == TRUE)
                     {
-                        memcpy(((OCI_Date *) bnd->input)->handle,
-                               (void *) bnd->buf.data,
-                               sizeof(OCIDate));
-                    }
-
-                }
-                else
-                {
-                    for (j = 0; j < bnd->buf.count; j++)
-                    {
-
-                        /* - For big integer (64 bits), we use an OCINumber.
-
-                           - Oracle date/time type is the only non scalar type
-                             implemented by oracle through a public structure instead
-                             of using a handle. So we need to copy the value
-                        */
-
-                        if (bnd->type == OCI_CDT_NUMERIC)
+                        if (bnd->type == OCI_CDT_DATETIME)
                         {
+                            if (bnd->input[j] != NULL)
+                            {
+                                memcpy(((OCI_Date *) bnd->input[j])->handle,
+                                       ((ub1 *) bnd->buf.data) + (size_t) (j*bnd->size),
+                                       sizeof(OCIDate));
+                            }
+                        }
 
-                            res = OCI_NumberGet(stmt->con,
-                                               (OCINumber *) ((ub1 *) bnd->buf.data + (size_t) (j*bnd->size)),
-                                               (void *) (((ub1 *) bnd->input) +  (((size_t)j)*sizeof(big_int))),
-                                               (uword) sizeof(big_int), bnd->subtype);
-                        }
-                        else  if (bnd->type == OCI_CDT_DATETIME)
+                    /* update bind object indicator pointer with object indicator */
+
+                        if (bnd->type == OCI_CDT_OBJECT)
                         {
-                            memcpy(((OCI_Date *) bnd->input[j])->handle,
-                                   ((ub1 *) bnd->buf.data) + (size_t) (j*bnd->size),
-                                   sizeof(OCIDate));
-                        }
+                            if (bnd->input != NULL)
+                            {
+                                ((OCI_Object *) bnd->input[j])->tab_ind = bnd->buf.obj_inds[j];
+                            }
+                        }   
                     }
                 }
             }
@@ -556,6 +625,20 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
         res = (bnd->buf.inds != NULL);
     }
+    
+    /* allocate object indicators pointer array */
+
+    if (res == TRUE)
+    {
+        if ((type == OCI_CDT_OBJECT) && (bnd->buf.obj_inds == NULL))
+        {
+            bnd->buf.obj_inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY,
+                                                      sizeof(void *), (size_t) nbelem, 
+                                                      TRUE);
+
+            res = (bnd->buf.obj_inds != NULL);
+        }
+    }
 
     /* check need for PL/SQL table extra info */
 
@@ -584,32 +667,40 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
     if ((res == TRUE) && (mode == OCI_BIND_INPUT))
     {
-        if (type != OCI_CDT_RAW      &&
-            type != OCI_CDT_LONG     &&
-            type != OCI_CDT_CURSOR   &&
-
-#ifndef OCI_CHECK_DATASTRINGS
-
-            type != OCI_CDT_TEXT     &&
-
-#endif
-            (type != OCI_CDT_NUMERIC || code == SQLT_VNU)
-        )
+        if (stmt->bind_alloc_mode == OCI_BAM_EXTERNAL)
         {
-            bnd->alloc = TRUE;
+            if (type != OCI_CDT_RAW      &&
+                type != OCI_CDT_LONG     &&
+                type != OCI_CDT_CURSOR   &&
 
-            if (bnd->buf.data == NULL)
-            {
-                bnd->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, 
-                                                       (size_t) size,
-                                                       (size_t) nbelem,
-                                                       TRUE);
+    #ifndef OCI_CHECK_DATASTRINGS
+
+                type != OCI_CDT_TEXT     &&
+
+    #endif
+                (type != OCI_CDT_NUMERIC || code == SQLT_VNU)
+            )
+            {               
+                bnd->alloc = TRUE;
+
+                if ((reused == TRUE) && (bnd->buf.data != NULL) && (bnd->size != (sb4) size))
+                {
+                    OCI_FREE(bnd->buf.data);
+                }
+
+                if (bnd->buf.data == NULL)
+                {
+                    bnd->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, 
+                                                           (size_t) size,
+                                                           (size_t) nbelem,
+                                                           TRUE);
+                }
+
+                res = (bnd->buf.data != NULL);
             }
-
-            res = (bnd->buf.data != NULL);
+            else
+                bnd->buf.data = (void **) data;
         }
-        else
-            bnd->buf.data = (void **) data;
     }
 
     /* setup data length array */
@@ -661,6 +752,13 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
         bnd->buf.count   = nbelem;
         bnd->buf.sizelen = sizeof(ub2);
+
+        /* internal allocation if needed */
+
+        if ((data == NULL) && (stmt->bind_alloc_mode == OCI_BAM_INTERNAL))
+        {
+            res = OCI_BindAllocData(bnd);
+        }
 
         /* if we bind an OCI_Long or any output bind, we need to change the
            execution mode to provide data at execute time */
@@ -723,7 +821,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
                 OCIBindObject((OCIBind *) bnd->buf.handle, stmt->con->err,
                               (OCIType *) typinf->tdo, (void **) bnd->buf.data,
-                              (ub4 *) NULL, (void **) NULL,
+                              (ub4 *) NULL, (void **) bnd->buf.obj_inds,
                               (ub4 *) bnd->buf.inds)
             )
         }
@@ -1148,14 +1246,15 @@ OCI_Statement * OCI_StatementInit(OCI_Connection *con, OCI_Statement **pstmt,
     {
         stmt = *pstmt;
 
-        stmt->con           = con;
-        stmt->stmt          = handle;
+        stmt->con             = con;
+        stmt->stmt            = handle;
 
-        stmt->exec_mode     = OCI_DEFAULT;
-        stmt->long_size     = OCI_SIZE_LONG;
-        stmt->bind_reuse    = FALSE;
-        stmt->bind_mode     = OCI_BIND_BY_NAME;
-        stmt->long_mode     = OCI_LONG_EXPLICIT;
+        stmt->exec_mode       = OCI_DEFAULT;
+        stmt->long_size       = OCI_SIZE_LONG;
+        stmt->bind_reuse      = FALSE;
+        stmt->bind_mode       = OCI_BIND_BY_NAME;
+        stmt->long_mode       = OCI_LONG_EXPLICIT;
+        stmt->bind_alloc_mode = OCI_BAM_EXTERNAL;
 
         /* reset statement */
 
@@ -1296,8 +1395,6 @@ boolean OCI_BatchErrorClear(OCI_Statement *stmt)
         /* free batch structure */
 
         OCI_FREE(stmt->batch);
-
-        stmt->batch = NULL;
     }
 
     return TRUE;
@@ -1601,10 +1698,28 @@ boolean OCI_API OCI_Execute(OCI_Statement *stmt)
 
     res = OCI_BindCheck(stmt);
 
-    /* free previous resulsets in case of re-execution of the same SQL order */
+    /* check current resultsets */
 
-   if (res == TRUE)
-       res = OCI_ReleaseResultsets(stmt);
+    if ((res == TRUE) && (stmt->rsts != NULL))
+    {
+        /* resultsets are freed before any prepare operations.
+           So, if we got ones here, it means the same SQL order 
+           is re-executed */
+
+       if (stmt->type == OCI_CST_SELECT)
+       {
+            /* just reinitialize the current resultet */
+           
+           res = OCI_ResultsetInit(stmt->rsts[0]);
+       }
+       else
+       {
+            /* Must free previous resulsets for 'returning into'
+               SQL orders that can produce multiple resulsets */
+
+           res = OCI_ReleaseResultsets(stmt);
+       }
+    }
 
     /* Oracle execute call */
 
@@ -1625,6 +1740,18 @@ boolean OCI_API OCI_Execute(OCI_Statement *stmt)
     if (status == OCI_SUCCESS_WITH_INFO)
     {
         OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt, TRUE);
+    }
+
+    /* on batch mode, check if any error occured */
+
+    if (mode & OCI_BATCH_ERRORS)
+    {
+        /* build batch error list if the statement is array DML */
+
+        OCI_BatchErrorInit(stmt);
+
+        if (stmt->batch != NULL)
+            res = (stmt->batch->count == 0);
     }
 
     /* update status on success */
@@ -1652,13 +1779,6 @@ boolean OCI_API OCI_Execute(OCI_Statement *stmt)
         /* raise exception */
 
         OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt, FALSE);
-
-        /* build batch error list if the statement is array DML */
-
-        if (mode & OCI_BATCH_ERRORS)
-        {
-            OCI_BatchErrorInit(stmt);
-        }
     }
 
     OCI_RESULT(res);
@@ -2979,6 +3099,35 @@ unsigned int OCI_API OCI_GetBindMode(OCI_Statement *stmt)
     return stmt->bind_mode;
 }
 
+
+/* ------------------------------------------------------------------------ *
+ * OCI_SetBindAllocation
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_SetBindAllocation(OCI_Statement *stmt, unsigned int mode)
+{
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
+
+    stmt->bind_alloc_mode = mode;
+
+    OCI_RESULT(TRUE);
+
+    return TRUE;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_GetBindAllocation
+ * ------------------------------------------------------------------------ */
+
+unsigned int OCI_API OCI_GetBindAllocation(OCI_Statement *stmt)
+{
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, 0);
+
+    OCI_RESULT(TRUE);
+
+    return stmt->bind_alloc_mode;
+}
+
 /* ------------------------------------------------------------------------ *
  * OCI_SetFetchSize
  * ------------------------------------------------------------------------ */
@@ -3326,9 +3475,12 @@ OCI_Error * OCI_API OCI_GetBatchError(OCI_Statement *stmt)
 
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, OCI_UNKNOWN);
 
-    if (stmt->batch->cur < stmt->batch->count)
+    if (stmt->batch != NULL)
     {
-        err = &stmt->batch->errs[stmt->batch->cur++];
+        if (stmt->batch->cur < stmt->batch->count)
+        {
+            err = &stmt->batch->errs[stmt->batch->cur++];
+        }
     }
 
     OCI_RESULT(TRUE);
@@ -3342,9 +3494,16 @@ OCI_Error * OCI_API OCI_GetBatchError(OCI_Statement *stmt)
 
 unsigned int OCI_API OCI_GetBatchErrorCount(OCI_Statement *stmt)
 {
+    unsigned int count = 0;
+
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, 0);
 
-    OCI_RESULT(TRUE);
+    if (stmt->batch != NULL)
+    {
+        count = stmt->batch->count;
+    }
 
-    return stmt->batch->count;
+    OCI_RESULT(TRUE);
+    
+    return 0;
 }

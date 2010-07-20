@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_defs.h, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: oci_defs.h, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_DEFS_H_INCLUDED 
@@ -148,6 +148,7 @@
 #define OCI_HTYPE_DIRPATH_STREAM       16              /* direct path stream */
 #define OCI_HTYPE_TRANS         10                     /* transaction handle */
 #define OCI_HTYPE_CPOOL         26                 /* connection pool handle */
+#define OCI_HTYPE_SPOOL         27                    /* session pool handle */
 #define OCI_HTYPE_ADMIN         28                           /* admin handle */
 
 
@@ -258,12 +259,20 @@
 #define OCI_ATTR_NUM_TYPE_ATTRS        228      /* number of attribute types */
 #define OCI_ATTR_LIST_TYPE_ATTRS       229        /* list of type attributes */
 
-#define OCI_ATTR_CQ_QUERYID            304
-
 #define OCI_ATTR_CLIENT_IDENTIFIER     278       /* value of client id to set*/
 
 #define OCI_ATTR_CHAR_USED             285          /* char length semantics */
 #define OCI_ATTR_CHAR_SIZE             286                    /* char length */
+
+#define OCI_ATTR_CQ_QUERYID            304
+
+#define OCI_ATTR_SPOOL_TIMEOUT         308                /* session timeout */
+#define OCI_ATTR_SPOOL_GETMODE         309               /* session get mode */
+#define OCI_ATTR_SPOOL_BUSY_COUNT      310             /* busy session count */
+#define OCI_ATTR_SPOOL_OPEN_COUNT      311             /* open session count */
+#define OCI_ATTR_SPOOL_MIN             312              /* min session count */
+#define OCI_ATTR_SPOOL_MAX             313              /* max session count */
+#define OCI_ATTR_SPOOL_INCR            314        /* session increment count */
 
 #define OCI_ATTR_ADMIN_PFILE           389         /* client-side param file */
 
@@ -444,6 +453,42 @@ typedef struct OCIEvent         OCIEvent;                 /* HA event handle */
 typedef struct OCIDirPathCtx      OCIDirPathCtx;               /* DP context */
 typedef struct OCIDirPathColArray OCIDirPathColArray;     /* DP column array */
 typedef struct OCIDirPathStream   OCIDirPathStream;             /* DP stream */
+
+/*---------------------------------------------------------------------------*/
+/*------------------------- OCISessionPoolCreate Modes ----------------------*/
+
+#define OCI_SPC_REINITIALIZE 0x0001   /* Reinitialize the session pool */
+#define OCI_SPC_HOMOGENEOUS  0x0002   /* Session pool is homogeneneous */
+#define OCI_SPC_STMTCACHE    0x0004   /* Session pool has stmt cache */
+
+/*---------------------------------------------------------------------------*/
+/*--------------------------- OCISessionGet Modes ---------------------------*/
+
+#define OCI_SESSGET_SPOOL      0x0001     /* SessionGet called in SPOOL mode */
+#define OCI_SESSGET_CPOOL      OCI_CPOOL  /* SessionGet called in CPOOL mode */
+#define OCI_SESSGET_STMTCACHE  0x0004                 /* Use statement cache */
+#define OCI_SESSGET_CREDPROXY  0x0008     /* SessionGet called in proxy mode */
+#define OCI_SESSGET_CREDEXT    0x0010     
+#define OCI_SESSGET_SPOOL_MATCHANY 0x0020
+/*---------------------------------------------------------------------------*/
+/*------------------------ATTR Values for Session Pool-----------------------*/
+/* Attribute values for OCI_ATTR_SPOOL_GETMODE */
+#define OCI_SPOOL_ATTRVAL_WAIT     0         /* block till you get a session */
+#define OCI_SPOOL_ATTRVAL_NOWAIT   1    /* error out if no session avaliable */
+#define OCI_SPOOL_ATTRVAL_FORCEGET 2  /* get session even if max is exceeded */
+
+/*---------------------------------------------------------------------------*/
+/*--------------------------- OCISessionRelease Modes -----------------------*/
+
+#define OCI_SESSRLS_DROPSESS 0x0001                    /* Drop the Session */
+#define OCI_SESSRLS_RETAG    0x0002                   /* Retag the session */
+
+/*---------------------------------------------------------------------------*/
+/*----------------------- OCISessionPoolDestroy Modes -----------------------*/
+
+#define OCI_SPD_FORCE        0x0001       /* Force the sessions to terminate. 
+                                             Even if there are some busy 
+                                             sessions close them */
 
 /*--------------------- OCI Thread Object Definitions------------------------*/
 
@@ -695,13 +740,6 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_OBJECT_NEW     0x0001                             /* new object */
 #define OCI_OBJECT_DELETED 0x0002                  /* object marked deleted */
 #define OCI_OBJECT_UPDATED 0x0004                  /* object marked updated */
-
-/* macros to test the object mark status */ 
-#define OCI_OBJECT_IS_UPDATED(flag) bit((flag), OCI_OBJECT_UPDATED)
-#define OCI_OBJECT_IS_DELETED(flag) bit((flag), OCI_OBJECT_DELETED)
-#define OCI_OBJECT_IS_NEW(flag) bit((flag), OCI_OBJECT_NEW)
-#define OCI_OBJECT_IS_DIRTY(flag) \
-  bit((flag), OCI_OBJECT_UPDATED|OCI_OBJECT_NEW|OCI_OBJECT_DELETED)
 
 /*----- values for cflg argument to OCIDirpathColArrayEntrySet --------------*/
 

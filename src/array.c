@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: array.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: array.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -39,126 +39,27 @@
  * ************************************************************************ */
 
 /* ------------------------------------------------------------------------ *
- * OCI_ArrayGetDatatypeInfo
- * ------------------------------------------------------------------------ */
-
-boolean OCI_ArrayGetDatatypeInfo(unsigned int type,
-                                 unsigned int subtype,
-                                 unsigned int *handle_type,
-                                 size_t *struct_size,
-                                 size_t *handle_size)
-{
-    *handle_size = sizeof(void *);
-
-    switch (type)
-    {
-        case OCI_CDT_DATETIME :
-
-            *struct_size = sizeof(OCI_Date);
-            *handle_size = sizeof(OCIDate);
-            *handle_type = 0;
-
-            break;
-
-        case OCI_CDT_LOB:
-
-            *struct_size = sizeof(OCI_Lob);
-            *handle_type = OCI_DTYPE_LOB;
-
-            break;
-
-        case OCI_CDT_FILE:
-
-            *struct_size = sizeof(OCI_File);
-            *handle_type = OCI_DTYPE_LOB;
-
-            break;
-
-       case OCI_CDT_TIMESTAMP:
-
-            *struct_size = sizeof(OCI_Timestamp);
-
-            if (subtype == OCI_TIMESTAMP)
-            {
-                *handle_type = OCI_DTYPE_TIMESTAMP;
-            }
-            else if (subtype == OCI_TIMESTAMP_TZ)
-            {
-                *handle_type = OCI_DTYPE_TIMESTAMP_TZ;
-            }
-            else if (subtype == OCI_TIMESTAMP_LTZ)
-            {
-                *handle_type = OCI_DTYPE_TIMESTAMP_LTZ;
-            }
-
-            break;
-
-        case OCI_CDT_INTERVAL:
-
-            *struct_size = sizeof(OCI_Interval);
-
-            if (subtype == OCI_INTERVAL_YM)
-            {
-                *handle_type = OCI_DTYPE_INTERVAL_YM;
-            }
-            else if (subtype == OCI_INTERVAL_DS)
-            {
-                *handle_type = OCI_DTYPE_INTERVAL_DS;
-            }
-
-            break;
-
-        case OCI_CDT_OBJECT:
-
-            *struct_size = sizeof(OCI_Object);
-            *handle_type = 0;
-
-            break;
-
-        case OCI_CDT_COLLECTION:
-
-            *struct_size = sizeof(OCI_Coll);
-            *handle_type = 0;
-
-            break;
-
-        case OCI_CDT_REF:
-
-            *struct_size = sizeof(OCI_Ref);
-            *handle_type = 0;
-
-            break;
-
-    }
-
-    return TRUE;
-}
-
-/* ------------------------------------------------------------------------ *
  * OCI_ArrayInit
  * ------------------------------------------------------------------------ */
 
-boolean OCI_ArrayInit(OCI_Array *arr, size_t struct_size, size_t handle_size,
-                      OCI_TypeInfo *typinf)
+boolean OCI_ArrayInit(OCI_Array *arr, OCI_TypeInfo *typinf)
 {
     unsigned int i;
-
-    OCI_NOT_USED(handle_size);
 
     for (i = 0; i < arr->nb_elem; i++)
     {
         void *handle = NULL;
 
-        if (arr->type == OCI_CDT_DATETIME)
+        if (arr->elem_type == OCI_CDT_DATETIME)
             handle = &(((OCIDate *)(arr->mem_handle))[i]);
         else
             handle = ((void **)(arr->mem_handle))[i];
 
-        arr->tab_obj[i] = ((char *) arr->mem_struct) + (struct_size * i);
+        arr->tab_obj[i] = ((char *) arr->mem_struct) + (arr->struct_size * i);
 
         ((OCI_Datatype *) (arr->tab_obj[i]))->hstate = OCI_OBJECT_ALLOCATED_ARRAY;
 
-        switch (arr->type)
+        switch (arr->elem_type)
         {
             case OCI_CDT_DATETIME :
 
@@ -170,27 +71,27 @@ boolean OCI_ArrayInit(OCI_Array *arr, size_t struct_size, size_t handle_size,
             case OCI_CDT_LOB:
 
                 OCI_LobInit(arr->con, (OCI_Lob **) &arr->tab_obj[i],
-                            handle, arr->subtype);
+                            handle, arr->elem_subtype);
 
                 break;
 
             case OCI_CDT_FILE:
 
                 OCI_FileInit(arr->con, (OCI_File **) &arr->tab_obj[i],
-                             handle, arr->subtype);
+                             handle, arr->elem_subtype);
                 break;
 
             case OCI_CDT_TIMESTAMP:
 
                 OCI_TimestampInit(arr->con, (OCI_Timestamp **) &arr->tab_obj[i],
-                                  handle, arr->subtype);
+                                  handle, arr->elem_subtype);
 
                 break;
 
             case OCI_CDT_INTERVAL:
 
                 OCI_IntervalInit(arr->con, (OCI_Interval **) &arr->tab_obj[i],
-                                 handle, arr->subtype);
+                                 handle, arr->elem_subtype);
 
                 break;
 
@@ -226,30 +127,14 @@ boolean OCI_ArrayInit(OCI_Array *arr, size_t struct_size, size_t handle_size,
 boolean OCI_ArrayClose(OCI_Array *arr)
 {
     unsigned int i;
-    size_t struct_size       = 0;
-    size_t handle_size       = 0;
-    unsigned int handle_type = 0;
 
     OCI_CHECK_PTR(OCI_IPC_ARRAY, arr, FALSE);
 
-    /* free array structure */
-
-    OCI_ArrayGetDatatypeInfo(arr->type, arr->subtype, &handle_type,
-                             &struct_size, &handle_size);
-
-    if (handle_type != 0)
-    {
-        OCI_DescriptorArrayFree
-        (
-            (dvoid **) arr->mem_handle,
-            (ub4     ) handle_type,
-            (ub4     ) arr->nb_elem
-        );
-    }
+    /* Cleanup OCILIB Objects */
 
     for (i = 0; i < arr->nb_elem; i++)
     {
-        switch (arr->type)
+        switch (arr->elem_type)
         {
             case OCI_CDT_DATETIME :
 
@@ -299,6 +184,18 @@ boolean OCI_ArrayClose(OCI_Array *arr)
         }
     }
 
+    /* free OCI descriptors */
+
+    if (arr->handle_type != 0)
+    {
+        OCI_DescriptorArrayFree
+        (
+            (dvoid **) arr->mem_handle,
+            (ub4     ) arr->handle_type,
+            (ub4     ) arr->nb_elem
+        );
+    }
+
     OCI_FREE(arr->mem_handle);
     OCI_FREE(arr->mem_struct);
     OCI_FREE(arr->tab_obj);
@@ -310,21 +207,19 @@ boolean OCI_ArrayClose(OCI_Array *arr)
  * OCI_ArrayCreate
  * ------------------------------------------------------------------------ */
 
-OCI_Array * OCI_ArrayCreate(OCI_Connection *con, unsigned int nb_elem,
-                                    unsigned int type, unsigned int subtype,
-                                    OCI_TypeInfo *typinf)
+OCI_Array * OCI_ArrayCreate(OCI_Connection *con,      unsigned int nb_elem,
+                            unsigned int elem_type,   unsigned int elem_subtype,
+                            unsigned int elem_size,   unsigned int struct_size,
+                            unsigned int handle_type, OCI_TypeInfo *typinf)
 {
     boolean res              = TRUE;
     OCI_Array *arr           = NULL;
-    size_t struct_size       = 0;
-    size_t handle_size       = 0;
-    unsigned int handle_type = 0;
     OCI_Item *item           = NULL;
 
     OCI_CHECK_INITIALIZED(NULL);
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 
-    /* create connection pool object */
+    /* create array object */
 
     item = OCI_ListAppend(OCILib.arrs, sizeof(*arr));
 
@@ -332,19 +227,56 @@ OCI_Array * OCI_ArrayCreate(OCI_Connection *con, unsigned int nb_elem,
     {
         arr = (OCI_Array *) item->data;
 
-        arr->con        = con;
-        arr->type       = type;
-        arr->subtype    = subtype;
-        arr->nb_elem    = nb_elem;
+        arr->con            = con;
+        arr->elem_type      = elem_type;
+        arr->elem_subtype   = elem_subtype;
+        arr->elem_size      = elem_size;
+        arr->nb_elem        = nb_elem;
+        arr->struct_size    = struct_size;
+        arr->handle_type    = handle_type;
 
-        OCI_ArrayGetDatatypeInfo(type, subtype, &handle_type,
-                                 &struct_size, &handle_size);
+        /* allocate OCILIB Object array */
 
-        arr->tab_obj    = (void **) OCI_MemAlloc(OCI_IPC_VOID, sizeof(void *), nb_elem, TRUE);
-        arr->mem_handle = (void **) OCI_MemAlloc(OCI_IPC_VOID, handle_size, nb_elem, TRUE);
-        arr->mem_struct = (void  *) OCI_MemAlloc(OCI_IPC_VOID, struct_size, nb_elem, TRUE);
+        if (res == TRUE)
+        {
+            if ((arr->elem_type != OCI_CDT_NUMERIC) &&
+                (arr->elem_type != OCI_CDT_TEXT   ) &&
+                (arr->elem_type != OCI_CDT_RAW    ))
+            {
+                arr->tab_obj = (void **) OCI_MemAlloc(OCI_IPC_VOID, sizeof(void *), 
+                                                      nb_elem, TRUE);
 
-        res = ((arr->tab_obj != NULL) && (arr->mem_handle != NULL) && (arr->mem_struct != NULL));
+                res = (arr->tab_obj != NULL) ;
+            }
+        }
+
+        /* allocate OCI handle array */
+
+        if (res == TRUE)
+        {
+            if (arr->elem_size > 0)
+            {
+                arr->mem_handle = (void **) OCI_MemAlloc(OCI_IPC_VOID, elem_size, 
+                                                         nb_elem, TRUE);
+
+                res = (arr->mem_handle != NULL) ;
+            }
+        }
+
+        /* allocate OCILIB structure array */
+
+        if (res == TRUE)
+        {
+            if (arr->struct_size > 0)
+            {
+                arr->mem_struct = (void **) OCI_MemAlloc(OCI_IPC_VOID, struct_size, 
+                                                         nb_elem, TRUE);
+
+                res = (arr->mem_struct != NULL) ;
+            }
+        }
+
+        /* allocate OCI handle descriptors */
 
         if (res == TRUE)
         {
@@ -362,9 +294,9 @@ OCI_Array * OCI_ArrayCreate(OCI_Connection *con, unsigned int nb_elem,
             }
         }
 
-        if (res == TRUE)
+        if ((res == TRUE) && (arr->mem_handle != NULL))
         {
-            res = OCI_ArrayInit(arr, struct_size, handle_size, typinf);
+            res = OCI_ArrayInit(arr, typinf);
         }
     }
     else

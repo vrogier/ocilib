@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: file.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: file.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -246,7 +246,9 @@ OCI_File ** OCI_API OCI_FileArrayCreate(OCI_Connection *con, unsigned int type,
     OCI_Array  *arr  = NULL;
     OCI_File **files = NULL;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_FILE, type, NULL);
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_FILE, type, 
+                          sizeof(OCILobLocator *), sizeof(OCI_File), 
+                          OCI_DTYPE_LOB, NULL);
 
     if (arr != NULL)
     {

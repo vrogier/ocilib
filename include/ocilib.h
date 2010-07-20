@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib.h, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: ocilib.h, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,7 +59,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.6.0 (2010-05-18)</b>
+ * <b>Current version : 3.7.0 (2010-07-20)</b>
  *
  * @section s_feats Main features
  *
@@ -69,8 +69,8 @@ extern "C" {
  * - Support for non scalar datatype with trough library objects
  * - Binding array Interface for fast and massive bulk operations
  * - Reusable and scrollable statements
- * - Connection Pooling
- * - Global Transactions
+ * - Oracle Pooling (connections and sessions pools)
+ * - Transactions
  * - Full PL/SQL support (blocks, cursors, Index by Tables and Nested tables)
  * - Returning DML feature support
  * - Direct Path loading
@@ -143,7 +143,7 @@ extern "C" {
  * ------------------------------------------------------------------------ */
 
 #define OCILIB_MAJOR_VERSION     3
-#define OCILIB_MINOR_VERSION     6
+#define OCILIB_MINOR_VERSION     7
 #define OCILIB_REVISION_VERSION  0
 
 /* ------------------------------------------------------------------------ *
@@ -153,7 +153,6 @@ extern "C" {
 /**
  * @defgroup g_install Installing OCILIB
  * @{
- *
  *
  * @par Compatibilities
  *
@@ -165,6 +164,7 @@ extern "C" {
  * - Oracle versions: 8i, 9i, 10g, 11g
  *
  * @note
+ *
  * The validation of OCILIB on OpenVMS is still pending.
  *
  * Please, contact the author if you have validated OCILIB on platforms or
@@ -198,6 +198,7 @@ extern "C" {
  *       independence (default on MSVC projects)
  *
  * @note
+ *
  * On Windows, OCI_API MUST be set to __stdcall in order to use prebuilt libraries
  * From v3.5.0, ocilib.h automatically sets OCI_API to  __stdcall with MS compilers
  *
@@ -240,11 +241,13 @@ extern "C" {
  *       loader flag '-ldl') and the --with-oracle-import is set to 'runtime'
  *
  * @note
+ *
  * --with-oracle-headers-path and --with-oracle-lib-path are meant to be used with
  * Instant client only but can used for regular client of libs and headers are
  * not located in usual folders
  *
  * @note
+ *
  * If the Oracle OCI linkage mode is set to 'linkage' (default) and no Oracle lib
  * path is provided, OCILIB configure script tries to located the Oracle library
  * folder following this sequence :
@@ -253,6 +256,7 @@ extern "C" {
  *  - $ORACLE_HOME/lib64 (64 bits libs)
  *
  * @note 
+ *
  * To compile native 64 bits versions of OCILIB, you need pass your compiler 
  * specifics flags to the configure script.
  *
@@ -305,6 +309,7 @@ extern "C" {
  *   linker options 
  *
  * @note
+ *
  * The OCI import mode (OCI_IMPORT_LINKAGE or OCI_IMPORT_RUNTIME is only used when
  * compiling OCILIB source code
 
@@ -715,16 +720,16 @@ OCI_EXPORT int       ociwcscasecmp(const wchar_t *str1, const wchar_t *str2);
 
 
 /**
- * @struct OCI_ConnPool
+ * @struct OCI_Pool
  *
  * @brief
- * Oracle Connection Pool
+ * Pool object (session or connection)
  *
- * A Connection pool is a set of connections
+ * A pool is a set of pooled objects
  *
  */
 
-typedef struct OCI_ConnPool OCI_ConnPool;
+typedef struct OCI_Pool OCI_Pool;
 
 /**
  * @struct OCI_Connection
@@ -1079,6 +1084,7 @@ typedef void (*POCI_THREAD) (OCI_Thread *thread, void *arg);
  * Thread key destructor prototype.
  *
  * @note
+ *
  * data is the thread key value
  *
  */
@@ -1092,6 +1098,7 @@ typedef void (*POCI_THREADKEYDEST) (void *data);
  * Database Change Notification User callback prototype.
  *
  * @note
+ *
  * data is the thread key value
  *
  */
@@ -1122,6 +1129,7 @@ typedef struct OCI_XID {
  * Internal Variant type based on union C type.
  *
  * @note
+ *
  * Helpful for generic buffer, it reduces the amount of casts
  *
  */
@@ -1431,19 +1439,26 @@ typedef struct OCI_HashEntry {
 #define OCI_SFD_RELATIVE        0x40
 
 
-/* Integer types */
+/* bind allocation mode */
 
-#define OCI_NUM_UNSIGNED               2
-#define OCI_NUM_SHORT                  4
-#define OCI_NUM_INT                    8
-#define OCI_NUM_BIGINT                 16
-#define OCI_NUM_NUMBER                 32
-#define OCI_NUM_DOUBLE                 64
+#define OCI_BAM_EXTERNAL        1
+#define OCI_BAM_INTERNAL        2
 
-#define OCI_NUM_USHORT                 (OCI_NUM_SHORT  | OCI_NUM_UNSIGNED)
-#define OCI_NUM_UINT                   (OCI_NUM_INT    | OCI_NUM_UNSIGNED)
-#define OCI_NUM_BIGUINT                (OCI_NUM_BIGINT | OCI_NUM_UNSIGNED)
+/* Integer sign flag */
 
+#define OCI_NUM_UNSIGNED        2 
+
+/* External Integer types */
+
+#define OCI_NUM_SHORT           4
+#define OCI_NUM_INT             8
+#define OCI_NUM_BIGINT          16
+
+#define OCI_NUM_DOUBLE          64
+
+#define OCI_NUM_USHORT          (OCI_NUM_SHORT  | OCI_NUM_UNSIGNED)
+#define OCI_NUM_UINT            (OCI_NUM_INT    | OCI_NUM_UNSIGNED)
+#define OCI_NUM_BIGUINT         (OCI_NUM_BIGINT | OCI_NUM_UNSIGNED)
 
 /* timestamp types */
 
@@ -1499,6 +1514,12 @@ typedef struct OCI_HashEntry {
 
 #define OCI_COLL_VARRAY         1
 #define OCI_COLL_NESTED_TABLE   2
+
+/* pool types */
+
+#define OCI_POOL_CONNECTION     1
+#define OCI_POOL_SESSION        2
+
 
 /* size constants */
 
@@ -1712,25 +1733,28 @@ typedef struct OCI_HashEntry {
  * Finally, OCILIB resources must be released by OCI_Cleanup()
  *
  * @note
+ *
  * The following objects are automatically freed by the library:
  * - Connections
- * - Connection pools
+ * - pools
  * - Statements
  * - Type info objects
  * - Thread keys
  *
  * @warning
+ *
  * All other standalone object instances (mutexes, threads, dates, lobs, ...)
  * <b>ARE NOT</b> freed.
  *
  * @par Example
+ *
  * @include init.c
  *
  */
 
 /**
  * @brief
- * Initializes the library
+ * Initialize the library
  *
  * @param err_handler  - Pointer to error handler procedure (optional)
  * @param lib_path     - Oracle shared library path (optional)
@@ -1744,23 +1768,28 @@ typedef struct OCI_HashEntry {
  * - OCI_ENV_EVENTS   : enables events for subscription
  *
  * @note
+ *
  * This function must be called before any OCILIB library function.
  *
  * - It installs the error handler
  * - It loads the Oracle shared library located in the path pointed by 'home'
  *
-* @warning
+ * @warning
+ *
  * The parameter 'home' is only used if OCILIB has been built with the option
  * OCI_IMPORT_RUNTIME (default on MS windows but NOT on Unix systems
  * 
  * @warning
+ *
  * If the parameter 'lib_path' is NULL, the Oracle library is loaded from system
  * environment variables
  *
  * @warning
+ *
  * OCI_Initialize() should be called <b>ONCE</b> per application
  *
  * @return
+ *
  * TRUE on success otherwise FALSE (only with Oracle runtime loading mode
  * if the oracle shared libraries can't be loaded or if OCI subsystem cannot
  * be initialized)
@@ -1774,20 +1803,12 @@ OCI_EXPORT boolean OCI_API OCI_Initialize
     unsigned int mode
 );
 
-OCI_EXPORT boolean OCI_API OCI_Initialize2
-(
-    POCI_ERROR err_handler,
-    const mtext *lib_path,
-    unsigned int mode,
-    unsigned int csid,
-    unsigned int ncsid
-);
-
 /**
  * @brief
  * Clean up all resources allocated by the library
  *
  * @note
+ *
  * This function must be the last OCILIB library function call.
  *
  * - It deallocates objects not explicitly freed by the program (connections,
@@ -1795,6 +1816,7 @@ OCI_EXPORT boolean OCI_API OCI_Initialize2
  * - It unloads the Oracle shared library
  *
  * @warning
+ *
  * OCI_Cleanup() should be called <b>ONCE</b> per application
  *
  * @return TRUE
@@ -1942,6 +1964,7 @@ OCI_EXPORT void OCI_API OCI_SetErrorHandler
  * Thread contextual error is also available for single thread based applications
  *
  * @par Oracle Warnings
+ *
  * Oracle warnings are raised through OCI_Error API. 
  * Such error handles have their error type property (OCI_ErrorGetType()) set to
  * OCI_ERR_WARNING.
@@ -2196,6 +2219,50 @@ OCI_EXPORT boolean OCI_API OCI_SetUserData
     OCI_Connection *con,
     void * data
 );
+
+/**
+ * @brief
+ * Associate a tag to the given connection/session
+ *
+ * @param con - Connection handle
+ * @param tag - user tag string
+ *
+ * @note
+ * Use this call only for connections retrieved from a session pool
+ * See OCI_PoolGetConnection() for more details
+ * 
+ * @note
+ * To untag a session, call OCI_SetSessionTag() with 'tag' parameter
+ * set ot NULL
+ *
+ * @warning
+ * No error is raised if the connection is a standalone connection
+ * or retrieved from a connection pool
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetSessionTag
+(
+    OCI_Connection *con,
+    const mtext * tag
+);
+
+/**
+ * @brief
+ * Return the tag associated the the given connection
+ *
+ * @param con - Connection handle
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_GetSessionTag
+(
+    OCI_Connection *con
+);
+
 
 /**
  * @brief
@@ -2592,13 +2659,53 @@ OCI_EXPORT boolean OCI_API OCI_Ping
  */
 
 /**
- * @defgroup g_connpool Connection Pools
+ * @defgroup g_pool Oracle Pools
  * @{
  *
- * OCILIB support the OCI features Connection pooling introduced in Oracle 9i.
+ * OCILIB support the connections and sessions pooling featurse introduced 
+ * in Oracle 9i.
+ *
+ * Let's Oracle talk about this features !
+ * 
+ * @par Connection pools (from Oracle Oracle Call Interface Programmer's Guide)
+ *
+ * Connection pooling is the use of a group (the pool) of reusable physical connections 
+ * by several sessions, in order to balance loads. The management of the pool is done 
+ * by OCI, not the application. Applications that can use connection pooling include 
+ * middle-tier applications for Web application servers and e-mail servers.
+ * 
+ * @par Session Pools (from Oracle Oracl® Call Interface Programmer's Guide)
+ *
+ * Session pooling means that the application will create and maintain a group of stateless
+ * sessions to the database. These sessions will be handed over to thin clients as requested.
+ * If no sessions are available, a new one may be created. When the client is done with 
+ * the session, the client will release it to the pool. Thus, the number of sessions in 
+ * the pool can increase dynamically.
  *
  * @note
- * OCILIB implements its own pooling mechanism for Oracle 8i.
+ * OCILIB implements homogeneous session pools only.
+ *
+ * @par When using Pools (from Oracle Oracle Call Interface Programmer's Guide)
+ *
+ * If database sessions are not reusable by mid-tier threads (that is, they are stateful)
+ * and the number of back-end server processes may cause scaling problems on the database,
+ * use OCI connection pooling.
+ * 
+ * If database sessions are reusable by mid-tier threads (that is, they are stateless) 
+ * and the number of back-end server processes may cause scaling problems on the database, 
+ * use OCI session pooling.
+ * 
+ * If database sessions are not reusable by mid-tier threads (that is, they are stateful) 
+ * and the number of back-end server processes will never be large enough to potentially 
+ * cause any scaling issue on the database, there is no need to use any pooling mechanism.
+ *
+ * @par Oracle 8i support
+ *
+ * Pooling has bee introduced in  :
+ * - 9iR1 for connection pools
+ * - 9iR2 for session pools
+ * For Oracle 8i, OCILIB implements its own pooling mechanism in order to remain compatible
+ * with older versions. But sessions pools then are handled as connection pools
  *
  * @par Example
  * @include pool.c
@@ -2607,19 +2714,24 @@ OCI_EXPORT boolean OCI_API OCI_Ping
 
 /**
  * @brief
- * Create a Connection pool
+ * Create an Oracle pool of connections or sessions
  *
  * @param db       - Oracle Service Name
  * @param user     - Oracle User name
  * @param pwd      - Oracle User password
+ * @param type     - Type of pool
  * @param mode     - Session mode
- * @param min_con  - minimum number of connections that can be opened.
- * @param max_con  - maximum number of connections that can be opened.
- * @param incr_con - next increment for connections to be opened
+ * @param min_con  - minimum number of  connections/sessions that can be opened.
+ * @param max_con  - maximum number of  connections/sessions that can be opened.
+ * @param incr_con - next increment for connections/sessions to be opened
  *
- * Possible values for parameter mode:
+  * Possible values for parameter 'type':
+ * - OCI_POOL_CONNECTION
+ * - OCI_POOL_SESSION
+
+ * Possible values for parameter 'mode':
  * - OCI_SESSION_DEFAULT
- * - OCI_SESSION_SYSDBA
+ * - OCI_SESSION_SYSDAB
  * - OCI_SESSION_SYSOPER
  *
  * @note
@@ -2630,15 +2742,16 @@ OCI_EXPORT boolean OCI_API OCI_Ping
  * @note
  *
  * @return
- * Connection pool handle on success or NULL on failure
+ * Connection or session pool handle on success or NULL on failure
  *
  */
 
-OCI_EXPORT OCI_ConnPool * OCI_API OCI_ConnPoolCreate
+OCI_EXPORT OCI_Pool * OCI_API OCI_PoolCreate
 (
     const mtext *db,
     const mtext *user,
     const mtext *pwd,
+    unsigned int type,
     unsigned int mode,
     unsigned int min_con,
     unsigned int max_con,
@@ -2647,45 +2760,67 @@ OCI_EXPORT OCI_ConnPool * OCI_API OCI_ConnPoolCreate
 
 /**
  * @brief
- * Destroy a Connection pool object
+ * Destroy a pool object
  *
- * @param pool - Connection pool handle
+ * @param pool - Pool handle
  *
  * @return
  * TRUE on success otherwise FALSE
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ConnPoolFree
+OCI_EXPORT boolean OCI_API OCI_PoolFree
 (
-    OCI_ConnPool *pool
+    OCI_Pool *pool
 );
 
 /**
  * @brief
  * Get a connection from the pool
  *
- * @param pool - Connection pool handle
+ * @param pool - Pool handle
+ * @param tag  - user tag string
  *
- * @note
+ * @par Session tagging
+ *
+ * Session pools have a nice feature that is 'session tagging'
+ * It's possible to tag a session with a string identifier
+ * when the session is returned to the pool, it keeps its tags.
+ * When requesting a connection from the session pool, it's 
+ * possible to request a session that has the given 'tag' parameter
+ * If one exists, it is returned. If not and if an untagged session
+ * is available, it is then returned. So check the connection tag
+ * property with OCI_GetSessionTag() to find out if the returned
+ * connection is tagged or not.
+ * 
+ * This features is described in the OCI developper guide as the 
+ * following :
+ *
+ *  "The tags provide a way for users to customize sessions in the pool.
+ *   A client may get a default or untagged session from a pool, set certain 
+ *   attributes on the session (such as NLS settings), and return the session 
+ *   to the pool, labeling it with an appropriate tag.
+ *   The user may request a session with the same tags in order to have a
+ *   session with the same attributes"
  *
  * @return
  * Connection handle otherwise NULL on failure
  */
 
-OCI_EXPORT OCI_Connection * OCI_API OCI_ConnPoolGetConnection
+OCI_EXPORT OCI_Connection * OCI_API OCI_PoolGetConnection
 (
-    OCI_ConnPool *pool
+    OCI_Pool *pool,
+    mtext    *tag
 );
 
 /**
  * @brief
- * Get the idle connection timeout
+ * Get the idle timeout for connections/sessions in the pool
  *
- * @param pool - Connection pool handle
+ * @param pool - Pool handle
  *
  * @note
- * Connection idle for more than this time value (in seconds) is terminated
+ * Connections/sessions idle for more than this time value (in seconds) is terminated
  *
  * @note
  * Timeout is not available for internal pooling implementation (client < 9i)
@@ -2694,20 +2829,20 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_ConnPoolGetConnection
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ConnPoolGetTimeout
+OCI_EXPORT unsigned int OCI_API OCI_PoolGetTimeout
 (
-    OCI_ConnPool *pool
+    OCI_Pool *pool
 );
 
 /**
  * @brief
- * Set the idle connection timeout
+ * Set the connections/sessions idle timeout
  *
- * @param pool  - Connection pool handle
+ * @param pool  - Pool handle
  * @param value - Timeout value
  *
  * @note
- * Connection idle for more than this time value (in seconds) is terminated
+ * connections/sessions idle for more than this time value (in seconds) is terminated
  *
  * @note
  * This call has no effect if pooling is internally implemented (client < 9i)
@@ -2716,117 +2851,119 @@ OCI_EXPORT unsigned int OCI_API OCI_ConnPoolGetTimeout
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ConnPoolSetTimeout
+OCI_EXPORT boolean OCI_API OCI_PoolSetTimeout
 (
-    OCI_ConnPool *pool,
+    OCI_Pool *pool,
     unsigned int value
 );
 
 /**
  * @brief
- * Get the waiting mode used when no more connections are available from the
- * pool
+ * Get the waiting mode used when no more connections/sessions are available
+ * from the pool
  *
- * @param pool - Connection pool handle
+ * @param pool - Pool handle
  *
  * @return
- * - FALSE to wait for an available connection if the pool is saturated
- * - TRUE to not wait for an available connection
+ * - FALSE to wait for an available object if the pool is saturated
+ * - TRUE to not wait for an available object
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ConnPoolGetGetNoWait
+OCI_EXPORT boolean OCI_API OCI_PoolGetGetNoWait
 (
-    OCI_ConnPool *pool
+    OCI_Pool *pool
 );
 
 /**
  * @brief
- * Set the waiting mode used when no more connections are available from the
- * pool
+ * Set the waiting mode used when no more connections/sessions are available
+ * from the pool
  *
- * @param pool  - connection pool handle
- * @param value - wait for connection
+ * @param pool  - Pool handle
+ * @param value - wait for object
  *
  * @note
  * Pass :
- * - FALSE to wait for an available connection if the pool is saturated
- * - TRUE to not wait for an available connection
+ * - FALSE to wait for an available object if the pool is saturated
+ * - TRUE to not wait for an available object
  *
  * @return
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ConnPoolSetNoWait
+OCI_EXPORT boolean OCI_API OCI_PoolSetNoWait
 (
-    OCI_ConnPool *pool,
+    OCI_Pool *pool,
     boolean value
 );
 
 /**
  * @brief
- * Return the current number of busy connections
+ * Return the current number of busy connections/sessions
  *
- * @param pool - Connection pool handle
+ * @param pool - Pool handle
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ConnPoolGetBusyCount
+OCI_EXPORT unsigned int OCI_API OCI_PoolGetBusyCount
 (
-    OCI_ConnPool *pool
+    OCI_Pool *pool
 );
 
 /**
  * @brief
- * Return the current number of opened connections
+ * Return the current number of opened connections/sessions
  *
- * @param pool - Connection pool handle
+ * @param pool - Pool handle
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ConnPoolGetOpenedCount
+OCI_EXPORT unsigned int OCI_API OCI_PoolGetOpenedCount
 (
-    OCI_ConnPool *pool
+    OCI_Pool *pool
 );
 
 /**
  * @brief
- * Return the minimum number of connections that can be opened to the database
+ * Return the minimum number of connections/sessions that
+ * can be opened to the database
  *
- * @param pool - Connection pool handle
+ * @param pool - Pool handle
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ConnPoolGetMin
+OCI_EXPORT unsigned int OCI_API OCI_PoolGetMin
 (
-    OCI_ConnPool *pool
+    OCI_Pool *pool
 );
 
 /**
  * @brief
- * Return the maximum number of connections that can be opened to the database
+ * Return the maximum number of connections/sessions that
+ * can be opened to the database
  *
- * @param pool - Connection pool handle
+ * @param pool - Pool handle
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ConnPoolGetMax
+OCI_EXPORT unsigned int OCI_API OCI_PoolGetMax
 (
-    OCI_ConnPool *pool
+    OCI_Pool *pool
 );
 
 /**
  * @brief
- * Return the increment for connections to be opened to the database when the
- * pool is not full
+ * Return the increment for connections/sessions to be opened 
+ * to the database when the pool is not full
  *
- * @param pool - Connection pool handle
+ * @param pool - Pool handle
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ConnPoolGetIncrement
+OCI_EXPORT unsigned int OCI_API OCI_PoolGetIncrement
 (
-    OCI_ConnPool *pool
+    OCI_Pool *pool
 );
 
 /**
@@ -3386,6 +3523,19 @@ OCI_EXPORT const mtext * OCI_API OCI_GetSQLVerb
  * through the name parameter. Within this mode the bind name must be the
  * position preceded by a semicolon like ':1', ':2', ....
  *
+ * @par Internal Bind allocation mode
+ * 
+ * From version 3.7.0, bind variables or arrays can be internally allocated by
+ * OCILIB. That means that instead of allocating variables or arrays on the stack/heap
+ * in the user program, bind contents can be allocated internally and thus :
+ * - minimize the amount of program variables 
+ * - optimize internal memory management for arrays
+ *
+ * To do so :
+ * - Call OCI_SetBindAllocation() with the mode OCI_BAM_INTERNAL
+ * - pass a NULL variable or array to OCI_BindXXX() calls
+ * - Retrieve the bind content allotated by OCILIB with OCI_BindGetData()
+ *
  * @note
  * Rebinding is disabled by default (see OCI_AllowRebinding())
  *
@@ -3395,7 +3545,10 @@ OCI_EXPORT const mtext * OCI_API OCI_GetSQLVerb
  * @par Array interface Example
  * @include array.c
  *
- */
+ * @par Internal Array interface Example
+ * @include array_internal.c
+ *
+ * */
 
 /**
  * @brief
@@ -4832,8 +4985,35 @@ boolean OCI_API OCI_BindSetCharsetForm
  * - OCI_Coll
  * - OCI_Object
  *
+ * OCI_GetString() performs an implicit conversion from  the
+ * following datatypes:
+ *
+ * @par Fetching rows into user structures
+ * 
+ * From version 3.7.0, it is possible to fetch a complete row into a user
+ * defined structure. Each column of the resultset is mapped to a structure
+ * member.
+ * The mapping rules are :
+ *   - LOBs (CLOB, NCLOB, BLOB) : OCI_Lob *
+ *   - DATE : OCI_Date *
+ *   - TIMESTAMPS : OCI_Timestamp *
+ *   - INTERVALS : OCI_Interval *
+ *   - LONG, LONG RAW : OCI_Long *
+ *   - REFs : OCI_Ref *
+ *   - CURSOR, RESULSET : OCI_Statement *
+ *   - OBJECTS, UDT : OCI_Object *
+ *   - Character columns (CHAR,VARCHAR, etc..) : dtext *
+ *   - All NUMERIC types : 
+ *        - default : big_int 
+ *        - user defined (see OCI_SetStructNumericType())
+ * 
+ * See OCI_GetStruct() and OCI_SetStructNumericType() for more details
+ *
  * @par Fetch Example
  * @include fetch.c
+ *
+ * @par Fetch Rows into user structures Example
+ * @include fetch_struct.c
  *
  * @par Metadata Example
  * @include meta.c
@@ -5396,6 +5576,128 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
 OCI_EXPORT unsigned int OCI_API OCI_ColumnGetSubType
 (
     OCI_Column *col
+);
+
+/**
+ * @brief
+ * set the numeric datatype of the given structure member
+ * (identified from position in the resultset)  to retrieve 
+ * when calling OCI_GetStruct()
+ *
+ * @param rs    - Resultset handle
+ * @param index - Column position
+ * @param type  - Numeric type
+ *
+ * @note
+ * Possible values for parameter 'type' :
+ *   - OCI_NUM_SHORT     
+ *   - OCI_NUM_USHORT  
+ *   - OCI_NUM_INT    
+ *   - OCI_NUM_UINT       
+ *   - OCI_NUM_BIGINT 
+ *   - OCI_NUM_BIGUINT
+ *   - OCI_NUM_DOUBLE 
+ *
+ * @return
+ * Return TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetStructNumericType
+(
+    OCI_Resultset *rs, 
+    unsigned int   index,
+    unsigned int   type
+ );
+
+/**
+ * @brief
+ * set the numeric datatype of the given structure member
+ * (identified from column name in the resultset)  to retrieve 
+ * when calling OCI_GetStruct()
+ *
+ * @param rs    - Resultset handle
+ * @param name  - Column name
+ * @param type  - Numeric type
+ *
+ * @note
+ * Possible values for parameter 'type' :
+ *   - OCI_NUM_SHORT     
+ *   - OCI_NUM_USHORT  
+ *   - OCI_NUM_INT    
+ *   - OCI_NUM_UINT       
+ *   - OCI_NUM_BIGINT 
+ *   - OCI_NUM_BIGUINT
+ *   - OCI_NUM_DOUBLE 
+ *
+ * @return
+ * Return TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetStructNumericType2
+(
+    OCI_Resultset *rs, 
+    const mtext   *name,
+    unsigned int   type
+);
+
+/**
+ * @brief
+ * Return the row columns values into a single structure
+ *
+ * @param rs              - Resultset handle
+ * @param row_struct      - pointer to user row structure
+ * @param row_struct_ind  - pointer to user indicator structure
+ *
+ * @note
+ * Structure members values are contextual to the current row.
+ * The returned values can get out of scope when the current row 
+ * changes when calling any OCI_FecthXXX() calls
+ * 
+ * @par User row structure
+ *
+ * The user structure must have the same members than the resultset.
+ * Each column in the resulset must have its equivalent in the structure.
+ * Fields must be in the same order. 
+ * 
+ * The mapping rules are :
+ *
+ *   - LOBs (CLOB, NCLOB, BLOB) : OCI_Lob *
+ *   - DATE : OCI_Date *
+ *   - TIMESTAMPS : OCI_Timestamp *
+ *   - INTERVALS : OCI_Interval *
+ *   - LONG, LONG RAW : OCI_Long *
+ *   - REFs : OCI_Ref *
+ *   - CURSOR, RESULSET : OCI_Statement *
+ *   - OBJECTS, UDT : OCI_Object *
+ *   - Character columns (CHAR,VARCHAR, etc..) : dtext *
+ *   - All NUMERIC types : 
+ *        - default : big_int 
+ *        - user defined (see OCI_SetStructNumericType())
+ *
+ * The user structure pointer is not mandatory
+ *
+ * @par User row indicator structure
+
+ * This structure must have one boolean field per column in
+ * the resulset and respect in the same member order.
+ *
+ * If the value of the given member is TRUE, it means the value in 
+ * the user row structure is NOT NULL, otherwise its NULL
+ *
+ * The user indicator structure pointer is  mandatory
+ *
+ * @return
+ * Return TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_GetStruct
+(
+    OCI_Resultset *rs, 
+    void *row_struct, 
+    void *row_struct_ind
 );
 
 /**
@@ -8029,6 +8331,45 @@ OCI_EXPORT boolean OCI_API OCI_SetBindMode
  */
 
 OCI_EXPORT unsigned int OCI_API OCI_GetBindMode
+(
+    OCI_Statement *stmt
+);
+
+/**
+ * @brief
+ * Set the bind allocation mode of a SQL statement
+ *
+ * @param stmt - Statement handle
+ * @param mode - bind allocation mode value
+ *
+ * @note
+ * Possible values are :
+ *
+ *  - OCI_BAM_EXTERNAL : bind variable are allocated by user code
+ *  - OCI_BAM_INTERNAL : bind variable are allocated internally
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetBindAllocation
+(
+    OCI_Statement *stmt, unsigned int mode
+);
+
+/**
+ * @brief
+ * Return the bind allocation mode of a SQL statement
+ *
+ * @param stmt - Statement handle
+ *
+ * @note
+ * See OCI_SetBindAllocation() for possible values
+ * Default value is OCI_BAM_EXTERNAL
+ *
+ * @note
+ * if stmt is NULL, the return value is OCI_UNKNOWN
+ *
+ */
+OCI_EXPORT unsigned int OCI_API OCI_GetBindAllocation
 (
     OCI_Statement *stmt
 );
@@ -13038,6 +13379,7 @@ OCI_EXPORT void * OCI_API OCI_ThreadKeyGetValue
  * and LONG types are supported
  *
  * @par Oracle direct API features (from Oracle Documentation)
+ *
  * The direct path load interface allows an application to access the direct path
  * load engine of the Oracle database server to perform the functions of the
  * Oracle SQL*Loader utility.
@@ -13060,12 +13402,14 @@ OCI_EXPORT void * OCI_API OCI_ThreadKeyGetValue
  *   - LONGs must be specified last
  *
  * @warning
+ *
  * Its recommended to use direct path interface with an Oracle client that is
  * the same version than the database. With version < 10g, it is mandatory
  * regarding that it causes segmentation faults and it's known from Oracle that
  * advices to use the same version for client and server (see metalink KB)
  *
  * @par How to use direct path
+ *
  * - 1 : Create a direct path handle with OCI_DirPathCreate()
  * - 2 : Set (optional) some direct path load attributes
  * - 3 : Describe the columns to load with OCI_DirPathSetColumn()
@@ -13477,7 +13821,8 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetDateFormat
  * Setting the value to TRUE allows multiple load sessions to load the same
  * segment concurrently
  *
- * @par Oracle documentation
+ * @par Parallel loading mode (From Oracle documentation)
+ *
  * A direct load operation requires that the object being loaded is locked to
  * prevent DML on the object.
  * Note that queries are lock-free and are allowed while the object is being loaded.
@@ -13506,7 +13851,8 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetParallel
  * @param dp    - Direct path Handle
  * @param value - enable/disable logging
  *
- * @par Oracle Documentation
+ * @par Logging mode (from Oracle Documentation)
+ *
  * The NOLOG attribute of each segment determines whether image redo or
  * invalidation redo is generated:
  * - FALSE : Use the attribute of the segment being loaded.
@@ -13676,7 +14022,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  * modified data when necessary or perform specific tasks depending on
  * the events. It saves application time, network traffic and can help
  * the design of the application logic.
-
+ *
  * The database status change notification is also interesting to be
  * informed of instance startup / shutdown
  *
@@ -13686,12 +14032,14 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  * No active database connection is required to receive the
  * notifications as they are handled by the Oracle client using a
  * dedicated socket connection to the server
-
+ *
  * @par Dabatase changes
+ *
  * The client application can be notified of any database status
  * change (single DB or multiple DB in a RAC environment).
-
+ *
  * @par Object changes
+ *
  * The notifications of object changes are based on the registration
  * of a query ('select' SQL statement). 
  * 
@@ -13720,6 +14068,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
 
 /**
  * @brief
+ *
  * Register a notification against the given database
  *
  * @param con      - Connection handle
@@ -13730,6 +14079,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  * @param timeout  - notification timeout
  *
  * @note
+ *
  * Parameter 'type' can be one of the following values :
  *
  * - OCI_CNT_OBJECTS   : request for changes at objects (eg. tables) level (DDL / DML)
@@ -13738,9 +14088,11 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  * - OCI_CNT_ALL       : request for all changes 
  * 
  * @note
+ *
  * Subscription handles are automatically managed by the library
  *
  * @return
+ *
  * Subscription handle on success or NULL on failure
  *
  */
@@ -14711,6 +15063,26 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 #define OCI_CHAR_UNICODE  OCI_CHAR_WIDE
 #define OCI_CSF_CHARSET   OCI_CSF_DEFAULT
 
+/* macro added in version 3.7.0 */
+
+#define OCI_ConnPool                OCI_Pool
+
+#define OCI_ConnPoolCreate(db, us, pw, mo, mi, ma, in)                        \
+        OCI_PoolCreate  (db, us, pw, OCI_POOL_CONNECTION, mo, mi, ma, in) 
+
+#define OCI_ConnPoolGetConnection(p)                                          \
+        OCI_PoolGetConnection(p, NULL)
+
+#define OCI_ConnPoolFree            OCI_PoolFree
+#define OCI_ConnPoolGetTimeout      OCI_PoolGetConnection
+#define OCI_ConnPoolSetTimeout      OCI_PoolSetTimeout
+#define OCI_ConnPoolGetlGetNoWait   OCI_PoolGetlGetNoWait
+#define OCI_ConnPoolSetNoWait       OCI_PoolSetNoWait
+#define OCI_ConnPoolGetBusyCount    OCI_PoolGetBusyCount
+#define OCI_ConnPoolGetOpenedCount  OCI_PoolGetOpenedCount
+#define OCI_ConnPoolGetMin          OCI_PoolGetMin
+#define OCI_ConnPoolGetMax          OCI_PoolGetMax
+#define OCI_ConnPoolGetIncrement    OCI_PoolGetIncrement  
 
 #endif    /* OCILIB_H_INCLUDED */
 

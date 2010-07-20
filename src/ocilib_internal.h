@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: ocilib_internal.h, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED
@@ -55,8 +55,6 @@ extern "C"
 boolean OCI_ArrayInit
 (
     OCI_Array *arr,
-    size_t struct_size,
-    size_t handle_size,
     OCI_TypeInfo *typinf
 );
 
@@ -65,21 +63,15 @@ boolean OCI_ArrayCleanup
     OCI_Array *arr
 );
 
-boolean OCI_ArrayGetDatatypeInfo
-(
-    unsigned int type,
-    unsigned int subtype,
-    unsigned int *handle_type,
-    size_t *struct_size,
-    size_t *handle_size
-);
-
 OCI_Array * OCI_ArrayCreate
 (
     OCI_Connection *con,
     unsigned int nb_elem,
-    unsigned int type,
-    unsigned int subtype,
+    unsigned int elem_type,
+    unsigned int elem_subtype,
+    unsigned int elem_size,
+    unsigned int struct_size,
+    unsigned int handle_type,
     OCI_TypeInfo *typinf
 );
 
@@ -98,6 +90,11 @@ boolean OCI_ArrayFreeFromHandles
  * ------------------------------------------------------------------------ */
 
 boolean OCI_BindFree
+(
+    OCI_Bind *bnd
+);
+
+boolean OCI_BindAllocData
 (
     OCI_Bind *bnd
 );
@@ -179,7 +176,7 @@ boolean OCI_ColumnDescribe
 
 OCI_Connection * OCI_ConnectionAllocate
 (
-    OCI_ConnPool *pool,
+    OCI_Pool    *pool,
     const mtext *db,
     const mtext *user,
     const mtext *pwd,
@@ -199,7 +196,8 @@ boolean OCI_ConnectionAttach
 boolean OCI_ConnectionLogon
 (
     OCI_Connection *con,
-    const mtext *password
+    const mtext *password,
+    const mtext *tag
 );
 
 boolean OCI_ConnectionDetach
@@ -215,15 +213,6 @@ boolean OCI_ConnectionLogOff
 boolean OCI_ConnectionClose
 (
     OCI_Connection *con
-);
-
-/* ------------------------------------------------------------------------ *
- * connpool.c
- * ------------------------------------------------------------------------ */
-
-boolean OCI_ConnPoolClose
-(
-    OCI_ConnPool *pool
 );
 
 /* ------------------------------------------------------------------------ *
@@ -791,10 +780,12 @@ boolean OCI_NumberGetFromStr
  * object.c
  * ------------------------------------------------------------------------ */
 
-size_t OCI_ObjectGetAttrSize
+boolean OCI_ObjectGetAttrInfo
 (
     OCI_TypeInfo *typinf,
-    int index
+    int index,
+    size_t *p_size, 
+    int *p_type
 );
 
 size_t OCI_ObjectGetStructSize
@@ -854,9 +845,14 @@ boolean OCI_ObjectGetNumber
     uword size, uword flag
 );
 
+/* ------------------------------------------------------------------------ *
+ * pool.c
+ * ------------------------------------------------------------------------ */
 
-
-
+boolean OCI_PoolClose
+(
+    OCI_Pool *pool
+);
 /* ------------------------------------------------------------------------ *
  * ref.c
  * ------------------------------------------------------------------------ */
@@ -887,6 +883,11 @@ OCI_Resultset * OCI_ResultsetCreate
 (
     OCI_Statement *stmt,
     int size
+);
+
+boolean OCI_ResultsetInit
+(
+    OCI_Resultset *rs
 );
 
 boolean OCI_ResultsetFree
@@ -923,6 +924,17 @@ boolean OCI_ResultsetExpandStrings
 );
 
 #endif
+
+size_t OCI_ResultsetGetStructSize
+(
+    OCI_Resultset *rs
+);
+
+size_t OCI_ResultsetGetAttrSize
+(
+    OCI_Resultset *rs, 
+    unsigned int index
+);
 
 /* ------------------------------------------------------------------------ *
  * statement.c

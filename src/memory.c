@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: memory.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: memory.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -275,7 +275,7 @@ sword OCI_OCIObjectFree(OCIEnv *env, OCIError *err, dvoid *instance, ub2 flags)
     if (instance != NULL)
     {
         OCILib.nb_objinst--;  
-
+    
         ret = OCIObjectFree(env, err, instance, flags);
     }
 

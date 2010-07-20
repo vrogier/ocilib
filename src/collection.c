@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: collection.c, v 3.6.0 2010-05-14 20:21 Vincent Rogier $
+ * $Id: collection.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -169,7 +169,9 @@ OCI_Coll ** OCI_API OCI_CollArrayCreate(OCI_Connection *con,
     OCI_Array   *arr   = NULL;
     OCI_Coll   **colls = NULL;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, typinf);
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, 
+                          sizeof(OCIColl *), sizeof(OCI_Coll), 
+                          0, typinf);
 
     if (arr != NULL)
     {
