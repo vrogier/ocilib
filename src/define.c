@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: define.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: define.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -129,7 +129,8 @@ void * OCI_DefineGetData(OCI_Define *def)
 
             /* scalar types */
 
-            return (((ub1*)def->buf.data) + (size_t) (def->col.bufsize  * (def->rs->row_cur-1)));
+            return (((ub1  *) (def->buf.data)) + 
+                     (size_t) (def->col.bufsize * (def->rs->row_cur-1)));
     }
 }
 

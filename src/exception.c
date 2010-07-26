@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: exception.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: exception.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -75,6 +75,10 @@ static mtext * OCILib_TypeNames[] =
     MT("Subscription handle"),
     MT("Event handle"),
     MT("Array handle"),
+    MT("Message handle"),
+    MT("Enqueue handle"),
+    MT("Dequeue handle"),
+    MT("Agent handle"),
 
     MT("Internal list handle"),
     MT("Internal list item handle"),
@@ -165,11 +169,11 @@ static mtext * OCILib_ErrorMsg[] =
 
 static mtext * OCILib_OraFeatures[] =
 {
-    MT("Oracle 9i support for Unicode data"),
-    MT("Oracle 9i Timestamps and Intervals"),
-    MT("Oracle 9i Direct path date caching"),
-    MT("Oracle 10g R1 LOBs size extensions")
-    MT("Oracle 10g R2 Database change notification")
+    MT("Oracle 9.0 support for Unicode data"),
+    MT("Oracle 9.0 Timestamps and Intervals"),
+    MT("Oracle 9.2 Direct path date caching"),
+    MT("Oracle 10g R1 LOBs size extensions"),
+    MT("Oracle 10g R2 Database change notification"),
     MT("Oracle 10g R2 remote database startup/shutdown")
 };
 

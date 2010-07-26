@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: handle.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: handle.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -131,7 +131,7 @@ const void * OCI_API OCI_HandleGetStatement(OCI_Statement *stmt)
 
 const void * OCI_API OCI_HandleGetLob(OCI_Lob *lob)
 {
-    OCI_CHECK_PTR(OCI_IPC_LOB, lob,NULL);
+    OCI_CHECK_PTR(OCI_IPC_LOB, lob, NULL);
 
     OCI_RESULT(TRUE);
 

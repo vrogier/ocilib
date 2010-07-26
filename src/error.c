@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: error.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: error.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -87,7 +87,9 @@ OCI_Error * OCI_ErrorGet(boolean check, boolean warning)
     OCI_Error *err = NULL;
 
     if ((warning == TRUE) && (OCILib.warnings_on == FALSE))
+    {
         return NULL;
+    }
 
     if (OCILib.loaded == TRUE)
     {

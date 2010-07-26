@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: library.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: library.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -538,7 +538,9 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *lib_path,
 
   #endif
 
-    if ((len > (size_t) 0) && (len < sizeof(path)) && (path[len - (size_t) 1] != OCI_CHAR_SLASH))
+    if ((len > (size_t) 0)   &&
+        (len < sizeof(path)) && 
+        (path[len - (size_t) 1] != OCI_CHAR_SLASH))
     {
         path[len] = OCI_CHAR_SLASH;
         len++;
@@ -1270,7 +1272,7 @@ boolean OCI_API OCI_Cleanup(void)
 
 #endif
 
-    /* checks for not freed handles */
+    /* checks for unfreed handles */
 
     if (OCILib.nb_hndlp > 0)
     {
@@ -1278,7 +1280,7 @@ boolean OCI_API OCI_Cleanup(void)
         res = FALSE;
     }
 
-   /* checks for not freed descriptors */
+   /* checks for unfreed descriptors */
 
     if (OCILib.nb_descp > 0)
     {
@@ -1286,7 +1288,7 @@ boolean OCI_API OCI_Cleanup(void)
         res = FALSE;
     }
 
-    /* checks for not freed objects */
+    /* checks for unfreed objects */
 
     if (OCILib.nb_objinst > 0)
     {

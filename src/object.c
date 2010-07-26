@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: object.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: object.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -112,6 +112,7 @@ size_t OCI_ObjectGetStructSize(OCI_TypeInfo *typinf)
                 case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
                 case OCI_OFFSET_PAIR(OCI_OFT_DATE  , OCI_OFT_POINTER):
                 case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
+
                     align = TRUE;
                     break;
             }
@@ -148,18 +149,25 @@ boolean OCI_ObjectGetAttrInfo(OCI_TypeInfo *typinf, int index,
     switch (typinf->cols[index].type)
     {
         case OCI_CDT_NUMERIC:
+
             *p_size = sizeof(OCINumber);
             *p_type = OCI_OFT_NUMBER;
             break;
+
         case OCI_CDT_DATETIME:
+
             *p_size = sizeof(OCIDate);
             *p_type = OCI_OFT_DATE;
             break;
+
         case OCI_CDT_OBJECT:
+
             *p_size = OCI_ObjectGetStructSize(typinf->cols[index].typinf);
             *p_type = OCI_OFT_OBJECT;
             break;
+
         default:
+
             *p_size = sizeof(void *);
             *p_type = OCI_OFT_POINTER;
    }

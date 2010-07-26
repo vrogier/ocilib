@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: interval.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: interval.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -49,7 +49,7 @@ OCI_Interval * OCI_IntervalInit(OCI_Connection *con, OCI_Interval **pitv,
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    boolean res       = TRUE;
+    boolean res = TRUE;
 
     OCI_CHECK(pitv == NULL, NULL);
 

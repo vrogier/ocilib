@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: element.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: element.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -122,7 +122,7 @@ OCI_Elem * OCI_ElemInit(OCI_Connection *con, OCI_Elem **pelem, void *handle,
 
 boolean OCI_ElemSetNullIndicator(OCI_Elem *elem, OCIInd value)
 {
-    boolean res = FALSE;
+    boolean res = TRUE;
 
     if (elem->typinf->cols[0].type == OCI_CDT_OBJECT)
     {
@@ -135,7 +135,8 @@ boolean OCI_ElemSetNullIndicator(OCI_Elem *elem, OCIInd value)
     }
     else
     {
-        *elem->pind  = value;
+        if (elem->pind != NULL)
+            *elem->pind  = value;
     }
 
     return res;

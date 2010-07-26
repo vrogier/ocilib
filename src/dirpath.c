@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: dirpath.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: dirpath.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -61,7 +61,8 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
 
     /* allocate direct path structure */
 
-    dp = (OCI_DirPath *) OCI_MemAlloc(OCI_IPC_DIRPATH, sizeof(*dp), (size_t) 1, TRUE);
+    dp = (OCI_DirPath *) OCI_MemAlloc(OCI_IPC_DIRPATH, sizeof(*dp), 
+                                      (size_t) 1, TRUE);
 
     if (dp != NULL)
     {
@@ -800,9 +801,9 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
     ub1 flag;
     ub2 i, j;
 
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, OCI_DPR_ERROR);
 
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
+    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, OCI_DPR_ERROR);
 
     dp->err_col  = 0;
     dp->nb_prcsd = 0;
@@ -922,9 +923,9 @@ unsigned int OCI_API OCI_DirPathLoad(OCI_DirPath *dp)
     unsigned int res = OCI_DPR_COMPLETE;
     sword ret = OCI_SUCCESS;
 
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, OCI_DPR_ERROR);
 
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_CONVERTED, FALSE);
+    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_CONVERTED, OCI_DPR_ERROR);
 
     dp->err_col  = 0;
     dp->nb_prcsd = 0;
@@ -1107,7 +1108,7 @@ boolean OCI_API OCI_DirPathSetCurrentRows(OCI_DirPath *dp, unsigned int nb_rows)
 
 unsigned int OCI_API OCI_DirPathGetCurrentRows(OCI_DirPath *dp)
 {
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, 0);
 
     OCI_RESULT(TRUE);
 
@@ -1120,7 +1121,7 @@ unsigned int OCI_API OCI_DirPathGetCurrentRows(OCI_DirPath *dp)
 
 unsigned int OCI_API OCI_DirPathGetMaxRows(OCI_DirPath *dp)
 {
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, 0);
 
     OCI_RESULT(TRUE);
 

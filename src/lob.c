@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: lob.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: lob.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -227,7 +227,7 @@ boolean OCI_API OCI_LobArrayFree(OCI_Lob **lobs)
 
 unsigned int OCI_API OCI_LobGetType(OCI_Lob *lob)
 {
-    OCI_CHECK_PTR(OCI_IPC_LOB, lob,OCI_UNKNOWN);
+    OCI_CHECK_PTR(OCI_IPC_LOB, lob, OCI_UNKNOWN);
 
     OCI_RESULT(TRUE);
 
@@ -1274,7 +1274,6 @@ boolean OCI_API OCI_LobFlush(OCI_Lob *lob)
 /* ------------------------------------------------------------------------ *
  * OCI_LobEnableBuffering
  * ------------------------------------------------------------------------ */
-
 
 boolean OCI_API OCI_LobEnableBuffering(OCI_Lob *lob, boolean value)
 {

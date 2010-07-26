@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: file.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: file.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -376,7 +376,7 @@ unsigned int OCI_API OCI_FileRead(OCI_File *file, void *buffer, unsigned int len
 
 unsigned int OCI_API OCI_FileGetType(OCI_File *file)
 {
-    OCI_CHECK_PTR(OCI_IPC_FILE, file, 0);
+    OCI_CHECK_PTR(OCI_IPC_FILE, file, OCI_UNKNOWN);
 
     OCI_RESULT(TRUE);
 
@@ -645,7 +645,6 @@ boolean OCI_API OCI_FileAssign(OCI_File *file, OCI_File *file_src)
             OCILobLocatorAssign(file->con->cxt, file->con->err,
                                 file_src->handle, &file->handle)
         )
-
     }
     else
     {

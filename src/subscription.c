@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: subscriptions.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: subscriptions.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -450,7 +450,7 @@ const mtext * OCI_API OCI_SubscriptionGetName(OCI_Subscription *sub)
 
 unsigned int OCI_API OCI_SubscriptionGetPort(OCI_Subscription *sub)
 {
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, OCI_UNKNOWN);
+    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, 0);
 
     OCI_RESULT(TRUE);
 
@@ -463,7 +463,7 @@ unsigned int OCI_API OCI_SubscriptionGetPort(OCI_Subscription *sub)
 
 unsigned int OCI_API OCI_SubscriptionGetTimeout(OCI_Subscription *sub)
 {
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, OCI_UNKNOWN);
+    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, 0);
 
     OCI_RESULT(TRUE);
 

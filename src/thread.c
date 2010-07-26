@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: thread.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: thread.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -65,7 +65,7 @@ OCI_Thread * OCI_API OCI_ThreadCreate(void)
 
     OCI_CHECK_INITIALIZED(NULL);
 
-    OCI_CHECK_THREAD_ENABLED(FALSE);
+    OCI_CHECK_THREAD_ENABLED(NULL);
 
     /* allocate thread structure */
 

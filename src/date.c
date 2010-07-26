@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: date.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: date.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -382,7 +382,7 @@ boolean OCI_API OCI_DateGetDate(OCI_Date *date, int *year, int *month, int *day)
     ub1 mt = 0;
     ub1 dy = 0;
 
-    OCI_CHECK_PTR(OCI_IPC_DATE, date,  FALSE);
+    OCI_CHECK_PTR(OCI_IPC_DATE, date, FALSE);
     OCI_CHECK_PTR(OCI_IPC_INT, year,  FALSE);
     OCI_CHECK_PTR(OCI_IPC_INT, month, FALSE);
     OCI_CHECK_PTR(OCI_IPC_INT, day,   FALSE);
@@ -413,9 +413,9 @@ boolean OCI_API OCI_DateGetTime(OCI_Date *date, int *hour, int *min, int *sec)
     ub1 sc = 0;
 
     OCI_CHECK_PTR(OCI_IPC_DATE, date, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_INT, hour, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_INT, min , FALSE);
-    OCI_CHECK_PTR(OCI_IPC_INT, sec,  FALSE);
+    OCI_CHECK_PTR(OCI_IPC_INT, hour,  FALSE);
+    OCI_CHECK_PTR(OCI_IPC_INT, min ,  FALSE);
+    OCI_CHECK_PTR(OCI_IPC_INT, sec,   FALSE);
 
     *hour = 0;
     *min  = 0;

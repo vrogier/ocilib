@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: memory.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: memory.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -244,7 +244,7 @@ sword OCI_DescriptorArrayFree(dvoid **descp, CONST ub4 type, ub4 nb_elem)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_fob
+ * OCI_ObjectNew
  * ------------------------------------------------------------------------ */
 
 sword OCI_ObjectNew(OCIEnv *env, OCIError *err, CONST OCISvcCtx *svc,

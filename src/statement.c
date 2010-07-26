@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: statement.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -890,6 +890,10 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
     }
 /*
+    this call was removed in v3.6.0
+
+    It will be restored in future version, but need more testing on all 
+    builds
     if (bnd->type == OCI_CDT_TEXT)
     {
         OCI_CALL1
@@ -1386,6 +1390,8 @@ boolean OCI_StatementClose(OCI_Statement *stmt)
 
 boolean OCI_BatchErrorClear(OCI_Statement *stmt)
 {
+    boolean res = FALSE;
+
     if (stmt->batch != NULL)
     {
         /* free internal array of OCI_Errors */
@@ -1395,9 +1401,11 @@ boolean OCI_BatchErrorClear(OCI_Statement *stmt)
         /* free batch structure */
 
         OCI_FREE(stmt->batch);
+
+        res = TRUE;
     }
 
-    return TRUE;
+    return res;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -3092,7 +3100,7 @@ boolean OCI_API OCI_SetBindMode(OCI_Statement *stmt, unsigned int mode)
 
 unsigned int OCI_API OCI_GetBindMode(OCI_Statement *stmt)
 {
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, 0);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, OCI_UNKNOWN);
 
     OCI_RESULT(TRUE);
 
@@ -3121,7 +3129,7 @@ boolean OCI_API OCI_SetBindAllocation(OCI_Statement *stmt, unsigned int mode)
 
 unsigned int OCI_API OCI_GetBindAllocation(OCI_Statement *stmt)
 {
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, 0);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, OCI_UNKNOWN);
 
     OCI_RESULT(TRUE);
 
@@ -3291,7 +3299,7 @@ boolean OCI_API OCI_SetLongMode(OCI_Statement *stmt, unsigned int mode)
 
 unsigned int OCI_API OCI_GetLongMode(OCI_Statement *stmt)
 {
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, 0);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, OCI_UNKNOWN);
 
     OCI_RESULT(TRUE);
 
@@ -3304,7 +3312,7 @@ unsigned int OCI_API OCI_GetLongMode(OCI_Statement *stmt)
 
 OCI_Connection * OCI_API OCI_StatementGetConnection(OCI_Statement *stmt)
 {
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, 0);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
 
     OCI_RESULT(TRUE);
 
@@ -3346,7 +3354,7 @@ unsigned int OCI_API OCI_GetAffectedRows(OCI_Statement *stmt)
     boolean res = TRUE;
     ub4 count   = 0;
 
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt,  FALSE);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt,  0);
 
     OCI_CALL1
     (
@@ -3398,8 +3406,8 @@ OCI_Bind * OCI_API OCI_GetBind2(OCI_Statement *stmt, const mtext *name)
     OCI_Bind *bnd = NULL;
     int index     = -1;
 
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
+    OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
 
     index =  OCI_BindGetIndex(stmt, name);
 
@@ -3473,7 +3481,7 @@ OCI_Error * OCI_API OCI_GetBatchError(OCI_Statement *stmt)
 {
     OCI_Error *err = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, OCI_UNKNOWN);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
 
     if (stmt->batch != NULL)
     {

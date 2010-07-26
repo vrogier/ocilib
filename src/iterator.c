@@ -1,5 +1,5 @@
 /*
-   +----------------------------------------------------------------------+   
+   +----------------------------------------------------------------------+
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
@@ -25,11 +25,11 @@
    | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
    +----------------------------------------------------------------------+
    |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+   +----------------------------------------------------------------------+
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: iterator.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: iterator.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -53,7 +53,7 @@ OCI_Iter * OCI_API OCI_IterCreate(OCI_Coll *coll)
 
     /* allocate iterator structure */
 
-    iter = (OCI_Iter *) OCI_MemAlloc(OCI_IPC_ITERATOR, sizeof(*iter), 
+    iter = (OCI_Iter *) OCI_MemAlloc(OCI_IPC_ITERATOR, sizeof(*iter),
                                      (size_t) 1, TRUE);
 
     if (iter != NULL)
@@ -66,21 +66,21 @@ OCI_Iter * OCI_API OCI_IterCreate(OCI_Coll *coll)
 
         OCI_CALL2
         (
-            res, iter->coll->con,  
-            
-            OCIIterCreate(OCILib.env, iter->coll->con->err, coll->handle, 
+            res, iter->coll->con,
+
+            OCIIterCreate(OCILib.env, iter->coll->con->err, coll->handle,
                           &iter->handle)
         )
 
         /* create data element accessor */
 
        if (res == TRUE)
-           iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL, 
+           iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL,
                                      (OCIInd *) NULL, coll->typinf);
-    
+
        if (res == TRUE)
            res = (iter->elem != NULL);
-    
+
     }
     else
         res = FALSE;
@@ -107,27 +107,27 @@ boolean OCI_API OCI_IterFree(OCI_Iter *iter)
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, FALSE);
-    
+
     /* close iterator handle */
 
     if (iter->handle != NULL)
     {
         OCI_CALL2
         (
-            res, iter->coll->con,  
+            res, iter->coll->con,
 
             OCIIterDelete(OCILib.env, iter->coll->con->err, &iter->handle)
         )
     }
 
     /* free data element accessor */
-    
+
     if (iter->elem != NULL)
     {
         res = OCI_ElemFree(iter->elem);
         iter->elem = NULL;
     }
-   
+
     /* free iterator structure */
 
     OCI_FREE(iter);
@@ -146,17 +146,17 @@ OCI_Elem * OCI_API OCI_IterGetNext(OCI_Iter *iter)
     boolean res    = TRUE;
     OCI_Elem *elem = NULL;
     void * data    = NULL;
-    OCIInd *p_ind  = NULL;
+    void *p_ind    = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, FALSE);
-    
-    OCI_CHECK(iter->eoc == TRUE, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, NULL);
+
+    OCI_CHECK(iter->eoc == TRUE, NULL);
 
     iter->elem->init = FALSE;
 
     OCI_CALL2
     (
-        res, iter->coll->con,  
+        res, iter->coll->con,
 
         OCIIterNext(OCILib.env, iter->coll->con->err, iter->handle,
                     &data, (dvoid **) &p_ind, &iter->eoc)
@@ -167,7 +167,7 @@ OCI_Elem * OCI_API OCI_IterGetNext(OCI_Iter *iter)
         elem = OCI_ElemInit(iter->coll->con, &iter->elem,
                             data, p_ind, iter->coll->typinf);
     }
-       
+
     OCI_RESULT(elem != NULL);
 
     return elem;
@@ -182,19 +182,19 @@ OCI_Elem * OCI_API OCI_IterGetPrev(OCI_Iter *iter)
     boolean res    = TRUE;
     OCI_Elem *elem = NULL;
     void * data    = NULL;
-    OCIInd *p_ind  = NULL;
+    void *p_ind    = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, FALSE);
-    
-    OCI_CHECK(iter->boc == TRUE, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, NULL);
+
+    OCI_CHECK(iter->boc == TRUE, NULL);
 
     iter->elem->init = FALSE;
 
     OCI_CALL2
     (
-        res, iter->coll->con,  
+        res, iter->coll->con,
 
-        OCIIterPrev(OCILib.env, iter->coll->con->err, iter->handle, 
+        OCIIterPrev(OCILib.env, iter->coll->con->err, iter->handle,
                     &data, (dvoid **) &p_ind, &iter->boc)
     )
 

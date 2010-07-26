@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: ocilib_defs.h, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -234,33 +234,33 @@
 #define OCI_IPC_ARRAY            34
 #define OCI_IPC_MSG              35
 #define OCI_IPC_ENQUEUE          36
-#define OCI_IPC_DEQUEUE          36
-#define OCI_IPC_AGENT            36
+#define OCI_IPC_DEQUEUE          37
+#define OCI_IPC_AGENT            38
 
 /* ---- Internal pointers ----- */
  
-#define OCI_IPC_LIST             37
-#define OCI_IPC_LIST_ITEM        38
-#define OCI_IPC_BIND_ARRAY       39
-#define OCI_IPC_DEFINE           40
-#define OCI_IPC_DEFINE_ARRAY     41
-#define OCI_IPC_HASHENTRY        42
-#define OCI_IPC_HASHENTRY_ARRAY  43
-#define OCI_IPC_HASHVALUE        44
-#define OCI_IPC_THREADKEY        45
-#define OCI_IPC_OCIDATE          46
-#define OCI_IPC_TM               47
-#define OCI_IPC_RESULTSET_ARRAY  48
-#define OCI_IPC_PLS_SIZE_ARRAY   49
-#define OCI_IPC_PLS_RCODE_ARRAY  50
-#define OCI_IPC_SERVER_OUPUT     51
-#define OCI_IPC_INDICATOR_ARRAY  52
-#define OCI_IPC_LEN_ARRAY        53
-#define OCI_IPC_BUFF_ARRAY       54
-#define OCI_IPC_LONG_BUFFER      55
-#define OCI_IPC_TRACE_INFO       56
-#define OCI_IPC_DP_COL_ARRAY     57
-#define OCI_IPC_BATCH_ERRORS     58
+#define OCI_IPC_LIST             39
+#define OCI_IPC_LIST_ITEM        40
+#define OCI_IPC_BIND_ARRAY       41
+#define OCI_IPC_DEFINE           42
+#define OCI_IPC_DEFINE_ARRAY     43
+#define OCI_IPC_HASHENTRY        44
+#define OCI_IPC_HASHENTRY_ARRAY  45
+#define OCI_IPC_HASHVALUE        46
+#define OCI_IPC_THREADKEY        47
+#define OCI_IPC_OCIDATE          48
+#define OCI_IPC_TM               49
+#define OCI_IPC_RESULTSET_ARRAY  50
+#define OCI_IPC_PLS_SIZE_ARRAY   51
+#define OCI_IPC_PLS_RCODE_ARRAY  52
+#define OCI_IPC_SERVER_OUPUT     53
+#define OCI_IPC_INDICATOR_ARRAY  54
+#define OCI_IPC_LEN_ARRAY        55
+#define OCI_IPC_BUFF_ARRAY       56
+#define OCI_IPC_LONG_BUFFER      57
+#define OCI_IPC_TRACE_INFO       58
+#define OCI_IPC_DP_COL_ARRAY     59
+#define OCI_IPC_BATCH_ERRORS     60
 
 /* ------------------------------------------------------------------------ *
  * Oracle conditionnal features 

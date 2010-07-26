@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: array.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: array.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -111,7 +111,8 @@ boolean OCI_ArrayInit(OCI_Array *arr, OCI_TypeInfo *typinf)
 
             case OCI_CDT_REF:
 
-                OCI_RefInit(arr->con, typinf, (OCI_Ref **) &arr->tab_obj[i], handle);
+                OCI_RefInit(arr->con, typinf, (OCI_Ref **) &arr->tab_obj[i], 
+                            handle);
 
                 break;
         }
@@ -243,7 +244,8 @@ OCI_Array * OCI_ArrayCreate(OCI_Connection *con,      unsigned int nb_elem,
                 (arr->elem_type != OCI_CDT_TEXT   ) &&
                 (arr->elem_type != OCI_CDT_RAW    ))
             {
-                arr->tab_obj = (void **) OCI_MemAlloc(OCI_IPC_VOID, sizeof(void *), 
+                arr->tab_obj = (void **) OCI_MemAlloc(OCI_IPC_VOID, 
+                                                      sizeof(void *), 
                                                       nb_elem, TRUE);
 
                 res = (arr->tab_obj != NULL) ;
@@ -256,7 +258,8 @@ OCI_Array * OCI_ArrayCreate(OCI_Connection *con,      unsigned int nb_elem,
         {
             if (arr->elem_size > 0)
             {
-                arr->mem_handle = (void **) OCI_MemAlloc(OCI_IPC_VOID, elem_size, 
+                arr->mem_handle = (void **) OCI_MemAlloc(OCI_IPC_VOID,
+                                                         elem_size, 
                                                          nb_elem, TRUE);
 
                 res = (arr->mem_handle != NULL) ;
@@ -269,7 +272,8 @@ OCI_Array * OCI_ArrayCreate(OCI_Connection *con,      unsigned int nb_elem,
         {
             if (arr->struct_size > 0)
             {
-                arr->mem_struct = (void **) OCI_MemAlloc(OCI_IPC_VOID, struct_size, 
+                arr->mem_struct = (void **) OCI_MemAlloc(OCI_IPC_VOID,
+                                                         struct_size, 
                                                          nb_elem, TRUE);
 
                 res = (arr->mem_struct != NULL) ;

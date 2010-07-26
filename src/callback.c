@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: callback.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: callback.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -123,10 +123,11 @@ sb4 OCI_ProcOutBind(dvoid *octxp, OCIBind *bindp, ub4 iter, ub4 index,
 
         if (bnd->stmt->rsts == NULL)
         {
-            bnd->stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY,
-                                                              sizeof(*bnd->stmt->rsts),
-                                                              (size_t) bnd->stmt->nb_rs,
-                                                              TRUE);
+            bnd->stmt->rsts = 
+                
+            (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY,
+                                            sizeof(*bnd->stmt->rsts),
+                                            (size_t) bnd->stmt->nb_rs, TRUE);
 
             if (bnd->stmt->rsts == NULL)
                 res = FALSE;
@@ -237,8 +238,8 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
 
         sub->event.dbname =
 
-        (dtext *) OCI_MemRealloc(sub->event.dbname,  OCI_IPC_STRING, sizeof(dtext),
-                                (size_t) (osize + 1));
+        (dtext *) OCI_MemRealloc(sub->event.dbname,  OCI_IPC_STRING,
+                                 sizeof(dtext), (size_t) (osize + 1));
 
         sub->event.dbname_size = osize;
     }
@@ -343,8 +344,10 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
                 (
                     res, sub->err,
 
-                    OCICollGetElem(OCILib.env, sub->err, tables, i, &exist,
-                                   (dvoid**) (dvoid*) &elem_tbl,(dvoid**) &ind_tbl)
+                    OCICollGetElem(OCILib.env, sub->err, 
+                                   tables, i, &exist,
+                                   (dvoid**) (dvoid*) &elem_tbl,
+                                   (dvoid**) &ind_tbl)
                 )
 
                  /* get table name */
@@ -353,7 +356,8 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
                 (
                     res, sub->err,
 
-                    OCIAttrGet((dvoid *) *elem_tbl, (ub4) OCI_DTYPE_TABLE_CHDES,
+                    OCIAttrGet((dvoid *) *elem_tbl, 
+                               (ub4) OCI_DTYPE_TABLE_CHDES,
                                (dvoid *) &ostr, (ub4 *) &osize,
                                (ub4) OCI_ATTR_CHDES_TABLE_NAME,
                                sub->err)
@@ -365,13 +369,15 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
 
                     sub->event.objname =
 
-                    (dtext *) OCI_MemRealloc(sub->event.objname,  OCI_IPC_STRING, sizeof(dtext),
-                                            (size_t) (osize + 1));
+                    (dtext *) OCI_MemRealloc(sub->event.objname, 
+                                             OCI_IPC_STRING, sizeof(dtext),
+                                             (size_t) (osize + 1));
 
                     sub->event.objname_size = osize;
                 }
 
-                OCI_CopyString(ostr, sub->event.objname, &osize, sizeof(char), sizeof(dtext));
+                OCI_CopyString(ostr, sub->event.objname, &osize,
+                               sizeof(char), sizeof(dtext));
 
                 /* get table modification type */
 
@@ -400,7 +406,8 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
                     (
                         res, sub->err,
 
-                        OCIAttrGet((dvoid *) *elem_tbl, (ub4) OCI_DTYPE_TABLE_CHDES,
+                        OCIAttrGet((dvoid *) *elem_tbl, 
+                                   (ub4) OCI_DTYPE_TABLE_CHDES,
                                    (dvoid *) &rows, (ub4 *) NULL,
                                    (ub4) OCI_ATTR_CHDES_TABLE_ROW_CHANGES,
                                    sub->err)
@@ -435,8 +442,10 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
                             (
                                 res, sub->err,
 
-                                OCICollGetElem(OCILib.env, sub->err, rows, j, &exist,
-                                              (dvoid**) (dvoid*) &elem_row, (dvoid**) &ind_row)
+                                OCICollGetElem(OCILib.env, sub->err,
+                                               rows, j, &exist,
+                                               (dvoid**) (dvoid*) &elem_row,
+                                               (dvoid**) &ind_row)
                             )
 
                             /* get rowid  */
@@ -445,7 +454,8 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
                             (
                                 res, sub->err,
 
-                                OCIAttrGet((dvoid *) *elem_row, (ub4) OCI_DTYPE_ROW_CHDES,
+                                OCIAttrGet((dvoid *) *elem_row, 
+                                           (ub4) OCI_DTYPE_ROW_CHDES,
                                            (dvoid *) &ostr, (ub4 *) &osize,
                                            (ub4) OCI_ATTR_CHDES_ROW_ROWID,
                                            sub->err)
@@ -457,7 +467,8 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
                             (
                                 res, sub->err,
 
-                                OCIAttrGet((dvoid *) *elem_row, (ub4) OCI_DTYPE_ROW_CHDES,
+                                OCIAttrGet((dvoid *) *elem_row, 
+                                           (ub4) OCI_DTYPE_ROW_CHDES,
                                            &sub->event.op, (ub4*) NULL,
                                            (ub4) OCI_ATTR_CHDES_ROW_OPFLAGS,
                                            sub->err)
@@ -469,13 +480,16 @@ ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
 
                                 sub->event.rowid =
 
-                                (dtext *) OCI_MemRealloc(sub->event.rowid, OCI_IPC_STRING, sizeof(dtext),
+                                (dtext *) OCI_MemRealloc(sub->event.rowid, 
+                                                         OCI_IPC_STRING, 
+                                                         sizeof(dtext),
                                                          (size_t) (osize + 1));
 
                                 sub->event.rowid_size = osize;
                             }
 
-                            OCI_CopyString(ostr, sub->event.rowid, &osize, sizeof(char), sizeof(dtext));
+                            OCI_CopyString(ostr, sub->event.rowid, &osize, 
+                                           sizeof(char), sizeof(dtext));
 
                             sub->handler(&sub->event);
                         }

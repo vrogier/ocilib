@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: Pool.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: Pool.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -148,7 +148,7 @@ OCI_Pool * OCI_API OCI_PoolCreate(const mtext *db,
     OCI_Item     *item = NULL;
     boolean res        = TRUE;
 
-    OCI_CHECK_MIN(NULL, NULL, max_con, 1, FALSE);
+    OCI_CHECK_MIN(NULL, NULL, max_con, 1, NULL);
 
     /* let's be sure OCI_Initialize() has been called */
 

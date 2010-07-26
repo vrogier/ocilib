@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: connection.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: connection.c, v 3.7.0 2010-07-26 21:17 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -197,7 +197,8 @@ boolean OCI_ConnectionAttach(OCI_Connection *con)
         (
             res, con,
 
-            OCIServerAttach(con->svr, con->err,(OraText *) ostr, (sb4) osize, cmode)
+            OCIServerAttach(con->svr, con->err,(OraText *) ostr,
+                            (sb4) osize, cmode)
         )
 
         OCI_ReleaseMetaString(ostr);
@@ -401,9 +402,14 @@ boolean OCI_ConnectionLogon(OCI_Connection *con,
                     OCISessionBegin(con->cxt, con->err, con->ses, credt, con->mode)
                 )
 
-                /* This call has moved after OCISessionBegin() call to enable connection
-                   pooling (an error ORA-24324 was thrown is the session handle was set to
-                   the service context handle before OCISessionBegin() */
+                /* This call has moved after OCISessionBegin() call to 
+                   enable connection pooling (an error ORA-24324 was thrown if
+                   the session handle was set to the service context handle 
+                   before OCISessionBegin() 
+                   
+                   note  : from v3.7.0, OCISessionBegin() is not used anymore
+                           for OCI managed pools
+                   */
 
                 OCI_CALL2
                 (
@@ -624,8 +630,11 @@ boolean OCI_ConnectionLogOff(OCI_Connection *con)
             }
 
             /* set context transaction attribute to NULL
-               If not done, OCISessionRelease() genarerate a segfault if
-               a transaction to set on the service context handle */
+               If not done, OCISessionRelease() genarates a segfault if
+               a transaction to set on the service context handle
+               
+               Once again, OCI bug ? Need to report that on metalink ...  
+            */
 
             OCI_CALL2
             (
@@ -887,7 +896,7 @@ boolean OCI_API OCI_IsConnected(OCI_Connection *con)
 
 void * OCI_API OCI_GetUserData(OCI_Connection *con)
 {
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 
     OCI_RESULT(TRUE);
 
@@ -952,7 +961,7 @@ boolean OCI_API OCI_SetSessionTag(OCI_Connection *con, const mtext *tag)
 
 const mtext * OCI_API OCI_GetSessionData(OCI_Connection *con)
 {
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 
     OCI_RESULT(TRUE);
 
@@ -1102,7 +1111,8 @@ const mtext * OCI_API OCI_GetVersionServer(OCI_Connection *con)
         res = FALSE;
 
         con->ver_str = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext),
-                                              (size_t) (OCI_SIZE_BUFFER + 1), FALSE);
+                                              (size_t) (OCI_SIZE_BUFFER + 1),
+                                              FALSE);
 
         if (con->ver_str != NULL)
         {
@@ -1416,10 +1426,11 @@ boolean OCI_API OCI_ServerEnableOutput(OCI_Connection *con,
 
         /* allocate internal string (line) array */
 
-        con->svopt->arrbuf = (ub1 *) OCI_MemAlloc(OCI_IPC_STRING,
-                                                  ((size_t)(con->svopt->lnsize + 1)) * charsize,
-                                                  (size_t) con->svopt->arrsize, TRUE
-                                                  );
+        con->svopt->arrbuf =
+            
+        (ub1 *) OCI_MemAlloc(OCI_IPC_STRING,
+                             ((size_t)(con->svopt->lnsize + 1)) * charsize,
+                             (size_t) con->svopt->arrsize, TRUE);
 
         res = (con->svopt->arrbuf != NULL);
     }

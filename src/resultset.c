@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: resultset.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: resultset.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -680,6 +680,7 @@ size_t OCI_ResultsetGetAttrSize(OCI_Resultset *rs, unsigned int index)
         case OCI_CDT_OBJECT          :
         case OCI_CDT_COLLECTION      :
         case OCI_CDT_REF             :
+
             size = sizeof(void *);
             break;
     }
@@ -728,8 +729,8 @@ OCI_Resultset * OCI_API OCI_GetResultset(OCI_Statement *stmt)
 
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
 
-    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_CLOSED, FALSE);
-    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED, FALSE);
+    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_CLOSED, NULL);
+    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED, NULL);
 
     /* if the sql statement does not return a result, we just return NULL and not
        throwing any exception */
@@ -784,7 +785,7 @@ OCI_Resultset * OCI_API OCI_GetNextResultset(OCI_Statement *stmt)
 {
     OCI_Resultset *rs = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
 
     if (stmt->cur_rs < (stmt->nb_rs-1))
         rs = stmt->rsts[++stmt->cur_rs];

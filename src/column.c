@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: column.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: column.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -445,9 +445,11 @@ boolean OCI_ColumnMap(OCI_Column *col, OCI_Statement *stmt)
             break;
  
         case SQLT_BIN:
+     
+            /* adding one extra character space for string conversion */
 
             col->type    = OCI_CDT_RAW;
-            col->bufsize = (ub4) (col->size + (ub2) sizeof(dtext)); /* for string conversion */
+            col->bufsize = (ub4) (col->size + (ub2) sizeof(dtext)); 
             break;
 
         case SQLT_BLOB:
@@ -1159,7 +1161,7 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType(OCI_Column *col, mtext *buffer,
 
 OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo(OCI_Column *col)
 {
-    OCI_CHECK_PTR(OCI_IPC_COLUMN, col, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_COLUMN, col, NULL);
 
     OCI_RESULT(TRUE);
 

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib.h, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: ocilib.h, v 3.7.0 2010-07-26 21:19 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,11 +59,12 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.7.0 (2010-07-20)</b>
+ * <b>Current version : 3.7.0 (2010-07-26)</b>
  *
  * @section s_feats Main features
  *
  * - Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
+ * - Full 32/64 bits compatibility
  * - Builtin error handling (global and thread context)
  * - Support for ALL Oracle SQL and PL/SQL datatypes (scalars, objects, refs, collections, ..)
  * - Support for non scalar datatype with trough library objects

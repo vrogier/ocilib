@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: bind.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: bind.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -95,6 +95,7 @@ boolean OCI_BindFree(OCI_Bind *bnd)
 
                     OCI_RefFree((OCI_Ref *) bnd->input);
                     break;
+
                 default:
 
                     OCI_MemFree(bnd->input);
@@ -213,7 +214,9 @@ boolean OCI_BindAllocData(OCI_Bind *bnd)
         {
             case OCI_CDT_NUMERIC:
             {
-                bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
+                bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_VOID,
+                                                       bnd->size,
+                                                       1, TRUE);
                 bnd->buf.data = (void **) bnd->input;
                 break;
             }
@@ -231,7 +234,9 @@ boolean OCI_BindAllocData(OCI_Bind *bnd)
             }
             case OCI_CDT_TEXT:
             {
-                bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
+                bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_STRING,
+                                                       bnd->size, 
+                                                       1, TRUE);
                 bnd->buf.data = (void **) bnd->input;
                 break;
             }
@@ -249,7 +254,8 @@ boolean OCI_BindAllocData(OCI_Bind *bnd)
             }
             case OCI_CDT_FILE:
             {
-                OCI_File *file = OCI_FileCreate(bnd->stmt->con, bnd->subtype);
+                OCI_File *file = OCI_FileCreate(bnd->stmt->con, 
+                                                bnd->subtype);
 
                 if (file != NULL)
                 {
@@ -261,7 +267,8 @@ boolean OCI_BindAllocData(OCI_Bind *bnd)
             }
             case OCI_CDT_TIMESTAMP:
             {
-                OCI_Timestamp *tmsp = OCI_TimestampCreate(bnd->stmt->con, bnd->subtype);
+                OCI_Timestamp *tmsp = OCI_TimestampCreate(bnd->stmt->con,
+                                                          bnd->subtype);
 
                 if (tmsp != NULL)
                 {
@@ -273,7 +280,8 @@ boolean OCI_BindAllocData(OCI_Bind *bnd)
             }
             case OCI_CDT_INTERVAL:
             {
-                OCI_Interval *itv = OCI_IntervalCreate(bnd->stmt->con, bnd->subtype);
+                OCI_Interval *itv = OCI_IntervalCreate(bnd->stmt->con, 
+                                                       bnd->subtype);
 
                 if (itv != NULL)
                 {
@@ -285,13 +293,16 @@ boolean OCI_BindAllocData(OCI_Bind *bnd)
             }
             case OCI_CDT_RAW:
             {
-                bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
+                bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_VOID,
+                                                       bnd->size, 
+                                                       1, TRUE);
                 bnd->buf.data = (void **) bnd->input;
                 break;
             }
             case OCI_CDT_OBJECT:
             {
-                OCI_Object *obj = OCI_ObjectCreate(bnd->stmt->con, bnd->typinf);
+                OCI_Object *obj = OCI_ObjectCreate(bnd->stmt->con, 
+                                                   bnd->typinf);
 
                 if (obj != NULL)
                 {
@@ -315,7 +326,8 @@ boolean OCI_BindAllocData(OCI_Bind *bnd)
             }
            case OCI_CDT_REF:
            {
-                OCI_Ref *ref =  OCI_RefCreate(bnd->stmt->con, bnd->typinf);
+                OCI_Ref *ref =  OCI_RefCreate(bnd->stmt->con, 
+                                              bnd->typinf);
 
                 if (ref != NULL)
                 {
@@ -482,7 +494,8 @@ unsigned int OCI_API OCI_BindGetDataSize(OCI_Bind *bnd)
  * OCI_BindGetDataSizeAtPos
  * ------------------------------------------------------------------------ */
 
-unsigned int OCI_API OCI_BindGetDataSizeAtPos(OCI_Bind *bnd, unsigned int position)
+unsigned int OCI_API OCI_BindGetDataSizeAtPos(OCI_Bind *bnd, 
+                                              unsigned int position)
 {
     unsigned int size = 0;
 

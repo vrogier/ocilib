@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: threadkey.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: threadkey.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -243,7 +243,7 @@ void * OCI_API OCI_ThreadKeyGetValue(const mtext *name)
     void * value       = NULL;
     OCI_ThreadKey* key = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
 
     key = (OCI_ThreadKey *) OCI_HashGetPointer(OCILib.key_map, name);
 

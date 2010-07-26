@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ref.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: ref.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -331,7 +331,7 @@ boolean OCI_API OCI_RefIsNull(OCI_Ref *ref)
 
     OCI_RESULT(TRUE);
 
-    return OCIRefIsNull(OCILib.env, ref->handle);
+    return (OCIRefIsNull(OCILib.env, ref->handle) == TRUE);
 }
 
 /* ------------------------------------------------------------------------ *

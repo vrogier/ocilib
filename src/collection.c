@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: collection.c, v 3.7.0 2010-07-20 17:45 Vincent Rogier $
+ * $Id: collection.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -351,7 +351,9 @@ boolean OCI_API OCI_CollGetAt2(OCI_Coll *coll, unsigned int index, OCI_Elem *ele
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
 
-    OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].type == coll->typinf->cols[0].type, FALSE);
+    OCI_CHECK_COMPAT(coll->con, 
+                     elem->typinf->cols[0].type == coll->typinf->cols[0].type, 
+                     FALSE);
 
     OCI_CALL2
     (
@@ -386,7 +388,9 @@ boolean OCI_API OCI_CollSetAt(OCI_Coll *coll, unsigned int index, OCI_Elem *elem
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
 
-    OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].type == coll->typinf->cols[0].type, FALSE);
+    OCI_CHECK_COMPAT(coll->con, 
+                     elem->typinf->cols[0].type == coll->typinf->cols[0].type, 
+                     FALSE);
 
     OCI_CALL2
     (
@@ -412,7 +416,9 @@ boolean OCI_API OCI_CollAppend(OCI_Coll *coll, OCI_Elem *elem)
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
 
-    OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].type == coll->typinf->cols[0].type, FALSE);
+    OCI_CHECK_COMPAT(coll->con, 
+                     elem->typinf->cols[0].type == coll->typinf->cols[0].type, 
+                     FALSE);
 
     OCI_CALL2
     (

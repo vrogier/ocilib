@@ -1,4 +1,4 @@
-2010-07-20 Version 3.7.0 Vincent Rogier vince.rogier@ocilib.net
+2010-07-26 Version 3.7.0 Vincent Rogier vince.rogier@ocilib.net
 
     * Added support for Session Pools
 
@@ -15,17 +15,17 @@
         - OCI_POOL_CONNECTION : creates a connection pool
         - OCI_POOL_SESSION    : creates a session pool
 
-      - Added support for session pool tagging :
+      - Added support for session pool tagging:
 
         - Added OCI_GetSessionTag()
         - Added OCI_SetSessionTag()
 
       - Added new parameter 'tag' to OCI_PoolGetConnection() 
 
-      - Updated documentation :
+      - Updated documentation:
 
         - Renamed page <module>, section <Connection pooling> to <Oracle pooling>
-        - Added Information abour session pooling
+        - Added Information about session pooling
 
     * Extended fetch interface
 
@@ -44,8 +44,8 @@
 
           - From v3.7.0 :
 
-              - the resulset is create only once and is just reinitialized before re-execution
-              - Avoiding these unecessary memory allocations/deallocations improves drastically the performances
+              - The resulset is created only once and is just reinitialized before re-execution
+              - Avoiding these unnecessary memory allocations/deallocations improves drastically the performances
 
     * Extended Array interface
 
@@ -63,28 +63,29 @@
          - Before theses handles were all allocated/deallocated when physical connection to server was created/freed
          - The old way could cause problems with old Oracle versions
       
-       - Existing programs must be recompiled (in order to use this new version of ocilib) with no code change (as compatibilty macros are provided)
+       - Existing programs must be recompiled (in order to use this new version of ocilib) with no code change (as compatibility macros are provided)
 
     * Miscellaneous fixes
     
-      - Fixed OCI_Object binding : 
+      - Fixed OCI_Object binding: 
 	
-         - internal objects indicator structures were not binded properly
-         - even if the internal objects indicators were updated correctly, it was not seen by the server
+         - Internal objects indicator structures were not binded properly
+         - Even if the internal objects indicators were updated correctly, it was not seen by the server
          - Only the object itself nullity flag was sent to server
    
-      - Fixed Batch error handling :
+      - Fixed Batch error handling:
         
-         - some errors could not have be caught
+         - Some errors could not have be caught
          - Added checks in OCI_GetBatchErrorCount()
 
       - Fixed OCI_Element API :
 
-         - Setting values with a standalone OCI_element object associated to a standalone collection was broken
+         - Setting values with a standalone OCI_Element object associated to a standalone collection was broken
          - For collection of REFs, internal OCI_REf object was not freed by OCI_ElemFree()
 
       - Fixed OCI_Object members internal offset computation for 64bits builds
-      - Fixed OCI_DirPathSave() that couln't execute on a loaded stream
-      - Fixed Connection Pooling emulation for Oracle 8i
+      - Fixed OCI_DirPathSave() that could not execute on a loaded stream
+      - Fixed Connection pooling emulation for Oracle 8i
       - Fixed warnings when compiling OCILIB with OCI_IMPORT_LINKAGE and Oracle 8i
+      - Fixed few internal return values literals in OCI_CHECK_XXX macros (like FALSE literal returned for pointer values ...)
 
