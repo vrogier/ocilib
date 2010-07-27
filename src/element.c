@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: element.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: element.c, v 3.7.0 2010-07-27 18:36 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -481,10 +481,10 @@ OCI_Date * OCI_API  OCI_ElemGetDate(OCI_Elem *elem)
     return date;
 }
 /* ------------------------------------------------------------------------ *
- * OCI_ElemGetTimeStamp
+ * OCI_ElemGetTimestamp
  * ------------------------------------------------------------------------ */
 
-OCI_Timestamp * OCI_API  OCI_ElemGetTimeStamp(OCI_Elem *elem)
+OCI_Timestamp * OCI_API  OCI_ElemGetTimestamp(OCI_Elem *elem)
 {
     boolean res = TRUE;
     OCI_Timestamp *tmsp = NULL;

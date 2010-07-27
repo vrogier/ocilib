@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: timestamp.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: timestamp.c, v 3.7.1 2010-07-27 18:35 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -894,10 +894,10 @@ boolean OCI_API OCI_TimestampSubtract(OCI_Timestamp *tmsp, OCI_Timestamp *tmsp2,
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_TimestampSysTimeStamp
+ * OCI_TimestampSysTimestamp
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_TimestampSysTimeStamp(OCI_Timestamp *tmsp)
+boolean OCI_API OCI_TimestampSysTimestamp(OCI_Timestamp *tmsp)
 {
     boolean res = TRUE;
     OCI_Timestamp *tmp  = NULL;
@@ -910,9 +910,9 @@ boolean OCI_API OCI_TimestampSysTimeStamp(OCI_Timestamp *tmsp)
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     /* Filling a timestamp handle of type OCI_TIMESTAMP with
-       OCIDateTimeSysTimeStamp() can lead later to an error ORA-01483 when
+       OCIDateTimeSysTimestamp() can lead later to an error ORA-01483 when
        binding the given timestamp to some SQL Statement (Oracle BUG).
-       The only way to avoid that is to pass to OCIDateTimeSysTimeStamp()
+       The only way to avoid that is to pass to OCIDateTimeSysTimestamp()
        a timestamp handle of type OCI_TIMESTAMP_TZ and convert it back to
        OCI_TIMESTAMP if needed
     */

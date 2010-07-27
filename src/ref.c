@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ref.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: ref.c, v 3.7.0 2010-07-27 18:26 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -295,7 +295,7 @@ boolean OCI_API OCI_RefAssign(OCI_Ref *ref, OCI_Ref *ref_src)
     OCI_CHECK_PTR(OCI_IPC_REF, ref,     FALSE);
     OCI_CHECK_PTR(OCI_IPC_REF, ref_src, FALSE);
 
-    OCI_CHECK_COMPAT(ref->con, ref->typinf == ref_src->typinf, FALSE);
+    OCI_CHECK_COMPAT(ref->con, ref->typinf->tdo == ref_src->typinf->tdo, FALSE);
 
     OCI_CALL2
     (

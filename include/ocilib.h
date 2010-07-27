@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib.h, v 3.7.0 2010-07-26 21:19 Vincent Rogier $
+ * $Id: ocilib.h, v 3.7.1 2010-07-27 18:36 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -59,7 +59,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.7.0 (2010-07-26)</b>
+ * <b>Current version : 3.7.1 (2010-07-27)</b>
  *
  * @section s_feats Main features
  *
@@ -7334,7 +7334,7 @@ OCI_EXPORT OCI_Date * OCI_API OCI_ElemGetDate
  *
  */
 
-OCI_EXPORT OCI_Timestamp * OCI_API OCI_ElemGetTimeStamp
+OCI_EXPORT OCI_Timestamp * OCI_API OCI_ElemGetTimestamp
 (
     OCI_Elem *elem
 );
@@ -10824,7 +10824,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampSubtract
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampSysTimeStamp
+OCI_EXPORT boolean OCI_API OCI_TimestampSysTimestamp
 (
     OCI_Timestamp *tmsp
 );
@@ -11706,7 +11706,7 @@ OCI_EXPORT OCI_Date * OCI_API OCI_ObjectGetDate
  *
  */
 
-OCI_EXPORT OCI_Timestamp * OCI_API OCI_ObjectGetTimeStamp
+OCI_EXPORT OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp
 (
     OCI_Object *obj,
     const mtext *attr
@@ -15084,6 +15084,12 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 #define OCI_ConnPoolGetMin          OCI_PoolGetMin
 #define OCI_ConnPoolGetMax          OCI_PoolGetMax
 #define OCI_ConnPoolGetIncrement    OCI_PoolGetIncrement  
+
+/* macro added in version 3.7.1 */
+
+#define OCI_ObjectGetTimeStamp      OCI_ObjectGetTimestamp
+#define OCI_ElemGetTimeStamp        OCI_ElemGetTimestamp
+#define OCI_TimestampSysTimeStamp   OCI_TimestampSysTimestamp    
 
 #endif    /* OCILIB_H_INCLUDED */
 

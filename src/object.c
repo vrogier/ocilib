@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: object.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: object.c, v 3.7.1 2010-07-27 18:36 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -597,7 +597,7 @@ boolean OCI_API OCI_ObjectAssign(OCI_Object *obj, OCI_Object *obj_src)
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj,     FALSE);
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj_src, FALSE);
 
-    OCI_CHECK_COMPAT(obj->con, obj->typinf == obj_src->typinf, FALSE);
+    OCI_CHECK_COMPAT(obj->con, obj->typinf->tdo == obj_src->typinf->tdo, FALSE);
 
     OCI_CALL2
     (
@@ -807,10 +807,10 @@ OCI_Date * OCI_API OCI_ObjectGetDate(OCI_Object *obj, const mtext *attr)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_ObjectGetTimeStamp
+ * OCI_ObjectGetTimestamp
  * ------------------------------------------------------------------------ */
 
-OCI_Timestamp * OCI_API OCI_ObjectGetTimeStamp(OCI_Object *obj,
+OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp(OCI_Object *obj,
                                                const mtext *attr)
 {
     OCI_Timestamp *tmsp = NULL;
@@ -1615,7 +1615,7 @@ boolean OCI_API OCI_ObjectGetSelfRef(OCI_Object *obj, OCI_Ref *ref)
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj, FALSE);
     OCI_CHECK_PTR(OCI_IPC_REF   , ref, FALSE);
 
-    OCI_CHECK_COMPAT(obj->con, obj->typinf == ref->typinf, FALSE);
+    OCI_CHECK_COMPAT(obj->con, obj->typinf->tdo == ref->typinf->tdo, FALSE);
 
     OCI_CALL2
     (
