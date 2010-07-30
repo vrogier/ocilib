@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: element.c, v 3.7.0 2010-07-27 18:36 Vincent Rogier $
+ * $Id: element.c, v 3.7.1 2010-07-30 11:57 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -82,6 +82,8 @@ OCI_Elem * OCI_ElemInit(OCI_Connection *con, OCI_Elem **pelem, void *handle,
                 break;
 
             case OCI_CDT_TEXT:
+            case OCI_CDT_TIMESTAMP:
+            case OCI_CDT_INTERVAL:
             case OCI_CDT_RAW:
             case OCI_CDT_LOB:
             case OCI_CDT_FILE:
