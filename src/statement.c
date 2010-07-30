@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: statement.c, v 3.7.1 2010-07-30 13:09 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -472,6 +472,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
     boolean reused   = FALSE;
     ub4 *pnbelem     = NULL;
     int index        = 0;
+    size_t nballoc   = (size_t) nbelem;
 
     /* check index if necessary */
 
@@ -581,9 +582,14 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         {
             nbelem   = stmt->nb_iters;
             is_array = stmt->bind_array;
-
-            if (nbelem < stmt->nb_iters_init)
-                nbelem = stmt->nb_iters_init;
+        }
+    }
+    
+    if (res == TRUE)
+    {
+        if (nballoc < stmt->nb_iters_init) 
+        {
+             nballoc = (size_t) stmt->nb_iters_init;
         }
     }
 
@@ -619,7 +625,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         if (bnd->buf.inds == NULL)
         {
             bnd->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY,
-                                                  sizeof(sb2), (size_t) nbelem, 
+                                                  sizeof(sb2), nballoc, 
                                                   TRUE);
         }
 
@@ -633,7 +639,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         if ((type == OCI_CDT_OBJECT) && (bnd->buf.obj_inds == NULL))
         {
             bnd->buf.obj_inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY,
-                                                      sizeof(void *), (size_t) nbelem, 
+                                                      sizeof(void *), nballoc, 
                                                       TRUE);
 
             res = (bnd->buf.obj_inds != NULL);
@@ -654,7 +660,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
             if (bnd->plrcds == NULL)
             {
                 bnd->plrcds = (ub2 *) OCI_MemAlloc(OCI_IPC_PLS_RCODE_ARRAY,
-                                                   sizeof(ub2), (size_t) nbelem, 
+                                                   sizeof(ub2), nballoc, 
                                                    TRUE);
             }
 
@@ -692,7 +698,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
                 {
                     bnd->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, 
                                                            (size_t) size,
-                                                           (size_t) nbelem,
+                                                           (size_t) nballoc,
                                                            TRUE);
                 }
 
@@ -710,7 +716,7 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
         if (bnd->buf.lens == NULL)
         {
             bnd->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, sizeof(ub2),
-                                                  (size_t) nbelem, TRUE);
+                                                  nballoc, TRUE);
         }
 
         res = (bnd->buf.lens != NULL);
