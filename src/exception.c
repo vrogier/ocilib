@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: exception.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: exception.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -263,7 +263,6 @@ void OCI_ExceptionOCI(OCIError *p_err, OCI_Connection *con,
 
         OCIErrorGet((dvoid *) p_err, (ub4) 1, (OraText *) NULL, &err->ocode,
         (OraText *) ostr, (ub4) osize, (ub4) OCI_HTYPE_ERROR);
-
 
         OCI_GetOutputMetaString(ostr, err->str, &osize);
         OCI_ReleaseMetaString(ostr);

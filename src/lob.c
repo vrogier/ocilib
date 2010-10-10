@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: lob.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: lob.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -141,8 +141,6 @@
 OCI_Lob * OCI_API OCI_LobCreate(OCI_Connection *con, unsigned int type)
 {
     OCI_Lob *lob = NULL;
-
-    OCI_CHECK_INITIALIZED(NULL);
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 

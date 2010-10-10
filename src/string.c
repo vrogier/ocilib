@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: string.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: string.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -726,6 +726,88 @@ boolean OCI_StringToStringPtr(OCIString **str, OCIError *err, void *value,
     return res;
 }
 
+
+/* ------------------------------------------------------------------------ *
+ * OCI_StringGetFromAttrHandle
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_StringGetFromAttrHandle(OCI_Connection *con, void *handle, 
+                                    unsigned int type, unsigned int attr,
+                                    mtext **str)
+{
+    boolean res    = TRUE;
+    void    *ostr  = NULL;
+    int      osize = -1;
+
+    OCI_CHECK(str == NULL, FALSE);
+
+    OCI_CALL2
+    (
+        res, con,
+
+        OCIAttrGet((dvoid *) handle, 
+                   (ub4    ) type,
+                   (dvoid *) &ostr, 
+                   (ub4   *) &osize,
+                   (ub4    ) attr, 
+                   con->err)
+    )
+
+    if ((res == TRUE) && (ostr != NULL))
+    {
+        *str = (void *) OCI_MemAlloc(OCI_IPC_STRING,  sizeof(mtext),
+                                     (size_t) ((osize / (int) sizeof(omtext)) + 1),
+                                     TRUE);
+  
+        if (*str != NULL)
+        {
+            OCI_CopyString(ostr, *str, &osize, sizeof(omtext), sizeof(mtext));
+        }
+        else
+            res = FALSE;
+    }
+
+    return res;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_StringSetToAttrHandle
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_StringSetToAttrHandle(OCI_Connection *con, void *handle, 
+                                  unsigned int type, unsigned int attr,
+                                  mtext **str, const mtext *value)
+{
+    boolean res    = TRUE;
+    void    *ostr  = NULL;
+    int      osize = -1;
+
+    ostr = OCI_GetInputMetaString(value, &osize);
+
+    OCI_CALL2
+    (
+        res, con,
+
+        OCIAttrSet((dvoid *) handle, 
+                   (ub4    ) type,
+                   (dvoid *) ostr, 
+                   (ub4    ) osize,
+                   (ub4    ) attr, 
+                   con->err)
+    )
+ 
+    OCI_ReleaseMetaString(ostr);
+
+    if ((res == TRUE) && (str != NULL))
+    {
+        OCI_FREE(*str);
+
+        *str = mtsdup(value);
+    }
+
+    return res;
+}
+
 /* ************************************************************************ *
  *                            PUBLIC FUNCTIONS
  * ************************************************************************ */
@@ -838,4 +920,3 @@ int ociwcscasecmp(const wchar_t *str1, const wchar_t *str2)
 }
 
 #endif
-

@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: library.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: library.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -368,6 +368,10 @@ OCISTMTRELEASE               OCIStmtRelease               = NULL;
 
 OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister      = NULL;
 OCISUBSCRIPTIONUNREGISTER    OCISubscriptionUnRegister    = NULL;
+
+OCIAQENQ                     OCIAQEnq                      = NULL;
+OCIAQDEQ                     OCIAQDeq                      = NULL;
+OCIAQLISTEN                  OCIAQListen                   = NULL;
 
 #ifdef ORAXB8_DEFINED
 
@@ -1003,6 +1007,13 @@ boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const mtext *lib_path,
         LIB_SYMBOL(OCILib.lib_handle, "OCISubscriptionUnRegister", OCISubscriptionUnRegister,
                    OCISUBSCRIPTIONUNREGISTER);
 
+        LIB_SYMBOL(OCILib.lib_handle, "OCIAQEnq", OCIAQEnq,
+                   OCIAQENQ);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIAQDeq", OCIAQDeq,
+                   OCIAQDEQ);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIAQListen", OCIAQListen,
+                   OCIAQLISTEN);
+
         /* API Version checking */
 
         if (OCIArrayDescriptorFree != NULL)
@@ -1188,6 +1199,11 @@ boolean OCI_API OCI_Cleanup(void)
 {
     boolean res = TRUE;
 
+    /* free all arrays */
+
+    OCI_ListForEach(OCILib.arrs, (boolean (*)(void *)) OCI_ArrayClose);
+    OCI_ListClear(OCILib.arrs);
+
     /* free all subscriptions */
 
     OCI_ListForEach(OCILib.subs, (boolean (*)(void *)) OCI_SubscriptionClose);
@@ -1202,11 +1218,6 @@ boolean OCI_API OCI_Cleanup(void)
 
     OCI_ListForEach(OCILib.pools, (boolean (*)(void *)) OCI_PoolClose);
     OCI_ListClear(OCILib.pools);
-
-    /* free all arrays */
-
-    OCI_ListForEach(OCILib.arrs, (boolean (*)(void *)) OCI_ArrayClose);
-    OCI_ListClear(OCILib.arrs);
 
     /* free objects */
 

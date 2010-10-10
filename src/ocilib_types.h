@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_types.h, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: ocilib_types.h, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 
@@ -738,6 +738,70 @@ struct OCI_Subscription
     mtext               *saved_pwd;  /* password for reconnection if needed */
     OCI_Event            event;      /* event object for user callback */
 };  
+
+/*
+ * Oracle A/Q Agent
+ *
+ */
+
+struct OCI_Agent
+{
+    OCIAQAgent          *handle;
+    ub4                  hstate;   /* object variable state */
+    OCI_Connection      *con;      /* OCILIB connection handle */
+    mtext               *address;
+    mtext               *name;
+};
+
+/*
+ * Oracle A/Q message
+ *
+ */
+
+struct OCI_Msg
+{
+    OCI_TypeInfo        *typinf;     /* pointer to type info object */
+    OCIAQMsgProperties  *proph;      /* OCI message properties handle */
+    OCI_Object          *obj;
+    OCIRaw              *raw;
+    OCIRaw              *id;
+    OCI_Date            *date;
+    mtext               *correlation;
+    mtext               *except_queue;
+    mtext               *trs_group;
+};
+
+
+/*
+ * Oracle A/Q enqueue
+ *
+ */
+
+struct OCI_Enqueue
+{
+    OCI_TypeInfo        *typinf;     /* pointer to type info object */
+    OCIAQEnqOptions     *opth;       /* OCI enqueue options handle */
+    mtext               *name;       /* queue name */
+};
+
+/*
+ * Oracle A/Q Dequeue
+ *
+ */
+
+struct OCI_Dequeue
+{
+    OCI_TypeInfo        *typinf;     /* pointer to type info object */
+    OCIAQDeqOptions     *opth;       /* OCI dequeue options handle */
+    mtext               *name;       /* queue name */
+    mtext               *pattern;    /* queue name */
+    mtext               *consumer;
+    OCI_Msg             *msg;        /* message retrieved from queue */
+    OCIAQAgent         **agent_list;
+    ub4                  agent_count;
+    OCI_Agent           *agent;
+
+};
 
 /*
  * oCILIB array

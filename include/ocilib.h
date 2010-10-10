@@ -26,10 +26,25 @@
    +----------------------------------------------------------------------+
    |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
    +----------------------------------------------------------------------+
-*/
+
+   +----------------------------------------------------------------------+   
+   |                          IMPORTANT NOTICE                            |
+   +----------------------------------------------------------------------+
+   |                                                                      |
+   | This file contains explanations about Oracle and OCI  technologies   |
+   | OCILIB is a wrapper around OCI and thus exposes OCI features.        |
+   | The OCILIB documentation intends to explain Oracle / OCI concepts    |
+   | and is naturally based on the official Oracle OCI documentation.     |
+   |                                                                      |
+   | Some OCILIB documentation parts may include some informations        |
+   | taken and adapted from the Oracle Call Interface Programmer's Guide  |
+   |                                                                      |
+   +----------------------------------------------------------------------+
+
+ */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib.h, v 3.7.1 2010-07-27 18:36 Vincent Rogier $
+ * $Id: ocilib.h, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_H_INCLUDED
@@ -42,7 +57,7 @@ extern "C" {
 /**
  * @mainpage
  *
- * @image html logo160120.png
+ * @image html logo-160x120.png
  *
  * @section s_intro Introduction
  *
@@ -59,7 +74,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.7.1 (2010-07-27)</b>
+ * <b>Current version : 3.8.0 (2010-10-09)</b>
  *
  * @section s_feats Main features
  *
@@ -69,12 +84,13 @@ extern "C" {
  * - Support for ALL Oracle SQL and PL/SQL datatypes (scalars, objects, refs, collections, ..)
  * - Support for non scalar datatype with trough library objects
  * - Binding array Interface for fast and massive bulk operations
- * - Reusable and scrollable statements
  * - Oracle Pooling (connections and sessions pools)
- * - Transactions
  * - Full PL/SQL support (blocks, cursors, Index by Tables and Nested tables)
  * - Returning DML feature support
+ * - Advanded Queues (Oracle AQ)
+ * - Reusable and scrollable statements
  * - Direct Path loading
+ * - Transactions
  * - Runtime loading (no OCI libs required at compile time)
  * - Remote Instances Startup/Shutdown
  * - Oracle Database Change notification / Continuous Query Notification
@@ -144,7 +160,7 @@ extern "C" {
  * ------------------------------------------------------------------------ */
 
 #define OCILIB_MAJOR_VERSION     3
-#define OCILIB_MINOR_VERSION     7
+#define OCILIB_MINOR_VERSION     8
 #define OCILIB_REVISION_VERSION  0
 
 /* ------------------------------------------------------------------------ *
@@ -977,6 +993,13 @@ typedef struct OCI_Iter OCI_Iter;
 
 typedef struct OCI_Ref OCI_Ref;
 
+/**
+ * @struct OCI_TypeInfo
+ *
+ * @brief
+ * Type info metadata handle.
+ *
+ */
 
 typedef struct OCI_TypeInfo OCI_TypeInfo;
 
@@ -1053,6 +1076,47 @@ typedef struct OCI_Subscription OCI_Subscription;
  */
 
 typedef struct OCI_Event OCI_Event;
+
+/**
+ * @struct OCI_Msg
+ *
+ * @brief
+ * OCILIB encapsulation of A/Q message
+ *
+ */
+
+typedef struct OCI_Msg OCI_Msg;
+
+/**
+ * @struct OCI_Agent
+ *
+ * @brief
+ * OCILIB encapsulation of A/Q Agent
+ *
+ */
+
+typedef struct OCI_Agent OCI_Agent;
+
+/**
+ * @struct OCI_Dequeue
+ *
+ * @brief
+ * OCILIB encapsulation of A/Q dequeuing operations
+ *
+ */
+
+typedef struct OCI_Dequeue OCI_Dequeue;
+
+/**
+ * @struct OCI_Enqueue
+ *
+ * @brief
+ * OCILIB encapsulation of A/Q enqueuing operations
+ *
+ */
+
+typedef struct OCI_Enqueue OCI_Enqueue;
+
 
 /**
  * @}
@@ -1241,357 +1305,358 @@ typedef struct OCI_HashEntry {
 
 /* oracle OCI key versions*/
 
-#define OCI_8_0                         800
-#define OCI_8_1                         810
-#define OCI_9_0                         900
-#define OCI_9_2                         920
-#define OCI_10_1                       1010
-#define OCI_10_2                       1020
-#define OCI_11_1                       1110
-#define OCI_11_2                       1120
+#define OCI_8_0                             800
+#define OCI_8_1                             810
+#define OCI_9_0                             900
+#define OCI_9_2                             920
+#define OCI_10_1                            1010
+#define OCI_10_2                            1020
+#define OCI_11_1                            1110
+#define OCI_11_2                            1120
 
 /* versions extract macros */
 
 
-#define OCI_VER_MAJ(v)                 (unsigned int) (v/100)
-#define OCI_VER_MIN(v)                 (unsigned int) ((v/10) - ((v/100)*10))
-#define OCI_VER_REV(v)                 (unsigned int) ((v) - ((v/10)*10))
+#define OCI_VER_MAJ(v)                      (unsigned int) (v/100)
+#define OCI_VER_MIN(v)                      (unsigned int) ((v/10) - ((v/100)*10))
+#define OCI_VER_REV(v)                      (unsigned int) ((v) - ((v/10)*10))
 
 /* OCILIB Error types */
 
-#define OCI_ERR_ORACLE                  1
-#define OCI_ERR_OCILIB                  2
-#define OCI_ERR_WARNING                 3
+#define OCI_ERR_ORACLE                      1
+#define OCI_ERR_OCILIB                      2
+#define OCI_ERR_WARNING                     3
 
 /* OCILIB Error codes */
 
-#define OCI_ERR_NONE                    0
-#define OCI_ERR_NOT_INITIALIZED         1
-#define OCI_ERR_LOADING_SHARED_LIB      2
-#define OCI_ERR_LOADING_SYMBOLS         3
-#define OCI_ERR_MULTITHREADED           4
-#define OCI_ERR_MEMORY                  5
-#define OCI_ERR_NOT_AVAILABLE           6
-#define OCI_ERR_NULL_POINTER            7
-#define OCI_ERR_DATATYPE_NOT_SUPPORTED  8
-#define OCI_ERR_PARSE_TOKEN             9
-#define OCI_ERR_MAP_ARGUMENT            10
-#define OCI_ERR_OUT_OF_BOUNDS           11
-#define OCI_ERR_UNFREED_DATA            12
-#define OCI_ERR_MAX_BIND                13
-#define OCI_ERR_ATTR_NOT_FOUND          14
-#define OCI_ERR_MIN_VALUE               15
-#define OCI_ERR_NOT_COMPATIBLE          16
-#define OCI_ERR_STMT_STATE              17
-#define OCI_ERR_STMT_NOT_SCROLLABLE     18
-#define OCI_ERR_BIND_ALREADY_USED       19
-#define OCI_ERR_BIND_ARRAY_SIZE         20
-#define OCI_ERR_COLUMN_NOT_FOUND        21
-#define OCI_ERR_DIRPATH_STATE           22
-#define OCI_ERR_CREATE_OCI_ENVIRONMENT  23
+#define OCI_ERR_NONE                        0
+#define OCI_ERR_NOT_INITIALIZED             1
+#define OCI_ERR_LOADING_SHARED_LIB          2
+#define OCI_ERR_LOADING_SYMBOLS             3
+#define OCI_ERR_MULTITHREADED               4
+#define OCI_ERR_MEMORY                      5
+#define OCI_ERR_NOT_AVAILABLE               6
+#define OCI_ERR_NULL_POINTER                7
+#define OCI_ERR_DATATYPE_NOT_SUPPORTED      8
+#define OCI_ERR_PARSE_TOKEN                 9
+#define OCI_ERR_MAP_ARGUMENT                10
+#define OCI_ERR_OUT_OF_BOUNDS               11
+#define OCI_ERR_UNFREED_DATA                12
+#define OCI_ERR_MAX_BIND                    13
+#define OCI_ERR_ATTR_NOT_FOUND              14
+#define OCI_ERR_MIN_VALUE                   15
+#define OCI_ERR_NOT_COMPATIBLE              16
+#define OCI_ERR_STMT_STATE                  17
+#define OCI_ERR_STMT_NOT_SCROLLABLE         18
+#define OCI_ERR_BIND_ALREADY_USED           19
+#define OCI_ERR_BIND_ARRAY_SIZE             20
+#define OCI_ERR_COLUMN_NOT_FOUND            21
+#define OCI_ERR_DIRPATH_STATE               22
+#define OCI_ERR_CREATE_OCI_ENVIRONMENT      23
 
 /* binding */
 
-#define OCI_BIND_BY_POS         0
-#define OCI_BIND_BY_NAME        1
-#define OCI_BIND_SIZE           6
-#define OCI_BIND_MAX            1024
+#define OCI_BIND_BY_POS                     0
+#define OCI_BIND_BY_NAME                    1
+#define OCI_BIND_SIZE                       6
+#define OCI_BIND_MAX                        1024
 
 /* fetching */
 
-#define OCI_FETCH_SIZE          20
-#define OCI_PREFETCH_SIZE       20
-#define OCI_LONG_EXPLICIT       1
-#define OCI_LONG_IMPLICIT       2
+#define OCI_FETCH_SIZE                      20
+#define OCI_PREFETCH_SIZE                   20
+#define OCI_LONG_EXPLICIT                   1
+#define OCI_LONG_IMPLICIT                   2
 
 /* unknown value */
 
-#define OCI_UNKNOWN             0
+#define OCI_UNKNOWN                         0
 
 /* C Data Type mapping */
 
-#define OCI_CDT_NUMERIC         1
-#define OCI_CDT_DATETIME        3
-#define OCI_CDT_TEXT            4
-#define OCI_CDT_LONG            5
-#define OCI_CDT_CURSOR          6
-#define OCI_CDT_LOB             7
-#define OCI_CDT_FILE            8
-#define OCI_CDT_TIMESTAMP       9
-#define OCI_CDT_INTERVAL        10
-#define OCI_CDT_RAW             11
-#define OCI_CDT_OBJECT          12
-#define OCI_CDT_COLLECTION      13
-#define OCI_CDT_REF             14
+#define OCI_CDT_NUMERIC                     1
+#define OCI_CDT_DATETIME                    3
+#define OCI_CDT_TEXT                        4
+#define OCI_CDT_LONG                        5
+#define OCI_CDT_CURSOR                      6
+#define OCI_CDT_LOB                         7
+#define OCI_CDT_FILE                        8
+#define OCI_CDT_TIMESTAMP                   9
+#define OCI_CDT_INTERVAL                    10
+#define OCI_CDT_RAW                         11
+#define OCI_CDT_OBJECT                      12
+#define OCI_CDT_COLLECTION                  13
+#define OCI_CDT_REF                         14
 
 /* Data Type codes for OCI_ImmediateXXX() calls */
 
-#define OCI_ARG_SHORT           1
-#define OCI_ARG_USHORT          2
-#define OCI_ARG_INT             3
-#define OCI_ARG_UINT            4
-#define OCI_ARG_BIGINT          5
-#define OCI_ARG_BIGUINT         6
-#define OCI_ARG_DOUBLE          7
-#define OCI_ARG_DATETIME        8
-#define OCI_ARG_TEXT            9
-#define OCI_ARG_LOB             10
-#define OCI_ARG_FILE            11
-#define OCI_ARG_TIMESTAMP       12
-#define OCI_ARG_INTERVAL        13
-#define OCI_ARG_RAW             14
-#define OCI_ARG_OBJECT          15
-#define OCI_ARG_COLLECTION      16
-#define OCI_ARG_REF             17
+#define OCI_ARG_SHORT                       1
+#define OCI_ARG_USHORT                      2
+#define OCI_ARG_INT                         3
+#define OCI_ARG_UINT                        4
+#define OCI_ARG_BIGINT                      5
+#define OCI_ARG_BIGUINT                     6
+#define OCI_ARG_DOUBLE                      7
+#define OCI_ARG_DATETIME                    8
+#define OCI_ARG_TEXT                        9
+#define OCI_ARG_LOB                         10
+#define OCI_ARG_FILE                        11
+#define OCI_ARG_TIMESTAMP                   12
+#define OCI_ARG_INTERVAL                    13
+#define OCI_ARG_RAW                         14
+#define OCI_ARG_OBJECT                      15
+#define OCI_ARG_COLLECTION                  16
+#define OCI_ARG_REF                         17
 
 /* statement types */
 
-#define OCI_CST_SELECT          1
-#define OCI_CST_UPDATE          2
-#define OCI_CST_DELETE          3
-#define OCI_CST_INSERT          4
-#define OCI_CST_CREATE          5
-#define OCI_CST_DROP            6
-#define OCI_CST_ALTER           7
-#define OCI_CST_BEGIN           8
-#define OCI_CST_DECLARE         9
+#define OCI_CST_SELECT                      1
+#define OCI_CST_UPDATE                      2
+#define OCI_CST_DELETE                      3
+#define OCI_CST_INSERT                      4
+#define OCI_CST_CREATE                      5
+#define OCI_CST_DROP                        6
+#define OCI_CST_ALTER                       7
+#define OCI_CST_BEGIN                       8
+#define OCI_CST_DECLARE                     9
 
 /* environment modes */
 
-#define OCI_ENV_DEFAULT         0
-#define OCI_ENV_THREADED        1
-#define OCI_ENV_CONTEXT         2
-#define OCI_ENV_EVENTS          4
+#define OCI_ENV_DEFAULT                     0
+#define OCI_ENV_THREADED                    1
+#define OCI_ENV_CONTEXT                     2
+#define OCI_ENV_EVENTS                      4
 
 /* sessions modes */
 
-#define OCI_SESSION_DEFAULT     0
-#define OCI_SESSION_SYSDBA      2
-#define OCI_SESSION_SYSOPER     4
-#define OCI_SESSION_PRELIM_AUTH 8
+#define OCI_SESSION_DEFAULT                 0
+#define OCI_SESSION_SYSDBA                  2
+#define OCI_SESSION_SYSOPER                 4
+#define OCI_SESSION_PRELIM_AUTH             8
 
 /* change notification types */
 
-#define OCI_CNT_OBJECTS         1
-#define OCI_CNT_ROWS            2
-#define OCI_CNT_DATABASES       4
-#define OCI_CNT_ALL             OCI_CNT_OBJECTS | OCI_CNT_ROWS | OCI_CNT_DATABASES
+#define OCI_CNT_OBJECTS                     1
+#define OCI_CNT_ROWS                        2
+#define OCI_CNT_DATABASES                   4
+#define OCI_CNT_ALL                         OCI_CNT_OBJECTS |                  \
+                                            OCI_CNT_ROWS    |                  \
+                                            OCI_CNT_DATABASES
 
 /* event notification types */
 
-#define OCI_ENT_STARTUP         1
-#define OCI_ENT_SHUTDOWN        2
-#define OCI_ENT_SHUTDOWN_ANY    3
-#define OCI_ENT_DROP_DATABASE   4
-#define OCI_ENT_DEREGISTER      5
-#define OCI_ENT_OBJECT_CHANGED  6
+#define OCI_ENT_STARTUP                     1
+#define OCI_ENT_SHUTDOWN                    2
+#define OCI_ENT_SHUTDOWN_ANY                3
+#define OCI_ENT_DROP_DATABASE               4
+#define OCI_ENT_DEREGISTER                  5
+#define OCI_ENT_OBJECT_CHANGED              6
 
 /* event object notification types */
 
-#define OCI_ONT_INSERT          0x2             
-#define OCI_ONT_UPDATE          0x4              
-#define OCI_ONT_DELETE          0x8              
-#define OCI_ONT_ALTER           0x10              
-#define OCI_ONT_DROP            0x20               
-#define OCI_ONT_GENERIC         0x40
+#define OCI_ONT_INSERT                      0x2             
+#define OCI_ONT_UPDATE                      0x4              
+#define OCI_ONT_DELETE                      0x8              
+#define OCI_ONT_ALTER                       0x10              
+#define OCI_ONT_DROP                        0x20               
+#define OCI_ONT_GENERIC                     0x40
           
 /* database startup modes */
 
-#define OCI_DB_SPM_START        1
-#define OCI_DB_SPM_MOUNT        2
-#define OCI_DB_SPM_OPEN         4
-#define OCI_DB_SPM_FULL         OCI_DB_SPM_START | OCI_DB_SPM_MOUNT | OCI_DB_SPM_OPEN
+#define OCI_DB_SPM_START                    1
+#define OCI_DB_SPM_MOUNT                    2
+#define OCI_DB_SPM_OPEN                     4
+#define OCI_DB_SPM_FULL                     OCI_DB_SPM_START |                 \
+                                            OCI_DB_SPM_MOUNT |                 \
+                                            OCI_DB_SPM_OPEN
 
 /* database startup flags */
 
-#define OCI_DB_SPF_DEFAULT      0
-#define OCI_DB_SPF_FORCE        1
-#define OCI_DB_SPF_RESTRICT     2
+#define OCI_DB_SPF_DEFAULT                  0
+#define OCI_DB_SPF_FORCE                    1
+#define OCI_DB_SPF_RESTRICT                 2
 
 /* database shutdown modes */
  
-#define OCI_DB_SDM_SHUTDOWN     1
-#define OCI_DB_SDM_CLOSE        2
-#define OCI_DB_SDM_DISMOUNT     4
-#define OCI_DB_SDM_FULL         OCI_DB_SDM_SHUTDOWN | OCI_DB_SDM_CLOSE | OCI_DB_SDM_DISMOUNT
+#define OCI_DB_SDM_SHUTDOWN                 1
+#define OCI_DB_SDM_CLOSE                    2
+#define OCI_DB_SDM_DISMOUNT                 4
+#define OCI_DB_SDM_FULL                     OCI_DB_SDM_SHUTDOWN |              \
+                                            OCI_DB_SDM_CLOSE    |              \
+                                            OCI_DB_SDM_DISMOUNT
 
 /* database shutdown flags */
 
-#define OCI_DB_SDF_DEFAULT      0
-#define OCI_DB_SDF_TRANS        1
-#define OCI_DB_SDF_TRANS_LOCAL  2
-#define OCI_DB_SDF_IMMEDIATE    3
-#define OCI_DB_SDF_ABORT        4
+#define OCI_DB_SDF_DEFAULT                  0
+#define OCI_DB_SDF_TRANS                    1
+#define OCI_DB_SDF_TRANS_LOCAL              2
+#define OCI_DB_SDF_IMMEDIATE                3
+#define OCI_DB_SDF_ABORT                    4
 
 /* charset form types */
 
-#define OCI_CSF_NONE            0
-#define OCI_CSF_DEFAULT         1
-#define OCI_CSF_NATIONAL        2
+#define OCI_CSF_NONE                        0
+#define OCI_CSF_DEFAULT                     1
+#define OCI_CSF_NATIONAL                    2
 
 /* statement fetch mode */
 
-#define OCI_SFM_DEFAULT         0
-#define OCI_SFM_SCROLLABLE      0x08
+#define OCI_SFM_DEFAULT                     0
+#define OCI_SFM_SCROLLABLE                  0x08
 
 /* statement fetch direction */
 
-#define OCI_SFD_ABSOLUTE        0x20
-#define OCI_SFD_RELATIVE        0x40
+#define OCI_SFD_ABSOLUTE                    0x20
+#define OCI_SFD_RELATIVE                    0x40
 
 
 /* bind allocation mode */
 
-#define OCI_BAM_EXTERNAL        1
-#define OCI_BAM_INTERNAL        2
+#define OCI_BAM_EXTERNAL                    1
+#define OCI_BAM_INTERNAL                    2
 
 /* Integer sign flag */
 
-#define OCI_NUM_UNSIGNED        2 
+#define OCI_NUM_UNSIGNED                    2 
 
 /* External Integer types */
 
-#define OCI_NUM_SHORT           4
-#define OCI_NUM_INT             8
-#define OCI_NUM_BIGINT          16
+#define OCI_NUM_SHORT                       4
+#define OCI_NUM_INT                         8
+#define OCI_NUM_BIGINT                      16
 
-#define OCI_NUM_DOUBLE          64
+#define OCI_NUM_DOUBLE                      64
 
-#define OCI_NUM_USHORT          (OCI_NUM_SHORT  | OCI_NUM_UNSIGNED)
-#define OCI_NUM_UINT            (OCI_NUM_INT    | OCI_NUM_UNSIGNED)
-#define OCI_NUM_BIGUINT         (OCI_NUM_BIGINT | OCI_NUM_UNSIGNED)
+#define OCI_NUM_USHORT                      (OCI_NUM_SHORT  | OCI_NUM_UNSIGNED)
+#define OCI_NUM_UINT                        (OCI_NUM_INT    | OCI_NUM_UNSIGNED)
+#define OCI_NUM_BIGUINT                     (OCI_NUM_BIGINT | OCI_NUM_UNSIGNED)
 
 /* timestamp types */
 
-#define OCI_TIMESTAMP           1
-#define OCI_TIMESTAMP_TZ        2
-#define OCI_TIMESTAMP_LTZ       3
+#define OCI_TIMESTAMP                       1
+#define OCI_TIMESTAMP_TZ                    2
+#define OCI_TIMESTAMP_LTZ                   3
 
 /* interval types */
 
-#define OCI_INTERVAL_YM         1
-#define OCI_INTERVAL_DS         2
+#define OCI_INTERVAL_YM                     1
+#define OCI_INTERVAL_DS                     2
 
 /* long types */
 
-#define OCI_BLONG               1
-#define OCI_CLONG               2
+#define OCI_BLONG                           1
+#define OCI_CLONG                           2
 
 /* lob types */
-
-#define OCI_BLOB                1
-#define OCI_CLOB                2
-#define OCI_NCLOB               3
+            
+#define OCI_BLOB                            1
+#define OCI_CLOB                            2
+#define OCI_NCLOB                           3
 
 /* lob opening mode */
 
-#define OCI_LOB_READONLY        1
-#define OCI_LOB_READWRITE       2
+#define OCI_LOB_READONLY                    1
+#define OCI_LOB_READWRITE                   2
 
 /* file types */
 
-#define OCI_BFILE               1
-#define OCI_CFILE               2
+#define OCI_BFILE                           1
+#define OCI_CFILE                           2
 
 /* lob browsing mode */
 
-#define OCI_SEEK_SET            1
-#define OCI_SEEK_END            2
-#define OCI_SEEK_CUR            3
+#define OCI_SEEK_SET                        1
+#define OCI_SEEK_END                        2
+#define OCI_SEEK_CUR                        3
 
 /* type info types */
 
-#define OCI_TIF_TABLE           1
-#define OCI_TIF_VIEW            2
-#define OCI_TIF_TYPE            3
+#define OCI_TIF_TABLE                       1
+#define OCI_TIF_VIEW                        2
+#define OCI_TIF_TYPE                        3
 
 /* object type */
 
-#define OCI_OBJ_PERSISTENT      1
-#define OCI_OBJ_TRANSIENT       2
-#define OCI_OBJ_VALUE           3
+#define OCI_OBJ_PERSISTENT                  1
+#define OCI_OBJ_TRANSIENT                   2
+#define OCI_OBJ_VALUE                       3
 
 /* collection types */
 
-#define OCI_COLL_VARRAY         1
-#define OCI_COLL_NESTED_TABLE   2
+#define OCI_COLL_VARRAY                     1
+#define OCI_COLL_NESTED_TABLE               2
 
 /* pool types */
 
-#define OCI_POOL_CONNECTION     1
-#define OCI_POOL_SESSION        2
+#define OCI_POOL_CONNECTION                 1
+#define OCI_POOL_SESSION                    2
 
+/* AQ message state */
+    
+#define OCI_AMS_READY                       0    
+#define OCI_AMS_WAITING                     1 
+#define OCI_AMS_PROCESSED                   2          
+#define OCI_AMS_EXPIRED                     3   
 
-/* size constants */
+/* AQ sequence deviation    */
 
-#define OCI_SIZE_FORMAT         64
-#define OCI_SIZE_BUFFER         512
-#define OCI_SIZE_LONG           (64*1024)-1
-#define OCI_SIZE_DATE           45
-#define OCI_SIZE_TIMESTAMP      54
-#define OCI_SIZE_FORMAT_TODATE  14
-#define OCI_SIZE_NULL           4
-#define OCI_SIZE_PRECISION      10
-#define OCI_SIZE_ROWID          23
-#define OCI_SIZE_DIRECTORY      30
-#define OCI_SIZE_FILENAME       255
-#define OCI_SIZE_FORMAT_NUMS    40
-#define OCI_SIZE_FORMAT_NUML    65
-#define OCI_SIZE_OBJ_NAME       30
+#define OCI_ASD_BEFORE                      2  
+#define OCI_ASD_TOP                         3   
+
+/* AQ message visibility    */
+
+#define OCI_AMV_IMMEDIATE                   1   
+#define OCI_AMV_ON_COMMIT                   2  
+
+/* AQ dequeue mode    */
+
+#define OCI_ADM_BROWSE                      1   
+#define OCI_ADM_LOCKED                      2   
+#define OCI_ADM_REMOVE                      3         
+#define OCI_ADM_REMOVE_NODATA               4    
+
+/* AQ dequeue navigation */
+
+#define OCI_ADN_FIRST_MSG                   1    
+#define OCI_ADN_NEXT_TRANSACTION            2    
+#define OCI_ADN_NEXT_MSG                    3    
 
 /* direct path processing return status */
 
-#define OCI_DPR_COMPLETE        1
-#define OCI_DPR_ERROR           2
-#define OCI_DPR_FULL            3
-#define OCI_DPR_PARTIAL         4
-#define OCI_DPR_EMPTY           5
+#define OCI_DPR_COMPLETE                    1
+#define OCI_DPR_ERROR                       2
+#define OCI_DPR_FULL                        3
+#define OCI_DPR_PARTIAL                     4
+#define OCI_DPR_EMPTY                       5
 
 /* trace size constants */
 
-#define OCI_SIZE_TRACE_ID       64
-#define OCI_SIZE_TRACE_MODULE   48
-#define OCI_SIZE_TRACE_ACTION   32
-#define OCI_SIZE_TRACE_INF0     64
+#define OCI_SIZE_TRACE_ID                   64
+#define OCI_SIZE_TRACE_MODULE               48
+#define OCI_SIZE_TRACE_ACTION               32
+#define OCI_SIZE_TRACE_INF0                 64
 
 /* trace types */
 
-#define OCI_TRC_IDENTITY        1
-#define OCI_TRC_MODULE          2
-#define OCI_TRC_ACTION          3
-#define OCI_TRC_DETAIL          4
+#define OCI_TRC_IDENTITY                    1
+#define OCI_TRC_MODULE                      2
+#define OCI_TRC_ACTION                      3
+#define OCI_TRC_DETAIL                      4
 
 /* hash tables support */
 
-#define OCI_HASH_STRING         1
-#define OCI_HASH_INTEGER        2
-#define OCI_HASH_POINTER        3
-
-#define OCI_HASH_DEFAULT_SIZE   256
+#define OCI_HASH_STRING                     1
+#define OCI_HASH_INTEGER                    2
+#define OCI_HASH_POINTER                    3
 
 /* transaction types */
 
-#define OCI_TRS_NEW             0x00000001
-#define OCI_TRS_READONLY        0x00000100
-#define OCI_TRS_READWRITE       0x00000200
-#define OCI_TRS_SERIALIZABLE    0x00000400
-#define OCI_TRS_LOOSE           0x00010000
-#define OCI_TRS_TIGHT           0x00020000
-
-/* string constants */
-
-#define OCILIB_DRIVER_NAME      MT("OCILIB")
-#define OCI_STRING_NULL         MT("NULL")
-#define OCI_STRING_FORMAT_DATE  MT("YYYY-MM-DD")
-#define OCI_STRING_DEFAULT_PREC 3
-#define OCI_STRING_FORMAT_NUM   \
-       MT("FM99999999999999999999999999999999999990.999999999999999999999999")
-
-#ifdef _WINDOWS
-  #define OCI_CHAR_SLASH        '\\'
-#else
-  #define OCI_CHAR_SLASH        '/'
-#endif
+#define OCI_TRS_NEW                         0x00000001
+#define OCI_TRS_READONLY                    0x00000100
+#define OCI_TRS_READWRITE                   0x00000200
+#define OCI_TRS_SERIALIZABLE                0x00000400
+#define OCI_TRS_LOOSE                       0x00010000
+#define OCI_TRS_TIGHT                       0x00020000
 
 /* sql function codes */
 
@@ -1720,7 +1785,43 @@ typedef struct OCI_HashEntry {
 #define OCI_SFC_CREATE_OUTLINE              180
 #define OCI_SFC_DROP_OUTLINE                181
 #define OCI_SFC_UPDATE_INDEXES              182
-#define OCI_SFC_ALTER_OPERATOR              183                                    
+#define OCI_SFC_ALTER_OPERATOR              183    
+
+
+/* size constants */
+
+#define OCI_SIZE_FORMAT                     64
+#define OCI_SIZE_BUFFER                     512
+#define OCI_SIZE_LONG                       (64*1024)-1
+#define OCI_SIZE_DATE                       45
+#define OCI_SIZE_TIMESTAMP                  54
+#define OCI_SIZE_FORMAT_TODATE              14
+#define OCI_SIZE_NULL                       4
+#define OCI_SIZE_PRECISION                  10
+#define OCI_SIZE_ROWID                      23
+#define OCI_SIZE_DIRECTORY                  30
+#define OCI_SIZE_FILENAME                   255
+#define OCI_SIZE_FORMAT_NUMS                40
+#define OCI_SIZE_FORMAT_NUML                65
+#define OCI_SIZE_OBJ_NAME                   30
+
+#define OCI_HASH_DEFAULT_SIZE               256
+
+/* string constants */
+
+#define OCILIB_DRIVER_NAME                  MT("OCILIB")
+#define OCI_STRING_NULL                     MT("NULL")
+#define OCI_STRING_FORMAT_DATE              MT("YYYY-MM-DD")
+#define OCI_STRING_DEFAULT_PREC             3
+#define OCI_STRING_FORMAT_NUM   \
+       MT("FM99999999999999999999999999999999999990.999999999999999999999999")
+
+#ifdef _WINDOWS
+  #define OCI_CHAR_SLASH                    '\\'
+#else
+  #define OCI_CHAR_SLASH                    '/'
+#endif
+                                
 
 /**
  * @defgroup g_init Initializing the library
@@ -3255,18 +3356,18 @@ OCI_EXPORT unsigned int OCI_API OCI_TransactionGetTimeout
  *
  * First, call OCI_StatementCreate() to allocate a statement handle. Then :
  *
- * - Parse the SQL with OCI_Prepare()
- * - Execute it with OCI_Execute()
+ * - Prepare the SQL with OCI_Prepare()
+ * - Parse and execute it with OCI_Execute()
  *
  * These two steps can be done together by calling OCI_ExecuteStmt() that
- * parses and executes in one go.
+ * prepares and executes in one go.
  *
  * To find out if the statement has affected any rows, call OCI_GetAffectedRows()
  *
  * Finally, release the statement and its resources with OCI_StatementFree()
  *
  * @note
- * A statement can be parsed once and executed as many times as needed (see
+ * A statement can be prepared once and executed as many times as needed (see
  * Binding variables section)
  *
  * @note
@@ -3355,7 +3456,7 @@ OCI_EXPORT boolean OCI_API OCI_Execute
 
 /**
  * @brief
- * Parse and execute a SQL statement or PL/SQL block.
+ * Execute a SQL statement or PL/SQL block.
  *
  * @param stmt - Statement handle
  * @param sql  - SQL order - PL/SQL block
@@ -3372,7 +3473,40 @@ OCI_EXPORT boolean OCI_API OCI_ExecuteStmt
 
 /**
  * @brief
- * Return the last SQL or PL/SQL statement parsed by the statement
+ * Parse a SQL statement or PL/SQL block.
+ *
+ * @param stmt - Statement handle
+ * @param sql  - SQL order - PL/SQL block
+ *
+ * @note
+ * This call sends the SQL or PL/SQL command to the server for parsing only.
+ * The command is not executed.
+ * This call is only useful to check is a command is valid or not.
+ * 
+ * @note
+ * This call prepares the statement (internal call to OCI_Prepare()) and ask 
+ * the Oracle server to parse its SQL or PL/SQL command.
+ * OCI_Execute() can be call after OCI_Parse() in order to execute the 
+ * statement, which means that the server will reparse again the command.
+ *
+ * @warning
+ * Do not use OCI_Parse() unless you're only interested in the parsing result 
+ * because the statement will be parsed again when executed and thus leading to
+ * unnecessary server roundtrips and less performance
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ */
+
+OCI_EXPORT boolean OCI_API OCI_Parse
+(
+    OCI_Statement *stmt, 
+    const mtext *sql
+);
+
+/**
+ * @brief
+ * Return the last SQL or PL/SQL statement prepared or executed by the statement
  *
  * @param stmt - Statement handle
  *
@@ -12829,7 +12963,7 @@ OCI_EXPORT boolean OCI_PrepareFmt
 
 /**
  * @brief
- * Parse and execute a formatted SQL statement or PL/SQL block.
+ * Execute a formatted SQL statement or PL/SQL block.
  *
  * @param stmt - Statement handle
  * @param sql  - SQL statement
@@ -12846,6 +12980,43 @@ OCI_EXPORT boolean OCI_ExecuteStmtFmt
     const mtext *sql,
     ...
 );
+
+/**
+ * @brief
+ * Parse a formatted SQL statement or PL/SQL block.
+ *
+ * @param stmt - Statement handle
+ * @param sql  - SQL statement
+ * @param ...  - List of program values to format the SQL
+ *
+ * @note
+ * This call sends the SQL or PL/SQL command to the server for parsing only.
+ * The command is not executed.
+ * This call is only useful to check is a command is valid or not.
+ * 
+ * @note
+ * This call prepares the statement (internal call to OCI_Prepare()) and ask 
+ * the Oracle server to parse its SQL or PL/SQL command.
+ * OCI_Execute() can be call after OCI_ParseFmt() in order to execute the 
+ * statement, which means that the server will reparse again the command.
+ *
+ * @warning
+ * Do not use OCI_ParseFmt() unless you're only interested in the parsing result 
+ * because the statement will be parsed again when executed and thus leading to
+ * unnecessary server roundtrips and less performance
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_ParseFmt
+(
+    OCI_Statement *stmt,
+    const mtext *sql,
+    ...
+);
+
 
 /**
  * @}
@@ -13993,6 +14164,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorColumn
  * error
  *
  */
+
 OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
 (
     OCI_DirPath *dp
@@ -14002,6 +14174,1259 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  * @}
  */
 
+/**
+ * @defgroup g_aq Oracle Advanced Queuing (A/Q)
+ * @{
+ *
+ * OCILIB supports Oracle Advanced Queues features
+ *
+ * Let's Oracle talk about this features !
+ * 
+ * @par Oracle Queues (from Oracle Streams - Advanced Queuing User's Guide)
+ *
+ * Oracle Streams AQ provides database-integrated message queuing functionality.
+ * It is built on top of Oracle Streams and leverages the functions of Oracle 
+ * Database so that messages can be stored persistently, propagated between
+ * queues on different computers and databases, and transmitted using Oracle 
+ * Net Services and HTTP(S).
+ * Because Oracle Streams AQ is implemented in database tables, all operational
+ * benefits of high availability, scalability, and reliability are also
+ * applicable to queue data. Standard database features such as recovery, 
+ * restart, and security are supported by Oracle Streams AQ. You can use 
+ * database development and management tools such as Oracle Enterprise Manager 
+ * to monitor queues. Like other database tables, queue tables can be imported 
+ * and exported.
+ *
+ * @par OCILIB implementation
+ *
+ * OCILIB provides the full C implementation of Advanced Queues available in
+ * Oracle OCI and proposes the following datatypes :
+ *  - OCI_Msg     : Implementation of message to enqueue/dequeue from/to queues
+ *  - OCI_Enqueue : Implementation of enqueuing process
+ *  - OCI_Dequeue : Implementation of dequeuing process
+ *  - OCI_Agent   : Implementation of Advanced queues Agents
+ *
+ * @par Example
+ * @include queue.c
+ *
+ */
+
+/**
+ * @brief
+ *
+ * @param typinf - Type info handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT OCI_Msg * OCI_API OCI_MsgCreate
+(
+    OCI_TypeInfo *typinf
+);
+
+/**
+ * @brief
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgFree
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT OCI_Object * OCI_API OCI_MsgGetObject
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT void * OCI_API OCI_MsgGetRaw
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ *
+ * @param msg  - Message handle
+ * @param raw  - Message Raw data
+ * @param size - Message Raw data size
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgSetRaw
+(
+    OCI_Msg *msg, 
+    void *raw, 
+    unsigned int size
+);
+
+/**
+ * @brief
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT int OCI_API OCI_MsgGetAttemptCount
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT int OCI_API OCI_MsgGetEnqueueDelay
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ *
+ * @param msg   - Message handle
+ * @param value - Enqueue delay
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgSetEnqueueDelay
+(
+    OCI_Msg *msg, 
+    int value
+);
+
+/**
+ * @brief
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT OCI_Date * OCI_API OCI_MsgGetEnqueueTime
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT int OCI_API OCI_MsgGetExpiration
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ *
+ * @param msg   - Message handle
+ * @param value - Expiration time
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgSetExpiration
+(
+    OCI_Msg *msg, 
+    int value
+);
+
+
+/**
+ * @brief
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+/*
+#define OCI_AMS_READY           0    the message is ready to be processed
+#define OCI_AMS_WAITING         1    the message delay has not yet completed 
+#define OCI_AMS_PROCESSED       2    the message has been processed 
+#define OCI_AMS_EXPIRED         3    message has moved to exception queue 
+
+*/
+
+OCI_EXPORT unsigned int OCI_API OCI_MsgGetState
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT int OCI_API OCI_MsgGetPriority
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ *
+ * @param msg   - Message handle
+ * @param value - Message priority
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgSetPriority
+(
+    OCI_Msg *msg, 
+    int value
+);
+
+/**
+ * @brief
+ *
+ * @param msg    - Message handle
+ * @param msg_id - Message ID
+ * @param len    - Message ID length
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgGetOriginalID
+(
+    OCI_Msg *msg,
+    void *msg_id, 
+    unsigned int len
+);
+
+/**
+ * @brief
+ *
+ * @param msg    - Message handle
+ * @param msg_id - Message ID
+ * @param len    - Message ID length
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgSetOriginalID
+(
+    OCI_Msg *msg, 
+    const void *msg_id, 
+    unsigned int len
+);
+
+/**
+ * @brief
+ *
+ * @param msg    - Message handle
+ * @param sender - Message sender
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgSetSender
+(
+    OCI_Msg *msg, 
+    OCI_Agent *sender
+);
+
+/**
+ * @brief
+ *
+ * @param msg       - Message handle
+ * @param consumers - Recipients list (array of agent handles)
+ * @param count     - Number of recipients
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgSetConsumers
+(
+    OCI_Msg *msg, 
+    OCI_Agent **consumers, 
+    unsigned int count
+);
+
+/**
+ * @brief
+ *
+ * @param msg    - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_MsgGetCorrelation
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ *
+ * @param msg         - Message handle
+ * @param correlation - Message correlation text
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgSetCorrelation
+(
+    OCI_Msg *msg,
+    const mtext *correlation
+);
+
+/**
+ * @brief
+ *
+ * @param msg   - Message handle
+ * @param queue - Exception queue name
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgSetExceptionQueue
+(
+    OCI_Msg *msg, 
+    const mtext *queue
+);
+
+/**
+ * @brief
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_MsgGetExceptionQueue
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_MsgGetTransactionGroup
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ * Create a Enqueue object for the given queue
+ *
+ * @param typinf - Type info handle
+ * @param name   - Queue name
+ *
+ * @note
+ * OCILIB supports 2 type of message payload :
+ * - Oracle types (UDT)
+ * - RAW data
+ *
+ * @note
+ * Oracle Type AnyData is not supported in the current version of OCILIB
+ *
+ * @note
+ * the parameter 'typinf' indicates the type of payload to enqueue to the 
+ * given queue :
+ * - For object payload, retrieve the object type information handle with
+ *   OCI_TypeInfoGet() using the object type name
+ * - For RAW payload, you MUST pass the object type information retrieved with 
+ *   OCI_TypeInfoGet() using "SYS.RAW" as object type name
+ *
+ * @return
+ * Return the Enqueue handle on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT OCI_Enqueue * OCI_API OCI_EnqueueCreate
+(
+    OCI_TypeInfo *typinf,
+    const mtext *name
+);
+
+/**
+ * @brief
+ * Free a Enqueue object
+ *
+ * @param enqueue - Enqueue handle
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_EnqueueFree
+(
+    OCI_Enqueue *enqueue
+);
+
+/**
+ * @brief
+ * Enqueue a message on queue associated to the Enqueue object
+ *
+ * @param enqueue - Enqueue handle
+ * @param msg     - Message handle to enqueue
+ *
+ * @return
+ * Message handle on success otherwise NULL on failure or on timeout
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_EnqueuePut
+(
+    OCI_Enqueue *enqueue,
+    OCI_Msg *msg
+);
+
+
+ /**
+ * @brief
+ * Set the enqueing sequence of messages to put in the queue
+ *
+ * @param enqueue  - Enqueue handle
+ * @param sequence - enqueuing sequence
+ *
+ * @note
+ * Possible values for parameter 'sequence' :
+ *   - OCI_ASD_BEFORE : enqueue message before another message
+ *   - OCI_ASD_TOP    : enqueue message before all messages
+ *
+ * @note
+ * Default value is OCI_ASD_TOP
+ * 
+ * @note
+ * if the parameter 'sequence' is set to OCI_ASD_BEFORE, the application must
+ * call OCI_EnqueueSetRelativeMsgID() before enqueuing the next message in 
+ * the queue.
+ * 
+ * @note
+ * In order to stop enqueuing message using a sequence deviation, call 
+ * OCI_EnqueueSetSequenceDeviation() with the value OCI_ASD_TOP
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_EnqueueSetSequenceDeviation
+(
+    OCI_Enqueue *enqueue,
+    unsigned int sequence
+);
+
+/**
+ * @brief
+ * Return the sequence deviation of messages to enqueue to the queue
+ * 
+ * @param enqueue - Enqueue handle
+ *
+ * @note
+ * see OCI_EnqueueSetSequenceDeviation() for more details
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
+(
+    OCI_Enqueue *enqueue
+);
+
+/**
+ * @brief
+ * Set whether the new message is enqueued as part of the current transaction
+ *
+ * @param enqueue    - Enqueue handle
+ * @param visibility - Equeueing mode
+ *
+ * @note
+ * Possible values for parameter 'mode' :
+ *   - OCI_AMV_IMMEDIATE : enqueue is an independent transaction
+ *   - OCI_AMV_ON_COMMIT : enqueue is part of current transaction
+ *
+ * @note
+ * Default value is OCI_AMV_ON_COMMIT
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_EnqueueSetVisibility
+(
+    OCI_Enqueue *enqueue,
+    unsigned int visibility
+);
+
+/**
+ * @brief
+ * Get the enqueueing/locking behavior
+ * 
+ * @param enqueue - Enqueue handle
+ *
+ * @note
+ * see OCI_EnqueueSetVisibility() for more details
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_EnqueueGetVisibility
+(
+    OCI_Enqueue *enqueue
+);
+
+/**
+ * @brief
+ * Set a message identifier to use for enqueuing messages using a sequence deviation
+ * 
+ * @param enqueue - Enqueue handle
+ * @param msg_id  - message identifier
+ * @param len     - message identifier length
+ *
+ * @note
+ * This call is only valid if OCI_EnqueueSetSequenceDeviation() has been called
+ * with the value  OCI_ASD_BEFORE
+ *
+ * @note
+ * see OCI_EnqueueSetSequenceDeviation() for more details
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_EnqueueSetRelativeMsgID
+(
+    OCI_Enqueue *enqueue, 
+    const void *msg_id,
+    unsigned int len
+);
+
+/**
+ * @brief
+ * Get the current associated message identifier used for enqueuing messages 
+ * using a sequence deviation
+ * 
+ * @param enqueue - Enqueue handle
+ * @param msg_id  - buffer to receive the message identifier
+ * @param len     - buffer max length
+ *
+ * @note
+ * see OCI_EnqueueGetRelativeMsgID() for more details
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_EnqueueGetRelativeMsgID
+(
+    OCI_Enqueue *enqueue, 
+    void *msg_id,
+    unsigned int len
+);
+
+/**
+ * @brief
+ * Create a Dequeue object for the given queue
+ *
+ * @param typinf - Type info handle
+ * @param name   - Queue name
+ *
+ * @note
+ * OCILIB supports 2 type of message payload :
+ * - Oracle types (UDT)
+ * - RAW data
+ *
+ * @note
+ * Oracle Type AnyData is not supported in the current version of OCILIB
+ *
+ * @note
+ * the parameter 'typinf' indicates the type of payload to dequeue from the 
+ * given queue :
+ * - For object payload, retrieve the object type information handle with
+ *   OCI_TypeInfoGet() using the object type name
+ * - For RAW payload, you MUST pass the object type information retrieved with 
+ *   OCI_TypeInfoGet() using "SYS.RAW" as object type name
+ *
+ * @return
+ * Return the Dequeue handle on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT OCI_Dequeue * OCI_API OCI_DequeueCreate
+(
+    OCI_TypeInfo *typinf,
+    const mtext *name
+);
+
+/**
+ * @brief
+ * Free a Dequeue object
+ *
+ * @param dequeue - Dequeue handle
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueFree
+(
+    OCI_Dequeue *dequeue
+);
+
+/**
+ * @brief
+ * Dequeue messages from the given queue
+ *
+ * @param dequeue - Dequeue handle
+ *
+ * @return
+ * Message handle on success otherwise NULL on failure or on timeout
+ *
+ */
+
+OCI_EXPORT OCI_Msg * OCI_API OCI_DequeueGet
+(
+    OCI_Dequeue *dequeue
+);
+
+/**
+ * @brief
+ * Set the current consumer name to retrieve message for.
+ * 
+ * @param dequeue  - Dequeue handle
+ * @param consumer - consumer name
+ *
+ * @warning
+ * If a queue is not set up for multiple consumers, OCI_DequeueSetConsumer() 
+ * should not be called or called with parameter 'consumer' set to NULL
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueSetConsumer
+(
+    OCI_Dequeue *dequeue, 
+    const mtext *consumer
+);
+
+/**
+ * @brief
+ * Get the current consumer name associated with the dequeueing process.
+ * 
+ * @param dequeue - Dequeue handle
+ *
+ * @note
+ * see OCI_DequeueSetConsumer() for more details
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_DequeueGetConsumer
+(
+    OCI_Dequeue *dequeue
+);
+
+/**
+ * @brief
+ * set the correlation identifier of the message to be dequeued
+ *
+ * @param dequeue - Dequeue handle
+ * @param pattern - correlation identifier
+ *
+ * @note
+ * Special pattern matching characters, such as "%" or "_" can be used. 
+ * If more than one message satisfies the pattern, the order of dequeuing is
+ * undetermined.
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueSetCorrelation
+(
+    OCI_Dequeue *dequeue,
+    const mtext *pattern
+);
+
+/**
+ * @brief
+ * Get the correlation identifier of the message to be dequeued
+ * 
+ * @param dequeue - Dequeue handle
+ *
+ * @note
+ * see OCI_DequeueSetCorrelation() for more details
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_DequeueGetCorrelation
+(
+    OCI_Dequeue *dequeue
+);
+
+/**
+ * @brief
+ * Set the message identifier of the message to be dequeued
+ *
+ * @param dequeue - Dequeue handle
+ * @param msg_id  - message identitier
+ * @param len     - size of the message identitier
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueSetRelativeMsgID
+(
+    OCI_Dequeue *dequeue,
+    const void *msg_id, 
+    unsigned int len
+);
+
+/**
+ * @brief
+ * Get the message identifier of the message to be dequeued
+ * 
+ * @param dequeue - Dequeue handle
+ * @param msg_id  - message identitier
+ * @param len     - size of the message identitier
+ *
+ * @note
+ * see OCI_DequeueSetRelativeMsgID() for more details
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueGetRelativeMsgID
+(
+    OCI_Dequeue *dequeue, 
+    void *msg_id,
+    unsigned int len
+);
+
+/**
+ * @brief
+ * Set whether the new message is dequeued as part of the current transaction
+ *
+ * @param dequeue    - Dequeue handle
+ * @param visibility - dequeueing mode
+ *
+ * @warning
+ * The visibility parameter is ignored when using the OCI_ADM_BROWSE dequeuing
+ * mode (see OCI_DequeueSetMode())
+ *
+ * @note
+ * Possible values for parameter 'mode' :
+ *   - OCI_AMV_IMMEDIATE : dequeue is an independent transaction
+ *   - OCI_AMV_ON_COMMIT : dequeue is part of current transaction
+ *
+ * @note
+ * Default value is OCI_AMV_ON_COMMIT
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueSetVisibility
+(
+    OCI_Dequeue *dequeue,
+    unsigned int visibility
+);
+
+/**
+ * @brief
+ * Get the dequeueing/locking behavior
+ * 
+ * @param dequeue - Dequeue handle
+ *
+ * @note
+ * see OCI_DequeueSetVisibility() for more details
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_DequeueGetVisibility
+(
+    OCI_Dequeue *dequeue
+);
+
+/**
+ * @brief
+ * Set the dequeueing/locking behavior
+ *
+ * @param dequeue - Dequeue handle
+ * @param mode    - dequeueing mode
+ *
+ * @note
+ * Possible values for parameter 'mode' :
+ *   - OCI_ADM_BROWSE        : read message without acquiring a lock 
+ *   - OCI_ADM_LOCKED        : read and obtain write lock on message 
+ *   - OCI_ADM_REMOVE        : read the message and delete it 
+ *   - OCI_ADM_REMOVE_NODATA : confirm receipt of the message, but do not
+ *                             deliver the actual message content 
+ *
+ * @note
+ * Default value is OCI_ADM_REMOVE
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueSetMode
+(
+    OCI_Dequeue *dequeue,
+    unsigned int mode
+);
+
+/**
+ * @brief
+ * Get the dequeueing/locking behavior
+ * 
+ * @param dequeue - Dequeue handle
+ *
+ * @note
+ * see OCI_DequeueSetMode() for more details
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_DequeueGetMode
+(
+    OCI_Dequeue *dequeue
+);
+
+/**
+ * @brief
+ * Set the position of messages to be retrieved.
+ *
+ * @param dequeue  - Dequeue handle
+ * @param position - navigation position
+ *
+ * @note
+ * The dequeuing uses the following sequence :
+ *   - find messages using the navigation position 
+ *   - apply search criterias (message correlation)
+ *   - get message
+ *
+ * @note
+ * Possible values for parameter 'position' :
+ *   - OCI_ADN_FIRST_MSG        : retrieves the first message which is available
+ *   - OCI_ADN_NEXT_MSG         : retrieves the next message which is available 
+ *   - OCI_ADN_NEXT_TRANSACTION : skips the remainder of the current transaction 
+ *                                group (if any) and retrieves the first message
+ *                                of the next transactiong roup.
+ *
+ * @note
+ * Default value is OCI_ADN_NEXT_MSG
+ *
+ * @warnning
+ * OCI_ADN_NEXT_TRANSACTION can only be used if message grouping is enabled for
+ * the given queue.
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueSetNavigation
+(
+    OCI_Dequeue *dequeue, 
+    unsigned int position
+);
+
+/**
+ * @brief
+ * Return the navigation position of messages to retrieve from the queue
+ * 
+ * @param dequeue - Dequeue handle
+ *
+ * @note
+ * see OCI_DequeueSetNavigation() for more details
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_DequeueGetNavigation
+(
+    OCI_Dequeue *dequeue
+);
+
+/**
+ * @brief
+ * set the time that OCIDequeueGet() waits for messages if no messages are
+ * currently available
+ *
+ * @param dequeue - Dequeue handle
+ * @param timeout - timeout in seconds
+ *
+ *@note
+ * - Any positive values in seconds are valid.
+ * - The value 0  is accepted and means OCIDequeueGet() does not wait for 
+ *   messages and returns immediately if no messages are available
+ * - The value -1 is accepted and means OCIDequeueGet() waits for ever (until
+ *   a message is available in the queue)
+ *
+ * @note
+ * Default value is -1 (wait for ever)
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueSetWaitTime
+(
+    OCI_Dequeue *dequeue, 
+    int timeout
+);
+
+/**
+ * @brief
+ * Return the time that OCIDequeueGet() waits for messages if no messages are
+ * currently available
+ * 
+ * @param dequeue - Dequeue handle
+ *
+ * @note
+ * see OCI_DequeueSetWaitTime() for more details
+ *
+ */
+
+OCI_EXPORT int OCI_API OCI_DequeueGetWaitTime
+(
+    OCI_Dequeue *dequeue
+);
+
+/**
+ * @brief
+ * Set the Agent list to listen to message for
+ *
+ * @param dequeue   - Dequeue handle
+ * @param consumers - Agent handle array
+ * @param count     - Number of agents the the array
+ *
+ * @warning
+ *
+ * @note
+ *
+ * @return
+ * return TRUE on success otherwise FALSE
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueSetAgentList
+(
+    OCI_Dequeue *dequeue, 
+    OCI_Agent **consumers, 
+    unsigned int count
+);
+
+/**
+ * @brief
+ * Listen for messages that match any recipient of the associated Agent list
+ *
+ * @param dequeue - Dequeue handle
+ * @param timeout - Timeout in second
+ *
+ * @note
+ * If an Agent handle is returned, messages are available for this agent.
+ * In order to retrieve its messsages :
+ * - call OCI_DequeueSetConsumer() with the name of agent using OCI_AgentGetName()
+ * - call OCI_DequeueGet() to dequeue it's pending messages
+ *
+ * @warning
+ * The return value is valid only until:
+ * - OCIDequeueListen() is called again
+ * - OCI_DequeueFree(à is called to free the Dequeue object
+ * So Do not store the handle value across calls to OCIDequeueListen()
+ *
+ * @return
+ * An Agent handle for who messages are available on success otherwise NULL
+ */
+
+OCI_EXPORT OCI_Agent * OCI_API OCI_DequeueListen
+(
+    OCI_Dequeue *dequeue,
+    int timeout
+);
+
+/**
+ * @brief
+ * Create an AQ agent object
+ *
+ * @param con     - Connection handle
+ * @param name    - Agent name 
+ * @param address - Agent address
+ *
+ * @note
+ * An AQ agent object is :
+ * - used as recipient information when enqueuing a message
+ * - used as sender information when dequeuing a message
+ * - used for listening message only from identified senders
+ *
+ * @return
+ * AQ agent handle on success otherwise NULL
+ *
+ */
+
+OCI_EXPORT OCI_Agent * OCI_API OCI_AgentCreate
+(
+    OCI_Connection *con, 
+    const mtext *name, 
+    const mtext *address
+);
+
+/**
+ * @brief
+ * Free an AQ agent object
+ *
+ * @param agent - AQ agent handle 
+ *
+ * @warning
+ * Only AQ agent handle created with OCI_AgentCreate() should be freed by
+ * OCI_AgentFree()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_AgentFree
+(
+    OCI_Agent *agent
+);
+
+/**
+ * @brief
+ * Set the given AQ agent name
+ *
+ * @param agent - AQ agent handle 
+ * @param name  - AQ agent name 
+ *
+ * @note
+ * the AQ agent name is used to identified an message send or recipient when
+ * enqueuing/dequeuing a message
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_AgentSetName
+(
+    OCI_Agent *agent, 
+    const mtext *name
+);
+
+/**
+ * @brief
+ * Get the given AQ agent name
+ *
+ * @param agent - AQ agent handle 
+ *
+ * @return
+ * AQ agent name on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_AgentGetName
+(
+    OCI_Agent *agent
+);
+
+/**
+ * @brief
+ * Set the given AQ agent address
+ *
+ * @param agent   - AQ agent handle 
+ * @param address - AQ agent address 
+ *
+ * @note
+ * the parameter 'address' must be of the form [schema.]queue_name[@dblink].
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_AgentSetAddress
+(
+    OCI_Agent *agent, const mtext *address
+);
+
+/**
+ * @brief
+ * Get the given AQ agent address
+ *
+ * @param agent - AQ agent handle 
+ *
+ * @note
+ * See OCI_AgentSetAddress()
+ *
+ * @return
+ * AQ agent address on success otherwise NULL on failure
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_AgentGetAddress
+(
+    OCI_Agent *agent
+);
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup g_subscription Database Change notifications (DCN or CQN)
@@ -15085,11 +16510,11 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 #define OCI_ConnPoolGetMax          OCI_PoolGetMax
 #define OCI_ConnPoolGetIncrement    OCI_PoolGetIncrement  
 
-/* macro added in version 3.7.1 */
+/* macro added in version 3.8.0 */
 
 #define OCI_ObjectGetTimeStamp      OCI_ObjectGetTimestamp
 #define OCI_ElemGetTimeStamp        OCI_ElemGetTimestamp
-#define OCI_TimestampSysTimeStamp   OCI_TimestampSysTimestamp    
+#define OCI_TimestampSysTimeStamp   OCI_TimestampSysTimestamp  
 
 #endif    /* OCILIB_H_INCLUDED */
 

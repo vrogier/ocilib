@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_api.h, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: oci_api.h, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_API_H_INCLUDED 
@@ -1513,6 +1513,46 @@ typedef sword (*OCIITERPREV)
     dvoid **elem, 
     dvoid **elemind, 
     boolean *boc    
+);
+
+typedef sword (*OCIAQENQ)
+(
+    OCISvcCtx *svchp,
+    OCIError *errhp,
+    OraText *queue_name,
+    OCIAQEnqOptions *enqopt,
+    OCIAQMsgProperties *msgprop,
+    OCIType *payload_tdo,
+    dvoid **payload, 
+    dvoid **payload_ind, 
+    OCIRaw **msgid,
+    ub4 flags
+); 
+
+typedef sword (*OCIAQDEQ)
+(
+    OCISvcCtx *svchp, 
+    OCIError *errhp, 
+    OraText *queue_name,
+    OCIAQDeqOptions *deqopt, 
+    OCIAQMsgProperties *msgprop,
+    OCIType *payload_tdo, 
+    dvoid **payload,
+    dvoid **payload_ind, 
+    OCIRaw **msgid,
+    ub4 flags
+); 
+
+
+typedef sword (*OCIAQLISTEN)
+(
+    OCISvcCtx *svchp,
+    OCIError *errhp, 
+    OCIAQAgent **agent_list, 
+    ub4 num_agents,
+    sb4 wait,
+    OCIAQAgent **agent,
+    ub4 flags
 );
 
 /* API introduced in 8.1 */

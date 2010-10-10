@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: statement.c, v 3.7.1 2010-07-30 13:09 Vincent Rogier $
+ * $Id: statement.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -849,35 +849,11 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
     
     /* set charset form */
 
-    if ((bnd->type == OCI_CDT_LOB) && (bnd->subtype == OCI_NCLOB))
+    if (res == TRUE)
     {
-        ub1 csfrm = SQLCS_NCHAR;
-
-        OCI_CALL1
-        (
-            res, bnd->stmt->con, bnd->stmt,
-
-            OCIAttrSet((dvoid *) bnd->buf.handle,
-                       (ub4    ) OCI_HTYPE_BIND,
-                       (dvoid *) &csfrm,
-                       (ub4    ) sizeof(csfrm),
-                       (ub4    ) OCI_ATTR_CHARSET_FORM,
-                       bnd->stmt->con->err)
-        )
-    }
-
-    /* set charset ID */
-
-    if ((bnd->type == OCI_CDT_TEXT)  || 
-       ((bnd->type == OCI_CDT_LOB)   && (bnd->subtype != OCI_BLOB))  ||
-       ((bnd->type == OCI_CDT_LONG)  && (bnd->subtype != OCI_BLONG)))
-    {
-
-     #ifdef OCI_CHARSET_MIXED
-
-        /* setup Unicode mode for user data on mixed builds */
+        if ((bnd->type == OCI_CDT_LOB) && (bnd->subtype == OCI_NCLOB))
         {
-            ub2 csid = OCI_UTF16ID;
+            ub1 csfrm = SQLCS_NCHAR;
 
             OCI_CALL1
             (
@@ -885,16 +861,47 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
 
                 OCIAttrSet((dvoid *) bnd->buf.handle,
                            (ub4    ) OCI_HTYPE_BIND,
-                           (dvoid *) &csid,
-                           (ub4    ) sizeof(csid),
-                           (ub4    ) OCI_ATTR_CHARSET_ID,
+                           (dvoid *) &csfrm,
+                           (ub4    ) sizeof(csfrm),
+                           (ub4    ) OCI_ATTR_CHARSET_FORM,
                            bnd->stmt->con->err)
             )
         }
-
-    #endif
-
     }
+
+    /* set charset ID */
+
+    if (res == TRUE)
+    {
+        if ((bnd->type == OCI_CDT_TEXT)  || 
+           ((bnd->type == OCI_CDT_LOB)   && (bnd->subtype != OCI_BLOB))  ||
+           ((bnd->type == OCI_CDT_LONG)  && (bnd->subtype != OCI_BLONG)))
+        {
+
+         #ifdef OCI_CHARSET_MIXED
+
+            /* setup Unicode mode for user data on mixed builds */
+            {
+                ub2 csid = OCI_UTF16ID;
+
+                OCI_CALL1
+                (
+                    res, bnd->stmt->con, bnd->stmt,
+
+                    OCIAttrSet((dvoid *) bnd->buf.handle,
+                               (ub4    ) OCI_HTYPE_BIND,
+                               (dvoid *) &csid,
+                               (ub4    ) sizeof(csid),
+                               (ub4    ) OCI_ATTR_CHARSET_ID,
+                               bnd->stmt->con->err)
+                )
+            }
+
+        #endif
+
+        }
+    }
+
 /*
     this call was removed in v3.6.0
 
@@ -939,6 +946,14 @@ boolean OCI_BindData(OCI_Statement *stmt, void *data, ub4 size,
             index = (int) stmt->nb_rbinds;
 
             OCI_HashAddInt(stmt->map, name, -index);
+        }
+    }
+
+    if (res == FALSE)
+    {
+        if (bnd != NULL)
+        {
+            OCI_BindFree(bnd);
         }
     }
 
@@ -1353,7 +1368,7 @@ boolean OCI_StatementReset(OCI_Statement *stmt)
     stmt->bind_array  = FALSE;
 
     stmt->nb_iters      = 1;
-    stmt->nb_iters_init = 0;
+    stmt->nb_iters_init = 1;
     stmt->dynidx        = 0;
     stmt->err_pos       = 0;
 
@@ -1531,6 +1546,131 @@ boolean OCI_BatchErrorInit(OCI_Statement *stmt)
     return res;
 }
 
+/* ------------------------------------------------------------------------ *
+ * OCI_ExecuteInternal
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_ExecuteInternal(OCI_Statement *stmt, ub4 mode)
+{
+    boolean res   = TRUE;
+    sword status  = OCI_SUCCESS;
+    ub4 iters     = 0;
+
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
+    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_CLOSED, FALSE);
+
+    /* set up iters and mode values for execution */
+
+    if (stmt->type == OCI_CST_SELECT)
+        mode  = stmt->exec_mode;
+    else
+    {
+        iters = stmt->nb_iters;
+
+        /* for array DML, use batch error mode */
+
+        if (iters > 1)
+        {
+            mode = mode | OCI_BATCH_ERRORS;
+        }
+    }
+
+    /* reset batch errors */
+
+    res = OCI_BatchErrorClear(stmt);
+
+    /* check bind objects for updating their null indicator status */
+
+    res = OCI_BindCheck(stmt);
+
+    /* check current resultsets */
+
+    if ((res == TRUE) && (stmt->rsts != NULL))
+    {
+        /* resultsets are freed before any prepare operations.
+           So, if we got ones here, it means the same SQL order 
+           is re-executed */
+
+       if (stmt->type == OCI_CST_SELECT)
+       {
+            /* just reinitialize the current resultet */
+           
+           res = OCI_ResultsetInit(stmt->rsts[0]);
+       }
+       else
+       {
+            /* Must free previous resulsets for 'returning into'
+               SQL orders that can produce multiple resulsets */
+
+           res = OCI_ReleaseResultsets(stmt);
+       }
+    }
+
+    /* Oracle execute call */
+
+    status = OCIStmtExecute(stmt->con->cxt, stmt->stmt, stmt->con->err, iters,
+                            (ub4) 0, (OCISnapshot *) NULL, (OCISnapshot *) NULL,
+                            mode);
+
+    /* reset input binds indicators status even if execution failed */
+
+    OCI_BindReset(stmt);
+
+    /* check result */
+
+    res = ((status == OCI_SUCCESS) ||
+           (status == OCI_SUCCESS_WITH_INFO) || 
+           (status == OCI_NEED_DATA));
+
+    if (status == OCI_SUCCESS_WITH_INFO)
+    {
+        OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt, TRUE);
+    }
+
+    /* on batch mode, check if any error occured */
+
+    if (mode & OCI_BATCH_ERRORS)
+    {
+        /* build batch error list if the statement is array DML */
+
+        OCI_BatchErrorInit(stmt);
+
+        if (stmt->batch != NULL)
+            res = (stmt->batch->count == 0);
+    }
+
+    /* update status on success */
+
+    if (res == TRUE)
+    {
+        stmt->status = OCI_STMT_EXECUTED;
+
+        /* commit if necessary */
+
+        if (stmt->con->autocom == TRUE)
+            OCI_Commit(stmt->con);
+    }
+    else
+    {
+        /* get parse error position type */
+
+        /* (one of the rare OCI call not enclosed with a OCI_CALLX macro ...) */
+
+
+        OCIAttrGet((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT,
+                   (dvoid *) &stmt->err_pos, (ub4 *) NULL,
+                   (ub4) OCI_ATTR_PARSE_ERROR_OFFSET, stmt->con->err);
+
+        /* raise exception */
+
+        OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt, FALSE);
+    }
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
 /* ************************************************************************ *
  *                            PUBLIC FUNCTIONS
  * ************************************************************************ */
@@ -1680,124 +1820,7 @@ boolean OCI_API OCI_Prepare(OCI_Statement *stmt, const mtext *sql)
 
 boolean OCI_API OCI_Execute(OCI_Statement *stmt)
 {
-    boolean res   = TRUE;
-    sword status  = OCI_SUCCESS;
-    ub4 iters     = 0;
-    ub4 mode      = OCI_DEFAULT;
-
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
-    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_CLOSED, FALSE);
-
-    /* set up iters and mode values for execution */
-
-    if (stmt->type == OCI_CST_SELECT)
-        mode  = stmt->exec_mode;
-    else
-    {
-        iters = stmt->nb_iters;
-
-        /* for array DML, use batch error mode */
-
-        if (iters > 1)
-        {
-            mode = mode | OCI_BATCH_ERRORS;
-        }
-    }
-
-    /* reset batch errors */
-
-    res = OCI_BatchErrorClear(stmt);
-
-    /* check bind objects for updating their null indicator status */
-
-    res = OCI_BindCheck(stmt);
-
-    /* check current resultsets */
-
-    if ((res == TRUE) && (stmt->rsts != NULL))
-    {
-        /* resultsets are freed before any prepare operations.
-           So, if we got ones here, it means the same SQL order 
-           is re-executed */
-
-       if (stmt->type == OCI_CST_SELECT)
-       {
-            /* just reinitialize the current resultet */
-           
-           res = OCI_ResultsetInit(stmt->rsts[0]);
-       }
-       else
-       {
-            /* Must free previous resulsets for 'returning into'
-               SQL orders that can produce multiple resulsets */
-
-           res = OCI_ReleaseResultsets(stmt);
-       }
-    }
-
-    /* Oracle execute call */
-
-    status = OCIStmtExecute(stmt->con->cxt, stmt->stmt, stmt->con->err, iters,
-                            (ub4) 0, (OCISnapshot *) NULL, (OCISnapshot *) NULL,
-                            mode);
-
-    /* reset input binds indicators status even if execution failed */
-
-    OCI_BindReset(stmt);
-
-    /* check result */
-
-    res = ((status == OCI_SUCCESS) ||
-           (status == OCI_SUCCESS_WITH_INFO) || 
-           (status == OCI_NEED_DATA));
-
-    if (status == OCI_SUCCESS_WITH_INFO)
-    {
-        OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt, TRUE);
-    }
-
-    /* on batch mode, check if any error occured */
-
-    if (mode & OCI_BATCH_ERRORS)
-    {
-        /* build batch error list if the statement is array DML */
-
-        OCI_BatchErrorInit(stmt);
-
-        if (stmt->batch != NULL)
-            res = (stmt->batch->count == 0);
-    }
-
-    /* update status on success */
-
-    if (res == TRUE)
-    {
-        stmt->status = OCI_STMT_EXECUTED;
-
-        /* commit if necessary */
-
-        if (stmt->con->autocom == TRUE)
-            OCI_Commit(stmt->con);
-    }
-    else
-    {
-        /* get parse error position type */
-
-        /* (one of the rare OCI call not enclosed with a OCI_CALLX macro ...) */
-
-
-        OCIAttrGet((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT,
-                   (dvoid *) &stmt->err_pos, (ub4 *) NULL,
-                   (ub4) OCI_ATTR_PARSE_ERROR_OFFSET, stmt->con->err);
-
-        /* raise exception */
-
-        OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt, FALSE);
-    }
-
-    OCI_RESULT(res);
-
-    return res;
+    return OCI_ExecuteInternal(stmt, OCI_DEFAULT);
 }
 
 /* ------------------------------------------------------------------------ *
@@ -1806,7 +1829,16 @@ boolean OCI_API OCI_Execute(OCI_Statement *stmt)
 
 boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const mtext *sql)
 {
-    return (OCI_Prepare(stmt, sql) && OCI_Execute(stmt));
+    return (OCI_Prepare(stmt, sql) && OCI_ExecuteInternal(stmt, OCI_DEFAULT));
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_Parse
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_API OCI_Parse(OCI_Statement *stmt, const mtext *sql)
+{
+    return (OCI_Prepare(stmt, sql) && OCI_ExecuteInternal(stmt, OCI_PARSE_ONLY));
 }
 
 /* ------------------------------------------------------------------------ *
@@ -1901,7 +1933,62 @@ boolean OCI_ExecuteStmtFmt(OCI_Statement *stmt, const mtext *sql, ...)
             {
                 /* prepare and execute SQL buffer */
 
-                res = (OCI_Prepare(stmt, sql_fmt) &&  OCI_Execute(stmt));
+                res = (OCI_Prepare(stmt, sql_fmt) &&  
+                       OCI_ExecuteInternal(stmt, OCI_DEFAULT));
+            }
+
+            va_end(args);
+
+            OCI_FREE(sql_fmt);
+        }
+    }
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ParseFmt
+ * ------------------------------------------------------------------------ */
+
+boolean OCI_ParseFmt(OCI_Statement *stmt, const mtext *sql, ...)
+{
+    boolean res    = FALSE;
+    mtext *sql_fmt = NULL;
+    va_list args;
+    int size;
+
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_STRING, sql, FALSE);
+
+    /* first, get buffer size */
+
+    va_start(args, sql);
+
+    size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
+
+    va_end(args);
+
+    if (size > 0)
+    {
+        /* allocate buffer */
+
+        sql_fmt = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext), 
+                                        (size_t) (size+1), TRUE);
+
+        if (sql_fmt != NULL)
+        {
+            /* format buffer */
+
+            va_start(args, sql);
+
+            if (OCI_ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
+            {
+                /* prepare and execute SQL buffer */
+
+                res = (OCI_Prepare(stmt, sql_fmt) &&  
+                       OCI_ExecuteInternal(stmt, OCI_PARSE_ONLY));
             }
 
             va_end(args);
@@ -2000,7 +2087,8 @@ boolean OCI_ImmediateFmt(OCI_Connection *con, const mtext *sql, ...)
                 {
                     /* prepare and execute SQL buffer */
 
-                    res = (OCI_Prepare(stmt, sql_fmt) &&  OCI_Execute(stmt));
+                    res = (OCI_Prepare(stmt, sql_fmt) &&  
+                           OCI_ExecuteInternal(stmt, OCI_DEFAULT));
 
                     /* get resultset and set up variables */
 
@@ -2042,7 +2130,7 @@ boolean OCI_API OCI_BindArraySetSize(OCI_Statement *stmt, unsigned int size)
        not greater than the initial size
     */
 
-    if ((stmt->nb_ubinds > 0) && (size > stmt->nb_iters_init))
+    if ((stmt->nb_ubinds > 0) && (stmt->nb_iters_init < size))
     {
         OCI_ExceptionBindArraySize(stmt, stmt->nb_iters_init,
                                          stmt->nb_iters, size);
@@ -2054,9 +2142,8 @@ boolean OCI_API OCI_BindArraySetSize(OCI_Statement *stmt, unsigned int size)
         stmt->nb_iters   = size;
         stmt->bind_array = TRUE;
 
-        if (stmt->nb_iters_init == 0)
+        if (stmt->nb_ubinds == 0)
             stmt->nb_iters_init = stmt->nb_iters;
-            
     }
 
     OCI_RESULT(res);

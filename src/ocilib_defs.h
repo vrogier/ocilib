@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: ocilib_defs.h, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -373,7 +373,7 @@
  *  AQ queues defines
  * ------------------------------------------------------------------------ */
 
-#define OCI_RAW_OCJECT_TYPE   MT("SYS.RAW")
+#define OCI_RAW_OBJECT_TYPE   MT("SYS.RAW")
 
 /* ------------------------------------------------------------------------ *
  *  string functions mapping

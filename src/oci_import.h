@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_import.h, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: oci_import.h, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
@@ -280,6 +280,10 @@ extern OCIDIRPATHFLUSHROW           OCIDirPathFlushRow;
 extern OCICACHEFREE                 OCICacheFree;
 
 extern OCIPING                      OCIPing;
+
+extern OCIAQENQ                     OCIAQEnq;
+extern OCIAQDEQ                     OCIAQDeq;
+extern OCIAQLISTEN                  OCIAQListen;
 
 #ifdef ORAXB8_DEFINED
 

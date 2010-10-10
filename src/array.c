@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: array.c, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: array.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #include "ocilib_internal.h"
@@ -181,7 +181,6 @@ boolean OCI_ArrayClose(OCI_Array *arr)
 
                 OCI_RefFree((OCI_Ref *) arr->tab_obj[i]);
                 break;
-
         }
     }
 
@@ -367,4 +366,48 @@ boolean OCI_ArrayFreeFromHandles(void ** handles)
     OCI_RESULT(res);
 
     return res;
+}
+
+
+/* ------------------------------------------------------------------------ *
+ * OCI_ArrayGetOCIHandles
+ * ------------------------------------------------------------------------ */
+
+void * OCI_ArrayGetOCIHandlesFromHandles(void ** handles)
+{
+    OCI_List *list  = OCILib.arrs;
+    void *ret       = NULL;
+    OCI_Item *item  = NULL;
+    OCI_Array *arr  = NULL;
+
+    OCI_CHECK(list == NULL, NULL);
+    OCI_CHECK(list == NULL, NULL);
+
+    if (list->mutex != NULL)
+        OCI_MutexAcquire(list->mutex);
+
+    item = list->head;
+
+    while (item != NULL)
+    {
+        OCI_Array * tmp_arr = (OCI_Array *) item->data;
+
+        if ((tmp_arr != NULL) && (tmp_arr->tab_obj == handles))
+        {
+            arr = tmp_arr;
+            break;
+        }
+
+        item = item->next;
+    }
+
+    if (list->mutex != NULL)
+        OCI_MutexRelease(list->mutex);
+
+    if (arr != NULL)
+    {
+        ret = arr->mem_handle; 
+    }
+
+    return ret;
 }

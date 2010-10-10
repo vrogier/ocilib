@@ -29,7 +29,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: ocilib_internal.h, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: ocilib_internal.h, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED
@@ -47,6 +47,18 @@ extern "C"
                          PRIVATE FUNCTIONS PROTOTYPES
  * ************************************************************************ */
 
+/* ------------------------------------------------------------------------ *
+ * agent.c
+ * ------------------------------------------------------------------------ */
+
+OCI_Agent * OCI_AgentInit
+(
+    OCI_Connection *con,
+    OCI_Agent **pagent,
+    OCIAQAgent *handle,
+    const mtext *name,
+    const mtext *address
+);
 
 /* ------------------------------------------------------------------------ *
  * array.c
@@ -84,6 +96,12 @@ boolean OCI_ArrayFreeFromHandles
 (
     void ** handles
 );
+
+void * OCI_ArrayGetOCIHandlesFromHandles
+(
+    void ** handles
+);
+
 
 /* ------------------------------------------------------------------------ *
  * bind.c
@@ -784,7 +802,7 @@ boolean OCI_ObjectGetAttrInfo
 (
     OCI_TypeInfo *typinf,
     int index,
-    size_t *p_size, 
+    size_t *p_size,
     int *p_type
 );
 
@@ -932,7 +950,7 @@ size_t OCI_ResultsetGetStructSize
 
 size_t OCI_ResultsetGetAttrSize
 (
-    OCI_Resultset *rs, 
+    OCI_Resultset *rs,
     unsigned int index
 );
 
@@ -1009,6 +1027,11 @@ boolean OCI_BatchErrorInit
     OCI_Statement *stmt
 );
 
+boolean OCI_API OCI_ExecuteInternal
+(
+    OCI_Statement *stmt,
+    ub4 mode
+);
 
 /* ------------------------------------------------------------------------ *
  * string.c
@@ -1126,6 +1149,26 @@ boolean OCI_StringToStringPtr
     void *value,
     void **buf,
     int *buflen
+);
+
+boolean OCI_StringGetFromAttrHandle
+(
+    OCI_Connection *con,
+    void *handle,
+    unsigned int type,
+    unsigned int attr,
+    mtext **str
+);
+
+
+boolean OCI_StringSetToAttrHandle
+(
+    OCI_Connection *con,
+    void *handle,
+    unsigned int type,
+    unsigned int attr,
+    mtext **str,
+    const mtext *value
 );
 
 /* ------------------------------------------------------------------------ *

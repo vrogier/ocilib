@@ -47,7 +47,7 @@
 */
 
 /* ------------------------------------------------------------------------ *
- * $Id: oci_defs.h, v 3.7.0 2010-07-26 21:10 Vincent Rogier $
+ * $Id: oci_defs.h, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
  * ------------------------------------------------------------------------ */
 
 #ifndef OCILIB_OCI_DEFS_H_INCLUDED 
@@ -157,6 +157,10 @@
 #define OCI_DTYPE_LOB 50                                     /* lob  locator */
 #define OCI_DTYPE_PARAM 53  /* a parameter descriptor obtained from ocigparm */
 #define OCI_DTYPE_FILE 56                                /* File Lob locator */
+#define OCI_DTYPE_AQENQ_OPTIONS 57                        /* enqueue options */
+#define OCI_DTYPE_AQDEQ_OPTIONS 58                        /* dequeue options */
+#define OCI_DTYPE_AQMSG_PROPERTIES 59                  /* message properties */
+#define OCI_DTYPE_AQAGENT 60                                     /* aq agent */
 #define OCI_DTYPE_INTERVAL_YM 62                      /* Interval year month */
 #define OCI_DTYPE_INTERVAL_DS 63                      /* Interval day second */
 #define OCI_DTYPE_DATE 65                                            /* Date */
@@ -212,6 +216,33 @@
                /* Number of rows returned in current iter - for Bind handles */
 
 #define OCI_ATTR_LOBEMPTY               45                    /* empty lob ? */
+
+#define OCI_ATTR_VISIBILITY             47                     /* visibility */
+#define OCI_ATTR_RELATIVE_MSGID         48            /* relative message id */
+#define OCI_ATTR_SEQUENCE_DEVIATION     49             /* sequence deviation */
+
+#define OCI_ATTR_CONSUMER_NAME          50                  /* consumer name */
+#define OCI_ATTR_DEQ_MODE               51                   /* dequeue mode */
+#define OCI_ATTR_NAVIGATION             52                     /* navigation */
+#define OCI_ATTR_WAIT                   53                           /* wait */
+#define OCI_ATTR_DEQ_MSGID              54             /* dequeue message id */
+
+#define OCI_ATTR_PRIORITY               55                       /* priority */
+#define OCI_ATTR_DELAY                  56                          /* delay */
+#define OCI_ATTR_EXPIRATION             57                     /* expiration */
+#define OCI_ATTR_CORRELATION            58                 /* correlation id */
+#define OCI_ATTR_ATTEMPTS               59                  /* # of attempts */
+#define OCI_ATTR_RECIPIENT_LIST         60                 /* recipient list */
+#define OCI_ATTR_EXCEPTION_QUEUE        61           /* exception queue name */
+#define OCI_ATTR_ENQ_TIME               62 /* enqueue time (only OCIAttrGet) */
+#define OCI_ATTR_MSG_STATE              63/* message state (only OCIAttrGet) */
+                                                   /* NOTE: 64-66 used below */
+#define OCI_ATTR_AGENT_NAME             64                     /* agent name */
+#define OCI_ATTR_AGENT_ADDRESS          65                  /* agent address */
+#define OCI_ATTR_AGENT_PROTOCOL         66                 /* agent protocol */
+#define OCI_ATTR_USER_PROPERTY          67                  /* user property */
+#define OCI_ATTR_SENDER_ID              68                      /* sender id */
+#define OCI_ATTR_ORIGINAL_MSGID         69            /* original message id */
 
 #define OCI_ATTR_NUM_DML_ERRORS         73       /* num of errs in array DML */
 #define OCI_ATTR_DML_ROW_OFFSET         74        /* row offset in the array */
@@ -273,6 +304,8 @@
 #define OCI_ATTR_SPOOL_MIN             312              /* min session count */
 #define OCI_ATTR_SPOOL_MAX             313              /* max session count */
 #define OCI_ATTR_SPOOL_INCR            314        /* session increment count */
+
+#define OCI_ATTR_TRANSACTION_NO             365         /* AQ enq txn number */
 
 #define OCI_ATTR_ADMIN_PFILE           389         /* client-side param file */
 
@@ -364,8 +397,9 @@
 
 /*----------------------- Execution Modes -----------------------------------*/
 
-#define OCI_BATCH_ERRORS      0x80             /* batch errors in array dmls */
+#define OCI_BATCH_ERRORS             0x80      /* batch errors in array dmls */
 #define OCI_STMT_SCROLLABLE_READONLY 0x08     /* if result set is scrollable */
+#define OCI_PARSE_ONLY               0x0000010   /* only parse the statement */
 
 
 /*-----------------------------  Various Modes ------------------------------*/
@@ -453,6 +487,16 @@ typedef struct OCIEvent         OCIEvent;                 /* HA event handle */
 typedef struct OCIDirPathCtx      OCIDirPathCtx;               /* DP context */
 typedef struct OCIDirPathColArray OCIDirPathColArray;     /* DP column array */
 typedef struct OCIDirPathStream   OCIDirPathStream;             /* DP stream */
+
+typedef struct OCIAQEnqOptions    OCIAQEnqOptions; /* AQ Enqueue Options hdl */
+typedef struct OCIAQDeqOptions    OCIAQDeqOptions; /* AQ Dequeue Options hdl */
+typedef struct OCIAQMsgProperties OCIAQMsgProperties;  /* AQ Mesg Properties */
+typedef struct OCIAQAgent         OCIAQAgent;         /* AQ Agent descriptor */
+typedef struct OCIAQNfyDescriptor OCIAQNfyDescriptor;   /* AQ Nfy descriptor */
+typedef struct OCIAQSignature     OCIAQSignature;            /* AQ Siganture */
+typedef struct OCIAQListenOpts    OCIAQListenOpts;      /* AQ listen options */
+typedef struct OCIAQLisMsgProps   OCIAQLisMsgProps;   /* AQ listen msg props */
+
 
 /*---------------------------------------------------------------------------*/
 /*------------------------- OCISessionPoolCreate Modes ----------------------*/
