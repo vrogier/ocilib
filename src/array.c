@@ -42,7 +42,11 @@
  * OCI_ArrayInit
  * ------------------------------------------------------------------------ */
 
-boolean OCI_ArrayInit(OCI_Array *arr, OCI_TypeInfo *typinf)
+boolean OCI_ArrayInit
+(
+    OCI_Array    *arr, 
+    OCI_TypeInfo *typinf
+)
 {
     unsigned int i;
 
@@ -122,10 +126,13 @@ boolean OCI_ArrayInit(OCI_Array *arr, OCI_TypeInfo *typinf)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_ArrayCleanup
+ * OCI_ArrayClose
  * ------------------------------------------------------------------------ */
 
-boolean OCI_ArrayClose(OCI_Array *arr)
+boolean OCI_ArrayClose
+(
+    OCI_Array *arr
+)
 {
     unsigned int i;
 
@@ -207,10 +214,17 @@ boolean OCI_ArrayClose(OCI_Array *arr)
  * OCI_ArrayCreate
  * ------------------------------------------------------------------------ */
 
-OCI_Array * OCI_ArrayCreate(OCI_Connection *con,      unsigned int nb_elem,
-                            unsigned int elem_type,   unsigned int elem_subtype,
-                            unsigned int elem_size,   unsigned int struct_size,
-                            unsigned int handle_type, OCI_TypeInfo *typinf)
+OCI_Array * OCI_ArrayCreate
+(
+    OCI_Connection *con, 
+    unsigned int    nb_elem,
+    unsigned int    elem_type,
+    unsigned int    elem_subtype,
+    unsigned int    elem_size, 
+    unsigned int    struct_size,
+    unsigned int    handle_type,
+    OCI_TypeInfo   *typinf
+)
 {
     boolean res              = TRUE;
     OCI_Array *arr           = NULL;
@@ -324,7 +338,10 @@ OCI_Array * OCI_ArrayCreate(OCI_Connection *con,      unsigned int nb_elem,
  * OCI_ArrayFreeFromHandles
  * ------------------------------------------------------------------------ */
 
-boolean OCI_ArrayFreeFromHandles(void ** handles)
+boolean OCI_ArrayFreeFromHandles
+(
+    void **handles
+)
 {
     boolean res     = FALSE;
     OCI_List *list  = OCILib.arrs;
@@ -370,10 +387,13 @@ boolean OCI_ArrayFreeFromHandles(void ** handles)
 
 
 /* ------------------------------------------------------------------------ *
- * OCI_ArrayGetOCIHandles
+ * OCI_ArrayGetOCIHandlesFromHandles
  * ------------------------------------------------------------------------ */
 
-void * OCI_ArrayGetOCIHandlesFromHandles(void ** handles)
+void * OCI_ArrayGetOCIHandlesFromHandles
+(
+    void **handles
+)
 {
     OCI_List *list  = OCILib.arrs;
     void *ret       = NULL;

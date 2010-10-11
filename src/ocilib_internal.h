@@ -1135,6 +1135,15 @@ int OCI_StringUTF8Length
                                                               sizeof(odtext),  \
                                                               sizeof(dtext))
 
+
+#define OCI_GetDataFromMetaString(s, n)  OCI_GetInputString((void *) s, n,     \
+                                                             sizeof(mtext),    \
+                                                             sizeof(dtext))
+
+#define OCI_GetMetaFromDataString(s, n)  OCI_GetInputString((void *) s, n,     \
+                                                             sizeof(dtext),    \
+                                                             sizeof(mtext))
+
 void * OCI_StringFromStringPtr
 (
     OCIString *str,

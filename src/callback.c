@@ -42,8 +42,17 @@
  * OCI_ProcInBind
  * ------------------------------------------------------------------------ */
 
-sb4 OCI_ProcInBind(dvoid *ictxp, OCIBind *bindp, ub4 iter, ub4 index,
-                   dvoid **bufpp, ub4 *alenp, ub1 *piecep, dvoid **indp)
+sb4 OCI_ProcInBind
+(
+    dvoid   *ictxp, 
+    OCIBind *bindp, 
+    ub4      iter, 
+    ub4      index,
+    dvoid  **bufpp,
+    ub4     *alenp, 
+    ub1     *piecep, 
+    dvoid  **indp
+)
 {
     OCI_Bind * bnd = (OCI_Bind *) ictxp;
     sb2 *ind       = (sb2 *) bnd->buf.inds;
@@ -84,12 +93,21 @@ sb4 OCI_ProcInBind(dvoid *ictxp, OCIBind *bindp, ub4 iter, ub4 index,
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_GetDefine
+ * OCI_ProcOutBind
  * ------------------------------------------------------------------------ */
 
-sb4 OCI_ProcOutBind(dvoid *octxp, OCIBind *bindp, ub4 iter, ub4 index,
-                    dvoid **bufpp, ub4 **alenp, ub1 *piecep, dvoid **indp,
-                    ub2 **rcodep)
+sb4 OCI_ProcOutBind
+(
+    dvoid   *octxp, 
+    OCIBind *bindp, 
+    ub4      iter, 
+    ub4      index,
+    dvoid  **bufpp,
+    ub4    **alenp, 
+    ub1     *piecep,
+    dvoid  **indp,
+    ub2    **rcodep
+)
 {
     OCI_Bind * bnd    = (OCI_Bind *) octxp;
     OCI_Define *def   = NULL;
@@ -200,8 +218,15 @@ sb4 OCI_ProcOutBind(dvoid *octxp, OCIBind *bindp, ub4 iter, ub4 index,
  * OCI_ProcNotify
  * ------------------------------------------------------------------------ */
 
-ub4 OCI_ProcNotify(void *ctx, OCISubscription *subscrhp, void *payload,
-                   ub4 paylen, void *desc, ub4 mode)
+ub4 OCI_ProcNotify
+(
+    void            *ctx,
+    OCISubscription *subscrhp, 
+    void            *payload,
+    ub4              paylen, 
+    void            *desc, 
+    ub4              mode
+)
 {
     OCI_Subscription *sub = (OCI_Subscription *) ctx;
     boolean res = TRUE;

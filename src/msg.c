@@ -643,30 +643,6 @@ boolean OCI_API OCI_MsgSetExceptionQueue(OCI_Msg *msg, const mtext *queue)
 }
 
 /* ------------------------------------------------------------------------ *
- * OCI_MsgGetTransactionGroup
- * ------------------------------------------------------------------------ */
-
-const mtext * OCI_API OCI_MsgGetTransactionGroup(OCI_Msg *msg)
-{
-    boolean res = TRUE;
-
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, NULL);
-
-    if (msg->trs_group == NULL)
-    {
-        res = OCI_StringGetFromAttrHandle(msg->typinf->con, 
-                                          msg->proph,
-                                          OCI_DTYPE_AQMSG_PROPERTIES,
-                                          OCI_ATTR_TRANSACTION_NO, 
-                                          &msg->trs_group);
-    }
-
-    OCI_RESULT(res);
-
-    return msg->trs_group;
-}
-
-/* ------------------------------------------------------------------------ *
  * OCI_MsgSetSender
  * ------------------------------------------------------------------------ */
 

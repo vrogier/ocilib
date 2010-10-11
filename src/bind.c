@@ -42,7 +42,10 @@
  * OCI_BindFree
  * ------------------------------------------------------------------------ */
 
-boolean OCI_BindFree(OCI_Bind *bnd)
+boolean OCI_BindFree
+(
+    OCI_Bind *bnd
+)
 {
     if (bnd->alloc == TRUE)
         OCI_FREE(bnd->buf.data);
@@ -120,7 +123,10 @@ boolean OCI_BindFree(OCI_Bind *bnd)
  * OCI_BindAllocData
  * ------------------------------------------------------------------------ */
 
-boolean OCI_BindAllocData(OCI_Bind *bnd)
+boolean OCI_BindAllocData
+(
+    OCI_Bind *bnd
+)
 {
     boolean res = FALSE;
 
@@ -353,7 +359,10 @@ boolean OCI_BindAllocData(OCI_Bind *bnd)
  * OCI_BindGetName
  * ------------------------------------------------------------------------ */
 
-const mtext * OCI_API OCI_BindGetName(OCI_Bind *bnd)
+const mtext * OCI_API OCI_BindGetName
+(
+    OCI_Bind *bnd
+)
 {
     OCI_CHECK_PTR(OCI_IPC_BIND, bnd, NULL);
 
@@ -366,7 +375,10 @@ const mtext * OCI_API OCI_BindGetName(OCI_Bind *bnd)
  * OCI_BindGetType
  * ------------------------------------------------------------------------ */
 
-unsigned int OCI_API OCI_BindGetType(OCI_Bind *bnd)
+unsigned int OCI_API OCI_BindGetType
+(
+    OCI_Bind *bnd
+)
 {
     OCI_CHECK_PTR(OCI_IPC_BIND, bnd, OCI_UNKNOWN);
 
@@ -379,7 +391,10 @@ unsigned int OCI_API OCI_BindGetType(OCI_Bind *bnd)
  * OCI_BindGetSubtype
  * ------------------------------------------------------------------------ */
 
-unsigned int OCI_API OCI_BindGetSubtype(OCI_Bind *bnd)
+unsigned int OCI_API OCI_BindGetSubtype
+(
+    OCI_Bind *bnd
+)
 {
     unsigned int type = OCI_UNKNOWN;
 
@@ -403,7 +418,10 @@ unsigned int OCI_API OCI_BindGetSubtype(OCI_Bind *bnd)
  * OCI_BindGetDataCount
  * ------------------------------------------------------------------------ */
 
-unsigned int OCI_API OCI_BindGetDataCount(OCI_Bind *bnd)
+unsigned int OCI_API OCI_BindGetDataCount
+(
+    OCI_Bind *bnd
+)
 {
     OCI_CHECK_PTR(OCI_IPC_BIND, bnd, 0);
 
@@ -416,7 +434,10 @@ unsigned int OCI_API OCI_BindGetDataCount(OCI_Bind *bnd)
  * OCI_BindGetData
  * ------------------------------------------------------------------------ */
 
-void * OCI_API OCI_BindGetData(OCI_Bind *bnd)
+void * OCI_API OCI_BindGetData
+(
+    OCI_Bind *bnd
+)
 {
     OCI_CHECK_PTR(OCI_IPC_BIND, bnd, NULL);
 
@@ -429,7 +450,10 @@ void * OCI_API OCI_BindGetData(OCI_Bind *bnd)
  * OCI_BindGetStatement
  * ------------------------------------------------------------------------ */
 
-OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement(OCI_Bind *bnd)
+OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement
+(
+    OCI_Bind *bnd
+)
 {
     OCI_CHECK_PTR(OCI_IPC_BIND, bnd, NULL);
 
@@ -442,7 +466,10 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement(OCI_Bind *bnd)
  * OCI_BindSetDataSize
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_BindSetDataSize(OCI_Bind *bnd, unsigned int size)
+boolean OCI_API OCI_BindSetDataSize
+(
+    OCI_Bind *bnd, unsigned int size
+)
 {
     return OCI_BindSetDataSizeAtPos(bnd, 1, size);
 }
@@ -451,8 +478,12 @@ boolean OCI_API OCI_BindSetDataSize(OCI_Bind *bnd, unsigned int size)
  * OCI_BindSetDataSizeAtPos
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_BindSetDataSizeAtPos(OCI_Bind *bnd, unsigned int position, 
-                                         unsigned int size)
+boolean OCI_API OCI_BindSetDataSizeAtPos
+(
+    OCI_Bind    *bnd, 
+    unsigned int position,
+    unsigned int size
+)
 {
     boolean res   = FALSE;
 
@@ -485,7 +516,10 @@ boolean OCI_API OCI_BindSetDataSizeAtPos(OCI_Bind *bnd, unsigned int position,
  * OCI_BindGetDataSize
  * ------------------------------------------------------------------------ */
 
-unsigned int OCI_API OCI_BindGetDataSize(OCI_Bind *bnd)
+unsigned int OCI_API OCI_BindGetDataSize
+(
+    OCI_Bind *bnd
+)
 {
     return OCI_BindGetDataSizeAtPos(bnd, 1);
 }
@@ -494,8 +528,11 @@ unsigned int OCI_API OCI_BindGetDataSize(OCI_Bind *bnd)
  * OCI_BindGetDataSizeAtPos
  * ------------------------------------------------------------------------ */
 
-unsigned int OCI_API OCI_BindGetDataSizeAtPos(OCI_Bind *bnd, 
-                                              unsigned int position)
+unsigned int OCI_API OCI_BindGetDataSizeAtPos
+(
+    OCI_Bind    *bnd, 
+    unsigned int position
+)
 {
     unsigned int size = 0;
 
@@ -520,12 +557,15 @@ unsigned int OCI_API OCI_BindGetDataSizeAtPos(OCI_Bind *bnd,
     return size;
 }
 
-
 /* ------------------------------------------------------------------------ *
  * OCI_BindSetNullAtPos
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_BindSetNullAtPos(OCI_Bind *bnd, unsigned int position)
+boolean OCI_API OCI_BindSetNullAtPos
+(
+    OCI_Bind    *bnd, 
+    unsigned int position
+)
 {
     OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
     OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buf.count, FALSE);
@@ -542,7 +582,10 @@ boolean OCI_API OCI_BindSetNullAtPos(OCI_Bind *bnd, unsigned int position)
  * OCI_BindSetNull
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_BindSetNull(OCI_Bind *bnd)
+boolean OCI_API OCI_BindSetNull
+(
+    OCI_Bind *bnd
+)
 {
   return OCI_BindSetNullAtPos(bnd, 1);
 }
@@ -551,7 +594,11 @@ boolean OCI_API OCI_BindSetNull(OCI_Bind *bnd)
  * OCI_BindIsNullAtPos
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_BindIsNullAtPos(OCI_Bind *bnd, unsigned int position)
+boolean OCI_API OCI_BindIsNullAtPos
+(
+    OCI_Bind    *bnd,                                    
+    unsigned int position
+)
 {
     boolean ret = TRUE;
 
@@ -570,17 +617,23 @@ boolean OCI_API OCI_BindIsNullAtPos(OCI_Bind *bnd, unsigned int position)
  * OCI_BindIsNull
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_BindIsNull(OCI_Bind *bnd)
+boolean OCI_API OCI_BindIsNull
+(
+    OCI_Bind *bnd
+)
 {
   return OCI_BindIsNullAtPos(bnd, 1);
 }
-
 
 /* ------------------------------------------------------------------------ *
  * OCI_BindSetCharsetForm
  * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_BindSetCharsetForm(OCI_Bind *bnd, unsigned int csfrm)
+boolean OCI_API OCI_BindSetCharsetForm
+(
+    OCI_Bind    *bnd, 
+    unsigned int csfrm
+)
 {
     boolean res = TRUE;
 

@@ -42,8 +42,13 @@
  * OCI_CollInit
  * ------------------------------------------------------------------------ */
 
-OCI_Coll * OCI_CollInit(OCI_Connection *con, OCI_Coll **pcoll, void *handle,
-                        OCI_TypeInfo *typinf)
+OCI_Coll * OCI_CollInit
+(
+    OCI_Connection *con, 
+    OCI_Coll      **pcoll, 
+    void           *handle,
+    OCI_TypeInfo   *typinf
+)
 {
     OCI_Coll *coll = NULL;
     boolean res    = TRUE;

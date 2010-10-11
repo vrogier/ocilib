@@ -1619,7 +1619,24 @@ typedef struct OCI_HashEntry {
 
 #define OCI_ADN_FIRST_MSG                   1    
 #define OCI_ADN_NEXT_TRANSACTION            2    
-#define OCI_ADN_NEXT_MSG                    3    
+#define OCI_ADN_NEXT_MSG                    3
+
+/* AQ queue table purge mode */
+
+#define OCI_APM_BUFFERED                    1
+#define OCI_APM_PERSISTENT                  2
+
+/* AQ queue table grouping mode */
+
+#define OCI_AGM_NONE                        0
+#define OCI_AGM_TRANSACTIONNAL              1
+
+/* AQ queue table type */
+
+#define OCI_AQT_NORMAL                      0
+#define OCI_AQT_EXCEPTION                   1 
+#define OCI_AQT_NON_PERSISTENT              2
+
 
 /* direct path processing return status */
 
@@ -14645,24 +14662,6 @@ OCI_EXPORT const mtext * OCI_API OCI_MsgGetExceptionQueue
 
 /**
  * @brief
- *
- * @param msg - Message handle
- *
- * @warning
- *
- * @note
- *
- * @return
- *
- */
-
-OCI_EXPORT const mtext * OCI_API OCI_MsgGetTransactionGroup
-(
-    OCI_Msg *msg
-);
-
-/**
- * @brief
  * Create a Enqueue object for the given queue
  *
  * @param typinf - Type info handle
@@ -15422,6 +15421,256 @@ OCI_EXPORT boolean OCI_API OCI_AgentSetAddress
 OCI_EXPORT const mtext * OCI_API OCI_AgentGetAddress
 (
     OCI_Agent *agent
+);
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @note
+ * Possible values for parameter 'queue_type' :
+ *  - OCI_AQT_NORMAL
+ *  - OCI_AQT_EXCEPTION
+ *  - OCI_AQT_NON_PERSISTENT
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_QueueCreate
+(
+    OCI_Connection *con,
+    const mtext    *queue_name,
+    const mtext    *queue_table,
+    unsigned int    queue_type,
+    unsigned int    max_retries,
+    unsigned int    retry_delay,
+    unsigned int    retention_time,
+    boolean         dependency_tracking,
+    const mtext    *comment,
+    boolean         auto_commit
+);
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @note
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_QueueCreateNonPersistent
+(
+    OCI_Connection *con,
+    const mtext    *queue_name,
+    boolean         multiple_consumers,
+    const mtext    *comment
+);
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @note
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+
+OCI_EXPORT boolean OCI_API OCI_QueueAlter
+(
+    OCI_Connection *con,
+    const mtext    *queue_name,
+    unsigned int    max_retries,
+    unsigned int    retry_delay,
+    unsigned int    retention_time,
+    boolean         auto_commit,
+    const mtext    *comment
+);
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @note
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_QueueDrop
+(
+    OCI_Connection *con,
+    const mtext    *queue_name,
+    boolean         auto_commit
+ );
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @note
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_QueueStart
+(
+    OCI_Connection *con,
+    const mtext    *queue_name,
+    boolean         enqueue,
+    boolean         dequeue
+ );
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @note
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_QueueStop
+(
+    OCI_Connection *con,
+    const mtext    *queue_name,
+    boolean         enqueue,
+    boolean         dequeue,
+    boolean         wait
+ );
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @note
+ * @note
+ * Possible values for parameter 'message_grouping' :
+ *  - OCI_AGM_NONE
+ *  - OCI_AGM_TRANSACTIONNAL
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_QueueTableCreate
+(
+    OCI_Connection *con,
+    const mtext    *queue_table,
+    const mtext    *queue_payload_type,
+    const mtext    *storage_clause,
+    const mtext    *sort_list,
+    boolean         multiple_consumers,
+    unsigned int    message_grouping,
+    const mtext    *comment,
+    boolean         auto_commit,
+    unsigned int    primary_instance,
+    unsigned int    secondary_instance,
+    const mtext    *compatible
+);
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @note
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_QueueTableAlter
+(
+    OCI_Connection *con,
+    const mtext    *queue_table,
+    const mtext    *comment,
+    unsigned int    primary_instance,
+    unsigned int    secondary_instance
+);
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @note
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_QueueTableDrop
+(
+    OCI_Connection *con,
+    const mtext    *queue_table,
+    boolean         auto_commit,
+    boolean         force
+ );
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @note
+ * Possible values for parameter 'delivery_mode' :
+ *  - OCI_APM_BUFFERED
+ *  - OCI_APM_PERSISTENT
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_QueueTablePurge
+(
+    OCI_Connection *con,
+    const mtext    *queue_table,
+    const mtext    *purge_condition,
+    boolean         block,
+    unsigned int    delivery_mode
+ );
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @note
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
+(
+    OCI_Connection *con,
+    const mtext    *queue_table,
+    const mtext    *compatible
 );
 
 /**

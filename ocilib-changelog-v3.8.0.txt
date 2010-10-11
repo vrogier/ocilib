@@ -30,7 +30,6 @@
       - Added OCI_MsgSetCorrelation()
       - Added OCI_MsgSetExceptionQueue()
       - Added OCI_MsgGetExceptionQueue()
-      - Added OCI_MsgGetTransactionGroup()
       - Added OCI_EnqueueCreate()
       - Added OCI_EnqueueFree()
       - Added OCI_EnqueuePut()
@@ -65,6 +64,17 @@
       - Added OCI_AgentGetName()
       - Added OCI_AgentSetAddress()
       - Added OCI_AgentGetAddress()
+      - Added OCI_QueueCreate()
+      - Added OCI_QueueCreateNonPersistent()
+      - Added OCI_QueueAlter()
+      - Added OCI_QueueDrop()
+      - Added OCI_QueueStart()
+      - Added OCI_QueueStop()
+      - Added OCI_QueueTableCreate()
+      - Added OCI_QueueTableAlter()
+      - Added OCI_QueueTableDrop()
+      - Added OCI_QueueTablePurge()
+      - Added OCI_QueueTableMigrate()
 
     * Added support for SQL parsing only
  
@@ -84,3 +94,4 @@
         - Macros have been added for backward compatibility
         - Existing programs must be recompiled (in order to use this new version of ocilib) with no code change (as compatibility macros are provided)
   
+
