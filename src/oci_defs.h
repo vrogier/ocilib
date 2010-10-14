@@ -1,62 +1,64 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 
-   +----------------------------------------------------------------------+   
-   |                          IMPORTANT NOTICE                            |
-   +----------------------------------------------------------------------+
-   |                                                                      |
-   | THIS FILE CONTAINS CONSTANTS AND STRUCTURES DECLARATIONS THAT WERE   |
-   | PICKED UP FROM ORACLE PUBLIC HEADER FILES.                           |
-   |                                                                      |
-   | SO THE CONTENT OF THIS FILE IS UNDER ORACLE COPYRIGHT AND THE        |
-   | DECLARATIONS REPRODUCED HERE ARE ORIGINALLY WRITTEN BY ORACLE        | 
-   | CORPORATION.                                                         |
-   |                                                                      |
-   | THE AUTHOR OF OCILIB LIBRARY HAS NOT WRITTEN THE CONTENT OF THIS     |
-   | FILE AND HAS PARTIALLY INTEGRATED SOME ORACLE OCI DEFINITONS TO      |
-   | ALLOW COMPILATION OF THIS OPEN SOURCE LIBRARY WITHOUT HAVING         |
-   | ORACLE PRODUCTS INSTALLED ON DEVELOPMENT ENVIRONMENTS                |
-   |                                                                      |
-   +----------------------------------------------------------------------+
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                                       IMPORTANT NOTICE                                  |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             THIS FILE CONTAINS CONSTANTS AND STRUCTURES DECLARATIONS THAT WERE          |
+    |             PICKED UP FROM ORACLE PUBLIC HEADER FILES.                                  |
+    |                                                                                         |
+    |             SO THE CONTENT OF THIS FILE IS UNDER ORACLE COPYRIGHT AND THE               |
+    |             DECLARATIONS REPRODUCED HERE ARE ORIGINALLY WRITTEN BY ORACLE               |
+    |             CORPORATION.                                                                |
+    |                                                                                         |
+    |             THE AUTHOR OF OCILIB LIBRARY HAS NOT WRITTEN THE CONTENT OF THIS            |
+    |             FILE AND HAS PARTIALLY INTEGRATED SOME ORACLE OCI DEFINITONS TO             |
+    |             ALLOW COMPILATION OF THIS OPEN SOURCE LIBRARY WITHOUT HAVING                |
+    |             ORACLE PRODUCTS INSTALLED ON DEVELOPMENT ENVIRONMENTS                       |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: oci_defs.h, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: oci_defs.h, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
-#ifndef OCILIB_OCI_DEFS_H_INCLUDED 
-#define OCILIB_OCI_DEFS_H_INCLUDED 
+#ifndef OCILIB_OCI_DEFS_H_INCLUDED
+#define OCILIB_OCI_DEFS_H_INCLUDED
 
 #include "oci_types.h"
 
-/*--------------------------------------------------------------------------- 
-                     PUBLIC TYPES AND CONSTANTS 
+/*---------------------------------------------------------------------------
+                     PUBLIC TYPES AND CONSTANTS
   ---------------------------------------------------------------------------*/
 
 /* input data types */
@@ -81,7 +83,7 @@
 #define SQLT_UIN  68                                     /* unsigned integer */
 #define SQLT_SLS  91                        /* Display sign leading separate */
 #define SQLT_LVC  94                                  /* Longer longs (char) */
-#define SQLT_LVB  95                                   /* Longer long binary */ 
+#define SQLT_LVB  95                                   /* Longer long binary */
 #define SQLT_AFC  96                                      /* Ansi fixed char */
 #define SQLT_AVC  97                                        /* Ansi Var char */
 #define SQLT_IBFLOAT  100                          /* binary float canonical */
@@ -120,7 +122,6 @@
 
 #define SQLT_PNTY   241               /* pl/sql representation of named types */
 
-
 /* CHAR/NCHAR/VARCHAR2/NVARCHAR2/CLOB/NCLOB char set "form" information */
 #define SQLCS_IMPLICIT 1     /* for CHAR, VARCHAR2, CLOB w/o a specified set */
 #define SQLCS_NCHAR    2                  /* for NCHAR, NCHAR VARYING, NCLOB */
@@ -128,9 +129,8 @@
 #define SQLCS_FLEXIBLE 4                 /* for PL/SQL "flexible" parameters */
 #define SQLCS_LIT_NULL 5      /* for typecheck of NULL and empty_clob() lits */
 
-
 /*-----------------------------Handle Types----------------------------------*/
-                                           /* handle types range from 1 - 49 */
+/* handle types range from 1 - 49 */
 #define OCI_HTYPE_FIRST          1             /* start value of handle type */
 #define OCI_HTYPE_ENV            1                     /* environment handle */
 #define OCI_HTYPE_ERROR          2                           /* error handle */
@@ -151,7 +151,6 @@
 #define OCI_HTYPE_SPOOL         27                    /* session pool handle */
 #define OCI_HTYPE_ADMIN         28                           /* admin handle */
 
-
 /*-------------------------Descriptor Types----------------------------------*/
 
 #define OCI_DTYPE_LOB 50                                     /* lob  locator */
@@ -169,9 +168,12 @@
 #define OCI_DTYPE_TIMESTAMP 68                                  /* Timestamp */
 #define OCI_DTYPE_TIMESTAMP_TZ 69                 /* Timestamp with timezone */
 #define OCI_DTYPE_TIMESTAMP_LTZ 70                /* Timestamp with local tz */
-#define OCI_DTYPE_CHDES         77          /* Top level change notification desc */
-#define OCI_DTYPE_TABLE_CHDES   78          /* Table change descriptor           */
-#define OCI_DTYPE_ROW_CHDES     79          /* Row change descriptor            */
+#define OCI_DTYPE_CHDES         77          /* Top level change notification
+                                             *desc */
+#define OCI_DTYPE_TABLE_CHDES   78          /* Table change descriptor
+                                             *          */
+#define OCI_DTYPE_ROW_CHDES     79          /* Row change descriptor
+                                             *           */
 
 /*---------------------------------------------------------------------------*/
 
@@ -181,7 +183,6 @@
 /*---------------------------------------------------------------------------*/
 
 /*--------------------------Attribute Types----------------------------------*/
-
 
 #define OCI_ATTR_OBJECT   2 /* is the environment initialized in object mode */
 #define OCI_ATTR_SQLCODE  4                                  /* the SQL verb */
@@ -196,11 +197,13 @@
 #define OCI_ATTR_PREFETCH_MEMORY 13         /* memory limit for rows fetched */
 #define OCI_ATTR_NESTED_PREFETCH_MEMORY 14   /* memory limit for nested rows */
 #define OCI_ATTR_PDSCL          16                   /* packed decimal scale */
-#define OCI_ATTR_FSPRECISION OCI_ATTR_PDSCL   
-                                          /* fs prec for datetime data types */
+#define OCI_ATTR_FSPRECISION OCI_ATTR_PDSCL
+
+/* fs prec for datetime data types */
 #define OCI_ATTR_PDPRC          17                  /* packed decimal format */
-#define OCI_ATTR_LFPRECISION OCI_ATTR_PDPRC 
-                                          /* fs prec for datetime data types */
+#define OCI_ATTR_LFPRECISION OCI_ATTR_PDPRC
+
+/* fs prec for datetime data types */
 
 #define OCI_ATTR_PARAM_COUNT 18       /* number of column in the select list */
 #define OCI_ATTR_ROWID   19                                     /* the rowid */
@@ -213,7 +216,8 @@
 #define OCI_ATTR_CHARSET_FORM 32                       /* Character Set Form */
 #define OCI_ATTR_MAXDATA_SIZE 33       /* Maximumsize of data on the server  */
 #define OCI_ATTR_ROWS_RETURNED 42
-               /* Number of rows returned in current iter - for Bind handles */
+
+/* Number of rows returned in current iter - for Bind handles */
 
 #define OCI_ATTR_LOBEMPTY               45                    /* empty lob ? */
 
@@ -235,8 +239,8 @@
 #define OCI_ATTR_RECIPIENT_LIST         60                 /* recipient list */
 #define OCI_ATTR_EXCEPTION_QUEUE        61           /* exception queue name */
 #define OCI_ATTR_ENQ_TIME               62 /* enqueue time (only OCIAttrGet) */
-#define OCI_ATTR_MSG_STATE              63/* message state (only OCIAttrGet) */
-                                                   /* NOTE: 64-66 used below */
+#define OCI_ATTR_MSG_STATE              63 /* message state (only OCIAttrGet) */
+/* NOTE: 64-66 used below */
 #define OCI_ATTR_AGENT_NAME             64                     /* agent name */
 #define OCI_ATTR_AGENT_ADDRESS          65                  /* agent address */
 #define OCI_ATTR_AGENT_PROTOCOL         66                 /* agent protocol */
@@ -250,7 +254,7 @@
 #define OCI_ATTR_DATEFORMAT             75     /* default date format string */
 #define OCI_ATTR_BUF_ADDR               76                 /* buffer address */
 #define OCI_ATTR_BUF_SIZE               77                    /* buffer size */
-#define OCI_ATTR_NUM_ROWS               81 /* number of rows in column array */                                 
+#define OCI_ATTR_NUM_ROWS               81 /* number of rows in column array */
 #define OCI_ATTR_COL_COUNT              82 /* columns of column array
                                                      processed so far.       */
 
@@ -266,7 +270,7 @@
 #define OCI_ATTR_PARAM                 124           /* parameter descriptor */
 #define OCI_ATTR_PARSE_ERROR_OFFSET    129             /* Parse Error offset */
 
-#define OCI_ATTR_SERVER_STATUS		   143        /* state of the server hdl */
+#define OCI_ATTR_SERVER_STATUS         143        /* state of the server hdl */
 
 #define OCI_ATTR_CURRENT_POSITION      164      /* for scrollable result sets*/
 #define OCI_ATTR_STMTCACHESIZE         176         /* size of the stmt cache */
@@ -317,7 +321,7 @@
 
 #define OCI_ATTR_DRIVER_NAME           424                    /* Driver Name */
 
-/*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */ 
+/*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
 
 #define OCI_UCS2ID                     1000               /* UCS2 charset ID */
 #define OCI_UTF16ID                    1000              /* UTF16 charset ID */
@@ -340,8 +344,8 @@
 
 /*---------------- Server Handle Attribute Values ---------------------------*/
 
-#define OCI_SERVER_NOT_CONNECTED	0x0 
-#define OCI_SERVER_NORMAL      		0x1 
+#define OCI_SERVER_NOT_CONNECTED    0x0
+#define OCI_SERVER_NORMAL           0x1
 
 /*--------------------- User Callback Return Values -------------------------*/
 #define OCI_CONTINUE -24200    /* Continue with the body of the OCI function */
@@ -364,15 +368,15 @@
 #define   OCI_DT_MINUTE_BELOW_VALID  0x200 /*Bad MiNute Low/high bit (1=low) */
 #define   OCI_DT_INVALID_SECOND      0x400                    /*  Bad SeCond */
 #define   OCI_DT_SECOND_BELOW_VALID  0x800  /*bad second Low/high bit (1=low)*/
-#define   OCI_DT_DAY_MISSING_FROM_1582 0x1000     
-                                 /*  Day is one of those "missing" from 1582 */
+#define   OCI_DT_DAY_MISSING_FROM_1582 0x1000
+
+/*  Day is one of those "missing" from 1582 */
 #define   OCI_DT_YEAR_ZERO           0x2000       /* Year may not equal zero */
 #define   OCI_DT_INVALID_TIMEZONE    0x4000                 /*  Bad Timezone */
 #define   OCI_DT_INVALID_FORMAT      0x8000         /* Bad date format input */
 
-
-/*------------------------Scrollable Cursor Fetch Options------------------- 
- * For non-scrollable cursor, the only valid (and default) orientation is 
+/*------------------------Scrollable Cursor Fetch Options-------------------
+ * For non-scrollable cursor, the only valid (and default) orientation is
  * OCI_FETCH_NEXT
  */
 #define OCI_FETCH_CURRENT     0x01           /* refetching current position  */
@@ -388,7 +392,6 @@
 
 #define OCI_NTV_SYNTAX 1    /* Use what so ever is the native lang of server */
 
-
 /*------------------------Bind and Define Options----------------------------*/
 
 #define OCI_DATA_AT_EXEC      0x00000002             /* data at execute time */
@@ -401,9 +404,8 @@
 #define OCI_STMT_SCROLLABLE_READONLY 0x08     /* if result set is scrollable */
 #define OCI_PARSE_ONLY               0x0000010   /* only parse the statement */
 
-
 /*-----------------------------  Various Modes ------------------------------*/
-#define OCI_DEFAULT         0x00000000 
+#define OCI_DEFAULT         0x00000000
 #define OCI_THREADED        0x00000001      /* appl. in threaded environment */
 #define OCI_OBJECT          0x00000002  /* application in object environment */
 #define OCI_EVENTS          0x00000004  /* application is enabled for events */
@@ -424,7 +426,8 @@
 #define OCI_TRANS_READONLY     0x00000100   /* starts a readonly transaction */
 #define OCI_TRANS_READWRITE    0x00000200 /* starts a read-write transaction */
 #define OCI_TRANS_SERIALIZABLE 0x00000400
-                                        /* starts a serializable transaction */
+
+/* starts a serializable transaction */
 #define OCI_TRANS_ISOLMASK     0x0000ff00
 
 #define OCI_TRANS_LOOSE        0x00010000        /* a loosely coupled branch */
@@ -460,43 +463,41 @@
 
 #define OCI_ERROR_MAXMSG_SIZE   1024         /* max size of an error message */
 #define OCI_LOBMAXSIZE          MINUB4MAXVAL        /* maximum lob data size */
-#define OCI_ROWID_LEN           23 
+#define OCI_ROWID_LEN           23
 
 /*-----------------------Handle Definitions----------------------------------*/
-typedef struct OCIEnv           OCIEnv;            /* OCI environment handle */
-typedef struct OCIError         OCIError;                /* OCI error handle */
-typedef struct OCISvcCtx        OCISvcCtx;             /* OCI service handle */
-typedef struct OCIStmt          OCIStmt;             /* OCI statement handle */
-typedef struct OCIBind          OCIBind;                  /* OCI bind handle */
-typedef struct OCIDefine        OCIDefine;              /* OCI Define handle */
-typedef struct OCIDescribe      OCIDescribe;          /* OCI Describe handle */
-typedef struct OCIServer        OCIServer;              /* OCI Server handle */
-typedef struct OCISession       OCISession;     /* OCI Authentication handle */
+typedef struct OCIEnv OCIEnv;                      /* OCI environment handle */
+typedef struct OCIError OCIError;                        /* OCI error handle */
+typedef struct OCISvcCtx OCISvcCtx;                    /* OCI service handle */
+typedef struct OCIStmt OCIStmt;                      /* OCI statement handle */
+typedef struct OCIBind OCIBind;                           /* OCI bind handle */
+typedef struct OCIDefine OCIDefine;                     /* OCI Define handle */
+typedef struct OCIDescribe OCIDescribe;               /* OCI Describe handle */
+typedef struct OCIServer OCIServer;                     /* OCI Server handle */
+typedef struct OCISession OCISession;           /* OCI Authentication handle */
 typedef struct OCIComplexObject OCIComplexObject;          /* OCI COR handle */
-typedef struct OCITrans         OCITrans;          /* OCI Transaction handle */
-typedef struct OCISecurity      OCISecurity;          /* OCI Security handle */
-typedef struct OCISubscription  OCISubscription;      /* subscription handle */
+typedef struct OCITrans OCITrans;                  /* OCI Transaction handle */
+typedef struct OCISecurity OCISecurity;               /* OCI Security handle */
+typedef struct OCISubscription OCISubscription;       /* subscription handle */
 
-typedef struct OCICPool         OCICPool;          /* connection pool handle */
-typedef struct OCISPool         OCISPool;             /* session pool handle */
-typedef struct OCIAuthInfo      OCIAuthInfo;                  /* auth handle */
-typedef struct OCIAdmin         OCIAdmin;                    /* admin handle */
-typedef struct OCIEvent         OCIEvent;                 /* HA event handle */
+typedef struct OCICPool OCICPool;                  /* connection pool handle */
+typedef struct OCISPool OCISPool;                     /* session pool handle */
+typedef struct OCIAuthInfo OCIAuthInfo;                       /* auth handle */
+typedef struct OCIAdmin OCIAdmin;                            /* admin handle */
+typedef struct OCIEvent OCIEvent;                         /* HA event handle */
 
-
-typedef struct OCIDirPathCtx      OCIDirPathCtx;               /* DP context */
+typedef struct OCIDirPathCtx OCIDirPathCtx;                    /* DP context */
 typedef struct OCIDirPathColArray OCIDirPathColArray;     /* DP column array */
-typedef struct OCIDirPathStream   OCIDirPathStream;             /* DP stream */
+typedef struct OCIDirPathStream OCIDirPathStream;               /* DP stream */
 
-typedef struct OCIAQEnqOptions    OCIAQEnqOptions; /* AQ Enqueue Options hdl */
-typedef struct OCIAQDeqOptions    OCIAQDeqOptions; /* AQ Dequeue Options hdl */
+typedef struct OCIAQEnqOptions OCIAQEnqOptions;    /* AQ Enqueue Options hdl */
+typedef struct OCIAQDeqOptions OCIAQDeqOptions;    /* AQ Dequeue Options hdl */
 typedef struct OCIAQMsgProperties OCIAQMsgProperties;  /* AQ Mesg Properties */
-typedef struct OCIAQAgent         OCIAQAgent;         /* AQ Agent descriptor */
+typedef struct OCIAQAgent OCIAQAgent;                 /* AQ Agent descriptor */
 typedef struct OCIAQNfyDescriptor OCIAQNfyDescriptor;   /* AQ Nfy descriptor */
-typedef struct OCIAQSignature     OCIAQSignature;            /* AQ Siganture */
-typedef struct OCIAQListenOpts    OCIAQListenOpts;      /* AQ listen options */
-typedef struct OCIAQLisMsgProps   OCIAQLisMsgProps;   /* AQ listen msg props */
-
+typedef struct OCIAQSignature OCIAQSignature;                /* AQ Siganture */
+typedef struct OCIAQListenOpts OCIAQListenOpts;         /* AQ listen options */
+typedef struct OCIAQLisMsgProps OCIAQLisMsgProps;     /* AQ listen msg props */
 
 /*---------------------------------------------------------------------------*/
 /*------------------------- OCISessionPoolCreate Modes ----------------------*/
@@ -512,8 +513,9 @@ typedef struct OCIAQLisMsgProps   OCIAQLisMsgProps;   /* AQ listen msg props */
 #define OCI_SESSGET_CPOOL      OCI_CPOOL  /* SessionGet called in CPOOL mode */
 #define OCI_SESSGET_STMTCACHE  0x0004                 /* Use statement cache */
 #define OCI_SESSGET_CREDPROXY  0x0008     /* SessionGet called in proxy mode */
-#define OCI_SESSGET_CREDEXT    0x0010     
+#define OCI_SESSGET_CREDEXT    0x0010
 #define OCI_SESSGET_SPOOL_MATCHANY 0x0020
+
 /*---------------------------------------------------------------------------*/
 /*------------------------ATTR Values for Session Pool-----------------------*/
 /* Attribute values for OCI_ATTR_SPOOL_GETMODE */
@@ -530,8 +532,8 @@ typedef struct OCIAQLisMsgProps   OCIAQLisMsgProps;   /* AQ listen msg props */
 /*---------------------------------------------------------------------------*/
 /*----------------------- OCISessionPoolDestroy Modes -----------------------*/
 
-#define OCI_SPD_FORCE        0x0001       /* Force the sessions to terminate. 
-                                             Even if there are some busy 
+#define OCI_SPD_FORCE        0x0001       /* Force the sessions to terminate.
+                                             Even if there are some busy
                                              sessions close them */
 
 /*--------------------- OCI Thread Object Definitions------------------------*/
@@ -540,16 +542,16 @@ typedef struct OCIAQLisMsgProps   OCIAQLisMsgProps;   /* AQ listen msg props */
 typedef struct OCIThreadContext OCIThreadContext;
 
 /* OCIThread Mutual Exclusion Lock */
-typedef struct OCIThreadMutex   OCIThreadMutex; 
+typedef struct OCIThreadMutex OCIThreadMutex;
 
 /* OCIThread Key for Thread-Specific Data */
-typedef struct OCIThreadKey     OCIThreadKey;  
+typedef struct OCIThreadKey OCIThreadKey;
 
 /* OCIThread Thread ID */
-typedef struct OCIThreadId      OCIThreadId;  
+typedef struct OCIThreadId OCIThreadId;
 
 /* OCIThread Thread Handle */
-typedef struct OCIThreadHandle  OCIThreadHandle;  
+typedef struct OCIThreadHandle OCIThreadHandle;
 
 /*--------------------- OCI Collection Object Definitions--------------------*/
 
@@ -565,17 +567,15 @@ typedef OCIColl OCITable;
 /* OCIIter - collection iterator */
 typedef struct OCIIter OCIIter;
 
-
 /*-----------------------Descriptor Definitions------------------------------*/
 
-typedef struct OCISnapshot      OCISnapshot;      /* OCI snapshot descriptor */
-typedef struct OCIResult        OCIResult;      /* OCI Result Set Descriptor */
-typedef struct OCILobLocator    OCILobLocator; /* OCI Lob Locator descriptor */
-typedef struct OCIParam         OCIParam;        /* OCI PARameter descriptor */
-typedef struct OCIDateTime      OCIDateTime;      /* OCI DateTime descriptor */
-typedef struct OCIInterval      OCIInterval;      /* OCI Interval descriptor */
-typedef struct OCIRowid         OCIRowid;            /* OCI ROWID descriptor */
-
+typedef struct OCISnapshot OCISnapshot;           /* OCI snapshot descriptor */
+typedef struct OCIResult OCIResult;             /* OCI Result Set Descriptor */
+typedef struct OCILobLocator OCILobLocator;    /* OCI Lob Locator descriptor */
+typedef struct OCIParam OCIParam;                /* OCI PARameter descriptor */
+typedef struct OCIDateTime OCIDateTime;           /* OCI DateTime descriptor */
+typedef struct OCIInterval OCIInterval;           /* OCI Interval descriptor */
+typedef struct OCIRowid OCIRowid;                    /* OCI ROWID descriptor */
 
 /*----------------------------- OBJECT FREE OPTION --------------------------*/
 
@@ -590,20 +590,21 @@ typedef struct OCIRowid         OCIRowid;            /* OCI ROWID descriptor */
 
 struct OCINumber
 {
-  ub1 OCINumberPart[OCI_NUMBER_SIZE];
+    ub1 OCINumberPart[OCI_NUMBER_SIZE];
 };
 
 /*-----------------------Objects Definitions---------------------------------*/
 
-typedef struct OCIString        OCIString;
-typedef struct OCIRaw           OCIRaw;
-typedef struct OCIType          OCIType;
-typedef struct OCINumber        OCINumber;
-typedef struct OCIRef           OCIRef;   
+typedef struct OCIString OCIString;
+typedef struct OCIRaw OCIRaw;
+typedef struct OCIType OCIType;
+typedef struct OCINumber OCINumber;
+typedef struct OCIRef OCIRef;
 
 /*--------------------------- OBJECT INDICATOR ------------------------------*/
 
 typedef sb2 OCIInd;
+
 /*
  * OCIInd -- a variable of this type contains (null) indicator information
  */
@@ -612,7 +613,6 @@ typedef sb2 OCIInd;
 #define OCI_IND_NULL (OCIInd)(-1)                                    /* NULL */
 #define OCI_IND_BADNULL (OCIInd)(-2)                             /* BAD NULL */
 #define OCI_IND_NOTNULLABLE (OCIInd)(-3)                     /* not NULLable */
-
 
 /*-------------------------Object Ptr Types----------------------------------*/
 #define OCI_OTYPE_NAME 1                                      /* object name */
@@ -631,13 +631,12 @@ typedef ub4 OCILobLength;
 #define OCI_NEXT_PIECE 2                          /* the next of many pieces */
 #define OCI_LAST_PIECE 3                                   /* the last piece */
 
-
 /*----------------------- GET OPTIONS FOR TDO  ------------------------------*/
 
 enum OCITypeGetOpt
 {
-  OCI_TYPEGET_HEADER,   /* load only the header portion of the TDO           */
-  OCI_TYPEGET_ALL       /* load all attribute and method descriptors as well */
+    OCI_TYPEGET_HEADER, /* load only the header portion of the TDO           */
+    OCI_TYPEGET_ALL     /* load all attribute and method descriptors as well */
 };
 typedef enum OCITypeGetOpt OCITypeGetOpt;
 
@@ -645,11 +644,11 @@ typedef enum OCITypeGetOpt OCITypeGetOpt;
 
 enum OCIPinOpt
 {
-  /* 0 = uninitialized */
-  OCI_PIN_DEFAULT = 1,                                 /* default pin option */
-  OCI_PIN_ANY = 3,                             /* pin any copy of the object */
-  OCI_PIN_RECENT = 4,                       /* pin recent copy of the object */
-  OCI_PIN_LATEST = 5                        /* pin latest copy of the object */
+    /* 0 = uninitialized */
+    OCI_PIN_DEFAULT = 1,                               /* default pin option */
+    OCI_PIN_ANY     = 3,                       /* pin any copy of the object */
+    OCI_PIN_RECENT  = 4,                    /* pin recent copy of the object */
+    OCI_PIN_LATEST  = 5                     /* pin latest copy of the object */
 };
 typedef enum OCIPinOpt OCIPinOpt;
 
@@ -657,10 +656,10 @@ typedef enum OCIPinOpt OCIPinOpt;
 
 enum OCILockOpt
 {
-  /* 0 = uninitialized */
-  OCI_LOCK_NONE = 1,                               /* null (same as no lock) */
-  OCI_LOCK_X = 2,                                          /* exclusive lock */
-  OCI_LOCK_X_NOWAIT = 3                      /* exclusive lock, do not wait  */
+    /* 0 = uninitialized */
+    OCI_LOCK_NONE     = 1,                         /* null (same as no lock) */
+    OCI_LOCK_X        = 2,                                 /* exclusive lock */
+    OCI_LOCK_X_NOWAIT = 3                    /* exclusive lock, do not wait  */
 };
 typedef enum OCILockOpt OCILockOpt;
 
@@ -668,10 +667,10 @@ typedef enum OCILockOpt OCILockOpt;
 
 enum OCIMarkOpt
 {
-  /* 0 = uninitialized */
-  OCI_MARK_DEFAULT = 1,               /* default (the same as OCI_MARK_NONE) */
-  OCI_MARK_NONE = OCI_MARK_DEFAULT,          /* object has not been modified */
-  OCI_MARK_UPDATE                                 /* object is to be updated */
+    /* 0 = uninitialized */
+    OCI_MARK_DEFAULT = 1,             /* default (the same as OCI_MARK_NONE) */
+    OCI_MARK_NONE    = OCI_MARK_DEFAULT,     /* object has not been modified */
+    OCI_MARK_UPDATE                               /* object is to be updated */
 };
 typedef enum OCIMarkOpt OCIMarkOpt;
 
@@ -685,36 +684,41 @@ typedef ub2 OCITypeCode;
 
 struct OCITime
 {
-  ub1 OCITimeHH;                          /* hours; range is 0 <= hours <=23 */
-  ub1 OCITimeMI;                     /* minutes; range is 0 <= minutes <= 59 */
-  ub1 OCITimeSS;                     /* seconds; range is 0 <= seconds <= 59 */
+    ub1 OCITimeHH;                        /* hours; range is 0 <= hours <=23 */
+    ub1 OCITimeMI;                   /* minutes; range is 0 <= minutes <= 59 */
+    ub1 OCITimeSS;                   /* seconds; range is 0 <= seconds <= 59 */
 };
 typedef struct OCITime OCITime;
 
 struct OCIDate
 {
-  sb2 OCIDateYYYY;         /* gregorian year; range is -4712 <= year <= 9999 */
-  ub1 OCIDateMM;                          /* month; range is 1 <= month < 12 */
-  ub1 OCIDateDD;                             /* day; range is 1 <= day <= 31 */
-  OCITime OCIDateTime;                                               /* time */
+    sb2     OCIDateYYYY;   /* gregorian year; range is -4712 <= year <= 9999 */
+    ub1     OCIDateMM;                    /* month; range is 1 <= month < 12 */
+    ub1     OCIDateDD;                       /* day; range is 1 <= day <= 31 */
+    OCITime OCIDateTime;                                             /* time */
 };
 typedef struct OCIDate OCIDate;
 
 /*-------------------------- OBJECT Duration --------------------------------*/
- 
+
 typedef ub2 OCIDuration;
- 
+
 #define  OCI_DURATION_BEGIN (OCIDuration)10
-                                           /* beginning sequence of duration */
+
+/* beginning sequence of duration */
 #define  OCI_DURATION_NULL (OCIDuration)(OCI_DURATION_BEGIN-1)
-                                                            /* null duration */
+
+/* null duration */
 #define  OCI_DURATION_DEFAULT (OCIDuration)(OCI_DURATION_BEGIN-2) /* default */
 #define  OCI_DURATION_NEXT (OCIDuration)(OCI_DURATION_BEGIN-3)
-                                                    /* next special duration */
+
+/* next special duration */
 #define  OCI_DURATION_SESSION (OCIDuration)(OCI_DURATION_BEGIN)
-                                                  /* the end of user session */
+
+/* the end of user session */
 #define  OCI_DURATION_TRANS (OCIDuration)(OCI_DURATION_BEGIN+1)
-                                              /* the end of user transaction */
+
+/* the end of user transaction */
 
 /*-------------------------Object Ptr Types----------------------------------*/
 #define OCI_OTYPE_NAME 1                                      /* object name */
@@ -736,7 +740,7 @@ typedef ub2 OCIDuration;
 #define OCI_PTYPE_TYPE_COLL           13        /* collection type's element */
 #define OCI_PTYPE_TYPE_METHOD         14       /* user-defined type's method */
 #define OCI_PTYPE_TYPE_ARG            15   /* user-defined type method's arg */
-#define OCI_PTYPE_TYPE_RESULT         16/* user-defined type method's result */
+#define OCI_PTYPE_TYPE_RESULT         16 /* user-defined type method's result */
 #define OCI_PTYPE_SCHEMA              17                           /* schema */
 #define OCI_PTYPE_DATABASE            18                         /* database */
 #define OCI_PTYPE_RULE                19                             /* rule */
@@ -771,10 +775,10 @@ typedef ub1 OCIObjectPropId;
 
 enum OCIObjectLifetime
 {
-   /* 0 = uninitialized */
-   OCI_OBJECT_PERSISTENT = 1,                          /* persistent object */
-   OCI_OBJECT_TRANSIENT,                                /* transient object */
-   OCI_OBJECT_VALUE                                         /* value object */
+    /* 0 = uninitialized */
+    OCI_OBJECT_PERSISTENT = 1,                         /* persistent object */
+    OCI_OBJECT_TRANSIENT,                               /* transient object */
+    OCI_OBJECT_VALUE                                        /* value object */
 };
 typedef enum OCIObjectLifetime OCIObjectLifetime;
 
@@ -822,16 +826,20 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_AUTH         0x08        /* Change the password but do not login */
 
 /* ------------- DB Change Notification reg handle attributes ---------------*/
-#define OCI_ATTR_CHNF_TABLENAMES          401     /* out: array of table names     */
-#define OCI_ATTR_CHNF_ROWIDS              402     /* in: rowids needed */ 
-#define OCI_ATTR_CHNF_OPERATIONS          403  /* in: notification operation filter*/ 
-#define OCI_ATTR_CHNF_CHANGELAG           404  /* txn lag between notifications  */
+#define OCI_ATTR_CHNF_TABLENAMES          401     /* out: array of table names
+                                                   *    */
+#define OCI_ATTR_CHNF_ROWIDS              402     /* in: rowids needed */
+#define OCI_ATTR_CHNF_OPERATIONS          403  /* in: notification operation
+                                                *filter*/
+#define OCI_ATTR_CHNF_CHANGELAG           404  /* txn lag between notifications
+                                                * */
 
 /* DB Change: Notification Descriptor attributes -----------------------*/
 #define OCI_ATTR_CHDES_DBNAME            405    /* source database    */
 #define OCI_ATTR_CHDES_NFYTYPE           406    /* notification type flags */
 #define OCI_ATTR_CHDES_XID               407    /* XID  of the transaction */
-#define OCI_ATTR_CHDES_TABLE_CHANGES     408    /* array of table chg descriptors */
+#define OCI_ATTR_CHDES_TABLE_CHANGES     408    /* array of table chg
+                                                 *descriptors */
 
 #define OCI_ATTR_CHDES_TABLE_NAME        409    /* table name */
 #define OCI_ATTR_CHDES_TABLE_OPFLAGS     410    /* table operation flags */
@@ -853,7 +861,8 @@ typedef uword OCIObjectMarkStatus;
 
 /* DB Change: Operation types -----------*/
 #define OCI_OPCODE_ALLROWS 0x1                 /* all rows invalidated  */
-#define OCI_OPCODE_ALLOPS 0x0                  /* interested in all operations */
+#define OCI_OPCODE_ALLOPS 0x0                  /* interested in all operations
+                                                **/
 #define OCI_OPCODE_INSERT 0x2                 /*  INSERT */
 #define OCI_OPCODE_UPDATE 0x4                 /*  UPDATE */
 #define OCI_OPCODE_DELETE 0x8                 /* DELETE */

@@ -1,51 +1,51 @@
 /*
-   +----------------------------------------------------------------------+
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: collection.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: collection.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollInit
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 OCI_Coll * OCI_CollInit
 (
-    OCI_Connection *con, 
-    OCI_Coll      **pcoll, 
+    OCI_Connection *con,
+    OCI_Coll      **pcoll,
     void           *handle,
     OCI_TypeInfo   *typinf
 )
@@ -102,15 +102,18 @@ OCI_Coll * OCI_CollInit
     return coll;
 }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OCI_API OCI_CollCreate(OCI_TypeInfo *typinf)
+OCI_Coll * OCI_API OCI_CollCreate
+(
+    OCI_TypeInfo *typinf
+)
 {
     OCI_Coll *coll = NULL;
 
@@ -126,11 +129,14 @@ OCI_Coll * OCI_API OCI_CollCreate(OCI_TypeInfo *typinf)
     return coll;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollFree(OCI_Coll *coll)
+boolean OCI_API OCI_CollFree
+(
+    OCI_Coll *coll
+)
 {
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_OBJECT_FETCHED(coll, FALSE);
@@ -163,19 +169,22 @@ boolean OCI_API OCI_CollFree(OCI_Coll *coll)
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollArrayCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll ** OCI_API OCI_CollArrayCreate(OCI_Connection *con,
-                                        OCI_TypeInfo *typinf,
-                                        unsigned int nbelem)
+OCI_Coll ** OCI_API OCI_CollArrayCreate
+(
+    OCI_Connection *con,
+    OCI_TypeInfo   *typinf,
+    unsigned int    nbelem
+)
 {
-    OCI_Array   *arr   = NULL;
-    OCI_Coll   **colls = NULL;
+    OCI_Array *arr   = NULL;
+    OCI_Coll **colls = NULL;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, 
-                          sizeof(OCIColl *), sizeof(OCI_Coll), 
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0,
+                          sizeof(OCIColl *), sizeof(OCI_Coll),
                           0, typinf);
 
     if (arr != NULL)
@@ -186,20 +195,27 @@ OCI_Coll ** OCI_API OCI_CollArrayCreate(OCI_Connection *con,
     return colls;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollArrayFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollArrayFree(OCI_Coll **colls)
+boolean OCI_API OCI_CollArrayFree
+(
+    OCI_Coll **colls
+)
 {
     return OCI_ArrayFreeFromHandles((void **) colls);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollAssign
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollAssign(OCI_Coll *coll, OCI_Coll *coll_src)
+boolean OCI_API OCI_CollAssign
+(
+    OCI_Coll *coll,
+    OCI_Coll *coll_src
+)
 {
     boolean res = TRUE;
 
@@ -222,11 +238,14 @@ boolean OCI_API OCI_CollAssign(OCI_Coll *coll, OCI_Coll *coll_src)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollGetType
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_CollGetType(OCI_Coll *coll)
+unsigned int OCI_API OCI_CollGetType
+(
+    OCI_Coll *coll
+)
 {
     unsigned int type = OCI_UNKNOWN;
 
@@ -242,11 +261,14 @@ unsigned int OCI_API OCI_CollGetType(OCI_Coll *coll)
     return type;
 }
 
-/* ------------------------------------------------------------------------ *
- * OCI_CollGetCount
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_CollGetMax
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_CollGetMax(OCI_Coll *coll)
+unsigned int OCI_API OCI_CollGetMax
+(
+    OCI_Coll *coll
+)
 {
     int max = 0;
 
@@ -259,11 +281,14 @@ unsigned int OCI_API OCI_CollGetMax(OCI_Coll *coll)
     return (unsigned int) max;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollGetSize
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_CollGetSize(OCI_Coll *coll)
+unsigned int OCI_API OCI_CollGetSize
+(
+    OCI_Coll *coll
+)
 {
     boolean res = TRUE;
     sb4 size    = 0;
@@ -282,13 +307,17 @@ unsigned int OCI_API OCI_CollGetSize(OCI_Coll *coll)
     return (unsigned int) size;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollTrim
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollTrim(OCI_Coll *coll, unsigned int nb_elem)
+boolean OCI_API OCI_CollTrim
+(
+    OCI_Coll    *coll,
+    unsigned int nb_elem
+)
 {
-    boolean res      = TRUE;
+    boolean res       = TRUE;
     unsigned int size = 0;
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
@@ -309,11 +338,15 @@ boolean OCI_API OCI_CollTrim(OCI_Coll *coll, unsigned int nb_elem)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollGetAt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OCI_API OCI_CollGetAt(OCI_Coll *coll, unsigned int index)
+OCI_Elem * OCI_API OCI_CollGetAt
+(
+    OCI_Coll    *coll,
+    unsigned int index
+)
 {
     boolean res    = TRUE;
     boolean exists = FALSE;
@@ -342,11 +375,16 @@ OCI_Elem * OCI_API OCI_CollGetAt(OCI_Coll *coll, unsigned int index)
     return elem;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollGetAt2
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollGetAt2(OCI_Coll *coll, unsigned int index, OCI_Elem *elem)
+boolean OCI_API OCI_CollGetAt2
+(
+    OCI_Coll    *coll,
+    unsigned int index,
+    OCI_Elem    *elem
+)
 {
     boolean res    = TRUE;
     boolean exists = FALSE;
@@ -356,8 +394,8 @@ boolean OCI_API OCI_CollGetAt2(OCI_Coll *coll, unsigned int index, OCI_Elem *ele
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
 
-    OCI_CHECK_COMPAT(coll->con, 
-                     elem->typinf->cols[0].type == coll->typinf->cols[0].type, 
+    OCI_CHECK_COMPAT(coll->con,
+                     elem->typinf->cols[0].type == coll->typinf->cols[0].type,
                      FALSE);
 
     OCI_CALL2
@@ -382,19 +420,24 @@ boolean OCI_API OCI_CollGetAt2(OCI_Coll *coll, unsigned int index, OCI_Elem *ele
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollSetAt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollSetAt(OCI_Coll *coll, unsigned int index, OCI_Elem *elem)
+boolean OCI_API OCI_CollSetAt
+(
+    OCI_Coll    *coll,
+    unsigned int index,
+    OCI_Elem    *elem
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
 
-    OCI_CHECK_COMPAT(coll->con, 
-                     elem->typinf->cols[0].type == coll->typinf->cols[0].type, 
+    OCI_CHECK_COMPAT(coll->con,
+                     elem->typinf->cols[0].type == coll->typinf->cols[0].type,
                      FALSE);
 
     OCI_CALL2
@@ -410,19 +453,23 @@ boolean OCI_API OCI_CollSetAt(OCI_Coll *coll, unsigned int index, OCI_Elem *elem
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollAppend
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollAppend(OCI_Coll *coll, OCI_Elem *elem)
+boolean OCI_API OCI_CollAppend
+(
+    OCI_Coll *coll,
+    OCI_Elem *elem
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
 
-    OCI_CHECK_COMPAT(coll->con, 
-                     elem->typinf->cols[0].type == coll->typinf->cols[0].type, 
+    OCI_CHECK_COMPAT(coll->con,
+                     elem->typinf->cols[0].type == coll->typinf->cols[0].type,
                      FALSE);
 
     OCI_CALL2
@@ -438,11 +485,14 @@ boolean OCI_API OCI_CollAppend(OCI_Coll *coll, OCI_Elem *elem)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollGetTypeInfo
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo(OCI_Coll *coll)
+OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo
+(
+    OCI_Coll *coll
+)
 {
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, NULL);
 
@@ -451,11 +501,14 @@ OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo(OCI_Coll *coll)
     return coll->typinf;
 }
 
-/* ------------------------------------------------------------------------ *
- * OCI_CollTrim
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_CollClear
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollClear(OCI_Coll *coll)
+boolean OCI_API OCI_CollClear
+(
+    OCI_Coll *coll
+)
 {
     boolean res = TRUE;
 

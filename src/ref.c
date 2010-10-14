@@ -1,49 +1,54 @@
 /*
-   +----------------------------------------------------------------------+
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: ref.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: ref.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefInit
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OCI_RefInit(OCI_Connection *con, OCI_TypeInfo *typinf, OCI_Ref **pref,
-                      void *handle)
+OCI_Ref * OCI_RefInit
+(
+    OCI_Connection *con,
+    OCI_TypeInfo   *typinf,
+    OCI_Ref       **pref,
+    void           *handle
+)
 {
     boolean res   = TRUE;
     OCI_Ref * ref = NULL;
@@ -81,7 +86,7 @@ OCI_Ref * OCI_RefInit(OCI_Connection *con, OCI_TypeInfo *typinf, OCI_Ref **pref,
                               (OCIDuration) OCI_DURATION_SESSION,
                               (boolean) FALSE,
                               (dvoid **) &ref->handle)
-           )
+            )
         }
         else
         {
@@ -104,11 +109,14 @@ OCI_Ref * OCI_RefInit(OCI_Connection *con, OCI_TypeInfo *typinf, OCI_Ref **pref,
     return ref;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefPin
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_RefPin(OCI_Ref *ref)
+boolean OCI_RefPin
+(
+    OCI_Ref *ref
+)
 {
     boolean res      = TRUE;
     void *obj_handle = NULL;
@@ -145,11 +153,14 @@ boolean OCI_RefPin(OCI_Ref *ref)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefUnpin
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_RefUnpin(OCI_Ref *ref)
+boolean OCI_RefUnpin
+(
+    OCI_Ref *ref
+)
 {
     boolean res = TRUE;
 
@@ -177,15 +188,19 @@ boolean OCI_RefUnpin(OCI_Ref *ref)
     return res;
 }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OCI_API OCI_RefCreate(OCI_Connection *con, OCI_TypeInfo *typinf)
+OCI_Ref * OCI_API OCI_RefCreate
+(
+    OCI_Connection *con,
+    OCI_TypeInfo   *typinf
+)
 {
     OCI_Ref *ref = NULL;
 
@@ -201,11 +216,14 @@ OCI_Ref * OCI_API OCI_RefCreate(OCI_Connection *con, OCI_TypeInfo *typinf)
     return ref;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefFree(OCI_Ref *ref)
+boolean OCI_API OCI_RefFree
+(
+    OCI_Ref *ref
+)
 {
     OCI_CHECK_PTR(OCI_IPC_REF, ref, FALSE);
 
@@ -230,19 +248,22 @@ boolean OCI_API OCI_RefFree(OCI_Ref *ref)
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefArrayCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref ** OCI_API OCI_RefArrayCreate(OCI_Connection *con,
-                                      OCI_TypeInfo *typinf,
-                                      unsigned int nbelem)
+OCI_Ref ** OCI_API OCI_RefArrayCreate
+(
+    OCI_Connection *con,
+    OCI_TypeInfo   *typinf,
+    unsigned int    nbelem
+)
 {
-    OCI_Array   *arr  = NULL;
-    OCI_Ref    **refs = NULL;
+    OCI_Array *arr = NULL;
+    OCI_Ref **refs = NULL;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0, 
-                          sizeof(OCIRef *), sizeof(OCI_Ref), 
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0,
+                          sizeof(OCIRef *), sizeof(OCI_Ref),
                           0, typinf);
 
     if (arr != NULL)
@@ -253,20 +274,26 @@ OCI_Ref ** OCI_API OCI_RefArrayCreate(OCI_Connection *con,
     return refs;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefArrayFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefArrayFree(OCI_Ref **refs)
+boolean OCI_API OCI_RefArrayFree
+(
+    OCI_Ref **refs
+)
 {
     return OCI_ArrayFreeFromHandles((void **) refs);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefGetObject
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * OCI_API OCI_RefGetObject(OCI_Ref *ref)
+OCI_Object * OCI_API OCI_RefGetObject
+(
+    OCI_Ref *ref
+)
 {
     OCI_Object *obj = NULL;
 
@@ -281,14 +308,18 @@ OCI_Object * OCI_API OCI_RefGetObject(OCI_Ref *ref)
         obj = ref->obj;
     }
 
-	return obj;
+    return obj;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefAssign
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefAssign(OCI_Ref *ref, OCI_Ref *ref_src)
+boolean OCI_API OCI_RefAssign
+(
+    OCI_Ref *ref,
+    OCI_Ref *ref_src
+)
 {
     boolean res = TRUE;
 
@@ -321,11 +352,14 @@ boolean OCI_API OCI_RefAssign(OCI_Ref *ref, OCI_Ref *ref_src)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefIsNull
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefIsNull(OCI_Ref *ref)
+boolean OCI_API OCI_RefIsNull
+(
+    OCI_Ref *ref
+)
 {
     OCI_CHECK_PTR(OCI_IPC_REF, ref, TRUE);
 
@@ -334,11 +368,14 @@ boolean OCI_API OCI_RefIsNull(OCI_Ref *ref)
     return (OCIRefIsNull(OCILib.env, ref->handle) == TRUE);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefSetNull
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefSetNull(OCI_Ref *ref)
+boolean OCI_API OCI_RefSetNull
+(
+    OCI_Ref *ref
+)
 {
     boolean res = TRUE;
 
@@ -362,11 +399,16 @@ boolean OCI_API OCI_RefSetNull(OCI_Ref *ref)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefToText
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefToText(OCI_Ref *ref, unsigned int size, mtext *str)
+boolean OCI_API OCI_RefToText
+(
+    OCI_Ref     *ref,
+    unsigned int size,
+    mtext       *str
+)
 {
     boolean res = TRUE;
     void *ostr  = NULL;
@@ -401,11 +443,14 @@ boolean OCI_API OCI_RefToText(OCI_Ref *ref, unsigned int size, mtext *str)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_RefGetHexSize
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_RefGetHexSize(OCI_Ref *ref)
+unsigned int OCI_API OCI_RefGetHexSize
+(
+    OCI_Ref *ref
+)
 {
     ub4 size = 0;
 
@@ -420,11 +465,14 @@ unsigned int OCI_API OCI_RefGetHexSize(OCI_Ref *ref)
     return (unsigned int) size;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_CollRefGetTypeInfo
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * OCI_API OCI_RefGetTypeInfo(OCI_Ref *ref)
+OCI_TypeInfo * OCI_API OCI_RefGetTypeInfo
+(
+    OCI_Ref *ref
+)
 {
     OCI_CHECK_PTR(OCI_IPC_REF, ref, NULL);
 
@@ -432,5 +480,4 @@ OCI_TypeInfo * OCI_API OCI_RefGetTypeInfo(OCI_Ref *ref)
 
     return ref->typinf;
 }
-
 

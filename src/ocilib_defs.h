@@ -1,36 +1,36 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: ocilib_defs.h, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: ocilib_defs.h, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
 #define OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -38,16 +38,17 @@
 #include "ocilib.h"
 #include "oci_import.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
                            ORACLE VERSION DETECTION
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
 #ifdef OCI_IMPORT_RUNTIME
 
-  /* for runtime loading, set compile time version to the highest minimum
-     version needed by OCILIB encapsulation of OCI */
+/* for runtime loading, set compile time version to the highest minimum
+   version needed by OCILIB encapsulation of OCI */
   #define OCI_VERSION_COMPILE OCI_11_1
-  /* set runtime version to unknown, it will be guessed from symbols loading */
+
+/* set runtime version to unknown, it will be guessed from symbols loading */
   #define OCI_VERSION_RUNTIME OCI_UNKNOWN
 
 #else
@@ -102,22 +103,22 @@
   #define OCI_LOB2_API_ENABLED
 #endif
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
                      CHARSET AND STRING TYPES DETECTION
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
 /* mtext and dtext are public character types for meta and user string types
    We need to handle as well internal string types because :
-   
+
    - wchar_t is not the same type on all platforms (that is such a pain !),
    - OCI, in Unicode mode, uses Fixed length UTF16 encoding (2 bytes)
-   
+
    So, omtext and odtext were added to represent internal meta and user string
    types.
 
    The following checks find out the real types and sizes of omtext and odtext
 */
-   
+
 #if  defined (OCI_CHARSET_ANSI)
 
   #define omtext         mtext
@@ -134,23 +135,25 @@
   #define WCHAR_4_BYTES  0x7FFFFFFF
 
   #if WCHAR_MAX == WCHAR_4_BYTES
-    /* so, input/output conversion will be needed */
+
+/* so, input/output conversion will be needed */
     #define OCI_CHECK_STRINGS
   #endif
 
   #ifdef OCI_METADATA_WIDE
 
     #ifdef OCI_CHECK_STRINGS
-      /* conversion for meta string needed */
+
+/* conversion for meta string needed */
       #define OCI_CHECK_METASTRINGS
     #endif
 
-    /* internal meta string type is UTF16 (2 bytes) */
+/* internal meta string type is UTF16 (2 bytes) */
     #define omtext unsigned short
 
   #else
 
-    /* internal meta string type is char */
+/* internal meta string type is char */
     #define omtext char
 
   #endif
@@ -158,42 +161,42 @@
   #ifdef OCI_USERDATA_WIDE
 
     #ifdef OCI_CHECK_STRINGS
-      /* conversion for data string needed */
+
+/* conversion for data string needed */
       #define OCI_CHECK_DATASTRINGS
     #endif
 
-    /* internal data string type is UTF16 (2 bytes) */
+/* internal data string type is UTF16 (2 bytes) */
     #define odtext unsigned short
 
   #else
 
-    /* internal data string type is char */
+/* internal data string type is char */
     #define odtext char
 
   #endif
 
 #endif
 
-
-/* ************************************************************************ *
+/* ********************************************************************************************* *
                             INTERNAL  CONSTANTS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * DEfault environnement mode
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #ifdef OCI_METADATA_WIDE
-    #define OCI_ENV_MODE    OCI_UTF16 
+  #define OCI_ENV_MODE    OCI_UTF16
 #else
-    #define OCI_ENV_MODE    OCI_DEFAULT
+  #define OCI_ENV_MODE    OCI_DEFAULT
 #endif
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * Internal Pointer Codes
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
- /* -- external C pointers ---- */
+/* -- external C pointers ---- */
 
 #define OCI_IPC_VOID             1
 #define OCI_IPC_SHORT            2
@@ -210,7 +213,7 @@
 #define OCI_IPC_CONNECTION       10
 #define OCI_IPC_POOL             11
 #define OCI_IPC_TRANSACTION      12
-#define OCI_IPC_STATEMENT        13 
+#define OCI_IPC_STATEMENT        13
 #define OCI_IPC_RESULTSET        14
 #define OCI_IPC_COLUMN           15
 #define OCI_IPC_DATE             16
@@ -238,7 +241,7 @@
 #define OCI_IPC_AGENT            38
 
 /* ---- Internal pointers ----- */
- 
+
 #define OCI_IPC_LIST             39
 #define OCI_IPC_LIST_ITEM        40
 #define OCI_IPC_BIND_ARRAY       41
@@ -262,9 +265,9 @@
 #define OCI_IPC_DP_COL_ARRAY     59
 #define OCI_IPC_BATCH_ERRORS     60
 
-/* ------------------------------------------------------------------------ *
- * Oracle conditionnal features 
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * Oracle conditionnal features
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_FEATURE_WIDE_USERDATA       1
 #define OCI_FEATURE_TIMESTAMP           2
@@ -273,49 +276,49 @@
 #define OCI_FEATURE_DATABASE_NOTIFY     5
 #define OCI_FEATURE_REMOTE_DBS_CONTROL  6
 
-/* ------------------------------------------------------------------------ *
- * Oracle conditionnal features 
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * Oracle conditionnal features
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_HDLE_HANDLE                 1
 #define OCI_HDLE_DESCRIPTOR             2
 #define OCI_HDLE_OBJECT                 3
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * statement status
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_STMT_CLOSED                 1
 #define OCI_STMT_PREPARED               2
 #define OCI_STMT_EXECUTED               3
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * connection states
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_CONN_ALLOCATED              1
 #define OCI_CONN_ATTACHED               2
 #define OCI_CONN_LOGGED                 3
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * objects status
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_OBJECT_ALLOCATED            1
 #define OCI_OBJECT_FETCHED_CLEAN        2
 #define OCI_OBJECT_FETCHED_DIRTY        3
 #define OCI_OBJECT_ALLOCATED_ARRAY      4
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * bind type
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_BIND_INPUT                  1
 #define OCI_BIND_OUTPUT                 2
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * Type of schema describing
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_DESC_RESULTSET              1
 #define OCI_DESC_COLUMN                 2
@@ -323,43 +326,43 @@
 #define OCI_DESC_TYPE                   4
 #define OCI_DESC_COLLECTION             5
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * Direct path object status
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_DPS_NOT_PREPARED            1
 #define OCI_DPS_PREPARED                2
 #define OCI_DPS_CONVERTED               3
 #define OCI_DPS_TERMINATED              4
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * internal statement fetch direction
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_SFD_NEXT                    0x02
 #define OCI_SFD_FIRST                   0x04
 #define OCI_SFD_LAST                    0x08
 #define OCI_SFD_PREV                    0x10
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * internal direct path column types
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_DDT_TEXT                    1
 #define OCI_DDT_BINARY                  2
 #define OCI_DDT_NUMBER                  3
 #define OCI_DDT_OTHERS                  4
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  *  output buffer server line size
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_OUPUT_LSIZE                 255
 #define OCI_OUPUT_LSIZE_10G             32767
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  *  offset for alignment computation
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_OFT_POINTER                 1
 #define OCI_OFT_NUMBER                  2
@@ -368,16 +371,15 @@
 
 #define OCI_OFFSET_PAIR(a, b)           (a + (b << 16))
 
-
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  *  AQ queues defines
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_RAW_OBJECT_TYPE   MT("SYS.RAW")
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  *  string functions mapping
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #ifdef OCI_METADATA_WIDE
   #define mttoupper           towupper
@@ -389,15 +391,15 @@
   #define mtsscanf            sscanf
 #endif
 
-/* ------------------------------------------------------------------------ *
- *  Internal integer types 
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ *  Internal integer types
+ * --------------------------------------------------------------------------------------------- */
 
 #define OCI_NUM_NUMBER        32
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  *  Unicode constants
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 /* OCI unicode flag */
 
@@ -429,14 +431,13 @@
 
 #define UTF8_BYTES_PER_CHAR     4
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * Local helper macros
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 /* check OCI status */
 
 #define OCI_NO_ERROR(res)   ((res) == OCI_SUCCESS)
-
 
 /* memory management helpers */
 
@@ -451,7 +452,6 @@
      (rs->row_cur > 0) &&                                   \
      ((sb2) ((sb2*)(def)->buf.inds)[rs->row_cur-1] != -1))
 
-
 #define OCI_NOT_USED(p)                 (p) = (p);
 
 /* miscellaneaous */
@@ -462,11 +462,10 @@
 
 #define OCI_LIB_CONTEXT                 (OCILib.env_mode & OCI_ENV_CONTEXT)
 
-
 #define OCI_RESULT(res)                                                        \
                                                                                \
-        if (OCI_LIB_CONTEXT)                                                   \
-            OCI_SetStatus(res);                                                \
+    if (OCI_LIB_CONTEXT)                                                                                                                                  \
+        OCI_SetStatus(res);                                                                                                                                        \
 
 #ifdef _WINDOWS
   #define OCI_CVT_CHAR                  1
@@ -487,11 +486,8 @@
 #define OCI_SIZEOF_NUMBER               22
 #define OCI_SIZEOF_DATE                 7
 
-
-
 #define msizeof(s) (sizeof(s) / sizeof(mtext))
 #define dsizeof(s) (sizeof(s) / sizeof(dtext))
-
 
 #endif    /* OCILIB_OCILIB_DEFS_H_INCLUDED */
 

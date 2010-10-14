@@ -1,56 +1,59 @@
 /*
-   +----------------------------------------------------------------------+
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: dirpath.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: dirpath.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
-                                        const mtext *partition,
-                                        unsigned int nb_cols,
-                                        unsigned int nb_rows)
+OCI_DirPath * OCI_API OCI_DirPathCreate
+(
+    OCI_TypeInfo *typinf,
+    const mtext  *partition,
+    unsigned int  nb_cols,
+    unsigned int  nb_rows
+)
 {
     OCI_DirPath *dp = NULL;
 
-    void *ostr  = NULL;
-    int osize   = -1;
+    void *ostr = NULL;
+    int osize  = -1;
 
     boolean res = TRUE;
 
@@ -61,20 +64,20 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
 
     /* allocate direct path structure */
 
-    dp = (OCI_DirPath *) OCI_MemAlloc(OCI_IPC_DIRPATH, sizeof(*dp), 
+    dp = (OCI_DirPath *) OCI_MemAlloc(OCI_IPC_DIRPATH, sizeof(*dp),
                                       (size_t) 1, TRUE);
 
     if (dp != NULL)
     {
-        dp->con       = typinf->con;
-        dp->status    = OCI_DPS_NOT_PREPARED;
-        dp->typinf    = typinf;
-        dp->nb_rows   = (ub2) nb_rows;
-        dp->nb_cols   = (ub2) nb_cols;
-        dp->nb_cur    = (ub2) dp->nb_rows;
-        dp->err_col   = 0;
-        dp->err_row   = 0;
-        dp->nb_prcsd  = 0;
+        dp->con      = typinf->con;
+        dp->status   = OCI_DPS_NOT_PREPARED;
+        dp->typinf   = typinf;
+        dp->nb_rows  = (ub2) nb_rows;
+        dp->nb_cols  = (ub2) nb_cols;
+        dp->nb_cur   = (ub2) dp->nb_rows;
+        dp->err_col  = 0;
+        dp->err_row  = 0;
+        dp->nb_prcsd = 0;
 
         /* allocates direct context handle */
 
@@ -93,7 +96,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
             osize = -1;
             ostr  = OCI_GetInputMetaString(dp->typinf->name, &osize);
 
-			OCI_CALL2
+            OCI_CALL2
             (
                 res, dp->con,
 
@@ -112,7 +115,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
             osize = -1;
             ostr  = OCI_GetInputMetaString(dp->typinf->schema, &osize);
 
-			OCI_CALL2
+            OCI_CALL2
             (
                 res, dp->con,
 
@@ -184,7 +187,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
     else
         res = FALSE;
 
-   /* handle errors */
+    /* handle errors */
 
     if (res == FALSE)
     {
@@ -197,11 +200,14 @@ OCI_DirPath * OCI_API OCI_DirPathCreate(OCI_TypeInfo *typinf,
     return dp;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathFree(OCI_DirPath *dp)
+boolean OCI_API OCI_DirPathFree
+(
+    OCI_DirPath *dp
+)
 {
     ub2 i;
 
@@ -213,7 +219,7 @@ boolean OCI_API OCI_DirPathFree(OCI_DirPath *dp)
         OCI_FREE(dp->cols[i].lens);
         OCI_FREE(dp->cols[i].flags);
         OCI_FREE(dp->cols[i].format);
-   }
+    }
 
     OCI_FREE(dp->cols);
 
@@ -228,21 +234,26 @@ boolean OCI_API OCI_DirPathFree(OCI_DirPath *dp)
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathSetColumn
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
-                                     const mtext *name, unsigned int maxsize,
-                                     const mtext *format)
+boolean OCI_API OCI_DirPathSetColumn
+(
+    OCI_DirPath *dp,
+    unsigned int index,
+    const mtext *name,
+    unsigned int maxsize,
+    const mtext *format
+)
 {
     OCI_DirPathColumn *dpcol = NULL;
-    OCI_Column *col = NULL;
-    OCIParam *hattr = NULL;
-    OCIParam *hlist = NULL;
-    void *ostr   = NULL;
-    int osize    = -1;
-    boolean res  = TRUE;
+    OCI_Column *col          = NULL;
+    OCIParam *hattr          = NULL;
+    OCIParam *hlist          = NULL;
+    void *ostr               = NULL;
+    int osize                = -1;
+    boolean res              = TRUE;
     ub2 i;
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
@@ -276,96 +287,96 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
         col   = &dp->typinf->cols[i];
         dpcol = &dp->cols[index-1];
 
-       /* default column attributes */
+        /* default column attributes */
 
-        dpcol->maxsize      = (ub2) maxsize;
-        dpcol->bufsize      = (ub2) maxsize + 1;
-        dpcol->sqlcode      = SQLT_CHR;
-        dpcol->type         = OCI_DDT_TEXT;
-        dpcol->index        = i;
-        dpcol->format_size  = 0;
+        dpcol->maxsize     = (ub2) maxsize;
+        dpcol->bufsize     = (ub2) maxsize + 1;
+        dpcol->sqlcode     = SQLT_CHR;
+        dpcol->type        = OCI_DDT_TEXT;
+        dpcol->index       = i;
+        dpcol->format_size = 0;
 
         switch (col->type)
         {
-            case OCI_CDT_TEXT :
+        case OCI_CDT_TEXT:
 
-                dpcol->maxsize *= sizeof(dtext);
-                dpcol->bufsize *= sizeof(dtext);
+            dpcol->maxsize *= sizeof(dtext);
+            dpcol->bufsize *= sizeof(dtext);
 
-                if (OCILib.nls_utf8 == TRUE)
-                {
-                    dpcol->bufsize *= UTF8_BYTES_PER_CHAR;
-                }
+            if (OCILib.nls_utf8 == TRUE)
+            {
+                dpcol->bufsize *= UTF8_BYTES_PER_CHAR;
+            }
 
-                break;
+            break;
 
-            case OCI_CDT_NUMERIC :
+        case OCI_CDT_NUMERIC:
 
-                if ((format != NULL) && (format[0] != 0))
-                {
-                    dpcol->format      = mtsdup(format);
-                    dpcol->format_size = (ub4) mtslen(format);
-                    dpcol->type        = OCI_DDT_NUMBER;
-                    dpcol->sqlcode     = SQLT_NUM;
-                    dpcol->bufsize     = sizeof(OCINumber);
-                    dpcol->maxsize     = sizeof(OCINumber);
-               }
-                else
-                {
-                    dpcol->type    = OCI_DDT_OTHERS;
-                }
+            if ((format != NULL) && (format[0] != 0))
+            {
+                dpcol->format      = mtsdup(format);
+                dpcol->format_size = (ub4) mtslen(format);
+                dpcol->type        = OCI_DDT_NUMBER;
+                dpcol->sqlcode     = SQLT_NUM;
+                dpcol->bufsize     = sizeof(OCINumber);
+                dpcol->maxsize     = sizeof(OCINumber);
+            }
+            else
+            {
+                dpcol->type = OCI_DDT_OTHERS;
+            }
 
-                break;
+            break;
 
-            case OCI_CDT_DATETIME  :
-            case OCI_CDT_TIMESTAMP :
-            case OCI_CDT_INTERVAL  :
+        case OCI_CDT_DATETIME:
+        case OCI_CDT_TIMESTAMP:
+        case OCI_CDT_INTERVAL:
 
-                dpcol->type    = OCI_DDT_OTHERS;
+            dpcol->type = OCI_DDT_OTHERS;
 
-                if ((format != NULL) && (format[0] != 0))
-                {
-                    dpcol->format       = mtsdup(format);
-                    dpcol->format_size  = (ub4) mtslen(format);
-                    dpcol->maxsize      = (ub2) dpcol->format_size;
-                    dpcol->bufsize     *= sizeof(dtext);
-                }
+            if ((format != NULL) && (format[0] != 0))
+            {
+                dpcol->format      = mtsdup(format);
+                dpcol->format_size = (ub4) mtslen(format);
+                dpcol->maxsize     = (ub2) dpcol->format_size;
+                dpcol->bufsize    *= sizeof(dtext);
+            }
 
-                break;
+            break;
 
-            case OCI_CDT_LOB :
+        case OCI_CDT_LOB:
 
-                if (col->subtype == OCI_BLOB)
-                {
-                    dpcol->type    = OCI_DDT_BINARY;
-                    dpcol->sqlcode = SQLT_BIN;
-                }
-
-                break;
-
-            case OCI_CDT_LONG :
-
-                if (col->subtype == OCI_BLONG)
-                {
-                    dpcol->type    = OCI_DDT_BINARY;
-                    dpcol->sqlcode = SQLT_BIN;
-                }
-
-                break;
-
-            case OCI_CDT_RAW :
-
+            if (col->subtype == OCI_BLOB)
+            {
                 dpcol->type    = OCI_DDT_BINARY;
                 dpcol->sqlcode = SQLT_BIN;
+            }
 
-                break;
+            break;
 
-            default :
+        case OCI_CDT_LONG:
 
-                res = FALSE;
-                OCI_ExceptionDatatypeNotSupported(dp->con, NULL, col->ocode);
+            if (col->subtype == OCI_BLONG)
+            {
+                dpcol->type    = OCI_DDT_BINARY;
+                dpcol->sqlcode = SQLT_BIN;
+            }
 
-                break;
+            break;
+
+        case OCI_CDT_RAW:
+
+            dpcol->type    = OCI_DDT_BINARY;
+            dpcol->sqlcode = SQLT_BIN;
+
+            break;
+
+        default:
+
+            res = FALSE;
+            OCI_ExceptionDatatypeNotSupported(dp->con, NULL, col->ocode);
+
+            break;
         }
     }
 
@@ -385,7 +396,7 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
 
         /* get colum attribute handle */
 
-		OCI_CALL2
+        OCI_CALL2
         (
             res, dp->con,
 
@@ -393,7 +404,7 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
                         (dvoid** ) (dvoid *) &hattr, (ub4) index)
         )
 
-	    /* set column name */
+        /* set column name */
 
         if (res == TRUE)
         {
@@ -482,7 +493,7 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
             OCI_ReleaseMetaString(ostr);
         }
 
-    #ifdef OCI_CHARSET_WIDE
+        #ifdef OCI_CHARSET_WIDE
 
         /* setup Unicode mode for Unicode user data */
 
@@ -500,7 +511,7 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
             )
         }
 
-    #endif
+        #endif
 
         /* free param handle */
 
@@ -512,11 +523,14 @@ boolean OCI_API OCI_DirPathSetColumn(OCI_DirPath *dp, unsigned int index,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathPrepare
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathPrepare(OCI_DirPath *dp)
+boolean OCI_API OCI_DirPathPrepare
+(
+    OCI_DirPath *dp
+)
 {
     boolean res = TRUE;
     ub2 i;
@@ -547,10 +561,10 @@ boolean OCI_API OCI_DirPathPrepare(OCI_DirPath *dp)
 
     if (res == TRUE)
     {
-       res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) dp->ctx,
-                                             (dvoid **) (void *) &dp->strm,
-                                             (ub4) OCI_HTYPE_DIRPATH_STREAM,
-                                             (size_t) 0, (dvoid **) NULL));
+        res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) dp->ctx,
+                                              (dvoid **) (void *) &dp->strm,
+                                              (ub4) OCI_HTYPE_DIRPATH_STREAM,
+                                              (size_t) 0, (dvoid **) NULL));
     }
 
     /* check the number of rows allocated */
@@ -625,17 +639,23 @@ boolean OCI_API OCI_DirPathPrepare(OCI_DirPath *dp)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathSetEntry
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
-                                    unsigned int index, void *value,
-                                    unsigned int size,  boolean complete)
+boolean OCI_API OCI_DirPathSetEntry
+(
+    OCI_DirPath *dp,
+    unsigned int row,
+    unsigned int index,
+    void        *value,
+    unsigned int size,
+    boolean      complete
+)
 {
-    boolean res = TRUE;
+    boolean res              = TRUE;
     OCI_DirPathColumn *dpcol = NULL;
-    OCI_Column *col = NULL;
+    OCI_Column *col          = NULL;
 
     ub1 *data;
     ub1 flag;
@@ -669,18 +689,19 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
         flag = OCI_DIRPATH_COL_PARTIAL;
     }
 
-    /* for character based column, parameter size was the number of characters */
+    /* for character based column, parameter size was the number of characters
+     **/
 
     if (dpcol->sqlcode == SQLT_CHR)
     {
-       size *= (unsigned int) sizeof(dtext);
+        size *= (unsigned int) sizeof(dtext);
     }
 
     /* get internal data cell */
 
     data = ((ub1 *) dpcol->data) + (size_t) ((row-1) * dpcol->bufsize);
 
-#if defined(OCI_CHECK_DATASTRINGS)
+    #if defined(OCI_CHECK_DATASTRINGS)
 
     /* we weed to pack the buffer if wchar_t is 4 bytes */
 
@@ -692,9 +713,9 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
     }
     else
 
-#endif
+    #endif
 
-#if defined(OCI_USERDATA_WIDE)
+    #if defined(OCI_USERDATA_WIDE)
 
     /* input Unicode numeric values causes oracle conversion error.
        so, let's convert them to ansi */
@@ -705,7 +726,7 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
     }
     else
 
-#endif
+    #endif
 
     /* if a format was provided for a numeric column, we convert the input
        buffer to a OCINumber */
@@ -714,8 +735,8 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
     {
         OCINumber *num = (OCINumber *) data;
 
-        res  = OCI_NumberConvertStr(dp->con, num, (dtext *) value, size,
-                                    dpcol->format, dpcol->format_size);
+        res = OCI_NumberConvertStr(dp->con, num, (dtext *) value, size,
+                                   dpcol->format, dpcol->format_size);
 
         if (res == TRUE)
         {
@@ -725,7 +746,7 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
     else
     {
 
-#if defined(OCI_CHARSET_MIXED)
+        #if defined(OCI_CHARSET_MIXED)
 
         /* with mixed charset builds, OCIDirPrepare() causes a segfault if the
            attribute OCI_ATTR_CHARSET_ID has been set with OCI_UTF16.
@@ -739,7 +760,7 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
             size = (unsigned int) wcstombs((char *) data, value, dpcol->bufsize - 1);
         }
         else
-#endif
+        #endif
         {
             memcpy(data, value, (size_t) size);
         }
@@ -754,17 +775,20 @@ boolean OCI_API OCI_DirPathSetEntry(OCI_DirPath *dp, unsigned int row,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathReset
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathReset(OCI_DirPath *dp)
+boolean OCI_API OCI_DirPathReset
+(
+    OCI_DirPath *dp
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
 
-   /* reset array */
+    /* reset array */
 
     OCI_CALL2
     (
@@ -773,7 +797,7 @@ boolean OCI_API OCI_DirPathReset(OCI_DirPath *dp)
         OCIDirPathColArrayReset(dp->arr, dp->con->err)
     )
 
-   /* reset stream */
+    /* reset stream */
 
     OCI_CALL2
     (
@@ -787,15 +811,18 @@ boolean OCI_API OCI_DirPathReset(OCI_DirPath *dp)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathConvert
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
+unsigned int OCI_API OCI_DirPathConvert
+(
+    OCI_DirPath *dp
+)
 {
-    unsigned int res = OCI_DPR_COMPLETE;
+    unsigned int res         = OCI_DPR_COMPLETE;
     OCI_DirPathColumn *dpcol = NULL;
-    sword ret = OCI_SUCCESS;
+    sword ret                = OCI_SUCCESS;
     ub1 *data;
     ub4 size;
     ub1 flag;
@@ -831,7 +858,7 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
 
             /* set entry value */
 
-	        OCI_CALL2
+            OCI_CALL2
             (
                 res, dp->con,
 
@@ -851,36 +878,36 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
 
         switch (ret)
         {
-            case OCI_SUCCESS:
-            {
-                dp->status    = OCI_DPS_CONVERTED;
-                dp->err_col   = 0;
-                dp->err_row   = 0;
-                res           = OCI_DPR_COMPLETE;
+        case OCI_SUCCESS:
+        {
+            dp->status  = OCI_DPS_CONVERTED;
+            dp->err_col = 0;
+            dp->err_row = 0;
+            res         = OCI_DPR_COMPLETE;
 
-                break;
-            }
-            case OCI_ERROR:
-            {
-                res = OCI_DPR_ERROR;
+            break;
+        }
+        case OCI_ERROR:
+        {
+            res = OCI_DPR_ERROR;
 
-                OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
+            OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
 
-                break;
-            }
-            case OCI_CONTINUE:
-            {
-                dp->status = OCI_DPS_CONVERTED;
-                res        = OCI_DPR_FULL;
+            break;
+        }
+        case OCI_CONTINUE:
+        {
+            dp->status = OCI_DPS_CONVERTED;
+            res        = OCI_DPR_FULL;
 
-                break;
-            }
-            case OCI_NEED_DATA:
-            {
-                res = OCI_DPR_PARTIAL;
+            break;
+        }
+        case OCI_NEED_DATA:
+        {
+            res = OCI_DPR_PARTIAL;
 
-                break;
-            }
+            break;
+        }
 
         }
 
@@ -896,11 +923,11 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
             OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &dp->err_row,
                        &size, OCI_ATTR_ROW_COUNT, dp->con->err);
 
-            dp->nb_prcsd  = dp->err_row;
+            dp->nb_prcsd = dp->err_row;
         }
         else
         {
-            dp->nb_prcsd  = dp->nb_cur;
+            dp->nb_prcsd = dp->nb_cur;
         }
 
     }
@@ -914,14 +941,17 @@ unsigned int OCI_API OCI_DirPathConvert(OCI_DirPath *dp)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathLoad
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathLoad(OCI_DirPath *dp)
+unsigned int OCI_API OCI_DirPathLoad
+(
+    OCI_DirPath *dp
+)
 {
     unsigned int res = OCI_DPR_COMPLETE;
-    sword ret = OCI_SUCCESS;
+    sword ret        = OCI_SUCCESS;
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, OCI_DPR_ERROR);
 
@@ -934,35 +964,35 @@ unsigned int OCI_API OCI_DirPathLoad(OCI_DirPath *dp)
 
     switch (ret)
     {
-        case OCI_SUCCESS:
-        {
-            dp->status     = OCI_DPS_PREPARED;
-            dp->nb_prcsd   = dp->nb_cur;
-            dp->nb_loaded += dp->nb_prcsd;
-            res            = OCI_DPR_COMPLETE;
+    case OCI_SUCCESS:
+    {
+        dp->status     = OCI_DPS_PREPARED;
+        dp->nb_prcsd   = dp->nb_cur;
+        dp->nb_loaded += dp->nb_prcsd;
+        res            = OCI_DPR_COMPLETE;
 
-            break;
-        }
-        case OCI_ERROR:
-        {
-            res = OCI_DPR_ERROR;
+        break;
+    }
+    case OCI_ERROR:
+    {
+        res = OCI_DPR_ERROR;
 
-            OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
+        OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
 
-            break;
-        }
-        case OCI_NO_DATA:
-        {
-            res = OCI_DPR_EMPTY;
+        break;
+    }
+    case OCI_NO_DATA:
+    {
+        res = OCI_DPR_EMPTY;
 
-            break;
-        }
-        case OCI_NEED_DATA:
-        {
-            res = OCI_DPR_PARTIAL;
+        break;
+    }
+    case OCI_NEED_DATA:
+    {
+        res = OCI_DPR_PARTIAL;
 
-            break;
-        }
+        break;
+    }
 
     }
 
@@ -970,8 +1000,8 @@ unsigned int OCI_API OCI_DirPathLoad(OCI_DirPath *dp)
     {
         ub4 size = sizeof(dp->nb_prcsd);
 
-         OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &dp->nb_prcsd,
-                    &size, OCI_ATTR_NUM_ROWS, dp->con->err);
+        OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &dp->nb_prcsd,
+                   &size, OCI_ATTR_NUM_ROWS, dp->con->err);
     }
 
     OCI_RESULT(ret == OCI_SUCCESS);
@@ -979,11 +1009,14 @@ unsigned int OCI_API OCI_DirPathLoad(OCI_DirPath *dp)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathFinish
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathFinish(OCI_DirPath *dp)
+boolean OCI_API OCI_DirPathFinish
+(
+    OCI_DirPath *dp
+)
 {
     boolean res = TRUE;
 
@@ -991,7 +1024,7 @@ boolean OCI_API OCI_DirPathFinish(OCI_DirPath *dp)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
 
-	OCI_CALL2
+    OCI_CALL2
     (
         res, dp->con,
 
@@ -1006,11 +1039,14 @@ boolean OCI_API OCI_DirPathFinish(OCI_DirPath *dp)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathAbort
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathAbort(OCI_DirPath *dp)
+boolean OCI_API OCI_DirPathAbort
+(
+    OCI_DirPath *dp
+)
 {
     boolean res = TRUE;
 
@@ -1018,7 +1054,7 @@ boolean OCI_API OCI_DirPathAbort(OCI_DirPath *dp)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
 
-	OCI_CALL2
+    OCI_CALL2
     (
         res, dp->con,
 
@@ -1033,11 +1069,14 @@ boolean OCI_API OCI_DirPathAbort(OCI_DirPath *dp)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathSave
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSave(OCI_DirPath *dp)
+boolean OCI_API OCI_DirPathSave
+(
+    OCI_DirPath *dp
+)
 {
     boolean res = TRUE;
 
@@ -1057,11 +1096,14 @@ boolean OCI_API OCI_DirPathSave(OCI_DirPath *dp)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathFlushRow
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathFlushRow(OCI_DirPath *dp)
+boolean OCI_API OCI_DirPathFlushRow
+(
+    OCI_DirPath *dp
+)
 {
     boolean res = TRUE;
 
@@ -1069,7 +1111,7 @@ boolean OCI_API OCI_DirPathFlushRow(OCI_DirPath *dp)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, FALSE);
 
-	OCI_CALL2
+    OCI_CALL2
     (
         res, dp->con,
 
@@ -1081,11 +1123,15 @@ boolean OCI_API OCI_DirPathFlushRow(OCI_DirPath *dp)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathSetCurrentRows
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetCurrentRows(OCI_DirPath *dp, unsigned int nb_rows)
+boolean OCI_API OCI_DirPathSetCurrentRows
+(
+    OCI_DirPath *dp,
+    unsigned int nb_rows
+)
 {
     boolean res = TRUE;
 
@@ -1102,11 +1148,14 @@ boolean OCI_API OCI_DirPathSetCurrentRows(OCI_DirPath *dp, unsigned int nb_rows)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathGetCurrentRows
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetCurrentRows(OCI_DirPath *dp)
+unsigned int OCI_API OCI_DirPathGetCurrentRows
+(
+    OCI_DirPath *dp
+)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, 0);
 
@@ -1115,11 +1164,14 @@ unsigned int OCI_API OCI_DirPathGetCurrentRows(OCI_DirPath *dp)
     return dp->nb_cur;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathGetMaxRows
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetMaxRows(OCI_DirPath *dp)
+unsigned int OCI_API OCI_DirPathGetMaxRows
+(
+    OCI_DirPath *dp
+)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, 0);
 
@@ -1127,11 +1179,16 @@ unsigned int OCI_API OCI_DirPathGetMaxRows(OCI_DirPath *dp)
 
     return dp->nb_rows;
 }
-/* ------------------------------------------------------------------------ *
- * OCI_DirPathSetDateFormat
- * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_DirPathSetDateFormat(OCI_DirPath *dp, const mtext *format)
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_DirPathSetDateFormat
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_DirPathSetDateFormat
+(
+    OCI_DirPath *dp,
+    const mtext *format
+)
 {
     boolean res = TRUE;
     void *ostr  = NULL;
@@ -1160,11 +1217,15 @@ boolean OCI_API OCI_DirPathSetDateFormat(OCI_DirPath *dp, const mtext *format)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathSetParallel
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetParallel(OCI_DirPath *dp, boolean value)
+boolean OCI_API OCI_DirPathSetParallel
+(
+    OCI_DirPath *dp,
+    boolean      value
+)
 {
     boolean res = TRUE;
     ub1 enabled = (ub1) value;
@@ -1184,13 +1245,18 @@ boolean OCI_API OCI_DirPathSetParallel(OCI_DirPath *dp, boolean value)
 
     OCI_RESULT(res);
 
-    return res;}
+    return res;
+}
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathSetNoLog
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetNoLog(OCI_DirPath *dp, boolean value)
+boolean OCI_API OCI_DirPathSetNoLog
+(
+    OCI_DirPath *dp,
+    boolean      value
+)
 {
     boolean res = TRUE;
     ub1 nolog   = (ub1) value;
@@ -1213,11 +1279,15 @@ boolean OCI_API OCI_DirPathSetNoLog(OCI_DirPath *dp, boolean value)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathSetCacheSize
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetCacheSize(OCI_DirPath *dp, unsigned int size)
+boolean OCI_API OCI_DirPathSetCacheSize
+(
+    OCI_DirPath *dp,
+    unsigned int size
+)
 {
     boolean res     = TRUE;
     ub4 cache_size  = size;
@@ -1229,7 +1299,7 @@ boolean OCI_API OCI_DirPathSetCacheSize(OCI_DirPath *dp, unsigned int size)
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9_2
+    #if OCI_VERSION_COMPILE >= OCI_9_2
 
     OCI_CALL2
     (
@@ -1249,26 +1319,30 @@ boolean OCI_API OCI_DirPathSetCacheSize(OCI_DirPath *dp, unsigned int size)
                    (ub4) OCI_ATTR_DIRPATH_DCACHE_DISABLE, dp->con->err)
     )
 
-#else
+    #else
 
     OCI_NOT_USED(cache_size);
     OCI_NOT_USED(enabled);
 
-#endif
+    #endif
 
     OCI_RESULT(res);
 
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathSetBufferSize
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetBufferSize(OCI_DirPath *dp, unsigned int size)
+boolean OCI_API OCI_DirPathSetBufferSize
+(
+    OCI_DirPath *dp,
+    unsigned int size
+)
 {
-    boolean res  = TRUE;
-    ub4 bufsize  = (ub4) size;
+    boolean res = TRUE;
+    ub4 bufsize = (ub4) size;
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
 
@@ -1288,11 +1362,14 @@ boolean OCI_API OCI_DirPathSetBufferSize(OCI_DirPath *dp, unsigned int size)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathGetRowCount
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetRowCount(OCI_DirPath *dp)
+unsigned int OCI_API OCI_DirPathGetRowCount
+(
+    OCI_DirPath *dp
+)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
 
@@ -1301,11 +1378,14 @@ unsigned int OCI_API OCI_DirPathGetRowCount(OCI_DirPath *dp)
     return dp->nb_loaded;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathGetAffectedRows
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetAffectedRows(OCI_DirPath *dp)
+unsigned int OCI_API OCI_DirPathGetAffectedRows
+(
+    OCI_DirPath *dp
+)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
 
@@ -1314,11 +1394,14 @@ unsigned int OCI_API OCI_DirPathGetAffectedRows(OCI_DirPath *dp)
     return dp->nb_prcsd;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathGetErrorColumn
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetErrorColumn(OCI_DirPath *dp)
+unsigned int OCI_API OCI_DirPathGetErrorColumn
+(
+    OCI_DirPath *dp
+)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
 
@@ -1327,11 +1410,14 @@ unsigned int OCI_API OCI_DirPathGetErrorColumn(OCI_DirPath *dp)
     return dp->err_col;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathGetErrorRow
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetErrorRow(OCI_DirPath *dp)
+unsigned int OCI_API OCI_DirPathGetErrorRow
+(
+    OCI_DirPath *dp
+)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
 

@@ -1,48 +1,51 @@
 /*
-   +----------------------------------------------------------------------+
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: Pool.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: Pool.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolClose
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_PoolClose(OCI_Pool *pool)
+boolean OCI_PoolClose
+(
+    OCI_Pool *pool
+)
 {
     boolean res = TRUE;
 
@@ -50,7 +53,7 @@ boolean OCI_PoolClose(OCI_Pool *pool)
 
     /* free all connections */
 
-    OCI_ListForEach(pool->cons, (boolean (*)(void *)) OCI_ConnectionClose);
+    OCI_ListForEach(pool->cons, (POCI_LIST_FOR_EACH) OCI_ConnectionClose);
     OCI_ListClear(pool->cons);
     OCI_ListFree(pool->cons);
 
@@ -59,7 +62,7 @@ boolean OCI_PoolClose(OCI_Pool *pool)
     if (OCI_LIB_THREADED)
         OCI_MutexFree(pool->mutex);
 
-#if OCI_VERSION_COMPILE >= OCI_9_0
+    #if OCI_VERSION_COMPILE >= OCI_9_0
 
     if (OCILib.version_runtime >= OCI_9_0)
     {
@@ -74,11 +77,11 @@ boolean OCI_PoolClose(OCI_Pool *pool)
                     res, pool->err,
 
                     OCIConnectionPoolDestroy(pool->handle, pool->err,
-                                              (ub4) OCI_DEFAULT)
+                                             (ub4) OCI_DEFAULT)
                 )
             }
 
-        #if OCI_VERSION_COMPILE >= OCI_9_2
+            #if OCI_VERSION_COMPILE >= OCI_9_2
 
             else
             {
@@ -89,29 +92,29 @@ boolean OCI_PoolClose(OCI_Pool *pool)
                     OCISessionPoolDestroy(pool->handle, pool->err,
                                           (ub4) OCI_SPD_FORCE)
                 )
-            } 
-        
-        #endif
+            }
+
+            #endif
 
             OCI_HandleFree((void *) pool->handle, (ub4) pool->htype);
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_9_2
+        #if OCI_VERSION_COMPILE >= OCI_9_2
 
         /* close authentification handle */
 
         if (pool->authp != NULL)
             OCI_HandleFree((void *) pool->authp, (ub4) OCI_HTYPE_AUTHINFO);
-        
-    #endif
+
+        #endif
 
         /* close error handle */
 
         if (pool->err != NULL)
             OCI_HandleFree((void *) pool->err, (ub4) OCI_HTYPE_ERROR);
-   }
+    }
 
-#endif
+    #endif
 
     pool->err    = NULL;
     pool->handle = NULL;
@@ -127,26 +130,29 @@ boolean OCI_PoolClose(OCI_Pool *pool)
     return res;
 }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Pool * OCI_API OCI_PoolCreate(const mtext *db, 
-                                  const mtext *user,
-                                  const mtext *pwd,
-                                  unsigned int type,
-                                  unsigned int mode,
-                                  unsigned int min_con,
-                                  unsigned int max_con,
-                                  unsigned int incr_con)
+OCI_Pool * OCI_API OCI_PoolCreate
+(
+    const mtext *db,
+    const mtext *user,
+    const mtext *pwd,
+    unsigned int type,
+    unsigned int mode,
+    unsigned int min_con,
+    unsigned int max_con,
+    unsigned int incr_con
+)
 {
     OCI_Pool *pool = NULL;
-    OCI_Item     *item = NULL;
-    boolean res        = TRUE;
+    OCI_Item *item = NULL;
+    boolean res    = TRUE;
 
     OCI_CHECK_MIN(NULL, NULL, max_con, 1, NULL);
 
@@ -193,34 +199,34 @@ OCI_Pool * OCI_API OCI_PoolCreate(const mtext *db,
         pool->pwd  = mtsdup(pwd  != NULL ? pwd  : MT(""));
     }
 
-#if OCI_VERSION_COMPILE < OCI_9_2
+    #if OCI_VERSION_COMPILE < OCI_9_2
 
-    type  = OCI_POOL_CONNECTION;
+    type = OCI_POOL_CONNECTION;
 
-#endif
+    #endif
 
-#if OCI_VERSION_COMPILE >= OCI_9_0
+    #if OCI_VERSION_COMPILE >= OCI_9_0
 
     if (res == TRUE)
     {
         if (type == OCI_POOL_CONNECTION)
             pool->htype = OCI_HTYPE_CPOOL;
 
-    #if OCI_VERSION_COMPILE >= OCI_9_2
-        
-        else
-           pool->htype = OCI_HTYPE_SPOOL;
+        #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    #endif
+        else
+            pool->htype = OCI_HTYPE_SPOOL;
+
+        #endif
 
     }
 
     if (OCILib.version_runtime >= OCI_9_0)
     {
-        int osize_name  = -1;
-        int osize_db    = -1;
-        int osize_user  = -1;
-        int osize_pwd   = -1;
+        int osize_name = -1;
+        int osize_db   = -1;
+        int osize_user = -1;
+        int osize_pwd  = -1;
 
         void *ostr_name = NULL;
         void *ostr_db   = NULL;
@@ -244,8 +250,8 @@ OCI_Pool * OCI_API OCI_PoolCreate(const mtext *db,
                                                   (ub4) pool->htype,
                                                   (size_t) 0,
                                                   (dvoid **) NULL));
-        
-    #if OCI_VERSION_COMPILE >= OCI_9_2
+
+        #if OCI_VERSION_COMPILE >= OCI_9_2
 
         /* allocate authentification handle */
 
@@ -256,15 +262,15 @@ OCI_Pool * OCI_API OCI_PoolCreate(const mtext *db,
                                                   (size_t) 0,
                                                   (dvoid **) NULL));
 
-    #endif
+        #endif
 
         /* create the pool */
 
         if (res == TRUE)
         {
-            ostr_db    = OCI_GetInputMetaString(pool->db,   &osize_db);
-            ostr_user  = OCI_GetInputMetaString(pool->user, &osize_user);
-            ostr_pwd   = OCI_GetInputMetaString(pool->pwd,  &osize_pwd);
+            ostr_db   = OCI_GetInputMetaString(pool->db,   &osize_db);
+            ostr_user = OCI_GetInputMetaString(pool->user, &osize_user);
+            ostr_pwd  = OCI_GetInputMetaString(pool->pwd,  &osize_pwd);
 
             if (pool->htype == OCI_HTYPE_CPOOL)
             {
@@ -283,7 +289,7 @@ OCI_Pool * OCI_API OCI_PoolCreate(const mtext *db,
                 )
             }
 
-        #if OCI_VERSION_COMPILE >= OCI_9_2
+            #if OCI_VERSION_COMPILE >= OCI_9_2
 
             else
             {
@@ -302,9 +308,9 @@ OCI_Pool * OCI_API OCI_PoolCreate(const mtext *db,
                 )
             }
 
-        #endif
+            #endif
 
-        #if OCI_VERSION_COMPILE >= OCI_9_2
+            #if OCI_VERSION_COMPILE >= OCI_9_2
 
             /* set session login attribute */
 
@@ -317,7 +323,6 @@ OCI_Pool * OCI_API OCI_PoolCreate(const mtext *db,
                            (ub4) OCI_ATTR_USERNAME, pool->err)
             )
 
-
             /* set session password attribute */
 
             OCI_CALL3
@@ -329,7 +334,7 @@ OCI_Pool * OCI_API OCI_PoolCreate(const mtext *db,
                            (ub4) OCI_ATTR_PASSWORD, pool->err)
             )
 
-        #endif
+            #endif
 
             OCI_ReleaseMetaString(ostr_db);
             OCI_ReleaseMetaString(ostr_user);
@@ -352,10 +357,10 @@ OCI_Pool * OCI_API OCI_PoolCreate(const mtext *db,
         }
     }
 
-#endif
+    #endif
 
-   /* on success, we allocate internal OCI connection objects for pool
-      minimum size */
+    /* on success, we allocate internal OCI connection objects for pool
+       minimum size */
 
     if (res == TRUE)
     {
@@ -378,11 +383,14 @@ OCI_Pool * OCI_API OCI_PoolCreate(const mtext *db,
     return pool;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_PoolFree(OCI_Pool *pool)
+boolean OCI_API OCI_PoolFree
+(
+    OCI_Pool *pool
+)
 {
     boolean res = TRUE;
 
@@ -399,16 +407,20 @@ boolean OCI_API OCI_PoolFree(OCI_Pool *pool)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolGetConnection
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_API OCI_PoolGetConnection(OCI_Pool *pool, mtext *tag)
+OCI_Connection * OCI_API OCI_PoolGetConnection
+(
+    OCI_Pool *pool,
+    mtext    *tag
+)
 {
-    OCI_Connection *con  = NULL;
-    OCI_Item       *item = NULL;
-    boolean res          = FALSE;
-    boolean found        = FALSE;
+    OCI_Connection *con = NULL;
+    OCI_Item *item      = NULL;
+    boolean res         = FALSE;
+    boolean found       = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, NULL);
 
@@ -455,7 +467,7 @@ OCI_Connection * OCI_API OCI_PoolGetConnection(OCI_Pool *pool, mtext *tag)
                                            pool->pwd, pool->mode);
 
                 if (i == pool->nb_opened && c != NULL)
-                   con = c;
+                    con = c;
             }
         }
     }
@@ -467,7 +479,7 @@ OCI_Connection * OCI_API OCI_PoolGetConnection(OCI_Pool *pool, mtext *tag)
         if (con->cstate == OCI_CONN_ALLOCATED)
             res = res && OCI_ConnectionAttach(con);
 
-        res  = res &&  OCI_ConnectionLogon(con, NULL, tag);
+        res = res &&  OCI_ConnectionLogon(con, NULL, tag);
 
         if (res == FALSE)
         {
@@ -488,11 +500,14 @@ OCI_Connection * OCI_API OCI_PoolGetConnection(OCI_Pool *pool, mtext *tag)
     return con;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolGetTimeout
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetTimeout(OCI_Pool *pool)
+unsigned int OCI_API OCI_PoolGetTimeout
+(
+    OCI_Pool *pool
+)
 {
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, 0);
 
@@ -501,17 +516,21 @@ unsigned int OCI_API OCI_PoolGetTimeout(OCI_Pool *pool)
     return pool->timeout;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolSetTimeout
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_PoolSetTimeout(OCI_Pool *pool, unsigned int value)
+boolean OCI_API OCI_PoolSetTimeout
+(
+    OCI_Pool    *pool,
+    unsigned int value
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9_0
+    #if OCI_VERSION_COMPILE >= OCI_9_0
 
     if (OCILib.version_runtime >= OCI_9_0)
     {
@@ -521,11 +540,11 @@ boolean OCI_API OCI_PoolSetTimeout(OCI_Pool *pool, unsigned int value)
         if (pool->htype == OCI_HTYPE_CPOOL)
             attr = OCI_ATTR_CONN_TIMEOUT ;
 
-    #if OCI_VERSION_COMPILE >= OCI_9_2
+        #if OCI_VERSION_COMPILE >= OCI_9_2
 
         else
             attr = OCI_ATTR_SPOOL_TIMEOUT;
-    #endif
+        #endif
 
         OCI_CALL3
         (
@@ -537,7 +556,7 @@ boolean OCI_API OCI_PoolSetTimeout(OCI_Pool *pool, unsigned int value)
         )
     }
 
-#endif
+    #endif
 
     if (res == TRUE)
         pool->timeout = value;
@@ -547,11 +566,14 @@ boolean OCI_API OCI_PoolSetTimeout(OCI_Pool *pool, unsigned int value)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolGetNoWait
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_PoolGetNoWait(OCI_Pool *pool)
+boolean OCI_API OCI_PoolGetNoWait
+(
+    OCI_Pool *pool
+)
 {
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, FALSE);
 
@@ -560,27 +582,31 @@ boolean OCI_API OCI_PoolGetNoWait(OCI_Pool *pool)
     return pool->nowait;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolSetNoWait
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_PoolSetNoWait(OCI_Pool *pool, boolean value)
+boolean OCI_API OCI_PoolSetNoWait
+(
+    OCI_Pool *pool,
+    boolean   value
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, 0);
 
-#if OCI_VERSION_COMPILE >= OCI_9_0
+    #if OCI_VERSION_COMPILE >= OCI_9_0
 
     if (OCILib.version_runtime >= OCI_9_0)
     {
         ub1 nowait = (ub1) value;
-        ub4 attr  = 0;
+        ub4 attr   = 0;
 
         if (pool->htype == OCI_HTYPE_CPOOL)
             attr = OCI_ATTR_CONN_NOWAIT;
 
-    #if OCI_VERSION_COMPILE >= OCI_9_2
+        #if OCI_VERSION_COMPILE >= OCI_9_2
 
         else
         {
@@ -592,7 +618,7 @@ boolean OCI_API OCI_PoolSetNoWait(OCI_Pool *pool, boolean value)
                 nowait = (ub1) OCI_SPOOL_ATTRVAL_WAIT;
         }
 
-    #endif
+        #endif
 
         OCI_CALL3
         (
@@ -604,7 +630,7 @@ boolean OCI_API OCI_PoolSetNoWait(OCI_Pool *pool, boolean value)
         )
     }
 
-#endif
+    #endif
 
     if (res == TRUE)
         pool->nowait = value;
@@ -614,17 +640,20 @@ boolean OCI_API OCI_PoolSetNoWait(OCI_Pool *pool, boolean value)
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolGetBusyCount
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetBusyCount(OCI_Pool *pool)
+unsigned int OCI_API OCI_PoolGetBusyCount
+(
+    OCI_Pool *pool
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, 0);
 
-#if OCI_VERSION_COMPILE >= OCI_9_0
+    #if OCI_VERSION_COMPILE >= OCI_9_0
 
     if (OCILib.version_runtime >= OCI_9_0)
     {
@@ -634,12 +663,12 @@ unsigned int OCI_API OCI_PoolGetBusyCount(OCI_Pool *pool)
         if (pool->htype == OCI_HTYPE_CPOOL)
             attr = (ub4) OCI_ATTR_CONN_BUSY_COUNT;
 
-    #if OCI_VERSION_COMPILE >= OCI_9_2
+        #if OCI_VERSION_COMPILE >= OCI_9_2
 
         else
             attr = (ub4) OCI_ATTR_SPOOL_BUSY_COUNT;
 
-    #endif
+        #endif
 
         OCI_CALL3
         (
@@ -654,24 +683,27 @@ unsigned int OCI_API OCI_PoolGetBusyCount(OCI_Pool *pool)
             pool->nb_busy = value;
     }
 
-#endif
+    #endif
 
     OCI_RESULT(res);
 
     return pool->nb_busy;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolGetOpenedCount
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetOpenedCount(OCI_Pool *pool)
+unsigned int OCI_API OCI_PoolGetOpenedCount
+(
+    OCI_Pool *pool
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, 0);
 
-#if OCI_VERSION_COMPILE >= OCI_9_0
+    #if OCI_VERSION_COMPILE >= OCI_9_0
 
     if (OCILib.version_runtime >= OCI_9_0)
     {
@@ -681,12 +713,12 @@ unsigned int OCI_API OCI_PoolGetOpenedCount(OCI_Pool *pool)
         if (pool->htype == OCI_HTYPE_CPOOL)
             attr = OCI_ATTR_CONN_OPEN_COUNT;
 
-    #if OCI_VERSION_COMPILE >= OCI_9_2
+        #if OCI_VERSION_COMPILE >= OCI_9_2
 
         else
             attr = OCI_ATTR_SPOOL_OPEN_COUNT;
 
-    #endif
+        #endif
 
         OCI_CALL3
         (
@@ -701,18 +733,21 @@ unsigned int OCI_API OCI_PoolGetOpenedCount(OCI_Pool *pool)
             pool->nb_opened = value;
     }
 
-#endif
+    #endif
 
-     OCI_RESULT(res);
+    OCI_RESULT(res);
 
-     return pool->nb_opened;
+    return pool->nb_opened;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolGetMin
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetMin(OCI_Pool *pool)
+unsigned int OCI_API OCI_PoolGetMin
+(
+    OCI_Pool *pool
+)
 {
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, 0);
 
@@ -721,11 +756,14 @@ unsigned int OCI_API OCI_PoolGetMin(OCI_Pool *pool)
     return pool->min;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolGetMax
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetMax(OCI_Pool *pool)
+unsigned int OCI_API OCI_PoolGetMax
+(
+    OCI_Pool *pool
+)
 {
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, 0);
 
@@ -734,11 +772,14 @@ unsigned int OCI_API OCI_PoolGetMax(OCI_Pool *pool)
     return pool->max;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_PoolGetIncrement
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetIncrement(OCI_Pool *pool)
+unsigned int OCI_API OCI_PoolGetIncrement
+(
+    OCI_Pool *pool
+)
 {
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, 0);
 

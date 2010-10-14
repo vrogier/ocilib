@@ -1,48 +1,51 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: thread.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: thread.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ThreadProc
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ThreadProc(dvoid *arg)
+void OCI_ThreadProc
+(
+    dvoid *arg
+)
 {
     OCI_Thread *thread = (OCI_Thread *) arg;
 
@@ -50,15 +53,18 @@ void OCI_ThreadProc(dvoid *arg)
         thread->proc(thread, thread->arg);
 }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ThreadCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Thread * OCI_API OCI_ThreadCreate(void)
+OCI_Thread * OCI_API OCI_ThreadCreate
+(
+    void
+)
 {
     OCI_Thread *thread = NULL;
     boolean res        = TRUE;
@@ -76,7 +82,7 @@ OCI_Thread * OCI_API OCI_ThreadCreate(void)
     {
         /* allocate error handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env, 
+        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
                                               (dvoid **) (void *) &thread->err,
                                               OCI_HTYPE_ERROR, (size_t) 0,
                                               (dvoid **) NULL));
@@ -86,7 +92,7 @@ OCI_Thread * OCI_API OCI_ThreadCreate(void)
         OCI_CALL3
         (
             res, thread->err,
-            
+
             OCIThreadHndInit(OCILib.env, thread->err, &thread->handle)
         )
 
@@ -95,9 +101,9 @@ OCI_Thread * OCI_API OCI_ThreadCreate(void)
         OCI_CALL3
         (
             res, thread->err,
-            
+
             OCIThreadIdInit(OCILib.env, thread->err, &thread->id)
-        )    
+        )
     }
     else
         res = FALSE;
@@ -113,11 +119,14 @@ OCI_Thread * OCI_API OCI_ThreadCreate(void)
     return thread;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ThreadFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadFree(OCI_Thread *thread)
+boolean OCI_API OCI_ThreadFree
+(
+    OCI_Thread *thread
+)
 {
     boolean res = TRUE;
 
@@ -131,15 +140,15 @@ boolean OCI_API OCI_ThreadFree(OCI_Thread *thread)
     {
         OCI_CALL0
         (
-            res, thread->err, 
-            
+            res, thread->err,
+
             OCIThreadClose(OCILib.env, thread->err, thread->handle)
         )
 
         OCI_CALL0
         (
-            res, thread->err, 
-            
+            res, thread->err,
+
             OCIThreadHndDestroy(OCILib.env, thread->err, &thread->handle)
         )
     }
@@ -150,10 +159,10 @@ boolean OCI_API OCI_ThreadFree(OCI_Thread *thread)
     {
         OCI_CALL0
         (
-            res, thread->err, 
-            
+            res, thread->err,
+
             OCIThreadIdDestroy(OCILib.env, thread->err, &thread->id)
-         )    
+        )
     }
 
     /* close error handle */
@@ -172,11 +181,16 @@ boolean OCI_API OCI_ThreadFree(OCI_Thread *thread)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ThreadRun
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadRun(OCI_Thread *thread, POCI_THREAD proc, void *arg)
+boolean OCI_API OCI_ThreadRun
+(
+    OCI_Thread *thread,
+    POCI_THREAD proc,
+    void       *arg
+)
 {
     boolean res = TRUE;
 
@@ -190,8 +204,8 @@ boolean OCI_API OCI_ThreadRun(OCI_Thread *thread, POCI_THREAD proc, void *arg)
 
     OCI_CALL3
     (
-        res, thread->err, 
-        
+        res, thread->err,
+
         OCIThreadCreate(OCILib.env, thread->err, OCI_ThreadProc,
                         thread, thread->id, thread->handle)
     )
@@ -201,11 +215,14 @@ boolean OCI_API OCI_ThreadRun(OCI_Thread *thread, POCI_THREAD proc, void *arg)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ThreadJoin
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadJoin(OCI_Thread *thread)
+boolean OCI_API OCI_ThreadJoin
+(
+    OCI_Thread *thread
+)
 {
     boolean res = TRUE;
 
@@ -215,8 +232,8 @@ boolean OCI_API OCI_ThreadJoin(OCI_Thread *thread)
 
     OCI_CALL3
     (
-        res, thread->err, 
-        
+        res, thread->err,
+
         OCIThreadJoin(OCILib.env, thread->err, thread->handle)
     )
 

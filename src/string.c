@@ -1,63 +1,68 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: string.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: string.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  *                    Widechar/Multibytes String functions
  *
- * StringCopy4to2bytes() and StringCopy2to4bytes() are based on the 
+ * StringCopy4to2bytes() and StringCopy2to4bytes() are based on the
  * ConvertUTF source file by Mark E. Davis - Copyright 2001 Unicode, Inc.
  *
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_StringCopy4to2bytes
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int OCI_StringCopy4to2bytes(const unsigned int* src, size_t src_size, 
-                            unsigned short* dst, size_t dst_size)
+int OCI_StringCopy4to2bytes
+(
+    const unsigned int* src,
+    size_t              src_size,
+    unsigned short    * dst,
+    size_t              dst_size
+)
 {
     int cp_size = 0;
 
-    const unsigned int   *src_end = NULL;
+    const unsigned int *src_end   = NULL;
     const unsigned short *dst_end = NULL;
-    
+
     OCI_CHECK(src == NULL, 0);
     OCI_CHECK(dst == NULL, 0);
 
@@ -67,16 +72,16 @@ int OCI_StringCopy4to2bytes(const unsigned int* src, size_t src_size,
     while (src < src_end)
     {
         unsigned int c;
-    
-        if (dst >= dst_end) return -1; 
-    
+
+        if (dst >= dst_end) return -1;
+
         c = *src++;
-        
-        if (c <= UNI_MAX_BMP) 
-        { 
+
+        if (c <= UNI_MAX_BMP)
+        {
             if ((c >= UNI_SUR_HIGH_START) && (c < UNI_SUR_LOW_END))
                 *dst++ = UNI_REPLACEMENT_CHAR;
-            else 
+            else
                 *dst++ = (unsigned short) c;
 
             cp_size++;
@@ -84,15 +89,15 @@ int OCI_StringCopy4to2bytes(const unsigned int* src, size_t src_size,
         else if (c > UNI_MAX_LEGAL_UTF32)
         {
             *dst++ = UNI_REPLACEMENT_CHAR;
-            
+
             cp_size++;
-        } 
+        }
         else
         {
-            if ((dst +  (size_t) 1) >= dst_end) return -2; 
+            if ((dst +  (size_t) 1) >= dst_end) return -2;
 
             c -= UNI_BASE;
-            
+
             if (dst)
             {
                 *dst++ = (unsigned short)((c >> UNI_SHIFT) + UNI_SUR_HIGH_START);
@@ -107,17 +112,22 @@ int OCI_StringCopy4to2bytes(const unsigned int* src, size_t src_size,
     return cp_size;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_StringCopy2to4bytes
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int OCI_StringCopy2to4bytes(const unsigned short* src, size_t src_size, 
-                            unsigned int* dst, size_t dst_size)
+int OCI_StringCopy2to4bytes
+(
+    const unsigned short* src,
+    size_t                src_size,
+    unsigned int        * dst,
+    size_t                dst_size
+)
 {
     int cp_size = 0;
 
     const unsigned short *src_end = NULL;
-    const unsigned int   *dst_end = NULL;
+    const unsigned int *dst_end   = NULL;
 
     unsigned int c1, c2;
 
@@ -128,7 +138,7 @@ int OCI_StringCopy2to4bytes(const unsigned short* src, size_t src_size,
     dst_end = dst + dst_size;
 
     while (src < src_end)
-    {        
+    {
         c1 = *src++;
 
         if ((c1 >= UNI_SUR_HIGH_START) && (c1 <= UNI_SUR_HIGH_END))
@@ -139,15 +149,15 @@ int OCI_StringCopy2to4bytes(const unsigned short* src, size_t src_size,
 
                 if ((c2 >= UNI_SUR_LOW_START) && (c2 <= UNI_SUR_LOW_END))
                 {
-                    c1 = ((c1 - UNI_SUR_HIGH_START) << UNI_SHIFT) + 
-                          (c2 - UNI_SUR_LOW_START )  + UNI_BASE;
-                    
+                    c1 = ((c1 - UNI_SUR_HIGH_START) << UNI_SHIFT) +
+                         (c2 - UNI_SUR_LOW_START )  + UNI_BASE;
+
                     ++src;
                 }
-            } 
-            else 
+            }
+            else
                 return -1;
-        } 
+        }
 
         if (dst >= dst_end) return -2;
 
@@ -159,16 +169,20 @@ int OCI_StringCopy2to4bytes(const unsigned short* src, size_t src_size,
     return cp_size;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_StringLength
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-size_t OCI_StringLength(void *ptr, size_t size_elem)
+size_t OCI_StringLength
+(
+    void  *ptr,
+    size_t size_elem
+)
 {
     int size = 0;
 
     OCI_CHECK(ptr == NULL, 0);
-    
+
     if (size_elem == sizeof(char))
     {
         const char *s = (const char *) ptr;
@@ -200,39 +214,47 @@ size_t OCI_StringLength(void *ptr, size_t size_elem)
     return size;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_StringUTF8Length
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int OCI_StringUTF8Length(const char *str)
+int OCI_StringUTF8Length
+(
+    const char *str
+)
 {
     int i    = 0;
     int size = 0;
 
-    while (*str) 
+    while (*str)
     {
         if ((*str & 0xc0) != 0x80)
             size++;
         i++;
     }
-    
+
     return size;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_GetInputString
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void * OCI_GetInputString(void *src, int *size, size_t size_char_in,
-                          size_t size_char_out)
+void * OCI_GetInputString
+(
+    void  *src,
+    int   *size,
+    size_t size_char_in,
+    size_t size_char_out
+)
 {
     OCI_CHECK(src  == NULL, NULL);
     OCI_CHECK(size == NULL, NULL);
 
-    if (size_char_in == size_char_out) 
+    if (size_char_in == size_char_out)
     {
         /* in/out type sizes are equal, so no conversion ! */
-       
+
         if (*size == -1)
             *size = (int) (OCI_StringLength(src, size_char_in) * size_char_in);
 
@@ -241,7 +263,7 @@ void * OCI_GetInputString(void *src, int *size, size_t size_char_in,
     else
     {
         /* in/out type size are not equal, so conversion needed ! */
-     
+
         int char_count = 0;
         void *dest     = NULL;
 
@@ -253,12 +275,12 @@ void * OCI_GetInputString(void *src, int *size, size_t size_char_in,
         *size = 0;
 
         dest = OCI_MemAlloc(OCI_IPC_STRING, size_char_out, char_count + 1, 0);
-        
+
         if (dest != NULL)
         {
             unsigned int null_char = 0;
-            
-            if (memcmp(src , &null_char, (size_t) size_char_in) != 0)
+
+            if (memcmp(src, &null_char, (size_t) size_char_in) != 0)
             {
                 if (size_char_in > size_char_out)
                 {
@@ -269,8 +291,8 @@ void * OCI_GetInputString(void *src, int *size, size_t size_char_in,
 
                         char_count = OCI_StringCopy4to2bytes
                                      (
-                                        (unsigned int   *)  src, char_count,
-                                        (unsigned short *) dest, char_count
+                            (unsigned int   *)  src, char_count,
+                            (unsigned short *) dest, char_count
                                      );
                     }
                     else
@@ -281,16 +303,16 @@ void * OCI_GetInputString(void *src, int *size, size_t size_char_in,
                     }
                 }
                 else
-                {                
+                {
                     if ((size_char_in  == sizeof(short)) &&
                         (size_char_out == sizeof(int  )))
                     {
                         /* UTF16 to UTF32 */
-                  
+
                         char_count = OCI_StringCopy2to4bytes
                                      (
-                                        (unsigned short *) src,  char_count, 
-                                        (unsigned int   *) dest, char_count
+                            (unsigned short *) src,  char_count,
+                            (unsigned int   *) dest, char_count
                                      );
                     }
                     else
@@ -300,8 +322,8 @@ void * OCI_GetInputString(void *src, int *size, size_t size_char_in,
                         char_count = (int) mbstowcs(dest, src, (size_t) (char_count+1));
                     }
                 }
-           }
-                
+            }
+
             *size = char_count * (int) size_char_out;
 
             memset( (void*) (((char*) dest) + (size_t) (*size)), 0, size_char_out);
@@ -311,27 +333,33 @@ void * OCI_GetInputString(void *src, int *size, size_t size_char_in,
     }
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_GetOutputString
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_GetOutputString(void *src, void *dest, int *size, size_t size_char_in,
-                         size_t size_char_out)
+void OCI_GetOutputString
+(
+    void  *src,
+    void  *dest,
+    int   *size,
+    size_t size_char_in,
+    size_t size_char_out
+)
 {
     if ((src == NULL) || (dest == NULL) || (size == NULL))
         return;
 
     /* do something only if in/out type sizes are not equal ! */
 
-    if (size_char_in != size_char_out) 
-    {        
+    if (size_char_in != size_char_out)
+    {
         int char_count = 0;
-     
+
         if (*size == -1)
             char_count = (int) OCI_StringLength(src, size_char_in);
         else
             char_count = *size / (int) size_char_in;
-           
+
         if (size_char_in > size_char_out)
         {
             if ((size_char_in  == sizeof(int  )) &&
@@ -341,8 +369,8 @@ void OCI_GetOutputString(void *src, void *dest, int *size, size_t size_char_in,
 
                 char_count = OCI_StringCopy4to2bytes
                              (
-                                (unsigned int   *)  src, char_count,
-                                (unsigned short *) dest, char_count
+                    (unsigned int   *)  src, char_count,
+                    (unsigned short *) dest, char_count
                              );
             }
             else
@@ -354,15 +382,15 @@ void OCI_GetOutputString(void *src, void *dest, int *size, size_t size_char_in,
         }
         else
         {
-           if ((size_char_in  == sizeof(short)) &&
-               (size_char_out == sizeof(int  )))
+            if ((size_char_in  == sizeof(short)) &&
+                (size_char_out == sizeof(int  )))
             {
                 /* UTF16 to UTF32 */
-          
+
                 char_count = OCI_StringCopy2to4bytes
                              (
-                                (unsigned short *) src,  char_count, 
-                                (unsigned int   *) dest, char_count
+                    (unsigned short *) src,  char_count,
+                    (unsigned int   *) dest, char_count
                              );
             }
             else
@@ -377,29 +405,35 @@ void OCI_GetOutputString(void *src, void *dest, int *size, size_t size_char_in,
     }
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MoveString
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_MoveString(void *src, void *dst, int char_count,
-                    size_t size_char_in, size_t size_char_out)
+void OCI_MoveString
+(
+    void  *src,
+    void  *dst,
+    int    char_count,
+    size_t size_char_in,
+    size_t size_char_out
+)
 {
     if ((src == NULL) || (dst == NULL))
         return;
- 
+
     /* raw string packing/expansion without charset conversion */
 
     if (size_char_out > size_char_in)
     {
         /* expand string */
 
-        if ((size_char_in  == sizeof(short)) && 
+        if ((size_char_in  == sizeof(short)) &&
             (size_char_out == sizeof(int)))
-        {            
+        {
             /* 2 => 4 bytes */
 
-            unsigned short *str1  = (unsigned short *) src;
-            unsigned int   *str2  = (unsigned int   *) dst;
+            unsigned short *str1 = (unsigned short *) src;
+            unsigned int *str2   = (unsigned int   *) dst;
 
             if (*str1 == 0)
                 return;
@@ -407,14 +441,14 @@ void OCI_MoveString(void *src, void *dst, int char_count,
             while (char_count--)
                 str2[char_count] = (unsigned int) str1[char_count];
         }
-         
+
         else if ((size_char_in  == sizeof(char)) &&
                  (size_char_out == sizeof(short)))
-        {            
+        {
             /* 1 => 2 bytes */
 
-            unsigned char  *str1  = (unsigned char  *) src;
-            unsigned short *str2  = (unsigned short *) dst;
+            unsigned char *str1  = (unsigned char  *) src;
+            unsigned short *str2 = (unsigned short *) dst;
 
             if (*str1 == 0)
                 return;
@@ -422,20 +456,20 @@ void OCI_MoveString(void *src, void *dst, int char_count,
             while (char_count--)
                 str2[char_count] = (unsigned short) str1[char_count];
         }
-        else if ((size_char_in  == sizeof(char)) && 
+        else if ((size_char_in  == sizeof(char)) &&
                  (size_char_out == sizeof(int)))
-        {            
+        {
             /* 1 => 4 bytes */
 
-            unsigned char *str1  = (unsigned char *) src;
-            unsigned int  *str2  = (unsigned int  *) dst;
-         
+            unsigned char *str1 = (unsigned char *) src;
+            unsigned int *str2  = (unsigned int  *) dst;
+
             if (*str1 == 0)
                 return;
 
             while (char_count--)
-                 str2[char_count] = (unsigned int) str1[char_count];
-         }
+                str2[char_count] = (unsigned int) str1[char_count];
+        }
     }
     else if (size_char_out < size_char_in)
     {
@@ -446,9 +480,9 @@ void OCI_MoveString(void *src, void *dst, int char_count,
         {
             /* 4 => 2 bytes */
 
-            unsigned int   *str1  = (unsigned int   *) src;
-            unsigned short *str2  = (unsigned short *) dst;
-            int i = 0;
+            unsigned int *str1   = (unsigned int   *) src;
+            unsigned short *str2 = (unsigned short *) dst;
+            int i                = 0;
 
             if (*str1 == 0)
                 return;
@@ -456,14 +490,14 @@ void OCI_MoveString(void *src, void *dst, int char_count,
             while (++i < char_count)
                 str2[i] = (unsigned short) str1[i];
         }
-        else if ((size_char_in  == sizeof(short)) && 
+        else if ((size_char_in  == sizeof(short)) &&
                  (size_char_out == sizeof(char)))
         {
             /* 2 => 1 bytes */
 
             unsigned short *str1 = (unsigned short *) src;
-            unsigned char  *str2 = (unsigned char  *) dst;
-            int i = 0;
+            unsigned char *str2  = (unsigned char  *) dst;
+            int i                = 0;
 
             if (*str1 == 0)
                 return;
@@ -471,14 +505,14 @@ void OCI_MoveString(void *src, void *dst, int char_count,
             while (++i < char_count)
                 str2[i] = (unsigned char) str1[i];
         }
-        else if ((size_char_in  == sizeof(int)) && 
+        else if ((size_char_in  == sizeof(int)) &&
                  (size_char_out == sizeof(char)))
         {
             /* 4 => 1 bytes */
 
-            unsigned int  *str1 = (unsigned int  *) src;
+            unsigned int *str1  = (unsigned int  *) src;
             unsigned char *str2 = (unsigned char *) dst;
-            int i = 0;
+            int i               = 0;
 
             if (*str1 == 0)
                 return;
@@ -489,24 +523,35 @@ void OCI_MoveString(void *src, void *dst, int char_count,
     }
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ConvertString
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ConvertString(void *str, int char_count, size_t size_char_in, 
-                       size_t size_char_out)
+void OCI_ConvertString
+(
+    void  *str,
+    int    char_count,
+    size_t size_char_in,
+    size_t size_char_out
+)
 {
     /* inplace string packing / expansion */
 
     OCI_MoveString(str, str, char_count, size_char_in, size_char_out);
 }
 
-/* ------------------------------------------------------------------------ *
- *  
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ *
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_CopyString(void *src, void *dest, int *size, size_t size_char_in,
-                    size_t size_char_out)
+void OCI_CopyString
+(
+    void  *src,
+    void  *dest,
+    int   *size,
+    size_t size_char_in,
+    size_t size_char_out
+)
 {
     if ((src == NULL) || (dest == NULL) || (size == NULL))
         return;
@@ -520,47 +565,58 @@ void OCI_CopyString(void *src, void *dest, int *size, size_t size_char_in,
         OCI_GetOutputString(src, dest, size, size_char_in, size_char_out);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ReleaseMetaString
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ReleaseMetaString(void *str)
+void OCI_ReleaseMetaString
+(
+    void *str
+)
 {
     if (str == NULL)
         return;
 
-#ifdef OCI_CHECK_METASTRINGS 
+    #ifdef OCI_CHECK_METASTRINGS
 
     OCI_MemFree(str);
 
-#endif
+    #endif
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ReleaseDataString
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ReleaseDataString(void *str)
+void OCI_ReleaseDataString
+(
+    void *str
+)
 {
     if (str == NULL)
         return;
 
-#ifdef OCI_CHECK_DATASTRINGS 
+    #ifdef OCI_CHECK_DATASTRINGS
 
     OCI_MemFree(str);
 
-#endif
+    #endif
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_StringFromStringPtr
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void * OCI_StringFromStringPtr(OCIString *str, void **buf, int *buflen)
+void * OCI_StringFromStringPtr
+(
+    OCIString *str,
+    void     **buf,
+    int       *buflen
+)
 {
     void *tmp = NULL;
-    void *ret = NULL;  
-  
+    void *ret = NULL;
+
     int olen  = 0;
     int osize = 0;
     int esize = 0;
@@ -574,39 +630,38 @@ void * OCI_StringFromStringPtr(OCIString *str, void **buf, int *buflen)
     if (tmp != NULL)
     {
 
-#if defined(OCI_CHARSET_MIXED)
+        #if defined(OCI_CHARSET_MIXED)
 
         /* tmp is ANSI and must be converted to UTF16 */
 
-        esize  = 1;
-        msize  = (int) sizeof(dtext);
-        olen   = (int) strlen((char* ) tmp);
-        osize  = olen * esize;
-        
-#elif defined(OCI_CHECK_DATASTRINGS)
+        esize = 1;
+        msize = (int) sizeof(dtext);
+        olen  = (int) strlen((char* ) tmp);
+        osize = olen * esize;
+
+        #elif defined(OCI_CHECK_DATASTRINGS)
 
         /* tmp is UTF16 and might be converted to UTF32 on unixes */
 
-        
-        esize  = (int) sizeof(odtext);
-        msize  = (int) sizeof(dtext);
-        olen   = (int) OCI_StringLength(tmp, sizeof(odtext));
-        osize  = olen * esize;
+        esize = (int) sizeof(odtext);
+        msize = (int) sizeof(dtext);
+        olen  = (int) OCI_StringLength(tmp, sizeof(odtext));
+        osize = olen * esize;
 
-#else
+        #else
 
-    OCI_NOT_USED(esize);
+        OCI_NOT_USED(esize);
 
-#endif
+        #endif
 
         /* do we need to use a buffer */
 
         if (olen > 0)
         {
             /* do we need to allocate/reallocate the buffer */
-            
+
             if ((*buf) == NULL)
-            {           
+            {
                 *buflen = (olen+1) * msize;
                 *buf    = OCI_MemAlloc(OCI_IPC_STRING, (size_t) msize,
                                        (size_t) (olen+1), FALSE);
@@ -619,28 +674,28 @@ void * OCI_StringFromStringPtr(OCIString *str, void **buf, int *buflen)
             }
         }
 
-#if defined(OCI_CHARSET_MIXED)
+        #if defined(OCI_CHARSET_MIXED)
 
         mbstowcs(*buf, tmp, olen + OCI_CVT_CHAR);
 
         memset( (void*) (((char*) *buf) + (olen*msize)), 0, msize);
-        
+
         ret = *buf;
 
-#elif defined(OCI_CHECK_DATASTRINGS)
-  
+        #elif defined(OCI_CHECK_DATASTRINGS)
+
         OCI_GetOutputDataString(tmp, *buf, &osize);
-        
+
         memset( (void*) (((char*) *buf) + (osize)), 0, msize);
-                
+
         ret = *buf;
 
-#else
+        #else
 
         osize = 0;
         ret   = tmp;
 
-#endif
+        #endif
 
     }
     else
@@ -651,35 +706,41 @@ void * OCI_StringFromStringPtr(OCIString *str, void **buf, int *buflen)
     return ret;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_StringFromStringPtr
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StringToStringPtr(OCIString **str, OCIError *err, void *value, 
-                              void **buf, int *buflen)
+boolean OCI_StringToStringPtr
+(
+    OCIString **str,
+    OCIError   *err,
+    void       *value,
+    void      **buf,
+    int        *buflen
+)
 {
     boolean res = TRUE;
-    void *ostr  = NULL;  
+    void *ostr  = NULL;
     int osize   = 0;
 
-#ifdef OCI_CHARSET_MIXED
+    #ifdef OCI_CHARSET_MIXED
 
-    int olen    = 0;
-    int esize   = 0;
+    int olen  = 0;
+    int esize = 0;
 
-#endif
+    #endif
 
     OCI_CHECK(str    == NULL, FALSE);
     OCI_CHECK(buf    == NULL, FALSE);
     OCI_CHECK(buflen == NULL, FALSE);
 
-#ifdef OCI_CHARSET_MIXED
+    #ifdef OCI_CHARSET_MIXED
 
     /* value is wchar_t and must be converted to ANSI */
- 
-    esize  = (int) 1;
-    olen   = (int) dtslen((dtext*) value);
-    osize  = olen;
+
+    esize = (int) 1;
+    olen  = (int) dtslen((dtext*) value);
+    osize = olen;
 
     /* do we need to use a buffer */
 
@@ -688,7 +749,7 @@ boolean OCI_StringToStringPtr(OCIString **str, OCIError *err, void *value,
         /* do we need to allocate/reallocate the buffer */
 
         if ((*buf) == NULL)
-        {           
+        {
             *buflen = (olen+1) * esize;
             *buf    = OCI_MemAlloc(OCI_IPC_STRING, esize, olen+1, FALSE);
         }
@@ -698,46 +759,50 @@ boolean OCI_StringToStringPtr(OCIString **str, OCIError *err, void *value,
             *buf    = OCI_MemRealloc(*buf, OCI_IPC_STRING, esize, olen+1);
         }
 
-    }    
-    
+    }
+
     wcstombs((char *) *buf, (dtext *) value, olen + OCI_CVT_CHAR);
 
     ostr = *buf;
-    
-#else
-    
-    osize  = -1;
-    ostr   = OCI_GetInputDataString(value, &osize);
 
-#endif
+    #else
+
+    osize = -1;
+    ostr  = OCI_GetInputDataString(value, &osize);
+
+    #endif
 
     OCI_CALL3
     (
-        res, err, 
+        res, err,
 
         OCIStringAssignText(OCILib.env, err, (oratext *) ostr, (ub4) osize, str)
     )
 
-#ifndef OCI_CHARSET_MIXED
+    #ifndef OCI_CHARSET_MIXED
 
     OCI_ReleaseDataString(ostr);
 
-#endif
+    #endif
     return res;
 }
 
-
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_StringGetFromAttrHandle
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StringGetFromAttrHandle(OCI_Connection *con, void *handle, 
-                                    unsigned int type, unsigned int attr,
-                                    mtext **str)
+boolean OCI_StringGetFromAttrHandle
+(
+    OCI_Connection *con,
+    void           *handle,
+    unsigned int    type,
+    unsigned int    attr,
+    mtext         **str
+)
 {
-    boolean res    = TRUE;
-    void    *ostr  = NULL;
-    int      osize = -1;
+    boolean res = TRUE;
+    void *ostr  = NULL;
+    int osize   = -1;
 
     OCI_CHECK(str == NULL, FALSE);
 
@@ -745,11 +810,11 @@ boolean OCI_StringGetFromAttrHandle(OCI_Connection *con, void *handle,
     (
         res, con,
 
-        OCIAttrGet((dvoid *) handle, 
+        OCIAttrGet((dvoid *) handle,
                    (ub4    ) type,
-                   (dvoid *) &ostr, 
+                   (dvoid *) &ostr,
                    (ub4   *) &osize,
-                   (ub4    ) attr, 
+                   (ub4    ) attr,
                    con->err)
     )
 
@@ -758,7 +823,7 @@ boolean OCI_StringGetFromAttrHandle(OCI_Connection *con, void *handle,
         *str = (void *) OCI_MemAlloc(OCI_IPC_STRING,  sizeof(mtext),
                                      (size_t) ((osize / (int) sizeof(omtext)) + 1),
                                      TRUE);
-  
+
         if (*str != NULL)
         {
             OCI_CopyString(ostr, *str, &osize, sizeof(omtext), sizeof(mtext));
@@ -770,17 +835,23 @@ boolean OCI_StringGetFromAttrHandle(OCI_Connection *con, void *handle,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_StringSetToAttrHandle
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StringSetToAttrHandle(OCI_Connection *con, void *handle, 
-                                  unsigned int type, unsigned int attr,
-                                  mtext **str, const mtext *value)
+boolean OCI_StringSetToAttrHandle
+(
+    OCI_Connection *con,
+    void           *handle,
+    unsigned int    type,
+    unsigned int    attr,
+    mtext         **str,
+    const mtext    *value
+)
 {
-    boolean res    = TRUE;
-    void    *ostr  = NULL;
-    int      osize = -1;
+    boolean res = TRUE;
+    void *ostr  = NULL;
+    int osize   = -1;
 
     ostr = OCI_GetInputMetaString(value, &osize);
 
@@ -788,14 +859,14 @@ boolean OCI_StringSetToAttrHandle(OCI_Connection *con, void *handle,
     (
         res, con,
 
-        OCIAttrSet((dvoid *) handle, 
+        OCIAttrSet((dvoid *) handle,
                    (ub4    ) type,
-                   (dvoid *) ostr, 
+                   (dvoid *) ostr,
                    (ub4    ) osize,
-                   (ub4    ) attr, 
+                   (ub4    ) attr,
                    con->err)
     )
- 
+
     OCI_ReleaseMetaString(ostr);
 
     if ((res == TRUE) && (str != NULL))
@@ -808,15 +879,18 @@ boolean OCI_StringSetToAttrHandle(OCI_Connection *con, void *handle,
     return res;
 }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * ocistrdup
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-char * ocistrdup(const char * src)
+char * ocistrdup
+(
+    const char * src
+)
 {
     char *dst;
 
@@ -830,11 +904,15 @@ char * ocistrdup(const char * src)
     return dst;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * ocistrcasecmp
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int ocistrcasecmp(const char *str1, const char *str2)
+int ocistrcasecmp
+(
+    const char *str1,
+    const char *str2
+)
 {
     if (str1 == NULL && str2 == NULL)
         return 0;
@@ -845,7 +923,7 @@ int ocistrcasecmp(const char *str1, const char *str2)
     if (str2 == NULL)
         return -1;
 
-    while (((*str1) != 0) && 
+    while (((*str1) != 0) &&
            ((*str2) != 0) &&
            (tolower((int)(*str1)) == tolower((int)(*str2))))
     {
@@ -856,11 +934,17 @@ int ocistrcasecmp(const char *str1, const char *str2)
     return (tolower((int) (*str1)) - tolower((int) (*str2)));
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * ocisprintf
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int ocisprintf(char *str, int size, const char *format, ...)
+int ocisprintf
+(
+    char       *str,
+    int         size,
+    const char *format,
+    ...
+)
 {
     va_list args;
     int n;
@@ -876,11 +960,14 @@ int ocisprintf(char *str, int size, const char *format, ...)
 
 #ifdef OCI_INCLUDE_WCHAR
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * ociwcsdup
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-wchar_t * ociwcsdup(const wchar_t * src)
+wchar_t * ociwcsdup
+(
+    const wchar_t * src
+)
 {
     wchar_t *dst;
 
@@ -894,13 +981,17 @@ wchar_t * ociwcsdup(const wchar_t * src)
     return dst;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * ociwcscasecmp
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int ociwcscasecmp(const wchar_t *str1, const wchar_t *str2)
+int ociwcscasecmp
+(
+    const wchar_t *str1,
+    const wchar_t *str2
+)
 {
-     if (str1 == NULL && str2 == NULL)
+    if (str1 == NULL && str2 == NULL)
         return 0;
 
     if (str1 == NULL)

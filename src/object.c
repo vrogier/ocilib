@@ -1,48 +1,52 @@
 /*
-   +----------------------------------------------------------------------+
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: object.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: object.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetIndicatorOffset
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-ub2 OCI_ObjectGetIndOffset(OCI_TypeInfo *typinf, int index)
+ub2 OCI_ObjectGetIndOffset
+(
+    OCI_TypeInfo *typinf,
+    int           index
+)
 {
     ub2 i = 0, j = 1;
 
@@ -63,11 +67,14 @@ ub2 OCI_ObjectGetIndOffset(OCI_TypeInfo *typinf, int index)
     return j;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetStructSize
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-size_t OCI_ObjectGetStructSize(OCI_TypeInfo *typinf)
+size_t OCI_ObjectGetStructSize
+(
+    OCI_TypeInfo *typinf
+)
 {
     size_t size1 = 0;
     size_t size2 = 0;
@@ -79,7 +86,7 @@ size_t OCI_ObjectGetStructSize(OCI_TypeInfo *typinf)
 
     boolean align = FALSE;
 
-    size_t size  = 0;
+    size_t size = 0;
 
     if (typinf->struct_size != 0)
     {
@@ -100,21 +107,21 @@ size_t OCI_ObjectGetStructSize(OCI_TypeInfo *typinf)
             }
             else
             {
-                OCI_ObjectGetAttrInfo(typinf, i , &size1, &type1);
+                OCI_ObjectGetAttrInfo(typinf, i, &size1, &type1);
 
                 typinf->offsets[i] = 0;
             }
-                
-            OCI_ObjectGetAttrInfo(typinf, i+1 , &size2, &type2);
+
+            OCI_ObjectGetAttrInfo(typinf, i+1, &size2, &type2);
 
             switch (OCI_OFFSET_PAIR(type1, type2))
             {
-                case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
-                case OCI_OFFSET_PAIR(OCI_OFT_DATE  , OCI_OFT_POINTER):
-                case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
+            case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
+            case OCI_OFFSET_PAIR(OCI_OFT_DATE, OCI_OFT_POINTER):
+            case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
 
-                    align = TRUE;
-                    break;
+                align = TRUE;
+                break;
             }
 
             size += size1;
@@ -122,7 +129,7 @@ size_t OCI_ObjectGetStructSize(OCI_TypeInfo *typinf)
             if (align)
             {
                 size = ROUNDUP(size);
-            }   
+            }
         }
 
         typinf->struct_size = size + size2;
@@ -131,12 +138,17 @@ size_t OCI_ObjectGetStructSize(OCI_TypeInfo *typinf)
     return size;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetAttrSize
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ObjectGetAttrInfo(OCI_TypeInfo *typinf, int index,
-                             size_t *p_size, int *p_type)
+boolean OCI_ObjectGetAttrInfo
+(
+    OCI_TypeInfo *typinf,
+    int           index,
+    size_t       *p_size,
+    int          *p_type
+)
 {
     if (index >= typinf->nb_cols)
     {
@@ -148,40 +160,47 @@ boolean OCI_ObjectGetAttrInfo(OCI_TypeInfo *typinf, int index,
 
     switch (typinf->cols[index].type)
     {
-        case OCI_CDT_NUMERIC:
+    case OCI_CDT_NUMERIC:
 
-            *p_size = sizeof(OCINumber);
-            *p_type = OCI_OFT_NUMBER;
-            break;
+        *p_size = sizeof(OCINumber);
+        *p_type = OCI_OFT_NUMBER;
+        break;
 
-        case OCI_CDT_DATETIME:
+    case OCI_CDT_DATETIME:
 
-            *p_size = sizeof(OCIDate);
-            *p_type = OCI_OFT_DATE;
-            break;
+        *p_size = sizeof(OCIDate);
+        *p_type = OCI_OFT_DATE;
+        break;
 
-        case OCI_CDT_OBJECT:
+    case OCI_CDT_OBJECT:
 
-            *p_size = OCI_ObjectGetStructSize(typinf->cols[index].typinf);
-            *p_type = OCI_OFT_OBJECT;
-            break;
+        *p_size = OCI_ObjectGetStructSize(typinf->cols[index].typinf);
+        *p_type = OCI_OFT_OBJECT;
+        break;
 
-        default:
+    default:
 
-            *p_size = sizeof(void *);
-            *p_type = OCI_OFT_POINTER;
-   }
+        *p_size = sizeof(void *);
+        *p_type = OCI_OFT_POINTER;
+    }
 
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectInit
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
-                            void *handle, OCI_TypeInfo *typinf,
-                            OCI_Object *parent, int index, boolean reset)
+OCI_Object * OCI_ObjectInit
+(
+    OCI_Connection *con,
+    OCI_Object    **pobj,
+    void           *handle,
+    OCI_TypeInfo   *typinf,
+    OCI_Object     *parent,
+    int             index,
+    boolean         reset
+)
 {
     OCI_Object * obj = NULL;
     boolean res      = TRUE;
@@ -196,9 +215,9 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
     {
         obj = *pobj;
 
-        obj->con     = con;
-        obj->handle  = handle;
-        obj->typinf  = typinf;
+        obj->con    = con;
+        obj->handle = handle;
+        obj->typinf = typinf;
 
         if (obj->objs == NULL)
         {
@@ -234,7 +253,7 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
                               (OCIDuration) OCI_DURATION_SESSION,
                               (boolean) TRUE,
                               (dvoid **) &obj->handle)
-           )
+            )
         }
         else
         {
@@ -244,7 +263,6 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
         if ((res == TRUE) && (obj->type == 0))
         {
             ub4 size = sizeof(obj->type);
-
 
             /* calling OCIObjectGetProperty() on objects that are attributes of
                parent objects leads to a segfault on MS Windows !
@@ -298,11 +316,14 @@ OCI_Object * OCI_ObjectInit(OCI_Connection *con, OCI_Object **pobj,
     return obj;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectReset
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ObjectReset(OCI_Object *obj)
+void OCI_ObjectReset
+(
+    OCI_Object *obj
+)
 {
     ub2 i;
 
@@ -317,44 +338,44 @@ void OCI_ObjectReset(OCI_Object *obj)
 
             switch (obj->typinf->cols[i].type)
             {
-                case OCI_CDT_DATETIME:
+            case OCI_CDT_DATETIME:
 
-                    OCI_DateFree((OCI_Date *) obj->objs[i]);
-                    break;
+                OCI_DateFree((OCI_Date *) obj->objs[i]);
+                break;
 
-                case OCI_CDT_LOB:
+            case OCI_CDT_LOB:
 
-                    OCI_LobFree((OCI_Lob *) obj->objs[i]);
-                    break;
+                OCI_LobFree((OCI_Lob *) obj->objs[i]);
+                break;
 
-                case OCI_CDT_FILE:
+            case OCI_CDT_FILE:
 
-                    OCI_FileFree((OCI_File *) obj->objs[i]);
-                    break;
+                OCI_FileFree((OCI_File *) obj->objs[i]);
+                break;
 
-                case OCI_CDT_OBJECT:
+            case OCI_CDT_OBJECT:
 
-                    OCI_ObjectFree((OCI_Object *) obj->objs[i]);
-                    break;
+                OCI_ObjectFree((OCI_Object *) obj->objs[i]);
+                break;
 
-                case OCI_CDT_COLLECTION:
+            case OCI_CDT_COLLECTION:
 
-                    OCI_CollFree((OCI_Coll *) obj->objs[i]);;
-                    break;
+                OCI_CollFree((OCI_Coll *) obj->objs[i]);;
+                break;
 
-                case OCI_CDT_TIMESTAMP:
+            case OCI_CDT_TIMESTAMP:
 
-                    OCI_TimestampFree((OCI_Timestamp *) obj->objs[i]);
-                    break;
+                OCI_TimestampFree((OCI_Timestamp *) obj->objs[i]);
+                break;
 
-                case OCI_CDT_INTERVAL:
+            case OCI_CDT_INTERVAL:
 
-                    OCI_IntervalFree((OCI_Interval *) obj->objs[i]);
-                    break;
-                case OCI_CDT_REF:
+                OCI_IntervalFree((OCI_Interval *) obj->objs[i]);
+                break;
+            case OCI_CDT_REF:
 
-                    OCI_RefFree((OCI_Ref *) obj->objs[i]);
-                    break;
+                OCI_RefFree((OCI_Ref *) obj->objs[i]);
+                break;
             }
 
             obj->objs[i] = NULL;
@@ -362,11 +383,16 @@ void OCI_ObjectReset(OCI_Object *obj)
     }
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetAttrIndex
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int OCI_ObjectGetAttrIndex(OCI_Object *obj, const mtext *attr, int type)
+int OCI_ObjectGetAttrIndex
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    int          type
+)
 {
     int res = -1;
     ub2 i;
@@ -381,8 +407,8 @@ int OCI_ObjectGetAttrIndex(OCI_Object *obj, const mtext *attr, int type)
         if (((type == -1) || (col->type == type))  &&
             (mtscasecmp(col->name, attr) == 0))
         {
-           res = (int) i;
-           break;
+            res = (int) i;
+            break;
         }
     }
 
@@ -392,19 +418,24 @@ int OCI_ObjectGetAttrIndex(OCI_Object *obj, const mtext *attr, int type)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetAttr
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void * OCI_ObjectGetAttr(OCI_Object *obj, unsigned int index, OCIInd **pind)
+void * OCI_ObjectGetAttr
+(
+    OCI_Object  *obj,
+    unsigned int index,
+    OCIInd     **pind
+)
 {
-    size_t  offset = 0;
+    size_t offset = 0;
 
     if (obj->typinf->struct_size == 0)
     {
         OCI_ObjectGetStructSize(obj->typinf);
     }
- 
+
     offset = (size_t) obj->typinf->offsets[index];
 
     if (pind != NULL)
@@ -415,12 +446,18 @@ void * OCI_ObjectGetAttr(OCI_Object *obj, unsigned int index, OCIInd **pind)
     return ((char *) obj->handle + offset);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetNumber
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ObjectSetNumber(OCI_Object *obj, const mtext *attr,
-                            void *value, uword size, uword flag)
+boolean OCI_ObjectSetNumber
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    void        *value,
+    uword        size,
+    uword        flag
+)
 {
     boolean res = FALSE;
     int index   = 0;
@@ -431,8 +468,8 @@ boolean OCI_ObjectSetNumber(OCI_Object *obj, const mtext *attr,
 
     if (index >= 0)
     {
-        OCIInd *ind     = NULL;
-        OCINumber *num  = OCI_ObjectGetAttr(obj, index, &ind);
+        OCIInd *ind    = NULL;
+        OCINumber *num = OCI_ObjectGetAttr(obj, index, &ind);
 
         res = OCI_NumberSet(obj->con, num, value, size, flag);
 
@@ -445,12 +482,18 @@ boolean OCI_ObjectSetNumber(OCI_Object *obj, const mtext *attr,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetNumber
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ObjectGetNumber(OCI_Object *obj, const mtext *attr, void *value,
-                            uword size, uword flag)
+boolean OCI_ObjectGetNumber
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    void        *value,
+    uword        size,
+    uword        flag
+)
 {
     boolean res = FALSE;
     int index   = 0;
@@ -461,8 +504,8 @@ boolean OCI_ObjectGetNumber(OCI_Object *obj, const mtext *attr, void *value,
 
     if (index >= 0)
     {
-        OCIInd *ind     = NULL;
-        OCINumber *num  = NULL;
+        OCIInd *ind    = NULL;
+        OCINumber *num = NULL;
 
         num = OCI_ObjectGetAttr(obj, index, &ind);
 
@@ -491,15 +534,19 @@ boolean OCI_ObjectGetNumber(OCI_Object *obj, const mtext *attr, void *value,
     return res;
 }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * OCI_API OCI_ObjectCreate(OCI_Connection *con, OCI_TypeInfo *typinf)
+OCI_Object * OCI_API OCI_ObjectCreate
+(
+    OCI_Connection *con,
+    OCI_TypeInfo   *typinf
+)
 {
     OCI_Object *obj = NULL;
 
@@ -515,11 +562,14 @@ OCI_Object * OCI_API OCI_ObjectCreate(OCI_Connection *con, OCI_TypeInfo *typinf)
     return obj;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectFree(OCI_Object *obj)
+boolean OCI_API OCI_ObjectFree
+(
+    OCI_Object *obj
+)
 {
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj, FALSE);
 
@@ -528,7 +578,7 @@ boolean OCI_API OCI_ObjectFree(OCI_Object *obj)
     /* if the object has sub-objects that have been fetched, we need to free
        these objects */
 
-     OCI_ObjectReset(obj);
+    OCI_ObjectReset(obj);
 
     if (obj->objs != NULL)
     {
@@ -554,19 +604,22 @@ boolean OCI_API OCI_ObjectFree(OCI_Object *obj)
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectArrayCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Object ** OCI_API OCI_ObjectArrayCreate(OCI_Connection *con,
-                                            OCI_TypeInfo *typinf,
-                                            unsigned int nbelem)
+OCI_Object ** OCI_API OCI_ObjectArrayCreate
+(
+    OCI_Connection *con,
+    OCI_TypeInfo   *typinf,
+    unsigned int    nbelem
+)
 {
-    OCI_Array   *arr  = NULL;
+    OCI_Array *arr    = NULL;
     OCI_Object **objs = NULL;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0, 
-                          sizeof(void *), sizeof(OCI_Object), 
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0,
+                          sizeof(void *), sizeof(OCI_Object),
                           0, typinf);
 
     if (arr != NULL)
@@ -577,20 +630,27 @@ OCI_Object ** OCI_API OCI_ObjectArrayCreate(OCI_Connection *con,
     return objs;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectArrayFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectArrayFree(OCI_Object **objs)
+boolean OCI_API OCI_ObjectArrayFree
+(
+    OCI_Object **objs
+)
 {
     return OCI_ArrayFreeFromHandles((void **) objs);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectAssign
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectAssign(OCI_Object *obj, OCI_Object *obj_src)
+boolean OCI_API OCI_ObjectAssign
+(
+    OCI_Object *obj,
+    OCI_Object *obj_src
+)
 {
     boolean res = TRUE;
 
@@ -621,11 +681,15 @@ boolean OCI_API OCI_ObjectAssign(OCI_Object *obj, OCI_Object *obj_src)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetInt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-short OCI_API OCI_ObjectGetShort(OCI_Object *obj, const mtext *attr)
+short OCI_API OCI_ObjectGetShort
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     short value = 0;
 
@@ -634,12 +698,15 @@ short OCI_API OCI_ObjectGetShort(OCI_Object *obj, const mtext *attr)
     return value;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetUnsignedInt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned short OCI_API OCI_ObjectGetUnsignedShort(OCI_Object *obj,
-                                                  const mtext *attr)
+unsigned short OCI_API OCI_ObjectGetUnsignedShort
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     unsigned short value = 0;
 
@@ -648,11 +715,15 @@ unsigned short OCI_API OCI_ObjectGetUnsignedShort(OCI_Object *obj,
     return value;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetInt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_ObjectGetInt(OCI_Object *obj, const mtext *attr)
+int OCI_API OCI_ObjectGetInt
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     int value = 0;
 
@@ -661,11 +732,15 @@ int OCI_API OCI_ObjectGetInt(OCI_Object *obj, const mtext *attr)
     return value;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetUnsignedInt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ObjectGetUnsignedInt(OCI_Object *obj, const mtext *attr)
+unsigned int OCI_API OCI_ObjectGetUnsignedInt
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     unsigned int value = 0;
 
@@ -674,11 +749,15 @@ unsigned int OCI_API OCI_ObjectGetUnsignedInt(OCI_Object *obj, const mtext *attr
     return value;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetBigInt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-big_int OCI_API OCI_ObjectGetBigInt(OCI_Object *obj, const mtext *attr)
+big_int OCI_API OCI_ObjectGetBigInt
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     big_int value = 0;
 
@@ -687,11 +766,15 @@ big_int OCI_API OCI_ObjectGetBigInt(OCI_Object *obj, const mtext *attr)
     return value;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetUnsignedBigInt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-big_uint OCI_API OCI_ObjectGetUnsignedBigInt(OCI_Object *obj, const mtext *attr)
+big_uint OCI_API OCI_ObjectGetUnsignedBigInt
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     big_uint value = 0;
 
@@ -700,11 +783,15 @@ big_uint OCI_API OCI_ObjectGetUnsignedBigInt(OCI_Object *obj, const mtext *attr)
     return value;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetDouble
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-double OCI_API OCI_ObjectGetDouble(OCI_Object *obj, const mtext *attr)
+double OCI_API OCI_ObjectGetDouble
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     double value = 0.0;
 
@@ -713,15 +800,19 @@ double OCI_API OCI_ObjectGetDouble(OCI_Object *obj, const mtext *attr)
     return value;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetString
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const dtext * OCI_API OCI_ObjectGetString(OCI_Object *obj, const mtext *attr)
+const dtext * OCI_API OCI_ObjectGetString
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
-    const dtext *str  = NULL;
-    boolean res       = TRUE;
-    int index         = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT);
+    const dtext *str = NULL;
+    boolean res      = TRUE;
+    int index        = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT);
 
     if (index >= 0)
     {
@@ -741,12 +832,17 @@ const dtext * OCI_API OCI_ObjectGetString(OCI_Object *obj, const mtext *attr)
     return str;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetRaw
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_ObjectGetRaw(OCI_Object *obj, const mtext *attr, void *buffer,
-                             unsigned int len)
+int OCI_API OCI_ObjectGetRaw
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    void        *buffer,
+    unsigned int len
+)
 {
     boolean res = TRUE;
     int index   = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW);
@@ -761,7 +857,7 @@ int OCI_API OCI_ObjectGetRaw(OCI_Object *obj, const mtext *attr, void *buffer,
 
         if ((value != NULL) && (*ind != OCI_IND_NULL))
         {
-           raw_len = OCIRawSize(OCILib.env, *value);
+            raw_len = OCIRawSize(OCILib.env, *value);
 
             if (len > raw_len)
                 len = raw_len;
@@ -775,11 +871,15 @@ int OCI_API OCI_ObjectGetRaw(OCI_Object *obj, const mtext *attr, void *buffer,
     return len;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetDate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * OCI_API OCI_ObjectGetDate(OCI_Object *obj, const mtext *attr)
+OCI_Date * OCI_API OCI_ObjectGetDate
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     OCI_Date * date = NULL;
     boolean res     = TRUE;
@@ -806,17 +906,20 @@ OCI_Date * OCI_API OCI_ObjectGetDate(OCI_Object *obj, const mtext *attr)
     return date;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetTimestamp
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp(OCI_Object *obj,
-                                               const mtext *attr)
+OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     OCI_Timestamp *tmsp = NULL;
     boolean res         = TRUE;
 
-    int index           = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TIMESTAMP);
+    int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TIMESTAMP);
 
     if (index >= 0)
     {
@@ -827,12 +930,12 @@ OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp(OCI_Object *obj,
 
         if ((value != NULL) && (*ind != OCI_IND_NULL))
         {
-           tmsp = OCI_TimestampInit(obj->con,
-                                    (OCI_Timestamp **) &obj->objs[index],
-                                    (OCIDateTime *) *value,
-                                    obj->typinf->cols[index].subtype);
+            tmsp = OCI_TimestampInit(obj->con,
+                                     (OCI_Timestamp **) &obj->objs[index],
+                                     (OCIDateTime *) *value,
+                                     obj->typinf->cols[index].subtype);
 
-           res = (tmsp != NULL);
+            res = (tmsp != NULL);
         }
     }
 
@@ -841,11 +944,15 @@ OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp(OCI_Object *obj,
     return tmsp;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetInterval
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval * OCI_API OCI_ObjectGetInterval(OCI_Object *obj, const mtext *attr)
+OCI_Interval * OCI_API OCI_ObjectGetInterval
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     OCI_Interval *itv = NULL;
     boolean res       = TRUE;
@@ -856,7 +963,7 @@ OCI_Interval * OCI_API OCI_ObjectGetInterval(OCI_Object *obj, const mtext *attr)
         OCIInd *ind         = NULL;
         OCIInterval **value = NULL;
 
-       value = OCI_ObjectGetAttr(obj, index, &ind);
+        value = OCI_ObjectGetAttr(obj, index, &ind);
 
         if ((value != NULL) && (*ind != OCI_IND_NULL))
         {
@@ -874,11 +981,15 @@ OCI_Interval * OCI_API OCI_ObjectGetInterval(OCI_Object *obj, const mtext *attr)
     return itv;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetColl
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OCI_API OCI_ObjectGetColl(OCI_Object *obj, const mtext *attr)
+OCI_Coll * OCI_API OCI_ObjectGetColl
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     OCI_Coll *coll = NULL;
     boolean res    = TRUE;
@@ -907,11 +1018,15 @@ OCI_Coll * OCI_API OCI_ObjectGetColl(OCI_Object *obj, const mtext *attr)
     return coll;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetObject
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * OCI_API OCI_ObjectGetObject(OCI_Object *obj, const mtext *attr)
+OCI_Object * OCI_API OCI_ObjectGetObject
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     OCI_Object *obj2 = NULL;
     boolean res      = TRUE;
@@ -919,8 +1034,8 @@ OCI_Object * OCI_API OCI_ObjectGetObject(OCI_Object *obj, const mtext *attr)
 
     if (index >= 0)
     {
-        OCIInd *ind   = NULL;
-        void *value   = NULL;
+        OCIInd *ind = NULL;
+        void *value = NULL;
 
         value = OCI_ObjectGetAttr(obj, index, &ind);
 
@@ -931,7 +1046,7 @@ OCI_Object * OCI_API OCI_ObjectGetObject(OCI_Object *obj, const mtext *attr)
                                   obj, index, FALSE);
 
             res = (obj2 != NULL);
-       }
+        }
     }
 
     OCI_RESULT(res);
@@ -939,11 +1054,15 @@ OCI_Object * OCI_API OCI_ObjectGetObject(OCI_Object *obj, const mtext *attr)
     return obj2;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetLob
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Lob * OCI_API OCI_ObjectGetLob(OCI_Object *obj, const mtext *attr)
+OCI_Lob * OCI_API OCI_ObjectGetLob
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     OCI_Lob *lob = NULL;
     boolean res  = TRUE;
@@ -970,11 +1089,15 @@ OCI_Lob * OCI_API OCI_ObjectGetLob(OCI_Object *obj, const mtext *attr)
     return lob;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetFile
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_File * OCI_API OCI_ObjectGetFile(OCI_Object *obj, const mtext *attr)
+OCI_File * OCI_API OCI_ObjectGetFile
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     OCI_File *file = NULL;
     boolean res    = TRUE;
@@ -1001,11 +1124,15 @@ OCI_File * OCI_API OCI_ObjectGetFile(OCI_Object *obj, const mtext *attr)
     return file;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetRef
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OCI_API OCI_ObjectGetRef(OCI_Object *obj, const mtext *attr)
+OCI_Ref * OCI_API OCI_ObjectGetRef
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     OCI_Ref *ref = NULL;
     boolean res  = TRUE;
@@ -1032,88 +1159,121 @@ OCI_Ref * OCI_API OCI_ObjectGetRef(OCI_Object *obj, const mtext *attr)
     return ref;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetShort
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetShort(OCI_Object *obj, const mtext *attr, short value)
+boolean OCI_API OCI_ObjectSetShort
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    short        value
+)
 {
     return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value),
                                (uword) OCI_NUM_SHORT);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetUnsignedShort
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetUnsignedShort(OCI_Object *obj, const mtext *attr,
-                                           unsigned short value)
+boolean OCI_API OCI_ObjectSetUnsignedShort
+(
+    OCI_Object    *obj,
+    const mtext   *attr,
+    unsigned short value
+)
 {
     return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value),
                                (uword) OCI_NUM_USHORT);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetInt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetInt(OCI_Object *obj, const mtext *attr, int value)
+boolean OCI_API OCI_ObjectSetInt
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    int          value
+)
 {
     return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value),
                                (uword) OCI_NUM_INT);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetUnsignedInt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetUnsignedInt(OCI_Object *obj, const mtext *attr,
-                                        unsigned int value)
+boolean OCI_API OCI_ObjectSetUnsignedInt
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    unsigned int value
+)
 {
     return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value),
                                (uword) OCI_NUM_UINT);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetBigInt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetBigInt(OCI_Object *obj, const mtext *attr,
-                                    big_int value)
+boolean OCI_API OCI_ObjectSetBigInt
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    big_int      value
+)
 {
     return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value),
                                (uword) OCI_NUM_BIGINT);
 }
 
-
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetUnsignedBigInt
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetUnsignedBigInt(OCI_Object *obj, const mtext *attr,
-                                            big_uint value)
+boolean OCI_API OCI_ObjectSetUnsignedBigInt
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    big_uint     value
+)
 {
     return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value),
                                (uword) OCI_NUM_BIGUINT);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetDouble
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetDouble(OCI_Object *obj, const mtext *attr,
-                                    double value)
+boolean OCI_API OCI_ObjectSetDouble
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    double       value
+)
 {
     return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value),
                                (uword) OCI_NUM_DOUBLE);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetString
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetString(OCI_Object *obj, const mtext *attr,
-                                    const dtext *value)
+boolean OCI_API OCI_ObjectSetString
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    const dtext *value
+)
 {
     boolean res = TRUE;
 
@@ -1145,12 +1305,17 @@ boolean OCI_API OCI_ObjectSetString(OCI_Object *obj, const mtext *attr,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetRaw
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetRaw(OCI_Object *obj, const mtext *attr,
-                                 void* value, unsigned int len)
+boolean OCI_API OCI_ObjectSetRaw
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    void       * value,
+    unsigned int len
+)
 {
     boolean res = TRUE;
 
@@ -1181,7 +1346,7 @@ boolean OCI_API OCI_ObjectSetRaw(OCI_Object *obj, const mtext *attr,
 
             if (res == TRUE)
                 *ind = OCI_IND_NOTNULL;
-       }
+        }
         else
             res = FALSE;
     }
@@ -1191,12 +1356,16 @@ boolean OCI_API OCI_ObjectSetRaw(OCI_Object *obj, const mtext *attr,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetDate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetDate(OCI_Object *obj, const mtext *attr,
-                                  OCI_Date *value)
+boolean OCI_API OCI_ObjectSetDate
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    OCI_Date    *value
+)
 {
     boolean res = TRUE;
 
@@ -1230,12 +1399,16 @@ boolean OCI_API OCI_ObjectSetDate(OCI_Object *obj, const mtext *attr,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetTimestamp
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetTimestamp(OCI_Object *obj, const mtext *attr,
-                                  OCI_Timestamp *value)
+boolean OCI_API OCI_ObjectSetTimestamp
+(
+    OCI_Object    *obj,
+    const mtext   *attr,
+    OCI_Timestamp *value
+)
 {
     boolean res = TRUE;
 
@@ -1249,7 +1422,7 @@ boolean OCI_API OCI_ObjectSetTimestamp(OCI_Object *obj, const mtext *attr,
 
         if (index >= 0)
         {
-        #if OCI_VERSION_COMPILE >= OCI_9_0
+            #if OCI_VERSION_COMPILE >= OCI_9_0
 
             OCIInd * ind       = NULL;
             OCIDateTime **data = OCI_ObjectGetAttr(obj, index, &ind);
@@ -1265,7 +1438,7 @@ boolean OCI_API OCI_ObjectSetTimestamp(OCI_Object *obj, const mtext *attr,
             if (res == TRUE)
                 *ind = OCI_IND_NOTNULL;
 
-        #endif
+            #endif
         }
     }
 
@@ -1274,12 +1447,16 @@ boolean OCI_API OCI_ObjectSetTimestamp(OCI_Object *obj, const mtext *attr,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetInterval
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetInterval(OCI_Object *obj, const mtext *attr,
-                                      OCI_Interval *value)
+boolean OCI_API OCI_ObjectSetInterval
+(
+    OCI_Object   *obj,
+    const mtext  *attr,
+    OCI_Interval *value
+)
 {
     boolean res = TRUE;
 
@@ -1293,7 +1470,7 @@ boolean OCI_API OCI_ObjectSetInterval(OCI_Object *obj, const mtext *attr,
 
         if (index >= 0)
         {
-        #if OCI_VERSION_COMPILE >= OCI_9_0
+            #if OCI_VERSION_COMPILE >= OCI_9_0
 
             OCIInd * ind       = NULL;
             OCIInterval **data = OCI_ObjectGetAttr(obj, index, &ind);
@@ -1309,7 +1486,7 @@ boolean OCI_API OCI_ObjectSetInterval(OCI_Object *obj, const mtext *attr,
             if (res == TRUE)
                 *ind = OCI_IND_NOTNULL;
 
-        #endif
+            #endif
         }
     }
 
@@ -1318,12 +1495,16 @@ boolean OCI_API OCI_ObjectSetInterval(OCI_Object *obj, const mtext *attr,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetColl
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetColl(OCI_Object *obj, const mtext *attr,
-                                  OCI_Coll *value)
+boolean OCI_API OCI_ObjectSetColl
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    OCI_Coll    *value
+)
 {
     boolean res = TRUE;
 
@@ -1337,7 +1518,7 @@ boolean OCI_API OCI_ObjectSetColl(OCI_Object *obj, const mtext *attr,
 
         if (index >= 0)
         {
-            OCIInd   *ind  = NULL;
+            OCIInd *ind    = NULL;
             OCIColl **data = OCI_ObjectGetAttr(obj, index, &ind);
 
             OCI_CALL2
@@ -1357,12 +1538,16 @@ boolean OCI_API OCI_ObjectSetColl(OCI_Object *obj, const mtext *attr,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetObject
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetObject(OCI_Object *obj, const mtext *attr,
-                                    OCI_Object *value)
+boolean OCI_API OCI_ObjectSetObject
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    OCI_Object  *value
+)
 {
     boolean res = TRUE;
 
@@ -1376,8 +1561,8 @@ boolean OCI_API OCI_ObjectSetObject(OCI_Object *obj, const mtext *attr,
 
         if (index >= 0)
         {
-            OCIInd   *ind   = NULL;
-            void *data      = OCI_ObjectGetAttr(obj, index, &ind);
+            OCIInd *ind = NULL;
+            void *data  = OCI_ObjectGetAttr(obj, index, &ind);
 
             OCI_CALL2
             (
@@ -1399,12 +1584,16 @@ boolean OCI_API OCI_ObjectSetObject(OCI_Object *obj, const mtext *attr,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetLob
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetLob(OCI_Object *obj, const mtext *attr,
-                                  OCI_Lob *value)
+boolean OCI_API OCI_ObjectSetLob
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    OCI_Lob     *value
+)
 {
     boolean res = TRUE;
 
@@ -1418,48 +1607,8 @@ boolean OCI_API OCI_ObjectSetLob(OCI_Object *obj, const mtext *attr,
 
         if (index >= 0)
         {
-            OCIInd * ind  = NULL;
-            void   **data = OCI_ObjectGetAttr(obj, index, &ind);
-
-            OCI_CALL2
-            (
-                res, obj->con,
-
-                OCILobLocatorAssign(obj->con->cxt, obj->con->err,
-                                    value->handle, (OCILobLocator **) data)
-                                    )
-
-            if (res == TRUE)
-                *ind = OCI_IND_NOTNULL;
-        }
-    }
-
-    OCI_RESULT(res);
-
-    return res;
-}
-
-/* ------------------------------------------------------------------------ *
- * OCI_ObjectSetFile
- * ------------------------------------------------------------------------ */
-
-boolean OCI_API OCI_ObjectSetFile(OCI_Object *obj, const mtext *attr,
-                                  OCI_File *value)
-{
-    boolean res = TRUE;
-
-    if (value == NULL)
-    {
-        res = OCI_ObjectSetNull(obj, attr);
-    }
-    else
-    {
-        int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_FILE);
-
-        if (index >= 0)
-        {
-            OCIInd *ind  = NULL;
-            void  **data = OCI_ObjectGetAttr(obj, index, &ind);
+            OCIInd * ind = NULL;
+            void **data  = OCI_ObjectGetAttr(obj, index, &ind);
 
             OCI_CALL2
             (
@@ -1479,11 +1628,60 @@ boolean OCI_API OCI_ObjectSetFile(OCI_Object *obj, const mtext *attr,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
- * OCI_ObjectSetRef
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ObjectSetFile
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetRef(OCI_Object *obj, const mtext *attr, OCI_Ref *value)
+boolean OCI_API OCI_ObjectSetFile
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    OCI_File    *value
+)
+{
+    boolean res = TRUE;
+
+    if (value == NULL)
+    {
+        res = OCI_ObjectSetNull(obj, attr);
+    }
+    else
+    {
+        int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_FILE);
+
+        if (index >= 0)
+        {
+            OCIInd *ind = NULL;
+            void **data = OCI_ObjectGetAttr(obj, index, &ind);
+
+            OCI_CALL2
+            (
+                res, obj->con,
+
+                OCILobLocatorAssign(obj->con->cxt, obj->con->err,
+                                    value->handle, (OCILobLocator **) data)
+            )
+
+            if (res == TRUE)
+                *ind = OCI_IND_NOTNULL;
+        }
+    }
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ObjectSetRef
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_ObjectSetRef
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    OCI_Ref     *value
+)
 {
     boolean res = FALSE;
 
@@ -1497,7 +1695,7 @@ boolean OCI_API OCI_ObjectSetRef(OCI_Object *obj, const mtext *attr, OCI_Ref *va
 
         if (index >= 0)
         {
-            OCIInd   *ind  = NULL;
+            OCIInd *ind   = NULL;
             OCIRef **data = OCI_ObjectGetAttr(obj, index, &ind);
 
             OCI_CALL2
@@ -1517,11 +1715,15 @@ boolean OCI_API OCI_ObjectSetRef(OCI_Object *obj, const mtext *attr, OCI_Ref *va
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetNull
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectSetNull(OCI_Object *obj, const mtext *attr)
+boolean OCI_API OCI_ObjectSetNull
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     boolean res = TRUE;
     int index;
@@ -1547,11 +1749,15 @@ boolean OCI_API OCI_ObjectSetNull(OCI_Object *obj, const mtext *attr)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectIsNull
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectIsNull(OCI_Object *obj, const mtext *attr)
+boolean OCI_API OCI_ObjectIsNull
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
 {
     boolean res = TRUE;
     boolean ret = TRUE;
@@ -1578,11 +1784,14 @@ boolean OCI_API OCI_ObjectIsNull(OCI_Object *obj, const mtext *attr)
     return ret;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetTypeInfo
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * OCI_API OCI_ObjectGetTypeInfo(OCI_Object *obj)
+OCI_TypeInfo * OCI_API OCI_ObjectGetTypeInfo
+(
+    OCI_Object *obj
+)
 {
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj, NULL);
 
@@ -1591,11 +1800,14 @@ OCI_TypeInfo * OCI_API OCI_ObjectGetTypeInfo(OCI_Object *obj)
     return obj->typinf;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetType
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ObjectGetType(OCI_Object *obj)
+unsigned int OCI_API OCI_ObjectGetType
+(
+    OCI_Object *obj
+)
 {
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj, OCI_UNKNOWN);
 
@@ -1604,16 +1816,20 @@ unsigned int OCI_API OCI_ObjectGetType(OCI_Object *obj)
     return (unsigned int) obj->type;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetSelfRef
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectGetSelfRef(OCI_Object *obj, OCI_Ref *ref)
+boolean OCI_API OCI_ObjectGetSelfRef
+(
+    OCI_Object *obj,
+    OCI_Ref    *ref
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_REF   , ref, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_REF, ref, FALSE);
 
     OCI_CHECK_COMPAT(obj->con, obj->typinf->tdo == ref->typinf->tdo, FALSE);
 
@@ -1635,12 +1851,16 @@ boolean OCI_API OCI_ObjectGetSelfRef(OCI_Object *obj, OCI_Ref *ref)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetStruct
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ObjectGetStruct(OCI_Object *obj, void **pp_struct,
-                                    void** pp_ind)
+boolean OCI_API OCI_ObjectGetStruct
+(
+    OCI_Object *obj,
+    void      **pp_struct,
+    void     ** pp_ind
+)
 {
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj, FALSE);
 

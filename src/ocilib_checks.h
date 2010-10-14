@@ -1,51 +1,51 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: ocilib_checks.h, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: ocilib_checks.h, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_CHECKS_H_INCLUDED
 #define OCILIB_OCILIB_CHECKS_H_INCLUDED
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
                         MACROS FOR CHECKING OCI CALLS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
 /**
- * @brief 
+ * @brief
  * Direct OCI call with return value checking
  *
  * @param res   - OCI call result
  * @param err   - OCI error handle
- * @param fct   - OCI function 
+ * @param fct   - OCI function
  *
  * @note
  * Throws an exception on failure
@@ -61,18 +61,18 @@
             (res) = ((res) == OCI_SUCCESS_WITH_INFO);                          \
             OCI_ExceptionOCI((err), NULL, NULL, res);                          \
         }                                                                      \
-        else                                                                   \
-            (res) = TRUE;                                                      \
+        else                                                                                             \
+            (res) = TRUE;                                                                                                          \
     }
 
 /**
- * @brief 
+ * @brief
  * Conditional OCI call with return value checking
  *
  * @param res   - OCI call result
  * @param con   - OCILIB connection objet
  * @param stmt  - OCILIB statement object
- * @param fct   - OCI function 
+ * @param fct   - OCI function
  *
  * @note
  * Calls the OCI function only if the 'res' variable is TRUE
@@ -90,20 +90,20 @@
             if (OCI_NO_ERROR((res)) == FALSE)                                  \
             {                                                                  \
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
-                 OCI_ExceptionOCI((con)->err, (con), (stmt), res);             \
+                OCI_ExceptionOCI((con)->err, (con), (stmt), res);              \
             }                                                                  \
-            else                                                               \
-                (res) = TRUE;                                                  \
+            else                                                                                                 \
+                (res) = TRUE;                                                                                                              \
         }                                                                      \
     }
 
 /**
- * @brief 
+ * @brief
  * Conditional OCI call with return value checking
  *
  * @param res   - OCI call result
  * @param con   - OCILIB connection objet
- * @param fct   - OCI function 
+ * @param fct   - OCI function
  *
  * @note
  * Calls the OCI function only if the 'res' variable is TRUE
@@ -123,18 +123,18 @@
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
                 OCI_ExceptionOCI((con)->err, (con), NULL, res);                \
             }                                                                  \
-            else                                                               \
-                (res) = TRUE;                                                  \
+            else                                                                                                 \
+                (res) = TRUE;                                                                                                              \
         }                                                                      \
     }
-    
+
 /**
- * @brief 
+ * @brief
  * Conditional OCI call with return value checking
  *
  * @param res   - OCI call result
  * @param err   - OCI error handle
- * @param fct   - OCI function 
+ * @param fct   - OCI function
  *
  * @note
  * Throws an exception on failure
@@ -150,21 +150,21 @@
             if (OCI_NO_ERROR((res)) == FALSE)                                  \
             {                                                                  \
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
-                 OCI_ExceptionOCI((err), NULL, NULL, res);                     \
+                OCI_ExceptionOCI((err), NULL, NULL, res);                      \
             }                                                                  \
-            else                                                               \
-                (res) = TRUE;                                                  \
+            else                                                                                                 \
+                (res) = TRUE;                                                                                                              \
         }                                                                      \
     }
-    
+
 /**
- * @brief 
+ * @brief
  * Conditional OCI call with return value checking
  *
  * @param res   - OCI call result
  * @param err   - OCI error handle
  * @param con   - OCILIB connection objet
- * @param fct   - OCI function 
+ * @param fct   - OCI function
  *
  * @note
  * Calls the OCI function only if the 'res' variable is TRUE
@@ -183,19 +183,19 @@
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
                 OCI_ExceptionOCI((err), (con), NULL, res);                     \
             }                                                                  \
-            else                                                               \
-                (res) = TRUE;                                                  \
+            else                                                                                                 \
+                (res) = TRUE;                                                                                                              \
         }                                                                      \
     }
 
 /**
- * @brief 
+ * @brief
  * Direct OCI call with return value checking
 
  * @param res   - OCI call result
  * @param con   - OCILIB connection objet
  * @param stmt  - OCILIB statement object
- * @param fct   - OCI function 
+ * @param fct   - OCI function
  *
  * @note
  * Calls the OCI function only if the 'res' variable is TRUE
@@ -213,19 +213,19 @@
             (res) = ((res) == OCI_SUCCESS_WITH_INFO);                          \
             OCI_WarningOCI((con)->err, (con), (stmt), res);                    \
         }                                                                      \
-        else                                                                   \
-            (res) = TRUE;                                                      \
+        else                                                                                             \
+            (res) = TRUE;                                                                                                          \
     }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
                         PARAMETER CHECKING MACROS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
 /**
- * @brief 
- * Internal general purpose expression checking 
+ * @brief
+ * Internal general purpose expression checking
  *
- * @param exp   - Expression 
+ * @param exp   - Expression
  * @param ret   - Return value if 'exp' is true
  *
  * @note
@@ -236,11 +236,11 @@
 #define OCI_CHECK(exp, ret) if ((exp) == TRUE) return (ret);
 
 /**
- * @brief 
+ * @brief
  * Checks if a pointer passed to public function is NULL
  *
  * @param type  - Pointer type
- * @param ptr   - Pointer 
+ * @param ptr   - Pointer
  * @param ret   - Return value
  *
  * @note
@@ -255,10 +255,10 @@
         OCI_ExceptionNullPointer(type);                                        \
                                                                                \
         return (ret);                                                          \
-    }           
+    }
 
 /**
- * @brief 
+ * @brief
  * Checks if the parameters of a bind call are valid
  *
  * @param stmt  - Statement handle
@@ -267,7 +267,7 @@
  * @param type  - Input pointer type
  *
  * @note
- * Throws an exception if one of the parameters is invalid and then returns 
+ * Throws an exception if one of the parameters is invalid and then returns
  * FALSE.
  *
  */
@@ -276,12 +276,12 @@
                                                                                \
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);                             \
     OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);                                \
-    if (stmt->bind_alloc_mode == OCI_BAM_EXTERNAL)                             \
-        OCI_CHECK_PTR(type, data, FALSE);                                      \
+    if (stmt->bind_alloc_mode == OCI_BAM_EXTERNAL)                                                                                                                                                                                      \
+        OCI_CHECK_PTR(type, data, FALSE);                                                                                                                                                                    \
 
 
 /**
- * @brief 
+ * @brief
  * Checks if the parameters of a register call are valid
  *
  * @param stmt  - Statement handle
@@ -297,17 +297,17 @@
     OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);                                \
 
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
                         MISCELLANEOUS CHECKING MACROS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
 /**
- * @brief 
+ * @brief
  * Checks if an integer parameter value fits into the given bounds
  *
  * @param con - Connection handle
- * @param v   - Integer value 
- * @param b1  - Lower bound 
+ * @param v   - Integer value
+ * @param b1  - Lower bound
  * @param b2  - Upper bound
  * @param ret - Return value
  *
@@ -323,16 +323,16 @@
         OCI_ExceptionOutOfBounds((con), (v));                                  \
                                                                                \
         return (ret);                                                          \
-    } 
+    }
 
 /**
- * @brief 
+ * @brief
  * Checks if an integer parameter value is >= minimum provided value
  *
  * @param con  - Connection handle
  * @param stmt - Statement handle
- * @param v    - Integer value 
- * @param m    - Minimum value 
+ * @param v    - Integer value
+ * @param m    - Minimum value
  * @param ret  - Return value
  *
  * @note
@@ -347,14 +347,14 @@
         OCI_ExceptionMinimumValue((con), (stmt), m);                           \
                                                                                \
         return (ret);                                                          \
-    } 
+    }
 
 /**
- * @brief 
+ * @brief
  * Checks if two expressions are compatible
  *
  * @param con - Connection handle
- * @param exp - Equality expression 
+ * @param exp - Equality expression
  * @param ret - Return value
  *
  * @note
@@ -364,20 +364,19 @@
 
 #define OCI_CHECK_COMPAT(con, exp, ret)                                        \
                                                                                \
-    if ((exp) == FALSE)                                                         \
+    if ((exp) == FALSE)                                                        \
     {                                                                          \
         OCI_ExceptionTypeNotCompatible((con));                                 \
                                                                                \
         return (ret);                                                          \
-    } 
+    }
 
-
-/* ************************************************************************ *
+/* ********************************************************************************************* *
                   INTERNAL STATES/ATTRIBUTES CHECKING MACROS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
 /**
- * @brief 
+ * @brief
  * Checks if the input OCILIB object was fetched and not discartable
  *
  * @param obj - OCILIB object handle
@@ -390,11 +389,11 @@
 
 #define OCI_CHECK_OBJECT_FETCHED(obj, ret)                                     \
                                                                                \
-    if ((obj)->hstate == OCI_OBJECT_FETCHED_CLEAN)                             \
-        return (ret);                                                      
+    if ((obj)->hstate == OCI_OBJECT_FETCHED_CLEAN)                                                                                                                                   \
+        return (ret);
 
 /**
- * @brief 
+ * @brief
  * Checks if the status of a OCILIB statement matches the provided one
  *
  * @param st  - Statement handle
@@ -414,8 +413,9 @@
         return ret;                                                            \
     }                                                                          \
 
+
 /**
- * @brief 
+ * @brief
  * Checks if the given statement is scrollable
  *
  * @param st  - Statement handle
@@ -428,7 +428,7 @@
 
 #define OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(st, ret)                         \
                                                                                \
-    if (((st)->nb_rbinds > 0) ||                                             \
+    if (((st)->nb_rbinds > 0) ||                                               \
         ((st)->exec_mode != OCI_STMT_SCROLLABLE_READONLY))                     \
     {                                                                          \
         OCI_ExceptionStatementNotScrollable(st);                               \
@@ -436,7 +436,7 @@
     }
 
 /**
- * @brief 
+ * @brief
  * Checks if the status of a OCILIB direct path handle is compatible with the
  * given one
  *
@@ -455,15 +455,14 @@
     {                                                                          \
         OCI_ExceptionDirPathState((dp), (dp)->status);                         \
         return ret;                                                            \
-    } 
+    }
 
-
-/* ************************************************************************ *
+/* ********************************************************************************************* *
                     INTERNAL FEATURES AVAILABILITY CHECKING MACROS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
 /**
- * @brief 
+ * @brief
  * Checks the library has been initialized
  *
  * @param ret - Return value
@@ -475,14 +474,14 @@
 
 #define OCI_CHECK_INITIALIZED(ret)                                             \
                                                                                \
-        if (OCILib.loaded == FALSE)                                            \
-        {                                                                      \
-            OCI_ExceptionNotInitialized();                                     \
-            return ret;                                                        \
-        }
+    if (OCILib.loaded == FALSE)                                                \
+    {                                                                          \
+        OCI_ExceptionNotInitialized();                                         \
+        return ret;                                                            \
+    }
 
 /**
- * @brief 
+ * @brief
  * Internal check for various features
  *
  * @param con  - Connection handle
@@ -504,7 +503,7 @@
     }
 
 /**
- * @brief 
+ * @brief
  * Checks if multithreading mode is activated
  *
  * @param ret - Return value
@@ -515,16 +514,16 @@
  *
  */
 
-#define OCI_CHECK_THREAD_ENABLED(ret)                                          \
-                                                                               \
-        if ((OCI_LIB_THREADED) == FALSE)                                       \
-        {                                                                      \
-            OCI_ExceptionNotMultithreaded();                                   \
-            return ret;                                                        \
-        }
+#define OCI_CHECK_THREAD_ENABLED(ret)                                      \
+                                                                           \
+    if ((OCI_LIB_THREADED) == FALSE)                                       \
+    {                                                                      \
+        OCI_ExceptionNotMultithreaded();                                   \
+        return ret;                                                        \
+    }
 
 /**
- * @brief 
+ * @brief
  * Checks if the timestamp datatype is supported by the connection
  *
  * @param con - Connection handle
@@ -538,10 +537,10 @@
 
 #define OCI_CHECK_TIMESTAMP_ENABLED(con,  ret)                                 \
                                                                                \
-        OCI_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0, ret)
+    OCI_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0, ret)
 
 /**
- * @brief 
+ * @brief
  * Checks if the interval datatype is supported by the connection
  *
  * @param con - Connection handle
@@ -556,7 +555,7 @@
 #define OCI_CHECK_INTERVAL_ENABLED OCI_CHECK_TIMESTAMP_ENABLED
 
 /**
- * @brief 
+ * @brief
  * Checks if the connection supports scrollable cursors
  *
  * @param con - Connection handle
@@ -570,11 +569,10 @@
 
 #define OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(con, ret)                          \
                                                                                \
-        OCI_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9_0, ret)
-
+    OCI_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9_0, ret)
 
 /**
- * @brief 
+ * @brief
  * Checks if the direct path date caching is available
  *
  * @param con - Connection handle
@@ -594,7 +592,7 @@
     }
 
 /**
- * @brief 
+ * @brief
  * Checks if the current OCI client supports remote database startup/shutdown
  *
  * @param ret - Return value
@@ -613,7 +611,7 @@
     }
 
 /**
- * @brief 
+ * @brief
  * Checks if the current OCI client supports database notifications
  *
  * @param ret - Return value

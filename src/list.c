@@ -1,51 +1,54 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: list.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: list.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ListCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_List * OCI_ListCreate(int type)
+OCI_List * OCI_ListCreate
+(
+    int type
+)
 {
     OCI_List *list = NULL;
-    
+
     /* allocate list */
 
     list = (OCI_List *) OCI_MemAlloc(OCI_IPC_LIST, sizeof(*list), (size_t) 1, TRUE);
@@ -56,23 +59,26 @@ OCI_List * OCI_ListCreate(int type)
     {
         list->type = type;
 
-         if (OCI_LIB_THREADED)
-         {
-             list->mutex = OCI_MutexCreateInternal();
+        if (OCI_LIB_THREADED)
+        {
+            list->mutex = OCI_MutexCreateInternal();
 
             if (list->mutex == NULL)
                 OCI_FREE(list);
-         }
+        }
     }
 
     return list;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ListFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ListFree(OCI_List *list)
+boolean OCI_ListFree
+(
+    OCI_List *list
+)
 {
     boolean res = TRUE;
 
@@ -84,17 +90,21 @@ boolean OCI_ListFree(OCI_List *list)
         res = OCI_MutexFree(list->mutex);
 
     OCI_FREE(list);
-    
+
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ListCreateItem
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Item * OCI_ListCreateItem(int type, int size)
+OCI_Item * OCI_ListCreateItem
+(
+    int type,
+    int size
+)
 {
-    OCI_Item *item  = NULL;
+    OCI_Item *item = NULL;
 
     /* allocate list item entry */
 
@@ -114,11 +124,15 @@ OCI_Item * OCI_ListCreateItem(int type, int size)
     return item;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ListAppend
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Item * OCI_ListAppend(OCI_List *list, int size)
+OCI_Item * OCI_ListAppend
+(
+    OCI_List *list,
+    int       size
+)
 {
     OCI_Item *item = NULL;
     OCI_Item *temp = NULL;
@@ -152,11 +166,14 @@ OCI_Item * OCI_ListAppend(OCI_List *list, int size)
     return item;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ListClear
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ListClear(OCI_List *list)
+boolean OCI_ListClear
+(
+    OCI_List *list
+)
 {
     OCI_Item *item = NULL;
     OCI_Item *temp = NULL;
@@ -172,8 +189,8 @@ boolean OCI_ListClear(OCI_List *list)
 
     while (item != NULL)
     {
-        temp  = item;
-        item  = item->next;
+        temp = item;
+        item = item->next;
 
         /* free data */
 
@@ -190,11 +207,15 @@ boolean OCI_ListClear(OCI_List *list)
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ListForEach
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ListForEach(OCI_List *list, boolean (*proc)(void *))
+boolean OCI_ListForEach
+(
+    OCI_List          *list,
+    POCI_LIST_FOR_EACH proc
+)
 {
     OCI_Item *item = NULL;
 
@@ -219,11 +240,15 @@ boolean OCI_ListForEach(OCI_List *list, boolean (*proc)(void *))
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ListRemove
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ListRemove(OCI_List *list, void *data)
+boolean OCI_ListRemove
+(
+    OCI_List *list,
+    void     *data
+)
 {
     OCI_Item *item = NULL;
     OCI_Item *temp = NULL;

@@ -1,42 +1,42 @@
 /*
-   +----------------------------------------------------------------------+
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: exception.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: exception.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            STRINGS MESSAGES
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
 static mtext * OCILib_TypeNames[] =
 {
@@ -103,7 +103,6 @@ static mtext * OCILib_TypeNames[] =
     MT("Internal array of direct path columns"),
     MT("Internal array of batch error objects")
 };
-
 
 #if defined(OCI_CHARSET_WIDE) && !defined(_MSC_VER)
 
@@ -192,7 +191,6 @@ static mtext * OCILib_DirPathStates[] =
     MT("terminated")
 };
 
-
 static mtext * OCILib_HandleNames[] =
 {
     MT("OCI handle"),
@@ -200,15 +198,18 @@ static mtext * OCILib_HandleNames[] =
     MT("OCI Object handles")
 };
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionGetError
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Error * OCI_ExceptionGetError(boolean warning)
+OCI_Error * OCI_ExceptionGetError
+(
+    boolean warning
+)
 {
     OCI_Error *err = OCI_ErrorGet(TRUE, warning);
 
@@ -223,11 +224,14 @@ OCI_Error * OCI_ExceptionGetError(boolean warning)
     return err;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionRaise
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionRaise(OCI_Error *err)
+void OCI_ExceptionRaise
+(
+    OCI_Error *err
+)
 {
     if (err != NULL)
     {
@@ -238,12 +242,17 @@ void OCI_ExceptionRaise(OCI_Error *err)
     }
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionOCI
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionOCI(OCIError *p_err, OCI_Connection *con, 
-                      OCI_Statement *stmt, boolean warning)
+void OCI_ExceptionOCI
+(
+    OCIError       *p_err,
+    OCI_Connection *con,
+    OCI_Statement  *stmt,
+    boolean         warning
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(warning);
 
@@ -252,17 +261,17 @@ void OCI_ExceptionOCI(OCIError *p_err, OCI_Connection *con,
         int osize  = -1;
         void *ostr = NULL;
 
-        err->type    = (warning ? OCI_ERR_WARNING : OCI_ERR_ORACLE);
-        err->con     = con;
-        err->stmt    = stmt;
+        err->type = (warning ? OCI_ERR_WARNING : OCI_ERR_ORACLE);
+        err->con  = con;
+        err->stmt = stmt;
 
         /* get oracle description */
 
-        osize        = (int) (msizeof(err->str) - (size_t) 1);
-        ostr         = OCI_GetInputMetaString(err->str, &osize);
+        osize = (int) (msizeof(err->str) - (size_t) 1);
+        ostr  = OCI_GetInputMetaString(err->str, &osize);
 
         OCIErrorGet((dvoid *) p_err, (ub4) 1, (OraText *) NULL, &err->ocode,
-        (OraText *) ostr, (ub4) osize, (ub4) OCI_HTYPE_ERROR);
+                    (OraText *) ostr, (ub4) osize, (ub4) OCI_HTYPE_ERROR);
 
         OCI_GetOutputMetaString(ostr, err->str, &osize);
         OCI_ReleaseMetaString(ostr);
@@ -271,11 +280,14 @@ void OCI_ExceptionOCI(OCIError *p_err, OCI_Connection *con,
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionNotInitialized
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionNotInitialized(void)
+void OCI_ExceptionNotInitialized
+(
+    void
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -291,13 +303,16 @@ void OCI_ExceptionNotInitialized(void)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionLoadingShareLib
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionLoadingSharedLib(void)
+void OCI_ExceptionLoadingSharedLib
+(
+    void
+)
 {
-#ifdef OCI_IMPORT_RUNTIME
+    #ifdef OCI_IMPORT_RUNTIME
 
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -313,14 +328,17 @@ void OCI_ExceptionLoadingSharedLib(void)
 
     OCI_ExceptionRaise(err);
 
-#endif
+    #endif
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionLoadingSymbols
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionLoadingSymbols(void)
+void OCI_ExceptionLoadingSymbols
+(
+    void
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -333,13 +351,17 @@ void OCI_ExceptionLoadingSymbols(void)
                 msizeof(err->str) - (size_t) 1);
     }
 
-    OCI_ExceptionRaise(err);}
+    OCI_ExceptionRaise(err);
+}
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionNotMultithreaded
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionNotMultithreaded(void)
+void OCI_ExceptionNotMultithreaded
+(
+    void
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -355,11 +377,14 @@ void OCI_ExceptionNotMultithreaded(void)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionNullPointer
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionNullPointer(int type)
+void OCI_ExceptionNullPointer
+(
+    int type
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -376,12 +401,17 @@ void OCI_ExceptionNullPointer(int type)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionMemory
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionMemory(int type, size_t nb_bytes, OCI_Connection *con,
-                     OCI_Statement *stmt)
+void OCI_ExceptionMemory
+(
+    int             type,
+    size_t          nb_bytes,
+    OCI_Connection *con,
+    OCI_Statement  *stmt
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -402,11 +432,15 @@ void OCI_ExceptionMemory(int type, size_t nb_bytes, OCI_Connection *con,
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionNotAvailable
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionNotAvailable(OCI_Connection *con, int feature)
+void OCI_ExceptionNotAvailable
+(
+    OCI_Connection *con,
+    int             feature
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -425,12 +459,16 @@ void OCI_ExceptionNotAvailable(OCI_Connection *con, int feature)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionDatatypeNotSupported
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionDatatypeNotSupported(OCI_Connection *con, OCI_Statement *stmt,
-                                       int code)
+void OCI_ExceptionDatatypeNotSupported
+(
+    OCI_Connection *con,
+    OCI_Statement  *stmt,
+    int             code
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -450,11 +488,16 @@ void OCI_ExceptionDatatypeNotSupported(OCI_Connection *con, OCI_Statement *stmt,
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionParsingError
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionParsingToken(OCI_Connection *con, OCI_Statement *stmt, mtext token)
+void OCI_ExceptionParsingToken
+(
+    OCI_Connection *con,
+    OCI_Statement  *stmt,
+    mtext           token
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -474,12 +517,16 @@ void OCI_ExceptionParsingToken(OCI_Connection *con, OCI_Statement *stmt, mtext t
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionMappingArgument
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionMappingArgument(OCI_Connection *con, OCI_Statement *stmt,
-                               int arg)
+void OCI_ExceptionMappingArgument
+(
+    OCI_Connection *con,
+    OCI_Statement  *stmt,
+    int             arg
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -499,11 +546,15 @@ void OCI_ExceptionMappingArgument(OCI_Connection *con, OCI_Statement *stmt,
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionOutOfBounds
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionOutOfBounds(OCI_Connection *con, int value)
+void OCI_ExceptionOutOfBounds
+(
+    OCI_Connection *con,
+    int             value
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -522,11 +573,15 @@ void OCI_ExceptionOutOfBounds(OCI_Connection *con, int value)
     OCI_ExceptionRaise(err);
 }
 
- /* ------------------------------------------------------------------------ *
- * OCI_ExceptionUnfreedData
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ExceptionUnfreedData
+* --------------------------------------------------------------------------------------------- */
 
-void  OCI_ExceptionUnfreedData(int type_elem, int nb_elem)
+void OCI_ExceptionUnfreedData
+(
+    int type_elem,
+    int nb_elem
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -544,11 +599,14 @@ void  OCI_ExceptionUnfreedData(int type_elem, int nb_elem)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionRuntimeLoading
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionMaxBind(OCI_Statement *stmt)
+void OCI_ExceptionMaxBind
+(
+    OCI_Statement *stmt
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -561,7 +619,6 @@ void OCI_ExceptionMaxBind(OCI_Statement *stmt)
         if (stmt != NULL)
             err->con =  stmt->con;
 
-
         mtsprintf(err->str,
                   msizeof(err->str) - (size_t) 1,
                   OCILib_ErrorMsg[OCI_ERR_MAX_BIND],
@@ -571,11 +628,15 @@ void OCI_ExceptionMaxBind(OCI_Statement *stmt)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionAttributeNotFound
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionAttributeNotFound(OCI_Connection *con, const mtext *attr)
+void OCI_ExceptionAttributeNotFound
+(
+    OCI_Connection *con,
+    const mtext    *attr
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -594,11 +655,16 @@ void OCI_ExceptionAttributeNotFound(OCI_Connection *con, const mtext *attr)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionMinimumValue
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionMinimumValue(OCI_Connection *con, OCI_Statement *stmt, int min)
+void OCI_ExceptionMinimumValue
+(
+    OCI_Connection *con,
+    OCI_Statement  *stmt,
+    int             min
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -615,11 +681,14 @@ void OCI_ExceptionMinimumValue(OCI_Connection *con, OCI_Statement *stmt, int min
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionTypeNotCompatible
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionTypeNotCompatible(OCI_Connection *con)
+void OCI_ExceptionTypeNotCompatible
+(
+    OCI_Connection *con
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -636,11 +705,15 @@ void OCI_ExceptionTypeNotCompatible(OCI_Connection *con)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionStatementState
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionStatementState(OCI_Statement *stmt, int state)
+void OCI_ExceptionStatementState
+(
+    OCI_Statement *stmt,
+    int            state
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -662,11 +735,14 @@ void OCI_ExceptionStatementState(OCI_Statement *stmt, int state)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionStatementNotScrollable
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionStatementNotScrollable(OCI_Statement *stmt)
+void OCI_ExceptionStatementNotScrollable
+(
+    OCI_Statement *stmt
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -687,11 +763,15 @@ void OCI_ExceptionStatementNotScrollable(OCI_Statement *stmt)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionBindAlreadyUsed
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionBindAlreadyUsed(OCI_Statement *stmt, const mtext * bind)
+void OCI_ExceptionBindAlreadyUsed
+(
+    OCI_Statement *stmt,
+    const mtext  * bind
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -713,12 +793,17 @@ void OCI_ExceptionBindAlreadyUsed(OCI_Statement *stmt, const mtext * bind)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionBindArraySize
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionBindArraySize(OCI_Statement *stmt, unsigned int maxsize, 
-                                unsigned int cursize, unsigned int newsize)
+void OCI_ExceptionBindArraySize
+(
+    OCI_Statement *stmt,
+    unsigned int   maxsize,
+    unsigned int   cursize,
+    unsigned int   newsize
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -740,12 +825,16 @@ void OCI_ExceptionBindArraySize(OCI_Statement *stmt, unsigned int maxsize,
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionDirPathColNotFound
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionDirPathColNotFound(OCI_DirPath *dp, const mtext * column,
-                                     const mtext *table)
+void OCI_ExceptionDirPathColNotFound
+(
+    OCI_DirPath  *dp,
+    const mtext * column,
+    const mtext  *table
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -761,18 +850,22 @@ void OCI_ExceptionDirPathColNotFound(OCI_DirPath *dp, const mtext * column,
         mtsprintf(err->str,
                   msizeof(err->str) - (size_t) 1,
                   OCILib_ErrorMsg[OCI_ERR_COLUMN_NOT_FOUND],
-                  column, 
+                  column,
                   table);
     }
 
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionDirPathState
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionDirPathState(OCI_DirPath *dp, int state)
+void OCI_ExceptionDirPathState
+(
+    OCI_DirPath *dp,
+    int          state
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -794,11 +887,14 @@ void OCI_ExceptionDirPathState(OCI_DirPath *dp, int state)
     OCI_ExceptionRaise(err);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ExceptionOCIEnvironment
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionOCIEnvironment(void)
+void OCI_ExceptionOCIEnvironment
+(
+    void
+)
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 

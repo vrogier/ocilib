@@ -1,54 +1,57 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: subscriptions.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: subscriptions.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_SubscriptionClose
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_SubscriptionClose(OCI_Subscription *sub)
+boolean OCI_SubscriptionClose
+(
+    OCI_Subscription *sub
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_10_2
+    #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* deregister the subscription if connection still alive */
 
@@ -65,7 +68,7 @@ boolean OCI_SubscriptionClose(OCI_Subscription *sub)
         }
 
         if (sub->con != NULL)
-        {           
+        {
             OCI_CALL3
             (
                 res, sub->err,
@@ -92,7 +95,7 @@ boolean OCI_SubscriptionClose(OCI_Subscription *sub)
         OCI_HandleFree(sub->err, OCI_HTYPE_ERROR);
     }
 
-#endif
+    #endif
 
     /* free event data */
 
@@ -110,11 +113,14 @@ boolean OCI_SubscriptionClose(OCI_Subscription *sub)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_SubscriptionDetachConnection
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_SubscriptionDetachConnection(OCI_Connection *con)
+boolean OCI_SubscriptionDetachConnection
+(
+    OCI_Connection *con
+)
 {
     OCI_List *list = OCILib.subs;
     OCI_Item *item = NULL;
@@ -150,24 +156,27 @@ boolean OCI_SubscriptionDetachConnection(OCI_Connection *con)
     return TRUE;
 }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_SubscriptionCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
-                                                    const mtext *name,                                                  
-                                                    unsigned int type,      
-                                                    POCI_NOTIFY handler,  
-                                                    unsigned int port,      
-                                                    unsigned int timeout)
+OCI_Subscription * OCI_API OCI_SubscriptionRegister
+(
+    OCI_Connection *con,
+    const mtext    *name,
+    unsigned int    type,
+    POCI_NOTIFY     handler,
+    unsigned int    port,
+    unsigned int    timeout
+)
 {
-    OCI_Subscription *sub  = NULL;
-    OCI_Item         *item = NULL;
-    boolean           res  = TRUE;
+    OCI_Subscription *sub = NULL;
+    OCI_Item *item        = NULL;
+    boolean res           = TRUE;
 
     OCI_CHECK_INITIALIZED(NULL);
     OCI_CHECK_DATABASE_NOTIFY_ENABLED(NULL);
@@ -176,7 +185,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
     OCI_CHECK_PTR(OCI_IPC_PROC, handler, NULL);
     OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
 
-#if OCI_VERSION_COMPILE >= OCI_10_2
+    #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* create subscription object */
 
@@ -188,23 +197,23 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
 
         /* allocate error handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env, 
+        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
                                               (dvoid **) (void *) &sub->err,
                                               OCI_HTYPE_ERROR, (size_t) 0,
                                               (dvoid **) NULL));
 
         /* allocate subcription handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env, 
+        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
                                               (dvoid **) (void *) &sub->subhp,
                                               OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
                                               (dvoid **) NULL));
 
         if (res == TRUE)
         {
-            ub4 attr     = 0;
-            int osize    = -1;
-            void *ostr   = NULL;
+            ub4 attr   = 0;
+            int osize  = -1;
+            void *ostr = NULL;
 
             sub->con       = con;
             sub->port      = (ub4) port;
@@ -253,10 +262,10 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
                 )
             }
 
-             /* name  */
+            /* name  */
 
-            ostr  = OCI_GetInputMetaString(sub->name, &osize);
- 
+            ostr = OCI_GetInputMetaString(sub->name, &osize);
+
             OCI_CALL3
             (
                 res, sub->err,
@@ -265,7 +274,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
                            (dvoid *) ostr, (ub4) osize,
                            (ub4) OCI_ATTR_SUBSCR_NAME, sub->err)
             )
-         
+
             OCI_ReleaseMetaString(ostr);
 
             /* namespace for CDN */
@@ -285,9 +294,10 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
    As there is no other to way to do regarding the OCI API, let's disable this
    warning just the time to set the callback attribute to the subscription handle */
 
-#ifdef _MSC_VER
-  #pragma warning(disable: 4054)
-#endif
+            #ifdef _MSC_VER
+            #pragma warning(disable: 4054)
+            #endif
+
             /* internal callback handler */
 
             OCI_CALL3
@@ -299,10 +309,10 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
                            (ub4) OCI_ATTR_SUBSCR_CALLBACK, sub->err)
             )
 
- #ifdef _MSC_VER
-  #pragma warning(default: 4054)
-#endif
-              
+            #ifdef _MSC_VER
+            #pragma warning(default: 4054)
+            #endif
+
             /* RowIds handling */
 
             if (sub->type & OCI_CNT_ROWS)
@@ -318,7 +328,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
                                (ub4) OCI_ATTR_CHNF_ROWIDS, sub->err)
                 )
             }
-    
+
             /* set subsription context pointer to our subscription structure */
 
             OCI_CALL3
@@ -331,14 +341,14 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
             )
 
             /* all attributes set, let's register the subscription ! */
-    
+
             OCI_CALL3
             (
                 res, sub->err,
 
                 OCISubscriptionRegister(sub->con->cxt, &sub->subhp, (ub2) 1,
                                         sub->err,(ub4) OCI_DEFAULT)
-                                        
+
             )
         }
     }
@@ -351,7 +361,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
         OCI_FREE(sub);
     }
 
-#else
+    #else
 
     res = FALSE;
 
@@ -363,18 +373,21 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister(OCI_Connection *con,
     OCI_NOT_USED(con);
     OCI_NOT_USED(item);
 
-#endif
+    #endif
 
     OCI_RESULT(res);
 
     return sub;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_SubscriptionUnregister
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SubscriptionUnregister(OCI_Subscription *sub)
+boolean OCI_API OCI_SubscriptionUnregister
+(
+    OCI_Subscription *sub
+)
 {
     boolean res = TRUE;
 
@@ -391,22 +404,25 @@ boolean OCI_API OCI_SubscriptionUnregister(OCI_Subscription *sub)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_SubscriptionAddStatement
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SubscriptionAddStatement(OCI_Subscription *sub,
-                                             OCI_Statement *stmt)
+boolean OCI_API OCI_SubscriptionAddStatement
+(
+    OCI_Subscription *sub,
+    OCI_Statement    *stmt
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
-    
+
     OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_CLOSED, FALSE);
     OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_EXECUTED, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_10_2
+    #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* register the statement query if provided */
 
@@ -416,26 +432,29 @@ boolean OCI_API OCI_SubscriptionAddStatement(OCI_Subscription *sub,
         (
             res, sub->err,
 
-              OCIAttrSet((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT,
-                   (dvoid *) sub->subhp, (ub4) 0,
-                   (ub4) OCI_ATTR_CHNF_REGHANDLE, sub->err)
+            OCIAttrSet((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT,
+                       (dvoid *) sub->subhp, (ub4) 0,
+                       (ub4) OCI_ATTR_CHNF_REGHANDLE, sub->err)
         )
 
         res = res && OCI_Execute(stmt) && (OCI_GetResultset(stmt) != NULL);
     }
 
-#endif
+    #endif
 
     OCI_RESULT(res);
 
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_SubscriptionGetName
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_SubscriptionGetName(OCI_Subscription *sub)
+const mtext * OCI_API OCI_SubscriptionGetName
+(
+    OCI_Subscription *sub
+)
 {
     OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, NULL);
 
@@ -444,11 +463,14 @@ const mtext * OCI_API OCI_SubscriptionGetName(OCI_Subscription *sub)
     return sub->name;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_SubscriptionGetPort
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_SubscriptionGetPort(OCI_Subscription *sub)
+unsigned int OCI_API OCI_SubscriptionGetPort
+(
+    OCI_Subscription *sub
+)
 {
     OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, 0);
 
@@ -457,11 +479,14 @@ unsigned int OCI_API OCI_SubscriptionGetPort(OCI_Subscription *sub)
     return sub->port;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_SubscriptionGetTimeout
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_SubscriptionGetTimeout(OCI_Subscription *sub)
+unsigned int OCI_API OCI_SubscriptionGetTimeout
+(
+    OCI_Subscription *sub
+)
 {
     OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, 0);
 

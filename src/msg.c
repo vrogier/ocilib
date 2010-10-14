@@ -1,53 +1,55 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: msg.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: msg.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Msg * OCI_API OCI_MsgCreate(OCI_TypeInfo *typinf)
+OCI_Msg * OCI_API OCI_MsgCreate
+(
+    OCI_TypeInfo *typinf
+)
 {
     OCI_Msg *msg = NULL;
     boolean res  = TRUE;
@@ -58,8 +60,8 @@ OCI_Msg * OCI_API OCI_MsgCreate(OCI_TypeInfo *typinf)
 
     /* allocate message structure */
 
-    msg = (OCI_Msg *) OCI_MemAlloc(OCI_IPC_MSG, sizeof(*msg), 
-                                       (size_t) 1, TRUE);
+    msg = (OCI_Msg *) OCI_MemAlloc(OCI_IPC_MSG, sizeof(*msg),
+                                   (size_t) 1, TRUE);
 
     if (msg != NULL)
     {
@@ -67,9 +69,9 @@ OCI_Msg * OCI_API OCI_MsgCreate(OCI_TypeInfo *typinf)
 
         /* allocate message properties handle */
 
-        res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) OCILib.env, 
+        res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) OCILib.env,
                                                   (dvoid **) &msg->proph,
-                                                  OCI_DTYPE_AQMSG_PROPERTIES, 
+                                                  OCI_DTYPE_AQMSG_PROPERTIES,
                                                   (size_t) 0, (dvoid **) NULL));
 
         if (res == TRUE)
@@ -93,11 +95,15 @@ OCI_Msg * OCI_API OCI_MsgCreate(OCI_TypeInfo *typinf)
 
     return msg;
 }
-/* ------------------------------------------------------------------------ *
- * OCI_MsgFree
- * ------------------------------------------------------------------------ */
 
-boolean OCI_API OCI_MsgFree(OCI_Msg *msg)
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_MsgFree
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_MsgFree
+(
+    OCI_Msg *msg
+)
 {
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
@@ -113,11 +119,14 @@ boolean OCI_API OCI_MsgFree(OCI_Msg *msg)
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgGetObject
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * OCI_API OCI_MsgGetObject(OCI_Msg *msg)
+OCI_Object * OCI_API OCI_MsgGetObject
+(
+    OCI_Msg *msg
+)
 {
     OCI_Object *obj = NULL;
 
@@ -133,11 +142,15 @@ OCI_Object * OCI_API OCI_MsgGetObject(OCI_Msg *msg)
     return obj;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgGetObject
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MsgSetObject(OCI_Msg *msg, OCI_Object *obj)
+boolean OCI_API OCI_MsgSetObject
+(
+    OCI_Msg    *msg,
+    OCI_Object *obj
+)
 {
     boolean res = FALSE;
 
@@ -153,11 +166,14 @@ boolean OCI_API OCI_MsgSetObject(OCI_Msg *msg, OCI_Object *obj)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgGetRaw
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void * OCI_API OCI_MsgGetRaw(OCI_Msg *msg)
+void * OCI_API OCI_MsgGetRaw
+(
+    OCI_Msg *msg
+)
 {
     void *raw = NULL;
 
@@ -167,17 +183,22 @@ void * OCI_API OCI_MsgGetRaw(OCI_Msg *msg)
     {
         raw = OCIRawPtr(OCILib.env, msg->raw);
     }
-    
+
     OCI_RESULT(TRUE);
 
     return raw;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgSetRaw
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MsgSetRaw(OCI_Msg *msg, void *raw, unsigned int size)
+boolean OCI_API OCI_MsgSetRaw
+(
+    OCI_Msg     *msg,
+    void        *raw,
+    unsigned int size
+)
 {
     boolean res = TRUE;
 
@@ -188,26 +209,29 @@ boolean OCI_API OCI_MsgSetRaw(OCI_Msg *msg, void *raw, unsigned int size)
     {
         OCI_CALL2
         (
-            res, msg->typinf->con, 
-            
+            res, msg->typinf->con,
+
             OCIRawAssignBytes(OCILib.env, msg->typinf->con->err, (ub1*) raw,
                               (ub4) size, (OCIRaw **) msg->raw)
-        )    
+        )
     }
-    
+
     OCI_RESULT(res);
 
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgGetAttemptCount
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_MsgGetAttemptCount(OCI_Msg *msg)
+int OCI_API OCI_MsgGetAttemptCount
+(
+    OCI_Msg *msg
+)
 {
     boolean res = TRUE;
-    sb4 ret = 0;
+    sb4 ret     = 0;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
@@ -215,28 +239,30 @@ int OCI_API OCI_MsgGetAttemptCount(OCI_Msg *msg)
     (
         res, msg->typinf->con,
 
-        OCIAttrGet((dvoid *) msg->proph, 
+        OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &ret, 
+                   (dvoid *) &ret,
                    (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_ATTEMPTS, 
+                   (ub4    ) OCI_ATTR_ATTEMPTS,
                    msg->typinf->con->err)
     )
-
 
     OCI_RESULT(res);
 
     return (int) ret;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgGetEnqueueDelay
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_MsgGetEnqueueDelay(OCI_Msg *msg)
+int OCI_API OCI_MsgGetEnqueueDelay
+(
+    OCI_Msg *msg
+)
 {
     boolean res = TRUE;
-    sb4 ret = 0;
+    sb4 ret     = 0;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
@@ -244,28 +270,31 @@ int OCI_API OCI_MsgGetEnqueueDelay(OCI_Msg *msg)
     (
         res, msg->typinf->con,
 
-        OCIAttrGet((dvoid *) msg->proph, 
+        OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &ret, 
+                   (dvoid *) &ret,
                    (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_DELAY, 
+                   (ub4    ) OCI_ATTR_DELAY,
                    msg->typinf->con->err)
     )
-
 
     OCI_RESULT(res);
 
     return (int) ret;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgSetEnqueueDelay
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MsgSetEnqueueDelay(OCI_Msg *msg, int value)
+boolean OCI_API OCI_MsgSetEnqueueDelay
+(
+    OCI_Msg *msg,
+    int      value
+)
 {
     boolean res = TRUE;
-    sb4 sval = (sb4) value;
+    sb4 sval    = (sb4) value;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
@@ -273,27 +302,29 @@ boolean OCI_API OCI_MsgSetEnqueueDelay(OCI_Msg *msg, int value)
     (
         res, msg->typinf->con,
 
-        OCIAttrSet((dvoid *) msg->proph, 
+        OCIAttrSet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &sval, 
+                   (dvoid *) &sval,
                    (ub4    ) sizeof(sval),
-                   (ub4    ) OCI_ATTR_DELAY, 
+                   (ub4    ) OCI_ATTR_DELAY,
                    msg->typinf->con->err)
     )
-
 
     OCI_RESULT(res);
 
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgGetEnqueueTime
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * OCI_API OCI_MsgGetEnqueueTime(OCI_Msg *msg)
+OCI_Date * OCI_API OCI_MsgGetEnqueueTime
+(
+    OCI_Msg *msg
+)
 {
-    boolean   res  = TRUE;
+    boolean res    = TRUE;
     OCI_Date *date = NULL;
     OCIDate oci_date;
 
@@ -303,18 +334,18 @@ OCI_Date * OCI_API OCI_MsgGetEnqueueTime(OCI_Msg *msg)
     (
         res, msg->typinf->con,
 
-        OCIAttrGet((dvoid *) msg->proph, 
+        OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &oci_date, 
+                   (dvoid *) &oci_date,
                    (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_ENQ_TIME, 
+                   (ub4    ) OCI_ATTR_ENQ_TIME,
                    msg->typinf->con->err)
     )
 
     if (res == TRUE)
     {
-        date = OCI_DateInit(msg->typinf->con, &msg->date, &oci_date, 
-                                 FALSE, FALSE);
+        date = OCI_DateInit(msg->typinf->con, &msg->date, &oci_date,
+                            FALSE, FALSE);
 
         res = (date != NULL);
     }
@@ -325,14 +356,17 @@ OCI_Date * OCI_API OCI_MsgGetEnqueueTime(OCI_Msg *msg)
 
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgGetExpiration
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_MsgGetExpiration(OCI_Msg *msg)
+int OCI_API OCI_MsgGetExpiration
+(
+    OCI_Msg *msg
+)
 {
     boolean res = TRUE;
-    sb4 ret = 0;
+    sb4 ret     = 0;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
@@ -340,28 +374,31 @@ int OCI_API OCI_MsgGetExpiration(OCI_Msg *msg)
     (
         res, msg->typinf->con,
 
-        OCIAttrGet((dvoid *) msg->proph, 
+        OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &ret, 
+                   (dvoid *) &ret,
                    (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_EXPIRATION, 
+                   (ub4    ) OCI_ATTR_EXPIRATION,
                    msg->typinf->con->err)
     )
-
 
     OCI_RESULT(res);
 
     return (int) ret;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgSetExpiration
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MsgSetExpiration(OCI_Msg *msg, int value)
+boolean OCI_API OCI_MsgSetExpiration
+(
+    OCI_Msg *msg,
+    int      value
+)
 {
     boolean res = TRUE;
-    sb4 sval = (sb4) value;
+    sb4 sval    = (sb4) value;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
@@ -369,28 +406,30 @@ boolean OCI_API OCI_MsgSetExpiration(OCI_Msg *msg, int value)
     (
         res, msg->typinf->con,
 
-        OCIAttrSet((dvoid *) msg->proph, 
+        OCIAttrSet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &sval, 
+                   (dvoid *) &sval,
                    (ub4    ) sizeof(sval),
-                   (ub4    ) OCI_ATTR_EXPIRATION, 
+                   (ub4    ) OCI_ATTR_EXPIRATION,
                    msg->typinf->con->err)
     )
-
 
     OCI_RESULT(res);
 
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgGetState
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_MsgGetState(OCI_Msg *msg)
+unsigned int OCI_API OCI_MsgGetState
+(
+    OCI_Msg *msg
+)
 {
     boolean res = TRUE;
-    sb4 ret = 0;
+    sb4 ret     = 0;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, 0);
 
@@ -398,28 +437,30 @@ unsigned int OCI_API OCI_MsgGetState(OCI_Msg *msg)
     (
         res, msg->typinf->con,
 
-        OCIAttrGet((dvoid *) msg->proph, 
+        OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &ret, 
+                   (dvoid *) &ret,
                    (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_MSG_STATE, 
+                   (ub4    ) OCI_ATTR_MSG_STATE,
                    msg->typinf->con->err)
     )
-
 
     OCI_RESULT(res);
 
     return (int) ret;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgGetPriority
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_MsgGetPriority(OCI_Msg *msg)
+int OCI_API OCI_MsgGetPriority
+(
+    OCI_Msg *msg
+)
 {
     boolean res = TRUE;
-    sb4 ret = 0;
+    sb4 ret     = 0;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
@@ -427,28 +468,31 @@ int OCI_API OCI_MsgGetPriority(OCI_Msg *msg)
     (
         res, msg->typinf->con,
 
-        OCIAttrGet((dvoid *) msg->proph, 
+        OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &ret, 
+                   (dvoid *) &ret,
                    (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_PRIORITY, 
+                   (ub4    ) OCI_ATTR_PRIORITY,
                    msg->typinf->con->err)
     )
-
 
     OCI_RESULT(res);
 
     return (int) ret;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgSetPriority
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MsgSetPriority(OCI_Msg *msg, int value)
+boolean OCI_API OCI_MsgSetPriority
+(
+    OCI_Msg *msg,
+    int      value
+)
 {
     boolean res = TRUE;
-    sb4 sval = (sb4) value;
+    sb4 sval    = (sb4) value;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
@@ -456,30 +500,32 @@ boolean OCI_API OCI_MsgSetPriority(OCI_Msg *msg, int value)
     (
         res, msg->typinf->con,
 
-        OCIAttrSet((dvoid *) msg->proph, 
+        OCIAttrSet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &sval, 
+                   (dvoid *) &sval,
                    (ub4    ) sizeof(sval),
-                   (ub4    ) OCI_ATTR_PRIORITY, 
+                   (ub4    ) OCI_ATTR_PRIORITY,
                    msg->typinf->con->err)
     )
-
 
     OCI_RESULT(res);
 
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgGetOriginalID
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MsgGetOriginalID(OCI_Msg *msg,
-                                     void *msg_id, 
-                                     unsigned int len)
+boolean OCI_API OCI_MsgGetOriginalID
+(
+    OCI_Msg     *msg,
+    void        *msg_id,
+    unsigned int len
+)
 {
-    boolean res    = TRUE;
-    OCIRaw  *value = NULL;
+    boolean res   = TRUE;
+    OCIRaw *value = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
@@ -487,18 +533,18 @@ boolean OCI_API OCI_MsgGetOriginalID(OCI_Msg *msg,
     (
         res, msg->typinf->con,
 
-        OCIAttrGet((dvoid *) msg->proph, 
+        OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &value, 
+                   (dvoid *) &value,
                    (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_ORIGINAL_MSGID, 
+                   (ub4    ) OCI_ATTR_ORIGINAL_MSGID,
                    msg->typinf->con->err)
     )
 
     if (value != NULL)
     {
         ub4 raw_len = 0;
-    
+
         raw_len = OCIRawSize(OCILib.env, value);
 
         if (len > raw_len)
@@ -512,24 +558,27 @@ boolean OCI_API OCI_MsgGetOriginalID(OCI_Msg *msg,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgSetOriginalID
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MsgSetOriginalID(OCI_Msg *msg,
-                                     const void *msg_id, 
-                                     unsigned int len)
+boolean OCI_API OCI_MsgSetOriginalID
+(
+    OCI_Msg     *msg,
+    const void  *msg_id,
+    unsigned int len
+)
 {
-    boolean res    = TRUE;
-    OCIRaw  *value = NULL;
+    boolean res   = TRUE;
+    OCIRaw *value = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
     OCI_CALL2
     (
         res, msg->typinf->con,
-        
-        OCIRawAssignBytes(OCILib.env, msg->typinf->con->err, 
+
+        OCIRawAssignBytes(OCILib.env, msg->typinf->con->err,
                           (ub1*) msg_id, (ub4) len, (OCIRaw **) &value)
     )
 
@@ -537,11 +586,11 @@ boolean OCI_API OCI_MsgSetOriginalID(OCI_Msg *msg,
     (
         res, msg->typinf->con,
 
-        OCIAttrSet((dvoid *) msg->proph, 
+        OCIAttrSet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &value, 
+                   (dvoid *) &value,
                    (ub4    ) 0,
-                   (ub4    ) OCI_ATTR_ORIGINAL_MSGID, 
+                   (ub4    ) OCI_ATTR_ORIGINAL_MSGID,
                    msg->typinf->con->err)
     )
 
@@ -550,11 +599,14 @@ boolean OCI_API OCI_MsgSetOriginalID(OCI_Msg *msg,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgGetCorrelation
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_MsgGetCorrelation(OCI_Msg *msg)
+const mtext * OCI_API OCI_MsgGetCorrelation
+(
+    OCI_Msg *msg
+)
 {
     boolean res = TRUE;
 
@@ -562,10 +614,10 @@ const mtext * OCI_API OCI_MsgGetCorrelation(OCI_Msg *msg)
 
     if (msg->correlation == NULL)
     {
-        res = OCI_StringGetFromAttrHandle(msg->typinf->con, 
+        res = OCI_StringGetFromAttrHandle(msg->typinf->con,
                                           msg->proph,
                                           OCI_DTYPE_AQMSG_PROPERTIES,
-                                          OCI_ATTR_CORRELATION, 
+                                          OCI_ATTR_CORRELATION,
                                           &msg->correlation);
     }
 
@@ -574,20 +626,24 @@ const mtext * OCI_API OCI_MsgGetCorrelation(OCI_Msg *msg)
     return msg->correlation;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgSetCorrelation
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MsgSetCorrelation(OCI_Msg *msg, const mtext *correlation)
+boolean OCI_API OCI_MsgSetCorrelation
+(
+    OCI_Msg     *msg,
+    const mtext *correlation
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
-    res =  OCI_StringSetToAttrHandle(msg->typinf->con, 
+    res =  OCI_StringSetToAttrHandle(msg->typinf->con,
                                      msg->proph,
                                      OCI_DTYPE_AQMSG_PROPERTIES,
-                                     OCI_ATTR_CORRELATION, 
+                                     OCI_ATTR_CORRELATION,
                                      &msg->correlation,
                                      correlation);
 
@@ -596,11 +652,14 @@ boolean OCI_API OCI_MsgSetCorrelation(OCI_Msg *msg, const mtext *correlation)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
- * OCI_MsGSetExceptionQueue
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_MsgGetExceptionQueue
+ * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_MsGSetExceptionQueue(OCI_Msg *msg)
+const mtext * OCI_API OCI_MsGetExceptionQueue
+(
+    OCI_Msg *msg
+)
 {
     boolean res = TRUE;
 
@@ -608,10 +667,10 @@ const mtext * OCI_API OCI_MsGSetExceptionQueue(OCI_Msg *msg)
 
     if (msg->except_queue == NULL)
     {
-        res = OCI_StringGetFromAttrHandle(msg->typinf->con, 
+        res = OCI_StringGetFromAttrHandle(msg->typinf->con,
                                           msg->proph,
                                           OCI_DTYPE_AQMSG_PROPERTIES,
-                                          OCI_ATTR_CORRELATION, 
+                                          OCI_ATTR_CORRELATION,
                                           &msg->except_queue);
     }
 
@@ -620,20 +679,24 @@ const mtext * OCI_API OCI_MsGSetExceptionQueue(OCI_Msg *msg)
     return msg->except_queue;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgSetExceptionQueue
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MsgSetExceptionQueue(OCI_Msg *msg, const mtext *queue)
+boolean OCI_API OCI_MsgSetExceptionQueue
+(
+    OCI_Msg     *msg,
+    const mtext *queue
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
-    res =  OCI_StringSetToAttrHandle(msg->typinf->con, 
+    res =  OCI_StringSetToAttrHandle(msg->typinf->con,
                                      msg->proph,
                                      OCI_DTYPE_AQMSG_PROPERTIES,
-                                     OCI_ATTR_CORRELATION, 
+                                     OCI_ATTR_CORRELATION,
                                      &msg->except_queue,
                                      queue);
 
@@ -642,11 +705,15 @@ boolean OCI_API OCI_MsgSetExceptionQueue(OCI_Msg *msg, const mtext *queue)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgSetSender
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MsgSetSender(OCI_Msg *msg, OCI_Agent *sender)
+boolean OCI_API OCI_MsgSetSender
+(
+    OCI_Msg   *msg,
+    OCI_Agent *sender
+)
 {
     boolean res = TRUE;
 
@@ -657,11 +724,11 @@ boolean OCI_API OCI_MsgSetSender(OCI_Msg *msg, OCI_Agent *sender)
     (
         res, msg->typinf->con,
 
-        OCIAttrSet((dvoid *) msg->proph, 
+        OCIAttrSet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) sender->handle, 
+                   (dvoid *) sender->handle,
                    (ub4    ) 0,
-                   (ub4    ) OCI_ATTR_SENDER_ID, 
+                   (ub4    ) OCI_ATTR_SENDER_ID,
                    msg->typinf->con->err)
     )
 
@@ -670,14 +737,18 @@ boolean OCI_API OCI_MsgSetSender(OCI_Msg *msg, OCI_Agent *sender)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_MsgSetConsumers
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MsgSetConsumers(OCI_Msg *msg, OCI_Agent **consumers, 
-                                    unsigned int count)
+boolean OCI_API OCI_MsgSetConsumers
+(
+    OCI_Msg     *msg,
+    OCI_Agent  **consumers,
+    unsigned int count
+)
 {
-    boolean res = TRUE;
+    boolean res          = TRUE;
     OCIAQAgent **handles = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
@@ -685,7 +756,7 @@ boolean OCI_API OCI_MsgSetConsumers(OCI_Msg *msg, OCI_Agent **consumers,
 
     OCI_CHECK_MIN(msg->typinf->con, NULL, count, 1, FALSE);
 
-    handles = (OCIAQAgent **) OCI_MemAlloc(OCI_IPC_ARRAY,sizeof(OCIAQAgent *), 
+    handles = (OCIAQAgent **) OCI_MemAlloc(OCI_IPC_ARRAY,sizeof(OCIAQAgent *),
                                            count, FALSE);
 
     if (handles != NULL)
@@ -701,11 +772,11 @@ boolean OCI_API OCI_MsgSetConsumers(OCI_Msg *msg, OCI_Agent **consumers,
         (
             res, msg->typinf->con,
 
-            OCIAttrSet((dvoid *) msg->proph, 
+            OCIAttrSet((dvoid *) msg->proph,
                        (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                       (dvoid *) handles, 
+                       (dvoid *) handles,
                        (ub4    ) count,
-                       (ub4    ) OCI_ATTR_RECIPIENT_LIST, 
+                       (ub4    ) OCI_ATTR_RECIPIENT_LIST,
                        msg->typinf->con->err)
         )
 

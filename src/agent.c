@@ -1,58 +1,58 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: agent.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: agent.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_AgentInit
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 OCI_Agent * OCI_AgentInit
 (
-    OCI_Connection  *con, 
-    OCI_Agent      **pagent,
-    OCIAQAgent      *handle, 
-    const mtext     *name, 
-    const mtext     *address
+    OCI_Connection *con,
+    OCI_Agent     **pagent,
+    OCIAQAgent     *handle,
+    const mtext    *name,
+    const mtext    *address
 )
 {
     OCI_Agent *agent = NULL;
-    boolean res = TRUE;
+    boolean res      = TRUE;
 
     OCI_CHECK(pagent == NULL, NULL);
 
@@ -76,10 +76,9 @@ OCI_Agent * OCI_AgentInit
         {
             agent->hstate = OCI_OBJECT_ALLOCATED;
 
-
-            res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) OCILib.env, 
+            res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) OCILib.env,
                                                       (dvoid **) &agent->handle,
-                                                      OCI_DTYPE_AQAGENT, 
+                                                      OCI_DTYPE_AQAGENT,
                                                       (size_t) 0, (dvoid **) NULL));
         }
         else
@@ -109,18 +108,18 @@ OCI_Agent * OCI_AgentInit
     return agent;
 }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_AgentCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 OCI_Agent * OCI_API OCI_AgentCreate
 (
-    OCI_Connection *con, 
-    const mtext    *name, 
+    OCI_Connection *con,
+    const mtext    *name,
     const mtext    *address
 )
 {
@@ -137,9 +136,9 @@ OCI_Agent * OCI_API OCI_AgentCreate
     return agent;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_AgentFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_AgentFree
 (
@@ -165,9 +164,9 @@ boolean OCI_API OCI_AgentFree
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_AgentGetName
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 const mtext * OCI_API OCI_AgentGetName
 (
@@ -180,10 +179,10 @@ const mtext * OCI_API OCI_AgentGetName
 
     if (agent->name == NULL)
     {
-        res = OCI_StringGetFromAttrHandle(agent->con, 
+        res = OCI_StringGetFromAttrHandle(agent->con,
                                           agent->handle,
-                                          OCI_DTYPE_AQAGENT, 
-                                          OCI_ATTR_AGENT_NAME, 
+                                          OCI_DTYPE_AQAGENT,
+                                          OCI_ATTR_AGENT_NAME,
                                           &agent->name);
     }
 
@@ -192,13 +191,13 @@ const mtext * OCI_API OCI_AgentGetName
     return agent->name;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_AgentSetName
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_AgentSetName
 (
-    OCI_Agent   *agent, 
+    OCI_Agent   *agent,
     const mtext *name
 )
 {
@@ -207,7 +206,7 @@ boolean OCI_API OCI_AgentSetName
     OCI_CHECK_PTR(OCI_IPC_AGENT, agent, FALSE);
 
     res =  OCI_StringSetToAttrHandle(agent->con, agent->handle,
-                                     OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_NAME, 
+                                     OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_NAME,
                                      &agent->name, name);
 
     OCI_RESULT(res);
@@ -215,9 +214,9 @@ boolean OCI_API OCI_AgentSetName
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_AgentGetAddress
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 const mtext * OCI_API OCI_AgentGetAddress
 (
@@ -230,10 +229,10 @@ const mtext * OCI_API OCI_AgentGetAddress
 
     if (agent->name == NULL)
     {
-        res = OCI_StringGetFromAttrHandle(agent->con, 
+        res = OCI_StringGetFromAttrHandle(agent->con,
                                           agent->handle,
-                                          OCI_DTYPE_AQAGENT, 
-                                          OCI_ATTR_AGENT_ADDRESS, 
+                                          OCI_DTYPE_AQAGENT,
+                                          OCI_ATTR_AGENT_ADDRESS,
                                           &agent->address);
     }
 
@@ -242,22 +241,22 @@ const mtext * OCI_API OCI_AgentGetAddress
     return agent->address;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_AgentSetAddress
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_AgentSetAddress
 (
-    OCI_Agent   *agent, 
+    OCI_Agent   *agent,
     const mtext *address
- )
+)
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_AGENT, agent, FALSE);
 
     res = OCI_StringSetToAttrHandle(agent->con, agent->handle,
-                                    OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_ADDRESS, 
+                                    OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_ADDRESS,
                                     &agent->address, address);
 
     OCI_RESULT(res);

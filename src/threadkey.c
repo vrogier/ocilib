@@ -1,62 +1,65 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: threadkey.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: threadkey.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ThreadKeyCreateInternal
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_ThreadKey * OCI_ThreadKeyCreateInternal(POCI_THREADKEYDEST destfunc)
+OCI_ThreadKey * OCI_ThreadKeyCreateInternal
+(
+    POCI_THREADKEYDEST destfunc
+)
 {
-    boolean  res       = TRUE;
+    boolean res        = TRUE;
     OCI_ThreadKey *key = NULL;
 
     /* allocate key structure */
 
-    key = (OCI_ThreadKey *) OCI_MemAlloc(OCI_IPC_THREADKEY, sizeof(*key), 
+    key = (OCI_ThreadKey *) OCI_MemAlloc(OCI_IPC_THREADKEY, sizeof(*key),
                                          (size_t) 1, TRUE);
 
     if (key != NULL)
     {
         /* allocate error handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env, 
+        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
                                               (dvoid **) (void *) &key->err,
                                               OCI_HTYPE_ERROR, (size_t) 0,
                                               (dvoid **) NULL));
@@ -66,7 +69,7 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal(POCI_THREADKEYDEST destfunc)
         OCI_CALL3
         (
             res, key->err,
-            
+
             OCIThreadKeyInit(OCILib.env, key->err, &key->handle, destfunc)
         )
     }
@@ -83,11 +86,15 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal(POCI_THREADKEYDEST destfunc)
 
     return key;
 }
-/* ------------------------------------------------------------------------ *
- * OCI_ThreadKeyFree
- * ------------------------------------------------------------------------ */
 
-boolean OCI_ThreadKeyFree(OCI_ThreadKey *key)
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ThreadKeyFree
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_ThreadKeyFree
+(
+    OCI_ThreadKey *key
+)
 {
     boolean res = TRUE;
 
@@ -99,8 +106,8 @@ boolean OCI_ThreadKeyFree(OCI_ThreadKey *key)
     {
         OCI_CALL0
         (
-            res, key->err, 
-            
+            res, key->err,
+
             OCIThreadKeyDestroy(OCILib.env, key->err, &key->handle)
         )
     }
@@ -121,11 +128,15 @@ boolean OCI_ThreadKeyFree(OCI_ThreadKey *key)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ThreadKeySet
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ThreadKeySet(OCI_ThreadKey *key, void *value)
+boolean OCI_ThreadKeySet
+(
+    OCI_ThreadKey *key,
+    void          *value
+)
 {
     boolean res = TRUE;
 
@@ -133,43 +144,51 @@ boolean OCI_ThreadKeySet(OCI_ThreadKey *key, void *value)
 
     OCI_CALL3
     (
-        res, key->err, 
-        
+        res, key->err,
+
         OCIThreadKeySet(OCILib.env, key->err, key->handle, value)
-     )
+    )
 
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ThreadKeyGet
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ThreadKeyGet(OCI_ThreadKey* key, void **value)
+boolean OCI_ThreadKeyGet
+(
+    OCI_ThreadKey* key,
+    void         **value
+)
 {
-    boolean res  = TRUE;
+    boolean res = TRUE;
 
     OCI_CHECK(key == NULL, FALSE);
- 
+
     OCI_CALL3
     (
-        res, key->err, 
-        
+        res, key->err,
+
         OCIThreadKeyGet(OCILib.env, key->err, key->handle, value)
-     )
-  
+    )
+
     return res;
 }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ThreadKeyCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadKeyCreate(const mtext *name, POCI_THREADKEYDEST destfunc)
+boolean OCI_API OCI_ThreadKeyCreate
+(
+    const mtext       *name,
+    POCI_THREADKEYDEST destfunc
+)
 {
     OCI_ThreadKey *key = NULL;
     boolean res        = TRUE;
@@ -213,11 +232,15 @@ boolean OCI_API OCI_ThreadKeyCreate(const mtext *name, POCI_THREADKEYDEST destfu
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ThreadKeySetValue
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadKeySetValue(const mtext *name, void *value)
+boolean OCI_API OCI_ThreadKeySetValue
+(
+    const mtext *name,
+    void        *value
+)
 {
     boolean res        = TRUE;
     OCI_ThreadKey *key = NULL;
@@ -233,11 +256,14 @@ boolean OCI_API OCI_ThreadKeySetValue(const mtext *name, void *value)
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ThreadKeyGetValue
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-void * OCI_API OCI_ThreadKeyGetValue(const mtext *name)
+void * OCI_API OCI_ThreadKeyGetValue
+(
+    const mtext *name
+)
 {
     boolean res        = TRUE;
     void * value       = NULL;
@@ -250,6 +276,6 @@ void * OCI_API OCI_ThreadKeyGetValue(const mtext *name)
     res = OCI_ThreadKeyGet(key, &value);
 
     OCI_RESULT(res);
-    
+
     return value;
 }

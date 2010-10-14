@@ -1,65 +1,69 @@
 /*
-   +----------------------------------------------------------------------+
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: dequeue.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: dequeue.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Dequeue * OCI_API OCI_DequeueCreate(OCI_TypeInfo *typinf, const mtext *name)
+OCI_Dequeue * OCI_API OCI_DequeueCreate
+(
+    OCI_TypeInfo *typinf,
+    const mtext  *name
+)
 {
     OCI_Dequeue *dequeue = NULL;
-    boolean res  = TRUE;
+    boolean res          = TRUE;
 
     OCI_CHECK_INITIALIZED(NULL);
 
     OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf, NULL);
     OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
 
-    /* allocate message structure */
+    /* allocate dequeue structure */
 
     dequeue = (OCI_Dequeue *) OCI_MemAlloc(OCI_IPC_ENQUEUE, sizeof(*dequeue),
-                                       (size_t) 1, TRUE);
+                                           (size_t) 1, TRUE);
 
     if (dequeue != NULL)
     {
@@ -89,11 +93,14 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate(OCI_TypeInfo *typinf, const mtext *name)
     return dequeue;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueFree(OCI_Dequeue *dequeue)
+boolean OCI_API OCI_DequeueFree
+(
+    OCI_Dequeue *dequeue
+)
 {
     OCI_CHECK_PTR(OCI_IPC_ENQUEUE, dequeue, FALSE);
 
@@ -119,14 +126,18 @@ boolean OCI_API OCI_DequeueFree(OCI_Dequeue *dequeue)
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueListen
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * OCI_API OCI_DequeueListen(OCI_Dequeue *dequeue, int timeout)
+OCI_Agent * OCI_API OCI_DequeueListen
+(
+    OCI_Dequeue *dequeue,
+    int          timeout
+)
 {
-    boolean res = TRUE;
-    OCI_Agent *agent = NULL;
+    boolean res        = TRUE;
+    OCI_Agent *agent   = NULL;
     OCIAQAgent *handle = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_ENQUEUE, dequeue, NULL);
@@ -137,8 +148,8 @@ OCI_Agent * OCI_API OCI_DequeueListen(OCI_Dequeue *dequeue, int timeout)
         sb4 code;
 
         ret =  OCIAQListen(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
-                        dequeue->agent_list, (ub4) dequeue->agent_count,
-                        (sb4) timeout, &handle, OCI_DEFAULT);
+                           dequeue->agent_list, (ub4) dequeue->agent_count,
+                           (sb4) timeout, &handle, OCI_DEFAULT);
 
         if (ret == OCI_ERROR)
         {
@@ -168,18 +179,21 @@ OCI_Agent * OCI_API OCI_DequeueListen(OCI_Dequeue *dequeue, int timeout)
     return agent;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueGet
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Msg * OCI_API OCI_DequeueGet(OCI_Dequeue *dequeue)
+OCI_Msg * OCI_API OCI_DequeueGet
+(
+    OCI_Dequeue *dequeue
+)
 {
-    boolean res   = TRUE;
+    boolean res = TRUE;
 
-    void  *ostr   = NULL;
-    int    osize  = -1;
+    void *ostr = NULL;
+    int osize  = -1;
 
-    OCI_Msg *msg  = NULL;
+    OCI_Msg *msg = NULL;
 
     void *payload = NULL;
     void *ind     = NULL;
@@ -218,11 +232,15 @@ OCI_Msg * OCI_API OCI_DequeueGet(OCI_Dequeue *dequeue)
     return msg;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueSetConsumerName
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetConsumer(OCI_Dequeue *dequeue, const mtext *consumer)
+boolean OCI_API OCI_DequeueSetConsumer
+(
+    OCI_Dequeue *dequeue,
+    const mtext *consumer
+)
 {
     boolean res = TRUE;
 
@@ -240,11 +258,14 @@ boolean OCI_API OCI_DequeueSetConsumer(OCI_Dequeue *dequeue, const mtext *consum
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueGetConsumerName
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_DequeueGetConsumer(OCI_Dequeue *dequeue)
+const mtext * OCI_API OCI_DequeueGetConsumer
+(
+    OCI_Dequeue *dequeue
+)
 {
     boolean res = TRUE;
 
@@ -264,11 +285,15 @@ const mtext * OCI_API OCI_DequeueGetConsumer(OCI_Dequeue *dequeue)
     return dequeue->consumer;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueSetCorrelation
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetCorrelation(OCI_Dequeue *dequeue, const mtext *pattern)
+boolean OCI_API OCI_DequeueSetCorrelation
+(
+    OCI_Dequeue *dequeue,
+    const mtext *pattern
+)
 {
     boolean res = TRUE;
 
@@ -286,11 +311,14 @@ boolean OCI_API OCI_DequeueSetCorrelation(OCI_Dequeue *dequeue, const mtext *pat
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueGetCorrelation
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_DequeueGetCorrelation(OCI_Dequeue *dequeue)
+const mtext * OCI_API OCI_DequeueGetCorrelation
+(
+    OCI_Dequeue *dequeue
+)
 {
     boolean res = TRUE;
 
@@ -310,16 +338,19 @@ const mtext * OCI_API OCI_DequeueGetCorrelation(OCI_Dequeue *dequeue)
     return dequeue->pattern;
 }
 
-/* ------------------------------------------------------------------------ *
- * OCI_DequeueSetMsgID
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_DequeueSetRelativeMsgID
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetMsgID(OCI_Dequeue *dequeue,
-                                    const void *msg_id,
-                                    unsigned int len)
+boolean OCI_API OCI_DequeueSetRelativeMsgID
+(
+    OCI_Dequeue *dequeue,
+    const void  *msg_id,
+    unsigned int len
+)
 {
-    boolean res    = TRUE;
-    OCIRaw  *value = NULL;
+    boolean res   = TRUE;
+    OCIRaw *value = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
 
@@ -348,16 +379,19 @@ boolean OCI_API OCI_DequeueSetMsgID(OCI_Dequeue *dequeue,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
- * OCI_DequeueSetMsgID
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_DequeueGetRelativeMsgID
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueGetMsgID(OCI_Dequeue *dequeue,
-                                    void *msg_id,
-                                    unsigned int len)
+boolean OCI_API OCI_DequeueGetRelativeMsgID
+(
+    OCI_Dequeue *dequeue,
+    void        *msg_id,
+    unsigned int len
+)
 {
-    boolean res    = TRUE;
-    OCIRaw  *value = NULL;
+    boolean res   = TRUE;
+    OCIRaw *value = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
 
@@ -390,12 +424,15 @@ boolean OCI_API OCI_DequeueGetMsgID(OCI_Dequeue *dequeue,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueSetVisibility
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetVisibility(OCI_Dequeue *dequeue, 
-                                         unsigned int visibility)
+boolean OCI_API OCI_DequeueSetVisibility
+(
+    OCI_Dequeue *dequeue,
+    unsigned int visibility
+)
 {
     boolean res = TRUE;
     ub4 value   = (ub4) visibility;
@@ -419,14 +456,17 @@ boolean OCI_API OCI_DequeueSetVisibility(OCI_Dequeue *dequeue,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueGetVisibility
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DequeueGetVisibility(OCI_Dequeue *dequeue)
+unsigned int OCI_API OCI_DequeueGetVisibility
+(
+    OCI_Dequeue *dequeue
+)
 {
     boolean res = TRUE;
-    ub4 ret = 0;
+    ub4 ret     = 0;
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, 0);
 
@@ -442,17 +482,20 @@ unsigned int OCI_API OCI_DequeueGetVisibility(OCI_Dequeue *dequeue)
                    dequeue->typinf->con->err)
     )
 
-
     OCI_RESULT(res);
 
     return (int) ret;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueSetMode
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetMode(OCI_Dequeue *dequeue, unsigned int mode)
+boolean OCI_API OCI_DequeueSetMode
+(
+    OCI_Dequeue *dequeue,
+    unsigned int mode
+)
 {
     boolean res = TRUE;
     ub4 value   = (ub4) mode;
@@ -476,14 +519,17 @@ boolean OCI_API OCI_DequeueSetMode(OCI_Dequeue *dequeue, unsigned int mode)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueGetMode
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DequeueGetMode(OCI_Dequeue *dequeue)
+unsigned int OCI_API OCI_DequeueGetMode
+(
+    OCI_Dequeue *dequeue
+)
 {
     boolean res = TRUE;
-    ub4 ret = 0;
+    ub4 ret     = 0;
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, 0);
 
@@ -499,18 +545,20 @@ unsigned int OCI_API OCI_DequeueGetMode(OCI_Dequeue *dequeue)
                    dequeue->typinf->con->err)
     )
 
-
     OCI_RESULT(res);
 
     return (int) ret;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueSetNavigation
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetNavigation(OCI_Dequeue *dequeue, 
-                                         unsigned int position)
+boolean OCI_API OCI_DequeueSetNavigation
+(
+    OCI_Dequeue *dequeue,
+    unsigned int position
+)
 {
     boolean res = TRUE;
     ub4 value   = (ub4) position;
@@ -534,14 +582,17 @@ boolean OCI_API OCI_DequeueSetNavigation(OCI_Dequeue *dequeue,
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueGetNavigation
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DequeueGetNavigation(OCI_Dequeue *dequeue)
+unsigned int OCI_API OCI_DequeueGetNavigation
+(
+    OCI_Dequeue *dequeue
+)
 {
     boolean res = TRUE;
-    ub4 ret = 0;
+    ub4 ret     = 0;
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
 
@@ -557,17 +608,20 @@ unsigned int OCI_API OCI_DequeueGetNavigation(OCI_Dequeue *dequeue)
                    dequeue->typinf->con->err)
     )
 
-
     OCI_RESULT(res);
 
     return (int) ret;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueSetWaitTime
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetWaitTime(OCI_Dequeue *dequeue, int timeout)
+boolean OCI_API OCI_DequeueSetWaitTime
+(
+    OCI_Dequeue *dequeue,
+    int          timeout
+)
 {
     boolean res = TRUE;
     sb4 value   = (ub4) timeout;
@@ -591,14 +645,17 @@ boolean OCI_API OCI_DequeueSetWaitTime(OCI_Dequeue *dequeue, int timeout)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueGetWaitTime
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_DequeueGetWaitTime(OCI_Dequeue *dequeue)
+int OCI_API OCI_DequeueGetWaitTime
+(
+    OCI_Dequeue *dequeue
+)
 {
     boolean res = TRUE;
-    sb4 ret = 0;
+    sb4 ret     = 0;
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
 
@@ -614,21 +671,23 @@ int OCI_API OCI_DequeueGetWaitTime(OCI_Dequeue *dequeue)
                    dequeue->typinf->con->err)
     )
 
-
     OCI_RESULT(res);
 
     return (int) ret;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DequeueSetAgentList
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetAgentList(OCI_Dequeue *dequeue,
-                                        OCI_Agent **consumers,
-                                        unsigned int count)
+boolean OCI_API OCI_DequeueSetAgentList
+(
+    OCI_Dequeue *dequeue,
+    OCI_Agent  **consumers,
+    unsigned int count
+)
 {
-    boolean res  = TRUE;
+    boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_ENQUEUE, dequeue, FALSE);
     OCI_CHECK_PTR(OCI_IPC_AGENT, consumers, FALSE);

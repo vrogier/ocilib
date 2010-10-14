@@ -1,48 +1,51 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: typeinfo.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: typeinfo.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TypeInfoClose
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_TypeInfoClose(OCI_TypeInfo *typinf)
+boolean OCI_TypeInfoClose
+(
+    OCI_TypeInfo *typinf
+)
 {
     ub2 i;
 
@@ -61,19 +64,23 @@ boolean OCI_TypeInfoClose(OCI_TypeInfo *typinf)
     return TRUE;
 }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TypeInfoGet
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name, 
-                                       unsigned int type)
+OCI_TypeInfo * OCI_API OCI_TypeInfoGet
+(
+    OCI_Connection *con,
+    const mtext    *name,
+    unsigned int    type
+)
 {
     OCI_TypeInfo *typinf = NULL;
-    OCI_Item     *item   = NULL;
+    OCI_Item *item       = NULL;
     OCIDescribe *dschp   = NULL;
     OCIParam *parmh1     = NULL;
     OCIParam *parmh2     = NULL;
@@ -86,7 +93,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
     boolean res          = TRUE;
     boolean found        = FALSE;
     ub2 i;
-    
+
     mtext obj_schema[OCI_SIZE_OBJ_NAME+1];
     mtext obj_name[OCI_SIZE_OBJ_NAME+1];
 
@@ -105,7 +112,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
         return NULL;
 
     obj_schema[0] = 0;
-    obj_name[0] = 0;
+    obj_name[0]   = 0;
 
     /* is the schema provided in the object name ? */
 
@@ -145,7 +152,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
     while (item != NULL)
     {
         typinf = (OCI_TypeInfo *) item->data;
-     
+
         if ((typinf != NULL) && (typinf->type == type))
         {
             if ((mtscasecmp(typinf->name,   obj_name  ) == 0) &&
@@ -157,7 +164,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
         }
 
         item = item->next;
-    } 
+    }
 
     /* Not found, so create type object */
 
@@ -178,20 +185,20 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
             typinf->struct_size = 0;
 
             res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
-                                                  (dvoid **) (void *) &dschp, 
-                                                  OCI_HTYPE_DESCRIBE, (size_t) 0, 
+                                                  (dvoid **) (void *) &dschp,
+                                                  OCI_HTYPE_DESCRIBE, (size_t) 0,
                                                   (dvoid **) NULL));
         }
 
         if (res == TRUE)
         {
             if (type == OCI_TIF_TYPE)
-            {            
+            {
                 void *ostr1 = NULL;
                 void *ostr2 = NULL;
                 int osize1  = -1;
                 int osize2  = -1;
-               
+
                 attr_type = OCI_ATTR_LIST_TYPE_ATTRS;
                 num_type  = OCI_ATTR_NUM_TYPE_ATTRS;
                 ptype     = OCI_DESC_TYPE;
@@ -201,32 +208,32 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
 
                 OCI_CALL2
                 (
-                    res, con, 
-                    
+                    res, con,
+
                     OCITypeByName(OCILib.env, con->err, con->cxt,
-                                 (text *) ostr1, (ub4) osize1, 
-                                 (text *) ostr2, (ub4) osize2, 
-                                 (text *) NULL, (ub4) 0, 
-                                 OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
-                                 &typinf->tdo)
+                                  (text *) ostr1, (ub4) osize1,
+                                  (text *) ostr2, (ub4) osize2,
+                                  (text *) NULL, (ub4) 0,
+                                  OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
+                                  &typinf->tdo)
                 )
 
                 OCI_CALL2
                 (
-                    res, con, 
-                    
+                    res, con,
+
                     OCIDescribeAny(con->cxt, con->err, (void *) typinf->tdo,
-                                   0, OCI_OTYPE_PTR, OCI_DEFAULT, 
+                                   0, OCI_OTYPE_PTR, OCI_DEFAULT,
                                    OCI_PTYPE_TYPE, dschp)
                 )
-                
+
                 OCI_ReleaseMetaString(ostr1);
                 OCI_ReleaseMetaString(ostr2);
             }
             else
             {
                 mtext buffer[(OCI_SIZE_OBJ_NAME*2) + 2];
-                
+
                 size_t size = sizeof(buffer)/sizeof(mtext);
                 void *ostr1 = NULL;
                 int osize1  = -1;
@@ -236,13 +243,13 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
                 ptype     = OCI_DESC_TABLE;
                 str       = buffer;
 
-                str[0] = 0;                
+                str[0] = 0;
 
                 if ((typinf->schema != NULL) && (typinf->schema[0] != 0))
                 {
-                    str = mtsncat(buffer, typinf->schema, size);
+                    str   = mtsncat(buffer, typinf->schema, size);
                     size -= mtslen(typinf->schema);
-                    str = mtsncat(str, MT("."), size);
+                    str   = mtsncat(str, MT("."), size);
                     size -= (size_t) 1;
                 }
 
@@ -252,21 +259,21 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
 
                 OCI_CALL2
                 (
-                    res, con, 
-                    
-                    OCIDescribeAny(con->cxt, con->err, (dvoid *) ostr1, 
-                                   (ub4) osize1, OCI_OTYPE_NAME, 
+                    res, con,
+
+                    OCIDescribeAny(con->cxt, con->err, (dvoid *) ostr1,
+                                   (ub4) osize1, OCI_OTYPE_NAME,
                                    OCI_DEFAULT, item_type, dschp)
                 )
 
                 OCI_ReleaseMetaString(ostr1);
             }
-                  
+
             OCI_CALL2
             (
-                res, con, 
-                
-                OCIAttrGet(dschp, OCI_HTYPE_DESCRIBE, &parmh1, 
+                res, con,
+
+                OCIAttrGet(dschp, OCI_HTYPE_DESCRIBE, &parmh1,
                            NULL, OCI_ATTR_PARAM, con->err)
             )
 
@@ -276,27 +283,27 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
             {
                 OCI_CALL2
                 (
-                    res, con, 
-                    
-                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->tcode, 
+                    res, con,
+
+                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->tcode,
                                NULL, OCI_ATTR_TYPECODE, con->err)
                 )
 
             }
 
             if (typinf->tcode == SQLT_NCO)
-            {      
+            {
                 typinf->nb_cols = 1;
-                
+
                 ptype  = OCI_DESC_COLLECTION;
                 etype  = OCI_DESC_TYPE;
                 parmh2 = parmh1;
 
                 OCI_CALL2
                 (
-                    res, con, 
-                    
-                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->ccode, 
+                    res, con,
+
+                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->ccode,
                                NULL, OCI_ATTR_COLLECTION_TYPECODE, con->err)
                 )
             }
@@ -304,21 +311,21 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
             {
                 OCI_CALL2
                 (
-                    res, con, 
-                    
-                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &parmh2, 
+                    res, con,
+
+                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &parmh2,
                                NULL, attr_type, con->err)
                 )
 
                 OCI_CALL2
                 (
-                    res, con, 
-                    
+                    res, con,
+
                     OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->nb_cols,
                                NULL, num_type, con->err)
                 )
             }
-         
+
             /* allocates memory for cached offsets */
 
             if (typinf->nb_cols > 0)
@@ -351,19 +358,19 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
                 {
                     for (i = 0; i < typinf->nb_cols; i++)
                     {
-                        res = res && OCI_ColumnDescribe(&typinf->cols[i], con, 
+                        res = res && OCI_ColumnDescribe(&typinf->cols[i], con,
                                                         NULL, parmh2, i + 1, ptype);
-                        
+
                         res = res && OCI_ColumnMap(&typinf->cols[i], NULL);
 
                         if (res == FALSE)
                             break;
-                   }
+                    }
                 }
                 else
                     res = FALSE;
             }
-  
+
             /* free describe handle */
 
             if (dschp != NULL)
@@ -371,12 +378,12 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
         }
     }
 
-   /* handle errors */
+    /* handle errors */
 
     if (res == FALSE)
     {
-       OCI_TypeInfoFree(typinf);        
-       typinf = NULL;
+        OCI_TypeInfoFree(typinf);
+        typinf = NULL;
     }
 
     OCI_RESULT(res);
@@ -386,14 +393,17 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet(OCI_Connection *con, const mtext *name,
     if (typinf != NULL)
         typinf->refcount++;
 
-    return typinf; 
+    return typinf;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TypeInfoFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TypeInfoFree(OCI_TypeInfo *typinf)
+boolean OCI_API OCI_TypeInfoFree
+(
+    OCI_TypeInfo *typinf
+)
 {
     boolean res = TRUE;
 
@@ -415,11 +425,14 @@ boolean OCI_API OCI_TypeInfoFree(OCI_TypeInfo *typinf)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TypeInfoGetType
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_TypeInfoGetType(OCI_TypeInfo *typinf)
+unsigned int OCI_API OCI_TypeInfoGetType
+(
+    OCI_TypeInfo *typinf
+)
 {
     OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf, OCI_UNKNOWN);
 
@@ -428,24 +441,31 @@ unsigned int OCI_API OCI_TypeInfoGetType(OCI_TypeInfo *typinf)
     return typinf->type;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TypeInfoGetColumnCount
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_TypeInfoGetColumnCount(OCI_TypeInfo *typinf)
+unsigned int OCI_API OCI_TypeInfoGetColumnCount
+(
+    OCI_TypeInfo *typinf
+)
 {
     OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf, 0);
-  
+
     OCI_RESULT(TRUE);
 
     return typinf->nb_cols;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TypeInfoGetColumn
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Column * OCI_API OCI_TypeInfoGetColumn(OCI_TypeInfo *typinf, unsigned int index)
+OCI_Column * OCI_API OCI_TypeInfoGetColumn
+(
+    OCI_TypeInfo *typinf,
+    unsigned int  index
+)
 {
     OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf, NULL);
     OCI_CHECK_BOUND(typinf->con, index, 1,  typinf->nb_cols, NULL);
@@ -455,11 +475,14 @@ OCI_Column * OCI_API OCI_TypeInfoGetColumn(OCI_TypeInfo *typinf, unsigned int in
     return &(typinf->cols[index-1]);
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TypeInfoGetName
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_TypeInfoGetName(OCI_TypeInfo *typinf)
+const mtext * OCI_API OCI_TypeInfoGetName
+(
+    OCI_TypeInfo *typinf
+)
 {
     OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf, NULL);
 

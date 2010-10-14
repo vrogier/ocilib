@@ -1,57 +1,63 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: handle.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: handle.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetEnvironment
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetEnvironment(void)
+const void * OCI_API OCI_HandleGetEnvironment
+(
+    void
+)
 {
     return OCILib.env;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetContext
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetContext(OCI_Connection *con)
+const void * OCI_API OCI_HandleGetContext
+(
+    OCI_Connection *con
+)
 {
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 
@@ -60,11 +66,14 @@ const void * OCI_API OCI_HandleGetContext(OCI_Connection *con)
     return con->cxt;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetServer
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetServer(OCI_Connection *con)
+const void * OCI_API OCI_HandleGetServer
+(
+    OCI_Connection *con
+)
 {
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 
@@ -73,11 +82,14 @@ const void * OCI_API OCI_HandleGetServer(OCI_Connection *con)
     return con->svr;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetError
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetError(OCI_Connection *con)
+const void * OCI_API OCI_HandleGetError
+(
+    OCI_Connection *con
+)
 {
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 
@@ -86,11 +98,14 @@ const void * OCI_API OCI_HandleGetError(OCI_Connection *con)
     return con->err;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetSession
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetSession(OCI_Connection *con)
+const void * OCI_API OCI_HandleGetSession
+(
+    OCI_Connection *con
+)
 {
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 
@@ -99,11 +114,14 @@ const void * OCI_API OCI_HandleGetSession(OCI_Connection *con)
     return con->ses;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetTransaction
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetTransaction(OCI_Transaction *trans)
+const void * OCI_API OCI_HandleGetTransaction
+(
+    OCI_Transaction *trans
+)
 {
     OCI_CHECK_PTR(OCI_IPC_TRANSACTION, trans, NULL);
 
@@ -112,11 +130,14 @@ const void * OCI_API OCI_HandleGetTransaction(OCI_Transaction *trans)
     return trans->htr;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetStatement
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetStatement(OCI_Statement *stmt)
+const void * OCI_API OCI_HandleGetStatement
+(
+    OCI_Statement *stmt
+)
 {
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
 
@@ -125,11 +146,14 @@ const void * OCI_API OCI_HandleGetStatement(OCI_Statement *stmt)
     return stmt->stmt;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetLob
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetLob(OCI_Lob *lob)
+const void * OCI_API OCI_HandleGetLob
+(
+    OCI_Lob *lob
+)
 {
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, NULL);
 
@@ -138,11 +162,14 @@ const void * OCI_API OCI_HandleGetLob(OCI_Lob *lob)
     return lob->handle;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetFile
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetFile(OCI_File *file)
+const void * OCI_API OCI_HandleGetFile
+(
+    OCI_File *file
+)
 {
     OCI_CHECK_PTR(OCI_IPC_FILE, file, NULL);
 
@@ -151,11 +178,14 @@ const void * OCI_API OCI_HandleGetFile(OCI_File *file)
     return file->handle;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetDate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetDate(OCI_Date *date)
+const void * OCI_API OCI_HandleGetDate
+(
+    OCI_Date *date
+)
 {
     OCI_CHECK_PTR(OCI_IPC_DATE, date, NULL);
 
@@ -164,11 +194,14 @@ const void * OCI_API OCI_HandleGetDate(OCI_Date *date)
     return date->handle;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetTimestamp
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetTimestamp(OCI_Timestamp *tmsp)
+const void * OCI_API OCI_HandleGetTimestamp
+(
+    OCI_Timestamp *tmsp
+)
 {
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, NULL);
 
@@ -177,11 +210,14 @@ const void * OCI_API OCI_HandleGetTimestamp(OCI_Timestamp *tmsp)
     return tmsp->handle;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetInterval
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetInterval(OCI_Interval *itv)
+const void * OCI_API OCI_HandleGetInterval
+(
+    OCI_Interval *itv
+)
 {
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv, NULL);
 
@@ -190,11 +226,14 @@ const void * OCI_API OCI_HandleGetInterval(OCI_Interval *itv)
     return itv->handle;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetObject
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetObject(OCI_Object *obj)
+const void * OCI_API OCI_HandleGetObject
+(
+    OCI_Object *obj
+)
 {
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj, NULL);
 
@@ -203,11 +242,14 @@ const void * OCI_API OCI_HandleGetObject(OCI_Object *obj)
     return obj->handle;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetColl
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetColl(OCI_Coll *coll)
+const void * OCI_API OCI_HandleGetColl
+(
+    OCI_Coll *coll
+)
 {
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, NULL);
 
@@ -216,11 +258,14 @@ const void * OCI_API OCI_HandleGetColl(OCI_Coll *coll)
     return coll->handle;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetRef
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetRef(OCI_Ref *ref)
+const void * OCI_API OCI_HandleGetRef
+(
+    OCI_Ref *ref
+)
 {
     OCI_CHECK_PTR(OCI_IPC_REF, ref, NULL);
 
@@ -229,11 +274,14 @@ const void * OCI_API OCI_HandleGetRef(OCI_Ref *ref)
     return ref->handle;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetMutex
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetMutex(OCI_Mutex *mutex)
+const void * OCI_API OCI_HandleGetMutex
+(
+    OCI_Mutex *mutex
+)
 {
     OCI_CHECK_PTR(OCI_IPC_MUTEX, mutex, NULL);
 
@@ -242,11 +290,14 @@ const void * OCI_API OCI_HandleGetMutex(OCI_Mutex *mutex)
     return mutex->handle;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetThreadID
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetThreadID(OCI_Thread *thread)
+const void * OCI_API OCI_HandleGetThreadID
+(
+    OCI_Thread *thread
+)
 {
     OCI_CHECK_PTR(OCI_IPC_THREAD, thread, NULL);
 
@@ -255,11 +306,14 @@ const void * OCI_API OCI_HandleGetThreadID(OCI_Thread *thread)
     return thread->id;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetThread
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetThread(OCI_Thread *thread)
+const void * OCI_API OCI_HandleGetThread
+(
+    OCI_Thread *thread
+)
 {
     OCI_CHECK_PTR(OCI_IPC_THREAD, thread, NULL);
 
@@ -268,11 +322,14 @@ const void * OCI_API OCI_HandleGetThread(OCI_Thread *thread)
     return thread->handle;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetDirPathCtx
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetDirPathCtx(OCI_DirPath *dp)
+const void * OCI_API OCI_HandleGetDirPathCtx
+(
+    OCI_DirPath *dp
+)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
 
@@ -281,11 +338,14 @@ const void * OCI_API OCI_HandleGetDirPathCtx(OCI_DirPath *dp)
     return dp->ctx;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetDirPathColArray
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetDirPathColArray(OCI_DirPath *dp)
+const void * OCI_API OCI_HandleGetDirPathColArray
+(
+    OCI_DirPath *dp
+)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
 
@@ -294,11 +354,14 @@ const void * OCI_API OCI_HandleGetDirPathColArray(OCI_DirPath *dp)
     return dp->arr;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetDirPathStream
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetDirPathStream(OCI_DirPath *dp)
+const void * OCI_API OCI_HandleGetDirPathStream
+(
+    OCI_DirPath *dp
+)
 {
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
 
@@ -307,11 +370,14 @@ const void * OCI_API OCI_HandleGetDirPathStream(OCI_DirPath *dp)
     return dp->strm;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetSubscription
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const void * OCI_API OCI_HandleGetSubscription(OCI_Subscription *sub)
+const void * OCI_API OCI_HandleGetSubscription
+(
+    OCI_Subscription *sub
+)
 {
     OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, NULL);
 

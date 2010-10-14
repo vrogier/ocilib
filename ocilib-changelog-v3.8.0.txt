@@ -81,11 +81,17 @@
       - Added OCI_Parse()
       - Added OCI_ParseFmt()
 
+    * Miscellaneous changes
+
+      - All OCILIB source files have been reformatted using uncrustify (best source code formatter ever tried !!)
+      - Source code max line length have been modified (80 -> 100 characters)
+
     * Miscellaneous fixes
 
       - Fixed memory leak : if an OCI_Bindxxx() returned FALSE (eg. non present binds in the sql statment), the newly internal allocated bind object was not freed
       - Fixed internal array allocation when using OCI_ArraySetSize() called many times on the same prepared SQL statement
       - Fixed OCI_ElemGetTimeStamp() and OCI_ElemGetInterval() when collections are retreived from the server 
+      - Fixed possible segfault in OCI_TimestampFromCTime() and OCI_TimestampFromCTime() if the libc function localtime() returns a NULL tm structure pointer
       - Fixed some API naming inconstancy (lower/upper case)
 
         - OCI_ElemGetTimeStamp()      renamed to OCI_ElemGetTimestamp()
@@ -94,4 +100,3 @@
         - Macros have been added for backward compatibility
         - Existing programs must be recompiled (in order to use this new version of ocilib) with no code change (as compatibility macros are provided)
   
-

@@ -1,51 +1,54 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: transaction.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: transaction.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TransactionCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Transaction * OCI_API OCI_TransactionCreate(OCI_Connection *con,
-                                                unsigned int timeout, 
-                                                unsigned int mode,
-                                                OCI_XID *pxid)
+OCI_Transaction * OCI_API OCI_TransactionCreate
+(
+    OCI_Connection *con,
+    unsigned int    timeout,
+    unsigned int    mode,
+    OCI_XID        *pxid
+)
 {
     OCI_Item *item         = NULL;
     OCI_Transaction *trans = NULL;
@@ -58,30 +61,30 @@ OCI_Transaction * OCI_API OCI_TransactionCreate(OCI_Connection *con,
     /* create transaction object */
 
     item = OCI_ListAppend(con->trsns, sizeof(*trans));
- 
+
     if (item != NULL)
     {
         trans = (OCI_Transaction *) item->data;
 
-        trans->con      = con;
-        trans->mode     = mode;
-        trans->timeout  = timeout;
-        trans->local    = (pxid == NULL);
+        trans->con     = con;
+        trans->mode    = mode;
+        trans->timeout = timeout;
+        trans->local   = (pxid == NULL);
 
         /* allocate transaction handle */
 
         if (res == TRUE)
             res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
                                                   (dvoid **) (void *) &trans->htr,
-                                                  (ub4) OCI_HTYPE_TRANS, 
+                                                  (ub4) OCI_HTYPE_TRANS,
                                                   (size_t) 0, (dvoid **) NULL));
 
         /* set context transaction attribute */
 
         OCI_CALL2
         (
-            res, con, 
-            
+            res, con,
+
             OCIAttrSet((dvoid *) trans->con->cxt, (ub4) OCI_HTYPE_SVCCTX,
                        (dvoid *) trans->htr, (ub4) sizeof(trans->htr),
                        (ub4) OCI_ATTR_TRANS, trans->con->err)
@@ -91,12 +94,12 @@ OCI_Transaction * OCI_API OCI_TransactionCreate(OCI_Connection *con,
 
         if (pxid != NULL)
         {
-            memcpy(&trans->xid , pxid, sizeof(trans->xid));
+            memcpy(&trans->xid, pxid, sizeof(trans->xid));
 
             OCI_CALL2
             (
-                res, con, 
-                
+                res, con,
+
                 OCIAttrSet((dvoid *) trans->htr, (ub4) OCI_HTYPE_TRANS,
                            (dvoid *) &trans->xid, (ub4) sizeof(trans->xid),
                            (ub4) OCI_ATTR_XID, trans->con->err)
@@ -106,7 +109,7 @@ OCI_Transaction * OCI_API OCI_TransactionCreate(OCI_Connection *con,
     else
         res = FALSE;
 
-   /* handle errors */
+    /* handle errors */
 
     if (res == FALSE)
     {
@@ -119,11 +122,14 @@ OCI_Transaction * OCI_API OCI_TransactionCreate(OCI_Connection *con,
     return trans;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TransactionClose
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_TransactionClose(OCI_Transaction * trans)
+boolean OCI_TransactionClose
+(
+    OCI_Transaction * trans
+)
 {
     boolean res = TRUE;
 
@@ -141,11 +147,14 @@ boolean OCI_TransactionClose(OCI_Transaction * trans)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TransactionFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionFree(OCI_Transaction * trans)
+boolean OCI_API OCI_TransactionFree
+(
+    OCI_Transaction * trans
+)
 {
     boolean res = TRUE;
 
@@ -164,11 +173,14 @@ boolean OCI_API OCI_TransactionFree(OCI_Transaction * trans)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TransactionStart
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionStart(OCI_Transaction * trans)
+boolean OCI_API OCI_TransactionStart
+(
+    OCI_Transaction * trans
+)
 {
     boolean res = TRUE;
 
@@ -176,9 +188,9 @@ boolean OCI_API OCI_TransactionStart(OCI_Transaction * trans)
 
     OCI_CALL2
     (
-        res, trans->con, 
-        
-        OCITransStart(trans->con->cxt, trans->con->err, (uword) trans->timeout, 
+        res, trans->con,
+
+        OCITransStart(trans->con->cxt, trans->con->err, (uword) trans->timeout,
                       (ub4) trans->mode)
     )
 
@@ -187,11 +199,14 @@ boolean OCI_API OCI_TransactionStart(OCI_Transaction * trans)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TransactionStop
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionStop(OCI_Transaction * trans)
+boolean OCI_API OCI_TransactionStop
+(
+    OCI_Transaction * trans
+)
 {
     boolean res = TRUE;
 
@@ -210,8 +225,8 @@ boolean OCI_API OCI_TransactionStop(OCI_Transaction * trans)
     {
         OCI_CALL2
         (
-            res, trans->con, 
-            
+            res, trans->con,
+
             OCITransDetach(trans->con->cxt, trans->con->err, (ub4) OCI_DEFAULT)
         )
     }
@@ -221,11 +236,14 @@ boolean OCI_API OCI_TransactionStop(OCI_Transaction * trans)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TransactionResume
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionResume(OCI_Transaction * trans)
+boolean OCI_API OCI_TransactionResume
+(
+    OCI_Transaction * trans
+)
 {
     boolean res = TRUE;
 
@@ -233,8 +251,8 @@ boolean OCI_API OCI_TransactionResume(OCI_Transaction * trans)
 
     OCI_CALL2
     (
-        res, trans->con, 
-        
+        res, trans->con,
+
         OCITransStart(trans->con->cxt, trans->con->err,
                       (uword) trans->timeout, (ub4) OCI_TRANS_RESUME)
     )
@@ -244,11 +262,14 @@ boolean OCI_API OCI_TransactionResume(OCI_Transaction * trans)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TransactionPrepare
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionPrepare(OCI_Transaction * trans)
+boolean OCI_API OCI_TransactionPrepare
+(
+    OCI_Transaction * trans
+)
 {
     boolean res = TRUE;
 
@@ -256,8 +277,8 @@ boolean OCI_API OCI_TransactionPrepare(OCI_Transaction * trans)
 
     OCI_CALL2
     (
-        res, trans->con, 
-        
+        res, trans->con,
+
         OCITransPrepare(trans->con->cxt, trans->con->err, (ub4) OCI_DEFAULT)
     )
 
@@ -266,11 +287,14 @@ boolean OCI_API OCI_TransactionPrepare(OCI_Transaction * trans)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TransactionForget
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionForget(OCI_Transaction * trans)
+boolean OCI_API OCI_TransactionForget
+(
+    OCI_Transaction * trans
+)
 {
     boolean res = TRUE;
 
@@ -278,8 +302,8 @@ boolean OCI_API OCI_TransactionForget(OCI_Transaction * trans)
 
     OCI_CALL2
     (
-        res, trans->con, 
-        
+        res, trans->con,
+
         OCITransForget(trans->con->cxt, trans->con->err, (ub4) OCI_DEFAULT)
     )
 
@@ -288,11 +312,14 @@ boolean OCI_API OCI_TransactionForget(OCI_Transaction * trans)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TransactionGetMode
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_TransactionGetMode(OCI_Transaction * trans)
+unsigned int OCI_API OCI_TransactionGetMode
+(
+    OCI_Transaction * trans
+)
 {
     OCI_CHECK_PTR(OCI_IPC_TRANSACTION, trans, OCI_UNKNOWN);
 
@@ -301,11 +328,14 @@ unsigned int OCI_API OCI_TransactionGetMode(OCI_Transaction * trans)
     return trans->mode;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TransactionGetTimeout
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_TransactionGetTimeout(OCI_Transaction * trans)
+unsigned int OCI_API OCI_TransactionGetTimeout
+(
+    OCI_Transaction * trans
+)
 {
     OCI_CHECK_PTR(OCI_IPC_TRANSACTION, trans, 0);
 

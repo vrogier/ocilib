@@ -1,48 +1,51 @@
 /*
-   +----------------------------------------------------------------------+   
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+ 
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: event.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: event.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_EventReset
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_EventReset(OCI_Event *event)
+boolean OCI_EventReset
+(
+    OCI_Event *event
+)
 {
     OCI_CHECK(event == NULL, FALSE);
 
@@ -61,15 +64,18 @@ boolean OCI_EventReset(OCI_Event *event)
     return TRUE;
 }
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_EventGetType
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_EventGetType(OCI_Event *event)
+unsigned int OCI_API OCI_EventGetType
+(
+    OCI_Event *event
+)
 {
     OCI_CHECK_PTR(OCI_IPC_EVENT, event, OCI_UNKNOWN);
 
@@ -78,11 +84,14 @@ unsigned int OCI_API OCI_EventGetType(OCI_Event *event)
     return event->type;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_EventGetType
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_EventGetOperation(OCI_Event *event)
+unsigned int OCI_API OCI_EventGetOperation
+(
+    OCI_Event *event
+)
 {
     OCI_CHECK_PTR(OCI_IPC_EVENT, event, OCI_UNKNOWN);
 
@@ -91,11 +100,14 @@ unsigned int OCI_API OCI_EventGetOperation(OCI_Event *event)
     return event->op;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_EventGetObject
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const dtext * OCI_API OCI_EventGetDatabase(OCI_Event *event)
+const dtext * OCI_API OCI_EventGetDatabase
+(
+    OCI_Event *event
+)
 {
     OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
 
@@ -104,12 +116,14 @@ const dtext * OCI_API OCI_EventGetDatabase(OCI_Event *event)
     return event->dbname;
 }
 
-
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_EventGetObject
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const dtext * OCI_API OCI_EventGetObject(OCI_Event *event)
+const dtext * OCI_API OCI_EventGetObject
+(
+    OCI_Event *event
+)
 {
     OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
 
@@ -118,11 +132,14 @@ const dtext * OCI_API OCI_EventGetObject(OCI_Event *event)
     return event->objname;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_EventGetRowid
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-const dtext * OCI_API OCI_EventGetRowid(OCI_Event *event)
+const dtext * OCI_API OCI_EventGetRowid
+(
+    OCI_Event *event
+)
 {
     OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
 
@@ -131,11 +148,14 @@ const dtext * OCI_API OCI_EventGetRowid(OCI_Event *event)
     return event->rowid;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_EventGetSubscription
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Subscription * OCI_API OCI_EventGetSubscription(OCI_Event *event)
+OCI_Subscription * OCI_API OCI_EventGetSubscription
+(
+    OCI_Event *event
+)
 {
     OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
 

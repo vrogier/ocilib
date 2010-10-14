@@ -1,48 +1,51 @@
 /*
-   +----------------------------------------------------------------------+
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@ocilib.net>            |
-   +----------------------------------------------------------------------+
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
- * $Id: iterator.c, v 3.8.0 2010-10-09 19:30 Vincent Rogier $
- * ------------------------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------- *
+ * $Id: iterator.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
 
-/* ************************************************************************ *
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
- * ************************************************************************ */
+ * ********************************************************************************************* */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_IterCreate
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Iter * OCI_API OCI_IterCreate(OCI_Coll *coll)
+OCI_Iter * OCI_API OCI_IterCreate
+(
+    OCI_Coll *coll
+)
 {
     boolean res    = TRUE;
     OCI_Iter *iter = NULL;
@@ -58,9 +61,9 @@ OCI_Iter * OCI_API OCI_IterCreate(OCI_Coll *coll)
 
     if (iter != NULL)
     {
-        iter->coll      = coll;
-        iter->eoc       = FALSE;
-        iter->boc       = TRUE;
+        iter->coll = coll;
+        iter->eoc  = FALSE;
+        iter->boc  = TRUE;
 
         /* create iterator */
 
@@ -74,12 +77,12 @@ OCI_Iter * OCI_API OCI_IterCreate(OCI_Coll *coll)
 
         /* create data element accessor */
 
-       if (res == TRUE)
-           iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL,
-                                     (OCIInd *) NULL, coll->typinf);
+        if (res == TRUE)
+            iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL,
+                                      (OCIInd *) NULL, coll->typinf);
 
-       if (res == TRUE)
-           res = (iter->elem != NULL);
+        if (res == TRUE)
+            res = (iter->elem != NULL);
 
     }
     else
@@ -98,11 +101,14 @@ OCI_Iter * OCI_API OCI_IterCreate(OCI_Coll *coll)
     return iter;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_IterFree
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IterFree(OCI_Iter *iter)
+boolean OCI_API OCI_IterFree
+(
+    OCI_Iter *iter
+)
 {
     boolean res = TRUE;
 
@@ -124,7 +130,7 @@ boolean OCI_API OCI_IterFree(OCI_Iter *iter)
 
     if (iter->elem != NULL)
     {
-        res = OCI_ElemFree(iter->elem);
+        res        = OCI_ElemFree(iter->elem);
         iter->elem = NULL;
     }
 
@@ -137,11 +143,14 @@ boolean OCI_API OCI_IterFree(OCI_Iter *iter)
     return res;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_IterGetNext
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OCI_API OCI_IterGetNext(OCI_Iter *iter)
+OCI_Elem * OCI_API OCI_IterGetNext
+(
+    OCI_Iter *iter
+)
 {
     boolean res    = TRUE;
     OCI_Elem *elem = NULL;
@@ -173,11 +182,14 @@ OCI_Elem * OCI_API OCI_IterGetNext(OCI_Iter *iter)
     return elem;
 }
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * OCI_IterGetPrev
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OCI_API OCI_IterGetPrev(OCI_Iter *iter)
+OCI_Elem * OCI_API OCI_IterGetPrev
+(
+    OCI_Iter *iter
+)
 {
     boolean res    = TRUE;
     OCI_Elem *elem = NULL;
