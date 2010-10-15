@@ -314,7 +314,7 @@ boolean OCI_ColumnDescribe
             if (tmp != NULL)
             {
                 OCI_CopyString(ostr, tmp, &osize, sizeof(omtext), sizeof(mtext));
-                col->typinf = OCI_TypeInfoGet(con, tmp, OCI_SCHEMA_TYPE);
+                col->typinf = OCI_TypeInfoGet(con, tmp, OCI_TIF_TYPE);
             }
 
             res = (col->typinf != NULL);
@@ -682,7 +682,7 @@ unsigned int OCI_API OCI_ColumnGetCharsetForm
     if (col->csfrm == SQLCS_NCHAR)
         return OCI_CSF_NATIONAL;
     else if (col->csfrm == SQLCS_IMPLICIT)
-        return OCI_CSF_CHARSET;
+        return OCI_CSF_DEFAULT;
     else
         return OCI_CSF_NONE;
 }

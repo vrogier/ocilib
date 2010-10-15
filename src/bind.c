@@ -644,7 +644,7 @@ boolean OCI_API OCI_BindSetCharsetForm
     {
         if (csfrm == OCI_CSF_NATIONAL)
             bnd->csfrm = SQLCS_NCHAR;
-        else if (csfrm == OCI_CSF_CHARSET)
+        else if (csfrm == OCI_CSF_DEFAULT)
             bnd->csfrm = SQLCS_IMPLICIT;
 
         OCI_CALL1

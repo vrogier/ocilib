@@ -1570,7 +1570,7 @@ boolean OCI_API OCI_ServerEnableOutput
             res = res && OCI_BindUnsignedInt(con->svopt->stmt, MT(":n"), &bufsize);
 
             if (bufsize == 0)
-                res = OCI_SetNull(con->svopt->stmt, 1);
+                res = OCI_BindSetNull(OCI_GetBind(con->svopt->stmt, 1));
 
             res = res && OCI_Execute(con->svopt->stmt);
 

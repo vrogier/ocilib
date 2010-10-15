@@ -656,7 +656,7 @@ boolean OCI_API OCI_MsgSetCorrelation
  * OCI_MsgGetExceptionQueue
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_MsGetExceptionQueue
+const mtext * OCI_API OCI_MsgGetExceptionQueue
 (
     OCI_Msg *msg
 )
