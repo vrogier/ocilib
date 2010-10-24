@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: string.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * $Id: string.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -855,6 +855,9 @@ boolean OCI_StringSetToAttrHandle
 
     ostr = OCI_GetInputMetaString(value, &osize);
 
+    if (osize == -1)
+        osize = 0;
+
     OCI_CALL2
     (
         res, con,
@@ -873,7 +876,10 @@ boolean OCI_StringSetToAttrHandle
     {
         OCI_FREE(*str);
 
-        *str = mtsdup(value);
+        if (value != NULL)
+        {
+            *str = mtsdup(value);
+        }
     }
 
     return res;

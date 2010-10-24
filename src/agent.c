@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: agent.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * $Id: agent.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -55,6 +55,8 @@ OCI_Agent * OCI_AgentInit
     boolean res      = TRUE;
 
     OCI_CHECK(pagent == NULL, NULL);
+
+    /* allocate agent structure */
 
     if (*pagent == NULL)
         *pagent = (OCI_Agent *) OCI_MemAlloc(OCI_IPC_AGENT, sizeof(*agent),
@@ -84,10 +86,14 @@ OCI_Agent * OCI_AgentInit
         else
             agent->hstate = OCI_OBJECT_FETCHED_CLEAN;
 
+        /* set name attribute if provided */
+
         if ((res == TRUE) && (name != NULL) && (name[0] != 0))
         {
             res = OCI_AgentSetName(agent, name);
         }
+
+        /* set address attribute if provided */
 
         if ((res == TRUE) && (address != NULL) && (address[0] != 0))
         {

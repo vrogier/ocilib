@@ -49,7 +49,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: oci_api.h, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * $Id: oci_api.h, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCI_API_H_INCLUDED
@@ -1312,7 +1312,7 @@ typedef sword (*OCINUMBERTOTEXT)
     CONST text      *fmt,
     ub4              fmt_length,
     CONST text      *nls_params,
-    ub4 nls_         p_length,
+    ub4              nls_p_length,
     ub4             *buf_size,
     text            *buf
 );

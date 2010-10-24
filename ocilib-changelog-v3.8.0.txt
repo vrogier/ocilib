@@ -1,4 +1,4 @@
-2010-10-09 Version 3.8.0 Vincent Rogier vince.rogier@ocilib.net
+2010-10-24 Version 3.8.0 Vincent Rogier vince.rogier@ocilib.net
 
 
     * Added support for Oracle Streams AQ (Advanced Queues)
@@ -11,6 +11,8 @@
       - Added type OCI_Dequeue
       - Added OCI_MsgCreate()
       - Added OCI_MsgFree()
+      - Added OCI_MsgReset()
+      - Added OCI_MsgSetObject()
       - Added OCI_MsgGetObject()
       - Added OCI_MsgGetRaw()
       - Added OCI_MsgSetRaw()
@@ -22,8 +24,10 @@
       - Added OCI_MsgGetState()
       - Added OCI_MsgGetPriority()
       - Added OCI_MsgSetPriority()
+      - Added OCI_MsgGetID()     
       - Added OCI_MsgGetOriginalID()
       - Added OCI_MsgSetOriginalID()
+      - Added OCI_MsgGetSender()
       - Added OCI_MsgSetSender()
       - Added OCI_MsgSetConsumers()
       - Added OCI_MsgGetCorrelation()
@@ -89,14 +93,18 @@
     * Miscellaneous fixes
 
       - Fixed memory leak : if an OCI_Bindxxx() returned FALSE (eg. non present binds in the sql statment), the newly internal allocated bind object was not freed
+      - Fixed possible segfault in OCI_Cleanup() if OCI_SubscriptionRegister() had been previouly called call unsuccessfully
       - Fixed internal array allocation when using OCI_ArraySetSize() called many times on the same prepared SQL statement
       - Fixed OCI_ElemGetTimeStamp() and OCI_ElemGetInterval() when collections are retreived from the server 
       - Fixed possible segfault in OCI_TimestampFromCTime() and OCI_TimestampFromCTime() if the libc function localtime() returns a NULL tm structure pointer
+      - Fixed OCI_GetSessionTag() linkage : the function was internally named OCI_GetSessionData() instead of OCI_GetSessionTag() in connection.c
+      - Fixed binding of date arrays : the introduction of OCI_XXXArrayCreate() in v3.6.0 has introduced a bug in dates array binding that would cause to pass NULL data for some elements of the array
       - Fixed some API naming inconstancy (lower/upper case)
 
         - OCI_ElemGetTimeStamp()      renamed to OCI_ElemGetTimestamp()
         - OCI_ObjectGetTimeStamp()    renamed to OCI_ObjectGetTimestamp()
         - OCI_TimestampSysTimeStamp() renamed to OCI_TimestampSysTimestamp()
         - Macros have been added for backward compatibility
+
         - Existing programs must be recompiled (in order to use this new version of ocilib) with no code change (as compatibility macros are provided)
   

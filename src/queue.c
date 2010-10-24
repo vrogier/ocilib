@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: queue.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * $Id: queue.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -52,8 +52,7 @@ boolean OCI_API OCI_QueueCreate
     unsigned int    retry_delay,
     unsigned int    retention_time,
     boolean         dependency_tracking,
-    const mtext    *comment,
-    boolean         auto_commit
+    const mtext    *comment
 )
 {
     boolean res       = FALSE;
@@ -79,30 +78,25 @@ boolean OCI_API OCI_QueueCreate
     {
         res = OCI_Prepare
               (
-            st,
-            MT("DECLARE ")
-            MT("    v_auto_commit         BOOLEAN  := FALSE; ")
-            MT("    v_dependency_tracking BOOLEAN  := FALSE; ")
-            MT("BEGIN ")
-            MT("    IF (:auto_commit = 1) then ")
-            MT("        v_auto_commit := TRUE; ")
-            MT("    END IF; ")
-            MT("    IF (:dependency_tracking = 1) then ")
-            MT("        v_dependency_tracking := TRUE; ")
-            MT("    END IF; ")
-            MT("    DBMS_AQADM.CREATE_QUEUE ")
-            MT("    (")
-            MT("       queue_name           => :queue_name, ")
-            MT("       queue_table          => :queue_table, ")
-            MT("       queue_type           => :queue_type, ")
-            MT("       max_retries          => :max_retries, ")
-            MT("       retry_delay          => :retry_delay, ")
-            MT("       retention_time       => :retention_time, ")
-            MT("       dependency_tracking  => v_dependency_tracking, ")
-            MT("       comment              => :comment, ")
-            MT("       auto_commit          => v_auto_commit ")
-            MT("    ); ")
-            MT("END; ")
+                st,
+                MT("DECLARE ")
+                MT("    v_dependency_tracking BOOLEAN  := FALSE; ")
+                MT("BEGIN ")
+                MT("    IF (:dependency_tracking = 1) then ")
+                MT("        v_dependency_tracking := TRUE; ")
+                MT("    END IF; ")
+                MT("    DBMS_AQADM.CREATE_QUEUE ")
+                MT("    (")
+                MT("        queue_name           => :queue_name, ")
+                MT("        queue_table          => :queue_table, ")
+                MT("        queue_type           => :queue_type, ")
+                MT("        max_retries          => :max_retries, ")
+                MT("        retry_delay          => :retry_delay, ")
+                MT("        retention_time       => :retention_time, ")
+                MT("        dependency_tracking  => v_dependency_tracking, ")
+                MT("        comment              => :comment ")
+                MT("    ); ")
+                MT("END; ")
               );
 
         res = res && OCI_BindString(st, MT(":queue_name"),  bstr1, 0);
@@ -113,7 +107,6 @@ boolean OCI_API OCI_QueueCreate
         res = res && OCI_BindUnsignedInt(st, MT(":retention_time"),  &retention_time);
         res = res && OCI_BindInt(st, MT(":dependency_tracking"),  &dependency_tracking);
         res = res && OCI_BindString(st, MT(":comment"), bstr3, 0);
-        res = res && OCI_BindInt(st, MT(":auto_commit"),  &auto_commit);
 
         res = res && OCI_Execute(st);
 
@@ -132,74 +125,6 @@ boolean OCI_API OCI_QueueCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_QueueCreateNonPersistent
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_API OCI_QueueCreateNonPersistent
-(
-    OCI_Connection *con,
-    const mtext    *queue_name,
-    boolean         multiple_consumers,
-    const mtext    *comment
-)
-{
-    boolean res       = FALSE;
-    OCI_Statement *st = NULL;
-    void *bstr1       = NULL, *bstr2 = NULL;
-    int bsize1        = -1, bsize2 = -1;
-    dtext *null_str   = DT("");
-
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_STRING, queue_name, FALSE);
-
-    bstr1 = OCI_GetMetaFromDataString(queue_name,  &bsize1);
-    bstr2 = OCI_GetMetaFromDataString(comment,     &bsize2);
-
-    if (bstr2 == NULL)
-        bstr2 = null_str;
-
-    st = OCI_StatementCreate(con);
-
-    if (st)
-    {
-        res = OCI_Prepare
-              (
-            st,
-            MT("DECLARE ")
-            MT("    v_multiple_consumers BOOLEAN  := FALSE; ")
-            MT("BEGIN ")
-            MT("    IF (:multiple_consumers = 1) then ")
-            MT("        v_multiple_consumers := TRUE; ")
-            MT("    END IF; ")
-            MT("    DBMS_AQADM.CREATE_NP_QUEUE ")
-            MT("   (")
-            MT("       queue_name         => :queue_name, ")
-            MT("       multiple_consumers => v_multiple_consumers, ")
-            MT("       comment            => :comment ")
-            MT("   ); ")
-            MT("END; ")
-              );
-
-        res = res && OCI_BindString(st, MT(":queue_name"),  bstr1, 0);
-        res = res && OCI_BindInt(st, MT(":multiple_consumers"),  &multiple_consumers);
-        res = res && OCI_BindString(st, MT(":comment"), bstr2, 0);
-
-        res = res && OCI_Execute(st);
-
-        OCI_StatementFree(st);
-    }
-
-    OCI_ReleaseDataString(bstr1);
-
-    if (comment != NULL)
-        OCI_ReleaseDataString(bstr2);
-
-    OCI_RESULT(res);
-
-    return res;
-}
-
-/* --------------------------------------------------------------------------------------------- *
  * OCI_QueueAlter
  * --------------------------------------------------------------------------------------------- */
 
@@ -210,7 +135,6 @@ boolean OCI_API OCI_QueueAlter
     unsigned int    max_retries,
     unsigned int    retry_delay,
     unsigned int    retention_time,
-    boolean         auto_commit,
     const mtext    *comment
 )
 {
@@ -235,23 +159,17 @@ boolean OCI_API OCI_QueueAlter
     {
         res = OCI_Prepare
               (
-            st,
-            MT("DECLARE ")
-            MT("    v_auto_commit BOOLEAN  := FALSE; ")
-            MT("BEGIN ")
-            MT("    IF (:auto_commit = 1) then ")
-            MT("        v_auto_commit := TRUE; ")
-            MT("    END IF; ")
-            MT("    DBMS_AQADM.ALTER_QUEUE ")
-            MT("   (")
-            MT("       queue_name           => :queue_name, ")
-            MT("       max_retries          => :max_retries, ")
-            MT("       retry_delay          => :retry_delay, ")
-            MT("       retention_time       => :retention_time, ")
-            MT("       comment              => :comment, ")
-            MT("       auto_commit          => v_auto_commit ")
-            MT("   ); ")
-            MT("END; ")
+                st,
+                MT("BEGIN ")
+                MT("    DBMS_AQADM.ALTER_QUEUE ")
+                MT("    (")
+                MT("        queue_name           => :queue_name, ")
+                MT("        max_retries          => :max_retries, ")
+                MT("        retry_delay          => :retry_delay, ")
+                MT("        retention_time       => :retention_time, ")
+                MT("        comment              => :comment ")
+                MT("    ); ")
+                MT("END; ")
               );
 
         res = res && OCI_BindString(st, MT(":queue_name"),  bstr1, 0);
@@ -259,7 +177,6 @@ boolean OCI_API OCI_QueueAlter
         res = res && OCI_BindUnsignedInt(st, MT(":retry_delay"),  &retry_delay);
         res = res && OCI_BindUnsignedInt(st, MT(":retention_time"),  &retention_time);
         res = res && OCI_BindString(st, MT(":comment"), bstr2, 0);
-        res = res && OCI_BindInt(st, MT(":auto_commit"),  &auto_commit);
 
         res = res && OCI_Execute(st);
 
@@ -283,8 +200,7 @@ boolean OCI_API OCI_QueueAlter
 boolean OCI_API OCI_QueueDrop
 (
     OCI_Connection *con,
-    const mtext    *queue_name,
-    boolean         auto_commit
+    const mtext    *queue_name
 )
 {
     boolean res       = FALSE;
@@ -303,23 +219,16 @@ boolean OCI_API OCI_QueueDrop
     {
         res = OCI_Prepare
               (
-            st,
-            MT("DECLARE ")
-            MT("    v_auto_commit BOOLEAN  := FALSE; ")
-            MT("BEGIN ")
-            MT("    IF (:auto_commit = 1) then ")
-            MT("        v_auto_commit := TRUE; ")
-            MT("    END IF; ")
-            MT("    DBMS_AQADM.DROP_QUEUE ")
-            MT("   (")
-            MT("       queue_name  => :queue_name, ")
-            MT("       auto_commit => v_auto_commit ")
-            MT("   ); ")
-            MT("END; ")
+                st,
+                MT("BEGIN ")
+                MT("    DBMS_AQADM.DROP_QUEUE ")
+                MT("    (")
+                MT("        queue_name  => :queue_name ")
+                MT("    ); ")
+                MT("END; ")
               );
 
         res = res && OCI_BindString(st, MT(":queue_name"),  bstr1, 0);
-        res = res && OCI_BindInt(st, MT(":auto_commit"),  &auto_commit);
 
         res = res && OCI_Execute(st);
 
@@ -482,7 +391,6 @@ boolean OCI_API OCI_QueueTableCreate
     boolean         multiple_consumers,
     unsigned int    message_grouping,
     const mtext    *comment,
-    boolean         auto_commit,
     unsigned int    primary_instance,
     unsigned int    secondary_instance,
     const mtext    *compatible
@@ -530,9 +438,6 @@ boolean OCI_API OCI_QueueTableCreate
             MT("    v_auto_commit        BOOLEAN  := FALSE; ")
             MT("    v_multiple_consumers BOOLEAN  := FALSE; ")
             MT("BEGIN ")
-            MT("    IF (:auto_commit = 1) then ")
-            MT("        v_auto_commit := TRUE; ")
-            MT("    END IF; ")
             MT("    IF (:multiple_consumers = 1) then ")
             MT("        v_multiple_consumers := TRUE; ")
             MT("    END IF; ")
@@ -545,7 +450,6 @@ boolean OCI_API OCI_QueueTableCreate
             MT("       multiple_consumers => v_multiple_consumers, ")
             MT("       message_grouping   => :message_grouping, ")
             MT("       comment            => :comment, ")
-            MT("       auto_commit        => v_auto_commit, ")
             MT("       primary_instance   => :primary_instance, ")
             MT("       secondary_instance => :secondary_instance, ")
             MT("       compatible         => :compatible")
@@ -560,7 +464,6 @@ boolean OCI_API OCI_QueueTableCreate
         res = res && OCI_BindInt(st, MT(":multiple_consumers"),  &multiple_consumers);
         res = res && OCI_BindUnsignedInt(st, MT(":message_grouping"),  &message_grouping);
         res = res && OCI_BindString(st, MT(":comment"), bstr5, 0);
-        res = res && OCI_BindInt(st, MT(":auto_commit"),  &auto_commit);
         res = res && OCI_BindUnsignedInt(st, MT(":primary_instance"),  &primary_instance);
         res = res && OCI_BindUnsignedInt(st, MT(":secondary_instance"),  &secondary_instance);
         res = res && OCI_BindString(st, MT(":compatible"), bstr6, 0);
@@ -664,7 +567,6 @@ boolean OCI_API OCI_QueueTableDrop
 (
     OCI_Connection *con,
     const mtext    *queue_table,
-    boolean         auto_commit,
     boolean         force
 )
 {
@@ -686,11 +588,8 @@ boolean OCI_API OCI_QueueTableDrop
               (
             st,
             MT("DECLARE ")
-            MT("    v_auto_commit BOOLEAN  := FALSE; ")
             MT("    v_force       BOOLEAN  := FALSE; ")
             MT("BEGIN ")
-            MT("    IF (:auto_commit = 1) then ")
-            MT("        v_auto_commit := TRUE; ")
             MT("    END IF; ")
             MT("    IF (:force = 1) then ")
             MT("        v_force := TRUE; ")
@@ -698,15 +597,13 @@ boolean OCI_API OCI_QueueTableDrop
             MT("    DBMS_AQADM.DROP_QUEUE_TABLE ")
             MT("   (")
             MT("       queue_table  => :queue_table, ")
-            MT("       force        => v_force, ")
-            MT("       auto_commit  => v_auto_commit ")
+            MT("       force        => v_force ")
             MT("   ); ")
             MT("END; ")
               );
 
         res = res && OCI_BindString(st, MT(":queue_table"), bstr1, 0);
         res = res && OCI_BindInt(st, MT(":force"),  &force);
-        res = res && OCI_BindInt(st, MT(":auto_commit"),  &auto_commit);
 
         res = res && OCI_Execute(st);
 

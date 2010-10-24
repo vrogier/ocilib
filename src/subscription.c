@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: subscriptions.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * $Id: subscriptions.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -358,6 +358,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
     if (res == FALSE)
     {
         OCI_SubscriptionClose(sub);
+        OCI_ListRemove(OCILib.subs, sub);
         OCI_FREE(sub);
     }
 

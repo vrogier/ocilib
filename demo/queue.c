@@ -19,14 +19,17 @@ int main(int argc, char *argv[])
     deq = OCI_DequeueCreate(inf, "my_queue");
     
     msg = OCI_MsgCreate(inf);
-    obj = OCI_MsgGetObject(msg);
+    obj = OCI_ObjectCreate(con, inf);
 
     OCI_ObjectSetString(obj, "TITLE", "NEXT MEETING");
     OCI_ObjectSetString(obj, "CONTENT", "12:00 PM IN STARBUCKS");
 
+    OCI_MsgSetObject(msg, obj);
+
     OCI_EnqueuePut(enq, msg);
 
     OCI_MsgFree(msg);
+    OCI_ObjectFree(obj);
 
     OCI_Commit(con);
     

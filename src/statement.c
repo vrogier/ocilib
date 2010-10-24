@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: statement.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * $Id: statement.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -275,7 +275,7 @@ boolean OCI_BindCheck
                 {
                     if (ind != NULL && *ind != -1)
                     {
-                        *ind = OCI_IND(bnd->buf.data[j]);
+                        *ind = OCI_IND((((OCI_Datatype *) bnd->input[j])->handle));
                     }
                 }
 

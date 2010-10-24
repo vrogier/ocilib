@@ -28,7 +28,7 @@ libocilib_la_SOURCES=           \
 	string.c     	\
 	timestamp.c  	\
 	collection.c  	\
-	connpool.c    	\
+	pool.c    	\
 	element.c  	\
 	file.c       	\
 	hash.c      	\
@@ -51,7 +51,12 @@ libocilib_la_SOURCES=           \
 	threadkey.c     \
 	dirpath.c       \
 	event.c         \
-	subscription.c
+	subscription.c  \
+	agent.c         \
+	dequeue.c       \
+	enqueue.c       \
+	msg.c           \
+	queue.c
 
 libocilib_la_CFLAGS= -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)

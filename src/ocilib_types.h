@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_types.h, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * $Id: ocilib_types.h, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_TYPES_H_INCLUDED
@@ -761,12 +761,15 @@ struct OCI_Msg
 {
     OCI_TypeInfo       *typinf;        /* pointer to type info object */
     OCIAQMsgProperties *proph;         /* OCI message properties handle */
-    OCI_Object         *obj;           /* message object payload */
-    OCIRaw             *raw;           /* message raw payload */
+    void               *payload;       /* message payload (object or raw) */
+    void               *payload_ind;   /* message payload indicator pointer */
+    OCIInd              ind;            /* message payload indicator */
     OCIRaw             *id;            /* message identitier */
     OCI_Date           *date;          /* enqueue date */
     mtext              *correlation;   /* correlation string */
-    mtext              *except_queue;  /* exception queue name */ 
+    mtext              *except_queue;  /* exception queue name */
+    unsigned int        payload_type;  /* payload type */
+    OCI_Agent          *sender;        /* sender */
 };
 
 /*
@@ -779,6 +782,7 @@ struct OCI_Enqueue
     OCI_TypeInfo    *typinf;         /* pointer to type info object */
     OCIAQEnqOptions *opth;           /* OCI enqueue options handle */
     mtext           *name;           /* queue name */
+    unsigned int     payload_type;   /* payload type */
 };
 
 /*
@@ -797,7 +801,9 @@ struct OCI_Dequeue
     OCIAQAgent     **agent_list;     /* array of agents objects */
     ub4              agent_count;    /* number of agents objects */
     OCI_Agent       *agent;          /* pointer to agent object for listen call */
-
+    unsigned int     payload_type;   /* payload type */
+    void            *payload;        /* payload data */
+    void            *payload_ind;    /* payload indicator */
 };
 
 /*

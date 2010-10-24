@@ -36,8 +36,8 @@
     |             The OCILIB documentation intends to explain Oracle / OCI concepts           |
     |             and is naturally based on the official Oracle OCI documentation.            |
     |                                                                                         |
-    |             Some OCILIB documentation parts may include some informations               |
-    |             taken and adapted from the following Oracle documentation :                 |
+    |             Some parts of OCILIB documentation may include some informations               |
+    |             taken and adapted from the following Oracle documentations :                 |
     |                 - Oracle Call Interface Programmer's Guide                              |
     |                 - Oracle Streams - Advanced Queuing User's Guide                        |
     |                                                                                         |
@@ -46,7 +46,7 @@
  */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib.h, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * $Id: ocilib.h, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_H_INCLUDED
@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.8.0 (2010-10-09)</b>
+ * <b>Current version : 3.8.0 (2010-10-24)</b>
  *
  * @section s_feats Main features
  *
@@ -1584,10 +1584,10 @@ typedef unsigned int big_uint;
 
 /* AQ message state */
 
-#define OCI_AMS_READY                       0
-#define OCI_AMS_WAITING                     1
-#define OCI_AMS_PROCESSED                   2
-#define OCI_AMS_EXPIRED                     3
+#define OCI_AMS_READY                       1
+#define OCI_AMS_WAITING                     2
+#define OCI_AMS_PROCESSED                   3
+#define OCI_AMS_EXPIRED                     4
 
 /* AQ sequence deviation    */
 
@@ -1616,7 +1616,7 @@ typedef unsigned int big_uint;
 
 #define OCI_APM_BUFFERED                    1
 #define OCI_APM_PERSISTENT                  2
-
+#define OCI_APM_ALL                         (OCI_APM_BUFFERED | OCI_APM_PERSISTENT)
 /* AQ queue table grouping mode */
 
 #define OCI_AGM_NONE                        0
@@ -14114,30 +14114,71 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  *
  * @par OCILIB implementation
  *
- * OCILIB provides the full C implementation of Advanced Queues available in
+ * OCILIB provides a (nearly) full C implementation of Advanced Queues available in
  * Oracle OCI and proposes the following datatypes :
  *  - OCI_Msg     : Implementation of message to enqueue/dequeue from/to queues
  *  - OCI_Enqueue : Implementation of enqueuing process
  *  - OCI_Dequeue : Implementation of dequeuing process
  *  - OCI_Agent   : Implementation of Advanced queues Agents
+ * 
+ * Note that the only AQ features not supported yet by OCILIB are :
+ *   - Payloads of type AnyData
+ *   - Enqueuing/dequeuing arrays of messages
+ *   - Optionnal delivery mode introduced in 10gR2
  *
- * @par Example
+ * OCILIB provides as well a C API to administrate queues and queue tables initially 
+ * reserved to PL/SQL and Java (wrappers around PL/SQL calls).
+ * This API, based on internal PL/SQL calls wrapping the DBMS_AQADM packages procedures, allow the 
+ * following actions :
+ *  - create, alter, drop and purge queue tables (OCI_QueueTableXXX calls)
+ *  - create, alter, drop, start, stop queues (OCI_QueueXXX calls)
+ * 
+ * Note that the user connected to the database needs particular privileges to manipulate or 
+ * administrate queues (See Oracle Streams - Advanced Queuing User's Guide for more informations
+ * on these privileges)
+ * 
+ *@par Example
  * @include queue.c
  *
  */
 
 /**
  * @brief
+ * Create a message object based on the given payload type
  *
  * @param typinf - Type info handle
  *
- * @warning
+ * @note
+ * OCILIB supports 2 type of message payload :
+ * - Oracle types (UDT)
+ * - RAW data
  *
  * @note
+ * Oracle Type AnyData is not supported in the current version of OCILIB
+ *
+ * @note
+ * the parameter 'typinf' indicates the type of payload :
+ * - For object payload, retrieve the object type information handle with
+ *   OCI_TypeInfoGet() using the object type name
+ * - For RAW payload, you MUST pass the object type information retrieved with
+ *   OCI_TypeInfoGet() using "SYS.RAW" as object type name
+ *
+ * @warning
+ * Newly created Message handles have NULL payloads.
+ * For Message handling Objects payloads, OCI_MsgSetObject() returns NULL until an object handle is 
+ * assigned to the message.
+ * 
+ * @note
+ * When a local OCI_Msg handle is enqueued, it keeps its attributes. If it's enqeued again, another
+ * identical message is posted into the queue.
+ * To reset a message and empty all its properties, call OCI_MsgReset()
+ * Note that OCI_MsgReset() clears the message payload.
  *
  * @return
+ * Return the message handle on success otherwise NULL on failure
  *
  */
+
 
 OCI_EXPORT OCI_Msg * OCI_API OCI_MsgCreate
 (
@@ -14146,14 +14187,15 @@ OCI_EXPORT OCI_Msg * OCI_API OCI_MsgCreate
 
 /**
  * @brief
+ * Free a message object
  *
  * @param msg - Message handle
  *
  * @warning
- *
- * @note
+ * Only message handles created with OCI_MsgCreate() should be freed by OCI_MsgFree()
  *
  * @return
+ * TRUE on success otherwise FALSE
  *
  */
 
@@ -14164,14 +14206,36 @@ OCI_EXPORT boolean OCI_API OCI_MsgFree
 
 /**
  * @brief
+ * Reset all attributes of a message object
  *
  * @param msg - Message handle
  *
- * @warning
- *
  * @note
+ * This function calls OCI_MsgSetxxx() with default or NULL attributes
+ *
+ * @warning
+ * OCI_MsgReset() clears the message payload and set it to NULL
+ * For messages handling objects payloads, OCI_MsgSetObject() must be called again to assign a 
+ * payload.
+
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgReset
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ * Get the object payload of the given message 
+ *
+ * @param msg - Message handle
  *
  * @return
+ * Return the object handle on success otherwise NULL on failure or if payload is NULL
  *
  */
 
@@ -14182,54 +14246,70 @@ OCI_EXPORT OCI_Object * OCI_API OCI_MsgGetObject
 
 /**
  * @brief
+ * Set the object payload of the given message 
  *
  * @param msg - Message handle
- *
- * @warning
- *
- * @note
+ * @param obj - Object handle
  *
  * @return
+ * TRUE on success otherwise FALSE
  *
  */
 
-OCI_EXPORT void * OCI_API OCI_MsgGetRaw
+OCI_EXPORT boolean OCI_API OCI_MsgSetObject
 (
-    OCI_Msg *msg
+    OCI_Msg    *msg,
+    OCI_Object *obj
 );
 
 /**
  * @brief
+ * Get the RAW payload of the given message 
  *
  * @param msg  - Message handle
- * @param raw  - Message Raw data
- * @param size - Message Raw data size
- *
- * @warning
+ * @param raw  - Input buffer
+ * @param size - Input buffer maximum size
  *
  * @note
+ * On output, parameter 'size' holds the number of bytes copied into the given buffer 
  *
  * @return
+ * TRUE on success otherwise FALSE on failure or if payload is object based.
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_MsgGetRaw
+(
+    OCI_Msg      *msg,
+    void         *raw,
+    unsigned int *size
+);
+
+/**
+ * @brief
+ * Set the RAW payload of the given message 
+ *
+ * @param msg  - Message handle
+ * @param raw  - Raw data
+ * @param size - Raw data size
+ *
+ * @return
+ * TRUE on success otherwise FALSE on failure or if payload is object based.
  *
  */
 
 OCI_EXPORT boolean OCI_API OCI_MsgSetRaw
 (
-    OCI_Msg     *msg,
-    void        *raw,
-    unsigned int size
+    OCI_Msg      *msg,
+    const void   *raw,
+    unsigned int  size
 );
 
 /**
  * @brief
+ * Return the number of attempts that have been made to dequeue the message
  *
  * @param msg - Message handle
- *
- * @warning
- *
- * @note
- *
- * @return
  *
  */
 
@@ -14240,14 +14320,12 @@ OCI_EXPORT int OCI_API OCI_MsgGetAttemptCount
 
 /**
  * @brief
+ * Return the number of seconds that a message is delayed for dequeuing
  *
  * @param msg - Message handle
  *
- * @warning
- *
  * @note
- *
- * @return
+ * see OCI_MsgSetEnqueueDelay() for more details
  *
  */
 
@@ -14258,15 +14336,28 @@ OCI_EXPORT int OCI_API OCI_MsgGetEnqueueDelay
 
 /**
  * @brief
+ * set the number of seconds to delay the enqueued message
  *
  * @param msg   - Message handle
- * @param value - Enqueue delay
- *
- * @warning
+ * @param value - Delay in seconds
  *
  * @note
+ * The delay represents the number of seconds after which a message is available for dequeuing.
+ * When the message is enqueued, its state is set to OCI_AMS_WAITING.
+ * When the delay expires, its state is set to OCI_AMS_READY.
+ *
+ * @note
+ * If parameter 'value' is set to zero (default value), the message will be immediately available 
+ * for dequeuing
+ *
+ * @warning
+ * Dequeuing by Message ID overrides the delay specification.
+ *
+ * @warning
+ * Delaying processing requires the queue monitor to be started.
  *
  * @return
+ * TRUE on success otherwise FALSE
  *
  */
 
@@ -14278,14 +14369,12 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetEnqueueDelay
 
 /**
  * @brief
+ * return the time the message was enqueued
  *
  * @param msg - Message handle
  *
- * @warning
- *
  * @note
- *
- * @return
+ * Only use this function for message dequeued from queues
  *
  */
 
@@ -14296,14 +14385,12 @@ OCI_EXPORT OCI_Date * OCI_API OCI_MsgGetEnqueueTime
 
 /**
  * @brief
+ * Return the duration that the message is available for dequeuing
  *
  * @param msg - Message handle
  *
- * @warning
- *
  * @note
- *
- * @return
+ * see OCI_MsgSetExpiration() for more details
  *
  */
 
@@ -14314,15 +14401,25 @@ OCI_EXPORT int OCI_API OCI_MsgGetExpiration
 
 /**
  * @brief
+ * set the duration that the message is available for dequeuing
  *
  * @param msg   - Message handle
- * @param value - Expiration time
- *
- * @warning
+ * @param value - duration in seconds
  *
  * @note
+ * This parameter is an offset from the delay (see OCI_MsgSetEnqueueDelay())
+ * While waiting for expiration, the message state is set to OCI_AMS_READY.
+ * If the message is not dequeued before it expires, it will be moved to the exception queue
+ * with the state OCI_AMS_EXPIRED.
+ *
+ * @note
+ * If parameter 'value' is set to -1 (default value), the message will not expire
+ *
+ * @warning
+ * Expiration processing requires the queue monitor to be started.
  *
  * @return
+ * TRUE on success otherwise FALSE
  *
  */
 
@@ -14334,24 +14431,18 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetExpiration
 
 /**
  * @brief
+ * Return the state of the message at the time of the dequeue
  *
  * @param msg - Message handle
  *
- * @warning
- *
- * @note
- *
  * @return
+ *  - OCI_UNKNOWN       :  the function has failed to get the message state
+ *  - OCI_AMS_READY     :  the message is ready to be processed
+ *  - OCI_AMS_WAITING   :  the message delay has not yet completed
+ *  - OCI_AMS_PROCESSED :  the message has been processed
+ *  - OCI_AMS_EXPIRED   :  the message has moved to exception queue
  *
  */
-
-/*
-#define OCI_AMS_READY           0    the message is ready to be processed
-#define OCI_AMS_WAITING         1    the message delay has not yet completed
-#define OCI_AMS_PROCESSED       2    the message has been processed
-#define OCI_AMS_EXPIRED         3    message has moved to exception queue
-
-*/
 
 OCI_EXPORT unsigned int OCI_API OCI_MsgGetState
 (
@@ -14360,14 +14451,12 @@ OCI_EXPORT unsigned int OCI_API OCI_MsgGetState
 
 /**
  * @brief
+ * Return the priority of the message
  *
  * @param msg - Message handle
  *
- * @warning
- *
  * @note
- *
- * @return
+ * see OCI_MsgSetPriority() for more details
  *
  */
 
@@ -14378,15 +14467,18 @@ OCI_EXPORT int OCI_API OCI_MsgGetPriority
 
 /**
  * @brief
+ * Set the priority of the message
  *
  * @param msg   - Message handle
  * @param value - Message priority
  *
- * @warning
- *
  * @note
+ *   - The priority can be any number, including negative numbers.
+ *   - A smaller number indicates higher priority.
+ *   - Default value is zero.
  *
  * @return
+ * TRUE on success otherwise FALSE
  *
  */
 
@@ -14398,59 +14490,108 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetPriority
 
 /**
  * @brief
+ * Return the ID of the message
  *
- * @param msg    - Message handle
- * @param msg_id - Message ID
- * @param len    - Message ID length
- *
- * @warning
+ * @param msg - Message handle
+ * @param id  - Input buffer
+ * @param len - Input buffer maximum size
  *
  * @note
+ * The message ID is :
+ *  - generated when the message is enqueued in the queue
+ *  - retrieved when the message is dequeued from the queue
  *
+ * @note
+ * On output, parameter 'len' holds the number of bytes copied into the given buffer 
+ * 
  * @return
+ * TRUE on success otherwise FALSE
  *
  */
+
+OCI_EXPORT boolean OCI_API OCI_MsgGetID
+(
+    OCI_Msg      *msg,
+    void         *id,
+    unsigned int *len
+);
+
+/**
+ * @brief
+ * Return the original ID of the message in the last queue that generated this message
+ *
+ * @param msg - Message handle
+ * @param id  - Input buffer
+ * @param len - Input buffer maximum size
+ *
+ * @warning
+ * When a message is propagated from/to differents queues, this ID is the one generated for the
+ * message in the previous queue.
+ *
+ * @note
+ * On output, parameter 'len' holds the number of bytes copied into the given buffer 
+ * 
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */     
 
 OCI_EXPORT boolean OCI_API OCI_MsgGetOriginalID
 (
-    OCI_Msg     *msg,
-    void        *msg_id,
-    unsigned int len
+    OCI_Msg      *msg,
+    void         *id,
+    unsigned int *len
 );
 
 /**
  * @brief
+ * Set the original ID of the message in the last queue that generated this message
  *
- * @param msg    - Message handle
- * @param msg_id - Message ID
- * @param len    - Message ID length
+ * @param msg  - Message handle
+ * @param id   - Message ID
+ * @param len  - Message ID size
  *
  * @warning
- *
- * @note
+ * When a message is propagated from/to differents queues, this ID is the one generated for the
+ * message in the previous queue.
  *
  * @return
+ * TRUE on success otherwise FALSE
  *
- */
+ */     
 
 OCI_EXPORT boolean OCI_API OCI_MsgSetOriginalID
 (
-    OCI_Msg     *msg,
-    const void  *msg_id,
-    unsigned int len
+    OCI_Msg      *msg,
+    const void   *id,
+    unsigned int  len
 );
 
 /**
  * @brief
+ * Return the original sender of a message
+ *
+ * @param msg    - Message handle
+ *
+ * @return
+ * Sender Handle (OCI_Agent *) on success (if set at rnqueue time) otherwise NULL
+ *
+ */
+
+OCI_EXPORT OCI_Agent * OCI_API OCI_MsgGetSender
+(
+    OCI_Msg   *msg
+);
+
+/**
+ * @brief
+ * Set the original sender of a message
  *
  * @param msg    - Message handle
  * @param sender - Message sender
  *
- * @warning
- *
- * @note
- *
  * @return
+ * TRUE on success otherwise FALSE
  *
  */
 
@@ -14462,16 +14603,18 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetSender
 
 /**
  * @brief
+ * Set the recipient list of a message to enqueue
  *
  * @param msg       - Message handle
  * @param consumers - Recipients list (array of agent handles)
  * @param count     - Number of recipients
  *
  * @warning
- *
- * @note
+ * This function should only be used for queues which allow multiple consumers. 
+ * The default recipients are the queue subscribers. 
  *
  * @return
+ * TRUE on success otherwise FALSE
  *
  */
 
@@ -14484,14 +14627,12 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetConsumers
 
 /**
  * @brief
+ * Get the correlation identifier of the message
  *
- * @param msg    - Message handle
- *
- * @warning
+ * @param msg - Message handle
  *
  * @note
- *
- * @return
+ * see OCI_MsgSetCorrelation() for more details
  *
  */
 
@@ -14502,15 +14643,16 @@ OCI_EXPORT const mtext * OCI_API OCI_MsgGetCorrelation
 
 /**
  * @brief
+ * set the correlation identifier of the message
  *
  * @param msg         - Message handle
  * @param correlation - Message correlation text
  *
- * @warning
- *
  * @note
+ * see OCI_DequeueSetCorrelation()  for more details
  *
  * @return
+ * TRUE on success otherwise FALSE
  *
  */
 
@@ -14522,15 +14664,52 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetCorrelation
 
 /**
  * @brief
+ * Get the Exception queue name of the message
+ *
+ * @param msg - Message handle
+ *
+ * @warning
+ * When calling this function on a message retrieved with OCI_DequeueGet(), the returned value is 
+ * NULL if the default exception queue associated with the current queue is used (eg. no user
+ * defined specified at enqueue time for the message)
+ *
+ * @note
+ * see OCI_MsgSetExceptionQueue() for more details
+ *
+ */
+OCI_EXPORT const mtext * OCI_API OCI_MsgGetExceptionQueue
+(
+    OCI_Msg *msg
+);
+
+/**
+ * @brief
+ * Set the name of the queue to which the message is moved to if it cannot be
+ * processed successfully
  *
  * @param msg   - Message handle
  * @param queue - Exception queue name
  *
  * @warning
+ * From Oracle Dopcumentation : 
  *
- * @note
+ * "Messages are moved into exception queues in two cases : 
+ *  - If the number of unsuccessful dequeue attempts has exceeded the attribute 'max_retries' of 
+ *    given queue
+ *  - if the message has expired. 
+ * 
+ * All messages in the exception queue are in the EXPIRED state.
+ * 
+ * The default is the exception queue associated with the queue table. 
+ * 
+ * If the exception queue specified does not exist at the time of the move the message will be
+ * moved to the default exception queue associated with the queue table and a warning will be
+ * logged in the alert file.  
+ *
+ * This attribute must refer to a valid queue name."
  *
  * @return
+ * TRUE on success otherwise FALSE
  *
  */
 
@@ -14538,24 +14717,6 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetExceptionQueue
 (
     OCI_Msg     *msg,
     const mtext *queue
-);
-
-/**
- * @brief
- *
- * @param msg - Message handle
- *
- * @warning
- *
- * @note
- *
- * @return
- *
- */
-
-OCI_EXPORT const mtext * OCI_API OCI_MsgGetExceptionQueue
-(
-    OCI_Msg *msg
 );
 
 /**
@@ -14722,12 +14883,15 @@ OCI_EXPORT unsigned int OCI_API OCI_EnqueueGetVisibility
  * Set a message identifier to use for enqueuing messages using a sequence deviation
  *
  * @param enqueue - Enqueue handle
- * @param msg_id  - message identifier
- * @param len     - message identifier length
+ * @param id      - message identifier
+ * @param len     - pointer to message identifier length
  *
  * @note
  * This call is only valid if OCI_EnqueueSetSequenceDeviation() has been called
  * with the value  OCI_ASD_BEFORE
+ *
+ * @warning 
+ * if the function cannot assign the message id, the content of the parameter 'len' is set to zero. 
  *
  * @note
  * see OCI_EnqueueSetSequenceDeviation() for more details
@@ -14739,9 +14903,9 @@ OCI_EXPORT unsigned int OCI_API OCI_EnqueueGetVisibility
 
 OCI_EXPORT boolean OCI_API OCI_EnqueueSetRelativeMsgID
 (
-    OCI_Enqueue *enqueue,
-    const void  *msg_id,
-    unsigned int len
+    OCI_Enqueue  *enqueue,
+    const void   *id,
+    unsigned int  len
 );
 
 /**
@@ -14750,8 +14914,11 @@ OCI_EXPORT boolean OCI_API OCI_EnqueueSetRelativeMsgID
  * using a sequence deviation
  *
  * @param enqueue - Enqueue handle
- * @param msg_id  - buffer to receive the message identifier
- * @param len     - buffer max length
+ * @param id      - buffer to receive the message identifier
+ * @param len     - pointer to buffer max length
+ *
+ * @warning
+ * When the function returns, parameter 'len' hold the number of bytes assigned to parameter 'id' 
  *
  * @note
  * see OCI_EnqueueGetRelativeMsgID() for more details
@@ -14764,8 +14931,8 @@ OCI_EXPORT boolean OCI_API OCI_EnqueueSetRelativeMsgID
 OCI_EXPORT boolean OCI_API OCI_EnqueueGetRelativeMsgID
 (
     OCI_Enqueue *enqueue,
-    void        *msg_id,
-    unsigned int len
+    void         *id,
+    unsigned int *len
 );
 
 /**
@@ -14914,8 +15081,11 @@ OCI_EXPORT const mtext * OCI_API OCI_DequeueGetCorrelation
  * Set the message identifier of the message to be dequeued
  *
  * @param dequeue - Dequeue handle
- * @param msg_id  - message identitier
+ * @param id      - message identitier
  * @param len     - size of the message identitier
+ *
+ * @warning 
+ * if the function cannot assign the message id, the content of the parameter 'len' is set to zero. 
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -14924,9 +15094,9 @@ OCI_EXPORT const mtext * OCI_API OCI_DequeueGetCorrelation
 
 OCI_EXPORT boolean OCI_API OCI_DequeueSetRelativeMsgID
 (
-    OCI_Dequeue *dequeue,
-    const void  *msg_id,
-    unsigned int len
+    OCI_Dequeue  *dequeue,
+    const void   *id,
+    unsigned int  len
 );
 
 /**
@@ -14934,8 +15104,11 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetRelativeMsgID
  * Get the message identifier of the message to be dequeued
  *
  * @param dequeue - Dequeue handle
- * @param msg_id  - message identitier
+ * @param id      - message identitier
  * @param len     - size of the message identitier
+ *
+ * @warning
+ * When the function returns, parameter 'len' hold the number of bytes assigned to parameter 'id' 
  *
  * @note
  * see OCI_DequeueSetRelativeMsgID() for more details
@@ -14944,9 +15117,9 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetRelativeMsgID
 
 OCI_EXPORT boolean OCI_API OCI_DequeueGetRelativeMsgID
 (
-    OCI_Dequeue *dequeue,
-    void        *msg_id,
-    unsigned int len
+    OCI_Dequeue  *dequeue,
+    void         *id,
+    unsigned int *len
 );
 
 /**
@@ -15064,7 +15237,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DequeueGetMode
  * @note
  * Default value is OCI_ADN_NEXT_MSG
  *
- * @warnning
+ * @warning
  * OCI_ADN_NEXT_TRANSACTION can only be used if message grouping is enabled for the given queue.
  *
  * @return
@@ -15205,6 +15378,10 @@ OCI_EXPORT OCI_Agent * OCI_API OCI_DequeueListen
  * - used as sender information when dequeuing a message
  * - used for listening message only from identified senders
  *
+ * @note
+ * the AQ agent address can be any Oracle identifier, up to 128 bytes.
+ * the AQ agent name    can be any Oracle identifier, up to 30  bytes.
+ * 
  * @return
  * AQ agent handle on success otherwise NULL
  *
@@ -15247,6 +15424,9 @@ OCI_EXPORT boolean OCI_API OCI_AgentFree
  * the AQ agent name is used to identified an message send or recipient when enqueuing/dequeuing 
  * a message
  *
+ * @note
+ * the AQ agent name can be any Oracle identifier, up to 30 bytes.
+
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -15284,6 +15464,9 @@ OCI_EXPORT const mtext * OCI_API OCI_AgentGetName
  * @note
  * the parameter 'address' must be of the form [schema.]queue_name[@dblink].
  *
+ * @note
+ * the AQ agent address can be any Oracle identifier, up to 128 bytes.
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -15316,14 +15499,39 @@ OCI_EXPORT const mtext * OCI_API OCI_AgentGetAddress
 
 /**
  * @brief
+ * Create a queue
+ * 
+ * @param con                   - Connection handle
+ * @param queue_name            - Queue name
+ * @param queue_table           - Queue table name
+ * @param queue_type            - Queue type
+ * @param max_retries           - Maximum number of attempts to dequeue a message
+ * @param retry_delay           - Number of seconds between attempts to dequeue a message
+ * @param retention_time        - number of seconds a message is retained in the queue table after
+ *                                being dequeued from the queue
+ * @param dependency_tracking   - Parameter reserved for future use by Oracle (MUST be set to FALSE)
+ * @param comment               - Description of the queue
  *
- * @param
+ * @note    
+ * Parameter 'queue_name' can specify the shema where to create to queue ([schema.]queue_name)
+ * Queue names cannot be longer than 24 characters (Oracle limit for user queues)
  *
- * @note
+ * @note    
  * Possible values for parameter 'queue_type' :
- *  - OCI_AQT_NORMAL
- *  - OCI_AQT_EXCEPTION
- *  - OCI_AQT_NON_PERSISTENT
+ *  - OCI_AQT_NORMAL            : Normal queue
+ *  - OCI_AQT_EXCEPTION         : Exception queue
+ *  - OCI_AQT_NON_PERSISTENT    : Non persistent queue
+ *
+ * To set default values, pass :
+ *  - queue_type     : OCI_AQT_NORMAL
+ *  - max_retries    : 0
+ *  - retry_delay    : 0
+ *  - retention_time : 0
+ *  - comment        : NULL
+ *
+ * @note    
+ * this call wraps the PL/SQL procedure DBMS_AQADM.CREATE_QUEUE().
+ * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15340,36 +15548,30 @@ OCI_EXPORT boolean OCI_API OCI_QueueCreate
     unsigned int    retry_delay,
     unsigned int    retention_time,
     boolean         dependency_tracking,
-    const mtext    *comment,
-    boolean         auto_commit
-);
-
-/**
- * @brief
- *
- * @param
- *
- * @note
- *
- * @return
- * TRUE on success otherwise FALSE
- *
- */
-
-OCI_EXPORT boolean OCI_API OCI_QueueCreateNonPersistent
-(
-    OCI_Connection *con,
-    const mtext    *queue_name,
-    boolean         multiple_consumers,
     const mtext    *comment
 );
 
 /**
  * @brief
+ * Alter the given queue
  *
- * @param
+ * @param con                   - Connection handle
+ * @param queue_name            - Queue name
+ * @param max_retries           - Maximum number of attempts to dequeue a message
+ * @param retry_delay           - Number of seconds between attempts to dequeue a message
+ * @param retention_time        - number of seconds a message is retained in the queue table after
+ *                                being dequeued from the queue
+ * @param comment               - Description of the queue
  *
- * @note
+ * @note    
+ * See OCI_QueueCreate() for more details
+ *
+ * @warning
+ * This fonction updates all attributes handled in the parameter list !
+ *
+ * @note    
+ * this call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE().
+ * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15383,16 +15585,22 @@ OCI_EXPORT boolean OCI_API OCI_QueueAlter
     unsigned int    max_retries,
     unsigned int    retry_delay,
     unsigned int    retention_time,
-    boolean         auto_commit,
     const mtext    *comment
 );
 
 /**
  * @brief
+ * Drop the given queue
  *
- * @param
+ * @param con        - Connection handle
+ * @param queue_name - Queue name
  *
- * @note
+ * @warning
+ * A queue can be dropped only if it has been stopped before.
+ *
+ * @note    
+ * this call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE().
+ * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15402,16 +15610,24 @@ OCI_EXPORT boolean OCI_API OCI_QueueAlter
 OCI_EXPORT boolean OCI_API OCI_QueueDrop
 (
     OCI_Connection *con,
-    const mtext    *queue_name,
-    boolean         auto_commit
+    const mtext    *queue_name
 );
 
 /**
  * @brief
+ * Start the given queue
  *
- * @param
+ * @param con        - Connection handle
+ * @param queue_name - Queue name
+ * @param enqueue    - Enable enqueue
+ * @param dequeue    - Enable dequeue
  *
- * @note
+ * @warning
+ * For exception queues, only enqueuing is allowed
+ *
+ * @note    
+ * this call wraps the PL/SQL procedure DBMS_AQADM.START_QUEUE().
+ * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15428,10 +15644,20 @@ OCI_EXPORT boolean OCI_API OCI_QueueStart
 
 /**
  * @brief
+ * Stop enqueuing or dequeuing or both on the given queue
  *
- * @param
+ * @param con        - Connection handle
+ * @param queue_name - Queue name
+ * @param enqueue    - Disable enqueue
+ * @param dequeue    - Disable dequeue
+ * @param wait       - Wait for current pending enqueuues/dequeues
  *
- * @note
+ * @warning
+ * A queue cannot be stopped if there are pending transactions against the queue.
+ *
+ * @note    
+ * this call wraps the PL/SQL procedure DBMS_AQADM.STOP_QUEUE().
+ * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15449,14 +15675,51 @@ OCI_EXPORT boolean OCI_API OCI_QueueStop
 
 /**
  * @brief
+ * Create a queue table for messages of the given type
+ * 
+ * @param con                   - Connection handle
+ * @param queue_table           - Queue table name
+ * @param queue_payload_type    - Message type name
+ * @param storage_clause        - Additionnal clauses for the table storage
+ * @param sort_list             - Additional columns name to use for sorting
+ * @param multiple_consumers    - Enable multiple consumers for each messages
+ * @param message_grouping      - Specifies if messages are grouped within a transaction
+ * @param comment               - Description of the queue table
+ * @param primary_instance      - primary owner (instance) of the queue table
+ * @param secondary_instance    - Owner of the queue table if the primary instance is not available
+ * @param compatible            - lowest database version with which the queue table is compatible
  *
- * @param
+ * @note    
+ * Parameter 'queue_table' can specify the shema where to create to queue table ([schema.]queue_table)
+ * Queue table names cannot be longer than 24 characters (Oracle limit for user queue tables)
  *
- * @note
- * @note
+ * @note    
+ * Possible values for parameter 'queue_payload_type' :
+ * - For Oracle types (UDT) : use the type name ([schema.].type_name)
+ * - For RAW data           : use "SYS.RAW" or "RAW" 
+ *
+ * @note    
  * Possible values for parameter 'message_grouping' :
- *  - OCI_AGM_NONE
- *  - OCI_AGM_TRANSACTIONNAL
+ *  - OCI_AGM_NONE            : each message is treated individually
+ *  - OCI_AGM_TRANSACTIONNAL  : all messages enqueued in one transaction are considered part of
+ *                              the same group and can be dequeued as a group of related messages.
+ *
+ * @note    
+ * Possible values for parameter 'compatible' :
+ * - "8.0", "8.1", "10.0"
+ *
+ * To set default values, pass :
+ *  - storage_clause    : NULL
+ *  - sort_list         : NULL
+ *  - message_grouping  : OCI_AGM_NONE
+ *  - comment           : NULL
+ *  - primary_instance  : 0
+ *  - primary_instance  : 0
+ *  - compatible        : NULL
+ *
+ * @note    
+ * this call wraps the PL/SQL procedure DBMS_AQADM.CREATE_QUEUE_TABLE().
+ * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15473,7 +15736,6 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableCreate
     boolean         multiple_consumers,
     unsigned int    message_grouping,
     const mtext    *comment,
-    boolean         auto_commit,
     unsigned int    primary_instance,
     unsigned int    secondary_instance,
     const mtext    *compatible
@@ -15481,10 +15743,20 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableCreate
 
 /**
  * @brief
+ * Alter the given queue table
+ * 
+ * @param con                   - Connection handle
+ * @param queue_table           - Queue table name
+ * @param comment               - Description of the queue table
+ * @param primary_instance      - primary owner (instance) of the queue table
+ * @param secondary_instance    - Owner of the queue table if the primary instance is not available
  *
- * @param
+ * @note    
+ * See OCI_QueueTableCreate() from more details
  *
- * @note
+ * @note    
+ * this call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE_TABLE().
+ * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15502,10 +15774,22 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableAlter
 
 /**
  * @brief
+ * Drop the given queue table
  *
- * @param
+ * @param con         - Connection handle
+ * @param queue_table - Queue table name
+ * @param force       - Force the deletion of objects related to the queue table
  *
  * @note
+ * Possible values for 'force' :
+ *  - TRUE  : all queues using the queue table and their associated propagation schedules are 
+ *            dropped automatically
+ *  - FALSE : All the queues using the giben queue table must be stopped and dropped before the
+ *            queue table can be dropped.
+ *
+ * @note    
+ * this call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE_TABLE().
+ * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15516,19 +15800,36 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableDrop
 (
     OCI_Connection *con,
     const mtext    *queue_table,
-    boolean         auto_commit,
     boolean         force
 );
 
 /**
  * @brief
+ * Purge messages from the given queue table
  *
- * @param
+ * @param con             - Connection handle
+ * @param queue_table     - Queue table name
+ * @param purge_condition - Optionnal SQL based conditions (see notes)
+ * @param block           - Lock all queues using the queue table while doing the purge
+ * @param delivery_mode   - Type of message to purge
  *
  * @note
  * Possible values for parameter 'delivery_mode' :
- *  - OCI_APM_BUFFERED
- *  - OCI_APM_PERSISTENT
+ *  - OCI_APM_BUFFERED      : purge only buffered   messages
+ *  - OCI_APM_PERSISTENT    : purge only persistent messages
+ *  - OCI_APM_ALL           : purge all messages
+ *
+ * @note
+ * For more information about the SQL purge conditions, refer to 
+ *  Oracle Streams - Advanced Queuing User's Guide for more details
+ *
+ * @warning
+ * This feature is onyl available from ORacle 10gR2. 
+ * This function does nothing and returns TRUE is the server version is < Oracle 10gR2
+ *
+ * @note    
+ * this call wraps the PL/SQL procedure DBMS_AQADM.PURGE_QUEUE_TABLE().
+ * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15546,10 +15847,19 @@ OCI_EXPORT boolean OCI_API OCI_QueueTablePurge
 
 /**
  * @brief
+ * Migrate a queue table from one version to another
  *
- * @param
+ * @param con             - Connection handle
+ * @param queue_table     - Queue table name
+ * @param compatible      - Database version with witch the queue table has to migrate
  *
- * @note
+ * @note    
+ * Possible values for parameter 'compatible' :
+ * - "8.0", "8.1", "10.0"
+ *
+ * @note    
+ * this call wraps the PL/SQL procedure DBMS_AQADM.MIGRATE_QUEUE_TABLE().
+ * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -16561,6 +16871,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
  *
  * @return
  * TRUE on success otherwise FALSE
+ *
  */
 
 #define OCI_SetNullAtPos(stmt, index, position)                                \
@@ -16591,6 +16902,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
  *
  * @return
  * TRUE on success otherwise FALSE
+ *
  */
 
 #define OCI_SetNullAtPos2(stmt, name, position)                                \

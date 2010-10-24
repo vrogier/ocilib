@@ -29,14 +29,10 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: event.c, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * $Id: event.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
-
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
 
 /* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
@@ -62,15 +58,25 @@ OCI_Enqueue * OCI_API OCI_EnqueueCreate
 
     /* allocate enqueue structure */
 
-    enqueue = (OCI_Enqueue *) OCI_MemAlloc(OCI_IPC_ENQUEUE, sizeof(*enqueue),
-                                           (size_t) 1, TRUE);
+    enqueue = (OCI_Enqueue *) OCI_MemAlloc(OCI_IPC_ENQUEUE, sizeof(*enqueue), (size_t) 1, TRUE);
 
     if (enqueue != NULL)
     {
         enqueue->typinf = typinf;
         enqueue->name   = mtsdup(name);
 
-        /* allocate enqueue options handle */
+        /* get payload type */
+
+        if (mtscmp(enqueue->typinf->name, OCI_RAW_OBJECT_TYPE) == 0)
+        {
+            enqueue->payload_type = OCI_CDT_RAW;
+        }
+        else
+        {
+            enqueue->payload_type = OCI_CDT_OBJECT;
+        }
+
+        /* allocate enqueue options descriptor */
 
         res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) OCILib.env,
                                                   (dvoid **) &enqueue->opth,
@@ -79,6 +85,8 @@ OCI_Enqueue * OCI_API OCI_EnqueueCreate
     }
     else
         res = FALSE;
+
+    /* check for failure */
 
     if (res == FALSE)
     {
@@ -100,6 +108,8 @@ boolean OCI_API OCI_EnqueueFree
 {
     OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue, FALSE);
 
+    /* free OCI descriptor */
+
     OCI_DescriptorFree((dvoid *) enqueue->opth, OCI_DTYPE_AQENQ_OPTIONS);
 
     OCI_FREE(enqueue->name);
@@ -118,12 +128,12 @@ boolean OCI_API OCI_EnqueuePut
     OCI_Msg     *msg
 )
 {
-    boolean res = TRUE;
-    void *ostr  = NULL;
-    int osize   = -1;
+    boolean res     = TRUE;
+    void *ostr      = NULL;
+    int osize       = -1;
 
-    void *payload = NULL;
-    void *ind     = NULL;
+    void *payload  = NULL;
+    void *ind      = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue, FALSE);
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
@@ -132,16 +142,31 @@ boolean OCI_API OCI_EnqueuePut
 
     ostr = OCI_GetInputMetaString(enqueue->name, &osize);
 
-    if (mtscmp(enqueue->typinf->name, OCI_RAW_OBJECT_TYPE) != 0)
+    /* get payload */
+
+    if (enqueue->payload_type == OCI_CDT_OBJECT)
     {
-        payload = &msg->obj->handle;
-        ind     = &msg->obj->tab_ind;
+        OCI_Object *obj = (OCI_Object *) msg->payload;
+
+        if (msg->ind != OCI_IND_NULL)
+        {
+
+            payload = obj->handle;
+            ind     = obj->tab_ind;
+        }
+        else
+        {
+            payload = NULL;
+            ind     = msg->payload_ind;
+        }
     }
     else
     {
-        payload = &msg->raw;
-        ind     = NULL;
+        payload = msg->payload;
+        ind     = msg->payload_ind;
     }
+
+    /* enqueue message */
 
     OCI_CALL2
     (
@@ -149,12 +174,43 @@ boolean OCI_API OCI_EnqueuePut
 
         OCIAQEnq(enqueue->typinf->con->cxt, enqueue->typinf->con->err,
                  ostr, enqueue->opth, msg->proph, enqueue->typinf->tdo,
-                 payload, ind, &msg->id, OCI_DEFAULT);
+                 &payload, &ind, &msg->id, OCI_DEFAULT);
     )
 
     OCI_RESULT(res);
 
     return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_EnqueueGetVisibility
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_EnqueueGetVisibility
+(
+    OCI_Enqueue *enqueue
+)
+{
+    boolean res = TRUE;
+    ub4 ret     = 0;
+
+    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue, FALSE);
+
+    OCI_CALL2
+    (
+        res, enqueue->typinf->con,
+
+        OCIAttrGet((dvoid *) enqueue->opth,
+                   (ub4    ) OCI_DTYPE_AQENQ_OPTIONS,
+                   (dvoid *) &ret,
+                   (ub4   *) NULL,
+                   (ub4    ) OCI_ATTR_VISIBILITY,
+                   enqueue->typinf->con->err)
+    )
+
+    OCI_RESULT(res);
+
+    return (int) ret;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -190,10 +246,10 @@ boolean OCI_API OCI_EnqueueSetVisibility
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueueGetVisibility
+ * OCI_EnqueueGetSequenceDeviation
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_EnqueueGetVisibility
+unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
 (
     OCI_Enqueue *enqueue
 )
@@ -211,7 +267,7 @@ unsigned int OCI_API OCI_EnqueueGetVisibility
                    (ub4    ) OCI_DTYPE_AQENQ_OPTIONS,
                    (dvoid *) &ret,
                    (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_VISIBILITY,
+                   (ub4    ) OCI_ATTR_SEQUENCE_DEVIATION,
                    enqueue->typinf->con->err)
     )
 
@@ -253,92 +309,22 @@ boolean OCI_API OCI_EnqueueSetSequenceDeviation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueueGetSequenceDeviation
- * --------------------------------------------------------------------------------------------- */
-
-unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
-(
-    OCI_Enqueue *enqueue
-)
-{
-    boolean res = TRUE;
-    ub4 ret     = 0;
-
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue, FALSE);
-
-    OCI_CALL2
-    (
-        res, enqueue->typinf->con,
-
-        OCIAttrGet((dvoid *) enqueue->opth,
-                   (ub4    ) OCI_DTYPE_AQENQ_OPTIONS,
-                   (dvoid *) &ret,
-                   (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_SEQUENCE_DEVIATION,
-                   enqueue->typinf->con->err)
-    )
-
-    OCI_RESULT(res);
-
-    return (int) ret;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueueSetRelativeMsgID
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_API OCI_EnqueueSetRelativeMsgID
-(
-    OCI_Enqueue *enqueue,
-    const void  *msg_id,
-    unsigned int len
-)
-{
-    boolean res   = TRUE;
-    OCIRaw *value = NULL;
-
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue, FALSE);
-
-    OCI_CALL2
-    (
-        res, enqueue->typinf->con,
-
-        OCIRawAssignBytes(OCILib.env, enqueue->typinf->con->err,
-                          (ub1*) msg_id, (ub4) len, (OCIRaw **) &value)
-    )
-
-    OCI_CALL2
-    (
-        res, enqueue->typinf->con,
-
-        OCIAttrSet((dvoid *) enqueue->opth,
-                   (ub4    ) OCI_DTYPE_AQENQ_OPTIONS,
-                   (dvoid *) &value,
-                   (ub4    ) 0,
-                   (ub4    ) OCI_ATTR_RELATIVE_MSGID,
-                   enqueue->typinf->con->err)
-    )
-
-    OCI_RESULT(res);
-
-    return res;
-}
-
-/* --------------------------------------------------------------------------------------------- *
  * OCI_EnqueueSetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_EnqueueGetRelativeMsgID
 (
-    OCI_Enqueue *enqueue,
-    void        *msg_id,
-    unsigned int len
+    OCI_Enqueue  *enqueue,
+    void         *id,
+    unsigned int *len
 )
 {
     boolean res   = TRUE;
     OCIRaw *value = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_VOID,    id,      FALSE);
+    OCI_CHECK_PTR(OCI_IPC_VOID,    len,     FALSE);
 
     OCI_CALL2
     (
@@ -358,11 +344,56 @@ boolean OCI_API OCI_EnqueueGetRelativeMsgID
 
         raw_len = OCIRawSize(OCILib.env, value);
 
-        if (len > raw_len)
-            len = raw_len;
+        if (*len > raw_len)
+            *len = raw_len;
 
-        memcpy(msg_id, OCIRawPtr(OCILib.env, value), (size_t) len);
+        memcpy(id, OCIRawPtr(OCILib.env, value), (size_t) (*len));
     }
+    else
+    {
+        *len = 0;
+    }
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_EnqueueSetRelativeMsgID
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_EnqueueSetRelativeMsgID
+(
+    OCI_Enqueue  *enqueue,
+    const void   *id,
+    unsigned int  len
+)
+{
+    boolean res   = TRUE;
+    OCIRaw *value = NULL;
+
+    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue, FALSE);
+
+    OCI_CALL2
+    (
+        res, enqueue->typinf->con,
+
+        OCIRawAssignBytes(OCILib.env, enqueue->typinf->con->err,
+                          (ub1*) id, (ub4) len, (OCIRaw **) &value)
+    )
+
+    OCI_CALL2
+    (
+        res, enqueue->typinf->con,
+
+        OCIAttrSet((dvoid *) enqueue->opth,
+                   (ub4    ) OCI_DTYPE_AQENQ_OPTIONS,
+                   (dvoid *) &value,
+                   (ub4    ) 0,
+                   (ub4    ) OCI_ATTR_RELATIVE_MSGID,
+                   enqueue->typinf->con->err)
+    )
 
     OCI_RESULT(res);
 

@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_defs.h, v 3.8.0 2010-14-09 22:37 Vincent Rogier $
+ * $Id: ocilib_defs.h, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -488,6 +488,9 @@
 
 #define msizeof(s) (sizeof(s) / sizeof(mtext))
 #define dsizeof(s) (sizeof(s) / sizeof(dtext))
+
+#define OCI_ERR_AQ_LISTEN_TIMEOUT      25254
+#define OCI_ERR_AQ_DEQUEUE_TIMEOUT     25228
 
 #endif    /* OCILIB_OCILIB_DEFS_H_INCLUDED */
 
