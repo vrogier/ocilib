@@ -435,7 +435,6 @@ boolean OCI_API OCI_QueueTableCreate
               (
             st,
             MT("DECLARE ")
-            MT("    v_auto_commit        BOOLEAN  := FALSE; ")
             MT("    v_multiple_consumers BOOLEAN  := FALSE; ")
             MT("BEGIN ")
             MT("    IF (:multiple_consumers = 1) then ")
@@ -590,7 +589,6 @@ boolean OCI_API OCI_QueueTableDrop
             MT("DECLARE ")
             MT("    v_force       BOOLEAN  := FALSE; ")
             MT("BEGIN ")
-            MT("    END IF; ")
             MT("    IF (:force = 1) then ")
             MT("        v_force := TRUE; ")
             MT("    END IF; ")

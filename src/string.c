@@ -223,14 +223,14 @@ int OCI_StringUTF8Length
     const char *str
 )
 {
-    int i    = 0;
     int size = 0;
 
     while (*str)
     {
         if ((*str & 0xc0) != 0x80)
             size++;
-        i++;
+        
+        str++;
     }
 
     return size;
