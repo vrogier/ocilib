@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: dirpath.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: dirpath.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -298,85 +298,85 @@ boolean OCI_API OCI_DirPathSetColumn
 
         switch (col->type)
         {
-        case OCI_CDT_TEXT:
+            case OCI_CDT_TEXT:
 
-            dpcol->maxsize *= sizeof(dtext);
-            dpcol->bufsize *= sizeof(dtext);
+                dpcol->maxsize *= sizeof(dtext);
+                dpcol->bufsize *= sizeof(dtext);
 
-            if (OCILib.nls_utf8 == TRUE)
-            {
-                dpcol->bufsize *= UTF8_BYTES_PER_CHAR;
-            }
+                if (OCILib.nls_utf8 == TRUE)
+                {
+                    dpcol->bufsize *= UTF8_BYTES_PER_CHAR;
+                }
 
-            break;
+                break;
 
-        case OCI_CDT_NUMERIC:
+            case OCI_CDT_NUMERIC:
 
-            if ((format != NULL) && (format[0] != 0))
-            {
-                dpcol->format      = mtsdup(format);
-                dpcol->format_size = (ub4) mtslen(format);
-                dpcol->type        = OCI_DDT_NUMBER;
-                dpcol->sqlcode     = SQLT_NUM;
-                dpcol->bufsize     = sizeof(OCINumber);
-                dpcol->maxsize     = sizeof(OCINumber);
-            }
-            else
-            {
+                if ((format != NULL) && (format[0] != 0))
+                {
+                    dpcol->format      = mtsdup(format);
+                    dpcol->format_size = (ub4) mtslen(format);
+                    dpcol->type        = OCI_DDT_NUMBER;
+                    dpcol->sqlcode     = SQLT_NUM;
+                    dpcol->bufsize     = sizeof(OCINumber);
+                    dpcol->maxsize     = sizeof(OCINumber);
+                }
+                else
+                {
+                    dpcol->type = OCI_DDT_OTHERS;
+                }
+
+                break;
+
+            case OCI_CDT_DATETIME:
+            case OCI_CDT_TIMESTAMP:
+            case OCI_CDT_INTERVAL:
+
                 dpcol->type = OCI_DDT_OTHERS;
-            }
 
-            break;
+                if ((format != NULL) && (format[0] != 0))
+                {
+                    dpcol->format      = mtsdup(format);
+                    dpcol->format_size = (ub4) mtslen(format);
+                    dpcol->maxsize     = (ub2) dpcol->format_size;
+                    dpcol->bufsize    *= sizeof(dtext);
+                }
 
-        case OCI_CDT_DATETIME:
-        case OCI_CDT_TIMESTAMP:
-        case OCI_CDT_INTERVAL:
+                break;
 
-            dpcol->type = OCI_DDT_OTHERS;
+            case OCI_CDT_LOB:
 
-            if ((format != NULL) && (format[0] != 0))
-            {
-                dpcol->format      = mtsdup(format);
-                dpcol->format_size = (ub4) mtslen(format);
-                dpcol->maxsize     = (ub2) dpcol->format_size;
-                dpcol->bufsize    *= sizeof(dtext);
-            }
+                if (col->subtype == OCI_BLOB)
+                {
+                    dpcol->type    = OCI_DDT_BINARY;
+                    dpcol->sqlcode = SQLT_BIN;
+                }
 
-            break;
+                break;
 
-        case OCI_CDT_LOB:
+            case OCI_CDT_LONG:
 
-            if (col->subtype == OCI_BLOB)
-            {
+                if (col->subtype == OCI_BLONG)
+                {
+                    dpcol->type    = OCI_DDT_BINARY;
+                    dpcol->sqlcode = SQLT_BIN;
+                }
+
+                break;
+
+            case OCI_CDT_RAW:
+
                 dpcol->type    = OCI_DDT_BINARY;
                 dpcol->sqlcode = SQLT_BIN;
-            }
 
-            break;
+                break;
 
-        case OCI_CDT_LONG:
+            default:
 
-            if (col->subtype == OCI_BLONG)
-            {
-                dpcol->type    = OCI_DDT_BINARY;
-                dpcol->sqlcode = SQLT_BIN;
-            }
+                res = FALSE;
+                OCI_ExceptionDatatypeNotSupported(dp->con, NULL, col->ocode);
 
-            break;
-
-        case OCI_CDT_RAW:
-
-            dpcol->type    = OCI_DDT_BINARY;
-            dpcol->sqlcode = SQLT_BIN;
-
-            break;
-
-        default:
-
-            res = FALSE;
-            OCI_ExceptionDatatypeNotSupported(dp->con, NULL, col->ocode);
-
-            break;
+                break;
         }
     }
 
@@ -878,37 +878,36 @@ unsigned int OCI_API OCI_DirPathConvert
 
         switch (ret)
         {
-        case OCI_SUCCESS:
-        {
-            dp->status  = OCI_DPS_CONVERTED;
-            dp->err_col = 0;
-            dp->err_row = 0;
-            res         = OCI_DPR_COMPLETE;
+            case OCI_SUCCESS:
+            {
+                dp->status  = OCI_DPS_CONVERTED;
+                dp->err_col = 0;
+                dp->err_row = 0;
+                res         = OCI_DPR_COMPLETE;
 
-            break;
-        }
-        case OCI_ERROR:
-        {
-            res = OCI_DPR_ERROR;
+                break;
+            }
+            case OCI_ERROR:
+            {
+                res = OCI_DPR_ERROR;
 
-            OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
+                OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
 
-            break;
-        }
-        case OCI_CONTINUE:
-        {
-            dp->status = OCI_DPS_CONVERTED;
-            res        = OCI_DPR_FULL;
+                break;
+            }
+            case OCI_CONTINUE:
+            {
+                dp->status = OCI_DPS_CONVERTED;
+                res        = OCI_DPR_FULL;
 
-            break;
-        }
-        case OCI_NEED_DATA:
-        {
-            res = OCI_DPR_PARTIAL;
+                break;
+            }
+            case OCI_NEED_DATA:
+            {
+                res = OCI_DPR_PARTIAL;
 
-            break;
-        }
-
+                break;
+            }
         }
 
         if (ret != OCI_SUCCESS)
@@ -964,36 +963,35 @@ unsigned int OCI_API OCI_DirPathLoad
 
     switch (ret)
     {
-    case OCI_SUCCESS:
-    {
-        dp->status     = OCI_DPS_PREPARED;
-        dp->nb_prcsd   = dp->nb_cur;
-        dp->nb_loaded += dp->nb_prcsd;
-        res            = OCI_DPR_COMPLETE;
+        case OCI_SUCCESS:
+        {
+            dp->status     = OCI_DPS_PREPARED;
+            dp->nb_prcsd   = dp->nb_cur;
+            dp->nb_loaded += dp->nb_prcsd;
+            res            = OCI_DPR_COMPLETE;
 
-        break;
-    }
-    case OCI_ERROR:
-    {
-        res = OCI_DPR_ERROR;
+            break;
+        }
+        case OCI_ERROR:
+        {
+            res = OCI_DPR_ERROR;
 
-        OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
+            OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
 
-        break;
-    }
-    case OCI_NO_DATA:
-    {
-        res = OCI_DPR_EMPTY;
+            break;
+        }
+        case OCI_NO_DATA:
+        {
+            res = OCI_DPR_EMPTY;
 
-        break;
-    }
-    case OCI_NEED_DATA:
-    {
-        res = OCI_DPR_PARTIAL;
+            break;
+        }
+        case OCI_NEED_DATA:
+        {
+            res = OCI_DPR_PARTIAL;
 
-        break;
-    }
-
+            break;
+        }
     }
 
     if (ret != OCI_SUCCESS)

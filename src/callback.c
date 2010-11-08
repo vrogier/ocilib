@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: callback.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: callback.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -190,19 +190,18 @@ sb4 OCI_ProcOutBind
 
         switch (def->col.type)
         {
+            case OCI_CDT_CURSOR:
+            case OCI_CDT_TIMESTAMP:
+            case OCI_CDT_INTERVAL:
+            case OCI_CDT_LOB:
+            case OCI_CDT_FILE:
 
-        case OCI_CDT_CURSOR:
-        case OCI_CDT_TIMESTAMP:
-        case OCI_CDT_INTERVAL:
-        case OCI_CDT_LOB:
-        case OCI_CDT_FILE:
+                *bufpp = def->buf.data[index];
+                break;
 
-            *bufpp = def->buf.data[index];
-            break;
+            default:
 
-        default:
-
-            *bufpp = (((ub1*)def->buf.data) + (size_t) (def->col.bufsize * index));
+                *bufpp = (((ub1*)def->buf.data) + (size_t) (def->col.bufsize * index));
         }
 
         *alenp  = (ub4   *) (((ub1 *) def->buf.lens) + (size_t) ((ub4) def->buf.sizelen * index));
@@ -284,35 +283,35 @@ ub4 OCI_ProcNotify
 
     switch(type)
     {
-    case OCI_EVENT_STARTUP:
-    case OCI_EVENT_SHUTDOWN:
-    case OCI_EVENT_SHUTDOWN_ANY:
-    {
-        if (sub->type & OCI_CNT_DATABASES)
+        case OCI_EVENT_STARTUP:
+        case OCI_EVENT_SHUTDOWN:
+        case OCI_EVENT_SHUTDOWN_ANY:
+        {
+            if (sub->type & OCI_CNT_DATABASES)
+            {
+                sub->event.type = type;
+            }
+
+            break;
+        }
+        case OCI_EVENT_DEREG:
         {
             sub->event.type = type;
+            break;
         }
-
-        break;
-    }
-    case OCI_EVENT_DEREG:
-    {
-        sub->event.type = type;
-        break;
-    }
-    case OCI_EVENT_OBJCHANGE:
-    {
-        if (sub->type & OCI_CNT_OBJECTS)
+        case OCI_EVENT_OBJCHANGE:
         {
-            sub->event.type = type;
-        }
+            if (sub->type & OCI_CNT_OBJECTS)
+            {
+                sub->event.type = type;
+            }
 
-        break;
-    }
-    default:
-    {
-        break;
-    }
+            break;
+        }
+        default:
+        {
+            break;
+        }
     }
 
     /* for object, much work to do for retrieving data */

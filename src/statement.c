@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: statement.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: statement.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -1066,215 +1066,215 @@ boolean OCI_FetchIntoUserVariables
 
             switch (type)
             {
-            case OCI_ARG_SHORT:
-            {
-                short src, *dst;
+                case OCI_ARG_SHORT:
+                {
+                    short src, *dst;
 
-                src = OCI_GetShort(rs, i);
-                dst = va_arg(args, short *);
+                    src = OCI_GetShort(rs, i);
+                    dst = va_arg(args, short *);
 
-                if (dst != NULL)
-                    *dst = src;
+                    if (dst != NULL)
+                        *dst = src;
 
-                break;
-            }
-            case OCI_ARG_USHORT:
-            {
-                unsigned short src, *dst;
+                    break;
+                }
+                case OCI_ARG_USHORT:
+                {
+                    unsigned short src, *dst;
 
-                src = OCI_GetUnsignedShort(rs, i);
-                dst = va_arg(args, unsigned short *);
+                    src = OCI_GetUnsignedShort(rs, i);
+                    dst = va_arg(args, unsigned short *);
 
-                if (dst != NULL)
-                    *dst = src;
+                    if (dst != NULL)
+                        *dst = src;
 
-                break;
-            }
-            case OCI_ARG_INT:
-            {
-                int src, *dst;
+                    break;
+                }
+                case OCI_ARG_INT:
+                {
+                    int src, *dst;
 
-                src = OCI_GetInt(rs, i);
-                dst = va_arg(args, int *);
+                    src = OCI_GetInt(rs, i);
+                    dst = va_arg(args, int *);
 
-                if (dst != NULL)
-                    *dst = src;
+                    if (dst != NULL)
+                        *dst = src;
 
-                break;
-            }
-            case OCI_ARG_UINT:
-            {
-                unsigned int src, *dst;
+                    break;
+                }
+                case OCI_ARG_UINT:
+                {
+                    unsigned int src, *dst;
 
-                src = OCI_GetUnsignedInt(rs, i);
-                dst = va_arg(args, unsigned int *);
+                    src = OCI_GetUnsignedInt(rs, i);
+                    dst = va_arg(args, unsigned int *);
 
-                if (dst != NULL)
-                    *dst = src;
+                    if (dst != NULL)
+                        *dst = src;
 
-                break;
-            }
-            case OCI_ARG_BIGINT:
-            {
-                big_int src, *dst;
+                    break;
+                }
+                case OCI_ARG_BIGINT:
+                {
+                    big_int src, *dst;
 
-                src = OCI_GetBigInt(rs, i);
-                dst = va_arg(args, big_int *);
+                    src = OCI_GetBigInt(rs, i);
+                    dst = va_arg(args, big_int *);
 
-                if (dst != NULL)
-                    *dst = src;
+                    if (dst != NULL)
+                        *dst = src;
 
-                break;
-            }
-            case OCI_ARG_BIGUINT:
-            {
-                big_uint src, *dst;
+                    break;
+                }
+                case OCI_ARG_BIGUINT:
+                {
+                    big_uint src, *dst;
 
-                src = OCI_GetUnsignedBigInt(rs, i);
-                dst = va_arg(args, big_uint *);
+                    src = OCI_GetUnsignedBigInt(rs, i);
+                    dst = va_arg(args, big_uint *);
 
-                if (dst != NULL)
-                    *dst = src;
+                    if (dst != NULL)
+                        *dst = src;
 
-                break;
-            }
-            case OCI_ARG_DOUBLE:
-            {
-                double src, *dst;
+                    break;
+                }
+                case OCI_ARG_DOUBLE:
+                {
+                    double src, *dst;
 
-                src = OCI_GetDouble(rs, i);
-                dst = va_arg(args, double *);
+                    src = OCI_GetDouble(rs, i);
+                    dst = va_arg(args, double *);
 
-                if (dst != NULL)
-                    *dst = src;
+                    if (dst != NULL)
+                        *dst = src;
 
-                break;
-            }
-            case OCI_ARG_DATETIME:
-            {
-                OCI_Date *src, *dst;
+                    break;
+                }
+                case OCI_ARG_DATETIME:
+                {
+                    OCI_Date *src, *dst;
 
-                src = OCI_GetDate(rs, i);
-                dst = (OCI_Date *) va_arg(args, OCI_Date *);
+                    src = OCI_GetDate(rs, i);
+                    dst = (OCI_Date *) va_arg(args, OCI_Date *);
 
-                if (src != NULL && dst != NULL)
-                    res = OCI_DateAssign(dst, src);
+                    if (src != NULL && dst != NULL)
+                        res = OCI_DateAssign(dst, src);
 
-                break;
-            }
-            case OCI_ARG_TEXT:
-            {
-                const dtext *src;
-                dtext *dst;
+                    break;
+                }
+                case OCI_ARG_TEXT:
+                {
+                    const dtext *src;
+                    dtext *dst;
 
-                src = OCI_GetString(rs, i);
-                dst = va_arg(args, dtext *);
+                    src = OCI_GetString(rs, i);
+                    dst = va_arg(args, dtext *);
 
-                if (dst != NULL)
-                    dst[0] = 0;
+                    if (dst != NULL)
+                        dst[0] = 0;
 
-                if (dst != NULL && src != NULL)
-                    dtscat(dst, src);
+                    if (dst != NULL && src != NULL)
+                        dtscat(dst, src);
 
-                break;
-            }
-            case OCI_ARG_RAW:
-            {
-                OCI_GetRaw(rs, i, va_arg(args, dtext *), col->bufsize);
-                break;
-            }
-            case OCI_ARG_LOB:
-            {
-                OCI_Lob *src, *dst;
+                    break;
+                }
+                case OCI_ARG_RAW:
+                {
+                    OCI_GetRaw(rs, i, va_arg(args, dtext *), col->bufsize);
+                    break;
+                }
+                case OCI_ARG_LOB:
+                {
+                    OCI_Lob *src, *dst;
 
-                src = OCI_GetLob(rs, i);
-                dst = (OCI_Lob *) va_arg(args, OCI_Lob *);
+                    src = OCI_GetLob(rs, i);
+                    dst = (OCI_Lob *) va_arg(args, OCI_Lob *);
 
-                if (src != NULL && dst != NULL)
-                    res = OCI_LobAssign(dst, src);
+                    if (src != NULL && dst != NULL)
+                        res = OCI_LobAssign(dst, src);
 
-                break;
-            }
-            case OCI_ARG_FILE:
-            {
-                OCI_File *src, *dst;
+                    break;
+                }
+                case OCI_ARG_FILE:
+                {
+                    OCI_File *src, *dst;
 
-                src = OCI_GetFile(rs, i);
-                dst = (OCI_File *) va_arg(args, OCI_File *);
+                    src = OCI_GetFile(rs, i);
+                    dst = (OCI_File *) va_arg(args, OCI_File *);
 
-                if (src != NULL && dst != NULL)
-                    res = OCI_FileAssign(dst, src);
+                    if (src != NULL && dst != NULL)
+                        res = OCI_FileAssign(dst, src);
 
-                break;
-            }
-            case OCI_ARG_TIMESTAMP:
-            {
-                OCI_Timestamp *src, *dst;
+                    break;
+                }
+                case OCI_ARG_TIMESTAMP:
+                {
+                    OCI_Timestamp *src, *dst;
 
-                src = OCI_GetTimestamp(rs, i);
-                dst = (OCI_Timestamp *) va_arg(args, OCI_Timestamp *);
+                    src = OCI_GetTimestamp(rs, i);
+                    dst = (OCI_Timestamp *) va_arg(args, OCI_Timestamp *);
 
-                if (src != NULL && dst != NULL)
-                    res = OCI_TimestampAssign(dst, src);
+                    if (src != NULL && dst != NULL)
+                        res = OCI_TimestampAssign(dst, src);
 
-                break;
-            }
-            case OCI_ARG_INTERVAL:
-            {
-                OCI_Interval *src, *dst;
+                    break;
+                }
+                case OCI_ARG_INTERVAL:
+                {
+                    OCI_Interval *src, *dst;
 
-                src = OCI_GetInterval(rs, i);
-                dst = (OCI_Interval *) va_arg(args, OCI_Interval *);
+                    src = OCI_GetInterval(rs, i);
+                    dst = (OCI_Interval *) va_arg(args, OCI_Interval *);
 
-                if (src != NULL && dst != NULL)
-                    res =OCI_IntervalAssign(dst, src);
+                    if (src != NULL && dst != NULL)
+                        res =OCI_IntervalAssign(dst, src);
 
-                break;
-            }
-            case OCI_ARG_OBJECT:
-            {
-                OCI_Object *src, *dst;
+                    break;
+                }
+                case OCI_ARG_OBJECT:
+                {
+                    OCI_Object *src, *dst;
 
-                src = OCI_GetObject(rs, i);
-                dst = (OCI_Object *) va_arg(args, OCI_Object *);
+                    src = OCI_GetObject(rs, i);
+                    dst = (OCI_Object *) va_arg(args, OCI_Object *);
 
-                if (src != NULL && dst != NULL)
-                    res =OCI_ObjectAssign(dst, src);
+                    if (src != NULL && dst != NULL)
+                        res =OCI_ObjectAssign(dst, src);
 
-                break;
-            }
-            case OCI_ARG_COLLECTION:
-            {
-                OCI_Coll *src, *dst;
+                    break;
+                }
+                case OCI_ARG_COLLECTION:
+                {
+                    OCI_Coll *src, *dst;
 
-                src = OCI_GetColl(rs, i);
-                dst = (OCI_Coll *) va_arg(args, OCI_Coll *);
+                    src = OCI_GetColl(rs, i);
+                    dst = (OCI_Coll *) va_arg(args, OCI_Coll *);
 
-                if (src != NULL && dst != NULL)
-                    res =OCI_CollAssign(dst, src);
+                    if (src != NULL && dst != NULL)
+                        res =OCI_CollAssign(dst, src);
 
-                break;
-            }
-            case OCI_ARG_REF:
-            {
-                OCI_Ref *src, *dst;
+                    break;
+                }
+                case OCI_ARG_REF:
+                {
+                    OCI_Ref *src, *dst;
 
-                src = OCI_GetRef(rs, i);
-                dst = (OCI_Ref *) va_arg(args, OCI_Ref *);
+                    src = OCI_GetRef(rs, i);
+                    dst = (OCI_Ref *) va_arg(args, OCI_Ref *);
 
-                if (src != NULL && dst != NULL)
-                    res =OCI_RefAssign(dst, src);
+                    if (src != NULL && dst != NULL)
+                        res =OCI_RefAssign(dst, src);
 
-                break;
-            }
-            default:
-            {
-                OCI_ExceptionMappingArgument(stmt->con, stmt, type);
+                    break;
+                }
+                default:
+                {
+                    OCI_ExceptionMappingArgument(stmt->con, stmt, type);
 
-                res = FALSE;
+                    res = FALSE;
 
-                break;
-            }
+                    break;
+                }
             }
         }
     }
@@ -1613,7 +1613,9 @@ boolean OCI_API OCI_ExecuteInternal
     /* set up iters and mode values for execution */
 
     if (stmt->type == OCI_CST_SELECT)
+    {
         mode = stmt->exec_mode;
+    }
     else
     {
         iters = stmt->nb_iters;

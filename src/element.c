@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: element.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: element.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -68,6 +68,7 @@ OCI_Elem * OCI_ElemInit
         elem->ind    = OCI_IND_NULL;
         elem->typinf = typinf;
         elem->handle = handle;
+        elem->init   = FALSE;
 
         if (handle == NULL)
             elem->hstate = OCI_OBJECT_ALLOCATED;
@@ -76,28 +77,28 @@ OCI_Elem * OCI_ElemInit
 
         switch (elem->typinf->cols[0].type)
         {
-        case OCI_CDT_NUMERIC:
+            case OCI_CDT_NUMERIC:
 
-            if (elem->handle == NULL)
-            {
-                elem->handle = (OCINumber *) OCI_MemAlloc(OCI_IPC_VOID,
-                                                          sizeof(OCINumber),
-                                                          1, TRUE);
-            }
+                if (elem->handle == NULL)
+                {
+                    elem->handle = (OCINumber *) OCI_MemAlloc(OCI_IPC_VOID,
+                                                              sizeof(OCINumber),
+                                                              1, TRUE);
+                }
 
-            break;
+                break;
 
-        case OCI_CDT_TEXT:
-        case OCI_CDT_TIMESTAMP:
-        case OCI_CDT_INTERVAL:
-        case OCI_CDT_RAW:
-        case OCI_CDT_LOB:
-        case OCI_CDT_FILE:
-        case OCI_CDT_REF:
+            case OCI_CDT_TEXT:
+            case OCI_CDT_TIMESTAMP:
+            case OCI_CDT_INTERVAL:
+            case OCI_CDT_RAW:
+            case OCI_CDT_LOB:
+            case OCI_CDT_FILE:
+            case OCI_CDT_REF:
 
-            if (elem->handle != NULL)
-                elem->handle = * (void **) handle;
-            break;
+                if (elem->handle != NULL)
+                    elem->handle = * (void **) handle;
+                break;
         }
 
         if (pind != NULL)
@@ -271,45 +272,45 @@ boolean OCI_API OCI_ElemFree
 
         switch (elem->typinf->cols[0].type)
         {
-        case OCI_CDT_DATETIME:
+            case OCI_CDT_DATETIME:
 
-            OCI_DateFree((OCI_Date *) elem->obj);
-            break;
+                OCI_DateFree((OCI_Date *) elem->obj);
+                break;
 
-        case OCI_CDT_LOB:
+            case OCI_CDT_LOB:
 
-            OCI_LobFree((OCI_Lob *) elem->obj);
-            break;
+                OCI_LobFree((OCI_Lob *) elem->obj);
+                break;
 
-        case OCI_CDT_FILE:
+            case OCI_CDT_FILE:
 
-            OCI_FileFree((OCI_File *) elem->obj);
-            break;
+                OCI_FileFree((OCI_File *) elem->obj);
+                break;
 
-        case OCI_CDT_OBJECT:
+            case OCI_CDT_OBJECT:
 
-            OCI_ObjectFree((OCI_Object *) elem->obj);
-            break;
+                OCI_ObjectFree((OCI_Object *) elem->obj);
+                break;
 
-        case OCI_CDT_COLLECTION:
+            case OCI_CDT_COLLECTION:
 
-            OCI_CollFree((OCI_Coll *) elem->obj);;
-            break;
+                OCI_CollFree((OCI_Coll *) elem->obj);;
+                break;
 
-        case OCI_CDT_TIMESTAMP:
+            case OCI_CDT_TIMESTAMP:
 
-            OCI_TimestampFree((OCI_Timestamp *) elem->obj);
-            break;
+                OCI_TimestampFree((OCI_Timestamp *) elem->obj);
+                break;
 
-        case OCI_CDT_INTERVAL:
+            case OCI_CDT_INTERVAL:
 
-            OCI_IntervalFree((OCI_Interval *) elem->obj);
-            break;
+                OCI_IntervalFree((OCI_Interval *) elem->obj);
+                break;
 
-        case OCI_CDT_REF:
+            case OCI_CDT_REF:
 
-            OCI_RefFree((OCI_Ref *) elem->obj);
-            break;
+                OCI_RefFree((OCI_Ref *) elem->obj);
+                break;
         }
     }
 

@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: array.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: array.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -65,60 +65,60 @@ boolean OCI_ArrayInit
 
         switch (arr->elem_type)
         {
-        case OCI_CDT_DATETIME:
+            case OCI_CDT_DATETIME:
 
-            OCI_DateInit(arr->con, (OCI_Date **) &arr->tab_obj[i],
-                         handle, FALSE, FALSE);
+                OCI_DateInit(arr->con, (OCI_Date **) &arr->tab_obj[i],
+                             handle, FALSE, FALSE);
 
-            break;
+                break;
 
-        case OCI_CDT_LOB:
+            case OCI_CDT_LOB:
 
-            OCI_LobInit(arr->con, (OCI_Lob **) &arr->tab_obj[i],
-                        handle, arr->elem_subtype);
+                OCI_LobInit(arr->con, (OCI_Lob **) &arr->tab_obj[i],
+                            handle, arr->elem_subtype);
 
-            break;
+                break;
 
-        case OCI_CDT_FILE:
+            case OCI_CDT_FILE:
 
-            OCI_FileInit(arr->con, (OCI_File **) &arr->tab_obj[i],
-                         handle, arr->elem_subtype);
-            break;
-
-        case OCI_CDT_TIMESTAMP:
-
-            OCI_TimestampInit(arr->con, (OCI_Timestamp **) &arr->tab_obj[i],
-                              handle, arr->elem_subtype);
-
-            break;
-
-        case OCI_CDT_INTERVAL:
-
-            OCI_IntervalInit(arr->con, (OCI_Interval **) &arr->tab_obj[i],
+                OCI_FileInit(arr->con, (OCI_File **) &arr->tab_obj[i],
                              handle, arr->elem_subtype);
+                break;
 
-            break;
+            case OCI_CDT_TIMESTAMP:
 
-        case OCI_CDT_OBJECT:
+                OCI_TimestampInit(arr->con, (OCI_Timestamp **) &arr->tab_obj[i],
+                                  handle, arr->elem_subtype);
 
-            OCI_ObjectInit(arr->con, (OCI_Object **) &arr->tab_obj[i],
-                           handle, typinf, NULL, -1, TRUE);
+                break;
 
-            break;
+            case OCI_CDT_INTERVAL:
 
-        case OCI_CDT_COLLECTION:
+                OCI_IntervalInit(arr->con, (OCI_Interval **) &arr->tab_obj[i],
+                                 handle, arr->elem_subtype);
 
-            OCI_CollInit(arr->con, (OCI_Coll **) &arr->tab_obj[i],
-                         handle, typinf);
+                break;
 
-            break;
+            case OCI_CDT_OBJECT:
 
-        case OCI_CDT_REF:
+                OCI_ObjectInit(arr->con, (OCI_Object **) &arr->tab_obj[i],
+                               handle, typinf, NULL, -1, TRUE);
 
-            OCI_RefInit(arr->con, typinf, (OCI_Ref **) &arr->tab_obj[i],
-                        handle);
+                break;
 
-            break;
+            case OCI_CDT_COLLECTION:
+
+                OCI_CollInit(arr->con, (OCI_Coll **) &arr->tab_obj[i],
+                             handle, typinf);
+
+                break;
+
+            case OCI_CDT_REF:
+
+                OCI_RefInit(arr->con, typinf, (OCI_Ref **) &arr->tab_obj[i],
+                            handle);
+
+                break;
         }
     }
 
@@ -144,50 +144,50 @@ boolean OCI_ArrayClose
     {
         switch (arr->elem_type)
         {
-        case OCI_CDT_DATETIME:
+            case OCI_CDT_DATETIME:
 
-            OCI_DateFree((OCI_Date *) arr->tab_obj[i]);
+                OCI_DateFree((OCI_Date *) arr->tab_obj[i]);
 
-            break;
+                break;
 
-        case OCI_CDT_LOB:
+            case OCI_CDT_LOB:
 
-            OCI_LobFree((OCI_Lob *) arr->tab_obj[i]);
-            break;
+                OCI_LobFree((OCI_Lob *) arr->tab_obj[i]);
+                break;
 
-        case OCI_CDT_FILE:
+            case OCI_CDT_FILE:
 
-            OCI_FileFree((OCI_File *) arr->tab_obj[i]);
-            break;
+                OCI_FileFree((OCI_File *) arr->tab_obj[i]);
+                break;
 
-        case OCI_CDT_TIMESTAMP:
+            case OCI_CDT_TIMESTAMP:
 
-            OCI_TimestampFree((OCI_Timestamp *) arr->tab_obj[i]);
+                OCI_TimestampFree((OCI_Timestamp *) arr->tab_obj[i]);
 
-            break;
+                break;
 
-        case OCI_CDT_INTERVAL:
+            case OCI_CDT_INTERVAL:
 
-            OCI_IntervalFree((OCI_Interval *) arr->tab_obj[i]);
+                OCI_IntervalFree((OCI_Interval *) arr->tab_obj[i]);
 
-            break;
+                break;
 
-        case OCI_CDT_OBJECT:
+            case OCI_CDT_OBJECT:
 
-            OCI_ObjectFree((OCI_Object *) arr->tab_obj[i]);
+                OCI_ObjectFree((OCI_Object *) arr->tab_obj[i]);
 
-            break;
+                break;
 
-        case OCI_CDT_COLLECTION:
+            case OCI_CDT_COLLECTION:
 
-            OCI_CollFree((OCI_Coll *) arr->tab_obj[i]);
+                OCI_CollFree((OCI_Coll *) arr->tab_obj[i]);
 
-            break;
+                break;
 
-        case OCI_CDT_REF:
+            case OCI_CDT_REF:
 
-            OCI_RefFree((OCI_Ref *) arr->tab_obj[i]);
-            break;
+                OCI_RefFree((OCI_Ref *) arr->tab_obj[i]);
+                break;
         }
     }
 

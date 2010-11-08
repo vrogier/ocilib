@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: define.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: define.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -122,26 +122,26 @@ void * OCI_DefineGetData
 
     switch (def->col.type)
     {
-    case OCI_CDT_LONG:
-    case OCI_CDT_CURSOR:
-    case OCI_CDT_TIMESTAMP:
-    case OCI_CDT_INTERVAL:
-    case OCI_CDT_LOB:
-    case OCI_CDT_FILE:
-    case OCI_CDT_OBJECT:
-    case OCI_CDT_COLLECTION:
-    case OCI_CDT_REF:
+        case OCI_CDT_LONG:
+        case OCI_CDT_CURSOR:
+        case OCI_CDT_TIMESTAMP:
+        case OCI_CDT_INTERVAL:
+        case OCI_CDT_LOB:
+        case OCI_CDT_FILE:
+        case OCI_CDT_OBJECT:
+        case OCI_CDT_COLLECTION:
+        case OCI_CDT_REF:
 
-        /* handle based types */
+            /* handle based types */
 
-        return def->buf.data[def->rs->row_cur-1];
+            return def->buf.data[def->rs->row_cur-1];
 
-    default:
+        default:
 
-        /* scalar types */
+            /* scalar types */
 
-        return (((ub1  *) (def->buf.data)) +
-                (size_t) (def->col.bufsize * (def->rs->row_cur-1)));
+            return (((ub1  *) (def->buf.data)) +
+                    (size_t) (def->col.bufsize * (def->rs->row_cur-1)));
     }
 }
 
@@ -167,23 +167,23 @@ boolean OCI_DefineGetNumber
 
         switch (def->col.type)
         {
-        case OCI_CDT_NUMERIC:
-        {
-            res = OCI_NumberGet(rs->stmt->con, (OCINumber *) data, value,
-                                size, type);
-            break;
-        }
-        case OCI_CDT_TEXT:
-        {
-            const mtext *fmt = OCI_GetDefaultFormatNumeric(rs->stmt->con);
-            ub4 fmt_size     = (ub4) mtslen(fmt);
+            case OCI_CDT_NUMERIC:
+            {
+                res = OCI_NumberGet(rs->stmt->con, (OCINumber *) data, value,
+                                    size, type);
+                break;
+            }
+            case OCI_CDT_TEXT:
+            {
+                const mtext *fmt = OCI_GetDefaultFormatNumeric(rs->stmt->con);
+                ub4 fmt_size     = (ub4) mtslen(fmt);
 
-            res = OCI_NumberGetFromStr(rs->stmt->con, value, size, type,
-                                       (dtext *) data,
-                                       (int) dtslen((dtext *) data),
-                                       fmt, fmt_size);
-            break;
-        }
+                res = OCI_NumberGetFromStr(rs->stmt->con, value, size, type,
+                                           (dtext *) data,
+                                           (int) dtslen((dtext *) data),
+                                           fmt, fmt_size);
+                break;
+            }
         }
     }
 

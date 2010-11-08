@@ -1,0 +1,18 @@
+2010-11-08 Version 3.8.1 Vincent Rogier vince.rogier@ocilib.net
+
+    * Fixed UTF8 support using NLS_LANG environment variable set to any UTF8 values
+
+      - Writing/reading lob using OCI_LobRead2() and OCI_LobWrite2()
+      - Allocating internal memory for ROWID and UROWID
+
+    * Miscellaneous fixes
+
+      - Fixed internal computation of OCI_Object attributes null indicator offsets
+      - Fixed OCI_Elem handle initialization by OCI_CollGetAt() and OCI_CollGetAt2()
+      - Fixed OCI_Ping() : OCI symbol OCIPing() was not dynamically loaded if OCI_IMPORT_RUNTIME was used (default for precompiled MS Windows Dlls)
+
+    * Miscellaneous changes
+
+      - Added support for numeric subtypes in OCI_BindGetSubtype() + documentation update
+      - Manual update of source code formatted with Uncrustify (wrong indentation of witch case and some variable initialization)
+

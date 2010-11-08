@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: resultset.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: resultset.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -569,58 +569,58 @@ boolean OCI_FetchCustom
 
     switch (mode)
     {
-    case OCI_SFD_RELATIVE:
-    {
-        int offset_save = 0;
-
-        if (((offset > 0) && (rs->eof == TRUE)) ||
-            ((offset < 0) && (rs->bof == TRUE)) ||
-            (offset == 0))
+        case OCI_SFD_RELATIVE:
         {
-            res = FALSE;
-        }
-        else
-        {
-            offset_save = offset;
-            offset      = offset - rs->row_fetched + rs->row_cur;
-            rs->row_cur = 1;
+            int offset_save = 0;
 
-            res = OCI_FetchData(rs, mode, offset, err);
-
-            if (res == TRUE)
-                rs->row_abs += offset_save;
-        }
-
-        break;
-    }
-    case OCI_SFD_ABSOLUTE:
-    {
-        if (offset == 0)
-        {
-            res = FALSE;
-        }
-        else
-        {
-            rs->row_abs = 1;
-            rs->row_cur = 1;
-
-            res = OCI_FetchData(rs, mode, offset, err);
-
-            if (res == TRUE)
+            if (((offset > 0) && (rs->eof == TRUE)) ||
+                ((offset < 0) && (rs->bof == TRUE)) ||
+                (offset == 0))
             {
-                rs->row_abs = offset;
-
-                rs->bof = FALSE;
-                rs->eof = FALSE;
+                res = FALSE;
             }
-        }
+            else
+            {
+                offset_save = offset;
+                offset      = offset - rs->row_fetched + rs->row_cur;
+                rs->row_cur = 1;
 
-        break;
-    }
-    default:
-    {
-        res = FALSE;
-    }
+                res = OCI_FetchData(rs, mode, offset, err);
+
+                if (res == TRUE)
+                    rs->row_abs += offset_save;
+            }
+
+            break;
+        }
+        case OCI_SFD_ABSOLUTE:
+        {
+            if (offset == 0)
+            {
+                res = FALSE;
+            }
+            else
+            {
+                rs->row_abs = 1;
+                rs->row_cur = 1;
+
+                res = OCI_FetchData(rs, mode, offset, err);
+
+                if (res == TRUE)
+                {
+                    rs->row_abs = offset;
+
+                    rs->bof = FALSE;
+                    rs->eof = FALSE;
+                }
+            }
+
+            break;
+        }
+        default:
+        {
+            res = FALSE;
+        }
     }
 
     return res;
@@ -679,36 +679,36 @@ size_t OCI_ResultsetGetAttrSize
 
     switch (rs->defs[index].col.type)
     {
-    case OCI_CDT_NUMERIC:
-    {
-        unsigned int type = rs->defs[index].col.subtype;
+        case OCI_CDT_NUMERIC:
+        {
+            unsigned int type = rs->defs[index].col.subtype;
 
-        if (type & OCI_NUM_SHORT)
-            size = sizeof(short);
-        else if (type & OCI_NUM_INT)
-            size = sizeof(int);
-        else if (type & OCI_NUM_DOUBLE)
-            size = sizeof(double);
-        else
-            size = sizeof(big_int);
+            if (type & OCI_NUM_SHORT)
+                size = sizeof(short);
+            else if (type & OCI_NUM_INT)
+                size = sizeof(int);
+            else if (type & OCI_NUM_DOUBLE)
+                size = sizeof(double);
+            else
+                size = sizeof(big_int);
 
-        break;
-    }
-    case OCI_CDT_TEXT:
-    case OCI_CDT_RAW:
-    case OCI_CDT_LONG:
-    case OCI_CDT_DATETIME:
-    case OCI_CDT_CURSOR:
-    case OCI_CDT_LOB:
-    case OCI_CDT_FILE:
-    case OCI_CDT_TIMESTAMP:
-    case OCI_CDT_INTERVAL:
-    case OCI_CDT_OBJECT:
-    case OCI_CDT_COLLECTION:
-    case OCI_CDT_REF:
+            break;
+        }
+        case OCI_CDT_TEXT:
+        case OCI_CDT_RAW:
+        case OCI_CDT_LONG:
+        case OCI_CDT_DATETIME:
+        case OCI_CDT_CURSOR:
+        case OCI_CDT_LOB:
+        case OCI_CDT_FILE:
+        case OCI_CDT_TIMESTAMP:
+        case OCI_CDT_INTERVAL:
+        case OCI_CDT_OBJECT:
+        case OCI_CDT_COLLECTION:
+        case OCI_CDT_REF:
 
-        size = sizeof(void *);
-        break;
+            size = sizeof(void *);
+            break;
     }
 
     return size;
@@ -877,51 +877,51 @@ boolean OCI_ResultsetFree
 
             switch (def->col.type)
             {
-            case OCI_CDT_DATETIME:
+                case OCI_CDT_DATETIME:
 
-                OCI_DateFree((OCI_Date *) def->obj);
-                break;
+                    OCI_DateFree((OCI_Date *) def->obj);
+                    break;
 
-            case OCI_CDT_LOB:
+                case OCI_CDT_LOB:
 
-                OCI_LobFree((OCI_Lob *) def->obj);
-                break;
+                    OCI_LobFree((OCI_Lob *) def->obj);
+                    break;
 
-            case OCI_CDT_FILE:
+                case OCI_CDT_FILE:
 
-                OCI_FileFree((OCI_File *) def->obj);
-                break;
+                    OCI_FileFree((OCI_File *) def->obj);
+                    break;
 
-            case OCI_CDT_CURSOR:
+                case OCI_CDT_CURSOR:
 
-                OCI_StatementClose((OCI_Statement *) def->obj);
-                OCI_FREE(def->obj);
-                break;
+                    OCI_StatementClose((OCI_Statement *) def->obj);
+                    OCI_FREE(def->obj);
+                    break;
 
-            case OCI_CDT_OBJECT:
+                case OCI_CDT_OBJECT:
 
-                OCI_ObjectFree((OCI_Object *) def->obj);
-                break;
+                    OCI_ObjectFree((OCI_Object *) def->obj);
+                    break;
 
-            case OCI_CDT_COLLECTION:
+                case OCI_CDT_COLLECTION:
 
-                OCI_CollFree((OCI_Coll *) def->obj);
-                break;
+                    OCI_CollFree((OCI_Coll *) def->obj);
+                    break;
 
-            case OCI_CDT_REF:
+                case OCI_CDT_REF:
 
-                OCI_RefFree((OCI_Ref *) def->obj);
-                break;
+                    OCI_RefFree((OCI_Ref *) def->obj);
+                    break;
 
-            case OCI_CDT_TIMESTAMP:
+                case OCI_CDT_TIMESTAMP:
 
-                OCI_TimestampFree((OCI_Timestamp *) def->obj);
-                break;
+                    OCI_TimestampFree((OCI_Timestamp *) def->obj);
+                    break;
 
-            case OCI_CDT_INTERVAL:
+                case OCI_CDT_INTERVAL:
 
-                OCI_IntervalFree((OCI_Interval *) def->obj);
-                break;
+                    OCI_IntervalFree((OCI_Interval *) def->obj);
+                    break;
             }
 
             def->obj = NULL;
@@ -1452,110 +1452,110 @@ boolean OCI_API OCI_GetStruct
 
             switch (rs->defs[i-1].col.type)
             {
-            case OCI_CDT_NUMERIC:
-            {
-                OCI_DefineGetNumber(rs, i, ptr,
-                                    rs->defs[i-1].col.subtype,
-                                    (uword) size);
+                case OCI_CDT_NUMERIC:
+                {
+                    OCI_DefineGetNumber(rs, i, ptr,
+                                        rs->defs[i-1].col.subtype,
+                                        (uword) size);
 
-                break;
-            }
-            case OCI_CDT_TEXT:
-            {
-                dtext **str = (dtext **) ptr;
+                    break;
+                }
+                case OCI_CDT_TEXT:
+                {
+                    dtext **str = (dtext **) ptr;
 
-                *str =  (dtext * ) OCI_GetString(rs, i);
+                    *str =  (dtext * ) OCI_GetString(rs, i);
 
-                break;
-            }
-            case OCI_CDT_RAW:
-            {
-                void **buf = (void **) ptr;
+                    break;
+                }
+                case OCI_CDT_RAW:
+                {
+                    void **buf = (void **) ptr;
 
-                *buf = OCI_DefineGetData(&rs->defs[i]);
+                    *buf = OCI_DefineGetData(&rs->defs[i]);
 
-                break;
-            }
-            case OCI_CDT_LONG:
-            {
-                OCI_Long **lg = (OCI_Long **) ptr;
+                    break;
+                }
+                case OCI_CDT_LONG:
+                {
+                    OCI_Long **lg = (OCI_Long **) ptr;
 
-                *lg = OCI_GetLong(rs, i);
+                    *lg = OCI_GetLong(rs, i);
 
-                break;
-            }
-            case OCI_CDT_DATETIME:
-            {
-                OCI_Date **date = (OCI_Date **) ptr;
+                    break;
+                }
+                case OCI_CDT_DATETIME:
+                {
+                    OCI_Date **date = (OCI_Date **) ptr;
 
-                *date = OCI_GetDate(rs, i);
+                    *date = OCI_GetDate(rs, i);
 
-                break;
-            }
-            case OCI_CDT_CURSOR:
-            {
-                OCI_Statement **stmt = (OCI_Statement **) ptr;
+                    break;
+                }
+                case OCI_CDT_CURSOR:
+                {
+                    OCI_Statement **stmt = (OCI_Statement **) ptr;
 
-                *stmt = OCI_GetStatement(rs, i);
+                    *stmt = OCI_GetStatement(rs, i);
 
-                break;
-            }
-            case OCI_CDT_LOB:
-            {
-                OCI_Lob **lob = (OCI_Lob **) ptr;
+                    break;
+                }
+                case OCI_CDT_LOB:
+                {
+                    OCI_Lob **lob = (OCI_Lob **) ptr;
 
-                *lob = OCI_GetLob(rs, i);
+                    *lob = OCI_GetLob(rs, i);
 
-                break;
-            }
-            case OCI_CDT_FILE:
-            {
-                OCI_File **file = (OCI_File **) ptr;
+                    break;
+                }
+                case OCI_CDT_FILE:
+                {
+                    OCI_File **file = (OCI_File **) ptr;
 
-                *file = OCI_GetFile(rs, i);
+                    *file = OCI_GetFile(rs, i);
 
-                break;
-            }
-            case OCI_CDT_TIMESTAMP:
-            {
-                OCI_Timestamp **tmsp = (OCI_Timestamp **) ptr;
+                    break;
+                }
+                case OCI_CDT_TIMESTAMP:
+                {
+                    OCI_Timestamp **tmsp = (OCI_Timestamp **) ptr;
 
-                *tmsp = OCI_GetTimestamp(rs, i);
+                    *tmsp = OCI_GetTimestamp(rs, i);
 
-                break;
-            }
-            case OCI_CDT_INTERVAL:
-            {
-                OCI_Interval **itv = (OCI_Interval **) ptr;
+                    break;
+                }
+                case OCI_CDT_INTERVAL:
+                {
+                    OCI_Interval **itv = (OCI_Interval **) ptr;
 
-                *itv = OCI_GetInterval(rs, i);
+                    *itv = OCI_GetInterval(rs, i);
 
-                break;
-            }
-            case OCI_CDT_OBJECT:
-            {
-                OCI_Object **obj = (OCI_Object **) ptr;
+                    break;
+                }
+                case OCI_CDT_OBJECT:
+                {
+                    OCI_Object **obj = (OCI_Object **) ptr;
 
-                *obj = OCI_GetObject(rs, i);
+                    *obj = OCI_GetObject(rs, i);
 
-                break;
-            }
-            case OCI_CDT_COLLECTION:
-            {
-                OCI_Coll **coll = (OCI_Coll **) ptr;
+                    break;
+                }
+                case OCI_CDT_COLLECTION:
+                {
+                    OCI_Coll **coll = (OCI_Coll **) ptr;
 
-                *coll = OCI_GetColl(rs, i);
+                    *coll = OCI_GetColl(rs, i);
 
-                break;
-            }
-            case OCI_CDT_REF:
-            {
-                OCI_Ref **ref = (OCI_Ref **) ptr;
+                    break;
+                }
+                case OCI_CDT_REF:
+                {
+                    OCI_Ref **ref = (OCI_Ref **) ptr;
 
-                *ref = OCI_GetRef(rs, i);
+                    *ref = OCI_GetRef(rs, i);
 
-                break;
-            }
+                    break;
+                }
             }
 
             ptr += size;

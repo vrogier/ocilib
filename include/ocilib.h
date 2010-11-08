@@ -46,7 +46,7 @@
  */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib.h, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: ocilib.h, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_H_INCLUDED
@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.8.0 (2010-10-24)</b>
+ * <b>Current version : 3.8.1 (2010-11-08)</b>
  *
  * @section s_feats Main features
  *
@@ -163,7 +163,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     3
 #define OCILIB_MINOR_VERSION     8
-#define OCILIB_REVISION_VERSION  0
+#define OCILIB_REVISION_VERSION  1
 
 /* --------------------------------------------------------------------------------------------- *
  * Installing OCILIB
@@ -1435,9 +1435,7 @@ typedef unsigned int big_uint;
 #define OCI_CNT_OBJECTS                     1
 #define OCI_CNT_ROWS                        2
 #define OCI_CNT_DATABASES                   4
-#define OCI_CNT_ALL                         OCI_CNT_OBJECTS |                  \
-    OCI_CNT_ROWS    |                  \
-    OCI_CNT_DATABASES
+#define OCI_CNT_ALL                         OCI_CNT_OBJECTS | OCI_CNT_ROWS | OCI_CNT_DATABASES
 
 /* event notification types */
 
@@ -4720,15 +4718,29 @@ OCI_EXPORT const mtext * OCI_API OCI_BindGetName
 
 /**
  * @brief
- * Return the type of the given bind
+ * Return the OCILIB type of the given bind
  *
  * @param bnd - Bind handle
  *
  * @note
- * See OCI_GetColumnType() for possible values
+ * Possible values are :
+ *
+ * - OCI_CDT_NUMERIC     : short, int, long long, double
+ * - OCI_CDT_DATETIME    : OCI_Date *
+ * - OCI_CDT_TEXT        : dtext *
+ * - OCI_CDT_LONG        : OCI_Long *
+ * - OCI_CDT_CURSOR      : OCI_Statement *
+ * - OCI_CDT_LOB         : OCI_Lob  *
+ * - OCI_CDT_FILE        : OCI_File *
+ * - OCI_CDT_TIMESTAMP   : OCI_Timestamp *
+ * - OCI_CDT_INTERVAL    : OCI_Interval *
+ * - OCI_CDT_RAW         : void *
+ * - OCI_CDT_OBJECT      : OCI_Object *
+ * - OCI_CDT_COLLECTION  : OCI_Coll *
+ * - OCI_CDT_REF         : OCI_Ref *
  *
  * @return
- * The column type or OCI_CDT_UNKNOWN if index is out of bounds
+ * The column type or OCI_CDT_UNKNOWN on error
  *
  */
 
@@ -4744,10 +4756,49 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetType
  * @param bnd - Bind handle
  *
  * @note
- * See OCI_GetColumnSubType() for possible values
  *
- * @return
- * The column type or OCI_CDT_UNKNOWN if index is out of bounds
+ * This call is valid for the following OCILIB types:
+ *
+ * - OCI_CDT_NUMERIC
+ * - OCI_CDT_LONG
+ * - OCI_CDT_LOB
+ * - OCI_CDT_FILE
+ * - OCI_CDT_TIMESTAMP
+ * - OCI_CDT_INTERVAL
+ *
+ * For numeric binds the possible values are:
+ * - OCI_NUM_SHORT
+ * - OCI_NUM_INT
+ * - OCI_NUM_BIGINT
+ * - OCI_NUM_USHORT
+ * - OCI_NUM_UINT 
+ * - OCI_NUM_BIGUINT
+ * - OCI_NUM_DOUBLE
+ *
+ * For OCI_Long type the possible values are:
+ * - OCI_BLONG
+ * - OCI_CLONG
+ *
+ * For OCI_Lob type the possible values are:
+ * - OCI_BLOB
+ * - OCI_CLOB
+ * - OCI_NCLOB
+ *
+ * For OCI_File type the possible values are:
+ * - OCI_BFILE
+ * - OCI_CFILE
+ *
+ * For OCI_Timestamp type the possible values are:
+ * - OCI_TIMESTAMP
+ * - OCI_TIMESTAMP_TZ
+ * - OCI_TIMESTAMP_LTZ
+ *
+ * For OCI_Interval type the possible values are:
+ * - OCI_INTERVAL_YM
+ * - OCI_INTERVAL_DS
+ *
+ * @note
+ * For all other OCILIB types, it returns OCI_UNKNOWN
  *
  */
 

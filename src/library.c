@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: library.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: library.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -41,345 +41,341 @@ OCI_Library OCILib;
 
 OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
 {
-    {OCI_SFC_CREATE_TABLE,             MT("CREATE TABLE")                                                        },
-    {OCI_SFC_SET_ROLE,                 MT("SET ROLE")                                                            },
-    {OCI_SFC_INSERT,                   MT("INSERT")                                                              },
-    {OCI_SFC_SELECT,                   MT("SELECT")                                                              },
-    {OCI_SFC_UPDATE,                   MT("UPDATE")                                                              },
-    {OCI_SFC_DROP_ROLE,                MT("DROP ROLE")                                                           },
-    {OCI_SFC_DROP_VIEW,                MT("DROP VIEW")                                                           },
-    {OCI_SFC_DROP_TABLE,               MT("DROP TABLE")                                                          },
-    {OCI_SFC_DELETE,                   MT("DELETE")                                                              },
-    {OCI_SFC_CREATE_VIEW,              MT("CREATE VIEW")                                                         },
-    {OCI_SFC_DROP_USER,                MT("DROP USER")                                                           },
-    {OCI_SFC_CREATE_ROLE,              MT("CREATE ROLE")                                                         },
-    {OCI_SFC_CREATE_SEQUENCE,          MT("CREATE SEQUENCE")                                                     },
-    {OCI_SFC_ALTER_SEQUENCE,           MT("ALTER SEQUENCE")                                                      },
-    {OCI_SFC_DROP_SEQUENCE,            MT("DROP SEQUENCE")                                                       },
-    {OCI_SFC_CREATE_SCHEMA,            MT("CREATE SCHEMA")                                                       },
-    {OCI_SFC_CREATE_CLUSTER,           MT("CREATE CLUSTER")                                                      },
-    {OCI_SFC_CREATE_USER,              MT("CREATE USER")                                                         },
-    {OCI_SFC_CREATE_INDEX,             MT("CREATE INDEX")                                                        },
-    {OCI_SFC_DROP_INDEX,               MT("DROP INDEX")                                                          },
-    {OCI_SFC_DROP_CLUSTER,             MT("DROP CLUSTER")                                                        },
-    {OCI_SFC_VALIDATE_INDEX,           MT("VALIDATE INDEX")                                                      },
-    {OCI_SFC_CREATE_PROCEDURE,         MT("CREATE PROCEDURE")                                                    },
-    {OCI_SFC_ALTER_PROCEDURE,          MT("ALTER PROCEDURE")                                                     },
-    {OCI_SFC_ALTER_TABLE,              MT("ALTER TABLE")                                                         },
-    {OCI_SFC_EXPLAIN,                  MT("EXPLAIN")                                                             },
-    {OCI_SFC_GRANT,                    MT("GRANT")                                                               },
-    {OCI_SFC_REVOKE,                   MT("REVOKE")                                                              },
-    {OCI_SFC_CREATE_SYNONYM,           MT("CREATE SYNONYM")                                                      },
-    {OCI_SFC_DROP_SYNONYM,             MT("DROP SYNONYM")                                                        },
-    {OCI_SFC_ALTER_SYSTEM_SWITCHLOG,   MT("ALTER SYSTEM SWITCHLOG")                                              },
-    {OCI_SFC_SET_TRANSACTION,          MT("SET TRANSACTION")                                                     },
-    {OCI_SFC_PLSQL_EXECUTE,            MT("PL/SQL EXECUTE")                                                      },
-    {OCI_SFC_LOCK,                     MT("LOCK")                                                                },
-    {OCI_SFC_NOOP,                     MT("NOOP")                                                                },
-    {OCI_SFC_RENAME,                   MT("RENAME")                                                              },
-    {OCI_SFC_COMMENT,                  MT("COMMENT")                                                             },
-    {OCI_SFC_AUDIT,                    MT("AUDIT")                                                               },
-    {OCI_SFC_NO_AUDIT,                 MT("NO AUDIT")                                                            },
-    {OCI_SFC_ALTER_INDEX,              MT("ALTER INDEX")                                                         },
-    {OCI_SFC_CREATE_EXTERNAL_DATABASE, MT("CREATE EXTERNAL DATABASE")                                            },
-    {OCI_SFC_DROP_EXTERNALDATABASE,    MT("DROP EXTERNALDATABASE")                                               },
-    {OCI_SFC_CREATE_DATABASE,          MT("CREATE DATABASE")                                                     },
-    {OCI_SFC_ALTER_DATABASE,           MT("ALTER DATABASE")                                                      },
-    {OCI_SFC_CREATE_ROLLBACK_SEGMENT,  MT("CREATE ROLLBACK SEGMENT")                                             },
-    {OCI_SFC_ALTER_ROLLBACK_SEGMENT,   MT("ALTER ROLLBACK SEGMENT")                                              },
-    {OCI_SFC_DROP_ROLLBACK_SEGMENT,    MT("DROP ROLLBACK SEGMENT")                                               },
-    {OCI_SFC_CREATE_TABLESPACE,        MT("CREATE TABLESPACE")                                                   },
-    {OCI_SFC_ALTER_TABLESPACE,         MT("ALTER TABLESPACE")                                                    },
-    {OCI_SFC_DROP_TABLESPACE,          MT("DROP TABLESPACE")                                                     },
-    {OCI_SFC_ALTER_SESSION,            MT("ALTER SESSION")                                                       },
-    {OCI_SFC_ALTER_USER,               MT("ALTER USER")                                                          },
-    {OCI_SFC_COMMIT_WORK,              MT("COMMIT (WORK)")                                                       },
-    {OCI_SFC_ROLLBACK,                 MT("ROLLBACK")                                                            },
-    {OCI_SFC_SAVEPOINT,                MT("SAVEPOINT")                                                           },
-    {OCI_SFC_CREATE_CONTROL_FILE,      MT("CREATE CONTROL FILE")                                                 },
-    {OCI_SFC_ALTER_TRACING,            MT("ALTER TRACING")                                                       },
-    {OCI_SFC_CREATE_TRIGGER,           MT("CREATE TRIGGER")                                                      },
-    {OCI_SFC_ALTER_TRIGGER,            MT("ALTER TRIGGER")                                                       },
-    {OCI_SFC_DROP_TRIGGER,             MT("DROP TRIGGER")                                                        },
-    {OCI_SFC_ANALYZE_TABLE,            MT("ANALYZE TABLE")                                                       },
-    {OCI_SFC_ANALYZE_INDEX,            MT("ANALYZE INDEX")                                                       },
-    {OCI_SFC_ANALYZE_CLUSTER,          MT("ANALYZE CLUSTER")                                                     },
-    {OCI_SFC_CREATE_PROFILE,           MT("CREATE PROFILE")                                                      },
-    {OCI_SFC_DROP_PROFILE,             MT("DROP PROFILE")                                                        },
-    {OCI_SFC_ALTER_PROFILE,            MT("ALTER PROFILE")                                                       },
-    {OCI_SFC_DROP_PROCEDURE,           MT("DROP PROCEDURE")                                                      },
-    {OCI_SFC_ALTER_RESOURCE_COST,      MT("ALTER RESOURCE COST")                                                 },
-    {OCI_SFC_CREATE_SNAPSHOT_LOG,      MT("CREATE SNAPSHOT LOG")                                                 },
-    {OCI_SFC_ALTER_SNAPSHOT_LOG,       MT("ALTER SNAPSHOT LOG")                                                  },
-    {OCI_SFC_DROP_SNAPSHOT_LOG,        MT("DROP SNAPSHOT LOG")                                                   },
-    {OCI_SFC_DROP_SUMMARY,             MT("DROP SUMMARY")                                                        },
-    {OCI_SFC_CREATE_SNAPSHOT,          MT("CREATE SNAPSHOT")                                                     },
-    {OCI_SFC_ALTER_SNAPSHOT,           MT("ALTER SNAPSHOT")                                                      },
-    {OCI_SFC_DROP_SNAPSHOT,            MT("DROP SNAPSHOT")                                                       },
-    {OCI_SFC_CREATE_TYPE,              MT("CREATE TYPE")                                                         },
-    {OCI_SFC_DROP_TYPE,                MT("DROP TYPE")                                                           },
-    {OCI_SFC_ALTER_ROLE,               MT("ALTER ROLE")                                                          },
-    {OCI_SFC_ALTER_TYPE,               MT("ALTER TYPE")                                                          },
-    {OCI_SFC_CREATE_TYPE_BODY,         MT("CREATE TYPE BODY")                                                    },
-    {OCI_SFC_ALTER_TYPE_BODY,          MT("ALTER TYPE BODY")                                                     },
-    {OCI_SFC_DROP_TYPE_BODY,           MT("DROP TYPE BODY")                                                      },
-    {OCI_SFC_DROP_LIBRARY,             MT("DROP LIBRARY")                                                        },
-    {OCI_SFC_TRUNCATE_TABLE,           MT("TRUNCATE TABLE")                                                      },
-    {OCI_SFC_TRUNCATE_CLUSTER,         MT("TRUNCATE CLUSTER")                                                    },
-    {OCI_SFC_CREATE_BITMAPFILE,        MT("CREATE BITMAPFILE")                                                   },
-    {OCI_SFC_ALTER_VIEW,               MT("ALTER VIEW")                                                          },
-    {OCI_SFC_DROP_BITMAPFILE,          MT("DROP BITMAPFILE")                                                     },
-    {OCI_SFC_SET_CONSTRAINTS,          MT("SET CONSTRAINTS")                                                     },
-    {OCI_SFC_CREATE_FUNCTION,          MT("CREATE FUNCTION")                                                     },
-    {OCI_SFC_ALTER_FUNCTION,           MT("ALTER FUNCTION")                                                      },
-    {OCI_SFC_DROP_FUNCTION,            MT("DROP FUNCTION")                                                       },
-    {OCI_SFC_CREATE_PACKAGE,           MT("CREATE PACKAGE")                                                      },
-    {OCI_SFC_ALTER_PACKAGE,            MT("ALTER PACKAGE")                                                       },
-    {OCI_SFC_DROP_PACKAGE,             MT("DROP PACKAGE")                                                        },
-    {OCI_SFC_CREATE_PACKAGE_BODY,      MT("CREATE PACKAGE BODY")                                                 },
-    {OCI_SFC_ALTER_PACKAGE_BODY,       MT("ALTER PACKAGE BODY")                                                  },
-    {OCI_SFC_DROP_PACKAGE_BODY,        MT("DROP PACKAGE BODY")                                                   },
-    {OCI_SFC_CREATE_DIRECTORY,         MT("CREATE DIRECTORY")                                                    },
-    {OCI_SFC_DROP_DIRECTORY,           MT("DROP DIRECTORY")                                                      },
-    {OCI_SFC_CREATE_LIBRARY,           MT("CREATE LIBRARY")                                                      },
-    {OCI_SFC_CREATE_JAVA,              MT("CREATE JAVA")                                                         },
-    {OCI_SFC_ALTER_JAVA,               MT("ALTER JAVA")                                                          },
-    {OCI_SFC_DROP_JAVA,                MT("DROP JAVA")                                                           },
-    {OCI_SFC_CREATE_OPERATOR,          MT("CREATE OPERATOR")                                                     },
-    {OCI_SFC_CREATE_INDEXTYPE,         MT("CREATE INDEXTYPE")                                                    },
-    {OCI_SFC_DROP_INDEXTYPE,           MT("DROP INDEXTYPE")                                                      },
-    {OCI_SFC_ALTER_INDEXTYPE,          MT("ALTER INDEXTYPE")                                                     },
-    {OCI_SFC_DROP_OPERATOR,            MT("DROP OPERATOR")                                                       },
-    {OCI_SFC_ASSOCIATE_STATISTICS,     MT("ASSOCIATE STATISTICS")                                                },
-    {OCI_SFC_DISASSOCIATE_STATISTICS,  MT("DISASSOCIATE STATISTICS")                                             },
-    {OCI_SFC_CALL_METHOD,              MT("CALL METHOD")                                                         },
-    {OCI_SFC_CREATE_SUMMARY,           MT("CREATE SUMMARY")                                                      },
-    {OCI_SFC_ALTER_SUMMARY,            MT("ALTER SUMMARY")                                                       },
-    {OCI_SFC_CREATE_DIMENSION,         MT("CREATE DIMENSION")                                                    },
-    {OCI_SFC_ALTER_DIMENSION,          MT("ALTER DIMENSION")                                                     },
-    {OCI_SFC_DROP_DIMENSION,           MT("DROP DIMENSION")                                                      },
-    {OCI_SFC_CREATE_CONTEXT,           MT("CREATE CONTEXT")                                                      },
-    {OCI_SFC_DROP_CONTEXT,             MT("DROP CONTEXT")                                                        },
-    {OCI_SFC_ALTER_OUTLINE,            MT("ALTER OUTLINE")                                                       },
-    {OCI_SFC_CREATE_OUTLINE,           MT("CREATE OUTLINE")                                                      },
-    {OCI_SFC_DROP_OUTLINE,             MT("DROP OUTLINE")                                                        },
-    {OCI_SFC_UPDATE_INDEXES,           MT("UPDATE INDEXES")                                                      },
-    {OCI_SFC_ALTER_OPERATOR,           MT("ALTER OPERATOR")                                                      }
+    {OCI_SFC_CREATE_TABLE,             MT("CREATE TABLE")                                         },
+    {OCI_SFC_SET_ROLE,                 MT("SET ROLE")                                             },
+    {OCI_SFC_INSERT,                   MT("INSERT")                                               },
+    {OCI_SFC_SELECT,                   MT("SELECT")                                               },
+    {OCI_SFC_UPDATE,                   MT("UPDATE")                                               },
+    {OCI_SFC_DROP_ROLE,                MT("DROP ROLE")                                            },
+    {OCI_SFC_DROP_VIEW,                MT("DROP VIEW")                                            },
+    {OCI_SFC_DROP_TABLE,               MT("DROP TABLE")                                           },
+    {OCI_SFC_DELETE,                   MT("DELETE")                                               },
+    {OCI_SFC_CREATE_VIEW,              MT("CREATE VIEW")                                          },
+    {OCI_SFC_DROP_USER,                MT("DROP USER")                                            },
+    {OCI_SFC_CREATE_ROLE,              MT("CREATE ROLE")                                          },
+    {OCI_SFC_CREATE_SEQUENCE,          MT("CREATE SEQUENCE")                                      },
+    {OCI_SFC_ALTER_SEQUENCE,           MT("ALTER SEQUENCE")                                       },
+    {OCI_SFC_DROP_SEQUENCE,            MT("DROP SEQUENCE")                                        },
+    {OCI_SFC_CREATE_SCHEMA,            MT("CREATE SCHEMA")                                        },
+    {OCI_SFC_CREATE_CLUSTER,           MT("CREATE CLUSTER")                                       },
+    {OCI_SFC_CREATE_USER,              MT("CREATE USER")                                          },
+    {OCI_SFC_CREATE_INDEX,             MT("CREATE INDEX")                                         },
+    {OCI_SFC_DROP_INDEX,               MT("DROP INDEX")                                           },
+    {OCI_SFC_DROP_CLUSTER,             MT("DROP CLUSTER")                                         },
+    {OCI_SFC_VALIDATE_INDEX,           MT("VALIDATE INDEX")                                       },
+    {OCI_SFC_CREATE_PROCEDURE,         MT("CREATE PROCEDURE")                                     },
+    {OCI_SFC_ALTER_PROCEDURE,          MT("ALTER PROCEDURE")                                      },
+    {OCI_SFC_ALTER_TABLE,              MT("ALTER TABLE")                                          },
+    {OCI_SFC_EXPLAIN,                  MT("EXPLAIN")                                              },
+    {OCI_SFC_GRANT,                    MT("GRANT")                                                },
+    {OCI_SFC_REVOKE,                   MT("REVOKE")                                               },
+    {OCI_SFC_CREATE_SYNONYM,           MT("CREATE SYNONYM")                                       },
+    {OCI_SFC_DROP_SYNONYM,             MT("DROP SYNONYM")                                         },
+    {OCI_SFC_ALTER_SYSTEM_SWITCHLOG,   MT("ALTER SYSTEM SWITCHLOG")                               },
+    {OCI_SFC_SET_TRANSACTION,          MT("SET TRANSACTION")                                      },
+    {OCI_SFC_PLSQL_EXECUTE,            MT("PL/SQL EXECUTE")                                       },
+    {OCI_SFC_LOCK,                     MT("LOCK")                                                 },
+    {OCI_SFC_NOOP,                     MT("NOOP")                                                 },
+    {OCI_SFC_RENAME,                   MT("RENAME")                                               },
+    {OCI_SFC_COMMENT,                  MT("COMMENT")                                              },
+    {OCI_SFC_AUDIT,                    MT("AUDIT")                                                },
+    {OCI_SFC_NO_AUDIT,                 MT("NO AUDIT")                                             },
+    {OCI_SFC_ALTER_INDEX,              MT("ALTER INDEX")                                          },
+    {OCI_SFC_CREATE_EXTERNAL_DATABASE, MT("CREATE EXTERNAL DATABASE")                             },
+    {OCI_SFC_DROP_EXTERNALDATABASE,    MT("DROP EXTERNALDATABASE")                                },
+    {OCI_SFC_CREATE_DATABASE,          MT("CREATE DATABASE")                                      },
+    {OCI_SFC_ALTER_DATABASE,           MT("ALTER DATABASE")                                       },
+    {OCI_SFC_CREATE_ROLLBACK_SEGMENT,  MT("CREATE ROLLBACK SEGMENT")                              },
+    {OCI_SFC_ALTER_ROLLBACK_SEGMENT,   MT("ALTER ROLLBACK SEGMENT")                               },
+    {OCI_SFC_DROP_ROLLBACK_SEGMENT,    MT("DROP ROLLBACK SEGMENT")                                },
+    {OCI_SFC_CREATE_TABLESPACE,        MT("CREATE TABLESPACE")                                    },
+    {OCI_SFC_ALTER_TABLESPACE,         MT("ALTER TABLESPACE")                                     },
+    {OCI_SFC_DROP_TABLESPACE,          MT("DROP TABLESPACE")                                      },
+    {OCI_SFC_ALTER_SESSION,            MT("ALTER SESSION")                                        },
+    {OCI_SFC_ALTER_USER,               MT("ALTER USER")                                           },
+    {OCI_SFC_COMMIT_WORK,              MT("COMMIT (WORK)")                                        },
+    {OCI_SFC_ROLLBACK,                 MT("ROLLBACK")                                             },
+    {OCI_SFC_SAVEPOINT,                MT("SAVEPOINT")                                            },
+    {OCI_SFC_CREATE_CONTROL_FILE,      MT("CREATE CONTROL FILE")                                  },
+    {OCI_SFC_ALTER_TRACING,            MT("ALTER TRACING")                                        },
+    {OCI_SFC_CREATE_TRIGGER,           MT("CREATE TRIGGER")                                       },
+    {OCI_SFC_ALTER_TRIGGER,            MT("ALTER TRIGGER")                                        },
+    {OCI_SFC_DROP_TRIGGER,             MT("DROP TRIGGER")                                         },
+    {OCI_SFC_ANALYZE_TABLE,            MT("ANALYZE TABLE")                                        },
+    {OCI_SFC_ANALYZE_INDEX,            MT("ANALYZE INDEX")                                        },
+    {OCI_SFC_ANALYZE_CLUSTER,          MT("ANALYZE CLUSTER")                                      },
+    {OCI_SFC_CREATE_PROFILE,           MT("CREATE PROFILE")                                       },
+    {OCI_SFC_DROP_PROFILE,             MT("DROP PROFILE")                                         },
+    {OCI_SFC_ALTER_PROFILE,            MT("ALTER PROFILE")                                        },
+    {OCI_SFC_DROP_PROCEDURE,           MT("DROP PROCEDURE")                                       },
+    {OCI_SFC_ALTER_RESOURCE_COST,      MT("ALTER RESOURCE COST")                                  },
+    {OCI_SFC_CREATE_SNAPSHOT_LOG,      MT("CREATE SNAPSHOT LOG")                                  },
+    {OCI_SFC_ALTER_SNAPSHOT_LOG,       MT("ALTER SNAPSHOT LOG")                                   },
+    {OCI_SFC_DROP_SNAPSHOT_LOG,        MT("DROP SNAPSHOT LOG")                                    },
+    {OCI_SFC_DROP_SUMMARY,             MT("DROP SUMMARY")                                         },
+    {OCI_SFC_CREATE_SNAPSHOT,          MT("CREATE SNAPSHOT")                                      },
+    {OCI_SFC_ALTER_SNAPSHOT,           MT("ALTER SNAPSHOT")                                       },
+    {OCI_SFC_DROP_SNAPSHOT,            MT("DROP SNAPSHOT")                                        },
+    {OCI_SFC_CREATE_TYPE,              MT("CREATE TYPE")                                          },
+    {OCI_SFC_DROP_TYPE,                MT("DROP TYPE")                                            },
+    {OCI_SFC_ALTER_ROLE,               MT("ALTER ROLE")                                           },
+    {OCI_SFC_ALTER_TYPE,               MT("ALTER TYPE")                                           },
+    {OCI_SFC_CREATE_TYPE_BODY,         MT("CREATE TYPE BODY")                                     },
+    {OCI_SFC_ALTER_TYPE_BODY,          MT("ALTER TYPE BODY")                                      },
+    {OCI_SFC_DROP_TYPE_BODY,           MT("DROP TYPE BODY")                                       },
+    {OCI_SFC_DROP_LIBRARY,             MT("DROP LIBRARY")                                         },
+    {OCI_SFC_TRUNCATE_TABLE,           MT("TRUNCATE TABLE")                                       },
+    {OCI_SFC_TRUNCATE_CLUSTER,         MT("TRUNCATE CLUSTER")                                     },
+    {OCI_SFC_CREATE_BITMAPFILE,        MT("CREATE BITMAPFILE")                                    },
+    {OCI_SFC_ALTER_VIEW,               MT("ALTER VIEW")                                           },
+    {OCI_SFC_DROP_BITMAPFILE,          MT("DROP BITMAPFILE")                                      },
+    {OCI_SFC_SET_CONSTRAINTS,          MT("SET CONSTRAINTS")                                      },
+    {OCI_SFC_CREATE_FUNCTION,          MT("CREATE FUNCTION")                                      },
+    {OCI_SFC_ALTER_FUNCTION,           MT("ALTER FUNCTION")                                       },
+    {OCI_SFC_DROP_FUNCTION,            MT("DROP FUNCTION")                                        },
+    {OCI_SFC_CREATE_PACKAGE,           MT("CREATE PACKAGE")                                       },
+    {OCI_SFC_ALTER_PACKAGE,            MT("ALTER PACKAGE")                                        },
+    {OCI_SFC_DROP_PACKAGE,             MT("DROP PACKAGE")                                         },
+    {OCI_SFC_CREATE_PACKAGE_BODY,      MT("CREATE PACKAGE BODY")                                  },
+    {OCI_SFC_ALTER_PACKAGE_BODY,       MT("ALTER PACKAGE BODY")                                   },
+    {OCI_SFC_DROP_PACKAGE_BODY,        MT("DROP PACKAGE BODY")                                    },
+    {OCI_SFC_CREATE_DIRECTORY,         MT("CREATE DIRECTORY")                                     },
+    {OCI_SFC_DROP_DIRECTORY,           MT("DROP DIRECTORY")                                       },
+    {OCI_SFC_CREATE_LIBRARY,           MT("CREATE LIBRARY")                                       },
+    {OCI_SFC_CREATE_JAVA,              MT("CREATE JAVA")                                          },
+    {OCI_SFC_ALTER_JAVA,               MT("ALTER JAVA")                                           },
+    {OCI_SFC_DROP_JAVA,                MT("DROP JAVA")                                            },
+    {OCI_SFC_CREATE_OPERATOR,          MT("CREATE OPERATOR")                                      },
+    {OCI_SFC_CREATE_INDEXTYPE,         MT("CREATE INDEXTYPE")                                     },
+    {OCI_SFC_DROP_INDEXTYPE,           MT("DROP INDEXTYPE")                                       },
+    {OCI_SFC_ALTER_INDEXTYPE,          MT("ALTER INDEXTYPE")                                      },
+    {OCI_SFC_DROP_OPERATOR,            MT("DROP OPERATOR")                                        },
+    {OCI_SFC_ASSOCIATE_STATISTICS,     MT("ASSOCIATE STATISTICS")                                 },
+    {OCI_SFC_DISASSOCIATE_STATISTICS,  MT("DISASSOCIATE STATISTICS")                              },
+    {OCI_SFC_CALL_METHOD,              MT("CALL METHOD")                                          },
+    {OCI_SFC_CREATE_SUMMARY,           MT("CREATE SUMMARY")                                       },
+    {OCI_SFC_ALTER_SUMMARY,            MT("ALTER SUMMARY")                                        },
+    {OCI_SFC_CREATE_DIMENSION,         MT("CREATE DIMENSION")                                     },
+    {OCI_SFC_ALTER_DIMENSION,          MT("ALTER DIMENSION")                                      },
+    {OCI_SFC_DROP_DIMENSION,           MT("DROP DIMENSION")                                       },
+    {OCI_SFC_CREATE_CONTEXT,           MT("CREATE CONTEXT")                                       },
+    {OCI_SFC_DROP_CONTEXT,             MT("DROP CONTEXT")                                         },
+    {OCI_SFC_ALTER_OUTLINE,            MT("ALTER OUTLINE")                                        },
+    {OCI_SFC_CREATE_OUTLINE,           MT("CREATE OUTLINE")                                       },
+    {OCI_SFC_DROP_OUTLINE,             MT("DROP OUTLINE")                                         },
+    {OCI_SFC_UPDATE_INDEXES,           MT("UPDATE INDEXES")                                       },
+    {OCI_SFC_ALTER_OPERATOR,           MT("ALTER OPERATOR")                                       }
 };
 
 #ifdef OCI_IMPORT_RUNTIME
 
 /* OCI function pointers */
 
-OCIENVCREATE OCIEnvCreate                                 = NULL;
-OCISERVERATTACH OCIServerAttach                           = NULL;
-OCISERVERDETACH OCIServerDetach                           = NULL;
-OCIHANDLEALLOC OCIHandleAlloc                             = NULL;
-OCIHANDLEFREE OCIHandleFree                               = NULL;
-OCIDESCRIPTORALLOC OCIDescriptorAlloc                     = NULL;
-OCIDESCRIPTORFREE OCIDescriptorFree                       = NULL;
-OCISESSIONBEGIN OCISessionBegin                           = NULL;
-OCISESSIONEND OCISessionEnd                               = NULL;
-OCIPASSWORDCHANGE OCIPasswordChange                       = NULL;
-OCIBINDBYPOS OCIBindByPos                                 = NULL;
-OCIBINDBYNAME OCIBindByName                               = NULL;
-OCIBINDDYNAMIC OCIBindDynamic                             = NULL;
-OCIBINDOBJECT OCIBindObject                               = NULL;
-OCIDEFINEBYPOS OCIDefineByPos                             = NULL;
-OCIDEFINEOBJECT OCIDefineObject                           = NULL;
-OCISTMTPREPARE OCIStmtPrepare                             = NULL;
-OCISTMTEXECUTE OCIStmtExecute                             = NULL;
-OCISTMTFETCH OCIStmtFetch                                 = NULL;
-OCISTMTFETCH2 OCIStmtFetch2                               = NULL;
-OCISTMTGETPIECEINFO OCIStmtGetPieceInfo                   = NULL;
-OCISTMTSETPIECEINFO OCIStmtSetPieceInfo                   = NULL;
-OCIPARAMGET OCIParamGet                                   = NULL;
-OCIPARAMSET OCIParamSet                                   = NULL;
-OCITRANSSTART OCITransStart                               = NULL;
-OCITRANSDETACH OCITransDetach                             = NULL;
-OCITRANSPREPARE OCITransPrepare                           = NULL;
-OCITRANSFORGET OCITransForget                             = NULL;
-OCITRANSCOMMIT OCITransCommit                             = NULL;
-OCITRANSROLLBACK OCITransRollback                         = NULL;
-OCIERRORGET OCIErrorGet                                   = NULL;
-OCILOBCREATETEMPORARY OCILobCreateTemporary               = NULL;
-OCILOBFREETEMPORARY OCILobFreeTemporary                   = NULL;
-OCILOBISTEMPORARY OCILobIsTemporary                       = NULL;
-OCILOBAPPEND OCILobAppend                                 = NULL;
-OCILOBCOPY OCILobCopy                                     = NULL;
-OCILOBGETLENGTH OCILobGetLength                           = NULL;
-OCILOBGETCHUNKSIZE OCILobGetChunkSize                     = NULL;
-OCILOBREAD OCILobRead                                     = NULL;
-OCILOBWRITE OCILobWrite                                   = NULL;
-OCILOBTRIM OCILobTrim                                     = NULL;
-OCILOBERASE OCILobErase                                   = NULL;
-OCILOBOPEN OCILobOpen                                     = NULL;
-OCILOBCLOSE OCILobClose                                   = NULL;
-OCILOBLOCATORASSIGN OCILobLocatorAssign                   = NULL;
-OCILOBASSIGN OCILobAssign                                 = NULL;
-OCILOBISEQUAL OCILobIsEqual                               = NULL;
-OCILOBFLUSHBUFFER OCILobFlushBuffer                       = NULL;
-OCILOBENABLEBUFFERING OCILobEnableBuffering               = NULL;
-OCILOBDISABLEBUFFERING OCILobDisableBuffering             = NULL;
-OCILOBGETSTORAGELIMIT OCILobGetStorageLimit               = NULL;
-OCILOBFILEOPEN OCILobFileOpen                             = NULL;
-OCILOBFILECLOSE OCILobFileClose                           = NULL;
-OCILOBFILECLOSEALL OCILobFileCloseAll                     = NULL;
-OCILOBFILEISOPEN OCILobFileIsOpen                         = NULL;
-OCILOBFILEEXISTS OCILobFileExists                         = NULL;
-OCILOBFIELGETNAME OCILobFileGetName                       = NULL;
-OCILOBFILESETNAME OCILobFileSetName                       = NULL;
-OCILOBLOADFROMFILE OCILobLoadFromFile                     = NULL;
-OCILOBWRITEAPPEND OCILobWriteAppend                       = NULL;
-OCISERVERVERSION OCIServerVersion                         = NULL;
-OCIBREAK OCIBreak                                         = NULL;
-OCIATTRGET OCIAttrGet                                     = NULL;
-OCIATTRSET OCIAttrSet                                     = NULL;
-OCIDATEASSIGN OCIDateAssign                               = NULL;
-OCIDATETOTEXT OCIDateToText                               = NULL;
-OCIDATEFROMTEXT OCIDateFromText                           = NULL;
-OCIDATECOMPARE OCIDateCompare                             = NULL;
-OCIDATEADDMONTHS OCIDateAddMonths                         = NULL;
-OCIDATEADDDAYS OCIDateAddDays                             = NULL;
-OCIDATELASTDAY OCIDateLastDay                             = NULL;
-OCIDATEDAYSBETWEEN OCIDateDaysBetween                     = NULL;
-OCIDATEZONETOZONE OCIDateZoneToZone                       = NULL;
-OCIDATENEXTDAY OCIDateNextDay                             = NULL;
-OCIDATECHECK OCIDateCheck                                 = NULL;
-OCIDATESYSDATE OCIDateSysDate                             = NULL;
-OCIDESCRIBEANY OCIDescribeAny                             = NULL;
-OCIINTERVALASSIGN OCIIntervalAssign                       = NULL;
-OCIINTERVALCHECK OCIIntervalCheck                         = NULL;
-OCIINTERVALCOMPARE OCIIntervalCompare                     = NULL;
-OCIINTERVALFROMTEXT OCIIntervalFromText                   = NULL;
-OCIINTERVALTOTEXT OCIIntervalToText                       = NULL;
-OCIINTERVALFROMTZ OCIIntervalFromTZ                       = NULL;
-OCIINTERVALGETDAYSECOND OCIIntervalGetDaySecond           = NULL;
-OCIINTERVALGETYEARMONTH OCIIntervalGetYearMonth           = NULL;
-OCIINTERVALSETDAYSECOND OCIIntervalSetDaySecond           = NULL;
-OCIINTERVALSETYEARMONTH OCIIntervalSetYearMonth           = NULL;
-OCIINTERVALSUBTRACT OCIIntervalSubtract                   = NULL;
-OCIINTERVALADD OCIIntervalAdd                             = NULL;
-OCIDATETIMEASSIGN OCIDateTimeAssign                       = NULL;
-OCIDATETIMECHECK OCIDateTimeCheck                         = NULL;
-OCIDATETIMECOMPARE OCIDateTimeCompare                     = NULL;
-OCIDATETIMECONSTRUCT OCIDateTimeConstruct                 = NULL;
-OCIDATETIMECONVERT OCIDateTimeConvert                     = NULL;
-OCIDATETIMEFROMARRAY OCIDateTimeFromArray                 = NULL;
-OCIDATETIMETOARRAY OCIDateTimeToArray                     = NULL;
-OCIDATETIMEFROMTEXT OCIDateTimeFromText                   = NULL;
-OCIDATETIMETOTEXT OCIDateTimeToText                       = NULL;
-OCIDATETIMEGETDATE OCIDateTimeGetDate                     = NULL;
-OCIDATETIMEGETTIME OCIDateTimeGetTime                     = NULL;
-OCIDATETIMEGETTIMEZONENAME OCIDateTimeGetTimeZoneName     = NULL;
+OCIENVCREATE                 OCIEnvCreate                 = NULL;
+OCISERVERATTACH              OCIServerAttach              = NULL;
+OCISERVERDETACH              OCIServerDetach              = NULL;
+OCIHANDLEALLOC               OCIHandleAlloc               = NULL;
+OCIHANDLEFREE                OCIHandleFree                = NULL;
+OCIDESCRIPTORALLOC           OCIDescriptorAlloc           = NULL;
+OCIDESCRIPTORFREE            OCIDescriptorFree            = NULL;
+OCISESSIONBEGIN              OCISessionBegin              = NULL;
+OCISESSIONEND                OCISessionEnd                = NULL;
+OCIPASSWORDCHANGE            OCIPasswordChange            = NULL;
+OCIBINDBYPOS                 OCIBindByPos                 = NULL;
+OCIBINDBYNAME                OCIBindByName                = NULL;
+OCIBINDDYNAMIC               OCIBindDynamic               = NULL;
+OCIBINDOBJECT                OCIBindObject                = NULL;
+OCIDEFINEBYPOS               OCIDefineByPos               = NULL;
+OCIDEFINEOBJECT              OCIDefineObject              = NULL;
+OCISTMTPREPARE               OCIStmtPrepare               = NULL;
+OCISTMTEXECUTE               OCIStmtExecute               = NULL;
+OCISTMTFETCH                 OCIStmtFetch                 = NULL;
+OCISTMTFETCH2                OCIStmtFetch2                = NULL;
+OCISTMTGETPIECEINFO          OCIStmtGetPieceInfo          = NULL;
+OCISTMTSETPIECEINFO          OCIStmtSetPieceInfo          = NULL;
+OCIPARAMGET                  OCIParamGet                  = NULL;
+OCIPARAMSET                  OCIParamSet                  = NULL;
+OCITRANSSTART                OCITransStart                = NULL;
+OCITRANSDETACH               OCITransDetach               = NULL;
+OCITRANSPREPARE              OCITransPrepare              = NULL;
+OCITRANSFORGET               OCITransForget               = NULL;
+OCITRANSCOMMIT               OCITransCommit               = NULL;
+OCITRANSROLLBACK             OCITransRollback             = NULL;
+OCIERRORGET                  OCIErrorGet                  = NULL;
+OCILOBCREATETEMPORARY        OCILobCreateTemporary        = NULL;
+OCILOBFREETEMPORARY          OCILobFreeTemporary          = NULL;
+OCILOBISTEMPORARY            OCILobIsTemporary            = NULL;
+OCILOBAPPEND                 OCILobAppend                 = NULL;
+OCILOBCOPY                   OCILobCopy                   = NULL;
+OCILOBGETLENGTH              OCILobGetLength              = NULL;
+OCILOBGETCHUNKSIZE           OCILobGetChunkSize           = NULL;
+OCILOBREAD                   OCILobRead                   = NULL;
+OCILOBWRITE                  OCILobWrite                  = NULL;
+OCILOBTRIM                   OCILobTrim                   = NULL;
+OCILOBERASE                  OCILobErase                  = NULL;
+OCILOBOPEN                   OCILobOpen                   = NULL;
+OCILOBCLOSE                  OCILobClose                  = NULL;
+OCILOBLOCATORASSIGN          OCILobLocatorAssign          = NULL;
+OCILOBASSIGN                 OCILobAssign                 = NULL;
+OCILOBISEQUAL                OCILobIsEqual                = NULL;
+OCILOBFLUSHBUFFER            OCILobFlushBuffer            = NULL;
+OCILOBENABLEBUFFERING        OCILobEnableBuffering        = NULL;
+OCILOBDISABLEBUFFERING       OCILobDisableBuffering       = NULL;
+OCILOBGETSTORAGELIMIT        OCILobGetStorageLimit        = NULL;
+OCILOBFILEOPEN               OCILobFileOpen               = NULL;
+OCILOBFILECLOSE              OCILobFileClose              = NULL;
+OCILOBFILECLOSEALL           OCILobFileCloseAll           = NULL;
+OCILOBFILEISOPEN             OCILobFileIsOpen             = NULL;
+OCILOBFILEEXISTS             OCILobFileExists             = NULL;
+OCILOBFIELGETNAME            OCILobFileGetName            = NULL;
+OCILOBFILESETNAME            OCILobFileSetName            = NULL;
+OCILOBLOADFROMFILE           OCILobLoadFromFile           = NULL;
+OCILOBWRITEAPPEND            OCILobWriteAppend            = NULL;
+OCISERVERVERSION             OCIServerVersion             = NULL;
+OCIBREAK                     OCIBreak                     = NULL;
+OCIATTRGET                   OCIAttrGet                   = NULL;
+OCIATTRSET                   OCIAttrSet                   = NULL;
+OCIDATEASSIGN                OCIDateAssign                = NULL;
+OCIDATETOTEXT                OCIDateToText                = NULL;
+OCIDATEFROMTEXT              OCIDateFromText              = NULL;
+OCIDATECOMPARE               OCIDateCompare               = NULL;
+OCIDATEADDMONTHS             OCIDateAddMonths             = NULL;
+OCIDATEADDDAYS               OCIDateAddDays               = NULL;
+OCIDATELASTDAY               OCIDateLastDay               = NULL;
+OCIDATEDAYSBETWEEN           OCIDateDaysBetween           = NULL;
+OCIDATEZONETOZONE            OCIDateZoneToZone            = NULL;
+OCIDATENEXTDAY               OCIDateNextDay               = NULL;
+OCIDATECHECK                 OCIDateCheck                 = NULL;
+OCIDATESYSDATE               OCIDateSysDate               = NULL;
+OCIDESCRIBEANY               OCIDescribeAny               = NULL;
+OCIINTERVALASSIGN            OCIIntervalAssign            = NULL;
+OCIINTERVALCHECK             OCIIntervalCheck             = NULL;
+OCIINTERVALCOMPARE           OCIIntervalCompare           = NULL;
+OCIINTERVALFROMTEXT          OCIIntervalFromText          = NULL;
+OCIINTERVALTOTEXT            OCIIntervalToText            = NULL;
+OCIINTERVALFROMTZ            OCIIntervalFromTZ            = NULL;
+OCIINTERVALGETDAYSECOND      OCIIntervalGetDaySecond      = NULL;
+OCIINTERVALGETYEARMONTH      OCIIntervalGetYearMonth      = NULL;
+OCIINTERVALSETDAYSECOND      OCIIntervalSetDaySecond      = NULL;
+OCIINTERVALSETYEARMONTH      OCIIntervalSetYearMonth      = NULL;
+OCIINTERVALSUBTRACT          OCIIntervalSubtract          = NULL;
+OCIINTERVALADD               OCIIntervalAdd               = NULL;
+OCIDATETIMEASSIGN            OCIDateTimeAssign            = NULL;
+OCIDATETIMECHECK             OCIDateTimeCheck             = NULL;
+OCIDATETIMECOMPARE           OCIDateTimeCompare           = NULL;
+OCIDATETIMECONSTRUCT         OCIDateTimeConstruct         = NULL;
+OCIDATETIMECONVERT           OCIDateTimeConvert           = NULL;
+OCIDATETIMEFROMARRAY         OCIDateTimeFromArray         = NULL;
+OCIDATETIMETOARRAY           OCIDateTimeToArray           = NULL;
+OCIDATETIMEFROMTEXT          OCIDateTimeFromText          = NULL;
+OCIDATETIMETOTEXT            OCIDateTimeToText            = NULL;
+OCIDATETIMEGETDATE           OCIDateTimeGetDate           = NULL;
+OCIDATETIMEGETTIME           OCIDateTimeGetTime           = NULL;
+OCIDATETIMEGETTIMEZONENAME   OCIDateTimeGetTimeZoneName   = NULL;
 OCIDATETIMEGETTIMEZONEOFFSET OCIDateTimeGetTimeZoneOffset = NULL;
-OCIDATETIMEINTERVALADD OCIDateTimeIntervalAdd             = NULL;
-OCIDATETIMEINTERVALSUB OCIDateTimeIntervalSub             = NULL;
-OCIDATETIMESUBTRACT OCIDateTimeSubtract                   = NULL;
-OCIDATETIMESYSTIMESTAMP OCIDateTimeSysTimeStamp           = NULL;
-OCIARRAYDESCRIPTORALLOC OCIArrayDescriptorAlloc           = NULL;
-OCIARRAYDESCRIPTORFREE OCIArrayDescriptorFree             = NULL;
-OCICLIENTVERSION OCIClientVersion                         = NULL;
-OCITYPEBYNAME OCITypeByName                               = NULL;
-OCINUMBERTOINT OCINumberToInt                             = NULL;
-OCINUMBERFROMINT OCINumberFromInt                         = NULL;
-OCINUMBERTOREAL OCINumberToReal                           = NULL;
-OCINUMBERFROMREAL OCINumberFromReal                       = NULL;
-OCINUMBERTOTEXT OCINumberToText                           = NULL;
-OCINUMBERFROMTEXT OCINumberFromText                       = NULL;
-OCISTRINGPTR OCIStringPtr                                 = NULL;
-OCISTRINGASSIGNTEXT OCIStringAssignText                   = NULL;
-OCIRAWPTR OCIRawPtr                                       = NULL;
-OCIRAWASSIGNBYTES OCIRawAssignBytes                       = NULL;
-OCIRAWALLOCSIZE OCIRawAllocSize                           = NULL;
-OCIRAWSIZE OCIRawSize                                     = NULL;
-OCIOBJECTNEW OCIObjectNew                                 = NULL;
-OCIOBJECTFREE OCIObjectFree                               = NULL;
-OCIOBJECTSETATTR OCIObjectSetAttr                         = NULL;
-OCIOBJECTGETATTR OCIObjectGetAttr                         = NULL;
-OCIOBJECTPIN OCIObjectPin                                 = NULL;
-OCIOBJECTUNPIN OCIObjectUnpin                             = NULL;
-OCIOBJECTCOPY OCIObjectCopy                               = NULL;
-OCIOBJECTGETOBJECTREF OCIObjectGetObjectRef               = NULL;
-OCIOBJECTGETPROPERTY OCIObjectGetProperty                 = NULL;
-OCIOBJECTGETIND OCIObjectGetInd                           = NULL;
-OCIREFASSIGN OCIRefAssign                                 = NULL;
-OCIREFISNULL OCIRefIsNull                                 = NULL;
-OCIREFCLEAR OCIRefClear                                   = NULL;
-OCIREFTOHEX OCIRefToHex                                   = NULL;
-OCIREFHEXSIZE OCIRefHexSize                               = NULL;
-OCITHREADPROCESSINIT OCIThreadProcessInit                 = NULL;
-OCITHREADINIT OCIThreadInit                               = NULL;
-OCITHREADTERM OCIThreadTerm                               = NULL;
-OCITHREADIDINIT OCIThreadIdInit                           = NULL;
-OCITHREADIDDESTROY OCIThreadIdDestroy                     = NULL;
-OCITHREADHNDINIT OCIThreadHndInit                         = NULL;
-OCITHREADHNDDESTROY OCIThreadHndDestroy                   = NULL;
-OCITHREADCREATE OCIThreadCreate                           = NULL;
-OCITHREADJOIN OCIThreadJoin                               = NULL;
-OCITHREADCLOSE OCIThreadClose                             = NULL;
-OCITHREADMUTEXINIT OCIThreadMutexInit                     = NULL;
-OCITHREADMUTEXDESTROY OCIThreadMutexDestroy               = NULL;
-OCITHREADMUTEXACQUIRE OCIThreadMutexAcquire               = NULL;
-OCITHREADMUTEXRELEASE OCIThreadMutexRelease               = NULL;
-OCITHREADKEYINIT OCIThreadKeyInit                         = NULL;
-OCITHREADKEYDESTROY OCIThreadKeyDestroy                   = NULL;
-OCITHREADKEYSET OCIThreadKeySet                           = NULL;
-OCITHREADKEYGET OCIThreadKeyGet                           = NULL;
-OCICONNECTIONPOOLCREATE OCIConnectionPoolCreate           = NULL;
-OCICONNECTIONPOOLDESTROY OCIConnectionPoolDestroy         = NULL;
-OCISESSIONPOOLCREATE OCISessionPoolCreate                 = NULL;
-OCISESSIONPOOLDESTROY OCISessionPoolDestroy               = NULL;
-OCISESSIONGET OCISessionGet                               = NULL;
-OCISESSIONRELEASE OCISessionRelease                       = NULL;
-OCICOLLSIZE OCICollSize                                   = NULL;
-OCICOLLMAX OCICollMax                                     = NULL;
-OCICOLLGETITEM OCICollGetElem                             = NULL;
-OCICOLLASSIGNELEM OCICollAssignElem                       = NULL;
-OCICOLLASSIGN OCICollAssign                               = NULL;
-OCICOLLAPPEND OCICollAppend                               = NULL;
-OCICOLLTRIM OCICollTrim                                   = NULL;
-OCIITERCREATE OCIIterCreate                               = NULL;
-OCIITERDELETE OCIIterDelete                               = NULL;
-OCIITERINIT OCIIterInit                                   = NULL;
-OCIITERNEXT OCIIterNext                                   = NULL;
-OCIITERPREV OCIIterPrev                                   = NULL;
-OCIDIRPATHABORT OCIDirPathAbort                           = NULL;
-OCIDIRPATHDATASAVE OCIDirPathDataSave                     = NULL;
-OCIDIRPATHFINISH OCIDirPathFinish                         = NULL;
-OCIDIRPATHPREPARE OCIDirPathPrepare                       = NULL;
-OCIDIRPATHLOADSTREAM OCIDirPathLoadStream                 = NULL;
-OCIDIRPATHCOLARRAYENTRYSET OCIDirPathColArrayEntrySet     = NULL;
-OCIDIRPATHCOLARRAYRESET OCIDirPathColArrayReset           = NULL;
-OCIDIRPATHCOLARRAYTOSTREAM OCIDirPathColArrayToStream     = NULL;
-OCIDIRPATHSTREAMRESET OCIDirPathStreamReset               = NULL;
-OCIDIRPATHFLUSHROW OCIDirPathFlushRow                     = NULL;
-OCICACHEFREE OCICacheFree                                 = NULL;
-OCIPING OCIPing                                           = NULL;
-
-OCIDBSTARTUP OCIDBStartup   = NULL;
-OCIDBSHUTDOWN OCIDBShutdown = NULL;
-
-OCISTMTPREPARE2 OCIStmtPrepare2 = NULL;
-OCISTMTRELEASE OCIStmtRelease   = NULL;
-
-OCISUBSCRIPTIONREGISTER OCISubscriptionRegister     = NULL;
-OCISUBSCRIPTIONUNREGISTER OCISubscriptionUnRegister = NULL;
-
-OCIAQENQ OCIAQEnq       = NULL;
-OCIAQDEQ OCIAQDeq       = NULL;
-OCIAQLISTEN OCIAQListen = NULL;
+OCIDATETIMEINTERVALADD       OCIDateTimeIntervalAdd       = NULL;
+OCIDATETIMEINTERVALSUB       OCIDateTimeIntervalSub       = NULL;
+OCIDATETIMESUBTRACT          OCIDateTimeSubtract          = NULL;
+OCIDATETIMESYSTIMESTAMP      OCIDateTimeSysTimeStamp      = NULL;
+OCIARRAYDESCRIPTORALLOC      OCIArrayDescriptorAlloc      = NULL;
+OCIARRAYDESCRIPTORFREE       OCIArrayDescriptorFree       = NULL;
+OCICLIENTVERSION             OCIClientVersion             = NULL;
+OCITYPEBYNAME                OCITypeByName                = NULL;
+OCINUMBERTOINT               OCINumberToInt               = NULL;
+OCINUMBERFROMINT             OCINumberFromInt             = NULL;
+OCINUMBERTOREAL              OCINumberToReal              = NULL;
+OCINUMBERFROMREAL            OCINumberFromReal            = NULL;
+OCINUMBERTOTEXT              OCINumberToText              = NULL;
+OCINUMBERFROMTEXT            OCINumberFromText            = NULL;
+OCISTRINGPTR                 OCIStringPtr                 = NULL;
+OCISTRINGASSIGNTEXT          OCIStringAssignText          = NULL;
+OCIRAWPTR                    OCIRawPtr                    = NULL;
+OCIRAWASSIGNBYTES            OCIRawAssignBytes            = NULL;
+OCIRAWALLOCSIZE              OCIRawAllocSize              = NULL;
+OCIRAWSIZE                   OCIRawSize                   = NULL;
+OCIOBJECTNEW                 OCIObjectNew                 = NULL;
+OCIOBJECTFREE                OCIObjectFree                = NULL;
+OCIOBJECTSETATTR             OCIObjectSetAttr             = NULL;
+OCIOBJECTGETATTR             OCIObjectGetAttr             = NULL;
+OCIOBJECTPIN                 OCIObjectPin                 = NULL;
+OCIOBJECTUNPIN               OCIObjectUnpin               = NULL;
+OCIOBJECTCOPY                OCIObjectCopy                = NULL;
+OCIOBJECTGETOBJECTREF        OCIObjectGetObjectRef        = NULL;
+OCIOBJECTGETPROPERTY         OCIObjectGetProperty         = NULL;
+OCIOBJECTGETIND              OCIObjectGetInd              = NULL;
+OCIREFASSIGN                 OCIRefAssign                 = NULL;
+OCIREFISNULL                 OCIRefIsNull                 = NULL;
+OCIREFCLEAR                  OCIRefClear                  = NULL;
+OCIREFTOHEX                  OCIRefToHex                  = NULL;
+OCIREFHEXSIZE                OCIRefHexSize                = NULL;
+OCITHREADPROCESSINIT         OCIThreadProcessInit         = NULL;
+OCITHREADINIT                OCIThreadInit                = NULL;
+OCITHREADTERM                OCIThreadTerm                = NULL;
+OCITHREADIDINIT              OCIThreadIdInit              = NULL;
+OCITHREADIDDESTROY           OCIThreadIdDestroy           = NULL;
+OCITHREADHNDINIT             OCIThreadHndInit             = NULL;
+OCITHREADHNDDESTROY          OCIThreadHndDestroy          = NULL;
+OCITHREADCREATE              OCIThreadCreate              = NULL;
+OCITHREADJOIN                OCIThreadJoin                = NULL;
+OCITHREADCLOSE               OCIThreadClose               = NULL;
+OCITHREADMUTEXINIT           OCIThreadMutexInit           = NULL;
+OCITHREADMUTEXDESTROY        OCIThreadMutexDestroy        = NULL;
+OCITHREADMUTEXACQUIRE        OCIThreadMutexAcquire        = NULL;
+OCITHREADMUTEXRELEASE        OCIThreadMutexRelease        = NULL;
+OCITHREADKEYINIT             OCIThreadKeyInit             = NULL;
+OCITHREADKEYDESTROY          OCIThreadKeyDestroy          = NULL;
+OCITHREADKEYSET              OCIThreadKeySet              = NULL;
+OCITHREADKEYGET              OCIThreadKeyGet              = NULL;
+OCICONNECTIONPOOLCREATE      OCIConnectionPoolCreate      = NULL;
+OCICONNECTIONPOOLDESTROY     OCIConnectionPoolDestroy     = NULL;
+OCISESSIONPOOLCREATE         OCISessionPoolCreate         = NULL;
+OCISESSIONPOOLDESTROY        OCISessionPoolDestroy        = NULL;
+OCISESSIONGET                OCISessionGet                = NULL;
+OCISESSIONRELEASE            OCISessionRelease            = NULL;
+OCICOLLSIZE                  OCICollSize                  = NULL;
+OCICOLLMAX                   OCICollMax                   = NULL;
+OCICOLLGETITEM               OCICollGetElem               = NULL;
+OCICOLLASSIGNELEM            OCICollAssignElem            = NULL;
+OCICOLLASSIGN                OCICollAssign                = NULL;
+OCICOLLAPPEND                OCICollAppend                = NULL;
+OCICOLLTRIM                  OCICollTrim                  = NULL;
+OCIITERCREATE                OCIIterCreate                = NULL;
+OCIITERDELETE                OCIIterDelete                = NULL;
+OCIITERINIT                  OCIIterInit                  = NULL;
+OCIITERNEXT                  OCIIterNext                  = NULL;
+OCIITERPREV                  OCIIterPrev                  = NULL;
+OCIDIRPATHABORT              OCIDirPathAbort              = NULL;
+OCIDIRPATHDATASAVE           OCIDirPathDataSave           = NULL;
+OCIDIRPATHFINISH             OCIDirPathFinish             = NULL;
+OCIDIRPATHPREPARE            OCIDirPathPrepare            = NULL;
+OCIDIRPATHLOADSTREAM         OCIDirPathLoadStream         = NULL;
+OCIDIRPATHCOLARRAYENTRYSET   OCIDirPathColArrayEntrySet   = NULL;
+OCIDIRPATHCOLARRAYRESET      OCIDirPathColArrayReset      = NULL;
+OCIDIRPATHCOLARRAYTOSTREAM   OCIDirPathColArrayToStream   = NULL;
+OCIDIRPATHSTREAMRESET        OCIDirPathStreamReset        = NULL;
+OCIDIRPATHFLUSHROW           OCIDirPathFlushRow           = NULL;
+OCICACHEFREE                 OCICacheFree                 = NULL;
+OCIPING                      OCIPing                      = NULL;
+OCIDBSTARTUP                 OCIDBStartup                 = NULL;
+OCIDBSHUTDOWN                OCIDBShutdown                = NULL;
+OCISTMTPREPARE2              OCIStmtPrepare2              = NULL;
+OCISTMTRELEASE               OCIStmtRelease               = NULL;
+OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister      = NULL;
+OCISUBSCRIPTIONUNREGISTER    OCISubscriptionUnRegister    = NULL;
+OCIAQENQ                     OCIAQEnq                     = NULL;
+OCIAQDEQ                     OCIAQDeq                     = NULL;
+OCIAQLISTEN                  OCIAQListen                  = NULL;
 
   #ifdef ORAXB8_DEFINED
 
-OCILOBCOPY2 OCILobCopy2                 = NULL;
-OCILOBERASE2 OCILobErase2               = NULL;
-OCILOBGETLENGTH2 OCILobGetLength2       = NULL;
-OCILOBLOADFROMFILE2 OCILobLoadFromFile2 = NULL;
-OCILOBREAD2 OCILobRead2                 = NULL;
-OCILOBTRIM2 OCILobTrim2                 = NULL;
-OCILOBWRITE2 OCILobWrite2               = NULL;
-OCILOBWRITEAPPEND2 OCILobWriteAppend2   = NULL;
+OCILOBCOPY2                  OCILobCopy2                  = NULL;
+OCILOBERASE2                 OCILobErase2                 = NULL;
+OCILOBGETLENGTH2             OCILobGetLength2             = NULL;
+OCILOBLOADFROMFILE2          OCILobLoadFromFile2          = NULL;
+OCILOBREAD2                  OCILobRead2                  = NULL;
+OCILOBTRIM2                  OCILobTrim2                  = NULL;
+OCILOBWRITE2                 OCILobWrite2                = NULL;
+OCILOBWRITEAPPEND2           OCILobWriteAppend2          = NULL;
 
   #endif
 
@@ -997,6 +993,8 @@ boolean OCI_API OCI_Initialize
 
         LIB_SYMBOL(OCILib.lib_handle, "OCICacheFree", OCICacheFree,
                    OCICACHEFREE);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIPing", OCIPing,
+                   OCIPING);
 
         LIB_SYMBOL(OCILib.lib_handle, "OCIDBStartup", OCIDBStartup,
                    OCIDBSTARTUP);

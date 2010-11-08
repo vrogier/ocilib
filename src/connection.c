@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: connection.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: connection.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -1701,69 +1701,69 @@ boolean OCI_API OCI_SetTrace
     {
         switch (trace)
         {
-        case OCI_TRC_IDENTITY:
+            case OCI_TRC_IDENTITY:
 
-            #if OCI_VERSION_COMPILE >= OCI_10_1
+                #if OCI_VERSION_COMPILE >= OCI_10_1
 
-            attrib = OCI_ATTR_CLIENT_IDENTIFIER;
+                attrib = OCI_ATTR_CLIENT_IDENTIFIER;
 
-            #endif
-            con->trace->identifier[0] = 0;
+                #endif
+                con->trace->identifier[0] = 0;
 
-            mtsncat(con->trace->identifier, value, OCI_SIZE_TRACE_ID);
+                mtsncat(con->trace->identifier, value, OCI_SIZE_TRACE_ID);
 
-            str = con->trace->identifier;
+                str = con->trace->identifier;
 
-            break;
+                break;
 
-        case OCI_TRC_MODULE:
+            case OCI_TRC_MODULE:
 
-            #if OCI_VERSION_COMPILE >= OCI_10_1
+                #if OCI_VERSION_COMPILE >= OCI_10_1
 
-            attrib = OCI_ATTR_MODULE;
+                attrib = OCI_ATTR_MODULE;
 
-            #endif
-            con->trace->module[0] = 0;
+                #endif
+                con->trace->module[0] = 0;
 
-            mtsncat(con->trace->module, value, OCI_SIZE_TRACE_MODULE);
+                mtsncat(con->trace->module, value, OCI_SIZE_TRACE_MODULE);
 
-            str = con->trace->module;
+                str = con->trace->module;
 
-            break;
+                break;
 
-        case OCI_TRC_ACTION:
+            case OCI_TRC_ACTION:
 
-            #if OCI_VERSION_COMPILE >= OCI_10_1
+                #if OCI_VERSION_COMPILE >= OCI_10_1
 
-            attrib = OCI_ATTR_ACTION;
+                attrib = OCI_ATTR_ACTION;
 
-            #endif
-            con->trace->action[0] = 0;
+                #endif
+                con->trace->action[0] = 0;
 
-            mtsncat(con->trace->action, value, OCI_SIZE_TRACE_ACTION);
+                mtsncat(con->trace->action, value, OCI_SIZE_TRACE_ACTION);
 
-            str = con->trace->action;
+                str = con->trace->action;
 
-            break;
+                break;
 
-        case OCI_TRC_DETAIL:
+            case OCI_TRC_DETAIL:
 
-            #if OCI_VERSION_COMPILE >= OCI_10_1
+                #if OCI_VERSION_COMPILE >= OCI_10_1
 
-            attrib = OCI_ATTR_CLIENT_INFO;
+                attrib = OCI_ATTR_CLIENT_INFO;
 
-            #endif
-            con->trace->info[0] = 0;
+                #endif
+                con->trace->info[0] = 0;
 
-            mtsncat(con->trace->info, value,  OCI_SIZE_TRACE_INF0);
+                mtsncat(con->trace->info, value,  OCI_SIZE_TRACE_INF0);
 
-            str = con->trace->info;
+                str = con->trace->info;
 
-            break;
+                break;
 
-        default:
+            default:
 
-            res = FALSE;
+                res = FALSE;
         }
     }
 
@@ -1819,29 +1819,29 @@ const mtext * OCI_API OCI_GetTrace
     {
         switch (trace)
         {
-        case OCI_TRC_IDENTITY:
+            case OCI_TRC_IDENTITY:
 
-            str = con->trace->identifier;
-            break;
+                str = con->trace->identifier;
+                break;
 
-        case OCI_TRC_MODULE:
+            case OCI_TRC_MODULE:
 
-            str = con->trace->module;
-            break;
+                str = con->trace->module;
+                break;
 
-        case OCI_TRC_ACTION:
+            case OCI_TRC_ACTION:
 
-            str = con->trace->action;
-            break;
+                str = con->trace->action;
+                break;
 
-        case OCI_TRC_DETAIL:
+            case OCI_TRC_DETAIL:
 
-            str = con->trace->info;
-            break;
+                str = con->trace->info;
+                break;
 
-        default:
+            default:
 
-            res = FALSE;
+                res = FALSE;
         }
     }
 

@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: bind.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: bind.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -60,48 +60,49 @@ boolean OCI_BindFree
         {
             switch (bnd->type)
             {
-            case OCI_CDT_DATETIME:
+                case OCI_CDT_DATETIME:
 
-                OCI_DateFree((OCI_Date *) bnd->input);
-                break;
+                    OCI_DateFree((OCI_Date *) bnd->input);
+                    break;
 
-            case OCI_CDT_LOB:
+                case OCI_CDT_LOB:
 
-                OCI_LobFree((OCI_Lob *) bnd->input);
-                break;
+                    OCI_LobFree((OCI_Lob *) bnd->input);
+                    break;
 
-            case OCI_CDT_FILE:
+                case OCI_CDT_FILE:
 
-                OCI_FileFree((OCI_File *) bnd->input);
-                break;
+                    OCI_FileFree((OCI_File *) bnd->input);
+                    break;
 
-            case OCI_CDT_OBJECT:
+                case OCI_CDT_OBJECT:
 
-                OCI_ObjectFree((OCI_Object *) bnd->input);
-                break;
+                    OCI_ObjectFree((OCI_Object *) bnd->input);
+                    break;
 
-            case OCI_CDT_COLLECTION:
+                case OCI_CDT_COLLECTION:
 
-                OCI_CollFree((OCI_Coll *) bnd->input);;
-                break;
+                    OCI_CollFree((OCI_Coll *) bnd->input);;
+                    break;
 
-            case OCI_CDT_TIMESTAMP:
+                case OCI_CDT_TIMESTAMP:
 
-                OCI_TimestampFree((OCI_Timestamp *) bnd->input);
-                break;
+                    OCI_TimestampFree((OCI_Timestamp *) bnd->input);
+                    break;
 
-            case OCI_CDT_INTERVAL:
+                case OCI_CDT_INTERVAL:
 
-                OCI_IntervalFree((OCI_Interval *) bnd->input);
-                break;
-            case OCI_CDT_REF:
+                    OCI_IntervalFree((OCI_Interval *) bnd->input);
+                    break;
 
-                OCI_RefFree((OCI_Ref *) bnd->input);
-                break;
+                case OCI_CDT_REF:
 
-            default:
+                    OCI_RefFree((OCI_Ref *) bnd->input);
+                    break;
 
-                OCI_MemFree(bnd->input);
+                default:
+
+                    OCI_MemFree(bnd->input);
             }
         }
     }
@@ -140,55 +141,55 @@ boolean OCI_BindAllocData
 
         switch (bnd->type)
         {
-        case OCI_CDT_NUMERIC:
-            if (bnd->code == SQLT_VNU)
-            {
-                elem_size   = sizeof(big_int);
-                struct_size = sizeof(OCINumber);
-            }
-            else
-            {
+            case OCI_CDT_NUMERIC:
+                if (bnd->code == SQLT_VNU)
+                {
+                    elem_size   = sizeof(big_int);
+                    struct_size = sizeof(OCINumber);
+                }
+                else
+                {
+                    struct_size = bnd->size;
+                }
+                break;
+            case OCI_CDT_DATETIME:
+                struct_size = sizeof(OCI_Date);
+                elem_size   = sizeof(OCIDate);
+                break;
+            case OCI_CDT_TEXT:
                 struct_size = bnd->size;
-            }
-            break;
-        case OCI_CDT_DATETIME:
-            struct_size = sizeof(OCI_Date);
-            elem_size   = sizeof(OCIDate);
-            break;
-        case OCI_CDT_TEXT:
-            struct_size = bnd->size;
-            break;
-        case OCI_CDT_LOB:
-            struct_size = sizeof(OCI_Lob);
-            elem_size   = sizeof(OCILobLocator *);
-            break;
-        case OCI_CDT_FILE:
-            struct_size = sizeof(OCI_File);
-            elem_size   = sizeof(OCILobLocator *);
-            break;
-        case OCI_CDT_TIMESTAMP:
-            struct_size = sizeof(OCI_Timestamp);
-            elem_size   = sizeof(OCIDateTime *);
-            break;
-        case OCI_CDT_INTERVAL:
-            struct_size = sizeof(OCI_Interval);
-            elem_size   = sizeof(OCIInterval *);
-            break;
-        case OCI_CDT_RAW:
-            struct_size = bnd->size;
-            break;
-        case OCI_CDT_OBJECT:
-            struct_size = sizeof(OCI_Object);
-            elem_size   = sizeof(void *);
-            break;
-        case OCI_CDT_COLLECTION:
-            struct_size = sizeof(OCI_Coll);
-            elem_size   = sizeof(OCIColl *);
-            break;
-        case OCI_CDT_REF:
-            struct_size = sizeof(OCI_Ref);
-            elem_size   = sizeof(OCIRef *);
-            break;
+                break;
+            case OCI_CDT_LOB:
+                struct_size = sizeof(OCI_Lob);
+                elem_size   = sizeof(OCILobLocator *);
+                break;
+            case OCI_CDT_FILE:
+                struct_size = sizeof(OCI_File);
+                elem_size   = sizeof(OCILobLocator *);
+                break;
+            case OCI_CDT_TIMESTAMP:
+                struct_size = sizeof(OCI_Timestamp);
+                elem_size   = sizeof(OCIDateTime *);
+                break;
+            case OCI_CDT_INTERVAL:
+                struct_size = sizeof(OCI_Interval);
+                elem_size   = sizeof(OCIInterval *);
+                break;
+            case OCI_CDT_RAW:
+                struct_size = bnd->size;
+                break;
+            case OCI_CDT_OBJECT:
+                struct_size = sizeof(OCI_Object);
+                elem_size   = sizeof(void *);
+                break;
+            case OCI_CDT_COLLECTION:
+                struct_size = sizeof(OCI_Coll);
+                elem_size   = sizeof(OCIColl *);
+                break;
+            case OCI_CDT_REF:
+                struct_size = sizeof(OCI_Ref);
+                elem_size   = sizeof(OCIRef *);
+                break;
         }
 
         arr = OCI_ArrayCreate(bnd->stmt->con,
@@ -218,131 +219,131 @@ boolean OCI_BindAllocData
     {
         switch (bnd->type)
         {
-        case OCI_CDT_NUMERIC:
-        {
-            bnd->input = (void **) OCI_MemAlloc(OCI_IPC_VOID,
-                                                bnd->size,
-                                                1, TRUE);
-            bnd->buf.data = (void **) bnd->input;
-            break;
-        }
-        case OCI_CDT_DATETIME:
-        {
-            OCI_Date *date = OCI_DateCreate(bnd->stmt->con);
-
-            if (date != NULL)
+            case OCI_CDT_NUMERIC:
             {
-                bnd->input    = (void **) date;
-                bnd->buf.data = (void **) date->handle;
+                bnd->input = (void **) OCI_MemAlloc(OCI_IPC_VOID,
+                                                    bnd->size,
+                                                    1, TRUE);
+                bnd->buf.data = (void **) bnd->input;
+                break;
             }
-
-            break;
-        }
-        case OCI_CDT_TEXT:
-        {
-            bnd->input = (void **) OCI_MemAlloc(OCI_IPC_STRING,
-                                                bnd->size,
-                                                1, TRUE);
-            bnd->buf.data = (void **) bnd->input;
-            break;
-        }
-        case OCI_CDT_LOB:
-        {
-            OCI_Lob *lob = OCI_LobCreate(bnd->stmt->con, bnd->subtype);
-
-            if (lob != NULL)
+            case OCI_CDT_DATETIME:
             {
-                bnd->input    = (void **) lob;
-                bnd->buf.data = (void **) lob->handle;
+                OCI_Date *date = OCI_DateCreate(bnd->stmt->con);
+
+                if (date != NULL)
+                {
+                    bnd->input    = (void **) date;
+                    bnd->buf.data = (void **) date->handle;
+                }
+
+                break;
             }
-
-            break;
-        }
-        case OCI_CDT_FILE:
-        {
-            OCI_File *file = OCI_FileCreate(bnd->stmt->con,
-                                            bnd->subtype);
-
-            if (file != NULL)
+            case OCI_CDT_TEXT:
             {
-                bnd->input    = (void **) file;
-                bnd->buf.data = (void **) file->handle;
+                bnd->input = (void **) OCI_MemAlloc(OCI_IPC_STRING,
+                                                    bnd->size,
+                                                    1, TRUE);
+                bnd->buf.data = (void **) bnd->input;
+                break;
             }
-
-            break;
-        }
-        case OCI_CDT_TIMESTAMP:
-        {
-            OCI_Timestamp *tmsp = OCI_TimestampCreate(bnd->stmt->con,
-                                                      bnd->subtype);
-
-            if (tmsp != NULL)
+            case OCI_CDT_LOB:
             {
-                bnd->input    = (void **) tmsp;
-                bnd->buf.data = (void **) tmsp->handle;
+                OCI_Lob *lob = OCI_LobCreate(bnd->stmt->con, bnd->subtype);
+
+                if (lob != NULL)
+                {
+                    bnd->input    = (void **) lob;
+                    bnd->buf.data = (void **) lob->handle;
+                }
+
+                break;
             }
-
-            break;
-        }
-        case OCI_CDT_INTERVAL:
-        {
-            OCI_Interval *itv = OCI_IntervalCreate(bnd->stmt->con,
-                                                   bnd->subtype);
-
-            if (itv != NULL)
+            case OCI_CDT_FILE:
             {
-                bnd->input    = (void **) itv;
-                bnd->buf.data = (void **) itv->handle;
+                OCI_File *file = OCI_FileCreate(bnd->stmt->con,
+                                                bnd->subtype);
+
+                if (file != NULL)
+                {
+                    bnd->input    = (void **) file;
+                    bnd->buf.data = (void **) file->handle;
+                }
+
+                break;
             }
-
-            break;
-        }
-        case OCI_CDT_RAW:
-        {
-            bnd->input = (void **) OCI_MemAlloc(OCI_IPC_VOID,
-                                                bnd->size,
-                                                1, TRUE);
-            bnd->buf.data = (void **) bnd->input;
-            break;
-        }
-        case OCI_CDT_OBJECT:
-        {
-            OCI_Object *obj = OCI_ObjectCreate(bnd->stmt->con,
-                                               bnd->typinf);
-
-            if (obj != NULL)
+            case OCI_CDT_TIMESTAMP:
             {
-                bnd->input    = (void **) obj;
-                bnd->buf.data = (void **) obj->handle;
+                OCI_Timestamp *tmsp = OCI_TimestampCreate(bnd->stmt->con,
+                                                          bnd->subtype);
+
+                if (tmsp != NULL)
+                {
+                    bnd->input    = (void **) tmsp;
+                    bnd->buf.data = (void **) tmsp->handle;
+                }
+
+                break;
             }
-
-            break;
-        }
-        case OCI_CDT_COLLECTION:
-        {
-            OCI_Coll *coll = OCI_CollCreate(bnd->typinf);
-
-            if (coll != NULL)
+            case OCI_CDT_INTERVAL:
             {
-                bnd->input    = (void **) coll;
-                bnd->buf.data = (void **) coll->handle;
+                OCI_Interval *itv = OCI_IntervalCreate(bnd->stmt->con,
+                                                       bnd->subtype);
+
+                if (itv != NULL)
+                {
+                    bnd->input    = (void **) itv;
+                    bnd->buf.data = (void **) itv->handle;
+                }
+
+                break;
             }
-
-            break;
-        }
-        case OCI_CDT_REF:
-        {
-            OCI_Ref *ref =  OCI_RefCreate(bnd->stmt->con,
-                                          bnd->typinf);
-
-            if (ref != NULL)
+            case OCI_CDT_RAW:
             {
-                bnd->input    = (void **) ref;
-                bnd->buf.data = (void **) ref->handle;
+                bnd->input = (void **) OCI_MemAlloc(OCI_IPC_VOID,
+                                                    bnd->size,
+                                                    1, TRUE);
+                bnd->buf.data = (void **) bnd->input;
+                break;
             }
+            case OCI_CDT_OBJECT:
+            {
+                OCI_Object *obj = OCI_ObjectCreate(bnd->stmt->con,
+                                                   bnd->typinf);
 
-            break;
-        }
+                if (obj != NULL)
+                {
+                    bnd->input    = (void **) obj;
+                    bnd->buf.data = (void **) obj->handle;
+                }
+
+                break;
+            }
+            case OCI_CDT_COLLECTION:
+            {
+                OCI_Coll *coll = OCI_CollCreate(bnd->typinf);
+
+                if (coll != NULL)
+                {
+                    bnd->input    = (void **) coll;
+                    bnd->buf.data = (void **) coll->handle;
+                }
+
+                break;
+            }
+            case OCI_CDT_REF:
+            {
+                OCI_Ref *ref =  OCI_RefCreate(bnd->stmt->con,
+                                              bnd->typinf);
+
+                if (ref != NULL)
+                {
+                    bnd->input    = (void **) ref;
+                    bnd->buf.data = (void **) ref->handle;
+                }
+
+                break;
+            }
         }
     }
 
@@ -402,7 +403,8 @@ unsigned int OCI_API OCI_BindGetSubtype
 
     OCI_RESULT(TRUE);
 
-    if (bnd->type == OCI_CDT_LONG      ||
+    if (bnd->type == OCI_CDT_NUMERIC   ||
+		bnd->type == OCI_CDT_LONG      ||
         bnd->type == OCI_CDT_LOB       ||
         bnd->type == OCI_CDT_FILE      ||
         bnd->type == OCI_CDT_TIMESTAMP ||

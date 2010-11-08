@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: object.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: object.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -116,12 +116,12 @@ size_t OCI_ObjectGetStructSize
 
             switch (OCI_OFFSET_PAIR(type1, type2))
             {
-            case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
-            case OCI_OFFSET_PAIR(OCI_OFT_DATE, OCI_OFT_POINTER):
-            case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
+                case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
+                case OCI_OFFSET_PAIR(OCI_OFT_DATE, OCI_OFT_POINTER):
+                case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
 
-                align = TRUE;
-                break;
+                    align = TRUE;
+                    break;
             }
 
             size += size1;
@@ -160,28 +160,28 @@ boolean OCI_ObjectGetAttrInfo
 
     switch (typinf->cols[index].type)
     {
-    case OCI_CDT_NUMERIC:
+        case OCI_CDT_NUMERIC:
 
-        *p_size = sizeof(OCINumber);
-        *p_type = OCI_OFT_NUMBER;
-        break;
+            *p_size = sizeof(OCINumber);
+            *p_type = OCI_OFT_NUMBER;
+            break;
 
-    case OCI_CDT_DATETIME:
+        case OCI_CDT_DATETIME:
 
-        *p_size = sizeof(OCIDate);
-        *p_type = OCI_OFT_DATE;
-        break;
+            *p_size = sizeof(OCIDate);
+            *p_type = OCI_OFT_DATE;
+            break;
 
-    case OCI_CDT_OBJECT:
+        case OCI_CDT_OBJECT:
 
-        *p_size = OCI_ObjectGetStructSize(typinf->cols[index].typinf);
-        *p_type = OCI_OFT_OBJECT;
-        break;
+            *p_size = OCI_ObjectGetStructSize(typinf->cols[index].typinf);
+            *p_type = OCI_OFT_OBJECT;
+            break;
 
-    default:
+        default:
 
-        *p_size = sizeof(void *);
-        *p_type = OCI_OFT_POINTER;
+            *p_size = sizeof(void *);
+            *p_type = OCI_OFT_POINTER;
     }
 
     return TRUE;
@@ -338,44 +338,44 @@ void OCI_ObjectReset
 
             switch (obj->typinf->cols[i].type)
             {
-            case OCI_CDT_DATETIME:
+                case OCI_CDT_DATETIME:
 
-                OCI_DateFree((OCI_Date *) obj->objs[i]);
-                break;
+                    OCI_DateFree((OCI_Date *) obj->objs[i]);
+                    break;
 
-            case OCI_CDT_LOB:
+                case OCI_CDT_LOB:
 
-                OCI_LobFree((OCI_Lob *) obj->objs[i]);
-                break;
+                    OCI_LobFree((OCI_Lob *) obj->objs[i]);
+                    break;
 
-            case OCI_CDT_FILE:
+                case OCI_CDT_FILE:
 
-                OCI_FileFree((OCI_File *) obj->objs[i]);
-                break;
+                    OCI_FileFree((OCI_File *) obj->objs[i]);
+                    break;
 
-            case OCI_CDT_OBJECT:
+                case OCI_CDT_OBJECT:
 
-                OCI_ObjectFree((OCI_Object *) obj->objs[i]);
-                break;
+                    OCI_ObjectFree((OCI_Object *) obj->objs[i]);
+                    break;
 
-            case OCI_CDT_COLLECTION:
+                case OCI_CDT_COLLECTION:
 
-                OCI_CollFree((OCI_Coll *) obj->objs[i]);;
-                break;
+                    OCI_CollFree((OCI_Coll *) obj->objs[i]);;
+                    break;
 
-            case OCI_CDT_TIMESTAMP:
+                case OCI_CDT_TIMESTAMP:
 
-                OCI_TimestampFree((OCI_Timestamp *) obj->objs[i]);
-                break;
+                    OCI_TimestampFree((OCI_Timestamp *) obj->objs[i]);
+                    break;
 
-            case OCI_CDT_INTERVAL:
+                case OCI_CDT_INTERVAL:
 
-                OCI_IntervalFree((OCI_Interval *) obj->objs[i]);
-                break;
-            case OCI_CDT_REF:
+                    OCI_IntervalFree((OCI_Interval *) obj->objs[i]);
+                    break;
+                case OCI_CDT_REF:
 
-                OCI_RefFree((OCI_Ref *) obj->objs[i]);
-                break;
+                    OCI_RefFree((OCI_Ref *) obj->objs[i]);
+                    break;
             }
 
             obj->objs[i] = NULL;
@@ -440,7 +440,9 @@ void * OCI_ObjectGetAttr
 
     if (pind != NULL)
     {
-        *pind = &obj->tab_ind[OCI_ObjectGetIndOffset(obj->typinf, index)];
+        int ind_index = obj->idx_ind + OCI_ObjectGetIndOffset(obj->typinf, index);
+
+        *pind = &obj->tab_ind[ind_index];
     }
 
     return ((char *) obj->handle + offset);
@@ -1735,7 +1737,7 @@ boolean OCI_API OCI_ObjectSetNull
 
     if (index >= 0)
     {
-        int ind_index = OCI_ObjectGetIndOffset(obj->typinf, index);
+        int ind_index = obj->idx_ind + OCI_ObjectGetIndOffset(obj->typinf, index);
 
         obj->tab_ind[ind_index] = OCI_IND_NULL;
 
@@ -1770,7 +1772,7 @@ boolean OCI_API OCI_ObjectIsNull
 
     if (index >= 0)
     {
-        int ind_index = OCI_ObjectGetIndOffset(obj->typinf, index);
+        int ind_index = obj->idx_ind + OCI_ObjectGetIndOffset(obj->typinf, index);
 
         ret = (obj->tab_ind[ind_index] != OCI_IND_NOTNULL);
 

@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: iterator.c, v 3.8.0 2010-10-24 21:53 Vincent Rogier $
+ * $Id: iterator.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -161,8 +161,6 @@ OCI_Elem * OCI_API OCI_IterGetNext
 
     OCI_CHECK(iter->eoc == TRUE, NULL);
 
-    iter->elem->init = FALSE;
-
     OCI_CALL2
     (
         res, iter->coll->con,
@@ -199,8 +197,6 @@ OCI_Elem * OCI_API OCI_IterGetPrev
     OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, NULL);
 
     OCI_CHECK(iter->boc == TRUE, NULL);
-
-    iter->elem->init = FALSE;
 
     OCI_CALL2
     (
