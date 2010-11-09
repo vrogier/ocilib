@@ -218,7 +218,7 @@ unsigned int OCI_API OCI_LongWrite
     ub4 type     = 0;
     ub4 iter     = 0;
     ub4 dx       = 0;
-    ub4 count    = len;
+    ub4 count    = 0;
 
     OCI_CHECK_PTR(OCI_IPC_VOID, buffer, 0);
     OCI_CHECK_PTR(OCI_IPC_LONG, lg, 0);
@@ -257,6 +257,10 @@ unsigned int OCI_API OCI_LongWrite
         piece = OCI_LAST_PIECE;
         count = lg->stmt->long_size - lg->size;
     }
+	else
+	{
+		count = len;
+	}
 
     /* set up info for writing */
 
