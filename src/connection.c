@@ -150,6 +150,11 @@ boolean OCI_ConnectionDeallocate
     if (con->err != NULL)
         OCI_HandleFree((dvoid *) con->err, (ub4) OCI_HTYPE_ERROR);
 
+    /* close server handle in case of login error */
+
+    if (con->svr != NULL)
+		OCI_HandleFree((dvoid *) con->svr, (ub4) OCI_HTYPE_SERVER);
+
     con->cxt = NULL;
     con->ses = NULL;
     con->svr = NULL;

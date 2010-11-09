@@ -10,6 +10,7 @@
       - Fixed internal computation of OCI_Object attributes null indicator offsets
       - Fixed OCI_Elem handle initialization by OCI_CollGetAt() and OCI_CollGetAt2()
       - Fixed OCI_Ping() : OCI symbol OCIPing() was not dynamically loaded if OCI_IMPORT_RUNTIME was used (default for precompiled MS Windows Dlls)
+      - Fixed memory leak : in case of an unsuccessfull attempt to create a connection, an OCI internal handle was not freed since v3.6.0
 
     * Miscellaneous changes
 
