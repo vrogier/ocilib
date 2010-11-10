@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: resultset.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
+ * $Id: resultset.c, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -1062,7 +1062,7 @@ boolean OCI_API OCI_FetchPrev
 
     #endif
 
-    OCI_RESULT(err);
+    OCI_RESULT(err == FALSE);
 
     return res;
 }
@@ -1120,11 +1120,11 @@ boolean OCI_API OCI_FetchNext
             {
                 /* check string buffer once for Unicode build */
 
-                #ifdef OCI_CHECK_DATASTRINGS
+            #ifdef OCI_CHECK_DATASTRINGS
 
                 OCI_ResultsetExpandStrings(rs);
 
-                #endif
+            #endif
 
             }
 
@@ -1142,7 +1142,7 @@ boolean OCI_API OCI_FetchNext
     else
         res = FALSE;
 
-    OCI_RESULT(err);
+    OCI_RESULT(err == FALSE);
 
     return ((res == TRUE) && (rs->eof == FALSE));
 }
@@ -1182,7 +1182,7 @@ boolean OCI_API OCI_FetchFirst
 
     #endif
 
-    OCI_RESULT(err);
+    OCI_RESULT(err == FALSE);
 
     return ((res == TRUE) && (rs->bof == FALSE));
 }
@@ -1224,7 +1224,7 @@ boolean OCI_API OCI_FetchLast
 
     #endif
 
-    OCI_RESULT(err);
+    OCI_RESULT(err == FALSE);
 
     return ((res == TRUE) && (rs->eof != TRUE));
 }
@@ -1263,7 +1263,7 @@ boolean OCI_API OCI_FetchSeek
 
     #endif
 
-    OCI_RESULT(err);
+    OCI_RESULT(err == FALSE);
 
     return res;
 }

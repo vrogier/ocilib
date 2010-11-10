@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: typeinfo.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
+ * $Id: typeinfo.c, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -277,18 +277,34 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                            NULL, OCI_ATTR_PARAM, con->err)
             )
 
-            /* do we need get more attributes for collections ? */
 
             if (type == OCI_TIF_TYPE)
             {
+				boolean pdt = FALSE;
+
+				/* check if it's system predefined type if order to avoid the next call
+				   that is not allowed on system types */
+
                 OCI_CALL2
                 (
                     res, con,
 
-                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->tcode,
-                               NULL, OCI_ATTR_TYPECODE, con->err)
+                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &pdt,
+                               NULL, OCI_ATTR_IS_PREDEFINED_TYPE, con->err)
                 )
 
+				if (pdt == FALSE)
+				{
+				   /* do we need get more attributes for collections ? */
+
+					OCI_CALL2
+					(
+						res, con,
+
+						OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->tcode,
+								   NULL, OCI_ATTR_TYPECODE, con->err)
+					)
+				}
             }
 
             if (typinf->tcode == SQLT_NCO)
