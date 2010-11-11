@@ -49,7 +49,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: oci_defs.h, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
+ * $Id: oci_defs.h, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCI_DEFS_H_INCLUDED
@@ -287,6 +287,7 @@
 
 #define OCI_ATTR_TYPECODE              216           /* object or collection */
 #define OCI_ATTR_COLLECTION_TYPECODE   217         /* varray or nested table */
+#define OCI_ATTR_IS_PREDEFINED_TYPE    221              /* a predefined type */
 
 #define OCI_ATTR_SUBSCR_TIMEOUT        227                        /* Timeout */
 
