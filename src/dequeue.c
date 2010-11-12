@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: dequeue.c, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
+ * $Id: dequeue.c, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -216,22 +216,27 @@ OCI_Msg * OCI_API OCI_DequeueGet
     boolean res     = TRUE;
     void *ostr      = NULL;
     int osize       = -1;
+    OCI_Msg *msg    = NULL;
+	OCIInd ind      = OCI_IND_NULL;
 
     sword ret;
     sb4 code;
 
-    OCI_Msg *msg    = NULL;
-
     OCI_CHECK_PTR(OCI_IPC_ENQUEUE, dequeue, NULL);
 
     ostr = OCI_GetInputMetaString(dequeue->name, &osize);
+
+    if (dequeue->payload_type == OCI_CDT_RAW)
+	{
+		dequeue->payload_ind = &ind;
+	}
 
     /* dequeue message */
 
     ret = OCIAQDeq(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
                    ostr, dequeue->opth, dequeue->msg->proph, dequeue->typinf->tdo,
                    &dequeue->payload, &dequeue->payload_ind, &dequeue->msg->id, OCI_DEFAULT);
-
+				  
     /* check returned error code */
 
     if (ret == OCI_ERROR)

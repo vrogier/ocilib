@@ -46,7 +46,7 @@
  */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib.h, v 3.8.1 2010-11-08 22:03 Vincent Rogier $
+ * $Id: ocilib.h, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_H_INCLUDED
@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.8.1 (2010-11-08)</b>
+ * <b>Current version : 3.8.1 (2010-11-10)</b>
  *
  * @section s_feats Main features
  *

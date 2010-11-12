@@ -14,6 +14,7 @@
       - Fixed OCI_LongWrite()   + OCI_CHARSET_WIDE charset mode : internal length passed to internal OCI calls was expressed in chars instead of bytes
       - Fixed OCI_TypeInfoGet() + OCI_TYF_TYPE : an Oracle error was raised when passing as type name a builtin system type like "SYS.RAW"
       - Fixed OCI_GetLastError() that could return NULL when errors occured in OCI_FetchXXX() calls (although the global error handler was correctly fired) 
+      - Fixed OCI_Dequeue() : a segfault happened if the queue payload was of type RAW
 
     * Miscellaneous changes
 
