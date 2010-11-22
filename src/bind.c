@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: bind.c, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
+ * $Id: bind.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -404,7 +404,7 @@ unsigned int OCI_API OCI_BindGetSubtype
     OCI_RESULT(TRUE);
 
     if (bnd->type == OCI_CDT_NUMERIC   ||
-		bnd->type == OCI_CDT_LONG      ||
+        bnd->type == OCI_CDT_LONG      ||
         bnd->type == OCI_CDT_LOB       ||
         bnd->type == OCI_CDT_FILE      ||
         bnd->type == OCI_CDT_TIMESTAMP ||

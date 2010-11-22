@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: dequeue.c, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
+ * $Id: dequeue.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -58,23 +58,12 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
 
     /* allocate dequeue structure */
 
-    dequeue = (OCI_Dequeue *) OCI_MemAlloc(OCI_IPC_ENQUEUE, sizeof(*dequeue), (size_t) 1, TRUE);
+    dequeue = (OCI_Dequeue *) OCI_MemAlloc(OCI_IPC_DEQUEUE, sizeof(*dequeue), (size_t) 1, TRUE);
 
     if (dequeue != NULL)
     {
         dequeue->typinf = typinf;
         dequeue->name   = mtsdup(name);
-
-        /* get payload type */
-
-        if (mtscmp(dequeue->typinf->name, OCI_RAW_OBJECT_TYPE) == 0)
-        {
-            dequeue->payload_type = OCI_CDT_RAW;
-        }
-        else
-        {
-            dequeue->payload_type = OCI_CDT_OBJECT;
-        }
 
         /* allocate dequeue options descriptor */
 
@@ -85,7 +74,10 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
 
         /* create local message for OCI_DequeueGet() */
 
-        dequeue->msg = OCI_MsgCreate(dequeue->typinf);
+        if (res == TRUE)
+        {
+            dequeue->msg = OCI_MsgCreate(dequeue->typinf);
+        }
 
         res = (dequeue->msg != NULL);
     }
@@ -112,11 +104,7 @@ boolean OCI_API OCI_DequeueFree
     OCI_Dequeue *dequeue
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, dequeue, FALSE);
-
-    /* free OCI descriptor */
-
-    OCI_DescriptorFree((dvoid *) dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
 
     /* free local message  */
 
@@ -132,10 +120,15 @@ boolean OCI_API OCI_DequeueFree
         OCI_AgentFree(dequeue->agent);
     }
 
+    /* free OCI descriptor */
+
+    OCI_DescriptorFree((dvoid *) dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
+
     /* free strings  */
 
     OCI_FREE(dequeue->name);
     OCI_FREE(dequeue->pattern);
+    OCI_FREE(dequeue->consumer);
 
     /* free misc. */
 
@@ -160,7 +153,7 @@ OCI_Agent * OCI_API OCI_DequeueListen
     OCI_Agent *agent   = NULL;
     OCIAQAgent *handle = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, dequeue, NULL);
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, NULL);
 
     /* listen only if OCI_DequeueSetAgentList has been called */
 
@@ -213,45 +206,54 @@ OCI_Msg * OCI_API OCI_DequeueGet
     OCI_Dequeue *dequeue
 )
 {
-    boolean res     = TRUE;
-    void *ostr      = NULL;
-    int osize       = -1;
-    OCI_Msg *msg    = NULL;
-	OCIInd ind      = OCI_IND_NULL;
+    boolean   res      = TRUE;
+    void     *ostr     = NULL;
+    int       osize    = -1;
+    OCI_Msg  *msg      = NULL;
+    sword     ret      = OCI_SUCCESS;
+    void     *p_ind    = NULL;
+ 
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, NULL);
 
-    sword ret;
-    sb4 code;
+    /* reset message */
 
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, dequeue, NULL);
+    res = OCI_MsgReset(dequeue->msg);
 
-    ostr = OCI_GetInputMetaString(dequeue->name, &osize);
-
-    if (dequeue->payload_type == OCI_CDT_RAW)
-	{
-		dequeue->payload_ind = &ind;
-	}
-
-    /* dequeue message */
-
-    ret = OCIAQDeq(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
-                   ostr, dequeue->opth, dequeue->msg->proph, dequeue->typinf->tdo,
-                   &dequeue->payload, &dequeue->payload_ind, &dequeue->msg->id, OCI_DEFAULT);
-				  
-    /* check returned error code */
-
-    if (ret == OCI_ERROR)
+    if (res == TRUE)
     {
-        OCIErrorGet((dvoid *) dequeue->typinf->con->err, (ub4) 1,
-                    (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
-                    (ub4) OCI_HTYPE_ERROR);
+        ostr  = OCI_GetInputMetaString(dequeue->name, &osize);
 
-        /* raise error only if the call has not been timed out */
-
-        if (code != OCI_ERR_AQ_DEQUEUE_TIMEOUT)
+        if (dequeue->typinf->tcode == OCI_UNKNOWN)
         {
-            OCI_ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE);
+            p_ind = &dequeue->msg->ind;
+        }
 
-            res = FALSE;
+        /* dequeue message */
+        
+        ret = OCIAQDeq(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
+                       ostr, dequeue->opth, dequeue->msg->proph, dequeue->typinf->tdo,
+                       &dequeue->msg->payload, (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
+        
+        OCI_ReleaseMetaString(ostr);
+        
+        /* check returned error code */
+
+        if (ret == OCI_ERROR)
+        {
+            sb4 code = 0;
+
+            OCIErrorGet((dvoid *) dequeue->typinf->con->err, (ub4) 1,
+                        (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
+                        (ub4) OCI_HTYPE_ERROR);
+
+            /* raise error only if the call has not been timed out */
+
+            if (code != OCI_ERR_AQ_DEQUEUE_TIMEOUT)
+            {
+                OCI_ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE);
+
+                res = FALSE;
+            }
         }
     }
 
@@ -259,34 +261,21 @@ OCI_Msg * OCI_API OCI_DequeueGet
 
     if ((res == TRUE) && (ret == OCI_SUCCESS))
     {
-        res = OCI_MsgReset(dequeue->msg);
-
         /* get payload */
 
-        if (dequeue->payload_type == OCI_CDT_OBJECT)
+        if (dequeue->typinf->tcode != OCI_UNKNOWN)
         {
-            if ((dequeue->payload_ind != NULL) && (*(OCIInd *) dequeue->payload_ind != OCI_IND_NULL))
+            if ((p_ind != NULL) && ((*(OCIInd *) p_ind) != OCI_IND_NULL))
             {
-                dequeue->msg->payload = OCI_ObjectInit(dequeue->typinf->con, 
-                                                       (OCI_Object **) &dequeue->msg->payload,
-                                                       dequeue->payload, dequeue->typinf,
-                                                       NULL, -1, TRUE); 
+                dequeue->msg->ind = *(OCIInd *) p_ind;
 
-                res = dequeue->msg->payload != NULL;
+                dequeue->msg->obj = OCI_ObjectInit(dequeue->typinf->con, 
+                                                   (OCI_Object **) &dequeue->msg->obj,
+                                                   dequeue->msg->payload, dequeue->typinf,
+                                                   NULL, -1, TRUE); 
 
-                dequeue->msg->ind     = OCI_IND_NOTNULL;
+                res = dequeue->msg->obj != NULL;
             }
-            else
-                dequeue->msg->ind     = OCI_IND_NULL;
-        }
-        else
-        {
-            dequeue->msg->payload     = dequeue->payload;
-
-            if (dequeue->payload_ind != NULL)
-                dequeue->msg->ind     = *(OCIInd *) dequeue->payload_ind;
-            else
-                dequeue->msg->ind     = OCI_IND_NULL;
         }
     }
 

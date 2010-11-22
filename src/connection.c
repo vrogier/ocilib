@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: connection.c, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
+ * $Id: connection.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -153,7 +153,7 @@ boolean OCI_ConnectionDeallocate
     /* close server handle in case of login error */
 
     if (con->svr != NULL)
-		OCI_HandleFree((dvoid *) con->svr, (ub4) OCI_HTYPE_SERVER);
+        OCI_HandleFree((dvoid *) con->svr, (ub4) OCI_HTYPE_SERVER);
 
     con->cxt = NULL;
     con->ses = NULL;

@@ -46,7 +46,7 @@
  */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib.h, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
+ * $Id: ocilib.h, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_H_INCLUDED
@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.8.1 (2010-11-10)</b>
+ * <b>Current version : 3.8.1 (2010-11-22)</b>
  *
  * @section s_feats Main features
  *
@@ -448,27 +448,27 @@ extern "C" {
  *
  * @par Option OCI_CHARSET_ANSI
  *
- *  - dtext	-->	char
- *  - DT(x)	-->	x
+ *  - dtext    -->    char
+ *  - DT(x)    -->    x
  *
- *  - mtext	-->	char
- *  - MT(x)	-->	x
+ *  - mtext    -->    char
+ *  - MT(x)    -->    x
  *
  * @par Option OCI_CHARSET_WIDE
  *
- *  - dtext	-->	wchar_t
- *  - DT(x)	-->	L ## x
+ *  - dtext    -->    wchar_t
+ *  - DT(x)    -->    L ## x
  *
- *  - mtext	-->	wchar_t
- *  - MT(x)	-->	L ## x
+ *  - mtext    -->    wchar_t
+ *  - MT(x)    -->    L ## x
  *
  * @par Option OCI_CHARSET_MIXED
  *
- *  - dtext	-->	wchar_t
- *  - DT(x)	-->	L ## x
+ *  - dtext    -->    wchar_t
+ *  - DT(x)    -->    L ## x
  *
- *  - mtext	-->	char
- *  - MT(x)	-->	x
+ *  - mtext    -->    char
+ *  - MT(x)    -->    x
  *
  * @par Unicode and ISO C
  *

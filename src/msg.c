@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: msg.c, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
+ * $Id: msg.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -60,20 +60,8 @@ OCI_Msg * OCI_API OCI_MsgCreate
 
     if (msg != NULL)
     {
-        msg->typinf       = typinf;
-        msg->ind          = OCI_IND_NULL;
-        msg->payload_ind  = &msg->ind;
-
-        /* get payload type */
-
-        if (mtscmp(msg->typinf->name, OCI_RAW_OBJECT_TYPE) == 0)
-        {
-            msg->payload_type = OCI_CDT_RAW;
-        }
-        else
-        {
-            msg->payload_type = OCI_CDT_OBJECT;
-        }
+        msg->typinf = typinf;
+        msg->ind    = OCI_IND_NULL;
 
         /* allocate message properties descriptor */
 
@@ -86,11 +74,11 @@ OCI_Msg * OCI_API OCI_MsgCreate
         {
             /* allocate internal OCI_Object handle if payload is not RAW */
 
-            if (msg->payload_type == OCI_CDT_OBJECT)
+            if (msg->typinf->tcode != OCI_UNKNOWN)
             {
-                msg->payload = (void *) OCI_ObjectCreate(typinf->con, typinf);
+                msg->obj = OCI_ObjectCreate(typinf->con, typinf);
 
-                res = (msg->payload != NULL);
+                res = (msg->obj != NULL);
             }
         }
     }
@@ -117,6 +105,8 @@ boolean OCI_API OCI_MsgFree
     OCI_Msg *msg
 )
 {
+    boolean res = TRUE;
+
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
     /* free local OCI_Agent object */
@@ -126,26 +116,39 @@ boolean OCI_API OCI_MsgFree
         OCI_AgentFree(msg->sender);
     }
 
+    /* free internal OCI_Object handle if payload is not RAW */
+
+    if (msg->obj != NULL)
+    {
+        msg->obj->hstate =  OCI_OBJECT_ALLOCATED;
+
+        OCI_ObjectFree(msg->obj);
+
+        msg->obj = NULL;
+    }
+
+    /* free message ID */
+
+    if (msg->id != NULL)
+    {
+        
+        OCI_CALL2
+        (
+            res, msg->typinf->con,
+
+            OCIRawResize(OCILib.env, msg->typinf->con->err, 0, (OCIRaw **) &msg->id)
+        )
+    }		
+
+    msg->id = NULL;
+
     /* free OCI descriptor */
 
     OCI_DescriptorFree((dvoid *) msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
-
-    /* free internal OCI_Object handle if payload is not RAW */
-
-    if ((msg->payload_type == OCI_CDT_OBJECT) && (msg->payload != NULL))
-    {
-        OCI_Object * obj = (OCI_Object *) msg->payload;
-
-        obj->hstate =  OCI_OBJECT_ALLOCATED;
-
-        OCI_ObjectFree(obj);
-
-        msg->payload = NULL;
-    }
-
+  
     OCI_FREE(msg);
 
-    return TRUE;
+    return res;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -175,7 +178,7 @@ boolean OCI_API OCI_MsgReset
 
     if (res == TRUE)
     {
-        if (msg->payload_type == OCI_CDT_RAW)
+        if (msg->typinf->tcode == OCI_UNKNOWN)
         {
             res = OCI_MsgSetRaw(msg, null_ptr, len);
         }
@@ -200,11 +203,11 @@ OCI_Object * OCI_API OCI_MsgGetObject
     OCI_Object *obj = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, NULL);
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->payload_type == OCI_CDT_OBJECT, NULL);
+    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->tcode != OCI_UNKNOWN, NULL);
 
     if (msg->ind != OCI_IND_NULL)
     {
-        obj = (OCI_Object *) msg->payload;
+        obj = (OCI_Object *) msg->obj;
     }
 
     OCI_RESULT(TRUE);
@@ -226,13 +229,13 @@ boolean OCI_API OCI_MsgSetObject
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->payload_type == OCI_CDT_OBJECT, FALSE);
+    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->tcode != OCI_UNKNOWN, FALSE);
 
     if (obj != NULL)
     {
         /* assign the given object to the message internal object */
 
-        res = OCI_ObjectAssign((OCI_Object *) msg->payload, obj);
+        res = OCI_ObjectAssign((OCI_Object *) msg->obj, obj);
 
         if (res == TRUE)
         {
@@ -266,7 +269,7 @@ boolean OCI_API OCI_MsgGetRaw
     OCI_CHECK_PTR(OCI_IPC_VOID, raw, FALSE);
     OCI_CHECK_PTR(OCI_IPC_VOID, size, FALSE);
 
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->payload_type == OCI_CDT_RAW, FALSE);
+    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->tcode == OCI_UNKNOWN, FALSE);
 
     if ((msg->payload != NULL) && (msg->ind != OCI_IND_NULL))
     {
@@ -302,16 +305,16 @@ boolean OCI_API OCI_MsgSetRaw
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
  
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->payload_type == OCI_CDT_RAW, FALSE);
+    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->tcode == OCI_UNKNOWN, FALSE);
 
     OCI_CALL2
     (
         res, msg->typinf->con,
 
         OCIRawAssignBytes(OCILib.env, msg->typinf->con->err, (ub1*) raw,
-                          (ub4) size, (OCIRaw **) &msg->payload)
+                            (ub4) size, (OCIRaw **) &msg->payload)
     )
-
+ 
     if ((res == TRUE) && (msg->payload != NULL) && (size > 0))
     {
         msg->ind = OCI_IND_NOTNULL;

@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: event.c, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
+ * $Id: event.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -64,17 +64,6 @@ OCI_Enqueue * OCI_API OCI_EnqueueCreate
     {
         enqueue->typinf = typinf;
         enqueue->name   = mtsdup(name);
-
-        /* get payload type */
-
-        if (mtscmp(enqueue->typinf->name, OCI_RAW_OBJECT_TYPE) == 0)
-        {
-            enqueue->payload_type = OCI_CDT_RAW;
-        }
-        else
-        {
-            enqueue->payload_type = OCI_CDT_OBJECT;
-        }
 
         /* allocate enqueue options descriptor */
 
@@ -138,32 +127,24 @@ boolean OCI_API OCI_EnqueuePut
     OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue, FALSE);
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
-    OCI_CHECK_COMPAT(enqueue->typinf->con, enqueue->typinf == msg->typinf, FALSE);
+    OCI_CHECK_COMPAT(enqueue->typinf->con, enqueue->typinf->tdo == msg->typinf->tdo, FALSE);
 
     ostr = OCI_GetInputMetaString(enqueue->name, &osize);
 
     /* get payload */
 
-    if (enqueue->payload_type == OCI_CDT_OBJECT)
+    if (enqueue->typinf->tcode != OCI_UNKNOWN)
     {
-        OCI_Object *obj = (OCI_Object *) msg->payload;
-
         if (msg->ind != OCI_IND_NULL)
         {
-
-            payload = obj->handle;
-            ind     = obj->tab_ind;
-        }
-        else
-        {
-            payload = NULL;
-            ind     = msg->payload_ind;
+            payload = msg->obj->handle;
+            ind     = msg->obj->tab_ind;
         }
     }
     else
     {
-        payload = msg->payload;
-        ind     = msg->payload_ind;
+        payload =  msg->payload;
+        ind     = &msg->ind;
     }
 
     /* enqueue message */
@@ -176,6 +157,8 @@ boolean OCI_API OCI_EnqueuePut
                  ostr, enqueue->opth, msg->proph, enqueue->typinf->tdo,
                  &payload, &ind, &msg->id, OCI_DEFAULT);
     )
+
+    OCI_ReleaseMetaString(ostr);
 
     OCI_RESULT(res);
 

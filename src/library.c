@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: library.c, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
+ * $Id: library.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -291,6 +291,7 @@ OCISTRINGPTR                 OCIStringPtr                 = NULL;
 OCISTRINGASSIGNTEXT          OCIStringAssignText          = NULL;
 OCIRAWPTR                    OCIRawPtr                    = NULL;
 OCIRAWASSIGNBYTES            OCIRawAssignBytes            = NULL;
+OCIRAWRESIZE                 OCIRawResize                 = NULL;
 OCIRAWALLOCSIZE              OCIRawAllocSize              = NULL;
 OCIRAWSIZE                   OCIRawSize                   = NULL;
 OCIOBJECTNEW                 OCIObjectNew                 = NULL;
@@ -844,6 +845,8 @@ boolean OCI_API OCI_Initialize
                    OCIRAWPTR);
         LIB_SYMBOL(OCILib.lib_handle, "OCIRawAssignBytes", OCIRawAssignBytes,
                    OCIRAWASSIGNBYTES);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIRawResize", OCIRawResize,
+                   OCIRAWRESIZE);
         LIB_SYMBOL(OCILib.lib_handle, "OCIRawAllocSize", OCIRawAllocSize,
                    OCIRAWALLOCSIZE);
         LIB_SYMBOL(OCILib.lib_handle, "OCIRawSize", OCIRawSize,

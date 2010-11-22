@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: iterator.c, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
+ * $Id: iterator.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -130,7 +130,8 @@ boolean OCI_API OCI_IterFree
 
     if (iter->elem != NULL)
     {
-        res        = OCI_ElemFree(iter->elem);
+        iter->elem->hstate = OCI_OBJECT_FETCHED_DIRTY;
+        OCI_ElemFree(iter->elem);
         iter->elem = NULL;
     }
 

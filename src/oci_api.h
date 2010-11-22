@@ -49,7 +49,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: oci_api.h, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
+ * $Id: oci_api.h, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCI_API_H_INCLUDED
@@ -1357,6 +1357,14 @@ typedef sword (*OCIRAWASSIGNBYTES)
     CONST ub1 *rhs,
     ub4        rhs_len,
     OCIRaw   **lhs
+);
+
+typedef sword (*OCIRAWRESIZE)
+(
+    OCIEnv    *env, 
+    OCIError  *err, 
+    ub4        new_size, 
+    OCIRaw   **raw    
 );
 
 typedef sword (*OCIRAWALLOCSIZE)

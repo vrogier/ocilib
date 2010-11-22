@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: long.c, v 3.8.1 2010-11-10 00:00 Vincent Rogier $
+ * $Id: long.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -257,10 +257,10 @@ unsigned int OCI_API OCI_LongWrite
         piece = OCI_LAST_PIECE;
         count = lg->stmt->long_size - lg->size;
     }
-	else
-	{
-		count = len;
-	}
+    else
+    {
+        count = len;
+    }
 
     /* set up info for writing */
 
