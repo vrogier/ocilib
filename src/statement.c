@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: statement.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
+ * $Id: statement.c, v 3.8.1 2010-12-06 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -495,6 +495,7 @@ boolean OCI_BindData
     boolean reused   = FALSE;
     ub4 *pnbelem     = NULL;
     int index        = 0;
+    int prev_index   = -1;
     size_t nballoc   = (size_t) nbelem;
 
     /* check index if necessary */
@@ -519,9 +520,9 @@ boolean OCI_BindData
     {
         if (mode == OCI_BIND_INPUT)
         {
-            int test_index = OCI_BindGetIndex(stmt, name);
+            prev_index = OCI_BindGetIndex(stmt, name);
 
-            if (test_index > 0)
+            if (prev_index > 0)
             {
                 if (stmt->bind_reuse == FALSE)
                 {
@@ -530,11 +531,18 @@ boolean OCI_BindData
                 }
                 else
                 {
-                    bnd    = stmt->ubinds[test_index-1];
-                    reused = TRUE;
+                    bnd = stmt->ubinds[prev_index-1];
+
+                    if (bnd->type != type)
+                    {
+                        OCI_ExceptionRebindBadDatatype(stmt, name);
+                        res = FALSE;
+                    }
+                    else
+                        reused = TRUE;
                 }
 
-                index = test_index;
+                index = prev_index;
             }
         }
     }
@@ -975,7 +983,7 @@ boolean OCI_BindData
 
     if (res == FALSE)
     {
-        if (bnd != NULL)
+        if ((bnd != NULL) && (prev_index  == -1))
         {
             OCI_BindFree(bnd);
         }

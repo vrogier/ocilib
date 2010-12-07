@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_internal.h, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
+ * $Id: ocilib_internal.h, v 3.8.1 2010-12-06 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED
@@ -520,6 +520,12 @@ void OCI_ExceptionOCIEnvironment
     void
 );
 
+void OCI_ExceptionRebindBadDatatype
+(
+    OCI_Statement *stmt,
+    const mtext  * bind
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * file.c
  * --------------------------------------------------------------------------------------------- */
@@ -971,10 +977,12 @@ size_t OCI_ResultsetGetStructSize
     OCI_Resultset *rs
 );
 
-size_t OCI_ResultsetGetAttrSize
+boolean OCI_ResultsetGetAttrInfo
 (
     OCI_Resultset *rs,
-    unsigned int   index
+    unsigned int   index,
+    size_t        *p_size,
+    int           *p_type
 );
 
 /* --------------------------------------------------------------------------------------------- *

@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_defs.h, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
+ * $Id: ocilib_defs.h, v 3.8.1 2010-12-06 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -368,6 +368,11 @@
 #define OCI_OFT_NUMBER                  2
 #define OCI_OFT_DATE                    4
 #define OCI_OFT_OBJECT                  8
+#define OCI_OFT_SHORT                   16
+#define OCI_OFT_INT                     32
+#define OCI_OFT_BIGINT                  64
+#define OCI_OFT_DOUBLE                  128
+#define OCI_OFT_TEXT                    256
 
 #define OCI_OFFSET_PAIR(a, b)           (a + (b << 16))
 
@@ -473,9 +478,9 @@
 
 #define OCI_DEF_ALIGN                   sizeof(void *)
 
-#define ROUNDUP(amount)                                                        \
+#define ROUNDUP(amount, align)                                                 \
                                                                                \
-    (((unsigned long)(amount)+((OCI_DEF_ALIGN)-1))&~((OCI_DEF_ALIGN)-1))
+    (((unsigned long)(amount)+((align)-1))&~((align)-1))
 
 #define OCI_SIZEOF_NUMBER               22
 #define OCI_SIZEOF_DATE                 7

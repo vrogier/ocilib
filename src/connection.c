@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: connection.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
+ * $Id: connection.c, v 3.8.1 2010-12-06 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -336,6 +336,16 @@ boolean OCI_ConnectionLogon
 
     if (new_pwd && new_pwd[0])
     {
+        int   osize1 = -1;
+        int   osize2 = -1;
+        int   osize3 = -1;
+        void *ostr1  = NULL;
+        void *ostr2  = NULL;
+        void *ostr3  = NULL;
+
+        ostr1 = OCI_GetInputMetaString(con->user, &osize1);
+        ostr2 = OCI_GetInputMetaString(con->pwd,  &osize2);
+        ostr3 = OCI_GetInputMetaString(new_pwd,   &osize3);
 
         OCI_CALL2
         (
@@ -351,11 +361,16 @@ boolean OCI_ConnectionLogon
             res, con,
 
             OCIPasswordChange(con->cxt, con->err,
-                              (OraText *) con->user, (ub4) mtslen(con->user),
-                              (OraText *) con->pwd,  (ub4) mtslen(con->pwd),
-                              (OraText *) new_pwd,   (ub4) mtslen(new_pwd),
+                              (OraText *) ostr1, (ub4) osize1,
+                              (OraText *) ostr2, (ub4) osize2,
+                              (OraText *) ostr3, (ub4) osize3,
                               OCI_AUTH)
         )
+
+        OCI_ReleaseMetaString(ostr1);
+        OCI_ReleaseMetaString(ostr2);
+        OCI_ReleaseMetaString(ostr3);
+
 
         if (res == TRUE)
         {
@@ -1100,16 +1115,31 @@ boolean OCI_API OCI_SetPassword
     }
     else
     {
+        int   osize1 = -1;
+        int   osize2 = -1;
+        int   osize3 = -1;
+        void *ostr1  = NULL;
+        void *ostr2  = NULL;
+        void *ostr3  = NULL;
+
+        ostr1 = OCI_GetInputMetaString(con->user,  &osize1);
+        ostr2 = OCI_GetInputMetaString(con->pwd,   &osize2);
+        ostr3 = OCI_GetInputMetaString(password,   &osize3);
+
         OCI_CALL2
         (
             res, con,
 
             OCIPasswordChange(con->cxt, con->err,
-                              (OraText *) con->user, (ub4) mtslen(con->user),
-                              (OraText *) con->pwd,  (ub4) mtslen(con->pwd),
-                              (OraText *) password,  (ub4) mtslen(password),
+                              (OraText *) ostr1, (ub4) osize1,
+                              (OraText *) ostr2, (ub4) osize2,
+                              (OraText *) ostr3, (ub4) osize3,
                               mode)
         )
+
+        OCI_ReleaseMetaString(ostr1);
+        OCI_ReleaseMetaString(ostr2);
+        OCI_ReleaseMetaString(ostr3);
     }
 
     OCI_RESULT(res);

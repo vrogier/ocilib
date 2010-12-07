@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: object.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
+ * $Id: object.c, v 3.8.1 2010-12-06 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -117,7 +117,7 @@ size_t OCI_ObjectGetStructSize
             switch (OCI_OFFSET_PAIR(type1, type2))
             {
                 case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
-                case OCI_OFFSET_PAIR(OCI_OFT_DATE, OCI_OFT_POINTER):
+                case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_POINTER):
                 case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
 
                     align = TRUE;
@@ -128,7 +128,7 @@ size_t OCI_ObjectGetStructSize
 
             if (align)
             {
-                size = ROUNDUP(size);
+                size = ROUNDUP(size, size2);
             }
         }
 
@@ -139,7 +139,7 @@ size_t OCI_ObjectGetStructSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ObjectGetAttrSize
+ * OCI_ObjectGetAttrInfo
  * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_ObjectGetAttrInfo

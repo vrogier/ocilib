@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: msg.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
+ * $Id: msg.c, v 3.8.1 2010-12-06 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -126,6 +126,18 @@ boolean OCI_API OCI_MsgFree
 
         msg->obj = NULL;
     }
+
+    /* free message RAW payload if necessary */
+
+    if ((msg->typinf->tcode == OCI_UNKNOWN)&& ( msg->id != NULL))
+    {
+        OCI_CALL2
+        (
+            res, msg->typinf->con,
+
+            OCIRawResize(OCILib.env, msg->typinf->con->err, 0, (OCIRaw **) &msg->payload)
+        )
+    }	
 
     /* free message ID */
 

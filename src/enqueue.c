@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: event.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
+ * $Id: event.c, v 3.8.1 2010-12-06 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -155,7 +155,7 @@ boolean OCI_API OCI_EnqueuePut
 
         OCIAQEnq(enqueue->typinf->con->cxt, enqueue->typinf->con->err,
                  ostr, enqueue->opth, msg->proph, enqueue->typinf->tdo,
-                 &payload, &ind, &msg->id, OCI_DEFAULT);
+                 &payload, &ind, NULL, OCI_DEFAULT);
     )
 
     OCI_ReleaseMetaString(ostr);

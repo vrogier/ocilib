@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: exception.c, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
+ * $Id: exception.c, v 3.8.1 2010-12-06 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -131,7 +131,8 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
     MT("Column '%ls' not find in table '%ls'"),
     MT("Unable to perform this operation on a %ls direct path process"),
-    MT("Cannot create OCI environment")
+    MT("Cannot create OCI environment"),
+    MT("Name or position '%ls' previously binded with different datatype")
 };
 
 #else
@@ -161,7 +162,8 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
     MT("Column '%s' not find in table '%s'"),
     MT("Unable to perform this operation on a %s direct path process"),
-    MT("Cannot create OCI environment")
+    MT("Cannot create OCI environment"),
+    MT("Name or position '%ls' previously binded with different datatype")
 };
 
 #endif
@@ -905,6 +907,36 @@ void OCI_ExceptionOCIEnvironment
 
         mtsncat(err->str,  OCILib_ErrorMsg[OCI_ERR_CREATE_OCI_ENVIRONMENT],
                 msizeof(err->str) - (size_t) 1);
+    }
+
+    OCI_ExceptionRaise(err);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ExceptionRebindBadDatatype
+ * --------------------------------------------------------------------------------------------- */
+
+void OCI_ExceptionRebindBadDatatype
+(
+    OCI_Statement *stmt,
+    const mtext  * bind
+)
+{
+    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+
+    if (err != NULL)
+    {
+        err->type  = OCI_ERR_OCILIB;
+        err->icode = OCI_ERR_REBIND_BAD_DATATYPE;
+        err->stmt  = stmt;
+
+        if (stmt != NULL)
+            err->con =  stmt->con;
+
+        mtsprintf(err->str,
+                  msizeof(err->str) - (size_t) 1,
+                  OCILib_ErrorMsg[OCI_ERR_REBIND_BAD_DATATYPE],
+                  bind);
     }
 
     OCI_ExceptionRaise(err);
