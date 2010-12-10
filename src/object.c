@@ -128,7 +128,7 @@ size_t OCI_ObjectGetStructSize
 
             if (align)
             {
-                size = ROUNDUP(size, size2);
+                size = ROUNDUP(size, OCI_DEF_ALIGN);
             }
         }
 

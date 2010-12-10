@@ -46,7 +46,7 @@
  */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib.h, v 3.8.1 2010-11-22 00:00 Vincent Rogier $
+ * $Id: ocilib.h, v 3.8.1 2010-12-06 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_H_INCLUDED
@@ -1349,6 +1349,7 @@ typedef unsigned int big_uint;
 #define OCI_ERR_COLUMN_NOT_FOUND            21
 #define OCI_ERR_DIRPATH_STATE               22
 #define OCI_ERR_CREATE_OCI_ENVIRONMENT      23
+#define OCI_ERR_REBIND_BAD_DATATYPE         24      
 
 /* binding */
 
@@ -3676,6 +3677,8 @@ OCI_EXPORT const mtext * OCI_API OCI_GetSQLVerb
  *
  * @note
  * Rebinding is disabled by default (see OCI_AllowRebinding())
+ * When using rebinding feature, host variable rebinded to a previously allocated
+ * bind MUST be of the same datatype !
  *
  * @par Basic input bind Example
  * @include bind.c
@@ -3748,6 +3751,10 @@ OCI_EXPORT unsigned int OCI_API OCI_BindArrayGetSize
  *
  * @note
  * Default value is FALSE
+ *
+ * @warning
+ * When using rebinding feature, host variable rebinded to a previously allocated
+ * bind MUST be of the same datatype !
  *
  * @return
  * TRUE on success otherwise FALSE

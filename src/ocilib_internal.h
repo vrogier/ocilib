@@ -972,11 +972,6 @@ boolean OCI_ResultsetExpandStrings
 
 #endif
 
-size_t OCI_ResultsetGetStructSize
-(
-    OCI_Resultset *rs
-);
-
 boolean OCI_ResultsetGetAttrInfo
 (
     OCI_Resultset *rs,

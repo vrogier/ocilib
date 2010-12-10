@@ -721,73 +721,6 @@ boolean OCI_ResultsetGetAttrInfo
     return TRUE;
 }
 
-/* --------------------------------------------------------------------------------------------- *
- * OCI_ResultsetGetStructSize
- * --------------------------------------------------------------------------------------------- */
-
-size_t OCI_ResultsetGetStructSize
-(
-    OCI_Resultset *rs
-)
-{
-    size_t size1 = 0;
-    size_t size2 = 0;
-
-    int type1 = 0;
-    int type2 = 0;
-
-    ub2 i;
-
-    boolean align = FALSE;
-
-    size_t size = 0;
-
-    for (i = 0; i <  rs->nb_defs; i++)
-    {
-        align = FALSE;
-
-        if (i > 0)
-        {
-            size1 = size2;
-            type1 = type2;
-        }
-        else
-        {
-            OCI_ResultsetGetAttrInfo(rs, i, &size1, &type1);
-        }
-
-        OCI_ResultsetGetAttrInfo(rs, i+1, &size2, &type2);
-
-        switch (OCI_OFFSET_PAIR(type1, type2))
-        {
-            case OCI_OFFSET_PAIR(OCI_OFT_TEXT,  OCI_OFT_POINTER):
-            case OCI_OFFSET_PAIR(OCI_OFT_SHORT, OCI_OFT_POINTER):
-            case OCI_OFFSET_PAIR(OCI_OFT_INT,   OCI_OFT_POINTER):
-            case OCI_OFFSET_PAIR(OCI_OFT_TEXT,  OCI_OFT_BIGINT):
-            case OCI_OFFSET_PAIR(OCI_OFT_SHORT, OCI_OFT_BIGINT):
-            case OCI_OFFSET_PAIR(OCI_OFT_INT,   OCI_OFT_BIGINT):
-            case OCI_OFFSET_PAIR(OCI_OFT_TEXT,  OCI_OFT_DOUBLE):
-            case OCI_OFFSET_PAIR(OCI_OFT_SHORT, OCI_OFT_DOUBLE):
-            case OCI_OFFSET_PAIR(OCI_OFT_INT,   OCI_OFT_DOUBLE):
-
-                align = TRUE;
-                break;
-        }
-
-        size += size1;
-
-        if (align)
-        {
-            size = ROUNDUP(size, size2);
-        }
-    }
-
-    size += size2;
-
-    return size;
-}
-
-
 /* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
  * ********************************************************************************************* */
@@ -1481,13 +1414,12 @@ boolean OCI_API OCI_GetStruct
     char *ptr     = NULL;
     boolean *inds = NULL;
     boolean res   = TRUE;
+    size_t size   = 0;
     size_t size1  = 0;
     size_t size2  = 0;
     int type1     = 0;
     int type2     = 0;
-
-    boolean align = FALSE;
-
+ 
     ub4 i;
 
     OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
@@ -1500,8 +1432,6 @@ boolean OCI_API OCI_GetStruct
     {
         for (i = 1; i <= rs->nb_defs; i++)
         {
-            align = FALSE;
-
             OCI_ResultsetGetAttrInfo(rs, i-1, &size1, &type1);
             OCI_ResultsetGetAttrInfo(rs, i,   &size2, &type2);
 
@@ -1613,28 +1543,15 @@ boolean OCI_API OCI_GetStruct
                 }
             }
 
-            switch (OCI_OFFSET_PAIR(type1, type2))
-            {
-                case OCI_OFFSET_PAIR(OCI_OFT_SHORT,     OCI_OFT_INT):
-                case OCI_OFFSET_PAIR(OCI_OFT_SHORT,     OCI_OFT_POINTER):
-                case OCI_OFFSET_PAIR(OCI_OFT_SHORT,     OCI_OFT_BIGINT):
-                case OCI_OFFSET_PAIR(OCI_OFT_SHORT,     OCI_OFT_DOUBLE):
-                case OCI_OFFSET_PAIR(OCI_OFT_INT,       OCI_OFT_POINTER):
-                case OCI_OFFSET_PAIR(OCI_OFT_INT,       OCI_OFT_BIGINT):
-                case OCI_OFFSET_PAIR(OCI_OFT_INT,       OCI_OFT_DOUBLE):
-                case OCI_OFFSET_PAIR(OCI_OFT_POINTER,   OCI_OFT_DOUBLE):
-                case OCI_OFFSET_PAIR(OCI_OFT_POINTER,   OCI_OFT_BIGINT):
-
-                    align = TRUE;
-                    break;
-            }
-
-            if (align)
+            if ((size2 > 0)  && ((size + size1) % size2))
             {
                 size1 = ROUNDUP(size1, size2);
             }
+         
+            size += size1;
 
-            ptr += size1;
+            ptr = ((char *) row_struct) + size;
+
 
             if (inds != NULL)
             {
