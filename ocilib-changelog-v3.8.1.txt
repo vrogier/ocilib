@@ -1,4 +1,4 @@
-2010-12-06 Version 3.8.1 Vincent Rogier vince.rogier@ocilib.net
+2010-12-13 Version 3.8.1 Vincent Rogier vince.rogier@ocilib.net
 
     * Miscellaneous fixes
 
@@ -28,4 +28,3 @@
       - Manual update of source code formatted with Uncrustify (wrong indentation of witch case and some variable initialization)
       - Pre built MS Windows 32/64bits Dlls are now built using MS Visual Studio 2010 Express (instead of MS Visual Studio 2008 Professional)
       - A MS Visual Studio 2010 Express solution and project has been added to the Windows package to rebuild the Dlls
-  
