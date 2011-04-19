@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -49,7 +49,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: oci_api.h, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: oci_api.h, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCI_API_H_INCLUDED
@@ -1600,10 +1600,21 @@ typedef sword (*OCIAQLISTEN)
     ub4          flags
 );
 
+typedef OCISvcCtx * (*XAOSVCCTX)
+(
+    OraText *dbname
+);
+
+typedef OCIEnv * (*XAOENV)
+(
+    OraText *dbname
+);
+
 /* API introduced in 8.1 */
 
 typedef void (*OCITHREADPROCESSINIT)
 (
+	void
 );
 
 typedef sword (*OCITHREADINIT)

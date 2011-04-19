@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ref.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: ref.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -56,7 +56,9 @@ OCI_Ref * OCI_RefInit
     OCI_CHECK(pref == NULL, NULL);
 
     if (*pref == NULL)
+    {
         *pref = (OCI_Ref *) OCI_MemAlloc(OCI_IPC_REF, sizeof(*ref), (size_t) 1, TRUE);
+    }
 
     if (*pref != NULL)
     {
@@ -79,7 +81,7 @@ OCI_Ref * OCI_RefInit
             (
                 res, ref->con,
 
-                OCI_ObjectNew(OCILib.env,  con->err, con->cxt,
+                OCI_ObjectNew(ref->con->env, ref->con->err, ref->con->cxt,
                               (OCITypeCode) SQLT_REF,
                               (OCIType*) NULL,
                               (dvoid *) NULL,
@@ -96,7 +98,9 @@ OCI_Ref * OCI_RefInit
         }
     }
     else
+    {
         res = FALSE;
+    }
 
     /* check for failure */
 
@@ -129,7 +133,7 @@ boolean OCI_RefPin
     (
         res, ref->con,
 
-        OCIObjectPin(OCILib.env, ref->con->err, ref->handle,
+        OCIObjectPin(ref->con->env, ref->con->err, ref->handle,
                      (OCIComplexObject *) 0, OCI_PIN_ANY, OCI_DURATION_SESSION,
                      OCI_LOCK_NONE, &obj_handle)
     )
@@ -140,14 +144,18 @@ boolean OCI_RefPin
 
         if (res == TRUE)
         {
-            obj =  OCI_ObjectInit(ref->con, (OCI_Object **) &ref->obj,
-                                  obj_handle, ref->typinf, NULL, -1, TRUE);
+            obj =  OCI_ObjectInit(ref->con, (OCI_Object **) &ref->obj, obj_handle,
+                                  ref->typinf, NULL, -1, TRUE);
         }
 
         if (obj != NULL)
+        {
             ref->pinned = TRUE;
+        }
         else
+        {
             res = FALSE;
+        }
     }
 
     return res;
@@ -172,7 +180,7 @@ boolean OCI_RefUnpin
         (
             res, ref->con,
 
-            OCIObjectUnpin(OCILib.env, ref->con->err, ref->obj->handle)
+            OCIObjectUnpin(ref->con->env, ref->con->err, ref->obj->handle)
         )
 
         ref->pinned = FALSE;
@@ -231,11 +239,9 @@ boolean OCI_API OCI_RefFree
 
     OCI_RefUnpin(ref);
 
-    if ((ref->hstate == OCI_OBJECT_ALLOCATED      ) ||
-        (ref->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
+    if ((ref->hstate == OCI_OBJECT_ALLOCATED) || (ref->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
     {
-        OCI_OCIObjectFree(OCILib.env, ref->con->err,  ref->handle,
-                          OCI_OBJECTFREE_NONULL);
+        OCI_OCIObjectFree(ref->con->env, ref->con->err,  ref->handle, OCI_OBJECTFREE_NONULL);
     }
 
     if (ref->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
@@ -262,9 +268,7 @@ OCI_Ref ** OCI_API OCI_RefArrayCreate
     OCI_Array *arr = NULL;
     OCI_Ref **refs = NULL;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0,
-                          sizeof(OCIRef *), sizeof(OCI_Ref),
-                          0, typinf);
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0, sizeof(OCIRef *), sizeof(OCI_Ref), 0, typinf);
 
     if (arr != NULL)
     {
@@ -332,7 +336,7 @@ boolean OCI_API OCI_RefAssign
     (
         res, ref->con,
 
-        OCIRefAssign(OCILib.env, ref->con->err, ref_src->handle, &ref->handle)
+        OCIRefAssign(ref->con->env, ref->con->err, ref_src->handle, &ref->handle)
     )
 
     if (res == TRUE)
@@ -365,7 +369,7 @@ boolean OCI_API OCI_RefIsNull
 
     OCI_RESULT(TRUE);
 
-    return (OCIRefIsNull(OCILib.env, ref->handle) == TRUE);
+    return (OCIRefIsNull(ref->con->env, ref->handle) == TRUE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -385,7 +389,7 @@ boolean OCI_API OCI_RefSetNull
 
     if (res == TRUE)
     {
-        OCIRefClear(OCILib.env, ref->handle);
+        OCIRefClear(ref->con->env, ref->handle);
 
         if (ref->obj != NULL)
         {
@@ -427,7 +431,7 @@ boolean OCI_API OCI_RefToText
     (
         res, ref->con,
 
-        OCIRefToHex((dvoid *) OCILib.env, ref->con->err, ref->handle,
+        OCIRefToHex((dvoid *) ref->con->env, ref->con->err, ref->handle,
                     (OraText *) ostr, (ub4 *) &osize)
     )
 
@@ -456,7 +460,7 @@ unsigned int OCI_API OCI_RefGetHexSize
 
     OCI_CHECK_PTR(OCI_IPC_REF, ref, 0);
 
-    size = OCIRefHexSize(OCILib.env, (const OCIRef *) ref->handle);
+    size = OCIRefHexSize(ref->con->env, (const OCIRef *) ref->handle);
 
     size /= (ub4) sizeof(mtext);
 

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: list.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: list.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -64,7 +64,9 @@ OCI_List * OCI_ListCreate
             list->mutex = OCI_MutexCreateInternal();
 
             if (list->mutex == NULL)
+            {
                 OCI_FREE(list);
+            }
         }
     }
 
@@ -87,7 +89,9 @@ boolean OCI_ListFree
     OCI_ListClear(list);
 
     if (list->mutex != NULL)
+    {
         res = OCI_MutexFree(list->mutex);
+    }
 
     OCI_FREE(list);
 
@@ -108,8 +112,7 @@ OCI_Item * OCI_ListCreateItem
 
     /* allocate list item entry */
 
-    item = (OCI_Item *) OCI_MemAlloc(OCI_IPC_LIST_ITEM, sizeof(*item),
-                                     (size_t) 1, TRUE);
+    item = (OCI_Item *) OCI_MemAlloc(OCI_IPC_LIST_ITEM, sizeof(*item), (size_t) 1, TRUE);
 
     if (item != NULL)
     {
@@ -118,7 +121,9 @@ OCI_Item * OCI_ListCreateItem
         item->data = (void *) OCI_MemAlloc(type, (size_t) size, (size_t) 1, TRUE);
 
         if (item->data == NULL)
+        {
             OCI_FREE(item);
+        }
     }
 
     return item;
@@ -144,7 +149,9 @@ OCI_Item * OCI_ListAppend
     OCI_CHECK(item == NULL, FALSE);
 
     if (list->mutex != NULL)
+    {
         OCI_MutexAcquire(list->mutex);
+    }
 
     temp = list->head;
 
@@ -154,14 +161,20 @@ OCI_Item * OCI_ListAppend
     }
 
     if (temp != NULL)
+    {
         temp->next = item;
+    }
     else
+    {
         list->head = item;
+    }
 
     list->count++;
 
     if (list->mutex != NULL)
+    {
         OCI_MutexRelease(list->mutex);
+    }
 
     return item;
 }
@@ -181,7 +194,9 @@ boolean OCI_ListClear
     OCI_CHECK(list == NULL, FALSE);
 
     if (list->mutex != NULL)
+    {
         OCI_MutexAcquire(list->mutex);
+    }
 
     /* walk along the list to free item's buffer */
 
@@ -202,7 +217,9 @@ boolean OCI_ListClear
     list->count = 0;
 
     if (list->mutex != NULL)
+    {
         OCI_MutexRelease(list->mutex);
+    }
 
     return TRUE;
 }
@@ -222,7 +239,9 @@ boolean OCI_ListForEach
     OCI_CHECK(list == NULL, FALSE);
 
     if (list->mutex != NULL)
+    {
         OCI_MutexAcquire(list->mutex);
+    }
 
     item = list->head;
 
@@ -235,7 +254,9 @@ boolean OCI_ListForEach
     }
 
     if (list->mutex != NULL)
+    {
         OCI_MutexRelease(list->mutex);
+    }
 
     return TRUE;
 }
@@ -257,7 +278,9 @@ boolean OCI_ListRemove
     OCI_CHECK(data == NULL, FALSE);
 
     if (list->mutex != NULL)
+    {
         OCI_MutexAcquire(list->mutex);
+    }
 
     item = list->head;
 
@@ -265,12 +288,18 @@ boolean OCI_ListRemove
     {
         if (item->data == data)
         {
-            if (temp) temp->next = item->next;
+            if (temp)
+            {
+                temp->next = item->next;
+            }
 
             /* if item was the first entry, readjust the first list
                entry to next element */
 
-            if (item == list->head) list->head = item->next;
+            if (item == list->head)
+            {
+                list->head = item->next;
+            }
 
             OCI_FREE(item);
 
@@ -284,7 +313,9 @@ boolean OCI_ListRemove
     list->count--;
 
     if (list->mutex != NULL)
+    {
         OCI_MutexRelease(list->mutex);
+    }
 
     return TRUE;
 }

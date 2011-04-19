@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: callback.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: callback.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -74,13 +74,17 @@ sb4 OCI_ProcInBind
        so let's do it for all */
 
     for (i = 0; i < bnd->buf.count; i++, ind++)
+    {
         *ind = -1;
+    }
 
     /* setup bind index because OCI_RegisterXXX() might not have been called
        in the same order than the variables in the returning clause */
 
     if (iter == 0)
+    {
         bnd->dynpos = bnd->stmt->dynidx++;
+    }
 
     /* we do not need to do anything here except setting indicators */
 
@@ -141,14 +145,14 @@ sb4 OCI_ProcOutBind
 
         if (bnd->stmt->rsts == NULL)
         {
-            bnd->stmt->rsts =
-
-                (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY,
-                                                sizeof(*bnd->stmt->rsts),
-                                                (size_t) bnd->stmt->nb_rs, TRUE);
+            bnd->stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY,
+                                                              sizeof(*bnd->stmt->rsts),
+                                                              (size_t) bnd->stmt->nb_rs, TRUE);
 
             if (bnd->stmt->rsts == NULL)
+            {
                 res = FALSE;
+            }
         }
 
         /* create resultset as needed */
@@ -159,9 +163,8 @@ sb4 OCI_ProcOutBind
             (
                 res, bnd->stmt->con, bnd->stmt,
 
-                OCIAttrGet(bnd->buf.handle, (ub4) OCI_HTYPE_BIND, (void *) &rows,
-                           (ub4 *) NULL, (ub4) OCI_ATTR_ROWS_RETURNED,
-                           bnd->stmt->con->err)
+                OCIAttrGet(bnd->buf.handle, (ub4) OCI_HTYPE_BIND, (void *) &rows, (ub4 *) NULL,
+                           (ub4) OCI_ATTR_ROWS_RETURNED, bnd->stmt->con->err)
             )
 
             if (res == TRUE)
@@ -169,7 +172,9 @@ sb4 OCI_ProcOutBind
                 bnd->stmt->rsts[iter] = OCI_ResultsetCreate(bnd->stmt, rows);
 
                 if (bnd->stmt->rsts[iter] != NULL)
+                {
                     bnd->stmt->rsts[iter]->row_count = rows;
+                }
             }
         }
     }
@@ -195,13 +200,15 @@ sb4 OCI_ProcOutBind
             case OCI_CDT_INTERVAL:
             case OCI_CDT_LOB:
             case OCI_CDT_FILE:
-
+            {
                 *bufpp = def->buf.data[index];
                 break;
-
+            }
             default:
-
+            {
                 *bufpp = (((ub1*)def->buf.data) + (size_t) (def->col.bufsize * index));
+                break;
+            }
         }
 
         *alenp  = (ub4   *) (((ub1 *) def->buf.lens) + (size_t) ((ub4) def->buf.sizelen * index));
@@ -242,7 +249,7 @@ ub4 OCI_ProcNotify
 
     OCI_EventReset(&sub->event);
 
-    #if OCI_VERSION_COMPILE >= OCI_10_2
+#if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* get database that generated the notification */
 
@@ -250,20 +257,16 @@ ub4 OCI_ProcNotify
     (
         res, sub->err,
 
-        OCIAttrGet((dvoid *) desc, (ub4) OCI_DTYPE_CHDES,
-                   (dvoid *) &ostr, (ub4 *) &osize,
-                   (ub4) OCI_ATTR_CHDES_DBNAME,
-                   sub->err)
+        OCIAttrGet((dvoid *) desc, (ub4) OCI_DTYPE_CHDES, (dvoid *) &ostr, (ub4 *) &osize,
+                   (ub4) OCI_ATTR_CHDES_DBNAME, sub->err)
     )
 
     if ((res == TRUE) && (osize > (int) sub->event.dbname_size))
     {
         /* buffer is ANSI  */
 
-        sub->event.dbname =
-
-            (dtext *) OCI_MemRealloc(sub->event.dbname,  OCI_IPC_STRING,
-                                     sizeof(dtext), (size_t) (osize + 1));
+        sub->event.dbname = (dtext *) OCI_MemRealloc(sub->event.dbname,  OCI_IPC_STRING,
+                                                     sizeof(dtext), (size_t) (osize + 1));
 
         sub->event.dbname_size = osize;
     }
@@ -328,10 +331,8 @@ ub4 OCI_ProcNotify
         (
             res, sub->err,
 
-            OCIAttrGet((dvoid *) desc, (ub4) OCI_DTYPE_CHDES,
-                       (dvoid *) &tables, (ub4 *) NULL,
-                       (ub4) OCI_ATTR_CHDES_TABLE_CHANGES,
-                       sub->err)
+            OCIAttrGet((dvoid *) desc, (ub4) OCI_DTYPE_CHDES, (dvoid *) &tables,
+                       (ub4   *) NULL, (ub4) OCI_ATTR_CHDES_TABLE_CHANGES,  sub->err)
         )
 
         if (tables != NULL)
@@ -347,7 +348,7 @@ ub4 OCI_ProcNotify
             (
                 res, sub->err,
 
-                OCICollSize(OCILib.env, sub->err, tables, &nb_tables)
+                OCICollSize(sub->env, sub->err, tables, &nb_tables)
             )
 
             for(i = 0; i < nb_tables; i++)
@@ -357,10 +358,14 @@ ub4 OCI_ProcNotify
                 /* partial reset of the event object  */
 
                 if (sub->event.objname != NULL)
+                {
                     sub->event.objname[0] = 0;
+                }
 
                 if (sub->event.rowid != NULL)
+                {
                     sub->event.rowid[0] = 0;
+                }
 
                 /* get table element */
 
@@ -368,10 +373,8 @@ ub4 OCI_ProcNotify
                 (
                     res, sub->err,
 
-                    OCICollGetElem(OCILib.env, sub->err,
-                                   tables, i, &exist,
-                                   (dvoid**) (dvoid*) &elem_tbl,
-                                   (dvoid**) &ind_tbl)
+                    OCICollGetElem(sub->env, sub->err,  tables, i, &exist,
+                                   (dvoid**) (dvoid*) &elem_tbl, (dvoid**) &ind_tbl)
                 )
 
                 /* get table name */
@@ -391,17 +394,14 @@ ub4 OCI_ProcNotify
                 {
                     /* buffer is ANSI  */
 
-                    sub->event.objname =
-
-                        (dtext *) OCI_MemRealloc(sub->event.objname,
-                                                 OCI_IPC_STRING, sizeof(dtext),
-                                                 (size_t) (osize + 1));
+                    sub->event.objname = (dtext *) OCI_MemRealloc(sub->event.objname,
+                                                                  OCI_IPC_STRING, sizeof(dtext),
+                                                                  (size_t) (osize + 1));
 
                     sub->event.objname_size = osize;
                 }
 
-                OCI_CopyString(ostr, sub->event.objname, &osize,
-                               sizeof(char), sizeof(dtext));
+                OCI_CopyString(ostr, sub->event.objname, &osize, sizeof(char), sizeof(dtext));
 
                 /* get table modification type */
 
@@ -411,8 +411,7 @@ ub4 OCI_ProcNotify
 
                     OCIAttrGet((dvoid *) *elem_tbl, (ub4) OCI_DTYPE_TABLE_CHDES,
                                (dvoid *) &sub->event.op, (ub4*) NULL,
-                               (ub4) OCI_ATTR_CHDES_TABLE_OPFLAGS,
-                               sub->err)
+                               (ub4) OCI_ATTR_CHDES_TABLE_OPFLAGS, sub->err)
                 )
 
                 sub->event.op = sub->event.op & (~OCI_OPCODE_ALLROWS);
@@ -430,11 +429,9 @@ ub4 OCI_ProcNotify
                     (
                         res, sub->err,
 
-                        OCIAttrGet((dvoid *) *elem_tbl,
-                                   (ub4) OCI_DTYPE_TABLE_CHDES,
+                        OCIAttrGet((dvoid *) *elem_tbl, (ub4) OCI_DTYPE_TABLE_CHDES,
                                    (dvoid *) &rows, (ub4 *) NULL,
-                                   (ub4) OCI_ATTR_CHDES_TABLE_ROW_CHANGES,
-                                   sub->err)
+                                   (ub4    ) OCI_ATTR_CHDES_TABLE_ROW_CHANGES, sub->err)
                     )
 
                     if (rows != NULL)
@@ -450,7 +447,7 @@ ub4 OCI_ProcNotify
                         (
                             res, sub->err,
 
-                            OCICollSize(OCILib.env, sub->err, rows, &nb_rows)
+                            OCICollSize(sub->env, sub->err, rows, &nb_rows)
                         )
 
                         for (j = 0; j < nb_rows; j++)
@@ -458,7 +455,9 @@ ub4 OCI_ProcNotify
                             /* partial reset of the event  */
 
                             if (sub->event.rowid != NULL)
+                            {
                                 sub->event.rowid[0] = 0;
+                            }
 
                             /* get row element */
 
@@ -466,10 +465,8 @@ ub4 OCI_ProcNotify
                             (
                                 res, sub->err,
 
-                                OCICollGetElem(OCILib.env, sub->err,
-                                               rows, j, &exist,
-                                               (dvoid**) (dvoid*) &elem_row,
-                                               (dvoid**) &ind_row)
+                                OCICollGetElem(sub->env, sub->err, rows, j, &exist,
+                                               (dvoid**) (dvoid*) &elem_row, (dvoid**) &ind_row)
                             )
 
                             /* get rowid  */
@@ -478,11 +475,9 @@ ub4 OCI_ProcNotify
                             (
                                 res, sub->err,
 
-                                OCIAttrGet((dvoid *) *elem_row,
-                                           (ub4) OCI_DTYPE_ROW_CHDES,
+                                OCIAttrGet((dvoid *) *elem_row, (ub4) OCI_DTYPE_ROW_CHDES,
                                            (dvoid *) &ostr, (ub4 *) &osize,
-                                           (ub4) OCI_ATTR_CHDES_ROW_ROWID,
-                                           sub->err)
+                                           (ub4) OCI_ATTR_CHDES_ROW_ROWID, sub->err)
                             )
 
                             /* get opcode  */
@@ -491,23 +486,19 @@ ub4 OCI_ProcNotify
                             (
                                 res, sub->err,
 
-                                OCIAttrGet((dvoid *) *elem_row,
-                                           (ub4) OCI_DTYPE_ROW_CHDES,
+                                OCIAttrGet((dvoid *) *elem_row, (ub4) OCI_DTYPE_ROW_CHDES,
                                            &sub->event.op, (ub4*) NULL,
-                                           (ub4) OCI_ATTR_CHDES_ROW_OPFLAGS,
-                                           sub->err)
+                                           (ub4) OCI_ATTR_CHDES_ROW_OPFLAGS, sub->err)
                             )
 
                             if(osize > (int) sub->event.rowid_size)
                             {
                                 /* buffer is ANSI  */
 
-                                sub->event.rowid =
-
-                                    (dtext *) OCI_MemRealloc(sub->event.rowid,
-                                                             OCI_IPC_STRING,
-                                                             sizeof(dtext),
-                                                             (size_t) (osize + 1));
+                                sub->event.rowid = (dtext *) OCI_MemRealloc(sub->event.rowid,
+                                                                            OCI_IPC_STRING,
+                                                                            sizeof(dtext),
+                                                                            (size_t) (osize + 1));
 
                                 sub->event.rowid_size = osize;
                             }
@@ -532,7 +523,7 @@ ub4 OCI_ProcNotify
         sub->handler(&sub->event);
     }
 
-    #else
+#else
 
     OCI_NOT_USED(ctx);
     OCI_NOT_USED(desc);
@@ -543,8 +534,160 @@ ub4 OCI_ProcNotify
     OCI_NOT_USED(ostr);
     OCI_NOT_USED(osize);
 
-    #endif
+#endif
 
     return OCI_SUCCESS;
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ProcFailOver
+ * --------------------------------------------------------------------------------------------- */
+
+sb4 OCI_ProcFailOver
+(
+    dvoid *svchp,
+    dvoid *envhp,
+    dvoid *fo_ctx,
+    ub4    fo_type,
+    ub4    fo_event
+)
+{
+    OCI_Connection *cn = (OCI_Connection *) fo_ctx;
+    sb4 ret = OCI_FOC_OK;
+
+    OCI_NOT_USED(envhp);
+    OCI_NOT_USED(svchp);
+
+    if ((cn != NULL) && (cn->taf_handler != NULL))
+    {
+        ret = (sb4) cn->taf_handler(cn, fo_type, fo_event);
+    }
+
+    return ret;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ProcHAEvent
+ * --------------------------------------------------------------------------------------------- */
+
+void OCI_ProcHAEvent
+(
+    dvoid     *evtctx,
+    OCIEvent  *eventhp
+)
+{
+    sword      ret   = OCI_SUCCESS;
+    OCIServer *srvhp = NULL;
+    OCI_List  *list  = OCILib.cons;
+    OCI_Item  *item  = NULL;
+	boolean    res   = TRUE;
+
+    OCI_NOT_USED(evtctx);
+
+    if ((list == NULL) || (OCILib.ha_handler == NULL))
+    {
+        return;
+    }
+    
+#if OCI_VERSION_COMPILE >= OCI_10_2
+
+    if (OCILib.version_runtime >= OCI_10_2)
+    {
+
+        ret = OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &srvhp,
+                         (ub4 *) NULL, (ub4) OCI_ATTR_HA_SRVFIRST, OCILib.err);
+
+        while ((ret == OCI_SUCCESS) && (srvhp != NULL))
+        {
+            if (list->mutex != NULL)
+            {
+                OCI_MutexAcquire(list->mutex);
+            }
+
+            item = list->head;
+
+            /* for each item in the list, check the connection */
+
+            while (item != NULL)
+            {
+                OCI_Connection *tmp = (OCI_Connection *) item->data;
+                OCI_Connection *con  = NULL;
+				OCI_Timestamp  *tmsp = NULL;
+				OCIDateTime    *dth  = NULL;
+
+				ub4 status = OCI_HA_STATUS_DOWN;
+				ub4 source = OCI_HA_SOURCE_INSTANCE;
+
+                if ((tmp != NULL) && (tmp->svr == srvhp))
+                {
+                    con = tmp;
+ 
+					/* get event timestamp */
+
+					OCI_CALL2
+					(
+						res, con,
+
+						OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &dth,
+								   (ub4 *) NULL,  (ub4) OCI_ATTR_HA_TIMESTAMP, con->err)
+
+					)
+
+					if (res == TRUE)
+					{
+						res = (OCI_TimestampInit(con, &tmsp, dth, OCI_TIMESTAMP) != NULL);
+					}
+
+					/* get status */
+
+					if (res == TRUE)
+					{
+						OCI_CALL2
+						(
+							res, con,
+
+							OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &status,
+									   (ub4 *) NULL,  (ub4) OCI_ATTR_HA_SOURCE, con->err)
+
+						)
+					}
+
+					/* get source */
+
+					if (res == TRUE)
+					{
+						OCI_CALL2
+						(
+							res, con,
+
+							OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &source,
+									   (ub4 *) NULL,  (ub4) OCI_ATTR_HA_STATUS, con->err)
+
+						)
+					}
+
+					/* on success, call the user callback */
+
+					if (res == TRUE)
+					{
+						OCILib.ha_handler(con, (unsigned int) source, (unsigned int) status, tmsp);
+					}
+
+					item = item->next;
+				}
+            }
+
+            if (list->mutex != NULL)
+            {
+                OCI_MutexRelease(list->mutex);
+            }
+
+            ret = OCIAttrGet((dvoid **) srvhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &srvhp,
+                             (ub4 *) NULL,  (ub4) OCI_ATTR_HA_SRVNEXT, OCILib.err);
+
+        }
+    }
+
+#endif
+
+}

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: element.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: element.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -57,8 +57,9 @@ OCI_Elem * OCI_ElemInit
     OCI_CHECK(pelem == NULL, NULL);
 
     if (*pelem == NULL)
-        *pelem = (OCI_Elem *) OCI_MemAlloc(OCI_IPC_ELEMENT, sizeof(*elem),
-                                           (size_t) 1, TRUE);
+    {
+        *pelem = (OCI_Elem *) OCI_MemAlloc(OCI_IPC_ELEMENT, sizeof(*elem), (size_t) 1, TRUE);
+    }
 
     if (*pelem != NULL)
     {
@@ -71,23 +72,25 @@ OCI_Elem * OCI_ElemInit
         elem->init   = FALSE;
 
         if (handle == NULL)
+        {
             elem->hstate = OCI_OBJECT_ALLOCATED;
+        }
         else
+        {
             elem->hstate = OCI_OBJECT_FETCHED_CLEAN;
+        }
 
         switch (elem->typinf->cols[0].type)
         {
             case OCI_CDT_NUMERIC:
-
+            {
                 if (elem->handle == NULL)
                 {
-                    elem->handle = (OCINumber *) OCI_MemAlloc(OCI_IPC_VOID,
-                                                              sizeof(OCINumber),
-                                                              1, TRUE);
+                    elem->handle = (OCINumber *) OCI_MemAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
                 }
 
                 break;
-
+            }
             case OCI_CDT_TEXT:
             case OCI_CDT_TIMESTAMP:
             case OCI_CDT_INTERVAL:
@@ -95,10 +98,14 @@ OCI_Elem * OCI_ElemInit
             case OCI_CDT_LOB:
             case OCI_CDT_FILE:
             case OCI_CDT_REF:
-
+            {
                 if (elem->handle != NULL)
+                {
                     elem->handle = * (void **) handle;
+                }
+
                 break;
+            }
         }
 
         if (pind != NULL)
@@ -112,7 +119,9 @@ OCI_Elem * OCI_ElemInit
         }
     }
     else
+    {
         res = FALSE;
+    }
 
     /* check for failure */
 
@@ -149,7 +158,9 @@ boolean OCI_ElemSetNullIndicator
     else
     {
         if (elem->pind != NULL)
+        {
             *elem->pind = value;
+        }
     }
 
     return res;
@@ -209,8 +220,7 @@ boolean OCI_ElemGetNumber
         ub4 fmt_size     = (ub4) mtslen(fmt);
         dtext *data      = (dtext *) OCI_ElemGetString(elem);
 
-        res = OCI_NumberGetFromStr(elem->con, value, size, flag, data,
-                                   (int) dtslen(data),  fmt, fmt_size);
+        res = OCI_NumberGetFromStr(elem->con, value, size, flag, data, (int) dtslen(data), fmt, fmt_size);
     }
     else
     {
@@ -268,54 +278,56 @@ boolean OCI_API OCI_ElemFree
         OCI_Datatype * data = (OCI_Datatype *) elem->obj;
 
         if (data->hstate == OCI_OBJECT_FETCHED_CLEAN)
+        {
             data->hstate = OCI_OBJECT_FETCHED_DIRTY;
+        }
 
         switch (elem->typinf->cols[0].type)
         {
             case OCI_CDT_DATETIME:
-
+            {
                 OCI_DateFree((OCI_Date *) elem->obj);
                 break;
-
+            }
             case OCI_CDT_LOB:
-
+            {
                 OCI_LobFree((OCI_Lob *) elem->obj);
                 break;
-
+            }
             case OCI_CDT_FILE:
-
+            {
                 OCI_FileFree((OCI_File *) elem->obj);
                 break;
-
+            }
             case OCI_CDT_OBJECT:
-
+            {
                 OCI_ObjectFree((OCI_Object *) elem->obj);
                 break;
-
+            }
             case OCI_CDT_COLLECTION:
-
+            {
                 OCI_CollFree((OCI_Coll *) elem->obj);;
                 break;
-
+            }
             case OCI_CDT_TIMESTAMP:
-
+            {
                 OCI_TimestampFree((OCI_Timestamp *) elem->obj);
                 break;
-
+            }
             case OCI_CDT_INTERVAL:
-
+            {
                 OCI_IntervalFree((OCI_Interval *) elem->obj);
                 break;
-
+            }
             case OCI_CDT_REF:
-
+            {
                 OCI_RefFree((OCI_Ref *) elem->obj);
                 break;
+            }
         }
     }
 
-    if ((elem->hstate == OCI_OBJECT_ALLOCATED) &&
-        (elem->typinf->cols[0].type == OCI_CDT_NUMERIC))
+    if ((elem->hstate == OCI_OBJECT_ALLOCATED) && (elem->typinf->cols[0].type == OCI_CDT_NUMERIC))
     {
         OCI_FREE(elem->handle);
     }
@@ -339,8 +351,7 @@ short OCI_API OCI_ElemGetShort
 {
     short value = 0;
 
-    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(short),
-                      (uword) OCI_NUM_SHORT);
+    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(short), (uword) OCI_NUM_SHORT);
 
     return value;
 }
@@ -356,8 +367,7 @@ unsigned short OCI_API OCI_ElemGetUnsignedShort
 {
     unsigned short value = 0;
 
-    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(unsigned short),
-                      (uword) OCI_NUM_USHORT);
+    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(unsigned short), (uword) OCI_NUM_USHORT);
 
     return value;
 }
@@ -373,8 +383,7 @@ int OCI_API OCI_ElemGetInt
 {
     int value = 0;
 
-    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(value),
-                      (uword) OCI_NUM_INT);
+    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_INT);
 
     return value;
 }
@@ -390,8 +399,7 @@ unsigned int OCI_API OCI_ElemGetUnsignedInt
 {
     unsigned int value = 0;
 
-    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(value),
-                      (uword) OCI_NUM_UINT);
+    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_UINT);
 
     return value;
 }
@@ -407,8 +415,7 @@ big_int OCI_API OCI_ElemGetBigInt
 {
     big_int value = 0;
 
-    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(big_int),
-                      (uword) OCI_NUM_BIGINT);
+    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(big_int), (uword) OCI_NUM_BIGINT);
 
     return value;
 }
@@ -424,8 +431,7 @@ big_uint OCI_API OCI_ElemGetUnsignedBigInt
 {
     big_uint value = 0;
 
-    OCI_ElemGetNumber(elem, (void *) &value,  (uword) sizeof(big_uint),
-                      (uword) OCI_NUM_BIGUINT);
+    OCI_ElemGetNumber(elem, (void *) &value,  (uword) sizeof(big_uint), (uword) OCI_NUM_BIGUINT);
 
     return value;
 }
@@ -441,8 +447,7 @@ double OCI_API OCI_ElemGetDouble
 {
     double value = 0.0;
 
-    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(double),
-                      (uword) OCI_NUM_DOUBLE);
+    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(double), (uword) OCI_NUM_DOUBLE);
 
     return value;
 }
@@ -466,7 +471,7 @@ const dtext * OCI_API OCI_ElemGetString
     {
         res = TRUE;
 
-        str = (dtext *) OCI_StringFromStringPtr((OCIString *) elem->handle,
+        str = (dtext *) OCI_StringFromStringPtr(elem->con->env, (OCIString *) elem->handle,
                                                 &elem->buf, &elem->buflen);
     }
 
@@ -496,12 +501,14 @@ unsigned int OCI_API OCI_ElemGetRaw
         OCIRaw *raw = *(OCIRaw **) elem->handle;
         ub4 raw_len = 0;
 
-        raw_len = OCIRawSize(OCILib.env, raw);
+        raw_len = OCIRawSize(elem->con->env, raw);
 
         if (len > raw_len)
+        {
             len = raw_len;
+        }
 
-        memcpy(value, OCIRawPtr(OCILib.env, raw), (size_t) len);
+        memcpy(value, OCIRawPtr(elem->con->env, raw), (size_t) len);
     }
 
     OCI_RESULT(res);
@@ -534,7 +541,9 @@ OCI_Date * OCI_API OCI_ElemGetDate
             elem->init = (date != NULL);
         }
         else
+        {
             date = (OCI_Date *) elem->obj;
+        }
 
         res = elem->init;
     }
@@ -570,7 +579,9 @@ OCI_Timestamp * OCI_API OCI_ElemGetTimestamp
             elem->init = (tmsp != NULL);
         }
         else
+        {
             tmsp = (OCI_Timestamp *) elem->obj;
+        }
 
         res = elem->init;
     }
@@ -606,7 +617,9 @@ OCI_Interval * OCI_API OCI_ElemGetInterval
             elem->init = (itv != NULL);
         }
         else
+        {
             itv = (OCI_Interval *) elem->obj;
+        }
 
         res = elem->init;
     }
@@ -642,7 +655,9 @@ OCI_Lob * OCI_API OCI_ElemGetLob
             elem->init = (lob != NULL);
         }
         else
+        {
             lob = (OCI_Lob *) elem->obj;
+        }
 
         res = elem->init;
     }
@@ -678,7 +693,9 @@ OCI_File * OCI_API OCI_ElemGetFile
             elem->init = (file != NULL);
         }
         else
+        {
             file = (OCI_File *) elem->obj;
+        }
 
         res = elem->init;
     }
@@ -714,7 +731,9 @@ OCI_Ref * OCI_API OCI_ElemGetRef
             elem->init = (ref != NULL);
         }
         else
+        {
             ref = (OCI_Ref *) elem->obj;
+        }
 
         res = elem->init;
     }
@@ -743,15 +762,15 @@ OCI_Object * OCI_API OCI_ElemGetObject
     {
         if (elem->init == FALSE)
         {
-            obj = OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj,
-                                 elem->handle,
-                                 elem->typinf->cols[0].typinf,
-                                 NULL, -1, TRUE);
+            obj = OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj, elem->handle,
+                                 elem->typinf->cols[0].typinf, NULL, -1, TRUE);
 
             elem->init = (obj != NULL);
         }
         else
+        {
             obj = (OCI_Object *) elem->obj;
+        }
 
         res = elem->init;
     }
@@ -787,7 +806,9 @@ OCI_Coll * OCI_API OCI_ElemGetColl
             elem->init = (coll != NULL);
         }
         else
+        {
             coll = (OCI_Coll *) elem->obj;
+        }
 
         res = elem->init;
     }
@@ -807,8 +828,7 @@ boolean OCI_API OCI_ElemSetShort
     short     value
 )
 {
-    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value),
-                             (uword) OCI_NUM_SHORT);
+    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_SHORT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -821,8 +841,7 @@ boolean OCI_API OCI_ElemSetUnsignedShort
     unsigned short value
 )
 {
-    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value),
-                             (uword) OCI_NUM_USHORT);
+    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_USHORT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -835,8 +854,7 @@ boolean OCI_API OCI_ElemSetInt
     int       value
 )
 {
-    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value),
-                             (uword) OCI_NUM_INT);
+    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_INT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -849,8 +867,7 @@ boolean OCI_API OCI_ElemSetUnsignedInt
     unsigned int value
 )
 {
-    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value),
-                             (uword) OCI_NUM_UINT);
+    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_UINT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -863,8 +880,7 @@ boolean OCI_API OCI_ElemSetBigInt
     big_int   value
 )
 {
-    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value),
-                             (uword) OCI_NUM_BIGINT);
+    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_BIGINT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -877,8 +893,7 @@ boolean OCI_API OCI_ElemSetUnsignedBigInt
     big_uint  value
 )
 {
-    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value),
-                             (uword) OCI_NUM_BIGUINT);
+    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_BIGUINT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -891,8 +906,7 @@ boolean OCI_API OCI_ElemSetDouble
     double    value
 )
 {
-    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value),
-                             (uword) OCI_NUM_DOUBLE);
+    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_DOUBLE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -916,7 +930,8 @@ boolean OCI_API OCI_ElemSetString
     }
     else
     {
-        res = OCI_StringToStringPtr((OCIString **) &elem->handle,
+        res = OCI_StringToStringPtr(elem->con->env,
+                                    (OCIString **) &elem->handle,
                                     elem->con->err, (void *) value,
                                     &elem->buf, &elem->buflen);
 
@@ -956,7 +971,7 @@ boolean OCI_API OCI_ElemSetRaw
         (
             res, elem->con,
 
-            OCIRawAssignBytes(OCILib.env, elem->con->err, (ub1*) value,
+            OCIRawAssignBytes(elem->con->env, elem->con->err, (ub1*) value,
                               len, (OCIRaw **) &elem->handle)
         )
 
@@ -991,8 +1006,7 @@ boolean OCI_API OCI_ElemSetDate
     {
         if (elem->obj == NULL)
         {
-            OCI_DateInit(elem->con, (OCI_Date **) &elem->obj,
-                         (OCIDate *) elem->handle, TRUE, FALSE);
+            OCI_DateInit(elem->con, (OCI_Date **) &elem->obj, (OCIDate *) elem->handle, TRUE, FALSE);
         }
 
         if (elem->obj != NULL)
@@ -1037,8 +1051,7 @@ boolean OCI_API OCI_ElemSetTimestamp
         if (elem->obj == NULL)
         {
             OCI_TimestampInit(elem->con, (OCI_Timestamp **) &elem->obj,
-                              (OCIDateTime   *) elem->handle,
-                              elem->typinf->cols[0].subtype);
+                              (OCIDateTime *) elem->handle,  elem->typinf->cols[0].subtype);
         }
 
         if (elem->obj != NULL)
@@ -1083,8 +1096,7 @@ boolean OCI_API OCI_ElemSetInterval
         if (elem->obj == NULL)
         {
             OCI_IntervalInit(elem->con, (OCI_Interval **) &elem->obj,
-                             (OCIInterval  *) elem->handle,
-                             elem->typinf->cols[0].subtype);
+                             (OCIInterval *) elem->handle, elem->typinf->cols[0].subtype);
         }
 
         if (elem->obj != NULL)
@@ -1129,8 +1141,7 @@ boolean OCI_API OCI_ElemSetColl
         if (elem->obj == NULL)
         {
             OCI_CollInit(elem->con, (OCI_Coll **) &elem->obj,
-                         (OCIColl  *) elem->handle,
-                         elem->typinf->cols[0].typinf);
+                         (OCIColl *) elem->handle, elem->typinf->cols[0].typinf);
         }
 
         if (elem->obj != NULL)
@@ -1312,9 +1323,10 @@ boolean OCI_API OCI_ElemSetRef
     {
         if (elem->obj == NULL)
         {
-            OCI_RefInit(elem->con,elem->typinf->cols[0].typinf,
-                        (OCI_Ref **) &elem->obj, (OCIRef *) elem->handle);
+            OCI_RefInit(elem->con,elem->typinf->cols[0].typinf, (OCI_Ref **) &elem->obj,
+                        (OCIRef *) elem->handle);
         }
+
 
         if (elem->obj != NULL)
         {

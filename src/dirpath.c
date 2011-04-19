@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: dirpath.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: dirpath.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -64,8 +64,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 
     /* allocate direct path structure */
 
-    dp = (OCI_DirPath *) OCI_MemAlloc(OCI_IPC_DIRPATH, sizeof(*dp),
-                                      (size_t) 1, TRUE);
+    dp = (OCI_DirPath *) OCI_MemAlloc(OCI_IPC_DIRPATH, sizeof(*dp), (size_t) 1, TRUE);
 
     if (dp != NULL)
     {
@@ -83,7 +82,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 
         if (res == TRUE)
         {
-            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
+            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) dp->con->env,
                                                   (dvoid **) (void *) &dp->ctx,
                                                   (ub4) OCI_HTYPE_DIRPATH_CTX,
                                                   (size_t) 0, (dvoid **) NULL));
@@ -101,8 +100,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
                 res, dp->con,
 
                 OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                           (dvoid *) ostr, (ub4) osize,
-                           (ub4) OCI_ATTR_NAME, dp->con->err)
+                           (dvoid *) ostr, (ub4) osize, (ub4) OCI_ATTR_NAME, dp->con->err)
             )
 
             OCI_ReleaseMetaString(ostr);
@@ -120,8 +118,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
                 res, dp->con,
 
                 OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                           (dvoid *) ostr, (ub4) osize,
-                           (ub4) OCI_ATTR_SCHEMA_NAME, dp->con->err)
+                           (dvoid *) ostr, (ub4) osize, (ub4) OCI_ATTR_SCHEMA_NAME, dp->con->err)
             )
 
             OCI_ReleaseMetaString(ostr);
@@ -139,8 +136,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
                 res, dp->con,
 
                 OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                           (dvoid *) ostr, (ub4) osize,
-                           (ub4) OCI_ATTR_SUB_NAME, dp->con->err)
+                           (dvoid *) ostr, (ub4) osize, (ub4) OCI_ATTR_SUB_NAME, dp->con->err)
             )
 
             OCI_ReleaseMetaString(ostr);
@@ -177,15 +173,16 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 
         if (res == TRUE)
         {
-            dp->cols = (void *) OCI_MemAlloc(OCI_IPC_DP_COL_ARRAY,
-                                             sizeof(OCI_DirPathColumn),
+            dp->cols = (void *) OCI_MemAlloc(OCI_IPC_DP_COL_ARRAY, sizeof(OCI_DirPathColumn),
                                              (size_t) dp->nb_cols, TRUE);
 
             res = (dp->cols != NULL);
         }
     }
     else
+    {
         res = FALSE;
+    }
 
     /* handle errors */
 
@@ -299,7 +296,7 @@ boolean OCI_API OCI_DirPathSetColumn
         switch (col->type)
         {
             case OCI_CDT_TEXT:
-
+            {
                 dpcol->maxsize *= sizeof(dtext);
                 dpcol->bufsize *= sizeof(dtext);
 
@@ -309,9 +306,9 @@ boolean OCI_API OCI_DirPathSetColumn
                 }
 
                 break;
-
+            }
             case OCI_CDT_NUMERIC:
-
+            {
                 if ((format != NULL) && (format[0] != 0))
                 {
                     dpcol->format      = mtsdup(format);
@@ -327,11 +324,11 @@ boolean OCI_API OCI_DirPathSetColumn
                 }
 
                 break;
-
+            }
             case OCI_CDT_DATETIME:
             case OCI_CDT_TIMESTAMP:
             case OCI_CDT_INTERVAL:
-
+            {
                 dpcol->type = OCI_DDT_OTHERS;
 
                 if ((format != NULL) && (format[0] != 0))
@@ -343,9 +340,9 @@ boolean OCI_API OCI_DirPathSetColumn
                 }
 
                 break;
-
+            }
             case OCI_CDT_LOB:
-
+            {
                 if (col->subtype == OCI_BLOB)
                 {
                     dpcol->type    = OCI_DDT_BINARY;
@@ -353,9 +350,9 @@ boolean OCI_API OCI_DirPathSetColumn
                 }
 
                 break;
-
+            }
             case OCI_CDT_LONG:
-
+            {
                 if (col->subtype == OCI_BLONG)
                 {
                     dpcol->type    = OCI_DDT_BINARY;
@@ -363,20 +360,21 @@ boolean OCI_API OCI_DirPathSetColumn
                 }
 
                 break;
-
+            }
             case OCI_CDT_RAW:
-
+            {
                 dpcol->type    = OCI_DDT_BINARY;
                 dpcol->sqlcode = SQLT_BIN;
 
                 break;
-
+            }
             default:
-
+            {
                 res = FALSE;
                 OCI_ExceptionDatatypeNotSupported(dp->con, NULL, col->ocode);
 
                 break;
+            }
         }
     }
 
@@ -390,8 +388,7 @@ boolean OCI_API OCI_DirPathSetColumn
         (
             res, dp->con,
 
-            OCIAttrGet(dp->ctx, OCI_HTYPE_DIRPATH_CTX, &hlist,
-                       NULL, OCI_ATTR_LIST_COLUMNS, dp->con->err)
+            OCIAttrGet(dp->ctx, OCI_HTYPE_DIRPATH_CTX, &hlist, NULL, OCI_ATTR_LIST_COLUMNS, dp->con->err)
         )
 
         /* get colum attribute handle */
@@ -416,8 +413,7 @@ boolean OCI_API OCI_DirPathSetColumn
                 res, dp->con,
 
                 OCIAttrSet((dvoid *) hattr, (ub4) OCI_DTYPE_PARAM,
-                           (dvoid *) ostr, (ub4) osize,
-                           (ub4) OCI_ATTR_NAME, dp->con->err)
+                           (dvoid *) ostr, (ub4) osize, (ub4) OCI_ATTR_NAME, dp->con->err)
             )
 
             OCI_ReleaseMetaString(ostr);
@@ -493,7 +489,7 @@ boolean OCI_API OCI_DirPathSetColumn
             OCI_ReleaseMetaString(ostr);
         }
 
-        #ifdef OCI_CHARSET_WIDE
+    #ifdef OCI_CHARSET_WIDE
 
         /* setup Unicode mode for Unicode user data */
 
@@ -511,7 +507,7 @@ boolean OCI_API OCI_DirPathSetColumn
             )
         }
 
-        #endif
+    #endif
 
         /* free param handle */
 
@@ -632,7 +628,9 @@ boolean OCI_API OCI_DirPathPrepare
     }
 
     if (res == TRUE)
+    {
         dp->status = OCI_DPS_PREPARED;
+    }
 
     OCI_RESULT(res);
 
@@ -672,7 +670,9 @@ boolean OCI_API OCI_DirPathSetEntry
     /* check size */
 
     if (size > dpcol->maxsize)
+    {
         size = (unsigned int) dpcol->maxsize;
+    }
 
     /* setup column flag */
 
@@ -701,7 +701,7 @@ boolean OCI_API OCI_DirPathSetEntry
 
     data = ((ub1 *) dpcol->data) + (size_t) ((row-1) * dpcol->bufsize);
 
-    #if defined(OCI_CHECK_DATASTRINGS)
+#if defined(OCI_CHECK_DATASTRINGS)
 
     /* we weed to pack the buffer if wchar_t is 4 bytes */
 
@@ -713,9 +713,9 @@ boolean OCI_API OCI_DirPathSetEntry
     }
     else
 
-    #endif
+#endif
 
-    #if defined(OCI_USERDATA_WIDE)
+#if defined(OCI_USERDATA_WIDE)
 
     /* input Unicode numeric values causes oracle conversion error.
        so, let's convert them to ansi */
@@ -726,7 +726,7 @@ boolean OCI_API OCI_DirPathSetEntry
     }
     else
 
-    #endif
+#endif
 
     /* if a format was provided for a numeric column, we convert the input
        buffer to a OCINumber */
@@ -746,7 +746,7 @@ boolean OCI_API OCI_DirPathSetEntry
     else
     {
 
-        #if defined(OCI_CHARSET_MIXED)
+    #if defined(OCI_CHARSET_MIXED)
 
         /* with mixed charset builds, OCIDirPrepare() causes a segfault if the
            attribute OCI_ATTR_CHARSET_ID has been set with OCI_UTF16.
@@ -760,7 +760,9 @@ boolean OCI_API OCI_DirPathSetEntry
             size = (unsigned int) wcstombs((char *) data, value, dpcol->bufsize - 1);
         }
         else
-        #endif
+
+    #endif
+
         {
             memcpy(data, value, (size_t) size);
         }
@@ -862,9 +864,8 @@ unsigned int OCI_API OCI_DirPathConvert
             (
                 res, dp->con,
 
-                OCIDirPathColArrayEntrySet(dp->arr, dp->con->err, (ub4) j,
-                                           (ub2) (i), (ub1*) data,
-                                           (ub4) size, flag)
+                OCIDirPathColArrayEntrySet(dp->arr, dp->con->err, (ub4) j, (ub2) (i),
+                                           (ub1*) data, (ub4) size, flag)
             )
         }
     }
@@ -928,7 +929,6 @@ unsigned int OCI_API OCI_DirPathConvert
         {
             dp->nb_prcsd = dp->nb_cur;
         }
-
     }
     else
     {
@@ -1030,7 +1030,9 @@ boolean OCI_API OCI_DirPathFinish
     )
 
     if (res == TRUE)
+    {
         dp->status = OCI_DPS_TERMINATED;
+    }
 
     OCI_RESULT(res);
 
@@ -1060,7 +1062,9 @@ boolean OCI_API OCI_DirPathAbort
     )
 
     if (res == TRUE)
+    {
         dp->status = OCI_DPS_TERMINATED;
+    }
 
     OCI_RESULT(res);
 
@@ -1204,8 +1208,7 @@ boolean OCI_API OCI_DirPathSetDateFormat
         res, dp->con,
 
         OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                   (dvoid *) ostr, (ub4) osize,
-                   (ub4) OCI_ATTR_DATEFORMAT, dp->con->err)
+                   (dvoid *) ostr, (ub4) osize, (ub4) OCI_ATTR_DATEFORMAT, dp->con->err)
     )
 
     OCI_ReleaseMetaString(ostr);
@@ -1297,7 +1300,7 @@ boolean OCI_API OCI_DirPathSetCacheSize
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED, FALSE);
 
-    #if OCI_VERSION_COMPILE >= OCI_9_2
+#if OCI_VERSION_COMPILE >= OCI_9_2
 
     OCI_CALL2
     (
@@ -1317,12 +1320,12 @@ boolean OCI_API OCI_DirPathSetCacheSize
                    (ub4) OCI_ATTR_DIRPATH_DCACHE_DISABLE, dp->con->err)
     )
 
-    #else
+#else
 
     OCI_NOT_USED(cache_size);
     OCI_NOT_USED(enabled);
 
-    #endif
+#endif
 
     OCI_RESULT(res);
 

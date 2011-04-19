@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: format.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: format.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -63,7 +63,9 @@ int OCI_ParseSqlFmt
         if (*pf != MT('%'))
         {
             if (buf != NULL)
+            {
                 *(pb++) = *pf;
+            }
 
             size++;
             continue;
@@ -76,7 +78,9 @@ int OCI_ParseSqlFmt
             if ( *(++pf) == MT('%'))
             {
                 if (buf != NULL)
+                {
                     *pb = *pf;
+                }
 
                 quote = FALSE;
                 len   = 1;
@@ -98,7 +102,7 @@ int OCI_ParseSqlFmt
                     {
                         if (buf != NULL)
                         {
-                            *pb = 39;
+                            *pb = MT('"');
                             mtscpy(pb + (size_t) 1, str);
                             *(pb + (size_t) (len + 1)) = MT('\'');
                         }
@@ -106,7 +110,9 @@ int OCI_ParseSqlFmt
                         len+=2;
                     }
                     else if (buf != NULL)
+                    {
                         mtscpy(pb, str);
+                    }
                 }
                 else
                 {
@@ -115,7 +121,9 @@ int OCI_ParseSqlFmt
                         len = OCI_SIZE_NULL;
 
                         if (buf != NULL)
+                        {
                             mtscpy(pb, OCI_STRING_NULL);
+                        }
                     }
                 }
                 break;
@@ -145,7 +153,9 @@ int OCI_ParseSqlFmt
                     }
                 }
                 else
+                {
                     len = ((date != NULL) ? OCI_SIZE_DATE : OCI_SIZE_NULL);
+                }
 
                 break;
             }
@@ -166,9 +176,13 @@ int OCI_ParseSqlFmt
                                                  &hh, &mi, &ss, &ff);
 
                         if (ff > 0)
+                        {
                             mtsprintf(str_ff, (int) msizeof(str_ff)- 1, MT("%i"), ff);
+                        }
                         else
+                        {
                             mtscpy(str_ff, MT("00"));
+                        }
 
                         str_ff[2] = 0;
 
@@ -184,7 +198,9 @@ int OCI_ParseSqlFmt
                     }
                 }
                 else
+                {
                     len = ((tmsp != NULL) ? OCI_SIZE_TIMESTAMP : OCI_SIZE_NULL);
+                }
 
                 break;
             }
@@ -203,14 +219,18 @@ int OCI_ParseSqlFmt
                     len = (int) mtslen(temp);
 
                     if ((buf != NULL) && (len > 0))
+                    {
                         mtscpy(pb, temp);
+                    }
                 }
                 else
                 {
                     len = OCI_SIZE_NULL;
 
                     if ((buf != NULL) && (len > 0))
+                    {
                         mtscpy(pb, OCI_STRING_NULL);
+                    }
                 }
 
                 break;
@@ -221,11 +241,12 @@ int OCI_ParseSqlFmt
 
                 temp[0] = 0;
 
-                len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%i"),
-                                      va_arg(*pargs, int));
+                len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%i"), va_arg(*pargs, int));
 
                 if ((buf != NULL) && (len > 0))
+                {
                     mtscpy(pb, temp);
+                }
 
                 break;
             }
@@ -235,11 +256,12 @@ int OCI_ParseSqlFmt
 
                 temp[0] = 0;
 
-                len = (int) mtsprintf(temp, (int)  msizeof(temp) - 1, MT("%u"),
-                                      va_arg(*pargs, unsigned int));
+                len = (int) mtsprintf(temp, (int)  msizeof(temp) - 1, MT("%u"), va_arg(*pargs, unsigned int));
 
                 if ((buf != NULL) && (len > 0))
+                {
                     mtscpy(pb, temp);
+                }
 
                 break;
             }
@@ -253,19 +275,21 @@ int OCI_ParseSqlFmt
 
                 if (*pf == MT('i'))
                 {
-                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%lld"),
-                                          va_arg(*pargs, big_int));
+                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%lld"), va_arg(*pargs, big_int));
                 }
                 else if (*pf == MT('u'))
                 {
-                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%llu"),
-                                          va_arg(*pargs, big_uint));
+                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%llu"), va_arg(*pargs, big_uint));
                 }
                 else
+                {
                     len = 0;
+                }
 
                 if ((buf != NULL) && (len > 0))
+                {
                     mtscpy(pb, temp);
+                }
 
                 break;
             }
@@ -281,19 +305,21 @@ int OCI_ParseSqlFmt
 
                 if (*pf == 'i')
                 {
-                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%hd"),
-                                          va_arg(*pargs, int));
+                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%hd"), va_arg(*pargs, int));
                 }
                 else if (*pf == 'u')
                 {
-                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%hu"),
-                                          va_arg(*pargs, unsigned int));
+                    len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%hu"), va_arg(*pargs, unsigned int));
                 }
                 else
+                {
                     len = 0;
+                }
 
                 if ((buf != NULL) && (len > 0))
+                {
                     mtscpy(pb, temp);
+                }
 
                 break;
             }
@@ -303,11 +329,12 @@ int OCI_ParseSqlFmt
 
                 temp[0] = 0;
 
-                len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%f"),
-                                      va_arg(*pargs, double));
+                len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%f"), va_arg(*pargs, double));
 
                 if ((buf != NULL) && (len > 0))
+                {
                     mtscpy(pb, temp);
+                }
 
                 break;
             }
@@ -326,14 +353,18 @@ int OCI_ParseSqlFmt
                     len = (int) mtslen(temp);
 
                     if ((buf != NULL) && (len > 0))
+                    {
                         mtscpy(pb, temp);
+                    }
                 }
                 else
                 {
                     len = OCI_SIZE_NULL;
 
                     if ((buf != NULL) && (len > 0))
+                    {
                         mtscpy(pb, OCI_STRING_NULL);
+                    }
                 }
 
                 break;
@@ -347,13 +378,17 @@ int OCI_ParseSqlFmt
         }
 
         if (buf != NULL)
+        {
             pb += (size_t) len;
+        }
 
         size += len;
     }
 
     if (buf != NULL)
+    {
         *pb = 0;
+    }
 
     return size;
 }

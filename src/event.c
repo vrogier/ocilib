@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: event.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: event.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -53,13 +53,19 @@ boolean OCI_EventReset
     event->type = OCI_UNKNOWN;
 
     if (event->dbname != NULL)
+    {
         event->dbname[0] = 0;
+    }
 
     if (event->objname != NULL)
+    {
         event->objname[0] = 0;
+    }
 
     if (event->rowid != NULL)
+    {
         event->rowid[0] = 0;
+    }
 
     return TRUE;
 }

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -36,8 +36,8 @@
     |             The OCILIB documentation intends to explain Oracle / OCI concepts           |
     |             and is naturally based on the official Oracle OCI documentation.            |
     |                                                                                         |
-    |             Some parts of OCILIB documentation may include some informations               |
-    |             taken and adapted from the following Oracle documentations :                 |
+    |             Some parts of OCILIB documentation may include some informations            |
+    |             taken and adapted from the following Oracle documentations :                |
     |                 - Oracle Call Interface Programmer's Guide                              |
     |                 - Oracle Streams - Advanced Queuing User's Guide                        |
     |                                                                                         |
@@ -46,7 +46,7 @@
  */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib.h, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: ocilib.h, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_H_INCLUDED
@@ -76,27 +76,33 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.8.1 (2010-12-13)</b>
+ * <b>Current version : 3.9.0 (2011-04-20)</b>
  *
  * @section s_feats Main features
  *
  * - Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
  * - Full 32/64 bits compatibility
+ * - Comptabile with all Oracle version >= 8i
+ * - Automatic adaptation to the runtime Oracle client version
+ * - Runtime loading of Oracle libraries
  * - Builtin error handling (global and thread context)
- * - Support for ALL Oracle SQL and PL/SQL datatypes (scalars, objects, refs, collections, ..)
- * - Support for non scalar datatype with trough library objects
- * - Binding array Interface for fast and massive bulk operations
+ * - Full support for SQL API and Object API
+ * - Full support for ALL Oracle SQL and PL/SQL datatypes (scalars, objects, refs, collections, ..)
+ * - Full support for PL/SQL (blocks, cursors, Index by Tables and Nested tables)
+ * - Support for non scalar datatype with trough library objects 
  * - Oracle Pooling (connections and sessions pools)
- * - Full PL/SQL support (blocks, cursors, Index by Tables and Nested tables)
- * - Returning DML feature support
- * - Advanded Queues (Oracle AQ)
- * - Reusable and scrollable statements
+ * - Oracle XA connectivity (X/Open Distributed Transaction Processing XA interface)
+ * - Oracle AQ (Advanded Queues)
+ * - Oracle TAF (Transparent Application Failover) and HA (High availabality) support 
+ * - Binding array Interface
+ * - Returning DML feature
+ * - Scrollable statements
+ * - Statement cache
  * - Direct Path loading
- * - Transactions
- * - Runtime loading (no OCI libs required at compile time)
  * - Remote Instances Startup/Shutdown
  * - Oracle Database Change notification / Continuous Query Notification
  * - Oracle warnings support
+ * - Global and local transactions 
  * - Describe database schema objects
  * - Hash tables API
  * - Portable Threads and mutexes API
@@ -162,8 +168,8 @@ extern "C" {
  * --------------------------------------------------------------------------------------------- */
 
 #define OCILIB_MAJOR_VERSION     3
-#define OCILIB_MINOR_VERSION     8
-#define OCILIB_REVISION_VERSION  1
+#define OCILIB_MINOR_VERSION     9
+#define OCILIB_REVISION_VERSION  0
 
 /* --------------------------------------------------------------------------------------------- *
  * Installing OCILIB
@@ -204,7 +210,7 @@ extern "C" {
  *  - OCI_CHARSET_MIXED : ANSI for meta data and wide characters for user data
  *  - OCI_CHARSET_UFT8  : UFT8 strings
  *
- * From v3.6.0, OCI_CHARSET_WIDE replaces OCI_CHARSET_UNICODE OCI_CHARSET_UNICODE remains a 
+ * From v3.6.0, OCI_CHARSET_WIDE replaces OCI_CHARSET_UNICODE OCI_CHARSET_UNICODE remains a
  * valid identifier for backward compatibility
  *
  * => Calling convention (WINDOWS ONLY)
@@ -287,7 +293,7 @@ extern "C" {
  * - $USER_LIBS is the folder where OCILIB was installed
  * - $ORACLE_LIB_PATH is Oracle client shared library path
  *
- * Some older version of Oracle 8 have direct path API symbols located in the library libclient8. 
+ * Some older version of Oracle 8 have direct path API symbols located in the library libclient8.
  * With these versions, you must include as well the linker flag -lclient8 to use Direct Path API.
  *
  * @par Installing and using OCILIB on Microsoft Windows
@@ -335,7 +341,7 @@ extern "C" {
  * - with-oracle-headers-path: location the public header files
  * - with-oracle-lib-path: location the oracle shared lib
  *
- * If your instant client package containing the shared libs does not have a symbolic link 
+ * If your instant client package containing the shared libs does not have a symbolic link
  * 'libclntsh.[shared lib extension]' to the fully qualified shared lib real name,
  * you must create it:
  *
@@ -498,7 +504,7 @@ extern "C" {
  *
  * @par UTF8 strings
  *
- * From version 3.6.0, OCILIB fully supports UTF8 strings for all data in OCI_CHARSET_ANSI mode 
+ * From version 3.6.0, OCILIB fully supports UTF8 strings for all data in OCI_CHARSET_ANSI mode
  * if NLS_LANG environment variable is set to an valid UTF8 Oracle charset string
  *
  * @par Charset mapping macros
@@ -1115,56 +1121,135 @@ typedef struct OCI_Dequeue OCI_Dequeue;
 typedef struct OCI_Enqueue OCI_Enqueue;
 
 /**
- * @}
- */
-
-/**
- * @typedef POCI_ERROR
+ * @struct POCI_ERROR
  *
  * @brief
  * Error procedure prototype
  *
+ * @param err - Error handle
+ * 
  */
 
-typedef void (*POCI_ERROR)(OCI_Error *err);
+typedef void (__cdecl *POCI_ERROR)
+(
+	OCI_Error *err
+);
 
 /**
- * @typedef POCI_THREAD
+ * @struct POCI_THREAD
  *
  * @brief
  * Thread procedure prototype
  *
+ * @param thread - Thread handle
+ * @param arg    - Pointer passed to OCI_ThreadRun()
+ *
  */
 
-typedef void (*POCI_THREAD)(OCI_Thread *thread, void *arg);
+typedef void (__cdecl *POCI_THREAD)
+(
+	OCI_Thread *thread, 
+	void       *arg
+);
 
 /**
- * @typedef POCI_THREADKEYDEST
+ * @struct POCI_THREADKEYDEST
  *
  * @brief
  * Thread key destructor prototype.
  *
- * @note
- *
- * data is the thread key value
+ * @param data - Thread Key current pointer value
  *
  */
 
-typedef void (*POCI_THREADKEYDEST)(void *data);
+typedef void (__cdecl *POCI_THREADKEYDEST)
+(
+	void *data
+);
 
 /**
- * @typedef POCI_NOTIFY
+ * @struct POCI_NOTIFY
  *
  * @brief
  * Database Change Notification User callback prototype.
  *
- * @note
- *
- * data is the thread key value
+ * @param event - Event handle
  *
  */
 
-typedef void (*POCI_NOTIFY)(OCI_Event *event);
+typedef void (__cdecl *POCI_NOTIFY)
+(
+	OCI_Event *event
+);
+
+/**
+ * @struct POCI_TAF_HANDLER
+ *
+ * @brief
+ * Failover Notification User callback prototype.
+ *
+ * @param con   - Connection handle related to the event
+ * @param type  - Event type
+ * @param event - Event code
+ *
+ * @note
+ * Possible values for parameter 'type' :
+ *
+ *  - OCI_FOT_NONE
+ *  - OCI_FOT_SESSION
+ *  - OCI_FOT_SELECT
+ *
+ * @note
+ * Possible values for parameter 'event' :
+ *
+ *  - OCI_FOE_END
+ *  - OCI_FOE_ABORT
+ *  - OCI_FOE_REAUTH
+ *  - OCI_FOE_BEGIN
+ *  - OCI_FOE_ERROR
+ *
+ */
+
+typedef unsigned int (__cdecl *POCI_TAF_HANDLER)
+(
+	OCI_Connection *con, 
+	unsigned int	type, 
+	unsigned int	event
+);
+
+/**
+ * @struct POCI_HA_HANDLER
+ *
+ * @brief
+ * HA (High Availabality) events Notification User callback prototype.
+ *
+ * @param event - Event type
+ * @param con   - Connection handle related to the event
+ *
+ * @note
+ * Currently, Oracle only send HA down events
+ *
+ * @note
+ * Possible values for parameter 'status' :
+ *
+ *  - OCI_HAE_DOWN : HA down event
+ *  - OCI_HAE_UP   : HA up event
+ *
+ * @note
+ * Possible values for parameter 'status' :
+ *
+ *  - OCI_HAE_DOWN : HA down event
+ *  - OCI_HAE_UP   : HA up event
+ *
+ */
+
+typedef void (__cdecl *POCI_HA_HANDLER)
+(
+	OCI_Connection *con, 
+	unsigned int    source, 
+	unsigned int    status, 
+	OCI_Timestamp  *time
+);
 
 /* public structures */
 
@@ -1289,6 +1374,10 @@ typedef unsigned int big_uint;
 
 #endif
 
+/**
+ * @}
+ */
+
 /* boolean values */
 
 #ifndef TRUE
@@ -1349,7 +1438,7 @@ typedef unsigned int big_uint;
 #define OCI_ERR_COLUMN_NOT_FOUND            21
 #define OCI_ERR_DIRPATH_STATE               22
 #define OCI_ERR_CREATE_OCI_ENVIRONMENT      23
-#define OCI_ERR_REBIND_BAD_DATATYPE         24      
+#define OCI_ERR_REBIND_BAD_DATATYPE         24
 
 /* binding */
 
@@ -1427,6 +1516,7 @@ typedef unsigned int big_uint;
 /* sessions modes */
 
 #define OCI_SESSION_DEFAULT                 0
+#define OCI_SESSION_XA                      1
 #define OCI_SESSION_SYSDBA                  2
 #define OCI_SESSION_SYSOPER                 4
 #define OCI_SESSION_PRELIM_AUTH             8
@@ -1504,6 +1594,12 @@ typedef unsigned int big_uint;
 
 #define OCI_BAM_EXTERNAL                    1
 #define OCI_BAM_INTERNAL                    2
+
+/* bind direction mode */
+
+#define OCI_BDM_IN                          1
+#define OCI_BDM_OUT                         2
+#define OCI_BDM_IN_OUT                      (OCI_BDM_IN | OCI_BDM_OUT)
 
 /* Integer sign flag */
 
@@ -1648,6 +1744,39 @@ typedef unsigned int big_uint;
 #define OCI_TRC_MODULE                      2
 #define OCI_TRC_ACTION                      3
 #define OCI_TRC_DETAIL                      4
+
+/* HA event type */
+
+#define OCI_HAE_DOWN						0
+#define OCI_HAE_EVENT_UP                    1
+
+/* HA event source */
+#define OCI_HAS_INSTANCE					0 
+#define OCI_HAS_DATABASE					1
+#define OCI_HAS_NODE						2
+#define OCI_HAS_SERVICE						3
+#define OCI_HAS_SERVICE_MEMBER				4
+#define OCI_HAS_ASM_INSTANCE				5
+#define OCI_HAS_PRECONNECT					6
+
+/* Fail over types */
+
+#define OCI_FOT_NONE                        1
+#define OCI_FOT_SESSION                     2
+#define OCI_FOT_SELECT                      4
+
+/* fail over notifications*/
+
+#define OCI_FOE_END                         1
+#define OCI_FOE_ABORT                       2
+#define OCI_FOE_REAUTH                      4
+#define OCI_FOE_BEGIN                       8
+#define OCI_FOE_ERROR                       16
+
+/* fail over callback return code */
+
+#define OCI_FOC_OK                          0
+#define OCI_FOC_RETRY                       25410
 
 /* hash tables support */
 
@@ -2046,6 +2175,30 @@ OCI_EXPORT void OCI_API OCI_SetErrorHandler
     POCI_ERROR handler
 );
 
+
+/**
+ * @brief
+ * Set the High availabality (HA) user handler
+ *
+ * @param handler - Pointer to HA handler procedure
+ *
+ * @note
+ * See POCI_HA_HANDLER documentation for more details
+ *
+ * @warning
+ * This call is supported from Oracle 10gR2.
+ * For previous versions, it returns FALSE without throwing any exception.
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetHAHandler
+(
+    POCI_HA_HANDLER handler
+);
+
 /**
  * @}
  */
@@ -2257,10 +2410,41 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
  * - OCI_SESSION_DEFAULT
  * - OCI_SESSION_SYSDBA
  * - OCI_SESSION_SYSOPER
+ * - OCI_SESSION_XA
  *
  * @note
- * External credentials are supported by supplying a null value for the 'user' and 'pwd' parameters
+ * External credentials are supported by supplying a null value for the
+ * 'user' and 'pwd' parameters.
  * If the param 'db' is NULL then a connection to the default local DB is done
+ *
+ * @note
+ * For parameter 'mode', the possible values are exclusive and cannot be combined
+ *
+ * @par Oracle XA support
+ *
+ * OCILIB supports Oracle XA connectivity. In order to get a connection using
+ * the XA interface :
+ *
+ *  - Pass to the parameter 'db' the value of the 'DB' parameter of the given
+ *    XA connection string pased to the Transaction Processing Monitor (TPM)
+ *  - Pass NULL to the 'user' and 'pwd' parameters
+ *  - Pass the value OCI_SESSION_XA to parameter 'mode'
+ *
+ * @par Oracle XA Connection String
+ *
+ * The XA connection string used in a transaction monitor to connect to Oracle must
+ * be compatible with OCILIB :
+ *
+ *   - the XA parameter 'Objects' MUST be set to 'true'
+ *   - If OCI_ENV_THREADED is passed to OCI_Initialize(), the XA parameter 'Threads' must
+ *     be set to 'true', otherwise to 'false'
+ *   - If OCI_ENV_EVENTS is passed to OCI_Initialize(), the XA parameter 'Events' must
+ *     be set to 'true', otherwise to 'false'
+ *   - As Oracle does not support Unicode UTF16 characterset through the XA interface,
+ *     Only OCI_CHARSET_ANSI builds of OCILIB can be used
+ *   - You still can use UTF8 if the NLS_LANG environment variable is set with a valid
+ *     UTF8 NLS value
+ *   - DO NOT USE OCI_CHARSET_MIXED or OCI_CHARSET_WIDE OCILIB builds with XA connections
  *
  * @note
  * On success, a local transaction is automatically created and started
@@ -2757,13 +2941,199 @@ OCI_EXPORT const mtext * OCI_API OCI_GetTrace
  *
  * @warning
  * This call is supported from Oracle 10g.
- * For previous version, it returns FALSE without throwing any exception.
+ * For previous versions, it returns FALSE without throwing any exception.
  *
  */
 
 OCI_EXPORT boolean OCI_API OCI_Ping
 (
     OCI_Connection *con
+);
+
+/**
+ * @brief
+ * Return the Oracle server database name of the connected database/service name
+ *
+ * @param con - Connection handle
+ *
+ * @warning
+ * This call is supported from Oracle 10gR2.
+ * For previous versions, it returns NULL without throwing any exception.
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_GetDBName
+(
+    OCI_Connection *con
+);
+
+/**
+ * @brief
+ * Return the Oracle server Instance name of the connected database/service name
+ *
+ * @param con - Connection handle
+ *
+ * @warning
+ * This call is supported from Oracle 10gR2.
+ * For previous versions, it returns NULL without throwing any exception.
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_GetInstanceName
+(
+    OCI_Connection *con
+);
+
+
+/**
+ * @brief
+ * Return the Oracle server service name of the connected database/service name
+ *
+ * @param con - Connection handle
+ *
+ * @warning
+ * This call is supported from Oracle 10gR2.
+ * For previous versions, it returns NULL without throwing any exception.
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_GetServiceName
+(
+    OCI_Connection *con
+);
+
+
+/**
+ * @brief
+ * Return the Oracle server machine name of the connected database/service name
+ *
+ * @param con - Connection handle
+ *
+ * @warning
+ * This call is supported from Oracle 10gR2.
+ * For previous versions, it returns NULL without throwing any exception.
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_GetServerName
+(
+    OCI_Connection *con
+);
+
+
+/**
+ * @brief
+ * Return the Oracle server domain name of the connected database/service name
+ *
+ * @param con - Connection handle
+ *
+ * @warning
+ * This call is supported from Oracle 10gR2.
+ * For previous versions, it returns NULL without throwing any exception.
+ *
+ */
+
+OCI_EXPORT const mtext * OCI_API OCI_GetDomainName
+(
+    OCI_Connection *con
+);
+
+
+/**
+ * @brief
+ * Return the date and time (Timestamp) server instance start of the
+ * connected database/service name
+ *
+ * @param con - Connection handle
+ *
+ * @warning
+ * This call is supported from Oracle 10gR2.
+ * For previous versions, it returns NULL without throwing any exception.
+ *
+ */
+
+OCI_EXPORT OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
+(
+    OCI_Connection *con
+);
+
+/**
+ * @brief
+ * Verifiy if the given connection support TAF events
+ *
+ * @param con - Connection handle
+ *
+ * @note
+ * Returns TRUE is the connection supports TAF event otherwise FALSE
+ *
+ * @warning
+ * This call is supported from Oracle 10gR2.
+ * For previous versions, it returns FALSE without throwing any exception.
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_IsTAFCapable
+(
+    OCI_Connection *con
+);
+
+/**
+ * @brief
+ * Set the Transparent Application Failover (TAF) user handler
+ *
+ * @param con     - Connection handle
+ * @param handler - Pointer to TAF handler procedure
+ *
+ * @note
+ * See POCI_TAF_HANDLER documentation for more details
+ *
+* @warning
+ * This call is supported from Oracle 10gR2.
+ * For previous versions, it returns FALSE without throwing any exception.
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetTAFHandler
+(
+    OCI_Connection   *con,
+    POCI_TAF_HANDLER  handler
+);
+
+/**
+ * @brief
+ * Return the maximum number of statements to keep in the statement cache
+ *
+ * @param con  - Connection handle
+ *
+ * @note
+ * Default value is 20 (value from Oracle Documentation)
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetStatementCacheSize
+(
+    OCI_Connection  *con
+);
+
+/**
+ * @brief
+ * Set the maximum number of statements to keep in the statement cache
+ *
+ * @param con   - Connection handle
+ * @param value - maximun number of statements in the cache
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetStatementCacheSize
+(
+    OCI_Connection  *con,
+    unsigned int     value
 );
 
 /**
@@ -3063,7 +3433,7 @@ OCI_EXPORT unsigned int OCI_API OCI_PoolGetMax
 
 /**
  * @brief
- * Return the increment for connections/sessions to be opened to the database when the pool is 
+ * Return the increment for connections/sessions to be opened to the database when the pool is
  * not full
  *
  * @param pool - Pool handle
@@ -3073,6 +3443,40 @@ OCI_EXPORT unsigned int OCI_API OCI_PoolGetMax
 OCI_EXPORT unsigned int OCI_API OCI_PoolGetIncrement
 (
     OCI_Pool *pool
+);
+
+/**
+ * @brief
+ * Return the maximum number of statements to keep in the pool statement cache
+ *
+ * @param pool - Pool handle
+ *
+ * @note
+ * Default value is 20 (value from Oracle Documentation)
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_PoolGetStatementCacheSize
+(
+    OCI_Pool *pool
+);
+
+/**
+ * @brief
+ * Set the maximum number of statements to keep in the pool statement cache
+ *
+ * @param pool  - Pool handle
+ * @param value - maximun number of statements in the cache
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_PoolSetStatementCacheSize
+(
+    OCI_Pool     *pool,
+    unsigned int  value
 );
 
 /**
@@ -3504,6 +3908,43 @@ OCI_EXPORT boolean OCI_API OCI_ExecuteStmt
  */
 
 OCI_EXPORT boolean OCI_API OCI_Parse
+(
+    OCI_Statement *stmt,
+    const mtext   *sql
+);
+
+/**
+ * @brief
+ * Describe the select list of a SQL select statement.
+ *
+ * @param stmt - Statement handle
+ * @param sql  - SELECT sql statement
+ *
+ * @note
+ * This call sends the SELECT SQL order to the server for retrieving the
+ * description of the select order only.
+ * The command is not executed.
+ * This call is only useful to retreive information on the associated resultet
+ * Call OCI_GetResultet() after OCI_Describe() to access to SELECT list
+ * information
+ *
+ * @note
+ * This call prepares the statement (internal call to OCI_Prepare()) and ask
+ * the Oracle server to describe the output SELECT list.
+ * OCI_Execute() can be call after OCI_Desbribe() in order to execute the
+ * statement, which means that the server will parse, and describe again the SQL
+ * order.
+ *
+ * @warning
+ * Do not use OCI_Desbribe() unless you're only interested in the resultset
+ * information because the statement will be parsed again when executed and thus
+ * leading to unnecessary server roundtrips and less performance
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ */
+
+OCI_EXPORT boolean OCI_API OCI_Describe
 (
     OCI_Statement *stmt,
     const mtext   *sql
@@ -4654,13 +5095,13 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBatchErrorCount
  * @brief
  * Return the number of binds currently associated to a statement
  *
- * @param st - Statement handle
+ * @param stmt - Statement handle
  *
  */
 
 OCI_EXPORT unsigned int OCI_API OCI_GetBindCount
 (
-    OCI_Statement *st
+    OCI_Statement *stmt
 );
 
 /**
@@ -4723,6 +5164,52 @@ OCI_EXPORT const mtext * OCI_API OCI_BindGetName
     OCI_Bind *bnd
 );
 
+
+/**
+ * @brief
+ * Set the direction mode of a bind handle
+ *
+ * @param bnd       - Bind handle
+ * @param direction - direction mode
+ *
+ * @note
+ * Possible values for parameter 'direction' :
+ *   - OCI_BDM_IN      : input values  (not modified by the server)
+ *   - OCI_BDM_OUT     : output values (modified by the server)
+ *   - OCI_BDM_IN_OUT  : input and ouput values 
+ *
+ * @note
+ * Default value is OCI_BDM_IN_OUT
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_BindSetDirection
+(
+    OCI_Bind    *bnd,
+    unsigned int direction
+);
+
+/**
+ * @brief
+ * Get the direction mode of a bind handle
+ *
+ * @param bnd - Bind handle
+ *
+ * @note
+ * see OCI_BindSetDirection() for more details
+ *
+ * return the bind direction mode on success otherwise OCI_UNKNWON
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_BindGetDirection
+(
+    OCI_Bind *bnd
+);
+
 /**
  * @brief
  * Return the OCILIB type of the given bind
@@ -4778,7 +5265,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetType
  * - OCI_NUM_INT
  * - OCI_NUM_BIGINT
  * - OCI_NUM_USHORT
- * - OCI_NUM_UINT 
+ * - OCI_NUM_UINT
  * - OCI_NUM_BIGUINT
  * - OCI_NUM_DOUBLE
  *
@@ -8760,7 +9247,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_StatementGetConnection
  * big_uint will be a 64 bits integer :
  * - if the compiler supports it
  * - if OCILIB is build with option OCI_IMPORT_LINKAGE and the Oracle version is >= 10.1
- * - or OCILIB is build with option OCI_IMPORT_RUNTIME (oracle version is not known at 
+ * - or OCILIB is build with option OCI_IMPORT_RUNTIME (oracle version is not known at
  *   compilation stage)
  *
  * @par Example
@@ -12736,6 +13223,11 @@ OCI_EXPORT unsigned int OCI_API OCI_TypeInfoGetType
  *
  * @param typinf  - Type info handle
  *
+ * @note
+ * this call is optionnal.
+ * OCI_TypeInfo object are internally tracked and
+ * automatically freed when their related connection is freed
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -12882,7 +13374,7 @@ OCI_EXPORT const mtext * OCI_API OCI_TypeInfoGetName
  * @param ...  - List of program variables address to store the result of fetch operation
  *
  * @note
- * Every output parameter MUST be preceded by an integer parameter that indicates the type 
+ * Every output parameter MUST be preceded by an integer parameter that indicates the type
  * of the placeholder in order to handle correctly the given pointer.
  *
  * TRUE on success otherwise FALSE
@@ -12985,6 +13477,14 @@ OCI_EXPORT boolean OCI_ExecuteStmtFmt
  */
 
 OCI_EXPORT boolean OCI_ParseFmt
+(
+    OCI_Statement *stmt,
+    const mtext   *sql,
+    ...
+);
+
+
+OCI_EXPORT boolean OCI_DescribeFmt
 (
     OCI_Statement *stmt,
     const mtext   *sql,
@@ -14178,23 +14678,23 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  *  - OCI_Enqueue : Implementation of enqueuing process
  *  - OCI_Dequeue : Implementation of dequeuing process
  *  - OCI_Agent   : Implementation of Advanced queues Agents
- * 
+ *
  * Note that the only AQ features not supported yet by OCILIB are :
  *   - Payloads of type AnyData
  *   - Enqueuing/dequeuing arrays of messages
  *   - Optionnal delivery mode introduced in 10gR2
  *
- * OCILIB provides as well a C API to administrate queues and queue tables initially 
+ * OCILIB provides as well a C API to administrate queues and queue tables initially
  * reserved to PL/SQL and Java (wrappers around PL/SQL calls).
- * This API, based on internal PL/SQL calls wrapping the DBMS_AQADM packages procedures, allow the 
+ * This API, based on internal PL/SQL calls wrapping the DBMS_AQADM packages procedures, allow the
  * following actions :
  *  - create, alter, drop and purge queue tables (OCI_QueueTableXXX calls)
  *  - create, alter, drop, start, stop queues (OCI_QueueXXX calls)
- * 
- * Note that the user connected to the database needs particular privileges to manipulate or 
+ *
+ * Note that the user connected to the database needs particular privileges to manipulate or
  * administrate queues (See Oracle Streams - Advanced Queuing User's Guide for more informations
  * on these privileges)
- * 
+ *
  *@par Example
  * @include queue.c
  *
@@ -14223,9 +14723,9 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  *
  * @warning
  * Newly created Message handles have NULL payloads.
- * For Message handling Objects payloads, OCI_MsgSetObject() returns NULL until an object handle is 
+ * For Message handling Objects payloads, OCI_MsgSetObject() returns NULL until an object handle is
  * assigned to the message.
- * 
+ *
  * @note
  * When a local OCI_Msg handle is enqueued, it keeps its attributes. If it's enqeued again, another
  * identical message is posted into the queue.
@@ -14273,7 +14773,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgFree
  *
  * @warning
  * OCI_MsgReset() clears the message payload and set it to NULL
- * For messages handling objects payloads, OCI_MsgSetObject() must be called again to assign a 
+ * For messages handling objects payloads, OCI_MsgSetObject() must be called again to assign a
  * payload.
 
  * @return
@@ -14288,7 +14788,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgReset
 
 /**
  * @brief
- * Get the object payload of the given message 
+ * Get the object payload of the given message
  *
  * @param msg - Message handle
  *
@@ -14304,7 +14804,7 @@ OCI_EXPORT OCI_Object * OCI_API OCI_MsgGetObject
 
 /**
  * @brief
- * Set the object payload of the given message 
+ * Set the object payload of the given message
  *
  * @param msg - Message handle
  * @param obj - Object handle
@@ -14322,14 +14822,14 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetObject
 
 /**
  * @brief
- * Get the RAW payload of the given message 
+ * Get the RAW payload of the given message
  *
  * @param msg  - Message handle
  * @param raw  - Input buffer
  * @param size - Input buffer maximum size
  *
  * @note
- * On output, parameter 'size' holds the number of bytes copied into the given buffer 
+ * On output, parameter 'size' holds the number of bytes copied into the given buffer
  *
  * @return
  * TRUE on success otherwise FALSE on failure or if payload is object based.
@@ -14345,7 +14845,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgGetRaw
 
 /**
  * @brief
- * Set the RAW payload of the given message 
+ * Set the RAW payload of the given message
  *
  * @param msg  - Message handle
  * @param raw  - Raw data
@@ -14405,7 +14905,7 @@ OCI_EXPORT int OCI_API OCI_MsgGetEnqueueDelay
  * When the delay expires, its state is set to OCI_AMS_READY.
  *
  * @note
- * If parameter 'value' is set to zero (default value), the message will be immediately available 
+ * If parameter 'value' is set to zero (default value), the message will be immediately available
  * for dequeuing
  *
  * @warning
@@ -14560,8 +15060,8 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetPriority
  *  - retrieved when the message is dequeued from the queue
  *
  * @note
- * On output, parameter 'len' holds the number of bytes copied into the given buffer 
- * 
+ * On output, parameter 'len' holds the number of bytes copied into the given buffer
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -14587,12 +15087,12 @@ OCI_EXPORT boolean OCI_API OCI_MsgGetID
  * message in the previous queue.
  *
  * @note
- * On output, parameter 'len' holds the number of bytes copied into the given buffer 
- * 
+ * On output, parameter 'len' holds the number of bytes copied into the given buffer
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
- */     
+ */
 
 OCI_EXPORT boolean OCI_API OCI_MsgGetOriginalID
 (
@@ -14616,7 +15116,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgGetOriginalID
  * @return
  * TRUE on success otherwise FALSE
  *
- */     
+ */
 
 OCI_EXPORT boolean OCI_API OCI_MsgSetOriginalID
 (
@@ -14668,8 +15168,8 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetSender
  * @param count     - Number of recipients
  *
  * @warning
- * This function should only be used for queues which allow multiple consumers. 
- * The default recipients are the queue subscribers. 
+ * This function should only be used for queues which allow multiple consumers.
+ * The default recipients are the queue subscribers.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -14727,7 +15227,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetCorrelation
  * @param msg - Message handle
  *
  * @warning
- * When calling this function on a message retrieved with OCI_DequeueGet(), the returned value is 
+ * When calling this function on a message retrieved with OCI_DequeueGet(), the returned value is
  * NULL if the default exception queue associated with the current queue is used (eg. no user
  * defined specified at enqueue time for the message)
  *
@@ -14749,20 +15249,20 @@ OCI_EXPORT const mtext * OCI_API OCI_MsgGetExceptionQueue
  * @param queue - Exception queue name
  *
  * @warning
- * From Oracle Dopcumentation : 
+ * From Oracle Dopcumentation :
  *
- * "Messages are moved into exception queues in two cases : 
- *  - If the number of unsuccessful dequeue attempts has exceeded the attribute 'max_retries' of 
+ * "Messages are moved into exception queues in two cases :
+ *  - If the number of unsuccessful dequeue attempts has exceeded the attribute 'max_retries' of
  *    given queue
- *  - if the message has expired. 
- * 
+ *  - if the message has expired.
+ *
  * All messages in the exception queue are in the EXPIRED state.
- * 
- * The default is the exception queue associated with the queue table. 
- * 
+ *
+ * The default is the exception queue associated with the queue table.
+ *
  * If the exception queue specified does not exist at the time of the move the message will be
  * moved to the default exception queue associated with the queue table and a warning will be
- * logged in the alert file.  
+ * logged in the alert file.
  *
  * This attribute must refer to a valid queue name."
  *
@@ -14948,8 +15448,8 @@ OCI_EXPORT unsigned int OCI_API OCI_EnqueueGetVisibility
  * This call is only valid if OCI_EnqueueSetSequenceDeviation() has been called
  * with the value  OCI_ASD_BEFORE
  *
- * @warning 
- * if the function cannot assign the message id, the content of the parameter 'len' is set to zero. 
+ * @warning
+ * if the function cannot assign the message id, the content of the parameter 'len' is set to zero.
  *
  * @note
  * see OCI_EnqueueSetSequenceDeviation() for more details
@@ -14976,7 +15476,7 @@ OCI_EXPORT boolean OCI_API OCI_EnqueueSetRelativeMsgID
  * @param len     - pointer to buffer max length
  *
  * @warning
- * When the function returns, parameter 'len' hold the number of bytes assigned to parameter 'id' 
+ * When the function returns, parameter 'len' hold the number of bytes assigned to parameter 'id'
  *
  * @note
  * see OCI_EnqueueGetRelativeMsgID() for more details
@@ -15142,8 +15642,8 @@ OCI_EXPORT const mtext * OCI_API OCI_DequeueGetCorrelation
  * @param id      - message identitier
  * @param len     - size of the message identitier
  *
- * @warning 
- * if the function cannot assign the message id, the content of the parameter 'len' is set to zero. 
+ * @warning
+ * if the function cannot assign the message id, the content of the parameter 'len' is set to zero.
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15166,7 +15666,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetRelativeMsgID
  * @param len     - size of the message identitier
  *
  * @warning
- * When the function returns, parameter 'len' hold the number of bytes assigned to parameter 'id' 
+ * When the function returns, parameter 'len' hold the number of bytes assigned to parameter 'id'
  *
  * @note
  * see OCI_DequeueSetRelativeMsgID() for more details
@@ -15439,7 +15939,7 @@ OCI_EXPORT OCI_Agent * OCI_API OCI_DequeueListen
  * @note
  * the AQ agent address can be any Oracle identifier, up to 128 bytes.
  * the AQ agent name    can be any Oracle identifier, up to 30  bytes.
- * 
+ *
  * @return
  * AQ agent handle on success otherwise NULL
  *
@@ -15479,7 +15979,7 @@ OCI_EXPORT boolean OCI_API OCI_AgentFree
  * @param name  - AQ agent name
  *
  * @note
- * the AQ agent name is used to identified an message send or recipient when enqueuing/dequeuing 
+ * the AQ agent name is used to identified an message send or recipient when enqueuing/dequeuing
  * a message
  *
  * @note
@@ -15558,7 +16058,7 @@ OCI_EXPORT const mtext * OCI_API OCI_AgentGetAddress
 /**
  * @brief
  * Create a queue
- * 
+ *
  * @param con                   - Connection handle
  * @param queue_name            - Queue name
  * @param queue_table           - Queue table name
@@ -15570,11 +16070,11 @@ OCI_EXPORT const mtext * OCI_API OCI_AgentGetAddress
  * @param dependency_tracking   - Parameter reserved for future use by Oracle (MUST be set to FALSE)
  * @param comment               - Description of the queue
  *
- * @note    
+ * @note
  * Parameter 'queue_name' can specify the shema where to create to queue ([schema.]queue_name)
  * Queue names cannot be longer than 24 characters (Oracle limit for user queues)
  *
- * @note    
+ * @note
  * Possible values for parameter 'queue_type' :
  *  - OCI_AQT_NORMAL            : Normal queue
  *  - OCI_AQT_EXCEPTION         : Exception queue
@@ -15587,7 +16087,7 @@ OCI_EXPORT const mtext * OCI_API OCI_AgentGetAddress
  *  - retention_time : 0
  *  - comment        : NULL
  *
- * @note    
+ * @note
  * this call wraps the PL/SQL procedure DBMS_AQADM.CREATE_QUEUE().
  * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
@@ -15621,13 +16121,13 @@ OCI_EXPORT boolean OCI_API OCI_QueueCreate
  *                                being dequeued from the queue
  * @param comment               - Description of the queue
  *
- * @note    
+ * @note
  * See OCI_QueueCreate() for more details
  *
  * @warning
  * This fonction updates all attributes handled in the parameter list !
  *
- * @note    
+ * @note
  * this call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE().
  * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
@@ -15656,7 +16156,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueAlter
  * @warning
  * A queue can be dropped only if it has been stopped before.
  *
- * @note    
+ * @note
  * this call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE().
  * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
@@ -15683,7 +16183,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueDrop
  * @warning
  * For exception queues, only enqueuing is allowed
  *
- * @note    
+ * @note
  * this call wraps the PL/SQL procedure DBMS_AQADM.START_QUEUE().
  * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
@@ -15713,7 +16213,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueStart
  * @warning
  * A queue cannot be stopped if there are pending transactions against the queue.
  *
- * @note    
+ * @note
  * this call wraps the PL/SQL procedure DBMS_AQADM.STOP_QUEUE().
  * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
@@ -15734,7 +16234,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueStop
 /**
  * @brief
  * Create a queue table for messages of the given type
- * 
+ *
  * @param con                   - Connection handle
  * @param queue_table           - Queue table name
  * @param queue_payload_type    - Message type name
@@ -15747,22 +16247,22 @@ OCI_EXPORT boolean OCI_API OCI_QueueStop
  * @param secondary_instance    - Owner of the queue table if the primary instance is not available
  * @param compatible            - lowest database version with which the queue table is compatible
  *
- * @note    
+ * @note
  * Parameter 'queue_table' can specify the shema where to create to queue table ([schema.]queue_table)
  * Queue table names cannot be longer than 24 characters (Oracle limit for user queue tables)
  *
- * @note    
+ * @note
  * Possible values for parameter 'queue_payload_type' :
  * - For Oracle types (UDT) : use the type name ([schema.].type_name)
- * - For RAW data           : use "SYS.RAW" or "RAW" 
+ * - For RAW data           : use "SYS.RAW" or "RAW"
  *
- * @note    
+ * @note
  * Possible values for parameter 'message_grouping' :
  *  - OCI_AGM_NONE            : each message is treated individually
  *  - OCI_AGM_TRANSACTIONNAL  : all messages enqueued in one transaction are considered part of
  *                              the same group and can be dequeued as a group of related messages.
  *
- * @note    
+ * @note
  * Possible values for parameter 'compatible' :
  * - "8.0", "8.1", "10.0"
  *
@@ -15775,7 +16275,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueStop
  *  - primary_instance  : 0
  *  - compatible        : NULL
  *
- * @note    
+ * @note
  * this call wraps the PL/SQL procedure DBMS_AQADM.CREATE_QUEUE_TABLE().
  * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
@@ -15802,17 +16302,17 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableCreate
 /**
  * @brief
  * Alter the given queue table
- * 
+ *
  * @param con                   - Connection handle
  * @param queue_table           - Queue table name
  * @param comment               - Description of the queue table
  * @param primary_instance      - primary owner (instance) of the queue table
  * @param secondary_instance    - Owner of the queue table if the primary instance is not available
  *
- * @note    
+ * @note
  * See OCI_QueueTableCreate() from more details
  *
- * @note    
+ * @note
  * this call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE_TABLE().
  * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
@@ -15840,12 +16340,12 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableAlter
  *
  * @note
  * Possible values for 'force' :
- *  - TRUE  : all queues using the queue table and their associated propagation schedules are 
+ *  - TRUE  : all queues using the queue table and their associated propagation schedules are
  *            dropped automatically
  *  - FALSE : All the queues using the giben queue table must be stopped and dropped before the
  *            queue table can be dropped.
  *
- * @note    
+ * @note
  * this call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE_TABLE().
  * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
@@ -15878,14 +16378,14 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableDrop
  *  - OCI_APM_ALL           : purge all messages
  *
  * @note
- * For more information about the SQL purge conditions, refer to 
+ * For more information about the SQL purge conditions, refer to
  *  Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @warning
- * This feature is onyl available from ORacle 10gR2. 
+ * This feature is onyl available from ORacle 10gR2.
  * This function does nothing and returns TRUE is the server version is < Oracle 10gR2
  *
- * @note    
+ * @note
  * this call wraps the PL/SQL procedure DBMS_AQADM.PURGE_QUEUE_TABLE().
  * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
@@ -15911,11 +16411,11 @@ OCI_EXPORT boolean OCI_API OCI_QueueTablePurge
  * @param queue_table     - Queue table name
  * @param compatible      - Database version with witch the queue table has to migrate
  *
- * @note    
+ * @note
  * Possible values for parameter 'compatible' :
  * - "8.0", "8.1", "10.0"
  *
- * @note    
+ * @note
  * this call wraps the PL/SQL procedure DBMS_AQADM.MIGRATE_QUEUE_TABLE().
  * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
  *
@@ -16826,7 +17326,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 #define OCI_GetColumnCharUsed               OCI_ColumnGetCharUsed
 
 #define OCI_GetFormatDate(s)                OCI_GetDefaultFormatDate(OCI_StatementGetConnection(s))
-#define OCI_SetFormatDate(s)                OCI_SetDefaultFormatDate(OCI_StatementGetConnection(s))
+#define OCI_SetFormatDate(s, f)             OCI_SetDefaultFormatDate(OCI_StatementGetConnection(s), f)
 
 #define OCI_ERR_API                         OCI_ERR_ORACLE
 

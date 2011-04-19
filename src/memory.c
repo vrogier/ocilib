@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: memory.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: memory.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -58,10 +58,14 @@ void * OCI_MemAlloc
     if (ptr != NULL)
     {
         if (zero_fill == TRUE)
+        {
             memset(ptr, 0, size);
+        }
     }
     else
+    {
         OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
+    }
 
     return ptr;
 }
@@ -103,7 +107,9 @@ void OCI_MemFree
 )
 {
     if (ptr_mem != NULL)
+    {
         free(ptr_mem);
+    }
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -194,17 +200,16 @@ sword OCI_DescriptorArrayAlloc
 {
     sword ret = OCI_SUCCESS;
 
-    #if OCI_VERSION_COMPILE >= OCI_11_1
+#if OCI_VERSION_COMPILE >= OCI_11_1
 
     if (OCILib.version_runtime >= OCI_11_1)
     {
-        ret = OCIArrayDescriptorAlloc(parenth, descpp, type, nb_elem,
-                                      xtramem_sz, usrmempp);
+        ret = OCIArrayDescriptorAlloc(parenth, descpp, type, nb_elem, xtramem_sz, usrmempp);
 
     }
     else
 
-    #endif
+#endif
 
     {
         ub4 i;
@@ -260,7 +265,8 @@ sword OCI_DescriptorArrayFree
 
     if (descp != NULL)
     {
-        #if OCI_VERSION_COMPILE >= OCI_11_1
+
+    #if OCI_VERSION_COMPILE >= OCI_11_1
 
         if (OCILib.version_runtime >= OCI_11_1)
         {
@@ -269,7 +275,7 @@ sword OCI_DescriptorArrayFree
         }
         else
 
-        #endif
+    #endif
 
         {
             ub4 i;

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: exception.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: exception.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -125,7 +125,7 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Object attribute '%ls' not found"),
     MT("The integer parameter value must be at least %d"),
     MT("Elements are not compatible"),
-    MT("Unable to perform this operation on a %ls statement"),
+    MT("The statement must be %ls to perform this operation"),
     MT("The statement is not scrollable"),
     MT("Name or position '%ls' already binded to the statement"),
     MT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
@@ -156,7 +156,7 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Object attribute '%s' not found"),
     MT("The integer parameter value must be at least %d"),
     MT("Elements are not compatible"),
-    MT("Unable to perform this operation on a %s statement"),
+    MT("The statement must be %s to perform this operation"),
     MT("The statement is not scrollable"),
     MT("Name or position '%s' already binded to the statement"),
     MT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
@@ -173,16 +173,26 @@ static mtext * OCILib_OraFeatures[] =
     MT("Oracle 9.0 support for Unicode data"),
     MT("Oracle 9.0 Timestamps and Intervals"),
     MT("Oracle 9.2 Direct path date caching"),
+    MT("Oracle 9.2 Statement caching"),
     MT("Oracle 10g R1 LOBs size extensions"),
     MT("Oracle 10g R2 Database change notification"),
-    MT("Oracle 10g R2 remote database startup/shutdown")
+    MT("Oracle 10g R2 remote database startup/shutdown"),
+    MT("Oracle 10g R2 High Availability")
 };
 
-static mtext * OCILib_StmtStates[] =
+typedef struct OCI_StmtStateTable
 {
-    MT("closed"),
-    MT("prepared"),
-    MT("executed")
+    int    state;
+    mtext *name;
+} OCI_StmtStateTable;
+
+static OCI_StmtStateTable OCILib_StmtStates[] =
+{
+    { OCI_STMT_CLOSED,    MT("closed")        },
+    { OCI_STMT_PARSED,    MT("parsed")        },
+    { OCI_STMT_PREPARED,  MT("prepared")      },
+    { OCI_STMT_DESCRIBED, MT("described")     },
+    { OCI_STMT_EXECUTED,  MT("executed")      }
 };
 
 static mtext * OCILib_DirPathStates[] =
@@ -238,7 +248,9 @@ void OCI_ExceptionRaise
     if (err != NULL)
     {
         if (OCILib.error_handler != NULL)
+        {
             OCILib.error_handler(err);
+        }
 
         err->active = FALSE;
     }
@@ -298,8 +310,7 @@ void OCI_ExceptionNotInitialized
         err->type  = OCI_ERR_OCILIB;
         err->icode = OCI_ERR_NOT_INITIALIZED;
 
-        mtsncat(err->str,  OCILib_ErrorMsg[OCI_ERR_NOT_INITIALIZED],
-                msizeof(err->str) - (size_t) 1);
+        mtsncat(err->str,  OCILib_ErrorMsg[OCI_ERR_NOT_INITIALIZED], msizeof(err->str) - (size_t) 1);
     }
 
     OCI_ExceptionRaise(err);
@@ -314,7 +325,7 @@ void OCI_ExceptionLoadingSharedLib
     void
 )
 {
-    #ifdef OCI_IMPORT_RUNTIME
+#ifdef OCI_IMPORT_RUNTIME
 
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
@@ -330,7 +341,7 @@ void OCI_ExceptionLoadingSharedLib
 
     OCI_ExceptionRaise(err);
 
-    #endif
+#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -349,8 +360,7 @@ void OCI_ExceptionLoadingSymbols
         err->type  = OCI_ERR_OCILIB;
         err->icode = OCI_ERR_LOADING_SYMBOLS;
 
-        mtsncat(err->str,  OCILib_ErrorMsg[OCI_ERR_LOADING_SYMBOLS],
-                msizeof(err->str) - (size_t) 1);
+        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_LOADING_SYMBOLS], msizeof(err->str) - (size_t) 1);
     }
 
     OCI_ExceptionRaise(err);
@@ -372,8 +382,7 @@ void OCI_ExceptionNotMultithreaded
         err->type  = OCI_ERR_OCILIB;
         err->icode = OCI_ERR_MULTITHREADED;
 
-        mtsncat(err->str,  OCILib_ErrorMsg[OCI_ERR_MULTITHREADED],
-                msizeof(err->str) - (size_t) 1);
+        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_MULTITHREADED], msizeof(err->str) - (size_t) 1);
     }
 
     OCI_ExceptionRaise(err);
@@ -676,8 +685,8 @@ void OCI_ExceptionMinimumValue
         err->icode = OCI_ERR_MIN_VALUE;
         err->con   = con;
         err->stmt  = stmt;
-        mtsprintf(err->str, msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_MIN_VALUE], min);
+
+        mtsprintf(err->str, msizeof(err->str) - (size_t) 1, OCILib_ErrorMsg[OCI_ERR_MIN_VALUE], min);
     }
 
     OCI_ExceptionRaise(err);
@@ -700,8 +709,7 @@ void OCI_ExceptionTypeNotCompatible
         err->icode = OCI_ERR_NOT_COMPATIBLE;
         err->con   = con;
 
-        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_NOT_COMPATIBLE],
-                msizeof(err->str) - (size_t) 1);
+        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_NOT_COMPATIBLE], msizeof(err->str) - (size_t) 1);
     }
 
     OCI_ExceptionRaise(err);
@@ -721,17 +729,28 @@ void OCI_ExceptionStatementState
 
     if (err != NULL)
     {
+        int i, index;
+
+        index      = 0;
+
         err->type  = OCI_ERR_OCILIB;
         err->icode = OCI_ERR_STMT_STATE;
         err->stmt  = stmt;
+        err->con   =  stmt->con;
 
-        if (stmt != NULL)
-            err->con =  stmt->con;
+        for(i = 0; i < OCI_STMT_STATES_COUNT; i++)
+        {
+            if (state == OCILib_StmtStates[i].state)
+            {
+                index = i;
+                break;
+            }
+        }
 
         mtsprintf(err->str,
                   msizeof(err->str) - (size_t) 1,
                   OCILib_ErrorMsg[OCI_ERR_STMT_STATE],
-                  OCILib_StmtStates[state-1]);
+                  OCILib_StmtStates[index].name);
     }
 
     OCI_ExceptionRaise(err);
@@ -755,10 +774,11 @@ void OCI_ExceptionStatementNotScrollable
         err->stmt  = stmt;
 
         if (stmt != NULL)
+        {
             err->con =  stmt->con;
+        }
 
-        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_STMT_NOT_SCROLLABLE],
-                msizeof(err->str) - (size_t) 1);
+        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_STMT_NOT_SCROLLABLE], msizeof(err->str) - (size_t) 1);
 
     }
 
@@ -784,7 +804,9 @@ void OCI_ExceptionBindAlreadyUsed
         err->stmt  = stmt;
 
         if (stmt != NULL)
+        {
             err->con =  stmt->con;
+        }
 
         mtsprintf(err->str,
                   msizeof(err->str) - (size_t) 1,
@@ -816,7 +838,9 @@ void OCI_ExceptionBindArraySize
         err->stmt  = stmt;
 
         if (stmt != NULL)
+        {
             err->con =  stmt->con;
+        }
 
         mtsprintf(err->str,
                   msizeof(err->str) - (size_t) 1,
@@ -847,7 +871,9 @@ void OCI_ExceptionDirPathColNotFound
         err->stmt  = NULL;
 
         if (dp != NULL)
-            dp->con =  dp->con;
+        {
+            err->con =  dp->con;
+        }
 
         mtsprintf(err->str,
                   msizeof(err->str) - (size_t) 1,
@@ -878,7 +904,9 @@ void OCI_ExceptionDirPathState
         err->stmt  = NULL;
 
         if (dp != NULL)
+        {
             dp->con =  dp->con;
+        }
 
         mtsprintf(err->str,
                   msizeof(err->str) - (size_t) 1,
@@ -905,8 +933,7 @@ void OCI_ExceptionOCIEnvironment
         err->type  = OCI_ERR_OCILIB;
         err->icode = OCI_ERR_CREATE_OCI_ENVIRONMENT;
 
-        mtsncat(err->str,  OCILib_ErrorMsg[OCI_ERR_CREATE_OCI_ENVIRONMENT],
-                msizeof(err->str) - (size_t) 1);
+        mtsncat(err->str,  OCILib_ErrorMsg[OCI_ERR_CREATE_OCI_ENVIRONMENT], msizeof(err->str) - (size_t) 1);
     }
 
     OCI_ExceptionRaise(err);
@@ -931,7 +958,9 @@ void OCI_ExceptionRebindBadDatatype
         err->stmt  = stmt;
 
         if (stmt != NULL)
+        {
             err->con =  stmt->con;
+        }
 
         mtsprintf(err->str,
                   msizeof(err->str) - (size_t) 1,

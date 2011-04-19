@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: iterator.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: iterator.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -56,8 +56,7 @@ OCI_Iter * OCI_API OCI_IterCreate
 
     /* allocate iterator structure */
 
-    iter = (OCI_Iter *) OCI_MemAlloc(OCI_IPC_ITERATOR, sizeof(*iter),
-                                     (size_t) 1, TRUE);
+    iter = (OCI_Iter *) OCI_MemAlloc(OCI_IPC_ITERATOR, sizeof(*iter), (size_t) 1, TRUE);
 
     if (iter != NULL)
     {
@@ -71,22 +70,22 @@ OCI_Iter * OCI_API OCI_IterCreate
         (
             res, iter->coll->con,
 
-            OCIIterCreate(OCILib.env, iter->coll->con->err, coll->handle,
-                          &iter->handle)
+            OCIIterCreate(iter->coll->con->env, iter->coll->con->err, coll->handle, &iter->handle)
         )
 
         /* create data element accessor */
 
         if (res == TRUE)
-            iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL,
-                                      (OCIInd *) NULL, coll->typinf);
+        {
+            iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL, (OCIInd *) NULL, coll->typinf);
 
-        if (res == TRUE)
             res = (iter->elem != NULL);
-
+        }
     }
     else
+    {
         res = FALSE;
+    }
 
     /* check for success */
 
@@ -122,7 +121,7 @@ boolean OCI_API OCI_IterFree
         (
             res, iter->coll->con,
 
-            OCIIterDelete(OCILib.env, iter->coll->con->err, &iter->handle)
+            OCIIterDelete(iter->coll->con->env, iter->coll->con->err, &iter->handle)
         )
     }
 
@@ -166,14 +165,13 @@ OCI_Elem * OCI_API OCI_IterGetNext
     (
         res, iter->coll->con,
 
-        OCIIterNext(OCILib.env, iter->coll->con->err, iter->handle,
+        OCIIterNext(iter->coll->con->env, iter->coll->con->err, iter->handle,
                     &data, (dvoid **) &p_ind, &iter->eoc)
     )
 
     if ((res == TRUE) && (iter->eoc == FALSE))
     {
-        elem = OCI_ElemInit(iter->coll->con, &iter->elem,
-                            data, p_ind, iter->coll->typinf);
+        elem = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
     }
 
     OCI_RESULT(elem != NULL);
@@ -203,14 +201,13 @@ OCI_Elem * OCI_API OCI_IterGetPrev
     (
         res, iter->coll->con,
 
-        OCIIterPrev(OCILib.env, iter->coll->con->err, iter->handle,
+        OCIIterPrev(iter->coll->con->env, iter->coll->con->err, iter->handle,
                     &data, (dvoid **) &p_ind, &iter->boc)
     )
 
     if ((res == TRUE) && (iter->boc == FALSE))
     {
-        elem = OCI_ElemInit(iter->coll->con, &iter->elem,
-                            data, p_ind, iter->coll->typinf);
+        elem = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
     }
 
     OCI_RESULT(elem != NULL);

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_defs.h, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: ocilib_defs.h, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -44,63 +44,72 @@
 
 #ifdef OCI_IMPORT_RUNTIME
 
-/* for runtime loading, set compile time version to the highest minimum
-   version needed by OCILIB encapsulation of OCI */
-  #define OCI_VERSION_COMPILE OCI_11_1
+    /* for runtime loading, set compile time version to the highest minimum
+       version needed by OCILIB encapsulation of OCI */
 
-/* set runtime version to unknown, it will be guessed from symbols loading */
-  #define OCI_VERSION_RUNTIME OCI_UNKNOWN
+    #define OCI_VERSION_COMPILE OCI_11_2
+
+    /* set runtime version to unknown, it will be guessed from symbols loading */
+
+    #define OCI_VERSION_RUNTIME OCI_UNKNOWN
 
 #else
 
-  #if   defined(OCI_LOB_OPT_COMPRESS)       /* = OCI_11_1 */
+    #if defined(OCI_SESSGET_SYSDBA)           /* = OCI_11_2 */
 
-    #define OCI_VERSION_COMPILE OCI_11_1
-    #define OCI_VERSION_RUNTIME OCI_11_1
+        #define OCI_VERSION_COMPILE OCI_11_2
+        #define OCI_VERSION_RUNTIME OCI_11_2
 
-  #elif defined(OCI_DBSHUTDOWN_ABORT)       /* = OCI_10_2 */
+    #elif defined(OCI_LOB_OPT_COMPRESS)       /* = OCI_11_1 */
 
-    #define OCI_VERSION_COMPILE OCI_10_2
-    #define OCI_VERSION_RUNTIME OCI_10_2
+        #define OCI_VERSION_COMPILE OCI_11_1
+        #define OCI_VERSION_RUNTIME OCI_11_1
 
-  #elif defined(OCI_ATTR_DB_CHARSET_ID)     /* = OCI_10_1 */
+    #elif defined(OCI_DBSHUTDOWN_ABORT)       /* = OCI_10_2 */
 
-    #define OCI_VERSION_COMPILE OCI_10_1
-    #define OCI_VERSION_RUNTIME OCI_10_1
+        #define OCI_VERSION_COMPILE OCI_10_2
+        #define OCI_VERSION_RUNTIME OCI_10_2
 
-  #elif defined(OCI_ATTR_STMTCACHESIZE)     /* = OCI_9_2 */
+    #elif defined(OCI_ATTR_DB_CHARSET_ID)     /* = OCI_10_1 */
 
-    #define OCI_VERSION_COMPILE OCI_9_2
-    #define OCI_VERSION_RUNTIME OCI_9_2
+        #define OCI_VERSION_COMPILE OCI_10_1
+        #define OCI_VERSION_RUNTIME OCI_10_1
 
-  #elif defined(SQLT_PNTY)                  /* = OCI_9_0 */
+    #elif defined(OCI_ATTR_STMTCACHESIZE)     /* = OCI_9_2 */
 
-    #define OCI_VERSION_COMPILE OCI_9_0
-    #define OCI_VERSION_RUNTIME OCI_9_0
+        #define OCI_VERSION_COMPILE OCI_9_2
+        #define OCI_VERSION_RUNTIME OCI_9_2
 
-  #elif defined(OCIThreadHandle)             /* = OCI_8_1 */
+    #elif defined(SQLT_PNTY)                  /* = OCI_9_0 */
 
-    #define OCI_VERSION_COMPILE OCI_8_1
-    #define OCI_VERSION_RUNTIME OCI_8_1
+        #define OCI_VERSION_COMPILE OCI_9_0
+        #define OCI_VERSION_RUNTIME OCI_9_0
 
-  #elif defined(OCIEnv)                      /* = OCI_8_0 */
+    #elif defined(OCIThreadHandle)             /* = OCI_8_1 */
 
-    #define OCI_VERSION_COMPILE OCI_8_0
-    #define OCI_VERSION_RUNTIME OCI_8_0
+        #define OCI_VERSION_COMPILE OCI_8_1
+        #define OCI_VERSION_RUNTIME OCI_8_1
 
-  #else                                      /* OCI_UNKNOWN */
+    #elif defined(OCIEnv)                      /* = OCI_8_0 */
 
-    #define OCI_VERSION_COMPILE OCI_UNKNOWN
-    #define OCI_VERSION_RUNTIME OCI_UNKNOWN
+        #define OCI_VERSION_COMPILE OCI_8_0
+        #define OCI_VERSION_RUNTIME OCI_8_0
 
-  #endif
+    #else                                      /* OCI_UNKNOWN */
+
+        #define OCI_VERSION_COMPILE OCI_UNKNOWN
+        #define OCI_VERSION_RUNTIME OCI_UNKNOWN
+
+    #endif
 
 #endif
 
 /* tries to enable Oracle 10g support for lobs > 4Go with OCILobxxx2() calls */
 
 #if defined(OCI_BIG_UINT_ENABLED) && defined(ORAXB8_DEFINED)
-  #define OCI_LOB2_API_ENABLED
+  
+    #define OCI_LOB2_API_ENABLED
+
 #endif
 
 /* ********************************************************************************************* *
@@ -121,60 +130,70 @@
 
 #if  defined (OCI_CHARSET_ANSI)
 
-  #define omtext         mtext
-  #define odtext         dtext
+    #define omtext         mtext
+    #define odtext         dtext
 
 #elif defined (OCI_CHARSET_UTF8)
 
-  #define omtext         mtext
-  #define odtext         dtext
+    #define omtext         mtext
+    #define odtext         dtext
 
 #else
 
-  #define WCHAR_2_BYTES  0xFFFF
-  #define WCHAR_4_BYTES  0x7FFFFFFF
+    #define WCHAR_2_BYTES  0xFFFF
+    #define WCHAR_4_BYTES  0x7FFFFFFF
 
-  #if WCHAR_MAX == WCHAR_4_BYTES
+    #if WCHAR_MAX == WCHAR_4_BYTES
 
-/* so, input/output conversion will be needed */
-    #define OCI_CHECK_STRINGS
-  #endif
+        /* so, input/output conversion will be needed */
 
-  #ifdef OCI_METADATA_WIDE
+        #define OCI_CHECK_STRINGS
 
-    #ifdef OCI_CHECK_STRINGS
-
-/* conversion for meta string needed */
-      #define OCI_CHECK_METASTRINGS
     #endif
 
-/* internal meta string type is UTF16 (2 bytes) */
-    #define omtext unsigned short
+    #ifdef OCI_METADATA_WIDE
 
-  #else
+        #ifdef OCI_CHECK_STRINGS
 
-/* internal meta string type is char */
-    #define omtext char
+            /* conversion for meta string needed */
 
-  #endif
+            #define OCI_CHECK_METASTRINGS
 
-  #ifdef OCI_USERDATA_WIDE
+        #endif
 
-    #ifdef OCI_CHECK_STRINGS
+        /* internal meta string type is UTF16 (2 bytes) */
+    
+        #define omtext unsigned short
 
-/* conversion for data string needed */
-      #define OCI_CHECK_DATASTRINGS
+    #else
+
+        /* internal meta string type is char */
+    
+        #define omtext char
+
     #endif
 
-/* internal data string type is UTF16 (2 bytes) */
-    #define odtext unsigned short
+    #ifdef OCI_USERDATA_WIDE
 
-  #else
+        #ifdef OCI_CHECK_STRINGS
 
-/* internal data string type is char */
-    #define odtext char
+            /* conversion for data string needed */
+      
+            #define OCI_CHECK_DATASTRINGS
 
-  #endif
+        #endif
+
+        /* internal data string type is UTF16 (2 bytes) */
+    
+        #define odtext unsigned short
+
+    #else
+
+        /* internal data string type is char */
+    
+        #define odtext char
+
+    #endif
 
 #endif
 
@@ -187,9 +206,13 @@
  * --------------------------------------------------------------------------------------------- */
 
 #ifdef OCI_METADATA_WIDE
-  #define OCI_ENV_MODE    OCI_UTF16
+
+    #define OCI_ENV_MODE    OCI_UTF16
+
 #else
-  #define OCI_ENV_MODE    OCI_DEFAULT
+
+    #define OCI_ENV_MODE    OCI_DEFAULT
+
 #endif
 
 /* --------------------------------------------------------------------------------------------- *
@@ -272,12 +295,14 @@
 #define OCI_FEATURE_WIDE_USERDATA       1
 #define OCI_FEATURE_TIMESTAMP           2
 #define OCI_FEATURE_DIRPATH_DATE_CACHE  3
-#define OCI_FEATURE_SCROLLABLE_CURSOR   4
-#define OCI_FEATURE_DATABASE_NOTIFY     5
-#define OCI_FEATURE_REMOTE_DBS_CONTROL  6
+#define OCI_FEATURE_STATEMENT_CACHING   4
+#define OCI_FEATURE_SCROLLABLE_CURSOR   5
+#define OCI_FEATURE_DATABASE_NOTIFY     6
+#define OCI_FEATURE_REMOTE_DBS_CONTROL  7
+#define OCI_FEATURE_HIGH_AVAILABILITY   8
 
 /* --------------------------------------------------------------------------------------------- *
- * Oracle conditionnal features
+ * handle types
  * --------------------------------------------------------------------------------------------- */
 
 #define OCI_HDLE_HANDLE                 1
@@ -289,8 +314,12 @@
  * --------------------------------------------------------------------------------------------- */
 
 #define OCI_STMT_CLOSED                 1
-#define OCI_STMT_PREPARED               2
-#define OCI_STMT_EXECUTED               3
+#define OCI_STMT_PARSED                 2
+#define OCI_STMT_PREPARED               4
+#define OCI_STMT_DESCRIBED              8
+#define OCI_STMT_EXECUTED               16
+
+#define OCI_STMT_STATES_COUNT           5
 
 /* --------------------------------------------------------------------------------------------- *
  * connection states
@@ -381,13 +410,17 @@
  * --------------------------------------------------------------------------------------------- */
 
 #ifdef OCI_METADATA_WIDE
-  #define mttoupper           towupper
-  #define mtisdigit           iswdigit
-  #define mtsscanf            swscanf
+
+    #define mttoupper           towupper
+    #define mtisdigit           iswdigit
+    #define mtsscanf            swscanf
+
 #else
-  #define mttoupper           toupper
-  #define mtisdigit           isdigit
-  #define mtsscanf            sscanf
+
+    #define mttoupper           toupper
+    #define mtisdigit           isdigit
+    #define mtsscanf            sscanf
+
 #endif
 
 /* --------------------------------------------------------------------------------------------- *
@@ -403,7 +436,9 @@
 /* OCI unicode flag */
 
 #ifndef OCI_UTF16ID
-  #define OCI_UTF16ID                   OCI_UCS2ID
+  
+    #define OCI_UTF16ID                   OCI_UCS2ID
+
 #endif
 
 /* unicode constants */
@@ -446,10 +481,9 @@
 
 #define OCI_IND(exp)                    (sb2) ((exp) ? 0 : -1)
 
-#define OCI_NOT_NULL(def)                                   \
-    (((def) != NULL) &&                                     \
-     (rs->row_cur > 0) &&                                   \
-     ((sb2) ((sb2*)(def)->buf.inds)[rs->row_cur-1] != -1))
+#define OCI_NOT_NULL(def)                                                      \
+                                                                               \
+    (((def) != NULL) && (rs->row_cur > 0) && ((sb2) ((sb2*)(def)->buf.inds)[rs->row_cur-1] != -1))
 
 #define OCI_NOT_USED(p)                 (p) = (p);
 
@@ -467,9 +501,13 @@
         OCI_SetStatus(res);                                                    \
 
 #ifdef _WINDOWS
-  #define OCI_CVT_CHAR                  1
+
+    #define OCI_CVT_CHAR                  1
+
 #else
-  #define OCI_CVT_CHAR                  0
+
+    #define OCI_CVT_CHAR                  0
+
 #endif
 
 #define OCI_SQLCMD_COUNT                126
@@ -490,6 +528,8 @@
 
 #define OCI_ERR_AQ_LISTEN_TIMEOUT      25254
 #define OCI_ERR_AQ_DEQUEUE_TIMEOUT     25228
+
+#define OCI_DEFAUT_STMT_CACHE_SIZE     20
 
 #endif    /* OCILIB_OCILIB_DEFS_H_INCLUDED */
 

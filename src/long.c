@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: long.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: long.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -56,8 +56,9 @@ OCI_Long * OCI_LongInit
     OCI_CHECK(plg == NULL, NULL);
 
     if (*plg == NULL)
-        *plg = (OCI_Long *) OCI_MemAlloc(OCI_IPC_LONG, sizeof(*lg),
-                                         (size_t) 1, TRUE);
+    {
+        *plg = (OCI_Long *) OCI_MemAlloc(OCI_IPC_LONG, sizeof(*lg), (size_t) 1, TRUE);
+    }
 
     if (*plg != NULL)
     {
@@ -70,12 +71,18 @@ OCI_Long * OCI_LongInit
         lg->offset = 0;
 
         if (def != NULL)
+        {
             lg->hstate = OCI_OBJECT_FETCHED_CLEAN;
-        else
+        }
+        else if (lg->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+        {
             lg->hstate = OCI_OBJECT_ALLOCATED;
+        }
     }
     else
+    {
         res = FALSE;
+    }
 
     OCI_RESULT(res);
 
@@ -172,7 +179,9 @@ unsigned int OCI_API OCI_LongRead
     */
 
     if (lg->type == OCI_CLONG)
+    {
         len *= (unsigned int) sizeof(odtext);
+    }
 
     /* check buffer size to read */
 
@@ -190,7 +199,8 @@ unsigned int OCI_API OCI_LongRead
     if (lg->type == OCI_CLONG)
     {
         ((dtext *) buffer)[size] = 0;
-        size                    /= (unsigned int) sizeof(dtext);
+
+        size /= (unsigned int) sizeof(dtext);
     }
 
     OCI_RESULT(TRUE);
@@ -226,12 +236,18 @@ unsigned int OCI_API OCI_LongWrite
     OCI_CHECK_MIN(lg->stmt->con, lg->stmt, len, 1, 0);
 
     if (lg->type == OCI_CLONG)
+    {
         len *= (unsigned int) sizeof(dtext);
+    }
 
     if (lg->type == OCI_CLONG)
+    {
         obuf = OCI_GetInputDataString(buffer, (int *) &len);
+    }
     else
+    {
         obuf = buffer;
+    }
 
     /* get piece info */
 
@@ -246,9 +262,13 @@ unsigned int OCI_API OCI_LongWrite
     /* set up piece type */
 
     if (len > 0)
+    {
         piece = (ub1) ((lg->size > 0) ? OCI_NEXT_PIECE : OCI_FIRST_PIECE);
+    }
     else
+    {
         piece = (ub1) OCI_LAST_PIECE;
+    }
 
     /* correct size to read for last piece */
 
@@ -296,7 +316,9 @@ unsigned int OCI_API OCI_LongWrite
     }
 
     if (lg->type == OCI_CLONG)
+    {
         OCI_ReleaseDataString(obuf);
+    }
 
     /* update size */
 
@@ -308,7 +330,9 @@ unsigned int OCI_API OCI_LongWrite
          **/
 
         if (lg->type == OCI_CLONG)
+        {
             count /= (unsigned int) sizeof(odtext);
+        }
 
     }
 
@@ -333,7 +357,9 @@ unsigned int OCI_API OCI_LongGetSize
     size = lg->size;
 
     if (lg->type == OCI_CLONG)
+    {
         size /= (unsigned int) sizeof(odtext);
+    }
 
     OCI_RESULT(TRUE);
 

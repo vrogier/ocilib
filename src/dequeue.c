@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: dequeue.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: dequeue.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -67,7 +67,7 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
 
         /* allocate dequeue options descriptor */
 
-        res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) OCILib.env,
+        res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) dequeue->typinf->con->env,
                                                   (dvoid **) &dequeue->opth,
                                                   OCI_DTYPE_AQDEQ_OPTIONS,
                                                   (size_t) 0, (dvoid **) NULL));
@@ -82,7 +82,9 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
         res = (dequeue->msg != NULL);
     }
     else
+    {
         res = FALSE;
+    }
 
     /* check for failure */
 
@@ -212,7 +214,7 @@ OCI_Msg * OCI_API OCI_DequeueGet
     OCI_Msg  *msg      = NULL;
     sword     ret      = OCI_SUCCESS;
     void     *p_ind    = NULL;
- 
+
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, NULL);
 
     /* reset message */
@@ -229,13 +231,13 @@ OCI_Msg * OCI_API OCI_DequeueGet
         }
 
         /* dequeue message */
-        
+
         ret = OCIAQDeq(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
                        ostr, dequeue->opth, dequeue->msg->proph, dequeue->typinf->tdo,
                        &dequeue->msg->payload, (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
-        
+
         OCI_ReleaseMetaString(ostr);
-        
+
         /* check returned error code */
 
         if (ret == OCI_ERROR)
@@ -269,10 +271,10 @@ OCI_Msg * OCI_API OCI_DequeueGet
             {
                 dequeue->msg->ind = *(OCIInd *) p_ind;
 
-                dequeue->msg->obj = OCI_ObjectInit(dequeue->typinf->con, 
+                dequeue->msg->obj = OCI_ObjectInit(dequeue->typinf->con,
                                                    (OCI_Object **) &dequeue->msg->obj,
                                                    dequeue->msg->payload, dequeue->typinf,
-                                                   NULL, -1, TRUE); 
+                                                   NULL, -1, TRUE);
 
                 res = dequeue->msg->obj != NULL;
             }
@@ -431,12 +433,12 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
     {
         ub4 raw_len = 0;
 
-        raw_len = OCIRawSize(OCILib.env, value);
+        raw_len = OCIRawSize(dequeue->typinf->con->env, value);
 
         if (*len > raw_len)
             *len = raw_len;
 
-        memcpy(id, OCIRawPtr(OCILib.env, value), (size_t) (*len));
+        memcpy(id, OCIRawPtr(dequeue->typinf->con->env, value), (size_t) (*len));
     }
     else
     {
@@ -468,7 +470,7 @@ boolean OCI_API OCI_DequeueSetRelativeMsgID
     (
         res, dequeue->typinf->con,
 
-        OCIRawAssignBytes(OCILib.env, dequeue->typinf->con->err,
+        OCIRawAssignBytes(dequeue->typinf->con->env, dequeue->typinf->con->err,
                           (ub1*) id, (ub4) len, (OCIRaw **) &value)
     )
 
@@ -760,8 +762,7 @@ boolean OCI_API OCI_DequeueSetAgentList
 
     if ((consumers != NULL) && (count > 0))
     {
-        dequeue->agent_list = (OCIAQAgent **) OCI_MemAlloc(OCI_IPC_ARRAY,
-                                                           sizeof(OCIAQAgent *),
+        dequeue->agent_list = (OCIAQAgent **) OCI_MemAlloc(OCI_IPC_ARRAY,  sizeof(OCIAQAgent *),
                                                            count, FALSE);
 
         if (dequeue->agent_list != NULL)

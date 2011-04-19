@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: define.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: define.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -48,10 +48,17 @@ OCI_Define * OCI_GetDefine
     unsigned int   index
 )
 {
+    OCI_Define * def = NULL;
+
     OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, NULL);
     OCI_CHECK_BOUND(rs->stmt->con, index,  1,  rs->nb_defs, NULL);
 
-    return &rs->defs[index-1];
+    if ((rs->stmt->exec_mode != OCI_DESCRIBE_ONLY) && (rs->stmt->exec_mode != OCI_PARSE_ONLY))
+    {
+        def =  &rs->defs[index-1];
+    }
+
+    return def;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -131,17 +138,17 @@ void * OCI_DefineGetData
         case OCI_CDT_OBJECT:
         case OCI_CDT_COLLECTION:
         case OCI_CDT_REF:
-
+        {
             /* handle based types */
 
             return def->buf.data[def->rs->row_cur-1];
-
+        }
         default:
-
+        {
             /* scalar types */
 
-            return (((ub1  *) (def->buf.data)) +
-                    (size_t) (def->col.bufsize * (def->rs->row_cur-1)));
+            return (((ub1 *) (def->buf.data)) + (size_t) (def->col.bufsize * (def->rs->row_cur-1)));
+        }
     }
 }
 
@@ -169,8 +176,7 @@ boolean OCI_DefineGetNumber
         {
             case OCI_CDT_NUMERIC:
             {
-                res = OCI_NumberGet(rs->stmt->con, (OCINumber *) data, value,
-                                    size, type);
+                res = OCI_NumberGet(rs->stmt->con, (OCINumber *) data, value, size, type);
                 break;
             }
             case OCI_CDT_TEXT:
@@ -178,10 +184,8 @@ boolean OCI_DefineGetNumber
                 const mtext *fmt = OCI_GetDefaultFormatNumeric(rs->stmt->con);
                 ub4 fmt_size     = (ub4) mtslen(fmt);
 
-                res = OCI_NumberGetFromStr(rs->stmt->con, value, size, type,
-                                           (dtext *) data,
-                                           (int) dtslen((dtext *) data),
-                                           fmt, fmt_size);
+                res = OCI_NumberGetFromStr(rs->stmt->con, value, size, type, (dtext *) data,
+                                           (int) dtslen((dtext *) data), fmt, fmt_size);
                 break;
             }
         }
@@ -214,24 +218,25 @@ boolean OCI_DefineAlloc
     /* Allocate null indicators array */
 
     if (def->col.ocode == SQLT_NTY || def->col.ocode == SQLT_REF)
+    {
         indsize = (ub4) sizeof(void*);
+    }
     else
+    {
         indsize = (ub4) sizeof(sb2);
+    }
 
     if (res == TRUE)
     {
-        def->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY,
-                                              (size_t) indsize,
+        def->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, (size_t) indsize,
                                               (size_t) def->buf.count, TRUE);
         res = (def->buf.inds != NULL);
     }
 
     if (def->col.type == OCI_CDT_OBJECT)
     {
-        def->buf.obj_inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY,
-                                                  sizeof(void *),
-                                                  (size_t) def->buf.count,
-                                                  TRUE);
+        def->buf.obj_inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(void *),
+                                                  (size_t) def->buf.count, TRUE);
         res = (def->buf.obj_inds != NULL);
     }
 
@@ -239,10 +244,8 @@ boolean OCI_DefineAlloc
 
     if (res == TRUE)
     {
-        def->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY,
-                                              (size_t) def->buf.sizelen,
+        def->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, (size_t) def->buf.sizelen,
                                               (size_t) def->buf.count, TRUE);
-
         res = (def->buf.lens != NULL);
     }
 
@@ -254,11 +257,13 @@ boolean OCI_DefineAlloc
         for (i=0; i < def->buf.count; i++)
         {
             if (def->buf.sizelen == (int) sizeof(ub2))
-                *(ub2*)(((ub1 *)def->buf.lens) +
-                        (size_t) (def->buf.sizelen*i)) = (ub2) def->col.bufsize;
+            {
+                *(ub2*)(((ub1 *)def->buf.lens) + (size_t) (def->buf.sizelen*i)) = (ub2) def->col.bufsize;
+            }
             else if (def->buf.sizelen == (int) sizeof(ub4))
-                *(ub4*)(((ub1 *)def->buf.lens) +
-                        (size_t) (def->buf.sizelen*i)) = (ub4) def->col.bufsize;
+            {
+                *(ub4*)(((ub1 *)def->buf.lens) + (size_t) (def->buf.sizelen*i)) = (ub4) def->col.bufsize;
+            }
         }
     }
 
@@ -267,9 +272,13 @@ boolean OCI_DefineAlloc
     if (res == TRUE)
     {
         if (def->col.type == OCI_CDT_LONG)
+        {
             bufsize = (ub4) sizeof(OCI_Long *);
+        }
         else
+        {
             bufsize = def->col.bufsize;
+        }
 
         def->buf.data = (void *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (size_t) bufsize,
                                               (size_t) def->buf.count, TRUE);
@@ -287,7 +296,7 @@ boolean OCI_DefineAlloc
             {
                 for (i = 0; (i < def->buf.count) && (res == TRUE); i++)
                 {
-                    res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid  *) OCILib.env,
+                    res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid  *) def->rs->stmt->con->env,
                                                           (dvoid **) &(def->buf.data[i]),
                                                           (ub4) def->col.dtype,
                                                           (size_t) 0, (dvoid **) NULL));
@@ -295,15 +304,11 @@ boolean OCI_DefineAlloc
             }
             else
             {
-                res = (OCI_SUCCESS == OCI_DescriptorArrayAlloc
-                       (
-                           (dvoid  *) OCILib.env,
-                           (dvoid **) def->buf.data,
-                           (ub4) def->col.dtype,
-                           (ub4) def->buf.count,
-                           (size_t) 0, (dvoid **) NULL
-                       )
-                       );
+                res = (OCI_SUCCESS == OCI_DescriptorArrayAlloc((dvoid  *) def->rs->stmt->con->env,
+                                                               (dvoid **) def->buf.data,
+                                                               (ub4) def->col.dtype,
+                                                               (ub4) def->buf.count,
+                                                               (size_t) 0, (dvoid **) NULL));
 
                 if ((res == TRUE) && (def->col.type == OCI_CDT_LOB))
                 {
@@ -315,11 +320,9 @@ boolean OCI_DefineAlloc
                         (
                             res, def->rs->stmt->con, def->rs->stmt,
 
-                            OCIAttrSet((dvoid *) def->buf.data[i],
-                                       (ub4) def->col.dtype,
+                            OCIAttrSet((dvoid *) def->buf.data[i],  (ub4) def->col.dtype,
                                        (void *) &empty, (ub4) sizeof(empty),
-                                       (ub4) OCI_ATTR_LOBEMPTY,
-                                       def->rs->stmt->con->err)
+                                       (ub4) OCI_ATTR_LOBEMPTY, def->rs->stmt->con->err)
                         )
                     }
                 }
@@ -340,16 +343,16 @@ boolean OCI_DefineDef
 )
 {
     boolean res    = TRUE;
-    ub2 fetch_mode = 0;
+    ub2 fetch_mode = OCI_DEFAULT;
 
     OCI_CHECK(def == NULL, FALSE);
 
     /*check define mode for long columns */
 
     if (def->col.type == OCI_CDT_LONG)
+    {
         fetch_mode = OCI_DYNAMIC_FETCH;
-    else
-        fetch_mode = OCI_DEFAULT;
+    }
 
     /* oracle defining */
 
@@ -409,7 +412,7 @@ boolean OCI_DefineDef
             )
         }
 
-        #ifdef OCI_CHARSET_MIXED
+    #ifdef OCI_CHARSET_MIXED
 
         /* setup Unicode mode for user data on mixed builds */
         {
@@ -428,7 +431,7 @@ boolean OCI_DefineDef
             )
         }
 
-        #endif
+    #endif
 
     }
 
@@ -450,34 +453,40 @@ boolean OCI_DefineRequestBuffer
     size++;
 
     if (OCILib.nls_utf8 == TRUE)
+    {
         size *= UTF8_BYTES_PER_CHAR;
+    }
     else
+    {
         size *= sizeof(dtext);
+    }
 
     if (def->buf.tmpbuf == NULL)
     {
-        def->buf.tmpbuf = (dtext *) OCI_MemAlloc(OCI_IPC_STRING,
-                                                 (size_t) size,
-                                                 (size_t) 1,
-                                                 TRUE);
+        def->buf.tmpbuf = (dtext *) OCI_MemAlloc(OCI_IPC_STRING, (size_t) size, (size_t) 1, TRUE);
 
         if (def->buf.tmpbuf != NULL)
+        {
             def->buf.tmpsize = size;
+        }
         else
+        {
             res = FALSE;
+        }
 
     }
     else if (def->buf.tmpsize < size)
     {
-        def->buf.tmpbuf = (dtext *) OCI_MemRealloc(def->buf.tmpbuf,
-                                                   OCI_IPC_STRING,
-                                                   (size_t) size,
-                                                   (size_t) 1);
+        def->buf.tmpbuf = (dtext *) OCI_MemRealloc(def->buf.tmpbuf, OCI_IPC_STRING, (size_t) size, (size_t) 1);
 
         if (def->buf.tmpbuf != NULL)
+        {
             def->buf.tmpsize = size;
+        }
         else
+        {
             res = FALSE;
+        }
     }
 
     def->buf.tmpbuf[0] = 0;

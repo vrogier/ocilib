@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: threadkey.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: threadkey.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -52,8 +52,7 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
 
     /* allocate key structure */
 
-    key = (OCI_ThreadKey *) OCI_MemAlloc(OCI_IPC_THREADKEY, sizeof(*key),
-                                         (size_t) 1, TRUE);
+    key = (OCI_ThreadKey *) OCI_MemAlloc(OCI_IPC_THREADKEY, sizeof(*key), (size_t) 1, TRUE);
 
     if (key != NULL)
     {
@@ -74,7 +73,9 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
         )
     }
     else
+    {
         res = FALSE;
+    }
 
     /* check errors */
 
@@ -217,15 +218,21 @@ boolean OCI_API OCI_ThreadKeyCreate
         /* add key to internal key hash table */
 
         if (key != NULL)
+        {
             res = OCI_HashAddPointer(OCILib.key_map, name, key);
+        }
         else
+        {
             res = FALSE;
+        }
     }
 
     /* check errors */
 
     if (res == FALSE)
+    {
         OCI_ThreadKeyFree(key);
+    }
 
     OCI_RESULT(res);
 

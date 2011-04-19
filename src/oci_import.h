@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: oci_import.h, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: oci_import.h, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
@@ -285,6 +285,8 @@ extern OCISTMTPREPARE2              OCIStmtPrepare2;
 extern OCISTMTRELEASE               OCIStmtRelease;
 extern OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister;
 extern OCISUBSCRIPTIONUNREGISTER    OCISubscriptionUnRegister;
+extern XAOSVCCTX                    xaoSvcCtx;
+extern XAOENV                       xaoEnv;
 
 #ifdef ORAXB8_DEFINED
 

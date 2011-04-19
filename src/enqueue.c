@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: event.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: event.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -67,13 +67,15 @@ OCI_Enqueue * OCI_API OCI_EnqueueCreate
 
         /* allocate enqueue options descriptor */
 
-        res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) OCILib.env,
+        res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) enqueue->typinf->con->env,
                                                   (dvoid **) &enqueue->opth,
                                                   OCI_DTYPE_AQENQ_OPTIONS,
                                                   (size_t) 0, (dvoid **) NULL));
     }
     else
+    {
         res = FALSE;
+    }
 
     /* check for failure */
 
@@ -325,12 +327,12 @@ boolean OCI_API OCI_EnqueueGetRelativeMsgID
     {
         ub4 raw_len = 0;
 
-        raw_len = OCIRawSize(OCILib.env, value);
+        raw_len = OCIRawSize(enqueue->typinf->con->env, value);
 
         if (*len > raw_len)
             *len = raw_len;
 
-        memcpy(id, OCIRawPtr(OCILib.env, value), (size_t) (*len));
+        memcpy(id, OCIRawPtr(enqueue->typinf->con->env, value), (size_t) (*len));
     }
     else
     {
@@ -362,7 +364,7 @@ boolean OCI_API OCI_EnqueueSetRelativeMsgID
     (
         res, enqueue->typinf->con,
 
-        OCIRawAssignBytes(OCILib.env, enqueue->typinf->con->err,
+        OCIRawAssignBytes(enqueue->typinf->con->env, enqueue->typinf->con->err,
                           (ub1*) id, (ub4) len, (OCIRaw **) &value)
     )
 

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_checks.h, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: ocilib_checks.h, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_CHECKS_H_INCLUDED
@@ -61,8 +61,8 @@
             (res) = ((res) == OCI_SUCCESS_WITH_INFO);                          \
             OCI_ExceptionOCI((err), NULL, NULL, res);                          \
         }                                                                      \
-        else                                                                                             \
-            (res) = TRUE;                                                                                                          \
+        else                                                                   \
+            (res) = TRUE;                                                      \
     }
 
 /**
@@ -92,8 +92,8 @@
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
                 OCI_ExceptionOCI((con)->err, (con), (stmt), res);              \
             }                                                                  \
-            else                                                                                                 \
-                (res) = TRUE;                                                                                                              \
+            else                                                               \
+                (res) = TRUE;                                                  \
         }                                                                      \
     }
 
@@ -123,8 +123,8 @@
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
                 OCI_ExceptionOCI((con)->err, (con), NULL, res);                \
             }                                                                  \
-            else                                                                                                 \
-                (res) = TRUE;                                                                                                              \
+            else                                                               \
+                (res) = TRUE;                                                  \
         }                                                                      \
     }
 
@@ -152,8 +152,8 @@
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
                 OCI_ExceptionOCI((err), NULL, NULL, res);                      \
             }                                                                  \
-            else                                                                                                 \
-                (res) = TRUE;                                                                                                              \
+            else                                                               \
+                (res) = TRUE;                                                  \
         }                                                                      \
     }
 
@@ -183,8 +183,8 @@
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
                 OCI_ExceptionOCI((err), (con), NULL, res);                     \
             }                                                                  \
-            else                                                                                                 \
-                (res) = TRUE;                                                                                                              \
+            else                                                               \
+                (res) = TRUE;                                                  \
         }                                                                      \
     }
 
@@ -213,8 +213,8 @@
             (res) = ((res) == OCI_SUCCESS_WITH_INFO);                          \
             OCI_WarningOCI((con)->err, (con), (stmt), res);                    \
         }                                                                      \
-        else                                                                                             \
-            (res) = TRUE;                                                                                                          \
+        else                                                                   \
+            (res) = TRUE;                                                      \
     }
 
 /* ********************************************************************************************* *
@@ -276,8 +276,9 @@
                                                                                \
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);                             \
     OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);                                \
-    if (stmt->bind_alloc_mode == OCI_BAM_EXTERNAL)                                                                                                                                                                                      \
-        OCI_CHECK_PTR(type, data, FALSE);                                                                                                                                                                    \
+    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED, FALSE);                     \
+    if (stmt->bind_alloc_mode == OCI_BAM_EXTERNAL)                             \
+        OCI_CHECK_PTR(type, data, FALSE);
 
 
 /**
@@ -336,7 +337,7 @@
  * @param ret  - Return value
  *
  * @note
- * Throws an exception if the input value is < 1.
+ * Throws an exception if the input value is < < m.
  *
  */
 
@@ -407,7 +408,7 @@
 
 #define OCI_CHECK_STMT_STATUS(st, v, ret)                                      \
                                                                                \
-    if ((st)->status == (v))                                                   \
+    if ((((st)->status) & (v)) == 0)                                           \
     {                                                                          \
         OCI_ExceptionStatementState((st), v);                                  \
         return ret;                                                            \
@@ -440,7 +441,7 @@
  * Checks if the status of a OCILIB direct path handle is compatible with the
  * given one
  *
- * @param st  - Direct path handle
+ * @param dp  - Direct path handle
  * @param v   - Status to compare
  * @param ret - Return value
  *
@@ -573,9 +574,29 @@
 
 /**
  * @brief
+ * Checks if the runtime OCI client supports statement caching
+ *
+ * @param ret - Return value
+ *
+ * @note
+ * Throws an exception if the OCI client does not
+ * support statement caching
+ *
+ */
+
+#define OCI_CHECK_STATEMENT_CACHING_ENABLED(ret)                               \
+                                                                               \
+    if (OCILib.version_runtime < OCI_9_2)                                      \
+    {                                                                          \
+        OCI_ExceptionNotAvailable((dp)->con, OCI_FEATURE_STATEMENT_CACHING);   \
+        return ret;                                                            \
+    }
+
+/**
+ * @brief
  * Checks if the direct path date caching is available
  *
- * @param con - Connection handle
+ * @param dp  - Direct path handle
  * @param ret - Return value
  *
  * @note
@@ -606,7 +627,7 @@
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
-        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_DIRPATH_DATE_CACHE);       \
+        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_REMOTE_DBS_CONTROL);       \
         return ret;                                                            \
     }
 
@@ -629,5 +650,25 @@
         return ret;                                                            \
     }
 
+/**
+ * @brief
+ * Checks if the runtime OCI version supports Oracle high availabality
+ *
+ * @param ret - Return value
+ *
+ * @note
+ * Throws an exception if the client version does not
+ * support Oracle high availabality
+ *
+ */
+
+#define OCI_CHECK_HIGH_AVAILABILITY_ENABLED(ret)                               \
+                                                                               \
+    if (OCILib.version_runtime < OCI_10_2)                                     \
+    {                                                                          \
+        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_HIGH_AVAILABILITY);        \
+        return ret;                                                            \
+    }
 #endif    /* OCILIB_OCILIB_CHECKS_H_INCLUDED */
+
 

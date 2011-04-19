@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: agent.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: agent.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -59,8 +59,9 @@ OCI_Agent * OCI_AgentInit
     /* allocate agent structure */
 
     if (*pagent == NULL)
-        *pagent = (OCI_Agent *) OCI_MemAlloc(OCI_IPC_AGENT, sizeof(*agent),
-                                             (size_t) 1, TRUE);
+    {
+        *pagent = (OCI_Agent *) OCI_MemAlloc(OCI_IPC_AGENT, sizeof(*agent),  (size_t) 1, TRUE);
+    }
 
     if (*pagent != NULL)
     {
@@ -78,13 +79,15 @@ OCI_Agent * OCI_AgentInit
         {
             agent->hstate = OCI_OBJECT_ALLOCATED;
 
-            res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) OCILib.env,
+            res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) agent->con->env,
                                                       (dvoid **) &agent->handle,
                                                       OCI_DTYPE_AQAGENT,
                                                       (size_t) 0, (dvoid **) NULL));
         }
         else
+        {
             agent->hstate = OCI_OBJECT_FETCHED_CLEAN;
+        }
 
         /* set name attribute if provided */
 
@@ -101,7 +104,9 @@ OCI_Agent * OCI_AgentInit
         }
     }
     else
+    {
         res = FALSE;
+    }
 
     /* check for failure */
 
@@ -185,11 +190,8 @@ const mtext * OCI_API OCI_AgentGetName
 
     if (agent->name == NULL)
     {
-        res = OCI_StringGetFromAttrHandle(agent->con,
-                                          agent->handle,
-                                          OCI_DTYPE_AQAGENT,
-                                          OCI_ATTR_AGENT_NAME,
-                                          &agent->name);
+        res = OCI_StringGetFromAttrHandle(agent->con, agent->handle,  OCI_DTYPE_AQAGENT,
+                                          OCI_ATTR_AGENT_NAME,  &agent->name);
     }
 
     OCI_RESULT(res);
@@ -211,9 +213,8 @@ boolean OCI_API OCI_AgentSetName
 
     OCI_CHECK_PTR(OCI_IPC_AGENT, agent, FALSE);
 
-    res =  OCI_StringSetToAttrHandle(agent->con, agent->handle,
-                                     OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_NAME,
-                                     &agent->name, name);
+    res =  OCI_StringSetToAttrHandle(agent->con, agent->handle,  OCI_DTYPE_AQAGENT,
+                                     OCI_ATTR_AGENT_NAME, &agent->name, name);
 
     OCI_RESULT(res);
 
@@ -235,11 +236,8 @@ const mtext * OCI_API OCI_AgentGetAddress
 
     if (agent->name == NULL)
     {
-        res = OCI_StringGetFromAttrHandle(agent->con,
-                                          agent->handle,
-                                          OCI_DTYPE_AQAGENT,
-                                          OCI_ATTR_AGENT_ADDRESS,
-                                          &agent->address);
+        res = OCI_StringGetFromAttrHandle(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
+                                          OCI_ATTR_AGENT_ADDRESS, &agent->address);
     }
 
     OCI_RESULT(res);
@@ -261,9 +259,8 @@ boolean OCI_API OCI_AgentSetAddress
 
     OCI_CHECK_PTR(OCI_IPC_AGENT, agent, FALSE);
 
-    res = OCI_StringSetToAttrHandle(agent->con, agent->handle,
-                                    OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_ADDRESS,
-                                    &agent->address, address);
+    res = OCI_StringSetToAttrHandle(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
+                                    OCI_ATTR_AGENT_ADDRESS, &agent->address, address);
 
     OCI_RESULT(res);
 

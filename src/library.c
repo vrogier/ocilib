@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: library.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: library.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -366,8 +366,10 @@ OCISUBSCRIPTIONUNREGISTER    OCISubscriptionUnRegister    = NULL;
 OCIAQENQ                     OCIAQEnq                     = NULL;
 OCIAQDEQ                     OCIAQDeq                     = NULL;
 OCIAQLISTEN                  OCIAQListen                  = NULL;
+XAOSVCCTX                    xaoSvcCtx                    = NULL;
+XAOENV                       xaoEnv                       = NULL;
 
-  #ifdef ORAXB8_DEFINED
+#ifdef ORAXB8_DEFINED
 
 OCILOBCOPY2                  OCILobCopy2                  = NULL;
 OCILOBERASE2                 OCILobErase2                 = NULL;
@@ -375,12 +377,12 @@ OCILOBGETLENGTH2             OCILobGetLength2             = NULL;
 OCILOBLOADFROMFILE2          OCILobLoadFromFile2          = NULL;
 OCILOBREAD2                  OCILobRead2                  = NULL;
 OCILOBTRIM2                  OCILobTrim2                  = NULL;
-OCILOBWRITE2                 OCILobWrite2                = NULL;
-OCILOBWRITEAPPEND2           OCILobWriteAppend2          = NULL;
+OCILOBWRITE2                 OCILobWrite2                 = NULL;
+OCILOBWRITEAPPEND2           OCILobWriteAppend2           = NULL;
 
-  #endif
+#endif /* ORAXB8_DEFINED */
 
-#endif
+#endif /* OCI_IMPORT_RUNTIME */
 
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
@@ -415,7 +417,9 @@ boolean OCI_KeyMapFree
             while (v != NULL)
             {
                 if (FALSE == OCI_ThreadKeyFree((OCI_ThreadKey *) (v->value.p_void)))
+                {
                     nb_err++;
+                }
 
                 v = v->next;
             }
@@ -466,18 +470,20 @@ boolean OCI_API OCI_Initialize
     boolean res  = TRUE;
     ub4 oci_mode = OCI_ENV_MODE | OCI_OBJECT;
 
-    #ifdef OCI_IMPORT_RUNTIME
+#ifdef OCI_IMPORT_RUNTIME
 
     char path[OCI_SIZE_BUFFER+1];
 
     size_t len = (size_t) 0;
 
-    #endif
+#endif
 
     /* check if it was already initialized */
 
     if (OCILib.loaded == TRUE)
+    {
         return TRUE;
+    }
 
     memset(&OCILib, 0, sizeof(OCI_Library));
 
@@ -488,7 +494,7 @@ boolean OCI_API OCI_Initialize
 
     OCILib.env_mode = mode;
 
-    #ifdef OCI_CHARSET_ANSI
+#ifdef OCI_CHARSET_ANSI
 
     /* test for UTF8 environment */
 
@@ -502,15 +508,17 @@ boolean OCI_API OCI_Initialize
             strncat(nls_lang, str, OCI_SIZE_OBJ_NAME);
 
             for (str = nls_lang; *str != 0; str++)
+            {
                 *str = (char) toupper(*str);
+            }
 
             OCILib.nls_utf8 = (strstr(nls_lang, "UTF8") != NULL);
         }
     }
 
-    #endif
+#endif
 
-    #ifdef OCI_IMPORT_LINKAGE
+#ifdef OCI_IMPORT_LINKAGE
 
     OCI_NOT_USED(lib_path);
 
@@ -526,14 +534,16 @@ boolean OCI_API OCI_Initialize
 
     #endif
 
-    #else
+#else
 
     memset(path, 0, sizeof(path));
 
     #if defined(OCI_CHARSET_WIDE)
 
     if (lib_path != NULL && lib_path[0] != 0)
+    {
         len = wcstombs(path, lib_path, sizeof(path));
+    }
 
     #else
 
@@ -546,9 +556,7 @@ boolean OCI_API OCI_Initialize
 
     #endif
 
-    if ((len > (size_t) 0)   &&
-        (len < sizeof(path)) &&
-        (path[len - (size_t) 1] != OCI_CHAR_SLASH))
+    if ((len > (size_t) 0) && (len < sizeof(path)) && (path[len - (size_t) 1] != OCI_CHAR_SLASH))
     {
         path[len] = OCI_CHAR_SLASH;
         len++;
@@ -677,7 +685,7 @@ boolean OCI_API OCI_Initialize
         LIB_SYMBOL(OCILib.lib_handle, "OCILobClose", OCILobClose,
                    OCILOBCLOSE);
 
-        #ifdef ORAXB8_DEFINED
+    #ifdef ORAXB8_DEFINED
 
         LIB_SYMBOL(OCILib.lib_handle, "OCILobCopy2", OCILobCopy2,
                    OCILOBCOPY2);
@@ -696,7 +704,7 @@ boolean OCI_API OCI_Initialize
         LIB_SYMBOL(OCILib.lib_handle, "OCILobWriteAppend2", OCILobWriteAppend2,
                    OCILOBWRITEAPPEND2);
 
-        #endif
+    #endif
 
         LIB_SYMBOL(OCILib.lib_handle, "OCILobFileOpen", OCILobFileOpen,
                    OCILOBFILEOPEN);
@@ -1021,6 +1029,11 @@ boolean OCI_API OCI_Initialize
         LIB_SYMBOL(OCILib.lib_handle, "OCIAQListen", OCIAQListen,
                    OCIAQLISTEN);
 
+        LIB_SYMBOL(OCILib.lib_handle, "xaoSvcCtx", xaoSvcCtx,
+                   XAOSVCCTX);
+        LIB_SYMBOL(OCILib.lib_handle, "xaoEnv", xaoEnv,
+                   XAOENV);
+
         /* API Version checking */
 
         if (OCIArrayDescriptorFree != NULL)
@@ -1070,29 +1083,29 @@ boolean OCI_API OCI_Initialize
     if (res == TRUE)
     {
 
-        #if defined(OCI_BIG_UINT_ENABLED)
+    #if defined(OCI_BIG_UINT_ENABLED)
 
         if ((OCILib.version_runtime >= OCI_10_1) && (OCILobCopy2 != NULL))
         {
             OCILib.use_lob_ub8 = TRUE;
         }
 
-        #endif
+    #endif
 
-        #if defined(OCI_STMT_SCROLLABLE_READONLY)
+    #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
         if ((OCILib.version_runtime >= OCI_9_0) && (OCIStmtFetch2 != NULL))
         {
             OCILib.use_scrollable_cursors = TRUE;
         }
 
-        #endif
+    #endif
 
     }
 
-    #endif
+#endif
 
-    #if defined(OCI_CHARSET_WIDE)
+#if defined(OCI_CHARSET_WIDE)
 
     /* Oracle 8i does not support full Unicode mode */
 
@@ -1103,7 +1116,7 @@ boolean OCI_API OCI_Initialize
         res = FALSE;
     }
 
-    #endif
+#endif
 
     /* Initialize OCI environment */
 
@@ -1112,10 +1125,14 @@ boolean OCI_API OCI_Initialize
         /* check modes */
 
         if (mode & OCI_ENV_THREADED)
+        {
             oci_mode |= OCI_THREADED;
+        }
 
         if (mode & OCI_ENV_EVENTS)
+        {
             oci_mode |= OCI_EVENTS;
+        }
 
         /* create environment on success */
 
@@ -1170,7 +1187,7 @@ boolean OCI_API OCI_Initialize
             res = (OCILib.pools != NULL);
         }
 
-        #if OCI_VERSION_COMPILE >= OCI_10_2
+    #if OCI_VERSION_COMPILE >= OCI_10_2
 
         /* allocate connection pools internal list */
 
@@ -1181,7 +1198,8 @@ boolean OCI_API OCI_Initialize
 
             res = (OCILib.subs != NULL);
         }
-        #endif
+
+    #endif
 
         if (res == TRUE)
         {
@@ -1193,7 +1211,9 @@ boolean OCI_API OCI_Initialize
     }
 
     if (res == TRUE)
+    {
         OCILib.loaded = TRUE;
+    }
 
     return res;
 }
@@ -1276,7 +1296,9 @@ boolean OCI_API OCI_Cleanup
     /* close error handle */
 
     if (OCILib.err != NULL)
+    {
         OCI_HandleFree(OCILib.err, OCI_HTYPE_ERROR);
+    }
 
     /* close environment handle
        => direct OCIHandleFree() because this handle was not allocated
@@ -1284,14 +1306,18 @@ boolean OCI_API OCI_Cleanup
     */
 
     if (OCILib.env != NULL)
+    {
         OCIHandleFree(OCILib.env, OCI_HTYPE_ENV);
+    }
 
-    #ifdef OCI_IMPORT_RUNTIME
+#ifdef OCI_IMPORT_RUNTIME
 
     if (OCILib.lib_handle != NULL)
+    {
         LIB_CLOSE(OCILib.lib_handle);
+    }
 
-    #endif
+#endif
 
     /* checks for unfreed handles */
 
@@ -1400,7 +1426,9 @@ OCI_Error * OCI_API OCI_GetLastError
         if (err != NULL)
         {
             if (err->raise == FALSE)
+            {
                 err = NULL;
+            }
         }
     }
 
@@ -1451,7 +1479,7 @@ boolean OCI_API OCI_DatabaseStartup
 
     OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED(FALSE);
 
-    #if OCI_VERSION_COMPILE >= OCI_10_2
+#if OCI_VERSION_COMPILE >= OCI_10_2
 
     if (start_mode & OCI_DB_SPM_START)
     {
@@ -1497,8 +1525,7 @@ boolean OCI_API OCI_DatabaseStartup
             (
                 res, con,
 
-                OCIDBStartup(con->cxt, con->err, (OCIAdmin *) adm,
-                             OCI_DEFAULT, start_flag)
+                OCIDBStartup(con->cxt, con->err, (OCIAdmin *) adm, OCI_DEFAULT, start_flag)
             )
 
             /* release security admin handle */
@@ -1513,7 +1540,9 @@ boolean OCI_API OCI_DatabaseStartup
             OCI_ConnectionFree(con);
         }
         else
+        {
             res = FALSE;
+        }
     }
 
     if (res == TRUE)
@@ -1531,12 +1560,16 @@ boolean OCI_API OCI_DatabaseStartup
             /* mount database */
 
             if (start_mode & OCI_DB_SPM_MOUNT)
+            {
                 res = (res && OCI_ExecuteStmt(stmt, MT("ALTER DATABASE MOUNT")));
+            }
 
             /* open database */
 
             if (start_mode & OCI_DB_SPM_OPEN)
+            {
                 res = (res && OCI_ExecuteStmt(stmt, MT("ALTER DATABASE OPEN")));
+            }
 
             OCI_StatementFree(stmt);
 
@@ -1545,10 +1578,12 @@ boolean OCI_API OCI_DatabaseStartup
             OCI_ConnectionFree(con);
         }
         else
+        {
             res = FALSE;
+        }
     }
 
-    #else
+#else
 
     res = FALSE;
 
@@ -1561,7 +1596,7 @@ boolean OCI_API OCI_DatabaseStartup
     OCI_NOT_USED(spfile);
     OCI_NOT_USED(con);
 
-    #endif
+#endif
 
     OCI_RESULT(res);
 
@@ -1587,7 +1622,7 @@ boolean OCI_API OCI_DatabaseShutdown
 
     OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED(FALSE);
 
-    #if OCI_VERSION_COMPILE >= OCI_10_2
+#if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* connect to server */
 
@@ -1627,12 +1662,16 @@ boolean OCI_API OCI_DatabaseShutdown
             /* close database */
 
             if (shut_mode & OCI_DB_SDM_CLOSE)
+            {
                 res = (res && OCI_ExecuteStmt(stmt, MT("ALTER DATABASE CLOSE NORMAL")));
+            }
 
             /* unmount database */
 
             if (shut_mode & OCI_DB_SDM_DISMOUNT)
+            {
                 res = (res && OCI_ExecuteStmt(stmt,MT( "ALTER DATABASE DISMOUNT")));
+            }
 
             OCI_StatementFree(stmt);
 
@@ -1660,9 +1699,11 @@ boolean OCI_API OCI_DatabaseShutdown
         OCI_ConnectionFree(con);
     }
     else
+    {
         res = FALSE;
+    }
 
-    #else
+#else
 
     res = FALSE;
 
@@ -1674,7 +1715,59 @@ boolean OCI_API OCI_DatabaseShutdown
     OCI_NOT_USED(shut_flag);
     OCI_NOT_USED(con);
 
-    #endif
+#endif
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_SetHAHandler
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_SetHAHandler
+(
+    POCI_HA_HANDLER  handler
+)
+{
+    boolean  res      = TRUE;
+    void    *callback = NULL;
+
+    OCI_CHECK_INITIALIZED(FALSE)
+
+    OCI_CHECK_HIGH_AVAILABILITY_ENABLED(FALSE)
+
+    OCILib.ha_handler = handler;
+
+    /* On MSVC, casting a function pointer to a data pointer generates a warning.
+       As there is no other to way to do regarding the OCI API, let's disable this
+       warning just the time to set the callback attribute to the environment handle */
+
+#ifdef _MSC_VER
+
+    #pragma warning(disable: 4054)
+
+#endif
+
+    if (handler)
+    {
+        callback = (void*) OCI_ProcHAEvent;
+    }
+
+#ifdef _MSC_VER
+
+    #pragma warning(default: 4054)
+
+#endif
+
+    OCI_CALL3
+    (
+        res, OCILib.err,
+
+        OCIAttrSet((dvoid *) OCILib.env, (ub4) OCI_HTYPE_ENV, (dvoid *) callback, 
+                   (ub4) 0, (ub4) OCI_ATTR_EVTCBK, OCILib.err)
+    )
 
     OCI_RESULT(res);
 

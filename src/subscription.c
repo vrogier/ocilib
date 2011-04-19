@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: subscriptions.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: subscriptions.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -51,7 +51,7 @@ boolean OCI_SubscriptionClose
 
     OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, FALSE);
 
-    #if OCI_VERSION_COMPILE >= OCI_10_2
+#if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* deregister the subscription if connection still alive */
 
@@ -95,7 +95,7 @@ boolean OCI_SubscriptionClose
         OCI_HandleFree(sub->err, OCI_HTYPE_ERROR);
     }
 
-    #endif
+#endif
 
     /* free event data */
 
@@ -128,7 +128,9 @@ boolean OCI_SubscriptionDetachConnection
     OCI_CHECK(list == NULL, FALSE);
 
     if (list->mutex != NULL)
+    {
         OCI_MutexAcquire(list->mutex);
+    }
 
     item = list->head;
 
@@ -151,7 +153,9 @@ boolean OCI_SubscriptionDetachConnection
     }
 
     if (list->mutex != NULL)
+    {
         OCI_MutexRelease(list->mutex);
+    }
 
     return TRUE;
 }
@@ -185,7 +189,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
     OCI_CHECK_PTR(OCI_IPC_PROC, handler, NULL);
     OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
 
-    #if OCI_VERSION_COMPILE >= OCI_10_2
+#if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* create subscription object */
 
@@ -197,14 +201,14 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
         /* allocate error handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
+        res = (OCI_SUCCESS == OCI_HandleAlloc(con->env,
                                               (dvoid **) (void *) &sub->err,
                                               OCI_HTYPE_ERROR, (size_t) 0,
                                               (dvoid **) NULL));
 
         /* allocate subcription handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
+        res = (OCI_SUCCESS == OCI_HandleAlloc(con->env,
                                               (dvoid **) (void *) &sub->subhp,
                                               OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
                                               (dvoid **) NULL));
@@ -216,6 +220,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
             void *ostr = NULL;
 
             sub->con       = con;
+            sub->env       = con->env;
             sub->port      = (ub4) port;
             sub->timeout   = (ub4) timeout;
             sub->handler   = handler;
@@ -231,7 +236,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                 (
                     res, sub->err,
 
-                    OCIAttrSet((dvoid *) OCILib.env, (ub4) OCI_HTYPE_ENV,
+                    OCIAttrSet((dvoid *) con->env, (ub4) OCI_HTYPE_ENV,
                                (dvoid *) &sub->port, (ub4) sizeof (sub->port),
                                (ub4) OCI_ATTR_SUBSCR_PORTNO, sub->err)
                 )
@@ -242,7 +247,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                 (
                     res, sub->err,
 
-                    OCIAttrGet((dvoid *) OCILib.env, (ub4) OCI_HTYPE_ENV,
+                    OCIAttrGet((dvoid *) con->env, (ub4) OCI_HTYPE_ENV,
                                (dvoid *) &sub->port, (ub4) 0,
                                (ub4) OCI_ATTR_SUBSCR_PORTNO, sub->err)
                 )
@@ -294,9 +299,11 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
    As there is no other to way to do regarding the OCI API, let's disable this
    warning just the time to set the callback attribute to the subscription handle */
 
-            #ifdef _MSC_VER
+        #ifdef _MSC_VER
+
             #pragma warning(disable: 4054)
-            #endif
+   
+        #endif
 
             /* internal callback handler */
 
@@ -309,9 +316,11 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                            (ub4) OCI_ATTR_SUBSCR_CALLBACK, sub->err)
             )
 
-            #ifdef _MSC_VER
+        #ifdef _MSC_VER
+
             #pragma warning(default: 4054)
-            #endif
+            
+        #endif
 
             /* RowIds handling */
 
@@ -353,7 +362,9 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
         }
     }
     else
+    {
         res = FALSE;
+    }
 
     if (res == FALSE)
     {
@@ -362,7 +373,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
         OCI_FREE(sub);
     }
 
-    #else
+#else
 
     res = FALSE;
 
@@ -374,7 +385,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
     OCI_NOT_USED(con);
     OCI_NOT_USED(item);
 
-    #endif
+#endif
 
     OCI_RESULT(res);
 
@@ -420,10 +431,9 @@ boolean OCI_API OCI_SubscriptionAddStatement
     OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
 
-    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_CLOSED, FALSE);
-    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_EXECUTED, FALSE);
+    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED, FALSE);
 
-    #if OCI_VERSION_COMPILE >= OCI_10_2
+#if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* register the statement query if provided */
 
@@ -441,7 +451,7 @@ boolean OCI_API OCI_SubscriptionAddStatement
         res = res && OCI_Execute(stmt) && (OCI_GetResultset(stmt) != NULL);
     }
 
-    #endif
+#endif
 
     OCI_RESULT(res);
 

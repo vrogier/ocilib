@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: mutex.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: mutex.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -52,17 +52,14 @@ OCI_Mutex * OCI_MutexCreateInternal
 
     /* allocate mutex structure */
 
-    mutex = (OCI_Mutex *) OCI_MemAlloc(OCI_IPC_MUTEX, sizeof(*mutex),
-                                       (size_t) 1, TRUE);
+    mutex = (OCI_Mutex *) OCI_MemAlloc(OCI_IPC_MUTEX, sizeof(*mutex), (size_t) 1, TRUE);
 
     if (mutex != NULL)
     {
         /* allocate error handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
-                                              (dvoid **) (void *) &mutex->err,
-                                              OCI_HTYPE_ERROR, (size_t) 0,
-                                              (dvoid **) NULL));
+        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env, (dvoid **) (void *) &mutex->err,
+                                              OCI_HTYPE_ERROR, (size_t) 0, (dvoid **) NULL));
 
         /* allocate mutex handle */
 
@@ -74,7 +71,9 @@ OCI_Mutex * OCI_MutexCreateInternal
         )
     }
     else
+    {
         res = FALSE;
+    }
 
     if (res == FALSE)
     {

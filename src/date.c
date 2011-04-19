@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: date.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: date.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -57,8 +57,9 @@ OCI_Date * OCI_DateInit
     OCI_CHECK(pdate == NULL, NULL);
 
     if (*pdate == NULL)
-        *pdate = (OCI_Date *) OCI_MemAlloc(OCI_IPC_DATE, sizeof(*date),
-                                           (size_t) 1, TRUE);
+    {
+        *pdate = (OCI_Date *) OCI_MemAlloc(OCI_IPC_DATE, sizeof(*date), (size_t) 1, TRUE);
+    }
 
     if (*pdate != NULL)
     {
@@ -69,9 +70,15 @@ OCI_Date * OCI_DateInit
         /* get the right error handle */
 
         if (con != NULL)
+        {
             date->err = con->err;
+            date->env = con->env;
+        }
         else
+        {
             date->err = OCILib.err;
+            date->env = OCILib.env;
+        }
 
         /* allocate buffer if needed */
 
@@ -80,10 +87,11 @@ OCI_Date * OCI_DateInit
             date->allocated = TRUE;
 
             if (allocate == TRUE)
+            {
                 date->hstate = OCI_OBJECT_ALLOCATED;
+            }
 
-            date->handle = (OCIDate *) OCI_MemAlloc(OCI_IPC_OCIDATE,
-                                                    sizeof(*date->handle),
+            date->handle = (OCIDate *) OCI_MemAlloc(OCI_IPC_OCIDATE, sizeof(*date->handle),
                                                     (size_t) 1, TRUE);
 
             res = (date->handle != NULL);
@@ -114,7 +122,9 @@ OCI_Date * OCI_DateInit
         }
     }
     else
+    {
         res = FALSE;
+    }
 
     /* check for failure */
 
@@ -192,9 +202,7 @@ OCI_Date ** OCI_API OCI_DateArrayCreate
     OCI_Array *arr   = NULL;
     OCI_Date **dates = NULL;
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0,
-                          sizeof(OCIDate), sizeof(OCI_Date),
-                          0, NULL);
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
 
     if (arr != NULL)
     {
@@ -505,8 +513,7 @@ boolean OCI_API OCI_DateGetDateTime
     int      *sec
 )
 {
-    return (OCI_DateGetDate(date, year, month, day) &&
-            OCI_DateGetTime(date, hour, min, sec));
+    return (OCI_DateGetDate(date, year, month, day) && OCI_DateGetTime(date, hour, min, sec));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -557,8 +564,7 @@ boolean OCI_API OCI_DateNextDay
     (
         res, date->err, date->con,
 
-        OCIDateNextDay(date->err, date->handle, (oratext *) ostr,
-                       (ub4) osize, date->handle)
+        OCIDateNextDay(date->err, date->handle, (oratext *) ostr, (ub4) osize, date->handle)
     )
 
     OCI_ReleaseMetaString(ostr);
@@ -625,8 +631,7 @@ boolean OCI_API OCI_DateSetDateTime
     int       sec
 )
 {
-    return (OCI_DateSetDate(date, year, month, day) &&
-            OCI_DateSetTime(date, hour, min, sec));
+    return (OCI_DateSetDate(date, year, month, day) && OCI_DateSetTime(date, hour, min, sec));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -781,10 +786,14 @@ boolean OCI_API OCI_DateToCTime
     time = mktime(&t);
 
     if (ptm != NULL)
+    {
         memcpy(ptm, &t, sizeof(t));
+    }
 
     if (pt != NULL)
+    {
         *pt = time;
+    }
 
     OCI_RESULT(TRUE);
 
@@ -807,10 +816,14 @@ boolean OCI_API OCI_DateFromCTime
     OCI_CHECK_PTR(OCI_IPC_DATE, date, FALSE);
 
     if ((ptm == NULL) && (t == (time_t) 0))
+    {
         OCI_ExceptionNullPointer(OCI_IPC_TM);
+    }
 
     if (ptm == NULL)
+    {
         ptm = localtime(&t);
+    }
 
     if (ptm != NULL)
     {

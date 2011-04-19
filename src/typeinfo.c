@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: typeinfo.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: typeinfo.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -103,13 +103,21 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
 
     if (type == OCI_TIF_TABLE)
+    {
         item_type = OCI_PTYPE_TABLE;
+    }
     else if (type == OCI_TIF_VIEW)
+    {
         item_type = OCI_PTYPE_VIEW;
+    }
     else if (type == OCI_TIF_TYPE)
+    {
         item_type = OCI_PTYPE_TYPE;
+    }
     else
+    {
         return NULL;
+    }
 
     obj_schema[0] = 0;
     obj_name[0]   = 0;
@@ -136,12 +144,16 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     /* type name must be uppercase */
 
     for (str = obj_name; *str != 0; str++)
+    {
         *str = (mtext) mttoupper(*str);
+    }
 
     /* schema name must be uppercase */
 
     for (str = obj_schema; *str != 0; str++)
+    {
         *str = (mtext) mttoupper(*str);
+    }
 
     /* first try to find it in list */
 
@@ -184,7 +196,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
             typinf->schema      = mtsdup(obj_schema);
             typinf->struct_size = 0;
 
-            res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
+            res = (OCI_SUCCESS == OCI_HandleAlloc(typinf->con->env,
                                                   (dvoid **) (void *) &dschp,
                                                   OCI_HTYPE_DESCRIBE, (size_t) 0,
                                                   (dvoid **) NULL));
@@ -210,7 +222,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                 (
                     res, con,
 
-                    OCITypeByName(OCILib.env, con->err, con->cxt,
+                    OCITypeByName(typinf->con->env, con->err, con->cxt,
                                   (text *) ostr1, (ub4) osize1,
                                   (text *) ostr2, (ub4) osize2,
                                   (text *) NULL, (ub4) 0,
@@ -380,17 +392,23 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                         res = res && OCI_ColumnMap(&typinf->cols[i], NULL);
 
                         if (res == FALSE)
+                        {
                             break;
+                        }
                     }
                 }
                 else
+                {
                     res = FALSE;
+                }
             }
 
             /* free describe handle */
 
             if (dschp != NULL)
+            {
                 OCI_HandleFree(dschp, OCI_HTYPE_DESCRIBE);
+            }
         }
     }
 
@@ -407,7 +425,9 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     /* increment type info reference counter on success */
 
     if (typinf != NULL)
+    {
         typinf->refcount++;
+    }
 
     return typinf;
 }

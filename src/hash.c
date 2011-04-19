@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: hash.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: hash.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -84,8 +84,7 @@ OCI_HashTable * OCI_API OCI_HashCreate
 
     /* allocate table structure */
 
-    table = (OCI_HashTable *) OCI_MemAlloc(OCI_IPC_HASHTABLE, sizeof(*table),
-                                           (size_t) 1, TRUE);
+    table = (OCI_HashTable *) OCI_MemAlloc(OCI_IPC_HASHTABLE, sizeof(*table), (size_t) 1, TRUE);
 
     /* set up attributes and allocate internal array of hash entry pointers */
 
@@ -101,10 +100,14 @@ OCI_HashTable * OCI_API OCI_HashCreate
         res = (table->items != NULL);
     }
     else
+    {
         res = FALSE;
+    }
 
     if (res == FALSE)
+    {
         OCI_HashFree(table);
+    }
 
     OCI_RESULT(res);
 
@@ -144,16 +147,22 @@ boolean OCI_API OCI_HashFree
                 v1 = v1->next;
 
                 if (table->type == OCI_HASH_STRING)
+                {
                     OCI_FREE(v2->value.p_mtext);
+                }
 
                 OCI_FREE(v2);
             }
 
             if (e2->key)
+            {
                 OCI_FREE(e2->key);
+            }
 
             if (e2)
+            {
                 OCI_FREE(e2);
+            }
         }
     }
 
@@ -219,7 +228,9 @@ OCI_HashValue * OCI_API OCI_HashGetValue
     e = OCI_HashLookup(table, key, FALSE);
 
     if (e != NULL)
+    {
         v = e->values;
+    }
 
     OCI_RESULT(v != NULL);
 
@@ -351,8 +362,7 @@ boolean OCI_HashAdd
 
     if (e != NULL)
     {
-        v = (OCI_HashValue *) OCI_MemAlloc(OCI_IPC_HASHVALUE, sizeof(*v),
-                                           (size_t) 1, TRUE);
+        v = (OCI_HashValue *) OCI_MemAlloc(OCI_IPC_HASHVALUE, sizeof(*v), (size_t) 1, TRUE);
 
         if (v != NULL)
         {
@@ -365,7 +375,9 @@ boolean OCI_HashAdd
                 v->value.num = value.num;
             }
             else
+            {
                 v->value.p_void = value.p_void;
+            }
 
             v1 = v2 = e->values;
 
@@ -376,9 +388,13 @@ boolean OCI_HashAdd
             }
 
             if (v2 != NULL)
+            {
                 v2->next = v;
+            }
             else
+            {
                 e->values = v;
+            }
         }
     }
 
@@ -484,13 +500,14 @@ OCI_HashEntry * OCI_API OCI_HashLookup
         for(e = table->items[i]; e != NULL; e = e->next)
         {
             if (mtscasecmp(e->key, key) == 0)
+            {
                 break;
+            }
         }
 
         if ((e == NULL) && (create == TRUE))
         {
-            e = (OCI_HashEntry *) OCI_MemAlloc(OCI_IPC_HASHENTRY, sizeof(*e),
-                                               (size_t) 1, TRUE);
+            e = (OCI_HashEntry *) OCI_MemAlloc(OCI_IPC_HASHENTRY, sizeof(*e), (size_t) 1, TRUE);
 
             if (e != NULL)
             {
@@ -505,9 +522,13 @@ OCI_HashEntry * OCI_API OCI_HashLookup
                 }
 
                 if (e2 != NULL)
+                {
                     e2->next = e;
+                }
                 else
+                {
                     table->items[i] = e;
+                }
             }
         }
     }

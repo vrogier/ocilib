@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_internal.h, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: ocilib_internal.h, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED
@@ -153,6 +153,21 @@ ub4 OCI_ProcNotify
     ub4              paylen,
     void            *desc,
     ub4              mode
+);
+
+sb4 OCI_ProcFailOver
+(
+    dvoid *svchp,
+    dvoid *envhp,
+    dvoid *fo_ctx,
+    ub4    fo_type,
+    ub4    fo_event
+);
+
+void OCI_ProcHAEvent
+(
+    dvoid     *evtctx,
+    OCIEvent  *eventhp
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1144,7 +1159,7 @@ int OCI_StringUTF8Length
 );
 
 #define OCI_GetInputMetaString(s, n)     OCI_GetInputString((void *) s, n,     \
-                                                            sizeof(mtext),    \
+                                                            sizeof(mtext),     \
                                                             sizeof(omtext))
 
 #define OCI_GetOutputMetaString(s, d, n) OCI_GetOutputString((void *) s, d, n, \
@@ -1152,30 +1167,32 @@ int OCI_StringUTF8Length
                                                              sizeof(mtext))
 
 #define OCI_GetInputDataString(s, n)     OCI_GetInputString((void *) s, n,     \
-                                                            sizeof(dtext),    \
+                                                            sizeof(dtext),     \
                                                             sizeof(odtext))
 
 #define OCI_GetOutputDataString(s, d, n) OCI_GetOutputString((void *) s, d, n, \
-                                                             sizeof(odtext),  \
+                                                             sizeof(odtext),   \
                                                              sizeof(dtext))
 
 #define OCI_GetDataFromMetaString(s, n)  OCI_GetInputString((void *) s, n,     \
-                                                            sizeof(mtext),    \
+                                                            sizeof(mtext),     \
                                                             sizeof(dtext))
 
 #define OCI_GetMetaFromDataString(s, n)  OCI_GetInputString((void *) s, n,     \
-                                                            sizeof(dtext),    \
+                                                            sizeof(dtext),     \
                                                             sizeof(mtext))
 
 void * OCI_StringFromStringPtr
 (
-    OCIString *str,
-    void    ** buf,
-    int       *buflen
+    OCIEnv     *env,
+    OCIString  *str,
+    void      **buf,
+    int        *buflen
 );
 
 boolean OCI_StringToStringPtr
 (
+    OCIEnv     *env,
     OCIString **str,
     OCIError   *err,
     void       *value,
@@ -1285,5 +1302,5 @@ boolean OCI_TypeInfoClose
 }
 #endif
 
-#endif    /* OCILIB_COMMON_FUNCTIONS_H_INCLUDED */
+#endif    /* OCILIB_OCILIB_TYPES_H_INCLUDED */
 

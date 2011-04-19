@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: number.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: number.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -71,7 +71,9 @@ boolean OCI_NumberGet
         uword sign = OCI_NUMBER_SIGNED;
 
         if (flag & OCI_NUM_UNSIGNED)
+        {
             sign = OCI_NUMBER_UNSIGNED;
+        }
 
         OCI_CALL2
         (
@@ -117,7 +119,9 @@ boolean OCI_NumberSet
         uword sign = OCI_NUMBER_SIGNED;
 
         if (flag & OCI_NUM_UNSIGNED)
+        {
             sign = OCI_NUMBER_UNSIGNED;
+        }
 
         OCI_CALL2
         (
@@ -150,28 +154,28 @@ boolean OCI_NumberConvertStr
     void *ostr2 = NULL;
     int osize2  = fmt_size;
 
-    #ifdef OCI_CHARSET_MIXED
+#ifdef OCI_CHARSET_MIXED
 
     mtext temp[OCI_SIZE_BUFFER + 1];
 
-    #endif
+#endif
 
     OCI_CHECK(con   == NULL, FALSE);
     OCI_CHECK(str   == NULL, FALSE);
     OCI_CHECK(fmt   == NULL, FALSE);
 
-    #ifdef OCI_CHARSET_MIXED
+#ifdef OCI_CHARSET_MIXED
 
     temp[0] = 0;
 
     ostr1  = temp;
     osize1 = (int) wcstombs(temp, str, OCI_SIZE_BUFFER + OCI_CVT_CHAR);
 
-    #else
+#else
 
     ostr1 = OCI_GetInputDataString(str, &osize1);
 
-    #endif
+#endif
 
     ostr2 = OCI_GetInputMetaString(fmt, &osize2);
 
@@ -181,16 +185,15 @@ boolean OCI_NumberConvertStr
     (
         res, con,
 
-        OCINumberFromText(con->err, (oratext *) ostr1, (ub4) osize1,
-                          (oratext *) ostr2, (ub4) osize2,
-                          (oratext *) NULL,  (ub4) 0, num)
+        OCINumberFromText(con->err, (oratext *) ostr1, (ub4) osize1, (oratext *) ostr2,
+                          (ub4) osize2, (oratext *) NULL,  (ub4) 0, num)
     )
 
-    #ifndef OCI_CHARSET_MIXED
+#ifndef OCI_CHARSET_MIXED
 
     OCI_ReleaseDataString(ostr1);
 
-    #endif
+#endif
 
     OCI_ReleaseMetaString(ostr2);
 

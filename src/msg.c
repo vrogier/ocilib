@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: msg.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: msg.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -65,7 +65,7 @@ OCI_Msg * OCI_API OCI_MsgCreate
 
         /* allocate message properties descriptor */
 
-        res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) OCILib.env,
+        res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) msg->typinf->con->env,
                                                   (dvoid **) &msg->proph,
                                                   OCI_DTYPE_AQMSG_PROPERTIES,
                                                   (size_t) 0, (dvoid **) NULL));
@@ -83,7 +83,9 @@ OCI_Msg * OCI_API OCI_MsgCreate
         }
     }
     else
+    {
         res = FALSE;
+    }
 
     /* check for failure */
 
@@ -135,29 +137,29 @@ boolean OCI_API OCI_MsgFree
         (
             res, msg->typinf->con,
 
-            OCIRawResize(OCILib.env, msg->typinf->con->err, 0, (OCIRaw **) &msg->payload)
+            OCIRawResize(msg->typinf->con->env, msg->typinf->con->err, 0, (OCIRaw **) &msg->payload)
         )
-    }	
+    }
 
     /* free message ID */
 
     if (msg->id != NULL)
     {
-        
+
         OCI_CALL2
         (
             res, msg->typinf->con,
 
-            OCIRawResize(OCILib.env, msg->typinf->con->err, 0, (OCIRaw **) &msg->id)
+            OCIRawResize(msg->typinf->con->env, msg->typinf->con->err, 0, (OCIRaw **) &msg->id)
         )
-    }		
+    }
 
     msg->id = NULL;
 
     /* free OCI descriptor */
 
     OCI_DescriptorFree((dvoid *) msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
-  
+
     OCI_FREE(msg);
 
     return res;
@@ -285,12 +287,14 @@ boolean OCI_API OCI_MsgGetRaw
 
     if ((msg->payload != NULL) && (msg->ind != OCI_IND_NULL))
     {
-        raw_size = OCIRawSize(OCILib.env, (OCIRaw *) msg->payload);
+        raw_size = OCIRawSize(msg->typinf->con->env, (OCIRaw *) msg->payload);
 
         if (*size > raw_size)
+        {
             *size = raw_size;
+        }
 
-        memcpy(raw, OCIRawPtr(OCILib.env, msg->payload), (size_t) (*size));
+        memcpy(raw, OCIRawPtr(msg->typinf->con->env, msg->payload), (size_t) (*size));
     }
     else
     {
@@ -316,17 +320,17 @@ boolean OCI_API OCI_MsgSetRaw
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
- 
+
     OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->tcode == OCI_UNKNOWN, FALSE);
 
     OCI_CALL2
     (
         res, msg->typinf->con,
 
-        OCIRawAssignBytes(OCILib.env, msg->typinf->con->err, (ub1*) raw,
-                            (ub4) size, (OCIRaw **) &msg->payload)
+        OCIRawAssignBytes(msg->typinf->con->env, msg->typinf->con->err,
+                          (ub1*) raw, (ub4) size, (OCIRaw **) &msg->payload)
     )
- 
+
     if ((res == TRUE) && (msg->payload != NULL) && (size > 0))
     {
         msg->ind = OCI_IND_NOTNULL;
@@ -464,8 +468,7 @@ OCI_Date * OCI_API OCI_MsgGetEnqueueTime
 
     if (res == TRUE)
     {
-        date = OCI_DateInit(msg->typinf->con, &msg->date, &oci_date,
-                            FALSE, FALSE);
+        date = OCI_DateInit(msg->typinf->con, &msg->date, &oci_date, FALSE, FALSE);
 
         res = (date != NULL);
     }
@@ -574,9 +577,9 @@ unsigned int OCI_API OCI_MsgGetState
     {
         ret = OCI_UNKNOWN;
     }
-    
+
     OCI_RESULT(res);
-    
+
     return (int) ret;
 }
 
@@ -665,12 +668,14 @@ boolean OCI_API OCI_MsgGetID
     {
         ub4 raw_len = 0;
 
-        raw_len = OCIRawSize(OCILib.env, msg->id);
+        raw_len = OCIRawSize(msg->typinf->con->env, msg->id);
 
         if (*len > raw_len)
+        {
             *len = raw_len;
+        }
 
-        memcpy(id, OCIRawPtr(OCILib.env, msg->id), (size_t) (*len));
+        memcpy(id, OCIRawPtr(msg->typinf->con->env, msg->id), (size_t) (*len));
     }
     else
     {
@@ -716,12 +721,14 @@ boolean OCI_API OCI_MsgGetOriginalID
     {
         ub4 raw_len = 0;
 
-        raw_len = OCIRawSize(OCILib.env, value);
+        raw_len = OCIRawSize(msg->typinf->con->env, value);
 
         if (*len > raw_len)
+        {
             *len = raw_len;
+        }
 
-        memcpy(id, OCIRawPtr(OCILib.env, value), (size_t) (*len));
+        memcpy(id, OCIRawPtr(msg->typinf->con->env, value), (size_t) (*len));
     }
     else
     {
@@ -753,7 +760,7 @@ boolean OCI_API OCI_MsgSetOriginalID
     (
         res, msg->typinf->con,
 
-        OCIRawAssignBytes(OCILib.env, msg->typinf->con->err,
+        OCIRawAssignBytes(msg->typinf->con->env, msg->typinf->con->err,
                           (ub1*) id, (ub4) len, (OCIRaw **) &value)
     )
 
@@ -968,8 +975,7 @@ boolean OCI_API OCI_MsgSetConsumers
 
     if ((consumers != NULL) && (count > 0))
     {
-        handles = (OCIAQAgent **) OCI_MemAlloc(OCI_IPC_ARRAY,sizeof(OCIAQAgent *),
-                                               count, FALSE);
+        handles = (OCIAQAgent **) OCI_MemAlloc(OCI_IPC_ARRAY,sizeof(OCIAQAgent *), count, FALSE);
 
         if (handles != NULL)
         {

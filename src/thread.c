@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: thread.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: thread.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -50,7 +50,9 @@ void OCI_ThreadProc
     OCI_Thread *thread = (OCI_Thread *) arg;
 
     if (thread != NULL)
+    {
         thread->proc(thread, thread->arg);
+    }
 }
 
 /* ********************************************************************************************* *
@@ -75,8 +77,7 @@ OCI_Thread * OCI_API OCI_ThreadCreate
 
     /* allocate thread structure */
 
-    thread = (OCI_Thread *) OCI_MemAlloc(OCI_IPC_THREAD, sizeof(*thread),
-                                         (size_t) 1, TRUE);
+    thread = (OCI_Thread *) OCI_MemAlloc(OCI_IPC_THREAD, sizeof(*thread), (size_t) 1, TRUE);
 
     if (thread != NULL)
     {
@@ -106,7 +107,9 @@ OCI_Thread * OCI_API OCI_ThreadCreate
         )
     }
     else
+    {
         res = FALSE;
+    }
 
     if (res == FALSE)
     {

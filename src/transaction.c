@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: transaction.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: transaction.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -74,10 +74,12 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
         /* allocate transaction handle */
 
         if (res == TRUE)
-            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) OCILib.env,
+        {
+            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) trans->con->env,
                                                   (dvoid **) (void *) &trans->htr,
                                                   (ub4) OCI_HTYPE_TRANS,
                                                   (size_t) 0, (dvoid **) NULL));
+        }
 
         /* set context transaction attribute */
 
@@ -107,7 +109,9 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
         }
     }
     else
-        res = FALSE;
+    {
+       res = FALSE;
+    }
 
     /* handle errors */
 
@@ -215,9 +219,13 @@ boolean OCI_API OCI_TransactionStop
     /* commit or rollback upon auto commit mode */
 
     if (trans->con->autocom == TRUE)
+    {
         res = OCI_Commit(trans->con);
+    }
     else
+    {
         res = OCI_Rollback(trans->con);
+    }
 
     /* detach global transaction */
 

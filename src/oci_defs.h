@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -49,7 +49,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: oci_defs.h, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: oci_defs.h, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCI_DEFS_H_INCLUDED
@@ -217,6 +217,9 @@
 #define OCI_ATTR_MAXDATA_SIZE 33       /* Maximumsize of data on the server  */
 #define OCI_ATTR_ROWS_RETURNED 42
 
+#define OCI_ATTR_FOCBK        43              /* Failover Callback attribute */
+
+
 /* Number of rows returned in current iter - for Bind handles */
 
 #define OCI_ATTR_LOBEMPTY               45                    /* empty lob ? */
@@ -284,6 +287,7 @@
 #define OCI_ATTR_CONN_MAX              184
 #define OCI_ATTR_CONN_INCR             185
 #define OCI_ATTR_ROWS_FETCHED          197      /* rows fetched in last call */
+#define OCI_ATTR_SPOOL_STMTCACHESIZE   208        /*Stmt cache size of pool  */
 
 #define OCI_ATTR_TYPECODE              216           /* object or collection */
 #define OCI_ATTR_COLLECTION_TYPECODE   217         /* varray or nested table */
@@ -300,7 +304,8 @@
 #define OCI_ATTR_CHAR_USED             285          /* char length semantics */
 #define OCI_ATTR_CHAR_SIZE             286                    /* char length */
 
-#define OCI_ATTR_CQ_QUERYID            304
+#define OCI_ATTR_EVTCBK                304                    /* ha callback */
+#define OCI_ATTR_EVTCTX                305            /* ctx for ha callback */
 
 #define OCI_ATTR_SPOOL_TIMEOUT         308                /* session timeout */
 #define OCI_ATTR_SPOOL_GETMODE         309               /* session get mode */
@@ -310,16 +315,29 @@
 #define OCI_ATTR_SPOOL_MAX             313              /* max session count */
 #define OCI_ATTR_SPOOL_INCR            314        /* session increment count */
 
-#define OCI_ATTR_TRANSACTION_NO             365         /* AQ enq txn number */
-
-#define OCI_ATTR_ADMIN_PFILE           389         /* client-side param file */
+#define OCI_ATTR_TRANSACTION_NO        365              /* AQ enq txn number */
 
 #define OCI_ATTR_MODULE                366             /* module for tracing */
 #define OCI_ATTR_ACTION                367             /* action for tracing */
 #define OCI_ATTR_CLIENT_INFO           368                    /* client info */
 
+#define OCI_ATTR_ADMIN_PFILE           389         /* client-side param file */
+
 #define OCI_ATTR_SUBSCR_PORTNO         390       /* port no to listen        */
 
+#define OCI_ATTR_HOSTNAME              390           /* SYS_CONTEXT hostname */
+#define OCI_ATTR_DBNAME                391             /* SYS_CONTEXT dbname */
+#define OCI_ATTR_INSTNAME              392      /* SYS_CONTEXT instance name */
+#define OCI_ATTR_SERVICENAME           393       /* SYS_CONTEXT service name */
+#define OCI_ATTR_INSTSTARTTIME         394 /* v$instance instance start time */
+#define OCI_ATTR_HA_TIMESTAMP          395                     /* event time */
+#define OCI_ATTR_DBDOMAIN              399                      /* db domain */
+#define OCI_ATTR_EVENTTYPE			   400                     /* event type */
+#define OCI_ATTR_HA_SOURCE			   401
+#define OCI_ATTR_HA_STATUS			   402
+#define OCI_ATTR_HA_SRVFIRST           403
+#define OCI_ATTR_HA_SRVNEXT            404
+#define OCI_ATTR_TAF_ENABLED           405
 #define OCI_ATTR_DRIVER_NAME           424                    /* Driver Name */
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
@@ -398,12 +416,17 @@
 #define OCI_DATA_AT_EXEC      0x00000002             /* data at execute time */
 #define OCI_DYNAMIC_FETCH     0x00000002                /* fetch dynamically */
 #define OCI_PIECEWISE         0x00000004          /* piecewise DMLs or fetch */
+#define OCI_BIND_SOFT         0x00000040              /* soft bind or define */
+#define OCI_DEFINE_SOFT       0x00000080              /* soft bind or define */
 
 /*----------------------- Execution Modes -----------------------------------*/
 
-#define OCI_BATCH_ERRORS             0x80      /* batch errors in array dmls */
-#define OCI_STMT_SCROLLABLE_READONLY 0x08     /* if result set is scrollable */
-#define OCI_PARSE_ONLY               0x0000010   /* only parse the statement */
+#define OCI_BATCH_MODE             0x00000001 /* batch the oci stmt for exec */
+#define OCI_STMT_SCROLLABLE_READONLY \
+                                   0x00000008 /* if result set is scrollable */
+#define OCI_DESCRIBE_ONLY          0x00000010 /* only describe the statement */
+#define OCI_BATCH_ERRORS           0x00000080  /* batch errors in array dmls */
+#define OCI_PARSE_ONLY             0x00000100    /* only parse the statement */
 
 /*-----------------------------  Various Modes ------------------------------*/
 #define OCI_DEFAULT         0x00000000
@@ -416,6 +439,7 @@
 #define OCI_SYSDBA          0x00000002           /* for SYSDBA authorization */
 #define OCI_SYSOPER         0x00000004          /* for SYSOPER authorization */
 #define OCI_PRELIM_AUTH     0x00000008      /* for preliminary authorization */
+#define OCI_STMT_CACHE      0x00000040            /* enable OCI Stmt Caching */
 
 /*------------------------ Transaction Start Flags --------------------------*/
 
@@ -536,6 +560,36 @@ typedef struct OCIAQLisMsgProps OCIAQLisMsgProps;     /* AQ listen msg props */
 #define OCI_SPD_FORCE        0x0001       /* Force the sessions to terminate.
                                              Even if there are some busy
                                              sessions close them */
+
+/*------------------------ Fail Over Events ---------------------------------*/
+#define OCI_FO_END          0x00000001
+#define OCI_FO_ABORT        0x00000002
+#define OCI_FO_REAUTH       0x00000004
+#define OCI_FO_BEGIN        0x00000008
+#define OCI_FO_ERROR        0x00000010
+/*---------------------------------------------------------------------------*/
+
+/*------------------------ Fail Over Callback Return Codes ------------------*/
+#define OCI_FO_RETRY        25410
+/*---------------------------------------------------------------------------*/
+
+/*------------------------- Fail Over Types ---------------------------------*/
+#define OCI_FO_NONE           0x00000001
+#define OCI_FO_SESSION        0x00000002
+#define OCI_FO_SELECT         0x00000004
+#define OCI_FO_TXNAL          0x00000008
+
+/*--------------------------Failover Callback Structure ---------------------*/
+typedef sb4 (*OCICallbackFailover)(dvoid *svcctx, dvoid *envctx,
+                                   dvoid *fo_ctx, ub4 fo_type,
+                                   ub4 fo_event);
+
+typedef struct
+{
+  OCICallbackFailover callback_function;
+  dvoid *fo_ctx;
+}
+OCIFocbkStruct;
 
 /*--------------------- OCI Thread Object Definitions------------------------*/
 
@@ -876,6 +930,23 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_SUBSCR_NAMESPACE_AQ          1                /* Advanced Queues */
 #define OCI_SUBSCR_NAMESPACE_DBCHANGE    2            /* change notification */
 #define OCI_SUBSCR_NAMESPACE_MAX         3          /* Max Name Space Number */
+
+
+
+/* -------------------- HA Event Handle Attributes values------------------- */
+#define OCI_EVENTTYPE_HA            0  /* valid value for OCI_ATTR_EVENTTYPE */
+
+/* valid values for OCI_ATTR_HA_SOURCE */
+#define OCI_HA_SOURCE_INSTANCE            0 
+#define OCI_HA_SOURCE_DATABASE            1
+#define OCI_HA_SOURCE_NODE                2
+#define OCI_HA_SOURCE_SERVICE             3
+#define OCI_HA_SOURCE_SERVICE_MEMBER      4
+#define OCI_HA_SOURCE_ASM_INSTANCE        5
+#define OCI_HA_SOURCE_SERVICE_PRECONNECT  6
+
+#define OCI_HA_STATUS_DOWN          0 /* valid values for OCI_ATTR_HA_STATUS */
+#define OCI_HA_STATUS_UP            1
 
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */
 

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2010 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: error.c, v 3.8.1 2010-12-13 00:00 Vincent Rogier $
+ * $Id: error.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -113,12 +113,16 @@ OCI_Error * OCI_ErrorGet
                 err = OCI_ErrorCreate();
 
                 if (err != NULL)
+                {
                     OCI_ThreadKeySet(OCILib.key_errs, err);
+                }
             }
             else if (check == TRUE)
             {
                 if ((err->active == TRUE) || (err->warning != warning))
+                {
                     err = NULL;
+                }
             }
         }
     }
@@ -129,7 +133,9 @@ OCI_Error * OCI_ErrorGet
         if (err != NULL)
         {
             if ((err->active == TRUE) || (err->warning != warning))
+            {
                 err = NULL;
+            }
         }
     }
 
