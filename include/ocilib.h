@@ -1132,7 +1132,7 @@ typedef struct OCI_Enqueue OCI_Enqueue;
 
 typedef void (__cdecl *POCI_ERROR)
 (
-	OCI_Error *err
+    OCI_Error *err
 );
 
 /**
@@ -1148,8 +1148,8 @@ typedef void (__cdecl *POCI_ERROR)
 
 typedef void (__cdecl *POCI_THREAD)
 (
-	OCI_Thread *thread, 
-	void       *arg
+    OCI_Thread *thread, 
+    void       *arg
 );
 
 /**
@@ -1164,7 +1164,7 @@ typedef void (__cdecl *POCI_THREAD)
 
 typedef void (__cdecl *POCI_THREADKEYDEST)
 (
-	void *data
+    void *data
 );
 
 /**
@@ -1179,7 +1179,7 @@ typedef void (__cdecl *POCI_THREADKEYDEST)
 
 typedef void (__cdecl *POCI_NOTIFY)
 (
-	OCI_Event *event
+    OCI_Event *event
 );
 
 /**
@@ -1212,9 +1212,9 @@ typedef void (__cdecl *POCI_NOTIFY)
 
 typedef unsigned int (__cdecl *POCI_TAF_HANDLER)
 (
-	OCI_Connection *con, 
-	unsigned int	type, 
-	unsigned int	event
+    OCI_Connection *con, 
+    unsigned int    type, 
+    unsigned int    event
 );
 
 /**
@@ -1245,10 +1245,10 @@ typedef unsigned int (__cdecl *POCI_TAF_HANDLER)
 
 typedef void (__cdecl *POCI_HA_HANDLER)
 (
-	OCI_Connection *con, 
-	unsigned int    source, 
-	unsigned int    status, 
-	OCI_Timestamp  *time
+    OCI_Connection *con, 
+    unsigned int    source, 
+    unsigned int    status, 
+    OCI_Timestamp  *time
 );
 
 /* public structures */
@@ -1747,17 +1747,17 @@ typedef unsigned int big_uint;
 
 /* HA event type */
 
-#define OCI_HAE_DOWN						0
+#define OCI_HAE_DOWN                        0
 #define OCI_HAE_EVENT_UP                    1
 
 /* HA event source */
-#define OCI_HAS_INSTANCE					0 
-#define OCI_HAS_DATABASE					1
-#define OCI_HAS_NODE						2
-#define OCI_HAS_SERVICE						3
-#define OCI_HAS_SERVICE_MEMBER				4
-#define OCI_HAS_ASM_INSTANCE				5
-#define OCI_HAS_PRECONNECT					6
+#define OCI_HAS_INSTANCE                    0 
+#define OCI_HAS_DATABASE                    1
+#define OCI_HAS_NODE                        2
+#define OCI_HAS_SERVICE                        3
+#define OCI_HAS_SERVICE_MEMBER                4
+#define OCI_HAS_ASM_INSTANCE                5
+#define OCI_HAS_PRECONNECT                    6
 
 /* Fail over types */
 
@@ -13483,6 +13483,37 @@ OCI_EXPORT boolean OCI_ParseFmt
     ...
 );
 
+/**
+ * @brief
+ * Describe the select list of a formatted SQL select statement.
+ *
+ * @param stmt - Statement handle
+ * @param sql  - SQL statement
+ * @param ...  - List of program values to format the SQL
+ *
+ * @note
+ * This call sends the SELECT SQL order to the server for retrieving the
+ * description of the select order only.
+ * The command is not executed.
+ * This call is only useful to retreive information on the associated resultet
+ * Call OCI_GetResultet() after OCI_Describe() to access to SELECT list
+ * information
+ *
+ * @note
+ * This call prepares the statement (internal call to OCI_Prepare()) and ask
+ * the Oracle server to describe the output SELECT list.
+ * OCI_Execute() can be call after OCI_Desbribe() in order to execute the
+ * statement, which means that the server will parse, and describe again the SQL
+ * order.
+ *
+ * @warning
+ * Do not use OCI_Desbribe() unless you're only interested in the resultset
+ * information because the statement will be parsed again when executed and thus
+ * leading to unnecessary server roundtrips and less performance
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ */
 
 OCI_EXPORT boolean OCI_DescribeFmt
 (

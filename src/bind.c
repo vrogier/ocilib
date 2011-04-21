@@ -47,11 +47,6 @@ boolean OCI_BindFree
     OCI_Bind *bnd
 )
 {
-    if (bnd->alloc == TRUE)
-    {
-        OCI_FREE(bnd->buf.data);
-    }
-
     if (bnd->stmt->bind_alloc_mode == OCI_BAM_INTERNAL)
     {
         if (bnd->is_array)
@@ -62,6 +57,28 @@ boolean OCI_BindFree
         {
             switch (bnd->type)
             {
+                case OCI_CDT_NUMERIC:
+                {
+                    OCI_MemFree(bnd->input);
+                    
+                    if (bnd->alloc == TRUE)
+                    {
+                        OCI_FREE(bnd->buf.data);
+                    }                    
+                    
+                    break;
+                }
+                case OCI_CDT_TEXT:
+                {
+                    OCI_MemFree(bnd->input);
+                    
+                    if (bnd->alloc == TRUE)
+                    {
+                        OCI_FREE(bnd->buf.data);
+                    }                    
+
+                    break;
+                }
                 case OCI_CDT_DATETIME:
                 {
                     OCI_DateFree((OCI_Date *) bnd->input);
@@ -109,6 +126,13 @@ boolean OCI_BindFree
             }
         }
     }
+    else
+    {
+        if (bnd->alloc == TRUE)
+        {
+            OCI_FREE(bnd->buf.data);
+        }
+    }
 
     OCI_FREE(bnd->buf.inds);
     OCI_FREE(bnd->buf.obj_inds);
@@ -148,8 +172,8 @@ boolean OCI_BindAllocData
             {
                 if (bnd->code == SQLT_VNU)
                 {
-                    elem_size   = sizeof(big_int);
-                    struct_size = sizeof(OCINumber);
+                    struct_size = sizeof(big_int);
+                    elem_size   = sizeof(OCINumber);
                 }
                 else
                 {
@@ -166,6 +190,13 @@ boolean OCI_BindAllocData
             case OCI_CDT_TEXT:
             {
                 struct_size = bnd->size;
+
+            #ifdef OCI_CHECK_DATASTRINGS
+
+                elem_size   = bnd->size * (sizeof(dtext) / sizeof(odtext));
+
+            #endif
+
                 break;
             }
             case OCI_CDT_LOB:
@@ -248,15 +279,59 @@ boolean OCI_BindAllocData
 
         if (arr != NULL)
         {
-            if (elem_size > 0)
+            switch (bnd->type)
             {
-                bnd->buf.data = arr->mem_handle;
-                bnd->input    = arr->tab_obj;
-            }
-            else
-            {
-                bnd->buf.data = arr->mem_struct;
-                bnd->input    = bnd->buf.data;
+                case OCI_CDT_NUMERIC:
+                {
+                    if (bnd->code == SQLT_VNU)
+                    {
+                        bnd->buf.data = (void **) arr->mem_handle;
+                        bnd->input    = (void **) arr->mem_struct;
+                        bnd->alloc    = TRUE;
+                    }
+                    else
+                    {
+                        bnd->buf.data = (void **) arr->mem_struct;
+                        bnd->input    = (void **) bnd->buf.data;
+                    }
+                    break;
+                }
+                case OCI_CDT_TEXT:
+                {
+
+            #ifdef OCI_CHECK_DATASTRINGS
+
+                    bnd->buf.data = (void **) arr->mem_handle;
+                    bnd->input    = (void **) arr->mem_struct;
+                    bnd->alloc    = TRUE;
+            #else
+
+                    bnd->buf.data = (void **) arr->mem_struct;
+                    bnd->input    = (void **) bnd->buf.data;
+
+            #endif
+
+                    break;
+                }
+                case OCI_CDT_RAW:
+                {
+                    bnd->buf.data = (void **) arr->mem_struct;
+                    bnd->input    = (void **) bnd->buf.data;
+                    break;
+                }
+                case OCI_CDT_DATETIME:
+                case OCI_CDT_LOB:
+                case OCI_CDT_FILE:
+                case OCI_CDT_TIMESTAMP:
+                case OCI_CDT_INTERVAL:
+                case OCI_CDT_OBJECT:
+                case OCI_CDT_COLLECTION:
+                case OCI_CDT_REF:
+                {
+                    bnd->buf.data = (void **) arr->mem_handle;
+                    bnd->input    = (void **) arr->tab_obj;
+                    break;
+                }
             }
         }
     }
@@ -266,8 +341,16 @@ boolean OCI_BindAllocData
         {
             case OCI_CDT_NUMERIC:
             {
-                bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
-                bnd->buf.data = (void **) bnd->input;
+                if (bnd->code == SQLT_VNU)
+                {
+                    bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_VOID, sizeof(big_int),   1, TRUE);
+                    bnd->buf.data = (void **) OCI_MemAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
+                }
+                else
+                {
+                    bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
+                    bnd->buf.data = (void **) bnd->input;
+                }
                 break;
             }
             case OCI_CDT_DATETIME:
@@ -284,8 +367,22 @@ boolean OCI_BindAllocData
             }
             case OCI_CDT_TEXT:
             {
+
                 bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
                 bnd->buf.data = (void **) bnd->input;
+
+
+            #ifdef OCI_CHECK_DATASTRINGS
+
+                    bnd->buf.data = (void **) OCI_MemAlloc(OCI_IPC_STRING, bnd->size * (sizeof(dtext) / sizeof(odtext)), 1, TRUE);
+                    bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
+            #else
+
+                    bnd->buf.data = (void **) OCI_MemAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
+                    bnd->input    = (void **) bnd->buf.data;
+
+            #endif
+
                 break;
             }
             case OCI_CDT_LOB:

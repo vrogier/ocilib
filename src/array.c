@@ -260,9 +260,9 @@ OCI_Array * OCI_ArrayCreate
 
         if (res == TRUE)
         {
-            if ((arr->elem_type != OCI_CDT_NUMERIC) &&
-                (arr->elem_type != OCI_CDT_TEXT   ) &&
-                (arr->elem_type != OCI_CDT_RAW    ))
+            if ( (arr->elem_type != OCI_CDT_NUMERIC ) &&
+                 (arr->elem_type != OCI_CDT_TEXT    ) && 
+                 (arr->elem_type != OCI_CDT_RAW     ))
             {
                 arr->tab_obj = (void **) OCI_MemAlloc(OCI_IPC_VOID,  sizeof(void *), nb_elem, TRUE);
 
@@ -312,7 +312,7 @@ OCI_Array * OCI_ArrayCreate
             }
         }
 
-        if ((res == TRUE) && (arr->mem_handle != NULL))
+        if ((res == TRUE) && (arr->tab_obj != NULL) && (arr->mem_handle != NULL))
         {
             res = OCI_ArrayInit(arr, typinf);
         }

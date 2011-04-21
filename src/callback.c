@@ -580,7 +580,7 @@ void OCI_ProcHAEvent
     OCIServer *srvhp = NULL;
     OCI_List  *list  = OCILib.cons;
     OCI_Item  *item  = NULL;
-	boolean    res   = TRUE;
+    boolean    res   = TRUE;
 
     OCI_NOT_USED(evtctx);
 
@@ -612,69 +612,69 @@ void OCI_ProcHAEvent
             {
                 OCI_Connection *tmp = (OCI_Connection *) item->data;
                 OCI_Connection *con  = NULL;
-				OCI_Timestamp  *tmsp = NULL;
-				OCIDateTime    *dth  = NULL;
+                OCI_Timestamp  *tmsp = NULL;
+                OCIDateTime    *dth  = NULL;
 
-				ub4 status = OCI_HA_STATUS_DOWN;
-				ub4 source = OCI_HA_SOURCE_INSTANCE;
+                ub4 status = OCI_HA_STATUS_DOWN;
+                ub4 source = OCI_HA_SOURCE_INSTANCE;
 
                 if ((tmp != NULL) && (tmp->svr == srvhp))
                 {
                     con = tmp;
  
-					/* get event timestamp */
+                    /* get event timestamp */
 
-					OCI_CALL2
-					(
-						res, con,
+                    OCI_CALL2
+                    (
+                        res, con,
 
-						OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &dth,
-								   (ub4 *) NULL,  (ub4) OCI_ATTR_HA_TIMESTAMP, con->err)
+                        OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &dth,
+                                   (ub4 *) NULL,  (ub4) OCI_ATTR_HA_TIMESTAMP, con->err)
 
-					)
+                    )
 
-					if (res == TRUE)
-					{
-						res = (OCI_TimestampInit(con, &tmsp, dth, OCI_TIMESTAMP) != NULL);
-					}
+                    if (res == TRUE)
+                    {
+                        res = (OCI_TimestampInit(con, &tmsp, dth, OCI_TIMESTAMP) != NULL);
+                    }
 
-					/* get status */
+                    /* get status */
 
-					if (res == TRUE)
-					{
-						OCI_CALL2
-						(
-							res, con,
+                    if (res == TRUE)
+                    {
+                        OCI_CALL2
+                        (
+                            res, con,
 
-							OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &status,
-									   (ub4 *) NULL,  (ub4) OCI_ATTR_HA_SOURCE, con->err)
+                            OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &status,
+                                       (ub4 *) NULL,  (ub4) OCI_ATTR_HA_SOURCE, con->err)
 
-						)
-					}
+                        )
+                    }
 
-					/* get source */
+                    /* get source */
 
-					if (res == TRUE)
-					{
-						OCI_CALL2
-						(
-							res, con,
+                    if (res == TRUE)
+                    {
+                        OCI_CALL2
+                        (
+                            res, con,
 
-							OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &source,
-									   (ub4 *) NULL,  (ub4) OCI_ATTR_HA_STATUS, con->err)
+                            OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &source,
+                                       (ub4 *) NULL,  (ub4) OCI_ATTR_HA_STATUS, con->err)
 
-						)
-					}
+                        )
+                    }
 
-					/* on success, call the user callback */
+                    /* on success, call the user callback */
 
-					if (res == TRUE)
-					{
-						OCILib.ha_handler(con, (unsigned int) source, (unsigned int) status, tmsp);
-					}
+                    if (res == TRUE)
+                    {
+                        OCILib.ha_handler(con, (unsigned int) source, (unsigned int) status, tmsp);
+                    }
 
-					item = item->next;
-				}
+                    item = item->next;
+                }
             }
 
             if (list->mutex != NULL)

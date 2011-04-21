@@ -218,9 +218,9 @@ boolean OCI_BindCheck
 
                         res = OCI_NumberSet(stmt->con,
                                             (OCINumber *) ((ub1 *) bnd->buf.data +
-                                                           (size_t) (j*bnd->size)),
+                                            (size_t) (j*bnd->size)),
                                             (void *) (((ub1 *) bnd->input) +
-                                                      (((size_t)j)*sizeof(big_int))),
+                                            (((size_t)j)*sizeof(big_int))),
                                             (uword) sizeof(big_int), bnd->subtype);
                     }
                     else if (bnd->alloc == TRUE)
@@ -2728,22 +2728,22 @@ boolean OCI_API OCI_BindString
 
     if ((len == 0) || len == (UINT_MAX))
     {
-		if (data != NULL)
-		{
-			/* only compute length for external bind if no valid length has been provided */
+        if (data != NULL)
+        {
+            /* only compute length for external bind if no valid length has been provided */
 
-			len = (unsigned int) dtslen(data);
-		}
-		else
-		{
-			/* if data is NULL, it means that binding mode is OCI_BAM_INTERNAL.
-			   An invalid length passed to the function, we do not have a valid length to 
-			   allocate internal array, thus we need to raise an exception */
-	
-			OCI_ExceptionMinimumValue(stmt->con, stmt, 1);
+            len = (unsigned int) dtslen(data);
+        }
+        else
+        {
+            /* if data is NULL, it means that binding mode is OCI_BAM_INTERNAL.
+               An invalid length passed to the function, we do not have a valid length to 
+               allocate internal array, thus we need to raise an exception */
+    
+            OCI_ExceptionMinimumValue(stmt->con, stmt, 1);
 
-			return FALSE;
-		}
+            return FALSE;
+        }
     }
 
 
@@ -2827,7 +2827,7 @@ boolean OCI_API OCI_BindDouble
     OCI_CHECK_BIND_CALL(stmt, name, data, OCI_IPC_DOUBLE);
 
     return OCI_BindData(stmt, data, sizeof(double), name, OCI_CDT_NUMERIC,
-                        SQLT_FLT, OCI_BIND_INPUT, 0, NULL, 0);
+                        SQLT_FLT, OCI_BIND_INPUT, OCI_NUM_DOUBLE, NULL, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2845,7 +2845,7 @@ boolean OCI_API OCI_BindArrayOfDoubles
     OCI_CHECK_BIND_CALL(stmt, name, data, OCI_IPC_DOUBLE);
 
     return OCI_BindData(stmt, data, sizeof(double), name, OCI_CDT_NUMERIC,
-                        SQLT_FLT, OCI_BIND_INPUT, 0, NULL, nbelem);
+                        SQLT_FLT, OCI_BIND_INPUT, OCI_NUM_DOUBLE, NULL, nbelem);
 }
 
 /* --------------------------------------------------------------------------------------------- *

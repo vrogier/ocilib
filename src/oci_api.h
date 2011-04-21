@@ -1614,7 +1614,7 @@ typedef OCIEnv * (*XAOENV)
 
 typedef void (*OCITHREADPROCESSINIT)
 (
-	void
+    void
 );
 
 typedef sword (*OCITHREADINIT)
