@@ -1402,6 +1402,10 @@ OCI_Statement * OCI_StatementInit
                            OCI_STMT_DESCRIBED | OCI_STMT_EXECUTED;
             stmt->type   = OCI_CST_SELECT;
 
+
+            res = (res && OCI_SetPrefetchSize(stmt, OCI_PREFETCH_SIZE));
+            res = (res && OCI_SetFetchSize(stmt, OCI_FETCH_SIZE));
+
             /* not really perfect, but better than nothing */
 
             if (def->col.name != NULL)
