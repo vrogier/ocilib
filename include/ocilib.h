@@ -182,7 +182,6 @@ extern "C" {
  * @par Compatibilities
  *
  * Actual version of OCILIB has been validated on :
- *
  *  - Platforms: Windows, HP/UX, Linux, Mac OS, Solaris, AIX
  *  - Architectures: 32/64bits
  *  - Compilers: GCC / MinGW, MS Compilers, IBM XLC, CCs, LabView
@@ -1121,7 +1120,7 @@ typedef struct OCI_Dequeue OCI_Dequeue;
 typedef struct OCI_Enqueue OCI_Enqueue;
 
 /**
- * @struct POCI_ERROR
+ * @var POCI_ERROR
  *
  * @brief
  * Error procedure prototype
@@ -1130,13 +1129,13 @@ typedef struct OCI_Enqueue OCI_Enqueue;
  * 
  */
 
-typedef void (__cdecl *POCI_ERROR)
+typedef void (*POCI_ERROR)
 (
     OCI_Error *err
 );
 
 /**
- * @struct POCI_THREAD
+ * @var POCI_THREAD
  *
  * @brief
  * Thread procedure prototype
@@ -1146,14 +1145,14 @@ typedef void (__cdecl *POCI_ERROR)
  *
  */
 
-typedef void (__cdecl *POCI_THREAD)
+typedef void (*POCI_THREAD)
 (
     OCI_Thread *thread, 
     void       *arg
 );
 
 /**
- * @struct POCI_THREADKEYDEST
+ * @var POCI_THREADKEYDEST
  *
  * @brief
  * Thread key destructor prototype.
@@ -1162,13 +1161,13 @@ typedef void (__cdecl *POCI_THREAD)
  *
  */
 
-typedef void (__cdecl *POCI_THREADKEYDEST)
+typedef void (*POCI_THREADKEYDEST)
 (
     void *data
 );
 
 /**
- * @struct POCI_NOTIFY
+ * @var POCI_NOTIFY
  *
  * @brief
  * Database Change Notification User callback prototype.
@@ -1177,13 +1176,13 @@ typedef void (__cdecl *POCI_THREADKEYDEST)
  *
  */
 
-typedef void (__cdecl *POCI_NOTIFY)
+typedef void (*POCI_NOTIFY)
 (
     OCI_Event *event
 );
 
 /**
- * @struct POCI_TAF_HANDLER
+ * @var POCI_TAF_HANDLER
  *
  * @brief
  * Failover Notification User callback prototype.
@@ -1194,23 +1193,26 @@ typedef void (__cdecl *POCI_NOTIFY)
  *
  * @note
  * Possible values for parameter 'type' :
- *
  *  - OCI_FOT_NONE
  *  - OCI_FOT_SESSION
  *  - OCI_FOT_SELECT
  *
  * @note
  * Possible values for parameter 'event' :
- *
  *  - OCI_FOE_END
  *  - OCI_FOE_ABORT
  *  - OCI_FOE_REAUTH
  *  - OCI_FOE_BEGIN
  *  - OCI_FOE_ERROR
  *
+ * @return
+ * User callback should return one iof the following value :
+ *  - OCI_FOC_OK 
+ *  - OCI_FOC_RETRY
+ *
  */
 
-typedef unsigned int (__cdecl *POCI_TAF_HANDLER)
+typedef unsigned int (*POCI_TAF_HANDLER)
 (
     OCI_Connection *con, 
     unsigned int    type, 
@@ -1218,36 +1220,41 @@ typedef unsigned int (__cdecl *POCI_TAF_HANDLER)
 );
 
 /**
- * @struct POCI_HA_HANDLER
+ * @var POCI_HA_HANDLER
  *
  * @brief
  * HA (High Availabality) events Notification User callback prototype.
  *
- * @param event - Event type
- * @param con   - Connection handle related to the event
+ * @param con    - Connection handle related to the event
+ * @param source - Connection handle related to the event
+ * @param status - Timestamp of the event
+ * @param time   - Timestamp of the event
  *
  * @note
  * Currently, Oracle only send HA down events
  *
  * @note
  * Possible values for parameter 'status' :
- *
- *  - OCI_HAE_DOWN : HA down event
- *  - OCI_HAE_UP   : HA up event
+ *  - OCI_HET_DOWN : HA event type down
+ *  - OCI_HET_UP   : HA event type up
  *
  * @note
- * Possible values for parameter 'status' :
- *
- *  - OCI_HAE_DOWN : HA down event
- *  - OCI_HAE_UP   : HA up event
+ * Possible values for parameter 'event' :
+ *  - OCI_HES_INSTANCE                    
+ *  - OCI_HES_DATABASE                    
+ *  - OCI_HES_NODE                        
+ *  - OCI_HES_SERVICE                     
+ *  - OCI_HES_SERVICE_MEMBER              
+ *  - OCI_HES_ASM_INSTANCE                
+ *  - OCI_HES_PRECONNECT                  
  *
  */
 
-typedef void (__cdecl *POCI_HA_HANDLER)
+typedef void (*POCI_HA_HANDLER)
 (
     OCI_Connection *con, 
     unsigned int    source, 
-    unsigned int    status, 
+    unsigned int    event, 
     OCI_Timestamp  *time
 );
 
@@ -1747,17 +1754,17 @@ typedef unsigned int big_uint;
 
 /* HA event type */
 
-#define OCI_HAE_DOWN                        0
-#define OCI_HAE_EVENT_UP                    1
+#define OCI_HET_DOWN                        0
+#define OCI_HET_UP                          1
 
 /* HA event source */
-#define OCI_HAS_INSTANCE                    0 
-#define OCI_HAS_DATABASE                    1
-#define OCI_HAS_NODE                        2
-#define OCI_HAS_SERVICE                        3
-#define OCI_HAS_SERVICE_MEMBER                4
-#define OCI_HAS_ASM_INSTANCE                5
-#define OCI_HAS_PRECONNECT                    6
+#define OCI_HES_INSTANCE                    0 
+#define OCI_HES_DATABASE                    1
+#define OCI_HES_NODE                        2
+#define OCI_HES_SERVICE                     3
+#define OCI_HES_SERVICE_MEMBER              4
+#define OCI_HES_ASM_INSTANCE                5
+#define OCI_HES_PRECONNECT                  6
 
 /* Fail over types */
 
@@ -1765,7 +1772,7 @@ typedef unsigned int big_uint;
 #define OCI_FOT_SESSION                     2
 #define OCI_FOT_SELECT                      4
 
-/* fail over notifications*/
+/* fail over notifications */
 
 #define OCI_FOE_END                         1
 #define OCI_FOE_ABORT                       2
@@ -1994,7 +2001,6 @@ typedef unsigned int big_uint;
  * @param mode         - Environment mode
  *
  * Possible values for parameter mode:
- *
  * - OCI_ENV_DEFAULT  : default mode
  * - OCI_ENV_THREADED : multithreading support
  * - OCI_ENV_CONTEXT  : thread contextual error handling
@@ -2098,7 +2104,6 @@ OCI_EXPORT unsigned int OCI_API OCI_GetOCIRuntimeVersion
  *
  * @note
  * Possible values are:
- *
  * - OCI_IMPORT_MODE_LINKAGE
  * - OCI_IMPORT_MODE_RUNTIME
  *
@@ -2115,7 +2120,6 @@ OCI_EXPORT unsigned int OCI_API OCI_GetImportMode
  *
  * @note
  * Possible values are:
- *
  * - OCI_CHAR_ANSI
  * - OCI_CHAR_WIDE
  *
@@ -2132,7 +2136,6 @@ OCI_EXPORT unsigned int OCI_API OCI_GetCharsetMetaData
  *
  * @note
  * Possible values are:
- *
  * - OCI_CHAR_ANSI
  * - OCI_CHAR_WIDE
  *
@@ -2424,7 +2427,6 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
  *
  * OCILIB supports Oracle XA connectivity. In order to get a connection using
  * the XA interface :
- *
  *  - Pass to the parameter 'db' the value of the 'DB' parameter of the given
  *    XA connection string pased to the Transaction Processing Monitor (TPM)
  *  - Pass NULL to the 'user' and 'pwd' parameters
@@ -3987,7 +3989,6 @@ OCI_EXPORT unsigned int OCI_API OCI_GetSqlErrorPos
  * @param stmt - Statement handle
  *
  * The returned value is :
- *
  *  - For UPDATEs : number of rows updated
  *  - For INSERTs : number of rows inserted
  *  - For DELETEs : number of rows deleted
@@ -5853,7 +5854,6 @@ OCI_EXPORT boolean OCI_API OCI_FetchLast
  *
  * @note
  * Possible values for 'direction' parameter are:
- *
  *  - OCI_SFD_ABSOLUTE
  *  - OCI_SFD_RELATIVE
  *
@@ -8890,7 +8890,6 @@ OCI_EXPORT unsigned int OCI_API OCI_GetStatementType
  *
  * @note
  * Possible values are :
- *
  *  - OCI_SFM_DEFAULT
  *  - OCI_SFM_SCROLLABLE
  *
@@ -8928,7 +8927,6 @@ OCI_EXPORT unsigned int OCI_API OCI_GetFetchMode
  *
  * @note
  * Possible values are :
- *
  *  - OCI_BIND_BY_POS  : position binding
  *  - OCI_BIND_BY_NAME : name binding
  *
@@ -8969,7 +8967,6 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBindMode
  *
  * @note
  * Possible values are :
- *
  *  - OCI_BAM_EXTERNAL : bind variable are allocated by user code
  *  - OCI_BAM_INTERNAL : bind variable are allocated internally
  *

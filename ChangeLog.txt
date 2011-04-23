@@ -52,6 +52,7 @@
       - Updated layout of some internal structure to supress unnecessary padding
       - Manual update of source code formatted with Uncrustify (wrong indentation of preprocessor directives)
       - User callbacks were not correctly documented
+      - Updated Doxygen version used to generate the documentation (update in the output html style)
 
     * Miscellaneous fixes :
 

@@ -615,7 +615,7 @@ void OCI_ProcHAEvent
                 OCI_Timestamp  *tmsp = NULL;
                 OCIDateTime    *dth  = NULL;
 
-                ub4 status = OCI_HA_STATUS_DOWN;
+                ub4 event  = OCI_HA_STATUS_DOWN;
                 ub4 source = OCI_HA_SOURCE_INSTANCE;
 
                 if ((tmp != NULL) && (tmp->svr == srvhp))
@@ -646,8 +646,8 @@ void OCI_ProcHAEvent
                         (
                             res, con,
 
-                            OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &status,
-                                       (ub4 *) NULL,  (ub4) OCI_ATTR_HA_SOURCE, con->err)
+                            OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &event,
+                                       (ub4 *) NULL,  (ub4) OCI_ATTR_HA_STATUS, con->err)
 
                         )
                     }
@@ -661,7 +661,7 @@ void OCI_ProcHAEvent
                             res, con,
 
                             OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &source,
-                                       (ub4 *) NULL,  (ub4) OCI_ATTR_HA_STATUS, con->err)
+                                       (ub4 *) NULL,  (ub4) OCI_ATTR_HA_SOURCE, con->err)
 
                         )
                     }
@@ -670,7 +670,7 @@ void OCI_ProcHAEvent
 
                     if (res == TRUE)
                     {
-                        OCILib.ha_handler(con, (unsigned int) source, (unsigned int) status, tmsp);
+                        OCILib.ha_handler(con, (unsigned int) source, (unsigned int) event, tmsp);
                     }
 
                     item = item->next;
