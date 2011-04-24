@@ -108,6 +108,26 @@ boolean OCI_BindCheck
             OCI_Statement *bnd_stmt = (OCI_Statement *) bnd->buf.data;
 
             OCI_StatementReset(bnd_stmt);
+
+            bnd_stmt->hstate = OCI_OBJECT_ALLOCATED_BIND_STMT;
+        
+            /* allocate stmt handle */
+
+            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) bnd_stmt->con->env,
+                                                  (dvoid **) (void *) &bnd_stmt->stmt,
+                                                  (ub4) OCI_HTYPE_STMT,
+                                                  (size_t) 0, (dvoid **) NULL));
+
+            if (res == TRUE)
+            {
+                ub4 size = 0;
+
+                size = bnd_stmt->prefetch_size ? bnd_stmt->prefetch_size : OCI_PREFETCH_SIZE;
+                res  = (res && OCI_SetPrefetchSize(bnd_stmt, size));
+                
+                size = bnd_stmt->fetch_size ? bnd_stmt->fetch_size : OCI_FETCH_SIZE;
+                res  = (res && OCI_SetFetchSize(bnd_stmt, size));
+            }
         }
 
         if (bnd->direction & OCI_BDM_IN)
@@ -1402,7 +1422,6 @@ OCI_Statement * OCI_StatementInit
                            OCI_STMT_DESCRIBED | OCI_STMT_EXECUTED;
             stmt->type   = OCI_CST_SELECT;
 
-
             res = (res && OCI_SetPrefetchSize(stmt, OCI_PREFETCH_SIZE));
             res = (res && OCI_SetFetchSize(stmt, OCI_FETCH_SIZE));
 
@@ -1415,7 +1434,7 @@ OCI_Statement * OCI_StatementInit
         }
     }
 
-    /* check for failure */
+    /* check for failurec */
 
     if (res == FALSE)
     {
@@ -1456,6 +1475,38 @@ boolean OCI_StatementReset
         OCI_HashFree(stmt->map);
     }
 
+    /* free handle if needed */
+
+    if (stmt->stmt != NULL)
+    {
+        if (stmt->hstate == OCI_OBJECT_ALLOCATED)
+        {
+
+        #if OCI_VERSION_COMPILE >= OCI_9_2
+
+
+            if (OCILib.version_runtime >= OCI_9_2)
+            {
+                OCIStmtRelease(stmt->stmt, stmt->con->err, NULL, 0, OCI_DEFAULT);
+            }
+            else
+
+        #endif
+
+            {
+                OCI_HandleFree((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT);
+            }
+                
+            stmt->stmt = NULL;
+        }
+        else if (stmt->hstate == OCI_OBJECT_ALLOCATED_BIND_STMT)
+        {  
+            OCI_HandleFree((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT);
+
+            stmt->stmt = NULL;
+        }
+    }
+
     /* free sql statement */
 
     OCI_FREE(stmt->sql);
@@ -1473,18 +1524,6 @@ boolean OCI_StatementReset
     stmt->nb_iters_init = 1;
     stmt->dynidx        = 0;
     stmt->err_pos       = 0;
-
-#if OCI_VERSION_COMPILE >= OCI_9_2
-
-    if (OCILib.version_runtime >= OCI_9_2)
-    {
-        if (stmt->stmt != NULL && stmt->hstate == OCI_OBJECT_ALLOCATED)
-        { 
-            OCIStmtRelease(stmt->stmt, stmt->con->err, NULL, 0, OCI_DEFAULT);
-        }
-    }
-
-#endif
 
     return res;
 }
@@ -1515,15 +1554,6 @@ boolean OCI_StatementClose
     /* reset data */
 
     res = OCI_StatementReset(stmt);
-
-#if OCI_VERSION_COMPILE < OCI_9_2
-
-    if (stmt->stmt != NULL && stmt->hstate == OCI_OBJECT_ALLOCATED)
-    {  
-        OCI_HandleFree((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT);
-    }
-
-#endif
 
     return res;
 }
@@ -1945,9 +1975,9 @@ boolean OCI_API OCI_Prepare
 
     #if OCI_VERSION_COMPILE < OCI_9_2
 
-        if (stmt->stmt == NULL)
+        if (OCILib.version_runtime < OCI_9_2)
         {
-          /* allocate handle */
+            /* allocate handle */
 
             res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) stmt->con->env,
                                                   (dvoid **) (void *) &stmt->stmt,
@@ -2007,11 +2037,16 @@ boolean OCI_API OCI_Prepare
 
     if (res == TRUE)
     {
-        stmt->status = OCI_STMT_PREPARED;
-    }
+        ub4 size = 0;
 
-    res = (res && OCI_SetPrefetchSize(stmt, OCI_PREFETCH_SIZE));
-    res = (res && OCI_SetFetchSize(stmt, OCI_FETCH_SIZE));
+        stmt->status = OCI_STMT_PREPARED;
+
+        size = stmt->prefetch_size ? stmt->prefetch_size : OCI_PREFETCH_SIZE;
+        res  = (res && OCI_SetPrefetchSize(stmt, size));
+                
+        size = stmt->fetch_size ? stmt->fetch_size : OCI_FETCH_SIZE;
+        res  = (res && OCI_SetFetchSize(stmt, size));
+    }
 
     OCI_RESULT(res);
 
@@ -3329,19 +3364,8 @@ boolean OCI_API OCI_BindStatement
 
     OCI_CHECK_BIND_CALL(stmt, name, data, OCI_IPC_STATEMENT);
 
-    OCI_StatementReset(data);
-
     res = OCI_BindData(stmt, &data->stmt, sizeof(OCIStmt*), name, OCI_CDT_CURSOR,
                        SQLT_RSET, OCI_BIND_INPUT, 0, NULL, 0);
-
-    if (res == TRUE)
-    {
-        /* Once stmt is executed, Oracle provides a statement handle
-           ready to be fetched  */
-
-        data->status = OCI_STMT_EXECUTED;
-        data->type   = OCI_CST_SELECT;
-    }
 
     return res;
 }

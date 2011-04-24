@@ -337,6 +337,7 @@
 #define OCI_OBJECT_FETCHED_CLEAN        2
 #define OCI_OBJECT_FETCHED_DIRTY        3
 #define OCI_OBJECT_ALLOCATED_ARRAY      4
+#define OCI_OBJECT_ALLOCATED_BIND_STMT  5
 
 /* --------------------------------------------------------------------------------------------- *
  * bind type
