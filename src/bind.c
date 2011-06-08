@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: bind.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
+ * $Id: bind.c, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -367,10 +367,6 @@ boolean OCI_BindAllocData
             }
             case OCI_CDT_TEXT:
             {
-
-                bnd->input    = (void **) OCI_MemAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
-                bnd->buf.data = (void **) bnd->input;
-
 
             #ifdef OCI_CHECK_DATASTRINGS
 

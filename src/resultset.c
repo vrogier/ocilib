@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: resultset.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
+ * $Id: resultset.c, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -1630,7 +1630,7 @@ boolean OCI_API OCI_GetStruct
 
             if (inds != NULL)
             {
-                *inds = OCI_NOT_NULL(&rs->defs[i-1]);
+                *inds = OCI_DefineIsDataNotNull(&rs->defs[i-1]);
 
                 inds++;
             }
@@ -1838,7 +1838,7 @@ const dtext * OCI_API OCI_GetString
 
     res = (def != NULL);
 
-    if ((res == TRUE) && (OCI_NOT_NULL(def) == TRUE))
+    if ((res == TRUE) && (OCI_DefineIsDataNotNull(def) == TRUE))
     {
         void *data = OCI_DefineGetData(def);
 
@@ -2179,7 +2179,7 @@ unsigned int OCI_API OCI_GetRaw
 
     res = (def != NULL);
 
-    if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_RAW))
+    if ((OCI_DefineIsDataNotNull(def) == TRUE) && (def->col.type == OCI_CDT_RAW))
     {
         ub2 size = ((ub2*)def->buf.lens)[def->rs->row_cur-1];
 
@@ -2263,7 +2263,7 @@ OCI_Date * OCI_API OCI_GetDate
     OCI_Define *def = OCI_GetDefine(rs, index);
     OCI_Date *date  = NULL;
 
-    if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_DATETIME))
+    if ((OCI_DefineIsDataNotNull(def) == TRUE) && (def->col.type == OCI_CDT_DATETIME))
     {
         date =  OCI_DateInit(rs->stmt->con,
                              (OCI_Date **) &def->obj,
@@ -2302,7 +2302,7 @@ OCI_Timestamp * OCI_API OCI_GetTimestamp
     OCI_Define *def     = OCI_GetDefine(rs, index);
     OCI_Timestamp *tmsp = NULL;
 
-    if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_TIMESTAMP))
+    if ((OCI_DefineIsDataNotNull(def) == TRUE) && (def->col.type == OCI_CDT_TIMESTAMP))
     {
         tmsp =  OCI_TimestampInit(rs->stmt->con,
                                   (OCI_Timestamp **) &def->obj,
@@ -2341,7 +2341,7 @@ OCI_Interval * OCI_API OCI_GetInterval
     OCI_Define *def   = OCI_GetDefine(rs, index);
     OCI_Interval *itv = NULL;
 
-    if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_INTERVAL))
+    if ((OCI_DefineIsDataNotNull(def) == TRUE) && (def->col.type == OCI_CDT_INTERVAL))
     {
         itv = OCI_IntervalInit(rs->stmt->con,
                                (OCI_Interval **) &def->obj,
@@ -2380,7 +2380,7 @@ OCI_Object * OCI_API OCI_GetObject
     OCI_Define *def = OCI_GetDefine(rs, index);
     OCI_Object *obj =  NULL;
 
-    if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_OBJECT))
+    if ((OCI_DefineIsDataNotNull(def) == TRUE) && (def->col.type == OCI_CDT_OBJECT))
     {
         obj =  OCI_ObjectInit(rs->stmt->con,
                               (OCI_Object **) &def->obj,
@@ -2418,7 +2418,7 @@ OCI_Coll * OCI_API OCI_GetColl
     OCI_Define *def = OCI_GetDefine(rs, index);
     OCI_Coll *coll  = NULL;
 
-    if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_COLLECTION))
+    if ((OCI_DefineIsDataNotNull(def) == TRUE) && (def->col.type == OCI_CDT_COLLECTION))
     {
         coll = OCI_CollInit(rs->stmt->con, (OCI_Coll **) &def->obj,
                             OCI_DefineGetData(def), def->col.typinf);
@@ -2455,7 +2455,7 @@ OCI_Ref * OCI_API OCI_GetRef
     OCI_Define *def = OCI_GetDefine(rs, index);
     OCI_Ref *ref    = NULL;
 
-    if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_REF))
+    if ((OCI_DefineIsDataNotNull(def) == TRUE) && (def->col.type == OCI_CDT_REF))
     {
         ref = OCI_RefInit(rs->stmt->con, def->col.typinf,
                           (OCI_Ref **) &def->obj, OCI_DefineGetData(def));
@@ -2502,7 +2502,7 @@ OCI_Statement * OCI_API OCI_GetStatement
     OCI_Define *def   = OCI_GetDefine(rs, index);
     OCI_Statement *st = NULL;
 
-    if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_CURSOR))
+    if ((OCI_DefineIsDataNotNull(def) == TRUE) && (def->col.type == OCI_CDT_CURSOR))
     {
         st = OCI_StatementInit(rs->stmt->con,
                                (OCI_Statement **) &def->obj,
@@ -2540,7 +2540,7 @@ OCI_Lob * OCI_API OCI_GetLob
     OCI_Define *def = OCI_GetDefine(rs, index);
     OCI_Lob * lob   = NULL;
 
-    if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_LOB))
+    if ((OCI_DefineIsDataNotNull(def) == TRUE) && (def->col.type == OCI_CDT_LOB))
     {
         lob =  OCI_LobInit(rs->stmt->con,(OCI_Lob **) &def->obj,
                            (OCILobLocator *) OCI_DefineGetData(def),
@@ -2578,7 +2578,7 @@ OCI_File * OCI_API OCI_GetFile
     OCI_Define *def = OCI_GetDefine(rs, index);
     OCI_File *file  = NULL;
 
-    if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_FILE))
+    if ((OCI_DefineIsDataNotNull(def) == TRUE) && (def->col.type == OCI_CDT_FILE))
     {
         file = OCI_FileInit(rs->stmt->con,(OCI_File **) &def->obj,
                             (OCILobLocator *) OCI_DefineGetData(def),
@@ -2616,7 +2616,7 @@ OCI_Long * OCI_API OCI_GetLong
     OCI_Define *def = OCI_GetDefine(rs, index);
     OCI_Long *lg    = NULL;
 
-    if ((OCI_NOT_NULL(def) == TRUE) && (def->col.type == OCI_CDT_LONG))
+    if ((OCI_DefineIsDataNotNull(def) == TRUE) && (def->col.type == OCI_CDT_LONG))
     {
         lg = (OCI_Long *) OCI_DefineGetData(def);
     }
@@ -2653,7 +2653,7 @@ boolean OCI_API OCI_IsNull
 
     OCI_RESULT(def != NULL);
 
-    return (OCI_NOT_NULL(def) == FALSE);
+    return (OCI_DefineIsDataNotNull(def) == FALSE);
 }
 
 /* --------------------------------------------------------------------------------------------- *

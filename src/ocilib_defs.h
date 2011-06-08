@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_defs.h, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
+ * $Id: ocilib_defs.h, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -481,10 +481,6 @@
 /* indicator and nullity handlers */
 
 #define OCI_IND(exp)                    (sb2) ((exp) ? 0 : -1)
-
-#define OCI_NOT_NULL(def)                                                      \
-                                                                               \
-    (((def) != NULL) && (rs->row_cur > 0) && ((sb2) ((sb2*)(def)->buf.inds)[rs->row_cur-1] != -1))
 
 #define OCI_NOT_USED(p)                 (p) = (p);
 

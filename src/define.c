@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: define.c, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
+ * $Id: define.c, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -153,6 +153,38 @@ void * OCI_DefineGetData
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_DefineIsDataNotNull
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_DefineIsDataNotNull
+(
+    OCI_Define *def
+)
+{
+    boolean res = FALSE;
+    
+    if ((def != NULL) && (def->rs->row_cur > 0))
+    {
+        OCIInd ind = OCI_IND_NULL;
+
+        if (def->col.type == OCI_CDT_OBJECT)
+        {
+           ind = (*( (OCIInd **) def->buf.obj_inds))[def->rs->row_cur-1];
+        }
+        else
+        {
+            ind = ((OCIInd *) (def->buf.inds))[def->rs->row_cur-1];
+
+        }
+        
+        res = (ind != OCI_IND_NULL);
+    }
+
+    return res;
+}
+
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DefineGetNumber
  * --------------------------------------------------------------------------------------------- */
 
@@ -168,7 +200,7 @@ boolean OCI_DefineGetNumber
     OCI_Define *def = OCI_GetDefine(rs, index);
     boolean res     = FALSE;
 
-    if (OCI_NOT_NULL(def) == TRUE)
+    if (OCI_DefineIsDataNotNull(def) == TRUE)
     {
         void *data = OCI_DefineGetData(def);
 

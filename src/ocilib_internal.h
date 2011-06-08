@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_internal.h, v 3.9.0 2011-04-20 00:00 Vincent Rogier $
+ * $Id: ocilib_internal.h, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED
@@ -296,6 +296,11 @@ boolean OCI_DefineDef
 );
 
 void * OCI_DefineGetData
+(
+    OCI_Define *def
+);
+
+boolean OCI_DefineIsDataNotNull
 (
     OCI_Define *def
 );
