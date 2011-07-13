@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: column.c, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
+ * $Id: column.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -1369,4 +1369,77 @@ unsigned int OCI_API OCI_ColumnGetSubType
     }
 
     return type;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ColumnGetAttrInfo
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_ColumnGetAttrInfo
+(
+    OCI_Column    *col,
+    unsigned int   count,
+    unsigned int   index,
+    size_t        *p_size,
+    int           *p_type
+)
+{
+    if (index >= count)
+    {
+        *p_size = 0;
+        *p_type = 0;
+
+        return FALSE;
+    }
+
+    switch (col->type)
+    {
+        case OCI_CDT_NUMERIC:
+        {
+            int type = col->subtype;
+
+            if (type & OCI_NUM_SHORT)
+            {
+                *p_type = OCI_OFT_SHORT;
+                *p_size = sizeof(short);
+            }
+            else if (type & OCI_NUM_INT)
+            {
+                *p_type = OCI_OFT_INT;
+                *p_size = sizeof(int);
+            }
+            else if (type & OCI_NUM_BIGUINT)
+            {
+                *p_type = OCI_OFT_BIGINT;
+                *p_size = sizeof(big_int);
+            }
+            else if (type & OCI_NUM_DOUBLE)
+            {
+                *p_type = OCI_OFT_DOUBLE;
+                *p_size = sizeof(double);
+            }
+            else 
+            {
+                //default mapping to big_int 
+
+                *p_type = OCI_OFT_BIGINT;
+                *p_size = sizeof(big_int);
+            }
+            break;
+        }
+        case OCI_CDT_OBJECT:
+        {
+            *p_size = OCI_ObjectGetUserStructSize(col->typinf);
+            *p_type = OCI_OFT_STRUCT;
+            break;
+        }
+        default:
+        {
+            *p_size = sizeof(void *);
+            *p_type = OCI_OFT_POINTER;
+            break;
+        }
+    }
+
+    return TRUE;
 }

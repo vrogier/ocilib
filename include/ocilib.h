@@ -46,7 +46,7 @@
  */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib.h, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
+ * $Id: ocilib.h, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_H_INCLUDED
@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.9.1 (2011-06-09)</b>
+ * <b>Current version : 3.9.2 (2011-07-13)</b>
  *
  * @section s_feats Main features
  *
@@ -169,7 +169,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     3
 #define OCILIB_MINOR_VERSION     9
-#define OCILIB_REVISION_VERSION  1
+#define OCILIB_REVISION_VERSION  2
 
 /* --------------------------------------------------------------------------------------------- *
  * Installing OCILIB
@@ -1356,7 +1356,7 @@ typedef struct OCI_HashEntry {
 
 /* check for long long support */
 
-#if defined(_LONGLONG) || defined(LONG_LONG_MAX) || defined(LLONG_MAX)
+#if defined(_LONGLONG) || defined(LONG_LONG_MAX) || defined(LLONG_MAX) || defined(__LONG_LONG_MAX__)
 
 /* C99 long long supported */
 

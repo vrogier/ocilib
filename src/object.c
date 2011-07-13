@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: object.c, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
+ * $Id: object.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -118,6 +118,9 @@ size_t OCI_ObjectGetStructSize
                 case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
                 case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_POINTER):
                 case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
+                case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_OBJECT):
+                case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_OBJECT):
+                case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_OBJECT):
                 {
                     align = TRUE;
                     break;
@@ -133,6 +136,60 @@ size_t OCI_ObjectGetStructSize
         }
 
         typinf->struct_size = size + size2;
+    }
+
+    return size;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ObjectGetUserStructSize
+ * --------------------------------------------------------------------------------------------- */
+
+size_t OCI_ObjectGetUserStructSize
+(
+    OCI_TypeInfo *typinf
+)
+{
+    size_t size1 = 0;
+    size_t size2 = 0;
+
+    int type1 = 0;
+    int type2 = 0;
+
+    ub2 i;
+
+    boolean align = FALSE;
+
+    size_t size = 0;
+
+    for (i = 0; i < typinf->nb_cols; i++)
+    {
+        align = FALSE;
+
+        OCI_ColumnGetAttrInfo(&typinf->cols[i],   typinf->nb_cols, i, &size1, &type1);
+        OCI_ColumnGetAttrInfo(&typinf->cols[i+1], typinf->nb_cols, i, &size2, &type2);
+
+        switch (OCI_OFFSET_PAIR(type1, type2))
+        {
+            case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
+            case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_POINTER):
+            case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
+            case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_STRUCT):
+            case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_STRUCT):
+            case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_STRUCT): 
+            case OCI_OFFSET_PAIR(OCI_OFT_STRUCT, OCI_OFT_STRUCT): 
+            {
+                align = TRUE;
+                break;
+            }
+        }
+
+        size += size1;
+
+        if (align)
+        {
+            size = ROUNDUP(size, OCI_DEF_ALIGN);
+        }
     }
 
     return size;

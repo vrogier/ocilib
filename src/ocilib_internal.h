@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_internal.h, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
+ * $Id: ocilib_internal.h, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED
@@ -164,10 +164,11 @@ sb4 OCI_ProcFailOver
     ub4    fo_event
 );
 
+
 void OCI_ProcHAEvent
 (
     dvoid     *evtctx,
-    OCIEvent  *eventhp
+    dvoid     *eventptr
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -200,6 +201,15 @@ boolean OCI_ColumnDescribe
     void           *handle,
     int             index,
     int             ptype
+);
+
+boolean OCI_ColumnGetAttrInfo
+(
+    OCI_Column    *col,
+    unsigned int   count,
+    unsigned int   index,
+    size_t        *p_size,
+    int           *p_type
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -857,6 +867,11 @@ size_t OCI_ObjectGetStructSize
     OCI_TypeInfo *typinf
 );
 
+size_t OCI_ObjectGetUserStructSize
+(
+    OCI_TypeInfo *typinf
+);
+
 ub2 OCI_ObjectGetIndOffset
 (
     OCI_TypeInfo *typinf,
@@ -991,14 +1006,6 @@ boolean OCI_ResultsetExpandStrings
 );
 
 #endif
-
-boolean OCI_ResultsetGetAttrInfo
-(
-    OCI_Resultset *rs,
-    unsigned int   index,
-    size_t        *p_size,
-    int           *p_type
-);
 
 /* --------------------------------------------------------------------------------------------- *
  * statement.c

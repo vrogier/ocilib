@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: callback.c, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
+ * $Id: callback.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -132,7 +132,7 @@ sb4 OCI_ProcOutBind
 
     /* update statmement status */
 
-    bnd->stmt->status = OCI_STMT_EXECUTED;
+    bnd->stmt->status |= OCI_STMT_EXECUTED;
 
     /* create resultset on the first row processed for each iteration */
 
@@ -573,7 +573,7 @@ sb4 OCI_ProcFailOver
 void OCI_ProcHAEvent
 (
     dvoid     *evtctx,
-    OCIEvent  *eventhp
+    dvoid     *eventptr
 )
 {
     sword      ret   = OCI_SUCCESS;
@@ -584,15 +584,16 @@ void OCI_ProcHAEvent
 
     OCI_NOT_USED(evtctx);
 
+#if OCI_VERSION_COMPILE >= OCI_10_2
+
     if ((list == NULL) || (OCILib.ha_handler == NULL))
     {
-        return;
-    }
-    
-#if OCI_VERSION_COMPILE >= OCI_10_2
+        return;    }    
+
 
     if (OCILib.version_runtime >= OCI_10_2)
     {
+        OCIEvent *eventhp = (OCIEvent *) eventptr;
 
         ret = OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &srvhp,
                          (ub4 *) NULL, (ub4) OCI_ATTR_HA_SRVFIRST, OCILib.err);
@@ -687,6 +688,9 @@ void OCI_ProcHAEvent
 
         }
     }
+#else
+
+    OCI_NOT_USED(eventptr);
 
 #endif
 

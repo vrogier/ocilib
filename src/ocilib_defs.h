@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_defs.h, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
+ * $Id: ocilib_defs.h, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -403,6 +403,7 @@
 #define OCI_OFT_BIGINT                  64
 #define OCI_OFT_DOUBLE                  128
 #define OCI_OFT_TEXT                    256
+#define OCI_OFT_STRUCT                  512
 
 #define OCI_OFFSET_PAIR(a, b)           (a + (b << 16))
 

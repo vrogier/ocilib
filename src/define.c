@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: define.c, v 3.9.1 2011-06-09 00:00 Vincent Rogier $
+ * $Id: define.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -169,7 +169,7 @@ boolean OCI_DefineIsDataNotNull
 
         if (def->col.type == OCI_CDT_OBJECT)
         {
-           ind = (*( (OCIInd **) def->buf.obj_inds))[def->rs->row_cur-1];
+           ind =  * (OCIInd *) def->buf.obj_inds[def->rs->row_cur-1];
         }
         else
         {
