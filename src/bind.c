@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: bind.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: bind.c, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -706,7 +706,7 @@ boolean OCI_API OCI_BindSetNullAtPos
 
     if (bnd->buf.inds != NULL)
     {
-        ((sb2*) bnd->buf.inds)[position-1] = -1;
+        ((sb2*) bnd->buf.inds)[position-1] = OCI_IND_NULL;
     }
 
     OCI_RESULT(TRUE);
@@ -743,7 +743,7 @@ boolean OCI_API OCI_BindIsNullAtPos
 
     if (bnd->buf.inds != NULL)
     {
-        ret = (((sb2*) bnd->buf.inds)[position-1] == -1);
+        ret = (((sb2*) bnd->buf.inds)[position-1] == OCI_IND_NULL);
     }
 
     OCI_RESULT(TRUE);

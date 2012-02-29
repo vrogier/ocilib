@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: resultset.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: resultset.c, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -1822,7 +1822,7 @@ const dtext * OCI_API OCI_GetString
                     {
                         void *ostr1 = NULL;
                         void *ostr2 = NULL;
-                        int osize1  = OCI_SIZE_FORMAT_NUML * (int) sizeof(mtext);
+                        int osize1  = -1;
                         int osize2  = OCI_SIZE_BUFFER      * (int) sizeof(dtext);
                         const mtext *fmt;
                         int pos;

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: library.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: library.c, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -1740,6 +1740,8 @@ boolean OCI_API OCI_SetHAHandler
 
     OCILib.ha_handler = handler;
 
+#if OCI_VERSION_COMPILE >= OCI_10_2
+
     /* On MSVC, casting a function pointer to a data pointer generates a warning.
        As there is no other to way to do regarding the OCI API, let's disable this
        warning just the time to set the callback attribute to the environment handle */
@@ -1770,6 +1772,12 @@ boolean OCI_API OCI_SetHAHandler
     )
 
     OCI_RESULT(res);
+
+#else
+    
+    OCI_NOT_USED(callback);
+
+#endif
 
     return res;
 }

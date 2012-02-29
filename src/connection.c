@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: connection.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: connection.c, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -110,6 +110,8 @@ OCI_Connection * OCI_ConnectionAllocate
                 con->pwd  = mtsdup(pwd  != NULL ? pwd  : MT(""));
             }
 
+        #if OCI_VERSION_COMPILE >= OCI_10_1
+
             if (con->mode & OCI_SESSION_XA)
             {
                 char dbname[OCI_SIZE_BUFFER+1];
@@ -119,21 +121,24 @@ OCI_Connection * OCI_ConnectionAllocate
                 if (con->db != NULL && con->db[0] != 0)
                 {
 
-            #if defined(OCI_CHARSET_WIDE)
+                #if defined(OCI_CHARSET_WIDE)
 
                     wcstombs(dbname, con->db, sizeof(dbname));
 
-            #else
+                #else
 
                     strncat(dbname, con->db, sizeof(dbname));
 
-            #endif
+                #endif
 
                 }
 
                 con->env = xaoEnv((OraText *) (dbname[0] ? dbname : NULL ));
             }
             else
+
+        #endif
+
             {
                 con->env = OCILib.env;
             }
@@ -345,6 +350,9 @@ boolean OCI_ConnectionLogon
 
     if (con->mode & OCI_SESSION_XA)
     {
+    
+    #if OCI_VERSION_COMPILE >= OCI_10_1
+
         char dbname[OCI_SIZE_BUFFER+1];
 
         memset(dbname, 0, sizeof(dbname));
@@ -399,9 +407,10 @@ boolean OCI_ConnectionLogon
                            (ub4) OCI_ATTR_USERNAME, con->err)
 
             )
-
-
         }
+    
+    #endif  
+    
     }
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
@@ -1515,7 +1524,7 @@ unsigned int OCI_API OCI_GetServerRevisionVersion
 
     OCI_RESULT(con->ver_num != OCI_UNKNOWN);
 
-    return (unsigned int) OCI_VER_MAJ(con->ver_num);
+    return (unsigned int) OCI_VER_REV(con->ver_num);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2367,7 +2376,7 @@ boolean OCI_API OCI_SetTAFHandler
             )
         }
     }
-    
+
 #endif
     
     OCI_RESULT(res);
@@ -2398,7 +2407,7 @@ unsigned int OCI_API OCI_GetStatementCacheSize
         (
             res, con,
 
-            OCIAttrGet((dvoid **) con->svr, (ub4) OCI_HTYPE_SERVER, (dvoid *) &cache_size,
+            OCIAttrGet((dvoid **) con->cxt, (ub4) OCI_HTYPE_SVCCTX, (dvoid *) &cache_size,
                         (ub4 *) NULL,  (ub4) OCI_ATTR_STMTCACHESIZE, con->err)
         )
     }
@@ -2433,11 +2442,15 @@ boolean OCI_API OCI_SetStatementCacheSize
         (
             res, con,
 
-            OCIAttrSet((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION,
+            OCIAttrSet((dvoid *) con->cxt, (ub4) OCI_HTYPE_SVCCTX,
                         (dvoid *) &cache_size, (ub4) sizeof (cache_size),
                         (ub4) OCI_ATTR_STMTCACHESIZE, con->err)
         )
     }
+
+#else
+
+    OCI_NOT_USED(cache_size);
 
 #endif
 

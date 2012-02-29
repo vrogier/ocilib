@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: object.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: object.c, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -118,9 +118,9 @@ size_t OCI_ObjectGetStructSize
                 case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
                 case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_POINTER):
                 case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
-                case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_OBJECT):
-                case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_OBJECT):
-                case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_OBJECT):
+             //   case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_OBJECT):
+             //   case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_OBJECT):
+             //   case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_OBJECT):
                 {
                     align = TRUE;
                     break;

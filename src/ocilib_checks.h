@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_checks.h, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: ocilib_checks.h, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_CHECKS_H_INCLUDED
@@ -272,14 +272,35 @@
  *
  */
 
-#define OCI_CHECK_BIND_CALL(stmt, name, data, type)                            \
+#define OCI_CHECK_BIND_CALL1(stmt, name, data, type)                           \
+                                                                               \
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);                             \
+    OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);                                \
+    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED, FALSE);                     \
+    OCI_CHECK_PTR(type, data, FALSE);
+
+/**
+ * @brief
+ * Checks if the parameters of bind call are valid and bind allocation mode
+ *
+ * @param stmt  - Statement handle
+ * @param name  - Bind name/literal position
+ * @param data  - Input pointer to bind
+ * @param type  - Input pointer type
+ *
+ * @note
+ * Throws an exception if one of the parameters is invalid and then returns
+ * FALSE.
+ *
+ */
+
+#define OCI_CHECK_BIND_CALL2(stmt, name, data, type)                           \
                                                                                \
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);                             \
     OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);                                \
     OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED, FALSE);                     \
     if (stmt->bind_alloc_mode == OCI_BAM_EXTERNAL)                             \
         OCI_CHECK_PTR(type, data, FALSE);
-
 
 /**
  * @brief

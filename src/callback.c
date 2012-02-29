@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: callback.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: callback.c, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -578,7 +578,7 @@ void OCI_ProcHAEvent
 {
     sword      ret   = OCI_SUCCESS;
     OCIServer *srvhp = NULL;
-    OCI_List  *list  = OCILib.cons;
+    OCI_List  *list  = NULL;
     OCI_Item  *item  = NULL;
     boolean    res   = TRUE;
 
@@ -586,11 +586,13 @@ void OCI_ProcHAEvent
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
+    list  = OCILib.cons;
+
     if ((list == NULL) || (OCILib.ha_handler == NULL))
     {
-        return;    }    
-
-
+        return;    
+    }    
+    
     if (OCILib.version_runtime >= OCI_10_2)
     {
         OCIEvent *eventhp = (OCIEvent *) eventptr;
@@ -691,7 +693,11 @@ void OCI_ProcHAEvent
 #else
 
     OCI_NOT_USED(eventptr);
-
+    OCI_NOT_USED(res);
+    OCI_NOT_USED(list);
+    OCI_NOT_USED(ret);
+    OCI_NOT_USED(item);
+    OCI_NOT_USED(srvhp);
 #endif
 
 }

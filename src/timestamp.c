@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: timestamp.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: timestamp.c, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -269,8 +269,10 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
 
 #else
 
+    OCI_NOT_USED(arr);
     OCI_NOT_USED(type);
     OCI_NOT_USED(nbelem);
+    OCI_NOT_USED(htype);
 
 #endif
 

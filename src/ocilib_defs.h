@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_defs.h, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: ocilib_defs.h, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_OCILIB_DEFS_H_INCLUDED
@@ -55,32 +55,32 @@
 
 #else
 
-    #if defined(OCI_SESSGET_SYSDBA)           /* = OCI_11_2 */
+    #if defined(OCI_FNCODE_LOBGETCONTENTTYPE)  /* = OCI_11_2 */
 
         #define OCI_VERSION_COMPILE OCI_11_2
         #define OCI_VERSION_RUNTIME OCI_11_2
 
-    #elif defined(OCI_LOB_OPT_COMPRESS)       /* = OCI_11_1 */
+    #elif defined(OCI_FNCODE_LOBGETOPT)        /* = OCI_11_1 */
 
         #define OCI_VERSION_COMPILE OCI_11_1
         #define OCI_VERSION_RUNTIME OCI_11_1
 
-    #elif defined(OCI_DBSHUTDOWN_ABORT)       /* = OCI_10_2 */
+    #elif defined(OCI_FNCODE_DBSHUTDOWN)       /* = OCI_10_2 */
 
         #define OCI_VERSION_COMPILE OCI_10_2
         #define OCI_VERSION_RUNTIME OCI_10_2
 
-    #elif defined(OCI_ATTR_DB_CHARSET_ID)     /* = OCI_10_1 */
+    #elif defined(OCI_FNCODE_LOBREAD2)         /* = OCI_10_1 */
 
         #define OCI_VERSION_COMPILE OCI_10_1
         #define OCI_VERSION_RUNTIME OCI_10_1
 
-    #elif defined(OCI_ATTR_STMTCACHESIZE)     /* = OCI_9_2 */
+    #elif defined(OCI_FNCODE_STMTPREPARE2)     /* = OCI_9_2 */
 
         #define OCI_VERSION_COMPILE OCI_9_2
         #define OCI_VERSION_RUNTIME OCI_9_2
 
-    #elif defined(SQLT_PNTY)                  /* = OCI_9_0 */
+    #elif defined(OCI_FNCODE_CPOOLCREATE)      /* = OCI_9_0 */
 
         #define OCI_VERSION_COMPILE OCI_9_0
         #define OCI_VERSION_RUNTIME OCI_9_0

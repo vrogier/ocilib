@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -46,7 +46,7 @@
  */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib.h, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: ocilib.h, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef OCILIB_H_INCLUDED
@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.9.2 (2011-07-13)</b>
+ * <b>Current version : 3.9.4 (2012-02-29)</b>
  *
  * @section s_feats Main features
  *
@@ -169,7 +169,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     3
 #define OCILIB_MINOR_VERSION     9
-#define OCILIB_REVISION_VERSION  2
+#define OCILIB_REVISION_VERSION  4
 
 /* --------------------------------------------------------------------------------------------- *
  * Installing OCILIB
@@ -2004,7 +2004,7 @@ typedef unsigned int big_uint;
  * - OCI_ENV_DEFAULT  : default mode
  * - OCI_ENV_THREADED : multithreading support
  * - OCI_ENV_CONTEXT  : thread contextual error handling
- * - OCI_ENV_EVENTS   : enables events for subscription
+ * - OCI_ENV_EVENTS   : enables events for subscription, HA Events
  *
  * @note
  *
@@ -2187,6 +2187,10 @@ OCI_EXPORT void OCI_API OCI_SetErrorHandler
  *
  * @note
  * See POCI_HA_HANDLER documentation for more details
+ *
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * HA events
  *
  * @warning
  * This call is supported from Oracle 10gR2.
@@ -4116,11 +4120,29 @@ OCI_EXPORT const mtext * OCI_API OCI_GetSQLVerb
  * - Call OCI_SetBindAllocation() with the mode OCI_BAM_INTERNAL
  * - pass a NULL variable or array to OCI_BindXXX() calls
  * - Retrieve the bind content allotated by OCILIB with OCI_BindGetData()
+ * 
+ * Internal Bind allocation mode IS compatible with ALL array binding OCI_BindArrayOfxxx() methods.
+ *
+ * Internal Bind allocation mode IS NOT compatible with some single variable bind calls :
+ * - OCI_BindTimestamp()
+ * - OCI_BindInterval()
+ * - OCI_BindLob()
+ * - OCI_BindFile()
+ * - OCI_BindObject()
+ * - OCI_BindColl()
+ * - OCI_BindRef()
+ * - OCI_BindStatement()
+ * - OCI_BindLong()
+ * 
+ * These methods need to know the data sub type (like OCI_CLOB/OCI_BLOB for lobs) in order
+ * to internally create variables. As these methods prototypes are not passing the sub type,
+ * calling them with the statement bind mode set to OCI_BAM_INTERNAL will raise 
+ * an OCILIB error of type OCI_ERR_NULL_POINTER
  *
  * @note
  * Rebinding is disabled by default (see OCI_AllowRebinding())
  * When using rebinding feature, host variable rebinded to a previously allocated
- * bind MUST be of the same datatype !
+ * bind MUST be of the SAME datatype !
  *
  * @par Basic input bind Example
  * @include bind.c
@@ -4216,6 +4238,10 @@ OCI_EXPORT boolean OCI_API OCI_AllowRebinding
  * @param name - Variable name
  * @param data - Pointer to short variable
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4240,6 +4266,10 @@ OCI_EXPORT boolean OCI_API OCI_BindShort
  * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
  * For regular DML array operations, pass the value 0.
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4259,6 +4289,10 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfShorts
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Pointer to unsigned short variable
+ *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4284,6 +4318,10 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedShort
  * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
  * For regular DML array operations, pass the value 0.
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4303,6 +4341,10 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedShorts
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Pointer to int variable
+ *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4328,6 +4370,10 @@ OCI_EXPORT boolean OCI_API OCI_BindInt
  * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
  * For regular DML array operations, pass the value 0.
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4347,6 +4393,10 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfInts
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Pointer to unsigned int variable
+ *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4372,6 +4422,10 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedInt
  * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
  * For regular DML array operations, pass the value 0.
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4391,6 +4445,10 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedInts
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Pointer to big int variable
+ *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4416,6 +4474,10 @@ OCI_EXPORT boolean OCI_API OCI_BindBigInt
  * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
  * For regular DML array operations, pass the value 0.
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4435,6 +4497,10 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfBigInts
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Pointer to unsigned big int variable
+ *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4460,6 +4526,10 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedBigInt
  * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
  * For regular DML array operations, pass the value 0.
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4484,6 +4554,10 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedBigInts
  *
  * @note
  * if len == 0, len is set to the string size
+ *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4514,6 +4588,10 @@ OCI_EXPORT boolean OCI_API OCI_BindString
  * For regular DML array operations, pass the value 0.
  *
  * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
+ * @note
  * if len <= 0, it returns FALSE
  *
  * @return
@@ -4540,6 +4618,10 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfStrings
  *
  * @note
  * if len <= 0, it returns false
+ *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4573,6 +4655,10 @@ OCI_EXPORT boolean OCI_API OCI_BindRaw
  * @note
  * If len <= 0, it returns FALSE
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4593,6 +4679,10 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfRaws
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Pointer to double variable
+ *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4618,6 +4708,10 @@ OCI_EXPORT boolean OCI_API OCI_BindDouble
  * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
  * For regular DML array operations, pass the value 0.
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4637,6 +4731,10 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfDoubles
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Date handle
+ *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4662,6 +4760,10 @@ OCI_EXPORT boolean OCI_API OCI_BindDate
  * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
  * For regular DML array operations, pass the value 0.
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4681,6 +4783,9 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfDates
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Timestamp handle
+ *
+ * @note
+ * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4710,6 +4815,10 @@ OCI_EXPORT boolean OCI_API OCI_BindTimestamp
  * @note
  * See OCI_TimestampCreate() for possible values of parameter 'type'
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4730,6 +4839,9 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfTimestamps
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Interval handle
+ *
+ * @note
+ * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4760,6 +4872,10 @@ OCI_EXPORT boolean OCI_API OCI_BindInterval
  * @note
  * See OCI_IntervalCreate() for possible values of parameter 'type'
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -4781,6 +4897,9 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfIntervals
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Lob handle
+ *
+ * @note
+ * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4810,6 +4929,10 @@ OCI_EXPORT boolean OCI_API OCI_BindLob
  * @note
  * See OCI_LobCreate() for possible values of parameter 'type'
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4830,6 +4953,9 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfLobs
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - File handle
+ *
+ * @note
+ * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4859,6 +4985,10 @@ OCI_EXPORT boolean OCI_API OCI_BindFile
  * @note
  * See OCI_FileCreate() for possible values of parameter 'type'
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -4879,6 +5009,9 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfFiles
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Object handle
+ *
+ * @note
+ * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4906,6 +5039,10 @@ OCI_EXPORT boolean OCI_API OCI_BindObject
  * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
  * For regular DML array operations, pass the value 0.
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -4927,6 +5064,9 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfObjects
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Collection handle to bind
+ *
+ * @note
+ * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4956,6 +5096,10 @@ OCI_EXPORT boolean OCI_API OCI_BindColl
  * @note
  * See OCI_CollCreate() for possible values of parameter 'type'
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -4977,6 +5121,9 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfColls
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Ref handle to bind
+ *
+ * @note
+ * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -5003,6 +5150,10 @@ OCI_EXPORT boolean OCI_API OCI_BindRef
  * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
  * For regular DML array operations, pass the value 0.
  *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -5024,6 +5175,9 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfRefs
  * @param stmt - Statement handle
  * @param name - Variable name
  * @param data - Statement handle to bind
+ *
+ * @note
+ * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -5049,6 +5203,9 @@ OCI_EXPORT boolean OCI_API OCI_BindStatement
  * Size is expressed in:
  * - Bytes for BLONGs
  * - Characters for CLONGs
+ *
+ * @note
+ * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -16527,7 +16684,6 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
 
 /**
  * @brief
- *
  * Register a notification against the given database
  *
  * @param con      - Connection handle
@@ -16538,7 +16694,6 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
  * @param timeout  - notification timeout
  *
  * @note
- *
  * Parameter 'type' can be one of the following values :
  *
  * - OCI_CNT_OBJECTS   : request for changes at objects (eg. tables) level (DDL / DML)
@@ -16547,8 +16702,12 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
  * - OCI_CNT_ALL       : request for all changes
  *
  * @note
- *
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
+ * 
+ @note
  * Subscription handles are automatically managed by the library
+ *
  *
  * @return
  *
@@ -16582,6 +16741,10 @@ OCI_EXPORT OCI_Subscription * OCI_API  OCI_SubscriptionRegister
  * OCI_SubscriptionUnregister, the library internally reconnects
  * to the given database, performs the deregistration and then disconnects
  *
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -16604,6 +16767,10 @@ OCI_EXPORT boolean OCI_API OCI_SubscriptionUnregister
  * OCI_SubscriptionAddStatement() executes the statement and register it for notifications
  *
  * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
+ *
+ * @note
  * The given statement must hold a 'SELECT' SQL statement
  *
  * @return
@@ -16623,6 +16790,10 @@ OCI_EXPORT boolean OCI_API OCI_SubscriptionAddStatement
  *
  * @param sub - Subscription handle
  *
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
+ *
  */
 
 OCI_EXPORT const mtext * OCI_API OCI_SubscriptionGetName
@@ -16636,6 +16807,10 @@ OCI_EXPORT const mtext * OCI_API OCI_SubscriptionGetName
  *
  * @param sub - Subscription handle
  *
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
+ *
  */
 
 OCI_EXPORT unsigned int OCI_API OCI_SubscriptionGetPort
@@ -16648,6 +16823,10 @@ OCI_EXPORT unsigned int OCI_API OCI_SubscriptionGetPort
  * Return the timeout of the given registered subscription
  *
  * @param sub - Subscription handle
+ *
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
  *
  */
 
@@ -16674,6 +16853,10 @@ OCI_EXPORT unsigned int OCI_API OCI_SubscriptionGetTimeout
  *
  * @note
  * OCI_EventGetDatabase() returns the affected database
+ *
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
  *
  * @note
  * OCI_EventGetObject() returns the affected object
@@ -16713,6 +16896,10 @@ OCI_EXPORT unsigned int OCI_API OCI_EventGetType
  * OCI_EventGetObject() returns the affected object ('schema_name'.'object_name')
  *
  * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
+ *
+ * @note
  * if OCI_CNT_ROWS is passed to OCI_SubscriptionRegister(),
  * the rowid of the altered row can be retrieved with OCI_EventGetRowid()
  *
@@ -16729,6 +16916,10 @@ OCI_EXPORT unsigned int OCI_API OCI_EventGetOperation
  *
  * @param event - Event handle
  *
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
+ *
  */
 
 OCI_EXPORT const dtext * OCI_API OCI_EventGetDatabase
@@ -16741,6 +16932,10 @@ OCI_EXPORT const dtext * OCI_API OCI_EventGetDatabase
  * Return the name of the name of the object that generated the event
  *
  * @param event - Event handle
+ *
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
  *
  */
 
@@ -16755,6 +16950,10 @@ OCI_EXPORT const dtext * OCI_API OCI_EventGetObject
  *
  * @param event - Event handle
  *
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
+ *
  */
 
 OCI_EXPORT const dtext * OCI_API OCI_EventGetRowid
@@ -16768,8 +16967,9 @@ OCI_EXPORT const dtext * OCI_API OCI_EventGetRowid
  *
  * @param event - Event handle
  *
- * @return
- *
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * subscriptions
  *
  */
 

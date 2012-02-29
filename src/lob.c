@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: lob.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: lob.c, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -428,14 +428,7 @@ boolean OCI_API OCI_LobRead2
 
     if (lob->type != OCI_BLOB)
     {
-        unsigned int byte_offset = (ub4) (*byte_count);
-
-        if (OCILib.nls_utf8 == FALSE)
-        {
-            byte_offset *= sizeof(odtext);
-        }
-
-        memset(((char *) buffer) + byte_offset, 0, sizeof(odtext));
+        memset(((char *) buffer) + (ub4) (*byte_count), 0, sizeof(odtext));
 
     #ifndef OCI_LOB2_API_ENABLED
 

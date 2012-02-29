@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: collection.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: collection.c, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -318,11 +318,11 @@ unsigned int OCI_API OCI_CollGetSize
 
 boolean OCI_API OCI_CollTrim
 (
-    OCI_Coll    *coll,
-    unsigned int nb_elem
+    OCI_Coll     *coll,
+    unsigned int  nb_elem
 )
 {
-    boolean res       = TRUE;
+    boolean res = TRUE;
     unsigned int size = 0;
 
     OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);

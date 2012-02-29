@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2011 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -29,7 +29,7 @@
 */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: Pool.c, v 3.9.2 2011-07-13 00:00 Vincent Rogier $
+ * $Id: Pool.c, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib_internal.h"
@@ -411,6 +411,9 @@ OCI_Pool * OCI_API OCI_PoolCreate
     {
         OCI_Connection *cn;
         
+
+    #if OCI_VERSION_COMPILE >= OCI_9_0
+
         /* retrieve statement cache size */
 
         OCI_PoolGetStatementCacheSize(pool);
@@ -422,6 +425,8 @@ OCI_Pool * OCI_API OCI_PoolCreate
         {
             pool->cache_size = OCI_DEFAUT_STMT_CACHE_SIZE;
         }
+
+    #endif
 
         while ((min_con--) > 0)
         {
@@ -973,6 +978,11 @@ unsigned int OCI_API OCI_PoolGetStatementCacheSize
             }
         }
     }
+
+#else
+
+    OCI_NOT_USED(res);
+    OCI_NOT_USED(cache_size);
 
 #endif
 
