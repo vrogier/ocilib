@@ -81,17 +81,6 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
                                                   (size_t) 0, (dvoid **) NULL));
         }
 
-        /* set context transaction attribute */
-
-        OCI_CALL2
-        (
-            res, con,
-
-            OCIAttrSet((dvoid *) trans->con->cxt, (ub4) OCI_HTYPE_SVCCTX,
-                       (dvoid *) trans->htr, (ub4) sizeof(trans->htr),
-                       (ub4) OCI_ATTR_TRANS, trans->con->err)
-        )
-
         /* set XID attribute for global transaction */
 
         if (pxid != NULL)

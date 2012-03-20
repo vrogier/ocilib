@@ -1,10 +1,26 @@
-2012-02-29 Version 3.9.4 Vincent Rogier vince.rogier@ocilib.net
+2012-03-21 Version 3.9.4 Vincent Rogier vince.rogier@ocilib.net
 
     * Miscellaneous fixes
 
-      - (Finally) Fixed broken support for Oracle 8i client (on all platforms and import modes)
-      - Oracle XA is now only supported with Oracle Client 10g and above (as on MS Windows, for 8i and 9i, specific import libraries are used and can be missing from installation)
-  
+      - Connection and Session Pools : Fixed various bugs related to OCILIB automatic adaptation to runtime client versions and features
+      - Statement cache was not properly activated when feature available
+      - OCI_PoolGetStatementCacheSize() : an error was raised as an invalid internal oci attibute code was used
+      - Fixed broken compilation support for Oracle 8i and 9i clients on unix platforms
+      - Oracle XA is now only supported with Oracle Client 10g and above (as on MS Windows, for 8i and 9i, specific import libraries are used and can be missing in some installation)
+      - Oracle 11g : OCILIB driver name could not be properly set in V$SESSION_CONNECT_INFO
+      - various internal minor fixes
+     
+    * Miscellaneous changes
+    
+      - default transaction behavior :
+      
+          - Prior to v3.9.4, a default transaction object was created in OCI_ConnectionCreate() and associated to the returned connection object. 
+          - From v3.9.4, no transaction object is created anymore and OCI_GetTransaction() will return NULL for a newly created connection.
+          - Note that transaction objects must not be set to connections retrieved from a session or XA connections
+          - For other types of connection (regular or retrieved from connection pool), transaction objects can be used as normal
+      
+      - various internal minor code change
+      
 2011-12-05 Version 3.9.3 Vincent Rogier vince.rogier@ocilib.net
 
     * Miscellaneous fixes

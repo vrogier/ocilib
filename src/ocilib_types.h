@@ -254,36 +254,37 @@ struct OCI_Pool
 
 struct OCI_Connection
 {
-    mtext            *db;          /* database */
-    mtext            *user;        /* user */
-    mtext            *pwd;         /* password */
-    OCI_List         *stmts;       /* list of statements */
-    OCI_List         *trsns;       /* list of transactions */
-    OCI_List         *tinfs;       /* list of type info objects */
-    OCI_Transaction  *trs;         /* pointer to current transaction object */
-    OCI_Pool         *pool;        /* pointer to parent pool object */
-    OCI_ServerOutput *svopt;       /* Pointer to server output object */
-    OCIServer        *svr;         /* OCI server handle */
-    OCIError         *err;         /* OCI context handle */
-    OCIEnv           *env;         /* OCI environment handle */
-    OCISession       *ses;         /* OCI session handle */
-    OCISvcCtx        *cxt;         /* OCI context handle */
-    boolean           autocom;     /* auto commit mode */
-    unsigned int      nb_files;    /* number of OCI_File opened by the connection */
-    unsigned int      mode;        /* session mode */
-    int               cstate;      /* connection state */
-    void             *usrdata;     /* user data */
-    mtext            *fmt_date;    /* date string format for conversion */
-    mtext            *fmt_num;     /* numeric string format for conversion */
-    mtext            *ver_str;     /* string  server version*/
-    unsigned int      ver_num;     /* numeric server version */
-    OCI_TraceInfo    *trace;       /* trace information */
-    mtext            *sess_tag;    /* session tag */
-    POCI_TAF_HANDLER  taf_handler; /* failover call back */
-    mtext            *db_name;     /* session tag */
-    mtext            *inst_name;   /* instance name */
-    mtext            *service_name;/* server service name */
-    mtext            *server_name; /* server name (hostname) */
+    mtext            *db;           /* database */
+    mtext            *user;         /* user */
+    mtext            *pwd;          /* password */
+    OCI_List         *stmts;        /* list of statements */
+    OCI_List         *trsns;        /* list of transactions */
+    OCI_List         *tinfs;        /* list of type info objects */
+    OCI_Transaction  *trs;          /* pointer to current transaction object */
+    OCI_Pool         *pool;         /* pointer to parent pool object */
+    OCI_ServerOutput *svopt;        /* Pointer to server output object */
+    OCIServer        *svr;          /* OCI server handle */
+    OCIError         *err;          /* OCI context handle */
+    OCIEnv           *env;          /* OCI environment handle */
+    OCISession       *ses;          /* OCI session handle */
+    OCISvcCtx        *cxt;          /* OCI context handle */
+    boolean           autocom;      /* auto commit mode */
+    unsigned int      nb_files;     /* number of OCI_File opened by the connection */
+    boolean           alloc_handles;/* do new need to allocate OCI handles ? */
+    unsigned int      mode;         /* session mode */
+    int               cstate;       /* connection state */
+    void             *usrdata;      /* user data */
+    mtext            *fmt_date;     /* date string format for conversion */
+    mtext            *fmt_num;      /* numeric string format for conversion */
+    mtext            *ver_str;      /* string  server version*/
+    unsigned int      ver_num;      /* numeric server version */
+    OCI_TraceInfo    *trace;        /* trace information */
+    mtext            *sess_tag;     /* session tag */
+    POCI_TAF_HANDLER  taf_handler;  /* failover call back */
+    mtext            *db_name;      /* session tag */
+    mtext            *inst_name;    /* instance name */
+    mtext            *service_name; /* server service name */
+    mtext            *server_name;  /* server name (hostname) */
     mtext            *domain_name; /* server domain name */
     OCI_Timestamp    *inst_startup;/* instance startup timestamp */
 };

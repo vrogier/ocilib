@@ -332,13 +332,14 @@
 #define OCI_ATTR_INSTSTARTTIME         394 /* v$instance instance start time */
 #define OCI_ATTR_HA_TIMESTAMP          395                     /* event time */
 #define OCI_ATTR_DBDOMAIN              399                      /* db domain */
-#define OCI_ATTR_EVENTTYPE               400                     /* event type */
-#define OCI_ATTR_HA_SOURCE               401
-#define OCI_ATTR_HA_STATUS               402
+#define OCI_ATTR_EVENTTYPE             400                     /* event type */
+#define OCI_ATTR_HA_SOURCE             401
+#define OCI_ATTR_HA_STATUS             402
 #define OCI_ATTR_HA_SRVFIRST           403
 #define OCI_ATTR_HA_SRVNEXT            404
 #define OCI_ATTR_TAF_ENABLED           405
 #define OCI_ATTR_DRIVER_NAME           424                    /* Driver Name */
+#define OCI_ATTR_SPOOL_AUTH            460      /* Auth handle on pool handle*/
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
 

@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.9.4 (2012-02-29)</b>
+ * <b>Current version : 3.9.4 (2012-03-21)</b>
  *
  * @section s_feats Main features
  *
@@ -169,7 +169,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     3
 #define OCILIB_MINOR_VERSION     9
-#define OCILIB_REVISION_VERSION  4
+#define OCILIB_REVISION_VERSION  3
 
 /* --------------------------------------------------------------------------------------------- *
  * Installing OCILIB
@@ -2813,6 +2813,9 @@ OCI_EXPORT const mtext * OCI_API OCI_GetDefaultFormatNumeric
  *
  * @param con - Connection handle
  *
+ * @note
+ * From v3.9.4, no more default transaction object is created for a new connection
+ *
  */
 
 OCI_EXPORT OCI_Transaction * OCI_API OCI_GetTransaction
@@ -2822,13 +2825,17 @@ OCI_EXPORT OCI_Transaction * OCI_API OCI_GetTransaction
 
 /**
  * @brief
- * Return the current transaction attached to the connection
+ * Set a transaction to a connection
  *
  * @param con   - Connection handle
  * @param trans - Transaction handle to assign
  *
  * @note
- * The current transaction is automatically stopped but the newly assigned is not started or resumed
+ * The current transaction (if any) is automatically stopped but the newly assigned is not
+ * started or resumed
+ * 
+ * @warning
+ * Do not set transaction object to XA connection or connection retrieved from a session pool
  *
  */
 
