@@ -169,7 +169,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     3
 #define OCILIB_MINOR_VERSION     9
-#define OCILIB_REVISION_VERSION  3
+#define OCILIB_REVISION_VERSION  4
 
 /* --------------------------------------------------------------------------------------------- *
  * Installing OCILIB
