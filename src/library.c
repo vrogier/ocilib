@@ -1215,6 +1215,18 @@ boolean OCI_API OCI_Initialize
         OCILib.loaded = TRUE;
     }
 
+    /* test for XA support */
+
+#ifdef _WINDOWS               
+    #if OCI_VERSION_COMPILE >= OCI_10_1     
+        OCILib.use_xa = (xaoEnv != NULL);
+    #else
+        OCILib.use_xa = FALSE;
+    #endif
+#else
+    OCILib.use_xa = TRUE;
+#endif
+
     return res;
 }
 

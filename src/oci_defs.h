@@ -270,6 +270,8 @@
 #define OCI_ATTR_NUM_COLS              102              /* number of columns */
 #define OCI_ATTR_LIST_COLUMNS          103   /* parameter of the column list */
 
+#define OCI_ATTR_LINK                  111         /* the database link name */
+#define OCI_ATTR_PTYPE                 123      /* type of info described by */
 #define OCI_ATTR_PARAM                 124           /* parameter descriptor */
 #define OCI_ATTR_PARSE_ERROR_OFFSET    129             /* Parse Error offset */
 
@@ -298,6 +300,8 @@
 #define OCI_ATTR_COLLECTION_ELEMENT    227     /* has a collection attribute */
 #define OCI_ATTR_NUM_TYPE_ATTRS        228      /* number of attribute types */
 #define OCI_ATTR_LIST_TYPE_ATTRS       229        /* list of type attributes */
+
+#define OCI_ATTR_DESC_PUBLIC           250                  /* public object */
 
 #define OCI_ATTR_CLIENT_IDENTIFIER     278       /* value of client id to set*/
 

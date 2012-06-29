@@ -521,7 +521,7 @@ void OCI_ExceptionStatementNotScrollable
 void OCI_ExceptionBindAlreadyUsed
 (
     OCI_Statement *stmt,
-    const mtext  * bind
+    const mtext   *bind
 );
 
 void OCI_ExceptionBindArraySize
@@ -535,7 +535,7 @@ void OCI_ExceptionBindArraySize
 void OCI_ExceptionDirPathColNotFound
 (
     OCI_DirPath  *dp,
-    const mtext * column,
+    const mtext  *column,
     const mtext  *table
 );
 
@@ -553,7 +553,13 @@ void OCI_ExceptionOCIEnvironment
 void OCI_ExceptionRebindBadDatatype
 (
     OCI_Statement *stmt,
-    const mtext  * bind
+    const mtext   *bind
+);
+
+void OCI_ExceptionTypeInfoWrongType
+(
+    OCI_Connection *con,
+    const mtext    *name
 );
 
 /* --------------------------------------------------------------------------------------------- *

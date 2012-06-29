@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.9.4 (2012-03-21)</b>
+ * <b>Current version : 3.9.4 (2012-06-27)</b>
  *
  * @section s_feats Main features
  *
@@ -1226,27 +1226,27 @@ typedef unsigned int (*POCI_TAF_HANDLER)
  * HA (High Availabality) events Notification User callback prototype.
  *
  * @param con    - Connection handle related to the event
- * @param source - Connection handle related to the event
- * @param status - Timestamp of the event
+ * @param source - source of the event
+ * @param event  - type of the event
  * @param time   - Timestamp of the event
  *
  * @note
  * Currently, Oracle only send HA down events
  *
  * @note
- * Possible values for parameter 'status' :
- *  - OCI_HET_DOWN : HA event type down
- *  - OCI_HET_UP   : HA event type up
- *
- * @note
- * Possible values for parameter 'event' :
+ * Possible values for parameter 'source' :
  *  - OCI_HES_INSTANCE                    
  *  - OCI_HES_DATABASE                    
  *  - OCI_HES_NODE                        
  *  - OCI_HES_SERVICE                     
  *  - OCI_HES_SERVICE_MEMBER              
  *  - OCI_HES_ASM_INSTANCE                
- *  - OCI_HES_PRECONNECT                  
+ *  - OCI_HES_PRECONNECT     
+ *
+ * @note
+ * Possible values for parameter 'event' :
+ *  - OCI_HET_DOWN : HA event type down
+ *  - OCI_HET_UP   : HA event type up            
  *
  */
 
@@ -1446,6 +1446,7 @@ typedef unsigned int big_uint;
 #define OCI_ERR_DIRPATH_STATE               22
 #define OCI_ERR_CREATE_OCI_ENVIRONMENT      23
 #define OCI_ERR_REBIND_BAD_DATATYPE         24
+#define OCI_ERR_TYPEINFO_DATATYPE           25
 
 /* binding */
 
@@ -2453,7 +2454,9 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
  *   - DO NOT USE OCI_CHARSET_MIXED or OCI_CHARSET_WIDE OCILIB builds with XA connections
  *
  * @note
- * On success, a local transaction is automatically created and started
+ * On success, a local transaction is automatically created and started ONLY for regular 
+ * standalone connections and connections retrieved from connection pools.
+ * No transaction is created for XA connections or connection retrieved from session pools.
  *
  * @return
  * Connection handle on success or NULL on failure

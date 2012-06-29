@@ -199,6 +199,7 @@ struct OCI_Library
     unsigned int         version_compile;         /* OCI version used at compile time */
     unsigned int         version_runtime;         /* OCI version used at runtime */
     boolean              use_lob_ub8;             /* use 64 bits integers for lobs ? */
+    boolean              use_xa;                   /* is xa enabled */
     boolean              use_scrollable_cursors;  /* use Oracle 9i fetch API */
     ub4                  env_mode;                /* default environment mode */
     boolean              loaded;                  /* OCILIB correctly loaded ? */

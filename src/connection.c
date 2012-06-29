@@ -633,6 +633,26 @@ boolean OCI_ConnectionLogon
                     con->ses = NULL;
                     con->cxt = NULL;
                 }
+
+                if (res == TRUE)
+                {                    
+                    if (!(con->mode & OCI_PRELIM_AUTH))
+                    {
+                        /* create default transaction object */
+
+                       OCI_Transaction *trs = OCI_TransactionCreate(con, 1, OCI_TRANS_READWRITE, NULL);
+
+                       if (trs != NULL)
+                       {
+                           if (OCI_SetTransaction(con, trs))
+                           {
+                                /* start transaction */
+
+                                res = OCI_TransactionStart(trs);
+                           }
+                       }
+                    }
+                }
             }
         }
     }
@@ -656,19 +676,12 @@ boolean OCI_ConnectionLogon
             osize = -1;
             ostr  = OCI_GetInputMetaString(con->pool->name, &osize);
 
-            if (con->pool->htype == OCI_HTYPE_CPOOL)
-            {
-                mode = OCI_SESSGET_CPOOL;
-            }
-            else
-            {
-                mode = OCI_SESSGET_SPOOL;
+            mode = OCI_SESSGET_SPOOL;
 
-                if (tag != NULL)
-                {
-                    osize_tag = -1;
-                    ostr_tag  = OCI_GetInputMetaString(tag, &osize_tag);
-                }
+            if (tag != NULL && tag[0] != 0)
+            {
+                osize_tag = -1;
+                ostr_tag  = OCI_GetInputMetaString(tag, &osize_tag);
             }
 
             OCI_CALL2
@@ -774,6 +787,24 @@ boolean OCI_ConnectionLogOff
     if (con->nb_files > 0)
     {
         OCILobFileCloseAll(con->cxt, con->err);
+    }
+
+    /* commit if needed otherwise rollback changes */
+
+    if (con->autocom == TRUE)
+    {
+         OCI_Commit(con);
+    }
+    else
+    {
+        /* From v3.9.4, no default transaction is created for session pool and XA connections
+           OCI will commit changes by default if no explicit transaction has been set.
+           To preverse previous behavior, we need to perfom a rollback id no current connection is associated */
+
+        if (con->trs == NULL)
+        {
+            OCI_Rollback(con);
+        }
     }
 
     /* close session */
@@ -938,6 +969,12 @@ OCI_Connection * OCI_API OCI_ConnectionCreate
     /* let's be sure OCI_Initialize() has been called */
 
     OCI_CHECK_INITIALIZED(NULL);
+
+    /* check for XA connections support */
+
+    OCI_CHECK_XA_ENABLED(mode, NULL);
+
+    /* create connection */
 
     con = OCI_ConnectionAllocate(NULL, db, user, pwd, mode);
 

@@ -690,6 +690,27 @@
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_HIGH_AVAILABILITY);        \
         return ret;                                                            \
     }
+
+/**
+ * @brief
+ * Checks if the OCILIB runtime version supports Oracle XA
+ *
+ * @param ret - Return value
+ *
+ * @note
+ * Throws an exception if the OCILIB that not support XA connections
+ *
+ */
+
+#define OCI_CHECK_XA_ENABLED(mode, ret)                                         \
+                                                                               \
+    if ( (mode & OCI_SESSION_XA) && (OCILib.use_xa == FALSE ) )                \
+    {                                                                          \
+        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_XA);                       \
+        return ret;                                                            \
+    }
+
+
 #endif    /* OCILIB_OCILIB_CHECKS_H_INCLUDED */
 
 

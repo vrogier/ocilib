@@ -576,11 +576,11 @@ void OCI_ProcHAEvent
     dvoid     *eventptr
 )
 {
-    sword      ret   = OCI_SUCCESS;
-    OCIServer *srvhp = NULL;
-    OCI_List  *list  = NULL;
-    OCI_Item  *item  = NULL;
-    boolean    res   = TRUE;
+    sword           ret   = OCI_SUCCESS;
+    boolean         res   = TRUE;
+    OCI_List       *list  = NULL;
+    OCI_Item       *item  = NULL;
+    OCIServer      *srvhp = NULL;
 
     OCI_NOT_USED(evtctx);
 
@@ -595,7 +595,8 @@ void OCI_ProcHAEvent
     
     if (OCILib.version_runtime >= OCI_10_2)
     {
-        OCIEvent *eventhp = (OCIEvent *) eventptr;
+        OCIEvent        *eventhp = (OCIEvent *) eventptr;
+        OCI_Timestamp   *tmsp    = NULL;
 
         ret = OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &srvhp,
                          (ub4 *) NULL, (ub4) OCI_ATTR_HA_SRVFIRST, OCILib.err);
@@ -614,8 +615,7 @@ void OCI_ProcHAEvent
             while (item != NULL)
             {
                 OCI_Connection *tmp = (OCI_Connection *) item->data;
-                OCI_Connection *con  = NULL;
-                OCI_Timestamp  *tmsp = NULL;
+                OCI_Connection *con  = NULL;          
                 OCIDateTime    *dth  = NULL;
 
                 ub4 event  = OCI_HA_STATUS_DOWN;
@@ -689,7 +689,16 @@ void OCI_ProcHAEvent
                              (ub4 *) NULL,  (ub4) OCI_ATTR_HA_SRVNEXT, OCILib.err);
 
         }
+
+        /* free temporary timestamp object */
+
+        if (tmsp != NULL)
+        {
+            tmsp->hstate = OCI_OBJECT_FETCHED_DIRTY;
+            OCI_TimestampFree(tmsp);
+        }
     }
+
 #else
 
     OCI_NOT_USED(eventptr);
@@ -698,6 +707,7 @@ void OCI_ProcHAEvent
     OCI_NOT_USED(ret);
     OCI_NOT_USED(item);
     OCI_NOT_USED(srvhp);
+
 #endif
 
 }

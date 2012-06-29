@@ -300,6 +300,7 @@
 #define OCI_FEATURE_DATABASE_NOTIFY     6
 #define OCI_FEATURE_REMOTE_DBS_CONTROL  7
 #define OCI_FEATURE_HIGH_AVAILABILITY   8
+#define OCI_FEATURE_XA                  9
 
 /* --------------------------------------------------------------------------------------------- *
  * handle types

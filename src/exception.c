@@ -132,7 +132,8 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Column '%ls' not find in table '%ls'"),
     MT("Unable to perform this operation on a %ls direct path process"),
     MT("Cannot create OCI environment"),
-    MT("Name or position '%ls' previously binded with different datatype")
+    MT("Name or position '%ls' previously binded with different datatype"),
+    MT("Object '%ls' type does not match the requested object type")
 };
 
 #else
@@ -163,7 +164,8 @@ static mtext * OCILib_ErrorMsg[] =
     MT("Column '%s' not find in table '%s'"),
     MT("Unable to perform this operation on a %s direct path process"),
     MT("Cannot create OCI environment"),
-    MT("Name or position '%ls' previously binded with different datatype")
+    MT("Name or position '%s' previously binded with different datatype"),
+    MT("Object '%s' type does not match the requested object type")
 };
 
 #endif
@@ -177,7 +179,8 @@ static mtext * OCILib_OraFeatures[] =
     MT("Oracle 10g R1 LOBs size extensions"),
     MT("Oracle 10g R2 Database change notification"),
     MT("Oracle 10g R2 remote database startup/shutdown"),
-    MT("Oracle 10g R2 High Availability")
+    MT("Oracle 10g R2 High Availability"),
+    MT("Oracle XA Connections")
 };
 
 typedef struct OCI_StmtStateTable
@@ -966,6 +969,34 @@ void OCI_ExceptionRebindBadDatatype
                   msizeof(err->str) - (size_t) 1,
                   OCILib_ErrorMsg[OCI_ERR_REBIND_BAD_DATATYPE],
                   bind);
+    }
+
+    OCI_ExceptionRaise(err);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ExceptionTypeInfoWrongType
+ * --------------------------------------------------------------------------------------------- */
+
+void OCI_ExceptionTypeInfoWrongType
+(
+    OCI_Connection *con,
+    const mtext  * name
+)
+{
+    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+
+    if (err != NULL)
+    {
+        err->type  = OCI_ERR_OCILIB;
+        err->icode = OCI_ERR_TYPEINFO_DATATYPE;
+        err->stmt  = NULL;
+        err->con   = con;
+
+        mtsprintf(err->str,
+                  msizeof(err->str) - (size_t) 1,
+                  OCILib_ErrorMsg[OCI_ERR_TYPEINFO_DATATYPE],
+                  name);
     }
 
     OCI_ExceptionRaise(err);

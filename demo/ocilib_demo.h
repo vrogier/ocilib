@@ -1,36 +1,34 @@
 /*
-   +----------------------------------------------------------------------+
-   |                                                                      |
-   |                     OCILIB - C Driver for Oracle                     |
-   |                                                                      |
-   |                      (C Wrapper for Oracle OCI)                      |
-   |                                                                      |
-   |                         DEMO HEADER FILE                             |
-   |                                                                      |
-   +----------------------------------------------------------------------+
-   |                      Website : http://www.ocilib.net                 |
-   +----------------------------------------------------------------------+
-   |               Copyright (c) 2007-2010 Vincent ROGIER                 |
-   +----------------------------------------------------------------------+
-   | This library is free software; you can redistribute it and/or        |
-   | modify it under the terms of the GNU Lesser General Public           |
-   | License as published by the Free Software Foundation; either         |
-   | version 2 of the License, or (at your option) any later version.     |
-   |                                                                      |
-   | This library is distributed in the hope that it will be useful,      |
-   | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    |
-   | Lesser General Public License for more details.                      |
-   |                                                                      |
-   | You should have received a copy of the GNU Lesser General Public     |
-   | License along with this library; if not, write to the Free           |
-   | Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   |
-   +----------------------------------------------------------------------+
-   |          Author: Vincent ROGIER <vince.rogier@gmail.com>             |
-   +----------------------------------------------------------------------+
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |                               OCILIB - C Driver for Oracle                              |
+    |                                                                                         |
+    |                                (C Wrapper for Oracle OCI)                               |
+    |                                                                                         |
+    |                              Website : http://www.ocilib.net                            |
+    |                                                                                         |
+    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
+    |                                                                                         |
+    |             This library is free software; you can redistribute it and/or               |
+    |             modify it under the terms of the GNU Lesser General Public                  |
+    |             License as published by the Free Software Foundation; either                |
+    |             version 2 of the License, or (at your option) any later version.            |
+    |                                                                                         |
+    |             This library is distributed in the hope that it will be useful,             |
+    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
+    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
+    |             Lesser General Public License for more details.                             |
+    |                                                                                         |
+    |             You should have received a copy of the GNU Lesser General Public            |
+    |             License along with this library; if not, write to the Free                  |
+    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
+    |                                                                                         |
+    +-----------------------------------------------------------------------------------------+
 */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  *
  * THIS DEMO RUNS ON ALL PLATFOMS AND OCILIB BUILDS.
  *
@@ -41,11 +39,11 @@
  *
  * SOME DEFINES FOLLOW IN ORDER TO HANDLE ALL THOSE STUFF
  *
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * COMMON DEFINES
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define ARG_DB     1
 #define ARG_USER   2
@@ -73,9 +71,9 @@ typedef struct test_t
         int    execute;     /* do execute the procedure ? */
 }test_t;
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * PlATFORMS
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #ifdef _WINDOWS
 
@@ -83,15 +81,15 @@ typedef struct test_t
 
 #endif
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * INCLUDES
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #include "ocilib.h"
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * PLATFORMS
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #ifdef _MSC_VER
 
@@ -111,9 +109,9 @@ typedef struct test_t
    #define EXE_NAME   "ocilib_demo"
 #endif
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * STRING PRINTING
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #define print_text(x)       printf(x)
 #define print_frmt(f, x)    printf(f, x)
@@ -165,9 +163,9 @@ typedef struct test_t
 
 #endif
 
-/* ------------------------------------------------------------------------ *
+/* --------------------------------------------------------------------------------------------- *
  * PROGRAM ARGUMENTS
- * ------------------------------------------------------------------------ */
+ * --------------------------------------------------------------------------------------------- */
 
 #if defined(OCI_CHARSET_WIDE)
 

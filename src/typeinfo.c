@@ -79,19 +79,19 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     unsigned int    type
 )
 {
-    OCI_TypeInfo *typinf = NULL;
-    OCI_Item *item       = NULL;
-    OCIDescribe *dschp   = NULL;
-    OCIParam *parmh1     = NULL;
-    OCIParam *parmh2     = NULL;
-    mtext *str           = NULL;
-    int etype            = OCI_DESC_COLUMN;
-    int ptype            = 0;
-    ub1 item_type        = 0;
-    ub4 attr_type        = 0;
-    ub4 num_type         = 0;
-    boolean res          = TRUE;
-    boolean found        = FALSE;
+    OCI_TypeInfo *typinf        = NULL;
+    OCI_TypeInfo *syn_typinf    = NULL;
+    OCI_Item *item              = NULL;
+    OCIDescribe *dschp          = NULL;
+    OCIParam *parmh1            = NULL;
+    OCIParam *parmh2            = NULL;
+    mtext *str                  = NULL;
+    int ptype                   = 0;
+    ub1 desc_type               = 0;
+    ub4 attr_type               = 0;
+    ub4 num_type                = 0;
+    boolean res                 = TRUE;
+    boolean found               = FALSE;
     ub2 i;
 
     mtext obj_schema[OCI_SIZE_OBJ_NAME+1];
@@ -101,23 +101,6 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
     OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
-
-    if (type == OCI_TIF_TABLE)
-    {
-        item_type = OCI_PTYPE_TABLE;
-    }
-    else if (type == OCI_TIF_VIEW)
-    {
-        item_type = OCI_PTYPE_VIEW;
-    }
-    else if (type == OCI_TIF_TYPE)
-    {
-        item_type = OCI_PTYPE_TYPE;
-    }
-    else
-    {
-        return NULL;
-    }
 
     obj_schema[0] = 0;
     obj_name[0]   = 0;
@@ -186,6 +169,8 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
         res = (item != NULL);
 
+        /* allocate describe handle */
+
         if (res == TRUE)
         {
             typinf = (OCI_TypeInfo *) item->data;
@@ -202,219 +187,349 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                                                   (dvoid **) NULL));
         }
 
+        /* perfom describe */
+
         if (res == TRUE)
         {
-            if (type == OCI_TIF_TYPE)
+            mtext buffer[(OCI_SIZE_OBJ_NAME*2) + 2] = MT("");
+
+            size_t size = sizeof(buffer)/sizeof(mtext);
+            void *ostr1 = NULL;
+            int osize1  = -1;
+            sb4 pbsp    = 1;
+
+            str = buffer;
+
+            /* compute full object name */
+
+            if ((typinf->schema != NULL) && (typinf->schema[0] != 0))
             {
-                void *ostr1 = NULL;
-                void *ostr2 = NULL;
-                int osize1  = -1;
-                int osize2  = -1;
-
-                attr_type = OCI_ATTR_LIST_TYPE_ATTRS;
-                num_type  = OCI_ATTR_NUM_TYPE_ATTRS;
-                ptype     = OCI_DESC_TYPE;
-
-                ostr1 = OCI_GetInputMetaString(typinf->schema, &osize1);
-                ostr2 = OCI_GetInputMetaString(typinf->name,   &osize2);
-
-                OCI_CALL2
-                (
-                    res, con,
-
-                    OCITypeByName(typinf->con->env, con->err, con->cxt,
-                                  (text *) ostr1, (ub4) osize1,
-                                  (text *) ostr2, (ub4) osize2,
-                                  (text *) NULL, (ub4) 0,
-                                  OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
-                                  &typinf->tdo)
-                )
-
-                OCI_CALL2
-                (
-                    res, con,
-
-                    OCIDescribeAny(con->cxt, con->err, (void *) typinf->tdo,
-                                   0, OCI_OTYPE_PTR, OCI_DEFAULT,
-                                   OCI_PTYPE_TYPE, dschp)
-                )
-
-                OCI_ReleaseMetaString(ostr1);
-                OCI_ReleaseMetaString(ostr2);
+                str   = mtsncat(buffer, typinf->schema, size);
+                size -= mtslen(typinf->schema);
+                str   = mtsncat(str, MT("."), size);
+                size -= (size_t) 1;
             }
-            else
-            {
-                mtext buffer[(OCI_SIZE_OBJ_NAME*2) + 2];
 
-                size_t size = sizeof(buffer)/sizeof(mtext);
-                void *ostr1 = NULL;
-                int osize1  = -1;
+            mtsncat(str, typinf->name, size);
 
-                attr_type = OCI_ATTR_LIST_COLUMNS;
-                num_type  = OCI_ATTR_NUM_COLS;
-                ptype     = OCI_DESC_TABLE;
-                str       = buffer;
+            ostr1 = OCI_GetInputMetaString(str, &osize1);
 
-                str[0] = 0;
+            /* set public scope to include synonyms */
+                
+            OCI_CALL2
+            (
+                res, con,
 
-                if ((typinf->schema != NULL) && (typinf->schema[0] != 0))
-                {
-                    str   = mtsncat(buffer, typinf->schema, size);
-                    size -= mtslen(typinf->schema);
-                    str   = mtsncat(str, MT("."), size);
-                    size -= (size_t) 1;
-                }
+                OCIAttrSet(dschp, OCI_HTYPE_DESCRIBE, &pbsp, (ub4) sizeof(pbsp), 
+                            OCI_ATTR_DESC_PUBLIC, con->err)
+            )
 
-                mtsncat(str, typinf->name, size);
-
-                ostr1 = OCI_GetInputMetaString(str, &osize1);
-
-                OCI_CALL2
-                (
-                    res, con,
-
-                    OCIDescribeAny(con->cxt, con->err, (dvoid *) ostr1,
-                                   (ub4) osize1, OCI_OTYPE_NAME,
-                                   OCI_DEFAULT, item_type, dschp)
-                )
-
-                OCI_ReleaseMetaString(ostr1);
-            }
+            /* describe call */
 
             OCI_CALL2
             (
                 res, con,
 
-                OCIAttrGet(dschp, OCI_HTYPE_DESCRIBE, &parmh1,
-                           NULL, OCI_ATTR_PARAM, con->err)
+                OCIDescribeAny(con->cxt, con->err, (dvoid *) ostr1,
+                                (ub4) osize1, OCI_OTYPE_NAME,
+                                OCI_DEFAULT, OCI_PTYPE_UNK, dschp)
             )
 
+            OCI_ReleaseMetaString(ostr1);
 
-            if (type == OCI_TIF_TYPE)
+            /* get parameter handle */
+                
+            OCI_CALL2
+            (
+                res, con,
+
+                OCIAttrGet(dschp, OCI_HTYPE_DESCRIBE, &parmh1,
+                            NULL, OCI_ATTR_PARAM, con->err)
+            )
+            
+            /* get object type */
+                
+            OCI_CALL2
+            (
+                res, con,
+
+                OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &desc_type,
+                           NULL, OCI_ATTR_PTYPE, con->err)
+            )
+        }
+
+        /* on sucessfull describe call, retrieve all information about the object 
+           if it is not a synonym */
+
+        if (res == TRUE)
+        {
+            switch (desc_type)
             {
-                boolean pdt = FALSE;
+                case OCI_PTYPE_TYPE:
+                {
+                    if (typinf->type != OCI_UNKNOWN)
+                    {
+                        res = (typinf->type == OCI_TIF_TYPE);
 
-                /* check if it's system predefined type if order to avoid the next call
-                   that is not allowed on system types */
+                    }
 
-                OCI_CALL2
-                (
-                    res, con,
+                    typinf->type = OCI_TIF_TYPE;
+                    
+                    if (res == TRUE)
+                    {
+                        boolean pdt = FALSE;
+                        void *ostr1 = NULL;
+                        void *ostr2 = NULL;
+                        int osize1  = -1;
+                        int osize2  = -1;
 
-                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &pdt,
-                               NULL, OCI_ATTR_IS_PREDEFINED_TYPE, con->err)
-                )
+                        attr_type = OCI_ATTR_LIST_TYPE_ATTRS;
+                        num_type  = OCI_ATTR_NUM_TYPE_ATTRS;
+                        ptype     = OCI_DESC_TYPE;
 
-                if (pdt == FALSE)
+                        /* get the object  tdo */
+
+                        ostr1 = OCI_GetInputMetaString(typinf->schema, &osize1);
+                        ostr2 = OCI_GetInputMetaString(typinf->name,   &osize2);
+
+                        OCI_CALL2
+                        (
+                            res, con,
+
+                            OCITypeByName(typinf->con->env, con->err, con->cxt,
+                                          (text *) ostr1, (ub4) osize1,
+                                          (text *) ostr2, (ub4) osize2,
+                                          (text *) NULL, (ub4) 0,
+                                          OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
+                                          &typinf->tdo)
+                        )
+
+                        OCI_ReleaseMetaString(ostr1);
+                        OCI_ReleaseMetaString(ostr2);
+
+                        /* check if it's system predefined type if order to avoid the next call
+                           that is not allowed on system types */
+
+                        OCI_CALL2
+                        (
+                            res, con,
+
+                            OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &pdt,
+                                       NULL, OCI_ATTR_IS_PREDEFINED_TYPE, con->err)
+                        )
+
+                        if (pdt == FALSE)
+                        {
+                            OCI_CALL2
+                            (
+                                res, con,
+
+                                OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->tcode,
+                                           NULL, OCI_ATTR_TYPECODE, con->err)
+                            )
+                        }
+                    
+                    }
+
+                    break;
+                }
+                case OCI_PTYPE_TABLE:
+                case OCI_PTYPE_VIEW:
+            #if OCI_VERSION_COMPILE >= OCI_10_1
+                case OCI_PTYPE_TABLE_ALIAS:
+            #endif
+                {
+                    if (typinf->type != OCI_UNKNOWN)
+                    {
+                        res = (((typinf->type == OCI_TIF_TABLE) && (desc_type != OCI_PTYPE_VIEW)) ||
+                               ((typinf->type == OCI_TIF_VIEW ) && (desc_type == OCI_PTYPE_VIEW)));
+                    }
+
+                    typinf->type = (desc_type == OCI_PTYPE_VIEW ? OCI_TIF_VIEW : OCI_TIF_TABLE);
+ 
+                    if (res == TRUE)
+                    {
+                        attr_type = OCI_ATTR_LIST_COLUMNS;
+                        num_type  = OCI_ATTR_NUM_COLS;
+                        ptype     = OCI_DESC_TABLE;             
+                    }
+                    
+                    break;
+                }
+                case OCI_PTYPE_SYN:
+                {
+                    mtext *syn_schema_name   = NULL;
+                    mtext *syn_object_name   = NULL;
+                    mtext *syn_link_name     = NULL;
+
+                    mtext syn_fullname[(OCI_SIZE_OBJ_NAME*3) + 3] = MT("");
+
+                    /* get link schema, object and databaselink names */
+
+                    res = res && OCI_StringGetFromAttrHandle (con, parmh1, OCI_DTYPE_PARAM,
+                                                              OCI_ATTR_SCHEMA_NAME, 
+                                                              &syn_schema_name);
+                    
+                    res = res && OCI_StringGetFromAttrHandle (con, parmh1, OCI_DTYPE_PARAM,
+                                                              OCI_ATTR_NAME, 
+                                                              &syn_object_name);
+ 
+                    res = res && OCI_StringGetFromAttrHandle (con, parmh1, OCI_DTYPE_PARAM,
+                                                              OCI_ATTR_LINK, &syn_link_name);
+
+                    /* compute link full name */
+                    
+                    if ((syn_schema_name != NULL) && (syn_schema_name[0] != 0))
+                    {
+                        mtsncat(syn_fullname, syn_schema_name, (size_t) OCI_SIZE_OBJ_NAME);
+                        mtsncat(syn_fullname, MT("."), 1);
+                    }
+
+                    if ((syn_object_name != NULL) && (syn_object_name[0] != 0))
+                    {
+                        mtsncat(syn_fullname, syn_object_name, (size_t) OCI_SIZE_OBJ_NAME);
+                    }
+                
+                    if ((syn_link_name != NULL) && (syn_link_name[0] != 0))
+                    {
+                        mtsncat(syn_fullname, MT("@"), 1);
+                        mtsncat(syn_fullname, syn_link_name, (size_t) OCI_SIZE_OBJ_NAME);
+                    }
+
+                    /* retrieve the type info of the real object */
+
+                    syn_typinf = OCI_TypeInfoGet (con, syn_fullname, typinf->type);
+                         
+                    /* free temporay strings */
+
+                    OCI_MemFree (syn_link_name);
+                    OCI_MemFree (syn_object_name);
+                    OCI_MemFree (syn_schema_name);
+                    
+                    /* do we have a valid object ? */
+
+                    res = (syn_typinf != NULL);
+
+                    break;
+                }
+            }
+
+            /*  did we handle a supported object other than a synonym */
+
+            if ((res == TRUE) && (ptype != 0)) 
+            {
+                /* do we need get more attributes for collections ? */
+
+                if (typinf->tcode == SQLT_NCO)
+                {
+                    typinf->nb_cols = 1;
+
+                    ptype  = OCI_DESC_COLLECTION;
+                    parmh2 = parmh1;
+
+                    OCI_CALL2
+                    (
+                        res, con,
+
+                        OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->ccode,
+                                   NULL, OCI_ATTR_COLLECTION_TYPECODE, con->err)
+                    )
+                }
+                else
                 {
                     OCI_CALL2
                     (
                         res, con,
 
-                        OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->tcode,
-                                   NULL, OCI_ATTR_TYPECODE, con->err)
+                        OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &parmh2,
+                                   NULL, attr_type, con->err)
+                    )
+
+                    OCI_CALL2
+                    (
+                        res, con,
+
+                        OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->nb_cols,
+                                   NULL, num_type, con->err)
                     )
                 }
-            }
 
-            /* do we need get more attributes for collections ? */
+                /* allocates memory for cached offsets */
 
-            if (typinf->tcode == SQLT_NCO)
-            {
-                typinf->nb_cols = 1;
-
-                ptype  = OCI_DESC_COLLECTION;
-                etype  = OCI_DESC_TYPE;
-                parmh2 = parmh1;
-
-                OCI_CALL2
-                (
-                    res, con,
-
-                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->ccode,
-                               NULL, OCI_ATTR_COLLECTION_TYPECODE, con->err)
-                )
-            }
-            else
-            {
-                OCI_CALL2
-                (
-                    res, con,
-
-                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &parmh2,
-                               NULL, attr_type, con->err)
-                )
-
-                OCI_CALL2
-                (
-                    res, con,
-
-                    OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->nb_cols,
-                               NULL, num_type, con->err)
-                )
-            }
-
-            /* allocates memory for cached offsets */
-
-            if (typinf->nb_cols > 0)
-            {
-                typinf->offsets = (int *) OCI_MemAlloc(OCI_IPC_ARRAY,
-                                                       sizeof(*typinf->offsets),
-                                                       (size_t) typinf->nb_cols,
-                                                       FALSE);
-
-                res = (typinf->offsets != NULL);
-
-                if (res == TRUE)
+                if (typinf->nb_cols > 0)
                 {
-                    memset(typinf->offsets, -1, sizeof(*typinf->offsets) * typinf->nb_cols);
-                }
-            }
-
-            /* allocates memory for children */
-
-            if (typinf->nb_cols > 0)
-            {
-                typinf->cols = (OCI_Column *) OCI_MemAlloc(OCI_IPC_COLUMN,
-                                                           sizeof(*typinf->cols),
+                    typinf->offsets = (int *) OCI_MemAlloc(OCI_IPC_ARRAY,
+                                                           sizeof(*typinf->offsets),
                                                            (size_t) typinf->nb_cols,
-                                                           TRUE);
+                                                           FALSE);
 
-                /* describe children */
+                    res = (typinf->offsets != NULL);
 
-                if (typinf->cols != NULL)
-                {
-                    for (i = 0; i < typinf->nb_cols; i++)
+                    if (res == TRUE)
                     {
-                        res = res && OCI_ColumnDescribe(&typinf->cols[i], con,
-                                                        NULL, parmh2, i + 1, ptype);
-
-                        res = res && OCI_ColumnMap(&typinf->cols[i], NULL);
-
-                        if (res == FALSE)
-                        {
-                            break;
-                        }
+                        memset(typinf->offsets, -1, sizeof(*typinf->offsets) * typinf->nb_cols);
                     }
                 }
-                else
+
+                /* allocates memory for children */
+
+                if (typinf->nb_cols > 0)
                 {
-                    res = FALSE;
+                    typinf->cols = (OCI_Column *) OCI_MemAlloc(OCI_IPC_COLUMN,  sizeof(*typinf->cols),
+                                                               (size_t) typinf->nb_cols, TRUE);
+
+                    /* describe children */
+
+                    if (typinf->cols != NULL)
+                    {
+                        for (i = 0; i < typinf->nb_cols; i++)
+                        {
+                            res = res && OCI_ColumnDescribe(&typinf->cols[i], con,
+                                                            NULL, parmh2, i + 1, ptype);
+
+                            res = res && OCI_ColumnMap(&typinf->cols[i], NULL);
+
+                            if (res == FALSE)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        res = FALSE;
+                    }
                 }
             }
+        }
+    }
 
-            /* free describe handle */
+    /* free describe handle */
 
-            if (dschp != NULL)
-            {
-                OCI_HandleFree(dschp, OCI_HTYPE_DESCRIBE);
-            }
+    if (dschp != NULL)
+    {
+        OCI_HandleFree(dschp, OCI_HTYPE_DESCRIBE);
+    }
+
+    /* increment type info reference counter on success */
+
+    if (typinf != NULL)
+    {
+        typinf->refcount++;
+
+        /* type checking sanity checks */
+
+        if ((type != OCI_UNKNOWN) && (typinf->type != type))
+        {
+            OCI_ExceptionTypeInfoWrongType(con, name);
+
+            res = FALSE;
         }
     }
 
     /* handle errors */
 
-    if (res == FALSE)
+    if ((res == FALSE) || (syn_typinf != NULL))
     {
         OCI_TypeInfoFree(typinf);
         typinf = NULL;
@@ -422,14 +537,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
     OCI_RESULT(res);
 
-    /* increment type info reference counter on success */
-
-    if (typinf != NULL)
-    {
-        typinf->refcount++;
-    }
-
-    return typinf;
+    return syn_typinf ? syn_typinf : typinf;
 }
 
 /* --------------------------------------------------------------------------------------------- *
