@@ -2,15 +2,15 @@
 
     * Added support for native C float datatype :
 
-      - Added OCI_OCI_GetFloat()
-      - Added OCI_OCI_GetFloat2()
-      - Added OCI_OCI_BindFloat()
-      - Added OCI_OCI_BindArrayOfFloats()
-      - Added OCI_OCI_RegisterFloat()
-      - Added OCI_OCI_ElemGetFloat()
-      - Added OCI_OCI_ElemSetFloat()
-      - Added OCI_OCI_ObjectGetFloat()
-      - Added OCI_OCI_ObjectSetFloat()
+      - Added OCI_GetFloat()
+      - Added OCI_GetFloat2()
+      - Added OCI_BindFloat()
+      - Added OCI_BindArrayOfFloats()
+      - Added OCI_RegisterFloat()
+      - Added OCI_ElemGetFloat()
+      - Added OCI_ElemSetFloat()
+      - Added OCI_ObjectGetFloat()
+      - Added OCI_ObjectSetFloat()
       - Added constant OCI_ARG_FLOAT
       - Added constant OCI_NUM_FLOAT
       - Use the input identifier '%g' for OCI_StmtxxxxFmt() calls when passing float variables
