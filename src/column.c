@@ -1418,6 +1418,11 @@ boolean OCI_ColumnGetAttrInfo
                 *p_type = OCI_OFT_DOUBLE;
                 *p_size = sizeof(double);
             }
+            else if (type & OCI_NUM_FLOAT)
+            {
+                *p_type = OCI_OFT_FLOAT;
+                *p_size = sizeof(float);
+            }
             else 
             {
                 //default mapping to big_int 

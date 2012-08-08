@@ -862,6 +862,23 @@ double OCI_API OCI_ObjectGetDouble
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_ObjectGetFloat
+ * --------------------------------------------------------------------------------------------- */
+
+float OCI_API OCI_ObjectGetFloat
+(
+    OCI_Object  *obj,
+    const mtext *attr
+)
+{
+    float value = 0.0;
+
+    OCI_ObjectGetNumber(obj, attr, &value, sizeof(value), OCI_NUM_FLOAT);
+
+    return value;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetString
  * --------------------------------------------------------------------------------------------- */
 
@@ -1317,6 +1334,20 @@ boolean OCI_API OCI_ObjectSetDouble
 )
 {
     return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value), (uword) OCI_NUM_DOUBLE);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ObjectSetFloat
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_ObjectSetFloat
+(
+    OCI_Object  *obj,
+    const mtext *attr,
+    float        value
+)
+{
+    return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value), (uword) OCI_NUM_FLOAT);
 }
 
 /* --------------------------------------------------------------------------------------------- *

@@ -236,11 +236,11 @@ OCI_Interval ** OCI_API OCI_IntervalArrayCreate
 
     if (type == OCI_INTERVAL_YM)
     {
-        htype = OCI_INTERVAL_YM;
+        htype = OCI_DTYPE_INTERVAL_YM;
     }
     else if (type == OCI_INTERVAL_DS)
     {
-        htype = OCI_INTERVAL_DS;
+        htype = OCI_DTYPE_INTERVAL_DS;
     }
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type, sizeof(OCIInterval *),

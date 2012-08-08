@@ -226,67 +226,70 @@
 #define OCI_IPC_INT              3
 #define OCI_IPC_BIGINT           4
 #define OCI_IPC_DOUBLE           5
-#define OCI_IPC_STRING           6
-#define OCI_IPC_PROC             7
+#define OCI_IPC_FLOAT            6
+#define OCI_IPC_STRING           7
+#define OCI_IPC_PROC             8
 
 /* -- external OCILIB handles - */
 
-#define OCI_IPC_ERROR            8
-#define OCI_IPC_TYPE_INFO        9
-#define OCI_IPC_CONNECTION       10
-#define OCI_IPC_POOL             11
-#define OCI_IPC_TRANSACTION      12
-#define OCI_IPC_STATEMENT        13
-#define OCI_IPC_RESULTSET        14
-#define OCI_IPC_COLUMN           15
-#define OCI_IPC_DATE             16
-#define OCI_IPC_TIMESTAMP        17
-#define OCI_IPC_INTERVAL         18
-#define OCI_IPC_LOB              19
-#define OCI_IPC_FILE             20
-#define OCI_IPC_LONG             21
-#define OCI_IPC_OBJECT           22
-#define OCI_IPC_COLLECTION       23
-#define OCI_IPC_ITERATOR         24
-#define OCI_IPC_ELEMENT          25
-#define OCI_IPC_HASHTABLE        26
-#define OCI_IPC_THREAD           27
-#define OCI_IPC_MUTEX            28
-#define OCI_IPC_BIND             29
-#define OCI_IPC_REF              30
-#define OCI_IPC_DIRPATH          31
-#define OCI_IPC_NOTIFY           32
-#define OCI_IPC_EVENT            33
-#define OCI_IPC_ARRAY            34
-#define OCI_IPC_MSG              35
-#define OCI_IPC_ENQUEUE          36
-#define OCI_IPC_DEQUEUE          37
-#define OCI_IPC_AGENT            38
+#define OCI_IPC_ERROR            9
+#define OCI_IPC_TYPE_INFO        10
+#define OCI_IPC_CONNECTION       11
+#define OCI_IPC_POOL             12
+#define OCI_IPC_TRANSACTION      13
+#define OCI_IPC_STATEMENT        14
+#define OCI_IPC_RESULTSET        15
+#define OCI_IPC_COLUMN           16
+#define OCI_IPC_DATE             17
+#define OCI_IPC_TIMESTAMP        18
+#define OCI_IPC_INTERVAL         19
+#define OCI_IPC_LOB              20
+#define OCI_IPC_FILE             21
+#define OCI_IPC_LONG             22
+#define OCI_IPC_OBJECT           23
+#define OCI_IPC_COLLECTION       24
+#define OCI_IPC_ITERATOR         25
+#define OCI_IPC_ELEMENT          26
+#define OCI_IPC_HASHTABLE        27
+#define OCI_IPC_THREAD           28
+#define OCI_IPC_MUTEX            29
+#define OCI_IPC_BIND             30
+#define OCI_IPC_REF              31
+#define OCI_IPC_DIRPATH          32
+#define OCI_IPC_NOTIFY           33
+#define OCI_IPC_EVENT            34
+#define OCI_IPC_ARRAY            35
+#define OCI_IPC_MSG              36
+#define OCI_IPC_ENQUEUE          37
+#define OCI_IPC_DEQUEUE          38
+#define OCI_IPC_AGENT            39
 
 /* ---- Internal pointers ----- */
 
-#define OCI_IPC_LIST             39
-#define OCI_IPC_LIST_ITEM        40
-#define OCI_IPC_BIND_ARRAY       41
-#define OCI_IPC_DEFINE           42
-#define OCI_IPC_DEFINE_ARRAY     43
-#define OCI_IPC_HASHENTRY        44
-#define OCI_IPC_HASHENTRY_ARRAY  45
-#define OCI_IPC_HASHVALUE        46
-#define OCI_IPC_THREADKEY        47
-#define OCI_IPC_OCIDATE          48
-#define OCI_IPC_TM               49
-#define OCI_IPC_RESULTSET_ARRAY  50
-#define OCI_IPC_PLS_SIZE_ARRAY   51
-#define OCI_IPC_PLS_RCODE_ARRAY  52
-#define OCI_IPC_SERVER_OUPUT     53
-#define OCI_IPC_INDICATOR_ARRAY  54
-#define OCI_IPC_LEN_ARRAY        55
-#define OCI_IPC_BUFF_ARRAY       56
-#define OCI_IPC_LONG_BUFFER      57
-#define OCI_IPC_TRACE_INFO       58
-#define OCI_IPC_DP_COL_ARRAY     59
-#define OCI_IPC_BATCH_ERRORS     60
+#define OCI_IPC_LIST             40
+#define OCI_IPC_LIST_ITEM        41
+#define OCI_IPC_BIND_ARRAY       42
+#define OCI_IPC_DEFINE           43
+#define OCI_IPC_DEFINE_ARRAY     44
+#define OCI_IPC_HASHENTRY        45
+#define OCI_IPC_HASHENTRY_ARRAY  46
+#define OCI_IPC_HASHVALUE        47
+#define OCI_IPC_THREADKEY        48
+#define OCI_IPC_OCIDATE          49
+#define OCI_IPC_TM               50
+#define OCI_IPC_RESULTSET_ARRAY  51
+#define OCI_IPC_PLS_SIZE_ARRAY   52
+#define OCI_IPC_PLS_RCODE_ARRAY  53
+#define OCI_IPC_SERVER_OUPUT     54
+#define OCI_IPC_INDICATOR_ARRAY  55
+#define OCI_IPC_LEN_ARRAY        56
+#define OCI_IPC_BUFF_ARRAY       57
+#define OCI_IPC_LONG_BUFFER      58
+#define OCI_IPC_TRACE_INFO       59
+#define OCI_IPC_DP_COL_ARRAY     60
+#define OCI_IPC_BATCH_ERRORS     61
+
+#define OCI_IPC_COUNT            OCI_IPC_BATCH_ERRORS
 
 /* --------------------------------------------------------------------------------------------- *
  * Oracle conditionnal features
@@ -302,6 +305,8 @@
 #define OCI_FEATURE_HIGH_AVAILABILITY   8
 #define OCI_FEATURE_XA                  9
 
+#define OCI_FEATURE_COUNT               OCI_FEATURE_XA
+
 /* --------------------------------------------------------------------------------------------- *
  * handle types
  * --------------------------------------------------------------------------------------------- */
@@ -309,6 +314,8 @@
 #define OCI_HDLE_HANDLE                 1
 #define OCI_HDLE_DESCRIPTOR             2
 #define OCI_HDLE_OBJECT                 3
+
+#define OCI_HDLE_COUNT                  OCI_HDLE_OBJECT
 
 /* --------------------------------------------------------------------------------------------- *
  * statement status
@@ -366,6 +373,8 @@
 #define OCI_DPS_CONVERTED               3
 #define OCI_DPS_TERMINATED              4
 
+#define OCI_DPS_COUNT                   OCI_DPS_TERMINATED
+
 /* --------------------------------------------------------------------------------------------- *
  * internal statement fetch direction
  * --------------------------------------------------------------------------------------------- */
@@ -403,8 +412,9 @@
 #define OCI_OFT_INT                     32
 #define OCI_OFT_BIGINT                  64
 #define OCI_OFT_DOUBLE                  128
-#define OCI_OFT_TEXT                    256
-#define OCI_OFT_STRUCT                  512
+#define OCI_OFT_FLOAT                   256
+#define OCI_OFT_TEXT                    512
+#define OCI_OFT_STRUCT                  1024
 
 #define OCI_OFFSET_PAIR(a, b)           (a + (b << 16))
 

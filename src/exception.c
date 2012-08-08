@@ -38,13 +38,14 @@
  *                            STRINGS MESSAGES
  * ********************************************************************************************* */
 
-static mtext * OCILib_TypeNames[] =
+static mtext * OCILib_TypeNames[OCI_IPC_COUNT] =
 {
     MT("generic pointer"),
     MT("short pointer"),
     MT("int pointer"),
     MT("big_int pointer"),
     MT("double pointer"),
+    MT("float    pointer"),
     MT("string pointer"),
     MT("function callback"),
 
@@ -106,7 +107,7 @@ static mtext * OCILib_TypeNames[] =
 
 #if defined(OCI_CHARSET_WIDE) && !defined(_MSC_VER)
 
-static mtext * OCILib_ErrorMsg[] =
+static mtext * OCILib_ErrorMsg[OCI_IPC_COUNT] =
 {
     MT("No error"),
     MT("OCILIB has not been initialized"),
@@ -138,7 +139,7 @@ static mtext * OCILib_ErrorMsg[] =
 
 #else
 
-static mtext * OCILib_ErrorMsg[] =
+static mtext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
 {
     MT("No error"),
     MT("OCILIB has not been initialized"),
@@ -170,7 +171,7 @@ static mtext * OCILib_ErrorMsg[] =
 
 #endif
 
-static mtext * OCILib_OraFeatures[] =
+static mtext * OCILib_OraFeatures[OCI_FEATURE_COUNT] =
 {
     MT("Oracle 9.0 support for Unicode data"),
     MT("Oracle 9.0 Timestamps and Intervals"),
@@ -189,7 +190,7 @@ typedef struct OCI_StmtStateTable
     mtext *name;
 } OCI_StmtStateTable;
 
-static OCI_StmtStateTable OCILib_StmtStates[] =
+static OCI_StmtStateTable OCILib_StmtStates[OCI_STMT_STATES_COUNT] =
 {
     { OCI_STMT_CLOSED,    MT("closed")        },
     { OCI_STMT_PARSED,    MT("parsed")        },
@@ -198,7 +199,7 @@ static OCI_StmtStateTable OCILib_StmtStates[] =
     { OCI_STMT_EXECUTED,  MT("executed")      }
 };
 
-static mtext * OCILib_DirPathStates[] =
+static mtext * OCILib_DirPathStates[OCI_DPS_COUNT] =
 {
     MT("non prepared"),
     MT("prepared"),
@@ -206,7 +207,7 @@ static mtext * OCILib_DirPathStates[] =
     MT("terminated")
 };
 
-static mtext * OCILib_HandleNames[] =
+static mtext * OCILib_HandleNames[OCI_HDLE_COUNT] =
 {
     MT("OCI handle"),
     MT("OCI descriptors"),

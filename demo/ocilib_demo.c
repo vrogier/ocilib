@@ -302,6 +302,7 @@ void create_tables(void)
                     MT("( ")
                     MT("    val_int  number, ")
                     MT("    val_flt  float, ")
+                    MT("    val_dbl  float, ")
                     MT("    val_str  varchar2(30), ")
                     MT("    val_date date, ")
                     MT("    val_lob  clob, ")
@@ -331,6 +332,7 @@ void create_tables(void)
     OCI_ExecuteStmt(st, MT("create table test_array ")
                         MT("( ")
                         MT("    val_int  number, ")
+                        MT("    val_dbl  float, ")
                         MT("    val_flt  float, ")
                         MT("    val_str  varchar2(30), ")
                         MT("    val_date date, ")
@@ -559,7 +561,8 @@ void test_bind2(void)
     OCI_File *file;
 
     int i;
-    double flt;
+    double dbl;
+    float flt;
 
     print_text("\n>>>>> SINGLE BINDING \n\n");
 
@@ -567,12 +570,12 @@ void test_bind2(void)
 
     OCI_Prepare(st, MT("insert into test_array ")
                     MT("( ")
-                    MT("   val_int,  val_flt, val_str, val_date, ")
+                    MT("   val_int,  val_dbl, val_flt, val_str, val_date, ")
                     MT( "   val_lob, val_file ")
                     MT( ") " )
                     MT( "values ")
                     MT( "( ")
-                    MT( "   :val_int, :val_flt, :val_str, :val_date, ")
+                    MT( "   :val_int, :val_dbl, :val_flt, :val_str, :val_date, ")
                     MT( "   :val_lob, :val_file ")
                     MT(") "));
 
@@ -593,13 +596,15 @@ void test_bind2(void)
 
     /* scalar types */
     i   = 1;
-    flt = 3.14;
+    dbl = 3.14;
+    flt = (float) 3.14;
     sprint_dt(temp, 30, DT("Name00"));
 
     /* bind scalar C types arrays */
 
     OCI_BindInt(st, MT(":val_int"),  &i);
-    OCI_BindDouble(st, MT(":val_flt"), &flt);
+    OCI_BindDouble(st, MT(":val_dbl"), &dbl);
+    OCI_BindFloat(st, MT(":val_flt"), &flt);
     OCI_BindString(st, MT(":val_str"), (dtext*) temp, 30);
 
     /* bind oracle types arrays */
@@ -1090,7 +1095,8 @@ void test_returning_array(void)
     /* arrays */
     int       tab_int [SIZE_TAB];
     dtext     tab_str [SIZE_TAB][31];
-    double    tab_flt [SIZE_TAB];
+    float     tab_flt [SIZE_TAB];
+    double    tab_dbl [SIZE_TAB];
 
     OCI_Date  **tab_date = OCI_DateArrayCreate(cn, SIZE_TAB);
     OCI_Lob   **tab_lob  = OCI_LobArrayCreate(cn,  OCI_CLOB, SIZE_TAB);
@@ -1102,19 +1108,19 @@ void test_returning_array(void)
 
     OCI_Prepare(st, MT("insert into test_array ")
                     MT("( ")
-                    MT("   val_int,  val_flt, val_str, val_date, ")
+                    MT("   val_int,  val_dbl, val_flt, val_str, val_date, ")
                     MT( "   val_lob, val_file ")
                     MT( ") " )
                     MT( "values ")
                     MT( "( ")
-                    MT( "   :val_int, :val_flt, :val_str, :val_date, ")
+                    MT( "   :val_int, :val_dbl, :val_flt, :val_str, :val_date, ")
                     MT( "   :val_lob, :val_file ")
                     MT(") ")
                     MT("returning")
-                    MT( "  val_int,  val_flt, val_str, val_date, ")
+                    MT( "  val_int,  val_dbl, val_flt, val_str, val_date, ")
                     MT("   val_lob, val_file ")
                     MT("into  " )
-                    MT( "  :out_int, :out_flt,  :out_str, :out_date, ")
+                    MT( "  :out_int, :out_dbl, :out_flt,  :out_str, :out_date, ")
                     MT("   :out_lob, :out_file "));
 
     /* Set Array Size */
@@ -1124,7 +1130,8 @@ void test_returning_array(void)
     /* bind scalar C types arrays */
 
     OCI_BindArrayOfInts(st, MT(":val_int"),  tab_int, 0);
-    OCI_BindArrayOfDoubles(st, MT(":val_flt"), tab_flt, 0);
+    OCI_BindArrayOfDoubles(st, MT(":val_dbl"), tab_dbl, 0);
+    OCI_BindArrayOfFloats(st, MT(":val_flt"), tab_flt, 0);
     OCI_BindArrayOfStrings(st, MT(":val_str"), (dtext*) tab_str, 30, 0);
 
     /* bind oracle types arrays */
@@ -1136,7 +1143,8 @@ void test_returning_array(void)
     /* register C scalar types output */
 
     OCI_RegisterInt(st, MT(":out_int"));
-    OCI_RegisterDouble(st, MT(":out_flt"));
+    OCI_RegisterDouble(st, MT(":out_dbl"));
+    OCI_RegisterFloat(st, MT(":out_flt"));
     OCI_RegisterString(st, MT(":out_str"), 30);
 
     /* bind oracle types outputs */
@@ -1151,7 +1159,8 @@ void test_returning_array(void)
     {
         /* scalar types */
         tab_int[i] = i+1;
-        tab_flt[i] = 3.14*(double)(i+1);
+        tab_dbl[i] = 3.14*(double)(i+1);
+        tab_flt[i] = (float) 3.14*(float)(i+1);
         sprint_dt(tab_str[i], 30, DT("Name%02i"), i+1);
 
         /* date */
@@ -1192,21 +1201,22 @@ void test_returning_array(void)
             print_frmt("Row # %d-------------------\n", i);
 
             print_frmt(".... val_int    : %i\n", OCI_GetInt2(rs, MT(":OUT_INT")));
-            print_frmt(".... val_flt    : %g\n", OCI_GetDouble2(rs, MT(":OUT_FLT")));
+            print_frmt(".... val_dbl    : %g\n", OCI_GetDouble2(rs, MT(":OUT_DBL")));
+            print_frmt(".... val_flt    : %g\n", OCI_GetFloat2(rs, MT(":OUT_FLT")));
             print_text(".... val_str    : "); print_dstr(OCI_GetString2(rs, MT(":OUT_STR")));
             print_text("\n");
 
-            date = OCI_GetDate(rs, 4);
+            date = OCI_GetDate2(rs, MT(":OUT_DATE"));
             OCI_DateToText(date, MT("YYYY-MM-DD HH24:MI:SS"), SIZE_STR, str);
             print_text(".... val_date   : "); print_mstr(str);
             print_text("\n");
 
-            lob  = OCI_GetLob(rs, 5);
+            lob  = OCI_GetLob2(rs, MT(":OUT_LOB"));
             temp[OCI_LobRead(lob, temp, 100)]=0;
             print_text(".... val_lob    : "); print_dstr(temp);
             print_text("\n");
 
-            file = OCI_GetFile(rs, 6);
+            file = OCI_GetFile2(rs, MT(":OUT_FILE"));
             print_text(".... val_file   : ");
             print_mstr(OCI_FileGetDirectory(file));
             print_text("/");
@@ -1244,7 +1254,8 @@ void test_object_insert(void)
     obj  = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, MT("test_t"), OCI_TIF_TYPE));
 
     OCI_ObjectSetInt(obj, MT("VAL_INT"), 1);
-    OCI_ObjectSetDouble(obj, MT("VAL_FLT"), 3.14);
+    OCI_ObjectSetDouble(obj, MT("VAL_DBL"), 3.14);
+    OCI_ObjectSetFloat(obj, MT("VAL_FLT"), (float) 3.14);
     OCI_ObjectSetString(obj, MT("VAL_STR"), DT("USB KEY 2go"));
     OCI_ObjectSetRaw(obj, MT("VAL_RAW"), rawbuf, 10);
 
@@ -1305,6 +1316,7 @@ void test_object_fetch(void)
         obj  = OCI_GetObject(rs, 1);
 
         print_frmt("val_int        : %i\n",  OCI_ObjectGetInt(obj, MT("VAL_INT")));
+        print_frmt("val_dbl        : %g\n",  OCI_ObjectGetFloat(obj, MT("VAL_DBL")));
         print_frmt("val_flt        : %g\n",  OCI_ObjectGetDouble(obj, MT("VAL_FLT")));
         print_text("val_str        : "); print_dstr(OCI_ObjectGetString(obj, MT("VAL_STR")));
         print_text("\n");

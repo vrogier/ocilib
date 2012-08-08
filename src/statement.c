@@ -1223,6 +1223,20 @@ boolean OCI_FetchIntoUserVariables
 
                     break;
                 }
+                case OCI_ARG_FLOAT:
+                {
+                    float src, *dst;
+
+                    src = OCI_GetFloat(rs, i);
+                    dst = va_arg(args, float *);
+
+                    if (dst != NULL)
+                    {
+                        *dst = src;
+                    }
+
+                    break;
+                }
                 case OCI_ARG_DATETIME:
                 {
                     OCI_Date *src, *dst;
@@ -2891,6 +2905,42 @@ boolean OCI_API OCI_BindArrayOfDoubles
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_BindFloat
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_BindFloat
+(
+    OCI_Statement *stmt,
+    const mtext   *name,
+    float         *data
+)
+{
+    OCI_CHECK_BIND_CALL2(stmt, name, data, OCI_IPC_FLOAT);
+
+    return OCI_BindData(stmt, data, sizeof(float), name, OCI_CDT_NUMERIC,
+                        SQLT_FLT, OCI_BIND_INPUT, OCI_NUM_FLOAT, NULL, 0);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_BindArrayOfFloats
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_BindArrayOfFloats
+(
+    OCI_Statement *stmt,
+    const mtext   *name,
+    float         *data,
+    unsigned int   nbelem
+)
+{
+    OCI_CHECK_BIND_CALL2(stmt, name, data, OCI_IPC_FLOAT);
+
+    return OCI_BindData(stmt, data, sizeof(float), name, OCI_CDT_NUMERIC,
+                        SQLT_FLT, OCI_BIND_INPUT, OCI_NUM_FLOAT, NULL, nbelem);
+}
+
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_BindDate
  * --------------------------------------------------------------------------------------------- */
 
@@ -3557,6 +3607,22 @@ boolean OCI_API OCI_RegisterDouble
 
     return OCI_BindData(stmt, NULL, sizeof(OCINumber), name, OCI_CDT_NUMERIC,
                         SQLT_VNU, OCI_BIND_OUTPUT, OCI_NUM_DOUBLE, NULL, 0);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_RegisterFloat
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_RegisterFloat
+(
+    OCI_Statement *stmt,
+    const mtext   *name
+)
+{
+    OCI_CHECK_REGISTER_CALL(stmt, name);
+
+    return OCI_BindData(stmt, NULL, sizeof(OCINumber), name, OCI_CDT_NUMERIC,
+                        SQLT_VNU, OCI_BIND_OUTPUT, OCI_NUM_FLOAT, NULL, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *

@@ -57,7 +57,7 @@ boolean OCI_NumberGet
     OCI_CHECK(value == NULL, FALSE);
     OCI_CHECK(data  == NULL, FALSE);
 
-    if (flag & OCI_NUM_DOUBLE)
+    if (flag & OCI_NUM_DOUBLE || flag & OCI_NUM_FLOAT)
     {
         OCI_CALL2
         (
@@ -105,7 +105,7 @@ boolean OCI_NumberSet
     OCI_CHECK(value == NULL, FALSE);
     OCI_CHECK(data  == NULL, FALSE);
 
-    if (flag & OCI_NUM_DOUBLE)
+    if (flag & OCI_NUM_DOUBLE || flag & OCI_NUM_FLOAT)
     {
         OCI_CALL2
         (

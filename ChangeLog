@@ -1,3 +1,23 @@
+2012-08-08 Version 3.10.0 Vincent Rogier vince.rogier@ocilib.net
+
+    * Added support for native C float datatype :
+
+      - Added OCI_OCI_GetFloat()
+      - Added OCI_OCI_GetFloat2()
+      - Added OCI_OCI_BindFloat()
+      - Added OCI_OCI_BindArrayOfFloats()
+      - Added OCI_OCI_RegisterFloat()
+      - Added OCI_OCI_ElemGetFloat()
+      - Added OCI_OCI_ElemSetFloat()
+      - Added OCI_OCI_ObjectGetFloat()
+      - Added OCI_OCI_ObjectSetFloat()
+      - Added constant OCI_ARG_FLOAT
+      - Added constant OCI_NUM_FLOAT
+      - Use the input identifier '%g' for OCI_StmtxxxxFmt() calls when passing float variables
+      - Updated demo application to use float datatype 
+      
+    * Fixed OCI_IntervalArrayCreate() : wrong internal handle type caused the function to fail to allocate the array with the right interval type
+      
 2012-06-29 Version 3.9.4 Vincent Rogier vince.rogier@ocilib.net
 
     * Miscellaneous fixes

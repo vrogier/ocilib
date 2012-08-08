@@ -351,7 +351,7 @@ short OCI_API OCI_ElemGetShort
 {
     short value = 0;
 
-    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(short), (uword) OCI_NUM_SHORT);
+    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_SHORT);
 
     return value;
 }
@@ -367,7 +367,7 @@ unsigned short OCI_API OCI_ElemGetUnsignedShort
 {
     unsigned short value = 0;
 
-    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(unsigned short), (uword) OCI_NUM_USHORT);
+    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_USHORT);
 
     return value;
 }
@@ -415,7 +415,7 @@ big_int OCI_API OCI_ElemGetBigInt
 {
     big_int value = 0;
 
-    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(big_int), (uword) OCI_NUM_BIGINT);
+    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_BIGINT);
 
     return value;
 }
@@ -431,7 +431,7 @@ big_uint OCI_API OCI_ElemGetUnsignedBigInt
 {
     big_uint value = 0;
 
-    OCI_ElemGetNumber(elem, (void *) &value,  (uword) sizeof(big_uint), (uword) OCI_NUM_BIGUINT);
+    OCI_ElemGetNumber(elem, (void *) &value,  (uword) sizeof(value), (uword) OCI_NUM_BIGUINT);
 
     return value;
 }
@@ -447,7 +447,23 @@ double OCI_API OCI_ElemGetDouble
 {
     double value = 0.0;
 
-    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(double), (uword) OCI_NUM_DOUBLE);
+    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_DOUBLE);
+
+    return value;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ElemGetFloat
+ * --------------------------------------------------------------------------------------------- */
+
+float OCI_API OCI_ElemGetFloat
+(
+    OCI_Elem *elem
+)
+{
+    float value = 0.0;
+
+    OCI_ElemGetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_FLOAT);
 
     return value;
 }
@@ -907,6 +923,19 @@ boolean OCI_API OCI_ElemSetDouble
 )
 {
     return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_DOUBLE);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ElemSetFloat
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_ElemSetFloat
+(
+    OCI_Elem *elem,
+    float     value
+)
+{
+    return OCI_ElemSetNumber(elem, (void *) &value, (uword) sizeof(value), (uword) OCI_NUM_FLOAT);
 }
 
 /* --------------------------------------------------------------------------------------------- *

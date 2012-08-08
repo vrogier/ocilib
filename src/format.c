@@ -295,7 +295,7 @@ int OCI_ParseSqlFmt
             }
             case MT('h'):
             {
-                mtext temp[64];
+                mtext temp[128];
 
                 temp[0] = 0;
 
@@ -310,7 +310,7 @@ int OCI_ParseSqlFmt
                 else if (*pf == 'u')
                 {
                     len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%hu"), va_arg(*pargs, unsigned int));
-                }
+                }           
                 else
                 {
                     len = 0;
