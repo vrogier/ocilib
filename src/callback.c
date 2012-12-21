@@ -157,7 +157,7 @@ sb4 OCI_ProcOutBind
 
         /* create resultset as needed */
 
-        if (bnd->stmt->rsts[iter] == NULL)
+        if (res == TRUE && bnd->stmt->rsts[iter] == NULL)
         {
             OCI_CALL1
             (
@@ -221,10 +221,39 @@ sb4 OCI_ProcOutBind
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcNotify
+ * OCI_ProcNotifyMessages
  * --------------------------------------------------------------------------------------------- */
 
-ub4 OCI_ProcNotify
+ub4 OCI_ProcNotifyMessages
+(
+    void            *ctx,
+    OCISubscription *subscrhp,
+    void            *payload,
+    ub4              paylen,
+    void            *desc,
+    ub4              mode
+)
+{
+    OCI_Dequeue *dequeue = (OCI_Dequeue *) ctx;
+
+    OCI_NOT_USED(paylen);
+    OCI_NOT_USED(payload);
+    OCI_NOT_USED(mode);
+    OCI_NOT_USED(subscrhp);
+    OCI_NOT_USED(desc);
+
+    OCI_CHECK(dequeue == NULL, OCI_SUCCESS);
+  
+    dequeue->callback(dequeue);
+    
+    return OCI_SUCCESS;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ProcNotifyChanges
+ * --------------------------------------------------------------------------------------------- */
+
+ub4 OCI_ProcNotifyChanges
 (
     void            *ctx,
     OCISubscription *subscrhp,
@@ -322,8 +351,6 @@ ub4 OCI_ProcNotify
     if (sub->event.type == OCI_EVENT_OBJCHANGE)
     {
         OCIColl *tables = 0;
-        sb4 nb_tables   = 0;
-        sb4 i;
 
         /* get collection of modified tables */
 
@@ -337,11 +364,13 @@ ub4 OCI_ProcNotify
 
         if (tables != NULL)
         {
-            dvoid **elem_tbl = NULL;
-            dvoid *ind_tbl   = NULL;
-            boolean exist    = FALSE;
-            sb4 nb_rows      = 0;
-
+            dvoid **tbl_elem  = NULL;
+            dvoid  *tbl_ind   = NULL;
+            boolean tbl_exist = FALSE;
+            sb4     nb_tables = 0;
+            sb4     nb_rows   = 0;
+            sb4     i;
+            
             /* get number of tables in the collection */
 
             OCI_CALL3
@@ -351,7 +380,7 @@ ub4 OCI_ProcNotify
                 OCICollSize(sub->env, sub->err, tables, &nb_tables)
             )
 
-            for(i = 0; i < nb_tables; i++)
+            for (i = 0; i < nb_tables; i++)
             {
                 nb_rows = 0;
 
@@ -373,8 +402,8 @@ ub4 OCI_ProcNotify
                 (
                     res, sub->err,
 
-                    OCICollGetElem(sub->env, sub->err,  tables, i, &exist,
-                                   (dvoid**) (dvoid*) &elem_tbl, (dvoid**) &ind_tbl)
+                    OCICollGetElem(sub->env, sub->err,  tables, i, &tbl_exist,
+                                   (dvoid**) (dvoid*) &tbl_elem, (dvoid**) &tbl_ind)
                 )
 
                 /* get table name */
@@ -383,7 +412,7 @@ ub4 OCI_ProcNotify
                 (
                     res, sub->err,
 
-                    OCIAttrGet((dvoid *) *elem_tbl,
+                    OCIAttrGet((dvoid *) *tbl_elem,
                                (ub4) OCI_DTYPE_TABLE_CHDES,
                                (dvoid *) &ostr, (ub4 *) &osize,
                                (ub4) OCI_ATTR_CHDES_TABLE_NAME,
@@ -409,7 +438,7 @@ ub4 OCI_ProcNotify
                 (
                     res, sub->err,
 
-                    OCIAttrGet((dvoid *) *elem_tbl, (ub4) OCI_DTYPE_TABLE_CHDES,
+                    OCIAttrGet((dvoid *) *tbl_elem, (ub4) OCI_DTYPE_TABLE_CHDES,
                                (dvoid *) &sub->event.op, (ub4*) NULL,
                                (ub4) OCI_ATTR_CHDES_TABLE_OPFLAGS, sub->err)
                 )
@@ -429,16 +458,16 @@ ub4 OCI_ProcNotify
                     (
                         res, sub->err,
 
-                        OCIAttrGet((dvoid *) *elem_tbl, (ub4) OCI_DTYPE_TABLE_CHDES,
+                        OCIAttrGet((dvoid *) *tbl_elem, (ub4) OCI_DTYPE_TABLE_CHDES,
                                    (dvoid *) &rows, (ub4 *) NULL,
                                    (ub4    ) OCI_ATTR_CHDES_TABLE_ROW_CHANGES, sub->err)
                     )
 
                     if (rows != NULL)
                     {
-                        dvoid **elem_row = NULL;
-                        dvoid *ind_row   = NULL;
-                        boolean exist    = FALSE;
+                        dvoid **row_elem  = NULL;
+                        dvoid  *row_ind   = NULL;
+                        boolean row_exist = FALSE;
                         sb4 j;
 
                         /* get number of rows */
@@ -465,8 +494,8 @@ ub4 OCI_ProcNotify
                             (
                                 res, sub->err,
 
-                                OCICollGetElem(sub->env, sub->err, rows, j, &exist,
-                                               (dvoid**) (dvoid*) &elem_row, (dvoid**) &ind_row)
+                                OCICollGetElem(sub->env, sub->err, rows, j, &row_exist,
+                                               (dvoid**) (dvoid*) &row_elem, (dvoid**) &row_ind)
                             )
 
                             /* get rowid  */
@@ -475,7 +504,7 @@ ub4 OCI_ProcNotify
                             (
                                 res, sub->err,
 
-                                OCIAttrGet((dvoid *) *elem_row, (ub4) OCI_DTYPE_ROW_CHDES,
+                                OCIAttrGet((dvoid *) *row_elem, (ub4) OCI_DTYPE_ROW_CHDES,
                                            (dvoid *) &ostr, (ub4 *) &osize,
                                            (ub4) OCI_ATTR_CHDES_ROW_ROWID, sub->err)
                             )
@@ -486,7 +515,7 @@ ub4 OCI_ProcNotify
                             (
                                 res, sub->err,
 
-                                OCIAttrGet((dvoid *) *elem_row, (ub4) OCI_DTYPE_ROW_CHDES,
+                                OCIAttrGet((dvoid *) *row_elem, (ub4) OCI_DTYPE_ROW_CHDES,
                                            &sub->event.op, (ub4*) NULL,
                                            (ub4) OCI_ATTR_CHDES_ROW_OPFLAGS, sub->err)
                             )
@@ -576,17 +605,13 @@ void OCI_ProcHAEvent
     dvoid     *eventptr
 )
 {
-    sword           ret   = OCI_SUCCESS;
-    boolean         res   = TRUE;
-    OCI_List       *list  = NULL;
+    OCI_List       *list  = OCILib.cons;
     OCI_Item       *item  = NULL;
     OCIServer      *srvhp = NULL;
 
     OCI_NOT_USED(evtctx);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
-
-    list  = OCILib.cons;
 
     if ((list == NULL) || (OCILib.ha_handler == NULL))
     {
@@ -597,7 +622,8 @@ void OCI_ProcHAEvent
     {
         OCIEvent        *eventhp = (OCIEvent *) eventptr;
         OCI_Timestamp   *tmsp    = NULL;
-
+        sword            ret;
+ 
         ret = OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &srvhp,
                          (ub4 *) NULL, (ub4) OCI_ATTR_HA_SRVFIRST, OCILib.err);
 
@@ -614,16 +640,15 @@ void OCI_ProcHAEvent
 
             while (item != NULL)
             {
-                OCI_Connection *tmp = (OCI_Connection *) item->data;
-                OCI_Connection *con  = NULL;          
+                OCI_Connection *con  = (OCI_Connection *) item->data;        
                 OCIDateTime    *dth  = NULL;
 
                 ub4 event  = OCI_HA_STATUS_DOWN;
                 ub4 source = OCI_HA_SOURCE_INSTANCE;
 
-                if ((tmp != NULL) && (tmp->svr == srvhp))
+                if ((con != NULL) && (con->svr == srvhp))
                 {
-                    con = tmp;
+                    boolean res  = TRUE;
  
                     /* get event timestamp */
 
@@ -702,9 +727,7 @@ void OCI_ProcHAEvent
 #else
 
     OCI_NOT_USED(eventptr);
-    OCI_NOT_USED(res);
     OCI_NOT_USED(list);
-    OCI_NOT_USED(ret);
     OCI_NOT_USED(item);
     OCI_NOT_USED(srvhp);
 

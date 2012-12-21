@@ -72,16 +72,6 @@ typedef struct test_t
 }test_t;
 
 /* --------------------------------------------------------------------------------------------- *
- * PlATFORMS
- * --------------------------------------------------------------------------------------------- */
-
-#ifdef _WINDOWS
-
-  #include "windows.h"
-
-#endif
-
-/* --------------------------------------------------------------------------------------------- *
  * INCLUDES
  * --------------------------------------------------------------------------------------------- */
 
@@ -103,10 +93,16 @@ typedef struct test_t
 
 #endif
 
-#ifdef _WINDOWS
-   #define EXE_NAME   "ocilib_demo.exe"
-#else
-   #define EXE_NAME   "ocilib_demo"
+#ifndef OCI_SHARED_LIB
+    #if defined(_WINDOWS)
+        #define OCI_SHARED_LIB                   "oci.dll"
+    #elif defined(__APPLE__)
+        #define OCI_SHARED_LIB                   "libclntsh.dylib"
+    #elif defined(__hppa)
+        #define OCI_SHARED_LIB                   "libclntsh.sl"
+    #else
+        #define OCI_SHARED_LIB                   "libclntsh.so"
+    #endif
 #endif
 
 /* --------------------------------------------------------------------------------------------- *

@@ -82,12 +82,10 @@ void * OCI_MemRealloc
     size_t block_count
 )
 {
-    void * ptr  = NULL;
     size_t size = (size_t) (block_size * block_count);
+    void * ptr  = (void *) realloc(ptr_mem, size);
 
-    ptr = (void *) realloc(ptr_mem, size);
-
-    if (ptr == NULL)
+    if (ptr == NULL && ptr_mem != NULL)
     {
         OCI_MemFree(ptr_mem);
 
@@ -125,9 +123,7 @@ sword OCI_HandleAlloc
     dvoid      **usrmempp
 )
 {
-    sword ret = OCI_SUCCESS;
-
-    ret = OCIHandleAlloc(parenth, hndlpp, type, xtramem_sz, usrmempp);
+    sword ret = OCIHandleAlloc(parenth, hndlpp, type, xtramem_sz, usrmempp);
 
     if (ret == OCI_SUCCESS)
     {
@@ -172,9 +168,7 @@ sword OCI_DescriptorAlloc
     dvoid      **usrmempp
 )
 {
-    sword ret = OCI_SUCCESS;
-
-    ret = OCIDescriptorAlloc(parenth, descpp, type, xtramem_sz, usrmempp);
+    sword ret = OCIDescriptorAlloc(parenth, descpp, type, xtramem_sz, usrmempp);
 
     if (ret == OCI_SUCCESS)
     {
@@ -309,9 +303,7 @@ sword OCI_ObjectNew
     dvoid          **instance
 )
 {
-    sword ret = OCI_SUCCESS;
-
-    ret = OCIObjectNew(env, err, svc, typecode, tdo, table, duration, value, instance);
+    sword ret = OCIObjectNew(env, err, svc, typecode, tdo, table, duration, value, instance);
 
     if (ret == OCI_SUCCESS)
     {

@@ -125,8 +125,8 @@ boolean OCI_API OCI_HashFree
 {
     unsigned int i;
 
-    OCI_HashEntry *e1, *e2;
-    OCI_HashValue *v1, *v2;
+    OCI_HashEntry *e1 = NULL, *e2 = NULL;
+    OCI_HashValue *v1 = NULL, *v2 = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, FALSE);
 

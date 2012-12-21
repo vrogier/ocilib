@@ -405,7 +405,6 @@ void * OCI_ArrayGetOCIHandlesFromHandles
     OCI_Array *arr = NULL;
 
     OCI_CHECK(list == NULL, NULL);
-    OCI_CHECK(list == NULL, NULL);
 
     if (list->mutex != NULL)
     {

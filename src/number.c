@@ -45,32 +45,64 @@
 boolean OCI_NumberGet
 (
     OCI_Connection *con,
-    OCINumber      *data,
-    void           *value,
+    void           *number,
     uword           size,
-    uword           flag
+    uword           type,
+    int             sqlcode,
+    void           *out_value
 )
 {
     boolean res = TRUE;
 
-    OCI_CHECK(con   == NULL, FALSE);
-    OCI_CHECK(value == NULL, FALSE);
-    OCI_CHECK(data  == NULL, FALSE);
+    OCI_CHECK(con       == NULL, FALSE);
+    OCI_CHECK(number    == NULL, FALSE);
+    OCI_CHECK(out_value == NULL, FALSE);
 
-    if (flag & OCI_NUM_DOUBLE || flag & OCI_NUM_FLOAT)
+#if OCI_VERSION_COMPILE < OCI_10_1
+
+    OCI_NOT_USED(sqlcode);
+
+#endif
+
+    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
     {
-        OCI_CALL2
-        (
-            res, con,
 
-            OCINumberToReal(con->err, data, size, value)
-        )
-    }
+    #if OCI_VERSION_COMPILE >= OCI_10_1
+
+        if ((OCILib.version_runtime >= OCI_10_1) && ((sqlcode != SQLT_VNU)))
+        {
+            if (((type & OCI_NUM_DOUBLE) && (sqlcode == SQLT_BDOUBLE)) ||
+                ((type & OCI_NUM_FLOAT ) && (sqlcode == SQLT_BFLOAT )))
+            {
+                memcpy(out_value, number, size);
+            }
+            else if (type & OCI_NUM_DOUBLE && sqlcode == SQLT_BFLOAT)
+            {
+                *((double *) out_value) = (double) *((float *) number);
+            }
+            else if (type & OCI_NUM_FLOAT && sqlcode == SQLT_BDOUBLE)
+            {
+                 *((float *) out_value) = (float) *((double *) number);
+            }
+        }
+        else
+
+    #endif
+
+        {
+            OCI_CALL2
+            (
+                res, con,
+
+                OCINumberToReal(con->err, (OCINumber *) number, size, out_value)
+            )
+        }
+    }  
     else
     {
         uword sign = OCI_NUMBER_SIGNED;
 
-        if (flag & OCI_NUM_UNSIGNED)
+        if (type & OCI_NUM_UNSIGNED)
         {
             sign = OCI_NUMBER_UNSIGNED;
         }
@@ -79,7 +111,7 @@ boolean OCI_NumberGet
         (
             res, con,
 
-            OCINumberToInt(con->err, data, size, sign, value)
+            OCINumberToInt(con->err, (OCINumber *) number, size, sign, out_value)
         )
     }
 
@@ -93,32 +125,64 @@ boolean OCI_NumberGet
 boolean OCI_NumberSet
 (
     OCI_Connection *con,
-    OCINumber      *data,
-    void           *value,
+    void           *number,
     uword           size,
-    uword           flag
+    uword           type,
+    int             sqlcode,
+    void           *in_value
 )
 {
     boolean res = TRUE;
 
-    OCI_CHECK(con   == NULL, FALSE);
-    OCI_CHECK(value == NULL, FALSE);
-    OCI_CHECK(data  == NULL, FALSE);
+    OCI_CHECK(con       == NULL, FALSE);
+    OCI_CHECK(number    == NULL, FALSE);
+    OCI_CHECK(in_value  == NULL, FALSE);
 
-    if (flag & OCI_NUM_DOUBLE || flag & OCI_NUM_FLOAT)
+#if OCI_VERSION_COMPILE < OCI_10_1
+
+    OCI_NOT_USED(sqlcode);
+
+#endif
+
+    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
     {
-        OCI_CALL2
-        (
-            res, con,
 
-            OCINumberFromReal(con->err, value, size, (OCINumber *) data)
-        )
-    }
+    #if OCI_VERSION_COMPILE >= OCI_10_1
+
+        if ((OCILib.version_runtime >= OCI_10_1) && ((sqlcode != SQLT_VNU)))
+        {
+            if (((type & OCI_NUM_DOUBLE) && (sqlcode == SQLT_BDOUBLE)) ||
+                ((type & OCI_NUM_FLOAT ) && (sqlcode == SQLT_BFLOAT )))
+            {
+                memcpy(number, in_value, size);
+            }
+            else if (type & OCI_NUM_DOUBLE && sqlcode == SQLT_BFLOAT)
+            {
+                *((double *) number) = (double) *((float *) in_value);
+            }
+            else if (type & OCI_NUM_FLOAT && sqlcode == SQLT_BDOUBLE)
+            {
+                 *((float *) number) = (float) *((double *) in_value);
+            }
+        }
+        else
+
+    #endif
+
+        {
+            OCI_CALL2
+            (
+                res, con,
+
+                OCINumberFromReal(con->err, in_value, size, (OCINumber *) number)
+            )
+        }
+    }  
     else
     {
         uword sign = OCI_NUMBER_SIGNED;
 
-        if (flag & OCI_NUM_UNSIGNED)
+        if (type & OCI_NUM_UNSIGNED)
         {
             sign = OCI_NUMBER_UNSIGNED;
         }
@@ -127,99 +191,230 @@ boolean OCI_NumberSet
         (
             res, con,
 
-            OCINumberFromInt(con->err, value, size, sign, (OCINumber *) data)
+            OCINumberFromInt(con->err, in_value, size, sign, (OCINumber *) number)
         )
     }
 
     return res;
 }
 
+
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberConvertStr
+ * OCI_NumberFromString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_NumberConvertStr
+boolean OCI_NumberFromString
 (
     OCI_Connection *con,
-    OCINumber      *num,
-    const dtext    *str,
-    int             str_size,
-    const mtext   * fmt,
-    ub4             fmt_size
+    void           *number,
+    uword           type,
+    const dtext    *in_value,
+    const mtext   * fmt
 )
 {
-    boolean res = TRUE;
-    void *ostr1 = NULL;
-    int osize1  = str_size;
-    void *ostr2 = NULL;
-    int osize2  = fmt_size;
+    boolean res  = TRUE;
+    boolean done = FALSE;
 
-#ifdef OCI_CHARSET_MIXED
+    /* For binary types, perfom a C based conversion */
 
-    mtext temp[OCI_SIZE_BUFFER + 1];
+    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
+    {
 
-#endif
+    #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    OCI_CHECK(con   == NULL, FALSE);
-    OCI_CHECK(str   == NULL, FALSE);
-    OCI_CHECK(fmt   == NULL, FALSE);
+        if (OCILib.version_runtime >= OCI_10_1)
+        {
+            void *ostr1  = NULL;
+            int   osize1 = -1;
 
-#ifdef OCI_CHARSET_MIXED
+            fmt = OCI_STRING_FORMAT_NUM_BIN;            
+ 
+            ostr1 = OCI_GetInputString((void *) fmt, &osize1, sizeof(mtext), sizeof(dtext));
 
-    temp[0] = 0;
+            if (type & OCI_NUM_DOUBLE)
+            {
+                res = (dtscanf(in_value, (dtext *) ostr1, number) == 1);
+            }
+            else if (type & OCI_NUM_FLOAT)
+            {
+                double tmp_value = 0.0;
+                
+                res = (dtscanf(in_value, (dtext *) ostr1, &tmp_value) == 1);
 
-    ostr1  = temp;
-    osize1 = (int) wcstombs(temp, str, OCI_SIZE_BUFFER + OCI_CVT_CHAR);
+                *((float *) number) = (float) tmp_value;
+            }
 
-#else
+            done = TRUE;
 
-    ostr1 = OCI_GetInputDataString(str, &osize1);
+            if (fmt != ostr1)
+            {
+                OCI_ReleaseMetaString(ostr1);
+            }
+        }
 
-#endif
+    #endif
+    
+    }
 
-    ostr2 = OCI_GetInputMetaString(fmt, &osize2);
+    /* use OCINumber conversion if not processed yet */
 
-    memset(num, 0, sizeof(*num));
+    if (done == FALSE)
+    {   
+        void *ostr1 = NULL;
+        void *ostr2 = NULL;
+        int osize1  = -1;
+        int osize2  = -1;
+        
+        if (fmt == NULL)
+        {
+            fmt = OCI_GetDefaultFormatNumeric(con);
+        }
 
-    OCI_CALL2
-    (
-        res, con,
+        ostr1 = OCI_GetInputString((void *) in_value, &osize1, sizeof(dtext), sizeof(omtext));
+        ostr2 = OCI_GetInputMetaString(fmt, &osize2);
 
-        OCINumberFromText(con->err, (oratext *) ostr1, (ub4) osize1, (oratext *) ostr2,
-                          (ub4) osize2, (oratext *) NULL,  (ub4) 0, num)
-    )
+        memset(number, 0, sizeof(OCINumber));
 
-#ifndef OCI_CHARSET_MIXED
+        OCI_CALL2
+        (
+            res, con,
 
-    OCI_ReleaseDataString(ostr1);
+            OCINumberFromText(con->err, (oratext *) ostr1, (ub4) osize1, (oratext *) ostr2,
+                                (ub4) osize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) number)
+        )
+ 
+        OCI_ReleaseMetaString(ostr2);
 
-#endif
-
-    OCI_ReleaseMetaString(ostr2);
+        if (in_value != ostr1)
+        {
+            OCI_ReleaseMetaString(ostr1);
+        }
+    }  
 
     return res;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberGetFromStr
+ * OCI_NumberToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_NumberGetFromStr
+boolean OCI_NumberToString
 (
     OCI_Connection *con,
-    void           *value,
-    uword           size,
+    void           *number,
     uword           type,
-    const dtext    *str,
-    int             str_size,
-    const mtext   * fmt,
-    ub4             fmt_size
+    int             sqlcode,
+    dtext          *out_value,
+    int             out_value_size,
+    const mtext   * fmt
 )
 {
-    OCINumber num;
+    boolean res  = TRUE;
+    boolean done = FALSE;
 
-    OCI_CHECK(value == NULL, FALSE);
+    out_value[0] = 0;
 
-    return (OCI_NumberConvertStr(con, &num, str, str_size, fmt, fmt_size) &&
-            OCI_NumberGet(con, &num, value, size, type));
+    /* For binary types, perfom a C based conversion */
+
+    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
+    {
+
+    #if OCI_VERSION_COMPILE >= OCI_10_1
+
+        if ((OCILib.version_runtime >= OCI_10_1) && ((sqlcode != SQLT_VNU)))
+        {
+            void *ostr1  = NULL;
+            int   osize1 = -1;
+
+            if (fmt == NULL)
+            {
+                fmt = OCI_STRING_FORMAT_NUM_BIN;
+            }
+ 
+            ostr1 = OCI_GetInputString((void *) fmt, &osize1, sizeof(mtext), sizeof(dtext));
+
+            if (type & OCI_NUM_DOUBLE && sqlcode == SQLT_BDOUBLE)
+            {
+                out_value_size = dtsprintf(out_value, out_value_size, (dtext *) ostr1,  *((double *) number));
+            }
+            else if (type & OCI_NUM_FLOAT && sqlcode == SQLT_BFLOAT)
+            {
+                 out_value_size = dtsprintf(out_value, out_value_size, (dtext *) ostr1,  *((float *) number));
+            }
+
+            done = TRUE;
+
+            if (fmt != ostr1)
+            {
+                OCI_ReleaseMetaString(ostr1);
+            }
+
+            if ((out_value_size) > 0)
+            {
+                while (out_value[out_value_size-1] == DT('0'))
+                {
+                    out_value[out_value_size-1] = 0;
+                }
+
+                out_value--;
+            }
+        }
+
+    #else
+    
+        OCI_NOT_USED(sqlcode);
+
+    #endif
+    
+    }
+
+    /* use OCINumber conversion if not processed yet */
+
+    if (done == FALSE)
+    {   
+        void *ostr1 = NULL;
+        void *ostr2 = NULL;
+        int osize1  = out_value_size * (int) sizeof(dtext);
+        int osize2  = -1;
+        
+        if (fmt == NULL)
+        {
+            fmt = OCI_GetDefaultFormatNumeric(con);
+        }
+
+        ostr1 = OCI_GetInputString(out_value, &osize1, sizeof(dtext), sizeof(omtext));
+        ostr2 = OCI_GetInputMetaString(fmt, &osize2);
+
+        OCI_CALL2
+        (
+            res, con,
+
+            OCINumberToText(con->err, (OCINumber *) number,  (oratext *) ostr2,
+                            (ub4) osize2, (oratext *) NULL,  (ub4) 0,
+                            (ub4 *) &osize1, (oratext *) ostr1)
+        )
+
+        OCI_GetOutputString(ostr1, out_value, &osize1, sizeof(omtext), sizeof(dtext));
+        OCI_ReleaseMetaString(ostr2);
+
+        if (out_value != ostr1)
+        {
+            OCI_ReleaseMetaString(ostr1);
+        }
+
+        out_value_size = osize1;
+    }  
+
+    /* do we need to suppress last '.' or ',' from integers */
+
+    if ((--out_value_size) >= 0)
+    {
+        if ((out_value[out_value_size] == DT('.')) ||
+            (out_value[out_value_size] == DT(',')))
+        {
+            out_value[out_value_size] = 0;
+        }
+    }
+
+    return res;
 }

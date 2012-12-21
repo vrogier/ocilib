@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.10.0 (2012-08-08)</b>
+ * <b>Current version : 3.11.1 (2012-12-19)</b>
  *
  * @section s_feats Main features
  *
@@ -144,7 +144,7 @@ extern "C" {
 #include <limits.h>
 
 /* --------------------------------------------------------------------------------------------- *
- * MS Windows plaform detection
+ * MS Windows platform detection
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef _WINDOWS
@@ -168,8 +168,8 @@ extern "C" {
  * --------------------------------------------------------------------------------------------- */
 
 #define OCILIB_MAJOR_VERSION     3
-#define OCILIB_MINOR_VERSION     10
-#define OCILIB_REVISION_VERSION  0
+#define OCILIB_MINOR_VERSION     11
+#define OCILIB_REVISION_VERSION  1
 
 /* --------------------------------------------------------------------------------------------- *
  * Installing OCILIB
@@ -679,6 +679,7 @@ OCI_EXPORT int       ociwcscasecmp
   #define dtscmp          wcscmp
   #define dtscasecmp      ociwcscasecmp
   #define dtsprintf       swprintf
+  #define dtscanf         swscanf
   #define dtstol          wcstol
 
 #else
@@ -691,6 +692,7 @@ OCI_EXPORT int       ociwcscasecmp
   #define dtscmp          strcmp
   #define dtscasecmp      ocistrcasecmp
   #define dtsprintf       ocisprintf
+  #define dtscanf         sscanf
   #define dtstol          strtol
 #endif
 
@@ -1179,6 +1181,21 @@ typedef void (*POCI_THREADKEYDEST)
 typedef void (*POCI_NOTIFY)
 (
     OCI_Event *event
+);
+
+/**
+ * @var POCI_NOTIFY_AQ
+ *
+ * @brief
+ * AQ notification callback prototype.
+ *
+ * @param dequeue - dequeue handle
+ *
+ */
+
+typedef void (*POCI_NOTIFY_AQ)
+(
+    OCI_Dequeue *dequeue
 );
 
 /**
@@ -1961,6 +1978,8 @@ typedef unsigned int big_uint;
 #define OCI_STRING_DEFAULT_PREC             3
 #define OCI_STRING_FORMAT_NUM   \
     MT("FM99999999999999999999999999999999999990.999999999999999999999999")
+#define OCI_STRING_FORMAT_NUM_BIN   \
+    MT("%lf")
 
 #ifdef _WINDOWS
   #define OCI_CHAR_SLASH                    '\\'
@@ -2009,7 +2028,7 @@ typedef unsigned int big_uint;
  * - OCI_ENV_DEFAULT  : default mode
  * - OCI_ENV_THREADED : multithreading support
  * - OCI_ENV_CONTEXT  : thread contextual error handling
- * - OCI_ENV_EVENTS   : enables events for subscription, HA Events
+ * - OCI_ENV_EVENTS   : enables events for subscription, HA Events, AQ notifications
  *
  * @note
  *
@@ -2743,7 +2762,8 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion
  * @note
  * Default format is 'YYYY-MM-DD' defined by the public constant OCI_STRING_FORMAT_DATE
  *
-  * @note
+ * @note
+ * Conversions are performed by Oracle builtin functions.
  * Possible values are the string date format supported by Oracle.
  * See documentation of Oracle SQL to_date() function for more details
  *
@@ -2779,6 +2799,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetDefaultFormatDate
  * @param format - Numeric format
  *
  * @note
+ * Conversions are performed by Oracle builtin functions.
  * Possible values are the string numeric format supported by Oracle.
  * See documentation of Oracle SQL to_number() function for more details
  *
@@ -2789,6 +2810,10 @@ OCI_EXPORT const mtext * OCI_API OCI_GetDefaultFormatDate
  * @warning
  * If data fetched from a string column cannot be converted to a number value
  * with the given format, an error will be raised
+ * 
+ * @warning
+ * It does not applies to binary double and binary floats data types that
+ * are converted from/to strings using the standard C library
  *
  */
 
@@ -5000,6 +5025,12 @@ OCI_EXPORT boolean OCI_API OCI_BindLob
  * parameter 'data' can NULL if the statement bind allocation mode
  * has been set to OCI_BAM_INTERNAL
  *
+ * @warning
+ * There is a knwon Oracle bug related to binding array of lob using UTF16
+ * and Oracle 8i clients. Lob contents are badly inserted into database
+ * Thus do not use OCI_BindArrayOfLobs with Oracle 8I clients and OCILIB built
+ * with OCI_CHARSET_MIXED
+ *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -5864,6 +5895,12 @@ boolean OCI_API OCI_BindSetCharsetForm
  * Any use of scrollable fetching functions with a resultset that depends on a
  * statement with fetch mode =  OCI_SFM_DEFAULT will fail !
  *
+ * @warning
+ * If you intend to use OCI_FetchSeek() on a scrollable statement and if any of the
+ * selected columns is a ref cursor or a nested table, OCILIB will internally set the 
+ * resultset internal array size to 1 and thus ignore any values set using OCI_SetFetchSize()
+ * This is performed due to an Oracle bug.
+ *
  * @note
  * If the column internal data does not match the requested type, OCILIB tries
  * to convert the data when it's possible and throws an error if not.
@@ -5877,6 +5914,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  * following datatypes:
  *
  * - Numerics (based on the current connection handle numeric format)
+ * - Binary doubles and floats (using the standard C Library functions)
  * - OCI_Date (based on the current connection handle date format)
  * - OCI_Timestamp (based on the current connection handle date format)
  * - OCI_Interval (based on Oracle default conversion)
@@ -5889,8 +5927,13 @@ boolean OCI_API OCI_BindSetCharsetForm
  * - OCI_Statement
  * - OCI_Coll
  * - OCI_Object
- *
- * OCI_GetString() performs an implicit conversion from the following datatypes:
+ * 
+ * @warning
+ * For Dates and numerics types, OCILIB uses OCI client calls to perform
+ * the conversion.
+ * For binary double and binary floats data types, OCI client functions cannot
+ * handle the full double range of values. Thus, OCILIB is using the
+ * standard C library to convert theses datatypes to string
  *
  * @par Fetching rows into user structures
  *
@@ -6084,6 +6127,12 @@ OCI_EXPORT boolean OCI_API OCI_FetchLast
  *
  * @note
  * OCI_FetchSeek() works ONLY for scrollable resultsets
+ *
+ * @warning
+ * If you intend to use OCI_FetchSeek() on a scrollable statement and if any of the
+ * selected columns is a ref cursor or a nested table, you must set the fetching size
+ * to 1 using OCI_SetFetchSize() before calling OCI_GetResultset()
+ * Otherwise OCI_FetchSeek() will fails with a OCI-10002 error 
  *
  * @return
  * TRUE on success otherwise FALSE if:
@@ -6492,14 +6541,14 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetSubType
  *
  * @note
  * Possible values for parameter 'type' :
- *   - OCI_NUM_SHORT
- *   - OCI_NUM_USHORT
- *   - OCI_NUM_INT
- *   - OCI_NUM_UINT
- *   - OCI_NUM_BIGINT
- *   - OCI_NUM_BIGUINT
- *   - OCI_NUM_DOUBLE
- *   - OCI_NUM_FLOAT
+ * - OCI_NUM_SHORT
+ * - OCI_NUM_USHORT
+ * - OCI_NUM_INT
+ * - OCI_NUM_UINT
+ * - OCI_NUM_BIGINT
+ * - OCI_NUM_BIGUINT
+ * - OCI_NUM_DOUBLE
+ * - OCI_NUM_FLOAT
  *
  * @return
  * Return TRUE on success otherwise FALSE
@@ -6864,6 +6913,25 @@ OCI_EXPORT big_uint OCI_API OCI_GetUnsignedBigInt2
  *
  * @note
  * Column position starts at 1.
+ *
+ * @note
+ * OCI_GetString() performs an implicit conversion from  the
+ * following datatypes:
+ *
+ * - Numerics (based on the current connection handle numeric format)
+ * - Binary doubles and floats (using the standard C Library functions)
+ * - OCI_Date (based on the current connection handle date format)
+ * - OCI_Timestamp (based on the current connection handle date format)
+ * - OCI_Interval (based on Oracle default conversion)
+ * - OCI_Lob (maximum number of character is defined by OCI_SIZE_BUFFER)
+ * - OCI_Long
+ * - OCI_File (maximum number of character is defined by OCI_SIZE_BUFFER)
+ * - RAW buffer
+ *
+ * The following type are not supported for implicit conversion:
+ * - OCI_Statement
+ * - OCI_Coll
+ * - OCI_Object
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -11484,15 +11552,15 @@ OCI_EXPORT int OCI_API OCI_TimestampCompare
  * @brief
  * Set a timestamp handle value
  *
- * @param tmsp     - Timestamp handle
- * @param year     - Year value
- * @param month    - Month value
- * @param day      - Day value
- * @param hour     - hour value
- * @param min      - minutes value
- * @param sec      - seconds value
- * @param fsec     - fractional part of seconds value
- * @param timezone - name of a time zone to use [optional]
+ * @param tmsp      - Timestamp handle
+ * @param year      - Year value
+ * @param month     - Month value
+ * @param day       - Day value
+ * @param hour      - hour value
+ * @param min       - minutes value
+ * @param sec       - seconds value
+ * @param fsec      - fractional part of seconds value
+ * @param time_zone - name of a time zone to use [optional]
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -11509,7 +11577,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampConstruct
     int            min,
     int            sec,
     int            fsec,
-    const mtext   *timezone
+    const mtext   *time_zone
 );
 
 /**
@@ -15071,6 +15139,8 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  *  - OCI_Dequeue : Implementation of dequeuing process
  *  - OCI_Agent   : Implementation of Advanced queues Agents
  *
+ * OCILIB support AQ messages notification with Oracle Client 10gR2 or above
+ *
  * Note that the only AQ features not supported yet by OCILIB are :
  *   - Payloads of type AnyData
  *   - Enqueuing/dequeuing arrays of messages
@@ -15641,7 +15711,7 @@ OCI_EXPORT const mtext * OCI_API OCI_MsgGetExceptionQueue
  * @param queue - Exception queue name
  *
  * @warning
- * From Oracle Dopcumentation :
+ * From Oracle Documentation :
  *
  * "Messages are moved into exception queues in two cases :
  *  - If the number of unsuccessful dequeue attempts has exceeded the attribute 'max_retries' of
@@ -15940,6 +16010,15 @@ OCI_EXPORT boolean OCI_API OCI_DequeueFree
  *
  * @param dequeue - Dequeue handle
  *
+ * @warning
+ * The returned message is handled by the dequeue object.
+ * Do not release it with OCI_MsgFree()
+ *
+ * @warning
+ * When dequeuing from a multiple consumer queue, you need
+ * to set the navigation mode to OCI_ADN_FIRST_MSG using
+ * OCI_DequeueSetNavigation()
+ *
  * @return
  * Message handle on success otherwise NULL on failure or on timeout
  *
@@ -15949,6 +16028,51 @@ OCI_EXPORT OCI_Msg * OCI_API OCI_DequeueGet
 (
     OCI_Dequeue *dequeue
 );
+
+/**
+ * @brief
+ * Subscribe for asynchronous messages notifications
+ *
+ * @param dequeue  - Dequeue handle
+ * @param port     - Port to use for notifications
+ * @param timeout  - notification timeout
+ * @param callback - User handler callback fired when messages are ready to be dequeued
+ *
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * asynchronous messages notifications
+ *
+ * @note
+ * Requires Oracle Client 10gR2 or above
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
+(
+    OCI_Dequeue    *dequeue, 
+    unsigned int    port, 
+    unsigned int    timeout,
+    POCI_NOTIFY_AQ  callback
+);
+
+/**
+ * @brief
+ * Unsubscribe for asynchronous messages notifications
+ *
+ * @param dequeue - Dequeue handle
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueUnsubscribe
+(
+    OCI_Dequeue *dequeue
+);    
 
 /**
  * @brief
@@ -16911,8 +17035,11 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
  * @note
  * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
  * subscriptions
- * 
- @note
+ *
+ * @note
+ * Requires Oracle Client 10gR2 or above
+ *
+ * @note
  * Subscription handles are automatically managed by the library
  *
  *

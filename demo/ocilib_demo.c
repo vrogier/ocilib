@@ -645,7 +645,7 @@ void test_piecewise_insert(void)
 
     /* open the app file in for reading*/
 
-    f = fopen(EXE_NAME, "rb");
+    f = fopen(OCI_SHARED_LIB, "rb");
 
     if (f)
     {
@@ -840,6 +840,19 @@ void test_plsql(void)
 
     print_text("\nPL/SQL : trunc(sysdate+1)-trunc(sysdate-1)\n");
     print_frmt("\nResult : %i\n", res);
+
+#ifndef OCI_CHARSET_ANSI
+
+    {
+        unsigned int version = OCI_GetOCIRuntimeVersion();
+
+        /* Oracle 8i has some troubles with SERVER OUTPUT in unicode */
+
+        if (version < OCI_9_0) 
+            return;
+    }
+
+#endif
 
     print_text("\n>>>>> TEST PL/SQL SERVER OUTPUT\n\n");
 

@@ -276,17 +276,14 @@ void OCI_ExceptionOCI
 
     if (err != NULL)
     {
-        int osize  = -1;
-        void *ostr = NULL;
+        int osize  = (int) (msizeof(err->str) - (size_t) 1);
+        void *ostr =  OCI_GetInputMetaString(err->str, &osize);
 
         err->type = (warning ? OCI_ERR_WARNING : OCI_ERR_ORACLE);
         err->con  = con;
         err->stmt = stmt;
 
         /* get oracle description */
-
-        osize = (int) (msizeof(err->str) - (size_t) 1);
-        ostr  = OCI_GetInputMetaString(err->str, &osize);
 
         OCIErrorGet((dvoid *) p_err, (ub4) 1, (OraText *) NULL, &err->ocode,
                     (OraText *) ostr, (ub4) osize, (ub4) OCI_HTYPE_ERROR);
@@ -909,7 +906,7 @@ void OCI_ExceptionDirPathState
 
         if (dp != NULL)
         {
-            dp->con =  dp->con;
+            err->con =  dp->con;
         }
 
         mtsprintf(err->str,

@@ -139,7 +139,7 @@ OCI_Connection * OCI_ConnectionAllocate
 
             #else
 
-                    strncat(dbname, con->db, sizeof(dbname));
+                    strncat(dbname, con->db, sizeof(dbname) - strlen(dbname));
 
             #endif
 
@@ -231,10 +231,7 @@ boolean OCI_ConnectionAttach
     OCI_Connection *con
 )
 {
-    void *ostr  = NULL;
-    int osize   = -1;
     boolean res = TRUE;
-    ub4 cmode   = OCI_DEFAULT;
 
     OCI_CHECK(con == NULL, FALSE);
     OCI_CHECK(con->cstate != OCI_CONN_ALLOCATED, FALSE);
@@ -243,6 +240,10 @@ boolean OCI_ConnectionAttach
 
     if (con->alloc_handles == TRUE)
     {
+        ub4 cmode   = OCI_DEFAULT;
+        void *ostr  = NULL;
+        int osize   = -1;
+        
         res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) con->env,
                                               (dvoid **) (void *) &con->svr,
                                               (ub4) OCI_HTYPE_SERVER,
@@ -379,7 +380,7 @@ boolean OCI_ConnectionLogon
 
         #else
 
-            strncat(dbname, con->db, sizeof(dbname));
+            strncat(dbname, con->db, sizeof(dbname) - strlen(dbname));
 
         #endif
 
@@ -732,12 +733,9 @@ boolean OCI_ConnectionLogon
         /* get server version */
 
         OCI_GetVersionServer(con);
-    }
 
-    /* update internal status */
+        /* update internal status */
 
-    if (res == TRUE)
-    {
         if (OCILib.version_runtime < OCI_9_0 && con->pool != NULL)
         {
             con->pool->nb_busy++;
@@ -763,6 +761,13 @@ boolean OCI_ConnectionLogOff
     OCI_CHECK(con == NULL, FALSE);
     OCI_CHECK(con->cstate != OCI_CONN_LOGGED, FALSE);
 
+    /* close opened files */
+
+    if (con->nb_files > 0)
+    {
+        OCILobFileCloseAll(con->cxt, con->err);
+    }
+
     /* deassociate connection from existing subscriptions */
 
     OCI_SubscriptionDetachConnection(con);
@@ -772,40 +777,15 @@ boolean OCI_ConnectionLogOff
     OCI_ListForEach(con->stmts, (POCI_LIST_FOR_EACH) OCI_StatementClose);
     OCI_ListClear(con->stmts);
 
-    /* free all transactions */
-
-    OCI_ListForEach(con->trsns, (POCI_LIST_FOR_EACH) OCI_TransactionClose);
-    OCI_ListClear(con->trsns);
-
     /* free all type info objects */
 
     OCI_ListForEach(con->tinfs, (POCI_LIST_FOR_EACH) OCI_TypeInfoClose);
     OCI_ListClear(con->tinfs);
 
-    /* close opened files */
+    /* free all transactions */
 
-    if (con->nb_files > 0)
-    {
-        OCILobFileCloseAll(con->cxt, con->err);
-    }
-
-    /* commit if needed otherwise rollback changes */
-
-    if (con->autocom == TRUE)
-    {
-         OCI_Commit(con);
-    }
-    else
-    {
-        /* From v3.9.4, no default transaction is created for session pool and XA connections
-           OCI will commit changes by default if no explicit transaction has been set.
-           To preverse previous behavior, we need to perfom a rollback id no current connection is associated */
-
-        if (con->trs == NULL)
-        {
-            OCI_Rollback(con);
-        }
-    }
+    OCI_ListForEach(con->trsns, (POCI_LIST_FOR_EACH) OCI_TransactionClose);
+    OCI_ListClear(con->trsns);
 
     /* close session */
 
@@ -843,6 +823,16 @@ boolean OCI_ConnectionLogOff
     }
     else
     {
+        /* No explicit transaction object => commit if needed otherwise rollback changes */
+
+        if (con->autocom == TRUE)
+        {
+             OCI_Commit(con);
+        }
+        else
+        {
+             OCI_Rollback(con);
+        }
 
     #if OCI_VERSION_COMPILE >= OCI_9_2
 
@@ -852,7 +842,9 @@ boolean OCI_ConnectionLogOff
             int osize  = 0;
             ub4 mode   = OCI_DEFAULT;
 
-            if ((con->sess_tag != NULL) && (con->pool->htype == (ub4) OCI_HTYPE_SPOOL))
+            /* Clear session tag if connection was retrieved from session pool */
+
+            if ((con->pool != NULL) && (con->sess_tag != NULL) && (con->pool->htype == (ub4) OCI_HTYPE_SPOOL))
             {
                 osize = -1;
                 ostr  = OCI_GetInputMetaString(con->sess_tag, &osize);
@@ -863,7 +855,7 @@ boolean OCI_ConnectionLogOff
             (
                 res, con,
 
-                OCISessionRelease(con->cxt, con->err, ostr, (ub4) osize, mode)
+                OCISessionRelease(con->cxt, con->err, (OraText*) ostr, (ub4) osize, mode)
             )
 
             con->cxt = NULL;
@@ -1301,7 +1293,6 @@ boolean OCI_API OCI_SetPassword
 )
 {
     boolean res = TRUE;
-    ub4 mode    = OCI_DEFAULT;
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, password, FALSE);
@@ -1331,7 +1322,7 @@ boolean OCI_API OCI_SetPassword
                               (OraText *) ostr1, (ub4) osize1,
                               (OraText *) ostr2, (ub4) osize2,
                               (OraText *) ostr3, (ub4) osize3,
-                              mode)
+                              OCI_DEFAULT)
         )
 
         OCI_ReleaseMetaString(ostr1);
@@ -1431,7 +1422,6 @@ const mtext * OCI_API OCI_GetVersionServer
         {
             int osize  = OCI_SIZE_BUFFER * (int) sizeof(mtext);
             void *ostr = NULL;
-            mtext *p   = NULL;
 
             con->ver_str[0] = 0;
 
@@ -1453,6 +1443,8 @@ const mtext * OCI_API OCI_GetVersionServer
 
             if (res == TRUE)
             {
+                mtext *p = NULL;
+                
                 int ver_maj, ver_min, ver_rev;
 
                 ver_maj = ver_min = ver_rev = 0;
@@ -1464,7 +1456,7 @@ const mtext * OCI_API OCI_GetVersionServer
 
                 for (p = con->ver_str; (p != NULL) && (*p != 0); p++)
                 {
-                    if (mtisdigit(*p) &&
+                    if (mtisdigit((unsigned char) *p) &&
                         (*(p + (size_t) 1) != 0) &&
                         (*(p + (size_t) 1) == MT('.') || (*(p + (size_t) 2) == MT('.') )))
                     {
@@ -1621,12 +1613,7 @@ unsigned int OCI_API OCI_GetVersionConnection
     OCI_Connection *con
 )
 {
-    int v1, v2;
-
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, OCI_UNKNOWN);
-
-    v1 = OCI_GetOCIRuntimeVersion();
-    v2 = OCI_GetServerMajorVersion(con);
 
     OCI_RESULT(TRUE);
 

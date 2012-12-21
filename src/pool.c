@@ -240,13 +240,9 @@ OCI_Pool * OCI_API OCI_PoolCreate
     {
         int osize_name = -1;
         int osize_db   = -1;
-        int osize_user = -1;
-        int osize_pwd  = -1;
 
         void *ostr_name = NULL;
         void *ostr_db   = NULL;
-        void *ostr_user = NULL;
-        void *ostr_pwd  = NULL;
 
         /* allocate error handle */
 
@@ -275,7 +271,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
    #if OCI_VERSION_COMPILE >= OCI_11_1
 
         if (res == TRUE)
-        {
+        {       
             if ((pool->htype == OCI_HTYPE_SPOOL) && (OCILib.version_runtime >= OCI_11_1))
             {
                 int   osize = -1;
@@ -324,6 +320,11 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
         if (res == TRUE)
         {
+            void *ostr_user     = NULL;
+            void *ostr_pwd      = NULL;
+            int   osize_user    = -1;
+            int   osize_pwd     = -1;
+      
             ostr_db   = OCI_GetInputMetaString(pool->db,   &osize_db);
             ostr_user = OCI_GetInputMetaString(pool->user, &osize_user);
             ostr_pwd  = OCI_GetInputMetaString(pool->pwd,  &osize_pwd);
@@ -395,9 +396,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
        minimum size */
 
     if (res == TRUE)
-    {
-        OCI_Connection *cn;
-        
+    {     
 
     #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -415,9 +414,9 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
     #endif
 
-        while ((min_con--) > 0)
+        while ((res == TRUE) && (min_con--) > 0)
         {
-            cn = OCI_ConnectionAllocate(pool, pool->db, pool->user, pool->pwd, pool->mode);
+            res = (NULL != OCI_ConnectionAllocate(pool, pool->db, pool->user, pool->pwd, pool->mode));
         }
     }
     else
@@ -977,7 +976,7 @@ unsigned int OCI_API OCI_PoolGetStatementCacheSize
 
 #endif
 
-    OCI_RESULT(TRUE);
+    OCI_RESULT(res);
 
     return pool->cache_size;
 }

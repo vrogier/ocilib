@@ -1,3 +1,66 @@
+2012-12-19 Version 3.11.1 Vincent Rogier vince.rogier@ocilib.net
+
+    * Fixed broken support for Oracle Database Change notifications
+    
+       - Fixed OCI_SubscriptionRegister() : Previous version 3.11.0 introduced a bug in subscription registration  
+
+    * OCILIB Thanks file was missing in 3.11.0 packages. It is reintroduced within this release.     
+
+2012-12-12 Version 3.11.0 Vincent Rogier vince.rogier@ocilib.net
+
+    * Extended Oracle Streams AQ (Advanced Queues) support :
+    
+       - Added support for asynchrounous notifications (Petr Vanek proposal) :       
+          - Added OCI_DequeueSubscribe()
+          - Added OCI_DequeueUnsubscribe()
+          - Added demo file queue_async.c
+          
+    * Fixed And Enhhanced support of BINARY FLOAT and BINARY DOUBLE types :     
+      - Updated OCI_GetDouble(), OCI_GetDouble2(), OCI_GetFloat(), OCI_GetFloat2() : 
+          - In previous releases, BINARY FLOAT and BINARY DOUBLE were fetched as NUMBER and locally converted to native double and float types using Oracle Client API
+          - With this release, BINARY FLOAT and BINARY DOUBLE are directly fetched as native double and float types
+      - BINARY FLOAT and BINARY DOUBLE were not supported in Oracle Objects and Oracle Collections (TYPES, VARRAYs and NESTED TABLES)
+          - In previous releases, segfaults could happen when manipulating objects with BINARY FLOAT and BINARY DOUBLE members or collections of BINARY FLOAT and BINARY DOUBLE
+          - With this release, BINARY FLOAT and BINARY DOUBLE are fully supported within OCI_Elem and OCI_Object
+      - Updated OCI_BindDouble(), OCI_BindArrayOfDoubles(), OCI_BindFloat(), OCI_BindArrayOfFloats() 
+          - If the Oracle client supports BINARY FLOAT and BINARY DOUBLE types (Oracle 10g and above), host double and float variables are binding as BINARY FLOAT and BINARY DOUBLE instead of NUMBER.
+          - This prevent the Oracle client from performing internal conversions. 
+      - Enhanced String conversions :
+          - When OCILIB has to convert BINARY DOUBLE values to/from strings, it now supports the double type full range of values.
+          - OCILIB uses now the C runtime to perform BINARY DOUBLE and BINARY FLOAT conversions to/from strings as the Oracle Client API cannot handle the full double datatype wihtin its string conversion API
+ 
+    * Miscellaneous changes :
+    
+      - OCI_GetString() : Conversion from numeric types has been rewritten, much cleaner code now
+      - Internal numeric types handling (conversions between numeric types, to/from strings) has been rewritten
+      - Miscellaneous code updates : OCILIB source code has been tested against various code analysis tools
+      - Documentation updates
+      - Added pkgconfig support for Unixes/Linux platforms (thanks to Petr Vanek)
+          
+    * Miscellaneous fixes :
+    
+      - OCI_GetBatchErrorCount() always returned 0
+      - OCI_FileGetDirectory() did not set error flag for OCI_GetLastError()
+      - OCI_ElemGetRaw() was setting error flag to TRUE in all cases for OCI_GetLastError()
+      - OCI_PoolGetStatementCacheSize() was setting error flag to FALSE in all cases for OCI_GetLastError()
+      - OCI_LobRead() and OCI_LobRead2() : In OCI_CHARSET_WIDE and OCI_CHARSET_MIXED builds, values could be truncated with Oracle clients 8i and 9i only
+      - OCI_LobWrite2() and OCI_LobAppend2() : returned byte count may not been accurate for CLOB when using OCI_CHARSET_WIDE or OCI_CHARSET_MIXED builds
+      - OCI_ColumnGetCharUsed() : Attribute introduced in Oracle 9.2 but OCILIB tried to retrieve it from Oracle 9.0 as well
+      - OCI_ConnectionFree() could generate a segfault on a reused connection retrieved from a connection pool since version 3.10.0
+      - OCI_TypeInfoGet() could generate a segfault in OCI_CHARSET_WIDE builds when a table/view column or object member was an Oracle Type (Object and Collection)
+      - OCI_xxxFmt() calls : Timestamp arguments were not formatted correctly (missing quotes in the formatted SQL)     
+      - Scrollable Statements : 
+          - An Oracle error (ORA-01001 or ORA-01002) was thrown when fetching a statement (PL/SQL Cursor or Nested table) that was returned by a select statement that contained more thant one column
+          - This happened only if the statement was retrieved from a scrollable statement using array fetching (internal OCILIB default behavior)
+          - This is an Oracle bug and a workaround has been found
+          - Now, OCILIB internally sets the resultset internal array size to 1 and thus ignore any values set using OCI_SetFetchSize() for such statements
+
+    * Modified Prebuilt MS Windows binaries
+    
+      - Official Windows OCILIB Binaries are now built using MS C compiler optimization capabilities (compiler remains MS Visual Studio 2010 Express) :
+          - Full optimization compiler flag (/Ox)
+          - Whole program optimization flag (/GL)
+        
 2012-08-08 Version 3.10.0 Vincent Rogier vince.rogier@ocilib.net
 
     * Added support for native C float datatype :

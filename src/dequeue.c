@@ -108,6 +108,13 @@ boolean OCI_API OCI_DequeueFree
 {
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
 
+    /* Unsubscribe notification if needed */
+
+    if (dequeue->subhp != NULL)
+    {
+        OCI_DequeueUnsubscribe(dequeue);
+    }
+
     /* free local message  */
 
     if (dequeue->msg != NULL)
@@ -162,7 +169,7 @@ OCI_Agent * OCI_API OCI_DequeueListen
     if (dequeue->agent_list != NULL)
     {
         sword ret;
-        sb4 code;
+        sb4 code = OCI_SUCCESS;
 
         ret =  OCIAQListen(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
                            dequeue->agent_list, (ub4) dequeue->agent_count,
@@ -209,10 +216,8 @@ OCI_Msg * OCI_API OCI_DequeueGet
 )
 {
     boolean   res      = TRUE;
-    void     *ostr     = NULL;
-    int       osize    = -1;
-    OCI_Msg  *msg      = NULL;
     sword     ret      = OCI_SUCCESS;
+    OCI_Msg  *msg      = NULL;
     void     *p_ind    = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, NULL);
@@ -223,6 +228,9 @@ OCI_Msg * OCI_API OCI_DequeueGet
 
     if (res == TRUE)
     {
+        void     *ostr     = NULL;
+        int       osize    = -1;
+
         ostr  = OCI_GetInputMetaString(dequeue->name, &osize);
 
         if (dequeue->typinf->tcode == OCI_UNKNOWN)
@@ -431,9 +439,7 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
 
     if (value != NULL)
     {
-        ub4 raw_len = 0;
-
-        raw_len = OCIRawSize(dequeue->typinf->con->env, value);
+        ub4 raw_len = OCIRawSize(dequeue->typinf->con->env, value);
 
         if (*len > raw_len)
             *len = raw_len;
@@ -780,6 +786,256 @@ boolean OCI_API OCI_DequeueSetAgentList
         {
             res = FALSE;
         }
+    }
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_DequeueSubscribe
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
+(
+    OCI_Dequeue    *dequeue, 
+    unsigned int    port, 
+    unsigned int    timeout,
+    POCI_NOTIFY_AQ  callback
+)
+{
+    boolean res             = TRUE;
+    ub4     oci_namespace   = OCI_SUBSCR_NAMESPACE_AQ;
+
+#if OCI_VERSION_COMPILE >= OCI_10_2
+
+    ub4     oci_port        = (ub4) port;
+    ub4     oci_timeout     = (ub4) timeout;
+    ub4     oci_protocol    = OCI_SUBSCR_PROTO_OCI;
+    ub4     oci_msgpres     = OCI_SUBSCR_PRES_DEFAULT;
+
+#endif
+
+    OCI_Connection *con = NULL;
+     
+    OCI_CHECK_INITIALIZED(FALSE);
+    OCI_CHECK_DATABASE_NOTIFY_ENABLED(FALSE);
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+
+    con = dequeue->typinf->con;
+
+    /* clear any previous subscription */
+
+    OCI_DequeueUnsubscribe(dequeue);
+
+    /* allocate subcription handle */
+
+    res = (OCI_SUCCESS == OCI_HandleAlloc(con->env,
+                                          (dvoid **) (void *) &dequeue->subhp,
+                                          OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
+                                          (dvoid **) NULL));
+
+#if OCI_VERSION_COMPILE >= OCI_10_2
+
+    /* set port number */
+
+    if (oci_port > 0)
+    {
+        OCI_CALL3
+        (
+            res, con->err,
+
+            OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
+                        (dvoid *) &oci_port, (ub4) sizeof (oci_port),
+                        (ub4) OCI_ATTR_SUBSCR_PORTNO, con->err)
+        )
+    }
+
+    /* set timeout */
+
+    if (oci_timeout > 0)
+    {
+        OCI_CALL3
+        (
+            res, con->err,
+
+            OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
+                        (dvoid *) &oci_timeout, (ub4) sizeof (oci_timeout),
+                        (ub4) OCI_ATTR_SUBSCR_TIMEOUT, con->err)
+        )
+    }
+
+    /* set protocol  */
+
+    OCI_CALL3
+    (
+        res, con->err,
+
+        OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
+                    (dvoid *) &oci_protocol, (ub4) sizeof(oci_protocol),
+                    (ub4) OCI_ATTR_SUBSCR_RECPTPROTO, con->err)
+    )
+
+    /* set presentation  */
+
+    OCI_CALL3
+    (
+        res, con->err,
+
+        OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
+                    (dvoid *) &oci_msgpres, (ub4) sizeof(oci_msgpres),
+                    (ub4) OCI_ATTR_SUBSCR_RECPTPRES, con->err)
+    )
+
+#else
+
+    OCI_NOT_USED(port);
+    OCI_NOT_USED(timeout);
+
+#endif
+    
+    /* set name  */
+
+    if (dequeue->name != NULL)
+    {
+        /* for AQ subscription, the name should be "[shema.]queue[:consumer]" */
+
+        mtext buffer[(OCI_SIZE_OBJ_NAME*2) + 2] = MT("");
+
+        mtext *str  = NULL;
+        size_t size = sizeof(buffer)/sizeof(mtext);
+
+        void *ostr  = NULL;
+        int osize   = -1;
+            
+        mtsncat(buffer, dequeue->name, size);
+
+        if (dequeue->consumer != NULL)
+        {
+            size -= mtslen(dequeue->name);
+            mtsncat(buffer, MT(":"), size);
+            size -= (size_t) 1;
+
+            mtsncat(buffer, dequeue->consumer, size);
+        }           
+
+        /* queue name must be uppercase */
+
+        for (str =  buffer; *str != 0; str++)
+        {
+            *str = (mtext) mttoupper(*str);
+        }
+
+        ostr = OCI_GetInputMetaString(buffer, &osize);
+
+        OCI_CALL3
+        (
+            res, con->err,
+
+            OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
+                        (dvoid *) ostr, (ub4) osize,
+                        (ub4) OCI_ATTR_SUBSCR_NAME, con->err)
+        )
+
+        OCI_ReleaseMetaString(ostr);
+    }
+
+    /* set namespace  */
+
+    OCI_CALL3
+    (
+        res, con->err,
+
+        OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
+                    (dvoid *) &oci_namespace, (ub4) sizeof(oci_namespace),
+                    (ub4) OCI_ATTR_SUBSCR_NAMESPACE, con->err)
+    )
+
+    /* set context pointer to dequeue structure */
+
+    OCI_CALL3
+    (
+        res, con->err,
+
+        OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
+                    (dvoid *) dequeue, (ub4) 0,
+                    (ub4) OCI_ATTR_SUBSCR_CTX, con->err)
+    )
+    
+    /* internal callback handler */
+
+    OCI_CALL3
+    (
+        res, con->err,
+
+        OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
+                    (dvoid *) OCI_ProcNotifyMessages, (ub4) 0,
+                    (ub4) OCI_ATTR_SUBSCR_CALLBACK, con->err)
+    )
+
+    /* all attributes set, let's register the subscription ! */
+
+    OCI_CALL3
+    (
+        res, con->err,
+
+        OCISubscriptionRegister(con->cxt, &dequeue->subhp, (ub2) 1, con->err,(ub4) OCI_DEFAULT)
+    )
+
+   /* set callback on success */
+
+    if (res)
+    {
+        dequeue->callback = callback;
+    }
+    else
+    {
+        /* clear subscription on failure */
+
+        OCI_DequeueUnsubscribe(dequeue);
+    }
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_DequeueUnsubscribe
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_EXPORT boolean OCI_API OCI_DequeueUnsubscribe
+(
+    OCI_Dequeue *dequeue
+)
+{
+    boolean res = TRUE;
+ 
+    OCI_CHECK_DATABASE_NOTIFY_ENABLED(FALSE);
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+
+    dequeue->callback = NULL;
+    
+    if (dequeue->subhp != NULL)
+    {
+        /* unregister the subscription */
+
+        OCI_CALL3
+        (
+            res, dequeue->typinf->con->err,
+
+            OCISubscriptionUnRegister(dequeue->typinf->con->cxt, dequeue->subhp,
+                                      dequeue->typinf->con->err,(ub4) OCI_DEFAULT)
+        )
+
+        /* free OCI handle */
+
+        OCI_HandleFree((dvoid *) dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
+
+        dequeue->subhp = NULL;
     }
 
     OCI_RESULT(res);

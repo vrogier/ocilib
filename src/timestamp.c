@@ -424,7 +424,7 @@ boolean OCI_API OCI_TimestampConstruct
     int            min,
     int            sec,
     int            fsec,
-    const mtext   *timezone
+    const mtext   *time_zone
 )
 {
     boolean res = TRUE;
@@ -443,8 +443,8 @@ boolean OCI_API OCI_TimestampConstruct
                              tmsp->handle,
                              (sb2) year, (ub1) month, (ub1) day,
                              (ub1) hour, (ub1) min,(ub1) sec,
-                             (ub4) fsec, (OraText *) timezone,
-                             (size_t) (timezone ? mtextsize(timezone) : 0))
+                             (ub4) fsec, (OraText *) time_zone,
+                             (size_t) (time_zone ? mtextsize(time_zone) : 0))
     )
 
 #else
@@ -456,7 +456,7 @@ boolean OCI_API OCI_TimestampConstruct
     OCI_NOT_USED(min);
     OCI_NOT_USED(sec);
     OCI_NOT_USED(fsec);
-    OCI_NOT_USED(timezone);
+    OCI_NOT_USED(time_zone);
 
 #endif
 
@@ -888,7 +888,7 @@ boolean OCI_API OCI_TimestampIntervalAdd
 
     /* OCIDateTimeIntervalAdd() fails if timestamps is not OCI_TIMESTAMP_TZ */
 
-    if ((res == TRUE) && (tmsp->type != OCI_TIMESTAMP_TZ))
+    if (tmsp->type != OCI_TIMESTAMP_TZ)
     {
         tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
@@ -949,7 +949,7 @@ boolean OCI_API OCI_TimestampIntervalSub
 
     /* OCIDateTimeIntervalSub() fails if timestamps is not OCI_TIMESTAMP_TZ */
 
-    if ((res == TRUE) && (tmsp->type != OCI_TIMESTAMP_TZ))
+    if (tmsp->type != OCI_TIMESTAMP_TZ)
     {
         tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
@@ -1051,7 +1051,7 @@ boolean OCI_API OCI_TimestampSysTimestamp
        OCI_TIMESTAMP if needed
     */
 
-    if ((res == TRUE) && (tmsp->type == OCI_TIMESTAMP))
+    if (tmsp->type == OCI_TIMESTAMP)
     {
         tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 

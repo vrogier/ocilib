@@ -673,18 +673,19 @@ boolean OCI_API OCI_QueueTablePurge
 )
 {
     boolean res       = FALSE;
-    OCI_Statement *st = NULL;
-    void *bstr1       = NULL; 
-    void *bstr2       = NULL;
-    int bsize1        = -1; 
-    int bsize2        = -1;
-    dtext *null_str   = DT("");
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, queue_table, FALSE);
 
     if (con->ver_num >= OCI_10_1)
     {
+        OCI_Statement *st = NULL;
+        void *bstr1       = NULL; 
+        void *bstr2       = NULL;
+        int bsize1        = -1; 
+        int bsize2        = -1;
+        dtext *null_str   = DT("");
+ 
         bstr1 = OCI_GetDataFromMetaString(queue_table,     &bsize1);
         bstr2 = OCI_GetDataFromMetaString(purge_condition, &bsize2);
 

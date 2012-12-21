@@ -54,7 +54,6 @@ boolean OCI_ColumnDescribe
 {
     void    *param    = NULL;
     boolean  res      = TRUE;
-    ub4      htype    = 0;
 
     /* get descriptor */
 
@@ -70,6 +69,8 @@ boolean OCI_ColumnDescribe
     }
     else
     {
+        ub4 htype = 0;
+    
         if (ptype == OCI_DESC_RESULTSET)
         {
             htype = OCI_HTYPE_STMT;
@@ -160,9 +161,9 @@ boolean OCI_ColumnDescribe
 
     /* type of column length for string based column */
 
-#if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_2
 
-    if ((OCILib.version_runtime >= OCI_9_0) && (con->ver_num >= OCI_9_0))
+    if ((OCILib.version_runtime >= OCI_9_2) && (con->ver_num >= OCI_9_2))
     {
         /* char used - no error checking because on Oracle 9.0, querying
                        this param that is not char/varchar based will cause an
@@ -333,7 +334,7 @@ boolean OCI_ColumnDescribe
                 mtscat(type_name, MT("."));
             }
 
-            OCI_CopyString(ostr_name, type_name + mtextsize(type_name), &osize_name,
+            OCI_CopyString(ostr_name, ((char *) type_name) + mtextsize(type_name), &osize_name,
                            sizeof(omtext), sizeof(mtext));
 
             col->typinf = OCI_TypeInfoGet(con, type_name, OCI_TIF_TYPE);
@@ -402,16 +403,6 @@ boolean OCI_ColumnMap
         case SQLT_VNU:
         case SQLT_PDN:
         case SQLT_NUM:
-
-    #if OCI_VERSION_COMPILE >= OCI_10_1
-
-        case SQLT_BFLOAT:
-        case SQLT_BDOUBLE:
-        case SQLT_IBFLOAT:
-        case SQLT_IBDOUBLE:
-
-    #endif
-
         {
             col->type    = OCI_CDT_NUMERIC;
             col->subtype = OCI_NUM_NUMBER;
@@ -420,6 +411,38 @@ boolean OCI_ColumnMap
 
             break;
         }
+
+    #if OCI_VERSION_COMPILE >= OCI_10_1
+
+        case SQLT_BFLOAT:
+        case SQLT_IBFLOAT:
+        {
+            col->type    = OCI_CDT_NUMERIC;
+            col->subtype = OCI_NUM_FLOAT;
+            col->icode   = SQLT_BFLOAT;
+            col->bufsize = sizeof(float);
+
+            break;
+        }
+
+    #endif
+
+    #if OCI_VERSION_COMPILE >= OCI_10_1
+
+        case SQLT_BDOUBLE:
+        case SQLT_IBDOUBLE:
+        {
+        
+            col->type    = OCI_CDT_NUMERIC;
+            col->subtype = OCI_NUM_DOUBLE;
+            col->icode   = SQLT_BDOUBLE;
+            col->bufsize = sizeof(double);
+
+            break;
+        }
+
+    #endif
+
         case SQLT_DAT:
         case SQLT_ODT:
         {
@@ -1425,7 +1448,7 @@ boolean OCI_ColumnGetAttrInfo
             }
             else 
             {
-                //default mapping to big_int 
+                /* default mapping to big_int */
 
                 *p_type = OCI_OFT_BIGINT;
                 *p_size = sizeof(big_int);

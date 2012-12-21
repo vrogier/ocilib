@@ -206,12 +206,15 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                                               OCI_HTYPE_ERROR, (size_t) 0,
                                               (dvoid **) NULL));
 
-        /* allocate subcription handle */
+        if (res == TRUE)
+        {
+            /* allocate subcription handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(con->env,
-                                              (dvoid **) (void *) &sub->subhp,
-                                              OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
-                                              (dvoid **) NULL));
+            res = (OCI_SUCCESS == OCI_HandleAlloc(con->env,
+                                                  (dvoid **) (void *) &sub->subhp,
+                                                  OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
+                                                  (dvoid **) NULL));
+        }
 
         if (res == TRUE)
         {
@@ -236,7 +239,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                 (
                     res, sub->err,
 
-                    OCIAttrSet((dvoid *) con->env, (ub4) OCI_HTYPE_ENV,
+                    OCIAttrSet((dvoid *) sub->subhp, (ub4)  OCI_HTYPE_SUBSCRIPTION,
                                (dvoid *) &sub->port, (ub4) sizeof (sub->port),
                                (ub4) OCI_ATTR_SUBSCR_PORTNO, sub->err)
                 )
@@ -247,13 +250,13 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                 (
                     res, sub->err,
 
-                    OCIAttrGet((dvoid *) con->env, (ub4) OCI_HTYPE_ENV,
+                    OCIAttrGet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                                (dvoid *) &sub->port, (ub4) 0,
                                (ub4) OCI_ATTR_SUBSCR_PORTNO, sub->err)
                 )
             }
 
-            /* set/get timeout */
+            /* set timeout */
 
             if(sub->timeout > 0)
             {
@@ -295,15 +298,18 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                            (ub4) OCI_ATTR_SUBSCR_NAMESPACE, sub->err)
             )
 
-/* On MSVC, casting a function pointer to a data pointer generates a warning.
-   As there is no other to way to do regarding the OCI API, let's disable this
-   warning just the time to set the callback attribute to the subscription handle */
+            /* protocol for CDN */
 
-        #ifdef _MSC_VER
+            attr =  OCI_SUBSCR_PROTO_OCI;
 
-            #pragma warning(disable: 4054)
-   
-        #endif
+            OCI_CALL3
+            (
+                res, sub->err,
+
+                OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
+                           (dvoid *) &attr, (ub4) sizeof(attr),
+                           (ub4) OCI_ATTR_SUBSCR_RECPTPROTO, sub->err)
+            )
 
             /* internal callback handler */
 
@@ -312,15 +318,9 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                 res, sub->err,
 
                 OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                           (dvoid *) OCI_ProcNotify, (ub4) 0,
+                           (dvoid *) OCI_ProcNotifyChanges, (ub4) 0,
                            (ub4) OCI_ATTR_SUBSCR_CALLBACK, sub->err)
             )
-
-        #ifdef _MSC_VER
-
-            #pragma warning(default: 4054)
-            
-        #endif
 
             /* RowIds handling */
 

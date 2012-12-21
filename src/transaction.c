@@ -137,6 +137,11 @@ boolean OCI_TransactionClose
         OCI_HandleFree((dvoid *) trans->htr, (ub4) OCI_HTYPE_TRANS);
     }
 
+    if (trans->con->trs == trans)
+    {
+        trans->con->trs = NULL;
+    }
+
     return res;
 }
 

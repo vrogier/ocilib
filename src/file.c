@@ -123,12 +123,6 @@ boolean OCI_FileGetInfo
 )
 {
     boolean res = TRUE;
-    void *ostr1 = NULL;
-    void *ostr2 = NULL;
-    int osize1  = 0;
-    int osize2  = 0;
-    ub2 usize1  = 0;
-    ub2 usize2  = 0;
 
     OCI_CHECK_PTR(OCI_IPC_FILE, file, FALSE);
 
@@ -171,6 +165,13 @@ boolean OCI_FileGetInfo
 
     if (res == TRUE)
     {
+        void *ostr1 = NULL;
+        void *ostr2 = NULL;
+        int osize1  = 0;
+        int osize2  = 0;
+        ub2 usize1  = 0;
+        ub2 usize2  = 0;
+
         osize1 = (int   ) OCI_SIZE_DIRECTORY  * (int) sizeof(mtext);
         ostr1  = (void *) OCI_GetInputMetaString(file->dir, &osize1);
 
@@ -579,6 +580,8 @@ const mtext * OCI_API OCI_FileGetDirectory
     {
         res = OCI_FileGetInfo(file);
     }
+
+    OCI_RESULT(res);
 
     return file->dir;
 }

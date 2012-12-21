@@ -101,7 +101,7 @@ boolean OCI_BindFree
                 }
                 case OCI_CDT_COLLECTION:
                 {
-                    OCI_CollFree((OCI_Coll *) bnd->input);;
+                    OCI_CollFree((OCI_Coll *) bnd->input);
                     break;
                 }
                 case OCI_CDT_TIMESTAMP:

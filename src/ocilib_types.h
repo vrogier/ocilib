@@ -131,6 +131,7 @@ struct OCI_Error
     ub4             row;                      /* Error row offset (array DML) */
     boolean         warning;                  /* is it a warning */
     mtext           str[OCI_ERR_MSG_SIZE+1];  /* error message */
+    mtext           padding[3];               /* dummy variable for alignment */ 
 };
 
 /*
@@ -286,9 +287,9 @@ struct OCI_Connection
     mtext            *inst_name;    /* instance name */
     mtext            *service_name; /* server service name */
     mtext            *server_name;  /* server name (hostname) */
-    mtext            *domain_name; /* server domain name */
-    OCI_Timestamp    *inst_startup;/* instance startup timestamp */
-};
+    mtext            *domain_name;  /* server domain name */
+    OCI_Timestamp    *inst_startup; /* instance startup timestamp */
+ };
 
 /*
  * Transaction object
@@ -364,7 +365,6 @@ struct OCI_Bind
     void         **input;       /* input values */
     mtext         *name;        /* name of the bind */
     sb4            size;        /* data size */
-    ub2            dynpos;      /* index of the bind for dynamic binds */
     ub2           *plrcds;      /* PL/SQL tables return codes */
     ub4            nbelem;      /* PL/SQL tables number of elements */
     OCI_TypeInfo  *typinf;      /* for object, collection and ref */
@@ -373,9 +373,11 @@ struct OCI_Bind
     ub2            code;        /* SQL datatype code */
     boolean        is_array;    /* is it an array bind ? */
     OCI_Buffer     buf;         /* place holder */
+    ub2            dynpos;      /* index of the bind for dynamic binds */
     ub1            alloc;       /* is buffer allocated or mapped to input */
     ub1            csfrm;       /* charset form */
     ub1            direction;   /* in, out or in/out bind */
+    char           padding[3];  /* dummy variable for alignment */ 
 }
 ;
 
@@ -465,6 +467,7 @@ struct OCI_Statement
     boolean          bind_array;        /* has array binds ? */
     OCI_BatchErrors *batch;             /* error handling for array DML */
     ub2              err_pos;           /* error position in sql statement */
+    char             padding[2];        /* dummy variable for alignment */ 
 };
 
 /*
@@ -575,16 +578,17 @@ struct OCI_Interval
 
 struct OCI_Object
 {
-    void             *handle;   /* OCI handle */
-    ub4               hstate;   /* object variable state */
-    OCI_Connection   *con;      /* pointer to connection object */
-    OCI_TypeInfo     *typinf;   /* pointer to type info object */
-    void            **objs;     /* array of OCILIB sub objects */
-    void             *buf;      /* buffer to store converted out string attribute */
-    int               buflen;   /* buffer length */
-    OCIObjectLifetime type;     /* object type */
-    sb2              *tab_ind;  /* indicators for root instance */
-    ub2               idx_ind;  /* instance indicator offset / indicator table */
+    void             *handle;       /* OCI handle */
+    ub4               hstate;       /* object variable state */
+    OCI_Connection   *con;          /* pointer to connection object */
+    OCI_TypeInfo     *typinf;       /* pointer to type info object */
+    void            **objs;         /* array of OCILIB sub objects */
+    void             *buf;          /* buffer to store converted out string attribute */
+    int               buflen;       /* buffer length */
+    OCIObjectLifetime type;         /* object type */
+    sb2              *tab_ind;      /* indicators for root instance */
+    ub2               idx_ind;      /* instance indicator offset / indicator table */
+    char              padding[2];   /* dummy variable for alignment */ 
 };
 
 /*
@@ -594,16 +598,17 @@ struct OCI_Object
 
 struct OCI_Elem
 {
-    void           *handle;    /* OCI handle */
-    ub4             hstate;    /* object variable state */
-    OCI_Connection *con;       /* pointer to connection object */
-    void           *obj;       /* OCILIB sub object */
-    void           *buf;       /* buffer to store converted out string attribute */
-    int             buflen;    /* buffer length */
-    boolean         init;      /* underlying object has been initialized ? */
-    OCI_TypeInfo   *typinf;    /* object type information */
-    OCIInd         *pind;      /* indicator  pointer */
-    OCIInd          ind;       /* internal temporary data state indicator */
+    void           *handle;     /* OCI handle */
+    ub4             hstate;     /* object variable state */
+    OCI_Connection *con;        /* pointer to connection object */
+    void           *obj;        /* OCILIB sub object */
+    void           *buf;        /* buffer to store converted out string attribute */
+    int             buflen;     /* buffer length */
+    boolean         init;       /* underlying object has been initialized ? */
+    OCI_TypeInfo   *typinf;     /* object type information */
+    OCIInd         *pind;       /* indicator  pointer */
+    OCIInd          ind;        /* internal temporary data state indicator */
+    char            padding[2]; /* dummy variable for alignment */ 
 };
 
 /*
@@ -679,7 +684,6 @@ struct OCI_DirPathColumn
 {
     ub4    format_size;           /* size of the column format */
     mtext *format;                /* date or numeric format */
-    ub2    maxsize;               /* input max size */
     ub2    type;                  /* column type */
     ub2    sqlcode;               /* sql type */
     ub4   *lens;                  /* array of lengths */
@@ -687,6 +691,8 @@ struct OCI_DirPathColumn
     ub2    index;                 /* ref index in the type info columns list */
     ub1   *data;                  /* array of data */
     ub1   *flags;                 /* array of row flags */
+    ub2    maxsize;               /* input max size */
+    char   padding[2];            /* dummy variable for alignment */ 
 };
 
 typedef struct OCI_DirPathColumn OCI_DirPathColumn;
@@ -712,6 +718,8 @@ struct OCI_DirPath
     ub2                 err_col;    /* index of the column not processed at last call */
     ub2                 nb_cols;    /* number of columns to load */
     ub2                 nb_rows;    /* maximum number of row to load per stream */
+    char                padding[2]; /* dummy variable for alignment */ 
+
 };
 
 /*
@@ -721,7 +729,7 @@ struct OCI_DirPath
 
 struct OCI_Event
 {
-    OCI_Subscription *sub;              /* OCILIB subcription handle */
+    OCI_Subscription *sub;              /* OCILIB subscription handle */
     unsigned int      objname_size;     /* cached size of altered object name */
     unsigned int      rowid_size;       /* cached size of altered object row id */
     unsigned int      dbname_size;      /* cached size of the database name */
@@ -778,13 +786,14 @@ struct OCI_Msg
     OCI_TypeInfo       *typinf;        /* pointer to type info object */
     OCIAQMsgProperties *proph;         /* OCI message properties handle */
     void               *payload;       /* message payload (object handle or raw handle) */
-    OCIRaw             *id;            /* message identitier */
+    OCIRaw             *id;            /* message identifier */
     OCI_Date           *date;          /* enqueue date */
     mtext              *correlation;   /* correlation string */
     mtext              *except_queue;  /* exception queue name */
     OCI_Agent          *sender;        /* sender */
     OCI_Object         *obj;           /* OCILIB object handle for object payloads */
     OCIInd              ind;           /* message payload indicator pointer */
+    char                padding[2];    /* dummy variable for alignment */ 
 };
 
 /*
@@ -806,15 +815,17 @@ struct OCI_Enqueue
 
 struct OCI_Dequeue
 {
-    OCI_TypeInfo    *typinf;         /* pointer to type info object */
-    OCIAQDeqOptions *opth;           /* OCI dequeue options handle */
-    mtext           *name;           /* queue name */
-    mtext           *pattern;        /* queue name */
-    mtext           *consumer;       /* consumer name */
-    OCI_Msg         *msg;            /* message retrieved from queue */
-    OCIAQAgent     **agent_list;     /* array of agents objects */
-    ub4              agent_count;    /* number of agents objects */
-    OCI_Agent       *agent;          /* pointer to agent object for listen call */
+    OCI_TypeInfo        *typinf;         /* pointer to type info object */
+    OCIAQDeqOptions     *opth;           /* OCI dequeue options handle */
+    mtext               *name;           /* queue name */
+    mtext               *pattern;        /* queue name */
+    mtext               *consumer;       /* consumer name */
+    OCI_Msg             *msg;            /* message retrieved from queue */
+    OCIAQAgent         **agent_list;     /* array of agents objects */
+    ub4                  agent_count;    /* number of agents objects */
+    OCI_Agent           *agent;          /* pointer to agent object for listen call */
+    POCI_NOTIFY_AQ       callback;       /* user callback */
+    OCISubscription     *subhp;          /* AQ subscription for async dequeueing */
 };
 
 /*

@@ -125,6 +125,7 @@ void * OCI_DefineGetData
 )
 {
     OCI_CHECK(def == NULL, NULL);
+    OCI_CHECK(def->rs == NULL, NULL);
     OCI_CHECK(def->rs->row_cur < 1, NULL);
 
     switch (def->col.type)
@@ -208,16 +209,12 @@ boolean OCI_DefineGetNumber
         {
             case OCI_CDT_NUMERIC:
             {
-                res = OCI_NumberGet(rs->stmt->con, (OCINumber *) data, value, size, type);
+                res = OCI_NumberGet(rs->stmt->con, data, size, type, def->col.icode, value);
                 break;
             }
             case OCI_CDT_TEXT:
             {
-                const mtext *fmt = OCI_GetDefaultFormatNumeric(rs->stmt->con);
-                ub4 fmt_size     = (ub4) mtslen(fmt);
-
-                res = OCI_NumberGetFromStr(rs->stmt->con, value, size, type, (dtext *) data,
-                                           (int) dtslen((dtext *) data), fmt, fmt_size);
+                res = OCI_NumberFromString(rs->stmt->con, value, type, (const dtext *) data, NULL);
                 break;
             }
         }
@@ -238,7 +235,6 @@ boolean OCI_DefineAlloc
 )
 {
     boolean res = TRUE;
-    ub4 bufsize = 0;
     ub4 indsize = 0;
     ub4 i;
 
@@ -286,7 +282,9 @@ boolean OCI_DefineAlloc
 
     if (res == TRUE)
     {
-        for (i=0; i < def->buf.count; i++)
+       ub4 bufsize = 0;
+
+       for (i=0; i < def->buf.count; i++)
         {
             if (def->buf.sizelen == (int) sizeof(ub2))
             {
@@ -297,12 +295,9 @@ boolean OCI_DefineAlloc
                 *(ub4*)(((ub1 *)def->buf.lens) + (size_t) (def->buf.sizelen*i)) = (ub4) def->col.bufsize;
             }
         }
-    }
 
-    /* Allocate buffer array */
+        /* Allocate buffer array */
 
-    if (res == TRUE)
-    {
         if (def->col.type == OCI_CDT_LONG)
         {
             bufsize = (ub4) sizeof(OCI_Long *);
@@ -313,7 +308,7 @@ boolean OCI_DefineAlloc
         }
 
         def->buf.data = (void *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (size_t) bufsize,
-                                              (size_t) def->buf.count, TRUE);
+                                                (size_t) def->buf.count, TRUE);
 
         res = (def->buf.data != NULL);
     }
@@ -371,7 +366,8 @@ boolean OCI_DefineAlloc
 
 boolean OCI_DefineDef
 (
-    OCI_Define *def
+    OCI_Define *def,
+    ub4         position
 )
 {
     boolean res    = TRUE;
@@ -395,7 +391,7 @@ boolean OCI_DefineDef
         OCIDefineByPos(def->rs->stmt->stmt,
                        (OCIDefine **) &def->buf.handle,
                        def->rs->stmt->con->err,
-                       def->rs->nb_defs,
+                       position,
                        (void *) def->buf.data,
                        (sb4   ) def->col.bufsize,
                        (ub2   ) def->col.icode,
@@ -521,7 +517,10 @@ boolean OCI_DefineRequestBuffer
         }
     }
 
-    def->buf.tmpbuf[0] = 0;
+    if (def->buf.tmpbuf != NULL)
+    {
+        def->buf.tmpbuf[0] = 0;
+    }
 
     return res;
 }

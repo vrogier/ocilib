@@ -145,7 +145,17 @@ sb4 OCI_ProcOutBind
     ub2    **rcodep
 );
 
-ub4 OCI_ProcNotify
+ub4 OCI_ProcNotifyChanges
+(
+    void            *ctx,
+    OCISubscription *subscrhp,
+    void            *payload,
+    ub4              paylen,
+    void            *desc,
+    ub4              mode
+);
+
+ub4 OCI_ProcNotifyMessages
 (
     void            *ctx,
     OCISubscription *subscrhp,
@@ -302,7 +312,8 @@ boolean OCI_DefineAlloc
 
 boolean OCI_DefineDef
 (
-    OCI_Define *def
+    OCI_Define *def,
+    ub4         position
 );
 
 void * OCI_DefineGetData
@@ -818,42 +829,42 @@ OCI_Mutex * OCI_MutexCreateInternal
 boolean OCI_NumberGet
 (
     OCI_Connection *con,
-    OCINumber      *data,
-    void           *value,
+    void           *number,
     uword           size,
-    uword           flag
+    uword           type,
+    int             sqlcode,
+    void           *out_value
 )
 ;
 
 boolean OCI_NumberSet
 (
     OCI_Connection *con,
-    OCINumber      *data,
-    void           *value,
-    uword           size,
-    uword           flag
-);
-
-boolean OCI_NumberConvertStr
-(
-    OCI_Connection *con,
-    OCINumber      *num,
-    const dtext    *str,
-    int             str_size,
-    const mtext   * fmt,
-    ub4             fmt_size
-);
-
-boolean OCI_NumberGetFromStr
-(
-    OCI_Connection *con,
-    void           *value,
+    void           *number,
     uword           size,
     uword           type,
-    const dtext    *str,
-    int             str_size,
-    const mtext   * fmt,
-    ub4             fmt_size
+    int             sqlcode,
+    void           *in_value
+);
+
+boolean OCI_NumberFromString
+(
+    OCI_Connection *con,
+    void           *number,
+    uword           type,
+    const dtext    *in_value,
+    const mtext   * fmt
+);
+
+boolean OCI_NumberToString
+(
+    OCI_Connection *con,
+    void           *number,
+    uword           type,
+    int             sqlcode,
+    dtext          *out_value,
+    int             out_value_size,
+    const mtext   * fmt
 );
 
 /* --------------------------------------------------------------------------------------------- *

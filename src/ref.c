@@ -173,6 +173,7 @@ boolean OCI_RefUnpin
     boolean res = TRUE;
 
     OCI_CHECK(ref == NULL, FALSE);
+    OCI_CHECK(ref->obj == NULL, FALSE);
 
     if (ref->pinned == TRUE)
     {
@@ -299,19 +300,18 @@ OCI_Object * OCI_API OCI_RefGetObject
     OCI_Ref *ref
 )
 {
+    boolean     res = TRUE;
     OCI_Object *obj = NULL;
 
     if (OCI_RefIsNull(ref) == FALSE)
     {
-        boolean res = TRUE;
-
         res = OCI_RefPin(ref);
-
-        OCI_RESULT(res);
 
         obj = ref->obj;
     }
 
+    OCI_RESULT(res);
+    
     return obj;
 }
 

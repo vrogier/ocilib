@@ -75,16 +75,6 @@ size_t OCI_ObjectGetStructSize
     OCI_TypeInfo *typinf
 )
 {
-    size_t size1 = 0;
-    size_t size2 = 0;
-
-    int type1 = 0;
-    int type2 = 0;
-
-    ub2 i;
-
-    boolean align = FALSE;
-
     size_t size = 0;
 
     if (typinf->struct_size != 0)
@@ -93,6 +83,15 @@ size_t OCI_ObjectGetStructSize
     }
     else
     {
+        size_t size1 = 0;
+        size_t size2 = 0;
+
+        int type1 = 0;
+        int type2 = 0;
+
+        boolean align = FALSE;
+        ub2 i;
+
         for (i = 0; i < typinf->nb_cols; i++)
         {
             align = FALSE;
@@ -118,9 +117,6 @@ size_t OCI_ObjectGetStructSize
                 case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
                 case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_POINTER):
                 case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
-             //   case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_OBJECT):
-             //   case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_OBJECT):
-             //   case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_OBJECT):
                 {
                     align = TRUE;
                     break;
@@ -419,7 +415,7 @@ void OCI_ObjectReset
                 }
                 case OCI_CDT_COLLECTION:
                 {
-                    OCI_CollFree((OCI_Coll *) obj->objs[i]);;
+                    OCI_CollFree((OCI_Coll *) obj->objs[i]);
                     break;
                 }
                 case OCI_CDT_TIMESTAMP:
@@ -532,10 +528,10 @@ boolean OCI_ObjectSetNumber
 
     if (index >= 0)
     {
-        OCIInd *ind    = NULL;
-        OCINumber *num = OCI_ObjectGetAttr(obj, index, &ind);
+        OCIInd *ind = NULL;
+        void   *num = OCI_ObjectGetAttr(obj, index, &ind);
 
-        res = OCI_NumberSet(obj->con, num, value, size, flag);
+        res = OCI_NumberSet(obj->con, num, size, flag, obj->typinf->cols[index].icode, value);
 
         if (res == TRUE)
         {
@@ -570,14 +566,14 @@ boolean OCI_ObjectGetNumber
 
     if (index >= 0)
     {
-        OCIInd *ind    = NULL;
-        OCINumber *num = NULL;
+        OCIInd *ind = NULL;
+        void   *num = NULL;
 
         num = OCI_ObjectGetAttr(obj, index, &ind);
 
         if ((num != NULL) && (*ind != OCI_IND_NULL))
         {
-            res = OCI_NumberGet(obj->con, num, value, size, flag);
+            res = OCI_NumberGet(obj->con, num, size, flag, obj->typinf->cols[index].icode, value);
         }
     }
     else
@@ -586,11 +582,7 @@ boolean OCI_ObjectGetNumber
 
         if (index >= 0)
         {
-            const mtext *fmt = OCI_GetDefaultFormatNumeric(obj->con);
-            ub4 fmt_size     = (ub4) mtslen(fmt);
-            dtext *data      = (dtext *) OCI_ObjectGetString(obj, attr);
-
-            res = OCI_NumberGetFromStr(obj->con, value, size, flag, data, (int) dtslen(data),  fmt, fmt_size);
+            res = OCI_NumberFromString(obj->con, value, flag, OCI_ObjectGetString(obj, attr), NULL);
         }
     }
 
@@ -871,7 +863,7 @@ float OCI_API OCI_ObjectGetFloat
     const mtext *attr
 )
 {
-    float value = 0.0;
+    float value = 0.0f;
 
     OCI_ObjectGetNumber(obj, attr, &value, sizeof(value), OCI_NUM_FLOAT);
 
@@ -889,7 +881,6 @@ const dtext * OCI_API OCI_ObjectGetString
 )
 {
     const dtext *str = NULL;
-    boolean res      = TRUE;
     int index        = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT);
 
     if (index >= 0)
@@ -905,7 +896,7 @@ const dtext * OCI_API OCI_ObjectGetString
         }
     }
 
-    OCI_RESULT(res);
+    OCI_RESULT(TRUE);
 
     return str;
 }
@@ -922,9 +913,7 @@ int OCI_API OCI_ObjectGetRaw
     unsigned int len
 )
 {
-    boolean res = TRUE;
-    int index   = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW);
-    ub4 raw_len = 0;
+    int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW);
 
     if (index >= 0)
     {
@@ -935,7 +924,7 @@ int OCI_API OCI_ObjectGetRaw
 
         if ((value != NULL) && (*ind != OCI_IND_NULL))
         {
-            raw_len = OCIRawSize(obj->con->env, *value);
+            ub4 raw_len = OCIRawSize(obj->con->env, *value);
 
             if (len > raw_len)
             {
@@ -946,7 +935,7 @@ int OCI_API OCI_ObjectGetRaw
         }
     }
 
-    OCI_RESULT(res);
+    OCI_RESULT(TRUE);
 
     return len;
 }
@@ -2024,4 +2013,3 @@ boolean OCI_API OCI_ObjectGetStruct
 
     return TRUE;
 }
-

@@ -1,0 +1,226 @@
+****************************************************************************
+ 
+   +----------------------------------------------------------------------+   
+   |                                                                      |
+   |                     OCILIB - C Driver for Oracle                     |
+   |                                                                      |
+   |                      (C Wrapper for Oracle OCI)                      |
+   |                                                                      |
+   +----------------------------------------------------------------------+
+   |                                                                      |
+   |                     Website : http://www.ocilib.net                  |
+   |                                                                      |
+   +----------------------------------------------------------------------+
+   |                                                                      |
+   |               Copyright (c) 2007-2012 Vincent ROGIER                |
+   |                                                                      |
+   +----------------------------------------------------------------------+
+   |                                                                      |
+   |                              (GNU PACKAGE)                           |
+   |                                                                      |
+   +----------------------------------------------------------------------+   
+
+****************************************************************************
+
+DESCRIPTION 
+===========
+
+OCILIB is an open source and portable Oracle Driver that delivers really fast and reliable access to Oracle databases.
+
+The OCILIB library :
+
+    * offers a rich, full featured and easy to use API
+    * runs on all Oracle platforms
+    * is written in pure ISO C code with native ISO C Unicode support
+    * encapsulates OCI (Oracle Call Interface)
+    * is the most complete available OCI wrapper
+ 
+VERSION 
+========
+
+see VERSION file.
+
+
+FEATURES 
+========
+   
+    * Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
+    * Full 32/64 bits compatibility
+    * Comptabile with all Oracle version >= 8i
+    * Automatic adaptation to the runtime Oracle client version
+    * Runtime loading of Oracle libraries
+    * Builtin error handling (global and thread context)
+    * Full support for SQL API and Object API
+    * Full support for ALL Oracle SQL and PL/SQL datatypes (scalars, objects, refs, collections, ..)
+    * Full support for PL/SQL (blocks, cursors, Index by Tables and Nested tables)
+    * Support for non scalar datatype with trough library objects 
+    * Oracle Pooling (connections and sessions pools)
+    * Oracle XA connectivity (X/Open Distributed Transaction Processing XA interface)
+    * Oracle AQ (Advanded Queues)
+    * Oracle TAF (Transparent Application Failover) and HA (High availabality) support 
+    * Binding array Interface
+    * Returning DML feature
+    * Scrollable statements
+    * Statement cache
+    * Direct Path loading
+    * Remote Instances Startup/Shutdown
+    * Oracle Database Change notification / Continuous Query Notification
+    * Oracle warnings support
+    * Global and local transactions 
+    * Describe database schema objects
+    * Hash tables API
+    * Portable Threads and mutexes API
+
+DOWNLOAD 
+========
+
+Available at :
+
+URL : http://orclib.sourceforge.net
+
+LICENSE
+=======
+
+see COPYING file.
+
+COMPATIBILITY
+=============
+
+This current source is pure ISO C and should compile with any C90 Compliant compiler
+for ansi version and C99 for unicode versions.
+ 
+ Validated Platforms (32/64bits): 
+ 
+ - Windows 
+ - UP/UX 
+ - Linux 
+ - Solaris 
+ - AIX
+ - Mac OS X
+ - OpenvMS (full validation pending)
+
+ Validated Compilers : 
+
+ - GCC / MinGW
+ - MS Compilers 
+ - XLC  
+ - CCs 
+ - LabView
+
+ Validated Oracle versions : 
+ 
+ - Oracle 8i 
+ - Oracle 9i 
+ - Oracle 10g 
+ - Oracle 11g 
+
+INSTALLATION AND LIBRARY BUILDS  
+===============================
+
+see INSTALL file for installation options.
+
+To install, use GNU install :
+
+>./configure
+>./make
+>./make install
+
+you migth need to `su` to make install
+
+Make sure Oracle library path and the ocilib library path are defined in
+your shared library variable (LB_LIBRARY_PATH, LDPATH, SHLIB_PATH....)
+
+Custom install options
+
+`--with-oracle-charset'
+
+     Specify charset uses with Oracle OCI libraries
+     Possible values are : ansi|wide|mixed
+     Default is : ansi
+
+`--with-oracle-import'
+
+     Specify how OCILIB is importing Oracle OCI libraries
+     Possible values are : linkage|runtime
+     Default is : linkage
+     in runtime import mode, Oracle libraries and environnement are 
+     not checked during compilation time.
+
+`--with-oracle-home'
+
+     Specify your Oracle home location.  (for regular Oracle client installation)
+     Default is $ORACLE_HOME
+     Only used if import mode is linkage
+
+`--with-oracle-headers-path'
+
+     Specify your OCI public headers path (for Oracle Instant client)
+     Only used if import mode is linkage
+
+`--with-oracle-lib-path'
+
+     Specify your OCI shared library path (for Oracle Instant client)
+     this directory must contains the libclntsh library.
+     You might need to create a symbolic link without version number.
+     Only used if import mode is linkage
+
+`--with-custom-loader'
+
+     Specify the linker the flag for adding support for loaders other than ld
+     Default value is '-ldl'.
+     Only used if import mode is runtime
+
+
+BUILD DEMO
+==========
+
+copy demo.c and Makefile_demo from the folder $(OCILIB_PREFIX)/share/doc/ocilib/demo
+
+(OCILIB_PREFIX is the installation lib folder - default is /usr/local)
+
+to any of our full access directory and then compile :
+
+>make -f Makefile_demo
+
+MAKE ANY PROGRAM WITH OCILIB
+============================
+
+Add the following to your makefile
+
+1/ define charset
+
+add -DOCI_CHARSET_xxxx  to your CFLAGS
+
+where xxxx can be : ANSI | WIDE | MIXED
+
+2 / link OCILIB library
+
+add -L$(OCILIB_PREFIX)/lib -locilib to your LDFLAGS
+
+where OCILIB_PREFIX is the installation lib folder - default is /usr/local
+
+2 / link Oracle library (if import mode = linkage which is default)
+
+add -L$(ORACLE_HOME)/lib -lclntsh to your LDFLAGS
+
+
+FEED BACK, BUG REPORTS
+======================
+
+URL : http://orclib.sourceforge.net
+
+DOCUMENTATION
+=============
+
+Included in the library archive, it's installed in $(OCILIB_PREFIX)/share/doc/ocilib/html/
+
+Online : http://orclib.sourceforge.net/doc/html
+
+USE OF OCILIB
+=============
+
+Please, Let me know about projects using OCILIB.
+
+Send me a mail at <vince.rogier@ocilib.net> with a brief description of your project
+
+Thanks.

@@ -187,8 +187,8 @@ int OCI_ParseSqlFmt
                         str_ff[2] = 0;
 
                         len = mtsprintf(pb, OCI_SIZE_TIMESTAMP,
-                                        MT("to_timestamp(%02i%02i%04i%02i%02i%02i%s,")
-                                        MT("DDMMYYYYHH24MISSFF)"),
+                                        MT("to_timestamp('%02i%02i%04i%02i%02i%02i%s',")
+                                        MT("'DDMMYYYYHH24MISSFF')"),
                                         dd, mm, yy, hh, mi, ss, str_ff);
                     }
                     else
@@ -329,7 +329,7 @@ int OCI_ParseSqlFmt
 
                 temp[0] = 0;
 
-                len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%f"), va_arg(*pargs, double));
+                len = (int) mtsprintf(temp, (int) msizeof(temp) - 1, MT("%lf"), va_arg(*pargs, double));
 
                 if ((buf != NULL) && (len > 0))
                 {
