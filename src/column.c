@@ -483,7 +483,7 @@ boolean OCI_ColumnMap
                    OCI_SIZE_ROWID
                 */
 
-                col->bufsize = (OCI_SIZE_ROWID + 1) * (ub4) sizeof(dtext);
+                col->bufsize = (OCI_SIZE_ROWID + 1) * (ub4) sizeof(odtext);
             }
             else
             {
@@ -493,7 +493,7 @@ boolean OCI_ColumnMap
                     its value as an hex string
                 */
 
-                col->bufsize = (ub4) ((col->size + 1) * (ub2) sizeof(dtext));
+                col->bufsize = (ub4) ((col->size + 1) * (ub2) sizeof(odtext));
             }
 
             if (OCILib.nls_utf8 == TRUE)
@@ -566,7 +566,7 @@ boolean OCI_ColumnMap
                 (stmt != NULL && stmt->long_mode == OCI_LONG_IMPLICIT))
             {
                 col->type    = OCI_CDT_TEXT;
-                col->bufsize = (OCI_SIZE_LONG+1) * ((ub2) sizeof(dtext));
+                col->bufsize = (OCI_SIZE_LONG+1) * ((ub2) sizeof(odtext));
                 col->subtype = OCI_CLONG;
 
                 if (OCILib.nls_utf8 == TRUE)
@@ -688,7 +688,7 @@ boolean OCI_ColumnMap
         {
             col->icode   = SQLT_STR;
             col->type    = OCI_CDT_TEXT;
-            col->bufsize = (ub4) ((col->size + 1) * (ub2) sizeof(dtext));
+            col->bufsize = (ub4) ((col->size + 1) * (ub2) sizeof(odtext));
 
             if (OCILib.nls_utf8 == TRUE)
             {
