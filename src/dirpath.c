@@ -678,6 +678,7 @@ boolean OCI_API OCI_DirPathSetEntry
         if (value == NULL)
         {
             flag = OCI_DIRPATH_COL_NULL;
+            size = 0;
         }
         else if (complete == TRUE)
         {
@@ -688,72 +689,41 @@ boolean OCI_API OCI_DirPathSetEntry
             flag = OCI_DIRPATH_COL_PARTIAL;
         }
 
-        /* for character based column, parameter size was the number of characters
-         **/
-
-        if (dpcol->sqlcode == SQLT_CHR)
+        /* Process only if data is not null */
+        
+        if (value != NULL)
         {
-            size *= (unsigned int) sizeof(dtext);
-        }
+            /* for character based column, parameter size was the number of characters */
 
-        /* get internal data cell */
-
-        data = ((ub1 *) dpcol->data) + (size_t) ((row-1) * dpcol->bufsize);
-
-    #if defined(OCI_CHECK_DATASTRINGS)
-
-        /* we weed to pack the buffer if wchar_t is 4 bytes */
-
-        if (dpcol->type == OCI_DDT_TEXT)
-        {
-            int osize = -1;
-
-            OCI_GetOutputString(value, data, &size, sizeof(dtext), sizeof(odtext));
-        }
-        else
-
-    #endif
-
-    #if defined(OCI_USERDATA_WIDE)
-
-        /* input Unicode numeric values causes oracle conversion error.
-           so, let's convert them to ansi */
-
-        if (dpcol->type == OCI_DDT_OTHERS)
-        {
-            size = (unsigned int) wcstombs((char *) data, value, dpcol->bufsize - 1);
-        }
-        else
-
-    #endif
-
-        /* if a format was provided for a numeric column, we convert the input
-           buffer to a OCINumber */
-
-        if (dpcol->type == OCI_DDT_NUMBER)
-        {
-            OCINumber *num = (OCINumber *) data;
-
-            res = OCI_NumberFromString(dp->con, num, OCI_NUM_NUMBER, (dtext *) value, dpcol->format);
-
-            if (res == TRUE)
+            if (dpcol->sqlcode == SQLT_CHR)
             {
-                size = (unsigned int) num->OCINumberPart[0];
+                size *= (unsigned int) sizeof(dtext);
             }
-        }
-        else
-        {
 
-        #if defined(OCI_CHARSET_MIXED)
+            /* get internal data cell */
 
-            /* with mixed charset builds, OCIDirPrepare() causes a segfault if the
-               attribute OCI_ATTR_CHARSET_ID has been set with OCI_UTF16.
-               In the OCILIB direct path implementation, the code is the same for
-               Unicode and mixed charset. This only difference is the
-               environment mode set of UTF16...
-               So let's convert the data back to ANSI until Oracle corrects this bug */
+            data = ((ub1 *) dpcol->data) + (size_t) ((row-1) * dpcol->bufsize);
+
+        #if defined(OCI_CHECK_DATASTRINGS)
+
+            /* we weed to pack the buffer if wchar_t is 4 bytes */
 
             if (dpcol->type == OCI_DDT_TEXT)
+            {
+                int osize = -1;
+
+                OCI_GetOutputString(value, data, &size, sizeof(dtext), sizeof(odtext));
+            }
+            else
+
+        #endif
+
+        #if defined(OCI_USERDATA_WIDE)
+
+            /* input Unicode numeric values causes oracle conversion error.
+               so, let's convert them to ansi */
+
+            if (dpcol->type == OCI_DDT_OTHERS)
             {
                 size = (unsigned int) wcstombs((char *) data, value, dpcol->bufsize - 1);
             }
@@ -761,10 +731,44 @@ boolean OCI_API OCI_DirPathSetEntry
 
         #endif
 
-            {
-                memcpy(data, value, (size_t) size);
-            }
+            /* if a format was provided for a numeric column, we convert the input
+               buffer to a OCINumber */
 
+            if (dpcol->type == OCI_DDT_NUMBER)
+            {
+                OCINumber *num = (OCINumber *) data;
+
+                res = OCI_NumberFromString(dp->con, num, OCI_NUM_NUMBER, (dtext *) value, dpcol->format);
+
+                if (res == TRUE)
+                {
+                    size = (unsigned int) num->OCINumberPart[0];
+                }
+            }
+            else
+            {
+
+            #if defined(OCI_CHARSET_MIXED)
+
+                /* with mixed charset builds, OCIDirPrepare() causes a segfault if the
+                   attribute OCI_ATTR_CHARSET_ID has been set with OCI_UTF16.
+                   In the OCILIB direct path implementation, the code is the same for
+                   Unicode and mixed charset. This only difference is the
+                   environment mode set of UTF16...
+                   So let's convert the data back to ANSI until Oracle corrects this bug */
+
+                if (dpcol->type == OCI_DDT_TEXT)
+                {
+                    size = (unsigned int) wcstombs((char *) data, value, dpcol->bufsize - 1);
+                }
+                else
+
+            #endif
+
+                {
+                    memcpy(data, value, (size_t) size);
+                }
+            }
         }
 
         dpcol->lens[row-1]  = size;
@@ -927,6 +931,9 @@ unsigned int OCI_API OCI_DirPathConvert
                        &size, OCI_ATTR_ROW_COUNT, dp->con->err);
 
             dp->nb_prcsd = dp->err_row;
+
+            /* fauled row is the number of processed rows + 1 */
+            dp->err_row++;
         }
         else
         {
