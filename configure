@@ -3002,7 +3002,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=ocilib
- VERSION=`cat VERSION`
+ VERSION=`cat $srcdir/VERSION`
 
 
 cat >>confdefs.h <<_ACEOF
