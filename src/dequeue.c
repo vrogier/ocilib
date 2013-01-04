@@ -975,6 +975,10 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
                     (ub4) OCI_ATTR_SUBSCR_CALLBACK, con->err)
     )
 
+    /* set callback */
+
+    dequeue->callback = callback;
+
     /* all attributes set, let's register the subscription ! */
 
     OCI_CALL3
@@ -984,13 +988,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
         OCISubscriptionRegister(con->cxt, &dequeue->subhp, (ub2) 1, con->err,(ub4) OCI_DEFAULT)
     )
 
-   /* set callback on success */
-
-    if (res)
-    {
-        dequeue->callback = callback;
-    }
-    else
+    if (res == FALSE)
     {
         /* clear subscription on failure */
 
