@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.11.1 (2012-12-19)</b>
+ * <b>Current version : 3.12.0 (2013-01-16)</b>
  *
  * @section s_feats Main features
  *
@@ -1759,6 +1759,11 @@ typedef unsigned int big_uint;
 #define OCI_DPR_FULL                        3
 #define OCI_DPR_PARTIAL                     4
 #define OCI_DPR_EMPTY                       5
+
+/* direct path conversion modes */
+
+#define OCI_DCM_DEFAULT                     1
+#define OCI_DCM_FORCE                       2
 
 /* trace size constants */
 
@@ -14678,17 +14683,9 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetEntry
 
 /**
  * @brief
- * Convert user provided data to a direct path stream format
+ * Convert provided user data to the direct path stream format
  *
  * @param dp - Direct path Handle
- *
- * @note
- * if the call does return another result than OCI_DPR_COMPLETE :
- * - OCI_DirPathGetErrorRow() returns the row where the error occured
- * - OCI_DirPathGetErrorColumn() returns the column where the error occured
- *
- * @note
- * OCI_DirPathGetAffectedRows() returns the number of rows processed in the last call.
  *
  * @return
  * Possible return values :
@@ -14697,6 +14694,20 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetEntry
  * - OCI_DPR_FULL     : the internal stream is full
  * - OCI_DPR_PARTIAL  : a column hasn't been fully filled yet
  * - OCI_DPR_EMPTY    : no data was found to load
+ *
+ * @note
+ * - When using conversion mode OCI_DCM_DEFAULT, OCI_DirPathConvert() stops when
+ *   any error is encountered and returns OCI_DPR_ERROR 
+ * - When using conversion mode OCI_DCM_FORCE, OCI_DirPathConvert() does not stop
+ *   on errors. Instead it discards any erred rows and returns OCI_DPR_COMPLETE once
+ *   all rows are processed.
+ *
+ * @note
+ * List of faulted rows and columns can be retrieved using OCI_DirPathGetErrorRow() and 
+ * OCI_DirPathGetErrorColumn()
+ * 
+ * @note
+ * OCI_DirPathGetAffectedRows() returns the number of rows converted in the last call.
  *
  */
 
@@ -15023,6 +15034,35 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetBufferSize
 
 /**
  * @brief
+ * Set the direct path conversion mode
+ *
+ * @param dp   - Direct path Handle
+ * @param mode - Conversion mode
+ *
+ * @note
+ * Possible values for parameter 'mode' :
+ *   - OCI_DCM_DEFAULT : conversion fails on error
+ *   - OCI_DCM_FORCE   : conversion does not fail on error
+ *
+ * @note
+ * See OCI_DirPathConvert() for conversion mode details
+ *
+ * @note
+ * Default value is OCI_DCM_DEFAULT
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_DirPathSetConvertMode
+(
+    OCI_DirPath *dp,
+    unsigned int mode
+);
+
+/**
+ * @brief
  * Return the number of rows successfully loaded into the database so far
  *
  * @param dp - Direct path Handle
@@ -15059,12 +15099,23 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetAffectedRows
 
 /**
  * @brief
- * Return the column index which caused an error during data conversion
+ * Return the index of a column which caused an error during data conversion
  *
  * @param dp - Direct path Handle
  *
  * @warning
- * Direct path column indexes start at 1.
+ * Direct path colmun indexes start at 1.
+ * 
+ * @Note
+ * Errors may happen while data is converted to direct path stream format
+ * using OCI_DirPathConvert().
+ * When using conversion mode OCI_DCM_DEFAULT, OCI_DirPathConvert() returns
+ * OCI_DPR_ERROR on error. OCI_DirPathGetErrorColumn() returns the column index
+ * that caused the error
+ * When using conversion mode OCI_DCM_FORCE, OCI_DirPathConvert() returns 
+ * OCI_DPR_COMPLETE even on errors. In order to retrieve the list of all column
+ * indexes that have erred, the application can call OCI_DirPathGetErrorColumn() 
+ * repeatedly until it returns 0. 
  *
  * @note
  * The internal value is reset to 0 when calling OCI_DirPathConvert()
@@ -15082,12 +15133,23 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorColumn
 
 /**
  * @brief
- * Return the row index which caused an error during data conversion
+ * Return the index of a row which caused an error during data conversion
  *
  * @param dp - Direct path Handle
  *
  * @warning
  * Direct path row indexes start at 1.
+ * 
+ * @Note
+ * Errors may happen while data is converted to direct path stream format
+ * using OCI_DirPathConvert().
+ * When using conversion mode OCI_DCM_DEFAULT, OCI_DirPathConvert() returns
+ * OCI_DPR_ERROR on error. OCI_DirPathGetErrorRow() returns the row index that
+ * caused the error
+ * When using conversion mode OCI_DCM_FORCE, OCI_DirPathConvert() returns 
+ * OCI_DPR_COMPLETE even on errors. In order to retrieve the list of all row
+ * indexes that have erred, the application can call OCI_DirPathGetErrorRow() 
+ * repeatedly until it returns 0. 
  *
  * @note
  * The internal value is reset to 0 when calling OCI_DirPathConvert()

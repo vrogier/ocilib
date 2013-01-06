@@ -34,6 +34,165 @@
 
 #include "ocilib_internal.h"
 
+
+/* ********************************************************************************************* *
+ *                             PRIVATE FUNCTIONS
+ * ********************************************************************************************* */
+
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_DirPathSetArray
+ * --------------------------------------------------------------------------------------------- */
+
+int OCI_API OCI_DirPathSetArray
+(
+    OCI_DirPath *dp,
+    ub4 row_from
+)
+{
+    boolean  res     = TRUE;
+    ub1     *data    = NULL;
+    ub4      size    = 0;
+    ub1      flag    = 0;
+    ub2      col     = 0;
+    ub4      row     = 0;
+
+    /* reset the number of entries et */
+
+    dp->nb_entries = 0;
+
+    /* set entries */
+
+    for (row = row_from; (row < dp->nb_cur) && (res == TRUE); row++)
+    { 
+        for (col = 0; (col < dp->nb_cols) && (res == TRUE); col++)
+        {
+            OCI_DirPathColumn *dpcol = &(dp->cols[col]); 
+
+            /* get internal data cell */
+
+            data = ((ub1 *) dpcol->data) +  (size_t) (row * dpcol->bufsize);
+            size = dpcol->lens[row];
+            flag = dpcol->flags[row];
+                 
+            if (dpcol->sqlcode == SQLT_NUM)
+            {
+                OCINumber *num = (OCINumber *) data;
+
+                data = &num->OCINumberPart[1];
+            }
+
+            /* set entry value */
+
+            OCI_CALL2
+            (
+                res, dp->con,
+
+                OCIDirPathColArrayEntrySet(dp->arr, dp->con->err, (ub4) dp->nb_entries,
+                                            (ub2) (col), (ub1*) data, (ub4) size, flag)
+            )
+        }
+
+        // increment number of item set
+
+        if (res == TRUE)
+        {
+            dp->nb_entries++;
+        }
+    }
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_DirPahArrayToStream
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_DirPahArrayToStream
+(
+    OCI_DirPath *dp,
+    ub4 row_from
+)
+{
+    unsigned int res  = OCI_DPR_COMPLETE;
+    sword        ret  = OCI_SUCCESS;
+    
+    /* convert the array to a stream */
+
+    ret = OCIDirPathColArrayToStream(dp->arr, dp->ctx, dp->strm, dp->con->err, dp->nb_entries, (ub4) 0);
+
+    switch (ret)
+    {
+        case OCI_SUCCESS:
+        {
+            res        = OCI_DPR_COMPLETE;
+            dp->status = OCI_DPS_CONVERTED;
+
+            break;
+        }
+        case OCI_ERROR:
+        {
+            res = OCI_DPR_ERROR;
+
+            /* only raise the exception if we're not in force mode */
+
+            if (dp->cvt_mode == OCI_DCM_DEFAULT)
+            {
+                OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
+            }
+
+            break;
+        }
+        case OCI_CONTINUE:
+        {
+            dp->status = OCI_DPS_CONVERTED;
+            res        = OCI_DPR_FULL;
+
+            break;
+        }
+        case OCI_NEED_DATA:
+        {
+            res = OCI_DPR_PARTIAL;
+
+            break;
+        }
+    }
+
+    if (ret != OCI_SUCCESS)
+    {
+        ub4 err_row = 0;
+        ub2 err_col = 0;
+        ub4 size    = 0;
+ 
+        size = sizeof(err_col);
+
+        OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &err_col,
+                    &size, OCI_ATTR_COL_COUNT, dp->con->err);
+
+        size = sizeof(err_row);
+
+        OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &err_row,
+                    &size, OCI_ATTR_ROW_COUNT, dp->con->err);
+
+        /* update converted rows so far */
+        dp->nb_converted += err_row;
+
+        /* record errors index */
+        dp->err_rows[dp->nb_err] = row_from + err_row;
+        dp->err_cols[dp->nb_err] = err_col;
+
+        dp->nb_err++;
+    }
+    else
+    {
+        /* conversion is successful. the number of converted rows is the same 
+           as the number of row set*/
+        dp->nb_converted += dp->nb_entries;
+    }
+
+    return res;
+}
+
 /* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
  * ********************************************************************************************* */
@@ -67,15 +226,20 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
         void *ostr = NULL;
         int osize  = -1;
     
-        dp->con      = typinf->con;
-        dp->status   = OCI_DPS_NOT_PREPARED;
-        dp->typinf   = typinf;
-        dp->nb_rows  = (ub2) nb_rows;
-        dp->nb_cols  = (ub2) nb_cols;
-        dp->nb_cur   = (ub2) dp->nb_rows;
-        dp->err_col  = 0;
-        dp->err_row  = 0;
-        dp->nb_prcsd = 0;
+        dp->con          = typinf->con;
+        dp->status       = OCI_DPS_NOT_PREPARED;
+        dp->typinf       = typinf;
+        dp->nb_rows      = (ub2) nb_rows;
+        dp->nb_cols      = (ub2) nb_cols;
+        dp->nb_cur       = (ub2) dp->nb_rows;
+        dp->nb_entries   = 0;
+        dp->nb_err       = 0;
+        dp->idx_err_col  = 0;
+        dp->idx_err_row  = 0;
+        dp->nb_converted = 0;
+        dp->nb_loaded    = 0;
+        dp->nb_converted = 0;
+        dp->cvt_mode     = OCI_DCM_DEFAULT;
 
         /* allocates direct context handle */
 
@@ -218,6 +382,8 @@ boolean OCI_API OCI_DirPathFree
     }
 
     OCI_FREE(dp->cols);
+    OCI_FREE(dp->err_cols);
+    OCI_FREE(dp->err_rows);
 
     OCI_HandleFree(dp->strm, OCI_HTYPE_DIRPATH_STREAM);
     OCI_HandleFree(dp->arr,  OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
@@ -580,6 +746,26 @@ boolean OCI_API OCI_DirPathPrepare
         dp->nb_rows = (ub2) num_rows;
     }
 
+    /* allocate array of errs rows */
+
+    if (res == TRUE)
+    {
+        dp->err_rows = (ub4 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(*dp->err_rows),
+                                            (size_t) dp->nb_cur, TRUE);
+
+        res = (dp->err_rows != NULL);
+    }
+
+    /* allocate array of errs cols */
+
+    if (res == TRUE)
+    {
+        dp->err_cols = (ub2 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(*dp->err_cols),
+                                            (size_t) dp->nb_cur, TRUE);
+
+        res = (dp->err_cols != NULL);
+    }
+    
     /* now, we need to allocate internal buffers */
 
     if (res == TRUE)
@@ -829,125 +1015,60 @@ unsigned int OCI_API OCI_DirPathConvert
     OCI_DirPath *dp
 )
 {
-    unsigned int res         = OCI_DPR_COMPLETE;
-    OCI_DirPathColumn *dpcol = NULL;
-    sword ret                = OCI_SUCCESS;
-    ub1 *data;
-    ub4 size;
-    ub1 flag;
-    ub2 i, j;
+    unsigned int ret  = OCI_DPR_ERROR;
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, OCI_DPR_ERROR);
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, OCI_DPR_ERROR);
 
-    dp->err_col  = 0;
-    dp->nb_prcsd = 0;
+    dp->nb_err          = 0;
+    dp->idx_err_row     = 0;
+    dp->idx_err_col     = 0;
+    dp->nb_converted    = 0;
+    dp->nb_processed    = 0;
 
-    /* set entries */
+    /* set array values */
 
-    for (i = 0; (i < dp->nb_cols) && (res == TRUE); i++)
+    if (OCI_DirPathSetArray(dp, 0) == TRUE)
     {
-        dpcol = &(dp->cols[i]);
+        /* try to convert values from array into stream */
 
-        for (j = (ub2) 0; (j < dp->nb_cur) && (res == TRUE); j++)
+        ret = OCI_DirPahArrayToStream(dp, 0);
+
+        /* in case of conversion error, continue conversion in force mode
+           other return from conversion */
+
+        if (dp->cvt_mode == OCI_DCM_FORCE && ret == OCI_DPR_ERROR)
         {
-            /* get internal data cell */
+            boolean res = TRUE;
 
-            data = ((ub1 *) dpcol->data) +  (size_t) (j * dpcol->bufsize);
-            size = dpcol->lens[j];
-            flag = dpcol->flags[j];
+            /* perfom conversion until all non erred rows are converted */
 
-            if (dpcol->sqlcode == SQLT_NUM)
+            while ((ret == OCI_DPR_ERROR) && (dp->nb_err <= dp->nb_cur) && (res == TRUE))
             {
-                OCINumber *num = (OCINumber *) data;
+                /* start from the row that follows the last erred row */
 
-                data = &num->OCINumberPart[1];
+                ub4 row_from = dp->err_rows[dp->nb_err - 1] + 1;
+
+                /* set values again */
+
+                res = OCI_DirPathSetArray(dp, row_from);
+
+                if (res == TRUE)
+                {
+                     /* perform conversion again */
+
+                     ret = OCI_DirPahArrayToStream(dp, row_from);
+                }
             }
-
-            /* set entry value */
-
-            OCI_CALL2
-            (
-                res, dp->con,
-
-                OCIDirPathColArrayEntrySet(dp->arr, dp->con->err, (ub4) j, (ub2) (i),
-                                           (ub1*) data, (ub4) size, flag)
-            )
         }
     }
 
-    if (res == TRUE)
-    {
-        /* conversion */
+    dp->nb_processed = dp->nb_converted;
 
-        ret = OCIDirPathColArrayToStream(dp->arr, dp->ctx,  dp->strm, dp->con->err,
-                                         (ub4) dp->nb_cur, (ub4) 0);
+    OCI_RESULT(ret ==  OCI_DPR_COMPLETE);
 
-        switch (ret)
-        {
-            case OCI_SUCCESS:
-            {
-                dp->status  = OCI_DPS_CONVERTED;
-                dp->err_col = 0;
-                dp->err_row = 0;
-                res         = OCI_DPR_COMPLETE;
-
-                break;
-            }
-            case OCI_ERROR:
-            {
-                res = OCI_DPR_ERROR;
-
-                OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
-
-                break;
-            }
-            case OCI_CONTINUE:
-            {
-                dp->status = OCI_DPS_CONVERTED;
-                res        = OCI_DPR_FULL;
-
-                break;
-            }
-            case OCI_NEED_DATA:
-            {
-                res = OCI_DPR_PARTIAL;
-
-                break;
-            }
-        }
-
-        if (ret != OCI_SUCCESS)
-        {
-            size = sizeof(dp->err_col);
-
-            OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &dp->err_col,
-                       &size, OCI_ATTR_COL_COUNT, dp->con->err);
-
-            size = sizeof(dp->err_row);
-
-            OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &dp->err_row,
-                       &size, OCI_ATTR_ROW_COUNT, dp->con->err);
-
-            dp->nb_prcsd = dp->err_row;
-
-            /* fauled row is the number of processed rows + 1 */
-            dp->err_row++;
-        }
-        else
-        {
-            dp->nb_prcsd = dp->nb_cur;
-        }
-    }
-    else
-    {
-        ret = OCI_ERROR;
-    }
-
-    OCI_RESULT(ret == OCI_SUCCESS);
-
-    return res;
+    return ret;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -966,8 +1087,7 @@ unsigned int OCI_API OCI_DirPathLoad
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_CONVERTED, OCI_DPR_ERROR);
 
-    dp->err_col  = 0;
-    dp->nb_prcsd = 0;
+    dp->nb_processed = 0;
 
     ret = OCIDirPathLoadStream(dp->ctx, dp->strm, dp->con->err);
 
@@ -975,10 +1095,14 @@ unsigned int OCI_API OCI_DirPathLoad
     {
         case OCI_SUCCESS:
         {
-            dp->status     = OCI_DPS_PREPARED;
-            dp->nb_prcsd   = dp->nb_cur;
-            dp->nb_loaded += dp->nb_prcsd;
-            res            = OCI_DPR_COMPLETE;
+            res                 = OCI_DPR_COMPLETE;
+
+            dp->nb_loaded      += dp->nb_converted;
+            dp->nb_processed    = dp->nb_converted;
+            dp->status          = OCI_DPS_PREPARED;
+            dp->nb_err          = 0;
+            dp->idx_err_row     = 0;
+            dp->idx_err_col     = 0;
 
             break;
         }
@@ -1006,13 +1130,17 @@ unsigned int OCI_API OCI_DirPathLoad
 
     if (ret != OCI_SUCCESS)
     {
-        ub4 size = sizeof(dp->nb_prcsd);
+        ub4 nb_loaded = 0;
+        ub4 size      = sizeof(nb_loaded);
 
-        OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &dp->nb_prcsd,
-                   &size, OCI_ATTR_NUM_ROWS, dp->con->err);
+        OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &nb_loaded,
+                   &size, OCI_ATTR_ROW_COUNT, dp->con->err);
+
+        dp->nb_loaded   += nb_loaded;
+        dp->nb_processed = nb_loaded;
     }
 
-    OCI_RESULT(ret == OCI_SUCCESS);
+     OCI_RESULT(ret == OCI_SUCCESS);
 
     return res;
 }
@@ -1374,6 +1502,27 @@ boolean OCI_API OCI_DirPathSetBufferSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_DirPathSetConvertMode
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_DirPathSetConvertMode
+(
+    OCI_DirPath *dp,
+    unsigned int mode
+)
+{
+    boolean res = TRUE;
+
+    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
+
+    dp->cvt_mode = (ub2) mode;
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathGetRowCount
  * --------------------------------------------------------------------------------------------- */
 
@@ -1402,7 +1551,7 @@ unsigned int OCI_API OCI_DirPathGetAffectedRows
 
     OCI_RESULT(TRUE);
 
-    return dp->nb_prcsd;
+    return dp->nb_processed;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1414,11 +1563,18 @@ unsigned int OCI_API OCI_DirPathGetErrorColumn
     OCI_DirPath *dp
 )
 {
+    ub2 err_col = 0;
+
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
 
     OCI_RESULT(TRUE);
 
-    return dp->err_col;
+    if (dp->idx_err_col < dp->nb_err)
+    {
+        err_col = dp->err_cols[dp->idx_err_col++];
+    }
+
+    return err_col;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1430,9 +1586,16 @@ unsigned int OCI_API OCI_DirPathGetErrorRow
     OCI_DirPath *dp
 )
 {
+    ub4 err_row = 0;
+
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
 
     OCI_RESULT(TRUE);
 
-    return dp->err_row;
+    if (dp->idx_err_row < dp->nb_err)
+    {
+        err_row = dp->err_rows[dp->idx_err_row++] + 1;
+    }
+
+    return err_row;
 }

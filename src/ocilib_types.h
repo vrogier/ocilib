@@ -704,22 +704,27 @@ typedef struct OCI_DirPathColumn OCI_DirPathColumn;
 
 struct OCI_DirPath
 {
-    OCI_Connection     *con;        /* pointer to connection object */
-    OCI_TypeInfo       *typinf;     /* type info about table to load */
-    OCIDirPathCtx      *ctx;        /* OCI DP context handle */
-    OCIDirPathColArray *arr;        /* OCI DP column array handle */
-    OCIDirPathStream   *strm;       /* OCI DP stream handle */
-    OCI_DirPathColumn  *cols;       /* array of column info */
-    ub4                 nb_prcsd;   /* number of row processed at last call */
-    ub4                 nb_loaded;  /* number of row loaded so far */
-    ub4                 status;     /* internal status */
-    ub4                 err_row;    /* index of the row not processed at last call */
-    ub4                 nb_cur;     /* current number of row to load per stream */
-    ub2                 err_col;    /* index of the column not processed at last call */
-    ub2                 nb_cols;    /* number of columns to load */
-    ub2                 nb_rows;    /* maximum number of row to load per stream */
-    char                padding[2]; /* dummy variable for alignment */ 
-
+    OCI_Connection     *con;            /* pointer to connection object */
+    OCI_TypeInfo       *typinf;         /* type info about table to load */
+    OCIDirPathCtx      *ctx;            /* OCI DP context handle */
+    OCIDirPathColArray *arr;            /* OCI DP column array handle */
+    OCIDirPathStream   *strm;           /* OCI DP stream handle */
+    OCI_DirPathColumn  *cols;           /* array of column info */
+    ub4                 nb_processed;   /* number of row processed at last call */
+    ub4                 nb_loaded;      /* number of row loaded so far */
+    ub4                 nb_converted;   /* number of row converted so far */
+    ub4                 nb_entries;     /* number of rows currently set */
+    ub4                 status;         /* internal status */
+    ub4                 nb_cur;         /* current number of row to load per stream */
+    ub2                 nb_cols;        /* number of columns to load */
+    ub2                 nb_rows;        /* maximum number of row to load per stream */
+    ub2                 cvt_mode;       /* conversion mode */ 
+    ub2                 idx_err_col;    /* index of current erred row */    
+    ub4                 idx_err_row;    /* index of current erred column */
+    ub4                 nb_err;         /* number of conversion errors since the last load */
+    ub4                *err_rows;       /* array of err rows index */
+    ub2                *err_cols;       /* array of err col index */
+    char                padding[2];     /* dummy variable for alignment */ 
 };
 
 /*
