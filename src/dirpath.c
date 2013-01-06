@@ -93,7 +93,7 @@ int OCI_API OCI_DirPathSetArray
             )
         }
 
-        // increment number of item set
+        /* increment number of item set */
 
         if (res == TRUE)
         {
@@ -1015,25 +1015,39 @@ unsigned int OCI_API OCI_DirPathConvert
     OCI_DirPath *dp
 )
 {
-    unsigned int ret  = OCI_DPR_ERROR;
+    unsigned int ret      = OCI_DPR_ERROR;
+    ub4          row_from = 0;
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, OCI_DPR_ERROR);
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED, OCI_DPR_ERROR);
 
-    dp->nb_err          = 0;
-    dp->idx_err_row     = 0;
-    dp->idx_err_col     = 0;
-    dp->nb_converted    = 0;
-    dp->nb_processed    = 0;
+    dp->nb_processed = 0;
+
+    /* perform full variable reset in forcemode or if we did not encounter errors in default mode*/
+
+    if ((dp->cvt_mode == OCI_DCM_FORCE) || (dp->cvt_mode == OCI_DCM_DEFAULT && dp->nb_err == 0))
+    {
+        dp->nb_converted    = 0;
+        dp->nb_err          = 0;
+        dp->idx_err_row     = 0;
+        dp->idx_err_col     = 0;
+    }
+
+    /* in case of previous error in default mode, start again from the last faulted row */
+
+    if ((dp->cvt_mode == OCI_DCM_DEFAULT) && (dp->nb_err > 0))
+    {
+        row_from = dp->err_rows[dp->nb_err - 1];
+    }
 
     /* set array values */
 
-    if (OCI_DirPathSetArray(dp, 0) == TRUE)
+    if (OCI_DirPathSetArray(dp, row_from) == TRUE)
     {
         /* try to convert values from array into stream */
 
-        ret = OCI_DirPahArrayToStream(dp, 0);
+        ret = OCI_DirPahArrayToStream(dp, row_from);
 
         /* in case of conversion error, continue conversion in force mode
            other return from conversion */
@@ -1048,7 +1062,7 @@ unsigned int OCI_API OCI_DirPathConvert
             {
                 /* start from the row that follows the last erred row */
 
-                ub4 row_from = dp->err_rows[dp->nb_err - 1] + 1;
+                row_from = dp->err_rows[dp->nb_err - 1] + 1;
 
                 /* set values again */
 
