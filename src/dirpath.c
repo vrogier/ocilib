@@ -1147,7 +1147,7 @@ unsigned int OCI_API OCI_DirPathLoad
         ub4 nb_loaded = 0;
         ub4 size      = sizeof(nb_loaded);
 
-        OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_STREAM, &nb_loaded,
+        OCIAttrGet(dp->strm, OCI_HTYPE_DIRPATH_STREAM, &nb_loaded,
                    &size, OCI_ATTR_ROW_COUNT, dp->con->err);
 
         dp->nb_loaded   += nb_loaded;
