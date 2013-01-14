@@ -866,8 +866,10 @@ boolean OCI_NumberSet
 boolean OCI_NumberFromString
 (
     OCI_Connection *con,
-    void           *number,
+    void           *out_value,
+    uword           size,
     uword           type,
+    int             sqlcode,
     const dtext    *in_value,
     const mtext   * fmt
 );

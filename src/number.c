@@ -206,8 +206,10 @@ boolean OCI_NumberSet
 boolean OCI_NumberFromString
 (
     OCI_Connection *con,
-    void           *number,
+    void           *out_value,
+    uword           size,
     uword           type,
+    int             sqlcode,
     const dtext    *in_value,
     const mtext   * fmt
 )
@@ -233,7 +235,7 @@ boolean OCI_NumberFromString
 
             if (type & OCI_NUM_DOUBLE)
             {
-                res = (dtscanf(in_value, (dtext *) ostr1, number) == 1);
+                res = (dtscanf(in_value, (dtext *) ostr1, out_value) == 1);
             }
             else if (type & OCI_NUM_FLOAT)
             {
@@ -241,7 +243,7 @@ boolean OCI_NumberFromString
                 
                 res = (dtscanf(in_value, (dtext *) ostr1, &tmp_value) == 1);
 
-                *((float *) number) = (float) tmp_value;
+                *((float *) out_value) = (float) tmp_value;
             }
 
             done = TRUE;
@@ -264,6 +266,7 @@ boolean OCI_NumberFromString
         void *ostr2 = NULL;
         int osize1  = -1;
         int osize2  = -1;
+        OCINumber number;
         
         if (fmt == NULL)
         {
@@ -273,14 +276,14 @@ boolean OCI_NumberFromString
         ostr1 = OCI_GetInputString((void *) in_value, &osize1, sizeof(dtext), sizeof(omtext));
         ostr2 = OCI_GetInputMetaString(fmt, &osize2);
 
-        memset(number, 0, sizeof(OCINumber));
+        memset(&number, 0, sizeof(number));
 
         OCI_CALL2
         (
             res, con,
 
             OCINumberFromText(con->err, (oratext *) ostr1, (ub4) osize1, (oratext *) ostr2,
-                                (ub4) osize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) number)
+                                (ub4) osize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
         )
  
         OCI_ReleaseMetaString(ostr2);
@@ -289,6 +292,8 @@ boolean OCI_NumberFromString
         {
             OCI_ReleaseMetaString(ostr1);
         }
+
+        res = res && OCI_NumberGet(con, &number, size, type, sqlcode, out_value);
     }  
 
     return res;

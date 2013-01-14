@@ -215,8 +215,24 @@ boolean OCI_ObjectGetAttrInfo
     {
         case OCI_CDT_NUMERIC:
         {
-            *p_size = sizeof(OCINumber);
-            *p_type = OCI_OFT_NUMBER;
+            ub4 subtype = typinf->cols[index].subtype;
+
+            if (subtype & OCI_NUM_FLOAT)
+            {
+                *p_size = sizeof(double);
+                *p_type = OCI_OFT_FLOAT;
+            }
+            else if (subtype & OCI_NUM_DOUBLE)
+            {
+                *p_size = sizeof(double);
+                *p_type = OCI_OFT_DOUBLE;
+            }
+            else
+            {
+                *p_size = sizeof(OCINumber);
+                *p_type = OCI_OFT_NUMBER;
+            }
+            
             break;
         }
         case OCI_CDT_DATETIME:
@@ -581,8 +597,8 @@ boolean OCI_ObjectGetNumber
         index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT);
 
         if (index >= 0)
-        {
-            res = OCI_NumberFromString(obj->con, value, flag, OCI_ObjectGetString(obj, attr), NULL);
+        {          
+            res = OCI_NumberFromString(obj->con, value, size, flag, obj->typinf->cols[index].icode, OCI_ObjectGetString(obj, attr), NULL);
         }
     }
 
