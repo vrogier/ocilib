@@ -342,11 +342,17 @@ int OCI_API OCI_DirPathSetArray
     ub4 row_from
 );
 
-unsigned int OCI_API OCI_DirPahArrayToStream
+unsigned int OCI_API OCI_DirPathArrayToStream
 (
     OCI_DirPath *dp,
     ub4 row_from
 );
+
+unsigned int OCI_API OCI_DirPathLoadStream
+(
+    OCI_DirPath *dp
+);
+
 
 /* --------------------------------------------------------------------------------------------- *
  * element.c

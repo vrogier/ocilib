@@ -14693,7 +14693,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetEntry
  * - OCI_DPR_ERROR    : an error happened while loading data
  * - OCI_DPR_FULL     : the internal stream is full
  * - OCI_DPR_PARTIAL  : a column hasn't been fully filled yet
- * - OCI_DPR_EMPTY    : no data was found to load
+ * - OCI_DPR_EMPTY    : no data was found to convert
  *
  * @note
  * - When using conversion mode OCI_DCM_DEFAULT, OCI_DirPathConvert() stops when
@@ -14722,9 +14722,6 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathConvert
  *
  * @param dp - Direct path Handle
  *
- * @note
- * OCI_DirPathGetAffectedRows() returns the number of rows successfully loaded in the last call.
- *
  * @return
  * Possible return values :
  * - OCI_DPR_COMPLETE : conversion has been successful
@@ -14732,6 +14729,12 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathConvert
  * - OCI_DPR_FULL     : the internal stream is full
  * - OCI_DPR_PARTIAL  : a column hasn't been fully filled yet
  * - OCI_DPR_EMPTY    : no data was found to load
+ *
+ * @note
+ * List of faulted rows can be retrieved using OCI_DirPathGetErrorRow()
+ *
+ * @note
+ * OCI_DirPathGetAffectedRows() returns the number of rows successfully loaded in the last call.
  *
  */
 
@@ -15141,18 +15144,26 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorColumn
  * Direct path row indexes start at 1.
  * 
  * @Note
- * Errors may happen while data is converted to direct path stream format
- * using OCI_DirPathConvert().
+ * Errors may happen :
+ * - while data is converted to direct path stream format using OCI_DirPathConvert()
+ * - while data is loaded to database using OCI_DirPathLoad()
+ *
+ * @Note
  * When using conversion mode OCI_DCM_DEFAULT, OCI_DirPathConvert() returns
  * OCI_DPR_ERROR on error. OCI_DirPathGetErrorRow() returns the row index that
- * caused the error
+ * caused the error.
  * When using conversion mode OCI_DCM_FORCE, OCI_DirPathConvert() returns 
  * OCI_DPR_COMPLETE even on errors. In order to retrieve the list of all row
  * indexes that have erred, the application can call OCI_DirPathGetErrorRow() 
  * repeatedly until it returns 0. 
  *
  * @note
- * The internal value is reset to 0 when calling OCI_DirPathConvert()
+ * After a call to OCI_DirPathLoad(), in order to retrieve the list of all faulted rows 
+ * indexes, the application can call OCI_DirPathGetErrorRow() repeatedly until it returns 0. 
+ *
+ * @note
+ * The internal value is reset to 0 when calling OCI_DirPathConvert(),
+ * OCI_DirPathReset() or OCI_DirPathLoad()
  *
  * @return
  * 0 is no error occurs otherwise the index of the given row which caused an
