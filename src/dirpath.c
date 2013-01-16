@@ -294,6 +294,9 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
     
         dp->con          = typinf->con;
         dp->status       = OCI_DPS_NOT_PREPARED;
+        dp->cvt_mode     = OCI_DCM_DEFAULT;
+        dp->res_conv     = OCI_DPR_EMPTY;
+        dp->res_load     = OCI_DPR_EMPTY;
         dp->typinf       = typinf;
         dp->nb_rows      = (ub2) nb_rows;
         dp->nb_cols      = (ub2) nb_cols;
@@ -305,7 +308,6 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
         dp->nb_converted = 0;
         dp->nb_loaded    = 0;
         dp->nb_converted = 0;
-        dp->cvt_mode     = OCI_DCM_DEFAULT;
 
         /* allocates direct context handle */
 
@@ -1089,7 +1091,7 @@ unsigned int OCI_API OCI_DirPathConvert
     OCI_DirPath *dp
 )
 {
-    unsigned int ret      = OCI_DPR_ERROR;
+    unsigned int res      = TRUE;
     ub4          row_from = 0;
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, OCI_DPR_ERROR);
@@ -1100,31 +1102,46 @@ unsigned int OCI_API OCI_DirPathConvert
 
     dp->nb_processed = 0;
 
-    /* in case of previous error in default mode, start again from the last faulted row */
+    /* in case of previous error in default mode or if the stream is full,
+       let's start again from the last faulted row */
 
-    if ((dp->cvt_mode == OCI_DCM_DEFAULT) && (dp->nb_err > 0))
+    if ((dp->cvt_mode == OCI_DCM_DEFAULT || dp->res_conv == OCI_DPR_FULL) && (dp->nb_err > 0))
     {
         row_from = dp->err_rows[dp->nb_err - 1];
     }
 
+    /* reset the stream if it is full */
+
+    if (dp->res_conv == OCI_DPR_FULL)
+    {
+        OCI_CALL2
+        (
+            res, dp->con,
+
+            OCIDirPathStreamReset(dp->strm, dp->con->err)
+        )
+    }
+
+    /* reset conversion status back to default error value */
+    
+    dp->res_conv = OCI_DPR_ERROR;
+
     /* set array values */
 
-    if (OCI_DirPathSetArray(dp, row_from) == TRUE)
+    if (res == TRUE && OCI_DirPathSetArray(dp, row_from) == TRUE)
     {
         /* try to convert values from array into stream */
 
-        ret = OCI_DirPathArrayToStream(dp, row_from);
+        dp->res_conv = OCI_DirPathArrayToStream(dp, row_from);
 
         /* in case of conversion error, continue conversion in force mode
            other return from conversion */
 
-        if (dp->cvt_mode == OCI_DCM_FORCE && ret == OCI_DPR_ERROR)
+        if (dp->cvt_mode == OCI_DCM_FORCE && dp->res_conv == OCI_DPR_ERROR)
         {
-            boolean res = TRUE;
-
             /* perfom conversion until all non erred rows are converted */
 
-            while ((ret == OCI_DPR_ERROR) && (dp->nb_err <= dp->nb_cur) && (res == TRUE))
+            while ((dp->res_conv == OCI_DPR_ERROR) && (dp->nb_err <= dp->nb_cur) && (res == TRUE))
             {
                 /* start from the row that follows the last erred row */
 
@@ -1138,17 +1155,17 @@ unsigned int OCI_API OCI_DirPathConvert
                 {
                      /* perform conversion again */
 
-                     ret = OCI_DirPathArrayToStream(dp, row_from);
+                     dp->res_conv = OCI_DirPathArrayToStream(dp, row_from);
                 }
             }
         }
     }
-
+  
     dp->nb_processed = dp->nb_converted;
+ 
+    OCI_RESULT(dp->res_conv ==  OCI_DPR_COMPLETE);
 
-    OCI_RESULT(ret ==  OCI_DPR_COMPLETE);
-
-    return ret;
+    return dp->res_conv;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1160,8 +1177,6 @@ unsigned int OCI_API OCI_DirPathLoad
     OCI_DirPath *dp
 )
 {
-    unsigned int res = OCI_DPR_COMPLETE;
- 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, OCI_DPR_ERROR);
 
     OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_CONVERTED, OCI_DPR_ERROR);
@@ -1175,21 +1190,22 @@ unsigned int OCI_API OCI_DirPathLoad
     dp->nb_err       = 0;
     dp->idx_err_col  = 0;
     dp->idx_err_row  = 0;
+    dp->res_load     = OCI_DPR_COMPLETE;
 
     /* load the stream */
 
-    res = OCI_DirPathLoadStream(dp);
+    dp->res_load = OCI_DirPathLoadStream(dp);
 
     /* continue to load the stream while it returns an error */
 
-    while (res == OCI_DPR_ERROR)
+    while (dp->res_load == OCI_DPR_ERROR)
     {
-        res = OCI_DirPathLoadStream(dp);
+        dp->res_load = OCI_DirPathLoadStream(dp);
     }
 
-    OCI_RESULT(res == OCI_DPR_COMPLETE);
+    OCI_RESULT(dp->res_load == OCI_DPR_COMPLETE);
 
-    return res;
+    return dp->res_load;
 }
 
 /* --------------------------------------------------------------------------------------------- *

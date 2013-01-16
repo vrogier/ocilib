@@ -722,6 +722,8 @@ struct OCI_DirPath
     ub2                 idx_err_col;    /* index of current erred row */    
     ub4                 idx_err_row;    /* index of current erred column */
     ub4                 nb_err;         /* number of conversion errors since the last load */
+    unsigned int        res_conv;       /* status of the last conversion */
+    unsigned int        res_load;       /* status of the last load */
     ub4                *err_rows;       /* array of err rows index */
     ub2                *err_cols;       /* array of err col index */
     char                padding[2];     /* dummy variable for alignment */ 
