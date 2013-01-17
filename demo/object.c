@@ -33,10 +33,11 @@ int main(void)
     if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
         return EXIT_FAILURE;
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate("db11g", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     obj  = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, "t_sale", OCI_TIF_TYPE));
+    obj2 = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, "t_vendor", OCI_TIF_TYPE));
 
     OCI_ObjectSetInt(obj, "CODE", 1);
     OCI_ObjectSetDouble(obj, "PRICE", 12.99);
@@ -46,9 +47,10 @@ int main(void)
     date = OCI_ObjectGetDate(obj, "DATE_SALE");
     OCI_DateSysDate(date);
 
-    obj2 = OCI_ObjectGetObject(obj, "VENDOR");
+    obj2 = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, "t_vendor", OCI_TIF_TYPE));
     OCI_ObjectSetInt(obj2, "CODE", 134);
     OCI_ObjectSetString(obj2, "NAME", "JOHN SMITH");
+    OCI_ObjectSetObject(obj, "VENDOR", obj2);
 
     OCI_Prepare(st, "insert into sales values(:obj)");
     OCI_BindObject(st, ":obj", obj);
@@ -59,6 +61,7 @@ int main(void)
     OCI_Commit(cn);
 
     OCI_ObjectFree(obj);
+    OCI_ObjectFree(obj2);
 
     OCI_Cleanup();
 
