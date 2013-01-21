@@ -350,6 +350,12 @@
 #define OCI_ATTR_DRIVER_NAME           424                    /* Driver Name */
 #define OCI_ATTR_SPOOL_AUTH            460      /* Auth handle on pool handle*/
 
+
+/*--------- Attributes related to LOB prefetch------------------------------ */
+#define OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE     438   /* default prefetch size */
+#define OCI_ATTR_LOBPREFETCH_SIZE             439           /* prefetch size */
+#define OCI_ATTR_LOBPREFETCH_LENGTH           440 /* prefetch length & chunk */
+
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
 
 #define OCI_UCS2ID                     1000               /* UCS2 charset ID */

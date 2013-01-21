@@ -2488,3 +2488,78 @@ boolean OCI_API OCI_SetStatementCacheSize
     return res;
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_GetDefaultLobPrefetchSize
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
+(
+    OCI_Connection *con
+)
+{
+    boolean res           = TRUE;
+    ub4     prefetch_size = 0;
+
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, 0);
+    
+#if OCI_VERSION_COMPILE >= OCI_11_1
+
+    if (con->ver_num >= OCI_11_1)
+    {
+
+        OCI_CALL2
+        (
+            res, con,
+
+            OCIAttrGet((dvoid **) con->ses, (ub4) OCI_HTYPE_SESSION, (dvoid *) &prefetch_size,
+                        (ub4 *) NULL,  (ub4) OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE, con->err)
+        )
+    }
+
+#endif
+
+    OCI_RESULT(res);
+
+    return prefetch_size;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_SetDefaultLobPrefetchSize
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_EXPORT boolean OCI_API OCI_SetDefaultLobPrefetchSize
+(
+    OCI_Connection *con,
+    unsigned int     value
+)
+{
+    boolean res           = TRUE;
+    ub4     prefetch_size = value;
+
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
+    
+#if OCI_VERSION_COMPILE >= OCI_11_1
+
+    if (con->ver_num >= OCI_11_1)
+    {
+        OCI_CALL2
+        (
+            res, con,
+
+            OCIAttrSet((dvoid *) con->ses, (ub4) OCI_HTYPE_SESSION,
+                        (dvoid *) &prefetch_size, (ub4) sizeof (prefetch_size),
+                        (ub4) OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE, con->err)
+        )
+    }
+
+#else
+
+    OCI_NOT_USED(prefetch_size);
+
+#endif
+
+    OCI_RESULT(res);
+
+    return res;
+}
+

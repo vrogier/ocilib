@@ -1534,6 +1534,7 @@ typedef unsigned int big_uint;
 #define OCI_CST_ALTER                       7
 #define OCI_CST_BEGIN                       8
 #define OCI_CST_DECLARE                     9
+#define OCI_CST_CALL                        10
 
 /* environment modes */
 
@@ -3160,6 +3161,10 @@ OCI_EXPORT boolean OCI_API OCI_SetTAFHandler
  *
  * @note
  * Default value is 20 (value from Oracle Documentation)
+ *"
+ * @warning
+ * Requires Oracle Client 9.2 or above
+ *
  *
  */
 
@@ -3175,6 +3180,9 @@ OCI_EXPORT unsigned int OCI_API OCI_GetStatementCacheSize
  * @param con   - Connection handle
  * @param value - maximun number of statements in the cache
  *
+ * @warning
+ * Requires Oracle Client 9.2 or above
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -3184,6 +3192,65 @@ OCI_EXPORT boolean OCI_API OCI_SetStatementCacheSize
 (
     OCI_Connection  *con,
     unsigned int     value
+);
+
+/**
+ * @brief
+ * Return the default LOB prefetch buffer size for the connection
+ *
+ * @param con  - Connection handle
+ * 
+ * @warning
+ * Requires Oracle Client AND Server 11gR1 or above
+ *
+ * @note 
+ * Prefetch size is:
+ * - number of bytes for BLOBs and BFILEs
+ * - number of characters for CLOBs.
+ *
+ * @note
+ * Default is 0 (prefetching disabled)
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
+(
+    OCI_Connection *con
+);
+    
+/**
+ * @brief
+ * Enable or disable prefetching for all LOBs fetched in the connection
+ *
+ * @param con   - Connection handle
+ * @param value - default prefetch buffer size
+ *
+ * @note
+ * If parameter 'value':
+ * - is == 0, it disables prefetching for all LOBs fetched in the connection.
+ * - is >  0, it enables prefetching for all LOBs fetched in the connection 
+ * and the given buffer size is used for prefetching LOBs
+ *
+ * @note
+ * LOBs prefetching is disabled by default
+ *
+ * @warning
+ * Requires Oracle Client AND Server 11gR1 or above.
+ *
+ * @note 
+ * Prefetch size is:
+ * - number of bytes for BLOBs and BFILEs
+ * - number of characters for CLOBs.
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetDefaultLobPrefetchSize
+(
+    OCI_Connection *con,
+    unsigned int    value
 );
 
 /**
@@ -5351,7 +5418,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBatchErrorCount
 (
     OCI_Statement *stmt
 );
-
+  
 /**
  * @brief
  * Return the number of binds currently associated to a statement
@@ -9260,6 +9327,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterRef
  * - OCI_CST_ALTER   : alter statement
  * - OCI_CST_BEGIN   : begin (pl/sql) statement
  * - OCI_CST_DECLARE : declare (pl/sql) statement
+ * - OCI_CST_CALL    : kpu call
  *
  * @return
  * The statement type on success or OCI_UNKOWN on error
@@ -14665,6 +14733,12 @@ OCI_EXPORT boolean OCI_API OCI_DirPathPrepare
  * - Repeat calls to OCI_DirPathSetEntry() until the data is totally provided
  * - The last call that set the last piece or an entry must specify the value
  *   TRUE for the 'complete' parameter
+ *
+ * @warning
+ * Current Direct Path OCILIB implementation DOES NOT support setting entry
+ * content piece by piece as mentionned above. It was planned in the original design
+ * but not supported yet. So, always set the complete parameter to TRUE.
+ * Setting entries content piece by piece may be supported in future releases
  *
  * @return
  * TRUE on success otherwise FALSE
