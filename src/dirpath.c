@@ -158,7 +158,7 @@ unsigned int OCI_API OCI_DirPathArrayToStream
         }
     }
 
-    if (ret != OCI_SUCCESS)
+    if (res != OCI_SUCCESS)
     {
         ub4 err_row = 0;
         ub2 err_col = 0;
@@ -177,11 +177,14 @@ unsigned int OCI_API OCI_DirPathArrayToStream
         /* update converted rows so far */
         dp->nb_converted += err_row;
 
-        /* record errors index */
-        dp->err_rows[dp->nb_err] = row_from + err_row;
-        dp->err_cols[dp->nb_err] = err_col;
+        /* record errors index on real error */
+        if (res == OCI_DPR_ERROR)
+        {           
+            dp->err_rows[dp->nb_err] = row_from + err_row;
+            dp->err_cols[dp->nb_err] = err_col;
 
-        dp->nb_err++;
+            dp->nb_err++;
+        }
     }
     else
     {
@@ -1634,7 +1637,7 @@ unsigned int OCI_API OCI_DirPathGetErrorColumn
 
     if (dp->idx_err_col < dp->nb_err)
     {
-        err_col = dp->err_cols[dp->idx_err_col++];
+        err_col = dp->err_cols[dp->idx_err_col++] + 1;
     }
 
     return err_col;

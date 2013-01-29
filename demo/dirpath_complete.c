@@ -45,11 +45,11 @@ int main(void)
 
     /* insuficient stream buffer size tests */
     do_load(con, FALSE, FALSE, TRUE,  FALSE,    "TEST SMALL BUFFER - DEFAULT MODE");
-    do_load(con, FALSE, FALSE, TRUE,  FALSE,    "TEST SMALL BUFFER - FORCE   MODE");  
+    do_load(con, FALSE, FALSE, TRUE,  TRUE,     "TEST SMALL BUFFER - FORCE   MODE");  
 
     /* conversion error tests */
     do_load(con, TRUE,  FALSE, FALSE, FALSE,    "TEST CONV   ERROR - DEFAULT MODE");
-    do_load(con, FALSE, FALSE, FALSE, TRUE,     "TEST CONV   ERROR - FORCE   MODE");
+    do_load(con, TRUE,  FALSE, FALSE, TRUE,     "TEST CONV   ERROR - FORCE   MODE");
 
     /* loading error tests */
     if (partionning_enabled)
