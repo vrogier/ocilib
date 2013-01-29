@@ -64,7 +64,11 @@ boolean OCI_NumberGet
 
 #endif
 
-    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
+    if (type == OCI_NUM_NUMBER)
+    {
+        memcpy(out_value, number, size);
+    }
+    else if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
     {
 
     #if OCI_VERSION_COMPILE >= OCI_10_1

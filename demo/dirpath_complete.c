@@ -38,7 +38,7 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    con  = OCI_ConnectionCreate("db11g", "usr", "pwd", OCI_SESSION_DEFAULT);
+    con  = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
     
     /* Nominal test */
     do_load(con, FALSE, FALSE, FALSE, FALSE,    "TEST BASE         - DEFAULT MODE");
