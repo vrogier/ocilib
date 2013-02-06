@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.12.0 (2013-01-16)</b>
+ * <b>Current version : 3.12.0 (2013-02-07)</b>
  *
  * @section s_feats Main features
  *
@@ -168,8 +168,8 @@ extern "C" {
  * --------------------------------------------------------------------------------------------- */
 
 #define OCILIB_MAJOR_VERSION     3
-#define OCILIB_MINOR_VERSION     11
-#define OCILIB_REVISION_VERSION  1
+#define OCILIB_MINOR_VERSION     12
+#define OCILIB_REVISION_VERSION  0
 
 /* --------------------------------------------------------------------------------------------- *
  * Installing OCILIB
