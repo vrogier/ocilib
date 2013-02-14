@@ -411,7 +411,7 @@ boolean OCI_NumberToString
             OCI_ReleaseMetaString(ostr1);
         }
 
-        out_value_size = osize1;
+        out_value_size = (osize1 / (int) sizeof(dtext));
     }  
 
     /* do we need to suppress last '.' or ',' from integers */
