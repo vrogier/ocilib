@@ -158,7 +158,7 @@ unsigned int OCI_API OCI_DirPathArrayToStream
         }
     }
 
-    if (res != OCI_SUCCESS)
+    if (ret != OCI_SUCCESS)
     {
         ub4 err_row = 0;
         ub2 err_col = 0;
