@@ -64,11 +64,12 @@ OCI_Long * OCI_LongInit
     {
         lg = *plg;
 
-        lg->size   = 0;
-        lg->stmt   = stmt;
-        lg->def    = def;
-        lg->type   = type;
-        lg->offset = 0;
+        lg->size    = 0;
+        lg->maxsize = 0;
+        lg->stmt    = stmt;
+        lg->def     = def;
+        lg->type    = type;
+        lg->offset  = 0;
 
         if (def != NULL)
         {
@@ -270,12 +271,12 @@ unsigned int OCI_API OCI_LongWrite
         piece = (ub1) OCI_LAST_PIECE;
     }
 
-    /* correct size to read for last piece */
+    /* correct size to write for last piece flag */
 
-    if ((lg->size + len) >= lg->stmt->long_size)
+    if ((lg->size + len) >= lg->maxsize)
     {
         piece = OCI_LAST_PIECE;
-        count = lg->stmt->long_size - lg->size;
+        count = lg->maxsize - lg->size;
     }
     else
     {

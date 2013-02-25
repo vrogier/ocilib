@@ -423,12 +423,19 @@ boolean OCI_API OCI_LobRead2
         )
 
         (*char_count) = (ub4) size_in_out_char_byte;
-        (*byte_count) = (ub4) size_in_out_char_byte * (ub4) sizeof(odtext);
+        (*byte_count) = (ub4) size_in_out_char_byte;
     }
 
     if (lob->type != OCI_BLOB)
     {
-        memset(((char *) buffer) + (ub4) (*byte_count), 0, sizeof(odtext));
+		ub4 ora_byte_count = (ub4) *byte_count;
+
+		if (OCILib.nls_utf8 == FALSE)
+        {
+            ora_byte_count *= sizeof(odtext);
+        }
+
+        memset(((char *) buffer) + ora_byte_count, 0, sizeof(odtext));
 
     #ifndef OCI_LOB2_API_ENABLED
 
@@ -454,6 +461,8 @@ boolean OCI_API OCI_LobRead2
             if (OCILib.nls_utf8 == FALSE)
             {
                 OCI_ConvertString(buffer, (int) (*char_count), sizeof(odtext), sizeof(dtext));
+
+				(*byte_count) = (ub4) (*char_count) * (ub4) sizeof(dtext);
             }
         }
     }
@@ -630,7 +639,12 @@ boolean OCI_API OCI_LobWrite2
         else
         {
             (*char_count) = (ub4) size_in_out_char_byte;
-            (*byte_count) = (ub4) size_in_out_char_byte * (ub4) sizeof(dtext);
+            (*byte_count) = (ub4) size_in_out_char_byte;
+
+			if (OCILib.nls_utf8 == FALSE)
+            {
+ 				(*byte_count) *= (ub4) sizeof(dtext);
+			}
         }
     }
 
@@ -1112,7 +1126,12 @@ boolean OCI_API OCI_LobAppend2
         else
         {
             (*char_count) = (ub4) size_in_out_char_byte;
-            (*byte_count) = (ub4) size_in_out_char_byte * (ub4) sizeof(dtext);
+            (*byte_count) = (ub4) size_in_out_char_byte;
+
+			if (OCILib.nls_utf8 == FALSE)
+            {
+ 				(*byte_count) *= (ub4) sizeof(dtext);
+			}
         }
     }
 
