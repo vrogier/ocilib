@@ -361,6 +361,8 @@ boolean OCI_ColumnMap
     OCI_Statement *stmt
 )
 {
+    ub2 char_size = (ub2) ( (OCILib.nls_utf8 == TRUE) ? UTF8_BYTES_PER_CHAR : sizeof(dtext) );
+
     boolean res = TRUE;
 
     OCI_CHECK(col == NULL, FALSE);
@@ -483,7 +485,7 @@ boolean OCI_ColumnMap
                    OCI_SIZE_ROWID
                 */
 
-                col->bufsize = (OCI_SIZE_ROWID + 1) * (ub4) sizeof(odtext);
+                col->bufsize = (ub4) ((OCI_SIZE_ROWID + 1) * char_size);
             }
             else
             {
@@ -493,12 +495,7 @@ boolean OCI_ColumnMap
                     its value as an hex string
                 */
 
-                col->bufsize = (ub4) ((col->size + 1) * (ub2) sizeof(odtext));
-            }
-
-            if (OCILib.nls_utf8 == TRUE)
-            {
-                col->bufsize *= UTF8_BYTES_PER_CHAR;
+                col->bufsize = (ub4) ((col->size + 1) * char_size);
             }
 
             break;
@@ -565,14 +562,10 @@ boolean OCI_ColumnMap
             if ((col->icode == SQLT_LNG || col->icode == SQLT_LVC) &&
                 (stmt != NULL && stmt->long_mode == OCI_LONG_IMPLICIT))
             {
-                col->type    = OCI_CDT_TEXT;
-                col->bufsize = (OCI_SIZE_LONG+1) * ((ub2) sizeof(odtext));
+                col->type    = OCI_CDT_TEXT;               
                 col->subtype = OCI_CLONG;
+                col->bufsize = (OCI_SIZE_LONG+1) * char_size;
 
-                if (OCILib.nls_utf8 == TRUE)
-                {
-                    col->bufsize *= UTF8_BYTES_PER_CHAR;
-                }
             }
             else
             {
@@ -688,12 +681,7 @@ boolean OCI_ColumnMap
         {
             col->icode   = SQLT_STR;
             col->type    = OCI_CDT_TEXT;
-            col->bufsize = (ub4) ((col->size + 1) * (ub2) sizeof(odtext));
-
-            if (OCILib.nls_utf8 == TRUE)
-            {
-                col->bufsize *= UTF8_BYTES_PER_CHAR;
-            }
+            col->bufsize = (ub4) ((col->size + 1) * char_size);
 
             break;
         }

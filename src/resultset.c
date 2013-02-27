@@ -727,7 +727,7 @@ boolean OCI_ResultsetExpandStrings
             for (j = (int) (def->buf.count-1); j >= 0; j--)
             {
                 OCI_ConvertString(((ub1*) def->buf.data) + (def->col.bufsize * j),
-                                  def->col.bufsize / sizeof(dtext), sizeof(odtext), sizeof(dtext));
+                                  (def->col.bufsize / sizeof(dtext) ) -1 , sizeof(odtext), sizeof(dtext));
             }
         }
     }
