@@ -514,7 +514,7 @@ struct OCI_Long
     unsigned int   type;        /* type of long */
     ub4            offset;      /* current offset for R/W */
     ub4            piecesize;   /* size of current fetched piece */
-    ub4            maxsize;     /* current offset for R/W */
+    ub4            maxsize;     /* size to R/W */
     ub1           *buffer;      /* fetched buffer */
 };
 

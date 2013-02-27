@@ -371,13 +371,15 @@ boolean OCI_FetchPieces
                 /* update piece info */
 
                 if (res == TRUE)
-                {
+                {              
+                    lg->piecesize = bufsize;
+
                     if (lg->type == OCI_CLONG)
                     {
+                        lg->piecesize /= sizeof(dtext);
+                        lg->piecesize *= sizeof(odtext);
                         lg->piecesize -= (ub4) sizeof(odtext);
-                    }
-
-                    lg->piecesize = (bufsize / sizeof(dtext)) * sizeof(odtext);
+                    }                  
 
                     OCI_CALL1
                     (
