@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -64,12 +64,12 @@ OCI_Long * OCI_LongInit
     {
         lg = *plg;
 
-        lg->size    = 0;
-        lg->maxsize = 0;
-        lg->stmt    = stmt;
-        lg->def     = def;
-        lg->type    = type;
-        lg->offset  = 0;
+        lg->size        = 0;
+        lg->maxsize     = 0;
+        lg->stmt        = stmt;
+        lg->def         = def;
+        lg->type        = type;
+        lg->offset      = 0;
 
         if (def != NULL)
         {

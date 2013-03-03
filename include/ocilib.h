@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2012 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -76,7 +76,7 @@ extern "C" {
  *
  * @section s_version Version information
  *
- * <b>Current version : 3.12.0 (2013-02-07)</b>
+ * <b>Current version : 3.12.1 (2013-03-04)</b>
  *
  * @section s_feats Main features
  *
