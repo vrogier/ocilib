@@ -460,8 +460,8 @@ boolean OCI_API OCI_PoolFree
 
 OCI_Connection * OCI_API OCI_PoolGetConnection
 (
-    OCI_Pool *pool,
-    mtext    *tag
+    OCI_Pool    *pool,
+    const mtext *tag
 )
 {
     OCI_Connection *con = NULL;

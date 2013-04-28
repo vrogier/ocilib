@@ -510,7 +510,7 @@ unsigned int OCI_API OCI_ElemGetRaw
 
     if (elem->handle != NULL)
     {
-        OCIRaw *raw = *(OCIRaw **) elem->handle;
+        OCIRaw *raw = (OCIRaw *) elem->handle; 
         ub4 raw_len = OCIRawSize(elem->con->env, raw);
 
         if (len > raw_len)

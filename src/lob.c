@@ -523,6 +523,7 @@ boolean OCI_API OCI_LobWrite2
     ub2     csid  = 0;
     void   *obuf  = NULL;
 
+    OCI_CHECK_PTR(OCI_IPC_LOB, lob, FALSE);
     OCI_CHECK_PTR(OCI_IPC_LOB, char_count, FALSE);
     OCI_CHECK_PTR(OCI_IPC_LOB, byte_count, FALSE);
 
