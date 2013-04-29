@@ -1269,7 +1269,7 @@ inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::Destroy()
     boolean ret = TRUE;
     boolean chk = FALSE;
 
-    if (_releasable && _func)
+    if (_releasable)
     {
         if (_parent && _handle)
         {
@@ -1286,8 +1286,11 @@ inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::Destroy()
             handle->Destroy();
         }
 
-        ret = _func(_handle);
-        chk = TRUE;
+        if (_func)
+        {
+            ret = _func(_handle);
+            chk = TRUE;
+        }
     }
 
     if (chk)
@@ -1548,8 +1551,7 @@ inline Connection::Connection(mstring db, mstring user, mstring pwd, unsigned in
 
 inline Connection::Connection(OCI_Connection *con,  Handle *parent)
 {
-    Acquire(con, (HandleFreeFunc) 0, (parent != 0), parent);
-
+    Acquire(con, (HandleFreeFunc) (parent != 0 ? OCI_ConnectionFree : 0), (parent != 0), parent);
 }
 
 inline void Connection::Open(mstring db, mstring user, mstring pwd, unsigned int sessionMode)
