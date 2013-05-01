@@ -120,6 +120,15 @@ class Column;
 class Agent;
 
 /**
+ * @typedef HAHandlerProc
+ *
+ * @brief
+ *
+ *
+ */
+typedef void (*HAHandlerProc) (const Connection &con, unsigned int source, unsigned int event, const Timestamp  &time);
+
+/**
  * @namespace API
  *
  * @brief
@@ -288,13 +297,13 @@ private:
  *
  *
  */
+
 class Environment
 {
     friend class Connection;
 
 public:
 
-    typedef void (*HAHandlerProc) (const Connection &con, unsigned int source, unsigned int event, const Timestamp  &time);
 
     static void Initialize(unsigned int mode = OCI_ENV_DEFAULT, mstring libpath = MT(""));
     static void Cleanup();
@@ -314,9 +323,9 @@ public:
 
 private:
 
-    static void HAHandler(OCI_Connection *con, unsigned int source, unsigned int event, OCI_Timestamp  *time);
+    static HAHandlerProc GetOrSetHAHandler(HAHandlerProc handler, bool set);
 
-    static HAHandlerProc _haHandler;
+    static void HAHandler(OCI_Connection *con, unsigned int source, unsigned int event, OCI_Timestamp  *time);
 };
 
 
@@ -1358,8 +1367,6 @@ inline Connection Exception::GetConnection()
  * Environment
  * --------------------------------------------------------------------------------------------- */
 
-Environment::HAHandlerProc Environment::_haHandler = 0;
-
 inline void Environment::Initialize(unsigned int mode, mstring libpath)
 {
     OCI_Initialize(0, libpath.c_str(),  mode | OCI_ENV_CONTEXT);
@@ -1405,14 +1412,28 @@ inline void Environment::ShutdownDatabase(mstring db, mstring user, mstring pwd,
 
 inline void Environment::SetHAHandler(HAHandlerProc handler)
 {
-    _haHandler = handler;
+    GetOrSetHAHandler(handler, true);
 }
 
-void Environment::HAHandler(OCI_Connection *con, unsigned int source, unsigned int event, OCI_Timestamp  *time)
+inline HAHandlerProc Environment::GetOrSetHAHandler(HAHandlerProc handler, bool set)
 {
-    if (_haHandler)
+    static HAHandlerProc _haHandler;
+
+    if (set)
     {
-        _haHandler(Connection(con), source, event, Timestamp(time));
+        _haHandler = handler;
+    }
+
+    return _haHandler;
+}
+
+inline void Environment::HAHandler(OCI_Connection *con, unsigned int source, unsigned int event, OCI_Timestamp  *time)
+{
+    HAHandlerProc handler = GetOrSetHAHandler(0, false);
+
+    if (handler)
+    {
+        handler(Connection(con), source, event, Timestamp(time));
     }
 }
 
@@ -2307,24 +2328,24 @@ inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator TDataType *
  * BindString
  * --------------------------------------------------------------------------------------------- */
 
-void BindString::SetOutData()
+inline void BindString::SetOutData()
 {
     _string = _data;
 }
 
-BindString::BindString(dstring &string, unsigned int elemSize) : _string(string), _elemSize(elemSize)
+inline BindString::BindString(dstring &string, unsigned int elemSize) : _string(string), _elemSize(elemSize)
 {
     _data = new dtext[_elemSize];
 
      memset( _data, 0, _elemSize);
 }
 
-BindString::~BindString()
+inline BindString::~BindString()
 {
     delete [] _data;
 }
 
-BindString::operator dtext *()
+inline BindString::operator dtext *()
 {
     return _data;
 }
