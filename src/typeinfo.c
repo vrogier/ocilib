@@ -586,6 +586,22 @@ unsigned int OCI_API OCI_TypeInfoGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_TypeInfoGetConnection
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Connection * OCI_API OCI_TypeInfoGetConnection
+(
+    OCI_TypeInfo *typinf
+)
+{
+    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf, NULL);
+
+    OCI_RESULT(TRUE);
+
+    return typinf->con;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_TypeInfoGetColumnCount
  * --------------------------------------------------------------------------------------------- */
 

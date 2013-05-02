@@ -169,7 +169,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     3
 #define OCILIB_MINOR_VERSION     12
-#define OCILIB_REVISION_VERSION  0
+#define OCILIB_REVISION_VERSION  1
 
 /* --------------------------------------------------------------------------------------------- *
  * Installing OCILIB
@@ -3407,8 +3407,8 @@ OCI_EXPORT boolean OCI_API OCI_PoolFree
 
 OCI_EXPORT OCI_Connection * OCI_API OCI_PoolGetConnection
 (
-    OCI_Pool *pool,
-    mtext    *tag
+    OCI_Pool    *pool,
+    const mtext *tag
 );
 
 /**
@@ -13714,6 +13714,19 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_TypeInfoGet
  */
 
 OCI_EXPORT unsigned int OCI_API OCI_TypeInfoGetType
+(
+    OCI_TypeInfo *typinf
+);
+
+/**
+ * @brief
+ * Retrieve connection handle from the type info handle
+ *
+ * @param typinf - Type info handle
+ *
+ */
+
+OCI_EXPORT OCI_Connection * OCI_API OCI_TypeInfoGetConnection
 (
     OCI_TypeInfo *typinf
 );
