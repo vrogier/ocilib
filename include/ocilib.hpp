@@ -52,32 +52,19 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include "ocilib.h"
 
 namespace ocilib
 {
 
-/* Types */
+typedef std::basic_string<mtext, std::char_traits<mtext>, std::allocator<mtext> > mstring;
+typedef std::basic_string<dtext, std::char_traits<dtext>, std::allocator<dtext> > dstring;
+typedef std::basic_string<unsigned char,  std::char_traits<unsigned char>, std::allocator<unsigned char> > Raw;
 
-#if defined(OCI_CHARSET_WIDE)
-
-  typedef std::wstring  mstring;
-  typedef std::wstring  dstring;
-
-#elif defined(OCI_CHARSET_MIXED)
-
-  typedef std::string   mstring;
-  typedef std::wstring  dstring;
-
-#else
-
-  typedef std::string   mstring;
-  typedef std::string   dstring;
-
-#endif
-
-  typedef std::basic_string<char, std::char_traits<unsigned char>, std::allocator<unsigned char> > Raw;
+typedef OCI_Thread * ThreadHandle;
+typedef OCI_Mutex  * MutexHandle ;
 
 /* ********************************************************************************************* *
  *                                       CLASS DECLARATIONS
@@ -99,6 +86,7 @@ class TypeInfo;
 class Reference;
 class Object;
 class Collection;
+class CollectionIterator;
 class Clob;
 class Blob;
 class File;
@@ -108,11 +96,9 @@ class Queue;
 class Dequeue;
 class Enqueue;
 class Pool;
-class Mutex;
-class Thread;
 class Message;
-class Long;
-class Iterator;
+class CLong;
+class BLong;
 class HashTable;
 class Event;
 class Element;
@@ -150,6 +136,9 @@ namespace API
 
     template<class TResultType>
     TResultType Call(TResultType result);
+
+    template<class TCharType>
+    std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > MakeString(const TCharType *result);
 }
 
 
@@ -164,9 +153,25 @@ class Handle
 {
 public:
 
-    virtual void Destroy() = 0;
     virtual std::list<Handle *> & GetChildren() = 0;
 
+};
+
+
+class HandlePool
+{
+public:
+
+    void Remove(void * ociHandle);
+    Handle * Get(void *ociHandle);
+    void Set(void * ociHandle, Handle *Handle);
+
+private:
+
+    std::map<void *, Handle * > _map;
+
+    void Lock();
+    void Unlock();
 };
 
 /**
@@ -200,7 +205,8 @@ protected:
 
     Handle* GetHandle();
 
-	void Acquire(THandleType handle, HandleFreeFunc func, bool releasable, Handle *parent = NULL);
+	void Acquire(THandleType handle, HandleFreeFunc func, Handle *parent);
+    void Acquire(THandleType handle);
     void Release();
 
     template <class TSmartHandleType>
@@ -208,14 +214,14 @@ protected:
     {
     public:
 
-        SmartHandle(HandleHolder<TSmartHandleType> *holder, TSmartHandleType handle, HandleFreeFunc func, bool releasable, Handle *parent = NULL);
+        SmartHandle(HandleHolder<TSmartHandleType> *holder, TSmartHandleType handle, HandleFreeFunc func, Handle *parent);
+        ~SmartHandle();
 
         void Acquire(HandleHolder<TSmartHandleType> *holder);
         void Release(HandleHolder<TSmartHandleType> *holder);
 
         TSmartHandleType GetHandle();
 
-        void Destroy();
         std::list<Handle *> & GetChildren();
 
     private:
@@ -226,10 +232,8 @@ protected:
         std::list<Handle *>  _children;
 
         THandleType _handle;
-        bool _releasable;
         HandleFreeFunc _func;
         Handle *_parent;
-
     };
 
 protected:
@@ -237,41 +241,6 @@ protected:
     SmartHandle<THandleType> *_smartHandle;
  };
 
-
-/**
- * @class Thread
- *
- * @brief
- *
- *
- */
-class Thread : public HandleHolder<OCI_Thread *>
-{
- public:
-
-    Thread();
-
-    void Run(POCI_THREAD func, void *args);
-    void Join();
-};
-
-
-/**
- * @class Mutex
- *
- * @brief
- *
- *
- */
-class Mutex : public HandleHolder<OCI_Mutex *>
-{
-public:
-
-    Mutex();
-
-    void Acquire();
-    void Release();
-};
 
 /**
  * @class Exception
@@ -311,9 +280,10 @@ private:
 class Environment
 {
     friend class Connection;
+    template<class THandleType>
+    friend class HandleHolder;
 
 public:
-
 
     static void Initialize(unsigned int mode = OCI_ENV_DEFAULT, mstring libpath = MT(""));
     static void Cleanup();
@@ -333,11 +303,24 @@ public:
 
     static void SetHAHandler(HAHandlerProc handler);
 
+    static ThreadHandle CreateThread();
+    static void DestroyThread(ThreadHandle handle);
+    static void RunThread(ThreadHandle handle, POCI_THREAD func, void *args);
+    static void JoinThread(ThreadHandle thrhandleead);
+
+    static MutexHandle CreateMutex();
+    static void DestroyMutex(MutexHandle handle);
+    static void AcquireMutex(MutexHandle handle);
+    static void ReleaseMutex(MutexHandle handle);
+
 private:
 
-    static HAHandlerProc GetOrSetHAHandler(HAHandlerProc handler, bool set);
+    static unsigned int &GetMode();
 
+    static HAHandlerProc &GetHAHandler();
     static void HAHandler(OCI_Connection *con, unsigned int source, unsigned int event, OCI_Timestamp  *time);
+
+    static HandlePool &GetHandlePool();
 };
 
 
@@ -402,6 +385,7 @@ class Connection : public HandleHolder<OCI_Connection *>
     friend class Object;
     friend class TypeInfo;
     friend class Reference;
+    friend class Resultset;
 
 public:
 
@@ -815,6 +799,13 @@ public:
 
     TypeInfo(Connection &connection, mstring name, unsigned int type);
 
+    unsigned int GetType();
+    mstring GetName();
+    Connection GetConnection();
+
+    unsigned int GetColumnCount();
+    Column GetColumn(unsigned int index);
+
 private:
 
     TypeInfo(OCI_TypeInfo *pTypeInfo);
@@ -840,23 +831,11 @@ public:
 
     TypeInfo GetTypeInfo();
 
-    short   GetShort    (mstring name);
-    int     GetInt      (mstring name);
-    float   GetFloat    (mstring name);
-    double  GetDouble   (mstring name);
-    big_int GetBigInt   (mstring name);
-    dstring GetString   (mstring name);
-    Date    GetDate     (mstring name);
-    Clob    GetClob     (mstring name);
+    template<class TDataType>
+    TDataType Get(mstring name);
 
-    void    SetShort    (mstring name, short    value);
-    void    SetInt      (mstring name, int      value);
-    void    SetFloat    (mstring name, float    value);
-    void    SetDouble   (mstring name, double   value);
-    void    SetBigInt   (mstring name, big_int  value);
-    void    SetString   (mstring name, dstring  value);
-    void    SetDate     (mstring name, Date     value);
-    void    SetClob     (mstring name, Clob     value);
+    template<class TDataType>
+    void Set(mstring name, TDataType &value);
 
 private:
 
@@ -875,6 +854,7 @@ class Reference : public HandleHolder<OCI_Ref *>
     friend class Statement;
     friend class Resultset;
     friend class BindArray;
+    friend class Object;
 
 public:
 
@@ -907,24 +887,79 @@ class Collection : public HandleHolder<OCI_Coll *>
     friend class Statement;
     friend class Resultset;
     friend class BindArray;
-
+    friend class Object;
+    friend class CollectionIterator;
 public:
 
     Collection(Connection &connection, TypeInfo &typeInfo);
 
+    void Assign(const Collection& source);
+
+    unsigned int GetType();
+    unsigned int GetMax();
+    unsigned int GetSize();
+
+    void Truncate(unsigned int size);
+    void Clear();
+
+    template <class TDataType>
+    TDataType Get(unsigned int index);
+
+    template <class TDataType>
+    void Set(unsigned int index, TDataType &data);
+
+    template <class TDataType>
+    void Append(TDataType &data);
+
+    TypeInfo GetTypeInfo();
+
 private:
+
+    template <class TDataType>
+    static TDataType GetElem(OCI_Elem *elem);
+
+    template <class TDataType>
+    static void SetElem(OCI_Elem *elem, TDataType &value);
 
     Collection(OCI_Coll *pColl);
 };
 
+
 /**
- * @class Long
+ * @class CollectionIterator
  *
  * @brief
  *
  *
  */
-class Long : public HandleHolder<OCI_Long *>
+class CollectionIterator : public HandleHolder<OCI_Iter *>
+{
+public:
+
+    CollectionIterator(Collection &collection);
+
+    template <class TDataType>
+    TDataType Get();
+
+    template <class TDataType>
+    void Set(TDataType &value);
+
+    bool Next();
+    bool Prev();
+
+private:
+
+};
+
+
+/**
+ * @class CLong
+ *
+ * @brief
+ *
+ *
+ */
+class CLong : public HandleHolder<OCI_Long *>
 {
     friend class Statement;
     friend class Resultset;
@@ -932,11 +967,45 @@ class Long : public HandleHolder<OCI_Long *>
 
 public:
 
-    Long(Connection &connection);
+    CLong(Statement &statement);
+
+    dstring Read(unsigned int size);
+    unsigned int Write(dstring content);
+
+    unsigned int GetSize();
+    dstring GetContent();
 
 private:
 
-    Long(OCI_Long *pLong);
+    CLong(OCI_Long *pLong);
+};
+
+/**
+ * @class CLong
+ *
+ * @brief
+ *
+ *
+ */
+class BLong : public HandleHolder<OCI_Long *>
+{
+    friend class Statement;
+    friend class Resultset;
+    friend class BindArray;
+
+public:
+
+    BLong(Statement &statement);
+
+    unsigned int Read(void *buffer, unsigned int size);
+    unsigned int Write(void *buffer, unsigned int size);
+
+    unsigned int GetSize();
+    void * GetContent();
+
+private:
+
+    BLong(OCI_Long *pLong);
 };
 
 /**
@@ -1060,6 +1129,8 @@ class Statement : public HandleHolder<OCI_Statement *>
 {
     friend class Exception;
     friend class Resultset;
+    friend class CLong;
+    friend class BLong;
 
 public:
 
@@ -1078,6 +1149,9 @@ public:
 
     mstring GetSql();
 
+    Resultset GetResulset();
+    Resultset GetNextResulset();
+
     void SetBindArraySize(unsigned int size);
     unsigned int GetBindArraySize();
 
@@ -1085,7 +1159,7 @@ public:
 
     template <class TDataType>
     void Bind(mstring name, TDataType &value, unsigned int mode);
- 
+
     template <class TDataType, class TExtraInfo>
     void Bind(mstring name, TDataType &value, TExtraInfo extraInfo, unsigned int mode);
 
@@ -1118,7 +1192,7 @@ public:
 
     void SetBindMode(unsigned int value);
     unsigned int GetBindMode();
-   
+
     void SetFetchSize(unsigned int value);
     unsigned int GetFetchSize();
 
@@ -1136,12 +1210,12 @@ public:
 
     unsigned int GetSQLCommand();
     mstring GetSQLVerb();
-   
+
     void GetBatchErrors(std::vector<Exception> &exceptions);
 
 private:
 
-    Statement(const Connection &connection, OCI_Statement *stmt);
+    Statement(OCI_Statement *stmt);
 
     void SetInData();
     void SetOutData();
@@ -1172,30 +1246,53 @@ private:
  */
 class Resultset : public HandleHolder<OCI_Resultset *>
 {
+    friend class Statement;
 public:
 
-    Resultset(Statement &statement);
+    template<class TDataType>
+    TDataType Get(int index);
+
+    template<class TDataType>
+    TDataType Get(mstring name);
 
     bool Next();
+    bool Prev();
+    bool First();
+    bool Last();
+    bool Seek(unsigned int mode, int offset);
 
-    short   GetShort    (mstring name);
-    int     GetInt      (mstring name);
-    float   GetFloat    (mstring name);
-    double  GetDouble   (mstring name);
-    big_int GetBigInt   (mstring name);
-    dstring GetString   (mstring name);
-    Date    GetDate     (mstring name);
-    Clob    GetClob     (mstring name);
+    unsigned int GetCount();
+    unsigned int GetCurrentRow();
 
-    short   GetShort    (int index);
-    int     GetInt      (int index);
-    float   GetFloat    (int index);
-    double  GetDouble   (int index);
-    big_int GetBigInt   (int index);
-    dstring GetString   (int index);
-    Date    GetDate     (int index);
-    Clob    GetClob     (int index);
+    unsigned int GetColumnCount();
+    Column GetColumn(unsigned int index);
+    Column GetColumn(mstring name);
 
+    bool IsColumnNull(unsigned int index);
+    bool IsColumnNull(mstring name);
+
+    Statement GetStatement();
+
+private:
+
+   Resultset(OCI_Resultset *resultset);
+};
+
+/**
+ * @class Column
+ *
+ * @brief
+ *
+ *
+ */
+class Column : public HandleHolder<OCI_Column *>
+{
+    friend class TypeInfo;
+    friend class Resultset;
+public:
+
+private:
+    Column(OCI_Column *column);
 };
 
 /* ********************************************************************************************* *
@@ -1218,6 +1315,19 @@ inline TResultType API::Call(TResultType result)
     Call();
 
     return result;
+}
+
+template<class TCharType>
+inline std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > API::MakeString(const TCharType *result)
+{
+    if (result)
+    {
+        return std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > (result);
+    }
+    else
+    {
+        return std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > ();
+    }
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1277,9 +1387,24 @@ inline Handle * HandleHolder<THandleType>::GetHandle()
 }
 
 template<class THandleType>
-inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFunc func, bool releasable, Handle *parent)
+inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFunc func, Handle *parent)
 {
-    _smartHandle = new HandleHolder::SmartHandle<THandleType>(this, handle, func, releasable, parent);
+    _smartHandle = new HandleHolder::SmartHandle<THandleType>(this, handle, func, parent);
+
+    Environment::GetHandlePool().Set(handle, _smartHandle);
+}
+
+template<class THandleType>
+inline void HandleHolder<THandleType>::Acquire(THandleType handle)
+{
+    _smartHandle = dynamic_cast<SmartHandle<THandleType> *>(Environment::GetHandlePool().Get(handle));
+
+    if (!_smartHandle)
+    {
+        _smartHandle = new HandleHolder::SmartHandle<THandleType>(this, handle, 0, 0);
+    }
+
+    _smartHandle->Acquire(this);
 }
 
 template<class THandleType>
@@ -1293,15 +1418,92 @@ inline void HandleHolder<THandleType>::Release()
     _smartHandle = 0;
 }
 
+
+inline void HandlePool::Remove(void *ociHandle)
+{
+    Lock();
+    _map.erase(ociHandle);
+    Unlock();
+}
+
+inline Handle * HandlePool::Get(void *ociHandle)
+{
+    Handle *handle = 0;
+
+    Lock();
+    std::map<void *, Handle *>::iterator it = _map.find(ociHandle);
+    if (it != _map.end() )
+    {
+        handle = it->second;
+    }
+    Unlock();
+
+    return handle;
+}
+
+inline void HandlePool::Set(void *ociHandle, Handle *handle)
+{
+    Lock();
+    _map[ociHandle] = handle;
+    Unlock();
+}
+
+inline void HandlePool::Lock()
+{
+
+}
+
+inline void HandlePool::Unlock()
+{
+
+}
+
 template <class THandleType>
 template <class TSmartHandleType>
-inline HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::SmartHandle(HandleHolder<TSmartHandleType> *holder, TSmartHandleType handle, HandleFreeFunc func, bool releasable, Handle *parent) : _handle(handle), _releasable(releasable), _func(func), _parent(parent)
+inline HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::SmartHandle(HandleHolder<TSmartHandleType> *holder, TSmartHandleType handle, HandleFreeFunc func, Handle *parent) : _handle(handle), _func(func), _parent(parent)
 {
     Acquire(holder);
 
     if (_parent && _handle)
     {
         _parent->GetChildren().push_back(this);
+    }
+}
+
+template <class THandleType>
+template <class TSmartHandleType>
+inline HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::~SmartHandle()
+{
+    boolean ret = TRUE;
+    boolean chk = FALSE;
+
+    if (_parent && _handle)
+    {
+        _parent->GetChildren().remove(this);
+    }
+
+    if (_func)
+    {
+        for(std::list<Handle *>::iterator it = _children.begin(); it != _children.end(); it++)
+        {
+            SmartHandle<TSmartHandleType> *handle = reinterpret_cast<SmartHandle<TSmartHandleType> *> (*it);
+
+            handle->_parent = 0;
+
+            handle->DetachFromHolders();
+
+            delete handle;
+        }
+
+        Environment::GetHandlePool().Remove(_handle);
+
+        ret = _func(_handle);
+        chk = TRUE;
+    }
+
+    if (chk)
+    {
+        API::Call(ret);
     }
 }
 
@@ -1322,7 +1524,7 @@ inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::Release(Ha
 
     if (_holders.size() == 0)
     {
-        Destroy();
+        delete this;
     }
 }
 
@@ -1352,83 +1554,6 @@ inline std::list<Handle *> & HandleHolder<THandleType>::SmartHandle<TSmartHandle
     return _children;
 }
 
-template <class THandleType>
-template <class TSmartHandleType>
-inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::Destroy()
-{
-    boolean ret = TRUE;
-    boolean chk = FALSE;
-
-    if (_releasable)
-    {
-        if (_parent && _handle)
-        {
-            _parent->GetChildren().remove(this);
-        }
-
-        for(std::list<Handle *>::iterator it = _children.begin(); it != _children.end(); it++)
-        {
-            SmartHandle<TSmartHandleType> *handle = reinterpret_cast<SmartHandle<TSmartHandleType> *> (*it);
-
-            handle->_parent = 0;
-
-            handle->DetachFromHolders();
-            handle->Destroy();
-        }
-
-        if (_func)
-        {
-            ret = _func(_handle);
-            chk = TRUE;
-        }
-    }
-
-    if (chk)
-    {
-        API::Call(ret);
-    }
-
-    delete this;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * Thread
- * --------------------------------------------------------------------------------------------- */
-
-inline Thread::Thread()
-{
-   Acquire(API::Call(OCI_ThreadCreate()), (HandleFreeFunc) OCI_ThreadFree, true);
-}
-
-inline void Thread::Run(POCI_THREAD func, void *args)
-{
-    API::Call(OCI_ThreadRun(*this, func, args));
-}
-
-inline void Thread::Join()
-{
-    API::Call(OCI_ThreadJoin(*this));
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * Mutex
- * --------------------------------------------------------------------------------------------- */
-
-inline Mutex::Mutex()
-{
-   HandleHolder::Acquire(API::Call(OCI_MutexCreate()), (HandleFreeFunc) OCI_MutexFree, true);
-}
-
-inline void Mutex::Acquire()
-{
-    API::Call(OCI_MutexAcquire(*this));
-}
-
-inline void Mutex::Release()
-{
-    API::Call(OCI_MutexRelease(*this));
-}
-
 /* --------------------------------------------------------------------------------------------- *
  * Exception
  * --------------------------------------------------------------------------------------------- */
@@ -1440,12 +1565,12 @@ inline Exception::Exception()
 
 inline Exception::Exception(OCI_Error *err)
 {
-    Acquire(err, 0, false);
+    Acquire(err);
 }
 
 inline mstring Exception::GetMessage()
 {
-    return OCI_ErrorGetString(*this);
+    return API::MakeString(OCI_ErrorGetString(*this));
 }
 
 inline unsigned int Exception::GetType()
@@ -1465,7 +1590,7 @@ inline unsigned int Exception::GetInternalErrorCode()
 
 inline Statement Exception::GetStatement()
 {
-    return Statement(Connection(OCI_ErrorGetConnection(*this)), OCI_ErrorGetStatement(*this));
+    return Statement(OCI_ErrorGetStatement(*this));
 }
 
 inline Connection Exception::GetConnection()
@@ -1479,7 +1604,11 @@ inline Connection Exception::GetConnection()
 
 inline void Environment::Initialize(unsigned int mode, mstring libpath)
 {
-    OCI_Initialize(0, libpath.c_str(),  mode | OCI_ENV_CONTEXT);
+    mode |=  OCI_ENV_CONTEXT;
+
+    OCI_Initialize(0, libpath.c_str(),  mode);
+
+    GetMode() =  mode;
 
     API::Call();
 }
@@ -1525,26 +1654,61 @@ inline void Environment::ChangeUserPassword(mstring db, mstring user, mstring pw
     API::Call(OCI_SetUserPassword(db.c_str(), user.c_str(), pwd.c_str(), newPassword.c_str()));
 }
 
-inline void Environment::SetHAHandler(HAHandlerProc handler)
+inline MutexHandle Environment::CreateMutex()
 {
-    GetOrSetHAHandler(handler, true);
+    return API::Call(OCI_MutexCreate());
 }
 
-inline HAHandlerProc Environment::GetOrSetHAHandler(HAHandlerProc handler, bool set)
+inline void Environment::DestroyMutex(MutexHandle mutex)
+{
+    API::Call(OCI_MutexFree(mutex));
+}
+
+inline void Environment::AcquireMutex(MutexHandle mutex)
+{
+    API::Call(OCI_MutexAcquire(mutex));
+}
+
+inline void Environment::ReleaseMutex(MutexHandle mutex)
+{
+    API::Call(OCI_MutexRelease(mutex));
+}
+
+inline ThreadHandle Environment::CreateThread()
+{
+    return API::Call(OCI_ThreadCreate());
+}
+
+inline void Environment::DestroyThread(ThreadHandle handle)
+{
+    API::Call(OCI_ThreadFree(handle));
+}
+
+inline void Environment::RunThread(ThreadHandle handle, POCI_THREAD func, void *args)
+{
+    API::Call(OCI_ThreadRun(handle, func, args));
+}
+
+inline void Environment::JoinThread(ThreadHandle handle)
+{
+    API::Call(OCI_ThreadJoin(handle));
+}
+
+inline void Environment::SetHAHandler(HAHandlerProc handler)
+{
+    GetHAHandler() = handler;
+}
+
+inline HAHandlerProc & Environment::GetHAHandler()
 {
     static HAHandlerProc _haHandler;
-
-    if (set)
-    {
-        _haHandler = handler;
-    }
 
     return _haHandler;
 }
 
 inline void Environment::HAHandler(OCI_Connection *con, unsigned int source, unsigned int event, OCI_Timestamp  *time)
 {
-    HAHandlerProc handler = GetOrSetHAHandler(0, false);
+    HAHandlerProc &handler = GetHAHandler();
 
     if (handler)
     {
@@ -1552,6 +1716,19 @@ inline void Environment::HAHandler(OCI_Connection *con, unsigned int source, uns
     }
 }
 
+inline HandlePool & Environment::GetHandlePool()
+{
+    static HandlePool pool;
+
+    return pool;
+}
+
+inline unsigned int & Environment::GetMode()
+{
+    static unsigned int mode;
+
+    return mode;
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * Pool
@@ -1574,7 +1751,7 @@ inline void Pool::Open(mstring db, mstring user, mstring pwd, unsigned int poolT
     Release();
 
     Acquire(API::Call(OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionMode,
-            minCon, maxCon, incrCon)), (HandleFreeFunc) OCI_PoolFree, true);
+            minCon, maxCon, incrCon)), (HandleFreeFunc) OCI_PoolFree, 0);
 }
 
 inline void Pool::Close()
@@ -1658,7 +1835,14 @@ inline Connection::Connection(mstring db, mstring user, mstring pwd, unsigned in
 
 inline Connection::Connection(OCI_Connection *con,  Handle *parent)
 {
-    Acquire(con, (HandleFreeFunc) (parent != 0 ? OCI_ConnectionFree : 0), (parent != 0), parent);
+    if (parent)
+    {
+        Acquire(con, (HandleFreeFunc) OCI_ConnectionFree, parent);
+    }
+    else
+    {
+        Acquire(con);
+    }
 }
 
 inline void Connection::Open(mstring db, mstring user, mstring pwd, unsigned int sessionMode)
@@ -1666,7 +1850,7 @@ inline void Connection::Open(mstring db, mstring user, mstring pwd, unsigned int
     Release();
 
     Acquire(API::Call(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), (int) sessionMode)),
-            (HandleFreeFunc) OCI_ConnectionFree, true);
+            (HandleFreeFunc) OCI_ConnectionFree, 0);
 }
 
 inline void Connection::Close()
@@ -1711,17 +1895,17 @@ inline bool Connection::PingServer()
 
 inline mstring Connection::GetConnectionString()
 {
-    return API::Call(OCI_GetDatabase(*this));
+    return API::MakeString(API::Call(OCI_GetDatabase(*this)));
 }
 
 inline mstring Connection::GetUserName()
 {
-    return API::Call(OCI_GetUserName(*this));
+    return API::MakeString(API::Call(OCI_GetUserName(*this)));
 }
 
 inline mstring Connection::GetPassword()
 {
-    return API::Call(OCI_GetPassword(*this));
+    return API::MakeString(API::Call(OCI_GetPassword(*this)));
 }
 
 inline unsigned int Connection::GetVersion()
@@ -1731,7 +1915,7 @@ inline unsigned int Connection::GetVersion()
 
 inline mstring Connection::GetServerVersion()
 {
-    return API::Call( OCI_GetVersionServer(*this));
+    return API::MakeString(API::Call( OCI_GetVersionServer(*this)));
 }
 
 inline unsigned int Connection::GetServerMajorVersion()
@@ -1756,7 +1940,7 @@ inline void Connection::ChangePassword(mstring newPassword)
 
 inline mstring Connection::GetSessionTag()
 {
-    return API::Call(OCI_GetSessionTag(*this));
+    return API::MakeString(API::Call(OCI_GetSessionTag(*this)));
 }
 
 inline void Connection::SetSessionTag(mstring tag)
@@ -1786,12 +1970,12 @@ inline void Connection::SetDefaultNumericFormat(mstring format)
 
 inline mstring  Connection::GetDefaultDateFormat()
 {
-    return API::Call(OCI_GetDefaultFormatDate(*this));
+    return API::MakeString(API::Call(OCI_GetDefaultFormatDate(*this)));
 }
 
 inline mstring  Connection::GetDefaultNumericFormat()
 {
-   return  API::Call(OCI_GetDefaultFormatNumeric(*this));
+   return  API::MakeString(API::Call(OCI_GetDefaultFormatNumeric(*this)));
 }
 
 inline void Connection::EnableServerOutput(unsigned int bufsize, unsigned int arrsize, unsigned int lnsize)
@@ -1810,7 +1994,7 @@ inline bool Connection::GetServerOutput(mstring &line)
 
     line = str;
 
-    return (str != 0);    
+    return (str != 0);
 }
 
 inline void Connection::GetServerOutput(std::vector<mstring> &lines)
@@ -1821,7 +2005,7 @@ inline void Connection::GetServerOutput(std::vector<mstring> &lines)
     {
         lines.push_back(str);
         str = API::Call(OCI_ServerGetOutput(*this));
-    }   
+    }
 }
 
 inline void Connection::SetTrace(unsigned int trace, mstring value)
@@ -1831,12 +2015,12 @@ inline void Connection::SetTrace(unsigned int trace, mstring value)
 
 inline mstring Connection::GetTrace(unsigned int trace)
 {
-    return API::Call(OCI_GetTrace(*this, trace));
+    return API::MakeString(API::Call(OCI_GetTrace(*this, trace)));
 }
 
 inline mstring Connection::GetDatabase()
 {
-    return API::Call(OCI_GetDBName(*this));
+    return API::MakeString(API::Call(OCI_GetDBName(*this)));
 }
 
 inline mstring Connection::GetInstance()
@@ -1846,7 +2030,7 @@ inline mstring Connection::GetInstance()
 
 inline mstring Connection::GetService()
 {
-    return API::Call(OCI_GetServiceName(*this));
+    return API::MakeString(API::Call(OCI_GetServiceName(*this)));
 }
 
 inline mstring Connection::GetServer()
@@ -1856,7 +2040,7 @@ inline mstring Connection::GetServer()
 
 inline mstring Connection::GetDomain()
 {
-    return API::Call(OCI_GetDomainName(*this));
+    return API::MakeString(API::Call(OCI_GetDomainName(*this)));
 }
 
 inline Timestamp Connection::GetInstanceStartTime()
@@ -1876,7 +2060,7 @@ inline void Connection::SetStatementCacheSize(unsigned int value)
 
 inline unsigned int Connection::GetDefaultLobPrefetchSize()
 {
-    return API::Call(OCI_GetDefaultLobPrefetchSize(*this));
+    return API::Call(OCI_GetDefaultLobPrefetchSize  (*this));
 }
 
 inline void Connection::SetDefaultLobPrefetchSize(unsigned int value)
@@ -1893,7 +2077,7 @@ inline void Connection::SetTAFHandler(TAFHandlerProc handler)
 {
     _tafHandler = handler;
 
-    API::Call(OCI_SetTAFHandler(*this, (POCI_TAF_HANDLER ) (_tafHandler != 0 ? TAFHandler : 0 )));    
+    API::Call(OCI_SetTAFHandler(*this, (POCI_TAF_HANDLER ) (_tafHandler != 0 ? TAFHandler : 0 )));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1902,12 +2086,12 @@ inline void Connection::SetTAFHandler(TAFHandlerProc handler)
 
 inline Transaction::Transaction(Connection &connection, unsigned int timeout, unsigned int mode, OCI_XID *pxid)
 {
-    Acquire(API::Call(OCI_TransactionCreate(connection, timeout, mode, pxid)), (HandleFreeFunc) OCI_TransactionFree, true);
+    Acquire(API::Call(OCI_TransactionCreate(connection, timeout, mode, pxid)), (HandleFreeFunc) OCI_TransactionFree, 0);
 }
 
 inline Transaction::Transaction(OCI_Transaction *trans)
 {
-    Acquire(trans, 0, false);
+    Acquire(trans);
 }
 
 inline void Transaction::Prepare()
@@ -1951,12 +2135,12 @@ inline unsigned int Transaction::GetTimeout()
 
 inline Date::Date()
 {
-    Acquire(API::Call(OCI_DateCreate(NULL)), (HandleFreeFunc) OCI_DateFree, true);
+    Acquire(API::Call(OCI_DateCreate(NULL)), (HandleFreeFunc) OCI_DateFree, 0);
 }
 
 inline Date::Date(OCI_Date *pDate)
 {
-    Acquire(pDate, (HandleFreeFunc) OCI_DateFree, false);
+    Acquire(pDate);
 }
 
 inline void Date::Assign(const Date& source)
@@ -2031,11 +2215,11 @@ inline void Date::FromString(mstring data, mstring format)
 
 inline mstring Date::ToString(mstring format)
 {
-    dtext buffer[256];
+    mtext buffer[256];
 
     API::Call(OCI_DateToText(*this, format.c_str(), 256, buffer));
 
-    return buffer;
+    return API::MakeString(buffer);
 }
 
 inline Date::operator mstring()
@@ -2050,12 +2234,12 @@ inline Date::operator mstring()
 
 inline Timestamp::Timestamp(Connection &connection, unsigned int type)
 {
-    Acquire(API::Call(OCI_TimestampCreate(connection, type)), (HandleFreeFunc) OCI_TimestampFree, true, connection.GetHandle());
+    Acquire(API::Call(OCI_TimestampCreate(connection, type)), (HandleFreeFunc) OCI_TimestampFree, connection.GetHandle());
 }
 
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp)
 {
-    Acquire(pTimestamp, (HandleFreeFunc) OCI_TimestampFree, false);
+    Acquire(pTimestamp);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2064,12 +2248,12 @@ inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp)
 
 inline Clob::Clob(Connection &connection)
 {
-    Acquire(API::Call(OCI_LobCreate(connection, OCI_CLOB)), (HandleFreeFunc) OCI_LobFree, true, connection.GetHandle());
+    Acquire(API::Call(OCI_LobCreate(connection, OCI_CLOB)), (HandleFreeFunc) OCI_LobFree, connection.GetHandle());
 }
 
 inline Clob::Clob(OCI_Lob *pLob)
 {
-    Acquire(pLob, (HandleFreeFunc) OCI_LobFree, false);
+    Acquire(pLob);
 }
 
 inline dstring Clob::Read(unsigned int size)
@@ -2080,7 +2264,7 @@ inline dstring Clob::Read(unsigned int size)
 
     size = API::Call(OCI_LobRead(*this, (void *) result.c_str(), size));
 
-    return result.c_str();
+    return API::MakeString(result.c_str());
 }
 
 inline unsigned int Clob::Write(dstring content)
@@ -2179,12 +2363,12 @@ inline void Clob::EnableBuffering(bool value)
 
 inline Blob::Blob(Connection &connection)
 {
-    Acquire(API::Call(OCI_LobCreate(connection, OCI_BLOB)), (HandleFreeFunc) OCI_LobFree, true, connection.GetHandle());
+    Acquire(API::Call(OCI_LobCreate(connection, OCI_BLOB)), (HandleFreeFunc) OCI_LobFree, connection.GetHandle());
 }
 
 inline Blob::Blob(OCI_Lob *pLob)
 {
-    Acquire(pLob, (HandleFreeFunc) OCI_LobFree, false);
+    Acquire(pLob);
 }
 
 inline unsigned int Blob::Read(void *buffer, unsigned int size)
@@ -2288,20 +2472,19 @@ inline void Blob::EnableBuffering(bool value)
 
 inline File::File(Connection &connection)
 {
-    Acquire(API::Call(OCI_FileCreate(connection, OCI_BFILE)), (HandleFreeFunc) OCI_FileFree, true, connection.GetHandle());
+    Acquire(API::Call(OCI_FileCreate(connection, OCI_BFILE)), (HandleFreeFunc) OCI_FileFree, connection.GetHandle());
 }
-
 
 inline File::File(Connection &connection, mstring directory, mstring name)
 {
-    Acquire(API::Call(OCI_FileCreate(connection, OCI_BFILE)), (HandleFreeFunc) OCI_FileFree, true, connection.GetHandle());
+    Acquire(API::Call(OCI_FileCreate(connection, OCI_BFILE)), (HandleFreeFunc) OCI_FileFree, connection.GetHandle());
 
     SetInfos(directory, name);
 }
 
 inline File::File(OCI_File *pFile)
 {
-    Acquire(pFile, (HandleFreeFunc) OCI_FileFree, false);
+    Acquire(pFile);
 }
 
 inline unsigned int File::Read(void *buffer, unsigned int size)
@@ -2346,12 +2529,12 @@ inline void File::SetInfos(mstring directory, mstring name)
 
 inline mstring File::GetName()
 {
-    return API::Call(OCI_FileGetName(*this));
+    return API::MakeString(API::Call(OCI_FileGetName(*this)));
 }
 
 inline mstring File::GetDirectory()
 {
-    return API::Call(OCI_FileGetDirectory(*this));
+    return API::MakeString(API::Call(OCI_FileGetDirectory(*this)));
 }
 
 inline void File::Open()
@@ -2375,12 +2558,37 @@ inline void File::Close()
 
 inline TypeInfo::TypeInfo(Connection &connection, mstring name, unsigned int type)
 {
-    Acquire(API::Call(OCI_TypeInfoGet(connection, name.c_str(), type)), (HandleFreeFunc) 0, false, connection.GetHandle());
+    Acquire(API::Call(OCI_TypeInfoGet(connection, name.c_str(), type)), (HandleFreeFunc) 0, connection.GetHandle());
 }
 
 inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
 {
-    Acquire(pTypeInfo, (HandleFreeFunc) 0, false);
+    Acquire(pTypeInfo);
+}
+
+inline unsigned int TypeInfo::GetType()
+{
+    return API::Call(OCI_TypeInfoGetType(*this));
+}
+
+inline mstring TypeInfo::GetName()
+{
+    return API::Call(OCI_TypeInfoGetName(*this));
+}
+
+inline Connection TypeInfo::GetConnection()
+{
+    return Connection(API::Call(OCI_TypeInfoGetConnection(*this)));
+}
+
+inline unsigned int TypeInfo::GetColumnCount()
+{
+    return API::Call(OCI_TypeInfoGetColumnCount(*this));
+}
+
+inline Column TypeInfo::GetColumn(unsigned int index)
+{
+    return Column(API::Call(OCI_TypeInfoGetColumn(*this, index)));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2389,7 +2597,7 @@ inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
 
 inline Object::Object(Connection &connection, TypeInfo &typeInfo)
 {
-    Acquire(API::Call(OCI_ObjectCreate(connection, typeInfo)), (HandleFreeFunc) OCI_ObjectFree, true, connection.GetHandle());
+    Acquire(API::Call(OCI_ObjectCreate(connection, typeInfo)), (HandleFreeFunc) OCI_ObjectFree, connection.GetHandle());
 }
 
 inline TypeInfo Object::GetTypeInfo()
@@ -2397,84 +2605,220 @@ inline TypeInfo Object::GetTypeInfo()
     return TypeInfo(API::Call(OCI_ObjectGetTypeInfo(*this)));
 }
 
-inline short Object::GetShort(mstring name)
+template<>
+inline short Object::Get<short>(mstring name)
 {
     return API::Call(OCI_ObjectGetShort(*this, name.c_str()));
 }
 
-inline int Object::GetInt(mstring name)
+template<>
+inline unsigned short Object::Get<unsigned short>(mstring name)
+{
+    return API::Call(OCI_ObjectGetUnsignedShort(*this, name.c_str()));
+}
+
+template<>
+inline int Object::Get<int>(mstring name)
 {
     return API::Call(OCI_ObjectGetInt(*this, name.c_str()));
 }
 
-inline float Object::GetFloat(mstring name)
+template<>
+inline unsigned int Object::Get<unsigned int>(mstring name)
 {
-    return API::Call(OCI_ObjectGetFloat(*this, name.c_str()));
+    return API::Call(OCI_ObjectGetUnsignedInt(*this, name.c_str()));
 }
 
-inline double Object::GetDouble(mstring name)
-{
-    return API::Call(OCI_ObjectGetDouble(*this, name.c_str()));
-}
-
-inline big_int Object::GetBigInt(mstring name)
+template<>
+inline big_int Object::Get<big_int>(mstring name)
 {
     return API::Call(OCI_ObjectGetBigInt(*this, name.c_str()));
 }
 
-inline dstring Object::GetString(mstring name)
+template<>
+inline big_uint Object::Get<big_uint>(mstring name)
 {
-    return API::Call(OCI_ObjectGetString(*this, name.c_str()));
+    return API::Call(OCI_ObjectGetUnsignedBigInt(*this, name.c_str()));
 }
 
-inline Date Object::GetDate(mstring name)
+template<>
+inline float Object::Get<float>(mstring name)
 {
-    return API::Call(OCI_ObjectGetDate(*this, name.c_str()));
+    return API::Call(OCI_ObjectGetFloat(*this, name.c_str()));
 }
 
-inline Clob Object::GetClob(mstring name)
+template<>
+inline double Object::Get<double>(mstring name)
 {
-    return API::Call(OCI_ObjectGetLob(*this, name.c_str()));
+    return API::Call(OCI_ObjectGetDouble(*this, name.c_str()));
 }
 
-inline void Object::SetShort(mstring name, short value)
+template<>
+inline dstring Object::Get<dstring>(mstring name)
+{
+    return API::Call(OCI_ObjectGetString(*this,name.c_str()));
+}
+
+template<>
+inline Date Object::Get<Date>(mstring name)
+{
+    return API::Call(OCI_ObjectGetDate(*this,name.c_str()));
+}
+
+template<>
+inline Timestamp Object::Get<Timestamp>(mstring name)
+{
+    return API::Call(OCI_ObjectGetTimestamp(*this,name.c_str()));
+}
+
+template<>
+inline Interval Object::Get<Interval>(mstring name)
+{
+    return API::Call(OCI_ObjectGetInterval(*this,name.c_str()));
+}
+
+template<>
+inline Object Object::Get<Object>(mstring name)
+{
+    return API::Call(OCI_ObjectGetObject(*this,name.c_str()));
+}
+
+template<>
+inline Collection Object::Get<Collection>(mstring name)
+{
+    return API::Call(OCI_ObjectGetColl(*this,name.c_str()));
+}
+
+template<>
+inline Reference Object::Get<Reference>(mstring name)
+{
+    return API::Call(OCI_ObjectGetRef(*this,name.c_str()));
+}
+
+template<>
+inline Clob Object::Get<Clob>(mstring name)
+{
+    return API::Call(OCI_ObjectGetLob(*this,name.c_str()));
+}
+
+template<>
+inline Blob Object::Get<Blob>(mstring name)
+{
+    return API::Call(OCI_ObjectGetLob(*this,name.c_str()));
+}
+
+template<>
+inline File Object::Get<File>(mstring name)
+{
+    return API::Call(OCI_ObjectGetFile(*this,name.c_str()));
+}
+
+template<>
+inline void Object::Set<short>(mstring name, short &value)
 {
     API::Call(OCI_ObjectSetShort(*this, name.c_str(), value));
 }
 
-inline void Object::SetInt(mstring name, int value)
+template<>
+inline void Object::Set<unsigned short>(mstring name, unsigned short &value)
+{
+    API::Call(OCI_ObjectSetUnsignedShort(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<int>(mstring name, int &value)
 {
     API::Call(OCI_ObjectSetInt(*this, name.c_str(), value));
 }
 
-inline void Object::SetFloat(mstring name, float value)
+template<>
+inline void Object::Set<unsigned int>(mstring name, unsigned int &value)
 {
-    API::Call(OCI_ObjectSetFloat(*this, name.c_str(), value));
+    API::Call(OCI_ObjectSetUnsignedInt(*this, name.c_str(), value));
 }
 
-inline void Object::SetDouble(mstring name, double value)
-{
-    API::Call(OCI_ObjectSetDouble(*this, name.c_str(), value));
-}
-
-inline void Object::SetBigInt(mstring name, big_int value)
+template<>
+inline void Object::Set<big_int>(mstring name, big_int &value)
 {
     API::Call(OCI_ObjectSetBigInt(*this, name.c_str(), value));
 }
 
-inline void Object::SetString(mstring name, dstring value)
+template<>
+inline void Object::Set<big_uint>(mstring name, big_uint &value)
+{
+    API::Call(OCI_ObjectSetUnsignedBigInt(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<float>(mstring name, float &value)
+{
+    API::Call(OCI_ObjectSetFloat(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<double>(mstring name, double &value)
+{
+    API::Call(OCI_ObjectSetDouble(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<dstring>(mstring name, dstring &value)
 {
     API::Call(OCI_ObjectSetString(*this, name.c_str(), value.c_str()));
 }
 
-inline void Object::SetDate(mstring name, Date value)
+template<>
+inline void Object::Set<Date>(mstring name, Date &value)
 {
     API::Call(OCI_ObjectSetDate(*this, name.c_str(), value));
 }
 
-inline void Object::SetClob(mstring name, Clob value)
+template<>
+inline void Object::Set<Timestamp>(mstring name, Timestamp &value)
+{
+    API::Call(OCI_ObjectSetTimestamp(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<Interval>(mstring name, Interval &value)
+{
+    API::Call(OCI_ObjectSetInterval(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<Object>(mstring name, Object &value)
+{
+    API::Call(OCI_ObjectSetObject(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<Collection>(mstring name, Collection &value)
+{
+    API::Call(OCI_ObjectSetColl(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<Reference>(mstring name, Reference &value)
+{
+    API::Call(OCI_ObjectSetRef(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<Clob>(mstring name, Clob &value)
 {
     API::Call(OCI_ObjectSetLob(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<Blob>(mstring name, Blob &value)
+{
+    API::Call(OCI_ObjectSetLob(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<File>(mstring name, File &value)
+{
+    API::Call(OCI_ObjectSetFile(*this, name.c_str(), value));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2483,7 +2827,7 @@ inline void Object::SetClob(mstring name, Clob value)
 
 inline Reference::Reference(Connection &connection, TypeInfo &typeInfo)
 {
-    Acquire(API::Call(OCI_RefCreate(connection, typeInfo)), (HandleFreeFunc) OCI_RefFree, true, connection.GetHandle());
+    Acquire(API::Call(OCI_RefCreate(connection, typeInfo)), (HandleFreeFunc) OCI_RefFree, connection.GetHandle());
 }
 
 inline TypeInfo Reference::GetTypeInfo()
@@ -2514,14 +2858,135 @@ inline void Reference::SetNulReference()
 inline mstring Reference::ToString()
 {
     mstring res;
-    
+
     unsigned int size = API::Call(OCI_RefGetHexSize(*this));
 
     res.reserve(size);
 
     API::Call(OCI_RefToText(*this, size, (mtext *) res.c_str()));
 
-    return res.c_str();
+    return API::MakeString(res.c_str());
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * Collection
+ * --------------------------------------------------------------------------------------------- */
+
+template <>
+inline short Collection::GetElem(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetShort(elem));
+}
+
+template <>
+inline void Collection::SetElem(OCI_Elem *elem, short &value)
+{
+    API::Call(OCI_ElemSetShort(elem, value));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * CollectionIterator
+ * --------------------------------------------------------------------------------------------- */
+
+inline CollectionIterator::CollectionIterator(Collection &collection)
+{
+    Acquire(API::Call(OCI_IterCreate(collection)), (HandleFreeFunc) OCI_IterFree, collection.GetHandle());
+}
+
+inline bool CollectionIterator::Next()
+{
+   return (API::Call(OCI_IterGetNext(*this)) != 0);
+}
+
+inline bool CollectionIterator::Prev()
+{
+   return (API::Call(OCI_IterGetPrev(*this)) != 0);
+}
+
+template <class TDataType>
+inline void CollectionIterator::Set(TDataType &value)
+{
+    Collection::CollectionItem::Set<TDataType>(API::Call(OCI_IterGetCurrent(*this)), value);
+}
+
+template <class TDataType>
+inline TDataType CollectionIterator::Get()
+{
+    return Collection::Get<TDataType>(API::Call(OCI_IterGetCurrent(*this)));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * CLong
+ * --------------------------------------------------------------------------------------------- */
+
+inline CLong::CLong(Statement &statement)
+{
+    Acquire(API::Call(OCI_LongCreate(statement, OCI_CLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
+}
+
+inline CLong::CLong(OCI_Long *pLong)
+{
+    Acquire(pLong);
+}
+
+inline dstring CLong::Read(unsigned int size)
+{
+    dstring result;
+
+    result.reserve(size);
+
+    size = API::Call(OCI_LongRead(*this, (void *) result.c_str(), size));
+
+    return API::MakeString(result.c_str());
+}
+
+inline unsigned int CLong::Write(dstring content)
+{
+    return API::Call(OCI_LongWrite(*this, (void *) content.c_str(), content.size()));
+}
+
+inline unsigned int CLong::GetSize()
+{
+    return API::Call(OCI_LongGetSize(*this));
+}
+
+inline dstring CLong::GetContent()
+{
+    return API::MakeString((dtext *) API::Call(OCI_LongGetBuffer(*this)));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * BLong
+ * --------------------------------------------------------------------------------------------- */
+
+inline BLong::BLong(Statement &statement)
+{
+    Acquire(API::Call(OCI_LongCreate(statement, OCI_CLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
+}
+
+inline BLong::BLong(OCI_Long *pLong)
+{
+    Acquire(pLong);
+}
+
+inline unsigned int BLong::Read(void *buffer, unsigned int size)
+{
+    return API::Call(OCI_LongRead(*this ,buffer, size));
+}
+
+inline unsigned int BLong::Write(void *buffer, unsigned int size)
+{
+    return API::Call(OCI_LongWrite(*this ,buffer, size));
+}
+
+inline unsigned int BLong::GetSize()
+{
+    return API::Call(OCI_LongGetSize(*this));
+}
+
+inline void * BLong::GetContent()
+{
+    return  API::Call(OCI_LongGetBuffer(*this));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2726,12 +3191,12 @@ inline BindString::operator dtext *()
 
 inline Statement::Statement(Connection &connection)
 {
-    Acquire(API::Call(OCI_StatementCreate(connection)), (HandleFreeFunc) OCI_StatementFree, true, connection.GetHandle());
+    Acquire(API::Call(OCI_StatementCreate(connection)), (HandleFreeFunc) OCI_StatementFree, connection.GetHandle());
 }
 
-inline Statement::Statement(const Connection &connection, OCI_Statement *stmt)
+inline Statement::Statement(OCI_Statement *stmt)
 {
-     Acquire(stmt, (HandleFreeFunc) OCI_StatementFree, false);
+     Acquire(stmt, (HandleFreeFunc) OCI_StatementFree, 0);
 }
 
 inline Statement::~Statement()
@@ -2781,7 +3246,17 @@ inline unsigned int Statement::GetAffectedRows()
 
 inline mstring Statement::GetSql()
 {
-    return API::Call(OCI_GetSql(*this));
+    return API::MakeString(API::Call(OCI_GetSql(*this)));
+}
+
+inline Resultset Statement::GetResulset()
+{
+   return Resultset(API::Call(OCI_GetResultset(*this)));
+}
+
+inline Resultset Statement::GetNextResulset()
+{
+   return Resultset(API::Call(OCI_GetNextResultset(*this)));
 }
 
 inline void Statement::SetBindArraySize(unsigned int size)
@@ -2944,7 +3419,14 @@ inline void Statement::Bind<Statement>(mstring name, Statement &value, unsigned 
 }
 
 template <>
-inline void Statement::Bind<Long, unsigned int>(mstring name, Long &value, unsigned int maxSize, unsigned int mode)
+inline void Statement::Bind<CLong, unsigned int>(mstring name, CLong &value, unsigned int maxSize, unsigned int mode)
+{
+    API::Call(OCI_BindLong(*this, name.c_str(), value, maxSize));
+    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
+}
+
+template <>
+inline void Statement::Bind<BLong, unsigned int>(mstring name, BLong &value, unsigned int maxSize, unsigned int mode)
 {
     API::Call(OCI_BindLong(*this, name.c_str(), value, maxSize));
     API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
@@ -3283,7 +3765,7 @@ inline unsigned int Statement::GetBindMode()
 {
     return API::Call(OCI_GetBindMode(*this));
 }
-   
+
 inline void Statement::SetFetchSize(unsigned int value)
 {
     API::Call(OCI_SetFetchSize(*this, value));
@@ -3341,9 +3823,9 @@ inline unsigned int Statement::GetSQLCommand()
 
 inline mstring Statement::GetSQLVerb()
 {
-    return API::Call(OCI_GetSQLVerb(*this));
+    return API::MakeString(API::Call(OCI_GetSQLVerb(*this)));
 }
-   
+
 inline void Statement::GetBatchErrors(std::vector<Exception> &exceptions)
 {
     OCI_Error *err =  API::Call(OCI_GetBatchError(*this));
@@ -3404,13 +3886,9 @@ inline void Statement::SetInData()
     }
 }
 
-/* --------------------------------------------------------------------------------------------- *
- * Resultset
- * --------------------------------------------------------------------------------------------- */
-
-inline Resultset::Resultset(Statement &statement)
+inline Resultset::Resultset(OCI_Resultset *resultset)
 {
-    Acquire(API::Call(OCI_GetResultset(statement)), 0, false);
+    Acquire(resultset);
 }
 
 inline bool Resultset::Next()
@@ -3418,84 +3896,317 @@ inline bool Resultset::Next()
     return (API::Call(OCI_FetchNext(*this)) == TRUE);
 }
 
-inline short Resultset::GetShort(mstring name)
+inline bool Resultset::Prev()
 {
-    return API::Call(OCI_GetShort2(*this, name.c_str()));
+    return (API::Call(OCI_FetchPrev(*this)) == TRUE);
 }
 
-inline int Resultset::GetInt(mstring name)
+inline bool Resultset::First()
 {
-    return API::Call(OCI_GetInt2(*this, name.c_str()));
+    return (API::Call(OCI_FetchFirst(*this)) == TRUE);
 }
 
-inline float Resultset::GetFloat(mstring name)
+inline bool Resultset::Last()
 {
-    return API::Call(OCI_GetFloat2(*this, name.c_str()));
+    return (API::Call(OCI_FetchLast(*this)) == TRUE);
 }
 
-inline double Resultset::GetDouble(mstring name)
+inline bool Resultset::Seek(unsigned int mode, int offset)
 {
-    return API::Call(OCI_GetDouble2(*this, name.c_str()));
+    return (API::Call(OCI_FetchSeek(*this, mode, offset)) == TRUE);
 }
 
-inline big_int Resultset::GetBigInt(mstring name)
+inline unsigned int Resultset::GetCount()
 {
-    return API::Call(OCI_GetBigInt2(*this, name.c_str()));
+    return API::Call(OCI_GetRowCount(*this));
 }
 
-inline dstring Resultset::GetString(mstring name)
+inline unsigned int Resultset::GetCurrentRow()
 {
-    return API::Call(OCI_GetString2(*this, name.c_str()));
+    return API::Call(OCI_GetCurrentRow(*this));
 }
 
-inline Date Resultset::GetDate(mstring name)
+inline unsigned int Resultset::GetColumnCount()
 {
-    return API::Call(OCI_GetDate2(*this, name.c_str()));
+    return API::Call(OCI_GetColumnCount(*this));
 }
 
-inline Clob Resultset::GetClob(mstring name)
+inline Column Resultset::GetColumn(unsigned int index)
 {
-    return API::Call(OCI_GetLob2(*this, name.c_str()));
+    return Column(API::Call(OCI_GetColumn(*this, index)));
 }
 
-inline short Resultset::GetShort(int index)
+inline Column Resultset::GetColumn(mstring name)
+{
+    return Column(API::Call(OCI_GetColumn2(*this, name.c_str())));
+}
+
+inline bool Resultset::IsColumnNull(unsigned int index)
+{
+    return (API::Call(OCI_IsNull(*this, index)) == TRUE);
+}
+
+inline bool Resultset::IsColumnNull(mstring name)
+{
+    return (API::Call(OCI_IsNull2(*this, name.c_str())) == TRUE);
+}
+
+inline Statement Resultset::GetStatement()
+{
+    return Statement( API::Call(OCI_ResultsetGetStatement(*this)));
+}
+
+template<>
+inline short Resultset::Get<short>(int index)
 {
     return API::Call(OCI_GetShort(*this, index));
 }
 
-inline int Resultset::GetInt(int index)
+template<>
+inline short Resultset::Get<short>(mstring name)
+{
+    return API::Call(OCI_GetShort2(*this, name.c_str()));
+}
+
+template<>
+inline unsigned short Resultset::Get<unsigned short>(int index)
+{
+    return API::Call(OCI_GetUnsignedShort(*this, index));
+}
+
+template<>
+inline unsigned short Resultset::Get<unsigned short>(mstring name)
+{
+    return API::Call(OCI_GetUnsignedShort2(*this, name.c_str()));
+}
+
+template<>
+inline int Resultset::Get<int>(int index)
 {
     return API::Call(OCI_GetInt(*this, index));
 }
 
-inline float Resultset::GetFloat(int index)
+template<>
+inline int Resultset::Get<int>(mstring name)
 {
-    return API::Call(OCI_GetFloat(*this, index));
+    return API::Call(OCI_GetInt2(*this, name.c_str()));
 }
 
-inline double Resultset::GetDouble(int index)
+template<>
+inline unsigned int Resultset::Get<unsigned int>(int index)
 {
-    return API::Call(OCI_GetDouble(*this, index));
+    return API::Call(OCI_GetUnsignedInt(*this, index));
 }
 
-inline big_int Resultset::GetBigInt(int index)
+template<>
+inline unsigned int Resultset::Get<unsigned int>(mstring name)
+{
+    return API::Call(OCI_GetUnsignedInt2(*this, name.c_str()));
+}
+
+template<>
+inline big_int Resultset::Get<big_int>(int index)
 {
     return API::Call(OCI_GetBigInt(*this, index));
 }
 
-inline dstring Resultset::GetString(int index)
+template<>
+inline big_int Resultset::Get<big_int>(mstring name)
+{
+    return API::Call(OCI_GetBigInt2(*this, name.c_str()));
+}
+
+template<>
+inline big_uint Resultset::Get<big_uint>(int index)
+{
+    return API::Call(OCI_GetUnsignedBigInt(*this, index));
+}
+
+template<>
+inline big_uint Resultset::Get<big_uint>(mstring name)
+{
+    return API::Call(OCI_GetUnsignedBigInt2(*this, name.c_str()));
+}
+
+template<>
+inline float Resultset::Get<float>(int index)
+{
+    return API::Call(OCI_GetFloat(*this, index));
+}
+
+template<>
+inline float Resultset::Get<float>(mstring name)
+{
+    return API::Call(OCI_GetFloat2(*this, name.c_str()));
+}
+
+template<>
+inline double Resultset::Get<double>(int index)
+{
+    return API::Call(OCI_GetDouble(*this, index));
+}
+
+template<>
+inline double Resultset::Get<double>(mstring name)
+{
+    return API::Call(OCI_GetDouble2(*this, name.c_str()));
+}
+
+template<>
+inline dstring Resultset::Get<dstring>(int index)
 {
     return API::Call(OCI_GetString(*this, index));
 }
 
-inline Date Resultset::GetDate(int index)
+template<>
+inline dstring Resultset::Get<dstring>(mstring name)
+{
+    return API::Call(OCI_GetString2(*this,name.c_str()));
+}
+
+template<>
+inline Date Resultset::Get<Date>(int index)
 {
     return API::Call(OCI_GetDate(*this, index));
 }
 
-inline Clob Resultset::GetClob(int index)
+template<>
+inline Date Resultset::Get<Date>(mstring name)
+{
+    return API::Call(OCI_GetDate2(*this,name.c_str()));
+}
+
+template<>
+inline Timestamp Resultset::Get<Timestamp>(int index)
+{
+    return API::Call(OCI_GetTimestamp(*this, index));
+}
+
+template<>
+inline Timestamp Resultset::Get<Timestamp>(mstring name)
+{
+    return API::Call(OCI_GetTimestamp2(*this,name.c_str()));
+}
+
+template<>
+inline Interval Resultset::Get<Interval>(int index)
+{
+    return API::Call(OCI_GetInterval(*this, index));
+}
+
+template<>
+inline Interval Resultset::Get<Interval>(mstring name)
+{
+    return API::Call(OCI_GetInterval2(*this,name.c_str()));
+}
+
+template<>
+inline Object Resultset::Get<Object>(int index)
+{
+    return API::Call(OCI_GetObject(*this, index));
+}
+
+template<>
+inline Object Resultset::Get<Object>(mstring name)
+{
+    return API::Call(OCI_GetObject2(*this,name.c_str()));
+}
+
+template<>
+inline Collection Resultset::Get<Collection>(int index)
+{
+    return API::Call(OCI_GetColl(*this, index));
+}
+
+template<>
+inline Collection Resultset::Get<Collection>(mstring name)
+{
+    return API::Call(OCI_GetColl2(*this,name.c_str()));
+}
+
+template<>
+inline Reference Resultset::Get<Reference>(int index)
+{
+    return API::Call(OCI_GetRef(*this, index));
+}
+
+template<>
+inline Reference Resultset::Get<Reference>(mstring name)
+{
+    return API::Call(OCI_GetRef2(*this,name.c_str()));
+}
+
+template<>
+inline Statement Resultset::Get<Statement>(int index)
+{
+    return API::Call(OCI_GetStatement(*this, index));
+}
+
+template<>
+inline Statement Resultset::Get<Statement>(mstring name)
+{
+    return API::Call(OCI_GetStatement2(*this,name.c_str()));
+}
+
+template<>
+inline Clob Resultset::Get<Clob>(int index)
 {
     return API::Call(OCI_GetLob(*this, index));
+}
+
+template<>
+inline Clob Resultset::Get<Clob>(mstring name)
+{
+    return API::Call(OCI_GetLob2(*this,name.c_str()));
+}
+
+template<>
+inline Blob Resultset::Get<Blob>(int index)
+{
+    return API::Call(OCI_GetLob(*this, index));
+}
+
+template<>
+inline Blob Resultset::Get<Blob>(mstring name)
+{
+    return API::Call(OCI_GetLob2(*this,name.c_str()));
+}
+
+template<>
+inline File Resultset::Get<File>(int index)
+{
+    return API::Call(OCI_GetFile(*this, index));
+}
+
+template<>
+inline File Resultset::Get<File>(mstring name)
+{
+    return API::Call(OCI_GetFile2(*this,name.c_str()));
+}
+
+template<>
+inline CLong Resultset::Get<CLong>(int index)
+{
+    return API::Call(OCI_GetLong(*this, index));
+}
+
+template<>
+inline CLong Resultset::Get<CLong>(mstring name)
+{
+    return API::Call(OCI_GetLong2(*this,name.c_str()));
+}
+
+
+template<>
+inline BLong Resultset::Get<BLong>(int index)
+{
+    return API::Call(OCI_GetLong(*this, index));
+}
+
+template<>
+inline BLong Resultset::Get<BLong>(mstring name)
+{
+    return API::Call(OCI_GetLong2(*this,name.c_str()));
 }
 
 
