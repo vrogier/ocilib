@@ -60,9 +60,10 @@ OCI_Iter * OCI_API OCI_IterCreate
 
     if (iter != NULL)
     {
-        iter->coll = coll;
-        iter->eoc  = FALSE;
-        iter->boc  = TRUE;
+        iter->coll  = coll;
+        iter->eoc   = FALSE;
+        iter->boc   = TRUE;
+        iter->dirty = TRUE;
 
         /* create iterator */
 
@@ -172,9 +173,12 @@ OCI_Elem * OCI_API OCI_IterGetNext
     if ((res == TRUE) && (iter->eoc == FALSE))
     {
         elem = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
+
+        iter->dirty = FALSE;
+        iter->boc   = FALSE;
     }
 
-    OCI_RESULT(elem != NULL);
+    OCI_RESULT(res);
 
     return elem;
 }
@@ -208,9 +212,12 @@ OCI_Elem * OCI_API OCI_IterGetPrev
     if ((res == TRUE) && (iter->boc == FALSE))
     {
         elem = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
+
+        iter->dirty = FALSE;
+        iter->eoc   = FALSE;
     }
 
-    OCI_RESULT(elem != NULL);
+    OCI_RESULT(res);
 
     return elem;
 
@@ -225,14 +232,14 @@ OCI_Elem * OCI_API OCI_IterGetCurrent
     OCI_Iter *iter
 )
 {
-    boolean res    = TRUE;
-
     OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, NULL);
 
-    OCI_CHECK(iter->boc == TRUE, NULL);
-    OCI_CHECK(iter->eoc == TRUE, NULL);
+    OCI_CHECK(iter->boc    == TRUE, NULL);
+    OCI_CHECK(iter->eoc    == TRUE, NULL);
+    OCI_CHECK(iter->dirty  == TRUE, NULL);
+    OCI_CHECK(iter->elem   == NULL, NULL);
 
-    OCI_RESULT(iter->elem != NULL);
+    OCI_RESULT(TRUE);
 
     return iter->elem;
 }

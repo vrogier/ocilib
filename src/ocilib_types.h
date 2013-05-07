@@ -637,6 +637,7 @@ struct OCI_Iter
     OCI_Elem *elem;              /* item object */
     boolean   eoc;               /* end of collection */
     boolean   boc;               /* beginning of collection */
+    boolean   dirty;             /* indicate if elem is dirty, e.g. not fetched yet */
 };
 
 /*
