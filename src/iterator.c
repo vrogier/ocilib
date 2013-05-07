@@ -215,3 +215,24 @@ OCI_Elem * OCI_API OCI_IterGetPrev
     return elem;
 
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_IterGetCurrent
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Elem * OCI_API OCI_IterGetCurrent
+(
+    OCI_Iter *iter
+)
+{
+    boolean res    = TRUE;
+
+    OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, NULL);
+
+    OCI_CHECK(iter->boc == TRUE, NULL);
+    OCI_CHECK(iter->eoc == TRUE, NULL);
+
+    OCI_RESULT(iter->elem != NULL);
+
+    return iter->elem;
+}

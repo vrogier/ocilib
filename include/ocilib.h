@@ -8128,7 +8128,7 @@ OCI_EXPORT boolean OCI_API OCI_IterFree
  * @param iter - Iterator handle
  *
  * @return
- * TRUE on success otherwise FALSE if:
+ * Element handle on success otherwise NULL if:
  * - Empty collection
  * - Iterator already positioned on the last collection element
  * - An error occurred
@@ -8147,14 +8147,33 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetNext
  * @param iter - Iterator handle
  *
  * @return
- * TRUE on success otherwise FALSE if:
+ * Element handle on success otherwise NULL if:
  * - Empty collection
- * - Iterator already positioned on the first collection element
+ * - Iterator already positioned on the last collection element
  * - An error occurred
  *
  */
 
 OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetPrev
+(
+    OCI_Iter *iter
+);
+
+/**
+ * @brief
+ * Get the current element in the collection
+ *
+ * @param iter - Iterator handle
+ *
+ * @return
+ * Element handle on success otherwise NULL if:
+ * - Empty collection
+ * - Iterator already positioned on the last collection element
+ * - An error occurred
+ *
+ */
+
+OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetCurrent
 (
     OCI_Iter *iter
 );
