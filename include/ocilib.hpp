@@ -105,6 +105,9 @@ class Element;
 class Column;
 class Agent;
 
+template <class TDataType>
+class ManagedPtr;
+
 /**
  * @typedef HAHandlerProc
  *
@@ -121,7 +124,7 @@ typedef void (*HAHandlerProc) (const Connection &con, unsigned int source, unsig
  *
  *
  */
-typedef void (*TAFHandlerProc) (Connection &con, unsigned int type, unsigned int event);
+typedef void (*TAFHandlerProc) (const Connection &con, unsigned int type, unsigned int event);
 
 /**
  * @namespace API
@@ -141,6 +144,24 @@ namespace API
     std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > MakeString(const TCharType *result);
 }
 
+
+template< typename TBufferType>
+class ManagedBuffer
+{
+public:
+    ManagedBuffer();
+    ManagedBuffer(TBufferType *buffer);
+    ~ManagedBuffer();
+
+    ManagedBuffer<TBufferType> & operator= (TBufferType *buffer);
+
+    operator TBufferType* ();
+    operator const TBufferType* ();
+
+private:
+
+    TBufferType* _buffer;
+};
 
 /**
  * @class Handle
@@ -203,7 +224,7 @@ protected:
 
     typedef boolean (OCI_API *HandleFreeFunc)(void *handle);
 
-    Handle* GetHandle();
+    Handle* GetHandle() const;
 
 	void Acquire(THandleType handle, HandleFreeFunc func, Handle *parent);
     void Acquire(THandleType handle);
@@ -386,6 +407,7 @@ class Connection : public HandleHolder<OCI_Connection *>
     friend class TypeInfo;
     friend class Reference;
     friend class Resultset;
+    friend class Collection;
 
 public:
 
@@ -423,7 +445,7 @@ public:
     void SetSessionTag(mstring tag);
 
     Transaction GetTransaction();
-    void SetTransaction(Transaction &transaction);
+    void SetTransaction(const Transaction &transaction);
 
     void SetDefaultDateFormat(mstring format);
     void SetDefaultNumericFormat(mstring format);
@@ -479,7 +501,7 @@ class Transaction : public HandleHolder<OCI_Transaction *>
 
 public:
 
-   Transaction(Connection &connection, unsigned int timeout, unsigned int mode, OCI_XID *pxid);
+   Transaction(const Connection &connection, unsigned int timeout, unsigned int mode, OCI_XID *pxid);
 
    void Prepare();
    void Start();
@@ -508,6 +530,7 @@ class Date : public HandleHolder<OCI_Date *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+    friend class Collection;
 
 public:
 
@@ -558,19 +581,19 @@ class Interval : public HandleHolder<OCI_Interval *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+    friend class Collection;
 
 public:
 
-    Interval(Connection &con, unsigned int type);
+    Interval(const Connection &con, unsigned int type);
 
-    void Assign(const Interval& source);
-
-    int Compare(const Interval& source);
+    void Assign(const Interval& other);
+    int Compare(const Interval& other);
 
     unsigned int GetType();
 
-    void Add(const Interval& interval);
-    void Substract(const Interval& interval);
+    void Add(const Interval& other);
+    void Substract(const Interval& other);
 
     void FromTimeZone(mstring timeZone);
 
@@ -599,19 +622,19 @@ class Timestamp : public HandleHolder<OCI_Timestamp *>
     friend class BindArray;
     friend class Object;
     friend class Connection;
+    friend class Collection;
 
 public:
 
-    Timestamp(Connection &con, unsigned int type);
+    Timestamp(const Connection &con, unsigned int type);
 
-    void Assign(const Timestamp& source);
-
-    int Compare(const Timestamp& source);
+    void Assign(const Timestamp& other);
+    int Compare(const Timestamp& other);
 
     unsigned int GetType();
 
     void Construct(int year, int month, int day, int hour, int min, int sec, mstring timeZone = MT(""));
-    void Convert(const Timestamp& source);
+    void Convert(const Timestamp& other);
 
     void SetDate(int year, int month, int day);
     void SetTime(int hour, int min,   int sec);
@@ -624,10 +647,10 @@ public:
     mstring GetTimeZone();
     void GetTimeZoneOffset(int *hour, int *min);
 
-    void AddInterval(const Interval& interval);
-    void SubstractInterval(const Interval& interval);
+    void AddInterval(const Interval& other);
+    void SubstractInterval(const Interval& other);
 
-    void Substract(const Interval& interval);
+    void Substract(const Interval& other);
 
     void SysDatetime();
 
@@ -654,10 +677,11 @@ class Clob : public HandleHolder<OCI_Lob *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+    friend class Collection;
 
 public:
 
-    Clob(Connection &connection);
+    Clob(const Connection &connection);
 
     dstring Read(unsigned int size);
     unsigned int Write(dstring content);
@@ -703,10 +727,11 @@ class Blob : public HandleHolder<OCI_Lob *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+    friend class Collection;
 
 public:
 
-    Blob(Connection &connection);
+    Blob(const Connection &connection);
 
     unsigned int Read(void *buffer, unsigned int size);
     unsigned int Write(void *buffer, unsigned int size);
@@ -752,11 +777,12 @@ class File : public HandleHolder<OCI_File *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+    friend class Collection;
 
 public:
 
-    File(Connection &connection);
-    File(Connection &connection, mstring directory, mstring name);
+    File(const Connection &connection);
+    File(const Connection &connection, mstring directory, mstring name);
 
     unsigned int Read(void *buffer, unsigned int size);
     unsigned int Seek(unsigned int seekMode, big_uint offset);
@@ -794,10 +820,10 @@ class TypeInfo : public HandleHolder<OCI_TypeInfo *>
 {
     friend class Object;
     friend class Reference;
-
+    friend class Collection;
 public:
 
-    TypeInfo(Connection &connection, mstring name, unsigned int type);
+    TypeInfo(const Connection &connection, mstring name, unsigned int type);
 
     unsigned int GetType();
     mstring GetName();
@@ -807,6 +833,8 @@ public:
     Column GetColumn(unsigned int index);
 
 private:
+
+    Connection GetConnection() const;
 
     TypeInfo(OCI_TypeInfo *pTypeInfo);
 };
@@ -824,10 +852,11 @@ class Object : public HandleHolder<OCI_Object *>
     friend class Resultset;
     friend class BindArray;
     friend class Reference;
+    friend class Collection;
 
 public:
 
-    Object(Connection &connection, TypeInfo &typeInfo);
+    Object(const Connection &connection, const TypeInfo &typeInfo);
 
     TypeInfo GetTypeInfo();
 
@@ -835,7 +864,7 @@ public:
     TDataType Get(mstring name);
 
     template<class TDataType>
-    void Set(mstring name, TDataType &value);
+    void Set(mstring name, const TDataType &value);
 
 private:
 
@@ -855,10 +884,11 @@ class Reference : public HandleHolder<OCI_Ref *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+    friend class Collection;
 
 public:
 
-    Reference(Connection &connection, TypeInfo &typeInfo);
+    Reference(const Connection &connection, const TypeInfo &typeInfo);
 
     TypeInfo GetTypeInfo();
     Object GetObject();
@@ -891,9 +921,9 @@ class Collection : public HandleHolder<OCI_Coll *>
     friend class CollectionIterator;
 public:
 
-    Collection(Connection &connection, TypeInfo &typeInfo);
+    Collection(const TypeInfo &typeInfo);
 
-    void Assign(const Collection& source);
+    void Assign(const Collection& other);
 
     unsigned int GetType();
     unsigned int GetMax();
@@ -906,10 +936,10 @@ public:
     TDataType Get(unsigned int index);
 
     template <class TDataType>
-    void Set(unsigned int index, TDataType &data);
+    void Set(unsigned int index, const TDataType &data);
 
     template <class TDataType>
-    void Append(TDataType &data);
+    void Append(const TDataType &data);
 
     TypeInfo GetTypeInfo();
 
@@ -919,7 +949,7 @@ private:
     static TDataType GetElem(OCI_Elem *elem);
 
     template <class TDataType>
-    static void SetElem(OCI_Elem *elem, TDataType &value);
+    static void SetElem(OCI_Elem *elem, const TDataType &value);
 
     Collection(OCI_Coll *pColl);
 };
@@ -936,7 +966,7 @@ class CollectionIterator : public HandleHolder<OCI_Iter *>
 {
 public:
 
-    CollectionIterator(Collection &collection);
+    CollectionIterator(const Collection &collection);
 
     template <class TDataType>
     TDataType Get();
@@ -946,8 +976,6 @@ public:
 
     bool Next();
     bool Prev();
-
-private:
 
 };
 
@@ -967,7 +995,7 @@ class CLong : public HandleHolder<OCI_Long *>
 
 public:
 
-    CLong(Statement &statement);
+    CLong(const Statement &statement);
 
     dstring Read(unsigned int size);
     unsigned int Write(dstring content);
@@ -995,7 +1023,7 @@ class BLong : public HandleHolder<OCI_Long *>
 
 public:
 
-    BLong(Statement &statement);
+    BLong(const Statement &statement);
 
     unsigned int Read(void *buffer, unsigned int size);
     unsigned int Write(void *buffer, unsigned int size);
@@ -1134,7 +1162,7 @@ class Statement : public HandleHolder<OCI_Statement *>
 
 public:
 
-    Statement(Connection &connection);
+    Statement(const Connection &connection);
     ~Statement();
 
     Connection GetConnection();
@@ -1331,6 +1359,47 @@ inline std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * ManagedBuffer
+ * --------------------------------------------------------------------------------------------- */
+
+template< typename TBufferType>
+inline ManagedBuffer<TBufferType>::ManagedBuffer()  : _buffer( NULL )
+{
+}
+
+template< typename TBufferType>
+inline ManagedBuffer<TBufferType>::ManagedBuffer( TBufferType *buffer )  : _buffer( buffer )
+{
+}
+
+template< typename TBufferType>
+inline ManagedBuffer<TBufferType>::~ManagedBuffer()
+{
+    delete [] _buffer;
+}
+
+template< typename TBufferType>
+inline ManagedBuffer<TBufferType> & ManagedBuffer<TBufferType>::operator=( TBufferType *buffer )
+{
+    delete [] _buffer;
+    _buffer = buffer;
+
+    return( *this );
+}
+
+template< typename TBufferType>
+inline ManagedBuffer<TBufferType>::operator TBufferType* ()
+{
+    return  _buffer;
+}
+
+template< typename TBufferType>
+inline ManagedBuffer<TBufferType>::operator const TBufferType* ()
+{
+    return  _buffer;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * Handle
  * --------------------------------------------------------------------------------------------- */
 
@@ -1381,7 +1450,7 @@ inline HandleHolder<THandleType>::operator bool()
 }
 
 template<class THandleType>
-inline Handle * HandleHolder<THandleType>::GetHandle()
+inline Handle * HandleHolder<THandleType>::GetHandle() const
 {
     return ( Handle *) _smartHandle;
 }
@@ -1953,7 +2022,7 @@ inline Transaction Connection::GetTransaction()
     return Transaction(API::Call(OCI_GetTransaction(*this)));
 }
 
-inline void Connection::SetTransaction(Transaction &transaction)
+inline void Connection::SetTransaction(const Transaction &transaction)
 {
     API::Call(OCI_SetTransaction(*this, transaction));
 }
@@ -2084,7 +2153,7 @@ inline void Connection::SetTAFHandler(TAFHandlerProc handler)
  * Transaction
  * --------------------------------------------------------------------------------------------- */
 
-inline Transaction::Transaction(Connection &connection, unsigned int timeout, unsigned int mode, OCI_XID *pxid)
+inline Transaction::Transaction(const Connection &connection, unsigned int timeout, unsigned int mode, OCI_XID *pxid)
 {
     Acquire(API::Call(OCI_TransactionCreate(connection, timeout, mode, pxid)), (HandleFreeFunc) OCI_TransactionFree, 0);
 }
@@ -2143,9 +2212,9 @@ inline Date::Date(OCI_Date *pDate)
     Acquire(pDate);
 }
 
-inline void Date::Assign(const Date& source)
+inline void Date::Assign(const Date& other)
 {
-    API::Call(OCI_DateAssign(*this, source));
+    API::Call(OCI_DateAssign(*this, other));
 }
 
 inline void Date::SetDate(int year, int month, int day)
@@ -2232,7 +2301,7 @@ inline Date::operator mstring()
  * Timestamp
  * --------------------------------------------------------------------------------------------- */
 
-inline Timestamp::Timestamp(Connection &connection, unsigned int type)
+inline Timestamp::Timestamp(const Connection &connection, unsigned int type)
 {
     Acquire(API::Call(OCI_TimestampCreate(connection, type)), (HandleFreeFunc) OCI_TimestampFree, connection.GetHandle());
 }
@@ -2246,7 +2315,7 @@ inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp)
  * Clob
  * --------------------------------------------------------------------------------------------- */
 
-inline Clob::Clob(Connection &connection)
+inline Clob::Clob(const Connection &connection)
 {
     Acquire(API::Call(OCI_LobCreate(connection, OCI_CLOB)), (HandleFreeFunc) OCI_LobFree, connection.GetHandle());
 }
@@ -2258,13 +2327,11 @@ inline Clob::Clob(OCI_Lob *pLob)
 
 inline dstring Clob::Read(unsigned int size)
 {
-    dstring result;
+    ManagedBuffer<dtext> buffer = new dtext[size+1];
 
-    result.reserve(size);
+    size = API::Call(OCI_LobRead(*this, (void *) buffer, size));
 
-    size = API::Call(OCI_LobRead(*this, (void *) result.c_str(), size));
-
-    return API::MakeString(result.c_str());
+    return API::MakeString( (const dtext *) buffer);
 }
 
 inline unsigned int Clob::Write(dstring content)
@@ -2361,7 +2428,7 @@ inline void Clob::EnableBuffering(bool value)
  * Blob
  * --------------------------------------------------------------------------------------------- */
 
-inline Blob::Blob(Connection &connection)
+inline Blob::Blob(const Connection &connection)
 {
     Acquire(API::Call(OCI_LobCreate(connection, OCI_BLOB)), (HandleFreeFunc) OCI_LobFree, connection.GetHandle());
 }
@@ -2470,12 +2537,12 @@ inline void Blob::EnableBuffering(bool value)
  * File
  * --------------------------------------------------------------------------------------------- */
 
-inline File::File(Connection &connection)
+inline File::File(const Connection &connection)
 {
     Acquire(API::Call(OCI_FileCreate(connection, OCI_BFILE)), (HandleFreeFunc) OCI_FileFree, connection.GetHandle());
 }
 
-inline File::File(Connection &connection, mstring directory, mstring name)
+inline File::File(const Connection &connection, mstring directory, mstring name)
 {
     Acquire(API::Call(OCI_FileCreate(connection, OCI_BFILE)), (HandleFreeFunc) OCI_FileFree, connection.GetHandle());
 
@@ -2556,7 +2623,7 @@ inline void File::Close()
  * TypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-inline TypeInfo::TypeInfo(Connection &connection, mstring name, unsigned int type)
+inline TypeInfo::TypeInfo(const Connection &connection, mstring name, unsigned int type)
 {
     Acquire(API::Call(OCI_TypeInfoGet(connection, name.c_str(), type)), (HandleFreeFunc) 0, connection.GetHandle());
 }
@@ -2581,6 +2648,11 @@ inline Connection TypeInfo::GetConnection()
     return Connection(API::Call(OCI_TypeInfoGetConnection(*this)));
 }
 
+inline Connection TypeInfo::GetConnection() const
+{
+    return Connection(API::Call(OCI_TypeInfoGetConnection(*this)));
+}
+
 inline unsigned int TypeInfo::GetColumnCount()
 {
     return API::Call(OCI_TypeInfoGetColumnCount(*this));
@@ -2595,7 +2667,7 @@ inline Column TypeInfo::GetColumn(unsigned int index)
  * Object
  * --------------------------------------------------------------------------------------------- */
 
-inline Object::Object(Connection &connection, TypeInfo &typeInfo)
+inline Object::Object(const Connection &connection, const TypeInfo &typeInfo)
 {
     Acquire(API::Call(OCI_ObjectCreate(connection, typeInfo)), (HandleFreeFunc) OCI_ObjectFree, connection.GetHandle());
 }
@@ -2714,109 +2786,109 @@ inline File Object::Get<File>(mstring name)
 }
 
 template<>
-inline void Object::Set<short>(mstring name, short &value)
+inline void Object::Set<short>(mstring name, const short &value)
 {
     API::Call(OCI_ObjectSetShort(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<unsigned short>(mstring name, unsigned short &value)
+inline void Object::Set<unsigned short>(mstring name, const unsigned short &value)
 {
     API::Call(OCI_ObjectSetUnsignedShort(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<int>(mstring name, int &value)
+inline void Object::Set<int>(mstring name, const int &value)
 {
     API::Call(OCI_ObjectSetInt(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<unsigned int>(mstring name, unsigned int &value)
+inline void Object::Set<unsigned int>(mstring name, const unsigned int &value)
 {
     API::Call(OCI_ObjectSetUnsignedInt(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<big_int>(mstring name, big_int &value)
+inline void Object::Set<big_int>(mstring name, const big_int &value)
 {
     API::Call(OCI_ObjectSetBigInt(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<big_uint>(mstring name, big_uint &value)
+inline void Object::Set<big_uint>(mstring name, const big_uint &value)
 {
     API::Call(OCI_ObjectSetUnsignedBigInt(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<float>(mstring name, float &value)
+inline void Object::Set<float>(mstring name, const float &value)
 {
     API::Call(OCI_ObjectSetFloat(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<double>(mstring name, double &value)
+inline void Object::Set<double>(mstring name, const double &value)
 {
     API::Call(OCI_ObjectSetDouble(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<dstring>(mstring name, dstring &value)
+inline void Object::Set<dstring>(mstring name, const dstring &value)
 {
     API::Call(OCI_ObjectSetString(*this, name.c_str(), value.c_str()));
 }
 
 template<>
-inline void Object::Set<Date>(mstring name, Date &value)
+inline void Object::Set<Date>(mstring name, const Date &value)
 {
     API::Call(OCI_ObjectSetDate(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<Timestamp>(mstring name, Timestamp &value)
+inline void Object::Set<Timestamp>(mstring name, const Timestamp &value)
 {
     API::Call(OCI_ObjectSetTimestamp(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<Interval>(mstring name, Interval &value)
+inline void Object::Set<Interval>(mstring name, const Interval &value)
 {
     API::Call(OCI_ObjectSetInterval(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<Object>(mstring name, Object &value)
+inline void Object::Set<Object>(mstring name, const Object &value)
 {
     API::Call(OCI_ObjectSetObject(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<Collection>(mstring name, Collection &value)
+inline void Object::Set<Collection>(mstring name, const Collection &value)
 {
     API::Call(OCI_ObjectSetColl(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<Reference>(mstring name, Reference &value)
+inline void Object::Set<Reference>(mstring name, const Reference &value)
 {
     API::Call(OCI_ObjectSetRef(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<Clob>(mstring name, Clob &value)
+inline void Object::Set<Clob>(mstring name, const Clob &value)
 {
     API::Call(OCI_ObjectSetLob(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<Blob>(mstring name, Blob &value)
+inline void Object::Set<Blob>(mstring name, const Blob &value)
 {
     API::Call(OCI_ObjectSetLob(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<File>(mstring name, File &value)
+inline void Object::Set<File>(mstring name, const File &value)
 {
     API::Call(OCI_ObjectSetFile(*this, name.c_str(), value));
 }
@@ -2825,7 +2897,7 @@ inline void Object::Set<File>(mstring name, File &value)
  * Reference
  * --------------------------------------------------------------------------------------------- */
 
-inline Reference::Reference(Connection &connection, TypeInfo &typeInfo)
+inline Reference::Reference(const Connection &connection, const TypeInfo &typeInfo)
 {
     Acquire(API::Call(OCI_RefCreate(connection, typeInfo)), (HandleFreeFunc) OCI_RefFree, connection.GetHandle());
 }
@@ -2857,38 +2929,316 @@ inline void Reference::SetNulReference()
 
 inline mstring Reference::ToString()
 {
-    mstring res;
+    unsigned int size =  API::Call(OCI_RefGetHexSize(*this));
 
-    unsigned int size = API::Call(OCI_RefGetHexSize(*this));
+    ManagedBuffer<mtext> buffer = new dtext [ size+1 ];
 
-    res.reserve(size);
+    API::Call(OCI_RefToText(*this, size, (mtext *) buffer));
 
-    API::Call(OCI_RefToText(*this, size, (mtext *) res.c_str()));
+    return API::MakeString( (const dtext *) buffer);
 
-    return API::MakeString(res.c_str());
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * Collection
  * --------------------------------------------------------------------------------------------- */
 
-template <>
-inline short Collection::GetElem(OCI_Elem *elem)
+inline Collection::Collection(const TypeInfo &typeInfo)
+{
+    Acquire(API::Call(OCI_CollCreate(typeInfo)), (HandleFreeFunc) OCI_CollFree, typeInfo.GetConnection().GetHandle());
+}
+
+inline Collection::Collection(OCI_Coll *pColl)
+{
+     Acquire(pColl);
+}
+
+inline void Collection::Assign(const Collection& other)
+{
+    API::Call(OCI_CollAssign(*this, other));
+}
+
+inline TypeInfo Collection::GetTypeInfo()
+{
+    return TypeInfo(API::Call(OCI_CollGetTypeInfo(*this)));
+}
+
+inline unsigned int Collection::GetType()
+{
+    return API::Call(OCI_CollGetType(*this));
+}
+
+inline unsigned int Collection::GetMax()
+{
+    return API::Call(OCI_CollGetMax(*this));
+}
+
+inline unsigned int Collection::GetSize()
+
+{
+    return API::Call(OCI_CollGetSize(*this));
+}
+
+inline void Collection::Truncate(unsigned int size)
+{
+    API::Call(OCI_CollTrim(*this, size));
+}
+
+inline void Collection::Clear()
+{
+    API::Call(OCI_CollClear(*this));
+}
+
+template <class TDataType>
+inline TDataType Collection::Get(unsigned int index)
+{
+    return GetElem<TDataType>(API::Call(OCI_CollGetAt(*this, index)));
+}
+
+template <class TDataType>
+inline void Collection::Set(unsigned int index, const TDataType &data)
+{
+    OCI_Elem * elem = API::Call(OCI_CollGetAt(*this, index));
+
+    SetElem<TDataType>(elem, data);
+
+    API::Call(OCI_CollSetAt(*this, index, elem));
+}
+
+template <class TDataType>
+inline void Collection::Append(const TDataType &data)
+{
+    OCI_Elem * elem = API::Call(OCI_ElemCreate(OCI_CollGetTypeInfo(*this)));
+
+    SetElem<TDataType>(elem, data);
+
+    API::Call(OCI_CollAppend(*this, elem));
+    API::Call(OCI_ElemFree(elem));
+}
+
+template<>
+inline short Collection::GetElem<short>(OCI_Elem *elem)
 {
     return API::Call(OCI_ElemGetShort(elem));
 }
 
-template <>
-inline void Collection::SetElem(OCI_Elem *elem, short &value)
+template<>
+inline unsigned short Collection::GetElem<unsigned short>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetUnsignedShort(elem));
+}
+
+template<>
+inline int Collection::GetElem<int>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetInt(elem));
+}
+
+template<>
+inline unsigned int Collection::GetElem<unsigned int>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetUnsignedInt(elem));
+}
+
+template<>
+inline big_int Collection::GetElem<big_int>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetBigInt(elem));
+}
+
+template<>
+inline big_uint Collection::GetElem<big_uint>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetUnsignedBigInt(elem));
+}
+
+template<>
+inline float Collection::GetElem<float>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetFloat(elem));
+}
+
+template<>
+inline double Collection::GetElem<double>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetDouble(elem));
+}
+
+template<>
+inline dstring Collection::GetElem<dstring>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetString(elem));
+}
+
+template<>
+inline Date Collection::GetElem<Date>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetDate(elem));
+}
+
+template<>
+inline Timestamp Collection::GetElem<Timestamp>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetTimestamp(elem));
+}
+
+template<>
+inline Interval Collection::GetElem<Interval>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetInterval(elem));
+}
+
+template<>
+inline Object Collection::GetElem<Object>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetObject(elem));
+}
+
+template<>
+inline Collection Collection::GetElem<Collection>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetColl(elem));
+}
+
+template<>
+inline Reference Collection::GetElem<Reference>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetRef(elem));
+}
+
+template<>
+inline Clob Collection::GetElem<Clob>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetLob(elem));
+}
+
+template<>
+inline Blob Collection::GetElem<Blob>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetLob(elem));
+}
+
+template<>
+inline File Collection::GetElem<File>(OCI_Elem *elem)
+{
+    return API::Call(OCI_ElemGetFile(elem));
+}
+
+template<>
+inline void Collection::SetElem<short>(OCI_Elem *elem, const short &value)
 {
     API::Call(OCI_ElemSetShort(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<unsigned short>(OCI_Elem *elem, const unsigned short &value)
+{
+    API::Call(OCI_ElemSetUnsignedShort(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<int>(OCI_Elem *elem, const int &value)
+{
+    API::Call(OCI_ElemSetInt(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<unsigned int>(OCI_Elem *elem, const unsigned int &value)
+{
+    API::Call(OCI_ElemSetUnsignedInt(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<big_int>(OCI_Elem *elem, const big_int &value)
+{
+    API::Call(OCI_ElemSetBigInt(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<big_uint>(OCI_Elem *elem, const big_uint &value)
+{
+    API::Call(OCI_ElemSetUnsignedBigInt(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<float>(OCI_Elem *elem, const float &value)
+{
+    API::Call(OCI_ElemSetFloat(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<double>(OCI_Elem *elem, const double &value)
+{
+    API::Call(OCI_ElemSetDouble(elem, value));
+}
+
+
+template <>
+inline void Collection::SetElem<dstring>(OCI_Elem *elem, const dstring &value)
+{
+    API::Call(OCI_ElemSetString(elem, value.c_str()));
+}
+
+
+template<>
+inline void Collection::SetElem<Date>(OCI_Elem *elem, const Date &value)
+{
+    API::Call(OCI_ElemSetDate(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<Timestamp>(OCI_Elem *elem, const Timestamp &value)
+{
+    API::Call(OCI_ElemSetTimestamp(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<Interval>(OCI_Elem *elem, const Interval &value)
+{
+    API::Call(OCI_ElemSetInterval(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<Object>(OCI_Elem *elem, const Object &value)
+{
+    API::Call(OCI_ElemSetObject(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<Collection>(OCI_Elem *elem, const Collection &value)
+{
+    API::Call(OCI_ElemSetColl(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<Reference>(OCI_Elem *elem, const Reference &value)
+{
+    API::Call(OCI_ElemSetRef(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<Clob>(OCI_Elem *elem, const Clob &value)
+{
+    API::Call(OCI_ElemSetLob(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<Blob>(OCI_Elem *elem, const Blob &value)
+{
+    API::Call(OCI_ElemSetLob(elem, value));
+}
+
+template<>
+inline void Collection::SetElem<File>(OCI_Elem *elem, const File &value)
+{
+    API::Call(OCI_ElemSetFile(elem, value));
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * CollectionIterator
  * --------------------------------------------------------------------------------------------- */
 
-inline CollectionIterator::CollectionIterator(Collection &collection)
+inline CollectionIterator::CollectionIterator(const Collection &collection)
 {
     Acquire(API::Call(OCI_IterCreate(collection)), (HandleFreeFunc) OCI_IterFree, collection.GetHandle());
 }
@@ -2919,7 +3269,7 @@ inline TDataType CollectionIterator::Get()
  * CLong
  * --------------------------------------------------------------------------------------------- */
 
-inline CLong::CLong(Statement &statement)
+inline CLong::CLong(const Statement &statement)
 {
     Acquire(API::Call(OCI_LongCreate(statement, OCI_CLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
 }
@@ -2931,13 +3281,11 @@ inline CLong::CLong(OCI_Long *pLong)
 
 inline dstring CLong::Read(unsigned int size)
 {
-    dstring result;
+    ManagedBuffer<dtext> buffer = new dtext[size+1];
 
-    result.reserve(size);
+    size = API::Call(OCI_LongRead(*this, (void *) buffer, size));
 
-    size = API::Call(OCI_LongRead(*this, (void *) result.c_str(), size));
-
-    return API::MakeString(result.c_str());
+    return API::MakeString( (const dtext *) buffer);
 }
 
 inline unsigned int CLong::Write(dstring content)
@@ -2959,7 +3307,7 @@ inline dstring CLong::GetContent()
  * BLong
  * --------------------------------------------------------------------------------------------- */
 
-inline BLong::BLong(Statement &statement)
+inline BLong::BLong(const Statement &statement)
 {
     Acquire(API::Call(OCI_LongCreate(statement, OCI_CLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
 }
@@ -3189,7 +3537,7 @@ inline BindString::operator dtext *()
  * Statement
  * --------------------------------------------------------------------------------------------- */
 
-inline Statement::Statement(Connection &connection)
+inline Statement::Statement(const Connection &connection)
 {
     Acquire(API::Call(OCI_StatementCreate(connection)), (HandleFreeFunc) OCI_StatementFree, connection.GetHandle());
 }
