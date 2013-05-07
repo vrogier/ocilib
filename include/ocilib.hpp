@@ -2906,13 +2906,13 @@ inline bool CollectionIterator::Prev()
 template <class TDataType>
 inline void CollectionIterator::Set(TDataType &value)
 {
-    Collection::CollectionItem::Set<TDataType>(API::Call(OCI_IterGetCurrent(*this)), value);
+    Collection::SetElem<TDataType>(API::Call(OCI_IterGetCurrent(*this)), value);
 }
 
 template <class TDataType>
 inline TDataType CollectionIterator::Get()
 {
-    return Collection::Get<TDataType>(API::Call(OCI_IterGetCurrent(*this)));
+    return Collection::GetElem<TDataType>(API::Call(OCI_IterGetCurrent(*this)));
 }
 
 /* --------------------------------------------------------------------------------------------- *
