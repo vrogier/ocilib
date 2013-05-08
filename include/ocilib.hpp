@@ -65,6 +65,7 @@ typedef std::basic_string<unsigned char,  std::char_traits<unsigned char>, std::
 
 typedef OCI_Thread * ThreadHandle;
 typedef OCI_Mutex  * MutexHandle ;
+typedef POCI_THREAD  ThreadProc;
 
 /* ********************************************************************************************* *
  *                                       CLASS DECLARATIONS
@@ -536,9 +537,10 @@ public:
 
     Date();
 
-    void Assign(const Date& source);
+    void Assign(const Date& other);
+    int Compare(const Date& other);
 
-    int Compare(const Date& source);
+    int DaysBetween(const Date& other);
 
     void SetDate(int year, int month, int day);
     void SetTime(int hour, int min,   int sec);
@@ -585,7 +587,7 @@ class Interval : public HandleHolder<OCI_Interval *>
 
 public:
 
-    Interval(const Connection &con, unsigned int type);
+    Interval(unsigned int type);
 
     void Assign(const Interval& other);
     int Compare(const Interval& other);
@@ -595,10 +597,16 @@ public:
     void Add(const Interval& other);
     void Substract(const Interval& other);
 
+    void GetDaySecond(int *day, int *hour, int *min, int *sec, int *fsec);
+    void SetDaySecond(int day, int hour, int min, int sec, int fsec);
+
+    void GetYearMonth(int *year, int *month);
+    void SetYearMonth(int year, int month);
+
     void FromTimeZone(mstring timeZone);
 
-    void FromString(mstring data, mstring format = OCI_STRING_FORMAT_DATE);
-    mstring ToString(mstring format = OCI_STRING_FORMAT_DATE);
+    void FromString(mstring data, mstring format);
+    mstring ToString(int leadingPrecision = 10, int fractionPrecision = 10);
 
     operator mstring();
 
@@ -626,23 +634,19 @@ class Timestamp : public HandleHolder<OCI_Timestamp *>
 
 public:
 
-    Timestamp(const Connection &con, unsigned int type);
+    Timestamp(unsigned int type);
 
     void Assign(const Timestamp& other);
     int Compare(const Timestamp& other);
 
     unsigned int GetType();
 
-    void Construct(int year, int month, int day, int hour, int min, int sec, mstring timeZone = MT(""));
+    void Construct(int year, int month, int day, int hour, int min, int sec, int fsec, mstring timeZone = MT(""));
     void Convert(const Timestamp& other);
 
-    void SetDate(int year, int month, int day);
-    void SetTime(int hour, int min,   int sec);
-    void SetDateTime(int year, int month, int day, int hour, int min, int sec);
-
     void GetDate(int *year, int *month, int *day);
-    void GetTime(int *hour, int *min,   int *sec);
-    void GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec);
+    void GetTime(int *hour, int *min,   int *sec, int *fsec);
+    void GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec, int *fsec);
 
     mstring GetTimeZone();
     void GetTimeZoneOffset(int *hour, int *min);
@@ -650,12 +654,12 @@ public:
     void AddInterval(const Interval& other);
     void SubstractInterval(const Interval& other);
 
-    void Substract(const Interval& other);
+    void Substract(const Timestamp &other, Interval &result);
 
-    void SysDatetime();
+    void SysTimestamp();
 
     void FromString(mstring data, mstring format = OCI_STRING_FORMAT_DATE);
-    mstring ToString(mstring format = OCI_STRING_FORMAT_DATE);
+    mstring ToString(mstring format = OCI_STRING_FORMAT_DATE, int precision = 0);
 
     operator mstring();
 
@@ -821,6 +825,7 @@ class TypeInfo : public HandleHolder<OCI_TypeInfo *>
     friend class Object;
     friend class Reference;
     friend class Collection;
+    friend class Column;
 public:
 
     TypeInfo(const Connection &connection, mstring name, unsigned int type);
@@ -856,7 +861,7 @@ class Object : public HandleHolder<OCI_Object *>
 
 public:
 
-    Object(const Connection &connection, const TypeInfo &typeInfo);
+    Object(const TypeInfo &typeInfo);
 
     TypeInfo GetTypeInfo();
 
@@ -1317,9 +1322,30 @@ class Column : public HandleHolder<OCI_Column *>
 {
     friend class TypeInfo;
     friend class Resultset;
+
 public:
 
+    mstring GetName();
+    mstring GetSQLType();
+    mstring GetFullSQLType();
+
+    unsigned int GetType();
+    unsigned int GetSubType();
+    unsigned int GetCharsetForm();
+    unsigned int GetSize();
+
+    int GetScale();
+    int GetPrecision();
+    int GetFractionalPrecision();
+    int GetLeadingPrecision();
+
+    bool GetNullable();
+    bool GetCharUsed();
+
+    TypeInfo GetTypeInfo();
+
 private:
+
     Column(OCI_Column *column);
 };
 
@@ -1753,7 +1779,7 @@ inline void Environment::DestroyThread(ThreadHandle handle)
     API::Call(OCI_ThreadFree(handle));
 }
 
-inline void Environment::RunThread(ThreadHandle handle, POCI_THREAD func, void *args)
+inline void Environment::RunThread(ThreadHandle handle, ThreadProc func, void *args)
 {
     API::Call(OCI_ThreadRun(handle, func, args));
 }
@@ -2217,6 +2243,16 @@ inline void Date::Assign(const Date& other)
     API::Call(OCI_DateAssign(*this, other));
 }
 
+inline int Date::Compare(const Date& other)
+{
+    return API::Call(OCI_DateCompare(*this, other));
+}
+
+inline int Date::DaysBetween(const Date& other)
+{
+    return API::Call(OCI_DateDaysBetween(*this, other));
+}
+
 inline void Date::SetDate(int year, int month, int day)
 {
     API::Call(OCI_DateSetDate(*this, year, month, day));
@@ -2237,7 +2273,7 @@ inline void Date::GetDate(int *year, int *month, int *day)
     API::Call(OCI_DateGetDate(*this, year, month, day));
 }
 
-inline void Date::GetTime(int *hour, int *min,   int *sec)
+inline void Date::GetTime(int *hour, int *min, int *sec)
 {
     API::Call(OCI_DateGetTime(*this, hour, min , sec));
 }
@@ -2284,11 +2320,13 @@ inline void Date::FromString(mstring data, mstring format)
 
 inline mstring Date::ToString(mstring format)
 {
-    mtext buffer[256];
+    int size = OCI_SIZE_BUFFER;
 
-    API::Call(OCI_DateToText(*this, format.c_str(), 256, buffer));
+    ManagedBuffer<mtext> buffer = new mtext[size+1];
 
-    return API::MakeString(buffer);
+    API::Call(OCI_DateToText(*this, format.c_str(), size, (mtext *) buffer));
+
+    return API::MakeString((mtext *) buffer);
 }
 
 inline Date::operator mstring()
@@ -2296,19 +2334,199 @@ inline Date::operator mstring()
     return ToString();
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * Interval
+ * --------------------------------------------------------------------------------------------- */
+
+inline Interval::Interval(unsigned int type)
+{
+    Acquire(API::Call(OCI_IntervalCreate(NULL, type)), (HandleFreeFunc) OCI_IntervalFree, 0);
+}
+
+inline Interval::Interval(OCI_Interval *pInterval)
+{
+    Acquire(pInterval);
+}
+
+inline void Interval::Assign(const Interval& other)
+{
+   API::Call(OCI_IntervalAssign(*this, other));
+}
+
+inline int Interval::Compare(const Interval& other)
+{
+    return API::Call(OCI_IntervalCompare(*this, other));
+}
+
+inline unsigned int Interval::GetType()   
+{
+    return API::Call(OCI_IntervalGetType(*this));
+}
+
+inline void Interval::Add(const Interval& other)
+{
+     API::Call(OCI_IntervalAdd(*this, other));
+}
+
+inline void Interval::Substract(const Interval& other)
+{
+    API::Call(OCI_IntervalSubtract(*this, other));
+}
+
+inline void Interval::GetDaySecond(int *day, int *hour, int *min, int *sec, int *fsec)
+{
+    API::Call(OCI_IntervalGetDaySecond(*this, day, hour, min, sec, fsec));
+}
+
+inline void Interval::SetDaySecond(int day, int hour, int min, int sec, int fsec)
+{
+    API::Call(OCI_IntervalSetDaySecond(*this, day, hour, min, sec, fsec));
+}
+
+inline void Interval::GetYearMonth(int *year, int *month)
+{
+    API::Call(OCI_IntervalGetYearMonth(*this, year, month));
+}
+inline void Interval::SetYearMonth(int year, int month)
+{
+    API::Call(OCI_IntervalSetYearMonth(*this, year, month));
+}
+
+inline void Interval::FromTimeZone(mstring timeZone)
+{
+    API::Call(OCI_IntervalFromTimeZone(*this, timeZone.c_str()));
+}
+
+inline void Interval::FromString(mstring data, mstring format)
+{
+    API::Call(OCI_IntervalFromText(*this, format.c_str()));
+}
+
+inline mstring Interval::ToString(int leadingPrecision, int fractionPrecision)
+{
+    int size = OCI_SIZE_BUFFER;
+
+    ManagedBuffer<mtext> buffer = new mtext[size+1];
+
+    API::Call(OCI_IntervalToText(*this, leadingPrecision, fractionPrecision,  size, (mtext *) buffer));
+
+    return API::MakeString((mtext *) buffer);
+}
+
+inline Interval::operator mstring()
+{
+    return ToString();
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * Timestamp
  * --------------------------------------------------------------------------------------------- */
 
-inline Timestamp::Timestamp(const Connection &connection, unsigned int type)
+inline Timestamp::Timestamp(unsigned int type)
 {
-    Acquire(API::Call(OCI_TimestampCreate(connection, type)), (HandleFreeFunc) OCI_TimestampFree, connection.GetHandle());
+    Acquire(API::Call(OCI_TimestampCreate(NULL, type)), (HandleFreeFunc) OCI_TimestampFree, 0);
 }
 
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp)
 {
     Acquire(pTimestamp);
+}
+
+inline void Timestamp::Assign(const Timestamp& other)
+{
+    API::Call(OCI_TimestampAssign(*this, other));
+}
+
+inline int Timestamp::Compare(const Timestamp& other)
+{
+    return API::Call(OCI_TimestampCompare(*this, other));
+}
+
+inline unsigned int Timestamp::GetType()
+{
+    return API::Call(OCI_TimestampGetType(*this));
+}
+
+inline void Timestamp::Construct(int year, int month, int day, int hour, int min, int sec, int fsec, mstring timeZone)
+{
+    API::Call(OCI_TimestampConstruct(*this, year, month, day, hour, min,sec, fsec, timeZone.c_str()));
+}
+
+inline void Timestamp::Convert(const Timestamp& other)
+{
+    API::Call(OCI_TimestampConvert(*this, other));
+}
+
+inline void Timestamp::GetDate(int *year, int *month, int *day)
+{
+    API::Call(OCI_TimestampGetDate(*this, year, month, day));
+}
+
+inline void Timestamp::GetTime(int *hour, int *min, int *sec, int *fsec)
+{
+    API::Call(OCI_TimestampGetTime(*this, hour, min, sec, fsec));
+}
+
+inline void Timestamp::GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec, int *fsec)
+{
+    API::Call(OCI_TimestampGetDateTime(*this, year, month, day, hour, min, sec, fsec));
+}
+
+inline mstring Timestamp::GetTimeZone()
+{
+    int size = OCI_SIZE_BUFFER;
+
+    ManagedBuffer<mtext> buffer = new mtext[size+1];
+
+    API::Call(OCI_TimestampGetTimeZoneName(*this,  size, (mtext *) buffer));
+
+    return API::MakeString((mtext *) buffer);
+}
+
+inline void Timestamp::GetTimeZoneOffset(int *hour, int *min)
+{
+    API::Call(OCI_TimestampGetTimeZoneOffset(*this, hour, min));
+}
+
+inline void Timestamp::AddInterval(const Interval& other)
+{
+    API::Call(OCI_TimestampIntervalAdd(*this, other));
+}
+
+inline void Timestamp::SubstractInterval(const Interval& other)
+{
+    API::Call(OCI_TimestampIntervalSub(*this, other));
+}
+
+inline void Timestamp::Substract(const Timestamp &other, Interval &result)
+{
+    API::Call(OCI_TimestampSubtract(*this, other, result));
+}
+
+inline void Timestamp::SysTimestamp()
+{
+    API::Call(OCI_TimestampSysTimestamp(*this));
+}
+
+inline void Timestamp::FromString(mstring data, mstring format)
+{
+    API::Call(OCI_TimestampFromText(*this, data.c_str(), format.c_str()));
+}
+
+inline mstring Timestamp::ToString(mstring format, int precision)
+{
+    int size = OCI_SIZE_BUFFER;
+
+    ManagedBuffer<mtext> buffer = new mtext[size+1];
+
+    API::Call(OCI_TimestampToText(*this, format.c_str(), size, (mtext *) buffer, precision));
+
+    return API::MakeString((mtext *) buffer);
+}
+
+inline Timestamp::operator mstring()
+{
+    return ToString();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2667,8 +2885,9 @@ inline Column TypeInfo::GetColumn(unsigned int index)
  * Object
  * --------------------------------------------------------------------------------------------- */
 
-inline Object::Object(const Connection &connection, const TypeInfo &typeInfo)
+inline Object::Object(const TypeInfo &typeInfo)
 {
+    Connection connection = typeInfo.GetConnection();
     Acquire(API::Call(OCI_ObjectCreate(connection, typeInfo)), (HandleFreeFunc) OCI_ObjectFree, connection.GetHandle());
 }
 
@@ -2728,7 +2947,7 @@ inline double Object::Get<double>(mstring name)
 template<>
 inline dstring Object::Get<dstring>(mstring name)
 {
-    return API::Call(OCI_ObjectGetString(*this,name.c_str()));
+    return API::MakeString(API::Call(OCI_ObjectGetString(*this,name.c_str())));
 }
 
 template<>
@@ -3067,7 +3286,7 @@ inline double Collection::GetElem<double>(OCI_Elem *elem)
 template<>
 inline dstring Collection::GetElem<dstring>(OCI_Elem *elem)
 {
-    return API::Call(OCI_ElemGetString(elem));
+    return API::MakeString(API::Call(OCI_ElemGetString(elem)));
 }
 
 template<>
@@ -4403,13 +4622,13 @@ inline double Resultset::Get<double>(mstring name)
 template<>
 inline dstring Resultset::Get<dstring>(int index)
 {
-    return API::Call(OCI_GetString(*this, index));
+    return API::MakeString(API::Call(OCI_GetString(*this, index)));
 }
 
 template<>
 inline dstring Resultset::Get<dstring>(mstring name)
 {
-    return API::Call(OCI_GetString2(*this,name.c_str()));
+    return API::MakeString(API::Call(OCI_GetString2(*this,name.c_str())));
 }
 
 template<>
@@ -4556,6 +4775,93 @@ inline BLong Resultset::Get<BLong>(mstring name)
 {
     return API::Call(OCI_GetLong2(*this,name.c_str()));
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * Column
+ * --------------------------------------------------------------------------------------------- */
+
+
+inline Column::Column(OCI_Column *column)
+{
+    Acquire(column);
+}
+
+inline mstring Column::GetName()
+{
+    return API::MakeString(API::Call(OCI_ColumnGetName(*this)));
+}
+
+inline mstring Column::GetSQLType()
+{
+    return API::MakeString(API::Call(OCI_ColumnGetSQLType(*this)));
+}
+
+inline mstring Column::GetFullSQLType()
+{
+    unsigned int size = OCI_SIZE_BUFFER;
+
+    ManagedBuffer<mtext> buffer = new mtext[size+1];
+
+    API::Call(OCI_ColumnGetFullSQLType(*this, buffer, size));
+
+    return API::MakeString((mtext *) buffer);
+}
+
+inline unsigned int Column::GetType()
+{
+    return API::Call(OCI_ColumnGetType(*this));
+}
+
+inline unsigned int Column::GetSubType()
+{
+    return API::Call(OCI_ColumnGetSubType(*this));
+}
+
+inline unsigned int Column::GetCharsetForm()
+{
+    return API::Call(OCI_ColumnGetCharsetForm(*this));
+}
+
+inline unsigned int Column::GetSize()
+{
+    return API::Call(OCI_ColumnGetSize(*this));
+}
+
+inline int Column::GetScale()
+{
+    return API::Call(OCI_ColumnGetScale(*this));
+}
+
+inline int Column::GetPrecision()
+{
+    return API::Call(OCI_ColumnGetPrecision(*this));
+}
+
+inline int Column::GetFractionalPrecision()
+{
+    return API::Call(OCI_ColumnGetFractionalPrecision(*this));
+}
+
+inline int Column::GetLeadingPrecision()
+{
+    return API::Call(OCI_ColumnGetLeadingPrecision(*this));
+}
+
+inline bool Column::GetNullable()
+{
+    return (API::Call(OCI_ColumnGetNullable(*this)) == TRUE);
+}
+
+inline bool Column::GetCharUsed()
+{
+    return (API::Call(OCI_ColumnGetCharUsed(*this)) == TRUE);
+}
+
+inline TypeInfo Column::GetTypeInfo()
+{
+    return TypeInfo(API::Call(OCI_ColumnGetTypeInfo(*this)));
+}
+
 
 
 }
