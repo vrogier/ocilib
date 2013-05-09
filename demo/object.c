@@ -8,7 +8,7 @@
         code  number, 
         name  varchar2(30)
     ); 
-
+    /		
     create type t_sale as object 
     ( 
         code  number, 
@@ -18,7 +18,7 @@
         date_sale date, 
         vendor  t_vendor
     ); 
-
+    /
     create table sales(item t_sale);
 
 */
@@ -37,8 +37,7 @@ int main(void)
     st = OCI_StatementCreate(cn);
 
     obj  = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, "t_sale", OCI_TIF_TYPE));
-    obj2 = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, "t_vendor", OCI_TIF_TYPE));
-
+ 
     OCI_ObjectSetInt(obj, "CODE", 1);
     OCI_ObjectSetDouble(obj, "PRICE", 12.99);
     OCI_ObjectSetString(obj, "NAME", "USB KEY 2go");

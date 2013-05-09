@@ -61,11 +61,11 @@ namespace ocilib
 
 typedef std::basic_string<mtext, std::char_traits<mtext>, std::allocator<mtext> > mstring;
 typedef std::basic_string<dtext, std::char_traits<dtext>, std::allocator<dtext> > dstring;
-typedef std::basic_string<unsigned char,  std::char_traits<unsigned char>, std::allocator<unsigned char> > Raw;
-
-typedef OCI_Thread * ThreadHandle;
-typedef OCI_Mutex  * MutexHandle ;
-typedef POCI_THREAD  ThreadProc;
+typedef void *              BufferPointer;
+typedef OCI_Thread *        ThreadHandle;
+typedef OCI_Mutex *         MutexHandle ;
+typedef POCI_THREAD         ThreadProc;
+typedef POCI_THREADKEYDEST  ThreadKeyFreeProc;
 
 /* ********************************************************************************************* *
  *                                       CLASS DECLARATIONS
@@ -91,7 +91,6 @@ class CollectionIterator;
 class Clob;
 class Blob;
 class File;
-class Long;
 class Subscription;
 class Queue;
 class Dequeue;
@@ -223,12 +222,15 @@ protected:
     HandleHolder();
     ~HandleHolder();
 
+    HandleHolder<THandleType>& operator= (HandleHolder<THandleType> &other);
+
     typedef boolean (OCI_API *HandleFreeFunc)(void *handle);
 
     Handle* GetHandle() const;
 
 	void Acquire(THandleType handle, HandleFreeFunc func, Handle *parent);
     void Acquire(THandleType handle);
+    void Acquire(HandleHolder<THandleType> &other);
     void Release();
 
     template <class TSmartHandleType>
@@ -244,6 +246,11 @@ protected:
 
         TSmartHandleType GetHandle();
 
+        void * GetExtraInfos();
+        void   SetExtraInfos(void *extraInfo);
+
+        bool IsLastHolder(HandleHolder<TSmartHandleType> *holder);
+
         std::list<Handle *> & GetChildren();
 
     private:
@@ -256,6 +263,8 @@ protected:
         THandleType _handle;
         HandleFreeFunc _func;
         Handle *_parent;
+        void * _extraInfo;
+
     };
 
 protected:
@@ -310,7 +319,12 @@ public:
     static void Initialize(unsigned int mode = OCI_ENV_DEFAULT, mstring libpath = MT(""));
     static void Cleanup();
 
-    static unsigned int GetCompiledVersion();
+    static unsigned int GetImportMode();
+
+    static unsigned int GetCharsetMetaData();
+    static unsigned int GetCharsetUserData();
+
+    static unsigned int GetCompileVersion();
     static unsigned int GetRuntimeVersion();
 
     static void EnableWarnings(bool value);
@@ -325,9 +339,13 @@ public:
 
     static void SetHAHandler(HAHandlerProc handler);
 
+    static void CreateThreadKey(mstring name, ThreadKeyFreeProc freeProc = 0);
+    static void ThreadKeySetValue(mstring name, void *value);
+    static void * ThreadKeyGetValue(mstring name);
+
     static ThreadHandle CreateThread();
     static void DestroyThread(ThreadHandle handle);
-    static void RunThread(ThreadHandle handle, POCI_THREAD func, void *args);
+    static void RunThread(ThreadHandle handle, ThreadProc func, void *args);
     static void JoinThread(ThreadHandle thrhandleead);
 
     static MutexHandle CreateMutex();
@@ -871,6 +889,12 @@ public:
     template<class TDataType>
     void Set(mstring name, const TDataType &value);
 
+    template<class TDataType>
+    void Get(mstring name, TDataType &value, unsigned int &size);
+ 
+    template<class TDataType>
+    void Set(mstring name, const TDataType &value, unsigned int size);
+
 private:
 
     Object(OCI_Object *pObject);
@@ -943,8 +967,17 @@ public:
     template <class TDataType>
     void Set(unsigned int index, const TDataType &data);
 
+    template<class TDataType>
+    void Get(unsigned int index, TDataType &value, unsigned int &size);
+ 
+    template<class TDataType>
+    void Set(unsigned int index, const TDataType &value, unsigned int size);
+
     template <class TDataType>
     void Append(const TDataType &data);
+
+    template <class TDataType>
+    void Append(const TDataType &data, unsigned int size);
 
     TypeInfo GetTypeInfo();
 
@@ -955,6 +988,12 @@ private:
 
     template <class TDataType>
     static void SetElem(OCI_Elem *elem, const TDataType &value);
+
+    template <class TDataType>
+    static TDataType GetElem(OCI_Elem *elem,  unsigned int &size);
+
+    template <class TDataType>
+    static void SetElem(OCI_Elem *elem, const TDataType &value,  unsigned int size);
 
     Collection(OCI_Coll *pColl);
 };
@@ -1152,6 +1191,34 @@ private:
 };
 
 /**
+ * @class BindsHolder
+ *
+ * @brief
+ *
+ *
+ */
+class BindsHolder
+{
+public:
+     
+    BindsHolder();
+    ~BindsHolder();
+
+    void Clear();
+
+    void AddBindArray(BindArray *bindArray);
+    void AddBindString(BindString *bindString);
+
+    void SetOutData();
+    void SetInData();
+
+private:
+
+    std::vector<BindString *> _bindStrings;
+    std::vector<BindArray  *> _bindArrays;
+};
+
+/**
  * @class Statement
  *
  * @brief
@@ -1182,8 +1249,8 @@ public:
 
     mstring GetSql();
 
-    Resultset GetResulset();
-    Resultset GetNextResulset();
+    Resultset GetResultset();
+    Resultset GetNextResultset();
 
     void SetBindArraySize(unsigned int size);
     unsigned int GetBindArraySize();
@@ -1249,6 +1316,8 @@ public:
 private:
 
     Statement(OCI_Statement *stmt);
+ 
+    BindsHolder *GetBindsHolder(bool allocate);
 
     void SetInData();
     void SetOutData();
@@ -1265,9 +1334,6 @@ private:
 
     template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
     void Bind (TBindMethod &method, mstring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, unsigned int mode, TElemType type);
-
-    std::vector<BindString *> _bindStrings;
-    std::vector<BindArray  *> _bindArrays;
 };
 
 /**
@@ -1437,11 +1503,7 @@ inline HandleHolder<THandleType>::HandleHolder() :  _smartHandle(0)
 template<class THandleType>
 inline HandleHolder<THandleType>::HandleHolder(const HandleHolder &src) :  _smartHandle(0)
 {
-    if (src._smartHandle)
-    {
-        src._smartHandle->Acquire(this);
-        _smartHandle = src._smartHandle;
-    }
+    Acquire(src);
 }
 
 template<class THandleType>
@@ -1450,11 +1512,17 @@ inline HandleHolder<THandleType>::~HandleHolder()
     Release();
 }
 
+template<class THandleType>
+inline HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (HandleHolder<THandleType> &other)
+{
+    Acquire(other);
+    return *this;
+}
 
 template<class THandleType>
 inline bool HandleHolder<THandleType>::IsNull()
 {
-    return  (((THandleType) *this) != 0);
+    return  (((THandleType) *this) == 0);
 }
 
 template<class THandleType>
@@ -1503,6 +1571,21 @@ inline void HandleHolder<THandleType>::Acquire(THandleType handle)
 }
 
 template<class THandleType>
+inline void HandleHolder<THandleType>::Acquire(HandleHolder<THandleType> &other)
+{
+    if (&other != this)
+    {
+        Release();
+
+        if (other._smartHandle)
+        {
+            other._smartHandle->Acquire(this);
+            _smartHandle = other._smartHandle;
+        }
+    }
+}
+
+template<class THandleType>
 inline void HandleHolder<THandleType>::Release()
 {
     if (_smartHandle)
@@ -1512,7 +1595,6 @@ inline void HandleHolder<THandleType>::Release()
 
     _smartHandle = 0;
 }
-
 
 inline void HandlePool::Remove(void *ociHandle)
 {
@@ -1555,7 +1637,8 @@ inline void HandlePool::Unlock()
 
 template <class THandleType>
 template <class TSmartHandleType>
-inline HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::SmartHandle(HandleHolder<TSmartHandleType> *holder, TSmartHandleType handle, HandleFreeFunc func, Handle *parent) : _handle(handle), _func(func), _parent(parent)
+inline HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::SmartHandle(HandleHolder<TSmartHandleType> *holder, TSmartHandleType handle, HandleFreeFunc func, Handle *parent)
+    : _handle(handle), _func(func), _parent(parent), _extraInfo(0)
 {
     Acquire(holder);
 
@@ -1613,14 +1696,21 @@ template <class THandleType>
 template <class TSmartHandleType>
 inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::Release(HandleHolder<TSmartHandleType> *holder)
 {
-    holder->_smartHandle = 0;
-
     _holders.remove(holder);
 
     if (_holders.size() == 0)
     {
         delete this;
     }
+
+    holder->_smartHandle = 0;
+}
+
+template <class THandleType>
+template <class TSmartHandleType>
+inline bool HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::IsLastHolder(HandleHolder<TSmartHandleType> *holder)
+{
+    return ((_holders.size() == 1) && (*(_holders.begin()) == holder));
 }
 
 template <class THandleType>
@@ -1628,6 +1718,20 @@ template <class TSmartHandleType>
 inline TSmartHandleType HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetHandle()
 {
     return _handle;
+}
+
+template <class THandleType>
+template <class TSmartHandleType>
+inline void * HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetExtraInfos()
+{
+    return _extraInfo;
+}
+
+template <class THandleType>
+template <class TSmartHandleType>
+inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::SetExtraInfos(void *extraInfo)
+{
+    _extraInfo = extraInfo;
 }
 
 template <class THandleType>
@@ -1715,7 +1819,22 @@ inline void Environment::Cleanup()
     API::Call();
 }
 
-inline unsigned int Environment::GetCompiledVersion()
+inline unsigned int Environment::GetImportMode()
+{
+    return API::Call(OCI_GetImportMode());
+}
+
+inline unsigned int Environment::GetCharsetMetaData()
+{
+    return API::Call(OCI_GetCharsetMetaData());
+}
+
+inline unsigned int Environment::GetCharsetUserData()
+{
+    return API::Call(OCI_GetCharsetUserData());
+}
+
+inline unsigned int Environment::GetCompileVersion()
 {
     return API::Call(OCI_GetOCICompileVersion());
 }
@@ -1787,6 +1906,21 @@ inline void Environment::RunThread(ThreadHandle handle, ThreadProc func, void *a
 inline void Environment::JoinThread(ThreadHandle handle)
 {
     API::Call(OCI_ThreadJoin(handle));
+}
+
+inline void Environment::CreateThreadKey(mstring name, ThreadKeyFreeProc freeProc)
+{
+    API::Call(OCI_ThreadKeyCreate(name.c_str(), freeProc));
+}
+
+inline void Environment::ThreadKeySetValue(mstring name, void *value)
+{
+    API::Call(OCI_ThreadKeySetValue(name.c_str(), value));
+}
+
+inline void * Environment::ThreadKeyGetValue(mstring name)
+{
+    return API::Call(OCI_ThreadKeyGetValue(name.c_str()));
 }
 
 inline void Environment::SetHAHandler(HAHandlerProc handler)
@@ -2087,7 +2221,7 @@ inline bool Connection::GetServerOutput(mstring &line)
 {
     const mtext * str = API::Call(OCI_ServerGetOutput(*this));
 
-    line = str;
+    line = API::MakeString(str);
 
     return (str != 0);
 }
@@ -3005,6 +3139,12 @@ inline File Object::Get<File>(mstring name)
 }
 
 template<>
+inline void Object::Get<BufferPointer>(mstring name, BufferPointer &value, unsigned int &size)
+{
+    API::Call(OCI_ObjectGetRaw(*this,name.c_str(), value, size));
+}
+
+template<>
 inline void Object::Set<short>(mstring name, const short &value)
 {
     API::Call(OCI_ObjectSetShort(*this, name.c_str(), value));
@@ -3110,6 +3250,12 @@ template<>
 inline void Object::Set<File>(mstring name, const File &value)
 {
     API::Call(OCI_ObjectSetFile(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<BufferPointer>(mstring name, const BufferPointer & value, unsigned int size)
+{
+    API::Call(OCI_ObjectSetRaw(*this, name.c_str(), value, size));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3657,7 +3803,7 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetInData()
 
         unsigned int index = 0;
 
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemSize; it++, index++)
+        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount; it++, index++)
         {
             _data[index] = BindValue<TDataType>( *it);
         }
@@ -3673,7 +3819,7 @@ inline void BindArray::BindArrayObject<dstring, dtext>::SetInData()
 
         unsigned int index = 0;
 
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemSize; it++, index++)
+        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount; it++, index++)
         {
             dstring & value = *it;
 
@@ -3691,9 +3837,9 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetOutData()
 
         unsigned int index = 0;
 
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemSize; it++, index++)
+        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount; it++, index++)
         {
-            *it = _data[index];
+            *it = (TObjectType) _data[index];
         }
     }
 }
@@ -3707,7 +3853,7 @@ inline void BindArray::BindArrayObject<dstring, dtext>::SetOutData()
 
         unsigned int index = 0;
 
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemSize; it++, index++)
+        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount; it++, index++)
         {
             *it = (dtext*) (((dtext *) _data) + (_elemSize * index));
         }
@@ -3753,6 +3899,78 @@ inline BindString::operator dtext *()
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * BindsHolder
+ * --------------------------------------------------------------------------------------------- */
+
+inline BindsHolder::BindsHolder()
+{
+
+}
+
+inline BindsHolder::~BindsHolder()
+{
+    Clear();
+}
+
+inline void BindsHolder::Clear()
+{
+    std::vector<BindString *>::iterator its, its_end;
+
+    for(its = _bindStrings.begin(), its_end = _bindStrings.end(); its < its_end; its++)
+    {
+        delete (*its);
+    }
+
+    _bindStrings.clear();
+
+    std::vector<BindArray *>::iterator ita, ita_end;
+
+    for(ita = _bindArrays.begin(), ita_end = _bindArrays.end(); ita < ita_end; ita++)
+    {
+        delete (*ita);
+    }
+
+    _bindArrays.clear();
+}
+
+inline void BindsHolder::AddBindArray(BindArray *bindArray)
+{
+    _bindArrays.push_back(bindArray);
+}
+
+inline void BindsHolder::AddBindString(BindString *bindString)
+{
+    _bindStrings.push_back(bindString);
+}
+
+inline void BindsHolder::SetOutData()
+{
+    std::vector<BindString *>::iterator its, its_end;
+
+    for(its = _bindStrings.begin(), its_end = _bindStrings.end(); its < its_end; its++)
+    {
+        (*its)->SetOutData();
+    }
+
+    std::vector<BindArray *>::iterator ita, ita_end;
+
+    for(ita = _bindArrays.begin(), ita_end = _bindArrays.end(); ita < ita_end; ita++)
+    {
+        (*ita)->SetOutData();
+    }
+}
+
+inline void BindsHolder::SetInData()
+{
+    std::vector<BindArray *>::iterator ita, ita_end;
+
+    for(ita = _bindArrays.begin(), ita_end = _bindArrays.end(); ita < ita_end; ita++)
+    {
+        (*ita)->SetInData();
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * Statement
  * --------------------------------------------------------------------------------------------- */
 
@@ -3768,7 +3986,12 @@ inline Statement::Statement(OCI_Statement *stmt)
 
 inline Statement::~Statement()
 {
-    ClearBinds();
+    if (_smartHandle->IsLastHolder(this))
+    {
+        BindsHolder *bindsHolder = GetBindsHolder(false);
+
+        delete bindsHolder;
+    }
 }
 
 inline Connection Statement::GetConnection()
@@ -3816,12 +4039,12 @@ inline mstring Statement::GetSql()
     return API::MakeString(API::Call(OCI_GetSql(*this)));
 }
 
-inline Resultset Statement::GetResulset()
+inline Resultset Statement::GetResultset()
 {
    return Resultset(API::Call(OCI_GetResultset(*this)));
 }
 
-inline Resultset Statement::GetNextResulset()
+inline Resultset Statement::GetNextResultset()
 {
    return Resultset(API::Call(OCI_GetNextResultset(*this)));
 }
@@ -3860,7 +4083,8 @@ inline void Statement::Bind (TBindMethod &method, mstring name, std::vector<TObj
 {
     BindArray * bnd = new BindArray(values, datatype, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
 
-    _bindArrays.push_back(bnd);
+    BindsHolder *bindsHolder = GetBindsHolder(true);
+    bindsHolder->AddBindArray(bnd);
 
     API::Call(method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), 0));
     API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
@@ -3871,7 +4095,8 @@ inline void Statement::Bind (TBindMethod &method, mstring name, std::vector<TObj
 {
     BindArray * bnd = new BindArray(values, datatype, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
 
-    _bindArrays.push_back(bnd);
+    BindsHolder *bindsHolder = GetBindsHolder(true);
+    bindsHolder->AddBindArray(bnd);
 
     method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), type, 0);
     API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
@@ -3993,6 +4218,13 @@ inline void Statement::Bind<CLong, unsigned int>(mstring name, CLong &value, uns
 }
 
 template <>
+inline void Statement::Bind<CLong, int>(mstring name, CLong &value, int maxSize, unsigned int mode)
+{
+    Bind<CLong, unsigned int>(name, value, (unsigned int) maxSize,  mode);
+}
+
+
+template <>
 inline void Statement::Bind<BLong, unsigned int>(mstring name, BLong &value, unsigned int maxSize, unsigned int mode)
 {
     API::Call(OCI_BindLong(*this, name.c_str(), value, maxSize));
@@ -4000,26 +4232,24 @@ inline void Statement::Bind<BLong, unsigned int>(mstring name, BLong &value, uns
 }
 
 template <>
-inline void Statement::Bind<Long, int>(mstring name, Long &value, int maxSize, unsigned int mode)
+inline void Statement::Bind<BLong, int>(mstring name, BLong &value, int maxSize, unsigned int mode)
 {
-    Bind<Long, unsigned int>(name, value, (unsigned int) maxSize,  mode);
+    Bind<BLong, unsigned int>(name, value, (unsigned int) maxSize,  mode);
 }
 
 template <>
 inline void Statement::Bind<dstring, unsigned int>(mstring name, dstring &value, unsigned int maxSize, unsigned int mode)
 {
-    if (maxSize > 0)
+    if (maxSize == 0)
     {
-        BindString * bnd = new BindString(value, maxSize+1);
-        _bindStrings.push_back(bnd);
-
-        API::Call(OCI_BindString(*this, name.c_str(), (dtext*) (*bnd), maxSize));
-    }
-    else
-    {
-        API::Call(OCI_BindString(*this, name.c_str(), (dtext *) value.c_str(), value.size()));
+        maxSize = value.size();
     }
 
+    BindString * bnd = new BindString(value, maxSize+1);
+    BindsHolder *bindsHolder = GetBindsHolder(true);
+    bindsHolder->AddBindString(bnd);
+
+    API::Call(OCI_BindString(*this, name.c_str(), (dtext*) (*bnd), maxSize));
     API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
 }
 
@@ -4030,14 +4260,14 @@ inline void Statement::Bind<dstring, int>(mstring name, dstring &value, int maxS
 }
 
 template <>
-inline void Statement::Bind<void *, unsigned int>(mstring name, void * &value, unsigned int maxSize, unsigned int mode)
+inline void Statement::Bind<BufferPointer, unsigned int>(mstring name, BufferPointer &value, unsigned int maxSize, unsigned int mode)
 {
     API::Call(OCI_BindRaw(*this, name.c_str(), value, maxSize));
     API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
 }
 
 template <>
-inline void Statement::Bind<void *,  int>(mstring name, void * &value,  int maxSize, unsigned int mode)
+inline void Statement::Bind<BufferPointer,  int>(mstring name, BufferPointer &value,  int maxSize, unsigned int mode)
 {
      Bind<void *, unsigned int>(name, value, (unsigned int) maxSize,  mode);
 }
@@ -4161,7 +4391,8 @@ inline void Statement::Bind<dstring, unsigned int>(mstring name, std::vector<dst
 {
     BindArray * bnd = new BindArray(values, BindValue<dtext>(), mode, OCI_BindArrayGetSize(*this), maxSize+1);
 
-    _bindArrays.push_back(bnd);
+    BindsHolder *bindsHolder = GetBindsHolder(true);
+    bindsHolder->AddBindArray(bnd);
 
     API::Call(OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<dstring, dtext>(), maxSize, 0));
     API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
@@ -4174,18 +4405,19 @@ inline void Statement::Bind<dstring, int>(mstring name, std::vector<dstring> &va
 }
 
 template <>
-inline void Statement::Bind<void *, unsigned int>(mstring name, std::vector<void *> &values, unsigned int maxSize,  unsigned int mode)
+inline void Statement::Bind<BufferPointer, unsigned int>(mstring name, std::vector<BufferPointer> &values, unsigned int maxSize,  unsigned int mode)
 {
     BindArray * bnd = new BindArray(values, BindValue<void *>(), mode, OCI_BindArrayGetSize(*this), maxSize+1);
 
-    _bindArrays.push_back(bnd);
+    BindsHolder *bindsHolder = GetBindsHolder(true);
+    bindsHolder->AddBindArray(bnd);
 
     API::Call(OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<void *, void *>(), maxSize, 0));
     API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
 }
 
 template <>
-inline void Statement::Bind<void *, int>(mstring name, std::vector<void *> &values, int maxSize, unsigned int mode)
+inline void Statement::Bind<BufferPointer, int>(mstring name, std::vector<BufferPointer> &values, int maxSize, unsigned int mode)
 {
     Bind<void *, int>(name, values, ( unsigned int) maxSize, mode);
 }
@@ -4293,10 +4525,23 @@ inline void Statement::Register<dstring, unsigned int>(mstring name, unsigned in
 }
 
 template <>
-inline void Statement::Register<void *, unsigned int>(mstring name, unsigned int len)
+inline void Statement::Register<dstring, int>(mstring name, int len)
+{
+    Register<dstring, unsigned int>(name, len);
+}
+
+template <>
+inline void Statement::Register<BufferPointer, unsigned int>(mstring name, unsigned int len)
 {
     API::Call(OCI_RegisterRaw(*this, name.c_str(), len));
 }
+
+template <>
+inline void Statement::Register<BufferPointer, int>(mstring name, int len)
+{
+  Register<dstring, unsigned int>(name,(unsigned int) len);
+}
+
 
 inline unsigned int Statement::GetStatementType()
 {
@@ -4407,51 +4652,50 @@ inline void Statement::GetBatchErrors(std::vector<Exception> &exceptions)
 
 inline void Statement::ClearBinds()
 {
-    std::vector<BindString *>::iterator its, its_end;
+    BindsHolder *bindsHolder = GetBindsHolder(false);
 
-    for(its = _bindStrings.begin(), its_end = _bindStrings.end(); its < its_end; its++)
+    if (bindsHolder)
     {
-        delete (*its);
+         bindsHolder->Clear();
     }
-
-    _bindStrings.clear();
-
-    std::vector<BindArray *>::iterator ita, ita_end;
-
-    for(ita = _bindArrays.begin(), ita_end = _bindArrays.end(); ita < ita_end; ita++)
-    {
-        delete (*ita);
-    }
-
-    _bindArrays.clear();
 }
 
 inline void Statement::SetOutData()
 {
-    std::vector<BindString *>::iterator its, its_end;
+    BindsHolder *bindsHolder = GetBindsHolder(false);
 
-    for(its = _bindStrings.begin(), its_end = _bindStrings.end(); its < its_end; its++)
+    if (bindsHolder)
     {
-        (*its)->SetOutData();
-    }
-
-    std::vector<BindArray *>::iterator ita, ita_end;
-
-    for(ita = _bindArrays.begin(), ita_end = _bindArrays.end(); ita < ita_end; ita++)
-    {
-        (*ita)->SetOutData();
+        bindsHolder->SetOutData();
     }
 }
 
 inline void Statement::SetInData()
 {
-    std::vector<BindArray *>::iterator ita, ita_end;
+    BindsHolder *bindsHolder = GetBindsHolder(false);
 
-    for(ita = _bindArrays.begin(), ita_end = _bindArrays.end(); ita < ita_end; ita++)
+    if (bindsHolder)
     {
-        (*ita)->SetInData();
+        bindsHolder->SetInData();
     }
 }
+
+inline BindsHolder * Statement::GetBindsHolder(bool create)
+{
+    BindsHolder * bindsHolder = (BindsHolder *) _smartHandle->GetExtraInfos();
+
+    if (bindsHolder == 0 && create)
+    {
+        bindsHolder = new BindsHolder();
+        _smartHandle->SetExtraInfos(bindsHolder);
+    }
+
+    return bindsHolder;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * Resultset
+ * --------------------------------------------------------------------------------------------- */
 
 inline Resultset::Resultset(OCI_Resultset *resultset)
 {
