@@ -222,7 +222,7 @@ protected:
     HandleHolder();
     ~HandleHolder();
 
-    HandleHolder<THandleType>& operator= (HandleHolder<THandleType> &other);
+    HandleHolder<THandleType>& operator= (const HandleHolder<THandleType> &other);
 
     typedef boolean (OCI_API *HandleFreeFunc)(void *handle);
 
@@ -1513,7 +1513,7 @@ inline HandleHolder<THandleType>::~HandleHolder()
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (HandleHolder<THandleType> &other)
+inline HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (const HandleHolder<THandleType> &other)
 {
     Acquire(other);
     return *this;
