@@ -30,6 +30,7 @@
 
 #include "ocilib.hpp"
 
+
 using namespace ocilib;
 
 #include <iostream>
@@ -47,8 +48,16 @@ using namespace ocilib;
 
 #define ARG_COUNT  5
 
+#define SIZE_STR   260
 #define SIZE_BUF   2048
 #define SIZE_TAB   5
+
+#define SIZE_ARRAY 100
+#define NB_LOAD    10
+#define SIZE_COL1  20
+#define SIZE_COL2  30
+#define SIZE_COL3  8
+#define NUM_COLS   3
 
 #ifndef OCI_SHARED_LIB
     #if defined(_WINDOWS)
@@ -202,7 +211,7 @@ int mtmain(int argc, mtext* argv[])
                 tab_test[i].proc();
         }
 
-        drop_tables();        
+        drop_tables();
         con.Close();
     }
     catch(Exception &ex)
@@ -214,8 +223,8 @@ int mtmain(int argc, mtext* argv[])
 
     std::cout << "\nPress any key to exit...";
 
-    getchar(); 
- 
+    getchar();
+
     return EXIT_SUCCESS;
 }
 
@@ -538,7 +547,7 @@ void test_piecewise_insert(void)
         std::streamoff size = file.tellg();
         file.seekg (0, std::ios::beg);
         std::cout << std::endl << size << " bytes to write" << std::endl;
-              
+
         Statement st(con);
         BLong lg(st);
         st.Prepare(MT("insert into test_long_raw(code, content values (1, :data)"));
@@ -554,7 +563,7 @@ void test_piecewise_insert(void)
         }
 
         std::cout << std::endl << lg.GetSize() << " bytes written" << std::endl;
-        
+
         file.close();
         con.Commit();
     }
@@ -575,7 +584,7 @@ void test_piecewise_fetch(void)
     while (rs1.Next())
     {
         BLong lg = rs1.Get<BLong>(1);
-        
+
         char buffer[SIZE_BUF];
         int bytesRead;
 
@@ -613,7 +622,7 @@ void test_lob(void)
 
     Statement st(con);
     st.Execute(MT("select code, content from test_lob where code=1 for update"));
-    
+
     Resultset rs= st.GetResultset();
     while (rs.Next())
     {
@@ -641,7 +650,7 @@ void test_nested_table(void)
 
     Statement st(con);
     st.Execute(MT("select article, cursor(select sysdate from dual) from test_fetch"));
-    
+
     Resultset rs= st.GetResultset();
     while (rs.Next())
     {
@@ -704,8 +713,8 @@ void test_plsql(void)
 #ifndef OCI_CHARSET_ANSI
 
    /* Oracle 8i has some troubles with SERVER OUTPUT in unicode */
-   if (con.GetRuntimeVersion() < OCI_9_0) 
-        return;     
+   if (con.GetRuntimeVersion() < OCI_9_0)
+        return;
 
 #endif
 
@@ -752,7 +761,7 @@ void test_dates(void)
     std::cout << "Date + 5 days and 2 months is " << d1.ToString("DD/MM/YYYY HH24:MI:SS") << std::endl;
 
     d2.Assign(d1);
-        
+
     d1.LastDay();
     std::cout << "Last day of the month : " << d1.ToString("DD/MM/YYYY HH24:MI:SS") << std::endl;
 
@@ -817,8 +826,8 @@ void test_describe(void)
     {
         Column col = table.GetColumn(i);
 
-        std::cout <<  std::setw(20) << col.GetName().c_str() 
-                  <<  std::setw(20) << col.GetFullSQLType().c_str() 
+        std::cout <<  std::setw(20) << col.GetName().c_str()
+                  <<  std::setw(20) << col.GetFullSQLType().c_str()
                   <<  std::endl;
     }
 
@@ -835,10 +844,10 @@ void test_describe(void)
     {
         Column col = type.GetColumn(i);
 
-        std::cout <<  std::setw(20) << col.GetName().c_str() 
-                  <<  std::setw(20) << col.GetFullSQLType().c_str() 
+        std::cout <<  std::setw(20) << col.GetName().c_str()
+                  <<  std::setw(20) << col.GetFullSQLType().c_str()
                   <<  std::endl;
-    }  
+    }
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -866,7 +875,7 @@ void test_returning(void)
     }
 
     con.Commit();
- 
+
     std::cout << std::endl << rs.GetCount() << " row(s) fetched" << std::endl;
 }
 
@@ -885,13 +894,13 @@ void test_returning_array(void)
     std::vector<Date>    tab_date;
     std::vector<Clob>    tab_lob;
     std::vector<File>    tab_file;
-        
+
     for(int i = 0; i < SIZE_TAB; i++)
     {
         tab_int.push_back(i+1);
         tab_dbl.push_back(3.14*(double)(i+1));
         tab_flt.push_back((float) 3.14*(float)(i+1));
- 
+
         dstring str;
         str += "Name";
         str += ( (i+1) +'0');
@@ -951,12 +960,14 @@ void test_returning_array(void)
     st.Execute();
     std::cout << std::endl << st.GetAffectedRows() << " row(s) inserted" << std::endl;
 
+    int rowIndex = 0;
+
     Resultset rs = st.GetResultset();
     while (!rs.IsNull())
     {
         while (rs.Next())
         {
-            std::cout << "Row #" << rs.GetCount() << "---------------" << std::endl;
+            std::cout << "Row #" << ++rowIndex << "---------------" << std::endl;
 
             std::cout << ".... val_int    : " << rs.Get<int>(MT(":OUT_INT"))     << std::endl;
             std::cout << ".... val_dbl    : " << rs.Get<double>(MT(":OUT_DBL"))  << std::endl;
@@ -1001,7 +1012,7 @@ void test_object_insert(void)
     obj1.Set<double> (MT("VAL_DBL"), 3.14);
     obj1.Set<float>  (MT("VAL_FLT"), (float) 3.14);
     obj1.Set<dstring>(MT("VAL_STR"), DT("USB KEY 2go"));
-    obj1.Set<void *> (MT("VAL_RAW"), "0123456789", 10);
+    obj1.Set<void *> (MT("VAL_RAW"), (void*) "0123456789", 10);
     obj1.Set<Date>   (MT("VAL_DATE"), date);
     obj1.Set<Object> (MT("VAL_OBJ"), obj2);
     obj1.Set<Clob>   (MT("VAL_LOB"), clob);
@@ -1013,6 +1024,6 @@ void test_object_insert(void)
     st.Execute();
 
     std::cout << "Rows inserted :  " << st.GetAffectedRows() << std::endl;
- 
+
     con.Commit();
 }

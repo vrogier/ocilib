@@ -1573,7 +1573,7 @@ inline void HandleHolder<THandleType>::Acquire(THandleType handle)
 template<class THandleType>
 inline void HandleHolder<THandleType>::Acquire(HandleHolder<THandleType> &other)
 {
-    if (&other != this)
+    if (&other != this && _smartHandle != other._smartHandle)
     {
         Release();
 
