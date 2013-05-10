@@ -91,19 +91,20 @@ class CollectionIterator;
 class Clob;
 class Blob;
 class File;
+class Pool;
+class CLong;
+class BLong;
+class Column;
 class Subscription;
+class Event;
+
+/*
 class Queue;
 class Dequeue;
 class Enqueue;
-class Pool;
 class Message;
-class CLong;
-class BLong;
-class HashTable;
-class Event;
-class Element;
-class Column;
 class Agent;
+*/
 
 template <class TDataType>
 class ManagedPtr;
@@ -115,7 +116,7 @@ class ManagedPtr;
  *
  *
  */
-typedef void (*HAHandlerProc) (const Connection &con, unsigned int source, unsigned int event, const Timestamp  &time);
+typedef void (*HAHandlerProc) (Connection &con, unsigned int source, unsigned int event, Timestamp  &time);
 
 /**
  * @typedef TAFHandlerProc
@@ -124,7 +125,17 @@ typedef void (*HAHandlerProc) (const Connection &con, unsigned int source, unsig
  *
  *
  */
-typedef void (*TAFHandlerProc) (const Connection &con, unsigned int type, unsigned int event);
+typedef void (*TAFHandlerProc) (Connection &con, unsigned int type, unsigned int event);
+
+/**
+ * @typedef NotifyHandlerProc
+ *
+ * @brief
+ *
+ *
+ */
+typedef void (*NotifyHandlerProc) (Event &evt);
+
 
 /**
  * @namespace API
@@ -144,7 +155,13 @@ namespace API
     std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > MakeString(const TCharType *result);
 }
 
-
+/**
+ * @class ManagedBuffer
+ *
+ * @brief
+ *
+ *
+ */
 template< typename TBufferType>
 class ManagedBuffer
 {
@@ -164,6 +181,36 @@ private:
 };
 
 /**
+ * @class ConcurrentPool
+ *
+ * @brief
+ *
+ *
+ */
+template <class TKey, class TValue>
+class ConcurrentPool
+{
+public:
+
+    void Initialize(unsigned int envMode);
+    void Release();
+
+    void Remove(TKey key);
+    TValue Get(TKey key);
+    void Set(TKey key, TValue value);
+
+private:
+
+    typedef std::map< TKey, TValue > ConcurrentPoolMap;
+
+    ConcurrentPoolMap _map;
+    MutexHandle _mutex;
+
+    void Lock();
+    void Unlock();
+};
+
+/**
  * @class Handle
  *
  * @brief
@@ -176,23 +223,6 @@ public:
 
     virtual std::list<Handle *> & GetChildren() = 0;
 
-};
-
-
-class HandlePool
-{
-public:
-
-    void Remove(void * ociHandle);
-    Handle * Get(void *ociHandle);
-    void Set(void * ociHandle, Handle *Handle);
-
-private:
-
-    std::map<void *, Handle * > _map;
-
-    void Lock();
-    void Unlock();
 };
 
 /**
@@ -311,6 +341,7 @@ private:
 class Environment
 {
     friend class Connection;
+    friend class Subscription;
     template<class THandleType>
     friend class HandleHolder;
 
@@ -318,6 +349,8 @@ public:
 
     static void Initialize(unsigned int mode = OCI_ENV_DEFAULT, mstring libpath = MT(""));
     static void Cleanup();
+
+    static unsigned int GetMode();
 
     static unsigned int GetImportMode();
 
@@ -355,12 +388,34 @@ public:
 
 private:
 
-    static unsigned int &GetMode();
+    typedef ConcurrentPool<void *, Handle *> HandlePool;
+    typedef ConcurrentPool<void*, void*> CallbackPool;
 
-    static HAHandlerProc &GetHAHandler();
+    struct EnvironmentData
+    {
+        HandlePool   handlePool;
+        CallbackPool callbackPool;
+        unsigned int mode;
+
+        void Initialize(unsigned int envMode)
+        {
+            mode = envMode;
+            callbackPool.Initialize(envMode);
+            handlePool.Initialize(envMode);
+        }
+
+        void Release()
+        {
+            callbackPool.Release();
+            handlePool.Release();
+        }
+    };
+
+    static EnvironmentData& GetEnvironmentData();
+
     static void HAHandler(OCI_Connection *con, unsigned int source, unsigned int event, OCI_Timestamp  *time);
-
-    static HandlePool &GetHandlePool();
+    static void TAFHandler(OCI_Connection *con, unsigned int type, unsigned int event);
+    static void NotifyHandler(OCI_Event *event);
 };
 
 
@@ -427,6 +482,7 @@ class Connection : public HandleHolder<OCI_Connection *>
     friend class Reference;
     friend class Resultset;
     friend class Collection;
+    friend class Subscription;
 
 public:
 
@@ -502,9 +558,6 @@ private:
 
     Connection(OCI_Connection *con, Handle *parent = NULL);
 
-    static void TAFHandler(OCI_Connection *con, unsigned int type, unsigned int event);
-
-    TAFHandlerProc _tafHandler;
 };
 
 /**
@@ -1412,7 +1465,64 @@ public:
 
 private:
 
-    Column(OCI_Column *column);
+    Column(OCI_Column *pColumn);
+};
+
+/**
+ * @class Column
+ *
+ * @brief
+ *
+ *
+ */
+class Subscription : public HandleHolder<OCI_Subscription *>
+{
+    friend class Event;
+
+public:
+
+    Subscription();
+
+    void Register(const Connection &con, mstring name, unsigned int type, NotifyHandlerProc handler, unsigned int port = 0, unsigned int timeout = 0);
+    void Unregister();
+
+    void Watch(mstring sql);
+
+    mstring GetName();
+    unsigned int GetTimeout();
+    unsigned int GetPort();
+
+    Connection GetConnection();
+
+private:
+
+    Subscription(OCI_Subscription *pSubcription);
+};
+
+/**
+ * @class Column
+ *
+ * @brief
+ *
+ *
+ */
+class Event : public HandleHolder<OCI_Event *>
+{
+    friend class Subscription;
+    friend class Environment;
+
+public:
+
+    unsigned int GetType();
+    unsigned int GetOperation();
+    mstring GetDatabaseName();
+    mstring GetObjectName();
+    mstring GetRowID();
+    Subscription GetSubscription();
+
+private:
+
+    Event(OCI_Event *pEvent);
 };
 
 /* ********************************************************************************************* *
@@ -1554,13 +1664,13 @@ inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFun
 {
     _smartHandle = new HandleHolder::SmartHandle<THandleType>(this, handle, func, parent);
 
-    Environment::GetHandlePool().Set(handle, _smartHandle);
+   Environment::GetEnvironmentData().handlePool.Set(handle, _smartHandle);
 }
 
 template<class THandleType>
 inline void HandleHolder<THandleType>::Acquire(THandleType handle)
 {
-    _smartHandle = dynamic_cast<SmartHandle<THandleType> *>(Environment::GetHandlePool().Get(handle));
+    _smartHandle = dynamic_cast<SmartHandle<THandleType> *>(Environment::GetEnvironmentData().handlePool.Get(handle));
 
     if (!_smartHandle)
     {
@@ -1596,43 +1706,72 @@ inline void HandleHolder<THandleType>::Release()
     _smartHandle = 0;
 }
 
-inline void HandlePool::Remove(void *ociHandle)
+template <class TKey, class TValue>
+inline void ConcurrentPool<TKey, TValue>::Initialize(unsigned int envMode)
+{
+    if (envMode & OCI_ENV_THREADED)
+    {
+        _mutex = Environment::CreateMutex();
+    }
+}
+
+template <class TKey, class TValue>
+inline void ConcurrentPool<TKey, TValue>::Release()
+{
+    if (_mutex)
+    {
+        Environment::DestroyMutex(_mutex);
+    }
+}
+
+template <class TKey, class TValue>
+inline void ConcurrentPool<TKey, TValue>::Remove(TKey key)
 {
     Lock();
-    _map.erase(ociHandle);
+    _map.erase(key);
     Unlock();
 }
 
-inline Handle * HandlePool::Get(void *ociHandle)
+template <class TKey, class TValue>
+inline TValue ConcurrentPool<TKey, TValue>::Get(TKey key)
 {
-    Handle *handle = 0;
+    TValue value = 0;
 
     Lock();
-    std::map<void *, Handle *>::iterator it = _map.find(ociHandle);
+    ConcurrentPoolMap::iterator it = _map.find(key);
     if (it != _map.end() )
     {
-        handle = it->second;
+        value = it->second;
     }
     Unlock();
 
-    return handle;
+    return value;
 }
 
-inline void HandlePool::Set(void *ociHandle, Handle *handle)
+template <class TKey, class TValue>
+inline void ConcurrentPool<TKey, TValue>::Set(TKey key, TValue value)
 {
     Lock();
-    _map[ociHandle] = handle;
+    _map[key] = value;
     Unlock();
 }
 
-inline void HandlePool::Lock()
+template <class TKey, class TValue>
+inline void ConcurrentPool<TKey, TValue>::Lock()
 {
-
+    if (_mutex)
+    {
+        Environment::AcquireMutex(_mutex);
+    }
 }
 
-inline void HandlePool::Unlock()
+template <class TKey, class TValue>
+inline void ConcurrentPool<TKey, TValue>::Unlock()
 {
-
+    if (_mutex)
+    {
+        Environment::ReleaseMutex(_mutex);
+    }
 }
 
 template <class THandleType>
@@ -1673,7 +1812,7 @@ inline HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::~SmartHandle()
             delete handle;
         }
 
-        Environment::GetHandlePool().Remove(_handle);
+        Environment::GetEnvironmentData().handlePool.Remove(_handle);
 
         ret = _func(_handle);
         chk = TRUE;
@@ -1807,16 +1946,23 @@ inline void Environment::Initialize(unsigned int mode, mstring libpath)
 
     OCI_Initialize(0, libpath.c_str(),  mode);
 
-    GetMode() =  mode;
+    GetEnvironmentData().Initialize(mode);
 
     API::Call();
 }
 
 inline void Environment::Cleanup()
 {
+    GetEnvironmentData().Release();
+
     OCI_Cleanup();
 
     API::Call();
+}
+
+inline unsigned int Environment::GetMode()
+{
+    return GetEnvironmentData().mode;
 }
 
 inline unsigned int Environment::GetImportMode()
@@ -1925,19 +2071,16 @@ inline void * Environment::ThreadKeyGetValue(mstring name)
 
 inline void Environment::SetHAHandler(HAHandlerProc handler)
 {
-    GetHAHandler() = handler;
-}
+    Environment::CallbackPool & pool = GetEnvironmentData().callbackPool;
 
-inline HAHandlerProc & Environment::GetHAHandler()
-{
-    static HAHandlerProc _haHandler;
+    API::Call(OCI_SetHAHandler((POCI_HA_HANDLER ) (handler != 0 ? Environment::HAHandler : 0 )));
 
-    return _haHandler;
+    pool.Set(&GetEnvironmentData(), (void*) handler);
 }
 
 inline void Environment::HAHandler(OCI_Connection *con, unsigned int source, unsigned int event, OCI_Timestamp  *time)
 {
-    HAHandlerProc &handler = GetHAHandler();
+    HAHandlerProc handler = (HAHandlerProc) GetEnvironmentData().callbackPool.Get(&GetEnvironmentData());
 
     if (handler)
     {
@@ -1945,18 +2088,31 @@ inline void Environment::HAHandler(OCI_Connection *con, unsigned int source, uns
     }
 }
 
-inline HandlePool & Environment::GetHandlePool()
+inline void Environment::TAFHandler(OCI_Connection *con, unsigned int type, unsigned int event)
 {
-    static HandlePool pool;
+    TAFHandlerProc handler = (TAFHandlerProc) GetEnvironmentData().callbackPool.Get(con);
 
-    return pool;
+    if (handler)
+    {
+        handler(Connection(con), type, event);
+    }
 }
 
-inline unsigned int & Environment::GetMode()
+inline void Environment::NotifyHandler(OCI_Event *event)
 {
-    static unsigned int mode;
+    NotifyHandlerProc handler = (NotifyHandlerProc) GetEnvironmentData().callbackPool.Get(API::Call(OCI_EventGetSubscription(event)));
 
-    return mode;
+    if (handler)
+    {
+        handler(Event(event));
+    }
+}
+
+inline Environment::EnvironmentData & Environment::GetEnvironmentData()
+{
+    static EnvironmentData envData;
+
+    return envData;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2304,9 +2460,11 @@ inline bool Connection::IsTAFCapable()
 
 inline void Connection::SetTAFHandler(TAFHandlerProc handler)
 {
-    _tafHandler = handler;
+    Environment::CallbackPool & pool = Environment::GetEnvironmentData().callbackPool;
 
-    API::Call(OCI_SetTAFHandler(*this, (POCI_TAF_HANDLER ) (_tafHandler != 0 ? TAFHandler : 0 )));
+    API::Call(OCI_SetTAFHandler(*this, (POCI_TAF_HANDLER ) (handler != 0 ? Environment::TAFHandler : 0 )));
+
+    pool.Set((OCI_Connection*) *this, (void*) handler);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3674,7 +3832,7 @@ inline dstring CLong::GetContent()
 
 inline BLong::BLong(const Statement &statement)
 {
-    Acquire(API::Call(OCI_LongCreate(statement, OCI_CLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
+    Acquire(API::Call(OCI_LongCreate(statement, OCI_BLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
 }
 
 inline BLong::BLong(OCI_Long *pLong)
@@ -3986,7 +4144,7 @@ inline Statement::Statement(OCI_Statement *stmt)
 
 inline Statement::~Statement()
 {
-    if (_smartHandle->IsLastHolder(this))
+    if (_smartHandle && _smartHandle->IsLastHolder(this))
     {
         BindsHolder *bindsHolder = GetBindsHolder(false);
 
@@ -5024,10 +5182,9 @@ inline BLong Resultset::Get<BLong>(mstring name)
  * Column
  * --------------------------------------------------------------------------------------------- */
 
-
-inline Column::Column(OCI_Column *column)
+inline Column::Column(OCI_Column *pColumn)
 {
-    Acquire(column);
+    Acquire(pColumn);
 }
 
 inline mstring Column::GetName()
@@ -5106,7 +5263,100 @@ inline TypeInfo Column::GetTypeInfo()
     return TypeInfo(API::Call(OCI_ColumnGetTypeInfo(*this)));
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * Subscription
+ * --------------------------------------------------------------------------------------------- */
 
+inline Subscription::Subscription()
+{
+
+}
+
+inline Subscription::Subscription(OCI_Subscription *pSubcription)
+{
+    Acquire(pSubcription);
+}
+
+inline void Subscription::Register(const Connection &con, mstring name, unsigned int type, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
+{
+    Acquire(API::Call(OCI_SubscriptionRegister(con, name.c_str(), type, (POCI_NOTIFY) (handler != 0 ? Environment::NotifyHandler : 0 ), port, timeout)), (HandleFreeFunc) OCI_SubscriptionUnregister, 0);
+
+    Environment::GetEnvironmentData().callbackPool.Set((OCI_Subscription*) *this, (void*) handler);
+}
+
+inline void Subscription::Unregister()
+{
+    Environment::GetEnvironmentData().callbackPool.Remove(*this);
+    Release();
+}
+
+inline void Subscription::Watch(mstring sql)
+{
+    Statement st(GetConnection());
+
+    st.Execute(sql);
+   
+    API::Call(OCI_SubscriptionAddStatement(*this, st));
+}
+
+inline mstring Subscription::GetName()
+{
+    return API::MakeString(API::Call(OCI_SubscriptionGetName(*this)));  
+}
+
+inline unsigned int Subscription::GetTimeout()
+{
+    return API::Call(OCI_SubscriptionGetTimeout(*this));
+}
+
+inline unsigned int Subscription::GetPort()
+{
+    return API::Call(OCI_SubscriptionGetPort(*this));
+}
+
+inline Connection Subscription::GetConnection()
+{
+    return Connection(API::Call(OCI_SubscriptionGetConnection(*this)));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * Event
+ * --------------------------------------------------------------------------------------------- */
+
+inline Event::Event(OCI_Event *pEvent)
+{
+    Acquire(pEvent);
+}
+
+inline unsigned int Event::GetType()
+{
+    return API::Call(OCI_EventGetType(*this));
+}
+
+inline unsigned int Event::GetOperation()
+{
+    return API::Call(OCI_EventGetOperation(*this));
+}
+
+inline mstring Event::GetDatabaseName()
+{
+    return API::MakeString(API::Call(OCI_EventGetDatabase(*this)));  
+}
+
+inline mstring Event::GetObjectName()
+{
+    return API::MakeString(API::Call(OCI_EventGetObject(*this))); 
+}
+
+inline mstring Event::GetRowID()
+{
+    return API::MakeString(API::Call(OCI_EventGetRowid(*this))); 
+}
+
+inline Subscription Event::GetSubscription()
+{
+    return Subscription(API::Call(OCI_EventGetSubscription(*this)));
+}
 
 }
 
