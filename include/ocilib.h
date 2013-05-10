@@ -148,7 +148,7 @@ extern "C" {
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef _WINDOWS
-  #if defined(_WIN32) || defined(_WIN64) ||defined(_WIN32_WINNT)
+  #if defined(_WIN32)|| defined(WIN32) || defined(_WIN64) || defined(WIN64) || defined(_WIN32_WINNT)
     #define _WINDOWS
   #endif
 #endif
@@ -17347,6 +17347,24 @@ OCI_EXPORT unsigned int OCI_API OCI_SubscriptionGetTimeout
 (
     OCI_Subscription *sub
 );
+
+/**
+ * @brief
+ * Return the connection handle associated with a subscription handle
+ *
+ * @param sub - Subscription handle
+ *
+ * @note
+ * It may return a NULL handle if the connection used in OCI_SubscriptionRegister has been closed
+ * subscriptions
+ *
+ */
+
+OCI_EXPORT OCI_Connection * OCI_API OCI_SubscriptionGetConnection
+(
+OCI_Subscription *sub
+);
+
 
 /**
  * @brief

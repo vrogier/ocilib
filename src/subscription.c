@@ -506,3 +506,20 @@ unsigned int OCI_API OCI_SubscriptionGetTimeout
     return sub->timeout;
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_SubscriptionGetConnection
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Connection * OCI_API OCI_SubscriptionGetConnection
+(
+    OCI_Subscription *sub
+)
+{
+    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, NULL);
+
+    OCI_RESULT(TRUE);
+
+    return sub->con;
+}
+
+
