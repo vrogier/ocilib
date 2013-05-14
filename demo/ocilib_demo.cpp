@@ -146,11 +146,11 @@ test_t tab_test[] =
         {test_describe,          TRUE},
         {test_returning,         TRUE},
         {test_returning_array,   TRUE},
-        {test_object_insert,     TRUE}/*,
+        {test_object_insert,     TRUE},
         {test_object_fetch,      TRUE},
         {test_scrollable_cursor, TRUE},
         {test_collection,        TRUE},
-        {test_ref,               TRUE},
+        {test_ref,               TRUE}/*,
         {test_directpath,        FALSE}*/
 };
 
@@ -227,7 +227,6 @@ int mtmain(int argc, mtext* argv[])
 
     return EXIT_SUCCESS;
 }
-
 
 /* --------------------------------------------------------------------------------------------- *
  * print_version
@@ -997,6 +996,7 @@ void test_object_insert(void)
     std::cout << "\n>>>>> TEST OBJECT BINDING \n\n";
 
     Clob clob(con);
+    clob.Write("Lob Value");
     File file(con,  MT("mydir"), MT("myfile"));
     Date date;
     date.SysDate();
@@ -1026,4 +1026,201 @@ void test_object_insert(void)
     std::cout << "Rows inserted :  " << st.GetAffectedRows() << std::endl;
 
     con.Commit();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * test_object_fetch
+ * --------------------------------------------------------------------------------------------- */
+
+void test_object_fetch(void)
+{
+    std::cout << "\n>>>>> TEST OBJECT FETCHING \n\n";
+
+    Statement st(con);
+    st.Execute(MT("select val from test_object for update"));
+
+    Resultset rs = st.GetResultset();
+
+    while (rs.Next())
+    {
+        Object obj  = rs.Get<Object>(1);
+
+        std::cout << ".... val_int      : " << obj.Get<int>(MT("VAL_INT"))     << std::endl;
+        std::cout << ".... val_dbl      : " << obj.Get<double>(MT("VAL_DBL"))  << std::endl;
+        std::cout << ".... val_flt      : " << obj.Get<float>(MT("VAL_FLT"))   << std::endl;
+        std::cout << ".... val_str      : " << obj.Get<dstring>(MT("VAL_STR")) << std::endl;
+
+        Date date = obj.Get<Date>(MT("VAL_DATE"));
+        std::cout << ".... val_date     : " << date.ToString(MT("YYYY-MM-DD HH24:MI:SS")) << std::endl;
+
+        Clob clob = obj.Get<Clob>(MT("VAL_LOB"));
+        std::cout << ".... val_lob      : " << clob.Read(SIZE_BUF) << std::endl;
+
+        File file = obj.Get<File>(MT("VAL_FILE"));
+        std::cout << ".... val_file     : " << file.GetDirectory() << "/" << file.GetName() << std::endl;
+
+        char buffer[11];
+        unsigned int len = 10;
+        obj.Get<void *>(MT("VAL_RAW"), (BufferPointer) &buffer, len);
+        buffer[len] = 0;
+        std::cout << ".... val_raw      : " << buffer << std::endl;
+
+        Object obj2 = obj.Get<Object>("VAL_OBJ");
+        std::cout << ".... val_obj.code : " << obj2.Get<int>(MT("ID"))       << std::endl;
+        std::cout << ".... val_obj.name : " << obj2.Get<dstring>(MT("NAME")) << std::endl;
+    }
+
+    con.Commit();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * test_scrollable_cursor
+ * --------------------------------------------------------------------------------------------- */
+
+void test_scrollable_cursor(void)
+{
+    if (Environment::GetRuntimeVersion() > OCI_9_0)
+    {   
+        std::cout << "\n>>>>> TEST SCROLLABLE CURSORS \n\n";
+
+        Statement st(con);
+        
+        st.SetFetchMode(OCI_SFM_SCROLLABLE);
+        st.Execute(MT("select table_name from user_tables where ")
+                   MT("table_name like 'TEST_%' order by table_name"));
+   
+        Resultset rs = st.GetResultset();
+        
+        rs.Last();
+        std::cout << "Total rows : " << rs.GetCount() << std::endl;
+        
+        std::cout << "... Go to row 1\n";
+        rs.First();
+        std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+
+        std::cout << "... Enumerate from row 2 to row " << rs.GetCount() << " " << std::endl;
+        while (rs.Next())
+        {
+            std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+        }
+
+        std::cout << "... Enumerate from row " << rs.GetCount() -1  << " back to row 1" << std::endl;
+        std::cout << "table " << rs.Get<dstring>(1) << std::endl;while (rs.Prev())
+        {
+            std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+        }
+
+        std::cout << "... Go to the 3th row" << std::endl;
+        rs.Seek(OCI_SFD_ABSOLUTE, 3);
+        std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+
+        std::cout <<"... Fetch the next 2 rows" << std::endl;
+        while (rs.GetCurrentRow() < 5 && rs.Next())
+        {
+            std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+        }
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * test_collection
+ * --------------------------------------------------------------------------------------------- */
+void test_collection(void)
+{
+    std::cout << "\n>>>>> TEST VARRAY BINDING WITH ITERATOR \n\n";
+
+    int i;
+
+    Statement st(con);
+    TypeInfo type(con, MT("T_TAB1_EMP"), OCI_TIF_TYPE);
+    Collection coll(type);
+
+    st.Prepare( MT("begin")
+                MT("    select employees into :tab_emp ")
+                MT("    from test_coll_varray ")
+                MT("    where departement = :id; ")
+                MT("end;"));
+
+    st.Bind(MT(":tab_emp"), coll, OCI_BDM_IN);
+    st.Bind(MT(":id"), i, OCI_BDM_IN);
+
+    i = 1;
+
+    st.Execute();
+
+    std::cout << "Department ID #" << i << std::endl;
+
+    CollectionIterator iter(coll);
+    while (iter.Next())
+    {
+        std::cout << "... Employee : " << iter.Get<dstring>() << std::endl;
+    }
+
+    std::cout << "\n>>>>> TEST VARRAY FETCHING WITH ITERATOR \n\n";
+
+    st.Execute(MT("SELECT * from test_coll_varray"));
+ 
+    Resultset rs = st.GetResultset();
+    while (rs.Next())
+    {
+        std::cout << "Department ID #" << rs.Get<int>(1) << std::endl;
+
+        coll = rs.Get<Collection>(2);
+        CollectionIterator iter2(coll);
+        while (iter2.Next())
+        {
+            std::cout << "... Employee : " << iter2.Get<dstring>() << std::endl;
+        }
+    }
+
+    std::cout << "\n>>>>> TEST NESTED TABLE FETCHING WITH INDEX ACCESS \n\n";
+
+    st.Execute(MT("SELECT * from test_coll_nested"));
+
+    rs = st.GetResultset();
+    while (rs.Next())
+    {
+        std::cout << "Department ID #" << rs.Get<int>(1) << std::endl;
+
+        coll = rs.Get<Collection>(2);
+        for(int index = 1, n = coll.GetSize(); index <= n; index++)
+        {
+            std::cout << "... Employee : " << coll.Get<dstring>(index) << std::endl;
+        }
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * test_ref
+ * --------------------------------------------------------------------------------------------- */
+void test_ref(void)
+{
+    std::cout << "\n>>>>> TEST REF FETCHING \n\n";
+
+    Statement st(con);
+
+    st.Execute(MT("select ref(e) from test_table_obj e"));
+
+    Resultset rs = st.GetResultset();
+    while (rs.Next())
+    {
+        Reference ref = rs.Get<Reference>(1);
+        Object   obj  = ref.GetObject();
+        
+        std::cout << obj.Get<int>(MT("ID")) << " - " << obj.Get<dstring>(MT("NAME")) << std::endl;
+    }
+
+    std::cout << "\n>>>>> TEST REF PL/SQL BINDING \n\n";
+
+    Reference ref(TypeInfo(con, MT("type_t"), OCI_TIF_TYPE));
+
+    st.Prepare (MT("begin ")
+                MT("  select ref(e) into :r from test_table_obj e where e.id = 1; ")
+                MT("end; "));
+
+    st.Bind(MT(":r"), ref, OCI_BDM_IN_OUT);
+    st.Execute();
+
+    Object obj = ref.GetObject();
+    std::cout << obj.Get<int>(MT("ID")) << " - " << obj.Get<dstring>(MT("NAME")) << std::endl;
 }

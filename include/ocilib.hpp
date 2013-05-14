@@ -248,7 +248,7 @@ protected:
     template <class TSmartHandleType>
     class SmartHandle;
 
-    HandleHolder(const HandleHolder &src);
+    HandleHolder(const HandleHolder &other);
     HandleHolder();
     ~HandleHolder();
 
@@ -259,7 +259,6 @@ protected:
     Handle* GetHandle() const;
 
 	void Acquire(THandleType handle, HandleFreeFunc func, Handle *parent);
-    void Acquire(THandleType handle);
     void Acquire(HandleHolder<THandleType> &other);
     void Release();
 
@@ -276,6 +275,13 @@ protected:
 
         TSmartHandleType GetHandle();
 
+        Handle *GetParent()
+        {
+            return _parent;
+        }
+
+        void DetachFromHolders();
+
         void * GetExtraInfos();
         void   SetExtraInfos(void *extraInfo);
 
@@ -284,8 +290,6 @@ protected:
         std::list<Handle *> & GetChildren();
 
     private:
-
-        void DetachFromHolders();
 
         std::list<HandleHolder<TSmartHandleType> *> _holders;
         std::list<Handle *>  _children;
@@ -556,7 +560,7 @@ public:
 
 private:
 
-    Connection(OCI_Connection *con, Handle *parent = NULL);
+    Connection(OCI_Connection *con, Handle *parent);
 
 };
 
@@ -637,7 +641,7 @@ public:
 
 private:
 
-    Date(OCI_Date *pDate);
+    Date(OCI_Date *pDate, Handle *parent = 0);
 };
 
 /**
@@ -683,7 +687,7 @@ public:
 
 private:
 
-    Interval(OCI_Interval *pInterval);
+    Interval(OCI_Interval *pInterval, Handle *parent = 0);
 };
 
 /**
@@ -736,7 +740,7 @@ public:
 
 private:
 
-    Timestamp(OCI_Timestamp *pTimestamp);
+    Timestamp(OCI_Timestamp *pTimestamp, Handle *parent = 0);
 };
 
 /**
@@ -786,7 +790,7 @@ public:
 
 private:
 
-    Clob(OCI_Lob *pLob);
+    Clob(OCI_Lob *pLob, Handle *parent = 0);
 };
 
 /**
@@ -836,7 +840,7 @@ public:
 
 private:
 
-    Blob(OCI_Lob *pLob);
+    Blob(OCI_Lob *pLob, Handle *parent = 0);
 };
 
 /**
@@ -881,7 +885,7 @@ public:
 
 private:
 
-    File(OCI_File *pFile);
+    File(OCI_File *pFile, Handle *parent = 0);
 };
 
 /**
@@ -943,14 +947,14 @@ public:
     void Set(mstring name, const TDataType &value);
 
     template<class TDataType>
-    void Get(mstring name, TDataType &value, unsigned int &size);
- 
+    void Get(mstring name, TDataType value, unsigned int &size);
+
     template<class TDataType>
     void Set(mstring name, const TDataType &value, unsigned int size);
 
 private:
 
-    Object(OCI_Object *pObject);
+    Object(OCI_Object *pObject, Handle *parent = 0);
 };
 
 /**
@@ -970,7 +974,7 @@ class Reference : public HandleHolder<OCI_Ref *>
 
 public:
 
-    Reference(const Connection &connection, const TypeInfo &typeInfo);
+    Reference(const TypeInfo &typeInfo);
 
     TypeInfo GetTypeInfo();
     Object GetObject();
@@ -984,7 +988,7 @@ public:
 
 private:
 
-    Reference(OCI_Ref *pRef);
+    Reference(OCI_Ref *pRef, Handle *parent = 0);
 };
 
 /**
@@ -1022,7 +1026,7 @@ public:
 
     template<class TDataType>
     void Get(unsigned int index, TDataType &value, unsigned int &size);
- 
+
     template<class TDataType>
     void Set(unsigned int index, const TDataType &value, unsigned int size);
 
@@ -1037,7 +1041,7 @@ public:
 private:
 
     template <class TDataType>
-    static TDataType GetElem(OCI_Elem *elem);
+    static TDataType GetElem(OCI_Elem *elem, Handle *parent);
 
     template <class TDataType>
     static void SetElem(OCI_Elem *elem, const TDataType &value);
@@ -1048,7 +1052,7 @@ private:
     template <class TDataType>
     static void SetElem(OCI_Elem *elem, const TDataType &value,  unsigned int size);
 
-    Collection(OCI_Coll *pColl);
+    Collection(OCI_Coll *pColl, Handle *parent = 0);
 };
 
 
@@ -1102,7 +1106,7 @@ public:
 
 private:
 
-    CLong(OCI_Long *pLong);
+    CLong(OCI_Long *pLong, Handle *parent = 0);
 };
 
 /**
@@ -1130,7 +1134,7 @@ public:
 
 private:
 
-    BLong(OCI_Long *pLong);
+    BLong(OCI_Long *pLong, Handle *parent = 0);
 };
 
 /**
@@ -1253,7 +1257,7 @@ private:
 class BindsHolder
 {
 public:
-     
+
     BindsHolder();
     ~BindsHolder();
 
@@ -1368,9 +1372,11 @@ public:
 
 private:
 
-    Statement(OCI_Statement *stmt);
- 
+    Statement(OCI_Statement *stmt, Handle *parent = 0);
+
     BindsHolder *GetBindsHolder(bool allocate);
+
+    void ReleaseResultsets();
 
     void SetInData();
     void SetOutData();
@@ -1427,7 +1433,7 @@ public:
 
 private:
 
-   Resultset(OCI_Resultset *resultset);
+   Resultset(OCI_Resultset *resultset, Handle *parent);
 };
 
 /**
@@ -1465,7 +1471,7 @@ public:
 
 private:
 
-    Column(OCI_Column *pColumn);
+    Column(OCI_Column *pColumn, Handle *parent);
 };
 
 /**
@@ -1611,9 +1617,9 @@ inline HandleHolder<THandleType>::HandleHolder() :  _smartHandle(0)
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>::HandleHolder(const HandleHolder &src) :  _smartHandle(0)
+inline HandleHolder<THandleType>::HandleHolder(const HandleHolder &other) :  _smartHandle(0)
 {
-    Acquire(src);
+    Acquire(other, 0,  other._smartHandle ? other._smartHandle->GetParent() : 0);
 }
 
 template<class THandleType>
@@ -1625,7 +1631,7 @@ inline HandleHolder<THandleType>::~HandleHolder()
 template<class THandleType>
 inline HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (const HandleHolder<THandleType> &other)
 {
-    Acquire(other);
+    Acquire(other, 0, other._smartHandle ? other._smartHandle->GetParent() : 0);
     return *this;
 }
 
@@ -1662,22 +1668,27 @@ inline Handle * HandleHolder<THandleType>::GetHandle() const
 template<class THandleType>
 inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFunc func, Handle *parent)
 {
-    _smartHandle = new HandleHolder::SmartHandle<THandleType>(this, handle, func, parent);
+    Release();
 
-   Environment::GetEnvironmentData().handlePool.Set(handle, _smartHandle);
-}
-
-template<class THandleType>
-inline void HandleHolder<THandleType>::Acquire(THandleType handle)
-{
-    _smartHandle = dynamic_cast<SmartHandle<THandleType> *>(Environment::GetEnvironmentData().handlePool.Get(handle));
-
-    if (!_smartHandle)
+    if (func)
     {
-        _smartHandle = new HandleHolder::SmartHandle<THandleType>(this, handle, 0, 0);
-    }
+        _smartHandle = new HandleHolder::SmartHandle<THandleType>(this, handle, func, parent);
 
-    _smartHandle->Acquire(this);
+       Environment::GetEnvironmentData().handlePool.Set(handle, _smartHandle);
+    }
+    else
+    {
+        _smartHandle = dynamic_cast<SmartHandle<THandleType> *>(Environment::GetEnvironmentData().handlePool.Get(handle));
+
+        if (!_smartHandle)
+        {
+            _smartHandle = new HandleHolder::SmartHandle<THandleType>(this, handle, 0, parent);
+        }
+        else
+        {
+            _smartHandle->Acquire(this);
+        }
+    }
 }
 
 template<class THandleType>
@@ -1738,7 +1749,7 @@ inline TValue ConcurrentPool<TKey, TValue>::Get(TKey key)
     TValue value = 0;
 
     Lock();
-    ConcurrentPoolMap::iterator it = _map.find(key);
+    typename ConcurrentPoolMap::iterator it = _map.find(key);
     if (it != _map.end() )
     {
         value = it->second;
@@ -1799,20 +1810,21 @@ inline HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::~SmartHandle()
         _parent->GetChildren().remove(this);
     }
 
+    for(std::list<Handle *>::iterator it = _children.begin(); it != _children.end(); it++)
+    {
+        SmartHandle<TSmartHandleType> *handle = reinterpret_cast<SmartHandle<TSmartHandleType> *> (*it);
+
+        handle->_parent = 0;
+
+        handle->DetachFromHolders();
+
+        delete handle;
+    }
+
+    Environment::GetEnvironmentData().handlePool.Remove(_handle);
+
     if (_func)
     {
-        for(std::list<Handle *>::iterator it = _children.begin(); it != _children.end(); it++)
-        {
-            SmartHandle<TSmartHandleType> *handle = reinterpret_cast<SmartHandle<TSmartHandleType> *> (*it);
-
-            handle->_parent = 0;
-
-            handle->DetachFromHolders();
-
-            delete handle;
-        }
-
-        Environment::GetEnvironmentData().handlePool.Remove(_handle);
 
         ret = _func(_handle);
         chk = TRUE;
@@ -1903,7 +1915,7 @@ inline Exception::Exception()
 
 inline Exception::Exception(OCI_Error *err)
 {
-    Acquire(err);
+    Acquire(err, 0, 0);
 }
 
 inline mstring Exception::GetMessage()
@@ -1928,12 +1940,12 @@ inline unsigned int Exception::GetInternalErrorCode()
 
 inline Statement Exception::GetStatement()
 {
-    return Statement(OCI_ErrorGetStatement(*this));
+    return Statement(OCI_ErrorGetStatement(*this), 0);
 }
 
 inline Connection Exception::GetConnection()
 {
-    return Connection(OCI_ErrorGetConnection(*this));
+    return Connection(OCI_ErrorGetConnection(*this), 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2084,7 +2096,10 @@ inline void Environment::HAHandler(OCI_Connection *con, unsigned int source, uns
 
     if (handler)
     {
-        handler(Connection(con), source, event, Timestamp(time));
+        Connection connection(con, 0);
+        Timestamp timestamp(time, connection.GetHandle());
+
+        handler(connection, source, event, timestamp);
     }
 }
 
@@ -2094,7 +2109,9 @@ inline void Environment::TAFHandler(OCI_Connection *con, unsigned int type, unsi
 
     if (handler)
     {
-        handler(Connection(con), type, event);
+        Connection connection(con, 0);
+
+        handler(connection, type, event);
     }
 }
 
@@ -2104,7 +2121,8 @@ inline void Environment::NotifyHandler(OCI_Event *event)
 
     if (handler)
     {
-        handler(Event(event));
+        Event evt(event);
+        handler(evt);
     }
 }
 
@@ -2220,14 +2238,7 @@ inline Connection::Connection(mstring db, mstring user, mstring pwd, unsigned in
 
 inline Connection::Connection(OCI_Connection *con,  Handle *parent)
 {
-    if (parent)
-    {
-        Acquire(con, (HandleFreeFunc) OCI_ConnectionFree, parent);
-    }
-    else
-    {
-        Acquire(con);
-    }
+    Acquire(con, parent ? (HandleFreeFunc) OCI_ConnectionFree : 0, parent);
 }
 
 inline void Connection::Open(mstring db, mstring user, mstring pwd, unsigned int sessionMode)
@@ -2430,7 +2441,7 @@ inline mstring Connection::GetDomain()
 
 inline Timestamp Connection::GetInstanceStartTime()
 {
-    return Timestamp(API::Call(OCI_GetInstanceStartTime(*this)));
+    return Timestamp(API::Call(OCI_GetInstanceStartTime(*this)), GetHandle());
 }
 
 inline unsigned int Connection::GetStatementCacheSize()
@@ -2478,7 +2489,7 @@ inline Transaction::Transaction(const Connection &connection, unsigned int timeo
 
 inline Transaction::Transaction(OCI_Transaction *trans)
 {
-    Acquire(trans);
+    Acquire(trans, 0, 0);
 }
 
 inline void Transaction::Prepare()
@@ -2525,9 +2536,9 @@ inline Date::Date()
     Acquire(API::Call(OCI_DateCreate(NULL)), (HandleFreeFunc) OCI_DateFree, 0);
 }
 
-inline Date::Date(OCI_Date *pDate)
+inline Date::Date(OCI_Date *pDate, Handle *parent)
 {
-    Acquire(pDate);
+    Acquire(pDate, 0, parent);
 }
 
 inline void Date::Assign(const Date& other)
@@ -2635,9 +2646,9 @@ inline Interval::Interval(unsigned int type)
     Acquire(API::Call(OCI_IntervalCreate(NULL, type)), (HandleFreeFunc) OCI_IntervalFree, 0);
 }
 
-inline Interval::Interval(OCI_Interval *pInterval)
+inline Interval::Interval(OCI_Interval *pInterval, Handle *parent)
 {
-    Acquire(pInterval);
+    Acquire(pInterval, 0, parent);
 }
 
 inline void Interval::Assign(const Interval& other)
@@ -2650,7 +2661,7 @@ inline int Interval::Compare(const Interval& other)
     return API::Call(OCI_IntervalCompare(*this, other));
 }
 
-inline unsigned int Interval::GetType()   
+inline unsigned int Interval::GetType()
 {
     return API::Call(OCI_IntervalGetType(*this));
 }
@@ -2719,9 +2730,9 @@ inline Timestamp::Timestamp(unsigned int type)
     Acquire(API::Call(OCI_TimestampCreate(NULL, type)), (HandleFreeFunc) OCI_TimestampFree, 0);
 }
 
-inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp)
+inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, Handle *parent)
 {
-    Acquire(pTimestamp);
+    Acquire(pTimestamp, 0, parent);
 }
 
 inline void Timestamp::Assign(const Timestamp& other)
@@ -2830,9 +2841,9 @@ inline Clob::Clob(const Connection &connection)
     Acquire(API::Call(OCI_LobCreate(connection, OCI_CLOB)), (HandleFreeFunc) OCI_LobFree, connection.GetHandle());
 }
 
-inline Clob::Clob(OCI_Lob *pLob)
+inline Clob::Clob(OCI_Lob *pLob, Handle *parent)
 {
-    Acquire(pLob);
+    Acquire(pLob, 0, parent);
 }
 
 inline dstring Clob::Read(unsigned int size)
@@ -2943,9 +2954,9 @@ inline Blob::Blob(const Connection &connection)
     Acquire(API::Call(OCI_LobCreate(connection, OCI_BLOB)), (HandleFreeFunc) OCI_LobFree, connection.GetHandle());
 }
 
-inline Blob::Blob(OCI_Lob *pLob)
+inline Blob::Blob(OCI_Lob *pLob, Handle *parent)
 {
-    Acquire(pLob);
+    Acquire(pLob, 0, parent);
 }
 
 inline unsigned int Blob::Read(void *buffer, unsigned int size)
@@ -3059,9 +3070,9 @@ inline File::File(const Connection &connection, mstring directory, mstring name)
     SetInfos(directory, name);
 }
 
-inline File::File(OCI_File *pFile)
+inline File::File(OCI_File *pFile, Handle *parent)
 {
-    Acquire(pFile);
+    Acquire(pFile, 0, parent);
 }
 
 inline unsigned int File::Read(void *buffer, unsigned int size)
@@ -3140,7 +3151,7 @@ inline TypeInfo::TypeInfo(const Connection &connection, mstring name, unsigned i
 
 inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
 {
-    Acquire(pTypeInfo);
+    Acquire(pTypeInfo, 0, 0);
 }
 
 inline unsigned int TypeInfo::GetType()
@@ -3155,12 +3166,12 @@ inline mstring TypeInfo::GetName()
 
 inline Connection TypeInfo::GetConnection()
 {
-    return Connection(API::Call(OCI_TypeInfoGetConnection(*this)));
+    return Connection(API::Call(OCI_TypeInfoGetConnection(*this)), 0);
 }
 
 inline Connection TypeInfo::GetConnection() const
 {
-    return Connection(API::Call(OCI_TypeInfoGetConnection(*this)));
+    return Connection(API::Call(OCI_TypeInfoGetConnection(*this)), 0);
 }
 
 inline unsigned int TypeInfo::GetColumnCount()
@@ -3170,7 +3181,7 @@ inline unsigned int TypeInfo::GetColumnCount()
 
 inline Column TypeInfo::GetColumn(unsigned int index)
 {
-    return Column(API::Call(OCI_TypeInfoGetColumn(*this, index)));
+    return Column(API::Call(OCI_TypeInfoGetColumn(*this, index)), GetHandle());
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3179,8 +3190,13 @@ inline Column TypeInfo::GetColumn(unsigned int index)
 
 inline Object::Object(const TypeInfo &typeInfo)
 {
-    Connection connection = typeInfo.GetConnection();
+    Connection &connection = typeInfo.GetConnection();
     Acquire(API::Call(OCI_ObjectCreate(connection, typeInfo)), (HandleFreeFunc) OCI_ObjectFree, connection.GetHandle());
+}
+
+inline Object::Object(OCI_Object *pObject, Handle *parent)
+{
+    Acquire(pObject, 0, parent);
 }
 
 inline TypeInfo Object::GetTypeInfo()
@@ -3245,59 +3261,59 @@ inline dstring Object::Get<dstring>(mstring name)
 template<>
 inline Date Object::Get<Date>(mstring name)
 {
-    return API::Call(OCI_ObjectGetDate(*this,name.c_str()));
+    return Date(API::Call(OCI_ObjectGetDate(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Timestamp Object::Get<Timestamp>(mstring name)
 {
-    return API::Call(OCI_ObjectGetTimestamp(*this,name.c_str()));
+    return Timestamp(API::Call(OCI_ObjectGetTimestamp(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Interval Object::Get<Interval>(mstring name)
 {
-    return API::Call(OCI_ObjectGetInterval(*this,name.c_str()));
+    return Interval(API::Call(OCI_ObjectGetInterval(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Object Object::Get<Object>(mstring name)
 {
-    return API::Call(OCI_ObjectGetObject(*this,name.c_str()));
+    return Object(API::Call(OCI_ObjectGetObject(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Collection Object::Get<Collection>(mstring name)
 {
-    return API::Call(OCI_ObjectGetColl(*this,name.c_str()));
+    return Collection(API::Call(OCI_ObjectGetColl(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Reference Object::Get<Reference>(mstring name)
 {
-    return API::Call(OCI_ObjectGetRef(*this,name.c_str()));
+    return Reference(API::Call(OCI_ObjectGetRef(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Clob Object::Get<Clob>(mstring name)
 {
-    return API::Call(OCI_ObjectGetLob(*this,name.c_str()));
+    return Clob(API::Call(OCI_ObjectGetLob(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Blob Object::Get<Blob>(mstring name)
 {
-    return API::Call(OCI_ObjectGetLob(*this,name.c_str()));
+    return Blob(API::Call(OCI_ObjectGetLob(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline File Object::Get<File>(mstring name)
 {
-    return API::Call(OCI_ObjectGetFile(*this,name.c_str()));
+    return File(API::Call(OCI_ObjectGetFile(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline void Object::Get<BufferPointer>(mstring name, BufferPointer &value, unsigned int &size)
+inline void Object::Get<BufferPointer>(mstring name, BufferPointer value, unsigned int &size)
 {
     API::Call(OCI_ObjectGetRaw(*this,name.c_str(), value, size));
 }
@@ -3420,9 +3436,15 @@ inline void Object::Set<BufferPointer>(mstring name, const BufferPointer & value
  * Reference
  * --------------------------------------------------------------------------------------------- */
 
-inline Reference::Reference(const Connection &connection, const TypeInfo &typeInfo)
+inline Reference::Reference(const TypeInfo &typeInfo)
 {
+    Connection &connection = typeInfo.GetConnection();
     Acquire(API::Call(OCI_RefCreate(connection, typeInfo)), (HandleFreeFunc) OCI_RefFree, connection.GetHandle());
+}
+
+inline Reference::Reference(OCI_Ref *pRef, Handle *parent)
+{
+    Acquire(pRef, 0, parent);
 }
 
 inline TypeInfo Reference::GetTypeInfo()
@@ -3432,7 +3454,7 @@ inline TypeInfo Reference::GetTypeInfo()
 
 inline Object Reference::GetObject()
 {
-    return Object(API::Call(OCI_RefGetObject(*this)));
+    return Object(API::Call(OCI_RefGetObject(*this)), GetHandle());
 }
 
 inline void Reference::Assign(const Reference& other)
@@ -3471,9 +3493,9 @@ inline Collection::Collection(const TypeInfo &typeInfo)
     Acquire(API::Call(OCI_CollCreate(typeInfo)), (HandleFreeFunc) OCI_CollFree, typeInfo.GetConnection().GetHandle());
 }
 
-inline Collection::Collection(OCI_Coll *pColl)
+inline Collection::Collection(OCI_Coll *pColl, Handle *parent)
 {
-     Acquire(pColl);
+     Acquire(pColl, 0, parent);
 }
 
 inline void Collection::Assign(const Collection& other)
@@ -3515,7 +3537,7 @@ inline void Collection::Clear()
 template <class TDataType>
 inline TDataType Collection::Get(unsigned int index)
 {
-    return GetElem<TDataType>(API::Call(OCI_CollGetAt(*this, index)));
+    return GetElem<TDataType>(API::Call(OCI_CollGetAt(*this, index)), GetHandle());
 }
 
 template <class TDataType>
@@ -3540,111 +3562,111 @@ inline void Collection::Append(const TDataType &data)
 }
 
 template<>
-inline short Collection::GetElem<short>(OCI_Elem *elem)
+inline short Collection::GetElem<short>(OCI_Elem *elem, Handle *parent)
 {
     return API::Call(OCI_ElemGetShort(elem));
 }
 
 template<>
-inline unsigned short Collection::GetElem<unsigned short>(OCI_Elem *elem)
+inline unsigned short Collection::GetElem<unsigned short>(OCI_Elem *elem, Handle *parent)
 {
     return API::Call(OCI_ElemGetUnsignedShort(elem));
 }
 
 template<>
-inline int Collection::GetElem<int>(OCI_Elem *elem)
+inline int Collection::GetElem<int>(OCI_Elem *elem, Handle *parent)
 {
     return API::Call(OCI_ElemGetInt(elem));
 }
 
 template<>
-inline unsigned int Collection::GetElem<unsigned int>(OCI_Elem *elem)
+inline unsigned int Collection::GetElem<unsigned int>(OCI_Elem *elem, Handle *parent)
 {
     return API::Call(OCI_ElemGetUnsignedInt(elem));
 }
 
 template<>
-inline big_int Collection::GetElem<big_int>(OCI_Elem *elem)
+inline big_int Collection::GetElem<big_int>(OCI_Elem *elem, Handle *parent)
 {
     return API::Call(OCI_ElemGetBigInt(elem));
 }
 
 template<>
-inline big_uint Collection::GetElem<big_uint>(OCI_Elem *elem)
+inline big_uint Collection::GetElem<big_uint>(OCI_Elem *elem, Handle *parent)
 {
     return API::Call(OCI_ElemGetUnsignedBigInt(elem));
 }
 
 template<>
-inline float Collection::GetElem<float>(OCI_Elem *elem)
+inline float Collection::GetElem<float>(OCI_Elem *elem, Handle *parent)
 {
     return API::Call(OCI_ElemGetFloat(elem));
 }
 
 template<>
-inline double Collection::GetElem<double>(OCI_Elem *elem)
+inline double Collection::GetElem<double>(OCI_Elem *elem, Handle *parent)
 {
     return API::Call(OCI_ElemGetDouble(elem));
 }
 
 template<>
-inline dstring Collection::GetElem<dstring>(OCI_Elem *elem)
+inline dstring Collection::GetElem<dstring>(OCI_Elem *elem, Handle *parent)
 {
     return API::MakeString(API::Call(OCI_ElemGetString(elem)));
 }
 
 template<>
-inline Date Collection::GetElem<Date>(OCI_Elem *elem)
+inline Date Collection::GetElem<Date>(OCI_Elem *elem, Handle *parent)
 {
-    return API::Call(OCI_ElemGetDate(elem));
+    return Date(API::Call(OCI_ElemGetDate(elem)), parent);
 }
 
 template<>
-inline Timestamp Collection::GetElem<Timestamp>(OCI_Elem *elem)
+inline Timestamp Collection::GetElem<Timestamp>(OCI_Elem *elem, Handle *parent)
 {
-    return API::Call(OCI_ElemGetTimestamp(elem));
+    return Timestamp(API::Call(OCI_ElemGetTimestamp(elem)), parent);
 }
 
 template<>
-inline Interval Collection::GetElem<Interval>(OCI_Elem *elem)
+inline Interval Collection::GetElem<Interval>(OCI_Elem *elem, Handle *parent)
 {
-    return API::Call(OCI_ElemGetInterval(elem));
+    return Interval(API::Call(OCI_ElemGetInterval(elem)), parent);
 }
 
 template<>
-inline Object Collection::GetElem<Object>(OCI_Elem *elem)
+inline Object Collection::GetElem<Object>(OCI_Elem *elem, Handle *parent)
 {
-    return API::Call(OCI_ElemGetObject(elem));
+    return Object(API::Call(OCI_ElemGetObject(elem)), parent);
 }
 
 template<>
-inline Collection Collection::GetElem<Collection>(OCI_Elem *elem)
+inline Collection Collection::GetElem<Collection>(OCI_Elem *elem, Handle *parent)
 {
-    return API::Call(OCI_ElemGetColl(elem));
+    return Collection(API::Call(OCI_ElemGetColl(elem)), parent);
 }
 
 template<>
-inline Reference Collection::GetElem<Reference>(OCI_Elem *elem)
+inline Reference Collection::GetElem<Reference>(OCI_Elem *elem, Handle *parent)
 {
-    return API::Call(OCI_ElemGetRef(elem));
+    return Reference(API::Call(OCI_ElemGetRef(elem)), parent);
 }
 
 template<>
-inline Clob Collection::GetElem<Clob>(OCI_Elem *elem)
+inline Clob Collection::GetElem<Clob>(OCI_Elem *elem, Handle *parent)
 {
-    return API::Call(OCI_ElemGetLob(elem));
+    return Clob(API::Call(OCI_ElemGetLob(elem)), parent);
 }
 
 template<>
-inline Blob Collection::GetElem<Blob>(OCI_Elem *elem)
+inline Blob Collection::GetElem<Blob>(OCI_Elem *elem, Handle *parent)
 {
-    return API::Call(OCI_ElemGetLob(elem));
+    return Blob(API::Call(OCI_ElemGetLob(elem)), parent);
 }
 
 template<>
-inline File Collection::GetElem<File>(OCI_Elem *elem)
+inline File Collection::GetElem<File>(OCI_Elem *elem, Handle *parent)
 {
-    return API::Call(OCI_ElemGetFile(elem));
+    return File(API::Call(OCI_ElemGetFile(elem)), parent);
 }
 
 template<>
@@ -3785,7 +3807,7 @@ inline void CollectionIterator::Set(TDataType &value)
 template <class TDataType>
 inline TDataType CollectionIterator::Get()
 {
-    return Collection::GetElem<TDataType>(API::Call(OCI_IterGetCurrent(*this)));
+    return Collection::GetElem<TDataType>(API::Call(OCI_IterGetCurrent(*this)), GetHandle());
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3797,9 +3819,9 @@ inline CLong::CLong(const Statement &statement)
     Acquire(API::Call(OCI_LongCreate(statement, OCI_CLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
 }
 
-inline CLong::CLong(OCI_Long *pLong)
+inline CLong::CLong(OCI_Long *pLong, Handle* parent)
 {
-    Acquire(pLong);
+    Acquire(pLong, 0, parent);
 }
 
 inline dstring CLong::Read(unsigned int size)
@@ -3835,9 +3857,9 @@ inline BLong::BLong(const Statement &statement)
     Acquire(API::Call(OCI_LongCreate(statement, OCI_BLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
 }
 
-inline BLong::BLong(OCI_Long *pLong)
+inline BLong::BLong(OCI_Long *pLong, Handle *parent)
 {
-    Acquire(pLong);
+    Acquire(pLong, 0, parent);
 }
 
 inline unsigned int BLong::Read(void *buffer, unsigned int size)
@@ -3997,7 +4019,9 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetOutData()
 
         for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount; it++, index++)
         {
-            *it = (TObjectType) _data[index];
+            TObjectType& object = *it;
+
+            object = (TDataType) _data[index];
         }
     }
 }
@@ -4137,9 +4161,9 @@ inline Statement::Statement(const Connection &connection)
     Acquire(API::Call(OCI_StatementCreate(connection)), (HandleFreeFunc) OCI_StatementFree, connection.GetHandle());
 }
 
-inline Statement::Statement(OCI_Statement *stmt)
+inline Statement::Statement(OCI_Statement *stmt, Handle *parent)
 {
-     Acquire(stmt, (HandleFreeFunc) OCI_StatementFree, 0);
+     Acquire(stmt, parent ? (HandleFreeFunc) OCI_StatementFree : 0, parent);
 }
 
 inline Statement::~Statement()
@@ -4154,29 +4178,33 @@ inline Statement::~Statement()
 
 inline Connection Statement::GetConnection()
 {
-    return Connection(API::Call(OCI_StatementGetConnection(*this)));
+    return Connection(API::Call(OCI_StatementGetConnection(*this)), 0);
 }
 
 inline void Statement::Describe(mstring sql)
 {
     ClearBinds();
+    ReleaseResultsets();
     API::Call(OCI_Describe(*this, sql.c_str()));
 }
 
 inline void Statement::Parse(mstring sql)
 {
     ClearBinds();
+    ReleaseResultsets();
     API::Call(OCI_Parse(*this, sql.c_str()));
 }
 
 inline void Statement::Prepare(mstring sql)
 {
     ClearBinds();
+    ReleaseResultsets();
     API::Call(OCI_Prepare(*this, sql.c_str()));
 }
 
 inline void Statement::Execute()
 {
+    ReleaseResultsets();
     SetInData();
     API::Call(OCI_Execute(*this));
     SetOutData();
@@ -4184,6 +4212,8 @@ inline void Statement::Execute()
 
 inline void Statement::Execute(mstring sql)
 {
+    ClearBinds();
+    ReleaseResultsets();
     API::Call(OCI_ExecuteStmt(*this, sql.c_str()));
 }
 
@@ -4199,12 +4229,12 @@ inline mstring Statement::GetSql()
 
 inline Resultset Statement::GetResultset()
 {
-   return Resultset(API::Call(OCI_GetResultset(*this)));
+   return Resultset(API::Call(OCI_GetResultset(*this)), GetHandle());
 }
 
 inline Resultset Statement::GetNextResultset()
 {
-   return Resultset(API::Call(OCI_GetNextResultset(*this)));
+   return Resultset(API::Call(OCI_GetNextResultset(*this)), GetHandle());
 }
 
 inline void Statement::SetBindArraySize(unsigned int size)
@@ -4838,6 +4868,23 @@ inline void Statement::SetInData()
     }
 }
 
+inline void Statement::ReleaseResultsets()
+{
+    if (_smartHandle)
+    {
+        std::list<Handle *> &children = _smartHandle->GetChildren();
+
+        while (children.size() > 0)
+        {
+            Resultset::SmartHandle<OCI_Resultset *> *smartHandle = dynamic_cast<Resultset::SmartHandle<OCI_Resultset *> *>(*children.begin());
+
+            smartHandle->DetachFromHolders();
+
+            delete smartHandle;
+        }
+    }
+}
+
 inline BindsHolder * Statement::GetBindsHolder(bool create)
 {
     BindsHolder * bindsHolder = (BindsHolder *) _smartHandle->GetExtraInfos();
@@ -4855,9 +4902,9 @@ inline BindsHolder * Statement::GetBindsHolder(bool create)
  * Resultset
  * --------------------------------------------------------------------------------------------- */
 
-inline Resultset::Resultset(OCI_Resultset *resultset)
+inline Resultset::Resultset(OCI_Resultset *resultset, Handle *parent)
 {
-    Acquire(resultset);
+    Acquire(resultset, 0, parent);
 }
 
 inline bool Resultset::Next()
@@ -4902,12 +4949,12 @@ inline unsigned int Resultset::GetColumnCount()
 
 inline Column Resultset::GetColumn(unsigned int index)
 {
-    return Column(API::Call(OCI_GetColumn(*this, index)));
+    return Column(API::Call(OCI_GetColumn(*this, index)), GetHandle());
 }
 
 inline Column Resultset::GetColumn(mstring name)
 {
-    return Column(API::Call(OCI_GetColumn2(*this, name.c_str())));
+    return Column(API::Call(OCI_GetColumn2(*this, name.c_str())), GetHandle());
 }
 
 inline bool Resultset::IsColumnNull(unsigned int index)
@@ -4922,7 +4969,7 @@ inline bool Resultset::IsColumnNull(mstring name)
 
 inline Statement Resultset::GetStatement()
 {
-    return Statement( API::Call(OCI_ResultsetGetStatement(*this)));
+    return Statement( API::Call(OCI_ResultsetGetStatement(*this)), 0);
 }
 
 template<>
@@ -5036,155 +5083,155 @@ inline dstring Resultset::Get<dstring>(mstring name)
 template<>
 inline Date Resultset::Get<Date>(int index)
 {
-    return API::Call(OCI_GetDate(*this, index));
+    return Date(API::Call(OCI_GetDate(*this, index)), GetHandle());
 }
 
 template<>
 inline Date Resultset::Get<Date>(mstring name)
 {
-    return API::Call(OCI_GetDate2(*this,name.c_str()));
+    return Date(API::Call(OCI_GetDate2(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Timestamp Resultset::Get<Timestamp>(int index)
 {
-    return API::Call(OCI_GetTimestamp(*this, index));
+    return Timestamp(API::Call(OCI_GetTimestamp(*this, index)), GetHandle());
 }
 
 template<>
 inline Timestamp Resultset::Get<Timestamp>(mstring name)
 {
-    return API::Call(OCI_GetTimestamp2(*this,name.c_str()));
+    return Timestamp(API::Call(OCI_GetTimestamp2(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Interval Resultset::Get<Interval>(int index)
 {
-    return API::Call(OCI_GetInterval(*this, index));
+    return Interval(API::Call(OCI_GetInterval(*this, index)), GetHandle());
 }
 
 template<>
 inline Interval Resultset::Get<Interval>(mstring name)
 {
-    return API::Call(OCI_GetInterval2(*this,name.c_str()));
+    return Interval(API::Call(OCI_GetInterval2(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Object Resultset::Get<Object>(int index)
 {
-    return API::Call(OCI_GetObject(*this, index));
+    return Object(API::Call(OCI_GetObject(*this, index)), GetHandle());
 }
 
 template<>
 inline Object Resultset::Get<Object>(mstring name)
 {
-    return API::Call(OCI_GetObject2(*this,name.c_str()));
+    return Object(API::Call(OCI_GetObject2(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Collection Resultset::Get<Collection>(int index)
 {
-    return API::Call(OCI_GetColl(*this, index));
+    return Collection(API::Call(OCI_GetColl(*this, index)), GetHandle());
 }
 
 template<>
 inline Collection Resultset::Get<Collection>(mstring name)
 {
-    return API::Call(OCI_GetColl2(*this,name.c_str()));
+    return Collection(API::Call(OCI_GetColl2(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Reference Resultset::Get<Reference>(int index)
 {
-    return API::Call(OCI_GetRef(*this, index));
+    return Reference(API::Call(OCI_GetRef(*this, index)), GetHandle());
 }
 
 template<>
 inline Reference Resultset::Get<Reference>(mstring name)
 {
-    return API::Call(OCI_GetRef2(*this,name.c_str()));
+    return Reference(API::Call(OCI_GetRef2(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Statement Resultset::Get<Statement>(int index)
 {
-    return API::Call(OCI_GetStatement(*this, index));
+    return Statement(API::Call(OCI_GetStatement(*this, index)), GetHandle());
 }
 
 template<>
 inline Statement Resultset::Get<Statement>(mstring name)
 {
-    return API::Call(OCI_GetStatement2(*this,name.c_str()));
+    return Statement(API::Call(OCI_GetStatement2(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Clob Resultset::Get<Clob>(int index)
 {
-    return API::Call(OCI_GetLob(*this, index));
+    return Clob(API::Call(OCI_GetLob(*this, index)), GetHandle());
 }
 
 template<>
 inline Clob Resultset::Get<Clob>(mstring name)
 {
-    return API::Call(OCI_GetLob2(*this,name.c_str()));
+    return Clob(API::Call(OCI_GetLob2(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline Blob Resultset::Get<Blob>(int index)
 {
-    return API::Call(OCI_GetLob(*this, index));
+    return Blob(API::Call(OCI_GetLob(*this, index)), GetHandle());
 }
 
 template<>
 inline Blob Resultset::Get<Blob>(mstring name)
 {
-    return API::Call(OCI_GetLob2(*this,name.c_str()));
+    return Blob(API::Call(OCI_GetLob2(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline File Resultset::Get<File>(int index)
 {
-    return API::Call(OCI_GetFile(*this, index));
+    return File(API::Call(OCI_GetFile(*this, index)), GetHandle());
 }
 
 template<>
 inline File Resultset::Get<File>(mstring name)
 {
-    return API::Call(OCI_GetFile2(*this,name.c_str()));
+    return File(API::Call(OCI_GetFile2(*this,name.c_str())), GetHandle());
 }
 
 template<>
 inline CLong Resultset::Get<CLong>(int index)
 {
-    return API::Call(OCI_GetLong(*this, index));
+    return CLong(API::Call(OCI_GetLong(*this, index)), GetHandle());
 }
 
 template<>
 inline CLong Resultset::Get<CLong>(mstring name)
 {
-    return API::Call(OCI_GetLong2(*this,name.c_str()));
+    return CLong(API::Call(OCI_GetLong2(*this,name.c_str())), GetHandle());
 }
 
 
 template<>
 inline BLong Resultset::Get<BLong>(int index)
 {
-    return API::Call(OCI_GetLong(*this, index));
+    return BLong(API::Call(OCI_GetLong(*this, index)), GetHandle());
 }
 
 template<>
 inline BLong Resultset::Get<BLong>(mstring name)
 {
-    return API::Call(OCI_GetLong2(*this,name.c_str()));
+    return BLong(API::Call(OCI_GetLong2(*this,name.c_str())), GetHandle());
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * Column
  * --------------------------------------------------------------------------------------------- */
 
-inline Column::Column(OCI_Column *pColumn)
+inline Column::Column(OCI_Column *pColumn, Handle *parent)
 {
-    Acquire(pColumn);
+    Acquire(pColumn, 0, parent);
 }
 
 inline mstring Column::GetName()
@@ -5274,7 +5321,7 @@ inline Subscription::Subscription()
 
 inline Subscription::Subscription(OCI_Subscription *pSubcription)
 {
-    Acquire(pSubcription);
+    Acquire(pSubcription, 0, 0);
 }
 
 inline void Subscription::Register(const Connection &con, mstring name, unsigned int type, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
@@ -5295,13 +5342,13 @@ inline void Subscription::Watch(mstring sql)
     Statement st(GetConnection());
 
     st.Execute(sql);
-   
+
     API::Call(OCI_SubscriptionAddStatement(*this, st));
 }
 
 inline mstring Subscription::GetName()
 {
-    return API::MakeString(API::Call(OCI_SubscriptionGetName(*this)));  
+    return API::MakeString(API::Call(OCI_SubscriptionGetName(*this)));
 }
 
 inline unsigned int Subscription::GetTimeout()
@@ -5316,7 +5363,7 @@ inline unsigned int Subscription::GetPort()
 
 inline Connection Subscription::GetConnection()
 {
-    return Connection(API::Call(OCI_SubscriptionGetConnection(*this)));
+    return Connection(API::Call(OCI_SubscriptionGetConnection(*this)), 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -5325,7 +5372,7 @@ inline Connection Subscription::GetConnection()
 
 inline Event::Event(OCI_Event *pEvent)
 {
-    Acquire(pEvent);
+    Acquire(pEvent, 0, 0);
 }
 
 inline unsigned int Event::GetType()
@@ -5340,17 +5387,17 @@ inline unsigned int Event::GetOperation()
 
 inline mstring Event::GetDatabaseName()
 {
-    return API::MakeString(API::Call(OCI_EventGetDatabase(*this)));  
+    return API::MakeString(API::Call(OCI_EventGetDatabase(*this)));
 }
 
 inline mstring Event::GetObjectName()
 {
-    return API::MakeString(API::Call(OCI_EventGetObject(*this))); 
+    return API::MakeString(API::Call(OCI_EventGetObject(*this)));
 }
 
 inline mstring Event::GetRowID()
 {
-    return API::MakeString(API::Call(OCI_EventGetRowid(*this))); 
+    return API::MakeString(API::Call(OCI_EventGetRowid(*this)));
 }
 
 inline Subscription Event::GetSubscription()
