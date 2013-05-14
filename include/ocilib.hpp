@@ -3190,7 +3190,7 @@ inline Column TypeInfo::GetColumn(unsigned int index)
 
 inline Object::Object(const TypeInfo &typeInfo)
 {
-    Connection &connection = typeInfo.GetConnection();
+    Connection connection = typeInfo.GetConnection();
     Acquire(API::Call(OCI_ObjectCreate(connection, typeInfo)), (HandleFreeFunc) OCI_ObjectFree, connection.GetHandle());
 }
 
@@ -3438,7 +3438,7 @@ inline void Object::Set<BufferPointer>(mstring name, const BufferPointer & value
 
 inline Reference::Reference(const TypeInfo &typeInfo)
 {
-    Connection &connection = typeInfo.GetConnection();
+    Connection connection = typeInfo.GetConnection();
     Acquire(API::Call(OCI_RefCreate(connection, typeInfo)), (HandleFreeFunc) OCI_RefFree, connection.GetHandle());
 }
 
