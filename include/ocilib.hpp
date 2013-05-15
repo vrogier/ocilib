@@ -74,6 +74,9 @@ typedef POCI_THREADKEYDEST  ThreadKeyFreeProc;
 template <class THandleType>
 class HandleHolder;
 
+template <class TDataType>
+class ManagedPtr;
+
 class Exception;
 class Connection;
 class Transaction;
@@ -97,17 +100,17 @@ class BLong;
 class Column;
 class Subscription;
 class Event;
+class Agent;
+class Message;
+class Enqueue;
+class Dequeue;
+
 
 /*
 class Queue;
-class Dequeue;
-class Enqueue;
-class Message;
-class Agent;
+
 */
 
-template <class TDataType>
-class ManagedPtr;
 
 /**
  * @typedef HAHandlerProc
@@ -136,6 +139,14 @@ typedef void (*TAFHandlerProc) (Connection &con, unsigned int type, unsigned int
  */
 typedef void (*NotifyHandlerProc) (Event &evt);
 
+/**
+ * @typedef NotifyHandlerProc
+ *
+ * @brief
+ *
+ *
+ */
+typedef void (*NotifyAQHandlerProc) (Dequeue &dequeue);
 
 /**
  * @namespace API
@@ -346,6 +357,7 @@ class Environment
 {
     friend class Connection;
     friend class Subscription;
+    friend class Dequeue;
     template<class THandleType>
     friend class HandleHolder;
 
@@ -417,9 +429,10 @@ private:
 
     static EnvironmentData& GetEnvironmentData();
 
-    static void HAHandler(OCI_Connection *con, unsigned int source, unsigned int event, OCI_Timestamp  *time);
-    static void TAFHandler(OCI_Connection *con, unsigned int type, unsigned int event);
-    static void NotifyHandler(OCI_Event *event);
+    static void HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp);
+    static void TAFHandler(OCI_Connection *pConnection, unsigned int type, unsigned int event);
+    static void NotifyHandler(OCI_Event *pEvent);
+    static void NotifyHandlerAQ(OCI_Dequeue *pDequeue);
 };
 
 
@@ -607,6 +620,7 @@ class Date : public HandleHolder<OCI_Date *>
     friend class BindArray;
     friend class Object;
     friend class Collection;
+    friend class Message;
 
 public:
 
@@ -933,6 +947,7 @@ class Object : public HandleHolder<OCI_Object *>
     friend class BindArray;
     friend class Reference;
     friend class Collection;
+    friend class Message;
 
 public:
 
@@ -1475,7 +1490,7 @@ private:
 };
 
 /**
- * @class Column
+ * @class Subscription
  *
  * @brief
  *
@@ -1506,7 +1521,7 @@ private:
 };
 
 /**
- * @class Column
+ * @class Event
  *
  * @brief
  *
@@ -1529,6 +1544,201 @@ public:
 private:
 
     Event(OCI_Event *pEvent);
+};
+
+
+/**
+ * @class Agent
+ *
+ * @brief
+ *
+ *
+ */
+class Agent : public HandleHolder<OCI_Agent *>
+{
+    friend class Message;
+
+public:
+
+    Agent(const Connection &connection, mstring name = MT(""), mstring address = MT(""));
+
+    mstring GetName();
+    void SetName(mstring value);
+
+    mstring GetAddress();
+    void SetAddress(mstring value);
+
+private:
+
+    Agent(OCI_Agent *pAgent, Handle *parent);
+};
+
+/**
+ * @class Message
+ *
+ * @brief
+ *
+ *
+ */
+class Message : public HandleHolder<OCI_Msg *>
+{
+    friend class Dequeue;
+
+public:
+
+    Message(const TypeInfo &typeInfo);
+
+    void Reset();
+
+    Object Get();
+    void Set(const Object &value);
+
+    void Get(BufferPointer value, unsigned int &size);
+    void Set(const BufferPointer &value, unsigned int size);
+
+    Date GetEnqueueTime();
+    int GetAttemptCount();
+    unsigned int GetState();    
+    void GetID(BufferPointer value, unsigned int &size);
+
+    int GetExpiration();
+    void SetExpiration(int value);
+    
+    int GetEnqueueDelay();
+    void SetEnqueueDelay(int value);
+
+    int GetPriority();
+    void SetPriority(int value);
+
+    void GetOriginalID(BufferPointer value, unsigned int &size);
+    void SetOriginalID(const BufferPointer &value, unsigned int size);
+
+    mstring GetCorrelation();
+    void SetCorrelation(mstring value);
+
+    mstring GetExceptionQueue();
+    void SetExceptionQueue(mstring value);
+
+    Agent GetSender();
+    void SetSender(const Agent &agent);
+
+    void SetConsumers(std::vector<Agent> &agents);
+
+private:
+
+    Message(OCI_Msg *pMessage, Handle *parent);
+};
+
+/**
+ * @class Enqueue
+ *
+ * @brief
+ *
+ *
+ */
+class Enqueue : public HandleHolder<OCI_Enqueue *>
+{
+public:
+
+    Enqueue(const TypeInfo &typeInfo, mstring queueName);
+
+    void Put(const Message &message);
+
+    unsigned int GetVisibility();
+    void SetVisibility(unsigned int value);
+
+    unsigned int GetSequenceDeviation();
+    void SetSequenceDeviation(unsigned int value);
+
+    void GetRelativeMsgID(BufferPointer value, unsigned int &size);
+    void SetRelativeMsgID(const BufferPointer &value, unsigned int size);
+};
+
+/**
+ * @class Dequeue
+ *
+ * @brief
+ *
+ *
+ */
+class Dequeue : public HandleHolder<OCI_Dequeue *>
+{
+    friend class Environment;
+
+public:
+
+    Dequeue(const TypeInfo &typeInfo, mstring queueName);
+
+    Message Get();
+
+    mstring GetConsumer();
+    void SetConsumer(mstring value);
+
+    mstring GetCorrelation();
+    void SetCorrelation(mstring value);
+
+    void GetRelativeMsgID(BufferPointer value, unsigned int &size);
+    void SetRelativeMsgID(const BufferPointer &value, unsigned int size);
+
+    unsigned int GetVisibility();
+    void SetVisibility(unsigned int value);
+
+    unsigned int GetMode();
+    void SetMode(unsigned int value);
+ 
+    unsigned int GetNavigation();
+    void SetNavigation(unsigned int value);
+
+    int GetWaitTime();
+    void SetWaitTime(int value);
+
+    void SetAgents(std::vector<Agent> &agents);
+
+    void Subscribe(unsigned int port, unsigned int timeout, NotifyAQHandlerProc handler);
+    void Unsubscribe(); 
+
+private:
+
+    Dequeue(OCI_Dequeue *pDequeue);
+};
+
+/**
+ * @class Queue
+ *
+ * @brief
+ *
+ *
+ */
+class Queue
+{
+public:
+
+    static void Create(const Connection &connection, mstring queue, mstring table, unsigned int queueType, unsigned int maxRetries,
+                       unsigned int retryDelay, unsigned int retentionTime, bool dependencyTracking, mstring comment);
+    static void Alter (const Connection &connection, mstring queue, unsigned int maxRetries, unsigned int retryDelay, unsigned int retentionTime, mstring comment);
+    static void Drop  (const Connection &connection, mstring queue);
+    static void Start (const Connection &connection, mstring queue, bool enqueue, boolean dequeue);
+    static void Stop  (const Connection &connection, mstring queue, bool enqueue, boolean dequeue, bool wait);
+};
+
+/**
+ * @class QueueTable
+ *
+ * @brief
+ *
+ *
+ */
+class QueueTable
+{
+public:
+
+    static void Create (const Connection &connection, mstring table, mstring payloadType, mstring storageClause, mstring sortList,
+                        bool multipleConsumers, unsigned int messageGrouping, mstring comment, unsigned int primaryInstance,
+                        unsigned int secondaryInstance, mstring compatible);
+    static void Alter  (const Connection &connection, mstring table, mstring comment, unsigned int primaryInstance, unsigned int secondaryInstance);
+    static void Drop   (const Connection &connection, mstring table, bool force);
+    static void Purge  (const Connection &connection, mstring table, mstring purgeCondition, bool block, unsigned int deliveryMode);
+    static void Migrate(const Connection &connection, mstring table, mstring compatible);
 };
 
 /* ********************************************************************************************* *
@@ -2090,39 +2300,50 @@ inline void Environment::SetHAHandler(HAHandlerProc handler)
     pool.Set(&GetEnvironmentData(), (void*) handler);
 }
 
-inline void Environment::HAHandler(OCI_Connection *con, unsigned int source, unsigned int event, OCI_Timestamp  *time)
+inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp)
 {
     HAHandlerProc handler = (HAHandlerProc) GetEnvironmentData().callbackPool.Get(&GetEnvironmentData());
 
     if (handler)
     {
-        Connection connection(con, 0);
-        Timestamp timestamp(time, connection.GetHandle());
+        Connection connection(pConnection, 0);
+        Timestamp timestamp(pTimestamp, connection.GetHandle());
 
         handler(connection, source, event, timestamp);
     }
 }
 
-inline void Environment::TAFHandler(OCI_Connection *con, unsigned int type, unsigned int event)
+inline void Environment::TAFHandler(OCI_Connection *pConnection, unsigned int type, unsigned int event)
 {
-    TAFHandlerProc handler = (TAFHandlerProc) GetEnvironmentData().callbackPool.Get(con);
+    TAFHandlerProc handler = (TAFHandlerProc) GetEnvironmentData().callbackPool.Get(pConnection);
 
     if (handler)
     {
-        Connection connection(con, 0);
+        Connection connection(pConnection, 0);
 
         handler(connection, type, event);
     }
 }
 
-inline void Environment::NotifyHandler(OCI_Event *event)
+inline void Environment::NotifyHandler(OCI_Event *pEvent)
 {
-    NotifyHandlerProc handler = (NotifyHandlerProc) GetEnvironmentData().callbackPool.Get(API::Call(OCI_EventGetSubscription(event)));
+    NotifyHandlerProc handler = (NotifyHandlerProc) GetEnvironmentData().callbackPool.Get(API::Call(OCI_EventGetSubscription(pEvent)));
 
     if (handler)
     {
-        Event evt(event);
+        Event evt(pEvent);
         handler(evt);
+    }
+}
+
+inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
+{
+    NotifyAQHandlerProc handler = (NotifyAQHandlerProc) GetEnvironmentData().callbackPool.Get(API::Call(pDequeue));
+
+    if (handler)
+    {
+        Dequeue dequeue(pDequeue);
+        handler(dequeue);
     }
 }
 
@@ -5404,6 +5625,341 @@ inline Subscription Event::GetSubscription()
 {
     return Subscription(API::Call(OCI_EventGetSubscription(*this)));
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * Agent
+ * --------------------------------------------------------------------------------------------- */
+
+inline Agent::Agent(const Connection &connection, mstring name, mstring address)
+{
+    Acquire(API::Call(OCI_AgentCreate(connection, name.c_str(), address.c_str())), (HandleFreeFunc) OCI_AgentFree, 0);
+}
+
+inline Agent::Agent(OCI_Agent *pAgent, Handle *parent)
+{
+    Acquire(pAgent, 0, parent);
+}
+
+inline mstring Agent::GetName()
+{
+    return API::MakeString(API::Call(OCI_AgentGetName(*this)));
+}
+
+inline void Agent::SetName(mstring value)
+{
+    API::Call(OCI_AgentSetName(*this, value.c_str()));
+}
+
+inline mstring Agent::GetAddress()
+{
+    return API::MakeString(API::Call(OCI_AgentGetAddress(*this)));
+}
+
+inline void Agent::SetAddress(mstring value)
+{
+    API::Call(OCI_AgentSetAddress(*this, value.c_str()));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * Message
+ * --------------------------------------------------------------------------------------------- */
+
+inline Message::Message(const TypeInfo &typeInfo)
+{
+    Acquire(API::Call(OCI_MsgCreate(typeInfo)), (HandleFreeFunc) OCI_MsgFree, 0);
+}
+
+inline Message::Message(OCI_Msg *pMessage, Handle *parent)
+{
+    Acquire(pMessage, 0, parent);
+}
+
+inline void Message::Reset()
+{
+    API::Call(OCI_MsgReset(*this));
+}
+
+inline Object Message::Get()
+{
+    return Object(API::Call(OCI_MsgGetObject(*this)), 0);
+}
+
+inline void Message::Set(const Object &value)
+{
+    API::Call(OCI_MsgSetObject(*this, value));
+}
+
+inline void Message::Get(BufferPointer value, unsigned int &size)
+{
+    API::Call(OCI_MsgGetRaw(*this, value, &size));
+}
+
+inline void Message::Set(const BufferPointer &value, unsigned int size)
+{
+    API::Call(OCI_MsgSetRaw(*this, value, size));
+}
+
+inline Date Message::GetEnqueueTime()    
+{
+    return Date(API::Call(OCI_MsgGetEnqueueTime(*this)), 0);
+}
+
+inline int Message::GetAttemptCount()
+{
+    return API::Call(OCI_MsgGetAttemptCount(*this));
+}
+
+inline unsigned int Message::GetState()
+{
+    return API::Call(OCI_MsgGetState(*this));
+}
+
+inline void Message::GetID(BufferPointer value, unsigned int &size)
+{
+    API::Call(OCI_MsgGetID(*this, value, &size));
+}
+
+inline int Message::GetExpiration()
+{
+    return API::Call(OCI_MsgGetExpiration(*this));
+}
+
+inline void Message::SetExpiration(int value)
+{
+    API::Call(OCI_MsgSetExpiration(*this, value));
+}
+
+inline int Message::GetEnqueueDelay()
+{
+    return API::Call(OCI_MsgGetEnqueueDelay(*this));
+}
+
+inline void Message::SetEnqueueDelay(int value)
+{
+    API::Call(OCI_MsgSetEnqueueDelay(*this, value));
+}
+
+inline int Message::GetPriority()
+{
+    return API::Call(OCI_MsgGetPriority(*this));
+}
+
+inline void Message::SetPriority(int value)
+{
+    API::Call(OCI_MsgSetPriority(*this, value));
+}
+
+inline void Message::GetOriginalID(BufferPointer value, unsigned int &size)
+{
+    API::Call(OCI_MsgGetOriginalID(*this, value, &size));
+}
+
+inline void Message::SetOriginalID(const BufferPointer &value, unsigned int size)
+{
+    API::Call(OCI_MsgSetOriginalID(*this, value, size));
+}
+
+inline mstring Message::GetCorrelation()
+{
+    return API::MakeString(API::Call(OCI_MsgGetCorrelation(*this)));
+}
+
+inline void Message::SetCorrelation(mstring value)
+{
+    API::Call(OCI_MsgSetCorrelation(*this, value.c_str()));
+}
+
+inline mstring Message::GetExceptionQueue()
+{
+    return API::MakeString(API::Call(OCI_MsgGetExceptionQueue(*this)));
+}
+
+inline void Message::SetExceptionQueue(mstring value)
+{
+    API::Call(OCI_MsgSetExceptionQueue(*this, value.c_str()));
+}
+
+inline Agent Message::GetSender()
+{
+    return Agent(API::Call(OCI_MsgGetSender(*this)), 0);
+}
+
+inline void Message::SetSender(const Agent &agent)
+{
+    API::Call(OCI_MsgSetSender(*this, agent));
+}
+
+inline void Message::SetConsumers(std::vector<Agent> &agents)
+{
+    size_t size = agents.size();
+    ManagedBuffer<OCI_Agent*> buffer = new OCI_Agent * [size];
+
+    for (size_t i = 0; i < size; i++)
+    {
+       ((OCI_Agent **) buffer)[i] = (const Agent &) agents[i];
+    }
+
+    API::Call(OCI_MsgSetConsumers(*this, (OCI_Agent **) buffer, (unsigned int) size));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * Enqueue
+ * --------------------------------------------------------------------------------------------- */
+
+inline Enqueue::Enqueue(const TypeInfo &typeInfo, mstring queueName)
+{
+   Acquire(API::Call(OCI_EnqueueCreate(typeInfo, queueName.c_str())), (HandleFreeFunc) OCI_EnqueueFree, 0);
+}
+
+inline void Enqueue::Put(const Message &message)
+{
+    API::Call(OCI_EnqueuePut(*this, message));
+}
+
+inline unsigned int Enqueue::GetVisibility()
+{
+    return API::Call(OCI_EnqueueGetVisibility(*this));
+}
+
+inline void Enqueue::SetVisibility(unsigned int value)
+{
+    API::Call(OCI_EnqueueSetVisibility(*this, value));
+}
+
+inline unsigned int Enqueue::GetSequenceDeviation()
+{
+    return API::Call(OCI_EnqueueGetSequenceDeviation(*this));
+}
+
+inline void Enqueue::SetSequenceDeviation(unsigned int value)
+{
+    API::Call(OCI_EnqueueSetSequenceDeviation(*this, value));
+}
+
+inline void Enqueue::GetRelativeMsgID(BufferPointer value, unsigned int &size)
+{
+    API::Call(OCI_EnqueueGetRelativeMsgID(*this, value, &size));
+}
+
+inline void Enqueue::SetRelativeMsgID(const BufferPointer &value, unsigned int size)
+{
+    API::Call(OCI_EnqueueSetRelativeMsgID(*this, value, size));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * Dequeue
+ * --------------------------------------------------------------------------------------------- */
+
+inline Dequeue::Dequeue(const TypeInfo &typeInfo, mstring queueName)
+{
+   Acquire(API::Call(OCI_DequeueCreate(typeInfo, queueName.c_str())), (HandleFreeFunc) OCI_DequeueFree, 0);
+}
+
+inline Dequeue::Dequeue(OCI_Dequeue *pDequeue)
+{
+    Acquire(pDequeue, 0, 0);
+}
+
+inline Message Dequeue::Get()
+{
+    return Message(API::Call(OCI_DequeueGet(*this)), 0);
+}
+
+inline mstring Dequeue::GetConsumer()
+{
+    return API::MakeString(API::Call(OCI_DequeueGetConsumer(*this)));
+}
+
+inline void Dequeue::SetConsumer(mstring value)
+{
+    API::Call(OCI_DequeueSetConsumer(*this, value.c_str()));
+}
+
+inline mstring Dequeue::GetCorrelation()
+{
+    return API::MakeString(API::Call(OCI_DequeueGetCorrelation(*this)));
+}
+
+inline void Dequeue::SetCorrelation(mstring value)
+{
+    API::Call(OCI_DequeueSetCorrelation(*this, value.c_str()));
+}
+
+inline void Dequeue::GetRelativeMsgID(BufferPointer value, unsigned int &size)
+{
+    API::Call(OCI_DequeueGetRelativeMsgID(*this, value, &size));
+}
+
+inline void Dequeue::SetRelativeMsgID(const BufferPointer &value, unsigned int size)
+{
+    API::Call(OCI_DequeueSetRelativeMsgID(*this, value, size));
+}
+
+inline unsigned int Dequeue::GetVisibility()
+{
+    return API::Call(OCI_DequeueGetVisibility(*this));
+}
+
+inline void Dequeue::SetVisibility(unsigned int value)
+{
+    API::Call(OCI_DequeueSetVisibility(*this, value));
+}
+
+inline unsigned int Dequeue::GetMode()
+{
+    return API::Call(OCI_DequeueGetMode(*this));
+}
+
+inline void Dequeue::SetMode(unsigned int value)
+{
+    API::Call(OCI_DequeueSetMode(*this, value));
+}
+
+inline unsigned int Dequeue::GetNavigation()
+{
+    return API::Call(OCI_DequeueGetNavigation(*this));
+}
+
+inline void Dequeue::SetNavigation(unsigned int value)
+{
+    API::Call(OCI_DequeueSetNavigation(*this, value));
+}
+
+inline int Dequeue::GetWaitTime()
+{
+    return API::Call(OCI_DequeueGetWaitTime(*this));
+}
+
+inline void Dequeue::SetWaitTime(int value)
+{
+    API::Call(OCI_DequeueSetWaitTime(*this, value));
+}
+
+inline void Dequeue::SetAgents(std::vector<Agent> &agents)
+{
+    size_t size = agents.size();
+    ManagedBuffer<OCI_Agent*> buffer = new OCI_Agent * [size];
+
+    for (size_t i = 0; i < size; i++)
+    {
+       ((OCI_Agent **) buffer)[i] = (const Agent &) agents[i];
+    }
+
+    API::Call(OCI_DequeueSetAgentList(*this, (OCI_Agent **) buffer, (unsigned int) size));
+}
+
+inline void Dequeue::Subscribe(unsigned int port, unsigned int timeout, NotifyAQHandlerProc handler)
+{
+    API::Call(OCI_DequeueSubscribe(*this, port, timeout, (POCI_NOTIFY_AQ) (handler != 0 ? Environment::NotifyHandlerAQ : 0 )));
+
+    Environment::GetEnvironmentData().callbackPool.Set((OCI_Dequeue*) *this, (void*) handler);
+}
+
+inline void Dequeue::Unsubscribe()
+{
+    API::Call(OCI_DequeueUnsubscribe(*this));
+}
+
 
 }
 
