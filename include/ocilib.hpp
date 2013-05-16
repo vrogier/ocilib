@@ -110,7 +110,7 @@ class DirectPath;
 class Thread;
 class ThreadKey;
 class Mutex;
-class Bind;
+class BindInfo;
 
 /**
  * @typedef HAHandlerProc
@@ -1324,13 +1324,13 @@ private:
 };
 
 /**
- * @class Bind
+ * @class BindInfo
  *
  * @brief
  *
  *
  */
-class Bind : public HandleHolder<OCI_Bind *>
+class BindInfo : public HandleHolder<OCI_Bind *>
 {
     friend class Statement;
 
@@ -1356,7 +1356,7 @@ public:
 
 private:
 
-    Bind(OCI_Bind *pBind, Handle *parent);
+    BindInfo(OCI_Bind *pBind, Handle *parent);
 };
 
 /**
@@ -1372,7 +1372,7 @@ class Statement : public HandleHolder<OCI_Statement *>
     friend class Resultset;
     friend class CLong;
     friend class BLong;
-    friend class Bind;
+    friend class BindInfo;
 
 public:
 
@@ -1401,8 +1401,8 @@ public:
 
     unsigned int GetBindCount();
 
-    Bind GetBind(unsigned int index);
-    Bind GetBind(mstring name);
+    BindInfo GetBind(unsigned int index);
+    BindInfo GetBind(mstring name);
 
     template <class TDataType>
     void Bind(mstring name, TDataType &value, unsigned int mode);
@@ -4512,67 +4512,67 @@ inline void BindsHolder::SetInData()
 
 
 
-inline Bind::Bind(OCI_Bind *pBind, Handle *parent)
+inline BindInfo::BindInfo(OCI_Bind *pBind, Handle *parent)
 {
 
 }
 
-inline mstring Bind::GetName()
+inline mstring BindInfo::GetName()
 {
     return API::MakeString(API::Call(OCI_BindGetName(*this)));
 }
 
-inline unsigned int Bind::GetType()
+inline unsigned int BindInfo::GetType()
 {
     return API::Call(OCI_BindGetType(*this));   
 }
 
-inline unsigned int Bind::GetSubType()
+inline unsigned int BindInfo::GetSubType()
 {   
     return API::Call(OCI_BindGetSubtype(*this));
 }
 
-inline unsigned int Bind::GetElemcount()
+inline unsigned int BindInfo::GetElemcount()
 {
     return API::Call(OCI_BindGetDirection(*this));
 }
 
-inline Statement Bind::GetStatement()
+inline Statement BindInfo::GetStatement()
 {
     return Statement(API::Call(OCI_BindGetStatement(*this)));
 }
 
-inline void Bind::SetNull()
+inline void BindInfo::SetNull()
 {
     API::Call(OCI_BindSetNull(*this));
 }
 
-inline void Bind::SetNull(unsigned int pos)
+inline void BindInfo::SetNull(unsigned int pos)
 {
     API::Call(OCI_BindSetNullAtPos(*this, pos));
 }
 
-inline bool Bind::IsNull()
+inline bool BindInfo::IsNull()
 {
     return (API::Call(OCI_BindIsNull(*this)) == TRUE);
 }
 
-inline bool Bind::IsNull(unsigned int pos)
+inline bool BindInfo::IsNull(unsigned int pos)
 {
     return (API::Call(OCI_BindIsNullAtPos(*this, pos)) == TRUE);
 }
 
-inline void Bind::SetCharsetForm(unsigned int value)
+inline void BindInfo::SetCharsetForm(unsigned int value)
 {
     API::Call(OCI_BindSetCharsetForm(*this, value));
 }
 
-inline void Bind::SetDirection(unsigned int value)
+inline void BindInfo::SetDirection(unsigned int value)
 {
     API::Call(OCI_BindSetDirection(*this, value));
 }
 
-inline unsigned int Bind::GetDirection()
+inline unsigned int BindInfo::GetDirection()
 {
     return API::Call(OCI_BindGetDirection(*this));
 }
@@ -4682,14 +4682,14 @@ inline unsigned int Statement::GetBindCount()
     return API::Call(OCI_GetBindCount(*this));  
 }
 
-inline Bind Statement::GetBind(unsigned int index)
+inline BindInfo Statement::GetBind(unsigned int index)
 {
-    return ocilib::Bind(API::Call(OCI_GetBind(*this, index)), GetHandle());
+    return BindInfo(API::Call(OCI_GetBind(*this, index)), GetHandle());
 }
 
-inline Bind Statement::GetBind(mstring name)
+inline BindInfo Statement::GetBind(mstring name)
 {
-    return ocilib::Bind(API::Call(OCI_GetBind2(*this, name.c_str())), GetHandle());
+    return BindInfo(API::Call(OCI_GetBind2(*this, name.c_str())), GetHandle());
 }
 
 template <typename TBindMethod, class TDataType>
