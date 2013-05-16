@@ -104,13 +104,13 @@ class Agent;
 class Message;
 class Enqueue;
 class Dequeue;
-
-
-/*
 class Queue;
-
-*/
-
+class QueueTable;
+class DirectPath;
+class Thread;
+class ThreadKey;
+class Mutex;
+class Bind;
 
 /**
  * @typedef HAHandlerProc
@@ -388,20 +388,6 @@ public:
 
     static void SetHAHandler(HAHandlerProc handler);
 
-    static void CreateThreadKey(mstring name, ThreadKeyFreeProc freeProc = 0);
-    static void ThreadKeySetValue(mstring name, void *value);
-    static void * ThreadKeyGetValue(mstring name);
-
-    static ThreadHandle CreateThread();
-    static void DestroyThread(ThreadHandle handle);
-    static void RunThread(ThreadHandle handle, ThreadProc func, void *args);
-    static void JoinThread(ThreadHandle thrhandleead);
-
-    static MutexHandle CreateMutex();
-    static void DestroyMutex(MutexHandle handle);
-    static void AcquireMutex(MutexHandle handle);
-    static void ReleaseMutex(MutexHandle handle);
-
 private:
 
     typedef ConcurrentPool<void *, Handle *> HandlePool;
@@ -435,6 +421,53 @@ private:
     static void NotifyHandlerAQ(OCI_Dequeue *pDequeue);
 };
 
+
+/**
+ * @class Thread
+ *
+ * @brief
+ *
+ *
+ */
+class Thread
+{
+public:
+    static ThreadHandle Create();
+    static void Destroy(ThreadHandle handle);
+    static void Run(ThreadHandle handle, ThreadProc func, void *args);
+    static void Join(ThreadHandle thrhandleead);
+};
+
+/**
+ * @class ThreadKey
+ *
+ * @brief
+ *
+ *
+ */
+class Mutex
+{
+public:
+    static MutexHandle Create();
+    static void Destroy(MutexHandle handle);
+    static void Acquire(MutexHandle handle);
+    static void Release(MutexHandle handle);
+};
+
+/**
+ * @class ThreadKey
+ *
+ * @brief
+ *
+ *
+ */
+class ThreadKey
+{
+public:
+    static void Create(mstring name, ThreadKeyFreeProc freeProc = 0);
+    static void SetValue(mstring name, void *value);
+    static void * GetValue(mstring name);
+};
 
 /**
  * @class Pool
@@ -1291,6 +1324,42 @@ private:
 };
 
 /**
+ * @class Bind
+ *
+ * @brief
+ *
+ *
+ */
+class Bind : public HandleHolder<OCI_Bind *>
+{
+    friend class Statement;
+
+public:
+
+    mstring GetName();
+    unsigned int GetType();
+    unsigned int GetSubType();
+    unsigned int GetElemcount();
+
+    Statement GetStatement();
+
+    void SetNull();
+    void SetNull(unsigned int pos);
+
+    bool IsNull();
+    bool IsNull(unsigned int pos);
+
+    void SetCharsetForm(unsigned int value);
+
+    void SetDirection(unsigned int value);
+    unsigned int GetDirection();
+
+private:
+
+    Bind(OCI_Bind *pBind, Handle *parent);
+};
+
+/**
  * @class Statement
  *
  * @brief
@@ -1303,6 +1372,7 @@ class Statement : public HandleHolder<OCI_Statement *>
     friend class Resultset;
     friend class CLong;
     friend class BLong;
+    friend class Bind;
 
 public:
 
@@ -1328,6 +1398,11 @@ public:
     unsigned int GetBindArraySize();
 
     void AllowRebinding(bool value);
+
+    unsigned int GetBindCount();
+
+    Bind GetBind(unsigned int index);
+    Bind GetBind(mstring name);
 
     template <class TDataType>
     void Bind(mstring name, TDataType &value, unsigned int mode);
@@ -1356,9 +1431,7 @@ public:
     unsigned int GetStatementType();
 
     unsigned int GetSqlErrorPos();
-
-    unsigned int GetBindCount();
-
+    
     void SetFetchMode(unsigned int value);
     unsigned int GetFetchMode();
 
@@ -1392,6 +1465,8 @@ private:
     BindsHolder *GetBindsHolder(bool allocate);
 
     void ReleaseResultsets();
+
+    void SetLastBindMode(unsigned int mode);
 
     void SetInData();
     void SetOutData();
@@ -1713,12 +1788,12 @@ class Queue
 {
 public:
 
-    static void Create(const Connection &connection, mstring queue, mstring table, unsigned int queueType, unsigned int maxRetries,
-                       unsigned int retryDelay, unsigned int retentionTime, bool dependencyTracking, mstring comment);
-    static void Alter (const Connection &connection, mstring queue, unsigned int maxRetries, unsigned int retryDelay, unsigned int retentionTime, mstring comment);
+    static void Create(const Connection &connection, mstring queue, mstring table, unsigned int queueType = OCI_AQT_NORMAL, unsigned int maxRetries = 0,
+                       unsigned int retryDelay = 0, unsigned int retentionTime = 0, bool dependencyTracking = false, mstring comment = MT(""));
+    static void Alter (const Connection &connection, mstring queue, unsigned int maxRetries= 0, unsigned int retryDelay= 0, unsigned int retentionTime= 0, mstring comment = MT(""));
     static void Drop  (const Connection &connection, mstring queue);
-    static void Start (const Connection &connection, mstring queue, bool enqueue, boolean dequeue);
-    static void Stop  (const Connection &connection, mstring queue, bool enqueue, boolean dequeue, bool wait);
+    static void Start (const Connection &connection, mstring queue, bool startEnqueue = true, bool startDequeue = true);
+    static void Stop  (const Connection &connection, mstring queue, bool stopEnqueue = true, bool stopDequeue = true, bool wait = true);
 };
 
 /**
@@ -1732,14 +1807,60 @@ class QueueTable
 {
 public:
 
-    static void Create (const Connection &connection, mstring table, mstring payloadType, mstring storageClause, mstring sortList,
-                        bool multipleConsumers, unsigned int messageGrouping, mstring comment, unsigned int primaryInstance,
-                        unsigned int secondaryInstance, mstring compatible);
-    static void Alter  (const Connection &connection, mstring table, mstring comment, unsigned int primaryInstance, unsigned int secondaryInstance);
-    static void Drop   (const Connection &connection, mstring table, bool force);
-    static void Purge  (const Connection &connection, mstring table, mstring purgeCondition, bool block, unsigned int deliveryMode);
-    static void Migrate(const Connection &connection, mstring table, mstring compatible);
+    static void Create (const Connection &connection, mstring table, mstring payloadType, bool multipleConsumers, mstring storageClause = MT(""), mstring sortList = MT(""),
+                        unsigned int messageGrouping = OCI_AGM_NONE, mstring comment = MT(""), unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0, mstring compatible = MT(""));
+    static void Alter  (const Connection &connection, mstring table, mstring comment, unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0);
+    static void Drop   (const Connection &connection, mstring table, bool force = true);
+    static void Purge  (const Connection &connection, mstring table,  unsigned int deliveryMode, mstring purgeCondition = MT(""), bool block = true);
+    static void Migrate(const Connection &connection, mstring table, mstring compatible = MT(""));
 };
+
+/**
+ * @class DirectPath
+ *
+ * @brief
+ *
+ *
+ */
+class DirectPath : public HandleHolder<OCI_DirPath *>
+{
+public:
+
+    DirectPath(const TypeInfo &typeInfo, unsigned int nbCols, unsigned int  nbRows, mstring partition = MT(""));
+
+    void SetColumn(unsigned int colIndex, mstring name, unsigned int maxSize,  mstring format = MT(""));
+    void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const dstring &value,  bool complete = true);
+    void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const BufferPointer &value, unsigned int size,  bool complete = true);
+
+    void Reset();
+    void Prepare();
+    unsigned int Convert();
+    unsigned int Load();
+    void Finish();
+    void Abort();
+    void Save();
+    void FlushRow();
+
+    void SetCurrentRows(unsigned int nbRows);
+    unsigned int GetCurrentRows();
+
+    unsigned int GetMaxRows();
+    unsigned int GetRowCount();
+    unsigned int GetAffectedRows();
+
+    void SetDateFormat(mstring format);
+
+    void SetParallel(bool value);
+    void SetNoLog(bool value);
+    void SetCacheSize(unsigned int value);
+    void SetBufferSize(unsigned int value);
+
+    void SetConvertMode(unsigned int value);
+
+    unsigned int GetErrorColumn();
+    unsigned int GetErrorRow();
+};
+
 
 /* ********************************************************************************************* *
  *                                         IMPLEMENTATION
@@ -1932,7 +2053,7 @@ inline void ConcurrentPool<TKey, TValue>::Initialize(unsigned int envMode)
 {
     if (envMode & OCI_ENV_THREADED)
     {
-        _mutex = Environment::CreateMutex();
+        _mutex = Mutex::Create();
     }
 }
 
@@ -1941,7 +2062,7 @@ inline void ConcurrentPool<TKey, TValue>::Release()
 {
     if (_mutex)
     {
-        Environment::DestroyMutex(_mutex);
+        Mutex::Destroy(_mutex);
     }
 }
 
@@ -1982,7 +2103,7 @@ inline void ConcurrentPool<TKey, TValue>::Lock()
 {
     if (_mutex)
     {
-        Environment::AcquireMutex(_mutex);
+        Mutex::Acquire(_mutex);
     }
 }
 
@@ -1991,7 +2112,7 @@ inline void ConcurrentPool<TKey, TValue>::Unlock()
 {
     if (_mutex)
     {
-        Environment::ReleaseMutex(_mutex);
+        Mutex::Release(_mutex);
     }
 }
 
@@ -2236,61 +2357,6 @@ inline void Environment::ChangeUserPassword(mstring db, mstring user, mstring pw
     API::Call(OCI_SetUserPassword(db.c_str(), user.c_str(), pwd.c_str(), newPassword.c_str()));
 }
 
-inline MutexHandle Environment::CreateMutex()
-{
-    return API::Call(OCI_MutexCreate());
-}
-
-inline void Environment::DestroyMutex(MutexHandle mutex)
-{
-    API::Call(OCI_MutexFree(mutex));
-}
-
-inline void Environment::AcquireMutex(MutexHandle mutex)
-{
-    API::Call(OCI_MutexAcquire(mutex));
-}
-
-inline void Environment::ReleaseMutex(MutexHandle mutex)
-{
-    API::Call(OCI_MutexRelease(mutex));
-}
-
-inline ThreadHandle Environment::CreateThread()
-{
-    return API::Call(OCI_ThreadCreate());
-}
-
-inline void Environment::DestroyThread(ThreadHandle handle)
-{
-    API::Call(OCI_ThreadFree(handle));
-}
-
-inline void Environment::RunThread(ThreadHandle handle, ThreadProc func, void *args)
-{
-    API::Call(OCI_ThreadRun(handle, func, args));
-}
-
-inline void Environment::JoinThread(ThreadHandle handle)
-{
-    API::Call(OCI_ThreadJoin(handle));
-}
-
-inline void Environment::CreateThreadKey(mstring name, ThreadKeyFreeProc freeProc)
-{
-    API::Call(OCI_ThreadKeyCreate(name.c_str(), freeProc));
-}
-
-inline void Environment::ThreadKeySetValue(mstring name, void *value)
-{
-    API::Call(OCI_ThreadKeySetValue(name.c_str(), value));
-}
-
-inline void * Environment::ThreadKeyGetValue(mstring name)
-{
-    return API::Call(OCI_ThreadKeyGetValue(name.c_str()));
-}
-
 inline void Environment::SetHAHandler(HAHandlerProc handler)
 {
     Environment::CallbackPool & pool = GetEnvironmentData().callbackPool;
@@ -2352,6 +2418,73 @@ inline Environment::EnvironmentData & Environment::GetEnvironmentData()
     static EnvironmentData envData;
 
     return envData;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * Mutex
+ * --------------------------------------------------------------------------------------------- */
+
+inline MutexHandle Mutex::Create()
+{
+    return API::Call(OCI_MutexCreate());
+}
+
+inline void Mutex::Destroy(MutexHandle mutex)
+{
+    API::Call(OCI_MutexFree(mutex));
+}
+
+inline void Mutex::Acquire(MutexHandle mutex)
+{
+    API::Call(OCI_MutexAcquire(mutex));
+}
+
+inline void Mutex::Release(MutexHandle mutex)
+{
+    API::Call(OCI_MutexRelease(mutex));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * Thread
+ * --------------------------------------------------------------------------------------------- */
+
+inline ThreadHandle Thread::Create()
+{
+    return API::Call(OCI_ThreadCreate());
+}
+
+inline void Thread::Destroy(ThreadHandle handle)
+{
+    API::Call(OCI_ThreadFree(handle));
+}
+
+inline void Thread::Run(ThreadHandle handle, ThreadProc func, void *args)
+{
+    API::Call(OCI_ThreadRun(handle, func, args));
+}
+
+inline void Thread::Join(ThreadHandle handle)
+{
+    API::Call(OCI_ThreadJoin(handle));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * ThreadKey
+ * --------------------------------------------------------------------------------------------- */
+
+inline void ThreadKey::Create(mstring name, ThreadKeyFreeProc freeProc)
+{
+    API::Call(OCI_ThreadKeyCreate(name.c_str(), freeProc));
+}
+
+inline void ThreadKey::SetValue(mstring name, void *value)
+{
+    API::Call(OCI_ThreadKeySetValue(name.c_str(), value));
+}
+
+inline void * ThreadKey::GetValue(mstring name)
+{
+    return API::Call(OCI_ThreadKeyGetValue(name.c_str()));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4374,6 +4507,77 @@ inline void BindsHolder::SetInData()
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * Bind
+ * --------------------------------------------------------------------------------------------- */
+
+
+
+inline Bind::Bind(OCI_Bind *pBind, Handle *parent)
+{
+
+}
+
+inline mstring Bind::GetName()
+{
+    return API::MakeString(API::Call(OCI_BindGetName(*this)));
+}
+
+inline unsigned int Bind::GetType()
+{
+    return API::Call(OCI_BindGetType(*this));   
+}
+
+inline unsigned int Bind::GetSubType()
+{   
+    return API::Call(OCI_BindGetSubtype(*this));
+}
+
+inline unsigned int Bind::GetElemcount()
+{
+    return API::Call(OCI_BindGetDirection(*this));
+}
+
+inline Statement Bind::GetStatement()
+{
+    return Statement(API::Call(OCI_BindGetStatement(*this)));
+}
+
+inline void Bind::SetNull()
+{
+    API::Call(OCI_BindSetNull(*this));
+}
+
+inline void Bind::SetNull(unsigned int pos)
+{
+    API::Call(OCI_BindSetNullAtPos(*this, pos));
+}
+
+inline bool Bind::IsNull()
+{
+    return (API::Call(OCI_BindIsNull(*this)) == TRUE);
+}
+
+inline bool Bind::IsNull(unsigned int pos)
+{
+    return (API::Call(OCI_BindIsNullAtPos(*this, pos)) == TRUE);
+}
+
+inline void Bind::SetCharsetForm(unsigned int value)
+{
+    API::Call(OCI_BindSetCharsetForm(*this, value));
+}
+
+inline void Bind::SetDirection(unsigned int value)
+{
+    API::Call(OCI_BindSetDirection(*this, value));
+}
+
+inline unsigned int Bind::GetDirection()
+{
+    return API::Call(OCI_BindGetDirection(*this));
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * Statement
  * --------------------------------------------------------------------------------------------- */
 
@@ -4473,18 +4677,33 @@ inline void Statement::AllowRebinding(bool value)
     API::Call(OCI_AllowRebinding(*this, value));
 }
 
+inline unsigned int Statement::GetBindCount()
+{
+    return API::Call(OCI_GetBindCount(*this));  
+}
+
+inline Bind Statement::GetBind(unsigned int index)
+{
+    return ocilib::Bind(API::Call(OCI_GetBind(*this, index)), GetHandle());
+}
+
+inline Bind Statement::GetBind(mstring name)
+{
+    return ocilib::Bind(API::Call(OCI_GetBind2(*this, name.c_str())), GetHandle());
+}
+
 template <typename TBindMethod, class TDataType>
 inline void Statement::Bind (TBindMethod &method, mstring name, TDataType& value, unsigned int mode)
 {
     API::Call(method(*this, name.c_str(), &value));
-    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
+    SetLastBindMode(mode);
 }
 
 template <typename TBindMethod, class TObjectType, class TDataType>
 inline void Statement::Bind (TBindMethod &method, mstring name, TObjectType& value, BindValue<TDataType> datatype, unsigned int mode)
 {
     API::Call(method(*this, name.c_str(), (TDataType) value));
-    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
+    SetLastBindMode(mode);
 }
 
 template <typename TBindMethod, class TObjectType, class TDataType>
@@ -4496,7 +4715,7 @@ inline void Statement::Bind (TBindMethod &method, mstring name, std::vector<TObj
     bindsHolder->AddBindArray(bnd);
 
     API::Call(method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), 0));
-    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
+    SetLastBindMode(mode);
 }
 
 template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
@@ -4508,7 +4727,7 @@ inline void Statement::Bind (TBindMethod &method, mstring name, std::vector<TObj
     bindsHolder->AddBindArray(bnd);
 
     method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), type, 0);
-    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
+    SetLastBindMode(mode);
 }
 
 template <>
@@ -4623,7 +4842,7 @@ template <>
 inline void Statement::Bind<CLong, unsigned int>(mstring name, CLong &value, unsigned int maxSize, unsigned int mode)
 {
     API::Call(OCI_BindLong(*this, name.c_str(), value, maxSize));
-    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
+    SetLastBindMode(mode);
 }
 
 template <>
@@ -4637,7 +4856,7 @@ template <>
 inline void Statement::Bind<BLong, unsigned int>(mstring name, BLong &value, unsigned int maxSize, unsigned int mode)
 {
     API::Call(OCI_BindLong(*this, name.c_str(), value, maxSize));
-    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
+    SetLastBindMode(mode);
 }
 
 template <>
@@ -4659,7 +4878,7 @@ inline void Statement::Bind<dstring, unsigned int>(mstring name, dstring &value,
     bindsHolder->AddBindString(bnd);
 
     API::Call(OCI_BindString(*this, name.c_str(), (dtext*) (*bnd), maxSize));
-    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
+    SetLastBindMode(mode);
 }
 
 template <>
@@ -4672,7 +4891,7 @@ template <>
 inline void Statement::Bind<BufferPointer, unsigned int>(mstring name, BufferPointer &value, unsigned int maxSize, unsigned int mode)
 {
     API::Call(OCI_BindRaw(*this, name.c_str(), value, maxSize));
-    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
+    SetLastBindMode(mode);
 }
 
 template <>
@@ -4804,7 +5023,7 @@ inline void Statement::Bind<dstring, unsigned int>(mstring name, std::vector<dst
     bindsHolder->AddBindArray(bnd);
 
     API::Call(OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<dstring, dtext>(), maxSize, 0));
-    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
+    SetLastBindMode(mode);
 }
 
 template <>
@@ -4822,7 +5041,7 @@ inline void Statement::Bind<BufferPointer, unsigned int>(mstring name, std::vect
     bindsHolder->AddBindArray(bnd);
 
     API::Call(OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<void *, void *>(), maxSize, 0));
-    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
+    SetLastBindMode(mode);
 }
 
 template <>
@@ -4962,11 +5181,6 @@ inline unsigned int Statement::GetSqlErrorPos()
     return API::Call(OCI_GetSqlErrorPos(*this));
 }
 
-inline unsigned int Statement::GetBindCount()
-{
-    return API::Call(OCI_GetBindCount(*this));
-}
-
 inline void Statement::SetFetchMode(unsigned int value)
 {
     API::Call(OCI_SetFetchMode(*this, value));
@@ -5104,6 +5318,11 @@ inline void Statement::ReleaseResultsets()
             delete smartHandle;
         }
     }
+}
+
+inline void Statement::SetLastBindMode(unsigned int mode)
+{
+    API::Call(OCI_BindSetDirection(API::Call(OCI_GetBind(*this, API::Call(OCI_GetBindCount(*this)))), mode));
 }
 
 inline BindsHolder * Statement::GetBindsHolder(bool create)
@@ -5958,6 +6177,197 @@ inline void Dequeue::Subscribe(unsigned int port, unsigned int timeout, NotifyAQ
 inline void Dequeue::Unsubscribe()
 {
     API::Call(OCI_DequeueUnsubscribe(*this));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * DirectPath
+ * --------------------------------------------------------------------------------------------- */
+
+inline DirectPath::DirectPath(const TypeInfo &typeInfo, unsigned int nbCols, unsigned int  nbRows, mstring partition)
+{
+    Acquire(API::Call(OCI_DirPathCreate(typeInfo, partition.c_str(), nbCols, nbRows)), (HandleFreeFunc) OCI_DirPathFree, 0);
+}
+
+inline void DirectPath::SetColumn(unsigned int colIndex, mstring name, unsigned int maxSize,  mstring format)
+{
+    API::Call(OCI_DirPathSetColumn(*this, colIndex, name.c_str(), maxSize, format.c_str()));
+}
+
+inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex,  const dstring &value,  bool complete)
+{
+    API::Call(OCI_DirPathSetEntry(*this, rowIndex, colIndex, (void *) value.c_str(), value.size(), complete));
+}
+
+inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex,  const BufferPointer &value, unsigned int size,  bool complete )
+{
+    API::Call(OCI_DirPathSetEntry(*this, rowIndex, colIndex, value, size, complete));
+}
+
+inline void DirectPath::Reset()
+{
+    API::Call(OCI_DirPathReset(*this));
+}
+
+inline void DirectPath::Prepare()
+{
+    API::Call(OCI_DirPathPrepare(*this));
+}
+
+inline unsigned int DirectPath::Convert()
+{
+    return API::Call(OCI_DirPathConvert(*this));
+}
+
+inline unsigned int DirectPath::Load()
+{
+    return API::Call(OCI_DirPathLoad(*this));
+}
+
+inline void DirectPath::Finish()
+{
+    API::Call(OCI_DirPathFinish(*this));
+}
+
+inline void DirectPath::Abort()
+{
+    API::Call(OCI_DirPathAbort(*this));
+}
+
+inline void DirectPath::Save()
+{
+    API::Call(OCI_DirPathSave(*this));
+}
+
+inline void DirectPath::FlushRow()
+{
+    API::Call(OCI_DirPathFlushRow(*this));
+}
+
+inline void DirectPath::SetCurrentRows(unsigned int value)
+{
+    API::Call(OCI_DirPathSetCurrentRows(*this, value));
+}
+
+inline unsigned int DirectPath::GetCurrentRows()
+{
+    return API::Call(OCI_DirPathGetCurrentRows(*this));
+}
+
+inline unsigned int DirectPath::GetMaxRows()
+{
+    return API::Call(OCI_DirPathGetMaxRows(*this));
+}
+
+inline unsigned int DirectPath::GetRowCount()
+{
+    return API::Call(OCI_DirPathGetRowCount(*this));
+}
+
+inline unsigned int DirectPath::GetAffectedRows()
+{
+    return API::Call(OCI_DirPathGetAffectedRows(*this));
+}
+
+inline void DirectPath::SetDateFormat(mstring format)
+{
+    API::Call(OCI_DirPathSetDateFormat(*this, format.c_str()));
+}
+
+inline void DirectPath::SetParallel(bool value)
+{
+    API::Call(OCI_DirPathSetParallel(*this, value));
+}
+
+inline void DirectPath::SetNoLog(bool value)
+{
+    API::Call(OCI_DirPathSetNoLog(*this, value));
+}
+
+inline void DirectPath::SetCacheSize(unsigned int value)
+{
+    API::Call(OCI_DirPathSetCacheSize(*this, value));
+}
+
+inline void DirectPath::SetBufferSize(unsigned int value)
+{
+    API::Call(OCI_DirPathSetBufferSize(*this, value));
+}
+
+inline void DirectPath::SetConvertMode(unsigned int value)
+{
+    API::Call(OCI_DirPathSetConvertMode(*this, value));
+}
+
+inline unsigned int DirectPath::GetErrorColumn()
+{
+    return API::Call(OCI_DirPathGetErrorColumn(*this));
+}
+
+inline unsigned int DirectPath::GetErrorRow()
+{
+    return API::Call(OCI_DirPathGetErrorRow(*this));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * Queue
+ * --------------------------------------------------------------------------------------------- */
+
+inline void Queue::Create(const Connection &connection, mstring queue, mstring table, unsigned int queueType, unsigned int maxRetries,
+            unsigned int retryDelay, unsigned int retentionTime, bool dependencyTracking, mstring comment)
+{
+    API::Call(OCI_QueueCreate(connection, queue.c_str(), table.c_str(), queueType, maxRetries, retryDelay, retentionTime, dependencyTracking, comment.c_str()));
+}
+
+inline void Queue::Alter(const Connection &connection, mstring queue, unsigned int maxRetries, unsigned int retryDelay, unsigned int retentionTime, mstring comment)
+{
+    API::Call(OCI_QueueAlter(connection, queue.c_str(), maxRetries, retryDelay, retentionTime, comment.c_str()));
+}
+
+inline void Queue::Drop(const Connection &connection, mstring queue)
+{
+    API::Call(OCI_QueueDrop(connection, queue.c_str()));
+}
+
+inline void Queue::Start(const Connection &connection, mstring queue, bool startEnqueue, bool startDequeue)
+{
+    API::Call(OCI_QueueStart(connection, queue.c_str(), startEnqueue, startDequeue));
+}
+
+inline void Queue::Stop(const Connection &connection, mstring queue, bool stopEnqueue, bool stopDequeue, bool wait)
+{
+    API::Call(OCI_QueueStop(connection, queue.c_str(), stopEnqueue, stopDequeue, wait));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * QueueTable
+ * --------------------------------------------------------------------------------------------- */
+
+inline void QueueTable::Create(const Connection &connection, mstring table, mstring payloadType, bool multipleConsumers, mstring storageClause, mstring sortList,
+                    unsigned int messageGrouping, mstring comment, unsigned int primaryInstance, unsigned int secondaryInstance, mstring compatible)
+
+{
+    API::Call(OCI_QueueTableCreate(connection, table.c_str(), payloadType.c_str(), storageClause.c_str(), sortList.c_str(), multipleConsumers, 
+                                   messageGrouping, comment.c_str(), primaryInstance, secondaryInstance, compatible.c_str()));
+}
+
+inline void QueueTable::Alter(const Connection &connection, mstring table, mstring comment, unsigned int primaryInstance, unsigned int secondaryInstance)
+{
+    API::Call(OCI_QueueTableAlter(connection, table.c_str(), comment.c_str(), primaryInstance, secondaryInstance));
+}
+
+inline void QueueTable::Drop(const Connection &connection, mstring table, bool force)
+{
+    API::Call(OCI_QueueTableDrop(connection, table.c_str(), force));
+}
+
+inline void QueueTable::Purge(const Connection &connection, mstring table, unsigned int deliveryMode, mstring purgeCondition, bool block)
+{
+    API::Call(OCI_QueueTablePurge(connection, table.c_str(), purgeCondition.c_str(), block, deliveryMode));
+}
+
+inline void QueueTable::Migrate(const Connection &connection, mstring table, mstring compatible)
+{
+    API::Call(OCI_QueueTableMigrate(connection, table.c_str(), compatible.c_str()));
 }
 
 
