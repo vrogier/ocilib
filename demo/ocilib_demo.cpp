@@ -36,6 +36,7 @@ using namespace ocilib;
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <sstream>
 
 /* --------------------------------------------------------------------------------------------- *
  * COMMON DEFINES
@@ -61,7 +62,7 @@ using namespace ocilib;
 
 #ifndef OCI_SHARED_LIB
     #if defined(_WINDOWS)
-        #define OCI_SHARED_LIB                   "oci.dll"
+        #define OCI_SHARED_LIB                   "libclntsh.dll"
     #elif defined(__APPLE__)
         #define OCI_SHARED_LIB                   "libclntsh.dylib"
     #elif defined(__hppa)
@@ -150,8 +151,8 @@ test_t tab_test[] =
         {test_object_fetch,      TRUE},
         {test_scrollable_cursor, TRUE},
         {test_collection,        TRUE},
-        {test_ref,               TRUE}/*,
-        {test_directpath,        FALSE}*/
+        {test_ref,               TRUE},
+        {test_directpath,        TRUE}
 };
 
 /* --------------------------------------------------------------------------------------------- *
@@ -543,23 +544,23 @@ void test_piecewise_insert(void)
     std::ifstream file(OCI_SHARED_LIB, std::ios::in|std::ios::binary|std::ios::ate);
     if (file.is_open())
     {
-        std::streamoff size = file.tellg();
+        size_t size  = (size_t) file.tellg();
         file.seekg (0, std::ios::beg);
         std::cout << std::endl << size << " bytes to write" << std::endl;
 
         Statement st(con);
         BLong lg(st);
-        st.Prepare(MT("insert into test_long_raw(code, content values (1, :data)"));
+        st.Prepare(MT("insert into test_long_raw(code, content) values (1, :data)"));
+        st.SetLongMaxSize(size);
         st.Bind(MT(":data"), lg, (int) size, OCI_BDM_IN);
         st.Execute();
 
-        char buffer[SIZE_BUF];
-        int bytesRead;
+        char * buffer = new char [size];
 
-        while (bytesRead = (int) file.readsome(buffer, SIZE_BUF))
-        {
-            lg.Write(buffer, bytesRead);
-        }
+        file.read(buffer, size);
+        lg.Write(buffer, size);
+
+        delete buffer;
 
         std::cout << std::endl << lg.GetSize() << " bytes written" << std::endl;
 
@@ -1224,3 +1225,85 @@ void test_ref(void)
     Object obj = ref.GetObject();
     std::cout << obj.Get<int>(MT("ID")) << " - " << obj.Get<dstring>(MT("NAME")) << std::endl;
 }
+
+
+/* --------------------------------------------------------------------------------------------- *
+ * test_directpath
+ * --------------------------------------------------------------------------------------------- */
+
+void test_directpath(void)
+{
+   /* Some OCI Direct path function fails (segfault) if the OCI version of the
+      client is different than the server one.
+      It happens with OCI 8i and 9i client. Apparently Oracle 10g and 11g seems to
+      have fixed these problems.
+      Anyway, we run this test case only if the major versions of client and server
+      match
+   */
+    if(OCI_VER_MAJ(Environment::GetCompileVersion()) == con.GetServerMajorVersion())
+    {
+       /* commit any previous pending modifications */
+
+        con.Commit();
+
+        std::cout << "\n>>>>> TEST DIRECT PATH (10 loads of 100 rows) \n\n";
+    
+        int i = 0, j = 0, nb_rows = SIZE_ARRAY;
+
+        DirectPath directPath(TypeInfo(con, MT("test_directpath"), OCI_TIF_TABLE), NUM_COLS, nb_rows);
+
+        /* optional attributes to set */
+
+        directPath.SetBufferSize(64000);
+        directPath.SetNoLog(true);
+        directPath.SetParallel(true);
+
+        if(Environment::GetCompileVersion() >= OCI_9_2)
+        {
+           directPath.SetCacheSize(100);
+        }
+
+        /* describe the target table */
+
+        directPath.SetColumn(1, MT("VAL_INT"),  SIZE_COL1);
+        directPath.SetColumn(2, MT("VAL_STR"),  SIZE_COL2);
+        directPath.SetColumn(3, MT("VAL_DATE"), SIZE_COL3, MT("YYYYMMDD"));
+
+        /* prepare the load */
+
+        directPath.Prepare();
+
+        nb_rows = directPath.GetMaxRows();          
+            
+        for (i = 0; i < NB_LOAD ; i++)
+        {
+            directPath.Reset();
+
+            for (j = 1; j <= nb_rows; j++)
+            {             
+                std::ostringstream val1, val2, val3;
+
+                /* fill test values */
+
+                val1 << std::setfill('0') << std::setw(4) << j + (i*100);
+                val2 << "value "<< std::setfill('0') << std::setw(5) << j + (i*100);
+                val3 << std::setfill('0') << std::setw(2) << (j%23)+1 + 2000 <<  std::setw(2) << (j%11)+1 << (j%23)+1;
+
+                directPath.SetEntry(j, 1, val1.str());
+                directPath.SetEntry(j, 2, val2.str());
+                directPath.SetEntry(j, 3, val3.str());
+            }
+
+            /* load data to the server */
+           directPath.Convert();
+           directPath.Load();
+        }
+
+        /* commits changes */
+
+        directPath.Finish();
+
+       std::cout << std::setw(4) << directPath.GetRowCount() << " row(s) loaded" << std::endl;
+   }
+}
+

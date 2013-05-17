@@ -29,15 +29,15 @@ int main(void)
 
         for (int i = 0; i < MaxThreads; i++)
         {
-            ThreadHandle th = Environment::CreateThread();            
+            ThreadHandle th = Thread::Create();            
             threads.push_back(th);
-            Environment::RunThread(th, worker, &pool);
+            Thread::Run(th, worker, &pool);
         }
 
         for (int i = 0; i < MaxThreads; i++)
         {
-            Environment::JoinThread(threads[i]);
-            Environment::DestroyThread(threads[i]);
+            Thread::Join(threads[i]);
+            Thread::Destroy(threads[i]);
         }
     }
     catch(Exception &ex)

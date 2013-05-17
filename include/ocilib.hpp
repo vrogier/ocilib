@@ -5309,13 +5309,18 @@ inline void Statement::ReleaseResultsets()
     {
         std::list<Handle *> &children = _smartHandle->GetChildren();
 
-        while (children.size() > 0)
+        size_t nbHandles = children.size();
+
+        while (nbHandles-- > 0)
         {
             Resultset::SmartHandle<OCI_Resultset *> *smartHandle = dynamic_cast<Resultset::SmartHandle<OCI_Resultset *> *>(*children.begin());
 
-            smartHandle->DetachFromHolders();
+            if (smartHandle)
+            {
+                smartHandle->DetachFromHolders();
 
-            delete smartHandle;
+                delete smartHandle;
+            }
         }
     }
 }
