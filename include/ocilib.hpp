@@ -61,7 +61,10 @@ namespace ocilib
 
 typedef std::basic_string<mtext, std::char_traits<mtext>, std::allocator<mtext> > mstring;
 typedef std::basic_string<dtext, std::char_traits<dtext>, std::allocator<dtext> > dstring;
+
 typedef void *              BufferPointer;
+typedef void *              UnknownHandle;
+typedef void *              CallbackPointer;
 typedef OCI_Thread *        ThreadHandle;
 typedef OCI_Mutex *         MutexHandle ;
 typedef POCI_THREAD         ThreadProc;
@@ -265,7 +268,7 @@ protected:
 
     HandleHolder<THandleType>& operator= (const HandleHolder<THandleType> &other);
 
-    typedef boolean (OCI_API *HandleFreeFunc)(void *handle);
+    typedef boolean (OCI_API *HandleFreeFunc)(UnknownHandle handle);
 
     Handle* GetHandle() const;
 
@@ -293,8 +296,8 @@ protected:
 
         void DetachFromHolders();
 
-        void * GetExtraInfos();
-        void   SetExtraInfos(void *extraInfo);
+        BufferPointer GetExtraInfos();
+        void   SetExtraInfos(BufferPointer extraInfo);
 
         bool IsLastHolder(HandleHolder<TSmartHandleType> *holder);
 
@@ -308,7 +311,7 @@ protected:
         THandleType _handle;
         HandleFreeFunc _func;
         Handle *_parent;
-        void * _extraInfo;
+        BufferPointer _extraInfo;
 
     };
 
@@ -378,47 +381,42 @@ public:
 
     static void EnableWarnings(bool value);
 
-    static void StartDatabase(mstring db, mstring user, mstring pwd, unsigned int start_flag, unsigned int start_mode,
-                              unsigned int sess_mode = OCI_SESSION_SYSDBA, mstring spfile = MT(""));
+    static void StartDatabase(mstring db, mstring user, mstring pwd, unsigned int start_flag, unsigned int startMode,
+                              unsigned int sessMode = OCI_SESSION_SYSDBA, mstring spfile = MT(""));
 
-    static void ShutdownDatabase(mstring db, mstring user, mstring pwd, unsigned int shut_flag, unsigned int shut_mode,
-                              unsigned int sess_mode = OCI_SESSION_SYSDBA);
+    static void ShutdownDatabase(mstring db, mstring user, mstring pwd, unsigned int shut_flag, unsigned int shutMode,
+                              unsigned int sessMode = OCI_SESSION_SYSDBA);
 
     static void ChangeUserPassword(mstring db, mstring user, mstring pwd, mstring newPassword);
 
     static void SetHAHandler(HAHandlerProc handler);
 
 private:
-
-    typedef ConcurrentPool<void *, Handle *> HandlePool;
-    typedef ConcurrentPool<void*, void*> CallbackPool;
-
-    struct EnvironmentData
-    {
-        HandlePool   handlePool;
-        CallbackPool callbackPool;
-        unsigned int mode;
-
-        void Initialize(unsigned int envMode)
-        {
-            mode = envMode;
-            callbackPool.Initialize(envMode);
-            handlePool.Initialize(envMode);
-        }
-
-        void Release()
-        {
-            callbackPool.Release();
-            handlePool.Release();
-        }
-    };
-
-    static EnvironmentData& GetEnvironmentData();
-
+ 
     static void HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp);
     static void TAFHandler(OCI_Connection *pConnection, unsigned int type, unsigned int event);
     static void NotifyHandler(OCI_Event *pEvent);
     static void NotifyHandlerAQ(OCI_Dequeue *pDequeue);
+
+    typedef ConcurrentPool<UnknownHandle, Handle *> HandlePool;
+    typedef ConcurrentPool<UnknownHandle, CallbackPointer> CallbackPool;
+
+    
+    class EnvironmentHandle : public HandleHolder<UnknownHandle>
+    {
+        friend class Connection;
+
+    public:
+
+        HandlePool   Handles;
+        CallbackPool Callbacks;
+        unsigned int Mode;
+
+        void Initialize(UnknownHandle pEnv, unsigned int envMode);
+        void Finalize();
+    };
+    
+    static EnvironmentHandle& GetEnvironmentHandle();
 };
 
 
@@ -2005,11 +2003,11 @@ inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFun
     {
         _smartHandle = new HandleHolder::SmartHandle<THandleType>(this, handle, func, parent);
 
-       Environment::GetEnvironmentData().handlePool.Set(handle, _smartHandle);
+       Environment::GetEnvironmentHandle().Handles.Set(handle, _smartHandle);
     }
     else
     {
-        _smartHandle = dynamic_cast<SmartHandle<THandleType> *>(Environment::GetEnvironmentData().handlePool.Get(handle));
+        _smartHandle = dynamic_cast<SmartHandle<THandleType> *>(Environment::GetEnvironmentHandle().Handles.Get(handle));
 
         if (!_smartHandle)
         {
@@ -2064,6 +2062,8 @@ inline void ConcurrentPool<TKey, TValue>::Release()
     {
         Mutex::Destroy(_mutex);
     }
+
+    _map.clear();
 }
 
 template <class TKey, class TValue>
@@ -2152,7 +2152,7 @@ inline HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::~SmartHandle()
         delete handle;
     }
 
-    Environment::GetEnvironmentData().handlePool.Remove(_handle);
+    Environment::GetEnvironmentHandle().Handles.Remove(_handle);
 
     if (_func)
     {
@@ -2289,14 +2289,14 @@ inline void Environment::Initialize(unsigned int mode, mstring libpath)
 
     OCI_Initialize(0, libpath.c_str(),  mode);
 
-    GetEnvironmentData().Initialize(mode);
-
     API::Call();
+
+    GetEnvironmentHandle().Initialize((void *) OCI_HandleGetEnvironment(), mode);
 }
 
 inline void Environment::Cleanup()
 {
-    GetEnvironmentData().Release();
+    GetEnvironmentHandle().Finalize();
 
     OCI_Cleanup();
 
@@ -2305,7 +2305,7 @@ inline void Environment::Cleanup()
 
 inline unsigned int Environment::GetMode()
 {
-    return GetEnvironmentData().mode;
+    return GetEnvironmentHandle().Mode;
 }
 
 inline unsigned int Environment::GetImportMode()
@@ -2341,15 +2341,15 @@ inline void Environment::EnableWarnings(bool value)
 }
 
 inline void Environment::StartDatabase(mstring db, mstring user, mstring pwd, unsigned int start_flag, unsigned
-                                       int start_mode, unsigned int sess_mode, mstring spfile)
+                                       int startMode, unsigned int sessMode, mstring spfile)
 {
-    API::Call(OCI_DatabaseStartup(db.c_str(), user.c_str(), pwd.c_str(), sess_mode, start_mode, start_flag, spfile.c_str() ));
+    API::Call(OCI_DatabaseStartup(db.c_str(), user.c_str(), pwd.c_str(), sessMode, startMode, start_flag, spfile.c_str() ));
 }
 
-inline void Environment::ShutdownDatabase(mstring db, mstring user, mstring pwd, unsigned int shut_flag, unsigned int shut_mode,
-                                          unsigned int sess_mode)
+inline void Environment::ShutdownDatabase(mstring db, mstring user, mstring pwd, unsigned int shut_flag, unsigned int shutMode,
+                                          unsigned int sessMode)
 {
-    API::Call(OCI_DatabaseShutdown(db.c_str(), user.c_str(), pwd.c_str(), sess_mode, shut_mode, shut_flag ));
+    API::Call(OCI_DatabaseShutdown(db.c_str(), user.c_str(), pwd.c_str(), sessMode, shutMode, shut_flag ));
 }
 
 inline void Environment::ChangeUserPassword(mstring db, mstring user, mstring pwd, mstring newPassword)
@@ -2359,16 +2359,16 @@ inline void Environment::ChangeUserPassword(mstring db, mstring user, mstring pw
 
 inline void Environment::SetHAHandler(HAHandlerProc handler)
 {
-    Environment::CallbackPool & pool = GetEnvironmentData().callbackPool;
+    Environment::CallbackPool & pool = GetEnvironmentHandle().Callbacks;
 
     API::Call(OCI_SetHAHandler((POCI_HA_HANDLER ) (handler != 0 ? Environment::HAHandler : 0 )));
 
-    pool.Set(&GetEnvironmentData(), (void*) handler);
+    pool.Set((UnknownHandle) GetEnvironmentHandle(), (CallbackPointer) handler);
 }
 
 inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp)
 {
-    HAHandlerProc handler = (HAHandlerProc) GetEnvironmentData().callbackPool.Get(&GetEnvironmentData());
+    HAHandlerProc handler = (HAHandlerProc) GetEnvironmentHandle().Callbacks.Get((void *) GetEnvironmentHandle());
 
     if (handler)
     {
@@ -2381,7 +2381,7 @@ inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int sou
 
 inline void Environment::TAFHandler(OCI_Connection *pConnection, unsigned int type, unsigned int event)
 {
-    TAFHandlerProc handler = (TAFHandlerProc) GetEnvironmentData().callbackPool.Get(pConnection);
+    TAFHandlerProc handler = (TAFHandlerProc) GetEnvironmentHandle().Callbacks.Get(pConnection);
 
     if (handler)
     {
@@ -2393,7 +2393,7 @@ inline void Environment::TAFHandler(OCI_Connection *pConnection, unsigned int ty
 
 inline void Environment::NotifyHandler(OCI_Event *pEvent)
 {
-    NotifyHandlerProc handler = (NotifyHandlerProc) GetEnvironmentData().callbackPool.Get(API::Call(OCI_EventGetSubscription(pEvent)));
+    NotifyHandlerProc handler = (NotifyHandlerProc) GetEnvironmentHandle().Callbacks.Get(API::Call(OCI_EventGetSubscription(pEvent)));
 
     if (handler)
     {
@@ -2404,7 +2404,7 @@ inline void Environment::NotifyHandler(OCI_Event *pEvent)
 
 inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
 {
-    NotifyAQHandlerProc handler = (NotifyAQHandlerProc) GetEnvironmentData().callbackPool.Get(API::Call(pDequeue));
+    NotifyAQHandlerProc handler = (NotifyAQHandlerProc) GetEnvironmentHandle().Callbacks.Get(API::Call(pDequeue));
 
     if (handler)
     {
@@ -2413,11 +2413,28 @@ inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
     }
 }
 
-inline Environment::EnvironmentData & Environment::GetEnvironmentData()
+inline Environment::EnvironmentHandle & Environment::GetEnvironmentHandle()
 {
-    static EnvironmentData envData;
+    static EnvironmentHandle envHandle;
 
-    return envData;
+    return envHandle;
+}
+
+inline void Environment::EnvironmentHandle::Initialize(void *handle, unsigned int envMode)
+{
+    Mode = envMode;
+    Callbacks.Initialize(envMode);
+    Handles.Initialize(envMode);
+
+    Acquire(handle, 0, 0);
+}
+
+inline void Environment::EnvironmentHandle::Finalize()
+{
+    Callbacks.Release();
+    Handles.Release();
+
+    Release();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2597,10 +2614,8 @@ inline Connection::Connection(OCI_Connection *con,  Handle *parent)
 
 inline void Connection::Open(mstring db, mstring user, mstring pwd, unsigned int sessionMode)
 {
-    Release();
-
     Acquire(API::Call(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), (int) sessionMode)),
-            (HandleFreeFunc) OCI_ConnectionFree, 0);
+            (HandleFreeFunc) OCI_ConnectionFree, Environment::GetEnvironmentHandle().GetHandle());
 }
 
 inline void Connection::Close()
@@ -2825,11 +2840,11 @@ inline bool Connection::IsTAFCapable()
 
 inline void Connection::SetTAFHandler(TAFHandlerProc handler)
 {
-    Environment::CallbackPool & pool = Environment::GetEnvironmentData().callbackPool;
+    Environment::CallbackPool & pool = Environment::GetEnvironmentHandle().Callbacks;
 
     API::Call(OCI_SetTAFHandler(*this, (POCI_TAF_HANDLER ) (handler != 0 ? Environment::TAFHandler : 0 )));
 
-    pool.Set((OCI_Connection*) *this, (void*) handler);
+    pool.Set((OCI_Connection*) *this, (CallbackPointer) handler);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -5773,12 +5788,12 @@ inline void Subscription::Register(const Connection &con, mstring name, unsigned
 {
     Acquire(API::Call(OCI_SubscriptionRegister(con, name.c_str(), type, (POCI_NOTIFY) (handler != 0 ? Environment::NotifyHandler : 0 ), port, timeout)), (HandleFreeFunc) OCI_SubscriptionUnregister, 0);
 
-    Environment::GetEnvironmentData().callbackPool.Set((OCI_Subscription*) *this, (void*) handler);
+    Environment::GetEnvironmentHandle().Callbacks.Set((OCI_Subscription*) *this, (CallbackPointer) handler);
 }
 
 inline void Subscription::Unregister()
 {
-    Environment::GetEnvironmentData().callbackPool.Remove(*this);
+    Environment::GetEnvironmentHandle().Callbacks.Remove(*this);
     Release();
 }
 
@@ -6176,7 +6191,7 @@ inline void Dequeue::Subscribe(unsigned int port, unsigned int timeout, NotifyAQ
 {
     API::Call(OCI_DequeueSubscribe(*this, port, timeout, (POCI_NOTIFY_AQ) (handler != 0 ? Environment::NotifyHandlerAQ : 0 )));
 
-    Environment::GetEnvironmentData().callbackPool.Set((OCI_Dequeue*) *this, (void*) handler);
+    Environment::GetEnvironmentHandle().Callbacks.Set((OCI_Dequeue*) *this, (CallbackPointer) handler);
 }
 
 inline void Dequeue::Unsubscribe()
