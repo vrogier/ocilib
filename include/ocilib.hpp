@@ -103,13 +103,13 @@ typedef OCI_Mutex *         MutexHandle ;
 
 /**
  * @brief
- * 
+ *
  */
 static  void Check();
 
 /**
  * @brief
- * 
+ *
  */
 template<class TResultType>
 static TResultType Check(TResultType result);
@@ -413,12 +413,26 @@ private:
 };
 
 /**
+ * @class BindObject
+ *
+ * @brief
+ *
+ */
+
+class BindObject
+{
+public:
+     virtual void SetInData()  = 0;
+     virtual void SetOutData() = 0;
+};
+
+/**
  * @class BindArray
  *
  * @brief
  *
  */
-class BindArray
+class BindArray : public BindObject
 {
 public:
 
@@ -478,7 +492,7 @@ private:
  * @brief
  *
  */
-class BindString
+class BindString : public BindObject
 {
     friend class Statement;
 
@@ -486,6 +500,7 @@ public:
 
     operator dtext *();
 
+    void SetInData();
     void SetOutData();
 
     BindString(dstring &source, unsigned int elemSize);
@@ -513,16 +528,14 @@ public:
 
     void Clear();
 
-    void AddBindArray(BindArray *bindArray);
-    void AddBindString(BindString *bindString);
+    void AddBindObject(BindObject *bindObject);
 
     void SetOutData();
     void SetInData();
 
 private:
 
-    std::vector<BindString *> _bindStrings;
-    std::vector<BindArray  *> _bindArrays;
+    std::vector<BindObject *> _bindObjects;
 };
 
  /**
@@ -604,7 +617,7 @@ public:
     static void SetHAHandler(HAHandlerProc handler);
 
 private:
- 
+
     static void HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp);
     static void TAFHandler(OCI_Connection *pConnection, unsigned int type, unsigned int event);
     static void NotifyHandler(OCI_Event *pEvent);
@@ -613,7 +626,7 @@ private:
     typedef ConcurrentPool<UnknownHandle, Handle *> HandlePool;
     typedef ConcurrentPool<UnknownHandle, CallbackPointer> CallbackPool;
 
-    
+
     class EnvironmentHandle : public HandleHolder<UnknownHandle>
     {
         friend class Connection;
@@ -627,7 +640,7 @@ private:
         void Initialize(UnknownHandle pEnv, unsigned int envMode);
         void Finalize();
     };
-    
+
     static EnvironmentHandle& GetEnvironmentHandle();
 };
 
@@ -1481,7 +1494,7 @@ public:
     unsigned int GetStatementType();
 
     unsigned int GetSqlErrorPos();
-    
+
     void SetFetchMode(unsigned int value);
     unsigned int GetFetchMode();
 
@@ -1717,12 +1730,12 @@ public:
 
     Date GetEnqueueTime();
     int GetAttemptCount();
-    unsigned int GetState();    
+    unsigned int GetState();
     void GetID(BufferPointer value, unsigned int &size);
 
     int GetExpiration();
     void SetExpiration(int value);
-    
+
     int GetEnqueueDelay();
     void SetEnqueueDelay(int value);
 
@@ -1802,7 +1815,7 @@ public:
 
     unsigned int GetMode();
     void SetMode(unsigned int value);
- 
+
     unsigned int GetNavigation();
     void SetNavigation(unsigned int value);
 
@@ -1812,7 +1825,7 @@ public:
     void SetAgents(std::vector<Agent> &agents);
 
     void Subscribe(unsigned int port, unsigned int timeout, NotifyAQHandlerProc handler);
-    void Unsubscribe(); 
+    void Unsubscribe();
 
 private:
 
@@ -4474,6 +4487,18 @@ inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator TDataType *
  * BindString
  * --------------------------------------------------------------------------------------------- */
 
+inline void BindString::SetInData()
+{
+    unsigned int size = (unsigned int) _string.size();
+
+    if (size > _elemSize)
+    {
+        size = _elemSize;
+    }
+
+    memcpy(_data, _string.c_str(), size * sizeof(dtext));
+}
+
 inline void BindString::SetOutData()
 {
     _string = _data;
@@ -4512,67 +4537,42 @@ inline BindsHolder::~BindsHolder()
 
 inline void BindsHolder::Clear()
 {
-    std::vector<BindString *>::iterator its, its_end;
+    std::vector<BindObject *>::iterator it, it_end;
 
-    for(its = _bindStrings.begin(), its_end = _bindStrings.end(); its < its_end; its++)
+    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it < it_end; it++)
     {
-        delete (*its);
+        delete (*it);
     }
-
-    _bindStrings.clear();
-
-    std::vector<BindArray *>::iterator ita, ita_end;
-
-    for(ita = _bindArrays.begin(), ita_end = _bindArrays.end(); ita < ita_end; ita++)
-    {
-        delete (*ita);
-    }
-
-    _bindArrays.clear();
 }
 
-inline void BindsHolder::AddBindArray(BindArray *bindArray)
+inline void BindsHolder::AddBindObject(BindObject *bindObject)
 {
-    _bindArrays.push_back(bindArray);
-}
-
-inline void BindsHolder::AddBindString(BindString *bindString)
-{
-    _bindStrings.push_back(bindString);
+    _bindObjects.push_back(bindObject);
 }
 
 inline void BindsHolder::SetOutData()
 {
-    std::vector<BindString *>::iterator its, its_end;
+    std::vector<BindObject *>::iterator it, it_end;
 
-    for(its = _bindStrings.begin(), its_end = _bindStrings.end(); its < its_end; its++)
+    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it < it_end; it++)
     {
-        (*its)->SetOutData();
-    }
-
-    std::vector<BindArray *>::iterator ita, ita_end;
-
-    for(ita = _bindArrays.begin(), ita_end = _bindArrays.end(); ita < ita_end; ita++)
-    {
-        (*ita)->SetOutData();
+        (*it)->SetOutData();
     }
 }
 
 inline void BindsHolder::SetInData()
 {
-    std::vector<BindArray *>::iterator ita, ita_end;
+    std::vector<BindObject *>::iterator it, it_end;
 
-    for(ita = _bindArrays.begin(), ita_end = _bindArrays.end(); ita < ita_end; ita++)
+    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it < it_end; it++)
     {
-        (*ita)->SetInData();
+        (*it)->SetInData();
     }
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * Bind
  * --------------------------------------------------------------------------------------------- */
-
-
 
 inline BindInfo::BindInfo(OCI_Bind *pBind, Handle *parent)
 {
@@ -4586,11 +4586,11 @@ inline mstring BindInfo::GetName()
 
 inline unsigned int BindInfo::GetType()
 {
-    return Check(OCI_BindGetType(*this));   
+    return Check(OCI_BindGetType(*this));
 }
 
 inline unsigned int BindInfo::GetSubType()
-{   
+{
     return Check(OCI_BindGetSubtype(*this));
 }
 
@@ -4741,7 +4741,7 @@ inline void Statement::AllowRebinding(bool value)
 
 inline unsigned int Statement::GetBindCount()
 {
-    return Check(OCI_GetBindCount(*this));  
+    return Check(OCI_GetBindCount(*this));
 }
 
 inline BindInfo Statement::GetBind(unsigned int index)
@@ -4774,7 +4774,7 @@ inline void Statement::Bind (TBindMethod &method, mstring name, std::vector<TObj
     BindArray * bnd = new BindArray(values, datatype, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
 
     BindsHolder *bindsHolder = GetBindsHolder(true);
-    bindsHolder->AddBindArray(bnd);
+    bindsHolder->AddBindObject(bnd);
 
     Check(method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), 0));
     SetLastBindMode(mode);
@@ -4786,7 +4786,7 @@ inline void Statement::Bind (TBindMethod &method, mstring name, std::vector<TObj
     BindArray * bnd = new BindArray(values, datatype, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
 
     BindsHolder *bindsHolder = GetBindsHolder(true);
-    bindsHolder->AddBindArray(bnd);
+    bindsHolder->AddBindObject(bnd);
 
     method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), type, 0);
     SetLastBindMode(mode);
@@ -4937,7 +4937,7 @@ inline void Statement::Bind<dstring, unsigned int>(mstring name, dstring &value,
 
     BindString * bnd = new BindString(value, maxSize+1);
     BindsHolder *bindsHolder = GetBindsHolder(true);
-    bindsHolder->AddBindString(bnd);
+    bindsHolder->AddBindObject(bnd);
 
     Check(OCI_BindString(*this, name.c_str(), (dtext*) (*bnd), maxSize));
     SetLastBindMode(mode);
@@ -5082,7 +5082,7 @@ inline void Statement::Bind<dstring, unsigned int>(mstring name, std::vector<dst
     BindArray * bnd = new BindArray(values, BindValue<dtext>(), mode, OCI_BindArrayGetSize(*this), maxSize+1);
 
     BindsHolder *bindsHolder = GetBindsHolder(true);
-    bindsHolder->AddBindArray(bnd);
+    bindsHolder->AddBindObject(bnd);
 
     Check(OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<dstring, dtext>(), maxSize, 0));
     SetLastBindMode(mode);
@@ -5100,7 +5100,7 @@ inline void Statement::Bind<BufferPointer, unsigned int>(mstring name, std::vect
     BindArray * bnd = new BindArray(values, BindValue<void *>(), mode, OCI_BindArrayGetSize(*this), maxSize+1);
 
     BindsHolder *bindsHolder = GetBindsHolder(true);
-    bindsHolder->AddBindArray(bnd);
+    bindsHolder->AddBindObject(bnd);
 
     Check(OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<void *, void *>(), maxSize, 0));
     SetLastBindMode(mode);
@@ -5985,7 +5985,7 @@ inline void Message::Set(const BufferPointer &value, unsigned int size)
     Check(OCI_MsgSetRaw(*this, value, size));
 }
 
-inline Date Message::GetEnqueueTime()    
+inline Date Message::GetEnqueueTime()
 {
     return Date(Check(OCI_MsgGetEnqueueTime(*this)), 0);
 }
@@ -6413,7 +6413,7 @@ inline void QueueTable::Create(const Connection &connection, mstring table, mstr
                     unsigned int messageGrouping, mstring comment, unsigned int primaryInstance, unsigned int secondaryInstance, mstring compatible)
 
 {
-    Check(OCI_QueueTableCreate(connection, table.c_str(), payloadType.c_str(), storageClause.c_str(), sortList.c_str(), multipleConsumers, 
+    Check(OCI_QueueTableCreate(connection, table.c_str(), payloadType.c_str(), storageClause.c_str(), sortList.c_str(), multipleConsumers,
                                    messageGrouping, comment.c_str(), primaryInstance, secondaryInstance, compatible.c_str()));
 }
 
