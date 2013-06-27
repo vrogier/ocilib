@@ -1195,7 +1195,11 @@ public:
 
     Object(const TypeInfo &typeInfo);
 
+    void Assign(const Object& other);
+
     TypeInfo GetTypeInfo();
+
+    Reference GetReference();
 
     template<class TDataType>
     TDataType Get(mstring name);
@@ -1280,10 +1284,10 @@ public:
     void Set(unsigned int index, const TDataType &data);
 
     template<class TDataType>
-    void Get(unsigned int index, TDataType &value, unsigned int &size);
+    void Get(unsigned int index, TDataType value, unsigned int &size);
 
     template<class TDataType>
-    void Set(unsigned int index, const TDataType &value, unsigned int size);
+    void Set(unsigned int index, const TDataType value, unsigned int size);
 
     template <class TDataType>
     void Append(const TDataType &data);
@@ -1302,10 +1306,10 @@ private:
     static void SetElem(OCI_Elem *elem, const TDataType &value);
 
     template <class TDataType>
-    static TDataType GetElem(OCI_Elem *elem,  unsigned int &size);
+    static void GetElem(OCI_Elem *elem,  TDataType value, unsigned int &size);
 
     template <class TDataType>
-    static void SetElem(OCI_Elem *elem, const TDataType &value,  unsigned int size);
+    static void SetElem(OCI_Elem *elem, const TDataType value,  unsigned int size);
 
     Collection(OCI_Coll *pColl, Handle *parent = 0);
 };
@@ -1565,6 +1569,12 @@ public:
     template<class TDataType>
     TDataType Get(mstring name);
 
+    template<class TDataType>
+    void Get(unsigned int index, TDataType value, unsigned int &size);
+
+    template<class TDataType>
+    void Get(mstring name, TDataType value, unsigned int &size);
+
     bool Next();
     bool Prev();
     bool First();
@@ -1690,6 +1700,7 @@ private:
 class Agent : public HandleHolder<OCI_Agent *>
 {
     friend class Message;
+    friend class Dequeue;
 
 public:
 
@@ -1800,6 +1811,8 @@ public:
     Dequeue(const TypeInfo &typeInfo, mstring queueName);
 
     Message Get();
+
+    Agent Listen(int timeout);
 
     mstring GetConsumer();
     void SetConsumer(mstring value);
@@ -3628,9 +3641,26 @@ inline Object::Object(OCI_Object *pObject, Handle *parent)
     Acquire(pObject, 0, parent);
 }
 
+inline void Object::Assign(const Object& other)
+{
+    Check(OCI_ObjectAssign(*this, other));
+}
+
 inline TypeInfo Object::GetTypeInfo()
 {
     return TypeInfo(Check(OCI_ObjectGetTypeInfo(*this)));
+}
+
+inline Reference Object::GetReference()
+{
+    TypeInfo typeInfo = GetTypeInfo();
+    Connection connection = typeInfo.GetConnection();
+
+    OCI_Ref *pRef = OCI_RefCreate(connection, typeInfo);
+    
+    Check(OCI_ObjectGetSelfRef(*this, pRef));
+    
+    return Reference(pRef, GetHandle());
 }
 
 template<>
@@ -3970,11 +4000,27 @@ inline TDataType Collection::Get(unsigned int index)
 }
 
 template <class TDataType>
+inline void Collection::Get(unsigned int index, TDataType value, unsigned int &size)
+{
+    GetElem<TDataType>(Check(OCI_CollGetAt(*this, index)), value, size);
+}
+
+template <class TDataType>
 inline void Collection::Set(unsigned int index, const TDataType &data)
 {
     OCI_Elem * elem = Check(OCI_CollGetAt(*this, index));
 
     SetElem<TDataType>(elem, data);
+
+    Check(OCI_CollSetAt(*this, index, elem));
+}
+
+template <class TDataType>
+inline void Collection::Set(unsigned int index, const TDataType value, unsigned int size)
+{
+    OCI_Elem * elem = Check(OCI_CollGetAt(*this, index));
+
+    SetElem<TDataType>(elem, value, size);
 
     Check(OCI_CollSetAt(*this, index, elem));
 }
@@ -4042,6 +4088,12 @@ template<>
 inline dstring Collection::GetElem<dstring>(OCI_Elem *elem, Handle *parent)
 {
     return MakeString(Check(OCI_ElemGetString(elem)));
+}
+
+template<>
+inline void Collection::GetElem<BufferPointer>(OCI_Elem *elem, BufferPointer value, unsigned int &size)
+{
+    Check(OCI_ElemGetRaw(elem, value, size));
 }
 
 template<>
@@ -4153,6 +4205,11 @@ inline void Collection::SetElem<dstring>(OCI_Elem *elem, const dstring &value)
     Check(OCI_ElemSetString(elem, value.c_str()));
 }
 
+template<>
+inline void Collection::SetElem<BufferPointer>(OCI_Elem *elem, const BufferPointer value, unsigned int size)
+{
+    Check(OCI_ElemSetRaw(elem, value, size));
+}
 
 template<>
 inline void Collection::SetElem<Date>(OCI_Elem *elem, const Date &value)
@@ -5588,6 +5645,18 @@ inline dstring Resultset::Get<dstring>(mstring name)
 }
 
 template<>
+inline void Resultset::Get<BufferPointer>(unsigned int index, BufferPointer value, unsigned int &size)
+{
+    Check(OCI_GetRaw(*this, index, value, size));
+}
+
+template<>
+inline void Resultset::Get<BufferPointer>(mstring name, BufferPointer value, unsigned int &size)
+{
+    Check(OCI_GetRaw2(*this,name.c_str(), value, size));
+}
+
+template<>
 inline Date Resultset::Get<Date>(int index)
 {
     return Date(Check(OCI_GetDate(*this, index)), GetHandle());
@@ -6149,6 +6218,11 @@ inline Dequeue::Dequeue(OCI_Dequeue *pDequeue)
 inline Message Dequeue::Get()
 {
     return Message(Check(OCI_DequeueGet(*this)), 0);
+}
+
+inline Agent Dequeue::Listen(int timeout)
+{
+    return Agent(Check(OCI_DequeueListen(*this, timeout)), 0);
 }
 
 inline mstring Dequeue::GetConsumer()
