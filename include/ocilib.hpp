@@ -58,9 +58,7 @@
 
 /**
  * @namespace ocilib
- *
  * @brief
- *
  */
 namespace ocilib
 {
@@ -68,7 +66,6 @@ namespace ocilib
 /**
  * @defgroup OcilibCppApi C++ API
  * @{
- *
  */
 
 /**
@@ -81,16 +78,62 @@ namespace ocilib
 /**
  * @defgroup OcilibCppApiTypes Types
  * @{
- *
+ */
+    
+/**
+ * @typedef mstring
+ * @brief    
+ * string class wrapping the OCILIB mtext * type and MT() macros (see @ref OcilibCApiSupportedCharsets)
  */
 
 typedef std::basic_string<mtext, std::char_traits<mtext>, std::allocator<mtext> > mstring;
+    
+/**
+ * @typedef dstring
+ * @brief 
+ * string class wrapping the OCILIB dtext * type and DT() macros (see @ref OcilibCApiSupportedCharsets)
+ */
+
 typedef std::basic_string<dtext, std::char_traits<dtext>, std::allocator<dtext> > dstring;
 
+/**
+ * @typedef BufferPointer
+ * @brief 
+ * Alias for the generic void pointer
+ */
+
 typedef void *              BufferPointer;
+
+/**
+ * @typedef UnknownHandle
+ * @brief 
+ * Alias used for manipulating unknown handle types
+ */
+
 typedef void *              UnknownHandle;
+
+/**
+ * @typedef CallbackPointer
+ * @brief 
+ * Alias used for storing user callback method pointers
+ */
+
 typedef void *              CallbackPointer;
+
+/**
+ * @typedef ThreadHandle
+ * @brief 
+ * Alias for an OCI_Thread pointer
+ */
+
 typedef OCI_Thread *        ThreadHandle;
+
+/**
+ * @typedef MutexHandle
+ * @brief 
+ * Alias for an OCI_Mutex pointer
+ */
+
 typedef OCI_Mutex *         MutexHandle ;
 
 /**
@@ -102,36 +145,37 @@ typedef OCI_Mutex *         MutexHandle ;
  * ********************************************************************************************* */
 
 /**
- * @brief
- *
+ * @brief Internal usage. 
+ * Checks if the last OCILIB method call has raised an error.
+ * If so, it raises a C++ exception using the retrieved error handle
  */
-static  void Check();
+static void Check();
 
 /**
- * @brief
- *
+ * @brief Internal usage. 
+ * Checks if the last OCILIB function call has raised an error.
+ * If so, it raises a C++ exception using the retrieved error handle
  */
 template<class TResultType>
 static TResultType Check(TResultType result);
 
 /**
- * @brief
- *
+ * @brief Internal usage. 
+ * Constructs a C++ string object from the given OCILIB string pointer
  */
 template<class TCharType>
 static std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > MakeString(const TCharType *result);
 
-
 /* ********************************************************************************************* *
  *                                INTERNAL CLASS DECLARATIONS
  * ********************************************************************************************* */
-
-
+/**
+ * @class HandleHolder
+ * @brief 
+ * Template class providing OCILIB handles auto memory, life cycle and scope management
+ */
 template <class THandleType>
 class HandleHolder;
-
-template <class TDataType>
-class ManagedPtr;
 
 /* ********************************************************************************************* *
  *                                PUBLIC CLASS DECLARATIONS
@@ -568,6 +612,7 @@ public:
     unsigned int    GetInternalErrorCode();
     Statement       GetStatement();
     Connection      GetConnection();
+    unsigned int    GetRow();
 
 private:
 
@@ -1197,8 +1242,10 @@ public:
 
     void Assign(const Object& other);
 
-    TypeInfo GetTypeInfo();
+    bool IsAttributeNull(mstring name);
+    void SetAttributeNull(mstring name);
 
+    TypeInfo GetTypeInfo();
     Reference GetReference();
 
     template<class TDataType>
@@ -1241,8 +1288,8 @@ public:
 
     void Assign(const Reference& other);
 
-    bool IsNullReference();
-    void SetNulReference();
+    bool IsReferenceNull();
+    void SetReferenceNull();
 
     mstring ToString();
 
@@ -1276,6 +1323,9 @@ public:
 
     void Truncate(unsigned int size);
     void Clear();
+
+    bool IsElementNull(unsigned int index);
+    void SetElementNull(unsigned int index);
 
     template <class TDataType>
     TDataType Get(unsigned int index);
@@ -1336,6 +1386,8 @@ public:
     bool Next();
     bool Prev();
 
+    bool IsElementNull(unsigned int index);
+    void SetElementNull(unsigned int index);
 };
 
 /**
@@ -2351,6 +2403,12 @@ inline Connection Exception::GetConnection()
 {
     return Connection(OCI_ErrorGetConnection(*this), 0);
 }
+
+inline unsigned int Exception::GetRow()
+{
+    return OCI_ErrorGetRow(*this);
+}
+
 
 /* --------------------------------------------------------------------------------------------- *
  * Environment
@@ -3646,6 +3704,16 @@ inline void Object::Assign(const Object& other)
     Check(OCI_ObjectAssign(*this, other));
 }
 
+inline bool Object::IsAttributeNull(mstring name)
+{
+    return (Check(OCI_ObjectIsNull(*this, name.c_str())) == TRUE);
+}
+
+inline void Object::SetAttributeNull(mstring name)
+{
+    Check(OCI_ObjectSetNull(*this, name.c_str()));
+}
+
 inline TypeInfo Object::GetTypeInfo()
 {
     return TypeInfo(Check(OCI_ObjectGetTypeInfo(*this)));
@@ -3921,12 +3989,12 @@ inline void Reference::Assign(const Reference& other)
    Check(OCI_RefAssign(*this, other));
 }
 
-inline bool Reference::IsNullReference()
+inline bool Reference::IsReferenceNull()
 {
     return (Check(OCI_RefIsNull(*this)) == TRUE);
 }
 
-inline void Reference::SetNulReference()
+inline void Reference::SetReferenceNull()
 {
     Check(OCI_RefSetNull(*this));
 }
@@ -3991,6 +4059,16 @@ inline void Collection::Truncate(unsigned int size)
 inline void Collection::Clear()
 {
     Check(OCI_CollClear(*this));
+}
+
+inline bool Collection::IsElementNull(unsigned int index)
+{
+   return (Check(OCI_ElemIsNull(Check(OCI_CollGetAt(*this, index)))) == TRUE);
+}
+
+inline void Collection::SetElementNull(unsigned int index)
+{
+    Check(OCI_ElemSetNull(Check(OCI_CollGetAt(*this, index))));
 }
 
 template <class TDataType>
@@ -4294,6 +4372,16 @@ template <class TDataType>
 inline TDataType CollectionIterator::Get()
 {
     return Collection::GetElem<TDataType>(Check(OCI_IterGetCurrent(*this)), GetHandle());
+}
+
+inline bool CollectionIterator::IsElementNull(unsigned int index)
+{
+   return (Check(OCI_ElemIsNull(Check(OCI_IterGetCurrent(*this)))) == TRUE);
+}
+
+inline void CollectionIterator::SetElementNull(unsigned int index)
+{
+    Check(OCI_ElemSetNull(Check(OCI_IterGetCurrent(*this))));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -5382,6 +5470,8 @@ inline mstring Statement::GetSQLVerb()
 
 inline void Statement::GetBatchErrors(std::vector<Exception> &exceptions)
 {
+    exceptions.clear();
+
     OCI_Error *err =  Check(OCI_GetBatchError(*this));
 
     while (err)
