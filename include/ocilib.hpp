@@ -483,13 +483,12 @@ class BindArray : public BindObject
 {
 public:
 
-    template <class TObjectType, class TDataType>
-    BindArray(std::vector<TObjectType> & vector, BindValue<TDataType> datatype, unsigned int mode, unsigned int elemCount, unsigned int elemSize);
-    virtual ~BindArray();
+     BindArray();
+     virtual ~BindArray();
 
-    template <class TObjectType, class TDataType>
-    std::vector<TObjectType> & GetVector(BindValue<TDataType> datatype);
-
+     template <class TObjectType, class TDataType>
+     void SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemCount, unsigned int elemSize);
+     
      template <class TObjectType, class TDataType>
      TDataType * GetData ();
 
@@ -517,10 +516,12 @@ private:
         unsigned int _mode;
         unsigned int _elemCount;
         unsigned int _elemSize;
+ 
+        BindArrayObject & operator=( const BindArrayObject & other);
 
     public:
 
-        BindArrayObject(std::vector<TObjectType> &vector, BindValue<TDataType> datatype, unsigned int mode, unsigned int elemCount, unsigned int elemSize);
+        BindArrayObject(std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemCount, unsigned int elemSize);
         virtual ~BindArrayObject();
         void SetInData();
         void SetOutData();
@@ -528,6 +529,9 @@ private:
         void FreeData();
         operator std::vector<TObjectType> & ();
         operator TDataType * ();
+
+       
+
     };
 
     AbstractBindArrayObject * _object;
@@ -1599,6 +1603,8 @@ private:
 
     template <typename TBindMethod, class TObjectType, class TDataType>
     void Bind (TBindMethod &method, mstring name, TObjectType &value, BindValue<TDataType> datatype, unsigned int mode);
+    template <typename TBindMethod, class TObjectType, class TDataType>
+    void toto (TBindMethod &method, mstring name, TObjectType &value, BindValue<TDataType> datatype, unsigned int mode);
 
     template <typename TBindMethod, class TObjectType, class TDataType>
     void Bind (TBindMethod &method, mstring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, unsigned int mode);
@@ -4503,21 +4509,20 @@ inline BindValue<TValueType>::operator TValueType()
  * BindArray
  * --------------------------------------------------------------------------------------------- */
 
-template <class TObjectType, class TDataType>
-inline BindArray::BindArray(std::vector<TObjectType> & vector, BindValue<TDataType> datatype, unsigned int mode, unsigned int elemCount, unsigned int elemSize)
+inline BindArray::BindArray() : _object(0)
 {
-    _object = new BindArrayObject<TObjectType, TDataType>(vector, datatype, mode, elemCount, elemSize);
+
+}
+
+template <class TObjectType, class TDataType>
+inline void BindArray::SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemCount, unsigned int elemSize)
+{
+    _object = new BindArrayObject<TObjectType, TDataType>(vector, mode, elemCount, elemSize);
 }
 
 inline BindArray::~BindArray()
 {
     delete _object;
-}
-
-template <class TObjectType, class TDataType>
-inline std::vector<TObjectType> &  BindArray::GetVector (BindValue<TDataType> datatype)
-{
-    return (std::vector<TObjectType> &) (*(dynamic_cast< BindArrayObject<TObjectType, TDataType> * > (_object)));
 }
 
 template <class TObjectType, class TDataType>
@@ -4537,7 +4542,7 @@ inline void BindArray::SetOutData()
 }
 
 template <class TObjectType, class TDataType>
-inline BindArray::BindArrayObject<TObjectType, TDataType>::BindArrayObject(std::vector<TObjectType> &vector, BindValue<TDataType> datatype, unsigned int mode, unsigned int elemCount, unsigned int elemSize)
+inline BindArray::BindArrayObject<TObjectType, TDataType>::BindArrayObject(std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemCount, unsigned int elemSize)
     : _vector(vector), _data(0), _mode(mode), _elemCount(elemCount), _elemSize(elemSize)
 {
     AllocData();
@@ -4567,6 +4572,13 @@ template <class TObjectType, class TDataType>
 inline void BindArray::BindArrayObject<TObjectType, TDataType>::FreeData()
 {
     delete [] _data ;
+}
+
+template <class TObjectType, class TDataType>
+inline BindArray::BindArrayObject<TObjectType, TDataType> & BindArray::BindArrayObject<TObjectType, TDataType>::operator = (const BindArrayObject<TObjectType, TDataType> & other)
+{
+    _object = other._object;
+    return *this;
 }
 
 template <class TObjectType, class TDataType>
@@ -4935,9 +4947,18 @@ inline void Statement::Bind (TBindMethod &method, mstring name, TObjectType& val
 }
 
 template <typename TBindMethod, class TObjectType, class TDataType>
+inline void Statement::toto (TBindMethod &method, mstring name, TObjectType& value, BindValue<TDataType> datatype, unsigned int mode)
+{
+    Check(method(*this, name.c_str(), (TDataType) value));
+    SetLastBindMode(mode);
+}
+
+template <typename TBindMethod, class TObjectType, class TDataType>
 inline void Statement::Bind (TBindMethod &method, mstring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, unsigned int mode)
 {
-    BindArray * bnd = new BindArray(values, datatype, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
+    BindArray * bnd = new BindArray();
+
+    bnd->SetVector<TObjectType, TDataType>(values, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
 
     BindsHolder *bindsHolder = GetBindsHolder(true);
     bindsHolder->AddBindObject(bnd);
@@ -4949,7 +4970,9 @@ inline void Statement::Bind (TBindMethod &method, mstring name, std::vector<TObj
 template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
 inline void Statement::Bind (TBindMethod &method, mstring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, unsigned int mode, TElemType type)
 {
-    BindArray * bnd = new BindArray(values, datatype, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
+    BindArray * bnd = new BindArray();
+
+    bnd->SetVector<TObjectType, TDataType>(values, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
 
     BindsHolder *bindsHolder = GetBindsHolder(true);
     bindsHolder->AddBindObject(bnd);
@@ -5009,7 +5032,7 @@ inline void Statement::Bind<double>(mstring name, double &value, unsigned int mo
 template <>
 inline void Statement::Bind<Date>(mstring name, Date &value, unsigned int mode)
 {
-    Bind(OCI_BindDate, name, value, BindValue<OCI_Date *>(), mode);
+    Bind(OCI_BindDate, name, value, BindValue<OCI_Date *>(),  mode);
 }
 
 template <>
@@ -5233,7 +5256,9 @@ inline void Statement::Bind<Collection, TypeInfo>(mstring name, std::vector<Coll
 template <>
 inline void Statement::Bind<dstring, unsigned int>(mstring name, std::vector<dstring> &values,  unsigned int maxSize, unsigned int mode)
 {
-    BindArray * bnd = new BindArray(values, BindValue<dtext>(), mode, OCI_BindArrayGetSize(*this), maxSize+1);
+    BindArray * bnd = new BindArray();
+
+    bnd->SetVector<dstring, dtext>(values, mode, OCI_BindArrayGetSize(*this), maxSize+1);
 
     BindsHolder *bindsHolder = GetBindsHolder(true);
     bindsHolder->AddBindObject(bnd);
@@ -5251,7 +5276,9 @@ inline void Statement::Bind<dstring, int>(mstring name, std::vector<dstring> &va
 template <>
 inline void Statement::Bind<BufferPointer, unsigned int>(mstring name, std::vector<BufferPointer> &values, unsigned int maxSize,  unsigned int mode)
 {
-    BindArray * bnd = new BindArray(values, BindValue<void *>(), mode, OCI_BindArrayGetSize(*this), maxSize+1);
+    BindArray * bnd = new BindArray();
+
+    bnd->SetVector<BufferPointer, void *>(values, mode, OCI_BindArrayGetSize(*this), maxSize+1);
 
     BindsHolder *bindsHolder = GetBindsHolder(true);
     bindsHolder->AddBindObject(bnd);
