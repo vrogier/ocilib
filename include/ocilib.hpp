@@ -267,7 +267,7 @@ typedef void (*HAHandlerProc) (Connection &con, unsigned int source, unsigned in
  * @brief
  *
  */
-typedef void (*TAFHandlerProc) (Connection &con, unsigned int type, unsigned int event);
+typedef unsigned int (*TAFHandlerProc) (Connection &con, unsigned int type, unsigned int event);
 
 /**
  * @typedef NotifyHandlerProc
@@ -671,7 +671,7 @@ public:
 private:
 
     static void HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp);
-    static void TAFHandler(OCI_Connection *pConnection, unsigned int type, unsigned int event);
+    static unsigned int TAFHandler(OCI_Connection *pConnection, unsigned int type, unsigned int event);
     static void NotifyHandler(OCI_Event *pEvent);
     static void NotifyHandlerAQ(OCI_Dequeue *pDequeue);
 
@@ -1603,8 +1603,6 @@ private:
 
     template <typename TBindMethod, class TObjectType, class TDataType>
     void Bind (TBindMethod &method, mstring name, TObjectType &value, BindValue<TDataType> datatype, unsigned int mode);
-    template <typename TBindMethod, class TObjectType, class TDataType>
-    void toto (TBindMethod &method, mstring name, TObjectType &value, BindValue<TDataType> datatype, unsigned int mode);
 
     template <typename TBindMethod, class TObjectType, class TDataType>
     void Bind (TBindMethod &method, mstring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, unsigned int mode);
@@ -2519,16 +2517,20 @@ inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int sou
     }
 }
 
-inline void Environment::TAFHandler(OCI_Connection *pConnection, unsigned int type, unsigned int event)
+inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigned int type, unsigned int event)
 {
+    unsigned int res = OCI_FOC_OK;
+
     TAFHandlerProc handler = (TAFHandlerProc) GetEnvironmentHandle().Callbacks.Get(pConnection);
 
     if (handler)
     {
         Connection connection(pConnection, 0);
 
-        handler(connection, type, event);
+        res = handler(connection, type, event);
     }
+
+    return res;
 }
 
 inline void Environment::NotifyHandler(OCI_Event *pEvent)
@@ -4941,13 +4943,6 @@ inline void Statement::Bind (TBindMethod &method, mstring name, TDataType& value
 
 template <typename TBindMethod, class TObjectType, class TDataType>
 inline void Statement::Bind (TBindMethod &method, mstring name, TObjectType& value, BindValue<TDataType> datatype, unsigned int mode)
-{
-    Check(method(*this, name.c_str(), (TDataType) value));
-    SetLastBindMode(mode);
-}
-
-template <typename TBindMethod, class TObjectType, class TDataType>
-inline void Statement::toto (TBindMethod &method, mstring name, TObjectType& value, BindValue<TDataType> datatype, unsigned int mode)
 {
     Check(method(*this, name.c_str(), (TDataType) value));
     SetLastBindMode(mode);
