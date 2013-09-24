@@ -306,8 +306,8 @@ public:
 
     ManagedBuffer<TBufferType> & operator= (TBufferType *buffer);
 
-    operator TBufferType* ();
-    operator const TBufferType* ();
+    operator TBufferType* () const;
+    operator const TBufferType* () const;
 
 private:
 
@@ -329,7 +329,7 @@ public:
     void Release();
 
     void Remove(TKey key);
-    TValue Get(TKey key);
+    TValue Get(TKey key) const;
     void Set(TKey key, TValue value);
 
 private:
@@ -339,8 +339,8 @@ private:
     ConcurrentPoolMap _map;
     MutexHandle _mutex;
 
-    void Lock();
-    void Unlock();
+    void Lock() const;
+    void Unlock() const;
 };
 
 /**
@@ -353,8 +353,10 @@ class Handle
 {
 public:
 
+    virtual ~Handle() {};
     virtual std::list<Handle *> & GetChildren() = 0;
-
+    virtual void DetachFromHolders() = 0;
+    virtual void DetachFromParent() = 0;
 };
 
 /**
@@ -368,9 +370,9 @@ class HandleHolder
 {
 public:
 
-    bool IsNull();
+    bool IsNull() const;
 
-    operator bool();
+    operator bool() const;
     operator THandleType();
     operator THandleType() const;
 
@@ -404,21 +406,21 @@ protected:
         void Acquire(HandleHolder<TSmartHandleType> *holder);
         void Release(HandleHolder<TSmartHandleType> *holder);
 
-        TSmartHandleType GetHandle();
+        TSmartHandleType GetHandle() const;
 
-        Handle *GetParent()
+        Handle *GetParent() const
         {
             return _parent;
         }
 
-        void DetachFromHolders();
-
-        BufferPointer GetExtraInfos();
+        BufferPointer GetExtraInfos() const;
         void   SetExtraInfos(BufferPointer extraInfo);
 
-        bool IsLastHolder(HandleHolder<TSmartHandleType> *holder);
+        bool IsLastHolder(HandleHolder<TSmartHandleType> *holder) const;
 
         std::list<Handle *> & GetChildren();
+        void DetachFromHolders();
+        void DetachFromParent();
 
     private:
 
@@ -452,7 +454,7 @@ public:
     BindValue();
     BindValue(TValueType value);
 
-    operator TValueType();
+    operator TValueType() const;
 
 private:
 
@@ -490,7 +492,7 @@ public:
      void SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemCount, unsigned int elemSize);
      
      template <class TObjectType, class TDataType>
-     TDataType * GetData ();
+     TDataType * GetData () const;
 
      void SetInData();
      void SetOutData();
@@ -527,11 +529,8 @@ private:
         void SetOutData();
         void AllocData();
         void FreeData();
-        operator std::vector<TObjectType> & ();
-        operator TDataType * ();
-
-       
-
+        operator std::vector<TObjectType> & () const;
+        operator TDataType * () const; 
     };
 
     AbstractBindArrayObject * _object;
@@ -549,7 +548,7 @@ class BindString : public BindObject
 
 public:
 
-    operator dtext *();
+    operator dtext *()  const;
 
     void SetInData();
     void SetOutData();
@@ -613,13 +612,13 @@ class Exception : public HandleHolder<OCI_Error *>
 
 public:
 
-    mstring         GetMessage();
-    unsigned int    GetType();
-    int             GetOracleErrorCode();
-    int             GetInternalErrorCode();
-    Statement       GetStatement();
-    Connection      GetConnection();
-    unsigned int    GetRow();
+    mstring         GetMessage() const;
+    unsigned int    GetType() const;
+    int             GetOracleErrorCode() const;
+    int             GetInternalErrorCode() const;
+    Statement       GetStatement() const;
+    Connection      GetConnection() const;
+    unsigned int    GetRow() const;
 
 private:
 
@@ -709,7 +708,7 @@ public:
     static ThreadHandle Create();
     static void Destroy(ThreadHandle handle);
     static void Run(ThreadHandle handle, ThreadProc func, void *args);
-    static void Join(ThreadHandle thrhandleead);
+    static void Join(ThreadHandle handle);
 };
 
 /**
@@ -764,20 +763,20 @@ public:
 
     Connection GetConnection(mstring sessionTag = MT(""));
 
-    unsigned int GetTimeout();
+    unsigned int GetTimeout() const;
     void SetTimeout(unsigned int value);
 
-    bool GetNoWait();
+    bool GetNoWait() const;
     void SetNoWait(bool value);
 
-    unsigned int GetBusyConnectionsCount();
-    unsigned int GetOpenedConnectionsCount();
+    unsigned int GetBusyConnectionsCount() const;
+    unsigned int GetOpenedConnectionsCount() const;
 
-    unsigned int GetMinSize();
-    unsigned int GetMaxSize();
-    unsigned int GetIncrement();
+    unsigned int GetMinSize() const;
+    unsigned int GetMaxSize() const;
+    unsigned int GetIncrement() const;
 
-    unsigned int GetStatementCacheSize();
+    unsigned int GetStatementCacheSize() const;
     void SetStatementCacheSize(unsigned int value);
 };
 
@@ -817,60 +816,60 @@ public:
     void Break();
 
     void SetAutoCommit(bool enabled);
-    bool GetAutoCommit();
+    bool GetAutoCommit() const;
 
-    bool IsServerAlive();
+    bool IsServerAlive() const;
 
-    bool PingServer();
+    bool PingServer() const;
 
-    mstring GetConnectionString();
-    mstring GetUserName();
-    mstring GetPassword();
+    mstring GetConnectionString() const;
+    mstring GetUserName() const;
+    mstring GetPassword() const;
 
-    unsigned int GetVersion();
+    unsigned int GetVersion() const;
 
-    mstring GetServerVersion();
-    unsigned int GetServerMajorVersion();
-    unsigned int GetServerMinorVersion();
-    unsigned int GetServerRevisionVersion();
+    mstring GetServerVersion() const;
+    unsigned int GetServerMajorVersion() const;
+    unsigned int GetServerMinorVersion() const;
+    unsigned int GetServerRevisionVersion() const;
 
     void ChangePassword(mstring newPassword);
 
-    mstring GetSessionTag();
+    mstring GetSessionTag() const;
     void SetSessionTag(mstring tag);
 
-    Transaction GetTransaction();
+    Transaction GetTransaction() const;
     void SetTransaction(const Transaction &transaction);
 
     void SetDefaultDateFormat(mstring format);
     void SetDefaultNumericFormat(mstring format);
 
-    mstring  GetDefaultDateFormat();
-    mstring  GetDefaultNumericFormat();
+    mstring  GetDefaultDateFormat() const;
+    mstring  GetDefaultNumericFormat() const;
 
     void EnableServerOutput(unsigned int bufsize, unsigned int arrsize, unsigned int lnsize);
     void DisableServerOutput();
-    bool GetServerOutput(mstring &line);
-    void GetServerOutput(std::vector<mstring> &lines);
+    bool GetServerOutput(mstring &line) const;
+    void GetServerOutput(std::vector<mstring> &lines) const;
 
     void SetTrace(unsigned int trace, mstring value);
-    mstring GetTrace(unsigned int trace);
+    mstring GetTrace(unsigned int trace) const;
 
-    mstring GetDatabase();
-    mstring GetInstance();
-    mstring GetService();
-    mstring GetServer();
-    mstring GetDomain();
+    mstring GetDatabase() const;
+    mstring GetInstance() const;
+    mstring GetService() const;
+    mstring GetServer() const;
+    mstring GetDomain() const;
 
-    Timestamp GetInstanceStartTime();
+    Timestamp GetInstanceStartTime() const;
 
-    unsigned int GetStatementCacheSize();
+    unsigned int GetStatementCacheSize() const;
     void SetStatementCacheSize(unsigned int value);
 
-    unsigned int GetDefaultLobPrefetchSize();
+    unsigned int GetDefaultLobPrefetchSize() const;
     void SetDefaultLobPrefetchSize(unsigned int value);
 
-    bool IsTAFCapable();
+    bool IsTAFCapable() const;
 
     void SetTAFHandler(TAFHandlerProc handler);
 
@@ -900,8 +899,8 @@ public:
    void Resume();
    void Forget();
 
-   unsigned int GetMode();
-   unsigned int GetTimeout();
+   unsigned int GetMode() const;
+   unsigned int GetTimeout() const;
 
 private:
 
@@ -928,17 +927,17 @@ public:
     Date();
 
     void Assign(const Date& other);
-    int Compare(const Date& other);
+    int Compare(const Date& other) const;
 
-    int DaysBetween(const Date& other);
+    int DaysBetween(const Date& other) const;
 
     void SetDate(int year, int month, int day);
     void SetTime(int hour, int min,   int sec);
     void SetDateTime(int year, int month, int day, int hour, int min, int sec);
 
-    void GetDate(int *year, int *month, int *day);
-    void GetTime(int *hour, int *min,   int *sec);
-    void GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec);
+    void GetDate(int *year, int *month, int *day) const;
+    void GetTime(int *hour, int *min,   int *sec) const;
+    void GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec) const;
 
     void AddDays(int days);
     void AddMonths(int months);
@@ -950,9 +949,9 @@ public:
     void ChangeTimeZone(mstring tzSrc, mstring tzDst);
 
     void FromString(mstring data, mstring format = OCI_STRING_FORMAT_DATE);
-    mstring ToString(mstring format = OCI_STRING_FORMAT_DATE);
+    mstring ToString(mstring format = OCI_STRING_FORMAT_DATE) const;
 
-    operator mstring();
+    operator mstring() const;
 
 private:
 
@@ -979,25 +978,25 @@ public:
     Interval(unsigned int type);
 
     void Assign(const Interval& other);
-    int Compare(const Interval& other);
+    int Compare(const Interval& other) const;
 
-    unsigned int GetType();
+    unsigned int GetType() const;
 
     void Add(const Interval& other);
     void Substract(const Interval& other);
 
-    void GetDaySecond(int *day, int *hour, int *min, int *sec, int *fsec);
+    void GetDaySecond(int *day, int *hour, int *min, int *sec, int *fsec) const;
     void SetDaySecond(int day, int hour, int min, int sec, int fsec);
 
-    void GetYearMonth(int *year, int *month);
+    void GetYearMonth(int *year, int *month) const;
     void SetYearMonth(int year, int month);
 
     void FromTimeZone(mstring timeZone);
 
-    void FromString(mstring data, mstring format);
-    mstring ToString(int leadingPrecision = 10, int fractionPrecision = 10);
+    void FromString(mstring data);
+    mstring ToString(int leadingPrecision = 10, int fractionPrecision = 10) const;
 
-    operator mstring();
+    operator mstring() const;
 
 private:
 
@@ -1025,19 +1024,19 @@ public:
     Timestamp(unsigned int type);
 
     void Assign(const Timestamp& other);
-    int Compare(const Timestamp& other);
+    int Compare(const Timestamp& other) const;
 
-    unsigned int GetType();
+    unsigned int GetType() const;
 
     void Construct(int year, int month, int day, int hour, int min, int sec, int fsec, mstring timeZone = MT(""));
     void Convert(const Timestamp& other);
 
-    void GetDate(int *year, int *month, int *day);
-    void GetTime(int *hour, int *min,   int *sec, int *fsec);
-    void GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec, int *fsec);
+    void GetDate(int *year, int *month, int *day) const;
+    void GetTime(int *hour, int *min,   int *sec, int *fsec) const;
+    void GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec, int *fsec) const;
 
-    mstring GetTimeZone();
-    void GetTimeZoneOffset(int *hour, int *min);
+    mstring GetTimeZone() const;
+    void GetTimeZoneOffset(int *hour, int *min) const;
 
     void AddInterval(const Interval& other);
     void SubstractInterval(const Interval& other);
@@ -1047,9 +1046,9 @@ public:
     void SysTimestamp();
 
     void FromString(mstring data, mstring format = OCI_STRING_FORMAT_DATE);
-    mstring ToString(mstring format = OCI_STRING_FORMAT_DATE, int precision = 0);
+    mstring ToString(mstring format = OCI_STRING_FORMAT_DATE, int precision = 0) const;
 
-    operator mstring();
+    operator mstring() const;
 
 private:
 
@@ -1081,18 +1080,18 @@ public:
 
     void Append(const Clob &other);
     void Assign(const Clob &other);
-    bool Equals(const Clob &other);
+    bool Equals(const Clob &other) const;
 
-    big_uint GetOffset();
-    big_uint GetLength();
-    big_uint GetMaxSize();
-    big_uint GetChunkSize();
+    big_uint GetOffset() const;
+    big_uint GetLength() const;
+    big_uint GetMaxSize() const;
+    big_uint GetChunkSize() const;
 
     void Truncate(big_uint size);
     big_uint Erase(big_uint offset, big_uint size);
-    void Copy(Clob &dest, big_uint offset, big_uint offsetDest, big_uint size);
+    void Copy(Clob &dest, big_uint offset, big_uint offsetDest, big_uint size) const;
 
-    bool IsTemporary();
+    bool IsTemporary() const;
 
     void Open(unsigned int mode);
     void Flush();
@@ -1130,18 +1129,18 @@ public:
 
     void Append(const Blob &other);
     void Assign(const Blob &other);
-    bool Equals(const Blob &other);
+    bool Equals(const Blob &other) const;
 
-    big_uint GetOffset();
-    big_uint GetLength();
-    big_uint GetMaxSize();
-    big_uint GetChunkSize();
+    big_uint GetOffset() const;
+    big_uint GetLength() const;
+    big_uint GetMaxSize() const;
+    big_uint GetChunkSize() const;
 
     void Truncate(big_uint size);
     big_uint Erase(big_uint offset, big_uint size);
-    void Copy(Blob &dest, big_uint offset, big_uint offsetDest, big_uint size);
+    void Copy(Blob &dest, big_uint offset, big_uint offsetDest, big_uint size) const;
 
-    bool IsTemporary();
+    bool IsTemporary() const;
 
     void Open(unsigned int mode);
     void Flush();
@@ -1177,21 +1176,21 @@ public:
     bool Seek(unsigned int seekMode, big_uint offset);
 
     void Assign(const File &other);
-    bool Equals(const File &other);
+    bool Equals(const File &other) const;
 
-    bool Exists();
+    bool Exists() const;
 
-    big_uint GetOffset();
-    big_uint GetSize();
+    big_uint GetOffset() const;
+    big_uint GetSize() const;
 
     void SetInfos(mstring directory, mstring name);
 
-    mstring GetName();
-    mstring GetDirectory();
+    mstring GetName() const;
+    mstring GetDirectory() const;
 
     void Open();
     void Close();
-    bool IsOpened();
+    bool IsOpened() const;
 
 private:
 
@@ -1214,16 +1213,14 @@ public:
 
     TypeInfo(const Connection &connection, mstring name, unsigned int type);
 
-    unsigned int GetType();
-    mstring GetName();
-    Connection GetConnection();
+    unsigned int GetType() const;
+    mstring GetName() const;
+    Connection GetConnection() const;
 
-    unsigned int GetColumnCount();
-    Column GetColumn(unsigned int index);
+    unsigned int GetColumnCount() const;
+    Column GetColumn(unsigned int index) const;
 
 private:
-
-    Connection GetConnection() const;
 
     TypeInfo(OCI_TypeInfo *pTypeInfo);
 };
@@ -1249,20 +1246,20 @@ public:
 
     void Assign(const Object& other);
 
-    bool IsAttributeNull(mstring name);
+    bool IsAttributeNull(mstring name) const;
     void SetAttributeNull(mstring name);
 
-    TypeInfo GetTypeInfo();
-    Reference GetReference();
+    TypeInfo GetTypeInfo() const;
+    Reference GetReference() const;
 
     template<class TDataType>
-    TDataType Get(mstring name);
+    TDataType Get(mstring name) const;
 
     template<class TDataType>
     void Set(mstring name, const TDataType &value);
 
     template<class TDataType>
-    void Get(mstring name, TDataType value, unsigned int &size);
+    void Get(mstring name, TDataType value, unsigned int &size) const;
 
     template<class TDataType>
     void Set(mstring name, const TDataType &value, unsigned int size);
@@ -1290,15 +1287,15 @@ public:
 
     Reference(const TypeInfo &typeInfo);
 
-    TypeInfo GetTypeInfo();
-    Object GetObject();
+    TypeInfo GetTypeInfo() const;
+    Object GetObject() const;
 
     void Assign(const Reference& other);
 
-    bool IsReferenceNull();
+    bool IsReferenceNull() const;
     void SetReferenceNull();
 
-    mstring ToString();
+    mstring ToString() const;
 
 private:
 
@@ -1324,24 +1321,24 @@ public:
 
     void Assign(const Collection& other);
 
-    unsigned int GetType();
-    unsigned int GetMax();
-    unsigned int GetSize();
+    unsigned int GetType() const;
+    unsigned int GetMax() const;
+    unsigned int GetSize() const;
 
     void Truncate(unsigned int size);
     void Clear();
 
-    bool IsElementNull(unsigned int index);
+    bool IsElementNull(unsigned int index) const;
     void SetElementNull(unsigned int index);
 
     template <class TDataType>
-    TDataType Get(unsigned int index);
+    TDataType Get(unsigned int index) const;
 
     template <class TDataType>
     void Set(unsigned int index, const TDataType &data);
 
     template<class TDataType>
-    void Get(unsigned int index, TDataType value, unsigned int &size);
+    void Get(unsigned int index, TDataType value, unsigned int &size) const;
 
     template<class TDataType>
     void Set(unsigned int index, const TDataType value, unsigned int size);
@@ -1352,7 +1349,7 @@ public:
     template <class TDataType>
     void Append(const TDataType &data, unsigned int size);
 
-    TypeInfo GetTypeInfo();
+    TypeInfo GetTypeInfo() const;
 
 private:
 
@@ -1385,7 +1382,7 @@ public:
     CollectionIterator(const Collection &collection);
 
     template <class TDataType>
-    TDataType Get();
+    TDataType Get() const;
 
     template <class TDataType>
     void Set(TDataType &value);
@@ -1393,7 +1390,7 @@ public:
     bool Next();
     bool Prev();
 
-    bool IsElementNull();
+    bool IsElementNull() const;
     void SetElementNull();
 };
 
@@ -1416,8 +1413,8 @@ public:
     dstring Read(unsigned int size);
     unsigned int Write(dstring content);
 
-    unsigned int GetSize();
-    dstring GetContent();
+    unsigned int GetSize() const;
+    dstring GetContent() const;
 
 private:
 
@@ -1443,8 +1440,8 @@ public:
     unsigned int Read(void *buffer, unsigned int size);
     unsigned int Write(void *buffer, unsigned int size);
 
-    unsigned int GetSize();
-    void * GetContent();
+    unsigned int GetSize() const;
+    void * GetContent() const;
 
 private:
 
@@ -1463,23 +1460,23 @@ class BindInfo : public HandleHolder<OCI_Bind *>
 
 public:
 
-    mstring GetName();
-    unsigned int GetType();
-    unsigned int GetSubType();
-    unsigned int GetElemcount();
+    mstring GetName() const;
+    unsigned int GetType() const;
+    unsigned int GetSubType() const;
+    unsigned int GetElemcount() const;
 
-    Statement GetStatement();
+    Statement GetStatement() const;
 
     void SetNull(bool value);
     void SetNull(bool value, unsigned int pos);
 
-    bool IsNull();
-    bool IsNull(unsigned int pos);
+    bool IsNull() const;
+    bool IsNull(unsigned int pos) const;
 
     void SetCharsetForm(unsigned int value);
 
     void SetDirection(unsigned int value);
-    unsigned int GetDirection();
+    unsigned int GetDirection() const;
 
 private:
 
@@ -1505,7 +1502,7 @@ public:
     Statement(const Connection &connection);
     ~Statement();
 
-    Connection GetConnection();
+    Connection GetConnection() const;
 
     void Describe(mstring sql);
     void Parse(mstring sql);
@@ -1513,22 +1510,22 @@ public:
     void Execute();
     void Execute(mstring sql);
 
-    unsigned int GetAffectedRows();
+    unsigned int GetAffectedRows() const;
 
-    mstring GetSql();
+    mstring GetSql()  const;
 
     Resultset GetResultset();
     Resultset GetNextResultset();
 
     void SetBindArraySize(unsigned int size);
-    unsigned int GetBindArraySize();
+    unsigned int GetBindArraySize() const;
 
     void AllowRebinding(bool value);
 
-    unsigned int GetBindCount();
+    unsigned int GetBindCount() const;
 
-    BindInfo GetBind(unsigned int index);
-    BindInfo GetBind(mstring name);
+    BindInfo GetBind(unsigned int index) const;
+    BindInfo GetBind(mstring name) const;
 
     template <class TDataType>
     void Bind(mstring name, TDataType &value, unsigned int mode);
@@ -1554,33 +1551,33 @@ public:
     template <class TDataType, class TExtraInfo>
     void Register(mstring name, TExtraInfo &extraInfo);
 
-    unsigned int GetStatementType();
+    unsigned int GetStatementType() const;
 
-    unsigned int GetSqlErrorPos();
+    unsigned int GetSqlErrorPos() const;
 
     void SetFetchMode(unsigned int value);
-    unsigned int GetFetchMode();
+    unsigned int GetFetchMode() const;
 
     void SetBindMode(unsigned int value);
-    unsigned int GetBindMode();
+    unsigned int GetBindMode() const;
 
     void SetFetchSize(unsigned int value);
-    unsigned int GetFetchSize();
+    unsigned int GetFetchSize() const;
 
     void SetPrefetchSize(unsigned int value);
-    unsigned int GetPrefetchSize();
+    unsigned int GetPrefetchSize() const;
 
     void SetPrefetchMemory(unsigned int value);
-    unsigned int GetPrefetchMemory();
+    unsigned int GetPrefetchMemory() const;
 
     void SetLongMaxSize(unsigned int value);
-    unsigned int GetLongMaxSize();
+    unsigned int GetLongMaxSize() const;
 
     void SetLongMode(unsigned int value);
-    unsigned int GetLongMode();
+    unsigned int GetLongMode() const;
 
-    unsigned int GetSQLCommand();
-    mstring GetSQLVerb();
+    unsigned int GetSQLCommand() const;
+    mstring GetSQLVerb() const;
 
     void GetBatchErrors(std::vector<Exception> &exceptions);
 
@@ -1623,16 +1620,16 @@ class Resultset : public HandleHolder<OCI_Resultset *>
 public:
 
     template<class TDataType>
-    TDataType Get(unsigned int index);
+    TDataType Get(unsigned int index) const;
 
     template<class TDataType>
-    TDataType Get(mstring name);
+    TDataType Get(mstring name) const;
 
     template<class TDataType>
-    void Get(unsigned int index, TDataType value, unsigned int &size);
+    void Get(unsigned int index, TDataType value, unsigned int &size) const;
 
     template<class TDataType>
-    void Get(mstring name, TDataType value, unsigned int &size);
+    void Get(mstring name, TDataType value, unsigned int &size) const;
 
     bool Next();
     bool Prev();
@@ -1640,17 +1637,17 @@ public:
     bool Last();
     bool Seek(unsigned int mode, int offset);
 
-    unsigned int GetCount();
-    unsigned int GetCurrentRow();
+    unsigned int GetCount() const;
+    unsigned int GetCurrentRow() const;
 
-    unsigned int GetColumnCount();
-    Column GetColumn(unsigned int index);
-    Column GetColumn(mstring name);
+    unsigned int GetColumnCount() const;
+    Column GetColumn(unsigned int index) const;
+    Column GetColumn(mstring name) const;
 
-    bool IsColumnNull(unsigned int index);
-    bool IsColumnNull(mstring name);
+    bool IsColumnNull(unsigned int index) const;
+    bool IsColumnNull(mstring name) const;
 
-    Statement GetStatement();
+    Statement GetStatement() const;
 
 private:
 
@@ -1670,24 +1667,24 @@ class Column : public HandleHolder<OCI_Column *>
 
 public:
 
-    mstring GetName();
-    mstring GetSQLType();
-    mstring GetFullSQLType();
+    mstring GetName() const;
+    mstring GetSQLType() const;
+    mstring GetFullSQLType() const;
 
-    unsigned int GetType();
-    unsigned int GetSubType();
-    unsigned int GetCharsetForm();
-    unsigned int GetSize();
+    unsigned int GetType() const;
+    unsigned int GetSubType() const;
+    unsigned int GetCharsetForm() const;
+    unsigned int GetSize() const;
 
-    int GetScale();
-    int GetPrecision();
-    int GetFractionalPrecision();
-    int GetLeadingPrecision();
+    int GetScale() const;
+    int GetPrecision() const;
+    int GetFractionalPrecision() const;
+    int GetLeadingPrecision() const;
 
-    bool GetNullable();
-    bool GetCharUsed();
+    bool GetNullable() const;
+    bool GetCharUsed() const;
 
-    TypeInfo GetTypeInfo();
+    TypeInfo GetTypeInfo() const;
 
 private:
 
@@ -1713,11 +1710,11 @@ public:
 
     void Watch(mstring sql);
 
-    mstring GetName();
-    unsigned int GetTimeout();
-    unsigned int GetPort();
+    mstring GetName() const;
+    unsigned int GetTimeout() const;
+    unsigned int GetPort() const;
 
-    Connection GetConnection();
+    Connection GetConnection() const;
 
 private:
 
@@ -1737,12 +1734,12 @@ class Event : public HandleHolder<OCI_Event *>
 
 public:
 
-    unsigned int GetType();
-    unsigned int GetOperation();
-    mstring GetDatabaseName();
-    mstring GetObjectName();
-    mstring GetRowID();
-    Subscription GetSubscription();
+    unsigned int GetType() const;
+    unsigned int GetOperation() const;
+    mstring GetDatabaseName() const;
+    mstring GetObjectName() const;
+    mstring GetRowID() const;
+    Subscription GetSubscription() const;
 
 private:
 
@@ -1765,10 +1762,10 @@ public:
 
     Agent(const Connection &connection, mstring name = MT(""), mstring address = MT(""));
 
-    mstring GetName();
+    mstring GetName() const;
     void SetName(mstring value);
 
-    mstring GetAddress();
+    mstring GetAddress() const;
     void SetAddress(mstring value);
 
 private:
@@ -1798,30 +1795,30 @@ public:
     void Get(BufferPointer value, unsigned int &size);
     void Set(const BufferPointer &value, unsigned int size);
 
-    Date GetEnqueueTime();
-    int GetAttemptCount();
-    unsigned int GetState();
-    void GetID(BufferPointer value, unsigned int &size);
+    Date GetEnqueueTime() const;
+    int GetAttemptCount() const;
+    unsigned int GetState() const;
+    void GetID(BufferPointer value, unsigned int &size) const;
 
-    int GetExpiration();
+    int GetExpiration() const;
     void SetExpiration(int value);
 
-    int GetEnqueueDelay();
+    int GetEnqueueDelay() const;
     void SetEnqueueDelay(int value);
 
-    int GetPriority();
+    int GetPriority() const;
     void SetPriority(int value);
 
-    void GetOriginalID(BufferPointer value, unsigned int &size);
+    void GetOriginalID(BufferPointer value, unsigned int &size) const;
     void SetOriginalID(const BufferPointer &value, unsigned int size);
 
-    mstring GetCorrelation();
+    mstring GetCorrelation() const;
     void SetCorrelation(mstring value);
 
-    mstring GetExceptionQueue();
+    mstring GetExceptionQueue() const;
     void SetExceptionQueue(mstring value);
 
-    Agent GetSender();
+    Agent GetSender() const;;
     void SetSender(const Agent &agent);
 
     void SetConsumers(std::vector<Agent> &agents);
@@ -1845,13 +1842,13 @@ public:
 
     void Put(const Message &message);
 
-    unsigned int GetVisibility();
+    unsigned int GetVisibility() const;
     void SetVisibility(unsigned int value);
 
-    unsigned int GetSequenceDeviation();
+    unsigned int GetSequenceDeviation() const;
     void SetSequenceDeviation(unsigned int value);
 
-    void GetRelativeMsgID(BufferPointer value, unsigned int &size);
+    void GetRelativeMsgID(BufferPointer value, unsigned int &size) const;
     void SetRelativeMsgID(const BufferPointer &value, unsigned int size);
 };
 
@@ -1873,25 +1870,25 @@ public:
 
     Agent Listen(int timeout);
 
-    mstring GetConsumer();
+    mstring GetConsumer() const;
     void SetConsumer(mstring value);
 
-    mstring GetCorrelation();
+    mstring GetCorrelation() const;
     void SetCorrelation(mstring value);
 
-    void GetRelativeMsgID(BufferPointer value, unsigned int &size);
+    void GetRelativeMsgID(BufferPointer value, unsigned int &size) const;
     void SetRelativeMsgID(const BufferPointer &value, unsigned int size);
 
-    unsigned int GetVisibility();
+    unsigned int GetVisibility() const;
     void SetVisibility(unsigned int value);
 
-    unsigned int GetMode();
+    unsigned int GetMode() const;
     void SetMode(unsigned int value);
 
-    unsigned int GetNavigation();
+    unsigned int GetNavigation() const;
     void SetNavigation(unsigned int value);
 
-    int GetWaitTime();
+    int GetWaitTime() const;
     void SetWaitTime(int value);
 
     void SetAgents(std::vector<Agent> &agents);
@@ -1966,11 +1963,11 @@ public:
     void FlushRow();
 
     void SetCurrentRows(unsigned int nbRows);
-    unsigned int GetCurrentRows();
+    unsigned int GetCurrentRows() const;
 
-    unsigned int GetMaxRows();
-    unsigned int GetRowCount();
-    unsigned int GetAffectedRows();
+    unsigned int GetMaxRows() const;
+    unsigned int GetRowCount() const;
+    unsigned int GetAffectedRows() const;
 
     void SetDateFormat(mstring format);
 
@@ -2055,13 +2052,13 @@ inline ManagedBuffer<TBufferType> & ManagedBuffer<TBufferType>::operator=( TBuff
 }
 
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::operator TBufferType* ()
+inline ManagedBuffer<TBufferType>::operator TBufferType* () const
 {
     return  _buffer;
 }
 
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::operator const TBufferType* ()
+inline ManagedBuffer<TBufferType>::operator const TBufferType* () const
 {
     return  _buffer;
 }
@@ -2095,7 +2092,7 @@ inline HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (const H
 }
 
 template<class THandleType>
-inline bool HandleHolder<THandleType>::IsNull()
+inline bool HandleHolder<THandleType>::IsNull() const
 {
     return  (((THandleType) *this) == 0);
 }
@@ -2113,7 +2110,7 @@ inline HandleHolder<THandleType>::operator THandleType() const
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>::operator bool()
+inline HandleHolder<THandleType>::operator bool() const
 {
     return IsNull();
 }
@@ -2207,12 +2204,12 @@ inline void ConcurrentPool<TKey, TValue>::Remove(TKey key)
 }
 
 template <class TKey, class TValue>
-inline TValue ConcurrentPool<TKey, TValue>::Get(TKey key)
+inline TValue ConcurrentPool<TKey, TValue>::Get(TKey key) const
 {
     TValue value = 0;
 
     Lock();
-    typename ConcurrentPoolMap::iterator it = _map.find(key);
+    typename ConcurrentPoolMap::const_iterator it = _map.find(key);
     if (it != _map.end() )
     {
         value = it->second;
@@ -2231,7 +2228,7 @@ inline void ConcurrentPool<TKey, TValue>::Set(TKey key, TValue value)
 }
 
 template <class TKey, class TValue>
-inline void ConcurrentPool<TKey, TValue>::Lock()
+inline void ConcurrentPool<TKey, TValue>::Lock() const
 {
     if (_mutex)
     {
@@ -2240,7 +2237,7 @@ inline void ConcurrentPool<TKey, TValue>::Lock()
 }
 
 template <class TKey, class TValue>
-inline void ConcurrentPool<TKey, TValue>::Unlock()
+inline void ConcurrentPool<TKey, TValue>::Unlock() const
 {
     if (_mutex)
     {
@@ -2275,10 +2272,9 @@ inline HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::~SmartHandle()
 
     for(std::list<Handle *>::iterator it = _children.begin(); it != _children.end(); it++)
     {
-        SmartHandle<TSmartHandleType> *handle = dynamic_cast<SmartHandle<TSmartHandleType> *> (*it);
+        Handle *handle = *it;
 
-        handle->_parent = 0;
-
+        handle->DetachFromParent();
         handle->DetachFromHolders();
 
         delete handle;
@@ -2322,21 +2318,21 @@ inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::Release(Ha
 
 template <class THandleType>
 template <class TSmartHandleType>
-inline bool HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::IsLastHolder(HandleHolder<TSmartHandleType> *holder)
+inline bool HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::IsLastHolder(HandleHolder<TSmartHandleType> *holder) const
 {
     return ((_holders.size() == 1) && (*(_holders.begin()) == holder));
 }
 
 template <class THandleType>
 template <class TSmartHandleType>
-inline TSmartHandleType HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetHandle()
+inline TSmartHandleType HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetHandle() const
 {
     return _handle;
 }
 
 template <class THandleType>
 template <class TSmartHandleType>
-inline void * HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetExtraInfos()
+inline void * HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetExtraInfos() const
 {
     return _extraInfo;
 }
@@ -2346,6 +2342,13 @@ template <class TSmartHandleType>
 inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::SetExtraInfos(void *extraInfo)
 {
     _extraInfo = extraInfo;
+}
+
+template <class THandleType>
+template <class TSmartHandleType>
+inline std::list<Handle *> & HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetChildren()
+{
+    return _children;
 }
 
 template <class THandleType>
@@ -2362,9 +2365,9 @@ inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::DetachFrom
 
 template <class THandleType>
 template <class TSmartHandleType>
-inline std::list<Handle *> & HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetChildren()
+inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::DetachFromParent()
 {
-    return _children;
+    _parent = 0;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2381,41 +2384,40 @@ inline Exception::Exception(OCI_Error *err)
     Acquire(err, 0, 0);
 }
 
-inline mstring Exception::GetMessage()
+inline mstring Exception::GetMessage() const
 {
     return MakeString(OCI_ErrorGetString(*this));
 }
 
-inline unsigned int Exception::GetType()
+inline unsigned int Exception::GetType() const
 {
     return OCI_ErrorGetType(*this);
 }
 
-inline int Exception::GetOracleErrorCode()
+inline int Exception::GetOracleErrorCode() const
 {
     return OCI_ErrorGetOCICode(*this);
 }
 
-inline int Exception::GetInternalErrorCode()
+inline int Exception::GetInternalErrorCode() const
 {
     return OCI_ErrorGetInternalCode(*this);
 }
 
-inline Statement Exception::GetStatement()
+inline Statement Exception::GetStatement() const
 {
     return Statement(OCI_ErrorGetStatement(*this), 0);
 }
 
-inline Connection Exception::GetConnection()
+inline Connection Exception::GetConnection() const
 {
     return Connection(OCI_ErrorGetConnection(*this), 0);
 }
 
-inline unsigned int Exception::GetRow()
+inline unsigned int Exception::GetRow() const
 {
     return OCI_ErrorGetRow(*this);
 }
-
 
 /* --------------------------------------------------------------------------------------------- *
  * Environment
@@ -2562,7 +2564,7 @@ inline Environment::EnvironmentHandle & Environment::GetEnvironmentHandle()
     return envHandle;
 }
 
-inline void Environment::EnvironmentHandle::Initialize(void *handle, unsigned int envMode)
+inline void Environment::EnvironmentHandle::Initialize(UnknownHandle handle, unsigned int envMode)
 {
     Mode = envMode;
     Callbacks.Initialize(envMode);
@@ -2680,7 +2682,7 @@ inline Connection Pool::GetConnection(mstring sessionTag)
     return Connection(Check( OCI_PoolGetConnection(*this, sessionTag.c_str())), GetHandle());
 }
 
-inline unsigned int Pool::GetTimeout()
+inline unsigned int Pool::GetTimeout() const
 {
     return Check( OCI_PoolGetTimeout(*this));
 }
@@ -2690,7 +2692,7 @@ inline void Pool::SetTimeout(unsigned int value)
     Check( OCI_PoolSetTimeout(*this, value));
 }
 
-inline bool Pool::GetNoWait()
+inline bool Pool::GetNoWait() const
 {
     return (Check( OCI_PoolGetNoWait(*this)) == TRUE);
 }
@@ -2700,32 +2702,32 @@ inline void Pool::SetNoWait(bool value)
     Check( OCI_PoolSetNoWait(*this, value));
 }
 
-inline unsigned int Pool::GetBusyConnectionsCount()
+inline unsigned int Pool::GetBusyConnectionsCount() const
 {
     return Check( OCI_PoolGetBusyCount(*this));
 }
 
-inline unsigned int Pool::GetOpenedConnectionsCount()
+inline unsigned int Pool::GetOpenedConnectionsCount() const
 {
     return Check( OCI_PoolGetOpenedCount(*this));
 }
 
-inline unsigned int Pool::GetMinSize()
+inline unsigned int Pool::GetMinSize() const
 {
     return Check( OCI_PoolGetMin(*this));
 }
 
-inline unsigned int Pool::GetMaxSize()
+inline unsigned int Pool::GetMaxSize() const
 {
     return Check( OCI_PoolGetMax(*this));
 }
 
-inline unsigned int Pool::GetIncrement()
+inline unsigned int Pool::GetIncrement() const
 {
     return Check( OCI_PoolGetIncrement(*this));
 }
 
-inline unsigned int Pool::GetStatementCacheSize()
+inline unsigned int Pool::GetStatementCacheSize() const
 {
     return Check( OCI_PoolGetStatementCacheSize(*this));
 }
@@ -2785,57 +2787,57 @@ inline void Connection::SetAutoCommit(bool enabled)
     Check(OCI_SetAutoCommit(*this, enabled));
 }
 
-inline bool Connection::GetAutoCommit()
+inline bool Connection::GetAutoCommit() const
 {
     return (Check(OCI_GetAutoCommit(*this)) == TRUE);
 }
 
-inline bool Connection::IsServerAlive()
+inline bool Connection::IsServerAlive() const
 {
     return (Check(OCI_IsConnected(*this)) == TRUE);
 }
 
-inline bool Connection::PingServer()
+inline bool Connection::PingServer() const
 {
     return( Check(OCI_Ping(*this)) == TRUE);
 }
 
-inline mstring Connection::GetConnectionString()
+inline mstring Connection::GetConnectionString() const
 {
     return MakeString(Check(OCI_GetDatabase(*this)));
 }
 
-inline mstring Connection::GetUserName()
+inline mstring Connection::GetUserName() const
 {
     return MakeString(Check(OCI_GetUserName(*this)));
 }
 
-inline mstring Connection::GetPassword()
+inline mstring Connection::GetPassword() const
 {
     return MakeString(Check(OCI_GetPassword(*this)));
 }
 
-inline unsigned int Connection::GetVersion()
+inline unsigned int Connection::GetVersion() const
 {
     return Check(OCI_GetVersionConnection(*this));
 }
 
-inline mstring Connection::GetServerVersion()
+inline mstring Connection::GetServerVersion() const
 {
     return MakeString(Check( OCI_GetVersionServer(*this)));
 }
 
-inline unsigned int Connection::GetServerMajorVersion()
+inline unsigned int Connection::GetServerMajorVersion() const
 {
     return Check(OCI_GetServerMajorVersion(*this));
 }
 
-inline unsigned int Connection::GetServerMinorVersion()
+inline unsigned int Connection::GetServerMinorVersion() const
 {
     return Check(OCI_GetServerMinorVersion(*this));
 }
 
-inline unsigned int Connection::GetServerRevisionVersion()
+inline unsigned int Connection::GetServerRevisionVersion() const
 {
     return Check(OCI_GetServerRevisionVersion(*this));
 }
@@ -2845,7 +2847,7 @@ inline void Connection::ChangePassword(mstring newPassword)
     Check(OCI_SetPassword(*this, newPassword.c_str()));
 }
 
-inline mstring Connection::GetSessionTag()
+inline mstring Connection::GetSessionTag() const
 {
     return MakeString(Check(OCI_GetSessionTag(*this)));
 }
@@ -2855,7 +2857,7 @@ inline void Connection::SetSessionTag(mstring tag)
     Check(OCI_SetSessionTag(*this, tag.c_str()));
 }
 
-inline Transaction Connection::GetTransaction()
+inline Transaction Connection::GetTransaction() const
 {
     return Transaction(Check(OCI_GetTransaction(*this)));
 }
@@ -2875,12 +2877,12 @@ inline void Connection::SetDefaultNumericFormat(mstring format)
     Check(OCI_SetDefaultFormatNumeric(*this, format.c_str()));
 }
 
-inline mstring  Connection::GetDefaultDateFormat()
+inline mstring  Connection::GetDefaultDateFormat() const
 {
     return MakeString(Check(OCI_GetDefaultFormatDate(*this)));
 }
 
-inline mstring  Connection::GetDefaultNumericFormat()
+inline mstring  Connection::GetDefaultNumericFormat() const
 {
    return  MakeString(Check(OCI_GetDefaultFormatNumeric(*this)));
 }
@@ -2895,7 +2897,7 @@ inline void Connection::DisableServerOutput()
     Check(OCI_ServerDisableOutput(*this));
 }
 
-inline bool Connection::GetServerOutput(mstring &line)
+inline bool Connection::GetServerOutput(mstring &line) const
 {
     const mtext * str = Check(OCI_ServerGetOutput(*this));
 
@@ -2904,7 +2906,7 @@ inline bool Connection::GetServerOutput(mstring &line)
     return (str != 0);
 }
 
-inline void Connection::GetServerOutput(std::vector<mstring> &lines)
+inline void Connection::GetServerOutput(std::vector<mstring> &lines) const
 {
     const mtext * str = Check(OCI_ServerGetOutput(*this));
 
@@ -2920,42 +2922,42 @@ inline void Connection::SetTrace(unsigned int trace, mstring value)
     Check(OCI_SetTrace(*this, trace, value.c_str()));
 }
 
-inline mstring Connection::GetTrace(unsigned int trace)
+inline mstring Connection::GetTrace(unsigned int trace) const
 {
     return MakeString(Check(OCI_GetTrace(*this, trace)));
 }
 
-inline mstring Connection::GetDatabase()
+inline mstring Connection::GetDatabase() const
 {
     return MakeString(Check(OCI_GetDBName(*this)));
 }
 
-inline mstring Connection::GetInstance()
+inline mstring Connection::GetInstance() const
 {
     return Check(OCI_GetInstanceName(*this));
 }
 
-inline mstring Connection::GetService()
+inline mstring Connection::GetService() const
 {
     return MakeString(Check(OCI_GetServiceName(*this)));
 }
 
-inline mstring Connection::GetServer()
+inline mstring Connection::GetServer() const
 {
     return Check(OCI_GetServerName(*this));
 }
 
-inline mstring Connection::GetDomain()
+inline mstring Connection::GetDomain() const
 {
     return MakeString(Check(OCI_GetDomainName(*this)));
 }
 
-inline Timestamp Connection::GetInstanceStartTime()
+inline Timestamp Connection::GetInstanceStartTime() const
 {
     return Timestamp(Check(OCI_GetInstanceStartTime(*this)), GetHandle());
 }
 
-inline unsigned int Connection::GetStatementCacheSize()
+inline unsigned int Connection::GetStatementCacheSize() const
 {
     return Check(OCI_GetStatementCacheSize(*this));
 }
@@ -2965,7 +2967,7 @@ inline void Connection::SetStatementCacheSize(unsigned int value)
     Check(OCI_SetStatementCacheSize(*this, value));
 }
 
-inline unsigned int Connection::GetDefaultLobPrefetchSize()
+inline unsigned int Connection::GetDefaultLobPrefetchSize() const
 {
     return Check(OCI_GetDefaultLobPrefetchSize  (*this));
 }
@@ -2975,7 +2977,7 @@ inline void Connection::SetDefaultLobPrefetchSize(unsigned int value)
     Check(OCI_SetDefaultLobPrefetchSize(*this, value));
 }
 
-inline bool Connection::IsTAFCapable()
+inline bool Connection::IsTAFCapable() const
 {
     return (Check(OCI_IsTAFCapable(*this)) == TRUE);
 }
@@ -3028,12 +3030,12 @@ inline void Transaction::Forget()
     Check(OCI_TransactionForget(*this));
 }
 
-inline unsigned int Transaction::GetMode()
+inline unsigned int Transaction::GetMode() const
 {
     return Check(OCI_TransactionGetMode(*this));
 }
 
-inline unsigned int Transaction::GetTimeout()
+inline unsigned int Transaction::GetTimeout() const
 {
     return Check(OCI_TransactionGetTimeout(*this));
 }
@@ -3057,12 +3059,12 @@ inline void Date::Assign(const Date& other)
     Check(OCI_DateAssign(*this, other));
 }
 
-inline int Date::Compare(const Date& other)
+inline int Date::Compare(const Date& other) const
 {
     return Check(OCI_DateCompare(*this, other));
 }
 
-inline int Date::DaysBetween(const Date& other)
+inline int Date::DaysBetween(const Date& other) const
 {
     return Check(OCI_DateDaysBetween(*this, other));
 }
@@ -3082,17 +3084,17 @@ inline void Date::SetDateTime(int year, int month, int day, int hour, int min, i
     Check(OCI_DateSetDateTime(*this, year, month, day, hour, min , sec));
 }
 
-inline void Date::GetDate(int *year, int *month, int *day)
+inline void Date::GetDate(int *year, int *month, int *day) const
 {
     Check(OCI_DateGetDate(*this, year, month, day));
 }
 
-inline void Date::GetTime(int *hour, int *min, int *sec)
+inline void Date::GetTime(int *hour, int *min, int *sec) const
 {
     Check(OCI_DateGetTime(*this, hour, min , sec));
 }
 
-inline void Date::GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec)
+inline void Date::GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec) const
 {
     Check(OCI_DateGetDateTime(*this, year, month, day, hour, min , sec));
 }
@@ -3132,7 +3134,7 @@ inline void Date::FromString(mstring data, mstring format)
    Check(OCI_DateFromText(*this, data.c_str(), format.c_str()));
 }
 
-inline mstring Date::ToString(mstring format)
+inline mstring Date::ToString(mstring format) const
 {
     size_t size = OCI_SIZE_BUFFER;
 
@@ -3143,7 +3145,7 @@ inline mstring Date::ToString(mstring format)
     return MakeString((mtext *) buffer);
 }
 
-inline Date::operator mstring()
+inline Date::operator mstring() const
 {
     return ToString();
 }
@@ -3167,12 +3169,12 @@ inline void Interval::Assign(const Interval& other)
    Check(OCI_IntervalAssign(*this, other));
 }
 
-inline int Interval::Compare(const Interval& other)
+inline int Interval::Compare(const Interval& other) const
 {
     return Check(OCI_IntervalCompare(*this, other));
 }
 
-inline unsigned int Interval::GetType()
+inline unsigned int Interval::GetType() const
 {
     return Check(OCI_IntervalGetType(*this));
 }
@@ -3187,7 +3189,7 @@ inline void Interval::Substract(const Interval& other)
     Check(OCI_IntervalSubtract(*this, other));
 }
 
-inline void Interval::GetDaySecond(int *day, int *hour, int *min, int *sec, int *fsec)
+inline void Interval::GetDaySecond(int *day, int *hour, int *min, int *sec, int *fsec) const
 {
     Check(OCI_IntervalGetDaySecond(*this, day, hour, min, sec, fsec));
 }
@@ -3197,7 +3199,7 @@ inline void Interval::SetDaySecond(int day, int hour, int min, int sec, int fsec
     Check(OCI_IntervalSetDaySecond(*this, day, hour, min, sec, fsec));
 }
 
-inline void Interval::GetYearMonth(int *year, int *month)
+inline void Interval::GetYearMonth(int *year, int *month) const
 {
     Check(OCI_IntervalGetYearMonth(*this, year, month));
 }
@@ -3211,12 +3213,12 @@ inline void Interval::FromTimeZone(mstring timeZone)
     Check(OCI_IntervalFromTimeZone(*this, timeZone.c_str()));
 }
 
-inline void Interval::FromString(mstring data, mstring format)
+inline void Interval::FromString(mstring data)
 {
-    Check(OCI_IntervalFromText(*this, format.c_str()));
+    Check(OCI_IntervalFromText(*this, data.c_str()));
 }
 
-inline mstring Interval::ToString(int leadingPrecision, int fractionPrecision)
+inline mstring Interval::ToString(int leadingPrecision, int fractionPrecision) const
 {
     size_t size = OCI_SIZE_BUFFER;
 
@@ -3227,7 +3229,7 @@ inline mstring Interval::ToString(int leadingPrecision, int fractionPrecision)
     return MakeString((mtext *) buffer);
 }
 
-inline Interval::operator mstring()
+inline Interval::operator mstring() const
 {
     return ToString();
 }
@@ -3251,12 +3253,12 @@ inline void Timestamp::Assign(const Timestamp& other)
     Check(OCI_TimestampAssign(*this, other));
 }
 
-inline int Timestamp::Compare(const Timestamp& other)
+inline int Timestamp::Compare(const Timestamp& other) const
 {
     return Check(OCI_TimestampCompare(*this, other));
 }
 
-inline unsigned int Timestamp::GetType()
+inline unsigned int Timestamp::GetType() const
 {
     return Check(OCI_TimestampGetType(*this));
 }
@@ -3271,22 +3273,22 @@ inline void Timestamp::Convert(const Timestamp& other)
     Check(OCI_TimestampConvert(*this, other));
 }
 
-inline void Timestamp::GetDate(int *year, int *month, int *day)
+inline void Timestamp::GetDate(int *year, int *month, int *day) const
 {
     Check(OCI_TimestampGetDate(*this, year, month, day));
 }
 
-inline void Timestamp::GetTime(int *hour, int *min, int *sec, int *fsec)
+inline void Timestamp::GetTime(int *hour, int *min, int *sec, int *fsec) const
 {
     Check(OCI_TimestampGetTime(*this, hour, min, sec, fsec));
 }
 
-inline void Timestamp::GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec, int *fsec)
+inline void Timestamp::GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec, int *fsec) const
 {
     Check(OCI_TimestampGetDateTime(*this, year, month, day, hour, min, sec, fsec));
 }
 
-inline mstring Timestamp::GetTimeZone()
+inline mstring Timestamp::GetTimeZone() const
 {
     size_t size = OCI_SIZE_BUFFER;
 
@@ -3297,7 +3299,7 @@ inline mstring Timestamp::GetTimeZone()
     return MakeString((mtext *) buffer);
 }
 
-inline void Timestamp::GetTimeZoneOffset(int *hour, int *min)
+inline void Timestamp::GetTimeZoneOffset(int *hour, int *min) const
 {
     Check(OCI_TimestampGetTimeZoneOffset(*this, hour, min));
 }
@@ -3327,7 +3329,7 @@ inline void Timestamp::FromString(mstring data, mstring format)
     Check(OCI_TimestampFromText(*this, data.c_str(), format.c_str()));
 }
 
-inline mstring Timestamp::ToString(mstring format, int precision)
+inline mstring Timestamp::ToString(mstring format, int precision) const
 {
     size_t size = OCI_SIZE_BUFFER;
 
@@ -3338,7 +3340,7 @@ inline mstring Timestamp::ToString(mstring format, int precision)
     return MakeString((mtext *) buffer);
 }
 
-inline Timestamp::operator mstring()
+inline Timestamp::operator mstring() const
 {
     return ToString();
 }
@@ -3391,27 +3393,27 @@ inline void Clob::Assign(const Clob &other)
     Check(OCI_LobAssign(*this, other));
 }
 
-inline bool Clob::Equals(const Clob &other)
+inline bool Clob::Equals(const Clob &other) const
 {
     return (Check(OCI_LobIsEqual(*this, other)) == TRUE);
 }
 
-inline big_uint Clob::GetOffset()
+inline big_uint Clob::GetOffset() const
 {
     return Check(OCI_LobGetOffset(*this));
 }
 
-inline big_uint Clob::GetLength()
+inline big_uint Clob::GetLength() const
 {
     return Check(OCI_LobGetLength(*this));
 }
 
-inline big_uint Clob::GetMaxSize()
+inline big_uint Clob::GetMaxSize() const
 {
     return Check(OCI_LobGetMaxSize(*this));
 }
 
-inline big_uint Clob::GetChunkSize()
+inline big_uint Clob::GetChunkSize() const
 {
     return Check(OCI_LobGetChunkSize(*this));
 }
@@ -3426,12 +3428,12 @@ inline big_uint Clob::Erase(big_uint offset, big_uint size)
     return Check(OCI_LobErase(*this, offset, size));
 }
 
-inline void Clob::Copy(Clob &dest, big_uint offset, big_uint offsetDest, big_uint size)
+inline void Clob::Copy(Clob &dest, big_uint offset, big_uint offsetDest, big_uint size) const
 {
     Check(OCI_LobCopy(dest, *this, offsetDest, offset, size));
 }
 
-inline bool Clob::IsTemporary()
+inline bool Clob::IsTemporary() const
 {
     return (Check(OCI_LobIsTemporary(*this)) == TRUE);
 }
@@ -3500,27 +3502,27 @@ inline void Blob::Assign(const Blob &other)
     Check(OCI_LobAssign(*this, other));
 }
 
-inline bool Blob::Equals(const Blob &other)
+inline bool Blob::Equals(const Blob &other) const
 {
     return (Check(OCI_LobIsEqual(*this, other)) == TRUE);
 }
 
-inline big_uint Blob::GetOffset()
+inline big_uint Blob::GetOffset() const
 {
     return Check(OCI_LobGetOffset(*this));
 }
 
-inline big_uint Blob::GetLength()
+inline big_uint Blob::GetLength() const
 {
     return Check(OCI_LobGetLength(*this));
 }
 
-inline big_uint Blob::GetMaxSize()
+inline big_uint Blob::GetMaxSize() const
 {
     return Check(OCI_LobGetMaxSize(*this));
 }
 
-inline big_uint Blob::GetChunkSize()
+inline big_uint Blob::GetChunkSize() const
 {
     return Check(OCI_LobGetChunkSize(*this));
 }
@@ -3535,12 +3537,12 @@ inline big_uint Blob::Erase(big_uint offset, big_uint size)
     return Check(OCI_LobErase(*this, offset, size));
 }
 
-inline void Blob::Copy(Blob &dest, big_uint offset, big_uint offsetDest, big_uint size)
+inline void Blob::Copy(Blob &dest, big_uint offset, big_uint offsetDest, big_uint size) const
 {
     Check(OCI_LobCopy(dest, *this, offsetDest, offset, size));
 }
 
-inline bool Blob::IsTemporary()
+inline bool Blob::IsTemporary() const
 {
     return (Check(OCI_LobIsTemporary(*this)) == TRUE);
 }
@@ -3601,22 +3603,22 @@ inline void File::Assign(const File &other)
     Check(OCI_FileAssign(*this, other));
 }
 
-inline bool File::Equals(const File &other)
+inline bool File::Equals(const File &other) const
 {
     return (Check(OCI_FileIsEqual(*this, other)) == TRUE);
 }
 
-inline big_uint File::GetOffset()
+inline big_uint File::GetOffset() const
 {
     return Check(OCI_FileGetOffset(*this));
 }
 
-inline big_uint File::GetSize()
+inline big_uint File::GetSize() const
 {
     return Check(OCI_FileGetSize(*this));
 }
 
-inline bool File::Exists()
+inline bool File::Exists() const
 {
     return (Check(OCI_FileExists(*this)) == TRUE);
 }
@@ -3626,12 +3628,12 @@ inline void File::SetInfos(mstring directory, mstring name)
     Check(OCI_FileSetName(*this, directory.c_str(), name.c_str()));
 }
 
-inline mstring File::GetName()
+inline mstring File::GetName() const
 {
     return MakeString(Check(OCI_FileGetName(*this)));
 }
 
-inline mstring File::GetDirectory()
+inline mstring File::GetDirectory() const
 {
     return MakeString(Check(OCI_FileGetDirectory(*this)));
 }
@@ -3641,7 +3643,7 @@ inline void File::Open()
     Check(OCI_FileOpen(*this));
 }
 
-inline bool File::IsOpened()
+inline bool File::IsOpened() const
 {
     return (Check(OCI_FileIsOpen(*this)) == TRUE);
 }
@@ -3665,19 +3667,14 @@ inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
     Acquire(pTypeInfo, 0, 0);
 }
 
-inline unsigned int TypeInfo::GetType()
+inline unsigned int TypeInfo::GetType() const
 {
     return Check(OCI_TypeInfoGetType(*this));
 }
 
-inline mstring TypeInfo::GetName()
+inline mstring TypeInfo::GetName() const
 {
     return Check(OCI_TypeInfoGetName(*this));
-}
-
-inline Connection TypeInfo::GetConnection()
-{
-    return Connection(Check(OCI_TypeInfoGetConnection(*this)), 0);
 }
 
 inline Connection TypeInfo::GetConnection() const
@@ -3685,12 +3682,12 @@ inline Connection TypeInfo::GetConnection() const
     return Connection(Check(OCI_TypeInfoGetConnection(*this)), 0);
 }
 
-inline unsigned int TypeInfo::GetColumnCount()
+inline unsigned int TypeInfo::GetColumnCount() const
 {
     return Check(OCI_TypeInfoGetColumnCount(*this));
 }
 
-inline Column TypeInfo::GetColumn(unsigned int index)
+inline Column TypeInfo::GetColumn(unsigned int index) const
 {
     return Column(Check(OCI_TypeInfoGetColumn(*this, index)), GetHandle());
 }
@@ -3715,7 +3712,7 @@ inline void Object::Assign(const Object& other)
     Check(OCI_ObjectAssign(*this, other));
 }
 
-inline bool Object::IsAttributeNull(mstring name)
+inline bool Object::IsAttributeNull(mstring name) const
 {
     return (Check(OCI_ObjectIsNull(*this, name.c_str())) == TRUE);
 }
@@ -3725,12 +3722,12 @@ inline void Object::SetAttributeNull(mstring name)
     Check(OCI_ObjectSetNull(*this, name.c_str()));
 }
 
-inline TypeInfo Object::GetTypeInfo()
+inline TypeInfo Object::GetTypeInfo() const
 {
     return TypeInfo(Check(OCI_ObjectGetTypeInfo(*this)));
 }
 
-inline Reference Object::GetReference()
+inline Reference Object::GetReference() const
 {
     TypeInfo typeInfo = GetTypeInfo();
     Connection connection = typeInfo.GetConnection();
@@ -3743,115 +3740,115 @@ inline Reference Object::GetReference()
 }
 
 template<>
-inline short Object::Get<short>(mstring name)
+inline short Object::Get<short>(mstring name) const
 {
     return Check(OCI_ObjectGetShort(*this, name.c_str()));
 }
 
 template<>
-inline unsigned short Object::Get<unsigned short>(mstring name)
+inline unsigned short Object::Get<unsigned short>(mstring name) const
 {
     return Check(OCI_ObjectGetUnsignedShort(*this, name.c_str()));
 }
 
 template<>
-inline int Object::Get<int>(mstring name)
+inline int Object::Get<int>(mstring name) const
 {
     return Check(OCI_ObjectGetInt(*this, name.c_str()));
 }
 
 template<>
-inline unsigned int Object::Get<unsigned int>(mstring name)
+inline unsigned int Object::Get<unsigned int>(mstring name) const
 {
     return Check(OCI_ObjectGetUnsignedInt(*this, name.c_str()));
 }
 
 template<>
-inline big_int Object::Get<big_int>(mstring name)
+inline big_int Object::Get<big_int>(mstring name) const
 {
     return Check(OCI_ObjectGetBigInt(*this, name.c_str()));
 }
 
 template<>
-inline big_uint Object::Get<big_uint>(mstring name)
+inline big_uint Object::Get<big_uint>(mstring name) const
 {
     return Check(OCI_ObjectGetUnsignedBigInt(*this, name.c_str()));
 }
 
 template<>
-inline float Object::Get<float>(mstring name)
+inline float Object::Get<float>(mstring name) const
 {
     return Check(OCI_ObjectGetFloat(*this, name.c_str()));
 }
 
 template<>
-inline double Object::Get<double>(mstring name)
+inline double Object::Get<double>(mstring name) const
 {
     return Check(OCI_ObjectGetDouble(*this, name.c_str()));
 }
 
 template<>
-inline dstring Object::Get<dstring>(mstring name)
+inline dstring Object::Get<dstring>(mstring name) const
 {
     return MakeString(Check(OCI_ObjectGetString(*this,name.c_str())));
 }
 
 template<>
-inline Date Object::Get<Date>(mstring name)
+inline Date Object::Get<Date>(mstring name) const
 {
     return Date(Check(OCI_ObjectGetDate(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Timestamp Object::Get<Timestamp>(mstring name)
+inline Timestamp Object::Get<Timestamp>(mstring name) const
 {
     return Timestamp(Check(OCI_ObjectGetTimestamp(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Interval Object::Get<Interval>(mstring name)
+inline Interval Object::Get<Interval>(mstring name) const
 {
     return Interval(Check(OCI_ObjectGetInterval(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Object Object::Get<Object>(mstring name)
+inline Object Object::Get<Object>(mstring name) const
 {
     return Object(Check(OCI_ObjectGetObject(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Collection Object::Get<Collection>(mstring name)
+inline Collection Object::Get<Collection>(mstring name) const
 {
     return Collection(Check(OCI_ObjectGetColl(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Reference Object::Get<Reference>(mstring name)
+inline Reference Object::Get<Reference>(mstring name) const
 {
     return Reference(Check(OCI_ObjectGetRef(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Clob Object::Get<Clob>(mstring name)
+inline Clob Object::Get<Clob>(mstring name) const
 {
     return Clob(Check(OCI_ObjectGetLob(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Blob Object::Get<Blob>(mstring name)
+inline Blob Object::Get<Blob>(mstring name) const
 {
     return Blob(Check(OCI_ObjectGetLob(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline File Object::Get<File>(mstring name)
+inline File Object::Get<File>(mstring name) const
 {
     return File(Check(OCI_ObjectGetFile(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline void Object::Get<BufferPointer>(mstring name, BufferPointer value, unsigned int &size)
+inline void Object::Get<BufferPointer>(mstring name, BufferPointer value, unsigned int &size) const
 {
     Check(OCI_ObjectGetRaw(*this,name.c_str(), value, size));
 }
@@ -3985,12 +3982,12 @@ inline Reference::Reference(OCI_Ref *pRef, Handle *parent)
     Acquire(pRef, 0, parent);
 }
 
-inline TypeInfo Reference::GetTypeInfo()
+inline TypeInfo Reference::GetTypeInfo() const
 {
     return TypeInfo(Check(OCI_RefGetTypeInfo(*this)));
 }
 
-inline Object Reference::GetObject()
+inline Object Reference::GetObject() const
 {
     return Object(Check(OCI_RefGetObject(*this)), GetHandle());
 }
@@ -4000,7 +3997,7 @@ inline void Reference::Assign(const Reference& other)
    Check(OCI_RefAssign(*this, other));
 }
 
-inline bool Reference::IsReferenceNull()
+inline bool Reference::IsReferenceNull() const
 {
     return (Check(OCI_RefIsNull(*this)) == TRUE);
 }
@@ -4010,7 +4007,7 @@ inline void Reference::SetReferenceNull()
     Check(OCI_RefSetNull(*this));
 }
 
-inline mstring Reference::ToString()
+inline mstring Reference::ToString() const
 {
     unsigned int size =  Check(OCI_RefGetHexSize(*this));
 
@@ -4019,7 +4016,6 @@ inline mstring Reference::ToString()
     Check(OCI_RefToText(*this, size, (mtext *) buffer));
 
     return MakeString( (const dtext *) buffer);
-
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4041,22 +4037,22 @@ inline void Collection::Assign(const Collection& other)
     Check(OCI_CollAssign(*this, other));
 }
 
-inline TypeInfo Collection::GetTypeInfo()
+inline TypeInfo Collection::GetTypeInfo() const
 {
     return TypeInfo(Check(OCI_CollGetTypeInfo(*this)));
 }
 
-inline unsigned int Collection::GetType()
+inline unsigned int Collection::GetType() const
 {
     return Check(OCI_CollGetType(*this));
 }
 
-inline unsigned int Collection::GetMax()
+inline unsigned int Collection::GetMax() const
 {
     return Check(OCI_CollGetMax(*this));
 }
 
-inline unsigned int Collection::GetSize()
+inline unsigned int Collection::GetSize() const
 
 {
     return Check(OCI_CollGetSize(*this));
@@ -4072,7 +4068,7 @@ inline void Collection::Clear()
     Check(OCI_CollClear(*this));
 }
 
-inline bool Collection::IsElementNull(unsigned int index)
+inline bool Collection::IsElementNull(unsigned int index) const
 {
    return (Check(OCI_ElemIsNull(Check(OCI_CollGetAt(*this, index)))) == TRUE);
 }
@@ -4083,13 +4079,13 @@ inline void Collection::SetElementNull(unsigned int index)
 }
 
 template <class TDataType>
-inline TDataType Collection::Get(unsigned int index)
+inline TDataType Collection::Get(unsigned int index) const
 {
     return GetElem<TDataType>(Check(OCI_CollGetAt(*this, index)), GetHandle());
 }
 
 template <class TDataType>
-inline void Collection::Get(unsigned int index, TDataType value, unsigned int &size)
+inline void Collection::Get(unsigned int index, TDataType value, unsigned int &size) const
 {
     GetElem<TDataType>(Check(OCI_CollGetAt(*this, index)), value, size);
 }
@@ -4398,12 +4394,12 @@ inline void CollectionIterator::Set(TDataType &value)
 }
 
 template <class TDataType>
-inline TDataType CollectionIterator::Get()
+inline TDataType CollectionIterator::Get() const
 {
     return Collection::GetElem<TDataType>(Check(OCI_IterGetCurrent(*this)), GetHandle());
 }
 
-inline bool CollectionIterator::IsElementNull()
+inline bool CollectionIterator::IsElementNull() const
 {
    return (Check(OCI_ElemIsNull(Check(OCI_IterGetCurrent(*this)))) == TRUE);
 }
@@ -4441,12 +4437,12 @@ inline unsigned int CLong::Write(dstring content)
     return Check(OCI_LongWrite(*this, (void *) content.c_str(), content.size()));
 }
 
-inline unsigned int CLong::GetSize()
+inline unsigned int CLong::GetSize() const
 {
     return Check(OCI_LongGetSize(*this));
 }
 
-inline dstring CLong::GetContent()
+inline dstring CLong::GetContent() const
 {
     return MakeString((dtext *) Check(OCI_LongGetBuffer(*this)));
 }
@@ -4475,12 +4471,12 @@ inline unsigned int BLong::Write(void *buffer, unsigned int size)
     return Check(OCI_LongWrite(*this ,buffer, size));
 }
 
-inline unsigned int BLong::GetSize()
+inline unsigned int BLong::GetSize() const
 {
     return Check(OCI_LongGetSize(*this));
 }
 
-inline void * BLong::GetContent()
+inline void * BLong::GetContent() const
 {
     return  Check(OCI_LongGetBuffer(*this));
 }
@@ -4502,7 +4498,7 @@ inline BindValue<TValueType>::BindValue(TValueType value) : _value(value)
 }
 
 template<class TValueType>
-inline BindValue<TValueType>::operator TValueType()
+inline BindValue<TValueType>::operator TValueType() const
 {
     return _value;
 }
@@ -4528,7 +4524,7 @@ inline BindArray::~BindArray()
 }
 
 template <class TObjectType, class TDataType>
-inline TDataType *  BindArray::GetData ()
+inline TDataType *  BindArray::GetData ()  const
 {
     return (TDataType *) (*(dynamic_cast< BindArrayObject<TObjectType, TDataType> * > (_object)));
 }
@@ -4652,13 +4648,13 @@ inline void BindArray::BindArrayObject<dstring, dtext>::SetOutData()
 }
 
 template <class TObjectType, class TDataType>
-inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator std::vector<TObjectType> & ()
+inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator std::vector<TObjectType> & ()  const
 {
     return _vector;
 }
 
 template <class TObjectType, class TDataType>
-inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator TDataType * ()
+inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator TDataType * ()  const
 {
     return _data;
 }
@@ -4696,7 +4692,7 @@ inline BindString::~BindString()
     delete [] _data;
 }
 
-inline BindString::operator dtext *()
+inline BindString::operator dtext *()  const
 {
     return _data;
 }
@@ -4759,27 +4755,27 @@ inline BindInfo::BindInfo(OCI_Bind *pBind, Handle *parent)
     Acquire(pBind, 0, parent);
 }
 
-inline mstring BindInfo::GetName()
+inline mstring BindInfo::GetName() const
 {
     return MakeString(Check(OCI_BindGetName(*this)));
 }
 
-inline unsigned int BindInfo::GetType()
+inline unsigned int BindInfo::GetType() const
 {
     return Check(OCI_BindGetType(*this));
 }
 
-inline unsigned int BindInfo::GetSubType()
+inline unsigned int BindInfo::GetSubType() const
 {
     return Check(OCI_BindGetSubtype(*this));
 }
 
-inline unsigned int BindInfo::GetElemcount()
+inline unsigned int BindInfo::GetElemcount() const
 {
     return Check(OCI_BindGetDirection(*this));
 }
 
-inline Statement BindInfo::GetStatement()
+inline Statement BindInfo::GetStatement() const
 {
     return Statement(Check(OCI_BindGetStatement(*this)));
 }
@@ -4808,12 +4804,12 @@ inline void BindInfo::SetNull(bool value, unsigned int pos)
     }
 }
 
-inline bool BindInfo::IsNull()
+inline bool BindInfo::IsNull() const
 {
     return (Check(OCI_BindIsNull(*this)) == TRUE);
 }
 
-inline bool BindInfo::IsNull(unsigned int pos)
+inline bool BindInfo::IsNull(unsigned int pos) const
 {
     return (Check(OCI_BindIsNullAtPos(*this, pos)) == TRUE);
 }
@@ -4828,7 +4824,7 @@ inline void BindInfo::SetDirection(unsigned int value)
     Check(OCI_BindSetDirection(*this, value));
 }
 
-inline unsigned int BindInfo::GetDirection()
+inline unsigned int BindInfo::GetDirection() const
 {
     return Check(OCI_BindGetDirection(*this));
 }
@@ -4857,7 +4853,7 @@ inline Statement::~Statement()
     }
 }
 
-inline Connection Statement::GetConnection()
+inline Connection Statement::GetConnection() const
 {
     return Connection(Check(OCI_StatementGetConnection(*this)), 0);
 }
@@ -4898,12 +4894,12 @@ inline void Statement::Execute(mstring sql)
     Check(OCI_ExecuteStmt(*this, sql.c_str()));
 }
 
-inline unsigned int Statement::GetAffectedRows()
+inline unsigned int Statement::GetAffectedRows() const
 {
     return Check(OCI_GetAffectedRows(*this));
 }
 
-inline mstring Statement::GetSql()
+inline mstring Statement::GetSql() const
 {
     return MakeString(Check(OCI_GetSql(*this)));
 }
@@ -4923,7 +4919,7 @@ inline void Statement::SetBindArraySize(unsigned int size)
     Check(OCI_BindArraySetSize(*this, size));
 }
 
-inline unsigned int Statement::GetBindArraySize()
+inline unsigned int Statement::GetBindArraySize() const
 {
     return Check(OCI_BindArrayGetSize(*this));
 }
@@ -4933,17 +4929,17 @@ inline void Statement::AllowRebinding(bool value)
     Check(OCI_AllowRebinding(*this, value));
 }
 
-inline unsigned int Statement::GetBindCount()
+inline unsigned int Statement::GetBindCount() const
 {
     return Check(OCI_GetBindCount(*this));
 }
 
-inline BindInfo Statement::GetBind(unsigned int index)
+inline BindInfo Statement::GetBind(unsigned int index) const
 {
     return BindInfo(Check(OCI_GetBind(*this, index)), GetHandle());
 }
 
-inline BindInfo Statement::GetBind(mstring name)
+inline BindInfo Statement::GetBind(mstring name) const
 {
     return BindInfo(Check(OCI_GetBind2(*this, name.c_str())), GetHandle());
 }
@@ -5417,12 +5413,12 @@ inline void Statement::Register<BufferPointer, int>(mstring name, int len)
 }
 
 
-inline unsigned int Statement::GetStatementType()
+inline unsigned int Statement::GetStatementType() const
 {
     return Check(OCI_GetStatementType(*this));
 }
 
-inline unsigned int Statement::GetSqlErrorPos()
+inline unsigned int Statement::GetSqlErrorPos() const
 {
     return Check(OCI_GetSqlErrorPos(*this));
 }
@@ -5432,7 +5428,7 @@ inline void Statement::SetFetchMode(unsigned int value)
     Check(OCI_SetFetchMode(*this, value));
 }
 
-inline unsigned int Statement::GetFetchMode()
+inline unsigned int Statement::GetFetchMode() const
 {
     return Check(OCI_GetFetchMode(*this));
 }
@@ -5442,7 +5438,7 @@ inline void Statement::SetBindMode(unsigned int value)
     Check(OCI_SetBindMode(*this, value));
 }
 
-inline unsigned int Statement::GetBindMode()
+inline unsigned int Statement::GetBindMode() const
 {
     return Check(OCI_GetBindMode(*this));
 }
@@ -5452,7 +5448,7 @@ inline void Statement::SetFetchSize(unsigned int value)
     Check(OCI_SetFetchSize(*this, value));
 }
 
-inline unsigned int Statement::GetFetchSize()
+inline unsigned int Statement::GetFetchSize() const
 {
    return Check(OCI_GetFetchSize(*this));
 }
@@ -5462,7 +5458,7 @@ inline void Statement::SetPrefetchSize(unsigned int value)
     Check(OCI_SetPrefetchSize(*this, value));
 }
 
-inline unsigned int Statement::GetPrefetchSize()
+inline unsigned int Statement::GetPrefetchSize() const
 {
     return Check(OCI_GetPrefetchSize(*this));
 }
@@ -5472,7 +5468,7 @@ inline void Statement::SetPrefetchMemory(unsigned int value)
     Check(OCI_SetPrefetchMemory(*this, value));
 }
 
-inline unsigned int Statement::GetPrefetchMemory()
+inline unsigned int Statement::GetPrefetchMemory() const
 {
     return Check(OCI_GetPrefetchMemory(*this));
 }
@@ -5482,7 +5478,7 @@ inline void Statement::SetLongMaxSize(unsigned int value)
     Check(OCI_SetLongMaxSize(*this, value));
 }
 
-inline unsigned int Statement::GetLongMaxSize()
+inline unsigned int Statement::GetLongMaxSize() const
 {
     return Check(OCI_GetLongMaxSize(*this));
 }
@@ -5492,17 +5488,17 @@ inline void Statement::SetLongMode(unsigned int value)
     Check(OCI_SetLongMode(*this, value));
 }
 
-inline unsigned int Statement::GetLongMode()
+inline unsigned int Statement::GetLongMode() const
 {
     return Check(OCI_GetLongMode(*this));
 }
 
-inline unsigned int Statement::GetSQLCommand()
+inline unsigned int Statement::GetSQLCommand() const
 {
     return Check(OCI_GetSQLCommand(*this));
 }
 
-inline mstring Statement::GetSQLVerb()
+inline mstring Statement::GetSQLVerb() const
 {
     return MakeString(Check(OCI_GetSQLVerb(*this)));
 }
@@ -5625,306 +5621,306 @@ inline bool Resultset::Seek(unsigned int mode, int offset)
     return (Check(OCI_FetchSeek(*this, mode, offset)) == TRUE);
 }
 
-inline unsigned int Resultset::GetCount()
+inline unsigned int Resultset::GetCount() const
 {
     return Check(OCI_GetRowCount(*this));
 }
 
-inline unsigned int Resultset::GetCurrentRow()
+inline unsigned int Resultset::GetCurrentRow() const
 {
     return Check(OCI_GetCurrentRow(*this));
 }
 
-inline unsigned int Resultset::GetColumnCount()
+inline unsigned int Resultset::GetColumnCount() const
 {
     return Check(OCI_GetColumnCount(*this));
 }
 
-inline Column Resultset::GetColumn(unsigned int index)
+inline Column Resultset::GetColumn(unsigned int index) const
 {
     return Column(Check(OCI_GetColumn(*this, index)), GetHandle());
 }
 
-inline Column Resultset::GetColumn(mstring name)
+inline Column Resultset::GetColumn(mstring name) const
 {
     return Column(Check(OCI_GetColumn2(*this, name.c_str())), GetHandle());
 }
 
-inline bool Resultset::IsColumnNull(unsigned int index)
+inline bool Resultset::IsColumnNull(unsigned int index) const
 {
     return (Check(OCI_IsNull(*this, index)) == TRUE);
 }
 
-inline bool Resultset::IsColumnNull(mstring name)
+inline bool Resultset::IsColumnNull(mstring name) const
 {
     return (Check(OCI_IsNull2(*this, name.c_str())) == TRUE);
 }
 
-inline Statement Resultset::GetStatement()
+inline Statement Resultset::GetStatement() const
 {
     return Statement( Check(OCI_ResultsetGetStatement(*this)), 0);
 }
 
 template<>
-inline short Resultset::Get<short>(unsigned int index)
+inline short Resultset::Get<short>(unsigned int index) const
 {
     return Check(OCI_GetShort(*this, index));
 }
 
 template<>
-inline short Resultset::Get<short>(mstring name)
+inline short Resultset::Get<short>(mstring name) const
 {
     return Check(OCI_GetShort2(*this, name.c_str()));
 }
 
 template<>
-inline unsigned short Resultset::Get<unsigned short>(unsigned int index)
+inline unsigned short Resultset::Get<unsigned short>(unsigned int index) const
 {
     return Check(OCI_GetUnsignedShort(*this, index));
 }
 
 template<>
-inline unsigned short Resultset::Get<unsigned short>(mstring name)
+inline unsigned short Resultset::Get<unsigned short>(mstring name) const
 {
     return Check(OCI_GetUnsignedShort2(*this, name.c_str()));
 }
 
 template<>
-inline int Resultset::Get<int>(unsigned int index)
+inline int Resultset::Get<int>(unsigned int index) const
 {
     return Check(OCI_GetInt(*this, index));
 }
 
 template<>
-inline int Resultset::Get<int>(mstring name)
+inline int Resultset::Get<int>(mstring name) const
 {
     return Check(OCI_GetInt2(*this, name.c_str()));
 }
 
 template<>
-inline unsigned int Resultset::Get<unsigned int>(unsigned int index)
+inline unsigned int Resultset::Get<unsigned int>(unsigned int index) const
 {
     return Check(OCI_GetUnsignedInt(*this, index));
 }
 
 template<>
-inline unsigned int Resultset::Get<unsigned int>(mstring name)
+inline unsigned int Resultset::Get<unsigned int>(mstring name) const
 {
     return Check(OCI_GetUnsignedInt2(*this, name.c_str()));
 }
 
 template<>
-inline big_int Resultset::Get<big_int>(unsigned int index)
+inline big_int Resultset::Get<big_int>(unsigned int index) const
 {
     return Check(OCI_GetBigInt(*this, index));
 }
 
 template<>
-inline big_int Resultset::Get<big_int>(mstring name)
+inline big_int Resultset::Get<big_int>(mstring name) const
 {
     return Check(OCI_GetBigInt2(*this, name.c_str()));
 }
 
 template<>
-inline big_uint Resultset::Get<big_uint>(unsigned int index)
+inline big_uint Resultset::Get<big_uint>(unsigned int index) const
 {
     return Check(OCI_GetUnsignedBigInt(*this, index));
 }
 
 template<>
-inline big_uint Resultset::Get<big_uint>(mstring name)
+inline big_uint Resultset::Get<big_uint>(mstring name) const
 {
     return Check(OCI_GetUnsignedBigInt2(*this, name.c_str()));
 }
 
 template<>
-inline float Resultset::Get<float>(unsigned int index)
+inline float Resultset::Get<float>(unsigned int index) const
 {
     return Check(OCI_GetFloat(*this, index));
 }
 
 template<>
-inline float Resultset::Get<float>(mstring name)
+inline float Resultset::Get<float>(mstring name) const
 {
     return Check(OCI_GetFloat2(*this, name.c_str()));
 }
 
 template<>
-inline double Resultset::Get<double>(unsigned int index)
+inline double Resultset::Get<double>(unsigned int index) const
 {
     return Check(OCI_GetDouble(*this, index));
 }
 
 template<>
-inline double Resultset::Get<double>(mstring name)
+inline double Resultset::Get<double>(mstring name) const
 {
     return Check(OCI_GetDouble2(*this, name.c_str()));
 }
 
 template<>
-inline dstring Resultset::Get<dstring>(unsigned int index)
+inline dstring Resultset::Get<dstring>(unsigned int index) const
 {
     return MakeString(Check(OCI_GetString(*this, index)));
 }
 
 template<>
-inline dstring Resultset::Get<dstring>(mstring name)
+inline dstring Resultset::Get<dstring>(mstring name) const
 {
     return MakeString(Check(OCI_GetString2(*this,name.c_str())));
 }
 
 template<>
-inline void Resultset::Get<BufferPointer>(unsigned int index, BufferPointer value, unsigned int &size)
+inline void Resultset::Get<BufferPointer>(unsigned int index, BufferPointer value, unsigned int &size) const
 {
     Check(OCI_GetRaw(*this, index, value, size));
 }
 
 template<>
-inline void Resultset::Get<BufferPointer>(mstring name, BufferPointer value, unsigned int &size)
+inline void Resultset::Get<BufferPointer>(mstring name, BufferPointer value, unsigned int &size) const
 {
     Check(OCI_GetRaw2(*this,name.c_str(), value, size));
 }
 
 template<>
-inline Date Resultset::Get<Date>(unsigned int index)
+inline Date Resultset::Get<Date>(unsigned int index) const
 {
     return Date(Check(OCI_GetDate(*this, index)), GetHandle());
 }
 
 template<>
-inline Date Resultset::Get<Date>(mstring name)
+inline Date Resultset::Get<Date>(mstring name) const
 {
     return Date(Check(OCI_GetDate2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Timestamp Resultset::Get<Timestamp>(unsigned int index)
+inline Timestamp Resultset::Get<Timestamp>(unsigned int index) const
 {
     return Timestamp(Check(OCI_GetTimestamp(*this, index)), GetHandle());
 }
 
 template<>
-inline Timestamp Resultset::Get<Timestamp>(mstring name)
+inline Timestamp Resultset::Get<Timestamp>(mstring name) const
 {
     return Timestamp(Check(OCI_GetTimestamp2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Interval Resultset::Get<Interval>(unsigned int index)
+inline Interval Resultset::Get<Interval>(unsigned int index) const
 {
     return Interval(Check(OCI_GetInterval(*this, index)), GetHandle());
 }
 
 template<>
-inline Interval Resultset::Get<Interval>(mstring name)
+inline Interval Resultset::Get<Interval>(mstring name) const
 {
     return Interval(Check(OCI_GetInterval2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Object Resultset::Get<Object>(unsigned int index)
+inline Object Resultset::Get<Object>(unsigned int index) const
 {
     return Object(Check(OCI_GetObject(*this, index)), GetHandle());
 }
 
 template<>
-inline Object Resultset::Get<Object>(mstring name)
+inline Object Resultset::Get<Object>(mstring name) const
 {
     return Object(Check(OCI_GetObject2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Collection Resultset::Get<Collection>(unsigned int index)
+inline Collection Resultset::Get<Collection>(unsigned int index) const
 {
     return Collection(Check(OCI_GetColl(*this, index)), GetHandle());
 }
 
 template<>
-inline Collection Resultset::Get<Collection>(mstring name)
+inline Collection Resultset::Get<Collection>(mstring name) const
 {
     return Collection(Check(OCI_GetColl2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Reference Resultset::Get<Reference>(unsigned int index)
+inline Reference Resultset::Get<Reference>(unsigned int index) const
 {
     return Reference(Check(OCI_GetRef(*this, index)), GetHandle());
 }
 
 template<>
-inline Reference Resultset::Get<Reference>(mstring name)
+inline Reference Resultset::Get<Reference>(mstring name) const
 {
     return Reference(Check(OCI_GetRef2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Statement Resultset::Get<Statement>(unsigned int index)
+inline Statement Resultset::Get<Statement>(unsigned int index) const
 {
     return Statement(Check(OCI_GetStatement(*this, index)), GetHandle());
 }
 
 template<>
-inline Statement Resultset::Get<Statement>(mstring name)
+inline Statement Resultset::Get<Statement>(mstring name) const
 {
     return Statement(Check(OCI_GetStatement2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Clob Resultset::Get<Clob>(unsigned int index)
+inline Clob Resultset::Get<Clob>(unsigned int index) const
 {
     return Clob(Check(OCI_GetLob(*this, index)), GetHandle());
 }
 
 template<>
-inline Clob Resultset::Get<Clob>(mstring name)
+inline Clob Resultset::Get<Clob>(mstring name) const
 {
     return Clob(Check(OCI_GetLob2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Blob Resultset::Get<Blob>(unsigned int index)
+inline Blob Resultset::Get<Blob>(unsigned int index) const
 {
     return Blob(Check(OCI_GetLob(*this, index)), GetHandle());
 }
 
 template<>
-inline Blob Resultset::Get<Blob>(mstring name)
+inline Blob Resultset::Get<Blob>(mstring name) const
 {
     return Blob(Check(OCI_GetLob2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline File Resultset::Get<File>(unsigned int index)
+inline File Resultset::Get<File>(unsigned int index) const
 {
     return File(Check(OCI_GetFile(*this, index)), GetHandle());
 }
 
 template<>
-inline File Resultset::Get<File>(mstring name)
+inline File Resultset::Get<File>(mstring name) const
 {
     return File(Check(OCI_GetFile2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline CLong Resultset::Get<CLong>(unsigned int index)
+inline CLong Resultset::Get<CLong>(unsigned int index) const
 {
     return CLong(Check(OCI_GetLong(*this, index)), GetHandle());
 }
 
 template<>
-inline CLong Resultset::Get<CLong>(mstring name)
+inline CLong Resultset::Get<CLong>(mstring name) const
 {
     return CLong(Check(OCI_GetLong2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline BLong Resultset::Get<BLong>(unsigned int index)
+inline BLong Resultset::Get<BLong>(unsigned int index) const
 {
     return BLong(Check(OCI_GetLong(*this, index)), GetHandle());
 }
 
 template<>
-inline BLong Resultset::Get<BLong>(mstring name)
+inline BLong Resultset::Get<BLong>(mstring name) const
 {
     return BLong(Check(OCI_GetLong2(*this,name.c_str())), GetHandle());
 }
@@ -5938,17 +5934,17 @@ inline Column::Column(OCI_Column *pColumn, Handle *parent)
     Acquire(pColumn, 0, parent);
 }
 
-inline mstring Column::GetName()
+inline mstring Column::GetName() const
 {
     return MakeString(Check(OCI_ColumnGetName(*this)));
 }
 
-inline mstring Column::GetSQLType()
+inline mstring Column::GetSQLType() const
 {
     return MakeString(Check(OCI_ColumnGetSQLType(*this)));
 }
 
-inline mstring Column::GetFullSQLType()
+inline mstring Column::GetFullSQLType() const
 {
     unsigned int size = OCI_SIZE_BUFFER;
 
@@ -5959,57 +5955,57 @@ inline mstring Column::GetFullSQLType()
     return MakeString((mtext *) buffer);
 }
 
-inline unsigned int Column::GetType()
+inline unsigned int Column::GetType() const
 {
     return Check(OCI_ColumnGetType(*this));
 }
 
-inline unsigned int Column::GetSubType()
+inline unsigned int Column::GetSubType() const
 {
     return Check(OCI_ColumnGetSubType(*this));
 }
 
-inline unsigned int Column::GetCharsetForm()
+inline unsigned int Column::GetCharsetForm() const
 {
     return Check(OCI_ColumnGetCharsetForm(*this));
 }
 
-inline unsigned int Column::GetSize()
+inline unsigned int Column::GetSize() const
 {
     return Check(OCI_ColumnGetSize(*this));
 }
 
-inline int Column::GetScale()
+inline int Column::GetScale() const
 {
     return Check(OCI_ColumnGetScale(*this));
 }
 
-inline int Column::GetPrecision()
+inline int Column::GetPrecision() const
 {
     return Check(OCI_ColumnGetPrecision(*this));
 }
 
-inline int Column::GetFractionalPrecision()
+inline int Column::GetFractionalPrecision() const
 {
     return Check(OCI_ColumnGetFractionalPrecision(*this));
 }
 
-inline int Column::GetLeadingPrecision()
+inline int Column::GetLeadingPrecision() const
 {
     return Check(OCI_ColumnGetLeadingPrecision(*this));
 }
 
-inline bool Column::GetNullable()
+inline bool Column::GetNullable() const
 {
     return (Check(OCI_ColumnGetNullable(*this)) == TRUE);
 }
 
-inline bool Column::GetCharUsed()
+inline bool Column::GetCharUsed() const
 {
     return (Check(OCI_ColumnGetCharUsed(*this)) == TRUE);
 }
 
-inline TypeInfo Column::GetTypeInfo()
+inline TypeInfo Column::GetTypeInfo() const
 {
     return TypeInfo(Check(OCI_ColumnGetTypeInfo(*this)));
 }
@@ -6050,22 +6046,22 @@ inline void Subscription::Watch(mstring sql)
     Check(OCI_SubscriptionAddStatement(*this, st));
 }
 
-inline mstring Subscription::GetName()
+inline mstring Subscription::GetName() const
 {
     return MakeString(Check(OCI_SubscriptionGetName(*this)));
 }
 
-inline unsigned int Subscription::GetTimeout()
+inline unsigned int Subscription::GetTimeout() const
 {
     return Check(OCI_SubscriptionGetTimeout(*this));
 }
 
-inline unsigned int Subscription::GetPort()
+inline unsigned int Subscription::GetPort() const
 {
     return Check(OCI_SubscriptionGetPort(*this));
 }
 
-inline Connection Subscription::GetConnection()
+inline Connection Subscription::GetConnection() const
 {
     return Connection(Check(OCI_SubscriptionGetConnection(*this)), 0);
 }
@@ -6079,32 +6075,32 @@ inline Event::Event(OCI_Event *pEvent)
     Acquire(pEvent, 0, 0);
 }
 
-inline unsigned int Event::GetType()
+inline unsigned int Event::GetType() const
 {
     return Check(OCI_EventGetType(*this));
 }
 
-inline unsigned int Event::GetOperation()
+inline unsigned int Event::GetOperation() const
 {
     return Check(OCI_EventGetOperation(*this));
 }
 
-inline mstring Event::GetDatabaseName()
+inline mstring Event::GetDatabaseName() const
 {
     return MakeString(Check(OCI_EventGetDatabase(*this)));
 }
 
-inline mstring Event::GetObjectName()
+inline mstring Event::GetObjectName() const
 {
     return MakeString(Check(OCI_EventGetObject(*this)));
 }
 
-inline mstring Event::GetRowID()
+inline mstring Event::GetRowID() const
 {
     return MakeString(Check(OCI_EventGetRowid(*this)));
 }
 
-inline Subscription Event::GetSubscription()
+inline Subscription Event::GetSubscription() const
 {
     return Subscription(Check(OCI_EventGetSubscription(*this)));
 }
@@ -6123,7 +6119,7 @@ inline Agent::Agent(OCI_Agent *pAgent, Handle *parent)
     Acquire(pAgent, 0, parent);
 }
 
-inline mstring Agent::GetName()
+inline mstring Agent::GetName() const
 {
     return MakeString(Check(OCI_AgentGetName(*this)));
 }
@@ -6133,7 +6129,7 @@ inline void Agent::SetName(mstring value)
     Check(OCI_AgentSetName(*this, value.c_str()));
 }
 
-inline mstring Agent::GetAddress()
+inline mstring Agent::GetAddress() const
 {
     return MakeString(Check(OCI_AgentGetAddress(*this)));
 }
@@ -6182,27 +6178,27 @@ inline void Message::Set(const BufferPointer &value, unsigned int size)
     Check(OCI_MsgSetRaw(*this, value, size));
 }
 
-inline Date Message::GetEnqueueTime()
+inline Date Message::GetEnqueueTime() const
 {
     return Date(Check(OCI_MsgGetEnqueueTime(*this)), 0);
 }
 
-inline int Message::GetAttemptCount()
+inline int Message::GetAttemptCount() const
 {
     return Check(OCI_MsgGetAttemptCount(*this));
 }
 
-inline unsigned int Message::GetState()
+inline unsigned int Message::GetState() const
 {
     return Check(OCI_MsgGetState(*this));
 }
 
-inline void Message::GetID(BufferPointer value, unsigned int &size)
+inline void Message::GetID(BufferPointer value, unsigned int &size) const
 {
     Check(OCI_MsgGetID(*this, value, &size));
 }
 
-inline int Message::GetExpiration()
+inline int Message::GetExpiration() const
 {
     return Check(OCI_MsgGetExpiration(*this));
 }
@@ -6212,7 +6208,7 @@ inline void Message::SetExpiration(int value)
     Check(OCI_MsgSetExpiration(*this, value));
 }
 
-inline int Message::GetEnqueueDelay()
+inline int Message::GetEnqueueDelay() const
 {
     return Check(OCI_MsgGetEnqueueDelay(*this));
 }
@@ -6222,7 +6218,7 @@ inline void Message::SetEnqueueDelay(int value)
     Check(OCI_MsgSetEnqueueDelay(*this, value));
 }
 
-inline int Message::GetPriority()
+inline int Message::GetPriority() const
 {
     return Check(OCI_MsgGetPriority(*this));
 }
@@ -6232,7 +6228,7 @@ inline void Message::SetPriority(int value)
     Check(OCI_MsgSetPriority(*this, value));
 }
 
-inline void Message::GetOriginalID(BufferPointer value, unsigned int &size)
+inline void Message::GetOriginalID(BufferPointer value, unsigned int &size) const
 {
     Check(OCI_MsgGetOriginalID(*this, value, &size));
 }
@@ -6242,7 +6238,7 @@ inline void Message::SetOriginalID(const BufferPointer &value, unsigned int size
     Check(OCI_MsgSetOriginalID(*this, value, size));
 }
 
-inline mstring Message::GetCorrelation()
+inline mstring Message::GetCorrelation() const
 {
     return MakeString(Check(OCI_MsgGetCorrelation(*this)));
 }
@@ -6252,7 +6248,7 @@ inline void Message::SetCorrelation(mstring value)
     Check(OCI_MsgSetCorrelation(*this, value.c_str()));
 }
 
-inline mstring Message::GetExceptionQueue()
+inline mstring Message::GetExceptionQueue() const
 {
     return MakeString(Check(OCI_MsgGetExceptionQueue(*this)));
 }
@@ -6262,7 +6258,7 @@ inline void Message::SetExceptionQueue(mstring value)
     Check(OCI_MsgSetExceptionQueue(*this, value.c_str()));
 }
 
-inline Agent Message::GetSender()
+inline Agent Message::GetSender() const
 {
     return Agent(Check(OCI_MsgGetSender(*this)), 0);
 }
@@ -6299,7 +6295,7 @@ inline void Enqueue::Put(const Message &message)
     Check(OCI_EnqueuePut(*this, message));
 }
 
-inline unsigned int Enqueue::GetVisibility()
+inline unsigned int Enqueue::GetVisibility() const
 {
     return Check(OCI_EnqueueGetVisibility(*this));
 }
@@ -6309,7 +6305,7 @@ inline void Enqueue::SetVisibility(unsigned int value)
     Check(OCI_EnqueueSetVisibility(*this, value));
 }
 
-inline unsigned int Enqueue::GetSequenceDeviation()
+inline unsigned int Enqueue::GetSequenceDeviation() const
 {
     return Check(OCI_EnqueueGetSequenceDeviation(*this));
 }
@@ -6319,7 +6315,7 @@ inline void Enqueue::SetSequenceDeviation(unsigned int value)
     Check(OCI_EnqueueSetSequenceDeviation(*this, value));
 }
 
-inline void Enqueue::GetRelativeMsgID(BufferPointer value, unsigned int &size)
+inline void Enqueue::GetRelativeMsgID(BufferPointer value, unsigned int &size) const
 {
     Check(OCI_EnqueueGetRelativeMsgID(*this, value, &size));
 }
@@ -6353,7 +6349,7 @@ inline Agent Dequeue::Listen(int timeout)
     return Agent(Check(OCI_DequeueListen(*this, timeout)), 0);
 }
 
-inline mstring Dequeue::GetConsumer()
+inline mstring Dequeue::GetConsumer() const
 {
     return MakeString(Check(OCI_DequeueGetConsumer(*this)));
 }
@@ -6363,7 +6359,7 @@ inline void Dequeue::SetConsumer(mstring value)
     Check(OCI_DequeueSetConsumer(*this, value.c_str()));
 }
 
-inline mstring Dequeue::GetCorrelation()
+inline mstring Dequeue::GetCorrelation() const
 {
     return MakeString(Check(OCI_DequeueGetCorrelation(*this)));
 }
@@ -6373,7 +6369,7 @@ inline void Dequeue::SetCorrelation(mstring value)
     Check(OCI_DequeueSetCorrelation(*this, value.c_str()));
 }
 
-inline void Dequeue::GetRelativeMsgID(BufferPointer value, unsigned int &size)
+inline void Dequeue::GetRelativeMsgID(BufferPointer value, unsigned int &size) const
 {
     Check(OCI_DequeueGetRelativeMsgID(*this, value, &size));
 }
@@ -6383,7 +6379,7 @@ inline void Dequeue::SetRelativeMsgID(const BufferPointer &value, unsigned int s
     Check(OCI_DequeueSetRelativeMsgID(*this, value, size));
 }
 
-inline unsigned int Dequeue::GetVisibility()
+inline unsigned int Dequeue::GetVisibility() const
 {
     return Check(OCI_DequeueGetVisibility(*this));
 }
@@ -6393,7 +6389,7 @@ inline void Dequeue::SetVisibility(unsigned int value)
     Check(OCI_DequeueSetVisibility(*this, value));
 }
 
-inline unsigned int Dequeue::GetMode()
+inline unsigned int Dequeue::GetMode() const
 {
     return Check(OCI_DequeueGetMode(*this));
 }
@@ -6403,7 +6399,7 @@ inline void Dequeue::SetMode(unsigned int value)
     Check(OCI_DequeueSetMode(*this, value));
 }
 
-inline unsigned int Dequeue::GetNavigation()
+inline unsigned int Dequeue::GetNavigation() const
 {
     return Check(OCI_DequeueGetNavigation(*this));
 }
@@ -6413,7 +6409,7 @@ inline void Dequeue::SetNavigation(unsigned int value)
     Check(OCI_DequeueSetNavigation(*this, value));
 }
 
-inline int Dequeue::GetWaitTime()
+inline int Dequeue::GetWaitTime() const
 {
     return Check(OCI_DequeueGetWaitTime(*this));
 }
@@ -6517,22 +6513,22 @@ inline void DirectPath::SetCurrentRows(unsigned int value)
     Check(OCI_DirPathSetCurrentRows(*this, value));
 }
 
-inline unsigned int DirectPath::GetCurrentRows()
+inline unsigned int DirectPath::GetCurrentRows() const
 {
     return Check(OCI_DirPathGetCurrentRows(*this));
 }
 
-inline unsigned int DirectPath::GetMaxRows()
+inline unsigned int DirectPath::GetMaxRows() const
 {
     return Check(OCI_DirPathGetMaxRows(*this));
 }
 
-inline unsigned int DirectPath::GetRowCount()
+inline unsigned int DirectPath::GetRowCount() const
 {
     return Check(OCI_DirPathGetRowCount(*this));
 }
 
-inline unsigned int DirectPath::GetAffectedRows()
+inline unsigned int DirectPath::GetAffectedRows() const
 {
     return Check(OCI_DirPathGetAffectedRows(*this));
 }
