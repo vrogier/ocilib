@@ -1470,8 +1470,8 @@ public:
 
     Statement GetStatement();
 
-    void SetNull();
-    void SetNull(unsigned int pos);
+    void SetNull(bool value);
+    void SetNull(bool value, unsigned int pos);
 
     bool IsNull();
     bool IsNull(unsigned int pos);
@@ -4784,14 +4784,28 @@ inline Statement BindInfo::GetStatement()
     return Statement(Check(OCI_BindGetStatement(*this)));
 }
 
-inline void BindInfo::SetNull()
+inline void BindInfo::SetNull(bool value)
 {
-    Check(OCI_BindSetNull(*this));
+    if (value)
+    {
+        Check(OCI_BindSetNull(*this));
+    }
+    else
+    {
+        Check(OCI_BindSetNotNull(*this));
+    }
 }
 
-inline void BindInfo::SetNull(unsigned int pos)
-{
-    Check(OCI_BindSetNullAtPos(*this, pos));
+inline void BindInfo::SetNull(bool value, unsigned int pos)
+{ 
+    if (value)
+    {
+        Check(OCI_BindSetNullAtPos(*this, pos));
+    }
+    else
+    {
+        Check(OCI_BindSetNotNullAtPos(*this, pos));
+    }
 }
 
 inline bool BindInfo::IsNull()

@@ -61,7 +61,7 @@ extern "C" {
  *
  * @image html logo-160x120.png
  *
- * @section s_intro Introduction
+ * @section Intro Introduction
  *
  * OCILIB is an open source and portable Oracle Driver that delivers really fast
  * and reliable access to Oracle databases.
@@ -74,11 +74,11 @@ extern "C" {
  * - encapsulates OCI (Oracle Call Interface)
  * - is the most complete available OCI wrapper
  *
- * @section s_version Version information
+ * @section Version Version information
  *
- * <b>Current version : 4.0.0 (2013-07-01)</b>
+ * <b>Current version : 4.0.0 (2013-01-10)</b>
  *
- * @section s_feats Main features
+ * @section Features Main features
  *
  * - Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
  * - Full 32/64 bits compatibility
@@ -107,18 +107,24 @@ extern "C" {
  * - Hash tables API
  * - Portable Threads and mutexes API
  *
- * @section s_down Download
+ * @section Download Download
  *
  * Get OCILIB from <a href="http://orclib.sourceforge.net">OCILIB Project page</a>
  * at Sourceforge Website
  *
- * @section s_author Author
+ * @section Author Author
  *
  * OCILIB is developed by <a href="mailto:vince.rogier@ocilib.net">Vincent Rogier</a>
  *
- * @section s_changelog ChangeLog
+ * @section Changelog ChangeLog
  *
  * @include ChangeLog.txt
+ *
+ */
+
+/**
+ * @defgroup OcilibCApi C API
+ * @{
  *
  */
 
@@ -176,7 +182,7 @@ extern "C" {
  * --------------------------------------------------------------------------------------------- */
 
 /**
- * @defgroup g_install Installing OCILIB
+ * @defgroup OcilibCApiInstallation Installing OCILIB
  * @{
  *
  * @par Compatibilities
@@ -418,7 +424,7 @@ extern "C" {
 #endif
 
 /**
- * @defgroup g_charset Charset support
+ * @defgroup OcilibCApiSupportedCharsets Charset support
  * @{
  *
  * OCILIB supports ANSI and Unicode charsets
@@ -706,7 +712,7 @@ OCI_EXPORT int       ociwcscasecmp
  */
 
 /**
- * @defgroup g_objects Library objects and datatypes
+ * @defgroup OcilibCApiDatatypes Library objects and datatypes
  * @{
  *
  * OCILIB implements:
@@ -1994,7 +2000,7 @@ typedef unsigned int big_uint;
 #endif
 
 /**
- * @defgroup g_init Initializing the library
+ * @defgroup OcilibCApiInitialization Initializing the library
  * @{
  *
  * To use OCILIB, it first needs to be initialized through a call to OCI_Initialize().
@@ -2241,7 +2247,7 @@ OCI_EXPORT boolean OCI_API OCI_SetHAHandler
  */
 
 /**
- * @defgroup g_error Error handling
+ * @defgroup OcilibCApiErrorHandling Error handling
  * @{
  *
  * OCILIB provides two mechanisms for error handling:
@@ -2420,7 +2426,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
  */
 
 /**
- * @defgroup g_connect Connecting to Database
+ * @defgroup OcilibCApiConnections Connecting to Database
  * @{
  *
  * Connecting to a database server is done with one call to OCI_ConnectionCreate().
@@ -3258,7 +3264,7 @@ OCI_EXPORT boolean OCI_API OCI_SetDefaultLobPrefetchSize
  */
 
 /**
- * @defgroup g_pool Oracle Pools
+ * @defgroup OcilibCApiPools Oracle Pools
  * @{
  *
  * OCILIB support the connections and sessions pooling featurse introduced
@@ -3601,7 +3607,7 @@ OCI_EXPORT boolean OCI_API OCI_PoolSetStatementCacheSize
  */
 
 /**
- * @defgroup g_transac Managing transactions
+ * @defgroup OcilibCApiTransactions Managing transactions
  * @{
  *
  * OCILIB supports local and global transactions.
@@ -3876,7 +3882,7 @@ OCI_EXPORT unsigned int OCI_API OCI_TransactionGetTimeout
  */
 
 /**
- * @defgroup g_exec Executing statements
+ * @defgroup OcilibCApiStatements Executing statements
  * @{
  *
  * Executing SQL statements or PL/SQL blocks is really simple with OCILIB.
@@ -4164,7 +4170,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetSQLVerb
  */
 
 /**
- * @defgroup g_bind Binding variables and arrays
+ * @defgroup OcilibCApiBinding Binding variables and arrays
  * @{
  *
  * OCILIB supports OCI data binding APIs
@@ -5839,6 +5845,59 @@ OCI_EXPORT boolean OCI_API OCI_BindSetNullAtPos
 
 /**
  * @brief
+ * Set the bind variable to NOT null
+ *
+ * @param bnd   - Bind handle
+ *
+ * @note
+ * There is no notion of null value in C.
+ * It's necessary to explicitly tell Oracle that the bind has a null value.
+ * It must be done before an OCI_Execute() call
+ *
+ * @note
+ * For handled based datatypes (non scalar types), OCILIB performs an extra
+ * check on handles and set the bind status to null is the handle is null
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ */
+
+OCI_EXPORT boolean OCI_API OCI_BindSetNotNull
+(
+    OCI_Bind *bnd
+);
+
+/**
+ * @brief
+ * Set to NOT null the entry in the bind variable input array
+ *
+ * @param bnd      - Bind handle
+ * @param position - Position in the array
+ *
+ * @note
+ * There is no notion of null value in C.
+ * It's necessary to explicitly tell Oracle that the bind has a null value.
+ * It must be done before an OCI_Execute() call
+ *
+ * @warning
+ * Position starts with 1
+ *
+ * @note
+ * For handled based datatypes (non scalar types), OCILIB performs an extra
+ * check on handles and set the bind status to null is the handle is null
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ */
+
+OCI_EXPORT boolean OCI_API OCI_BindSetNotNullAtPos
+(
+    OCI_Bind    *bnd,
+    unsigned int position
+);
+
+/**
+ * @brief
  * Check if the current value of the binded variable is marked as NULL
  *
  * @param bnd - Bind handle
@@ -5912,7 +5971,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  */
 
 /**
- * @defgroup g_fetch Fetching data
+ * @defgroup OcilibCApiFetching Fetching data
  * @{
  *
  * OCILIB offers a really easy and smart mechanism to fetch data from a SQL Statement.
@@ -7639,7 +7698,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDataLength
  */
 
 /**
- * @defgroup g_plsql PL/SQL Support
+ * @defgroup OcilibCApiPlSql PL/SQL Support
  * @{
  *
  * OCILIB has a strong PL/SQL support :
@@ -7753,7 +7812,7 @@ OCI_EXPORT const dtext * OCI_API OCI_ServerGetOutput
  */
 
 /**
- * @defgroup g_collection Oracle collections (Varrays and Nested Tables)
+ * @defgroup OcilibCApiCollections Oracle collections (Varrays and Nested Tables)
  * @{
  *
  * OCILIB supports all Oracle collections:
@@ -8905,7 +8964,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetNull
  */
 
 /**
- * @defgroup g_ora_ret Oracle Returning feature
+ * @defgroup OcilibCApiFeatureReturningInto Oracle Returning feature
  * @{
  *
  * OCILIB supports the Oracle feature 'Returning into' for DML statements.
@@ -9304,7 +9363,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterRef
  */
 
 /**
- * @defgroup g_rowid Oracle Rowids
+ * @defgroup OcilibCApiRowIds Oracle Rowids
  * @{
  *
  * OCILIB supports the Oracle ROWID type through C scalar string types (dtext).
@@ -9321,7 +9380,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterRef
  */
 
 /**
- * @defgroup g_stmt Statements control
+ * @defgroup OcilibCApiStatementControl Statements control
  * @{
  *
  * Those functions give extra information about OCILIB statements and can modify their behaviour.
@@ -9684,7 +9743,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_StatementGetConnection
  */
 
 /**
- * @defgroup g_lob Internal Large Objects (LOBs)
+ * @defgroup OcilibCApiLobs Internal Large Objects (LOBs)
  * @{
  *
  * Large Objects (LOBs) were introduced with Oracle 8i to replace LONGs
@@ -10394,7 +10453,7 @@ OCI_EXPORT boolean OCI_API OCI_LobEnableBuffering
  */
 
 /**
- * @defgroup g_file External Large Objects (FILEs)
+ * @defgroup OcilibCApiFiles External Large Objects (FILEs)
  * @{
  *
  * External Large Objects (FILEs) were introduced with Oracle 8i
@@ -10772,7 +10831,7 @@ OCI_EXPORT boolean OCI_API OCI_FileAssign
  */
 
 /**
- * @defgroup g_long Long objects
+ * @defgroup OcilibCApiLongs Long objects
  * @{
  *
  * Long Objects encapsulate Oracle LONGs datatypes and were used to store large
@@ -10949,7 +11008,7 @@ OCI_EXPORT void * OCI_API OCI_LongGetBuffer
  */
 
 /**
- * @defgroup g_date Date/time manipulation
+ * @defgroup OcilibCApiDatetimes Date/time manipulation
  * @{
  *
  * OCILIB encapsulates Oracle SQL Date datatype within OCI_Date structure
@@ -11459,7 +11518,7 @@ OCI_EXPORT boolean OCI_API OCI_DateFromCTime
  */
 
 /**
- * @defgroup g_timestamp Timestamps and intervals manipulation
+ * @defgroup OcilibCApiTimestamps Timestamps and intervals manipulation
  * @{
  *
  * OCILIB encapsulates Oracle  :
@@ -12333,7 +12392,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalSubtract
  */
 
 /**
- * @defgroup g_usertypes Oracle Named Types (Oracle OBJECTs)
+ * @defgroup OcilibCApiUserTypes Oracle Named Types (Oracle OBJECTs)
  * @{
  *
  * OCILIB implements Oracle Named types (user types and built-in types) through
@@ -13624,7 +13683,7 @@ OCI_EXPORT boolean OCI_API OCI_RefToText
  */
 
 /**
- * @defgroup g_abort Aborting long operations
+ * @defgroup OcilibCApiAbort Aborting long operations
  * @{
  *
  * The Oracle OCI provides the ability to establish a server connection in :
@@ -13674,7 +13733,7 @@ OCI_EXPORT boolean OCI_API OCI_Break
  */
 
 /**
- * @defgroup g_desc Describing Schema Metadata and Objects
+ * @defgroup OcilibCApiMetadata Describing Schema Metadata and Objects
  * @{
  *
  *
@@ -13823,7 +13882,7 @@ OCI_EXPORT const mtext * OCI_API OCI_TypeInfoGetName
  */
 
 /**
- * @defgroup g_format Formatted functions
+ * @defgroup OcilibCApiFormatting Formatted functions
  * @{
  *
  * OCILIB offers some smart routines that takes a variable number of arguments
@@ -14061,7 +14120,7 @@ OCI_EXPORT boolean OCI_DescribeFmt
  */
 
 /**
- * @defgroup g_hash Hash tables
+ * @defgroup OcilibCApiHashTables Hash tables
  * @{
  *
  * OCILIB uses hash tables internally for index/name columns mapping.
@@ -14350,7 +14409,7 @@ OCI_EXPORT OCI_HashEntry * OCI_API OCI_HashGetEntry
  */
 
 /**
- * @defgroup g_threads Threads and mutexes
+ * @defgroup OcilibCApiThreading Threads and mutexes
  * @{
  *
  * Oracle proposes a portable implementation of Mutex and Thread objects
@@ -14578,7 +14637,7 @@ OCI_EXPORT void * OCI_API OCI_ThreadKeyGetValue
  */
 
 /**
- * @defgroup g_dirpath Direct Path loading
+ * @defgroup OcilibCApidirectPath Direct Path loading
  * @{
  *
  * OCILIB (from version 3.2.0) support the OCI direct Path API.
@@ -15287,7 +15346,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  */
 
 /**
- * @defgroup g_aq Oracle Advanced Queuing (A/Q)
+ * @defgroup OcilibCApiAdvancedQueuing Oracle Advanced Queuing (A/Q)
  * @{
  *
  * OCILIB supports Oracle Advanced Queues features
@@ -17131,7 +17190,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
  */
 
 /**
- * @defgroup g_subscription Database Change notifications (DCN or CQN)
+ * @defgroup OcilibCApiSubscriptions Database Change notifications (DCN or CQN)
  * @{
  *
  * OCILIB supports Oracle 10gR2 feature Database Change Notifications (DCN)
@@ -17514,7 +17573,7 @@ OCI_EXPORT OCI_Subscription * OCI_API OCI_EventGetSubscription
  */
 
 /**
- * @defgroup g_instances Remote Instance startup/shutdown
+ * @defgroup OcilibCApiInstancesManagement Remote Instance startup/shutdown
  * @{
  *
  * OCILIB supports Oracle 11g client features for manuipulating remote Oracle instances.
@@ -17652,7 +17711,7 @@ OCI_EXPORT boolean OCI_API OCI_DatabaseShutdown
  */
 
 /**
- * @defgroup g_handles Using OCI Handles directly
+ * @defgroup OcilibCApiRawHandles Using OCI Handles directly
  * @{
  *
  * OCILIB conception was focused on a full but closed encapsulation of OCI.
@@ -18041,7 +18100,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 #endif
 
 /**
- * @defgroup g_demo OCILIB main demo application code
+ * @defgroup OcilibCApiDemoApplication OCILIB main demo application code
  * @{
  *
  * Portable Main demo application header
@@ -18263,6 +18322,10 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 #define OCI_ObjectGetTimeStamp      OCI_ObjectGetTimestamp
 #define OCI_ElemGetTimeStamp        OCI_ElemGetTimestamp
 #define OCI_TimestampSysTimeStamp   OCI_TimestampSysTimestamp
+
+/**
+ * @}
+ */
 
 #endif    /* OCILIB_H_INCLUDED */
 
