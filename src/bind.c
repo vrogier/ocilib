@@ -479,6 +479,30 @@ boolean OCI_BindAllocData
     return res;
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_BindSetNullIndicator
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_BindSetNullIndicator
+(
+    OCI_Bind    *bnd,
+    unsigned int position,
+    sb2          value
+)
+{
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
+    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buf.count, FALSE);
+
+    if (bnd->buf.inds != NULL)
+    {
+        ((sb2*) bnd->buf.inds)[position-1] = value;
+    }
+
+    OCI_RESULT(TRUE);
+
+    return TRUE;
+}
+
 /* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
  * ********************************************************************************************* */
@@ -701,17 +725,7 @@ boolean OCI_API OCI_BindSetNullAtPos
     unsigned int position
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
-    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buf.count, FALSE);
-
-    if (bnd->buf.inds != NULL)
-    {
-        ((sb2*) bnd->buf.inds)[position-1] = OCI_IND_NULL;
-    }
-
-    OCI_RESULT(TRUE);
-
-    return TRUE;
+    return OCI_BindSetNullIndicator(bnd, position, OCI_IND_NULL);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -724,6 +738,31 @@ boolean OCI_API OCI_BindSetNull
 )
 {
     return OCI_BindSetNullAtPos(bnd, 1);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_BindSetNotNullAtPos
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_BindSetNotNullAtPos
+(
+    OCI_Bind    *bnd,
+    unsigned int position
+)
+{
+    return OCI_BindSetNullIndicator(bnd, position, OCI_IND_NOTNULL);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_BindSetNotNull
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_BindSetNotNull
+(
+    OCI_Bind *bnd
+)
+{
+    return OCI_BindSetNotNullAtPos(bnd, 1);
 }
 
 /* --------------------------------------------------------------------------------------------- *

@@ -116,6 +116,13 @@ boolean OCI_BindAllocData
     OCI_Bind *bnd
 );
 
+boolean OCI_BindSetNullIndicator
+(
+    OCI_Bind    *bnd,
+    unsigned int position,
+    sb2          value
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * callback.c
  * --------------------------------------------------------------------------------------------- */
