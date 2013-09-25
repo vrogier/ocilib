@@ -82,18 +82,18 @@ namespace ocilib
  * @defgroup OcilibCppApiTypes Types
  * @{
  */
-    
+
 /**
  * @typedef mstring
- * @brief    
+ * @brief
  * string class wrapping the OCILIB mtext * type and MT() macros (see @ref OcilibCApiSupportedCharsets)
  */
 
 typedef std::basic_string<mtext, std::char_traits<mtext>, std::allocator<mtext> > mstring;
-    
+
 /**
  * @typedef dstring
- * @brief 
+ * @brief
  * string class wrapping the OCILIB dtext * type and DT() macros (see @ref OcilibCApiSupportedCharsets)
  */
 
@@ -101,7 +101,7 @@ typedef std::basic_string<dtext, std::char_traits<dtext>, std::allocator<dtext> 
 
 /**
  * @typedef BufferPointer
- * @brief 
+ * @brief
  * Alias for the generic void pointer
  */
 
@@ -109,7 +109,7 @@ typedef void *              BufferPointer;
 
 /**
  * @typedef UnknownHandle
- * @brief 
+ * @brief
  * Alias used for manipulating unknown handle types
  */
 
@@ -117,7 +117,7 @@ typedef void *              UnknownHandle;
 
 /**
  * @typedef CallbackPointer
- * @brief 
+ * @brief
  * Alias used for storing user callback method pointers
  */
 
@@ -125,7 +125,7 @@ typedef void *              CallbackPointer;
 
 /**
  * @typedef ThreadHandle
- * @brief 
+ * @brief
  * Alias for an OCI_Thread pointer
  */
 
@@ -133,7 +133,7 @@ typedef OCI_Thread *        ThreadHandle;
 
 /**
  * @typedef MutexHandle
- * @brief 
+ * @brief
  * Alias for an OCI_Mutex pointer
  */
 
@@ -148,14 +148,14 @@ typedef OCI_Mutex *         MutexHandle ;
  * ********************************************************************************************* */
 
 /**
- * @brief Internal usage. 
+ * @brief Internal usage.
  * Checks if the last OCILIB method call has raised an error.
  * If so, it raises a C++ exception using the retrieved error handle
  */
 static void Check();
 
 /**
- * @brief Internal usage. 
+ * @brief Internal usage.
  * Checks if the last OCILIB function call has raised an error.
  * If so, it raises a C++ exception using the retrieved error handle
  */
@@ -163,7 +163,7 @@ template<class TResultType>
 static TResultType Check(TResultType result);
 
 /**
- * @brief Internal usage. 
+ * @brief Internal usage.
  * Constructs a C++ string object from the given OCILIB string pointer
  */
 template<class TCharType>
@@ -174,7 +174,7 @@ static std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<
  * ********************************************************************************************* */
 /**
  * @class HandleHolder
- * @brief 
+ * @brief
  * Template class providing OCILIB handles auto memory, life cycle and scope management
  */
 template <class THandleType>
@@ -490,7 +490,7 @@ public:
 
      template <class TObjectType, class TDataType>
      void SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemCount, unsigned int elemSize);
-     
+
      template <class TObjectType, class TDataType>
      TDataType * GetData () const;
 
@@ -518,7 +518,7 @@ private:
         unsigned int _mode;
         unsigned int _elemCount;
         unsigned int _elemSize;
- 
+
         BindArrayObject & operator=( const BindArrayObject & other);
 
     public:
@@ -530,7 +530,7 @@ private:
         void AllocData();
         void FreeData();
         operator std::vector<TObjectType> & () const;
-        operator TDataType * () const; 
+        operator TDataType * () const;
     };
 
     AbstractBindArrayObject * _object;
@@ -3370,12 +3370,12 @@ inline dstring Clob::Read(unsigned int size)
 
 inline unsigned int Clob::Write(dstring content)
 {
-    return Check(OCI_LobWrite(*this, (void *) content.c_str(), content.size()));
+    return Check(OCI_LobWrite(*this, (void *) content.c_str(), (unsigned int) content.size()));
 }
 
 inline unsigned int Clob::Append(dstring content)
 {
-    return Check(OCI_LobAppend(*this, (void *) content.c_str(), content.size()));
+    return Check(OCI_LobAppend(*this, (void *) content.c_str(), (unsigned int) content.size()));
 }
 
 inline bool Clob::Seek(unsigned int seekMode, big_uint offset)
@@ -3733,9 +3733,9 @@ inline Reference Object::GetReference() const
     Connection connection = typeInfo.GetConnection();
 
     OCI_Ref *pRef = OCI_RefCreate(connection, typeInfo);
-    
+
     Check(OCI_ObjectGetSelfRef(*this, pRef));
-    
+
     return Reference(pRef, GetHandle());
 }
 
@@ -4434,7 +4434,7 @@ inline dstring CLong::Read(unsigned int size)
 
 inline unsigned int CLong::Write(dstring content)
 {
-    return Check(OCI_LongWrite(*this, (void *) content.c_str(), content.size()));
+    return Check(OCI_LongWrite(*this, (void *) content.c_str(), (unsigned int) content.size()));
 }
 
 inline unsigned int CLong::GetSize() const
@@ -4793,7 +4793,7 @@ inline void BindInfo::SetNull(bool value)
 }
 
 inline void BindInfo::SetNull(bool value, unsigned int pos)
-{ 
+{
     if (value)
     {
         Check(OCI_BindSetNullAtPos(*this, pos));
@@ -5126,7 +5126,7 @@ inline void Statement::Bind<dstring, unsigned int>(mstring name, dstring &value,
 {
     if (maxSize == 0)
     {
-        maxSize = value.size();
+        maxSize = (unsigned int) value.size();
     }
 
     BindString * bnd = new BindString(value, maxSize+1);
@@ -5387,7 +5387,7 @@ inline void Statement::Register<Reference, TypeInfo>(mstring name, TypeInfo& typ
 {
     Check(OCI_RegisterRef(*this, name.c_str(), typeInfo));
 }
- 
+
 template <>
 inline void Statement::Register<dstring, unsigned int>(mstring name, unsigned int len)
 {
@@ -6460,7 +6460,7 @@ inline void DirectPath::SetColumn(unsigned int colIndex, mstring name, unsigned 
 
 inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex,  const dstring &value,  bool complete)
 {
-    Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, (void *) value.c_str(), value.size(), complete));
+    Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, (void *) value.c_str(), (unsigned int) value.size(), complete));
 }
 
 inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex,  const BufferPointer &value, unsigned int size,  bool complete )

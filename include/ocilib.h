@@ -1430,6 +1430,7 @@ typedef unsigned int big_uint;
 #define OCI_10_2                            1020
 #define OCI_11_1                            1110
 #define OCI_11_2                            1120
+#define OCI_12_1                            1210
 
 /* versions extract macros */
 

@@ -2070,5 +2070,37 @@ typedef sword (*OCIARRAYDESCRIPTORFREE)
 
 /* API introduced in 11.2 */
 
+typedef sword (*OCILOBGETCONTENTTYPE)
+(
+    OCISvcCtx       *svchp, 
+    OCIError        *errhp,
+    OCILobLocator   *lobp,
+    oratext         *contenttypep, 
+    ub4             *contenttypelenp,
+    ub4              mode
+);
+
+/* API introduced in 12.1 */
+
+#ifdef ORAXB8_DEFINED
+
+typedef sword (*OCIDEFINEBYPOS2)
+(
+    OCIStmt    *stmtp, 
+    OCIDefine **defnp, 
+    OCIError   *errhp,
+    ub4         position, 
+    void       *valuep, 
+    sb8         value_sz, 
+    ub2         dty,
+    void       *indp,
+    ub4        *rlenp, 
+    ub2        *rcodep,
+    ub4         mode
+);
+
+#endif /* ORAXB8_DEFINED */
+
+
 #endif /* OCILIB_OCI_API_H_INCLUDED */
 

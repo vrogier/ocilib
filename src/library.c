@@ -368,6 +368,7 @@ OCIAQDEQ                     OCIAQDeq                     = NULL;
 OCIAQLISTEN                  OCIAQListen                  = NULL;
 XAOSVCCTX                    xaoSvcCtx                    = NULL;
 XAOENV                       xaoEnv                       = NULL;
+OCILOBGETCONTENTTYPE         OCILobGetContentType         = NULL;
 
 #ifdef ORAXB8_DEFINED
 
@@ -379,6 +380,7 @@ OCILOBREAD2                  OCILobRead2                  = NULL;
 OCILOBTRIM2                  OCILobTrim2                  = NULL;
 OCILOBWRITE2                 OCILobWrite2                 = NULL;
 OCILOBWRITEAPPEND2           OCILobWriteAppend2           = NULL;
+OCIDEFINEBYPOS2              OCIDefineByPos2              = NULL;
 
 #endif /* ORAXB8_DEFINED */
 
@@ -1033,9 +1035,27 @@ boolean OCI_API OCI_Initialize
         LIB_SYMBOL(OCILib.lib_handle, "xaoEnv", xaoEnv,
                    XAOENV);
 
+        LIB_SYMBOL(OCILib.lib_handle, "OCILobGetContentType", OCILobGetContentType,
+                   OCILOBGETCONTENTTYPE);
+
+    #ifdef ORAXB8_DEFINED
+
+        LIB_SYMBOL(OCILib.lib_handle, "OCIDefineByPos2", OCIDefineByPos2,
+                   OCIDEFINEBYPOS2);
+
+    #endif
+
         /* API Version checking */
 
-        if (OCIArrayDescriptorFree != NULL)
+        if (OCIDefineByPos2 != NULL)
+        {
+            OCILib.version_runtime = OCI_12_1;
+        }
+        else if (OCILobGetContentType != NULL)
+        {
+            OCILib.version_runtime = OCI_11_2;
+        }
+        else if (OCIArrayDescriptorFree != NULL)
         {
             OCILib.version_runtime = OCI_11_1;
         }
