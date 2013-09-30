@@ -952,6 +952,19 @@ public:
     mstring ToString(mstring format = OCI_STRING_FORMAT_DATE) const;
 
     operator mstring() const;
+	Date& operator ++ (int);  
+	Date& operator -- (int);  
+	Date& operator = (const Date& other);
+	Date& operator + (int val);
+	Date& operator - (int val);
+	Date& operator += (int val);
+	Date& operator -= (int val);
+	bool operator == (const Date& other) const;
+	bool operator != (const Date& other) const;			
+	bool operator > (const Date& other) const;
+	bool operator < (const Date& other) const;
+	bool operator >= (const Date& other) const;
+	bool operator <= (const Date& other) const;
 
 private:
 
@@ -1099,6 +1112,12 @@ public:
 
     void EnableBuffering(bool value);
 
+    operator dstring() const;
+	Clob& operator = (const Clob& other);
+	Clob& operator + (const Clob& other);
+	bool operator == (const Clob& other) const;
+	bool operator != (const Clob& other) const;			
+
 private:
 
     Clob(OCI_Lob *pLob, Handle *parent = 0);
@@ -1147,6 +1166,11 @@ public:
     void Close();
 
     void EnableBuffering(bool value);
+
+	Blob& operator = (const Blob& other);
+	Blob& operator + (const Blob& other);
+	bool operator == (const Blob& other) const;
+	bool operator != (const Blob& other) const;	
 
 private:
 
@@ -1392,6 +1416,9 @@ public:
 
     bool IsElementNull() const;
     void SetElementNull();
+
+    bool operator ++ (int);
+    bool operator -- (int value);
 };
 
 /**
@@ -1648,6 +1675,12 @@ public:
     bool IsColumnNull(mstring name) const;
 
     Statement GetStatement() const;
+
+    bool operator ++ (int);
+    bool operator -- (int value);
+
+    bool operator += (int);
+    bool operator -= (int value);
 
 private:
 
@@ -3150,6 +3183,78 @@ inline Date::operator mstring() const
     return ToString();
 }
 
+inline Date& Date::operator ++ (int)
+{
+    return *this + 1;
+}
+
+inline Date& Date::operator -- (int)
+{
+    return *this - 1;
+}
+  
+inline Date& Date::operator = (const Date& other)
+{
+    Assign(other);
+    return *this;
+}
+
+inline Date& Date::operator + (int val)
+{
+    return *this += val;
+}
+
+inline Date& Date::operator - (int val)
+{
+    return *this -= val;
+}
+
+inline Date& Date::operator += (int val)
+{
+    AddDays(val);
+    return *this;
+}
+
+inline Date& Date::operator -= (int val)
+{
+    AddDays(-val);
+    return *this;
+}
+
+inline bool Date::operator == (const Date& other) const
+{
+    return Compare(other) == 0;
+}
+
+inline bool Date::operator != (const Date& other) const
+{
+	return (!(*this == other));
+}
+			
+inline bool Date::operator > (const Date& other) const
+{
+    return (Compare(other) > 0);
+}
+
+inline bool Date::operator < (const Date& other) const
+{
+    return (Compare(other) < 0);
+}
+
+inline bool Date::operator >= (const Date& other) const
+{
+    int res = Compare(other);
+
+    return (res == 0 || res < 0);
+}
+
+inline bool Date::operator <= (const Date& other) const
+{
+    int res = Compare(other);
+
+    return (res == 0 || res > 0);
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * Interval
  * --------------------------------------------------------------------------------------------- */
@@ -3363,7 +3468,7 @@ inline dstring Clob::Read(unsigned int size)
 {
     ManagedBuffer<dtext> buffer = new dtext[size+1];
 
-    size = Check(OCI_LobRead(*this, (void *) buffer, size));
+    Check(OCI_LobRead(*this, (void *) buffer, size));
 
     return MakeString( (const dtext *) buffer);
 }
@@ -3458,6 +3563,41 @@ inline void Clob::EnableBuffering(bool value)
     Check(OCI_LobEnableBuffering(*this, value));
 }
 
+inline Clob::operator dstring() const
+{
+    size_t size   = (size_t) GetLength();
+    size_t offset = (size_t) GetOffset();
+
+    ManagedBuffer<dtext> buffer = new dtext[size+1];
+
+    Check(OCI_LobRead(*this, (void *) buffer, (unsigned int) size));
+    Check(OCI_LobSeek(*this, offset, OCI_SEEK_SET)); 
+
+    return MakeString( (const dtext *) buffer);
+}
+
+inline Clob& Clob::operator = (const Clob& other)
+{
+    Assign(other);
+    return *this;
+}
+
+inline Clob& Clob::operator + (const Clob& other)
+{
+    Append(other);
+    return *this;
+}
+
+inline bool Clob::operator == (const Clob& other) const
+{
+    return Equals(other);
+}
+
+inline bool Clob::operator != (const Clob& other) const
+{
+    return (!(*this == other));
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * Blob
  * --------------------------------------------------------------------------------------------- */
@@ -3472,7 +3612,7 @@ inline Blob::Blob(OCI_Lob *pLob, Handle *parent)
     Acquire(pLob, 0, parent);
 }
 
-inline unsigned int Blob::Read(void *buffer, unsigned int size)
+inline unsigned int Blob::Read(void *buffer, unsigned int size) 
 {
     return Check(OCI_LobRead(*this, buffer, size));
 }
@@ -3565,6 +3705,28 @@ inline void Blob::Close()
 inline void Blob::EnableBuffering(bool value)
 {
     Check(OCI_LobEnableBuffering(*this, value));
+}
+
+inline Blob& Blob::operator = (const Blob& other)
+{
+    Assign(other);
+    return *this;
+}
+
+inline Blob& Blob::operator + (const Blob& other)
+{
+    Append(other);
+    return *this;
+}
+
+inline bool Blob::operator == (const Blob& other) const
+{
+    return Equals(other);
+}
+
+inline bool Blob::operator != (const Blob& other) const
+{
+    return (!(*this == other));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4385,6 +4547,16 @@ inline bool CollectionIterator::Next()
 inline bool CollectionIterator::Prev()
 {
    return (Check(OCI_IterGetPrev(*this)) != 0);
+}
+
+inline bool CollectionIterator::operator ++ (int)
+{
+    return Next();
+}
+
+inline bool CollectionIterator::operator -- (int)
+{
+    return Prev();
 }
 
 template <class TDataType>
@@ -5659,6 +5831,26 @@ inline bool Resultset::IsColumnNull(mstring name) const
 inline Statement Resultset::GetStatement() const
 {
     return Statement( Check(OCI_ResultsetGetStatement(*this)), 0);
+}
+
+inline bool Resultset::operator ++ (int)
+{
+    return Next();
+}
+
+inline bool Resultset::operator -- (int)
+{
+    return Prev();
+}
+
+inline bool Resultset::operator += (int value)
+{
+    return Seek(OCI_SFD_RELATIVE, value);
+}
+
+inline bool Resultset::operator -= (int value)
+{
+    return Seek(OCI_SFD_RELATIVE, -value);
 }
 
 template<>
