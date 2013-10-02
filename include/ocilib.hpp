@@ -929,6 +929,26 @@ public:
     void Assign(const Date& other);
     int Compare(const Date& other) const;
 
+    bool IsValid() const;
+
+    int GetYear() const;
+    void SetYear(int value);
+ 
+    int GetMonth() const;
+    void SetMonth(int value);
+
+    int GetDay() const;
+    void SetDay(int value);
+ 
+    int GetHours() const;
+    void SetHours(int value);
+  
+    int GetMinutes() const;
+    void SetMinutes(int value);
+
+    int GetSeconds() const;
+    void SetSeconds(int value);
+
     int DaysBetween(const Date& other) const;
 
     void SetDate(int year, int month, int day);
@@ -998,6 +1018,29 @@ public:
     void Add(const Interval& other);
     void Substract(const Interval& other);
 
+    bool IsValid() const;
+
+    int GetYear() const;
+    void SetYear(int value);
+ 
+    int GetMonth() const;
+    void SetMonth(int value);
+
+    int GetDay() const;
+    void SetDay(int value);
+ 
+    int GetHours() const;
+    void SetHours(int value);
+  
+    int GetMinutes() const;
+    void SetMinutes(int value);
+
+    int GetSeconds() const;
+    void SetSeconds(int value);
+
+    int GetMilliSeconds() const;
+    void SetMilliSeconds(int value);
+
     void GetDaySecond(int *day, int *hour, int *min, int *sec, int *fsec) const;
     void SetDaySecond(int day, int hour, int min, int sec, int fsec);
 
@@ -1043,6 +1086,29 @@ public:
 
     void Construct(int year, int month, int day, int hour, int min, int sec, int fsec, mstring timeZone = MT(""));
     void Convert(const Timestamp& other);
+
+    bool IsValid() const;
+
+    int GetYear() const;
+    void SetYear(int value);
+ 
+    int GetMonth() const;
+    void SetMonth(int value);
+
+    int GetDay() const;
+    void SetDay(int value);
+ 
+    int GetHours() const;
+    void SetHours(int value);
+  
+    int GetMinutes() const;
+    void SetMinutes(int value);
+
+    int GetSeconds() const;
+    void SetSeconds(int value);
+
+    int GetMilliSeconds() const;
+    void SetMilliSeconds(int value);
 
     void GetDate(int *year, int *month, int *day) const;
     void GetTime(int *hour, int *min,   int *sec, int *fsec) const;
@@ -3097,6 +3163,113 @@ inline int Date::Compare(const Date& other) const
     return Check(OCI_DateCompare(*this, other));
 }
 
+inline bool Date::IsValid() const
+{
+    return (Check(OCI_DateCheck(*this)) == 0);
+}
+
+inline int Date::GetYear() const
+{
+    int year, month, day;
+
+    GetDate(&year, &month, &day);
+
+    return year;
+}
+
+inline void Date::SetYear(int value)
+{
+    int year, month, day;
+
+    GetDate(&year, &month, &day);
+    SetDate(value, month, day);
+}
+ 
+inline int Date::GetMonth() const
+{
+    int year, month, day;
+
+    GetDate(&year, &month, &day);
+
+    return month;
+}
+
+inline void Date::SetMonth(int value)
+{
+    int year, month, day;
+
+    GetDate(&year, &month, &day);
+    SetDate(year, value, day);
+}
+
+inline int Date::GetDay() const
+{
+    int year, month, day;
+
+    GetDate(&year, &month, &day);
+
+    return day;
+}
+
+inline void Date::SetDay(int value)
+{
+    int year, month, day;
+
+    GetDate(&year, &month, &day);
+    SetDate(year, month, value);
+}
+ 
+inline int Date::GetHours() const
+{
+    int hour, minutes, seconds;
+
+    GetTime(&hour, &minutes, &seconds);
+
+    return hour;
+}
+
+inline void Date::SetHours(int value)
+{
+    int hour, minutes, seconds;
+
+    GetTime(&hour, &minutes, &seconds);
+    SetTime(value, minutes, seconds);
+}
+  
+inline int Date::GetMinutes() const
+{
+    int hour, minutes, seconds;
+
+    GetTime(&hour, &minutes, &seconds);
+
+    return minutes;
+}
+
+inline void Date::SetMinutes(int value)
+{
+    int hour, minutes, seconds;
+
+    GetTime(&hour, &minutes, &seconds);
+    SetTime(hour, minutes, value);
+}
+
+inline int Date::GetSeconds() const    
+{
+    int hour, minutes, seconds;
+
+    GetTime(&hour, &minutes, &seconds);
+
+    return seconds;
+}
+
+inline void Date::SetSeconds(int value)
+{
+    int hour, minutes, seconds;
+
+    GetTime(&hour, &minutes, &seconds);
+    SetTime(hour, minutes, value);
+}
+
 inline int Date::DaysBetween(const Date& other) const
 {
     return Check(OCI_DateDaysBetween(*this, other));
@@ -3294,6 +3467,130 @@ inline void Interval::Substract(const Interval& other)
     Check(OCI_IntervalSubtract(*this, other));
 }
 
+inline bool Interval::IsValid() const
+{
+    return (Check(OCI_IntervalCheck(*this)) == 0);
+}
+
+inline int Interval::GetYear() const
+{
+    int year, month;
+
+    GetYearMonth(&year, &month);
+
+    return year;
+}
+
+inline void Interval::SetYear(int value)
+{
+    int year, month;
+
+    GetYearMonth(&year, &month);
+    SetYearMonth(value, month);
+}
+ 
+inline int Interval::GetMonth() const
+{
+    int year, month;
+
+    GetYearMonth(&year, &month);
+
+    return month;
+}
+
+inline void Interval::SetMonth(int value)
+{
+    int year, month;
+
+    GetYearMonth(&year, &month);
+    SetYearMonth(year, value);
+}
+
+inline int Interval::GetDay() const
+{
+    int day, hour, minutes, seconds, milliseconds;
+
+    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+
+    return day;
+}
+
+inline void Interval::SetDay(int value)
+{
+    int day, hour, minutes, seconds, milliseconds;
+
+    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    SetDaySecond(value, hour, minutes, seconds, milliseconds);
+}
+ 
+inline int Interval::GetHours() const
+{
+    int day, hour, minutes, seconds, milliseconds;
+
+    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+
+    return day;
+}
+
+inline void Interval::SetHours(int value)
+{
+    int day, hour, minutes, seconds, milliseconds;
+
+    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    SetDaySecond(day, value, minutes, seconds, milliseconds);
+}
+  
+inline int Interval::GetMinutes() const
+{
+    int day, hour, minutes, seconds, milliseconds;
+
+    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+
+    return minutes;
+}
+
+inline void Interval::SetMinutes(int value)
+{
+    int day, hour, minutes, seconds, milliseconds;
+
+    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    SetDaySecond(day, hour, value, seconds, milliseconds);
+}
+
+inline int Interval::GetSeconds() const    
+{
+    int day, hour, minutes, seconds, milliseconds;
+
+    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+
+    return seconds;
+}
+
+inline void Interval::SetSeconds(int value)
+{
+    int day, hour, minutes, seconds, milliseconds;
+
+    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    SetDaySecond(day, hour, minutes, value, milliseconds);
+}
+
+inline int Interval::GetMilliSeconds() const    
+{
+    int day, hour, minutes, seconds, milliseconds;
+
+    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+
+    return milliseconds;
+}
+
+inline void Interval::SetMilliSeconds(int value)
+{
+    int day, hour, minutes, seconds, milliseconds;
+
+    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    SetDaySecond(day, hour, minutes, seconds, value);
+}
+
 inline void Interval::GetDaySecond(int *day, int *hour, int *min, int *sec, int *fsec) const
 {
     Check(OCI_IntervalGetDaySecond(*this, day, hour, min, sec, fsec));
@@ -3376,6 +3673,130 @@ inline void Timestamp::Construct(int year, int month, int day, int hour, int min
 inline void Timestamp::Convert(const Timestamp& other)
 {
     Check(OCI_TimestampConvert(*this, other));
+}
+
+inline bool Timestamp::IsValid() const
+{
+    return (Check(OCI_TimestampCheck(*this)) == 0);
+}
+
+inline int Timestamp::GetYear() const
+{
+    int year, month, day;
+
+    GetDate(&year, &month, &day);
+
+    return year;
+}
+
+inline void Timestamp::SetYear(int value)
+{
+    int year, month, day, hour, minutes, seconds, milliseconds;
+
+    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
+    Construct(value, month, day, hour, minutes, seconds, milliseconds);
+}
+ 
+inline int Timestamp::GetMonth() const
+{
+    int year, month, day;
+
+    GetDate(&year, &month, &day);
+
+    return month;
+}
+
+inline void Timestamp::SetMonth(int value)
+{
+    int year, month, day, hour, minutes, seconds, milliseconds;
+
+    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
+    Construct(year, value, day, hour, minutes, seconds, milliseconds);
+}
+
+inline int Timestamp::GetDay() const
+{
+    int year, month, day;
+
+    GetDate(&year, &month, &day);
+
+    return day;
+}
+
+inline void Timestamp::SetDay(int value)
+{
+    int year, month, day, hour, minutes, seconds, milliseconds;
+
+    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
+    Construct(year, month, value, hour, minutes, seconds, milliseconds);
+}
+ 
+inline int Timestamp::GetHours() const
+{
+    int hour, minutes, seconds, milliseconds;
+
+    GetTime(&hour, &minutes, &seconds, &milliseconds);
+
+    return hour;
+}
+
+inline void Timestamp::SetHours(int value)
+{
+    int year, month, day, hour, minutes, seconds, milliseconds;
+
+    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
+    Construct(year, month, day, value, minutes, seconds, milliseconds);
+}
+  
+inline int Timestamp::GetMinutes() const
+{
+    int hour, minutes, seconds, milliseconds;
+
+    GetTime(&hour, &minutes, &seconds, &milliseconds);
+
+    return minutes;
+}
+
+inline void Timestamp::SetMinutes(int value)
+{
+    int year, month, day, hour, minutes, seconds, milliseconds;
+
+    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
+    Construct(year, month, day, hour, value, seconds, milliseconds);
+}
+
+inline int Timestamp::GetSeconds() const    
+{
+    int hour, minutes, seconds, milliseconds;
+
+    GetTime(&hour, &minutes, &seconds, &milliseconds);
+
+    return seconds;
+}
+
+inline void Timestamp::SetSeconds(int value)
+{
+    int year, month, day, hour, minutes, seconds, milliseconds;
+
+    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
+    Construct(year, month, day, hour, minutes, value, milliseconds);
+}
+
+inline int Timestamp::GetMilliSeconds() const    
+{
+    int hour, minutes, seconds, milliseconds;
+
+    GetTime(&hour, &minutes, &seconds, &milliseconds);
+
+    return milliseconds;
+}
+
+inline void Timestamp::SetMilliSeconds(int value)
+{
+    int year, month, day, hour, minutes, seconds, milliseconds;
+
+    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
+    Construct(year, month, day, hour, minutes, seconds, value);
 }
 
 inline void Timestamp::GetDate(int *year, int *month, int *day) const
