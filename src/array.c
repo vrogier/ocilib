@@ -141,61 +141,66 @@ boolean OCI_ArrayClose
 
     OCI_CHECK_PTR(OCI_IPC_ARRAY, arr, FALSE);
 
-    /* Cleanup OCILIB Objects */
-
-    for (i = 0; i < arr->nb_elem; i++)
+    if ( (arr->elem_type != OCI_CDT_NUMERIC ) &&
+         (arr->elem_type != OCI_CDT_TEXT    ) && 
+         (arr->elem_type != OCI_CDT_RAW     ))
     {
-        switch (arr->elem_type)
+        /* Cleanup OCILIB Objects */
+
+        for (i = 0; i < arr->nb_elem; i++)
         {
-            case OCI_CDT_DATETIME:
+            switch (arr->elem_type)
             {
-                OCI_DateFree((OCI_Date *) arr->tab_obj[i]);
+                case OCI_CDT_DATETIME:
+                {
+                    OCI_DateFree((OCI_Date *) arr->tab_obj[i]);
 
-                break;
-            }
-            case OCI_CDT_LOB:
-            {
-                OCI_LobFree((OCI_Lob *) arr->tab_obj[i]);
+                    break;
+                }
+                case OCI_CDT_LOB:
+                {
+                    OCI_LobFree((OCI_Lob *) arr->tab_obj[i]);
 
-                break;
-            }
-            case OCI_CDT_FILE:
-            {
-                OCI_FileFree((OCI_File *) arr->tab_obj[i]);
+                    break;
+                }
+                case OCI_CDT_FILE:
+                {
+                    OCI_FileFree((OCI_File *) arr->tab_obj[i]);
 
-                break;
-            }
-            case OCI_CDT_TIMESTAMP:
-            {
-                OCI_TimestampFree((OCI_Timestamp *) arr->tab_obj[i]);
+                    break;
+                }
+                case OCI_CDT_TIMESTAMP:
+                {
+                    OCI_TimestampFree((OCI_Timestamp *) arr->tab_obj[i]);
 
-                break;
-            }
-            case OCI_CDT_INTERVAL:
-            {
-                OCI_IntervalFree((OCI_Interval *) arr->tab_obj[i]);
+                    break;
+                }
+                case OCI_CDT_INTERVAL:
+                {
+                    OCI_IntervalFree((OCI_Interval *) arr->tab_obj[i]);
 
-                break;
-            }
-            case OCI_CDT_OBJECT:
-            {
-                OCI_ObjectFree((OCI_Object *) arr->tab_obj[i]);
+                    break;
+                }
+                case OCI_CDT_OBJECT:
+                {
+                    OCI_ObjectFree((OCI_Object *) arr->tab_obj[i]);
 
-                break;
-            }
-            case OCI_CDT_COLLECTION:
-            {
-                OCI_CollFree((OCI_Coll *) arr->tab_obj[i]);
+                    break;
+                }
+                case OCI_CDT_COLLECTION:
+                {
+                    OCI_CollFree((OCI_Coll *) arr->tab_obj[i]);
 
-                break;
-            }
-            case OCI_CDT_REF:
-            {
-                OCI_RefFree((OCI_Ref *) arr->tab_obj[i]);
+                    break;
+                }
+                case OCI_CDT_REF:
+                {
+                    OCI_RefFree((OCI_Ref *) arr->tab_obj[i]);
 
-                break;
+                    break;
+                }
             }
-       }
+        }
     }
 
     /* free OCI descriptors */
@@ -364,7 +369,7 @@ boolean OCI_ArrayFreeFromHandles
     {
         OCI_Array * tmp_arr = (OCI_Array *) item->data;
 
-        if ((tmp_arr != NULL) && (tmp_arr->tab_obj == handles))
+        if ((tmp_arr != NULL) && ((tmp_arr->tab_obj == handles) || tmp_arr->mem_struct == handles))
         {
             arr = tmp_arr;
             break;
