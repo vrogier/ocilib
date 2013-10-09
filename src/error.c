@@ -119,7 +119,7 @@ OCI_Error * OCI_ErrorGet
             }
             else if (check == TRUE)
             {
-                if ((err->active == TRUE) || (err->warning != warning))
+                if (err->active == TRUE)
                 {
                     err = NULL;
                 }
@@ -132,7 +132,7 @@ OCI_Error * OCI_ErrorGet
 
         if (err != NULL)
         {
-            if ((err->active == TRUE) || (err->warning != warning))
+            if (err->active == TRUE)
             {
                 err = NULL;
             }

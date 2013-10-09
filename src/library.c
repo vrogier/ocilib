@@ -450,7 +450,7 @@ void OCI_SetStatus
 
     if (err != NULL)
     {
-        err->raise = (res == FALSE);
+        err->raise = ((res == FALSE) || ((OCILib.warnings_on == TRUE) && (err->warning == TRUE)));
     }
 }
 

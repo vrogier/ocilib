@@ -2298,11 +2298,16 @@ OCI_EXPORT boolean OCI_API OCI_SetHAHandler
 
 /**
  * @brief
- * Retrieve the last error occurred within the last OCILIB call
+ * Retrieve the last error or warning occurred within the last OCILIB call
  *
  * @note
  * OCI_GetLastError() is based on thread context and thus OCILIB must be
  * initialized with the flag OCI_ENV_CONTEXT
+ *
+ * @warning
+ * OCILIB functions that returns a boolean value to indicate their success :
+ * - return TRUE if no error occured OR if a warning occured
+ * - return FALSE if an error occured
  *
  */
 
@@ -3980,6 +3985,15 @@ OCI_EXPORT boolean OCI_API OCI_Prepare
  *
  * @return
  * TRUE on success otherwise FALSE
+ * 
+ * @warning
+ * If a SQL warning occurs:
+ * - the function returns TRUE 
+ * - the SQL warning triggers the global error handler with an OCI_Error having its OCI_ErrorGetType() 
+ *   attribute set to OCI_ERR_WARNING
+ * - If OCILIB is initalized with the OCI_ENV_CONTEXT mode, OCI_GetLastError() will return the OCI_Error
+ *   object corresponding to the warning
+ *
  */
 
 OCI_EXPORT boolean OCI_API OCI_Execute
@@ -3996,6 +4010,15 @@ OCI_EXPORT boolean OCI_API OCI_Execute
  *
  * @return
  * TRUE on success otherwise FALSE
+ * 
+ * @warning
+ * If a SQL warning occurs:
+ * - the function returns TRUE 
+ * - the SQL warning triggers the global error handler with an OCI_Error having its OCI_ErrorGetType() 
+ *   attribute set to OCI_ERR_WARNING
+ * - If OCILIB is initalized with the OCI_ENV_CONTEXT mode, OCI_GetLastError() will return the OCI_Error
+ *   object corresponding to the warning
+ *
  */
 
 OCI_EXPORT boolean OCI_API OCI_ExecuteStmt
@@ -14031,6 +14054,14 @@ OCI_EXPORT boolean OCI_PrepareFmt
  *
  * @return
  * TRUE on success otherwise FALSE
+ * 
+ * @warning
+ * If a SQL warning occurs:
+ * - the function returns TRUE 
+ * - the SQL warning triggers the global error handler with an OCI_Error having its OCI_ErrorGetType() 
+ *   attribute set to OCI_ERR_WARNING
+ * - If OCILIB is initalized with the OCI_ENV_CONTEXT mode, OCI_GetLastError() will return the OCI_Error
+ *   object corresponding to the warning
  *
  */
 
