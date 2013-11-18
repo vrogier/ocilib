@@ -344,10 +344,10 @@ boolean OCI_API OCI_CollTrim
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollGetAt
+ * OCI_CollGetElem
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OCI_API OCI_CollGetAt
+OCI_Elem * OCI_API OCI_CollGetElem
 (
     OCI_Coll    *coll,
     unsigned int index
@@ -380,10 +380,10 @@ OCI_Elem * OCI_API OCI_CollGetAt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollGetAt2
+ * OCI_CollGetElem2
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollGetAt2
+boolean OCI_API OCI_CollGetElem2
 (
     OCI_Coll    *coll,
     unsigned int index,
@@ -423,10 +423,10 @@ boolean OCI_API OCI_CollGetAt2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollSetAt
+ * OCI_CollSetElem
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollSetAt
+boolean OCI_API OCI_CollSetElem
 (
     OCI_Coll    *coll,
     unsigned int index,
@@ -520,4 +520,75 @@ boolean OCI_API OCI_CollClear
 
     return res;
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_CollDeleteElem
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_CollDeleteElem
+(
+    OCI_Coll    *coll,
+    unsigned int index
+)
+{
+    boolean res = TRUE;
+    boolean ret = FALSE;
+
+    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, FALSE);
+
+    if (coll->typinf->ccode == OCI_TYPECODE_TABLE)
+    {
+        OCI_CALL2
+        (
+            res, coll->con,
+
+            OCITableDelete(coll->con->env, coll->con->err, (sb4) index-1, coll->handle)
+        )
+
+        ret = res;
+    }
+
+    OCI_RESULT(res);
+
+    return ret;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_CollGetCount
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_CollGetCount
+(
+    OCI_Coll *coll
+)
+{
+    boolean res = TRUE;
+    sb4 count   = 0;
+
+    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, 0);
+
+    if (coll->typinf->ccode == OCI_TYPECODE_TABLE)
+    {
+        OCI_CALL2
+        (
+            res, coll->con,
+
+            OCITableSize(coll->con->env, coll->con->err, coll->handle, &count)
+        )
+    }
+    else
+    {
+        OCI_CALL2
+        (
+            res, coll->con,
+
+            OCICollSize(coll->con->env, coll->con->err, coll->handle, &count)
+        )
+    }
+
+    OCI_RESULT(res);
+
+    return (unsigned int) count;
+}
+
 

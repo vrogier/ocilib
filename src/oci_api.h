@@ -1518,6 +1518,22 @@ typedef sword (*OCICOLLTRIM)
     OCIColl  *coll
 );
 
+typedef sword (*OCITABLESIZE)
+(
+    OCIEnv         *env,
+    OCIError       *err,
+    CONST OCITable *tbl,
+    sb4            *size
+);
+
+typedef sword (*OCITABLEDELETE)
+(
+    OCIEnv      *env,
+    OCIError    *err,
+    sb4          index,
+    OCITable     *tbl
+);
+
 typedef sword (*OCIITERCREATE)
 (
     OCIEnv        *env,

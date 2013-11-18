@@ -784,7 +784,7 @@ public:
  * @class Connection
  *
  * @brief
- *
+ * A connection or session with a specific database.
  */
 class Connection : public HandleHolder<OCI_Connection *>
 {
@@ -911,6 +911,7 @@ private:
  * @class Date
  *
  * @brief
+ * Object identififying the SQL datatype DATE.
  *
  */
 class Date : public HandleHolder<OCI_Date *>
@@ -995,6 +996,7 @@ private:
  * @class Interval
  *
  * @brief
+ * Object identififying the SQL datatype INTERVAL.
  *
  */
 class Interval : public HandleHolder<OCI_Interval *>
@@ -1063,6 +1065,7 @@ private:
  * @class Timestamp
  *
  * @brief
+ * Object identififying the SQL datatype TIMESTAMP.
  *
  */
 class Timestamp : public HandleHolder<OCI_Timestamp *>
@@ -1138,6 +1141,7 @@ private:
  * @class Clob
  *
  * @brief
+ * Object identififying the SQL datatype CLOB.
  *
  */
 class Clob : public HandleHolder<OCI_Lob *>
@@ -1193,6 +1197,7 @@ private:
  * @class Blob
  *
  * @brief
+ * Object identififying the SQL datatype BLOB.
  *
  */
 class Blob : public HandleHolder<OCI_Lob *>
@@ -1247,6 +1252,7 @@ private:
  * @class File
  *
  * @brief
+ * Object identififying the SQL datatype BFILE.
  *
  */
 class File : public HandleHolder<OCI_File *>
@@ -1319,6 +1325,7 @@ private:
  * @class Object
  *
  * @brief
+ * Object identififying the SQL datatype OBJECT.
  *
  */
 class Object : public HandleHolder<OCI_Object *>
@@ -1363,6 +1370,7 @@ private:
  * @class Reference
  *
  * @brief
+ * Object identififying the SQL datatype REF.
  *
  */
 class Reference : public HandleHolder<OCI_Ref *>
@@ -1396,6 +1404,7 @@ private:
  * @class Collection
  *
  * @brief
+ * Object identififying the SQL datatype VARRAY and NESTED TABLE.
  *
  */
 class Collection : public HandleHolder<OCI_Coll *>
@@ -1414,12 +1423,15 @@ public:
     unsigned int GetType() const;
     unsigned int GetMax() const;
     unsigned int GetSize() const;
+    unsigned int GetCount() const;
 
     void Truncate(unsigned int size);
     void Clear();
 
     bool IsElementNull(unsigned int index) const;
     void SetElementNull(unsigned int index);
+
+    bool Delete(unsigned int index) const;
 
     template <class TDataType>
     TDataType Get(unsigned int index) const;
@@ -1491,6 +1503,7 @@ public:
  * @class CLong
  *
  * @brief
+ * Object identififying the SQL datatype LONG.
  *
  */
 class CLong : public HandleHolder<OCI_Long *>
@@ -1518,6 +1531,7 @@ private:
  * @class CLong
  *
  * @brief
+ * Object identififying the SQL datatype LONG RAW
  *
  */
 class BLong : public HandleHolder<OCI_Long *>
@@ -1580,7 +1594,8 @@ private:
  * @class Statement
  *
  * @brief
- *
+ * Object used for executing SQL or PL/SQL statement and returning the produced results.
+ * 
  */
 class Statement : public HandleHolder<OCI_Statement *>
 {
@@ -1705,7 +1720,7 @@ private:
  * @class Resultset
  *
  * @brief
- *
+ * Database result set
  */
 class Resultset : public HandleHolder<OCI_Resultset *>
 {
@@ -2866,6 +2881,11 @@ inline void Connection::Close()
     Release();
 }
 
+/**
+ * @brief
+ * Commits changes made since the previous commit or rollback
+ *
+ */
 inline void Connection::Commit()
 {
     Check(OCI_Commit(*this));
@@ -2891,6 +2911,14 @@ inline bool Connection::GetAutoCommit() const
     return (Check(OCI_GetAutoCommit(*this)) == TRUE);
 }
 
+/**
+ * @brief
+ * Check if the underlying psysical connection is still alive
+ *
+ * @return 
+ * true if the connection is live otherwise false
+ *
+ */
 inline bool Connection::IsServerAlive() const
 {
     return (Check(OCI_IsConnected(*this)) == TRUE);
@@ -4641,6 +4669,12 @@ inline unsigned int Collection::GetSize() const
     return Check(OCI_CollGetSize(*this));
 }
 
+inline unsigned int Collection::GetCount() const
+
+{
+    return Check(OCI_CollGetCount(*this));
+}
+
 inline void Collection::Truncate(unsigned int size)
 {
     Check(OCI_CollTrim(*this, size));
@@ -4659,6 +4693,11 @@ inline bool Collection::IsElementNull(unsigned int index) const
 inline void Collection::SetElementNull(unsigned int index)
 {
     Check(OCI_ElemSetNull(Check(OCI_CollGetAt(*this, index))));
+}
+
+inline bool Collection::Delete(unsigned int index) const
+{
+   return (Check(OCI_CollDeleteElem(*this, index)) == TRUE);
 }
 
 template <class TDataType>

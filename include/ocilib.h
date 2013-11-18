@@ -7858,7 +7858,7 @@ OCI_EXPORT const dtext * OCI_API OCI_ServerGetOutput
  *
  * OCI (and thus OCILIB) offers the possibility to access collection elements :
  *
- * - directly by index (OCI_CollGetAt() and OCI_CollSetAt())
+ * - directly by index (OCI_CollGetElem() and OCI_CollSetElem())
  * - using an iterator (OCI_Iter) to iterate through the collection
  *   (OCI_IterGetNext(), OCI_IterGetPrev())
  *
@@ -8021,13 +8021,31 @@ OCI_EXPORT unsigned int OCI_API OCI_CollGetMax
 
 /**
  * @brief
- * Returns the current number of elements of the given collection.
+ * Returns the total number of elements of the given collection.
  *
  * @param coll - Collection handle
  *
  */
 
 OCI_EXPORT unsigned int OCI_API OCI_CollGetSize
+(
+    OCI_Coll *coll
+);
+
+/**
+ * @brief
+ * Returns the current number of elements of the given collection.
+ *
+ * @note
+ * - For VARRAYs, it returns the same value than OCI_CollGetSize() as VARRAYs cannot contains holes
+ * - For Nested Tables that are spare collections that can have holes, it returns the total number
+ *   of elements minus the total of deleted elements
+ *
+ * @param coll - Collection handle
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_CollGetCount
 (
     OCI_Coll *coll
 );
@@ -8087,7 +8105,7 @@ OCI_EXPORT boolean OCI_API OCI_CollClear
  *
  */
 
-OCI_EXPORT OCI_Elem * OCI_API OCI_CollGetAt
+OCI_EXPORT OCI_Elem * OCI_API OCI_CollGetElem
 (
     OCI_Coll    *coll,
     unsigned int index
@@ -8115,7 +8133,7 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_CollGetAt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollGetAt2
+OCI_EXPORT boolean OCI_API OCI_CollGetElem2
 (
     OCI_Coll    *coll,
     unsigned int index,
@@ -8145,7 +8163,7 @@ OCI_EXPORT boolean OCI_API OCI_CollGetAt2
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollSetAt
+OCI_EXPORT boolean OCI_API OCI_CollSetElem
 (
     OCI_Coll    *coll,
     unsigned int index,
@@ -8170,6 +8188,32 @@ OCI_EXPORT boolean OCI_API OCI_CollAppend
 (
     OCI_Coll *coll,
     OCI_Elem *elem
+);
+
+/**
+ * @brief
+ * Delete the element at the given position in the Nested Table Collection
+ *
+ * @param coll  - Collection handle
+ * @param index - Index of the element to delete
+ *
+ * @note
+ * Collection indexes start at position 1.
+ *
+ * @warning
+ * OCI_CollDeleteElem() is only valid for nested tables.
+ *
+ * @return
+ * - if the input collection is a nested table, it returns TRUE if the element 
+ *   is successfully deleted otherwise FALSE on error
+ * - if the input collection is a varray, it always returns FALSE without spawning an exception
+ *
+ */
+
+OCI_EXPORT boolean  OCI_API OCI_CollDeleteElem
+(
+    OCI_Coll    *coll,
+    unsigned int index
 );
 
 /**
@@ -18354,6 +18398,12 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 #define OCI_ObjectGetTimeStamp      OCI_ObjectGetTimestamp
 #define OCI_ElemGetTimeStamp        OCI_ElemGetTimestamp
 #define OCI_TimestampSysTimeStamp   OCI_TimestampSysTimestamp
+
+/* macro added in version 4.0.0 */
+
+#define OCI_CollSetAt               OCI_CollSetElem
+#define OCI_CollGetAt               OCI_CollGetElem
+#define OCI_CollGetAt2              OCI_CollGetElem2
 
 /**
  * @}

@@ -259,6 +259,8 @@ extern OCICOLLASSIGNELEM            OCICollAssignElem;
 extern OCICOLLASSIGN                OCICollAssign;
 extern OCICOLLAPPEND                OCICollAppend;
 extern OCICOLLTRIM                  OCICollTrim;
+extern OCITABLESIZE                 OCITableSize;
+extern OCITABLEDELETE               OCITableDelete;
 extern OCIITERCREATE                OCIIterCreate;
 extern OCIITERDELETE                OCIIterDelete;
 extern OCIITERINIT                  OCIIterInit;

@@ -340,6 +340,8 @@ OCICOLLASSIGNELEM            OCICollAssignElem            = NULL;
 OCICOLLASSIGN                OCICollAssign                = NULL;
 OCICOLLAPPEND                OCICollAppend                = NULL;
 OCICOLLTRIM                  OCICollTrim                  = NULL;
+OCITABLESIZE                 OCITableSize                 = NULL;
+OCITABLEDELETE               OCITableDelete               = NULL;
 OCIITERCREATE                OCIIterCreate                = NULL;
 OCIITERDELETE                OCIIterDelete                = NULL;
 OCIITERINIT                  OCIIterInit                  = NULL;
@@ -970,6 +972,10 @@ boolean OCI_API OCI_Initialize
                    OCICOLLAPPEND);
         LIB_SYMBOL(OCILib.lib_handle, "OCICollTrim", OCICollTrim,
                    OCICOLLTRIM);
+        LIB_SYMBOL(OCILib.lib_handle, "OCITableDelete", OCITableDelete,
+                   OCITABLEDELETE);
+        LIB_SYMBOL(OCILib.lib_handle, "OCITableSize", OCITableSize,
+                   OCITABLESIZE);
 
         LIB_SYMBOL(OCILib.lib_handle, "OCIIterCreate", OCIIterCreate,
                    OCIITERCREATE);
