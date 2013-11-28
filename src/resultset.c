@@ -470,7 +470,7 @@ boolean OCI_FetchPieces
                     ((odtext *)lg->buffer)[lg->size/sizeof(odtext)] = 0;
                 }
 
-                OCI_ConvertString(lg->buffer, (lg->size / sizeof(odtext)),
+                OCI_ConvertString(lg->buffer, (lg->size / sizeof(odtext)) + 1,
                                   sizeof(odtext), sizeof(dtext));
             }
         }
