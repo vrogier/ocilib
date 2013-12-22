@@ -430,7 +430,7 @@ boolean OCI_API OCI_LobRead2
     {
 		ub4 ora_byte_count = (ub4) *byte_count;
 
-		if (OCILib.nls_utf8 == FALSE)
+        if ((OCILib.use_lob_ub8 == FALSE) && (OCILib.nls_utf8 == FALSE))
         {
             ora_byte_count *= sizeof(odtext);
         }
