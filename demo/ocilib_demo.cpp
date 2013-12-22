@@ -30,6 +30,17 @@
 
 #include "ocilib.hpp"
 
+#ifdef _MSC_VER
+
+  #if defined(OCI_CHARSET_WIDE)
+      #pragma comment(lib, "ocilibw.lib")
+  #elif defined(OCI_CHARSET_MIXED)
+      #pragma comment(lib, "ocilibm.lib")
+  #elif defined(OCI_CHARSET_ANSI)
+      #pragma comment(lib, "ociliba.lib")
+  #endif
+
+#endif
 
 using namespace ocilib;
 
@@ -62,7 +73,7 @@ using namespace ocilib;
 
 #ifndef OCI_SHARED_LIB
     #if defined(_WINDOWS)
-        #define OCI_SHARED_LIB                   "libclntsh.dll"
+        #define OCI_SHARED_LIB                   "oci.dll"
     #elif defined(__APPLE__)
         #define OCI_SHARED_LIB                   "libclntsh.dylib"
     #elif defined(__hppa)
@@ -85,6 +96,20 @@ using namespace ocilib;
   #define mtarg           char
 #endif
 
+#if defined(OCI_CHARSET_WIDE)
+  #define mtcout            wcout        
+  #define dtcout            wcout   
+  #define dtostringstream   wostringstream 
+
+#elif defined(OCI_CHARSET_MIXED)
+  #define mtcout            cout        
+  #define dtcout            wcout 
+  #define dtostringstream   wostringstream 
+#else
+  #define mtcout            cout        
+  #define dtcout            cout 
+  #define dtostringstream   ostringstream 
+#endif
 
 #define ARRAY_COUNT(t) (sizeof(t)/sizeof(t[0]))
 
@@ -197,11 +222,12 @@ int mtmain(int argc, mtext* argv[])
         Environment::Initialize(OCI_ENV_DEFAULT, home);
         Environment::EnableWarnings(true);
 
-        std::cout << "Connecting to " << usr << "/" << pwd << "@" << dbs << std::endl << std::endl;
+        std::mtcout << MT("Connecting to ") << usr << MT("/") << pwd << MT("@") << dbs << std::endl << std::endl;
 
         con.Open(dbs, usr, pwd, OCI_SESSION_DEFAULT);
 
         print_version();
+
         create_tables();
 
         /* execute tests */
@@ -217,12 +243,12 @@ int mtmain(int argc, mtext* argv[])
     }
     catch(Exception &ex)
     {
-         std::cout << ex.GetMessage() << std::endl;
+         std::mtcout << ex.GetMessage() << std::endl;
     }
 
     Environment::Cleanup();
 
-    std::cout << "\nPress any key to exit...";
+    std::mtcout << MT("\nPress any key to exit...");
 
     getchar();
 
@@ -235,36 +261,36 @@ int mtmain(int argc, mtext* argv[])
 
 void print_version(void)
 {
-    std::cout << "\n>>>>> OCILIB BUILD INFORMATION \n\n";
+    std::mtcout << MT("\n>>>>> OCILIB BUILD INFORMATION \n\n");
 
     if (Environment::GetImportMode() == OCI_IMPORT_MODE_LINKAGE)
-        std::cout << "OCI import mode         : LINKAGE\n";
+        std::mtcout << MT("OCI import mode         : LINKAGE\n");
     else
-        std::cout << "OCI import mode         : RUNTIME\n";
+        std::mtcout << MT("OCI import mode         : RUNTIME\n");
 
     if (Environment::GetCharsetMetaData() == OCI_CHAR_ANSI)
-        std::cout << "MetaData  char type     : ANSI\n";
+        std::mtcout << MT("MetaData  char type     : ANSI\n");
     else
-        std::cout << "MetaData  char type     : WIDE\n";
+        std::mtcout << MT("MetaData  char type     : WIDE\n");
 
     if (Environment::GetCharsetUserData() == OCI_CHAR_ANSI)
-        std::cout << "UserData  char type     : ANSI\n";
+        std::mtcout << MT("UserData  char type     : ANSI\n");
     else
-        std::cout << "UserData  char type     : WIDE\n";
+        std::mtcout << MT("UserData  char type     : WIDE\n");
 
-    std::cout << "\n>>>>> VERSIONS INFORMATION \n\n";
-    std::cout << "OCILIB major    version : " << OCILIB_MAJOR_VERSION     << std::endl;
-    std::cout << "OCILIB minor    version : " << OCILIB_MINOR_VERSION     << std::endl;
-    std::cout << "OCILIB revision version : " << OCILIB_REVISION_VERSION  << std::endl;
-    std::cout << "OCI compile     version : " << OCI_VER_MAJ(Environment::GetCompileVersion()) << std::endl;
-    std::cout << "OCI runtime     version : " << OCI_VER_MAJ(Environment::GetRuntimeVersion()) << std::endl;
-    std::cout << "Server major    version : " << con.GetServerMajorVersion()    << std::endl;
-    std::cout << "Server minor    version : " << con.GetServerMinorVersion()    << std::endl;
-    std::cout << "Server revision version : " << con.GetServerRevisionVersion() << std::endl;
-    std::cout << "Connection      version : " << con.GetVersion() << std::endl;
+    std::mtcout << MT("\n>>>>> VERSIONS INFORMATION \n\n");
+    std::mtcout << MT("OCILIB major    version : ") << OCILIB_MAJOR_VERSION     << std::endl;
+    std::mtcout << MT("OCILIB minor    version : ") << OCILIB_MINOR_VERSION     << std::endl;
+    std::mtcout << MT("OCILIB revision version : ") << OCILIB_REVISION_VERSION  << std::endl;
+    std::mtcout << MT("OCI compile     version : ") << OCI_VER_MAJ(Environment::GetCompileVersion()) << std::endl;
+    std::mtcout << MT("OCI runtime     version : ") << OCI_VER_MAJ(Environment::GetRuntimeVersion()) << std::endl;
+    std::mtcout << MT("Server major    version : ") << con.GetServerMajorVersion()    << std::endl;
+    std::mtcout << MT("Server minor    version : ") << con.GetServerMinorVersion()    << std::endl;
+    std::mtcout << MT("Server revision version : ") << con.GetServerRevisionVersion() << std::endl;
+    std::mtcout << MT("Connection      version : ") << con.GetVersion() << std::endl;
 
-    std::cout << "\n>>>>> SERVER VERSION BANNER \n\n";
-    std::cout << con.GetServerVersion() << std::endl << std::endl;
+    std::mtcout << MT("\n>>>>> SERVER VERSION BANNER \n\n");
+    std::mtcout << con.GetServerVersion() << std::endl << std::endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -280,7 +306,7 @@ void execute_ddl(mstring sql)
     }
     catch(Exception &ex)
     {
-         std::cout << ex.GetMessage() << std::endl;
+         std::mtcout << ex.GetMessage() << std::endl;
     }
 }
 
@@ -290,7 +316,7 @@ void execute_ddl(mstring sql)
 
 void create_tables(void)
 {
-    std::cout << "\n>>>>> CREATE TABLES FOR DEMO \n\n";
+    std::mtcout << MT("\n>>>>> CREATE TABLES FOR DEMO \n\n");
 
     /* create types for the demo */
     execute_ddl( MT("create type type_t as OBJECT (id int, name varchar2(50))"));
@@ -394,7 +420,7 @@ void create_tables(void)
 
 void drop_tables(void)
 {
-    std::cout << "\n>>>>> DROPPING TABLES AND TYPES \n\n";
+    std::mtcout << MT("\n>>>>> DROPPING TABLES AND TYPES \n\n");
 
     execute_ddl(MT("drop table test_fetch"));
     execute_ddl(MT("drop table test_long_str"));
@@ -418,7 +444,7 @@ void drop_tables(void)
 
 void test_fetch(void)
 {
-    std::cout << "\n>>>>> SIMPLE TEST FETCH WITH META DATA\n\n";
+    std::mtcout << MT("\n>>>>> SIMPLE TEST FETCH WITH META DATA\n\n");
 
     Statement st(con);
     st.Execute(MT("select * from test_fetch"));
@@ -427,21 +453,21 @@ void test_fetch(void)
     for(int i = 1, n = rs.GetColumnCount(); i <= n; i++)
     {
         Column col = rs.GetColumn(i);
-        std::cout << "> Field : #" << i << " - Name : " << col.GetName() << std::endl;
+        std::mtcout << MT("> Field : #") << i << MT(" - Name : ") << col.GetName() << std::endl;
     }
 
-    std::cout << std::endl;
+    std::mtcout << std::endl;
 
-    while (rs.Next())
+    while (rs++)
     {
-        std::cout << "> code   : "   << rs.Get<int>(1)
-                  << ", action : " << rs.Get<dstring>(2)
-                  << ", price  : " << rs.Get<double>(3)
-                  << ", date   : " << rs.Get<Date>(4).ToString()
-                  <<  std::endl;
+        std::dtcout << DT("> code   : ") << rs.Get<int>(1);
+        std::dtcout << DT(", action : ") << rs.Get<dstring>(2);
+        std::dtcout << DT(", price  : ") << rs.Get<double>(3);
+        std::dtcout << DT(", date   : ");
+        std::mtcout << rs.Get<Date>(4).ToString() <<  std::endl;
     }
 
-    std::cout << std::endl << rs.GetCount() << " row(s) fetched" << std::endl;
+    std::mtcout << std::endl << rs.GetCount() << MT(" row(s) fetched") << std::endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -452,7 +478,7 @@ void test_bind1(void)
 {
     int code = 1;
 
-    std::cout << "\n>>>>> TEST BINDING \n\n";
+    std::mtcout << MT("\n>>>>> TEST BINDING \n\n");
 
     Statement st(con);
     st.Prepare(MT("select * from test_fetch where code = :code"));
@@ -460,16 +486,16 @@ void test_bind1(void)
     st.Execute();
 
     Resultset rs = st.GetResultset();
-    while (rs.Next())
+    while (rs++)
     {
-        std::cout << "> code   : "   << rs.Get<int>(1)
-                  << ", action : " << rs.Get<dstring>(2)
-                  << ", price  : " << rs.Get<double>(3)
-                  << ", date   : " << rs.Get<Date>(4).ToString()
-                  <<  std::endl;
+        std::dtcout << DT("> code   : ") << rs.Get<int>(1);
+        std::dtcout << DT(", action : ") << rs.Get<dstring>(2);
+        std::dtcout << DT(", price  : ") << rs.Get<double>(3);
+        std::dtcout << DT(", date   : ");
+        std::mtcout << rs.Get<Date>(4).ToString() <<  std::endl;
     }
 
-    std::cout << std::endl << rs.GetCount() << " row(s) fetched" << std::endl;
+    std::mtcout << std::endl << rs.GetCount() << MT(" row(s) fetched") << std::endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -478,7 +504,7 @@ void test_bind1(void)
 
 void test_bind2(void)
 {
-    std::cout << "\n>>>>> SINGLE BINDING \n\n";
+    std::mtcout << MT("\n>>>>> SINGLE BINDING \n\n");
 
     Statement st(con);
     st.Prepare( MT("insert into test_array ")
@@ -498,9 +524,11 @@ void test_bind2(void)
     Date date;
     date.SysDate();
 
+    date++;
+
     /* lob */
     Clob clob(con);
-    clob.Write(MT("lob value00"));
+    clob.Write(DT("lob value00"));
 
     /* file */
     File file(con);
@@ -517,7 +545,7 @@ void test_bind2(void)
     st.Bind(MT(":val_int"),  i,  OCI_BDM_IN);
     st.Bind(MT(":val_dbl"), dbl, OCI_BDM_IN);
     st.Bind(MT(":val_flt"), flt, OCI_BDM_IN);
-    st.Bind(MT(":val_str"), str, str.size(), OCI_BDM_IN);
+    st.Bind(MT(":val_str"), str, (unsigned int) str.size(), OCI_BDM_IN);
 
     /* bind oracle types arrays */
 
@@ -530,7 +558,7 @@ void test_bind2(void)
     st.Execute();
     con.Commit();
 
-    std::cout << std::endl << st.GetAffectedRows() << " row(s) inserted" << std::endl;
+    std::mtcout << std::endl << st.GetAffectedRows() << MT(" row(s) inserted") << std::endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -539,30 +567,30 @@ void test_bind2(void)
 
 void test_piecewise_insert(void)
 {
-    std::cout << "\n>>>>> TEST PIECEWISE INSERTING\n\n";
+    std::mtcout << MT("\n>>>>> TEST PIECEWISE INSERTING\n\n");
 
     std::ifstream file(OCI_SHARED_LIB, std::ios::in|std::ios::binary|std::ios::ate);
     if (file.is_open())
     {
         size_t size  = (size_t) file.tellg();
         file.seekg (0, std::ios::beg);
-        std::cout << std::endl << size << " bytes to write" << std::endl;
+        std::mtcout << std::endl << size << MT(" bytes to write") << std::endl;
 
         Statement st(con);
         BLong lg(st);
         st.Prepare(MT("insert into test_long_raw(code, content) values (1, :data)"));
-        st.SetLongMaxSize(size);
+        st.SetLongMaxSize( (unsigned int) size);
         st.Bind(MT(":data"), lg, (int) size, OCI_BDM_IN);
         st.Execute();
 
         char * buffer = new char [size];
 
         file.read(buffer, size);
-        lg.Write(buffer, size);
+        lg.Write(buffer, (unsigned int) size);
 
         delete buffer;
 
-        std::cout << std::endl << lg.GetSize() << " bytes written" << std::endl;
+        std::mtcout << std::endl << lg.GetSize() << MT(" bytes written") << std::endl;
 
         file.close();
         con.Commit();
@@ -575,13 +603,13 @@ void test_piecewise_insert(void)
 
 void test_piecewise_fetch(void)
 {
-    std::cout << "\n>>>>> TEST PIECEWISE FETCHING\n\n";
+    std::mtcout << MT("\n>>>>> TEST PIECEWISE FETCHING\n\n");
 
     Statement st(con);
     st.Execute(MT("select content from test_long_raw where code = 1"));
 
     Resultset rs1 = st.GetResultset();
-    while (rs1.Next())
+    while (rs1++)
     {
         BLong lg = rs1.Get<BLong>(1);
 
@@ -590,26 +618,26 @@ void test_piecewise_fetch(void)
 
         while ((bytesRead = lg.Read(buffer, SIZE_BUF))) {}
 
-        std::cout << std::endl << lg.GetSize() << " bytes read" << std::endl;
+        std::mtcout << std::endl << lg.GetSize() << MT(" bytes read") << std::endl;
     }
 
-    std::cout << std::endl << rs1.GetCount() << " row(s) fetched" << std::endl;
+    std::mtcout << std::endl << rs1.GetCount() << MT(" row(s) fetched") << std::endl;
 
-    std::cout << "\n>>>>> TEST LONG MAPPED TO STRING\n\n";
+    std::mtcout << MT("\n>>>>> TEST LONG MAPPED TO STRING\n\n");
 
     st.Execute(MT("select content from test_long_str where code = 1"));
     st.SetLongMode(OCI_LONG_IMPLICIT);
 
     Resultset rs2 = st.GetResultset();
-    while (rs2.Next())
+    while (rs2++)
     {
         dstring str = rs2.Get<dstring>(1);
 
-        std::cout << str << std::endl;
-        std::cout << str.size() << " bytes read" << std::endl;
+        std::dtcout << str << std::endl;
+        std::mtcout << str.size() << MT(" bytes read") << std::endl;
     }
 
-    std::cout << std::endl << rs2.GetCount() << " row(s) fetched" << std::endl;
+    std::mtcout << std::endl << rs2.GetCount() << MT(" row(s) fetched") << std::endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -618,13 +646,13 @@ void test_piecewise_fetch(void)
 
 void test_lob(void)
 {
-    std::cout << "\n>>>>> TEST LOB MANIPULATION\n\n";
+    std::mtcout << MT("\n>>>>> TEST LOB MANIPULATION\n\n");
 
     Statement st(con);
     st.Execute(MT("select code, content from test_lob where code=1 for update"));
 
     Resultset rs= st.GetResultset();
-    while (rs.Next())
+    while (rs++)
     {
         Clob clob = rs.Get<Clob>(2);
 
@@ -632,12 +660,12 @@ void test_lob(void)
         clob.Append(DT("i'm going to the cinema ! "));
         clob.Seek( OCI_SEEK_SET, 0);
 
-        std::cout << "> code : " << rs.Get<int>(1) << ", content : " << clob.Read(SIZE_STR) << std::endl;
+        std::dtcout << DT("> code : ") << rs.Get<int>(1) << DT(", content : ") << clob.Read(SIZE_STR) << std::endl;
     }
 
     con.Commit();
 
-    std::cout << std::endl << rs.GetCount() << " row(s) fetched" << std::endl;
+    std::mtcout << std::endl << rs.GetCount() << MT(" row(s) fetched") << std::endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -646,20 +674,20 @@ void test_lob(void)
 
 void test_nested_table(void)
 {
-    std::cout << "\n>>>>> TEST NESTED TABLE \n\n";
+    std::mtcout << MT("\n>>>>> TEST NESTED TABLE \n\n");
 
     Statement st(con);
     st.Execute(MT("select article, cursor(select sysdate from dual) from test_fetch"));
 
     Resultset rs= st.GetResultset();
-    while (rs.Next())
+    while (rs++)
     {
         Statement st2 = rs.Get<Statement>(2);
         Resultset rs2 = st2.GetResultset();
 
-        while (rs2.Next())
+        while (rs2++)
         {
-            std::cout << "Article : " << rs.Get<dstring>(1) << ", Date : " << rs2.Get<dstring>(1) << std::endl;
+            std::dtcout << DT("Article : ") << rs.Get<dstring>(1) << DT(", Date : ") << rs2.Get<dstring>(1) << std::endl;
         }
     }
 }
@@ -670,7 +698,7 @@ void test_nested_table(void)
 
 void test_ref_cursor(void)
 {
-    std::cout << "\n>>>>> TEST REF CURSOR  \n\n";
+    std::mtcout << MT("\n>>>>> TEST REF CURSOR  \n\n");
 
     Statement stBind(con);
 
@@ -680,16 +708,16 @@ void test_ref_cursor(void)
     st.Execute();
 
     Resultset rs = stBind.GetResultset();
-    while (rs.Next())
+    while (rs++)
     {
-        std::cout << "> code   : "   << rs.Get<int>(1)
-                  << ", action : " << rs.Get<dstring>(2)
-                  << ", price  : " << rs.Get<double>(3)
-                  << ", date   : " << rs.Get<Date>(4).ToString()
-                  <<  std::endl;
+        std::dtcout << DT("> code   : ") << rs.Get<int>(1);
+        std::dtcout << DT(", action : ") << rs.Get<dstring>(2);
+        std::dtcout << DT(", price  : ") << rs.Get<double>(3);
+        std::dtcout << DT(", date   : ");
+        std::mtcout << rs.Get<Date>(4).ToString() <<  std::endl;
     }
 
-   std::cout << std::endl << rs.GetCount() << " row(s) fetched" << std::endl;
+   std::mtcout << std::endl << rs.GetCount() << MT(" row(s) fetched") << std::endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -698,7 +726,7 @@ void test_ref_cursor(void)
 
 void test_plsql(void)
 {
-    std::cout << "\n>>>>> TEST PL/SQL OUTPUT BIND\n\n";
+    std::mtcout << MT("\n>>>>> TEST PL/SQL OUTPUT BIND\n\n");
 
     int res = 0;
     Statement st(con);
@@ -706,19 +734,19 @@ void test_plsql(void)
     st.Prepare(MT("begin :res := trunc(sysdate+1)-trunc(sysdate-1); end;"));
     st.Bind( MT(":res"), res, OCI_BDM_OUT);
     st.Execute();
-    std::cout << "PL/SQL : trunc(sysdate+1)-trunc(sysdate-1)" << std::endl;
-    std::cout << "Result : " << res << std::endl;
+    std::mtcout << MT("PL/SQL : trunc(sysdate+1)-trunc(sysdate-1)") << std::endl;
+    std::mtcout << MT("Result : ") << res << std::endl;
 
 
 #ifndef OCI_CHARSET_ANSI
 
    /* Oracle 8i has some troubles with SERVER OUTPUT in unicode */
-   if (con.GetRuntimeVersion() < OCI_9_0)
+   if (Environment::GetRuntimeVersion() < OCI_9_0)
         return;
 
 #endif
 
-    std::cout << "\n>>>>> TEST PL/SQL SERVER OUTPUT\n\n" ;
+    std::mtcout << MT("\n>>>>> TEST PL/SQL SERVER OUTPUT\n\n");
 
     /* server output */
 
@@ -734,7 +762,7 @@ void test_plsql(void)
     dstring line;
     while (con.GetServerOutput(line) )
     {
-        std::cout << line << std::endl;
+        std::dtcout << line << std::endl;
     }
 
     con.DisableServerOutput();
@@ -746,26 +774,26 @@ void test_plsql(void)
 
 void test_dates(void)
 {
-    std::cout << "\n>>>>> TEST DATETIME MANIPULATION\n\n";
+    std::mtcout << MT("\n>>>>> TEST DATETIME MANIPULATION\n\n");
 
     Date d1, d2;
 
-    d1.FromString("13041978 20:20:12", "DDMMYYYY HH24:MI:SS");
-    std::cout << d1.ToString("DD/MM/YYYY HH24:MI:SS") << std::endl;
+    d1.FromString(MT("13041978 20:20:12"), MT("DDMMYYYY HH24:MI:SS"));
+    std::mtcout << d1.ToString(MT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
 
     d1.SysDate();
-    std::cout << d1.ToString("DD/MM/YYYY HH24:MI:SS") << std::endl;
+    std::mtcout << d1.ToString(MT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
 
     d1.AddDays(5);
     d1.AddMonths(2);
-    std::cout << "Date + 5 days and 2 months is " << d1.ToString("DD/MM/YYYY HH24:MI:SS") << std::endl;
+    std::mtcout << MT("Date + 5 days and 2 months is ") << d1.ToString(MT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
 
     d2.Assign(d1);
 
     d1.LastDay();
-    std::cout << "Last day of the month : " << d1.ToString("DD/MM/YYYY HH24:MI:SS") << std::endl;
+    std::mtcout << MT("Last day of the month : ") << d1.ToString(MT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
 
-    std::cout << "Number of days until the end of the months : " << d1.DaysBetween(d2) << std::endl;
+    std::mtcout << MT("Number of days until the end of the months : ") << d1.DaysBetween(d2) << std::endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -787,24 +815,24 @@ void test_timestamp(void)
 
     if (version >= OCI_9_0)
     {
-        std::cout << "\n>>>>> TEST TIMESTAMP\n\n";
+        std::mtcout << MT("\n>>>>> TEST TIMESTAMP\n\n");
 
         Timestamp tm(OCI_TIMESTAMP);
 
         tm.SysTimestamp();
-        std::cout << "Current timestamp : " << tm.ToString("DD/MM/YYYY HH24:MI:SS:FF3") << std::endl;
+        std::mtcout << MT("Current timestamp : ") << tm.ToString(MT("DD/MM/YYYY HH24:MI:SS:FF3")) << std::endl;
 
         /* intervals raw oci functions have some troubles with Oracle 9i. So let's
            use it for the demo only if we're using 10g or above */
 
         if (version >= OCI_10_1)
         {
-            std::cout << "\n>>>>> TEST INTERVAL \n\n";
+            std::mtcout << MT("\n>>>>> TEST INTERVAL \n\n");
 
             Interval itv(OCI_INTERVAL_DS);
             itv.SetDaySecond(1,1,1,1,0);
             tm.AddInterval(itv);
-            std::cout << "Current timestamp + Interval :" << tm.ToString("DD/MM/YYYY HH24:MI:SS:FF3") << std::endl;
+            std::mtcout << MT("Current timestamp + Interval :") << tm.ToString(MT("DD/MM/YYYY HH24:MI:SS:FF3")) << std::endl;
         }
     }
 }
@@ -815,38 +843,38 @@ void test_timestamp(void)
 
 void test_describe(void)
 {
-    std::cout << "\n>>>>> TEST DESCRIBING TABLE \n\n";
-    std::cout << "Column Name         Type                " << std::endl;
-    std::cout << "----------------------------------------" << std::endl;
-    std::cout <<  std::setiosflags(std::ios::left);
+    std::mtcout << MT("\n>>>>> TEST DESCRIBING TABLE \n\n");
+    std::mtcout << MT("Column Name         Type                ") << std::endl;
+    std::mtcout << MT("----------------------------------------") << std::endl;
+    std::mtcout << std::setiosflags(std::ios::left);
 
-    TypeInfo table(con, "test_fetch", OCI_TIF_TABLE);
+    TypeInfo table(con, MT("test_fetch"), OCI_TIF_TABLE);
 
     for(int i = 1, n = table.GetColumnCount(); i <= n; i++)
     {
         Column col = table.GetColumn(i);
 
-        std::cout <<  std::setw(20) << col.GetName().c_str()
-                  <<  std::setw(20) << col.GetFullSQLType().c_str()
-                  <<  std::endl;
+        std::mtcout <<  std::setw(20) << col.GetName().c_str()
+                    <<  std::setw(20) << col.GetFullSQLType().c_str()
+                    <<  std::endl;
     }
 
     /* TEST DESCRIBING TYPE ------------------------------------------------- */
 
-    std::cout << "\n>>>>> TEST DESCRIBING TYPE \n\n";
-    std::cout << "Column Name         Type                " << std::endl;
-    std::cout << "----------------------------------------" << std::endl;
-    std::cout <<  std::setiosflags(std::ios::left);
+    std::mtcout << MT("\n>>>>> TEST DESCRIBING TYPE \n\n");
+    std::mtcout << MT("Column Name         Type                ") << std::endl;
+    std::mtcout << MT("----------------------------------------") << std::endl;
+    std::mtcout << std::setiosflags(std::ios::left);
 
-    TypeInfo type(con, "test_t", OCI_TIF_TYPE);
+    TypeInfo type(con, MT("test_t"), OCI_TIF_TYPE);
 
     for(int i = 1, n = type.GetColumnCount(); i <= n; i++)
     {
         Column col = type.GetColumn(i);
 
-        std::cout <<  std::setw(20) << col.GetName().c_str()
-                  <<  std::setw(20) << col.GetFullSQLType().c_str()
-                  <<  std::endl;
+        std::mtcout <<  std::setw(20) << col.GetName().c_str()
+                    <<  std::setw(20) << col.GetFullSQLType().c_str()
+                    <<  std::endl;
     }
 }
 
@@ -856,27 +884,27 @@ void test_describe(void)
 
 void test_returning(void)
 {
-    std::cout << "\n>>>>> TEST RETURNING CLAUSE \n\n";
+    std::mtcout << MT("\n>>>>> TEST RETURNING CLAUSE \n\n");
 
     Statement st(con);
-    st.Prepare("update test_lob set code = code + 1 returning code, content into :i, :l");
-    st.Register<int>(":i");
-    st.Register<Clob>(":l");
+    st.Prepare(MT("update test_lob set code = code + 1 returning code, content into :i, :l"));
+    st.Register<int>(MT(":i"));
+    st.Register<Clob>(MT(":l"));
     st.Execute();
 
     Resultset rs = st.GetResultset();
-    while (rs.Next())
+    while (rs++)
     {
         Clob clob = rs.Get<Clob>(2);
         clob.Append(DT("(modified)"));
         clob.Seek(OCI_SEEK_SET, 0);
 
-        std::cout << "> code : " << rs.Get<int>(1) << " - " << clob.Read((int)clob.GetLength()) << std::endl;
+        std::dtcout << DT("> code : ") << rs.Get<int>(1) << DT(" - ") << clob.Read((int)clob.GetLength()) << std::endl;
     }
 
     con.Commit();
 
-    std::cout << std::endl << rs.GetCount() << " row(s) fetched" << std::endl;
+    std::mtcout << std::endl << rs.GetCount() << MT(" row(s) fetched") << std::endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -885,7 +913,7 @@ void test_returning(void)
 
 void test_returning_array(void)
 {
-    std::cout << "\n>>>>> TEST ARRAY BINDING WITH RETURNING CLAUSE \n\n";
+    std::mtcout << MT("\n>>>>> TEST ARRAY BINDING WITH RETURNING CLAUSE \n\n");
 
     std::vector<int>     tab_int;
     std::vector<double>  tab_dbl;
@@ -902,7 +930,7 @@ void test_returning_array(void)
         tab_flt.push_back((float) 3.14*(float)(i+1));
 
         dstring str;
-        str += "Name";
+        str += DT("Name");
         str += ( (i+1) +'0');
         tab_str.push_back(str);
 
@@ -911,10 +939,13 @@ void test_returning_array(void)
         tab_date.push_back(date);
 
         Clob clob(con);
-        clob.Write("Lob value " + str);
+        clob.Write(DT("Lob value ") + str);
         tab_lob.push_back(clob);
 
-        File file(con, MT("mydir"), "File" + str);
+        mstring fileName;
+        fileName += MT("File");
+        fileName += ( (i+1) +'0');
+        File file(con, MT("Mydir"), fileName);
         tab_file.push_back(file);
     }
 
@@ -958,30 +989,30 @@ void test_returning_array(void)
     st.Register<dstring>(MT(":out_str"), 30);
 
     st.Execute();
-    std::cout << std::endl << st.GetAffectedRows() << " row(s) inserted" << std::endl;
+    std::mtcout << std::endl << st.GetAffectedRows() << MT(" row(s) inserted") << std::endl;
 
     int rowIndex = 0;
 
     Resultset rs = st.GetResultset();
     while (!rs.IsNull())
     {
-        while (rs.Next())
+        while (rs++)
         {
-            std::cout << "Row #" << ++rowIndex << "---------------" << std::endl;
+            std::dtcout << DT("Row #") << ++rowIndex << DT("---------------") << std::endl;
 
-            std::cout << ".... val_int    : " << rs.Get<int>(MT(":OUT_INT"))     << std::endl;
-            std::cout << ".... val_dbl    : " << rs.Get<double>(MT(":OUT_DBL"))  << std::endl;
-            std::cout << ".... val_flt    : " << rs.Get<float>(MT(":OUT_FLT"))   << std::endl;
-            std::cout << ".... val_str    : " << rs.Get<dstring>(MT(":OUT_STR")) << std::endl;
+            std::dtcout << DT(".... val_int    : ") << rs.Get<int>(MT(":OUT_INT"))     << std::endl;
+            std::dtcout << DT(".... val_dbl    : ") << rs.Get<double>(MT(":OUT_DBL"))  << std::endl;
+            std::dtcout << DT(".... val_flt    : ") << rs.Get<float>(MT(":OUT_FLT"))   << std::endl;
+            std::dtcout << DT(".... val_str    : ") << rs.Get<dstring>(MT(":OUT_STR")) << std::endl;
 
             Date date = rs.Get<Date>(MT(":OUT_DATE"));
-            std::cout << ".... val_date   : " << date.ToString(MT("YYYY-MM-DD HH24:MI:SS")) << std::endl;
+            std::mtcout << MT(".... val_date   : ") << date.ToString(MT("YYYY-MM-DD HH24:MI:SS")) << std::endl;
 
             Clob clob = rs.Get<Clob>(MT(":OUT_LOB"));
-            std::cout << ".... val_lob    : " << clob.Read(SIZE_BUF) << std::endl;
+            std::dtcout << DT(".... val_lob    : ") << clob.Read(SIZE_BUF) << std::endl;
 
             File file = rs.Get<File>(MT(":OUT_FILE"));
-            std::cout << ".... val_file   : " << file.GetDirectory() << "/" << file.GetName() << std::endl;
+            std::mtcout << MT(".... val_file   : ") << file.GetDirectory() << MT("/") << file.GetName() << std::endl;
         }
 
         rs = st.GetNextResultset();
@@ -994,20 +1025,20 @@ void test_returning_array(void)
 
 void test_object_insert(void)
 {
-    std::cout << "\n>>>>> TEST OBJECT BINDING \n\n";
+    std::mtcout << MT("\n>>>>> TEST OBJECT BINDING \n\n");
 
     Clob clob(con);
-    clob.Write("Lob Value");
+    clob.Write(DT("Lob Value"));
     File file(con,  MT("mydir"), MT("myfile"));
     Date date;
     date.SysDate();
 
-    Object obj2(TypeInfo(con, "type_t", OCI_TIF_TYPE));
+    Object obj2(TypeInfo(con, MT("type_t"), OCI_TIF_TYPE));
 
     obj2.Set<int>    (MT("ID"), 1);
     obj2.Set<dstring>(MT("NAME"), DT("USB KEY 2go"));
 
-    Object obj1(TypeInfo(con, "test_t", OCI_TIF_TYPE));
+    Object obj1(TypeInfo(con, MT("test_t"), OCI_TIF_TYPE));
 
     obj1.Set<int>    (MT("VAL_INT"), 1);
     obj1.Set<double> (MT("VAL_DBL"), 3.14);
@@ -1020,11 +1051,11 @@ void test_object_insert(void)
     obj1.Set<File>   (MT("VAL_FILE"), file);
 
     Statement st(con);
-    st.Prepare("insert into test_object values(:obj)");
-    st.Bind(":obj", obj1, OCI_BDM_IN);
+    st.Prepare(MT("insert into test_object values(:obj)"));
+    st.Bind(MT(":obj"), obj1, OCI_BDM_IN);
     st.Execute();
 
-    std::cout << "Rows inserted :  " << st.GetAffectedRows() << std::endl;
+    std::mtcout << MT("Rows inserted :  ") << st.GetAffectedRows() << std::endl;
 
     con.Commit();
 }
@@ -1035,30 +1066,30 @@ void test_object_insert(void)
 
 void test_object_fetch(void)
 {
-    std::cout << "\n>>>>> TEST OBJECT FETCHING \n\n";
+    std::mtcout << MT("\n>>>>> TEST OBJECT FETCHING \n\n");
 
     Statement st(con);
     st.Execute(MT("select val from test_object for update"));
 
     Resultset rs = st.GetResultset();
 
-    while (rs.Next())
+    while (rs++)
     {
         Object obj  = rs.Get<Object>(1);
 
-        std::cout << ".... val_int      : " << obj.Get<int>(MT("VAL_INT"))     << std::endl;
-        std::cout << ".... val_dbl      : " << obj.Get<double>(MT("VAL_DBL"))  << std::endl;
-        std::cout << ".... val_flt      : " << obj.Get<float>(MT("VAL_FLT"))   << std::endl;
-        std::cout << ".... val_str      : " << obj.Get<dstring>(MT("VAL_STR")) << std::endl;
+        std::dtcout << DT(".... val_int      : ") << obj.Get<int>(MT("VAL_INT"))     << std::endl;
+        std::dtcout << DT(".... val_dbl      : ") << obj.Get<double>(MT("VAL_DBL"))  << std::endl;
+        std::dtcout << DT(".... val_flt      : ") << obj.Get<float>(MT("VAL_FLT"))   << std::endl;
+        std::dtcout << DT(".... val_str      : ") << obj.Get<dstring>(MT("VAL_STR")) << std::endl;
 
         Date date = obj.Get<Date>(MT("VAL_DATE"));
-        std::cout << ".... val_date     : " << date.ToString(MT("YYYY-MM-DD HH24:MI:SS")) << std::endl;
+        std::mtcout << MT(".... val_date     : ") << date.ToString(MT("YYYY-MM-DD HH24:MI:SS")) << std::endl;
 
         Clob clob = obj.Get<Clob>(MT("VAL_LOB"));
-        std::cout << ".... val_lob      : " << clob.Read(SIZE_BUF) << std::endl;
+        std::dtcout << DT(".... val_lob      : ") << clob.Read(SIZE_BUF) << std::endl;
 
         File file = obj.Get<File>(MT("VAL_FILE"));
-        std::cout << ".... val_file     : " << file.GetDirectory() << "/" << file.GetName() << std::endl;
+        std::mtcout << MT(".... val_file     : ") << file.GetDirectory() << MT("/") << file.GetName() << std::endl;
 
         char buffer[11];
         unsigned int len = 10;
@@ -1066,9 +1097,9 @@ void test_object_fetch(void)
         buffer[len] = 0;
         std::cout << ".... val_raw      : " << buffer << std::endl;
 
-        Object obj2 = obj.Get<Object>("VAL_OBJ");
-        std::cout << ".... val_obj.code : " << obj2.Get<int>(MT("ID"))       << std::endl;
-        std::cout << ".... val_obj.name : " << obj2.Get<dstring>(MT("NAME")) << std::endl;
+        Object obj2 = obj.Get<Object>(MT("VAL_OBJ"));
+        std::dtcout << DT(".... val_obj.code : ") << obj2.Get<int>(MT("ID"))       << std::endl;
+        std::dtcout << DT(".... val_obj.name : ") << obj2.Get<dstring>(MT("NAME")) << std::endl;
     }
 
     con.Commit();
@@ -1082,7 +1113,7 @@ void test_scrollable_cursor(void)
 {
     if (Environment::GetRuntimeVersion() > OCI_9_0)
     {   
-        std::cout << "\n>>>>> TEST SCROLLABLE CURSORS \n\n";
+        std::mtcout << MT("\n>>>>> TEST SCROLLABLE CURSORS \n\n");
 
         Statement st(con);
         
@@ -1093,32 +1124,32 @@ void test_scrollable_cursor(void)
         Resultset rs = st.GetResultset();
         
         rs.Last();
-        std::cout << "Total rows : " << rs.GetCount() << std::endl;
+        std::mtcout << MT("Total rows : ") << rs.GetCount() << std::endl;
         
-        std::cout << "... Go to row 1\n";
+        std::mtcout << MT("... Go to row 1\n");
         rs.First();
-        std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+        std::dtcout << DT("table ") << rs.Get<dstring>(1) << std::endl;
 
-        std::cout << "... Enumerate from row 2 to row " << rs.GetCount() << " " << std::endl;
-        while (rs.Next())
+        std::mtcout << MT("... Enumerate from row 2 to row ") << rs.GetCount() << MT(" ") << std::endl;
+        while (rs++)
         {
-            std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+            std::dtcout << DT("table ") << rs.Get<dstring>(1) << std::endl;
         }
 
-        std::cout << "... Enumerate from row " << rs.GetCount() -1  << " back to row 1" << std::endl;
-        std::cout << "table " << rs.Get<dstring>(1) << std::endl;while (rs.Prev())
+        std::mtcout << MT("... Enumerate from row ") << rs.GetCount() -1  << MT(" back to row 1") << std::endl;        
+        while (rs.Prev())
         {
-            std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+            std::dtcout << DT("table ") << rs.Get<dstring>(1) << std::endl;
         }
 
-        std::cout << "... Go to the 3th row" << std::endl;
+        std::mtcout << MT("... Go to the 3th row") << std::endl;
         rs.Seek(OCI_SFD_ABSOLUTE, 3);
-        std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+        std::dtcout << DT("table ") << rs.Get<dstring>(1) << std::endl;
 
-        std::cout <<"... Fetch the next 2 rows" << std::endl;
-        while (rs.GetCurrentRow() < 5 && rs.Next())
+        std::mtcout << MT("... Fetch the next 2 rows") << std::endl;
+        while (rs.GetCurrentRow() < 5 && rs++)
         {
-            std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+            std::dtcout << DT("table ") << rs.Get<dstring>(1) << std::endl;
         }
     }
 }
@@ -1128,7 +1159,7 @@ void test_scrollable_cursor(void)
  * --------------------------------------------------------------------------------------------- */
 void test_collection(void)
 {
-    std::cout << "\n>>>>> TEST VARRAY BINDING WITH ITERATOR \n\n";
+    std::mtcout << MT("\n>>>>> TEST VARRAY BINDING WITH ITERATOR \n\n");
 
     int i;
 
@@ -1149,44 +1180,44 @@ void test_collection(void)
 
     st.Execute();
 
-    std::cout << "Department ID #" << i << std::endl;
+    std::mtcout << MT("Department ID #") << i << std::endl;
 
     CollectionIterator iter(coll);
-    while (iter.Next())
+    while (iter++)
     {
-        std::cout << "... Employee : " << iter.Get<dstring>() << std::endl;
+        std::dtcout << DT("... Employee : ") << iter.Get<dstring>() << std::endl;
     }
 
-    std::cout << "\n>>>>> TEST VARRAY FETCHING WITH ITERATOR \n\n";
+    std::mtcout << MT("\n>>>>> TEST VARRAY FETCHING WITH ITERATOR \n\n");
 
     st.Execute(MT("SELECT * from test_coll_varray"));
  
     Resultset rs = st.GetResultset();
-    while (rs.Next())
+    while (rs++)
     {
-        std::cout << "Department ID #" << rs.Get<int>(1) << std::endl;
+        std::dtcout << DT("Department ID #") << rs.Get<int>(1) << std::endl;
 
         coll = rs.Get<Collection>(2);
         CollectionIterator iter2(coll);
-        while (iter2.Next())
+        while (iter2++)
         {
-            std::cout << "... Employee : " << iter2.Get<dstring>() << std::endl;
+            std::dtcout << DT("... Employee : ") << iter2.Get<dstring>() << std::endl;
         }
     }
 
-    std::cout << "\n>>>>> TEST NESTED TABLE FETCHING WITH INDEX ACCESS \n\n";
+    std::mtcout << MT("\n>>>>> TEST NESTED TABLE FETCHING WITH INDEX ACCESS \n\n");
 
     st.Execute(MT("SELECT * from test_coll_nested"));
 
     rs = st.GetResultset();
-    while (rs.Next())
+    while (rs++)
     {
-        std::cout << "Department ID #" << rs.Get<int>(1) << std::endl;
+        std::dtcout << DT("Department ID #") << rs.Get<int>(1) << std::endl;
 
         coll = rs.Get<Collection>(2);
         for(int index = 1, n = coll.GetSize(); index <= n; index++)
         {
-            std::cout << "... Employee : " << coll.Get<dstring>(index) << std::endl;
+            std::dtcout << DT("... Employee : ") << coll.Get<dstring>(index) << std::endl;
         }
     }
 }
@@ -1196,22 +1227,22 @@ void test_collection(void)
  * --------------------------------------------------------------------------------------------- */
 void test_ref(void)
 {
-    std::cout << "\n>>>>> TEST REF FETCHING \n\n";
+    std::mtcout << MT("\n>>>>> TEST REF FETCHING \n\n");
 
     Statement st(con);
 
     st.Execute(MT("select ref(e) from test_table_obj e"));
 
     Resultset rs = st.GetResultset();
-    while (rs.Next())
+    while (rs++)
     {
         Reference ref = rs.Get<Reference>(1);
         Object   obj  = ref.GetObject();
         
-        std::cout << obj.Get<int>(MT("ID")) << " - " << obj.Get<dstring>(MT("NAME")) << std::endl;
+        std::dtcout << obj.Get<int>(MT("ID")) << DT(" - ") << obj.Get<dstring>(MT("NAME")) << std::endl;
     }
 
-    std::cout << "\n>>>>> TEST REF PL/SQL BINDING \n\n";
+    std::mtcout << MT("\n>>>>> TEST REF PL/SQL BINDING \n\n");
 
     Reference ref(TypeInfo(con, MT("type_t"), OCI_TIF_TYPE));
 
@@ -1223,7 +1254,7 @@ void test_ref(void)
     st.Execute();
 
     Object obj = ref.GetObject();
-    std::cout << obj.Get<int>(MT("ID")) << " - " << obj.Get<dstring>(MT("NAME")) << std::endl;
+    std::dtcout << obj.Get<int>(MT("ID")) << DT(" - ") << obj.Get<dstring>(MT("NAME")) << std::endl;
 }
 
 
@@ -1246,7 +1277,7 @@ void test_directpath(void)
 
         con.Commit();
 
-        std::cout << "\n>>>>> TEST DIRECT PATH (10 loads of 100 rows) \n\n";
+        std::mtcout << MT("\n>>>>> TEST DIRECT PATH (10 loads of 100 rows) \n\n");
     
         int i = 0, j = 0, nb_rows = SIZE_ARRAY;
 
@@ -1281,13 +1312,13 @@ void test_directpath(void)
 
             for (j = 1; j <= nb_rows; j++)
             {             
-                std::ostringstream val1, val2, val3;
+                std::dtostringstream val1, val2, val3;
 
                 /* fill test values */
 
-                val1 << std::setfill('0') << std::setw(4) << j + (i*100);
-                val2 << "value "<< std::setfill('0') << std::setw(5) << j + (i*100);
-                val3 << std::setfill('0') << std::setw(2) << (j%23)+1 + 2000 <<  std::setw(2) << (j%11)+1 << (j%23)+1;
+                val1 << std::setfill(DT('0')) << std::setw(4) << j + (i*100);
+                val2 << DT("value ") << std::setfill(DT('0')) << std::setw(5) << j + (i*100);
+                val3 << std::setfill(DT('0')) << std::setw(2) << (j%23)+1 + 2000 <<  std::setw(2) << (j%11)+1 << (j%23)+1;
 
                 directPath.SetEntry(j, 1, val1.str());
                 directPath.SetEntry(j, 2, val2.str());
@@ -1303,7 +1334,7 @@ void test_directpath(void)
 
         directPath.Finish();
 
-       std::cout << std::setw(4) << directPath.GetRowCount() << " row(s) loaded" << std::endl;
+       std::mtcout << std::setw(4) << directPath.GetRowCount() << MT(" row(s) loaded") << std::endl;
    }
 }
 

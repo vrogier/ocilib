@@ -849,8 +849,8 @@ public:
 
     void EnableServerOutput(unsigned int bufsize, unsigned int arrsize, unsigned int lnsize);
     void DisableServerOutput();
-    bool GetServerOutput(mstring &line) const;
-    void GetServerOutput(std::vector<mstring> &lines) const;
+    bool GetServerOutput(dstring &line) const;
+    void GetServerOutput(std::vector<dstring> &lines) const;
 
     void SetTrace(unsigned int trace, mstring value);
     mstring GetTrace(unsigned int trace) const;
@@ -1850,9 +1850,9 @@ public:
 
     unsigned int GetType() const;
     unsigned int GetOperation() const;
-    mstring GetDatabaseName() const;
-    mstring GetObjectName() const;
-    mstring GetRowID() const;
+    dstring GetDatabaseName() const;
+    dstring GetObjectName() const;
+    dstring GetRowID() const;
     Subscription GetSubscription() const;
 
 private:
@@ -3024,18 +3024,18 @@ inline void Connection::DisableServerOutput()
     Check(OCI_ServerDisableOutput(*this));
 }
 
-inline bool Connection::GetServerOutput(mstring &line) const
+inline bool Connection::GetServerOutput(dstring &line) const
 {
-    const mtext * str = Check(OCI_ServerGetOutput(*this));
+    const dtext * str = Check(OCI_ServerGetOutput(*this));
 
     line = MakeString(str);
 
     return (str != 0);
 }
 
-inline void Connection::GetServerOutput(std::vector<mstring> &lines) const
+inline void Connection::GetServerOutput(std::vector<dstring> &lines) const
 {
-    const mtext * str = Check(OCI_ServerGetOutput(*this));
+    const dtext * str = Check(OCI_ServerGetOutput(*this));
 
     while (str)
     {
@@ -4622,11 +4622,11 @@ inline mstring Reference::ToString() const
 {
     unsigned int size =  Check(OCI_RefGetHexSize(*this));
 
-    ManagedBuffer<mtext> buffer = new dtext [ size+1 ];
+    ManagedBuffer<mtext> buffer = new mtext [ size+1 ];
 
     Check(OCI_RefToText(*this, size, (mtext *) buffer));
 
-    return MakeString( (const dtext *) buffer);
+    return MakeString( (const mtext *) buffer);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -6737,17 +6737,17 @@ inline unsigned int Event::GetOperation() const
     return Check(OCI_EventGetOperation(*this));
 }
 
-inline mstring Event::GetDatabaseName() const
+inline dstring Event::GetDatabaseName() const
 {
     return MakeString(Check(OCI_EventGetDatabase(*this)));
 }
 
-inline mstring Event::GetObjectName() const
+inline dstring Event::GetObjectName() const
 {
     return MakeString(Check(OCI_EventGetObject(*this)));
 }
 
-inline mstring Event::GetRowID() const
+inline dstring Event::GetRowID() const
 {
     return MakeString(Check(OCI_EventGetRowid(*this)));
 }
