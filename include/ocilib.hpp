@@ -4687,12 +4687,12 @@ inline void Collection::Clear()
 
 inline bool Collection::IsElementNull(unsigned int index) const
 {
-   return (Check(OCI_ElemIsNull(Check(OCI_CollGetAt(*this, index)))) == TRUE);
+   return (Check(OCI_ElemIsNull(Check(OCI_CollGetElem(*this, index)))) == TRUE);
 }
 
 inline void Collection::SetElementNull(unsigned int index)
 {
-    Check(OCI_ElemSetNull(Check(OCI_CollGetAt(*this, index))));
+    Check(OCI_ElemSetNull(Check(OCI_CollGetElem(*this, index))));
 }
 
 inline bool Collection::Delete(unsigned int index) const
@@ -4703,33 +4703,33 @@ inline bool Collection::Delete(unsigned int index) const
 template <class TDataType>
 inline TDataType Collection::Get(unsigned int index) const
 {
-    return GetElem<TDataType>(Check(OCI_CollGetAt(*this, index)), GetHandle());
+    return GetElem<TDataType>(Check(OCI_CollGetElem(*this, index)), GetHandle());
 }
 
 template <class TDataType>
 inline void Collection::Get(unsigned int index, TDataType value, unsigned int &size) const
 {
-    GetElem<TDataType>(Check(OCI_CollGetAt(*this, index)), value, size);
+    GetElem<TDataType>(Check(OCI_CollGetElem(*this, index)), value, size);
 }
 
 template <class TDataType>
 inline void Collection::Set(unsigned int index, const TDataType &data)
 {
-    OCI_Elem * elem = Check(OCI_CollGetAt(*this, index));
+    OCI_Elem * elem = Check(OCI_CollGetElem(*this, index));
 
     SetElem<TDataType>(elem, data);
 
-    Check(OCI_CollSetAt(*this, index, elem));
+    Check(OCI_CollSetElem(*this, index, elem));
 }
 
 template <class TDataType>
 inline void Collection::Set(unsigned int index, const TDataType value, unsigned int size)
 {
-    OCI_Elem * elem = Check(OCI_CollGetAt(*this, index));
+    OCI_Elem * elem = Check(OCI_CollGetElem(*this, index));
 
     SetElem<TDataType>(elem, value, size);
 
-    Check(OCI_CollSetAt(*this, index, elem));
+    Check(OCI_CollSetElem(*this, index, elem));
 }
 
 template <class TDataType>
@@ -5195,7 +5195,7 @@ inline void BindArray::BindArrayObject<dstring, dtext>::AllocData()
 {
     _data = (dtext *) new dtext[_elemSize * _elemCount];
 
-    memset(_data, 0, _elemSize * _elemCount);
+    memset(_data, 0, _elemSize * _elemCount * sizeof(dtext));
 }
 
 template <class TObjectType, class TDataType>
@@ -5316,7 +5316,7 @@ inline BindString::BindString(dstring &string, unsigned int elemSize) : _string(
 {
     _data = new dtext[_elemSize];
 
-     memset( _data, 0, _elemSize);
+     memset( _data, 0, _elemSize * sizeof(dtext));
 }
 
 inline BindString::~BindString()
