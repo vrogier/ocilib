@@ -80,7 +80,7 @@ OCI_HashTable * OCI_API OCI_HashCreate
 )
 {
     OCI_HashTable *table = NULL;
-    boolean res          = TRUE;
+    boolean res          = FALSE;
 
     /* allocate table structure */
 
@@ -90,18 +90,19 @@ OCI_HashTable * OCI_API OCI_HashCreate
 
     if (table != NULL)
     {
-        table->size  = size;
         table->type  = type;
+        table->size  = 0;
         table->count = 0;
 
         table->items = (OCI_HashEntry **) OCI_MemAlloc(OCI_IPC_HASHENTRY_ARRAY,
                                                        sizeof(*table->items),
                                                        (size_t) size, TRUE);
-        res = (table->items != NULL);
-    }
-    else
-    {
-        res = FALSE;
+        if (table->items != NULL)
+        {
+            table->size  = size;           
+            
+            res = TRUE;
+        }
     }
 
     if (res == FALSE)
@@ -130,44 +131,44 @@ boolean OCI_API OCI_HashFree
 
     OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, FALSE);
 
-    for (i = 0; i < table->size; i++)
-    {
-        e1 = table->items[i];
-
-        while (e1 != NULL)
-        {
-            e2 = e1;
-            e1 = e1->next;
-
-            v1 = e2->values;
-
-            while (v1 != NULL)
-            {
-                v2 = v1;
-                v1 = v1->next;
-
-                if (table->type == OCI_HASH_STRING)
-                {
-                    OCI_FREE(v2->value.p_mtext);
-                }
-
-                OCI_FREE(v2);
-            }
-
-            if (e2->key)
-            {
-                OCI_FREE(e2->key);
-            }
-
-            if (e2)
-            {
-                OCI_FREE(e2);
-            }
-        }
-    }
-
     if (table->items != NULL)
     {
+        for (i = 0; i < table->size; i++)
+        {
+            e1 = table->items[i];
+
+            while (e1 != NULL)
+            {
+                e2 = e1;
+                e1 = e1->next;
+
+                v1 = e2->values;
+
+                while (v1 != NULL)
+                {
+                    v2 = v1;
+                    v1 = v1->next;
+
+                    if (table->type == OCI_HASH_STRING)
+                    {
+                        OCI_FREE(v2->value.p_mtext);
+                    }
+
+                    OCI_FREE(v2);
+                }
+
+                if (e2->key)
+                {
+                    OCI_FREE(e2->key);
+                }
+
+                if (e2)
+                {
+                    OCI_FREE(e2);
+                }
+            }
+        }
+
         OCI_FREE(table->items);
     }
 
