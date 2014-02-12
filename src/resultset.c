@@ -1832,13 +1832,8 @@ const otext * OCI_API OCI_GetString
 
                     if (lob)
                     {
-                        big_uint len = OCI_LobGetLength(lob);
-
-                        if (len <= MAXUINT)
-                        {
-                            bufsize = (unsigned int) len;
-                        }
-
+                        bufsize = (unsigned int) OCI_LobGetLength(lob);;
+                     
                         if (OCI_BLONG == def->col.subtype)
                         {
                             /* here we have binary blob, it will be output in hexa */

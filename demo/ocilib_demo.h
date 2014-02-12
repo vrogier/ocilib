@@ -135,8 +135,8 @@ typedef struct test_t
 
   #else
 
-    #define mtmain          main
-    #define mtarg           char
+    #define omain           main
+    #define oarg            char
     #define print_args(x)   printf(x)
     #define GET_ARG(s, i)   mbstowcs(s, argv[i], sizeof(s))
 
@@ -144,9 +144,9 @@ typedef struct test_t
 
 #else
 
-  #define mtmain          main
-  #define mtarg           char
-  #define print_args(x)   print_otext(x)
+  #define omain           main
+  #define oarg            char
+  #define print_args(x)   printf(x)
   #define GET_ARG(s, i)   strncat(s, argv[i], sizeof(s))
 
 #endif

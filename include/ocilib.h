@@ -506,23 +506,16 @@ extern "C" {
  *
 **/
 
-
 #include <wctype.h>
 
-    #ifdef _MSC_VER
+#if (_MSC_VER < 1300) && defined(__cplusplus)
+    extern "C++" {
+#endif
 
-    #if (_MSC_VER < 1300) && defined(__cplusplus)
-        extern "C++" {
-    #endif
-
-    #include <wchar.h>
+#include <wchar.h>
     
-    #if (_MSC_VER < 1300) && defined(__cplusplus)
-        }
-    #endif
-
-    #else
-
+#if (_MSC_VER < 1300) && defined(__cplusplus)
+    }
 #endif
 
 /* Charset macros */
@@ -548,8 +541,6 @@ extern "C" {
 
 */
 
-#ifdef OCI_CHARSET_ANSI
-
 OCI_EXPORT int       ocisprintf
 (
     char       *str,
@@ -569,8 +560,6 @@ OCI_EXPORT int       ocistrcasecmp
     const char *str2
 );
 
-#else
-
 OCI_EXPORT wchar_t * ociwcsdup
 (
     const wchar_t * src
@@ -582,14 +571,12 @@ OCI_EXPORT int ociwcscasecmp
     const wchar_t *str2
 );
 
-#endif
-
 /* special defines for Microsoft C runtime that is not C ISO compliant */
 
 #ifdef _WINDOWS
 
   #define vsnprintf  _vsnprintf
-   #define swprintf _snwprintf
+  #define swprintf _snwprintf
 
 #endif
 

@@ -1015,7 +1015,7 @@ void test_describe(void)
             wprintf(OTEXT("%-20s%-8s%-30s\n"),
   #endif
 #else
-            print_text("%-20s%-8s%-30s\n",
+            printf("%-20s%-8s%-30s\n",
 #endif
                     OCI_ColumnGetName(col),
                     OCI_ColumnGetNullable(col) == TRUE ? OTEXT("Y") : OTEXT("N"),
