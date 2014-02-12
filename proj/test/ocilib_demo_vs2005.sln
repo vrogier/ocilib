@@ -7,7 +7,6 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug ANSI|Win32 = Debug ANSI|Win32
 		Release ANSI|Win32 = Release ANSI|Win32
-		Release MIXED|Win32 = Release MIXED|Win32
 		Release UNICODE|Win32 = Release UNICODE|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
@@ -15,8 +14,6 @@ Global
 		{D08196A4-17BC-42CE-A7A9-866905120974}.Debug ANSI|Win32.Build.0 = Debug ANSI|Win32
 		{D08196A4-17BC-42CE-A7A9-866905120974}.Release ANSI|Win32.ActiveCfg = Release ANSI|Win32
 		{D08196A4-17BC-42CE-A7A9-866905120974}.Release ANSI|Win32.Build.0 = Release ANSI|Win32
-		{D08196A4-17BC-42CE-A7A9-866905120974}.Release MIXED|Win32.ActiveCfg = Release MIXED|Win32
-		{D08196A4-17BC-42CE-A7A9-866905120974}.Release MIXED|Win32.Build.0 = Release MIXED|Win32
 		{D08196A4-17BC-42CE-A7A9-866905120974}.Release UNICODE|Win32.ActiveCfg = Release UNICODE|Win32
 		{D08196A4-17BC-42CE-A7A9-866905120974}.Release UNICODE|Win32.Build.0 = Release UNICODE|Win32
 	EndGlobalSection

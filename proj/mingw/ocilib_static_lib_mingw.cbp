@@ -24,24 +24,6 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
-			<Target title="Release - MIXED">
-				<Option output="..\..\lib32\libocilibm.a" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="" />
-				<Option object_output="obj\Release\" />
-				<Option type="2" />
-				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Compiler>
-					<Add option="-O2" />
-					<Add option="-Wall" />
-					<Add option="-DOCI_CHARSET_MIXED" />
-					<Add option="-DOCI_IMPORT_RUNTIME" />
-					<Add option="-DOCI_API=__stdcall" />
-				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
-			</Target>
 			<Target title="Release - UNICODE">
 				<Option output="..\..\lib32\libocilibw.a" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
