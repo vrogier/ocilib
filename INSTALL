@@ -238,7 +238,7 @@ an Autoconf bug.  Until the bug is fixed you can use this workaround:
 `--with-oracle-charset'
 
      Specify charset uses with Oracle OCI libraries
-     Possible values are : ansi|unicode|mixed
+     Possible values are : ansi|unicode
      Default is : ansi
 
 `--with-oracle-import'

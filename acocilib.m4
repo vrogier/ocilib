@@ -94,7 +94,7 @@ AC_DEFUN([OCILIB_OPTIONS],
   [  ac_oracle_import=$withval ], [ ac_oracle_import="linkage" ])
 
   AC_ARG_WITH(oracle_charset,
-  [  --with-oracle-charset=(ansi|wide|mixed)],
+  [  --with-oracle-charset=(ansi|wide)],
   [  ac_oracle_charset=$withval ], [ ac_oracle_charset="ansi" ])
 
   OCILIB_IMPORT="OCI_IMPORT_LINKAGE"
@@ -114,8 +114,6 @@ AC_DEFUN([OCILIB_OPTIONS],
     OCILIB_CHARSET="OCI_CHARSET_WIDE"
   elif test x"$ac_oracle_charset" = x"wide" ; then 
     OCILIB_CHARSET="OCI_CHARSET_WIDE"
-  elif test x"$ac_oracle_charset" = x"mixed" ; then 
-    OCILIB_CHARSET="OCI_CHARSET_MIXED"
   else
     AC_MSG_ERROR([Invalid argument ($ac_oracle_charset) for --with-oracle-charset.])
   fi

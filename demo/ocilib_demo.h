@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -35,7 +35,7 @@
  * SO, WE NEED A LITTLE EFFORT TO KEEP THE SAME SOURCE CODE FOR :
  *
  *    - MS WINDOWS AND UNIXES
- *    - ANSI / MIXED / WIDE BUILDS
+ *    - ANSI / WIDE BUILDS
  *
  * SOME DEFINES FOLLOW IN ORDER TO HANDLE ALL THOSE STUFF
  *
@@ -85,8 +85,6 @@ typedef struct test_t
 
   #if defined(OCI_CHARSET_WIDE)
       #pragma comment(lib, "ocilibw.lib")
-  #elif defined(OCI_CHARSET_MIXED)
-      #pragma comment(lib, "ocilibm.lib")
   #elif defined(OCI_CHARSET_ANSI)
       #pragma comment(lib, "ociliba.lib")
   #endif
@@ -109,54 +107,17 @@ typedef struct test_t
  * STRING PRINTING
  * --------------------------------------------------------------------------------------------- */
 
-#define print_text(x)       printf(x)
 #define print_frmt(f, x)    printf(f, x)
+#define print_text(x)       printf(x)
 
 #if defined(OCI_CHARSET_WIDE)
-
-  #define print_mt  wprintf
-  #define print_dt  wprintf
-  #define sprint_mt swprintf
-  #define sprint_dt swprintf
-
-#elif defined(OCI_CHARSET_MIXED)
-
-  #define print_mt  printf
-  #define print_dt  wprintf
-  #define sprint_mt ocisprintf
-  #define sprint_dt swprintf
-
+    #ifdef _WINDOWS
+        #define print_ostr(x)   wprintf(OTEXT("%s"), x)
 #else
-
-  #define print_mt  printf
-  #define print_dt  printf
-  #define sprint_mt ocisprintf
-  #define sprint_dt ocisprintf
-
+        #define print_ostr(x)   printf("%ls", x)
 #endif
-
-/* print userdata text */
-
-#if !defined(OCI_CHARSET_ANSI) && !defined(_WINDOWS)
-
-#define print_dstr(x)   printf("%ls", (wchar_t*) x)
-
 #else
-
-  #define print_dstr(x)   print_dt(DT("%s"), x)
-
-#endif
-
-/* print metadata text */
-
-#if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
-
-  #define print_mstr(x)   printf("%ls", x)
-
-#else
-
-  #define print_mstr(x)   print_mt(MT("%s"), x)
-
+  #define print_ostr(x)   printf(OTEXT("%s"), x)
 #endif
 
 /* --------------------------------------------------------------------------------------------- *
@@ -167,16 +128,16 @@ typedef struct test_t
 
   #if defined(_MSC_VER)
 
-    #define mtmain          wmain
-    #define mtarg           mtext
-    #define print_args(x)   print_mt(x)
-    #define GET_ARG(s, i)   mtsncat(s, argv[i], sizeof(s))
+    #define omain           wmain
+    #define oarg            otext
+    #define print_args(x)   wprintf(x)
+    #define GET_ARG(s, i)   ostrncat(s, argv[i], sizeof(s))
 
   #else
 
     #define mtmain          main
     #define mtarg           char
-    #define print_args(x)   print_mstr(x)
+    #define print_args(x)   printf(x)
     #define GET_ARG(s, i)   mbstowcs(s, argv[i], sizeof(s))
 
   #endif
@@ -185,7 +146,7 @@ typedef struct test_t
 
   #define mtmain          main
   #define mtarg           char
-  #define print_args(x)   print_text(x)
+  #define print_args(x)   print_otext(x)
   #define GET_ARG(s, i)   strncat(s, argv[i], sizeof(s))
 
 #endif

@@ -135,7 +135,7 @@ Custom install options
 `--with-oracle-charset'
 
      Specify charset uses with Oracle OCI libraries
-     Possible values are : ansi|wide|mixed
+     Possible values are : ansi|wide
      Default is : ansi
 
 `--with-oracle-import'
@@ -191,7 +191,7 @@ Add the following to your makefile
 
 add -DOCI_CHARSET_xxxx  to your CFLAGS
 
-where xxxx can be : ANSI | WIDE | MIXED
+where xxxx can be : ANSI | WIDE
 
 2 / link OCILIB library
 

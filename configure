@@ -1533,11 +1533,11 @@ Optional Packages:
                           both]
   --with-tags[=TAGS]      include additional configurations [automatic]
   --with-oracle-import=(linkage|runtime)
-  --with-oracle-charset=(ansi|wide|mixed)
---with-oracle-home=Location of Oracle Installation.
---with-oracle-headers-path=Location of OCI public headers.
---with-oracle-lib-path=Location of OCI shared library.
---with-custom-loader=Custom loader flag.
+  --with-oracle-charset=(ansi|wide)
+  --with-oracle-home=Location of Oracle Installation.
+  --with-oracle-headers-path=Location of OCI public headers.
+  --with-oracle-lib-path=Location of OCI shared library.
+  --with-custom-loader=Custom loader flag.
 
 Some influential environment variables:
   CC          C compiler command
@@ -18874,8 +18874,6 @@ fi
     OCILIB_CHARSET="OCI_CHARSET_WIDE"
   elif test x"$ac_oracle_charset" = x"wide" ; then
     OCILIB_CHARSET="OCI_CHARSET_WIDE"
-  elif test x"$ac_oracle_charset" = x"mixed" ; then
-    OCILIB_CHARSET="OCI_CHARSET_MIXED"
   else
     as_fn_error "Invalid argument ($ac_oracle_charset) for --with-oracle-charset." "$LINENO" 5
   fi
