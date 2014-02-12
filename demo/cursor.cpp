@@ -23,7 +23,7 @@ int main(void)
 
             while (rs2.Next())
             {
-                std::cout << "Code : " << rs.Get<int>(1) << ", Date : " << rs2.Get<dstring>(1) << std::endl;
+                std::cout << "Code : " << rs.Get<int>(1) << ", Date : " << rs2.Get<ostring>(1) << std::endl;
             }
         }    
 

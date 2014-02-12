@@ -16,7 +16,7 @@ int main(void)
         Resultset rs = st.GetResultset();
         while (rs.Next())
         {
-            std::cout << "code:" << rs.Get<int>(1) << " name: " <<  rs.Get<dstring>(2) << std::endl;
+            std::cout << "code:" << rs.Get<int>(1) << " name: " <<  rs.Get<ostring>(2) << std::endl;
         }
  
         std::cout << "=> Total fetched rows : " << rs.GetCount() << std::endl;

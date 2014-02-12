@@ -21,28 +21,28 @@ int main(void)
         std::cout << "Total rows : " << rs.GetCount() << std::endl;
 
         rs.First();
-        std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+        std::cout << "table " << rs.Get<ostring>(1) << std::endl;
 
         while (rs.Next())
         {
-            std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+            std::cout << "table " << rs.Get<ostring>(1) << std::endl;
         }
 
         while (rs.Prev())
         {
-            std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+            std::cout << "table " << rs.Get<ostring>(1) << std::endl;
         }
 
         rs.Seek(OCI_SFD_ABSOLUTE, 6);
-        std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+        std::cout << "table " << rs.Get<ostring>(1) << std::endl;
 
         while (rs.Next())
         {
-            std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+            std::cout << "table " << rs.Get<ostring>(1) << std::endl;
         }
 
         rs.Seek(OCI_SFD_RELATIVE, -3);
-        std::cout << "table " << rs.Get<dstring>(1) << std::endl;
+        std::cout << "table " << rs.Get<ostring>(1) << std::endl;
     }
     catch(Exception &ex)
     {

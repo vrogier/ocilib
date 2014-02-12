@@ -13,7 +13,7 @@ void worker(ThreadHandle handle, void *data)
     st.Execute("select to_char(sysdate, 'YYYYMMDD HH24:MI:SS') from dual");
     Resultset rs = st.GetResultset();
     rs.Next();
-    std::cout << handle << " - " << rs.Get<dstring>(1) << std::endl;
+    std::cout << handle << " - " << rs.Get<ostring>(1) << std::endl;
     con.Close();
 }
 

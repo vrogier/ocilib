@@ -13,7 +13,7 @@ int main(void)
         Connection con("db", "usr", "pwd");
 
         std::vector<int> ints;
-        std::vector<dstring> strs;
+        std::vector<ostring> strs;
         
         Statement st(con);
         st.Prepare("insert into products values(:i, :s)");
@@ -23,7 +23,7 @@ int main(void)
 
         for(int i=0;i<ArraySize;i++)
         {
-            dstring str;
+            ostring str;
             str += "Name";
             str += ( (i+1) +'0');
 

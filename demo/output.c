@@ -4,7 +4,7 @@ int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement  *st;
-    const dtext *p;
+    const char *p;
 
     if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
         return EXIT_FAILURE;

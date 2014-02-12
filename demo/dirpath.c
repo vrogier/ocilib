@@ -13,9 +13,9 @@ int main(void)
     OCI_DirPath    *dp;
     OCI_TypeInfo   *tbl;
 
-    dtext val1[SIZE_COL1+1];
-    dtext val2[SIZE_COL2+1];
-    dtext val3[SIZE_COL3+1];
+    char val1[SIZE_COL1+1];
+    char val2[SIZE_COL2+1];
+    char val3[SIZE_COL3+1];
 
     int i = 0, j = 0, nb_rows = SIZE_ARRAY;
     boolean res = TRUE;

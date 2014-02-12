@@ -16,7 +16,7 @@ void OracleCallProc(ThreadHandle handle, void *data)
         Resultset rs = st.GetResultset();
         while (rs.Next())
         {
-            std::cout << rs.Get<dstring>(1) << std::endl;
+            std::cout << rs.Get<ostring>(1) << std::endl;
         }
     }
     catch(Exception &ex)

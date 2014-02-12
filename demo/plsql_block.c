@@ -14,8 +14,8 @@ int main(void)
 
     /* pl/sql call */
 
-    OCI_Prepare(st, MT("begin :res := trunc(sysdate+1)-trunc(sysdate-1); end;"));
-    OCI_BindInt(st, MT(":res"), &res);
+    OCI_Prepare(st, "begin :res := trunc(sysdate+1)-trunc(sysdate-1); end;");
+    OCI_BindInt(st, ":res", &res);
     OCI_Execute(st);
 
     printf("result : %i\n", res);

@@ -40,12 +40,12 @@ int main(void)
         Object vendor(TypeInfo(con, "t_vendor", OCI_TIF_TYPE));
 
         vendor.Set<int>("CODE", 134);
-        vendor.Set<dstring>("NAME", "JOHN SMITH");
+        vendor.Set<ostring>("NAME", "JOHN SMITH");
 
         sale.Set<int>("CODE", 1);
         sale.Set<double>("PRICE", 12.99);
-        sale.Set<dstring>("NAME", "USB KEY 2go");
-        sale.Set<dstring>( "REF", "A56547WSAA");
+        sale.Set<ostring>("NAME", "USB KEY 2go");
+        sale.Set<ostring>( "REF", "A56547WSAA");
         sale.Set<Date>("DATE_SALE", date);
         sale.Set<Object>("VENDOR", vendor);
 

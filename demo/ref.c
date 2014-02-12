@@ -5,7 +5,7 @@
 void dump_ref(OCI_Ref *ref)
 {
     OCI_Object *obj;
-    dtext data[SIZE_STR + 1];
+    char data[SIZE_STR + 1];
 
     /* print ref hexadecimal value */
 
