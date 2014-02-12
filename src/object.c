@@ -644,7 +644,8 @@ boolean OCI_ObjectGetNumber
 
         if (index >= 0)
         {          
-            res = OCI_NumberFromString(obj->con, value, size, flag, obj->typinf->cols[index].libcode, OCI_ObjectGetString(obj, attr), NULL);
+            res = OCI_NumberFromString(obj->con, value, size, flag, obj->typinf->cols[index].libcode, 
+                                       OCI_ObjectGetString(obj, attr), NULL);
         }
     }
 

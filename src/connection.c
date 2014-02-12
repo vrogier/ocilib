@@ -132,7 +132,7 @@ OCI_Connection * OCI_ConnectionAllocate
 
                 if (con->db && con->db[0])
                 {
-                    OCI_StringNativeToAnsi(con->db, dbname, ostrlen(con->db));         
+                    OCI_StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));         
                 }
 
                 con->env = xaoEnv((OraText *) (dbname[0] ? dbname : NULL ));
@@ -363,7 +363,7 @@ boolean OCI_ConnectionLogon
 
         if (con->db && con->db[0])
         {
-            OCI_StringNativeToAnsi(con->db, dbname, ostrlen(con->db));         
+            OCI_StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));         
         }
 
         con->cxt = xaoSvcCtx((OraText *) (dbname[0] ? dbname : NULL ));
