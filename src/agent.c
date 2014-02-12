@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -47,25 +47,27 @@ OCI_Agent * OCI_AgentInit
     OCI_Connection *con,
     OCI_Agent     **pagent,
     OCIAQAgent     *handle,
-    const mtext    *name,
-    const mtext    *address
+    const otext    *name,
+    const otext    *address
 )
 {
     OCI_Agent *agent = NULL;
-    boolean res      = TRUE;
+    boolean    res   = FALSE;
 
     OCI_CHECK(pagent == NULL, NULL);
 
     /* allocate agent structure */
 
-    if (*pagent == NULL)
+    if (!*pagent)
     {
         *pagent = (OCI_Agent *) OCI_MemAlloc(OCI_IPC_AGENT, sizeof(*agent),  (size_t) 1, TRUE);
     }
 
-    if (*pagent != NULL)
+    if (*pagent)
     {
         agent = *pagent;
+
+        res = TRUE;
 
         /* reinit */
 
@@ -75,14 +77,14 @@ OCI_Agent * OCI_AgentInit
         agent->con    = con;
         agent->handle = handle;
 
-        if (handle == NULL)
+        if (!handle)
         {
             agent->hstate = OCI_OBJECT_ALLOCATED;
 
-            res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) agent->con->env,
-                                                      (dvoid **) &agent->handle,
-                                                      OCI_DTYPE_AQAGENT,
-                                                      (size_t) 0, (dvoid **) NULL));
+            res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid * ) agent->con->env,
+                                                     (dvoid **) &agent->handle,
+                                                     OCI_DTYPE_AQAGENT,
+                                                     (size_t) 0, (dvoid **) NULL));
         }
         else
         {
@@ -91,26 +93,22 @@ OCI_Agent * OCI_AgentInit
 
         /* set name attribute if provided */
 
-        if ((res == TRUE) && (name != NULL) && (name[0] != 0))
+        if (res && name && name[0])
         {
             res = OCI_AgentSetName(agent, name);
         }
 
         /* set address attribute if provided */
 
-        if ((res == TRUE) && (address != NULL) && (address[0] != 0))
+        if (res && address && address[0])
         {
             res = OCI_AgentSetAddress(agent, address);
         }
     }
-    else
-    {
-        res = FALSE;
-    }
 
     /* check for failure */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_AgentFree(agent);
         agent = NULL;
@@ -130,8 +128,8 @@ OCI_Agent * OCI_AgentInit
 OCI_Agent * OCI_API OCI_AgentCreate
 (
     OCI_Connection *con,
-    const mtext    *name,
-    const mtext    *address
+    const otext    *name,
+    const otext    *address
 )
 {
     OCI_Agent *agent = NULL;
@@ -160,14 +158,13 @@ boolean OCI_API OCI_AgentFree
 
     OCI_CHECK_PTR(OCI_IPC_AGENT, agent, FALSE);
 
-    if (agent->hstate == OCI_OBJECT_ALLOCATED)
+    if (OCI_OBJECT_ALLOCATED == agent->hstate)
     {
         OCI_DescriptorFree((dvoid *) agent->handle, OCI_DTYPE_AQAGENT);
     }
 
     OCI_FREE(agent->address);
     OCI_FREE(agent->name);
-
     OCI_FREE(agent);
 
     OCI_RESULT(res);
@@ -179,7 +176,7 @@ boolean OCI_API OCI_AgentFree
  * OCI_AgentGetName
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_AgentGetName
+const otext * OCI_API OCI_AgentGetName
 (
     OCI_Agent *agent
 )
@@ -188,7 +185,7 @@ const mtext * OCI_API OCI_AgentGetName
 
     OCI_CHECK_PTR(OCI_IPC_AGENT, agent, NULL);
 
-    if (agent->name == NULL)
+    if (!agent->name)
     {
         res = OCI_StringGetFromAttrHandle(agent->con, agent->handle,  OCI_DTYPE_AQAGENT,
                                           OCI_ATTR_AGENT_NAME,  &agent->name);
@@ -206,7 +203,7 @@ const mtext * OCI_API OCI_AgentGetName
 boolean OCI_API OCI_AgentSetName
 (
     OCI_Agent   *agent,
-    const mtext *name
+    const otext *name
 )
 {
     boolean res = TRUE;
@@ -225,7 +222,7 @@ boolean OCI_API OCI_AgentSetName
  * OCI_AgentGetAddress
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_AgentGetAddress
+const otext * OCI_API OCI_AgentGetAddress
 (
     OCI_Agent *agent
 )
@@ -234,7 +231,7 @@ const mtext * OCI_API OCI_AgentGetAddress
 
     OCI_CHECK_PTR(OCI_IPC_AGENT, agent, NULL);
 
-    if (agent->name == NULL)
+    if (!agent->address)
     {
         res = OCI_StringGetFromAttrHandle(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
                                           OCI_ATTR_AGENT_ADDRESS, &agent->address);
@@ -252,7 +249,7 @@ const mtext * OCI_API OCI_AgentGetAddress
 boolean OCI_API OCI_AgentSetAddress
 (
     OCI_Agent   *agent,
-    const mtext *address
+    const otext *address
 )
 {
     boolean res = TRUE;

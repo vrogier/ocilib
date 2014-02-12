@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -58,7 +58,7 @@ OCI_Iter * OCI_API OCI_IterCreate
 
     iter = (OCI_Iter *) OCI_MemAlloc(OCI_IPC_ITERATOR, sizeof(*iter), (size_t) 1, TRUE);
 
-    if (iter != NULL)
+    if (iter)
     {
         iter->coll  = coll;
         iter->eoc   = FALSE;
@@ -76,7 +76,7 @@ OCI_Iter * OCI_API OCI_IterCreate
 
         /* create data element accessor */
 
-        if (res == TRUE)
+        if (res)
         {
             iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL, (OCIInd *) NULL, coll->typinf);
 
@@ -90,7 +90,7 @@ OCI_Iter * OCI_API OCI_IterCreate
 
     /* check for success */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_IterFree(iter);
         iter = NULL;
@@ -116,7 +116,7 @@ boolean OCI_API OCI_IterFree
 
     /* close iterator handle */
 
-    if (iter->handle != NULL)
+    if (iter->handle)
     {
         OCI_CALL2
         (
@@ -128,7 +128,7 @@ boolean OCI_API OCI_IterFree
 
     /* free data element accessor */
 
-    if (iter->elem != NULL)
+    if (iter->elem)
     {
         iter->elem->hstate = OCI_OBJECT_FETCHED_DIRTY;
         OCI_ElemFree(iter->elem);
@@ -153,10 +153,10 @@ OCI_Elem * OCI_API OCI_IterGetNext
     OCI_Iter *iter
 )
 {
-    boolean res    = TRUE;
-    OCI_Elem *elem = NULL;
-    void * data    = NULL;
-    void *p_ind    = NULL;
+    boolean  res    = TRUE;
+    OCI_Elem *elem  = NULL;
+    void     *data  = NULL;
+    OCIInd   *p_ind = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, NULL);
 
@@ -170,7 +170,7 @@ OCI_Elem * OCI_API OCI_IterGetNext
                     &data, (dvoid **) &p_ind, &iter->eoc)
     )
 
-    if ((res == TRUE) && (iter->eoc == FALSE))
+    if (res && !iter->eoc)
     {
         elem = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
 
@@ -192,10 +192,10 @@ OCI_Elem * OCI_API OCI_IterGetPrev
     OCI_Iter *iter
 )
 {
-    boolean res    = TRUE;
-    OCI_Elem *elem = NULL;
-    void * data    = NULL;
-    void *p_ind    = NULL;
+    boolean  res    = TRUE;
+    OCI_Elem *elem  = NULL;
+    void     *data  = NULL;
+    OCIInd   *p_ind = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter, NULL);
 
@@ -209,7 +209,7 @@ OCI_Elem * OCI_API OCI_IterGetPrev
                     &data, (dvoid **) &p_ind, &iter->boc)
     )
 
-    if ((res == TRUE) && (iter->boc == FALSE))
+    if (res && !iter->boc)
     {
         elem = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
 

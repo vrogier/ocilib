@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -64,7 +64,7 @@ boolean OCI_NumberGet
 
 #endif
 
-    if (type == OCI_NUM_NUMBER)
+    if (OCI_NUM_NUMBER == type)
     {
         memcpy(out_value, number, size);
     }
@@ -75,16 +75,16 @@ boolean OCI_NumberGet
 
         if ((OCILib.version_runtime >= OCI_10_1) && ((sqlcode != SQLT_VNU)))
         {
-            if (((type & OCI_NUM_DOUBLE) && (sqlcode == SQLT_BDOUBLE)) ||
-                ((type & OCI_NUM_FLOAT ) && (sqlcode == SQLT_BFLOAT )))
+            if (((type & OCI_NUM_DOUBLE) && (SQLT_BDOUBLE == sqlcode)) ||
+                ((type & OCI_NUM_FLOAT ) && (SQLT_BFLOAT  == sqlcode)))
             {
                 memcpy(out_value, number, size);
             }
-            else if (type & OCI_NUM_DOUBLE && sqlcode == SQLT_BFLOAT)
+            else if (type & OCI_NUM_DOUBLE && (SQLT_BFLOAT == sqlcode))
             {
                 *((double *) out_value) = (double) *((float *) number);
             }
-            else if (type & OCI_NUM_FLOAT && sqlcode == SQLT_BDOUBLE)
+            else if (type & OCI_NUM_FLOAT && (SQLT_BDOUBLE == sqlcode))
             {
                  *((float *) out_value) = (float) *((double *) number);
             }
@@ -104,12 +104,7 @@ boolean OCI_NumberGet
     }  
     else
     {
-        uword sign = OCI_NUMBER_SIGNED;
-
-        if (type & OCI_NUM_UNSIGNED)
-        {
-            sign = OCI_NUMBER_UNSIGNED;
-        }
+        uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
 
         OCI_CALL2
         (
@@ -155,16 +150,16 @@ boolean OCI_NumberSet
 
         if ((OCILib.version_runtime >= OCI_10_1) && ((sqlcode != SQLT_VNU)))
         {
-            if (((type & OCI_NUM_DOUBLE) && (sqlcode == SQLT_BDOUBLE)) ||
-                ((type & OCI_NUM_FLOAT ) && (sqlcode == SQLT_BFLOAT )))
+            if (((type & OCI_NUM_DOUBLE) && (SQLT_BDOUBLE == sqlcode)) ||
+                ((type & OCI_NUM_FLOAT ) && (SQLT_BFLOAT  == sqlcode)))
             {
                 memcpy(number, in_value, size);
             }
-            else if (type & OCI_NUM_DOUBLE && sqlcode == SQLT_BFLOAT)
+            else if (type & OCI_NUM_DOUBLE && SQLT_BFLOAT == sqlcode)
             {
                 *((double *) number) = (double) *((float *) in_value);
             }
-            else if (type & OCI_NUM_FLOAT && sqlcode == SQLT_BDOUBLE)
+            else if (type & OCI_NUM_FLOAT && SQLT_BDOUBLE == sqlcode)
             {
                  *((float *) number) = (float) *((double *) in_value);
             }
@@ -184,13 +179,8 @@ boolean OCI_NumberSet
     }  
     else
     {
-        uword sign = OCI_NUMBER_SIGNED;
-
-        if (type & OCI_NUM_UNSIGNED)
-        {
-            sign = OCI_NUMBER_UNSIGNED;
-        }
-
+        uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+         
         OCI_CALL2
         (
             res, con,
@@ -214,8 +204,8 @@ boolean OCI_NumberFromString
     uword           size,
     uword           type,
     int             sqlcode,
-    const dtext    *in_value,
-    const mtext   * fmt
+    const otext    *in_value,
+    const otext   * fmt
 )
 {
     boolean res  = TRUE;
@@ -229,33 +219,21 @@ boolean OCI_NumberFromString
     #if OCI_VERSION_COMPILE >= OCI_10_1
 
         if (OCILib.version_runtime >= OCI_10_1)
-        {
-            void *ostr1  = NULL;
-            int   osize1 = -1;
-
-            fmt = OCI_STRING_FORMAT_NUM_BIN;            
- 
-            ostr1 = OCI_GetInputString((void *) fmt, &osize1, sizeof(mtext), sizeof(dtext));
-
+        {   
             if (type & OCI_NUM_DOUBLE)
             {
-                res = (dtscanf(in_value, (dtext *) ostr1, out_value) == 1);
+                res = (osscanf(in_value,  OCI_STRING_FORMAT_NUM_BIN, out_value) == 1);
             }
             else if (type & OCI_NUM_FLOAT)
             {
                 double tmp_value = 0.0;
                 
-                res = (dtscanf(in_value, (dtext *) ostr1, &tmp_value) == 1);
+                res = (osscanf(in_value, OCI_STRING_FORMAT_NUM_BIN, &tmp_value) == 1);
 
                 *((float *) out_value) = (float) tmp_value;
             }
 
             done = TRUE;
-
-            if (fmt != ostr1)
-            {
-                OCI_ReleaseMetaString(ostr1);
-            }
         }
 
     #endif
@@ -264,21 +242,21 @@ boolean OCI_NumberFromString
 
     /* use OCINumber conversion if not processed yet */
 
-    if (done == FALSE)
+    if (!done)
     {   
-        void *ostr1 = NULL;
-        void *ostr2 = NULL;
-        int osize1  = -1;
-        int osize2  = -1;
+        dbtext *dbstr1  = NULL;
+        dbtext *dbstr2  = NULL;
+        int     dbsize1 = -1;
+        int     dbsize2 = -1;
         OCINumber number;
         
-        if (fmt == NULL)
+        if (!fmt)
         {
             fmt = OCI_GetDefaultFormatNumeric(con);
         }
 
-        ostr1 = OCI_GetInputString((void *) in_value, &osize1, sizeof(dtext), sizeof(omtext));
-        ostr2 = OCI_GetInputMetaString(fmt, &osize2);
+        dbstr1 = OCI_StringGetOracleString(in_value, &dbsize1);
+        dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
         memset(&number, 0, sizeof(number));
 
@@ -286,18 +264,14 @@ boolean OCI_NumberFromString
         (
             res, con,
 
-            OCINumberFromText(con->err, (oratext *) ostr1, (ub4) osize1, (oratext *) ostr2,
-                                (ub4) osize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
+            OCINumberFromText(con->err, (oratext *) dbstr1, (ub4) dbsize1, (oratext *) dbstr2,
+                                (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
         )
  
-        OCI_ReleaseMetaString(ostr2);
+        OCI_StringReleaseOracleString(dbstr2);
+        OCI_StringReleaseOracleString(dbstr1);
 
-        if (in_value != ostr1)
-        {
-            OCI_ReleaseMetaString(ostr1);
-        }
-
-        res = res && OCI_NumberGet(con, &number, size, type, sqlcode, out_value);
+        res = res && OCI_NumberGet(con, (void *) &number, size, type, sqlcode, out_value);
     }  
 
     return res;
@@ -313,9 +287,9 @@ boolean OCI_NumberToString
     void           *number,
     uword           type,
     int             sqlcode,
-    dtext          *out_value,
+    otext          *out_value,
     int             out_value_size,
-    const mtext   * fmt
+    const otext   * fmt
 )
 {
     boolean res  = TRUE;
@@ -330,37 +304,27 @@ boolean OCI_NumberToString
 
     #if OCI_VERSION_COMPILE >= OCI_10_1
 
-        if ((OCILib.version_runtime >= OCI_10_1) && ((sqlcode != SQLT_VNU)))
+        if ((OCILib.version_runtime >= OCI_10_1) && ((SQLT_VNU != sqlcode)))
         {
-            void *ostr1  = NULL;
-            int   osize1 = -1;
-
-            if (fmt == NULL)
+            if (!fmt)
             {
                 fmt = OCI_STRING_FORMAT_NUM_BIN;
             }
- 
-            ostr1 = OCI_GetInputString((void *) fmt, &osize1, sizeof(mtext), sizeof(dtext));
 
-            if (type & OCI_NUM_DOUBLE && sqlcode == SQLT_BDOUBLE)
+            if (type & OCI_NUM_DOUBLE && (SQLT_BDOUBLE == sqlcode))
             {
-                out_value_size = dtsprintf(out_value, out_value_size, (dtext *) ostr1,  *((double *) number));
+                out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_BIN,  *((double *) number));
             }
-            else if (type & OCI_NUM_FLOAT && sqlcode == SQLT_BFLOAT)
+            else if (type & OCI_NUM_FLOAT && (SQLT_BFLOAT == sqlcode))
             {
-                 out_value_size = dtsprintf(out_value, out_value_size, (dtext *) ostr1,  *((float *) number));
+                 out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_BIN,  *((float *) number));
             }
 
             done = TRUE;
 
-            if (fmt != ostr1)
-            {
-                OCI_ReleaseMetaString(ostr1);
-            }
-
             if ((out_value_size) > 0)
             {
-                while (out_value[out_value_size-1] == DT('0'))
+                while (out_value[out_value_size-1] == OTEXT('0'))
                 {
                     out_value[out_value_size-1] = 0;
                 }
@@ -379,47 +343,43 @@ boolean OCI_NumberToString
 
     /* use OCINumber conversion if not processed yet */
 
-    if (done == FALSE)
+    if (!done)
     {   
-        void *ostr1 = NULL;
-        void *ostr2 = NULL;
-        int osize1  = out_value_size * (int) sizeof(dtext);
-        int osize2  = -1;
+        dbtext *dbstr1  = NULL;
+        dbtext *dbstr2  = NULL;
+        int     dbsize1 = out_value_size * (int) sizeof(otext);
+        int     dbsize2 = -1;
         
-        if (fmt == NULL)
+        if (!fmt)
         {
             fmt = OCI_GetDefaultFormatNumeric(con);
         }
 
-        ostr1 = OCI_GetInputString(out_value, &osize1, sizeof(dtext), sizeof(omtext));
-        ostr2 = OCI_GetInputMetaString(fmt, &osize2);
+        dbstr1 = OCI_StringGetOracleString(out_value, &dbsize1);
+        dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
         OCI_CALL2
         (
             res, con,
 
-            OCINumberToText(con->err, (OCINumber *) number,  (oratext *) ostr2,
-                            (ub4) osize2, (oratext *) NULL,  (ub4) 0,
-                            (ub4 *) &osize1, (oratext *) ostr1)
+            OCINumberToText(con->err, (OCINumber *) number,  (oratext *) dbstr2,
+                            (ub4) dbsize2, (oratext *) NULL,  (ub4) 0,
+                            (ub4 *) &dbsize1, (oratext *) dbstr1)
         )
 
-        OCI_GetOutputString(ostr1, out_value, &osize1, sizeof(omtext), sizeof(dtext));
-        OCI_ReleaseMetaString(ostr2);
+        OCI_StringCopyOracleStringToNativeString(dbstr1, out_value, dbcharcount(dbsize1));
+        OCI_StringReleaseOracleString(dbstr2);
+        OCI_StringReleaseOracleString(dbstr1);
 
-        if (out_value != ostr1)
-        {
-            OCI_ReleaseMetaString(ostr1);
-        }
-
-        out_value_size = (osize1 / (int) sizeof(dtext));
+        out_value_size = (dbsize1 / (int) sizeof(otext));
     }  
 
     /* do we need to suppress last '.' or ',' from integers */
 
     if ((--out_value_size) >= 0)
     {
-        if ((out_value[out_value_size] == DT('.')) ||
-            (out_value[out_value_size] == DT(',')))
+        if ((out_value[out_value_size] == OTEXT('.')) ||
+            (out_value[out_value_size] == OTEXT(',')))
         {
             out_value[out_value_size] = 0;
         }

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -52,17 +52,17 @@ boolean OCI_EventReset
     event->op   = OCI_UNKNOWN;
     event->type = OCI_UNKNOWN;
 
-    if (event->dbname != NULL)
+    if (event->dbname)
     {
         event->dbname[0] = 0;
     }
 
-    if (event->objname != NULL)
+    if (event->objname)
     {
         event->objname[0] = 0;
     }
 
-    if (event->rowid != NULL)
+    if (event->rowid)
     {
         event->rowid[0] = 0;
     }
@@ -110,7 +110,7 @@ unsigned int OCI_API OCI_EventGetOperation
  * OCI_EventGetObject
  * --------------------------------------------------------------------------------------------- */
 
-const dtext * OCI_API OCI_EventGetDatabase
+const otext * OCI_API OCI_EventGetDatabase
 (
     OCI_Event *event
 )
@@ -126,7 +126,7 @@ const dtext * OCI_API OCI_EventGetDatabase
  * OCI_EventGetObject
  * --------------------------------------------------------------------------------------------- */
 
-const dtext * OCI_API OCI_EventGetObject
+const otext * OCI_API OCI_EventGetObject
 (
     OCI_Event *event
 )
@@ -142,7 +142,7 @@ const dtext * OCI_API OCI_EventGetObject
  * OCI_EventGetRowid
  * --------------------------------------------------------------------------------------------- */
 
-const dtext * OCI_API OCI_EventGetRowid
+const otext * OCI_API OCI_EventGetRowid
 (
     OCI_Event *event
 )

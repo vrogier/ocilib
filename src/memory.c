@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -55,9 +55,9 @@ void * OCI_MemAlloc
 
     ptr = (void *) malloc(size);
 
-    if (ptr != NULL)
+    if (ptr)
     {
-        if (zero_fill == TRUE)
+        if (zero_fill)
         {
             memset(ptr, 0, size);
         }
@@ -85,7 +85,7 @@ void * OCI_MemRealloc
     size_t size = (size_t) (block_size * block_count);
     void * ptr  = (void *) realloc(ptr_mem, size);
 
-    if (ptr == NULL && ptr_mem != NULL)
+    if (!ptr && ptr_mem)
     {
         OCI_MemFree(ptr_mem);
 
@@ -104,7 +104,7 @@ void OCI_MemFree
     void * ptr_mem
 )
 {
-    if (ptr_mem != NULL)
+    if (ptr_mem)
     {
         free(ptr_mem);
     }
@@ -125,7 +125,7 @@ sword OCI_HandleAlloc
 {
     sword ret = OCIHandleAlloc(parenth, hndlpp, type, xtramem_sz, usrmempp);
 
-    if (ret == OCI_SUCCESS)
+    if (OCI_SUCCESSFUL(ret))
     {
         OCILib.nb_hndlp++;
     }
@@ -145,7 +145,7 @@ sword OCI_HandleFree
 {
     sword ret = OCI_SUCCESS;
 
-    if (hndlp != NULL)
+    if (hndlp)
     {
         OCILib.nb_hndlp--;
 
@@ -170,7 +170,7 @@ sword OCI_DescriptorAlloc
 {
     sword ret = OCIDescriptorAlloc(parenth, descpp, type, xtramem_sz, usrmempp);
 
-    if (ret == OCI_SUCCESS)
+    if (OCI_SUCCESSFUL(ret))
     {
         OCILib.nb_descp++;
     }
@@ -214,7 +214,7 @@ sword OCI_DescriptorArrayAlloc
         }
     }
 
-    if (ret == OCI_SUCCESS)
+    if (OCI_SUCCESSFUL(ret))
     {
         OCILib.nb_descp += nb_elem;
     }
@@ -234,7 +234,7 @@ sword OCI_DescriptorFree
 {
     sword ret = OCI_SUCCESS;
 
-    if (descp != NULL)
+    if (descp)
     {
         OCILib.nb_descp--;
 
@@ -257,7 +257,7 @@ sword OCI_DescriptorArrayFree
 {
     sword ret = OCI_SUCCESS;
 
-    if (descp != NULL)
+    if (descp)
     {
 
     #if OCI_VERSION_COMPILE >= OCI_11_1
@@ -305,7 +305,7 @@ sword OCI_ObjectNew
 {
     sword ret = OCIObjectNew(env, err, svc, typecode, tdo, table, duration, value, instance);
 
-    if (ret == OCI_SUCCESS)
+    if (OCI_SUCCESSFUL(ret))
     {
         OCILib.nb_objinst++;
     }
@@ -327,7 +327,7 @@ sword OCI_OCIObjectFree
 {
     sword ret = OCI_SUCCESS;
 
-    if (instance != NULL)
+    if (instance)
     {
         OCILib.nb_objinst--;
 

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -54,14 +54,14 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
 
     key = (OCI_ThreadKey *) OCI_MemAlloc(OCI_IPC_THREADKEY, sizeof(*key), (size_t) 1, TRUE);
 
-    if (key != NULL)
+    if (key)
     {
         /* allocate error handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
-                                              (dvoid **) (void *) &key->err,
-                                              OCI_HTYPE_ERROR, (size_t) 0,
-                                              (dvoid **) NULL));
+        res = OCI_SUCCESSFUL(OCI_HandleAlloc(OCILib.env,
+                                             (dvoid **) (void *) &key->err,
+                                             OCI_HTYPE_ERROR, (size_t) 0,
+                                             (dvoid **) NULL));
 
         /* key initialization */
 
@@ -71,19 +71,15 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
 
             OCIThreadKeyInit(OCILib.env, key->err, &key->handle, destfunc)
         )
-    }
-    else
-    {
-        res = FALSE;
-    }
 
-    /* check errors */
+        /* check errors */
 
-    if (res == FALSE)
-    {
-        OCI_ThreadKeyFree(key);
-        key = NULL;
-    }
+        if (!res)
+        {
+            OCI_ThreadKeyFree(key);
+            key = NULL;
+        }
+    } 
 
     return key;
 }
@@ -103,7 +99,7 @@ boolean OCI_ThreadKeyFree
 
     /* close key handle */
 
-    if (key->handle != NULL)
+    if (key->handle)
     {
         OCI_CALL0
         (
@@ -115,7 +111,7 @@ boolean OCI_ThreadKeyFree
 
     /* close error handle */
 
-    if (key->err != NULL)
+    if (key->err)
     {
         OCI_HandleFree(key->err, OCI_HTYPE_ERROR);
     }
@@ -123,8 +119,6 @@ boolean OCI_ThreadKeyFree
     /* free key structure */
 
     OCI_FREE(key);
-
-    OCI_RESULT(res);
 
     return res;
 }
@@ -187,7 +181,7 @@ boolean OCI_ThreadKeyGet
 
 boolean OCI_API OCI_ThreadKeyCreate
 (
-    const mtext       *name,
+    const otext       *name,
     POCI_THREADKEYDEST destfunc
 )
 {
@@ -198,7 +192,7 @@ boolean OCI_API OCI_ThreadKeyCreate
 
     OCI_CHECK_INITIALIZED(FALSE);
 
-    if (OCILib.key_map == NULL)
+    if (!OCILib.key_map)
     {
         /* create the map at the first call to OCI_ThreadKeyCreate to save
            time and memory when it's not needed */
@@ -211,13 +205,13 @@ boolean OCI_API OCI_ThreadKeyCreate
 
     /* create key */
 
-    if (res == TRUE)
+    if (res)
     {
         key = OCI_ThreadKeyCreateInternal(destfunc);
 
         /* add key to internal key hash table */
 
-        if (key != NULL)
+        if (key)
         {
             res = OCI_HashAddPointer(OCILib.key_map, name, key);
         }
@@ -229,7 +223,7 @@ boolean OCI_API OCI_ThreadKeyCreate
 
     /* check errors */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_ThreadKeyFree(key);
     }
@@ -245,7 +239,7 @@ boolean OCI_API OCI_ThreadKeyCreate
 
 boolean OCI_API OCI_ThreadKeySetValue
 (
-    const mtext *name,
+    const otext *name,
     void        *value
 )
 {
@@ -269,7 +263,7 @@ boolean OCI_API OCI_ThreadKeySetValue
 
 void * OCI_API OCI_ThreadKeyGetValue
 (
-    const mtext *name
+    const otext *name
 )
 {
     boolean res        = TRUE;

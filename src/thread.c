@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -49,7 +49,7 @@ void OCI_ThreadProc
 {
     OCI_Thread *thread = (OCI_Thread *) arg;
 
-    if (thread != NULL)
+    if (thread)
     {
         thread->proc(thread, thread->arg);
     }
@@ -69,7 +69,7 @@ OCI_Thread * OCI_API OCI_ThreadCreate
 )
 {
     OCI_Thread *thread = NULL;
-    boolean res        = TRUE;
+    boolean res        = FALSE;
 
     OCI_CHECK_INITIALIZED(NULL);
 
@@ -79,14 +79,14 @@ OCI_Thread * OCI_API OCI_ThreadCreate
 
     thread = (OCI_Thread *) OCI_MemAlloc(OCI_IPC_THREAD, sizeof(*thread), (size_t) 1, TRUE);
 
-    if (thread != NULL)
+    if (thread)
     {
         /* allocate error handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env,
-                                              (dvoid **) (void *) &thread->err,
-                                              OCI_HTYPE_ERROR, (size_t) 0,
-                                              (dvoid **) NULL));
+        res = OCI_SUCCESSFUL(OCI_HandleAlloc(OCILib.env,
+                                             (dvoid **) (void *) &thread->err,
+                                             OCI_HTYPE_ERROR, (size_t) 0,
+                                             (dvoid **) NULL));
 
         /* allocate thread handle */
 
@@ -106,12 +106,8 @@ OCI_Thread * OCI_API OCI_ThreadCreate
             OCIThreadIdInit(OCILib.env, thread->err, &thread->id)
         )
     }
-    else
-    {
-        res = FALSE;
-    }
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_ThreadFree(thread);
         thread = NULL;
@@ -139,7 +135,7 @@ boolean OCI_API OCI_ThreadFree
 
     /* close thread handle */
 
-    if (thread->handle != NULL)
+    if (thread->handle)
     {
         OCI_CALL0
         (
@@ -158,7 +154,7 @@ boolean OCI_API OCI_ThreadFree
 
     /* close thread id */
 
-    if (thread->id != NULL)
+    if (thread->id)
     {
         OCI_CALL0
         (
@@ -170,7 +166,7 @@ boolean OCI_API OCI_ThreadFree
 
     /* close error handle */
 
-    if (thread->err != NULL)
+    if (thread->err)
     {
         OCI_HandleFree(thread->err, OCI_HTYPE_ERROR);
     }

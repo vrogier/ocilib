@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -55,12 +55,12 @@ OCI_File * OCI_FileInit
 
     OCI_CHECK(pfile == NULL, NULL);
 
-    if (*pfile == NULL)
+    if (!*pfile)
     {
         *pfile = (OCI_File *) OCI_MemAlloc(OCI_IPC_FILE, sizeof(*file), (size_t) 1, TRUE);
     }
 
-    if (*pfile != NULL)
+    if (*pfile)
     {
         file = *pfile;
 
@@ -71,28 +71,28 @@ OCI_File * OCI_FileInit
 
         /* reset file info */
 
-        if (file->dir != NULL)
+        if (file->dir)
         {
             file->dir[0] = 0;
         }
 
-        if (file->name != NULL)
+        if (file->name)
         {
             file->name[0] = 0;
         }
 
-        if (file->handle == NULL)
+        if (!file->handle)
         {
             /* allocate handle for non fetched file (local file object) */
 
             file->hstate = OCI_OBJECT_ALLOCATED;
 
-            res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid *) file->con->env,
-                                                      (dvoid **) (void *) &file->handle,
-                                                      (ub4) OCI_DTYPE_LOB,
-                                                      (size_t) 0, (dvoid **) NULL));
+            res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid *) file->con->env,
+                                                     (dvoid **) (void *) &file->handle,
+                                                     (ub4) OCI_DTYPE_LOB,
+                                                     (size_t) 0, (dvoid **) NULL));
         }
-        else if (file->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+        else if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
         {
             file->hstate = OCI_OBJECT_FETCHED_CLEAN;
         }
@@ -104,7 +104,7 @@ OCI_File * OCI_FileInit
 
     /* check for failure */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_FileFree(file);
         file = NULL;
@@ -128,76 +128,77 @@ boolean OCI_FileGetInfo
 
     /* directory name */
 
-    if (file->dir == NULL)
+    if (res)
     {
-        if (res == TRUE)
+        if (!file->dir)
         {
-            file->dir = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext),
-                                               (size_t) (OCI_SIZE_DIRECTORY + 1), TRUE);
+            file->dir = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext),
+                                                (size_t) (OCI_SIZE_DIRECTORY + 1), TRUE);
 
             res = (file->dir != NULL);
         }
-    }
-    else
-    {
-        file->dir[0] = 0;
+        else
+        {
+            file->dir[0] = 0;
+        }
     }
 
     /* file name */
 
-    if (file->name == NULL)
+    if (res)
     {
-        if (res == TRUE)
+        if (!file->name )
         {
-            file->name = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext),
+            file->name = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext),
                                                 (size_t)( OCI_SIZE_FILENAME + 1),
                                                 TRUE);
 
             res = (file->name != NULL);
+
         }
-    }
-    else
-    {
-        file->name[0] = 0;
+        else
+        {
+            file->name[0] = 0;
+        }
     }
 
     /* retrieve name */
 
     if (res == TRUE)
     {
-        void *ostr1 = NULL;
-        void *ostr2 = NULL;
-        int osize1  = 0;
-        int osize2  = 0;
-        ub2 usize1  = 0;
-        ub2 usize2  = 0;
+        dbtext *dbstr1 = NULL;
+        dbtext *dbstr2 = NULL;
+        int    dbsize1 = 0;
+        int    dbsize2 = 0;
+        ub2    usize1  = 0;
+        ub2    usize2  = 0;
 
-        osize1 = (int   ) OCI_SIZE_DIRECTORY  * (int) sizeof(mtext);
-        ostr1  = (void *) OCI_GetInputMetaString(file->dir, &osize1);
+        dbsize1 = (int) OCI_SIZE_DIRECTORY  * (int) sizeof(otext);
+        dbstr1  = OCI_StringGetOracleString(file->dir, &dbsize1);
 
-        osize2 = (int   ) OCI_SIZE_FILENAME  * (int) sizeof(mtext);
-        ostr2  = (void *) OCI_GetInputMetaString(file->name, &osize1);
+        dbsize2 = (int) OCI_SIZE_FILENAME  * (int) sizeof(otext);
+        dbstr2  = OCI_StringGetOracleString(file->name, &dbsize1);
 
-        usize1 = (ub2) osize1;
-        usize2 = (ub2) osize2;
+        usize1 = (ub2) dbsize1;
+        usize2 = (ub2) dbsize2;
 
         OCI_CALL2
         (
             res, file->con,
 
             OCILobFileGetName(file->con->env, file->con->err, file->handle,
-                              (OraText *) ostr1, (ub2*) &usize1,
-                              (OraText *) ostr2, (ub2*) &usize2)
+                              (OraText *) dbstr1, (ub2*) &usize1,
+                              (OraText *) dbstr2, (ub2*) &usize2)
         )
 
-        osize1 = (int) usize1;
-        osize2 = (int) usize2;
+        dbsize1 = (int) usize1;
+        dbsize2 = (int) usize2;
 
-        OCI_GetOutputMetaString(ostr1, file->dir,  &osize1);
-        OCI_GetOutputMetaString(ostr2, file->name, &osize2);
+        OCI_StringCopyOracleStringToNativeString(dbstr1, file->dir,  dbcharcount(dbsize1));
+        OCI_StringCopyOracleStringToNativeString(dbstr2, file->name, dbcharcount(dbsize2));
 
-        OCI_ReleaseMetaString(ostr1);
-        OCI_ReleaseMetaString(ostr2);
+        OCI_StringReleaseOracleString(dbstr1);
+        OCI_StringReleaseOracleString(dbstr2);
     }
 
     return res;
@@ -247,12 +248,12 @@ boolean OCI_API OCI_FileFree
     OCI_FREE(file->dir);
     OCI_FREE(file->name);
 
-    if (file->hstate == OCI_OBJECT_ALLOCATED)
+    if (OCI_OBJECT_ALLOCATED == file->hstate)
     {
         OCI_DescriptorFree((dvoid *) file->handle, (ub4) OCI_DTYPE_LOB);
     }
 
-    if (file->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+    if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
     {
         OCI_FREE(file);
     }
@@ -280,7 +281,7 @@ OCI_File ** OCI_API OCI_FileArrayCreate
                           sizeof(OCILobLocator *), sizeof(OCI_File),
                           OCI_DTYPE_LOB, NULL);
 
-    if (arr != NULL)
+    if (arr)
     {
         files = (OCI_File **) arr->tab_obj;
     }
@@ -311,32 +312,34 @@ boolean OCI_API OCI_FileSeek
     unsigned int mode
 )
 {
-    boolean res   = TRUE;
+    boolean  res  =  TRUE;
     big_uint size = 0;
 
     OCI_CHECK_PTR(OCI_IPC_FILE, file, FALSE);
 
-    size = OCI_FileGetSize(file);
+    size  = OCI_FileGetSize(file);
 
-    if ((mode == OCI_SEEK_CUR && (offset + file->offset-1) > size))
+    if ((offset + file->offset - 1) > size)
     {
         res = FALSE;
     }
-    else if (mode == OCI_SEEK_SET)
+
+    if (res)
     {
-        file->offset = offset + 1;
-    }
-    else if (mode == OCI_SEEK_END)
-    {
-        file->offset = size-offset + 1;
-    }
-    else if (mode == OCI_SEEK_CUR)
-    {
-        file->offset += offset;
-    }
-    else
-    {
-        res = FALSE;
+        switch (mode)
+        {
+            case OCI_SEEK_CUR:
+                file->offset += offset;
+                break;
+            case OCI_SEEK_SET:
+                file->offset = offset + 1;
+                break;
+            case OCI_SEEK_END:
+                file->offset = size - offset + 1;
+                break;
+            default:
+                res = FALSE;
+        }
     }
 
     OCI_RESULT(res);
@@ -418,7 +421,7 @@ unsigned int OCI_API OCI_FileRead
         )
     }
 
-    if (res == TRUE)
+    if (res)
     {
         file->offset += (big_uint) size_out;
     }
@@ -525,20 +528,20 @@ boolean OCI_API OCI_FileExists
 boolean OCI_API OCI_FileSetName
 (
     OCI_File    *file,
-    const mtext *dir,
-    const mtext *name
+    const otext *dir,
+    const otext *name
 )
 {
-    void *ostr1 = NULL;
-    void *ostr2 = NULL;
-    int osize1  = -1;
-    int osize2  = -1;
-    boolean res = TRUE;
+    dbtext *dbstr1  = NULL;
+    dbtext *dbstr2  = NULL;
+    int     dbsize1 = -1;
+    int     dbsize2 = -1;
+    boolean res     = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_FILE, file, FALSE);
 
-    ostr1 = OCI_GetInputMetaString(dir,  &osize1);
-    ostr2 = OCI_GetInputMetaString(name, &osize2);
+    dbstr1 = OCI_StringGetOracleString(dir,  &dbsize1);
+    dbstr2 = OCI_StringGetOracleString(name, &dbsize2);
 
     OCI_CALL2
     (
@@ -546,14 +549,14 @@ boolean OCI_API OCI_FileSetName
 
         OCILobFileSetName(file->con->env, file->con->err,
                           &file->handle,
-                          (OraText *) ostr1, (ub2) osize1,
-                          (OraText *) ostr2, (ub2) osize2)
+                          (OraText *) dbstr1, (ub2) dbsize1,
+                          (OraText *) dbstr2, (ub2) dbsize2)
     )
 
-    OCI_ReleaseMetaString(ostr1);
-    OCI_ReleaseMetaString(ostr2);
+    OCI_StringReleaseOracleString(dbstr1);
+    OCI_StringReleaseOracleString(dbstr2);
 
-    if (res == TRUE)
+    if (res)
     {
         res = OCI_FileGetInfo(file);
     }
@@ -567,7 +570,7 @@ boolean OCI_API OCI_FileSetName
  * OCI_FileGetDirectory
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_FileGetDirectory
+const otext * OCI_API OCI_FileGetDirectory
 (
     OCI_File *file
 )
@@ -576,7 +579,7 @@ const mtext * OCI_API OCI_FileGetDirectory
 
     OCI_CHECK_PTR(OCI_IPC_FILE, file, NULL);
 
-    if ((file->dir == NULL) || (file->dir[0] == 0))
+    if (!file->dir || !file->dir[0])
     {
         res = OCI_FileGetInfo(file);
     }
@@ -590,7 +593,7 @@ const mtext * OCI_API OCI_FileGetDirectory
  * OCI_FileGetName
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_FileGetName
+const otext * OCI_API OCI_FileGetName
 (
     OCI_File *file
 )
@@ -599,7 +602,7 @@ const mtext * OCI_API OCI_FileGetName
 
     OCI_CHECK_PTR(OCI_IPC_FILE, file, NULL);
 
-    if ((file->name == NULL) || (file->name[0] == 0))
+    if (!file->name || !file->name[0])
     {
         res = OCI_FileGetInfo(file);
     }
@@ -629,7 +632,7 @@ boolean OCI_API OCI_FileOpen
         OCILobFileOpen(file->con->cxt, file->con->err, file->handle, (ub1) OCI_LOB_READONLY)
     )
 
-    if (res == TRUE)
+    if (res)
     {
         file->con->nb_files++;
     }
@@ -685,7 +688,7 @@ boolean OCI_API OCI_FileClose
         OCILobFileClose(file->con->cxt, file->con->err, file->handle)
     )
 
-    if (res == TRUE)
+    if (res)
     {
         file->con->nb_files--;
     }
@@ -738,7 +741,7 @@ boolean OCI_API OCI_FileAssign
     OCI_CHECK_PTR(OCI_IPC_FILE, file,     FALSE);
     OCI_CHECK_PTR(OCI_IPC_FILE, file_src, FALSE);
 
-    if ((file->hstate == OCI_OBJECT_ALLOCATED) || (file->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
+    if ((OCI_OBJECT_ALLOCATED == file->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == file->hstate))
     {
         OCI_CALL2
         (
@@ -757,7 +760,7 @@ boolean OCI_API OCI_FileAssign
         )
     }
 
-    if (res == TRUE)
+    if (res)
     {
         OCI_FileGetInfo(file);
     }

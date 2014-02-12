@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -55,12 +55,12 @@ OCI_Lob * OCI_LobInit
 
     OCI_CHECK(plob == NULL, NULL);
 
-    if (*plob == NULL)
+    if (!*plob)
     {
         *plob = (OCI_Lob *) OCI_MemAlloc(OCI_IPC_LOB, sizeof(*lob), (size_t) 1, TRUE);
     }
 
-    if (*plob != NULL)
+    if (*plob)
     {
         lob = *plob;
 
@@ -69,19 +69,19 @@ OCI_Lob * OCI_LobInit
         lob->handle = handle;
         lob->offset = 1;
 
-        if ((lob->handle == NULL) || (lob->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
+        if (!lob->handle || (OCI_OBJECT_ALLOCATED_ARRAY == lob->hstate))
         {
             ub2 csid    = OCI_DEFAULT;
             ub1 csfrm   = OCI_DEFAULT;
             ub1 lobtype = 0;
             ub4 empty   = 0;
 
-            if (lob->type == OCI_NCLOB)
+            if (OCI_NCLOB == lob->type)
             {
                 csfrm   = SQLCS_NCHAR;
                 lobtype = OCI_TEMP_CLOB;
             }
-            else if (lob->type == OCI_CLOB)
+            else if (OCI_CLOB == lob->type)
             {
                 csfrm   = SQLCS_IMPLICIT;
                 lobtype = OCI_TEMP_CLOB;
@@ -93,14 +93,14 @@ OCI_Lob * OCI_LobInit
 
             /* allocate handle for non fetched lob (temporary lob) */
 
-            if (lob->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+            if (OCI_OBJECT_ALLOCATED_ARRAY != lob->hstate)
             {
                 lob->hstate = OCI_OBJECT_ALLOCATED;
 
-                res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid  *) lob->con->env,
-                                                          (dvoid **) (void *) &lob->handle,
-                                                          (ub4) OCI_DTYPE_LOB,
-                                                          (size_t) 0, (dvoid **) NULL));
+                res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid  *) lob->con->env,
+                                                         (dvoid **) (void *) &lob->handle,
+                                                         (ub4) OCI_DTYPE_LOB,
+                                                         (size_t) 0, (dvoid **) NULL));
             }
 
             OCI_CALL2
@@ -134,7 +134,7 @@ OCI_Lob * OCI_LobInit
 
     /* check for failure */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_LobFree(lob);
         lob = NULL;
@@ -183,7 +183,7 @@ boolean OCI_API OCI_LobFree
 
     OCI_CHECK_OBJECT_FETCHED(lob, FALSE);
 
-    if (OCI_LobIsTemporary(lob) == TRUE)
+    if (OCI_LobIsTemporary(lob))
     {
         OCI_CALL2
         (
@@ -193,12 +193,12 @@ boolean OCI_API OCI_LobFree
         )
     }
 
-    if (lob->hstate == OCI_OBJECT_ALLOCATED)
+    if (OCI_OBJECT_ALLOCATED == lob->hstate)
     {
         OCI_DescriptorFree((dvoid *) lob->handle, (ub4) OCI_DTYPE_LOB);
     }
 
-    if (lob->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+    if (OCI_OBJECT_ALLOCATED_ARRAY != lob->hstate)
     {
         OCI_FREE(lob);
     }
@@ -225,7 +225,7 @@ OCI_Lob ** OCI_API OCI_LobArrayCreate
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_LOB, type, sizeof(OCILobLocator *),
                           sizeof(OCI_Lob), OCI_DTYPE_LOB, NULL);
 
-    if (arr != NULL)
+    if (arr)
     {
         lobs = (OCI_Lob **) arr->tab_obj;
     }
@@ -279,25 +279,27 @@ boolean OCI_API OCI_LobSeek
 
     size = OCI_LobGetLength(lob);
 
-    if ((mode == OCI_SEEK_CUR && (offset + lob->offset-1) > size))
+    if ((offset + lob->offset - 1) > size)
     {
         res = FALSE;
     }
-    else if (mode == OCI_SEEK_SET)
+
+    if (res)
     {
-        lob->offset = offset + 1;
-    }
-    else if (mode == OCI_SEEK_END)
-    {
-        lob->offset = size-offset + 1;
-    }
-    else if (mode == OCI_SEEK_CUR)
-    {
-        lob->offset += offset;
-    }
-    else
-    {
-        res = FALSE;
+        switch (mode)
+        {
+            case OCI_SEEK_CUR:
+                lob->offset += offset;
+                break;
+            case OCI_SEEK_SET:
+                lob->offset = offset + 1;
+                break;
+            case OCI_SEEK_END:
+                lob->offset = size - offset + 1;
+                break;
+            default:
+                res = FALSE;
+        }
     }
 
     OCI_RESULT(res);
@@ -341,36 +343,27 @@ boolean OCI_API OCI_LobRead2
     OCI_CHECK_PTR(OCI_IPC_LOB, char_count, FALSE);
     OCI_CHECK_PTR(OCI_IPC_LOB, byte_count, FALSE);
 
-    if (lob->type != OCI_BLOB)
+    if (OCI_BLOB != lob->type)
     {
-
-    #ifdef OCI_USERDATA_WIDE
-
-        csid = OCI_UTF16ID;
-
-    #endif
+        if (OCI_CHAR_WIDE == OCILib.charset)
+        {
+            csid = OCI_UTF16ID;
+        }
 
         if (((*byte_count) == 0) && ((*char_count) > 0))
         {
-            if (OCILib.nls_utf8 == TRUE)
+            if (OCILib.nls_utf8)
             {
                 (*byte_count) = (*char_count) * (ub4) UTF8_BYTES_PER_CHAR;
             }
             else
             {
-                (*byte_count) = (*char_count) * (ub4) sizeof(odtext);
+                (*byte_count) = (*char_count) * (ub4) sizeof(dbtext);
             }
         }
     }
 
-    if (lob->type == OCI_NCLOB)
-    {
-        csfrm = SQLCS_NCHAR;
-    }
-    else
-    {
-        csfrm = SQLCS_IMPLICIT;
-    }
+    csfrm = (lob->type == OCI_NCLOB) ? SQLCS_NCHAR : SQLCS_IMPLICIT;
 
     OCI_CHECK_MIN(lob->con, NULL, (*byte_count), 1, FALSE);
 
@@ -426,20 +419,20 @@ boolean OCI_API OCI_LobRead2
         (*byte_count) = (ub4) size_in_out_char_byte;
     }
 
-    if (lob->type != OCI_BLOB)
+    if (OCI_BLOB != lob->type)
     {
 		ub4 ora_byte_count = (ub4) *byte_count;
 
-        if ((OCILib.use_lob_ub8 == FALSE) && (OCILib.nls_utf8 == FALSE))
+        if (!OCILib.use_lob_ub8 && !OCILib.nls_utf8)
         {
-            ora_byte_count *= sizeof(odtext);
+            ora_byte_count *= sizeof(dbtext);
         }
 
-        memset(((char *) buffer) + ora_byte_count, 0, sizeof(odtext));
+        memset(((char *) buffer) + ora_byte_count, 0, sizeof(dbtext));
 
     #ifndef OCI_LOB2_API_ENABLED
 
-        if (OCILib.nls_utf8 == TRUE)
+        if (OCILib.nls_utf8)
         {
             (*char_count) = OCI_StringUTF8Length((const char *) buffer);
         }
@@ -448,9 +441,9 @@ boolean OCI_API OCI_LobRead2
 
     }
 
-    if (res == TRUE)
+    if (res)
     {
-        if (lob->type == OCI_BLOB)
+        if (OCI_BLOB == lob->type)
         {
             lob->offset += (big_uint) (*byte_count);
         }
@@ -458,11 +451,10 @@ boolean OCI_API OCI_LobRead2
         {
             lob->offset += (big_uint) (*char_count);
 
-            if (OCILib.nls_utf8 == FALSE)
+            if (!OCILib.nls_utf8 && OCILib.use_wide_char_conv)
             {
-                OCI_ConvertString(buffer, (int) (*char_count), sizeof(odtext), sizeof(dtext));
-
-				(*byte_count) = (ub4) (*char_count) * (ub4) sizeof(dtext);
+                OCI_StringUTF16ToUTF32(buffer, buffer, (int) (*char_count));
+				(*byte_count) = (ub4) (*char_count) * (ub4) sizeof(otext);
             }
         }
     }
@@ -487,9 +479,9 @@ unsigned int OCI_API OCI_LobRead
     unsigned int byte_count = 0;
     unsigned int *ptr_count = NULL;
 
-    if (lob != NULL)
+    if (lob)
     {
-        if(lob->type == OCI_BLOB)
+        if (OCI_BLOB == lob->type)
         {
             byte_count = len;
             ptr_count  = &byte_count;
@@ -527,60 +519,51 @@ boolean OCI_API OCI_LobWrite2
     OCI_CHECK_PTR(OCI_IPC_LOB, char_count, FALSE);
     OCI_CHECK_PTR(OCI_IPC_LOB, byte_count, FALSE);
 
-    if (lob->type != OCI_BLOB)
+    if (OCI_BLOB != lob->type)
     {
-
-    #ifdef OCI_USERDATA_WIDE
-
-        csid = OCI_UTF16ID;
-
-    #endif
+        if (OCI_CHAR_WIDE == OCILib.charset)
+        {
+            csid = OCI_UTF16ID;
+        }
 
         if (((*byte_count) == 0) && ((*char_count) > 0))
         {
-            if (OCILib.nls_utf8 == TRUE)
+            if (OCILib.nls_utf8)
             {
-                (*byte_count) = (unsigned int) strlen(buffer);
+                (*byte_count) = (unsigned int) strlen((const char *) buffer);
             }
             else
             {
-                (*byte_count) = (*char_count) * (ub4) sizeof(dtext);
+                (*byte_count) = (*char_count) * (ub4) sizeof(otext);
             }
         }
 
         if (((*char_count) == 0) && ((*byte_count) > 0))
         {
-            if (OCILib.nls_utf8 == TRUE)
+            if (OCILib.nls_utf8 )
             {
 
         #ifndef OCI_LOB2_API_ENABLED
 
-                (*char_count) = OCI_StringUTF8Length((const char *) buffer);
+                (*char_count) = OCI_StringLength((const char *) buffer, sizeof(char));
 
         #endif
 
             }
             else
             {
-                (*char_count) = (*byte_count) / (ub4) sizeof(dtext);
+                (*char_count) = (*byte_count) / (ub4) sizeof(otext);
             }
         }
 
-        obuf = OCI_GetInputDataString(buffer, (int *) byte_count);
+        obuf = OCI_StringGetOracleString( (otext *) buffer, (int *) byte_count);
     }
     else
     {
         obuf = buffer;
     }
 
-    if (lob->type == OCI_NCLOB)
-    {
-        csfrm = SQLCS_NCHAR;
-    }
-    else
-    {
-        csfrm = SQLCS_IMPLICIT;
-    }
+    csfrm = (lob->type == OCI_NCLOB) ? SQLCS_NCHAR : lob->type == OCI_NCLOB;
 
     OCI_CHECK_MIN(lob->con, NULL, (*byte_count), 1, FALSE);
 
@@ -613,7 +596,7 @@ boolean OCI_API OCI_LobWrite2
     {
         ub4 size_in_out_char_byte = 0;
 
-        if ((lob->type == OCI_BLOB) || (OCILib.nls_utf8 == TRUE))
+        if ((OCI_BLOB == lob->type) || OCILib.nls_utf8)
         {
             size_in_out_char_byte = (*byte_count);
         }
@@ -632,38 +615,30 @@ boolean OCI_API OCI_LobWrite2
                         (void *) NULL, NULL, csid, csfrm)
         )
 
-        if (lob->type == OCI_BLOB)
-        {
-            (*char_count) = (ub4) size_in_out_char_byte;
-            (*byte_count) = (ub4) size_in_out_char_byte;
-        }
-        else
-        {
-            (*char_count) = (ub4) size_in_out_char_byte;
-            (*byte_count) = (ub4) size_in_out_char_byte;
+        (*char_count) = (ub4) size_in_out_char_byte;
+        (*byte_count) = (ub4) size_in_out_char_byte;
 
-			if (OCILib.nls_utf8 == FALSE)
-            {
- 				(*byte_count) *= (ub4) sizeof(dtext);
-			}
-        }
+        if ((OCI_CLOB == lob->type) && !OCILib.nls_utf8)
+        {
+ 		    (*byte_count) *= (ub4) sizeof(otext);
+	    }
     }
 
-    if (res == TRUE)
+    if (res)
     {
-        if (lob->type == OCI_BLOB)
+        if (OCI_BLOB == lob->type)
         {
             lob->offset += (big_uint) (*byte_count);
         }
         else
         {
             lob->offset += (big_uint) (*char_count);
-
-            if (OCILib.nls_utf8 == FALSE)
-            {
-                OCI_ReleaseDataString(obuf);
-            }
         }
+    }
+
+    if (!OCILib.nls_utf8 && OCI_CLOB == lob->type)
+    {
+        OCI_StringReleaseOracleString((dbtext *) obuf);
     }
 
     OCI_RESULT(res);
@@ -686,9 +661,9 @@ unsigned int OCI_API OCI_LobWrite
     unsigned int byte_count = 0;
     unsigned int *ptr_count = NULL;
 
-    if (lob != NULL)
+    if (lob)
     {
-        if(lob->type == OCI_BLOB)
+        if(OCI_BLOB == lob->type)
         {
             byte_count = len;
             ptr_count  = &byte_count;
@@ -1017,60 +992,52 @@ boolean OCI_API OCI_LobAppend2
                OCI_LobWrite2(lob, buffer, char_count, byte_count);
     }
 
-    if (lob->type != OCI_BLOB)
+    if (OCI_BLOB != lob->type)
     {
-    #ifdef OCI_USERDATA_WIDE
-
-        csid = OCI_UTF16ID;
-
-    #endif
+        if (OCI_CHAR_WIDE == OCILib.charset)
+        {
+            csid = OCI_UTF16ID;
+        }
 
         if (((*byte_count) == 0) && ((*char_count) > 0))
         {
-            if (OCILib.nls_utf8 == TRUE)
+            if (OCILib.nls_utf8)
             {
-                (*byte_count) = (unsigned int) strlen(buffer);
+                (*byte_count) = (unsigned int) strlen( (char *) buffer);
             }
             else
             {
-                (*byte_count) = (*char_count) * (ub4) sizeof(dtext);
+                (*byte_count) = (*char_count) * (ub4) sizeof(otext);
             }
         }
 
         if (((*char_count) == 0) && ((*byte_count) > 0))
         {
-            if (OCILib.nls_utf8 == TRUE)
+            if (OCILib.nls_utf8)
             {
 
             #ifndef OCI_LOB2_API_ENABLED
 
-                (*char_count) = OCI_StringUTF8Length((const char *) buffer);
+                (*char_count) = OCI_StringLength((const char *) buffer, sizeof(char));
 
             #endif
 
             }
             else
             {
-                (*char_count) = (*byte_count) / (ub4) sizeof(dtext);
+                (*char_count) = (*byte_count) / (ub4) sizeof(otext);
             }
         }
 
-        obuf = OCI_GetInputDataString(buffer, (int *) byte_count);
+        obuf = OCI_StringGetOracleString((const otext *) buffer, (int *) byte_count);
     }
     else
     {
         obuf = buffer;
     }
 
-    if (lob->type == OCI_NCLOB)
-    {
-        csfrm = SQLCS_NCHAR;
-    }
-    else
-    {
-        csfrm = SQLCS_IMPLICIT;
-    }
-
+    csfrm = (lob->type == OCI_NCLOB) ? SQLCS_NCHAR : SQLCS_IMPLICIT;
+  
     OCI_CHECK_MIN(lob->con, NULL, (*byte_count), 1, FALSE);
 
 #ifdef OCI_LOB2_API_ENABLED
@@ -1101,7 +1068,7 @@ boolean OCI_API OCI_LobAppend2
     {
         ub4 size_in_out_char_byte = 0;
 
-        if ((lob->type == OCI_BLOB) || (OCILib.nls_utf8 == TRUE))
+        if ((OCI_BLOB == lob->type) || !OCILib.nls_utf8)
         {
             size_in_out_char_byte = (*byte_count);
         }
@@ -1119,38 +1086,30 @@ boolean OCI_API OCI_LobAppend2
                               (ub1) OCI_ONE_PIECE, (dvoid *) NULL, NULL, csid, csfrm)
         )
 
-        if (lob->type == OCI_BLOB)
-        {
-            (*char_count) = (ub4) size_in_out_char_byte;
-            (*byte_count) = (ub4) size_in_out_char_byte;
-        }
-        else
-        {
-            (*char_count) = (ub4) size_in_out_char_byte;
-            (*byte_count) = (ub4) size_in_out_char_byte;
+        (*char_count) = (ub4) size_in_out_char_byte;
+        (*byte_count) = (ub4) size_in_out_char_byte;
 
-			if (OCILib.nls_utf8 == FALSE)
-            {
- 				(*byte_count) *= (ub4) sizeof(dtext);
-			}
-        }
+        if ((OCI_CLOB == lob->type) && !OCILib.nls_utf8)
+        {
+ 		    (*byte_count) *= (ub4) sizeof(otext);
+	    }
     }
 
-    if (res == TRUE)
+    if (res)
     {
-        if (lob->type == OCI_BLOB)
+        if (OCI_BLOB == lob->type)
         {
             lob->offset += (big_uint) (*byte_count);
         }
         else
         {
             lob->offset += (big_uint) (*char_count);
-
-            if (OCILib.nls_utf8 == FALSE)
-            {
-                OCI_ReleaseDataString(obuf);
-            }
         }
+    }
+
+    if (!OCILib.nls_utf8 && OCI_CLOB == lob->type)
+    {
+        OCI_StringReleaseOracleString((dbtext *) obuf);
     }
 
     OCI_RESULT(res);
@@ -1173,9 +1132,9 @@ unsigned int OCI_API OCI_LobAppend
     unsigned int byte_count = 0;
     unsigned int *ptr_count = NULL;
 
-    if (lob != NULL)
+    if (lob)
     {
-        if(lob->type == OCI_BLOB)
+        if(OCI_BLOB == lob->type)
         {
             byte_count = len;
             ptr_count  = &byte_count;
@@ -1220,7 +1179,7 @@ boolean OCI_API OCI_LobAppendLob
         OCILobAppend(lob->con->cxt, lob->con->err, lob->handle, lob_src->handle)
     )
 
-    if (res == TRUE)
+    if (res)
     {
         lob->offset += OCI_LobGetLength(lob);
     }
@@ -1350,7 +1309,7 @@ boolean OCI_API OCI_LobAssign
     OCI_CHECK_PTR(OCI_IPC_LOB, lob,     FALSE);
     OCI_CHECK_PTR(OCI_IPC_LOB, lob_src, FALSE);
 
-    if ((lob->hstate == OCI_OBJECT_ALLOCATED) || (lob->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
+    if ((OCI_OBJECT_ALLOCATED == lob->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == lob->hstate))
     {
         OCI_CALL2
         (

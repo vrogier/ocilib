@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -54,16 +54,16 @@ OCI_Timestamp * OCI_TimestampInit
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    boolean res = TRUE;
+    boolean res = FALSE;
 
     OCI_CHECK(ptmsp == NULL, NULL);
 
-    if (*ptmsp == NULL)
+    if (!*ptmsp)
     {
         *ptmsp = (OCI_Timestamp *) OCI_MemAlloc(OCI_IPC_TIMESTAMP, sizeof(*tmsp), (size_t) 1, TRUE);
     }
 
-    if (*ptmsp != NULL)
+    if (*ptmsp)
     {
         tmsp = *ptmsp;
 
@@ -73,7 +73,7 @@ OCI_Timestamp * OCI_TimestampInit
 
         /* get the right error handle */
 
-        if (con != NULL)
+        if (con)
         {
             tmsp->err = con->err;
             tmsp->env = con->env;
@@ -86,49 +86,44 @@ OCI_Timestamp * OCI_TimestampInit
 
         /* allocate buffer if needed */
 
-        if ((tmsp->handle == NULL) || (tmsp->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
+        if (!tmsp->handle || (OCI_OBJECT_ALLOCATED_ARRAY == tmsp->hstate))
         {
-            ub4 htype = 0;
+            ub4 htype = OCI_UNKNOWN;
 
-            if (tmsp->type == OCI_TIMESTAMP)
+            if (OCI_TIMESTAMP == tmsp->type)
             {
                 htype = OCI_DTYPE_TIMESTAMP;
             }
-            else if (tmsp->type == OCI_TIMESTAMP_TZ)
+            else if (OCI_TIMESTAMP_TZ == tmsp->type)
             {
                 htype = OCI_DTYPE_TIMESTAMP_TZ;
             }
-            else if (tmsp->type == OCI_TIMESTAMP_LTZ)
+            else if (OCI_TIMESTAMP_LTZ == tmsp->type)
             {
                 htype = OCI_DTYPE_TIMESTAMP_LTZ;
             }
 
-            if (tmsp->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+            if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
             {
-                res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid  *) tmsp->env,
-                                                          (dvoid **) (void *) &tmsp->handle,
-                                                          (ub4     ) htype, (size_t) 0,
-                                                          (dvoid **) NULL));
+                res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid  *) tmsp->env,
+                                                         (dvoid **) (void *) &tmsp->handle,
+                                                         (ub4     ) htype, (size_t) 0,
+                                                         (dvoid **) NULL));
                 tmsp->hstate = OCI_OBJECT_ALLOCATED;
             }
-
         }
         else
         {
             tmsp->hstate = OCI_OBJECT_FETCHED_CLEAN;
         }
-    }
-    else
-    {
-        res = FALSE;
-    }
 
-    /* check for failure */
+        /* check for failure */
 
-    if (res == FALSE)
-    {
-        OCI_TimestampFree(tmsp);
-        tmsp = NULL;
+        if (!res)
+        {
+            OCI_TimestampFree(tmsp);
+            tmsp = NULL;
+        }
     }
 
 #else
@@ -195,19 +190,19 @@ boolean OCI_API OCI_TimestampFree
 
     OCI_CHECK_OBJECT_FETCHED(tmsp, FALSE);
 
-    if (tmsp->hstate == OCI_OBJECT_ALLOCATED)
+    if (OCI_OBJECT_ALLOCATED == tmsp->hstate)
     {
-        ub4 htype = 0;
+        ub4 htype = OCI_UNKNOWN;
 
-        if (tmsp->type == OCI_TIMESTAMP)
+        if (OCI_TIMESTAMP == tmsp->type)
         {
             htype = OCI_DTYPE_TIMESTAMP;
         }
-        else if (tmsp->type == OCI_TIMESTAMP_TZ)
+        else if (OCI_TIMESTAMP_TZ == tmsp->type)
         {
             htype = OCI_DTYPE_TIMESTAMP_TZ;
         }
-        else if (tmsp->type == OCI_TIMESTAMP_LTZ)
+        else if (OCI_TIMESTAMP_LTZ == tmsp->type)
         {
             htype = OCI_DTYPE_TIMESTAMP_LTZ;
         }
@@ -215,7 +210,7 @@ boolean OCI_API OCI_TimestampFree
         OCI_DescriptorFree((dvoid *) tmsp->handle, htype);
     }
 
-    if (tmsp->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+    if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
     {
         OCI_FREE(tmsp);
     }
@@ -238,31 +233,31 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
     unsigned int    nbelem
 )
 {
-    OCI_Array *arr        = NULL;
-    OCI_Timestamp **tmsps = NULL;
-    unsigned int htype    = 0;
+    OCI_Array       *arr   = NULL;
+    OCI_Timestamp **tmsps  = NULL;
+    unsigned int    htype  = OCI_UNKNOWN;
 
     OCI_CHECK_TIMESTAMP_ENABLED(con, NULL);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (type == OCI_TIMESTAMP)
+    if (OCI_TIMESTAMP == type)
     {
         htype = OCI_DTYPE_TIMESTAMP;
     }
-    else if (type == OCI_TIMESTAMP_TZ)
+    else if (OCI_TIMESTAMP_TZ == type)
     {
         htype = OCI_DTYPE_TIMESTAMP_TZ;
     }
-    else if (type == OCI_TIMESTAMP_LTZ)
+    else if (OCI_TIMESTAMP_LTZ == type)
     {
         htype = OCI_DTYPE_TIMESTAMP_LTZ;
     }
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type,sizeof(OCIDateTime *), 
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type, sizeof(OCIDateTime *), 
                           sizeof(OCI_Timestamp), htype, NULL);
 
-    if (arr != NULL)
+    if (arr)
     {
         tmsps = (OCI_Timestamp **) arr->tab_obj;
     }
@@ -424,7 +419,7 @@ boolean OCI_API OCI_TimestampConstruct
     int            min,
     int            sec,
     int            fsec,
-    const mtext   *time_zone
+    const otext   *time_zone
 )
 {
     boolean res = TRUE;
@@ -444,7 +439,7 @@ boolean OCI_API OCI_TimestampConstruct
                              (sb2) year, (ub1) month, (ub1) day,
                              (ub1) hour, (ub1) min,(ub1) sec,
                              (ub4) fsec, (OraText *) time_zone,
-                             (size_t) (time_zone ? mtextsize(time_zone) : 0))
+                             (size_t) (time_zone ? otextsize(time_zone) : 0))
     )
 
 #else
@@ -506,15 +501,15 @@ boolean OCI_API OCI_TimestampConvert
 boolean OCI_API OCI_TimestampFromText
 (
     OCI_Timestamp *tmsp,
-    const mtext   *str,
-    const mtext   *fmt
+    const otext   *str,
+    const otext   *fmt
 )
 {
-    boolean res = TRUE;
-    void *ostr1 = NULL;
-    void *ostr2 = NULL;
-    int osize1  = -1;
-    int osize2  = -1;
+    boolean  res     = TRUE;
+    dbtext  *dbstr1  = NULL;
+    dbtext  *dbstr2  = NULL;
+    int      dbsize1 = -1;
+    int      dbsize2 = -1;
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str,  FALSE);
@@ -524,29 +519,29 @@ boolean OCI_API OCI_TimestampFromText
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    ostr1 = OCI_GetInputMetaString(str, &osize1);
-    ostr2 = OCI_GetInputMetaString(fmt, &osize2);
+    dbstr1 = OCI_StringGetOracleString(str, &dbsize1);
+    dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
     OCI_CALL4
     (
         res, tmsp->err, tmsp->con,
 
         OCIDateTimeFromText((dvoid *) tmsp->env, tmsp->err,
-                            (OraText *) ostr1, (size_t) osize1,
-                            (OraText *) ostr2, (ub1) osize2,
+                            (OraText *) dbstr1, (size_t) dbsize1,
+                            (OraText *) dbstr2, (ub1) dbsize2,
                             (OraText *) NULL, (size_t) 0,
                             tmsp->handle)
     )
 
-    OCI_ReleaseMetaString(ostr1);
-    OCI_ReleaseMetaString(ostr2);
+    OCI_StringReleaseOracleString(dbstr1);
+    OCI_StringReleaseOracleString(dbstr2);
 
 #else
 
-    OCI_NOT_USED(ostr1);
-    OCI_NOT_USED(ostr2);
-    OCI_NOT_USED(osize1);
-    OCI_NOT_USED(osize2);
+    OCI_NOT_USED(dbstr1);
+    OCI_NOT_USED(dbstr2);
+    OCI_NOT_USED(dbsize1);
+    OCI_NOT_USED(dbsize2);
 
 #endif
 
@@ -562,17 +557,17 @@ boolean OCI_API OCI_TimestampFromText
 boolean OCI_API OCI_TimestampToText
 (
     OCI_Timestamp *tmsp,
-    const mtext   *fmt,
+    const otext   *fmt,
     int            size,
-    mtext         *str,
+    otext         *str,
     int            precision
 )
 {
-    boolean res = TRUE;
-    void *ostr1 = NULL;
-    void *ostr2 = NULL;
-    int osize1  = size * (int) sizeof(mtext);
-    int osize2  = -1;
+    boolean res     = TRUE;
+    dbtext *dbstr1  = NULL;
+    dbtext *dbstr2  = NULL;
+    int     dbsize1 = size * (int) sizeof(otext);
+    int     dbsize2 = -1;
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str,  FALSE);
@@ -586,36 +581,36 @@ boolean OCI_API OCI_TimestampToText
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    ostr1 = OCI_GetInputMetaString(str, &osize1);
-    ostr2 = OCI_GetInputMetaString(fmt, &osize2);
+    dbstr1 = OCI_StringGetOracleString(str, &dbsize1);
+    dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
     OCI_CALL4
     (
         res, tmsp->err, tmsp->con,
 
         OCIDateTimeToText((dvoid *) tmsp->env, tmsp->err,
-                          tmsp->handle, (OraText *) ostr2,
-                          (ub1) osize2, (ub1) precision,
+                          tmsp->handle, (OraText *) dbstr2,
+                          (ub1) dbsize2, (ub1) precision,
                           (OraText *) NULL, (size_t) 0,
-                          (ub4*) &osize1, (OraText *) ostr1)
+                          (ub4*) &dbsize1, (OraText *) dbstr1)
 
     )
 
-    OCI_GetOutputMetaString(ostr1, str, &osize1);
+    OCI_StringCopyOracleStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
 
-    OCI_ReleaseMetaString(ostr1);
-    OCI_ReleaseMetaString(ostr2);
+    OCI_StringReleaseOracleString(dbstr1);
+    OCI_StringReleaseOracleString(dbstr2);
 
     /* set null string terminator */
 
-    str[osize1/ (int) sizeof(mtext)] = 0;
+    str[dbcharcount(dbsize1)] = 0;
 
 #else
 
-    OCI_NOT_USED(ostr1);
-    OCI_NOT_USED(ostr2);
-    OCI_NOT_USED(osize1);
-    OCI_NOT_USED(osize2);
+    OCI_NOT_USED(dbstr1);
+    OCI_NOT_USED(dbstr2);
+    OCI_NOT_USED(dbsize1);
+    OCI_NOT_USED(dbsize2);
     OCI_NOT_USED(precision);
 
 #endif
@@ -779,12 +774,12 @@ boolean OCI_API OCI_TimestampGetTimeZoneName
 (
     OCI_Timestamp *tmsp,
     int            size,
-    mtext         *str
+    otext         *str
 )
 {
-    boolean res = TRUE;
-    void *ostr  = NULL;
-    int osize   = size * (int) sizeof(mtext);
+    boolean res    = TRUE;
+    dbtext *dbstr  = NULL;
+    int     dbsize  = size * (int) sizeof(otext);
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
@@ -793,30 +788,29 @@ boolean OCI_API OCI_TimestampGetTimeZoneName
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    ostr = OCI_GetInputMetaString(str, &osize);
+    dbstr = OCI_StringGetOracleString(str, &dbsize);
 
     OCI_CALL4
     (
         res, tmsp->err, tmsp->con,
 
         OCIDateTimeGetTimeZoneName((dvoid *) tmsp->env, tmsp->err, tmsp->handle,
-                                   (ub1*) ostr, (ub4*) &osize)
+                                   (ub1*) dbstr, (ub4*) &dbsize)
     )
 
-    OCI_GetOutputMetaString(ostr, str, &osize);
-
-    OCI_ReleaseMetaString(ostr);
+    OCI_StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    OCI_StringReleaseOracleString(dbstr);
 
     /* set null string terminator */
 
-    str[osize/ (int) sizeof(mtext)] = 0;
+    str[dbcharcount(dbsize)] = 0;
 
 #else
 
     OCI_NOT_USED(str);
     OCI_NOT_USED(size);
-    OCI_NOT_USED(ostr);
-    OCI_NOT_USED(osize);
+    OCI_NOT_USED(dbstr);
+    OCI_NOT_USED(dbsize);
 
 #endif
 
@@ -888,7 +882,7 @@ boolean OCI_API OCI_TimestampIntervalAdd
 
     /* OCIDateTimeIntervalAdd() fails if timestamps is not OCI_TIMESTAMP_TZ */
 
-    if (tmsp->type != OCI_TIMESTAMP_TZ)
+    if (OCI_TIMESTAMP_TZ != tmsp->type)
     {
         tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
@@ -909,10 +903,13 @@ boolean OCI_API OCI_TimestampIntervalAdd
 
     /* converting back */
 
-    if ((res == TRUE) && (tmsp->type != OCI_TIMESTAMP_TZ))
+    if (res && (OCI_TIMESTAMP_TZ != tmsp->type))
     {
         res = OCI_TimestampConvert(tmsp, tmp);
+    }
 
+    if (tmsp != tmp)
+    {
         OCI_TimestampFree(tmp);
     }
 
@@ -949,7 +946,7 @@ boolean OCI_API OCI_TimestampIntervalSub
 
     /* OCIDateTimeIntervalSub() fails if timestamps is not OCI_TIMESTAMP_TZ */
 
-    if (tmsp->type != OCI_TIMESTAMP_TZ)
+    if (OCI_TIMESTAMP_TZ != tmsp->type)
     {
         tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
@@ -970,10 +967,13 @@ boolean OCI_API OCI_TimestampIntervalSub
 
     /* converting back */
 
-    if ((res == TRUE) && (tmsp->type != OCI_TIMESTAMP_TZ))
+    if (res && (OCI_TIMESTAMP_TZ != tmsp->type))
     {
         res = OCI_TimestampConvert(tmsp, tmp);
+    }
 
+    if (tmsp != tmp)
+    {
         OCI_TimestampFree(tmp);
     }
 
@@ -1051,7 +1051,7 @@ boolean OCI_API OCI_TimestampSysTimestamp
        OCI_TIMESTAMP if needed
     */
 
-    if (tmsp->type == OCI_TIMESTAMP)
+    if (OCI_TIMESTAMP == tmsp->type)
     {
         tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
@@ -1069,10 +1069,13 @@ boolean OCI_API OCI_TimestampSysTimestamp
         OCIDateTimeSysTimeStamp((dvoid *) tmsp->env, tmsp->err, handle)
     )
 
-    if ((res == TRUE) && (tmsp->type == OCI_TIMESTAMP))
+    if (res && (OCI_TIMESTAMP == tmsp->type))
     {
         res = OCI_TimestampConvert(tmsp, tmp);
+    }
 
+    if (tmsp != tmp)
+    {
         OCI_TimestampFree(tmp);
     }
 
@@ -1122,12 +1125,12 @@ boolean OCI_API OCI_TimestampToCTime
 
         time = mktime(&t);
 
-        if (ptm != NULL)
+        if (ptm)
         {
             memcpy(ptm, &t, sizeof(t));
         }
 
-        if (pt != NULL)
+        if (pt)
         {
             *pt = time;
         }
@@ -1155,19 +1158,19 @@ boolean OCI_API OCI_TimestampFromCTime
 
     OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con, FALSE);
 
-    if (ptm == NULL && t == (time_t) 0)
+    if (ptm && t == (time_t) 0)
     {
         OCI_ExceptionNullPointer(OCI_IPC_TM);
 
         return FALSE;
     }
 
-    if (ptm == NULL)
+    if (ptm)
     {
         ptm = localtime(&t);
     }
 
-    if (ptm != NULL)
+    if (ptm)
     {
         res =  OCI_TimestampConstruct(tmsp,
                                       ptm->tm_year + 1900,
@@ -1177,7 +1180,7 @@ boolean OCI_API OCI_TimestampFromCTime
                                       ptm->tm_min,
                                       ptm->tm_sec,
                                       (int) 0,
-                                      (const mtext *) NULL);
+                                      (const otext *) NULL);
     }
     else
     {
@@ -1188,5 +1191,5 @@ boolean OCI_API OCI_TimestampFromCTime
 
     OCI_RESULT(res);
 
-    return res;
+    return res;       
 }

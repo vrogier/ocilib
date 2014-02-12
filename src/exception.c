@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -38,180 +38,180 @@
  *                            STRINGS MESSAGES
  * ********************************************************************************************* */
 
-static mtext * OCILib_TypeNames[OCI_IPC_COUNT] =
+static otext * OCILib_TypeNames[OCI_IPC_COUNT] =
 {
-    MT("generic pointer"),
-    MT("short pointer"),
-    MT("int pointer"),
-    MT("big_int pointer"),
-    MT("double pointer"),
-    MT("float    pointer"),
-    MT("string pointer"),
-    MT("function callback"),
+    OTEXT("generic pointer"),
+    OTEXT("short pointer"),
+    OTEXT("int pointer"),
+    OTEXT("big_int pointer"),
+    OTEXT("double pointer"),
+    OTEXT("float    pointer"),
+    OTEXT("string pointer"),
+    OTEXT("function callback"),
 
-    MT("Error handle"),
-    MT("Schema handle"),
-    MT("Connection handle"),
-    MT("Pool handle"),
-    MT("Transaction handle"),
-    MT("Statement handle"),
-    MT("Resultset handle"),
-    MT("Column handle"),
-    MT("Date handle"),
-    MT("Timestamp handle"),
-    MT("Interval handle"),
-    MT("Lob handle"),
-    MT("File handle"),
-    MT("Long handle"),
-    MT("Object handle"),
-    MT("Collection handle"),
-    MT("Collection iterator handle"),
-    MT("Collection element handle"),
-    MT("Hash Table handle"),
-    MT("Thread handle"),
-    MT("Mutex handle"),
-    MT("Bind handle"),
-    MT("Ref handle"),
-    MT("Direct Path handle"),
-    MT("Subscription handle"),
-    MT("Event handle"),
-    MT("Array handle"),
-    MT("Message handle"),
-    MT("Enqueue handle"),
-    MT("Dequeue handle"),
-    MT("Agent handle"),
+    OTEXT("Error handle"),
+    OTEXT("Schema handle"),
+    OTEXT("Connection handle"),
+    OTEXT("Pool handle"),
+    OTEXT("Transaction handle"),
+    OTEXT("Statement handle"),
+    OTEXT("Resultset handle"),
+    OTEXT("Column handle"),
+    OTEXT("Date handle"),
+    OTEXT("Timestamp handle"),
+    OTEXT("Interval handle"),
+    OTEXT("Lob handle"),
+    OTEXT("File handle"),
+    OTEXT("Long handle"),
+    OTEXT("Object handle"),
+    OTEXT("Collection handle"),
+    OTEXT("Collection iterator handle"),
+    OTEXT("Collection element handle"),
+    OTEXT("Hash Table handle"),
+    OTEXT("Thread handle"),
+    OTEXT("Mutex handle"),
+    OTEXT("Bind handle"),
+    OTEXT("Ref handle"),
+    OTEXT("Direct Path handle"),
+    OTEXT("Subscription handle"),
+    OTEXT("Event handle"),
+    OTEXT("Array handle"),
+    OTEXT("Message handle"),
+    OTEXT("Enqueue handle"),
+    OTEXT("Dequeue handle"),
+    OTEXT("Agent handle"),
 
-    MT("Internal list handle"),
-    MT("Internal list item handle"),
-    MT("Internal array of bind handles"),
-    MT("Internal define handle"),
-    MT("Internal array of define handles"),
-    MT("Internal hash entry handle"),
-    MT("Internal array of hash entry handles"),
-    MT("Internal hash value handle"),
-    MT("Internal thread key handle"),
-    MT("Internal Oracle date handle"),
-    MT("Internal C tm structure"),
-    MT("Internal array of resultset handles"),
-    MT("Internal array of PL/SQL sizes integers"),
-    MT("Internal array of PL/SQL return codes integers"),
-    MT("Internal server output handle"),
-    MT("Internal array of indicator integers"),
-    MT("Internal array of buffer length integers"),
-    MT("Internal array of data buffers"),
-    MT("Internal Long handle data buffer"),
-    MT("Internal trace info structure"),
-    MT("Internal array of direct path columns"),
-    MT("Internal array of batch error objects")
+    OTEXT("Internal list handle"),
+    OTEXT("Internal list item handle"),
+    OTEXT("Internal array of bind handles"),
+    OTEXT("Internal define handle"),
+    OTEXT("Internal array of define handles"),
+    OTEXT("Internal hash entry handle"),
+    OTEXT("Internal array of hash entry handles"),
+    OTEXT("Internal hash value handle"),
+    OTEXT("Internal thread key handle"),
+    OTEXT("Internal Oracle date handle"),
+    OTEXT("Internal C tm structure"),
+    OTEXT("Internal array of resultset handles"),
+    OTEXT("Internal array of PL/SQL sizes integers"),
+    OTEXT("Internal array of PL/SQL return codes integers"),
+    OTEXT("Internal server output handle"),
+    OTEXT("Internal array of indicator integers"),
+    OTEXT("Internal array of buffer length integers"),
+    OTEXT("Internal array of data buffers"),
+    OTEXT("Internal Long handle data buffer"),
+    OTEXT("Internal trace info structure"),
+    OTEXT("Internal array of direct path columns"),
+    OTEXT("Internal array of batch error objects")
 };
 
 #if defined(OCI_CHARSET_WIDE) && !defined(_MSC_VER)
 
-static mtext * OCILib_ErrorMsg[OCI_IPC_COUNT] =
+static otext * OCILib_ErrorMsg[OCI_IPC_COUNT] =
 {
-    MT("No error"),
-    MT("OCILIB has not been initialized"),
-    MT("Cannot load OCI shared library (%ls)"),
-    MT("Cannot load OCI symbols from shared library"),
-    MT("OCILIB has not been initialized in multithreaded mode"),
-    MT("Memory allocation failure (type %ls, size : %d)"),
-    MT("Feature not available (%ls) "),
-    MT("A null %ls has been provided"),
-    MT("Oracle datatype (sqlcode %d) not supported for this operation "),
-    MT("Unknown identifier %c while parsing SQL"),
-    MT("Unknown argument %d while retrieving data"),
-    MT("Index %d out of bounds"),
-    MT("Found %d unfreed %ls"),
-    MT("Maximum number of binds (%d) already reached"),
-    MT("Object attribute '%ls' not found"),
-    MT("The integer parameter value must be at least %d"),
-    MT("Elements are not compatible"),
-    MT("The statement must be %ls to perform this operation"),
-    MT("The statement is not scrollable"),
-    MT("Name or position '%ls' already binded to the statement"),
-    MT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
-    MT("Column '%ls' not find in table '%ls'"),
-    MT("Unable to perform this operation on a %ls direct path process"),
-    MT("Cannot create OCI environment"),
-    MT("Name or position '%ls' previously binded with different datatype"),
-    MT("Object '%ls' type does not match the requested object type")
+    OTEXT("No error"),
+    OTEXT("OCILIB has not been initialized"),
+    OTEXT("Cannot load OCI shared library (%ls)"),
+    OTEXT("Cannot load OCI symbols from shared library"),
+    OTEXT("OCILIB has not been initialized in multithreaded mode"),
+    OTEXT("Memory allocation failure (type %ls, size : %d)"),
+    OTEXT("Feature not available (%ls) "),
+    OTEXT("A null %ls has been provided"),
+    OTEXT("Oracle datatype (sqlcode %d) not supported for this operation "),
+    OTEXT("Unknown identifier %c while parsing SQL"),
+    OTEXT("Unknown argument %d while retrieving data"),
+    OTEXT("Index %d out of bounds"),
+    OTEXT("Found %d unfreed %ls"),
+    OTEXT("Maximum number of binds (%d) already reached"),
+    OTEXT("Object attribute '%ls' not found"),
+    OTEXT("The integer parameter value must be at least %d"),
+    OTEXT("Elements are not compatible"),
+    OTEXT("The statement must be %ls to perform this operation"),
+    OTEXT("The statement is not scrollable"),
+    OTEXT("Name or position '%ls' already binded to the statement"),
+    OTEXT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
+    OTEXT("Column '%ls' not find in table '%ls'"),
+    OTEXT("Unable to perform this operation on a %ls direct path process"),
+    OTEXT("Cannot create OCI environment"),
+    OTEXT("Name or position '%ls' previously binded with different datatype"),
+    OTEXT("Object '%ls' type does not match the requested object type")
 };
 
 #else
 
-static mtext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
+static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
 {
-    MT("No error"),
-    MT("OCILIB has not been initialized"),
-    MT("Cannot load OCI shared library (%s)"),
-    MT("Cannot load OCI symbols from shared library"),
-    MT("OCILIB has not been initialized in multithreaded mode"),
-    MT("Memory allocation failure (type %s, size : %d)"),
-    MT("Feature not available (%s) "),
-    MT("A null %s has been provided"),
-    MT("Oracle datatype (sqlcode %d) not supported for this operation "),
-    MT("Unknown identifier %c while parsing SQL : "),
-    MT("Unknown argument %d while retrieving data"),
-    MT("Index %d out of bounds"),
-    MT("Found %d unfreed %s"),
-    MT("Maximum number of binds (%d) already reached"),
-    MT("Object attribute '%s' not found"),
-    MT("The integer parameter value must be at least %d"),
-    MT("Elements are not compatible"),
-    MT("The statement must be %s to perform this operation"),
-    MT("The statement is not scrollable"),
-    MT("Name or position '%s' already binded to the statement"),
-    MT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
-    MT("Column '%s' not find in table '%s'"),
-    MT("Unable to perform this operation on a %s direct path process"),
-    MT("Cannot create OCI environment"),
-    MT("Name or position '%s' previously binded with different datatype"),
-    MT("Object '%s' type does not match the requested object type")
+    OTEXT("No error"),
+    OTEXT("OCILIB has not been initialized"),
+    OTEXT("Cannot load OCI shared library (%s)"),
+    OTEXT("Cannot load OCI symbols from shared library"),
+    OTEXT("OCILIB has not been initialized in multithreaded mode"),
+    OTEXT("Memory allocation failure (type %s, size : %d)"),
+    OTEXT("Feature not available (%s) "),
+    OTEXT("A null %s has been provided"),
+    OTEXT("Oracle datatype (sqlcode %d) not supported for this operation "),
+    OTEXT("Unknown identifier %c while parsing SQL : "),
+    OTEXT("Unknown argument %d while retrieving data"),
+    OTEXT("Index %d out of bounds"),
+    OTEXT("Found %d unfreed %s"),
+    OTEXT("Maximum number of binds (%d) already reached"),
+    OTEXT("Object attribute '%s' not found"),
+    OTEXT("The integer parameter value must be at least %d"),
+    OTEXT("Elements are not compatible"),
+    OTEXT("The statement must be %s to perform this operation"),
+    OTEXT("The statement is not scrollable"),
+    OTEXT("Name or position '%s' already binded to the statement"),
+    OTEXT("Invalid new size for bind arrays (initial %d, current %d, new %d)"),
+    OTEXT("Column '%s' not find in table '%s'"),
+    OTEXT("Unable to perform this operation on a %s direct path process"),
+    OTEXT("Cannot create OCI environment"),
+    OTEXT("Name or position '%s' previously binded with different datatype"),
+    OTEXT("Object '%s' type does not match the requested object type")
 };
 
 #endif
 
-static mtext * OCILib_OraFeatures[OCI_FEATURE_COUNT] =
+static otext * OCILib_OraFeatures[OCI_FEATURE_COUNT] =
 {
-    MT("Oracle 9.0 support for Unicode data"),
-    MT("Oracle 9.0 Timestamps and Intervals"),
-    MT("Oracle 9.2 Direct path date caching"),
-    MT("Oracle 9.2 Statement caching"),
-    MT("Oracle 10g R1 LOBs size extensions"),
-    MT("Oracle 10g R2 Database change notification"),
-    MT("Oracle 10g R2 remote database startup/shutdown"),
-    MT("Oracle 10g R2 High Availability"),
-    MT("Oracle XA Connections")
+    OTEXT("Oracle 9.0 support for Unicode data"),
+    OTEXT("Oracle 9.0 Timestamps and Intervals"),
+    OTEXT("Oracle 9.2 Direct path date caching"),
+    OTEXT("Oracle 9.2 Statement caching"),
+    OTEXT("Oracle 10g R1 LOBs size extensions"),
+    OTEXT("Oracle 10g R2 Database change notification"),
+    OTEXT("Oracle 10g R2 remote database startup/shutdown"),
+    OTEXT("Oracle 10g R2 High Availability"),
+    OTEXT("Oracle XA Connections")
 };
 
 typedef struct OCI_StmtStateTable
 {
     int    state;
-    mtext *name;
+    otext *name;
 } OCI_StmtStateTable;
 
 static OCI_StmtStateTable OCILib_StmtStates[OCI_STMT_STATES_COUNT] =
 {
-    { OCI_STMT_CLOSED,    MT("closed")        },
-    { OCI_STMT_PARSED,    MT("parsed")        },
-    { OCI_STMT_PREPARED,  MT("prepared")      },
-    { OCI_STMT_DESCRIBED, MT("described")     },
-    { OCI_STMT_EXECUTED,  MT("executed")      }
+    { OCI_STMT_CLOSED,    OTEXT("closed")        },
+    { OCI_STMT_PARSED,    OTEXT("parsed")        },
+    { OCI_STMT_PREPARED,  OTEXT("prepared")      },
+    { OCI_STMT_DESCRIBED, OTEXT("described")     },
+    { OCI_STMT_EXECUTED,  OTEXT("executed")      }
 };
 
-static mtext * OCILib_DirPathStates[OCI_DPS_COUNT] =
+static otext * OCILib_DirPathStates[OCI_DPS_COUNT] =
 {
-    MT("non prepared"),
-    MT("prepared"),
-    MT("converted"),
-    MT("terminated")
+    OTEXT("non prepared"),
+    OTEXT("prepared"),
+    OTEXT("converted"),
+    OTEXT("terminated")
 };
 
-static mtext * OCILib_HandleNames[OCI_HDLE_COUNT] =
+static otext * OCILib_HandleNames[OCI_HDLE_COUNT] =
 {
-    MT("OCI handle"),
-    MT("OCI descriptors"),
-    MT("OCI Object handles")
+    OTEXT("OCI handle"),
+    OTEXT("OCI descriptors"),
+    OTEXT("OCI Object handles")
 };
 
 /* ********************************************************************************************* *
@@ -229,7 +229,7 @@ OCI_Error * OCI_ExceptionGetError
 {
     OCI_Error *err = OCI_ErrorGet(TRUE, warning);
 
-    if (err != NULL)
+    if (err)
     {
         OCI_ErrorReset(err);
 
@@ -249,9 +249,9 @@ void OCI_ExceptionRaise
     OCI_Error *err
 )
 {
-    if (err != NULL)
+    if (err)
     {
-        if (OCILib.error_handler != NULL)
+        if (OCILib.error_handler)
         {
             OCILib.error_handler(err);
         }
@@ -274,10 +274,10 @@ void OCI_ExceptionOCI
 {
     OCI_Error *err = OCI_ExceptionGetError(warning);
 
-    if (err != NULL)
+    if (err)
     {
-        int osize  = (int) (msizeof(err->str) - (size_t) 1);
-        void *ostr =  OCI_GetInputMetaString(err->str, &osize);
+        int     dbsize = (int) (osizeof(err->str) - (size_t) 1);
+        dbtext *dbstr  =  OCI_StringGetOracleString(err->str, &dbsize);
 
         err->type = (warning ? OCI_ERR_WARNING : OCI_ERR_ORACLE);
         err->con  = con;
@@ -285,11 +285,11 @@ void OCI_ExceptionOCI
 
         /* get oracle description */
 
-        OCIErrorGet((dvoid *) p_err, (ub4) 1, (OraText *) NULL, &err->ocode,
-                    (OraText *) ostr, (ub4) osize, (ub4) OCI_HTYPE_ERROR);
+        OCIErrorGet((dvoid *) p_err, (ub4) 1, (OraText *) NULL, &err->sqlcode,
+                    (OraText *) dbstr, (ub4) dbsize, (ub4) OCI_HTYPE_ERROR);
 
-        OCI_GetOutputMetaString(ostr, err->str, &osize);
-        OCI_ReleaseMetaString(ostr);
+        OCI_StringCopyOracleStringToNativeString(dbstr, err->str, dbcharcount(dbsize));
+        OCI_StringReleaseOracleString(dbstr);
     }
 
     OCI_ExceptionRaise(err);
@@ -306,12 +306,12 @@ void OCI_ExceptionNotInitialized
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_NOT_INITIALIZED;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_NOT_INITIALIZED;
 
-        mtsncat(err->str,  OCILib_ErrorMsg[OCI_ERR_NOT_INITIALIZED], msizeof(err->str) - (size_t) 1);
+        ostrncat(err->str,  OCILib_ErrorMsg[OCI_ERR_NOT_INITIALIZED], osizeof(err->str) - (size_t) 1);
     }
 
     OCI_ExceptionRaise(err);
@@ -330,12 +330,12 @@ void OCI_ExceptionLoadingSharedLib
 
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_LOADING_SHARED_LIB;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_LOADING_SHARED_LIB;
 
-        mtsprintf(err->str, msizeof(err->str) - (size_t) 1,
+        osprintf(err->str, osizeof(err->str) - (size_t) 1,
                   OCILib_ErrorMsg[OCI_ERR_LOADING_SHARED_LIB],
                   OCI_DL_META_NAME);
     }
@@ -356,12 +356,12 @@ void OCI_ExceptionLoadingSymbols
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_LOADING_SYMBOLS;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_LOADING_SYMBOLS;
 
-        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_LOADING_SYMBOLS], msizeof(err->str) - (size_t) 1);
+        ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_LOADING_SYMBOLS], osizeof(err->str) - (size_t) 1);
     }
 
     OCI_ExceptionRaise(err);
@@ -378,12 +378,12 @@ void OCI_ExceptionNotMultithreaded
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_MULTITHREADED;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_MULTITHREADED;
 
-        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_MULTITHREADED], msizeof(err->str) - (size_t) 1);
+        ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_MULTITHREADED], osizeof(err->str) - (size_t) 1);
     }
 
     OCI_ExceptionRaise(err);
@@ -400,14 +400,14 @@ void OCI_ExceptionNullPointer
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_NULL_POINTER;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_NULL_POINTER;
 
-        mtsprintf(err->str, msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_NULL_POINTER],
-                  OCILib_TypeNames[type-1]);
+        osprintf(err->str, osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_NULL_POINTER],
+                 OCILib_TypeNames[type-1]);
     }
 
     OCI_ExceptionRaise(err);
@@ -427,18 +427,18 @@ void OCI_ExceptionMemory
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_MEMORY;
-        err->con   = con;
-        err->stmt  = stmt;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_MEMORY;
+        err->con     = con;
+        err->stmt    = stmt;
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_MEMORY],
-                  OCILib_TypeNames[type-1],
-                  nb_bytes);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_MEMORY],
+                 OCILib_TypeNames[type-1],
+                 nb_bytes);
     }
 
     OCI_ExceptionRaise(err);
@@ -456,16 +456,16 @@ void OCI_ExceptionNotAvailable
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_NOT_AVAILABLE;
-        err->con   = con;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_NOT_AVAILABLE;
+        err->con     = con;
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_NOT_AVAILABLE],
-                  OCILib_OraFeatures[feature-1]);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_NOT_AVAILABLE],
+                 OCILib_OraFeatures[feature-1]);
     }
 
     OCI_ExceptionRaise(err);
@@ -484,17 +484,17 @@ void OCI_ExceptionDatatypeNotSupported
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_DATATYPE_NOT_SUPPORTED;
-        err->con   = con;
-        err->stmt  = stmt;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_DATATYPE_NOT_SUPPORTED;
+        err->con     = con;
+        err->stmt    = stmt;
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_DATATYPE_NOT_SUPPORTED],
-                  code);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_DATATYPE_NOT_SUPPORTED],
+                 code);
     }
 
     OCI_ExceptionRaise(err);
@@ -508,22 +508,22 @@ void OCI_ExceptionParsingToken
 (
     OCI_Connection *con,
     OCI_Statement  *stmt,
-    mtext           token
+    otext           token
 )
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_PARSE_TOKEN;
-        err->con   = con;
-        err->stmt  = stmt;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_PARSE_TOKEN;
+        err->con     = con;
+        err->stmt    = stmt;
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_PARSE_TOKEN],
-                  token);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_PARSE_TOKEN],
+                 token);
     }
 
     OCI_ExceptionRaise(err);
@@ -542,17 +542,17 @@ void OCI_ExceptionMappingArgument
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_MAP_ARGUMENT;
-        err->con   = con;
-        err->stmt  = stmt;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_MAP_ARGUMENT;
+        err->con     = con;
+        err->stmt    = stmt;
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_MAP_ARGUMENT],
-                  arg);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_MAP_ARGUMENT],
+                 arg);
     }
 
     OCI_ExceptionRaise(err);
@@ -570,16 +570,16 @@ void OCI_ExceptionOutOfBounds
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_OUT_OF_BOUNDS;
-        err->con   = con;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_OUT_OF_BOUNDS;
+        err->con     = con;
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_OUT_OF_BOUNDS],
-                  value);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_OUT_OF_BOUNDS],
+                 value);
     }
 
     OCI_ExceptionRaise(err);
@@ -597,15 +597,15 @@ void OCI_ExceptionUnfreedData
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_UNFREED_DATA;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_UNFREED_DATA;
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_UNFREED_DATA],
-                  nb_elem, OCILib_HandleNames[type_elem-1]);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_UNFREED_DATA],
+                 nb_elem, OCILib_HandleNames[type_elem-1]);
     }
 
     OCI_ExceptionRaise(err);
@@ -622,19 +622,21 @@ void OCI_ExceptionMaxBind
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_MAX_BIND;
-        err->stmt  = stmt;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_MAX_BIND;
+        err->stmt    = stmt;
 
-        if (stmt != NULL)
-            err->con =  stmt->con;
+        if (stmt)
+        {
+            err->con = stmt->con;
+        }
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_MAX_BIND],
-                  OCI_BIND_MAX);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_MAX_BIND],
+                 OCI_BIND_MAX);
     }
 
     OCI_ExceptionRaise(err);
@@ -647,21 +649,21 @@ void OCI_ExceptionMaxBind
 void OCI_ExceptionAttributeNotFound
 (
     OCI_Connection *con,
-    const mtext    *attr
+    const otext    *attr
 )
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_ATTR_NOT_FOUND;
-        err->con   = con;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_ATTR_NOT_FOUND;
+        err->con     = con;
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_ATTR_NOT_FOUND],
-                  attr);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_ATTR_NOT_FOUND],
+                 attr);
     }
 
     OCI_ExceptionRaise(err);
@@ -680,14 +682,14 @@ void OCI_ExceptionMinimumValue
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_MIN_VALUE;
-        err->con   = con;
-        err->stmt  = stmt;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_MIN_VALUE;
+        err->con     = con;
+        err->stmt    = stmt;
 
-        mtsprintf(err->str, msizeof(err->str) - (size_t) 1, OCILib_ErrorMsg[OCI_ERR_MIN_VALUE], min);
+        osprintf(err->str, osizeof(err->str) - (size_t) 1, OCILib_ErrorMsg[OCI_ERR_MIN_VALUE], min);
     }
 
     OCI_ExceptionRaise(err);
@@ -704,13 +706,13 @@ void OCI_ExceptionTypeNotCompatible
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_NOT_COMPATIBLE;
-        err->con   = con;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_NOT_COMPATIBLE;
+        err->con     = con;
 
-        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_NOT_COMPATIBLE], msizeof(err->str) - (size_t) 1);
+        ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_NOT_COMPATIBLE], osizeof(err->str) - (size_t) 1);
     }
 
     OCI_ExceptionRaise(err);
@@ -728,16 +730,18 @@ void OCI_ExceptionStatementState
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        int i, index;
+        int i, index = 0;
 
-        index      = 0;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_STMT_STATE;
+        err->stmt    = stmt;
 
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_STMT_STATE;
-        err->stmt  = stmt;
-        err->con   =  stmt->con;
+        if (stmt)
+        {
+            err->con = stmt->con;
+        }
 
         for(i = 0; i < OCI_STMT_STATES_COUNT; i++)
         {
@@ -748,10 +752,10 @@ void OCI_ExceptionStatementState
             }
         }
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_STMT_STATE],
-                  OCILib_StmtStates[index].name);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_STMT_STATE],
+                 OCILib_StmtStates[index].name);
     }
 
     OCI_ExceptionRaise(err);
@@ -768,18 +772,18 @@ void OCI_ExceptionStatementNotScrollable
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_STMT_NOT_SCROLLABLE;
-        err->stmt  = stmt;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_STMT_NOT_SCROLLABLE;
+        err->stmt    = stmt;
 
-        if (stmt != NULL)
+        if (stmt)
         {
-            err->con =  stmt->con;
+            err->con = stmt->con;
         }
 
-        mtsncat(err->str, OCILib_ErrorMsg[OCI_ERR_STMT_NOT_SCROLLABLE], msizeof(err->str) - (size_t) 1);
+        ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_STMT_NOT_SCROLLABLE], osizeof(err->str) - (size_t) 1);
 
     }
 
@@ -793,26 +797,26 @@ void OCI_ExceptionStatementNotScrollable
 void OCI_ExceptionBindAlreadyUsed
 (
     OCI_Statement *stmt,
-    const mtext  * bind
+    const otext  * bind
 )
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_BIND_ALREADY_USED;
-        err->stmt  = stmt;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_BIND_ALREADY_USED;
+        err->stmt    = stmt;
 
-        if (stmt != NULL)
+        if (stmt)
         {
-            err->con =  stmt->con;
+            err->con = stmt->con;
         }
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_BIND_ALREADY_USED],
-                  bind);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_BIND_ALREADY_USED],
+                 bind);
     }
 
     OCI_ExceptionRaise(err);
@@ -832,21 +836,21 @@ void OCI_ExceptionBindArraySize
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_BIND_ARRAY_SIZE;
-        err->stmt  = stmt;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_BIND_ARRAY_SIZE;
+        err->stmt    = stmt;
 
-        if (stmt != NULL)
+        if (stmt)
         {
             err->con =  stmt->con;
         }
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_BIND_ARRAY_SIZE],
-                  maxsize, cursize, newsize);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_BIND_ARRAY_SIZE],
+                 maxsize, cursize, newsize);
     }
 
     OCI_ExceptionRaise(err);
@@ -859,25 +863,25 @@ void OCI_ExceptionBindArraySize
 void OCI_ExceptionDirPathColNotFound
 (
     OCI_DirPath  *dp,
-    const mtext * column,
-    const mtext  *table
+    const otext * column,
+    const otext  *table
 )
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_DIRPATH_STATE;
-        err->stmt  = NULL;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_DIRPATH_STATE;
+        err->stmt    = NULL;
 
-        if (dp != NULL)
+        if (dp)
         {
             err->con =  dp->con;
         }
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
+        osprintf(err->str,
+                  osizeof(err->str) - (size_t) 1,
                   OCILib_ErrorMsg[OCI_ERR_COLUMN_NOT_FOUND],
                   column,
                   table);
@@ -898,21 +902,21 @@ void OCI_ExceptionDirPathState
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_DIRPATH_STATE;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_DIRPATH_STATE;
         err->stmt  = NULL;
 
-        if (dp != NULL)
+        if (dp)
         {
             err->con =  dp->con;
         }
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_DIRPATH_STATE],
-                  OCILib_DirPathStates[state-1]);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_DIRPATH_STATE],
+                 OCILib_DirPathStates[state-1]);
     }
 
     OCI_ExceptionRaise(err);
@@ -929,12 +933,12 @@ void OCI_ExceptionOCIEnvironment
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_CREATE_OCI_ENVIRONMENT;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_CREATE_OCI_ENVIRONMENT;
 
-        mtsncat(err->str,  OCILib_ErrorMsg[OCI_ERR_CREATE_OCI_ENVIRONMENT], msizeof(err->str) - (size_t) 1);
+        ostrncat(err->str,  OCILib_ErrorMsg[OCI_ERR_CREATE_OCI_ENVIRONMENT], osizeof(err->str) - (size_t) 1);
     }
 
     OCI_ExceptionRaise(err);
@@ -947,26 +951,26 @@ void OCI_ExceptionOCIEnvironment
 void OCI_ExceptionRebindBadDatatype
 (
     OCI_Statement *stmt,
-    const mtext  * bind
+    const otext  * bind
 )
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_REBIND_BAD_DATATYPE;
-        err->stmt  = stmt;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_REBIND_BAD_DATATYPE;
+        err->stmt    = stmt;
 
-        if (stmt != NULL)
+        if (stmt)
         {
-            err->con =  stmt->con;
+            err->con = stmt->con;
         }
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_REBIND_BAD_DATATYPE],
-                  bind);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_REBIND_BAD_DATATYPE],
+                 bind);
     }
 
     OCI_ExceptionRaise(err);
@@ -979,22 +983,22 @@ void OCI_ExceptionRebindBadDatatype
 void OCI_ExceptionTypeInfoWrongType
 (
     OCI_Connection *con,
-    const mtext  * name
+    const otext  * name
 )
 {
     OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-    if (err != NULL)
+    if (err)
     {
-        err->type  = OCI_ERR_OCILIB;
-        err->icode = OCI_ERR_TYPEINFO_DATATYPE;
-        err->stmt  = NULL;
-        err->con   = con;
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_TYPEINFO_DATATYPE;
+        err->stmt    = NULL;
+        err->con     = con;
 
-        mtsprintf(err->str,
-                  msizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_TYPEINFO_DATATYPE],
-                  name);
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_TYPEINFO_DATATYPE],
+                 name);
     }
 
     OCI_ExceptionRaise(err);

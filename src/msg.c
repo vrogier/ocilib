@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -58,23 +58,23 @@ OCI_Msg * OCI_API OCI_MsgCreate
 
     msg = (OCI_Msg *) OCI_MemAlloc(OCI_IPC_MSG, sizeof(*msg), (size_t) 1, TRUE);
 
-    if (msg != NULL)
+    if (msg)
     {
         msg->typinf = typinf;
         msg->ind    = OCI_IND_NULL;
 
         /* allocate message properties descriptor */
 
-        res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) msg->typinf->con->env,
-                                                  (dvoid **) &msg->proph,
-                                                  OCI_DTYPE_AQMSG_PROPERTIES,
-                                                  (size_t) 0, (dvoid **) NULL));
+        res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid * ) msg->typinf->con->env,
+                                                 (dvoid **) &msg->proph,
+                                                 OCI_DTYPE_AQMSG_PROPERTIES,
+                                                 (size_t) 0, (dvoid **) NULL));
 
-        if (res == TRUE)
+        if (res)
         {
             /* allocate internal OCI_Object handle if payload is not RAW */
 
-            if (msg->typinf->tcode != OCI_UNKNOWN)
+            if (OCI_UNKNOWN != msg->typinf->typecode)
             {
                 msg->obj = OCI_ObjectCreate(typinf->con, typinf);
 
@@ -89,7 +89,7 @@ OCI_Msg * OCI_API OCI_MsgCreate
 
     /* check for failure */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_MsgFree(msg);
         msg = NULL;
@@ -113,14 +113,14 @@ boolean OCI_API OCI_MsgFree
 
     /* free local OCI_Agent object */
 
-    if (msg->sender != NULL)
+    if (msg->sender)
     {
         OCI_AgentFree(msg->sender);
     }
 
     /* free internal OCI_Object handle if payload is not RAW */
 
-    if (msg->obj != NULL)
+    if (msg->obj)
     {
         msg->obj->hstate =  OCI_OBJECT_ALLOCATED;
 
@@ -131,7 +131,7 @@ boolean OCI_API OCI_MsgFree
 
     /* free message RAW payload if necessary */
 
-    if ((msg->typinf->tcode == OCI_UNKNOWN)&& ( msg->id != NULL))
+    if (msg->id && (OCI_UNKNOWN == msg->typinf->typecode))
     {
         OCI_CALL2
         (
@@ -143,7 +143,7 @@ boolean OCI_API OCI_MsgFree
 
     /* free message ID */
 
-    if (msg->id != NULL)
+    if (msg->id)
     {
 
         OCI_CALL2
@@ -174,31 +174,29 @@ boolean OCI_API OCI_MsgReset
     OCI_Msg *msg
 )
 {
-    boolean res = TRUE;
-
-    unsigned int len = 0;
-    void  *null_ptr  = NULL;
+    boolean       res = TRUE;
+    unsigned int  len = 0;
 
     res =   (
                 OCI_MsgSetExpiration(msg, -1)            &&
                 OCI_MsgSetEnqueueDelay(msg, 0)           &&
                 OCI_MsgSetPriority(msg,0)                &&
-                OCI_MsgSetOriginalID(msg, null_ptr, len) &&
+                OCI_MsgSetOriginalID(msg, NULL, len)     &&
                 OCI_MsgSetSender(msg, NULL)              &&
-                OCI_MsgSetConsumers(msg, null_ptr, len)  &&
+                OCI_MsgSetConsumers(msg, NULL, len)      &&
                 OCI_MsgSetCorrelation(msg, NULL)         &&
                 OCI_MsgSetExceptionQueue(msg, NULL)
             );
 
-    if (res == TRUE)
+    if (res)
     {
-        if (msg->typinf->tcode == OCI_UNKNOWN)
+        if (OCI_UNKNOWN == msg->typinf->typecode)
         {
-            res = OCI_MsgSetRaw(msg, null_ptr, len);
+            res = OCI_MsgSetRaw(msg, NULL, len);
         }
         else
         {
-            res = OCI_MsgSetObject(msg, null_ptr);
+            res = OCI_MsgSetObject(msg, NULL);
         }
     }
 
@@ -217,9 +215,9 @@ OCI_Object * OCI_API OCI_MsgGetObject
     OCI_Object *obj = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, NULL);
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->tcode != OCI_UNKNOWN, NULL);
+    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode != OCI_UNKNOWN, NULL);
 
-    if (msg->ind != OCI_IND_NULL)
+    if (OCI_IND_NULL != msg->ind)
     {
         obj = (OCI_Object *) msg->obj;
     }
@@ -243,15 +241,15 @@ boolean OCI_API OCI_MsgSetObject
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->tcode != OCI_UNKNOWN, FALSE);
+    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode != OCI_UNKNOWN, FALSE);
 
-    if (obj != NULL)
+    if (obj)
     {
         /* assign the given object to the message internal object */
 
         res = OCI_ObjectAssign((OCI_Object *) msg->obj, obj);
 
-        if (res == TRUE)
+        if (res)
         {
             msg->ind = OCI_IND_NOTNULL;
         }
@@ -281,9 +279,9 @@ boolean OCI_API OCI_MsgGetRaw
     OCI_CHECK_PTR(OCI_IPC_VOID, raw, FALSE);
     OCI_CHECK_PTR(OCI_IPC_VOID, size, FALSE);
 
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->tcode == OCI_UNKNOWN, FALSE);
+    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode == OCI_UNKNOWN, FALSE);
 
-    if ((msg->payload != NULL) && (msg->ind != OCI_IND_NULL))
+    if ((msg->payload) && (OCI_IND_NULL != msg->ind))
     {
         unsigned int raw_size = OCIRawSize(msg->typinf->con->env, (OCIRaw *) msg->payload);
 
@@ -319,7 +317,7 @@ boolean OCI_API OCI_MsgSetRaw
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->tcode == OCI_UNKNOWN, FALSE);
+    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode == OCI_UNKNOWN, FALSE);
 
     OCI_CALL2
     (
@@ -329,7 +327,7 @@ boolean OCI_API OCI_MsgSetRaw
                           (ub1*) raw, (ub4) size, (OCIRaw **) &msg->payload)
     )
 
-    if ((res == TRUE) && (msg->payload != NULL) && (size > 0))
+    if (res && msg->payload && (size > 0))
     {
         msg->ind = OCI_IND_NOTNULL;
     }
@@ -464,7 +462,7 @@ OCI_Date * OCI_API OCI_MsgGetEnqueueTime
                    msg->typinf->con->err)
     )
 
-    if (res == TRUE)
+    if (res)
     {
         date = OCI_DateInit(msg->typinf->con, &msg->date, &oci_date, FALSE, FALSE);
 
@@ -567,7 +565,7 @@ unsigned int OCI_API OCI_MsgGetState
 
     /* increment value to handle return code OCI_UNKNOWN on failure */
 
-    if (res == TRUE)
+    if (res)
     {
         ret++;
     }
@@ -662,7 +660,7 @@ boolean OCI_API OCI_MsgGetID
     OCI_CHECK_PTR(OCI_IPC_VOID, id,  FALSE);
     OCI_CHECK_PTR(OCI_IPC_VOID, len, FALSE);
 
-    if (msg->id != NULL)
+    if (msg->id)
     {
         ub4 raw_len = OCIRawSize(msg->typinf->con->env, msg->id);
 
@@ -713,7 +711,7 @@ boolean OCI_API OCI_MsgGetOriginalID
                    msg->typinf->con->err)
     )
 
-    if (value != NULL)
+    if (value)
     {
         ub4 raw_len = OCIRawSize(msg->typinf->con->env, value);
 
@@ -779,7 +777,7 @@ boolean OCI_API OCI_MsgSetOriginalID
  * OCI_MsgGetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_MsgGetCorrelation
+const otext * OCI_API OCI_MsgGetCorrelation
 (
     OCI_Msg *msg
 )
@@ -788,7 +786,7 @@ const mtext * OCI_API OCI_MsgGetCorrelation
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, NULL);
 
-    if (msg->correlation == NULL)
+    if (!msg->correlation)
     {
         res = OCI_StringGetFromAttrHandle(msg->typinf->con,
                                           msg->proph,
@@ -809,7 +807,7 @@ const mtext * OCI_API OCI_MsgGetCorrelation
 boolean OCI_API OCI_MsgSetCorrelation
 (
     OCI_Msg     *msg,
-    const mtext *correlation
+    const otext *correlation
 )
 {
     boolean res = TRUE;
@@ -832,7 +830,7 @@ boolean OCI_API OCI_MsgSetCorrelation
  * OCI_MsgGetExceptionQueue
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_MsgGetExceptionQueue
+const otext * OCI_API OCI_MsgGetExceptionQueue
 (
     OCI_Msg *msg
 )
@@ -841,7 +839,7 @@ const mtext * OCI_API OCI_MsgGetExceptionQueue
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, NULL);
 
-    if (msg->except_queue == NULL)
+    if (!msg->except_queue)
     {
         res = OCI_StringGetFromAttrHandle(msg->typinf->con,
                                           msg->proph,
@@ -862,7 +860,7 @@ const mtext * OCI_API OCI_MsgGetExceptionQueue
 boolean OCI_API OCI_MsgSetExceptionQueue
 (
     OCI_Msg     *msg,
-    const mtext *queue
+    const otext *queue
 )
 {
     boolean res = TRUE;
@@ -967,11 +965,11 @@ boolean OCI_API OCI_MsgSetConsumers
 
     /* allocate local array of OCIAQAgent handles if needed */
 
-    if ((consumers != NULL) && (count > 0))
+    if (consumers && (count > 0))
     {
         handles = (OCIAQAgent **) OCI_MemAlloc(OCI_IPC_ARRAY,sizeof(OCIAQAgent *), count, FALSE);
 
-        if (handles != NULL)
+        if (handles)
         {
             unsigned int i;
 
@@ -979,6 +977,10 @@ boolean OCI_API OCI_MsgSetConsumers
             {
                 handles[i] = consumers[i]->handle;
             }
+        }
+        else
+        {
+            res = FALSE;
         }
     }
     else
@@ -1001,7 +1003,7 @@ boolean OCI_API OCI_MsgSetConsumers
 
     /* free local array of OCIAQAgent handles if needed */
 
-    if (handles != NULL)
+    if (handles)
     {
         OCI_FREE(handles);
     }

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -52,7 +52,7 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
 {
     OCI_Item *item         = NULL;
     OCI_Transaction *trans = NULL;
-    boolean res            = TRUE;
+    boolean res            = FALSE;
 
     OCI_CHECK_INITIALIZED(NULL);
 
@@ -62,7 +62,7 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
 
     item = OCI_ListAppend(con->trsns, sizeof(*trans));
 
-    if (item != NULL)
+    if (item)
     {
         trans = (OCI_Transaction *) item->data;
 
@@ -73,17 +73,14 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
 
         /* allocate transaction handle */
 
-        if (res == TRUE)
-        {
-            res = (OCI_SUCCESS == OCI_HandleAlloc((dvoid *) trans->con->env,
-                                                  (dvoid **) (void *) &trans->htr,
-                                                  (ub4) OCI_HTYPE_TRANS,
-                                                  (size_t) 0, (dvoid **) NULL));
-        }
+        res = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *) trans->con->env,
+                                             (dvoid **) (void *) &trans->htr,
+                                             (ub4) OCI_HTYPE_TRANS,
+                                             (size_t) 0, (dvoid **) NULL));
 
         /* set XID attribute for global transaction */
 
-        if (pxid != NULL)
+        if (pxid)
         {
             memcpy(&trans->xid, pxid, sizeof(trans->xid));
 
@@ -97,14 +94,10 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
             )
         }
     }
-    else
-    {
-       res = FALSE;
-    }
 
     /* handle errors */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_TransactionFree(trans);
         trans = NULL;
@@ -132,7 +125,7 @@ boolean OCI_TransactionClose
 
     /* close transaction handle */
 
-    if (trans->htr != NULL)
+    if (trans->htr)
     {
         OCI_HandleFree((dvoid *) trans->htr, (ub4) OCI_HTYPE_TRANS);
     }
@@ -212,18 +205,11 @@ boolean OCI_API OCI_TransactionStop
 
     /* commit or rollback upon auto commit mode */
 
-    if (trans->con->autocom == TRUE)
-    {
-        res = OCI_Commit(trans->con);
-    }
-    else
-    {
-        res = OCI_Rollback(trans->con);
-    }
+    res = trans->con->autocom ? OCI_Commit(trans->con) : OCI_Rollback(trans->con);
 
     /* detach global transaction */
 
-    if (trans->local == FALSE)
+    if (!trans->local)
     {
         OCI_CALL2
         (

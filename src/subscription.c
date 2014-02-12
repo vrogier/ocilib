@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -55,19 +55,15 @@ boolean OCI_SubscriptionClose
 
     /* deregister the subscription if connection still alive */
 
-    if (sub->subhp != NULL)
+    if (sub->subhp)
     {
-        OCI_Connection * con = NULL;
-
-        if (sub->con == NULL)
+        if (!sub->con)
         {
-            con = OCI_ConnectionCreate(sub->saved_db, sub->saved_user,
-                                       sub->saved_pwd, OCI_SESSION_DEFAULT);
-
-            sub->con = con;
+            sub->con = OCI_ConnectionCreate(sub->saved_db, sub->saved_user,
+                                            sub->saved_pwd, OCI_SESSION_DEFAULT);
         }
 
-        if (sub->con != NULL)
+        if (sub->con)
         {
             OCI_CALL3
             (
@@ -76,11 +72,8 @@ boolean OCI_SubscriptionClose
                 OCISubscriptionUnRegister(sub->con->cxt, sub->subhp,
                                           sub->err,(ub4) OCI_DEFAULT)
             )
-        }
 
-        if (con != NULL)
-        {
-            OCI_ConnectionFree(con);
+            OCI_ConnectionFree(sub->con);
         }
     }
 
@@ -90,7 +83,7 @@ boolean OCI_SubscriptionClose
 
     /* close error handle */
 
-    if (sub->err != NULL)
+    if (sub->err)
     {
         OCI_HandleFree(sub->err, OCI_HTYPE_ERROR);
     }
@@ -127,7 +120,7 @@ boolean OCI_SubscriptionDetachConnection
 
     OCI_CHECK(list == NULL, FALSE);
 
-    if (list->mutex != NULL)
+    if (list->mutex)
     {
         OCI_MutexAcquire(list->mutex);
     }
@@ -136,23 +129,23 @@ boolean OCI_SubscriptionDetachConnection
 
     /* for each item in the list, check the connection */
 
-    while (item != NULL)
+    while (item)
     {
         OCI_Subscription * sub = (OCI_Subscription *) item->data;
 
-        if ((sub != NULL) && (sub->con == con))
+        if (sub && (sub->con == con))
         {
             sub->con = NULL;
 
-            sub->saved_db   = mtsdup(con->db);
-            sub->saved_user = mtsdup(con->user);
-            sub->saved_pwd  = mtsdup(con->pwd);
+            sub->saved_db   = ostrdup(con->db);
+            sub->saved_user = ostrdup(con->user);
+            sub->saved_pwd  = ostrdup(con->pwd);
         }
 
         item = item->next;
     }
 
-    if (list->mutex != NULL)
+    if (list->mutex)
     {
         OCI_MutexRelease(list->mutex);
     }
@@ -171,7 +164,7 @@ boolean OCI_SubscriptionDetachConnection
 OCI_Subscription * OCI_API OCI_SubscriptionRegister
 (
     OCI_Connection *con,
-    const mtext    *name,
+    const otext    *name,
     unsigned int    type,
     POCI_NOTIFY     handler,
     unsigned int    port,
@@ -180,7 +173,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 {
     OCI_Subscription *sub = NULL;
     OCI_Item *item        = NULL;
-    boolean res           = TRUE;
+    boolean res           = FALSE;
 
     OCI_CHECK_INITIALIZED(NULL);
     OCI_CHECK_DATABASE_NOTIFY_ENABLED(NULL);
@@ -195,32 +188,32 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
     item = OCI_ListAppend(OCILib.subs, sizeof(*sub));
 
-    if (item != NULL)
+    if (item)
     {
         sub = (OCI_Subscription *) item->data;
 
         /* allocate error handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(con->env,
-                                              (dvoid **) (void *) &sub->err,
-                                              OCI_HTYPE_ERROR, (size_t) 0,
-                                              (dvoid **) NULL));
+        res = OCI_SUCCESSFUL(OCI_HandleAlloc(con->env,
+                                             (dvoid **) (void *) &sub->err,
+                                             OCI_HTYPE_ERROR, (size_t) 0,
+                                             (dvoid **) NULL));
 
-        if (res == TRUE)
+        if (res)
         {
             /* allocate subcription handle */
 
-            res = (OCI_SUCCESS == OCI_HandleAlloc(con->env,
-                                                  (dvoid **) (void *) &sub->subhp,
-                                                  OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
-                                                  (dvoid **) NULL));
+            res = OCI_SUCCESSFUL(OCI_HandleAlloc(con->env,
+                                                 (dvoid **) (void *) &sub->subhp,
+                                                 OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
+                                                 (dvoid **) NULL));
         }
 
-        if (res == TRUE)
+        if (res)
         {
-            ub4 attr   = 0;
-            int osize  = -1;
-            void *ostr = NULL;
+            ub4     attr   = 0;
+            int     dbsize = -1;
+            dbtext *dbstr  = NULL;
 
             sub->con       = con;
             sub->env       = con->env;
@@ -228,7 +221,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
             sub->timeout   = (ub4) timeout;
             sub->handler   = handler;
             sub->type      = type;
-            sub->name      = mtsdup(name);
+            sub->name      = ostrdup(name);
             sub->event.sub = sub;
 
             /* set/get port number */
@@ -272,18 +265,18 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
             /* name  */
 
-            ostr = OCI_GetInputMetaString(sub->name, &osize);
+            dbstr = OCI_StringGetOracleString(sub->name, &dbsize);
 
             OCI_CALL3
             (
                 res, sub->err,
 
                 OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                           (dvoid *) ostr, (ub4) osize,
+                           (dvoid *) dbstr, (ub4) dbsize,
                            (ub4) OCI_ATTR_SUBSCR_NAME, sub->err)
             )
 
-            OCI_ReleaseMetaString(ostr);
+            OCI_StringReleaseOracleString(dbstr);
 
             /* namespace for CDN */
 
@@ -361,12 +354,8 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
             )
         }
     }
-    else
-    {
-        res = FALSE;
-    }
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_SubscriptionClose(sub);
         OCI_ListRemove(OCILib.subs, sub);
@@ -374,8 +363,6 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
     }
 
 #else
-
-    res = FALSE;
 
     OCI_NOT_USED(name);
     OCI_NOT_USED(type);
@@ -462,7 +449,7 @@ boolean OCI_API OCI_SubscriptionAddStatement
  * OCI_SubscriptionGetName
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_SubscriptionGetName
+const otext * OCI_API OCI_SubscriptionGetName
 (
     OCI_Subscription *sub
 )

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -207,6 +207,7 @@ extern OCINUMBERFROMREAL            OCINumberFromReal;
 extern OCINUMBERTOTEXT              OCINumberToText;
 extern OCINUMBERFROMTEXT            OCINumberFromText;
 extern OCISTRINGPTR                 OCIStringPtr;
+extern OCISTRINGSIZE                OCIStringSize;
 extern OCISTRINGASSIGNTEXT          OCIStringAssignText;
 extern OCIRAWPTR                    OCIRawPtr;
 extern OCIRAWASSIGNBYTES            OCIRawAssignBytes;

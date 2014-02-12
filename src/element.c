@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -34,6 +34,57 @@
 
 #include "ocilib_internal.h"
 
+
+#define OCI_ELEM_SET_VALUE(elemtype, type, func_init, func_assign)                  \
+                                                                                    \
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);                                    \
+    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == elemtype, FALSE); \
+                                                                                    \
+    if (!value)                                                                     \
+    {                                                                               \
+        res = OCI_ElemSetNull(elem);                                                \
+    }                                                                               \
+    else                                                                            \
+    {                                                                               \
+        if (!elem->obj)                                                             \
+        {                                                                           \
+            func_init;                                                              \
+        }                                                                           \
+                                                                                    \
+        if (!elem->obj)                                                             \
+        {                                                                           \
+            res = func_assign;                                                      \
+                                                                                    \
+            if (res)                                                                \
+            {                                                                       \
+                OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);                    \
+                elem->handle = ((type *) elem->obj)->handle;                        \
+            }                                                                       \
+        }                                                                           \
+    }                                                                               \
+                                                                                    \
+
+#define OCI_ELEM_GET_VALUE(elemtype, ret, type, func)                               \
+                                                                                    \
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);                                    \
+    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == elemtype, FALSE); \
+                                                                                    \
+    if (OCI_IND_NULL != elem->ind)                                                  \
+    {                                                                               \
+        if (!elem->init)                                                            \
+        {                                                                           \
+            ret = func;                                                             \
+                                                                                    \
+            elem->init = (ret != NULL);                                             \
+        }                                                                           \
+        else                                                                        \
+        {                                                                           \
+            ret = (type *) elem->obj;                                               \
+        }                                                                           \
+                                                                                    \
+        res = elem->init;                                                           \
+    }                                                                               \
+
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
@@ -56,12 +107,12 @@ OCI_Elem * OCI_ElemInit
 
     OCI_CHECK(pelem == NULL, NULL);
 
-    if (*pelem == NULL)
+    if (!*pelem)
     {
         *pelem = (OCI_Elem *) OCI_MemAlloc(OCI_IPC_ELEMENT, sizeof(*elem), (size_t) 1, TRUE);
     }
 
-    if (*pelem != NULL)
+    if (*pelem)
     {
         elem = *pelem;
 
@@ -70,21 +121,13 @@ OCI_Elem * OCI_ElemInit
         elem->typinf = typinf;
         elem->handle = handle;
         elem->init   = FALSE;
-
-        if (handle == NULL)
-        {
-            elem->hstate = OCI_OBJECT_ALLOCATED;
-        }
-        else
-        {
-            elem->hstate = OCI_OBJECT_FETCHED_CLEAN;
-        }
-
-        switch (elem->typinf->cols[0].type)
+        elem->hstate = handle ? OCI_OBJECT_FETCHED_CLEAN : OCI_OBJECT_ALLOCATED;
+                
+        switch (elem->typinf->cols[0].datatype)
         {
             case OCI_CDT_NUMERIC:
             {
-                if (elem->handle == NULL)
+                if (!elem->handle)
                 {
                     elem->handle = (OCINumber *) OCI_MemAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
                 }
@@ -99,7 +142,7 @@ OCI_Elem * OCI_ElemInit
             case OCI_CDT_FILE:
             case OCI_CDT_REF:
             {
-                if (elem->handle != NULL)
+                if (elem->handle)
                 {
                     elem->handle = * (void **) handle;
                 }
@@ -108,7 +151,7 @@ OCI_Elem * OCI_ElemInit
             }
         }
 
-        if (pind != NULL)
+        if (pind)
         {
             elem->pind = pind;
             elem->ind  = *elem->pind;
@@ -125,7 +168,7 @@ OCI_Elem * OCI_ElemInit
 
     /* check for failure */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_ElemFree(elem);
         elem = NULL;
@@ -146,7 +189,7 @@ boolean OCI_ElemSetNullIndicator
 {
     boolean res = TRUE;
 
-    if (elem->pind != NULL)
+    if (elem->pind)
     {
         *elem->pind = value;
     }
@@ -169,9 +212,9 @@ boolean OCI_ElemSetNumber
     boolean res = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_NUMERIC, FALSE);
+    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == OCI_CDT_NUMERIC, FALSE);
 
-    res = OCI_NumberSet(elem->con, (OCINumber *) elem->handle, size, flag, elem->typinf->cols[0].icode, value);
+    res = OCI_NumberSet(elem->con, (OCINumber *) elem->handle, size, flag, elem->typinf->cols[0].libcode, value);
 
     OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
 
@@ -196,15 +239,15 @@ boolean OCI_ElemGetNumber
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
 
-    if (elem->typinf->cols[0].type == OCI_CDT_NUMERIC)
+    if (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)
     {
         OCINumber *num = (OCINumber *) elem->handle;
 
-        res = OCI_NumberGet(elem->con, num, size, flag, elem->typinf->cols[0].icode, value);
+        res = OCI_NumberGet(elem->con, num, size, flag, elem->typinf->cols[0].libcode, value);
     }
-    else if (elem->typinf->cols[0].type == OCI_CDT_TEXT)
+    else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
     {
-        res = OCI_NumberFromString(elem->con, value, size, flag, elem->typinf->cols[0].icode, OCI_ElemGetString(elem), NULL);
+        res = OCI_NumberFromString(elem->con, value, size, flag, elem->typinf->cols[0].libcode, OCI_ElemGetString(elem), NULL);
     }
     else
     {
@@ -257,16 +300,16 @@ boolean OCI_API OCI_ElemFree
     /* if the element has sub-objects that have been fetched, we need to free
        these objects */
 
-    if (elem->obj != NULL)
+    if (elem->obj)
     {
         OCI_Datatype * data = (OCI_Datatype *) elem->obj;
 
-        if (data->hstate == OCI_OBJECT_FETCHED_CLEAN)
+        if (OCI_OBJECT_FETCHED_CLEAN == data->hstate)
         {
             data->hstate = OCI_OBJECT_FETCHED_DIRTY;
         }
 
-        switch (elem->typinf->cols[0].type)
+        switch (elem->typinf->cols[0].datatype)
         {
             case OCI_CDT_DATETIME:
             {
@@ -311,12 +354,12 @@ boolean OCI_API OCI_ElemFree
         }
     }
 
-    if ((elem->hstate == OCI_OBJECT_ALLOCATED) && (elem->typinf->cols[0].type == OCI_CDT_NUMERIC))
+    if ((OCI_OBJECT_ALLOCATED == elem->hstate) && (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype))
     {
         OCI_FREE(elem->handle);
     }
 
-    OCI_FREE(elem->buf);
+    OCI_FREE(elem->tmpbuf);
     OCI_FREE(elem);
 
     OCI_RESULT(TRUE);
@@ -456,23 +499,22 @@ float OCI_API OCI_ElemGetFloat
  * OCI_ElemGetString
  * --------------------------------------------------------------------------------------------- */
 
-const dtext * OCI_API OCI_ElemGetString
+const otext * OCI_API OCI_ElemGetString
 (
     OCI_Elem *elem
 )
 {
-    const dtext *str = NULL;
+    const otext *str = NULL;
     boolean res      = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_TEXT, NULL);
+    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == OCI_CDT_TEXT, NULL);
 
-    if (elem->handle != NULL)
+    if (elem->handle)
     {
         res = TRUE;
 
-        str = (dtext *) OCI_StringFromStringPtr(elem->con->env, (OCIString *) elem->handle,
-                                                &elem->buf, &elem->buflen);
+        str = OCI_StringFromStringPtr(elem->con->env, (OCIString *) elem->handle, &elem->tmpbuf, &elem->tmpsize);
     }
 
     OCI_RESULT(res);
@@ -494,9 +536,9 @@ unsigned int OCI_API OCI_ElemGetRaw
     boolean res = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, 0);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_RAW, 0);
+    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == OCI_CDT_RAW, 0);
 
-    if (elem->handle != NULL)
+    if (elem->handle)
     {
         OCIRaw *raw = (OCIRaw *) elem->handle; 
         ub4 raw_len = OCIRawSize(elem->con->env, raw);
@@ -528,25 +570,13 @@ OCI_Date * OCI_API OCI_ElemGetDate
     boolean res    = TRUE;
     OCI_Date *date = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_DATETIME, NULL);
-
-    if (elem->ind != OCI_IND_NULL)
-    {
-        if (elem->init == FALSE)
-        {
-            date = OCI_DateInit(elem->con, (OCI_Date **) &elem->obj,
-                                (OCIDate *) elem->handle, FALSE, FALSE);
-
-            elem->init = (date != NULL);
-        }
-        else
-        {
-            date = (OCI_Date *) elem->obj;
-        }
-
-        res = elem->init;
-    }
+    OCI_ELEM_GET_VALUE
+    (
+        OCI_CDT_DATETIME,
+        date, 
+        OCI_Date,
+        OCI_DateInit(elem->con, (OCI_Date **) &elem->obj, (OCIDate *) elem->handle, FALSE, FALSE)
+    )
 
     OCI_RESULT(res);
 
@@ -565,26 +595,18 @@ OCI_Timestamp * OCI_API OCI_ElemGetTimestamp
     boolean res         = TRUE;
     OCI_Timestamp *tmsp = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_TIMESTAMP, NULL);
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (elem->ind != OCI_IND_NULL)
-    {
-        if (elem->init == FALSE)
-        {
-            tmsp = OCI_TimestampInit(elem->con, (OCI_Timestamp **) &elem->obj,
-                                     (OCIDateTime *) elem->handle,
-                                     elem->typinf->cols[0].subtype);
+    OCI_ELEM_GET_VALUE
+    (
+        OCI_CDT_TIMESTAMP,
+        tmsp, 
+        OCI_Timestamp,
+        OCI_TimestampInit(elem->con, (OCI_Timestamp **) &elem->obj,  (OCIDateTime *) elem->handle,
+                          elem->typinf->cols[0].subtype)
+    )
 
-            elem->init = (tmsp != NULL);
-        }
-        else
-        {
-            tmsp = (OCI_Timestamp *) elem->obj;
-        }
-
-        res = elem->init;
-    }
+#endif
 
     OCI_RESULT(res);
 
@@ -603,26 +625,18 @@ OCI_Interval * OCI_API OCI_ElemGetInterval
     boolean res       = TRUE;
     OCI_Interval *itv = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_INTERVAL, NULL);
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (elem->ind != OCI_IND_NULL)
-    {
-        if (elem->init == FALSE)
-        {
-            itv = OCI_IntervalInit(elem->con, (OCI_Interval **) &elem->obj,
-                                   (OCIInterval *) elem->handle,
-                                   elem->typinf->cols[0].subtype);
+    OCI_ELEM_GET_VALUE
+    (
+        OCI_CDT_INTERVAL,
+        itv, 
+        OCI_Interval,
+        OCI_IntervalInit(elem->con, (OCI_Interval **) &elem->obj, (OCIInterval *) elem->handle,
+                         elem->typinf->cols[0].subtype)
+    )
 
-            elem->init = (itv != NULL);
-        }
-        else
-        {
-            itv = (OCI_Interval *) elem->obj;
-        }
-
-        res = elem->init;
-    }
+#endif
 
     OCI_RESULT(res);
 
@@ -641,26 +655,14 @@ OCI_Lob * OCI_API OCI_ElemGetLob
     boolean res  = TRUE;
     OCI_Lob *lob = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_LOB, NULL);
-
-    if (elem->ind != OCI_IND_NULL)
-    {
-        if (elem->init == FALSE)
-        {
-            lob = OCI_LobInit(elem->con, (OCI_Lob **) &elem->obj,
-                              (OCILobLocator *) elem->handle,
-                              elem->typinf->cols[0].subtype);
-
-            elem->init = (lob != NULL);
-        }
-        else
-        {
-            lob = (OCI_Lob *) elem->obj;
-        }
-
-        res = elem->init;
-    }
+    OCI_ELEM_GET_VALUE
+    (
+        OCI_CDT_LOB,
+        lob, 
+        OCI_Lob,
+        OCI_LobInit(elem->con, (OCI_Lob **) &elem->obj, (OCILobLocator *) elem->handle,
+                    elem->typinf->cols[0].subtype)
+    )
 
     OCI_RESULT(res);
 
@@ -679,26 +681,15 @@ OCI_File * OCI_API OCI_ElemGetFile
     boolean res    = TRUE;
     OCI_File *file = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_FILE, NULL);
+    OCI_ELEM_GET_VALUE
+    (
+        OCI_CDT_FILE,
+        file, 
+        OCI_File,
+        OCI_FileInit(elem->con, (OCI_File **) &elem->obj, (OCILobLocator *) elem->handle,
+                     elem->typinf->cols[0].subtype)
+    )
 
-    if (elem->ind != OCI_IND_NULL)
-    {
-        if (elem->init == FALSE)
-        {
-            file = OCI_FileInit(elem->con, (OCI_File **) &elem->obj,
-                                (OCILobLocator *) elem->handle,
-                                elem->typinf->cols[0].subtype);
-
-            elem->init = (file != NULL);
-        }
-        else
-        {
-            file = (OCI_File *) elem->obj;
-        }
-
-        res = elem->init;
-    }
 
     OCI_RESULT(res);
 
@@ -717,26 +708,14 @@ OCI_Ref * OCI_API OCI_ElemGetRef
     boolean res  = TRUE;
     OCI_Ref *ref = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_REF, NULL);
-
-    if (elem->ind != OCI_IND_NULL)
-    {
-        if (elem->init == FALSE)
-        {
-            ref = OCI_RefInit(elem->con, elem->typinf->cols[0].typinf,
-                              (OCI_Ref **) &elem->obj,
-                              (OCIRef *) elem->handle);
-
-            elem->init = (ref != NULL);
-        }
-        else
-        {
-            ref = (OCI_Ref *) elem->obj;
-        }
-
-        res = elem->init;
-    }
+    OCI_ELEM_GET_VALUE
+    (
+        OCI_CDT_REF,
+        ref, 
+        OCI_Ref,
+        OCI_RefInit(elem->con, elem->typinf->cols[0].typinf,
+                    (OCI_Ref **) &elem->obj,  (OCIRef *) elem->handle)
+    )
 
     OCI_RESULT(res);
 
@@ -755,25 +734,14 @@ OCI_Object * OCI_API OCI_ElemGetObject
     boolean res     = TRUE;
     OCI_Object *obj = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_OBJECT, NULL);
-
-    if (elem->ind != OCI_IND_NULL)
-    {
-        if (elem->init == FALSE)
-        {
-            obj = OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj, elem->handle,
-                                 elem->typinf->cols[0].typinf, NULL, -1, TRUE);
-
-            elem->init = (obj != NULL);
-        }
-        else
-        {
-            obj = (OCI_Object *) elem->obj;
-        }
-
-        res = elem->init;
-    }
+    OCI_ELEM_GET_VALUE
+    (
+        OCI_CDT_OBJECT,
+        obj, 
+        OCI_Object,
+        OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj, elem->handle,
+                       elem->typinf->cols[0].typinf, NULL, -1, TRUE)
+    )
 
     OCI_RESULT(res);
 
@@ -792,26 +760,15 @@ OCI_Coll * OCI_API OCI_ElemGetColl
     boolean res    = TRUE;
     OCI_Coll *coll = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_COLLECTION, NULL);
+    OCI_ELEM_GET_VALUE
+    (
+        OCI_CDT_COLLECTION,
+        coll, 
+        OCI_Coll,
+        OCI_CollInit(elem->con, (OCI_Coll **) &elem->obj,  (OCIColl *) elem->handle,
+                     elem->typinf->cols[0].typinf)
+    )
 
-    if (elem->ind != OCI_IND_NULL)
-    {
-        if (elem->init == FALSE)
-        {
-            coll = OCI_CollInit(elem->con, (OCI_Coll **) &elem->obj,
-                                (OCIColl *) elem->handle,
-                                elem->typinf->cols[0].typinf);
-
-            elem->init = (coll != NULL);
-        }
-        else
-        {
-            coll = (OCI_Coll *) elem->obj;
-        }
-
-        res = elem->init;
-    }
 
     OCI_RESULT(res);
 
@@ -929,15 +886,15 @@ boolean OCI_API OCI_ElemSetFloat
 boolean OCI_API OCI_ElemSetString
 (
     OCI_Elem    *elem,
-    const dtext *value
+    const otext *value
 )
 {
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_TEXT, FALSE);
+    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == OCI_CDT_TEXT, FALSE);
 
-    if (value == NULL)
+    if (!value)
     {
         res = OCI_ElemSetNull(elem);
     }
@@ -945,8 +902,7 @@ boolean OCI_API OCI_ElemSetString
     {
         res = OCI_StringToStringPtr(elem->con->env,
                                     (OCIString **) &elem->handle,
-                                    elem->con->err, (void *) value,
-                                    &elem->buf, &elem->buflen);
+                                    elem->con->err, value);
 
         OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
     }
@@ -970,9 +926,9 @@ boolean OCI_API OCI_ElemSetRaw
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_RAW, FALSE);
+    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == OCI_CDT_RAW, FALSE);
 
-    if (value == NULL)
+    if (!value)
     {
         res = OCI_ElemSetNull(elem);
     }
@@ -1008,32 +964,13 @@ boolean OCI_API OCI_ElemSetDate
 {
     boolean res = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_DATETIME, FALSE);
-
-    if (value == NULL)
-    {
-        res = OCI_ElemSetNull(elem);
-    }
-    else
-    {
-        if (elem->obj == NULL)
-        {
-            OCI_DateInit(elem->con, (OCI_Date **) &elem->obj, (OCIDate *) elem->handle, TRUE, FALSE);
-        }
-
-        if (elem->obj != NULL)
-        {
-            res = OCI_DateAssign((OCI_Date *) elem->obj, value);
-
-            if (res == TRUE)
-            {
-                OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
-
-                elem->handle = ((OCI_Date *) elem->obj)->handle;
-            }
-        }
-    }
+    OCI_ELEM_SET_VALUE
+    (
+        OCI_CDT_DATETIME,
+        OCI_Date,
+        OCI_DateInit(elem->con, (OCI_Date **) &elem->obj, (OCIDate *) elem->handle, TRUE, FALSE),
+        OCI_DateAssign((OCI_Date *) elem->obj, value)
+    )
 
     OCI_RESULT(res);
 
@@ -1052,33 +989,18 @@ boolean OCI_API OCI_ElemSetTimestamp
 {
     boolean res = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_TIMESTAMP, FALSE);
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (value == NULL)
-    {
-        res = OCI_ElemSetNull(elem);
-    }
-    else
-    {
-        if (elem->obj == NULL)
-        {
-            OCI_TimestampInit(elem->con, (OCI_Timestamp **) &elem->obj,
-                              (OCIDateTime *) elem->handle,  elem->typinf->cols[0].subtype);
-        }
+    OCI_ELEM_SET_VALUE
+    (
+        OCI_CDT_TIMESTAMP, 
+        OCI_Timestamp,
+        OCI_TimestampInit(elem->con, (OCI_Timestamp **) &elem->obj,
+                          (OCIDateTime *) elem->handle,  elem->typinf->cols[0].subtype),
+        OCI_TimestampAssign((OCI_Timestamp *) elem->obj, value)
+    )
 
-        if (elem->obj != NULL)
-        {
-            res = OCI_TimestampAssign((OCI_Timestamp *) elem->obj, value);
-
-            if (res == TRUE)
-            {
-                OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
-
-                elem->handle = ((OCI_Timestamp *) elem->obj)->handle;
-            }
-        }
-    }
+#endif
 
     OCI_RESULT(res);
 
@@ -1097,33 +1019,18 @@ boolean OCI_API OCI_ElemSetInterval
 {
     boolean res = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_INTERVAL, FALSE);
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (value == NULL)
-    {
-        res = OCI_ElemSetNull(elem);
-    }
-    else
-    {
-        if (elem->obj == NULL)
-        {
-            OCI_IntervalInit(elem->con, (OCI_Interval **) &elem->obj,
-                             (OCIInterval *) elem->handle, elem->typinf->cols[0].subtype);
-        }
+    OCI_ELEM_SET_VALUE
+    ( 
+        OCI_CDT_INTERVAL,
+        OCI_Interval,
+        OCI_IntervalInit(elem->con, (OCI_Interval **) &elem->obj,
+                         (OCIInterval *) elem->handle, elem->typinf->cols[0].subtype),
+        OCI_IntervalAssign((OCI_Interval *) elem->obj, value)
+    )
 
-        if (elem->obj != NULL)
-        {
-            res = OCI_IntervalAssign((OCI_Interval *) elem->obj, value);
-
-            if (res == TRUE)
-            {
-                OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
-
-                elem->handle = ((OCI_Interval *) elem->obj)->handle;
-            }
-        }
-    }
+#endif
 
     OCI_RESULT(res);
 
@@ -1142,33 +1049,14 @@ boolean OCI_API OCI_ElemSetColl
 {
     boolean res = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_COLLECTION, FALSE);
-
-    if (value == NULL)
-    {
-        res = OCI_ElemSetNull(elem);
-    }
-    else
-    {
-        if (elem->obj == NULL)
-        {
-            OCI_CollInit(elem->con, (OCI_Coll **) &elem->obj,
-                         (OCIColl *) elem->handle, elem->typinf->cols[0].typinf);
-        }
-
-        if (elem->obj != NULL)
-        {
-            res = OCI_CollAssign((OCI_Coll *) elem->obj, value);
-
-            if (res == TRUE)
-            {
-                OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
-
-                elem->handle = ((OCI_Coll *) elem->obj)->handle;
-            }
-        }
-    }
+    OCI_ELEM_SET_VALUE
+    (
+        OCI_CDT_COLLECTION,
+        OCI_Coll,
+        OCI_CollInit(elem->con, (OCI_Coll **) &elem->obj,
+                         (OCIColl *) elem->handle, elem->typinf->cols[0].typinf),
+        OCI_CollAssign((OCI_Coll *) elem->obj, value)
+    )
 
     OCI_RESULT(res);
 
@@ -1187,35 +1075,15 @@ boolean OCI_API OCI_ElemSetObject
 {
     boolean res = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_OBJECT, FALSE);
-
-    if (value == NULL)
-    {
-        res = OCI_ElemSetNull(elem);
-    }
-    else
-    {
-        if (elem->obj == NULL)
-        {
-            OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj,
-                           elem->handle, elem->typinf->cols[0].typinf,
-                           NULL, -1, TRUE);
-        }
-
-        if (elem->obj != NULL)
-        {
-            res = OCI_ObjectAssign((OCI_Object *) elem->obj, value);
-
-            if (res == TRUE)
-            {
-                OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
-
-                elem->handle = ((OCI_Object *) elem->obj)->handle;
-            }
-        }
-    }
-
+    OCI_ELEM_SET_VALUE
+    (
+        OCI_CDT_OBJECT,
+        OCI_Object,
+        OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj, elem->handle, 
+                       elem->typinf->cols[0].typinf, NULL, -1, TRUE),
+        OCI_ObjectAssign((OCI_Object *) elem->obj, value)
+    )
+    
     OCI_RESULT(res);
 
     return res;
@@ -1232,36 +1100,16 @@ boolean OCI_API OCI_ElemSetLob
 )
 {
     boolean res = TRUE;
-
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_LOB, FALSE);
-
-    if (value == NULL)
-    {
-        res = OCI_ElemSetNull(elem);
-    }
-    else
-    {
-        if (elem->obj == NULL)
-        {
-            OCI_LobInit(elem->con, (OCI_Lob **) &elem->obj,
-                        (OCILobLocator *) elem->handle,
-                        elem->typinf->cols[0].subtype);
-        }
-
-        if (elem->obj != NULL)
-        {
-            res = OCI_LobAssign((OCI_Lob *) elem->obj, value);
-
-            if (res == TRUE)
-            {
-                OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
-
-                elem->handle = ((OCI_Lob *) elem->obj)->handle;
-            }
-        }
-    }
-
+    
+    OCI_ELEM_SET_VALUE
+    (
+        OCI_CDT_LOB,
+        OCI_Lob,
+        OCI_LobInit(elem->con, (OCI_Lob **) &elem->obj, (OCILobLocator *) elem->handle,
+                    elem->typinf->cols[0].subtype),
+        OCI_LobAssign((OCI_Lob *) elem->obj, value)
+    )
+    
     OCI_RESULT(res);
 
     return res;
@@ -1279,35 +1127,15 @@ boolean OCI_API OCI_ElemSetFile
 {
     boolean res = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_FILE, FALSE);
-
-    if (value == NULL)
-    {
-        res = OCI_ElemSetNull(elem);
-    }
-    else
-    {
-        if (elem->obj == NULL)
-        {
-            OCI_FileInit(elem->con, (OCI_File **) &elem->obj,
-                         (OCILobLocator *) elem->handle,
-                         elem->typinf->cols[0].subtype);
-        }
-
-        if (elem->obj != NULL)
-        {
-            res = OCI_FileAssign((OCI_File *) elem->obj, value);
-
-            if (res == TRUE)
-            {
-                OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
-
-                elem->handle = ((OCI_Object *) elem->obj)->handle;
-            }
-        }
-    }
-
+    OCI_ELEM_SET_VALUE
+    (
+        OCI_CDT_FILE,
+        OCI_File,
+        OCI_FileInit(elem->con, (OCI_File **) &elem->obj, (OCILobLocator *) elem->handle,
+                     elem->typinf->cols[0].subtype),
+        OCI_FileAssign((OCI_File *) elem->obj, value)
+    )
+    
     OCI_RESULT(res);
 
     return res;
@@ -1325,34 +1153,14 @@ boolean OCI_API OCI_ElemSetRef
 {
     boolean res = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].type == OCI_CDT_REF, FALSE);
-
-    if (value == NULL)
-    {
-        res = OCI_ElemSetNull(elem);
-    }
-    else
-    {
-        if (elem->obj == NULL)
-        {
-            OCI_RefInit(elem->con,elem->typinf->cols[0].typinf, (OCI_Ref **) &elem->obj,
-                        (OCIRef *) elem->handle);
-        }
-
-
-        if (elem->obj != NULL)
-        {
-            res = OCI_RefAssign((OCI_Ref *) elem->obj, value);
-
-            if (res == TRUE)
-            {
-                OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
-
-                elem->handle = ((OCI_Ref *) elem->obj)->handle;
-            }
-        }
-    }
+    OCI_ELEM_SET_VALUE
+    (
+        OCI_CDT_REF,
+        OCI_Ref,
+        OCI_RefInit(elem->con,elem->typinf->cols[0].typinf, (OCI_Ref **) &elem->obj,
+                    (OCIRef *) elem->handle),
+        OCI_RefAssign((OCI_Ref *) elem->obj, value)
+    )
 
     OCI_RESULT(res);
 
@@ -1372,7 +1180,7 @@ boolean OCI_API OCI_ElemIsNull
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
 
-    if (elem->pind != NULL)
+    if (elem->pind)
     {
         ret = (*elem->pind == OCI_IND_NULL);
     }

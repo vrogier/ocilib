@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -121,85 +121,25 @@
                      CHARSET AND STRING TYPES DETECTION
  * ********************************************************************************************* */
 
-/* mtext and dtext are public character types for meta and user string types
-   We need to handle as well internal string types because :
+/* otext is public character types for all string types
+   We need to handle as well an internal oracle string type because :
 
    - wchar_t is not the same type on all platforms (that is such a pain !),
    - OCI, in Unicode mode, uses Fixed length UTF16 encoding (2 bytes)
 
-   So, omtext and odtext were added to represent internal meta and user string
-   types.
+   So, dbtext was added to represent internal oracle string type.
 
-   The following checks find out the real types and sizes of omtext and odtext
+   The following checks find out the real types and size of dbtext
 */
 
 #if  defined (OCI_CHARSET_ANSI)
 
-    #define omtext         mtext
-    #define odtext         dtext
-
-#elif defined (OCI_CHARSET_UTF8)
-
-    #define omtext         mtext
-    #define odtext         dtext
-
+    typedef otext           dbtext;         
+  
 #else
-
-    #define WCHAR_2_BYTES  0xFFFF
-    #define WCHAR_4_BYTES  0x7FFFFFFF
-
-    #if WCHAR_MAX == WCHAR_4_BYTES
-
-        /* so, input/output conversion will be needed */
-
-        #define OCI_CHECK_STRINGS
-
-    #endif
-
-    #ifdef OCI_METADATA_WIDE
-
-        #ifdef OCI_CHECK_STRINGS
-
-            /* conversion for meta string needed */
-
-            #define OCI_CHECK_METASTRINGS
-
-        #endif
-
-        /* internal meta string type is UTF16 (2 bytes) */
+ 
+    typedef unsigned short  dbtext;   
     
-        #define omtext unsigned short
-
-    #else
-
-        /* internal meta string type is char */
-    
-        #define omtext char
-
-    #endif
-
-    #ifdef OCI_USERDATA_WIDE
-
-        #ifdef OCI_CHECK_STRINGS
-
-            /* conversion for data string needed */
-      
-            #define OCI_CHECK_DATASTRINGS
-
-        #endif
-
-        /* internal data string type is UTF16 (2 bytes) */
-    
-        #define odtext unsigned short
-
-    #else
-
-        /* internal data string type is char */
-    
-        #define odtext char
-
-    #endif
-
 #endif
 
 /* ********************************************************************************************* *
@@ -210,7 +150,7 @@
  * DEfault environnement mode
  * --------------------------------------------------------------------------------------------- */
 
-#ifdef OCI_METADATA_WIDE
+#ifdef OCI_CHARSET_WIDE
 
     #define OCI_ENV_MODE    OCI_UTF16
 
@@ -424,24 +364,6 @@
 #define OCI_OFFSET_PAIR(a, b)           (a + (b << 16))
 
 /* --------------------------------------------------------------------------------------------- *
- *  string functions mapping
- * --------------------------------------------------------------------------------------------- */
-
-#ifdef OCI_METADATA_WIDE
-
-    #define mttoupper           towupper
-    #define mtisdigit           iswdigit
-    #define mtsscanf            swscanf
-
-#else
-
-    #define mttoupper           toupper
-    #define mtisdigit           isdigit
-    #define mtsscanf            sscanf
-
-#endif
-
-/* --------------------------------------------------------------------------------------------- *
  *  Internal integer types
  * --------------------------------------------------------------------------------------------- */
 
@@ -489,7 +411,8 @@
 
 /* check OCI status */
 
-#define OCI_NO_ERROR(res)   ((res) == OCI_SUCCESS)
+#define OCI_FAILURE(res)                (OCI_SUCCESS != (res))
+#define OCI_SUCCESSFUL(res)             (OCI_SUCCESS == (res))
 
 /* memory management helpers */
 
@@ -537,13 +460,19 @@
 #define OCI_SIZEOF_NUMBER               22
 #define OCI_SIZEOF_DATE                 7
 
-#define msizeof(s) (sizeof(s) / sizeof(mtext))
-#define dsizeof(s) (sizeof(s) / sizeof(dtext))
+#define osizeof(s) (sizeof(s) / sizeof(otext))
+
+#define ocharcount(l) (l / sizeof(otext))
+#define dbcharcount(l) (l / sizeof(dbtext))
 
 #define OCI_ERR_AQ_LISTEN_TIMEOUT      25254
 #define OCI_ERR_AQ_DEQUEUE_TIMEOUT     25228
 
 #define OCI_DEFAUT_STMT_CACHE_SIZE     20
+
+#define WCHAR_2_BYTES   0xFFFF
+#define WCHAR_4_BYTES   0x7FFFFFFF
+
 
 #endif    /* OCILIB_OCILIB_DEFS_H_INCLUDED */
 

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -45,7 +45,7 @@
 OCI_Enqueue * OCI_API OCI_EnqueueCreate
 (
     OCI_TypeInfo *typinf,
-    const mtext  *name
+    const otext  *name
 )
 {
     OCI_Enqueue *enqueue = NULL;
@@ -60,17 +60,17 @@ OCI_Enqueue * OCI_API OCI_EnqueueCreate
 
     enqueue = (OCI_Enqueue *) OCI_MemAlloc(OCI_IPC_ENQUEUE, sizeof(*enqueue), (size_t) 1, TRUE);
 
-    if (enqueue != NULL)
+    if (enqueue)
     {
         enqueue->typinf = typinf;
-        enqueue->name   = mtsdup(name);
+        enqueue->name   = ostrdup(name);
 
         /* allocate enqueue options descriptor */
 
-        res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) enqueue->typinf->con->env,
-                                                  (dvoid **) &enqueue->opth,
-                                                  OCI_DTYPE_AQENQ_OPTIONS,
-                                                  (size_t) 0, (dvoid **) NULL));
+        res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid * ) enqueue->typinf->con->env,
+                                                 (dvoid **) &enqueue->opth,
+                                                 OCI_DTYPE_AQENQ_OPTIONS,
+                                                 (size_t) 0, (dvoid **) NULL));
     }
     else
     {
@@ -79,7 +79,7 @@ OCI_Enqueue * OCI_API OCI_EnqueueCreate
 
     /* check for failure */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_EnqueueFree(enqueue);
         enqueue = NULL;
@@ -120,8 +120,8 @@ boolean OCI_API OCI_EnqueuePut
 )
 {
     boolean res     = TRUE;
-    void *ostr      = NULL;
-    int osize       = -1;
+    dbtext *dbstr   = NULL;
+    int     dbsize  = -1;
 
     void *payload  = NULL;
     void *ind      = NULL;
@@ -131,13 +131,13 @@ boolean OCI_API OCI_EnqueuePut
 
     OCI_CHECK_COMPAT(enqueue->typinf->con, enqueue->typinf->tdo == msg->typinf->tdo, FALSE);
 
-    ostr = OCI_GetInputMetaString(enqueue->name, &osize);
+    dbstr = OCI_StringGetOracleString(enqueue->name, &dbsize);
 
     /* get payload */
 
-    if (enqueue->typinf->tcode != OCI_UNKNOWN)
+    if (OCI_UNKNOWN != enqueue->typinf->typecode)
     {
-        if (msg->ind != OCI_IND_NULL)
+        if (OCI_IND_NULL != msg->ind)
         {
             payload = msg->obj->handle;
             ind     = msg->obj->tab_ind;
@@ -156,11 +156,11 @@ boolean OCI_API OCI_EnqueuePut
         res, enqueue->typinf->con,
 
         OCIAQEnq(enqueue->typinf->con->cxt, enqueue->typinf->con->err,
-                 ostr, enqueue->opth, msg->proph, enqueue->typinf->tdo,
+                 (OraText *) dbstr, enqueue->opth, msg->proph, enqueue->typinf->tdo,
                  &payload, &ind, NULL, OCI_DEFAULT);
     )
 
-    OCI_ReleaseMetaString(ostr);
+    OCI_StringReleaseOracleString(dbstr);
 
     OCI_RESULT(res);
 
@@ -323,12 +323,14 @@ boolean OCI_API OCI_EnqueueGetRelativeMsgID
                    enqueue->typinf->con->err)
     )
 
-    if (value != NULL)
+    if (value)
     {
         ub4 raw_len = OCIRawSize(enqueue->typinf->con->env, value);
 
         if (*len > raw_len)
+        {
             *len = raw_len;
+        }
 
         memcpy(id, OCIRawPtr(enqueue->typinf->con->env, value), (size_t) (*len));
     }

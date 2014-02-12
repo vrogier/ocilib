@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -54,12 +54,12 @@ OCI_Mutex * OCI_MutexCreateInternal
 
     mutex = (OCI_Mutex *) OCI_MemAlloc(OCI_IPC_MUTEX, sizeof(*mutex), (size_t) 1, TRUE);
 
-    if (mutex != NULL)
+    if (mutex)
     {
         /* allocate error handle */
 
-        res = (OCI_SUCCESS == OCI_HandleAlloc(OCILib.env, (dvoid **) (void *) &mutex->err,
-                                              OCI_HTYPE_ERROR, (size_t) 0, (dvoid **) NULL));
+        res = OCI_SUCCESSFUL(OCI_HandleAlloc(OCILib.env, (dvoid **) (void *) &mutex->err,
+                                             OCI_HTYPE_ERROR, (size_t) 0, (dvoid **) NULL));
 
         /* allocate mutex handle */
 
@@ -75,7 +75,7 @@ OCI_Mutex * OCI_MutexCreateInternal
         res = FALSE;
     }
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_MutexFree(mutex);
         mutex = NULL;
@@ -123,7 +123,7 @@ boolean OCI_API OCI_MutexFree
 
     /* close mutex handle */
 
-    if (mutex->handle != NULL)
+    if (mutex->handle)
     {
         OCI_CALL0
         (
@@ -135,7 +135,7 @@ boolean OCI_API OCI_MutexFree
 
     /* close error handle */
 
-    if (mutex->err != NULL)
+    if (mutex->err)
     {
         OCI_HandleFree(mutex->err, OCI_HTYPE_ERROR);
     }

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -1332,6 +1332,12 @@ typedef sword (*OCINUMBERFROMTEXT)
 typedef oratext * (*OCISTRINGPTR)
 (
     OCIEnv          *env,
+    CONST OCIString *vs
+);
+
+typedef ub4 (*OCISTRINGSIZE) 
+(
+    OCIEnv          *env, 
     CONST OCIString *vs
 );
 

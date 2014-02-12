@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -58,12 +58,12 @@ OCI_Interval * OCI_IntervalInit
 
     OCI_CHECK(pitv == NULL, NULL);
 
-    if (*pitv == NULL)
+    if (!*pitv)
     {
         *pitv = (OCI_Interval *) OCI_MemAlloc(OCI_IPC_INTERVAL, sizeof(*itv), (size_t) 1, TRUE);
     }
 
-    if (*pitv != NULL)
+    if (*pitv)
     {
         itv = *pitv;
 
@@ -73,7 +73,7 @@ OCI_Interval * OCI_IntervalInit
 
         /* get the right error handle */
 
-        if (con != NULL)
+        if (con)
         {
             itv->err = con->err;
             itv->env = con->env;
@@ -86,25 +86,25 @@ OCI_Interval * OCI_IntervalInit
 
         /* allocate buffer if needed */
 
-        if ((itv->handle == NULL) || (itv->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
+        if (!itv->handle || (OCI_OBJECT_ALLOCATED_ARRAY == itv->hstate))
         {
-            ub4 htype = 0;
+            ub4 htype = OCI_UNKNOWN;
 
-            if (itv->type == OCI_INTERVAL_YM)
+            if (OCI_INTERVAL_YM == itv->type)
             {
                 htype = OCI_DTYPE_INTERVAL_YM;
             }
-            else if (itv->type == OCI_INTERVAL_DS)
+            else if (OCI_INTERVAL_DS == itv->type)
             {
                 htype = OCI_DTYPE_INTERVAL_DS;
             }
 
-            if (itv->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+            if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
             {
-                res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid  *) itv->env,
-                                                          (dvoid **) (void *) &itv->handle,
-                                                          (ub4     ) htype, (size_t) 0,
-                                                          (dvoid **) NULL));
+                res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid  *) itv->env,
+                                                         (dvoid **) (void *) &itv->handle,
+                                                         (ub4     ) htype, (size_t) 0,
+                                                         (dvoid **) NULL));
 
                 itv->hstate = OCI_OBJECT_ALLOCATED;
             }
@@ -121,7 +121,7 @@ OCI_Interval * OCI_IntervalInit
 
     /* check for failure */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_IntervalFree(itv);
         itv = NULL;
@@ -191,15 +191,15 @@ boolean OCI_API OCI_IntervalFree
 
     OCI_CHECK_OBJECT_FETCHED(itv, FALSE);
 
-    if (itv->hstate == OCI_OBJECT_ALLOCATED)
+    if (OCI_OBJECT_ALLOCATED == itv->hstate)
     {
-        ub4 htype = 0;
+        ub4 htype = OCI_UNKNOWN;
 
-        if (itv->type == OCI_INTERVAL_YM)
+        if (OCI_INTERVAL_YM == itv->type)
         {
             htype = OCI_DTYPE_INTERVAL_YM;
         }
-        else if (itv->type == OCI_INTERVAL_DS)
+        else if (OCI_INTERVAL_DS == itv->type)
         {
             htype = OCI_DTYPE_INTERVAL_DS;
         }
@@ -207,7 +207,7 @@ boolean OCI_API OCI_IntervalFree
         OCI_DescriptorFree((dvoid *) itv->handle, htype);
     }
 
-    if (itv->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+    if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
     {
         OCI_FREE(itv);
     }
@@ -234,11 +234,11 @@ OCI_Interval ** OCI_API OCI_IntervalArrayCreate
     OCI_Interval **itvs = NULL;
     unsigned int htype  = 0;
 
-    if (type == OCI_INTERVAL_YM)
+    if (OCI_INTERVAL_YM == type)
     {
         htype = OCI_DTYPE_INTERVAL_YM;
     }
-    else if (type == OCI_INTERVAL_DS)
+    else if (OCI_INTERVAL_DS == type)
     {
         htype = OCI_DTYPE_INTERVAL_DS;
     }
@@ -246,7 +246,7 @@ OCI_Interval ** OCI_API OCI_IntervalArrayCreate
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type, sizeof(OCIInterval *),
                           sizeof(OCI_Interval), htype, NULL);
 
-    if (arr != NULL)
+    if (arr)
     {
         itvs = (OCI_Interval **) arr->tab_obj;
     }
@@ -391,12 +391,12 @@ int OCI_API OCI_IntervalCompare
 boolean OCI_API OCI_IntervalFromText
 (
     OCI_Interval *itv,
-    const mtext * str
+    const otext * str
 )
 {
-    boolean res = TRUE;
-    void *ostr  = NULL;
-    int osize   = -1;
+    boolean res    = TRUE;
+    dbtext *dbstr  = NULL;
+    int     dbsize = -1;
 
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
@@ -405,22 +405,22 @@ boolean OCI_API OCI_IntervalFromText
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    ostr = OCI_GetInputMetaString(str, &osize);
+    dbstr = OCI_StringGetOracleString(str, &dbsize);
 
     OCI_CALL4
     (
         res, itv->err, itv->con,
 
-        OCIIntervalFromText((dvoid *) itv->env, itv->err, (OraText *) ostr, (size_t) osize, itv->handle)
+        OCIIntervalFromText((dvoid *) itv->env, itv->err, (OraText *) dbstr, (size_t) dbsize, itv->handle)
     )
 
-    OCI_ReleaseMetaString(ostr);
+    OCI_StringReleaseOracleString(dbstr);
 
  #else
 
     OCI_NOT_USED(str);
-    OCI_NOT_USED(ostr);
-    OCI_NOT_USED(osize);
+    OCI_NOT_USED(dbstr);
+    OCI_NOT_USED(dbsize);
 
 #endif
 
@@ -439,13 +439,13 @@ boolean OCI_API OCI_IntervalToText
     int           leading_prec,
     int           fraction_prec,
     int           size,
-    mtext        *str
+    otext        *str
 )
 {
-    boolean res = TRUE;
-    void *ostr  = NULL;
-    int osize   = size * (int)   sizeof(mtext);
-    size_t len  = 0;
+    boolean res    = TRUE;
+    dbtext *dbstr  = NULL;
+    int dbsize     = size * (int)   sizeof(otext);
+    size_t len     = 0;
 
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
@@ -458,9 +458,9 @@ boolean OCI_API OCI_IntervalToText
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    ostr = OCI_GetInputMetaString(str, &osize);
+    dbstr = OCI_StringGetOracleString(str, &dbsize);
 
-    len = (size_t) osize;
+    len = (size_t) dbsize;
 
     OCI_CALL4
     (
@@ -469,25 +469,25 @@ boolean OCI_API OCI_IntervalToText
         OCIIntervalToText((dvoid *) itv->env, itv->err,
                           (OCIInterval *) itv->handle,
                           (ub1) leading_prec, (ub1) fraction_prec,
-                          (OraText *) ostr, (size_t) osize,
+                          (OraText *) dbstr, (size_t) dbsize,
                           (size_t *) &len)
     )
 
-    osize = (int) len;
+    dbsize = (int) len;
 
-    OCI_GetOutputMetaString(ostr, str, &osize);
-    OCI_ReleaseMetaString(ostr);
+    OCI_StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    OCI_StringReleaseOracleString(dbstr);
 
     /* set null string terminator */
 
-    str[osize/ (int) sizeof(mtext)] = 0;
+    str[dbcharcount(dbsize)] = 0;
 
  #else
 
     OCI_NOT_USED(str);
-    OCI_NOT_USED(ostr);
+    OCI_NOT_USED(dbstr);
     OCI_NOT_USED(size);
-    OCI_NOT_USED(osize);
+    OCI_NOT_USED(dbsize);
     OCI_NOT_USED(leading_prec);
     OCI_NOT_USED(fraction_prec);
     OCI_NOT_USED(len);
@@ -506,12 +506,12 @@ boolean OCI_API OCI_IntervalToText
 boolean OCI_API OCI_IntervalFromTimeZone
 (
     OCI_Interval *itv,
-    const mtext * str
+    const otext * str
 )
 {
-    boolean res = TRUE;
-    void *ostr  = NULL;
-    int osize   = -1;
+    boolean res    = TRUE;
+    dbtext *dbstr  = NULL;
+    int     dbsize = -1;
 
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
@@ -520,23 +520,23 @@ boolean OCI_API OCI_IntervalFromTimeZone
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    ostr = OCI_GetInputMetaString(str, &osize);
+    dbstr = OCI_StringGetOracleString(str, &dbsize);
 
     OCI_CALL4
     (
         res, itv->err, itv->con,
 
-        OCIIntervalFromTZ((dvoid *) itv->env, itv->err, (CONST OraText *) ostr,
-                          (size_t) osize, itv->handle)
+        OCIIntervalFromTZ((dvoid *) itv->env, itv->err, (CONST OraText *) dbstr,
+                          (size_t) dbsize, itv->handle)
     )
 
-    OCI_ReleaseMetaString(ostr);
+    OCI_StringReleaseOracleString(dbstr);
 
 #else
 
     OCI_NOT_USED(str);
-    OCI_NOT_USED(ostr);
-    OCI_NOT_USED(osize);
+    OCI_NOT_USED(dbstr);
+    OCI_NOT_USED(dbsize);
 
 #endif
 

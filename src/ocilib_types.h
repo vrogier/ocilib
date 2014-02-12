@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -107,10 +107,10 @@ typedef struct OCI_ServerOutput OCI_ServerOutput;
 
 struct OCI_TraceInfo
 {
-    mtext identifier[OCI_SIZE_TRACE_ID+1];
-    mtext module[OCI_SIZE_TRACE_MODULE+1];
-    mtext action[OCI_SIZE_TRACE_ACTION+1];
-    mtext info[OCI_SIZE_TRACE_INF0+1];
+    otext identifier[OCI_SIZE_TRACE_ID+1];
+    otext module[OCI_SIZE_TRACE_MODULE+1];
+    otext action[OCI_SIZE_TRACE_ACTION+1];
+    otext info[OCI_SIZE_TRACE_INF0+1];
 };
 
 typedef struct OCI_TraceInfo OCI_TraceInfo;
@@ -125,13 +125,13 @@ struct OCI_Error
     boolean         active;                   /* to avoid recursive exceptions */
     OCI_Connection *con;                      /* pointer to connection object */
     OCI_Statement  *stmt;                     /* pointer to statement object */
-    sb4             ocode;                    /* Oracle OCI error code */
-    int             icode;                    /* OCILIB internal error code */
+    sb4             sqlcode;                  /* Oracle OCI error code */
+    int             libcode;                  /* OCILIB internal error code */
     unsigned int    type;                     /* OCILIB error type */
     ub4             row;                      /* Error row offset (array DML) */
     boolean         warning;                  /* is it a warning */
-    mtext           str[OCI_ERR_MSG_SIZE+1];  /* error message */
-    mtext           padding[3];               /* dummy variable for alignment */ 
+    otext           str[OCI_ERR_MSG_SIZE+1];  /* error message */
+    otext           padding[3];               /* dummy variable for alignment */ 
 };
 
 /*
@@ -205,6 +205,8 @@ struct OCI_Library
     ub4                  env_mode;                /* default environment mode */
     boolean              loaded;                  /* OCILIB correctly loaded ? */
     boolean              nls_utf8;                /* is UFT8 enabled for data strings ? */
+    unsigned int         charset;                 /* charset type */
+    boolean              use_wide_char_conv;      /* are we on a unix like platform with unicode */
     boolean              warnings_on;             /* warnings enabled ? */
     OCI_Error            lib_err;                 /* Error used when OCILIB is not loaded */
     OCI_HashTable       *key_map;                 /* hash table for mapping name/key */
@@ -232,10 +234,10 @@ struct OCI_Pool
     void        *handle;        /* OCI pool handle */
     void        *authp;         /* OCI authentification handle */
     OCIError    *err;           /* OCI context handle */
-    mtext       *name;          /* pool name */
-    mtext       *db;            /* database */
-    mtext       *user;          /* user */
-    mtext       *pwd;           /* password */
+    otext       *name;          /* pool name */
+    otext       *db;            /* database */
+    otext       *user;          /* user */
+    otext       *pwd;           /* password */
     OCI_Mutex   *mutex;         /* mutex handle */
     ub4          mode;          /* session mode */
     ub4          min;           /* minimum of objects */
@@ -256,9 +258,9 @@ struct OCI_Pool
 
 struct OCI_Connection
 {
-    mtext            *db;           /* database */
-    mtext            *user;         /* user */
-    mtext            *pwd;          /* password */
+    otext            *db;           /* database */
+    otext            *user;         /* user */
+    otext            *pwd;          /* password */
     OCI_List         *stmts;        /* list of statements */
     OCI_List         *trsns;        /* list of transactions */
     OCI_List         *tinfs;        /* list of type info objects */
@@ -276,18 +278,18 @@ struct OCI_Connection
     unsigned int      mode;         /* session mode */
     int               cstate;       /* connection state */
     void             *usrdata;      /* user data */
-    mtext            *fmt_date;     /* date string format for conversion */
-    mtext            *fmt_num;      /* numeric string format for conversion */
-    mtext            *ver_str;      /* string  server version*/
+    otext            *fmt_date;     /* date string format for conversion */
+    otext            *fmt_num;      /* numeric string format for conversion */
+    otext            *ver_str;      /* string  server version*/
     unsigned int      ver_num;      /* numeric server version */
     OCI_TraceInfo    *trace;        /* trace information */
-    mtext            *sess_tag;     /* session tag */
+    otext            *sess_tag;     /* session tag */
     POCI_TAF_HANDLER  taf_handler;  /* failover call back */
-    mtext            *db_name;      /* session tag */
-    mtext            *inst_name;    /* instance name */
-    mtext            *service_name; /* server service name */
-    mtext            *server_name;  /* server name (hostname) */
-    mtext            *domain_name;  /* server domain name */
+    otext            *db_name;      /* session tag */
+    otext            *inst_name;    /* instance name */
+    otext            *service_name; /* server service name */
+    otext            *server_name;  /* server name (hostname) */
+    otext            *domain_name;  /* server domain name */
     OCI_Timestamp    *inst_startup; /* instance startup timestamp */
  };
 
@@ -314,20 +316,20 @@ struct OCI_Transaction
 struct OCI_Column
 {
     /* 0racle infos */
-    ub2    ocode;               /* Oracle SQL code */
-    ub2    tcode;               /* Oracle type code */
-    ub2    icode;               /* Internal translated Oracle SQL code */
+    ub2    sqlcode;             /* Oracle SQL code */
+    ub2    typecode;            /* Oracle type code */
+    ub2    libcode;             /* Internal translated Oracle SQL code */
     ub2    size;                /* SQL Size */
     sb2    prec;                /* SQL precision 1 (number prec, leading prec) */
     sb2    prec2;               /* SQL precision 2 (fractional prec) */
     sb1    scale;               /* SQL scale */
-    ub1    type;                /* internal datatype */
-    ub1    null;                /* is nullable */
+    ub1    datatype;            /* internal datatype */
+    ub1    nullable;            /* is nullable */
     ub1    charused;            /* is column size expressed in characters */
-    mtext *name;                /* column name */
+    otext *name;                /* column name */
     ub2    charsize;            /* SQL Size in character */
     ub1    csfrm;               /* charset form */
-    ub1    dtype;               /* oracle handle type */
+    ub1    handletype;          /* oracle handle type */
     /* OCILIB infos */
     ub4           bufsize;      /* element size */
     OCI_TypeInfo *typinf;       /* user type descriptor */
@@ -335,21 +337,21 @@ struct OCI_Column
 };
 
 /*
- * OCI_Buffer : Internal input/output buffer
+ * OCI_Buffer : Internal input/output place holder
  *
  */
 
 struct OCI_Buffer
 {
-    void        *handle;       /* OCI handle (bind or define) */
-    void       **data;         /* data / array of data */
-    void        *inds;         /* array of indicators */
-    void        *lens;         /* array of lengths */
-    dtext       *tmpbuf;       /* temporary buffer for string conversion */
-    unsigned int tmpsize;      /* size of temporary buffer */
-    ub4          count;        /* number of elements in the buffer */
-    int          sizelen;      /* size of an element in the lens array */
-    void       **obj_inds;     /* array of indicators structure object */
+    void            *handle;       /* OCI handle (bind or define) */
+    void           **data;         /* data / array of data */
+    void            *inds;         /* array of indicators */
+    void            *lens;         /* array of lengths */
+    ub4              count;        /* number of elements in the buffer */
+    int              sizelen;      /* size of an element in the lens array */
+    void           **obj_inds;     /* array of indicators structure object */
+    otext           *tmpbuf;       /* temporary buffer */
+    unsigned int     tmpsize;      /* temporary buffer size */
 };
 
 typedef struct OCI_Buffer OCI_Buffer;
@@ -361,23 +363,23 @@ typedef struct OCI_Buffer OCI_Buffer;
 
 struct OCI_Bind
 {
-    OCI_Statement *stmt;        /* pointer to statement object */
-    void         **input;       /* input values */
-    mtext         *name;        /* name of the bind */
-    sb4            size;        /* data size */
-    ub2           *plrcds;      /* PL/SQL tables return codes */
-    ub4            nbelem;      /* PL/SQL tables number of elements */
-    OCI_TypeInfo  *typinf;      /* for object, collection and ref */
-    ub1            type;        /* internal datatype */
-    ub1            subtype;     /* internal subtype */
-    ub2            code;        /* SQL datatype code */
-    boolean        is_array;    /* is it an array bind ? */
-    OCI_Buffer     buf;         /* place holder */
-    ub2            dynpos;      /* index of the bind for dynamic binds */
-    ub1            alloc;       /* is buffer allocated or mapped to input */
-    ub1            csfrm;       /* charset form */
-    ub1            direction;   /* in, out or in/out bind */
-    char           padding[3];  /* dummy variable for alignment */ 
+    OCI_Statement  *stmt;        /* pointer to statement object */
+    void          **input;       /* input values */
+    otext          *name;        /* name of the bind */
+    sb4             size;        /* data size */
+    ub2            *plrcds;      /* PL/SQL tables return codes */
+    ub4             nbelem;      /* PL/SQL tables number of elements */
+    OCI_TypeInfo   *typinf;      /* for object, collection and ref */
+    ub1             type;        /* internal datatype */
+    ub1             subtype;     /* internal subtype */
+    ub2             code;        /* SQL datatype code */
+    boolean         is_array;    /* is it an array bind ? */
+    OCI_Buffer      buffer;      /* place holder */
+    ub2             dynpos;      /* index of the bind for dynamic binds */
+    ub1             alloc;       /* is buffer allocated or mapped to input */
+    ub1             csfrm;       /* charset form */
+    ub1             direction;   /* in, out or in/out bind */
+    char            padding[3];  /* dummy variable for alignment */ 
 }
 ;
 
@@ -388,10 +390,10 @@ struct OCI_Bind
 
 struct OCI_Define
 {
-    OCI_Resultset *rs;             /* pointer to resultset object */
-    void          *obj;            /* current OCILIB object instance */
-    OCI_Column     col;            /* column object */
-    OCI_Buffer     buf;            /* placeholder */
+    OCI_Resultset  *rs;   /* pointer to resultset object */
+    void           *obj;  /* current OCILIB object instance */
+    OCI_Column      col;  /* column object */
+    OCI_Buffer      buf;  /* placeholder */
 };
 
 typedef struct OCI_Define OCI_Define;
@@ -442,7 +444,7 @@ struct OCI_Statement
     ub4              hstate;            /* object variable state */
     OCI_Resultset  **rsts;              /* pointer to resultset list */
     OCI_Connection  *con;               /* pointer to connection object */
-    mtext           *sql;               /* SQL statement */
+    otext           *sql;               /* SQL statement */
     OCI_Bind       **ubinds;            /* array of user bind objects */
     OCI_Bind       **rbinds;            /* array of register bind objects */
     OCI_HashTable   *map;               /* hash table handle for mapping bind name/index */
@@ -494,8 +496,8 @@ struct OCI_File
     OCILobLocator  *handle;     /* OCI handle */
     ub4             hstate;     /* object variable state */
     OCI_Connection *con;        /* pointer to connection object */
-    mtext          *dir;        /* directory name */
-    mtext          *name;       /* file name */
+    otext          *dir;        /* directory name */
+    otext          *name;       /* file name */
     ub4             type;       /* type of file */
     big_uint        offset;     /* current offset for read */
 };
@@ -583,11 +585,11 @@ struct OCI_Object
     OCI_Connection   *con;          /* pointer to connection object */
     OCI_TypeInfo     *typinf;       /* pointer to type info object */
     void            **objs;         /* array of OCILIB sub objects */
-    void             *buf;          /* buffer to store converted out string attribute */
-    int               buflen;       /* buffer length */
     OCIObjectLifetime type;         /* object type */
     sb2              *tab_ind;      /* indicators for root instance */
     ub2               idx_ind;      /* instance indicator offset / indicator table */
+    otext            *tmpbuf;       /* temporary buffer */
+    unsigned int      tmpsize;      /* temporary buffer size */
     char              padding[2];   /* dummy variable for alignment */ 
 };
 
@@ -598,17 +600,17 @@ struct OCI_Object
 
 struct OCI_Elem
 {
-    void           *handle;     /* OCI handle */
-    ub4             hstate;     /* object variable state */
-    OCI_Connection *con;        /* pointer to connection object */
-    void           *obj;        /* OCILIB sub object */
-    void           *buf;        /* buffer to store converted out string attribute */
-    int             buflen;     /* buffer length */
-    boolean         init;       /* underlying object has been initialized ? */
-    OCI_TypeInfo   *typinf;     /* object type information */
-    OCIInd         *pind;       /* indicator  pointer */
-    OCIInd          ind;        /* internal temporary data state indicator */
-    char            padding[2]; /* dummy variable for alignment */ 
+    void            *handle;     /* OCI handle */
+    ub4              hstate;     /* object variable state */
+    OCI_Connection  *con;        /* pointer to connection object */
+    void            *obj;        /* OCILIB sub object */
+    otext           *tmpbuf;     /* temporary buffer */
+    unsigned int     tmpsize;    /* temporary buffer size */
+    boolean          init;       /* underlying object has been initialized ? */
+    OCI_TypeInfo    *typinf;     /* object type information */
+    OCIInd          *pind;       /* indicator  pointer */
+    OCIInd           ind;        /* internal temporary data state indicator */
+    char             padding[2]; /* dummy variable for alignment */ 
 };
 
 /*
@@ -663,12 +665,12 @@ struct OCI_Ref
 struct OCI_TypeInfo
 {
     OCI_Connection *con;         /* pointer to connection object */
-    mtext          *name;        /* name of the type info object */
-    mtext          *schema;      /* owner of the type info object */
+    otext          *name;        /* name of the type info object */
+    otext          *schema;      /* owner of the type info object */
     unsigned int    type;        /* type of type info handle */
     OCIType        *tdo;         /* datatype object type */
-    ub2             tcode;       /* Oracle type code */
-    ub2             ccode;       /* Oracle collection code */
+    ub2             typecode;    /* Oracle type code */
+    ub2             colcode;     /* Oracle collection code */
     OCI_Column     *cols;        /* array of column datatype info */
     ub2             nb_cols;     /* number of columns */
     ub2             refcount;    /* reference counter */
@@ -684,7 +686,7 @@ struct OCI_TypeInfo
 struct OCI_DirPathColumn
 {
     ub4    format_size;           /* size of the column format */
-    mtext *format;                /* date or numeric format */
+    otext *format;                /* date or numeric format */
     ub2    type;                  /* column type */
     ub2    sqlcode;               /* sql type */
     ub4   *lens;                  /* array of lengths */
@@ -737,15 +739,15 @@ struct OCI_DirPath
 
 struct OCI_Event
 {
-    OCI_Subscription *sub;              /* OCILIB subscription handle */
-    unsigned int      objname_size;     /* cached size of altered object name */
-    unsigned int      rowid_size;       /* cached size of altered object row id */
-    unsigned int      dbname_size;      /* cached size of the database name */
-    unsigned int      type;             /* event type */
-    ub4               op;               /* event object operation */
-    dtext            *objname;          /* altered object name */
-    dtext            *rowid;            /* altered row id */
-    dtext            *dbname;           /* database name */
+    OCI_Subscription *sub;             /* OCILIB subscription handle */
+    unsigned int      type;            /* event type */
+    ub4               op;              /* event object operation */
+    otext            *objname;         /* altered object name */
+    unsigned int      objname_size;    /* altered object name size */
+    otext            *rowid;           /* altered row id */
+    unsigned int      rowid_size;      /* altered row id size */
+    otext            *dbname;          /* tdatabase name */
+    unsigned int      dbname_size;     /* database name size */
 };
 
 /*
@@ -759,14 +761,14 @@ struct OCI_Subscription
     OCISubscription *subhp;          /* OCI subscription handle */
     OCIEnv          *env;            /* OCI environment handle */
     OCIError        *err;            /* OCI error handle  */
-    mtext           *name;           /* notification name */
+    otext           *name;           /* notification name */
     unsigned int     type;           /* notification type */
     POCI_NOTIFY      handler;        /* user callback */
     ub4              timeout;        /* notification timetout */
     ub4              port;           /* port to use  */
-    mtext           *saved_db;       /* database for reconnection if needed */
-    mtext           *saved_user;     /* user for reconnection if needed */
-    mtext           *saved_pwd;      /* password for reconnection if needed */
+    otext           *saved_db;       /* database for reconnection if needed */
+    otext           *saved_user;     /* user for reconnection if needed */
+    otext           *saved_pwd;      /* password for reconnection if needed */
     OCI_Event        event;          /* event object for user callback */
 };
 
@@ -780,8 +782,8 @@ struct OCI_Agent
     OCIAQAgent     *handle;        /* OCI agent handle */
     ub4             hstate;        /* object variable state */
     OCI_Connection *con;           /* OCILIB connection handle */
-    mtext          *address;       /* agent address */
-    mtext          *name;          /* agent name */
+    otext          *address;       /* agent address */
+    otext          *name;          /* agent name */
 };
 
 /*
@@ -796,8 +798,8 @@ struct OCI_Msg
     void               *payload;       /* message payload (object handle or raw handle) */
     OCIRaw             *id;            /* message identifier */
     OCI_Date           *date;          /* enqueue date */
-    mtext              *correlation;   /* correlation string */
-    mtext              *except_queue;  /* exception queue name */
+    otext              *correlation;   /* correlation string */
+    otext              *except_queue;  /* exception queue name */
     OCI_Agent          *sender;        /* sender */
     OCI_Object         *obj;           /* OCILIB object handle for object payloads */
     OCIInd              ind;           /* message payload indicator pointer */
@@ -813,7 +815,7 @@ struct OCI_Enqueue
 {
     OCI_TypeInfo    *typinf;         /* pointer to type info object */
     OCIAQEnqOptions *opth;           /* OCI enqueue options handle */
-    mtext           *name;           /* queue name */
+    otext           *name;           /* queue name */
 };
 
 /*
@@ -825,9 +827,9 @@ struct OCI_Dequeue
 {
     OCI_TypeInfo        *typinf;         /* pointer to type info object */
     OCIAQDeqOptions     *opth;           /* OCI dequeue options handle */
-    mtext               *name;           /* queue name */
-    mtext               *pattern;        /* queue name */
-    mtext               *consumer;       /* consumer name */
+    otext               *name;           /* queue name */
+    otext               *pattern;        /* queue name */
+    otext               *consumer;       /* consumer name */
     OCI_Msg             *msg;            /* message retrieved from queue */
     OCIAQAgent         **agent_list;     /* array of agents objects */
     ub4                  agent_count;    /* number of agents objects */
@@ -893,7 +895,7 @@ typedef struct OCI_Datatype OCI_Datatype;
 struct OCI_SQLCmdInfo
 {
     unsigned int code; /* SQL command code */
-    mtext       *verb; /* SQL command verb */
+    otext       *verb; /* SQL command verb */
 };
 
 typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;

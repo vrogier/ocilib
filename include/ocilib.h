@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -210,10 +210,8 @@ extern "C" {
  *
  * => Oracle charset modes
  *
- *  - OCI_CHARSET_ANSI  : ANSI strings (default)
+ *  - OCI_CHARSET_ANSI  : ANSI strings or UT8 strings (default)
  *  - OCI_CHARSET_WIDE  : wide strings using ISO C wide character
- *  - OCI_CHARSET_MIXED : ANSI for meta data and wide characters for user data
- *  - OCI_CHARSET_UFT8  : UFT8 strings
  *
  * From v3.6.0, OCI_CHARSET_WIDE replaces OCI_CHARSET_UNICODE OCI_CHARSET_UNICODE remains a
  * valid identifier for backward compatibility
@@ -254,7 +252,7 @@ extern "C" {
  * List of available options:
  *
  *  - --with-oracle-import=(linkage|runtime)
- *  - --with-oracle-charset=(ansi|wide|mixed) (old mode 'unicode' mapped to 'wide')
+ *  - --with-oracle-charset=(ansi|wide) (old mode 'unicode' mapped to 'wide')
  *  - --with-oracle-home=(custom oracle regular client directory)
  *  - --with-oracle-headers-path=(oracle header files directory)
  *  - --with-oracle-lib-path=(oracle shared lib directory)
@@ -290,7 +288,7 @@ extern "C" {
  * - Add the flag -I$USER_LIBS/include to your compiler
  * - Defines OCILIB modes:
  *    - OCI import  mode (-DOCI_IMPORT_LINKAGE | -DOCI_IMPORT_RUNTIME)
- *    - OCI charset mode (-DOCI_CHARSET_ANSI   | -DOCI_CHARSET_WIDE  | -DOCI_CHARSET_MIXED)
+ *    - OCI charset mode (-DOCI_CHARSET_ANSI   | -DOCI_CHARSET_WIDE)
  * - Add the flag -L/$ORACLE_HOME/[lib|lib32|lib64] -lclntsh to the linker
  * - Add the flag -L$USER_LIBS/lib -locilib to the linker
  *
@@ -312,13 +310,13 @@ extern "C" {
  * - Copy ocilib\lib[32|64]\ocilib[x].dll to a folder included in the PATH
  *   environment variable
  *
- * [x] is the compiled version of OCILIB ('a' -> ANSI, 'w' -> Unicode, 'm' -> Mixed)
+ * [x] is the compiled version of OCILIB ('a' -> ANSI, 'w' -> Unicode)
  *
  * To use OCILIB in a project :
  *
  * - include "ocilib.h" in your application
  * - define call convention (OCI_API) to __stdcall
- * - define charset mode (OCI_CHARSET_ANSI | OCI_CHARSET_MIXED| OCI_CHARSET_WIDE | OCI_CHARSET_UFT8)
+ * - define charset mode (OCI_CHARSET_ANSI | OCI_CHARSET_WIDE)
  *
  * Note for MinGW users:
  * - Precompiled 32bits static libraries libocilib[x].a are provided
@@ -389,21 +387,13 @@ extern "C" {
 
 #ifdef OCI_CHARSET_WIDE
   #undef OCI_CHARSET_ANSI
-  #undef OCI_CHARSET_MIXED
-#endif
-
-#ifdef OCI_CHARSET_MIXED
-  #undef OCI_CHARSET_ANSI
-  #undef OCI_CHARSET_WIDE
 #endif
 
 #ifdef OCI_CHARSET_ANSI
-  #undef OCI_CHARSET_MIXED
-  #undef OCI_CHARSET_WIDE
+  #undef OCI_CHARSET_ANSI
 #endif
 
-#if !defined(OCI_CHARSET_ANSI)  && !defined(OCI_CHARSET_MIXED) && \
-    !defined(OCI_CHARSET_WIDE)
+#if !defined(OCI_CHARSET_ANSI)  && !defined(OCI_CHARSET_WIDE)
   #define OCI_CHARSET_ANSI
 #endif
 
@@ -442,44 +432,20 @@ extern "C" {
  *
  * - ANSI (char)
  * - Unicode (wchar_t)
- * - Mixed charset: ANSI for metadata, Unicode for user data
  * - UTF8 strings
  *
- * OCILIB uses two types of strings:
- *
- * - mtext: for metadata, SQL strings, object attributes.
- * - dtext: for input binds and output data
- *
- * mtext and dtext are declared as defines around char and wchar_t depending on the charset option
- *
- * @par Text macro
- *
- *   - MT() macro : 'meta text' -> meta data and strings passed to OCI calls
- *   - DT() macro : 'data text' -> user input/output data
+ * OCILIB uses the character type 'otext' that is a define around char and wchar_t 
+ * depending on the charset option.
  *
  * @par Option OCI_CHARSET_ANSI
  *
- *  - dtext    -->    char
- *  - DT(x)    -->    x
- *
- *  - mtext    -->    char
- *  - MT(x)    -->    x
+ *  - otext    -->    char
+ *  - OTEXT(x) -->    x
  *
  * @par Option OCI_CHARSET_WIDE
  *
- *  - dtext    -->    wchar_t
- *  - DT(x)    -->    L ## x
- *
- *  - mtext    -->    wchar_t
- *  - MT(x)    -->    L ## x
- *
- * @par Option OCI_CHARSET_MIXED
- *
- *  - dtext    -->    wchar_t
- *  - DT(x)    -->    L ## x
- *
- *  - mtext    -->    char
- *  - MT(x)    -->    x
+ *  - otext    -->    wchar_t
+ *  - OTEXT(x) -->    L ## x
  *
  * @par Unicode and ISO C
  *
@@ -492,6 +458,11 @@ extern "C" {
  *
  * OCILIB, for Unicode builds, initialize OCI in UTF16 Unicode mode. Oracle
  * implements this mode with a 2 bytes (fixed length) UTF16 encoding.
+ *
+ * @warning
+ * When using Unicode builds of OCILIB, make sure that the target 
+ * Database charset is also a Unicode charset or is a superset of UTF16. If not,
+ * data string may be converted with substitution characters by the Oracle client !
  *
  * So, on systems implementing wchar_t as 2 bytes based UTF16 (e.g. Ms Windows),
  * input strings are directly passed to Oracle and taken back from it.
@@ -517,61 +488,40 @@ extern "C" {
  * OCILIB main header file provides macro around most common string functions of
  * the C standard library.
  *
- * these macros are based on the model:
- *
- * - mtsxxx() for mtext * typed strings
- * - dtsxxx() for dtext * typed strings
+ * these macros are based on the model: ots[libc function name]() 
  *
  * xxx is the standard C library string function name without the character type prefix (str/wcs).
  *
  * List of available macros:
- * - mtsdup, dtsdup
- * - mtscpy, dtscpy
- * - mtsncpy, dtsncpy
- * - mtscat, dtscat
- * - mtsncat, dtsncat
- * - mtslen, dtslen
- * - mtscmp, dtscmp
- * - mtscasecmp, dtscasecmp
- * - mtsprintf, dtsprintf
- * - mtstol, dtstol
+ * - ostrdup
+ * - ostrcpy
+ * - ostrncpy
+ * - ostrcat
+ * - ostrncat
+ * - ostrlen
+ * - ostrcmp
+ * - sotrcasecmp
+ * - osprintf
+ * - ostol
  *
 **/
 
-/* Unicode mode */
 
-#ifdef OCI_CHARSET_WIDE
-  #define OCI_METADATA_WIDE
-  #define OCI_USERDATA_WIDE
-  #define OCI_INCLUDE_WCHAR
-#endif
+#include <wctype.h>
 
-#ifdef OCI_CHARSET_MIXED
-  #define OCI_USERDATA_WIDE
-  #define OCI_INCLUDE_WCHAR
-#endif
-
-/* include wchar header if needed */
-
-#ifdef OCI_INCLUDE_WCHAR
-  #include <wctype.h>
-
-  #ifdef _MSC_VER
+    #ifdef _MSC_VER
 
     #if (_MSC_VER < 1300) && defined(__cplusplus)
-extern "C++" {
+        extern "C++" {
     #endif
 
     #include <wchar.h>
+    
     #if (_MSC_VER < 1300) && defined(__cplusplus)
-}
+        }
     #endif
 
-  #else
-
-    #include <wchar.h>
-
-  #endif
+    #else
 
 #endif
 
@@ -580,24 +530,14 @@ extern "C++" {
 #define OCI_CHAR_ANSI       1
 #define OCI_CHAR_WIDE       2
 
-#ifdef OCI_METADATA_WIDE
-  #define MT(x)           L ## x
-  #define mtext           wchar_t
-  #define OCI_CHAR_MTEXT  OCI_CHAR_WIDE
+#ifdef OCI_CHARSET_ANSI
+  typedef char              otext;
+  #define OTEXT(x)          x
+  #define OCI_CHAR_TEXT     OCI_CHAR_ANSI
 #else
-  #define MT(x)           x
-  #define mtext           char
-  #define OCI_CHAR_MTEXT  OCI_CHAR_ANSI
-#endif
-
-#ifdef OCI_USERDATA_WIDE
-  #define DT(x)           L ## x
-  #define dtext           wchar_t
-  #define OCI_CHAR_DTEXT  OCI_CHAR_WIDE
-#else
-  #define DT(x)           x
-  #define dtext           char
-  #define OCI_CHAR_DTEXT  OCI_CHAR_ANSI
+  typedef wchar_t           otext;
+  #define OTEXT(x)          L ## x
+  #define OCI_CHAR_TEXT     OCI_CHAR_WIDE
 #endif
 
 /*
@@ -608,6 +548,8 @@ extern "C++" {
 
 */
 
+#ifdef OCI_CHARSET_ANSI
+
 OCI_EXPORT int       ocisprintf
 (
     char       *str,
@@ -615,26 +557,31 @@ OCI_EXPORT int       ocisprintf
     const char *format,
     ...
 );
+
 OCI_EXPORT char    * ocistrdup
 (
     const char * src
 );
+
 OCI_EXPORT int       ocistrcasecmp
 (
     const char *str1,
     const char *str2
 );
 
-#ifdef OCI_INCLUDE_WCHAR
+#else
+
 OCI_EXPORT wchar_t * ociwcsdup
 (
     const wchar_t * src
 );
-OCI_EXPORT int       ociwcscasecmp
+
+OCI_EXPORT int ociwcscasecmp
 (
     const wchar_t *str1,
     const wchar_t *str2
 );
+
 #endif
 
 /* special defines for Microsoft C runtime that is not C ISO compliant */
@@ -642,70 +589,46 @@ OCI_EXPORT int       ociwcscasecmp
 #ifdef _WINDOWS
 
   #define vsnprintf  _vsnprintf
-
-  #ifdef OCI_INCLUDE_WCHAR
-    #define swprintf _snwprintf
-  #endif
+   #define swprintf _snwprintf
 
 #endif
 
 /* helpers mapping macros */
 
-#ifdef OCI_METADATA_WIDE
-  #define mtsdup          ociwcsdup
-  #define mtscpy          wcscpy
-  #define mtsncpy         wcsncpy
-  #define mtscat          wcscat
-  #define mtsncat         wcsncat
-  #define mtslen          wcslen
-  #define mtscmp          wcscmp
-  #define mtscasecmp      ociwcscasecmp
-  #define mtsprintf       swprintf
-  #define mtstol          wcstol
+#ifdef OCI_CHARSET_ANSI
+  #define ostrdup          ocistrdup
+  #define ostrcpy          strcpy
+  #define ostrncpy         strncpy
+  #define ostrcat          strcat
+  #define ostrncat         strncat
+  #define ostrlen          strlen
+  #define ostrcmp          strcmp
+  #define ostrcasecmp      ocistrcasecmp
+  #define osprintf         ocisprintf
+  #define ostrtol          strtol
+  #define osscanf          sscanf
+  #define otoupper         toupper
+  #define oisdigit         isdigit
 #else
-  #define mtsdup          ocistrdup
-  #define mtscpy          strcpy
-  #define mtsncpy         strncpy
-  #define mtscat          strcat
-  #define mtsncat         strncat
-  #define mtslen          strlen
-  #define mtscmp          strcmp
-  #define mtscasecmp      ocistrcasecmp
-  #define mtsprintf       ocisprintf
-  #define mtstol          strtol
-#endif
+  #define ostrdup          ociwcsdup
+  #define ostrcpy          wcscpy
+  #define ostrncpy         wcsncpy
+  #define ostrcat          wcscat
+  #define ostrncat         wcsncat
+  #define ostrlen          wcslen
+  #define ostrcmp          wcscmp
+  #define ostrcasecmp      ociwcscasecmp
+  #define osprintf         swprintf
+  #define ostrtol          wcstol
+  #define osscanf          swscanf
+  #define otoupper         towupper
+  #define oisdigit         iswdigit
 
-#ifdef OCI_USERDATA_WIDE
-  #define dtsdup          ociwcsdup
-  #define dtscpy          wcscpy
-  #define dtsncpy         wcsncpy
-  #define dtscat          wcscat
-  #define dtsncat         wcsncat
-  #define dtslen          wcslen
-  #define dtscmp          wcscmp
-  #define dtscasecmp      ociwcscasecmp
-  #define dtsprintf       swprintf
-  #define dtscanf         swscanf
-  #define dtstol          wcstol
-
-#else
-  #define dtsdup          ocistrdup
-  #define dtscpy          strcpy
-  #define dtsncpy         strncpy
-  #define dtscat          strcat
-  #define dtsncat         strncat
-  #define dtslen          strlen
-  #define dtscmp          strcmp
-  #define dtscasecmp      ocistrcasecmp
-  #define dtsprintf       ocisprintf
-  #define dtscanf         sscanf
-  #define dtstol          strtol
 #endif
 
 /* string size macros */
 
-#define mtextsize(s) (mtslen(s) * sizeof(mtext))
-#define dtextsize(s) (dtslen(s) * sizeof(dtext))
+#define otextsize(s) (ostrlen(s) * sizeof(otext))
 
 /**
  * @}
@@ -1322,8 +1245,7 @@ typedef union OCI_Variant {
     int           *p_int;
     float         *p_float;
     double        *p_double;
-    dtext         *p_dtext;
-    mtext         *p_mtext;
+    otext         *p_text;
 
     /* ocilib object types */
     OCI_Date      *p_date;
@@ -1364,7 +1286,7 @@ typedef struct OCI_HashValue {
  */
 
 typedef struct OCI_HashEntry {
-    mtext                 *key;
+    otext                 *key;
     struct OCI_HashValue  *values;
     struct OCI_HashEntry  *next;
 } OCI_HashEntry;
@@ -1985,14 +1907,15 @@ typedef unsigned int big_uint;
 
 /* string constants */
 
-#define OCILIB_DRIVER_NAME                  MT("OCILIB")
-#define OCI_STRING_NULL                     MT("NULL")
-#define OCI_STRING_FORMAT_DATE              MT("YYYY-MM-DD")
+#define OCILIB_DRIVER_NAME                  OTEXT("OCILIB")
+#define OCI_STRING_NULL                     OTEXT("NULL")
+#define OCI_STRING_EMPTY                    OTEXT("")
+#define OCI_STRING_FORMAT_DATE              OTEXT("YYYY-MM-DD")
 #define OCI_STRING_DEFAULT_PREC             3
 #define OCI_STRING_FORMAT_NUM   \
-    MT("FM99999999999999999999999999999999999990.999999999999999999999999")
+    OTEXT("FM99999999999999999999999999999999999990.999999999999999999999999")
 #define OCI_STRING_FORMAT_NUM_BIN   \
-    MT("%lf")
+    OTEXT("%lf")
 
 #ifdef _WINDOWS
   #define OCI_CHAR_SLASH                    '\\'
@@ -2074,7 +1997,7 @@ typedef unsigned int big_uint;
 OCI_EXPORT boolean OCI_API OCI_Initialize
 (
     POCI_ERROR   err_handler,
-    const mtext *lib_path,
+    const otext *lib_path,
     unsigned int mode
 );
 
@@ -2153,7 +2076,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetImportMode
 
 /**
  * @brief
- * Return the metadata charset type
+ * Return the OCILIB charset type
  *
  * @note
  * Possible values are:
@@ -2162,23 +2085,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetImportMode
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetCharsetMetaData
-(
-    void
-);
-
-/**
- * @brief
- * Return the user data charset type
- *
- * @note
- * Possible values are:
- * - OCI_CHAR_ANSI
- * - OCI_CHAR_WIDE
- *
- */
-
-OCI_EXPORT unsigned int OCI_API OCI_GetCharsetUserData
+OCI_EXPORT unsigned int OCI_API OCI_GetCharset
 (
     void
 );
@@ -2324,7 +2231,7 @@ OCI_EXPORT OCI_Error * OCI_API OCI_GetLastError
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_ErrorGetString
+OCI_EXPORT const otext * OCI_API OCI_ErrorGetString
 (
     OCI_Error *err
 );
@@ -2492,7 +2399,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
  *     Only OCI_CHARSET_ANSI builds of OCILIB can be used
  *   - You still can use UTF8 if the NLS_LANG environment variable is set with a valid
  *     UTF8 NLS value
- *   - DO NOT USE OCI_CHARSET_MIXED or OCI_CHARSET_WIDE OCILIB builds with XA connections
+ *   - DO NOT USE OCI_CHARSET_WIDE OCILIB builds with XA connections
  *
  * @note
  * On success, a local transaction is automatically created and started ONLY for regular 
@@ -2506,9 +2413,9 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
 
 OCI_EXPORT OCI_Connection * OCI_API OCI_ConnectionCreate
 (
-    const mtext *db,
-    const mtext *user,
-    const mtext *pwd,
+    const otext *db,
+    const otext *user,
+    const otext *pwd,
     unsigned int mode
 );
 
@@ -2598,7 +2505,7 @@ OCI_EXPORT boolean OCI_API OCI_SetUserData
 OCI_EXPORT boolean OCI_API OCI_SetSessionTag
 (
     OCI_Connection *con,
-    const mtext    *tag
+    const otext    *tag
 );
 
 /**
@@ -2609,7 +2516,7 @@ OCI_EXPORT boolean OCI_API OCI_SetSessionTag
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetSessionTag
+OCI_EXPORT const otext * OCI_API OCI_GetSessionTag
 (
     OCI_Connection *con
 );
@@ -2622,7 +2529,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetSessionTag
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetDatabase
+OCI_EXPORT const otext * OCI_API OCI_GetDatabase
 (
     OCI_Connection *con
 );
@@ -2635,7 +2542,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetDatabase
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetUserName
+OCI_EXPORT const otext * OCI_API OCI_GetUserName
 (
     OCI_Connection *con
 );
@@ -2648,7 +2555,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetUserName
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetPassword
+OCI_EXPORT const otext * OCI_API OCI_GetPassword
 (
     OCI_Connection *con
 );
@@ -2668,7 +2575,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetPassword
 OCI_EXPORT boolean OCI_API OCI_SetPassword
 (
     OCI_Connection *con,
-    const mtext    *password
+    const otext    *password
 );
 
 /**
@@ -2687,10 +2594,10 @@ OCI_EXPORT boolean OCI_API OCI_SetPassword
 
 OCI_EXPORT boolean OCI_API OCI_SetUserPassword
 (
-    const mtext *db,
-    const mtext *user,
-    const mtext *pwd,
-    const mtext *new_pwd
+    const otext *db,
+    const otext *user,
+    const otext *pwd,
+    const otext *new_pwd
 );
 
 /**
@@ -2717,7 +2624,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetSessionMode
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetVersionServer
+OCI_EXPORT const otext * OCI_API OCI_GetVersionServer
 (
     OCI_Connection *con
 );
@@ -2790,7 +2697,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion
 OCI_EXPORT boolean OCI_API OCI_SetDefaultFormatDate
 (
     OCI_Connection *con,
-    const mtext    *format
+    const otext    *format
 );
 
 /**
@@ -2804,7 +2711,7 @@ OCI_EXPORT boolean OCI_API OCI_SetDefaultFormatDate
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetDefaultFormatDate
+OCI_EXPORT const otext * OCI_API OCI_GetDefaultFormatDate
 (
     OCI_Connection *con
 );
@@ -2838,7 +2745,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetDefaultFormatDate
 OCI_EXPORT boolean OCI_API OCI_SetDefaultFormatNumeric
 (
     OCI_Connection *con,
-    const mtext    *format
+    const otext    *format
 );
 
 /**
@@ -2852,7 +2759,7 @@ OCI_EXPORT boolean OCI_API OCI_SetDefaultFormatNumeric
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetDefaultFormatNumeric
+OCI_EXPORT const otext * OCI_API OCI_GetDefaultFormatNumeric
 (
     OCI_Connection *con
 );
@@ -2972,7 +2879,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTrace
 (
     OCI_Connection *con,
     unsigned int    trace,
-    const mtext    *value
+    const otext    *value
 );
 
 /**
@@ -2987,7 +2894,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTrace
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetTrace
+OCI_EXPORT const otext * OCI_API OCI_GetTrace
 (
     OCI_Connection *con,
     unsigned int    trace
@@ -3025,7 +2932,7 @@ OCI_EXPORT boolean OCI_API OCI_Ping
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetDBName
+OCI_EXPORT const otext * OCI_API OCI_GetDBName
 (
     OCI_Connection *con
 );
@@ -3042,7 +2949,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetDBName
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetInstanceName
+OCI_EXPORT const otext * OCI_API OCI_GetInstanceName
 (
     OCI_Connection *con
 );
@@ -3060,7 +2967,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetInstanceName
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetServiceName
+OCI_EXPORT const otext * OCI_API OCI_GetServiceName
 (
     OCI_Connection *con
 );
@@ -3078,7 +2985,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetServiceName
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetServerName
+OCI_EXPORT const otext * OCI_API OCI_GetServerName
 (
     OCI_Connection *con
 );
@@ -3096,7 +3003,7 @@ OCI_EXPORT const mtext * OCI_API OCI_GetServerName
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetDomainName
+OCI_EXPORT const otext * OCI_API OCI_GetDomainName
 (
     OCI_Connection *con
 );
@@ -3359,9 +3266,9 @@ OCI_EXPORT boolean OCI_API OCI_SetDefaultLobPrefetchSize
 
 OCI_EXPORT OCI_Pool * OCI_API OCI_PoolCreate
 (
-    const mtext *db,
-    const mtext *user,
-    const mtext *pwd,
+    const otext *db,
+    const otext *user,
+    const otext *pwd,
     unsigned int type,
     unsigned int mode,
     unsigned int min_con,
@@ -3420,7 +3327,7 @@ OCI_EXPORT boolean OCI_API OCI_PoolFree
 OCI_EXPORT OCI_Connection * OCI_API OCI_PoolGetConnection
 (
     OCI_Pool    *pool,
-    const mtext *tag
+    const otext *tag
 );
 
 /**
@@ -3974,7 +3881,7 @@ OCI_EXPORT boolean OCI_API OCI_StatementFree
 OCI_EXPORT boolean OCI_API OCI_Prepare
 (
     OCI_Statement *stmt,
-    const mtext   *sql
+    const otext   *sql
 );
 
 /**
@@ -4024,7 +3931,7 @@ OCI_EXPORT boolean OCI_API OCI_Execute
 OCI_EXPORT boolean OCI_API OCI_ExecuteStmt
 (
     OCI_Statement *stmt,
-    const mtext   *sql
+    const otext   *sql
 );
 
 /**
@@ -4057,7 +3964,7 @@ OCI_EXPORT boolean OCI_API OCI_ExecuteStmt
 OCI_EXPORT boolean OCI_API OCI_Parse
 (
     OCI_Statement *stmt,
-    const mtext   *sql
+    const otext   *sql
 );
 
 /**
@@ -4094,7 +4001,7 @@ OCI_EXPORT boolean OCI_API OCI_Parse
 OCI_EXPORT boolean OCI_API OCI_Describe
 (
     OCI_Statement *stmt,
-    const mtext   *sql
+    const otext   *sql
 );
 
 /**
@@ -4105,7 +4012,7 @@ OCI_EXPORT boolean OCI_API OCI_Describe
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetSql
+OCI_EXPORT const otext * OCI_API OCI_GetSql
 (
     OCI_Statement *stmt
 );
@@ -4184,7 +4091,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetSQLCommand
  * The SQL command verb of the statement otherwise NULL
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_GetSQLVerb
+OCI_EXPORT const otext * OCI_API OCI_GetSQLVerb
 (
     OCI_Statement *stmt
 );
@@ -4390,7 +4297,7 @@ OCI_EXPORT boolean OCI_API OCI_AllowRebinding
 OCI_EXPORT boolean OCI_API OCI_BindShort
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     short         *data
 );
 
@@ -4418,7 +4325,7 @@ OCI_EXPORT boolean OCI_API OCI_BindShort
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfShorts
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     short         *data,
     unsigned int   nbelem
 );
@@ -4442,7 +4349,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfShorts
 OCI_EXPORT boolean OCI_API OCI_BindUnsignedShort
 (
     OCI_Statement  *stmt,
-    const mtext    *name,
+    const otext    *name,
     unsigned short *data
 );
 
@@ -4470,7 +4377,7 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedShort
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedShorts
 (
     OCI_Statement  *stmt,
-    const mtext    *name,
+    const otext    *name,
     unsigned short *data,
     unsigned int    nbelem
 );
@@ -4494,7 +4401,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedShorts
 OCI_EXPORT boolean OCI_API OCI_BindInt
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     int           *data
 );
 
@@ -4522,7 +4429,7 @@ OCI_EXPORT boolean OCI_API OCI_BindInt
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfInts
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     int           *data,
     unsigned int   nbelem
 );
@@ -4546,7 +4453,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfInts
 OCI_EXPORT boolean OCI_API OCI_BindUnsignedInt
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     unsigned int  *data
 );
 
@@ -4574,7 +4481,7 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedInt
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedInts
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     unsigned int  *data,
     unsigned int   nbelem
 );
@@ -4598,7 +4505,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedInts
 OCI_EXPORT boolean OCI_API OCI_BindBigInt
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     big_int       *data
 );
 
@@ -4626,7 +4533,7 @@ OCI_EXPORT boolean OCI_API OCI_BindBigInt
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfBigInts
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     big_int       *data,
     unsigned int   nbelem
 );
@@ -4650,7 +4557,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfBigInts
 OCI_EXPORT boolean OCI_API OCI_BindUnsignedBigInt
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     big_uint      *data
 );
 
@@ -4678,7 +4585,7 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedBigInt
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedBigInts
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     big_uint      *data,
     unsigned int   nbelem
 );
@@ -4707,8 +4614,8 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedBigInts
 OCI_EXPORT boolean OCI_API OCI_BindString
 (
     OCI_Statement *stmt,
-    const mtext   *name,
-    dtext         *data,
+    const otext   *name,
+    otext         *data,
     unsigned int   len
 );
 
@@ -4742,8 +4649,8 @@ OCI_EXPORT boolean OCI_API OCI_BindString
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfStrings
 (
     OCI_Statement *stmt,
-    const mtext   *name,
-    dtext         *data,
+    const otext   *name,
+    otext         *data,
     unsigned int   len,
     unsigned int   nbelem
 );
@@ -4771,7 +4678,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfStrings
 OCI_EXPORT boolean OCI_API OCI_BindRaw
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     void          *data,
     unsigned int   len
 );
@@ -4807,7 +4714,7 @@ OCI_EXPORT boolean OCI_API OCI_BindRaw
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfRaws
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     void          *data,
     unsigned int   len,
     unsigned int   nbelem
@@ -4832,7 +4739,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfRaws
 OCI_EXPORT boolean OCI_API OCI_BindDouble
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     double        *data
 );
 
@@ -4860,7 +4767,7 @@ OCI_EXPORT boolean OCI_API OCI_BindDouble
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfDoubles
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     double        *data,
     unsigned int   nbelem
 );
@@ -4885,7 +4792,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfDoubles
 OCI_EXPORT boolean OCI_API OCI_BindFloat
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     float         *data
 );
 
@@ -4913,7 +4820,7 @@ OCI_EXPORT boolean OCI_API OCI_BindFloat
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfFloats
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     float         *data,
     unsigned int   nbelem
 );
@@ -4937,7 +4844,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfFloats
 OCI_EXPORT boolean OCI_API OCI_BindDate
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Date      *data
 );
 
@@ -4965,7 +4872,7 @@ OCI_EXPORT boolean OCI_API OCI_BindDate
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfDates
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Date     **data,
     unsigned int   nbelem
 );
@@ -4988,7 +4895,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfDates
 OCI_EXPORT boolean OCI_API OCI_BindTimestamp
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Timestamp *data
 );
 
@@ -5020,7 +4927,7 @@ OCI_EXPORT boolean OCI_API OCI_BindTimestamp
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfTimestamps
 (
     OCI_Statement  *stmt,
-    const mtext    *name,
+    const otext    *name,
     OCI_Timestamp **data,
     unsigned int    type,
     unsigned int    nbelem
@@ -5045,7 +4952,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfTimestamps
 OCI_EXPORT boolean OCI_API OCI_BindInterval
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Interval  *data
 );
 
@@ -5078,7 +4985,7 @@ OCI_EXPORT boolean OCI_API OCI_BindInterval
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfIntervals
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Interval **data,
     unsigned int   type,
     unsigned int   nbelem
@@ -5102,7 +5009,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfIntervals
 OCI_EXPORT boolean OCI_API OCI_BindLob
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Lob       *data
 );
 
@@ -5127,12 +5034,6 @@ OCI_EXPORT boolean OCI_API OCI_BindLob
  * parameter 'data' can NULL if the statement bind allocation mode
  * has been set to OCI_BAM_INTERNAL
  *
- * @warning
- * There is a knwon Oracle bug related to binding array of lob using UTF16
- * and Oracle 8i clients. Lob contents are badly inserted into database
- * Thus do not use OCI_BindArrayOfLobs with Oracle 8I clients and OCILIB built
- * with OCI_CHARSET_MIXED
- *
  * @return
  * TRUE on success otherwise FALSE
  */
@@ -5140,7 +5041,7 @@ OCI_EXPORT boolean OCI_API OCI_BindLob
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfLobs
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Lob      **data,
     unsigned int   type,
     unsigned int   nbelem
@@ -5164,7 +5065,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfLobs
 OCI_EXPORT boolean OCI_API OCI_BindFile
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_File      *data
 );
 
@@ -5196,7 +5097,7 @@ OCI_EXPORT boolean OCI_API OCI_BindFile
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfFiles
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_File     **data,
     unsigned int   type,
     unsigned int   nbelem
@@ -5221,7 +5122,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfFiles
 OCI_EXPORT boolean OCI_API OCI_BindObject
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Object    *data
 );
 
@@ -5251,7 +5152,7 @@ OCI_EXPORT boolean OCI_API OCI_BindObject
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfObjects
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Object   **data,
     OCI_TypeInfo  *typinf,
     unsigned int   nbelem
@@ -5275,7 +5176,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfObjects
 OCI_EXPORT boolean OCI_API OCI_BindColl
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Coll      *data
 );
 
@@ -5308,7 +5209,7 @@ OCI_EXPORT boolean OCI_API OCI_BindColl
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfColls
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Coll     **data,
     OCI_TypeInfo  *typinf,
     unsigned int   nbelem
@@ -5332,7 +5233,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfColls
 OCI_EXPORT boolean OCI_API OCI_BindRef
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Ref       *data
 );
 
@@ -5362,7 +5263,7 @@ OCI_EXPORT boolean OCI_API OCI_BindRef
 OCI_EXPORT boolean OCI_API OCI_BindArrayOfRefs
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Ref      **data,
     OCI_TypeInfo  *typinf,
     unsigned int   nbelem
@@ -5386,7 +5287,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfRefs
 OCI_EXPORT boolean OCI_API OCI_BindStatement
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Statement *data
 );
 
@@ -5414,7 +5315,7 @@ OCI_EXPORT boolean OCI_API OCI_BindStatement
 OCI_EXPORT boolean OCI_API OCI_BindLong
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_Long      *data,
     unsigned int   size
 );
@@ -5506,7 +5407,7 @@ OCI_EXPORT OCI_Bind * OCI_API OCI_GetBind
 OCI_EXPORT OCI_Bind * OCI_API OCI_GetBind2
 (
     OCI_Statement *stmt,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -5517,7 +5418,7 @@ OCI_EXPORT OCI_Bind * OCI_API OCI_GetBind2
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_BindGetName
+OCI_EXPORT const otext * OCI_API OCI_BindGetName
 (
     OCI_Bind *bnd
 );
@@ -5579,7 +5480,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetDirection
  *
  * - OCI_CDT_NUMERIC     : short, int, long long, float, double
  * - OCI_CDT_DATETIME    : OCI_Date *
- * - OCI_CDT_TEXT        : dtext *
+ * - OCI_CDT_TEXT        : otext *
  * - OCI_CDT_LONG        : OCI_Long *
  * - OCI_CDT_CURSOR      : OCI_Statement *
  * - OCI_CDT_LOB         : OCI_Lob  *
@@ -6104,7 +6005,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  *   - REFs : OCI_Ref *
  *   - CURSOR, RESULSET : OCI_Statement *
  *   - OBJECTS, UDT : OCI_Object *
- *   - Character columns (CHAR,VARCHAR, etc..) : dtext *
+ *   - Character columns (CHAR,VARCHAR, etc..) : otext *
  *   - All NUMERIC types :
  *        - default : big_int
  *        - user defined (see OCI_SetStructNumericType())
@@ -6386,7 +6287,7 @@ OCI_EXPORT OCI_Column * OCI_API OCI_GetColumn
 OCI_EXPORT OCI_Column * OCI_API OCI_GetColumn2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -6410,7 +6311,7 @@ OCI_EXPORT OCI_Column * OCI_API OCI_GetColumn2
 OCI_EXPORT unsigned int OCI_API OCI_GetColumnIndex
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -6421,7 +6322,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetColumnIndex
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_ColumnGetName
+OCI_EXPORT const otext * OCI_API OCI_ColumnGetName
 (
     OCI_Column *col
 );
@@ -6437,7 +6338,7 @@ OCI_EXPORT const mtext * OCI_API OCI_ColumnGetName
  *
  * - OCI_CDT_NUMERIC     : short, int, long long, float, double
  * - OCI_CDT_DATETIME    : OCI_Date *
- * - OCI_CDT_TEXT        : dtext *
+ * - OCI_CDT_TEXT        : otext *
  * - OCI_CDT_LONG        : OCI_Long *
  * - OCI_CDT_CURSOR      : OCI_Statement *
  * - OCI_CDT_LOB         : OCI_Lob  *
@@ -6488,7 +6389,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetCharsetForm
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_ColumnGetSQLType
+OCI_EXPORT const otext * OCI_API OCI_ColumnGetSQLType
 (
     OCI_Column *col
 );
@@ -6513,7 +6414,7 @@ OCI_EXPORT const mtext * OCI_API OCI_ColumnGetSQLType
 OCI_EXPORT unsigned int OCI_API OCI_ColumnGetFullSQLType
 (
     OCI_Column  *col,
-    mtext       *buffer,
+    otext       *buffer,
     unsigned int len
 );
 
@@ -6745,7 +6646,7 @@ OCI_EXPORT boolean OCI_API OCI_SetStructNumericType
 OCI_EXPORT boolean OCI_API OCI_SetStructNumericType2
 (
     OCI_Resultset *rs,
-    const mtext   *name,
+    const otext   *name,
     unsigned int   type
 );
 
@@ -6778,7 +6679,7 @@ OCI_EXPORT boolean OCI_API OCI_SetStructNumericType2
  *   - REFs : OCI_Ref *
  *   - CURSOR, RESULSET : OCI_Statement *
  *   - OBJECTS, UDT : OCI_Object *
- *   - Character columns (CHAR,VARCHAR, etc..) : dtext *
+ *   - Character columns (CHAR,VARCHAR, etc..) : otext *
  *   - All NUMERIC types :
  *        - default : big_int
  *        - user defined (see OCI_SetStructNumericType())
@@ -6846,7 +6747,7 @@ OCI_EXPORT short OCI_API OCI_GetShort
 OCI_EXPORT short OCI_API OCI_GetShort2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -6888,7 +6789,7 @@ OCI_EXPORT unsigned short OCI_API OCI_GetUnsignedShort
 OCI_EXPORT unsigned short OCI_API OCI_GetUnsignedShort2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -6930,7 +6831,7 @@ OCI_EXPORT int OCI_API OCI_GetInt
 OCI_EXPORT int OCI_API OCI_GetInt2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -6972,7 +6873,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetUnsignedInt
 OCI_EXPORT unsigned int OCI_API OCI_GetUnsignedInt2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7014,7 +6915,7 @@ OCI_EXPORT big_int OCI_API OCI_GetBigInt
 OCI_EXPORT big_int OCI_API OCI_GetBigInt2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7056,7 +6957,7 @@ OCI_EXPORT big_uint OCI_API OCI_GetUnsignedBigInt
 OCI_EXPORT big_uint OCI_API OCI_GetUnsignedBigInt2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7093,7 +6994,7 @@ OCI_EXPORT big_uint OCI_API OCI_GetUnsignedBigInt2
  *
  */
 
-OCI_EXPORT const dtext * OCI_API OCI_GetString
+OCI_EXPORT const otext * OCI_API OCI_GetString
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -7114,10 +7015,10 @@ OCI_EXPORT const dtext * OCI_API OCI_GetString
  *
  */
 
-OCI_EXPORT const dtext * OCI_API OCI_GetString2
+OCI_EXPORT const otext * OCI_API OCI_GetString2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7165,7 +7066,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetRaw
 OCI_EXPORT unsigned int OCI_API OCI_GetRaw2
 (
     OCI_Resultset *rs,
-    const mtext   *name,
+    const otext   *name,
     void          *buffer,
     unsigned int   len
 );
@@ -7209,7 +7110,7 @@ OCI_EXPORT double OCI_API OCI_GetDouble
 OCI_EXPORT double OCI_API OCI_GetDouble2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7251,7 +7152,7 @@ OCI_EXPORT float OCI_API OCI_GetFloat
 OCI_EXPORT float OCI_API OCI_GetFloat2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7290,7 +7191,7 @@ OCI_EXPORT OCI_Date * OCI_API OCI_GetDate
 OCI_EXPORT OCI_Date * OCI_API OCI_GetDate2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7329,7 +7230,7 @@ OCI_EXPORT OCI_Timestamp * OCI_API OCI_GetTimestamp
 OCI_EXPORT OCI_Timestamp * OCI_API OCI_GetTimestamp2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7368,7 +7269,7 @@ OCI_EXPORT OCI_Interval * OCI_API OCI_GetInterval
 OCI_EXPORT OCI_Interval * OCI_API OCI_GetInterval2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7407,7 +7308,7 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_GetStatement
 OCI_EXPORT OCI_Statement * OCI_API OCI_GetStatement2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7446,7 +7347,7 @@ OCI_EXPORT OCI_Lob * OCI_API OCI_GetLob
 OCI_EXPORT OCI_Lob * OCI_API OCI_GetLob2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7485,7 +7386,7 @@ OCI_EXPORT OCI_File * OCI_API OCI_GetFile
 OCI_EXPORT OCI_File * OCI_API OCI_GetFile2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7524,7 +7425,7 @@ OCI_EXPORT OCI_Object * OCI_API OCI_GetObject
 OCI_EXPORT OCI_Object * OCI_API OCI_GetObject2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7563,7 +7464,7 @@ OCI_EXPORT OCI_Coll * OCI_API OCI_GetColl
 OCI_EXPORT OCI_Coll * OCI_API OCI_GetColl2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7602,7 +7503,7 @@ OCI_EXPORT OCI_Ref * OCI_API OCI_GetRef
 OCI_EXPORT OCI_Ref * OCI_API OCI_GetRef2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7641,7 +7542,7 @@ OCI_EXPORT OCI_Long * OCI_API OCI_GetLong
 OCI_EXPORT OCI_Long * OCI_API OCI_GetLong2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7680,7 +7581,7 @@ OCI_EXPORT boolean OCI_API OCI_IsNull
 OCI_EXPORT boolean OCI_API OCI_IsNull2
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -7826,7 +7727,7 @@ OCI_EXPORT boolean OCI_API OCI_ServerDisableOutput
  *
  */
 
-OCI_EXPORT const dtext * OCI_API OCI_ServerGetOutput
+OCI_EXPORT const otext * OCI_API OCI_ServerGetOutput
 (
     OCI_Connection *con
 );
@@ -8190,6 +8091,13 @@ OCI_EXPORT boolean OCI_API OCI_CollAppend
     OCI_Elem *elem
 );
 
+OCI_EXPORT boolean OCI_API OCI_CollToText
+(
+    OCI_Coll     *coll,
+    unsigned int *size,
+    otext        *str
+);
+
 /**
  * @brief
  * Delete the element at the given position in the Nested Table Collection
@@ -8481,7 +8389,7 @@ OCI_EXPORT float OCI_API OCI_ElemGetFloat
  *
  */
 
-OCI_EXPORT const dtext * OCI_API OCI_ElemGetString
+OCI_EXPORT const otext * OCI_API OCI_ElemGetString
 (
     OCI_Elem *elem
 );
@@ -8796,7 +8704,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetFloat
 OCI_EXPORT boolean OCI_API OCI_ElemSetString
 (
     OCI_Elem    *elem,
-    const dtext *value
+    const otext *value
 );
 
 /**
@@ -9117,7 +9025,7 @@ OCI_EXPORT OCI_Resultset * OCI_API OCI_GetNextResultset
 OCI_EXPORT boolean OCI_API OCI_RegisterShort
 (
     OCI_Statement *stmt,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -9135,7 +9043,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterShort
 OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedShort
 (
     OCI_Statement *stmt,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -9153,7 +9061,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedShort
 OCI_EXPORT boolean OCI_API OCI_RegisterInt
 (
     OCI_Statement *stmt,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -9171,7 +9079,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterInt
 OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedInt
 (
     OCI_Statement *stmt,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -9189,7 +9097,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedInt
 OCI_EXPORT boolean OCI_API OCI_RegisterBigInt
 (
     OCI_Statement *stmt,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -9207,7 +9115,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterBigInt
 OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedBigInt
 (
     OCI_Statement *stmt,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -9226,7 +9134,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedBigInt
 OCI_EXPORT boolean OCI_API OCI_RegisterString
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     unsigned int   len
 );
 
@@ -9245,7 +9153,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterString
 OCI_EXPORT boolean OCI_API OCI_RegisterRaw
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     unsigned int   len
 );
 
@@ -9263,7 +9171,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterRaw
 OCI_EXPORT boolean OCI_API OCI_RegisterDouble
 (
     OCI_Statement *stmt,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -9280,7 +9188,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterDouble
 OCI_EXPORT boolean OCI_API OCI_RegisterFloat
 (
     OCI_Statement *stmt,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -9297,7 +9205,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterFloat
 OCI_EXPORT boolean OCI_API OCI_RegisterDate
 (
     OCI_Statement *stmt,
-    const mtext   *name
+    const otext   *name
 );
 
 /**
@@ -9318,7 +9226,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterDate
 OCI_EXPORT boolean OCI_API OCI_RegisterTimestamp
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     unsigned int   type
 );
 
@@ -9340,7 +9248,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterTimestamp
 OCI_EXPORT boolean OCI_API OCI_RegisterInterval
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     unsigned int   type
 );
 
@@ -9359,7 +9267,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterInterval
 OCI_EXPORT boolean OCI_API OCI_RegisterObject
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_TypeInfo  *typinf
 );
 
@@ -9381,7 +9289,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterObject
 OCI_EXPORT boolean OCI_API OCI_RegisterLob
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     unsigned int   type
 );
 
@@ -9403,7 +9311,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterLob
 OCI_EXPORT boolean OCI_API OCI_RegisterFile
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     unsigned int   type
 );
 
@@ -9422,7 +9330,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterFile
 OCI_EXPORT boolean OCI_API OCI_RegisterRef
 (
     OCI_Statement *stmt,
-    const mtext   *name,
+    const otext   *name,
     OCI_TypeInfo  *typinf
 );
 
@@ -9434,7 +9342,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterRef
  * @defgroup OcilibCApiRowIds Oracle Rowids
  * @{
  *
- * OCILIB supports the Oracle ROWID type through C scalar string types (dtext).
+ * OCILIB supports the Oracle ROWID type through C scalar string types (otext).
  *
  * - ROWIDs can be retrieved from resultset with OCI_GetString()
  * - ROWIDs can be binded to statements with OCI_BindString()
@@ -10778,8 +10686,8 @@ OCI_EXPORT boolean OCI_API OCI_FileExists
 OCI_EXPORT boolean OCI_API OCI_FileSetName
 (
     OCI_File    *file,
-    const mtext *dir,
-    const mtext *name
+    const otext *dir,
+    const otext *name
 );
 
 /**
@@ -10790,7 +10698,7 @@ OCI_EXPORT boolean OCI_API OCI_FileSetName
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_FileGetDirectory
+OCI_EXPORT const otext * OCI_API OCI_FileGetDirectory
 (
     OCI_File *file
 );
@@ -10803,7 +10711,7 @@ OCI_EXPORT const mtext * OCI_API OCI_FileGetDirectory
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_FileGetName
+OCI_EXPORT const otext * OCI_API OCI_FileGetName
 (
     OCI_File *file
 );
@@ -11292,8 +11200,8 @@ OCI_EXPORT int OCI_API OCI_DateDaysBetween
 OCI_EXPORT boolean OCI_API OCI_DateFromText
 (
     OCI_Date    *date,
-    const mtext *str,
-    const mtext *fmt
+    const otext *str,
+    const otext *fmt
 );
 
 /**
@@ -11313,9 +11221,9 @@ OCI_EXPORT boolean OCI_API OCI_DateFromText
 OCI_EXPORT boolean OCI_API OCI_DateToText
 (
     OCI_Date    *date,
-    const mtext *fmt,
+    const otext *fmt,
     int          size,
-    mtext       *str
+    otext       *str
 );
 
 /**
@@ -11493,7 +11401,7 @@ OCI_EXPORT boolean OCI_API OCI_DateLastDay
 OCI_EXPORT boolean OCI_API OCI_DateNextDay
 (
     OCI_Date    *date,
-    const mtext *day
+    const otext *day
 );
 
 /**
@@ -11528,8 +11436,8 @@ OCI_EXPORT boolean OCI_API OCI_DateSysDate
 OCI_EXPORT boolean OCI_API OCI_DateZoneToZone
 (
     OCI_Date    *date,
-    const mtext *zone1,
-    const mtext *zone2
+    const otext *zone1,
+    const otext *zone2
 );
 
 /**
@@ -11796,7 +11704,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampConstruct
     int            min,
     int            sec,
     int            fsec,
-    const mtext   *time_zone
+    const otext   *time_zone
 );
 
 /**
@@ -11833,8 +11741,8 @@ OCI_EXPORT boolean OCI_API OCI_TimestampConvert
 OCI_EXPORT boolean OCI_API OCI_TimestampFromText
 (
     OCI_Timestamp *tmsp,
-    const mtext   *str,
-    const mtext   *fmt
+    const otext   *str,
+    const otext   *fmt
 );
 
 /**
@@ -11855,9 +11763,9 @@ OCI_EXPORT boolean OCI_API OCI_TimestampFromText
 OCI_EXPORT boolean OCI_API OCI_TimestampToText
 (
     OCI_Timestamp *tmsp,
-    const mtext   *fmt,
+    const otext   *fmt,
     int            size,
-    mtext         *str,
+    otext         *str,
     int            precision
 );
 
@@ -11954,7 +11862,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampGetTimeZoneName
 (
     OCI_Timestamp *tmsp,
     int            size,
-    mtext         *str
+    otext         *str
 );
 
 /**
@@ -12282,7 +12190,7 @@ OCI_EXPORT int OCI_API OCI_IntervalCompare
 OCI_EXPORT boolean OCI_API OCI_IntervalFromText
 (
     OCI_Interval *itv,
-    const mtext  *str
+    const otext  *str
 );
 
 /**
@@ -12306,7 +12214,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalToText
     int           leading_prec,
     int           fraction_prec,
     int           size,
-    mtext        *str
+    otext        *str
 );
 
 /**
@@ -12324,7 +12232,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalToText
 OCI_EXPORT boolean OCI_API OCI_IntervalFromTimeZone
 (
     OCI_Interval *itv,
-    const mtext  *str
+    const otext  *str
 );
 
 /**
@@ -12686,7 +12594,7 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ObjectGetTypeInfo
 OCI_EXPORT short OCI_API OCI_ObjectGetShort
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12709,7 +12617,7 @@ OCI_EXPORT short OCI_API OCI_ObjectGetShort
 OCI_EXPORT unsigned short OCI_API OCI_ObjectGetUnsignedShort
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12732,7 +12640,7 @@ OCI_EXPORT unsigned short OCI_API OCI_ObjectGetUnsignedShort
 OCI_EXPORT int OCI_API OCI_ObjectGetInt
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12755,7 +12663,7 @@ OCI_EXPORT int OCI_API OCI_ObjectGetInt
 OCI_EXPORT unsigned int OCI_API OCI_ObjectGetUnsignedInt
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12778,7 +12686,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ObjectGetUnsignedInt
 OCI_EXPORT big_int OCI_API OCI_ObjectGetBigInt
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12801,7 +12709,7 @@ OCI_EXPORT big_int OCI_API OCI_ObjectGetBigInt
 OCI_EXPORT big_uint OCI_API OCI_ObjectGetUnsignedBigInt
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12824,7 +12732,7 @@ OCI_EXPORT big_uint OCI_API OCI_ObjectGetUnsignedBigInt
 OCI_EXPORT double OCI_API OCI_ObjectGetDouble
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12847,7 +12755,7 @@ OCI_EXPORT double OCI_API OCI_ObjectGetDouble
 OCI_EXPORT float OCI_API OCI_ObjectGetFloat
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12867,10 +12775,10 @@ OCI_EXPORT float OCI_API OCI_ObjectGetFloat
  *
  */
 
-OCI_EXPORT const dtext * OCI_API OCI_ObjectGetString
+OCI_EXPORT const otext * OCI_API OCI_ObjectGetString
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12896,7 +12804,7 @@ OCI_EXPORT const dtext * OCI_API OCI_ObjectGetString
 OCI_EXPORT int OCI_API OCI_ObjectGetRaw
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     void        *value,
     unsigned int len
 );
@@ -12921,7 +12829,7 @@ OCI_EXPORT int OCI_API OCI_ObjectGetRaw
 OCI_EXPORT OCI_Date * OCI_API OCI_ObjectGetDate
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12944,7 +12852,7 @@ OCI_EXPORT OCI_Date * OCI_API OCI_ObjectGetDate
 OCI_EXPORT OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12967,7 +12875,7 @@ OCI_EXPORT OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp
 OCI_EXPORT OCI_Interval * OCI_API OCI_ObjectGetInterval
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -12990,7 +12898,7 @@ OCI_EXPORT OCI_Interval * OCI_API OCI_ObjectGetInterval
 OCI_EXPORT OCI_Coll * OCI_API OCI_ObjectGetColl
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -13013,7 +12921,7 @@ OCI_EXPORT OCI_Coll * OCI_API OCI_ObjectGetColl
 OCI_EXPORT OCI_Ref * OCI_API OCI_ObjectGetRef
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -13036,7 +12944,7 @@ OCI_EXPORT OCI_Ref * OCI_API OCI_ObjectGetRef
 OCI_EXPORT OCI_Object * OCI_API OCI_ObjectGetObject
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -13059,7 +12967,7 @@ OCI_EXPORT OCI_Object * OCI_API OCI_ObjectGetObject
 OCI_EXPORT OCI_Lob * OCI_API OCI_ObjectGetLob
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -13082,7 +12990,7 @@ OCI_EXPORT OCI_Lob * OCI_API OCI_ObjectGetLob
 OCI_EXPORT OCI_File * OCI_API OCI_ObjectGetFile
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -13101,7 +13009,7 @@ OCI_EXPORT OCI_File * OCI_API OCI_ObjectGetFile
 OCI_EXPORT boolean OCI_API OCI_ObjectSetShort
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     short        value
 );
 
@@ -13121,7 +13029,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetShort
 OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedShort
 (
     OCI_Object    *obj,
-    const mtext   *attr,
+    const otext   *attr,
     unsigned short value
 );
 
@@ -13141,7 +13049,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedShort
 OCI_EXPORT boolean OCI_API OCI_ObjectSetInt
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     int          value
 );
 
@@ -13161,7 +13069,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetInt
 OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedInt
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     unsigned int value
 );
 
@@ -13181,7 +13089,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedInt
 OCI_EXPORT boolean OCI_API OCI_ObjectSetBigInt
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     big_int      value
 );
 
@@ -13201,7 +13109,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetBigInt
 OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedBigInt
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     big_uint     value
 );
 
@@ -13221,7 +13129,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedBigInt
 OCI_EXPORT boolean OCI_API OCI_ObjectSetDouble
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     double       value
 );
 
@@ -13241,7 +13149,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetDouble
 OCI_EXPORT boolean OCI_API OCI_ObjectSetFloat
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     float       value
 );
 
@@ -13264,8 +13172,8 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetFloat
 OCI_EXPORT boolean OCI_API OCI_ObjectSetString
 (
     OCI_Object  *obj,
-    const mtext *attr,
-    const dtext *value
+    const otext *attr,
+    const otext *value
 );
 
 /**
@@ -13288,7 +13196,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetString
 OCI_EXPORT boolean OCI_API OCI_ObjectSetRaw
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     void        *value,
     unsigned int len
 );
@@ -13312,7 +13220,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetRaw
 OCI_EXPORT boolean OCI_API OCI_ObjectSetDate
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     OCI_Date    *value
 );
 
@@ -13335,7 +13243,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetDate
 OCI_EXPORT boolean OCI_API OCI_ObjectSetTimestamp
 (
     OCI_Object    *obj,
-    const mtext   *attr,
+    const otext   *attr,
     OCI_Timestamp *value
 );
 
@@ -13358,7 +13266,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetTimestamp
 OCI_EXPORT boolean OCI_API OCI_ObjectSetInterval
 (
     OCI_Object   *obj,
-    const mtext  *attr,
+    const otext  *attr,
     OCI_Interval *value
 );
 
@@ -13381,7 +13289,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetInterval
 OCI_EXPORT boolean OCI_API OCI_ObjectSetColl
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     OCI_Coll    *value
 );
 
@@ -13409,7 +13317,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetColl
 OCI_EXPORT boolean OCI_API OCI_ObjectSetObject
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     OCI_Object  *value
 );
 
@@ -13432,7 +13340,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetObject
 OCI_EXPORT boolean OCI_API OCI_ObjectSetLob
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     OCI_Lob     *value
 );
 
@@ -13455,7 +13363,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetLob
 OCI_EXPORT boolean OCI_API OCI_ObjectSetFile
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     OCI_File    *value
 );
 
@@ -13478,7 +13386,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetFile
 OCI_EXPORT boolean OCI_API OCI_ObjectSetRef
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     OCI_Ref     *value
 );
 
@@ -13497,7 +13405,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetRef
 OCI_EXPORT boolean OCI_API OCI_ObjectIsNull
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -13515,7 +13423,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectIsNull
 OCI_EXPORT boolean OCI_API OCI_ObjectSetNull
 (
     OCI_Object  *obj,
-    const mtext *attr
+    const otext *attr
 );
 
 /**
@@ -13542,6 +13450,13 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetStruct
     OCI_Object *obj,
     void      **pp_struct,
     void      **pp_ind
+);
+
+OCI_EXPORT boolean OCI_API OCI_ObjectToText
+(
+    OCI_Object   *obj,
+    unsigned int *size,
+    otext        *str
 );
 
 /**
@@ -13743,7 +13658,7 @@ OCI_EXPORT boolean OCI_API OCI_RefToText
 (
     OCI_Ref     *ref,
     unsigned int size,
-    mtext       *str
+    otext       *str
 );
 
 /**
@@ -13836,7 +13751,7 @@ OCI_EXPORT boolean OCI_API OCI_Break
 OCI_EXPORT OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 (
     OCI_Connection *con,
-    const mtext    *name,
+    const otext    *name,
     unsigned int    type
 );
 
@@ -13940,7 +13855,7 @@ OCI_EXPORT OCI_Column * OCI_API OCI_TypeInfoGetColumn
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_TypeInfoGetName
+OCI_EXPORT const otext * OCI_API OCI_TypeInfoGetName
 (
     OCI_TypeInfo *typinf
 );
@@ -13981,7 +13896,7 @@ OCI_EXPORT const mtext * OCI_API OCI_TypeInfoGetName
  * - OCI_ARG_BIGUINT ----> unsigned big_int *
  * - OCI_ARG_DOUBLE  ----> double *
  * - OCI_ARG_FLOAT ------> float *
- * - OCI_ARG_TEXT -------> dtext *
+ * - OCI_ARG_TEXT -------> otext *
  * - OCI_ARG_RAW --------> void *
  * - OCI_ARG_DATETIME ---> OCI_Date *
  * - OCI_ARG_LOB --------> OCI_Lob *
@@ -14005,8 +13920,8 @@ OCI_EXPORT const mtext * OCI_API OCI_TypeInfoGetName
  *
  * Supported input identifiers :
  *
- * - '%s'  : (dtext *) ----------> input string (quotes are added)
- * - '%m'  : (dtext *) ----------> metadata string (no quotes added)
+ * - '%s'  : (otext *) ----------> input string (quotes are added)
+ * - '%m'  : (otext *) ----------> metadata string (no quotes added)
  * - '%t'  : (OCI_Date *) -------> Date
  * - '%p'  : (OCI_Timestamp *) --> timestamp
  * - '%v'  : (OCI_Interval *) ---> Interval
@@ -14045,7 +13960,7 @@ OCI_EXPORT const mtext * OCI_API OCI_TypeInfoGetName
 OCI_EXPORT boolean OCI_Immediate
 (
     OCI_Connection *con,
-    const mtext    *sql,
+    const otext    *sql,
     ...
 );
 
@@ -14065,7 +13980,7 @@ OCI_EXPORT boolean OCI_Immediate
 OCI_EXPORT boolean OCI_ImmediateFmt
 (
     OCI_Connection *con,
-    const mtext    *sql,
+    const otext    *sql,
     ...
 );
 
@@ -14084,7 +13999,7 @@ OCI_EXPORT boolean OCI_ImmediateFmt
 OCI_EXPORT boolean OCI_PrepareFmt
 (
     OCI_Statement *stmt,
-    const mtext   *sql,
+    const otext   *sql,
     ...
 );
 
@@ -14112,7 +14027,7 @@ OCI_EXPORT boolean OCI_PrepareFmt
 OCI_EXPORT boolean OCI_ExecuteStmtFmt
 (
     OCI_Statement *stmt,
-    const mtext   *sql,
+    const otext   *sql,
     ...
 );
 
@@ -14148,7 +14063,7 @@ OCI_EXPORT boolean OCI_ExecuteStmtFmt
 OCI_EXPORT boolean OCI_ParseFmt
 (
     OCI_Statement *stmt,
-    const mtext   *sql,
+    const otext   *sql,
     ...
 );
 
@@ -14187,7 +14102,7 @@ OCI_EXPORT boolean OCI_ParseFmt
 OCI_EXPORT boolean OCI_DescribeFmt
 (
     OCI_Statement *stmt,
-    const mtext   *sql,
+    const otext   *sql,
     ...
 );
 
@@ -14326,8 +14241,8 @@ OCI_EXPORT unsigned int OCI_API OCI_HashGetType
 OCI_EXPORT boolean OCI_API OCI_HashAddString
 (
     OCI_HashTable *table,
-    const mtext   *key,
-    const mtext   *value
+    const otext   *key,
+    const otext   *value
 );
 
 /**
@@ -14342,10 +14257,10 @@ OCI_EXPORT boolean OCI_API OCI_HashAddString
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_HashGetString
+OCI_EXPORT const otext * OCI_API OCI_HashGetString
 (
     OCI_HashTable *table,
-    const mtext   *key
+    const otext   *key
 );
 
 /**
@@ -14364,7 +14279,7 @@ OCI_EXPORT const mtext * OCI_API OCI_HashGetString
 OCI_EXPORT boolean OCI_API OCI_HashAddInt
 (
     OCI_HashTable *table,
-    const mtext   *key,
+    const otext   *key,
     int            value
 );
 
@@ -14383,7 +14298,7 @@ OCI_EXPORT boolean OCI_API OCI_HashAddInt
 OCI_EXPORT int OCI_API OCI_HashGetInt
 (
     OCI_HashTable *table,
-    const mtext   *key
+    const otext   *key
 );
 
 /**
@@ -14402,7 +14317,7 @@ OCI_EXPORT int OCI_API OCI_HashGetInt
 OCI_EXPORT boolean OCI_API OCI_HashAddPointer
 (
     OCI_HashTable *table,
-    const mtext   *key,
+    const otext   *key,
     void          *value
 );
 
@@ -14421,7 +14336,7 @@ OCI_EXPORT boolean OCI_API OCI_HashAddPointer
 OCI_EXPORT void * OCI_API OCI_HashGetPointer
 (
     OCI_HashTable *table,
-    const mtext   *key
+    const otext   *key
 );
 
 /**
@@ -14440,7 +14355,7 @@ OCI_EXPORT void * OCI_API OCI_HashGetPointer
 OCI_EXPORT OCI_HashEntry * OCI_API OCI_HashLookup
 (
     OCI_HashTable *table,
-    const mtext   *key,
+    const otext   *key,
     boolean        create
 );
 
@@ -14459,7 +14374,7 @@ OCI_EXPORT OCI_HashEntry * OCI_API OCI_HashLookup
 OCI_EXPORT OCI_HashValue * OCI_API OCI_HashGetValue
 (
     OCI_HashTable *table,
-    const mtext   *key
+    const otext   *key
 );
 
 /**
@@ -14670,7 +14585,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadJoin
 
 OCI_EXPORT boolean OCI_API OCI_ThreadKeyCreate
 (
-    const mtext       *name,
+    const otext       *name,
     POCI_THREADKEYDEST destfunc
 );
 
@@ -14688,7 +14603,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadKeyCreate
 
 OCI_EXPORT boolean OCI_API OCI_ThreadKeySetValue
 (
-    const mtext *name,
+    const otext *name,
     void        *value
 );
 
@@ -14705,7 +14620,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadKeySetValue
 
 OCI_EXPORT void * OCI_API OCI_ThreadKeyGetValue
 (
-    const mtext *name
+    const otext *name
 );
 
 /**
@@ -14805,7 +14720,7 @@ OCI_EXPORT void * OCI_API OCI_ThreadKeyGetValue
 OCI_EXPORT OCI_DirPath * OCI_API OCI_DirPathCreate
 (
     OCI_TypeInfo *typinf,
-    const mtext  *partition,
+    const otext  *partition,
     unsigned int  nb_cols,
     unsigned int  nb_rows
 );
@@ -14850,9 +14765,9 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetColumn
 (
     OCI_DirPath *dp,
     unsigned int index,
-    const mtext *name,
+    const otext *name,
     unsigned int maxsize,
-    const mtext *format
+    const otext *format
 );
 
 /**
@@ -15165,7 +15080,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetMaxRows
 OCI_EXPORT boolean OCI_API OCI_DirPathSetDateFormat
 (
     OCI_DirPath *dp,
-    const mtext *format
+    const otext *format
 );
 
 /**
@@ -15970,7 +15885,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetConsumers
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_MsgGetCorrelation
+OCI_EXPORT const otext * OCI_API OCI_MsgGetCorrelation
 (
     OCI_Msg *msg
 );
@@ -15993,7 +15908,7 @@ OCI_EXPORT const mtext * OCI_API OCI_MsgGetCorrelation
 OCI_EXPORT boolean OCI_API OCI_MsgSetCorrelation
 (
     OCI_Msg     *msg,
-    const mtext *correlation
+    const otext *correlation
 );
 
 /**
@@ -16011,7 +15926,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetCorrelation
  * see OCI_MsgSetExceptionQueue() for more details
  *
  */
-OCI_EXPORT const mtext * OCI_API OCI_MsgGetExceptionQueue
+OCI_EXPORT const otext * OCI_API OCI_MsgGetExceptionQueue
 (
     OCI_Msg *msg
 );
@@ -16050,7 +15965,7 @@ OCI_EXPORT const mtext * OCI_API OCI_MsgGetExceptionQueue
 OCI_EXPORT boolean OCI_API OCI_MsgSetExceptionQueue
 (
     OCI_Msg     *msg,
-    const mtext *queue
+    const otext *queue
 );
 
 /**
@@ -16083,7 +15998,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetExceptionQueue
 OCI_EXPORT OCI_Enqueue * OCI_API OCI_EnqueueCreate
 (
     OCI_TypeInfo *typinf,
-    const mtext  *name
+    const otext  *name
 );
 
 /**
@@ -16299,7 +16214,7 @@ OCI_EXPORT boolean OCI_API OCI_EnqueueGetRelativeMsgID
 OCI_EXPORT OCI_Dequeue * OCI_API OCI_DequeueCreate
 (
     OCI_TypeInfo *typinf,
-    const mtext  *name
+    const otext  *name
 );
 
 /**
@@ -16407,7 +16322,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueUnsubscribe
 OCI_EXPORT boolean OCI_API OCI_DequeueSetConsumer
 (
     OCI_Dequeue *dequeue,
-    const mtext *consumer
+    const otext *consumer
 );
 
 /**
@@ -16421,7 +16336,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetConsumer
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_DequeueGetConsumer
+OCI_EXPORT const otext * OCI_API OCI_DequeueGetConsumer
 (
     OCI_Dequeue *dequeue
 );
@@ -16445,7 +16360,7 @@ OCI_EXPORT const mtext * OCI_API OCI_DequeueGetConsumer
 OCI_EXPORT boolean OCI_API OCI_DequeueSetCorrelation
 (
     OCI_Dequeue *dequeue,
-    const mtext *pattern
+    const otext *pattern
 );
 
 /**
@@ -16459,7 +16374,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetCorrelation
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_DequeueGetCorrelation
+OCI_EXPORT const otext * OCI_API OCI_DequeueGetCorrelation
 (
     OCI_Dequeue *dequeue
 );
@@ -16778,8 +16693,8 @@ OCI_EXPORT OCI_Agent * OCI_API OCI_DequeueListen
 OCI_EXPORT OCI_Agent * OCI_API OCI_AgentCreate
 (
     OCI_Connection *con,
-    const mtext    *name,
-    const mtext    *address
+    const otext    *name,
+    const otext    *address
 );
 
 /**
@@ -16823,7 +16738,7 @@ OCI_EXPORT boolean OCI_API OCI_AgentFree
 OCI_EXPORT boolean OCI_API OCI_AgentSetName
 (
     OCI_Agent   *agent,
-    const mtext *name
+    const otext *name
 );
 
 /**
@@ -16837,7 +16752,7 @@ OCI_EXPORT boolean OCI_API OCI_AgentSetName
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_AgentGetName
+OCI_EXPORT const otext * OCI_API OCI_AgentGetName
 (
     OCI_Agent *agent
 );
@@ -16863,7 +16778,7 @@ OCI_EXPORT const mtext * OCI_API OCI_AgentGetName
 OCI_EXPORT boolean OCI_API OCI_AgentSetAddress
 (
     OCI_Agent   *agent,
-    const mtext *address
+    const otext *address
 );
 
 /**
@@ -16880,7 +16795,7 @@ OCI_EXPORT boolean OCI_API OCI_AgentSetAddress
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_AgentGetAddress
+OCI_EXPORT const otext * OCI_API OCI_AgentGetAddress
 (
     OCI_Agent *agent
 );
@@ -16929,14 +16844,14 @@ OCI_EXPORT const mtext * OCI_API OCI_AgentGetAddress
 OCI_EXPORT boolean OCI_API OCI_QueueCreate
 (
     OCI_Connection *con,
-    const mtext    *queue_name,
-    const mtext    *queue_table,
+    const otext    *queue_name,
+    const otext    *queue_table,
     unsigned int    queue_type,
     unsigned int    max_retries,
     unsigned int    retry_delay,
     unsigned int    retention_time,
     boolean         dependency_tracking,
-    const mtext    *comment
+    const otext    *comment
 );
 
 /**
@@ -16969,11 +16884,11 @@ OCI_EXPORT boolean OCI_API OCI_QueueCreate
 OCI_EXPORT boolean OCI_API OCI_QueueAlter
 (
     OCI_Connection *con,
-    const mtext    *queue_name,
+    const otext    *queue_name,
     unsigned int    max_retries,
     unsigned int    retry_delay,
     unsigned int    retention_time,
-    const mtext    *comment
+    const otext    *comment
 );
 
 /**
@@ -16998,7 +16913,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueAlter
 OCI_EXPORT boolean OCI_API OCI_QueueDrop
 (
     OCI_Connection *con,
-    const mtext    *queue_name
+    const otext    *queue_name
 );
 
 /**
@@ -17025,7 +16940,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueDrop
 OCI_EXPORT boolean OCI_API OCI_QueueStart
 (
     OCI_Connection *con,
-    const mtext    *queue_name,
+    const otext    *queue_name,
     boolean         enqueue,
     boolean         dequeue
 );
@@ -17055,7 +16970,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueStart
 OCI_EXPORT boolean OCI_API OCI_QueueStop
 (
     OCI_Connection *con,
-    const mtext    *queue_name,
+    const otext    *queue_name,
     boolean         enqueue,
     boolean         dequeue,
     boolean         wait
@@ -17117,16 +17032,16 @@ OCI_EXPORT boolean OCI_API OCI_QueueStop
 OCI_EXPORT boolean OCI_API OCI_QueueTableCreate
 (
     OCI_Connection *con,
-    const mtext    *queue_table,
-    const mtext    *queue_payload_type,
-    const mtext    *storage_clause,
-    const mtext    *sort_list,
+    const otext    *queue_table,
+    const otext    *queue_payload_type,
+    const otext    *storage_clause,
+    const otext    *sort_list,
     boolean         multiple_consumers,
     unsigned int    message_grouping,
-    const mtext    *comment,
+    const otext    *comment,
     unsigned int    primary_instance,
     unsigned int    secondary_instance,
-    const mtext    *compatible
+    const otext    *compatible
 );
 
 /**
@@ -17154,8 +17069,8 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableCreate
 OCI_EXPORT boolean OCI_API OCI_QueueTableAlter
 (
     OCI_Connection *con,
-    const mtext    *queue_table,
-    const mtext    *comment,
+    const otext    *queue_table,
+    const otext    *comment,
     unsigned int    primary_instance,
     unsigned int    secondary_instance
 );
@@ -17187,7 +17102,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableAlter
 OCI_EXPORT boolean OCI_API OCI_QueueTableDrop
 (
     OCI_Connection *con,
-    const mtext    *queue_table,
+    const otext    *queue_table,
     boolean         force
 );
 
@@ -17227,8 +17142,8 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableDrop
 OCI_EXPORT boolean OCI_API OCI_QueueTablePurge
 (
     OCI_Connection *con,
-    const mtext    *queue_table,
-    const mtext    *purge_condition,
+    const otext    *queue_table,
+    const otext    *purge_condition,
     boolean         block,
     unsigned int    delivery_mode
 );
@@ -17257,8 +17172,8 @@ OCI_EXPORT boolean OCI_API OCI_QueueTablePurge
 OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
 (
     OCI_Connection *con,
-    const mtext    *queue_table,
-    const mtext    *compatible
+    const otext    *queue_table,
+    const otext    *compatible
 );
 
 /**
@@ -17366,7 +17281,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
 OCI_EXPORT OCI_Subscription * OCI_API  OCI_SubscriptionRegister
 (
     OCI_Connection *con,
-    const mtext    *name,
+    const otext    *name,
     unsigned int    type,
     POCI_NOTIFY     handler,
     unsigned int    port,
@@ -17444,7 +17359,7 @@ OCI_EXPORT boolean OCI_API OCI_SubscriptionAddStatement
  *
  */
 
-OCI_EXPORT const mtext * OCI_API OCI_SubscriptionGetName
+OCI_EXPORT const otext * OCI_API OCI_SubscriptionGetName
 (
     OCI_Subscription *sub
 );
@@ -17588,7 +17503,7 @@ OCI_EXPORT unsigned int OCI_API OCI_EventGetOperation
  *
  */
 
-OCI_EXPORT const dtext * OCI_API OCI_EventGetDatabase
+OCI_EXPORT const otext * OCI_API OCI_EventGetDatabase
 (
     OCI_Event *event
 );
@@ -17605,7 +17520,7 @@ OCI_EXPORT const dtext * OCI_API OCI_EventGetDatabase
  *
  */
 
-OCI_EXPORT const dtext * OCI_API OCI_EventGetObject
+OCI_EXPORT const otext * OCI_API OCI_EventGetObject
 (
     OCI_Event *event
 );
@@ -17622,7 +17537,7 @@ OCI_EXPORT const dtext * OCI_API OCI_EventGetObject
  *
  */
 
-OCI_EXPORT const dtext * OCI_API OCI_EventGetRowid
+OCI_EXPORT const otext * OCI_API OCI_EventGetRowid
 (
     OCI_Event *event
 );
@@ -17709,13 +17624,13 @@ OCI_EXPORT OCI_Subscription * OCI_API OCI_EventGetSubscription
 
 OCI_EXPORT boolean OCI_API OCI_DatabaseStartup
 (
-    const mtext *db,
-    const mtext *user,
-    const mtext *pwd,
+    const otext *db,
+    const otext *user,
+    const otext *pwd,
     unsigned int sess_mode,
     unsigned int start_mode,
     unsigned int start_flag,
-    const mtext *spfile
+    const otext *spfile
 );
 
 /**
@@ -17774,9 +17689,9 @@ OCI_EXPORT boolean OCI_API OCI_DatabaseStartup
 
 OCI_EXPORT boolean OCI_API OCI_DatabaseShutdown
 (
-    const mtext *db,
-    const mtext *user,
-    const mtext *pwd,
+    const otext *db,
+    const otext *user,
+    const otext *pwd,
     unsigned int sess_mode,
     unsigned int shut_mode,
     unsigned int shut_flag
@@ -18404,6 +18319,39 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 #define OCI_CollSetAt               OCI_CollSetElem
 #define OCI_CollGetAt               OCI_CollGetElem
 #define OCI_CollGetAt2              OCI_CollGetElem2
+
+#define OCI_GetCharsetMetaData      OCI_GetCharset
+#define OCI_GetCharsetUserData      OCI_GetCharset
+
+
+#define MT(x)    OTEXT(x)
+#define mtext    otext
+#define DT(x)    OTEXT(x)
+#define dtext    otext
+
+#define mtsdup          ostrdup
+#define mtscpy          ostrcpy
+#define mtsncpy         ostrncpy
+#define mtscat          ostrcat
+#define mtsncat         ostrncat
+#define mtslen          ostrlen
+#define mtscmp          ostrcmp
+#define mtscasecmp      ostrcasecmp
+#define mtsprintf       osprintf
+#define mtstol          ostrtol
+#define mtsscanf        osscanf
+
+#define dtsdup          ostrdup
+#define dtscpy          ostrcpy
+#define dtsncpy         ostrncpy
+#define dtscat          ostrcat
+#define dtsncat         ostrncat
+#define dtslen          ostrlen
+#define dtscmp          ostrcmp
+#define dtscasecmp      ostrcasecmp
+#define dtsprintf       osprintf
+#define dtstol          ostrtol
+#define dtsscanf        osscanf
 
 /**
  * @}

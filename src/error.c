@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -47,7 +47,7 @@ OCI_Error * OCI_ErrorCreate
     void
 )
 {
-    OCI_Error *err = calloc(1, sizeof(*err));
+    OCI_Error *err = (OCI_Error *) calloc(1, sizeof(*err));
 
     return err;
 }
@@ -73,15 +73,15 @@ void OCI_ErrorReset
     OCI_Error *err
 )
 {
-    if (err != NULL)
+    if (err)
     {
         err->warning = FALSE;
         err->raise   = TRUE;
         err->active  = FALSE;
         err->con     = NULL;
         err->stmt    = NULL;
-        err->ocode   = 0;
-        err->icode   = 0;
+        err->sqlcode = 0;
+        err->libcode = 0;
         err->type    = 0;
         err->str[0]  = 0;
     }
@@ -99,27 +99,27 @@ OCI_Error * OCI_ErrorGet
 {
     OCI_Error *err = NULL;
 
-    if ((warning == TRUE) && (OCILib.warnings_on == FALSE))
+    if (warning && !OCILib.warnings_on)
     {
         return NULL;
     }
 
-    if (OCILib.loaded == TRUE)
+    if (OCILib.loaded)
     {
-        if (OCI_ThreadKeyGet(OCILib.key_errs, ( void **) (dvoid *) &err) == TRUE)
+        if (OCI_ThreadKeyGet(OCILib.key_errs, ( void **) (dvoid *) &err))
         {
-            if (err == NULL)
+            if (!err)
             {
                 err = OCI_ErrorCreate();
 
-                if (err != NULL)
+                if (err)
                 {
                     OCI_ThreadKeySet(OCILib.key_errs, err);
                 }
             }
-            else if (check == TRUE)
+            else if (check )
             {
-                if (err->active == TRUE)
+                if (err->active)
                 {
                     err = NULL;
                 }
@@ -130,12 +130,9 @@ OCI_Error * OCI_ErrorGet
     {
         err = &OCILib.lib_err;
 
-        if (err != NULL)
+        if (err && err->active)
         {
-            if (err->active == TRUE)
-            {
-                err = NULL;
-            }
+            err = NULL;
         }
     }
 
@@ -150,7 +147,7 @@ OCI_Error * OCI_ErrorGet
  * OCI_ErrorGetString
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_ErrorGetString
+const otext * OCI_API OCI_ErrorGetString
 (
     OCI_Error *err
 )
@@ -185,7 +182,7 @@ int OCI_API OCI_ErrorGetOCICode
 {
     OCI_CHECK(err == NULL, OCI_UNKNOWN);
 
-    return (int) err->ocode;
+    return (int) err->sqlcode;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -199,7 +196,7 @@ int OCI_API OCI_ErrorGetInternalCode
 {
     OCI_CHECK_PTR(OCI_IPC_ERROR, err, 0);
 
-    return err->icode;
+    return err->libcode;
 }
 
 /* --------------------------------------------------------------------------------------------- *

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -56,12 +56,12 @@ OCI_Date * OCI_DateInit
 
     OCI_CHECK(pdate == NULL, NULL);
 
-    if (*pdate == NULL)
+    if (!*pdate)
     {
         *pdate = (OCI_Date *) OCI_MemAlloc(OCI_IPC_DATE, sizeof(*date), (size_t) 1, TRUE);
     }
 
-    if (*pdate != NULL)
+    if (*pdate)
     {
         date = *pdate;
 
@@ -69,7 +69,7 @@ OCI_Date * OCI_DateInit
 
         /* get the right error handle */
 
-        if (con != NULL)
+        if (con)
         {
             date->err = con->err;
             date->env = con->env;
@@ -82,11 +82,11 @@ OCI_Date * OCI_DateInit
 
         /* allocate buffer if needed */
 
-        if ((date->handle == NULL) && ((allocate == TRUE) || (ansi == TRUE)))
+        if (!date->handle && (allocate || ansi))
         {
             date->allocated = TRUE;
 
-            if (allocate == TRUE)
+            if (allocate)
             {
                 date->hstate = OCI_OBJECT_ALLOCATED;
             }
@@ -98,7 +98,7 @@ OCI_Date * OCI_DateInit
         }
         else
         {
-            if (date->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+            if (OCI_OBJECT_ALLOCATED_ARRAY != date->hstate)
             {
                 date->hstate = OCI_OBJECT_FETCHED_CLEAN;
             }
@@ -108,7 +108,7 @@ OCI_Date * OCI_DateInit
 
         /* if the input buffer is an SQLT_DAT buffer, we need to convert it */
 
-        if ((ansi == TRUE) && (buffer != NULL))
+        if (ansi && buffer)
         {
             unsigned char *d = (unsigned char *) buffer;
 
@@ -128,7 +128,7 @@ OCI_Date * OCI_DateInit
 
     /* check for failure */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_DateFree(date);
         date = NULL;
@@ -174,12 +174,12 @@ boolean OCI_API OCI_DateFree
 
     OCI_CHECK_OBJECT_FETCHED(date, FALSE);
 
-    if (date->allocated == TRUE)
+    if (date->allocated)
     {
         OCI_FREE(date->handle);
     }
 
-    if (date->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+    if (OCI_OBJECT_ALLOCATED_ARRAY != date->hstate)
     {
         OCI_FREE(date);
     }
@@ -204,7 +204,7 @@ OCI_Date ** OCI_API OCI_DateArrayCreate
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
 
-    if (arr != NULL)
+    if (arr)
     {
         dates = (OCI_Date **) arr->tab_obj;
     }
@@ -391,35 +391,35 @@ int OCI_API OCI_DateDaysBetween
 boolean OCI_API OCI_DateFromText
 (
     OCI_Date    *date,
-    const mtext *str,
-    const mtext *fmt
+    const otext *str,
+    const otext *fmt
 )
 {
-    void *ostr1 = NULL;
-    void *ostr2 = NULL;
-    int osize1  = -1;
-    int osize2  = -1;
-    boolean res = TRUE;
+    dbtext *dbstr1  = NULL;
+    dbtext *dbstr2  = NULL;
+    int     dbsize1 = -1;
+    int     dbsize2 = -1;
+    boolean res     = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_DATE, date, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str,  FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, fmt,  FALSE);
 
-    ostr1 = OCI_GetInputMetaString(str, &osize1);
-    ostr2 = OCI_GetInputMetaString(fmt, &osize2);
+    dbstr1 = OCI_StringGetOracleString(str, &dbsize1);
+    dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
     OCI_CALL4
     (
         res, date->err, date->con,
 
         OCIDateFromText(date->err,
-                        (oratext *) ostr1, (ub4) osize1,
-                        (oratext *) ostr2, (ub1) osize2,
+                        (oratext *) dbstr1, (ub4) dbsize1,
+                        (oratext *) dbstr2, (ub1) dbsize2,
                         (oratext *) NULL,  (ub4) 0, date->handle)
     )
 
-    OCI_ReleaseMetaString(ostr1);
-    OCI_ReleaseMetaString(ostr2);
+    OCI_StringReleaseOracleString(dbstr1);
+    OCI_StringReleaseOracleString(dbstr2);
 
     OCI_RESULT(res);
 
@@ -548,26 +548,26 @@ boolean OCI_API OCI_DateLastDay
 boolean OCI_API OCI_DateNextDay
 (
     OCI_Date    *date,
-    const mtext *day
+    const otext *day
 )
 {
-    boolean res = TRUE;
-    void *ostr  = NULL;
-    int osize   = -1;
+    boolean res    = TRUE;
+    dbtext *dbstr  = NULL;
+    int     dbsize = -1;
 
     OCI_CHECK_PTR(OCI_IPC_DATE, date, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, day,  FALSE);
 
-    ostr = OCI_GetInputMetaString(day, &osize);
+    dbstr = OCI_StringGetOracleString(day, &dbsize);
 
     OCI_CALL4
     (
         res, date->err, date->con,
 
-        OCIDateNextDay(date->err, date->handle, (oratext *) ostr, (ub4) osize, date->handle)
+        OCIDateNextDay(date->err, date->handle, (oratext *) dbstr, (ub4) dbsize, date->handle)
     )
 
-    OCI_ReleaseMetaString(ostr);
+    OCI_StringReleaseOracleString(dbstr);
 
     OCI_RESULT(res);
 
@@ -666,16 +666,16 @@ boolean OCI_API OCI_DateSysDate
 boolean OCI_API OCI_DateToText
 (
     OCI_Date    *date,
-    const mtext *fmt,
+    const otext *fmt,
     int          size,
-    mtext       *str
+    otext       *str
 )
 {
-    void *ostr1 = NULL;
-    void *ostr2 = NULL;
-    int osize1  = size * (int) sizeof(mtext);
-    int osize2  = -1;
-    boolean res = TRUE;
+    dbtext *dbstr1  = NULL;
+    dbtext *dbstr2  = NULL;
+    int     dbsize1 = size * (int) sizeof(otext);
+    int     dbsize2 = -1;
+    boolean res     = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_DATE, date,  FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
@@ -685,28 +685,26 @@ boolean OCI_API OCI_DateToText
 
     str[0] = 0;
 
-    ostr1 = OCI_GetInputMetaString(str, &osize1);
-    ostr2 = OCI_GetInputMetaString(fmt, &osize2);
+    dbstr1 = OCI_StringGetOracleString(str, &dbsize1);
+    dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
     OCI_CALL4
     (
         res, date->err, date->con,
 
-        OCIDateToText(date->err, date->handle, (oratext *) ostr2,
-                      (ub1) osize2, (oratext *) NULL, (ub4) 0,
-                      (ub4*) &osize1, (oratext *) ostr1)
+        OCIDateToText(date->err, date->handle, (oratext *) dbstr2,
+                      (ub1) dbsize2, (oratext *) NULL, (ub4) 0,
+                      (ub4*) &dbsize1, (oratext *) dbstr1)
     )
 
-    OCI_GetOutputMetaString(ostr1, str, &osize1);
+    OCI_StringCopyOracleStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
 
-    OCI_ReleaseMetaString(ostr1);
-    OCI_ReleaseMetaString(ostr2);
+    OCI_StringReleaseOracleString(dbstr1);
+    OCI_StringReleaseOracleString(dbstr2);
 
-    /* set null string terminator*/
+    /* set null string terminator */
 
-    osize1 /= (int) sizeof(mtext);
-
-    str[osize1] = 0;
+    str[dbcharcount(dbsize1)] = 0;
 
     OCI_RESULT(res);
 
@@ -720,35 +718,35 @@ boolean OCI_API OCI_DateToText
 boolean OCI_API OCI_DateZoneToZone
 (
     OCI_Date    *date,
-    const mtext *zone1,
-    const mtext *zone2
+    const otext *zone1,
+    const otext *zone2
 )
 {
-    void *ostr1 = NULL;
-    void *ostr2 = NULL;
-    int osize1  = -1;
-    int osize2  = -1;
-    boolean res = TRUE;
+    dbtext *dbstr1  = NULL;
+    dbtext *dbstr2  = NULL;
+    int     dbsize1 = -1;
+    int     dbsize2 = -1;
+    boolean res     = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_DATE, date,    FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, zone1, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, zone2, FALSE);
 
-    ostr1 = OCI_GetInputMetaString(zone1, &osize1);
-    ostr2 = OCI_GetInputMetaString(zone2, &osize2);
+    dbstr1 = OCI_StringGetOracleString(zone1, &dbsize1);
+    dbstr2 = OCI_StringGetOracleString(zone2, &dbsize2);
 
     OCI_CALL4
     (
         res, date->err, date->con,
 
         OCIDateZoneToZone(date->err, date->handle,
-                          (oratext *) ostr1, (ub4) osize1,
-                          (oratext *) ostr2, (ub4) osize2,
+                          (oratext *) dbstr1, (ub4) dbsize1,
+                          (oratext *) dbstr2, (ub4) dbsize2,
                           date->handle)
     )
 
-    OCI_ReleaseMetaString(ostr1);
-    OCI_ReleaseMetaString(ostr2);
+    OCI_StringReleaseOracleString(dbstr1);
+    OCI_StringReleaseOracleString(dbstr2);
 
     OCI_RESULT(res);
 
@@ -785,12 +783,12 @@ boolean OCI_API OCI_DateToCTime
 
     time = mktime(&t);
 
-    if (ptm != NULL)
+    if (ptm)
     {
         memcpy(ptm, &t, sizeof(t));
     }
 
-    if (pt != NULL)
+    if (pt)
     {
         *pt = time;
     }
@@ -815,17 +813,17 @@ boolean OCI_API OCI_DateFromCTime
 
     OCI_CHECK_PTR(OCI_IPC_DATE, date, FALSE);
 
-    if ((ptm == NULL) && (t == (time_t) 0))
+    if (!ptm && (t == (time_t) 0))
     {
         OCI_ExceptionNullPointer(OCI_IPC_TM);
     }
 
-    if (ptm == NULL)
+    if (!ptm)
     {
         ptm = localtime(&t);
     }
 
-    if (ptm != NULL)
+    if (ptm)
     {
         date->handle->OCIDateYYYY = (sb2) ptm->tm_year + 1900;
         date->handle->OCIDateMM   = (ub1) ptm->tm_mon  + 1;

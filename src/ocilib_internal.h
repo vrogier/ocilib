@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -56,8 +56,8 @@ OCI_Agent * OCI_AgentInit
     OCI_Connection *con,
     OCI_Agent     **pagent,
     OCIAQAgent     *handle,
-    const mtext    *name,
-    const mtext    *address
+    const otext    *name,
+    const otext    *address
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -236,9 +236,9 @@ boolean OCI_ColumnGetAttrInfo
 OCI_Connection * OCI_ConnectionAllocate
 (
     OCI_Pool    *pool,
-    const mtext *db,
-    const mtext *user,
-    const mtext *pwd,
+    const otext *db,
+    const otext *user,
+    const otext *pwd,
     unsigned int mode
 );
 
@@ -255,8 +255,8 @@ boolean OCI_ConnectionAttach
 boolean OCI_ConnectionLogon
 (
     OCI_Connection *con,
-    const mtext    *password,
-    const mtext    *tag
+    const otext    *password,
+    const otext    *tag
 );
 
 boolean OCI_ConnectionDetach
@@ -300,7 +300,7 @@ OCI_Define * OCI_GetDefine
 int OCI_GetDefineIndex
 (
     OCI_Resultset *rs,
-    const mtext   *name
+    const otext   *name
 );
 
 boolean OCI_DefineGetNumber
@@ -331,12 +331,6 @@ void * OCI_DefineGetData
 boolean OCI_DefineIsDataNotNull
 (
     OCI_Define *def
-);
-
-boolean OCI_DefineRequestBuffer
-(
-    OCI_Define  *def,
-    unsigned int size
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -482,7 +476,7 @@ void OCI_ExceptionParsingToken
 (
     OCI_Connection *con,
     OCI_Statement  *stmt,
-    mtext           token
+    otext           token
 );
 
 void OCI_ExceptionMappingArgument
@@ -532,7 +526,7 @@ void OCI_ExceptionMaxBind
 void OCI_ExceptionAttributeNotFound
 (
     OCI_Connection *con,
-    const mtext    *attr
+    const otext    *attr
 );
 
 void OCI_ExceptionMinimumValue
@@ -561,7 +555,7 @@ void OCI_ExceptionStatementNotScrollable
 void OCI_ExceptionBindAlreadyUsed
 (
     OCI_Statement *stmt,
-    const mtext   *bind
+    const otext   *bind
 );
 
 void OCI_ExceptionBindArraySize
@@ -575,8 +569,8 @@ void OCI_ExceptionBindArraySize
 void OCI_ExceptionDirPathColNotFound
 (
     OCI_DirPath  *dp,
-    const mtext  *column,
-    const mtext  *table
+    const otext  *column,
+    const otext  *table
 );
 
 void OCI_ExceptionDirPathState
@@ -593,13 +587,13 @@ void OCI_ExceptionOCIEnvironment
 void OCI_ExceptionRebindBadDatatype
 (
     OCI_Statement *stmt,
-    const mtext   *bind
+    const otext   *bind
 );
 
 void OCI_ExceptionTypeInfoWrongType
 (
     OCI_Connection *con,
-    const mtext    *name
+    const otext    *name
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -626,8 +620,8 @@ boolean OCI_FileGetInfo
 int OCI_ParseSqlFmt
 (
     OCI_Statement *stmt,
-    mtext         *buffer,
-    const mtext   *format,
+    otext         *buffer,
+    const otext   *format,
     va_list       *pargs
 );
 
@@ -638,13 +632,13 @@ int OCI_ParseSqlFmt
 unsigned int OCI_HashCompute
 (
     OCI_HashTable *table,
-    const mtext   *str
+    const otext   *str
 );
 
 boolean OCI_HashAdd
 (
     OCI_HashTable *table,
-    const mtext   *key,
+    const otext   *key,
     OCI_Variant    value,
     unsigned int   type
 );
@@ -883,8 +877,8 @@ boolean OCI_NumberFromString
     uword           size,
     uword           type,
     int             sqlcode,
-    const dtext    *in_value,
-    const mtext   * fmt
+    const otext    *in_value,
+    const otext   * fmt
 );
 
 boolean OCI_NumberToString
@@ -893,9 +887,9 @@ boolean OCI_NumberToString
     void           *number,
     uword           type,
     int             sqlcode,
-    dtext          *out_value,
+    otext          *out_value,
     int             out_value_size,
-    const mtext   * fmt
+    const otext   * fmt
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -945,7 +939,7 @@ void OCI_ObjectReset
 int OCI_ObjectGetAttrIndex
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     int          type
 );
 
@@ -959,7 +953,7 @@ void * OCI_ObjectGetAttr
 boolean OCI_ObjectSetNumber
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     void        *value,
     uword        size,
     uword        flag
@@ -968,7 +962,7 @@ boolean OCI_ObjectSetNumber
 boolean OCI_ObjectGetNumber
 (
     OCI_Object  *obj,
-    const mtext *attr,
+    const otext *attr,
     void        *value,
     uword        size,
     uword        flag
@@ -1046,14 +1040,10 @@ boolean OCI_FetchCustom
     boolean       *err
 );
 
-#ifdef OCI_CHECK_DATASTRINGS
-
 boolean OCI_ResultsetExpandStrings
 (
     OCI_Resultset *rs
 );
-
-#endif
 
 /* --------------------------------------------------------------------------------------------- *
  * statement.c
@@ -1079,7 +1069,7 @@ boolean OCI_BindData
     OCI_Statement *stmt,
     void          *data,
     ub4            size,
-    const mtext   *name,
+    const otext   *name,
     ub1            type,
     unsigned int   code,
     unsigned int   mode,
@@ -1091,7 +1081,7 @@ boolean OCI_BindData
 int OCI_BindGetIndex
 (
     OCI_Statement *stmt,
-    const mtext   *name
+    const otext   *name
 );
 
 boolean OCI_FetchIntoUserVariables
@@ -1138,126 +1128,91 @@ boolean OCI_API OCI_ExecuteInternal
  * string.c
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_StringCopy4to2bytes
-(
-    const unsigned int* src,
-    size_t              src_size,
-    unsigned short    * dst,
-    size_t              dst_size
-);
-
-int OCI_StringCopy2to4bytes
-(
-    const unsigned short* src,
-    size_t                src_size,
-    unsigned int        * dst,
-    size_t                dst_size
-);
-
-void * OCI_GetInputString
-(
-    void  *src,
-    int   *size,
-    size_t size_char_in,
-    size_t size_char_out
-);
-
-void OCI_GetOutputString
-(
-    void  *src,
-    void  *dest,
-    int   *size,
-    size_t size_char_in,
-    size_t size_char_out
-);
-
-void OCI_MoveString
-(
-    void  *src,
-    void  *dst,
-    int    char_count,
-    size_t size_char_in,
-    size_t size_char_out
-);
-
-void OCI_ConvertString
-(
-    void  *str,
-    int    char_count,
-    size_t size_char_in,
-    size_t size_char_out
-);
-
-void OCI_CopyString
-(
-    void  *src,
-    void  *dest,
-    int   *size,
-    size_t size_char_in,
-    size_t size_char_out
-);
-
-void OCI_ReleaseMetaString
-(
-    void *ptr
-);
-
-void OCI_ReleaseDataString
-(
-    void *ptr
-);
-
 size_t OCI_StringLength
 (
     void  *ptr,
     size_t size_elem
 );
 
-int OCI_StringUTF8Length
+unsigned int OCI_StringBinaryToString
 (
-    const char *str
+    unsigned char *binary,
+    unsigned int   binary_size,
+    otext         *buffer
 );
 
-#define OCI_GetInputMetaString(s, n)     OCI_GetInputString((void *) s, n,     \
-                                                            sizeof(mtext),     \
-                                                            sizeof(omtext))
-
-#define OCI_GetOutputMetaString(s, d, n) OCI_GetOutputString((void *) s, d, n, \
-                                                             sizeof(omtext),   \
-                                                             sizeof(mtext))
-
-#define OCI_GetInputDataString(s, n)     OCI_GetInputString((void *) s, n,     \
-                                                            sizeof(dtext),     \
-                                                            sizeof(odtext))
-
-#define OCI_GetOutputDataString(s, d, n) OCI_GetOutputString((void *) s, d, n, \
-                                                             sizeof(odtext),   \
-                                                             sizeof(dtext))
-
-#define OCI_GetDataFromMetaString(s, n)  OCI_GetInputString((void *) s, n,     \
-                                                            sizeof(mtext),     \
-                                                            sizeof(dtext))
-
-#define OCI_GetMetaFromDataString(s, n)  OCI_GetInputString((void *) s, n,     \
-                                                            sizeof(dtext),     \
-                                                            sizeof(mtext))
-
-void * OCI_StringFromStringPtr
+boolean OCI_StringRequestBuffer
 (
-    OCIEnv     *env,
-    OCIString  *str,
-    void      **buf,
-    int        *buflen
+    otext         **buffer,
+    unsigned int   *buffer_size,
+    unsigned int    request_size
+);
+
+void OCI_StringTranslate
+(
+    void  *src,
+    void  *dst,
+    int    len,
+    size_t size_char_in,
+    size_t size_char_out
+);
+
+#define OCI_StringAnsiToNative(s, d, l)    \
+    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(char),   sizeof(otext) )
+
+#define OCI_StringNativeToAnsi(s, d, l)     \
+    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(otext),  sizeof(char)  )
+
+#define OCI_StringUTF16ToUTF32(s, d, l)     \
+    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(short),  sizeof(int)   )
+
+#define OCI_StringUTF32ToUTF16(s, d, l)    \
+    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(int),    sizeof(short) )
+
+#define OCI_StringOracleToNative(s, d, l)  \
+    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(dbtext), sizeof(otext) )
+
+#define OCI_StringRawCopy(s, d, l)          \
+    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(otext),  sizeof(otext) )
+
+dbtext * OCI_StringGetOracleString
+(
+    const otext  *src,
+    int          *len
+);
+
+void OCI_StringReleaseOracleString
+(
+    dbtext *str
+);
+
+int OCI_StringCopyOracleStringToNativeString
+(
+    const dbtext  *src,
+    otext         *dst,
+    int            len
+);
+
+otext * OCI_StringDuplicateFromOracleString
+(
+    const dbtext  *src,
+    int            len
+);
+
+otext * OCI_StringFromStringPtr
+(
+    OCIEnv           *env,
+    OCIString        *str,
+    otext          **buffer,
+    unsigned int     *buffer_size
 );
 
 boolean OCI_StringToStringPtr
 (
-    OCIEnv     *env,
-    OCIString **str,
-    OCIError   *err,
-    void       *value,
-    void      **buf,
-    int        *buflen
+    OCIEnv      *env,
+    OCIString  **str,
+    OCIError    *err,
+    const otext *value
 );
 
 boolean OCI_StringGetFromAttrHandle
@@ -1266,7 +1221,7 @@ boolean OCI_StringGetFromAttrHandle
     void           *handle,
     unsigned int    type,
     unsigned int    attr,
-    mtext         **str
+    otext         **str
 );
 
 boolean OCI_StringSetToAttrHandle
@@ -1275,8 +1230,26 @@ boolean OCI_StringSetToAttrHandle
     void           *handle,
     unsigned int    type,
     unsigned int    attr,
-    mtext         **str,
-    const mtext    *value
+    otext         **str,
+    const otext    *value
+);
+
+unsigned int OCI_StringGetFromType
+(
+    OCI_Connection   *con,
+    OCI_Column       *col,
+    void             *data,
+    unsigned int      size,
+    otext            *buffer,
+    boolean           quote
+);
+
+unsigned int OCI_StringAddToBuffer
+(
+    otext           *buffer,
+    unsigned int     offset,
+    const otext     *str,
+    boolean          check_quote
 );
 
 /* --------------------------------------------------------------------------------------------- *

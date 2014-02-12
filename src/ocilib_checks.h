@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -56,7 +56,7 @@
                                                                                \
     {                                                                          \
         (res) = (boolean) fct;                                                 \
-        if (OCI_NO_ERROR((res)) == FALSE)                                      \
+        if (OCI_FAILURE((res)))                                                \
         {                                                                      \
             (res) = ((res) == OCI_SUCCESS_WITH_INFO);                          \
             OCI_ExceptionOCI((err), NULL, NULL, res);                          \
@@ -87,7 +87,7 @@
         if ((res) == TRUE)                                                     \
         {                                                                      \
             (res) = (boolean) fct;                                             \
-            if (OCI_NO_ERROR((res)) == FALSE)                                  \
+            if (OCI_FAILURE((res)))                                            \
             {                                                                  \
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
                 OCI_ExceptionOCI((con)->err, (con), (stmt), res);              \
@@ -118,7 +118,7 @@
         if ((res) == TRUE)                                                     \
         {                                                                      \
             (res) = (boolean) fct;                                             \
-            if (OCI_NO_ERROR((res)) == FALSE)                                  \
+            if (OCI_FAILURE((res)))                                            \
             {                                                                  \
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
                 OCI_ExceptionOCI((con)->err, (con), NULL, res);                \
@@ -147,7 +147,7 @@
         if ((res) == TRUE)                                                     \
         {                                                                      \
             (res) = (boolean) fct;                                             \
-            if (OCI_NO_ERROR((res)) == FALSE)                                  \
+            if (OCI_FAILURE((res)))                                            \
             {                                                                  \
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
                 OCI_ExceptionOCI((err), NULL, NULL, res);                      \
@@ -178,7 +178,7 @@
         if ((res) == TRUE)                                                     \
         {                                                                      \
             (res) = (boolean) fct;                                             \
-            if (OCI_NO_ERROR((res)) == FALSE)                                  \
+            if (OCI_FAILURE((res)))                                            \
             {                                                                  \
                 (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
                 OCI_ExceptionOCI((err), (con), NULL, res);                     \
@@ -208,7 +208,7 @@
                                                                                \
     {                                                                          \
         (res) = (boolean) fct;                                                 \
-        if (OCI_NO_ERROR((res)) == FALSE)                                      \
+        if (OCI_FAILURE((res)))                                                \
         {                                                                      \
             (res) = ((res) == OCI_SUCCESS_WITH_INFO);                          \
             OCI_WarningOCI((con)->err, (con), (stmt), res);                    \
@@ -233,7 +233,7 @@
  *
  */
 
-#define OCI_CHECK(exp, ret) if ((exp) == TRUE) return (ret);
+#define OCI_CHECK(exp, ret) if (exp) return (ret);
 
 /**
  * @brief
@@ -250,7 +250,7 @@
 
 #define OCI_CHECK_PTR(type, ptr, ret)                                          \
                                                                                \
-    if ((ptr) == NULL)                                                         \
+    if (!(ptr))                                                                \
     {                                                                          \
         OCI_ExceptionNullPointer(type);                                        \
                                                                                \
@@ -386,7 +386,7 @@
 
 #define OCI_CHECK_COMPAT(con, exp, ret)                                        \
                                                                                \
-    if ((exp) == FALSE)                                                        \
+    if (!(exp))                                                                \
     {                                                                          \
         OCI_ExceptionTypeNotCompatible((con));                                 \
                                                                                \
@@ -496,7 +496,7 @@
 
 #define OCI_CHECK_INITIALIZED(ret)                                             \
                                                                                \
-    if (OCILib.loaded == FALSE)                                                \
+    if (!OCILib.loaded)                                                        \
     {                                                                          \
         OCI_ExceptionNotInitialized();                                         \
         return ret;                                                            \
@@ -538,7 +538,7 @@
 
 #define OCI_CHECK_THREAD_ENABLED(ret)                                      \
                                                                            \
-    if ((OCI_LIB_THREADED) == FALSE)                                       \
+    if (!(OCI_LIB_THREADED))                                               \
     {                                                                      \
         OCI_ExceptionNotMultithreaded();                                   \
         return ret;                                                        \
@@ -702,9 +702,9 @@
  *
  */
 
-#define OCI_CHECK_XA_ENABLED(mode, ret)                                         \
+#define OCI_CHECK_XA_ENABLED(mode, ret)                                        \
                                                                                \
-    if ( (mode & OCI_SESSION_XA) && (OCILib.use_xa == FALSE ) )                \
+    if ( (mode & OCI_SESSION_XA) && (!OCILib.use_xa) )                         \
     {                                                                          \
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_XA);                       \
         return ret;                                                            \

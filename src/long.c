@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -55,12 +55,12 @@ OCI_Long * OCI_LongInit
 
     OCI_CHECK(plg == NULL, NULL);
 
-    if (*plg == NULL)
+    if (!*plg )
     {
         *plg = (OCI_Long *) OCI_MemAlloc(OCI_IPC_LONG, sizeof(*lg), (size_t) 1, TRUE);
     }
 
-    if (*plg != NULL)
+    if (*plg)
     {
         lg = *plg;
 
@@ -71,11 +71,11 @@ OCI_Long * OCI_LongInit
         lg->type        = type;
         lg->offset      = 0;
 
-        if (def != NULL)
+        if (def)
         {
             lg->hstate = OCI_OBJECT_FETCHED_CLEAN;
         }
-        else if (lg->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+        else if (OCI_OBJECT_ALLOCATED_ARRAY != lg->hstate)
         {
             lg->hstate = OCI_OBJECT_ALLOCATED;
         }
@@ -175,13 +175,13 @@ unsigned int OCI_API OCI_LongRead
 
     OCI_CHECK(lg->offset >= lg->size, 0);
 
-    /* lg->size and lg offset are still expressed in odtext units even
-       if the buffer had already been expanded to dtext *
+    /* lg->size and lg offset are still expressed in dbtext units even
+       if the buffer had already been expanded to otext *
     */
 
-    if (lg->type == OCI_CLONG)
+    if (OCI_CLONG == lg->type)
     {
-        len *= (unsigned int) sizeof(odtext);
+        len *= (unsigned int) sizeof(dbtext);
     }
 
     /* check buffer size to read */
@@ -199,9 +199,9 @@ unsigned int OCI_API OCI_LongRead
 
     if (lg->type == OCI_CLONG)
     {
-        ((dtext *) buffer)[size] = 0;
+        ((otext *) buffer)[size] = 0;
 
-        size /= (unsigned int) sizeof(dtext);
+        size /= (unsigned int) sizeof(otext);
     }
 
     OCI_RESULT(TRUE);
@@ -236,14 +236,10 @@ unsigned int OCI_API OCI_LongWrite
 
     OCI_CHECK_MIN(lg->stmt->con, lg->stmt, len, 1, 0);
 
-    if (lg->type == OCI_CLONG)
+    if (OCI_CLONG == lg->type)
     {
-        len *= (unsigned int) sizeof(dtext);
-    }
-
-    if (lg->type == OCI_CLONG)
-    {
-        obuf = OCI_GetInputDataString(buffer, (int *) &len);
+        len *= (unsigned int) sizeof(otext);
+        obuf = OCI_StringGetOracleString((const otext *) buffer, (int *) &len);
     }
     else
     {
@@ -295,7 +291,7 @@ unsigned int OCI_API OCI_LongWrite
 
     /* perform write call */
 
-    if (res == TRUE)
+    if (res)
     {
         code = OCIStmtExecute(lg->stmt->con->cxt, lg->stmt->stmt,
                               lg->stmt->con->err, (ub4) 1, (ub4) 0,
@@ -303,36 +299,30 @@ unsigned int OCI_API OCI_LongWrite
                               (ub4) 0);
     }
 
-    if ((code != OCI_SUCCESS) && (code != OCI_NEED_DATA))
+    if (OCI_FAILURE(code) && (OCI_NEED_DATA != code))
     {
-        if (code == OCI_SUCCESS_WITH_INFO)
-        {
-            OCI_ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt, TRUE);
-        }
-        else
-        {
-            OCI_ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt, FALSE);
-            res = FALSE;
-        }
+        res = (OCI_SUCCESS_WITH_INFO == code);
+
+        OCI_ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt, res);
     }
 
-    if (lg->type == OCI_CLONG)
+    if (OCI_CLONG == lg->type)
     {
-        OCI_ReleaseDataString(obuf);
+        OCI_StringReleaseOracleString((dbtext *) obuf);
     }
 
     /* update size */
 
-    if (res == TRUE)
+    if (res)
     {
         lg->size += count;
 
-        /* at this point, count is expressed in odtext bytes for character LONGs
+        /* at this point, count is expressed in dbtext bytes for character LONGs
          **/
 
-        if (lg->type == OCI_CLONG)
+        if (OCI_CLONG == lg->type)
         {
-            count /= (unsigned int) sizeof(odtext);
+            count /= (unsigned int) sizeof(dbtext);
         }
 
     }
@@ -357,9 +347,9 @@ unsigned int OCI_API OCI_LongGetSize
 
     size = lg->size;
 
-    if (lg->type == OCI_CLONG)
+    if (OCI_CLONG == lg->type)
     {
-        size /= (unsigned int) sizeof(odtext);
+        size /= (unsigned int) sizeof(dbtext);
     }
 
     OCI_RESULT(TRUE);

@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -55,12 +55,12 @@ OCI_Ref * OCI_RefInit
 
     OCI_CHECK(pref == NULL, NULL);
 
-    if (*pref == NULL)
+    if (!*pref)
     {
         *pref = (OCI_Ref *) OCI_MemAlloc(OCI_IPC_REF, sizeof(*ref), (size_t) 1, TRUE);
     }
 
-    if (*pref != NULL)
+    if (*pref)
     {
         ref = *pref;
 
@@ -68,11 +68,11 @@ OCI_Ref * OCI_RefInit
         ref->con    = con;
         ref->typinf = typinf;
 
-        if ((ref->handle == NULL) || (ref->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
+        if (!ref->handle || (OCI_OBJECT_ALLOCATED_ARRAY == ref->hstate))
         {
             /* allocates handle for non fetched object */
 
-            if (ref->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+            if (OCI_OBJECT_ALLOCATED_ARRAY != ref->hstate)
             {
                 ref->hstate = OCI_OBJECT_ALLOCATED;
             }
@@ -104,7 +104,7 @@ OCI_Ref * OCI_RefInit
 
     /* check for failure */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_RefFree(ref);
         ref = NULL;
@@ -138,24 +138,12 @@ boolean OCI_RefPin
                      OCI_LOCK_NONE, &obj_handle)
     )
 
-    if (res == TRUE)
+    if (res)
     {
-        OCI_Object *obj = NULL;
+        OCI_Object *obj = OCI_ObjectInit(ref->con, (OCI_Object **) &ref->obj, obj_handle,
+                                         ref->typinf, NULL, -1, TRUE);
 
-        if (res == TRUE)
-        {
-            obj =  OCI_ObjectInit(ref->con, (OCI_Object **) &ref->obj, obj_handle,
-                                  ref->typinf, NULL, -1, TRUE);
-        }
-
-        if (obj != NULL)
-        {
-            ref->pinned = TRUE;
-        }
-        else
-        {
-            res = FALSE;
-        }
+        res = ref->pinned = (obj != NULL);
     }
 
     return res;
@@ -175,7 +163,7 @@ boolean OCI_RefUnpin
     OCI_CHECK(ref == NULL, FALSE);
     OCI_CHECK(ref->obj == NULL, FALSE);
 
-    if (ref->pinned == TRUE)
+    if (ref->pinned)
     {
         OCI_CALL2
         (
@@ -187,7 +175,7 @@ boolean OCI_RefUnpin
         ref->pinned = FALSE;
     }
 
-    if (ref->obj != NULL)
+    if (ref->obj)
     {
         ref->obj->hstate = OCI_OBJECT_FETCHED_DIRTY;
         OCI_ObjectFree(ref->obj);
@@ -240,12 +228,12 @@ boolean OCI_API OCI_RefFree
 
     OCI_RefUnpin(ref);
 
-    if ((ref->hstate == OCI_OBJECT_ALLOCATED) || (ref->hstate == OCI_OBJECT_ALLOCATED_ARRAY))
+    if ((OCI_OBJECT_ALLOCATED == ref->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == ref->hstate))
     {
         OCI_OCIObjectFree(ref->con->env, ref->con->err,  ref->handle, OCI_OBJECTFREE_NONULL);
     }
 
-    if (ref->hstate != OCI_OBJECT_ALLOCATED_ARRAY)
+    if (OCI_OBJECT_ALLOCATED_ARRAY != ref->hstate)
     {
         OCI_FREE(ref);
     }
@@ -271,7 +259,7 @@ OCI_Ref ** OCI_API OCI_RefArrayCreate
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0, sizeof(OCIRef *), sizeof(OCI_Ref), 0, typinf);
 
-    if (arr != NULL)
+    if (arr)
     {
         refs = (OCI_Ref **) arr->tab_obj;
     }
@@ -303,7 +291,7 @@ OCI_Object * OCI_API OCI_RefGetObject
     boolean     res = TRUE;
     OCI_Object *obj = NULL;
 
-    if (OCI_RefIsNull(ref) == FALSE)
+    if (!OCI_RefIsNull(ref))
     {
         res = OCI_RefPin(ref);
 
@@ -339,9 +327,9 @@ boolean OCI_API OCI_RefAssign
         OCIRefAssign(ref->con->env, ref->con->err, ref_src->handle, &ref->handle)
     )
 
-    if (res == TRUE)
+    if (res)
     {
-        if (ref->obj != NULL)
+        if (ref->obj)
         {
             OCI_ObjectFree(ref->obj);
             ref->obj = NULL;
@@ -369,7 +357,7 @@ boolean OCI_API OCI_RefIsNull
 
     OCI_RESULT(TRUE);
 
-    return (OCIRefIsNull(ref->con->env, ref->handle) == TRUE);
+    return OCIRefIsNull(ref->con->env, ref->handle);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -387,11 +375,11 @@ boolean OCI_API OCI_RefSetNull
 
     res = OCI_RefUnpin(ref);
 
-    if (res == TRUE)
+    if (res)
     {
         OCIRefClear(ref->con->env, ref->handle);
 
-        if (ref->obj != NULL)
+        if (ref->obj)
         {
             OCI_ObjectFree(ref->obj);
             ref->obj = NULL;
@@ -411,12 +399,12 @@ boolean OCI_API OCI_RefToText
 (
     OCI_Ref     *ref,
     unsigned int size,
-    mtext       *str
+    otext       *str
 )
 {
-    boolean res = TRUE;
-    void *ostr  = NULL;
-    int osize   = (int) size * (int) sizeof(mtext);
+    boolean res    = TRUE;
+    dbtext *dbstr  = NULL;
+    int     dbsize = (int) size * (int) sizeof(otext);
 
     OCI_CHECK_PTR(OCI_IPC_REF, ref, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, str, FALSE);
@@ -425,22 +413,22 @@ boolean OCI_API OCI_RefToText
 
     str[0] = 0;
 
-    ostr = OCI_GetInputMetaString(str, &osize);
+    dbstr = OCI_StringGetOracleString(str, &dbsize);
 
     OCI_CALL2
     (
         res, ref->con,
 
-        OCIRefToHex((dvoid *) ref->con->env, ref->con->err, ref->handle,
-                    (OraText *) ostr, (ub4 *) &osize)
+        OCIRefToHex(ref->con->env, ref->con->err, ref->handle,
+                    (OraText *) dbstr, (ub4 *) &dbsize)
     )
 
-    OCI_GetOutputMetaString(ostr, str, &osize);
-    OCI_ReleaseMetaString(ostr);
+    OCI_StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    OCI_StringReleaseOracleString(dbstr);
 
     /* set null string terminator */
 
-    str[osize/ (int) sizeof(mtext)] = 0;
+    str[dbcharcount(dbsize)] = 0;
 
     OCI_RESULT(res);
 
@@ -462,7 +450,7 @@ unsigned int OCI_API OCI_RefGetHexSize
 
     size = OCIRefHexSize(ref->con->env, (const OCIRef *) ref->handle);
 
-    size /= (ub4) sizeof(mtext);
+    size /= (ub4) sizeof(dbtext);
 
     OCI_RESULT(TRUE);
 

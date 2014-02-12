@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -57,7 +57,7 @@ boolean OCI_ColumnDescribe
 
     /* get descriptor */
 
-    if (ptype == OCI_DESC_COLLECTION)
+    if (OCI_DESC_COLLECTION == ptype)
     {
         OCI_CALL1
         (
@@ -69,16 +69,7 @@ boolean OCI_ColumnDescribe
     }
     else
     {
-        ub4 htype = 0;
-    
-        if (ptype == OCI_DESC_RESULTSET)
-        {
-            htype = OCI_HTYPE_STMT;
-        }
-        else
-        {
-            htype = OCI_DTYPE_PARAM;
-        }
+        ub4 htype = (OCI_DESC_RESULTSET == ptype) ? OCI_HTYPE_STMT : OCI_DTYPE_PARAM;
 
         OCI_CALL1
         (
@@ -94,7 +85,7 @@ boolean OCI_ColumnDescribe
     (
         res, con, stmt,
 
-        OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM, (dvoid *) &col->ocode,
+        OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM, (dvoid *) &col->sqlcode,
                    (ub4 *) NULL, (ub4) OCI_ATTR_DATA_TYPE, con->err)
     )
 
@@ -120,7 +111,7 @@ boolean OCI_ColumnDescribe
 
     /* precision */
 
-    if (ptype == OCI_DESC_RESULTSET)
+    if (OCI_DESC_RESULTSET == ptype)
     {
         sb2 prec = 0;
 
@@ -181,7 +172,7 @@ boolean OCI_ColumnDescribe
 
     /* char size */
 
-    if (col->charused == TRUE)
+    if (col->charused)
     {
         OCI_CALL1
         (
@@ -197,9 +188,9 @@ boolean OCI_ColumnDescribe
     {
         /* fractional time precision for timestamps */
 
-        if (col->ocode == SQLT_TIMESTAMP    ||
-            col->ocode == SQLT_TIMESTAMP_TZ ||
-            col->ocode == SQLT_TIMESTAMP_LTZ)
+        if ( SQLT_TIMESTAMP     == col->sqlcode ||
+             SQLT_TIMESTAMP_TZ  == col->sqlcode ||
+             SQLT_TIMESTAMP_LTZ == col->sqlcode )
         {
             OCI_CALL1
             (
@@ -213,7 +204,7 @@ boolean OCI_ColumnDescribe
 
         /* leading and fractional precision for interval */
 
-        if (col->ocode == SQLT_INTERVAL_DS || col->ocode == SQLT_INTERVAL_YM)
+        if (SQLT_INTERVAL_DS == col->sqlcode  || SQLT_INTERVAL_YM == col->sqlcode)
         {
             OCI_CALL1
             (
@@ -246,71 +237,54 @@ boolean OCI_ColumnDescribe
             res, con, stmt,
 
             OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM,
-                       (dvoid *) &col->null, (ub4 *) NULL,
+                       (dvoid *) &col->nullable, (ub4 *) NULL,
                        (ub4) OCI_ATTR_IS_NULL, con->err)
         )
     }
     else
     {
-        col->null = TRUE;
+        col->nullable = TRUE;
     }
 
     /* name */
 
     if (res == TRUE)
     {
-        void *ostr     = NULL;
-        int   osize    = 0;
-        ub4   attrname = 0;
-
-        if (ptype == OCI_DESC_COLLECTION)
-        {
-            attrname = OCI_ATTR_TYPE_NAME;
-        }
-        else
-        {
-            attrname = OCI_ATTR_NAME;
-        }
+        dbtext *dbstr    = NULL;
+        int     dbsize   = 0;
+        ub4     attrname = (OCI_DESC_COLLECTION == ptype) ? OCI_ATTR_TYPE_NAME : OCI_ATTR_NAME;
 
         OCI_CALL1
         (
             res, con, stmt,
 
-            OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM, (dvoid *) &ostr,
-                       (ub4 *) &osize, (ub4) attrname, con->err)
+            OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM, (dvoid *) &dbstr,
+                       (ub4 *) &dbsize, (ub4) attrname, con->err)
         )
 
-        if ((res == TRUE) && (ostr != NULL))
+        if (res && dbstr)
         {
-            col->name = (mtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(mtext),
-                                               (size_t) ((osize / (int) sizeof(omtext)) + 1), TRUE);
+            col->name = OCI_StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
 
-            if (col->name != NULL)
-            {
-                OCI_CopyString(ostr, col->name, &osize, sizeof(omtext), sizeof(mtext));
-            }
-            else
-            {
-                res = FALSE;
-            }
+            res = (col->name != NULL);
         }
     }
 
     /* user type descriptor */
 
-    if (col->ocode == SQLT_NTY || col->ocode == SQLT_REF)
+    if (SQLT_NTY == col->sqlcode || SQLT_REF == col->sqlcode)
     {
-        void *ostr_name    = NULL;
-        void *ostr_schema  = NULL;
-        int   osize_name   = 0;
-        int   osize_schema = 0;
+        dbtext *dbstr_name   = NULL;
+        dbtext *dbstr_schema = NULL;
+        int    dbsize_name   = 0;
+        int    dbsize_schema = 0;
 
         OCI_CALL1
         (
             res, con, stmt,
 
             OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM,
-                       (dvoid *) &ostr_name, (ub4 *) &osize_name,
+                       (dvoid *) &dbstr_name, (ub4 *) &dbsize_name,
                        (ub4) OCI_ATTR_TYPE_NAME, con->err)
         )
 
@@ -319,23 +293,22 @@ boolean OCI_ColumnDescribe
             res, con, stmt,
 
             OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM,
-                       (dvoid *) &ostr_schema, (ub4 *) &osize_schema,
+                       (dvoid *) &dbstr_schema, (ub4 *) &dbsize_schema,
                        (ub4) OCI_ATTR_SCHEMA_NAME, con->err)
         )
 
-        if (res == TRUE)
+        if (res)
         {
-            mtext type_name[(OCI_SIZE_OBJ_NAME * 2) + 2] = MT("");
-
-            if ((ostr_schema != NULL) && (osize_schema > 0))
+            otext type_name[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
+  
+            if (dbstr_schema && (dbsize_schema > 0))
             {
-                OCI_CopyString(ostr_schema, type_name, &osize_schema, sizeof(omtext), sizeof(mtext));
+                OCI_StringOracleToNative(dbstr_schema, type_name, dbcharcount(dbsize_schema));
 
-                mtscat(type_name, MT("."));
+                ostrcat(type_name, OTEXT("."));
             }
 
-            OCI_CopyString(ostr_name, ((char *) type_name) + mtextsize(type_name), &osize_name,
-                           sizeof(omtext), sizeof(mtext));
+            OCI_StringOracleToNative(dbstr_name, (((char *) type_name) + otextsize(type_name)), dbcharcount(dbsize_name));
 
             col->typinf = OCI_TypeInfoGet(con, type_name, OCI_TIF_TYPE);
 
@@ -343,7 +316,7 @@ boolean OCI_ColumnDescribe
         }
     }
 
-    if (param != NULL)
+    if (param)
     {
         res = (OCI_SUCCESS == OCIDescriptorFree(param, OCI_DTYPE_PARAM));
     }
@@ -361,7 +334,7 @@ boolean OCI_ColumnMap
     OCI_Statement *stmt
 )
 {
-    ub2 char_size = (ub2) ( (OCILib.nls_utf8 == TRUE) ? UTF8_BYTES_PER_CHAR : sizeof(dtext) );
+    ub2 char_size = (ub2) ( (OCILib.nls_utf8 ) ? UTF8_BYTES_PER_CHAR : sizeof(otext) );
 
     boolean res = TRUE;
 
@@ -369,13 +342,13 @@ boolean OCI_ColumnMap
 
     /* map Oracle SQL code to OCILIB types and setup of internal buffer size */
 
-    col->icode = col->ocode;
+    col->libcode = col->sqlcode;
 
-    switch (col->icode)
+    switch (col->libcode)
     {
         case SQLT_INT:
         {
-            col->type = OCI_CDT_NUMERIC;
+            col->datatype = OCI_CDT_NUMERIC;
 
             /* set bufsize only if it's not a "returning into" placeholder */
 
@@ -389,7 +362,7 @@ boolean OCI_ColumnMap
         }
         case SQLT_UIN:
         {
-            col->type = OCI_CDT_NUMERIC;
+            col->datatype = OCI_CDT_NUMERIC;
 
             /* set bufsize only if it's not a "returning into" placeholder */
 
@@ -406,10 +379,10 @@ boolean OCI_ColumnMap
         case SQLT_PDN:
         case SQLT_NUM:
         {
-            col->type    = OCI_CDT_NUMERIC;
-            col->subtype = OCI_NUM_NUMBER;
-            col->icode   = SQLT_VNU;
-            col->bufsize = sizeof(OCINumber);
+            col->datatype = OCI_CDT_NUMERIC;
+            col->subtype  = OCI_NUM_NUMBER;
+            col->libcode  = SQLT_VNU;
+            col->bufsize  = sizeof(OCINumber);
 
             break;
         }
@@ -419,10 +392,10 @@ boolean OCI_ColumnMap
         case SQLT_BFLOAT:
         case SQLT_IBFLOAT:
         {
-            col->type    = OCI_CDT_NUMERIC;
-            col->subtype = OCI_NUM_FLOAT;
-            col->icode   = SQLT_BFLOAT;
-            col->bufsize = sizeof(float);
+            col->datatype = OCI_CDT_NUMERIC;
+            col->subtype  = OCI_NUM_FLOAT;
+            col->libcode  = SQLT_BFLOAT;
+            col->bufsize  = sizeof(float);
 
             break;
         }
@@ -435,10 +408,10 @@ boolean OCI_ColumnMap
         case SQLT_IBDOUBLE:
         {
         
-            col->type    = OCI_CDT_NUMERIC;
-            col->subtype = OCI_NUM_DOUBLE;
-            col->icode   = SQLT_BDOUBLE;
-            col->bufsize = sizeof(double);
+            col->datatype = OCI_CDT_NUMERIC;
+            col->subtype  = OCI_NUM_DOUBLE;
+            col->libcode  = SQLT_BDOUBLE;
+            col->bufsize  = sizeof(double);
 
             break;
         }
@@ -448,7 +421,7 @@ boolean OCI_ColumnMap
         case SQLT_DAT:
         case SQLT_ODT:
         {
-            col->type = OCI_CDT_DATETIME;
+            col->datatype = OCI_CDT_DATETIME;
 
             /* We map to SQLT_ODT only it the column is not part of a
                "returning into" clause (workaround for Oracle
@@ -457,7 +430,7 @@ boolean OCI_ColumnMap
 
             if (col->bufsize == 0)
             {
-                col->icode   = SQLT_ODT;
+                col->libcode = SQLT_ODT;
                 col->bufsize = sizeof(OCIDate);
             }
 
@@ -466,19 +439,19 @@ boolean OCI_ColumnMap
         case SQLT_CUR:
         case SQLT_RSET:
         {
-            col->type    = OCI_CDT_CURSOR;
-            col->bufsize = sizeof(OCIStmt *);
-            col->dtype   = OCI_HTYPE_STMT;
+            col->datatype   = OCI_CDT_CURSOR;
+            col->bufsize    = sizeof(OCIStmt *);
+            col->handletype = OCI_HTYPE_STMT;
 
             break;
         }
         case SQLT_RID:
         case SQLT_RDD:
         {
-            col->icode = SQLT_STR;
-            col->type  = OCI_CDT_TEXT;
+            col->libcode  = SQLT_STR;
+            col->datatype = OCI_CDT_TEXT;
 
-            if ((col->ocode == SQLT_RDD) || (col->size > sizeof(OCIRowid *)))
+            if ((SQLT_RDD == col->sqlcode) || (col->size > sizeof(OCIRowid *)))
             {
                 /* For Oracle 7 ROWIDs and regular ROWID descriptors, the
                    max size of the hex value is defined by the constant
@@ -504,27 +477,27 @@ boolean OCI_ColumnMap
         {
             /* adding one extra character space for string conversion */
 
-            col->type    = OCI_CDT_RAW;
-            col->bufsize = (ub4) (col->size + (ub2) sizeof(dtext));
+            col->datatype = OCI_CDT_RAW;
+            col->bufsize  = (ub4) (col->size + (ub2) sizeof(otext));
 
             break;
         }
         case SQLT_BLOB:
         {
-            col->type    = OCI_CDT_LOB;
-            col->subtype = OCI_BLOB;
-            col->dtype   = OCI_DTYPE_LOB;
-            col->bufsize = (ub4) sizeof(OCILobLocator *);
+            col->datatype   = OCI_CDT_LOB;
+            col->subtype    = OCI_BLOB;
+            col->handletype = OCI_DTYPE_LOB;
+            col->bufsize    = (ub4) sizeof(OCILobLocator *);
 
             break;
         }
         case SQLT_CLOB:
         {
-            col->type    = OCI_CDT_LOB;
-            col->dtype   = OCI_DTYPE_LOB;
-            col->bufsize = (ub4) sizeof(OCILobLocator *);
+            col->datatype   = OCI_CDT_LOB;
+            col->handletype = OCI_DTYPE_LOB;
+            col->bufsize    = (ub4) sizeof(OCILobLocator *);
 
-            if (col->csfrm == SQLCS_NCHAR)
+            if (SQLCS_NCHAR == col->csfrm)
             {
                 col->subtype = OCI_NCLOB;
             }
@@ -537,19 +510,19 @@ boolean OCI_ColumnMap
         }
         case SQLT_BFILE:
         {
-            col->type    = OCI_CDT_FILE;
-            col->subtype = OCI_BFILE;
-            col->dtype   = OCI_DTYPE_LOB;
-            col->bufsize = (ub4) sizeof(OCILobLocator *);
+            col->datatype   = OCI_CDT_FILE;
+            col->subtype    = OCI_BFILE;
+            col->handletype = OCI_DTYPE_LOB;
+            col->bufsize    = (ub4) sizeof(OCILobLocator *);
 
             break;
         }
         case SQLT_CFILE:
         {
-            col->type    = OCI_CDT_FILE;
-            col->subtype = OCI_CFILE;
-            col->bufsize = (ub4) sizeof(OCILobLocator *);
-            col->dtype   = OCI_DTYPE_LOB;
+            col->datatype   = OCI_CDT_FILE;
+            col->subtype    = OCI_CFILE;
+            col->bufsize    = (ub4) sizeof(OCILobLocator *);
+            col->handletype = OCI_DTYPE_LOB;
 
             break;
         }
@@ -559,22 +532,22 @@ boolean OCI_ColumnMap
         case SQLT_LVB:
         case SQLT_VBI:
         {
-            if ((col->icode == SQLT_LNG || col->icode == SQLT_LVC) &&
-                (stmt != NULL && stmt->long_mode == OCI_LONG_IMPLICIT))
+            if ((SQLT_LNG ==col->libcode || SQLT_LVC == col->libcode) &&
+                (stmt && OCI_LONG_IMPLICIT == stmt->long_mode))
             {
-                col->type    = OCI_CDT_TEXT;               
-                col->subtype = OCI_CLONG;
-                col->bufsize = (OCI_SIZE_LONG+1) * char_size;
+                col->datatype = OCI_CDT_TEXT;               
+                col->subtype  = OCI_CLONG;
+                col->bufsize  = (OCI_SIZE_LONG+1) * char_size;
 
             }
             else
             {
-                col->type    = OCI_CDT_LONG;
-                col->bufsize = INT_MAX;
+                col->datatype = OCI_CDT_LONG;
+                col->bufsize  = INT_MAX;
 
-                if (col->icode == SQLT_LBI ||
-                    col->icode == SQLT_LVB ||
-                    col->icode == SQLT_VBI)
+                if (SQLT_LBI == col->libcode ||
+                    SQLT_LVB == col->libcode ||
+                    SQLT_VBI == col->libcode )
                 {
                     col->subtype = OCI_BLONG;
                 }
@@ -592,46 +565,46 @@ boolean OCI_ColumnMap
 
         case SQLT_TIMESTAMP:
         {
-            col->type    = OCI_CDT_TIMESTAMP;
-            col->subtype = OCI_TIMESTAMP;
-            col->dtype   = OCI_DTYPE_TIMESTAMP;
-            col->bufsize = (ub4) sizeof(OCIDateTime *);
+            col->datatype   = OCI_CDT_TIMESTAMP;
+            col->subtype    = OCI_TIMESTAMP;
+            col->handletype = OCI_DTYPE_TIMESTAMP;
+            col->bufsize    = (ub4) sizeof(OCIDateTime *);
 
             break;
         }
         case SQLT_TIMESTAMP_TZ:
         {
-            col->type    = OCI_CDT_TIMESTAMP;
-            col->subtype = OCI_TIMESTAMP_TZ;
-            col->dtype   = OCI_DTYPE_TIMESTAMP_TZ;
-            col->bufsize = (ub4) sizeof(OCIDateTime *);
+            col->datatype   = OCI_CDT_TIMESTAMP;
+            col->subtype    = OCI_TIMESTAMP_TZ;
+            col->handletype = OCI_DTYPE_TIMESTAMP_TZ;
+            col->bufsize    = (ub4) sizeof(OCIDateTime *);
 
             break;
         }
         case SQLT_TIMESTAMP_LTZ:
         {
-            col->type    = OCI_CDT_TIMESTAMP;
-            col->subtype = OCI_TIMESTAMP_LTZ;
-            col->dtype   = OCI_DTYPE_TIMESTAMP_LTZ;
-            col->bufsize = (ub4) sizeof(OCIDateTime *);
+            col->datatype   = OCI_CDT_TIMESTAMP;
+            col->subtype    = OCI_TIMESTAMP_LTZ;
+            col->handletype = OCI_DTYPE_TIMESTAMP_LTZ;
+            col->bufsize    = (ub4) sizeof(OCIDateTime *);
 
             break;
         }
         case SQLT_INTERVAL_YM:
         {
-            col->type    = OCI_CDT_INTERVAL;
-            col->subtype = OCI_INTERVAL_YM;
-            col->dtype   = OCI_DTYPE_INTERVAL_YM;
-            col->bufsize = (ub4) sizeof(OCIInterval *);
+            col->datatype   = OCI_CDT_INTERVAL;
+            col->subtype    = OCI_INTERVAL_YM;
+            col->handletype = OCI_DTYPE_INTERVAL_YM;
+            col->bufsize    = (ub4) sizeof(OCIInterval *);
 
             break;
         }
         case SQLT_INTERVAL_DS:
         {
-            col->type    = OCI_CDT_INTERVAL;
-            col->subtype = OCI_INTERVAL_DS;
-            col->dtype   = OCI_DTYPE_INTERVAL_DS;
-            col->bufsize = (ub4) sizeof(OCIInterval *);
+            col->datatype   = OCI_CDT_INTERVAL;
+            col->subtype    = OCI_INTERVAL_DS;
+            col->handletype = OCI_DTYPE_INTERVAL_DS;
+            col->bufsize    = (ub4) sizeof(OCIInterval *);
 
             break;
         }
@@ -646,25 +619,17 @@ boolean OCI_ColumnMap
 
         case SQLT_NTY:
         {
-            col->icode   = SQLT_NTY;
-            col->bufsize = (ub4) sizeof(void *);
-
-            if (col->typinf->tcode == SQLT_NCO)
-            {
-                col->type = OCI_CDT_COLLECTION;
-            }
-            else
-            {
-                col->type = OCI_CDT_OBJECT;
-            }
+            col->libcode  = SQLT_NTY;
+            col->bufsize  = (ub4) sizeof(void *);
+            col->datatype = (SQLT_NCO == col->typinf->typecode) ? OCI_CDT_COLLECTION : OCI_CDT_OBJECT;
 
             break;
         }
         case SQLT_REF:
         {
-            col->icode   = SQLT_REF;
-            col->bufsize = (ub4) sizeof(OCIRef *);
-            col->type    = OCI_CDT_REF;
+            col->libcode  = SQLT_REF;
+            col->bufsize  = (ub4) sizeof(OCIRef *);
+            col->datatype = OCI_CDT_REF;
 
             break;
         }
@@ -679,9 +644,9 @@ boolean OCI_ColumnMap
         case SQLT_SLS:
         default:
         {
-            col->icode   = SQLT_STR;
-            col->type    = OCI_CDT_TEXT;
-            col->bufsize = (ub4) ((col->size + 1) * char_size);
+            col->libcode  = SQLT_STR;
+            col->datatype = OCI_CDT_TEXT;
+            col->bufsize  = (ub4) ((col->size + 1) * char_size);
 
             break;
         }
@@ -698,7 +663,7 @@ boolean OCI_ColumnMap
  * OCI_ColumnGetName
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_ColumnGetName
+const otext * OCI_API OCI_ColumnGetName
 (
     OCI_Column *col
 )
@@ -721,7 +686,7 @@ unsigned int OCI_API OCI_ColumnGetType
 
     OCI_RESULT(TRUE);
 
-    return col->type;
+    return col->datatype;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -733,22 +698,22 @@ unsigned int OCI_API OCI_ColumnGetCharsetForm
     OCI_Column *col
 )
 {
+    unsigned int result = OCI_CSF_NONE;
+
     OCI_CHECK_PTR(OCI_IPC_COLUMN, col, OCI_CSF_NONE);
 
     OCI_RESULT(TRUE);
 
-    if (col->csfrm == SQLCS_NCHAR)
+    if (SQLCS_NCHAR == col->csfrm)
     {
-        return OCI_CSF_NATIONAL;
+        result = OCI_CSF_NATIONAL;
     }
-    else if (col->csfrm == SQLCS_IMPLICIT)
+    else if (SQLCS_IMPLICIT == col->csfrm)
     {
-        return OCI_CSF_DEFAULT;
+        result = OCI_CSF_DEFAULT;
     }
-    else
-    {
-        return OCI_CSF_NONE;
-    }
+    
+    return result;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -772,14 +737,7 @@ unsigned int OCI_API OCI_ColumnGetSize
        - the size is not in char
        - client does not support the OCI_ATTR_CHAR_SIZE attribute */
 
-    if (col->charused == TRUE && col->charsize > 0)
-    {
-        return col->charsize;
-    }
-    else
-    {
-        return col->size;
-    }
+    return (col->charused && col->charsize > 0) ? col->charsize : col->size;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -811,14 +769,7 @@ int OCI_API OCI_ColumnGetPrecision
 
     OCI_RESULT(TRUE);
 
-    if (col->type == OCI_CDT_NUMERIC)
-    {
-        return (int) col->prec;
-    }
-    else
-    {
-        return 0;
-    }
+    return (OCI_CDT_NUMERIC == col->datatype) ? (int) col->prec : 0;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -830,22 +781,22 @@ int OCI_API OCI_ColumnGetFractionalPrecision
     OCI_Column *col
 )
 {
+    int result = 0;
+
     OCI_CHECK_PTR(OCI_IPC_COLUMN, col, 0);
 
     OCI_RESULT(TRUE);
 
-    if (col->type == OCI_CDT_TIMESTAMP)
+    if (OCI_CDT_TIMESTAMP == col->datatype)
     {
-        return (int) col->prec;
+        result = (int) col->prec;
     }
-    else if (col->type == OCI_CDT_INTERVAL)
+    else if (OCI_CDT_INTERVAL == col->datatype)
     {
-        return (int) col->prec2;
+        result = (int) col->prec2;
     }
-    else
-    {
-        return 0;
-    }
+
+    return result;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -861,14 +812,7 @@ int OCI_API OCI_ColumnGetLeadingPrecision
 
     OCI_RESULT(TRUE);
 
-    if (col->type == OCI_CDT_INTERVAL)
-    {
-        return (int) col->prec;
-    }
-    else
-    {
-        return 0;
-    }
+    return (OCI_CDT_INTERVAL == col->datatype) ? col->prec : 0;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -884,7 +828,7 @@ boolean OCI_API OCI_ColumnGetNullable
 
     OCI_RESULT(TRUE);
 
-    return (col->null == TRUE);
+    return (1 == col->nullable);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -907,7 +851,7 @@ boolean OCI_API OCI_ColumnGetCharUsed
  * OCI_ColumnGetSQLType
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_ColumnGetSQLType
+const otext * OCI_API OCI_ColumnGetSQLType
 (
     OCI_Column *col
 )
@@ -921,50 +865,29 @@ const mtext * OCI_API OCI_ColumnGetSQLType
 
     OCI_RESULT(TRUE);
 
-    switch(col->ocode)
+    switch(col->sqlcode)
     {
         case SQLT_AFC:
         {
-            if (col->csfrm == SQLCS_NCHAR)
-            {
-                return MT("NCHAR");
-            }
-            else
-            {
-                return MT("CHAR");
-            }
+            return (SQLCS_NCHAR == col->csfrm) ? OTEXT("NCHAR") : OTEXT("CHAR");
         }
         case SQLT_AVC:
         case SQLT_STR:
         case SQLT_CHR:
         {
-            if (col->csfrm == SQLCS_NCHAR)
-            {
-                return MT("NVARCHAR2");
-            }
-            else
-            {
-                return MT("VARCHAR2");
-            }
+             return (SQLCS_NCHAR == col->csfrm) ? OTEXT("NVARCHAR2") : OTEXT("VARCHAR2");
         }
         case SQLT_NUM:
         {
-            if (col->scale == -127 && col->prec > 0)
-            {
-                return MT("FLOAT");
-            }
-            else
-            {
-                return MT("NUMBER");
-            }
+              return (-127 == col->scale && col->prec > 0) ? OTEXT("FLOAT") : OTEXT("NUMBER");
         }
         case SQLT_INT:
         {
-            return MT("INTEGER");
+            return OTEXT("INTEGER");
         }
         case SQLT_FLT:
         {
-            return MT("FLOAT");
+            return OTEXT("FLOAT");
         }
 
     #if OCI_VERSION_COMPILE >= OCI_10_1
@@ -972,99 +895,92 @@ const mtext * OCI_API OCI_ColumnGetSQLType
         case SQLT_BFLOAT:
         case SQLT_IBFLOAT:
         {
-            return MT("BINARY FLOAT");
+            return OTEXT("BINARY FLOAT");
         }
         case SQLT_BDOUBLE:
         case SQLT_IBDOUBLE:
         {
-            return MT("BINARY DOUBLE");
+            return OTEXT("BINARY DOUBLE");
         }
 
     #endif
 
         case SQLT_LNG:
         {
-            return MT("LONG");
+            return OTEXT("LONG");
         }
         case SQLT_DAT:
         case SQLT_ODT:
         case SQLT_DATE:
         {
-            return MT("DATE");
+            return OTEXT("DATE");
         }
         case SQLT_RDD:
         case SQLT_RID:
         {
-            return MT("ROWID");
+            return OTEXT("ROWID");
         }
         case SQLT_BIN:
         {
-            return MT("RAW");
+            return OTEXT("RAW");
         }
         case SQLT_LBI:
         {
-            return MT("LONG RAW");
+            return OTEXT("LONG RAW");
         }
         case SQLT_RSET:
         {
-            return MT("RESULTSET");
+            return OTEXT("RESULTSET");
         }
         case SQLT_CUR:
         {
-            return MT("CURSOR");
+            return OTEXT("CURSOR");
         }
         case SQLT_CLOB:
         {
-            if (col->subtype == OCI_NCLOB)
-            {
-                return MT("NCLOB");
-            }
-            else
-            {
-                return MT("CLOB");
-            }
+            return (col->subtype == OCI_NCLOB) ? OTEXT("NCLOB") : OTEXT("CLOB");
         }
         case SQLT_BLOB:
         {
-            return MT("BLOB");
+            return OTEXT("BLOB");
         }
         case SQLT_BFILE:
         {
-            return MT("BINARY FILE LOB");
+            return OTEXT("BINARY FILE LOB");
         }
         case SQLT_CFILE:
         {
-            return MT("CFILE");
+            return OTEXT("CFILE");
         }
 
     #if OCI_VERSION_COMPILE >= OCI_9_0
 
         case SQLT_TIMESTAMP:
         {
-            return MT("TIMESTAMP");
+            return OTEXT("TIMESTAMP");
         }
         case SQLT_TIMESTAMP_TZ:
         {
-            return MT("TIMESTAMP WITH TIME ZONE");
+            return OTEXT("TIMESTAMP WITH TIME ZONE");
         }
         case SQLT_TIMESTAMP_LTZ:
         {
-            return MT("TIMESTAMP WITH LOCAL TIME ZONE");
+            return OTEXT("TIMESTAMP WITH LOCAL TIME ZONE");
         }
         case SQLT_INTERVAL_YM:
         {
-            return MT("INTERVAL YEAR TO MONTH");
+            return OTEXT("INTERVAL YEAR TO MONTH");
         }
         case SQLT_INTERVAL_DS:
         {
-            return MT("INTERVAL DAY TO SECOND");
+            return OTEXT("INTERVAL DAY TO SECOND");
         }
            
     #endif
 
         case SQLT_REF:
         {
-            return MT("REF");
+            return OTEXT("REF");
         }
 
     #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -1075,21 +991,14 @@ const mtext * OCI_API OCI_ColumnGetSQLType
 
         case SQLT_NTY:
         {
-            if (col->typinf != NULL)
-            {
-                return col->typinf->name;
-            }
-            else
-            {
-                return MT("NAMED TYPE");
-            }
+            return col->typinf ? col->typinf->name : OTEXT("NAMED TYPE");
         }
         default:
         {
             /* unknown datatype ? Should not happen because all
                  datatypes are supported */
 
-            return MT("?");
+            return OTEXT("?");
         }
     }
 }
@@ -1101,7 +1010,7 @@ const mtext * OCI_API OCI_ColumnGetSQLType
 unsigned int OCI_API OCI_ColumnGetFullSQLType
 (
     OCI_Column  *col,
-    mtext       *buffer,
+    otext       *buffer,
     unsigned int len
 )
 {
@@ -1120,70 +1029,64 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 
     /* This function returns the same strings as Sql*Plus DESC command */
 
-    switch(col->ocode)
+    switch(col->sqlcode)
     {
         case SQLT_AFC:
         {
         
-        #if defined(OCI_METADATA_WIDE) && !defined(_WINDOWS)
-            
-            len = mtsprintf(buffer, len, MT("%lsCHAR(%i%ls)"),
-
+        #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)            
+            len = osprintf(buffer, len, OTEXT("%lsCHAR(%i%ls)"),
         #else
-
-            len = mtsprintf(buffer, len, MT("%sCHAR(%i%s)"),
-
+            len = osprintf(buffer, len, OTEXT("%sCHAR(%i%s)"),
         #endif
-                            col->csfrm    == SQLCS_NCHAR ? MT("N") : MT(""),
-                            (int) (col->charused == TRUE ? col->charsize : col->size),
-                            col->charused == TRUE &&
-                            col->csfrm    != SQLCS_NCHAR ? MT(" CHAR") : MT(""));
+                            SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
+                            (int) (col->charused ? col->charsize : col->size),
+                            col->charused && SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
             break;
         }
         case SQLT_AVC:
         case SQLT_STR:
         case SQLT_CHR:
         {
-            #if defined(OCI_METADATA_WIDE) && !defined(_WINDOWS)
-            len = mtsprintf(buffer, len, MT("%lsVARCHAR(%i%ls)"),
-            #else
-            len = mtsprintf(buffer, len, MT("%sVARCHAR(%i%s)"),
-                            #endif
-                            col->csfrm    == SQLCS_NCHAR ? MT("N") : MT(""),
-                            (int) (col->charused == TRUE ? col->charsize : col->size),
-                            col->charused == TRUE &&
-                            col->csfrm    != SQLCS_NCHAR ? MT(" CHAR") : MT(""));
+         #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
+            len = osprintf(buffer, len, OTEXT("%lsVARCHAR(%i%ls)"),
+         #else
+            len = osprintf(buffer, len, OTEXT("%sVARCHAR(%i%s)"),
+         #endif
+                            SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
+                            (int) (col->charused ? col->charsize : col->size),
+                            col->charused &&  SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
             break;
         }
         case SQLT_NUM:
         {
-            if (col->scale == -127 && col->prec > 0)
+            if (-127 == col->scale && col->prec > 0)
             {
-                len = mtsprintf(buffer, len,  MT("FLOAT(%i)"), col->prec);
+                len = osprintf(buffer, len,  OTEXT("FLOAT(%i)"), col->prec);
             }
             else if (col->scale > 0 && col->prec > 0)
             {
-                len = mtsprintf(buffer, len,  MT("NUMBER(%i,%i)"), (int) col->prec, (int) col->scale);
+                len = osprintf(buffer, len,  OTEXT("NUMBER(%i,%i)"), (int) col->prec, (int) col->scale);
             }
             else if (col->prec > 0)
             {
-                len = mtsprintf(buffer, len,  MT("NUMBER(%i)"), (int) col->prec);
+                len = osprintf(buffer, len,  OTEXT("NUMBER(%i)"), (int) col->prec);
             }
             else
             {
-                len = mtsprintf(buffer, len,  MT("NUMBER"));
+                len = osprintf(buffer, len,  OTEXT("NUMBER"));
             }
 
             break;
         }
         case SQLT_INT:
         {
-            len = mtsprintf(buffer, len,  MT("NUMBER"));
+            len = osprintf(buffer, len,  OTEXT("NUMBER"));
             break;
         }
         case SQLT_FLT:
         {
-            len = mtsprintf(buffer, len,  MT("FLOAT(%i)"), (int) col->prec);
+            len = osprintf(buffer, len,  OTEXT("FLOAT(%i)"), (int) col->prec);
             break;
         }
 
@@ -1192,13 +1095,13 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
         case SQLT_BFLOAT:
         case SQLT_IBFLOAT:
         {
-            len = mtsprintf(buffer, len,  MT("BINARY FLOAT"));
+            len = osprintf(buffer, len,  OTEXT("BINARY FLOAT"));
             break;
         }
         case SQLT_BDOUBLE:
         case SQLT_IBDOUBLE:
         {
-            len = mtsprintf(buffer, len,  MT("BINARY DOUBLE"));
+            len = osprintf(buffer, len,  OTEXT("BINARY DOUBLE"));
             break;
         }
 
@@ -1206,68 +1109,60 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 
         case SQLT_LNG:
         {
-            len = mtsprintf(buffer, len, MT("LONG"));
+            len = osprintf(buffer, len, OTEXT("LONG"));
             break;
         }
         case SQLT_DAT:
         case SQLT_ODT:
         case SQLT_DATE:
         {
-            len = mtsprintf(buffer, len, MT("DATE"));
+            len = osprintf(buffer, len, OTEXT("DATE"));
             break;
         }
         case SQLT_RDD:
         case SQLT_RID:
         {
-            len = mtsprintf(buffer, len,  MT("ROWID"));
+            len = osprintf(buffer, len,  OTEXT("ROWID"));
             break;
         }
         case SQLT_BIN:
         {
-            len = mtsprintf(buffer, len, MT("RAW(%i)"), (int) col->size);
+            len = osprintf(buffer, len, OTEXT("RAW(%i)"), (int) col->size);
             break;
         }
         case SQLT_LBI:
         {
-            len = mtsprintf(buffer, len, MT("LONG RAW(%i)"), (int) col->size);
+            len = osprintf(buffer, len, OTEXT("LONG RAW(%i)"), (int) col->size);
             break;
         }
         case SQLT_RSET:
         {
-            len = mtsprintf(buffer, len,  MT("RESULTSET"));
+            len = osprintf(buffer, len,  OTEXT("RESULTSET"));
             break;
         }
         case SQLT_CUR:
         {
-            len = mtsprintf(buffer, len,  MT("CURSOR"));
+            len = osprintf(buffer, len,  OTEXT("CURSOR"));
             break;
         }
         case SQLT_CLOB:
         {
-            if (col->subtype == OCI_NCLOB)
-            {
-                len = mtsprintf(buffer, len,  MT("NCLOB"));
-            }
-            else
-            {
-                len = mtsprintf(buffer, len,  MT("CLOB"));
-            }
-
+            len = osprintf(buffer, len, (col->subtype == OCI_NCLOB) ? OTEXT("NCLOB") : OTEXT("CLOB"));
             break;
         }
         case SQLT_BLOB:
         {
-            len = mtsprintf(buffer, len,  MT("BLOB"));
+            len = osprintf(buffer, len,  OTEXT("BLOB"));
             break;
         }
         case SQLT_BFILE:
         {
-            len = mtsprintf(buffer, len,  MT("BINARY FILE LOB"));
+            len = osprintf(buffer, len,  OTEXT("BINARY FILE LOB"));
             break;
         }
         case SQLT_CFILE:
         {
-            len = mtsprintf(buffer, len,  MT("CFILE"));
+            len = osprintf(buffer, len,  OTEXT("CFILE"));
             break;
         }
 
@@ -1275,28 +1170,28 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 
         case SQLT_TIMESTAMP:
         {
-            len = mtsprintf(buffer, len,  MT("TIMESTAMP(%i)"), (int) col->prec);
+            len = osprintf(buffer, len,  OTEXT("TIMESTAMP(%i)"), (int) col->prec);
             break;
         }
         case SQLT_TIMESTAMP_TZ:
         {
-            len = mtsprintf(buffer, len,  MT("TIMESTAMP(%i) WITH TIME ZONE"), (int) col->prec);
+            len = osprintf(buffer, len,  OTEXT("TIMESTAMP(%i) WITH TIME ZONE"), (int) col->prec);
             break;
         }
         case SQLT_TIMESTAMP_LTZ:
         {
-            len = mtsprintf(buffer, len,  MT("TIMESTAMP(%i) WITH LOCAL TIME ZONE"), (int) col->prec);
+            len = osprintf(buffer, len,  OTEXT("TIMESTAMP(%i) WITH LOCAL TIME ZONE"), (int) col->prec);
             break;
         }
         case SQLT_INTERVAL_YM:
         {
-            len = mtsprintf(buffer, len,  MT("INTERVAL(%i) YEAR TO MONTH(%i)"),
+            len = osprintf(buffer, len,  OTEXT("INTERVAL(%i) YEAR TO MONTH(%i)"),
                             (int) col->prec, (int) col->prec2);
             break;
         }
         case SQLT_INTERVAL_DS:
         {
-            len = mtsprintf(buffer, len,  MT("INTERVAL(%i) DAY TO SECOND(%i)"),
+            len = osprintf(buffer, len,  OTEXT("INTERVAL(%i) DAY TO SECOND(%i)"),
                             (int) col->prec, (int) col->prec2);
             break;
         }
@@ -1305,7 +1200,7 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 
         case SQLT_REF:
         {
-            len = mtsprintf(buffer, len,  MT("REF"));
+            len = osprintf(buffer, len,  OTEXT("REF"));
             break;
         }
 
@@ -1317,21 +1212,12 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 
         case SQLT_NTY:
         {
-            if (col->typinf != NULL)
-            {
-                len = mtsprintf(buffer, len, col->typinf->name);
-            }
-            else
-            {
-                len = mtsprintf(buffer, len, MT("NAMED TYPE"));
-            }
-
+            len = osprintf(buffer, len, col->typinf ? col->typinf->name : OTEXT("NAMED TYPE"));
             break;
         }
         default:
         {
-            mtsncat(buffer, MT("?"), (size_t) len);
-
+            ostrncat(buffer, OTEXT("?"), (size_t) len);
             break;
         }
     }
@@ -1370,11 +1256,11 @@ unsigned int OCI_API OCI_ColumnGetSubType
 
     OCI_RESULT(TRUE);
 
-    if (col->type == OCI_CDT_LONG      ||
-        col->type == OCI_CDT_LOB       ||
-        col->type == OCI_CDT_FILE      ||
-        col->type == OCI_CDT_TIMESTAMP ||
-        col->type == OCI_CDT_INTERVAL)
+    if (OCI_CDT_LONG      == col->datatype  ||
+        OCI_CDT_LOB       == col->datatype  ||
+        OCI_CDT_FILE      == col->datatype  ||
+        OCI_CDT_TIMESTAMP == col->datatype  ||
+        OCI_CDT_INTERVAL  == col->datatype)
     {
         type = col->subtype;
     }
@@ -1403,7 +1289,7 @@ boolean OCI_ColumnGetAttrInfo
         return FALSE;
     }
 
-    switch (col->type)
+    switch (col->datatype)
     {
         case OCI_CDT_NUMERIC:
         {

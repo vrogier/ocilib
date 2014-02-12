@@ -7,7 +7,7 @@
     |                                                                                         |
     |                              Website : http://www.ocilib.net                            |
     |                                                                                         |
-    |             Copyright (c) 2007-2013 Vincent ROGIER <vince.rogier@ocilib.net>            |
+    |             Copyright (c) 2007-2014 Vincent ROGIER <vince.rogier@ocilib.net>            |
     |                                                                                         |
     +-----------------------------------------------------------------------------------------+
     |                                                                                         |
@@ -45,7 +45,7 @@
 OCI_Dequeue * OCI_API OCI_DequeueCreate
 (
     OCI_TypeInfo *typinf,
-    const mtext  *name
+    const otext  *name
 )
 {
     OCI_Dequeue *dequeue = NULL;
@@ -60,21 +60,21 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
 
     dequeue = (OCI_Dequeue *) OCI_MemAlloc(OCI_IPC_DEQUEUE, sizeof(*dequeue), (size_t) 1, TRUE);
 
-    if (dequeue != NULL)
+    if (dequeue)
     {
         dequeue->typinf = typinf;
-        dequeue->name   = mtsdup(name);
+        dequeue->name   = ostrdup(name);
 
         /* allocate dequeue options descriptor */
 
-        res = (OCI_SUCCESS == OCI_DescriptorAlloc((dvoid * ) dequeue->typinf->con->env,
-                                                  (dvoid **) &dequeue->opth,
-                                                  OCI_DTYPE_AQDEQ_OPTIONS,
-                                                  (size_t) 0, (dvoid **) NULL));
+        res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid * ) dequeue->typinf->con->env,
+                                                 (dvoid **) &dequeue->opth,
+                                                 OCI_DTYPE_AQDEQ_OPTIONS,
+                                                 (size_t) 0, (dvoid **) NULL));
 
         /* create local message for OCI_DequeueGet() */
 
-        if (res == TRUE)
+        if (res)
         {
             dequeue->msg = OCI_MsgCreate(dequeue->typinf);
         }
@@ -88,7 +88,7 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
 
     /* check for failure */
 
-    if (res == FALSE)
+    if (!res)
     {
         OCI_DequeueFree(dequeue);
         dequeue = NULL;
@@ -110,21 +110,21 @@ boolean OCI_API OCI_DequeueFree
 
     /* Unsubscribe notification if needed */
 
-    if (dequeue->subhp != NULL)
+    if (dequeue->subhp)
     {
         OCI_DequeueUnsubscribe(dequeue);
     }
 
     /* free local message  */
 
-    if (dequeue->msg != NULL)
+    if (dequeue->msg)
     {
         OCI_MsgFree(dequeue->msg);
     }
 
     /* free local agent  */
 
-    if (dequeue->agent != NULL)
+    if (dequeue->agent)
     {
         OCI_AgentFree(dequeue->agent);
     }
@@ -166,7 +166,7 @@ OCI_Agent * OCI_API OCI_DequeueListen
 
     /* listen only if OCI_DequeueSetAgentList has been called */
 
-    if (dequeue->agent_list != NULL)
+    if (dequeue->agent_list)
     {
         sword ret;
         sb4 code = OCI_SUCCESS;
@@ -177,7 +177,7 @@ OCI_Agent * OCI_API OCI_DequeueListen
 
         /* check returned error code */
 
-        if (ret == OCI_ERROR)
+        if (OCI_ERROR == ret)
         {
             OCIErrorGet((dvoid *) dequeue->typinf->con->err, (ub4) 1,
                         (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
@@ -185,7 +185,7 @@ OCI_Agent * OCI_API OCI_DequeueListen
 
             /* raise error only if the call has not been timed out */
 
-            if (code != OCI_ERR_AQ_LISTEN_TIMEOUT)
+            if (OCI_ERR_AQ_LISTEN_TIMEOUT != code)
             {
                 OCI_ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE);
 
@@ -195,7 +195,7 @@ OCI_Agent * OCI_API OCI_DequeueListen
 
         /* init local agent object */
 
-        if ((res == TRUE) && (ret == OCI_SUCCESS) && (handle != NULL))
+        if (res && handle && OCI_SUCCESSFUL(ret))
         {
             agent = OCI_AgentInit(dequeue->typinf->con, &dequeue->agent, handle, NULL, NULL);
         }
@@ -226,14 +226,12 @@ OCI_Msg * OCI_API OCI_DequeueGet
 
     res = OCI_MsgReset(dequeue->msg);
 
-    if (res == TRUE)
+    if (res)
     {
-        void     *ostr     = NULL;
-        int       osize    = -1;
+        int     dbsize = -1;
+        dbtext *dbstr  = OCI_StringGetOracleString(dequeue->name, &dbsize);
 
-        ostr  = OCI_GetInputMetaString(dequeue->name, &osize);
-
-        if (dequeue->typinf->tcode == OCI_UNKNOWN)
+        if (OCI_UNKNOWN == dequeue->typinf->typecode)
         {
             p_ind = &dequeue->msg->ind;
         }
@@ -241,14 +239,15 @@ OCI_Msg * OCI_API OCI_DequeueGet
         /* dequeue message */
 
         ret = OCIAQDeq(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
-                       ostr, dequeue->opth, dequeue->msg->proph, dequeue->typinf->tdo,
-                       &dequeue->msg->payload, (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
+                       (OraText *) dbstr, dequeue->opth, dequeue->msg->proph,
+                       dequeue->typinf->tdo, &dequeue->msg->payload, 
+                       (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
 
-        OCI_ReleaseMetaString(ostr);
+        OCI_StringReleaseOracleString(dbstr);
 
         /* check returned error code */
 
-        if (ret == OCI_ERROR)
+        if (OCI_ERROR == ret)
         {
             sb4 code = 0;
 
@@ -258,7 +257,7 @@ OCI_Msg * OCI_API OCI_DequeueGet
 
             /* raise error only if the call has not been timed out */
 
-            if (code != OCI_ERR_AQ_DEQUEUE_TIMEOUT)
+            if (OCI_ERR_AQ_DEQUEUE_TIMEOUT != code)
             {
                 OCI_ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE);
 
@@ -269,13 +268,13 @@ OCI_Msg * OCI_API OCI_DequeueGet
 
     /* reset message */
 
-    if ((res == TRUE) && (ret == OCI_SUCCESS))
+    if (res && OCI_SUCCESSFUL(ret))
     {
         /* get payload */
 
-        if (dequeue->typinf->tcode != OCI_UNKNOWN)
+        if (OCI_UNKNOWN != dequeue->typinf->typecode)
         {
-            if ((p_ind != NULL) && ((*(OCIInd *) p_ind) != OCI_IND_NULL))
+            if (p_ind && (OCI_IND_NULL != (*(OCIInd *) p_ind)))
             {
                 dequeue->msg->ind = *(OCIInd *) p_ind;
 
@@ -291,7 +290,7 @@ OCI_Msg * OCI_API OCI_DequeueGet
 
     /* on success return internla message handle */
 
-    if ((res == TRUE) && (ret == OCI_SUCCESS))
+    if (res && OCI_SUCCESSFUL(ret))
     {
         msg = dequeue->msg;
     }
@@ -305,7 +304,7 @@ OCI_Msg * OCI_API OCI_DequeueGet
  * OCI_DequeueGetConsumerName
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_DequeueGetConsumer
+const otext * OCI_API OCI_DequeueGetConsumer
 (
     OCI_Dequeue *dequeue
 )
@@ -314,7 +313,7 @@ const mtext * OCI_API OCI_DequeueGetConsumer
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, NULL);
 
-    if (dequeue->consumer == NULL)
+    if (!dequeue->consumer)
     {
         res = OCI_StringGetFromAttrHandle(dequeue->typinf->con,
                                           dequeue->opth,
@@ -335,7 +334,7 @@ const mtext * OCI_API OCI_DequeueGetConsumer
 boolean OCI_API OCI_DequeueSetConsumer
 (
     OCI_Dequeue *dequeue,
-    const mtext *consumer
+    const otext *consumer
 )
 {
     boolean res = TRUE;
@@ -358,7 +357,7 @@ boolean OCI_API OCI_DequeueSetConsumer
  * OCI_DequeueGetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-const mtext * OCI_API OCI_DequeueGetCorrelation
+const otext * OCI_API OCI_DequeueGetCorrelation
 (
     OCI_Dequeue *dequeue
 )
@@ -367,7 +366,7 @@ const mtext * OCI_API OCI_DequeueGetCorrelation
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, NULL);
 
-    if (dequeue->pattern == NULL)
+    if (!dequeue->pattern)
     {
         res = OCI_StringGetFromAttrHandle(dequeue->typinf->con,
                                           dequeue->opth,
@@ -388,7 +387,7 @@ const mtext * OCI_API OCI_DequeueGetCorrelation
 boolean OCI_API OCI_DequeueSetCorrelation
 (
     OCI_Dequeue *dequeue,
-    const mtext *pattern
+    const otext *pattern
 )
 {
     boolean res = TRUE;
@@ -437,12 +436,14 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
                    dequeue->typinf->con->err)
     )
 
-    if (value != NULL)
+    if (value)
     {
         ub4 raw_len = OCIRawSize(dequeue->typinf->con->env, value);
 
         if (*len > raw_len)
+        {
             *len = raw_len;
+        }
 
         memcpy(id, OCIRawPtr(dequeue->typinf->con->env, value), (size_t) (*len));
     }
@@ -766,12 +767,12 @@ boolean OCI_API OCI_DequeueSetAgentList
 
     OCI_FREE(dequeue->agent_list);
 
-    if ((consumers != NULL) && (count > 0))
+    if (consumers && (count > 0))
     {
         dequeue->agent_list = (OCIAQAgent **) OCI_MemAlloc(OCI_IPC_ARRAY,  sizeof(OCIAQAgent *),
                                                            count, FALSE);
 
-        if (dequeue->agent_list != NULL)
+        if (dequeue->agent_list)
         {
             unsigned int i;
 
@@ -832,10 +833,10 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 
     /* allocate subcription handle */
 
-    res = (OCI_SUCCESS == OCI_HandleAlloc(con->env,
-                                          (dvoid **) (void *) &dequeue->subhp,
-                                          OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
-                                          (dvoid **) NULL));
+    res = OCI_SUCCESSFUL(OCI_HandleAlloc(con->env,
+                                         (dvoid **) (void *) &dequeue->subhp,
+                                         OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
+                                         (dvoid **) NULL));
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -898,48 +899,48 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
     
     /* set name  */
 
-    if (dequeue->name != NULL)
+    if (dequeue->name)
     {
         /* for AQ subscription, the name should be "[shema.]queue[:consumer]" */
 
-        mtext buffer[(OCI_SIZE_OBJ_NAME*2) + 2] = MT("");
+        otext buffer[(OCI_SIZE_OBJ_NAME*2) + 2] = OTEXT("");
 
-        mtext *str  = NULL;
-        size_t size = sizeof(buffer)/sizeof(mtext);
+        otext *str  = NULL;
+        size_t size = sizeof(buffer)/sizeof(otext);
 
-        void *ostr  = NULL;
-        int osize   = -1;
+        dbtext *dbstr    = NULL;
+        int     dbsize   = -1;
             
-        mtsncat(buffer, dequeue->name, size);
+        ostrncat(buffer, dequeue->name, size);
 
-        if (dequeue->consumer != NULL)
+        if (dequeue->consumer)
         {
-            size -= mtslen(dequeue->name);
-            mtsncat(buffer, MT(":"), size);
+            size -= ostrlen(dequeue->name);
+            ostrncat(buffer, OTEXT(":"), size);
             size -= (size_t) 1;
 
-            mtsncat(buffer, dequeue->consumer, size);
+            ostrncat(buffer, dequeue->consumer, size);
         }           
 
         /* queue name must be uppercase */
 
-        for (str =  buffer; *str != 0; str++)
+        for (str = buffer; *str != 0; str++)
         {
-            *str = (mtext) mttoupper(*str);
+            *str = (otext) otoupper(*str);
         }
 
-        ostr = OCI_GetInputMetaString(buffer, &osize);
+        dbstr = OCI_StringGetOracleString(buffer, &dbsize);
 
         OCI_CALL3
         (
             res, con->err,
 
             OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                        (dvoid *) ostr, (ub4) osize,
+                        (dvoid *) dbstr, (ub4) dbsize,
                         (ub4) OCI_ATTR_SUBSCR_NAME, con->err)
         )
 
-        OCI_ReleaseMetaString(ostr);
+        OCI_StringReleaseOracleString(dbstr);
     }
 
     /* set namespace  */
@@ -988,7 +989,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
         OCISubscriptionRegister(con->cxt, &dequeue->subhp, (ub2) 1, con->err,(ub4) OCI_DEFAULT)
     )
 
-    if (res == FALSE)
+    if (!res)
     {
         /* clear subscription on failure */
 
@@ -1017,7 +1018,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueUnsubscribe
 
     dequeue->callback = NULL;
     
-    if (dequeue->subhp != NULL)
+    if (dequeue->subhp)
     {
         /* unregister the subscription */
 
