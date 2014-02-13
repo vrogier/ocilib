@@ -5953,23 +5953,27 @@ boolean OCI_API OCI_BindSetCharsetForm
  *
  * @par Implicit conversion to string types
  *
- * OCI_GetString() performs an implicit conversion from  the
- * following datatypes:
+ * OCI_GetString() performs an implicit conversion from ANY Oracle types:
  *
  * - Numerics (based on the current connection handle numeric format)
  * - Binary doubles and floats (using the standard C Library functions)
- * - OCI_Date (based on the current connection handle date format)
- * - OCI_Timestamp (based on the current connection handle date format)
- * - OCI_Interval (based on Oracle default conversion)
- * - OCI_Lob (maximum number of character is defined by OCI_SIZE_BUFFER)
- * - OCI_Long
- * - OCI_File (maximum number of character is defined by OCI_SIZE_BUFFER)
- * - RAW buffer
+ * - OCI_Date      : uses OCI_DateToText() with current connection date format
+ * - OCI_Timestamp : uses OCI_TimestampToText() with current connection date format
+ * - OCI_Interval  : uses OCI_IntervalToText() with Oracle default format
+ * - OCI_Coll      : uses OCI_CollToText()
+ * - OCI_Object    : uses OCI_ObjectToText() 
+ * - OCI_Ref       : uses OCI_RefToText() 
+ * - OCI_File      : returns "$(folder)/$(filename)" - no content returned
+ * - OCI_Lob       : see note above for binary types
+ * - OCI_Long      : see note above for binary types
+ * - RAWs          : see note above for binary types
+ * 
+ * @Note
+ * For RAWs and BLOBs attributes, their binary values are converted to hexadecimal strings
  *
- * The following type are not supported for implicit conversion:
+ * @Note
+ * The following OCILIB types are not supported for implicit conversion:
  * - OCI_Statement
- * - OCI_Coll
- * - OCI_Object
  * 
  * @warning
  * For Dates and numerics types, OCILIB uses OCI client calls to perform
@@ -8077,6 +8081,31 @@ OCI_EXPORT boolean OCI_API OCI_CollAppend
     OCI_Coll *coll,
     OCI_Elem *elem
 );
+
+/**
+ * @brief
+ * Convert a collection handle value to a string 
+ *
+ * @param obj  - Collection handle
+ * @param size - Destination string length pointer in characters
+ * @param str  - Destination string
+ *
+ * @note
+ * In order to compute the needed string length, call the method with a NULL string
+ * Then call the method again with a valid buffer
+ *
+ * @note
+ * The resulting string is similar to the SQL*PLUS output for collections
+ * For RAWs and BLOBs attributes, their binary values are converted to hexadecimal strings
+ *
+ * @Warning
+ * This convinient method shall not be used when performance matters. It is usually called twice (buffer length 
+ * computation) and must also care about quotes within strings.
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
 
 OCI_EXPORT boolean OCI_API OCI_CollToText
 (
@@ -12753,12 +12782,12 @@ OCI_EXPORT float OCI_API OCI_ObjectGetFloat
  * @param attr - Attribute name
  *
  * @note
- * If the attribute is found in the object descriptor attributes list, then a
- * datatype check is performed for integrity.
- * OCI_ObjectGetString() returns a valid value only for string based attributes
+ * The method can return a string value for any attributes types.
+ * It performs implicit string conversions using the same
+ * mechanisms than OCI_GetString(). See its documentation for more details.
  *
  * @return
- * Attribute value or NULL on failure or wrong attribute type
+ * Attribute value or NULL on failure 
  *
  */
 
@@ -13438,6 +13467,31 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetStruct
     void      **pp_struct,
     void      **pp_ind
 );
+
+/**
+ * @brief
+ * Convert an object handle value to a string 
+ *
+ * @param obj  - Object handle
+ * @param size - Destination string length pointer in characters
+ * @param str  - Destination string
+ *
+ * @note
+ * In order to compute the needed string length, call the method with a NULL string
+ * Then call the method again with a valid buffer
+ *
+ * @note
+ * The resulting string is similar to the SQL*PLUS output for UDTs (user types and objects)
+ * For RAWs and BLOBs attributes, their binary values are converted to hexadecimal strings
+ *
+ * @Warning
+ * This convinient method shall not be used when performance matters. It is usually called twice (buffer length 
+ * computation) and must also care about quotes within strings.
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
 
 OCI_EXPORT boolean OCI_API OCI_ObjectToText
 (
