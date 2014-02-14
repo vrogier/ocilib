@@ -1,0 +1,170 @@
+/**
+ * @defgroup OcilibCApiInstallation Installation
+ * @{
+ *
+ * @par Compatibilities
+ *
+ * Actual version of OCILIB has been validated on :
+ *  - Platforms: Windows, HP/UX, Linux, Mac OS, Solaris, AIX
+ *  - Architectures: 32/64bits
+ *  - Compilers: GCC / MinGW, MS Compilers, IBM XLC, CCs, LabView
+ *  - Oracle versions: 8i, 9i, 10g, 11g
+ *
+ * Please, contact the author if you have validated OCILIB on platforms or compilers not listed here.
+ *
+ * @par Global build options
+ *
+ * OCILIB supports the following global build options:
+ *
+ * => Oracle import modes
+ *
+ *  - OCI_IMPORT_LINKAGE for linkage at compile time (default on Unix systems)
+ *  - OCI_IMPORT_RUNTIME for runtime loading (default with prebuilt OCILIB libraries on MS Windows)
+ *
+ * => Oracle charset modes
+ *
+ *  - OCI_CHARSET_ANSI  : ANSI strings or UT8 strings (default)
+ *  - OCI_CHARSET_WIDE  : wide strings using ISO C wide character
+ *
+ * From v3.6.0, OCI_CHARSET_WIDE replaces OCI_CHARSET_UNICODE OCI_CHARSET_UNICODE remains a
+ * valid identifier for backward compatibility
+ *
+ * => Calling convention (WINDOWS ONLY)
+ *
+ *  - OCI_API = __cdecl or blank for C/C++ only ! (default on Unix systems and non MSVC projects)
+ *  - OCI_API = __stdcall to link OCILIB shared library on Ms Windows (default for MSVC projects)
+ *
+ * @note
+ *
+ * On Windows, OCI_API MUST be set to __stdcall in order to use prebuilt libraries
+ * From v3.5.0, ocilib.h automatically sets OCI_API to  __stdcall with MS compilers
+ *
+ * @par Installing OCILIB on UNIX like systems
+ *
+ * OCILIB uses GNU tools for deployment and installation on UNIX like platforms
+ *
+ * Uncompress the archive (ocilib-x.y.z-gnu.tar.gz)
+ *  - $ cd ocilib-x.y.z
+ *  - $ ./configure
+ *  - $ ./make
+ *  - $ ./make install (this step might require admin rights)
+ *
+ * Check the shared library path environment variable (LD_LIBRARY_PATH, LD_PATH, ...):
+ *  - it must include $ORACLE_HOME\[lib|lib32|lib64]
+ *  - it must include the path where OCILIB has been installed
+ *    (by example, typically /usr/local/lib under Linux)
+ *
+ * In order to get these values loaded at logon time, export these values in
+ * your .profile configuration file :
+ *  - > export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib:/usr/local/lib
+ *
+ * <b>GNU Installation options </b>:
+ *
+ * OCILIB supports some options that are not needed for most common configurations.
+ *
+ * List of available options:
+ *
+ *  - --with-oracle-import=(linkage|runtime)
+ *  - --with-oracle-charset=(ansi|wide) (old mode 'unicode' mapped to 'wide')
+ *  - --with-oracle-home=(custom oracle regular client directory)
+ *  - --with-oracle-headers-path=(oracle header files directory)
+ *  - --with-oracle-lib-path=(oracle shared lib directory)
+ *  - --with-oracle-lib-name=(oracle shared lib name)
+ *  - --with-custom-loader=(linker flag telling the linker which loader to use
+ *      when loading dynamically at runtime Oracle shared libs.
+ *      This option must be provide if the platform does not use the default
+ *      loader flag '-ldl') and the --with-oracle-import is set to 'runtime'
+ *
+ * @note
+ *
+ * --with-oracle-headers-path and --with-oracle-lib-path are meant to be used with
+ * Instant client only but can used for regular client of libs and headers are
+ * not located in usual folders
+ *
+ * @note
+ *
+ * If the Oracle OCI linkage mode is set to 'linkage' (default) and no Oracle lib
+ * path is provided, OCILIB configure script tries to located the Oracle library
+ * folder following this sequence :
+ *  - $ORACLE_HOME/lib32 (32 bits libs)
+ *  - $ORACLE_HOME/lib   (32 or 64 bits libs)
+ *  - $ORACLE_HOME/lib64 (64 bits libs)
+ *
+ * @note
+ *
+ * To compile native 64 bits versions of OCILIB, you need pass your compiler
+ * specifics flags to the configure script.
+ *
+ * To use OCILIB in a project:
+ *
+ * - include "ocilib.h" in your application
+ * - Add the flag -I$USER_LIBS/include to your compiler
+ * - Defines OCILIB modes:
+ *    - OCI import  mode (-DOCI_IMPORT_LINKAGE | -DOCI_IMPORT_RUNTIME)
+ *    - OCI charset mode (-DOCI_CHARSET_ANSI   | -DOCI_CHARSET_WIDE)
+ * - Add the flag -L/$ORACLE_HOME/[lib|lib32|lib64] -lclntsh to the linker
+ * - Add the flag -L$USER_LIBS/lib -locilib to the linker
+ *
+ * where :
+ * - $USER_LIBS is the folder where OCILIB was installed
+ * - $ORACLE_LIB_PATH is Oracle client shared library path
+ *
+ * Some older version of Oracle 8 have direct path API symbols located in the library libclient8.
+ * With these versions, you must include as well the linker flag -lclient8 to use Direct Path API.
+ *
+ * @par Installing and using OCILIB on Microsoft Windows
+ *
+ * 32bits and 64bits DLLs are provided for x86 architectures.
+ * Visual .NET (2005/2008) solutions are also provided to recompile the Dlls and the demo.
+ *
+ * - Uncompress the archive (ocilib-x.y.z-windows.zip)
+ * - Copy ocilib\include\ocilib.h to a folder listed in the compiler headers folders
+ * - Copy ocilib\lib[32|64]\ocilib[x].lib to a folder listed in the linker libraries folders
+ * - Copy ocilib\lib[32|64]\ocilib[x].dll to a folder included in the PATH
+ *   environment variable
+ *
+ * [x] is the compiled version of OCILIB ('a' -> ANSI, 'w' -> Unicode)
+ *
+ * To use OCILIB in a project :
+ *
+ * - include "ocilib.h" in your application
+ * - define call convention (OCI_API) to __stdcall
+ * - define charset mode (OCI_CHARSET_ANSI | OCI_CHARSET_WIDE)
+ *
+ * Note for MinGW users:
+ * - Precompiled 32bits static libraries libocilib[x].a are provided
+ * - To use OCILIB dll's, copy/rename import libraries ocilib[x].lib to libocilib[x].lib
+ * - Add the desired version (static/shared + charset) of the library to the linker options
+ *
+ * @note
+ *
+ * The OCI import mode (OCI_IMPORT_LINKAGE or OCI_IMPORT_RUNTIME is only used when
+ * compiling OCILIB source code
+
+ * @par Oracle Instant Client Support
+ *
+ * OCILIB supports Oracle Instant Client.
+ *
+ * On Microsoft Windows, there is no difference between using a regular Oracle
+ * client and an Instant Client with OCILIB
+ *
+ * On Unix-like systems, the Instant Client is divided in different packages.
+ *
+ * Public headers and shared libs are not part of the same package.
+ *
+ * So, you must provide the following options to the configure command:
+ *
+ * - with-oracle-headers-path: location the public header files
+ * - with-oracle-lib-path: location the oracle shared lib
+ *
+ * If your instant client package containing the shared libs does not have a symbolic link
+ * 'libclntsh.[shared lib extension]' to the fully qualified shared lib real name,
+ * you must create it:
+ *
+ * Example on Linux:
+ *
+ * - $ ln -s $ORALIBPATH/libclntsh.so.10.1 $ORALIBPATH/libclntsh.so
+ *
+ * @}
+ *
+ */

@@ -903,18 +903,6 @@ boolean OCI_BindData
         }
     }
 
-    if (bnd->type == OCI_CDT_TEXT)
-    {
-        OCI_CALL1
-        (
-            res, stmt->con, stmt,
-
-            OCIAttrSet((dvoid *) bnd->buffer.handle, (ub4) OCI_HTYPE_BIND,
-                       (dvoid *) &bnd->size, (ub4) sizeof(bnd->size),
-                       (ub4) OCI_ATTR_MAXDATA_SIZE,  bnd->stmt->con->err)
-        )
-    }
-
     /* on success, we :
          - add the bind handle to the bind array
          - add the bind index to the map

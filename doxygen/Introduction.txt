@@ -1,0 +1,71 @@
+/**
+ @mainpage Introduction
+
+ @image html logo-160x120.png
+
+ @section Intro Description
+
+ OCILIB is an open source and portable Oracle C/C++ Driver that delivers really fast
+ and reliable access to Oracle databases.
+
+ The OCILIB library :
+
+ - Offers a rich, full featured and easy to use API
+ - Runs on all Oracle platforms
+ - Encapsulates OCI (Oracle Call Interface)
+ - Is the most complete available OCI wrapper
+ - C API written in pure ISO C code with native ISO C Unicode support
+ - C++ API on based on STL paradigms
+
+ @section Version Version information
+
+Current version :  <b>4.0.0 (2013-01-10)</b>
+
+ @section Features Main features
+
+ - Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
+ - Full 32/64 bits compatibility
+ - Comptabile with all Oracle version >= 8i
+ - Automatic adaptation to the runtime Oracle client version
+ - Runtime loading of Oracle libraries
+ - Builtin error handling (global and thread context)
+ - Full support for SQL API and Object API
+ - Full support for ALL Oracle SQL and PL/SQL datatypes (scalars, objects, refs, collections, ..)
+ - Full support for PL/SQL (blocks, cursors, Index by Tables and Nested tables)
+ - Support for non scalar datatype with trough library objects 
+ - Oracle Pooling (connections and sessions pools)
+ - Oracle XA connectivity (X/Open Distributed Transaction Processing XA interface)
+ - Oracle AQ (Advanded Queues)
+ - Oracle TAF (Transparent Application Failover) and HA (High availabality) support 
+ - Binding array Interface
+ - Returning DML feature
+ - Scrollable statements
+ - Statement cache
+ - Direct Path loading
+ - Remote Instances Startup/Shutdown
+ - Oracle Database Change notification / Continuous Query Notification
+ - Oracle warnings support
+ - Global and local transactions 
+ - Describe database schema objects
+ - Hash tables API
+ - Portable Threads and mutexes API
+
+ @section Download Download
+
+ Get OCILIB from <a href="http://orclib.sourceforge.net">OCILIB Project page</a>
+ at Sourceforge Website
+
+ @section Author Author
+
+ OCILIB is developed by <a href="mailto:vince.rogier@ocilib.net">Vincent Rogier</a>
+
+ @section License License 
+ The source code is free source code. It's licensed under GNU LESSER GENERAL PUBLIC LICENSE (LGPL).
+ (see the file lgpl-license.txt)
+
+ @section Changelog ChangeLog
+
+ @include ChangeLog.txt
+
+ */
+
