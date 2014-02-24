@@ -111,6 +111,173 @@ extern "C" {
 #define OCILIB_MINOR_VERSION     0
 #define OCILIB_REVISION_VERSION  0
 
+/**
+ * @defgroup OcilibCApiInstallation Installation
+ * @{
+ *
+ * @par Compatibilities
+ *
+ * Actual version of OCILIB has been validated on :
+ *  - Platforms: Windows, HP/UX, Linux, Mac OS, Solaris, AIX
+ *  - Architectures: 32/64bits
+ *  - Compilers: GCC / MinGW, MS Compilers, IBM XLC, CCs, LabView
+ *  - Oracle versions: 8i, 9i, 10g, 11g, 12c
+ *
+ * Please, contact the author if you have validated OCILIB on platforms or compilers not listed here.
+ *
+ * @par Global build options
+ *
+ * OCILIB supports the following global build options:
+ *
+ * => Oracle import modes
+ *
+ *  - OCI_IMPORT_LINKAGE for linkage at compile time (default on Unix systems)
+ *  - OCI_IMPORT_RUNTIME for runtime loading (default with prebuilt OCILIB libraries on MS Windows)
+ *
+ * => Oracle charset modes
+ *
+ *  - OCI_CHARSET_ANSI  : ANSI strings or UT8 strings (default)
+ *  - OCI_CHARSET_WIDE  : wide strings using ISO C wide character
+ *
+ * => Calling convention (WINDOWS ONLY)
+ *
+ *  - OCI_API = __cdecl or blank for C/C++ only ! (default on Unix systems and non MSVC projects)
+ *  - OCI_API = __stdcall to link OCILIB shared library on Ms Windows (default for MSVC projects)
+ *
+ * @note
+ *
+ * - On Windows, OCI_API MUST be set to __stdcall in order to use prebuilt libraries
+ * - When using MS Compilers, OCI_API is automatically set to  __stdcall
+ *
+ * @par Installing OCILIB on UNIX like systems
+ *
+ * OCILIB uses GNU tools for deployment and installation on UNIX like platforms
+ *
+ * Uncompress the archive (ocilib-x.y.z-gnu.tar.gz)
+ *  - $ cd ocilib-x.y.z
+ *  - $ ./configure
+ *  - $ ./make
+ *  - $ ./make install (this step might require admin rights)
+ *
+ * Check the shared library path environment variable (LD_LIBRARY_PATH, LD_PATH, ...):
+ *  - it must include $ORACLE_HOME\[lib|lib32|lib64]
+ *  - it must include the path where OCILIB has been installed
+ *    (by example, typically /usr/local/lib under Linux)
+ *
+ * In order to get these values loaded at logon time, export these values in
+ * your .profile configuration file :
+ *  - > export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib:/usr/local/lib
+ *
+ * <b>GNU Installation options </b>:
+ *
+ * OCILIB supports some options that are not needed for most common configurations.
+ *
+ * List of available options:
+ *
+ *  - --with-oracle-import=(linkage|runtime)
+ *  - --with-oracle-charset=(ansi|wide)
+ *  - --with-oracle-home=(custom oracle regular client directory)
+ *  - --with-oracle-headers-path=(oracle header files directory)
+ *  - --with-oracle-lib-path=(oracle shared lib directory)
+ *  - --with-oracle-lib-name=(oracle shared lib name)
+ *  - --with-custom-loader=(linker flag telling the linker which loader to use
+ *      when loading dynamically at runtime Oracle shared libs.
+ *      This option must be provide if the platform does not use the default
+ *      loader flag '-ldl') and the --with-oracle-import is set to 'runtime'
+ *
+ * @note
+ *
+ * --with-oracle-headers-path and --with-oracle-lib-path are meant to be used with
+ * Instant client only but can used for regular client of libs and headers are
+ * not located in usual folders
+ *
+ * @note
+ *
+ * If the Oracle OCI linkage mode is set to 'linkage' (default) and no Oracle lib
+ * path is provided, OCILIB configure script tries to located the Oracle library
+ * folder following this sequence :
+ *  - $ORACLE_HOME/lib32 (32 bits libs)
+ *  - $ORACLE_HOME/lib   (32 or 64 bits libs)
+ *  - $ORACLE_HOME/lib64 (64 bits libs)
+ *
+ * @note
+ *
+ * To compile native 64 bits versions of OCILIB, you need pass your compiler
+ * specifics flags to the configure script.
+ *
+ * To use OCILIB in a project:
+ *
+ * - include "ocilib.h" in your application
+ * - Add the flag -I$USER_LIBS/include to your compiler
+ * - Defines OCILIB modes:
+ *    - OCI import  mode (-DOCI_IMPORT_LINKAGE | -DOCI_IMPORT_RUNTIME)
+ *    - OCI charset mode (-DOCI_CHARSET_ANSI   | -DOCI_CHARSET_WIDE)
+ * - Add the flag -L/$ORACLE_HOME/[lib|lib32|lib64] -lclntsh to the linker
+ * - Add the flag -L$USER_LIBS/lib -locilib to the linker
+ *
+ * where :
+ * - $USER_LIBS is the folder where OCILIB was installed
+ * - $ORACLE_LIB_PATH is Oracle client shared library path
+ *
+ * Some older version of Oracle 8 have direct path API symbols located in the library libclient8.
+ * With these versions, you must include as well the linker flag -lclient8 to use Direct Path API.
+ *
+ * @par Installing and using OCILIB on Microsoft Windows
+ *
+ * 32bits and 64bits DLLs are provided for x86 architectures.
+ * Visual studio solutions are also provided to recompile the Dlls and the demo.
+ *
+ * - Uncompress the archive (ocilib-x.y.z-windows.zip)
+ * - Copy ocilib\include\ocilib.h to a folder listed in the compiler headers folders
+ * - Copy ocilib\lib[32|64]\ocilib[x].lib to a folder listed in the linker libraries folders
+ * - Copy ocilib\lib[32|64]\ocilib[x].dll to a folder included in the PATH
+ *   environment variable
+ *
+ * [x] is the compiled version of OCILIB ('a' -> ANSI, 'w' -> Unicode)
+ *
+ * To use OCILIB in a project :
+ *
+ * - include "ocilib.h" in your application
+ * - define call convention (OCI_API) to __stdcall
+ * - define charset mode (OCI_CHARSET_ANSI | OCI_CHARSET_WIDE)
+ *
+ * Note for MinGW users:
+ * - Precompiled 32bits static libraries libocilib[x].a are provided
+ * - To use OCILIB dll's, copy/rename import libraries ocilib[x].lib to libocilib[x].lib
+ * - Add the desired version (static/shared + charset) of the library to the linker options
+ *
+ * @note
+ *
+ * The OCI import mode (OCI_IMPORT_LINKAGE or OCI_IMPORT_RUNTIME is only used when
+ * compiling OCILIB source code
+ *
+ * @par Oracle Instant Client Support
+ *
+ * OCILIB supports Oracle Instant Client.
+ *
+ * On Microsoft Windows, there is no difference between using a regular Oracle
+ * client and an Instant Client with OCILIB
+ *
+ * On Unix-like systems, the Instant Client is divided in different packages.
+ *
+ * Public headers and shared libs are not part of the same package.
+ *
+ * So, you must provide the following options to the configure command:
+ *
+ * - with-oracle-headers-path: location the public header files
+ * - with-oracle-lib-path: location the oracle shared lib
+ *
+ * If your instant client package containing the shared libs does not have a symbolic link
+ * 'libclntsh.[shared lib extension]' to the fully qualified shared lib real name,
+ * you must create it:
+ *
+ * Example on Linux:
+ *
+ * - $ ln -s $ORALIBPATH/libclntsh.so.10.1 $ORALIBPATH/libclntsh.so
+ *
+ * @}
+ *
+ */
 
 /* Import mode */
 
@@ -170,19 +337,17 @@ extern "C" {
 #endif
 
 /**
- * @defgroup OcilibCApiSupportedCharsets Charset support
+ * @defgroup OcilibCApiSupportedCharsets Charsets
  * @{
  *
- * OCILIB supports ANSI and Unicode charsets
+ * OCILIB supports both ANSI and Unicode.
  *
- * Oracle started a real Unicode support with Oracle8i but only for user data.
- * All SQL and PL/SQ/ statements, metadata string, database objects names, etc,
- * ... were still only supported in ANSI.
+ * Oracle started a real Unicode support with Oracle8i but only for bind and fetch data.
+ * All SQL and PL/SQ/ statements, database objects names were still only supported in ANSI.
  *
  * With Oracle 9i, Oracle provides a full Unicode support.
  *
- * So depending on the compile time Oracle library or the runtime loaded
- * library, the Unicode support differs.
+ * So depending on the compile time Oracle library or the runtime loaded library, Unicode support differs.
  *
  * OCILIB supports:
  *
@@ -190,8 +355,7 @@ extern "C" {
  * - Unicode (wchar_t)
  * - UTF8 strings
  *
- * OCILIB uses the character type 'otext' that is a define around char and wchar_t 
- * depending on the charset option.
+ * OCILIB uses the character type 'otext' that is a define around char and wchar_t  depending on the charset mode.
  *
  * @par Option OCI_CHARSET_ANSI
  *
@@ -207,37 +371,36 @@ extern "C" {
  *
  * Well, ISO C:
  * - doesn't know anything about Unicode.
- * - makes wide characters support tricky because the size of a wide character
- *   is not defined and is freely adaptable by implementations.
+ * - makes wide characters support tricky because wide character size is not defined and is freely adaptable by implementations.
  *
- * OCILIB uses char/wchar_t strings for public interface and internal storage.
+ * OCILIB uses char/wchar_t strings for both public interface and internal storage.
  *
- * OCILIB, for Unicode builds, initialize OCI in UTF16 Unicode mode. Oracle
- * implements this mode with a 2 bytes (fixed length) UTF16 encoding.
+ * Unicode builds of OCILIB initialize OCI in UTF16 Unicode mode. 
+ * Oracle implements this mode with a 2 bytes (fixed length) UTF16 encoding.
  *
  * @warning
  * When using Unicode builds of OCILIB, make sure that the target 
- * Database charset is also a Unicode charset or is a superset of UTF16. If not,
- * data string may be converted with substitution characters by the Oracle client !
+ * Database charset is also unsing an Unicode charset or is a superset of UTF16. 
+ * If not, strings may be converted with substitution characters by the Oracle client !
  *
  * So, on systems implementing wchar_t as 2 bytes based UTF16 (e.g. Ms Windows),
- * input strings are directly passed to Oracle and taken back from it.
+ * strings are directly passed to Oracle and taken back from it.
  *
- * On other systems (most of the Unix systems) that use UTF32 as encoding
- * (4 bytes based wchar_t), OCILIB uses:
- * - temporary buffers to pass string to OCI for metadata strings
- * - buffer expansion from UTF16 to UTF32 for user data string:
+ * On other systems (most of the Unix systems) that use UTF32 as encoding, (4 bytes based wchar_t), OCILIB uses:
+ * - temporary buffers for statements and object names
+ * - buffer expansion from UTF16 to UTF32 for fetch and bind string:
  *     - allocation based on sizeof(wchar_t)
  *     - data filling based on sizeof(short) -> (UTF16 2 bytes)
  *     - data expansion to sizeof(wchar_t).
  *
- * The buffer expansion is done in place and has the advantage of not requiring extra buffer.
+ * Buffer expansion is done in place and has the advantage of not requiring extra buffer.
  * That reduces the cost of the Unicode/ISO C handling overhead on Unix systems.
  *
  * @par UTF8 strings
  *
- * From version 3.6.0, OCILIB fully supports UTF8 strings for all data in OCI_CHARSET_ANSI mode
- * if NLS_LANG environment variable is set to an valid UTF8 Oracle charset string
+ * OCILIB fully supports UTF8 strings : 
+ * - Wihtin OCI_CHARSET_ANSI builds
+ * - NLS_LANG environment variable msut be set to any valid UTF8 Oracle charset string
  *
  * @par Charset mapping macros
  *
@@ -378,7 +541,7 @@ OCI_EXPORT int ociwcscasecmp
  */
 
 /**
- * @defgroup OcilibCApiDatatypes Library objects and datatypes
+ * @defgroup OcilibCApiDatatypes Datatypes
  * @{
  *
  * OCILIB implements:
@@ -1710,28 +1873,16 @@ typedef unsigned int big_uint;
  * - OCI_ENV_EVENTS   : enables events for subscription, HA Events, AQ notifications
  *
  * @note
- *
  * This function must be called before any OCILIB library function.
  *
- * - It installs the error handler
- * - It loads the Oracle shared library located in the path pointed by 'home'
+ * @warning
+ * - The parameter 'libpath' is only used if OCILIB has been built with the option OCI_IMPORT_RUNTIME
+ * - If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables
  *
  * @warning
- *
- * The parameter 'home' is only used if OCILIB has been built with the option
- * OCI_IMPORT_RUNTIME (default on MS windows but NOT on Unix systems
- *
- * @warning
- *
- * If the parameter 'lib_path' is NULL, the Oracle library is loaded from system
- * environment variables
- *
- * @warning
- *
  * OCI_Initialize() should be called <b>ONCE</b> per application
  *
  * @return
- *
  * TRUE on success otherwise FALSE (only with Oracle runtime loading mode
  * if the oracle shared libraries can't be loaded or if OCI subsystem cannot be initialized)
  *
@@ -1753,7 +1904,7 @@ OCI_EXPORT boolean OCI_API OCI_Initialize
  * This function must be the last OCILIB library function call.
  *
  * - It deallocates objects not explicitly freed by the program (connections, statements, ...)
- * - It unloads the Oracle shared library
+ * - It unloads the Oracle shared library if it has been dynamically loaded
  *
  * @warning
  *
@@ -1772,8 +1923,7 @@ OCI_EXPORT boolean OCI_API OCI_Cleanup
  * Return the version of OCI used for compilation
  *
  * @note
- * - with linkage build option, the version is determined from the oci.h header
- *   through different ways
+ * - with linkage build option, the version is determined from the oci.h header through different ways
  * - with runtime loading build option, the version is set to the highest version
  *   of OCI needed by OCILIB, not necessarily the real OCI version
  *
@@ -1864,7 +2014,6 @@ OCI_EXPORT void OCI_API OCI_SetErrorHandler
 (
     POCI_ERROR handler
 );
-
 
 /**
  * @brief
@@ -5724,10 +5873,10 @@ boolean OCI_API OCI_BindSetCharsetForm
  * - OCI_Long      : see note above for binary types
  * - RAWs          : see note above for binary types
  * 
- * @Note
+ * @note
  * For RAWs and BLOBs attributes, their binary values are converted to hexadecimal strings
  *
- * @Note
+ * @note
  * The following OCILIB types are not supported for implicit conversion:
  * - OCI_Statement
  * 
@@ -7854,7 +8003,7 @@ OCI_EXPORT boolean OCI_API OCI_CollAppend
  * The resulting string is similar to the SQL*PLUS output for collections
  * For RAWs and BLOBs attributes, their binary values are converted to hexadecimal strings
  *
- * @Warning
+ * @warning
  * This convinient method shall not be used when performance matters. It is usually called twice (buffer length 
  * computation) and must also care about quotes within strings.
  *
@@ -13240,7 +13389,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetStruct
  * The resulting string is similar to the SQL*PLUS output for UDTs (user types and objects)
  * For RAWs and BLOBs attributes, their binary values are converted to hexadecimal strings
  *
- * @Warning
+ * @warning
  * This convinient method shall not be used when performance matters. It is usually called twice (buffer length 
  * computation) and must also care about quotes within strings.
  *
@@ -14353,7 +14502,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadRun
  *
  * @note
  * This function waits for the given thread to finish
-
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -15062,7 +15211,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetAffectedRows
  * @warning
  * Direct path colmun indexes start at 1.
  * 
- * @Note
+ * @note
  * Errors may happen while data is converted to direct path stream format
  * using OCI_DirPathConvert().
  * When using conversion mode OCI_DCM_DEFAULT, OCI_DirPathConvert() returns
@@ -15096,12 +15245,12 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorColumn
  * @warning
  * Direct path row indexes start at 1.
  * 
- * @Note
+ * @note
  * Errors may happen :
  * - while data is converted to direct path stream format using OCI_DirPathConvert()
  * - while data is loaded to database using OCI_DirPathLoad()
  *
- * @Note
+ * @note
  * When using conversion mode OCI_DCM_DEFAULT, OCI_DirPathConvert() returns
  * OCI_DPR_ERROR on error. OCI_DirPathGetErrorRow() returns the row index that
  * caused the error.

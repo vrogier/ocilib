@@ -262,7 +262,7 @@ boolean OCI_DefineAlloc
 
     if (OCI_CDT_OBJECT == def->col.datatype)
     {
-        def->buf.obj_inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(void *),
+        def->buf.obj_inds = (void **) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(void *),
                                                   (size_t) def->buf.count, TRUE);
         res = (def->buf.obj_inds != NULL);
     }

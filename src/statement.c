@@ -203,7 +203,8 @@ boolean OCI_BindCheck
 
                 if ((OCI_CDT_NUMERIC != bnd->type) &&
                     (OCI_CDT_TEXT    != bnd->type) &&
-                    (OCI_CDT_RAW     != bnd->type))
+                    (OCI_CDT_RAW     != bnd->type)  &&
+                    (OCI_CDT_OBJECT  != bnd->type))
                 {
                     if (ind && *ind != ((sb2) OCI_IND_NULL))
                     {
@@ -215,7 +216,16 @@ boolean OCI_BindCheck
 
                 if (OCI_CDT_OBJECT == bnd->type)
                 {
-                    bnd->buffer.obj_inds[0] = ((OCI_Object *) bnd->input)->tab_ind;
+                   if (*ind != ((sb2) OCI_IND_NULL) && bnd->buffer.data)
+                   {
+                        bnd->buffer.obj_inds[0] = ((OCI_Object *) bnd->input)->tab_ind;
+                   }
+                   else
+                   {
+                       *ind = bnd->buffer.null_inds[0] = OCI_IND_NULL;
+
+                       bnd->buffer.obj_inds[0] = (void* ) &bnd->buffer.null_inds[0];
+                   }
                 }
 
                 if (!res)
@@ -281,7 +291,8 @@ boolean OCI_BindCheck
 
                     if ((OCI_CDT_NUMERIC != bnd->type) &&
                         (OCI_CDT_TEXT    != bnd->type) &&
-                        (OCI_CDT_RAW     != bnd->type))
+                        (OCI_CDT_RAW     != bnd->type) &&
+                        (OCI_CDT_OBJECT  != bnd->type))
                     {
                         if (ind && *ind != ((sb2) OCI_IND_NULL))
                         {
@@ -293,7 +304,16 @@ boolean OCI_BindCheck
 
                     if (OCI_CDT_OBJECT == bnd->type)
                     {
-                        bnd->buffer.obj_inds[j] = ((OCI_Object *) bnd->input[j])->tab_ind;
+                        if (*ind != ((sb2) OCI_IND_NULL) && bnd->buffer.data)
+                        {
+                            bnd->buffer.obj_inds[j] = ((OCI_Object *) bnd->input[j])->tab_ind;
+                        }
+                        else
+                        {
+                            *ind = bnd->buffer.null_inds[j] = OCI_IND_NULL;
+
+                            bnd->buffer.obj_inds[j] = (void* ) &bnd->buffer.null_inds[j];
+                        }
                     }
 
                     if (!res)
@@ -435,7 +455,7 @@ boolean OCI_BindReset
                             {
                                 if (bnd->input)
                                 {
-                                    ((OCI_Object *) bnd->input[j])->tab_ind = bnd->buffer.obj_inds[j];
+                                    ((OCI_Object *) bnd->input[j])->tab_ind = (sb2 *) bnd->buffer.obj_inds[j];
                                 }
                             }
                         }
@@ -673,12 +693,23 @@ boolean OCI_BindData
 
     if (res)
     {
-        if ((OCI_CDT_OBJECT == type) && (!bnd->buffer.obj_inds))
+        if (OCI_CDT_OBJECT == type) 
         {
-            bnd->buffer.obj_inds = (void **) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY,
-                                                         sizeof(void *), nballoc, TRUE);
+            if (!bnd->buffer.obj_inds)
+            {
+                bnd->buffer.obj_inds = (void **) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY,
+                                                             sizeof(void *), nballoc, TRUE);
 
-            res = (bnd->buffer.obj_inds != NULL);
+                res = (bnd->buffer.obj_inds != NULL);
+            }
+
+            if (!bnd->buffer.null_inds)
+            {
+                bnd->buffer.null_inds = (sb2 *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY,
+                                                             sizeof(sb2 *), nballoc, TRUE);
+
+                res = (bnd->buffer.null_inds != NULL);
+            }
         }
     }
 

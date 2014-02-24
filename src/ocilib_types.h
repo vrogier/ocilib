@@ -350,6 +350,7 @@ struct OCI_Buffer
     ub4              count;        /* number of elements in the buffer */
     int              sizelen;      /* size of an element in the lens array */
     void           **obj_inds;     /* array of indicators structure object */
+    sb2             *null_inds;    /* null indicators for objects */
     otext           *tmpbuf;       /* temporary buffer */
     unsigned int     tmpsize;      /* temporary buffer size */
 };
