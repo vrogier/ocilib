@@ -2272,8 +2272,8 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
  *
  * OCILIB supports Oracle XA connectivity. In order to get a connection using
  * the XA interface :
- *  - Pass to the parameter 'db' the value of the 'DB' parameter of the given
- *    XA connection string pased to the Transaction Processing Monitor (TPM)
+ *  - For parameter 'db' : pass the value of the 'DB' parameter of the given
+ *   XA connection string pased to the Transaction Processing Monitor (TPM)
  *  - Pass NULL to the 'user' and 'pwd' parameters
  *  - Pass the value OCI_SESSION_XA to parameter 'mode'
  *
@@ -2296,7 +2296,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
  * @note
  * On success, a local transaction is automatically created and started ONLY for regular 
  * standalone connections and connections retrieved from connection pools.
- * No transaction is created for XA connections or connection retrieved from session pools.
+ * No transaction is created for a XA connection or q connection retrieved from session pools.
  *
  * @return
  * Connection handle on success or NULL on failure
@@ -2715,6 +2715,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTransaction
  * - OCI_10_2
  * - OCI_11_1
  * - OCI_11_2
+ * - OCI_12_1
  *
  */
 
@@ -2972,10 +2973,9 @@ OCI_EXPORT boolean OCI_API OCI_SetTAFHandler
  *
  * @note
  * Default value is 20 (value from Oracle Documentation)
- *"
+ *
  * @warning
  * Requires Oracle Client 9.2 or above
- *
  *
  */
 
@@ -2989,7 +2989,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetStatementCacheSize
  * Set the maximum number of statements to keep in the statement cache
  *
  * @param con   - Connection handle
- * @param value - maximun number of statements in the cache
+ * @param value - maximum number of statements in the cache
  *
  * @warning
  * Requires Oracle Client 9.2 or above
@@ -3520,7 +3520,7 @@ OCI_EXPORT boolean OCI_API OCI_GetAutoCommit
  *
  * @param con     - Connection handle
  * @param timeout - Time that a transaction stays inactive after being stopped
- * @param mode    - Connection mode
+ * @param mode    - Transaction mode
  * @param pxid    - pointer to a global transaction identifier structure
  *
  *
@@ -7610,9 +7610,6 @@ OCI_EXPORT boolean OCI_API OCI_ServerDisableOutput
  * Retrieve one line of the server buffer
  *
  * @param con   - Connection handle
- *
- * @note
- * The current transaction is automatically stopped but the newly assigned is not started or resumed
  *
  * @note
  * Internally, OCILIB gets the server buffer through an array of lines in

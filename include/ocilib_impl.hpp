@@ -444,9 +444,9 @@ inline ostring Exception::GetMessage() const
     return MakeString(OCI_ErrorGetString(*this));
 }
 
-inline unsigned int Exception::GetType() const
+inline Exception::ExceptionType Exception::GetType() const
 {
-    return OCI_ErrorGetType(*this);
+    return (Exception::ExceptionType) OCI_ErrorGetType(*this);
 }
 
 inline int Exception::GetOracleErrorCode() const
@@ -478,15 +478,17 @@ inline unsigned int Exception::GetRow() const
  * Environment
  * --------------------------------------------------------------------------------------------- */
 
-inline void Environment::Initialize(unsigned int mode, ostring libpath)
+inline void Environment::Initialize(Environment::EnvMode mode, ostring libpath)
 {
-    mode |=  OCI_ENV_CONTEXT;
+    unsigned int ociMode =  (unsigned int) mode;
 
-    OCI_Initialize(0, libpath.c_str(),  mode);
+    ociMode |= OCI_ENV_CONTEXT;
+
+    OCI_Initialize(0, libpath.c_str(),  ociMode);
 
     Check();
 
-    GetEnvironmentHandle().Initialize((void *) OCI_HandleGetEnvironment(), mode);
+    GetEnvironmentHandle().Initialize((void *) OCI_HandleGetEnvironment(), ociMode);
 }
 
 inline void Environment::Cleanup()
@@ -498,19 +500,19 @@ inline void Environment::Cleanup()
     Check();
 }
 
-inline unsigned int Environment::GetMode()
+inline Environment::EnvMode Environment::GetMode()
 {
-    return GetEnvironmentHandle().Mode;
+    return (Environment::EnvMode) GetEnvironmentHandle().Mode;
 }
 
-inline unsigned int Environment::GetImportMode()
+inline Environment::ImportMode Environment::GetImportMode()
 {
-    return Check(OCI_GetImportMode());
+    return (Environment::ImportMode) Check(OCI_GetImportMode());
 }
 
-inline unsigned int Environment::GetCharset()
+inline Environment::Charset Environment::GetCharset()
 {
-    return Check(OCI_GetCharset());
+    return (Environment::Charset) Check(OCI_GetCharset());
 }
 
 inline unsigned int Environment::GetCompileVersion()
@@ -530,21 +532,22 @@ inline void Environment::EnableWarnings(bool value)
     Check();
 }
 
-inline void Environment::StartDatabase(ostring db, ostring user, ostring pwd, unsigned int start_flag, unsigned
-                                       int startMode, unsigned int sessMode, ostring spfile)
+inline void Environment::StartDatabase(ostring db, ostring user, ostring pwd, Environment::StartFlag startFlags,
+                                       Environment::StartMode startMode, Environment::SessionMode sessionMode, ostring spfile)
 {
-    Check(OCI_DatabaseStartup(db.c_str(), user.c_str(), pwd.c_str(), sessMode, startMode, start_flag, spfile.c_str() ));
+    Check(OCI_DatabaseStartup(db.c_str(), user.c_str(), pwd.c_str(), (unsigned int) sessionMode,
+                              (unsigned int) startMode, (unsigned int) startFlags, spfile.c_str() ));
 }
 
-inline void Environment::ShutdownDatabase(ostring db, ostring user, ostring pwd, unsigned int shut_flag, unsigned int shutMode,
-                                          unsigned int sessMode)
+inline void Environment::ShutdownDatabase(ostring db, ostring user, ostring pwd, Environment::ShutdownFlag shutdownFlag,
+                                       Environment::ShutdownMode shutdownMode, Environment::SessionMode sessionMode)
 {
-    Check(OCI_DatabaseShutdown(db.c_str(), user.c_str(), pwd.c_str(), sessMode, shutMode, shut_flag ));
+    Check(OCI_DatabaseShutdown(db.c_str(), user.c_str(), pwd.c_str(), (unsigned int) sessionMode, (unsigned int) shutdownMode, (unsigned int) shutdownFlag ));
 }
 
-inline void Environment::ChangeUserPassword(ostring db, ostring user, ostring pwd, ostring newPassword)
+inline void Environment::ChangeUserPassword(ostring db, ostring user, ostring pwd, ostring newPwd)
 {
-    Check(OCI_SetUserPassword(db.c_str(), user.c_str(), pwd.c_str(), newPassword.c_str()));
+    Check(OCI_SetUserPassword(db.c_str(), user.c_str(), pwd.c_str(), newPwd.c_str()));
 }
 
 inline void Environment::SetHAHandler(HAHandlerProc handler)
@@ -707,19 +710,19 @@ inline Pool::Pool()
 
 }
 
-inline Pool::Pool(ostring db, ostring user, ostring pwd, unsigned int poolType,
-        unsigned int minCon, unsigned int maxCon, unsigned int incrCon, unsigned int sessionMode)
+inline Pool::Pool(ostring db, ostring user, ostring pwd, Pool::PoolType poolType,
+        unsigned int minSize, unsigned int maxSize, unsigned int increment, Environment::SessionMode sessionMode)
 {
-    Open(db, user, pwd, poolType, minCon, maxCon, incrCon, sessionMode);
+    Open(db, user, pwd, poolType, minSize, maxSize, increment, sessionMode);
 }
 
-inline void Pool::Open(ostring db, ostring user, ostring pwd, unsigned int poolType,
-            unsigned int minCon, unsigned int maxCon, unsigned int incrCon, unsigned int sessionMode)
+inline void Pool::Open(ostring db, ostring user, ostring pwd, Pool::PoolType poolType,
+            unsigned int minSize, unsigned int maxSize, unsigned int increment, Environment::SessionMode sessionMode)
 {
     Release();
 
-    Acquire(Check(OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionMode,
-            minCon, maxCon, incrCon)), (HandleFreeFunc) OCI_PoolFree, 0);
+    Acquire(Check(OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), (unsigned int) poolType, (unsigned int) sessionMode,
+            minSize, maxSize, increment)), (HandleFreeFunc) OCI_PoolFree, 0);
 }
 
 inline void Pool::Close()
@@ -796,7 +799,7 @@ inline Connection::Connection()
 
 }
 
-inline Connection::Connection(ostring db, ostring user, ostring pwd, unsigned int sessionMode)
+inline Connection::Connection(ostring db, ostring user, ostring pwd, Environment::SessionMode sessionMode)
 {
     Open(db, user, pwd, sessionMode);
 }
@@ -806,9 +809,9 @@ inline Connection::Connection(OCI_Connection *con,  Handle *parent)
     Acquire(con, parent ? (HandleFreeFunc) OCI_ConnectionFree : 0, parent);
 }
 
-inline void Connection::Open(ostring db, ostring user, ostring pwd, unsigned int sessionMode)
+inline void Connection::Open(ostring db, ostring user, ostring pwd, Environment::SessionMode sessionMode)
 {
-    Acquire(Check(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), sessionMode)),
+    Acquire(Check(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), (unsigned int) sessionMode)),
             (HandleFreeFunc) OCI_ConnectionFree, Environment::GetEnvironmentHandle().GetHandle());
 }
 
@@ -817,11 +820,6 @@ inline void Connection::Close()
     Release();
 }
 
-/**
- * @brief
- * Commits changes made since the previous commit or rollback
- *
- */
 inline void Connection::Commit()
 {
     Check(OCI_Commit(*this));
@@ -905,9 +903,9 @@ inline unsigned int Connection::GetServerRevisionVersion() const
     return Check(OCI_GetServerRevisionVersion(*this));
 }
 
-inline void Connection::ChangePassword(ostring newPassword)
+inline void Connection::ChangePassword(ostring newPwd)
 {
-    Check(OCI_SetPassword(*this, newPassword.c_str()));
+    Check(OCI_SetPassword(*this, newPwd.c_str()));
 }
 
 inline ostring Connection::GetSessionTag() const
@@ -980,14 +978,14 @@ inline void Connection::GetServerOutput(std::vector<ostring> &lines) const
     }
 }
 
-inline void Connection::SetTrace(unsigned int trace, ostring value)
+inline void Connection::SetTrace(SessionTrace trace, ostring value)
 {
-    Check(OCI_SetTrace(*this, trace, value.c_str()));
+    Check(OCI_SetTrace(*this, (unsigned int) trace, value.c_str()));
 }
 
-inline ostring Connection::GetTrace(unsigned int trace) const
+inline ostring Connection::GetTrace(SessionTrace trace) const
 {
-    return MakeString(Check(OCI_GetTrace(*this, trace)));
+    return MakeString(Check(OCI_GetTrace(*this, (unsigned int) trace)));
 }
 
 inline ostring Connection::GetDatabase() const
@@ -1032,7 +1030,7 @@ inline void Connection::SetStatementCacheSize(unsigned int value)
 
 inline unsigned int Connection::GetDefaultLobPrefetchSize() const
 {
-    return Check(OCI_GetDefaultLobPrefetchSize  (*this));
+    return Check(OCI_GetDefaultLobPrefetchSize(*this));
 }
 
 inline void Connection::SetDefaultLobPrefetchSize(unsigned int value)
@@ -1054,13 +1052,23 @@ inline void Connection::SetTAFHandler(TAFHandlerProc handler)
     pool.Set((OCI_Connection*) *this, (CallbackPointer) handler);
 }
 
+inline void* Connection::GetUserData()
+{
+    return Check(OCI_GetUserData(*this));
+}
+
+inline void Connection::SetUserData(void *value)
+{
+    Check(OCI_SetUserData(*this, value));
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * Transaction
  * --------------------------------------------------------------------------------------------- */
 
-inline Transaction::Transaction(const Connection &connection, unsigned int timeout, unsigned int mode, OCI_XID *pxid)
+inline Transaction::Transaction(const Connection &connection, unsigned int timeout, TransactionMode mode, OCI_XID *pxid)
 {
-    Acquire(Check(OCI_TransactionCreate(connection, timeout, mode, pxid)), (HandleFreeFunc) OCI_TransactionFree, 0);
+    Acquire(Check(OCI_TransactionCreate(connection, timeout, (unsigned int) mode, pxid)), (HandleFreeFunc) OCI_TransactionFree, 0);
 }
 
 inline Transaction::Transaction(OCI_Transaction *trans)
@@ -1093,9 +1101,9 @@ inline void Transaction::Forget()
     Check(OCI_TransactionForget(*this));
 }
 
-inline unsigned int Transaction::GetMode() const
+inline Transaction::TransactionMode Transaction::GetMode() const
 {
-    return Check(OCI_TransactionGetMode(*this));
+    return (Transaction::TransactionMode) Check(OCI_TransactionGetMode(*this));
 }
 
 inline unsigned int Transaction::GetTimeout() const
@@ -1284,14 +1292,24 @@ inline void Date::SysDate()
    Check(OCI_DateSysDate(*this));
 }
 
-inline void Date::NextDay(ostring day)
+inline Date Date::NextDay(ostring day) const
 {
-   Check(OCI_DateNextDay(*this, day.c_str()));
+    Date date;
+
+    date.Assign(*this);    
+    Check(OCI_DateNextDay(date, day.c_str()));
+
+    return date;   
 }
 
-inline void Date::LastDay()
+inline Date Date::LastDay() const
 {
-    Check(OCI_DateLastDay(*this));
+    Date date;
+
+    date.Assign(*this);
+    Check(OCI_DateLastDay(date));
+
+    return date;
 }
 
 inline void Date::ChangeTimeZone(ostring tzSrc, ostring tzDst)
@@ -2214,6 +2232,19 @@ inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
     Acquire(pTypeInfo, 0, 0);
 }
 
+/**
+ * @brief
+ * Return the type of object
+ *
+ * @note
+ * Possible values for parameter type are :
+ *
+ * - OCI_UNKNOWM
+ * - OCI_TIF_TABLE
+ * - OCI_TIF_VIEW
+ * - OCI_TIF_TYPE
+ *
+ */
 inline unsigned int TypeInfo::GetType() const
 {
     return Check(OCI_TypeInfoGetType(*this));
@@ -2224,6 +2255,11 @@ inline ostring TypeInfo::GetName() const
     return Check(OCI_TypeInfoGetName(*this));
 }
 
+/**
+ * @brief
+ * Return the related connection
+ *
+ */
 inline Connection TypeInfo::GetConnection() const
 {
     return Connection(Check(OCI_TypeInfoGetConnection(*this)), 0);
@@ -4704,6 +4740,28 @@ inline Event::Event(OCI_Event *pEvent)
     Acquire(pEvent, 0, 0);
 }
 
+/**
+ * @brief
+ * Return the type of event reported by a notification
+ *
+ * @note
+ * The returned value can be one of the following values:
+ * - OCI_ENT_STARTUP        : a database has been started up
+ * - OCI_ENT_SHUTDOWN       : a database has been shut down
+ * - OCI_ENT_SHUTDOWN_ANY   : a database has been shut down (RAC)
+ * - OCI_ENT_DROP_DATABASE  : a database has benn dropped
+ * - OCI_ENT_DEREGISTER     : the notification is timed out
+ * - OCI_ENT_OBJECT_CHANGED : a database object has been modified
+ *
+ * @note
+ * - GetDatabase() returns the affected database
+ * - GetObject() returns the affected object ('schema_name'.'object_name')
+ * 
+ * @note
+ * OCI_ENV_EVENTS flag must be passed to Environment::Initialize() to be able to use
+ * subscriptions
+ *
+ */
 inline unsigned int Event::GetType() const
 {
     return Check(OCI_EventGetType(*this));

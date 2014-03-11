@@ -69,8 +69,22 @@ namespace ocilib
  */
 
 /**
- * @defgroup OcilibCppApiDesign Design
+ * @defgroup OcilibCppApiOverview Overview
  * @{
+ * OCILIB ++ is a C++ API for Oracle:
+ *  - Based on STL paradigms (templates, stack objects, ...)
+ *  - Based on design patterns (reference counting, smart pointers, proxyies, singleton, proxies, ...)
+ *  - No dynamic object allocation
+ *  - Implemented as a small set of header files, no library compilation needed
+ *  - Designed on top of OCILIB C API
+ *  - Full C API ported  to C++
+ *  - The only dependences are : STL and OCILIB C API
+ *
+ * @note
+ *  - OCILIB++ wraps the OCILIB C API into C++ objects. 
+ *  - Basically, each C OCILIB object handle has its C++ class counter parts.
+ *  - The whole OCILIB C Documentation (concepts, use cases, features and functionalities) is still valid for OCILIB++
+ *  - Most of the OCILIB++ classes and functions documentation refer to the C documentation
  *
  * @}
  */
@@ -128,18 +142,9 @@ typedef OCI_Thread *        ThreadHandle;
 
 typedef OCI_Mutex *         MutexHandle ;
 
-/**
- * @}
- */
+/* Including core classes  */
 
 #include "ocilib_priv.hpp"
-
-/**
- * @defgroup OcilibCppApiTypes Types
- * @{
-
- *
- */
 
 /**
  * @typedef HAHandlerProc
@@ -190,11 +195,11 @@ typedef void (*NotifyHandlerProc) (Event &evt);
 typedef void (*NotifyAQHandlerProc) (Dequeue &dequeue);
 
 /**
- * @class Exception
- *
  * @brief
+ * Exception class handling all OCILIB erors
  *
  */
+
 class Exception : public HandleHolder<OCI_Error *>
 {
     friend void ocilib::Check();
@@ -202,13 +207,79 @@ class Exception : public HandleHolder<OCI_Error *>
 
 public:
 
-    ostring         GetMessage() const;
-    unsigned int    GetType() const;
-    int             GetOracleErrorCode() const;
-    int             GetInternalErrorCode() const;
-    Statement       GetStatement() const;
-    Connection      GetConnection() const;
-    unsigned int    GetRow() const;
+    /**
+     * @brief 
+     * Type of Exception
+     *
+     */
+    enum ExceptionType
+    {
+        /** Unknown exception type */
+        Unknown = OCI_UNKNOWN,      
+        /** Exception caused by an Oracle error */
+        Oracle  = OCI_ERR_ORACLE,  
+        /** Exception caused by an Ocilib error */
+        Ocilib  = OCI_ERR_OCILIB,  
+        /** Exception caused by an Oracle Warning */
+        Warning = OCI_ERR_WARNING   
+    };
+
+    /**
+     * @brief
+     * Retrieve the error message
+     *
+     */
+    ostring GetMessage() const;
+
+    /**
+     *
+     * @brief 
+     * Return the Exception type
+     *
+     */
+    ExceptionType GetType() const;
+
+    /**
+     * @brief
+     * Return the Oracle error code
+     *
+     */
+    int GetOracleErrorCode() const;
+
+    /**
+     * @brief
+     * Return the OCILIB error code
+     *
+     */
+    int GetInternalErrorCode() const;
+
+    /**
+     * @brief
+     * Return the statement within the error occurred
+     *
+     */
+    Statement GetStatement() const;
+
+    /**
+     * @brief
+     * Return the connection within the error occurred
+     *
+     */
+    Connection GetConnection() const;
+
+    /**
+     * @brief
+     * Return the row index which caused an error during statement execution
+     *
+     * @warning
+     * Row index start at 1.
+     *
+     * @return
+     *  - 0 if the error is not related to array DML 
+     *  - otherwise the index of the given row which caused the error
+     *
+     */
+    unsigned int GetRow() const;
 
 private:
 
@@ -217,9 +288,8 @@ private:
 };
 
 /**
- * @class Environment
- *
  * @brief
+ * Static class in charge of library initialization / cleanup
  *
  */
 class Environment
@@ -232,28 +302,326 @@ class Environment
 
 public:
 
-    static void Initialize(unsigned int mode = OCI_ENV_DEFAULT, ostring libpath = OTEXT(""));
+    /**
+     * @brief 
+     * Type of Exception
+     *
+     */
+    enum EnvMode
+    {
+        /** Default mode */
+        EnvDefault = OCI_ENV_DEFAULT,      
+        /** Enable support for multithreading */
+        EnvThreaded  = OCI_ENV_THREADED,  
+        /** Enable support for events related to subscriptions, HA and AQ notifications */
+        EnvEvents = OCI_ENV_EVENTS   
+    };
+    
+    /**
+     * @brief 
+     * Type of OCI libraries import
+     *
+     */
+    enum ImportMode
+    {
+        /** OCI libraires are linked at compile time */
+        ImportLinkage = OCI_IMPORT_MODE_LINKAGE,      
+       /** OCI libraires are dynamically loaded at runtime */
+        ImportRuntime  = OCI_IMPORT_MODE_RUNTIME  
+    };
+
+    /**
+     * @brief 
+     * Type of Environment charset
+     *
+     */
+    enum Charset
+    {
+        /** Environment is Ansi string or UTF8 string */
+        CharsetAnsi = OCI_CHAR_ANSI,      
+        /** Environment is Unicode using wide character string  */
+        CharsetWide  = OCI_CHAR_WIDE  
+    };
+
+    /**
+     * @brief 
+     * Type of sessions
+     *
+     */
+    enum SessionMode
+    {
+        /** Default session mode */
+        SessionDefault = OCI_SESSION_DEFAULT,      
+        /**  */
+        SessionXa  = OCI_SESSION_XA,  
+        /**  */
+        SessionSysDba = OCI_SESSION_SYSDBA,   
+        /**  */
+        SessionSysOper = OCI_SESSION_SYSOPER
+    };
+
+    /**
+     * @brief 
+    * Oracle instance start modes
+     *
+     */
+    enum StartMode
+    {
+        /** Start the instance wihtout mouting and opening it */
+        StartOnly = OCI_DB_SPM_START,      
+        /** Mount (only) the instance */
+        StartMount  = OCI_DB_SPM_MOUNT,  
+        /** Open (only)  the instance */
+        StartOpen = OCI_DB_SPM_OPEN,   
+        /** Start, mount and open the instance */
+        StartFull = OCI_DB_SPM_FULL
+    };
+
+    /**
+     * @brief 
+     * Oracle instance start flags 
+     *
+     */
+    enum StartFlag
+    {
+        /** Default start flags */
+        StartDefault = OCI_DB_SPF_DEFAULT,      
+        /** Shuts down a running instance (if needed) using ABORT command and starts a new instance */
+        StartForce  = OCI_DB_SPF_FORCE,  
+        /** Allows database access only to users with both CREATE SESSION and RESTRICTED SESSION privileges */
+        StartRestrict = OCI_DB_SPF_RESTRICT   
+    };
+
+
+    /**
+     * @brief 
+    * Oracle instance shutdown modes
+     *
+     */
+    enum ShutdownMode
+    {
+        /** Shutdown the instance */
+        ShutdownOnly = OCI_DB_SDM_SHUTDOWN,      
+        /** Close (only) the instance */
+        ShutdownClose  = OCI_DB_SDM_CLOSE,  
+        /** Dismount (only)  the instance */
+        ShutdownDismount = OCI_DB_SDM_DISMOUNT,   
+        /** Shutdown, close and dismount the instance */
+        ShutdonwFull = OCI_DB_SDM_FULL
+    };
+
+    /**
+     * @brief 
+     * Oracle instance shutdown flags 
+     *
+     */
+    enum ShutdownFlag
+    {
+        /**  - Further connects are prohibited.
+          *  - Waits for users to disconnect from the database */
+        ShutdowntDefault = OCI_DB_SDF_DEFAULT,      
+        /**  - Further connects are prohibited
+          *  - No new transactions are allowed. */
+        ShutdowTrans  = OCI_DB_SDF_TRANS,  
+        /**  - Further connects are prohibited
+          *  - No new transactions are allowed.
+          *  - Waits for active transactions to complete */
+        ShutdownTransLocal = OCI_DB_SDF_TRANS_LOCAL,
+        /**  - Does not wait for current calls to complete or users to disconnect from the database.
+          *  - All uncommitted transactions are terminated and rolled back */
+        ShutdownImmediate = OCI_DB_SDF_IMMEDIATE,      
+        /**  - Does not wait for current calls to complete or users to disconnect from the database.
+          *  - All uncommitted transactions are terminated and are not rolled back.
+          *  - This is the fastest possible way to shut down the database, but the next
+          *    database startup may require instance recovery.
+          *  - Therefore, this option should be used only in unusual circumstances */
+        ShutdownAbort = OCI_DB_SDF_ABORT      
+    };
+ 
+    /**
+     * @brief
+     * Initialize the OCILIB environment
+     *
+     * @param mode         - Environment mode
+     * @param libpath      - Oracle shared library path (optional)
+     *
+     * @note
+     * This function must be called before any other OCILIB library function.
+     * 
+     * @warning
+     * It should be called <b>ONCE</b> per application
+     *
+     * @warning
+     * - The parameter 'libpath' is only used if OCILIB has been built with the option OCI_IMPORT_RUNTIME
+     * - If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables
+     *
+     */
+    static void Initialize(Environment::EnvMode mode = EnvDefault, ostring libpath = OTEXT(""));
+    
+    /**
+     * @brief
+     * Clean up all resources allocated by the environment
+     *
+     * @note
+     * This function must be the last OCILIB library function call.
+     * - It deallocates objects not explicitly freed by the program (connections, statements, ...)
+     * - It unloads the Oracle shared library if it has been dynamically loaded
+     *
+     * @warning
+     * It should be called <b>ONCE</b> per application
+     *
+     */    
     static void Cleanup();
 
-    static unsigned int GetMode();
+    /**
+     * @brief
+     * Return the Enviroment mode flags
+     *
+     * @note
+     * It returns the value of the parameter 'mode' passed to Initialize()
+     *
+     */
+    static Environment::EnvMode GetMode();
 
-    static unsigned int GetImportMode();
+    /**
+     * @brief
+     * Return the Oracle shared library import mode
+     *
+     */
+    static Environment::ImportMode GetImportMode();
 
-    static unsigned int GetCharset();
+    /**
+     * @brief
+     * Return the OCILIB charset type
+     * 
+     */
+    static Environment::Charset GetCharset();
 
+    /**
+     * @brief
+     * Return the version of OCI used for compiling OCILIB
+     *
+     * @note
+     * - with linkage build option, the version is determined from the oci.h header through different ways
+     * - with runtime loading build option, the version is set to the highest version
+     *   of OCI needed by OCILIB, not necessarily the real OCI version
+     *
+     */
     static unsigned int GetCompileVersion();
+
+    /**
+     * @brief
+     * Return the version of OCI used at runtime
+     *
+     * @note
+     * - with linkage build option, the version is determined from the oci.h header through different ways
+     * - with runtime loading build option, the version determined from the symbols dynamically loaded.
+     *
+     */
     static unsigned int GetRuntimeVersion();
 
+    /**
+     * @brief
+     * Enable or disable Oracle warning notifications
+     *
+     * @param value  - enable/disable warnings
+     *
+     * @note
+     * Default value is false
+     *
+     */
     static void EnableWarnings(bool value);
 
-    static void StartDatabase(ostring db, ostring user, ostring pwd, unsigned int start_flag, unsigned int startMode,
-                              unsigned int sessMode = OCI_SESSION_SYSDBA, ostring spfile = OTEXT(""));
+    /**
+     * @brief
+     * Start a database instance
+     *
+     * @param db          - Oracle Service Name
+     * @param user        - Oracle User name
+     * @param pwd         - Oracle User password
+     * @param startFlag   - Start flags
+     * @param startMode   - Start mode
+     * @param sessionMode - Session mode
+     * @param spfile      - Client-side spfile to start up the database (optionnal)
+     *
+     * @note
+     * The only valid modes for sessionMode are SessionSysDba and SessionSysOper.
+     *
+     * @note
+     * Start modes and flags parameters values can be combined.
+     *
+     * @note
+     * External credentials are supported by supplying a empty strings for the 'user' and 'pwd' parameters
+     * If the param 'db' is empty then a connection to the default local DB is done.
+     *
+     * @note
+     * If the client side spfile is not provided, the database is started with its server-side spfile.
+     *
+     */
+    static void StartDatabase(ostring db, ostring user, ostring pwd,
+                              Environment::StartFlag startFlag,
+                              Environment::StartMode startMode,
+                              Environment::SessionMode sessionMode = SessionSysDba,
+                              ostring spfile = OTEXT(""));
 
-    static void ShutdownDatabase(ostring db, ostring user, ostring pwd, unsigned int shut_flag, unsigned int shutMode,
-                              unsigned int sessMode = OCI_SESSION_SYSDBA);
+    /**
+     * @brief
+     * Shutdown a database instance
+     *
+     * @param db            - Oracle Service Name
+     * @param user          - Oracle User name
+     * @param pwd           - Oracle User password
+     * @param shutdownFlag  - Shutdown flag
+     * @param shutdownMode  - Shutdown mode
+     * @param sessionMode   - Session mode
+     *
+     * @note
+     * The only valid modes for sessionMode are SessionSysDba and SessionSysOper.
+     *
+     * @note
+     * Shutdown modes values can be combined.
+     *
+     * @note
+     * Shutdown flag values are exclusive.
+     *
+     * @note
+     * External credentials are supported by supplying a empty strings for the 'user' and 'pwd' parameters
+     * If the param 'db' is empty then a connection to the default local DB is done.
+     *
+     */
+    static void ShutdownDatabase(ostring db, ostring user, ostring pwd, 
+                                 Environment::ShutdownFlag shutdownFlag,
+                                 Environment::ShutdownMode shutdownMode,
+                                 Environment::SessionMode sessionMode = SessionSysDba);
 
-    static void ChangeUserPassword(ostring db, ostring user, ostring pwd, ostring newPassword);
+    /**
+     * @brief
+     * Change the password of the given user on the given database
+     *
+     * @param db      - Oracle Service Name
+     * @param user    - Oracle User name
+     * @param pwd     - Oracle User password
+     * @param newPwd  - Oracle User New password
+     *
+     */
+    static void ChangeUserPassword(ostring db, ostring user, ostring pwd, ostring newPwd);
 
+    /**
+     * @brief
+     * Set the High availabality (HA) user handler
+     *
+     * @param handler - Pointer to HA handler procedure
+     *
+     * @note
+     * See POCI_HA_HANDLER documentation for more details
+     *
+     * @note
+     * EnvMode::Events flag must be passed to Initialize() to be able to use HA events
+     *
+     * @warning
+     * This call is supported from Oracle 10gR2.
+     *
+     */
     static void SetHAHandler(HAHandlerProc handler);
 
 private:
@@ -265,7 +633,6 @@ private:
 
     typedef ConcurrentPool<UnknownHandle, Handle *> HandlePool;
     typedef ConcurrentPool<UnknownHandle, CallbackPointer> CallbackPool;
-
 
     class EnvironmentHandle : public HandleHolder<UnknownHandle>
     {
@@ -284,88 +651,383 @@ private:
     static EnvironmentHandle& GetEnvironmentHandle();
 };
 
-
 /**
- * @class Thread
- *
  * @brief
+ * static class allowing to manipulate threads
+ *
+ * This class wraps methods manipulating OCILIB OCI_Thread objects
+ *
+ * @note
+ * See @ref OcilibCApiThreading for more details on Oracle multithreading support
  *
  */
 class Thread
 {
 public:
+
+    /**
+     * @brief
+     * Create a Thread
+     *
+     * @return
+     * Thread handle on success or NULL on failure
+     *
+     */
     static ThreadHandle Create();
+
+    /**
+     * @brief
+     * Destroy a thread
+     *
+     * @param handle - Thread handle
+     *
+     */
     static void Destroy(ThreadHandle handle);
+
+    /**
+     * @brief
+     * Execute the given routine within the given thread
+     *
+     * @param handle - Thread handle
+     * @param func   - routine to execute
+     * @param args   - parameter to pass to the routine
+     *
+     */
     static void Run(ThreadHandle handle, ThreadProc func, void *args);
+
+    /**
+     * @brief
+     * Join the given thread
+     *
+     * @param handle - Thread handle
+     *
+     * @note
+     * This function waits for the given thread to finish
+     *
+     */
     static void Join(ThreadHandle handle);
 };
 
 /**
- * @class ThreadKey
- *
  * @brief
+ * Static class allowing managing mutexes
+ *
+ * This class wraps methods manipulating OCILIB OCI_Mutex objects
+ *
+ * @note
+ * See @ref OcilibCApiThreading for more details on Oracle multithreading support
  *
  */
 class Mutex
 {
 public:
+
+    /**
+     * @brief
+     * Create a Mutex handle
+     *
+     * @return
+     * Mutex handle on success or NULL on failure
+     *
+     */
     static MutexHandle Create();
+
+    /**
+     * @brief
+     * Destroy a mutex handle
+     *
+     * @param handle - Mutex handle
+     *
+     */
     static void Destroy(MutexHandle handle);
+
+    /**
+     * @brief
+     * Acquire a mutex lock
+     *
+     * @param handle - Mutex handle
+     *
+     */
     static void Acquire(MutexHandle handle);
+
+    /**
+     * @brief
+     * Release a mutex lock
+     *
+     * @param handle - Mutex handle
+     *
+     */
     static void Release(MutexHandle handle);
 };
 
 /**
- * @class ThreadKey
- *
  * @brief
+ * Static class allowing to set/get thread local storage (TLS) values for a given unique key
+ *
+ * This class wraps methods manipulating OCILIB OCI_ThreadKey objects
+ *
+ * @note
+ * See @ref OcilibCApiThreading for more details on Oracle multithreading support
  *
  */
 class ThreadKey
 {
 public:
+
+    /**
+     * @brief
+     * Create a thread key object
+     *
+     * @param name     - Thread key name
+     * @param freeProc - Thread key value destructor function
+     *
+     * @note
+     * Parameter freeProc is optional. It's called when the thread terminates to allow
+     * the program to deal with the thread specific value of the key
+     *
+     */
     static void Create(ostring name, ThreadKeyFreeProc freeProc = 0);
+
+    /**
+     * @brief
+     * Set a thread key value
+     *
+     * @param name  - Thread key name
+     * @param value - user value to set
+     *
+     */
     static void SetValue(ostring name, void *value);
+
+    /**
+     * @brief
+     * Get a thread key value
+     *
+     * @param name - Thread key name
+     *
+     * @return
+     * Thread key value on success otherwise FALSE
+     *
+     */
     static void * GetValue(ostring name);
 };
 
 /**
- * @class Pool
- *
- * @brief
- *
- */
+  * @brief
+  * A connection or session Pool.
+  *
+  * @note
+  * This class wraps methods manipulating OCILIB OCI_Pool objects
+  *
+  */
 class Pool : public HandleHolder<OCI_Pool *>
 {
 public:
 
+    /**
+     * @brief 
+     * Type of Pool
+     *
+     */
+    enum PoolType
+    {
+        /** Pool of Connections */
+        ConnectionPool = OCI_POOL_CONNECTION,      
+        /** Pool of stateless sessions */
+        SessionPool  = OCI_POOL_SESSION
+    };
+
+    /**
+     * @brief
+     * Default constructor
+     *
+     */
     Pool();
-    Pool(ostring db, ostring user, ostring pwd, unsigned int poolType,
-         unsigned int minCon, unsigned int maxCon, unsigned int incrCon = 1,
-         unsigned int sessionMode = OCI_SESSION_DEFAULT);
 
+    /**
+     * @brief
+     * Contructor that creates an underlying pool with the given information
+     *
+     * @param db           - Oracle Service Name
+     * @param user         - Oracle User name
+     * @param pwd          - Oracle User password
+     * @param poolType     - Type of pool
+     * @param sessionMode  - Session mode
+     * @param minSize      - minimum number of  connections/sessions that can be opened.
+     * @param maxSize      - maximum number of  connections/sessions that can be opened.
+     * @param increment    - next increment for connections/sessions to be opened
+     *
+     *  @note
+     * it calls Open() with the given parameters
+     *
+     */
+    Pool(ostring db, ostring user, ostring pwd, Pool::PoolType poolType,
+         unsigned int minSize, unsigned int maxSize, unsigned int increment = 1,
+         Environment::SessionMode sessionMode = Environment::SessionDefault);
 
-    void Open(ostring db, ostring user, ostring pwd, unsigned int poolType,
-              unsigned int minCon, unsigned int maxCon, unsigned int incrCon = 1,
-              unsigned int sessionMode = OCI_SESSION_DEFAULT);
+    /**
+     * @brief
+     * Create an Oracle pool of connections or sessions
+     *
+     * @param db           - Oracle Service Name
+     * @param user         - Oracle User name
+     * @param pwd          - Oracle User password
+     * @param poolType     - Type of pool
+     * @param sessionMode  - Session mode
+     * @param minSize      - minimum number of  connections/sessions that can be opened.
+     * @param maxSize      - maximum number of  connections/sessions that can be opened.
+     * @param increment    - next increment for connections/sessions to be opened
+     *
+     * @note
+     * External credentials are supported by supplying an emtpy string for the 'user' and 'pwd' parameters
+     * If the param 'db' is empty then a connection to the default local DB is done
+     *
+     */
+    void Open(ostring db, ostring user, ostring pwd, Pool::PoolType poolType,
+              unsigned int minSize, unsigned int maxSize, unsigned int increment = 1,
+              Environment::SessionMode sessionMode = Environment::SessionDefault);
+
+    /**
+     * @brief
+     * Destroy the current Oracle pool of connections or sessions
+     *
+     */
     void Close();
 
+    /**
+     * @brief
+     * Get a connection from the pool
+     *
+     * @param sessionTag  - Session user tag string
+     *
+     * @par Session tagging
+     *
+     * Session pools have a nice feature called 'session tagging'
+     * It's possible to tag a session with a string identifier
+     * when the session is returned to the pool, it keeps its tags.
+     * When requesting a connection from the session pool, it's
+     * possible to request a session that has the given 'tag' parameter
+     * If one exists, it is returned. If not and if an untagged session
+     * is available, it is then returned. So check the connection tag
+     * property with OCI_GetSessionTag() to find out if the returned
+     * connection is tagged or not.
+     *
+     * This features is described in the OCI developper guide as the following :
+     *
+     *  "The tags provide a way for users to customize sessions in the pool.
+     *   A client may get a default or untagged session from a pool, set certain
+     *   attributes on the session (such as NLS settings), and return the session
+     *   to the pool, labeling it with an appropriate tag.
+     *   The user may request a session with the same tags in order to have a
+     *   session with the same attributes"
+     *
+     */
     Connection GetConnection(ostring sessionTag = OTEXT(""));
 
+    /**
+     * @brief
+     * Get the idle timeout for connections/sessions in the pool
+     *
+     * @note
+     * Connections/sessions idled for more than this time value (in seconds) are terminated
+     *
+     * @note
+     * Timeout is not available for internal pooling implementation (client < 9i)
+     *
+     */
     unsigned int GetTimeout() const;
+
+    /**
+     * @brief
+     * Set the connections/sessions idle timeout
+     *
+     * @param value - Timeout value
+     *
+     * @note
+     * connections/sessions idle for more than this time value (in seconds) are terminated
+     *
+     * @note
+     * This call has no effect if pooling is internally implemented (client < 9i)
+     *
+     */
     void SetTimeout(unsigned int value);
 
+    /**
+     * @brief
+     * Get the waiting mode used when no more connections/sessions are available from the pool
+     *
+     * @return
+     * - true to wait for an available object if the pool is saturated
+     * - false to not wait for an available object
+     *
+     */
     bool GetNoWait() const;
+
+    /**
+     * @brief
+     * Set the waiting mode used when no more connections/sessions are available from the pool
+     *
+     * @param value - wait for object
+     *
+     * @note
+     * For paramter value, pass :
+     * - true to wait for an available object if the pool is saturated
+     * - false to not wait for an available object
+     *
+     */
     void SetNoWait(bool value);
 
+    /**
+     * @brief
+     * Return the current number of busy connections/sessions
+     *
+     */
     unsigned int GetBusyConnectionsCount() const;
+
+    /**
+     * @brief
+     * Return the current number of opened connections/sessions
+     *
+     */
     unsigned int GetOpenedConnectionsCount() const;
 
+    /**
+     * @brief
+     * Return the minimum number of connections/sessions that can be opened to the database
+     *
+     */
     unsigned int GetMinSize() const;
+
+    /**
+     * @brief
+     * Return the maximum number of connections/sessions that can be opened to the database
+     *
+     */
     unsigned int GetMaxSize() const;
+    
+    /**
+     * @brief
+     * Return the increment for connections/sessions to be opened to the database when the pool is not full
+     *
+     */
     unsigned int GetIncrement() const;
 
+    /**
+     * @brief
+     * Return the maximum number of statements to keep in the pool's statement cache
+     *
+     * @note
+     * Default value is 20 (value from Oracle Documentation)
+     *
+     */
     unsigned int GetStatementCacheSize() const;
+    
+    /**
+     * @brief
+     * Set the maximum number of statements to keep in the pool's statement cache
+     *
+     * @param value - maximun number of statements in the cache
+     *
+     */    
     void SetStatementCacheSize(unsigned int value);
 };
 
@@ -394,84 +1056,624 @@ class Connection : public HandleHolder<OCI_Connection *>
 
 public:
 
-    Connection();
-    Connection(ostring db, ostring user, ostring pwd, unsigned int sessionMode = OCI_SESSION_DEFAULT);
+    /**
+     * @brief 
+     * Type of session trace
+     *
+     */
+    enum SessionTrace
+    {
+        /** Specifies the user defined identifier in the session. It's recorded in the column CLIENT_IDENTIFIER of the system view V$SESSION */
+        TraceIdentity = OCI_TRC_IDENTITY,      
+        /** Name of the current module in the client application. It's recorded in the column MODULE of the system view V$SESSION */
+        TraceModule  = OCI_TRC_MODULE,
+        /** Name of the current action within the current module. It's recorded in the column ACTION of the system view V$SESSION */
+        TraceAction = OCI_TRC_ACTION,      
+        /** Client application additional information. It's recorded in the column CLIENT_INFO of the system view V$SESSION */
+        TraceDetail  = OCI_TRC_DETAIL
+    };
 
-    void Open(ostring db, ostring user, ostring pwd, unsigned int sessionMode = OCI_SESSION_DEFAULT);
+    /**
+     * @brief
+     * Default constructor
+     *
+     */
+    Connection();
+
+    /**
+     * @brief
+     * Contructor that creates an opens an underlying DB connection with the given information
+     *
+     * @param db           - Oracle Service Name
+     * @param user         - Oracle User name
+     * @param pwd          - Oracle User password
+     * @param sessionMode  - Session mode
+     *
+     *  @note
+     * it calls Open() with the given parameters
+     *
+     */
+    Connection(ostring db, ostring user, ostring pwd, Environment::SessionMode sessionMode = Environment::SessionDefault);
+
+    /**
+     * @brief
+     * Create a physical connection to an Oracle database server   
+     *
+     * @param db           - Oracle Service Name
+     * @param user         - Oracle User name
+     * @param pwd          - Oracle User password
+     * @param sessionMode  - Session mode
+     * *
+     * @note
+     * External credentials are supported by supplying an emtpy string for the 'user' and 'pwd' parameters
+     * If the param 'db' is empty then a connection to the default local DB is done
+     *
+     * @par Oracle XA support
+     * OCILIB supports Oracle XA connectivity. In order to get a connection using
+     * the XA interface :
+     *   - For parameter 'db' : pass the value of the 'DB' parameter of the given
+     *    XA connection string pased to the Transaction Processing Monitor (TPM)
+     *   - Pass emtpy strings for 'user' and 'pwd' parameters
+     *   - Use SessionMode:Xa for parameter 'sessionMode'
+     *
+     * @par Oracle XA Connection String
+     *
+     * The XA connection string used in a transaction monitor to connect to Oracle must
+     * be compatible with OCILIB :
+     *   - the XA parameter 'Objects' MUST be set to 'true'
+     *   - If EnvMode::Threaded is passed to Environment::Initialize(), the XA parameter 'Threads' must
+     *     be set to 'true', otherwise to 'false'
+     *   - If EnvMode::Events is passed to Environment::Initialize(), the XA parameter 'Events' must
+     *     be set to 'true', otherwise to 'false'
+     *   - As Oracle does not support Unicode UTF16 characterset through the XA interface,
+     *     Only OCI_CHARSET_ANSI builds of OCILIB can be used
+     *   - You still can use UTF8 if the NLS_LANG environment variable is set with a valid
+     *     UTF8 NLS value
+     *   - DO NOT USE OCI_CHARSET_WIDE OCILIB builds with XA connections
+     *
+     * @note
+     * On success, a local transaction is automatically created and started ONLY for regular 
+     * standalone connections and connections retrieved from connection pools.
+     * No transaction is created for a XA connection or q connection retrieved from session pools.
+     *
+     */
+    void Open(ostring db, ostring user, ostring pwd,  Environment::SessionMode sessionMode = Environment::SessionDefault);
+    
+    /**
+     * @brief
+     * Close the physical connection to the DB server
+     *
+     */
     void Close();
 
+    /**
+     * @brief
+     * Commit current pending changes
+     *
+     */
     void Commit();
+
+   /**
+     * @brief
+     * Cancel current pending changes
+     *
+     */
     void Rollback();
+
+    /**
+     * @brief
+     * Perform an immediate abort of any currently Oracle OCI call on the given connection
+     *
+     * @note
+     * The current call will abort and will raise an exception
+     *
+     */
     void Break();
 
+    /**
+     * @brief
+     * Enable or disable auto commit mode (implicit commits after every SQL execution)
+     *
+     * @param enabled - auto commit new status
+     *
+     */
     void SetAutoCommit(bool enabled);
+
+    /**
+     * @brief
+     * Indicates if autocommit is currently activated
+     *
+     */
     bool GetAutoCommit() const;
 
+    /**
+    * @brief
+    * Indiciated if the connection is still connected to the server 
+    *
+    * @note
+    * the returned value is not realtime and is  based on client libray last heart beat status
+    *
+    */
     bool IsServerAlive() const;
 
+    /**
+     * @brief
+     * Performs a round trip call to the server to confirm that the connection to the server is still valid.
+     *
+     * @warning
+     * This call is supported from Oracle 10g.
+     *
+     */
     bool PingServer() const;
 
+    /**
+     * @brief
+     * Return the name of the connected database/service name
+     *
+     * @note
+     * The returned value is the value of the 'db' parameter of the Open() method
+     *
+     */
     ostring GetConnectionString() const;
+
+    /**
+     * @brief
+     * Return the current logged user name
+     *
+     * @note
+     * The returned value is the value of the 'user' parameter of the Open() method
+     *
+     */
     ostring GetUserName() const;
+
+    /**
+     * @brief
+     * Return the current logged user password
+     *
+     * @note
+     * The returned value is the value of the 'pwd' parameter of the Open() method
+     *
+     */
     ostring GetPassword() const;
 
+    /**
+     * @brief
+     * Return the connected database server string version
+     *
+     * @note
+     * The returned value is the server version banner displayed by SQL*PLUS when connected to a DB server
+     *
+     */
+    ostring GetServerVersion() const;
+
+    /**
+     * @brief
+     * Return the Oracle version supported by the connection
+     *
+     * @note
+     * The supported version is the lower version between client and server:
+     *  - OCI_UNKNOWN
+     *  - OCI_8_0
+     *  - OCI_8_1
+     *  - OCI_9_0
+     *  - OCI_9_2
+     *  - OCI_10_1
+     *  - OCI_10_2
+     *  - OCI_11_1
+     *  - OCI_11_2
+     *  - OCI_12_1
+     *
+     */
     unsigned int GetVersion() const;
 
-    ostring GetServerVersion() const;
+    /**
+     * @brief
+     * Return the major version number of the connected database server
+     *
+     */
     unsigned int GetServerMajorVersion() const;
+
+    /**
+     * @brief
+     * Return the minor version number of the connected database server
+     *
+     */
     unsigned int GetServerMinorVersion() const;
+
+    /**
+     * @brief
+     * Return the revision version number of the connected database server
+     *
+     */
     unsigned int GetServerRevisionVersion() const;
 
-    void ChangePassword(ostring newPassword);
+    /**
+     * @brief
+     * Change the password of the logged user
+     *
+     * @param newPwd - New password
+     *
+     */
+    void ChangePassword(ostring newPwd);
 
+    /**
+     * @brief
+     * Return the tag associated the the given connection
+     *
+     */
     ostring GetSessionTag() const;
+
+    /**
+     * @brief
+     * Associate a tag to the given connection/session
+     *
+     * @param tag - user tag string
+     *
+     * @note
+     * Use this call only for connections retrieved from a session pool
+     * See Pool::GetConnection() for more details
+     *
+     * @note
+     * To untag a session, call SetSessionTag() with an empty 'tag' parameter
+     *
+     */
     void SetSessionTag(ostring tag);
 
+    /**
+     * @brief
+     * Return the current transaction of the connection
+     *
+     */
     Transaction GetTransaction() const;
+
+    /**
+     * @brief
+     * Set a transaction to a connection
+     *
+     * @param transaction - Transaction to assign
+     *
+     * @note
+     * The current transaction (if any) is automatically stopped but the newly assigned is not started or resumed
+     * 
+     * @warning
+     * Do not set a transaction to a XA connection or a connection retrieved from a session pool
+     *
+     */
     void SetTransaction(const Transaction &transaction);
 
+    /**
+     * @brief
+     * Set the date format for implicit string / date conversions
+     *
+     * @param format - Date format
+     *
+     * @note
+     * Default format is 'YYYY-MM-DD' defined by the public constant OCI_STRING_FORMAT_DATE
+     *
+     * @note
+     * Conversions are performed by Oracle builtin functions.
+     * Possible values are string date formats supported by Oracle.
+     * See documentation of Oracle SQL to_date() function for more details
+     *
+     */
     void SetDefaultDateFormat(ostring format);
+
+    /**
+     * @brief
+     * Return the current date format for implicit string / date conversions
+     *
+     * @note
+     *  See SetDefaultDateFormat() for possible values
+     *
+     */
+    ostring  GetDefaultDateFormat() const;
+
+    /**
+     * @brief
+     * Set the numeric format for implicit string / numeric conversions
+     *
+     * @param format - Numeric format
+     *
+     * @note
+     * Conversions are performed by Oracle builtin functions.
+     * Possible format values are the numeric formats supported by Oracle.
+     * See documentation of Oracle SQL to_number() function for more details
+     *
+     * @note
+     * Default format is 'FM99999999999999999999999999999999999990.999999999999999999999999'
+     * defined by the public constant OCI_STRING_FORMAT_NUM
+     * 
+     * @warning
+     * It does not applies to binary double and binary floats data types that
+     * are converted from/to strings using the standard C library
+     *
+     */
     void SetDefaultNumericFormat(ostring format);
 
-    ostring  GetDefaultDateFormat() const;
+    /**
+     * @brief
+     * Return the current numeric format for implicit string / numeric conversions
+     *
+     * @note
+     *  See SetDefaultNumericFormat() for possible values
+     *
+     */
     ostring  GetDefaultNumericFormat() const;
 
+    /**
+     * @brief
+     * Enable the server output
+     *
+     * @param bufsize - server buffer max size (server side)
+     * @param arrsize - number of lines to retrieve per server roundtrip
+     * @param lnsize  - maximum size of one line
+     *
+     * @note
+     * This call is equivalent to the command 'set serveroutput on' in SQL*PLUS
+     *
+     * @note
+     *  - 'bufsize' minimum value is 2000, maximum 1000000 with Oracle < 10.2g and can be unlimited above
+     *  -'lnsize' maximum value is 255 with Oracle < 10g R2 and 32767 above
+     *
+     * @warning
+     * If EnableServerOutput() is not called, GetServerOutput() will return false
+     *
+     */
     void EnableServerOutput(unsigned int bufsize, unsigned int arrsize, unsigned int lnsize);
+
+    /**
+     * @brief
+     * Disable the server output
+     *
+     * @note
+     * After this call, GetServerOutput() will return false.
+     *
+     */
     void DisableServerOutput();
+
+    /**
+     * @brief
+     * Retrieve one line of the server buffer
+     *
+     * @return
+     * true if a line has been retrieved otherwise false (server buffer is empty or all lines have been retrieved)
+     *
+     */
     bool GetServerOutput(ostring &line) const;
+
+    /**
+     * @brief
+     * Retrieve all remaining lines of the server buffer
+     *
+     */
     void GetServerOutput(std::vector<ostring> &lines) const;
 
-    void SetTrace(unsigned int trace, ostring value);
-    ostring GetTrace(unsigned int trace) const;
 
+    /**
+     * @brief
+     * Set tracing information for the session
+     *
+     * @param trace - trace type
+     * @param value - trace content
+     *
+     * Store current trace information to the given connection handle.
+     * These information:
+     *
+     * - is stored in the system view V$SESSION
+     * - can be retrieved from the connection property of an OCI_Error handle
+     *
+     * system view V$SESSION
+     *
+     * @warning
+     * The system view V$SESSION is updated on Oracle versions >= 10g
+     *
+     * @warning
+     * Oracle limits the size of these traces content and thus OCILIB will truncate
+     * the given values if needed :
+     *
+     * - TraceIdentity : 64 bytes
+     * - TraceModule   : 48 bytes
+     * - TraceAction   : 32 bytes
+     * - TraceDetail   : 64 bytes
+     *
+     */
+    void SetTrace(SessionTrace trace, ostring value);
+
+    /**
+     * @brief
+     * Get the current trace for the trace type from the given connection.
+     *
+     * @param trace - trace type
+     *
+     * @note
+     * See SetTrace() for more details.
+     *
+     */
+    ostring GetTrace(SessionTrace trace) const;
+
+    /**
+     * @brief
+     * Return the Oracle server database name of the connected database/service name
+     *
+     * @warning
+     * This call is supported from Oracle 10gR2.
+     *
+     */
     ostring GetDatabase() const;
+
+    /**
+     * @brief
+     * Return the Oracle server Instance name of the connected database/service name
+     *
+     * @warning
+     * This call is supported from Oracle 10gR2.
+     *
+     */
     ostring GetInstance() const;
+
+    /**
+     * @brief
+     * Return the Oracle server Service name of the connected database/service name
+     *
+     * @warning
+     * This call is supported from Oracle 10gR2.
+     *
+     */
     ostring GetService() const;
+
+    /**
+     * @brief
+     * Return the Oracle server Hos name of the connected database/service name
+     *
+     * @warning
+     * This call is supported from Oracle 10gR2.
+     *
+     */
     ostring GetServer() const;
+
+    /**
+     * @brief
+     * Return the Oracle server Domain name of the connected database/service name
+     *
+     * @warning
+     * This call is supported from Oracle 10gR2.
+     *
+     */
     ostring GetDomain() const;
 
+    /**
+     * @brief
+     * Return the date and time (Timestamp) server instance start of the
+     *
+     * @warning
+     * This call is supported from Oracle 10gR2.
+     *
+     */
     Timestamp GetInstanceStartTime() const;
 
+    /**
+     * @brief
+     * Return the maximum number of statements to keep in the statement cache
+     *
+     * @note
+     * Default value is 20 (value from Oracle Documentation)
+     *
+     * @warning
+     * Requires Oracle Client 9.2 or above
+     *
+     */
     unsigned int GetStatementCacheSize() const;
+
+    /**
+     * @brief
+     * Set the maximum number of statements to keep in the statement cache
+     *
+     * @param value - maximum number of statements in the cache
+     *
+     * @warning
+     * Requires Oracle Client 9.2 or above
+     *
+     */
     void SetStatementCacheSize(unsigned int value);
 
+    /**
+     * @brief
+     * Return the default LOB prefetch buffer size for the connection
+     * 
+     * @warning
+     * Requires Oracle Client AND Server 11gR1 or above
+     *
+     * @note 
+     * Prefetch size is:
+     * - number of bytes for BLOBs and BFILEs
+     * - number of characters for CLOBs.
+     *
+     * @note
+     * Default is 0 (prefetching disabled)
+     *
+     */
     unsigned int GetDefaultLobPrefetchSize() const;
+
+    /**
+     * @brief
+     * Enable or disable prefetching for all LOBs fetched in the connection
+     *
+     * @param value - default prefetch buffer size
+     *
+     * @note
+     * If parameter 'value':
+     * - is == 0, it disables prefetching for all LOBs fetched in the connection.
+     * - is >  0, it enables prefetching for all LOBs fetched in the connection 
+     * and the given buffer size is used for prefetching LOBs
+     *
+     * @note
+     * LOBs prefetching is disabled by default
+     *
+     * @warning
+     * Requires Oracle Client AND Server 11gR1 or above.
+     *
+     * @note 
+     * Prefetch size is:
+     * - number of bytes for BLOBs and BFILEs
+     * - number of characters for CLOBs.
+     *
+     */
     void SetDefaultLobPrefetchSize(unsigned int value);
 
+    /**
+     * @brief
+     * Verifiy if the connection support TAF events
+     *
+     * @warning
+     * This call is supported from Oracle 10gR2.
+     *
+     */
     bool IsTAFCapable() const;
 
+    /**
+     * @brief
+     * Set the Transparent Application Failover (TAF) user handler
+     *
+     * @param handler - Pointer to TAF handler procedure
+     *
+     * @note
+     * See TAFHandlerProc documentation for more details
+     *
+     * @warning
+     * This call is supported from Oracle 10gR2.
+     *
+     */
     void SetTAFHandler(TAFHandlerProc handler);
+
+    /**
+     * @brief
+     * Return the pointer to user data previously associated with the connection
+     *
+     */
+    void * GetUserData();
+
+    /**
+     * @brief
+     * Associate a pointer to user data to the given connection
+     *
+     * @param value - User data pointer
+     *
+     * @return
+     * TRUE on success otherwise FALSE
+     *
+     */
+    void SetUserData(void *value);
 
 private:
 
     Connection(OCI_Connection *con, Handle *parent);
-
 };
 
 /**
  * @class Transaction
  *
  * @brief
+ * Oracle Transaction object
  *
  */
 class Transaction : public HandleHolder<OCI_Transaction *>
@@ -480,15 +1682,92 @@ class Transaction : public HandleHolder<OCI_Transaction *>
 
 public:
 
-   Transaction(const Connection &connection, unsigned int timeout, unsigned int mode, OCI_XID *pxid);
+    /**
+     * @brief 
+     * Transaction mode
+     *
+     */
+    enum TransactionMode
+    {
+        /** (Global) Specifies tightly coupled and migratable branch */
+        TransactionNew = OCI_TRS_NEW,      
+        /** (Global) Specifies a tightly coupled branch */
+        TransactionTight  = OCI_TRS_TIGHT,
+        /** (Global) Specifies a loosely coupled branch */
+        TransactionLoose = OCI_TRS_LOOSE,      
+        /** (Global and local) start a read-only transaction */
+        TransactionReadOnly  = OCI_TRS_READONLY,
+        /** (Global and local) start a read-write transaction */
+        TransactionReadWrite = OCI_TRS_READWRITE,      
+        /** (Global and local) start a serializable transaction */
+        TransactionSerializable  = OCI_TRS_SERIALIZABLE
+    };
 
+    /**
+     * @brief
+     * Create a new global transaction or a serializable/read-only local transaction
+     *
+     * @param connection - Connection
+     * @param timeout    - Time that a transaction stays inactive after being stopped
+     * @param mode       - Transaction mode
+     * @param pxid       - pointer to a global transaction identifier structure
+     *
+     * @note
+     * For local transaction,  don't use the 'pxid' parameter
+     *
+     */
+   Transaction(const Connection &connection, unsigned int timeout, TransactionMode mode, OCI_XID *pxid = NULL);
+
+   /**
+     * @brief
+     * Prepare a global transaction validation
+     *
+     */
    void Prepare();
+
+   /**
+     * @brief
+     * Start global transaction
+     *
+     */
    void Start();
+
+    /**
+     * @brief
+     * Stop current global transaction
+     *
+     */
    void Stop();
+
+    /**
+     * @brief
+     * Resume a stopped global transaction
+     *
+     */
    void Resume();
+
+    /**
+     * @brief
+     * Cancel the prepared global transaction validation
+     *
+     */
    void Forget();
 
-   unsigned int GetMode() const;
+    /**
+     * @brief
+     * Return the transaction mode.
+     *
+     * @note:
+     * see Transaction() for possible values
+     *
+     */
+   Transaction::TransactionMode GetMode() const;
+
+   /**
+     * @brief
+     * Return the transaction Timeout
+     *
+     */
    unsigned int GetTimeout() const;
 
 private:
@@ -513,62 +1792,330 @@ class Date : public HandleHolder<OCI_Date *>
     friend class Message;
 
 public:
-
+    
+    /**
+     * @brief
+     * Create an empty date object
+     *
+     */
     Date();
 
+    /**
+     * @brief
+     * Assign the value of the given date
+     *
+     * @param other - Source Date handle
+     *
+     */
     void Assign(const Date& other);
-    int Compare(const Date& other) const;
 
+    /**
+     * @brief
+     * Check if the given date is valid
+     *
+     */
     bool IsValid() const;
 
+    /**
+     * @brief
+     * Return the date year value
+     *
+     */
     int GetYear() const;
+
+    /**
+     * @brief
+     * Set the date year value
+     *
+     */
     void SetYear(int value);
  
+    /**
+     * @brief
+     * Return the date month value
+     *
+     */
     int GetMonth() const;
+
+    /**
+     * @brief
+     * Set the date month value
+     *
+     */
     void SetMonth(int value);
 
+    /**
+     * @brief
+     * Return the date day value
+     *
+     */
     int GetDay() const;
+
+    /**
+     * @brief
+     * Set the date day value
+     *
+     */
     void SetDay(int value);
  
+    /**
+     * @brief
+     * Return the date hours value
+     *
+     */
     int GetHours() const;
+
+    /**
+     * @brief
+     * Set the date hours value
+     *
+     */
     void SetHours(int value);
   
+    /**
+     * @brief
+     * Return the date minutes value
+     *
+     */
     int GetMinutes() const;
+
+    /**
+     * @brief
+     * Set the date minutes value
+     *
+     */
     void SetMinutes(int value);
 
+    /**
+     * @brief
+     * Return the date seconds value
+     *
+     */
     int GetSeconds() const;
+
+    /**
+     * @brief
+     * Set the date seconds value
+     *
+     */
     void SetSeconds(int value);
 
+    /**
+     * @brief
+     * Return the number of days with the given date
+     *
+     * @param other - date to compare
+     *
+     */
     int DaysBetween(const Date& other) const;
 
+    /**
+     * @brief
+     * Set the date part
+     *
+     * @param year  - Year value
+     * @param month - Month value
+     * @param day   - Day value
+     *
+     */
     void SetDate(int year, int month, int day);
+
+    /**
+     * @brief
+     * Set the time part
+     *
+     * @param hour  - Hour value
+     * @param min   - Minute value
+     * @param sec   - Second value
+     *
+     */
     void SetTime(int hour, int min,   int sec);
+
+    /**
+     * @brief
+     * Set the date and time part
+     *
+     * @param year  - Year value
+     * @param month - Month value
+     * @param day   - Day value
+     * @param hour  - Hour value
+     * @param min   - Minute value
+     * @param sec   - Second value
+     *
+     */
     void SetDateTime(int year, int month, int day, int hour, int min, int sec);
 
+    /**
+     * @brief
+     * Extract the date parts
+     *
+     * @param year  - Place holder for year value
+     * @param month - Place holder for month value
+     * @param day   - Place holder for day value
+     *
+     */
     void GetDate(int *year, int *month, int *day) const;
+
+    /**
+     * @brief
+     * Extract time parts
+     *
+     * @param hour  - Place holder for hour value
+     * @param min   - Place holder for minute value
+     * @param sec   - Place holder for second value
+     *
+     */
     void GetTime(int *hour, int *min,   int *sec) const;
+
+    /**
+     * @brief
+     * Extract the date and time parts
+     *
+     * @param year  - Place holder for year value
+     * @param month - Place holder for month value
+     * @param day   - Place holder for day value
+     * @param hour  - Place holder for hour value
+     * @param min   - Place holder for minute value
+     * @param sec   - Place holder for second value
+     *
+     */
     void GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec) const;
 
+    /**
+     * @brief
+     * Add or subtract days
+     *
+     * @param nb   - Number of days to add/remove
+     *
+     */
     void AddDays(int days);
+
+    /**
+     * @brief
+     * Add or subtract months
+     *
+     * @param nb   - Number of months to add/remove
+     *
+     */
     void AddMonths(int months);
 
+    /**
+     * @brief
+     * Assign the current system datetime to the current date object
+     *
+     */
     void SysDate();
-    void NextDay(ostring day);
-    void LastDay();
 
+    /**
+     * @brief
+     *  Return the date of next day of the week, after the current date object
+     *
+     * @param day - Day of the week
+     *
+     */
+    Date NextDay(ostring day) const;
+
+    /**
+     * @brief
+     * Return the last day of month from the current date object
+     *
+     */
+    Date LastDay() const;
+
+    /**
+     * @brief
+     * Convert the date from one zone to another zone
+     *
+     * @param tzSrc - Source zone
+     * @param tzDst - Destination zone
+     *
+     */
     void ChangeTimeZone(ostring tzSrc, ostring tzDst);
+
 
     void FromString(ostring data, ostring format = OCI_STRING_FORMAT_DATE);
     ostring ToString(ostring format = OCI_STRING_FORMAT_DATE) const;
 
     operator ostring() const;
+
+    /**
+     * @brief
+     * Increment the date by 1 day
+     *
+     * @note
+     * This operator overload calls AddDays()  
+     *
+     */
 	Date& operator ++ (int);  
+
+    /**
+     * @brief
+     * Decrement the date by 1 day
+     *
+     * @note
+     * This operator overload calls AddDays()  
+     *
+     */
 	Date& operator -- (int);  
+
+    /**
+     * @brief
+     * Assign the given date object
+     *
+     * @note
+     * This operator overload calls Assign()  
+     *
+     */
 	Date& operator = (const Date& other);
+
+    /**
+     * @brief
+     * Increment the date by the given number of days
+     *
+     * @note
+     * This operator overload calls AddDays()  
+     *
+     */
 	Date& operator + (int val);
+
+    /**
+     * @brief
+     * Decrement the date by the given number of days
+     *
+     * @note
+     * This operator overload calls AddDays()  
+     *
+     */
 	Date& operator - (int val);
+
+    /**
+     * @brief
+     * Increment the date by the given number of days
+     *
+     * @note
+     * This operator overload calls AddDays()  
+     *
+     */
 	Date& operator += (int val);
+
+    /**
+     * @brief
+     * Decrement the date by the given number of days
+     *
+     * @note
+     * This operator overload calls AddDays()  
+     *
+     */
 	Date& operator -= (int val);
+
+    /**
+     * @brief
+     * Decrement the date by the given number of days
+     *
+     * @note
+     * This operator overload calls AddDays()  
+     *
+     */
 	bool operator == (const Date& other) const;
 	bool operator != (const Date& other) const;			
 	bool operator > (const Date& other) const;
@@ -577,6 +2124,8 @@ public:
 	bool operator <= (const Date& other) const;
 
 private:
+
+    int Compare(const Date& other) const;
 
     Date(OCI_Date *pDate, Handle *parent = 0);
 };
@@ -886,7 +2435,7 @@ private:
  * @class TypeInfo
  *
  * @brief
- *
+ *vsdgfdgfdhgdfhgfdgd
  */
 class TypeInfo : public HandleHolder<OCI_TypeInfo *>
 {
@@ -1435,7 +2984,7 @@ private:
  * @class Event
  *
  * @brief
- *
+ *dfsdgfsdgsdgsdgsdgsd
  */
 class Event : public HandleHolder<OCI_Event *>
 {
