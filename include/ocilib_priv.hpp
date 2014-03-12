@@ -156,7 +156,7 @@ private:
 
     typedef std::map< TKey, TValue > ConcurrentPoolMap;
 
-    ConcurrentPoolMap _map;
+    ConcurrentPoolMap  _map;
     MutexHandle _mutex;
 
     void Lock() const;

@@ -10,8 +10,8 @@ using namespace ocilib;
 #define WaitForDatabase() sleep(60)
 
 
-static std::map<unsigned int, mstring> EventNames;
-static std::map<unsigned int, mstring> ActionNames;
+static std::map<unsigned int, ostring> EventTypes;
+static std::map<unsigned int, ostring> ObjectEvents;
 
 void EventHandler(Event &evt);
 void SetupNames();
@@ -21,9 +21,9 @@ int main(int argc, char* argv[])
     SetupNames();
     try
     {
-        Environment::Initialize(OCI_ENV_EVENTS);
+        Environment::Initialize(Environment::EnvEvents);
 
-        Connection con("xe", "usr", "pwd");
+        Connection con("db", "usr", "pwd");
         con.SetAutoCommit(true);
 
         Statement st(con);      
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
         st.Execute("create table table2(str varchar2(10))");
 
         Subscription sub;
-        sub.Register(con, "sub-00", OCI_CNT_ALL, EventHandler, 5468, 0);
+        sub.Register(con, "sub-00", Subscription::AllChanges, EventHandler, 5468, 0);
         sub.Watch("select * from table1");
         sub.Watch("select * from table2");
 
@@ -52,10 +52,11 @@ int main(int argc, char* argv[])
 
         con.Close();      
 
-        Environment::ShutdownDatabase("xe", "sys", "sys", OCI_DB_SDF_IMMEDIATE, OCI_DB_SDM_FULL, OCI_SESSION_SYSDBA);
-        WaitForDatabase();
+        /* start remote instance */
+        Environment::StartDatabase("db", "sys_usr", "sys_pwd", Environment::StartForce, Environment::StartFull);
 
-        Environment::StartDatabase("xe", "sys", "sys", OCI_DB_SPF_FORCE, OCI_DB_SPM_FULL, OCI_SESSION_SYSDBA);
+        /* shutdown remote instance */
+        Environment::ShutdownDatabase("db", "sys_usr", "sys_pwd", Environment::ShutdownAbort, Environment::ShutdownFull);
         WaitForDatabase();
 
         sub.Unregister();
@@ -71,32 +72,32 @@ int main(int argc, char* argv[])
 
 void SetupNames()
 {
-    EventNames[ OCI_ENT_STARTUP         ] = "Startup";
-    EventNames[ OCI_ENT_SHUTDOWN        ] = "Shutdown";
-    EventNames[ OCI_ENT_SHUTDOWN_ANY    ] = "Shutdown Any";
-    EventNames[ OCI_ENT_DROP_DATABASE   ] = "Drop Database";
-    EventNames[ OCI_ENT_DEREGISTER      ] = "Deregister";
-    EventNames[ OCI_ENT_OBJECT_CHANGED  ] = "Object Changed";
+    EventTypes[ Event::DatabaseStart       ] = "Startup";
+    EventTypes[ Event::DatabaseShutdown    ] = "Shutdown";
+    EventTypes[ Event::DatabaseShutdownAny ]= "Shutdown Any";
+    EventTypes[ Event::DatabaseDrop        ] = "Drop Database";
+    EventTypes[ Event::Unregister          ] = "Unregister";
+    EventTypes[ Event::ObjectChanged       ] = "Object Changed";
 
-    ActionNames[ OCI_ONT_INSERT         ] = "Insert";
-    ActionNames[ OCI_ONT_UPDATE         ] = "Update";
-    ActionNames[ OCI_ONT_DELETE         ] = "Delete";
-    ActionNames[ OCI_ONT_ALTER          ] = "Alter";
-    ActionNames[ OCI_ONT_DROP           ] = "Drop";
-    ActionNames[ OCI_ONT_GENERIC        ] = "Generic";
+    ObjectEvents[ Event::ObjectInserted    ] = "Insert";
+    ObjectEvents[ Event::ObjectUpdated     ] = "Update";
+    ObjectEvents[ Event::ObjectDeleted     ] = "Delete";
+    ObjectEvents[ Event::ObjectAltered     ] = "Alter";
+    ObjectEvents[ Event::ObjectDropped     ] = "Drop";
+    ObjectEvents[ Event::ObjectGeneric     ] = "Generic";
 }
 
 void EventHandler(Event &evt)
 {
     std::cout << "** Notification : " << evt.GetSubscription().GetName() << std::endl;
     std::cout << "** Database     : " << evt.GetDatabaseName()           << std::endl;
-    std::cout << "** Event        : " << EventNames[evt.GetType()]       << std::endl;
+    std::cout << "** Event        : " << EventTypes[evt.GetType()]       << std::endl;
     
     if (evt.GetType() == OCI_ENT_OBJECT_CHANGED)
     {
-        std::cout << ".... Object : " << evt.GetObjectName()             << std::endl;
-        std::cout << ".... Action : " << ActionNames[evt.GetOperation()] << std::endl;
-        std::cout << ".... RowID  : " << evt.GetRowID()                  << std::endl;
+        std::cout << ".... Object : " << evt.GetObjectName()                << std::endl;
+        std::cout << ".... Action : " << ObjectEvents[evt.GetObjectEvent()] << std::endl;
+        std::cout << ".... RowID  : " << evt.GetRowID()                     << std::endl;
     }
 
     std::cout << std::endl;

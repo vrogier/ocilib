@@ -108,7 +108,7 @@ typedef std::basic_string<otext, std::char_traits<otext>, std::allocator<otext> 
  * Alias for the generic void pointer
  */
 
-typedef void *              BufferPointer;
+typedef void * BufferPointer;
 
 /**
  * @typedef UnknownHandle
@@ -116,23 +116,7 @@ typedef void *              BufferPointer;
  * Alias used for manipulating unknown handle types
  */
 
-typedef void *              UnknownHandle;
-
-/**
- * @typedef CallbackPointer
- * @brief
- * Alias used for storing user callback method pointers
- */
-
-typedef void *              CallbackPointer;
-
-/**
- * @typedef ThreadHandle
- * @brief
- * Alias for an OCI_Thread pointer
- */
-
-typedef OCI_Thread *        ThreadHandle;
+typedef void * UnknownHandle;
 
 /**
  * @typedef MutexHandle
@@ -140,59 +124,27 @@ typedef OCI_Thread *        ThreadHandle;
  * Alias for an OCI_Mutex pointer
  */
 
-typedef OCI_Mutex *         MutexHandle ;
+typedef OCI_Mutex *  MutexHandle ;
+
+/**
+ * @typedef ThreadHandle
+ * @brief
+ * Alias for an OCI_Thread pointer
+ */
+
+typedef OCI_Thread * ThreadHandle;
+
+/**
+ * @typedef CallbackPointer
+ * @brief
+ * Alias used for storing user callback method pointers
+ */
+
+typedef void * CallbackPointer;
 
 /* Including core classes  */
 
 #include "ocilib_priv.hpp"
-
-/**
- * @typedef HAHandlerProc
- *
- * @brief
- *
- */
-typedef POCI_THREAD         ThreadProc;
-
-/**
- * @typedef HAHandlerProc
- *
- * @brief
- *
- */
-typedef POCI_THREADKEYDEST  ThreadKeyFreeProc;
-
-/**
- * @typedef HAHandlerProc
- *
- * @brief
- *
- */
-typedef void (*HAHandlerProc) (Connection &con, unsigned int source, unsigned int event, Timestamp  &time);
-
-/**
- * @typedef TAFHandlerProc
- *
- * @brief
- *
- */
-typedef unsigned int (*TAFHandlerProc) (Connection &con, unsigned int type, unsigned int event);
-
-/**
- * @typedef NotifyHandlerProc
- *
- * @brief
- *
- */
-typedef void (*NotifyHandlerProc) (Event &evt);
-
-/**
- * @typedef NotifyHandlerProc
- *
- * @brief
- *
- */
-typedef void (*NotifyAQHandlerProc) (Dequeue &dequeue);
 
 /**
  * @brief
@@ -302,6 +254,31 @@ class Environment
 
 public:
 
+    enum HAEventSource
+    {
+        SourceInstance = OCI_HES_INSTANCE,                   
+        SourceDatabase = OCI_HES_DATABASE,                  
+        SourceNode = OCI_HES_NODE,                        
+        SourceService = OCI_HES_SERVICE,                     
+        SourceServiceMember = OCI_HES_SERVICE_MEMBER,              
+        SourceASMInstance = OCI_HES_ASM_INSTANCE,                
+        SourcePreCOnnect = OCI_HES_PRECONNECT
+    };
+
+    enum HAEventType
+    {
+        EventDown = OCI_HET_DOWN,                   
+        EventUp = OCI_HET_UP
+    };
+
+    /**
+     * @typedef HAHandlerProc
+     *
+     * @brief
+     *
+     */
+    typedef void (*HAHandlerProc) (Connection &con, HAEventSource eventSource, HAEventType eventType, Timestamp  &time);
+    
     /**
      * @brief 
      * Type of Exception
@@ -392,7 +369,6 @@ public:
         StartRestrict = OCI_DB_SPF_RESTRICT   
     };
 
-
     /**
      * @brief 
     * Oracle instance shutdown modes
@@ -407,7 +383,7 @@ public:
         /** Dismount (only)  the instance */
         ShutdownDismount = OCI_DB_SDM_DISMOUNT,   
         /** Shutdown, close and dismount the instance */
-        ShutdonwFull = OCI_DB_SDM_FULL
+        ShutdownFull = OCI_DB_SDM_FULL
     };
 
     /**
@@ -436,6 +412,13 @@ public:
           *    database startup may require instance recovery.
           *  - Therefore, this option should be used only in unusual circumstances */
         ShutdownAbort = OCI_DB_SDF_ABORT      
+    };
+
+    enum CharsetForm
+    {
+        CharsetFormUnknown = OCI_UNKNOWN,
+        CharsetFormDefault = OCI_CSF_DEFAULT,
+        CharsetFormNational = OCI_CSF_NATIONAL
     };
  
     /**
@@ -666,6 +649,14 @@ class Thread
 public:
 
     /**
+     * @typedef ThreadProc
+     *
+     * @brief
+     *
+     */
+    typedef POCI_THREAD ThreadProc;
+
+    /**
      * @brief
      * Create a Thread
      *
@@ -775,6 +766,14 @@ class ThreadKey
 public:
 
     /**
+     * @typedef ThreadKeyFreeProc
+     *
+     * @brief
+     *
+     */
+    typedef POCI_THREADKEYDEST ThreadKeyFreeProc;
+
+    /**
      * @brief
      * Create a thread key object
      *
@@ -830,6 +829,7 @@ public:
      */
     enum PoolType
     {
+        UnknownPool = OCI_UNKNOWN,   
         /** Pool of Connections */
         ConnectionPool = OCI_POOL_CONNECTION,      
         /** Pool of stateless sessions */
@@ -1055,6 +1055,36 @@ class Connection : public HandleHolder<OCI_Connection *>
     friend class Subscription;
 
 public:
+    
+    enum FailoverRequest
+    {
+        FailoverRequestNone = OCI_FOT_NONE,                   
+        FailoverRequestSession = OCI_FOT_SESSION,  
+        FailoverRequestSelect = OCI_FOT_SELECT
+    };
+
+    enum FailoverEvent
+    {
+        FailoverEventEnd = OCI_FOE_END,                   
+        FailoverEventAbort = OCI_FOE_ABORT,
+        FailoverEventReauthentificate = OCI_FOE_REAUTH,                        
+        FailoverEventBegin = OCI_FOE_BEGIN,                     
+        FailoverEventError = OCI_FOE_ERROR
+    };
+
+    enum FailoverResult
+    {
+        FailoverOk = OCI_FOC_OK,                   
+        FailoverRetry = OCI_FOC_RETRY
+    };
+
+    /**
+     * @typedef TAFHandlerProc
+     *
+     * @brief
+     *
+     */
+    typedef FailoverResult (*TAFHandlerProc) (Connection &con, FailoverRequest failoverRequest, FailoverEvent failoverEvent);
 
     /**
      * @brief 
@@ -1063,6 +1093,7 @@ public:
      */
     enum SessionTrace
     {
+        TraceUnknown = OCI_UNKNOWN,   
         /** Specifies the user defined identifier in the session. It's recorded in the column CLIENT_IDENTIFIER of the system view V$SESSION */
         TraceIdentity = OCI_TRC_IDENTITY,      
         /** Name of the current module in the client application. It's recorded in the column MODULE of the system view V$SESSION */
@@ -1689,6 +1720,7 @@ public:
      */
     enum TransactionMode
     {
+        TransactionUnknown = OCI_UNKNOWN,   
         /** (Global) Specifies tightly coupled and migratable branch */
         TransactionNew = OCI_TRS_NEW,      
         /** (Global) Specifies a tightly coupled branch */
@@ -2148,12 +2180,24 @@ class Interval : public HandleHolder<OCI_Interval *>
 
 public:
 
-    Interval(unsigned int type);
+    /**
+     * @brief 
+     * IntervalType
+     *
+     */
+    enum IntervalType
+    {
+        Unknown = OCI_UNKNOWN,   
+        YearMonth = OCI_INTERVAL_YM,
+        DaySecond = OCI_INTERVAL_DS 
+    };
+
+    Interval(IntervalType type);
 
     void Assign(const Interval& other);
     int Compare(const Interval& other) const;
 
-    unsigned int GetType() const;
+    IntervalType GetType() const;
 
     void Add(const Interval& other);
     void Substract(const Interval& other);
@@ -2218,12 +2262,20 @@ class Timestamp : public HandleHolder<OCI_Timestamp *>
 
 public:
 
-    Timestamp(unsigned int type);
+    enum TimestampType
+    {
+        Unknown = OCI_UNKNOWN,   
+        NoTimeZone = OCI_TIMESTAMP,
+        WithTimeZone = OCI_TIMESTAMP_TZ ,
+        WithLocalTimeZone = OCI_TIMESTAMP_LTZ 
+    };
+
+    Timestamp(TimestampType type);
 
     void Assign(const Timestamp& other);
     int Compare(const Timestamp& other) const;
 
-    unsigned int GetType() const;
+    TimestampType GetType() const;
 
     void Construct(int year, int month, int day, int hour, int min, int sec, int fsec, ostring timeZone = OTEXT(""));
     void Convert(const Timestamp& other);
@@ -2292,12 +2344,25 @@ class Clob : public HandleHolder<OCI_Lob *>
 
 public:
 
+    enum SeekMode
+    {
+        SeekSet = OCI_SEEK_SET,
+        SeelEnd = OCI_SEEK_END,
+        SeekCurrent = OCI_SEEK_CUR
+    };
+
+    enum OpenMode
+    {
+        OpenReadOnly = OCI_LOB_READONLY,
+        OpenReadWrite = OCI_LOB_READWRITE,
+    };
+
     Clob(const Connection &connection);
 
     ostring Read(unsigned int size);
     unsigned int Write(ostring content);
     unsigned int Append(ostring content);
-    bool Seek(unsigned int seekMode, big_uint offset);
+    bool Seek(SeekMode seekMode, big_uint offset);
 
     void Append(const Clob &other);
     void Assign(const Clob &other);
@@ -2314,7 +2379,7 @@ public:
 
     bool IsTemporary() const;
 
-    void Open(unsigned int mode);
+    void Open(OpenMode mode);
     void Flush();
     void Close();
 
@@ -2348,12 +2413,26 @@ class Blob : public HandleHolder<OCI_Lob *>
 
 public:
 
+    enum SeekMode
+    {
+        SeekSet = OCI_SEEK_SET,
+        SeelEnd = OCI_SEEK_END,
+        SeekCurrent = OCI_SEEK_CUR
+    };
+
+    enum OpenMode
+    {
+        OpenReadOnly = OCI_LOB_READONLY,
+        OpenReadWrite = OCI_LOB_READWRITE,
+    };
+
+
     Blob(const Connection &connection);
 
     unsigned int Read(void *buffer, unsigned int size);
     unsigned int Write(void *buffer, unsigned int size);
     unsigned int Append(void *buffer, unsigned int size);
-    bool Seek(unsigned int seekMode, big_uint offset);
+    bool Seek(SeekMode seekMode, big_uint offset);
 
     void Append(const Blob &other);
     void Assign(const Blob &other);
@@ -2370,7 +2449,7 @@ public:
 
     bool IsTemporary() const;
 
-    void Open(unsigned int mode);
+    void Open(OpenMode mode);
     void Flush();
     void Close();
 
@@ -2403,11 +2482,18 @@ class File : public HandleHolder<OCI_File *>
 
 public:
 
+    enum SeekMode
+    {
+        SeekSet = OCI_SEEK_SET,
+        SeelEnd = OCI_SEEK_END,
+        SeekCurrent = OCI_SEEK_CUR
+    };
+
     File(const Connection &connection);
     File(const Connection &connection, ostring directory, ostring name);
 
     unsigned int Read(void *buffer, unsigned int size);
-    bool Seek(unsigned int seekMode, big_uint offset);
+    bool Seek(SeekMode seekMode, big_uint offset);
 
     void Assign(const File &other);
     bool Equals(const File &other) const;
@@ -2445,9 +2531,17 @@ class TypeInfo : public HandleHolder<OCI_TypeInfo *>
     friend class Column;
 public:
 
-    TypeInfo(const Connection &connection, ostring name, unsigned int type);
+    enum TypeInfoObjectType
+    {
+        ObjectUnknown = OCI_UNKNOWN,   
+        ObjectTable = OCI_TIF_TABLE,
+        ObjectView = OCI_TIF_VIEW,
+        ObjectType = OCI_TIF_TYPE
+    };
 
-    unsigned int GetType() const;
+    TypeInfo(const Connection &connection, ostring name, TypeInfoObjectType type);
+
+    TypeInfoObjectType GetType() const;
     ostring GetName() const;
     Connection GetConnection() const;
 
@@ -2477,6 +2571,13 @@ class Object : public HandleHolder<OCI_Object *>
 
 public:
 
+    enum ObjectType
+    {
+        Persistent = OCI_OBJ_PERSISTENT,
+        Transient = OCI_OBJ_TRANSIENT,
+        Value =  OCI_OBJ_VALUE
+    };
+
     Object(const TypeInfo &typeInfo);
 
     void Assign(const Object& other);
@@ -2486,6 +2587,8 @@ public:
 
     TypeInfo GetTypeInfo() const;
     Reference GetReference() const;
+
+    ObjectType GetType() const;
 
     template<class TDataType>
     TDataType Get(ostring name) const;
@@ -2558,11 +2661,17 @@ class Collection : public HandleHolder<OCI_Coll *>
     friend class CollectionIterator;
 public:
 
+    enum CollectionType
+    {
+        Varray = OCI_COLL_VARRAY,
+        NestedTable = OCI_COLL_NESTED_TABLE
+    };
+
     Collection(const TypeInfo &typeInfo);
 
     void Assign(const Collection& other);
 
-    unsigned int GetType() const;
+    CollectionType GetType() const;
     unsigned int GetMax() const;
     unsigned int GetSize() const;
     unsigned int GetCount() const;
@@ -2712,6 +2821,14 @@ class BindInfo : public HandleHolder<OCI_Bind *>
 
 public:
 
+    enum BindDirection
+    {
+        Unknown = OCI_UNKNOWN,   
+        In = OCI_BDM_IN,
+        Out = OCI_BDM_OUT,
+        InOut = OCI_BDM_IN_OUT
+    };
+
     ostring GetName() const;
     unsigned int GetType() const;
     unsigned int GetSubType() const;
@@ -2725,10 +2842,10 @@ public:
     bool IsNull() const;
     bool IsNull(unsigned int pos) const;
 
-    void SetCharsetForm(unsigned int value);
+    void SetCharsetForm(Environment::CharsetForm value);
 
-    void SetDirection(unsigned int value);
-    unsigned int GetDirection() const;
+    void SetDirection(BindDirection value);
+    BindDirection GetDirection() const;
 
 private:
 
@@ -2751,6 +2868,39 @@ class Statement : public HandleHolder<OCI_Statement *>
     friend class BindInfo;
 
 public:
+
+    enum StatementType
+    {
+        TypeUnknown = OCI_UNKNOWN,
+        TypeSelect = OCI_CST_SELECT,
+        TypeUpdate =  OCI_CST_UPDATE,
+        TypeDelete = OCI_CST_DELETE,
+        TypeInsert = OCI_CST_INSERT,
+        TypeCreate = OCI_CST_CREATE,
+        TypeDrop = OCI_CST_DROP,
+        TypeAlter = OCI_CST_ALTER,
+        TypeBegin = OCI_CST_BEGIN,
+        TypeDeclare = OCI_CST_DECLARE,
+        TypeCall = OCI_CST_CALL,
+    };
+
+    enum FetchMode
+    {
+        FetchForward = OCI_SFM_DEFAULT,
+        FetchScrollable = OCI_SFM_SCROLLABLE
+    };
+
+    enum BindMode
+    {
+        BindByPosition =  OCI_BIND_BY_POS,
+        BindByName = OCI_BIND_BY_NAME
+    };
+
+    enum LongMode
+    {
+        LongExplicit = OCI_LONG_EXPLICIT,
+        LongImplicit = OCI_LONG_IMPLICIT
+    };
 
     Statement(const Connection &connection);
     ~Statement();
@@ -2781,19 +2931,19 @@ public:
     BindInfo GetBind(ostring name) const;
 
     template <class TDataType>
-    void Bind(ostring name, TDataType &value, unsigned int mode);
+    void Bind(ostring name, TDataType &value, BindInfo::BindDirection mode = BindInfo::In);
 
     template <class TDataType, class TExtraInfo>
-    void Bind(ostring name, TDataType &value, TExtraInfo extraInfo, unsigned int mode);
+    void Bind(ostring name, TDataType &value, TExtraInfo extraInfo, BindInfo::BindDirection mode = BindInfo::In);
 
     template <class TDataType>
-    void Bind(ostring name, std::vector<TDataType> &values, unsigned int mode);
+    void Bind(ostring name, std::vector<TDataType> &values, BindInfo::BindDirection mode = BindInfo::In);
 
     template <class TDataType, class TExtraInfo>
-    void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo extraInfo, unsigned int mode);
+    void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo extraInfo, BindInfo::BindDirection mode = BindInfo::In);
 
     template <class TDataType, class TExtraInfo>
-    void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo &extraInfo, unsigned int mode);
+    void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo &extraInfo, BindInfo::BindDirection mode = BindInfo::In);
 
     template <class TDataType>
     void Register(ostring name);
@@ -2804,15 +2954,15 @@ public:
     template <class TDataType, class TExtraInfo>
     void Register(ostring name, TExtraInfo &extraInfo);
 
-    unsigned int GetStatementType() const;
+    StatementType GetStatementType() const;
 
     unsigned int GetSqlErrorPos() const;
 
-    void SetFetchMode(unsigned int value);
-    unsigned int GetFetchMode() const;
+    void SetFetchMode(FetchMode value);
+    FetchMode GetFetchMode() const;
 
-    void SetBindMode(unsigned int value);
-    unsigned int GetBindMode() const;
+    void SetBindMode(BindMode value);
+    BindMode GetBindMode() const;
 
     void SetFetchSize(unsigned int value);
     unsigned int GetFetchSize() const;
@@ -2826,8 +2976,8 @@ public:
     void SetLongMaxSize(unsigned int value);
     unsigned int GetLongMaxSize() const;
 
-    void SetLongMode(unsigned int value);
-    unsigned int GetLongMode() const;
+    void SetLongMode(LongMode value);
+    LongMode GetLongMode() const;
 
     unsigned int GetSQLCommand() const;
     ostring GetSQLVerb() const;
@@ -2842,23 +2992,23 @@ private:
 
     void ReleaseResultsets();
 
-    void SetLastBindMode(unsigned int mode);
+    void SetLastBindMode(BindInfo::BindDirection mode);
 
     void SetInData();
     void SetOutData();
     void ClearBinds();
 
     template <typename TBindMethod, class TDataType>
-    void Bind (TBindMethod &method, ostring name, TDataType& value, unsigned int mode);
+    void Bind (TBindMethod &method, ostring name, TDataType& value, BindInfo::BindDirection mode);
 
     template <typename TBindMethod, class TObjectType, class TDataType>
-    void Bind (TBindMethod &method, ostring name, TObjectType &value, BindValue<TDataType> datatype, unsigned int mode);
+    void Bind (TBindMethod &method, ostring name, TObjectType &value, BindValue<TDataType> datatype, BindInfo::BindDirection mode);
 
     template <typename TBindMethod, class TObjectType, class TDataType>
-    void Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, unsigned int mode);
+    void Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode);
 
     template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
-    void Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, unsigned int mode, TElemType type);
+    void Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode, TElemType type);
 };
 
 /**
@@ -2872,6 +3022,12 @@ class Resultset : public HandleHolder<OCI_Resultset *>
     friend class Statement;
 public:
 
+    enum SeekMode
+    {
+        SeekAbsolute = OCI_SFD_ABSOLUTE,
+        SeeKRelative = OCI_SFD_RELATIVE
+    };
+    
     template<class TDataType>
     TDataType Get(unsigned int index) const;
 
@@ -2888,7 +3044,7 @@ public:
     bool Prev();
     bool First();
     bool Last();
-    bool Seek(unsigned int mode, int offset);
+    bool Seek(SeekMode mode, int offset);
 
     unsigned int GetCount() const;
     unsigned int GetCurrentRow() const;
@@ -2926,13 +3082,31 @@ class Column : public HandleHolder<OCI_Column *>
 
 public:
 
+    enum ColumnType
+    {
+        TypeUnknown = OCI_UNKNOWN,
+        TypeNumeric = OCI_CDT_NUMERIC,
+        TypeDate = OCI_CDT_DATETIME,
+        TypeString = OCI_CDT_TEXT,
+        TypeLong = OCI_CDT_LONG,
+        TypeStatement = OCI_CDT_CURSOR,
+        TypeLob = OCI_CDT_LOB,
+        TypeFile = OCI_CDT_FILE,
+        TypeTimestamp = OCI_CDT_TIMESTAMP,
+        TypeInterval = OCI_CDT_INTERVAL,
+        TypeRaw = OCI_CDT_RAW,
+        TypeObject=OCI_CDT_OBJECT,
+        TypeCollection = OCI_CDT_COLLECTION,
+        TypeReference = OCI_CDT_REF
+    };
+
     ostring GetName() const;
     ostring GetSQLType() const;
     ostring GetFullSQLType() const;
 
-    unsigned int GetType() const;
+    ColumnType GetType() const;
     unsigned int GetSubType() const;
-    unsigned int GetCharsetForm() const;
+    Environment::CharsetForm GetCharsetForm() const;
     unsigned int GetSize() const;
 
     int GetScale() const;
@@ -2940,8 +3114,8 @@ public:
     int GetFractionalPrecision() const;
     int GetLeadingPrecision() const;
 
-    bool GetNullable() const;
-    bool GetCharUsed() const;
+    bool IsNullable() const;
+    bool IsCharSemanticUsed() const;
 
     TypeInfo GetTypeInfo() const;
 
@@ -2962,9 +3136,25 @@ class Subscription : public HandleHolder<OCI_Subscription *>
 
 public:
 
+    /**
+     * @typedef NotifyHandlerProc
+     *
+     * @brief
+     *
+     */
+    typedef void (*NotifyHandlerProc) (Event &evt);
+
+    enum ChangeTypes
+    {
+        ObjectChanges = OCI_CNT_OBJECTS,
+        RowChanges = OCI_CNT_ROWS,
+        DatabaseChanges = OCI_CNT_DATABASES,
+        AllChanges = OCI_CNT_ALL
+    };
+
     Subscription();
 
-    void Register(const Connection &con, ostring name, unsigned int type, NotifyHandlerProc handler, unsigned int port = 0, unsigned int timeout = 0);
+    void Register(const Connection &con, ostring name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port = 0, unsigned int timeout = 0);
     void Unregister();
 
     void Watch(ostring sql);
@@ -2993,8 +3183,28 @@ class Event : public HandleHolder<OCI_Event *>
 
 public:
 
-    unsigned int GetType() const;
-    unsigned int GetOperation() const;
+    enum EventType
+    {
+        DatabaseStart =  OCI_ENT_STARTUP,
+        DatabaseShutdown = OCI_ENT_SHUTDOWN,
+        DatabaseShutdownAny = OCI_ENT_SHUTDOWN_ANY,
+        DatabaseDrop = OCI_ENT_DROP_DATABASE,
+        Unregister = OCI_ENT_DEREGISTER,
+        ObjectChanged = OCI_ENT_OBJECT_CHANGED
+    };
+
+    enum ObjectEvent
+    {
+        ObjectInserted = OCI_ONT_INSERT,
+        ObjectUpdated = OCI_ONT_UPDATE,
+        ObjectDeleted = OCI_ONT_DELETE,
+        ObjectAltered = OCI_ONT_ALTER,
+        ObjectDropped = OCI_ONT_DROP,
+        ObjectGeneric = OCI_ONT_GENERIC
+    };
+
+    EventType GetType() const;
+    ObjectEvent GetObjectEvent() const;
     ostring GetDatabaseName() const;
     ostring GetObjectName() const;
     ostring GetRowID() const;
@@ -3044,6 +3254,16 @@ class Message : public HandleHolder<OCI_Msg *>
 
 public:
 
+    enum MessageState
+    {
+        StateUnknown = OCI_UNKNOWN,
+        StateReady = OCI_AMS_READY,
+        StateWaiting = OCI_AMS_WAITING,
+        StateProcessed = OCI_AMS_PROCESSED,
+        StateExpired =  OCI_AMS_EXPIRED
+    };
+
+
     Message(const TypeInfo &typeInfo);
 
     void Reset();
@@ -3056,7 +3276,7 @@ public:
 
     Date GetEnqueueTime() const;
     int GetAttemptCount() const;
-    unsigned int GetState() const;
+    MessageState GetState() const;
     void GetID(BufferPointer value, unsigned int &size) const;
 
     int GetExpiration() const;
@@ -3097,15 +3317,27 @@ class Enqueue : public HandleHolder<OCI_Enqueue *>
 {
 public:
 
+    enum EnqueueMode
+    {
+        EnqueueBefore = OCI_ASD_BEFORE,
+        EnqueueOnTop  = OCI_ASD_TOP
+    };
+
+    enum EnqueueVisibility
+    {
+        Immediate = OCI_AMV_IMMEDIATE,
+        OnCommit  = OCI_AMV_ON_COMMIT
+    };
+
     Enqueue(const TypeInfo &typeInfo, ostring queueName);
 
     void Put(const Message &message);
 
-    unsigned int GetVisibility() const;
-    void SetVisibility(unsigned int value);
+    EnqueueVisibility GetVisibility() const;
+    void SetVisibility(EnqueueVisibility value);
 
-    unsigned int GetSequenceDeviation() const;
-    void SetSequenceDeviation(unsigned int value);
+    EnqueueMode GetMode() const;
+    void SetMode(EnqueueMode value);
 
     void GetRelativeMsgID(BufferPointer value, unsigned int &size) const;
     void SetRelativeMsgID(const BufferPointer &value, unsigned int size);
@@ -3123,6 +3355,35 @@ class Dequeue : public HandleHolder<OCI_Dequeue *>
 
 public:
 
+    /**
+     * @typedef NotifyAQHandlerProc
+     *
+     * @brief
+     *
+     */
+    typedef void (*NotifyAQHandlerProc) (Dequeue &dequeue);
+
+    enum DequeueMode
+    {
+        Browse =  OCI_ADM_BROWSE,
+        Locked = OCI_ADM_LOCKED,
+        Remove = OCI_ADM_REMOVE,
+        Confirm = OCI_ADM_REMOVE_NODATA
+    };
+
+    enum DequeueVisibility
+    {
+        Immediate = OCI_AMV_IMMEDIATE,
+        OnCommit  = OCI_AMV_ON_COMMIT
+    };
+
+    enum NavigationMode
+    {
+        FirstMessage = OCI_ADN_FIRST_MSG,
+        NextMessage = OCI_ADN_NEXT_MSG,
+        NextTransaction = OCI_ADN_NEXT_TRANSACTION,
+    };
+
     Dequeue(const TypeInfo &typeInfo, ostring queueName);
 
     Message Get();
@@ -3138,14 +3399,14 @@ public:
     void GetRelativeMsgID(BufferPointer value, unsigned int &size) const;
     void SetRelativeMsgID(const BufferPointer &value, unsigned int size);
 
-    unsigned int GetVisibility() const;
-    void SetVisibility(unsigned int value);
+    DequeueVisibility GetVisibility() const;
+    void SetVisibility(DequeueVisibility value);
 
-    unsigned int GetMode() const;
-    void SetMode(unsigned int value);
+    DequeueMode GetMode() const;
+    void SetMode(DequeueMode value);
 
-    unsigned int GetNavigation() const;
-    void SetNavigation(unsigned int value);
+    NavigationMode GetNavigation() const;
+    void SetNavigation(NavigationMode value);
 
     int GetWaitTime() const;
     void SetWaitTime(int value);
@@ -3170,7 +3431,14 @@ class Queue
 {
 public:
 
-    static void Create(const Connection &connection, ostring queue, ostring table, unsigned int queueType = OCI_AQT_NORMAL, unsigned int maxRetries = 0,
+    enum QueueType
+    {
+        NormalQueue = OCI_AQT_NORMAL,
+        ExceptionQueue = OCI_AQT_EXCEPTION,
+        NonPersistentQueue = OCI_AQT_NON_PERSISTENT
+    };
+
+    static void Create(const Connection &connection, ostring queue, ostring table, QueueType queueType = NormalQueue, unsigned int maxRetries = 0,
                        unsigned int retryDelay = 0, unsigned int retentionTime = 0, bool dependencyTracking = false, ostring comment = OTEXT(""));
     static void Alter (const Connection &connection, ostring queue, unsigned int maxRetries= 0, unsigned int retryDelay= 0, unsigned int retentionTime= 0, ostring comment = OTEXT(""));
     static void Drop  (const Connection &connection, ostring queue);
@@ -3189,11 +3457,24 @@ class QueueTable
 {
 public:
 
+    enum GroupingMode
+    {
+        None = OCI_AGM_NONE,
+        Transactionnal = OCI_AGM_TRANSACTIONNAL
+    };
+
+    enum PurgeMode
+    {
+        Buffered = OCI_APM_BUFFERED,
+        Persistent = OCI_APM_PERSISTENT,
+        All = OCI_APM_ALL
+    };
+
     static void Create (const Connection &connection, ostring table, ostring payloadType, bool multipleConsumers, ostring storageClause = OTEXT(""), ostring sortList = OTEXT(""),
-                        unsigned int messageGrouping = OCI_AGM_NONE, ostring comment = OTEXT(""), unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0, ostring compatible = OTEXT(""));
+                        GroupingMode groupingMode = None, ostring comment = OTEXT(""), unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0, ostring compatible = OTEXT(""));
     static void Alter  (const Connection &connection, ostring table, ostring comment, unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0);
     static void Drop   (const Connection &connection, ostring table, bool force = true);
-    static void Purge  (const Connection &connection, ostring table,  unsigned int deliveryMode, ostring purgeCondition = OTEXT(""), bool block = true);
+    static void Purge  (const Connection &connection, ostring table,  PurgeMode purgeMode, ostring purgeCondition = OTEXT(""), bool block = true);
     static void Migrate(const Connection &connection, ostring table, ostring compatible = OTEXT(""));
 };
 
@@ -3207,16 +3488,31 @@ class DirectPath : public HandleHolder<OCI_DirPath *>
 {
 public:
 
+    enum ConversionMode
+    {
+        Default = OCI_DCM_DEFAULT,
+        Force = OCI_DCM_FORCE
+    };
+
+    enum Result
+    {
+        ResultComplete = OCI_DPR_COMPLETE,
+        ResultError = OCI_DPR_ERROR,
+        ResultFull = OCI_DPR_FULL ,
+        ResultPartial = OCI_DPR_PARTIAL,
+        ResultEmpty = OCI_DPR_EMPTY
+    };
+
     DirectPath(const TypeInfo &typeInfo, unsigned int nbCols, unsigned int  nbRows, ostring partition = OTEXT(""));
 
     void SetColumn(unsigned int colIndex, ostring name, unsigned int maxSize,  ostring format = OTEXT(""));
     void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const ostring &value,  bool complete = true);
-    void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const BufferPointer &value, unsigned int size,  bool complete = true);
+    void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const BufferPointer &value, unsigned int size, bool complete = true);
 
     void Reset();
     void Prepare();
-    unsigned int Convert();
-    unsigned int Load();
+    Result Convert();
+    Result Load();
     void Finish();
     void Abort();
     void Save();
@@ -3236,7 +3532,7 @@ public:
     void SetCacheSize(unsigned int value);
     void SetBufferSize(unsigned int value);
 
-    void SetConvertMode(unsigned int value);
+    void SetConversionMode(ConversionMode value);
 
     unsigned int GetErrorColumn();
     unsigned int GetErrorRow();

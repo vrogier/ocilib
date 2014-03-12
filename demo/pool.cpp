@@ -1,4 +1,3 @@
-
 #include "ocilib.hpp"
 
 using namespace ocilib;
@@ -21,9 +20,9 @@ int main(void)
 {
     try
     {
-        Environment::Initialize(OCI_ENV_THREADED);
+        Environment::Initialize(Environment::EnvThreaded);
 
-        Pool pool("db", "usr", "pwd", OCI_POOL_CONNECTION, 0, MaxConnnections);
+        Pool pool("db", "usr", "pwd", Pool::ConnectionPool, 0, MaxConnnections);
 
         std::vector<ThreadHandle> threads;
 

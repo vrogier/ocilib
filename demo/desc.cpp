@@ -3,7 +3,6 @@
 
 using namespace ocilib;
 
-
 int main(void)
 {
     try
@@ -11,7 +10,7 @@ int main(void)
         Environment::Initialize();
 
         Connection con("db", "usr", "pwd");
-        TypeInfo table(con, "products", OCI_TIF_TABLE);
+        TypeInfo table(con, "products", TypeInfo::ObjectType);
 
         std::cout << "Column Name         Type      Length  Prec.   Scale   Null ?" << std::endl;
         std::cout << "----------------------------  ------------------------------" << std::endl;
@@ -27,7 +26,7 @@ int main(void)
                       <<  std::setw(8)  << col.GetSize()
                       <<  std::setw(8)  << col.GetPrecision()
                       <<  std::setw(8)  << col.GetScale()
-                      <<  std::setw(2)  << col.GetNullable()
+                      <<  std::setw(2)  << col.IsNullable()
                       <<  std::endl;
         
         }
@@ -42,3 +41,4 @@ int main(void)
  
     return EXIT_SUCCESS;
 }
+

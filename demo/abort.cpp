@@ -31,9 +31,9 @@ int main(void)
 {
     try
     {
-        Environment::Initialize(OCI_ENV_THREADED);
+        Environment::Initialize();
 
-        con.Open("db11g", "usr", "pwd");      
+        con.Open("db", "usr", "pwd");      
 
         thread = Thread::Create();
         Thread::Run(thread, OracleCallProc, 0);

@@ -36,8 +36,8 @@ int main(void)
         Date date;
         date.SysDate();
 
-        Object sale  (TypeInfo(con, "t_sale"  , OCI_TIF_TYPE));
-        Object vendor(TypeInfo(con, "t_vendor", OCI_TIF_TYPE));
+        Object sale  (TypeInfo(con, "t_sale"  , TypeInfo::ObjectType));
+        Object vendor(TypeInfo(con, "t_vendor", TypeInfo::ObjectType));
 
         vendor.Set<int>("CODE", 134);
         vendor.Set<ostring>("NAME", "JOHN SMITH");
@@ -51,7 +51,7 @@ int main(void)
 
         Statement st(con);
         st.Prepare("insert into sales values(:obj)");
-        st.Bind(":obj", sale, OCI_BDM_IN);
+        st.Bind(":obj", sale);
         st.Execute();
 
         std::cout << "Rows inserted :  " << st.GetAffectedRows() << std::endl;

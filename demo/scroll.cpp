@@ -12,7 +12,7 @@ int main(void)
 
         Statement st(con);
         
-        st.SetFetchMode(OCI_SFM_SCROLLABLE);
+        st.SetFetchMode(Statement::FetchScrollable);
         st.Execute("select table_name from tabs");
    
         Resultset rs = st.GetResultset();
@@ -33,7 +33,7 @@ int main(void)
             std::cout << "table " << rs.Get<ostring>(1) << std::endl;
         }
 
-        rs.Seek(OCI_SFD_ABSOLUTE, 6);
+        rs.Seek(Resultset::SeeKRelative, 6);
         std::cout << "table " << rs.Get<ostring>(1) << std::endl;
 
         while (rs.Next())
@@ -41,7 +41,7 @@ int main(void)
             std::cout << "table " << rs.Get<ostring>(1) << std::endl;
         }
 
-        rs.Seek(OCI_SFD_RELATIVE, -3);
+        rs.Seek(Resultset::SeeKRelative, -3);
         std::cout << "table " << rs.Get<ostring>(1) << std::endl;
     }
     catch(Exception &ex)

@@ -18,8 +18,8 @@ int main(void)
         Statement st(con);
         st.Prepare("insert into products values(:i, :s)");
         st.SetBindArraySize(ArraySize);
-        st.Bind(":i", ints, OCI_BDM_IN);
-        st.Bind(":s", strs, 20, OCI_BDM_IN);
+        st.Bind(":i", ints);
+        st.Bind(":s", strs, 20);
 
         for(int i=0;i<ArraySize;i++)
         {

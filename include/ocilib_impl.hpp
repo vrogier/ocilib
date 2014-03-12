@@ -568,7 +568,7 @@ inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int sou
         Connection connection(pConnection, 0);
         Timestamp timestamp(pTimestamp, connection.GetHandle());
 
-        handler(connection, source, event, timestamp);
+        handler(connection, (HAEventSource) source, (HAEventType) event, timestamp);
     }
 }
 
@@ -576,13 +576,13 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
 {
     unsigned int res = OCI_FOC_OK;
 
-    TAFHandlerProc handler = (TAFHandlerProc) GetEnvironmentHandle().Callbacks.Get(pConnection);
+    Connection::TAFHandlerProc handler = (Connection::TAFHandlerProc) GetEnvironmentHandle().Callbacks.Get(pConnection);
 
     if (handler)
     {
         Connection connection(pConnection, 0);
 
-        res = handler(connection, type, event);
+        res = (unsigned int) handler(connection, (Connection::FailoverRequest) type, (Connection::FailoverEvent) event);
     }
 
     return res;
@@ -590,7 +590,7 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
 
 inline void Environment::NotifyHandler(OCI_Event *pEvent)
 {
-    NotifyHandlerProc handler = (NotifyHandlerProc) GetEnvironmentHandle().Callbacks.Get(Check(OCI_EventGetSubscription(pEvent)));
+    Subscription::NotifyHandlerProc handler = ( Subscription::NotifyHandlerProc) GetEnvironmentHandle().Callbacks.Get(Check(OCI_EventGetSubscription(pEvent)));
 
     if (handler)
     {
@@ -601,7 +601,7 @@ inline void Environment::NotifyHandler(OCI_Event *pEvent)
 
 inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
 {
-    NotifyAQHandlerProc handler = (NotifyAQHandlerProc) GetEnvironmentHandle().Callbacks.Get(Check(pDequeue));
+    Dequeue::NotifyAQHandlerProc handler = (Dequeue::NotifyAQHandlerProc) GetEnvironmentHandle().Callbacks.Get(Check(pDequeue));
 
     if (handler)
     {
@@ -1414,9 +1414,9 @@ inline bool Date::operator <= (const Date& other) const
  * Interval
  * --------------------------------------------------------------------------------------------- */
 
-inline Interval::Interval(unsigned int type)
+inline Interval::Interval(IntervalType type)
 {
-    Acquire(Check(OCI_IntervalCreate(NULL, type)), (HandleFreeFunc) OCI_IntervalFree, 0);
+    Acquire(Check(OCI_IntervalCreate(NULL, (unsigned int) type)), (HandleFreeFunc) OCI_IntervalFree, 0);
 }
 
 inline Interval::Interval(OCI_Interval *pInterval, Handle *parent)
@@ -1434,9 +1434,9 @@ inline int Interval::Compare(const Interval& other) const
     return Check(OCI_IntervalCompare(*this, other));
 }
 
-inline unsigned int Interval::GetType() const
+inline Interval::IntervalType Interval::GetType() const
 {
-    return Check(OCI_IntervalGetType(*this));
+    return (IntervalType) Check(OCI_IntervalGetType(*this));
 }
 
 inline void Interval::Add(const Interval& other)
@@ -1622,9 +1622,9 @@ inline Interval::operator ostring() const
  * Timestamp
  * --------------------------------------------------------------------------------------------- */
 
-inline Timestamp::Timestamp(unsigned int type)
+inline Timestamp::Timestamp(TimestampType type)
 {
-    Acquire(Check(OCI_TimestampCreate(NULL, type)), (HandleFreeFunc) OCI_TimestampFree, 0);
+    Acquire(Check(OCI_TimestampCreate(NULL, (unsigned int) type)), (HandleFreeFunc) OCI_TimestampFree, 0);
 }
 
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, Handle *parent)
@@ -1642,9 +1642,9 @@ inline int Timestamp::Compare(const Timestamp& other) const
     return Check(OCI_TimestampCompare(*this, other));
 }
 
-inline unsigned int Timestamp::GetType() const
+inline Timestamp::TimestampType Timestamp::GetType() const
 {
-    return Check(OCI_TimestampGetType(*this));
+    return (TimestampType) Check(OCI_TimestampGetType(*this));
 }
 
 inline void Timestamp::Construct(int year, int month, int day, int hour, int min, int sec, int fsec, ostring timeZone)
@@ -1886,9 +1886,9 @@ inline unsigned int Clob::Append(ostring content)
     return Check(OCI_LobAppend(*this, (void *) content.c_str(), (unsigned int) content.size()));
 }
 
-inline bool Clob::Seek(unsigned int seekMode, big_uint offset)
+inline bool Clob::Seek(SeekMode seekMode, big_uint offset)
 {
-    return (Check(OCI_LobSeek(*this, offset, seekMode)) == TRUE);
+    return (Check(OCI_LobSeek(*this, offset, (unsigned int) seekMode)) == TRUE);
 }
 
 inline void Clob::Append(const Clob &other)
@@ -1946,9 +1946,9 @@ inline bool Clob::IsTemporary() const
     return (Check(OCI_LobIsTemporary(*this)) == TRUE);
 }
 
-inline void Clob::Open(unsigned int mode)
+inline void Clob::Open(OpenMode mode)
 {
-    Check(OCI_LobOpen(*this, mode));
+    Check(OCI_LobOpen(*this, (unsigned int) mode));
 }
 
 inline void Clob::Flush()
@@ -2030,9 +2030,9 @@ inline unsigned int Blob::Append(void *buffer, unsigned int size)
     return Check(OCI_LobAppend(*this, buffer, size));
 }
 
-inline bool Blob::Seek(unsigned int seekMode, big_uint offset)
+inline bool Blob::Seek(SeekMode seekMode, big_uint offset)
 {
-    return (Check(OCI_LobSeek(*this, offset, seekMode)) == TRUE);
+    return (Check(OCI_LobSeek(*this, offset, (unsigned int) seekMode)) == TRUE);
 }
 
 inline void Blob::Append(const Blob &other)
@@ -2090,9 +2090,9 @@ inline bool Blob::IsTemporary() const
     return (Check(OCI_LobIsTemporary(*this)) == TRUE);
 }
 
-inline void Blob::Open(unsigned int mode)
+inline void Blob::Open(OpenMode mode)
 {
-    Check(OCI_LobOpen(*this, mode));
+    Check(OCI_LobOpen(*this, (unsigned int) mode));
 }
 
 inline void Blob::Flush()
@@ -2158,9 +2158,9 @@ inline unsigned int File::Read(void *buffer, unsigned int size)
     return Check(OCI_FileRead(*this, buffer, size));
 }
 
-inline bool File::Seek(unsigned int seekMode, big_uint offset)
+inline bool File::Seek(SeekMode seekMode, big_uint offset)
 {
-    return (Check(OCI_FileSeek(*this, offset, seekMode)) == TRUE);
+    return (Check(OCI_FileSeek(*this, offset, (unsigned int) seekMode)) == TRUE);
 }
 
 inline void File::Assign(const File &other)
@@ -2222,9 +2222,9 @@ inline void File::Close()
  * TypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-inline TypeInfo::TypeInfo(const Connection &connection, ostring name, unsigned int type)
+inline TypeInfo::TypeInfo(const Connection &connection, ostring name, TypeInfoObjectType type)
 {
-    Acquire(Check(OCI_TypeInfoGet(connection, name.c_str(), type)), (HandleFreeFunc) 0, connection.GetHandle());
+    Acquire(Check(OCI_TypeInfoGet(connection, name.c_str(), (unsigned int) type)), (HandleFreeFunc) 0, connection.GetHandle());
 }
 
 inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
@@ -2232,22 +2232,9 @@ inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
     Acquire(pTypeInfo, 0, 0);
 }
 
-/**
- * @brief
- * Return the type of object
- *
- * @note
- * Possible values for parameter type are :
- *
- * - OCI_UNKNOWM
- * - OCI_TIF_TABLE
- * - OCI_TIF_VIEW
- * - OCI_TIF_TYPE
- *
- */
-inline unsigned int TypeInfo::GetType() const
+inline TypeInfo::TypeInfoObjectType TypeInfo::GetType() const
 {
-    return Check(OCI_TypeInfoGetType(*this));
+    return (TypeInfoObjectType) Check(OCI_TypeInfoGetType(*this));
 }
 
 inline ostring TypeInfo::GetName() const
@@ -2320,6 +2307,11 @@ inline Reference Object::GetReference() const
     Check(OCI_ObjectGetSelfRef(*this, pRef));
 
     return Reference(pRef, GetHandle());
+}
+
+inline Object::ObjectType Object::GetType() const
+{
+    return (ObjectType) Check(OCI_ObjectGetType(*this));
 }
 
 template<>
@@ -2648,9 +2640,9 @@ inline TypeInfo Collection::GetTypeInfo() const
     return TypeInfo(Check(OCI_CollGetTypeInfo(*this)));
 }
 
-inline unsigned int Collection::GetType() const
+inline Collection::CollectionType Collection::GetType() const
 {
-    return Check(OCI_CollGetType(*this));
+    return (CollectionType) Check(OCI_CollGetType(*this));
 }
 
 inline unsigned int Collection::GetMax() const
@@ -3459,19 +3451,19 @@ inline bool BindInfo::IsNull(unsigned int pos) const
     return (Check(OCI_BindIsNullAtPos(*this, pos)) == TRUE);
 }
 
-inline void BindInfo::SetCharsetForm(unsigned int value)
+inline void BindInfo::SetCharsetForm(Environment::CharsetForm value)
 {
-    Check(OCI_BindSetCharsetForm(*this, value));
+    Check(OCI_BindSetCharsetForm(*this, (unsigned int) value));
 }
 
-inline void BindInfo::SetDirection(unsigned int value)
+inline void BindInfo::SetDirection(BindDirection value)
 {
-    Check(OCI_BindSetDirection(*this, value));
+    Check(OCI_BindSetDirection(*this, (unsigned int) value));
 }
 
-inline unsigned int BindInfo::GetDirection() const
+inline BindInfo::BindDirection BindInfo::GetDirection() const
 {
-    return Check(OCI_BindGetDirection(*this));
+    return (BindDirection) Check(OCI_BindGetDirection(*this));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3590,21 +3582,21 @@ inline BindInfo Statement::GetBind(ostring name) const
 }
 
 template <typename TBindMethod, class TDataType>
-inline void Statement::Bind (TBindMethod &method, ostring name, TDataType& value, unsigned int mode)
+inline void Statement::Bind (TBindMethod &method, ostring name, TDataType& value, BindInfo::BindDirection mode)
 {
     Check(method(*this, name.c_str(), &value));
     SetLastBindMode(mode);
 }
 
 template <typename TBindMethod, class TObjectType, class TDataType>
-inline void Statement::Bind (TBindMethod &method, ostring name, TObjectType& value, BindValue<TDataType> datatype, unsigned int mode)
+inline void Statement::Bind (TBindMethod &method, ostring name, TObjectType& value, BindValue<TDataType> datatype, BindInfo::BindDirection mode)
 {
     Check(method(*this, name.c_str(), (TDataType) value));
     SetLastBindMode(mode);
 }
 
 template <typename TBindMethod, class TObjectType, class TDataType>
-inline void Statement::Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, unsigned int mode)
+inline void Statement::Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode)
 {
     BindArray * bnd = new BindArray();
 
@@ -3618,7 +3610,7 @@ inline void Statement::Bind (TBindMethod &method, ostring name, std::vector<TObj
 }
 
 template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
-inline void Statement::Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, unsigned int mode, TElemType type)
+inline void Statement::Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode, TElemType type)
 {
     BindArray * bnd = new BindArray();
 
@@ -3632,142 +3624,142 @@ inline void Statement::Bind (TBindMethod &method, ostring name, std::vector<TObj
 }
 
 template <>
-inline void Statement::Bind<short>(ostring name, short &value, unsigned int mode)
+inline void Statement::Bind<short>(ostring name, short &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindShort, name, value, mode);
 }
 
 template <>
-inline void Statement::Bind<unsigned short>(ostring name, unsigned short &value, unsigned int mode)
+inline void Statement::Bind<unsigned short>(ostring name, unsigned short &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindUnsignedShort, name, value, mode);
 }
 
 template <>
-inline void Statement::Bind<int>(ostring name, int &value, unsigned int mode)
+inline void Statement::Bind<int>(ostring name, int &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindInt, name, value, mode);
 }
 
 template <>
-inline void Statement::Bind<unsigned int>(ostring name, unsigned int &value, unsigned int mode)
+inline void Statement::Bind<unsigned int>(ostring name, unsigned int &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindUnsignedInt, name, value, mode);
 }
 
 template <>
-inline void Statement::Bind<big_int>(ostring name, big_int &value, unsigned int mode)
+inline void Statement::Bind<big_int>(ostring name, big_int &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindBigInt, name, value, mode);
 }
 
 template <>
-inline void Statement::Bind<big_uint>(ostring name, big_uint &value, unsigned int mode)
+inline void Statement::Bind<big_uint>(ostring name, big_uint &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindUnsignedBigInt, name, value, mode);
 }
 
 template <>
-inline void Statement::Bind<float>(ostring name, float &value, unsigned int mode)
+inline void Statement::Bind<float>(ostring name, float &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindFloat, name, value, mode);
 }
 
 template <>
-inline void Statement::Bind<double>(ostring name, double &value, unsigned int mode)
+inline void Statement::Bind<double>(ostring name, double &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindDouble, name, value, mode);
 }
 
 template <>
-inline void Statement::Bind<Date>(ostring name, Date &value, unsigned int mode)
+inline void Statement::Bind<Date>(ostring name, Date &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindDate, name, value, BindValue<OCI_Date *>(),  mode);
 }
 
 template <>
-inline void Statement::Bind<Timestamp>(ostring name, Timestamp &value, unsigned int mode)
+inline void Statement::Bind<Timestamp>(ostring name, Timestamp &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindTimestamp, name, value, BindValue<OCI_Timestamp *>(), mode);
 }
 
 template <>
-inline void Statement::Bind<Interval>(ostring name, Interval &value, unsigned int mode)
+inline void Statement::Bind<Interval>(ostring name, Interval &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindInterval, name, value, BindValue<OCI_Interval *>(), mode);
 }
 
 template <>
-inline void Statement::Bind<Clob>(ostring name, Clob &value, unsigned int mode)
+inline void Statement::Bind<Clob>(ostring name, Clob &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindLob, name, value, BindValue<OCI_Lob *>(), mode);
 }
 
 template <>
-inline void Statement::Bind<Blob>(ostring name, Blob &value, unsigned int mode)
+inline void Statement::Bind<Blob>(ostring name, Blob &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindLob, name, value, BindValue<OCI_Lob *>(), mode);
 }
 
 template <>
-inline void Statement::Bind<File>(ostring name, File &value, unsigned int mode)
+inline void Statement::Bind<File>(ostring name, File &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindFile, name, value, BindValue<OCI_File *>(), mode);
 }
 
 template <>
-inline void Statement::Bind<Object>(ostring name, Object &value, unsigned int mode)
+inline void Statement::Bind<Object>(ostring name, Object &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindObject, name, value, BindValue<OCI_Object *>(), mode);
 }
 
 template <>
-inline void Statement::Bind<Reference>(ostring name, Reference &value, unsigned int mode)
+inline void Statement::Bind<Reference>(ostring name, Reference &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindRef, name, value, BindValue<OCI_Ref *>(), mode);
 }
 
 template <>
-inline void Statement::Bind<Collection>(ostring name, Collection &value, unsigned int mode)
+inline void Statement::Bind<Collection>(ostring name, Collection &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindColl, name, value, BindValue<OCI_Coll *>(), mode);
 }
 
 template <>
-inline void Statement::Bind<Statement>(ostring name, Statement &value, unsigned int mode)
+inline void Statement::Bind<Statement>(ostring name, Statement &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindStatement, name, value, BindValue<OCI_Statement *>(), mode);
 }
 
 template <>
-inline void Statement::Bind<CLong, unsigned int>(ostring name, CLong &value, unsigned int maxSize, unsigned int mode)
+inline void Statement::Bind<CLong, unsigned int>(ostring name, CLong &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     Check(OCI_BindLong(*this, name.c_str(), value, maxSize));
     SetLastBindMode(mode);
 }
 
 template <>
-inline void Statement::Bind<CLong, int>(ostring name, CLong &value, int maxSize, unsigned int mode)
+inline void Statement::Bind<CLong, int>(ostring name, CLong &value, int maxSize, BindInfo::BindDirection mode)
 {
     Bind<CLong, unsigned int>(name, value, (unsigned int) maxSize,  mode);
 }
 
 
 template <>
-inline void Statement::Bind<BLong, unsigned int>(ostring name, BLong &value, unsigned int maxSize, unsigned int mode)
+inline void Statement::Bind<BLong, unsigned int>(ostring name, BLong &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     Check(OCI_BindLong(*this, name.c_str(), value, maxSize));
     SetLastBindMode(mode);
 }
 
 template <>
-inline void Statement::Bind<BLong, int>(ostring name, BLong &value, int maxSize, unsigned int mode)
+inline void Statement::Bind<BLong, int>(ostring name, BLong &value, int maxSize, BindInfo::BindDirection mode)
 {
     Bind<BLong, unsigned int>(name, value, (unsigned int) maxSize,  mode);
 }
 
 template <>
-inline void Statement::Bind<ostring, unsigned int>(ostring name, ostring &value, unsigned int maxSize, unsigned int mode)
+inline void Statement::Bind<ostring, unsigned int>(ostring name, ostring &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     if (maxSize == 0)
     {
@@ -3783,128 +3775,128 @@ inline void Statement::Bind<ostring, unsigned int>(ostring name, ostring &value,
 }
 
 template <>
-inline void Statement::Bind<ostring, int>(ostring name, ostring &value, int maxSize, unsigned int mode)
+inline void Statement::Bind<ostring, int>(ostring name, ostring &value, int maxSize, BindInfo::BindDirection mode)
 {
     Bind<ostring, unsigned int>(name, value, (unsigned int) maxSize,  mode);
 }
 
 template <>
-inline void Statement::Bind<BufferPointer, unsigned int>(ostring name, BufferPointer &value, unsigned int maxSize, unsigned int mode)
+inline void Statement::Bind<BufferPointer, unsigned int>(ostring name, BufferPointer &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     Check(OCI_BindRaw(*this, name.c_str(), value, maxSize));
     SetLastBindMode(mode);
 }
 
 template <>
-inline void Statement::Bind<BufferPointer,  int>(ostring name, BufferPointer &value,  int maxSize, unsigned int mode)
+inline void Statement::Bind<BufferPointer,  int>(ostring name, BufferPointer &value,  int maxSize, BindInfo::BindDirection mode)
 {
      Bind<void *, unsigned int>(name, value, (unsigned int) maxSize,  mode);
 }
 
 template <>
-inline void Statement::Bind<short>(ostring name, std::vector<short> &values, unsigned int mode)
+inline void Statement::Bind<short>(ostring name, std::vector<short> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfShorts, name, values, BindValue<short>(), mode);
 }
 
 template <>
-inline void Statement::Bind<unsigned short>(ostring name, std::vector<unsigned short> &values, unsigned int mode)
+inline void Statement::Bind<unsigned short>(ostring name, std::vector<unsigned short> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfUnsignedShorts, name, values, BindValue<unsigned short>(), mode);
 }
 
 template <>
-inline void Statement::Bind<int>(ostring name, std::vector<int> &values, unsigned int mode)
+inline void Statement::Bind<int>(ostring name, std::vector<int> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfInts, name, values, BindValue<int>(), mode);
 }
 
 template <>
-inline void Statement::Bind<unsigned int>(ostring name, std::vector<unsigned int> &values, unsigned int mode)
+inline void Statement::Bind<unsigned int>(ostring name, std::vector<unsigned int> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfUnsignedInts, name, values, BindValue<unsigned int>(), mode);
 }
 
 template <>
-inline void Statement::Bind<big_int>(ostring name, std::vector<big_int> &values, unsigned int mode)
+inline void Statement::Bind<big_int>(ostring name, std::vector<big_int> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfBigInts, name, values, BindValue<big_int>(), mode);
 }
 
 template <>
-inline void Statement::Bind<big_uint>(ostring name, std::vector<big_uint> &values, unsigned int mode)
+inline void Statement::Bind<big_uint>(ostring name, std::vector<big_uint> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfUnsignedBigInts, name, values, BindValue<big_uint>(), mode);
 }
 
 template <>
-inline void Statement::Bind<float>(ostring name, std::vector<float> &values, unsigned int mode)
+inline void Statement::Bind<float>(ostring name, std::vector<float> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfFloats, name, values, BindValue<float>(), mode);
 }
 
 template <>
-inline void Statement::Bind<double>(ostring name, std::vector<double> &values, unsigned int mode)
+inline void Statement::Bind<double>(ostring name, std::vector<double> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfDoubles, name, values, BindValue<double>(), mode);
 }
 
 template <>
-inline void Statement::Bind<Date>(ostring name, std::vector<Date> &values, unsigned int mode)
+inline void Statement::Bind<Date>(ostring name, std::vector<Date> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfDates, name, values, BindValue<OCI_Date *>(), mode);
 }
 
 template <>
-inline void Statement::Bind<Timestamp, unsigned int>(ostring name, std::vector<Timestamp> &values, unsigned int type, unsigned int mode)
+inline void Statement::Bind<Timestamp, unsigned int>(ostring name, std::vector<Timestamp> &values, unsigned int type, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfTimestamps, name, values, BindValue<OCI_Timestamp *>(), mode, type);
 }
 
 template <>
-inline void Statement::Bind<Interval, unsigned int>(ostring name, std::vector<Interval> &values, unsigned int type, unsigned int mode)
+inline void Statement::Bind<Interval, unsigned int>(ostring name, std::vector<Interval> &values, unsigned int type, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfIntervals, name, values, BindValue<OCI_Interval *>(), mode, type);
 }
 
 template <>
-inline void Statement::Bind<Clob>(ostring name, std::vector<Clob> &values, unsigned int mode)
+inline void Statement::Bind<Clob>(ostring name, std::vector<Clob> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, OCI_CLOB);
 }
 
 template <>
-inline void Statement::Bind<Blob>(ostring name, std::vector<Blob> &values, unsigned int mode)
+inline void Statement::Bind<Blob>(ostring name, std::vector<Blob> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, OCI_BLOB);
 }
 
 template <>
-inline void Statement::Bind<File>(ostring name, std::vector<File> &values, unsigned int mode)
+inline void Statement::Bind<File>(ostring name, std::vector<File> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfFiles, name, values, BindValue<OCI_File *>(), mode, OCI_BFILE);
 }
 
 template <>
-inline void Statement::Bind<Object, TypeInfo>(ostring name, std::vector<Object> &values, TypeInfo &typeInfo, unsigned int mode)
+inline void Statement::Bind<Object, TypeInfo>(ostring name, std::vector<Object> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
    Bind(OCI_BindArrayOfObjects, name, values, BindValue<OCI_Object *>(), mode, (OCI_TypeInfo *) typeInfo);
 }
 
 template <>
-inline void Statement::Bind<Reference, TypeInfo>(ostring name, std::vector<Reference> &values, TypeInfo &typeInfo, unsigned int mode)
+inline void Statement::Bind<Reference, TypeInfo>(ostring name, std::vector<Reference> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
    Bind(OCI_BindArrayOfRefs, name, values, BindValue<OCI_Ref *>(), mode, (OCI_TypeInfo *) typeInfo);
 }
 
 template <>
-inline void Statement::Bind<Collection, TypeInfo>(ostring name, std::vector<Collection> &values, TypeInfo &typeInfo, unsigned int mode)
+inline void Statement::Bind<Collection, TypeInfo>(ostring name, std::vector<Collection> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
    Bind(OCI_BindArrayOfColls, name, values, BindValue<OCI_Coll *>(), mode, (OCI_TypeInfo *) typeInfo);
 }
 
 template <>
-inline void Statement::Bind<ostring, unsigned int>(ostring name, std::vector<ostring> &values,  unsigned int maxSize, unsigned int mode)
+inline void Statement::Bind<ostring, unsigned int>(ostring name, std::vector<ostring> &values,  unsigned int maxSize, BindInfo::BindDirection mode)
 {
     BindArray * bnd = new BindArray();
 
@@ -3918,13 +3910,13 @@ inline void Statement::Bind<ostring, unsigned int>(ostring name, std::vector<ost
 }
 
 template <>
-inline void Statement::Bind<ostring, int>(ostring name, std::vector<ostring> &values, int maxSize, unsigned int mode)
+inline void Statement::Bind<ostring, int>(ostring name, std::vector<ostring> &values, int maxSize, BindInfo::BindDirection mode)
 {
     Bind<ostring, unsigned int>(name, values, ( unsigned int) maxSize, mode);
 }
 
 template <>
-inline void Statement::Bind<BufferPointer, unsigned int>(ostring name, std::vector<BufferPointer> &values, unsigned int maxSize,  unsigned int mode)
+inline void Statement::Bind<BufferPointer, unsigned int>(ostring name, std::vector<BufferPointer> &values, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     BindArray * bnd = new BindArray();
 
@@ -4058,9 +4050,9 @@ inline void Statement::Register<BufferPointer, int>(ostring name, int len)
 }
 
 
-inline unsigned int Statement::GetStatementType() const
+inline Statement::StatementType Statement::GetStatementType() const
 {
-    return Check(OCI_GetStatementType(*this));
+    return (StatementType) Check(OCI_GetStatementType(*this));
 }
 
 inline unsigned int Statement::GetSqlErrorPos() const
@@ -4068,24 +4060,24 @@ inline unsigned int Statement::GetSqlErrorPos() const
     return Check(OCI_GetSqlErrorPos(*this));
 }
 
-inline void Statement::SetFetchMode(unsigned int value)
+inline void Statement::SetFetchMode(FetchMode value)
 {
     Check(OCI_SetFetchMode(*this, value));
 }
 
-inline unsigned int Statement::GetFetchMode() const
+inline Statement::FetchMode Statement::GetFetchMode() const
 {
-    return Check(OCI_GetFetchMode(*this));
+    return (FetchMode) Check(OCI_GetFetchMode(*this));
 }
 
-inline void Statement::SetBindMode(unsigned int value)
+inline void Statement::SetBindMode(BindMode value)
 {
     Check(OCI_SetBindMode(*this, value));
 }
 
-inline unsigned int Statement::GetBindMode() const
+inline Statement::BindMode Statement::GetBindMode() const
 {
-    return Check(OCI_GetBindMode(*this));
+    return (BindMode) Check(OCI_GetBindMode(*this));
 }
 
 inline void Statement::SetFetchSize(unsigned int value)
@@ -4128,14 +4120,14 @@ inline unsigned int Statement::GetLongMaxSize() const
     return Check(OCI_GetLongMaxSize(*this));
 }
 
-inline void Statement::SetLongMode(unsigned int value)
+inline void Statement::SetLongMode(LongMode value)
 {
-    Check(OCI_SetLongMode(*this, value));
+    Check(OCI_SetLongMode(*this, (unsigned int) value));
 }
 
-inline unsigned int Statement::GetLongMode() const
+inline Statement::LongMode Statement::GetLongMode() const
 {
-    return Check(OCI_GetLongMode(*this));
+    return (LongMode) Check(OCI_GetLongMode(*this));
 }
 
 inline unsigned int Statement::GetSQLCommand() const
@@ -4214,9 +4206,9 @@ inline void Statement::ReleaseResultsets()
     }
 }
 
-inline void Statement::SetLastBindMode(unsigned int mode)
+inline void Statement::SetLastBindMode(BindInfo::BindDirection mode)
 {
-    Check(OCI_BindSetDirection(Check(OCI_GetBind(*this, Check(OCI_GetBindCount(*this)))), mode));
+    Check(OCI_BindSetDirection(Check(OCI_GetBind(*this, Check(OCI_GetBindCount(*this)))), (unsigned int) mode));
 }
 
 inline BindsHolder * Statement::GetBindsHolder(bool create)
@@ -4261,9 +4253,9 @@ inline bool Resultset::Last()
     return (Check(OCI_FetchLast(*this)) == TRUE);
 }
 
-inline bool Resultset::Seek(unsigned int mode, int offset)
+inline bool Resultset::Seek(SeekMode mode, int offset)
 {
-    return (Check(OCI_FetchSeek(*this, mode, offset)) == TRUE);
+    return (Check(OCI_FetchSeek(*this, (unsigned int) mode, offset)) == TRUE);
 }
 
 inline unsigned int Resultset::GetCount() const
@@ -4318,12 +4310,12 @@ inline bool Resultset::operator -- (int)
 
 inline bool Resultset::operator += (int value)
 {
-    return Seek(OCI_SFD_RELATIVE, value);
+    return Seek(Resultset::SeeKRelative, value);
 }
 
 inline bool Resultset::operator -= (int value)
 {
-    return Seek(OCI_SFD_RELATIVE, -value);
+    return Seek(Resultset::SeeKRelative, -value);
 }
 
 template<>
@@ -4620,9 +4612,9 @@ inline ostring Column::GetFullSQLType() const
     return MakeString((otext *) buffer);
 }
 
-inline unsigned int Column::GetType() const
+inline Column::ColumnType Column::GetType() const
 {
-    return Check(OCI_ColumnGetType(*this));
+    return (ColumnType) Check(OCI_ColumnGetType(*this));
 }
 
 inline unsigned int Column::GetSubType() const
@@ -4630,9 +4622,9 @@ inline unsigned int Column::GetSubType() const
     return Check(OCI_ColumnGetSubType(*this));
 }
 
-inline unsigned int Column::GetCharsetForm() const
+inline Environment::CharsetForm Column::GetCharsetForm() const
 {
-    return Check(OCI_ColumnGetCharsetForm(*this));
+    return (Environment::CharsetForm) Check(OCI_ColumnGetCharsetForm(*this));
 }
 
 inline unsigned int Column::GetSize() const
@@ -4660,12 +4652,12 @@ inline int Column::GetLeadingPrecision() const
     return Check(OCI_ColumnGetLeadingPrecision(*this));
 }
 
-inline bool Column::GetNullable() const
+inline bool Column::IsNullable() const
 {
     return (Check(OCI_ColumnGetNullable(*this)) == TRUE);
 }
 
-inline bool Column::GetCharUsed() const
+inline bool Column::IsCharSemanticUsed() const
 {
     return (Check(OCI_ColumnGetCharUsed(*this)) == TRUE);
 }
@@ -4689,9 +4681,9 @@ inline Subscription::Subscription(OCI_Subscription *pSubcription)
     Acquire(pSubcription, 0, 0);
 }
 
-inline void Subscription::Register(const Connection &con, ostring name, unsigned int type, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
+inline void Subscription::Register(const Connection &con, ostring name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
 {
-    Acquire(Check(OCI_SubscriptionRegister(con, name.c_str(), type, (POCI_NOTIFY) (handler != 0 ? Environment::NotifyHandler : 0 ), port, timeout)), (HandleFreeFunc) OCI_SubscriptionUnregister, 0);
+    Acquire(Check(OCI_SubscriptionRegister(con, name.c_str(), (unsigned int) changeTypes, (POCI_NOTIFY) (handler != 0 ? Environment::NotifyHandler : 0 ), port, timeout)), (HandleFreeFunc) OCI_SubscriptionUnregister, 0);
 
     Environment::GetEnvironmentHandle().Callbacks.Set((OCI_Subscription*) *this, (CallbackPointer) handler);
 }
@@ -4740,36 +4732,14 @@ inline Event::Event(OCI_Event *pEvent)
     Acquire(pEvent, 0, 0);
 }
 
-/**
- * @brief
- * Return the type of event reported by a notification
- *
- * @note
- * The returned value can be one of the following values:
- * - OCI_ENT_STARTUP        : a database has been started up
- * - OCI_ENT_SHUTDOWN       : a database has been shut down
- * - OCI_ENT_SHUTDOWN_ANY   : a database has been shut down (RAC)
- * - OCI_ENT_DROP_DATABASE  : a database has benn dropped
- * - OCI_ENT_DEREGISTER     : the notification is timed out
- * - OCI_ENT_OBJECT_CHANGED : a database object has been modified
- *
- * @note
- * - GetDatabase() returns the affected database
- * - GetObject() returns the affected object ('schema_name'.'object_name')
- * 
- * @note
- * OCI_ENV_EVENTS flag must be passed to Environment::Initialize() to be able to use
- * subscriptions
- *
- */
-inline unsigned int Event::GetType() const
+inline Event::EventType Event::GetType() const
 {
-    return Check(OCI_EventGetType(*this));
+    return (EventType) Check(OCI_EventGetType(*this));
 }
 
-inline unsigned int Event::GetOperation() const
+inline Event::ObjectEvent Event::GetObjectEvent() const
 {
-    return Check(OCI_EventGetOperation(*this));
+    return (ObjectEvent) Check(OCI_EventGetOperation(*this));
 }
 
 inline ostring Event::GetDatabaseName() const
@@ -4875,9 +4845,9 @@ inline int Message::GetAttemptCount() const
     return Check(OCI_MsgGetAttemptCount(*this));
 }
 
-inline unsigned int Message::GetState() const
+inline Message::MessageState Message::GetState() const
 {
-    return Check(OCI_MsgGetState(*this));
+    return (MessageState) Check(OCI_MsgGetState(*this));
 }
 
 inline void Message::GetID(BufferPointer value, unsigned int &size) const
@@ -4982,24 +4952,24 @@ inline void Enqueue::Put(const Message &message)
     Check(OCI_EnqueuePut(*this, message));
 }
 
-inline unsigned int Enqueue::GetVisibility() const
+inline Enqueue::EnqueueVisibility Enqueue::GetVisibility() const
 {
-    return Check(OCI_EnqueueGetVisibility(*this));
+    return (EnqueueVisibility) Check(OCI_EnqueueGetVisibility(*this));
 }
 
-inline void Enqueue::SetVisibility(unsigned int value)
+inline void Enqueue::SetVisibility(EnqueueVisibility value)
 {
-    Check(OCI_EnqueueSetVisibility(*this, value));
+    Check(OCI_EnqueueSetVisibility(*this, (unsigned int) value));
 }
 
-inline unsigned int Enqueue::GetSequenceDeviation() const
+inline Enqueue::EnqueueMode Enqueue::GetMode() const
 {
-    return Check(OCI_EnqueueGetSequenceDeviation(*this));
+    return (EnqueueMode) Check(OCI_EnqueueGetSequenceDeviation(*this));
 }
 
-inline void Enqueue::SetSequenceDeviation(unsigned int value)
+inline void Enqueue::SetMode(EnqueueMode value)
 {
-    Check(OCI_EnqueueSetSequenceDeviation(*this, value));
+    Check(OCI_EnqueueSetSequenceDeviation(*this, (unsigned int) value));
 }
 
 inline void Enqueue::GetRelativeMsgID(BufferPointer value, unsigned int &size) const
@@ -5066,34 +5036,34 @@ inline void Dequeue::SetRelativeMsgID(const BufferPointer &value, unsigned int s
     Check(OCI_DequeueSetRelativeMsgID(*this, value, size));
 }
 
-inline unsigned int Dequeue::GetVisibility() const
+inline Dequeue::DequeueVisibility Dequeue::GetVisibility() const
 {
-    return Check(OCI_DequeueGetVisibility(*this));
+    return (DequeueVisibility) Check(OCI_DequeueGetVisibility(*this));
 }
 
-inline void Dequeue::SetVisibility(unsigned int value)
+inline void Dequeue::SetVisibility(DequeueVisibility value)
 {
-    Check(OCI_DequeueSetVisibility(*this, value));
+    Check(OCI_DequeueSetVisibility(*this, (unsigned int) value));
 }
 
-inline unsigned int Dequeue::GetMode() const
+inline Dequeue::DequeueMode Dequeue::GetMode() const
 {
-    return Check(OCI_DequeueGetMode(*this));
+    return (DequeueMode) Check(OCI_DequeueGetMode(*this));
 }
 
-inline void Dequeue::SetMode(unsigned int value)
+inline void Dequeue::SetMode(DequeueMode value)
 {
-    Check(OCI_DequeueSetMode(*this, value));
+    Check(OCI_DequeueSetMode(*this, (unsigned int) value));
 }
 
-inline unsigned int Dequeue::GetNavigation() const
+inline Dequeue::NavigationMode Dequeue::GetNavigation() const
 {
-    return Check(OCI_DequeueGetNavigation(*this));
+    return (NavigationMode) Check(OCI_DequeueGetNavigation(*this));
 }
 
-inline void Dequeue::SetNavigation(unsigned int value)
+inline void Dequeue::SetNavigation(NavigationMode value)
 {
-    Check(OCI_DequeueSetNavigation(*this, value));
+    Check(OCI_DequeueSetNavigation(*this, (unsigned int) value));
 }
 
 inline int Dequeue::GetWaitTime() const
@@ -5165,14 +5135,14 @@ inline void DirectPath::Prepare()
     Check(OCI_DirPathPrepare(*this));
 }
 
-inline unsigned int DirectPath::Convert()
+inline DirectPath::Result DirectPath::Convert()
 {
-    return Check(OCI_DirPathConvert(*this));
+    return (Result) Check(OCI_DirPathConvert(*this));
 }
 
-inline unsigned int DirectPath::Load()
+inline DirectPath::Result DirectPath::Load()
 {
-    return Check(OCI_DirPathLoad(*this));
+    return (Result) Check(OCI_DirPathLoad(*this));
 }
 
 inline void DirectPath::Finish()
@@ -5245,9 +5215,9 @@ inline void DirectPath::SetBufferSize(unsigned int value)
     Check(OCI_DirPathSetBufferSize(*this, value));
 }
 
-inline void DirectPath::SetConvertMode(unsigned int value)
+inline void DirectPath::SetConversionMode(ConversionMode value)
 {
-    Check(OCI_DirPathSetConvertMode(*this, value));
+    Check(OCI_DirPathSetConvertMode(*this, (unsigned int) value));
 }
 
 inline unsigned int DirectPath::GetErrorColumn()
@@ -5264,10 +5234,10 @@ inline unsigned int DirectPath::GetErrorRow()
  * Queue
  * --------------------------------------------------------------------------------------------- */
 
-inline void Queue::Create(const Connection &connection, ostring queue, ostring table, unsigned int queueType, unsigned int maxRetries,
+inline void Queue::Create(const Connection &connection, ostring queue, ostring table, QueueType queueType, unsigned int maxRetries,
             unsigned int retryDelay, unsigned int retentionTime, bool dependencyTracking, ostring comment)
 {
-    Check(OCI_QueueCreate(connection, queue.c_str(), table.c_str(), queueType, maxRetries, retryDelay, retentionTime, dependencyTracking, comment.c_str()));
+    Check(OCI_QueueCreate(connection, queue.c_str(), table.c_str(), (unsigned int) queueType, maxRetries, retryDelay, retentionTime, dependencyTracking, comment.c_str()));
 }
 
 inline void Queue::Alter(const Connection &connection, ostring queue, unsigned int maxRetries, unsigned int retryDelay, unsigned int retentionTime, ostring comment)
@@ -5295,11 +5265,11 @@ inline void Queue::Stop(const Connection &connection, ostring queue, bool stopEn
  * --------------------------------------------------------------------------------------------- */
 
 inline void QueueTable::Create(const Connection &connection, ostring table, ostring payloadType, bool multipleConsumers, ostring storageClause, ostring sortList,
-                    unsigned int messageGrouping, ostring comment, unsigned int primaryInstance, unsigned int secondaryInstance, ostring compatible)
+                   GroupingMode groupingMode, ostring comment, unsigned int primaryInstance, unsigned int secondaryInstance, ostring compatible)
 
 {
     Check(OCI_QueueTableCreate(connection, table.c_str(), payloadType.c_str(), storageClause.c_str(), sortList.c_str(), multipleConsumers,
-                                   messageGrouping, comment.c_str(), primaryInstance, secondaryInstance, compatible.c_str()));
+                                   (unsigned int) groupingMode, comment.c_str(), primaryInstance, secondaryInstance, compatible.c_str()));
 }
 
 inline void QueueTable::Alter(const Connection &connection, ostring table, ostring comment, unsigned int primaryInstance, unsigned int secondaryInstance)
@@ -5312,9 +5282,9 @@ inline void QueueTable::Drop(const Connection &connection, ostring table, bool f
     Check(OCI_QueueTableDrop(connection, table.c_str(), force));
 }
 
-inline void QueueTable::Purge(const Connection &connection, ostring table, unsigned int deliveryMode, ostring purgeCondition, bool block)
+inline void QueueTable::Purge(const Connection &connection, ostring table, PurgeMode purgeMode, ostring purgeCondition, bool block)
 {
-    Check(OCI_QueueTablePurge(connection, table.c_str(), purgeCondition.c_str(), block, deliveryMode));
+    Check(OCI_QueueTablePurge(connection, table.c_str(), purgeCondition.c_str(), block, (unsigned int) purgeMode));
 }
 
 /**

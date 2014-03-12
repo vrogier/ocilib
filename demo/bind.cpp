@@ -13,8 +13,7 @@ int main(void)
         int code;
 
         st.Prepare("delete from test_fetch where code = :code");
-        st.Bind(":code", code, OCI_BDM_IN);
-    
+        st.Bind(":code", code);  
         code = 5;
         st.Execute();
 

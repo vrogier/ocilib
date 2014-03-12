@@ -210,12 +210,12 @@ int omain(int argc, oarg* argv[])
 
     try
     {
-        Environment::Initialize(OCI_ENV_DEFAULT, home);
+        Environment::Initialize(Environment::EnvDefault, home);
         Environment::EnableWarnings(true);
 
         std::ocout << OTEXT("Connecting to ") << usr << OTEXT("/") << pwd << OTEXT("@") << dbs << std::endl << std::endl;
 
-        con.Open(dbs, usr, pwd, OCI_SESSION_DEFAULT);
+        con.Open(dbs, usr, pwd, Environment::SessionDefault);
 
         print_version();
 
@@ -612,7 +612,7 @@ void test_piecewise_fetch(void)
     std::ocout << OTEXT("\n>>>>> TEST LONG MAPPED TO STRING\n\n");
 
     st.Execute(OTEXT("select content from test_long_str where code = 1"));
-    st.SetLongMode(OCI_LONG_IMPLICIT);
+    st.SetLongMode(Statement::LongImplicit);
 
     Resultset rs2 = st.GetResultset();
     while (rs2++)
@@ -644,7 +644,7 @@ void test_lob(void)
 
         clob.Write(OTEXT("today, "));
         clob.Append(OTEXT("i'm going to the cinema ! "));
-        clob.Seek( OCI_SEEK_SET, 0);
+        clob.Seek(Clob::SeekSet, 0);
 
         std::ocout << OTEXT("> code : ") << rs.Get<int>(1) << OTEXT(", content : ") << clob.Read(SIZE_STR) << std::endl;
     }
@@ -762,24 +762,21 @@ void test_dates(void)
 {
     std::ocout << OTEXT("\n>>>>> TEST DATETIME MANIPULATION\n\n");
 
-    Date d1, d2;
+    Date date;
 
-    d1.FromString(OTEXT("13041978 20:20:12"), OTEXT("DDMMYYYY HH24:MI:SS"));
-    std::ocout << d1.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
+    date.FromString(OTEXT("13041978 20:20:12"), OTEXT("DDMMYYYY HH24:MI:SS"));
+    std::ocout << date.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
 
-    d1.SysDate();
-    std::ocout << d1.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
+    date.SysDate();
+    std::ocout << date.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
 
-    d1.AddDays(5);
-    d1.AddMonths(2);
-    std::ocout << OTEXT("Date + 5 days and 2 months is ") << d1.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
+    date.AddDays(5);
+    date.AddMonths(2);
+    std::ocout << OTEXT("Date + 5 days and 2 months is ") << date.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
 
-    d2.Assign(d1);
+    std::ocout << OTEXT("Last day of the month : ") << date.LastDay().ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
 
-    d1.LastDay();
-    std::ocout << OTEXT("Last day of the month : ") << d1.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
-
-    std::ocout << OTEXT("Number of days until the end of the months : ") << d1.DaysBetween(d2) << std::endl;
+    std::ocout << OTEXT("Number of days until the end of the months : ") << date.LastDay().DaysBetween(date) << std::endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -803,7 +800,7 @@ void test_timestamp(void)
     {
         std::ocout << OTEXT("\n>>>>> TEST TIMESTAMP\n\n");
 
-        Timestamp tm(OCI_TIMESTAMP);
+        Timestamp tm(Timestamp::NoTimeZone);
 
         tm.SysTimestamp();
         std::ocout << OTEXT("Current timestamp : ") << tm.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS:FF3")) << std::endl;
@@ -815,7 +812,7 @@ void test_timestamp(void)
         {
             std::ocout << OTEXT("\n>>>>> TEST INTERVAL \n\n");
 
-            Interval itv(OCI_INTERVAL_DS);
+            Interval itv(Interval::DaySecond);
             itv.SetDaySecond(1,1,1,1,0);
             tm.AddInterval(itv);
             std::ocout << OTEXT("Current timestamp + Interval :") << tm.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS:FF3")) << std::endl;
@@ -834,7 +831,7 @@ void test_describe(void)
     std::ocout << OTEXT("----------------------------------------") << std::endl;
     std::ocout << std::setiosflags(std::ios::left);
 
-    TypeInfo table(con, OTEXT("test_fetch"), OCI_TIF_TABLE);
+    TypeInfo table(con, OTEXT("test_fetch"), TypeInfo::ObjectTable);
 
     for(int i = 1, n = table.GetColumnCount(); i <= n; i++)
     {
@@ -852,7 +849,7 @@ void test_describe(void)
     std::ocout << OTEXT("----------------------------------------") << std::endl;
     std::ocout << std::setiosflags(std::ios::left);
 
-    TypeInfo type(con, OTEXT("test_t"), OCI_TIF_TYPE);
+    TypeInfo type(con, OTEXT("test_t"), TypeInfo::ObjectType);
 
     for(int i = 1, n = type.GetColumnCount(); i <= n; i++)
     {
@@ -883,7 +880,7 @@ void test_returning(void)
     {
         Clob clob = rs.Get<Clob>(2);
         clob.Append(OTEXT("(modified)"));
-        clob.Seek(OCI_SEEK_SET, 0);
+        clob.Seek(Clob::SeekSet, 0);
 
         std::ocout << OTEXT("> code : ") << rs.Get<int>(1) << OTEXT(" - ") << clob.Read((int)clob.GetLength()) << std::endl;
     }
@@ -1019,12 +1016,12 @@ void test_object_insert(void)
     Date date;
     date.SysDate();
 
-    Object obj2(TypeInfo(con, OTEXT("type_t"), OCI_TIF_TYPE));
+    Object obj2(TypeInfo(con, OTEXT("type_t"), TypeInfo::ObjectType));
 
     obj2.Set<int>    (OTEXT("ID"), 1);
     obj2.Set<ostring>(OTEXT("NAME"), OTEXT("USB KEY 2go"));
 
-    Object obj1(TypeInfo(con, OTEXT("test_t"), OCI_TIF_TYPE));
+    Object obj1(TypeInfo(con, OTEXT("test_t"), TypeInfo::ObjectType));
 
     obj1.Set<int>    (OTEXT("VAL_INT"), 1);
     obj1.Set<double> (OTEXT("VAL_DBL"), 3.14);
@@ -1112,7 +1109,7 @@ void test_scrollable_cursor(void)
 
         Statement st(con);
         
-        st.SetFetchMode(OCI_SFM_SCROLLABLE);
+        st.SetFetchMode(Statement::FetchScrollable);
         st.Execute(OTEXT("select table_name from user_tables where ")
                    OTEXT("table_name like 'TEST_%' order by table_name"));
    
@@ -1138,7 +1135,7 @@ void test_scrollable_cursor(void)
         }
 
         std::ocout << OTEXT("... Go to the 3th row") << std::endl;
-        rs.Seek(OCI_SFD_ABSOLUTE, 3);
+        rs.Seek(Resultset::SeekAbsolute, 3);
         std::ocout << OTEXT("table ") << rs.Get<ostring>(1) << std::endl;
 
         std::ocout << OTEXT("... Fetch the next 2 rows") << std::endl;
@@ -1159,7 +1156,7 @@ void test_collection(void)
     int i;
 
     Statement st(con);
-    TypeInfo type(con, OTEXT("T_TAB1_EMP"), OCI_TIF_TYPE);
+    TypeInfo type(con, OTEXT("T_TAB1_EMP"), TypeInfo::ObjectType);
     Collection coll(type);
 
     st.Prepare( OTEXT("begin")
@@ -1243,7 +1240,7 @@ void test_ref(void)
 
     std::ocout << OTEXT("\n>>>>> TEST REF PL/SQL BINDING \n\n");
 
-    Reference ref(TypeInfo(con, OTEXT("type_t"), OCI_TIF_TYPE));
+    Reference ref(TypeInfo(con, OTEXT("type_t"), TypeInfo::ObjectType));
 
     st.Prepare (OTEXT("begin ")
                 OTEXT("  select ref(e) into :r from test_table_obj e where e.id = 1; ")
@@ -1280,7 +1277,7 @@ void test_directpath(void)
     
         int i = 0, j = 0, nb_rows = SIZE_ARRAY;
 
-        DirectPath directPath(TypeInfo(con, OTEXT("test_directpath"), OCI_TIF_TABLE), NUM_COLS, nb_rows);
+        DirectPath directPath(TypeInfo(con, OTEXT("test_directpath"), TypeInfo::ObjectTable), NUM_COLS, nb_rows);
 
         /* optional attributes to set */
 

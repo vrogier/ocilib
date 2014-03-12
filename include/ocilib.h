@@ -1577,6 +1577,7 @@ typedef unsigned int big_uint;
 #define OCI_APM_BUFFERED                    1
 #define OCI_APM_PERSISTENT                  2
 #define OCI_APM_ALL                         (OCI_APM_BUFFERED | OCI_APM_PERSISTENT)
+
 /* AQ queue table grouping mode */
 
 #define OCI_AGM_NONE                        0
@@ -9342,7 +9343,7 @@ OCI_EXPORT boolean OCI_API OCI_SetFetchMode
  *
  * @note
  * See OCI_SetFetchMode() for possible values
- * Default value is OCI_FETCH_FORWARD_ONLY
+ * Default value is OCI_SFM_DEFAULT
  *
  */
 

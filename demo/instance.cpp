@@ -9,10 +9,10 @@ int main(void)
         Environment::Initialize();
 
         /* start remote instance */
-        Environment::StartDatabase("db", "sys_usr", "sys_pwd", OCI_DB_SPM_FULL, OCI_DB_SPF_FORCE);
+        Environment::StartDatabase("db", "sys_usr", "sys_pwd", Environment::StartForce, Environment::StartFull);
 
         /* shutdown remote instance */
-        Environment::ShutdownDatabase("db", "sys_usr", "sys_pwd",  OCI_DB_SDM_FULL, OCI_DB_SDF_ABORT);
+        Environment::ShutdownDatabase("db", "sys_usr", "sys_pwd", Environment::ShutdownAbort, Environment::ShutdownFull);
     }
     catch(Exception &ex)
     {

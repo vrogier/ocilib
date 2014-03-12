@@ -8,8 +8,8 @@ int main(void)
     {
         Environment::Initialize();
 
-        Timestamp tm(OCI_TIMESTAMP);
-        Interval itv(OCI_INTERVAL_DS);
+        Timestamp tm(Timestamp::NoTimeZone);
+        Interval itv(Interval::DaySecond);
 
         tm.SysTimestamp();
         std::cout << tm.ToString("DD/MM/YYYY HH24:MI:SS:FF3") << std::endl;
