@@ -468,7 +468,7 @@ void test_bind1(void)
 
     Statement st(con);
     st.Prepare(OTEXT("select * from test_fetch where code = :code"));
-    st.Bind(OTEXT(":code"), code, OCI_BDM_IN);
+    st.Bind(OTEXT(":code"), code);
     st.Execute();
 
     Resultset rs = st.GetResultset();
@@ -528,16 +528,16 @@ void test_bind2(void)
 
     /* bind scalar C types arrays */
 
-    st.Bind(OTEXT(":val_int"),  i,  OCI_BDM_IN);
-    st.Bind(OTEXT(":val_dbl"), dbl, OCI_BDM_IN);
-    st.Bind(OTEXT(":val_flt"), flt, OCI_BDM_IN);
-    st.Bind(OTEXT(":val_str"), str, (unsigned int) str.size(), OCI_BDM_IN);
+    st.Bind(OTEXT(":val_int"),  i);
+    st.Bind(OTEXT(":val_dbl"), dbl);
+    st.Bind(OTEXT(":val_flt"), flt);
+    st.Bind(OTEXT(":val_str"), str, (unsigned int) str.size());
 
     /* bind oracle types arrays */
 
-    st.Bind(OTEXT(":val_date"), date, OCI_BDM_IN);
-    st.Bind(OTEXT(":val_lob"),  clob, OCI_BDM_IN);
-    st.Bind(OTEXT(":val_file"), file, OCI_BDM_IN);
+    st.Bind(OTEXT(":val_date"), date);
+    st.Bind(OTEXT(":val_lob"),  clob);
+    st.Bind(OTEXT(":val_file"), file);
 
     /* do insert */
 
@@ -566,7 +566,7 @@ void test_piecewise_insert(void)
         BLong lg(st);
         st.Prepare(OTEXT("insert into test_long_raw(code, content) values (1, :data)"));
         st.SetLongMaxSize( (unsigned int) size);
-        st.Bind(OTEXT(":data"), lg, (int) size, OCI_BDM_IN);
+        st.Bind(OTEXT(":data"), lg, (int) size);
         st.Execute();
 
         char * buffer = new char [size];
@@ -690,7 +690,7 @@ void test_ref_cursor(void)
 
     Statement st(con);
     st.Prepare(OTEXT("begin open :c for select * from test_fetch; end;"));
-    st.Bind( OTEXT(":c"), stBind, OCI_BDM_OUT);
+    st.Bind( OTEXT(":c"), stBind, BindInfo::Out);
     st.Execute();
 
     Resultset rs = stBind.GetResultset();
@@ -718,7 +718,7 @@ void test_plsql(void)
     Statement st(con);
 
     st.Prepare(OTEXT("begin :res := trunc(sysdate+1)-trunc(sysdate-1); end;"));
-    st.Bind( OTEXT(":res"), res, OCI_BDM_OUT);
+    st.Bind( OTEXT(":res"), res, BindInfo::Out);
     st.Execute();
     std::ocout << OTEXT("PL/SQL : trunc(sysdate+1)-trunc(sysdate-1)") << std::endl;
     std::ocout << OTEXT("Result : ") << res << std::endl;
@@ -954,13 +954,13 @@ void test_returning_array(void)
     st.SetBindArraySize(SIZE_TAB);
 
     /* bind vectors */
-    st.Bind(OTEXT(":val_int"),  tab_int, OCI_BDM_IN);
-    st.Bind(OTEXT(":val_dbl"),  tab_dbl, OCI_BDM_IN);
-    st.Bind(OTEXT(":val_flt"),  tab_flt, OCI_BDM_IN);
-    st.Bind(OTEXT(":val_date"), tab_date, OCI_BDM_IN);
-    st.Bind(OTEXT(":val_lob"),  tab_lob,  OCI_BDM_IN);
-    st.Bind(OTEXT(":val_file"), tab_file, OCI_BDM_IN);
-    st.Bind(OTEXT(":val_str"),  tab_str, 30, OCI_BDM_IN);
+    st.Bind(OTEXT(":val_int"),  tab_int);
+    st.Bind(OTEXT(":val_dbl"),  tab_dbl);
+    st.Bind(OTEXT(":val_flt"),  tab_flt);
+    st.Bind(OTEXT(":val_date"), tab_date);
+    st.Bind(OTEXT(":val_lob"),  tab_lob);
+    st.Bind(OTEXT(":val_file"), tab_file);
+    st.Bind(OTEXT(":val_str"),  tab_str, 30);
 
     /* register output */
     st.Register<int    >(OTEXT(":out_int"));
@@ -1035,7 +1035,7 @@ void test_object_insert(void)
 
     Statement st(con);
     st.Prepare(OTEXT("insert into test_object values(:obj)"));
-    st.Bind(OTEXT(":obj"), obj1, OCI_BDM_IN);
+    st.Bind(OTEXT(":obj"), obj1);
     st.Execute();
 
     std::ocout << OTEXT("Rows inserted :  ") << st.GetAffectedRows() << std::endl;
@@ -1165,8 +1165,8 @@ void test_collection(void)
                 OTEXT("    where departement = :id; ")
                 OTEXT("end;"));
 
-    st.Bind(OTEXT(":tab_emp"), coll, OCI_BDM_IN);
-    st.Bind(OTEXT(":id"), i, OCI_BDM_IN);
+    st.Bind(OTEXT(":tab_emp"), coll);
+    st.Bind(OTEXT(":id"), i);
 
     i = 1;
 
@@ -1246,7 +1246,7 @@ void test_ref(void)
                 OTEXT("  select ref(e) into :r from test_table_obj e where e.id = 1; ")
                 OTEXT("end; "));
 
-    st.Bind(OTEXT(":r"), ref, OCI_BDM_IN_OUT);
+    st.Bind(OTEXT(":r"), ref, BindInfo::InOut);
     st.Execute();
 
     Object obj = ref.GetObject();
