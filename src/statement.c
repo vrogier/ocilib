@@ -1271,6 +1271,20 @@ boolean OCI_StatementReset
 {
     boolean res = TRUE;
 
+#if OCI_VERSION_COMPILE >= OCI_9_2
+
+    ub4 mode = OCI_DEFAULT;
+
+    if ((OCILib.version_runtime >= OCI_9_2) && (stmt->nb_rbinds > 0))
+    {
+        /*  if we had registered binds, we must delete the stmt from the cache.
+            Because, if we execute another sql with "returnning into clause",  
+            OCI_ProcInBind won't be called by OCI. Nice Oracle bug ! */
+        mode = OCI_STRLS_CACHE_DELETE;
+    }
+
+#endif
+
     /* reset batch errors */
 
     res = OCI_BatchErrorClear(stmt);
@@ -1302,7 +1316,7 @@ boolean OCI_StatementReset
 
             if (OCILib.version_runtime >= OCI_9_2)
             {
-                OCIStmtRelease(stmt->stmt, stmt->con->err, NULL, 0, OCI_DEFAULT);
+                OCIStmtRelease(stmt->stmt, stmt->con->err, NULL, 0, mode);
             }
             else
 

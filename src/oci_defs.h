@@ -506,6 +506,9 @@
 #define OCI_LOBMAXSIZE          MINUB4MAXVAL        /* maximum lob data size */
 #define OCI_ROWID_LEN           23
 
+/*---------------------OCIStmtRelease Modes----------------------------------*/
+#define OCI_STRLS_CACHE_DELETE   0x0010                 /* Delete from Cache */
+
 /*-----------------------Handle Definitions----------------------------------*/
 typedef struct OCIEnv OCIEnv;                      /* OCI environment handle */
 typedef struct OCIError OCIError;                        /* OCI error handle */
