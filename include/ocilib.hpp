@@ -3488,53 +3488,451 @@ class DirectPath : public HandleHolder<OCI_DirPath *>
 {
 public:
 
+    /**
+     * @brief 
+     * Conversion modes
+     *
+     */
     enum ConversionMode
     {
+        /** conversion fails on error */
         Default = OCI_DCM_DEFAULT,
+        /** conversion does not fail on error */
         Force = OCI_DCM_FORCE
     };
 
     enum Result
     {
+        /** conversion/load has been successful */
         ResultComplete = OCI_DPR_COMPLETE,
+        /** an error happened while converting/loading data */
         ResultError = OCI_DPR_ERROR,
+        /** the internal stream is full*/
         ResultFull = OCI_DPR_FULL ,
+        /** a column has not been fully filled yet */
         ResultPartial = OCI_DPR_PARTIAL,
+        /** no data was found to convert/load */
         ResultEmpty = OCI_DPR_EMPTY
     };
 
+    /**
+     * @brief
+     * Constructor
+     *
+     * @param typeInfo  - Table type info object
+     * @param nbCols    - Number of columns to load
+     * @param nbRows    - Maximum of rows to handle per load operation
+     * @param partition - Partition name
+     *
+     * @note
+     * The partition name is not mandatory
+     *
+     * @note
+     * Parameter 'nbRows' is ignored for Oracle 8i. Prior to Oracle 9i, it's the
+     * OCI client that decides of the number of rows to process per convert/load calls.
+     * From Oracle 9i, OCI allows application to specify this value. Note that, the
+     * OCI client might not accept the input value. After DirPathPrepare() has
+     * been successfully called, GetMaxRows() returns the final number
+     * of rows used for the given direct path operation.
+     *
+     */
     DirectPath(const TypeInfo &typeInfo, unsigned int nbCols, unsigned int  nbRows, ostring partition = OTEXT(""));
 
+    /**
+     * @brief
+     * Describe a column to load into the given table
+     *
+     * @param colIndex - Column index
+     * @param name     - Column name
+     * @param maxsize  - Maximum input value size for a column entry
+     * @param format   - Date or numeric format to use
+     *
+     * @note
+     * An error is thrown if :
+     * - If the column specified by the 'name' parameter is not found in the table
+     *   referenced by the type info handle passed to OCI_DirPathCreate()
+     * - the index is out of bounds (= 0 or >= number of columns)
+     *
+     */
     void SetColumn(unsigned int colIndex, ostring name, unsigned int maxSize,  ostring format = OTEXT(""));
+
+    /**
+     * @brief
+     * Set the value of the given row/column array entry from the given string
+     *
+     * @param rowIndex  - Row index
+     * @param colIndex  - Column index
+     * @param value     - Value to set
+     * @param complete  - Is the entry content fully provided ?
+     *
+     * @note
+     * Rows and columns indexes start at 1.
+     *
+     * @note
+     * Direct path support piece loading for LONGs and LOBs columns. When filling
+     * these columns, it's possible to provide input buffer piece by piece. In order
+     * to do so :
+     * - set the 'complete' parameter to false
+     * - Repeat calls to SetEntry() until the data is totally provided
+     * - The last call that set the last piece or an entry must specify the value
+     *   true for the 'complete' parameter
+     *
+     * @warning
+     * Current Direct Path OCILIB implementation DOES NOT support setting entry
+     * content piece by piece as mentionned above. It was planned in the original design
+     * but not supported yet. So, always set the complete parameter to true.
+     * Setting entries content piece by piece may be supported in future releases
+     *
+     */
     void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const ostring &value,  bool complete = true);
+    
+    
+    /**
+     * @brief
+     * Set the value of the given row/column array entry from the giben buffer pointer
+     *
+     * @param rowIndex  - Row index
+     * @param colIndex  - Column index
+     * @param value     - Value to set
+     * @param size      - Value size
+     * @param complete  - Is the entry content fully provided ?
+     *
+     * @note
+     * Rows and columns indexes start at 1.
+     *
+     * @note
+     * Direct path support piece loading for LONGs and LOBs columns. When filling
+     * these columns, it's possible to provide input buffer piece by piece. In order
+     * to do so :
+     * - set the 'complete' parameter to false
+     * - Repeat calls to SetEntry() until the data is totally provided
+     * - The last call that set the last piece or an entry must specify the value
+     *   true for the 'complete' parameter
+     *
+     * @warning
+     * Current Direct Path OCILIB implementation DOES NOT support setting entry
+     * content piece by piece as mentionned above. It was planned in the original design
+     * but not supported yet. So, always set the complete parameter to true.
+     * Setting entries content piece by piece may be supported in future releases
+     *
+     */
     void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const BufferPointer &value, unsigned int size, bool complete = true);
 
+    /**
+     * @brief
+     * Reset internal arrays and streams to prepare another load
+     *
+     * @note
+     * Once some data have been converted or loaded, Reset() resets
+     * internal OCI structures in order to prepare another load operation
+     * (set entries, convert and load)
+     *
+     */
     void Reset();
+
+    /**
+     * @brief
+     * Prepares the OCI direct path load interface before any rows can be converted or loaded
+     *
+     */
     void Prepare();
+
+    /**
+     * @brief
+     * Convert provided user data to the direct path stream format
+     *
+     * @note
+     * - When using conversion mode Default, Convert() stops when
+     *   any error is encountered and returns ResultError 
+     * - When using conversion mode Force, Convert() does not stop
+     *   on errors. Instead it discards any erred rows and returns ResultComplete once
+     *   all rows are processed.
+     *
+     * @note
+     * List of faulted rows and columns can be retrieved using GetErrorRow() and GetErrorColumn()
+     * 
+     * @note
+     * GetAffectedRows() returns the number of rows converted in the last call.
+     *
+     */
     Result Convert();
+
+    /**
+     * @brief
+     * Loads the data converted to direct path stream format
+     *
+     * @note
+     * List of faulted rows can be retrieved using GetErrorRow()
+     *
+     * @note
+     * GetAffectedRows() returns the number of rows successfully loaded in the last call.
+     *
+     */
     Result Load();
+
+    /**
+     * @brief
+     * Terminate a direct path operation and commit changes into the database
+     *
+     * @warning
+     * The direct path object cannot be used anymore after this call for any more loading operations
+     *
+     */
     void Finish();
+
+    /**
+     * @brief
+     * Terminate a direct path operation without committing changes
+     *
+     * @note
+     * Any pending loaded data are cancelled.
+     * Any load completion operations, such as index maintenance operations, are not performed.
+     *
+     * @warning
+     * The direct path object cannot be used anymore after this call for any more loading operations
+     *
+     */
     void Abort();
+
+    /**
+     * @brief
+     * Execute a data savepoint (server side)
+     *
+     * @note
+     * Executing a data savepoint is not allowed for LOBs
+     *
+     */
     void Save();
+
+    /**
+     * @brief
+     * Flushes a partially loaded row from server
+     *
+     */
     void FlushRow();
 
-    void SetCurrentRows(unsigned int nbRows);
+    /**
+     * @brief
+     * Set the current number of rows to convert and load
+     *
+     * @param value - Number of row to process
+     *
+     * @warning
+     * An OCILIB error will be thrown if the value exceeds the maximum number of
+     * rows in the internals arrays
+     *
+     */
+    void SetCurrentRows(unsigned int value);
+
+    /**
+     * @brief
+     * Return the current number of rows used in the OCILIB internal arrays of rows
+     *
+     * @return
+     * Internal current array size on SUCCESS otherwise 0
+     *
+     */ 
     unsigned int GetCurrentRows() const;
 
+    /**
+     * @brief
+     * Return the maximum number of rows allocated in the OCI and OCILIB internal arrays of rows
+     *
+     * @return
+     * Internal maximum array size on SUCCESS otherwise 0
+     *
+     */
     unsigned int GetMaxRows() const;
+
+    /**
+     * @brief
+     * Return the number of rows successfully loaded into the database so far
+     *
+     * @note
+     * Insertions are committed with Finish()
+     *
+     */
     unsigned int GetRowCount() const;
+
+    /**
+     * @brief
+     * return the number of rows successfully processed during in the last
+     * conversion or loading call
+     *
+     * @note
+     * This function called after :
+     *
+     * - Convert(), returns the number of converted rows
+     * - Pathload(), returns the number of loaded rows
+     *
+     */
     unsigned int GetAffectedRows() const;
 
+    /**
+     * @brief
+     * Set the default date format string for input conversion
+     *
+     * @param format - date format
+     *
+     * @note
+     * For string to date conversion, Oracle uses :
+     * - Column date format
+     * - Default date format (modified by this call)
+     * - Default global support environment setting
+     *
+     */
     void SetDateFormat(ostring format);
-
+    
+    /**
+     * @brief
+     * Set the parallel loading mode
+     *
+     * @param value - enable/disable parallel mode
+     *
+     * @note
+     * Default value is false.
+     *
+     * @note
+     * Setting the value to TRUE allows multiple load sessions to load the same
+     * segment concurrently
+     *
+     * @par Parallel loading mode (From Oracle documentation)
+     *
+     * A direct load operation requires that the object being loaded is locked to
+     * prevent DML on the object.
+     * Note that queries are lock-free and are allowed while the object is being loaded.
+     * - For a table load, if the option is set to:
+     *   - false, then the table DML X-Lock is acquired.
+     *   - true, then the table DML S-Lock is acquired.
+     * - For a partition load, if the option is set to:
+     *   - false, then the table DML SX-Lock and partition DML X-Lock is acquired.
+     *   - true, then the table DML SS-Lock and partition DML S-Lock is acquired.
+     *
+     */
     void SetParallel(bool value);
+
+    /**
+     * @brief
+     * Set the logging mode for the loading operation
+     *
+     * @param value - enable/disable logging
+     *
+     * @par Logging mode (from Oracle Documentation)
+     *
+     * The NOLOG attribute of each segment determines whether image redo or
+     * invalidation redo is generated:
+     * - false : Use the attribute of the segment being loaded.
+     * - true  : No logging. Overrides DDL statement, if necessary.
+     *
+     */
     void SetNoLog(bool value);
+
+    /**
+     * @brief
+     * Set number of elements in the date cache
+     *
+     * @param value - Buffer size
+     *
+     * @note
+     * Default value is 0.
+     *
+     * @note
+     * Setting the value to 0 disables the cache
+     *
+     */
     void SetCacheSize(unsigned int value);
+
+    /**
+     * @brief
+     * Set the size of the internal stream transfer buffer
+     *
+     * @param value - Buffer size
+     *
+     * @note
+     * Default value is 64KB.
+     *
+     */
     void SetBufferSize(unsigned int value);
 
+    /**
+     * @brief
+     * Set the direct path conversion mode
+     *
+     * @param value - Conversion mode
+     *
+     * @note
+     * See Convert() for conversion mode details
+     *
+     * @note
+     * Default value is ConversionMode::Default
+     *
+     */
     void SetConversionMode(ConversionMode value);
 
+    /**
+     * @brief
+     * Return the index of a column which caused an error during data conversion
+     *
+     * @warning
+     * Direct path colmun indexes start at 1.
+     * 
+     * @note
+     * Errors may happen while data is converted to direct path stream format
+     * using Convert().
+     *
+     * @par
+     * When using conversion mode ConversionMode::Default, Convert() returns
+     * Result::ResultError on error and GetErrorColumn() returns the column index that
+     * caused the error.
+     * When using conversion mode ConversionMode::Force, Convert() returns 
+     * Result::ResultComplete even on errors. In order to retrieve the list of all column
+     * indexes that have erred, the application can call GetErrorColumn() 
+     * repeatedly until it returns 0. 
+     *
+     * @note
+     * The internal value is reset to 0 when calling Convert()
+     *
+     * @return
+     * 0 is no error occurs otherwise the index of the given column which caused an
+     * error
+     *
+     */
     unsigned int GetErrorColumn();
+
+    /**
+     * @brief
+     * Return the index of a row which caused an error during data conversion
+     *
+     * @warning
+     * Direct path row indexes start at 1.
+     * 
+     * @note
+     * Errors may happen :
+     * - while data is converted to direct path stream format using OCI_DirPathConvert()
+     * - while data is loaded to database using OCI_DirPathLoad()
+     *
+     * @par
+     * When using conversion mode ConversionMode::Default, Convert() returns
+     * Result::ResultError on error and GetErrorRow() returns the row index that
+     * caused the error.
+     * When using conversion mode ConversionMode::Force, Convert() returns 
+     * Result::ResultComplete even on errors. In order to retrieve the list of all row
+     * indexes that have erred, the application can call GetErrorRow() 
+     * repeatedly until it returns 0. 
+     *
+     * @note
+     * After a call to Load(), in order to retrieve the list of all faulted rows 
+     * indexes, the application can call GetErrorRow() repeatedly until it returns 0. 
+     *
+     * @note
+     * The internal value is reset to 0 when calling Convert(),Reset() or Load()
+     *
+     * @return
+     * 0 is no error occurs otherwise the index of the given row which caused an
+     * error
+     *
+     */
+
     unsigned int GetErrorRow();
 };
 

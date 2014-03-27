@@ -351,7 +351,7 @@ EXTRACT_LOCAL_CLASSES  = NO
 # the interface are included in the documentation. 
 # If set to NO (the default) only methods in the interface are included.
 
-EXTRACT_LOCAL_METHODS  = NO
+EXTRACT_LOCAL_METHODS  = YES
 
 # If this flag is set to YES, the members of anonymous namespaces will be 
 # extracted and appear in the documentation as a namespace called 
@@ -359,7 +359,7 @@ EXTRACT_LOCAL_METHODS  = NO
 # name of the file that contains the anonymous namespace. By default 
 # anonymous namespaces are hidden.
 
-EXTRACT_ANON_NSPACES   = NO
+EXTRACT_ANON_NSPACES   = YES
 
 # If the HIDE_UNDOC_MEMBERS tag is set to YES, Doxygen will hide all 
 # undocumented members of documented classes, files or namespaces. 
@@ -426,7 +426,7 @@ FORCE_LOCAL_INCLUDES   = NO
 # If the INLINE_INFO tag is set to YES (the default) then a tag [inline] 
 # is inserted in the documentation for inline members.
 
-INLINE_INFO            = NO
+INLINE_INFO            = YES
 
 # If the SORT_MEMBER_DOCS tag is set to YES (the default) then doxygen 
 # will sort the (detailed) documentation of file and class members 
@@ -620,7 +620,6 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = Introduction.txt \
-                         Installation.txt \
                          ../ocilib \
                          ../ocilib/include
 
