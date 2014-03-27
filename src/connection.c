@@ -901,7 +901,7 @@ boolean OCI_ConnectionClose
     OCI_FREE(con->db_name);
     OCI_FREE(con->domain_name);
 
-    if (con->pool)
+    if (!con->pool)
     {
         OCI_FREE(con->db);
         OCI_FREE(con->user);
