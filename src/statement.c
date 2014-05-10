@@ -187,7 +187,7 @@ boolean OCI_BindCheck
                         {
                             /* need conversion if bind buffer was allocated */
 
-                            OCI_StringUTF32ToUTF16(bnd->input, bnd->buffer.data, bnd->size);
+                            OCI_StringUTF32ToUTF16(bnd->input, bnd->buffer.data, (bnd->size / sizeof(dbtext)) - 1);
                         }
                     }
                     else
@@ -273,9 +273,9 @@ boolean OCI_BindCheck
                                 int offset1 = (bnd->size/sizeof(dbtext))*sizeof(otext);
                                 int offset2 = bnd->size;
 
-                                OCI_StringUTF16ToUTF32( (((ub1 *) bnd->input      ) + (j*offset1)),
+                                OCI_StringUTF32ToUTF16( (((ub1 *) bnd->input      ) + (j*offset1)),
                                                         (((ub1 *) bnd->buffer.data) + (j*offset2)),
-                                                        bnd->size/sizeof(otext)-1);                               
+                                                        (bnd->size / sizeof(dbtext)) - 1);                               
                             }
                         }
                         else
@@ -479,11 +479,12 @@ boolean OCI_BindReset
                         {
                             dbsize = (int) ((ub2 *) bnd->buffer.lens)[j];
                         }
-
-                        if (bnd->size == (sb4) dbsize)
+                        else
                         {
-                            dbsize -= sizeof(dbtext);
+                            dbsize = bnd->size - sizeof(dbtext);
                         }
+
+						dbsize /= sizeof(dbtext);
 
                         OCI_StringUTF16ToUTF32( (((ub1 *) bnd->buffer.data) + (j*offset2) ),
                                                 (((ub1 *) bnd->input      ) + (j*offset1) ),
