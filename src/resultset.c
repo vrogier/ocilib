@@ -290,7 +290,7 @@ boolean OCI_FetchPieces
 
         /* search for the given column */
 
-        for (i = 0; res&& (i < rs->nb_defs); i++)
+        for (i = 0; res && (i < rs->nb_defs); i++)
         {
             OCI_Define *def = &(rs->defs[i]);
 
@@ -313,7 +313,7 @@ boolean OCI_FetchPieces
                     char_fact = 1;
                 }
 
-                if (lg->type == OCI_CLONG)
+                if (OCI_CLONG == lg->type)
                 {
                     bufsize += (ub4) sizeof(dbtext);
                 }
@@ -338,7 +338,7 @@ boolean OCI_FetchPieces
                 }
                 else if ((lg->size*char_fact) >= (lg->maxsize - trailing_size))
                 {
-                    lg->maxsize = (lg->size*char_fact) + trailing_size + bufsize;
+                    lg->maxsize = (lg->size + trailing_size + bufsize) * char_fact;
 
                     lg->buffer = (ub1 *) OCI_MemRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER,
                                                         (size_t) lg->maxsize, 1);
