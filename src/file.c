@@ -312,34 +312,53 @@ boolean OCI_API OCI_FileSeek
     unsigned int mode
 )
 {
-    boolean  res  =  TRUE;
+    boolean  res  = TRUE;
     big_uint size = 0;
 
     OCI_CHECK_PTR(OCI_IPC_FILE, file, FALSE);
 
-    size  = OCI_FileGetSize(file);
+    size = OCI_FileGetSize(file);
 
-    if ((offset + file->offset - 1) > size)
+    switch (mode)
     {
-        res = FALSE;
-    }
-
-    if (res)
-    {
-        switch (mode)
+        case OCI_SEEK_CUR:
         {
-            case OCI_SEEK_CUR:
-                file->offset += offset;
-                break;
-            case OCI_SEEK_SET:
-                file->offset = offset + 1;
-                break;
-            case OCI_SEEK_END:
-                file->offset = size - offset + 1;
-                break;
-            default:
+            if ((offset + file->offset - 1) > size) 
+            {
                 res = FALSE;
+            }
+            else
+            {
+                file->offset += offset;
+            }
+            break;
         }
+        case OCI_SEEK_SET:
+        {
+            if (offset > size) 
+            {
+                res = FALSE;
+            }
+            else
+            {
+                file->offset = offset + 1;
+            }
+            break;
+        }
+        case OCI_SEEK_END:
+        {
+            if (offset > size) 
+            {
+                res = FALSE;
+            }
+            else
+            {
+                file->offset = size - offset + 1;
+            }
+            break;
+        }
+        default:
+            res = FALSE;
     }
 
     OCI_RESULT(res);

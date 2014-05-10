@@ -272,34 +272,53 @@ boolean OCI_API OCI_LobSeek
     unsigned int mode
 )
 {
-    boolean res   = TRUE;
+    boolean  res  = TRUE;
     big_uint size = 0;
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, FALSE);
 
     size = OCI_LobGetLength(lob);
 
-    if ((offset + lob->offset - 1) > size)
+    switch (mode)
     {
-        res = FALSE;
-    }
-
-    if (res)
-    {
-        switch (mode)
+        case OCI_SEEK_CUR:
         {
-            case OCI_SEEK_CUR:
-                lob->offset += offset;
-                break;
-            case OCI_SEEK_SET:
-                lob->offset = offset + 1;
-                break;
-            case OCI_SEEK_END:
-                lob->offset = size - offset + 1;
-                break;
-            default:
+            if ((offset + lob->offset - 1) > size) 
+            {
                 res = FALSE;
+            }
+            else
+            {
+                lob->offset += offset;
+            }
+            break;
         }
+        case OCI_SEEK_SET:
+        {
+            if (offset > size) 
+            {
+                res = FALSE;
+            }
+            else
+            {
+                lob->offset = offset + 1;
+            }
+            break;
+        }
+        case OCI_SEEK_END:
+        {
+            if (offset > size) 
+            {
+                res = FALSE;
+            }
+            else
+            {
+                lob->offset = size - offset + 1;
+            }
+            break;
+        }
+        default:
+            res = FALSE;
     }
 
     OCI_RESULT(res);
