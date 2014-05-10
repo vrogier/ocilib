@@ -325,7 +325,7 @@ dbtext * OCI_StringGetOracleString
 
     if (OCILib.use_wide_char_conv)
     {
-        dbtext *dst = (dbtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(dbtext), len + 1, FALSE);
+        dst = (dbtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(dbtext), len + 1, FALSE);
 
         if (dst)
         {
