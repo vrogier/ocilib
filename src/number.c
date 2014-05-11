@@ -371,7 +371,7 @@ boolean OCI_NumberToString
         OCI_StringReleaseOracleString(dbstr2);
         OCI_StringReleaseOracleString(dbstr1);
 
-        out_value_size = (dbsize1 / (int) sizeof(otext));
+        out_value_size = (dbsize1 / (int) sizeof(dbtext));
     }  
 
     /* do we need to suppress last '.' or ',' from integers */
