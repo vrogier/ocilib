@@ -54,7 +54,7 @@ OCI_Timestamp * OCI_TimestampInit
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    boolean res = FALSE;
+    boolean res = TRUE;
 
     OCI_CHECK(ptmsp == NULL, NULL);
 
@@ -116,16 +116,19 @@ OCI_Timestamp * OCI_TimestampInit
         {
             tmsp->hstate = OCI_OBJECT_FETCHED_CLEAN;
         }
-
-        /* check for failure */
-
-        if (!res)
-        {
-            OCI_TimestampFree(tmsp);
-            tmsp = NULL;
-        }
+    }
+    else
+    {
+        res = FALSE;
     }
 
+    /* check for failure */
+
+    if (!res)
+    {
+        OCI_TimestampFree(tmsp);
+        tmsp = NULL;
+    }
 #else
 
     OCI_NOT_USED(con);
