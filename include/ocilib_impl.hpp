@@ -1511,7 +1511,7 @@ inline int Interval::GetHours() const
 
     GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
 
-    return day;
+    return hour;
 }
 
 inline void Interval::SetHours(int value)
@@ -3144,7 +3144,7 @@ inline BindValue<TValueType>::operator TValueType() const
  * BindArray
  * --------------------------------------------------------------------------------------------- */
 
-inline BindArray::BindArray() : _object(0)
+inline BindArray::BindArray(ostring name) : BindObject(name), _object(0)
 {
 
 }
@@ -3317,7 +3317,10 @@ inline void BindString::SetOutData()
     _string = _data;
 }
 
-inline BindString::BindString(ostring &string, unsigned int elemSize) : _string(string), _elemSize(elemSize)
+inline BindString::BindString(ostring name, ostring &string, unsigned int elemSize) :
+     BindObject(name),
+     _string(string),
+     _elemSize(elemSize)
 {
     _data = new otext[_elemSize];
 
@@ -3338,7 +3341,7 @@ inline BindString::operator otext *()  const
  * BindsHolder
  * --------------------------------------------------------------------------------------------- */
 
-inline BindsHolder::BindsHolder()
+inline BindsHolder::BindsHolder(OCI_Statement *stmt) : _stmt(stmt)
 {
 
 }
@@ -3352,7 +3355,7 @@ inline void BindsHolder::Clear()
 {
     std::vector<BindObject *>::iterator it, it_end;
 
-    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it < it_end; it++)
+    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; it++)
     {
         delete (*it);
     }
@@ -3360,6 +3363,20 @@ inline void BindsHolder::Clear()
 
 inline void BindsHolder::AddBindObject(BindObject *bindObject)
 {
+    if (OCI_IsRebindingAllowed(_stmt))
+    {
+        std::vector<BindObject *>::iterator it, it_end;
+
+        for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; it++)
+        {
+            if ((*it)->GetName() == bindObject->GetName())
+            {
+                _bindObjects.erase(it);
+                break;
+            }
+        }
+    }
+
     _bindObjects.push_back(bindObject);
 }
 
@@ -3367,7 +3384,7 @@ inline void BindsHolder::SetOutData()
 {
     std::vector<BindObject *>::iterator it, it_end;
 
-    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it < it_end; it++)
+    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; it++)
     {
         (*it)->SetOutData();
     }
@@ -3377,7 +3394,7 @@ inline void BindsHolder::SetInData()
 {
     std::vector<BindObject *>::iterator it, it_end;
 
-    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it < it_end; it++)
+    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; it++)
     {
         (*it)->SetInData();
     }
@@ -3566,6 +3583,11 @@ inline void Statement::AllowRebinding(bool value)
     Check(OCI_AllowRebinding(*this, value));
 }
 
+inline bool Statement::IsRebindingAllowed() const
+{
+    return (Check(OCI_IsRebindingAllowed(*this)) == TRUE);
+}
+
 inline unsigned int Statement::GetBindCount() const
 {
     return Check(OCI_GetBindCount(*this));
@@ -3598,29 +3620,41 @@ inline void Statement::Bind (TBindMethod &method, ostring name, TObjectType& val
 template <typename TBindMethod, class TObjectType, class TDataType>
 inline void Statement::Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode)
 {
-    BindArray * bnd = new BindArray();
-
+    BindArray * bnd = new BindArray(name);
     bnd->SetVector<TObjectType, TDataType>(values, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
 
-    BindsHolder *bindsHolder = GetBindsHolder(true);
-    bindsHolder->AddBindObject(bnd);
+    if (method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), 0))
+    {
+        BindsHolder *bindsHolder = GetBindsHolder(true);
+        bindsHolder->AddBindObject(bnd);
+        SetLastBindMode(mode);
+    }
+    else
+    {
+        delete bnd;
+    }
 
-    Check(method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), 0));
-    SetLastBindMode(mode);
+    Check();
 }
 
 template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
 inline void Statement::Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode, TElemType type)
 {
-    BindArray * bnd = new BindArray();
-
+    BindArray * bnd = new BindArray(name);
     bnd->SetVector<TObjectType, TDataType>(values, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
 
-    BindsHolder *bindsHolder = GetBindsHolder(true);
-    bindsHolder->AddBindObject(bnd);
+    if (method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), type, 0))
+    {
+        BindsHolder *bindsHolder = GetBindsHolder(true);
+        bindsHolder->AddBindObject(bnd);
+        SetLastBindMode(mode);
+    }
+    else
+    {
+        delete bnd;
+    }
 
-    method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), type, 0);
-    SetLastBindMode(mode);
+    Check();
 }
 
 template <>
@@ -3744,7 +3778,6 @@ inline void Statement::Bind<CLong, int>(ostring name, CLong &value, int maxSize,
     Bind<CLong, unsigned int>(name, value, (unsigned int) maxSize,  mode);
 }
 
-
 template <>
 inline void Statement::Bind<BLong, unsigned int>(ostring name, BLong &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
@@ -3766,12 +3799,20 @@ inline void Statement::Bind<ostring, unsigned int>(ostring name, ostring &value,
         maxSize = (unsigned int) value.size();
     }
 
-    BindString * bnd = new BindString(value, maxSize+1);
-    BindsHolder *bindsHolder = GetBindsHolder(true);
-    bindsHolder->AddBindObject(bnd);
+    BindString * bnd = new BindString(name, value, maxSize+1);
 
-    Check(OCI_BindString(*this, name.c_str(), (otext*) (*bnd), maxSize));
-    SetLastBindMode(mode);
+    if (OCI_BindString(*this, name.c_str(), (otext*) (*bnd), maxSize))
+    {
+        BindsHolder *bindsHolder = GetBindsHolder(true);
+        bindsHolder->AddBindObject(bnd);
+        SetLastBindMode(mode);
+    }
+    else
+    {
+        delete bnd;
+    }
+
+    Check();
 }
 
 template <>
@@ -3898,15 +3939,21 @@ inline void Statement::Bind<Collection, TypeInfo>(ostring name, std::vector<Coll
 template <>
 inline void Statement::Bind<ostring, unsigned int>(ostring name, std::vector<ostring> &values,  unsigned int maxSize, BindInfo::BindDirection mode)
 {
-    BindArray * bnd = new BindArray();
-
+    BindArray * bnd = new BindArray(name);
     bnd->SetVector<ostring, otext>(values, mode, OCI_BindArrayGetSize(*this), maxSize+1);
 
-    BindsHolder *bindsHolder = GetBindsHolder(true);
-    bindsHolder->AddBindObject(bnd);
+    if (OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring, otext>(), maxSize, 0))
+    {
+        BindsHolder *bindsHolder = GetBindsHolder(true);
+        bindsHolder->AddBindObject(bnd);
+        SetLastBindMode(mode);
+    }
+    else
+    {
+        delete bnd;
+    }
 
-    Check(OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring, otext>(), maxSize, 0));
-    SetLastBindMode(mode);
+    Check();
 }
 
 template <>
@@ -3918,15 +3965,21 @@ inline void Statement::Bind<ostring, int>(ostring name, std::vector<ostring> &va
 template <>
 inline void Statement::Bind<BufferPointer, unsigned int>(ostring name, std::vector<BufferPointer> &values, unsigned int maxSize, BindInfo::BindDirection mode)
 {
-    BindArray * bnd = new BindArray();
-
+    BindArray * bnd = new BindArray(name);
     bnd->SetVector<BufferPointer, void *>(values, mode, OCI_BindArrayGetSize(*this), maxSize+1);
 
-    BindsHolder *bindsHolder = GetBindsHolder(true);
-    bindsHolder->AddBindObject(bnd);
+    if (OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<void *, void *>(), maxSize, 0))
+    {
+        BindsHolder *bindsHolder = GetBindsHolder(true);
+        bindsHolder->AddBindObject(bnd);
+        SetLastBindMode(mode);
+    }
+    else
+    {
+        delete bnd;
+    }
 
-    Check(OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<void *, void *>(), maxSize, 0));
-    SetLastBindMode(mode);
+    Check();
 }
 
 template <>
@@ -4217,7 +4270,7 @@ inline BindsHolder * Statement::GetBindsHolder(bool create)
 
     if (bindsHolder == 0 && create)
     {
-        bindsHolder = new BindsHolder();
+        bindsHolder = new BindsHolder(*this);
         _smartHandle->SetExtraInfos(bindsHolder);
     }
 
@@ -4850,7 +4903,7 @@ inline Message::MessageState Message::GetState() const
     return (MessageState) Check(OCI_MsgGetState(*this));
 }
 
-inline void Message::GetID(BufferPointer value, unsigned int &size) const
+inline void Message::GetID(BufferPointer &value, unsigned int &size) const
 {
     Check(OCI_MsgGetID(*this, value, &size));
 }
@@ -5282,19 +5335,11 @@ inline void QueueTable::Drop(const Connection &connection, ostring table, bool f
     Check(OCI_QueueTableDrop(connection, table.c_str(), force));
 }
 
-inline void QueueTable::Purge(const Connection &connection, ostring table, PurgeMode purgeMode, ostring purgeCondition, bool block)
+inline void QueueTable::Purge(const Connection &connection, ostring table, PurgeMode mode, ostring condition, bool block)
 {
-    Check(OCI_QueueTablePurge(connection, table.c_str(), purgeCondition.c_str(), block, (unsigned int) purgeMode));
+    Check(OCI_QueueTablePurge(connection, table.c_str(), condition.c_str(), block, (unsigned int) mode));
 }
 
-/**
- * @brief
- * Migrate a queue table from one version to another
- *
- * @note
- * refer to OCI_QueueTableMigrate() documentation
- *
- */
 inline void QueueTable::Migrate(const Connection &connection, ostring table, ostring compatible)
 {
     Check(OCI_QueueTableMigrate(connection, table.c_str(), compatible.c_str()));

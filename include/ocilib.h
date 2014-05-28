@@ -4173,6 +4173,24 @@ OCI_EXPORT boolean OCI_API OCI_AllowRebinding
 
 /**
  * @brief
+ * Indicate if rebinding is allowed on the given statement
+ *
+ * @param stmt - Statement handle
+ *
+ * @note
+ * See OCI_AllowRebinding() for more details
+ *
+ * @return
+ * TRUE if allowed otherwise FALSE
+ */
+
+OCI_EXPORT boolean OCI_API OCI_IsRebindingAllowed
+(
+    OCI_Statement *stmt
+);
+
+/**
+ * @brief
  * Bind an short variable
  *
  * @param stmt - Statement handle
@@ -16566,10 +16584,6 @@ OCI_EXPORT int OCI_API OCI_DequeueGetWaitTime
  * @param dequeue   - Dequeue handle
  * @param consumers - Agent handle array
  * @param count     - Number of agents the the array
- *
- * @warning
- *
- * @note
  *
  * @return
  * return TRUE on success otherwise FALSE

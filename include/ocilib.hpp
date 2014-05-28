@@ -154,7 +154,7 @@ typedef void * CallbackPointer;
 
 class Exception : public HandleHolder<OCI_Error *>
 {
-    friend void ocilib::Check();
+    friend void Check();
     friend class Statement;
 
 public:
@@ -2925,6 +2925,8 @@ public:
 
     void AllowRebinding(bool value);
 
+    bool IsRebindingAllowed() const;
+
     unsigned int GetBindCount() const;
 
     BindInfo GetBind(unsigned int index) const;
@@ -3277,7 +3279,7 @@ public:
     Date GetEnqueueTime() const;
     int GetAttemptCount() const;
     MessageState GetState() const;
-    void GetID(BufferPointer value, unsigned int &size) const;
+    void GetID(BufferPointer &value, unsigned int &size) const;
 
     int GetExpiration() const;
     void SetExpiration(int value);
@@ -3411,9 +3413,41 @@ public:
     int GetWaitTime() const;
     void SetWaitTime(int value);
 
+    /**
+     * @brief
+     * Set the Agent list to listen to message for
+     *
+     * @param agents - vector of agents
+     *
+     */
     void SetAgents(std::vector<Agent> &agents);
 
+    /**
+     * @brief
+     * Subscribe for asynchronous messages notifications
+     *
+     * @param port     - Port to use for notifications
+     * @param timeout  - notification timeout
+     * @param handler  - User handler callback fired when messages are ready to be dequeued
+     *
+     * @note
+     * EnvMode::EnvEvents flag must be passed to Environment::Initialize() to be able to use
+     * asynchronous messages notifications
+     *
+     * @note
+     * Requires Oracle Client 10gR2 or above
+     *
+     */
     void Subscribe(unsigned int port, unsigned int timeout, NotifyAQHandlerProc handler);
+        
+    /**
+     * @brief
+     * Unsubscribe for asynchronous messages notifications
+     *
+     * @note
+     * Requires Oracle Client 10gR2 or above
+     *
+     */
     void Unsubscribe();
 
 private:
@@ -3431,18 +3465,128 @@ class Queue
 {
 public:
 
+   /**
+     * 
+     * @brief
+     * Type of queue
+     *
+     */
     enum QueueType
     {
+        /** Normal queue */
         NormalQueue = OCI_AQT_NORMAL,
+        /** Exception queue */
         ExceptionQueue = OCI_AQT_EXCEPTION,
+        /** Non persistent queue */
         NonPersistentQueue = OCI_AQT_NON_PERSISTENT
     };
 
-    static void Create(const Connection &connection, ostring queue, ostring table, QueueType queueType = NormalQueue, unsigned int maxRetries = 0,
-                       unsigned int retryDelay = 0, unsigned int retentionTime = 0, bool dependencyTracking = false, ostring comment = OTEXT(""));
-    static void Alter (const Connection &connection, ostring queue, unsigned int maxRetries= 0, unsigned int retryDelay= 0, unsigned int retentionTime= 0, ostring comment = OTEXT(""));
+    /**
+     * @brief
+     * Create a queue
+     *
+     * @param connection         - Database connection
+     * @param queue              - Queue name
+     * @param table              - Queue table name
+     * @param type               - Queue type
+     * @param maxRetries         - Maximum number of attempts to dequeue a message
+     * @param retryDelay         - Number of seconds between attempts to dequeue a message
+     * @param retentionTime      - number of seconds a message is retained in the queue table after
+     *                             being dequeued from the queue
+     * @param dependencyTracking - Parameter reserved for future use by Oracle (MUST be set to FALSE)
+     * @param comment            - Description of the queue
+     *
+     * @note
+     * Parameter 'queue' can specify the shema where to create to queue ([schema.]queue_name)
+     * Queue names cannot be longer than 24 characters (Oracle limit for user queues)
+     *
+     * @note
+     * this call wraps the PL/SQL procedure DBMS_AQADM.CREATE_QUEUE().
+     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
+     *
+     */
+    static void Create(const Connection &connection, ostring queue, ostring table, QueueType type = NormalQueue, 
+                       unsigned int maxRetries = 0, unsigned int retryDelay = 0, unsigned int retentionTime = 0, 
+                       bool dependencyTracking = false, ostring comment = OTEXT(""));
+    
+    /**
+     * @brief
+     * Alter the given queue
+     *
+     * @param connection      - Database connection
+     * @param queue           - Queue name
+     * @param maxRetries      - Maximum number of attempts to dequeue a message
+     * @param retryDelay      - Number of seconds between attempts to dequeue a message
+     * @param retentionTime   - number of seconds a message is retained in the queue table after
+     *                          being dequeued from the queue
+     * @param comment         - Description of the queue
+     *
+     * @note
+     * See Create() for more details
+     *
+     * @note
+     * this call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE().
+     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
+     *
+     */    
+    static void Alter (const Connection &connection, ostring queue, 
+                       unsigned int maxRetries= 0, unsigned int retryDelay= 0,
+                       unsigned int retentionTime= 0, ostring comment = OTEXT(""));
+    
+    /**
+     * @brief
+     * Drop the given queue
+     *
+     * @param connection - Database connection
+     * @param queue      - Queue name
+     *
+     * @warning
+     * A queue can be dropped only if it has been stopped before.
+     *
+     * @note
+     * this call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE().
+     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
+     *
+     */ 
     static void Drop  (const Connection &connection, ostring queue);
-    static void Start (const Connection &connection, ostring queue, bool startEnqueue = true, bool startDequeue = true);
+
+    /**
+     * @brief
+     * Start the given queue
+     *
+     * @param connection     - Database connection
+     * @param queue          - Queue name
+     * @param enableEnqueue  - Enable enqueue
+     * @param enableDequeue  - Enable dequeue
+     *
+     * @warning
+     * For exception queues, only enqueuing is allowed
+     *
+     * @note
+     * this call wraps the PL/SQL procedure DBMS_AQADM.START_QUEUE().
+     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
+     *
+     */
+    static void Start (const Connection &connection, ostring queue, bool enableEnqueue = true, bool enableDequeue = true);
+    
+    /**
+    * @brief
+    * Stop enqueuing or dequeuing or both on the given queue
+    *
+    * @param connection - Database connection
+    * @param queue      - Queue name
+    * @param enqueue    - Disable enqueue
+    * @param dequeue    - Disable dequeue
+    * @param wait       - Wait for current pending enqueuues/dequeues
+    *
+    * @warning
+    * A queue cannot be stopped if there are pending transactions against the queue.
+    *
+    * @note
+    * this call wraps the PL/SQL procedure DBMS_AQADM.STOP_QUEUE().
+    * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
+    *
+    */
     static void Stop  (const Connection &connection, ostring queue, bool stopEnqueue = true, bool stopDequeue = true, bool wait = true);
 };
 
@@ -3457,24 +3601,161 @@ class QueueTable
 {
 public:
 
+    /**
+     * 
+     * @brief
+     * Grouping mode
+     *
+     */
     enum GroupingMode
     {
+        /** each message is treated individually */
         None = OCI_AGM_NONE,
+        /** all messages enqueued in one transaction are considered part of
+          * the same group and can be dequeued as a group of related messages */
         Transactionnal = OCI_AGM_TRANSACTIONNAL
     };
 
+    /**
+     * 
+     * @brief
+     * Purge mmode
+     *
+     */
     enum PurgeMode
     {
+        /**  purge only buffered   messages */
         Buffered = OCI_APM_BUFFERED,
+        /* purge only persistent messages */
         Persistent = OCI_APM_PERSISTENT,
+        /* purge all messages */
         All = OCI_APM_ALL
     };
 
-    static void Create (const Connection &connection, ostring table, ostring payloadType, bool multipleConsumers, ostring storageClause = OTEXT(""), ostring sortList = OTEXT(""),
-                        GroupingMode groupingMode = None, ostring comment = OTEXT(""), unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0, ostring compatible = OTEXT(""));
+    /**
+     * @brief
+     * Create a queue table for messages of the given type
+     *
+     * @param connection         - Database connection
+     * @param table              - Queue table name
+     * @param payloadType        - Message type name
+     * @param multipleConsumers  - Enable multiple consumers for each messages
+     * @param storageClause      - Optional Additionnal clauses for the table storage
+     * @param sortList           - Optional Additional columns name to use for sorting
+     * @param groupingMode       - Optional Specifies if messages are grouped within a transaction
+     * @param comment            - Optional Description of the queue table
+     * @param primaryInstance    - Optional primary owner (instance) of the queue table
+     * @param secondaryInstance  - Optional Owner of the queue table if the primary instance is not available
+     * @param compatible         - Optional lowest database version with which the queue table is compatible
+     *
+     * @note
+     * Parameter 'table' can specify the shema where to create to queue table ([schema.]queue_table)
+     * Queue table names cannot be longer than 24 characters (Oracle limit for user queue tables)
+     *
+     * @note
+     * Possible values for parameter 'payloadType' :
+     * - For Oracle types (UDT) : use the type name ([schema.].type_name)
+     * - For RAW data           : use "SYS.RAW" or "RAW"
+     *
+     * @note
+     * Possible values for parameter 'compatible' :
+     * - "8.0", "8.1", "10.0"
+     *
+     * @note
+     * this call wraps the PL/SQL procedure DBMS_AQADM.CREATE_QUEUE_TABLE().
+     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
+     *
+     */
+    static void Create (const Connection &connection, ostring table, ostring payloadType, bool multipleConsumers, 
+                        ostring storageClause = OTEXT(""), ostring sortList = OTEXT(""),
+                        GroupingMode groupingMode = None, ostring comment = OTEXT(""),
+                        unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0,
+                        ostring compatible = OTEXT(""));
+    
+    /**
+    * @brief
+    * Alter the given queue table
+    *
+    * @param connection           - Database connection
+    * @param table                - Queue table name
+    * @param comment              - Optional Description of the queue table
+    * @param primaryInstance      - Optional primary owner (instance) of the queue table
+    * @param secondaryInstance    - Optional Owner of the queue table if the primary instance is not available
+    *
+    * @note
+    * See Create() from more details
+    *
+    * @note
+    * this call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE_TABLE().
+    * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
+    *
+    */
     static void Alter  (const Connection &connection, ostring table, ostring comment, unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0);
-    static void Drop   (const Connection &connection, ostring table, bool force = true);
-    static void Purge  (const Connection &connection, ostring table,  PurgeMode purgeMode, ostring purgeCondition = OTEXT(""), bool block = true);
+    
+     /**
+     * @brief
+     * Drop the given queue table
+     *
+     * @param connection   - Database connection
+     * @param table        - Queue table name
+     * @param force        - Force the deletion of objects related to the queue table
+     *
+     * @note
+     * Possible values for 'force' :
+     *  - true  : all queues using the queue table and their associated propagation schedules are
+     *            dropped automatically
+     *  - false : All the queues using the giben queue table must be stopped and dropped before the
+     *            queue table can be dropped.
+     *
+     * @note
+     * this call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE_TABLE().
+     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
+     *
+     */   
+    static void Drop  (const Connection &connection, ostring table, bool force = true);
+   
+    /**
+     * @brief
+     * Purge messages from the given queue table
+     *
+     * @param connection - Database connection
+     * @param table      - Queue table name
+     * @param mode       - Type of message to purge
+     * @param block      - Lock all queues using the queue table while doing the purge
+     * @param condition  - Optionnal SQL based conditions (see notes)
+     *
+     * @note
+     * For more information about the SQL purge conditions, refer to
+     * Oracle Streams - Advanced Queuing User's Guide for more details
+     *
+     * @warning
+     * This feature is onyl available from ORacle 10gR2.
+     * This function does nothing and returns TRUE is the server version is < Oracle 10gR2
+     *
+     * @note
+     * this call wraps the PL/SQL procedure DBMS_AQADM.PURGE_QUEUE_TABLE().
+     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
+     *
+     */   
+    static void Purge  (const Connection &connection, ostring table, PurgeMode mode, ostring condition = OTEXT(""), bool block = true);
+
+    /**
+     * @brief
+     * Migrate a queue table from one version to another
+     *
+     * @param connection - Database connection
+     * @param table      - Queue table name
+     * @param compatible - Optional database version with witch the queue table has to migrate
+     *
+     * @note
+     * Possible values for parameter 'compatible' :
+     * - "8.0", "8.1", "10.0"
+     *
+     * @note
+     * this call wraps the PL/SQL procedure DBMS_AQADM.MIGRATE_QUEUE_TABLE().
+     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
+     *
+     */
     static void Migrate(const Connection &connection, ostring table, ostring compatible = OTEXT(""));
 };
 

@@ -291,8 +291,26 @@ private:
 class BindObject
 {
 public:
+
+     BindObject(ostring name) : _name(name)
+     {
+     }
+
+     virtual ~BindObject()
+     {
+     }
+
+     ostring GetName()
+     {
+         return _name;
+     }
+
      virtual void SetInData()  = 0;
      virtual void SetOutData() = 0;
+
+private:
+
+    ostring _name;
 };
 
 /**
@@ -305,7 +323,7 @@ class BindArray : public BindObject
 {
 public:
 
-     BindArray();
+     BindArray(ostring name);
      virtual ~BindArray();
 
      template <class TObjectType, class TDataType>
@@ -373,7 +391,7 @@ public:
     void SetInData();
     void SetOutData();
 
-    BindString(ostring &source, unsigned int elemSize);
+    BindString(ostring name, ostring &source, unsigned int elemSize);
     virtual ~BindString();
 
 private:
@@ -393,7 +411,7 @@ class BindsHolder
 {
 public:
 
-    BindsHolder();
+    BindsHolder(OCI_Statement *stmt);
     ~BindsHolder();
 
     void Clear();
@@ -406,4 +424,5 @@ public:
 private:
 
     std::vector<BindObject *> _bindObjects;
+    OCI_Statement * _stmt;
 };

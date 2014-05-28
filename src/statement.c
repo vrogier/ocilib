@@ -2361,6 +2361,22 @@ OCI_EXPORT boolean OCI_API OCI_AllowRebinding
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_IsRebindingAllowed
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_EXPORT boolean OCI_API OCI_IsRebindingAllowed
+(
+    OCI_Statement *stmt
+)
+{
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
+
+    OCI_RESULT(TRUE);
+
+    return stmt->bind_reuse;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_BindShort
  * --------------------------------------------------------------------------------------------- */
 
