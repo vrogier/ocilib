@@ -372,6 +372,7 @@ OCIAQLISTEN                  OCIAQListen                  = NULL;
 XAOSVCCTX                    xaoSvcCtx                    = NULL;
 XAOENV                       xaoEnv                       = NULL;
 OCILOBGETCONTENTTYPE         OCILobGetContentType         = NULL;
+OCISTMTGETNEXTRESULT         OCIStmtGetNextResult         = NULL;
 
 #ifdef ORAXB8_DEFINED
 
@@ -383,7 +384,6 @@ OCILOBREAD2                  OCILobRead2                  = NULL;
 OCILOBTRIM2                  OCILobTrim2                  = NULL;
 OCILOBWRITE2                 OCILobWrite2                 = NULL;
 OCILOBWRITEAPPEND2           OCILobWriteAppend2           = NULL;
-OCIDEFINEBYPOS2              OCIDefineByPos2              = NULL;
 
 #endif /* ORAXB8_DEFINED */
 
@@ -1046,16 +1046,13 @@ boolean OCI_API OCI_Initialize
         LIB_SYMBOL(OCILib.lib_handle, "OCILobGetContentType", OCILobGetContentType,
                    OCILOBGETCONTENTTYPE);
 
-    #ifdef ORAXB8_DEFINED
+        LIB_SYMBOL(OCILib.lib_handle, "OCIStmtGetNextResult", OCIStmtGetNextResult,
+                   OCISTMTGETNEXTRESULT);
 
-        LIB_SYMBOL(OCILib.lib_handle, "OCIDefineByPos2", OCIDefineByPos2,
-                   OCIDEFINEBYPOS2);
-
-    #endif
 
         /* API Version checking */
 
-        if (OCIDefineByPos2)
+        if (OCIStmtGetNextResult)
         {
             OCILib.version_runtime = OCI_12_1;
         }
@@ -1776,6 +1773,14 @@ boolean OCI_API OCI_SetHAHandler
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
+    /* On MSVC, casting a function pointer to a data pointer generates a warning.
+       As there is no other to way to do regarding the OCI API, let's disable this
+       warning just the time to set the callback attribute to the environment handle */
+
+    #ifdef _MSC_VER
+    #pragma warning(disable: 4054)
+    #endif
+
     if (handler)
     {
         callback = (void*) OCI_ProcHAEvent;
@@ -1788,6 +1793,10 @@ boolean OCI_API OCI_SetHAHandler
         OCIAttrSet((dvoid *) OCILib.env, (ub4) OCI_HTYPE_ENV, (dvoid *) callback, 
                    (ub4) 0, (ub4) OCI_ATTR_EVTCBK, OCILib.err)
     )
+
+    #ifdef _MSC_VER
+    #pragma warning(default: 4054)
+    #endif
 
     OCI_RESULT(res);
 

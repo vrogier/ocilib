@@ -741,7 +741,7 @@ OCI_Resultset * OCI_API OCI_GetResultset
        statements that can return a resultset are "SELECT..." and "... RETURNING INTO..." 
     */
 
-    if ((OCI_CST_SELECT == stmt->type) || (stmt->nb_rbinds > 0))
+    if ((OCI_CST_SELECT == stmt->type) || (stmt->nb_rbinds > 0) || (stmt->nb_stmt > 0))
     {
         /* if the resultset exists, let's use it */
 
@@ -2286,9 +2286,8 @@ OCI_Statement * OCI_API OCI_GetStatement
 
     if (OCI_MATCHING_TYPE(def, OCI_CDT_CURSOR))
     {
-        st = OCI_StatementInit(rs->stmt->con,
-                               (OCI_Statement **) &def->obj,
-                               (OCIStmt *) OCI_DefineGetData(def), def);
+        st = OCI_StatementInit(rs->stmt->con,(OCI_Statement **) &def->obj,
+                               (OCIStmt *) OCI_DefineGetData(def), TRUE, def->col.name);
     }
 
     OCI_RESULT(st != NULL);

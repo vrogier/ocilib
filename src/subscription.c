@@ -304,6 +304,14 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                            (ub4) OCI_ATTR_SUBSCR_RECPTPROTO, sub->err)
             )
 
+           /* On MSVC, casting a function pointer to a data pointer generates a warning.
+              As there is no other to way to do regarding the OCI API, let's disable this
+              warning just the time to set the callback attribute to the subscription handle */
+
+            #ifdef _MSC_VER
+            #pragma warning(disable: 4054)
+            #endif
+
             /* internal callback handler */
 
             OCI_CALL3
@@ -314,6 +322,10 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                            (dvoid *) OCI_ProcNotifyChanges, (ub4) 0,
                            (ub4) OCI_ATTR_SUBSCR_CALLBACK, sub->err)
             )
+
+            #ifdef _MSC_VER
+            #pragma warning(default: 4054)
+            #endif
 
             /* RowIds handling */
 

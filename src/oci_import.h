@@ -291,7 +291,8 @@ extern OCISUBSCRIPTIONUNREGISTER    OCISubscriptionUnRegister;
 extern XAOSVCCTX                    xaoSvcCtx;
 extern XAOENV                       xaoEnv;
 extern OCILOBGETCONTENTTYPE         OCILobGetContentType;
-
+extern OCISTMTGETNEXTRESULT         OCIStmtGetNextResult;
+            
 #ifdef ORAXB8_DEFINED
 
 extern OCILOBCOPY2                  OCILobCopy2;
@@ -302,7 +303,6 @@ extern OCILOBREAD2                  OCILobRead2;
 extern OCILOBTRIM2                  OCILobTrim2;
 extern OCILOBWRITE2                 OCILobWrite2;
 extern OCILOBWRITEAPPEND2           OCILobWriteAppend2;
-extern OCIDEFINEBYPOS2              OCIDefineByPos2;
 
 #endif
 

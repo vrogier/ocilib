@@ -278,6 +278,7 @@
 #define OCI_ATTR_PARSE_ERROR_OFFSET    129             /* Parse Error offset */
 
 #define OCI_ATTR_SERVER_STATUS         143        /* state of the server hdl */
+#define OCI_ATTR_STATEMENT             144      /* statement txt in stmt hdl */
 
 #define OCI_ATTR_SUBSCR_RECPTPROTO     149         /* protocol for recepient */
 
@@ -349,6 +350,8 @@
 #define OCI_ATTR_TAF_ENABLED           405
 #define OCI_ATTR_DRIVER_NAME           424                    /* Driver Name */
 #define OCI_ATTR_SPOOL_AUTH            460      /* Auth handle on pool handle*/
+
+#define OCI_ATTR_IMPLICIT_RESULT_COUNT 463
 
 
 /*--------- Attributes related to LOB prefetch------------------------------ */
@@ -978,6 +981,10 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_SUBSCR_PRES_DEFAULT             0                     /* default */
 #define OCI_SUBSCR_PRES_XML                 1                         /* xml */
 #define OCI_SUBSCR_PRES_MAX                 2   /* max current presentations */
+
+
+/* -------------------------- Implicit Result types ------------------------ */
+#define OCI_RESULT_TYPE_SELECT              1
 
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */
 

@@ -2104,25 +2104,14 @@ typedef sword (*OCILOBGETCONTENTTYPE)
 
 /* API introduced in 12.1 */
 
-#ifdef ORAXB8_DEFINED
-
-typedef sword (*OCIDEFINEBYPOS2)
+typedef sword (*OCISTMTGETNEXTRESULT)
 (
-    OCIStmt    *stmtp, 
-    OCIDefine **defnp, 
-    OCIError   *errhp,
-    ub4         position, 
-    void       *valuep, 
-    sb8         value_sz, 
-    ub2         dty,
-    void       *indp,
-    ub4        *rlenp, 
-    ub2        *rcodep,
-    ub4         mode
+    OCIStmt *stmthp,
+    OCIError *errhp,
+    void **result, 
+    ub4 *rtype,
+    ub4 mode
 );
-
-#endif /* ORAXB8_DEFINED */
-
 
 #endif /* OCILIB_OCI_API_H_INCLUDED */
 

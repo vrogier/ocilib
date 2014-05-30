@@ -965,6 +965,14 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
                     (ub4) OCI_ATTR_SUBSCR_CTX, con->err)
     )
     
+    /* On MSVC, casting a function pointer to a data pointer generates a warning.
+        As there is no other to way to do regarding the OCI API, let's disable this
+        warning just the time to set the callback attribute to the dequeue handle */
+
+    #ifdef _MSC_VER
+    #pragma warning(disable: 4054)
+    #endif
+
     /* internal callback handler */
 
     OCI_CALL3
@@ -975,6 +983,10 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
                     (dvoid *) OCI_ProcNotifyMessages, (ub4) 0,
                     (ub4) OCI_ATTR_SUBSCR_CALLBACK, con->err)
     )
+
+    #ifdef _MSC_VER
+    #pragma warning(default: 4054)
+    #endif
 
     /* set callback */
 

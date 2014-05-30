@@ -1105,7 +1105,13 @@ OCI_Statement * OCI_StatementInit
     OCI_Connection *con,
     OCI_Statement **pstmt,
     OCIStmt        *handle,
-    OCI_Define     *def
+    boolean         is_desc,
+    const otext    *sql
+);
+
+boolean OCI_StatementCheckImplicitResultsets
+(
+    OCI_Statement *stmt
 );
 
 boolean OCI_BatchErrorClear

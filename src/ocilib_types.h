@@ -444,6 +444,7 @@ struct OCI_Statement
     OCIStmt         *stmt;              /* OCI statement handle */
     ub4              hstate;            /* object variable state */
     OCI_Resultset  **rsts;              /* pointer to resultset list */
+    OCI_Statement  **stmts;             /* pointer to implicit statement resultset list */
     OCI_Connection  *con;               /* pointer to connection object */
     otext           *sql;               /* SQL statement */
     OCI_Bind       **ubinds;            /* array of user bind objects */
@@ -464,6 +465,7 @@ struct OCI_Statement
     ub2              type;              /* type of SQL statement */
     ub4              nb_iters;          /* current number of iterations for execution */
     ub4              nb_iters_init;     /* initial number of iterations for execution */
+    ub4              nb_stmt;           /* number of implicit statements */
     ub4              nb_rs;             /* number of resultsets */
     ub2              cur_rs;            /* index of the current resultset */
     ub2              dynidx;            /* bind index counter for dynamic exec */

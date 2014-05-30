@@ -233,8 +233,9 @@
 #define OCI_IPC_TRACE_INFO       59
 #define OCI_IPC_DP_COL_ARRAY     60
 #define OCI_IPC_BATCH_ERRORS     61
+#define OCI_IPC_STATEMENT_ARRAY  62
 
-#define OCI_IPC_COUNT            OCI_IPC_BATCH_ERRORS
+#define OCI_IPC_COUNT            OCI_IPC_STATEMENT_ARRAY
 
 /* --------------------------------------------------------------------------------------------- *
  * Oracle conditionnal features

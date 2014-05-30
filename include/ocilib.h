@@ -5813,11 +5813,17 @@ boolean OCI_API OCI_BindSetCharsetForm
  * OCILIB offers a really easy and smart mechanism to fetch data from a SQL Statement.
  * It looks like what's found in JDBC and other object oriented databases frameworks.
  *
- * Only SELECTs statement, DML with returning clause and some PL/SQL blocks
- * return a cursor that can be fetched by host programs.
- * That cursor, or resultset, is encapsulated in OCILIB by the OCI_Resultset object.
+ * ONLY the following statements can return resultsets that can be fetched by host programs:
+ * - Statements executing SQL SELECT 
+ * - Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause 
+ * - Statements binded to PL/SQL OPEN FOR argument
+ * - Statements binded to PL/SQL procedure OUT variables
+ * - Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using 
+ *   DBMS_SQL.RETURN_RESULT()
  *
- * So, after any successful call to an OCI_Executexxx() function that executed
+ * These resultsets are encapsulated in OCILIB by OCI_Resultset objects.
+ *
+ * Thus, after any successful call to an OCI_Executexxx() function that executed
  * a fetchable statement or filled output bind variables, the resultset can be
  * retrieved by calling OCI_GetResultset()
  *
@@ -5840,6 +5846,11 @@ boolean OCI_API OCI_BindSetCharsetForm
  * - To retrieve the value of a column, call OCI_GetXXXX() where XXXX is the
  *   type of data you want to fetch.
  *
+ * @note
+ * In case of a statement that has executed PL/SQL calls or blocks returning implicit resultsets:
+ * - OCI_GetResultset() return the first available resultset
+ * - OCI_GetNextResultset() return the next available resultset until no more resulset available
+ *
  * @par Scrollable Resultsets
  *
  * Oracle 9i introduced scrollable cursors (resultsets in OCILIB) that can be
@@ -5853,14 +5864,12 @@ boolean OCI_API OCI_BindSetCharsetForm
  * Scrollable statements uses more server and client resources and should only
  * be used when necessary.
  *
- * OCILIB support scrollable cursors from version OCILIB 3.0.0.
- *
  * Resultsets are 'forward only' by default. Call OCI_SetFetchMode() with
  * OCI_SFM_SCROLLABLE to enable scrollable resultsets for a given statement.
  *
  * @warning
  * Any use of scrollable fetching functions with a resultset that depends on a
- * statement with fetch mode =  OCI_SFM_DEFAULT will fail !
+ * statement with fetch mode set to OCI_SFM_DEFAULT will fail !
  *
  * @warning
  * If you intend to use OCI_FetchSeek() on a scrollable statement and if any of the
@@ -5908,9 +5917,8 @@ boolean OCI_API OCI_BindSetCharsetForm
  *
  * @par Fetching rows into user structures
  *
- * From version 3.7.0, it is possible to fetch a complete row into a user
- * defined structure. Each column of the resultset is mapped to a structure
- * member.
+ * It is possible to fetch a complete row into a user defined structure. 
+ * Each column of the resultset is mapped to a structure member.
  * The mapping rules are :
  *   - LOBs (CLOB, NCLOB, BLOB) : OCI_Lob *
  *   - DATE : OCI_Date *
@@ -5939,6 +5947,9 @@ boolean OCI_API OCI_BindSetCharsetForm
  * @par Ref cursor Example
  * @include cursor.c
  *
+ * @par Implicit resultset Example
+ * @include implicit_resultset.
+ *
  * @par Scrollable resultset Example
  * @include scroll.c
  *
@@ -5951,16 +5962,10 @@ boolean OCI_API OCI_BindSetCharsetForm
  * @param stmt - Statement handle
  *
  * @note
- * On a successful SELECT execution, OCI_GetResultset() always allocates a
- * resultset wherever it contains rows.
- *
- * @note
- * If a DML statement includes an returning clause, a resultset is implicitly
- * created at the SQL statement execution time
+ * See @ref OcilibCApiFetching for more details aboit what statements can return resultsets
  *
  * @warning
- * If the statement has not been prepared and executed, no resultset will be
- * returned
+ * If the statement has not been prepared and executed, no resultset will be  returned
  *
  * @return
  * A resultset handle on success otherwise NULL
@@ -8900,8 +8905,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetNull
  * @note
  * Array binding interface is also supported with 'returning into' DML statement.
  * Every iteration (or row of given arrays) generates an resultset object.
- * Once a resultset is fetched, the next on can be retrieved with
- * OCI_GetNextResultset()
+ * Once a resultset is fetched, the next on can be retrieved with OCI_GetNextResultset()
  *
  * @par
  *
@@ -8927,15 +8931,25 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetNull
 
 /**
  * @brief
- * Retrieve the next resultset from an executed DML statement using a 'SQL returning' clause
+ * Retrieve the next available resultset
  *
  * @param stmt - Statement handle
+ *
+ * @note
+ * it is only valid for the following statements:
+ * - Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause 
+ * - Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using 
+ *   DBMS_SQL.RETURN_RESULT()
  *
  * @note
  * SQL statements with a 'returning' clause can return multiple resultsets.
  * When arrays of program variables are binded to the statement, Oracle will
  * execute the statement for every row (iteration).
  * Each iteration generates a resultset that can be fetched like regular ones.
+ *
+ * @note
+ * Starting withOracle 12cR1, PL/SQ procedure and blocks ca return return multiple implicit resultsets
+ * Refer to  Oracle documentation for more informationb.
  *
  * @return
  * A resultset handle on success otherwise NULL

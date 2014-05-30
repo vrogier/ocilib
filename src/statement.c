@@ -482,7 +482,7 @@ boolean OCI_BindReset
                         else
                         {
                             dbsize = bnd->size - sizeof(dbtext);
-                        }
+                        }                       
 
 						dbsize /= sizeof(dbtext);
 
@@ -1192,7 +1192,8 @@ OCI_Statement * OCI_StatementInit
     OCI_Connection *con,
     OCI_Statement **pstmt,
     OCIStmt        *handle,
-    OCI_Define     *def
+    boolean         is_desc,
+    const otext    *sql
 )
 {
     OCI_Statement * stmt = NULL;
@@ -1225,22 +1226,41 @@ OCI_Statement * OCI_StatementInit
 
         OCI_StatementReset(stmt);
 
-        if (def)
+        if (is_desc)
         {
             stmt->hstate = OCI_OBJECT_FETCHED_CLEAN;
             stmt->status = OCI_STMT_PREPARED  | OCI_STMT_PARSED | 
                            OCI_STMT_DESCRIBED | OCI_STMT_EXECUTED;
             stmt->type   = OCI_CST_SELECT;
 
+            if (sql)
+            {
+                stmt->sql = ostrdup(sql);
+            }
+            else
+            {
+                dbtext *dbstr    = NULL;
+                int     dbsize   = 0;
+
+                OCI_CALL1
+                (
+                    res, con, stmt,
+
+                    OCIAttrGet((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT,
+                               (dvoid *)  &dbstr, (ub4 *) &dbsize,
+                               (ub4) OCI_ATTR_STATEMENT, stmt->con->err);
+                )
+
+                if (res && dbstr)
+                {
+                    stmt->sql = OCI_StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
+
+                    res = (stmt->sql != NULL);
+                }
+            }
+
             res = (res && OCI_SetPrefetchSize(stmt, OCI_PREFETCH_SIZE));
             res = (res && OCI_SetFetchSize(stmt, OCI_FETCH_SIZE));
-
-            /* not really perfect, but better than nothing */
-
-            if (def->col.name)
-            {
-                stmt->sql = ostrdup(def->col.name);
-            }
         }
         else
         {
@@ -1270,7 +1290,7 @@ boolean OCI_StatementReset
     OCI_Statement *stmt
 )
 {
-    boolean res = TRUE;
+    boolean res  = TRUE;
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
@@ -1313,8 +1333,7 @@ boolean OCI_StatementReset
         {
 
         #if OCI_VERSION_COMPILE >= OCI_9_2
-
-
+            
             if (OCILib.version_runtime >= OCI_9_2)
             {
                 OCIStmtRelease(stmt->stmt, stmt->con->err, NULL, 0, mode);
@@ -1341,14 +1360,18 @@ boolean OCI_StatementReset
 
     OCI_FREE(stmt->sql);
 
-    stmt->rsts  = NULL;
-    stmt->sql   = NULL;
-    stmt->map   = NULL;
-    stmt->batch = NULL;
+    stmt->rsts          = NULL;
+    stmt->stmts         = NULL;
+    stmt->sql           = NULL;
+    stmt->map           = NULL;
+    stmt->batch         = NULL;
+    
+    stmt->nb_rs         = 0;
+    stmt->nb_stmt       = 0;
 
-    stmt->status     = OCI_STMT_CLOSED;
-    stmt->type       = OCI_UNKNOWN;
-    stmt->bind_array = FALSE;
+    stmt->status        = OCI_STMT_CLOSED;
+    stmt->type          = OCI_UNKNOWN;
+    stmt->bind_array    = FALSE;
 
     stmt->nb_iters      = 1;
     stmt->nb_iters_init = 1;
@@ -1409,6 +1432,93 @@ boolean OCI_BatchErrorClear
 
         OCI_FREE(stmt->batch);
     }
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_StatementCheckImplicitResultsets
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_StatementCheckImplicitResultsets
+(
+    OCI_Statement *stmt
+)
+{
+    boolean res = TRUE;
+
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+    if (OCILib.version_runtime >= OCI_12_1)
+    {
+        OCI_CALL1
+        (
+            res, stmt->con, stmt,
+
+            OCIAttrGet((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT,
+                        (dvoid *) &stmt->nb_stmt, (ub4 *) NULL,
+                        (ub4) OCI_ATTR_IMPLICIT_RESULT_COUNT, stmt->con->err)
+        )
+
+        if (res && stmt->nb_stmt > 0)
+        {
+            OCIStmt *result  = NULL;
+            ub4      rs_type = OCI_UNKNOWN;
+            ub4      i       = 0;
+
+            /* allocate resultset handles array */
+
+            stmt->stmts = (OCI_Statement **) OCI_MemAlloc(OCI_IPC_STATEMENT_ARRAY, sizeof(*stmt->stmts),
+                                                          (size_t) stmt->nb_stmt, TRUE);
+
+            if (!stmt->stmts)
+            {
+                res = FALSE;
+            }
+
+            if (res)
+            {
+                stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY, sizeof(*stmt->rsts),
+                                                             (size_t) stmt->nb_stmt, TRUE);
+
+                if (!stmt->rsts)
+                {
+                    res = FALSE;
+                }
+            }                                        
+                
+            while (res && OCI_SUCCESS == OCIStmtGetNextResult(stmt->stmt, stmt->con->err, (dvoid  **) &result,
+                                                              &rs_type, OCI_DEFAULT))
+            {
+                if (OCI_RESULT_TYPE_SELECT == rs_type)
+                {
+                    stmt->stmts[i] = OCI_StatementInit(stmt->con, &stmt->stmts[i], result, TRUE, NULL);
+ 
+                    if (stmt->stmts[i])
+                    {
+                        stmt->rsts[i] = OCI_ResultsetCreate(stmt->stmts[i], stmt->stmts[i]->fetch_size);
+
+                        if (stmt->stmts[i])
+                        {
+                            i++;
+                            stmt->nb_rs++;
+                        }
+                        else
+                        {
+                            res = FALSE;
+                        }
+                    }
+                    else
+                    {
+                        res = FALSE;
+                    }
+                }
+            }
+        }
+    }
+
+#endif
 
     return res;
 }
@@ -1653,6 +1763,11 @@ boolean OCI_API OCI_ExecuteInternal
             {
                 OCI_Commit(stmt->con);
             }
+
+            /* check if any implicit results are available */
+
+            res = OCI_StatementCheckImplicitResultsets(stmt);
+
         }
     }
     else
@@ -1699,7 +1814,7 @@ OCI_Statement * OCI_API OCI_StatementCreate
 
     if (item)
     {
-        stmt = OCI_StatementInit(con, (OCI_Statement **) &item->data, NULL, FALSE);
+        stmt = OCI_StatementInit(con, (OCI_Statement **) &item->data, NULL, FALSE, NULL);
     }
 
     OCI_RESULT(stmt != NULL);
@@ -1747,6 +1862,26 @@ boolean OCI_API OCI_ReleaseResultsets
 
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
 
+    // Release statements for implicit resultsets
+    if (stmt->stmts)
+    {
+        ub4 i;
+        
+        for (i = 0; i  < stmt->nb_stmt; i++)
+        {
+            if (stmt->rsts[i])
+            {
+                if (!OCI_StatementClose(stmt->stmts[i]))
+                {
+                    nb_err++;
+                }
+            }
+        }
+
+        OCI_FREE(stmt->rsts);
+    }
+
+    // release resultsets
     if (stmt->rsts)
     {
         ub4 i;
