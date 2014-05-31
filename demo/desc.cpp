@@ -10,7 +10,7 @@ int main(void)
         Environment::Initialize();
 
         Connection con("db", "usr", "pwd");
-        TypeInfo table(con, "products", TypeInfo::ObjectType);
+        TypeInfo table(con, "products", TypeInfo::Type);
 
         std::cout << "Column Name         Type      Length  Prec.   Scale   Null ?" << std::endl;
         std::cout << "----------------------------  ------------------------------" << std::endl;
@@ -28,7 +28,6 @@ int main(void)
                       <<  std::setw(8)  << col.GetScale()
                       <<  std::setw(2)  << col.IsNullable()
                       <<  std::endl;
-        
         }
 
     }

@@ -31,7 +31,7 @@ int main(void)
 {
     try
     {
-        Environment::Initialize();
+        Environment::Initialize(Environment::Threaded);
 
         con.Open("db", "usr", "pwd");      
 

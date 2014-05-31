@@ -210,7 +210,8 @@ int omain(int argc, oarg* argv[])
 
     try
     {
-        Environment::Initialize(Environment::EnvDefault, home);
+        Environment::Initialize(Environment::Default | Environment::Threaded, home);
+
         Environment::EnableWarnings(true);
 
         std::ocout << OTEXT("Connecting to ") << usr << OTEXT("/") << pwd << OTEXT("@") << dbs << std::endl << std::endl;
@@ -292,6 +293,22 @@ void execute_ddl(ostring sql)
     }
     catch(Exception &ex)
     {
+        switch ( ex.GetType().GetValue())
+        {
+            case Exception::OracleError:
+                 std::ocout << OTEXT("Oracle Error => ");
+                break;
+            case Exception::OracleWarning:
+                std::ocout << OTEXT("Oracle Error => ");
+                break;
+            case Exception::OcilibError:
+                std::ocout << OTEXT("OCILIB Error => ");
+                break;
+            default:
+                std::ocout << OTEXT("Unknown Error => ");
+                break;
+        }
+
          std::ocout << ex.GetMessage() << std::endl;
     }
 }
@@ -468,7 +485,7 @@ void test_bind1(void)
 
     Statement st(con);
     st.Prepare(OTEXT("select * from test_fetch where code = :code"));
-    st.Bind(OTEXT(":code"), code);
+    st.Bind(OTEXT(":code"), code, BindInfo::In);
     st.Execute();
 
     Resultset rs = st.GetResultset();
@@ -528,16 +545,16 @@ void test_bind2(void)
 
     /* bind scalar C types arrays */
 
-    st.Bind(OTEXT(":val_int"),  i);
-    st.Bind(OTEXT(":val_dbl"), dbl);
-    st.Bind(OTEXT(":val_flt"), flt);
-    st.Bind(OTEXT(":val_str"), str, (unsigned int) str.size());
-
+    st.Bind(OTEXT(":val_int"),  i, BindInfo::In);
+    st.Bind(OTEXT(":val_dbl"), dbl, BindInfo::In);
+    st.Bind(OTEXT(":val_flt"), flt, BindInfo::In);
+    st.Bind(OTEXT(":val_str"), str, (unsigned int) str.size(), BindInfo::In);
+ 
     /* bind oracle types arrays */
 
-    st.Bind(OTEXT(":val_date"), date);
-    st.Bind(OTEXT(":val_lob"),  clob);
-    st.Bind(OTEXT(":val_file"), file);
+    st.Bind(OTEXT(":val_date"), date, BindInfo::In);
+    st.Bind(OTEXT(":val_lob"),  clob, BindInfo::In);
+    st.Bind(OTEXT(":val_file"), file, BindInfo::In);
 
     /* do insert */
 
@@ -566,7 +583,7 @@ void test_piecewise_insert(void)
         BLong lg(st);
         st.Prepare(OTEXT("insert into test_long_raw(code, content) values (1, :data)"));
         st.SetLongMaxSize( (unsigned int) size);
-        st.Bind(OTEXT(":data"), lg, (int) size);
+        st.Bind(OTEXT(":data"), lg, (int) size, BindInfo::In);
         st.Execute();
 
         char * buffer = new char [size];
@@ -644,7 +661,7 @@ void test_lob(void)
 
         clob.Write(OTEXT("today, "));
         clob.Append(OTEXT("i'm going to the cinema ! "));
-        clob.Seek(Clob::SeekSet, 0);
+        clob.Seek(Clob::Set, 0);
 
         std::ocout << OTEXT("> code : ") << rs.Get<int>(1) << OTEXT(", content : ") << clob.Read(SIZE_STR) << std::endl;
     }
@@ -831,7 +848,7 @@ void test_describe(void)
     std::ocout << OTEXT("----------------------------------------") << std::endl;
     std::ocout << std::setiosflags(std::ios::left);
 
-    TypeInfo table(con, OTEXT("test_fetch"), TypeInfo::ObjectTable);
+    TypeInfo table(con, OTEXT("test_fetch"), TypeInfo::Table);
 
     for(int i = 1, n = table.GetColumnCount(); i <= n; i++)
     {
@@ -849,7 +866,7 @@ void test_describe(void)
     std::ocout << OTEXT("----------------------------------------") << std::endl;
     std::ocout << std::setiosflags(std::ios::left);
 
-    TypeInfo type(con, OTEXT("test_t"), TypeInfo::ObjectType);
+    TypeInfo type(con, OTEXT("test_t"), TypeInfo::Type);
 
     for(int i = 1, n = type.GetColumnCount(); i <= n; i++)
     {
@@ -880,7 +897,7 @@ void test_returning(void)
     {
         Clob clob = rs.Get<Clob>(2);
         clob.Append(OTEXT("(modified)"));
-        clob.Seek(Clob::SeekSet, 0);
+        clob.Seek(Clob::Set, 0);
 
         std::ocout << OTEXT("> code : ") << rs.Get<int>(1) << OTEXT(" - ") << clob.Read((int)clob.GetLength()) << std::endl;
     }
@@ -953,14 +970,14 @@ void test_returning_array(void)
 
     st.SetBindArraySize(SIZE_TAB);
 
-    /* bind vectors */
-    st.Bind(OTEXT(":val_int"),  tab_int);
-    st.Bind(OTEXT(":val_dbl"),  tab_dbl);
-    st.Bind(OTEXT(":val_flt"),  tab_flt);
-    st.Bind(OTEXT(":val_date"), tab_date);
-    st.Bind(OTEXT(":val_lob"),  tab_lob);
-    st.Bind(OTEXT(":val_file"), tab_file);
-    st.Bind(OTEXT(":val_str"),  tab_str, 30);
+    /* bind vectors */ 
+    st.Bind(OTEXT(":val_int"),  tab_int, BindInfo::In);
+    st.Bind(OTEXT(":val_dbl"),  tab_dbl, BindInfo::In);
+    st.Bind(OTEXT(":val_flt"),  tab_flt, BindInfo::In);
+    st.Bind(OTEXT(":val_date"), tab_date, BindInfo::In);
+    st.Bind(OTEXT(":val_lob"),  tab_lob, BindInfo::In);
+    st.Bind(OTEXT(":val_file"), tab_file, BindInfo::In);
+    st.Bind(OTEXT(":val_str"),  tab_str, 30, BindInfo::In);
 
     /* register output */
     st.Register<int    >(OTEXT(":out_int"));
@@ -1016,12 +1033,12 @@ void test_object_insert(void)
     Date date;
     date.SysDate();
 
-    Object obj2(TypeInfo(con, OTEXT("type_t"), TypeInfo::ObjectType));
+    Object obj2(TypeInfo(con, OTEXT("type_t"), TypeInfo::Type));
 
     obj2.Set<int>    (OTEXT("ID"), 1);
     obj2.Set<ostring>(OTEXT("NAME"), OTEXT("USB KEY 2go"));
 
-    Object obj1(TypeInfo(con, OTEXT("test_t"), TypeInfo::ObjectType));
+    Object obj1(TypeInfo(con, OTEXT("test_t"), TypeInfo::Type));
 
     obj1.Set<int>    (OTEXT("VAL_INT"), 1);
     obj1.Set<double> (OTEXT("VAL_DBL"), 3.14);
@@ -1035,7 +1052,7 @@ void test_object_insert(void)
 
     Statement st(con);
     st.Prepare(OTEXT("insert into test_object values(:obj)"));
-    st.Bind(OTEXT(":obj"), obj1);
+    st.Bind(OTEXT(":obj"), obj1, BindInfo::In);
     st.Execute();
 
     std::ocout << OTEXT("Rows inserted :  ") << st.GetAffectedRows() << std::endl;
@@ -1156,7 +1173,7 @@ void test_collection(void)
     int i;
 
     Statement st(con);
-    TypeInfo type(con, OTEXT("T_TAB1_EMP"), TypeInfo::ObjectType);
+    TypeInfo type(con, OTEXT("T_TAB1_EMP"), TypeInfo::Type);
     Collection coll(type);
 
     st.Prepare( OTEXT("begin")
@@ -1165,8 +1182,8 @@ void test_collection(void)
                 OTEXT("    where departement = :id; ")
                 OTEXT("end;"));
 
-    st.Bind(OTEXT(":tab_emp"), coll);
-    st.Bind(OTEXT(":id"), i);
+    st.Bind(OTEXT(":tab_emp"), coll, BindInfo::In);
+    st.Bind(OTEXT(":id"), i, BindInfo::In);
 
     i = 1;
 
@@ -1240,7 +1257,7 @@ void test_ref(void)
 
     std::ocout << OTEXT("\n>>>>> TEST REF PL/SQL BINDING \n\n");
 
-    Reference ref(TypeInfo(con, OTEXT("type_t"), TypeInfo::ObjectType));
+    Reference ref(TypeInfo(con, OTEXT("type_t"), TypeInfo::Type));
 
     st.Prepare (OTEXT("begin ")
                 OTEXT("  select ref(e) into :r from test_table_obj e where e.id = 1; ")
@@ -1277,7 +1294,7 @@ void test_directpath(void)
     
         int i = 0, j = 0, nb_rows = SIZE_ARRAY;
 
-        DirectPath directPath(TypeInfo(con, OTEXT("test_directpath"), TypeInfo::ObjectTable), NUM_COLS, nb_rows);
+        DirectPath directPath(TypeInfo(con, OTEXT("test_directpath"), TypeInfo::Table), NUM_COLS, nb_rows);
 
         /* optional attributes to set */
 

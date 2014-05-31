@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     SetupNames();
     try
     {
-        Environment::Initialize(Environment::EnvEvents);
+        Environment::Initialize(Environment::Events);
 
         Connection con("db", "usr", "pwd");
         con.SetAutoCommit(true);
@@ -93,7 +93,7 @@ void EventHandler(Event &evt)
     std::cout << "** Database     : " << evt.GetDatabaseName()           << std::endl;
     std::cout << "** Event        : " << EventTypes[evt.GetType()]       << std::endl;
     
-    if (evt.GetType() == OCI_ENT_OBJECT_CHANGED)
+    if (evt.GetType() == Event::ObjectChanged)
     {
         std::cout << ".... Object : " << evt.GetObjectName()                << std::endl;
         std::cout << ".... Action : " << ObjectEvents[evt.GetObjectEvent()] << std::endl;

@@ -20,7 +20,7 @@ int main(void)
 {
     try
     {
-        Environment::Initialize(Environment::EnvThreaded);
+        Environment::Initialize(Environment::Threaded);
 
         Pool pool("db", "usr", "pwd", Pool::ConnectionPool, 0, MaxConnnections);
 

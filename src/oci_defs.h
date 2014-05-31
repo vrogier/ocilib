@@ -271,7 +271,7 @@
 
 #define OCI_ATTR_NUM_COLS              102              /* number of columns */
 #define OCI_ATTR_LIST_COLUMNS          103   /* parameter of the column list */
-
+#define OCI_ATTR_COL_PROPERTIES        104              /* column properties */
 #define OCI_ATTR_LINK                  111         /* the database link name */
 #define OCI_ATTR_PTYPE                 123      /* type of info described by */
 #define OCI_ATTR_PARAM                 124           /* parameter descriptor */
@@ -985,6 +985,11 @@ typedef uword OCIObjectMarkStatus;
 
 /* -------------------------- Implicit Result types ------------------------ */
 #define OCI_RESULT_TYPE_SELECT              1
+
+/*-------------- Flags coresponding to the column properties-----------------*/
+#define OCI_ATTR_COL_PROPERTY_IS_IDENTITY           0x0000000000000001 
+#define OCI_ATTR_COL_PROPERTY_IS_GEN_ALWAYS         0x0000000000000002 
+#define OCI_ATTR_COL_PROPERTY_IS_GEN_BY_DEF_ON_NULL 0x0000000000000004 
 
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */
 

@@ -228,6 +228,39 @@ boolean OCI_ColumnDescribe
 
 #endif
 
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+    if ((OCILib.version_runtime >= OCI_12_1) && (con->ver_num >= OCI_12_1))
+    {
+        ub8 value = 0;
+
+        OCI_CALL1
+        (
+            res, con, stmt,
+
+            OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM,
+                       (dvoid *) &value, (ub4 *) NULL,
+                       (ub4) OCI_ATTR_COL_PROPERTIES, con->err)
+        )
+
+        if (value & OCI_ATTR_COL_PROPERTY_IS_IDENTITY)
+        {
+            col->props |=  OCI_CPF_IS_IDENTITY;
+        }
+
+        if (value & OCI_ATTR_COL_PROPERTY_IS_GEN_ALWAYS)
+        {
+            col->props |=  OCI_CPF_IS_GEN_ALWAYS;
+        }
+
+        if (value & OCI_ATTR_COL_PROPERTY_IS_GEN_BY_DEF_ON_NULL)
+        {
+            col->props |=  OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL;
+        }
+    }
+
+#endif
+
     /* check nullable only for table based column */
 
     if (ptype < OCI_DESC_TYPE)
@@ -846,6 +879,23 @@ boolean OCI_API OCI_ColumnGetCharUsed
 
     return (boolean) col->charused;
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ColumnGetPropertyFlags
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_EXPORT unsigned int OCI_API OCI_ColumnGetPropertyFlags
+(
+    OCI_Column *col
+)
+{
+    OCI_CHECK_PTR(OCI_IPC_COLUMN, col, FALSE);
+
+    OCI_RESULT(TRUE);
+
+    return col->props;
+}
+
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ColumnGetSQLType

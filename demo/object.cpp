@@ -31,13 +31,13 @@ int main(void)
     {
         Environment::Initialize();
 
-        Connection con("db11g", "usr", "pwd");
+        Connection con("db", "usr", "pwd");
 
         Date date;
         date.SysDate();
 
-        Object sale  (TypeInfo(con, "t_sale"  , TypeInfo::ObjectType));
-        Object vendor(TypeInfo(con, "t_vendor", TypeInfo::ObjectType));
+        Object sale  (TypeInfo(con, "t_sale"  , TypeInfo::Type));
+        Object vendor(TypeInfo(con, "t_vendor", TypeInfo::Type));
 
         vendor.Set<int>("CODE", 134);
         vendor.Set<ostring>("NAME", "JOHN SMITH");
@@ -51,7 +51,7 @@ int main(void)
 
         Statement st(con);
         st.Prepare("insert into sales values(:obj)");
-        st.Bind(":obj", sale);
+        st.Bind(":obj", sale, BindInfo::In);
         st.Execute();
 
         std::cout << "Rows inserted :  " << st.GetAffectedRows() << std::endl;

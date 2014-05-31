@@ -164,17 +164,18 @@ public:
      * Type of Exception
      *
      */
-    enum ExceptionType
+    enum ExceptionTypeValues
     {
         /** Unknown exception type */
         Unknown = OCI_UNKNOWN,      
         /** Exception caused by an Oracle error */
-        Oracle  = OCI_ERR_ORACLE,  
+        OracleError  = OCI_ERR_ORACLE,  
         /** Exception caused by an Ocilib error */
-        Ocilib  = OCI_ERR_OCILIB,  
+        OcilibError = OCI_ERR_OCILIB,  
         /** Exception caused by an Oracle Warning */
-        Warning = OCI_ERR_WARNING   
+        OracleWarning = OCI_ERR_WARNING   
     };
+    typedef Enum<ExceptionTypeValues>  ExceptionType;
 
     /**
      * @brief
@@ -254,7 +255,7 @@ class Environment
 
 public:
 
-    enum HAEventSource
+    enum HAEventSourceValues
     {
         SourceInstance = OCI_HES_INSTANCE,                   
         SourceDatabase = OCI_HES_DATABASE,                  
@@ -264,12 +265,14 @@ public:
         SourceASMInstance = OCI_HES_ASM_INSTANCE,                
         SourcePreCOnnect = OCI_HES_PRECONNECT
     };
+    typedef Enum<HAEventSourceValues>  HAEventSource;
 
-    enum HAEventType
+    enum HAEventTypeValues
     {
         EventDown = OCI_HET_DOWN,                   
         EventUp = OCI_HET_UP
     };
+    typedef Enum<HAEventSourceValues>  HAEventType;
 
     /**
      * @typedef HAHandlerProc
@@ -284,48 +287,51 @@ public:
      * Type of Exception
      *
      */
-    enum EnvMode
+    enum EnvironmentFlagsValues
     {
         /** Default mode */
-        EnvDefault = OCI_ENV_DEFAULT,      
+        Default = OCI_ENV_DEFAULT,      
         /** Enable support for multithreading */
-        EnvThreaded  = OCI_ENV_THREADED,  
+        Threaded  = OCI_ENV_THREADED,  
         /** Enable support for events related to subscriptions, HA and AQ notifications */
-        EnvEvents = OCI_ENV_EVENTS   
+        Events = OCI_ENV_EVENTS   
     };
+    typedef Flags<EnvironmentFlagsValues> EnvironmentFlags;
     
     /**
      * @brief 
      * Type of OCI libraries import
      *
      */
-    enum ImportMode
+    enum ImportModeValues
     {
         /** OCI libraires are linked at compile time */
         ImportLinkage = OCI_IMPORT_MODE_LINKAGE,      
        /** OCI libraires are dynamically loaded at runtime */
         ImportRuntime  = OCI_IMPORT_MODE_RUNTIME  
     };
+    typedef Enum<ImportModeValues> ImportMode;
 
     /**
      * @brief 
      * Type of Environment charset
      *
      */
-    enum Charset
+    enum CharsetModeValues
     {
         /** Environment is Ansi string or UTF8 string */
         CharsetAnsi = OCI_CHAR_ANSI,      
         /** Environment is Unicode using wide character string  */
         CharsetWide  = OCI_CHAR_WIDE  
     };
+    typedef Enum<CharsetModeValues> CharsetMode;
 
     /**
      * @brief 
      * Type of sessions
      *
      */
-    enum SessionMode
+    enum SessionFlagsValues
     {
         /** Default session mode */
         SessionDefault = OCI_SESSION_DEFAULT,      
@@ -336,13 +342,14 @@ public:
         /**  */
         SessionSysOper = OCI_SESSION_SYSOPER
     };
+    typedef Flags<SessionFlagsValues> SessionFlags;
 
     /**
      * @brief 
     * Oracle instance start modes
      *
      */
-    enum StartMode
+    enum StartModeValues
     {
         /** Start the instance wihtout mouting and opening it */
         StartOnly = OCI_DB_SPM_START,      
@@ -353,13 +360,14 @@ public:
         /** Start, mount and open the instance */
         StartFull = OCI_DB_SPM_FULL
     };
+    typedef Enum<StartModeValues> StartMode;
 
     /**
      * @brief 
      * Oracle instance start flags 
      *
      */
-    enum StartFlag
+    enum StartFlagsValues
     {
         /** Default start flags */
         StartDefault = OCI_DB_SPF_DEFAULT,      
@@ -368,13 +376,14 @@ public:
         /** Allows database access only to users with both CREATE SESSION and RESTRICTED SESSION privileges */
         StartRestrict = OCI_DB_SPF_RESTRICT   
     };
+    typedef Flags<StartFlagsValues> StartFlags;
 
     /**
      * @brief 
     * Oracle instance shutdown modes
      *
      */
-    enum ShutdownMode
+    enum ShutdownModeValues
     {
         /** Shutdown the instance */
         ShutdownOnly = OCI_DB_SDM_SHUTDOWN,      
@@ -385,13 +394,14 @@ public:
         /** Shutdown, close and dismount the instance */
         ShutdownFull = OCI_DB_SDM_FULL
     };
+    typedef Enum<ShutdownModeValues> ShutdownMode;
 
     /**
      * @brief 
      * Oracle instance shutdown flags 
      *
      */
-    enum ShutdownFlag
+    enum ShutdownFlagsValues
     {
         /**  - Further connects are prohibited.
           *  - Waits for users to disconnect from the database */
@@ -413,14 +423,16 @@ public:
           *  - Therefore, this option should be used only in unusual circumstances */
         ShutdownAbort = OCI_DB_SDF_ABORT      
     };
+    typedef Flags<ShutdownFlagsValues> ShutdownFlags;
 
-    enum CharsetForm
+    enum CharsetFormValues
     {
         CharsetFormUnknown = OCI_UNKNOWN,
         CharsetFormDefault = OCI_CSF_DEFAULT,
         CharsetFormNational = OCI_CSF_NATIONAL
     };
- 
+    typedef Enum<CharsetFormValues> CharsetForm;
+
     /**
      * @brief
      * Initialize the OCILIB environment
@@ -439,7 +451,7 @@ public:
      * - If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables
      *
      */
-    static void Initialize(Environment::EnvMode mode = EnvDefault, ostring libpath = OTEXT(""));
+    static void Initialize(EnvironmentFlags mode = Environment::Default, ostring libpath = OTEXT(""));
     
     /**
      * @brief
@@ -464,7 +476,7 @@ public:
      * It returns the value of the parameter 'mode' passed to Initialize()
      *
      */
-    static Environment::EnvMode GetMode();
+    static Environment::EnvironmentFlags GetMode();
 
     /**
      * @brief
@@ -478,7 +490,7 @@ public:
      * Return the OCILIB charset type
      * 
      */
-    static Environment::Charset GetCharset();
+    static Environment::CharsetMode GetCharset();
 
     /**
      * @brief
@@ -542,9 +554,9 @@ public:
      *
      */
     static void StartDatabase(ostring db, ostring user, ostring pwd,
-                              Environment::StartFlag startFlag,
+                              Environment::StartFlags startFlag,
                               Environment::StartMode startMode,
-                              Environment::SessionMode sessionMode = SessionSysDba,
+                              Environment::SessionFlags sessionFlags = SessionSysDba,
                               ostring spfile = OTEXT(""));
 
     /**
@@ -573,9 +585,9 @@ public:
      *
      */
     static void ShutdownDatabase(ostring db, ostring user, ostring pwd, 
-                                 Environment::ShutdownFlag shutdownFlag,
+                                 Environment::ShutdownFlags shutdownFlags,
                                  Environment::ShutdownMode shutdownMode,
-                                 Environment::SessionMode sessionMode = SessionSysDba);
+                                 Environment::SessionFlags sessionFlags = SessionSysDba);
 
     /**
      * @brief
@@ -827,7 +839,7 @@ public:
      * Type of Pool
      *
      */
-    enum PoolType
+    enum PoolTypeValues
     {
         UnknownPool = OCI_UNKNOWN,   
         /** Pool of Connections */
@@ -835,6 +847,7 @@ public:
         /** Pool of stateless sessions */
         SessionPool  = OCI_POOL_SESSION
     };
+    typedef Enum<PoolTypeValues> PoolType;
 
     /**
      * @brief
@@ -862,7 +875,7 @@ public:
      */
     Pool(ostring db, ostring user, ostring pwd, Pool::PoolType poolType,
          unsigned int minSize, unsigned int maxSize, unsigned int increment = 1,
-         Environment::SessionMode sessionMode = Environment::SessionDefault);
+         Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
     /**
      * @brief
@@ -884,7 +897,7 @@ public:
      */
     void Open(ostring db, ostring user, ostring pwd, Pool::PoolType poolType,
               unsigned int minSize, unsigned int maxSize, unsigned int increment = 1,
-              Environment::SessionMode sessionMode = Environment::SessionDefault);
+              Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
     /**
      * @brief
@@ -1056,14 +1069,15 @@ class Connection : public HandleHolder<OCI_Connection *>
 
 public:
     
-    enum FailoverRequest
+    enum FailoverRequestValues
     {
         FailoverRequestNone = OCI_FOT_NONE,                   
         FailoverRequestSession = OCI_FOT_SESSION,  
         FailoverRequestSelect = OCI_FOT_SELECT
     };
+    typedef Enum<FailoverRequestValues> FailoverRequest;
 
-    enum FailoverEvent
+    enum FailoverEventValues
     {
         FailoverEventEnd = OCI_FOE_END,                   
         FailoverEventAbort = OCI_FOE_ABORT,
@@ -1071,12 +1085,14 @@ public:
         FailoverEventBegin = OCI_FOE_BEGIN,                     
         FailoverEventError = OCI_FOE_ERROR
     };
+    typedef Enum<FailoverEventValues> FailoverEvent;
 
-    enum FailoverResult
+    enum FailoverResultValues
     {
         FailoverOk = OCI_FOC_OK,                   
         FailoverRetry = OCI_FOC_RETRY
     };
+    typedef Enum<FailoverResultValues> FailoverResult;
 
     /**
      * @typedef TAFHandlerProc
@@ -1091,7 +1107,7 @@ public:
      * Type of session trace
      *
      */
-    enum SessionTrace
+    enum SessionTraceValues
     {
         TraceUnknown = OCI_UNKNOWN,   
         /** Specifies the user defined identifier in the session. It's recorded in the column CLIENT_IDENTIFIER of the system view V$SESSION */
@@ -1103,6 +1119,7 @@ public:
         /** Client application additional information. It's recorded in the column CLIENT_INFO of the system view V$SESSION */
         TraceDetail  = OCI_TRC_DETAIL
     };
+    typedef Enum<SessionTraceValues> SessionTrace;
 
     /**
      * @brief
@@ -1118,13 +1135,13 @@ public:
      * @param db           - Oracle Service Name
      * @param user         - Oracle User name
      * @param pwd          - Oracle User password
-     * @param sessionMode  - Session mode
+     * @param sessionFlags - Session Flags
      *
      *  @note
      * it calls Open() with the given parameters
      *
      */
-    Connection(ostring db, ostring user, ostring pwd, Environment::SessionMode sessionMode = Environment::SessionDefault);
+    Connection(ostring db, ostring user, ostring pwd, Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
     /**
      * @brief
@@ -1133,7 +1150,7 @@ public:
      * @param db           - Oracle Service Name
      * @param user         - Oracle User name
      * @param pwd          - Oracle User password
-     * @param sessionMode  - Session mode
+     * @param sessionFlags - Session Flags
      * *
      * @note
      * External credentials are supported by supplying an emtpy string for the 'user' and 'pwd' parameters
@@ -1168,7 +1185,7 @@ public:
      * No transaction is created for a XA connection or q connection retrieved from session pools.
      *
      */
-    void Open(ostring db, ostring user, ostring pwd,  Environment::SessionMode sessionMode = Environment::SessionDefault);
+    void Open(ostring db, ostring user, ostring pwd,  Environment::SessionFlags sessionFlags = Environment::SessionDefault);
     
     /**
      * @brief
@@ -1718,22 +1735,23 @@ public:
      * Transaction mode
      *
      */
-    enum TransactionMode
+    enum TransactionFlagsValues
     {
-        TransactionUnknown = OCI_UNKNOWN,   
+        Unknown = OCI_UNKNOWN,   
         /** (Global) Specifies tightly coupled and migratable branch */
-        TransactionNew = OCI_TRS_NEW,      
+        New = OCI_TRS_NEW,      
         /** (Global) Specifies a tightly coupled branch */
-        TransactionTight  = OCI_TRS_TIGHT,
+        Tight  = OCI_TRS_TIGHT,
         /** (Global) Specifies a loosely coupled branch */
-        TransactionLoose = OCI_TRS_LOOSE,      
+        Loose = OCI_TRS_LOOSE,      
         /** (Global and local) start a read-only transaction */
-        TransactionReadOnly  = OCI_TRS_READONLY,
+        ReadOnly  = OCI_TRS_READONLY,
         /** (Global and local) start a read-write transaction */
-        TransactionReadWrite = OCI_TRS_READWRITE,      
+        ReadWrite = OCI_TRS_READWRITE,      
         /** (Global and local) start a serializable transaction */
-        TransactionSerializable  = OCI_TRS_SERIALIZABLE
+        Serializable  = OCI_TRS_SERIALIZABLE
     };
+    typedef Flags<TransactionFlagsValues> TransactionFlags;
 
     /**
      * @brief
@@ -1741,14 +1759,14 @@ public:
      *
      * @param connection - Connection
      * @param timeout    - Time that a transaction stays inactive after being stopped
-     * @param mode       - Transaction mode
+     * @param flags      - Transaction flags
      * @param pxid       - pointer to a global transaction identifier structure
      *
      * @note
      * For local transaction,  don't use the 'pxid' parameter
      *
      */
-   Transaction(const Connection &connection, unsigned int timeout, TransactionMode mode, OCI_XID *pxid = NULL);
+   Transaction(const Connection &connection, unsigned int timeout, TransactionFlags flags, OCI_XID *pxid = NULL);
 
    /**
      * @brief
@@ -1793,7 +1811,7 @@ public:
      * see Transaction() for possible values
      *
      */
-   Transaction::TransactionMode GetMode() const;
+   Transaction::TransactionFlags GetFlags() const;
 
    /**
      * @brief
@@ -2185,12 +2203,13 @@ public:
      * IntervalType
      *
      */
-    enum IntervalType
+    enum IntervalTypeValues
     {
         Unknown = OCI_UNKNOWN,   
         YearMonth = OCI_INTERVAL_YM,
         DaySecond = OCI_INTERVAL_DS 
     };
+    typedef Enum<IntervalTypeValues> IntervalType;
 
     Interval(IntervalType type);
 
@@ -2262,13 +2281,14 @@ class Timestamp : public HandleHolder<OCI_Timestamp *>
 
 public:
 
-    enum TimestampType
+    enum TimestampTypeValues
     {
         Unknown = OCI_UNKNOWN,   
         NoTimeZone = OCI_TIMESTAMP,
         WithTimeZone = OCI_TIMESTAMP_TZ ,
         WithLocalTimeZone = OCI_TIMESTAMP_LTZ 
     };
+    typedef Enum<TimestampTypeValues> TimestampType;
 
     Timestamp(TimestampType type);
 
@@ -2344,18 +2364,20 @@ class Clob : public HandleHolder<OCI_Lob *>
 
 public:
 
-    enum SeekMode
+    enum SeekModeValues
     {
-        SeekSet = OCI_SEEK_SET,
-        SeelEnd = OCI_SEEK_END,
-        SeekCurrent = OCI_SEEK_CUR
+        Set = OCI_SEEK_SET,
+        End = OCI_SEEK_END,
+        Current = OCI_SEEK_CUR
     };
+    typedef Enum<SeekModeValues> SeekMode;
 
-    enum OpenMode
+    enum OpenModeValues
     {
-        OpenReadOnly = OCI_LOB_READONLY,
-        OpenReadWrite = OCI_LOB_READWRITE,
+        ReadOnly = OCI_LOB_READONLY,
+        ReadWrite = OCI_LOB_READWRITE,
     };
+    typedef Enum<OpenModeValues> OpenMode;
 
     Clob(const Connection &connection);
 
@@ -2413,19 +2435,20 @@ class Blob : public HandleHolder<OCI_Lob *>
 
 public:
 
-    enum SeekMode
+    enum SeekModeValues
     {
-        SeekSet = OCI_SEEK_SET,
-        SeelEnd = OCI_SEEK_END,
-        SeekCurrent = OCI_SEEK_CUR
+        Set = OCI_SEEK_SET,
+        End = OCI_SEEK_END,
+        Current = OCI_SEEK_CUR
     };
+    typedef Enum<SeekModeValues> SeekMode;
 
-    enum OpenMode
+    enum OpenModeValues
     {
-        OpenReadOnly = OCI_LOB_READONLY,
-        OpenReadWrite = OCI_LOB_READWRITE,
+        ReadOnly = OCI_LOB_READONLY,
+        ReadWrite = OCI_LOB_READWRITE,
     };
-
+    typedef Enum<OpenModeValues> OpenMode;
 
     Blob(const Connection &connection);
 
@@ -2482,12 +2505,13 @@ class File : public HandleHolder<OCI_File *>
 
 public:
 
-    enum SeekMode
+    enum SeekModeValues
     {
-        SeekSet = OCI_SEEK_SET,
-        SeelEnd = OCI_SEEK_END,
-        SeekCurrent = OCI_SEEK_CUR
+        Set = OCI_SEEK_SET,
+        End = OCI_SEEK_END,
+        Current = OCI_SEEK_CUR
     };
+    typedef Enum<SeekModeValues> SeekMode;
 
     File(const Connection &connection);
     File(const Connection &connection, ostring directory, ostring name);
@@ -2531,17 +2555,18 @@ class TypeInfo : public HandleHolder<OCI_TypeInfo *>
     friend class Column;
 public:
 
-    enum TypeInfoObjectType
+    enum TypeInfoTypeValues
     {
-        ObjectUnknown = OCI_UNKNOWN,   
-        ObjectTable = OCI_TIF_TABLE,
-        ObjectView = OCI_TIF_VIEW,
-        ObjectType = OCI_TIF_TYPE
+        Unknown = OCI_UNKNOWN,   
+        Table = OCI_TIF_TABLE,
+        View = OCI_TIF_VIEW,
+        Type = OCI_TIF_TYPE
     };
+    typedef Enum<TypeInfoTypeValues> TypeInfoType;
 
-    TypeInfo(const Connection &connection, ostring name, TypeInfoObjectType type);
+    TypeInfo(const Connection &connection, ostring name, TypeInfoType type);
 
-    TypeInfoObjectType GetType() const;
+    TypeInfoType GetType() const;
     ostring GetName() const;
     Connection GetConnection() const;
 
@@ -2571,12 +2596,13 @@ class Object : public HandleHolder<OCI_Object *>
 
 public:
 
-    enum ObjectType
+    enum ObjectTypeValues
     {
         Persistent = OCI_OBJ_PERSISTENT,
         Transient = OCI_OBJ_TRANSIENT,
         Value =  OCI_OBJ_VALUE
     };
+    typedef Enum<ObjectTypeValues> ObjectType;
 
     Object(const TypeInfo &typeInfo);
 
@@ -2661,11 +2687,12 @@ class Collection : public HandleHolder<OCI_Coll *>
     friend class CollectionIterator;
 public:
 
-    enum CollectionType
+    enum CollectionTypeValues
     {
         Varray = OCI_COLL_VARRAY,
         NestedTable = OCI_COLL_NESTED_TABLE
     };
+    typedef Enum<CollectionTypeValues> CollectionType;
 
     Collection(const TypeInfo &typeInfo);
 
@@ -2821,13 +2848,14 @@ class BindInfo : public HandleHolder<OCI_Bind *>
 
 public:
 
-    enum BindDirection
+    enum BindDirectionValues
     {
         Unknown = OCI_UNKNOWN,   
         In = OCI_BDM_IN,
         Out = OCI_BDM_OUT,
         InOut = OCI_BDM_IN_OUT
     };
+    typedef Enum<BindDirectionValues> BindDirection;
 
     ostring GetName() const;
     unsigned int GetType() const;
@@ -2869,7 +2897,7 @@ class Statement : public HandleHolder<OCI_Statement *>
 
 public:
 
-    enum StatementType
+    enum StatementTypeValues
     {
         TypeUnknown = OCI_UNKNOWN,
         TypeSelect = OCI_CST_SELECT,
@@ -2883,24 +2911,28 @@ public:
         TypeDeclare = OCI_CST_DECLARE,
         TypeCall = OCI_CST_CALL,
     };
+    typedef Enum<StatementTypeValues> StatementType;
 
-    enum FetchMode
+    enum FetchModeValues
     {
         FetchForward = OCI_SFM_DEFAULT,
         FetchScrollable = OCI_SFM_SCROLLABLE
     };
+    typedef Enum<FetchModeValues> FetchMode;
 
-    enum BindMode
+    enum BindModeValues
     {
         BindByPosition =  OCI_BIND_BY_POS,
         BindByName = OCI_BIND_BY_NAME
     };
+    typedef Enum<BindModeValues> BindMode;
 
-    enum LongMode
+    enum LongModeValues
     {
         LongExplicit = OCI_LONG_EXPLICIT,
         LongImplicit = OCI_LONG_IMPLICIT
     };
+    typedef Enum<LongModeValues> LongMode;
 
     Statement(const Connection &connection);
     ~Statement();
@@ -2933,19 +2965,19 @@ public:
     BindInfo GetBind(ostring name) const;
 
     template <class TDataType>
-    void Bind(ostring name, TDataType &value, BindInfo::BindDirection mode = BindInfo::In);
+    void Bind(ostring name, TDataType &value, BindInfo::BindDirection mode);
 
     template <class TDataType, class TExtraInfo>
-    void Bind(ostring name, TDataType &value, TExtraInfo extraInfo, BindInfo::BindDirection mode = BindInfo::In);
+    void Bind(ostring name, TDataType &value, TExtraInfo extraInfo, BindInfo::BindDirection mode);
 
     template <class TDataType>
-    void Bind(ostring name, std::vector<TDataType> &values, BindInfo::BindDirection mode = BindInfo::In);
+    void Bind(ostring name, std::vector<TDataType> &values, BindInfo::BindDirection mode);
 
     template <class TDataType, class TExtraInfo>
-    void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo extraInfo, BindInfo::BindDirection mode = BindInfo::In);
+    void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo extraInfo, BindInfo::BindDirection mode);
 
     template <class TDataType, class TExtraInfo>
-    void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo &extraInfo, BindInfo::BindDirection mode = BindInfo::In);
+    void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo &extraInfo, BindInfo::BindDirection mode);
 
     template <class TDataType>
     void Register(ostring name);
@@ -3084,7 +3116,7 @@ class Column : public HandleHolder<OCI_Column *>
 
 public:
 
-    enum ColumnType
+    enum ColumnTypeValues
     {
         TypeUnknown = OCI_UNKNOWN,
         TypeNumeric = OCI_CDT_NUMERIC,
@@ -3101,6 +3133,15 @@ public:
         TypeCollection = OCI_CDT_COLLECTION,
         TypeReference = OCI_CDT_REF
     };
+    typedef Enum<ColumnTypeValues> ColumnType;
+
+    enum PropertyFlagsValues
+    {
+        IsIdentity = OCI_CPF_IS_IDENTITY,
+        IsGeneratedAlways = OCI_CPF_IS_GEN_ALWAYS,
+        IsGeneratedByDefaultOnNull = OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL
+    };
+    typedef Flags<PropertyFlagsValues> PropertyFlags;
 
     ostring GetName() const;
     ostring GetSQLType() const;
@@ -3115,9 +3156,11 @@ public:
     int GetPrecision() const;
     int GetFractionalPrecision() const;
     int GetLeadingPrecision() const;
+    PropertyFlags GetPropertyFlags() const; 
 
     bool IsNullable() const;
     bool IsCharSemanticUsed() const;
+
 
     TypeInfo GetTypeInfo() const;
 
@@ -3146,13 +3189,14 @@ public:
      */
     typedef void (*NotifyHandlerProc) (Event &evt);
 
-    enum ChangeTypes
+    enum ChangeTypesValues
     {
         ObjectChanges = OCI_CNT_OBJECTS,
         RowChanges = OCI_CNT_ROWS,
         DatabaseChanges = OCI_CNT_DATABASES,
         AllChanges = OCI_CNT_ALL
     };
+    typedef Flags<ChangeTypesValues> ChangeTypes;
 
     Subscription();
 
@@ -3185,7 +3229,7 @@ class Event : public HandleHolder<OCI_Event *>
 
 public:
 
-    enum EventType
+    enum EventTypeValues
     {
         DatabaseStart =  OCI_ENT_STARTUP,
         DatabaseShutdown = OCI_ENT_SHUTDOWN,
@@ -3194,8 +3238,9 @@ public:
         Unregister = OCI_ENT_DEREGISTER,
         ObjectChanged = OCI_ENT_OBJECT_CHANGED
     };
+    typedef Enum<EventTypeValues> EventType;
 
-    enum ObjectEvent
+    enum ObjectEventValues
     {
         ObjectInserted = OCI_ONT_INSERT,
         ObjectUpdated = OCI_ONT_UPDATE,
@@ -3204,6 +3249,7 @@ public:
         ObjectDropped = OCI_ONT_DROP,
         ObjectGeneric = OCI_ONT_GENERIC
     };
+    typedef Enum<ObjectEventValues> ObjectEvent;
 
     EventType GetType() const;
     ObjectEvent GetObjectEvent() const;
@@ -3256,15 +3302,15 @@ class Message : public HandleHolder<OCI_Msg *>
 
 public:
 
-    enum MessageState
+    enum MessageStateValues
     {
-        StateUnknown = OCI_UNKNOWN,
-        StateReady = OCI_AMS_READY,
-        StateWaiting = OCI_AMS_WAITING,
-        StateProcessed = OCI_AMS_PROCESSED,
-        StateExpired =  OCI_AMS_EXPIRED
+        Unknown = OCI_UNKNOWN,
+        Ready = OCI_AMS_READY,
+        Waiting = OCI_AMS_WAITING,
+        Processed = OCI_AMS_PROCESSED,
+        Expired =  OCI_AMS_EXPIRED
     };
-
+    typedef Enum<MessageStateValues> MessageState;
 
     Message(const TypeInfo &typeInfo);
 
@@ -3319,17 +3365,19 @@ class Enqueue : public HandleHolder<OCI_Enqueue *>
 {
 public:
 
-    enum EnqueueMode
+    enum EnqueueModeValues
     {
-        EnqueueBefore = OCI_ASD_BEFORE,
-        EnqueueOnTop  = OCI_ASD_TOP
+        Before = OCI_ASD_BEFORE,
+        OnTop  = OCI_ASD_TOP
     };
+    typedef Enum<EnqueueModeValues> EnqueueMode;
 
-    enum EnqueueVisibility
+    enum EnqueueVisibilityValues
     {
         Immediate = OCI_AMV_IMMEDIATE,
         OnCommit  = OCI_AMV_ON_COMMIT
     };
+    typedef Enum<EnqueueVisibilityValues> EnqueueVisibility;
 
     Enqueue(const TypeInfo &typeInfo, ostring queueName);
 
@@ -3365,26 +3413,29 @@ public:
      */
     typedef void (*NotifyAQHandlerProc) (Dequeue &dequeue);
 
-    enum DequeueMode
+    enum DequeueModeValues
     {
         Browse =  OCI_ADM_BROWSE,
         Locked = OCI_ADM_LOCKED,
         Remove = OCI_ADM_REMOVE,
         Confirm = OCI_ADM_REMOVE_NODATA
     };
+    typedef Enum<DequeueModeValues> DequeueMode;
 
-    enum DequeueVisibility
+    enum DequeueVisibilityValues
     {
         Immediate = OCI_AMV_IMMEDIATE,
         OnCommit  = OCI_AMV_ON_COMMIT
     };
+    typedef Enum<DequeueVisibilityValues> DequeueVisibility;
 
-    enum NavigationMode
+    enum NavigationModeValues
     {
         FirstMessage = OCI_ADN_FIRST_MSG,
         NextMessage = OCI_ADN_NEXT_MSG,
         NextTransaction = OCI_ADN_NEXT_TRANSACTION,
     };
+    typedef Enum<NavigationModeValues> NavigationMode;
 
     Dequeue(const TypeInfo &typeInfo, ostring queueName);
 
@@ -3471,7 +3522,7 @@ public:
      * Type of queue
      *
      */
-    enum QueueType
+    enum QueueTypeValues
     {
         /** Normal queue */
         NormalQueue = OCI_AQT_NORMAL,
@@ -3480,6 +3531,7 @@ public:
         /** Non persistent queue */
         NonPersistentQueue = OCI_AQT_NON_PERSISTENT
     };
+    typedef Enum<QueueTypeValues> QueueType;
 
     /**
      * @brief
@@ -3607,7 +3659,7 @@ public:
      * Grouping mode
      *
      */
-    enum GroupingMode
+    enum GroupingModeValues
     {
         /** each message is treated individually */
         None = OCI_AGM_NONE,
@@ -3615,6 +3667,7 @@ public:
           * the same group and can be dequeued as a group of related messages */
         Transactionnal = OCI_AGM_TRANSACTIONNAL
     };
+    typedef Enum<GroupingModeValues> GroupingMode;
 
     /**
      * 
@@ -3622,7 +3675,7 @@ public:
      * Purge mmode
      *
      */
-    enum PurgeMode
+    enum PurgeModeValues
     {
         /**  purge only buffered   messages */
         Buffered = OCI_APM_BUFFERED,
@@ -3631,6 +3684,7 @@ public:
         /* purge all messages */
         All = OCI_APM_ALL
     };
+    typedef Enum<PurgeModeValues> PurgeMode;
 
     /**
      * @brief
@@ -3774,15 +3828,16 @@ public:
      * Conversion modes
      *
      */
-    enum ConversionMode
+    enum ConversionModeValues
     {
         /** conversion fails on error */
         Default = OCI_DCM_DEFAULT,
         /** conversion does not fail on error */
         Force = OCI_DCM_FORCE
     };
+    typedef Enum<ConversionModeValues> ConversionMode;
 
-    enum Result
+    enum ResultValues
     {
         /** conversion/load has been successful */
         ResultComplete = OCI_DPR_COMPLETE,
@@ -3795,6 +3850,7 @@ public:
         /** no data was found to convert/load */
         ResultEmpty = OCI_DPR_EMPTY
     };
+    typedef Enum<ResultValues> Result;
 
     /**
      * @brief
@@ -3897,7 +3953,8 @@ public:
      * Setting entries content piece by piece may be supported in future releases
      *
      */
-    void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const BufferPointer &value, unsigned int size, bool complete = true);
+    void SetEntry(unsigned int rowIndex, unsigned int colIndex, const BufferPointer &value,
+                  unsigned int size, bool complete = true);
 
     /**
      * @brief
@@ -3936,7 +3993,7 @@ public:
      * GetAffectedRows() returns the number of rows converted in the last call.
      *
      */
-    Result Convert();
+    DirectPath::Result Convert();
 
     /**
      * @brief
@@ -3949,7 +4006,7 @@ public:
      * GetAffectedRows() returns the number of rows successfully loaded in the last call.
      *
      */
-    Result Load();
+    DirectPath::Result Load();
 
     /**
      * @brief
@@ -4221,7 +4278,6 @@ public:
  *
  * @}
  */
-
 
 #include "ocilib_impl.hpp"
 

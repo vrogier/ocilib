@@ -13,7 +13,7 @@ int main(void)
         int code;
 
         st.Prepare("delete from test_fetch where code = :code");
-        st.Bind(":code", code);  
+        st.Bind(":code", code, BindInfo::In);  
         code = 5;
         st.Execute();
 

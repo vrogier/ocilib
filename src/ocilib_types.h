@@ -330,6 +330,7 @@ struct OCI_Column
     ub2    charsize;            /* SQL Size in character */
     ub1    csfrm;               /* charset form */
     ub1    handletype;          /* oracle handle type */
+    ub4    props;               /* column properties */
     /* OCILIB infos */
     ub4           bufsize;      /* element size */
     OCI_TypeInfo *typinf;       /* user type descriptor */

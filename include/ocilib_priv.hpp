@@ -74,41 +74,83 @@ static std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<
 template <class THandleType>
 class HandleHolder;
 
-class Exception;
-class Connection;
-class Transaction;
-class Environment;
-class Statement;
-class Resultset;
-class Date;
-class Timestamp;
-class Interval;
-class TypeInfo;
-class Reference;
-class Object;
-class Collection;
-class CollectionIterator;
-class Clob;
-class Blob;
-class File;
-class Pool;
-class CLong;
-class BLong;
-class Column;
-class Subscription;
-class Event;
-class Agent;
-class Message;
-class Enqueue;
-class Dequeue;
-class Queue;
-class QueueTable;
-class DirectPath;
-class Thread;
-class ThreadKey;
-class Mutex;
-class BindInfo;
+/**
+ * @class Enum
+ * @brief
+ * Template Enum template class providing some type safety to some extends for manipulating enum variables
+ */
+template <class TEnum>
+class Enum
+{
+public:
 
+    typedef TEnum type;
+
+    Enum(); 
+    Enum(TEnum value); 
+
+    TEnum GetValue();
+ 
+    operator TEnum ();
+    operator unsigned int ();
+
+	bool operator == (const Enum& other) const;
+	bool operator != (const Enum& other) const;	
+
+	bool operator == (const TEnum& other) const;
+	bool operator != (const TEnum& other) const;	
+
+private:
+
+    TEnum _value;
+};
+
+/**
+ * @class Flags
+ * @brief
+ * Template Flags template class providing some type safety to some extends for manipulating flags set variables
+ */
+template <class TEnum>
+class Flags
+{
+public:
+
+    typedef TEnum type;
+
+    Flags(); 
+    Flags(TEnum flag); 
+    Flags(Flags& other); 
+    Flags operator~ () const;
+
+    Flags operator | (TEnum other) const;
+    Flags operator & (TEnum other) const;
+    Flags operator ^ (TEnum other) const;
+
+    Flags operator | (Flags& other) const;
+    Flags operator & (Flags& other) const;
+    Flags operator ^ (Flags& other) const;
+
+    Flags& operator |= (TEnum other);
+    Flags& operator &= (TEnum other);
+    Flags& operator ^= (TEnum other);
+
+    Flags& operator |= (Flags& other);
+    Flags& operator &= (Flags& other);
+    Flags& operator ^= (Flags& other);
+
+    bool operator == (TEnum other) const;
+    bool operator == (Flags& other) const;
+
+    unsigned int GetValues() const;
+
+    bool IsSet(TEnum other) const;
+ 
+private:
+
+    Flags(unsigned int flags);
+ 
+    (unsigned int) _flags;
+};
 
 /**
  * @class ManagedBuffer
@@ -426,3 +468,40 @@ private:
     std::vector<BindObject *> _bindObjects;
     OCI_Statement * _stmt;
 };
+
+
+class Exception;
+class Connection;
+class Transaction;
+class Environment;
+class Statement;
+class Resultset;
+class Date;
+class Timestamp;
+class Interval;
+class TypeInfo;
+class Reference;
+class Object;
+class Collection;
+class CollectionIterator;
+class Clob;
+class Blob;
+class File;
+class Pool;
+class CLong;
+class BLong;
+class Column;
+class Subscription;
+class Event;
+class Agent;
+class Message;
+class Enqueue;
+class Dequeue;
+class Queue;
+class QueueTable;
+class DirectPath;
+class Thread;
+class ThreadKey;
+class Mutex;
+class BindInfo;
+
