@@ -232,30 +232,33 @@ boolean OCI_ColumnDescribe
 
     if ((OCILib.version_runtime >= OCI_12_1) && (con->ver_num >= OCI_12_1))
     {
-        ub8 value = 0;
-
-        OCI_CALL1
-        (
-            res, con, stmt,
-
-            OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM,
-                       (dvoid *) &value, (ub4 *) NULL,
-                       (ub4) OCI_ATTR_COL_PROPERTIES, con->err)
-        )
-
-        if (value & OCI_ATTR_COL_PROPERTY_IS_IDENTITY)
+        if (ptype < OCI_DESC_TYPE)
         {
-            col->props |=  OCI_CPF_IS_IDENTITY;
-        }
+            ub8 value = 0;
 
-        if (value & OCI_ATTR_COL_PROPERTY_IS_GEN_ALWAYS)
-        {
-            col->props |=  OCI_CPF_IS_GEN_ALWAYS;
-        }
+            OCI_CALL1
+            (
+                res, con, stmt,
 
-        if (value & OCI_ATTR_COL_PROPERTY_IS_GEN_BY_DEF_ON_NULL)
-        {
-            col->props |=  OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL;
+                OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM,
+                           (dvoid *) &value, (ub4 *) NULL,
+                           (ub4) OCI_ATTR_COL_PROPERTIES, con->err)
+            )
+
+            if (value & OCI_ATTR_COL_PROPERTY_IS_IDENTITY)
+            {
+                col->props |=  OCI_CPF_IS_IDENTITY;
+            }
+
+            if (value & OCI_ATTR_COL_PROPERTY_IS_GEN_ALWAYS)
+            {
+                col->props |=  OCI_CPF_IS_GEN_ALWAYS;
+            }
+
+            if (value & OCI_ATTR_COL_PROPERTY_IS_GEN_BY_DEF_ON_NULL)
+            {
+                col->props |=  OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL;
+            }
         }
     }
 
