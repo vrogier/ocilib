@@ -22,7 +22,7 @@
          
       - Added Support for some Oracle 12cR1 new features:      
           - Added support for "PL/SQL Implicit Results"          
-            - No API changes
+            - No API changes, internal code updates
             - Added demo file          
           - Added Support for "Identity columns" :          
             - Added OCI_ColumnGetPropertyFlags()
