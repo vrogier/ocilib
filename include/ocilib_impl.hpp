@@ -5511,9 +5511,9 @@ inline void Queue::Drop(const Connection &connection, ostring queue)
     Check(OCI_QueueDrop(connection, queue.c_str()));
 }
 
-inline void Queue::Start(const Connection &connection, ostring queue, bool startEnqueue, bool startDequeue)
+inline void Queue::Start(const Connection &connection, ostring queue, bool enableEnqueue, bool enableDequeue)
 {
-    Check(OCI_QueueStart(connection, queue.c_str(), startEnqueue, startDequeue));
+	Check(OCI_QueueStart(connection, queue.c_str(), enableEnqueue, enableDequeue));
 }
 
 inline void Queue::Stop(const Connection &connection, ostring queue, bool stopEnqueue, bool stopDequeue, bool wait)

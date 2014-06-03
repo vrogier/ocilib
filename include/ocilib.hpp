@@ -531,16 +531,16 @@ public:
      * @brief
      * Start a database instance
      *
-     * @param db          - Oracle Service Name
-     * @param user        - Oracle User name
-     * @param pwd         - Oracle User password
-     * @param startFlag   - Start flags
-     * @param startMode   - Start mode
-     * @param sessionMode - Session mode
-     * @param spfile      - Client-side spfile to start up the database (optionnal)
+     * @param db           - Oracle Service Name
+     * @param user         - Oracle User name
+     * @param pwd          - Oracle User password
+     * @param startFlags   - Start flags
+     * @param startMode    - Start mode
+     * @param sessionFlags - Session Flags
+     * @param spfile       - Client-side spfile to start up the database (optionnal)
      *
      * @note
-     * The only valid modes for sessionMode are SessionSysDba and SessionSysOper.
+     * The only valid modes for sessionFlags are SessionSysDba and SessionSysOper.
      *
      * @note
      * Start modes and flags parameters values can be combined.
@@ -554,7 +554,7 @@ public:
      *
      */
     static void StartDatabase(ostring db, ostring user, ostring pwd,
-                              Environment::StartFlags startFlag,
+                              Environment::StartFlags startFlags,
                               Environment::StartMode startMode,
                               Environment::SessionFlags sessionFlags = SessionSysDba,
                               ostring spfile = OTEXT(""));
@@ -566,12 +566,12 @@ public:
      * @param db            - Oracle Service Name
      * @param user          - Oracle User name
      * @param pwd           - Oracle User password
-     * @param shutdownFlag  - Shutdown flag
+     * @param shutdownFlags - Shutdown flags
      * @param shutdownMode  - Shutdown mode
-     * @param sessionMode   - Session mode
+     * @param sessionFlags  - Session flags
      *
      * @note
-     * The only valid modes for sessionMode are SessionSysDba and SessionSysOper.
+     * The only valid modes for sessionFlags are SessionSysDba and SessionSysOper.
      *
      * @note
      * Shutdown modes values can be combined.
@@ -864,7 +864,7 @@ public:
      * @param user         - Oracle User name
      * @param pwd          - Oracle User password
      * @param poolType     - Type of pool
-     * @param sessionMode  - Session mode
+     * @param sessionFlags - session Flags
      * @param minSize      - minimum number of  connections/sessions that can be opened.
      * @param maxSize      - maximum number of  connections/sessions that can be opened.
      * @param increment    - next increment for connections/sessions to be opened
@@ -885,7 +885,7 @@ public:
      * @param user         - Oracle User name
      * @param pwd          - Oracle User password
      * @param poolType     - Type of pool
-     * @param sessionMode  - Session mode
+     * @param sessionFlags - session Flags
      * @param minSize      - minimum number of  connections/sessions that can be opened.
      * @param maxSize      - maximum number of  connections/sessions that can be opened.
      * @param increment    - next increment for connections/sessions to be opened
@@ -1162,7 +1162,7 @@ public:
      *   - For parameter 'db' : pass the value of the 'DB' parameter of the given
      *    XA connection string pased to the Transaction Processing Monitor (TPM)
      *   - Pass emtpy strings for 'user' and 'pwd' parameters
-     *   - Use SessionMode:Xa for parameter 'sessionMode'
+     *   - Use SessionFlags::SessionXa for parameter 'sessionFlags'
      *
      * @par Oracle XA Connection String
      *
@@ -2035,7 +2035,7 @@ public:
      * @brief
      * Add or subtract days
      *
-     * @param nb   - Number of days to add/remove
+     * @param days   - Number of days to add/remove
      *
      */
     void AddDays(int days);
@@ -2044,7 +2044,7 @@ public:
      * @brief
      * Add or subtract months
      *
-     * @param nb   - Number of months to add/remove
+     * @param months   - Number of months to add/remove
      *
      */
     void AddMonths(int months);
@@ -3625,11 +3625,11 @@ public:
     * @brief
     * Stop enqueuing or dequeuing or both on the given queue
     *
-    * @param connection - Database connection
-    * @param queue      - Queue name
-    * @param enqueue    - Disable enqueue
-    * @param dequeue    - Disable dequeue
-    * @param wait       - Wait for current pending enqueuues/dequeues
+    * @param connection  - Database connection
+    * @param queue       - Queue name
+    * @param stopEnqueue - Disable enqueue
+    * @param stopDequeue - Disable dequeue
+    * @param wait        - Wait for current pending enqueuues/dequeues
     *
     * @warning
     * A queue cannot be stopped if there are pending transactions against the queue.
@@ -3881,7 +3881,7 @@ public:
      *
      * @param colIndex - Column index
      * @param name     - Column name
-     * @param maxsize  - Maximum input value size for a column entry
+     * @param maxSize  - Maximum input value size for a column entry
      * @param format   - Date or numeric format to use
      *
      * @note
