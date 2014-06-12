@@ -834,6 +834,7 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset
 )
 {
     boolean res = TRUE;
+	sb1 sb_hour = 0, sb_min = 0;
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
     OCI_CHECK_PTR(OCI_IPC_INT, hour, FALSE);
@@ -848,8 +849,11 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset
         res, tmsp->err, tmsp->con,
 
         OCIDateTimeGetTimeZoneOffset((dvoid *) tmsp->env, tmsp->err,
-                                     tmsp->handle, (sb1*) hour, (sb1*) min)
+                                     tmsp->handle, sb_hour, sb_min)
     )
+
+	*hour = sb_hour;
+	*min  = sb_min;
 
 #else
 

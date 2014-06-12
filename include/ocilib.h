@@ -5788,7 +5788,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  * @include cursor.c
  *
  * @par Implicit resultset Example
- * @include implicit_resultset.
+ * @include implicit_resultset.c
  *
  * @par Scrollable resultset Example
  * @include scroll.c

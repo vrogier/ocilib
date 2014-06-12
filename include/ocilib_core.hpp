@@ -39,7 +39,7 @@
  */
 
 /* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_priv.hpp, Vincent Rogier $
+ * $Id: ocilib_core.hpp, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
 #define ARG_NOT_USED(a) (a) = (a)
@@ -119,27 +119,27 @@ public:
 
     Flags(); 
     Flags(TEnum flag); 
-    Flags(Flags& other); 
+	Flags(const Flags& other);
     Flags operator~ () const;
 
     Flags operator | (TEnum other) const;
     Flags operator & (TEnum other) const;
     Flags operator ^ (TEnum other) const;
 
-    Flags operator | (Flags& other) const;
-    Flags operator & (Flags& other) const;
-    Flags operator ^ (Flags& other) const;
+	Flags operator | (const Flags& other) const;
+	Flags operator & (const Flags& other) const;
+	Flags operator ^ (const Flags& other) const;
 
     Flags& operator |= (TEnum other);
     Flags& operator &= (TEnum other);
     Flags& operator ^= (TEnum other);
 
-    Flags& operator |= (Flags& other);
-    Flags& operator &= (Flags& other);
-    Flags& operator ^= (Flags& other);
+	Flags& operator |= (const Flags& other);
+	Flags& operator &= (const Flags& other);
+	Flags& operator ^= (const Flags& other);
 
     bool operator == (TEnum other) const;
-    bool operator == (Flags& other) const;
+	bool operator == (const Flags& other) const;
 
     unsigned int GetValues() const;
 
@@ -149,7 +149,7 @@ private:
 
     Flags(unsigned int flags);
  
-    (unsigned int) _flags;
+    unsigned int _flags;
 };
 
 /**

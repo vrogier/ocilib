@@ -149,7 +149,7 @@ inline Flags<TEnum>::Flags(TEnum flag) : _flags( flag)
 }
 
 template<class TEnum>
-inline Flags<TEnum>::Flags(Flags& other) : _flags(other._flags)
+inline Flags<TEnum>::Flags(const Flags& other) : _flags(other._flags)
 {
 }
 
@@ -166,19 +166,19 @@ inline Flags<TEnum> Flags<TEnum>::operator~ () const
 }
 
 template<class TEnum>
-inline Flags<TEnum> Flags<TEnum>::operator | (Flags& other) const
+inline Flags<TEnum> Flags<TEnum>::operator | (const Flags& other) const
 {
     return Flags<TEnum>(_flags | other._flags);
 }
 
 template<class TEnum>
-inline Flags<TEnum> Flags<TEnum>::operator & (Flags& other) const
+inline Flags<TEnum> Flags<TEnum>::operator & (const Flags& other) const
 {
     return Flags<TEnum>(_flags & other._flags);
 }
 
 template<class TEnum>
-inline Flags<TEnum> Flags<TEnum>::operator ^ (Flags& other) const
+inline Flags<TEnum> Flags<TEnum>::operator ^ (const Flags& other) const
 {
     return Flags<TEnum>(_flags ^ other._flags);
 }
@@ -202,23 +202,23 @@ inline Flags<TEnum> Flags<TEnum>::operator ^ (TEnum other) const
 }
 
 template<class TEnum>
-inline Flags<TEnum>& Flags<TEnum>::operator |= (Flags<TEnum>& other)
+inline Flags<TEnum>& Flags<TEnum>::operator |= (const Flags<TEnum>& other)
 {
     _flags |= other._flags;
     return *this;
 }
 
 template<class TEnum>
-inline Flags<TEnum>& Flags<TEnum>::operator &= (Flags<TEnum>& other)
+inline Flags<TEnum>& Flags<TEnum>::operator &= (const Flags<TEnum>& other)
 {
     _flags &= other._flags;
     return *this;
 }
 
 template<class TEnum>
-inline Flags<TEnum>& Flags<TEnum>::operator ^= (Flags<TEnum>& other)
+inline Flags<TEnum>& Flags<TEnum>::operator ^= (const Flags<TEnum>& other)
 {
-    _flags ^|= other._flags;
+    _flags ^= other._flags;
     return *this;
 }
 
@@ -240,7 +240,7 @@ inline Flags<TEnum>& Flags<TEnum>::operator &= (TEnum other)
 template<class TEnum>
 inline Flags<TEnum>& Flags<TEnum>::operator ^= (TEnum other)
 {
-    _flags ^|= other;
+    _flags ^= other;
     return *this;
 }
 
@@ -251,7 +251,7 @@ inline bool Flags<TEnum>::operator == (TEnum other) const
 }
 
 template<class TEnum>
-inline bool Flags<TEnum>::operator == (Flags& other) const
+inline bool Flags<TEnum>::operator == (const Flags& other) const
 {
     return _flags == other._flags;
 }

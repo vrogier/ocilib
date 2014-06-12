@@ -59,6 +59,7 @@
           - Fixed runtime (OCI_IMPORT_RUNTIME) detection of OCI shared library version for Oracle 11gR2 that was reported as OCI 11gR1
           - Fixed segfault if a statement was executing more than once SQL statement with a "returning clause" (since statement cache support). It was due to an nice bug in the OCI client ! 
           - Fixed OCI_BindSetNull() : if called prior executing an insert statement that had OCI_Object handles binded to it, objects onctent were inserted in the DB instead of NUL
+		  - Fixed OCI_TimestampGetTimeZoneOffset() : returned offsets may have unattended values if negative
 
       - Miscellaneous changes
           - Added OCI_IsRebindingAllowed()

@@ -86,13 +86,13 @@ namespace ocilib
  *  - The whole OCILIB C Documentation (concepts, use cases, features and functionalities) is still valid for OCILIB++
  *  - Most of the OCILIB++ classes and functions documentation refer to the C documentation
  *
- * @}
+ * @} OcilibCppApiOverview
  */
 
 /**
- * @defgroup OcilibCppApiTypes Types
- * @{
- */
+*
+* @} OcilibCppApi
+*/
 
 /**
  * @typedef ostring
@@ -144,7 +144,7 @@ typedef void * CallbackPointer;
 
 /* Including core classes  */
 
-#include "ocilib_priv.hpp"
+#include "ocilib_core.hpp"
 
 /**
  * @brief
@@ -159,13 +159,13 @@ class Exception : public HandleHolder<OCI_Error *>
 
 public:
 
-    /**
-     * @brief 
-     * Type of Exception
-     *
-     */
-    enum ExceptionTypeValues
-    {
+	/**
+	* @brief
+	* Type of Exception
+	*
+	*/
+	enum ExceptionTypeValues
+	{
         /** Unknown exception type */
         Unknown = OCI_UNKNOWN,      
         /** Exception caused by an Oracle error */
@@ -175,9 +175,17 @@ public:
         /** Exception caused by an Oracle Warning */
         OracleWarning = OCI_ERR_WARNING   
     };
-    typedef Enum<ExceptionTypeValues>  ExceptionType;
 
-    /**
+	/**
+	* @brief
+	* Type of Exception
+	*
+	* Possible values are  Exception::ExceptionTypeValues
+	*
+	*/
+	typedef Enum<ExceptionTypeValues>  ExceptionType;
+    
+	/**
      * @brief
      * Retrieve the error message
      *
@@ -255,152 +263,206 @@ class Environment
 
 public:
 
-    enum HAEventSourceValues
-    {
-        SourceInstance = OCI_HES_INSTANCE,                   
-        SourceDatabase = OCI_HES_DATABASE,                  
-        SourceNode = OCI_HES_NODE,                        
-        SourceService = OCI_HES_SERVICE,                     
-        SourceServiceMember = OCI_HES_SERVICE_MEMBER,              
-        SourceASMInstance = OCI_HES_ASM_INSTANCE,                
-        SourcePreCOnnect = OCI_HES_PRECONNECT
-    };
-    typedef Enum<HAEventSourceValues>  HAEventSource;
+	/**
+	* @brief
+	* HA Event sources values
+	*
+	*/
+	enum HAEventSourceValues
+	{
+		SourceInstance = OCI_HES_INSTANCE,
+		SourceDatabase = OCI_HES_DATABASE,
+		SourceNode = OCI_HES_NODE,
+		SourceService = OCI_HES_SERVICE,
+		SourceServiceMember = OCI_HES_SERVICE_MEMBER,
+		SourceASMInstance = OCI_HES_ASM_INSTANCE,
+		SourcePreCOnnect = OCI_HES_PRECONNECT
+	};
 
-    enum HAEventTypeValues
-    {
-        EventDown = OCI_HET_DOWN,                   
-        EventUp = OCI_HET_UP
-    };
-    typedef Enum<HAEventSourceValues>  HAEventType;
+	/**
+	* @brief
+	* Source of HA events
+	*
+	*/
+	typedef Enum<HAEventSourceValues>  HAEventSource;
 
-    /**
-     * @typedef HAHandlerProc
-     *
-     * @brief
-     *
-     */
-    typedef void (*HAHandlerProc) (Connection &con, HAEventSource eventSource, HAEventType eventType, Timestamp  &time);
-    
-    /**
-     * @brief 
-     * Type of Exception
-     *
-     */
-    enum EnvironmentFlagsValues
-    {
-        /** Default mode */
-        Default = OCI_ENV_DEFAULT,      
-        /** Enable support for multithreading */
-        Threaded  = OCI_ENV_THREADED,  
-        /** Enable support for events related to subscriptions, HA and AQ notifications */
-        Events = OCI_ENV_EVENTS   
-    };
-    typedef Flags<EnvironmentFlagsValues> EnvironmentFlags;
-    
-    /**
-     * @brief 
-     * Type of OCI libraries import
-     *
-     */
-    enum ImportModeValues
-    {
-        /** OCI libraires are linked at compile time */
-        ImportLinkage = OCI_IMPORT_MODE_LINKAGE,      
-       /** OCI libraires are dynamically loaded at runtime */
-        ImportRuntime  = OCI_IMPORT_MODE_RUNTIME  
-    };
-    typedef Enum<ImportModeValues> ImportMode;
+	/**
+	* @brief
+	* HA Event types values
+	*
+	*/
+	enum HAEventTypeValues
+	{
+		EventDown = OCI_HET_DOWN,
+		EventUp = OCI_HET_UP
+	};
 
-    /**
-     * @brief 
-     * Type of Environment charset
-     *
-     */
-    enum CharsetModeValues
-    {
-        /** Environment is Ansi string or UTF8 string */
-        CharsetAnsi = OCI_CHAR_ANSI,      
-        /** Environment is Unicode using wide character string  */
-        CharsetWide  = OCI_CHAR_WIDE  
-    };
-    typedef Enum<CharsetModeValues> CharsetMode;
+	/**
+	* @brief
+	* Type of HA events
+	*
+	*/
+	typedef Enum<HAEventTypeValues>  HAEventType;
 
-    /**
-     * @brief 
-     * Type of sessions
-     *
-     */
-    enum SessionFlagsValues
-    {
-        /** Default session mode */
-        SessionDefault = OCI_SESSION_DEFAULT,      
-        /**  */
-        SessionXa  = OCI_SESSION_XA,  
-        /**  */
-        SessionSysDba = OCI_SESSION_SYSDBA,   
-        /**  */
-        SessionSysOper = OCI_SESSION_SYSOPER
-    };
-    typedef Flags<SessionFlagsValues> SessionFlags;
+	/**
+	* @typedef HAHandlerProc
+	*
+	* @brief
+	*
+	*/
+	typedef void (*HAHandlerProc) (Connection &con, HAEventSource eventSource, HAEventType eventType, Timestamp  &time);
 
-    /**
-     * @brief 
-    * Oracle instance start modes
-     *
-     */
-    enum StartModeValues
-    {
-        /** Start the instance wihtout mouting and opening it */
-        StartOnly = OCI_DB_SPM_START,      
-        /** Mount (only) the instance */
-        StartMount  = OCI_DB_SPM_MOUNT,  
-        /** Open (only)  the instance */
-        StartOpen = OCI_DB_SPM_OPEN,   
-        /** Start, mount and open the instance */
-        StartFull = OCI_DB_SPM_FULL
-    };
-    typedef Enum<StartModeValues> StartMode;
+	/**
+	* @brief
+	* Environment Flags Values
+	*
+	*/
+	enum EnvironmentFlagsValues
+	{
+		/** Default mode */
+		Default = OCI_ENV_DEFAULT,
+		/** Enable support for multithreading */
+		Threaded  = OCI_ENV_THREADED,
+		/** Enable support for events related to subscriptions, HA and AQ notifications */
+		Events = OCI_ENV_EVENTS
+	};
 
-    /**
-     * @brief 
-     * Oracle instance start flags 
-     *
-     */
-    enum StartFlagsValues
-    {
-        /** Default start flags */
-        StartDefault = OCI_DB_SPF_DEFAULT,      
-        /** Shuts down a running instance (if needed) using ABORT command and starts a new instance */
-        StartForce  = OCI_DB_SPF_FORCE,  
-        /** Allows database access only to users with both CREATE SESSION and RESTRICTED SESSION privileges */
-        StartRestrict = OCI_DB_SPF_RESTRICT   
-    };
-    typedef Flags<StartFlagsValues> StartFlags;
+	/**
+	* @brief
+	* Environment Flags
+	*
+	*/
+	typedef Flags<EnvironmentFlagsValues> EnvironmentFlags;
 
-    /**
-     * @brief 
-    * Oracle instance shutdown modes
-     *
-     */
-    enum ShutdownModeValues
-    {
-        /** Shutdown the instance */
-        ShutdownOnly = OCI_DB_SDM_SHUTDOWN,      
-        /** Close (only) the instance */
-        ShutdownClose  = OCI_DB_SDM_CLOSE,  
-        /** Dismount (only)  the instance */
-        ShutdownDismount = OCI_DB_SDM_DISMOUNT,   
-        /** Shutdown, close and dismount the instance */
-        ShutdownFull = OCI_DB_SDM_FULL
-    };
-    typedef Enum<ShutdownModeValues> ShutdownMode;
+	/**
+	* @brief
+	* Type of OCI libraries import values
+	*
+	*/
+	enum ImportModeValues
+	{
+		/** OCI libraires are linked at compile time */
+		ImportLinkage = OCI_IMPORT_MODE_LINKAGE,
+		/** OCI libraires are dynamically loaded at runtime */
+		ImportRuntime  = OCI_IMPORT_MODE_RUNTIME
+	};
 
-    /**
-     * @brief 
-     * Oracle instance shutdown flags 
-     *
-     */
+	/**
+	* @brief
+	* Type of OCI libraries import
+	*
+	*/
+	typedef Enum<ImportModeValues> ImportMode;
+	
+	/**
+	* @brief
+	* Charset mode values
+	*
+	*/
+	enum CharsetModeValues
+	{
+		/** Environment is Ansi string or UTF8 string */
+		CharsetAnsi = OCI_CHAR_ANSI,
+		/** Environment is Unicode using wide character string  */
+		CharsetWide  = OCI_CHAR_WIDE
+	};
+
+	/**
+	* @brief
+	* Type of Environment charset
+	*
+	*/
+	typedef Enum<CharsetModeValues> CharsetMode;
+
+	/**
+	* @brief
+	* Type of sessions values
+	*
+	*/
+	enum SessionFlagsValues
+	{
+		/** Default session mode */
+		SessionDefault = OCI_SESSION_DEFAULT,
+		/**  */
+		SessionXa  = OCI_SESSION_XA,
+		/**  */
+		SessionSysDba = OCI_SESSION_SYSDBA,
+		/**  */
+		SessionSysOper = OCI_SESSION_SYSOPER
+	};
+
+	/**
+	* @brief
+	* Type of sessions
+    *
+	*/
+	typedef Flags<SessionFlagsValues> SessionFlags;
+
+	/**
+	* @brief
+	* Oracle instance start modes
+	*
+	*/
+	enum StartModeValues
+	{
+		/** Start the instance wihtout mouting and opening it */
+		StartOnly = OCI_DB_SPM_START,
+		/** Mount (only) the instance */
+		StartMount  = OCI_DB_SPM_MOUNT,  
+		/** Open (only)  the instance */
+		StartOpen = OCI_DB_SPM_OPEN,
+		/** Start, mount and open the instance */
+		StartFull = OCI_DB_SPM_FULL
+	};
+
+	/**
+	* @brief
+	* Oracle instance start modes
+	*
+	* @class ocilib::StartMode
+	*
+	*/
+	typedef Enum<StartModeValues> StartMode;
+
+	/**
+	* @brief
+	* Oracle instance start flags
+	*
+	*/
+	enum StartFlagsValues
+	{
+		/** Default start flags */
+		StartDefault = OCI_DB_SPF_DEFAULT,
+		/** Shuts down a running instance (if needed) using ABORT command and starts a new instance */
+		StartForce  = OCI_DB_SPF_FORCE,  
+		/** Allows database access only to users with both CREATE SESSION and RESTRICTED SESSION privileges */
+		StartRestrict = OCI_DB_SPF_RESTRICT
+	};
+	typedef Flags<StartFlagsValues> StartFlags;
+
+	/**
+	* @brief
+	* Oracle instance shutdown modes
+	*
+	*/
+	enum ShutdownModeValues
+	{
+		/** Shutdown the instance */
+		ShutdownOnly = OCI_DB_SDM_SHUTDOWN,
+		/** Close (only) the instance */
+		ShutdownClose  = OCI_DB_SDM_CLOSE,
+		/** Dismount (only)  the instance */
+		ShutdownDismount = OCI_DB_SDM_DISMOUNT,
+		/** Shutdown, close and dismount the instance */
+		ShutdownFull = OCI_DB_SDM_FULL
+	};
+	typedef Enum<ShutdownModeValues> ShutdownMode;
+
+	/**
+	* @brief
+	* Oracle instance shutdown flags
+	*
+	*/
     enum ShutdownFlagsValues
     {
         /**  - Further connects are prohibited.
@@ -409,29 +471,29 @@ public:
         /**  - Further connects are prohibited
           *  - No new transactions are allowed. */
         ShutdowTrans  = OCI_DB_SDF_TRANS,  
-        /**  - Further connects are prohibited
-          *  - No new transactions are allowed.
-          *  - Waits for active transactions to complete */
-        ShutdownTransLocal = OCI_DB_SDF_TRANS_LOCAL,
-        /**  - Does not wait for current calls to complete or users to disconnect from the database.
-          *  - All uncommitted transactions are terminated and rolled back */
-        ShutdownImmediate = OCI_DB_SDF_IMMEDIATE,      
-        /**  - Does not wait for current calls to complete or users to disconnect from the database.
-          *  - All uncommitted transactions are terminated and are not rolled back.
-          *  - This is the fastest possible way to shut down the database, but the next
-          *    database startup may require instance recovery.
-          *  - Therefore, this option should be used only in unusual circumstances */
-        ShutdownAbort = OCI_DB_SDF_ABORT      
-    };
-    typedef Flags<ShutdownFlagsValues> ShutdownFlags;
+		/**  - Further connects are prohibited
+		*  - No new transactions are allowed.
+		*  - Waits for active transactions to complete */
+		ShutdownTransLocal = OCI_DB_SDF_TRANS_LOCAL,
+		/**  - Does not wait for current calls to complete or users to disconnect from the database.
+		*  - All uncommitted transactions are terminated and rolled back */
+		ShutdownImmediate = OCI_DB_SDF_IMMEDIATE,
+		/**  - Does not wait for current calls to complete or users to disconnect from the database.
+		*  - All uncommitted transactions are terminated and are not rolled back.
+		*  - This is the fastest possible way to shut down the database, but the next
+		*    database startup may require instance recovery.
+		*  - Therefore, this option should be used only in unusual circumstances */
+		ShutdownAbort = OCI_DB_SDF_ABORT
+	};
+	typedef Flags<ShutdownFlagsValues> ShutdownFlags;
 
-    enum CharsetFormValues
-    {
-        CharsetFormUnknown = OCI_UNKNOWN,
-        CharsetFormDefault = OCI_CSF_DEFAULT,
-        CharsetFormNational = OCI_CSF_NATIONAL
-    };
-    typedef Enum<CharsetFormValues> CharsetForm;
+	enum CharsetFormValues
+	{
+		CharsetFormUnknown = OCI_UNKNOWN,
+		CharsetFormDefault = OCI_CSF_DEFAULT,
+		CharsetFormNational = OCI_CSF_NATIONAL
+	};
+	typedef Enum<CharsetFormValues> CharsetForm;
 
     /**
      * @brief
@@ -4274,10 +4336,6 @@ public:
     unsigned int GetErrorRow();
 };
 
- /**
- *
- * @}
- */
 
 #include "ocilib_impl.hpp"
 

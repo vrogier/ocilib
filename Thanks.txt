@@ -28,6 +28,7 @@ Help me keep it complete and exempt of errors.
         - Oleg Finkelshteyn
         - sylvain benilan
         - Petr vanek
+		- Jakub Zakrzewski
 
     * Improvements suggestions
 
@@ -40,6 +41,7 @@ Help me keep it complete and exempt of errors.
         - Guillaume Laudet
         - Sandeep Yaramakala
         - Petr vanek
+		- Jakub Zakrzewski
  
     * Special Thanks
 
