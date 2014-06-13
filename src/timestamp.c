@@ -849,7 +849,7 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset
         res, tmsp->err, tmsp->con,
 
         OCIDateTimeGetTimeZoneOffset((dvoid *) tmsp->env, tmsp->err,
-                                     tmsp->handle, sb_hour, sb_min)
+                                     tmsp->handle, &sb_hour, &sb_min)
     )
 
 	*hour = sb_hour;
