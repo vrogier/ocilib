@@ -95,11 +95,11 @@ using namespace ocilib;
 #endif
 
 #if defined(OCI_CHARSET_WIDE)
-  #define ocout             wcout        
-  #define oostringstream    wostringstream 
+  #define ocout             wcout
+  #define oostringstream    wostringstream
 #else
-  #define ocout             cout        
-  #define oostringstream    ostringstream 
+  #define ocout             cout
+  #define oostringstream    ostringstream
 #endif
 
 #define ARRAY_COUNT(t) (sizeof(t)/sizeof(t[0]))
@@ -255,12 +255,12 @@ void print_version(void)
 {
     std::ocout << OTEXT("\n>>>>> OCILIB BUILD INFORMATION \n\n");
 
-    if (Environment::GetImportMode() == OCI_IMPORT_MODE_LINKAGE)
+    if (Environment::GetImportMode() == Environment::ImportLinkage)
         std::ocout << OTEXT("OCI import mode         : LINKAGE\n");
     else
         std::ocout << OTEXT("OCI import mode         : RUNTIME\n");
 
-    if (Environment::GetCharset() == OCI_CHAR_ANSI)
+    if (Environment::GetCharset() == Environment::CharsetAnsi)
         std::ocout << OTEXT("Charset type            : ANSI\n");
     else
         std::ocout << OTEXT("Charset type            : WIDE\n");
@@ -549,7 +549,7 @@ void test_bind2(void)
     st.Bind(OTEXT(":val_dbl"), dbl, BindInfo::In);
     st.Bind(OTEXT(":val_flt"), flt, BindInfo::In);
     st.Bind(OTEXT(":val_str"), str, (unsigned int) str.size(), BindInfo::In);
- 
+
     /* bind oracle types arrays */
 
     st.Bind(OTEXT(":val_date"), date, BindInfo::In);
@@ -970,7 +970,7 @@ void test_returning_array(void)
 
     st.SetBindArraySize(SIZE_TAB);
 
-    /* bind vectors */ 
+    /* bind vectors */
     st.Bind(OTEXT(":val_int"),  tab_int, BindInfo::In);
     st.Bind(OTEXT(":val_dbl"),  tab_dbl, BindInfo::In);
     st.Bind(OTEXT(":val_flt"),  tab_flt, BindInfo::In);
@@ -1121,20 +1121,20 @@ void test_object_fetch(void)
 void test_scrollable_cursor(void)
 {
     if (Environment::GetRuntimeVersion() > OCI_9_0)
-    {   
+    {
         std::ocout << OTEXT("\n>>>>> TEST SCROLLABLE CURSORS \n\n");
 
         Statement st(con);
-        
+
         st.SetFetchMode(Statement::FetchScrollable);
         st.Execute(OTEXT("select table_name from user_tables where ")
                    OTEXT("table_name like 'TEST_%' order by table_name"));
-   
+
         Resultset rs = st.GetResultset();
-        
+
         rs.Last();
         std::ocout << OTEXT("Total rows : ") << rs.GetCount() << std::endl;
-        
+
         std::ocout << OTEXT("... Go to row 1\n");
         rs.First();
         std::ocout << OTEXT("table ") << rs.Get<ostring>(1) << std::endl;
@@ -1145,7 +1145,7 @@ void test_scrollable_cursor(void)
             std::ocout << OTEXT("table ") << rs.Get<ostring>(1) << std::endl;
         }
 
-        std::ocout << OTEXT("... Enumerate from row ") << rs.GetCount() -1  << OTEXT(" back to row 1") << std::endl;        
+        std::ocout << OTEXT("... Enumerate from row ") << rs.GetCount() -1  << OTEXT(" back to row 1") << std::endl;
         while (rs.Prev())
         {
             std::ocout << OTEXT("table ") << rs.Get<ostring>(1) << std::endl;
@@ -1198,13 +1198,13 @@ void test_collection(void)
     }
 
     std::ocout << OTEXT("\n>>>>> TEST VARRAY PRINTING \n\n");
-     
+
     std::ocout << coll.ToString() << std::endl;
 
     std::ocout << OTEXT("\n>>>>> TEST VARRAY FETCHING WITH ITERATOR \n\n");
 
     st.Execute(OTEXT("SELECT * from test_coll_varray"));
- 
+
     Resultset rs = st.GetResultset();
     while (rs++)
     {
@@ -1251,7 +1251,7 @@ void test_ref(void)
     {
         Reference ref = rs.Get<Reference>(1);
         Object   obj  = ref.GetObject();
-        
+
         std::ocout << obj.Get<int>(OTEXT("ID")) << OTEXT(" - ") << obj.Get<ostring>(OTEXT("NAME")) << std::endl;
     }
 
@@ -1291,7 +1291,7 @@ void test_directpath(void)
         con.Commit();
 
         std::ocout << OTEXT("\n>>>>> TEST DIRECT PATH (10 loads of 100 rows) \n\n");
-    
+
         int i = 0, j = 0, nb_rows = SIZE_ARRAY;
 
         DirectPath directPath(TypeInfo(con, OTEXT("test_directpath"), TypeInfo::Table), NUM_COLS, nb_rows);
@@ -1317,14 +1317,14 @@ void test_directpath(void)
 
         directPath.Prepare();
 
-        nb_rows = directPath.GetMaxRows();          
-            
+        nb_rows = directPath.GetMaxRows();
+
         for (i = 0; i < NB_LOAD ; i++)
         {
             directPath.Reset();
 
             for (j = 1; j <= nb_rows; j++)
-            {             
+            {
                 std::oostringstream val1, val2, val3;
 
                 /* fill test values */
