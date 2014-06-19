@@ -107,7 +107,7 @@ static otext * OCILib_TypeNames[OCI_IPC_COUNT] =
 
 #if defined(OCI_CHARSET_WIDE) && !defined(_MSC_VER)
 
-static otext * OCILib_ErrorMsg[OCI_IPC_COUNT] =
+static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
 {
     OTEXT("No error"),
     OTEXT("OCILIB has not been initialized"),
@@ -134,7 +134,8 @@ static otext * OCILib_ErrorMsg[OCI_IPC_COUNT] =
     OTEXT("Unable to perform this operation on a %ls direct path process"),
     OTEXT("Cannot create OCI environment"),
     OTEXT("Name or position '%ls' previously binded with different datatype"),
-    OTEXT("Object '%ls' type does not match the requested object type")
+	OTEXT("Object '%ls' type does not match the requested object type"),
+	OTEXT("Item '%ls' (type %d)  not found")
 };
 
 #else
@@ -166,7 +167,8 @@ static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
     OTEXT("Unable to perform this operation on a %s direct path process"),
     OTEXT("Cannot create OCI environment"),
     OTEXT("Name or position '%s' previously binded with different datatype"),
-    OTEXT("Object '%s' type does not match the requested object type")
+    OTEXT("Object '%s' type does not match the requested object type"),
+	OTEXT("Item '%s' (type %d)  not found")
 };
 
 #endif
@@ -1004,3 +1006,33 @@ void OCI_ExceptionTypeInfoWrongType
     OCI_ExceptionRaise(err);
 }
 
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ExceptionItemNotFound
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_ExceptionItemNotFound
+(
+	OCI_Connection *con,
+	OCI_Statement *stmt,
+	const otext    *name,
+	unsigned int    type
+)
+{
+	OCI_Error *err = OCI_ExceptionGetError(FALSE);
+
+	if (err)
+	{
+		err->type = OCI_ERR_OCILIB;
+		err->libcode = OCI_ERR_ITEM_NOT_FOUND;
+		err->stmt = stmt;
+		err->con = con;
+
+		osprintf(err->str,
+			osizeof(err->str) - (size_t)1,
+			OCILib_ErrorMsg[OCI_ERR_ITEM_NOT_FOUND],
+			name, type);
+	}
+
+	OCI_ExceptionRaise(err);
+}

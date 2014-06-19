@@ -3789,6 +3789,11 @@ inline bool Statement::IsRebindingAllowed() const
     return (Check(OCI_IsRebindingAllowed(*this)) == TRUE);
 }
 
+inline unsigned int Statement::GetBindIndex(ostring name) const
+{
+	return Check(OCI_GetBindIndex(*this, name.c_str()));
+}
+
 inline unsigned int Statement::GetBindCount() const
 {
     return Check(OCI_GetBindCount(*this));
@@ -4520,6 +4525,11 @@ inline unsigned int Resultset::GetCount() const
 inline unsigned int Resultset::GetCurrentRow() const
 {
     return Check(OCI_GetCurrentRow(*this));
+}
+
+inline unsigned int Resultset::GetColumnIndex(ostring name) const
+{
+	return Check(OCI_GetColumnIndex(*this, name.c_str()));
 }
 
 inline unsigned int Resultset::GetColumnCount() const

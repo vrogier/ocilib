@@ -1133,8 +1133,9 @@ typedef unsigned int big_uint;
 #define OCI_ERR_CREATE_OCI_ENVIRONMENT      23
 #define OCI_ERR_REBIND_BAD_DATATYPE         24
 #define OCI_ERR_TYPEINFO_DATATYPE           25
+#define OCI_ERR_ITEM_NOT_FOUND				26
 
-#define OCI_ERR_COUNT                       26
+#define OCI_ERR_COUNT                       27
 
 /* binding */
 
@@ -5159,6 +5160,30 @@ OCI_EXPORT OCI_Bind * OCI_API OCI_GetBind2
 (
     OCI_Statement *stmt,
     const otext   *name
+);
+
+/**
+* @brief
+* Return the index of the bind  from its name belonging the given statement
+*
+* @param rs    - Statement handle
+* @param name - Bind variable name
+*
+* @note
+* The bind name is case insensitive
+*
+* @note
+* Bind indexes start with 1 in OCILIB
+*
+* @return
+* Bind index on success or zero if the bind does not exists or if statement is NULL
+*
+*/
+
+OCI_EXPORT unsigned int OCI_API OCI_GetBindIndex
+(
+	OCI_Statement *stmt,
+	const otext   *name
 );
 
 /**

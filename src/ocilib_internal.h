@@ -596,6 +596,14 @@ void OCI_ExceptionTypeInfoWrongType
     const otext    *name
 );
 
+void OCI_ExceptionItemNotFound
+(
+	OCI_Connection *con,
+	OCI_Statement *stmt,
+	const otext    *name,
+	unsigned int    type
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * file.c
  * --------------------------------------------------------------------------------------------- */
@@ -1078,7 +1086,7 @@ boolean OCI_BindData
     unsigned int   nbelem
 );
 
-int OCI_BindGetIndex
+int OCI_BindGetInternalIndex
 (
     OCI_Statement *stmt,
     const otext   *name

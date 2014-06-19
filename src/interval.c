@@ -612,7 +612,7 @@ boolean OCI_API OCI_IntervalGetYearMonth
     int          *month
 )
 {
-    boolean res = FALSE;
+    boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv, FALSE);
     OCI_CHECK_PTR(OCI_IPC_INT, year,  FALSE);

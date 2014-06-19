@@ -114,6 +114,11 @@ int OCI_GetDefineIndex
 		he = he->next;
     }
 
+	if (index < 0)
+	{
+		OCI_ExceptionItemNotFound(rs->stmt->con, rs->stmt, name, OCI_IPC_COLUMN);
+	}
+
     return index;
 }
 

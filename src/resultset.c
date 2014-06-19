@@ -41,6 +41,11 @@
 #define OCI_MATCHING_TYPE(def, type) \
     (def && OCI_DefineIsDataNotNull(def) && (type == def->col.datatype))
 
+
+#define OCI_GET_BY_NAME(rs, name, func, res)					\
+	int index = OCI_GetDefineIndex(rs, name);					\
+	return (index > 0) ? func(rs, (unsigned int) index) : res;
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ResultsetCreate
  * --------------------------------------------------------------------------------------------- */
@@ -1336,14 +1341,18 @@ OCI_Column * OCI_API OCI_GetColumn2
     const otext   *name
 )
 {
-    OCI_Define *def = NULL;
     OCI_Column *col = NULL;
-
-    def = OCI_GetDefine(rs, OCI_GetDefineIndex(rs, name));
-
-    if (def)
+	
+	int index = OCI_GetDefineIndex(rs, name);
+ 
+    if (index >= 0)
     {
-        col = &def->col;
+		OCI_Define *def = OCI_GetDefine(rs, index);
+
+		if (def)
+		{
+			col = &def->col;
+		}
     }
 
     OCI_RESULT(col != NULL);
@@ -1363,12 +1372,12 @@ unsigned int OCI_API OCI_GetColumnIndex
 {
     int index = OCI_GetDefineIndex(rs, name);
 
-    OCI_RESULT(index >= 1);
-
     if (index <= 0)
     {
         index = 0;
     }
+	
+	OCI_RESULT(TRUE);
 
     return (unsigned int) index;
 }
@@ -1408,7 +1417,9 @@ boolean OCI_API OCI_SetStructNumericType2
     unsigned int   type
 )
 {
-    return OCI_SetStructNumericType(rs, OCI_GetDefineIndex(rs, name), type);
+	int index = OCI_GetDefineIndex(rs, name);
+
+	return (index > 0) ?  OCI_SetStructNumericType(rs, (unsigned int) index, type) : FALSE;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1577,7 +1588,7 @@ short OCI_API OCI_GetShort2
     const otext   *name
 )
 {
-    return OCI_GetShort(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetShort, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1607,7 +1618,7 @@ unsigned short OCI_API OCI_GetUnsignedShort2
     const otext   *name
 )
 {
-    return OCI_GetUnsignedShort(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedShort, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1637,7 +1648,7 @@ int OCI_API OCI_GetInt2
     const otext   *name
 )
 {
-    return OCI_GetInt(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetInt, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1667,7 +1678,7 @@ unsigned int OCI_API OCI_GetUnsignedInt2
     const otext   *name
 )
 {
-    return OCI_GetUnsignedInt(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedInt, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1697,7 +1708,7 @@ big_int OCI_API OCI_GetBigInt2
     const otext   *name
 )
 {
-    return OCI_GetBigInt(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetBigInt, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1727,7 +1738,7 @@ big_uint OCI_API OCI_GetUnsignedBigInt2
     const otext   *name
 )
 {
-    return OCI_GetUnsignedBigInt(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedBigInt, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1912,7 +1923,7 @@ const otext * OCI_API OCI_GetString2
     const otext   *name
 )
 {
-    return OCI_GetString(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetString, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1969,7 +1980,9 @@ unsigned int OCI_API OCI_GetRaw2
     unsigned int   len
 )
 {
-    return OCI_GetRaw(rs, OCI_GetDefineIndex(rs, name), buffer, len);
+	int index = OCI_GetDefineIndex(rs, name);
+
+	return (index > 0) ? OCI_GetRaw(rs, (unsigned int) index, buffer, len) : 0;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1999,7 +2012,7 @@ double OCI_API OCI_GetDouble2
     const otext   *name
 )
 {
-    return OCI_GetDouble(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetDouble, 0.0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2029,7 +2042,7 @@ float OCI_API OCI_GetFloat2
     const otext   *name
 )
 {
-    return OCI_GetFloat(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetFloat, 0.0f)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2068,7 +2081,7 @@ OCI_Date * OCI_API OCI_GetDate2
     const otext   *name
 )
 {
-    return OCI_GetDate(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetDate, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2107,7 +2120,7 @@ OCI_Timestamp * OCI_API OCI_GetTimestamp2
     const otext   *name
 )
 {
-    return OCI_GetTimestamp(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetTimestamp, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2146,7 +2159,7 @@ OCI_Interval * OCI_API OCI_GetInterval2
     const otext   *name
 )
 {
-    return OCI_GetInterval(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetInterval, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2184,7 +2197,7 @@ OCI_Object * OCI_API OCI_GetObject2
     const otext   *name
 )
 {
-    return OCI_GetObject(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetObject, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2221,7 +2234,7 @@ OCI_Coll * OCI_API OCI_GetColl2
     const otext   *name
 )
 {
-    return OCI_GetColl(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetColl, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2268,7 +2281,7 @@ OCI_Ref * OCI_API OCI_GetRef2
     const otext   *name
 )
 {
-    return OCI_GetRef(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetRef, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2305,7 +2318,7 @@ OCI_Statement * OCI_API OCI_GetStatement2
     const otext   *name
 )
 {
-    return OCI_GetStatement(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetStatement, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2343,7 +2356,7 @@ OCI_Lob * OCI_API OCI_GetLob2
     const otext   *name
 )
 {
-    return OCI_GetLob(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetLob, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2381,7 +2394,7 @@ OCI_File * OCI_API OCI_GetFile2
     const otext   *name
 )
 {
-    return OCI_GetFile(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetFile, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2417,7 +2430,7 @@ OCI_Long * OCI_API OCI_GetLong2
     const otext   *name
 )
 {
-    return OCI_GetLong(rs, OCI_GetDefineIndex(rs, name));
+	OCI_GET_BY_NAME(rs, name, OCI_GetLong, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2447,7 +2460,9 @@ boolean OCI_API OCI_IsNull2
     const otext   *name
 )
 {
-    return OCI_IsNull(rs, OCI_GetDefineIndex(rs, name));
+	int index = OCI_GetDefineIndex(rs, name);
+
+	return (index > 0) ? OCI_IsNull(rs, (unsigned int) index) : TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- *

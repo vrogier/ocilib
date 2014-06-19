@@ -3021,6 +3021,7 @@ public:
 
     bool IsRebindingAllowed() const;
 
+	unsigned int GetBindIndex(ostring name) const;
     unsigned int GetBindCount() const;
 
     BindInfo GetBind(unsigned int index) const;
@@ -3145,7 +3146,8 @@ public:
     unsigned int GetCount() const;
     unsigned int GetCurrentRow() const;
 
-    unsigned int GetColumnCount() const;
+	unsigned int GetColumnIndex(ostring name) const;
+	unsigned int GetColumnCount() const;
     Column GetColumn(unsigned int index) const;
     Column GetColumn(ostring name) const;
 

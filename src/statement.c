@@ -546,7 +546,7 @@ boolean OCI_BindData
     {
         if (OCI_BIND_INPUT == mode)
         {
-            prev_index = OCI_BindGetIndex(stmt, name);
+			prev_index = OCI_BindGetInternalIndex(stmt, name);
 
             if (prev_index > 0)
             {
@@ -979,10 +979,10 @@ boolean OCI_BindData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetIndex
+ * OCI_BindGetInternalIndex
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_BindGetIndex
+int OCI_BindGetInternalIndex
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -1004,7 +1004,7 @@ int OCI_BindGetIndex
 
             if (!he->next || ostrcasecmp(he->key, name) == 0)
             {
-                /* in order to sue the same map for user binds and
+                /* in order to use the same map for user binds and
                    register binds :
                       - user binds are stored as positive values
                       - registers binds are stored as negatives values
@@ -1012,7 +1012,7 @@ int OCI_BindGetIndex
 
                 index = he->values->value.num;
 
-                if (index < 0)
+				if (index < 0)
                 {
                     index = -index;
                 }
@@ -4260,17 +4260,49 @@ OCI_Bind * OCI_API OCI_GetBind2
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
     OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
 
-    index =  OCI_BindGetIndex(stmt, name);
+	index = OCI_GetBindIndex(stmt, name);
 
     if (index > 0)
     {
         bnd = stmt->ubinds[index-1];
     }
+	else
+	{
+		OCI_ExceptionItemNotFound(stmt->con, stmt, name, OCI_IPC_BIND);
+	}
 
     OCI_RESULT(bnd != NULL);
 
     return bnd;
 }
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_GetBindIndex
+* --------------------------------------------------------------------------------------------- */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetBindIndex
+(
+	OCI_Statement *stmt,
+	const otext   *name
+)
+{
+	int index = -1;
+
+	OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, 0);
+	OCI_CHECK_PTR(OCI_IPC_STRING, name, 0);
+
+	index = OCI_BindGetInternalIndex(stmt, name);
+
+	if (index < 0)
+	{
+		index = 0;
+	}
+
+	OCI_RESULT(TRUE);
+
+	return index;
+}
+
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_GetSQLCommand
