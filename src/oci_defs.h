@@ -272,6 +272,7 @@
 #define OCI_ATTR_NUM_COLS              102              /* number of columns */
 #define OCI_ATTR_LIST_COLUMNS          103   /* parameter of the column list */
 #define OCI_ATTR_COL_PROPERTIES        104              /* column properties */
+#define OCI_ATTR_REF_TDO               110     /* REF to the type descriptor */
 #define OCI_ATTR_LINK                  111         /* the database link name */
 #define OCI_ATTR_PTYPE                 123      /* type of info described by */
 #define OCI_ATTR_PARAM                 124           /* parameter descriptor */

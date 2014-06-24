@@ -354,7 +354,7 @@ boolean OCI_ColumnDescribe
 
     if (param)
     {
-        res = (OCI_SUCCESS == OCIDescriptorFree(param, OCI_DTYPE_PARAM));
+        res = (OCI_SUCCESS == OCIDescriptorFree(param, OCI_DTYPE_PARAM) && res);
     }
 
     return res;

@@ -1105,20 +1105,14 @@ typedef sword (*OCIDATETIMESYSTIMESTAMP)
     OCIDateTime *sys_date
 );
 
-typedef sword (*OCITYPEBYNAME)
+typedef sword (*OCITYPEBYREF)
 (
-    OCIEnv          *env,
-    OCIError        *err,
-    CONST OCISvcCtx *svc,
-    CONST text      *schema_name,
-    ub4              s_length,
-    CONST text      *type_name,
-    ub4              t_length,
-    CONST text      *version_name,
-    ub4              v_length,
-    OCIDuration      pin_duration,
-    OCITypeGetOpt    get_option,
-    OCIType        **tdo
+	OCIEnv         *env,
+	OCIError       *err,
+	const OCIRef   *type_ref,
+	OCIDuration		pin_duration,
+	OCITypeGetOpt	get_option,
+	OCIType       **tdo
 );
 
 typedef sword (*OCIOBJECTNEW)

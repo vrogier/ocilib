@@ -280,7 +280,7 @@ OCIDATETIMESYSTIMESTAMP      OCIDateTimeSysTimeStamp      = NULL;
 OCIARRAYDESCRIPTORALLOC      OCIArrayDescriptorAlloc      = NULL;
 OCIARRAYDESCRIPTORFREE       OCIArrayDescriptorFree       = NULL;
 OCICLIENTVERSION             OCIClientVersion             = NULL;
-OCITYPEBYNAME                OCITypeByName                = NULL;
+OCITYPEBYREF                 OCITypeByRef                 = NULL;
 OCINUMBERTOINT               OCINumberToInt               = NULL;
 OCINUMBERFROMINT             OCINumberFromInt             = NULL;
 OCINUMBERTOREAL              OCINumberToReal              = NULL;
@@ -829,8 +829,8 @@ boolean OCI_API OCI_Initialize
         LIB_SYMBOL(OCILib.lib_handle, "OCIDateTimeSysTimeStamp", OCIDateTimeSysTimeStamp,
                    OCIDATETIMESYSTIMESTAMP);
 
-        LIB_SYMBOL(OCILib.lib_handle, "OCITypeByName", OCITypeByName,
-                   OCITYPEBYNAME);
+        LIB_SYMBOL(OCILib.lib_handle, "OCITypeByRef", OCITypeByRef,
+                   OCITYPEBYREF);
 
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberToInt", OCINumberToInt,
                    OCINUMBERTOINT);

@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OCILIB Demo", "ocilib_demo_vs2013.vcxproj", "{D08196A4-17BC-42CE-A7A9-866905120974}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug ANSI|Win32 = Debug ANSI|Win32
+		Debug ANSI|x64 = Debug ANSI|x64
+		Release ANSI|Win32 = Release ANSI|Win32
+		Release ANSI|x64 = Release ANSI|x64
+		Release UNICODE|Win32 = Release UNICODE|Win32
+		Release UNICODE|x64 = Release UNICODE|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Debug ANSI|Win32.ActiveCfg = Debug ANSI|Win32
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Debug ANSI|Win32.Build.0 = Debug ANSI|Win32
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Debug ANSI|x64.ActiveCfg = Debug ANSI|x64
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Debug ANSI|x64.Build.0 = Debug ANSI|x64
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Release ANSI|Win32.ActiveCfg = Release ANSI|Win32
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Release ANSI|Win32.Build.0 = Release ANSI|Win32
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Release ANSI|x64.ActiveCfg = Release ANSI|x64
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Release ANSI|x64.Build.0 = Release ANSI|x64
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Release UNICODE|Win32.ActiveCfg = Release UNICODE|Win32
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Release UNICODE|Win32.Build.0 = Release UNICODE|Win32
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Release UNICODE|x64.ActiveCfg = Release UNICODE|x64
+		{D08196A4-17BC-42CE-A7A9-866905120974}.Release UNICODE|x64.Build.0 = Release UNICODE|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

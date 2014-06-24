@@ -94,8 +94,8 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     boolean found               = FALSE;
     ub2 i;
 
-    otext obj_schema[OCI_SIZE_OBJ_NAME+1];
-    otext obj_name[OCI_SIZE_OBJ_NAME+1];
+    otext obj_schema[OCI_SIZE_OBJ_NAME + 2 + 1];
+    otext obj_name[OCI_SIZE_OBJ_NAME + 2 + 1];
 
     OCI_CHECK_INITIALIZED(NULL);
 
@@ -124,19 +124,25 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
         ostrncat(obj_name, name, (size_t) OCI_SIZE_OBJ_NAME);
     }
 
-    /* type name must be uppercase */
+    /* type name must be uppercase if not quoted */
 
-    for (str = obj_name; *str; str++)
-    {
-        *str = (otext) otoupper(*str);
-    }
+	if (obj_name[0] != OTEXT('"'))
+	{
+		for (str = obj_name; *str; str++)
+		{
+			*str = (otext)otoupper(*str);
+		}
+	}
 
-    /* schema name must be uppercase */
+	/* schema name must be uppercase if not quoted */
 
-    for (str = obj_schema; *str; str++)
-    {
-        *str = (otext) otoupper(*str);
-    }
+	if (obj_schema[0] != OTEXT('"'))
+	{
+		for (str = obj_schema; *str; str++)
+		{
+			*str = (otext)otoupper(*str);
+		}
+	}
 
     /* first try to find it in list */
 
@@ -191,7 +197,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
         if (res)
         {
-            otext buffer[(OCI_SIZE_OBJ_NAME*2) + 2] = OTEXT("");
+            otext buffer[ (OCI_SIZE_OBJ_NAME + 2 + 1) * 2 ] = OTEXT("");
 
             size_t  size    = sizeof(buffer)/sizeof(otext);
             dbtext *dbstr1  = NULL;
@@ -276,36 +282,31 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                     
                     if (res)
                     {
-                        boolean pdt     = FALSE;
-                        dbtext *dbstr1  = NULL;
-                        dbtext *dbstr2  = NULL;
-                        int     dbsize1 = -1;
-                        int     dbsize2 = -1;
+                        boolean pdt = FALSE;
+						OCIRef *ref = NULL;
 
-                        attr_type = OCI_ATTR_LIST_TYPE_ATTRS;
-                        num_type  = OCI_ATTR_NUM_TYPE_ATTRS;
-                        ptype     = OCI_DESC_TYPE;
+						attr_type = OCI_ATTR_LIST_TYPE_ATTRS;
+						num_type  = OCI_ATTR_NUM_TYPE_ATTRS;
+						ptype	  = OCI_DESC_TYPE;
 
                         /* get the object  tdo */
 
-                        dbstr1 = OCI_StringGetOracleString(typinf->schema, &dbsize1);
-                        dbstr2 = OCI_StringGetOracleString(typinf->name,   &dbsize2);
+						OCI_CALL2
+						(
+							res, con,
 
-                        OCI_CALL2
-                        (
-                            res, con,
+							OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &ref,
+							NULL, OCI_ATTR_REF_TDO, con->err)
+						)
 
-                            OCITypeByName(typinf->con->env, con->err, con->cxt,
-                                          (text *) dbstr1, (ub4) dbsize1,
-                                          (text *) dbstr2, (ub4) dbsize2,
-                                          (text *) NULL, (ub4) 0,
-                                          OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
-                                          &typinf->tdo)
-                        )
+						OCI_CALL2
+						(
+							res, con,
 
-                        OCI_StringReleaseOracleString(dbstr1);
-                        OCI_StringReleaseOracleString(dbstr2);
-
+							OCITypeByRef(typinf->con->env, con->err, ref,
+							OCI_DURATION_SESSION, OCI_TYPEGET_ALL,	&typinf->tdo)
+						)
+					
                         /* check if it's system predefined type if order to avoid the next call
                            that is not allowed on system types */
 

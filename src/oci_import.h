@@ -199,7 +199,7 @@ extern OCIDATETIMESYSTIMESTAMP      OCIDateTimeSysTimeStamp;
 extern OCIARRAYDESCRIPTORALLOC      OCIArrayDescriptorAlloc;
 extern OCIARRAYDESCRIPTORFREE       OCIArrayDescriptorFree;
 extern OCICLIENTVERSION             OCIClientVersion;
-extern OCITYPEBYNAME                OCITypeByName;
+extern OCITYPEBYREF                 OCITypeByRef;
 extern OCINUMBERTOINT               OCINumberToInt;
 extern OCINUMBERFROMINT             OCINumberFromInt;
 extern OCINUMBERTOREAL              OCINumberToReal;
