@@ -508,7 +508,7 @@ boolean OCI_API OCI_Initialize
 
         if (str)
         {
-            char nls_lang[OCI_SIZE_OBJ_NAME+1] = "";
+            char nls_lang[OCI_SIZE_OBJ_NAME + 1] = "";
 
             strncat(nls_lang, str, OCI_SIZE_OBJ_NAME);
 

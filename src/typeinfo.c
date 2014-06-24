@@ -94,8 +94,8 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     boolean found               = FALSE;
     ub2 i;
 
-    otext obj_schema[OCI_SIZE_OBJ_NAME + 2 + 1];
-    otext obj_name[OCI_SIZE_OBJ_NAME + 2 + 1];
+    otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
+    otext obj_name[OCI_SIZE_OBJ_NAME + 1];
 
     OCI_CHECK_INITIALIZED(NULL);
 
@@ -142,7 +142,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 		{
 			*str = (otext)otoupper(*str);
 		}
-	}
+	}	
 
     /* first try to find it in list */
 
@@ -197,7 +197,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
         if (res)
         {
-            otext buffer[ (OCI_SIZE_OBJ_NAME + 2 + 1) * 2 ] = OTEXT("");
+			otext buffer[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
             size_t  size    = sizeof(buffer)/sizeof(otext);
             dbtext *dbstr1  = NULL;
@@ -362,7 +362,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                     otext *syn_object_name   = NULL;
                     otext *syn_link_name     = NULL;
 
-                    otext syn_fullname[(OCI_SIZE_OBJ_NAME*3) + 3] = OTEXT("");
+					otext syn_fullname[(OCI_SIZE_OBJ_NAME * 3) + 3] = OTEXT("");
 
                     /* get link schema, object and databaselink names */
 
@@ -379,7 +379,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                     /* compute link full name */
                     
-                    if (syn_schema_name && syn_schema_name[0])
+					if (syn_schema_name && syn_schema_name[0] && (ostrcasecmp(syn_schema_name, OTEXT("PUBLIC")) != 0))
                     {
                         ostrncat(syn_fullname, syn_schema_name, (size_t) OCI_SIZE_OBJ_NAME);
                         ostrncat(syn_fullname, OTEXT("."), 1);

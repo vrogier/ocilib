@@ -903,7 +903,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
     {
         /* for AQ subscription, the name should be "[shema.]queue[:consumer]" */
 
-        otext buffer[(OCI_SIZE_OBJ_NAME*2) + 2] = OTEXT("");
+		otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
         otext *str  = NULL;
         size_t size = sizeof(buffer)/sizeof(otext);
