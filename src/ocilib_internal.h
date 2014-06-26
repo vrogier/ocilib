@@ -1266,6 +1266,22 @@ unsigned int OCI_StringAddToBuffer
     boolean          check_quote
 );
 
+unsigned int OCI_StringGetTypeName
+(
+	const otext *source,
+	otext		*dest,
+	unsigned int length
+);
+
+unsigned int OCI_StringGetFullTypeName
+(
+	const otext *schema, 
+	const otext *type,
+	const otext *link,
+	otext		*name,
+	unsigned int length
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * subscription.c
  * --------------------------------------------------------------------------------------------- */

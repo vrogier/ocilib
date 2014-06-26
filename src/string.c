@@ -922,6 +922,102 @@ unsigned int OCI_StringAddToBuffer
     return len_out;
 }
 
+/* --------------------------------------------------------------------------------------------- *
+* OCI_StringGetTypeName
+* --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_StringGetTypeName
+(
+	const otext *source,
+	otext *dest,
+	unsigned int length
+)
+{
+	boolean      quote  = FALSE;
+	unsigned int offset = 0;
+
+	if (!source || !source[0] || !dest)
+	{
+		return 0;
+	}
+
+	/* For types created WITH case sensitivity, OCI may not return quoted names... */
+
+	if (source[0] != OTEXT('"'))
+	{
+		const otext *str = NULL;
+
+		for (str = source; *str; str++)
+		{
+			if ((*str) != otoupper(*str))
+			{
+				quote = TRUE;
+				break;
+			}
+		}
+	}
+
+	/* Fill destination string */
+
+	if (quote)
+	{
+		ostrncpy(dest + offset, OTEXT("\""), length - offset);
+		offset++;
+	}
+
+	ostrncpy(dest + offset, source, length - offset);
+	offset = (unsigned int)ostrlen(dest);
+
+	if (quote)
+	{
+		ostrncpy(dest + offset, OTEXT("\""), length - offset);
+		offset++;
+	}
+
+	return offset;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_StringGetFullTypeName
+* --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_StringGetFullTypeName
+(
+	const otext *schema,
+	const otext *type,
+	const otext *link,
+	otext		*name,
+	unsigned int length
+	)
+{
+	unsigned int offset = 0;
+
+	if (schema && schema[0])
+	{
+		offset += OCI_StringGetTypeName(schema, name + offset, length - offset);
+		
+		if (offset)
+		{
+			ostrncpy(name + offset, OTEXT("."), length - offset);
+			offset++;
+		}
+	}
+
+	if (type && type[0])
+	{
+		offset += OCI_StringGetTypeName(type, name + offset, length - offset);
+	}
+
+	if (link && link[0])
+	{
+		ostrncpy(name + offset, OTEXT("@"), length - offset);
+		offset++;
+		offset += OCI_StringGetTypeName(link, name + offset, length - offset);
+	}
+
+	return offset;
+}
+
 /* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
  * ********************************************************************************************* */

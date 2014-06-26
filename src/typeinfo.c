@@ -378,23 +378,8 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                                                               OCI_ATTR_LINK, &syn_link_name);
 
                     /* compute link full name */
-                    
-					if (syn_schema_name && syn_schema_name[0] && (ostrcasecmp(syn_schema_name, OTEXT("PUBLIC")) != 0))
-                    {
-                        ostrncat(syn_fullname, syn_schema_name, (size_t) OCI_SIZE_OBJ_NAME);
-                        ostrncat(syn_fullname, OTEXT("."), 1);
-                    }
 
-                    if (syn_object_name && syn_object_name[0])
-                    {
-                        ostrncat(syn_fullname, syn_object_name, (size_t) OCI_SIZE_OBJ_NAME);
-                    }
-                
-                    if (syn_link_name && syn_link_name[0])
-                    {
-                        ostrncat(syn_fullname, OTEXT("@"), 1);
-                        ostrncat(syn_fullname, syn_link_name, (size_t) OCI_SIZE_OBJ_NAME);
-                    }
+					OCI_StringGetFullTypeName(syn_schema_name, syn_object_name, syn_link_name, syn_fullname, (sizeof(syn_fullname) / sizeof(otext)) - 1);
 
                     /* retrieve the type info of the real object */
 

@@ -338,9 +338,6 @@ boolean OCI_ColumnDescribe
             otext schema_name[OCI_SIZE_OBJ_NAME + 1] = OTEXT("");
 			otext type_name[OCI_SIZE_OBJ_NAME  + 1] = OTEXT("");
 			otext full_name[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
-			boolean quote_schema = FALSE;
-			boolean quote_type = FALSE;
-			otext *tmp = NULL;
 
 			/* Retrieve correct schema name */
 
@@ -352,20 +349,6 @@ boolean OCI_ColumnDescribe
 				{
 					schema_name[0] = 0;
 				}
-
-				if (schema_name[0] != OTEXT('"'))
-				{
-					/* for types created WITH case sensitivity, OCI does not return quoted names... */
-					
-					for (tmp = schema_name; *tmp; tmp++)
-					{
-						if ((*tmp) != otoupper(*tmp))
-						{
-							quote_schema = TRUE;
-							break;
-						}
-					}
-				}
             }
 
 			/* Retrieve correct type name */
@@ -373,53 +356,11 @@ boolean OCI_ColumnDescribe
 			if (dbstr_name && (dbsize_name > 0))
 			{
 				OCI_StringOracleToNative(dbstr_name, type_name, dbcharcount(dbsize_name));
-
-				/* for types created WITH case sensitivity, OCI does not return quoted names... */
-
-				if (type_name[0] != OTEXT('"'))
-				{
-					for (tmp = type_name; *tmp; tmp++)
-					{
-						if ((*tmp) != otoupper(*tmp))
-						{
-							quote_type = TRUE;
-							break;
-						}
-					}
-				}
 			}
 
-			/* Format full type name respecting case sensitivity if needed in order to not fail type info retrieval.
-			   Not the most optimized way... */
+			/* Format full type name respecting case sensitivity if needed in order to not fail type info retrieval.*/
 
-			if (schema_name[0])
-			{
-				if (quote_schema)
-				{
-					ostrcat(full_name, OTEXT("\""));
-				}
-
-				ostrcat(full_name, schema_name);
-
-				if (quote_schema)
-				{
-					ostrcat(full_name, OTEXT("\""));
-				}
-
-				ostrcat(full_name, OTEXT("."));
-			}
-
-			if (quote_type)
-			{
-				ostrcat(full_name, OTEXT("\""));
-			}
-
-			ostrcat(full_name, type_name);
-
-			if (quote_type)
-			{
-				ostrcat(full_name, OTEXT("\""));
-			}
+			OCI_StringGetFullTypeName(schema_name, type_name, NULL, full_name, (sizeof(full_name) / sizeof(otext)) - 1);
 
 			col->typinf = OCI_TypeInfoGet(con, full_name, OCI_TIF_TYPE);
 
