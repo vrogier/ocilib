@@ -1,9 +1,9 @@
-2014-03-01 Version 4.0.0 Vincent Rogier vince.rogier@ocilib.net
+2014-07-14 Version 4.0.0 Vincent Rogier vince.rogier@ocilib.net
 
     * Introducing new C++ API
     
       - Based on STL paradigms (templates, stack objects, ...)
-      - Based on design patterns (reference counting, smart pointers, proxyies, singleton, proxies, ...)
+      - Based on design patterns (reference counting, smart pointers, proxies, singleton, ...)
       - No dynamic object allocation
       - Implemented as a small set of header files, no library compilation needed
       - Designed on top of OCILIB C API
@@ -22,10 +22,10 @@
          
       - Added Support for some Oracle 12cR1 new features:      
           - Added support for "PL/SQL Implicit Results"          
-            - No API changes, internal code updates
-            - Added demo file          
+              - No API changes, internal code updates
+              - Added demo file          
           - Added Support for "Identity columns" :          
-            - Added OCI_ColumnGetPropertyFlags()
+              - Added OCI_ColumnGetPropertyFlags()
           
       - Collections:          
           - Added OCI_CollDeleteElem()
@@ -35,10 +35,10 @@
           - Fixed OCI_ElemGetRaw() : possible segfault could happen
           - Fixed OCI_ElemSetNull() : it was not setting correctly the element indicator for collections of objects
           - Renamed some methods:
-                - OCI_CollGetAt() to OCI_CollGetElem()
-                - OCI_CollGetAt2() to OCI_CollGetElem2()
-                - OCI_CollSetAt() to OCI_CollSetElem().
-                - Note that older method names are still supported using #define for backward compatibility reasons 
+              - OCI_CollGetAt() to OCI_CollGetElem()
+              - OCI_CollGetAt2() to OCI_CollGetElem2()
+              - OCI_CollSetAt() to OCI_CollSetElem().
+              - Note that older method names are still supported using #define for backward compatibility reasons 
 
       - Unicode builds:  
           - Fixed LONG data type fetching when using Unicode builds on Unix/Linux platforms. Returned strings could have extraneous trailing characters
@@ -50,7 +50,19 @@
           - Extended OCI_GetString() : supports now all types
           - Extended OCI_ObjectGetString() : supports now all types
           
-      - Miscellaneous fixes
+      - Miscellaneous additions:
+          - Added OCI_IsRebindingAllowed()
+          - Added OCI_TypeInfoGetConnection() 
+          - Added OCI_SubscriptionGetConnection()
+          - Added OCI_BindSetNotNullAtPos()
+          - Added OCI_BindSetNotNull()
+          - Added OCI_GetBindIndex()
+          - Added compile time (OCI_IMPORT_LINKAGE) and runtime (OCI_IMPORT_RUNTIME) detection of OCI shared library version for Oracle 12cR1
+          - Added new error code OCI_ERR_ITEM_NOT_FOUND
+          - Added VS 2013 solutions
+          - Important code refactoring
+
+     - Miscellaneous fixes:
           - Fixed NULL lob handle input checking in OCI_LobWrite() and OCI_LobWrite2()
           - Fixed OCI_PoolGetConnection() prototype : added const qualifier on tag argument
           - Fixed memory usage of internal arrays (for numeric, text and raw types) when using OCI_BAM_INTERNAL bind allocation mode. Memory was not freed when the statement was freed but only at OCI_Cleanup() time.
@@ -59,16 +71,10 @@
           - Fixed runtime (OCI_IMPORT_RUNTIME) detection of OCI shared library version for Oracle 11gR2 that was reported as OCI 11gR1
           - Fixed segfault if a statement was executing more than once SQL statement with a "returning clause" (since statement cache support). It was due to an nice bug in the OCI client ! 
           - Fixed OCI_BindSetNull() : if called prior executing an insert statement that had OCI_Object handles binded to it, objects onctent were inserted in the DB instead of NUL
-		  - Fixed OCI_TimestampGetTimeZoneOffset() : returned offsets may have unattended values if negative
-
-      - Miscellaneous changes
-          - Added OCI_IsRebindingAllowed()
-          - Added OCI_TypeInfoGetConnection() 
-          - Added OCI_SubscriptionGetConnection()
-          - Added OCI_BindSetNotNullAtPos()
-          - Added OCI_BindSetNotNull()
-          - Added compile time (OCI_IMPORT_LINKAGE) and runtime (OCI_IMPORT_RUNTIME) detection of OCI shared library version for Oracle 12cR1
-          - Important code refactoring
+          - Fixed OCI_TimestampGetTimeZoneOffset() : returned offsets may have unattended values if negative
+          - Fixed OCI_TypeInfoGet() that was failing if :
+              - object had been created with case sensitivity (e.g. using quotes)
+              - object were related to the PUBLIC role
 
 2013-03-04 Version 3.12.1 Vincent Rogier vince.rogier@ocilib.net
 
