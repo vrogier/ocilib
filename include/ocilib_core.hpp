@@ -42,6 +42,9 @@
  * $Id: ocilib_core.hpp, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
+namespace ocilib
+{
+
 #define ARG_NOT_USED(a) (a) = (a)
 
 /**
@@ -417,7 +420,7 @@ private:
 };
 
 /**
- * @class BindBuffer
+ * @class BindString
  *
  * @brief
  *
@@ -505,3 +508,4 @@ class ThreadKey;
 class Mutex;
 class BindInfo;
 
+}

@@ -58,7 +58,8 @@
 
 /**
  * @namespace ocilib
- * @brief
+ * @brief OCILIB ++ Namespace
+ *
  */
 namespace ocilib
 {
@@ -73,7 +74,7 @@ namespace ocilib
  * @{
  * OCILIB ++ is a C++ API for Oracle:
  *  - Based on STL paradigms (templates, stack objects, ...)
- *  - Based on design patterns (reference counting, smart pointers, proxyies, singleton, proxies, ...)
+ *  - Based on design patterns (reference counting, smart pointers, proxies, singleton, ...)
  *  - No dynamic object allocation
  *  - Implemented as a small set of header files, no library compilation needed
  *  - Designed on top of OCILIB C API
@@ -81,77 +82,97 @@ namespace ocilib
  *  - The only dependences are : STL and OCILIB C API
  *
  * @note
- *  - OCILIB++ wraps the OCILIB C API into C++ objects. 
- *  - Basically, each C OCILIB object handle has its C++ class counter parts.
+ *  - OCILIB++ wraps the whole OCILIB C API.
+ *  - Each C OCILIB object handle has its C++ class counter part.
  *  - The whole OCILIB C Documentation (concepts, use cases, features and functionalities) is still valid for OCILIB++
  *  - Most of the OCILIB++ classes and functions documentation refer to the C documentation
  *
- * @} OcilibCppApiOverview
+ * @} 
  */
 
 /**
 *
-* @} OcilibCppApi
+* @} 
 */
 
 /**
- * @typedef ostring
+ * @typedef ocilib::ostring
+ *
  * @brief
- * string class wrapping the OCILIB otext * type and OTEXT() macros (see @ref OcilibCApiSupportedCharsets)
+ * string class wrapping the OCILIB otext * type and OTEXT() macros ( see @ref OcilibCApiSupportedCharsets )
+ *
+ * @note
+ * - for ANSI builds, ocilib::ostring is equivalent to std::string
+ * - for UNICODE builds, ocilib::ostring is equivalent to std::wstring
+ *
  */
-
 typedef std::basic_string<otext, std::char_traits<otext>, std::allocator<otext> > ostring;
 
 /**
- * @typedef BufferPointer
+ * @typedef ocilib::BufferPointer
+ *
  * @brief
  * Alias for the generic void pointer
+ *
  */
-
 typedef void * BufferPointer;
 
 /**
- * @typedef UnknownHandle
+ * @typedef ocilib::UnknownHandle
+ *
  * @brief
  * Alias used for manipulating unknown handle types
+ *
  */
-
 typedef void * UnknownHandle;
 
 /**
- * @typedef MutexHandle
+ * @typedef ocilib::MutexHandle
+ *
  * @brief
  * Alias for an OCI_Mutex pointer
+ *
  */
-
 typedef OCI_Mutex *  MutexHandle ;
 
 /**
- * @typedef ThreadHandle
+ * @typedef ocilib::ThreadHandle
+ *
  * @brief
  * Alias for an OCI_Thread pointer
+ *
  */
-
 typedef OCI_Thread * ThreadHandle;
 
 /**
- * @typedef CallbackPointer
+ * @typedef ocilib::CallbackPointer
+ *
  * @brief
  * Alias used for storing user callback method pointers
+ *
  */
-
 typedef void * CallbackPointer;
+
+}
 
 /* Including core classes  */
 
 #include "ocilib_core.hpp"
 
+/* Defining public classes  */
+
+namespace ocilib
+{
+
 /**
+ *
  * @brief
  * Exception class handling all OCILIB erors
  *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Error and its related methods
+ *
  */
-
 class Exception : public HandleHolder<OCI_Error *>
 {
     friend void Check();
@@ -161,7 +182,7 @@ public:
 
 	/**
 	* @brief
-	* Type of Exception
+	* Exception type enumerated values
 	*
 	*/
 	enum ExceptionTypeValues
@@ -180,7 +201,7 @@ public:
 	* @brief
 	* Type of Exception
 	*
-	* Possible values are  Exception::ExceptionTypeValues
+	* Possible values are Exception::ExceptionTypeValues
 	*
 	*/
 	typedef Enum<ExceptionTypeValues>  ExceptionType;
@@ -265,7 +286,7 @@ public:
 
 	/**
 	* @brief
-	* HA Event sources values
+	* HA Event sources enumerated values
 	*
 	*/
 	enum HAEventSourceValues
@@ -283,12 +304,14 @@ public:
 	* @brief
 	* Source of HA events
 	*
+	* Possible values are Environment::HAEventSourceValues
+	*
 	*/
 	typedef Enum<HAEventSourceValues>  HAEventSource;
 
 	/**
 	* @brief
-	* HA Event types values
+	* HA Event types enumerated values
 	*
 	*/
 	enum HAEventTypeValues
@@ -301,20 +324,14 @@ public:
 	* @brief
 	* Type of HA events
 	*
+	* Possible values are Environment::HAEventTypeValues
+	*
 	*/
 	typedef Enum<HAEventTypeValues>  HAEventType;
 
 	/**
-	* @typedef HAHandlerProc
-	*
 	* @brief
-	*
-	*/
-	typedef void (*HAHandlerProc) (Connection &con, HAEventSource eventSource, HAEventType eventType, Timestamp  &time);
-
-	/**
-	* @brief
-	* Environment Flags Values
+	* Environment Flags enumerated values
 	*
 	*/
 	enum EnvironmentFlagsValues
@@ -331,12 +348,14 @@ public:
 	* @brief
 	* Environment Flags
 	*
+	* Possible values are Environment::EnvironmentFlagsValues
+	*
 	*/
 	typedef Flags<EnvironmentFlagsValues> EnvironmentFlags;
 
 	/**
 	* @brief
-	* Type of OCI libraries import values
+	* OCI libraries import mode enumerated values
 	*
 	*/
 	enum ImportModeValues
@@ -349,14 +368,16 @@ public:
 
 	/**
 	* @brief
-	* Type of OCI libraries import
+	* OCI libraries import mode
+	*
+	* Possible values are Environment::ImportMode
 	*
 	*/
 	typedef Enum<ImportModeValues> ImportMode;
 	
 	/**
 	* @brief
-	* Charset mode values
+	* Charset mode enumerated values
 	*
 	*/
 	enum CharsetModeValues
@@ -369,38 +390,42 @@ public:
 
 	/**
 	* @brief
-	* Type of Environment charset
+	* Environment charset mode
+	*
+	* Possible values are Environment::CharsetModeValues
 	*
 	*/
 	typedef Enum<CharsetModeValues> CharsetMode;
 
 	/**
 	* @brief
-	* Type of sessions values
+	* Session flags enumerated values
 	*
 	*/
 	enum SessionFlagsValues
 	{
 		/** Default session mode */
 		SessionDefault = OCI_SESSION_DEFAULT,
-		/**  */
+		/** Requested session will be created through the XA interface */
 		SessionXa  = OCI_SESSION_XA,
-		/**  */
+		/** the user is authenticated for SYSDBA access. */
 		SessionSysDba = OCI_SESSION_SYSDBA,
-		/**  */
+		/** the user is authenticated for SYSOPER access */
 		SessionSysOper = OCI_SESSION_SYSOPER
 	};
 
 	/**
 	* @brief
-	* Type of sessions
+	* Sessions flags
     *
+	* Possible values are Environment::SessionFlagsValues
+	*
 	*/
 	typedef Flags<SessionFlagsValues> SessionFlags;
 
 	/**
 	* @brief
-	* Oracle instance start modes
+	* Oracle instance start modes enumerated values
 	*
 	*/
 	enum StartModeValues
@@ -419,14 +444,14 @@ public:
 	* @brief
 	* Oracle instance start modes
 	*
-	* @class ocilib::StartMode
+	* Possible values are Environment::StartModeValues
 	*
 	*/
 	typedef Enum<StartModeValues> StartMode;
 
 	/**
 	* @brief
-	* Oracle instance start flags
+	* Oracle instance start flags enumerated values
 	*
 	*/
 	enum StartFlagsValues
@@ -438,11 +463,19 @@ public:
 		/** Allows database access only to users with both CREATE SESSION and RESTRICTED SESSION privileges */
 		StartRestrict = OCI_DB_SPF_RESTRICT
 	};
+
+	/**
+	* @brief
+	* Oracle instance start flags
+	*
+	* Possible values are Environment::StartFlagsValues
+	*
+	*/
 	typedef Flags<StartFlagsValues> StartFlags;
 
 	/**
 	* @brief
-	* Oracle instance shutdown modes
+	* Oracle instance shutdown modes enumerated values
 	*
 	*/
 	enum ShutdownModeValues
@@ -456,11 +489,19 @@ public:
 		/** Shutdown, close and dismount the instance */
 		ShutdownFull = OCI_DB_SDM_FULL
 	};
+
+	/**
+	* @brief
+	* Oracle instance shutdown modes
+	*
+	* Possible values are Environment::ShutdownModeValues
+	*
+	*/
 	typedef Enum<ShutdownModeValues> ShutdownMode;
 
 	/**
 	* @brief
-	* Oracle instance shutdown flags
+	* Oracle instance shutdown flags enumerated values
 	*
 	*/
     enum ShutdownFlagsValues
@@ -485,15 +526,44 @@ public:
 		*  - Therefore, this option should be used only in unusual circumstances */
 		ShutdownAbort = OCI_DB_SDF_ABORT
 	};
+
+	/**
+	* @brief
+	* Oracle instance shutdown flags
+	*
+	* Possible values are Environment::ShutdownFlagsValues
+	*
+	*/
 	typedef Flags<ShutdownFlagsValues> ShutdownFlags;
 
+	/**
+	* @brief
+	* Charset form enumerated values
+	*
+	*/
 	enum CharsetFormValues
 	{
 		CharsetFormUnknown = OCI_UNKNOWN,
 		CharsetFormDefault = OCI_CSF_DEFAULT,
 		CharsetFormNational = OCI_CSF_NATIONAL
 	};
+	/**
+	* @brief
+	* Type of Exception
+	*
+	* Possible values are Environment::CharsetFormValues
+	*
+	*/
 	typedef Enum<CharsetFormValues> CharsetForm;
+
+	/**
+	* @typedef HAHandlerProc
+	*
+	* @brief
+	* User callback for HA event notifications
+	*
+	*/
+	typedef void(*HAHandlerProc) (Connection &con, HAEventSource eventSource, HAEventType eventType, Timestamp  &time);
 
     /**
      * @brief
@@ -712,7 +782,8 @@ private:
  * @brief
  * static class allowing to manipulate threads
  *
- * This class wraps methods manipulating OCILIB OCI_Thread objects
+ * @note
+ * This class wraps the OCILIB object handle OCI_Thread and its related methods
  *
  * @note
  * See @ref OcilibCApiThreading for more details on Oracle multithreading support
@@ -777,7 +848,8 @@ public:
  * @brief
  * Static class allowing managing mutexes
  *
- * This class wraps methods manipulating OCILIB OCI_Mutex objects
+ * @note
+ * This class wraps the OCILIB object handle OCI_Mutex and its related methods
  *
  * @note
  * See @ref OcilibCApiThreading for more details on Oracle multithreading support
@@ -829,7 +901,8 @@ public:
  * @brief
  * Static class allowing to set/get thread local storage (TLS) values for a given unique key
  *
- * This class wraps methods manipulating OCILIB OCI_ThreadKey objects
+ * @note
+ * This class wraps the OCILIB object handle OCI_ThreadKey and its related methods
  *
  * @note
  * See @ref OcilibCApiThreading for more details on Oracle multithreading support
@@ -889,7 +962,7 @@ public:
   * A connection or session Pool.
   *
   * @note
-  * This class wraps methods manipulating OCILIB OCI_Pool objects
+  * This class wraps the OCILIB object handle OCI_Pool and its related methods
   *
   */
 class Pool : public HandleHolder<OCI_Pool *>
@@ -898,17 +971,24 @@ public:
 
     /**
      * @brief 
-     * Type of Pool
+     * Pool type enumerated values
      *
      */
     enum PoolTypeValues
     {
-        UnknownPool = OCI_UNKNOWN,   
         /** Pool of Connections */
         ConnectionPool = OCI_POOL_CONNECTION,      
         /** Pool of stateless sessions */
         SessionPool  = OCI_POOL_SESSION
     };
+
+	/**
+	* @brief
+	* Type of Pool
+	*
+	* Possible values are Pool::PoolTypeValues
+	*
+	*/
     typedef Enum<PoolTypeValues> PoolType;
 
     /**
@@ -1107,10 +1187,12 @@ public:
 };
 
 /**
- * @class Connection
- *
  * @brief
  * A connection or session with a specific database.
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Connection and its related methods
+ *
  */
 class Connection : public HandleHolder<OCI_Connection *>
 {
@@ -1131,14 +1213,32 @@ class Connection : public HandleHolder<OCI_Connection *>
 
 public:
     
-    enum FailoverRequestValues
+	/**
+	* @brief
+	* Failover request enumerated values
+	*
+	*/
+	enum FailoverRequestValues
     {
         FailoverRequestNone = OCI_FOT_NONE,                   
         FailoverRequestSession = OCI_FOT_SESSION,  
         FailoverRequestSelect = OCI_FOT_SELECT
     };
-    typedef Enum<FailoverRequestValues> FailoverRequest;
 
+	/**
+	* @brief
+	* Failover requests
+	*
+	* Possible values are Connection::FailoverRequestValues
+	*
+	*/
+	typedef Enum<FailoverRequestValues> FailoverRequest;
+
+	/**
+	* @brief
+	* Failover events enumerated values
+	*
+	*/
     enum FailoverEventValues
     {
         FailoverEventEnd = OCI_FOE_END,                   
@@ -1147,26 +1247,39 @@ public:
         FailoverEventBegin = OCI_FOE_BEGIN,                     
         FailoverEventError = OCI_FOE_ERROR
     };
+
+	/**
+	* @brief
+	* Failover events
+	*
+	* Possible values are Connection::FailoverEventValues
+	*
+	*/
     typedef Enum<FailoverEventValues> FailoverEvent;
 
+	/**
+	* @brief
+	* Failover callback results enumerated values
+	*
+	*/
     enum FailoverResultValues
     {
         FailoverOk = OCI_FOC_OK,                   
         FailoverRetry = OCI_FOC_RETRY
     };
+
+	/**
+	* @brief
+	* Failover callback results
+	*
+	* Possible values are Connection::FailoverResultValues
+	*
+	*/
     typedef Enum<FailoverResultValues> FailoverResult;
 
     /**
-     * @typedef TAFHandlerProc
-     *
-     * @brief
-     *
-     */
-    typedef FailoverResult (*TAFHandlerProc) (Connection &con, FailoverRequest failoverRequest, FailoverEvent failoverEvent);
-
-    /**
      * @brief 
-     * Type of session trace
+     * Session trace enumerated values
      *
      */
     enum SessionTraceValues
@@ -1181,7 +1294,24 @@ public:
         /** Client application additional information. It's recorded in the column CLIENT_INFO of the system view V$SESSION */
         TraceDetail  = OCI_TRC_DETAIL
     };
+
+	/**
+	* @brief
+	* Session traces
+	*
+	* Possible values are Connection::SessionTraceValues
+	*
+	*/
     typedef Enum<SessionTraceValues> SessionTrace;
+
+	/**
+	* @typedef TAFHandlerProc
+	*
+	* @brief
+	* User callback for TAF event notifications
+	*
+	*/
+	typedef FailoverResult(*TAFHandlerProc) (Connection &con, FailoverRequest failoverRequest, FailoverEvent failoverEvent);
 
     /**
      * @brief
@@ -1239,7 +1369,7 @@ public:
      *     Only OCI_CHARSET_ANSI builds of OCILIB can be used
      *   - You still can use UTF8 if the NLS_LANG environment variable is set with a valid
      *     UTF8 NLS value
-     *   - DO NOT USE OCI_CHARSET_WIDE OCILIB builds with XA connections
+     *   - DO NOT USE UNICODE OCILIB builds with XA connections
      *
      * @note
      * On success, a local transaction is automatically created and started ONLY for regular 
@@ -1780,10 +1910,11 @@ private:
 };
 
 /**
- * @class Transaction
- *
  * @brief
  * Oracle Transaction object
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Transaction and its related methods
  *
  */
 class Transaction : public HandleHolder<OCI_Transaction *>
@@ -1794,7 +1925,7 @@ public:
 
     /**
      * @brief 
-     * Transaction mode
+     * Transaction flags enumerated values
      *
      */
     enum TransactionFlagsValues
@@ -1813,6 +1944,14 @@ public:
         /** (Global and local) start a serializable transaction */
         Serializable  = OCI_TRS_SERIALIZABLE
     };
+
+	/**
+	* @brief
+	* Transaction flags
+	*
+	* Possible values are Transaction::TransactionFlagsValues
+	*
+	*/
     typedef Flags<TransactionFlagsValues> TransactionFlags;
 
     /**
@@ -1873,7 +2012,7 @@ public:
      * see Transaction() for possible values
      *
      */
-   Transaction::TransactionFlags GetFlags() const;
+   TransactionFlags GetFlags() const;
 
    /**
      * @brief
@@ -1888,10 +2027,11 @@ private:
 };
 
 /**
- * @class Date
- *
  * @brief
  * Object identififying the SQL datatype DATE.
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Date and its related methods
  *
  */
 class Date : public HandleHolder<OCI_Date *>
@@ -2144,10 +2284,39 @@ public:
      */
     void ChangeTimeZone(ostring tzSrc, ostring tzDst);
 
+	/**
+	* @brief
+	* Assign to the date object with the value provied by the input date time string
+	*
+	* @param str    - String date time
+	* @param format - format of the date time provided in parameter 'str'
+	*
+	* @note
+	* For date time formats, refer to the Oracle SQL documentation
+	*
+	*/
+    void FromString(ostring str, ostring format = OCI_STRING_FORMAT_DATE);
+	
+	/**
+	* @brief
+	* Convert the date object value to a string
+	*
+	* @param format - date time format to use
+	*
+	* @note
+	* For date time formats, refer to the Oracle SQL documentation
+	*
+	*/
+	ostring ToString(ostring format = OCI_STRING_FORMAT_DATE) const;
 
-    void FromString(ostring data, ostring format = OCI_STRING_FORMAT_DATE);
-    ostring ToString(ostring format = OCI_STRING_FORMAT_DATE) const;
-
+	/**
+	* @brief
+	* Convert the date object value to a string
+	*
+	* @note
+	* It calls ToString() with default date time format
+	*
+	*/
     operator ostring() const;
 
     /**
@@ -2243,10 +2412,11 @@ private:
 };
 
 /**
- * @class Interval
- *
  * @brief
  * Object identififying the SQL datatype INTERVAL.
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Interval and its related methods
  *
  */
 class Interval : public HandleHolder<OCI_Interval *>
@@ -2260,17 +2430,26 @@ class Interval : public HandleHolder<OCI_Interval *>
 
 public:
 
-    /**
-     * @brief 
-     * IntervalType
+	 /**
+	 * @brief
+	 * Interval types enumerated values
      *
      */
     enum IntervalTypeValues
     {
-        Unknown = OCI_UNKNOWN,   
-        YearMonth = OCI_INTERVAL_YM,
-        DaySecond = OCI_INTERVAL_DS 
+		/** Interval unit range is months -> years */
+		YearMonth = OCI_INTERVAL_YM,
+		/** Interval unit range is seconds -> days */
+		DaySecond = OCI_INTERVAL_DS
     };
+
+	/**
+	* @brief
+	* Interval types
+	*
+	* Possible values are Interval::IntervalTypeValues
+	*
+	*/
     typedef Enum<IntervalTypeValues> IntervalType;
 
     Interval(IntervalType type);
@@ -2330,6 +2509,9 @@ private:
  * @brief
  * Object identififying the SQL datatype TIMESTAMP.
  *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Timestamp and its related methods
+ *
  */
 class Timestamp : public HandleHolder<OCI_Timestamp *>
 {
@@ -2343,13 +2525,28 @@ class Timestamp : public HandleHolder<OCI_Timestamp *>
 
 public:
 
+	/**
+	* @brief
+	* Interval types enumerated values
+	*
+	*/
     enum TimestampTypeValues
     {
-        Unknown = OCI_UNKNOWN,   
-        NoTimeZone = OCI_TIMESTAMP,
-        WithTimeZone = OCI_TIMESTAMP_TZ ,
-        WithLocalTimeZone = OCI_TIMESTAMP_LTZ 
+		/** Timestamp does not contains any time zone information */
+		NoTimeZone = OCI_TIMESTAMP,
+		/** Timestamp contains a given time zone */
+		WithTimeZone = OCI_TIMESTAMP_TZ,
+		/** Timestamp contains the user's local session tim zone */
+		WithLocalTimeZone = OCI_TIMESTAMP_LTZ
     };
+
+	/**
+	* @brief
+	* Type of Exception
+	*
+	* Possible values are Timestamp::TimestampTypeValues
+	*
+	*/
     typedef Enum<TimestampTypeValues> TimestampType;
 
     Timestamp(TimestampType type);
@@ -2415,6 +2612,9 @@ private:
  * @brief
  * Object identififying the SQL datatype CLOB.
  *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Lob of type OCI_CLOB and its related methods
+ *
  */
 class Clob : public HandleHolder<OCI_Lob *>
 {
@@ -2426,20 +2626,46 @@ class Clob : public HandleHolder<OCI_Lob *>
 
 public:
 
-    enum SeekModeValues
+	/**
+	* @brief
+	* Seek Modes enumerated values
+	*
+	*/
+	enum SeekModeValues
     {
         Set = OCI_SEEK_SET,
         End = OCI_SEEK_END,
         Current = OCI_SEEK_CUR
     };
+
+	/**
+	* @brief
+	* Seek Modes 
+	*
+	* Possible values are Clob::SeekModeValues
+	*
+	*/
     typedef Enum<SeekModeValues> SeekMode;
 
-    enum OpenModeValues
+	/**
+	* @brief
+	* Open Modes enumerated values
+	*
+	*/
+	enum OpenModeValues
     {
         ReadOnly = OCI_LOB_READONLY,
         ReadWrite = OCI_LOB_READWRITE,
     };
-    typedef Enum<OpenModeValues> OpenMode;
+
+	/**
+	* @brief
+	* Open Modes
+	*
+	* Possible values are Clob::OpenModeValues
+	*
+	*/  
+	typedef Enum<OpenModeValues> OpenMode;
 
     Clob(const Connection &connection);
 
@@ -2486,6 +2712,9 @@ private:
  * @brief
  * Object identififying the SQL datatype BLOB.
  *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Lob of type OCI_BLOB and its related methods
+ *
  */
 class Blob : public HandleHolder<OCI_Lob *>
 {
@@ -2497,20 +2726,46 @@ class Blob : public HandleHolder<OCI_Lob *>
 
 public:
 
-    enum SeekModeValues
-    {
-        Set = OCI_SEEK_SET,
-        End = OCI_SEEK_END,
-        Current = OCI_SEEK_CUR
-    };
-    typedef Enum<SeekModeValues> SeekMode;
+	/**
+	* @brief
+	* Seek Modes enumerated values
+	*
+	*/
+	enum SeekModeValues
+	{
+		Set = OCI_SEEK_SET,
+		End = OCI_SEEK_END,
+		Current = OCI_SEEK_CUR
+	};
 
-    enum OpenModeValues
-    {
-        ReadOnly = OCI_LOB_READONLY,
-        ReadWrite = OCI_LOB_READWRITE,
-    };
-    typedef Enum<OpenModeValues> OpenMode;
+	/**
+	* @brief
+	* Seek Modes
+	*
+	* Possible values are Blob::SeekModeValues
+	*
+	*/
+	typedef Enum<SeekModeValues> SeekMode;
+
+	/**
+	* @brief
+	* Open Modes enumerated values
+	*
+	*/
+	enum OpenModeValues
+	{
+		ReadOnly = OCI_LOB_READONLY,
+		ReadWrite = OCI_LOB_READWRITE,
+	};
+
+	/**
+	* @brief
+	* Open Modes
+	*
+	* Possible values are Blob::OpenModeValues
+	*
+	*/    
+	typedef Enum<OpenModeValues> OpenMode;
 
     Blob(const Connection &connection);
 
@@ -2556,6 +2811,9 @@ private:
  * @brief
  * Object identififying the SQL datatype BFILE.
  *
+ * @note
+ * This class wraps the OCILIB object handle OCI_File and its related methods
+ *
  */
 class File : public HandleHolder<OCI_File *>
 {
@@ -2567,13 +2825,26 @@ class File : public HandleHolder<OCI_File *>
 
 public:
 
-    enum SeekModeValues
-    {
-        Set = OCI_SEEK_SET,
-        End = OCI_SEEK_END,
-        Current = OCI_SEEK_CUR
-    };
-    typedef Enum<SeekModeValues> SeekMode;
+	/**
+	* @brief
+	* Seek Modes enumerated values
+	*
+	*/
+	enum SeekModeValues
+	{
+		Set = OCI_SEEK_SET,
+		End = OCI_SEEK_END,
+		Current = OCI_SEEK_CUR
+	};
+
+	/**
+	* @brief
+	* Seek Modes
+	*
+	* Possible values are File::SeekModeValues
+	*
+	*/
+	typedef Enum<SeekModeValues> SeekMode;
 
     File(const Connection &connection);
     File(const Connection &connection, ostring directory, ostring name);
@@ -2604,10 +2875,12 @@ private:
 };
 
 /**
- * @class TypeInfo
- *
  * @brief
- *vsdgfdgfdhgdfhgfdgd
+ * Provides type information on Oracle Database objects
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_TypeInfo and its related methods
+ *
  */
 class TypeInfo : public HandleHolder<OCI_TypeInfo *>
 {
@@ -2617,13 +2890,28 @@ class TypeInfo : public HandleHolder<OCI_TypeInfo *>
     friend class Column;
 public:
 
+	/**
+	* @brief
+	* Type of object information enumerated values
+	*
+	*/
     enum TypeInfoTypeValues
     {
-        Unknown = OCI_UNKNOWN,   
+		/** Database Table information */
         Table = OCI_TIF_TABLE,
-        View = OCI_TIF_VIEW,
-        Type = OCI_TIF_TYPE
+		/** Database View information */   
+		View = OCI_TIF_VIEW,
+		/** Database type information */    
+		Type = OCI_TIF_TYPE
     };
+
+	/**
+	* @brief
+	* Type of object information
+	*
+	* Possible values are TypeInfo::TypeInfoTypeValues
+	*
+	*/
     typedef Enum<TypeInfoTypeValues> TypeInfoType;
 
     TypeInfo(const Connection &connection, ostring name, TypeInfoType type);
@@ -2641,10 +2929,11 @@ private:
 };
 
 /**
- * @class Object
- *
  * @brief
  * Object identififying the SQL datatype OBJECT.
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Object and its related methods
  *
  */
 class Object : public HandleHolder<OCI_Object *>
@@ -2658,12 +2947,28 @@ class Object : public HandleHolder<OCI_Object *>
 
 public:
 
+	/**
+	* @brief
+	* Object Type enumerated values
+	*
+	*/
     enum ObjectTypeValues
     {
+		/** The object is persistent in the database  */
         Persistent = OCI_OBJ_PERSISTENT,
-        Transient = OCI_OBJ_TRANSIENT,
-        Value =  OCI_OBJ_VALUE
+		/** The object is Transient */
+		Transient = OCI_OBJ_TRANSIENT,
+		/** The object is a value member of another object	*/
+		Value = OCI_OBJ_VALUE
     };
+
+	/**
+	* @brief
+	* Object Type 
+	*
+	* Possible values are Object::ObjectTypeValues
+	*
+	*/
     typedef Enum<ObjectTypeValues> ObjectType;
 
     Object(const TypeInfo &typeInfo);
@@ -2699,10 +3004,11 @@ private:
 };
 
 /**
- * @class Reference
- *
  * @brief
  * Object identififying the SQL datatype REF.
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Ref and its related methods
  *
  */
 class Reference : public HandleHolder<OCI_Ref *>
@@ -2734,10 +3040,11 @@ private:
 };
 
 /**
- * @class Collection
- *
  * @brief
  * Object identififying the SQL datatype VARRAY and NESTED TABLE.
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Coll and its related methods
  *
  */
 class Collection : public HandleHolder<OCI_Coll *>
@@ -2749,11 +3056,25 @@ class Collection : public HandleHolder<OCI_Coll *>
     friend class CollectionIterator;
 public:
 
+	/**
+	* @brief
+	* Collection type enumerated values
+	*
+	*/
+
     enum CollectionTypeValues
     {
         Varray = OCI_COLL_VARRAY,
         NestedTable = OCI_COLL_NESTED_TABLE
     };
+
+	/**
+	* @brief
+	* Collection type
+	*
+	* Possible values are Collection::CollectionTypeValues
+	*
+	*/
     typedef Enum<CollectionTypeValues> CollectionType;
 
     Collection(const TypeInfo &typeInfo);
@@ -2815,9 +3136,11 @@ private:
 
 
 /**
- * @class CollectionIterator
- *
  * @brief
+ * Collection iterator
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Iterator and its related methods
  *
  */
 class CollectionIterator : public HandleHolder<OCI_Iter *>
@@ -2843,10 +3166,11 @@ public:
 };
 
 /**
- * @class CLong
- *
  * @brief
  * Object identififying the SQL datatype LONG.
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_LONG of type OCI_CLONG and its related methods
  *
  */
 class CLong : public HandleHolder<OCI_Long *>
@@ -2871,10 +3195,11 @@ private:
 };
 
 /**
- * @class CLong
- *
  * @brief
  * Object identififying the SQL datatype LONG RAW
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_LONG of type OCI_BLONG and its related methods
  *
  */
 class BLong : public HandleHolder<OCI_Long *>
@@ -2899,9 +3224,11 @@ private:
 };
 
 /**
- * @class BindInfo
- *
  * @brief
+ * Provides SQL bind informations
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Bind and its related methods
  *
  */
 class BindInfo : public HandleHolder<OCI_Bind *>
@@ -2910,6 +3237,11 @@ class BindInfo : public HandleHolder<OCI_Bind *>
 
 public:
 
+	/**
+	* @brief
+	* Bind direction enumerated values
+	*
+	*/
     enum BindDirectionValues
     {
         Unknown = OCI_UNKNOWN,   
@@ -2917,6 +3249,14 @@ public:
         Out = OCI_BDM_OUT,
         InOut = OCI_BDM_IN_OUT
     };
+
+	/**
+	* @brief
+	* Bind direction
+	*
+	* Possible values are BindInfo::BindDirectionValues
+	*
+	*/
     typedef Enum<BindDirectionValues> BindDirection;
 
     ostring GetName() const;
@@ -2943,12 +3283,13 @@ private:
 };
 
 /**
- * @class Statement
- *
- * @brief
- * Object used for executing SQL or PL/SQL statement and returning the produced results.
- * 
- */
+* @brief
+* Object used for executing SQL or PL/SQL statement and returning the produced results.
+*
+* @note
+* This class wraps the OCILIB object handle OCI_Statement and its related methods
+*
+*/
 class Statement : public HandleHolder<OCI_Statement *>
 {
     friend class Exception;
@@ -2959,6 +3300,11 @@ class Statement : public HandleHolder<OCI_Statement *>
 
 public:
 
+	/**
+	* @brief
+	* Statement Type enumerated values
+    *
+	*/
     enum StatementTypeValues
     {
         TypeUnknown = OCI_UNKNOWN,
@@ -2973,27 +3319,74 @@ public:
         TypeDeclare = OCI_CST_DECLARE,
         TypeCall = OCI_CST_CALL,
     };
+
+	/**
+	* @brief
+	* Statement Type
+	*
+	* Possible values are Statement::StatementTypeValues
+	*
+	*/
     typedef Enum<StatementTypeValues> StatementType;
 
+	/**
+	* @brief
+	* Fetch Modes enumerated values
+	*
+	*/
     enum FetchModeValues
     {
         FetchForward = OCI_SFM_DEFAULT,
         FetchScrollable = OCI_SFM_SCROLLABLE
     };
+
+	/**
+	* @brief
+	* Fetch Modes
+	*
+	* Possible values are Statement::FetchModeValues
+	*
+	*/
     typedef Enum<FetchModeValues> FetchMode;
 
+	/**
+	* @brief
+	* Bind Modes enumerated values
+	*
+	*/
     enum BindModeValues
     {
         BindByPosition =  OCI_BIND_BY_POS,
         BindByName = OCI_BIND_BY_NAME
     };
+
+	/**
+	* @brief
+	* Bind Modes
+	*
+	* Possible values are Statement::BindModeValues
+	*
+	*/
     typedef Enum<BindModeValues> BindMode;
 
+	/**
+	* @brief
+	* LONG datatype mapping modes enumerated values
+	*
+	*/
     enum LongModeValues
     {
         LongExplicit = OCI_LONG_EXPLICIT,
         LongImplicit = OCI_LONG_IMPLICIT
     };
+
+	/**
+	* @brief
+	* LONG datatype mapping modes
+	*
+	* Possible values are Statement::LongModeValues
+	*
+	*/
     typedef Enum<LongModeValues> LongMode;
 
     Statement(const Connection &connection);
@@ -3109,22 +3502,38 @@ private:
 };
 
 /**
- * @class Resultset
- *
  * @brief
- * Database result set
+ * Database resultset
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Resultset and its related methods
+ *
  */
 class Resultset : public HandleHolder<OCI_Resultset *>
 {
     friend class Statement;
 public:
 
-    enum SeekMode
+	/**
+	* @brief
+	* Seek Modes enumerated values
+	*
+	*/
+    enum SeekModeValues
     {
         SeekAbsolute = OCI_SFD_ABSOLUTE,
         SeeKRelative = OCI_SFD_RELATIVE
     };
-    
+
+	/**
+	* @brief
+	* Seek Modes
+	*
+	* Possible values are Resultset::SeekModeValues
+	*
+	*/
+	typedef Enum<SeekModeValues> SeekMode;
+
     template<class TDataType>
     TDataType Get(unsigned int index) const;
 
@@ -3168,9 +3577,11 @@ private:
 };
 
 /**
- * @class Column
- *
  * @brief
+ * Encapsulate a Resultset column or object member properties
+ *
+ * @note
+ * This class wraps the OCILIB object handle OCI_Column and its related methods
  *
  */
 class Column : public HandleHolder<OCI_Column *>
@@ -3180,6 +3591,11 @@ class Column : public HandleHolder<OCI_Column *>
 
 public:
 
+	/**
+	* @brief
+	* Column data type enumerated values
+	*
+	*/
     enum ColumnTypeValues
     {
         TypeUnknown = OCI_UNKNOWN,
@@ -3197,14 +3613,35 @@ public:
         TypeCollection = OCI_CDT_COLLECTION,
         TypeReference = OCI_CDT_REF
     };
+
+	/**
+	* @brief
+	* Column data type
+	*
+	* Possible values are Column::ColumnTypeValues
+	*
+	*/
     typedef Enum<ColumnTypeValues> ColumnType;
 
+	/**
+	* @brief
+	* Column properties flags values
+	*
+	*/
     enum PropertyFlagsValues
     {
         IsIdentity = OCI_CPF_IS_IDENTITY,
         IsGeneratedAlways = OCI_CPF_IS_GEN_ALWAYS,
         IsGeneratedByDefaultOnNull = OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL
     };
+
+	/**
+	* @brief
+	* Column properties flags
+	*
+	* Possible values are Column::PropertyFlagsValues
+	*
+	*/
     typedef Flags<PropertyFlagsValues> PropertyFlags;
 
     ostring GetName() const;
@@ -3234,11 +3671,13 @@ private:
 };
 
 /**
- * @class Subscription
- *
- * @brief
- *
- */
+* @brief
+* Subscription to Database or objects changes
+*
+* @note
+* This class wraps the OCILIB object handle OCI_Subscription and its related methods
+*
+*/
 class Subscription : public HandleHolder<OCI_Subscription *>
 {
     friend class Event;
@@ -3249,10 +3688,17 @@ public:
      * @typedef NotifyHandlerProc
      *
      * @brief
+	 * User callback for subscriptions event notifications
      *
      */
     typedef void (*NotifyHandlerProc) (Event &evt);
 
+
+	/**
+	* @brief
+	* Subscription changes flags values
+	*
+	*/
     enum ChangeTypesValues
     {
         ObjectChanges = OCI_CNT_OBJECTS,
@@ -3260,6 +3706,14 @@ public:
         DatabaseChanges = OCI_CNT_DATABASES,
         AllChanges = OCI_CNT_ALL
     };
+
+	/**
+	* @brief
+	* Subscription changes flags
+	*
+	* Possible values are Subscription::ChangeTypesValues
+	*
+	*/
     typedef Flags<ChangeTypesValues> ChangeTypes;
 
     Subscription();
@@ -3281,11 +3735,13 @@ private:
 };
 
 /**
- * @class Event
- *
- * @brief
- *dfsdgfsdgsdgsdgsdgsd
- */
+* @brief
+* Subscription Event
+*
+* @note
+* This class wraps the OCILIB object handle OCI_Event and its related methods
+*
+*/
 class Event : public HandleHolder<OCI_Event *>
 {
     friend class Subscription;
@@ -3293,6 +3749,11 @@ class Event : public HandleHolder<OCI_Event *>
 
 public:
 
+	/**
+	* @brief
+	* Event type enumerated values
+	*
+	*/
     enum EventTypeValues
     {
         DatabaseStart =  OCI_ENT_STARTUP,
@@ -3302,8 +3763,21 @@ public:
         Unregister = OCI_ENT_DEREGISTER,
         ObjectChanged = OCI_ENT_OBJECT_CHANGED
     };
+
+	/**
+	* @brief
+	* Event type
+	*
+	* Possible values are Event::EventTypeValues
+	*
+	*/
     typedef Enum<EventTypeValues> EventType;
 
+	/**
+	* @brief
+	* Object events enumerated values
+	*
+	*/
     enum ObjectEventValues
     {
         ObjectInserted = OCI_ONT_INSERT,
@@ -3313,6 +3787,14 @@ public:
         ObjectDropped = OCI_ONT_DROP,
         ObjectGeneric = OCI_ONT_GENERIC
     };
+
+	/**
+	* @brief
+	* Object events
+	*
+	* Possible values are Event::ObjectEventValues
+	*
+	*/
     typedef Enum<ObjectEventValues> ObjectEvent;
 
     EventType GetType() const;
@@ -3329,11 +3811,13 @@ private:
 
 
 /**
- * @class Agent
- *
- * @brief
- *
- */
+* @brief
+* AQ identified agent for messages delivery
+*
+* @note
+* This class wraps the OCILIB object handle OCI_Agent and its related methods
+*
+*/
 class Agent : public HandleHolder<OCI_Agent *>
 {
     friend class Message;
@@ -3355,17 +3839,24 @@ private:
 };
 
 /**
- * @class Message
- *
- * @brief
- *
- */
+* @brief
+* AQ message
+*
+* @note
+* This class wraps the OCILIB object handle OCI_Msg and its related methods
+*
+*/
 class Message : public HandleHolder<OCI_Msg *>
 {
     friend class Dequeue;
 
 public:
 
+	/**
+	* @brief
+	* Message state enumerated values
+	*
+	*/
     enum MessageStateValues
     {
         Unknown = OCI_UNKNOWN,
@@ -3374,6 +3865,14 @@ public:
         Processed = OCI_AMS_PROCESSED,
         Expired =  OCI_AMS_EXPIRED
     };
+
+	/**
+	* @brief
+	* Message state
+	*
+	* Possible values are Message::MessageStateValues
+	*
+	*/
     typedef Enum<MessageStateValues> MessageState;
 
     Message(const TypeInfo &typeInfo);
@@ -3420,27 +3919,55 @@ private:
 };
 
 /**
- * @class Enqueue
- *
- * @brief
- *
- */
+* @brief
+* Enqueue object for queuing messages into an Oracle Queue
+*
+* @note
+* This class wraps the OCILIB object handle OCI_Enqueue and its related methods
+*
+*/
 class Enqueue : public HandleHolder<OCI_Enqueue *>
 {
 public:
 
+	/**
+	* @brief
+	* Message enqueuing mode enumerated values
+	*
+	*/
     enum EnqueueModeValues
     {
         Before = OCI_ASD_BEFORE,
         OnTop  = OCI_ASD_TOP
     };
+
+	/**
+	* @brief
+	* Message enqueuing mode
+	*
+	* Possible values are Enqueue::EnqueueModeValues
+	*
+	*/
     typedef Enum<EnqueueModeValues> EnqueueMode;
 
+	/**
+	* @brief
+	* Message visibility enumerated values
+	*
+	*/
     enum EnqueueVisibilityValues
     {
         Immediate = OCI_AMV_IMMEDIATE,
         OnCommit  = OCI_AMV_ON_COMMIT
     };
+
+	/**
+	* @brief
+	* Message visibility after begin queued
+	*
+	* Possible values are Enqueue::EnqueueVisibilityValues
+	*
+	*/
     typedef Enum<EnqueueVisibilityValues> EnqueueVisibility;
 
     Enqueue(const TypeInfo &typeInfo, ostring queueName);
@@ -3458,11 +3985,13 @@ public:
 };
 
 /**
- * @class Dequeue
- *
- * @brief
- *
- */
+* @brief
+* Dequeue object for dequeuing messages into an Oracle Queue
+*
+* @note
+* This class wraps the OCILIB object handle OCI_Dequeue and its related methods
+*
+*/
 class Dequeue : public HandleHolder<OCI_Dequeue *>
 {
     friend class Environment;
@@ -3473,10 +4002,16 @@ public:
      * @typedef NotifyAQHandlerProc
      *
      * @brief
-     *
+	 * User callback for dequeue event notifications
+	 *
      */
     typedef void (*NotifyAQHandlerProc) (Dequeue &dequeue);
 
+	/**
+	* @brief
+	* Dequeue mode enumerated values
+	*
+	*/
     enum DequeueModeValues
     {
         Browse =  OCI_ADM_BROWSE,
@@ -3484,21 +4019,55 @@ public:
         Remove = OCI_ADM_REMOVE,
         Confirm = OCI_ADM_REMOVE_NODATA
     };
+
+	/**
+	* @brief
+	* Dequeue mode
+	*
+	* Possible values are Dequeue::DequeueModeValues
+	*
+	*/
     typedef Enum<DequeueModeValues> DequeueMode;
 
+	/**
+	* @brief
+	* Message visibility enumerated values
+	*
+	*/
     enum DequeueVisibilityValues
     {
         Immediate = OCI_AMV_IMMEDIATE,
         OnCommit  = OCI_AMV_ON_COMMIT
     };
+
+	/**
+	* @brief
+	* Message visibility after begin dequeued
+	*
+	* Possible values are Dequeue::DequeueVisibilityValues
+	*
+	*/
     typedef Enum<DequeueVisibilityValues> DequeueVisibility;
 
+	/**
+	* @brief
+	* Navigation Mode enumerated values
+	*
+	*/
     enum NavigationModeValues
     {
         FirstMessage = OCI_ADN_FIRST_MSG,
         NextMessage = OCI_ADN_NEXT_MSG,
         NextTransaction = OCI_ADN_NEXT_TRANSACTION,
     };
+
+	/**
+	* @brief
+	* Navigation Mode
+	*
+	* Possible values are Dequeue::NavigationModeValues
+	*
+	*/
     typedef Enum<NavigationModeValues> NavigationMode;
 
     Dequeue(const TypeInfo &typeInfo, ostring queueName);
@@ -3571,21 +4140,19 @@ private:
 };
 
 /**
- * @class Queue
- *
- * @brief
- *
- */
+* @brief
+* Class allowing the administration of Oracle Queues
+*
+*/
 class Queue
 {
 public:
 
-   /**
-     * 
-     * @brief
-     * Type of queue
-     *
-     */
+	/**
+	* @brief
+	* Queue Type enumerated values
+	*
+	*/
     enum QueueTypeValues
     {
         /** Normal queue */
@@ -3595,6 +4162,14 @@ public:
         /** Non persistent queue */
         NonPersistentQueue = OCI_AQT_NON_PERSISTENT
     };
+
+	/**
+	* @brief
+	* Queue Type
+	*
+	* Possible values are Queue::QueueTypeValues
+	*
+	*/
     typedef Enum<QueueTypeValues> QueueType;
 
     /**
@@ -3707,12 +4282,10 @@ public:
 };
 
 /**
- * @class QueueTable
- *
- * @brief
- * Static class using for manipulating AQ Tables
- *
- */
+* @brief
+* Class allowing the administration of Oracle Queue tables
+*
+*/
 class QueueTable
 {
 public:
@@ -3720,7 +4293,7 @@ public:
     /**
      * 
      * @brief
-     * Grouping mode
+     * Grouping mode enumerated values
      *
      */
     enum GroupingModeValues
@@ -3731,12 +4304,20 @@ public:
           * the same group and can be dequeued as a group of related messages */
         Transactionnal = OCI_AGM_TRANSACTIONNAL
     };
+
+	/**
+	* @brief
+	* Grouping Mode
+	*
+	* Possible values are QueueTable::GroupingModeValues
+	*
+	*/
     typedef Enum<GroupingModeValues> GroupingMode;
 
     /**
      * 
      * @brief
-     * Purge mmode
+     * Purge mode enumerated values
      *
      */
     enum PurgeModeValues
@@ -3748,6 +4329,14 @@ public:
         /* purge all messages */
         All = OCI_APM_ALL
     };
+
+	/**
+	* @brief
+	* Purge mode
+	*
+	* Possible values are QueueTable::PurgeModeValues
+	*
+	*/
     typedef Enum<PurgeModeValues> PurgeMode;
 
     /**
@@ -3878,18 +4467,20 @@ public:
 };
 
 /**
- * @class DirectPath
- *
- * @brief
- *
- */
+* @brief
+* Oracle Direct path loading encapsulation
+*
+* @note
+* This class wraps the OCILIB object handle OCI_DirPath and its related methods
+*
+*/
 class DirectPath : public HandleHolder<OCI_DirPath *>
 {
 public:
 
     /**
      * @brief 
-     * Conversion modes
+     * Conversion mode enumerated  values
      *
      */
     enum ConversionModeValues
@@ -3899,8 +4490,21 @@ public:
         /** conversion does not fail on error */
         Force = OCI_DCM_FORCE
     };
+
+	/**
+	* @brief
+	* Conversion Mode
+	*
+	* Possible values are DirectPath::ConversionModeValues
+	*
+	*/
     typedef Enum<ConversionModeValues> ConversionMode;
 
+	/**
+	* @brief
+	* Direct Operation operation Result enumerated values
+	*
+	*/
     enum ResultValues
     {
         /** conversion/load has been successful */
@@ -3914,6 +4518,14 @@ public:
         /** no data was found to convert/load */
         ResultEmpty = OCI_DPR_EMPTY
     };
+
+	/**
+	* @brief
+	* Direct Operation operation Result
+	*
+	* Possible values are DirectPath::ResultValues
+	*
+	*/
     typedef Enum<ResultValues> Result;
 
     /**

@@ -1523,9 +1523,9 @@ inline void Date::ChangeTimeZone(ostring tzSrc, ostring tzDst)
     Check(OCI_DateZoneToZone(*this, tzSrc.c_str(), tzDst.c_str()));
 }
 
-inline void Date::FromString(ostring data, ostring format)
+inline void Date::FromString(ostring str, ostring format)
 {
-   Check(OCI_DateFromText(*this, data.c_str(), format.c_str()));
+	Check(OCI_DateFromText(*this, str.c_str(), format.c_str()));
 }
 
 inline ostring Date::ToString(ostring format) const

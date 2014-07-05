@@ -26,9 +26,6 @@
  *  - OCI_CHARSET_ANSI  : ANSI strings or UT8 strings (default)
  *  - OCI_CHARSET_WIDE  : wide strings using ISO C wide character
  *
- * From v3.6.0, OCI_CHARSET_WIDE replaces OCI_CHARSET_UNICODE OCI_CHARSET_UNICODE remains a
- * valid identifier for backward compatibility
- *
  * => Calling convention (WINDOWS ONLY)
  *
  *  - OCI_API = __cdecl or blank for C/C++ only ! (default on Unix systems and non MSVC projects)
@@ -37,7 +34,7 @@
  * @note
  *
  * On Windows, OCI_API MUST be set to __stdcall in order to use prebuilt libraries
- * From v3.5.0, ocilib.h automatically sets OCI_API to  __stdcall with MS compilers
+ * tHe header file "ocilib.h" automatically sets OCI_API to  __stdcall with MS compilers
  *
  * @par Installing OCILIB on UNIX like systems
  *
@@ -118,9 +115,9 @@
  * Visual .NET (2005/2008) solutions are also provided to recompile the Dlls and the demo.
  *
  * - Uncompress the archive (ocilib-x.y.z-windows.zip)
- * - Copy ocilib\include\ocilib.h to a folder listed in the compiler headers folders
- * - Copy ocilib\lib[32|64]\ocilib[x].lib to a folder listed in the linker libraries folders
- * - Copy ocilib\lib[32|64]\ocilib[x].dll to a folder included in the PATH
+ * - Copy ocilib/include/ocilib.h to a folder listed in the compiler headers folders
+ * - Copy ocilib/lib[32|64]/ocilib[x].lib to a folder listed in the linker libraries folders
+ * - Copy ocilib/lib[32|64]/ocilib[x].dll to a folder included in the PATH
  *   environment variable
  *
  * [x] is the compiled version of OCILIB ('a' -> ANSI, 'w' -> Unicode)

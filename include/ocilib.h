@@ -5166,7 +5166,7 @@ OCI_EXPORT OCI_Bind * OCI_API OCI_GetBind2
 * @brief
 * Return the index of the bind  from its name belonging the given statement
 *
-* @param rs    - Statement handle
+* @param stmt - Statement handle
 * @param name - Bind variable name
 *
 * @note
@@ -13771,7 +13771,7 @@ OCI_EXPORT const otext * OCI_API OCI_TypeInfoGetName
  * - OCI_ARG_DATETIME ---> OCI_Date *
  * - OCI_ARG_LOB --------> OCI_Lob *
  * - OCI_ARG_FILE -------> OCI_File *
- * - OCI_ARG_TIMESTAMP --> OCI_Timstamp *
+ * - OCI_ARG_TIMESTAMP --> OCI_Timestamp *
  * - OCI_ARG_INTERVAL ---> OCI_Interval *
  * - OCI_ARG_OBJECT -----> OCI_Object *
  * - OCI_ARG_COLLECTION -> OCI_Coll *
@@ -16631,7 +16631,7 @@ OCI_EXPORT const otext * OCI_API OCI_AgentGetName
  * @param address - AQ agent address
  *
  * @note
- * the parameter 'address' must be of the form [schema.]queue_name[@dblink].
+ * the parameter 'address' must be of the form : [schema.]queue_name[\@dblink]
  *
  * @note
  * the AQ agent address can be any Oracle identifier, up to 128 bytes.
