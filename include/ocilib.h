@@ -6315,7 +6315,7 @@ OCI_EXPORT boolean OCI_API OCI_ColumnGetCharUsed
  * For flags are:
  * - OCI_CPF_NONE : The column has no flags or the OCI client does not support this call
  * - OCI_CPF_IS_IDENTITY : 
- *      - If Set, the column is anIDENTIFTY column 
+ *      - If Set, the column is an IDENTITY column 
  *      - Otherwise, it is not an IDENTITY column
  * - OCI_CPF_IS_GEN_ALWAYS (only if OCI_CPF_IS_IDENTITY is set) :
  *      - If set, means that the value is "ALWAYS GENERATED"
@@ -17293,7 +17293,7 @@ OCI_Subscription *sub
  * - OCI_ENT_STARTUP        : a database has been started up
  * - OCI_ENT_SHUTDOWN       : a database has been shut down
  * - OCI_ENT_SHUTDOWN_ANY   : a database has been shut down (RAC)
- * - OCI_ENT_DROP_DATABASE  : a database has benn dropped
+ * - OCI_ENT_DROP_DATABASE  : a database has been dropped
  * - OCI_ENT_DEREGISTER     : the notification is timed out
  * - OCI_ENT_OBJECT_CHANGED : a database object has been modified
  *
@@ -17333,7 +17333,7 @@ OCI_EXPORT unsigned int OCI_API OCI_EventGetType
  * - OCI_ONT_DELETE  : a  delete has been performed
  * - OCI_ONT_ALTER   : an alter  has been performed
  * - OCI_ONT_DROP    : a  drop   has been performed
- * - OCI_ONT_GENERIC : generic not defined action
+ * - OCI_ONT_GENERIC : generic undefined action
  *
  * @note
  * OCI_EventGetDatabase() returns the affected database
