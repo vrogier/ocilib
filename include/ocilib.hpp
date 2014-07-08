@@ -1302,7 +1302,6 @@ public:
      */
     enum SessionTraceValues
     {
-        TraceUnknown = OCI_UNKNOWN,   
         /** Specifies the user defined identifier in the session. It's recorded in the column CLIENT_IDENTIFIER of the system view V$SESSION */
         TraceIdentity = OCI_TRC_IDENTITY,      
         /** Name of the current module in the client application. It's recorded in the column MODULE of the system view V$SESSION */
@@ -3833,17 +3832,17 @@ public:
 	*/
     enum EventTypeValues
     {
-		/** a database has been started up */
+		/** A database has been started up */
 		DatabaseStart = OCI_ENT_STARTUP,
-		/** a database has been shut down */
+		/** A database has been shut down */
 		DatabaseShutdown = OCI_ENT_SHUTDOWN,
-		/** a database has been shut down (RAC) */
+		/** A database has been shut down (RAC) */
 		DatabaseShutdownAny = OCI_ENT_SHUTDOWN_ANY,
-		/** a database has been dropped */
+		/** A database has been dropped */
 		DatabaseDrop = OCI_ENT_DROP_DATABASE,
-		/** the notification is timed out */
+		/** The notification is timed out */
 		Unregister = OCI_ENT_DEREGISTER,
-		/** a database object has been modified */
+		/** A database object has been modified */
         ObjectChanged = OCI_ENT_OBJECT_CHANGED
     };
 
@@ -3863,17 +3862,17 @@ public:
 	*/
     enum ObjectEventValues
     {
-		/** an insert has been performed */
+		/** An insert has been performed */
         ObjectInserted = OCI_ONT_INSERT,
-		/** an update has been performed */
+		/** An update has been performed */
 		ObjectUpdated = OCI_ONT_UPDATE,
-		/** a delete has been performed */
+		/** A delete has been performed */
 		ObjectDeleted = OCI_ONT_DELETE,
-		/** an alter has been performed */
+		/** An alter has been performed */
 		ObjectAltered = OCI_ONT_ALTER,
-		/** a drop has been performed */
+		/** A drop has been performed */
 		ObjectDropped = OCI_ONT_DROP,
-		/** generic undefined action * */
+		/** Generic undefined action * */
 		ObjectGeneric = OCI_ONT_GENERIC
     };
 
@@ -3948,11 +3947,14 @@ public:
 	*/
     enum MessageStateValues
     {
-        Unknown = OCI_UNKNOWN,
-        Ready = OCI_AMS_READY,
-        Waiting = OCI_AMS_WAITING,
+		/** The message is ready to be processed */
+		Ready = OCI_AMS_READY,
+		/** The message delay has not yet completed */
+		Waiting = OCI_AMS_WAITING,
+		/** The message has been processed */
         Processed = OCI_AMS_PROCESSED,
-        Expired =  OCI_AMS_EXPIRED
+		/** The message has moved to exception queue */
+		Expired = OCI_AMS_EXPIRED
     };
 
 	/**
@@ -4026,7 +4028,9 @@ public:
 	*/
     enum EnqueueModeValues
     {
+		/** Enqueue message before another message */
         Before = OCI_ASD_BEFORE,
+		/** Enqueue message before all messages */
         OnTop  = OCI_ASD_TOP
     };
 
@@ -4046,7 +4050,9 @@ public:
 	*/
     enum EnqueueVisibilityValues
     {
+		/** Enqueue is an independent transaction */
         Immediate = OCI_AMV_IMMEDIATE,
+		/** Enqueue is part of current transaction */
         OnCommit  = OCI_AMV_ON_COMMIT
     };
 
@@ -4103,9 +4109,13 @@ public:
 	*/
     enum DequeueModeValues
     {
+		/** Read message without acquiring a lock */
         Browse =  OCI_ADM_BROWSE,
+		/** Read and obtain write lock on message */
         Locked = OCI_ADM_LOCKED,
+		/** Read the message and delete it */
         Remove = OCI_ADM_REMOVE,
+		/** Confirm receipt of the message, but do not deliver the actual message content */
         Confirm = OCI_ADM_REMOVE_NODATA
     };
 
@@ -4125,7 +4135,9 @@ public:
 	*/
     enum DequeueVisibilityValues
     {
+		/** Dequeue is an independent transaction */
         Immediate = OCI_AMV_IMMEDIATE,
+		/** Dequeue is part of current transaction */
         OnCommit  = OCI_AMV_ON_COMMIT
     };
 
@@ -4145,8 +4157,12 @@ public:
 	*/
     enum NavigationModeValues
     {
+		/** Retrieves the first message which is available */
         FirstMessage = OCI_ADN_FIRST_MSG,
+		/** Retrieves the next message which is available */
         NextMessage = OCI_ADN_NEXT_MSG,
+		/** Skips the remainder of the current transaction  group (if any)
+		    and retrieves the first message of the next transactiong group.*/
         NextTransaction = OCI_ADN_NEXT_TRANSACTION,
     };
 
@@ -4387,10 +4403,10 @@ public:
      */
     enum GroupingModeValues
     {
-        /** each message is treated individually */
+        /** Each message is treated individually */
         None = OCI_AGM_NONE,
-        /** all messages enqueued in one transaction are considered part of
-          * the same group and can be dequeued as a group of related messages */
+        /** All messages enqueued in one transaction are considered part of
+            the same group and can be dequeued as a group of related messages */
         Transactionnal = OCI_AGM_TRANSACTIONNAL
     };
 
@@ -4411,11 +4427,11 @@ public:
      */
     enum PurgeModeValues
     {
-        /**  purge only buffered   messages */
+        /** Purge only buffered   messages */
         Buffered = OCI_APM_BUFFERED,
-        /* purge only persistent messages */
+        /** Purge only persistent messages */
         Persistent = OCI_APM_PERSISTENT,
-        /* purge all messages */
+        /** Purge all messages */
         All = OCI_APM_ALL
     };
 
@@ -4574,9 +4590,9 @@ public:
      */
     enum ConversionModeValues
     {
-        /** conversion fails on error */
+        /** Conversion fails on error */
         Default = OCI_DCM_DEFAULT,
-        /** conversion does not fail on error */
+        /** Conversion does not fail on error */
         Force = OCI_DCM_FORCE
     };
 
@@ -4596,15 +4612,15 @@ public:
 	*/
     enum ResultValues
     {
-        /** conversion/load has been successful */
+        /** Conversion/load has been successful */
         ResultComplete = OCI_DPR_COMPLETE,
-        /** an error happened while converting/loading data */
+        /** An error happened while converting/loading data */
         ResultError = OCI_DPR_ERROR,
-        /** the internal stream is full*/
+        /** The internal stream is full*/
         ResultFull = OCI_DPR_FULL ,
-        /** a column has not been fully filled yet */
+        /** A ccolumn has not been fully filled yet */
         ResultPartial = OCI_DPR_PARTIAL,
-        /** no data was found to convert/load */
+        /** No data was found to convert/load */
         ResultEmpty = OCI_DPR_EMPTY
     };
 

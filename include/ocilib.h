@@ -16405,7 +16405,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DequeueGetMode
  *   - OCI_ADN_NEXT_MSG         : retrieves the next message which is available
  *   - OCI_ADN_NEXT_TRANSACTION : skips the remainder of the current transaction
  *                                group (if any) and retrieves the first message
- *                                of the next transactiong roup.
+ *                                of the next transactiong group.
  *
  * @note
  * Default value is OCI_ADN_NEXT_MSG
