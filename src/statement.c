@@ -481,7 +481,7 @@ boolean OCI_BindReset
                         }
                         else
                         {
-                            dbsize = bnd->size - sizeof(dbtext);
+							dbsize = (bnd->size / sizeof(dbtext)) - 1;
                         }                       
 
 						dbsize /= sizeof(dbtext);

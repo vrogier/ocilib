@@ -4175,31 +4175,223 @@ public:
 	*/
     typedef Enum<NavigationModeValues> NavigationMode;
 
+	/**
+	* @brief
+	* Parametrized constructor
+	*
+	* @param typeInfo  - Payload type info
+	* @param queueName - Queue name
+	*
+	*/
     Dequeue(const TypeInfo &typeInfo, ostring queueName);
-
+	
+	/**
+	* @brief
+	* Dequeue messages from the given queue
+	*	
+	* @warning
+	* When dequeuing from a multiple consumer queue, you need
+	* to set the navigation mode to NavigationMode::FirstMessage using
+	* SetNavigation()
+	*
+	* @return
+	* A valid Message handle on success otherwise a null Message on failure or on timeout
+	*
+	*/
     Message Get();
 
+	/**
+	* @brief
+	* Listen for messages that match any recipient of the associated Agent list
+	*
+	* @param timeout - Timeout in second
+	*
+	* @note
+	* If an Agent handle is returned, messages are available for this agent.
+	* In order to retrieve its messsages :
+	* - call SetConsumer() with the name of agent using Agent::GetName()
+	* - call Get() to dequeue it's pending messages
+	*
+	* @return
+	* An Agent handle for who messages are available on success otherwise an null agent object
+	*/
     Agent Listen(int timeout);
 
+	/**
+	* @brief
+	* Get the current consumer name associated with the dequeueing process.
+	*
+	* @note
+	* see SetConsumer() for more details
+	*
+	*/
     ostring GetConsumer() const;
+
+	/**
+	* @brief
+	* Set the current consumer name to retrieve message for.
+	*
+	* @param value - consumer name
+	*
+	* @warning
+	* If a queue is not set up for multiple consumers, SetConsumer()
+	* should not be called or called with an empty value
+	*
+	*/
     void SetConsumer(ostring value);
 
+	/**
+	* @brief
+	* Get the correlation identifier of the message to be dequeued
+	*
+	* @note
+	* see SetCorrelation() for more details
+	*
+	*/
     ostring GetCorrelation() const;
+
+	/**
+	* @brief
+	* set the correlation identifier of the message to be dequeued
+	*
+	* @param value - correlation identifier
+	*
+	* @note
+	* Special pattern matching characters, such as "%" or "_" can be used.
+	* If more than one message satisfies the pattern, the order of dequeuing is undetermined.
+	*
+	*/
     void SetCorrelation(ostring value);
 
+	/**
+	* @brief
+	* Get the message identifier of the message to be dequeued
+	*
+	* @param value   - message identitier
+	* @param size    - size of the message identitier
+	*
+	* @note
+	* see SetRelativeMsgID() for more details
+	*
+	*/
     void GetRelativeMsgID(BufferPointer value, unsigned int &size) const;
+
+	/**
+	* @brief
+	* Set the message identifier of the message to be dequeued
+	*
+	* @param value    - message identitier
+	* @param size     - size of the message identitier
+	*
+	*/
     void SetRelativeMsgID(const BufferPointer &value, unsigned int size);
 
+	/**
+	* @brief
+	* Get the dequeueing/locking behavior
+	*
+	* @note
+	* see SetVisibility() for more details
+	*
+	*/
     DequeueVisibility GetVisibility() const;
+
+	/**
+	* @brief
+	* Set whether the new message is dequeued as part of the current transaction
+	*
+	* @param value - dequeueing mode
+	*
+	* @warning
+	* The visibility parameter is ignored when using the dequeuing
+	* mode is DequeueMode::Browse 
+	*
+	* @note
+	* Default value is DequeueVisibility::OnCommit
+	*
+	*/
     void SetVisibility(DequeueVisibility value);
 
+	/**
+	* @brief
+	* Get the dequeueing/locking behavior
+	*
+	* @note
+	* see SetMode() for more details
+	*
+	*/
     DequeueMode GetMode() const;
+
+	/**
+	* @brief
+	* Set the dequeueing/locking behavior
+	*
+	* @param value - dequeueing mode
+	*
+	* @note
+	* Default value is DequeueMode::Remove
+	*
+	*/
     void SetMode(DequeueMode value);
 
+	/**
+	* @brief
+	* Return the navigation position of messages to retrieve from the queue
+	*
+	* @note
+	* see SetNavigation() for more details
+	*
+	*/
     NavigationMode GetNavigation() const;
+
+	/**
+	* @brief
+	* Set the position of messages to be retrieved.
+	*
+	* @param value - navigation position
+	*
+	* @note
+	* The dequeuing uses the following sequence :
+	*   - find messages using the navigation position
+	*   - apply search criterias (message correlation)
+	*   - get message
+	*
+	* @note
+	* Default value is NavigationMode::NextMessage
+	*
+	* @warning
+	* NavigationMode::NextTransaction can only be used if message grouping is enabled for the given queue.
+	*
+	*/
     void SetNavigation(NavigationMode value);
 
+	/**
+	* @brief
+	* Return the time that Get() waits for messages if no messages are currently available
+	*
+	* @note
+	* see SetWaitTime() for more details
+	*
+	*/
     int GetWaitTime() const;
+
+	/**
+	* @brief
+	* Set the time that Get() waits for messages if no messages are currently available
+	*
+	* @param value - timeout in seconds
+	*
+	*@note
+	* - Any positive values in seconds are valid.
+	* - The value 0  is accepted and means Get() does not wait for
+	*   messages and returns immediately if no messages are available
+	* - The value -1 is accepted and means Get() waits for ever (until
+	*   a message is available in the queue)
+	*
+	* @note
+	* Default value is -1 (wait for ever)
+	*
+	*/
     void SetWaitTime(int value);
 
     /**
