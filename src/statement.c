@@ -466,29 +466,19 @@ boolean OCI_BindReset
             if (OCILib.use_wide_char_conv)
             {
                 if (OCI_CDT_TEXT == bnd->type)
-                {
+				{
+					int length = (bnd->size / sizeof(dbtext)) - 1;
+
                     for (j = 0; j < bnd->buffer.count; j++)
                     {
                         /* need conversion if bind buffer was allocated */
 
-                        int dbsize   = -1;
                         int offset1 = (bnd->size/sizeof(dbtext))*sizeof(otext);
-                        int offset2 = bnd->size;
-
-                        if (bnd->buffer.lens)
-                        {
-                            dbsize = (int) ((ub2 *) bnd->buffer.lens)[j];
-                        }
-                        else
-                        {
-							dbsize = (bnd->size / sizeof(dbtext)) - 1;
-                        }                       
-
-						dbsize /= sizeof(dbtext);
+                        int offset2 = bnd->size;						
 
                         OCI_StringUTF16ToUTF32( (((ub1 *) bnd->buffer.data) + (j*offset2) ),
                                                 (((ub1 *) bnd->input      ) + (j*offset1) ),
-                                                dbsize);
+												length);
                     }
                 }
             }
