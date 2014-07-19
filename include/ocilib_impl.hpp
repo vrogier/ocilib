@@ -52,7 +52,7 @@ inline void Check()
 
     if (err)
     {
-        throw Exception(err);
+		throw Exception(err);
     }
 }
 
@@ -67,14 +67,7 @@ inline TResultType Check(TResultType result)
 template<class TCharType>
 inline std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > MakeString(const TCharType *result)
 {
-    if (result)
-    {
-        return std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > (result);
-    }
-    else
-    {
-        return std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > ();
-    }
+	return std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > (result ? result : OTEXT(""));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -5047,6 +5040,11 @@ inline Agent::Agent(OCI_Agent *pAgent, Handle *parent)
     Acquire(pAgent, 0, parent);
 }
 
+/**
+* @brief
+* Get the given AQ agent name
+*
+*/
 inline ostring Agent::GetName() const
 {
     return MakeString(Check(OCI_AgentGetName(*this)));
@@ -5096,7 +5094,7 @@ inline void Message::Set(const Object &value)
     Check(OCI_MsgSetObject(*this, value));
 }
 
-inline void Message::Get(BufferPointer value, unsigned int &size)
+inline void Message::Get(BufferPointer &value, unsigned int &size)
 {
     Check(OCI_MsgGetRaw(*this, value, &size));
 }

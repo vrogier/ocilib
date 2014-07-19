@@ -15284,7 +15284,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  *
  * @warning
  * Newly created Message handles have NULL payloads.
- * For Message handling Objects payloads, OCI_MsgSetObject() returns NULL until an object handle is
+ * For Message handling Objects payloads, OCI_MsgGetObject() returns NULL until an object handle is
  * assigned to the message.
  *
  * @note
@@ -15297,7 +15297,6 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  * Return the message handle on success otherwise NULL on failure
  *
  */
-
 
 OCI_EXPORT OCI_Msg * OCI_API OCI_MsgCreate
 (
@@ -15336,7 +15335,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgFree
  * OCI_MsgReset() clears the message payload and set it to NULL
  * For messages handling objects payloads, OCI_MsgSetObject() must be called again to assign a
  * payload.
-
+ *	
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -15693,7 +15692,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetOriginalID
  * @param msg    - Message handle
  *
  * @return
- * Sender Handle (OCI_Agent *) on success (if set at rnqueue time) otherwise NULL
+ * Sender Handle (OCI_Agent *) on success (if set at enqueue time) otherwise NULL
  *
  */
 
@@ -15889,13 +15888,13 @@ OCI_EXPORT boolean OCI_API OCI_EnqueueFree
 
 /**
  * @brief
- * Enqueue a message on queue associated to the Enqueue object
+ * Enqueue a message on the queue associated to the Enqueue object
  *
  * @param enqueue - Enqueue handle
  * @param msg     - Message handle to enqueue
  *
  * @return
- * Message handle on success otherwise NULL on failure or on timeout
+ * TRUE on success otherwise FALSE
  *
  */
 
@@ -15960,10 +15959,10 @@ OCI_EXPORT unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
  * Set whether the new message is enqueued as part of the current transaction
  *
  * @param enqueue    - Enqueue handle
- * @param visibility - Equeueing mode
+ * @param visibility - Equeueing visibility
  *
  * @note
- * Possible values for parameter 'mode' :
+ * Possible values for parameter 'visibility' :
  *   - OCI_AMV_IMMEDIATE : enqueue is an independent transaction
  *   - OCI_AMV_ON_COMMIT : enqueue is part of current transaction
  *
@@ -16595,7 +16594,7 @@ OCI_EXPORT boolean OCI_API OCI_AgentFree
  *
  * @note
  * the AQ agent name can be any Oracle identifier, up to 30 bytes.
-
+ *
  * @return
  * TRUE on success otherwise FALSE
  *

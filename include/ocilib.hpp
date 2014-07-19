@@ -73,8 +73,8 @@ namespace ocilib
  * @defgroup OcilibCppApiOverview Overview
  * @{
  * OCILIB ++ is a C++ API for Oracle:
- *  - Based on STL paradigms (templates, stack objects, ...)
- *  - Based on design patterns (reference counting, smart pointers, proxies, singleton, ...)
+ *  - Based on STL paradigms (templates, stack objects)
+ *  - Based on design patterns (RAII, delegation, reference counting, smart pointers, proxies, singleton, ...)
  *  - No dynamic object allocation
  *  - Implemented as a small set of header files, no library compilation needed
  *  - Designed on top of OCILIB C API
@@ -3913,12 +3913,72 @@ class Agent : public HandleHolder<OCI_Agent *>
 
 public:
 
+	/**
+	* @brief
+	* Create an AQ agent object
+	*
+	* @param connection - Connection object
+	* @param name       - Agent name
+	* @param address    - Agent address
+	*
+	* @note
+	* An AQ agent object is :
+	* - used as recipient information when enqueuing a message
+	* - used as sender information when dequeuing a message
+	* - used for listening message only from identified senders
+	*
+	* @note
+	* the AQ agent address can be any Oracle identifier, up to 128 bytes.
+	* the AQ agent name    can be any Oracle identifier, up to 30  bytes.
+	*
+	*/
     Agent(const Connection &connection, ostring name = OTEXT(""), ostring address = OTEXT(""));
 
+	/**
+	* @brief
+	* Get the given AQ agent name
+	*
+	*/
     ostring GetName() const;
+
+	/**
+	* @brief
+	* Set the given AQ agent name
+	*
+	* @param value  - AQ agent name
+	*
+	* @note
+	* the AQ agent name is used to identified an message send or recipient when enqueuing/dequeuing a message
+	*
+	* @note
+	* the AQ agent name can be any Oracle identifier, up to 30 bytes.
+	*
+	*/
     void SetName(ostring value);
 
-    ostring GetAddress() const;
+	/**
+	* @brief
+	* Get the given AQ agent address
+	*
+	* @note
+	* See SetAddress() ffor more details
+	*
+	*/
+	ostring GetAddress() const;
+
+	/**
+	* @brief
+	* Set the given AQ agent address
+	*
+	* @param value - AQ agent address
+	*
+	* @note
+	* the parameter 'address' must be of the form : [schema.]queue_name[\@dblink]
+	*
+	* @note
+	* the AQ agent address can be any Oracle identifier, up to 128 bytes.
+	*
+	*/
     void SetAddress(ostring value);
 
 private:
@@ -3966,42 +4026,343 @@ public:
 	*/
     typedef Enum<MessageStateValues> MessageState;
 
+	/**
+	* @brief
+	* Create a message object based on the given payload type
+	*
+	* @param typeInfo - Type info object
+	*
+	* @note
+	* OCILIB supports 2 type of message payload :
+	* - Oracle types (UDT)
+	* - RAW data
+	*
+	* @note
+	* Oracle Type AnyData is not supported in the current version of OCILIB
+	*
+	* @note
+	* the parameter 'typinf' indicates the type of payload :
+	* - For object payload, retrieve the object type information object from the given type name
+	* - For RAW payload, you MUST pass the object type information object from the type name "SYS.RAW" as object type name
+	*
+	* @warning
+	* Newly created Message handles have NULL payloads.
+	* For Message handling Objects payloads, Get() returns a null Object until an object is assigned to the message.
+	*
+	* @note
+	* When a local Message object handle is enqueued, it keeps its attributes. If it's enqeued again, another
+	* identical message is posted into the queue.
+	* To reset a message and empty all its properties, call Reset()
+	*
+	*/
     Message(const TypeInfo &typeInfo);
 
+	/**
+	* @brief
+	* Reset all attributes of the message
+	*
+	* @warning
+	* Reset() clears the message payload and set it to NULL
+	*
+	*/
     void Reset();
 
+	/**
+	* @brief
+	* Get the object payload of the message
+	*
+	*/
     Object Get();
+
+	/**
+	* @brief
+	* Set the object payload of the message
+	*
+	* @param obj - Object payload
+	*
+	*/
     void Set(const Object &value);
 
-    void Get(BufferPointer value, unsigned int &size);
+	/**
+	* @brief
+	* Get the RAW payload of the message
+	*
+	* @param value  - Input buffer
+	* @param size - Input buffer maximum size
+	*
+	* @note
+	* On output, parameter 'size' holds the number of bytes copied into the given buffer
+	*
+	*/
+	void Get(BufferPointer &value, unsigned int &size);
+
+	/**
+	* @brief
+	* Set the RAW payload of the message
+	*
+	* @param value  - Raw data
+	* @param size - Raw data size
+	*
+	*/
     void Set(const BufferPointer &value, unsigned int size);
 
+	/**
+	* @brief
+	* return the time the message was enqueued
+	*
+	* @note
+	* Only use this function for message dequeued from queues
+	*
+	*/
     Date GetEnqueueTime() const;
+
+	/**
+	* @brief
+	* Return the number of attempts that have been made to dequeue the message
+	*
+	*/
     int GetAttemptCount() const;
+
+	/**
+	* @brief
+	* Return the state of the message at the time of the dequeue
+	*
+	*/
     MessageState GetState() const;
+
+	/**
+	* @brief
+	* Return the ID of the message
+	*
+	* @param value - Input buffer
+	* @param size  - Input buffer maximum size
+	*
+	* @note
+	* The message ID is :
+	*  - generated when the message is enqueued in the queue
+	*  - retrieved when the message is dequeued from the queue
+	*
+	* @note
+	* On output, parameter 'size' holds the number of bytes copied into the given buffer
+	*
+	*/
     void GetID(BufferPointer &value, unsigned int &size) const;
 
+	/**
+	* @brief
+	* Return the duration that the message is available for dequeuing
+	*
+	* @note
+	* see SetExpiration() for more details
+	*
+	*/
     int GetExpiration() const;
+
+	/**
+	* @brief
+	* set the duration that the message is available for dequeuing
+	*
+	* @param value - duration in seconds
+	*
+	* @note
+	* This parameter is an offset from the delay (see SetEnqueueDelay())
+	* While waiting for expiration, the message state is set to MessageStateValues::Ready.
+	* If the message is not dequeued before it expires, it will be moved to the exception queue
+	* with the state MessageStateValues::Expired.
+	*
+	* @note
+	* If parameter 'value' is set to -1 (default value), the message will not expire
+	*
+	* @warning
+	* Expiration processing requires the queue monitor to be started.
+	*
+	*/
     void SetExpiration(int value);
 
+	/**
+	* @brief
+	* Return the number of seconds that a message is delayed for dequeuing
+	*
+	* @note
+	* see SetEnqueueDelay() for more details
+	*
+	*/
     int GetEnqueueDelay() const;
+
+	/**
+	* @brief
+	* set the number of seconds to delay the enqueued message
+	*
+	* @param value - Delay in seconds
+	*
+	* @note
+	* The delay represents the number of seconds after which a message is available for dequeuing.
+	* When the message is enqueued, its state is set to MessageStateValues::Waiting.
+	* When the delay expires, its state is set to MessageStateValues::Ready.
+	*
+	* @note
+	* If parameter 'value' is set to zero (default value), the message will be immediately available
+	* for dequeuing
+	*
+	* @warning
+	* Dequeuing by Message ID overrides the delay specification.
+	*
+	* @warning
+	* Delaying processing requires the queue monitor to be started.
+	*
+	*/
     void SetEnqueueDelay(int value);
 
+	/**
+	* @brief
+	* Return the priority of the message
+    *
+	* @note
+	* see SetPriority() for more details
+	*
+	*/
     int GetPriority() const;
+
+	/**
+	* @brief
+	* Set the priority of the message
+	*
+	* @param value - Message priority
+	*
+	* @note
+	*   - The priority can be any number, including negative numbers.
+	*   - A smaller number indicates higher priority.
+	*   - Default value is zero.
+	*
+	*/
     void SetPriority(int value);
 
+	/**
+	* @brief
+	* Return the original ID of the message in the last queue that generated this message
+	*
+	* @param value  - Input buffer
+	* @param size   - Input buffer maximum size
+	*
+	* @warning
+	* When a message is propagated from/to differents queues, this ID is the one generated for the
+	* message in the previous queue.
+	*
+	* @note
+	* On output, parameter 'size' holds the number of bytes copied into the given buffer
+	*
+	*/
     void GetOriginalID(BufferPointer value, unsigned int &size) const;
+
+	/**
+	* @brief
+	* Set the original ID of the message in the last queue that generated this message
+	*
+	* @param value - Message ID
+	* @param size  - Message ID size
+	*
+	* @warning
+	* When a message is propagated from/to differents queues, this ID is the one generated for the
+	* message in the previous queue.
+	*
+	*/
     void SetOriginalID(const BufferPointer &value, unsigned int size);
 
+	/**
+	* @brief
+	* Get the correlation identifier of the message
+	*
+	* @note
+	* see SetCorrelation() for more details
+	*
+	*/
     ostring GetCorrelation() const;
+
+	/**
+	* @brief
+	* Set the correlation identifier of the message
+	*
+	* @param value - Message correlation text
+	*
+	* @note
+	* see Dequeue::SetCorrelation()  for more details
+	*
+	*/
     void SetCorrelation(ostring value);
 
+	/**
+	* @brief
+	* Get the Exception queue name of the message
+	*
+	* @warning
+	* When calling this function on a message retrieved with Dequeue::Get(), the returned value is
+	* empty if the default exception queue associated with the current queue is used (eg. no user
+	* defined specified at enqueue time for the message)
+	*
+	* @note
+	* see SetExceptionQueue() for more details
+	*
+	*/
     ostring GetExceptionQueue() const;
+
+	/**
+	* @brief
+	* Set the name of the queue to which the message is moved to if it cannot be
+	* processed successfully
+	*
+	* @param queue - Exception queue name
+	*
+	* @warning
+	* From Oracle Documentation :
+	*
+	* "Messages are moved into exception queues in two cases :
+	*  - If the number of unsuccessful dequeue attempts has exceeded the attribute 'max_retries' of
+	*    given queue
+	*  - if the message has expired.
+	*
+	* All messages in the exception queue are in the EXPIRED state.
+	*
+	* The default is the exception queue associated with the queue table.
+	*
+	* If the exception queue specified does not exist at the time of the move the message will be
+	* moved to the default exception queue associated with the queue table and a warning will be
+	* logged in the alert file.
+	*
+	* This attribute must refer to a valid queue name."
+	*
+	*/
     void SetExceptionQueue(ostring value);
 
-    Agent GetSender() const;;
+	/**
+	* @brief
+	* Return the original sender of the message
+	*
+	* @return
+	* Valid agent object if set at enqueue time otherwise a null agent object
+	*
+	*/
+    Agent GetSender() const;
+
+	/**
+	* @brief
+	* Set the original sender of the message
+	*
+	* @param agent - Message sender
+	*
+	*/
     void SetSender(const Agent &agent);
 
+	/**
+	* @brief
+	* Set the recipient list of a message to enqueue
+	*
+	* @param agents - Recipients list
+	*
+	* @warning
+	* This function should only be used for queues which allow multiple consumers.
+	* The default recipients are the queue subscribers.
+	*
+	*/
     void SetConsumers(std::vector<Agent> &agents);
 
 private:
@@ -4065,17 +4426,125 @@ public:
 	*/
     typedef Enum<EnqueueVisibilityValues> EnqueueVisibility;
 
-    Enqueue(const TypeInfo &typeInfo, ostring queueName);
-
+	/**
+	* @brief
+	* Create a Enqueue object for the given queue
+	*
+	* @param typeInfo  - Type info handle
+	* @param queueName - Queue name
+	*
+	* @note
+	* OCILIB supports 2 types of message payload :
+	* - Oracle types (UDT)
+	* - RAW data
+	*
+	* @note
+	* Oracle Type AnyData is not supported in the current version of OCILIB
+	*
+	* @note
+	* the parameter 'typeInfo' indicates the type of payload to enqueue to the given queue :
+	* - For object payload, retrieve the object type information object from the given type name
+	* - For RAW payload, you MUST pass the object type information object from the type name "SYS.RAW" as object type name
+	*
+	*/  
+	Enqueue(const TypeInfo &typeInfo, ostring queueName);
+	
+	/**
+	* @brief
+	* Enqueue a message the on queue associated to the Enqueue object
+	*
+	* @param message  - Message  to enqueue
+	*
+	*/
     void Put(const Message &message);
 
+	/**
+	* @brief
+	* Get the enqueueing/locking behavior
+	*
+	* @note
+	* see SetVisibility() for more details
+	*
+	*/
     EnqueueVisibility GetVisibility() const;
+
+	/**
+	* @brief
+	* Set whether the new message is enqueued as part of the current transaction
+	*
+	* @param value - Enqueueing visibility
+	*
+	* @note
+	* Default value is EnqueueVisibilityValues::OnCommit
+	*
+	*/
     void SetVisibility(EnqueueVisibility value);
 
+	/**
+	* @brief
+	* Return the enqueing mode of messages to enqueue 
+	*
+	* @note
+	* see SetMode() for more details
+	*
+	*/
     EnqueueMode GetMode() const;
+
+	/**
+	* @brief
+	* Set the enqueing mode of messages to put in the queue
+	*
+	* @param value - enqueing mode
+	*
+	* @note
+	* Default value is EnqueueModeValues::OnTop
+	*
+	* @note
+	* if the parameter 'value' is set to EnqueueModeValues::Before, the application must
+	* call SetRelativeMsgID() before enqueuing the next message in the queue.
+	*
+	* @note
+	* In order to stop enqueuing message using a sequence deviation, call
+	* SetMode() with the value EnqueueModeValues::OnTop
+	*
+	*/
     void SetMode(EnqueueMode value);
 
+	/**
+	* @brief
+	* Get the current associated message identifier used for enqueuing messages
+	* using a sequence deviation
+	*
+	* @param value    - buffer to receive the message identifier
+	* @param size     - pointer to buffer max length
+	*
+	* @warning
+	* When the function returns, parameter 'size' hold the number of bytes assigned to parameter 'value'
+	*
+	* @note
+	* see SetRelativeMsgID() for more details
+	*
+	*/
+
     void GetRelativeMsgID(BufferPointer value, unsigned int &size) const;
+
+	/**
+	* @brief
+	* Set a message identifier to use for enqueuing messages using a sequence deviation
+	*
+	* @param value    - message identifier
+	* @param size     - pointer to message identifier length
+	*
+	* @note
+	* This call is only valid if SetMode() has been called with the value EnqueueModeValues::Before
+	*
+	* @warning
+	* if the function cannot assign the message id, the content of the parameter 'size' is set to zero.
+	*
+	* @note
+	* see SetMode() for more details
+	*
+	*/
     void SetRelativeMsgID(const BufferPointer &value, unsigned int size);
 };
 
