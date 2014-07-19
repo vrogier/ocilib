@@ -76,8 +76,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\..\lib64;$(LibraryPath);$(VSInstallDir);$(VSInstallDir)lib\amd64</LibraryPath>
-    <IncludePath>..\..\include;$(WindowsSdkDir)\include;$(VCInstallDir)include</IncludePath>
+    <LibraryPath>..\..\lib64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
+    <IncludePath>..\..\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

@@ -3345,15 +3345,15 @@ inline BindValue<TValueType>::operator TValueType() const
  * BindArray
  * --------------------------------------------------------------------------------------------- */
 
-inline BindArray::BindArray(ostring name) : BindObject(name), _object(0)
+inline BindArray::BindArray(ostring name, Statement &statement) : BindObject(name), _statement(statement), _object(0)
 {
 
 }
 
 template <class TObjectType, class TDataType>
-inline void BindArray::SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemCount, unsigned int elemSize)
+inline void BindArray::SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemSize)
 {
-    _object = new BindArrayObject<TObjectType, TDataType>(vector, mode, elemCount, elemSize);
+	_object = new BindArrayObject<TObjectType, TDataType>(vector, mode, _statement.GetBindArraySize(), elemSize);
 }
 
 inline BindArray::~BindArray()
@@ -3369,12 +3369,12 @@ inline TDataType *  BindArray::GetData ()  const
 
 inline void BindArray::SetInData()
 {
-    _object->SetInData();
+	_object->SetInData(_statement.GetBindArraySize());
 }
 
 inline void BindArray::SetOutData()
 {
-    _object->SetOutData();
+	_object->SetOutData(_statement.GetBindArraySize());
 }
 
 template <class TObjectType, class TDataType>
@@ -3393,15 +3393,15 @@ inline BindArray::BindArrayObject<TObjectType, TDataType>::~BindArrayObject()
 template <class TObjectType, class TDataType>
 inline void BindArray::BindArrayObject<TObjectType, TDataType>::AllocData()
 {
-    _data = new TDataType[_elemCount];
+	_data = new TDataType[_elemCount];
 }
 
 template<>
 inline void BindArray::BindArrayObject<ostring, otext>::AllocData()
 {
-    _data = (otext *) new otext[_elemSize * _elemCount];
+	_data = (otext *) new otext[_elemSize * _elemCount];
 
-    memset(_data, 0, _elemSize * _elemCount * sizeof(otext));
+	memset(_data, 0, _elemSize * _elemCount * sizeof(otext));
 }
 
 template <class TObjectType, class TDataType>
@@ -3418,7 +3418,7 @@ inline BindArray::BindArrayObject<TObjectType, TDataType> & BindArray::BindArray
 }
 
 template <class TObjectType, class TDataType>
-inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetInData()
+inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetInData(unsigned int currElemCount)
 {
     if (_mode & OCI_BDM_IN)
     {
@@ -3426,7 +3426,7 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetInData()
 
         unsigned int index = 0;
 
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount; it++, index++)
+		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; it++, index++)
         {
             _data[index] = BindValue<TDataType>( *it);
         }
@@ -3434,34 +3434,34 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetInData()
 }
 
 template<>
-inline void BindArray::BindArrayObject<ostring, otext>::SetInData()
+inline void BindArray::BindArrayObject<ostring, otext>::SetInData(unsigned int currElemCount)
 {
     if (_mode & OCI_BDM_IN)
     {
         std::vector<ostring>::iterator it, it_end;
 
-        unsigned int index = 0;
+		unsigned int index = 0;
 
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount; it++, index++)
+		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; it++, index++)
         {
             ostring & value = *it;
 
-            memcpy((((otext *) _data) + (_elemSize * index)), value.c_str(), value.size() * sizeof(otext));
+            memcpy((((otext *) _data) + (_elemSize * index)), value.c_str(), (value.size() + 1) * sizeof(otext));
         }
     }
 }
 
 template <class TObjectType, class TDataType>
-inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetOutData()
+inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetOutData(unsigned int currElemCount)
 {
     if (_mode & OCI_BDM_OUT)
     {
         typename std::vector<TObjectType>::iterator it, it_end;
 
-        unsigned int index = 0;
+		unsigned int index = 0;
 
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount; it++, index++)
-        {
+		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; it++, index++)
+		{
             TObjectType& object = *it;
 
             object = (TDataType) _data[index];
@@ -3470,16 +3470,16 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetOutData()
 }
 
 template<>
-inline void BindArray::BindArrayObject<ostring, otext>::SetOutData()
+inline void BindArray::BindArrayObject<ostring, otext>::SetOutData(unsigned int currElemCount)
 {
     if (_mode & OCI_BDM_OUT)
     {
         std::vector<ostring>::iterator it, it_end;
 
-        unsigned int index = 0;
+		unsigned int index = 0;
 
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount; it++, index++)
-        {
+		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; it++, index++)
+		{
             *it = (otext*) (((otext *) _data) + (_elemSize * index));
         }
     }
@@ -3503,7 +3503,7 @@ inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator TDataType *
 
 inline void BindString::SetInData()
 {
-    unsigned int size = (unsigned int) _string.size();
+    unsigned int size = (unsigned int) _string.size() + 1;
 
     if (size > _elemSize)
     {
@@ -3542,7 +3542,7 @@ inline BindString::operator otext *()  const
  * BindsHolder
  * --------------------------------------------------------------------------------------------- */
 
-inline BindsHolder::BindsHolder(OCI_Statement *stmt) : _stmt(stmt)
+inline BindsHolder::BindsHolder(Statement &statement) : _statement(statement)
 {
 
 }
@@ -3564,7 +3564,7 @@ inline void BindsHolder::Clear()
 
 inline void BindsHolder::AddBindObject(BindObject *bindObject)
 {
-    if (OCI_IsRebindingAllowed(_stmt))
+    if (_statement.IsRebindingAllowed())
     {
         std::vector<BindObject *>::iterator it, it_end;
 
@@ -3826,8 +3826,8 @@ inline void Statement::Bind (TBindMethod &method, ostring name, TObjectType& val
 template <typename TBindMethod, class TObjectType, class TDataType>
 inline void Statement::Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode)
 {
-    BindArray * bnd = new BindArray(name);
-    bnd->SetVector<TObjectType, TDataType>(values, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
+	BindArray * bnd = new BindArray(name, *this);
+    bnd->SetVector<TObjectType, TDataType>(values, mode, sizeof(TDataType));
 
     if (method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), 0))
     {
@@ -3846,8 +3846,8 @@ inline void Statement::Bind (TBindMethod &method, ostring name, std::vector<TObj
 template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
 inline void Statement::Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode, TElemType type)
 {
-    BindArray * bnd = new BindArray(name);
-    bnd->SetVector<TObjectType, TDataType>(values, mode, OCI_BindArrayGetSize(*this), sizeof(TDataType));
+	BindArray * bnd = new BindArray(name, *this);
+	bnd->SetVector<TObjectType, TDataType>(values, mode, sizeof(TDataType));
 
     if (method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), type, 0))
     {
@@ -4145,8 +4145,8 @@ inline void Statement::Bind<Collection, TypeInfo>(ostring name, std::vector<Coll
 template <>
 inline void Statement::Bind<ostring, unsigned int>(ostring name, std::vector<ostring> &values,  unsigned int maxSize, BindInfo::BindDirection mode)
 {
-    BindArray * bnd = new BindArray(name);
-    bnd->SetVector<ostring, otext>(values, mode, OCI_BindArrayGetSize(*this), maxSize+1);
+	BindArray * bnd = new BindArray(name, *this);
+    bnd->SetVector<ostring, otext>(values, mode, maxSize+1);
 
     if (OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring, otext>(), maxSize, 0))
     {
@@ -4171,8 +4171,8 @@ inline void Statement::Bind<ostring, int>(ostring name, std::vector<ostring> &va
 template <>
 inline void Statement::Bind<BufferPointer, unsigned int>(ostring name, std::vector<BufferPointer> &values, unsigned int maxSize, BindInfo::BindDirection mode)
 {
-    BindArray * bnd = new BindArray(name);
-    bnd->SetVector<BufferPointer, void *>(values, mode, OCI_BindArrayGetSize(*this), maxSize+1);
+	BindArray * bnd = new BindArray(name, *this);
+	bnd->SetVector<BufferPointer, void *>(values, mode, maxSize + 1);
 
     if (OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<void *, void *>(), maxSize, 0))
     {

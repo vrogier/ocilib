@@ -47,6 +47,43 @@ namespace ocilib
 
 #define ARG_NOT_USED(a) (a) = (a)
 
+/** class pre declarations */
+
+class Exception;
+class Connection;
+class Transaction;
+class Environment;
+class Statement;
+class Resultset;
+class Date;
+class Timestamp;
+class Interval;
+class TypeInfo;
+class Reference;
+class Object;
+class Collection;
+class CollectionIterator;
+class Clob;
+class Blob;
+class File;
+class Pool;
+class CLong;
+class BLong;
+class Column;
+class Subscription;
+class Event;
+class Agent;
+class Message;
+class Enqueue;
+class Dequeue;
+class Queue;
+class QueueTable;
+class DirectPath;
+class Thread;
+class ThreadKey;
+class Mutex;
+class BindInfo;
+
 /**
  * @brief Internal usage.
  * Checks if the last OCILIB method call has raised an error.
@@ -368,11 +405,11 @@ class BindArray : public BindObject
 {
 public:
 
-     BindArray(ostring name);
+     BindArray(ostring name, Statement &statement);
      virtual ~BindArray();
 
      template <class TObjectType, class TDataType>
-     void SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemCount, unsigned int elemSize);
+	 void SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemSize);
 
      template <class TObjectType, class TDataType>
      TDataType * GetData () const;
@@ -387,8 +424,8 @@ private:
     public:
         AbstractBindArrayObject()  { }
         virtual ~AbstractBindArrayObject()  { }
-        virtual void SetInData() = 0;
-        virtual void SetOutData() = 0;
+		virtual void SetInData(unsigned int currentElemCount) = 0;
+		virtual void SetOutData(unsigned int currentElemCount) = 0;
     };
 
     template <class TObjectType, class TDataType>
@@ -406,16 +443,21 @@ private:
 
     public:
 
-        BindArrayObject(std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemCount, unsigned int elemSize);
+		BindArrayObject(std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemCount, unsigned int elemSize);
         virtual ~BindArrayObject();
-        void SetInData();
-        void SetOutData();
-        void AllocData();
-        void FreeData();
+		void SetInData(unsigned int currentElemCount);
+		void SetOutData(unsigned int currentElemCount);
+
         operator std::vector<TObjectType> & () const;
         operator TDataType * () const;
+
+	private:
+
+		void AllocData();
+		void FreeData();
     };
 
+	Statement & _statement;
     AbstractBindArrayObject * _object;
 };
 
@@ -456,7 +498,7 @@ class BindsHolder
 {
 public:
 
-    BindsHolder(OCI_Statement *stmt);
+    BindsHolder(Statement &statement);
     ~BindsHolder();
 
     void Clear();
@@ -469,43 +511,7 @@ public:
 private:
 
     std::vector<BindObject *> _bindObjects;
-    OCI_Statement * _stmt;
+	Statement & _statement;
 };
-
-
-class Exception;
-class Connection;
-class Transaction;
-class Environment;
-class Statement;
-class Resultset;
-class Date;
-class Timestamp;
-class Interval;
-class TypeInfo;
-class Reference;
-class Object;
-class Collection;
-class CollectionIterator;
-class Clob;
-class Blob;
-class File;
-class Pool;
-class CLong;
-class BLong;
-class Column;
-class Subscription;
-class Event;
-class Agent;
-class Message;
-class Enqueue;
-class Dequeue;
-class Queue;
-class QueueTable;
-class DirectPath;
-class Thread;
-class ThreadKey;
-class Mutex;
-class BindInfo;
 
 }
