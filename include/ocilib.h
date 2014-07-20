@@ -1146,7 +1146,7 @@ typedef unsigned int big_uint;
 
 /* fetching */
 
-#define OCI_FETCH_SIZE                      20
+#define OCI_FETCH_SIZE the number of rows fetched per internal server fetch cal                      20
 #define OCI_PREFETCH_SIZE                   20
 #define OCI_LONG_EXPLICIT                   1
 #define OCI_LONG_IMPLICIT                   2
@@ -1656,7 +1656,7 @@ typedef unsigned int big_uint;
 /* string constants */
 
 #define OCILIB_DRIVER_NAME                  OTEXT("OCILIB")
-#define OCI_STRING_NULL                     OTEXT("NULL")
+#define OCI_STRING_NULL            OCI_GetLongMaxSize         OTEXT("NULL")
 #define OCI_STRING_EMPTY                    OTEXT("")
 #define OCI_STRING_FORMAT_DATE              OTEXT("YYYY-MM-DD")
 #define OCI_STRING_DEFAULT_PREC             3
@@ -3644,7 +3644,7 @@ OCI_EXPORT boolean OCI_API OCI_Execute
 
 /**
  * @brief
- * Execute a SQL statement or PL/SQL block.
+ * Prepare and Execute a SQL statement or PL/SQL block.
  *
  * @param stmt - Statement handle
  * @param sql  - SQL order - PL/SQL block
@@ -3693,6 +3693,7 @@ OCI_EXPORT boolean OCI_API OCI_ExecuteStmt
  *
  * @return
  * TRUE on success otherwise FALSE
+ *
  */
 
 OCI_EXPORT boolean OCI_API OCI_Parse
@@ -3719,7 +3720,7 @@ OCI_EXPORT boolean OCI_API OCI_Parse
  * @note
  * This call prepares the statement (internal call to OCI_Prepare()) and ask
  * the Oracle server to describe the output SELECT list.
- * OCI_Execute() can be call after OCI_Desbribe() in order to execute the
+ * OCI_Execute() can be called after OCI_Desbribe() in order to execute the
  * statement, which means that the server will parse, and describe again the SQL
  * order.
  *
@@ -3730,6 +3731,7 @@ OCI_EXPORT boolean OCI_API OCI_Parse
  *
  * @return
  * TRUE on success otherwise FALSE
+ *
  */
 
 OCI_EXPORT boolean OCI_API OCI_Describe
@@ -3815,11 +3817,11 @@ OCI_EXPORT unsigned int OCI_API OCI_GetSQLCommand
  * @param stmt - Statement handle
  *
  * @warning
- * OCI_GetSQLVerb() must be called after the statement has be executed
- * because that's the server engine that computes the SQL command code
+ * OCI_GetSQLVerb() must be called after the statement has been executed
+ * because that's the server engine that computes the SQL verb
  *
  * @note
- * The SQL command verb list is available in Oracle documentations and guides
+ * The SQL verb list is available in Oracle documentations and guides
  *
  * @return
  * The SQL command verb of the statement otherwise NULL
@@ -3955,7 +3957,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetSQLVerb
  * be bone AFTER OCI_Prepare() and BEFORE any OCI_BindArrayOfxxx() call.
  *
  * @note
- * OCI_BindArraySetSize can optionally be called before any later OCI_Execute()
+ * OCI_BindArraySetSize() can optionally be called before any later OCI_Execute()
  * call in order to notify the statement of the exact number of elements
  * populating the input arrays for the next execution. The array size passed to
  * later OCI_BindArraySetSize() calls cannot be greater than the initial size
@@ -3963,6 +3965,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetSQLVerb
  *
  * @return
  * TRUE on success otherwise FALSE
+ *
  */
 
 OCI_EXPORT boolean OCI_API OCI_BindArraySetSize
@@ -5074,11 +5077,9 @@ OCI_EXPORT boolean OCI_API OCI_BindLong
 
 /**
  * @brief
- * Returns the first or next error that occurred within a DML array statement
+ * Returns the first or next error that occurred within a DML array statement execution
  *
  * @param stmt - Statement handle
- *
- * @note
  *
  * @return
  * The first or next error handle otherwise NULL
@@ -5127,7 +5128,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBindCount
  * Index starts at 1.
  *
  * @note
- * Bind handle are created sequentially. By example, the third call to a
+ * Bind handle are created sequentially. For example, the third call to a
  * OCI_BindXXX() generates a bind handle of index 3.
  *
  * @return
@@ -5164,12 +5165,12 @@ OCI_EXPORT OCI_Bind * OCI_API OCI_GetBind2
 
 /**
 * @brief
-* Return the index of the bind  from its name belonging the given statement
+* Return the index of the bind  from its name belonging to the given statement
 *
 * @param stmt - Statement handle
 * @param name - Bind variable name
 *
-* @note
+* @warning
 * The bind name is case insensitive
 *
 * @note
@@ -5827,7 +5828,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  * @param stmt - Statement handle
  *
  * @note
- * See @ref OcilibCApiFetching for more details aboit what statements can return resultsets
+ * See @ref OcilibCApiFetching for more details about what statements can return resultsets
  *
  * @warning
  * If the statement has not been prepared and executed, no resultset will be  returned
@@ -5924,7 +5925,7 @@ OCI_EXPORT boolean OCI_API OCI_FetchPrev
  * TRUE on success otherwise FALSE if :
  * - Empty resultset
  * - An error occurred
- *
+ *f
  */
 
 OCI_EXPORT boolean OCI_API OCI_FetchFirst
@@ -6156,6 +6157,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetType
  * - OCI_CSF_NONE     : the column is not an character or lob column
  * - OCI_CSF_DEFAULT  : the column has server default charset
  * - OCI_CSF_NATIONAL : the column has national server charset
+ *
  */
 
 OCI_EXPORT unsigned int OCI_API OCI_ColumnGetCharsetForm
@@ -6190,7 +6192,7 @@ OCI_EXPORT const otext * OCI_API OCI_ColumnGetSQLType
  *
  * @note
  * This function returns a description that matches the one given by SQL*Plus
-
+ *
  * @note
  * Return the number of characters written into the buffer
  *
@@ -9246,7 +9248,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetStatementType
  * @param mode - fetch mode value
  *
  * @warning
- * OCI_SetFetchMode() MUST be called before anyOCI_ExecuteXXX() call
+ * OCI_SetFetchMode() MUST be called before any OCI_ExecuteXXX() call
  *
  * @note
  * Possible values are :
@@ -9379,10 +9381,10 @@ OCI_EXPORT boolean OCI_API OCI_SetFetchSize
  * @brief
  * Return the number of rows fetched per internal server fetch call
  *
+ * @param stmt - Statement handle
+ *
  * @note
  * Default value is set to constant OCI_FETCH_SIZE
- *
- * @param stmt - Statement handle
  *
  */
 
@@ -9416,10 +9418,10 @@ OCI_EXPORT boolean OCI_API OCI_SetPrefetchSize
  * @brief
  * Return the number of rows pre-fetched by OCI Client
  *
+ * @param stmt - Statement handle
+ *
  * @note
  * Default value is set to constant OCI_PREFETCH_SIZE
- *
- * @param stmt - Statement handle
  *
  */
 
@@ -9430,7 +9432,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetPrefetchSize
 
 /**
  * @brief
- * Set the number of rows pre-fetched by OCI Client
+ * Set the amount of memory pre-fetched by OCI Client
  *
  * @param stmt - Statement handle
  * @param size - amount of memory to fetch
@@ -9495,10 +9497,10 @@ OCI_EXPORT boolean OCI_API OCI_SetLongMaxSize
  * @brief
  * Return the LONG datatype piece buffer size
  *
+ * @param stmt - Statement handle
+ *
  * @note
  * Default value is set to constant OCI_SIZE_LONG
- *
- * @param stmt - Statement handle
  *
  */
 
@@ -9512,7 +9514,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetLongMaxSize
  * Set the long datatype handling mode of a SQL statement
  *
  * @param stmt - Statement handle
- * @param mode - binding mode value
+ * @param mode - long mode value
  *
  * @note
  * Possible values are :
@@ -17136,9 +17138,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
  * @note
  * Subscription handles are automatically managed by the library
  *
- *
  * @return
- *
  * Subscription handle on success or NULL on failure
  *
  */
@@ -17270,8 +17270,7 @@ OCI_EXPORT unsigned int OCI_API OCI_SubscriptionGetTimeout
  * @param sub - Subscription handle
  *
  * @note
- * It may return a NULL handle if the connection used in OCI_SubscriptionRegister has been closed
- * subscriptions
+ * It may return a NULL handle if the connection used in OCI_SubscriptionRegister has been closed.
  *
  */
 
@@ -17374,7 +17373,7 @@ OCI_EXPORT const otext * OCI_API OCI_EventGetDatabase
 
 /**
  * @brief
- * Return the name of the name of the object that generated the event
+ * Return the name of the object that generated the event
  *
  * @param event - Event handle
  *

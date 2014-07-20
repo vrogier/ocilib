@@ -4088,13 +4088,13 @@ inline void Statement::Bind<Date>(ostring name, std::vector<Date> &values, BindI
 }
 
 template <>
-inline void Statement::Bind<Timestamp, unsigned int>(ostring name, std::vector<Timestamp> &values, unsigned int type, BindInfo::BindDirection mode)
+inline void Statement::Bind<Timestamp, Timestamp::TimestampType>(ostring name, std::vector<Timestamp> &values, Timestamp::TimestampType type, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfTimestamps, name, values, BindValue<OCI_Timestamp *>(), mode, type);
 }
 
 template <>
-inline void Statement::Bind<Interval, unsigned int>(ostring name, std::vector<Interval> &values, unsigned int type, BindInfo::BindDirection mode)
+inline void Statement::Bind<Interval, Interval::IntervalType>(ostring name, std::vector<Interval> &values, Interval::IntervalType type, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfIntervals, name, values, BindValue<OCI_Interval *>(), mode, type);
 }
@@ -4118,19 +4118,19 @@ inline void Statement::Bind<File>(ostring name, std::vector<File> &values, BindI
 }
 
 template <>
-inline void Statement::Bind<Object, TypeInfo>(ostring name, std::vector<Object> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
+inline void Statement::Bind<Object>(ostring name, std::vector<Object> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
    Bind(OCI_BindArrayOfObjects, name, values, BindValue<OCI_Object *>(), mode, (OCI_TypeInfo *) typeInfo);
 }
 
 template <>
-inline void Statement::Bind<Reference, TypeInfo>(ostring name, std::vector<Reference> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
+inline void Statement::Bind<Reference>(ostring name, std::vector<Reference> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
    Bind(OCI_BindArrayOfRefs, name, values, BindValue<OCI_Ref *>(), mode, (OCI_TypeInfo *) typeInfo);
 }
 
 template <>
-inline void Statement::Bind<Collection, TypeInfo>(ostring name, std::vector<Collection> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
+inline void Statement::Bind<Collection>(ostring name, std::vector<Collection> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
    Bind(OCI_BindArrayOfColls, name, values, BindValue<OCI_Coll *>(), mode, (OCI_TypeInfo *) typeInfo);
 }
@@ -4943,9 +4943,9 @@ inline Subscription::Subscription(OCI_Subscription *pSubcription)
     Acquire(pSubcription, 0, 0);
 }
 
-inline void Subscription::Register(const Connection &con, ostring name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
+inline void Subscription::Register(const Connection &connection, ostring name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
 {
-    Acquire(Check(OCI_SubscriptionRegister(con, name.c_str(),  changeTypes.GetValues(),
+	Acquire(Check(OCI_SubscriptionRegister(connection, name.c_str(), changeTypes.GetValues(),
                                            (POCI_NOTIFY) (handler != 0 ? Environment::NotifyHandler : 0 ), port, timeout)),
                                            (HandleFreeFunc) OCI_SubscriptionUnregister, 0);
 

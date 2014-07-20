@@ -3441,49 +3441,361 @@ public:
     Statement(const Connection &connection);
     ~Statement();
 
+	/**
+	* @brief
+	* Return the connection handle associated with a statement handle
+	*
+	*/
     Connection GetConnection() const;
 
+	/**
+	* @brief
+	* Describe the select list of a SQL select statement.
+	*
+	* @param sql  - SELECT sql statement
+	*
+	* @note
+	* This call sends the SELECT SQL order to the server for retrieving the
+	* description of the select order only.
+	* The command is not executed.
+	* This call is only useful to retreive information on the associated resultet
+	* Call GetResultet() after Describe() to access to SELECT list information
+	*
+	* @note
+	* This call prepares the statement (internal call to Prepare()) and ask
+	* the Oracle server to describe the output SELECT list.
+	* Execute() can be called after Desbribe() in order to execute the
+	* statement, which means that the server will parse, and describe again the SQL
+	* order.
+	*
+	* @warning
+	* Do not use Desbribe() unless you're only interested in the resultset
+	* information because the statement will be parsed again when executed and thus
+	* leading to unnecessary server roundtrips and less performance
+	*
+	*/
     void Describe(ostring sql);
+
+	/**
+	* @brief
+	* Parse a SQL statement or PL/SQL block.
+	*
+	* @param sql  - SQL order - PL/SQL block
+	*
+	* @note
+	* This call sends the SQL or PL/SQL command to the server for parsing only.
+	* The command is not executed.
+	* This call is only useful to check is a command is valid or not.
+	*
+	* @note
+	* This call prepares the statement (internal call to Prepare()) and ask
+	* the Oracle server to parse its SQL or PL/SQL command.
+	* Execute() can be call after Parse() in order to execute the
+	* statement, which means that the server will reparse again the command.
+	*
+	* @warning
+	* Do not use Parse() unless you're only interested in the parsing result
+	* because the statement will be parsed again when executed and thus leading to
+	* unnecessary server roundtrips and less performance
+	*
+	*/
     void Parse(ostring sql);
+
+	/**
+	* @brief
+	* Prepare a SQL statement or PL/SQL block.
+	*
+	* @param sql  - SQL order or PL/SQL block
+	*
+	* @note
+	* With version 1.3.0 and above, do not call this function for fetched statements (REF cursors)
+	*
+	*/
     void Prepare(ostring sql);
+
+	/**
+	* @brief
+	* Execute a prepared SQL statement or PL/SQL block.
+	*
+	*/
     void Execute();
+
+	/**
+	* @brief
+	* Prepare and execute a SQL statement or PL/SQL block.
+	*
+	* @param sql  - SQL order - PL/SQL block
+	*
+	*/
     void Execute(ostring sql);
 
+	/**
+	* @brief
+	* Return the number of rows affected by the SQL statement
+    *
+	*
+	* The returned value is :
+	*  - For UPDATEs : number of rows updated
+	*  - For INSERTs : number of rows inserted
+	*  - For DELETEs : number of rows deleted
+	*
+	* @note
+	* For SELECTs  statements, use GetRowCount() instead
+	*
+	*/
     unsigned int GetAffectedRows() const;
 
+	/**
+	* @brief
+	* Return the last SQL or PL/SQL statement prepared or executed by the statement
+	*
+	*/
     ostring GetSql()  const;
 
+	/**
+	* @brief
+	* Retrieve the resultset from an executed statement
+	*
+	* @note
+	* See @ref OcilibCApiFetching for more details about what statements can return resultsets
+	*
+	* @warning
+	* If the statement has not been prepared and executed, null resultset object will be returned
+	*
+	*/
     Resultset GetResultset();
+
+	/**
+	* @brief
+	* Retrieve the next available resultset
+	*
+	* @note
+	* it is only valid for the following statements:
+	* - Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause
+	* - Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using
+	*   DBMS_SQL.RETURN_RESULT()
+	*
+	* @note
+	* SQL statements with a 'returning' clause can return multiple resultsets.
+	* When arrays of program variables are binded to the statement, Oracle will
+	* execute the statement for every row (iteration).
+	* Each iteration generates a resultset that can be fetched like regular ones.
+	*
+	* @note
+	* Starting withOracle 12cR1, PL/SQ procedure and blocks ca return return multiple implicit resultsets
+	* Refer to  Oracle documentation for more informationb.
+	*
+	*/
     Resultset GetNextResultset();
 
+	/**
+	* @brief
+	* Set the input array size for bulk operations
+	*
+	* @param size - Array size
+	*
+	* @warning
+	* Do not use SetBindArraySize() for PL/SQL tables binding
+	*
+	* @note
+	* SetBindArraySize() is used to set the size of input bind array when using
+	* arrays for DML statements.
+	* SetBindArraySize() MUST be called to set the maximum size of the arrays
+	* to bind to the statement before any of its execution. This initial call must
+	* be bone AFTER OPrepare() and BEFORE any Bind() call taking vectors as parameter.
+	*
+	* @note
+	* SetBindArraySize() can optionally be called before any later Execute()
+	* call in order to notify the statement of the exact number of elements
+	* populating the input arrays for the next execution. The array size passed to
+	* later SetBindArraySize() calls cannot be greater than the initial size
+	* otherwise an exception will be thrown.
+	*
+	*/
     void SetBindArraySize(unsigned int size);
+
+	/**
+	* @brief
+	* Return the current input array size for bulk operations
+	*
+	*/
     unsigned int GetBindArraySize() const;
 
+	/**
+	* @brief
+	* Allow different host variables to be binded using the same bind name or
+	* position between executions of a prepared statement
+    *
+	* @param value - Rebinding mode allowed
+	*
+	* @note
+	* Default value is false
+	*
+	* @warning
+	* When using rebinding feature, host variable rebinded to a previously allocated
+	* bind MUST be of the same datatype !
+	*
+	*/
     void AllowRebinding(bool value);
 
+	/**
+	* @brief
+	* Indicate if rebinding is allowed on the statement
+	*
+	* @note
+	* See AllowRebinding() for more details
+	*
+	*/
     bool IsRebindingAllowed() const;
 
+	/**
+	* @brief
+	* Return the index of the bind from its name belonging to the statement
+	*
+	* @param name - Bind variable name
+	*
+	* @warning
+	* The bind name is case insensitive
+	*
+	* @note
+	* Bind indexes start with 1 in OCILIB
+	*
+	* @return
+	* Bind index on success or zero if the bind does not exists
+	*
+	*/
 	unsigned int GetBindIndex(ostring name) const;
+
+	/**
+	* @brief
+	* Return the number of binds currently associated to a statement
+	*
+	*/
     unsigned int GetBindCount() const;
 
+	/**
+	* @brief
+	* Return the bind at the given index in the internal array of bind objects
+	*
+	* @param index - Bind position
+	*
+	* @warning
+	* Index starts at 1.
+	*
+	* @note
+	* Bind handle are created sequentially. For example, the third call to a
+	* Bind() call generates a bind object of index 3.
+	*
+	*/
     BindInfo GetBind(unsigned int index) const;
+
+	/**
+	* @brief
+	* Return a bind handle from its name
+	*
+	* @param name - Bind variable name
+	*
+	* @note
+	* Bind names must include a semicolon at the beginning.
+	*
+	*/
     BindInfo GetBind(ostring name) const;
 
+	/**
+	* @brief
+	* Bind an host variable
+	*
+	* @tparam TDataType - C++ type of the host variable
+    *
+	* @param name  - Bind name
+	* @param value - Host variable
+	* @param mode  - bind direction mode
+	*
+	* @warning
+	* This method has builtin specialized versions for all supported types except ostring, Clong and Blong variables.
+	* For binding ostring, Clong and Blong variables, use the version with an extra parameter.
+    *
+	*/
     template <class TDataType>
     void Bind(ostring name, TDataType &value, BindInfo::BindDirection mode);
 
+	/**
+	* @brief
+	* Bind an host variable with more information
+	*
+	* @tparam TDataType  - C++ type of the host variable
+	* @tparam TExtraInfo - C++ type if the extra information needed for the bind call
+	*
+	* @param name      - Bind name
+	* @param value     - Host variable
+	* @param extraInfo - Extra information needed for the bind call
+	* @param mode      - bind direction mode
+	*
+	* @warning
+	* This method has builtin specialized versions for ostring, Clong and Blong variables.
+	* Pass the maximum length/size of the variable in the parameter extraInfo
+	*
+	*/
     template <class TDataType, class TExtraInfo>
     void Bind(ostring name, TDataType &value, TExtraInfo extraInfo, BindInfo::BindDirection mode);
 
+	/**
+	* @brief
+	* Bind a vector of host variables
+	*
+	* @tparam TDataType - C++ type of the host variable
+	*
+	* @param name  - Bind name
+	* @param value - Vector of host variables
+	* @param mode  - bind direction mode
+	*
+	* @warning
+	* This method has builtin specialized versions for all C++ native scalar types, Datetime and Statement objects.
+	* For others types (ostring, CLong, Blong, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
+	*
+	*/
     template <class TDataType>
     void Bind(ostring name, std::vector<TDataType> &values, BindInfo::BindDirection mode);
 
+	/**
+	* @brief
+	* Bind an host variable with Oracle type information
+	*
+	* @tparam TDataType  - C++ type of the host variable
+	*
+	* @param name      - Bind name
+	* @param value     - Host variable
+	* @param typeInfo  - Object type information
+	* @param mode      - bind direction mode
+	*
+	* @warning
+	* This method has builtin specialized versions for Object, Reference, Collection.
+	*
+	*/
+	template <class TDataType>
+	void Bind(ostring name, std::vector<TDataType> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
+
+	/**
+	* @brief
+	* Bind  a vector of host variables with more information
+	*
+	* @tparam TDataType  - C++ type of the host variable
+	* @tparam TExtraInfo - C++ type if the extra information needed for the bind call
+	*
+	* @param name      - Bind name
+	* @param value - Vector of host variables
+	* @param extraInfo - Extra information needed for the bind call
+	* @param mode      - bind direction mode
+	*
+	* @warning
+	* This method has builtin specialized versions for ostring, CLong, Blong, Timestamp, Interval variables.
+	* - For ostring, CLong, Blong : Pass the maximum length/size of variables in the parameter extraInfo 
+	* - For Timestamp, Interval : pass the matching C++ class GetType() property type.
+	*
+	*/
     template <class TDataType, class TExtraInfo>
     void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo extraInfo, BindInfo::BindDirection mode);
-
-    template <class TDataType, class TExtraInfo>
-    void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo &extraInfo, BindInfo::BindDirection mode);
-
+	
     template <class TDataType>
     void Register(ostring name);
 
@@ -3493,34 +3805,209 @@ public:
     template <class TDataType, class TExtraInfo>
     void Register(ostring name, TExtraInfo &extraInfo);
 
+	/**
+	* @brief
+	* Return the type of a SQL statement
+	*
+	*/
     StatementType GetStatementType() const;
 
+	/**
+	* @brief
+	* Return the error position (in terms of characters) in the SQL statement
+	* where the error occurred in case of SQL parsing error
+	*
+	* @note
+	* Positions start at 1.
+	*
+	*/
     unsigned int GetSqlErrorPos() const;
 
+	/**
+	* @brief
+	* Set the fetch mode of a SQL statement
+	*
+	* @param value - fetch mode value
+	*
+	* @warning
+	* SetFetchMode() MUST be called before any Execute() call
+	*
+	*/
     void SetFetchMode(FetchMode value);
+
+	/**
+	* @brief
+	* Return the fetch mode of a SQL statement
+	*
+	* @param stmt - Statement handle
+	*
+	* @note
+	* Default value is Statment::FetchForward
+	*
+	*/
     FetchMode GetFetchMode() const;
 
+	/**
+	* @brief
+	* Set the binding mode of a SQL statement
+	*
+	* @param value - binding mode value
+	*
+	*/
     void SetBindMode(BindMode value);
+
+	/**
+	* @brief
+	* Return the binding mode of a SQL statement
+	*
+	* @note
+	* Default value is Statment::BindByName
+	*
+	*/
     BindMode GetBindMode() const;
 
+	/**
+	* @brief
+	* Set the number of rows fetched per internal server fetch call
+	*
+	* @param size - number of rows to fetch
+	*
+	*/
     void SetFetchSize(unsigned int value);
+
+	/**
+	* @brief
+	* Return the number of rows fetched per internal server fetch call
+	*
+	* @note
+	* Default value is set to constant OCI_FETCH_SIZE
+	*
+	*/
     unsigned int GetFetchSize() const;
 
+	/**
+	* @brief
+	* Set the number of rows pre-fetched by OCI Client
+	*
+	* @param size - number of rows to pre-fetch
+	*
+	* @note
+	* To turn off pre-fetching, set both attributes (size and memory) to 0.
+	*
+	*/
     void SetPrefetchSize(unsigned int value);
+
+	/**
+	* @brief
+	* Return the number of rows pre-fetched by OCI Client
+	*
+	* @note
+	* Default value is set to constant OCI_PREFETCH_SIZE
+	*
+	*/
     unsigned int GetPrefetchSize() const;
 
+	/**
+	* @brief
+	* Set the amount of memory pre-fetched by OCI Client
+	*
+	* @param size - amount of memory to fetch
+	*
+	* @note
+	* Default value is 0 and the pre-fetch size attribute is used instead.
+	* When both attributes are set (pre-fetch size and memory) and pre-fetch memory
+	* value can hold more rows than specified by pre-fetch size, OCI uses pre-fetch
+	* size instead.
+	*
+	* @note
+	* OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
+	* To setup a big value for SetPrefetchMemory(), you must call
+	* SetPrefetchSize() to 0 to make OCI consider this attribute.
+	*
+	*/
     void SetPrefetchMemory(unsigned int value);
+
+	/**
+	* @brief
+	* Return the amount of memory used to retrieve rows pre-fetched by OCI Client
+    *
+	* @note
+	* Default value is 0
+	*
+	*/
     unsigned int GetPrefetchMemory() const;
 
+	/**
+	* @brief
+	* Set the LONG datatype piece buffer size
+	*
+	* @param value - maximum size for long buffer
+	*
+	*/
     void SetLongMaxSize(unsigned int value);
+
+	/**
+	* @brief
+	* Return the LONG datatype piece buffer size
+	*
+	* @note
+	* Default value is set to constant OCI_SIZE_LONG
+	*
+	*/
     unsigned int GetLongMaxSize() const;
 
+	/**
+	* @brief
+	* Set the long datatype handling mode of a SQL statement
+	*
+	* @param value - long mode value
+	*
+	* @note
+	* LONG RAWs can't be handled with Statement::LongImplicit mode
+	*
+	*/
     void SetLongMode(LongMode value);
+
+	/**
+	* @brief
+	* Return the long datatype handling mode of a SQL statement
+	*
+	*/
     LongMode GetLongMode() const;
 
+	/**
+	* @brief
+	* Return the Oracle SQL code the command held by the statement
+	*
+	* @warning
+	* GetSQLCommand() must be called after the statement has be executed
+	* because that's the server engine that computes the SQL command code
+	*
+	* @note
+	* The SQL command list is available in Oracle documentations and guides
+    *
+	*/
     unsigned int GetSQLCommand() const;
+
+	/**
+	* @brief
+	* Return the verb of the SQL command held by the statement
+	*
+	* @warning
+	* GetSQLVerb() must be called after the statement has been executed
+	* because that's the server engine that computes the SQL verb
+	*
+	* @note
+	* The SQL verb list is available in Oracle documentations and guides
+	*
+	*/
     ostring GetSQLVerb() const;
 
+	/**
+	* @brief
+	* Returns all errors that occurred within a DML array statement execution
+	*
+	*/
     void GetBatchErrors(std::vector<Exception> &exceptions);
 
 private:
@@ -3570,9 +4057,9 @@ public:
 	*/
     enum SeekModeValues
     {
-		/* Seek is performed using a given absolute offset. The statement must be scrollable */
+		/** Seek is performed using a given absolute offset. The statement must be scrollable */
         SeekAbsolute = OCI_SFD_ABSOLUTE,
-		/* Seek is performed using a given relative offset from the current position. The statement must be scrollable */
+		/** Seek is performed using a given relative offset from the current position. The statement must be scrollable */
 		SeeKRelative = OCI_SFD_RELATIVE
     };
 
@@ -3585,35 +4072,261 @@ public:
 	*/
 	typedef Enum<SeekModeValues> SeekMode;
 
+	/**
+	* @brief
+	* Return the current value of the column at the given index in the resultset
+	*
+	* @tparam TDataType - C++ type of the value to retrieve
+	*
+	* @param index - Column position
+	*
+	* @warning
+	* This method has builtin specialized versions for all supported types except RAW based types.
+	* For RAWS, use the version with extra parameters
+	*
+	* @note
+	* Column position starts at 1.
+	*
+	*/
     template<class TDataType>
     TDataType Get(unsigned int index) const;
 
+	/**
+	* @brief
+	* Return the current value of the column from its name in the resultset
+	*
+	* @tparam TDataType - C++ type of the value to retrieve
+	*
+	* @param name  - Column name
+	* 
+	* @warning
+	* This method has builtin specialized versions for all supported types except RAW based types.
+	* For RAWS, use the version with extra parameters
+	*
+	* @note
+	* The column name is case insensitive.
+	*
+	*/
     template<class TDataType>
     TDataType Get(ostring name) const;
-
+	
+	/**
+	* @brief
+	* Return the current value of the column at the given index in the resultset
+	*
+	* @tparam TDataType - C++ type of the value to retrieve
+	*
+	* @param index - Column position
+	* @param value - User value to fill out
+	* @param size  - number of bytes written in the user value
+	*
+	* @warning
+	* this version of Get() is currently used for RAW based values that
+	* need to copy data to a given buffer
+	* Thus, Use BufferPointer as TDataType
+	*
+	* @note
+	* Column position starts at 1.
+	*
+	*/
     template<class TDataType>
     void Get(unsigned int index, TDataType value, unsigned int &size) const;
 
+	/**
+	* @brief
+	* Retrieve the current value of the column from its name in the resultset
+	*
+	* @tparam TDataType - C++ type of the value to retrieve
+	*
+	* @param name  - Column name
+	* @param value - User value to fill out
+	* @param size  - number of bytes written in the user value
+	*
+	* @warning
+	* this version of Get() is currently used for RAW based values that
+	* need to copy data to a given buffer.
+	* Thus, Use BufferPointer as TDataType
+    *
+	* @note
+	* The column name is case insensitive.
+	*
+	*/
     template<class TDataType>
     void Get(ostring name, TDataType value, unsigned int &size) const;
 
+	/**
+	* @brief
+	* Fetch the next row of the resultset
+	*
+	* @note
+	* Next() works for normal and scrollable resultsets
+	*
+	* @return
+	* true on success otherwise false if :
+	* - Empty resultset
+	* - Last row already fetched
+	*
+	*/
     bool Next();
+
+	/**
+	* @brief
+	* Fetch the previous row of the resultset
+	*
+	* @note
+	* Prev() works ONLY for scrollable resultsets
+	*
+	* @return
+	* true on success otherwise false if :
+	* - Empty resultset
+	* - First row already fetched
+	*
+	*/
     bool Prev();
+
+	/**
+	* @brief
+	* Fetch the first row of the resultset
+	*
+	* @note
+	* First() works ONLY for scrollable resultsets
+	*
+	* @return
+	* true on success otherwise false if  the resultset is empty
+	*
+	*/
     bool First();
+
+	/**
+	* @brief
+	* Fetch the last row of the resultset
+	*
+	* @note
+	* Last() works ONLY for scrollable resultsets
+	*
+	* @return
+	* true on success otherwise false if  the resultset is empty
+	*
+	*/
     bool Last();
+
+	/**
+	* @brief
+	* Custom Fetch of the resultset
+	*
+	* @param mode    - Fetch direction
+	* @param offset  - Fetch offset
+	*
+	* @warning
+	* hSeek() works ONLY for scrollable resultsets
+	*
+	* @note
+	* If you intend to use Seek() on a scrollable statement and if any of the
+	* selected columns is a ref cursor or a nested table, you must set the fetching size
+	* to 1 using Statement::SetFetchSize() before calling Statement::GetResultset()
+	* Otherwise Seek() will fails with a OCI-10002 error
+	*
+	* @return
+	* true on success otherwise false the resultset is empty or seek offset out of bounds
+	*
+	*/
     bool Seek(SeekMode mode, int offset);
 
+	/**
+	* @brief
+	* Retrieve the number of rows fetched so far
+	*
+	*/
     unsigned int GetCount() const;
+
+	/**
+	* @brief
+	* Retrieve the current row index
+	*
+	* @note
+	* - GetCurrentRow() returns the current row number starting from 1
+	* - If the resultset has not been fetched or if the resultset is empty, it returns 0
+	* - If the resultset has been fully fetched, it returns the last fetched row number
+	*
+	*/
     unsigned int GetCurrentRow() const;
 
+	/**
+	* @brief
+	* Return the index of the column in the result from its name
+	*
+	* @param name  - Column name
+	*
+	* @warning
+	* The column name is case insensitive
+	*
+	* @note
+	* Column position starts at 1.
+	*
+	*/
 	unsigned int GetColumnIndex(ostring name) const;
+
+	/**
+	* @brief
+	* Return the number of columns in the resultset
+	*
+	*/
 	unsigned int GetColumnCount() const;
-    Column GetColumn(unsigned int index) const;
+
+
+	/**
+	* @brief
+	* Return the column from its name in the resultset
+	*
+	* @param index  - Column index
+	*
+	* @note
+	* Column position starts at 1.
+	*
+	* @warning
+	* The column name is case insensitive
+	*
+	*/  
+	Column GetColumn(unsigned int index) const;
+
+	/**
+	* @brief
+	* Return the column from its name in the resultset
+	*
+	* @param name  - Column name
+	*
+	* @note
+	* The column name is case insensitive
+	*
+	*/
     Column GetColumn(ostring name) const;
 
+	/**
+	* @brief
+	* Check if the current row value is null for the column at the given index
+	*
+	* @param index  - Column index
+	*
+	* @note
+	* Column position starts at 1.
+	*
+	*/
     bool IsColumnNull(unsigned int index) const;
+
+	/**
+	* @brief
+	* Check if the current row value is null for the column of the given name
+	*
+	* @param name  - Column name
+	*
+	*/
     bool IsColumnNull(ostring name) const;
 
+	/**
+	* @brief
+	* Return the statement associated with the resultset
+	*
+	*/
     Statement GetStatement() const;
 
     bool operator ++ (int);
@@ -3694,7 +4407,7 @@ public:
     enum PropertyFlagsValues
     {
 		/** The column has no flags or the OCI client does not support it */
-		None = OCI_CPF_NONE,
+		NoFlags = OCI_CPF_NONE,
 		/** - If Set, the column is an IDENTITY column 
             - Otherwise, it is not an IDENTITY column */
         IsIdentity = OCI_CPF_IS_IDENTITY,
@@ -3717,24 +4430,140 @@ public:
     typedef Flags<PropertyFlagsValues> PropertyFlags;
 
     ostring GetName() const;
+
+	/**
+	* @brief
+	* Return the Oracle SQL type name of the column datatype
+	*
+	* @note
+	* For possible values, consults Oracle Documentation
+	*
+	*/
     ostring GetSQLType() const;
+
+	/**
+	* @brief
+	* Return the Oracle SQL Full name including precision and size of the
+	* column datatype
+	*
+	* @note
+	* This function returns a description that matches the one given by SQL*Plus
+	*
+	*/
     ostring GetFullSQLType() const;
 
+	/**
+	* @brief
+	* Return the type of the given column
+	*
+	*/
     ColumnType GetType() const;
+
+	/**
+	* @brief
+	* Return the OCILIB object subtype of a column
+	*
+	* @note
+	* This call is valid for the following OCILIB types:
+    * - Long
+	* - Clob
+	* - BLob
+	* - File
+	* - Timestamp
+	* - Interval
+	*
+	* @warning
+	* - The returned values must be casted to the matching C++ class GetType() property type.
+	* - For a non valid type, it returns 0.
+	*
+	*/
     unsigned int GetSubType() const;
+
+	/**
+	* @brief
+	* Return the charset form of the given column
+	*
+	*/
     Environment::CharsetForm GetCharsetForm() const;
+
+	/**
+	* @brief
+	* Return the size of the column
+	*
+	* @note
+	* For all types, the size is expressed is bytes, excepted for character
+	* based columns that were created with a character based size or of type NCHAR/NVARCHAR
+	*
+	*/
     unsigned int GetSize() const;
 
+	/**
+	* @brief
+	* Return the scale of the column for numeric columns
+	*
+	*/
     int GetScale() const;
+
+	/**
+	* @brief
+	* Return the precision of the column for numeric columns
+	*
+	*/
     int GetPrecision() const;
+
+	/**
+	* @brief
+	* Return the fractional precision of the column for Timestamp and Interval columns
+    *
+	*/
     int GetFractionalPrecision() const;
+
+	/**
+	* @brief
+	* Return the leading precision of the column for Interval columns
+	*
+	*/
     int GetLeadingPrecision() const;
+
+	/**
+	* @brief
+	* Return the column property flags
+	*
+	* @note
+	* This was introduced in Oracle 12cR1.
+	* It is currently used for identifying Identity columns.
+	* For earlier versions, it always return Columns::NoFlags
+	*
+	*/
     PropertyFlags GetPropertyFlags() const; 
 
+	/**
+	* @brief
+	* Return true if the column is nullable otherwise false
+	*
+	*/
     bool IsNullable() const;
+
+	/**
+	* @brief
+	* Return true if the length of the column is character-length or  false if it is byte-length
+    *
+	* @note
+	* This was introduced in Oracle 9i. So for version that are not supporting this
+	* property, it always return false
+	*
+	*/
     bool IsCharSemanticUsed() const;
 
-
+	/**
+	* @brief
+	* Return the type information object associated to the column
+	*
+	* @note
+	* This call is used only for Named Object typed and collection columns.
+	* It returns a null object if the column is not a Named Object or a collection.
+	*
+	*/
     TypeInfo GetTypeInfo() const;
 
 private:
@@ -3749,6 +4578,9 @@ private:
 * @note
 * This class wraps the OCILIB object handle OCI_Subscription and its related methods
 *
+* @warning
+* Environment::Events flag must be passed to Environment::Initialize() to be able to use subscriptions
+
 */
 class Subscription : public HandleHolder<OCI_Subscription *>
 {
@@ -3792,17 +4624,83 @@ public:
 	*/
     typedef Flags<ChangeTypesValues> ChangeTypes;
 
+	/**
+	* @brief
+	* Default constructor
+	*
+	*/
     Subscription();
 
-    void Register(const Connection &con, ostring name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port = 0, unsigned int timeout = 0);
+	/**
+	* @brief
+	* Register a notification against the given database
+	*
+	* @param connection  - Connection handle
+	* @param name        - Notification name
+	* @param changeTypes - Subscription type
+	* @param handler     - User handler callback
+	* @param port        - Port to use for notifications
+	* @param timeout     - notification timeout
+	*
+	* @note
+	* Requires Oracle Client 10gR2 or above
+	*
+	*/
+    void Register(const Connection &connection, ostring name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port = 0, unsigned int timeout = 0);
+
+	/**
+	* @brief
+	* Deregister a previously registered notification
+	*
+	* @note
+	* Environment::Cleanup() will automatically deregister any non
+	* deregistered subscriptions
+	*
+	* @note
+	* If the database connection passed to Register()
+	* has been closed by the time that the application calls
+	* Unregister(), the library internally reconnects
+	* to the given database, performs the deregistration and then disconnects
+	*
+	*/
     void Unregister();
 
+	/**
+	* @brief
+	* Add a SQL query to monitor
+    *
+	*/
     void Watch(ostring sql);
 
+	/**
+	* @brief
+	* Return the name of the given registered subscription
+	*
+	*/
     ostring GetName() const;
+
+	/**
+	* @brief
+	* Return the timeout of the given registered subscription
+	*
+	*/
     unsigned int GetTimeout() const;
+
+	/**
+	* @brief
+	* Return the port used by the notification
+	*
+	*/
     unsigned int GetPort() const;
 
+	/**
+	* @brief
+	* Return the connection  associated with a subscription handle
+	*
+	* @note
+	* It may return a null connection object if the connection used at Register() time has been closed
+	*
+	*/
     Connection GetConnection() const;
 
 private:
@@ -3816,6 +4714,9 @@ private:
 *
 * @note
 * This class wraps the OCILIB object handle OCI_Event and its related methods
+* 
+* @warning
+* Environment::Events flag must be passed to Environment::Initialize() to be able to use subscriptions
 *
 */
 class Event : public HandleHolder<OCI_Event *>
@@ -3885,11 +4786,52 @@ public:
 	*/
     typedef Enum<ObjectEventValues> ObjectEvent;
 
+	/**
+	* @brief
+	* Return the type of event reported by a notification
+	*
+	*/
     EventType GetType() const;
+
+	/**
+	* @brief
+	* Return the type of operation reported by a notification
+
+	* @note
+	* Thi call is only valid when GetType() reports the event type Event::ObjectChanged
+	*
+	*/
     ObjectEvent GetObjectEvent() const;
+
+	/**
+	* @brief
+	* Return the name of the database that generated the event
+	*
+	*/
     ostring GetDatabaseName() const;
+
+	/**
+	* @brief
+	* Return the name of the object that generated the event
+	*
+	* @note
+	* Database object name follows the pattern "[schema_name].object_name"
+	*
+	*/
     ostring GetObjectName() const;
+
+	/**
+	* @brief
+	* Return the rowid of the altered database object row
+	*
+	*/
     ostring GetRowID() const;
+
+	/**
+	* @brief
+	* Return the subscription that generated this event
+	*
+	*/
     Subscription GetSubscription() const;
 
 private:
@@ -4078,7 +5020,7 @@ public:
 	* @brief
 	* Set the object payload of the message
 	*
-	* @param obj - Object payload
+	* @param value - Object payload
 	*
 	*/
     void Set(const Object &value);
@@ -4087,8 +5029,8 @@ public:
 	* @brief
 	* Get the RAW payload of the message
 	*
-	* @param value  - Input buffer
-	* @param size - Input buffer maximum size
+	* @param value - Input buffer
+	* @param size  - Input buffer maximum size
 	*
 	* @note
 	* On output, parameter 'size' holds the number of bytes copied into the given buffer
@@ -4166,9 +5108,9 @@ public:
 	*
 	* @note
 	* This parameter is an offset from the delay (see SetEnqueueDelay())
-	* While waiting for expiration, the message state is set to MessageStateValues::Ready.
+	* While waiting for expiration, the message state is set to Message::Ready.
 	* If the message is not dequeued before it expires, it will be moved to the exception queue
-	* with the state MessageStateValues::Expired.
+	* with the state Message::Expired.
 	*
 	* @note
 	* If parameter 'value' is set to -1 (default value), the message will not expire
@@ -4197,8 +5139,8 @@ public:
 	*
 	* @note
 	* The delay represents the number of seconds after which a message is available for dequeuing.
-	* When the message is enqueued, its state is set to MessageStateValues::Waiting.
-	* When the delay expires, its state is set to MessageStateValues::Ready.
+	* When the message is enqueued, its state is set to Message::Waiting.
+	* When the delay expires, its state is set to Message::Ready.
 	*
 	* @note
 	* If parameter 'value' is set to zero (default value), the message will be immediately available
@@ -4285,7 +5227,7 @@ public:
 	* @param value - Message correlation text
 	*
 	* @note
-	* see Dequeue::SetCorrelation()  for more details
+	* see Dequeue::SetCorrelation() for more details
 	*
 	*/
     void SetCorrelation(ostring value);
@@ -4310,7 +5252,7 @@ public:
 	* Set the name of the queue to which the message is moved to if it cannot be
 	* processed successfully
 	*
-	* @param queue - Exception queue name
+	* @param value - Exception queue name
 	*
 	* @warning
 	* From Oracle Documentation :
@@ -4475,7 +5417,7 @@ public:
 	* @param value - Enqueueing visibility
 	*
 	* @note
-	* Default value is EnqueueVisibilityValues::OnCommit
+	* Default value is Enqueue::OnCommit
 	*
 	*/
     void SetVisibility(EnqueueVisibility value);
@@ -4497,15 +5439,15 @@ public:
 	* @param value - enqueing mode
 	*
 	* @note
-	* Default value is EnqueueModeValues::OnTop
+	* Default value is Enqueue::OnTop
 	*
 	* @note
-	* if the parameter 'value' is set to EnqueueModeValues::Before, the application must
+	* if the parameter 'value' is set to Enqueue::Before, the application must
 	* call SetRelativeMsgID() before enqueuing the next message in the queue.
 	*
 	* @note
 	* In order to stop enqueuing message using a sequence deviation, call
-	* SetMode() with the value EnqueueModeValues::OnTop
+	* SetMode() with the value Enqueue::OnTop
 	*
 	*/
     void SetMode(EnqueueMode value);
@@ -4536,7 +5478,7 @@ public:
 	* @param size     - pointer to message identifier length
 	*
 	* @note
-	* This call is only valid if SetMode() has been called with the value EnqueueModeValues::Before
+	* This call is only valid if SetMode() has been called with the value Enqueue::Before
 	*
 	* @warning
 	* if the function cannot assign the message id, the content of the parameter 'size' is set to zero.
@@ -4664,7 +5606,7 @@ public:
 	* SetNavigation()
 	*
 	* @return
-	* A valid Message handle on success otherwise a null Message on failure or on timeout
+	* A valid Message handle on success otherwise a null Message on timeout
 	*
 	*/
     Message Get();
@@ -4773,10 +5715,10 @@ public:
 	*
 	* @warning
 	* The visibility parameter is ignored when using the dequeuing
-	* mode is DequeueMode::Browse 
+	* mode is Dequeue::Browse 
 	*
 	* @note
-	* Default value is DequeueVisibility::OnCommit
+	* Default value is Dequeue::OnCommit
 	*
 	*/
     void SetVisibility(DequeueVisibility value);
@@ -4798,7 +5740,7 @@ public:
 	* @param value - dequeueing mode
 	*
 	* @note
-	* Default value is DequeueMode::Remove
+	* Default value is Dequeue::Remove
 	*
 	*/
     void SetMode(DequeueMode value);
@@ -4826,10 +5768,10 @@ public:
 	*   - get message
 	*
 	* @note
-	* Default value is NavigationMode::NextMessage
+	* Default value is Dequeue::NextMessage
 	*
 	* @warning
-	* NavigationMode::NextTransaction can only be used if message grouping is enabled for the given queue.
+	* Dequeue::NextTransaction can only be used if message grouping is enabled for the given queue.
 	*
 	*/
     void SetNavigation(NavigationMode value);
@@ -4881,7 +5823,7 @@ public:
      * @param handler  - User handler callback fired when messages are ready to be dequeued
      *
      * @note
-     * EnvMode::EnvEvents flag must be passed to Environment::Initialize() to be able to use
+     * Environment::Events flag must be passed to Environment::Initialize() to be able to use
      * asynchronous messages notifications
      *
      * @note
@@ -5127,7 +6069,7 @@ public:
      *
      * @note
      * Possible values for parameter 'payloadType' :
-     * - For Oracle types (UDT) : use the type name ([schema.].type_name)
+     * - For Oracle types (UDT) : use the type name ([schema.]type_name)
      * - For RAW data           : use "SYS.RAW" or "RAW"
      *
      * @note
@@ -5310,7 +6252,7 @@ public:
      * Parameter 'nbRows' is ignored for Oracle 8i. Prior to Oracle 9i, it's the
      * OCI client that decides of the number of rows to process per convert/load calls.
      * From Oracle 9i, OCI allows application to specify this value. Note that, the
-     * OCI client might not accept the input value. After DirPathPrepare() has
+     * OCI client might not accept the input value. After Prepare() has
      * been successfully called, GetMaxRows() returns the final number
      * of rows used for the given direct path operation.
      *
@@ -5329,7 +6271,7 @@ public:
      * @note
      * An error is thrown if :
      * - If the column specified by the 'name' parameter is not found in the table
-     *   referenced by the type info handle passed to OCI_DirPathCreate()
+     *   referenced by the type info handle passed to the constructor
      * - the index is out of bounds (= 0 or >= number of columns)
      *
      */
@@ -5421,10 +6363,10 @@ public:
      * @brief
      * Convert provided user data to the direct path stream format
      *
-     * @note
-     * - When using conversion mode Default, Convert() stops when
+     * @par Behavior
+     * - When using conversion mode DirectPath::Default, Convert() stops when
      *   any error is encountered and returns ResultError 
-     * - When using conversion mode Force, Convert() does not stop
+     * - When using conversion mode DirectPath::Force, Convert() does not stop
      *   on errors. Instead it discards any erred rows and returns ResultComplete once
      *   all rows are processed.
      *
@@ -5543,7 +6485,7 @@ public:
      * This function called after :
      *
      * - Convert(), returns the number of converted rows
-     * - Pathload(), returns the number of loaded rows
+     * - Load(), returns the number of loaded rows
      *
      */
     unsigned int GetAffectedRows() const;
@@ -5660,12 +6602,12 @@ public:
      * Errors may happen while data is converted to direct path stream format
      * using Convert().
      *
-     * @par
-     * When using conversion mode ConversionMode::Default, Convert() returns
-     * Result::ResultError on error and GetErrorColumn() returns the column index that
+	 * @par Usage after a Convert() call
+     * - When using conversion mode DirectPath::Default, Convert() returns
+     * DirectPath::ResultError on error and GetErrorColumn() returns the column index that
      * caused the error.
-     * When using conversion mode ConversionMode::Force, Convert() returns 
-     * Result::ResultComplete even on errors. In order to retrieve the list of all column
+     * - When using conversion mode DirectPath::Force, Convert() returns 
+     * DirectPath::ResultComplete even on errors. In order to retrieve the list of all column
      * indexes that have erred, the application can call GetErrorColumn() 
      * repeatedly until it returns 0. 
      *
@@ -5688,19 +6630,18 @@ public:
      * 
      * @note
      * Errors may happen :
-     * - while data is converted to direct path stream format using OCI_DirPathConvert()
-     * - while data is loaded to database using OCI_DirPathLoad()
+     * - while data is converted to direct path stream format using Convert()
+     * - while data is loaded to database using Load()
      *
-     * @par
-     * When using conversion mode ConversionMode::Default, Convert() returns
-     * Result::ResultError on error and GetErrorRow() returns the row index that
-     * caused the error.
-     * When using conversion mode ConversionMode::Force, Convert() returns 
-     * Result::ResultComplete even on errors. In order to retrieve the list of all row
-     * indexes that have erred, the application can call GetErrorRow() 
-     * repeatedly until it returns 0. 
+	 * @par Usage after a Convert() call
+     * - When using conversion mode DirectPath::Default, Convert() returns
+     *   DirectPath::ResultError on error and GetErrorRow() returns the row index that
+     *   caused the error.
+     * - When using conversion mode DirectPath::Force, Convert() returns 
+     *   DirectPath::ResultComplete even on errors. In order to retrieve the list of all row
+     *   indexes that have erred, the application can call GetErrorRow() repeatedly until it returns 0. 
      *
-     * @note
+     * @par  Usage after a Load() call
      * After a call to Load(), in order to retrieve the list of all faulted rows 
      * indexes, the application can call GetErrorRow() repeatedly until it returns 0. 
      *
