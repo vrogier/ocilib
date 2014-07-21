@@ -4088,15 +4088,27 @@ inline void Statement::Bind<Date>(ostring name, std::vector<Date> &values, BindI
 }
 
 template <>
+inline void Statement::Bind<Timestamp, Timestamp::TimestampTypeValues>(ostring name, std::vector<Timestamp> &values, Timestamp::TimestampTypeValues type, BindInfo::BindDirection mode)
+{
+	Bind(OCI_BindArrayOfTimestamps, name, values, BindValue<OCI_Timestamp *>(), mode, type);
+}
+
+template <>
 inline void Statement::Bind<Timestamp, Timestamp::TimestampType>(ostring name, std::vector<Timestamp> &values, Timestamp::TimestampType type, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfTimestamps, name, values, BindValue<OCI_Timestamp *>(), mode, type);
+	Bind<Timestamp, Timestamp::TimestampTypeValues>(name, values, type.GetValue(), mode);
+}
+
+template <>
+inline void Statement::Bind<Interval, Interval::IntervalTypeValues>(ostring name, std::vector<Interval> &values, Interval::IntervalTypeValues type, BindInfo::BindDirection mode)
+{
+	Bind(OCI_BindArrayOfIntervals, name, values, BindValue<OCI_Interval *>(), mode, type);
 }
 
 template <>
 inline void Statement::Bind<Interval, Interval::IntervalType>(ostring name, std::vector<Interval> &values, Interval::IntervalType type, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfIntervals, name, values, BindValue<OCI_Interval *>(), mode, type);
+	Bind<Interval, Interval::IntervalTypeValues>(name, values, type.GetValue(), mode);
 }
 
 template <>
@@ -4236,15 +4248,27 @@ inline void Statement::Register<Date>(ostring name)
 }
 
 template <>
-inline void Statement::Register<Timestamp, unsigned int>(ostring name, unsigned int elemType)
+inline void Statement::Register<Timestamp, Timestamp::TimestampTypeValues>(ostring name, Timestamp::TimestampTypeValues type)
 {
-    Check(OCI_RegisterTimestamp(*this, name.c_str(), elemType));
+	Check(OCI_RegisterTimestamp(*this, name.c_str(), type));
 }
 
 template <>
-inline void Statement::Register<Interval, unsigned int>(ostring name, unsigned int elemType)
+inline void Statement::Register<Timestamp, Timestamp::TimestampType>(ostring name, Timestamp::TimestampType type)
 {
-    Check(OCI_RegisterInterval(*this, name.c_str(), elemType));
+	Register<Timestamp, Timestamp::TimestampTypeValues>(name, type.GetValue());
+}
+
+template <>
+inline void Statement::Register<Interval, Interval::IntervalTypeValues>(ostring name, Interval::IntervalTypeValues type)
+{
+	Check(OCI_RegisterInterval(*this, name.c_str(), type));
+}
+
+template <>
+inline void Statement::Register<Interval, Interval::IntervalType>(ostring name, Interval::IntervalType type)
+{
+	Register<Interval, Interval::IntervalTypeValues>(name, type.GetValue());
 }
 
 template <>
@@ -4266,13 +4290,13 @@ inline void Statement::Register<File>(ostring name)
 }
 
 template <>
-inline void Statement::Register<Object, TypeInfo>(ostring name, TypeInfo& typeInfo)
+inline void Statement::Register<Object>(ostring name, TypeInfo& typeInfo)
 {
     Check(OCI_RegisterObject(*this, name.c_str(), typeInfo));
 }
 
 template <>
-inline void Statement::Register<Reference, TypeInfo>(ostring name, TypeInfo& typeInfo)
+inline void Statement::Register<Reference>(ostring name, TypeInfo& typeInfo)
 {
     Check(OCI_RegisterRef(*this, name.c_str(), typeInfo));
 }

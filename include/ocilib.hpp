@@ -3714,7 +3714,11 @@ public:
 	* @warning
 	* This method has builtin specialized versions for all supported types except ostring, Clong and Blong variables.
 	* For binding ostring, Clong and Blong variables, use the version with an extra parameter.
-    *
+	*
+	* @note
+	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
+	* automatically from the arguments.
+	*
 	*/
     template <class TDataType>
     void Bind(ostring name, TDataType &value, BindInfo::BindDirection mode);
@@ -3735,6 +3739,10 @@ public:
 	* This method has builtin specialized versions for ostring, Clong and Blong variables.
 	* Pass the maximum length/size of the variable in the parameter extraInfo
 	*
+	* @note
+	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
+	* automatically from the arguments.
+	*
 	*/
     template <class TDataType, class TExtraInfo>
     void Bind(ostring name, TDataType &value, TExtraInfo extraInfo, BindInfo::BindDirection mode);
@@ -3745,13 +3753,17 @@ public:
 	*
 	* @tparam TDataType - C++ type of the host variable
 	*
-	* @param name  - Bind name
-	* @param value - Vector of host variables
-	* @param mode  - bind direction mode
+	* @param name   - Bind name
+	* @param values - Vector of host variables
+	* @param mode   - bind direction mode
 	*
 	* @warning
 	* This method has builtin specialized versions for all C++ native scalar types, Datetime and Statement objects.
-	* For others types (ostring, CLong, Blong, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
+	* For others types (ostring, CLong, Blong, BufferPointer, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
+	*
+	* @note
+	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
+	* automatically from the arguments.
 	*
 	*/
     template <class TDataType>
@@ -3759,17 +3771,21 @@ public:
 
 	/**
 	* @brief
-	* Bind an host variable with Oracle type information
+	* Bind a vector of host variables with Oracle type information
 	*
 	* @tparam TDataType  - C++ type of the host variable
 	*
-	* @param name      - Bind name
-	* @param value     - Host variable
-	* @param typeInfo  - Object type information
-	* @param mode      - bind direction mode
+	* @param name     - Bind name
+	* @param values   - Vector of host variables
+	* @param typeInfo - Object type information
+	* @param mode     - bind direction mode
 	*
 	* @warning
 	* This method has builtin specialized versions for Object, Reference, Collection.
+	*
+	* @note
+	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
+	* automatically from the arguments.
 	*
 	*/
 	template <class TDataType>
@@ -3777,34 +3793,93 @@ public:
 
 	/**
 	* @brief
-	* Bind  a vector of host variables with more information
+	* Bind a vector of host variables with more information
 	*
 	* @tparam TDataType  - C++ type of the host variable
 	* @tparam TExtraInfo - C++ type if the extra information needed for the bind call
 	*
 	* @param name      - Bind name
-	* @param value - Vector of host variables
+	* @param value     - Vector of host variables
 	* @param extraInfo - Extra information needed for the bind call
 	* @param mode      - bind direction mode
 	*
 	* @warning
-	* This method has builtin specialized versions for ostring, CLong, Blong, Timestamp, Interval variables.
-	* - For ostring, CLong, Blong : Pass the maximum length/size of variables in the parameter extraInfo 
-	* - For Timestamp, Interval : pass the matching C++ class GetType() property type.
+	* This method has builtin specialized versions for ostring, BufferPointer, CLong, Blong, Timestamp, Interval variables.
+	* - For ostring, CLong, Blong, BufferPointer : Pass the maximum length/size of variables in the parameter extraInfo 
+	* - For Timestamp, Interval : Pass a value of the matching C++ class GetType() property type OR the underlying enumeration type.
+	*
+	* @note
+	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
+	* automatically from the arguments.
 	*
 	*/
     template <class TDataType, class TExtraInfo>
     void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo extraInfo, BindInfo::BindDirection mode);
 	
+	/**
+	* @brief
+	* Register a host variable as an output for a column present in a SQL RETURNING INTO  clause
+	*
+	* @tparam TDataType - C++ type of the host variable
+	*
+	* @param name  - Bind name
+	*
+	* @warning
+	* This method has builtin specialized versions for all supported types except:
+	* - Timestamp and Interval, Object and Reference : use the version that takes a TypeInfo parameter
+    * - ostring and BufferPointer : use the version that takes an extraInfo parameter
+	*
+	* @note
+	* Statement, Blong and CLong are not supported for register calls
+	*
+	* @warning
+	* It is necessary to specify the template datatype in the register call  
+	*
+	*/
     template <class TDataType>
     void Register(ostring name);
 
-    template <class TDataType, class TExtraInfo>
+	/**
+	* @brief
+	* Register a host variable with Oracle type information as an output for a column present in a SQL RETURNING INTO  clause
+	*
+	* @tparam TDataType - C++ type of the host variable
+	*
+	* @param name     - Bind name
+	* @param typeInfo - Object type information
+	*
+	* @warning
+	* This method has builtin specialized versions for Timestamp and Interval, Object and Reference.
+	*
+	* @warning
+	* It is necessary to specify the template datatype in the register call
+	*
+	*/
+    template <class TDataType>
+	void Register(ostring name, TypeInfo& typeInfo);
+	
+	/**
+	* @brief
+	* Register a host variable with more information as an output for a column present in a SQL RETURNING INTO  clause
+	*
+	* @tparam TDataType  - C++ type of the host variable
+	* @tparam TExtraInfo - C++ type if the extra information needed for the bind call
+	*
+	* @param name      - Bind name
+	* @param typeInfo  - Object type information
+	* @param extraInfo - Extra information needed for the bind call
+	*
+	* @warning
+	* This method has builtin specialized versions for ostring and BufferPointer variables.
+	*  Pass the maximum length/size of variables in the parameter extraInfo
+	*
+	* @note
+	* It is necessary to specify the template datatype in the register call
+	*
+	*/
+	template <class TDataType, class TExtraInfo>
     void Register(ostring name, TExtraInfo extraInfo);
-
-    template <class TDataType, class TExtraInfo>
-    void Register(ostring name, TExtraInfo &extraInfo);
-
+	
 	/**
 	* @brief
 	* Return the type of a SQL statement
