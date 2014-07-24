@@ -67,8 +67,8 @@ class Clob;
 class Blob;
 class File;
 class Pool;
-class CLong;
-class BLong;
+class Clong;
+class Blong;
 class Column;
 class Subscription;
 class Event;
@@ -107,7 +107,6 @@ template<class TCharType>
 static std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > MakeString(const TCharType *result);
 
 /**
- * @class HandleHolder
  * @brief
  * Template class providing OCILIB handles auto memory, life cycle and scope management
  */
@@ -115,7 +114,6 @@ template <class THandleType>
 class HandleHolder;
 
 /**
- * @class Enum
  * @brief
  * Template Enum template class providing some type safety to some extends for manipulating enum variables
  */
@@ -146,7 +144,6 @@ private:
 };
 
 /**
- * @class Flags
  * @brief
  * Template Flags template class providing some type safety to some extends for manipulating flags set variables
  */
@@ -192,12 +189,6 @@ private:
     unsigned int _flags;
 };
 
-/**
- * @class ManagedBuffer
- *
- * @brief
- *
- */
 template< typename TBufferType>
 class ManagedBuffer
 {
@@ -216,12 +207,6 @@ private:
     TBufferType* _buffer;
 };
 
-/**
- * @class ConcurrentPool
- *
- * @brief
- *
- */
 template <class TKey, class TValue>
 class ConcurrentPool
 {
@@ -245,12 +230,6 @@ private:
     void Unlock() const;
 };
 
-/**
- * @class Handle
- *
- * @brief
- *
- */
 class Handle
 {
 public:
@@ -262,11 +241,9 @@ public:
 };
 
 /**
- * @class HandleHolder
- *
- * @brief
- *
- */
+* @brief
+* Smart pointer class with reference counting for managing OCILIB object handles
+*/
 template<class THandleType>
 class HandleHolder
 {
@@ -341,13 +318,6 @@ protected:
     SmartHandle<THandleType> *_smartHandle;
  };
 
-
-/**
- * @class BindValue
- *
- * @brief
- *
- */
 template <class TValueType>
 class BindValue
 {
@@ -362,13 +332,6 @@ private:
 
     TValueType _value;
 };
-
-/**
- * @class BindObject
- *
- * @brief
- *
- */
 
 class BindObject
 {
@@ -395,12 +358,6 @@ private:
     ostring _name;
 };
 
-/**
- * @class BindArray
- *
- * @brief
- *
- */
 class BindArray : public BindObject
 {
 public:
@@ -461,12 +418,6 @@ private:
     AbstractBindArrayObject * _object;
 };
 
-/**
- * @class BindString
- *
- * @brief
- *
- */
 class BindString : public BindObject
 {
     friend class Statement;
@@ -488,12 +439,6 @@ private:
     unsigned int    _elemSize;
 };
 
-/**
- * @class BindsHolder
- *
- * @brief
- *
- */
 class BindsHolder
 {
 public:

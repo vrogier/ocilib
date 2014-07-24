@@ -456,6 +456,14 @@ void test_fetch(void)
     for(int i = 1, n = rs.GetColumnCount(); i <= n; i++)
     {
         Column col = rs.GetColumn(i);
+
+		DataType type = col.GetType();
+
+		if (type == TypeDate)
+		{
+
+
+		}
         std::ocout << OTEXT("> Field : #") << i << OTEXT(" - Name : ") << col.GetName() << std::endl;
     }
 
@@ -580,7 +588,7 @@ void test_piecewise_insert(void)
         std::ocout << std::endl << size << OTEXT(" bytes to write") << std::endl;
 
         Statement st(con);
-        BLong lg(st);
+        Blong lg(st);
         st.Prepare(OTEXT("insert into test_long_raw(code, content) values (1, :data)"));
         st.SetLongMaxSize( (unsigned int) size);
         st.Bind(OTEXT(":data"), lg, (int) size, BindInfo::In);
@@ -614,7 +622,7 @@ void test_piecewise_fetch(void)
     Resultset rs1 = st.GetResultset();
     while (rs1++)
     {
-        BLong lg = rs1.Get<BLong>(1);
+        Blong lg = rs1.Get<Blong>(1);
 
         char buffer[SIZE_BUF];
         int bytesRead;

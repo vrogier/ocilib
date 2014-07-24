@@ -3241,20 +3241,20 @@ inline void CollectionIterator::SetElementNull()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CLong
+ * Clong
  * --------------------------------------------------------------------------------------------- */
 
-inline CLong::CLong(const Statement &statement)
+inline Clong::Clong(const Statement &statement)
 {
     Acquire(Check(OCI_LongCreate(statement, OCI_CLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
 }
 
-inline CLong::CLong(OCI_Long *pLong, Handle* parent)
+inline Clong::Clong(OCI_Long *pLong, Handle* parent)
 {
     Acquire(pLong, 0, parent);
 }
 
-inline ostring CLong::Read(unsigned int size)
+inline ostring Clong::Read(unsigned int size)
 {
     ManagedBuffer<otext> buffer = new otext[size+1];
 
@@ -3263,51 +3263,51 @@ inline ostring CLong::Read(unsigned int size)
     return MakeString( (const otext *) buffer);
 }
 
-inline unsigned int CLong::Write(ostring content)
+inline unsigned int Clong::Write(ostring content)
 {
     return Check(OCI_LongWrite(*this, (void *) content.c_str(), (unsigned int) content.size()));
 }
 
-inline unsigned int CLong::GetSize() const
+inline unsigned int Clong::GetSize() const
 {
     return Check(OCI_LongGetSize(*this));
 }
 
-inline ostring CLong::GetContent() const
+inline ostring Clong::GetContent() const
 {
     return MakeString((otext *) Check(OCI_LongGetBuffer(*this)));
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BLong
+ * Blong
  * --------------------------------------------------------------------------------------------- */
 
-inline BLong::BLong(const Statement &statement)
+inline Blong::Blong(const Statement &statement)
 {
     Acquire(Check(OCI_LongCreate(statement, OCI_BLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
 }
 
-inline BLong::BLong(OCI_Long *pLong, Handle *parent)
+inline Blong::Blong(OCI_Long *pLong, Handle *parent)
 {
     Acquire(pLong, 0, parent);
 }
 
-inline unsigned int BLong::Read(void *buffer, unsigned int size)
+inline unsigned int Blong::Read(void *buffer, unsigned int size)
 {
     return Check(OCI_LongRead(*this ,buffer, size));
 }
 
-inline unsigned int BLong::Write(void *buffer, unsigned int size)
+inline unsigned int Blong::Write(void *buffer, unsigned int size)
 {
     return Check(OCI_LongWrite(*this ,buffer, size));
 }
 
-inline unsigned int BLong::GetSize() const
+inline unsigned int Blong::GetSize() const
 {
     return Check(OCI_LongGetSize(*this));
 }
 
-inline void * BLong::GetContent() const
+inline void * Blong::GetContent() const
 {
     return  Check(OCI_LongGetBuffer(*this));
 }
@@ -3608,9 +3608,9 @@ inline ostring BindInfo::GetName() const
     return MakeString(Check(OCI_BindGetName(*this)));
 }
 
-inline unsigned int BindInfo::GetType() const
+inline DataType BindInfo::GetType() const
 {
-    return Check(OCI_BindGetType(*this));
+	return DataType((DataType::type)Check(OCI_BindGetType(*this)));
 }
 
 inline unsigned int BindInfo::GetSubType() const
@@ -3618,9 +3618,9 @@ inline unsigned int BindInfo::GetSubType() const
     return Check(OCI_BindGetSubtype(*this));
 }
 
-inline unsigned int BindInfo::GetElemcount() const
+inline unsigned int BindInfo::GetDataCount() const
 {
-    return Check(OCI_BindGetDirection(*this));
+    return Check(OCI_BindGetDataCount(*this));
 }
 
 inline Statement BindInfo::GetStatement() const
@@ -3628,48 +3628,26 @@ inline Statement BindInfo::GetStatement() const
     return Statement(Check(OCI_BindGetStatement(*this)));
 }
 
-inline void BindInfo::SetNull(bool value)
+inline void BindInfo::SetDataNull(bool value, unsigned int index)
 {
     if (value)
     {
-        Check(OCI_BindSetNull(*this));
+		Check(OCI_BindSetNullAtPos(*this, index));
     }
     else
     {
-        Check(OCI_BindSetNotNull(*this));
+		Check(OCI_BindSetNotNullAtPos(*this, index));
     }
 }
 
-inline void BindInfo::SetNull(bool value, unsigned int pos)
+inline bool BindInfo::IsDataNull(unsigned int index) const
 {
-    if (value)
-    {
-        Check(OCI_BindSetNullAtPos(*this, pos));
-    }
-    else
-    {
-        Check(OCI_BindSetNotNullAtPos(*this, pos));
-    }
-}
-
-inline bool BindInfo::IsNull() const
-{
-    return (Check(OCI_BindIsNull(*this)) == TRUE);
-}
-
-inline bool BindInfo::IsNull(unsigned int pos) const
-{
-    return (Check(OCI_BindIsNullAtPos(*this, pos)) == TRUE);
+	return (Check(OCI_BindIsNullAtPos(*this, index)) == TRUE);
 }
 
 inline void BindInfo::SetCharsetForm(Environment::CharsetForm value)
 {
     Check(OCI_BindSetCharsetForm(*this,value));
-}
-
-inline void BindInfo::SetDirection(BindDirection value)
-{
-    Check(OCI_BindSetDirection(*this, value));
 }
 
 inline BindInfo::BindDirection BindInfo::GetDirection() const
@@ -3965,29 +3943,29 @@ inline void Statement::Bind<Statement>(ostring name, Statement &value, BindInfo:
 }
 
 template <>
-inline void Statement::Bind<CLong, unsigned int>(ostring name, CLong &value, unsigned int maxSize, BindInfo::BindDirection mode)
+inline void Statement::Bind<Clong, unsigned int>(ostring name, Clong &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     Check(OCI_BindLong(*this, name.c_str(), value, maxSize));
     SetLastBindMode(mode);
 }
 
 template <>
-inline void Statement::Bind<CLong, int>(ostring name, CLong &value, int maxSize, BindInfo::BindDirection mode)
+inline void Statement::Bind<Clong, int>(ostring name, Clong &value, int maxSize, BindInfo::BindDirection mode)
 {
-    Bind<CLong, unsigned int>(name, value, (unsigned int) maxSize,  mode);
+    Bind<Clong, unsigned int>(name, value, (unsigned int) maxSize,  mode);
 }
 
 template <>
-inline void Statement::Bind<BLong, unsigned int>(ostring name, BLong &value, unsigned int maxSize, BindInfo::BindDirection mode)
+inline void Statement::Bind<Blong, unsigned int>(ostring name, Blong &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     Check(OCI_BindLong(*this, name.c_str(), value, maxSize));
     SetLastBindMode(mode);
 }
 
 template <>
-inline void Statement::Bind<BLong, int>(ostring name, BLong &value, int maxSize, BindInfo::BindDirection mode)
+inline void Statement::Bind<Blong, int>(ostring name, Blong &value, int maxSize, BindInfo::BindDirection mode)
 {
-    Bind<BLong, unsigned int>(name, value, (unsigned int) maxSize,  mode);
+    Bind<Blong, unsigned int>(name, value, (unsigned int) maxSize,  mode);
 }
 
 template <>
@@ -4840,27 +4818,27 @@ inline File Resultset::Get<File>(ostring name) const
 }
 
 template<>
-inline CLong Resultset::Get<CLong>(unsigned int index) const
+inline Clong Resultset::Get<Clong>(unsigned int index) const
 {
-    return CLong(Check(OCI_GetLong(*this, index)), GetHandle());
+    return Clong(Check(OCI_GetLong(*this, index)), GetHandle());
 }
 
 template<>
-inline CLong Resultset::Get<CLong>(ostring name) const
+inline Clong Resultset::Get<Clong>(ostring name) const
 {
-    return CLong(Check(OCI_GetLong2(*this,name.c_str())), GetHandle());
+    return Clong(Check(OCI_GetLong2(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline BLong Resultset::Get<BLong>(unsigned int index) const
+inline Blong Resultset::Get<Blong>(unsigned int index) const
 {
-    return BLong(Check(OCI_GetLong(*this, index)), GetHandle());
+    return Blong(Check(OCI_GetLong(*this, index)), GetHandle());
 }
 
 template<>
-inline BLong Resultset::Get<BLong>(ostring name) const
+inline Blong Resultset::Get<Blong>(ostring name) const
 {
-    return BLong(Check(OCI_GetLong2(*this,name.c_str())), GetHandle());
+    return Blong(Check(OCI_GetLong2(*this,name.c_str())), GetHandle());
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4893,9 +4871,9 @@ inline ostring Column::GetFullSQLType() const
     return MakeString((otext *) buffer);
 }
 
-inline Column::ColumnType Column::GetType() const
+inline DataType Column::GetType() const
 {
-    return ColumnType((ColumnType::type) Check(OCI_ColumnGetType(*this)));
+	return DataType((DataType::type) Check(OCI_ColumnGetType(*this)));
 }
 
 inline unsigned int Column::GetSubType() const

@@ -164,12 +164,90 @@ typedef void * CallbackPointer;
 namespace ocilib
 {
 
+
+/**
+* @brief
+* Data type enumerated values
+*
+*/
+enum DataTypeValues
+{
+	/** NUMERIC */
+	TypeNumeric = OCI_CDT_NUMERIC,
+	/** DATE */
+	TypeDate = OCI_CDT_DATETIME,
+	/** TEXT */
+	TypeString = OCI_CDT_TEXT,
+	/** LONG / LONG RAW */
+	TypeLong = OCI_CDT_LONG,
+	/** SQL CURSOR */
+	TypeStatement = OCI_CDT_CURSOR,
+	/** CLOB or BLOB */
+	TypeLob = OCI_CDT_LOB,
+	/** FILE */
+	TypeFile = OCI_CDT_FILE,
+	/** TIMESTAMP */
+	TypeTimestamp = OCI_CDT_TIMESTAMP,
+	/** INTERVAL */
+	TypeInterval = OCI_CDT_INTERVAL,
+	/** RAW */
+	TypeRaw = OCI_CDT_RAW,
+	/** Object type */
+	TypeObject = OCI_CDT_OBJECT,
+	/** Collection  */
+	TypeCollection = OCI_CDT_COLLECTION,
+	/** Object REF */
+	TypeReference = OCI_CDT_REF
+};
+
+/**
+* @brief
+* Column data type
+*
+* Possible values are DataTypeValues
+*
+*/
+typedef Enum<DataTypeValues> DataType;
+
+/**
+* @brief
+* Numeric type enumerated values
+*
+*/
+enum NumericTypeValues
+{	
+	/** Signed short */
+	NumericShort = OCI_NUM_SHORT,
+	/** Signed Integer */
+	NumericInt = OCI_NUM_INT,
+	/** Signed Big Integer (Integer or Long Integer depending on the compiler )*/
+	NumericBigInt = OCI_NUM_BIGINT,
+	/** Unsigned short */
+	NumericUnsignedShort = OCI_NUM_USHORT,
+	/** Unsigned Integer */
+	NumericUnsignedInt = OCI_NUM_UINT,
+	/** Unsigned Big Integer (Integer or Long Integer depending on the compiler )*/
+	NumericUnsignedBigInt = OCI_NUM_BIGUINT,
+	/** Double  */
+	NumericDouble = OCI_NUM_DOUBLE,
+	/** Float */
+	NumericFloat = OCI_NUM_FLOAT
+};
+
+/**
+* @brief
+* Numeric data type
+*
+* Possible values are NumericTypeValues
+*
+*/
+typedef Enum<NumericTypeValues> NumericType;
+
 /**
  *
  * @brief
  * Exception class handling all OCILIB erors
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Error and its related methods
  *
  */
@@ -792,7 +870,6 @@ private:
  * @brief
  * static class allowing to manipulate threads
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Thread and its related methods
  *
  * @note
@@ -858,10 +935,8 @@ public:
  * @brief
  * Static class allowing managing mutexes
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Mutex and its related methods
  *
- * @note
  * See @ref OcilibCApiThreading for more details on Oracle multithreading support
  *
  */
@@ -911,7 +986,6 @@ public:
  * @brief
  * Static class allowing to set/get thread local storage (TLS) values for a given unique key
  *
- * @note
  * This class wraps the OCILIB object handle OCI_ThreadKey and its related methods
  *
  * @note
@@ -971,7 +1045,6 @@ public:
   * @brief
   * A connection or session Pool.
   *
-  * @note
   * This class wraps the OCILIB object handle OCI_Pool and its related methods
   *
   */
@@ -1200,7 +1273,6 @@ public:
  * @brief
  * A connection or session with a specific database.
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Connection and its related methods
  *
  */
@@ -1930,7 +2002,6 @@ private:
  * @brief
  * Oracle Transaction object
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Transaction and its related methods
  *
  */
@@ -2047,7 +2118,6 @@ private:
  * @brief
  * Object identififying the SQL datatype DATE.
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Date and its related methods
  *
  */
@@ -2432,7 +2502,6 @@ private:
  * @brief
  * Object identififying the SQL datatype INTERVAL.
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Interval and its related methods
  *
  */
@@ -2521,12 +2590,10 @@ private:
 };
 
 /**
- * @class Timestamp
  *
  * @brief
  * Object identififying the SQL datatype TIMESTAMP.
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Timestamp and its related methods
  *
  */
@@ -2624,12 +2691,9 @@ private:
 };
 
 /**
- * @class Clob
- *
  * @brief
  * Object identififying the SQL datatype CLOB.
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Lob of type OCI_CLOB and its related methods
  *
  */
@@ -2729,12 +2793,10 @@ private:
 };
 
 /**
- * @class Blob
  *
  * @brief
  * Object identififying the SQL datatype BLOB.
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Lob of type OCI_BLOB and its related methods
  *
  */
@@ -2833,12 +2895,10 @@ private:
 };
 
 /**
- * @class File
  *
  * @brief
  * Object identififying the SQL datatype BFILE.
  *
- * @note
  * This class wraps the OCILIB object handle OCI_File and its related methods
  *
  */
@@ -2908,7 +2968,6 @@ private:
  * @brief
  * Provides type information on Oracle Database objects
  *
- * @note
  * This class wraps the OCILIB object handle OCI_TypeInfo and its related methods
  *
  */
@@ -2962,7 +3021,6 @@ private:
  * @brief
  * Object identififying the SQL datatype OBJECT.
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Object and its related methods
  *
  */
@@ -3037,7 +3095,6 @@ private:
  * @brief
  * Object identififying the SQL datatype REF.
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Ref and its related methods
  *
  */
@@ -3073,7 +3130,6 @@ private:
  * @brief
  * Object identififying the SQL datatype VARRAY and NESTED TABLE.
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Coll and its related methods
  *
  */
@@ -3171,7 +3227,6 @@ private:
  * @brief
  * Collection iterator
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Iterator and its related methods
  *
  */
@@ -3201,11 +3256,10 @@ public:
  * @brief
  * Object identififying the SQL datatype LONG.
  *
- * @note
  * This class wraps the OCILIB object handle OCI_LONG of type OCI_CLONG and its related methods
  *
  */
-class CLong : public HandleHolder<OCI_Long *>
+class Clong : public HandleHolder<OCI_Long *>
 {
     friend class Statement;
     friend class Resultset;
@@ -3213,7 +3267,7 @@ class CLong : public HandleHolder<OCI_Long *>
 
 public:
 
-    CLong(const Statement &statement);
+    Clong(const Statement &statement);
 
     ostring Read(unsigned int size);
     unsigned int Write(ostring content);
@@ -3223,18 +3277,17 @@ public:
 
 private:
 
-    CLong(OCI_Long *pLong, Handle *parent = 0);
+    Clong(OCI_Long *pLong, Handle *parent = 0);
 };
 
 /**
  * @brief
  * Object identififying the SQL datatype LONG RAW
  *
- * @note
  * This class wraps the OCILIB object handle OCI_LONG of type OCI_BLONG and its related methods
  *
  */
-class BLong : public HandleHolder<OCI_Long *>
+class Blong : public HandleHolder<OCI_Long *>
 {
     friend class Statement;
     friend class Resultset;
@@ -3242,7 +3295,7 @@ class BLong : public HandleHolder<OCI_Long *>
 
 public:
 
-    BLong(const Statement &statement);
+    Blong(const Statement &statement);
 
     unsigned int Read(void *buffer, unsigned int size);
     unsigned int Write(void *buffer, unsigned int size);
@@ -3252,14 +3305,13 @@ public:
 
 private:
 
-    BLong(OCI_Long *pLong, Handle *parent = 0);
+    Blong(OCI_Long *pLong, Handle *parent = 0);
 };
 
 /**
  * @brief
  * Provides SQL bind informations
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Bind and its related methods
  *
  */
@@ -3276,11 +3328,11 @@ public:
 	*/
     enum BindDirectionValues
     { 
-		/** Input bind variable */
+		/** Input bind variable (will be not modified as it is an input value for the server) */
         In = OCI_BDM_IN,
-		/** Output bind variable */
+		/** Output bind variable (will be modified  as it is an output vaule by the server ) */
 		Out = OCI_BDM_OUT,
-		/** Input / Output bind variable */
+		/** Input / Output bind variable (can be modified as it is an input value that can be modified by the server) */
 		InOut = OCI_BDM_IN_OUT
     };
 
@@ -3293,22 +3345,116 @@ public:
 	*/
     typedef Enum<BindDirectionValues> BindDirection;
 
+	/**
+	* @brief
+	* Return the name of the bind object
+	*
+	*/
     ostring GetName() const;
-    unsigned int GetType() const;
-    unsigned int GetSubType() const;
-    unsigned int GetElemcount() const;
 
+	/**
+	* @brief
+	* Return the OCILIB type of the data associated with the bind object
+	*
+	*/
+	DataType GetType() const;
+
+	/**
+	* @brief
+	* Return the OCILIB object subtype of a column
+	*
+	* @note
+	* This call is valid for the following OCILIB types:
+	* - Scalar numeric types
+	* - Clong and Blong
+	* - Clob and Blob
+	* - File
+	* - Timestamp
+	* - Interval
+	*
+	* @warning
+	* - The returned values must be casted to the matching C++ class GetType() property type.
+	* - For scalar numeric types, returned value must be casted to ocilib::NumericType.
+	* - For a non valid type, it returns 0.
+	*
+	*/
+    unsigned int GetSubType() const;
+
+	/**
+	* @brief
+	* Return the number of elements associated with the bind object
+	*
+	* @return
+	* - For single binds, it returns 1
+	* - For vector binds, it returns the number of element in the bind array
+	*
+	*/
+    unsigned int GetDataCount() const;
+
+	/**
+	* @brief
+	* Return the statement associated with the bind object
+	*
+	*/
     Statement GetStatement() const;
 
-    void SetNull(bool value);
-    void SetNull(bool value, unsigned int pos);
+	/**
+	* @brief
+	* Mark as null or not null the current bind real value(s) used in SQL statements
+	*
+	* @param index - Only valid for vectors : index of the element to check
+	*
+	* @note
+	* There is no notion of null value in C C++ for scalar types.
+	* It's necessary to explicitly tell Oracle that the bind has a null value.
+	* It must be done before an Execute() call
+	*
+	* @warning
+	* For handled based datatypes (non scalar types), OCILIB performs an extra
+	* check on handles and set the bind status to null is the handle is null
+	*
+	* @warning
+	* Index starts with 1
+	*
+	*/
+	void SetDataNull(bool value, unsigned int index = 1);
 
-    bool IsNull() const;
-    bool IsNull(unsigned int pos) const;
+	/**
+	* @brief
+	* Check if the current bind value(s) used in SQL statements is marked as NULL
+	*
+	* @param index - Only valid for vectors : index of the element to check
+	*
+	* @note
+	* If the bind is related to a single host variable, don't use the parameter index
+	* If the bind is related to host vectors, the parameter 'index' refers to the index in the vector
+	* 
+	* @warning
+	* Index starts with 1
+	*
+	*/
+	bool IsDataNull(unsigned int index = 1) const;
 
+	/**
+	* @brief
+	* Set the charset form of the given character based bind object
+	*
+	* @param value - charset form
+	*
+	* @note
+	* This call has to be made after Statement::Prepare() but before Statement::Execute()
+	*
+	* @warning
+	* This call does nothing the bind datatype is not ocilib::TypeString or ocilib::TypeLong
+	*
+	*/
     void SetCharsetForm(Environment::CharsetForm value);
 
-    void SetDirection(BindDirection value);
+	/**
+	* @brief
+	* Get the direction mode 
+  	*
+	*/
     BindDirection GetDirection() const;
 
 private:
@@ -3320,7 +3466,6 @@ private:
 * @brief
 * Object used for executing SQL or PL/SQL statement and returning the produced results.
 *
-* @note
 * This class wraps the OCILIB object handle OCI_Statement and its related methods
 *
 */
@@ -3328,8 +3473,8 @@ class Statement : public HandleHolder<OCI_Statement *>
 {
     friend class Exception;
     friend class Resultset;
-    friend class CLong;
-    friend class BLong;
+    friend class Clong;
+    friend class Blong;
     friend class BindInfo;
 
 public:
@@ -3759,7 +3904,7 @@ public:
 	*
 	* @warning
 	* This method has builtin specialized versions for all C++ native scalar types, Datetime and Statement objects.
-	* For others types (ostring, CLong, Blong, BufferPointer, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
+	* For others types (ostring, Clong, Blong, BufferPointer, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
 	*
 	* @note
 	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
@@ -3804,8 +3949,8 @@ public:
 	* @param mode      - bind direction mode
 	*
 	* @warning
-	* This method has builtin specialized versions for ostring, BufferPointer, CLong, Blong, Timestamp, Interval variables.
-	* - For ostring, CLong, Blong, BufferPointer : Pass the maximum length/size of variables in the parameter extraInfo 
+	* This method has builtin specialized versions for ostring, BufferPointer, Clong, Blong, Timestamp, Interval variables.
+	* - For ostring, Clong, Blong, BufferPointer : Pass the maximum length/size of variables in the parameter extraInfo 
 	* - For Timestamp, Interval : Pass a value of the matching C++ class GetType() property type OR the underlying enumeration type.
 	*
 	* @note
@@ -3830,7 +3975,7 @@ public:
     * - ostring and BufferPointer : use the version that takes an extraInfo parameter
 	*
 	* @note
-	* Statement, Blong and CLong are not supported for register calls
+	* Statement, Blong and Clong are not supported for register calls
 	*
 	* @warning
 	* It is necessary to specify the template datatype in the register call  
@@ -3986,7 +4131,7 @@ public:
 	* @brief
 	* Set the amount of memory pre-fetched by OCI Client
 	*
-	* @param size - amount of memory to fetch
+	* @param value - amount of memory to fetch
 	*
 	* @note
 	* Default value is 0 and the pre-fetch size attribute is used instead.
@@ -4116,7 +4261,6 @@ private:
  * @brief
  * Database resultset
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Resultset and its related methods
  *
  */
@@ -4419,7 +4563,6 @@ private:
  * @brief
  * Encapsulate a Resultset column or object member properties
  *
- * @note
  * This class wraps the OCILIB object handle OCI_Column and its related methods
  *
  */
@@ -4429,50 +4572,6 @@ class Column : public HandleHolder<OCI_Column *>
     friend class Resultset;
 
 public:
-
-	/**
-	* @brief
-	* Column data type enumerated values
-	*
-	*/
-    enum ColumnTypeValues
-    {
-		/** Member is NUMERIC value */
-        TypeNumeric = OCI_CDT_NUMERIC,
-		/** Member is a DATE value */
-		TypeDate = OCI_CDT_DATETIME,
-		/** Member is a TEXT value */
-		TypeString = OCI_CDT_TEXT,
-		/** Member is a LONG / LONG RAW */
-		TypeLong = OCI_CDT_LONG,
-		/** Member is a SQL CURSOR */
-		TypeStatement = OCI_CDT_CURSOR,
-		/** Member is a CLOB or BLOB */
-		TypeLob = OCI_CDT_LOB,
-		/** Member is a FILE */
-		TypeFile = OCI_CDT_FILE,
-		/** Member is a TIMESTAMP */
-		TypeTimestamp = OCI_CDT_TIMESTAMP,
-		/** Member is an INTERVAL */
-		TypeInterval = OCI_CDT_INTERVAL,
-		/** Member is RAW */
-		TypeRaw = OCI_CDT_RAW,
-		/** Member is an object type */
-		TypeObject = OCI_CDT_OBJECT,
-		/** Member is a collection  */
-		TypeCollection = OCI_CDT_COLLECTION,
-		/** Member is an object REF */
-		TypeReference = OCI_CDT_REF
-    };
-
-	/**
-	* @brief
-	* Column data type
-	*
-	* Possible values are Column::ColumnTypeValues
-	*
-	*/
-    typedef Enum<ColumnTypeValues> ColumnType;
 
 	/**
 	* @brief
@@ -4532,7 +4631,7 @@ public:
 	* Return the type of the given column
 	*
 	*/
-    ColumnType GetType() const;
+	DataType GetType() const;
 
 	/**
 	* @brief
@@ -4540,9 +4639,8 @@ public:
 	*
 	* @note
 	* This call is valid for the following OCILIB types:
-    * - Long
-	* - Clob
-	* - BLob
+	* - Clong and Blong
+	* - Clob and Blob
 	* - File
 	* - Timestamp
 	* - Interval
@@ -4648,9 +4746,8 @@ private:
 
 /**
 * @brief
-* Subscription to Database or objects changes
+* Subscription to database or objects changes
 *
-* @note
 * This class wraps the OCILIB object handle OCI_Subscription and its related methods
 *
 * @warning
@@ -4787,7 +4884,6 @@ private:
 * @brief
 * Subscription Event
 *
-* @note
 * This class wraps the OCILIB object handle OCI_Event and its related methods
 * 
 * @warning
@@ -4919,7 +5015,6 @@ private:
 * @brief
 * AQ identified agent for messages delivery
 *
-* @note
 * This class wraps the OCILIB object handle OCI_Agent and its related methods
 *
 */
@@ -5007,7 +5102,6 @@ private:
 * @brief
 * AQ message
 *
-* @note
 * This class wraps the OCILIB object handle OCI_Msg and its related methods
 *
 */
@@ -5391,7 +5485,6 @@ private:
 * @brief
 * Enqueue object for queuing messages into an Oracle Queue
 *
-* @note
 * This class wraps the OCILIB object handle OCI_Enqueue and its related methods
 *
 */
@@ -5569,7 +5662,6 @@ public:
 * @brief
 * Dequeue object for dequeuing messages into an Oracle Queue
 *
-* @note
 * This class wraps the OCILIB object handle OCI_Dequeue and its related methods
 *
 */
@@ -6253,7 +6345,6 @@ public:
 * @brief
 * Oracle Direct path loading encapsulation
 *
-* @note
 * This class wraps the OCILIB object handle OCI_DirPath and its related methods
 *
 */
