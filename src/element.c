@@ -188,8 +188,30 @@ boolean OCI_ElemSetNullIndicator
 )
 {
     boolean res = TRUE;
+	boolean set = FALSE;
 
-	if (elem->pind)
+	if (!elem->pind)
+	{
+		return FALSE;
+	}
+
+	if (elem->typinf->cols[0].datatype == OCI_CDT_OBJECT)
+	{
+		OCI_Object *obj = (OCI_Object*) elem->obj;
+
+		if (obj)
+		{
+			elem->pind = obj->tab_ind;
+			set = TRUE;			
+		}
+		else
+		{
+			value = OCI_IND_NULL;
+		}
+
+	}
+	
+	if (!set)
 	{
 		*elem->pind = value;
 	}
