@@ -1146,7 +1146,7 @@ typedef unsigned int big_uint;
 
 /* fetching */
 
-#define OCI_FETCH_SIZE the number of rows fetched per internal server fetch cal                      20
+#define OCI_FETCH_SIZE                      20
 #define OCI_PREFETCH_SIZE                   20
 #define OCI_LONG_EXPLICIT                   1
 #define OCI_LONG_IMPLICIT                   2
@@ -1656,7 +1656,7 @@ typedef unsigned int big_uint;
 /* string constants */
 
 #define OCILIB_DRIVER_NAME                  OTEXT("OCILIB")
-#define OCI_STRING_NULL            OCI_GetLongMaxSize         OTEXT("NULL")
+#define OCI_STRING_NULL                     OTEXT("NULL")
 #define OCI_STRING_EMPTY                    OTEXT("")
 #define OCI_STRING_FORMAT_DATE              OTEXT("YYYY-MM-DD")
 #define OCI_STRING_DEFAULT_PREC             3
