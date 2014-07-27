@@ -51,7 +51,7 @@
             func_init;                                                              \
         }                                                                           \
                                                                                     \
-        if (!elem->obj)                                                             \
+        if (elem->obj)                                                              \
         {                                                                           \
             res = func_assign;                                                      \
                                                                                     \
@@ -69,7 +69,7 @@
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);                                    \
     OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == elemtype, FALSE); \
                                                                                     \
-    if (OCI_IND_NULL != elem->ind)                                                  \
+    if (OCI_IND_NULL != *elem->pind)                                                \
     {                                                                               \
         if (!elem->init)                                                            \
         {                                                                           \
@@ -189,10 +189,10 @@ boolean OCI_ElemSetNullIndicator
 {
     boolean res = TRUE;
 
-    if (elem->pind)
-    {
-        *elem->pind = value;
-    }
+	if (elem->pind)
+	{
+		*elem->pind = value;
+	}
 
     return res;
 }
