@@ -183,7 +183,7 @@ static Connection con;
 
 int omain(int argc, oarg* argv[])
 {
-    ostring home;
+	ostring home;
     ostring dbs;
     ostring usr;
     ostring pwd;
@@ -623,11 +623,6 @@ void test_piecewise_fetch(void)
     while (rs1++)
     {
         Blong lg = rs1.Get<Blong>(1);
-
-        char buffer[SIZE_BUF];
-        int bytesRead;
-
-        while ((bytesRead = lg.Read(buffer, SIZE_BUF))) {}
 
         std::ocout << std::endl << lg.GetSize() << OTEXT(" bytes read") << std::endl;
     }
@@ -1100,7 +1095,7 @@ void test_object_fetch(void)
 
         char buffer[11];
         unsigned int len = 10;
-        obj.Get<void *>(OTEXT("VAL_RAW"), (BufferPointer) &buffer, len);
+        obj.Get<void *>(OTEXT("VAL_RAW"), (RawPointer) &buffer, len);
         buffer[len] = 0;
         std::cout << ".... val_raw      : " << buffer << std::endl;
 

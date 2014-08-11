@@ -109,13 +109,13 @@ namespace ocilib
 typedef std::basic_string<otext, std::char_traits<otext>, std::allocator<otext> > ostring;
 
 /**
- * @typedef ocilib::BufferPointer
+ * @typedef ocilib::RawPointer 
  *
  * @brief
  * Alias for the generic void pointer
  *
  */
-typedef void * BufferPointer;
+typedef void * RawPointer;
 
 /**
  * @typedef ocilib::UnknownHandle
@@ -1026,7 +1026,7 @@ public:
      * @param value - user value to set
      *
      */
-    static void SetValue(ostring name, void *value);
+	static void SetValue(ostring name, RawPointer value);
 
     /**
      * @brief
@@ -1038,7 +1038,7 @@ public:
      * Thread key value on success otherwise FALSE
      *
      */
-    static void * GetValue(ostring name);
+	static RawPointer GetValue(ostring name);
 };
 
 /**
@@ -1979,7 +1979,7 @@ public:
      * Return the pointer to user data previously associated with the connection
      *
      */
-    void * GetUserData();
+	RawPointer GetUserData();
 
     /**
      * @brief
@@ -1991,7 +1991,7 @@ public:
      * TRUE on success otherwise FALSE
      *
      */
-    void SetUserData(void *value);
+	void SetUserData(RawPointer value);
 
 private:
 
@@ -2858,9 +2858,9 @@ public:
 
     Blob(const Connection &connection);
 
-    unsigned int Read(void *buffer, unsigned int size);
-    unsigned int Write(void *buffer, unsigned int size);
-    unsigned int Append(void *buffer, unsigned int size);
+	unsigned int Read(RawPointer buffer, unsigned int size);
+	unsigned int Write(RawPointer buffer, unsigned int size);
+	unsigned int Append(RawPointer buffer, unsigned int size);
     bool Seek(SeekMode seekMode, big_uint offset);
 
     void Append(const Blob &other);
@@ -2939,7 +2939,7 @@ public:
     File(const Connection &connection);
     File(const Connection &connection, ostring directory, ostring name);
 
-    unsigned int Read(void *buffer, unsigned int size);
+	unsigned int Read(RawPointer buffer, unsigned int size);
     bool Seek(SeekMode seekMode, big_uint offset);
 
     void Assign(const File &other);
@@ -3267,13 +3267,40 @@ class Clong : public HandleHolder<OCI_Long *>
 
 public:
 
+	/**
+	* @brief
+	* Contructor
+	*
+	* @param statement - statement object that will handle operations on the Clong buffer
+	*
+	*/
     Clong(const Statement &statement);
 
-    ostring Read(unsigned int size);
-    unsigned int Write(ostring content);
+	/**
+	* @brief
+	* Write the given string into the Clong Object
+	*
+	* @param content - string to write
+	*
+	* @return
+	* Number of character written
+	*
+	*/
+	unsigned int Write(ostring content);
 
-    unsigned int GetSize() const;
-    ostring GetContent() const;
+	/**
+	* @brief
+	* Return the buffer length 
+	*
+	*/
+	unsigned int GetLength() const;
+    
+	/**
+	* @brief
+	* Return the string read from a fetch sequence
+	*
+	*/
+	ostring GetContent() const;
 
 private:
 
@@ -3295,13 +3322,41 @@ class Blong : public HandleHolder<OCI_Long *>
 
 public:
 
+	/**
+	* @brief
+	* Contructor
+	*
+	* @param statement - statement object that will handle operations on the Blong buffer
+	*
+	*/
     Blong(const Statement &statement);
+	
+	/**
+	* @brief
+	* Write the given raw buffer into the Blong Object
+	*
+	* @param buffer - the pointer to a buffer
+	* @param len    - Number of bytes to write from the given buffer
+	*
+	* @return
+	* Number of bytes written
+	*
+	*/
+	unsigned int Write(RawPointer buffer, unsigned int size);
 
-    unsigned int Read(void *buffer, unsigned int size);
-    unsigned int Write(void *buffer, unsigned int size);
-
+	/**
+	* @brief
+	* Return the buffer size
+	*
+	*/
     unsigned int GetSize() const;
-    void * GetContent() const;
+
+	/**
+	* @brief
+	* Return the internal raw buffer read from a fetch sequence
+	*
+	*/
+	RawPointer GetContent() const;
 
 private:
 
@@ -3904,7 +3959,7 @@ public:
 	*
 	* @warning
 	* This method has builtin specialized versions for all C++ native scalar types, Datetime and Statement objects.
-	* For others types (ostring, Clong, Blong, BufferPointer, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
+	* For others types (ostring, Clong, Blong, RawPointer , Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
 	*
 	* @note
 	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
@@ -3949,8 +4004,8 @@ public:
 	* @param mode      - bind direction mode
 	*
 	* @warning
-	* This method has builtin specialized versions for ostring, BufferPointer, Clong, Blong, Timestamp, Interval variables.
-	* - For ostring, Clong, Blong, BufferPointer : Pass the maximum length/size of variables in the parameter extraInfo 
+	* This method has builtin specialized versions for ostring, RawPointer , Clong, Blong, Timestamp, Interval variables.
+	* - For ostring, Clong, Blong, RawPointer : Pass the maximum length/size of variables in the parameter extraInfo 
 	* - For Timestamp, Interval : Pass a value of the matching C++ class GetType() property type OR the underlying enumeration type.
 	*
 	* @note
@@ -3972,7 +4027,7 @@ public:
 	* @warning
 	* This method has builtin specialized versions for all supported types except:
 	* - Timestamp and Interval, Object and Reference : use the version that takes a TypeInfo parameter
-    * - ostring and BufferPointer : use the version that takes an extraInfo parameter
+    * - ostring and RawPointer : use the version that takes an extraInfo parameter
 	*
 	* @note
 	* Statement, Blong and Clong are not supported for register calls
@@ -4015,7 +4070,7 @@ public:
 	* @param extraInfo - Extra information needed for the bind call
 	*
 	* @warning
-	* This method has builtin specialized versions for ostring and BufferPointer variables.
+	* This method has builtin specialized versions for ostring and RawPointer variables.
 	*  Pass the maximum length/size of variables in the parameter extraInfo
 	*
 	* @note
@@ -4342,7 +4397,7 @@ public:
 	* @warning
 	* this version of Get() is currently used for RAW based values that
 	* need to copy data to a given buffer
-	* Thus, Use BufferPointer as TDataType
+	* Thus, Use RawPointer as TDataType
 	*
 	* @note
 	* Column position starts at 1.
@@ -4364,7 +4419,7 @@ public:
 	* @warning
 	* this version of Get() is currently used for RAW based values that
 	* need to copy data to a given buffer.
-	* Thus, Use BufferPointer as TDataType
+	* Thus, Use RawPointer as TDataType
     *
 	* @note
 	* The column name is case insensitive.
@@ -5205,7 +5260,7 @@ public:
 	* On output, parameter 'size' holds the number of bytes copied into the given buffer
 	*
 	*/
-	void Get(BufferPointer &value, unsigned int &size);
+	void Get(RawPointer &value, unsigned int &size);
 
 	/**
 	* @brief
@@ -5215,7 +5270,7 @@ public:
 	* @param size - Raw data size
 	*
 	*/
-    void Set(const BufferPointer &value, unsigned int size);
+    void Set(const RawPointer &value, unsigned int size);
 
 	/**
 	* @brief
@@ -5257,7 +5312,7 @@ public:
 	* On output, parameter 'size' holds the number of bytes copied into the given buffer
 	*
 	*/
-    void GetID(BufferPointer &value, unsigned int &size) const;
+    void GetID(RawPointer &value, unsigned int &size) const;
 
 	/**
 	* @brief
@@ -5363,7 +5418,7 @@ public:
 	* On output, parameter 'size' holds the number of bytes copied into the given buffer
 	*
 	*/
-    void GetOriginalID(BufferPointer value, unsigned int &size) const;
+    void GetOriginalID(RawPointer value, unsigned int &size) const;
 
 	/**
 	* @brief
@@ -5377,7 +5432,7 @@ public:
 	* message in the previous queue.
 	*
 	*/
-    void SetOriginalID(const BufferPointer &value, unsigned int size);
+    void SetOriginalID(const RawPointer &value, unsigned int size);
 
 	/**
 	* @brief
@@ -5636,7 +5691,7 @@ public:
 	*
 	*/
 
-    void GetRelativeMsgID(BufferPointer value, unsigned int &size) const;
+    void GetRelativeMsgID(RawPointer value, unsigned int &size) const;
 
 	/**
 	* @brief
@@ -5655,7 +5710,7 @@ public:
 	* see SetMode() for more details
 	*
 	*/
-    void SetRelativeMsgID(const BufferPointer &value, unsigned int size);
+    void SetRelativeMsgID(const RawPointer &value, unsigned int size);
 };
 
 /**
@@ -5852,7 +5907,7 @@ public:
 	* see SetRelativeMsgID() for more details
 	*
 	*/
-    void GetRelativeMsgID(BufferPointer value, unsigned int &size) const;
+    void GetRelativeMsgID(RawPointer value, unsigned int &size) const;
 
 	/**
 	* @brief
@@ -5862,7 +5917,7 @@ public:
 	* @param size     - size of the message identitier
 	*
 	*/
-    void SetRelativeMsgID(const BufferPointer &value, unsigned int size);
+    void SetRelativeMsgID(const RawPointer &value, unsigned int size);
 
 	/**
 	* @brief
@@ -6503,7 +6558,7 @@ public:
      * Setting entries content piece by piece may be supported in future releases
      *
      */
-    void SetEntry(unsigned int rowIndex, unsigned int colIndex, const BufferPointer &value,
+    void SetEntry(unsigned int rowIndex, unsigned int colIndex, const RawPointer &value,
                   unsigned int size, bool complete = true);
 
     /**

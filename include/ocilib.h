@@ -10787,9 +10787,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LongRead
  *                  character (OCI_CLONG)
  *
  * @return
- * Number of bytes (OCI_BLONG) / character (OCI_CLONG) written on success
- * - 0 if there is nothing more to read
- * - 0 on failure
+ * Number of bytes (OCI_BLONG) / character (OCI_CLONG) written on success otherwise 0 on failure
  *
  */
 

@@ -292,8 +292,8 @@ protected:
             return _parent;
         }
 
-        BufferPointer GetExtraInfos() const;
-        void   SetExtraInfos(BufferPointer extraInfo);
+        RawPointer GetExtraInfos() const;
+        void   SetExtraInfos(RawPointer extraInfo);
 
         bool IsLastHolder(HandleHolder<TSmartHandleType> *holder) const;
 
@@ -309,7 +309,7 @@ protected:
         THandleType _handle;
         HandleFreeFunc _func;
         Handle *_parent;
-        BufferPointer _extraInfo;
+        RawPointer _extraInfo;
 
     };
 

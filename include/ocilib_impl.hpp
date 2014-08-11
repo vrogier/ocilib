@@ -582,14 +582,14 @@ inline TSmartHandleType HandleHolder<THandleType>::SmartHandle<TSmartHandleType>
 
 template <class THandleType>
 template <class TSmartHandleType>
-inline void * HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetExtraInfos() const
+inline RawPointer HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetExtraInfos() const
 {
     return _extraInfo;
 }
 
 template <class THandleType>
 template <class TSmartHandleType>
-inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::SetExtraInfos(void *extraInfo)
+inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::SetExtraInfos(RawPointer extraInfo)
 {
     _extraInfo = extraInfo;
 }
@@ -681,7 +681,7 @@ inline void Environment::Initialize(EnvironmentFlags mode, ostring libpath)
 
     Check();
 
-    GetEnvironmentHandle().Initialize((void *) OCI_HandleGetEnvironment(), ociMode);
+    GetEnvironmentHandle().Initialize((RawPointer) OCI_HandleGetEnvironment(), ociMode);
 }
 
 inline void Environment::Cleanup()
@@ -755,7 +755,7 @@ inline void Environment::SetHAHandler(HAHandlerProc handler)
 
 inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp)
 {
-    HAHandlerProc handler = (HAHandlerProc) GetEnvironmentHandle().Callbacks.Get((void *) GetEnvironmentHandle());
+    HAHandlerProc handler = (HAHandlerProc) GetEnvironmentHandle().Callbacks.Get((RawPointer) GetEnvironmentHandle());
 
     if (handler)
     {
@@ -871,7 +871,7 @@ inline void Thread::Destroy(ThreadHandle handle)
     Check(OCI_ThreadFree(handle));
 }
 
-inline void Thread::Run(ThreadHandle handle, ThreadProc func, void *args)
+inline void Thread::Run(ThreadHandle handle, ThreadProc func, RawPointer args)
 {
     Check(OCI_ThreadRun(handle, func, args));
 }
@@ -890,12 +890,12 @@ inline void ThreadKey::Create(ostring name, ThreadKeyFreeProc freeProc)
     Check(OCI_ThreadKeyCreate(name.c_str(), freeProc));
 }
 
-inline void ThreadKey::SetValue(ostring name, void *value)
+inline void ThreadKey::SetValue(ostring name, RawPointer value)
 {
     Check(OCI_ThreadKeySetValue(name.c_str(), value));
 }
 
-inline void * ThreadKey::GetValue(ostring name)
+inline RawPointer ThreadKey::GetValue(ostring name)
 {
     return Check(OCI_ThreadKeyGetValue(name.c_str()));
 }
@@ -1256,7 +1256,7 @@ inline void* Connection::GetUserData()
     return Check(OCI_GetUserData(*this));
 }
 
-inline void Connection::SetUserData(void *value)
+inline void Connection::SetUserData(RawPointer value)
 {
     Check(OCI_SetUserData(*this, value));
 }
@@ -2070,19 +2070,19 @@ inline ostring Clob::Read(unsigned int size)
 {
     ManagedBuffer<otext> buffer = new otext[size+1];
 
-    Check(OCI_LobRead(*this, (void *) buffer, size));
+    Check(OCI_LobRead(*this, (RawPointer) buffer, size));
 
     return MakeString( (const otext *) buffer);
 }
 
 inline unsigned int Clob::Write(ostring content)
 {
-    return Check(OCI_LobWrite(*this, (void *) content.c_str(), (unsigned int) content.size()));
+    return Check(OCI_LobWrite(*this, (RawPointer) content.c_str(), (unsigned int) content.size()));
 }
 
 inline unsigned int Clob::Append(ostring content)
 {
-    return Check(OCI_LobAppend(*this, (void *) content.c_str(), (unsigned int) content.size()));
+    return Check(OCI_LobAppend(*this, (RawPointer) content.c_str(), (unsigned int) content.size()));
 }
 
 inline bool Clob::Seek(SeekMode seekMode, big_uint offset)
@@ -2172,7 +2172,7 @@ inline Clob::operator ostring() const
 
     ManagedBuffer<otext> buffer = new otext[size+1];
 
-    Check(OCI_LobRead(*this, (void *) buffer, (unsigned int) size));
+    Check(OCI_LobRead(*this, (RawPointer) buffer, (unsigned int) size));
     Check(OCI_LobSeek(*this, offset, OCI_SEEK_SET)); 
 
     return MakeString( (const otext *) buffer);
@@ -2214,17 +2214,17 @@ inline Blob::Blob(OCI_Lob *pLob, Handle *parent)
     Acquire(pLob, 0, parent);
 }
 
-inline unsigned int Blob::Read(void *buffer, unsigned int size) 
+inline unsigned int Blob::Read(RawPointer buffer, unsigned int size) 
 {
     return Check(OCI_LobRead(*this, buffer, size));
 }
 
-inline unsigned int Blob::Write(void *buffer, unsigned int size)
+inline unsigned int Blob::Write(RawPointer buffer, unsigned int size)
 {
     return Check(OCI_LobWrite(*this, buffer, size));
 }
 
-inline unsigned int Blob::Append(void *buffer, unsigned int size)
+inline unsigned int Blob::Append(RawPointer buffer, unsigned int size)
 {
     return Check(OCI_LobAppend(*this, buffer, size));
 }
@@ -2352,7 +2352,7 @@ inline File::File(OCI_File *pFile, Handle *parent)
     Acquire(pFile, 0, parent);
 }
 
-inline unsigned int File::Read(void *buffer, unsigned int size)
+inline unsigned int File::Read(RawPointer buffer, unsigned int size)
 {
     return Check(OCI_FileRead(*this, buffer, size));
 }
@@ -2617,7 +2617,7 @@ inline File Object::Get<File>(ostring name) const
 }
 
 template<>
-inline void Object::Get<BufferPointer>(ostring name, BufferPointer value, unsigned int &size) const
+inline void Object::Get<RawPointer>(ostring name, RawPointer value, unsigned int &size) const
 {
     Check(OCI_ObjectGetRaw(*this,name.c_str(), value, size));
 }
@@ -2731,7 +2731,7 @@ inline void Object::Set<File>(ostring name, const File &value)
 }
 
 template<>
-inline void Object::Set<BufferPointer>(ostring name, const BufferPointer & value, unsigned int size)
+inline void Object::Set<RawPointer>(ostring name, const RawPointer & value, unsigned int size)
 {
     Check(OCI_ObjectSetRaw(*this, name.c_str(), value, size));
 }
@@ -2997,7 +2997,7 @@ inline ostring Collection::GetElem<ostring>(OCI_Elem *elem, Handle *parent)
 }
 
 template<>
-inline void Collection::GetElem<BufferPointer>(OCI_Elem *elem, BufferPointer value, unsigned int &size)
+inline void Collection::GetElem<RawPointer>(OCI_Elem *elem, RawPointer value, unsigned int &size)
 {
     Check(OCI_ElemGetRaw(elem, value, size));
 }
@@ -3112,7 +3112,7 @@ inline void Collection::SetElem<ostring>(OCI_Elem *elem, const ostring &value)
 }
 
 template<>
-inline void Collection::SetElem<BufferPointer>(OCI_Elem *elem, const BufferPointer value, unsigned int size)
+inline void Collection::SetElem<RawPointer>(OCI_Elem *elem, const RawPointer value, unsigned int size)
 {
     Check(OCI_ElemSetRaw(elem, value, size));
 }
@@ -3254,21 +3254,12 @@ inline Clong::Clong(OCI_Long *pLong, Handle* parent)
     Acquire(pLong, 0, parent);
 }
 
-inline ostring Clong::Read(unsigned int size)
-{
-    ManagedBuffer<otext> buffer = new otext[size+1];
-
-    size = Check(OCI_LongRead(*this, (void *) buffer, size));
-
-    return MakeString( (const otext *) buffer);
-}
-
 inline unsigned int Clong::Write(ostring content)
 {
-    return Check(OCI_LongWrite(*this, (void *) content.c_str(), (unsigned int) content.size()));
+    return Check(OCI_LongWrite(*this, (RawPointer) content.c_str(), (unsigned int) content.size()));
 }
 
-inline unsigned int Clong::GetSize() const
+inline unsigned int Clong::GetLength() const
 {
     return Check(OCI_LongGetSize(*this));
 }
@@ -3292,12 +3283,7 @@ inline Blong::Blong(OCI_Long *pLong, Handle *parent)
     Acquire(pLong, 0, parent);
 }
 
-inline unsigned int Blong::Read(void *buffer, unsigned int size)
-{
-    return Check(OCI_LongRead(*this ,buffer, size));
-}
-
-inline unsigned int Blong::Write(void *buffer, unsigned int size)
+inline unsigned int Blong::Write(RawPointer buffer, unsigned int size)
 {
     return Check(OCI_LongWrite(*this ,buffer, size));
 }
@@ -3307,7 +3293,7 @@ inline unsigned int Blong::GetSize() const
     return Check(OCI_LongGetSize(*this));
 }
 
-inline void * Blong::GetContent() const
+inline RawPointer Blong::GetContent() const
 {
     return  Check(OCI_LongGetBuffer(*this));
 }
@@ -3999,16 +3985,16 @@ inline void Statement::Bind<ostring, int>(ostring name, ostring &value, int maxS
 }
 
 template <>
-inline void Statement::Bind<BufferPointer, unsigned int>(ostring name, BufferPointer &value, unsigned int maxSize, BindInfo::BindDirection mode)
+inline void Statement::Bind<RawPointer, unsigned int>(ostring name, RawPointer &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     Check(OCI_BindRaw(*this, name.c_str(), value, maxSize));
     SetLastBindMode(mode);
 }
 
 template <>
-inline void Statement::Bind<BufferPointer,  int>(ostring name, BufferPointer &value,  int maxSize, BindInfo::BindDirection mode)
+inline void Statement::Bind<RawPointer,  int>(ostring name, RawPointer &value,  int maxSize, BindInfo::BindDirection mode)
 {
-     Bind<void *, unsigned int>(name, value, (unsigned int) maxSize,  mode);
+     Bind<RawPointer, unsigned int>(name, value, (unsigned int) maxSize,  mode);
 }
 
 template <>
@@ -4152,12 +4138,12 @@ inline void Statement::Bind<ostring, int>(ostring name, std::vector<ostring> &va
 }
 
 template <>
-inline void Statement::Bind<BufferPointer, unsigned int>(ostring name, std::vector<BufferPointer> &values, unsigned int maxSize, BindInfo::BindDirection mode)
+inline void Statement::Bind<RawPointer, unsigned int>(ostring name, std::vector<RawPointer> &values, unsigned int maxSize, BindInfo::BindDirection mode)
 {
 	BindArray * bnd = new BindArray(name, *this);
-	bnd->SetVector<BufferPointer, void *>(values, mode, maxSize + 1);
+	bnd->SetVector<RawPointer, RawPointer>(values, mode, maxSize + 1);
 
-    if (OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<void *, void *>(), maxSize, 0))
+    if (OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<RawPointer, RawPointer>(), maxSize, 0))
     {
         BindsHolder *bindsHolder = GetBindsHolder(true);
         bindsHolder->AddBindObject(bnd);
@@ -4292,13 +4278,13 @@ inline void Statement::Register<ostring, int>(ostring name, int len)
 }
 
 template <>
-inline void Statement::Register<BufferPointer, unsigned int>(ostring name, unsigned int len)
+inline void Statement::Register<RawPointer, unsigned int>(ostring name, unsigned int len)
 {
     Check(OCI_RegisterRaw(*this, name.c_str(), len));
 }
 
 template <>
-inline void Statement::Register<BufferPointer, int>(ostring name, int len)
+inline void Statement::Register<RawPointer, int>(ostring name, int len)
 {
   Register<ostring, unsigned int>(name,(unsigned int) len);
 }
@@ -4686,13 +4672,13 @@ inline ostring Resultset::Get<ostring>(ostring name) const
 }
 
 template<>
-inline void Resultset::Get<BufferPointer>(unsigned int index, BufferPointer value, unsigned int &size) const
+inline void Resultset::Get<RawPointer>(unsigned int index, RawPointer value, unsigned int &size) const
 {
     Check(OCI_GetRaw(*this, index, value, size));
 }
 
 template<>
-inline void Resultset::Get<BufferPointer>(ostring name, BufferPointer value, unsigned int &size) const
+inline void Resultset::Get<RawPointer>(ostring name, RawPointer value, unsigned int &size) const
 {
     Check(OCI_GetRaw2(*this,name.c_str(), value, size));
 }
@@ -5096,12 +5082,12 @@ inline void Message::Set(const Object &value)
     Check(OCI_MsgSetObject(*this, value));
 }
 
-inline void Message::Get(BufferPointer &value, unsigned int &size)
+inline void Message::Get(RawPointer &value, unsigned int &size)
 {
     Check(OCI_MsgGetRaw(*this, value, &size));
 }
 
-inline void Message::Set(const BufferPointer &value, unsigned int size)
+inline void Message::Set(const RawPointer &value, unsigned int size)
 {
     Check(OCI_MsgSetRaw(*this, value, size));
 }
@@ -5121,7 +5107,7 @@ inline Message::MessageState Message::GetState() const
     return MessageState((MessageState::type) Check(OCI_MsgGetState(*this)));
 }
 
-inline void Message::GetID(BufferPointer &value, unsigned int &size) const
+inline void Message::GetID(RawPointer &value, unsigned int &size) const
 {
     Check(OCI_MsgGetID(*this, value, &size));
 }
@@ -5156,12 +5142,12 @@ inline void Message::SetPriority(int value)
     Check(OCI_MsgSetPriority(*this, value));
 }
 
-inline void Message::GetOriginalID(BufferPointer value, unsigned int &size) const
+inline void Message::GetOriginalID(RawPointer value, unsigned int &size) const
 {
     Check(OCI_MsgGetOriginalID(*this, value, &size));
 }
 
-inline void Message::SetOriginalID(const BufferPointer &value, unsigned int size)
+inline void Message::SetOriginalID(const RawPointer &value, unsigned int size)
 {
     Check(OCI_MsgSetOriginalID(*this, value, size));
 }
@@ -5243,12 +5229,12 @@ inline void Enqueue::SetMode(EnqueueMode value)
     Check(OCI_EnqueueSetSequenceDeviation(*this, value));
 }
 
-inline void Enqueue::GetRelativeMsgID(BufferPointer value, unsigned int &size) const
+inline void Enqueue::GetRelativeMsgID(RawPointer value, unsigned int &size) const
 {
     Check(OCI_EnqueueGetRelativeMsgID(*this, value, &size));
 }
 
-inline void Enqueue::SetRelativeMsgID(const BufferPointer &value, unsigned int size)
+inline void Enqueue::SetRelativeMsgID(const RawPointer &value, unsigned int size)
 {
     Check(OCI_EnqueueSetRelativeMsgID(*this, value, size));
 }
@@ -5297,12 +5283,12 @@ inline void Dequeue::SetCorrelation(ostring value)
     Check(OCI_DequeueSetCorrelation(*this, value.c_str()));
 }
 
-inline void Dequeue::GetRelativeMsgID(BufferPointer value, unsigned int &size) const
+inline void Dequeue::GetRelativeMsgID(RawPointer value, unsigned int &size) const
 {
     Check(OCI_DequeueGetRelativeMsgID(*this, value, &size));
 }
 
-inline void Dequeue::SetRelativeMsgID(const BufferPointer &value, unsigned int size)
+inline void Dequeue::SetRelativeMsgID(const RawPointer &value, unsigned int size)
 {
     Check(OCI_DequeueSetRelativeMsgID(*this, value, size));
 }
@@ -5388,10 +5374,10 @@ inline void DirectPath::SetColumn(unsigned int colIndex, ostring name, unsigned 
 
 inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex,  const ostring &value,  bool complete)
 {
-    Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, (void *) value.c_str(), (unsigned int) value.size(), complete));
+    Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, (RawPointer) value.c_str(), (unsigned int) value.size(), complete));
 }
 
-inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex,  const BufferPointer &value, unsigned int size,  bool complete )
+inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex,  const RawPointer &value, unsigned int size,  bool complete )
 {
     Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, value, size, complete));
 }
