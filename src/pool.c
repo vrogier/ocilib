@@ -51,19 +51,6 @@ boolean OCI_PoolClose
 
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, FALSE);
 
-    /* free all connections */
-
-    OCI_ListForEach(pool->cons, (POCI_LIST_FOR_EACH) OCI_ConnectionClose);
-    OCI_ListClear(pool->cons);
-    OCI_ListFree(pool->cons);
-
-    pool->cons = NULL;
-
-    if (OCI_LIB_THREADED)
-    {
-        OCI_MutexFree(pool->mutex);
-    }
-
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
     if (OCILib.version_runtime >= OCI_9_0)
@@ -175,19 +162,6 @@ OCI_Pool * OCI_API OCI_PoolCreate
     if (item)
     {
         pool = (OCI_Pool *) item->data;
-
-        /* create internal lists */
-
-        pool->cons = OCI_ListCreate(OCI_IPC_CONNECTION);
-
-        if (OCI_LIB_THREADED)
-        {
-            /* create mutex for OCI_PoolGetConnection() */
-
-            pool->mutex = OCI_MutexCreateInternal();
-
-            res = (pool->mutex != NULL);
-        }
     }
     else
     {
@@ -402,10 +376,6 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
     #endif
 
-        while (res && (min_con--) > 0)
-        {
-            res = (NULL != OCI_ConnectionAllocate(pool, pool->db, pool->user, pool->pwd, pool->mode));
-        }
     }
     else
     {
@@ -449,96 +419,14 @@ boolean OCI_API OCI_PoolFree
 OCI_Connection * OCI_API OCI_PoolGetConnection
 (
     OCI_Pool    *pool,
-    const otext *tag
+    const otext	*tag
 )
 {
     OCI_Connection *con = NULL;
-    OCI_Item *item      = NULL;
-    boolean res         = FALSE;
-    boolean found       = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, NULL);
 
-    if (OCI_LIB_THREADED)
-    {
-        OCI_MutexAcquire(pool->mutex);
-    }
-
-    /* first, try to find an unused OCI_Connection in list */
-
-    item = pool->cons->head;
-
-    while (item)
-    {
-        con = (OCI_Connection *) item->data;
-
-        if (((OCILib.version_runtime >= OCI_9_0) && (con->cstate == OCI_CONN_ALLOCATED)) ||
-            ((OCILib.version_runtime <  OCI_9_0) && (con->cstate == OCI_CONN_ATTACHED )))
-        {
-            found = TRUE;
-            break;
-        }
-
-        item = item->next;
-    }
-
-    if (!found)
-    {
-        con = NULL;
-
-        /* no available connection found ! Try to allocate a new one... */
-
-        if (OCILib.version_runtime >= OCI_9_0 || pool->cons->count < pool->max)
-        {
-            ub4 i, nb;
-            OCI_Connection *c = NULL;
-
-            nb = pool->nb_opened + pool->incr;
-
-            if (nb > pool->max)
-            {
-                nb = pool->max;
-            }
-
-            for (i = pool->nb_opened; i < nb; i++)
-            {
-                c = OCI_ConnectionAllocate(pool, pool->db, pool->user,
-                                           pool->pwd, pool->mode);
-
-                if (i == pool->nb_opened && c != NULL)
-                {
-                    con = c;
-                }
-            }
-        }
-    }
-
-    if (con)
-    {
-        res = TRUE;
-
-        if (OCI_CONN_ALLOCATED == con->cstate)
-        {
-            res = res && OCI_ConnectionAttach(con);
-        }
-
-        res = res &&  OCI_ConnectionLogon(con, NULL, tag);
-
-        if (!res)
-        {
-            OCI_ConnectionFree(con);
-            con = NULL;
-        }
-    }
-    else
-    {
-        con = NULL;
-    }
-
-    if (OCI_LIB_THREADED)
-    {
-        OCI_MutexRelease(pool->mutex);
-    }
+    con = OCI_ConnectionCreateInternal(pool, pool->db, pool->user, pool->pwd, pool->mode, tag);
 
     /* for regular connection pool, set the statement cache size to 
        retrieved connection */
@@ -554,8 +442,6 @@ OCI_Connection * OCI_API OCI_PoolGetConnection
 
 #endif
 
-    OCI_RESULT(res);
-
     return con;
 }
 
@@ -568,11 +454,46 @@ unsigned int OCI_API OCI_PoolGetTimeout
     OCI_Pool *pool
 )
 {
+    boolean res   = TRUE;
+    ub4     value = 0;
+
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, 0);
 
-    OCI_RESULT(TRUE);
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
-    return pool->timeout;
+    if (OCILib.version_runtime >= OCI_9_0)
+    {
+        ub4 attr = 0;
+
+        if (OCI_HTYPE_CPOOL == pool->htype)
+        {
+            attr = OCI_ATTR_CONN_TIMEOUT;
+        }
+
+    #if OCI_VERSION_COMPILE >= OCI_9_2
+
+        else
+        {
+            attr = OCI_ATTR_SPOOL_TIMEOUT;
+        }
+
+    #endif
+
+        OCI_CALL3
+        (
+            res, pool->err,
+
+            OCIAttrGet((dvoid *)pool->handle, (ub4)pool->htype,
+                        (dvoid *)&value, (ub4 *)NULL,
+                        (ub4)attr, pool->err)
+        )
+    }
+
+#endif
+
+    OCI_RESULT(res);
+
+    return value;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -622,11 +543,6 @@ boolean OCI_API OCI_PoolSetTimeout
 
 #endif
 
-    if (res)
-    {
-        pool->timeout = value;
-    }
-
     OCI_RESULT(res);
 
     return res;
@@ -641,11 +557,47 @@ boolean OCI_API OCI_PoolGetNoWait
     OCI_Pool *pool
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool, FALSE);
+    boolean res   = TRUE;
+    ub1     value = 0;
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_POOL, pool, 0);
 
-    return pool->nowait;
+#if OCI_VERSION_COMPILE >= OCI_9_0
+
+    if (OCILib.version_runtime >= OCI_9_0)
+    {
+        ub4 attr = 0;
+
+        if (OCI_HTYPE_CPOOL == pool->htype)
+        {
+            attr = OCI_ATTR_CONN_NOWAIT;
+        }
+
+    #if OCI_VERSION_COMPILE >= OCI_9_2
+
+        else
+        {
+            attr = OCI_ATTR_SPOOL_GETMODE;
+
+        }
+
+    #endif
+
+        OCI_CALL3
+        (
+            res, pool->err,
+
+            OCIAttrGet((dvoid *)pool->handle, (ub4)pool->htype,
+                        (dvoid *)&value, (ub4 *)NULL,
+                        (ub4)attr, pool->err)
+        )
+    }
+
+#endif
+
+    OCI_RESULT(res);
+
+    return value;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -698,11 +650,6 @@ boolean OCI_API OCI_PoolSetNoWait
 
 #endif
 
-    if (res)
-    {
-        pool->nowait = value;
-    }
-
     OCI_RESULT(res);
 
     return TRUE;
@@ -718,6 +665,7 @@ unsigned int OCI_API OCI_PoolGetBusyCount
 )
 {
     boolean res = TRUE;
+    ub4     value = 0;
 
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, 0);
 
@@ -725,7 +673,6 @@ unsigned int OCI_API OCI_PoolGetBusyCount
 
     if (OCILib.version_runtime >= OCI_9_0)
     {
-        ub4 value = 0;
         ub4 attr  = 0;
 
         if (OCI_HTYPE_CPOOL == pool->htype)
@@ -750,18 +697,13 @@ unsigned int OCI_API OCI_PoolGetBusyCount
                        (dvoid *) &value, (ub4 *) NULL,
                        (ub4) attr, pool->err)
         )
-
-        if (res)
-        {
-            pool->nb_busy = value;
-        }
     }
 
 #endif
 
     OCI_RESULT(res);
 
-    return pool->nb_busy;
+    return value;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -774,6 +716,7 @@ unsigned int OCI_API OCI_PoolGetOpenedCount
 )
 {
     boolean res = TRUE;
+    ub4     value = 0;
 
     OCI_CHECK_PTR(OCI_IPC_POOL, pool, 0);
 
@@ -781,7 +724,6 @@ unsigned int OCI_API OCI_PoolGetOpenedCount
 
     if (OCILib.version_runtime >= OCI_9_0)
     {
-        ub4 value = 0;
         ub4 attr  = 0;
 
         if (OCI_HTYPE_CPOOL == pool->htype)
@@ -806,18 +748,13 @@ unsigned int OCI_API OCI_PoolGetOpenedCount
                        (dvoid *) &value, (ub4 *) NULL,
                        (ub4) attr, pool->err)
         )
-
-        if (res)
-        {
-            pool->nb_opened = value;
-        }
     }
 
 #endif
 
     OCI_RESULT(res);
 
-    return pool->nb_opened;
+    return value;
 }
 
 /* --------------------------------------------------------------------------------------------- *

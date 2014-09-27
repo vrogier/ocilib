@@ -230,7 +230,6 @@ typedef struct OCI_Library OCI_Library;
 
 struct OCI_Pool
 {
-    OCI_List    *cons;          /* list of connection objects */
     void        *handle;        /* OCI pool handle */
     void        *authp;         /* OCI authentification handle */
     OCIError    *err;           /* OCI context handle */
@@ -238,15 +237,10 @@ struct OCI_Pool
     otext       *db;            /* database */
     otext       *user;          /* user */
     otext       *pwd;           /* password */
-    OCI_Mutex   *mutex;         /* mutex handle */
     ub4          mode;          /* session mode */
     ub4          min;           /* minimum of objects */
     ub4          max;           /* maximum of objects */
     ub4          incr;          /* increment step of objects */
-    unsigned int nb_busy;       /* number of busy objects */
-    unsigned int nb_opened;     /* number of opened objects */
-    unsigned int timeout;       /* connection idle timeout */
-    boolean      nowait;        /* wait to retrieve object from pool ? */
     ub4          htype;         /* handle type of pool : connection / session */
     ub4          cache_size;    /* statement cache size */
 };

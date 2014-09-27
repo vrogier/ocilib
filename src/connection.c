@@ -38,6 +38,46 @@
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
+
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ConnectionCreateInternal
+* --------------------------------------------------------------------------------------------- */
+
+OCI_Connection * OCI_ConnectionCreateInternal
+(
+    OCI_Pool    *pool,
+    const otext *db,
+    const otext *user,
+    const otext *pwd,
+	unsigned int mode,
+	const otext *tag
+)
+{
+    OCI_Connection * con;
+
+    /* check for XA connections support */
+
+    OCI_CHECK_XA_ENABLED(mode, NULL);
+
+    /* create connection */
+
+    con = OCI_ConnectionAllocate(pool, db, user, pwd, mode);
+
+    if (con != NULL)
+    {
+        if (!OCI_ConnectionAttach(con) || !OCI_ConnectionLogon(con, NULL, tag))
+        {
+            OCI_ConnectionFree(con);
+            con = NULL;
+        }
+    }
+
+    OCI_RESULT(con != NULL);
+
+    return con;
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ConnectionAllocate
  * --------------------------------------------------------------------------------------------- */
@@ -52,22 +92,12 @@ OCI_Connection * OCI_ConnectionAllocate
 )
 {
     OCI_Connection *con = NULL;
-    OCI_List *list      = NULL;
     OCI_Item *item      = NULL;
     boolean res         = TRUE;
 
     /* create connection object */
 
-    if (pool)
-    {
-        list = pool->cons;
-    }
-    else
-    {
-        list = OCILib.cons;
-    }
-
-    item = OCI_ListAppend(list, sizeof(*con));
+    item = OCI_ListAppend(OCILib.cons, sizeof(*con));
 
     if (item)
     {
@@ -270,11 +300,6 @@ boolean OCI_ConnectionAttach
 
     if (res)
     {
-        if (OCILib.version_runtime < OCI_9_0 && con->pool)
-        {
-            con->pool->nb_opened++;
-        }
-
         con->cstate = OCI_CONN_ATTACHED;
     }
 
@@ -317,11 +342,6 @@ boolean OCI_ConnectionDetach
 
     if (res)
     {
-        if (OCILib.version_runtime < OCI_9_0 && con->pool)
-        {
-            con->pool->nb_opened--;
-        }
-
         con->cstate = OCI_CONN_ALLOCATED;
     }
 
@@ -712,13 +732,6 @@ boolean OCI_ConnectionLogon
 
         OCI_GetVersionServer(con);
 
-        /* update internal status */
-
-        if (OCILib.version_runtime < OCI_9_0 && con->pool)
-        {
-            con->pool->nb_busy++;
-        }
-
         con->cstate = OCI_CONN_LOGGED;
     }
 
@@ -851,11 +864,6 @@ boolean OCI_ConnectionLogOff
     if (res)
     {
         con->cstate = OCI_CONN_ATTACHED;
-
-        if (OCILib.version_runtime < OCI_9_0 && con->pool)
-        {
-            con->pool->nb_busy--;
-        }
     }
 
     return res;
@@ -870,8 +878,19 @@ boolean OCI_ConnectionClose
     OCI_Connection *con
 )
 {
+    OCI_Error *err = NULL;
+
     OCI_CHECK(con == NULL, FALSE);
 
+    /* clear connection reference from current error object */
+
+    err = OCI_ErrorGet(FALSE, FALSE);
+
+    if (err && err->con == con)
+    {
+        err->con = NULL;
+    }
+    
     /* clear server output resources */
 
     OCI_ServerDisableOutput(con);
@@ -936,32 +955,11 @@ OCI_Connection * OCI_API OCI_ConnectionCreate
     unsigned int mode
 )
 {
-    OCI_Connection * con;
-
     /* let's be sure OCI_Initialize() has been called */
 
     OCI_CHECK_INITIALIZED(NULL);
 
-    /* check for XA connections support */
-
-    OCI_CHECK_XA_ENABLED(mode, NULL);
-
-    /* create connection */
-
-    con = OCI_ConnectionAllocate(NULL, db, user, pwd, mode);
-
-    if (con)
-    {
-        if (!OCI_ConnectionAttach(con) || !OCI_ConnectionLogon(con, NULL, NULL))
-        {
-            OCI_ConnectionFree(con);
-            con = NULL;
-        }
-    }
-
-    OCI_RESULT(con != NULL);
-
-    return con;
+    return OCI_ConnectionCreateInternal(NULL, db, user, pwd, mode, NULL);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -974,36 +972,13 @@ boolean OCI_API OCI_ConnectionFree
 )
 {
     boolean res    = TRUE;
-    OCI_Error *err = NULL;
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
 
-    /* clear connection reference from current error object */
+    res = OCI_ConnectionClose(con);
 
-    err = OCI_ErrorGet(FALSE, FALSE);
-
-    if (err && err->con == con)
-    {
-        err->con = NULL;
-    }
-
-    OCI_FREE(con->sess_tag);
-
-    if (con->pool)
-    {
-        res = OCI_ConnectionLogOff(con);
-
-        if (OCILib.version_runtime >= OCI_9_0)
-        {
-            OCI_ConnectionDetach(con);
-        }
-    }
-    else
-    {
-        res = OCI_ConnectionClose(con);
-        OCI_ListRemove(OCILib.cons, con);
-        OCI_FREE(con);
-    }
+    OCI_ListRemove(OCILib.cons, con);
+    OCI_FREE(con);
 
     OCI_RESULT(res);
 

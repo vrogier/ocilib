@@ -233,6 +233,16 @@ boolean OCI_ColumnGetAttrInfo
  * connection.c
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Connection * OCI_ConnectionCreateInternal
+(
+    OCI_Pool    *pool,
+    const otext *db,
+    const otext *user,
+    const otext *pwd,
+    unsigned int mode,
+	const otext *tag
+);
+
 OCI_Connection * OCI_ConnectionAllocate
 (
     OCI_Pool    *pool,
