@@ -594,9 +594,9 @@ void test_piecewise_insert(void)
         st.Bind(OTEXT(":data"), lg, (int) size, BindInfo::In);
         st.Execute();
 
-        char * buffer = new char [size];
+		RawPointer buffer = new Raw[size];
 
-        file.read(buffer, size);
+		file.read(reinterpret_cast<char *>(buffer), size);
         lg.Write(buffer, (unsigned int) size);
 
         delete buffer;
@@ -1028,6 +1028,8 @@ void test_returning_array(void)
 
 void test_object_insert(void)
 {
+	RawPointer rawData = (RawPointer) "0123456789";
+
     std::ocout << OTEXT("\n>>>>> TEST OBJECT BINDING \n\n");
 
     Clob clob(con);
@@ -1043,15 +1045,15 @@ void test_object_insert(void)
 
     Object obj1(TypeInfo(con, OTEXT("test_t"), TypeInfo::Type));
 
-    obj1.Set<int>    (OTEXT("VAL_INT"), 1);
-    obj1.Set<double> (OTEXT("VAL_DBL"), 3.14);
-    obj1.Set<float>  (OTEXT("VAL_FLT"), (float) 3.14);
-    obj1.Set<ostring>(OTEXT("VAL_STR"), OTEXT("USB KEY 2go"));
-    obj1.Set<void *> (OTEXT("VAL_RAW"), (void*) "0123456789", 10);
-    obj1.Set<Date>   (OTEXT("VAL_DATE"), date);
-    obj1.Set<Object> (OTEXT("VAL_OBJ"), obj2);
-    obj1.Set<Clob>   (OTEXT("VAL_LOB"), clob);
-    obj1.Set<File>   (OTEXT("VAL_FILE"), file);
+    obj1.Set<int>		(OTEXT("VAL_INT"), 1);
+    obj1.Set<double>	(OTEXT("VAL_DBL"), 3.14);
+    obj1.Set<float>		(OTEXT("VAL_FLT"), (float) 3.14);
+    obj1.Set<ostring>	(OTEXT("VAL_STR"), OTEXT("USB KEY 2go"));
+	obj1.Set<RawPointer>(OTEXT("VAL_RAW"), rawData, 10);
+    obj1.Set<Date>		(OTEXT("VAL_DATE"), date);
+    obj1.Set<Object>	(OTEXT("VAL_OBJ"), obj2);
+    obj1.Set<Clob>		(OTEXT("VAL_LOB"), clob);
+    obj1.Set<File>		(OTEXT("VAL_FILE"), file);
 
     Statement st(con);
     st.Prepare(OTEXT("insert into test_object values(:obj)"));
@@ -1093,9 +1095,9 @@ void test_object_fetch(void)
         File file = obj.Get<File>(OTEXT("VAL_FILE"));
         std::ocout << OTEXT(".... val_file     : ") << file.GetDirectory() << OTEXT("/") << file.GetName() << std::endl;
 
-        char buffer[11];
+        Raw buffer[11];
         unsigned int len = 10;
-        obj.Get<void *>(OTEXT("VAL_RAW"), (RawPointer) &buffer, len);
+		obj.Get<RawPointer>(OTEXT("VAL_RAW"), &buffer[0], len);
         buffer[len] = 0;
         std::cout << ".... val_raw      : " << buffer << std::endl;
 

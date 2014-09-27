@@ -109,13 +109,30 @@ namespace ocilib
 typedef std::basic_string<otext, std::char_traits<otext>, std::allocator<otext> > ostring;
 
 /**
- * @typedef ocilib::RawPointer 
+ * @typedef ocilib::AnyPointer 
  *
  * @brief
  * Alias for the generic void pointer
  *
  */
-typedef void * RawPointer;
+typedef void * AnyPointer;
+
+/**
+* @typedef ocilib::Raw
+*
+* @brief
+* Alias for the generic raw buffer
+*
+*/
+typedef unsigned char Raw;
+/**
+* @typedef ocilib::RawPointer
+*
+* @brief
+* Alias for the generic raw buffer
+*
+*/
+typedef Raw * RawPointer;
 
 /**
  * @typedef ocilib::UnknownHandle
@@ -124,7 +141,7 @@ typedef void * RawPointer;
  * Alias used for manipulating unknown handle types
  *
  */
-typedef void * UnknownHandle;
+typedef const void * UnknownHandle;
 
 /**
  * @typedef ocilib::MutexHandle
@@ -825,7 +842,7 @@ public:
      * @brief
      * Set the High availabality (HA) user handler
      *
-     * @param handler - Pointer to HA handler procedure
+     * @param handler - HA handler procedure
      *
      * @note
      * See POCI_HA_HANDLER documentation for more details
@@ -1026,7 +1043,7 @@ public:
      * @param value - user value to set
      *
      */
-	static void SetValue(ostring name, RawPointer value);
+	static void SetValue(ostring name, AnyPointer value);
 
     /**
      * @brief
@@ -1038,7 +1055,7 @@ public:
      * Thread key value on success otherwise FALSE
      *
      */
-	static RawPointer GetValue(ostring name);
+	static AnyPointer GetValue(ostring name);
 };
 
 /**
@@ -1963,7 +1980,7 @@ public:
      * @brief
      * Set the Transparent Application Failover (TAF) user handler
      *
-     * @param handler - Pointer to TAF handler procedure
+     * @param handler - TAF handler procedure
      *
      * @note
      * See TAFHandlerProc documentation for more details
@@ -1979,7 +1996,7 @@ public:
      * Return the pointer to user data previously associated with the connection
      *
      */
-	RawPointer GetUserData();
+	AnyPointer GetUserData();
 
     /**
      * @brief
@@ -1991,7 +2008,7 @@ public:
      * TRUE on success otherwise FALSE
      *
      */
-	void SetUserData(RawPointer value);
+	void SetUserData(AnyPointer value);
 
 private:
 
@@ -3185,20 +3202,20 @@ public:
     template <class TDataType>
     TDataType Get(unsigned int index) const;
 
-    template <class TDataType>
-    void Set(unsigned int index, const TDataType &data);
+	template <class TDataType, class TExtraInfo>
+	void Get(unsigned int index, TDataType &value, TExtraInfo &extraInfo) const;
 
-    template<class TDataType>
-    void Get(unsigned int index, TDataType value, unsigned int &size) const;
+	template <class TDataType>
+	void Set(unsigned int index, const TDataType &value);
 
-    template<class TDataType>
-    void Set(unsigned int index, const TDataType value, unsigned int size);
+	template <class TDataType, class TExtraInfo>
+	void Set(unsigned int index, const TDataType &value, TExtraInfo extraInfo);
 
     template <class TDataType>
     void Append(const TDataType &data);
 
-    template <class TDataType>
-    void Append(const TDataType &data, unsigned int size);
+	template <class TDataType, class TExtraInfo>
+	void Append(const TDataType &value, TExtraInfo extraInfo);
 
     TypeInfo GetTypeInfo() const;
 
@@ -3210,14 +3227,17 @@ private:
     template <class TDataType>
     static TDataType GetElem(OCI_Elem *elem, Handle *parent);
 
+	template <class TDataType, class TExtraInfo >
+	static void GetElem(OCI_Elem *elem, TExtraInfo  &extraInfo);
+
+	template <class TDataType, class TExtraInfo >
+	static void GetElem(OCI_Elem *elem, TDataType &value, TExtraInfo  &extraInfo);
+
     template <class TDataType>
     static void SetElem(OCI_Elem *elem, const TDataType &value);
 
-    template <class TDataType>
-    static void GetElem(OCI_Elem *elem,  TDataType value, unsigned int &size);
-
-    template <class TDataType>
-    static void SetElem(OCI_Elem *elem, const TDataType value,  unsigned int size);
+	template <class TDataType, class TExtraInfo>
+	static void SetElem(OCI_Elem *elem, const TDataType value, TExtraInfo extraInfo);
 
     Collection(OCI_Coll *pColl, Handle *parent = 0);
 };
@@ -3236,19 +3256,94 @@ public:
 
     CollectionIterator(const Collection &collection);
 
+	/**
+	* @brief
+	* Retrieve the value of the current element pointed by the iterator
+	*
+	* @tparam TDataType  - C++ type of the host variable
+	*
+	* @warning
+	* This method has builtin specialized versions for all supported types.
+	*
+	* @note
+	* It is necessary to specify the template datatype.
+	*
+	*/
     template <class TDataType>
     TDataType Get() const;
 
-    template <class TDataType>
+	template <class TDataType, class TExtraInfo>
+	TDataType Get(TExtraInfo &extraInfo) const;
+
+	/**
+	* @brief
+	* Set the value of the current element pointed by the iterator
+	*
+	* @tparam TDataType  - C++ type of the host variable
+	*
+	* @warning
+	* This method has builtin specialized versions for all supported types.
+	*
+	* @note
+	* It is necessary to specify the template datatype.
+	*
+	*/
+	template <class TDataType>
     void Set(TDataType &value);
 
+	template <class TDataType, class TExtraInfo>
+	void Set(TDataType &value, TExtraInfo extraInfo);
+
+	/**
+	* @brief
+	* Move to the next element in the collection
+	*
+	* @return
+	* true o success otherwise false in the following cases:
+	* - Empty collection
+	* - Iterator already positioned on the last collection element
+	*
+	*/
     bool Next();
-    bool Prev();
 
+	/**
+	* @brief
+	* Move to the previous element in the collection
+	*
+	* @return
+	* true o success otherwise false in the following cases:
+	* - Empty collection
+	* - Iterator already positioned on the first collection element
+	*
+	*/
+	bool Prev();
+
+	/**
+	* @brief
+	* Check if the collection element value is null
+	*
+	*/
     bool IsElementNull() const;
-    void SetElementNull();
+    
+	/**
+	* @brief
+	* Set a collection element value to null
+	*
+	*/
+	void SetElementNull();
 
+	/**
+	* @brief
+	* Convenient operator overloading that performs a call to Next()
+	*
+	*/
     bool operator ++ (int);
+
+	/**
+	* @brief
+	* Convenient operator overloading that performs a call to Prev()
+	*
+	*/
     bool operator -- (int value);
 };
 
@@ -4603,11 +4698,35 @@ public:
 	*/
     Statement GetStatement() const;
 
+	/**
+	* @brief
+	* Convenient operator overloading that performs a call to Next()
+	*
+	*/
     bool operator ++ (int);
-    bool operator -- (int value);
 
-    bool operator += (int);
-    bool operator -= (int value);
+	/**
+	* @brief
+	* Convenient operator overloading that performs a call to Prev()
+	*
+	*/
+	bool operator -- (int);
+
+	/**
+	* @brief
+	* Convenient operator overloading that performs a call to Seek() 
+	* with Resultset::SeeKRelative and the given offset
+	*
+	*/
+    bool operator += (int offset);
+
+	/**
+	* @brief
+	* Convenient operator overloading that performs a call to Seek()
+	* with Resultset::SeeKRelative and the given offset that is internally negated
+	*
+	*/
+	bool operator -= (int offset);
 
 private:
 
@@ -5270,7 +5389,7 @@ public:
 	* @param size - Raw data size
 	*
 	*/
-    void Set(const RawPointer &value, unsigned int size);
+	void Set(const RawPointer &value, unsigned int size);
 
 	/**
 	* @brief
@@ -5312,7 +5431,7 @@ public:
 	* On output, parameter 'size' holds the number of bytes copied into the given buffer
 	*
 	*/
-    void GetID(RawPointer &value, unsigned int &size) const;
+	void GetID(RawPointer &value, unsigned int &size) const;
 
 	/**
 	* @brief
@@ -5418,7 +5537,7 @@ public:
 	* On output, parameter 'size' holds the number of bytes copied into the given buffer
 	*
 	*/
-    void GetOriginalID(RawPointer value, unsigned int &size) const;
+	void GetOriginalID(RawPointer value, unsigned int &size) const;
 
 	/**
 	* @brief
@@ -5432,7 +5551,7 @@ public:
 	* message in the previous queue.
 	*
 	*/
-    void SetOriginalID(const RawPointer &value, unsigned int size);
+	void SetOriginalID(const RawPointer &value, unsigned int size);
 
 	/**
 	* @brief
@@ -5691,7 +5810,7 @@ public:
 	*
 	*/
 
-    void GetRelativeMsgID(RawPointer value, unsigned int &size) const;
+	void GetRelativeMsgID(RawPointer value, unsigned int &size) const;
 
 	/**
 	* @brief
@@ -5710,7 +5829,7 @@ public:
 	* see SetMode() for more details
 	*
 	*/
-    void SetRelativeMsgID(const RawPointer &value, unsigned int size);
+	void SetRelativeMsgID(const RawPointer &value, unsigned int size);
 };
 
 /**
@@ -5907,7 +6026,7 @@ public:
 	* see SetRelativeMsgID() for more details
 	*
 	*/
-    void GetRelativeMsgID(RawPointer value, unsigned int &size) const;
+	void GetRelativeMsgID(RawPointer value, unsigned int &size) const;
 
 	/**
 	* @brief
@@ -5917,7 +6036,7 @@ public:
 	* @param size     - size of the message identitier
 	*
 	*/
-    void SetRelativeMsgID(const RawPointer &value, unsigned int size);
+	void SetRelativeMsgID(const RawPointer &value, unsigned int size);
 
 	/**
 	* @brief
@@ -6558,7 +6677,7 @@ public:
      * Setting entries content piece by piece may be supported in future releases
      *
      */
-    void SetEntry(unsigned int rowIndex, unsigned int colIndex, const RawPointer &value,
+	void SetEntry(unsigned int rowIndex, unsigned int colIndex, const RawPointer &value,
                   unsigned int size, bool complete = true);
 
     /**

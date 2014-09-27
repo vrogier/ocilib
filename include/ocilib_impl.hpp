@@ -582,14 +582,14 @@ inline TSmartHandleType HandleHolder<THandleType>::SmartHandle<TSmartHandleType>
 
 template <class THandleType>
 template <class TSmartHandleType>
-inline RawPointer HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetExtraInfos() const
+inline AnyPointer HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetExtraInfos() const
 {
     return _extraInfo;
 }
 
 template <class THandleType>
 template <class TSmartHandleType>
-inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::SetExtraInfos(RawPointer extraInfo)
+inline void HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::SetExtraInfos(AnyPointer extraInfo)
 {
     _extraInfo = extraInfo;
 }
@@ -681,7 +681,7 @@ inline void Environment::Initialize(EnvironmentFlags mode, ostring libpath)
 
     Check();
 
-    GetEnvironmentHandle().Initialize((RawPointer) OCI_HandleGetEnvironment(), ociMode);
+	GetEnvironmentHandle().Initialize(OCI_HandleGetEnvironment(), ociMode);
 }
 
 inline void Environment::Cleanup()
@@ -755,7 +755,7 @@ inline void Environment::SetHAHandler(HAHandlerProc handler)
 
 inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp)
 {
-    HAHandlerProc handler = (HAHandlerProc) GetEnvironmentHandle().Callbacks.Get((RawPointer) GetEnvironmentHandle());
+    HAHandlerProc handler = (HAHandlerProc) GetEnvironmentHandle().Callbacks.Get(GetEnvironmentHandle());
 
     if (handler)
     {
@@ -871,7 +871,7 @@ inline void Thread::Destroy(ThreadHandle handle)
     Check(OCI_ThreadFree(handle));
 }
 
-inline void Thread::Run(ThreadHandle handle, ThreadProc func, RawPointer args)
+inline void Thread::Run(ThreadHandle handle, ThreadProc func, AnyPointer args)
 {
     Check(OCI_ThreadRun(handle, func, args));
 }
@@ -890,12 +890,12 @@ inline void ThreadKey::Create(ostring name, ThreadKeyFreeProc freeProc)
     Check(OCI_ThreadKeyCreate(name.c_str(), freeProc));
 }
 
-inline void ThreadKey::SetValue(ostring name, RawPointer value)
+inline void ThreadKey::SetValue(ostring name, AnyPointer value)
 {
     Check(OCI_ThreadKeySetValue(name.c_str(), value));
 }
 
-inline RawPointer ThreadKey::GetValue(ostring name)
+inline AnyPointer ThreadKey::GetValue(ostring name)
 {
     return Check(OCI_ThreadKeyGetValue(name.c_str()));
 }
@@ -1256,7 +1256,7 @@ inline void* Connection::GetUserData()
     return Check(OCI_GetUserData(*this));
 }
 
-inline void Connection::SetUserData(RawPointer value)
+inline void Connection::SetUserData(AnyPointer value)
 {
     Check(OCI_SetUserData(*this, value));
 }
@@ -2068,9 +2068,9 @@ inline Clob::Clob(OCI_Lob *pLob, Handle *parent)
 
 inline ostring Clob::Read(unsigned int size)
 {
-    ManagedBuffer<otext> buffer = new otext[size+1];
+	ManagedBuffer<otext> buffer = new otext[size + 1];
 
-    Check(OCI_LobRead(*this, (RawPointer) buffer, size));
+    Check(OCI_LobRead(*this, buffer, size));
 
     return MakeString( (const otext *) buffer);
 }
@@ -2172,7 +2172,7 @@ inline Clob::operator ostring() const
 
     ManagedBuffer<otext> buffer = new otext[size+1];
 
-    Check(OCI_LobRead(*this, (RawPointer) buffer, (unsigned int) size));
+    Check(OCI_LobRead(*this, buffer, (unsigned int) size));
     Check(OCI_LobSeek(*this, offset, OCI_SEEK_SET)); 
 
     return MakeString( (const otext *) buffer);
@@ -2887,10 +2887,10 @@ inline TDataType Collection::Get(unsigned int index) const
     return GetElem<TDataType>(Check(OCI_CollGetElem(*this, index)), GetHandle());
 }
 
-template <class TDataType>
-inline void Collection::Get(unsigned int index, TDataType value, unsigned int &size) const
+template <class TDataType, class TExtraInfo>
+inline void Collection::Get(unsigned int index, TDataType &data, TExtraInfo &extraInfo) const
 {
-    GetElem<TDataType>(Check(OCI_CollGetElem(*this, index)), value, size);
+	GetElem<TDataType, TExtraInfo>(Check(OCI_CollGetElem(*this, index)), data, extraInfo);
 }
 
 template <class TDataType>
@@ -2903,25 +2903,36 @@ inline void Collection::Set(unsigned int index, const TDataType &data)
     Check(OCI_CollSetElem(*this, index, elem));
 }
 
-template <class TDataType>
-inline void Collection::Set(unsigned int index, const TDataType value, unsigned int size)
+template <class TDataType, class TExtraInfo>
+inline void Collection::Set(unsigned int index, const TDataType &value, TExtraInfo extraInfo)
 {
     OCI_Elem * elem = Check(OCI_CollGetElem(*this, index));
 
-    SetElem<TDataType>(elem, value, size);
+	SetElem<TDataType, TExtraInfo>(elem, value, extraInfo);
 
     Check(OCI_CollSetElem(*this, index, elem));
 }
 
 template <class TDataType>
-inline void Collection::Append(const TDataType &data)
+inline void Collection::Append(const TDataType &value)
 {
     OCI_Elem * elem = Check(OCI_ElemCreate(OCI_CollGetTypeInfo(*this)));
 
-    SetElem<TDataType>(elem, data);
+	SetElem<TDataType>(elem, value);
 
     Check(OCI_CollAppend(*this, elem));
     Check(OCI_ElemFree(elem));
+}
+
+template <class TDataType, class TExtraInfo>
+inline void Collection::Append(const TDataType &value, TExtraInfo extraInfo)
+{
+	OCI_Elem * elem = Check(OCI_ElemCreate(OCI_CollGetTypeInfo(*this)));
+
+	SetElem<TDataType, TExtraInfo>(elem, data, extraInfo);
+
+	Check(OCI_CollAppend(*this, elem));
+	Check(OCI_ElemFree(elem));
 }
 
 template<>
@@ -2997,9 +3008,19 @@ inline ostring Collection::GetElem<ostring>(OCI_Elem *elem, Handle *parent)
 }
 
 template<>
-inline void Collection::GetElem<RawPointer>(OCI_Elem *elem, RawPointer value, unsigned int &size)
+inline void Collection::GetElem<RawPointer, unsigned int>(OCI_Elem *elem, RawPointer &value, unsigned int &extraInfo)
 {
-    Check(OCI_ElemGetRaw(elem, value, size));
+	Check(OCI_ElemGetRaw(elem, value, extraInfo));
+}
+
+template<>
+inline void Collection::GetElem<RawPointer, int>(OCI_Elem *elem, RawPointer &value, int &extraInfo)
+{
+	unsigned int uExtraInfo = (unsigned int) extraInfo;
+	
+	GetElem<RawPointer, unsigned int>(elem, value, uExtraInfo);
+
+	extraInfo = (int) uExtraInfo;
 }
 
 template<>
@@ -3112,9 +3133,15 @@ inline void Collection::SetElem<ostring>(OCI_Elem *elem, const ostring &value)
 }
 
 template<>
-inline void Collection::SetElem<RawPointer>(OCI_Elem *elem, const RawPointer value, unsigned int size)
+inline void Collection::SetElem<RawPointer, unsigned int>(OCI_Elem *elem, const RawPointer value, unsigned int size)
 {
     Check(OCI_ElemSetRaw(elem, value, size));
+}
+
+template<>
+inline void Collection::SetElem<RawPointer, int>(OCI_Elem *elem, const RawPointer value, int size)
+{
+	return Collection::SetElem<RawPointer, unsigned int>(elem, value, (unsigned int)size);
 }
 
 template<>
@@ -3224,10 +3251,22 @@ inline void CollectionIterator::Set(TDataType &value)
     Collection::SetElem<TDataType>(Check(OCI_IterGetCurrent(*this)), value);
 }
 
+template <class TDataType, class TExtraInfo>
+inline void CollectionIterator::Set(TDataType &value, TExtraInfo extraInfo)
+{
+	Collection::SetElem<TDataType, TExtraInfo>(Check(OCI_IterGetCurrent(*this)), value, extraInfo);
+}
+
 template <class TDataType>
 inline TDataType CollectionIterator::Get() const
 {
     return Collection::GetElem<TDataType>(Check(OCI_IterGetCurrent(*this)), GetHandle());
+}
+
+template <class TDataType, class TExtraInfo>
+inline TDataType CollectionIterator::Get(TExtraInfo &extraInfo) const
+{
+	return Collection::GetElem<TDataType>(Check(OCI_IterGetCurrent(*this)), GetHandle(), extraInfo);
 }
 
 inline bool CollectionIterator::IsElementNull() const
@@ -3295,7 +3334,7 @@ inline unsigned int Blong::GetSize() const
 
 inline RawPointer Blong::GetContent() const
 {
-    return  Check(OCI_LongGetBuffer(*this));
+	return reinterpret_cast<RawPointer>(Check(OCI_LongGetBuffer(*this)));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4553,14 +4592,14 @@ inline bool Resultset::operator -- (int)
     return Prev();
 }
 
-inline bool Resultset::operator += (int value)
+inline bool Resultset::operator += (int offset)
 {
-    return Seek(Resultset::SeeKRelative, value);
+	return Seek(Resultset::SeeKRelative, offset);
 }
 
-inline bool Resultset::operator -= (int value)
+inline bool Resultset::operator -= (int offset)
 {
-    return Seek(Resultset::SeeKRelative, -value);
+	return Seek(Resultset::SeeKRelative, -offset);
 }
 
 template<>

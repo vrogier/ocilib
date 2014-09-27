@@ -292,8 +292,8 @@ protected:
             return _parent;
         }
 
-        RawPointer GetExtraInfos() const;
-        void   SetExtraInfos(RawPointer extraInfo);
+		AnyPointer GetExtraInfos() const;
+		void  SetExtraInfos(AnyPointer extraInfo);
 
         bool IsLastHolder(HandleHolder<TSmartHandleType> *holder) const;
 
@@ -309,7 +309,7 @@ protected:
         THandleType _handle;
         HandleFreeFunc _func;
         Handle *_parent;
-        RawPointer _extraInfo;
+		AnyPointer _extraInfo;
 
     };
 
