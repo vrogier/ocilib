@@ -639,6 +639,11 @@ inline Exception::Exception()
 
 }
 
+inline Exception::~Exception() throw ()
+{
+
+}
+
 inline Exception::Exception(OCI_Error *err)
 {
 	Acquire(err, 0, 0);
@@ -651,11 +656,11 @@ inline Exception::Exception(OCI_Error *err)
 
 		_what.resize(size);
 
-		while (i < size) { _what[i++] = static_cast<char>(str[i]); }
+		while (i < size) { _what[i] = static_cast<char>(str[i]); i++; }
 	}
 }
 
-inline const char * Exception::what() const
+inline const char * Exception::what() const throw()
 {
 	return _what.c_str();
 }
@@ -805,7 +810,7 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
     {
         Connection connection(pConnection, 0);
 
-        res = handler(connection, 
+        res = handler(connection,
                       Connection::FailoverRequest( static_cast<Connection::FailoverRequest::type> (type)),
 					  Connection::FailoverEvent  ( static_cast<Connection::FailoverEvent::type>   (event)));
     }
@@ -1074,7 +1079,7 @@ inline bool Connection::GetAutoCommit() const
  * @brief
  * Check if the underlying psysical connection is still alive
  *
- * @return 
+ * @return
  * true if the connection is live otherwise false
  *
  */
@@ -1381,7 +1386,7 @@ inline void Date::SetYear(int value)
     GetDate(&year, &month, &day);
     SetDate(value, month, day);
 }
- 
+
 inline int Date::GetMonth() const
 {
     int year, month, day;
@@ -1415,7 +1420,7 @@ inline void Date::SetDay(int value)
     GetDate(&year, &month, &day);
     SetDate(year, month, value);
 }
- 
+
 inline int Date::GetHours() const
 {
     int hour, minutes, seconds;
@@ -1432,7 +1437,7 @@ inline void Date::SetHours(int value)
     GetTime(&hour, &minutes, &seconds);
     SetTime(value, minutes, seconds);
 }
-  
+
 inline int Date::GetMinutes() const
 {
     int hour, minutes, seconds;
@@ -1450,7 +1455,7 @@ inline void Date::SetMinutes(int value)
     SetTime(hour, value, seconds);
 }
 
-inline int Date::GetSeconds() const    
+inline int Date::GetSeconds() const
 {
     int hour, minutes, seconds;
 
@@ -1521,10 +1526,10 @@ inline Date Date::NextDay(ostring day) const
 {
     Date date;
 
-    date.Assign(*this);    
+    date.Assign(*this);
     Check(OCI_DateNextDay(date, day.c_str()));
 
-    return date;   
+    return date;
 }
 
 inline Date Date::LastDay() const
@@ -1572,7 +1577,7 @@ inline Date& Date::operator -- (int)
 {
     return *this - 1;
 }
-  
+
 inline Date& Date::operator = (const Date& other)
 {
     Assign(other);
@@ -1610,7 +1615,7 @@ inline bool Date::operator != (const Date& other) const
 {
 	return (!(*this == other));
 }
-			
+
 inline bool Date::operator > (const Date& other) const
 {
     return (Compare(other) > 0);
@@ -1695,7 +1700,7 @@ inline void Interval::SetYear(int value)
     GetYearMonth(&year, &month);
     SetYearMonth(value, month);
 }
- 
+
 inline int Interval::GetMonth() const
 {
     int year, month;
@@ -1729,7 +1734,7 @@ inline void Interval::SetDay(int value)
     GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
     SetDaySecond(value, hour, minutes, seconds, milliseconds);
 }
- 
+
 inline int Interval::GetHours() const
 {
     int day, hour, minutes, seconds, milliseconds;
@@ -1746,7 +1751,7 @@ inline void Interval::SetHours(int value)
     GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
     SetDaySecond(day, value, minutes, seconds, milliseconds);
 }
-  
+
 inline int Interval::GetMinutes() const
 {
     int day, hour, minutes, seconds, milliseconds;
@@ -1764,7 +1769,7 @@ inline void Interval::SetMinutes(int value)
     SetDaySecond(day, hour, value, seconds, milliseconds);
 }
 
-inline int Interval::GetSeconds() const    
+inline int Interval::GetSeconds() const
 {
     int day, hour, minutes, seconds, milliseconds;
 
@@ -1781,7 +1786,7 @@ inline void Interval::SetSeconds(int value)
     SetDaySecond(day, hour, minutes, value, milliseconds);
 }
 
-inline int Interval::GetMilliSeconds() const    
+inline int Interval::GetMilliSeconds() const
 {
     int day, hour, minutes, seconds, milliseconds;
 
@@ -1903,7 +1908,7 @@ inline void Timestamp::SetYear(int value)
     GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
     Construct(value, month, day, hour, minutes, seconds, milliseconds);
 }
- 
+
 inline int Timestamp::GetMonth() const
 {
     int year, month, day;
@@ -1937,7 +1942,7 @@ inline void Timestamp::SetDay(int value)
     GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
     Construct(year, month, value, hour, minutes, seconds, milliseconds);
 }
- 
+
 inline int Timestamp::GetHours() const
 {
     int hour, minutes, seconds, milliseconds;
@@ -1954,7 +1959,7 @@ inline void Timestamp::SetHours(int value)
     GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
     Construct(year, month, day, value, minutes, seconds, milliseconds);
 }
-  
+
 inline int Timestamp::GetMinutes() const
 {
     int hour, minutes, seconds, milliseconds;
@@ -1972,7 +1977,7 @@ inline void Timestamp::SetMinutes(int value)
     Construct(year, month, day, hour, value, seconds, milliseconds);
 }
 
-inline int Timestamp::GetSeconds() const    
+inline int Timestamp::GetSeconds() const
 {
     int hour, minutes, seconds, milliseconds;
 
@@ -1989,7 +1994,7 @@ inline void Timestamp::SetSeconds(int value)
     Construct(year, month, day, hour, minutes, value, milliseconds);
 }
 
-inline int Timestamp::GetMilliSeconds() const    
+inline int Timestamp::GetMilliSeconds() const
 {
     int hour, minutes, seconds, milliseconds;
 
@@ -2199,7 +2204,7 @@ inline Clob::operator ostring() const
     ManagedBuffer<otext> buffer = new otext[size+1];
 
 	Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), static_cast<unsigned int>(size)));
-    Check(OCI_LobSeek(*this, offset, OCI_SEEK_SET)); 
+    Check(OCI_LobSeek(*this, offset, OCI_SEEK_SET));
 
 	return MakeString(static_cast<const otext *>(buffer));
 }
@@ -2240,7 +2245,7 @@ inline Blob::Blob(OCI_Lob *pLob, Handle *parent)
     Acquire(pLob, 0, parent);
 }
 
-inline unsigned int Blob::Read(RawPointer buffer, unsigned int size) 
+inline unsigned int Blob::Read(RawPointer buffer, unsigned int size)
 {
     return Check(OCI_LobRead(*this, buffer, size));
 }
@@ -2957,7 +2962,7 @@ inline void Collection::Append(const TDataType &value, TExtraInfo extraInfo)
 {
 	OCI_Elem * elem = Check(OCI_ElemCreate(OCI_CollGetTypeInfo(*this)));
 
-	SetElem<TDataType, TExtraInfo>(elem, data, extraInfo);
+	SetElem<TDataType, TExtraInfo>(elem, value, extraInfo);
 
 	Check(OCI_CollAppend(*this, elem));
 	Check(OCI_ElemFree(elem));
@@ -3045,7 +3050,7 @@ template<>
 inline void Collection::GetElem<RawPointer, int>(OCI_Elem *elem, RawPointer &value, int &extraInfo)
 {
 	unsigned int uExtraInfo = (unsigned int) extraInfo;
-	
+
 	GetElem<RawPointer, unsigned int>(elem, value, uExtraInfo);
 
 	extraInfo = (int) uExtraInfo;
@@ -4337,13 +4342,13 @@ inline void Statement::Register<File>(ostring name)
 }
 
 template <>
-inline void Statement::Register<Object>(ostring name, TypeInfo& typeInfo)
+inline void Statement::Register<Object, TypeInfo>(ostring name, TypeInfo& typeInfo)
 {
     Check(OCI_RegisterObject(*this, name.c_str(), typeInfo));
 }
 
 template <>
-inline void Statement::Register<Reference>(ostring name, TypeInfo& typeInfo)
+inline void Statement::Register<Reference, TypeInfo>(ostring name, TypeInfo& typeInfo)
 {
     Check(OCI_RegisterRef(*this, name.c_str(), typeInfo));
 }
@@ -5020,7 +5025,7 @@ inline void Subscription::Register(const Connection &connection, ostring name, C
                                            static_cast<POCI_NOTIFY> (handler != 0 ? Environment::NotifyHandler : 0 ), port, timeout)),
                                            reinterpret_cast<HandleFreeFunc>(OCI_SubscriptionUnregister), 0);
 
-	Environment::GetEnvironmentHandle().Callbacks.Set(static_cast<OCI_Subscription*>(*this), static_cast<CallbackPointer>(handler));
+	Environment::GetEnvironmentHandle().Callbacks.Set(static_cast<OCI_Subscription*>(*this), reinterpret_cast<CallbackPointer>(handler));
 }
 
 inline void Subscription::Unregister()
@@ -5437,7 +5442,7 @@ inline void Dequeue::Subscribe(unsigned int port, unsigned int timeout, NotifyAQ
 {
     Check(OCI_DequeueSubscribe(*this, port, timeout, static_cast<POCI_NOTIFY_AQ>(handler != 0 ? Environment::NotifyHandlerAQ : 0 )));
 
-	Environment::GetEnvironmentHandle().Callbacks.Set(static_cast<OCI_Dequeue*>(*this), static_cast<CallbackPointer>(handler));
+	Environment::GetEnvironmentHandle().Callbacks.Set(static_cast<OCI_Dequeue*>(*this), reinterpret_cast<CallbackPointer>(handler));
 }
 
 inline void Dequeue::Unsubscribe()

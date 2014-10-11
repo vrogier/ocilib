@@ -86,7 +86,7 @@ namespace ocilib
  * Dynamic memory allocation is not required at all.
  * OCILIB++ allows simple and safe usage of Oracle client wihtout the worries of memory leakages.
  * Using stack objects also makes error handling easier and program logic more robust
- * 
+ *
  * @par Exception model
  * Any failure occuring within an OCILIB C API call will throw a ocilib::Exception
  * For conformance reasons, this class derives from std::Exception
@@ -96,12 +96,12 @@ namespace ocilib
  *  - Each C OCILIB object handle has its C++ class counter part.
  *  - The whole OCILIB C Documentation (concepts, use cases, features and functionalities) is still valid for OCILIB++
  *
- * @} 
+ * @}
  */
 
 /**
 *
-* @} 
+* @}
 */
 
 /**
@@ -118,7 +118,7 @@ namespace ocilib
 typedef std::basic_string<otext, std::char_traits<otext>, std::allocator<otext> > ostring;
 
 /**
- * @typedef ocilib::AnyPointer 
+ * @typedef ocilib::AnyPointer
  *
  * @brief
  * Alias for the generic void pointer
@@ -241,7 +241,7 @@ typedef Enum<DataTypeValues> DataType;
 *
 */
 enum NumericTypeValues
-{	
+{
 	/** Signed short */
 	NumericShort = OCI_NUM_SHORT,
 	/** Signed Integer */
@@ -292,13 +292,13 @@ public:
 	enum ExceptionTypeValues
 	{
         /** Unknown exception type */
-        Unknown = OCI_UNKNOWN,      
+        Unknown = OCI_UNKNOWN,
         /** Exception caused by an Oracle error */
-        OracleError  = OCI_ERR_ORACLE,  
+        OracleError  = OCI_ERR_ORACLE,
         /** Exception caused by an Ocilib error */
-        OcilibError = OCI_ERR_OCILIB,  
+        OcilibError = OCI_ERR_OCILIB,
         /** Exception caused by an Oracle Warning */
-        OracleWarning = OCI_ERR_WARNING   
+        OracleWarning = OCI_ERR_WARNING
     };
 
 	/**
@@ -309,7 +309,7 @@ public:
 	*
 	*/
 	typedef Enum<ExceptionTypeValues>  ExceptionType;
-    
+
 	/**
      * @brief
      * Retrieve the error message
@@ -319,7 +319,7 @@ public:
 
     /**
      *
-     * @brief 
+     * @brief
      * Return the Exception type
      *
      */
@@ -361,7 +361,7 @@ public:
      * Row index start at 1.
      *
      * @return
-     *  - 0 if the error is not related to array DML 
+     *  - 0 if the error is not related to array DML
      *  - otherwise the index of the given row which caused the error
      *
      */
@@ -375,7 +375,14 @@ public:
 	*  - The same content as GetMessage() but as using const char * type
 	*
 	*/
-	virtual const char *what() const;
+	virtual const char *what() const throw();
+
+	/**
+	* @brief
+	* Virtual destructor required for deriving from std::exception
+	*
+	*/
+	virtual ~Exception() throw ();
 
 private:
 
@@ -499,7 +506,7 @@ public:
 	*
 	*/
 	typedef Enum<ImportModeValues> ImportMode;
-	
+
 	/**
 	* @brief
 	* Charset mode enumerated values
@@ -558,7 +565,7 @@ public:
 		/** Start the instance wihtout mouting and opening it */
 		StartOnly = OCI_DB_SPM_START,
 		/** Mount (only) the instance */
-		StartMount  = OCI_DB_SPM_MOUNT,  
+		StartMount  = OCI_DB_SPM_MOUNT,
 		/** Open (only)  the instance */
 		StartOpen = OCI_DB_SPM_OPEN,
 		/** Start, mount and open the instance */
@@ -584,7 +591,7 @@ public:
 		/** Default start flags */
 		StartDefault = OCI_DB_SPF_DEFAULT,
 		/** Shuts down a running instance (if needed) using ABORT command and starts a new instance */
-		StartForce  = OCI_DB_SPF_FORCE,  
+		StartForce  = OCI_DB_SPF_FORCE,
 		/** Allows database access only to users with both CREATE SESSION and RESTRICTED SESSION privileges */
 		StartRestrict = OCI_DB_SPF_RESTRICT
 	};
@@ -633,10 +640,10 @@ public:
     {
         /**  - Further connects are prohibited.
           *  - Waits for users to disconnect from the database */
-        ShutdowntDefault = OCI_DB_SDF_DEFAULT,      
+        ShutdowntDefault = OCI_DB_SDF_DEFAULT,
         /**  - Further connects are prohibited
           *  - No new transactions are allowed. */
-        ShutdowTrans  = OCI_DB_SDF_TRANS,  
+        ShutdowTrans  = OCI_DB_SDF_TRANS,
 		/**  - Further connects are prohibited
 		  *  - No new transactions are allowed.
 		  *  - Waits for active transactions to complete */
@@ -700,7 +707,7 @@ public:
      *
      * @note
      * This function must be called before any other OCILIB library function.
-     * 
+     *
      * @warning
      * It should be called <b>ONCE</b> per application
      *
@@ -710,7 +717,7 @@ public:
      *
      */
     static void Initialize(EnvironmentFlags mode = Environment::Default, ostring libpath = OTEXT(""));
-    
+
     /**
      * @brief
      * Clean up all resources allocated by the environment
@@ -723,7 +730,7 @@ public:
      * @warning
      * It should be called <b>ONCE</b> per application
      *
-     */    
+     */
     static void Cleanup();
 
     /**
@@ -746,7 +753,7 @@ public:
     /**
      * @brief
      * Return the OCILIB charset type
-     * 
+     *
      */
     static Environment::CharsetMode GetCharset();
 
@@ -842,7 +849,7 @@ public:
      * If the param 'db' is empty then a connection to the default local DB is done.
      *
      */
-    static void ShutdownDatabase(ostring db, ostring user, ostring pwd, 
+    static void ShutdownDatabase(ostring db, ostring user, ostring pwd,
                                  Environment::ShutdownFlags shutdownFlags,
                                  Environment::ShutdownMode shutdownMode,
                                  Environment::SessionFlags sessionFlags = SessionSysDba);
@@ -1091,14 +1098,14 @@ class Pool : public HandleHolder<OCI_Pool *>
 public:
 
     /**
-     * @brief 
+     * @brief
      * Pool type enumerated values
      *
      */
     enum PoolTypeValues
     {
         /** Pool of Connections */
-        ConnectionPool = OCI_POOL_CONNECTION,      
+        ConnectionPool = OCI_POOL_CONNECTION,
         /** Pool of stateless sessions */
         SessionPool  = OCI_POOL_SESSION
     };
@@ -1279,7 +1286,7 @@ public:
      *
      */
     unsigned int GetMaxSize() const;
-    
+
     /**
      * @brief
      * Return the increment for connections/sessions to be opened to the database when the pool is not full
@@ -1296,14 +1303,14 @@ public:
      *
      */
     unsigned int GetStatementCacheSize() const;
-    
+
     /**
      * @brief
      * Set the maximum number of statements to keep in the pool's statement cache
      *
      * @param value - maximun number of statements in the cache
      *
-     */    
+     */
     void SetStatementCacheSize(unsigned int value);
 };
 
@@ -1332,17 +1339,17 @@ class Connection : public HandleHolder<OCI_Connection *>
     friend class Subscription;
 
 public:
-    
+
 	/**
 	* @brief
 	* Failover request enumerated values
 	*
 	*/
 	enum FailoverRequestValues
-    {               
-		/** User has requested only session failover */   
+    {
+		/** User has requested only session failover */
 		FailoverRequestSession = OCI_FOT_SESSION,
-		/** User has requested select failover as well */   
+		/** User has requested select failover as well */
 		FailoverRequestSelect = OCI_FOT_SELECT
     };
 
@@ -1363,13 +1370,13 @@ public:
     enum FailoverEventValues
     {
 		/** Successful completion of failover */
-        FailoverEventEnd = OCI_FOE_END,        
+        FailoverEventEnd = OCI_FOE_END,
 		/** Failover was unsuccessful. Retrying is not allowed */
         FailoverEventAbort = OCI_FOE_ABORT,
 		/** Multiple authentication and failover has occurred after the original authentication. User has been reauthenticated */
-        FailoverEventReauthentificate = OCI_FOE_REAUTH,    
+        FailoverEventReauthentificate = OCI_FOE_REAUTH,
 		/** Failover has detected a lost connection and failover is starting */
-        FailoverEventBegin = OCI_FOE_BEGIN, 
+        FailoverEventBegin = OCI_FOE_BEGIN,
 		/** Failover was unsuccessful. Retrying is allowed */
         FailoverEventError = OCI_FOE_ERROR
     };
@@ -1406,18 +1413,18 @@ public:
     typedef Enum<FailoverResultValues> FailoverResult;
 
     /**
-     * @brief 
+     * @brief
      * Session trace enumerated values
      *
      */
     enum SessionTraceValues
     {
         /** Specifies the user defined identifier in the session. It's recorded in the column CLIENT_IDENTIFIER of the system view V$SESSION */
-        TraceIdentity = OCI_TRC_IDENTITY,      
+        TraceIdentity = OCI_TRC_IDENTITY,
         /** Name of the current module in the client application. It's recorded in the column MODULE of the system view V$SESSION */
         TraceModule  = OCI_TRC_MODULE,
         /** Name of the current action within the current module. It's recorded in the column ACTION of the system view V$SESSION */
-        TraceAction = OCI_TRC_ACTION,      
+        TraceAction = OCI_TRC_ACTION,
         /** Client application additional information. It's recorded in the column CLIENT_INFO of the system view V$SESSION */
         TraceDetail  = OCI_TRC_DETAIL
     };
@@ -1464,7 +1471,7 @@ public:
 
     /**
      * @brief
-     * Create a physical connection to an Oracle database server   
+     * Create a physical connection to an Oracle database server
      *
      * @param db           - Oracle Service Name
      * @param user         - Oracle User name
@@ -1499,13 +1506,13 @@ public:
      *   - DO NOT USE UNICODE OCILIB builds with XA connections
      *
      * @note
-     * On success, a local transaction is automatically created and started ONLY for regular 
+     * On success, a local transaction is automatically created and started ONLY for regular
      * standalone connections and connections retrieved from connection pools.
      * No transaction is created for a XA connection or q connection retrieved from session pools.
      *
      */
     void Open(ostring db, ostring user, ostring pwd,  Environment::SessionFlags sessionFlags = Environment::SessionDefault);
-    
+
     /**
      * @brief
      * Close the physical connection to the DB server
@@ -1555,7 +1562,7 @@ public:
 
     /**
     * @brief
-    * Indiciated if the connection is still connected to the server 
+    * Indiciated if the connection is still connected to the server
     *
     * @note
     * the returned value is not realtime and is  based on client libray last heart beat status
@@ -1701,7 +1708,7 @@ public:
      *
      * @note
      * The current transaction (if any) is automatically stopped but the newly assigned is not started or resumed
-     * 
+     *
      * @warning
      * Do not set a transaction to a XA connection or a connection retrieved from a session pool
      *
@@ -1749,7 +1756,7 @@ public:
      * @note
      * Default format is 'FM99999999999999999999999999999999999990.999999999999999999999999'
      * defined by the public constant OCI_STRING_FORMAT_NUM
-     * 
+     *
      * @warning
      * It does not applies to binary double and binary floats data types that
      * are converted from/to strings using the standard C library
@@ -1946,11 +1953,11 @@ public:
     /**
      * @brief
      * Return the default LOB prefetch buffer size for the connection
-     * 
+     *
      * @warning
      * Requires Oracle Client AND Server 11gR1 or above
      *
-     * @note 
+     * @note
      * Prefetch size is:
      * - number of bytes for BLOBs and BFILEs
      * - number of characters for CLOBs.
@@ -1970,7 +1977,7 @@ public:
      * @note
      * If parameter 'value':
      * - is == 0, it disables prefetching for all LOBs fetched in the connection.
-     * - is >  0, it enables prefetching for all LOBs fetched in the connection 
+     * - is >  0, it enables prefetching for all LOBs fetched in the connection
      * and the given buffer size is used for prefetching LOBs
      *
      * @note
@@ -1979,7 +1986,7 @@ public:
      * @warning
      * Requires Oracle Client AND Server 11gR1 or above.
      *
-     * @note 
+     * @note
      * Prefetch size is:
      * - number of bytes for BLOBs and BFILEs
      * - number of characters for CLOBs.
@@ -2050,23 +2057,23 @@ class Transaction : public HandleHolder<OCI_Transaction *>
 public:
 
     /**
-     * @brief 
+     * @brief
      * Transaction flags enumerated values
      *
      */
     enum TransactionFlagsValues
     {
-        Unknown = OCI_UNKNOWN,   
+        Unknown = OCI_UNKNOWN,
         /** (Global) Specifies tightly coupled and migratable branch */
-        New = OCI_TRS_NEW,      
+        New = OCI_TRS_NEW,
         /** (Global) Specifies a tightly coupled branch */
         Tight  = OCI_TRS_TIGHT,
         /** (Global) Specifies a loosely coupled branch */
-        Loose = OCI_TRS_LOOSE,      
+        Loose = OCI_TRS_LOOSE,
         /** (Global and local) start a read-only transaction */
         ReadOnly  = OCI_TRS_READONLY,
         /** (Global and local) start a read-write transaction */
-        ReadWrite = OCI_TRS_READWRITE,      
+        ReadWrite = OCI_TRS_READWRITE,
         /** (Global and local) start a serializable transaction */
         Serializable  = OCI_TRS_SERIALIZABLE
     };
@@ -2169,7 +2176,7 @@ class Date : public HandleHolder<OCI_Date *>
     friend class Message;
 
 public:
-    
+
     /**
      * @brief
      * Create an empty date object
@@ -2206,7 +2213,7 @@ public:
      *
      */
     void SetYear(int value);
- 
+
     /**
      * @brief
      * Return the date month value
@@ -2234,7 +2241,7 @@ public:
      *
      */
     void SetDay(int value);
- 
+
     /**
      * @brief
      * Return the date hours value
@@ -2248,7 +2255,7 @@ public:
      *
      */
     void SetHours(int value);
-  
+
     /**
      * @brief
      * Return the date minutes value
@@ -2421,7 +2428,7 @@ public:
 	*
 	*/
     void FromString(ostring str, ostring format = OCI_STRING_FORMAT_DATE);
-	
+
 	/**
 	* @brief
 	* Convert the date object value to a string
@@ -2449,27 +2456,27 @@ public:
      * Increment the date by 1 day
      *
      * @note
-     * This operator overload calls AddDays()  
+     * This operator overload calls AddDays()
      *
      */
-	Date& operator ++ (int);  
+	Date& operator ++ (int);
 
     /**
      * @brief
      * Decrement the date by 1 day
      *
      * @note
-     * This operator overload calls AddDays()  
+     * This operator overload calls AddDays()
      *
      */
-	Date& operator -- (int);  
+	Date& operator -- (int);
 
     /**
      * @brief
      * Assign the given date object
      *
      * @note
-     * This operator overload calls Assign()  
+     * This operator overload calls Assign()
      *
      */
 	Date& operator = (const Date& other);
@@ -2479,7 +2486,7 @@ public:
      * Increment the date by the given number of days
      *
      * @note
-     * This operator overload calls AddDays()  
+     * This operator overload calls AddDays()
      *
      */
 	Date& operator + (int val);
@@ -2489,7 +2496,7 @@ public:
      * Decrement the date by the given number of days
      *
      * @note
-     * This operator overload calls AddDays()  
+     * This operator overload calls AddDays()
      *
      */
 	Date& operator - (int val);
@@ -2499,7 +2506,7 @@ public:
      * Increment the date by the given number of days
      *
      * @note
-     * This operator overload calls AddDays()  
+     * This operator overload calls AddDays()
      *
      */
 	Date& operator += (int val);
@@ -2509,7 +2516,7 @@ public:
      * Decrement the date by the given number of days
      *
      * @note
-     * This operator overload calls AddDays()  
+     * This operator overload calls AddDays()
      *
      */
 	Date& operator -= (int val);
@@ -2519,11 +2526,11 @@ public:
      * Decrement the date by the given number of days
      *
      * @note
-     * This operator overload calls AddDays()  
+     * This operator overload calls AddDays()
      *
      */
 	bool operator == (const Date& other) const;
-	bool operator != (const Date& other) const;			
+	bool operator != (const Date& other) const;
 	bool operator > (const Date& other) const;
 	bool operator < (const Date& other) const;
 	bool operator >= (const Date& other) const;
@@ -2594,7 +2601,7 @@ public:
 	*
 	*/
     void Assign(const Interval& other);
-    
+
     int Compare(const Interval& other) const;
 
     IntervalType GetType() const;
@@ -2606,16 +2613,16 @@ public:
 
     int GetYear() const;
     void SetYear(int value);
- 
+
     int GetMonth() const;
     void SetMonth(int value);
 
     int GetDay() const;
     void SetDay(int value);
- 
+
     int GetHours() const;
     void SetHours(int value);
-  
+
     int GetMinutes() const;
     void SetMinutes(int value);
 
@@ -2701,16 +2708,16 @@ public:
 
     int GetYear() const;
     void SetYear(int value);
- 
+
     int GetMonth() const;
     void SetMonth(int value);
 
     int GetDay() const;
     void SetDay(int value);
- 
+
     int GetHours() const;
     void SetHours(int value);
-  
+
     int GetMinutes() const;
     void SetMinutes(int value);
 
@@ -2778,7 +2785,7 @@ public:
 
 	/**
 	* @brief
-	* Seek Modes 
+	* Seek Modes
 	*
 	* Possible values are Clob::SeekModeValues
 	*
@@ -2804,7 +2811,7 @@ public:
 	*
 	* Possible values are Clob::OpenModeValues
 	*
-	*/  
+	*/
 	typedef Enum<OpenModeValues> OpenMode;
 
     Clob(const Connection &connection);
@@ -2839,7 +2846,7 @@ public:
 	Clob& operator = (const Clob& other);
 	Clob& operator + (const Clob& other);
 	bool operator == (const Clob& other) const;
-	bool operator != (const Clob& other) const;			
+	bool operator != (const Clob& other) const;
 
 private:
 
@@ -2907,7 +2914,7 @@ public:
 	*
 	* Possible values are Blob::OpenModeValues
 	*
-	*/    
+	*/
 	typedef Enum<OpenModeValues> OpenMode;
 
     Blob(const Connection &connection);
@@ -2941,7 +2948,7 @@ public:
 	Blob& operator = (const Blob& other);
 	Blob& operator + (const Blob& other);
 	bool operator == (const Blob& other) const;
-	bool operator != (const Blob& other) const;	
+	bool operator != (const Blob& other) const;
 
 private:
 
@@ -3042,9 +3049,9 @@ public:
     {
 		/** Database Table information */
         Table = OCI_TIF_TABLE,
-		/** Database View information */   
+		/** Database View information */
 		View = OCI_TIF_VIEW,
-		/** Database type information */    
+		/** Database type information */
 		Type = OCI_TIF_TYPE
     };
 
@@ -3106,7 +3113,7 @@ public:
 
 	/**
 	* @brief
-	* Object Type 
+	* Object Type
 	*
 	* Possible values are Object::ObjectTypeValues
 	*
@@ -3361,7 +3368,7 @@ public:
 	*
 	*/
     bool IsElementNull() const;
-    
+
 	/**
 	* @brief
 	* Set a collection element value to null
@@ -3422,11 +3429,11 @@ public:
 
 	/**
 	* @brief
-	* Return the buffer length 
+	* Return the buffer length
 	*
 	*/
 	unsigned int GetLength() const;
-    
+
 	/**
 	* @brief
 	* Return the string read from a fetch sequence
@@ -3462,7 +3469,7 @@ public:
 	*
 	*/
     Blong(const Statement &statement);
-	
+
 	/**
 	* @brief
 	* Write the given raw buffer into the Blong Object
@@ -3514,7 +3521,7 @@ public:
 	*
 	*/
     enum BindDirectionValues
-    { 
+    {
 		/** Input bind variable (will be not modified as it is an input value for the server) */
         In = OCI_BDM_IN,
 		/** Output bind variable (will be modified  as it is an output vaule by the server ) */
@@ -3615,7 +3622,7 @@ public:
 	* @note
 	* If the bind is related to a single host variable, don't use the parameter index
 	* If the bind is related to host vectors, the parameter 'index' refers to the index in the vector
-	* 
+	*
 	* @warning
 	* Index starts with 1
 	*
@@ -3639,7 +3646,7 @@ public:
 
 	/**
 	* @brief
-	* Get the direction mode 
+	* Get the direction mode
   	*
 	*/
     BindDirection GetDirection() const;
@@ -4137,7 +4144,7 @@ public:
 	*
 	* @warning
 	* This method has builtin specialized versions for ostring, RawPointer , Clong, Blong, Timestamp, Interval variables.
-	* - For ostring, Clong, Blong, RawPointer : Pass the maximum length/size of variables in the parameter extraInfo 
+	* - For ostring, Clong, Blong, RawPointer : Pass the maximum length/size of variables in the parameter extraInfo
 	* - For Timestamp, Interval : Pass a value of the matching C++ class GetType() property type OR the underlying enumeration type.
 	*
 	* @note
@@ -4147,7 +4154,7 @@ public:
 	*/
     template <class TDataType, class TExtraInfo>
     void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo extraInfo, BindInfo::BindDirection mode);
-	
+
 	/**
 	* @brief
 	* Register a host variable as an output for a column present in a SQL RETURNING INTO  clause
@@ -4165,7 +4172,7 @@ public:
 	* Statement, Blong and Clong are not supported for register calls
 	*
 	* @warning
-	* It is necessary to specify the template datatype in the register call  
+	* It is necessary to specify the template datatype in the register call
 	*
 	*/
     template <class TDataType>
@@ -4175,21 +4182,22 @@ public:
 	* @brief
 	* Register a host variable with Oracle type information as an output for a column present in a SQL RETURNING INTO  clause
 	*
-	* @tparam TDataType - C++ type of the host variable
-	*
+	* @tparam TDataType  - C++ type of the host variable
+	* @tparam TExtraInfo - C++ type if the extra information needed for the bind call
+    *
 	* @param name     - Bind name
-	* @param typeInfo - Object type information
+	* @param extraInfo - Extra information needed for the bind call
 	*
 	* @warning
-	* This method has builtin specialized versions for Timestamp and Interval, Object and Reference.
+	* This method has builtin specialized versions for Object and Reference.
 	*
 	* @warning
 	* It is necessary to specify the template datatype in the register call
 	*
 	*/
-    template <class TDataType>
-	void Register(ostring name, TypeInfo& typeInfo);
-	
+    template <class TDataType, class TExtraInfo>
+	void Register(ostring name, TExtraInfo& extraInfo);
+
 	/**
 	* @brief
 	* Register a host variable with more information as an output for a column present in a SQL RETURNING INTO  clause
@@ -4198,7 +4206,6 @@ public:
 	* @tparam TExtraInfo - C++ type if the extra information needed for the bind call
 	*
 	* @param name      - Bind name
-	* @param typeInfo  - Object type information
 	* @param extraInfo - Extra information needed for the bind call
 	*
 	* @warning
@@ -4211,7 +4218,7 @@ public:
 	*/
 	template <class TDataType, class TExtraInfo>
     void Register(ostring name, TExtraInfo extraInfo);
-	
+
 	/**
 	* @brief
 	* Return the type of a SQL statement
@@ -4504,7 +4511,7 @@ public:
 	* @tparam TDataType - C++ type of the value to retrieve
 	*
 	* @param name  - Column name
-	* 
+	*
 	* @warning
 	* This method has builtin specialized versions for all supported types except RAW based types.
 	* For RAWS, use the version with extra parameters
@@ -4515,7 +4522,7 @@ public:
 	*/
     template<class TDataType>
     TDataType Get(ostring name) const;
-	
+
 	/**
 	* @brief
 	* Return the current value of the column at the given index in the resultset
@@ -4692,7 +4699,7 @@ public:
 	* @warning
 	* The column name is case insensitive
 	*
-	*/  
+	*/
 	Column GetColumn(unsigned int index) const;
 
 	/**
@@ -4751,7 +4758,7 @@ public:
 
 	/**
 	* @brief
-	* Convenient operator overloading that performs a call to Seek() 
+	* Convenient operator overloading that performs a call to Seek()
 	* with Resultset::SeekRelative and the given offset
 	*
 	*/
@@ -4793,14 +4800,14 @@ public:
     {
 		/** The column has no flags or the OCI client does not support it */
 		NoFlags = OCI_CPF_NONE,
-		/** - If Set, the column is an IDENTITY column 
+		/** - If Set, the column is an IDENTITY column
             - Otherwise, it is not an IDENTITY column */
         IsIdentity = OCI_CPF_IS_IDENTITY,
-		/** Only valid when IsIdentity is set: 
+		/** Only valid when IsIdentity is set:
 	           - If set, means that the value is "ALWAYS GENERATED"
 	           - Otherwise mens that the value is "GENERATED BY" */
         IsGeneratedAlways = OCI_CPF_IS_GEN_ALWAYS,
-		/** Only valid when IsIdentity is set: 
+		/** Only valid when IsIdentity is set:
 	           - If set, means that the value is generated by default on NULL */
         IsGeneratedByDefaultOnNull = OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL
     };
@@ -4919,7 +4926,7 @@ public:
 	* For earlier versions, it always return Columns::NoFlags
 	*
 	*/
-    PropertyFlags GetPropertyFlags() const; 
+    PropertyFlags GetPropertyFlags() const;
 
 	/**
 	* @brief
@@ -5096,7 +5103,7 @@ private:
 * Subscription Event
 *
 * This class wraps the OCILIB object handle OCI_Event and its related methods
-* 
+*
 * @warning
 * Environment::Events flag must be passed to Environment::Initialize() to be able to use subscriptions
 *
@@ -5767,9 +5774,9 @@ public:
 	* - For object payload, retrieve the object type information object from the given type name
 	* - For RAW payload, you MUST pass the object type information object from the type name "SYS.RAW" as object type name
 	*
-	*/  
+	*/
 	Enqueue(const TypeInfo &typeInfo, ostring queueName);
-	
+
 	/**
 	* @brief
 	* Enqueue a message the on queue associated to the Enqueue object
@@ -5803,7 +5810,7 @@ public:
 
 	/**
 	* @brief
-	* Return the enqueing mode of messages to enqueue 
+	* Return the enqueing mode of messages to enqueue
 	*
 	* @note
 	* see SetMode() for more details
@@ -5973,11 +5980,11 @@ public:
 	*
 	*/
     Dequeue(const TypeInfo &typeInfo, ostring queueName);
-	
+
 	/**
 	* @brief
 	* Dequeue messages from the given queue
-	*	
+	*
 	* @warning
 	* When dequeuing from a multiple consumer queue, you need
 	* to set the navigation mode to NavigationMode::FirstMessage using
@@ -6093,7 +6100,7 @@ public:
 	*
 	* @warning
 	* The visibility parameter is ignored when using the dequeuing
-	* mode is Dequeue::Browse 
+	* mode is Dequeue::Browse
 	*
 	* @note
 	* Default value is Dequeue::OnCommit
@@ -6209,7 +6216,7 @@ public:
      *
      */
     void Subscribe(unsigned int port, unsigned int timeout, NotifyAQHandlerProc handler);
-        
+
     /**
      * @brief
      * Unsubscribe for asynchronous messages notifications
@@ -6282,10 +6289,10 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Create(const Connection &connection, ostring queue, ostring table, QueueType type = NormalQueue, 
-                       unsigned int maxRetries = 0, unsigned int retryDelay = 0, unsigned int retentionTime = 0, 
+    static void Create(const Connection &connection, ostring queue, ostring table, QueueType type = NormalQueue,
+                       unsigned int maxRetries = 0, unsigned int retryDelay = 0, unsigned int retentionTime = 0,
                        bool dependencyTracking = false, ostring comment = OTEXT(""));
-    
+
     /**
      * @brief
      * Alter the given queue
@@ -6305,11 +6312,11 @@ public:
      * this call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE().
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
-     */    
-    static void Alter (const Connection &connection, ostring queue, 
+     */
+    static void Alter (const Connection &connection, ostring queue,
                        unsigned int maxRetries= 0, unsigned int retryDelay= 0,
                        unsigned int retentionTime= 0, ostring comment = OTEXT(""));
-    
+
     /**
      * @brief
      * Drop the given queue
@@ -6324,7 +6331,7 @@ public:
      * this call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE().
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
-     */ 
+     */
     static void Drop  (const Connection &connection, ostring queue);
 
     /**
@@ -6345,7 +6352,7 @@ public:
      *
      */
     static void Start (const Connection &connection, ostring queue, bool enableEnqueue = true, bool enableDequeue = true);
-    
+
     /**
     * @brief
     * Stop enqueuing or dequeuing or both on the given queue
@@ -6377,7 +6384,7 @@ class QueueTable
 public:
 
     /**
-     * 
+     *
      * @brief
      * Grouping mode enumerated values
      *
@@ -6401,7 +6408,7 @@ public:
     typedef Enum<GroupingModeValues> GroupingMode;
 
     /**
-     * 
+     *
      * @brief
      * Purge mode enumerated values
      *
@@ -6459,12 +6466,12 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Create (const Connection &connection, ostring table, ostring payloadType, bool multipleConsumers, 
+    static void Create (const Connection &connection, ostring table, ostring payloadType, bool multipleConsumers,
                         ostring storageClause = OTEXT(""), ostring sortList = OTEXT(""),
                         GroupingMode groupingMode = None, ostring comment = OTEXT(""),
                         unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0,
                         ostring compatible = OTEXT(""));
-    
+
     /**
     * @brief
     * Alter the given queue table
@@ -6484,7 +6491,7 @@ public:
     *
     */
     static void Alter  (const Connection &connection, ostring table, ostring comment, unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0);
-    
+
      /**
      * @brief
      * Drop the given queue table
@@ -6504,9 +6511,9 @@ public:
      * this call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE_TABLE().
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
-     */   
+     */
     static void Drop  (const Connection &connection, ostring table, bool force = true);
-   
+
     /**
      * @brief
      * Purge messages from the given queue table
@@ -6529,7 +6536,7 @@ public:
      * this call wraps the PL/SQL procedure DBMS_AQADM.PURGE_QUEUE_TABLE().
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
-     */   
+     */
     static void Purge  (const Connection &connection, ostring table, PurgeMode mode, ostring condition = OTEXT(""), bool block = true);
 
     /**
@@ -6564,7 +6571,7 @@ class DirectPath : public HandleHolder<OCI_DirPath *>
 public:
 
     /**
-     * @brief 
+     * @brief
      * Conversion mode enumerated  values
      *
      */
@@ -6683,8 +6690,8 @@ public:
      *
      */
     void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const ostring &value,  bool complete = true);
-    
-    
+
+
     /**
      * @brief
      * Set the value of the given row/column array entry from the giben buffer pointer
@@ -6742,14 +6749,14 @@ public:
      *
      * @par Behavior
      * - When using conversion mode DirectPath::Default, Convert() stops when
-     *   any error is encountered and returns ResultError 
+     *   any error is encountered and returns ResultError
      * - When using conversion mode DirectPath::Force, Convert() does not stop
      *   on errors. Instead it discards any erred rows and returns ResultComplete once
      *   all rows are processed.
      *
      * @note
      * List of faulted rows and columns can be retrieved using GetErrorRow() and GetErrorColumn()
-     * 
+     *
      * @note
      * GetAffectedRows() returns the number of rows converted in the last call.
      *
@@ -6830,7 +6837,7 @@ public:
      * @return
      * Internal current array size on SUCCESS otherwise 0
      *
-     */ 
+     */
     unsigned int GetCurrentRows() const;
 
     /**
@@ -6881,7 +6888,7 @@ public:
      *
      */
     void SetDateFormat(ostring format);
-    
+
     /**
      * @brief
      * Set the parallel loading mode
@@ -6974,7 +6981,7 @@ public:
      *
      * @warning
      * Direct path colmun indexes start at 1.
-     * 
+     *
      * @note
      * Errors may happen while data is converted to direct path stream format
      * using Convert().
@@ -6983,10 +6990,10 @@ public:
      * - When using conversion mode DirectPath::Default, Convert() returns
      * DirectPath::ResultError on error and GetErrorColumn() returns the column index that
      * caused the error.
-     * - When using conversion mode DirectPath::Force, Convert() returns 
+     * - When using conversion mode DirectPath::Force, Convert() returns
      * DirectPath::ResultComplete even on errors. In order to retrieve the list of all column
-     * indexes that have erred, the application can call GetErrorColumn() 
-     * repeatedly until it returns 0. 
+     * indexes that have erred, the application can call GetErrorColumn()
+     * repeatedly until it returns 0.
      *
      * @note
      * The internal value is reset to 0 when calling Convert()
@@ -7004,7 +7011,7 @@ public:
      *
      * @warning
      * Direct path row indexes start at 1.
-     * 
+     *
      * @note
      * Errors may happen :
      * - while data is converted to direct path stream format using Convert()
@@ -7014,13 +7021,13 @@ public:
      * - When using conversion mode DirectPath::Default, Convert() returns
      *   DirectPath::ResultError on error and GetErrorRow() returns the row index that
      *   caused the error.
-     * - When using conversion mode DirectPath::Force, Convert() returns 
+     * - When using conversion mode DirectPath::Force, Convert() returns
      *   DirectPath::ResultComplete even on errors. In order to retrieve the list of all row
-     *   indexes that have erred, the application can call GetErrorRow() repeatedly until it returns 0. 
+     *   indexes that have erred, the application can call GetErrorRow() repeatedly until it returns 0.
      *
      * @par  Usage after a Load() call
-     * After a call to Load(), in order to retrieve the list of all faulted rows 
-     * indexes, the application can call GetErrorRow() repeatedly until it returns 0. 
+     * After a call to Load(), in order to retrieve the list of all faulted rows
+     * indexes, the application can call GetErrorRow() repeatedly until it returns 0.
      *
      * @note
      * The internal value is reset to 0 when calling Convert(),Reset() or Load()
