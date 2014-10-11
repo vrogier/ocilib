@@ -641,7 +641,23 @@ inline Exception::Exception()
 
 inline Exception::Exception(OCI_Error *err)
 {
-    Acquire(err, 0, 0);
+	Acquire(err, 0, 0);
+
+	const otext *str = OCI_ErrorGetString(*this);
+
+	if (str)
+	{
+		size_t i = 0, size = ostrlen(str);
+
+		_what.resize(size);
+
+		while (i < size) { _what[i++] = static_cast<char>(str[i]); }
+	}
+}
+
+inline const char * Exception::what() const
+{
+	return _what.c_str();
 }
 
 inline ostring Exception::GetMessage() const

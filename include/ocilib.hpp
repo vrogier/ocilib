@@ -72,20 +72,29 @@ namespace ocilib
 /**
  * @defgroup OcilibCppApiOverview Overview
  * @{
- * OCILIB ++ is a C++ API for Oracle:
- *  - Based on STL paradigms (templates, stack objects)
- *  - Based on design patterns (RAII, delegation, reference counting, smart pointers, proxies, singleton, ...)
- *  - No dynamic object allocation
- *  - Implemented as a small set of header files, no library compilation needed
- *  - Designed on top of OCILIB C API
+ * OCILIB++ is a C++ API for Oracle built on top of the C OCILIB API:
  *  - Full C API ported  to C++
+ *  - Implemented as a small set of header files, no library compilation needed
+ *  - Based on STL paradigms (templates, stack objects, STL classes)
+ *  - Based on design patterns (RAII, delegation, reference counting, smart pointers, proxies, singleton)
+ *  - No dynamic object allocation
  *  - The only dependences are : STL and OCILIB C API
+ *
+ * API usage is very simple, based on stack objects wrapping OCILIB handles using reference counting.
+ * OCILIB handles are automatically allocated internally by C++ objects constructors or methods.
+ * They are also automatically freed when the last C++ object referencing it goes out of scope.
+ * Dynamic memory allocation is not required at all.
+ * OCILIB++ allows simple and safe usage of Oracle client wihtout the worries of memory leakages.
+ * Using stack objects also makes error handling easier and program logic more robust
+ * 
+ * @par Exception model
+ * Any failure occuring within an OCILIB C API call will throw a ocilib::Exception
+ * For conformance reasons, this class derives from std::Exception
  *
  * @note
  *  - OCILIB++ wraps the whole OCILIB C API.
  *  - Each C OCILIB object handle has its C++ class counter part.
  *  - The whole OCILIB C Documentation (concepts, use cases, features and functionalities) is still valid for OCILIB++
- *  - Most of the OCILIB++ classes and functions documentation refer to the C documentation
  *
  * @} 
  */
@@ -268,7 +277,7 @@ typedef Enum<NumericTypeValues> NumericType;
  * This class wraps the OCILIB object handle OCI_Error and its related methods
  *
  */
-class Exception : public HandleHolder<OCI_Error *>
+class Exception : public HandleHolder<OCI_Error *>, public std::exception
 {
     friend void Check();
     friend class Statement;
@@ -358,10 +367,22 @@ public:
      */
     unsigned int GetRow() const;
 
+	/**
+	* @brief
+	* Override the std::exception::what() method
+	*
+	* @return
+	*  - The same content as GetMessage() but as using const char * type
+	*
+	*/
+	virtual const char *what() const;
+
 private:
 
     Exception();
     Exception(OCI_Error *err);
+
+	std::string _what;
 };
 
 /**
