@@ -85,13 +85,16 @@ using namespace ocilib;
   #if defined(_MSC_VER)
     #define omain           wmain
     #define oarg            otext
+    #define oarglen         wcslen
   #else
     #define omain           main
     #define oarg            char
-  #endif
+    #define oarglen         strlen
+   #endif
 #else
   #define omain             main
   #define oarg              char
+  #define oarglen           strlen
 #endif
 
 #if defined(OCI_CHARSET_WIDE)
@@ -177,6 +180,22 @@ test_t tab_test[] =
 
 static Connection con;
 
+ostring GetArg(oarg *arg)
+{
+	ostring res;
+
+	if (arg)
+	{
+		size_t i = 0, size = oarglen(arg);
+
+		res.resize(size);
+
+		while (i < size) { res[i] = static_cast<char>(arg[i]); i++; }
+	}
+
+	return res;
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * main
  * --------------------------------------------------------------------------------------------- */
@@ -184,11 +203,11 @@ static Connection con;
 int omain(int argc, oarg* argv[])
 {
 	ostring home;
-    ostring dbs;
-    ostring usr;
-    ostring pwd;
+	ostring dbs;
+	ostring usr;
+	ostring pwd;
 
-    size_t i;
+	size_t i;
 
     /* CHECK COMMAND LINE --------------------------------------------------- */
 
@@ -197,16 +216,16 @@ int omain(int argc, oarg* argv[])
         return EXIT_FAILURE;
     }
 
-    /* GET ARGUMENTS ---------------------------------------------------------*/
+	/* GET ARGUMENTS ---------------------------------------------------------*/
 
-    dbs = argv[ARG_DB];
-    usr = argv[ARG_USER];
-    pwd = argv[ARG_PWD];
+	dbs = GetArg(argv[ARG_DB]);
+	usr = GetArg(argv[ARG_USER]);
+	pwd = GetArg(argv[ARG_PWD]);
 
-    if(argc == ARG_COUNT)
-    {
-        home = argv[ARG_HOME];
-    }
+	if (argc == ARG_COUNT)
+	{
+		home = GetArg(argv[ARG_HOME]);
+	}
 
     try
     {
@@ -216,7 +235,7 @@ int omain(int argc, oarg* argv[])
 
         std::ocout << OTEXT("Connecting to ") << usr << OTEXT("/") << pwd << OTEXT("@") << dbs << std::endl << std::endl;
 
-        con.Open(dbs, usr, pwd, Environment::SessionDefault);
+		con.Open(dbs, usr, pwd, Environment::SessionDefault);
 
         print_version();
 
@@ -233,9 +252,9 @@ int omain(int argc, oarg* argv[])
         drop_tables();
         con.Close();
     }
-    catch(Exception &ex)
+    catch(std::exception &ex)
     {
-         std::ocout << ex.GetMessage() << std::endl;
+         std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();
