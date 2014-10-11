@@ -42,6 +42,9 @@
  * $Id: ocilib_impl.hpp, Vincent Rogier $
  * --------------------------------------------------------------------------------------------- */
 
+namespace ocilib
+{
+
 /* ********************************************************************************************* *
  *                                         IMPLEMENTATION
  * ********************************************************************************************* */
@@ -100,7 +103,7 @@ inline Enum<TEnum>::operator TEnum ()
 template<class TEnum>
 inline Enum<TEnum>::operator unsigned int ()
 {
-    return (unsigned int) _value;
+    return static_cast<unsigned int>(_value);
 }
 
 template<class TEnum>
@@ -368,7 +371,7 @@ inline HandleHolder<THandleType>::operator bool() const
 template<class THandleType>
 inline Handle * HandleHolder<THandleType>::GetHandle() const
 {
-    return ( Handle *) _smartHandle;
+    return static_cast<Handle *>(_smartHandle);
 }
 
 template<class THandleType>
@@ -582,6 +585,13 @@ inline TSmartHandleType HandleHolder<THandleType>::SmartHandle<TSmartHandleType>
 
 template <class THandleType>
 template <class TSmartHandleType>
+inline Handle * HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetParent() const
+{
+	return _parent;
+}
+
+template <class THandleType>
+template <class TSmartHandleType>
 inline AnyPointer HandleHolder<THandleType>::SmartHandle<TSmartHandleType>::GetExtraInfos() const
 {
     return _extraInfo;
@@ -641,7 +651,7 @@ inline ostring Exception::GetMessage() const
 
 inline Exception::ExceptionType Exception::GetType() const
 {
-    return Exception::ExceptionType( (ExceptionTypeValues) OCI_ErrorGetType(*this) ) ;
+	return Exception::ExceptionType(static_cast<ExceptionType::type>(OCI_ErrorGetType(*this)));
 }
 
 inline int Exception::GetOracleErrorCode() const
@@ -681,7 +691,7 @@ inline void Environment::Initialize(EnvironmentFlags mode, ostring libpath)
 
     Check();
 
-	GetEnvironmentHandle().Initialize(OCI_HandleGetEnvironment(), ociMode);
+	GetEnvironmentHandle().Initialize(static_cast<UnknownHandle>(OCI_HandleGetEnvironment()), ociMode);
 }
 
 inline void Environment::Cleanup()
@@ -695,17 +705,17 @@ inline void Environment::Cleanup()
 
 inline Environment::EnvironmentFlags Environment::GetMode()
 {
-    return  EnvironmentFlags( (EnvironmentFlags::type) GetEnvironmentHandle().Mode);
+	return  EnvironmentFlags(static_cast<EnvironmentFlags::type>(GetEnvironmentHandle().Mode));
 }
 
 inline Environment::ImportMode Environment::GetImportMode()
 {
-    return ImportMode( (ImportMode::type) Check(OCI_GetImportMode()) );
+	return ImportMode(static_cast<ImportMode::type>(Check(OCI_GetImportMode())));
 }
 
 inline Environment::CharsetMode Environment::GetCharset()
 {
-    return CharsetMode((CharsetMode::type) Check(OCI_GetCharset()));
+	return CharsetMode(static_cast<CharsetMode::type>(Check(OCI_GetCharset())));
 }
 
 inline unsigned int Environment::GetCompileVersion()
@@ -748,14 +758,14 @@ inline void Environment::SetHAHandler(HAHandlerProc handler)
 {
     Environment::CallbackPool & pool = GetEnvironmentHandle().Callbacks;
 
-    Check(OCI_SetHAHandler((POCI_HA_HANDLER ) (handler != 0 ? Environment::HAHandler : 0 )));
+	Check(OCI_SetHAHandler(static_cast<POCI_HA_HANDLER>(handler != 0 ? Environment::HAHandler : 0)));
 
-    pool.Set((UnknownHandle) GetEnvironmentHandle(), (CallbackPointer) handler);
+    pool.Set(GetEnvironmentHandle(), reinterpret_cast<CallbackPointer>(handler));
 }
 
 inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp)
 {
-    HAHandlerProc handler = (HAHandlerProc) GetEnvironmentHandle().Callbacks.Get(GetEnvironmentHandle());
+	HAHandlerProc handler = reinterpret_cast<HAHandlerProc>(GetEnvironmentHandle().Callbacks.Get(GetEnvironmentHandle()));
 
     if (handler)
     {
@@ -763,8 +773,8 @@ inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int sou
         Timestamp timestamp(pTimestamp, connection.GetHandle());
 
         handler(connection,
-                HAEventSource((HAEventSource::type) source),
-                HAEventType  ((HAEventType::type  ) event ), 
+                HAEventSource(static_cast<HAEventSource::type>(source)),
+				HAEventType  (static_cast<HAEventType::type>  (event)),
                 timestamp);
     }
 }
@@ -773,15 +783,15 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
 {
     unsigned int res = OCI_FOC_OK;
 
-    Connection::TAFHandlerProc handler = (Connection::TAFHandlerProc) GetEnvironmentHandle().Callbacks.Get(pConnection);
+	Connection::TAFHandlerProc handler = reinterpret_cast<Connection::TAFHandlerProc>(GetEnvironmentHandle().Callbacks.Get(pConnection));
 
     if (handler)
     {
         Connection connection(pConnection, 0);
 
         res = handler(connection, 
-                      Connection::FailoverRequest( (Connection::FailoverRequest::type) type),
-                      Connection::FailoverEvent  ( (Connection::FailoverEvent::type  ) type));
+                      Connection::FailoverRequest( static_cast<Connection::FailoverRequest::type> (type)),
+					  Connection::FailoverEvent  ( static_cast<Connection::FailoverEvent::type>   (event)));
     }
 
     return res;
@@ -789,7 +799,7 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
 
 inline void Environment::NotifyHandler(OCI_Event *pEvent)
 {
-    Subscription::NotifyHandlerProc handler = ( Subscription::NotifyHandlerProc) GetEnvironmentHandle().Callbacks.Get(Check(OCI_EventGetSubscription(pEvent)));
+	Subscription::NotifyHandlerProc handler = reinterpret_cast<Subscription::NotifyHandlerProc>(GetEnvironmentHandle().Callbacks.Get(Check(OCI_EventGetSubscription(pEvent))));
 
     if (handler)
     {
@@ -800,7 +810,7 @@ inline void Environment::NotifyHandler(OCI_Event *pEvent)
 
 inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
 {
-    Dequeue::NotifyAQHandlerProc handler = (Dequeue::NotifyAQHandlerProc) GetEnvironmentHandle().Callbacks.Get(Check(pDequeue));
+	Dequeue::NotifyAQHandlerProc handler = reinterpret_cast<Dequeue::NotifyAQHandlerProc>(GetEnvironmentHandle().Callbacks.Get(Check(pDequeue)));
 
     if (handler)
     {
@@ -921,7 +931,7 @@ inline void Pool::Open(ostring db, ostring user, ostring pwd, Pool::PoolType poo
     Release();
 
     Acquire(Check(OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionFlags.GetValues(),
-            minSize, maxSize, increment)), (HandleFreeFunc) OCI_PoolFree, 0);
+            minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), 0);
 }
 
 inline void Pool::Close()
@@ -1005,13 +1015,13 @@ inline Connection::Connection(ostring db, ostring user, ostring pwd, Environment
 
 inline Connection::Connection(OCI_Connection *con,  Handle *parent)
 {
-    Acquire(con, parent ? (HandleFreeFunc) OCI_ConnectionFree : 0, parent);
+	Acquire(con, reinterpret_cast<HandleFreeFunc>(parent ? OCI_ConnectionFree : 0), parent);
 }
 
 inline void Connection::Open(ostring db, ostring user, ostring pwd, Environment::SessionFlags sessionFlags)
 {
     Acquire(Check(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
-            (HandleFreeFunc) OCI_ConnectionFree, Environment::GetEnvironmentHandle().GetHandle());
+		    reinterpret_cast<HandleFreeFunc>(OCI_ConnectionFree), Environment::GetEnvironmentHandle().GetHandle());
 }
 
 inline void Connection::Close()
@@ -1179,12 +1189,12 @@ inline void Connection::GetServerOutput(std::vector<ostring> &lines) const
 
 inline void Connection::SetTrace(SessionTrace trace, ostring value)
 {
-    Check(OCI_SetTrace(*this, (unsigned int) trace, value.c_str()));
+    Check(OCI_SetTrace(*this, trace, value.c_str()));
 }
 
 inline ostring Connection::GetTrace(SessionTrace trace) const
 {
-    return MakeString(Check(OCI_GetTrace(*this, (unsigned int) trace)));
+    return MakeString(Check(OCI_GetTrace(*this, trace)));
 }
 
 inline ostring Connection::GetDatabase() const
@@ -1246,9 +1256,9 @@ inline void Connection::SetTAFHandler(TAFHandlerProc handler)
 {
     Environment::CallbackPool & pool = Environment::GetEnvironmentHandle().Callbacks;
 
-    Check(OCI_SetTAFHandler(*this, (POCI_TAF_HANDLER ) (handler != 0 ? Environment::TAFHandler : 0 )));
+    Check(OCI_SetTAFHandler(*this, static_cast<POCI_TAF_HANDLER>(handler != 0 ? Environment::TAFHandler : 0 )));
 
-    pool.Set((OCI_Connection*) *this, (CallbackPointer) handler);
+	pool.Set((OCI_Connection*)*this, reinterpret_cast<CallbackPointer>(handler));
 }
 
 inline void* Connection::GetUserData()
@@ -1267,7 +1277,7 @@ inline void Connection::SetUserData(AnyPointer value)
 
 inline Transaction::Transaction(const Connection &connection, unsigned int timeout, TransactionFlags flags, OCI_XID *pxid)
 {
-    Acquire(Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), (HandleFreeFunc) OCI_TransactionFree, 0);
+	Acquire(Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), reinterpret_cast<HandleFreeFunc>(OCI_TransactionFree), 0);
 }
 
 inline Transaction::Transaction(OCI_Transaction *trans)
@@ -1302,7 +1312,7 @@ inline void Transaction::Forget()
 
 inline Transaction::TransactionFlags Transaction::GetFlags() const
 {
-    return TransactionFlags( (TransactionFlags::type) Check(OCI_TransactionGetMode(*this)));
+    return TransactionFlags(static_cast<TransactionFlags::type>(Check(OCI_TransactionGetMode(*this))));
 }
 
 inline unsigned int Transaction::GetTimeout() const
@@ -1316,7 +1326,7 @@ inline unsigned int Transaction::GetTimeout() const
 
 inline Date::Date()
 {
-    Acquire(Check(OCI_DateCreate(NULL)), (HandleFreeFunc) OCI_DateFree, 0);
+	Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0);
 }
 
 inline Date::Date(OCI_Date *pDate, Handle *parent)
@@ -1421,7 +1431,7 @@ inline void Date::SetMinutes(int value)
     int hour, minutes, seconds;
 
     GetTime(&hour, &minutes, &seconds);
-    SetTime(hour, minutes, value);
+    SetTime(hour, value, seconds);
 }
 
 inline int Date::GetSeconds() const    
@@ -1527,9 +1537,9 @@ inline ostring Date::ToString(ostring format) const
 
     ManagedBuffer<otext> buffer = new otext[size+1];
 
-    Check(OCI_DateToText(*this, format.c_str(), (int) size, (otext *) buffer));
+    Check(OCI_DateToText(*this, format.c_str(), (int) size, buffer));
 
-    return MakeString((otext *) buffer);
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline Date::operator ostring() const
@@ -1615,7 +1625,7 @@ inline bool Date::operator <= (const Date& other) const
 
 inline Interval::Interval(IntervalType type)
 {
-    Acquire(Check(OCI_IntervalCreate(NULL, type)), (HandleFreeFunc) OCI_IntervalFree, 0);
+    Acquire(Check(OCI_IntervalCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 0);
 }
 
 inline Interval::Interval(OCI_Interval *pInterval, Handle *parent)
@@ -1807,9 +1817,9 @@ inline ostring Interval::ToString(int leadingPrecision, int fractionPrecision) c
 
     ManagedBuffer<otext> buffer = new otext[size+1];
 
-    Check(OCI_IntervalToText(*this, leadingPrecision, fractionPrecision,  (int) size, (otext *) buffer));
+    Check(OCI_IntervalToText(*this, leadingPrecision, fractionPrecision,  (int) size, buffer));
 
-    return MakeString((otext *) buffer);
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline Interval::operator ostring() const
@@ -1823,7 +1833,7 @@ inline Interval::operator ostring() const
 
 inline Timestamp::Timestamp(TimestampType type)
 {
-    Acquire(Check(OCI_TimestampCreate(NULL, type)), (HandleFreeFunc) OCI_TimestampFree, 0);
+	Acquire(Check(OCI_TimestampCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 0);
 }
 
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, Handle *parent)
@@ -2001,9 +2011,9 @@ inline ostring Timestamp::GetTimeZone() const
 
     ManagedBuffer<otext> buffer = new otext[size+1];
 
-    Check(OCI_TimestampGetTimeZoneName(*this,  (int) size, (otext *) buffer));
+    Check(OCI_TimestampGetTimeZoneName(*this,  (int) size,  buffer));
 
-    return MakeString((otext *) buffer);
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline void Timestamp::GetTimeZoneOffset(int *hour, int *min) const
@@ -2042,9 +2052,9 @@ inline ostring Timestamp::ToString(ostring format, int precision) const
 
     ManagedBuffer<otext> buffer = new otext[size+1];
 
-    Check(OCI_TimestampToText(*this, format.c_str(), (int) size, (otext *) buffer, precision));
+    Check(OCI_TimestampToText(*this, format.c_str(), static_cast<int>(size), buffer, precision));
 
-    return MakeString((otext *) buffer);
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline Timestamp::operator ostring() const
@@ -2070,24 +2080,24 @@ inline ostring Clob::Read(unsigned int size)
 {
 	ManagedBuffer<otext> buffer = new otext[size + 1];
 
-    Check(OCI_LobRead(*this, buffer, size));
+    Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), size));
 
-    return MakeString( (const otext *) buffer);
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline unsigned int Clob::Write(ostring content)
 {
-    return Check(OCI_LobWrite(*this, (RawPointer) content.c_str(), (unsigned int) content.size()));
+    return Check(OCI_LobWrite(*this, (AnyPointer) content.c_str(), static_cast<unsigned int>(content.size())));
 }
 
 inline unsigned int Clob::Append(ostring content)
 {
-    return Check(OCI_LobAppend(*this, (RawPointer) content.c_str(), (unsigned int) content.size()));
+	return Check(OCI_LobAppend(*this, (AnyPointer)content.c_str(), static_cast<unsigned int>(content.size())));
 }
 
 inline bool Clob::Seek(SeekMode seekMode, big_uint offset)
 {
-    return (Check(OCI_LobSeek(*this, offset, (unsigned int) seekMode)) == TRUE);
+    return (Check(OCI_LobSeek(*this, offset, seekMode)) == TRUE);
 }
 
 inline void Clob::Append(const Clob &other)
@@ -2167,15 +2177,15 @@ inline void Clob::EnableBuffering(bool value)
 
 inline Clob::operator ostring() const
 {
-    size_t size   = (size_t) GetLength();
-    size_t offset = (size_t) GetOffset();
+	size_t size = static_cast<unsigned int>(GetLength());
+	size_t offset = static_cast<unsigned int>(GetOffset());
 
     ManagedBuffer<otext> buffer = new otext[size+1];
 
-    Check(OCI_LobRead(*this, buffer, (unsigned int) size));
+	Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), static_cast<unsigned int>(size)));
     Check(OCI_LobSeek(*this, offset, OCI_SEEK_SET)); 
 
-    return MakeString( (const otext *) buffer);
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline Clob& Clob::operator = (const Clob& other)
@@ -2206,7 +2216,7 @@ inline bool Clob::operator != (const Clob& other) const
 
 inline Blob::Blob(const Connection &connection)
 {
-    Acquire(Check(OCI_LobCreate(connection, OCI_BLOB)), (HandleFreeFunc) OCI_LobFree, connection.GetHandle());
+	Acquire(Check(OCI_LobCreate(connection, OCI_BLOB)), reinterpret_cast<HandleFreeFunc>(OCI_LobFree), connection.GetHandle());
 }
 
 inline Blob::Blob(OCI_Lob *pLob, Handle *parent)
@@ -2337,12 +2347,12 @@ inline bool Blob::operator != (const Blob& other) const
 
 inline File::File(const Connection &connection)
 {
-    Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), (HandleFreeFunc) OCI_FileFree, connection.GetHandle());
+    Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), connection.GetHandle());
 }
 
 inline File::File(const Connection &connection, ostring directory, ostring name)
 {
-    Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), (HandleFreeFunc) OCI_FileFree, connection.GetHandle());
+	Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), connection.GetHandle());
 
     SetInfos(directory, name);
 }
@@ -2423,7 +2433,7 @@ inline void File::Close()
 
 inline TypeInfo::TypeInfo(const Connection &connection, ostring name, TypeInfoType type)
 {
-    Acquire(Check(OCI_TypeInfoGet(connection, name.c_str(), type)), (HandleFreeFunc) 0, connection.GetHandle());
+	Acquire(Check(OCI_TypeInfoGet(connection, name.c_str(), type)), reinterpret_cast<HandleFreeFunc>(0), connection.GetHandle());
 }
 
 inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
@@ -2433,7 +2443,7 @@ inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
 
 inline TypeInfo::TypeInfoType TypeInfo::GetType() const
 {
-    return TypeInfoType( (TypeInfoType::type) Check(OCI_TypeInfoGetType(*this)));
+    return TypeInfoType(static_cast<TypeInfoType::type>(Check(OCI_TypeInfoGetType(*this))));
 }
 
 inline ostring TypeInfo::GetName() const
@@ -2463,7 +2473,7 @@ inline Column TypeInfo::GetColumn(unsigned int index) const
 inline Object::Object(const TypeInfo &typeInfo)
 {
     Connection connection = typeInfo.GetConnection();
-    Acquire(Check(OCI_ObjectCreate(connection, typeInfo)), (HandleFreeFunc) OCI_ObjectFree, connection.GetHandle());
+	Acquire(Check(OCI_ObjectCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_ObjectFree), connection.GetHandle());
 }
 
 inline Object::Object(OCI_Object *pObject, Handle *parent)
@@ -2505,7 +2515,7 @@ inline Reference Object::GetReference() const
 
 inline Object::ObjectType Object::GetType() const
 {
-    return ObjectType( (ObjectType::type) Check(OCI_ObjectGetType(*this)));
+    return ObjectType(static_cast<ObjectType::type>(Check(OCI_ObjectGetType(*this))));
 }
 
 template<>
@@ -2744,9 +2754,9 @@ inline ostring Object::ToString() const
 
     ManagedBuffer<otext> buffer = new otext[len+1];
 
-    Check(OCI_ObjectToText(*this, &len, (otext *) buffer));
+    Check(OCI_ObjectToText(*this, &len, buffer));
 
-    return MakeString((otext *) buffer);
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline Object::operator ostring() const
@@ -2761,7 +2771,7 @@ inline Object::operator ostring() const
 inline Reference::Reference(const TypeInfo &typeInfo)
 {
     Connection connection = typeInfo.GetConnection();
-    Acquire(Check(OCI_RefCreate(connection, typeInfo)), (HandleFreeFunc) OCI_RefFree, connection.GetHandle());
+	Acquire(Check(OCI_RefCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_RefFree), connection.GetHandle());
 }
 
 inline Reference::Reference(OCI_Ref *pRef, Handle *parent)
@@ -2800,9 +2810,11 @@ inline ostring Reference::ToString() const
 
     ManagedBuffer<otext> buffer = new otext [ size+1 ];
 
-    Check(OCI_RefToText(*this, size, (otext *) buffer));
+    Check(OCI_RefToText(*this, size, buffer));
 
-    return MakeString( (const otext *) buffer);
+	const otext * result = buffer;
+
+	return MakeString(result);
 }
 
 inline Reference::operator ostring() const
@@ -2816,7 +2828,7 @@ inline Reference::operator ostring() const
 
 inline Collection::Collection(const TypeInfo &typeInfo)
 {
-    Acquire(Check(OCI_CollCreate(typeInfo)), (HandleFreeFunc) OCI_CollFree, typeInfo.GetConnection().GetHandle());
+	Acquire(Check(OCI_CollCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_CollFree), typeInfo.GetConnection().GetHandle());
 }
 
 inline Collection::Collection(OCI_Coll *pColl, Handle *parent)
@@ -3125,7 +3137,6 @@ inline void Collection::SetElem<double>(OCI_Elem *elem, const double &value)
     Check(OCI_ElemSetDouble(elem, value));
 }
 
-
 template <>
 inline void Collection::SetElem<ostring>(OCI_Elem *elem, const ostring &value)
 {
@@ -3206,9 +3217,9 @@ inline ostring Collection::ToString() const
 
     ManagedBuffer<otext> buffer = new otext[len+1];
 
-    Check(OCI_CollToText(*this, &len, (otext *) buffer));
+    Check(OCI_CollToText(*this, &len, buffer));
 
-    return MakeString((otext *) buffer);
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline Collection::operator ostring() const
@@ -3222,7 +3233,7 @@ inline Collection::operator ostring() const
 
 inline CollectionIterator::CollectionIterator(const Collection &collection)
 {
-    Acquire(Check(OCI_IterCreate(collection)), (HandleFreeFunc) OCI_IterFree, collection.GetHandle());
+	Acquire(Check(OCI_IterCreate(collection)), reinterpret_cast<HandleFreeFunc>(OCI_IterFree), collection.GetHandle());
 }
 
 inline bool CollectionIterator::Next()
@@ -3285,7 +3296,7 @@ inline void CollectionIterator::SetElementNull()
 
 inline Clong::Clong(const Statement &statement)
 {
-    Acquire(Check(OCI_LongCreate(statement, OCI_CLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
+    Acquire(Check(OCI_LongCreate(statement, OCI_CLONG)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), statement.GetHandle());
 }
 
 inline Clong::Clong(OCI_Long *pLong, Handle* parent)
@@ -3295,7 +3306,7 @@ inline Clong::Clong(OCI_Long *pLong, Handle* parent)
 
 inline unsigned int Clong::Write(ostring content)
 {
-    return Check(OCI_LongWrite(*this, (RawPointer) content.c_str(), (unsigned int) content.size()));
+	return Check(OCI_LongWrite(*this, reinterpret_cast<AnyPointer>(const_cast<otext *>(content.c_str())), static_cast<unsigned int>(content.size())));
 }
 
 inline unsigned int Clong::GetLength() const
@@ -3305,7 +3316,7 @@ inline unsigned int Clong::GetLength() const
 
 inline ostring Clong::GetContent() const
 {
-    return MakeString((otext *) Check(OCI_LongGetBuffer(*this)));
+    return MakeString(static_cast<const otext *>(Check(OCI_LongGetBuffer(*this))));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3314,7 +3325,7 @@ inline ostring Clong::GetContent() const
 
 inline Blong::Blong(const Statement &statement)
 {
-    Acquire(Check(OCI_LongCreate(statement, OCI_BLONG)), (HandleFreeFunc) OCI_LongFree, statement.GetHandle());
+    Acquire(Check(OCI_LongCreate(statement, OCI_BLONG)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), statement.GetHandle());
 }
 
 inline Blong::Blong(OCI_Long *pLong, Handle *parent)
@@ -3360,6 +3371,23 @@ inline BindValue<TValueType>::operator TValueType() const
 }
 
 /* --------------------------------------------------------------------------------------------- *
+* BindObject
+* --------------------------------------------------------------------------------------------- */
+
+inline BindObject:: BindObject(ostring name) : _name(name)
+{
+}
+
+inline BindObject::~BindObject()
+{
+}
+
+ostring BindObject::GetName() const
+{
+	return _name;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * BindArray
  * --------------------------------------------------------------------------------------------- */
 
@@ -3382,7 +3410,7 @@ inline BindArray::~BindArray()
 template <class TObjectType, class TDataType>
 inline TDataType *  BindArray::GetData ()  const
 {
-    return (TDataType *) (*(dynamic_cast< BindArrayObject<TObjectType, TDataType> * > (_object)));
+    return static_cast<TDataType *>(*(dynamic_cast< BindArrayObject<TObjectType, TDataType> * > (_object)));
 }
 
 inline void BindArray::SetInData()
@@ -3417,7 +3445,7 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::AllocData()
 template<>
 inline void BindArray::BindArrayObject<ostring, otext>::AllocData()
 {
-	_data = (otext *) new otext[_elemSize * _elemCount];
+	_data = new otext[_elemSize * _elemCount];
 
 	memset(_data, 0, _elemSize * _elemCount * sizeof(otext));
 }
@@ -3464,7 +3492,7 @@ inline void BindArray::BindArrayObject<ostring, otext>::SetInData(unsigned int c
         {
             ostring & value = *it;
 
-            memcpy((((otext *) _data) + (_elemSize * index)), value.c_str(), (value.size() + 1) * sizeof(otext));
+            memcpy( _data + (_elemSize * index), value.c_str(), (value.size() + 1) * sizeof(otext));
         }
     }
 }
@@ -3482,7 +3510,7 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetOutData(unsig
 		{
             TObjectType& object = *it;
 
-            object = (TDataType) _data[index];
+            object = static_cast<TDataType>(_data[index]);
         }
     }
 }
@@ -3498,7 +3526,7 @@ inline void BindArray::BindArrayObject<ostring, otext>::SetOutData(unsigned int 
 
 		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; it++, index++)
 		{
-            *it = (otext*) (((otext *) _data) + (_elemSize * index));
+            *it = _data + (_elemSize * index);
         }
     }
 }
@@ -3521,7 +3549,7 @@ inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator TDataType *
 
 inline void BindString::SetInData()
 {
-    unsigned int size = (unsigned int) _string.size() + 1;
+    size_t size = _string.size() + 1;
 
     if (size > _elemSize)
     {
@@ -3677,7 +3705,7 @@ inline void BindInfo::SetCharsetForm(Environment::CharsetForm value)
 
 inline BindInfo::BindDirection BindInfo::GetDirection() const
 {
-    return BindDirection((BindDirection::type) Check(OCI_BindGetDirection(*this)));
+    return BindDirection(static_cast<BindDirection::type>(Check(OCI_BindGetDirection(*this))));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3686,12 +3714,12 @@ inline BindInfo::BindDirection BindInfo::GetDirection() const
 
 inline Statement::Statement(const Connection &connection)
 {
-    Acquire(Check(OCI_StatementCreate(connection)), (HandleFreeFunc) OCI_StatementFree, connection.GetHandle());
+	Acquire(Check(OCI_StatementCreate(connection)), reinterpret_cast<HandleFreeFunc>(OCI_StatementFree), connection.GetHandle());
 }
 
 inline Statement::Statement(OCI_Statement *stmt, Handle *parent)
 {
-     Acquire(stmt, parent ? (HandleFreeFunc) OCI_StatementFree : 0, parent);
+	Acquire(stmt, reinterpret_cast<HandleFreeFunc>(parent ? OCI_StatementFree : 0), parent);
 }
 
 inline Statement::~Statement()
@@ -3977,7 +4005,7 @@ inline void Statement::Bind<Clong, unsigned int>(ostring name, Clong &value, uns
 template <>
 inline void Statement::Bind<Clong, int>(ostring name, Clong &value, int maxSize, BindInfo::BindDirection mode)
 {
-    Bind<Clong, unsigned int>(name, value, (unsigned int) maxSize,  mode);
+	Bind<Clong, unsigned int>(name, value, static_cast<unsigned int>(maxSize), mode);
 }
 
 template <>
@@ -3990,7 +4018,7 @@ inline void Statement::Bind<Blong, unsigned int>(ostring name, Blong &value, uns
 template <>
 inline void Statement::Bind<Blong, int>(ostring name, Blong &value, int maxSize, BindInfo::BindDirection mode)
 {
-    Bind<Blong, unsigned int>(name, value, (unsigned int) maxSize,  mode);
+	Bind<Blong, unsigned int>(name, value, static_cast<unsigned int>(maxSize), mode);
 }
 
 template <>
@@ -3998,12 +4026,12 @@ inline void Statement::Bind<ostring, unsigned int>(ostring name, ostring &value,
 {
     if (maxSize == 0)
     {
-        maxSize = (unsigned int) value.size();
+		maxSize = static_cast<unsigned int>(value.size());
     }
 
     BindString * bnd = new BindString(name, value, maxSize+1);
 
-    if (OCI_BindString(*this, name.c_str(), (otext*) (*bnd), maxSize))
+    if (OCI_BindString(*this, name.c_str(), static_cast<otext *>(*bnd), maxSize))
     {
         BindsHolder *bindsHolder = GetBindsHolder(true);
         bindsHolder->AddBindObject(bnd);
@@ -4020,7 +4048,7 @@ inline void Statement::Bind<ostring, unsigned int>(ostring name, ostring &value,
 template <>
 inline void Statement::Bind<ostring, int>(ostring name, ostring &value, int maxSize, BindInfo::BindDirection mode)
 {
-    Bind<ostring, unsigned int>(name, value, (unsigned int) maxSize,  mode);
+    Bind<ostring, unsigned int>(name, value, static_cast<unsigned int>(maxSize),  mode);
 }
 
 template <>
@@ -4033,7 +4061,7 @@ inline void Statement::Bind<RawPointer, unsigned int>(ostring name, RawPointer &
 template <>
 inline void Statement::Bind<RawPointer,  int>(ostring name, RawPointer &value,  int maxSize, BindInfo::BindDirection mode)
 {
-     Bind<RawPointer, unsigned int>(name, value, (unsigned int) maxSize,  mode);
+     Bind<RawPointer, unsigned int>(name, value, static_cast<unsigned int>(maxSize), mode);
 }
 
 template <>
@@ -4135,19 +4163,19 @@ inline void Statement::Bind<File>(ostring name, std::vector<File> &values, BindI
 template <>
 inline void Statement::Bind<Object>(ostring name, std::vector<Object> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
-   Bind(OCI_BindArrayOfObjects, name, values, BindValue<OCI_Object *>(), mode, (OCI_TypeInfo *) typeInfo);
+	Bind(OCI_BindArrayOfObjects, name, values, BindValue<OCI_Object *>(), mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
 template <>
 inline void Statement::Bind<Reference>(ostring name, std::vector<Reference> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
-   Bind(OCI_BindArrayOfRefs, name, values, BindValue<OCI_Ref *>(), mode, (OCI_TypeInfo *) typeInfo);
+	Bind(OCI_BindArrayOfRefs, name, values, BindValue<OCI_Ref *>(), mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
 template <>
 inline void Statement::Bind<Collection>(ostring name, std::vector<Collection> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
-   Bind(OCI_BindArrayOfColls, name, values, BindValue<OCI_Coll *>(), mode, (OCI_TypeInfo *) typeInfo);
+	Bind(OCI_BindArrayOfColls, name, values, BindValue<OCI_Coll *>(), mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
 template <>
@@ -4313,7 +4341,7 @@ inline void Statement::Register<ostring, unsigned int>(ostring name, unsigned in
 template <>
 inline void Statement::Register<ostring, int>(ostring name, int len)
 {
-    Register<ostring, unsigned int>(name,  (unsigned int) len);
+    Register<ostring, unsigned int>(name, static_cast<unsigned int>(len));
 }
 
 template <>
@@ -4325,13 +4353,13 @@ inline void Statement::Register<RawPointer, unsigned int>(ostring name, unsigned
 template <>
 inline void Statement::Register<RawPointer, int>(ostring name, int len)
 {
-  Register<ostring, unsigned int>(name,(unsigned int) len);
+	Register<ostring, unsigned int>(name, static_cast<unsigned int>(len));
 }
 
 
 inline Statement::StatementType Statement::GetStatementType() const
 {
-    return StatementType((StatementType::type) Check(OCI_GetStatementType(*this)));
+	return StatementType(static_cast<StatementType::type>(Check(OCI_GetStatementType(*this))));
 }
 
 inline unsigned int Statement::GetSqlErrorPos() const
@@ -4346,7 +4374,7 @@ inline void Statement::SetFetchMode(FetchMode value)
 
 inline Statement::FetchMode Statement::GetFetchMode() const
 {
-    return FetchMode((FetchMode::type) Check(OCI_GetFetchMode(*this)));
+	return FetchMode(static_cast<FetchMode::type>(Check(OCI_GetFetchMode(*this))));
 }
 
 inline void Statement::SetBindMode(BindMode value)
@@ -4356,7 +4384,7 @@ inline void Statement::SetBindMode(BindMode value)
 
 inline Statement::BindMode Statement::GetBindMode() const
 {
-    return BindMode((BindMode::type) Check(OCI_GetBindMode(*this)));
+	return BindMode(static_cast<BindMode::type>(Check(OCI_GetBindMode(*this))));
 }
 
 inline void Statement::SetFetchSize(unsigned int value)
@@ -4406,7 +4434,7 @@ inline void Statement::SetLongMode(LongMode value)
 
 inline Statement::LongMode Statement::GetLongMode() const
 {
-    return LongMode((LongMode::type) Check(OCI_GetLongMode(*this)));
+	return LongMode(static_cast<LongMode::type>(Check(OCI_GetLongMode(*this))));
 }
 
 inline unsigned int Statement::GetSQLCommand() const
@@ -4492,7 +4520,7 @@ inline void Statement::SetLastBindMode(BindInfo::BindDirection mode)
 
 inline BindsHolder * Statement::GetBindsHolder(bool create)
 {
-    BindsHolder * bindsHolder = (BindsHolder *) _smartHandle->GetExtraInfos();
+	BindsHolder * bindsHolder = static_cast<BindsHolder *>(_smartHandle->GetExtraInfos());
 
     if (bindsHolder == 0 && create)
     {
@@ -4594,12 +4622,12 @@ inline bool Resultset::operator -- (int)
 
 inline bool Resultset::operator += (int offset)
 {
-	return Seek(Resultset::SeeKRelative, offset);
+	return Seek(Resultset::SeekRelative, offset);
 }
 
 inline bool Resultset::operator -= (int offset)
 {
-	return Seek(Resultset::SeeKRelative, -offset);
+	return Seek(Resultset::SeekRelative, -offset);
 }
 
 template<>
@@ -4893,12 +4921,12 @@ inline ostring Column::GetFullSQLType() const
 
     Check(OCI_ColumnGetFullSQLType(*this, buffer, size));
 
-    return MakeString((otext *) buffer);
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline DataType Column::GetType() const
 {
-	return DataType((DataType::type) Check(OCI_ColumnGetType(*this)));
+	return DataType(static_cast<DataType::type>(Check(OCI_ColumnGetType(*this))));
 }
 
 inline unsigned int Column::GetSubType() const
@@ -4908,7 +4936,7 @@ inline unsigned int Column::GetSubType() const
 
 inline Environment::CharsetForm Column::GetCharsetForm() const
 {
-    return Environment::CharsetForm((Environment::CharsetForm::type) Check(OCI_ColumnGetCharsetForm(*this)));
+	return Environment::CharsetForm(static_cast<Environment::CharsetForm::type>(Check(OCI_ColumnGetCharsetForm(*this))));
 }
 
 inline unsigned int Column::GetSize() const
@@ -4938,7 +4966,7 @@ inline int Column::GetLeadingPrecision() const
 
 inline Column::PropertyFlags Column::GetPropertyFlags() const
 {
-    return PropertyFlags((PropertyFlags::type) Check(OCI_ColumnGetPropertyFlags(*this)));
+	return PropertyFlags(static_cast<PropertyFlags::type>(Check(OCI_ColumnGetPropertyFlags(*this))));
 }
 
 inline bool Column::IsNullable() const
@@ -4973,10 +5001,10 @@ inline Subscription::Subscription(OCI_Subscription *pSubcription)
 inline void Subscription::Register(const Connection &connection, ostring name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
 {
 	Acquire(Check(OCI_SubscriptionRegister(connection, name.c_str(), changeTypes.GetValues(),
-                                           (POCI_NOTIFY) (handler != 0 ? Environment::NotifyHandler : 0 ), port, timeout)),
-                                           (HandleFreeFunc) OCI_SubscriptionUnregister, 0);
+                                           static_cast<POCI_NOTIFY> (handler != 0 ? Environment::NotifyHandler : 0 ), port, timeout)),
+                                           reinterpret_cast<HandleFreeFunc>(OCI_SubscriptionUnregister), 0);
 
-    Environment::GetEnvironmentHandle().Callbacks.Set((OCI_Subscription*) *this, (CallbackPointer) handler);
+	Environment::GetEnvironmentHandle().Callbacks.Set(static_cast<OCI_Subscription*>(*this), static_cast<CallbackPointer>(handler));
 }
 
 inline void Subscription::Unregister()
@@ -5025,12 +5053,12 @@ inline Event::Event(OCI_Event *pEvent)
 
 inline Event::EventType Event::GetType() const
 {
-    return EventType((EventType::type) Check(OCI_EventGetType(*this)));
+	return EventType(static_cast<EventType::type>(Check(OCI_EventGetType(*this))));
 }
 
 inline Event::ObjectEvent Event::GetObjectEvent() const
 {
-    return ObjectEvent((ObjectEvent::type) Check(OCI_EventGetOperation(*this)));
+	return ObjectEvent(static_cast<ObjectEvent::type>(Check(OCI_EventGetOperation(*this))));
 }
 
 inline ostring Event::GetDatabaseName() const
@@ -5059,7 +5087,7 @@ inline Subscription Event::GetSubscription() const
 
 inline Agent::Agent(const Connection &connection, ostring name, ostring address)
 {
-    Acquire(Check(OCI_AgentCreate(connection, name.c_str(), address.c_str())), (HandleFreeFunc) OCI_AgentFree, 0);
+    Acquire(Check(OCI_AgentCreate(connection, name.c_str(), address.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_AgentFree), 0);
 }
 
 inline Agent::Agent(OCI_Agent *pAgent, Handle *parent)
@@ -5098,7 +5126,7 @@ inline void Agent::SetAddress(ostring value)
 
 inline Message::Message(const TypeInfo &typeInfo)
 {
-    Acquire(Check(OCI_MsgCreate(typeInfo)), (HandleFreeFunc) OCI_MsgFree, 0);
+    Acquire(Check(OCI_MsgCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_MsgFree), 0);
 }
 
 inline Message::Message(OCI_Msg *pMessage, Handle *parent)
@@ -5143,7 +5171,7 @@ inline int Message::GetAttemptCount() const
 
 inline Message::MessageState Message::GetState() const
 {
-    return MessageState((MessageState::type) Check(OCI_MsgGetState(*this)));
+	return MessageState(static_cast<MessageState::type>(Check(OCI_MsgGetState(*this))));
 }
 
 inline void Message::GetID(RawPointer &value, unsigned int &size) const
@@ -5226,12 +5254,14 @@ inline void Message::SetConsumers(std::vector<Agent> &agents)
     size_t size = agents.size();
     ManagedBuffer<OCI_Agent*> buffer = new OCI_Agent * [size];
 
+	OCI_Agent ** pAgents = static_cast<OCI_Agent **>(buffer);
+
     for (size_t i = 0; i < size; i++)
     {
-       ((OCI_Agent **) buffer)[i] = (const Agent &) agents[i];
+		pAgents[i] = static_cast<const Agent &>(agents[i]);
     }
 
-    Check(OCI_MsgSetConsumers(*this, (OCI_Agent **) buffer, (unsigned int) size));
+	Check(OCI_MsgSetConsumers(*this, pAgents, static_cast<unsigned int>(size)));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -5240,7 +5270,7 @@ inline void Message::SetConsumers(std::vector<Agent> &agents)
 
 inline Enqueue::Enqueue(const TypeInfo &typeInfo, ostring queueName)
 {
-   Acquire(Check(OCI_EnqueueCreate(typeInfo, queueName.c_str())), (HandleFreeFunc) OCI_EnqueueFree, 0);
+   Acquire(Check(OCI_EnqueueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_EnqueueFree), 0);
 }
 
 inline void Enqueue::Put(const Message &message)
@@ -5250,7 +5280,7 @@ inline void Enqueue::Put(const Message &message)
 
 inline Enqueue::EnqueueVisibility Enqueue::GetVisibility() const
 {
-    return EnqueueVisibility((EnqueueVisibility::type) Check(OCI_EnqueueGetVisibility(*this)));
+	return EnqueueVisibility(static_cast<EnqueueVisibility::type>(Check(OCI_EnqueueGetVisibility(*this))));
 }
 
 inline void Enqueue::SetVisibility(EnqueueVisibility value)
@@ -5260,7 +5290,7 @@ inline void Enqueue::SetVisibility(EnqueueVisibility value)
 
 inline Enqueue::EnqueueMode Enqueue::GetMode() const
 {
-    return EnqueueMode((EnqueueMode::type) Check(OCI_EnqueueGetSequenceDeviation(*this)));
+	return EnqueueMode(static_cast<EnqueueMode::type>(Check(OCI_EnqueueGetSequenceDeviation(*this))));
 }
 
 inline void Enqueue::SetMode(EnqueueMode value)
@@ -5284,7 +5314,7 @@ inline void Enqueue::SetRelativeMsgID(const RawPointer &value, unsigned int size
 
 inline Dequeue::Dequeue(const TypeInfo &typeInfo, ostring queueName)
 {
-   Acquire(Check(OCI_DequeueCreate(typeInfo, queueName.c_str())), (HandleFreeFunc) OCI_DequeueFree, 0);
+   Acquire(Check(OCI_DequeueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_DequeueFree), 0);
 }
 
 inline Dequeue::Dequeue(OCI_Dequeue *pDequeue)
@@ -5377,19 +5407,21 @@ inline void Dequeue::SetAgents(std::vector<Agent> &agents)
     size_t size = agents.size();
     ManagedBuffer<OCI_Agent*> buffer = new OCI_Agent * [size];
 
+	OCI_Agent ** pAgents = static_cast<OCI_Agent **>(buffer);
+
     for (size_t i = 0; i < size; i++)
     {
-       ((OCI_Agent **) buffer)[i] = (const Agent &) agents[i];
+		pAgents[i] = static_cast<const Agent &>(agents[i]);
     }
 
-    Check(OCI_DequeueSetAgentList(*this, (OCI_Agent **) buffer, (unsigned int) size));
+	Check(OCI_DequeueSetAgentList(*this, pAgents, static_cast<unsigned int>(size)));
 }
 
 inline void Dequeue::Subscribe(unsigned int port, unsigned int timeout, NotifyAQHandlerProc handler)
 {
-    Check(OCI_DequeueSubscribe(*this, port, timeout, (POCI_NOTIFY_AQ) (handler != 0 ? Environment::NotifyHandlerAQ : 0 )));
+    Check(OCI_DequeueSubscribe(*this, port, timeout, static_cast<POCI_NOTIFY_AQ>(handler != 0 ? Environment::NotifyHandlerAQ : 0 )));
 
-    Environment::GetEnvironmentHandle().Callbacks.Set((OCI_Dequeue*) *this, (CallbackPointer) handler);
+	Environment::GetEnvironmentHandle().Callbacks.Set(static_cast<OCI_Dequeue*>(*this), static_cast<CallbackPointer>(handler));
 }
 
 inline void Dequeue::Unsubscribe()
@@ -5403,7 +5435,7 @@ inline void Dequeue::Unsubscribe()
 
 inline DirectPath::DirectPath(const TypeInfo &typeInfo, unsigned int nbCols, unsigned int  nbRows, ostring partition)
 {
-    Acquire(Check(OCI_DirPathCreate(typeInfo, partition.c_str(), nbCols, nbRows)), (HandleFreeFunc) OCI_DirPathFree, 0);
+    Acquire(Check(OCI_DirPathCreate(typeInfo, partition.c_str(), nbCols, nbRows)), reinterpret_cast<HandleFreeFunc>(OCI_DirPathFree), 0);
 }
 
 inline void DirectPath::SetColumn(unsigned int colIndex, ostring name, unsigned int maxSize,  ostring format)
@@ -5413,12 +5445,12 @@ inline void DirectPath::SetColumn(unsigned int colIndex, ostring name, unsigned 
 
 inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex,  const ostring &value,  bool complete)
 {
-    Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, (RawPointer) value.c_str(), (unsigned int) value.size(), complete));
+	Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, static_cast<const AnyPointer>(const_cast<otext *>(value.c_str())), static_cast<unsigned int>(value.size()), complete));
 }
 
 inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex,  const RawPointer &value, unsigned int size,  bool complete )
 {
-    Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, value, size, complete));
+	Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, static_cast<const AnyPointer>(value), size, complete));
 }
 
 inline void DirectPath::Reset()
@@ -5580,7 +5612,7 @@ inline void QueueTable::Drop(const Connection &connection, ostring table, bool f
 
 inline void QueueTable::Purge(const Connection &connection, ostring table, PurgeMode mode, ostring condition, bool block)
 {
-    Check(OCI_QueueTablePurge(connection, table.c_str(), condition.c_str(), block, (unsigned int) mode));
+	Check(OCI_QueueTablePurge(connection, table.c_str(), condition.c_str(), block, static_cast<unsigned int>(mode)));
 }
 
 inline void QueueTable::Migrate(const Connection &connection, ostring table, ostring compatible)
@@ -5592,3 +5624,4 @@ inline void QueueTable::Migrate(const Connection &connection, ostring table, ost
  * @}
  */
 
+}

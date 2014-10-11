@@ -2555,9 +2555,25 @@ public:
 	*/
     typedef Enum<IntervalTypeValues> IntervalType;
 
+	/**
+	* @brief
+	* Create a new instance of the given type
+	*
+	* @param type - Interval type to create
+	*
+	*/
+
     Interval(IntervalType type);
 
+	/**
+	* @brief
+	* Assign the value of the given Interval object
+	*
+	* @param other - Source Interval object
+	*
+	*/
     void Assign(const Interval& other);
+    
     int Compare(const Interval& other) const;
 
     IntervalType GetType() const;
@@ -4429,7 +4445,7 @@ public:
 		/** Seek is performed using a given absolute offset. The statement must be scrollable */
         SeekAbsolute = OCI_SFD_ABSOLUTE,
 		/** Seek is performed using a given relative offset from the current position. The statement must be scrollable */
-		SeeKRelative = OCI_SFD_RELATIVE
+		SeekRelative = OCI_SFD_RELATIVE
     };
 
 	/**
@@ -4715,7 +4731,7 @@ public:
 	/**
 	* @brief
 	* Convenient operator overloading that performs a call to Seek() 
-	* with Resultset::SeeKRelative and the given offset
+	* with Resultset::SeekRelative and the given offset
 	*
 	*/
     bool operator += (int offset);
@@ -4723,7 +4739,7 @@ public:
 	/**
 	* @brief
 	* Convenient operator overloading that performs a call to Seek()
-	* with Resultset::SeeKRelative and the given offset that is internally negated
+	* with Resultset::SeekRelative and the given offset that is internally negated
 	*
 	*/
 	bool operator -= (int offset);
@@ -6997,10 +7013,10 @@ public:
     unsigned int GetErrorRow();
 };
 
+}
 
 #include "ocilib_impl.hpp"
 
-}
 
 #endif
 

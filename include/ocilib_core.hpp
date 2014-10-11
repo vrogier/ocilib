@@ -287,10 +287,7 @@ protected:
 
         TSmartHandleType GetHandle() const;
 
-        Handle *GetParent() const
-        {
-            return _parent;
-        }
+		Handle *GetParent() const;
 
 		AnyPointer GetExtraInfos() const;
 		void  SetExtraInfos(AnyPointer extraInfo);
@@ -337,18 +334,11 @@ class BindObject
 {
 public:
 
-     BindObject(ostring name) : _name(name)
-     {
-     }
+	BindObject(ostring name);
 
-     virtual ~BindObject()
-     {
-     }
+	virtual ~BindObject();
 
-     ostring GetName()
-     {
-         return _name;
-     }
+	ostring GetName() const;
 
      virtual void SetInData()  = 0;
      virtual void SetOutData() = 0;
