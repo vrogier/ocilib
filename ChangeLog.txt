@@ -40,6 +40,11 @@
               - OCI_CollSetAt() to OCI_CollSetElem().
               - Note that older method names are still supported using #define for backward compatibility reasons 
 
+      - Connection/Session Pools:
+          - Fixed OCI_PoolGetConnection() that could return NULL connection handles (particurlarly when program is using OCI_PoolGetOpenedCount())
+          - Removed connection pooling emulation for Oracle 8i
+          - Refactored Oracle pooling implementation (code is now simplier and musch more robust)
+
       - Unicode builds:  
           - Fixed LONG data type fetching when using Unicode builds on Unix/Linux platforms. Returned strings could have extraneous trailing characters
           - Fixed Buffer overwrite in OCI_LobRead2() in Unicode builds
