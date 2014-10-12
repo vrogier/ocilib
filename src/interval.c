@@ -739,7 +739,7 @@ boolean OCI_API OCI_IntervalAdd
     OCI_Interval *itv2
 )
 {
-    boolean res = FALSE;
+    boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv,  FALSE);
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv2, FALSE);
@@ -772,7 +772,7 @@ boolean OCI_API OCI_IntervalSubtract
     OCI_Interval *itv2
 )
 {
-    boolean res = FALSE;
+    boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv,  FALSE);
     OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv2, FALSE);
