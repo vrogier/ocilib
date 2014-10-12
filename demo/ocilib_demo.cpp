@@ -231,9 +231,9 @@ int omain(int argc, oarg* argv[])
     {
         Environment::Initialize(Environment::Default | Environment::Threaded, home);
 
-        Environment::EnableWarnings(true);
+		Environment::EnableWarnings(true);
 
-        std::ocout << OTEXT("Connecting to ") << usr << OTEXT("/") << pwd << OTEXT("@") << dbs << std::endl << std::endl;
+		std::ocout << OTEXT("Connecting to ") << usr << OTEXT("/") << pwd << OTEXT("@") << dbs << std::endl << std::endl;
 
 		con.Open(dbs, usr, pwd, Environment::SessionDefault);
 
@@ -252,10 +252,10 @@ int omain(int argc, oarg* argv[])
         drop_tables();
         con.Close();
     }
-    catch(std::exception &ex)
-    {
-         std::cout << ex.what() << std::endl;
-    }
+	catch (std::exception &ex)
+	{
+		std::cout << ex.what() << std::endl;
+	}
 
     Environment::Cleanup();
 
@@ -853,7 +853,7 @@ void test_timestamp(void)
 
             Interval itv(Interval::DaySecond);
             itv.SetDaySecond(1,1,1,1,0);
-            tm.AddInterval(itv);
+            tm += itv;
             std::ocout << OTEXT("Current timestamp + Interval :") << tm.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS:FF3")) << std::endl;
         }
     }

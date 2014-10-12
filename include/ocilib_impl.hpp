@@ -1350,6 +1350,12 @@ inline Date::Date()
 	Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0);
 }
 
+inline Date::Date(const Date& other)
+{
+	Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0);
+	Assign(other);
+}
+
 inline Date::Date(OCI_Date *pDate, Handle *parent)
 {
     Acquire(pDate, 0, parent);
@@ -1570,12 +1576,12 @@ inline Date::operator ostring() const
 
 inline Date& Date::operator ++ (int)
 {
-    return *this + 1;
+    return *this += 1;
 }
 
 inline Date& Date::operator -- (int)
 {
-    return *this - 1;
+    return *this -= 1;
 }
 
 inline Date& Date::operator = (const Date& other)
@@ -1584,25 +1590,27 @@ inline Date& Date::operator = (const Date& other)
     return *this;
 }
 
-inline Date& Date::operator + (int val)
+inline Date Date::operator + (int value)
 {
-    return *this += val;
+	Date result(*this);
+	return result += value;
 }
 
-inline Date& Date::operator - (int val)
+inline Date Date::operator - (int value)
 {
-    return *this -= val;
+	Date result(*this);
+	return result -= value;
 }
 
-inline Date& Date::operator += (int val)
+inline Date& Date::operator += (int value)
 {
-    AddDays(val);
+	AddDays(value);
     return *this;
 }
 
-inline Date& Date::operator -= (int val)
+inline Date& Date::operator -= (int value)
 {
-    AddDays(-val);
+	AddDays(-value);
     return *this;
 }
 
@@ -1649,6 +1657,12 @@ inline Interval::Interval(IntervalType type)
     Acquire(Check(OCI_IntervalCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 0);
 }
 
+inline Interval::Interval(const Interval& other)
+{
+	Acquire(Check(OCI_IntervalCreate(NULL, other.GetType())), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 0);
+	Assign(other);
+}
+
 inline Interval::Interval(OCI_Interval *pInterval, Handle *parent)
 {
     Acquire(pInterval, 0, parent);
@@ -1667,16 +1681,6 @@ inline int Interval::Compare(const Interval& other) const
 inline Interval::IntervalType Interval::GetType() const
 {
     return IntervalType((IntervalType::type) Check(OCI_IntervalGetType(*this)));
-}
-
-inline void Interval::Add(const Interval& other)
-{
-     Check(OCI_IntervalAdd(*this, other));
-}
-
-inline void Interval::Substract(const Interval& other)
-{
-    Check(OCI_IntervalSubtract(*this, other));
 }
 
 inline bool Interval::IsValid() const
@@ -1846,6 +1850,70 @@ inline ostring Interval::ToString(int leadingPrecision, int fractionPrecision) c
 inline Interval::operator ostring() const
 {
     return ToString();
+}
+
+inline Interval& Interval::operator = (const Interval& other)
+{
+	Assign(other);
+	return *this;
+}
+
+inline Interval Interval::operator + (const Interval& other)
+{
+	Interval result(*this);
+	return result += other;
+}
+
+inline Interval Interval::operator - (const Interval& other)
+{
+	Interval result(*this);
+	return result -= other;
+}
+
+inline Interval& Interval::operator += (const Interval& other)
+{
+	Check(OCI_IntervalAdd(*this, other));
+	return *this;
+}
+
+inline Interval& Interval::operator -= (const Interval& other)
+{
+	Check(OCI_IntervalSubtract(*this, other));
+	return *this;
+}
+
+inline bool Interval::operator == (const Interval& other) const
+{
+	return Compare(other) == 0;
+}
+
+inline bool Interval::operator != (const Interval& other) const
+{
+	return (!(*this == other));
+}
+
+inline bool Interval::operator > (const Interval& other) const
+{
+	return (Compare(other) > 0);
+}
+
+inline bool Interval::operator < (const Interval& other) const
+{
+	return (Compare(other) < 0);
+}
+
+inline bool Interval::operator >= (const Interval& other) const
+{
+	int res = Compare(other);
+
+	return (res == 0 || res < 0);
+}
+
+inline bool Interval::operator <= (const Interval& other) const
+{
+	int res = Compare(other);
+
+	return (res == 0 || res > 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2042,19 +2110,9 @@ inline void Timestamp::GetTimeZoneOffset(int *hour, int *min) const
     Check(OCI_TimestampGetTimeZoneOffset(*this, hour, min));
 }
 
-inline void Timestamp::AddInterval(const Interval& other)
+inline void Timestamp::Substract(const Timestamp &lsh, const Timestamp &rsh, Interval& result)
 {
-    Check(OCI_TimestampIntervalAdd(*this, other));
-}
-
-inline void Timestamp::SubstractInterval(const Interval& other)
-{
-    Check(OCI_TimestampIntervalSub(*this, other));
-}
-
-inline void Timestamp::Substract(const Timestamp &other, Interval &result)
-{
-    Check(OCI_TimestampSubtract(*this, other, result));
+	Check(OCI_TimestampSubtract(lsh, rsh, result));
 }
 
 inline void Timestamp::SysTimestamp()
@@ -2081,6 +2139,110 @@ inline ostring Timestamp::ToString(ostring format, int precision) const
 inline Timestamp::operator ostring() const
 {
     return ToString();
+}
+
+inline Timestamp& Timestamp::operator ++ (int)
+{
+	return *this += 1;
+}
+
+inline Timestamp& Timestamp::operator -- (int)
+{
+	return *this -= 1;
+}
+
+inline Timestamp Timestamp::operator + (int value)
+{
+	Timestamp result(*this);
+	Interval interval(Interval::DaySecond);
+	interval.SetDay(1);
+	return result += value;
+}
+
+inline Timestamp Timestamp::operator - (int value)
+{
+	Timestamp result(*this);
+	Interval interval(Interval::DaySecond);
+	interval.SetDay(1);
+	return result -= value;
+}
+
+inline Timestamp& Timestamp::operator = (const Timestamp& other)
+{
+	Assign(other);
+	return *this;
+}
+
+inline Timestamp Timestamp::operator + (const Interval& other)
+{
+	Timestamp result(*this);
+	return result += other;
+}
+
+inline Timestamp Timestamp::operator - (const Interval& other)
+{
+	Timestamp result(*this);
+	return result -= other;
+}
+
+inline Timestamp& Timestamp::operator += (const Interval& other)
+{
+	Check(OCI_TimestampIntervalAdd(*this, other));
+	return *this;
+}
+
+inline Timestamp& Timestamp::operator -= (const Interval& other)
+{
+	Check(OCI_TimestampIntervalSub(*this, other));
+	return *this;
+}
+
+inline Timestamp& Timestamp::operator += (int value)
+{
+	Interval interval(Interval::DaySecond);
+	interval.SetDay(value);
+	return *this += interval;
+}
+
+inline Timestamp& Timestamp::operator -= (int value)
+{
+	Interval interval(Interval::DaySecond);
+	interval.SetDay(value);
+	return *this -= interval;
+}
+
+inline bool Timestamp::operator == (const Timestamp& other) const
+{
+	return Compare(other) == 0;
+}
+
+inline bool Timestamp::operator != (const Timestamp& other) const
+{
+	return (!(*this == other));
+}
+
+inline bool Timestamp::operator > (const Timestamp& other) const
+{
+	return (Compare(other) > 0);
+}
+
+inline bool Timestamp::operator < (const Timestamp& other) const
+{
+	return (Compare(other) < 0);
+}
+
+inline bool Timestamp::operator >= (const Timestamp& other) const
+{
+	int res = Compare(other);
+
+	return (res == 0 || res < 0);
+}
+
+inline bool Timestamp::operator <= (const Timestamp& other) const
+{
+	int res = Compare(other);
+
+	return (res == 0 || res > 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *

@@ -2184,14 +2184,12 @@ public:
      */
     Date();
 
-    /**
-     * @brief
-     * Assign the value of the given date
-     *
-     * @param other - Source Date handle
-     *
-     */
-    void Assign(const Date& other);
+	/**
+	* @brief
+	* Create a date object frm the value of the given date
+	*
+	*/
+	Date(const Date &other);
 
     /**
      * @brief
@@ -2455,18 +2453,12 @@ public:
      * @brief
      * Increment the date by 1 day
      *
-     * @note
-     * This operator overload calls AddDays()
-     *
      */
 	Date& operator ++ (int);
 
     /**
      * @brief
      * Decrement the date by 1 day
-     *
-     * @note
-     * This operator overload calls AddDays()
      *
      */
 	Date& operator -- (int);
@@ -2475,70 +2467,83 @@ public:
      * @brief
      * Assign the given date object
      *
-     * @note
-     * This operator overload calls Assign()
-     *
      */
 	Date& operator = (const Date& other);
 
     /**
      * @brief
-     * Increment the date by the given number of days
-     *
-     * @note
-     * This operator overload calls AddDays()
+     * Return a new date holding the current date value incremented by the given number of days
      *
      */
-	Date& operator + (int val);
+	Date operator + (int value);
 
     /**
      * @brief
-     * Decrement the date by the given number of days
-     *
-     * @note
-     * This operator overload calls AddDays()
-     *
+	 * Return a new date holding the current date value decremented by the given number of days
+	 *
      */
-	Date& operator - (int val);
+	Date operator - (int value);
 
     /**
      * @brief
      * Increment the date by the given number of days
      *
-     * @note
-     * This operator overload calls AddDays()
-     *
      */
-	Date& operator += (int val);
+	Date& operator += (int value);
 
     /**
      * @brief
      * Decrement the date by the given number of days
      *
-     * @note
-     * This operator overload calls AddDays()
-     *
      */
-	Date& operator -= (int val);
+	Date& operator -= (int value);
 
-    /**
-     * @brief
-     * Decrement the date by the given number of days
-     *
-     * @note
-     * This operator overload calls AddDays()
-     *
-     */
+	/**
+	* @brief
+	* Indicates if the current date value is equal to the given date value
+	*
+	*/
 	bool operator == (const Date& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current date value is not equal the given date value
+	*
+	*/
 	bool operator != (const Date& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current date value is superior to the given date value
+	*
+	*/
 	bool operator > (const Date& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current date value is inferior to the given date value
+	*
+	*/
 	bool operator < (const Date& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current date value is superior or equal to the given date value
+	*
+	*/
 	bool operator >= (const Date& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current date value is inferior or equal to the given date value
+	*
+	*/
 	bool operator <= (const Date& other) const;
 
 private:
 
     int Compare(const Date& other) const;
+	void Assign(const Date& other);
 
     Date(OCI_Date *pDate, Handle *parent = 0);
 };
@@ -2593,21 +2598,9 @@ public:
 
     Interval(IntervalType type);
 
-	/**
-	* @brief
-	* Assign the value of the given Interval object
-	*
-	* @param other - Source Interval object
-	*
-	*/
-    void Assign(const Interval& other);
-
-    int Compare(const Interval& other) const;
+	Interval(const Interval& other);
 
     IntervalType GetType() const;
-
-    void Add(const Interval& other);
-    void Substract(const Interval& other);
 
     bool IsValid() const;
 
@@ -2645,7 +2638,90 @@ public:
 
     operator ostring() const;
 
+	/**
+	* @brief
+	* Assign the Inverval object
+	*
+	* @note
+	* This operator overload calls Assign()
+	*
+	*/
+	Interval& operator = (const Interval& other);
+
+	/**
+	* @brief
+	* Return a new Interval holding the sum of the current Interval value and the given Interval value
+	*
+	*/
+	Interval operator + (const Interval& other);
+
+	/**
+	* @brief
+	* Return a new Interval holding the difference of the current Interval value and the given Interval value
+	*
+	*/
+	Interval operator - (const Interval& other);
+
+	/**
+	* @brief
+	* Increment the current Value with the given Interval value
+	*
+	*/
+	Interval& operator += (const Interval& other);
+
+	/**
+	* @brief
+	* Decrement the current Value with the given Interval value
+	*
+	*/
+	Interval& operator -= (const Interval& other);
+
+	/**
+	* @brief
+	* Indicates if the current Interval value is equal to the given Interval value
+	*
+	*/
+	bool operator == (const Interval& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current Interval value is not equal the given Interval value
+	*
+	*/
+	bool operator != (const Interval& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current Interval value is superior to the given Interval value
+	*
+	*/
+	bool operator > (const Interval& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current Interval value is inferior to the given Interval value
+	*
+	*/
+	bool operator < (const Interval& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current Interval value is superior or equal to the given Interval value
+	*
+	*/
+	bool operator >= (const Interval& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current Interval value is inferior or equal to the given Interval value
+	*
+	*/
+	bool operator <= (const Interval& other) const;
+
 private:
+
+	int Compare(const Interval& other) const;
+	void Assign(const Interval& other);
 
     Interval(OCI_Interval *pInterval, Handle *parent = 0);
 };
@@ -2696,8 +2772,7 @@ public:
 
     Timestamp(TimestampType type);
 
-    void Assign(const Timestamp& other);
-    int Compare(const Timestamp& other) const;
+	Timestamp(const Timestamp& other);
 
     TimestampType GetType() const;
 
@@ -2734,10 +2809,7 @@ public:
     ostring GetTimeZone() const;
     void GetTimeZoneOffset(int *hour, int *min) const;
 
-    void AddInterval(const Interval& other);
-    void SubstractInterval(const Interval& other);
-
-    void Substract(const Timestamp &other, Interval &result);
+	static void Substract(const Timestamp &lsh, const Timestamp &rsh, Interval &result);
 
     void SysTimestamp();
 
@@ -2746,7 +2818,129 @@ public:
 
     operator ostring() const;
 
+	/**
+	* @brief
+	* Increment the timestamp by 1 day
+	*
+	*/
+	Timestamp& operator ++ (int);
+
+	/**
+	* @brief
+	* Decrement the Timestamp by 1 day
+	*
+	*/
+	Timestamp& operator -- (int);
+
+	/**
+	* @brief
+	* Assign the given Timestamp object
+	*
+	*/
+	Timestamp& operator = (const Timestamp& other);
+
+	/**
+	* @brief
+	* Return a new Timestamp holding the current Timestamp value incremented by the given number of days
+	*
+	*/
+	Timestamp operator + (int value);
+
+	/**
+	* @brief
+	* Return a new Timestamp holding the current Timestamp value decremented by the given number of days
+	*
+	*/
+	Timestamp operator - (int value);
+
+	/**
+	* @brief
+	* Increment the Timestamp by the given number of days
+	*
+	*/
+	Timestamp& operator += (int value);
+
+	/**
+	* @brief
+	* Decrement the Timestamp by the given number of days
+	*
+	*/
+	Timestamp& operator -= (int value);
+
+	/**
+	* @brief
+	* Return a new Timestamp holding the sum of the current Timestamp value and the given Interval value
+	*
+	*/
+	Timestamp operator + (const Interval& other);
+
+	/**
+	* @brief
+	* Return a new Timestamp holding the difference of the current Timestamp value and the given Interval value
+	*
+	*/
+	Timestamp operator - (const Interval& other);
+
+	/**
+	* @brief
+	* Increment the current Value with the given Interval value
+	*
+	*/
+	Timestamp& operator += (const Interval& other);
+
+	/**
+	* @brief
+	* Decrement the current Value with the given Interval value
+	*
+	*/
+	Timestamp& operator -= (const Interval& other);
+
+	/**
+	* @brief
+	* Indicates if the current Timestamp value is equal to the given Timestamp value
+	*
+	*/
+	bool operator == (const Timestamp& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current Timestamp value is not equal the given Timestamp value
+	*
+	*/
+	bool operator != (const Timestamp& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current Timestamp value is superior to the given Timestamp value
+	*
+	*/
+	bool operator > (const Timestamp& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current Timestamp value is inferior to the given Timestamp value
+	*
+	*/
+	bool operator < (const Timestamp& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current Timestamp value is superior or equal to the given Timestamp value
+	*
+	*/
+	bool operator >= (const Timestamp& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current Timestamp value is inferior or equal to the given Timestamp value
+	*
+	*/
+	bool operator <= (const Timestamp& other) const;
+
 private:
+
+	int Compare(const Timestamp& other) const;
+	void Assign(const Timestamp& other);
 
     Timestamp(OCI_Timestamp *pTimestamp, Handle *parent = 0);
 };
