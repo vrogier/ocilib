@@ -1448,3 +1448,18 @@ boolean OCI_API OCI_LobEnableBuffering
     return res;
 }
 
+/* --------------------------------------------------------------------------------------------- *
+* OCI_LobGetConnection
+* --------------------------------------------------------------------------------------------- */
+
+OCI_Connection * OCI_API OCI_LobGetConnection
+(
+	OCI_Lob *lob
+)
+{
+	OCI_CHECK_PTR(OCI_IPC_LOB, lob, NULL);
+
+	OCI_RESULT(TRUE);
+
+	return lob->con;
+}

@@ -8253,6 +8253,22 @@ OCI_EXPORT unsigned int OCI_API  OCI_ElemGetRaw
 );
 
 /**
+* @brief
+* Return the raw attribute value size of the given element handle
+*
+* @param elem   - Element handle
+*
+* @return
+* size in bytes of the RAW value or 0 on failure or wrong attribute type
+*
+*/
+
+OCI_EXPORT unsigned int OCI_API OCI_ElemGetRawSize
+(
+	OCI_Elem    *elem
+);
+
+/**
  * @brief
  * Return the Date value of the given collection element
  *
@@ -10272,6 +10288,19 @@ OCI_EXPORT boolean OCI_API OCI_LobEnableBuffering
 );
 
 /**
+* @brief
+* Retrieve connection handle from the lob handle
+*
+* @param lob - lob handle
+*
+*/
+
+OCI_EXPORT OCI_Connection * OCI_API OCI_LobGetConnection
+(
+	OCI_Lob *lob
+);
+
+/**
  * @}
  */
 
@@ -10647,6 +10676,19 @@ OCI_EXPORT boolean OCI_API OCI_FileAssign
 (
     OCI_File *file,
     OCI_File *file_src
+);
+
+/**
+* @brief
+* Retrieve connection handle from the file handle
+*
+* @param file - file handle
+*
+*/
+
+OCI_EXPORT OCI_Connection * OCI_API OCI_FileGetConnection
+(
+	OCI_File *file
 );
 
 /**
@@ -12652,6 +12694,29 @@ OCI_EXPORT int OCI_API OCI_ObjectGetRaw
     const otext *attr,
     void        *value,
     unsigned int len
+);
+
+/**
+* @brief
+* Return the raw attribute value size of the given object attribute into the
+* given buffer
+*
+* @param obj   - Object handle
+* @param attr  - Attribute name
+*
+* @note
+* If the attribute is found in the object descriptor attributes list, then a
+* datatype check is performed for integrity.
+*
+* @return
+* size in bytes of the RAW value or 0 on failure or wrong attribute type
+*
+*/
+
+OCI_EXPORT unsigned int OCI_API OCI_ObjectGetRawSize
+(
+	OCI_Object  *obj,
+	const otext *attr
 );
 
 /**

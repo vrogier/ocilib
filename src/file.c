@@ -788,3 +788,19 @@ boolean OCI_API OCI_FileAssign
 
     return res;
 }
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_FileGetConnection
+* --------------------------------------------------------------------------------------------- */
+
+OCI_Connection * OCI_API OCI_FileGetConnection
+(
+	OCI_File *file
+)
+{
+	OCI_CHECK_PTR(OCI_IPC_FILE, file, NULL);
+
+	OCI_RESULT(TRUE);
+
+	return file->con;
+}

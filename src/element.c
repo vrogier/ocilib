@@ -580,6 +580,34 @@ unsigned int OCI_API OCI_ElemGetRaw
     return len;
 }
 
+/* -------------------------------------------------------------------------------------------- *
+* OCI_ElemGetRawSize
+* --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_ElemGetRawSize
+(
+	OCI_Elem    *elem
+)
+{
+	boolean res = FALSE;
+	ub4 raw_len = 0;
+
+	OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, 0);
+	OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == OCI_CDT_RAW, 0);
+
+	if (elem->handle)
+	{
+		OCIRaw *raw = (OCIRaw *)elem->handle;
+		raw_len = OCIRawSize(elem->con->env, raw);
+
+		res = TRUE;
+	}
+
+	OCI_RESULT(res);
+
+	return (unsigned int) raw_len;
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ElemGetDate
  * --------------------------------------------------------------------------------------------- */

@@ -1050,6 +1050,41 @@ int OCI_API OCI_ObjectGetRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
+* OCI_ObjectGetRawSize
+* --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_ObjectGetRawSize
+(
+	OCI_Object  *obj,
+	const otext *attr
+)
+{
+	boolean res = FALSE;
+	ub4 raw_len = 0;
+
+	int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW);
+
+	if (index >= 0)
+	{
+		OCIInd *ind = NULL;
+		OCIRaw **value = NULL;
+
+		res = TRUE;
+
+		value = (OCIRaw **)OCI_ObjectGetAttr(obj, index, &ind);
+
+		if (value && ind && (OCI_IND_NULL != *ind))
+		{
+			raw_len = OCIRawSize(obj->con->env, *value);
+		}
+	}
+
+	OCI_RESULT(res);
+
+	return (unsigned int) raw_len;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetDate
  * --------------------------------------------------------------------------------------------- */
 
