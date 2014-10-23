@@ -33,7 +33,7 @@ int main(void)
             std::cout << "table " << rs.Get<ostring>(1) << std::endl;
         }
 
-        rs.Seek(Resultset::SeeKRelative, 6);
+        rs.Seek(Resultset::SeekRelative, 6);
         std::cout << "table " << rs.Get<ostring>(1) << std::endl;
 
         while (rs.Next())
@@ -41,7 +41,7 @@ int main(void)
             std::cout << "table " << rs.Get<ostring>(1) << std::endl;
         }
 
-        rs.Seek(Resultset::SeeKRelative, -3);
+        rs.Seek(Resultset::SeekRelative, -3);
         std::cout << "table " << rs.Get<ostring>(1) << std::endl;
     }
     catch(Exception &ex)

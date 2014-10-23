@@ -17,7 +17,7 @@ int main(void)
         itv.SetDaySecond(1,1,1,1,0);
         std::cout << itv.ToString() << std::endl;
 
-        tm.AddInterval(itv);
+        tm += itv;
         std::cout << tm.ToString("DD/MM/YYYY HH24:MI:SS:FF3") << std::endl;
     }
     catch(Exception &ex)
