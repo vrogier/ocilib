@@ -168,8 +168,8 @@ test_t tab_test[] =
         {test_returning_array,   TRUE},
         {test_object_insert,     TRUE},
         {test_object_fetch,      TRUE},
-        {test_scrollable_cursor, TRUE},
-        {test_collection,        TRUE},
+		{test_scrollable_cursor, TRUE},
+        {test_collection,        TRUE}, 
         {test_ref,               TRUE},
         {test_directpath,        TRUE}
 };
@@ -457,7 +457,7 @@ void drop_tables(void)
     execute_ddl(OTEXT("drop type  test_t"));
     execute_ddl(OTEXT("drop type  type_t"));
     execute_ddl(OTEXT("drop type  t_tab1_emp"));
-    execute_ddl(OTEXT("drop type  t_tab2_emp"));
+	execute_ddl(OTEXT("drop type  t_tab2_emp"));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -476,13 +476,6 @@ void test_fetch(void)
     {
         Column col = rs.GetColumn(i);
 
-		DataType type = col.GetType();
-
-		if (type == TypeDate)
-		{
-
-
-		}
         std::ocout << OTEXT("> Field : #") << i << OTEXT(" - Name : ") << col.GetName() << std::endl;
     }
 
@@ -554,8 +547,6 @@ void test_bind2(void)
     Date date;
     date.SysDate();
 
-    date++;
-
     /* lob */
     Clob clob(con);
     clob.Write(OTEXT("lob value00"));
@@ -613,12 +604,13 @@ void test_piecewise_insert(void)
         st.Bind(OTEXT(":data"), lg, (int) size, BindInfo::In);
         st.Execute();
 
-		RawPointer buffer = new Raw[size];
+		unsigned char *strBuffer = new unsigned char[size];
 
-		file.read(reinterpret_cast<char *>(buffer), size);
-        lg.Write(buffer, (unsigned int) size);
+		file.read(reinterpret_cast<char *>(strBuffer), size);
 
-        delete buffer;
+		lg.Write(Raw(strBuffer, strBuffer + size));
+
+		delete[] strBuffer;
 
         std::ocout << std::endl << lg.GetSize() << OTEXT(" bytes written") << std::endl;
 
@@ -1047,7 +1039,8 @@ void test_returning_array(void)
 
 void test_object_insert(void)
 {
-	RawPointer rawData = (RawPointer) "0123456789";
+	unsigned char *constData = reinterpret_cast<unsigned char*>(static_cast<char *>("0123456789"));
+	Raw rawData(constData, constData + 10);
 
     std::ocout << OTEXT("\n>>>>> TEST OBJECT BINDING \n\n");
 
@@ -1068,7 +1061,7 @@ void test_object_insert(void)
     obj1.Set<double>	(OTEXT("VAL_DBL"), 3.14);
     obj1.Set<float>		(OTEXT("VAL_FLT"), (float) 3.14);
     obj1.Set<ostring>	(OTEXT("VAL_STR"), OTEXT("USB KEY 2go"));
-	obj1.Set<RawPointer>(OTEXT("VAL_RAW"), rawData, 10);
+	obj1.Set<Raw>       (OTEXT("VAL_RAW"), rawData);
     obj1.Set<Date>		(OTEXT("VAL_DATE"), date);
     obj1.Set<Object>	(OTEXT("VAL_OBJ"), obj2);
     obj1.Set<Clob>		(OTEXT("VAL_LOB"), clob);
@@ -1114,11 +1107,7 @@ void test_object_fetch(void)
         File file = obj.Get<File>(OTEXT("VAL_FILE"));
         std::ocout << OTEXT(".... val_file     : ") << file.GetDirectory() << OTEXT("/") << file.GetName() << std::endl;
 
-        Raw buffer[11];
-        unsigned int len = 10;
-		obj.Get<RawPointer>(OTEXT("VAL_RAW"), &buffer[0], len);
-        buffer[len] = 0;
-        std::cout << ".... val_raw      : " << buffer << std::endl;
+		std::cout << ".... val_raw      : " << (char*) obj.Get<Raw>(OTEXT("VAL_RAW")).data() << std::endl;
 
         Object obj2 = obj.Get<Object>(OTEXT("VAL_OBJ"));
         std::ocout << OTEXT(".... val_obj.code : ") << obj2.Get<int>(OTEXT("ID"))       << std::endl;
@@ -1198,7 +1187,7 @@ void test_collection(void)
 
     Statement st(con);
     TypeInfo type(con, OTEXT("T_TAB1_EMP"), TypeInfo::Type);
-    Collection coll(type);
+    Collection<ostring> coll(type);
 
     st.Prepare( OTEXT("begin")
                 OTEXT("    select employees into :tab_emp ")
@@ -1211,15 +1200,19 @@ void test_collection(void)
 
     i = 1;
 
-    st.Execute();
+	st.Execute();
 
-    std::ocout << OTEXT("Department ID #") << i << std::endl;
+	{
+		std::ocout << OTEXT("Department ID #") << i << std::endl;
 
-    CollectionIterator iter(coll);
-    while (iter++)
-    {
-        std::ocout << OTEXT("... Employee : ") << iter.Get<ostring>() << std::endl;
-    }
+		Collection<ostring>::iterator it1 = coll.begin();
+		Collection<ostring>::iterator it2 = coll.end();
+
+		for (; it1 != it2; ++it1)
+		{
+			std::ocout << OTEXT("... Employee : ") << static_cast<ostring>(*it1) << std::endl;
+		}
+	}
 
     std::ocout << OTEXT("\n>>>>> TEST VARRAY PRINTING \n\n");
 
@@ -1234,11 +1227,14 @@ void test_collection(void)
     {
         std::ocout << OTEXT("Department ID #") << rs.Get<int>(1) << std::endl;
 
-        coll = rs.Get<Collection>(2);
-        CollectionIterator iter2(coll);
-        while (iter2++)
+		coll = rs.Get<Collection<ostring>>(2);
+
+		Collection<ostring>::iterator it1 = coll.begin();
+		Collection<ostring>::iterator it2 = coll.end();
+
+		for (; it1 != it2; ++it1)
         {
-            std::ocout << OTEXT("... Employee : ") << iter2.Get<ostring>() << std::endl;
+			std::ocout << OTEXT("... Employee : ") << static_cast<ostring>(*it1) << std::endl;
         }
     }
 
@@ -1251,10 +1247,10 @@ void test_collection(void)
     {
         std::ocout << OTEXT("Department ID #") << rs.Get<int>(1) << std::endl;
 
-        coll = rs.Get<Collection>(2);
+        coll = rs.Get<Collection<ostring>>(2);
         for(int index = 1, n = coll.GetSize(); index <= n; index++)
         {
-            std::ocout << OTEXT("... Employee : ") << coll.Get<ostring>(index) << std::endl;
+            std::ocout << OTEXT("... Employee : ") << static_cast<ostring>(coll[index]) << std::endl;
         }
     }
 }

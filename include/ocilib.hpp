@@ -130,18 +130,10 @@ typedef void * AnyPointer;
 * @typedef ocilib::Raw
 *
 * @brief
-* Alias for the generic raw buffer
+* C++ counterpart of SQL RAW datatype
 *
 */
-typedef unsigned char Raw;
-/**
-* @typedef ocilib::RawPointer
-*
-* @brief
-* Alias for the generic raw buffer
-*
-*/
-typedef Raw * RawPointer;
+typedef std::vector<unsigned char> Raw;
 
 /**
  * @typedef ocilib::UnknownHandle
@@ -1335,6 +1327,7 @@ class Connection : public HandleHolder<OCI_Connection *>
     friend class TypeInfo;
     friend class Reference;
     friend class Resultset;
+	template <class TDataType>
     friend class Collection;
     friend class Subscription;
 
@@ -2172,6 +2165,7 @@ class Date : public HandleHolder<OCI_Date *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+	template <class TDataType>
     friend class Collection;
     friend class Message;
 
@@ -2183,13 +2177,6 @@ public:
      *
      */
     Date();
-
-	/**
-	* @brief
-	* Create a date object frm the value of the given date
-	*
-	*/
-	Date(const Date &other);
 
     /**
      * @brief
@@ -2441,6 +2428,13 @@ public:
 
 	/**
 	* @brief
+	* Clone the current instance to a new one performing deep copy
+	*
+	*/
+	Date Clone() const;
+
+	/**
+	* @brief
 	* Convert the date object value to a string
 	*
 	* @note
@@ -2462,13 +2456,6 @@ public:
      *
      */
 	Date& operator -- (int);
-
-    /**
-     * @brief
-     * Assign the given date object
-     *
-     */
-	Date& operator = (const Date& other);
 
     /**
      * @brief
@@ -2543,7 +2530,6 @@ public:
 private:
 
     int Compare(const Date& other) const;
-	void Assign(const Date& other);
 
     Date(OCI_Date *pDate, Handle *parent = 0);
 };
@@ -2562,6 +2548,7 @@ class Interval : public HandleHolder<OCI_Interval *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+	template <class TDataType>
     friend class Collection;
 
 public:
@@ -2597,8 +2584,6 @@ public:
 	*/
 
     Interval(IntervalType type);
-
-	Interval(const Interval& other);
 
     IntervalType GetType() const;
 
@@ -2636,17 +2621,14 @@ public:
     void FromString(ostring data);
     ostring ToString(int leadingPrecision = 10, int fractionPrecision = 10) const;
 
-    operator ostring() const;
-
 	/**
 	* @brief
-	* Assign the Inverval object
-	*
-	* @note
-	* This operator overload calls Assign()
+	* Clone the current instance to a new one performing deep copy
 	*
 	*/
-	Interval& operator = (const Interval& other);
+	Interval Clone() const;
+
+    operator ostring() const;
 
 	/**
 	* @brief
@@ -2721,7 +2703,6 @@ public:
 private:
 
 	int Compare(const Interval& other) const;
-	void Assign(const Interval& other);
 
     Interval(OCI_Interval *pInterval, Handle *parent = 0);
 };
@@ -2742,6 +2723,7 @@ class Timestamp : public HandleHolder<OCI_Timestamp *>
     friend class BindArray;
     friend class Object;
     friend class Connection;
+	template <class TDataType>
     friend class Collection;
 
 public:
@@ -2771,8 +2753,6 @@ public:
     typedef Enum<TimestampTypeValues> TimestampType;
 
     Timestamp(TimestampType type);
-
-	Timestamp(const Timestamp& other);
 
     TimestampType GetType() const;
 
@@ -2816,6 +2796,13 @@ public:
     void FromString(ostring data, ostring format = OCI_STRING_FORMAT_DATE);
     ostring ToString(ostring format = OCI_STRING_FORMAT_DATE, int precision = 0) const;
 
+	/**
+	* @brief
+	* Clone the current instance to a new one performing deep copy
+	*
+	*/
+	Timestamp Clone() const;
+
     operator ostring() const;
 
 	/**
@@ -2831,13 +2818,6 @@ public:
 	*
 	*/
 	Timestamp& operator -- (int);
-
-	/**
-	* @brief
-	* Assign the given Timestamp object
-	*
-	*/
-	Timestamp& operator = (const Timestamp& other);
 
 	/**
 	* @brief
@@ -2940,7 +2920,6 @@ public:
 private:
 
 	int Compare(const Timestamp& other) const;
-	void Assign(const Timestamp& other);
 
     Timestamp(OCI_Timestamp *pTimestamp, Handle *parent = 0);
 };
@@ -2958,6 +2937,7 @@ class Clob : public HandleHolder<OCI_Lob *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+	template <class TDataType>
     friend class Collection;
 
 public:
@@ -3015,14 +2995,12 @@ public:
     unsigned int Append(ostring content);
     bool Seek(SeekMode seekMode, big_uint offset);
 
-    void Append(const Clob &other);
-    void Assign(const Clob &other);
-    bool Equals(const Clob &other) const;
-
     big_uint GetOffset() const;
     big_uint GetLength() const;
     big_uint GetMaxSize() const;
     big_uint GetChunkSize() const;
+
+	Connection GetConnection() const;
 
     void Truncate(big_uint size);
     big_uint Erase(big_uint offset, big_uint size);
@@ -3036,13 +3014,22 @@ public:
 
     void EnableBuffering(bool value);
 
+	/**
+	* @brief
+	* Clone the current instance to a new one performing deep copy
+	*
+	*/
+	Clob Clone() const;
     operator ostring() const;
-	Clob& operator = (const Clob& other);
-	Clob& operator + (const Clob& other);
+
+	Clob& operator += (const Clob& other);
 	bool operator == (const Clob& other) const;
 	bool operator != (const Clob& other) const;
 
 private:
+
+	void Append(const Clob &other);
+	bool Equals(const Clob &other) const;
 
     Clob(OCI_Lob *pLob, Handle *parent = 0);
 };
@@ -3061,6 +3048,7 @@ class Blob : public HandleHolder<OCI_Lob *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+	template <class TDataType>
     friend class Collection;
 
 public:
@@ -3113,19 +3101,17 @@ public:
 
     Blob(const Connection &connection);
 
-	unsigned int Read(RawPointer buffer, unsigned int size);
-	unsigned int Write(RawPointer buffer, unsigned int size);
-	unsigned int Append(RawPointer buffer, unsigned int size);
+	Raw Read(unsigned int size);
+	unsigned int Write(const Raw &value);
+	unsigned int Append(const Raw &value);
     bool Seek(SeekMode seekMode, big_uint offset);
-
-    void Append(const Blob &other);
-    void Assign(const Blob &other);
-    bool Equals(const Blob &other) const;
 
     big_uint GetOffset() const;
     big_uint GetLength() const;
     big_uint GetMaxSize() const;
     big_uint GetChunkSize() const;
+
+	Connection GetConnection() const;
 
     void Truncate(big_uint size);
     big_uint Erase(big_uint offset, big_uint size);
@@ -3139,12 +3125,21 @@ public:
 
     void EnableBuffering(bool value);
 
-	Blob& operator = (const Blob& other);
-	Blob& operator + (const Blob& other);
+	/**
+	* @brief
+	* Clone the current instance to a new one performing deep copy
+	*
+	*/
+	Blob Clone() const;
+
+	Blob& operator += (const Blob& other);
 	bool operator == (const Blob& other) const;
 	bool operator != (const Blob& other) const;
 
 private:
+
+	void Append(const Blob &other);
+	bool Equals(const Blob &other) const;
 
     Blob(OCI_Lob *pLob, Handle *parent = 0);
 };
@@ -3163,6 +3158,7 @@ class File : public HandleHolder<OCI_File *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+	template <class TDataType>
     friend class Collection;
 
 public:
@@ -3194,16 +3190,15 @@ public:
     File(const Connection &connection);
     File(const Connection &connection, ostring directory, ostring name);
 
-	unsigned int Read(RawPointer buffer, unsigned int size);
+	Raw Read(unsigned int size);
     bool Seek(SeekMode seekMode, big_uint offset);
-
-    void Assign(const File &other);
-    bool Equals(const File &other) const;
 
     bool Exists() const;
 
     big_uint GetOffset() const;
     big_uint GetSize() const;
+
+	Connection GetConnection() const;
 
     void SetInfos(ostring directory, ostring name);
 
@@ -3214,7 +3209,19 @@ public:
     void Close();
     bool IsOpened() const;
 
+	/**
+	* @brief
+	* Clone the current instance to a new one performing deep copy
+	*
+	*/
+	File Clone() const;
+
+	bool operator == (const File& other) const;
+	bool operator != (const File& other) const;
+
 private:
+
+	bool Equals(const File &other) const;
 
     File(OCI_File *pFile, Handle *parent = 0);
 };
@@ -3230,6 +3237,7 @@ class TypeInfo : public HandleHolder<OCI_TypeInfo *>
 {
     friend class Object;
     friend class Reference;
+	template <class TDataType>
     friend class Collection;
     friend class Column;
 public:
@@ -3285,8 +3293,9 @@ class Object : public HandleHolder<OCI_Object *>
     friend class Resultset;
     friend class BindArray;
     friend class Reference;
+	template <class TDataType>
     friend class Collection;
-    friend class Message;
+	friend class Message;
 
 public:
 
@@ -3316,8 +3325,6 @@ public:
 
     Object(const TypeInfo &typeInfo);
 
-    void Assign(const Object& other);
-
     bool IsAttributeNull(ostring name) const;
     void SetAttributeNull(ostring name);
 
@@ -3332,11 +3339,12 @@ public:
     template<class TDataType>
     void Set(ostring name, const TDataType &value);
 
-    template<class TDataType>
-    void Get(ostring name, TDataType value, unsigned int &size) const;
-
-    template<class TDataType>
-    void Set(ostring name, const TDataType &value, unsigned int size);
+	/**
+	* @brief
+	* Clone the current instance to a new one performing deep copy
+	*
+	*/
+	Object Clone() const;
 
     ostring ToString() const;
     operator ostring() const;
@@ -3359,6 +3367,7 @@ class Reference : public HandleHolder<OCI_Ref *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+	template <class TDataType>
     friend class Collection;
 
 public:
@@ -3368,10 +3377,15 @@ public:
     TypeInfo GetTypeInfo() const;
     Object GetObject() const;
 
-    void Assign(const Reference& other);
-
     bool IsReferenceNull() const;
     void SetReferenceNull();
+
+	/**
+	* @brief
+	* Clone the current instance to a new one performing deep copy
+	*
+	*/
+	Reference Clone() const;
 
     ostring ToString() const;
     operator ostring() const;
@@ -3388,13 +3402,18 @@ private:
  * This class wraps the OCILIB object handle OCI_Coll and its related methods
  *
  */
+template <class TDataType>
 class Collection : public HandleHolder<OCI_Coll *>
 {
     friend class Statement;
     friend class Resultset;
     friend class BindArray;
     friend class Object;
+	template <class TDataType>
     friend class CollectionIterator;
+
+	template <class TOtherDataType>
+	friend class Collection;
 public:
 
 	/**
@@ -3402,7 +3421,6 @@ public:
 	* Collection type enumerated values
 	*
 	*/
-
     enum CollectionTypeValues
     {
 		/** Collection is a VARRAY */
@@ -3422,8 +3440,6 @@ public:
 
     Collection(const TypeInfo &typeInfo);
 
-    void Assign(const Collection& other);
-
     CollectionType GetType() const;
     unsigned int GetMax() const;
     unsigned int GetSize() const;
@@ -3437,152 +3453,77 @@ public:
 
     bool Delete(unsigned int index) const;
 
-    template <class TDataType>
     TDataType Get(unsigned int index) const;
 
-	template <class TDataType, class TExtraInfo>
-	void Get(unsigned int index, TDataType &value, TExtraInfo &extraInfo) const;
-
-	template <class TDataType>
 	void Set(unsigned int index, const TDataType &value);
 
-	template <class TDataType, class TExtraInfo>
-	void Set(unsigned int index, const TDataType &value, TExtraInfo extraInfo);
-
-    template <class TDataType>
     void Append(const TDataType &data);
 
-	template <class TDataType, class TExtraInfo>
-	void Append(const TDataType &value, TExtraInfo extraInfo);
-
     TypeInfo GetTypeInfo() const;
+
+	/**
+	* @brief
+	* Clone the current instance to a new one performing deep copy
+	*
+	*/
+	Collection Clone() const;
 
     ostring ToString() const;
     operator ostring() const;
 
+	class Element
+	{
+		friend class Iterator;
+
+	public:
+		Element(Collection &coll, unsigned int pos);
+		operator TDataType() const;
+		Element& operator = (TDataType value);
+		bool IsNull() const;
+		void SetNull();
+
+	private:
+		typename Collection & _coll;
+		unsigned int _pos;
+	};
+
+	class Iterator : public std::iterator<std::bidirectional_iterator_tag, TDataType>
+	{
+
+	public:
+			
+		Iterator(Collection &collection, unsigned int pos);
+		Iterator(const Iterator& other);
+
+		bool operator== (const Iterator& other);
+		bool operator!= (const Iterator& other);
+
+		Element& operator*();
+
+		Iterator &operator--();
+		Iterator operator--(int);
+
+		Iterator &operator++();
+		Iterator operator++(int);
+
+	private:
+		Element _elem;
+	};
+	
+    typedef Iterator iterator;
+
+	Iterator begin();
+	Iterator end();
+
+	Element operator [] (int index);
+
 private:
 
-    template <class TDataType>
     static TDataType GetElem(OCI_Elem *elem, Handle *parent);
 
-	template <class TDataType, class TExtraInfo >
-	static void GetElem(OCI_Elem *elem, TExtraInfo  &extraInfo);
-
-	template <class TDataType, class TExtraInfo >
-	static void GetElem(OCI_Elem *elem, TDataType &value, TExtraInfo  &extraInfo);
-
-    template <class TDataType>
-    static void SetElem(OCI_Elem *elem, const TDataType &value);
-
-	template <class TDataType, class TExtraInfo>
-	static void SetElem(OCI_Elem *elem, const TDataType value, TExtraInfo extraInfo);
+	static void SetElem(OCI_Elem *elem, const TDataType &value);
 
     Collection(OCI_Coll *pColl, Handle *parent = 0);
-};
-
-
-/**
- * @brief
- * Collection iterator
- *
- * This class wraps the OCILIB object handle OCI_Iterator and its related methods
- *
- */
-class CollectionIterator : public HandleHolder<OCI_Iter *>
-{
-public:
-
-    CollectionIterator(const Collection &collection);
-
-	/**
-	* @brief
-	* Retrieve the value of the current element pointed by the iterator
-	*
-	* @tparam TDataType  - C++ type of the host variable
-	*
-	* @warning
-	* This method has builtin specialized versions for all supported types.
-	*
-	* @note
-	* It is necessary to specify the template datatype.
-	*
-	*/
-    template <class TDataType>
-    TDataType Get() const;
-
-	template <class TDataType, class TExtraInfo>
-	TDataType Get(TExtraInfo &extraInfo) const;
-
-	/**
-	* @brief
-	* Set the value of the current element pointed by the iterator
-	*
-	* @tparam TDataType  - C++ type of the host variable
-	*
-	* @warning
-	* This method has builtin specialized versions for all supported types.
-	*
-	* @note
-	* It is necessary to specify the template datatype.
-	*
-	*/
-	template <class TDataType>
-    void Set(TDataType &value);
-
-	template <class TDataType, class TExtraInfo>
-	void Set(TDataType &value, TExtraInfo extraInfo);
-
-	/**
-	* @brief
-	* Move to the next element in the collection
-	*
-	* @return
-	* true o success otherwise false in the following cases:
-	* - Empty collection
-	* - Iterator already positioned on the last collection element
-	*
-	*/
-    bool Next();
-
-	/**
-	* @brief
-	* Move to the previous element in the collection
-	*
-	* @return
-	* true o success otherwise false in the following cases:
-	* - Empty collection
-	* - Iterator already positioned on the first collection element
-	*
-	*/
-	bool Prev();
-
-	/**
-	* @brief
-	* Check if the collection element value is null
-	*
-	*/
-    bool IsElementNull() const;
-
-	/**
-	* @brief
-	* Set a collection element value to null
-	*
-	*/
-	void SetElementNull();
-
-	/**
-	* @brief
-	* Convenient operator overloading that performs a call to Next()
-	*
-	*/
-    bool operator ++ (int);
-
-	/**
-	* @brief
-	* Convenient operator overloading that performs a call to Prev()
-	*
-	*/
-    bool operator -- (int value);
 };
 
 /**
@@ -3675,7 +3616,7 @@ public:
 	* Number of bytes written
 	*
 	*/
-	unsigned int Write(RawPointer buffer, unsigned int size);
+	unsigned int Write(const Raw &value);
 
 	/**
 	* @brief
@@ -3689,7 +3630,7 @@ public:
 	* Return the internal raw buffer read from a fetch sequence
 	*
 	*/
-	RawPointer GetContent() const;
+	Raw GetContent() const;
 
 private:
 
@@ -3864,6 +3805,7 @@ class Statement : public HandleHolder<OCI_Statement *>
     friend class Clong;
     friend class Blong;
     friend class BindInfo;
+	friend class BindObject;
 
 public:
 
@@ -4252,9 +4194,9 @@ public:
 	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
 	* automatically from the arguments.
 	*
-	*/
+	*/	
     template <class TDataType>
-    void Bind(ostring name, TDataType &value, BindInfo::BindDirection mode);
+	void Bind(ostring name, TDataType &value, BindInfo::BindDirection mode);
 
 	/**
 	* @brief
@@ -4697,7 +4639,7 @@ public:
 	*/
     template<class TDataType>
     TDataType Get(unsigned int index) const;
-
+	
 	/**
 	* @brief
 	* Return the current value of the column from its name in the resultset
@@ -5519,7 +5461,7 @@ private:
 */
 class Message : public HandleHolder<OCI_Msg *>
 {
-    friend class Dequeue;
+	friend class Dequeue;
 
 public:
 
@@ -5595,7 +5537,8 @@ public:
 	* Get the object payload of the message
 	*
 	*/
-    Object Get();
+	template <class TPayloadType>
+	TPayloadType GetPayload();
 
 	/**
 	* @brief
@@ -5604,30 +5547,8 @@ public:
 	* @param value - Object payload
 	*
 	*/
-    void Set(const Object &value);
-
-	/**
-	* @brief
-	* Get the RAW payload of the message
-	*
-	* @param value - Input buffer
-	* @param size  - Input buffer maximum size
-	*
-	* @note
-	* On output, parameter 'size' holds the number of bytes copied into the given buffer
-	*
-	*/
-	void Get(RawPointer &value, unsigned int &size);
-
-	/**
-	* @brief
-	* Set the RAW payload of the message
-	*
-	* @param value  - Raw data
-	* @param size - Raw data size
-	*
-	*/
-	void Set(const RawPointer &value, unsigned int size);
+	template <class TPayloadType>
+	void SetPayload(const TPayloadType &value);
 
 	/**
 	* @brief
@@ -5669,7 +5590,7 @@ public:
 	* On output, parameter 'size' holds the number of bytes copied into the given buffer
 	*
 	*/
-	void GetID(RawPointer &value, unsigned int &size) const;
+	Raw GetID() const;
 
 	/**
 	* @brief
@@ -5775,7 +5696,7 @@ public:
 	* On output, parameter 'size' holds the number of bytes copied into the given buffer
 	*
 	*/
-	void GetOriginalID(RawPointer value, unsigned int &size) const;
+	Raw GetOriginalID() const;
 
 	/**
 	* @brief
@@ -5789,7 +5710,7 @@ public:
 	* message in the previous queue.
 	*
 	*/
-	void SetOriginalID(const RawPointer &value, unsigned int size);
+	void SetOriginalID(const Raw &value);
 
 	/**
 	* @brief
@@ -6048,7 +5969,7 @@ public:
 	*
 	*/
 
-	void GetRelativeMsgID(RawPointer value, unsigned int &size) const;
+	Raw GetRelativeMsgID() const;
 
 	/**
 	* @brief
@@ -6067,7 +5988,7 @@ public:
 	* see SetMode() for more details
 	*
 	*/
-	void SetRelativeMsgID(const RawPointer &value, unsigned int size);
+	void SetRelativeMsgID(const Raw &value);
 };
 
 /**
@@ -6264,7 +6185,7 @@ public:
 	* see SetRelativeMsgID() for more details
 	*
 	*/
-	void GetRelativeMsgID(RawPointer value, unsigned int &size) const;
+	Raw GetRelativeMsgID() const;
 
 	/**
 	* @brief
@@ -6274,7 +6195,7 @@ public:
 	* @param size     - size of the message identitier
 	*
 	*/
-	void SetRelativeMsgID(const RawPointer &value, unsigned int size);
+	void SetRelativeMsgID(const Raw &value);
 
 	/**
 	* @brief
@@ -6915,8 +6836,7 @@ public:
      * Setting entries content piece by piece may be supported in future releases
      *
      */
-	void SetEntry(unsigned int rowIndex, unsigned int colIndex, const RawPointer &value,
-                  unsigned int size, bool complete = true);
+	void SetEntry(unsigned int rowIndex, unsigned int colIndex, const Raw &value, bool complete = true);
 
     /**
      * @brief

@@ -61,8 +61,8 @@ class Interval;
 class TypeInfo;
 class Reference;
 class Object;
+template <class TDataType>
 class Collection;
-class CollectionIterator;
 class Clob;
 class Blob;
 class File;
@@ -103,8 +103,13 @@ static TResultType Check(TResultType result);
  * @brief Internal usage.
  * Constructs a C++ string object from the given OCILIB string pointer
  */
-template<class TCharType>
-static std::basic_string<TCharType, std::char_traits<TCharType>, std::allocator<TCharType> > MakeString(const TCharType *result);
+ostring MakeString(const otext *result);
+
+/**
+* @brief Internal usage.
+* Constructs a C++ Raw object from the given OCILIB raw buffer
+*/
+Raw MakeRaw(void *result, unsigned int size);
 
 /**
  * @brief
@@ -194,7 +199,8 @@ class ManagedBuffer
 {
 public:
     ManagedBuffer();
-    ManagedBuffer(TBufferType *buffer);
+	ManagedBuffer(size_t size);
+	ManagedBuffer(TBufferType *buffer);
     ~ManagedBuffer();
 
     ManagedBuffer<TBufferType> & operator= (TBufferType *buffer);
@@ -257,42 +263,40 @@ public:
 
 protected:
 
-    template <class TSmartHandleType>
     class SmartHandle;
 
     HandleHolder(const HandleHolder &other);
     HandleHolder();
     ~HandleHolder();
 
-    HandleHolder<THandleType>& operator= (const HandleHolder<THandleType> &other);
+    HandleHolder& operator= (const HandleHolder &other);
 
     typedef boolean (OCI_API *HandleFreeFunc)(UnknownHandle handle);
 
     Handle* GetHandle() const;
 
 	void Acquire(THandleType handle, HandleFreeFunc func, Handle *parent);
-    void Acquire(HandleHolder<THandleType> &other);
+    void Acquire(HandleHolder &other);
     void Release();
 
-    template <class TSmartHandleType>
     class SmartHandle : public Handle
     {
     public:
 
-        SmartHandle(HandleHolder<TSmartHandleType> *holder, TSmartHandleType handle, HandleFreeFunc func, Handle *parent);
+		SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc func, Handle *parent);
         virtual ~SmartHandle();
 
-        void Acquire(HandleHolder<TSmartHandleType> *holder);
-        void Release(HandleHolder<TSmartHandleType> *holder);
+        void Acquire(HandleHolder *holder);
+        void Release(HandleHolder *holder);
 
-        TSmartHandleType GetHandle() const;
+		THandleType GetHandle() const;
 
 		Handle *GetParent() const;
 
 		AnyPointer GetExtraInfos() const;
 		void  SetExtraInfos(AnyPointer extraInfo);
 
-        bool IsLastHolder(HandleHolder<TSmartHandleType> *holder) const;
+        bool IsLastHolder(HandleHolder *holder) const;
 
         std::list<Handle *> & GetChildren();
         void DetachFromHolders();
@@ -300,7 +304,7 @@ protected:
 
     private:
 
-        std::list<HandleHolder<TSmartHandleType> *> _holders;
+        std::list<HandleHolder *> _holders;
         std::list<Handle *>  _children;
 
         THandleType _handle;
@@ -312,7 +316,7 @@ protected:
 
 protected:
 
-    SmartHandle<THandleType> *_smartHandle;
+    SmartHandle *_smartHandle;
  };
 
 template <class TValueType>
@@ -334,25 +338,28 @@ class BindObject
 {
 public:
 
-	BindObject(ostring name);
+	BindObject(const Statement &statement, ostring name);
 
 	virtual ~BindObject();
 
 	ostring GetName() const;
 
+	Statement GetStatement() const;
+
      virtual void SetInData()  = 0;
-     virtual void SetOutData() = 0;
+	 virtual void SetOutData() = 0;
 
 private:
 
     ostring _name;
+	OCI_Statement *_pStatement;
 };
 
 class BindArray : public BindObject
 {
 public:
 
-     BindArray(ostring name, Statement &statement);
+	 BindArray(const Statement &statement, ostring name);
      virtual ~BindArray();
 
      template <class TObjectType, class TDataType>
@@ -361,8 +368,8 @@ public:
      template <class TObjectType, class TDataType>
      TDataType * GetData () const;
 
-     void SetInData();
-     void SetOutData();
+	 void SetInData();
+	 void SetOutData();
 
 private:
 
@@ -371,8 +378,9 @@ private:
     public:
         AbstractBindArrayObject()  { }
         virtual ~AbstractBindArrayObject()  { }
-		virtual void SetInData(unsigned int currentElemCount) = 0;
-		virtual void SetOutData(unsigned int currentElemCount) = 0;
+		virtual void SetInData() = 0;
+		virtual void SetOutData() = 0;
+		ostring GetName();
     };
 
     template <class TObjectType, class TDataType>
@@ -380,6 +388,8 @@ private:
     {
     private:
 
+		OCI_Statement *_pStatement;
+		ostring _name;
         std::vector<TObjectType> & _vector;
         TDataType *_data;
         unsigned int _mode;
@@ -390,10 +400,11 @@ private:
 
     public:
 
-		BindArrayObject(std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemCount, unsigned int elemSize);
+		BindArrayObject(const Statement &statement, ostring name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize);
         virtual ~BindArrayObject();
-		void SetInData(unsigned int currentElemCount);
-		void SetOutData(unsigned int currentElemCount);
+		void SetInData();
+		void SetOutData();
+		ostring GetName();
 
         operator std::vector<TObjectType> & () const;
         operator TDataType * () const;
@@ -404,49 +415,49 @@ private:
 		void FreeData();
     };
 
-	Statement & _statement;
     AbstractBindArrayObject * _object;
 };
 
-class BindString : public BindObject
+template <class TNativeType, class TObjectType>
+class BindAdaptor : public BindObject
 {
     friend class Statement;
 
 public:
 
-    operator otext *()  const;
+	operator TNativeType *()  const;
 
-    void SetInData();
-    void SetOutData();
+	void SetInData();
+	void SetOutData();
 
-    BindString(ostring name, ostring &source, unsigned int elemSize);
-    virtual ~BindString();
+	BindAdaptor(const Statement &statement, ostring name, TObjectType &object, unsigned int size);
+	virtual ~BindAdaptor();
 
 private:
 
-    ostring&        _string;
-    otext *         _data;
-    unsigned int    _elemSize;
+	TObjectType&    _object;
+    TNativeType*    _data;
+    unsigned int    _size;
 };
 
 class BindsHolder
 {
 public:
 
-    BindsHolder(Statement &statement);
+	BindsHolder(const Statement &statement);
     ~BindsHolder();
 
     void Clear();
 
     void AddBindObject(BindObject *bindObject);
 
-    void SetOutData();
-    void SetInData();
+	void SetOutData();
+	void SetInData();
 
 private:
 
     std::vector<BindObject *> _bindObjects;
-	Statement & _statement;
+	OCI_Statement * _pStatement;
 };
 
 }
