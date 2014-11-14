@@ -163,6 +163,16 @@ typedef OCI_Mutex *  MutexHandle ;
 typedef OCI_Thread * ThreadHandle;
 
 /**
+* @typedef ocilib::ThreadId
+*
+* @brief
+* Thread Unique ID
+*
+*/
+typedef const void * ThreadId;
+
+
+/**
  * @typedef ocilib::CallbackPointer
  *
  * @brief
@@ -966,6 +976,15 @@ public:
      *
      */
     static void Join(ThreadHandle handle);
+
+	/**
+	* @brief
+	* Return the system Thread ID of the given thread handle
+	*
+	* @param handle - Thread handle
+	*
+	*/
+	static ThreadId GetThreadId(ThreadHandle handle);
 };
 
 /**

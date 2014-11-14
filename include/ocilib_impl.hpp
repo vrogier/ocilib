@@ -916,6 +916,11 @@ inline void Thread::Join(ThreadHandle handle)
     Check(OCI_ThreadJoin(handle));
 }
 
+inline ThreadId Thread::GetThreadId(ThreadHandle handle)
+{
+	return Check(OCI_HandleGetThreadID(handle));
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * ThreadKey
  * --------------------------------------------------------------------------------------------- */
