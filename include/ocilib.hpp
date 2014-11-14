@@ -87,6 +87,10 @@ namespace ocilib
  * OCILIB++ allows simple and safe usage of Oracle client wihtout the worries of memory leakages.
  * Using stack objects also makes error handling easier and program logic more robust
  *
+ * @par Reference couting model
+ *
+ * @par Exception model
+ *
  * @par Exception model
  * Any failure occuring within an OCILIB C API call will throw a ocilib::Exception
  * For conformance reasons, this class derives from std::Exception
@@ -136,15 +140,6 @@ typedef void * AnyPointer;
 typedef std::vector<unsigned char> Raw;
 
 /**
- * @typedef ocilib::UnknownHandle
- *
- * @brief
- * Alias used for manipulating unknown handle types
- *
- */
-typedef const void * UnknownHandle;
-
-/**
  * @typedef ocilib::MutexHandle
  *
  * @brief
@@ -171,7 +166,6 @@ typedef OCI_Thread * ThreadHandle;
 */
 typedef const void * ThreadId;
 
-
 /**
  * @typedef ocilib::CallbackPointer
  *
@@ -191,7 +185,6 @@ typedef void * CallbackPointer;
 
 namespace ocilib
 {
-
 
 /**
 * @brief
@@ -293,8 +286,6 @@ public:
 	*/
 	enum ExceptionTypeValues
 	{
-        /** Unknown exception type */
-        Unknown = OCI_UNKNOWN,
         /** Exception caused by an Oracle error */
         OracleError  = OCI_ERR_ORACLE,
         /** Exception caused by an Ocilib error */
@@ -893,10 +884,10 @@ private:
     static void NotifyHandler(OCI_Event *pEvent);
     static void NotifyHandlerAQ(OCI_Dequeue *pDequeue);
 
-    typedef ConcurrentPool<UnknownHandle, Handle *> HandlePool;
-    typedef ConcurrentPool<UnknownHandle, CallbackPointer> CallbackPool;
+	typedef ConcurrentPool<AnyPointer, Handle *> HandlePool;
+	typedef ConcurrentPool<AnyPointer, CallbackPointer> CallbackPool;
 
-    class EnvironmentHandle : public HandleHolder<UnknownHandle>
+	class EnvironmentHandle : public HandleHolder<AnyPointer>
     {
         friend class Connection;
 
@@ -906,7 +897,7 @@ private:
         CallbackPool Callbacks;
         unsigned int Mode;
 
-        void Initialize(UnknownHandle pEnv, unsigned int envMode);
+		void Initialize(AnyPointer pEnv, unsigned int envMode);
         void Finalize();
     };
 
@@ -2342,7 +2333,7 @@ public:
      * @param day   - Place holder for day value
      *
      */
-    void GetDate(int *year, int *month, int *day) const;
+    void GetDate(int &year, int &month, int &day) const;
 
     /**
      * @brief
@@ -2353,7 +2344,7 @@ public:
      * @param sec   - Place holder for second value
      *
      */
-    void GetTime(int *hour, int *min,   int *sec) const;
+    void GetTime(int &hour, int &min, int &sec) const;
 
     /**
      * @brief
@@ -2367,7 +2358,7 @@ public:
      * @param sec   - Place holder for second value
      *
      */
-    void GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec) const;
+    void GetDateTime(int &year, int &month, int &day, int &hour, int &min, int &sec) const;
 
     /**
      * @brief
@@ -2422,10 +2413,10 @@ public:
 
 	/**
 	* @brief
-	* Assign to the date object with the value provied by the input date time string
+	* Assign to the date object the value provied by the input date time string
 	*
-	* @param str    - String date time
-	* @param format - format of the date time provided in parameter 'str'
+	* @param data   - String date time
+	* @param format - format of the date time provided in parameter 'data'
 	*
 	* @note
 	* For date time formats, refer to the Oracle SQL documentation
@@ -2435,7 +2426,7 @@ public:
 
 	/**
 	* @brief
-	* Convert the date object value to a string
+	* Convert the date value to a string
 	*
 	* @param format - date time format to use
 	*
@@ -2454,7 +2445,7 @@ public:
 
 	/**
 	* @brief
-	* Convert the date object value to a string
+	* Convenient operator converting the date value to a string
 	*
 	* @note
 	* It calls ToString() with default date time format
@@ -2601,44 +2592,244 @@ public:
 	* @param type - Interval type to create
 	*
 	*/
-
     Interval(IntervalType type);
 
-    IntervalType GetType() const;
+	/**
+	* @brief
+	* Return the type of the given interval object
+	*
+	*/   
+	IntervalType GetType() const;
 
-    bool IsValid() const;
+	/**
+	* @brief
+	* Check if the given interval is valid
+	*
+	*/
+	bool IsValid() const;
 
-    int GetYear() const;
-    void SetYear(int value);
+	/**
+	* @brief
+	* Return the interval year value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::YearMonth
+	*
+	*/
+	int GetYear() const;
 
-    int GetMonth() const;
-    void SetMonth(int value);
+	/**
+	* @brief
+	* Set the interval year value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::YearMonth
+	*
+	*/
+	void SetYear(int value);
 
-    int GetDay() const;
-    void SetDay(int value);
+	/**
+	* @brief
+	* Return the interval month value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::YearMonth
+	*
+	*/
+	int GetMonth() const;
 
-    int GetHours() const;
-    void SetHours(int value);
+	/**
+	* @brief
+	* Set the interval month value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::YearMonth
+	*
+	*/
+	void SetMonth(int value);
 
-    int GetMinutes() const;
-    void SetMinutes(int value);
+	/**
+	* @brief
+	* Return the interval day value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::DaySecond
+	*
+	*/
+	int GetDay() const;
 
-    int GetSeconds() const;
-    void SetSeconds(int value);
+	/**
+	* @brief
+	* Set the interval day value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::DaySecond
+	*
+	*/
+	void SetDay(int value);
 
+	/**
+	* @brief
+	* Return the interval hours value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::DaySecond
+	*
+	*/
+	int GetHours() const;
+
+	/**
+	* @brief
+	* Set the interval hours value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::DaySecond
+	*
+	*/
+	void SetHours(int value);
+
+	/**
+	* @brief
+	* Return the interval minutes value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::DaySecond
+	*
+	*/
+	int GetMinutes() const;
+
+	/**
+	* @brief
+	* Set the interval minutes value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::DaySecond
+	*
+	*/
+	void SetMinutes(int value);
+
+	/**
+	* @brief
+	* Return the interval seconds value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::DaySecond
+	*
+	*/
+	int GetSeconds() const;
+
+	/**
+	* @brief
+	* Set the interval seconds value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::DaySecond
+	*
+	*/
+	void SetSeconds(int value);
+
+	/**
+	* @brief
+	* Return the interval seconds value
+	*
+	*/
     int GetMilliSeconds() const;
-    void SetMilliSeconds(int value);
 
-    void GetDaySecond(int *day, int *hour, int *min, int *sec, int *fsec) const;
-    void SetDaySecond(int day, int hour, int min, int sec, int fsec);
+	/**
+	* @brief
+	* Set the interval milliseconds value
+	*
+	*/
+	void SetMilliSeconds(int value);
+	
+	/**
+	* @brief
+	* Extract the date / second parts from the interval value
+	*
+	* @param day  - Place holder for Day value
+	* @param hour - Place holder for Hour value
+	* @param min  - Place holder for Minutes value
+	* @param sec  - Place holder for Seconds value
+	* @param fsec - Place holder for Milliseconds value	*
+	* 
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::DaySecond
+	*
+	*/
+	void GetDaySecond(int &day, int &hour, int &min, int &sec, int &fsec) const;
+    
+	/**
+	* @brief
+	* Set the Day / Second parts
+	*
+	* @param day  - Day value
+	* @param hour - Hour value
+	* @param min  - Minutes value
+	* @param sec  - Seconds value
+	* @param fsec - Milliseconds value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::DaySecond
+	*
+	*/
+	void SetDaySecond(int day, int hour, int min, int sec, int fsec);
 
-    void GetYearMonth(int *year, int *month) const;
-    void SetYearMonth(int year, int month);
+	/**
+	* @brief
+	* Extract the year / month parts from the interval value
+	*
+	* @param year  - Place holder for year value
+	* @param month - Place holder for month value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::YearMonth
+	*
+	*/    
+	void GetYearMonth(int &year, int &month) const;
+    
+	/**
+	* @brief
+	* Set the Year / Month parts
+	*
+	* @param year  - Year value
+	* @param month - Month value
+	*
+	* @warning
+	* this call is only permitted if the current interval type is  Interval::YearMonth
+	*
+	*/
+	void SetYearMonth(int year, int month);
 
-    void FromTimeZone(ostring timeZone);
+	/**
+	* @brief
+	* Update the interval value with the given time zone
+	*
+	* @param timeZone - Time zone name
+	*
+	*/
+    void UpdateTimeZone(ostring timeZone);
 
+	/**
+	* @brief
+	* Assign to the interval object the value provided by the input interval string
+	*
+	* @param data - String interval
+	*
+	* @note
+	* For interval format, refer to the Oracle SQL documentation
+	*
+	*/
     void FromString(ostring data);
-    ostring ToString(int leadingPrecision = 10, int fractionPrecision = 10) const;
+    
+	/**
+	* @brief
+	* Convert the interval value to a string
+	*
+	* @param leadingPrecision  - leading precision
+	* @param fractionPrecision - fraction precision
+	*
+	*/
+	ostring ToString(int leadingPrecision = 10, int fractionPrecision = 10) const;
 
 	/**
 	* @brief
@@ -2647,8 +2838,16 @@ public:
 	*/
 	Interval Clone() const;
 
-    operator ostring() const;
-
+	/**
+	* @brief
+	* Convenient operator converting the interval value to a string
+	*
+	* @note
+	* It calls ToString()
+	*
+	*/
+	operator ostring() const;
+	
 	/**
 	* @brief
 	* Return a new Interval holding the sum of the current Interval value and the given Interval value
@@ -2773,46 +2972,269 @@ public:
 
     Timestamp(TimestampType type);
 
+	/**
+	* @brief
+	* Return the type of the given timestamp object
+	*
+	*/
     TimestampType GetType() const;
 
-    void Construct(int year, int month, int day, int hour, int min, int sec, int fsec, ostring timeZone = OTEXT(""));
+	/**
+	* @brief
+	* Convert the current timestamp to the type of the given timestamp.
+	*
+	* @param other - Timestamp to use for the type conversion
+	*
+	*/
     void Convert(const Timestamp& other);
 
-    bool IsValid() const;
+	/**
+	* @brief
+	* Check if the given timestamp is valid
+	*
+	*/
+	bool IsValid() const;
 
-    int GetYear() const;
-    void SetYear(int value);
+	/**
+	* @brief
+	* Return the timestamp year value
+	*
+	*/
+	int GetYear() const;
 
-    int GetMonth() const;
-    void SetMonth(int value);
+	/**
+	* @brief
+	* Set the timestamp year value
+	*
+	*/
+	void SetYear(int value);
 
-    int GetDay() const;
-    void SetDay(int value);
+	/**
+	* @brief
+	* Return the timestamp month value
+	*
+	*/
+	int GetMonth() const;
 
-    int GetHours() const;
-    void SetHours(int value);
+	/**
+	* @brief
+	* Set the timestamp month value
+	*
+	*/
+	void SetMonth(int value);
 
-    int GetMinutes() const;
-    void SetMinutes(int value);
+	/**
+	* @brief
+	* Return the timestamp day value
+	*
+	*/
+	int GetDay() const;
 
-    int GetSeconds() const;
-    void SetSeconds(int value);
+	/**
+	* @brief
+	* Set the timestamp day value
+	*
+	*/
+	void SetDay(int value);
 
-    int GetMilliSeconds() const;
-    void SetMilliSeconds(int value);
+	/**
+	* @brief
+	* Return the timestamp hours value
+	*
+	*/
+	int GetHours() const;
 
-    void GetDate(int *year, int *month, int *day) const;
-    void GetTime(int *hour, int *min,   int *sec, int *fsec) const;
-    void GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec, int *fsec) const;
+	/**
+	* @brief
+	* Set the timestamp hours value
+	*
+	*/
+	void SetHours(int value);
 
+	/**
+	* @brief
+	* Return the timestamp minutes value
+	*
+	*/
+	int GetMinutes() const;
+
+	/**
+	* @brief
+	* Set the timestamp minutes value
+	*
+	*/
+	void SetMinutes(int value);
+
+	/**
+	* @brief
+	* Return the timestamp seconds value
+	*
+	*/
+	int GetSeconds() const;
+
+	/**
+	* @brief
+	* Set the timestamp seconds value
+	*
+	*/
+	void SetSeconds(int value);
+
+	/**
+	* @brief
+	* Return the timestamp seconds value
+	*
+	*/
+	int GetMilliSeconds() const;
+
+	/**
+	* @brief
+	* Set the timestamp milliseconds value
+	*
+	*/
+	void SetMilliSeconds(int value);
+
+	/**
+	* @brief
+	* Extract the date parts
+	*
+	* @param year  - Place holder for year value
+	* @param month - Place holder for month value
+	* @param day   - Place holder for day value
+	*
+	*/
+	void GetDate(int &year, int &month, int &day) const;
+
+	/**
+	* @brief
+	* Extract time parts
+	*
+	* @param year  - Place holder for year value
+	* @param month - Place holder for month value
+	* @param day   - Place holder for day value
+	* @param hour  - Place holder for hour value
+	* @param min   - Place holder for minute value
+	* @param sec   - Place holder for second value
+	* @param fsec  - Place holder for fractional part of the seconds
+	*
+	*/
+	void GetTime(int &hour, int &min, int &sec, int &fsec) const;
+
+	/**
+	* @brief
+	* Set the date part
+	*
+	* @param year  - Year value
+	* @param month - Month value
+	* @param day   - Day value
+	*
+	*/
+	void SetDate(int year, int month, int day);
+
+	/**
+	* @brief
+	* Set the time part
+	*
+	* @param hour  - Hour value
+	* @param min   - Minute value
+	* @param sec   - Second value
+	* @param fsec  - Place holder for fractional part of the seconds
+    *
+	*/
+	void SetTime(int hour, int min, int sec, int fsec);
+
+	/**
+	* @brief
+	* Extract date and time parts
+	*
+	* @param hour     - Place holder for hour value
+	* @param min      - Place holder for minute value
+	* @param sec      - Place holder for second value
+	* @param fsec     - Place holder for fractional part of the seconds
+	*
+	*/
+	void GetDateTime(int &year, int &month, int &day, int &hour, int &min, int &sec, int &fsec) const;
+
+	/**
+	* @brief
+	* Set the timestamp value from given date time parts
+	*
+	* @param year		- Year value
+	* @param month		- Month value
+	* @param day		- Day value
+	* @param hour		- Hour value
+	* @param min		- Minutes value
+	* @param sec		- Seconds value
+	* @param fsec		- Fractional part of seconds value
+	* @param timeZone	- name of a time zone to use [optional]
+	*
+	*/
+	void SetDateTime(int year, int month, int day, int hour, int min, int sec, int fsec, ostring timeZone = OTEXT(""));
+
+	/**
+	* @brief
+	* Return the name of the current time zone
+	*
+	* @warning
+	* Returns an empty string if the timestamp type is TimeStamp::NoTimeZone
+	*
+	*/
     ostring GetTimeZone() const;
-    void GetTimeZoneOffset(int *hour, int *min) const;
+
+	/**
+	* @brief
+	* Set the given time zone to the timestamp
+	*
+	* @warning
+	* - The timestamp must have a valid value before setting the timezone
+	* - Applies to TimeStamp::WithTimeZone only
+	*
+	*/
+	void SetTimeZone(ostring timeZone);
+
+	/**
+	* @brief
+	* Return the time zone (hour, minute) offsets
+	*
+	* @param hour  - Place holder for hour value
+	* @param min   - Place holder for min value
+    *
+	*/
+    void GetTimeZoneOffset(int &hour, int &min) const;
+
 
 	static void Substract(const Timestamp &lsh, const Timestamp &rsh, Interval &result);
 
+	/**
+	* @brief
+	* Assign the current system timestamp to the current timestamp object
+	*
+	*/
     void SysTimestamp();
 
-    void FromString(ostring data, ostring format = OCI_STRING_FORMAT_DATE);
+	/**
+	* @brief
+	* Assign to the timestamp object the value provied by the input date time string
+	*
+	* @param data   - String date time
+	* @param format - format of the date time provided in parameter 'data'
+	*
+	* @note
+	* For date time formats, refer to the Oracle SQL documentation
+	*
+	*/
+	void FromString(ostring data, ostring format = OCI_STRING_FORMAT_DATE);
+
+	/**
+	* @brief
+	* Convert the timestamp value to a string
+	*
+	* @param format    - date time / timestamp format to use
+	* @param precision - precision for milliseconds
+	*
+	* @note
+	* For date time / timestamp formats, refer to the Oracle SQL documentation
+	*
+	*/
     ostring ToString(ostring format = OCI_STRING_FORMAT_DATE, int precision = 0) const;
 
 	/**
@@ -2822,7 +3244,15 @@ public:
 	*/
 	Timestamp Clone() const;
 
-    operator ostring() const;
+	/**
+	* @brief
+	* Convenient operator converting the timestamp value to a string
+	*
+	* @note
+	* It calls ToString() with default date time format
+	*
+	*/
+	operator ostring() const;
 
 	/**
 	* @brief
@@ -2851,6 +3281,13 @@ public:
 	*
 	*/
 	Timestamp operator - (int value);
+
+	/**
+	* @brief
+	* Return an interval storing the difference between the current timestmap and the given one
+	*
+	*/
+	Interval operator - (const Timestamp& other);
 
 	/**
 	* @brief
@@ -3007,6 +3444,16 @@ public:
 	*/
 	typedef Enum<OpenModeValues> OpenMode;
 
+	/**
+	* @brief
+	* Parametrized constructor
+	*
+	* @param connection - Parent connection
+	*
+	* @note
+	* the clob object must not be accessed anymore once the parent connection object gets out of scope
+	*
+	*/
     Clob(const Connection &connection);
 
     ostring Read(unsigned int size);
@@ -3039,8 +3486,15 @@ public:
 	*
 	*/
 	Clob Clone() const;
-    operator ostring() const;
 
+
+	/**
+	* @brief
+	* return the clob object content 
+	*
+	*/
+	operator ostring() const;
+	
 	Clob& operator += (const Clob& other);
 	bool operator == (const Clob& other) const;
 	bool operator != (const Clob& other) const;
@@ -3118,7 +3572,17 @@ public:
 	*/
 	typedef Enum<OpenModeValues> OpenMode;
 
-    Blob(const Connection &connection);
+	/**
+	* @brief
+	* Parametrized constructor
+	*
+	* @param connection - Parent connection
+	*
+	* @note
+	* the blob object must not be accessed anymore once the parent connection object gets out of scope
+	*
+	*/
+	Blob(const Connection &connection);
 
 	Raw Read(unsigned int size);
 	unsigned int Write(const Raw &value);
@@ -3206,8 +3670,33 @@ public:
 	*/
 	typedef Enum<SeekModeValues> SeekMode;
 
+	/**
+	* @brief
+	* Parametrized constructor
+	*
+	* @param connection - Parent connection
+	*
+	* @note
+	* the file object must not be accessed anymore once the parent connection object gets out of scope
+	*
+	*/
     File(const Connection &connection);
-    File(const Connection &connection, ostring directory, ostring name);
+    
+	/**
+	* @brief
+	* Parametrized constructor
+	*
+	* @param connection - Parent connection
+	* @param directory  - File directory
+	* @param name       - File name
+	*
+	* this convinient constructor calls File::SetInfos()
+	*
+	* @note
+	* the file object must not be accessed anymore once the parent connection object gets out of scope
+	*
+	*/
+	File(const Connection &connection, ostring directory, ostring name);
 
 	Raw Read(unsigned int size);
     bool Seek(SeekMode seekMode, big_uint offset);
@@ -3285,8 +3774,25 @@ public:
 	*/
     typedef Enum<TypeInfoTypeValues> TypeInfoType;
 
+	/**
+	* @brief
+	* Parametrized constructor
+	*
+	* @param connection - Parent connection
+	* @param name       - Type name
+	* @param type       - Kind of type to retrieve
+	*
+	* @note
+	* the TypeInfo object must not be accessed anymore once the parent connection object gets out of scope
+	*
+	*/
     TypeInfo(const Connection &connection, ostring name, TypeInfoType type);
 
+	/**
+	* @brief
+	* Return the type of the given TypeInfo object
+	*
+	*/
     TypeInfoType GetType() const;
     ostring GetName() const;
     Connection GetConnection() const;
@@ -3350,6 +3856,11 @@ public:
     TypeInfo GetTypeInfo() const;
     Reference GetReference() const;
 
+	/**
+	* @brief
+	* Return the type of the given object
+	*
+	*/
     ObjectType GetType() const;
 
     template<class TDataType>
@@ -3365,8 +3876,22 @@ public:
 	*/
 	Object Clone() const;
 
+	/**
+	* @brief
+	* return a string representation of the current object
+	*
+	*/
     ostring ToString() const;
-    operator ostring() const;
+
+	/**
+	* @brief
+	* Convenient operator returning a string representation of the current object
+	*
+	* @note
+	* It calls ToString()
+	*
+	*/
+	operator ostring() const;
 
 private:
 
@@ -3406,8 +3931,22 @@ public:
 	*/
 	Reference Clone() const;
 
-    ostring ToString() const;
-    operator ostring() const;
+	/**
+	* @brief
+	* return a string representation of the current reference
+	*
+	*/
+	ostring ToString() const;
+
+	/**
+	* @brief
+	* Convenient operator returning a string representation of the current reference
+	*
+	* @note
+	* It calls ToString()
+	*
+	*/
+	operator ostring() const;
 
 private:
 
@@ -3459,6 +3998,11 @@ public:
 
     Collection(const TypeInfo &typeInfo);
 
+	/**
+	* @brief
+	* Return the type of the given collection object
+	*
+	*/
     CollectionType GetType() const;
     unsigned int GetMax() const;
     unsigned int GetSize() const;
@@ -3487,8 +4031,22 @@ public:
 	*/
 	Collection Clone() const;
 
-    ostring ToString() const;
-    operator ostring() const;
+	/**
+	* @brief
+	* return a string representation of the current collection
+	*
+	*/
+	ostring ToString() const;
+
+	/**
+	* @brief
+	* Convenient operator returning a string representation of the current collection
+	*
+	* @note
+	* It calls ToString()
+	*
+	*/
+	operator ostring() const;
 
 	class Element
 	{
@@ -3932,8 +4490,23 @@ public:
 	*/
     typedef Enum<LongModeValues> LongMode;
 
+	/**
+	* @brief
+	* Parametrized constructor
+	*
+	* @param connection - Parent connection
+	*
+	* @note
+	* - The statement object must not be accessed anymore once the parent connection object gets out of scope
+	*
+	*/
     Statement(const Connection &connection);
-    ~Statement();
+ 
+	/**
+	* @brief
+	* Destructor
+	*
+	*/	~Statement();
 
 	/**
 	* @brief
@@ -5416,6 +5989,9 @@ public:
 	* the AQ agent address can be any Oracle identifier, up to 128 bytes.
 	* the AQ agent name    can be any Oracle identifier, up to 30  bytes.
 	*
+	* @note
+	* the Agent object must not be accessed anymore once the parent connection object gets out of scope
+	*
 	*/
     Agent(const Connection &connection, ostring name = OTEXT(""), ostring address = OTEXT(""));
 
@@ -6447,9 +7023,9 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Alter (const Connection &connection, ostring queue,
-                       unsigned int maxRetries= 0, unsigned int retryDelay= 0,
-                       unsigned int retentionTime= 0, ostring comment = OTEXT(""));
+    static void Alter(const Connection &connection, ostring queue,
+                      unsigned int maxRetries= 0, unsigned int retryDelay= 0,
+                      unsigned int retentionTime= 0, ostring comment = OTEXT(""));
 
     /**
      * @brief
@@ -6466,7 +7042,7 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Drop  (const Connection &connection, ostring queue);
+    static void Drop(const Connection &connection, ostring queue);
 
     /**
      * @brief
@@ -6485,7 +7061,7 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Start (const Connection &connection, ostring queue, bool enableEnqueue = true, bool enableDequeue = true);
+    static void Start(const Connection &connection, ostring queue, bool enableEnqueue = true, bool enableDequeue = true);
 
     /**
     * @brief
@@ -6505,7 +7081,7 @@ public:
     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
     *
     */
-    static void Stop  (const Connection &connection, ostring queue, bool stopEnqueue = true, bool stopDequeue = true, bool wait = true);
+    static void Stop(const Connection &connection, ostring queue, bool stopEnqueue = true, bool stopDequeue = true, bool wait = true);
 };
 
 /**
@@ -6600,11 +7176,11 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Create (const Connection &connection, ostring table, ostring payloadType, bool multipleConsumers,
-                        ostring storageClause = OTEXT(""), ostring sortList = OTEXT(""),
-                        GroupingMode groupingMode = None, ostring comment = OTEXT(""),
-                        unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0,
-                        ostring compatible = OTEXT(""));
+    static void Create(const Connection &connection, ostring table, ostring payloadType, bool multipleConsumers,
+                       ostring storageClause = OTEXT(""), ostring sortList = OTEXT(""),
+                       GroupingMode groupingMode = None, ostring comment = OTEXT(""),
+                       unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0,
+                       ostring compatible = OTEXT(""));
 
     /**
     * @brief
@@ -6624,7 +7200,7 @@ public:
     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
     *
     */
-    static void Alter  (const Connection &connection, ostring table, ostring comment, unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0);
+    static void Alter(const Connection &connection, ostring table, ostring comment, unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0);
 
      /**
      * @brief
@@ -6646,7 +7222,7 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Drop  (const Connection &connection, ostring table, bool force = true);
+    static void Drop(const Connection &connection, ostring table, bool force = true);
 
     /**
      * @brief
@@ -6671,7 +7247,7 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Purge  (const Connection &connection, ostring table, PurgeMode mode, ostring condition = OTEXT(""), bool block = true);
+    static void Purge(const Connection &connection, ostring table, PurgeMode mode, ostring condition = OTEXT(""), bool block = true);
 
     /**
      * @brief

@@ -271,7 +271,7 @@ protected:
 
     HandleHolder& operator= (const HandleHolder &other);
 
-    typedef boolean (OCI_API *HandleFreeFunc)(UnknownHandle handle);
+	typedef boolean(OCI_API *HandleFreeFunc)(AnyPointer handle);
 
     Handle* GetHandle() const;
 

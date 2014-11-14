@@ -716,7 +716,7 @@ inline void Environment::Initialize(EnvironmentFlags mode, ostring libpath)
 
     Check();
 
-	GetEnvironmentHandle().Initialize(static_cast<UnknownHandle>(OCI_HandleGetEnvironment()), ociMode);
+	GetEnvironmentHandle().Initialize(const_cast<AnyPointer>(OCI_HandleGetEnvironment()), ociMode);
 }
 
 inline void Environment::Cleanup()
@@ -851,7 +851,7 @@ inline Environment::EnvironmentHandle & Environment::GetEnvironmentHandle()
     return envHandle;
 }
 
-inline void Environment::EnvironmentHandle::Initialize(UnknownHandle handle, unsigned int envMode)
+inline void Environment::EnvironmentHandle::Initialize(AnyPointer handle, unsigned int envMode)
 {
     Mode = envMode;
     Callbacks.Initialize(envMode);
@@ -1379,7 +1379,7 @@ inline int Date::GetYear() const
 {
     int year, month, day;
 
-    GetDate(&year, &month, &day);
+    GetDate(year, month, day);
 
     return year;
 }
@@ -1388,7 +1388,7 @@ inline void Date::SetYear(int value)
 {
     int year, month, day;
 
-    GetDate(&year, &month, &day);
+    GetDate(year, month, day);
     SetDate(value, month, day);
 }
 
@@ -1396,7 +1396,7 @@ inline int Date::GetMonth() const
 {
     int year, month, day;
 
-    GetDate(&year, &month, &day);
+    GetDate(year, month, day);
 
     return month;
 }
@@ -1405,7 +1405,7 @@ inline void Date::SetMonth(int value)
 {
     int year, month, day;
 
-    GetDate(&year, &month, &day);
+    GetDate(year, month, day);
     SetDate(year, value, day);
 }
 
@@ -1413,7 +1413,7 @@ inline int Date::GetDay() const
 {
     int year, month, day;
 
-    GetDate(&year, &month, &day);
+    GetDate(year, month, day);
 
     return day;
 }
@@ -1422,7 +1422,7 @@ inline void Date::SetDay(int value)
 {
     int year, month, day;
 
-    GetDate(&year, &month, &day);
+    GetDate(year, month, day);
     SetDate(year, month, value);
 }
 
@@ -1430,7 +1430,7 @@ inline int Date::GetHours() const
 {
     int hour, minutes, seconds;
 
-    GetTime(&hour, &minutes, &seconds);
+    GetTime(hour, minutes, seconds);
 
     return hour;
 }
@@ -1439,7 +1439,7 @@ inline void Date::SetHours(int value)
 {
     int hour, minutes, seconds;
 
-    GetTime(&hour, &minutes, &seconds);
+    GetTime(hour, minutes, seconds);
     SetTime(value, minutes, seconds);
 }
 
@@ -1447,7 +1447,7 @@ inline int Date::GetMinutes() const
 {
     int hour, minutes, seconds;
 
-    GetTime(&hour, &minutes, &seconds);
+    GetTime(hour, minutes, seconds);
 
     return minutes;
 }
@@ -1456,7 +1456,7 @@ inline void Date::SetMinutes(int value)
 {
     int hour, minutes, seconds;
 
-    GetTime(&hour, &minutes, &seconds);
+    GetTime(hour, minutes, seconds);
     SetTime(hour, value, seconds);
 }
 
@@ -1464,7 +1464,7 @@ inline int Date::GetSeconds() const
 {
     int hour, minutes, seconds;
 
-    GetTime(&hour, &minutes, &seconds);
+    GetTime(hour, minutes, seconds);
 
     return seconds;
 }
@@ -1473,7 +1473,7 @@ inline void Date::SetSeconds(int value)
 {
     int hour, minutes, seconds;
 
-    GetTime(&hour, &minutes, &seconds);
+    GetTime(hour, minutes, seconds);
     SetTime(hour, minutes, value);
 }
 
@@ -1497,19 +1497,19 @@ inline void Date::SetDateTime(int year, int month, int day, int hour, int min, i
     Check(OCI_DateSetDateTime(*this, year, month, day, hour, min , sec));
 }
 
-inline void Date::GetDate(int *year, int *month, int *day) const
+inline void Date::GetDate(int &year, int &month, int &day) const
 {
-    Check(OCI_DateGetDate(*this, year, month, day));
+    Check(OCI_DateGetDate(*this, &year, &month, &day));
 }
 
-inline void Date::GetTime(int *hour, int *min, int *sec) const
+inline void Date::GetTime(int &hour, int &min, int &sec) const
 {
-    Check(OCI_DateGetTime(*this, hour, min , sec));
+    Check(OCI_DateGetTime(*this, &hour, &min , &sec));
 }
 
-inline void Date::GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec) const
+inline void Date::GetDateTime(int &year, int &month, int &day, int &hour, int &min, int &sec) const
 {
-    Check(OCI_DateGetDateTime(*this, year, month, day, hour, min , sec));
+    Check(OCI_DateGetDateTime(*this, &year, &month, &day, &hour, &min , &sec));
 }
 
 inline void Date::AddDays(int days)
@@ -1583,13 +1583,13 @@ inline Date& Date::operator -- (int)
 
 inline Date Date::operator + (int value)
 {
-	Date result(*this);
+	Date result = Clone();
 	return result += value;
 }
 
 inline Date Date::operator - (int value)
 {
-	Date result(*this);
+	Date result = Clone();
 	return result -= value;
 }
 
@@ -1681,7 +1681,7 @@ inline int Interval::GetYear() const
 {
     int year, month;
 
-    GetYearMonth(&year, &month);
+    GetYearMonth(year, month);
 
     return year;
 }
@@ -1690,7 +1690,7 @@ inline void Interval::SetYear(int value)
 {
     int year, month;
 
-    GetYearMonth(&year, &month);
+    GetYearMonth(year, month);
     SetYearMonth(value, month);
 }
 
@@ -1698,7 +1698,7 @@ inline int Interval::GetMonth() const
 {
     int year, month;
 
-    GetYearMonth(&year, &month);
+    GetYearMonth(year, month);
 
     return month;
 }
@@ -1707,7 +1707,7 @@ inline void Interval::SetMonth(int value)
 {
     int year, month;
 
-    GetYearMonth(&year, &month);
+    GetYearMonth(year, month);
     SetYearMonth(year, value);
 }
 
@@ -1715,7 +1715,7 @@ inline int Interval::GetDay() const
 {
     int day, hour, minutes, seconds, milliseconds;
 
-    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
     return day;
 }
@@ -1724,7 +1724,7 @@ inline void Interval::SetDay(int value)
 {
     int day, hour, minutes, seconds, milliseconds;
 
-    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(value, hour, minutes, seconds, milliseconds);
 }
 
@@ -1732,7 +1732,7 @@ inline int Interval::GetHours() const
 {
     int day, hour, minutes, seconds, milliseconds;
 
-    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
     return hour;
 }
@@ -1741,7 +1741,7 @@ inline void Interval::SetHours(int value)
 {
     int day, hour, minutes, seconds, milliseconds;
 
-    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, value, minutes, seconds, milliseconds);
 }
 
@@ -1749,7 +1749,7 @@ inline int Interval::GetMinutes() const
 {
     int day, hour, minutes, seconds, milliseconds;
 
-    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
     return minutes;
 }
@@ -1758,7 +1758,7 @@ inline void Interval::SetMinutes(int value)
 {
     int day, hour, minutes, seconds, milliseconds;
 
-    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, hour, value, seconds, milliseconds);
 }
 
@@ -1766,7 +1766,7 @@ inline int Interval::GetSeconds() const
 {
     int day, hour, minutes, seconds, milliseconds;
 
-    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
     return seconds;
 }
@@ -1775,7 +1775,7 @@ inline void Interval::SetSeconds(int value)
 {
     int day, hour, minutes, seconds, milliseconds;
 
-    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, hour, minutes, value, milliseconds);
 }
 
@@ -1783,7 +1783,7 @@ inline int Interval::GetMilliSeconds() const
 {
     int day, hour, minutes, seconds, milliseconds;
 
-    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
     return milliseconds;
 }
@@ -1792,13 +1792,13 @@ inline void Interval::SetMilliSeconds(int value)
 {
     int day, hour, minutes, seconds, milliseconds;
 
-    GetDaySecond(&day, &hour, &minutes, &seconds, &milliseconds);
+    GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, hour, minutes, seconds, value);
 }
 
-inline void Interval::GetDaySecond(int *day, int *hour, int *min, int *sec, int *fsec) const
+inline void Interval::GetDaySecond(int &day, int &hour, int &min, int &sec, int &fsec) const
 {
-    Check(OCI_IntervalGetDaySecond(*this, day, hour, min, sec, fsec));
+    Check(OCI_IntervalGetDaySecond(*this, &day, &hour, &min, &sec, &fsec));
 }
 
 inline void Interval::SetDaySecond(int day, int hour, int min, int sec, int fsec)
@@ -1806,16 +1806,16 @@ inline void Interval::SetDaySecond(int day, int hour, int min, int sec, int fsec
     Check(OCI_IntervalSetDaySecond(*this, day, hour, min, sec, fsec));
 }
 
-inline void Interval::GetYearMonth(int *year, int *month) const
+inline void Interval::GetYearMonth(int &year, int &month) const
 {
-    Check(OCI_IntervalGetYearMonth(*this, year, month));
+    Check(OCI_IntervalGetYearMonth(*this, &year, &month));
 }
 inline void Interval::SetYearMonth(int year, int month)
 {
     Check(OCI_IntervalSetYearMonth(*this, year, month));
 }
 
-inline void Interval::FromTimeZone(ostring timeZone)
+inline void Interval::UpdateTimeZone(ostring timeZone)
 {
     Check(OCI_IntervalFromTimeZone(*this, timeZone.c_str()));
 }
@@ -1843,13 +1843,13 @@ inline Interval::operator ostring() const
 
 inline Interval Interval::operator + (const Interval& other)
 {
-	Interval result(*this);
+	Interval result = Clone();
 	return result += other;
 }
 
 inline Interval Interval::operator - (const Interval& other)
 {
-	Interval result(*this);
+	Interval result = Clone();
 	return result -= other;
 }
 
@@ -1932,7 +1932,7 @@ inline Timestamp::TimestampType Timestamp::GetType() const
     return TimestampType(static_cast<TimestampType::type>(Check(OCI_TimestampGetType(*this))));
 }
 
-inline void Timestamp::Construct(int year, int month, int day, int hour, int min, int sec, int fsec, ostring timeZone)
+inline void Timestamp::SetDateTime(int year, int month, int day, int hour, int min, int sec, int fsec, ostring timeZone)
 {
     Check(OCI_TimestampConstruct(*this, year, month, day, hour, min,sec, fsec, timeZone.c_str()));
 }
@@ -1951,150 +1951,184 @@ inline int Timestamp::GetYear() const
 {
     int year, month, day;
 
-    GetDate(&year, &month, &day);
+    GetDate(year, month, day);
 
     return year;
 }
 
 inline void Timestamp::SetYear(int value)
 {
-    int year, month, day, hour, minutes, seconds, milliseconds;
+    int year, month, day;
 
-    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
-    Construct(value, month, day, hour, minutes, seconds, milliseconds);
+	GetDate(year, month, day);
+	SetDate(value, month, day);
 }
 
 inline int Timestamp::GetMonth() const
 {
     int year, month, day;
 
-    GetDate(&year, &month, &day);
+    GetDate(year, month, day);
 
     return month;
 }
 
 inline void Timestamp::SetMonth(int value)
 {
-    int year, month, day, hour, minutes, seconds, milliseconds;
+	int year, month, day;
 
-    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
-    Construct(year, value, day, hour, minutes, seconds, milliseconds);
+	GetDate(year, month, day);
+	SetDate(year, value, day);
 }
 
 inline int Timestamp::GetDay() const
 {
     int year, month, day;
 
-    GetDate(&year, &month, &day);
+    GetDate(year, month, day);
 
     return day;
 }
 
 inline void Timestamp::SetDay(int value)
 {
-    int year, month, day, hour, minutes, seconds, milliseconds;
+	int year, month, day;
 
-    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
-    Construct(year, month, value, hour, minutes, seconds, milliseconds);
+	GetDate(year, month, day);
+	SetDate(year, month, value);
 }
 
 inline int Timestamp::GetHours() const
 {
     int hour, minutes, seconds, milliseconds;
 
-    GetTime(&hour, &minutes, &seconds, &milliseconds);
+    GetTime(hour, minutes, seconds, milliseconds);
 
     return hour;
 }
 
 inline void Timestamp::SetHours(int value)
 {
-    int year, month, day, hour, minutes, seconds, milliseconds;
+	int hour, minutes, seconds, milliseconds;
 
-    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
-    Construct(year, month, day, value, minutes, seconds, milliseconds);
+	GetTime(hour, minutes, seconds, milliseconds);
+	SetTime(value, minutes, seconds, milliseconds);
 }
 
 inline int Timestamp::GetMinutes() const
 {
     int hour, minutes, seconds, milliseconds;
 
-    GetTime(&hour, &minutes, &seconds, &milliseconds);
+    GetTime(hour, minutes, seconds, milliseconds);
 
     return minutes;
 }
 
 inline void Timestamp::SetMinutes(int value)
 {
-    int year, month, day, hour, minutes, seconds, milliseconds;
+	int hour, minutes, seconds, milliseconds;
 
-    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
-    Construct(year, month, day, hour, value, seconds, milliseconds);
+	GetTime(hour, minutes, seconds, milliseconds);
+	SetTime(hour, value, seconds, milliseconds);
 }
 
 inline int Timestamp::GetSeconds() const
 {
     int hour, minutes, seconds, milliseconds;
 
-    GetTime(&hour, &minutes, &seconds, &milliseconds);
+    GetTime(hour, minutes, seconds, milliseconds);
 
     return seconds;
 }
 
 inline void Timestamp::SetSeconds(int value)
 {
-    int year, month, day, hour, minutes, seconds, milliseconds;
+	int hour, minutes, seconds, milliseconds;
 
-    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
-    Construct(year, month, day, hour, minutes, value, milliseconds);
+	GetTime(hour, minutes, seconds, milliseconds);
+	SetTime(hour, minutes, value, milliseconds);
 }
 
 inline int Timestamp::GetMilliSeconds() const
 {
     int hour, minutes, seconds, milliseconds;
 
-    GetTime(&hour, &minutes, &seconds, &milliseconds);
+    GetTime(hour, minutes, seconds, milliseconds);
 
     return milliseconds;
 }
 
 inline void Timestamp::SetMilliSeconds(int value)
 {
-    int year, month, day, hour, minutes, seconds, milliseconds;
+	int hour, minutes, seconds, milliseconds;
 
-    GetDateTime(&year, &month, &day, &hour, &minutes, &seconds, &milliseconds);
-    Construct(year, month, day, hour, minutes, seconds, value);
+	GetTime(hour, minutes, seconds, milliseconds);
+	SetTime(hour, minutes, seconds, value);
 }
 
-inline void Timestamp::GetDate(int *year, int *month, int *day) const
+inline void Timestamp::GetDate(int &year, int &month, int &day) const
 {
-    Check(OCI_TimestampGetDate(*this, year, month, day));
+    Check(OCI_TimestampGetDate(*this, &year, &month, &day));
 }
 
-inline void Timestamp::GetTime(int *hour, int *min, int *sec, int *fsec) const
+inline void Timestamp::GetTime(int &hour, int &min, int &sec, int &fsec) const
 {
-    Check(OCI_TimestampGetTime(*this, hour, min, sec, fsec));
+    Check(OCI_TimestampGetTime(*this, &hour, &min, &sec, &fsec));
 }
 
-inline void Timestamp::GetDateTime(int *year, int *month, int *day, int *hour, int *min, int *sec, int *fsec) const
+inline void Timestamp::GetDateTime(int &year, int &month, int &day, int &hour, int &min, int &sec, int &fsec) const
 {
-    Check(OCI_TimestampGetDateTime(*this, year, month, day, hour, min, sec, fsec));
+    Check(OCI_TimestampGetDateTime(*this, &year, &month, &day, &hour, &min, &sec, &fsec));
+}
+
+inline void Timestamp::SetDate(int year, int month, int day)
+{
+	int tmpYear, tmpMonth, tempDay, hour, minutes, seconds, milliseconds;
+
+	GetDateTime(year, month, day, hour, tmpYear, tmpMonth, tempDay);
+	SetDateTime(year, month, day, hour, minutes, seconds, milliseconds);
+}
+
+inline void Timestamp::SetTime(int hour, int min, int sec, int fsec)
+{
+	int year, month, day, tmpHour, tmpMinutes, tmpSeconds, tmpMilliseconds;
+
+	GetDateTime(year, month, day, tmpHour, tmpMinutes, tmpSeconds, tmpMilliseconds);
+	SetDateTime(year, month, day, hour, min, sec, fsec);
+}
+
+inline void Timestamp::SetTimeZone(ostring timeZone)
+{
+	if (GetType() == Timestamp::WithTimeZone)
+	{
+		int year, month, day, hour, minutes, seconds, milliseconds;
+
+		GetDateTime(year, month, day, hour, minutes, seconds, milliseconds);
+		SetDateTime(year, month, day, hour, minutes, seconds, milliseconds, timeZone);
+	}
 }
 
 inline ostring Timestamp::GetTimeZone() const
 {
-    size_t size = OCI_SIZE_BUFFER;
+	if (GetType() != Timestamp::NoTimeZone)
+	{
+		size_t size = OCI_SIZE_BUFFER;
 
-	ManagedBuffer<otext> buffer(size + 1);
+		ManagedBuffer<otext> buffer(size + 1);
 
-    Check(OCI_TimestampGetTimeZoneName(*this,  (int) size,  buffer));
+		Check(OCI_TimestampGetTimeZoneName(*this, (int)size, buffer));
 
-	return MakeString(static_cast<const otext *>(buffer));
+		return MakeString(static_cast<const otext *>(buffer));
+	}
+	else
+	{
+		return "";
+	}
 }
 
-inline void Timestamp::GetTimeZoneOffset(int *hour, int *min) const
+inline void Timestamp::GetTimeZoneOffset(int &hour, int &min) const
 {
-    Check(OCI_TimestampGetTimeZoneOffset(*this, hour, min));
+    Check(OCI_TimestampGetTimeZoneOffset(*this, &hour, &min));
 }
 
 inline void Timestamp::Substract(const Timestamp &lsh, const Timestamp &rsh, Interval& result)
@@ -2140,7 +2174,7 @@ inline Timestamp& Timestamp::operator -- (int)
 
 inline Timestamp Timestamp::operator + (int value)
 {
-	Timestamp result(*this);
+	Timestamp result = Clone();
 	Interval interval(Interval::DaySecond);
 	interval.SetDay(1);
 	return result += value;
@@ -2148,21 +2182,28 @@ inline Timestamp Timestamp::operator + (int value)
 
 inline Timestamp Timestamp::operator - (int value)
 {
-	Timestamp result(*this);
+	Timestamp result = Clone();
 	Interval interval(Interval::DaySecond);
 	interval.SetDay(1);
 	return result -= value;
 }
 
+inline Interval Timestamp::operator - (const Timestamp& other)
+{
+	Interval interval(Interval::DaySecond);
+	Check(OCI_TimestampSubtract(*this, other, interval));
+	return interval;
+}
+
 inline Timestamp Timestamp::operator + (const Interval& other)
 {
-	Timestamp result(*this);
+	Timestamp result = Clone();
 	return result += other;
 }
 
 inline Timestamp Timestamp::operator - (const Interval& other)
 {
-	Timestamp result(*this);
+	Timestamp result = Clone();
 	return result -= other;
 }
 
