@@ -9976,7 +9976,8 @@ OCI_EXPORT unsigned int OCI_API OCI_LobGetChunkSize
  * @param len    - Number of bytes or characters to erase
  *
  * @note
- * Absolute position starts at 1.
+ * Absolute position starts at 0.
+ * Erasing means that spaces overwrite the existing LOB value.
  *
  * @return
  * Number of bytes (BLOB) or characters (CLOB/NCLOB) erased on success
@@ -10098,7 +10099,7 @@ OCI_EXPORT boolean OCI_API OCI_LobIsTemporary
  * offset_src are expressed in characters and not in bytes.
  *
  * @note
- * Absolute position starts at 1.
+ * Absolute position starts at 0.
  *
  */
 
@@ -10127,7 +10128,7 @@ OCI_EXPORT boolean OCI_API OCI_LobCopy
  * - Offset_src is always in bytes
  *
  * @note
- * Absolute position starts at 1.
+ * Absolute position starts at 0.
  *
  */
 
@@ -10274,7 +10275,7 @@ OCI_EXPORT boolean OCI_API OCI_LobFlush
  * @warning
  * According to Oracle documentation the following operations are not permitted
  * on Lobs when buffering is on : OCI_LobCopy(), OCI_LobAppend, OCI_LobErase(),
- * OCI_LobGetLength(), OCI_LobTrim()
+ * OCI_LobGetLength(), OCI_LobTruncate()
  *
  * @return
  * TRUE on success otherwise FALSE

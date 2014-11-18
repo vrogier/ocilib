@@ -264,6 +264,28 @@ enum NumericTypeValues
 */
 typedef Enum<NumericTypeValues> NumericType;
 
+
+/**
+* @brief
+* Charset form enumerated values
+*
+*/
+enum CharsetFormValues
+{
+	/** Database character set will be converted to the server national character set */
+	CharsetFormDefault = OCI_CSF_DEFAULT,
+	/** Client national character set will be converted to the server national character set */
+	CharsetFormNational = OCI_CSF_NATIONAL
+};
+/**
+* @brief
+* Type of Exception
+*
+* Possible values are CharsetFormValues
+*
+*/
+typedef Enum<CharsetFormValues> CharsetForm;
+
 /**
  *
  * @brief
@@ -660,27 +682,6 @@ public:
 	*
 	*/
 	typedef Flags<ShutdownFlagsValues> ShutdownFlags;
-
-	/**
-	* @brief
-	* Charset form enumerated values
-	*
-	*/
-	enum CharsetFormValues
-	{
-		/** Database character set will be converted to the server national character set */
-		CharsetFormDefault = OCI_CSF_DEFAULT,
-		/** Client national character set will be converted to the server national character set */
-		CharsetFormNational = OCI_CSF_NATIONAL
-	};
-	/**
-	* @brief
-	* Type of Exception
-	*
-	* Possible values are Environment::CharsetFormValues
-	*
-	*/
-	typedef Enum<CharsetFormValues> CharsetForm;
 
 	/**
 	* @typedef HAHandlerProc
@@ -3454,30 +3455,205 @@ public:
 	* the clob object must not be accessed anymore once the parent connection object gets out of scope
 	*
 	*/
-    Clob(const Connection &connection);
+	Clob(const Connection &connection, CharsetForm charsetForm = CharsetFormDefault);
 
-    ostring Read(unsigned int size);
-    unsigned int Write(ostring content);
-    unsigned int Append(ostring content);
-    bool Seek(SeekMode seekMode, big_uint offset);
+	/**
+	* @brief
+	* Read a portion of a clob
+	*
+	* @param size - Maximum number of characters to read
+	*
+	* @return
+	* The string read from the clob
+	*
+	*/
+	ostring Read(unsigned int length);
 
-    big_uint GetOffset() const;
-    big_uint GetLength() const;
+	/**
+	* @brief
+	* Write the given string at the current position within the clob
+	*
+	* @param content - String to write
+	*
+	* @return
+	* Number of character written into the clob
+	*
+	*/
+	unsigned int Write(ostring content);
+
+	/**
+	* @brief
+	* Append the given string to the clob
+	*
+	* @param content - String to write
+	*
+	* @return
+	*  Number of character written into the clob
+	*
+	*/
+	unsigned int Append(ostring content);
+
+	/**
+	* @brief
+	* Move the current position wihtin the clob for read/write operations
+	*
+	* @param mode   - Seek mode
+	* @param offset - offset from current position 
+	*
+	* @note
+	* Positions start at 0.
+	*
+	* @return
+	* TRUE on success otherwise FALSE
+	*
+	*/
+	bool Seek(SeekMode seekMode, big_uint offset);
+
+	/**
+	* @brief
+	* Return the charset form of the given column
+	*
+	*/
+	CharsetForm GetCharsetForm() const;
+
+	/**
+	* @brief
+	* Returns the current R/W offset within the clob
+    *
+	*/
+	big_uint GetOffset() const;
+
+	/**
+	* @brief
+	* Returns the number of characters contained in the clob
+	*
+	*/
+	big_uint GetLength() const;
+
+	/**
+	* @brief
+	* Returns the clob maximum possible size
+	*
+	*/
     big_uint GetMaxSize() const;
-    big_uint GetChunkSize() const;
+    
+	/**
+	* @brief
+	* Returns the current clob chunk size
+	*
+	* @note
+	* This chunk size corresponds to the chunk size used by the LOB data layer
+	* when accessing and modifying the LOB value. According to Oracle
+	* documentation, performance will be improved if the application issues
+	* read or write requests using a multiple of this chunk size
+	*
+	*/
+	big_uint GetChunkSize() const;
 
+	/**
+	* @brief
+	* Return the clob parent connection
+	*
+	*/
 	Connection GetConnection() const;
 
-    void Truncate(big_uint size);
-    big_uint Erase(big_uint offset, big_uint size);
-    void Copy(Clob &dest, big_uint offset, big_uint offsetDest, big_uint size) const;
+	/**
+	* @brief
+	* Truncate the lob to a shorter length
+	*
+	* @param length - New length in characters
+	*
+	*/
+    void Truncate(big_uint length);
 
+	/**
+	* @brief
+	* Erase a portion of the clob at a given position
+	*
+	* @param offset - Absolute position in source lob
+	* @param length - Number of bytes or characters to erase
+	*
+	* @note
+	* Absolute position starts at 0.
+	* Erasing means that spaces overwrite the existing LOB value.
+	*
+	* @return
+	* Number of characters erased
+	*
+	*/
+    big_uint Erase(big_uint offset, big_uint length);
+
+	/**
+	* @brief
+	* Copy the given portion of the clob content to another one
+	*
+	* @param dest        - Destination clob
+	* @param offset      - Absolute position in the clob
+	* @param offsetDest  - Absolute position in the destination clob
+	* @param length      - Number of characters to copy
+	*
+	* @note
+	* Absolute position starts at 0.
+	*
+	*/
+    void Copy(Clob &dest, big_uint offset, big_uint offsetDest, big_uint length) const;
+
+	/**
+	* @brief
+	* Check if the given lob is a temporary lob
+	*
+	*/
     bool IsTemporary() const;
 
+	/**
+	* @brief
+	* Open explicitly a Lob
+	*
+	* @param mode - open mode
+	*
+	* @note
+	* - A call to Open() is not necessary to manipulate a Lob.
+	* - If a lob hasn't been opened explicitly, triggers are fired and
+	*   indexes updated at every read/write/append operation
+	*
+	*/
     void Open(OpenMode mode);
-    void Flush();
-    void Close();
 
+	/**
+	* @brief
+	* Flush the lob content to the server (if applicable)
+	*
+	*/
+	void Flush();
+
+	/**
+	* @brief
+	* Close explicitly a Lob
+	*
+	* @note
+	* - A call to Close() is not necessary to manipulate a Lob.
+	*
+	*/
+	void Close();
+
+	/**
+	* @brief
+	* Enable / disable buffering mode on the given lob object
+	*
+	* @param value  - Enable/disable buffering mode
+	*
+	* @note
+	* Oracle "LOB Buffering Subsystem" allows client applications
+	* to speedup read/write of small buffers on Lobs Objects.
+	* Check Oracle Documentation for more details on "LOB Buffering Subsystem".
+	* This reduces the number of network round trips and LOB versions, thereby
+	* improving LOB performance significantly.
+	*
+	* @warning
+	* According to Oracle documentation the following operations are not permitted
+	* on Lobs when buffering is on : Copy(), Append(), Erase(), GetLength(), Truncate()
+	*
+	*/
     void EnableBuffering(bool value);
 
 	/**
@@ -3487,7 +3663,6 @@ public:
 	*/
 	Clob Clone() const;
 
-
 	/**
 	* @brief
 	* return the clob object content 
@@ -3495,8 +3670,25 @@ public:
 	*/
 	operator ostring() const;
 	
+	/**
+	* @brief
+	* Appending the given clob content to the current clob content
+	*
+	*/
 	Clob& operator += (const Clob& other);
+	
+	/**
+	* @brief
+	* Indicates if the current clob value is equal to the given clob value
+	*
+	*/
 	bool operator == (const Clob& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current clob value is not equal the given clob value
+	*
+	*/
 	bool operator != (const Clob& other) const;
 
 private:
@@ -4354,7 +4546,7 @@ public:
 	* This call does nothing the bind datatype is not ocilib::TypeString or ocilib::TypeLong
 	*
 	*/
-    void SetCharsetForm(Environment::CharsetForm value);
+    void SetCharsetForm(CharsetForm value);
 
 	/**
 	* @brief
@@ -4510,7 +4702,7 @@ public:
 
 	/**
 	* @brief
-	* Return the connection handle associated with a statement handle
+	* Return the connection associated with a statement
 	*
 	*/
     Connection GetConnection() const;
@@ -5603,7 +5795,7 @@ public:
 	* Return the charset form of the given column
 	*
 	*/
-    Environment::CharsetForm GetCharsetForm() const;
+    CharsetForm GetCharsetForm() const;
 
 	/**
 	* @brief

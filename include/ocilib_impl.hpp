@@ -2271,9 +2271,10 @@ inline bool Timestamp::operator <= (const Timestamp& other) const
  * Clob
  * --------------------------------------------------------------------------------------------- */
 
-inline Clob::Clob(const Connection &connection)
+inline Clob::Clob(const Connection &connection, CharsetForm charsetForm)
 {
-    Acquire(Check(OCI_LobCreate(connection, OCI_CLOB)), (HandleFreeFunc) OCI_LobFree, connection.GetHandle());
+	Acquire(Check(OCI_LobCreate(connection, charsetForm == CharsetFormNational ? OCI_NCLOB : OCI_CLOB)), 
+		                        reinterpret_cast<HandleFreeFunc>(OCI_LobFree), connection.GetHandle());
 }
 
 inline Clob::Clob(OCI_Lob *pLob, Handle *parent)
@@ -2281,23 +2282,23 @@ inline Clob::Clob(OCI_Lob *pLob, Handle *parent)
     Acquire(pLob, 0, parent);
 }
 
-inline ostring Clob::Read(unsigned int size)
+inline ostring Clob::Read(unsigned int length)
 {
-	ManagedBuffer<otext> buffer(size + 1);
+	ManagedBuffer<otext> buffer(length + 1);
 
-    Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), size));
+	Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), length));
 
 	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline unsigned int Clob::Write(ostring content)
 {
-    return Check(OCI_LobWrite(*this, (AnyPointer) content.c_str(), static_cast<unsigned int>(content.size())));
+	return Check(OCI_LobWrite(*this, static_cast<AnyPointer>(const_cast<otext *>(content.c_str())), static_cast<unsigned int>(content.size())));
 }
 
 inline unsigned int Clob::Append(ostring content)
 {
-	return Check(OCI_LobAppend(*this, (AnyPointer)content.c_str(), static_cast<unsigned int>(content.size())));
+	return Check(OCI_LobAppend(*this, static_cast<AnyPointer>(const_cast<otext *>(content.c_str())), static_cast<unsigned int>(content.size())));
 }
 
 inline bool Clob::Seek(SeekMode seekMode, big_uint offset)
@@ -2322,6 +2323,13 @@ inline Clob Clob::Clone() const
 inline bool Clob::Equals(const Clob &other) const
 {
     return (Check(OCI_LobIsEqual(*this, other)) == TRUE);
+}
+
+inline CharsetForm Clob::GetCharsetForm() const
+{
+	unsigned int type = Check(OCI_LobGetType(*this));
+
+	return (OCI_NCLOB == type) ? CharsetFormNational : CharsetFormDefault;
 }
 
 inline big_uint Clob::GetOffset() const
@@ -2349,14 +2357,14 @@ inline Connection Clob::GetConnection() const
 	return Connection(Check(OCI_LobGetConnection(*this)), 0);
 }
 
-inline void Clob::Truncate(big_uint size)
+inline void Clob::Truncate(big_uint length)
 {
-    Check(OCI_LobTruncate(*this, size));
+	Check(OCI_LobTruncate(*this, length));
 }
 
-inline big_uint Clob::Erase(big_uint offset, big_uint size)
+inline big_uint Clob::Erase(big_uint offset, big_uint length)
 {
-    return Check(OCI_LobErase(*this, offset, size));
+	return Check(OCI_LobErase(*this, offset, length));
 }
 
 inline void Clob::Copy(Clob &dest, big_uint offset, big_uint offsetDest, big_uint size) const
@@ -4025,9 +4033,9 @@ inline bool BindInfo::IsDataNull(unsigned int index) const
 	return (Check(OCI_BindIsNullAtPos(*this, index)) == TRUE);
 }
 
-inline void BindInfo::SetCharsetForm(Environment::CharsetForm value)
+inline void BindInfo::SetCharsetForm(CharsetForm value)
 {
-    Check(OCI_BindSetCharsetForm(*this,value));
+    Check(OCI_BindSetCharsetForm(*this, value));
 }
 
 inline BindInfo::BindDirection BindInfo::GetDirection() const
@@ -5294,9 +5302,9 @@ inline unsigned int Column::GetSubType() const
     return Check(OCI_ColumnGetSubType(*this));
 }
 
-inline Environment::CharsetForm Column::GetCharsetForm() const
+inline CharsetForm Column::GetCharsetForm() const
 {
-	return Environment::CharsetForm(static_cast<Environment::CharsetForm::type>(Check(OCI_ColumnGetCharsetForm(*this))));
+	return CharsetForm(static_cast<CharsetForm::type>(Check(OCI_ColumnGetCharsetForm(*this))));
 }
 
 inline unsigned int Column::GetSize() const
