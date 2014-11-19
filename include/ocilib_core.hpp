@@ -338,7 +338,7 @@ class BindObject
 {
 public:
 
-	BindObject(const Statement &statement, ostring name);
+	BindObject(const Statement &statement, const ostring& name);
 
 	virtual ~BindObject();
 
@@ -359,7 +359,7 @@ class BindArray : public BindObject
 {
 public:
 
-	 BindArray(const Statement &statement, ostring name);
+	 BindArray(const Statement &statement, const ostring& name);
      virtual ~BindArray();
 
      template <class TObjectType, class TDataType>
@@ -400,7 +400,7 @@ private:
 
     public:
 
-		BindArrayObject(const Statement &statement, ostring name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize);
+		BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize);
         virtual ~BindArrayObject();
 		void SetInData();
 		void SetOutData();
@@ -430,7 +430,7 @@ public:
 	void SetInData();
 	void SetOutData();
 
-	BindAdaptor(const Statement &statement, ostring name, TObjectType &object, unsigned int size);
+	BindAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size);
 	virtual ~BindAdaptor();
 
 private:

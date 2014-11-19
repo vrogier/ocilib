@@ -264,7 +264,6 @@ enum NumericTypeValues
 */
 typedef Enum<NumericTypeValues> NumericType;
 
-
 /**
 * @brief
 * Charset form enumerated values
@@ -285,6 +284,53 @@ enum CharsetFormValues
 *
 */
 typedef Enum<CharsetFormValues> CharsetForm;
+
+
+/**
+* @brief
+* Seek Modes enumerated values
+*
+*/
+enum SeekModeValues
+{
+	/** Set the current position within the stream to the given position */
+	SeekSet = OCI_SEEK_SET,
+	/** Set the current position within the stream begin position */
+	SeekEnd = OCI_SEEK_END,
+	/** Set the current position within the stream to the given value offset from the current position */
+	SeekOffset = OCI_SEEK_CUR
+};
+
+/**
+* @brief
+* Seek Modes
+*
+* Possible values are SeekModeValues
+*
+*/
+typedef Enum<SeekModeValues> SeekMode;
+
+/**
+* @brief
+* Open Modes enumerated values
+*
+*/
+enum OpenModeValues
+{
+	/** Stream is opened for read access */
+	ReadOnly = OCI_LOB_READONLY,
+	/** Stream is opened for read / write access */
+	ReadWrite = OCI_LOB_READWRITE
+};
+
+/**
+* @brief
+* Open Modes
+*
+* Possible values are OpenModeValues
+*
+*/
+typedef Enum<OpenModeValues> OpenMode;
 
 /**
  *
@@ -710,7 +756,7 @@ public:
      * - If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables
      *
      */
-    static void Initialize(EnvironmentFlags mode = Environment::Default, ostring libpath = OTEXT(""));
+    static void Initialize(EnvironmentFlags mode = Environment::Default, const ostring& libpath = OTEXT(""));
 
     /**
      * @brief
@@ -812,11 +858,11 @@ public:
      * If the client side spfile is not provided, the database is started with its server-side spfile.
      *
      */
-    static void StartDatabase(ostring db, ostring user, ostring pwd,
+    static void StartDatabase(const ostring &db, const ostring &user, const ostring& pwd,
                               Environment::StartFlags startFlags,
                               Environment::StartMode startMode,
                               Environment::SessionFlags sessionFlags = SessionSysDba,
-                              ostring spfile = OTEXT(""));
+                              const ostring& spfile = OTEXT(""));
 
     /**
      * @brief
@@ -843,7 +889,7 @@ public:
      * If the param 'db' is empty then a connection to the default local DB is done.
      *
      */
-    static void ShutdownDatabase(ostring db, ostring user, ostring pwd,
+    static void ShutdownDatabase(const ostring& db, const ostring& user, const ostring& pwd,
                                  Environment::ShutdownFlags shutdownFlags,
                                  Environment::ShutdownMode shutdownMode,
                                  Environment::SessionFlags sessionFlags = SessionSysDba);
@@ -858,7 +904,7 @@ public:
      * @param newPwd  - Oracle User New password
      *
      */
-    static void ChangeUserPassword(ostring db, ostring user, ostring pwd, ostring newPwd);
+    static void ChangeUserPassword(const ostring& db, const ostring& user, const ostring& pwd, const ostring& newPwd);
 
     /**
      * @brief
@@ -1064,7 +1110,7 @@ public:
      * the program to deal with the thread specific value of the key
      *
      */
-    static void Create(ostring name, ThreadKeyFreeProc freeProc = 0);
+    static void Create(const ostring& name, ThreadKeyFreeProc freeProc = 0);
 
     /**
      * @brief
@@ -1074,7 +1120,7 @@ public:
      * @param value - user value to set
      *
      */
-	static void SetValue(ostring name, AnyPointer value);
+	static void SetValue(const ostring& name, AnyPointer value);
 
     /**
      * @brief
@@ -1086,7 +1132,7 @@ public:
      * Thread key value on success otherwise FALSE
      *
      */
-	static AnyPointer GetValue(ostring name);
+	static AnyPointer GetValue(const ostring& name);
 };
 
 /**
@@ -1146,7 +1192,7 @@ public:
      * it calls Open() with the given parameters
      *
      */
-    Pool(ostring db, ostring user, ostring pwd, Pool::PoolType poolType,
+    Pool(const ostring& db, const ostring& user, const ostring& pwd, Pool::PoolType poolType,
          unsigned int minSize, unsigned int maxSize, unsigned int increment = 1,
          Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
@@ -1168,7 +1214,7 @@ public:
      * If the param 'db' is empty then a connection to the default local DB is done
      *
      */
-    void Open(ostring db, ostring user, ostring pwd, Pool::PoolType poolType,
+    void Open(const ostring& db, const ostring& user, const ostring& pwd, Pool::PoolType poolType,
               unsigned int minSize, unsigned int maxSize, unsigned int increment = 1,
               Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
@@ -1207,7 +1253,7 @@ public:
      *   session with the same attributes"
      *
      */
-    Connection GetConnection(ostring sessionTag = OTEXT(""));
+    Connection GetConnection(const ostring& sessionTag = OTEXT(""));
 
     /**
      * @brief
@@ -1471,7 +1517,7 @@ public:
      * it calls Open() with the given parameters
      *
      */
-    Connection(ostring db, ostring user, ostring pwd, Environment::SessionFlags sessionFlags = Environment::SessionDefault);
+    Connection(const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
     /**
      * @brief
@@ -1515,7 +1561,7 @@ public:
      * No transaction is created for a XA connection or q connection retrieved from session pools.
      *
      */
-    void Open(ostring db, ostring user, ostring pwd,  Environment::SessionFlags sessionFlags = Environment::SessionDefault);
+    void Open(const ostring& db, const ostring& user, const ostring& pwd,  Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
     /**
      * @brief
@@ -1672,7 +1718,7 @@ public:
      * @param newPwd - New password
      *
      */
-    void ChangePassword(ostring newPwd);
+    void ChangePassword(const ostring& newPwd);
 
     /**
      * @brief
@@ -1695,7 +1741,7 @@ public:
      * To untag a session, call SetSessionTag() with an empty 'tag' parameter
      *
      */
-    void SetSessionTag(ostring tag);
+    void SetSessionTag(const ostring& tag);
 
     /**
      * @brief
@@ -1734,7 +1780,7 @@ public:
      * See documentation of Oracle SQL to_date() function for more details
      *
      */
-    void SetDefaultDateFormat(ostring format);
+    void SetDefaultDateFormat(const ostring& format);
 
     /**
      * @brief
@@ -1766,7 +1812,7 @@ public:
      * are converted from/to strings using the standard C library
      *
      */
-    void SetDefaultNumericFormat(ostring format);
+    void SetDefaultNumericFormat(const ostring& format);
 
     /**
      * @brief
@@ -1855,7 +1901,7 @@ public:
      * - TraceDetail   : 64 bytes
      *
      */
-    void SetTrace(SessionTrace trace, ostring value);
+    void SetTrace(SessionTrace trace, const ostring& value);
 
     /**
      * @brief
@@ -1963,8 +2009,8 @@ public:
      *
      * @note
      * Prefetch size is:
-     * - number of bytes for BLOBs and BFILEs
-     * - number of characters for CLOBs.
+     * - number of bytes for BLOBs (Blob) and BFILEs (File)
+     * - number of characters for CLOBs (Clob).
      *
      * @note
      * Default is 0 (prefetching disabled)
@@ -1992,9 +2038,9 @@ public:
      *
      * @note
      * Prefetch size is:
-     * - number of bytes for BLOBs and BFILEs
-     * - number of characters for CLOBs.
-     *
+	 * - number of bytes for BLOBs (Blob) and BFILEs (File)
+	 * - number of characters for CLOBs (Clob).
+	 *
      */
     void SetDefaultLobPrefetchSize(unsigned int value);
 
@@ -2393,7 +2439,7 @@ public:
      * @param day - Day of the week
      *
      */
-    Date NextDay(ostring day) const;
+    Date NextDay(const ostring& day) const;
 
     /**
      * @brief
@@ -2410,7 +2456,7 @@ public:
      * @param tzDst - Destination zone
      *
      */
-    void ChangeTimeZone(ostring tzSrc, ostring tzDst);
+    void ChangeTimeZone(const ostring& tzSrc, const ostring& tzDst);
 
 	/**
 	* @brief
@@ -2423,7 +2469,7 @@ public:
 	* For date time formats, refer to the Oracle SQL documentation
 	*
 	*/
-    void FromString(ostring str, ostring format = OCI_STRING_FORMAT_DATE);
+    void FromString(const ostring& str, const ostring& format = OCI_STRING_FORMAT_DATE);
 
 	/**
 	* @brief
@@ -2435,7 +2481,7 @@ public:
 	* For date time formats, refer to the Oracle SQL documentation
 	*
 	*/
-	ostring ToString(ostring format = OCI_STRING_FORMAT_DATE) const;
+	ostring ToString(const ostring& format = OCI_STRING_FORMAT_DATE) const;
 
 	/**
 	* @brief
@@ -2808,7 +2854,7 @@ public:
 	* @param timeZone - Time zone name
 	*
 	*/
-    void UpdateTimeZone(ostring timeZone);
+    void UpdateTimeZone(const ostring& timeZone);
 
 	/**
 	* @brief
@@ -2820,7 +2866,7 @@ public:
 	* For interval format, refer to the Oracle SQL documentation
 	*
 	*/
-    void FromString(ostring data);
+    void FromString(const ostring& data);
     
 	/**
 	* @brief
@@ -3169,7 +3215,7 @@ public:
 	* @param timeZone	- name of a time zone to use [optional]
 	*
 	*/
-	void SetDateTime(int year, int month, int day, int hour, int min, int sec, int fsec, ostring timeZone = OTEXT(""));
+	void SetDateTime(int year, int month, int day, int hour, int min, int sec, int fsec, const ostring& timeZone = OTEXT(""));
 
 	/**
 	* @brief
@@ -3190,7 +3236,7 @@ public:
 	* - Applies to TimeStamp::WithTimeZone only
 	*
 	*/
-	void SetTimeZone(ostring timeZone);
+	void SetTimeZone(const ostring& timeZone);
 
 	/**
 	* @brief
@@ -3223,7 +3269,7 @@ public:
 	* For date time formats, refer to the Oracle SQL documentation
 	*
 	*/
-	void FromString(ostring data, ostring format = OCI_STRING_FORMAT_DATE);
+	void FromString(const ostring& data, const ostring& format = OCI_STRING_FORMAT_DATE);
 
 	/**
 	* @brief
@@ -3236,7 +3282,7 @@ public:
 	* For date time / timestamp formats, refer to the Oracle SQL documentation
 	*
 	*/
-    ostring ToString(ostring format = OCI_STRING_FORMAT_DATE, int precision = 0) const;
+    ostring ToString(const ostring& format = OCI_STRING_FORMAT_DATE, int precision = 0) const;
 
 	/**
 	* @brief
@@ -3401,52 +3447,6 @@ public:
 
 	/**
 	* @brief
-	* Seek Modes enumerated values
-	*
-	*/
-	enum SeekModeValues
-    {
-		/** Set the current position within the stream to the given position */
-        Set = OCI_SEEK_SET,
-		/** Set the current position within the stream end position */
-        End = OCI_SEEK_END,
-		/** Set the current position within the stream to the given value offset from the current position */
-		Current = OCI_SEEK_CUR
-    };
-
-	/**
-	* @brief
-	* Seek Modes
-	*
-	* Possible values are Clob::SeekModeValues
-	*
-	*/
-    typedef Enum<SeekModeValues> SeekMode;
-
-	/**
-	* @brief
-	* Open Modes enumerated values
-	*
-	*/
-	enum OpenModeValues
-    {
-		/** Stream is opened for read access */
-        ReadOnly = OCI_LOB_READONLY,
-		/** Stream is opened for read / write access */
-		ReadWrite = OCI_LOB_READWRITE
-    };
-
-	/**
-	* @brief
-	* Open Modes
-	*
-	* Possible values are Clob::OpenModeValues
-	*
-	*/
-	typedef Enum<OpenModeValues> OpenMode;
-
-	/**
-	* @brief
 	* Parametrized constructor
 	*
 	* @param connection - Parent connection
@@ -3479,7 +3479,7 @@ public:
 	* Number of character written into the clob
 	*
 	*/
-	unsigned int Write(ostring content);
+	unsigned int Write(const ostring &content);
 
 	/**
 	* @brief
@@ -3491,7 +3491,7 @@ public:
 	*  Number of character written into the clob
 	*
 	*/
-	unsigned int Append(ostring content);
+	unsigned int Append(const ostring& content);
 
 	/**
 	* @brief
@@ -3720,52 +3720,6 @@ public:
 
 	/**
 	* @brief
-	* Seek Modes enumerated values
-	*
-	*/
-	enum SeekModeValues
-	{
-		/** Set the current position within the stream to the given position */
-		Set = OCI_SEEK_SET,
-		/** Set the current position within the stream end position */
-		End = OCI_SEEK_END,
-		/** Set the current position within the stream to the given value offset from the current position */
-		Current = OCI_SEEK_CUR
-	};
-
-	/**
-	* @brief
-	* Seek Modes
-	*
-	* Possible values are Blob::SeekModeValues
-	*
-	*/
-	typedef Enum<SeekModeValues> SeekMode;
-
-	/**
-	* @brief
-	* Open Modes enumerated values
-	*
-	*/
-	enum OpenModeValues
-	{
-		/** Stream is opened for read access */
-		ReadOnly = OCI_LOB_READONLY,
-		/** Stream is opened for read / write access */
-		ReadWrite = OCI_LOB_READWRITE
-	};
-
-	/**
-	* @brief
-	* Open Modes
-	*
-	* Possible values are Blob::OpenModeValues
-	*
-	*/
-	typedef Enum<OpenModeValues> OpenMode;
-
-	/**
-	* @brief
 	* Parametrized constructor
 	*
 	* @param connection - Parent connection
@@ -3776,7 +3730,18 @@ public:
 	*/
 	Blob(const Connection &connection);
 
+	/**
+	* @brief
+	* Read a portion of a blob
+	*
+	* @param size - Maximum number of bytes to read
+	*
+	* @return
+	* The Raw data read from the blob
+	*
+	*/
 	Raw Read(unsigned int size);
+
 	unsigned int Write(const Raw &value);
 	unsigned int Append(const Raw &value);
     bool Seek(SeekMode seekMode, big_uint offset);
@@ -3840,30 +3805,6 @@ public:
 
 	/**
 	* @brief
-	* Seek Modes enumerated values
-	*
-	*/
-	enum SeekModeValues
-	{
-		/** Set the current position within the stream to the given position */
-		Set = OCI_SEEK_SET,
-		/** Set the current position within the stream end position */
-		End = OCI_SEEK_END,
-		/** Set the current position within the stream to the given value offset from the current position */
-		Current = OCI_SEEK_CUR
-	};
-
-	/**
-	* @brief
-	* Seek Modes
-	*
-	* Possible values are File::SeekModeValues
-	*
-	*/
-	typedef Enum<SeekModeValues> SeekMode;
-
-	/**
-	* @brief
 	* Parametrized constructor
 	*
 	* @param connection - Parent connection
@@ -3888,7 +3829,7 @@ public:
 	* the file object must not be accessed anymore once the parent connection object gets out of scope
 	*
 	*/
-	File(const Connection &connection, ostring directory, ostring name);
+	File(const Connection &connection, const ostring& directory, const ostring& name);
 
 	Raw Read(unsigned int size);
     bool Seek(SeekMode seekMode, big_uint offset);
@@ -3900,7 +3841,7 @@ public:
 
 	Connection GetConnection() const;
 
-    void SetInfos(ostring directory, ostring name);
+    void SetInfos(const ostring& directory, const ostring& name);
 
     ostring GetName() const;
     ostring GetDirectory() const;
@@ -3978,7 +3919,7 @@ public:
 	* the TypeInfo object must not be accessed anymore once the parent connection object gets out of scope
 	*
 	*/
-    TypeInfo(const Connection &connection, ostring name, TypeInfoType type);
+    TypeInfo(const Connection &connection, const ostring& name, TypeInfoType type);
 
 	/**
 	* @brief
@@ -4042,8 +3983,8 @@ public:
 
     Object(const TypeInfo &typeInfo);
 
-    bool IsAttributeNull(ostring name) const;
-    void SetAttributeNull(ostring name);
+    bool IsAttributeNull(const ostring& name) const;
+    void SetAttributeNull(const ostring& name);
 
     TypeInfo GetTypeInfo() const;
     Reference GetReference() const;
@@ -4056,10 +3997,10 @@ public:
     ObjectType GetType() const;
 
     template<class TDataType>
-    TDataType Get(ostring name) const;
+    TDataType Get(const ostring& name) const;
 
     template<class TDataType>
-    void Set(ostring name, const TDataType &value);
+    void Set(const ostring& name, const TDataType &value);
 
 	/**
 	* @brief
@@ -4329,7 +4270,7 @@ public:
 	* Number of character written
 	*
 	*/
-	unsigned int Write(ostring content);
+	unsigned int Write(const ostring& content);
 
 	/**
 	* @brief
@@ -4733,7 +4674,7 @@ public:
 	* leading to unnecessary server roundtrips and less performance
 	*
 	*/
-    void Describe(ostring sql);
+    void Describe(const ostring& sql);
 
 	/**
 	* @brief
@@ -4758,7 +4699,7 @@ public:
 	* unnecessary server roundtrips and less performance
 	*
 	*/
-    void Parse(ostring sql);
+    void Parse(const ostring& sql);
 
 	/**
 	* @brief
@@ -4770,7 +4711,7 @@ public:
 	* With version 1.3.0 and above, do not call this function for fetched statements (REF cursors)
 	*
 	*/
-    void Prepare(ostring sql);
+    void Prepare(const ostring& sql);
 
 	/**
 	* @brief
@@ -4786,7 +4727,7 @@ public:
 	* @param sql  - SQL order - PL/SQL block
 	*
 	*/
-    void Execute(ostring sql);
+    void Execute(const ostring& sql);
 
 	/**
 	* @brief
@@ -4923,7 +4864,7 @@ public:
 	* Bind index on success or zero if the bind does not exists
 	*
 	*/
-	unsigned int GetBindIndex(ostring name) const;
+	unsigned int GetBindIndex(const ostring& name) const;
 
 	/**
 	* @brief
@@ -4958,7 +4899,7 @@ public:
 	* Bind names must include a semicolon at the beginning.
 	*
 	*/
-    BindInfo GetBind(ostring name) const;
+    BindInfo GetBind(const ostring& name) const;
 
 	/**
 	* @brief
@@ -4980,7 +4921,7 @@ public:
 	*
 	*/	
     template <class TDataType>
-	void Bind(ostring name, TDataType &value, BindInfo::BindDirection mode);
+	void Bind(const ostring& name, TDataType &value, BindInfo::BindDirection mode);
 
 	/**
 	* @brief
@@ -5004,7 +4945,7 @@ public:
 	*
 	*/
     template <class TDataType, class TExtraInfo>
-    void Bind(ostring name, TDataType &value, TExtraInfo extraInfo, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, TDataType &value, TExtraInfo extraInfo, BindInfo::BindDirection mode);
 
 	/**
 	* @brief
@@ -5018,7 +4959,7 @@ public:
 	*
 	* @warning
 	* This method has builtin specialized versions for all C++ native scalar types, Datetime and Statement objects.
-	* For others types (ostring, Clong, Blong, RawPointer , Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
+	* For others types (ostring, Clong, Blong, Raw, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
 	*
 	* @note
 	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
@@ -5026,7 +4967,7 @@ public:
 	*
 	*/
     template <class TDataType>
-    void Bind(ostring name, std::vector<TDataType> &values, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, std::vector<TDataType> &values, BindInfo::BindDirection mode);
 
 	/**
 	* @brief
@@ -5048,7 +4989,7 @@ public:
 	*
 	*/
 	template <class TDataType>
-	void Bind(ostring name, std::vector<TDataType> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
+	void Bind(const ostring& name, std::vector<TDataType> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
 
 	/**
 	* @brief
@@ -5063,8 +5004,8 @@ public:
 	* @param mode      - bind direction mode
 	*
 	* @warning
-	* This method has builtin specialized versions for ostring, RawPointer , Clong, Blong, Timestamp, Interval variables.
-	* - For ostring, Clong, Blong, RawPointer : Pass the maximum length/size of variables in the parameter extraInfo
+	* This method has builtin specialized versions for ostring, Raw , Clong, Blong, Timestamp, Interval variables.
+	* - For ostring, Clong, Blong, Raw : Pass the maximum length/size of variables in the parameter extraInfo
 	* - For Timestamp, Interval : Pass a value of the matching C++ class GetType() property type OR the underlying enumeration type.
 	*
 	* @note
@@ -5073,7 +5014,7 @@ public:
 	*
 	*/
     template <class TDataType, class TExtraInfo>
-    void Bind(ostring name, std::vector<TDataType> &values, TExtraInfo extraInfo, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, std::vector<TDataType> &values, TExtraInfo extraInfo, BindInfo::BindDirection mode);
 
 	/**
 	* @brief
@@ -5086,7 +5027,7 @@ public:
 	* @warning
 	* This method has builtin specialized versions for all supported types except:
 	* - Timestamp and Interval, Object and Reference : use the version that takes a TypeInfo parameter
-    * - ostring and RawPointer : use the version that takes an extraInfo parameter
+    * - ostring and Raw : use the version that takes an extraInfo parameter
 	*
 	* @note
 	* Statement, Blong and Clong are not supported for register calls
@@ -5096,7 +5037,7 @@ public:
 	*
 	*/
     template <class TDataType>
-    void Register(ostring name);
+    void Register(const ostring& name);
 
 	/**
 	* @brief
@@ -5116,7 +5057,7 @@ public:
 	*
 	*/
     template <class TDataType, class TExtraInfo>
-	void Register(ostring name, TExtraInfo& extraInfo);
+	void Register(const ostring& name, TExtraInfo& extraInfo);
 
 	/**
 	* @brief
@@ -5129,7 +5070,7 @@ public:
 	* @param extraInfo - Extra information needed for the bind call
 	*
 	* @warning
-	* This method has builtin specialized versions for ostring and RawPointer variables.
+	* This method has builtin specialized versions for ostring and Raw variables.
 	*  Pass the maximum length/size of variables in the parameter extraInfo
 	*
 	* @note
@@ -5137,7 +5078,7 @@ public:
 	*
 	*/
 	template <class TDataType, class TExtraInfo>
-    void Register(ostring name, TExtraInfo extraInfo);
+    void Register(const ostring& name, TExtraInfo extraInfo);
 
 	/**
 	* @brief
@@ -5359,16 +5300,16 @@ private:
     void ClearBinds();
 
     template <typename TBindMethod, class TDataType>
-    void Bind (TBindMethod &method, ostring name, TDataType& value, BindInfo::BindDirection mode);
+    void Bind (TBindMethod &method, const ostring& name, TDataType& value, BindInfo::BindDirection mode);
 
     template <typename TBindMethod, class TObjectType, class TDataType>
-    void Bind (TBindMethod &method, ostring name, TObjectType &value, BindValue<TDataType> datatype, BindInfo::BindDirection mode);
+    void Bind (TBindMethod &method, const ostring& name, TObjectType &value, BindValue<TDataType> datatype, BindInfo::BindDirection mode);
 
     template <typename TBindMethod, class TObjectType, class TDataType>
-    void Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode);
+    void Bind (TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode);
 
     template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
-    void Bind (TBindMethod &method, ostring name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode, TElemType type);
+    void Bind (TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode, TElemType type);
 };
 
 /**
@@ -5441,51 +5382,7 @@ public:
 	*
 	*/
     template<class TDataType>
-    TDataType Get(ostring name) const;
-
-	/**
-	* @brief
-	* Return the current value of the column at the given index in the resultset
-	*
-	* @tparam TDataType - C++ type of the value to retrieve
-	*
-	* @param index - Column position
-	* @param value - User value to fill out
-	* @param size  - number of bytes written in the user value
-	*
-	* @warning
-	* this version of Get() is currently used for RAW based values that
-	* need to copy data to a given buffer
-	* Thus, Use RawPointer as TDataType
-	*
-	* @note
-	* Column position starts at 1.
-	*
-	*/
-    template<class TDataType>
-    void Get(unsigned int index, TDataType value, unsigned int &size) const;
-
-	/**
-	* @brief
-	* Retrieve the current value of the column from its name in the resultset
-	*
-	* @tparam TDataType - C++ type of the value to retrieve
-	*
-	* @param name  - Column name
-	* @param value - User value to fill out
-	* @param size  - number of bytes written in the user value
-	*
-	* @warning
-	* this version of Get() is currently used for RAW based values that
-	* need to copy data to a given buffer.
-	* Thus, Use RawPointer as TDataType
-    *
-	* @note
-	* The column name is case insensitive.
-	*
-	*/
-    template<class TDataType>
-    void Get(ostring name, TDataType value, unsigned int &size) const;
+    TDataType Get(const ostring& name) const;
 
 	/**
 	* @brief
@@ -5597,7 +5494,7 @@ public:
 	* Column position starts at 1.
 	*
 	*/
-	unsigned int GetColumnIndex(ostring name) const;
+	unsigned int GetColumnIndex(const ostring& name) const;
 
 	/**
 	* @brief
@@ -5632,7 +5529,7 @@ public:
 	* The column name is case insensitive
 	*
 	*/
-    Column GetColumn(ostring name) const;
+    Column GetColumn(const ostring& name) const;
 
 	/**
 	* @brief
@@ -5653,7 +5550,7 @@ public:
 	* @param name  - Column name
 	*
 	*/
-    bool IsColumnNull(ostring name) const;
+    bool IsColumnNull(const ostring& name) const;
 
 	/**
 	* @brief
@@ -5956,7 +5853,7 @@ public:
 	* Requires Oracle Client 10gR2 or above
 	*
 	*/
-    void Register(const Connection &connection, ostring name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port = 0, unsigned int timeout = 0);
+    void Register(const Connection &connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port = 0, unsigned int timeout = 0);
 
 	/**
 	* @brief
@@ -5980,7 +5877,7 @@ public:
 	* Add a SQL query to monitor
     *
 	*/
-    void Watch(ostring sql);
+    void Watch(const ostring& sql);
 
 	/**
 	* @brief
@@ -6185,7 +6082,7 @@ public:
 	* the Agent object must not be accessed anymore once the parent connection object gets out of scope
 	*
 	*/
-    Agent(const Connection &connection, ostring name = OTEXT(""), ostring address = OTEXT(""));
+    Agent(const Connection &connection, const ostring& name = OTEXT(""), const ostring& address = OTEXT(""));
 
 	/**
 	* @brief
@@ -6207,7 +6104,7 @@ public:
 	* the AQ agent name can be any Oracle identifier, up to 30 bytes.
 	*
 	*/
-    void SetName(ostring value);
+    void SetName(const ostring& value);
 
 	/**
 	* @brief
@@ -6232,7 +6129,7 @@ public:
 	* the AQ agent address can be any Oracle identifier, up to 128 bytes.
 	*
 	*/
-    void SetAddress(ostring value);
+    void SetAddress(const ostring& value);
 
 private:
 
@@ -6519,7 +6416,7 @@ public:
 	* see Dequeue::SetCorrelation() for more details
 	*
 	*/
-    void SetCorrelation(ostring value);
+    void SetCorrelation(const ostring& value);
 
 	/**
 	* @brief
@@ -6562,7 +6459,7 @@ public:
 	* This attribute must refer to a valid queue name."
 	*
 	*/
-    void SetExceptionQueue(ostring value);
+    void SetExceptionQueue(const ostring& value);
 
 	/**
 	* @brief
@@ -6677,7 +6574,7 @@ public:
 	* - For RAW payload, you MUST pass the object type information object from the type name "SYS.RAW" as object type name
 	*
 	*/
-	Enqueue(const TypeInfo &typeInfo, ostring queueName);
+	Enqueue(const TypeInfo &typeInfo, const ostring& queueName);
 
 	/**
 	* @brief
@@ -6881,7 +6778,7 @@ public:
 	* @param queueName - Queue name
 	*
 	*/
-    Dequeue(const TypeInfo &typeInfo, ostring queueName);
+    Dequeue(const TypeInfo &typeInfo, const ostring& queueName);
 
 	/**
 	* @brief
@@ -6936,7 +6833,7 @@ public:
 	* should not be called or called with an empty value
 	*
 	*/
-    void SetConsumer(ostring value);
+    void SetConsumer(const ostring& value);
 
 	/**
 	* @brief
@@ -6959,7 +6856,7 @@ public:
 	* If more than one message satisfies the pattern, the order of dequeuing is undetermined.
 	*
 	*/
-    void SetCorrelation(ostring value);
+    void SetCorrelation(const ostring& value);
 
 	/**
 	* @brief
@@ -7191,9 +7088,9 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Create(const Connection &connection, ostring queue, ostring table, QueueType type = NormalQueue,
+    static void Create(const Connection &connection, const ostring& queue, const ostring& table, QueueType type = NormalQueue,
                        unsigned int maxRetries = 0, unsigned int retryDelay = 0, unsigned int retentionTime = 0,
-                       bool dependencyTracking = false, ostring comment = OTEXT(""));
+                       bool dependencyTracking = false, const ostring& comment = OTEXT(""));
 
     /**
      * @brief
@@ -7215,9 +7112,9 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Alter(const Connection &connection, ostring queue,
+    static void Alter(const Connection &connection, const ostring& queue,
                       unsigned int maxRetries= 0, unsigned int retryDelay= 0,
-                      unsigned int retentionTime= 0, ostring comment = OTEXT(""));
+                      unsigned int retentionTime= 0, const ostring& comment = OTEXT(""));
 
     /**
      * @brief
@@ -7234,7 +7131,7 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Drop(const Connection &connection, ostring queue);
+    static void Drop(const Connection &connection, const ostring& queue);
 
     /**
      * @brief
@@ -7253,7 +7150,7 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Start(const Connection &connection, ostring queue, bool enableEnqueue = true, bool enableDequeue = true);
+    static void Start(const Connection &connection, const ostring& queue, bool enableEnqueue = true, bool enableDequeue = true);
 
     /**
     * @brief
@@ -7273,7 +7170,7 @@ public:
     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
     *
     */
-    static void Stop(const Connection &connection, ostring queue, bool stopEnqueue = true, bool stopDequeue = true, bool wait = true);
+    static void Stop(const Connection &connection, const ostring& queue, bool stopEnqueue = true, bool stopDequeue = true, bool wait = true);
 };
 
 /**
@@ -7368,11 +7265,11 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Create(const Connection &connection, ostring table, ostring payloadType, bool multipleConsumers,
-                       ostring storageClause = OTEXT(""), ostring sortList = OTEXT(""),
-                       GroupingMode groupingMode = None, ostring comment = OTEXT(""),
+    static void Create(const Connection &connection, const ostring& table, const ostring& payloadType, bool multipleConsumers,
+                       const ostring& storageClause = OTEXT(""), const ostring& sortList = OTEXT(""),
+                       GroupingMode groupingMode = None, const ostring& comment = OTEXT(""),
                        unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0,
-                       ostring compatible = OTEXT(""));
+                       const ostring& compatible = OTEXT(""));
 
     /**
     * @brief
@@ -7392,7 +7289,7 @@ public:
     * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
     *
     */
-    static void Alter(const Connection &connection, ostring table, ostring comment, unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0);
+    static void Alter(const Connection &connection, const ostring& table, const ostring& comment, unsigned int primaryInstance = 0, unsigned int secondaryInstance = 0);
 
      /**
      * @brief
@@ -7414,7 +7311,7 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Drop(const Connection &connection, ostring table, bool force = true);
+    static void Drop(const Connection &connection, const ostring& table, bool force = true);
 
     /**
      * @brief
@@ -7439,7 +7336,7 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Purge(const Connection &connection, ostring table, PurgeMode mode, ostring condition = OTEXT(""), bool block = true);
+    static void Purge(const Connection &connection, const ostring& table, PurgeMode mode, const ostring& condition = OTEXT(""), bool block = true);
 
     /**
      * @brief
@@ -7458,7 +7355,7 @@ public:
      * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
      *
      */
-    static void Migrate(const Connection &connection, ostring table, ostring compatible = OTEXT(""));
+    static void Migrate(const Connection &connection, const ostring& table, const ostring& compatible = OTEXT(""));
 };
 
 /**
@@ -7543,7 +7440,7 @@ public:
      * of rows used for the given direct path operation.
      *
      */
-    DirectPath(const TypeInfo &typeInfo, unsigned int nbCols, unsigned int  nbRows, ostring partition = OTEXT(""));
+    DirectPath(const TypeInfo &typeInfo, unsigned int nbCols, unsigned int  nbRows, const ostring& partition = OTEXT(""));
 
     /**
      * @brief
@@ -7561,7 +7458,7 @@ public:
      * - the index is out of bounds (= 0 or >= number of columns)
      *
      */
-    void SetColumn(unsigned int colIndex, ostring name, unsigned int maxSize,  ostring format = OTEXT(""));
+    void SetColumn(unsigned int colIndex, const ostring& name, unsigned int maxSize,  const ostring& format = OTEXT(""));
 
     /**
      * @brief
@@ -7591,7 +7488,7 @@ public:
      * Setting entries content piece by piece may be supported in future releases
      *
      */
-    void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const ostring &value,  bool complete = true);
+    void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const ostring& value,  bool complete = true);
 
 
     /**
@@ -7788,7 +7685,7 @@ public:
      * - Default global support environment setting
      *
      */
-    void SetDateFormat(ostring format);
+    void SetDateFormat(const ostring& format);
 
     /**
      * @brief
