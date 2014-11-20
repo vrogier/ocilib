@@ -63,8 +63,8 @@ class Reference;
 class Object;
 template <class TDataType>
 class Collection;
-class Clob;
-class Blob;
+template<class TLobObjectType, int TLobOracleType>
+class Lob;
 class File;
 class Pool;
 class Clong;

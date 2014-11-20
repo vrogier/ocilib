@@ -2268,21 +2268,23 @@ inline bool Timestamp::operator <= (const Timestamp& other) const
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * Clob
+ * Lob
  * --------------------------------------------------------------------------------------------- */
 
-inline Clob::Clob(const Connection &connection, CharsetForm charsetForm)
+template<class TLobObjectType, int TLobOracleType>
+inline Lob<TLobObjectType, TLobOracleType>::Lob(const Connection &connection)
 {
-	Acquire(Check(OCI_LobCreate(connection, charsetForm == CharsetFormNational ? OCI_NCLOB : OCI_CLOB)), 
-		                        reinterpret_cast<HandleFreeFunc>(OCI_LobFree), connection.GetHandle());
+	Acquire(Check(OCI_LobCreate(connection, TLobOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LobFree), connection.GetHandle());
 }
 
-inline Clob::Clob(OCI_Lob *pLob, Handle *parent)
+template<class TLobObjectType, int TLobOracleType>
+inline Lob<TLobObjectType, TLobOracleType>::Lob(OCI_Lob *pLob, Handle *parent)
 {
-    Acquire(pLob, 0, parent);
+	Acquire(pLob, 0, parent);
 }
 
-inline ostring Clob::Read(unsigned int length)
+template<>
+inline ostring Lob<ostring, LobCharacter>::Read(unsigned int length)
 {
 	ManagedBuffer<otext> buffer(length + 1);
 
@@ -2291,277 +2293,173 @@ inline ostring Clob::Read(unsigned int length)
 	return MakeString(static_cast<const otext *>(buffer));
 }
 
-inline unsigned int Clob::Write(const ostring& content)
+template<>
+inline ostring Lob<ostring, LobNationalCharacter>::Read(unsigned int length)
 {
-	return Check(OCI_LobWrite(*this, static_cast<AnyPointer>(const_cast<otext *>(content.c_str())), static_cast<unsigned int>(content.size())));
-}
+	ManagedBuffer<otext> buffer(length + 1);
 
-inline unsigned int Clob::Append(const ostring& content)
-{
-	return Check(OCI_LobAppend(*this, static_cast<AnyPointer>(const_cast<otext *>(content.c_str())), static_cast<unsigned int>(content.size())));
-}
-
-inline bool Clob::Seek(SeekMode seekMode, big_uint offset)
-{
-    return (Check(OCI_LobSeek(*this, offset, seekMode)) == TRUE);
-}
-
-inline void Clob::Append(const Clob &other)
-{
-    Check(OCI_LobAppendLob(*this, other));
-}
-
-inline Clob Clob::Clone() const
-{
-	Clob result(GetConnection());
-
-	Check(OCI_LobAssign(result, *this));
-
-	return result;
-}
-
-inline bool Clob::Equals(const Clob &other) const
-{
-    return (Check(OCI_LobIsEqual(*this, other)) == TRUE);
-}
-
-inline CharsetForm Clob::GetCharsetForm() const
-{
-	unsigned int type = Check(OCI_LobGetType(*this));
-
-	return (OCI_NCLOB == type) ? CharsetFormNational : CharsetFormDefault;
-}
-
-inline big_uint Clob::GetOffset() const
-{
-    return Check(OCI_LobGetOffset(*this));
-}
-
-inline big_uint Clob::GetLength() const
-{
-    return Check(OCI_LobGetLength(*this));
-}
-
-inline big_uint Clob::GetMaxSize() const
-{
-    return Check(OCI_LobGetMaxSize(*this));
-}
-
-inline big_uint Clob::GetChunkSize() const
-{
-    return Check(OCI_LobGetChunkSize(*this));
-}
-
-inline Connection Clob::GetConnection() const
-{
-	return Connection(Check(OCI_LobGetConnection(*this)), 0);
-}
-
-inline void Clob::Truncate(big_uint length)
-{
-	Check(OCI_LobTruncate(*this, length));
-}
-
-inline big_uint Clob::Erase(big_uint offset, big_uint length)
-{
-	return Check(OCI_LobErase(*this, offset, length));
-}
-
-inline void Clob::Copy(Clob &dest, big_uint offset, big_uint offsetDest, big_uint size) const
-{
-    Check(OCI_LobCopy(dest, *this, offsetDest, offset, size));
-}
-
-inline bool Clob::IsTemporary() const
-{
-    return (Check(OCI_LobIsTemporary(*this)) == TRUE);
-}
-
-inline void Clob::Open(OpenMode mode)
-{
-    Check(OCI_LobOpen(*this, mode));
-}
-
-inline void Clob::Flush()
-{
-    Check(OCI_LobFlush(*this));
-}
-
-inline void Clob::Close()
-{
-    Check(OCI_LobClose(*this));
-}
-
-inline void Clob::EnableBuffering(bool value)
-{
-    Check(OCI_LobEnableBuffering(*this, value));
-}
-
-inline Clob::operator ostring() const
-{
-	size_t size = static_cast<unsigned int>(GetLength());
-	size_t offset = static_cast<unsigned int>(GetOffset());
-
-	ManagedBuffer<otext> buffer(size + 1);
-
-	Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), static_cast<unsigned int>(size)));
-    Check(OCI_LobSeek(*this, offset, OCI_SEEK_SET));
+	Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), length));
 
 	return MakeString(static_cast<const otext *>(buffer));
 }
 
-inline Clob& Clob::operator += (const Clob& other)
+template<>
+inline Raw Lob<Raw, LobBinary>::Read(unsigned int length)
 {
-    Append(other);
-    return *this;
+	ManagedBuffer<unsigned char> buffer(length + 1);
+
+	length = Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), length));
+
+	return MakeRaw(buffer, length);
 }
 
-inline bool Clob::operator == (const Clob& other) const
+template<class TLobObjectType, int TLobOracleType>
+inline unsigned int Lob<TLobObjectType, TLobOracleType>::Write(const TLobObjectType& content)
 {
-    return Equals(other);
+	return Check(OCI_LobWrite(*this, static_cast<AnyPointer>(const_cast<TLobObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
 }
 
-inline bool Clob::operator != (const Clob& other) const
+template<class TLobObjectType, int TLobOracleType>
+inline void Lob<TLobObjectType, TLobOracleType>::Append(const Lob& other)
 {
-    return (!(*this == other));
+	Check(OCI_LobAppendLob(*this, other));
 }
 
-/* --------------------------------------------------------------------------------------------- *
- * Blob
- * --------------------------------------------------------------------------------------------- */
-
-inline Blob::Blob(const Connection &connection)
+template<class TLobObjectType, int TLobOracleType>
+inline unsigned int Lob<TLobObjectType, TLobOracleType>::Append(const TLobObjectType& content)
 {
-	Acquire(Check(OCI_LobCreate(connection, OCI_BLOB)), reinterpret_cast<HandleFreeFunc>(OCI_LobFree), connection.GetHandle());
+	return Check(OCI_LobAppend(*this, static_cast<AnyPointer>(const_cast<TLobObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
 }
 
-inline Blob::Blob(OCI_Lob *pLob, Handle *parent)
+template<class TLobObjectType, int TLobOracleType>
+inline bool Lob<TLobObjectType, TLobOracleType>::Seek(SeekMode seekMode, big_uint offset)
 {
-    Acquire(pLob, 0, parent);
+	return (Check(OCI_LobSeek(*this, offset, seekMode)) == TRUE);
 }
 
-inline Raw Blob::Read(unsigned int size)
+template<class TLobObjectType, int TLobOracleType>
+inline Lob<TLobObjectType, TLobOracleType> Lob<TLobObjectType, TLobOracleType>::Clone() const
 {
-	ManagedBuffer<unsigned char> buffer(size + 1);
-
-	size = Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), size));
-
-	return MakeRaw(buffer, size);
-}
-
-inline unsigned int Blob::Write(const Raw& value)
-{
-	return Check(OCI_LobWrite(*this, static_cast<AnyPointer>(const_cast<unsigned char *>(value.data())), static_cast<unsigned int>(value.size())));
-}
-
-inline unsigned int Blob::Append(const Raw& value)
-{
-	return Check(OCI_LobAppend(*this, static_cast<AnyPointer>(const_cast<unsigned char *>(value.data())), static_cast<unsigned int>(value.size())));
-}
-
-inline bool Blob::Seek(SeekMode seekMode, big_uint offset)
-{
-    return (Check(OCI_LobSeek(*this, offset, seekMode)) == TRUE);
-}
-
-inline void Blob::Append(const Blob &other)
-{
-    Check(OCI_LobAppendLob(*this, other));
-}
-
-inline Blob Blob::Clone() const
-{
-	Blob result(GetConnection());
+	Lob result(GetConnection());
 
 	Check(OCI_LobAssign(result, *this));
 
 	return result;
 }
 
-inline bool Blob::Equals(const Blob &other) const
+template<class TLobObjectType, int TLobOracleType>
+inline bool Lob<TLobObjectType, TLobOracleType>::Equals(const Lob &other) const
 {
-    return (Check(OCI_LobIsEqual(*this, other)) == TRUE);
+	return (Check(OCI_LobIsEqual(*this, other)) == TRUE);
 }
 
-inline big_uint Blob::GetOffset() const
+template<class TLobObjectType, int TLobOracleType>
+inline LobType Lob<TLobObjectType, TLobOracleType>::GetType() const
 {
-    return Check(OCI_LobGetOffset(*this));
+	return LobType(static_cast<LobType::type>(Check(OCI_LobGetType(*this))));
 }
 
-inline big_uint Blob::GetLength() const
+template<class TLobObjectType, int TLobOracleType>
+inline big_uint Lob<TLobObjectType, TLobOracleType>::GetOffset() const
 {
-    return Check(OCI_LobGetLength(*this));
+	return Check(OCI_LobGetOffset(*this));
 }
 
-inline big_uint Blob::GetMaxSize() const
+template<class TLobObjectType, int TLobOracleType>
+inline big_uint Lob<TLobObjectType, TLobOracleType>::GetLength() const
 {
-    return Check(OCI_LobGetMaxSize(*this));
+	return Check(OCI_LobGetLength(*this));
 }
 
-inline big_uint Blob::GetChunkSize() const
+template<class TLobObjectType, int TLobOracleType>
+inline big_uint Lob<TLobObjectType, TLobOracleType>::GetMaxSize() const
 {
-    return Check(OCI_LobGetChunkSize(*this));
+	return Check(OCI_LobGetMaxSize(*this));
 }
 
-inline Connection Blob::GetConnection() const
+template<class TLobObjectType, int TLobOracleType>
+inline big_uint Lob<TLobObjectType, TLobOracleType>::GetChunkSize() const
+{
+	return Check(OCI_LobGetChunkSize(*this));
+}
+
+template<class TLobObjectType, int TLobOracleType>
+inline Connection Lob<TLobObjectType, TLobOracleType>::GetConnection() const
 {
 	return Connection(Check(OCI_LobGetConnection(*this)), 0);
 }
 
-inline void Blob::Truncate(big_uint size)
+template<class TLobObjectType, int TLobOracleType>
+inline void Lob<TLobObjectType, TLobOracleType>::Truncate(big_uint length)
 {
-    Check(OCI_LobTruncate(*this, size));
+	Check(OCI_LobTruncate(*this, length));
 }
 
-inline big_uint Blob::Erase(big_uint offset, big_uint size)
+template<class TLobObjectType, int TLobOracleType>
+inline big_uint Lob<TLobObjectType, TLobOracleType>::Erase(big_uint offset, big_uint length)
 {
-    return Check(OCI_LobErase(*this, offset, size));
+	return Check(OCI_LobErase(*this, offset, length));
 }
 
-inline void Blob::Copy(Blob &dest, big_uint offset, big_uint offsetDest, big_uint size) const
+template<class TLobObjectType, int TLobOracleType>
+inline void Lob<TLobObjectType, TLobOracleType>::Copy(Lob &dest, big_uint offset, big_uint offsetDest, big_uint size) const
 {
-    Check(OCI_LobCopy(dest, *this, offsetDest, offset, size));
+	Check(OCI_LobCopy(dest, *this, offsetDest, offset, size));
 }
 
-inline bool Blob::IsTemporary() const
+template<class TLobObjectType, int TLobOracleType>
+inline bool Lob<TLobObjectType, TLobOracleType>::IsTemporary() const
 {
-    return (Check(OCI_LobIsTemporary(*this)) == TRUE);
+	return (Check(OCI_LobIsTemporary(*this)) == TRUE);
 }
 
-inline void Blob::Open(OpenMode mode)
+template<class TLobObjectType, int TLobOracleType>
+inline void Lob<TLobObjectType, TLobOracleType>::Open(OpenMode mode)
 {
-    Check(OCI_LobOpen(*this, mode));
+	Check(OCI_LobOpen(*this, mode));
 }
 
-inline void Blob::Flush()
+template<class TLobObjectType, int TLobOracleType>
+inline void Lob<TLobObjectType, TLobOracleType>::Flush()
 {
-    Check(OCI_LobFlush(*this));
+	Check(OCI_LobFlush(*this));
 }
 
-inline void Blob::Close()
+template<class TLobObjectType, int TLobOracleType>
+inline void Lob<TLobObjectType, TLobOracleType>::Close()
 {
-    Check(OCI_LobClose(*this));
+	Check(OCI_LobClose(*this));
 }
 
-inline void Blob::EnableBuffering(bool value)
+template<class TLobObjectType, int TLobOracleType>
+inline void Lob<TLobObjectType, TLobOracleType>::EnableBuffering(bool value)
 {
-    Check(OCI_LobEnableBuffering(*this, value));
+	Check(OCI_LobEnableBuffering(*this, value));
 }
 
-inline Blob& Blob::operator += (const Blob& other)
+template<class TLobObjectType, int TLobOracleType>
+inline Lob<TLobObjectType, TLobOracleType>::operator TLobObjectType () const
 {
-    Append(other);
-    return *this;
+	return GetContent();
 }
 
-inline bool Blob::operator == (const Blob& other) const
+template<class TLobObjectType, int TLobOracleType>
+inline Lob<TLobObjectType, TLobOracleType>& Lob<TLobObjectType, TLobOracleType>::operator += (const Lob<TLobObjectType, TLobOracleType>& other)
 {
-    return Equals(other);
+	Append(other);
+	return *this;
 }
 
-inline bool Blob::operator != (const Blob& other) const
+template<class TLobObjectType, int TLobOracleType>
+inline bool Lob<TLobObjectType, TLobOracleType>::operator == (const Lob<TLobObjectType, TLobOracleType>& other) const
 {
-    return (!(*this == other));
+	return Equals(other);
+}
+
+template<class TLobObjectType, int TLobOracleType>
+inline bool Lob<TLobObjectType, TLobOracleType>::operator != (const Lob<TLobObjectType, TLobOracleType>& other) const
+{
+	return (!(*this == other));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2859,6 +2757,13 @@ inline Clob Object::Get<Clob>(const ostring& name) const
 }
 
 template<>
+inline NClob Object::Get<NClob>(const ostring& name) const
+{
+	return NClob(Check(OCI_ObjectGetLob(*this, name.c_str())), GetHandle());
+}
+
+
+template<>
 inline Blob Object::Get<Blob>(const ostring& name) const
 {
     return Blob(Check(OCI_ObjectGetLob(*this,name.c_str())), GetHandle());
@@ -2976,6 +2881,12 @@ template<>
 inline void Object::Set<Clob>(const ostring& name, const Clob &value)
 {
     Check(OCI_ObjectSetLob(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<NClob>(const ostring& name, const NClob &value)
+{
+	Check(OCI_ObjectSetLob(*this, name.c_str(), value));
 }
 
 template<>
@@ -3329,6 +3240,11 @@ inline Clob Collection<Clob>::GetElem(OCI_Elem *elem, Handle *parent)
 }
 
 template<>
+inline NClob Collection<NClob>::GetElem(OCI_Elem *elem, Handle *parent)
+{
+	return NClob(Check(OCI_ElemGetLob(elem)), parent);
+}
+template<>
 inline Blob Collection<Blob>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return Blob(Check(OCI_ElemGetLob(elem)), parent);
@@ -3440,6 +3356,12 @@ template<>
 inline void Collection<Clob>::SetElem(OCI_Elem *elem, const Clob &value)
 {
     Check(OCI_ElemSetLob(elem, value));
+}
+
+template<>
+inline void Collection<NClob>::SetElem(OCI_Elem *elem, const NClob &value)
+{
+	Check(OCI_ElemSetLob(elem, value));
 }
 
 template<>
@@ -4295,6 +4217,12 @@ inline void Statement::Bind<Clob>(const ostring& name, Clob &value, BindInfo::Bi
 }
 
 template <>
+inline void Statement::Bind<NClob>(const ostring& name, NClob &value, BindInfo::BindDirection mode)
+{
+	Bind(OCI_BindLob, name, value, BindValue<OCI_Lob *>(), mode);
+}
+
+template <>
 inline void Statement::Bind<Blob>(const ostring& name, Blob &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindLob, name, value, BindValue<OCI_Lob *>(), mode);
@@ -4505,6 +4433,12 @@ inline void Statement::Bind<Clob>(const ostring& name, std::vector<Clob> &values
 }
 
 template <>
+inline void Statement::Bind<NClob>(const ostring& name, std::vector<NClob> &values, BindInfo::BindDirection mode)
+{
+	Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, OCI_NCLOB);
+}
+
+template <>
 inline void Statement::Bind<Blob>(const ostring& name, std::vector<Blob> &values, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, OCI_BLOB);
@@ -4662,6 +4596,12 @@ template <>
 inline void Statement::Register<Clob>(const ostring& name)
 {
     Check(OCI_RegisterLob(*this, name.c_str(), OCI_CLOB));
+}
+
+template <>
+inline void Statement::Register<NClob>(const ostring& name)
+{
+	Check(OCI_RegisterLob(*this, name.c_str(), OCI_NCLOB));
 }
 
 template <>
@@ -5200,6 +5140,18 @@ template<>
 inline Clob Resultset::Get<Clob>(const ostring& name) const
 {
     return Clob(Check(OCI_GetLob2(*this,name.c_str())), GetHandle());
+}
+
+template<>
+inline NClob Resultset::Get<NClob>(unsigned int index) const
+{
+	return NClob(Check(OCI_GetLob(*this, index)), GetHandle());
+}
+
+template<>
+inline NClob Resultset::Get<NClob>(const ostring& name) const
+{
+	return NClob(Check(OCI_GetLob2(*this, name.c_str())), GetHandle());
 }
 
 template<>

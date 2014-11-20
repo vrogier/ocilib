@@ -278,7 +278,7 @@ enum CharsetFormValues
 };
 /**
 * @brief
-* Type of Exception
+* Type of charsetForm
 *
 * Possible values are CharsetFormValues
 *
@@ -331,6 +331,30 @@ enum OpenModeValues
 *
 */
 typedef Enum<OpenModeValues> OpenMode;
+
+/**
+* @brief
+* Lob types enumerated values
+*
+*/
+enum LobTypeValues
+{
+	/** */
+	LobBinary = OCI_BLOB,
+	/**  */
+	LobCharacter = OCI_CLOB,
+	/**  */
+	LobNationalCharacter = OCI_NCLOB
+};
+
+/**
+* @brief
+* Type of Lob
+*
+* Possible values are LobTypeValues
+*
+*/
+typedef Enum<LobTypeValues> LobType;
 
 /**
  *
@@ -1375,8 +1399,6 @@ class Connection : public HandleHolder<OCI_Connection *>
     friend class Environment;
     friend class Exception;
     friend class Statement;
-    friend class Clob;
-    friend class Blob;
     friend class File;
     friend class Timestamp;
     friend class Pool;
@@ -1384,10 +1406,12 @@ class Connection : public HandleHolder<OCI_Connection *>
     friend class TypeInfo;
     friend class Reference;
     friend class Resultset;
-	template <class TDataType>
-    friend class Collection;
     friend class Subscription;
 
+	template<class TLobObjectType, int TLobOracleType>
+	friend class Lob;
+	template <class TDataType>
+	friend class Collection;
 public:
 
 	/**
@@ -2010,7 +2034,7 @@ public:
      * @note
      * Prefetch size is:
      * - number of bytes for BLOBs (Blob) and BFILEs (File)
-     * - number of characters for CLOBs (Clob).
+     * - number of characters for CLOBs (Clob / NClob).
      *
      * @note
      * Default is 0 (prefetching disabled)
@@ -2039,7 +2063,7 @@ public:
      * @note
      * Prefetch size is:
 	 * - number of bytes for BLOBs (Blob) and BFILEs (File)
-	 * - number of characters for CLOBs (Clob).
+	 * - number of characters for CLOBs (Clob / NClob).
 	 *
      */
     void SetDefaultLobPrefetchSize(unsigned int value);
@@ -3429,19 +3453,20 @@ private:
 
 /**
  * @brief
- * Object identififying the SQL datatype CLOB.
+ * Object identififying the SQL datatype LOB (CLOB, NCLOB and BLOB)
  *
- * This class wraps the OCILIB object handle OCI_Lob of type OCI_CLOB and its related methods
+ * This class wraps the OCILIB object handle OCI_Lob and its related methods
  *
  */
-class Clob : public HandleHolder<OCI_Lob *>
+template<class TLobObjectType, int TLobOracleType>
+class Lob : public HandleHolder<OCI_Lob *>
 {
-    friend class Statement;
-    friend class Resultset;
-    friend class BindArray;
-    friend class Object;
+	friend class Statement;
+	friend class Resultset;
+	friend class BindArray;
+	friend class Object;
 	template <class TDataType>
-    friend class Collection;
+	friend class Collection;
 
 public:
 
@@ -3452,50 +3477,62 @@ public:
 	* @param connection - Parent connection
 	*
 	* @note
-	* the clob object must not be accessed anymore once the parent connection object gets out of scope
+	* the lob object must not be accessed anymore once the parent connection object gets out of scope
 	*
 	*/
-	Clob(const Connection &connection, CharsetForm charsetForm = CharsetFormDefault);
+	Lob(const Connection &connection);
 
 	/**
 	* @brief
 	* Read a portion of a clob
 	*
-	* @param size - Maximum number of characters to read
+	* @param size - Maximum number of characters or bytes to read
 	*
 	* @return
-	* The string read from the clob
+	* The content read from the lob
 	*
 	*/
-	ostring Read(unsigned int length);
+	TLobObjectType Read(unsigned int length);
 
 	/**
 	* @brief
-	* Write the given string at the current position within the clob
+	* Write the given content at the current position within the lob
 	*
-	* @param content - String to write
+	* @param content - content to write
 	*
 	* @return
-	* Number of character written into the clob
+	* Number of character or bytes written into the lob
 	*
 	*/
-	unsigned int Write(const ostring &content);
+	unsigned int Write(const TLobObjectType &content);
 
 	/**
 	* @brief
-	* Append the given string to the clob
+	* Append the given content to the lob
 	*
-	* @param content - String to write
+	* @param content - content to write
 	*
 	* @return
-	*  Number of character written into the clob
+	* Number of character or bytes written into the lob
 	*
 	*/
-	unsigned int Append(const ostring& content);
+	unsigned int Append(const TLobObjectType& content);
 
 	/**
 	* @brief
-	* Move the current position wihtin the clob for read/write operations
+	* Append the given lob content to the lob
+	*
+	* @param content - source lob
+	*
+	* @return
+	* Number of character or bytes written into the lob
+	*
+	*/
+	void Append(const Lob& other);
+
+	/**
+	* @brief
+	* Move the current position wihtin the lob for read/write operations
 	*
 	* @param mode   - Seek mode
 	* @param offset - offset from current position 
@@ -3504,42 +3541,42 @@ public:
 	* Positions start at 0.
 	*
 	* @return
-	* TRUE on success otherwise FALSE
+	* true on success otherwise false
 	*
 	*/
 	bool Seek(SeekMode seekMode, big_uint offset);
 
 	/**
 	* @brief
-	* Return the charset form of the given column
+	* return the type of lob
 	*
 	*/
-	CharsetForm GetCharsetForm() const;
+	LobType GetType() const;
 
 	/**
 	* @brief
-	* Returns the current R/W offset within the clob
+	* Returns the current R/W offset within the lob
     *
 	*/
 	big_uint GetOffset() const;
 
 	/**
 	* @brief
-	* Returns the number of characters contained in the clob
+	* Returns the number of characters or bytes contained in the lob
 	*
 	*/
 	big_uint GetLength() const;
 
 	/**
 	* @brief
-	* Returns the clob maximum possible size
+	* Returns the lob maximum possible size
 	*
 	*/
     big_uint GetMaxSize() const;
     
 	/**
 	* @brief
-	* Returns the current clob chunk size
+	* Returns the current lob chunk size
 	*
 	* @note
 	* This chunk size corresponds to the chunk size used by the LOB data layer
@@ -3552,7 +3589,7 @@ public:
 
 	/**
 	* @brief
-	* Return the clob parent connection
+	* Return the lob parent connection
 	*
 	*/
 	Connection GetConnection() const;
@@ -3561,42 +3598,42 @@ public:
 	* @brief
 	* Truncate the lob to a shorter length
 	*
-	* @param length - New length in characters
+	* @param length - New length in characters or bytes
 	*
 	*/
     void Truncate(big_uint length);
 
 	/**
 	* @brief
-	* Erase a portion of the clob at a given position
+	* Erase a portion of the lob at a given position
 	*
 	* @param offset - Absolute position in source lob
 	* @param length - Number of bytes or characters to erase
 	*
 	* @note
 	* Absolute position starts at 0.
-	* Erasing means that spaces overwrite the existing LOB value.
+	* Erasing means that space or null values overwrite the existing LOB value.
 	*
 	* @return
-	* Number of characters erased
+	* Number of characters or bytes erased
 	*
 	*/
     big_uint Erase(big_uint offset, big_uint length);
 
 	/**
 	* @brief
-	* Copy the given portion of the clob content to another one
+	* Copy the given portion of the lob content to another one
 	*
-	* @param dest        - Destination clob
-	* @param offset      - Absolute position in the clob
-	* @param offsetDest  - Absolute position in the destination clob
-	* @param length      - Number of characters to copy
+	* @param dest        - Destination lob
+	* @param offset      - Absolute position in the lob
+	* @param offsetDest  - Absolute position in the destination lob
+	* @param length      - Number of characters or bytes to copy
 	*
 	* @note
 	* Absolute position starts at 0.
 	*
 	*/
-    void Copy(Clob &dest, big_uint offset, big_uint offsetDest, big_uint length) const;
+    void Copy(Lob &dest, big_uint offset, big_uint offsetDest, big_uint length) const;
 
 	/**
 	* @brief
@@ -3661,128 +3698,76 @@ public:
 	* Clone the current instance to a new one performing deep copy
 	*
 	*/
-	Clob Clone() const;
+	Lob Clone() const;
 
 	/**
 	* @brief
-	* return the clob object content 
+	* return the lob object content 
 	*
 	*/
-	operator ostring() const;
+	operator TLobObjectType() const;
+
+	/**
+	* @brief
+	* Appending the given lob content to the current lob content
+	*
+	*/
+	Lob& operator += (const Lob& other);
+
+	/**
+	* @brief
+	* Indicates if the current lob value is equal to the given lob value
+	*
+	*/
+	bool operator == (const Lob& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current lob value is not equal the given lob value
+	*
+	*/
+	bool operator != (const Lob& other) const;
 	
-	/**
-	* @brief
-	* Appending the given clob content to the current clob content
-	*
-	*/
-	Clob& operator += (const Clob& other);
-	
-	/**
-	* @brief
-	* Indicates if the current clob value is equal to the given clob value
-	*
-	*/
-	bool operator == (const Clob& other) const;
+protected:
 
-	/**
-	* @brief
-	* Indicates if the current clob value is not equal the given clob value
-	*
-	*/
-	bool operator != (const Clob& other) const;
 
-private:
+	Lob(OCI_Lob *pLob, Handle *parent = 0);
 
-	void Append(const Clob &other);
-	bool Equals(const Clob &other) const;
-
-    Clob(OCI_Lob *pLob, Handle *parent = 0);
+	bool Equals(const Lob &other) const;
 };
 
 /**
- *
- * @brief
- * Object identififying the SQL datatype BLOB.
- *
- * This class wraps the OCILIB object handle OCI_Lob of type OCI_BLOB and its related methods
- *
- */
-class Blob : public HandleHolder<OCI_Lob *>
-{
-    friend class Statement;
-    friend class Resultset;
-    friend class BindArray;
-    friend class Object;
-	template <class TDataType>
-    friend class Collection;
+*
+* @brief
+* Class hanling CLOB oracle type
+*
+* @note
+* Length and size arguments / returned values are expressed in number of characters
+*
+*/
+typedef Lob<ostring, LobCharacter> Clob;
 
-public:
+/**
+*
+* @brief
+* Class hanling NCLOB oracle type
+*
+* @note
+* Length and size arguments / returned values are expressed in number of characters
+*
+*/
+typedef Lob<ostring, LobNationalCharacter> NClob;
 
-	/**
-	* @brief
-	* Parametrized constructor
-	*
-	* @param connection - Parent connection
-	*
-	* @note
-	* the blob object must not be accessed anymore once the parent connection object gets out of scope
-	*
-	*/
-	Blob(const Connection &connection);
-
-	/**
-	* @brief
-	* Read a portion of a blob
-	*
-	* @param size - Maximum number of bytes to read
-	*
-	* @return
-	* The Raw data read from the blob
-	*
-	*/
-	Raw Read(unsigned int size);
-
-	unsigned int Write(const Raw &value);
-	unsigned int Append(const Raw &value);
-    bool Seek(SeekMode seekMode, big_uint offset);
-
-    big_uint GetOffset() const;
-    big_uint GetLength() const;
-    big_uint GetMaxSize() const;
-    big_uint GetChunkSize() const;
-
-	Connection GetConnection() const;
-
-    void Truncate(big_uint size);
-    big_uint Erase(big_uint offset, big_uint size);
-    void Copy(Blob &dest, big_uint offset, big_uint offsetDest, big_uint size) const;
-
-    bool IsTemporary() const;
-
-    void Open(OpenMode mode);
-    void Flush();
-    void Close();
-
-    void EnableBuffering(bool value);
-
-	/**
-	* @brief
-	* Clone the current instance to a new one performing deep copy
-	*
-	*/
-	Blob Clone() const;
-
-	Blob& operator += (const Blob& other);
-	bool operator == (const Blob& other) const;
-	bool operator != (const Blob& other) const;
-
-private:
-
-	void Append(const Blob &other);
-	bool Equals(const Blob &other) const;
-
-    Blob(OCI_Lob *pLob, Handle *parent = 0);
-};
+/**
+*
+* @brief
+* Class hanling BLOB oracle type
+*
+* @note
+* Length and size arguments / returned values are expressed in number of bytes
+*
+*/
+typedef Lob<Raw, LobBinary> Blob;
 
 /**
  *
@@ -4406,7 +4391,7 @@ public:
 	* This call is valid for the following OCILIB types:
 	* - Scalar numeric types
 	* - Clong and Blong
-	* - Clob and Blob
+	* - Clob, NClob and Blob
 	* - File
 	* - Timestamp
 	* - Interval
@@ -5675,7 +5660,7 @@ public:
 	* @note
 	* This call is valid for the following OCILIB types:
 	* - Clong and Blong
-	* - Clob and Blob
+	* - Clob, NClob and Blob
 	* - File
 	* - Timestamp
 	* - Interval
