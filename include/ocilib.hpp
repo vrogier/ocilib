@@ -3728,12 +3728,12 @@ public:
 	*/
 	bool operator != (const Lob& other) const;
 	
-protected:
+private:
 
+	bool Equals(const Lob &other) const;
 
 	Lob(OCI_Lob *pLob, Handle *parent = 0);
 
-	bool Equals(const Lob &other) const;
 };
 
 /**
@@ -3754,7 +3754,8 @@ typedef Lob<ostring, LobCharacter> Clob;
 *
 * @note
 * Length and size arguments / returned values are expressed in number of characters
-*
+*Nclob
+
 */
 typedef Lob<ostring, LobNationalCharacter> NClob;
 
@@ -3816,23 +3817,112 @@ public:
 	*/
 	File(const Connection &connection, const ostring& directory, const ostring& name);
 
+	/**
+	* @brief
+	* Read a portion of a file
+	*
+	* @param size - Maximum number of bytes to read
+	*
+	* @return
+	* The content read from the file
+	*
+	*/
 	Raw Read(unsigned int size);
+
+	/**
+	* @brief
+	* Move the current position wihtin the file for read/write operations
+	*
+	* @param mode   - Seek mode
+	* @param offset - offset from current position
+	*
+	* @note
+	* Positions start at 0.
+	*
+	* @return
+	* true on success otherwise false
+	*
+	*/
     bool Seek(SeekMode seekMode, big_uint offset);
 
+	/**
+	* @brief
+	* Check if the given file exists on server
+	*
+	* @note
+	* For local FILEs object, SetInfos() must be called before calling Exists()
+	*
+	*/
     bool Exists() const;
 
-    big_uint GetOffset() const;
-    big_uint GetSize() const;
+	/**
+	* @brief
+	* Returns the current R/W offset within the file
+	*
+	*/
+	big_uint GetOffset() const;
 
+	/**
+	* @brief
+	* Returns the number of bytes contained in the file
+	*
+	*/
+	big_uint GetLength() const;
+
+	/**
+	* @brief
+	* Return the file parent connection
+	*
+	*/
 	Connection GetConnection() const;
 
+	/**
+	* @brief
+	* Set the directory and file name of our file object
+	*
+	* @param directory - File directory
+	* @param name      - File name
+	*
+	* @note
+	* - For local FILEs only
+	* - Files fetched from resultset can't be assigned a new directory and name
+	*
+	*/
     void SetInfos(const ostring& directory, const ostring& name);
 
+	/**
+	* @brief
+	* Return the file name
+	*
+	*/
     ostring GetName() const;
+
+	/**
+	* @brief
+	* Return the file directory
+	*
+	*/
     ostring GetDirectory() const;
 
-    void Open();
-    void Close();
+	/**
+	* @brief
+	* Open a file for reading on the server
+	*
+	*/
+	void Open();
+
+	/**
+	* @brief
+	* Close the file on the server
+	*
+	*/
+	void Close();
+
+	/**
+	* @brief
+	* Check if the specified file is currently opened on the server by our object
+	*
+	*/
     bool IsOpened() const;
 
 	/**
@@ -3842,7 +3932,18 @@ public:
 	*/
 	File Clone() const;
 
+	/**
+	* @brief
+	* Indicates if the current file value is equal the given file value
+	*
+	*/
 	bool operator == (const File& other) const;
+
+	/**
+	* @brief
+	* Indicates if the current file value is not equal the given file value
+	*
+	*/
 	bool operator != (const File& other) const;
 
 private:
@@ -3913,9 +4014,39 @@ public:
 	*/
     TypeInfoType GetType() const;
     ostring GetName() const;
+
+	/**
+	* @brief
+	* Return the connection associated with a statement
+	*
+	*/
     Connection GetConnection() const;
 
+	/**
+	* @brief
+	* Return the number of columns contained in the type
+	* 
+	* @note
+	* - For table and views, it is the number of columns
+	* - For types, it is the number of member properties
+	*
+	*/
     unsigned int GetColumnCount() const;
+
+	/**
+	* @brief
+	* Return the column from its index in the resultset
+	*
+	* @param index  - Column index
+	*
+	* @note
+	* Column position starts at 1.
+	*
+	* @note
+	* - For table and views, the returned column object describes a table/view column
+	* - For types, the returned column object describes an object property
+	*
+	*/
     Column GetColumn(unsigned int index) const;
 
 private:
@@ -3966,12 +4097,45 @@ public:
 	*/
     typedef Enum<ObjectTypeValues> ObjectType;
 
+	/**
+	* @brief
+	* Parametrized constructor
+	*
+	* @param typeInfo - type info descriptor
+	*
+	*/
     Object(const TypeInfo &typeInfo);
 
+	/**
+	* @brief
+	* Check if an object attribute is null
+	*
+	* @param name - Attribute name
+	*
+	*/
     bool IsAttributeNull(const ostring& name) const;
+
+	/**
+	* @brief
+	* Set the given object attribute to null
+	*
+	* @param name - Attribute name
+	*
+	*/
     void SetAttributeNull(const ostring& name);
 
+	/**
+	* @brief
+	* Return the TypeInfo object describing the object
+	*
+	*/
     TypeInfo GetTypeInfo() const;
+
+	/**
+	* @brief
+	* Creates a reference on the current object 
+	*
+	*/
     Reference GetReference() const;
 
 	/**
@@ -3981,9 +4145,34 @@ public:
 	*/
     ObjectType GetType() const;
 
-    template<class TDataType>
+	/**
+	* @brief
+	* Return the given object attribute value
+	*
+	* @tparam TDataType - C++ object type to retrieve
+	*
+	* @param name - Attribute name
+	*
+	* @note 
+	* Specialized version of this template function are provided for all supported types
+	*
+	*/  
+	template<class TDataType>
     TDataType Get(const ostring& name) const;
 
+	/**
+	* @brief
+	* Set the given object attribute value
+	*
+	* @tparam TDataType - C++ object type to set
+	*
+	* @param name - Attribute name
+	* @param name - Attribute value
+	*
+	* @note
+	* Specialized version of this template function are provided for all supported types
+	*
+	*/
     template<class TDataType>
     void Set(const ostring& name, const TDataType &value);
 
@@ -4034,12 +4223,47 @@ class Reference : public HandleHolder<OCI_Ref *>
 
 public:
 
+	/**
+	* @brief
+	* Parametrized constructor
+	*
+	* @param typeInfo - type info descriptor
+	*
+	*/
     Reference(const TypeInfo &typeInfo);
 
+	/**
+	* @brief
+	* Return the TypeInfo object describing the referenced object
+	*
+	*/
     TypeInfo GetTypeInfo() const;
+
+	/**
+	* @brief
+	* Returns the object pointed by the reference
+	*
+	* @return
+	* The object may bu null is the current reference value is null
+	*
+	*/
     Object GetObject() const;
 
+	/**
+	* @brief
+	* Check if the reference points to an object or not.
+	*
+	*/
     bool IsReferenceNull() const;
+
+	/**
+	* @brief
+	* Nullify the given Ref handle
+	*
+	* @note
+	* this call clears the reference to object pointed by the refenrec object.
+	*
+	*/
     void SetReferenceNull();
 
 	/**
@@ -4114,32 +4338,144 @@ public:
 	*/
     typedef Enum<CollectionTypeValues> CollectionType;
 
+	/**
+	* @brief
+	* Parametrized constructor
+	*
+	* @param typeInfo - type info descriptor
+	*
+	*/
     Collection(const TypeInfo &typeInfo);
 
 	/**
 	* @brief
-	* Return the type of the given collection object
+	* Return the type of the collection
 	*
 	*/
     CollectionType GetType() const;
+
+	/**
+	* @brief
+	* Returns the maximum number of elements for the collection
+	*
+	*/
     unsigned int GetMax() const;
+
+	/**
+	* @brief
+	* Returns the total number of elements in the collection
+	*
+	* @param coll - Collection handle
+	*
+	*/
     unsigned int GetSize() const;
+
+	/**
+	* @brief
+	* Returns the current number of elements in the collection
+	*
+	* @note
+	* - For VARRAYs, it returns the same value than GetSize() as VARRAYs cannot contains holes
+	* - For Nested Tables that are spare collections that can have holes, it returns the total number
+	*   of elements minus the total of deleted elements
+	*
+	*/
     unsigned int GetCount() const;
 
+	/**
+	* @brief
+	* Trim the given number of elements from the end of the collection
+	*
+	* @param size - Number of elements to trim
+	*
+	*/
     void Truncate(unsigned int size);
+
+	/**
+	* @brief
+	* Clear all items of the collection
+	*
+	*/
+
     void Clear();
 
+	/**
+	* @brief
+	* check if the element at the given index is null
+	*
+	* @param index - Index of the element 
+	*
+	*  @note
+	* Collection Index start at 1
+	*
+	*/
     bool IsElementNull(unsigned int index) const;
+
+	/**
+	* @brief
+	* Nullify the element at the given index
+	*
+	* @param index - Index of the element
+	*
+	*  @note
+	* Collection Index start at 1
+	*
+	*/
     void SetElementNull(unsigned int index);
 
+	/**
+	* @brief
+	* Delete the element at the given position in the Nested Table Collection
+	*
+	* @param index - Index of the element to delete
+	*
+	* @note
+	* Collection indexes start at position 1.
+	*
+	* @warning
+	* Delete() is only valid for nested tables (e.g. when collection type is Collection::NestedTable
+	*
+	* @return
+	* - if the input collection is a nested table, it returns true if the element  is successfully deleted 
+	* - if the input collection is a varray, it always returns false 
+	*
+	*/
     bool Delete(unsigned int index) const;
 
+	/**
+	* @brief
+	* Return the collection element value at the given position
+	*
+	* @param index - Index of the element
+	*
+	*/
     TDataType Get(unsigned int index) const;
 
+	/**
+	* @brief
+	* Set the collection element value at the given position
+	*
+	* @param index - Index of the element
+	* @param name  - Value to set
+	*
+	*/
 	void Set(unsigned int index, const TDataType &value);
 
+	/**
+	* @brief
+	* Append the given element value at the end of the collection
+	*
+	* @param elem  - Value to add
+	*
+	*
+	*/
     void Append(const TDataType &data);
 
+	/**
+	* @brief
+	* Return the type information object associated to the collection
+	*
+	*/
     TypeInfo GetTypeInfo() const;
 
 	/**
@@ -4166,6 +4502,15 @@ public:
 	*/
 	operator ostring() const;
 
+	/**
+	* @brief
+	* Class used for handling transient collection value.
+	* it is used internally by:
+	* - the indexer operator in order to provide lvalue for write access
+	* - the Iterator class 
+	* This class is  not meant to be publically used !
+	*
+	*/
 	class Element
 	{
 		friend class Iterator;
@@ -4182,6 +4527,11 @@ public:
 		unsigned int _pos;
 	};
 
+	/**
+	* @brief
+	* STL compliant bi-directional iterator class
+	*
+	*/
 	class Iterator : public std::iterator<std::bidirectional_iterator_tag, TDataType>
 	{
 
@@ -4202,21 +4552,43 @@ public:
 		Iterator operator++(int);
 
 	private:
+
 		Element _elem;
 	};
 	
+	/**
+	* @brief
+	* common iterator declaration
+	*
+	*/
     typedef Iterator iterator;
 
+	/**
+	* @brief
+	* Returns an iterator pointing to the first element in the collection
+	*
+	*/
 	Iterator begin();
+
+	/**
+	* @brief
+	* Returns an iterator referring to the past-the-end element in the the collection
+	*
+	*/
 	Iterator end();
 
+	/**
+	* @brief
+	* Returns the element at a given position in the collection.
+	*
+	*/
 	Element operator [] (int index);
 
 private:
 
-    static TDataType GetElem(OCI_Elem *elem, Handle *parent);
+	TDataType GetElem(OCI_Elem *elem, Handle *parent) const;
 
-	static void SetElem(OCI_Elem *elem, const TDataType &value);
+	void SetElem(OCI_Elem *elem, const TDataType &value);
 
     Collection(OCI_Coll *pColl, Handle *parent = 0);
 };
@@ -5488,18 +5860,14 @@ public:
 	*/
 	unsigned int GetColumnCount() const;
 
-
 	/**
 	* @brief
-	* Return the column from its name in the resultset
+	* Return the column from its index in the resultset
 	*
 	* @param index  - Column index
 	*
 	* @note
 	* Column position starts at 1.
-	*
-	* @warning
-	* The column name is case insensitive
 	*
 	*/
 	Column GetColumn(unsigned int index) const;

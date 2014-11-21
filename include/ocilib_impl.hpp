@@ -2516,7 +2516,7 @@ inline big_uint File::GetOffset() const
     return Check(OCI_FileGetOffset(*this));
 }
 
-inline big_uint File::GetSize() const
+inline big_uint File::GetLength() const
 {
     return Check(OCI_FileGetSize(*this));
 }
@@ -3120,7 +3120,7 @@ inline void Collection<TDataType>::Append(const TDataType &value)
 }
 
 template <>
-inline short Collection<short>::GetElem(OCI_Elem *elem, Handle *parent)
+inline short Collection<short>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     ARG_NOT_USED(parent);
 
@@ -3128,7 +3128,7 @@ inline short Collection<short>::GetElem(OCI_Elem *elem, Handle *parent)
 }
 
 template<>
-inline unsigned short Collection<unsigned short>::GetElem(OCI_Elem *elem, Handle *parent)
+inline unsigned short Collection<unsigned short>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     ARG_NOT_USED(parent);
 
@@ -3136,7 +3136,7 @@ inline unsigned short Collection<unsigned short>::GetElem(OCI_Elem *elem, Handle
 }
 
 template<>
-inline int Collection<int>::GetElem(OCI_Elem *elem, Handle *parent)
+inline int Collection<int>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     ARG_NOT_USED(parent);
 
@@ -3144,7 +3144,7 @@ inline int Collection<int>::GetElem(OCI_Elem *elem, Handle *parent)
 }
 
 template<>
-inline unsigned int Collection<unsigned int>::GetElem(OCI_Elem *elem, Handle *parent)
+inline unsigned int Collection<unsigned int>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     ARG_NOT_USED(parent);
 
@@ -3152,7 +3152,7 @@ inline unsigned int Collection<unsigned int>::GetElem(OCI_Elem *elem, Handle *pa
 }
 
 template<>
-inline big_int Collection<big_int>::GetElem(OCI_Elem *elem, Handle *parent)
+inline big_int Collection<big_int>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     ARG_NOT_USED(parent);
 
@@ -3160,7 +3160,7 @@ inline big_int Collection<big_int>::GetElem(OCI_Elem *elem, Handle *parent)
 }
 
 template<>
-inline big_uint Collection<big_uint>::GetElem(OCI_Elem *elem, Handle *parent)
+inline big_uint Collection<big_uint>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     ARG_NOT_USED(parent);
 
@@ -3168,7 +3168,7 @@ inline big_uint Collection<big_uint>::GetElem(OCI_Elem *elem, Handle *parent)
 }
 
 template<>
-inline float Collection<float>::GetElem(OCI_Elem *elem, Handle *parent)
+inline float Collection<float>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     ARG_NOT_USED(parent);
 
@@ -3176,7 +3176,7 @@ inline float Collection<float>::GetElem(OCI_Elem *elem, Handle *parent)
 }
 
 template<>
-inline double Collection<double>::GetElem(OCI_Elem *elem, Handle *parent)
+inline double Collection<double>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     ARG_NOT_USED(parent);
 
@@ -3184,7 +3184,7 @@ inline double Collection<double>::GetElem(OCI_Elem *elem, Handle *parent)
 }
 
 template<>
-inline ostring Collection<ostring>::GetElem(OCI_Elem *elem, Handle *parent)
+inline ostring Collection<ostring>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     ARG_NOT_USED(parent);
 
@@ -3192,7 +3192,7 @@ inline ostring Collection<ostring>::GetElem(OCI_Elem *elem, Handle *parent)
 }
 
 template<>
-inline Raw Collection<Raw>::GetElem(OCI_Elem *elem, Handle *parent)
+inline Raw Collection<Raw>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
 	unsigned int size = Check(OCI_ElemGetRawSize(elem));
 
@@ -3204,60 +3204,60 @@ inline Raw Collection<Raw>::GetElem(OCI_Elem *elem, Handle *parent)
 }
 
 template<>
-inline Date Collection<Date>::GetElem(OCI_Elem *elem, Handle *parent)
+inline Date Collection<Date>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     return Date(Check(OCI_ElemGetDate(elem)), parent);
 }
 
 template<>
-inline Timestamp Collection<Timestamp>::GetElem(OCI_Elem *elem, Handle *parent)
+inline Timestamp Collection<Timestamp>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     return Timestamp(Check(OCI_ElemGetTimestamp(elem)), parent);
 }
 
 template<>
-inline Interval Collection<Interval>::GetElem(OCI_Elem *elem, Handle *parent)
+inline Interval Collection<Interval>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     return Interval(Check(OCI_ElemGetInterval(elem)), parent);
 }
 
 template<>
-inline Object Collection<Object>::GetElem(OCI_Elem *elem, Handle *parent)
+inline Object Collection<Object>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     return Object(Check(OCI_ElemGetObject(elem)), parent);
 }
 
-template<>
-inline Reference Collection<Reference>::GetElem(OCI_Elem *elem, Handle *parent)
+template<> 
+inline Reference Collection<Reference>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     return Reference(Check(OCI_ElemGetRef(elem)), parent);
 }
 
 template<>
-inline Clob Collection<Clob>::GetElem(OCI_Elem *elem, Handle *parent)
+inline Clob Collection<Clob>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     return Clob(Check(OCI_ElemGetLob(elem)), parent);
 }
 
 template<>
-inline NClob Collection<NClob>::GetElem(OCI_Elem *elem, Handle *parent)
+inline NClob Collection<NClob>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
 	return NClob(Check(OCI_ElemGetLob(elem)), parent);
 }
 template<>
-inline Blob Collection<Blob>::GetElem(OCI_Elem *elem, Handle *parent)
+inline Blob Collection<Blob>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     return Blob(Check(OCI_ElemGetLob(elem)), parent);
 }
 
 template<>
-inline File Collection<File>::GetElem(OCI_Elem *elem, Handle *parent)
+inline File Collection<File>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     return File(Check(OCI_ElemGetFile(elem)), parent);
 }
 
 template<class TDataType>
-inline TDataType Collection<TDataType>::GetElem(OCI_Elem *elem, Handle *parent)
+inline TDataType Collection<TDataType>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
 	return TDataType(Check(OCI_ElemGetColl(elem)), parent);
 }
