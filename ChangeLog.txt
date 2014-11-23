@@ -2,12 +2,11 @@
 
     * Introducing new C++ API
     
-      - Based on STL paradigms (templates, stack objects, ...)
-      - Based on design patterns (reference counting, smart pointers, proxies, singleton, ...)
-      - No dynamic object allocation
+      - Full C API ported to C++
       - Implemented as a small set of header files, no library compilation needed
-      - Designed on top of OCILIB C API
-      - Full C API ported  to C++
+      - Based on C++ and STL paradigms (Strong typing, templates, containers, RAII, exception handling, operators, stack objects)
+      - Based on design patterns (RAII, delegation, reference counting, smart pointers, proxies, singleton)
+      - No user dynamic object allocation required
       - The only dependences are : STL and OCILIB C API
       
     * Extended C API

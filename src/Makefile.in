@@ -297,7 +297,7 @@ libocilib_la_SOURCES = \
 
 libocilib_la_CFLAGS = -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS = @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-include_HEADERS = $(top_srcdir)/include/ocilib.h
+include_HEADERS = $(top_srcdir)/include/ocilib.h $(top_srcdir)/include/ocilib.hpp $(top_srcdir)/include/ocilib_core.hpp $(top_srcdir)/include/ocilib_impl.hpp
 noinst_HEADERS = \
 	ocilib_internal.h \
 	ocilib_types.h \

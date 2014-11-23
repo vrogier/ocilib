@@ -1,4 +1,4 @@
-dnl Copyright (C) 2007-2008 Vincent Rogier <vince.rogier@gmail.com>
+dnl Copyright (C) 2007-2014 Vincent Rogier <vince.rogier@gmail.com>
 dnl  
 dnl This file is free software; as a special exception the author gives
 dnl unlimited permission to copy and/or distribute it, with or without 
@@ -48,7 +48,7 @@ AC_DEFUN([OCILIB_PATH],
   doc_files=`(cd ${srcdir:-.}/doc/html && ls -1 *.html *.css *.png)`
   OCILIB_DOCS=`echo $doc_files | sed 's,$, ,g'`
 
-  demo_sources_files=`(cd ${srcdir:-.}/demo/ && ls -1 *.c *.h)`
+  demo_sources_files=`(cd ${srcdir:-.}/demo/ && ls -1 *.c *.h *.cpp)`
   OCILIB_DEMO_SOURCES=`echo $demo_sources_files | sed 's,$, ,g'`
 
   AC_SUBST(OCILIB_PREFIX)

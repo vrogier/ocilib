@@ -73,12 +73,14 @@ namespace ocilib
  * @defgroup OcilibCppApiOverview Overview
  * @{
  * OCILIB++ is a C++ API for Oracle built on top of the C OCILIB API:
- *  - Full C API ported  to C++
+ *  - Full C API ported to C++
  *  - Implemented as a small set of header files, no library compilation needed
- *  - Based on STL paradigms (templates, stack objects, STL classes)
+ *  - Based on C++ and STL paradigms (Strong typing, templates, containers, RAII, exception handling, operators, stack objects)
  *  - Based on design patterns (RAII, delegation, reference counting, smart pointers, proxies, singleton)
- *  - No dynamic object allocation
+ *  - No user dynamic object allocation required
  *  - The only dependences are : STL and OCILIB C API
+ *
+ * @par Reference counting model
  *
  * API usage is very simple, based on stack objects wrapping OCILIB handles using reference counting.
  * OCILIB handles are automatically allocated internally by C++ objects constructors or methods.
@@ -87,9 +89,6 @@ namespace ocilib
  * OCILIB++ allows simple and safe usage of Oracle client without the worries of memory leakages.
  * Using stack objects also makes error handling easier and program logic more robust
  *
- * @par Reference counting model
- *
- * @par Exception model
  *
  * @par Exception model
  * Any failure occurring within an OCILIB C API call will throw a ocilib::Exception

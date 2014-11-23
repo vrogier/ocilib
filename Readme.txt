@@ -8,11 +8,11 @@
    |                                                                      |
    +----------------------------------------------------------------------+
    |                                                                      |
-   |                     Website : http://WWW.ocilib.net                  |
+   |                     Website : http://www.ocilib.net                  |
    |                                                                      |
    +----------------------------------------------------------------------+
    |                                                                      |
-   |               Copyright (c) 2007-2013 Vincent ROGIER                 |
+   |               Copyright (c) 2007-2014 Vincent ROGIER                 |
    |                                                                      |
    +----------------------------------------------------------------------+
    |                                                                      |
@@ -164,23 +164,20 @@ if no import mode is set, the library sets the default to OCI_IMPORT_LINKAGE
 
 2/ charset (ansi, wide, mixed)
 
-this pakcage provides 3 OCILIB Dlls (32bits and 64bits) :
+this pakcage provides 2 OCILIB Dlls (32bits and 64bits) :
 
       - ociliba.dll (ANSI / UTF8 version)
-      - ocilibw.dll (UNICODE/UFT16/USC2/wchar_t version)
-      - ocilibm.dll (ANSI / UTF8 for meta data, UNICODE for user data - often used with Oracle 8i)     
+      - ocilibw.dll (UNICODE/UFT16/USC2/wchar_t version) 
 
 this package provides 3 OCILIB static libs (32 bits only) :
 
       - libociliba.a (ANSI / UTF8 version)
-      - libocilibw.a (UNICODE/UFT16/USC2/wchar_t version)
-      - libocilibm.a (ANSI / UTF8 for meta data, UNICODE for user data - often used with Oracle 8i)     
+      - libocilibw.a (UNICODE/UFT16/USC2/wchar_t version)  
 
 Defines :
 
      - OCI_CHARSET_ANSI for ansi / UTF8
      - OCI_CHARSET_WIDE for unicode (wide strings)
-     - OCI_CHARSET_MIXED for third mixed mode (often used with Oracle 8i)
 
 if no charset mode is set, the library sets the default to OCI_CHARSET_ANSI 
 
