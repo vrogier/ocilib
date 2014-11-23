@@ -3499,62 +3499,68 @@ inline void Collection<TDataType>::Element::SetNull()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * Clong
+ * Long
  * --------------------------------------------------------------------------------------------- */
 
-inline Clong::Clong(const Statement &statement)
+template<class TLongObjectType, int TLongOracleType>
+inline Long<TLongObjectType, TLongOracleType>::Long(const Statement &statement)
 {
-    Acquire(Check(OCI_LongCreate(statement, OCI_CLONG)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), statement.GetHandle());
+	Acquire(Check(OCI_LongCreate(statement, TLongOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), statement.GetHandle());
 }
 
-inline Clong::Clong(OCI_Long *pLong, Handle* parent)
+template<class TLongObjectType, int TLongOracleType>
+inline Long<TLongObjectType, TLongOracleType>::Long(OCI_Long *pLong, Handle* parent)
 {
     Acquire(pLong, 0, parent);
 }
 
-inline unsigned int Clong::Write(const ostring& content)
+template<class TLongObjectType, int TLongOracleType>
+inline unsigned int Long<TLongObjectType, TLongOracleType>::Write(const TLongObjectType& content)
 {
-	return Check(OCI_LongWrite(*this, reinterpret_cast<AnyPointer>(const_cast<otext *>(content.c_str())), static_cast<unsigned int>(content.size())));
+	return Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<TLongObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
 }
 
-inline unsigned int Clong::GetLength() const
-{
-    return Check(OCI_LongGetSize(*this));
-}
-
-inline ostring Clong::GetContent() const
-{
-    return MakeString(static_cast<const otext *>(Check(OCI_LongGetBuffer(*this))));
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * Blong
- * --------------------------------------------------------------------------------------------- */
-
-inline Blong::Blong(const Statement &statement)
-{
-    Acquire(Check(OCI_LongCreate(statement, OCI_BLONG)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), statement.GetHandle());
-}
-
-inline Blong::Blong(OCI_Long *pLong, Handle *parent)
-{
-    Acquire(pLong, 0, parent);
-}
-
-inline unsigned int Blong::Write(const Raw &value)
-{
-	return Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<unsigned char *>(value.data())), static_cast<unsigned int>(value.size())));
-}
-
-inline unsigned int Blong::GetSize() const
+template<class TLongObjectType, int TLongOracleType>
+inline unsigned int Long<TLongObjectType, TLongOracleType>::GetLength() const
 {
     return Check(OCI_LongGetSize(*this));
 }
 
-inline Raw Blong::GetContent() const
+template<>
+inline ostring Long<ostring, LongCharacter>::GetContent() const
 {
-	return MakeRaw(Check(OCI_LongGetBuffer(*this)), GetSize());
+	return MakeString(static_cast<const otext *>(Check(OCI_LongGetBuffer(*this))));
 }
+
+template<>
+inline Raw Long<Raw, LongBinary>::GetContent() const
+{
+	return MakeRaw(Check(OCI_LongGetBuffer(*this)), GetLength());
+}
+
+
+/**
+*
+* @brief
+* Class handling LONG oracle type
+*
+* @note
+* Length and size arguments / returned values are expressed in number of characters
+*
+*/
+typedef Long<ostring, LongCharacter> Clong;
+
+/**
+*
+* @brief
+* Class handling LONG RAW oracle type
+*
+* @note
+* Length and size arguments / returned values are expressed in number of bytes
+*
+*/
+typedef Long<Raw, LongBinary> Blong;
+
 
 /* --------------------------------------------------------------------------------------------- *
  * BindValue

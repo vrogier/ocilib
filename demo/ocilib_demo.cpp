@@ -238,7 +238,7 @@ int omain(int argc, oarg* argv[])
 		con.Open(dbs, usr, pwd, Environment::SessionDefault);
 
         print_version();
-
+		drop_tables();
         create_tables();
 
         /* execute tests */
@@ -612,7 +612,7 @@ void test_piecewise_insert(void)
 
 		delete[] strBuffer;
 
-        std::ocout << std::endl << lg.GetSize() << OTEXT(" bytes written") << std::endl;
+        std::ocout << std::endl << lg.GetLength() << OTEXT(" bytes written") << std::endl;
 
         file.close();
         con.Commit();
@@ -635,7 +635,7 @@ void test_piecewise_fetch(void)
     {
         Blong lg = rs1.Get<Blong>(1);
 
-        std::ocout << std::endl << lg.GetSize() << OTEXT(" bytes read") << std::endl;
+        std::ocout << std::endl << lg.GetLength() << OTEXT(" bytes read") << std::endl;
     }
 
     std::ocout << std::endl << rs1.GetCount() << OTEXT(" row(s) fetched") << std::endl;
@@ -675,7 +675,7 @@ void test_lob(void)
 
         clob.Write(OTEXT("today, "));
         clob.Append(OTEXT("i'm going to the cinema ! "));
-        clob.Seek(Clob::Set, 0);
+        clob.Seek(SeekSet, 0);
 
         std::ocout << OTEXT("> code : ") << rs.Get<int>(1) << OTEXT(", content : ") << clob.Read(SIZE_STR) << std::endl;
     }
@@ -911,7 +911,7 @@ void test_returning(void)
     {
         Clob clob = rs.Get<Clob>(2);
         clob.Append(OTEXT("(modified)"));
-        clob.Seek(Clob::Set, 0);
+        clob.Seek(SeekSet, 0);
 
         std::ocout << OTEXT("> code : ") << rs.Get<int>(1) << OTEXT(" - ") << clob.Read((int)clob.GetLength()) << std::endl;
     }
@@ -1107,7 +1107,9 @@ void test_object_fetch(void)
         File file = obj.Get<File>(OTEXT("VAL_FILE"));
         std::ocout << OTEXT(".... val_file     : ") << file.GetDirectory() << OTEXT("/") << file.GetName() << std::endl;
 
-		std::cout << ".... val_raw      : " << (char*) obj.Get<Raw>(OTEXT("VAL_RAW")).data() << std::endl;
+		Raw raw = obj.Get<Raw>(OTEXT("VAL_RAW"));
+		raw.push_back(0);
+		std::cout << ".... val_raw      : " << (char*) raw.data() << std::endl;
 
         Object obj2 = obj.Get<Object>(OTEXT("VAL_OBJ"));
         std::ocout << OTEXT(".... val_obj.code : ") << obj2.Get<int>(OTEXT("ID"))       << std::endl;

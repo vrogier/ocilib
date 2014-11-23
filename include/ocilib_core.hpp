@@ -67,8 +67,8 @@ template<class TLobObjectType, int TLobOracleType>
 class Lob;
 class File;
 class Pool;
-class Clong;
-class Blong;
+template<class TLongObjectType, int TLongOracleType>
+class Long;
 class Column;
 class Subscription;
 class Event;
