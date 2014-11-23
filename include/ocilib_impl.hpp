@@ -298,7 +298,7 @@ inline ManagedBuffer<TBufferType>::ManagedBuffer( TBufferType *buffer )  : _buff
 }
 
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::ManagedBuffer(size_t size) 
+inline ManagedBuffer<TBufferType>::ManagedBuffer(size_t size)
 {
 	_buffer = new TBufferType[size];
 
@@ -1916,7 +1916,7 @@ inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, Handle *parent)
 inline Timestamp Timestamp::Clone() const
 {
 	Timestamp result(GetType());
-    
+
 	Check(OCI_TimestampAssign(result, *this));
 
 	return result;
@@ -2316,7 +2316,7 @@ inline Raw Lob<Raw, LobBinary>::Read(unsigned int length)
 template<class TLobObjectType, int TLobOracleType>
 inline unsigned int Lob<TLobObjectType, TLobOracleType>::Write(const TLobObjectType& content)
 {
-	return Check(OCI_LobWrite(*this, static_cast<AnyPointer>(const_cast<TLobObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
+    return Check(OCI_LobWrite(*this, static_cast<AnyPointer>(const_cast<typename TLobObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
 }
 
 template<class TLobObjectType, int TLobOracleType>
@@ -2328,7 +2328,7 @@ inline void Lob<TLobObjectType, TLobOracleType>::Append(const Lob& other)
 template<class TLobObjectType, int TLobOracleType>
 inline unsigned int Lob<TLobObjectType, TLobOracleType>::Append(const TLobObjectType& content)
 {
-	return Check(OCI_LobAppend(*this, static_cast<AnyPointer>(const_cast<TLobObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
+	return Check(OCI_LobAppend(*this, static_cast<AnyPointer>(const_cast<typename TLobObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
 }
 
 template<class TLobObjectType, int TLobOracleType>
@@ -2440,7 +2440,7 @@ inline void Lob<TLobObjectType, TLobOracleType>::EnableBuffering(bool value)
 template<class TLobObjectType, int TLobOracleType>
 inline Lob<TLobObjectType, TLobOracleType>::operator TLobObjectType () const
 {
-	return GetContent();
+	return Lob<TLobObjectType, TLobOracleType>::GetContent();
 }
 
 template<class TLobObjectType, int TLobOracleType>
@@ -3026,7 +3026,7 @@ inline TypeInfo Collection<TDataType>::GetTypeInfo() const
 template<class TDataType>
 inline typename Collection<TDataType>::CollectionType Collection<TDataType>::GetType() const
 {
-	return Collection<TDataType>::CollectionType(static_cast<Collection<TDataType>::CollectionType::type>(Check(OCI_CollGetType(*this))));
+	return Collection<TDataType>::CollectionType(static_cast<typename Collection<TDataType>::CollectionType::type>(Check(OCI_CollGetType(*this))));
 }
 
 template<class TDataType>
@@ -3227,7 +3227,7 @@ inline Object Collection<Object>::GetElem(OCI_Elem *elem, Handle *parent) const
     return Object(Check(OCI_ElemGetObject(elem)), parent);
 }
 
-template<> 
+template<>
 inline Reference Collection<Reference>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     return Reference(Check(OCI_ElemGetRef(elem)), parent);
@@ -3414,7 +3414,7 @@ inline Collection<TDataType>::Iterator::Iterator(Collection &coll, unsigned int 
 }
 
 template<class TDataType>
-inline Collection<TDataType>::Iterator::Iterator(const Iterator& other) : _elem(coll, other._pos)
+inline Collection<TDataType>::Iterator::Iterator(const Iterator& other) : _elem(other._elem)
 {
 }
 
@@ -3517,7 +3517,7 @@ inline Long<TLongObjectType, TLongOracleType>::Long(OCI_Long *pLong, Handle* par
 template<class TLongObjectType, int TLongOracleType>
 inline unsigned int Long<TLongObjectType, TLongOracleType>::Write(const TLongObjectType& content)
 {
-	return Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<TLongObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
+	return Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<typename TLongObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
 }
 
 template<class TLongObjectType, int TLongOracleType>
@@ -3588,7 +3588,7 @@ inline BindValue<TValueType>::operator TValueType() const
 * BindObject
 * --------------------------------------------------------------------------------------------- */
 
-inline BindObject::BindObject(const Statement &statement, const ostring& name) : _pStatement(statement), _name(name)
+inline BindObject::BindObject(const Statement &statement, const ostring& name) :  _name(name), _pStatement(statement)
 {
 }
 
@@ -3814,7 +3814,7 @@ inline void BindAdaptor<TNativeType, TObjectType>::SetInData()
     }
 
 	memcpy(_data, _object.data(), size * sizeof(TNativeType));
-	
+
 	_data[size] = 0;
 }
 

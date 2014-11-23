@@ -2692,7 +2692,7 @@ public:
 	* @brief
 	* Return the type of the given interval object
 	*
-	*/   
+	*/
 	IntervalType GetType() const;
 
 	/**
@@ -2835,7 +2835,7 @@ public:
 	*
 	*/
 	void SetMilliSeconds(int value);
-	
+
 	/**
 	* @brief
 	* Extract the date / second parts from the interval value
@@ -2845,13 +2845,13 @@ public:
 	* @param min  - Place holder for Minutes value
 	* @param sec  - Place holder for Seconds value
 	* @param fsec - Place holder for Milliseconds value
-	* 
+	*
 	* @warning
 	* this call is only permitted if the current interval type is  Interval::DaySecond
 	*
 	*/
 	void GetDaySecond(int &day, int &hour, int &min, int &sec, int &fsec) const;
-    
+
 	/**
 	* @brief
 	* Set the Day / Second parts
@@ -2878,9 +2878,9 @@ public:
 	* @warning
 	* this call is only permitted if the current interval type is  Interval::YearMonth
 	*
-	*/    
+	*/
 	void GetYearMonth(int &year, int &month) const;
-    
+
 	/**
 	* @brief
 	* Set the Year / Month parts
@@ -2914,7 +2914,7 @@ public:
 	*
 	*/
     void FromString(const ostring& data);
-    
+
 	/**
 	* @brief
 	* Convert the interval value to a string
@@ -2941,7 +2941,7 @@ public:
 	*
 	*/
 	operator ostring() const;
-	
+
 	/**
 	* @brief
 	* Return a new Interval holding the sum of the current Interval value and the given Interval value
@@ -3558,7 +3558,7 @@ public:
 	* Move the current position within the lob for read/write operations
 	*
 	* @param mode   - Seek mode
-	* @param offset - offset from current position 
+	* @param offset - offset from current position
 	*
 	* @note
 	* Positions start at 0.
@@ -3596,7 +3596,7 @@ public:
 	*
 	*/
     big_uint GetMaxSize() const;
-    
+
 	/**
 	* @brief
 	* Returns the current lob chunk size
@@ -3725,7 +3725,7 @@ public:
 
 	/**
 	* @brief
-	* return the lob object content 
+	* return the lob object content
 	*
 	*/
 	operator TLobObjectType() const;
@@ -3750,7 +3750,7 @@ public:
 	*
 	*/
 	bool operator != (const Lob& other) const;
-	
+
 private:
 
 	bool Equals(const Lob &other) const;
@@ -3822,7 +3822,7 @@ public:
 	*
 	*/
     File(const Connection &connection);
-    
+
 	/**
 	* @brief
 	* Parametrized constructor
@@ -4047,7 +4047,7 @@ public:
 	/**
 	* @brief
 	* Return the number of columns contained in the type
-	* 
+	*
 	* @note
 	* - For table and views, it is the number of columns
 	* - For types, it is the number of member properties
@@ -4155,7 +4155,7 @@ public:
 
 	/**
 	* @brief
-	* Creates a reference on the current object 
+	* Creates a reference on the current object
 	*
 	*/
     Reference GetReference() const;
@@ -4175,10 +4175,10 @@ public:
 	*
 	* @param name - Attribute name
 	*
-	* @note 
+	* @note
 	* Specialized version of this template function are provided for all supported types
 	*
-	*/  
+	*/
 	template<class TDataType>
     TDataType Get(const ostring& name) const;
 
@@ -4331,7 +4331,7 @@ class Collection : public HandleHolder<OCI_Coll *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-	template <class TDataType>
+	template <class TOtherDataType>
     friend class CollectionIterator;
 
 	template <class TOtherDataType>
@@ -4425,7 +4425,7 @@ public:
 	* @brief
 	* check if the element at the given index is null
 	*
-	* @param index - Index of the element 
+	* @param index - Index of the element
 	*
 	*  @note
 	* Collection Index start at 1
@@ -4458,8 +4458,8 @@ public:
 	* Delete() is only valid for nested tables (e.g. when collection type is Collection::NestedTable
 	*
 	* @return
-	* - if the input collection is a nested table, it returns true if the element  is successfully deleted 
-	* - if the input collection is a VARRAY, it always returns false 
+	* - if the input collection is a nested table, it returns true if the element  is successfully deleted
+	* - if the input collection is a VARRAY, it always returns false
 	*
 	*/
     bool Delete(unsigned int index) const;
@@ -4529,13 +4529,13 @@ public:
 	* Class used for handling transient collection value.
 	* it is used internally by:
 	* - the indexer operator in order to provide lvalue for write access
-	* - the Iterator class 
+	* - the Iterator class
 	* This class is  not meant to be publicly used !
 	*
 	*/
 	class Element
 	{
-		friend class Iterator;
+		friend class Collection<TDataType>::Iterator;
 
 	public:
 		Element(Collection &coll, unsigned int pos);
@@ -4545,7 +4545,7 @@ public:
 		void SetNull();
 
 	private:
-		typename Collection & _coll;
+		Collection & _coll;
 		unsigned int _pos;
 	};
 
@@ -4558,7 +4558,7 @@ public:
 	{
 
 	public:
-			
+
 		Iterator(Collection &collection, unsigned int pos);
 		Iterator(const Iterator& other);
 
@@ -4577,7 +4577,7 @@ public:
 
 		Element _elem;
 	};
-	
+
 	/**
 	* @brief
 	* common iterator declaration
@@ -4958,7 +4958,7 @@ public:
 	*
 	*/
     Statement(const Connection &connection);
- 
+
 	/**
 	* @brief
 	* Destructor
@@ -5243,7 +5243,7 @@ public:
 	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
 	* automatically from the arguments.
 	*
-	*/	
+	*/
     template <class TDataType>
 	void Bind(const ostring& name, TDataType &value, BindInfo::BindDirection mode);
 
@@ -5688,7 +5688,7 @@ public:
 	*/
     template<class TDataType>
     TDataType Get(unsigned int index) const;
-	
+
 	/**
 	* @brief
 	* Return the current value of the column from its name in the resultset

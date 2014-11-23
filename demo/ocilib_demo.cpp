@@ -169,7 +169,7 @@ test_t tab_test[] =
         {test_object_insert,     TRUE},
         {test_object_fetch,      TRUE},
 		{test_scrollable_cursor, TRUE},
-        {test_collection,        TRUE}, 
+        {test_collection,        TRUE},
         {test_ref,               TRUE},
         {test_directpath,        TRUE}
 };
@@ -1039,7 +1039,7 @@ void test_returning_array(void)
 
 void test_object_insert(void)
 {
-	unsigned char *constData = reinterpret_cast<unsigned char*>(static_cast<char *>("0123456789"));
+	unsigned char *constData = reinterpret_cast<unsigned char*>(const_cast< char *>("0123456789"));
 	Raw rawData(constData, constData + 10);
 
     std::ocout << OTEXT("\n>>>>> TEST OBJECT BINDING \n\n");
@@ -1229,7 +1229,7 @@ void test_collection(void)
     {
         std::ocout << OTEXT("Department ID #") << rs.Get<int>(1) << std::endl;
 
-		coll = rs.Get<Collection<ostring>>(2);
+		coll = rs.Get<Collection<ostring> >(2);
 
 		Collection<ostring>::iterator it1 = coll.begin();
 		Collection<ostring>::iterator it2 = coll.end();
@@ -1249,7 +1249,7 @@ void test_collection(void)
     {
         std::ocout << OTEXT("Department ID #") << rs.Get<int>(1) << std::endl;
 
-        coll = rs.Get<Collection<ostring>>(2);
+        coll = rs.Get<Collection<ostring> >(2);
         for(int index = 1, n = coll.GetSize(); index <= n; index++)
         {
             std::ocout << OTEXT("... Employee : ") << static_cast<ostring>(coll[index]) << std::endl;
