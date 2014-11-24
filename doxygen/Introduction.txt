@@ -19,10 +19,12 @@
 
  @section Version Version information
 
-Current version :  <b>4.0.0 (2014-07-14)</b>
+Current version :  <b>4.0.0 (2014-11-28)</b>
 
  @section Features Main features
 
+ - ISO C API
+ - ISO C ++ API
  - Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
  - Full 32/64 bits compatibility
  - Comptabile with all Oracle version >= 8i

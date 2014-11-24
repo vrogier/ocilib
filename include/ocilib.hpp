@@ -89,7 +89,6 @@ namespace ocilib
  * OCILIB++ allows simple and safe usage of Oracle client without the worries of memory leakages.
  * Using stack objects also makes error handling easier and program logic more robust
  *
- *
  * @par Exception model
  * Any failure occurring within an OCILIB C API call will throw a ocilib::Exception
  * For conformance reasons, this class derives from std::Exception
@@ -101,6 +100,47 @@ namespace ocilib
  *
  * @}
  */
+
+/**
+ * @defgroup OcilibCppApiMainDemoApplication OCILIB main C++ demo application code
+ * @{
+ *
+ * Main C++ demo  source
+ * @include ocilib_demo.cpp
+ *
+ * @}
+ */
+
+/**
+ * @defgroup OcilibCppApiDemoListApplication Some OCILIB C++ sample codes
+ * @{
+ *
+ * Here are some C++ samples code. More samples can be found under the demo folder of ocilib packages.
+ *
+ * @par Fetching data
+ * @include fetch.cpp
+ *
+ * @par Binding vectors
+ * @include array.cpp
+ *
+ * @par Using collections
+ * @include coll.cpp
+ *
+ * @par Using connection pools
+ * @include pool.cpp
+ *
+ * @par Oracle 12g Implicit resultsets
+ * @include implicit_resultset.cpp
+ *
+ * @par Using Oracle objects
+ * @include object.cpp
+ *
+ * @par Database notifications
+ * @include notification.cpp
+ *
+ * @}
+ */
+
 
 /**
 *
@@ -2508,7 +2548,7 @@ public:
 	* @brief
 	* Assign to the date object the value provided by the input date time string
 	*
-	* @param data   - String date time
+	* @param str    - String date time
 	* @param format - format of the date time provided in parameter 'data'
 	*
 	* @note
@@ -3201,9 +3241,6 @@ public:
 	* @brief
 	* Extract time parts
 	*
-	* @param year  - Place holder for year value
-	* @param month - Place holder for month value
-	* @param day   - Place holder for day value
 	* @param hour  - Place holder for hour value
 	* @param min   - Place holder for minute value
 	* @param sec   - Place holder for second value
@@ -3239,6 +3276,9 @@ public:
 	* @brief
 	* Extract date and time parts
 	*
+	* @param year     - Place holder for year value
+	* @param month    - Place holder for month value
+	* @param day      - Place holder for day value
 	* @param hour     - Place holder for hour value
 	* @param min      - Place holder for minute value
 	* @param sec      - Place holder for second value
@@ -3508,7 +3548,7 @@ public:
 	* @brief
 	* Read a portion of a lob
 	*
-	* @param size - Maximum number of characters or bytes to read
+	* @param length - Maximum number of characters or bytes to read
 	*
 	* @return
 	* The content read from the lob
@@ -3544,7 +3584,7 @@ public:
 	* @brief
 	* Append the given lob content to the lob
 	*
-	* @param content - source lob
+	* @param other - source lob
 	*
 	* @return
 	* Number of character or bytes written into the lob
@@ -3556,8 +3596,8 @@ public:
 	* @brief
 	* Move the current position within the lob for read/write operations
 	*
-	* @param mode   - Seek mode
-	* @param offset - offset from current position
+	* @param seekMode - Seek mode
+	* @param offset   - offset from current position
 	*
 	* @note
 	* Positions start at 0.
@@ -3854,8 +3894,8 @@ public:
 	* @brief
 	* Move the current position within the file for read/write operations
 	*
-	* @param mode   - Seek mode
-	* @param offset - offset from current position
+	* @param seekMode  - Seek mode
+	* @param offset    - offset from current position
 	*
 	* @note
 	* Positions start at 0.
@@ -4187,8 +4227,8 @@ public:
 	*
 	* @tparam TDataType - C++ object type to set
 	*
-	* @param name - Attribute name
-	* @param name - Attribute value
+	* @param name  - Attribute name
+	* @param value - Attribute value
 	*
 	* @note
 	* Specialized version of this template function are provided for all supported types
@@ -4386,8 +4426,6 @@ public:
 	* @brief
 	* Returns the total number of elements in the collection
 	*
-	* @param coll - Collection handle
-	*
 	*/
     unsigned int GetSize() const;
 
@@ -4477,7 +4515,7 @@ public:
 	* Set the collection element value at the given position
 	*
 	* @param index - Index of the element
-	* @param name  - Value to set
+	* @param value - Value to set
 	*
 	*/
 	void Set(unsigned int index, const TDataType &value);
@@ -4486,7 +4524,7 @@ public:
 	* @brief
 	* Append the given element value at the end of the collection
 	*
-	* @param elem  - Value to add
+	* @param data - Value to add
 	*
 	*
 	*/
@@ -4764,6 +4802,7 @@ public:
 	* @brief
 	* Mark as null or not null the current bind real value(s) used in SQL statements
 	*
+	* @param value - null status value
 	* @param index - Only valid for vectors : index of the element to check
 	*
 	* @note
@@ -5322,7 +5361,7 @@ public:
 	* @tparam TExtraInfo - C++ type if the extra information needed for the bind call
 	*
 	* @param name      - Bind name
-	* @param value     - Vector of host variables
+	* @param values    - Vector of host variables
 	* @param extraInfo - Extra information needed for the bind call
 	* @param mode      - bind direction mode
 	*
@@ -5437,8 +5476,6 @@ public:
 	* @brief
 	* Return the fetch mode of a SQL statement
 	*
-	* @param stmt - Statement handle
-	*
 	* @note
 	* Default value is Statment::FetchForward
 	*
@@ -5468,7 +5505,7 @@ public:
 	* @brief
 	* Set the number of rows fetched per internal server fetch call
 	*
-	* @param size - number of rows to fetch
+	* @param value - number of rows to fetch
 	*
 	*/
     void SetFetchSize(unsigned int value);
@@ -5487,7 +5524,7 @@ public:
 	* @brief
 	* Set the number of rows pre-fetched by OCI Client
 	*
-	* @param size - number of rows to pre-fetch
+	* @param value - number of rows to pre-fetch
 	*
 	* @note
 	* To turn off pre-fetching, set both attributes (size and memory) to 0.
@@ -6581,16 +6618,10 @@ public:
 	* @brief
 	* Return the ID of the message
 	*
-	* @param value - Input buffer
-	* @param size  - Input buffer maximum size
-	*
 	* @note
 	* The message ID is :
 	*  - generated when the message is enqueued in the queue
 	*  - retrieved when the message is dequeued from the queue
-	*
-	* @note
-	* On output, parameter 'size' holds the number of bytes copied into the given buffer
 	*
 	*/
 	Raw GetID() const;
@@ -6688,15 +6719,9 @@ public:
 	* @brief
 	* Return the original ID of the message in the last queue that generated this message
 	*
-	* @param value  - Input buffer
-	* @param size   - Input buffer maximum size
-	*
 	* @warning
 	* When a message is propagated from/to differents queues, this ID is the one generated for the
 	* message in the previous queue.
-	*
-	* @note
-	* On output, parameter 'size' holds the number of bytes copied into the given buffer
 	*
 	*/
 	Raw GetOriginalID() const;
@@ -6706,7 +6731,6 @@ public:
 	* Set the original ID of the message in the last queue that generated this message
 	*
 	* @param value - Message ID
-	* @param size  - Message ID size
 	*
 	* @warning
 	* When a message is propagated from/to differents queues, this ID is the one generated for the
@@ -6961,12 +6985,6 @@ public:
 	* Get the current associated message identifier used for enqueuing messages
 	* using a sequence deviation
 	*
-	* @param value    - buffer to receive the message identifier
-	* @param size     - pointer to buffer max length
-	*
-	* @warning
-	* When the function returns, parameter 'size' hold the number of bytes assigned to parameter 'value'
-	*
 	* @note
 	* see SetRelativeMsgID() for more details
 	*
@@ -6979,13 +6997,9 @@ public:
 	* Set a message identifier to use for enqueuing messages using a sequence deviation
 	*
 	* @param value    - message identifier
-	* @param size     - pointer to message identifier length
 	*
 	* @note
 	* This call is only valid if SetMode() has been called with the value Enqueue::Before
-	*
-	* @warning
-	* if the function cannot assign the message id, the content of the parameter 'size' is set to zero.
 	*
 	* @note
 	* see SetMode() for more details
@@ -7181,9 +7195,6 @@ public:
 	* @brief
 	* Get the message identifier of the message to be dequeued
 	*
-	* @param value   - message identitier
-	* @param size    - size of the message identitier
-	*
 	* @note
 	* see SetRelativeMsgID() for more details
 	*
@@ -7195,7 +7206,6 @@ public:
 	* Set the message identifier of the message to be dequeued
 	*
 	* @param value    - message identitier
-	* @param size     - size of the message identitier
 	*
 	*/
 	void SetRelativeMsgID(const Raw &value);
@@ -7817,7 +7827,6 @@ public:
      * @param rowIndex  - Row index
      * @param colIndex  - Column index
      * @param value     - Value to set
-     * @param size      - Value size
      * @param complete  - Is the entry content fully provided ?
      *
      * @note
