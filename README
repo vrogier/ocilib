@@ -12,7 +12,7 @@
    |                                                                      |
    +----------------------------------------------------------------------+
    |                                                                      |
-   |               Copyright (c) 2007-2013 Vincent ROGIER                |
+   |               Copyright (c) 2007-2014 Vincent ROGIER                |
    |                                                                      |
    +----------------------------------------------------------------------+
    |                                                                      |
@@ -143,7 +143,7 @@ Custom install options
      Specify how OCILIB is importing Oracle OCI libraries
      Possible values are : linkage|runtime
      Default is : linkage
-     in runtime import mode, Oracle libraries and environnement are 
+     in runtime import mode, Oracle libraries and environment are 
      not checked during compilation time.
 
 `--with-oracle-home'
