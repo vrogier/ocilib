@@ -5,7 +5,7 @@
 
  @section Intro Description
 
- OCILIB is an open source and portable Oracle C/C++ Driver that delivers really fast
+ OCILIB is an open source and portable Oracle C and C++ Driver that delivers really fast
  and reliable access to Oracle databases.
 
  The OCILIB library :
@@ -14,12 +14,12 @@
  - Runs on all Oracle platforms
  - Encapsulates OCI (Oracle Call Interface)
  - Is the most complete available OCI wrapper
- - C API written in pure ISO C code with native ISO C Unicode support
- - C++ API on based on STL paradigms
+ - C API written in standard C99 code with native Unicode support
+ - C++ API written in standard C++98 based on STL paradigms
 
  @section Version Version information
 
-Current version :  <b>4.0.0 (2014-11-28)</b>
+Current version :  <b>4.0.0 (2014-12-05§)</b>
 
  @section Features Main features
 

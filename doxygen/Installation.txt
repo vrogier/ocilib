@@ -34,11 +34,11 @@
  * @note
  *
  * On Windows, OCI_API MUST be set to __stdcall in order to use prebuilt libraries
- * tHe header file "ocilib.h" automatically sets OCI_API to  __stdcall with MS compilers
+ * The header file "ocilib.h" automatically sets OCI_API to  __stdcall with MS compilers
  *
  * @par Installing OCILIB on UNIX like systems
  *
- * OCILIB uses GNU tools for deployment and installation on UNIX like platforms
+ * OCILIB uses GNU autotools for deployment and installation on UNIX like platforms
  *
  * Uncompress the archive (ocilib-x.y.z-gnu.tar.gz)
  *  - $ cd ocilib-x.y.z
@@ -62,7 +62,7 @@
  * List of available options:
  *
  *  - --with-oracle-import=(linkage|runtime)
- *  - --with-oracle-charset=(ansi|wide) (old mode 'unicode' mapped to 'wide')
+ *  - --with-oracle-charset=(ansi|wide)
  *  - --with-oracle-home=(custom oracle regular client directory)
  *  - --with-oracle-headers-path=(oracle header files directory)
  *  - --with-oracle-lib-path=(oracle shared lib directory)
@@ -112,7 +112,7 @@
  * @par Installing and using OCILIB on Microsoft Windows
  *
  * 32bits and 64bits DLLs are provided for x86 architectures.
- * Visual .NET (2005/2008) solutions are also provided to recompile the Dlls and the demo.
+ * Microsoft Visual Studio solutions (2005, 2008, 2010 and 2013) are also provided to recompile the Dlls and the demo.
  *
  * - Uncompress the archive (ocilib-x.y.z-windows.zip)
  * - Copy ocilib/include/ocilib.h to a folder listed in the compiler headers folders
@@ -120,7 +120,7 @@
  * - Copy ocilib/lib[32|64]/ocilib[x].dll to a folder included in the PATH
  *   environment variable
  *
- * [x] is the compiled version of OCILIB ('a' -> ANSI, 'w' -> Unicode)
+ * [x] is the compiled version of OCILIB ('a' -> ANSI, 'w' -> Wide character, e.g. Unicode)
  *
  * To use OCILIB in a project :
  *

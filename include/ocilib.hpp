@@ -79,9 +79,12 @@ namespace ocilib
  *  - Based on design patterns (RAII, delegation, reference counting, smart pointers, proxies, singleton)
  *  - No user dynamic object allocation required
  *  - The only dependences are : STL and OCILIB C API
+ * 
+ * @par C++ language requirements
+ * The OCILIB C++ API requires only C++99 features. 
+ * There are no dependencies on recent C++11 norm or C++14 drafts.
  *
  * @par Reference counting model
- *
  * API usage is very simple, based on stack objects wrapping OCILIB handles using reference counting.
  * OCILIB handles are automatically allocated internally by C++ objects constructors or methods.
  * They are also automatically freed when the last C++ object referencing it goes out of scope.
@@ -93,7 +96,7 @@ namespace ocilib
  * Any failure occurring within an OCILIB C API call will throw a ocilib::Exception
  * For conformance reasons, this class derives from std::Exception
  *
- * @note
+ * @warning
  *  - OCILIB++ wraps the whole OCILIB C API.
  *  - Each C OCILIB object handle has its C++ class counter part.
  *  - The whole OCILIB C Documentation (concepts, use cases, features and functionalities) is still valid for OCILIB++
@@ -140,7 +143,6 @@ namespace ocilib
  *
  * @}
  */
-
 
 /**
 *
