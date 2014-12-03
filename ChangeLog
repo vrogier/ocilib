@@ -71,6 +71,7 @@
           - Important code refactoring
 
      - Miscellaneous fixes:
+	      - Fixed OCI_ObjectGetObject() that could cause segfault when an object had 2 members of object type on a row
           - Fixed OCI_IntervalAdd() and OCI_IntervalSubstract() that were not performing OCI calls due to wrong return code initialization
           - Fixed NULL lob handle input checking in OCI_LobWrite() and OCI_LobWrite2()
           - Fixed OCI_PoolGetConnection() prototype : added const qualifier on tag argument
