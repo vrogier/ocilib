@@ -164,6 +164,8 @@ size_t OCI_ObjectGetStructSize
                 case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_POINTER):
                 case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
 				case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_OBJECT):
+				case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_OBJECT):
+				case OCI_OFFSET_PAIR(OCI_OFT_DATE, OCI_OFT_OBJECT):
 				{
                     align = TRUE;
                     break;
