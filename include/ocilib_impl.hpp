@@ -2904,7 +2904,7 @@ inline void Object::Set<File>(const ostring& name, const File &value)
 template<>
 inline void Object::Set<Raw>(const ostring& name, const Raw &value)
 {
-	Check(OCI_ObjectSetRaw(*this, name.c_str(), static_cast<AnyPointer>(const_cast<unsigned char *>(value.data())), static_cast<unsigned int>(value.size())));
+	Check(OCI_ObjectSetRaw(*this, name.c_str(), static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
 }
 
 template<class TDataType>
@@ -3319,7 +3319,7 @@ inline void Collection<ostring>::SetElem(OCI_Elem *elem, const ostring& value)
 template<>
 inline void Collection<Raw>::SetElem(OCI_Elem *elem, const Raw &value)
 {
-	Check(OCI_ElemSetRaw(elem, static_cast<AnyPointer>(const_cast<unsigned char *>(value.data())), static_cast<unsigned int>(value.size())));
+	Check(OCI_ElemSetRaw(elem, static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
 }
 
 template<>
@@ -3601,7 +3601,7 @@ inline ostring BindObject::GetName() const
 	return _name;
 }
 
-Statement BindObject::GetStatement() const
+inline Statement BindObject::GetStatement() const
 {
 	return Statement(_pStatement);
 }
@@ -5487,7 +5487,7 @@ inline Raw Message::GetPayload<Raw>()
 template <>
 inline void Message::SetPayload<Raw>(const Raw &value)
 {
-	Check(OCI_MsgSetRaw(*this, static_cast<AnyPointer>(const_cast<unsigned char *>(value.data())), static_cast<unsigned int>(value.size())));
+	Check(OCI_MsgSetRaw(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
 }
 
 inline Date Message::GetEnqueueTime() const
@@ -5559,7 +5559,7 @@ inline Raw Message::GetOriginalID() const
 
 inline void Message::SetOriginalID(const Raw &value)
 {
-	Check(OCI_MsgSetOriginalID(*this, static_cast<AnyPointer>(const_cast<unsigned char *>(value.data())), static_cast<unsigned int>(value.size())));
+	Check(OCI_MsgSetOriginalID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
 }
 
 inline ostring Message::GetCorrelation() const
@@ -5654,7 +5654,7 @@ inline Raw Enqueue::GetRelativeMsgID() const
 
 inline void Enqueue::SetRelativeMsgID(const Raw &value)
 {
-	Check(OCI_EnqueueSetRelativeMsgID(*this, static_cast<AnyPointer>(const_cast<unsigned char *>(value.data())), static_cast<unsigned int>(value.size())));
+	Check(OCI_EnqueueSetRelativeMsgID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -5714,7 +5714,7 @@ inline Raw Dequeue::GetRelativeMsgID() const
 
 inline void Dequeue::SetRelativeMsgID(const Raw &value)
 {
-	Check(OCI_DequeueSetRelativeMsgID(*this, static_cast<AnyPointer>(const_cast<unsigned char *>(value.data())), static_cast<unsigned int>(value.size())));
+	Check(OCI_DequeueSetRelativeMsgID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
 }
 
 inline Dequeue::DequeueVisibility Dequeue::GetVisibility() const
@@ -5798,14 +5798,10 @@ inline void DirectPath::SetColumn(unsigned int colIndex, const ostring& name, un
     Check(OCI_DirPathSetColumn(*this, colIndex, name.c_str(), maxSize, format.c_str()));
 }
 
-inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex,  const ostring &value,  bool complete)
+template <class TDataType>
+inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex, const TDataType &value, bool complete)
 {
-	Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, static_cast<const AnyPointer>(const_cast<otext *>(value.c_str())), static_cast<unsigned int>(value.size()), complete));
-}
-
-inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex,  const Raw &value, bool complete )
-{
-	Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, static_cast<AnyPointer>(const_cast<unsigned char *>(value.data())), static_cast<unsigned int>(value.size()), complete));
+	Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, static_cast<const AnyPointer>(const_cast<typename TDataType::value_type *>(value.c_str())), static_cast<unsigned int>(value.size()), complete));
 }
 
 inline void DirectPath::Reset()

@@ -238,7 +238,7 @@ int omain(int argc, oarg* argv[])
 		con.Open(dbs, usr, pwd, Environment::SessionDefault);
 
         print_version();
-		drop_tables();
+
         create_tables();
 
         /* execute tests */

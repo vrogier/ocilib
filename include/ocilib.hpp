@@ -7795,7 +7795,9 @@ public:
      * @brief
      * Set the value of the given row/column array entry from the given string
      *
-     * @param rowIndex  - Row index
+	 * @tparam TDataType - type of data to set (only supported types are ostring and Raw)
+     *
+	 * @param rowIndex  - Row index
      * @param colIndex  - Column index
      * @param value     - Value to set
      * @param complete  - Is the entry content fully provided ?
@@ -7819,38 +7821,8 @@ public:
      * Setting entries content piece by piece may be supported in future releases
      *
      */
-    void SetEntry(unsigned int rowIndex, unsigned int colIndex,  const ostring& value,  bool complete = true);
-
-
-    /**
-     * @brief
-     * Set the value of the given row/column array entry from the giben buffer pointer
-     *
-     * @param rowIndex  - Row index
-     * @param colIndex  - Column index
-     * @param value     - Value to set
-     * @param complete  - Is the entry content fully provided ?
-     *
-     * @note
-     * Rows and columns indexes start at 1.
-     *
-     * @note
-     * Direct path support piece loading for LONGs and LOBs columns. When filling
-     * these columns, it's possible to provide input buffer piece by piece. In order
-     * to do so :
-     * - set the 'complete' parameter to false
-     * - Repeat calls to SetEntry() until the data is totally provided
-     * - The last call that set the last piece or an entry must specify the value
-     *   true for the 'complete' parameter
-     *
-     * @warning
-     * Current Direct Path OCILIB implementation DOES NOT support setting entry
-     * content piece by piece as mentionned above. It was planned in the original design
-     * but not supported yet. So, always set the complete parameter to true.
-     * Setting entries content piece by piece may be supported in future releases
-     *
-     */
-	void SetEntry(unsigned int rowIndex, unsigned int colIndex, const Raw &value, bool complete = true);
+	template <class TDataType>
+	void SetEntry(unsigned int rowIndex, unsigned int colIndex, const TDataType& value, bool complete = true);
 
     /**
      * @brief
