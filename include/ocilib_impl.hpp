@@ -275,49 +275,37 @@ inline unsigned int Flags<TEnum>::GetValues() const
 #define OCI_DEFINE_FLAG_OPERATORS(TEnum) \
 inline Flags<TEnum> operator | (TEnum a, TEnum b) { return Flags<TEnum>(a) | Flags<TEnum>(b); } \
 
-OCI_DEFINE_FLAG_OPERATORS(Environment::EnvironmentFlagsValues);
-OCI_DEFINE_FLAG_OPERATORS(Environment::SessionFlagsValues);
-OCI_DEFINE_FLAG_OPERATORS(Environment::StartFlagsValues);
-OCI_DEFINE_FLAG_OPERATORS(Environment::ShutdownFlagsValues);
-OCI_DEFINE_FLAG_OPERATORS(Transaction::TransactionFlagsValues);
-OCI_DEFINE_FLAG_OPERATORS(Column::PropertyFlagsValues);
-OCI_DEFINE_FLAG_OPERATORS(Subscription::ChangeTypesValues);
+OCI_DEFINE_FLAG_OPERATORS(Environment::EnvironmentFlagsValues)
+OCI_DEFINE_FLAG_OPERATORS(Environment::SessionFlagsValues)
+OCI_DEFINE_FLAG_OPERATORS(Environment::StartFlagsValues)
+OCI_DEFINE_FLAG_OPERATORS(Environment::ShutdownFlagsValues)
+OCI_DEFINE_FLAG_OPERATORS(Transaction::TransactionFlagsValues)
+OCI_DEFINE_FLAG_OPERATORS(Column::PropertyFlagsValues)
+OCI_DEFINE_FLAG_OPERATORS(Subscription::ChangeTypesValues)
 
 /* --------------------------------------------------------------------------------------------- *
  * ManagedBuffer
  * --------------------------------------------------------------------------------------------- */
 
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::ManagedBuffer()  : _buffer( NULL )
+inline ManagedBuffer<TBufferType>::ManagedBuffer() : _buffer(NULL), _size(0)
 {
 }
 
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::ManagedBuffer( TBufferType *buffer )  : _buffer( buffer )
+inline ManagedBuffer<TBufferType>::ManagedBuffer(TBufferType *buffer, size_t size) : _buffer(buffer), _size(size)
 {
 }
 
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::ManagedBuffer(size_t size)
+inline ManagedBuffer<TBufferType>::ManagedBuffer(size_t size) : _buffer(new TBufferType[size]), _size(size)
 {
-	_buffer = new TBufferType[size];
-
 	memset(_buffer, 0, sizeof(TBufferType) * size);
 }
-
 template< typename TBufferType>
 inline ManagedBuffer<TBufferType>::~ManagedBuffer()
 {
     delete [] _buffer;
-}
-
-template< typename TBufferType>
-inline ManagedBuffer<TBufferType> & ManagedBuffer<TBufferType>::operator=( TBufferType *buffer )
-{
-    delete [] _buffer;
-    _buffer = buffer;
-
-    return( *this );
 }
 
 template< typename TBufferType>
@@ -442,6 +430,13 @@ inline void HandleHolder<THandleType>::Release()
     _smartHandle = 0;
 }
 
+
+template <class TKey, class TValue>
+inline  ConcurrentPool<TKey, TValue>::ConcurrentPool() : _map(), _mutex(0)
+{
+
+}
+
 template <class TKey, class TValue>
 inline void ConcurrentPool<TKey, TValue>::Initialize(unsigned int envMode)
 {
@@ -516,7 +511,7 @@ inline void ConcurrentPool<TKey, TValue>::Unlock() const
 
 template <class THandleType>
 inline HandleHolder<THandleType>::SmartHandle::SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc func, Handle *parent)
-    : _handle(handle), _func(func), _parent(parent), _extraInfo(0)
+    : _holders(), _children(), _handle(handle), _func(func), _parent(parent), _extraInfo(0)
 {
     Acquire(holder);
 
@@ -638,7 +633,7 @@ inline void HandleHolder<THandleType>::SmartHandle::DetachFromParent()
  * Exception
  * --------------------------------------------------------------------------------------------- */
 
-inline Exception::Exception()
+inline Exception::Exception() : _what()
 {
 
 }
@@ -648,7 +643,7 @@ inline Exception::~Exception() throw ()
 
 }
 
-inline Exception::Exception(OCI_Error *err)
+inline Exception::Exception(OCI_Error *err) : _what()
 {
 	Acquire(err, 0, 0);
 
@@ -849,6 +844,11 @@ inline Environment::EnvironmentHandle & Environment::GetEnvironmentHandle()
     static EnvironmentHandle envHandle;
 
     return envHandle;
+}
+
+inline Environment::EnvironmentHandle::EnvironmentHandle() : Handles(), Callbacks(), Mode(0)
+{
+
 }
 
 inline void Environment::EnvironmentHandle::Initialize(AnyPointer handle, unsigned int envMode)
@@ -1571,14 +1571,32 @@ inline Date::operator ostring() const
     return ToString();
 }
 
-inline Date& Date::operator ++ (int)
+inline Date& Date::operator ++ ()
 {
     return *this += 1;
 }
 
-inline Date& Date::operator -- (int)
+inline Date Date::operator ++ (int)
 {
-    return *this -= 1;
+	Date result = Clone();
+
+    *this += 1;
+
+	return result;
+}
+
+inline Date& Date::operator -- ()
+{
+	return *this -= 1;
+}
+
+inline Date Date::operator -- (int)
+{
+   	Date result = Clone();
+
+     *this -= 1;
+
+    return result;
 }
 
 inline Date Date::operator + (int value)
@@ -2162,14 +2180,32 @@ inline Timestamp::operator ostring() const
     return ToString();
 }
 
-inline Timestamp& Timestamp::operator ++ (int)
+inline Timestamp& Timestamp::operator ++ ()
 {
 	return *this += 1;
 }
 
-inline Timestamp& Timestamp::operator -- (int)
+inline Timestamp Timestamp::operator ++ (int)
+{
+	Timestamp result = Clone();
+
+	*this += 1;
+
+	return result;
+}
+
+inline Timestamp& Timestamp::operator -- ()
 {
 	return *this -= 1;
+}
+
+inline Timestamp Timestamp::operator -- (int)
+{
+	Timestamp result = Clone();
+
+	*this -= 1;
+
+	return result;
 }
 
 inline Timestamp Timestamp::operator + (int value)
@@ -3194,6 +3230,8 @@ inline ostring Collection<ostring>::GetElem(OCI_Elem *elem, Handle *parent) cons
 template<>
 inline Raw Collection<Raw>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
+    ARG_NOT_USED(parent);
+
 	unsigned int size = Check(OCI_ElemGetRawSize(elem));
 
 	ManagedBuffer<unsigned char> buffer(size + 1);
@@ -3567,7 +3605,7 @@ typedef Long<Raw, LongBinary> Blong;
  * --------------------------------------------------------------------------------------------- */
 
 template<class TValueType>
-inline BindValue<TValueType>::BindValue()
+inline BindValue<TValueType>::BindValue() : _value(0)
 {
 
 }
@@ -3644,10 +3682,8 @@ inline void BindArray::SetOutData()
 
 template <class TObjectType, class TDataType>
 inline BindArray::BindArrayObject<TObjectType, TDataType>::BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize)
-	: _pStatement(statement), _name(name), _vector(vector), _data(0), _mode(mode), _elemSize(elemSize)
+	: _pStatement(statement), _name(name), _vector(vector), _data(0), _mode(mode), _elemCount(statement.GetBindArraySize()), _elemSize(elemSize)
 {
-	_elemCount = statement.GetBindArraySize();
-
     AllocData();
 }
 
@@ -3675,13 +3711,6 @@ template <class TObjectType, class TDataType>
 inline void BindArray::BindArrayObject<TObjectType, TDataType>::FreeData()
 {
     delete [] _data ;
-}
-
-template <class TObjectType, class TDataType>
-inline BindArray::BindArrayObject<TObjectType, TDataType> & BindArray::BindArrayObject<TObjectType, TDataType>::operator = (const BindArrayObject<TObjectType, TDataType> & other)
-{
-    _object = other._object;
-    return *this;
 }
 
 template <class TObjectType, class TDataType>
@@ -3828,10 +3857,9 @@ template <class TNativeType, class TObjectType>
 inline BindAdaptor<TNativeType, TObjectType>::BindAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size) :
      BindObject(statement, name),
      _object(object),
+	 _data(new TNativeType[_size]),
 	 _size(size)
 {
-	_data = new TNativeType[_size];
-
 	memset(_data, 0, _size * sizeof(TNativeType));
 }
 
@@ -3851,7 +3879,7 @@ inline BindAdaptor<TNativeType, TObjectType>::operator TNativeType *()  const
  * BindsHolder
  * --------------------------------------------------------------------------------------------- */
 
-inline BindsHolder::BindsHolder(const Statement &statement) : _pStatement(statement)
+inline BindsHolder::BindsHolder(const Statement &statement) : _bindObjects(), _pStatement(statement)
 {
 
 }
@@ -4106,6 +4134,8 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, TDataType
 template <typename TBindMethod, class TObjectType, class TDataType>
 inline void Statement::Bind (TBindMethod &method, const ostring& name, TObjectType& value, BindValue<TDataType> datatype, BindInfo::BindDirection mode)
 {
+    ARG_NOT_USED(datatype);
+
     Check(method(*this, name.c_str(), (TDataType) value));
     SetLastBindMode(mode);
 }
@@ -4113,10 +4143,12 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, TObjectTy
 template <typename TBindMethod, class TObjectType, class TDataType>
 inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode)
 {
-	BindArray * bnd = new BindArray(*this, name);
+    ARG_NOT_USED(datatype);
+
+ 	BindArray * bnd = new BindArray(*this, name);
     bnd->SetVector<TObjectType, TDataType>(values, mode, sizeof(TDataType));
 
-    if (method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), 0))
+    if (method(*this, name.c_str(), static_cast<TDataType *>(bnd->GetData<TObjectType, TDataType>()), 0))
     {
         BindsHolder *bindsHolder = GetBindsHolder(true);
         bindsHolder->AddBindObject(bnd);
@@ -4133,10 +4165,12 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
 template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
 inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode, TElemType type)
 {
+    ARG_NOT_USED(datatype);
+
 	BindArray * bnd = new BindArray(*this, name);
 	bnd->SetVector<TObjectType, TDataType>(values, mode, sizeof(TDataType));
 
-    if (method(*this, name.c_str(), (TDataType *) bnd->GetData<TObjectType, TDataType>(), type, 0))
+    if (method(*this, name.c_str(), static_cast<TDataType *>(bnd->GetData<TObjectType, TDataType>()), type, 0))
     {
         BindsHolder *bindsHolder = GetBindsHolder(true);
         bindsHolder->AddBindObject(bnd);

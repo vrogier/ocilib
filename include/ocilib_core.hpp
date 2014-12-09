@@ -129,19 +129,19 @@ public:
 
     typedef TEnum type;
 
-    Enum(); 
-    Enum(TEnum value); 
+    Enum();
+    Enum(TEnum value);
 
     TEnum GetValue();
- 
+
     operator TEnum ();
     operator unsigned int ();
 
 	bool operator == (const Enum& other) const;
-	bool operator != (const Enum& other) const;	
+	bool operator != (const Enum& other) const;
 
 	bool operator == (const TEnum& other) const;
-	bool operator != (const TEnum& other) const;	
+	bool operator != (const TEnum& other) const;
 
 private:
 
@@ -159,8 +159,8 @@ public:
 
     typedef TEnum type;
 
-    Flags(); 
-    Flags(TEnum flag); 
+    Flags();
+    Flags(TEnum flag);
 	Flags(const Flags& other);
     Flags operator~ () const;
 
@@ -186,11 +186,11 @@ public:
     unsigned int GetValues() const;
 
     bool IsSet(TEnum other) const;
- 
+
 private:
 
     Flags(unsigned int flags);
- 
+
     unsigned int _flags;
 };
 
@@ -200,10 +200,9 @@ class ManagedBuffer
 public:
     ManagedBuffer();
 	ManagedBuffer(size_t size);
-	ManagedBuffer(TBufferType *buffer);
-    ~ManagedBuffer();
-
-    ManagedBuffer<TBufferType> & operator= (TBufferType *buffer);
+	ManagedBuffer(TBufferType *buffer, size_t size);
+	
+	~ManagedBuffer();
 
     operator TBufferType* () const;
     operator const TBufferType* () const;
@@ -211,12 +210,15 @@ public:
 private:
 
     TBufferType* _buffer;
+	size_t _size;
 };
 
 template <class TKey, class TValue>
 class ConcurrentPool
 {
 public:
+
+    ConcurrentPool();
 
     void Initialize(unsigned int envMode);
     void Release();
@@ -284,7 +286,7 @@ protected:
     public:
 
 		SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc func, Handle *parent);
-        virtual ~SmartHandle();
+		virtual ~SmartHandle();
 
         void Acquire(HandleHolder *holder);
         void Release(HandleHolder *holder);
@@ -311,7 +313,6 @@ protected:
         HandleFreeFunc _func;
         Handle *_parent;
 		AnyPointer _extraInfo;
-
     };
 
 protected:
@@ -346,8 +347,8 @@ public:
 
 	Statement GetStatement() const;
 
-     virtual void SetInData()  = 0;
-	 virtual void SetOutData() = 0;
+    virtual void SetInData()  = 0;
+    virtual void SetOutData() = 0;
 
 private:
 
@@ -396,12 +397,10 @@ private:
         unsigned int _elemCount;
         unsigned int _elemSize;
 
-        BindArrayObject & operator=( const BindArrayObject & other);
-
     public:
 
 		BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize);
-        virtual ~BindArrayObject();
+		virtual ~BindArrayObject();
 		void SetInData();
 		void SetOutData();
 		ostring GetName();

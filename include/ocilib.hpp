@@ -79,9 +79,9 @@ namespace ocilib
  *  - Based on design patterns (RAII, delegation, reference counting, smart pointers, proxies, singleton)
  *  - No user dynamic object allocation required
  *  - The only dependences are : STL and OCILIB C API
- * 
+ *
  * @par C++ language requirements
- * The OCILIB C++ API requires only C++99 features. 
+ * The OCILIB C++ API requires only C++99 features.
  * There are no dependencies on recent C++11 norm or C++14 drafts.
  *
  * @par Reference counting model
@@ -1031,6 +1031,8 @@ private:
         HandlePool   Handles;
         CallbackPool Callbacks;
         unsigned int Mode;
+
+        EnvironmentHandle();
 
 		void Initialize(AnyPointer pEnv, unsigned int envMode);
         void Finalize();
@@ -2593,14 +2595,28 @@ public:
      * Increment the date by 1 day
      *
      */
-	Date& operator ++ (int);
+	Date& operator ++ ();
+
+    /**
+     * @brief
+     * Increment the date by 1 day
+     *
+     */
+	Date operator ++ (int);
 
     /**
      * @brief
      * Decrement the date by 1 day
      *
      */
-	Date& operator -- (int);
+	Date& operator -- ();
+
+    /**
+     * @brief
+     * Decrement the date by 1 day
+     *
+     */
+	Date operator -- (int);
 
     /**
      * @brief
@@ -3394,14 +3410,28 @@ public:
 	* Increment the timestamp by 1 day
 	*
 	*/
-	Timestamp& operator ++ (int);
+	Timestamp& operator ++ ();
+
+	/**
+	* @brief
+	* Increment the timestamp by 1 day
+	*
+	*/
+	Timestamp operator ++ (int);
 
 	/**
 	* @brief
 	* Decrement the Timestamp by 1 day
 	*
 	*/
-	Timestamp& operator -- (int);
+	Timestamp& operator -- ();
+
+	/**
+	* @brief
+	* Decrement the Timestamp by 1 day
+	*
+	*/
+	Timestamp operator -- (int);
 
 	/**
 	* @brief

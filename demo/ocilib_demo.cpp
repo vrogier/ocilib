@@ -180,7 +180,7 @@ test_t tab_test[] =
 
 static Connection con;
 
-ostring GetArg(oarg *arg)
+inline ostring GetArg(oarg *arg)
 {
 	ostring res;
 
