@@ -19,6 +19,7 @@
 					<Add option="-DOCI_CHARSET_ANSI" />
 					<Add option="-DOCI_IMPORT_RUNTIME" />
 					<Add option="-DOCI_API=__stdcall" />
+					<Add directory="..\..\include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -37,6 +38,7 @@
 					<Add option="-DOCI_CHARSET_WIDE" />
 					<Add option="-DOCI_IMPORT_RUNTIME" />
 					<Add option="-DOCI_API=__stdcall" />
+					<Add directory="..\..\include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />

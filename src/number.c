@@ -101,7 +101,7 @@ boolean OCI_NumberGet
                 OCINumberToReal(con->err, (OCINumber *) number, size, out_value)
             )
         }
-    }  
+    }
     else
     {
         uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
@@ -176,11 +176,11 @@ boolean OCI_NumberSet
                 OCINumberFromReal(con->err, in_value, size, (OCINumber *) number)
             )
         }
-    }  
+    }
     else
     {
         uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
-         
+
         OCI_CALL2
         (
             res, con,
@@ -219,15 +219,15 @@ boolean OCI_NumberFromString
     #if OCI_VERSION_COMPILE >= OCI_10_1
 
         if (OCILib.version_runtime >= OCI_10_1)
-        {   
+        {
             if (type & OCI_NUM_DOUBLE)
             {
-                res = (osscanf(in_value,  OCI_STRING_FORMAT_NUM_BIN, out_value) == 1);
+                res = (osscanf(in_value,  OCI_STRING_FORMAT_NUM_BIN, (double *) out_value) == 1);
             }
             else if (type & OCI_NUM_FLOAT)
             {
                 double tmp_value = 0.0;
-                
+
                 res = (osscanf(in_value, OCI_STRING_FORMAT_NUM_BIN, &tmp_value) == 1);
 
                 *((float *) out_value) = (float) tmp_value;
@@ -237,19 +237,19 @@ boolean OCI_NumberFromString
         }
 
     #endif
-    
+
     }
 
     /* use OCINumber conversion if not processed yet */
 
     if (!done)
-    {   
+    {
         dbtext *dbstr1  = NULL;
         dbtext *dbstr2  = NULL;
         int     dbsize1 = -1;
         int     dbsize2 = -1;
         OCINumber number;
-        
+
         if (!fmt)
         {
             fmt = OCI_GetDefaultFormatNumeric(con);
@@ -267,12 +267,12 @@ boolean OCI_NumberFromString
             OCINumberFromText(con->err, (oratext *) dbstr1, (ub4) dbsize1, (oratext *) dbstr2,
                                 (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
         )
- 
+
         OCI_StringReleaseOracleString(dbstr2);
         OCI_StringReleaseOracleString(dbstr1);
 
         res = res && OCI_NumberGet(con, (void *) &number, size, type, sqlcode, out_value);
-    }  
+    }
 
     return res;
 }
@@ -334,22 +334,22 @@ boolean OCI_NumberToString
         }
 
     #else
-    
+
         OCI_NOT_USED(sqlcode);
 
     #endif
-    
+
     }
 
     /* use OCINumber conversion if not processed yet */
 
     if (!done)
-    {   
+    {
         dbtext *dbstr1  = NULL;
         dbtext *dbstr2  = NULL;
         int     dbsize1 = out_value_size * (int) sizeof(otext);
         int     dbsize2 = -1;
-        
+
         if (!fmt)
         {
             fmt = OCI_GetDefaultFormatNumeric(con);
@@ -372,7 +372,7 @@ boolean OCI_NumberToString
         OCI_StringReleaseOracleString(dbstr1);
 
         out_value_size = (dbsize1 / (int) sizeof(dbtext));
-    }  
+    }
 
     /* do we need to suppress last '.' or ',' from integers */
 
