@@ -72,6 +72,8 @@ namespace ocilib
 /**
  * @defgroup OcilibCppApiOverview Overview
  * @{
+ *
+ * @par Introduction
  * OCILIB++ is a C++ API for Oracle built on top of the C OCILIB API:
  *  - Full C API ported to C++
  *  - Implemented as a small set of header files, no library compilation needed
@@ -81,20 +83,20 @@ namespace ocilib
  *  - The only dependences are : STL and OCILIB C API
  *
  * @par C++ language requirements
- * The OCILIB C++ API requires only C++99 features.
- * There are no dependencies on recent C++11 norm or C++14 drafts.
+ * - The OCILIB C++ API requires only C++03 features.
+ * - There are no dependencies on recent C++11 norm or C++14 draft.
  *
  * @par Reference counting model
- * API usage is very simple, based on stack objects wrapping OCILIB handles using reference counting.
- * OCILIB handles are automatically allocated internally by C++ objects constructors or methods.
- * They are also automatically freed when the last C++ object referencing it goes out of scope.
- * Dynamic memory allocation is not required at all.
- * OCILIB++ allows simple and safe usage of Oracle client without the worries of memory leakages.
- * Using stack objects also makes error handling easier and program logic more robust
+ * - API usage is very simple, based on stack objects wrapping OCILIB handles using reference counting.
+ * - OCILIB handles are automatically allocated internally by C++ objects constructors or methods.
+ * - They are also automatically freed when the last C++ object referencing it goes out of scope.
+ * - Dynamic memory allocation is not required at all.
+ * - OCILIB++ allows simple and safe usage of Oracle client without the worries of memory leakages.
+ * - Using stack objects also makes error handling easier and program logic more robust
  *
  * @par Exception model
- * Any failure occurring within an OCILIB C API call will throw a ocilib::Exception
- * For conformance reasons, this class derives from std::Exception
+ * - Any failure occurring within an OCILIB C API call will throw a ocilib::Exception
+ * - For conformance reasons, this class derives from std::Exception
  *
  * @warning
  *  - OCILIB++ wraps the whole OCILIB C API.
