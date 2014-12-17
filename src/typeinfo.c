@@ -186,6 +186,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
             typinf->name        = ostrdup(obj_name);
             typinf->schema      = ostrdup(obj_schema);
             typinf->struct_size = 0;
+			typinf->align       = 0;
 
             res = OCI_SUCCESSFUL(OCI_HandleAlloc(typinf->con->env,
                                                  (dvoid **) (void *) &dschp,

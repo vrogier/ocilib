@@ -1347,13 +1347,12 @@ boolean OCI_ColumnGetAttrInfo
     unsigned int   count,
     unsigned int   index,
     size_t        *p_size,
-    int           *p_type
+	size_t        *p_align
 )
 {
     if (index >= count)
     {
         *p_size = 0;
-        *p_type = 0;
 
         return FALSE;
     }
@@ -1366,49 +1365,45 @@ boolean OCI_ColumnGetAttrInfo
 
             if (type & OCI_NUM_SHORT)
             {
-                *p_type = OCI_OFT_SHORT;
                 *p_size = sizeof(short);
             }
             else if (type & OCI_NUM_INT)
             {
-                *p_type = OCI_OFT_INT;
                 *p_size = sizeof(int);
             }
             else if (type & OCI_NUM_BIGUINT)
             {
-                *p_type = OCI_OFT_BIGINT;
                 *p_size = sizeof(big_int);
             }
             else if (type & OCI_NUM_DOUBLE)
             {
-                *p_type = OCI_OFT_DOUBLE;
                 *p_size = sizeof(double);
             }
             else if (type & OCI_NUM_FLOAT)
             {
-                *p_type = OCI_OFT_FLOAT;
                 *p_size = sizeof(float);
             }
             else 
             {
                 /* default mapping to big_int */
 
-                *p_type = OCI_OFT_BIGINT;
-                *p_size = sizeof(big_int);
+				*p_size = sizeof(big_int);
             }
+
+			*p_align = *p_size;
+
             break;
         }
         case OCI_CDT_OBJECT:
         {
-            *p_size = OCI_ObjectGetUserStructSize(col->typinf);
-            *p_type = OCI_OFT_STRUCT;
+            OCI_ObjectGetUserStructSize(col->typinf, p_size, p_align);
             break;
         }
         default:
         {
-            *p_size = sizeof(void *);
-            *p_type = OCI_OFT_POINTER;
-            break;
+            *p_size  = sizeof(void *);
+			*p_align = *p_size;
+			break;
         }
     }
 

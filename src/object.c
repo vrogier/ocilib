@@ -116,94 +116,75 @@ ub2 OCI_ObjectGetIndOffset
  * OCI_ObjectGetStructSize
  * --------------------------------------------------------------------------------------------- */
 
-size_t OCI_ObjectGetStructSize
+void OCI_ObjectGetStructSize
 (
-    OCI_TypeInfo *typinf
+    OCI_TypeInfo *typinf,
+	size_t       *p_size,
+	size_t       *p_align
 )
 {
     size_t size = 0;
 
-    if (typinf->struct_size != 0)
-    {
-        size = typinf->struct_size;
-    }
-    else
+	if (typinf->struct_size == 0)
     {
         size_t size1 = 0;
         size_t size2 = 0;
-
-        int type1 = 0;
-        int type2 = 0;
-
-        boolean align = FALSE;
+		size_t align = 0;
+			
         ub2 i;
 
         for (i = 0; i < typinf->nb_cols; i++)
         {
-            align = FALSE;
-
-            if (i > 0)
+			if (i > 0)
             {
                 size1 = size2;
-                type1 = type2;
 
                 typinf->offsets[i] = (int) size;
             }
             else
             {
-                OCI_ObjectGetAttrInfo(typinf, i, &size1, &type1);
+				OCI_ObjectGetAttrInfo(typinf, i, &size1, &align);
 
                 typinf->offsets[i] = 0;
             }
 
-            OCI_ObjectGetAttrInfo(typinf, i+1, &size2, &type2);
+			OCI_ObjectGetAttrInfo(typinf, i + 1, &size2, &align);
 
-            switch (OCI_OFFSET_PAIR(type1, type2))
-            {
-                case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
-                case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_POINTER):
-                case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
-				case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_OBJECT):
-				case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_OBJECT):
-				case OCI_OFFSET_PAIR(OCI_OFT_DATE, OCI_OFT_OBJECT):
-				{
-                    align = TRUE;
-                    break;
-                }
-            }
+			if (align > typinf->align)
+			{
+				typinf->align = align;
+			}
 
             size += size1;
 
-            if (align)
-            {
-                size = ROUNDUP(size, OCI_DEF_ALIGN);
-            }
+			size = ROUNDUP(size, align);
         }
 
         typinf->struct_size = size + size2;
     }
 
-    return size;
+	*p_size  = typinf->struct_size;
+	*p_align = typinf->align;
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetUserStructSize
  * --------------------------------------------------------------------------------------------- */
 
-size_t OCI_ObjectGetUserStructSize
+void OCI_ObjectGetUserStructSize
 (
-    OCI_TypeInfo *typinf
+	OCI_TypeInfo *typinf,
+	size_t       *p_size,
+	size_t       *p_align
 )
 {
-    size_t size1 = 0;
-    size_t size2 = 0;
-
-    int type1 = 0;
-    int type2 = 0;
+    size_t size1  = 0;
+    size_t size2  = 0;
+	size_t align1 = 0;
+	size_t align2 = 0;
+	size_t align  = 0;
 
     ub2 i;
-
-    boolean align = FALSE;
 
     size_t size = 0;
 
@@ -211,33 +192,26 @@ size_t OCI_ObjectGetUserStructSize
     {
         align = FALSE;
 
-        OCI_ColumnGetAttrInfo(&typinf->cols[i],   typinf->nb_cols, i, &size1, &type1);
-        OCI_ColumnGetAttrInfo(&typinf->cols[i+1], typinf->nb_cols, i, &size2, &type2);
+        OCI_ColumnGetAttrInfo(&typinf->cols[i],   typinf->nb_cols, i, &size1, &align1);
+        OCI_ColumnGetAttrInfo(&typinf->cols[i+1], typinf->nb_cols, i, &size2, &align2);
 
-        switch (OCI_OFFSET_PAIR(type1, type2))
-        {
-            case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_POINTER):
-            case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_POINTER):
-            case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_POINTER):
-            case OCI_OFFSET_PAIR(OCI_OFT_NUMBER, OCI_OFT_STRUCT):
-            case OCI_OFFSET_PAIR(OCI_OFT_DATE,   OCI_OFT_STRUCT):
-            case OCI_OFFSET_PAIR(OCI_OFT_OBJECT, OCI_OFT_STRUCT): 
-            case OCI_OFFSET_PAIR(OCI_OFT_STRUCT, OCI_OFT_STRUCT): 
-            {
-                align = TRUE;
-                break;
-            }
-        }
+		if (align < align1)
+		{
+			align = align1;
+		}
+
+		if (align < align2)
+		{
+			align = align2;
+		}
 
         size += size1;
 
-        if (align)
-        {
-            size = ROUNDUP(size, OCI_DEF_ALIGN);
-        }
+		size = ROUNDUP(size, align2);
     }
 
-    return size;
+	*p_size  = size;
+	*p_align = align;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -249,13 +223,12 @@ boolean OCI_ObjectGetAttrInfo
     OCI_TypeInfo *typinf,
     int           index,
     size_t       *p_size,
-    int          *p_type
+	size_t       *p_align
 )
 {
     if (index >= typinf->nb_cols)
     {
         *p_size = 0;
-        *p_type = 0;
 
         return FALSE;
     }
@@ -268,38 +241,37 @@ boolean OCI_ObjectGetAttrInfo
 
             if (subtype & OCI_NUM_FLOAT)
             {
-                *p_size = sizeof(double);
-                *p_type = OCI_OFT_FLOAT;
+                *p_size  = sizeof(double);
+				*p_align = *p_size;
             }
             else if (subtype & OCI_NUM_DOUBLE)
             {
-                *p_size = sizeof(double);
-                *p_type = OCI_OFT_DOUBLE;
+                *p_size  = sizeof(double);
+				*p_align = *p_size;
             }
             else
             {
-                *p_size = sizeof(OCINumber);
-                *p_type = OCI_OFT_NUMBER;
+                *p_size  = sizeof(OCINumber);
+				*p_align = sizeof(ub1);
             }
             
             break;
         }
         case OCI_CDT_DATETIME:
         {
-            *p_size = sizeof(OCIDate);
-            *p_type = OCI_OFT_DATE;
+            *p_size  = sizeof(OCIDate);
+			*p_align = sizeof(sb2);
             break;
         }
         case OCI_CDT_OBJECT:
         {
-            *p_size = OCI_ObjectGetStructSize(typinf->cols[index].typinf);
-            *p_type = OCI_OFT_OBJECT;
+			OCI_ObjectGetStructSize(typinf->cols[index].typinf, p_size, p_align);
             break;
         }
         default:
         {
-            *p_size = sizeof(void *);
-            *p_type = OCI_OFT_POINTER;
+            *p_size  = sizeof(void *);
+			*p_align = *p_size;
             break;
         }
     }
@@ -553,10 +525,12 @@ void * OCI_ObjectGetAttr
 )
 {
     size_t offset = 0;
+	size_t size   = 0;
+	size_t align  = 0;
 
     if (obj->typinf->struct_size == 0)
     {
-        OCI_ObjectGetStructSize(obj->typinf);
+		OCI_ObjectGetStructSize(obj->typinf, &size, &align);
     }
 
     offset = (size_t) obj->typinf->offsets[index];

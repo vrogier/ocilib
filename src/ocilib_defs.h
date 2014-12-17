@@ -347,24 +347,6 @@
 #define OCI_OUPUT_LSIZE_10G             32767
 
 /* --------------------------------------------------------------------------------------------- *
- *  offset for alignment computation
- * --------------------------------------------------------------------------------------------- */
-
-#define OCI_OFT_POINTER                 1
-#define OCI_OFT_NUMBER                  2
-#define OCI_OFT_DATE                    4
-#define OCI_OFT_OBJECT                  8
-#define OCI_OFT_SHORT                   16
-#define OCI_OFT_INT                     32
-#define OCI_OFT_BIGINT                  64
-#define OCI_OFT_DOUBLE                  128
-#define OCI_OFT_FLOAT                   256
-#define OCI_OFT_TEXT                    512
-#define OCI_OFT_STRUCT                  1024
-
-#define OCI_OFFSET_PAIR(a, b)           (a + (b << 16))
-
-/* --------------------------------------------------------------------------------------------- *
  *  Internal integer types
  * --------------------------------------------------------------------------------------------- */
 

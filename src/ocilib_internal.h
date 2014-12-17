@@ -226,7 +226,7 @@ boolean OCI_ColumnGetAttrInfo
     unsigned int   count,
     unsigned int   index,
     size_t        *p_size,
-    int           *p_type
+	size_t        *p_align
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -919,17 +919,21 @@ boolean OCI_ObjectGetAttrInfo
     OCI_TypeInfo *typinf,
     int           index,
     size_t       *p_size,
-    int          *p_type
+	size_t       *p_align
 );
 
-size_t OCI_ObjectGetStructSize
+void OCI_ObjectGetStructSize
 (
-    OCI_TypeInfo *typinf
+    OCI_TypeInfo *typinf,
+	size_t       *p_size,
+	size_t       *p_align
 );
 
-size_t OCI_ObjectGetUserStructSize
+void OCI_ObjectGetUserStructSize
 (
-    OCI_TypeInfo *typinf
+    OCI_TypeInfo *typinf,
+	size_t       *p_size,
+	size_t       *p_align
 );
 
 ub2 OCI_ObjectGetIndOffset

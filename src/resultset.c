@@ -1448,8 +1448,8 @@ boolean OCI_API OCI_GetStruct
         size_t size   = 0;
         size_t size1  = 0;
         size_t size2  = 0;
-        int type1     = 0;
-        int type2     = 0; 
+		size_t align1 = 0;
+		size_t align2 = 0;
         ub4 i;
         
         for (i = 1; i <= rs->nb_defs; i++)
@@ -1459,12 +1459,12 @@ boolean OCI_API OCI_GetStruct
 
             boolean is_not_null = OCI_DefineIsDataNotNull(&rs->defs[i-1]);
 
-            OCI_ColumnGetAttrInfo(col1, rs->nb_defs, i-1, &size1, &type1);
-            OCI_ColumnGetAttrInfo(col2, rs->nb_defs, i  , &size2, &type2);
+            OCI_ColumnGetAttrInfo(col1, rs->nb_defs, i-1, &size1, &align1);
+            OCI_ColumnGetAttrInfo(col2, rs->nb_defs, i  , &size2, &align2);
 
-            if ((size2 > 0)  && ((size + size1) % size2))
+            if (size2 > 0)
             {
-                size1 = ROUNDUP(size1, size2);
+				size1 = ROUNDUP(size1, align2);
             }
 
             memset(ptr, 0, size1);
