@@ -336,33 +336,33 @@ boolean OCI_ColumnDescribe
         if (res)
         {
             otext schema_name[OCI_SIZE_OBJ_NAME + 1] = OTEXT("");
-			otext type_name[OCI_SIZE_OBJ_NAME  + 1] = OTEXT("");
-			otext full_name[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
+            otext type_name[OCI_SIZE_OBJ_NAME  + 1] = OTEXT("");
+            otext full_name[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
-			/* Retrieve correct schema name */
+            /* Retrieve correct schema name */
 
             if (dbstr_schema && (dbsize_schema > 0))
             {
-				OCI_StringOracleToNative(dbstr_schema, schema_name, dbcharcount(dbsize_schema));
+                OCI_StringOracleToNative(dbstr_schema, schema_name, dbcharcount(dbsize_schema));
 
-				if (ostrcasecmp(dbstr_schema, OTEXT("PUBLIC")) == 0)
-				{
-					schema_name[0] = 0;
-				}
+                if (ostrcasecmp(dbstr_schema, OTEXT("PUBLIC")) == 0)
+                {
+                    schema_name[0] = 0;
+                }
             }
 
-			/* Retrieve correct type name */
+            /* Retrieve correct type name */
 
-			if (dbstr_name && (dbsize_name > 0))
-			{
-				OCI_StringOracleToNative(dbstr_name, type_name, dbcharcount(dbsize_name));
-			}
+            if (dbstr_name && (dbsize_name > 0))
+            {
+                OCI_StringOracleToNative(dbstr_name, type_name, dbcharcount(dbsize_name));
+            }
 
-			/* Format full type name respecting case sensitivity if needed in order to not fail type info retrieval.*/
+            /* Format full type name respecting case sensitivity if needed in order to not fail type info retrieval.*/
 
-			OCI_StringGetFullTypeName(schema_name, type_name, NULL, full_name, (sizeof(full_name) / sizeof(otext)) - 1);
+            OCI_StringGetFullTypeName(schema_name, type_name, NULL, full_name, (sizeof(full_name) / sizeof(otext)) - 1);
 
-			col->typinf = OCI_TypeInfoGet(con, full_name, OCI_TIF_TYPE);
+            col->typinf = OCI_TypeInfoGet(con, full_name, OCI_TIF_TYPE);
 
             res = (col->typinf != NULL);
         }
@@ -1347,7 +1347,7 @@ boolean OCI_ColumnGetAttrInfo
     unsigned int   count,
     unsigned int   index,
     size_t        *p_size,
-	size_t        *p_align
+    size_t        *p_align
 )
 {
     if (index >= count)
@@ -1387,10 +1387,10 @@ boolean OCI_ColumnGetAttrInfo
             {
                 /* default mapping to big_int */
 
-				*p_size = sizeof(big_int);
+                *p_size = sizeof(big_int);
             }
 
-			*p_align = *p_size;
+            *p_align = *p_size;
 
             break;
         }
@@ -1402,8 +1402,8 @@ boolean OCI_ColumnGetAttrInfo
         default:
         {
             *p_size  = sizeof(void *);
-			*p_align = *p_size;
-			break;
+            *p_align = *p_size;
+            break;
         }
     }
 

@@ -730,7 +730,7 @@ public:
 	* Possible values are Environment::StartModeValues
 	*
 	*/
-	typedef Enum<StartModeValues> StartMode;
+	typedef Flags<StartModeValues> StartMode;
 
 	/**
 	* @brief
@@ -780,7 +780,7 @@ public:
 	* Possible values are Environment::ShutdownModeValues
 	*
 	*/
-	typedef Enum<ShutdownModeValues> ShutdownMode;
+	typedef Flags<ShutdownModeValues> ShutdownMode;
 
 	/**
 	* @brief
@@ -1502,7 +1502,7 @@ public:
 	* Possible values are Connection::FailoverRequestValues
 	*
 	*/
-	typedef Enum<FailoverRequestValues> FailoverRequest;
+    typedef Enum<FailoverRequestValues> FailoverRequest;
 
 	/**
 	* @brief
@@ -7124,7 +7124,7 @@ public:
 		/** Retrieves the next message which is available */
         NextMessage = OCI_ADN_NEXT_MSG,
 		/** Skips the remainder of the current transaction  group (if any)
-		    and retrieves the first message of the next transactiong group.*/
+		    and retrieves the first message of the next transaction group.*/
         NextTransaction = OCI_ADN_NEXT_TRANSACTION,
     };
 
@@ -7767,7 +7767,7 @@ public:
         ResultError = OCI_DPR_ERROR,
         /** The internal stream is full*/
         ResultFull = OCI_DPR_FULL ,
-        /** A ccolumn has not been fully filled yet */
+        /** A column has not been fully filled yet */
         ResultPartial = OCI_DPR_PARTIAL,
         /** No data was found to convert/load */
         ResultEmpty = OCI_DPR_EMPTY

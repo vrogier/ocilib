@@ -35,6 +35,12 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int TimestampTypeValues[] = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
@@ -87,28 +93,13 @@ OCI_Timestamp * OCI_TimestampInit
         /* allocate buffer if needed */
 
         if (!tmsp->handle || (OCI_OBJECT_ALLOCATED_ARRAY == tmsp->hstate))
-        {
-            ub4 htype = OCI_UNKNOWN;
-
-            if (OCI_TIMESTAMP == tmsp->type)
-            {
-                htype = OCI_DTYPE_TIMESTAMP;
-            }
-            else if (OCI_TIMESTAMP_TZ == tmsp->type)
-            {
-                htype = OCI_DTYPE_TIMESTAMP_TZ;
-            }
-            else if (OCI_TIMESTAMP_LTZ == tmsp->type)
-            {
-                htype = OCI_DTYPE_TIMESTAMP_LTZ;
-            }
-
+        {          
             if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
             {
                 res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid  *) tmsp->env,
                                                          (dvoid **) (void *) &tmsp->handle,
-                                                         (ub4     ) htype, (size_t) 0,
-                                                         (dvoid **) NULL));
+                                                         (ub4)OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type),
+                                                         (size_t) 0, (dvoid **) NULL));
                 tmsp->hstate = OCI_OBJECT_ALLOCATED;
             }
         }
@@ -163,6 +154,8 @@ OCI_Timestamp * OCI_API OCI_TimestampCreate
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, TimestampTypeValues, OTEXT("Timestamp type"), NULL);
+
     tmsp = OCI_TimestampInit(con, &tmsp, NULL, type);
 
 #else
@@ -194,23 +187,8 @@ boolean OCI_API OCI_TimestampFree
     OCI_CHECK_OBJECT_FETCHED(tmsp, FALSE);
 
     if (OCI_OBJECT_ALLOCATED == tmsp->hstate)
-    {
-        ub4 htype = OCI_UNKNOWN;
-
-        if (OCI_TIMESTAMP == tmsp->type)
-        {
-            htype = OCI_DTYPE_TIMESTAMP;
-        }
-        else if (OCI_TIMESTAMP_TZ == tmsp->type)
-        {
-            htype = OCI_DTYPE_TIMESTAMP_TZ;
-        }
-        else if (OCI_TIMESTAMP_LTZ == tmsp->type)
-        {
-            htype = OCI_DTYPE_TIMESTAMP_LTZ;
-        }
-
-        OCI_DescriptorFree((dvoid *) tmsp->handle, htype);
+    {      
+        OCI_DescriptorFree((dvoid *)tmsp->handle, OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, tmsp->type));
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
@@ -238,27 +216,16 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
 {
     OCI_Array       *arr   = NULL;
     OCI_Timestamp **tmsps  = NULL;
-    unsigned int    htype  = OCI_UNKNOWN;
 
     OCI_CHECK_TIMESTAMP_ENABLED(con, NULL);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCI_TIMESTAMP == type)
-    {
-        htype = OCI_DTYPE_TIMESTAMP;
-    }
-    else if (OCI_TIMESTAMP_TZ == type)
-    {
-        htype = OCI_DTYPE_TIMESTAMP_TZ;
-    }
-    else if (OCI_TIMESTAMP_LTZ == type)
-    {
-        htype = OCI_DTYPE_TIMESTAMP_LTZ;
-    }
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, TimestampTypeValues, OTEXT("Timestamp type"), NULL);
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type, sizeof(OCIDateTime *), 
-                          sizeof(OCI_Timestamp), htype, NULL);
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type, 
+                          sizeof(OCIDateTime *), sizeof(OCI_Timestamp),
+                          OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type), NULL);
 
     if (arr)
     {
@@ -270,7 +237,6 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
     OCI_NOT_USED(arr);
     OCI_NOT_USED(type);
     OCI_NOT_USED(nbelem);
-    OCI_NOT_USED(htype);
 
 #endif
 
@@ -834,7 +800,7 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset
 )
 {
     boolean res = TRUE;
-	sb1 sb_hour = 0, sb_min = 0;
+    sb1 sb_hour = 0, sb_min = 0;
 
     OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, FALSE);
     OCI_CHECK_PTR(OCI_IPC_INT, hour, FALSE);
@@ -852,8 +818,8 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset
                                      tmsp->handle, &sb_hour, &sb_min)
     )
 
-	*hour = sb_hour;
-	*min  = sb_min;
+    *hour = sb_hour;
+    *min  = sb_min;
 
 #else
 

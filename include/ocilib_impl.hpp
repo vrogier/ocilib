@@ -759,14 +759,14 @@ inline void Environment::StartDatabase(const ostring& db, const ostring& user, c
                                        Environment::StartMode startMode, Environment::SessionFlags sessionFlags, const ostring& spfile)
 {
     Check(OCI_DatabaseStartup(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues(),
-                              startMode, startFlags.GetValues(), spfile.c_str() ));
+                              startMode.GetValues(), startFlags.GetValues(), spfile.c_str() ));
 }
 
 inline void Environment::ShutdownDatabase(const ostring& db, const ostring& user, const ostring &pwd, Environment::ShutdownFlags shutdownFlags,
                                        Environment::ShutdownMode shutdownMode, Environment::SessionFlags sessionFlags)
 {
    Check(OCI_DatabaseShutdown(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues(),
-                              shutdownMode,  shutdownFlags.GetValues() ));
+                              shutdownMode.GetValues(),  shutdownFlags.GetValues() ));
 }
 
 inline void Environment::ChangeUserPassword(const ostring& db, const ostring& user, const ostring& pwd, const ostring& newPwd)

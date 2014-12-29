@@ -35,6 +35,14 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
+static unsigned int OpenModeValues[] = { OCI_LOB_READONLY, OCI_LOB_READWRITE };
+static unsigned int LobTypeValues[]  = { OCI_CLOB, OCI_NCLOB, OCI_BLOB };
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
@@ -161,6 +169,8 @@ OCI_Lob * OCI_API OCI_LobCreate
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, LobTypeValues, OTEXT("Lob type"), NULL);
+
     lob = OCI_LobInit(con, &lob, NULL, type);
 
     OCI_RESULT(lob != NULL);
@@ -222,6 +232,8 @@ OCI_Lob ** OCI_API OCI_LobArrayCreate
     OCI_Array *arr = NULL;
     OCI_Lob **lobs = NULL;
 
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, LobTypeValues, OTEXT("Lob type"), NULL);
+
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_LOB, type, sizeof(OCILobLocator *),
                           sizeof(OCI_Lob), OCI_DTYPE_LOB, NULL);
 
@@ -276,6 +288,8 @@ boolean OCI_API OCI_LobSeek
     big_uint size = 0;
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, FALSE);
+
+    OCI_CHECK_ENUM_VALUE(lob->con, NULL, mode, SeekModeValues, OTEXT("Seek Mode"), FALSE);
 
     size = OCI_LobGetLength(lob);
 
@@ -440,7 +454,7 @@ boolean OCI_API OCI_LobRead2
 
     if (OCI_BLOB != lob->type)
     {
-		ub4 ora_byte_count = (ub4) *byte_count;
+        ub4 ora_byte_count = (ub4) *byte_count;
 
         if (!OCILib.use_lob_ub8 && !OCILib.nls_utf8)
         {
@@ -473,7 +487,7 @@ boolean OCI_API OCI_LobRead2
             if (!OCILib.nls_utf8 && OCILib.use_wide_char_conv)
             {
                 OCI_StringUTF16ToUTF32(buffer, buffer, (int) (*char_count));
-				(*byte_count) = (ub4) (*char_count) * (ub4) sizeof(otext);
+                (*byte_count) = (ub4) (*char_count) * (ub4) sizeof(otext);
             }
         }
     }
@@ -639,8 +653,8 @@ boolean OCI_API OCI_LobWrite2
 
         if ((OCI_CLOB == lob->type) && !OCILib.nls_utf8)
         {
- 		    (*byte_count) *= (ub4) sizeof(otext);
-	    }
+             (*byte_count) *= (ub4) sizeof(otext);
+        }
     }
 
     if (res)
@@ -1110,8 +1124,8 @@ boolean OCI_API OCI_LobAppend2
 
         if ((OCI_CLOB == lob->type) && !OCILib.nls_utf8)
         {
- 		    (*byte_count) *= (ub4) sizeof(otext);
-	    }
+             (*byte_count) *= (ub4) sizeof(otext);
+        }
     }
 
     if (res)
@@ -1247,6 +1261,8 @@ boolean OCI_API OCI_LobOpen
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, FALSE);
+
+    OCI_CHECK_ENUM_VALUE(lob->con, NULL, mode, OpenModeValues, OTEXT("Open mode"), FALSE);
 
     OCI_CALL2
     (
@@ -1454,12 +1470,12 @@ boolean OCI_API OCI_LobEnableBuffering
 
 OCI_Connection * OCI_API OCI_LobGetConnection
 (
-	OCI_Lob *lob
+    OCI_Lob *lob
 )
 {
-	OCI_CHECK_PTR(OCI_IPC_LOB, lob, NULL);
+    OCI_CHECK_PTR(OCI_IPC_LOB, lob, NULL);
 
-	OCI_RESULT(TRUE);
+    OCI_RESULT(TRUE);
 
-	return lob->con;
+    return lob->con;
 }

@@ -1133,9 +1133,10 @@ typedef unsigned int big_uint;
 #define OCI_ERR_CREATE_OCI_ENVIRONMENT      23
 #define OCI_ERR_REBIND_BAD_DATATYPE         24
 #define OCI_ERR_TYPEINFO_DATATYPE           25
-#define OCI_ERR_ITEM_NOT_FOUND				26
+#define OCI_ERR_ITEM_NOT_FOUND              26
+#define OCI_ERR_ARG_INVALID_VALUE           27
 
-#define OCI_ERR_COUNT                       27
+#define OCI_ERR_COUNT                       28
 
 /* binding */
 
@@ -5180,8 +5181,8 @@ OCI_EXPORT OCI_Bind * OCI_API OCI_GetBind2
 
 OCI_EXPORT unsigned int OCI_API OCI_GetBindIndex
 (
-	OCI_Statement *stmt,
-	const otext   *name
+    OCI_Statement *stmt,
+    const otext   *name
 );
 
 /**
@@ -8245,7 +8246,7 @@ OCI_EXPORT unsigned int OCI_API  OCI_ElemGetRaw
 
 OCI_EXPORT unsigned int OCI_API OCI_ElemGetRawSize
 (
-	OCI_Elem    *elem
+    OCI_Elem    *elem
 );
 
 /**
@@ -10278,7 +10279,7 @@ OCI_EXPORT boolean OCI_API OCI_LobEnableBuffering
 
 OCI_EXPORT OCI_Connection * OCI_API OCI_LobGetConnection
 (
-	OCI_Lob *lob
+    OCI_Lob *lob
 );
 
 /**
@@ -10669,7 +10670,7 @@ OCI_EXPORT boolean OCI_API OCI_FileAssign
 
 OCI_EXPORT OCI_Connection * OCI_API OCI_FileGetConnection
 (
-	OCI_File *file
+    OCI_File *file
 );
 
 /**
@@ -12696,8 +12697,8 @@ OCI_EXPORT int OCI_API OCI_ObjectGetRaw
 
 OCI_EXPORT unsigned int OCI_API OCI_ObjectGetRawSize
 (
-	OCI_Object  *obj,
-	const otext *attr
+    OCI_Object  *obj,
+    const otext *attr
 );
 
 /**
@@ -15381,7 +15382,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgFree
  * OCI_MsgReset() clears the message payload and set it to NULL
  * For messages handling objects payloads, OCI_MsgSetObject() must be called again to assign a
  * payload.
- *	
+ *    
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -18228,7 +18229,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 
 #define OCI_GetCharsetMetaData      OCI_GetCharset
 #define OCI_GetCharsetUserData      OCI_GetCharset
-#define OCI_SIZE_TRACE_INF0  		OCI_SIZE_TRACE_INFO
+#define OCI_SIZE_TRACE_INF0         OCI_SIZE_TRACE_INFO
 
 #define MT(x)    OTEXT(x)
 #define mtext    otext

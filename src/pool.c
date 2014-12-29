@@ -35,6 +35,12 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int PoolTypeValues[] = { OCI_POOL_CONNECTION, OCI_POOL_SESSION };
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
@@ -150,6 +156,8 @@ OCI_Pool * OCI_API OCI_PoolCreate
     /* let's be sure OCI_Initialize() has been called */
 
     OCI_CHECK_INITIALIZED(NULL);
+
+    OCI_CHECK_ENUM_VALUE(NULL, NULL, type, PoolTypeValues, OTEXT("Pool Type"), NULL);
 
     /* make sure that we do not have a XA session flag */
     
@@ -419,7 +427,7 @@ boolean OCI_API OCI_PoolFree
 OCI_Connection * OCI_API OCI_PoolGetConnection
 (
     OCI_Pool    *pool,
-    const otext	*tag
+    const otext *tag
 )
 {
     OCI_Connection *con = NULL;

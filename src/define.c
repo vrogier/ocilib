@@ -111,13 +111,13 @@ int OCI_GetDefineIndex
             break;
         }
 
-		he = he->next;
+        he = he->next;
     }
 
-	if (index < 0)
-	{
-		OCI_ExceptionItemNotFound(rs->stmt->con, rs->stmt, name, OCI_IPC_COLUMN);
-	}
+    if (index < 0)
+    {
+        OCI_ExceptionItemNotFound(rs->stmt->con, rs->stmt, name, OCI_IPC_COLUMN);
+    }
 
     return index;
 }

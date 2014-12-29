@@ -35,6 +35,12 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int ConversionModeValues[] = { OCI_DCM_DEFAULT, OCI_DCM_FORCE };
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
@@ -1538,6 +1544,8 @@ boolean OCI_API OCI_DirPathSetConvertMode
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, FALSE);
+
+    OCI_CHECK_ENUM_VALUE(dp->con, NULL, mode, ConversionModeValues, OTEXT("Conversion mode"), FALSE);
 
     dp->cvt_mode = (ub2) mode;
 

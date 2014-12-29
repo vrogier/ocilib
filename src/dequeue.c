@@ -35,6 +35,14 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int NavigationModeValues[] = { OCI_ADN_FIRST_MSG, OCI_ADN_NEXT_MSG, OCI_ADN_NEXT_TRANSACTION };
+static unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
+static unsigned int DequeueModeValues[]    = { OCI_ADM_BROWSE, OCI_ADM_LOCKED, OCI_ADM_REMOVE, OCI_ADM_REMOVE_NODATA };
+
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
  * ********************************************************************************************* */
 
@@ -544,6 +552,8 @@ boolean OCI_API OCI_DequeueSetVisibility
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
 
+    OCI_CHECK_ENUM_VALUE(NULL, NULL, visibility, VisibilityModeValues, OTEXT("Visibility Mode"), FALSE);
+
     OCI_CALL2
     (
         res, dequeue->typinf->con,
@@ -607,6 +617,8 @@ boolean OCI_API OCI_DequeueSetMode
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
 
+    OCI_CHECK_ENUM_VALUE(NULL, NULL, mode, DequeueModeValues, OTEXT("Dequeue Mode"), FALSE);
+
     OCI_CALL2
     (
         res, dequeue->typinf->con,
@@ -669,6 +681,8 @@ boolean OCI_API OCI_DequeueSetNavigation
     ub4 value   = (ub4) position;
 
     OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+
+    OCI_CHECK_ENUM_VALUE(NULL, NULL, position, NavigationModeValues, OTEXT("Navigation Mode"), FALSE);
 
     OCI_CALL2
     (
@@ -903,7 +917,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
     {
         /* for AQ subscription, the name should be "[shema.]queue[:consumer]" */
 
-		otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
+        otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
         otext *str  = NULL;
         size_t size = sizeof(buffer)/sizeof(otext);

@@ -35,6 +35,20 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int TimestampTypeValues[]  = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
+static unsigned int IntervalTypeValues[]   = { OCI_INTERVAL_YM, OCI_INTERVAL_DS };
+static unsigned int LobTypeValues[]        = { OCI_CLOB, OCI_NCLOB, OCI_BLOB };
+static unsigned int FileTypeValues[]       = { OCI_CFILE, OCI_BFILE };
+
+static unsigned int FetchModeValues[]      = { OCI_SFM_DEFAULT, OCI_SFM_SCROLLABLE };
+static unsigned int BindModeValues[]       = { OCI_BIND_BY_POS, OCI_BIND_BY_NAME };
+static unsigned int BindAllocationValues[] = { OCI_BAM_EXTERNAL, OCI_BAM_INTERNAL };
+static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLICIT };
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
@@ -364,7 +378,7 @@ boolean OCI_BindReset
         if ((bnd->direction & OCI_BDM_OUT) && (bnd->input) && (bnd->buffer.data))
         {
             /* only reset bind indicators if bind was not a PL/SQL bind
-               that can have oupout values
+               that can have output values
             */
 
             if ((OCI_CST_BEGIN != stmt->type) && (OCI_CST_DECLARE != stmt->type))
@@ -401,12 +415,19 @@ boolean OCI_BindReset
                                        (void *) bnd->buffer.data, sizeof(OCIDate));
                             }
                         }
-
-                        /* update object indicator with bind object indicator
-                         *pointer */
-
-                        if (OCI_CDT_OBJECT == bnd->type)
+                        else if (OCI_CDT_TEXT == bnd->type)
                         {
+                            if (bnd->input && OCILib.use_wide_char_conv)
+                            {
+                                /* need conversion if bind buffer was allocated */
+
+                                OCI_StringUTF16ToUTF32(bnd->buffer.data, bnd->input, (bnd->size / sizeof(dbtext)) - 1);
+                            }
+                        }  
+                        else if (OCI_CDT_OBJECT == bnd->type)
+                        {
+                            /* update object indicator with bind object indicator pointer */
+                            
                             if (bnd->input)
                             {
                                 ((OCI_Object *) bnd->input)->tab_ind = (sb2*) bnd->buffer.obj_inds[0];
@@ -447,38 +468,30 @@ boolean OCI_BindReset
                                            sizeof(OCIDate));
                                 }
                             }
-
-                            /* update bind object indicator pointer with object
-                             *indicator */
-
-                            if (OCI_CDT_OBJECT == bnd->type)
+                            else if (OCI_CDT_TEXT == bnd->type)
                             {
+                                if (OCILib.use_wide_char_conv)
+                                {
+                                    /* need conversion if bind buffer was allocated */
+
+                                    int offset1 = (bnd->size / sizeof(dbtext))*sizeof(otext);
+                                    int offset2 = bnd->size;
+
+                                    OCI_StringUTF16ToUTF32((((ub1 *)bnd->buffer.data) + (j*offset2)),
+                                        (((ub1 *)bnd->input) + (j*offset1)),                                        
+                                        (bnd->size / sizeof(dbtext)) - 1);
+                                }
+                            }
+                            else if (OCI_CDT_OBJECT == bnd->type)
+                            {
+                                /* update bind object indicator pointer with object indicator */
+
                                 if (bnd->input)
                                 {
                                     ((OCI_Object *) bnd->input[j])->tab_ind = (sb2 *) bnd->buffer.obj_inds[j];
                                 }
                             }
                         }
-                    }
-                }
-            }
-
-            if (OCILib.use_wide_char_conv)
-            {
-                if (OCI_CDT_TEXT == bnd->type)
-				{
-					int length = (bnd->size / sizeof(dbtext)) - 1;
-
-                    for (j = 0; j < bnd->buffer.count; j++)
-                    {
-                        /* need conversion if bind buffer was allocated */
-
-                        int offset1 = (bnd->size/sizeof(dbtext))*sizeof(otext);
-                        int offset2 = bnd->size;						
-
-                        OCI_StringUTF16ToUTF32( (((ub1 *) bnd->buffer.data) + (j*offset2) ),
-                                                (((ub1 *) bnd->input      ) + (j*offset1) ),
-												length);
                     }
                 }
             }
@@ -536,7 +549,7 @@ boolean OCI_BindData
     {
         if (OCI_BIND_INPUT == mode)
         {
-			prev_index = OCI_BindGetInternalIndex(stmt, name);
+            prev_index = OCI_BindGetInternalIndex(stmt, name);
 
             if (prev_index > 0)
             {
@@ -722,7 +735,7 @@ boolean OCI_BindData
         res = (bnd->plrcds != NULL);
     }
 
-    /* for handle based datatypes, we need to allocate an array of handles for
+    /* for handle based data types, we need to allocate an array of handles for
        bind calls because OCILIB uses external arrays of OCILIB Objects */
 
     if (res && (OCI_BIND_INPUT == mode))
@@ -875,7 +888,7 @@ boolean OCI_BindData
             OCI_StringReleaseOracleString(dbstr);
         }
 
-        if (SQLT_NTY == code  || SQLT_REF == code)
+        if (SQLT_NTY == code || SQLT_REF == code)
         {
             OCI_CALL1
             (
@@ -1002,7 +1015,7 @@ int OCI_BindGetInternalIndex
 
                 index = he->values->value.num;
 
-				if (index < 0)
+                if (index < 0)
                 {
                     index = -index;
                 }
@@ -1260,7 +1273,7 @@ OCI_Statement * OCI_StatementInit
         }
     }
 
-    /* check for failurec */
+    /* check for failure */
 
     if (!res)
     {
@@ -1288,8 +1301,8 @@ boolean OCI_StatementReset
 
     if ((OCILib.version_runtime >= OCI_9_2) && (stmt->nb_rbinds > 0))
     {
-        /*  if we had registered binds, we must delete the stmt from the cache.
-            Because, if we execute another sql with "returnning into clause",  
+        /*  if we had registered binds, we must delete the statement from the cache.
+            Because, if we execute another sql with "returning into clause",  
             OCI_ProcInBind won't be called by OCI. Nice Oracle bug ! */
         mode = OCI_STRLS_CACHE_DELETE;
     }
@@ -1714,7 +1727,7 @@ boolean OCI_API OCI_ExecuteInternal
         OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt, TRUE);
     }
 
-    /* on batch mode, check if any error occured */
+    /* on batch mode, check if any error occurred */
 
     if (mode & OCI_BATCH_ERRORS)
     {
@@ -1871,7 +1884,7 @@ boolean OCI_API OCI_ReleaseResultsets
         OCI_FREE(stmt->rsts);
     }
 
-    // release resultsets
+    /* release resultsets */
     if (stmt->rsts)
     {
         ub4 i;
@@ -1966,7 +1979,6 @@ boolean OCI_API OCI_Prepare
                                (ub4) dbsize, (ub4) OCI_NTV_SYNTAX, (ub4) OCI_DEFAULT)
             )
         }
-
 
         /* get statement type */
 
@@ -2823,7 +2835,7 @@ boolean OCI_API OCI_BindDouble
     double        *data
 )
 {
-    int code = SQLT_FLT;
+    unsigned int code = SQLT_FLT;
 
     OCI_CHECK_BIND_CALL2(stmt, name, data, OCI_IPC_DOUBLE);
 
@@ -2852,7 +2864,7 @@ boolean OCI_API OCI_BindArrayOfDoubles
     unsigned int   nbelem
 )
 {
-    int code = SQLT_FLT;
+    unsigned int code = SQLT_FLT;
 
     OCI_CHECK_BIND_CALL2(stmt, name, data, OCI_IPC_DOUBLE);
 
@@ -2880,7 +2892,7 @@ boolean OCI_API OCI_BindFloat
     float         *data
 )
 {
-    int code = SQLT_FLT;
+    unsigned int code = SQLT_FLT;
 
     OCI_CHECK_BIND_CALL2(stmt, name, data, OCI_IPC_FLOAT);
 
@@ -2909,7 +2921,7 @@ boolean OCI_API OCI_BindArrayOfFloats
     unsigned int   nbelem
 )
 {
-    int code = SQLT_FLT;
+    unsigned int code = SQLT_FLT;
 
     OCI_CHECK_BIND_CALL2(stmt, name, data, OCI_IPC_FLOAT);
 
@@ -2972,8 +2984,7 @@ boolean OCI_API OCI_BindTimestamp
     OCI_Timestamp *data
 )
 {
-    int code    = SQLT_TIMESTAMP;
-    boolean res = FALSE;
+    boolean res  = FALSE;
 
     OCI_CHECK_BIND_CALL1(stmt, name, data, OCI_IPC_TIMESTAMP);
 
@@ -2981,25 +2992,9 @@ boolean OCI_API OCI_BindTimestamp
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    /* map oracle internal type */
-
-    if (OCI_TIMESTAMP_TZ == data->type)
-    {
-        code = SQLT_TIMESTAMP_TZ;
-    }
-    else if (OCI_TIMESTAMP_LTZ == data->type)
-    {
-        code = SQLT_TIMESTAMP_LTZ;
-    }
-
     res = OCI_BindData(stmt, data, sizeof(OCIDateTime *), name, OCI_CDT_TIMESTAMP,
-                       code, OCI_BIND_INPUT, data->type, NULL, 0);
-
-#else
-
-    OCI_NOT_USED(name);
-    OCI_NOT_USED(code);
-    OCI_NOT_USED(code);
+                       OCI_ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, data->type),
+                       OCI_BIND_INPUT, data->type, NULL, 0);
 
 #endif
 
@@ -3019,7 +3014,6 @@ boolean OCI_API OCI_BindArrayOfTimestamps
     unsigned int    nbelem
 )
 {
-    int code     = SQLT_TIMESTAMP;
     boolean res  = FALSE;
 
     OCI_CHECK_BIND_CALL2(stmt, name, data, OCI_IPC_TIMESTAMP);
@@ -3028,19 +3022,11 @@ boolean OCI_API OCI_BindArrayOfTimestamps
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    /* map oracle internal type */
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, TimestampTypeValues, OTEXT("Timestamp type"), FALSE);
 
-    if (OCI_TIMESTAMP_TZ == type)
-    {
-        code = SQLT_TIMESTAMP_TZ;
-    }
-    else if (OCI_TIMESTAMP_LTZ == type)
-    {
-        code = SQLT_TIMESTAMP_LTZ;
-    }
-
-    res =  OCI_BindData(stmt, data, sizeof(OCIDateTime *), name, OCI_CDT_TIMESTAMP,
-                        code, OCI_BIND_INPUT, type, NULL, nbelem);
+    res = OCI_BindData(stmt, data, sizeof(OCIDateTime *), name, OCI_CDT_TIMESTAMP,
+                       OCI_ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type),
+                       OCI_BIND_INPUT, type, NULL, nbelem);
 
 #else
 
@@ -3065,8 +3051,7 @@ boolean OCI_API OCI_BindInterval
     OCI_Interval  *data
 )
 {
-    int code    = 0;
-    boolean res = FALSE;
+    boolean res  = FALSE;
 
     OCI_CHECK_BIND_CALL1(stmt, name, data, OCI_IPC_INTERVAL);
 
@@ -3074,19 +3059,9 @@ boolean OCI_API OCI_BindInterval
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    /* map oracle internal type */
-
-    if (OCI_INTERVAL_YM == data->type)
-    {
-        code = SQLT_INTERVAL_YM;
-    }
-    else if (OCI_INTERVAL_DS == data->type)
-    {
-        code = SQLT_INTERVAL_DS;
-    }
-
     res = OCI_BindData(stmt, data, sizeof(OCIInterval *), name, OCI_CDT_INTERVAL,
-                       code, OCI_BIND_INPUT, data->type, NULL, 0);
+                       OCI_ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, data->type),
+                       OCI_BIND_INPUT, data->type, NULL, 0);
 
 #else
 
@@ -3111,8 +3086,7 @@ boolean OCI_API OCI_BindArrayOfIntervals
     unsigned int   nbelem
 )
 {
-    unsigned int code = 0;
-    boolean res       = FALSE;
+    boolean res  = FALSE;
 
     OCI_CHECK_BIND_CALL2(stmt, name, data, OCI_IPC_INTERVAL);
 
@@ -3120,19 +3094,11 @@ boolean OCI_API OCI_BindArrayOfIntervals
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    /* map oracle internal type */
-
-    if (OCI_INTERVAL_YM == type)
-    {
-        code = SQLT_INTERVAL_YM;
-    }
-    else if (OCI_INTERVAL_DS == type)
-    {
-        code = SQLT_INTERVAL_DS;
-    }
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, IntervalTypeValues, OTEXT("Interval type"), FALSE);
 
     res = OCI_BindData(stmt, data, sizeof(OCIInterval *), name, OCI_CDT_INTERVAL,
-                       code, OCI_BIND_INPUT, type, NULL, nbelem);
+                       OCI_ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type),
+                       OCI_BIND_INPUT, type, NULL, nbelem);
 
 #else
 
@@ -3159,7 +3125,7 @@ boolean OCI_API OCI_BindObject
 {
     OCI_CHECK_BIND_CALL1(stmt, name, data, OCI_IPC_OBJECT);
 
-    return OCI_BindData(stmt, data, sizeof(void*), name, OCI_CDT_OBJECT,
+    return OCI_BindData(stmt, data, sizeof(void *), name, OCI_CDT_OBJECT,
                         SQLT_NTY, OCI_BIND_INPUT, 0, data->typinf, 0);
 }
 
@@ -3195,19 +3161,11 @@ boolean OCI_API OCI_BindLob
     OCI_Lob       *data
 )
 {
-    int code = SQLT_BLOB;
-
     OCI_CHECK_BIND_CALL1(stmt, name, data, OCI_IPC_LOB);
 
-    /* map oracle internal type */
-
-    if ((OCI_CLOB == data->type) || (OCI_NCLOB == data->type))
-    {
-        code = SQLT_CLOB;
-    }
-
     return OCI_BindData(stmt, data, sizeof(OCILobLocator*), name, OCI_CDT_LOB,
-                        code, OCI_BIND_INPUT, data->type, NULL, 0);
+                        OCI_ExternalSubTypeToSQLType(OCI_CDT_LOB, data->type),
+                        OCI_BIND_INPUT, data->type, NULL, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3223,19 +3181,13 @@ boolean OCI_API OCI_BindArrayOfLobs
     unsigned int   nbelem
 )
 {
-    unsigned int code = SQLT_BLOB;
-
     OCI_CHECK_BIND_CALL2(stmt, name, data, OCI_IPC_LOB);
 
-    /* map oracle internal type */
-
-    if ((OCI_CLOB == type) || (OCI_NCLOB == type))
-    {
-        code = SQLT_CLOB;
-    }
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, LobTypeValues, OTEXT("Lob type"), FALSE);
 
     return OCI_BindData(stmt, data, sizeof(OCILobLocator*), name, OCI_CDT_LOB,
-                        code, OCI_BIND_INPUT, type, NULL, nbelem);
+                        OCI_ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
+                        OCI_BIND_INPUT, type, NULL, nbelem);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3249,19 +3201,11 @@ boolean OCI_API OCI_BindFile
     OCI_File      *data
 )
 {
-    int code = SQLT_BFILE;
-
     OCI_CHECK_BIND_CALL1(stmt, name, data, OCI_IPC_FILE);
 
-    /* map oracle internal type */
-
-    if (OCI_CFILE == data->type)
-    {
-        code = SQLT_CFILE;
-    }
-
     return OCI_BindData(stmt, data, sizeof(OCILobLocator*), name, OCI_CDT_FILE,
-                        code, OCI_BIND_INPUT, data->type, NULL, 0);
+                        OCI_ExternalSubTypeToSQLType(OCI_CDT_FILE, data->type),
+                        OCI_BIND_INPUT, data->type, NULL, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3277,19 +3221,13 @@ boolean OCI_API OCI_BindArrayOfFiles
     unsigned int   nbelem
 )
 {
-    unsigned int code = SQLT_BFILE;
-
     OCI_CHECK_BIND_CALL2(stmt, name, data, OCI_IPC_FILE);
 
-    /* map oracle internal type */
-
-    if (OCI_CFILE == type)
-    {
-        code = SQLT_CFILE;
-    }
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, FileTypeValues, OTEXT("File type"), FALSE);
 
     return OCI_BindData(stmt, data, sizeof(OCILobLocator*), name, OCI_CDT_FILE,
-                        code, OCI_BIND_INPUT, type, NULL, nbelem);
+                        OCI_ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
+                        OCI_BIND_INPUT, type, NULL, nbelem);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3397,21 +3335,11 @@ boolean OCI_API OCI_BindLong
     unsigned int   size
 )
 {
-    int code = SQLT_LBI;
-
     OCI_CHECK_BIND_CALL1(stmt, name, data, OCI_IPC_LONG);
 
-    /* map oracle internal type */
-
-    if (OCI_CLONG == data->type)
-    {
-        code = SQLT_LNG;
-
-        size *= (unsigned int) sizeof(otext);
-    }
-
     return OCI_BindData(stmt, data, size, name, OCI_CDT_LONG,
-                        code, OCI_BIND_INPUT, data->type, NULL, 0);
+                        OCI_ExternalSubTypeToSQLType(OCI_CDT_LONG, data->type), 
+                        OCI_BIND_INPUT, data->type, NULL, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3590,8 +3518,8 @@ boolean OCI_API OCI_RegisterDate
     const otext   *name
 )
 {
-    int code = SQLT_ODT;
-    int size = sizeof(OCIDate);
+    unsigned int code = SQLT_ODT;
+    unsigned int size = sizeof(OCIDate);
 
     OCI_CHECK_REGISTER_CALL(stmt, name);
 
@@ -3620,7 +3548,6 @@ boolean OCI_API OCI_RegisterTimestamp
     unsigned int   type
 )
 {
-    int code    = SQLT_TIMESTAMP;
     boolean res = FALSE;
 
     OCI_CHECK_REGISTER_CALL(stmt, name);
@@ -3629,25 +3556,11 @@ boolean OCI_API OCI_RegisterTimestamp
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    /* map oracle internal type */
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, TimestampTypeValues, OTEXT("Timestamp type"), FALSE);
 
-    if (OCI_TIMESTAMP_TZ == type)
-    {
-        code = SQLT_TIMESTAMP_TZ;
-    }
-    else if (OCI_TIMESTAMP_LTZ == type)
-    {
-        code = SQLT_TIMESTAMP_LTZ;
-    }
- 
     res = OCI_BindData(stmt, NULL, sizeof(OCIDateTime *), name, OCI_CDT_TIMESTAMP,
-                       code, OCI_BIND_OUTPUT, type, NULL, 0);
-
-#else
-
-    OCI_NOT_USED(name);
-    OCI_NOT_USED(type);
-    OCI_NOT_USED(code);
+                       OCI_ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type), 
+                       OCI_BIND_OUTPUT, type, NULL, 0);
 
 #endif
 
@@ -3665,34 +3578,19 @@ boolean OCI_API OCI_RegisterInterval
     unsigned int   type
 )
 {
-    unsigned int code = 0;
-    boolean res       = FALSE;
+    boolean res = FALSE;
 
     OCI_CHECK_REGISTER_CALL(stmt, name);
 
     OCI_CHECK_INTERVAL_ENABLED(stmt->con, FALSE);
 
-#if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_0bin
 
-    /* map oracle internal type */
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, IntervalTypeValues, OTEXT("Interval type"), FALSE);
 
-    if (OCI_INTERVAL_YM == type)
-    {
-        code = SQLT_INTERVAL_YM;
-    }
-    else if (OCI_INTERVAL_DS == type)
-    {
-        code = SQLT_INTERVAL_DS;
-    }
-    
     res = OCI_BindData(stmt, NULL, sizeof(OCIInterval *), name, OCI_CDT_INTERVAL,
-                       code, OCI_BIND_OUTPUT, type, NULL, 0);
-
-#else
-
-    OCI_NOT_USED(name);
-    OCI_NOT_USED(type);
-    OCI_NOT_USED(code);
+                       OCI_ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type), 
+                       OCI_BIND_OUTPUT, type, NULL, 0);
 
 #endif
 
@@ -3714,7 +3612,7 @@ boolean OCI_API OCI_RegisterObject
 
     OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf, FALSE);
 
-    return OCI_BindData(stmt, NULL, sizeof(OCIInterval *), name, OCI_CDT_OBJECT,
+    return OCI_BindData(stmt, NULL, sizeof(void *), name, OCI_CDT_OBJECT,
                         SQLT_NTY, OCI_BIND_OUTPUT, 0, typinf, 0);
 }
 
@@ -3729,19 +3627,13 @@ boolean OCI_API OCI_RegisterLob
     unsigned int   type
 )
 {
-    unsigned int code = SQLT_BLOB;
-
     OCI_CHECK_REGISTER_CALL(stmt, name);
 
-    /* map oracle internal type */
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, LobTypeValues, OTEXT("Lob type"), FALSE);
 
-    if ((OCI_CLOB == type) || (OCI_NCLOB == type))
-    {
-        code = SQLT_CLOB;
-    }
-  
     return OCI_BindData(stmt, NULL, sizeof(OCILobLocator*), name, OCI_CDT_LOB,
-                        code, OCI_BIND_OUTPUT, type, NULL, 0);
+                        OCI_ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
+                        OCI_BIND_OUTPUT, type, NULL, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3755,19 +3647,13 @@ boolean OCI_API OCI_RegisterFile
     unsigned int   type
 )
 {
-    unsigned int code = SQLT_BFILE;
-
     OCI_CHECK_REGISTER_CALL(stmt, name);
 
-    /* map oracle internal type */
-
-    if (OCI_CFILE == type)
-    {
-        code = SQLT_CFILE;
-    }
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, FileTypeValues, OTEXT("File type"), FALSE);
 
     return OCI_BindData(stmt, NULL, sizeof(OCILobLocator*), name, OCI_CDT_FILE,
-                        code, OCI_BIND_OUTPUT, type, NULL, 0);
+                        OCI_ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
+                        OCI_BIND_OUTPUT, type, NULL, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3819,6 +3705,8 @@ boolean OCI_API OCI_SetFetchMode
 
     OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(stmt->con, FALSE);
 
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, mode, FetchModeValues, OTEXT("Fetch mode"), FALSE);
+
     stmt->exec_mode = mode;
 
     OCI_RESULT(TRUE);
@@ -3856,6 +3744,8 @@ boolean OCI_API OCI_SetBindMode
 {
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
 
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, mode, BindModeValues, OTEXT("Bind mode"), FALSE);
+
     stmt->bind_mode = mode;
 
     OCI_RESULT(TRUE);
@@ -3890,6 +3780,8 @@ boolean OCI_API OCI_SetBindAllocation
 )
 {
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
+
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, mode, BindAllocationValues, OTEXT("Bind Allocation"), FALSE);
 
     stmt->bind_alloc_mode = mode;
 
@@ -4100,6 +3992,8 @@ boolean OCI_API OCI_SetLongMode
 {
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
 
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, mode, LongModeValues, OTEXT("Long Mode"), FALSE);
+
     stmt->long_mode = (ub1) mode;
 
     OCI_RESULT(TRUE);
@@ -4250,16 +4144,16 @@ OCI_Bind * OCI_API OCI_GetBind2
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
     OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
 
-	index = OCI_GetBindIndex(stmt, name);
+    index = OCI_GetBindIndex(stmt, name);
 
     if (index > 0)
     {
         bnd = stmt->ubinds[index-1];
     }
-	else
-	{
-		OCI_ExceptionItemNotFound(stmt->con, stmt, name, OCI_IPC_BIND);
-	}
+    else
+    {
+        OCI_ExceptionItemNotFound(stmt->con, stmt, name, OCI_IPC_BIND);
+    }
 
     OCI_RESULT(bnd != NULL);
 
@@ -4272,25 +4166,25 @@ OCI_Bind * OCI_API OCI_GetBind2
 
 OCI_EXPORT unsigned int OCI_API OCI_GetBindIndex
 (
-	OCI_Statement *stmt,
-	const otext   *name
+    OCI_Statement *stmt,
+    const otext   *name
 )
 {
-	int index = -1;
+    int index = -1;
 
-	OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, 0);
-	OCI_CHECK_PTR(OCI_IPC_STRING, name, 0);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, 0);
+    OCI_CHECK_PTR(OCI_IPC_STRING, name, 0);
 
-	index = OCI_BindGetInternalIndex(stmt, name);
+    index = OCI_BindGetInternalIndex(stmt, name);
 
-	if (index < 0)
-	{
-		index = 0;
-	}
+    if (index < 0)
+    {
+        index = 0;
+    }
 
-	OCI_RESULT(TRUE);
+    OCI_RESULT(TRUE);
 
-	return index;
+    return index;
 }
 
 

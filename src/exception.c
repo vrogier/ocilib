@@ -134,8 +134,9 @@ static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
     OTEXT("Unable to perform this operation on a %ls direct path process"),
     OTEXT("Cannot create OCI environment"),
     OTEXT("Name or position '%ls' previously binded with different datatype"),
-	OTEXT("Object '%ls' type does not match the requested object type"),
-	OTEXT("Item '%ls' (type %d)  not found")
+    OTEXT("Object '%ls' type does not match the requested object type"),
+    OTEXT("Item '%ls' (type %d)  not found"),
+    OTEXT("Argument '%ls' : Invalid value %d")
 };
 
 #else
@@ -168,7 +169,8 @@ static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
     OTEXT("Cannot create OCI environment"),
     OTEXT("Name or position '%s' previously binded with different datatype"),
     OTEXT("Object '%s' type does not match the requested object type"),
-	OTEXT("Item '%s' (type %d)  not found")
+    OTEXT("Item '%s' (type %d)  not found"),
+    OTEXT("Argument '%s' : Invalid value %d")
 };
 
 #endif
@@ -1006,33 +1008,63 @@ void OCI_ExceptionTypeInfoWrongType
     OCI_ExceptionRaise(err);
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
 * OCI_ExceptionItemNotFound
 * --------------------------------------------------------------------------------------------- */
 
 void OCI_ExceptionItemNotFound
 (
-	OCI_Connection *con,
-	OCI_Statement *stmt,
-	const otext    *name,
-	unsigned int    type
+    OCI_Connection *con,
+    OCI_Statement  *stmt,
+    const otext    *name,
+    unsigned int    type
 )
 {
-	OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError(FALSE);
 
-	if (err)
-	{
-		err->type = OCI_ERR_OCILIB;
-		err->libcode = OCI_ERR_ITEM_NOT_FOUND;
-		err->stmt = stmt;
-		err->con = con;
+    if (err)
+    {
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_ITEM_NOT_FOUND;
+        err->stmt    = stmt;
+        err->con     = con;
 
-		osprintf(err->str,
-			osizeof(err->str) - (size_t)1,
-			OCILib_ErrorMsg[OCI_ERR_ITEM_NOT_FOUND],
-			name, type);
-	}
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t)1,
+                 OCILib_ErrorMsg[OCI_ERR_ITEM_NOT_FOUND],
+                 name, type);
+    }
 
-	OCI_ExceptionRaise(err);
+    OCI_ExceptionRaise(err);
 }
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ExceptionArgInvalidValue
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_ExceptionArgInvalidValue
+(
+    OCI_Connection *con,
+    OCI_Statement  *stmt,
+    const otext    *name,
+    unsigned int    value
+)
+{
+    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+
+    if (err)
+    {
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_ITEM_NOT_FOUND;
+        err->stmt    = stmt;
+        err->con     = con;
+
+        osprintf(err->str,
+                 osizeof(err->str) - (size_t)1,
+                 OCILib_ErrorMsg[OCI_ERR_ARG_INVALID_VALUE],
+                 name, value);
+    }
+
+    OCI_ExceptionRaise(err);
+}
+

@@ -35,6 +35,13 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int CharsetFormValues[]   = { OCI_CSF_DEFAULT, OCI_CSF_NATIONAL };
+static unsigned int BindDirectionValues[] = { OCI_BDM_IN, OCI_BDM_OUT, OCI_BDM_IN_OUT };
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
@@ -212,35 +219,14 @@ boolean OCI_BindAllocData
             {
                 struct_size = sizeof(OCI_Timestamp);
                 elem_size   = sizeof(OCIDateTime *);
-
-                if (OCI_TIMESTAMP == bnd->subtype)
-                {
-                    handle_type = OCI_DTYPE_TIMESTAMP;
-                }
-                else if (OCI_TIMESTAMP_TZ == bnd->subtype)
-                {
-                    handle_type = OCI_DTYPE_TIMESTAMP_TZ;
-                }
-                else if (OCI_TIMESTAMP_LTZ == bnd->subtype)
-                {
-                    handle_type = OCI_DTYPE_TIMESTAMP_LTZ;
-                }
+                handle_type = OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, bnd->subtype);
                 break;
             }
             case OCI_CDT_INTERVAL:
             {
                 struct_size = sizeof(OCI_Interval);
                 elem_size   = sizeof(OCIInterval *);
-
-                if (OCI_INTERVAL_YM == bnd->subtype)
-                {
-                    handle_type = OCI_DTYPE_INTERVAL_YM;
-                }
-                else if (OCI_INTERVAL_DS == bnd->subtype)
-                {
-                    handle_type = OCI_DTYPE_INTERVAL_DS;
-                }
-
+                handle_type = OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, bnd->subtype);
                 break;
             }
             case OCI_CDT_RAW:
@@ -798,6 +784,8 @@ boolean OCI_API OCI_BindSetCharsetForm
 
     OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
 
+    OCI_CHECK_ENUM_VALUE(bnd->stmt->con, bnd->stmt, csfrm, CharsetFormValues, OTEXT("CharsetForm"), FALSE);
+
     if ((OCI_CDT_TEXT == bnd->type) || (OCI_CDT_LONG == bnd->type))
     {
         if (OCI_CSF_NATIONAL == csfrm)
@@ -840,6 +828,8 @@ boolean OCI_API OCI_BindSetDirection
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
+
+    OCI_CHECK_ENUM_VALUE(bnd->stmt->con, bnd->stmt, direction, BindDirectionValues, OTEXT("Direction"), FALSE);
 
     bnd->direction = (ub1) direction;
 

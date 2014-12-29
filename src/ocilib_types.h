@@ -674,7 +674,7 @@ struct OCI_TypeInfo
     ub2             refcount;    /* reference counter */
     int            *offsets;     /* cached offsets */
     size_t          struct_size; /* cached structure size */
-	size_t          align;       /* cached structure alignment */
+    size_t          align;       /* cached structure alignment */
 };
 
 /*

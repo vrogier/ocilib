@@ -711,6 +711,19 @@
     }
 
 
+#define OCI_CHECK_ENUM_VALUE(con, stmt, mode, values, name, ret)               \
+    {                                                                          \
+        size_t i = 0, n = sizeof(values) / sizeof(values[0]);                  \
+        for (; i < n; i++) { if (mode == values[i]) break; }                   \
+        if (i >= n)                                                            \
+        {                                                                      \
+            OCI_ExceptionArgInvalidValue(con, stmt, name, mode);               \
+            return ret;                                                        \
+        }                                                                      \
+    }
+
+
+
 #endif    /* OCILIB_OCILIB_CHECKS_H_INCLUDED */
 
 

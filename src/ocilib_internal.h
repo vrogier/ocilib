@@ -226,7 +226,7 @@ boolean OCI_ColumnGetAttrInfo
     unsigned int   count,
     unsigned int   index,
     size_t        *p_size,
-	size_t        *p_align
+    size_t        *p_align
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -240,7 +240,7 @@ OCI_Connection * OCI_ConnectionCreateInternal
     const otext *user,
     const otext *pwd,
     unsigned int mode,
-	const otext *tag
+    const otext *tag
 );
 
 OCI_Connection * OCI_ConnectionAllocate
@@ -608,10 +608,18 @@ void OCI_ExceptionTypeInfoWrongType
 
 void OCI_ExceptionItemNotFound
 (
-	OCI_Connection *con,
-	OCI_Statement *stmt,
-	const otext    *name,
-	unsigned int    type
+    OCI_Connection *con,
+    OCI_Statement  *stmt,
+    const otext    *name,
+    unsigned int    type
+);
+
+void OCI_ExceptionArgInvalidValue
+(
+    OCI_Connection *con,
+    OCI_Statement  *stmt,
+    const otext    *name,
+    unsigned int    value
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -690,6 +698,18 @@ void OCI_SetStatus
 boolean OCI_KeyMapFree
 (
     void
+);
+
+unsigned int OCI_ExternalSubTypeToSQLType
+(
+    unsigned int type,
+    unsigned int subtype
+);
+
+unsigned int OCI_ExternalSubTypeToHandleType
+(
+    unsigned int type, 
+    unsigned int subtype
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -919,21 +939,21 @@ boolean OCI_ObjectGetAttrInfo
     OCI_TypeInfo *typinf,
     int           index,
     size_t       *p_size,
-	size_t       *p_align
+    size_t       *p_align
 );
 
 void OCI_ObjectGetStructSize
 (
     OCI_TypeInfo *typinf,
-	size_t       *p_size,
-	size_t       *p_align
+    size_t       *p_size,
+    size_t       *p_align
 );
 
 void OCI_ObjectGetUserStructSize
 (
     OCI_TypeInfo *typinf,
-	size_t       *p_size,
-	size_t       *p_align
+    size_t       *p_size,
+    size_t       *p_align
 );
 
 ub2 OCI_ObjectGetIndOffset
@@ -1282,18 +1302,18 @@ unsigned int OCI_StringAddToBuffer
 
 unsigned int OCI_StringGetTypeName
 (
-	const otext *source,
-	otext		*dest,
-	unsigned int length
+    const otext  *source,
+    otext        *dest,
+    unsigned int  length
 );
 
 unsigned int OCI_StringGetFullTypeName
 (
-	const otext *schema, 
-	const otext *type,
-	const otext *link,
-	otext		*name,
-	unsigned int length
+    const otext  *schema, 
+    const otext  *type,
+    const otext  *link,
+    otext        *name,
+    unsigned int  length
 );
 
 /* --------------------------------------------------------------------------------------------- *

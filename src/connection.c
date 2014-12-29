@@ -35,10 +35,14 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int TraceTypeValues[] = { OCI_TRC_IDENTITY, OCI_TRC_MODULE, OCI_TRC_ACTION, OCI_TRC_DETAIL };
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
-
-
 
 /* --------------------------------------------------------------------------------------------- *
 * OCI_ConnectionCreateInternal
@@ -50,8 +54,8 @@ OCI_Connection * OCI_ConnectionCreateInternal
     const otext *db,
     const otext *user,
     const otext *pwd,
-	unsigned int mode,
-	const otext *tag
+    unsigned int mode,
+    const otext *tag
 )
 {
     OCI_Connection * con;
@@ -1876,6 +1880,8 @@ boolean OCI_API OCI_SetTrace
 #endif
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
+
+    OCI_CHECK_ENUM_VALUE(con, NULL, trace, TraceTypeValues, OTEXT("Trace Type"), FALSE);
 
     /* allocate trace info structure only if trace functions are used */
 

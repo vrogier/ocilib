@@ -119,23 +119,23 @@ ub2 OCI_ObjectGetIndOffset
 void OCI_ObjectGetStructSize
 (
     OCI_TypeInfo *typinf,
-	size_t       *p_size,
-	size_t       *p_align
+    size_t       *p_size,
+    size_t       *p_align
 )
 {
     size_t size = 0;
 
-	if (typinf->struct_size == 0)
+    if (typinf->struct_size == 0)
     {
         size_t size1 = 0;
         size_t size2 = 0;
-		size_t align = 0;
-			
+        size_t align = 0;
+
         ub2 i;
 
         for (i = 0; i < typinf->nb_cols; i++)
         {
-			if (i > 0)
+            if (i > 0)
             {
                 size1 = size2;
 
@@ -143,28 +143,28 @@ void OCI_ObjectGetStructSize
             }
             else
             {
-				OCI_ObjectGetAttrInfo(typinf, i, &size1, &align);
+                OCI_ObjectGetAttrInfo(typinf, i, &size1, &align);
 
                 typinf->offsets[i] = 0;
             }
 
-			OCI_ObjectGetAttrInfo(typinf, i + 1, &size2, &align);
+            OCI_ObjectGetAttrInfo(typinf, i + 1, &size2, &align);
 
-			if (align > typinf->align)
-			{
-				typinf->align = align;
-			}
+            if (align > typinf->align)
+            {
+                typinf->align = align;
+            }
 
             size += size1;
 
-			size = ROUNDUP(size, align);
+            size = ROUNDUP(size, align);
         }
 
         typinf->struct_size = size + size2;
     }
 
-	*p_size  = typinf->struct_size;
-	*p_align = typinf->align;
+    *p_size  = typinf->struct_size;
+    *p_align = typinf->align;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -173,16 +173,16 @@ void OCI_ObjectGetStructSize
 
 void OCI_ObjectGetUserStructSize
 (
-	OCI_TypeInfo *typinf,
-	size_t       *p_size,
-	size_t       *p_align
+    OCI_TypeInfo *typinf,
+    size_t       *p_size,
+    size_t       *p_align
 )
 {
     size_t size1  = 0;
     size_t size2  = 0;
-	size_t align1 = 0;
-	size_t align2 = 0;
-	size_t align  = 0;
+    size_t align1 = 0;
+    size_t align2 = 0;
+    size_t align  = 0;
 
     ub2 i;
 
@@ -195,23 +195,23 @@ void OCI_ObjectGetUserStructSize
         OCI_ColumnGetAttrInfo(&typinf->cols[i],   typinf->nb_cols, i, &size1, &align1);
         OCI_ColumnGetAttrInfo(&typinf->cols[i+1], typinf->nb_cols, i, &size2, &align2);
 
-		if (align < align1)
-		{
-			align = align1;
-		}
+        if (align < align1)
+        {
+            align = align1;
+        }
 
-		if (align < align2)
-		{
-			align = align2;
-		}
+        if (align < align2)
+        {
+            align = align2;
+        }
 
         size += size1;
 
-		size = ROUNDUP(size, align2);
+        size = ROUNDUP(size, align2);
     }
 
-	*p_size  = size;
-	*p_align = align;
+    *p_size  = size;
+    *p_align = align;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -223,7 +223,7 @@ boolean OCI_ObjectGetAttrInfo
     OCI_TypeInfo *typinf,
     int           index,
     size_t       *p_size,
-	size_t       *p_align
+    size_t       *p_align
 )
 {
     if (index >= typinf->nb_cols)
@@ -242,17 +242,17 @@ boolean OCI_ObjectGetAttrInfo
             if (subtype & OCI_NUM_FLOAT)
             {
                 *p_size  = sizeof(double);
-				*p_align = *p_size;
+                *p_align = *p_size;
             }
             else if (subtype & OCI_NUM_DOUBLE)
             {
                 *p_size  = sizeof(double);
-				*p_align = *p_size;
+                *p_align = *p_size;
             }
             else
             {
                 *p_size  = sizeof(OCINumber);
-				*p_align = sizeof(ub1);
+                *p_align = sizeof(ub1);
             }
             
             break;
@@ -260,18 +260,18 @@ boolean OCI_ObjectGetAttrInfo
         case OCI_CDT_DATETIME:
         {
             *p_size  = sizeof(OCIDate);
-			*p_align = sizeof(sb2);
+            *p_align = sizeof(sb2);
             break;
         }
         case OCI_CDT_OBJECT:
         {
-			OCI_ObjectGetStructSize(typinf->cols[index].typinf, p_size, p_align);
+            OCI_ObjectGetStructSize(typinf->cols[index].typinf, p_size, p_align);
             break;
         }
         default:
         {
             *p_size  = sizeof(void *);
-			*p_align = *p_size;
+            *p_align = *p_size;
             break;
         }
     }
@@ -525,12 +525,12 @@ void * OCI_ObjectGetAttr
 )
 {
     size_t offset = 0;
-	size_t size   = 0;
-	size_t align  = 0;
+    size_t size   = 0;
+    size_t align  = 0;
 
     if (obj->typinf->struct_size == 0)
     {
-		OCI_ObjectGetStructSize(obj->typinf, &size, &align);
+        OCI_ObjectGetStructSize(obj->typinf, &size, &align);
     }
 
     offset = (size_t) obj->typinf->offsets[index];
@@ -1032,33 +1032,33 @@ int OCI_API OCI_ObjectGetRaw
 
 unsigned int OCI_API OCI_ObjectGetRawSize
 (
-	OCI_Object  *obj,
-	const otext *attr
+    OCI_Object  *obj,
+    const otext *attr
 )
 {
-	boolean res = FALSE;
-	ub4 raw_len = 0;
+    boolean res = FALSE;
+    ub4 raw_len = 0;
 
-	int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW);
+    int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW);
 
-	if (index >= 0)
-	{
-		OCIInd *ind = NULL;
-		OCIRaw **value = NULL;
+    if (index >= 0)
+    {
+        OCIInd *ind = NULL;
+        OCIRaw **value = NULL;
 
-		res = TRUE;
+        res = TRUE;
 
-		value = (OCIRaw **)OCI_ObjectGetAttr(obj, index, &ind);
+        value = (OCIRaw **)OCI_ObjectGetAttr(obj, index, &ind);
 
-		if (value && ind && (OCI_IND_NULL != *ind))
-		{
-			raw_len = OCIRawSize(obj->con->env, *value);
-		}
-	}
+        if (value && ind && (OCI_IND_NULL != *ind))
+        {
+            raw_len = OCIRawSize(obj->con->env, *value);
+        }
+    }
 
-	OCI_RESULT(res);
+    OCI_RESULT(res);
 
-	return (unsigned int) raw_len;
+    return (unsigned int) raw_len;
 }
 
 /* --------------------------------------------------------------------------------------------- *

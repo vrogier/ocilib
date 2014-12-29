@@ -35,6 +35,12 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int TypeInfoTypeValues[] = { OCI_TIF_TABLE, OCI_TIF_VIEW, OCI_TIF_TYPE };
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
@@ -102,6 +108,8 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
     OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
 
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, TypeInfoTypeValues, OTEXT("Type"), NULL);
+
     obj_schema[0] = 0;
     obj_name[0]   = 0;
 
@@ -126,23 +134,23 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
     /* type name must be uppercase if not quoted */
 
-	if (obj_name[0] != OTEXT('"'))
-	{
-		for (str = obj_name; *str; str++)
-		{
-			*str = (otext)otoupper(*str);
-		}
-	}
+    if (obj_name[0] != OTEXT('"'))
+    {
+        for (str = obj_name; *str; str++)
+        {
+            *str = (otext)otoupper(*str);
+        }
+    }
 
-	/* schema name must be uppercase if not quoted */
+    /* schema name must be uppercase if not quoted */
 
-	if (obj_schema[0] != OTEXT('"'))
-	{
-		for (str = obj_schema; *str; str++)
-		{
-			*str = (otext)otoupper(*str);
-		}
-	}	
+    if (obj_schema[0] != OTEXT('"'))
+    {
+        for (str = obj_schema; *str; str++)
+        {
+            *str = (otext)otoupper(*str);
+        }
+    }    
 
     /* first try to find it in list */
 
@@ -186,7 +194,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
             typinf->name        = ostrdup(obj_name);
             typinf->schema      = ostrdup(obj_schema);
             typinf->struct_size = 0;
-			typinf->align       = 0;
+            typinf->align       = 0;
 
             res = OCI_SUCCESSFUL(OCI_HandleAlloc(typinf->con->env,
                                                  (dvoid **) (void *) &dschp,
@@ -198,7 +206,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
         if (res)
         {
-			otext buffer[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
+            otext buffer[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
             size_t  size    = sizeof(buffer)/sizeof(otext);
             dbtext *dbstr1  = NULL;
@@ -284,30 +292,30 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                     if (res)
                     {
                         boolean pdt = FALSE;
-						OCIRef *ref = NULL;
+                        OCIRef *ref = NULL;
 
-						attr_type = OCI_ATTR_LIST_TYPE_ATTRS;
-						num_type  = OCI_ATTR_NUM_TYPE_ATTRS;
-						ptype	  = OCI_DESC_TYPE;
+                        attr_type = OCI_ATTR_LIST_TYPE_ATTRS;
+                        num_type  = OCI_ATTR_NUM_TYPE_ATTRS;
+                        ptype     = OCI_DESC_TYPE;
 
                         /* get the object  tdo */
 
-						OCI_CALL2
-						(
-							res, con,
+                        OCI_CALL2
+                        (
+                            res, con,
 
-							OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &ref,
-							NULL, OCI_ATTR_REF_TDO, con->err)
-						)
+                            OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &ref,
+                            NULL, OCI_ATTR_REF_TDO, con->err)
+                        )
 
-						OCI_CALL2
-						(
-							res, con,
+                        OCI_CALL2
+                        (
+                            res, con,
 
-							OCITypeByRef(typinf->con->env, con->err, ref,
-							OCI_DURATION_SESSION, OCI_TYPEGET_ALL,	&typinf->tdo)
-						)
-					
+                            OCITypeByRef(typinf->con->env, con->err, ref,
+                            OCI_DURATION_SESSION, OCI_TYPEGET_ALL,    &typinf->tdo)
+                        )
+                    
                         /* check if it's system predefined type if order to avoid the next call
                            that is not allowed on system types */
 
@@ -363,7 +371,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                     otext *syn_object_name   = NULL;
                     otext *syn_link_name     = NULL;
 
-					otext syn_fullname[(OCI_SIZE_OBJ_NAME * 3) + 3] = OTEXT("");
+                    otext syn_fullname[(OCI_SIZE_OBJ_NAME * 3) + 3] = OTEXT("");
 
                     /* get link schema, object and databaselink names */
 
@@ -380,7 +388,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                     /* compute link full name */
 
-					OCI_StringGetFullTypeName(syn_schema_name, syn_object_name, syn_link_name, syn_fullname, (sizeof(syn_fullname) / sizeof(otext)) - 1);
+                    OCI_StringGetFullTypeName(syn_schema_name, syn_object_name, syn_link_name, syn_fullname, (sizeof(syn_fullname) / sizeof(otext)) - 1);
 
                     /* retrieve the type info of the real object */
 

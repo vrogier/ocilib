@@ -35,6 +35,12 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int IntervalTypeValues[] = { OCI_INTERVAL_YM, OCI_INTERVAL_DS };
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
@@ -88,23 +94,12 @@ OCI_Interval * OCI_IntervalInit
 
         if (!itv->handle || (OCI_OBJECT_ALLOCATED_ARRAY == itv->hstate))
         {
-            ub4 htype = OCI_UNKNOWN;
-
-            if (OCI_INTERVAL_YM == itv->type)
-            {
-                htype = OCI_DTYPE_INTERVAL_YM;
-            }
-            else if (OCI_INTERVAL_DS == itv->type)
-            {
-                htype = OCI_DTYPE_INTERVAL_DS;
-            }
-
             if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
             {
                 res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid  *) itv->env,
                                                          (dvoid **) (void *) &itv->handle,
-                                                         (ub4     ) htype, (size_t) 0,
-                                                         (dvoid **) NULL));
+                                                         (ub4) OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type),
+                                                         (size_t)0, (dvoid **) NULL));
 
                 itv->hstate = OCI_OBJECT_ALLOCATED;
             }
@@ -161,6 +156,8 @@ OCI_Interval * OCI_API OCI_IntervalCreate
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"), NULL);
+
     itv = OCI_IntervalInit(con, &itv, NULL, type);
 
 #else
@@ -193,18 +190,7 @@ boolean OCI_API OCI_IntervalFree
 
     if (OCI_OBJECT_ALLOCATED == itv->hstate)
     {
-        ub4 htype = OCI_UNKNOWN;
-
-        if (OCI_INTERVAL_YM == itv->type)
-        {
-            htype = OCI_DTYPE_INTERVAL_YM;
-        }
-        else if (OCI_INTERVAL_DS == itv->type)
-        {
-            htype = OCI_DTYPE_INTERVAL_DS;
-        }
-
-        OCI_DescriptorFree((dvoid *) itv->handle, htype);
+        OCI_DescriptorFree((dvoid *)itv->handle, OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
@@ -232,25 +218,27 @@ OCI_Interval ** OCI_API OCI_IntervalArrayCreate
 {
     OCI_Array *arr      = NULL;
     OCI_Interval **itvs = NULL;
-    unsigned int htype  = 0;
 
-    if (OCI_INTERVAL_YM == type)
-    {
-        htype = OCI_DTYPE_INTERVAL_YM;
-    }
-    else if (OCI_INTERVAL_DS == type)
-    {
-        htype = OCI_DTYPE_INTERVAL_DS;
-    }
+    OCI_CHECK_INTERVAL_ENABLED(con, FALSE);
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type, sizeof(OCIInterval *),
-                          sizeof(OCI_Interval), htype, NULL);
+#if OCI_VERSION_COMPILE >= OCI_9_0
+
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type,
+                          sizeof(OCIInterval *), sizeof(OCI_Interval), 
+                          OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
 
     if (arr)
     {
         itvs = (OCI_Interval **) arr->tab_obj;
     }
 
+#else
+
+    OCI_NOT_USED(arr);
+    OCI_NOT_USED(type);
+    OCI_NOT_USED(nbelem);
+
+#endif
     return itvs;
 }
 

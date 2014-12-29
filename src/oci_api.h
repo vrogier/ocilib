@@ -1107,12 +1107,12 @@ typedef sword (*OCIDATETIMESYSTIMESTAMP)
 
 typedef sword (*OCITYPEBYREF)
 (
-	OCIEnv         *env,
-	OCIError       *err,
-	const OCIRef   *type_ref,
-	OCIDuration		pin_duration,
-	OCITypeGetOpt	get_option,
-	OCIType       **tdo
+    OCIEnv         *env,
+    OCIError       *err,
+    const OCIRef   *type_ref,
+    OCIDuration     pin_duration,
+    OCITypeGetOpt   get_option,
+    OCIType       **tdo
 );
 
 typedef sword (*OCIOBJECTNEW)

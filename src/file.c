@@ -35,6 +35,13 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
+static unsigned int FileTypeValues[] = { OCI_CFILE, OCI_BFILE };
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
@@ -224,6 +231,8 @@ OCI_File * OCI_API OCI_FileCreate
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
 
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"), NULL);
+
     file = OCI_FileInit(con, &file, NULL, type);
 
     OCI_RESULT(file != NULL);
@@ -277,6 +286,8 @@ OCI_File ** OCI_API OCI_FileArrayCreate
     OCI_Array *arr   = NULL;
     OCI_File **files = NULL;
 
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"), NULL);
+
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_FILE, type,
                           sizeof(OCILobLocator *), sizeof(OCI_File),
                           OCI_DTYPE_LOB, NULL);
@@ -316,6 +327,8 @@ boolean OCI_API OCI_FileSeek
     big_uint size = 0;
 
     OCI_CHECK_PTR(OCI_IPC_FILE, file, FALSE);
+
+    OCI_CHECK_ENUM_VALUE(file->con, NULL, mode, SeekModeValues, OTEXT("Seek Mode"), FALSE);
 
     size = OCI_FileGetSize(file);
 
@@ -795,12 +808,12 @@ boolean OCI_API OCI_FileAssign
 
 OCI_Connection * OCI_API OCI_FileGetConnection
 (
-	OCI_File *file
+    OCI_File *file
 )
 {
-	OCI_CHECK_PTR(OCI_IPC_FILE, file, NULL);
+    OCI_CHECK_PTR(OCI_IPC_FILE, file, NULL);
 
-	OCI_RESULT(TRUE);
+    OCI_RESULT(TRUE);
 
-	return file->con;
+    return file->con;
 }

@@ -35,6 +35,14 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int DeliveryModeValues[] = { OCI_APM_BUFFERED, OCI_APM_PERSISTENT, OCI_APM_ALL };
+static unsigned int GroupingModeValues[] = { OCI_AGM_NONE, OCI_AGM_TRANSACTIONNAL };
+static unsigned int QueueTypeValues[   ] = { OCI_AQT_NORMAL, OCI_AQT_EXCEPTION, OCI_AQT_NON_PERSISTENT };
+
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
  * ********************************************************************************************* */
 
@@ -61,6 +69,8 @@ boolean OCI_API OCI_QueueCreate
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, queue_name, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, queue_table, FALSE);
+
+    OCI_CHECK_ENUM_VALUE(con, NULL, queue_type, QueueTypeValues, OTEXT("Queue type"), FALSE);
 
     st = OCI_StatementCreate(con);
 
@@ -355,6 +365,8 @@ boolean OCI_API OCI_QueueTableCreate
     OCI_CHECK_PTR(OCI_IPC_STRING, queue_table, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, queue_payload_type, FALSE);
 
+    OCI_CHECK_ENUM_VALUE(con, NULL, message_grouping, GroupingModeValues, OTEXT("Grouping mode"), FALSE);
+
     st = OCI_StatementCreate(con);
 
     if (st)
@@ -525,6 +537,8 @@ boolean OCI_API OCI_QueueTablePurge
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
     OCI_CHECK_PTR(OCI_IPC_STRING, queue_table, FALSE);
+
+    OCI_CHECK_ENUM_VALUE(con, NULL, delivery_mode, DeliveryModeValues, OTEXT("Delivery mode"), FALSE);
 
     if (con->ver_num >= OCI_10_1)
     {

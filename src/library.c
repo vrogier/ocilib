@@ -394,6 +394,142 @@ OCILOBWRITEAPPEND2           OCILobWriteAppend2           = NULL;
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
+* OCI_ExternalSubTypeToSQLType
+* --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_ExternalSubTypeToSQLType
+(
+    unsigned int type, 
+    unsigned int subtype
+)
+{
+    unsigned int res = OCI_UNKNOWN;
+
+    switch (type)
+    {
+        case OCI_CDT_TIMESTAMP:
+        {
+            switch (subtype)
+            {
+                case OCI_TIMESTAMP:
+                    res = SQLT_TIMESTAMP;
+                    break;
+                case OCI_TIMESTAMP_TZ:
+                    res = SQLT_TIMESTAMP_TZ;
+                    break;
+                case OCI_TIMESTAMP_LTZ:
+                    res = SQLT_TIMESTAMP_LTZ;
+                    break;
+            }
+            break;
+        }
+        case OCI_CDT_INTERVAL:
+        {
+            switch (subtype)
+            {
+                case OCI_INTERVAL_YM:
+                    res = SQLT_INTERVAL_YM;
+                    break;
+                case OCI_INTERVAL_DS:
+                    res = SQLT_INTERVAL_DS;
+                    break;
+            }
+            break;
+        }
+        case OCI_CDT_LOB:
+        {
+            switch (subtype)
+            {
+                case OCI_CLOB:
+                case OCI_NCLOB:
+                    res = SQLT_CLOB;
+                    break;
+                case OCI_BLOB:
+                    res = SQLT_BLOB;
+                    break;
+            }
+            break;
+        }
+        case OCI_CDT_FILE:
+        {
+            switch (subtype)
+            {
+                case OCI_CFILE:
+                    res = SQLT_CFILE;
+                    break;
+                case OCI_BFILE:
+                    res = SQLT_BFILE;
+                    break;
+            }
+            break;
+        }
+        case OCI_CDT_LONG:
+        {
+            switch (subtype)
+            {
+                case OCI_CLONG:
+                    res = SQLT_LNG;
+                    break;
+                case OCI_BLONG:
+                    res = SQLT_LBI;
+                    break;
+            }
+            break;
+        }
+    }
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ExternalSubTypeToHandleType
+* --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_ExternalSubTypeToHandleType
+(
+    unsigned int type, 
+    unsigned int subtype
+)
+{
+    unsigned int res = OCI_UNKNOWN;
+
+    switch (type)
+    {
+        case OCI_CDT_TIMESTAMP:
+        {
+            switch (subtype)
+            {
+                case OCI_TIMESTAMP:
+                    res = OCI_DTYPE_TIMESTAMP;
+                    break;
+                case OCI_TIMESTAMP_TZ:
+                    res = OCI_DTYPE_TIMESTAMP_TZ;
+                    break;
+                case OCI_TIMESTAMP_LTZ:
+                    res = OCI_DTYPE_TIMESTAMP_LTZ;
+                    break;
+            }
+            break;
+        }
+        case OCI_CDT_INTERVAL:
+        {
+            switch (subtype)
+            {
+                case OCI_INTERVAL_YM:
+                    res = OCI_DTYPE_INTERVAL_YM;
+                    break;
+                case OCI_INTERVAL_DS:
+                    res = OCI_DTYPE_INTERVAL_DS;
+                    break;
+            }
+            break;
+        }
+    }
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_KeyMapFree
  * --------------------------------------------------------------------------------------------- */
 
@@ -1516,7 +1652,7 @@ boolean OCI_API OCI_DatabaseStartup
     {
         OCIAdmin *adm = NULL;
 
-        /* connect with prelim authenfication mode */
+        /* connect with prelim authentication mode */
 
         con = OCI_ConnectionCreate(db, user, pwd, sess_mode | OCI_PRELIM_AUTH);
 

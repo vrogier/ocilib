@@ -35,6 +35,12 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int LongTypeValues[] = { OCI_CLONG, OCI_BLONG };
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
@@ -109,6 +115,8 @@ OCI_Long * OCI_API OCI_LongCreate
     OCI_CHECK_INITIALIZED(NULL);
 
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
+
+    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, LongTypeValues, OTEXT("Long Type"), NULL);
 
     lg = OCI_LongInit(stmt, &lg, NULL, type);
 

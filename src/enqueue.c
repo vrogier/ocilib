@@ -35,6 +35,13 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
+static unsigned int EnqueueModeValues[] = { OCI_ASD_BEFORE, OCI_ASD_TOP };
+
+/* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
  * ********************************************************************************************* */
 
@@ -213,6 +220,8 @@ boolean OCI_API OCI_EnqueueSetVisibility
 
     OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue, FALSE);
 
+    OCI_CHECK_ENUM_VALUE(NULL, NULL, visibility, VisibilityModeValues, OTEXT("Visibility Mode"), FALSE);
+
     OCI_CALL2
     (
         res, enqueue->typinf->con,
@@ -275,6 +284,8 @@ boolean OCI_API OCI_EnqueueSetSequenceDeviation
     ub4 value   = (ub4) sequence;
 
     OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue, FALSE);
+
+    OCI_CHECK_ENUM_VALUE(NULL, NULL, sequence, EnqueueModeValues, OTEXT("Sequence Deviation"), FALSE);
 
     OCI_CALL2
     (
