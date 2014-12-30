@@ -483,7 +483,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                             res = res && OCI_ColumnMap(&typinf->cols[i], NULL);
 
-                            if (res == FALSE)
+                            if (!res)
                             {
                                 break;
                             }

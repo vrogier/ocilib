@@ -105,7 +105,7 @@ int OCI_GetDefineIndex
     {
         /* no more entries or key matched => so we got it ! */
 
-        if (!he->next || ostrcasecmp(he->key, name) == 0)
+        if (!he->next || 0 == ostrcasecmp(he->key, name))
         {
             index = he->values->value.num;
             break;

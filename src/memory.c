@@ -208,7 +208,7 @@ sword OCI_DescriptorArrayAlloc
     {
         ub4 i;
 
-        for(i = 0; (i < nb_elem) && (ret == OCI_SUCCESS); i++)
+        for (i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
         {
             ret = OCIDescriptorAlloc(parenth, &descpp[i], type, xtramem_sz, usrmempp);
         }
@@ -274,7 +274,7 @@ sword OCI_DescriptorArrayFree
         {
             ub4 i;
 
-            for(i = 0; (i < nb_elem) && (ret == OCI_SUCCESS); i++)
+            for (i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
             {
                 ret = OCIDescriptorFree(descp[i], type);
             }

@@ -38,7 +38,7 @@
 #define OCI_ELEM_SET_VALUE(elemtype, type, func_init, func_assign)                  \
                                                                                     \
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);                                    \
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == elemtype, FALSE); \
+    OCI_CHECK_COMPAT(elem->con, elemtype == elem->typinf->cols[0].datatype, FALSE); \
                                                                                     \
     if (!value)                                                                     \
     {                                                                               \
@@ -67,7 +67,7 @@
 #define OCI_ELEM_GET_VALUE(elemtype, ret, type, func)                               \
                                                                                     \
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);                                    \
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == elemtype, FALSE); \
+    OCI_CHECK_COMPAT(elem->con, elemtype == elem->typinf->cols[0].datatype, FALSE); \
                                                                                     \
     if (OCI_IND_NULL != *elem->pind)                                                \
     {                                                                               \
@@ -195,7 +195,7 @@ boolean OCI_ElemSetNullIndicator
         return FALSE;
     }
 
-    if (elem->typinf->cols[0].datatype == OCI_CDT_OBJECT)
+    if (OCI_CDT_OBJECT == elem->typinf->cols[0].datatype)
     {
         OCI_Object *obj = (OCI_Object*) elem->obj;
 
@@ -234,7 +234,7 @@ boolean OCI_ElemSetNumber
     boolean res = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == OCI_CDT_NUMERIC, FALSE);
+    OCI_CHECK_COMPAT(elem->con, OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype, FALSE);
 
     res = OCI_NumberSet(elem->con, (OCINumber *) elem->handle, size, flag, elem->typinf->cols[0].libcode, value);
 
@@ -530,7 +530,7 @@ const otext * OCI_API OCI_ElemGetString
     boolean res      = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, NULL);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == OCI_CDT_TEXT, NULL);
+    OCI_CHECK_COMPAT(elem->con, OCI_CDT_TEXT == elem->typinf->cols[0].datatype, NULL);
 
     if (elem->handle)
     {
@@ -558,7 +558,7 @@ unsigned int OCI_API OCI_ElemGetRaw
     boolean res = FALSE;
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, 0);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == OCI_CDT_RAW, 0);
+    OCI_CHECK_COMPAT(elem->con, OCI_CDT_RAW == elem->typinf->cols[0].datatype, 0);
 
     if (elem->handle)
     {
@@ -593,7 +593,7 @@ unsigned int OCI_API OCI_ElemGetRawSize
     ub4 raw_len = 0;
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, 0);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == OCI_CDT_RAW, 0);
+    OCI_CHECK_COMPAT(elem->con, OCI_CDT_RAW == elem->typinf->cols[0].datatype, 0);
 
     if (elem->handle)
     {
@@ -942,7 +942,7 @@ boolean OCI_API OCI_ElemSetString
     boolean res = TRUE;
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem, FALSE);
-    OCI_CHECK_COMPAT(elem->con, elem->typinf->cols[0].datatype == OCI_CDT_TEXT, FALSE);
+    OCI_CHECK_COMPAT(elem->con, OCI_CDT_TEXT == elem->typinf->cols[0].datatype, FALSE);
 
     if (!value)
     {
@@ -1232,7 +1232,7 @@ boolean OCI_API OCI_ElemIsNull
 
     if (elem->pind)
     {
-        ret = (*elem->pind == OCI_IND_NULL);
+        ret = (OCI_IND_NULL == *elem->pind);
     }
 
     OCI_RESULT(TRUE);

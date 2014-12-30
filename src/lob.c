@@ -396,7 +396,7 @@ boolean OCI_API OCI_LobRead2
         }
     }
 
-    csfrm = (lob->type == OCI_NCLOB) ? SQLCS_NCHAR : SQLCS_IMPLICIT;
+    csfrm = (OCI_NCLOB == lob->type) ? SQLCS_NCHAR : SQLCS_IMPLICIT;
 
     OCI_CHECK_MIN(lob->con, NULL, (*byte_count), 1, FALSE);
 
@@ -427,16 +427,7 @@ boolean OCI_API OCI_LobRead2
 #endif
 
     {
-        ub4 size_in_out_char_byte = 0;
-
-        if (lob->type == OCI_BLOB)
-        {
-            size_in_out_char_byte = (*byte_count);
-        }
-        else
-        {
-            size_in_out_char_byte = (*char_count);
-        }
+        ub4 size_in_out_char_byte = (lob->type == OCI_BLOB) ? *byte_count : *char_count;
 
         OCI_CALL2
         (
@@ -596,7 +587,7 @@ boolean OCI_API OCI_LobWrite2
         obuf = buffer;
     }
 
-    csfrm = (lob->type == OCI_NCLOB) ? SQLCS_NCHAR : lob->type == OCI_NCLOB;
+    csfrm = (OCI_NCLOB == lob->type) ? SQLCS_NCHAR : SQLCS_IMPLICIT;
 
     OCI_CHECK_MIN(lob->con, NULL, (*byte_count), 1, FALSE);
 
@@ -1069,7 +1060,7 @@ boolean OCI_API OCI_LobAppend2
         obuf = buffer;
     }
 
-    csfrm = (lob->type == OCI_NCLOB) ? SQLCS_NCHAR : SQLCS_IMPLICIT;
+    csfrm = (OCI_NCLOB == lob->type) ? SQLCS_NCHAR : SQLCS_IMPLICIT;
   
     OCI_CHECK_MIN(lob->con, NULL, (*byte_count), 1, FALSE);
 
@@ -1440,7 +1431,7 @@ boolean OCI_API OCI_LobEnableBuffering
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob, FALSE);
 
-    if (value == TRUE)
+    if (value)
     {
         OCI_CALL2
         (

@@ -67,10 +67,10 @@ sb4 OCI_ProcInBind
 
     /* check objects and bounds */
 
-    OCI_CHECK(bnd  == NULL, OCI_ERROR);
+    OCI_CHECK(bnd == NULL, OCI_ERROR);
     OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR);
 
-    /* indicators must be set to -1 depending on datatype,
+    /* indicators must be set to -1 depending on data type,
        so let's do it for all */
 
     for (i = 0; i < bnd->buffer.count; i++, ind++)
@@ -81,7 +81,7 @@ sb4 OCI_ProcInBind
     /* setup bind index because OCI_RegisterXXX() might not have been called
        in the same order than the variables in the returning clause */
 
-    if (iter == 0)
+    if (0 == iter)
     {
         bnd->dynpos = bnd->stmt->dynidx++;
     }
@@ -127,16 +127,16 @@ sb4 OCI_ProcOutBind
 
     /* check objects and bounds */
 
-    OCI_CHECK(bnd  == NULL, OCI_ERROR);
+    OCI_CHECK(bnd == NULL, OCI_ERROR);
     OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR);
 
-    /* update statmement status */
+    /* update statement status */
 
     bnd->stmt->status |= OCI_STMT_EXECUTED;
 
     /* create resultset on the first row processed for each iteration */
 
-    if (index == 0)
+    if (0 == index)
     {
         bnd->stmt->nb_rs  = bnd->stmt->nb_iters;
         bnd->stmt->cur_rs = 0;
@@ -167,7 +167,7 @@ sb4 OCI_ProcOutBind
                            (ub4) OCI_ATTR_ROWS_RETURNED, bnd->stmt->con->err)
             )
 
-            if (res == TRUE)
+            if (res)
             {
                 bnd->stmt->rsts[iter] = OCI_ResultsetCreate(bnd->stmt, rows);
 
@@ -516,7 +516,7 @@ ub4 OCI_ProcNotifyChanges
                     }
                 }
 
-                if (nb_rows == 0)
+                if (0 == nb_rows)
                 {
                     sub->handler(&sub->event);
                 }

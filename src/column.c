@@ -284,7 +284,7 @@ boolean OCI_ColumnDescribe
 
     /* name */
 
-    if (res == TRUE)
+    if (res)
     {
         dbtext *dbstr    = NULL;
         int     dbsize   = 0;
@@ -345,7 +345,7 @@ boolean OCI_ColumnDescribe
             {
                 OCI_StringOracleToNative(dbstr_schema, schema_name, dbcharcount(dbsize_schema));
 
-                if (ostrcasecmp(dbstr_schema, OTEXT("PUBLIC")) == 0)
+                if (0 == ostrcasecmp(dbstr_schema, OTEXT("PUBLIC")))
                 {
                     schema_name[0] = 0;
                 }
@@ -404,7 +404,7 @@ boolean OCI_ColumnMap
 
             /* set bufsize only if it's not a "returning into" placeholder */
 
-            if (col->bufsize == 0)
+            if (0 == col->bufsize)
             {
                 col->subtype = OCI_NUM_INT;
                 col->bufsize = sizeof(int);
@@ -418,7 +418,7 @@ boolean OCI_ColumnMap
 
             /* set bufsize only if it's not a "returning into" placeholder */
 
-            if (col->bufsize == 0)
+            if (0 == col->bufsize)
             {
                 col->subtype = OCI_NUM_UINT;
                 col->bufsize = sizeof(unsigned int);
@@ -480,7 +480,7 @@ boolean OCI_ColumnMap
                known bug #3269146
             */
 
-            if (col->bufsize == 0)
+            if (0 == col->bufsize)
             {
                 col->libcode = SQLT_ODT;
                 col->bufsize = sizeof(OCIDate);
@@ -948,7 +948,7 @@ const otext * OCI_API OCI_ColumnGetSQLType
         }
         case SQLT_NUM:
         {
-              return (-127 == col->scale && col->prec > 0) ? OTEXT("FLOAT") : OTEXT("NUMBER");
+              return (SCALE_FLOAT == col->scale && col->prec > 0) ? OTEXT("FLOAT") : OTEXT("NUMBER");
         }
         case SQLT_INT:
         {
@@ -1129,7 +1129,7 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
         }
         case SQLT_NUM:
         {
-            if (-127 == col->scale && col->prec > 0)
+            if (SCALE_FLOAT == col->scale && col->prec > 0)
             {
                 len = osprintf(buffer, len,  OTEXT("FLOAT(%i)"), col->prec);
             }

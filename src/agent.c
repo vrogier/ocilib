@@ -69,8 +69,6 @@ OCI_Agent * OCI_AgentInit
 
         res = TRUE;
 
-        /* reinit */
-
         OCI_FREE(agent->name);
         OCI_FREE(agent->address);
 

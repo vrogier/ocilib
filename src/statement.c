@@ -270,7 +270,7 @@ boolean OCI_BindCheck
                     }
                     else if (bnd->alloc)
                     {
-                        if (bnd->type == OCI_CDT_DATETIME)
+                        if (OCI_CDT_DATETIME == bnd->type)
                         {
                             if (bnd->input[j])
                             {
@@ -862,7 +862,7 @@ boolean OCI_BindData
                 OCIBindByPos(stmt->stmt, (OCIBind **) &bnd->buffer.handle,
                              stmt->con->err, (ub4) index, (void *) bnd->buffer.data,
                              bnd->size, bnd->code, bnd->buffer.inds, (ub2 *) bnd->buffer.lens,
-                             bnd->plrcds, (ub4) (is_pltbl == TRUE ? nbelem : 0),
+                             bnd->plrcds, (ub4) (is_pltbl ? nbelem : 0),
                              pnbelem, exec_mode)
             )
         }
@@ -881,7 +881,7 @@ boolean OCI_BindData
                               stmt->con->err, (OraText *) dbstr, (sb4) dbsize,
                               (void *) bnd->buffer.data, bnd->size, bnd->code,
                               bnd->buffer.inds, (ub2 *) bnd->buffer.lens, bnd->plrcds,
-                              (ub4) (is_pltbl == TRUE ? nbelem : 0),
+                              (ub4) (is_pltbl ? nbelem : 0),
                               pnbelem, exec_mode)
             )
 
@@ -1058,7 +1058,7 @@ boolean OCI_FetchIntoUserVariables
         
         /* loop on column list for updating user given placeholders */
 
-        for (i = 1, n = OCI_GetColumnCount(rs); (i <= n) && (res == TRUE); i++)
+        for (i = 1, n = OCI_GetColumnCount(rs); (i <= n) && res; i++)
         {
             OCI_Column *col = OCI_GetColumn(rs, i);
 

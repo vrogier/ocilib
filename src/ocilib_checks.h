@@ -58,7 +58,7 @@
         (res) = (boolean) fct;                                                 \
         if (OCI_FAILURE((res)))                                                \
         {                                                                      \
-            (res) = ((res) == OCI_SUCCESS_WITH_INFO);                          \
+            (res) = OCI_SUCCESS_WITH_INFO  == (res);                           \
             OCI_ExceptionOCI((err), NULL, NULL, res);                          \
         }                                                                      \
         else                                                                   \
@@ -84,12 +84,12 @@
 #define OCI_CALL1(res, con, stmt, fct)                                         \
                                                                                \
     {                                                                          \
-        if ((res) == TRUE)                                                     \
+        if (res)                                                               \
         {                                                                      \
             (res) = (boolean) fct;                                             \
             if (OCI_FAILURE((res)))                                            \
             {                                                                  \
-                (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
+                (res) = OCI_SUCCESS_WITH_INFO  == (res);                       \
                 OCI_ExceptionOCI((con)->err, (con), (stmt), res);              \
             }                                                                  \
             else                                                               \
@@ -115,12 +115,12 @@
 #define OCI_CALL2(res, con, fct)                                               \
                                                                                \
     {                                                                          \
-        if ((res) == TRUE)                                                     \
+        if (res)                                                               \
         {                                                                      \
             (res) = (boolean) fct;                                             \
             if (OCI_FAILURE((res)))                                            \
             {                                                                  \
-                (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
+               (res) = OCI_SUCCESS_WITH_INFO  == (res);                        \
                 OCI_ExceptionOCI((con)->err, (con), NULL, res);                \
             }                                                                  \
             else                                                               \
@@ -144,12 +144,12 @@
 #define OCI_CALL3(res, err, fct)                                               \
                                                                                \
     {                                                                          \
-        if ((res) == TRUE)                                                     \
+        if (res)                                                               \
         {                                                                      \
             (res) = (boolean) fct;                                             \
             if (OCI_FAILURE((res)))                                            \
             {                                                                  \
-                (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
+                (res) = OCI_SUCCESS_WITH_INFO  == (res);                       \
                 OCI_ExceptionOCI((err), NULL, NULL, res);                      \
             }                                                                  \
             else                                                               \
@@ -175,12 +175,12 @@
 #define OCI_CALL4(res, err, con, fct)                                          \
                                                                                \
     {                                                                          \
-        if ((res) == TRUE)                                                     \
+        if (res)                                                               \
         {                                                                      \
             (res) = (boolean) fct;                                             \
             if (OCI_FAILURE((res)))                                            \
             {                                                                  \
-                (res) = ((res) == OCI_SUCCESS_WITH_INFO);                      \
+                (res) = OCI_SUCCESS_WITH_INFO  == (res);                       \
                 OCI_ExceptionOCI((err), (con), NULL, res);                     \
             }                                                                  \
             else                                                               \
@@ -210,7 +210,7 @@
         (res) = (boolean) fct;                                                 \
         if (OCI_FAILURE((res)))                                                \
         {                                                                      \
-            (res) = ((res) == OCI_SUCCESS_WITH_INFO);                          \
+            (res) = OCI_SUCCESS_WITH_INFO  == (res);                           \
             OCI_WarningOCI((con)->err, (con), (stmt), res);                    \
         }                                                                      \
         else                                                                   \
@@ -299,7 +299,7 @@
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);                             \
     OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);                                \
     OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED, FALSE);                     \
-    if (stmt->bind_alloc_mode == OCI_BAM_EXTERNAL)                             \
+    if (OCI_BAM_EXTERNAL == stmt->bind_alloc_mode)                             \
         OCI_CHECK_PTR(type, data, FALSE);
 
 /**
@@ -411,7 +411,7 @@
 
 #define OCI_CHECK_OBJECT_FETCHED(obj, ret)                                     \
                                                                                \
-    if ((obj)->hstate == OCI_OBJECT_FETCHED_CLEAN)                                                                                                                                   \
+    if (OCI_OBJECT_FETCHED_CLEAN == (obj)->hstate)                                                                                                                                   \
         return (ret);
 
 /**
@@ -429,7 +429,7 @@
 
 #define OCI_CHECK_STMT_STATUS(st, v, ret)                                      \
                                                                                \
-    if ((((st)->status) & (v)) == 0)                                           \
+    if ((st)->status && 0 == (v))                                              \
     {                                                                          \
         OCI_ExceptionStatementState((st), v);                                  \
         return ret;                                                            \

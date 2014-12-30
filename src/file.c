@@ -171,7 +171,7 @@ boolean OCI_FileGetInfo
 
     /* retrieve name */
 
-    if (res == TRUE)
+    if (res)
     {
         dbtext *dbstr1 = NULL;
         dbtext *dbstr2 = NULL;

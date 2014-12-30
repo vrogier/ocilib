@@ -65,15 +65,6 @@ boolean OCI_BindFree
             switch (bnd->type)
             {
                 case OCI_CDT_NUMERIC:
-                {
-                    OCI_MemFree(bnd->input);
-                    
-                    if (bnd->alloc)
-                    {
-                        OCI_FREE(bnd->buffer.data);
-                    } 
-                    break;
-                }
                 case OCI_CDT_TEXT:
                 {
                     OCI_MemFree(bnd->input);

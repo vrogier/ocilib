@@ -522,7 +522,7 @@ boolean OCI_FetchData
         OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, TRUE);
         res = TRUE;
     }
-    else if (rs->fetch_status == OCI_NEED_DATA)
+    else if (OCI_NEED_DATA == rs->fetch_status)
     {
         /* need to do a piecewise fetch */
         res = OCI_FetchPieces(rs);
@@ -712,7 +712,7 @@ boolean OCI_ResultsetExpandStrings
     {
         OCI_Define *def = &rs->defs[i];
 
-        if (def->col.datatype == OCI_CDT_TEXT)
+        if (OCI_CDT_TEXT == def->col.datatype)
         {
             for (j = (int) (def->buf.count-1); j >= 0; j--)
             {
@@ -1405,7 +1405,7 @@ boolean OCI_API OCI_SetStructNumericType
 
     OCI_CHECK_BOUND(rs->stmt->con, index,  1,  rs->nb_defs, FALSE);
 
-    OCI_CHECK_COMPAT(rs->stmt->con, rs->defs[index-1].col.datatype == OCI_CDT_NUMERIC, FALSE);
+    OCI_CHECK_COMPAT(rs->stmt->con, OCI_CDT_NUMERIC == rs->defs[index - 1].col.datatype, FALSE);
 
     rs->defs[index-1].col.subtype = type;
 
@@ -2268,7 +2268,7 @@ OCI_Ref * OCI_API OCI_GetRef
            at the first fetch call by pinning the ref and we affect the type
            info object handle to the define object */
 
-        if ((def->col.typinf == NULL) && (ref != NULL) && (ref->typinf != NULL))
+        if (!def->col.typinf && ref && ref->typinf)
         {
             def->col.typinf = ref->typinf;
         }
@@ -2455,7 +2455,7 @@ boolean OCI_API OCI_IsNull
 
     OCI_RESULT(def != NULL);
 
-    return (OCI_DefineIsDataNotNull(def) == FALSE);
+    return (!OCI_DefineIsDataNotNull(def));
 }
 
 /* --------------------------------------------------------------------------------------------- *

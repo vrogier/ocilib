@@ -107,7 +107,7 @@ OCI_Connection * OCI_ConnectionAllocate
     {
         con = (OCI_Connection *) item->data;
 
-        con->alloc_handles = ((con->mode & OCI_SESSION_XA) == 0);
+        con->alloc_handles = (0 == (con->mode & OCI_SESSION_XA));
 
         /* create internal lists */
 
@@ -1765,7 +1765,7 @@ boolean OCI_API OCI_ServerEnableOutput
 
             res = res && OCI_BindUnsignedInt(con->svopt->stmt, OTEXT(":n"), &bufsize);
 
-            if (bufsize == 0)
+            if (0 == bufsize)
             {
                 res = OCI_BindSetNull(OCI_GetBind(con->svopt->stmt, 1));
             }
@@ -1840,7 +1840,7 @@ const otext * OCI_API OCI_ServerGetOutput
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
     OCI_CHECK(con->svopt == NULL, FALSE);
 
-    if (con->svopt->curpos == 0 || con->svopt->curpos >= con->svopt->cursize)
+    if (0 == con->svopt->curpos || con->svopt->curpos >= con->svopt->cursize)
     {
         con->svopt->cursize = con->svopt->arrsize;
         res                 = OCI_Execute(con->svopt->stmt);

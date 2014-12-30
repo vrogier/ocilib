@@ -1421,7 +1421,7 @@ boolean OCI_API OCI_ObjectSetString
            
             res = OCI_StringToStringPtr(obj->con->env, data, obj->con->err, value);
 
-            if (res == TRUE)
+            if (res)
             {
                 *ind = OCI_IND_NOTNULL;
             }

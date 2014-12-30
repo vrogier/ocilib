@@ -58,7 +58,7 @@ size_t OCI_StringLength
 
     OCI_CHECK(ptr == NULL, 0);
 
-    if (OCILib.nls_utf8 == TRUE)
+    if (OCILib.nls_utf8)
     {
         const char *s = (char *) ptr;
         while (*s)
@@ -522,7 +522,7 @@ boolean OCI_StringGetFromAttrHandle
 
         *str = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), dbcharcount(dbsize) + 1, TRUE);
 
-        OCI_StringTranslate(dbstr, *str, dbcharcount(dbsize),( is_ansi == TRUE) ? sizeof(char) : sizeof(dbtext), sizeof(otext));
+        OCI_StringTranslate(dbstr, *str, dbcharcount(dbsize), is_ansi ? sizeof(char) : sizeof(dbtext), sizeof(otext));
 
         res = (*str != NULL);
     }

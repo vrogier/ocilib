@@ -499,7 +499,7 @@ boolean OCI_API OCI_DirPathSetColumn
 
     for (i = 0; i < dp->typinf->nb_cols; i++)
     {
-        if (ostrcasecmp(name, dp->typinf->cols[i].name) == 0)
+        if (0 == ostrcasecmp(name, dp->typinf->cols[i].name))
         {
             break;
         }

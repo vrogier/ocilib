@@ -205,7 +205,7 @@ unsigned int OCI_API OCI_LongRead
 
     lg->offset += size;
 
-    if (lg->type == OCI_CLONG)
+    if (OCI_CLONG == lg->type)
     {
         ((otext *) buffer)[size] = 0;
 

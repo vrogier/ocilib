@@ -54,7 +54,7 @@ boolean OCI_ArrayInit
     {
         void *handle = NULL;
 
-        if (arr->elem_type == OCI_CDT_DATETIME)
+        if (OCI_CDT_DATETIME == arr->elem_type)
         {
             handle = &(((OCIDate *)(arr->mem_handle))[i]);
         }

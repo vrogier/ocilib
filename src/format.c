@@ -75,7 +75,7 @@ int OCI_ParseSqlFmt
             quote = TRUE;
             len   = 0;
 
-            if ( *(++pf) == OTEXT('%'))
+            if (OTEXT('%') == *(++pf))
             {
                 if (buf)
                 {
@@ -98,7 +98,7 @@ int OCI_ParseSqlFmt
                 {
                     len = (int) (str ? ostrlen(str) : OCI_SIZE_NULL);
 
-                    if ((quote == TRUE) && (*pf != OTEXT('m')))
+                    if (quote && (*pf != OTEXT('m')))
                     {
                         if (buf)
                         {
@@ -273,11 +273,11 @@ int OCI_ParseSqlFmt
 
                 pf++;
 
-                if (*pf == OTEXT('i'))
+                if (OTEXT('i') == *pf)
                 {
                     len = (int) osprintf(temp, (int) osizeof(temp) - 1, OTEXT("%lld"), va_arg(*pargs, big_int));
                 }
-                else if (*pf == OTEXT('u'))
+                else if (OTEXT('u') == *pf)
                 {
                     len = (int) osprintf(temp, (int) osizeof(temp) - 1, OTEXT("%llu"), va_arg(*pargs, big_uint));
                 }
@@ -303,11 +303,11 @@ int OCI_ParseSqlFmt
 
                 /* short ints must be passed as int to va_args */
 
-                if (*pf == 'i')
+                if (OTEXT('i') == *pf)
                 {
                     len = (int) osprintf(temp, (int) osizeof(temp) - 1, OTEXT("%hd"), va_arg(*pargs, int));
                 }
-                else if (*pf == 'u')
+                else if (OTEXT('u') == *pf)
                 {
                     len = (int) osprintf(temp, (int) osizeof(temp) - 1, OTEXT("%hu"), va_arg(*pargs, unsigned int));
                 }           

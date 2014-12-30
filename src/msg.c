@@ -279,7 +279,7 @@ boolean OCI_API OCI_MsgGetRaw
     OCI_CHECK_PTR(OCI_IPC_VOID, raw, FALSE);
     OCI_CHECK_PTR(OCI_IPC_VOID, size, FALSE);
 
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode == OCI_UNKNOWN, FALSE);
+    OCI_CHECK_COMPAT(msg->typinf->con, OCI_UNKNOWN == msg->typinf->typecode, FALSE);
 
     if ((msg->payload) && (OCI_IND_NULL != msg->ind))
     {
@@ -317,7 +317,7 @@ boolean OCI_API OCI_MsgSetRaw
 
     OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
 
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode == OCI_UNKNOWN, FALSE);
+    OCI_CHECK_COMPAT(msg->typinf->con, OCI_UNKNOWN ==  msg->typinf->typecode, FALSE);
 
     OCI_CALL2
     (
@@ -906,7 +906,7 @@ OCI_Agent * OCI_API OCI_MsgGetSender
                    msg->typinf->con->err)
     )
 
-    if ((res == TRUE) && (handle != NULL))
+    if (res && handle)
     {
         sender = OCI_AgentInit(msg->typinf->con, &msg->sender, handle, NULL, NULL);
     }

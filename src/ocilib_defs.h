@@ -394,8 +394,8 @@
 
 /* check OCI status */
 
-#define OCI_FAILURE(res)                (OCI_SUCCESS != (res))
-#define OCI_SUCCESSFUL(res)             (OCI_SUCCESS == (res))
+#define OCI_FAILURE(res)                ((res) != OCI_SUCCESS)
+#define OCI_SUCCESSFUL(res)             ((res) == OCI_SUCCESS)
 
 /* memory management helpers */
 
@@ -456,6 +456,7 @@
 #define WCHAR_2_BYTES   0xFFFF
 #define WCHAR_4_BYTES   0x7FFFFFFF
 
+#define SCALE_FLOAT     -127
 
 #endif    /* OCILIB_OCILIB_DEFS_H_INCLUDED */
 

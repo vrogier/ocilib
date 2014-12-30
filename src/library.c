@@ -1592,7 +1592,7 @@ OCI_Error * OCI_API OCI_GetLastError
 
         if (err)
         {
-            if (err->raise == FALSE)
+            if (!err->raise)
             {
                 err = NULL;
             }

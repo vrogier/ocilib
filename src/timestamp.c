@@ -1088,7 +1088,7 @@ boolean OCI_API OCI_TimestampToCTime
                                    &t.tm_hour, &t.tm_min, &t.tm_sec,
                                    &msec);
 
-    if (res == TRUE)
+    if (res)
     {
         t.tm_year -= 1900;
         t.tm_mon  -= 1;
