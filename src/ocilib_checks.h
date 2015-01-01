@@ -713,9 +713,9 @@
 
 #define OCI_CHECK_ENUM_VALUE(con, stmt, mode, values, name, ret)               \
     {                                                                          \
-        size_t i = 0, n = sizeof(values) / sizeof(values[0]);                  \
-        for (; i < n; i++) { if (mode == values[i]) break; }                   \
-        if (i >= n)                                                            \
+        size_t ii = 0, nn = sizeof(values) / sizeof(values[0]);                \
+        for (; ii < nn; ii++) { if (mode == values[ii]) break; }               \
+        if (ii >= nn)                                                          \
         {                                                                      \
             OCI_ExceptionArgInvalidValue(con, stmt, name, mode);               \
             return ret;                                                        \

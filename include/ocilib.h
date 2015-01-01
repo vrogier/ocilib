@@ -208,12 +208,12 @@ extern "C" {
  *
  * OCILIB uses char/wchar_t strings for both public interface and internal storage.
  *
- * Unicode builds of OCILIB initialize OCI in UTF16 Unicode mode. 
+ * Unicode builds of OCILIB initialize OCI in UTF16 Unicode mode.
  * Oracle implements this mode with a 2 bytes (fixed length) UTF16 encoding.
  *
  * @warning
- * When using Unicode builds of OCILIB, make sure that the target 
- * Database charset is also using an Unicode charset or is a superset of UTF16. 
+ * When using Unicode builds of OCILIB, make sure that the target
+ * Database charset is also using an Unicode charset or is a superset of UTF16.
  * If not, strings may be converted with substitution characters by the Oracle client !
  *
  * So, on systems implementing wchar_t as 2 bytes based UTF16 (e.g. Ms Windows),
@@ -231,7 +231,7 @@ extern "C" {
  *
  * @par UTF8 strings
  *
- * OCILIB fully supports UTF8 strings : 
+ * OCILIB fully supports UTF8 strings :
  * - Within OCI_CHARSET_ANSI builds
  * - NLS_LANG environment variable must be set to any valid UTF8 Oracle charset string
  *
@@ -240,7 +240,7 @@ extern "C" {
  * OCILIB main header file provides macro around most common string functions of
  * the C standard library.
  *
- * these macros are based on the model: ots[libc function name]() 
+ * these macros are based on the model: ots[libc function name]()
  *
  * xxx is the standard C library string function name without the character type prefix (str/wcs).
  *
@@ -260,14 +260,14 @@ extern "C" {
 
 #include <wctype.h>
 
-#if (_MSC_VER < 1300) && defined(__cplusplus)
-    extern "C++" {
+#if defined(__cplusplus) && defined(_MSC_VER) && (_MSC_VER < 1300)
+extern "C++" {
 #endif
 
 #include <wchar.h>
-    
-#if (_MSC_VER < 1300) && defined(__cplusplus)
-    }
+
+#if defined(__cplusplus) && defined(_MSC_VER) && (_MSC_VER < 1300)
+}
 #endif
 
 /* Charset macros */
@@ -796,7 +796,7 @@ typedef struct OCI_Enqueue OCI_Enqueue;
  * Error procedure prototype
  *
  * @param err - Error handle
- * 
+ *
  */
 
 typedef void (*POCI_ERROR)
@@ -817,7 +817,7 @@ typedef void (*POCI_ERROR)
 
 typedef void (*POCI_THREAD)
 (
-    OCI_Thread *thread, 
+    OCI_Thread *thread,
     void       *arg
 );
 
@@ -892,15 +892,15 @@ typedef void (*POCI_NOTIFY_AQ)
  *
  * @return
  * User callback should return one of the following value :
- *  - OCI_FOC_OK 
+ *  - OCI_FOC_OK
  *  - OCI_FOC_RETRY
  *
  */
 
 typedef unsigned int (*POCI_TAF_HANDLER)
 (
-    OCI_Connection *con, 
-    unsigned int    type, 
+    OCI_Connection *con,
+    unsigned int    type,
     unsigned int    event
 );
 
@@ -920,26 +920,26 @@ typedef unsigned int (*POCI_TAF_HANDLER)
  *
  * @note
  * Possible values for parameter 'source' :
- *  - OCI_HES_INSTANCE                    
- *  - OCI_HES_DATABASE                    
- *  - OCI_HES_NODE                        
- *  - OCI_HES_SERVICE                     
- *  - OCI_HES_SERVICE_MEMBER              
- *  - OCI_HES_ASM_INSTANCE                
- *  - OCI_HES_PRECONNECT     
+ *  - OCI_HES_INSTANCE
+ *  - OCI_HES_DATABASE
+ *  - OCI_HES_NODE
+ *  - OCI_HES_SERVICE
+ *  - OCI_HES_SERVICE_MEMBER
+ *  - OCI_HES_ASM_INSTANCE
+ *  - OCI_HES_PRECONNECT
  *
  * @note
  * Possible values for parameter 'event' :
  *  - OCI_HET_DOWN : HA event type down
- *  - OCI_HET_UP   : HA event type up            
+ *  - OCI_HET_UP   : HA event type up
  *
  */
 
 typedef void (*POCI_HA_HANDLER)
 (
-    OCI_Connection *con, 
-    unsigned int    source, 
-    unsigned int    event, 
+    OCI_Connection *con,
+    unsigned int    source,
+    unsigned int    event,
     OCI_Timestamp  *time
 );
 
@@ -1303,9 +1303,9 @@ typedef unsigned int big_uint;
 
 /* Column property flags     */
 
-#define OCI_CPF_NONE                        0 
-#define OCI_CPF_IS_IDENTITY                 1 
-#define OCI_CPF_IS_GEN_ALWAYS               2 
+#define OCI_CPF_NONE                        0
+#define OCI_CPF_IS_IDENTITY                 1
+#define OCI_CPF_IS_GEN_ALWAYS               2
 #define OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL   4
 
 /* Integer sign flag */
@@ -1464,7 +1464,7 @@ typedef unsigned int big_uint;
 #define OCI_HET_UP                          1
 
 /* HA event source */
-#define OCI_HES_INSTANCE                    0 
+#define OCI_HES_INSTANCE                    0
 #define OCI_HES_DATABASE                    1
 #define OCI_HES_NODE                        2
 #define OCI_HES_SERVICE                     3
@@ -1650,7 +1650,7 @@ typedef unsigned int big_uint;
 #define OCI_SIZE_FILENAME                   255
 #define OCI_SIZE_FORMAT_NUMS                40
 #define OCI_SIZE_FORMAT_NUML                65
-#define OCI_SIZE_OBJ_NAME                   32 // 30 is DB limit + 2 quotes
+#define OCI_SIZE_OBJ_NAME                   32
 
 #define OCI_HASH_DEFAULT_SIZE               256
 
@@ -2137,7 +2137,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
  *   - DO NOT USE OCI_CHARSET_WIDE OCILIB builds with XA connections
  *
  * @note
- * On success, a local transaction is automatically created and started ONLY for regular 
+ * On success, a local transaction is automatically created and started ONLY for regular
  * standalone connections and connections retrieved from connection pools.
  * No transaction is created for a XA connection or q connection retrieved from session pools.
  *
@@ -2470,7 +2470,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetDefaultFormatDate
  * @warning
  * If data fetched from a string column cannot be converted to a number value
  * with the given format, an error will be raised
- * 
+ *
  * @warning
  * It does not applies to binary double and binary floats data types that
  * are converted from/to strings using the standard C library
@@ -2525,7 +2525,7 @@ OCI_EXPORT OCI_Transaction * OCI_API OCI_GetTransaction
  * @note
  * The current transaction (if any) is automatically stopped but the newly assigned is not
  * started or resumed
- * 
+ *
  * @warning
  * Do not set transaction object to XA connection or connection retrieved from a session pool
  *
@@ -2853,11 +2853,11 @@ OCI_EXPORT boolean OCI_API OCI_SetStatementCacheSize
  * Return the default LOB prefetch buffer size for the connection
  *
  * @param con  - Connection handle
- * 
+ *
  * @warning
  * Requires Oracle Client AND Server 11gR1 or above
  *
- * @note 
+ * @note
  * Prefetch size is:
  * - number of bytes for BLOBs and BFILEs
  * - number of characters for CLOBs.
@@ -2871,7 +2871,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
 (
     OCI_Connection *con
 );
-    
+
 /**
  * @brief
  * Enable or disable prefetching for all LOBs fetched in the connection
@@ -2882,7 +2882,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
  * @note
  * If parameter 'value':
  * - is == 0, it disables prefetching for all LOBs fetched in the connection.
- * - is >  0, it enables prefetching for all LOBs fetched in the connection 
+ * - is >  0, it enables prefetching for all LOBs fetched in the connection
  * and the given buffer size is used for prefetching LOBs
  *
  * @note
@@ -2891,7 +2891,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
  * @warning
  * Requires Oracle Client AND Server 11gR1 or above.
  *
- * @note 
+ * @note
  * Prefetch size is:
  * - number of bytes for BLOBs and BFILEs
  * - number of characters for CLOBs.
@@ -3624,11 +3624,11 @@ OCI_EXPORT boolean OCI_API OCI_Prepare
  *
  * @return
  * TRUE on success otherwise FALSE
- * 
+ *
  * @warning
  * If a SQL warning occurs:
- * - the function returns TRUE 
- * - the SQL warning triggers the global error handler with an OCI_Error having its OCI_ErrorGetType() 
+ * - the function returns TRUE
+ * - the SQL warning triggers the global error handler with an OCI_Error having its OCI_ErrorGetType()
  *   attribute set to OCI_ERR_WARNING
  * - If OCILIB is initialized with the OCI_ENV_CONTEXT mode, OCI_GetLastError() will return the OCI_Error
  *   object corresponding to the warning
@@ -3649,11 +3649,11 @@ OCI_EXPORT boolean OCI_API OCI_Execute
  *
  * @return
  * TRUE on success otherwise FALSE
- * 
+ *
  * @warning
  * If a SQL warning occurs:
- * - the function returns TRUE 
- * - the SQL warning triggers the global error handler with an OCI_Error having its OCI_ErrorGetType() 
+ * - the function returns TRUE
+ * - the SQL warning triggers the global error handler with an OCI_Error having its OCI_ErrorGetType()
  *   attribute set to OCI_ERR_WARNING
  * - If OCILIB is initialized with the OCI_ENV_CONTEXT mode, OCI_GetLastError() will return the OCI_Error
  *   object corresponding to the warning
@@ -3902,7 +3902,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetSQLVerb
  * - Call OCI_SetBindAllocation() with the mode OCI_BAM_INTERNAL
  * - pass a NULL variable or array to OCI_BindXXX() calls
  * - Retrieve the bind content allocated by OCILIB with OCI_BindGetData()
- * 
+ *
  * Internal Bind allocation mode IS compatible with ALL array binding OCI_BindArrayOfxxx() methods.
  *
  * Internal Bind allocation mode IS NOT compatible with some single variable bind calls :
@@ -3915,10 +3915,10 @@ OCI_EXPORT const otext * OCI_API OCI_GetSQLVerb
  * - OCI_BindRef()
  * - OCI_BindStatement()
  * - OCI_BindLong()
- * 
+ *
  * These methods need to know the data sub type (like OCI_CLOB/OCI_BLOB for lobs) in order
  * to internally create variables. As these methods prototypes are not passing the sub type,
- * calling them with the statement bind mode set to OCI_BAM_INTERNAL will raise 
+ * calling them with the statement bind mode set to OCI_BAM_INTERNAL will raise
  * an OCILIB error of type OCI_ERR_NULL_POINTER
  *
  * @note
@@ -5100,7 +5100,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBatchErrorCount
 (
     OCI_Statement *stmt
 );
-  
+
 /**
  * @brief
  * Return the number of binds currently associated to a statement
@@ -5210,7 +5210,7 @@ OCI_EXPORT const otext * OCI_API OCI_BindGetName
  * Possible values for parameter 'direction' :
  *   - OCI_BDM_IN      : input values  (not modified by the server)
  *   - OCI_BDM_OUT     : output values (modified by the server)
- *   - OCI_BDM_IN_OUT  : input and output values 
+ *   - OCI_BDM_IN_OUT  : input and output values
  *
  * @note
  * Default value is OCI_BDM_IN_OUT
@@ -5678,11 +5678,11 @@ boolean OCI_API OCI_BindSetCharsetForm
  * It looks like what's found in JDBC and other object oriented databases frameworks.
  *
  * ONLY the following statements can return resultsets that can be fetched by host programs:
- * - Statements executing SQL SELECT 
- * - Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause 
+ * - Statements executing SQL SELECT
+ * - Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause
  * - Statements binded to PL/SQL OPEN FOR argument
  * - Statements binded to PL/SQL procedure OUT variables
- * - Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using 
+ * - Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using
  *   DBMS_SQL.RETURN_RESULT()
  *
  * These resultsets are encapsulated in OCILIB by OCI_Resultset objects.
@@ -5737,7 +5737,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  *
  * @warning
  * If you intend to use OCI_FetchSeek() on a scrollable statement and if any of the
- * selected columns is a ref cursor or a nested table, OCILIB will internally set the 
+ * selected columns is a ref cursor or a nested table, OCILIB will internally set the
  * resultset internal array size to 1 and thus ignore any values set using OCI_SetFetchSize()
  * This is performed due to an Oracle bug.
  *
@@ -5758,13 +5758,13 @@ boolean OCI_API OCI_BindSetCharsetForm
  * - OCI_Timestamp : uses OCI_TimestampToText() with current connection date format
  * - OCI_Interval  : uses OCI_IntervalToText() with Oracle default format
  * - OCI_Coll      : uses OCI_CollToText()
- * - OCI_Object    : uses OCI_ObjectToText() 
- * - OCI_Ref       : uses OCI_RefToText() 
+ * - OCI_Object    : uses OCI_ObjectToText()
+ * - OCI_Ref       : uses OCI_RefToText()
  * - OCI_File      : returns "$(folder)/$(filename)" - no content returned
  * - OCI_Lob       : see note above for binary types
  * - OCI_Long      : see note above for binary types
  * - RAWs          : see note above for binary types
- * 
+ *
  * @note
  * For RAWs and BLOBs attributes, their binary values are converted to hexadecimal strings
  * For LONG and CLOBs/NCLOBSs attributes, the whole string content is returned
@@ -5772,7 +5772,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  * @note
  * The following OCILIB types are not supported for implicit conversion:
  * - OCI_Statement
- * 
+ *
  * @warning
  * For Dates and numerics types, OCILIB uses OCI client calls to perform
  * the conversion.
@@ -5782,7 +5782,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  *
  * @par Fetching rows into user structures
  *
- * It is possible to fetch a complete row into a user defined structure. 
+ * It is possible to fetch a complete row into a user defined structure.
  * Each column of the resultset is mapped to a structure member.
  * The mapping rules are :
  *   - LOBs (CLOB, NCLOB, BLOB) : OCI_Lob *
@@ -5973,7 +5973,7 @@ OCI_EXPORT boolean OCI_API OCI_FetchLast
  * If you intend to use OCI_FetchSeek() on a scrollable statement and if any of the
  * selected columns is a ref cursor or a nested table, you must set the fetching size
  * to 1 using OCI_SetFetchSize() before calling OCI_GetResultset()
- * Otherwise OCI_FetchSeek() will fails with a OCI-10002 error 
+ * Otherwise OCI_FetchSeek() will fails with a OCI-10002 error
  *
  * @return
  * TRUE on success otherwise FALSE if:
@@ -6309,19 +6309,19 @@ OCI_EXPORT boolean OCI_API OCI_ColumnGetCharUsed
 
 /**
  * @brief
- * Return the column property flags 
+ * Return the column property flags
  *
  * @param col - Column handle
  *
  * For flags are:
  * - OCI_CPF_NONE : The column has no flags or the OCI client does not support this call
- * - OCI_CPF_IS_IDENTITY : 
- *      - If Set, the column is an IDENTITY column 
+ * - OCI_CPF_IS_IDENTITY :
+ *      - If Set, the column is an IDENTITY column
  *      - Otherwise, it is not an IDENTITY column
  * - OCI_CPF_IS_GEN_ALWAYS (only if OCI_CPF_IS_IDENTITY is set) :
  *      - If set, means that the value is "ALWAYS GENERATED"
  *      - Otherwise mens that the value is "GENERATED BY"
- * - OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL (only if OCI_CPF_IS_IDENTITY is set):  
+ * - OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL (only if OCI_CPF_IS_IDENTITY is set):
  *      - If set, means that the value is generated by default on NULL
  *
  * @note
@@ -7887,7 +7887,7 @@ OCI_EXPORT boolean OCI_API OCI_CollAppend
 
 /**
  * @brief
- * Convert a collection handle value to a string 
+ * Convert a collection handle value to a string
  *
  * @param coll - Collection handle
  * @param size - Destination string length pointer in characters
@@ -7902,7 +7902,7 @@ OCI_EXPORT boolean OCI_API OCI_CollAppend
  * For RAWs and BLOBs attributes, their binary values are converted to hexadecimal strings
  *
  * @warning
- * This convenient method shall not be used when performance matters. It is usually called twice (buffer length 
+ * This convenient method shall not be used when performance matters. It is usually called twice (buffer length
  * computation) and must also care about quotes within strings.
  *
  * @return
@@ -7931,7 +7931,7 @@ OCI_EXPORT boolean OCI_API OCI_CollToText
  * OCI_CollDeleteElem() is only valid for nested tables.
  *
  * @return
- * - if the input collection is a nested table, it returns TRUE if the element 
+ * - if the input collection is a nested table, it returns TRUE if the element
  *   is successfully deleted otherwise FALSE on error
  * - if the input collection is a VARRAY, it always returns FALSE without spawning an exception
  *
@@ -8830,8 +8830,8 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetNull
  *
  * @note
  * it is only valid for the following statements:
- * - Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause 
- * - Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using 
+ * - Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause
+ * - Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using
  *   DBMS_SQL.RETURN_RESULT()
  *
  * @note
@@ -12640,7 +12640,7 @@ OCI_EXPORT float OCI_API OCI_ObjectGetFloat
  * mechanisms than OCI_GetString(). See its documentation for more details.
  *
  * @return
- * Attribute value or NULL on failure 
+ * Attribute value or NULL on failure
  *
  */
 
@@ -13346,7 +13346,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetStruct
 
 /**
  * @brief
- * Convert an object handle value to a string 
+ * Convert an object handle value to a string
  *
  * @param obj  - Object handle
  * @param size - Destination string length pointer in characters
@@ -13361,7 +13361,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetStruct
  * For RAWs and BLOBs attributes, their binary values are converted to hexadecimal strings
  *
  * @warning
- * This convenient method shall not be used when performance matters. It is usually called twice (buffer length 
+ * This convenient method shall not be used when performance matters. It is usually called twice (buffer length
  * computation) and must also care about quotes within strings.
  *
  * @return
@@ -13930,11 +13930,11 @@ OCI_EXPORT boolean OCI_PrepareFmt
  *
  * @return
  * TRUE on success otherwise FALSE
- * 
+ *
  * @warning
  * If a SQL warning occurs:
- * - the function returns TRUE 
- * - the SQL warning triggers the global error handler with an OCI_Error having its OCI_ErrorGetType() 
+ * - the function returns TRUE
+ * - the SQL warning triggers the global error handler with an OCI_Error having its OCI_ErrorGetType()
  *   attribute set to OCI_ERR_WARNING
  * - If OCILIB is initialized with the OCI_ENV_CONTEXT mode, OCI_GetLastError() will return the OCI_Error
  *   object corresponding to the warning
@@ -14770,15 +14770,15 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetEntry
  *
  * @note
  * - When using conversion mode OCI_DCM_DEFAULT, OCI_DirPathConvert() stops when
- *   any error is encountered and returns OCI_DPR_ERROR 
+ *   any error is encountered and returns OCI_DPR_ERROR
  * - When using conversion mode OCI_DCM_FORCE, OCI_DirPathConvert() does not stop
  *   on errors. Instead it discards any erred rows and returns OCI_DPR_COMPLETE once
  *   all rows are processed.
  *
  * @note
- * List of faulted rows and columns can be retrieved using OCI_DirPathGetErrorRow() and 
+ * List of faulted rows and columns can be retrieved using OCI_DirPathGetErrorRow() and
  * OCI_DirPathGetErrorColumn()
- * 
+ *
  * @note
  * OCI_DirPathGetAffectedRows() returns the number of rows converted in the last call.
  *
@@ -15181,17 +15181,17 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetAffectedRows
  *
  * @warning
  * Direct path column indexes start at 1.
- * 
+ *
  * @note
  * Errors may happen while data is converted to direct path stream format
  * using OCI_DirPathConvert().
  * When using conversion mode OCI_DCM_DEFAULT, OCI_DirPathConvert() returns
  * OCI_DPR_ERROR on error. OCI_DirPathGetErrorColumn() returns the column index
  * that caused the error
- * When using conversion mode OCI_DCM_FORCE, OCI_DirPathConvert() returns 
+ * When using conversion mode OCI_DCM_FORCE, OCI_DirPathConvert() returns
  * OCI_DPR_COMPLETE even on errors. In order to retrieve the list of all column
- * indexes that have erred, the application can call OCI_DirPathGetErrorColumn() 
- * repeatedly until it returns 0. 
+ * indexes that have erred, the application can call OCI_DirPathGetErrorColumn()
+ * repeatedly until it returns 0.
  *
  * @note
  * The internal value is reset to 0 when calling OCI_DirPathConvert()
@@ -15215,7 +15215,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorColumn
  *
  * @warning
  * Direct path row indexes start at 1.
- * 
+ *
  * @note
  * Errors may happen :
  * - while data is converted to direct path stream format using OCI_DirPathConvert()
@@ -15225,14 +15225,14 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorColumn
  * When using conversion mode OCI_DCM_DEFAULT, OCI_DirPathConvert() returns
  * OCI_DPR_ERROR on error. OCI_DirPathGetErrorRow() returns the row index that
  * caused the error.
- * When using conversion mode OCI_DCM_FORCE, OCI_DirPathConvert() returns 
+ * When using conversion mode OCI_DCM_FORCE, OCI_DirPathConvert() returns
  * OCI_DPR_COMPLETE even on errors. In order to retrieve the list of all row
- * indexes that have erred, the application can call OCI_DirPathGetErrorRow() 
- * repeatedly until it returns 0. 
+ * indexes that have erred, the application can call OCI_DirPathGetErrorRow()
+ * repeatedly until it returns 0.
  *
  * @note
- * After a call to OCI_DirPathLoad(), in order to retrieve the list of all faulted rows 
- * indexes, the application can call OCI_DirPathGetErrorRow() repeatedly until it returns 0. 
+ * After a call to OCI_DirPathLoad(), in order to retrieve the list of all faulted rows
+ * indexes, the application can call OCI_DirPathGetErrorRow() repeatedly until it returns 0.
  *
  * @note
  * The internal value is reset to 0 when calling OCI_DirPathConvert(),
@@ -15382,7 +15382,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgFree
  * OCI_MsgReset() clears the message payload and set it to NULL
  * For messages handling objects payloads, OCI_MsgSetObject() must be called again to assign a
  * payload.
- *    
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -16197,8 +16197,8 @@ OCI_EXPORT OCI_Msg * OCI_API OCI_DequeueGet
 
 OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 (
-    OCI_Dequeue    *dequeue, 
-    unsigned int    port, 
+    OCI_Dequeue    *dequeue,
+    unsigned int    port,
     unsigned int    timeout,
     POCI_NOTIFY_AQ  callback
 );
@@ -16217,7 +16217,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 OCI_EXPORT boolean OCI_API OCI_DequeueUnsubscribe
 (
     OCI_Dequeue *dequeue
-);    
+);
 
 /**
  * @brief
