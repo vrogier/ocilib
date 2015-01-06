@@ -160,7 +160,7 @@ void OCI_ObjectGetStructSize
             size = ROUNDUP(size, align);
         }
 
-        typinf->struct_size = size + size2;
+        typinf->struct_size = ROUNDUP(size + size2, typinf->align);
     }
 
     *p_size  = typinf->struct_size;
