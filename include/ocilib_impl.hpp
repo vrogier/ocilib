@@ -495,9 +495,9 @@ inline void ConcurrentPool<TKey, TValue>::SetLockMode(bool threaded)
 template <class TKey, class TValue>
 inline void ConcurrentPool<TKey, TValue>::Remove(TKey key)
 {
-    Lock();
-    Data().erase(key);
-    Unlock();
+    this->Lock();
+    this->Data().erase(key);
+    this->Unlock();
 }
 
 template <class TKey, class TValue>
@@ -505,13 +505,13 @@ inline TValue ConcurrentPool<TKey, TValue>::Get(TKey key)
 {
     TValue value = 0;
 
-    Lock();
-    typename std::map< TKey, TValue >::const_iterator it = Data().find(key);
-    if (it != Data().end())
+    this->Lock();
+    typename std::map< TKey, TValue >::const_iterator it = this->Data().find(key);
+    if (it != this->Data().end())
     {
         value = it->second;
     }
-    Unlock();
+    this->Unlock();
 
     return value;
 }
@@ -519,9 +519,9 @@ inline TValue ConcurrentPool<TKey, TValue>::Get(TKey key)
 template <class TKey, class TValue>
 inline void ConcurrentPool<TKey, TValue>::Set(TKey key, TValue value)
 {
-    Lock();
-    Data()[key] = value;
-    Unlock();
+    this->Lock();
+    this->Data()[key] = value;
+    this->Unlock();
 }
 
 template <class THandleType>
@@ -529,7 +529,7 @@ inline HandleHolder<THandleType>::SmartHandle::SmartHandle(HandleHolder *holder,
     : _holders(), _children(), _handle(handle), _func(func), _parent(parent), _extraInfo(0)
 {
     bool threaded = ((Environment::GetMode() & Environment::Threaded) == Environment::Threaded);
-    
+
     _holders.SetLockMode(threaded);
     _children.SetLockMode(threaded);
 
@@ -614,7 +614,7 @@ template <class THandleType>
 inline bool HandleHolder<THandleType>::SmartHandle::IsLastHolder(HandleHolder *holder)
 {
     bool res = false;
-    
+
     _holders.Lock();
 
     res = ((_holders.Data().size() == 1) && (*(_holders.Data().begin()) == holder));
