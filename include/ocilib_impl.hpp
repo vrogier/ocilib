@@ -431,50 +431,83 @@ inline void HandleHolder<THandleType>::Release()
 }
 
 
-template <class TKey, class TValue>
-inline  ConcurrentPool<TKey, TValue>::ConcurrentPool() : _map(), _mutex(0)
+
+template <class TType>
+inline Lockable<TType>::Lockable() : _mutex(0), _type()
 {
 
 }
 
-template <class TKey, class TValue>
-inline void ConcurrentPool<TKey, TValue>::Initialize(unsigned int envMode)
+template <class TType>
+inline Lockable<TType>::~Lockable()
 {
-    if (envMode & OCI_ENV_THREADED)
+    SetLockMode(false);
+   _type.clear();
+}
+
+
+template <class TType>
+inline void Lockable<TType>::SetLockMode(bool threaded)
+{
+    if (threaded && !_mutex)
     {
         _mutex = Mutex::Create();
     }
+    else if (!threaded && _mutex)
+    {
+        Mutex::Destroy(_mutex);
+        _mutex = 0;
+    }
 }
 
-template <class TKey, class TValue>
-inline void ConcurrentPool<TKey, TValue>::Release()
+template <class TType>
+inline void Lockable<TType>::Lock()  const
 {
     if (_mutex)
     {
-        Mutex::Destroy(_mutex);
+        Mutex::Acquire(_mutex);
     }
+}
 
-    _mutex = 0;
+template <class TType>
+inline void Lockable<TType>::Unlock() const
+{
+    if (_mutex)
+    {
+        Mutex::Release(_mutex);
+    }
+}
 
-    _map.clear();
+template <class TType>
+inline TType& Lockable<TType>::Data()
+{
+    return _type;
+}
+
+
+
+template <class TKey, class TValue>
+inline void ConcurrentPool<TKey, TValue>::SetLockMode(bool threaded)
+{
+    Lockable<std::map< TKey, TValue > >::SetLockMode(threaded);
 }
 
 template <class TKey, class TValue>
 inline void ConcurrentPool<TKey, TValue>::Remove(TKey key)
 {
     Lock();
-    _map.erase(key);
+    Data().erase(key);
     Unlock();
 }
 
 template <class TKey, class TValue>
-inline TValue ConcurrentPool<TKey, TValue>::Get(TKey key) const
+inline TValue ConcurrentPool<TKey, TValue>::Get(TKey key)
 {
     TValue value = 0;
 
     Lock();
-    typename ConcurrentPoolMap::const_iterator it = _map.find(key);
-    if (it != _map.end() )
+    typename std::map< TKey, TValue >::const_iterator it = Data().find(key);
+    if (it != Data().end())
     {
         value = it->second;
     }
@@ -487,37 +520,26 @@ template <class TKey, class TValue>
 inline void ConcurrentPool<TKey, TValue>::Set(TKey key, TValue value)
 {
     Lock();
-    _map[key] = value;
+    Data()[key] = value;
     Unlock();
-}
-
-template <class TKey, class TValue>
-inline void ConcurrentPool<TKey, TValue>::Lock() const
-{
-    if (_mutex)
-    {
-        Mutex::Acquire(_mutex);
-    }
-}
-
-template <class TKey, class TValue>
-inline void ConcurrentPool<TKey, TValue>::Unlock() const
-{
-    if (_mutex)
-    {
-        Mutex::Release(_mutex);
-    }
 }
 
 template <class THandleType>
 inline HandleHolder<THandleType>::SmartHandle::SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc func, Handle *parent)
     : _holders(), _children(), _handle(handle), _func(func), _parent(parent), _extraInfo(0)
 {
+    bool threaded = ((Environment::GetMode() & Environment::Threaded) == Environment::Threaded);
+    
+    _holders.SetLockMode(threaded);
+    _children.SetLockMode(threaded);
+
     Acquire(holder);
 
     if (_parent && _handle)
     {
-        _parent->GetChildren().push_back(this);
+        _parent->GetChildren().Lock();
+        _parent->GetChildren().Data().push_back(this);
+        _parent->GetChildren().Unlock();
     }
 }
 
@@ -529,12 +551,16 @@ inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
 
     if (_parent && _handle)
     {
-        _parent->GetChildren().remove(this);
+        _parent->GetChildren().Lock();
+        _parent->GetChildren().Data().remove(this);
+        _parent->GetChildren().Unlock();
     }
 
-    for(std::list<Handle *>::iterator it = _children.begin(); it != _children.end(); it++)
+	_children.Lock();
+
+	for (std::list<Handle *>::iterator it1 = _children.Data().begin(), it2 = _children.Data().end(); it1 != it2;  ++it1)
     {
-        Handle *handle = *it;
+        Handle *handle = *it1;
 
         handle->DetachFromParent();
         handle->DetachFromHolders();
@@ -542,11 +568,12 @@ inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
         delete handle;
     }
 
+	_children.Unlock();
+
     Environment::GetEnvironmentHandle().Handles.Remove(_handle);
 
     if (_func)
     {
-
         ret = _func(_handle);
         chk = TRUE;
     }
@@ -560,15 +587,22 @@ inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
 template <class THandleType>
 inline void HandleHolder<THandleType>::SmartHandle::Acquire(HandleHolder *holder)
 {
-    _holders.push_back(holder);
+    _holders.Lock();
+    _holders.Data().push_back(holder);
+    _holders.Unlock();
 }
 
 template <class THandleType>
 inline void HandleHolder<THandleType>::SmartHandle::Release(HandleHolder *holder)
 {
-    _holders.remove(holder);
+    _holders.Lock();
+    _holders.Data().remove(holder);
 
-    if (_holders.size() == 0)
+    size_t count = _holders.Data().size();
+
+    _holders.Unlock();
+
+    if (count == 0)
     {
         delete this;
     }
@@ -577,9 +611,17 @@ inline void HandleHolder<THandleType>::SmartHandle::Release(HandleHolder *holder
 }
 
 template <class THandleType>
-inline bool HandleHolder<THandleType>::SmartHandle::IsLastHolder(HandleHolder *holder) const
+inline bool HandleHolder<THandleType>::SmartHandle::IsLastHolder(HandleHolder *holder)
 {
-    return ((_holders.size() == 1) && (*(_holders.begin()) == holder));
+    bool res = false;
+    
+    _holders.Lock();
+
+    res = ((_holders.Data().size() == 1) && (*(_holders.Data().begin()) == holder));
+
+    _holders.Unlock();
+
+    return res;
 }
 
 template <class THandleType>
@@ -607,7 +649,7 @@ inline void HandleHolder<THandleType>::SmartHandle::SetExtraInfos(AnyPointer ext
 }
 
 template <class THandleType>
-inline std::list<Handle *> & HandleHolder<THandleType>::SmartHandle::GetChildren()
+inline Lockable< std::list<Handle *> > & HandleHolder<THandleType>::SmartHandle::GetChildren()
 {
     return _children;
 }
@@ -615,12 +657,16 @@ inline std::list<Handle *> & HandleHolder<THandleType>::SmartHandle::GetChildren
 template <class THandleType>
 inline void HandleHolder<THandleType>::SmartHandle::DetachFromHolders()
 {
-    for(typename std::list<HandleHolder<THandleType> *>::iterator it = _holders.begin(); it != _holders.end(); it++)
+    _holders.Lock();
+
+    for (typename std::list<HandleHolder<THandleType> *>::iterator it1 = _holders.Data().begin(), it2 = _holders.Data().end(); it1 != it2; ++it1)
     {
-        (*it)->_smartHandle = 0;
+        (*it1)->_smartHandle = 0;
     }
 
-    _holders.clear();
+    _holders.Data().clear();
+
+    _holders.Unlock();
 }
 
 template <class THandleType>
@@ -655,7 +701,7 @@ inline Exception::Exception(OCI_Error *err) : _what()
 
 		_what.resize(size);
 
-		while (i < size) { _what[i] = static_cast<char>(str[i]); i++; }
+		while (i < size) { _what[i] = static_cast<char>(str[i]); ++i; }
 	}
 }
 
@@ -854,16 +900,19 @@ inline Environment::EnvironmentHandle::EnvironmentHandle() : Handles(), Callback
 inline void Environment::EnvironmentHandle::Initialize(AnyPointer handle, unsigned int envMode)
 {
     Mode = envMode;
-    Callbacks.Initialize(envMode);
-    Handles.Initialize(envMode);
+
+    bool threaded = ((envMode & OCI_ENV_THREADED) == OCI_ENV_THREADED);
+
+    Callbacks.SetLockMode(threaded);
+    Handles.SetLockMode(threaded);
 
     Acquire(handle, 0, 0);
 }
 
 inline void Environment::EnvironmentHandle::Finalize()
 {
-    Callbacks.Release();
-    Handles.Release();
+    Callbacks.SetLockMode(false);
+    Handles.SetLockMode(false);
 
     Release();
 }
@@ -3493,7 +3542,7 @@ inline typename Collection<TDataType>::Iterator Collection<TDataType>::Iterator:
 template<class TDataType>
 inline typename Collection<TDataType>::Iterator  & Collection<TDataType>::Iterator::operator++()
 {
-	_elem._pos++;
+	++_elem._pos;
 	return (*this);
 }
 
@@ -3723,7 +3772,7 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetInData()
         unsigned int index = 0;
 		unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
 
-		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; it++, index++)
+		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
         {
             _data[index] = BindValue<TDataType>( *it);
         }
@@ -3740,7 +3789,7 @@ inline void BindArray::BindArrayObject<ostring, otext>::SetInData()
 		unsigned int index = 0;
 		unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
 
-		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; it++, index++)
+		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
         {
            const  ostring & value = *it;
 
@@ -3760,7 +3809,7 @@ inline void BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
 		unsigned int index = 0;
 		unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
 
-		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; it++, index++)
+		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
 		{
 			Raw & value = *it;
 
@@ -3779,7 +3828,7 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetOutData()
 		unsigned int index = 0;
 		unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
 
-		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; it++, index++)
+		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
 		{
             TObjectType& object = *it;
 
@@ -3800,7 +3849,7 @@ inline void BindArray::BindArrayObject<Raw, unsigned char>::SetOutData()
 		unsigned int index = 0;
 		unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
 
-		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; it++, index++)
+		for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
 		{
 			unsigned char *currData = _data + (_elemSize * index);
 
@@ -3857,7 +3906,7 @@ template <class TNativeType, class TObjectType>
 inline BindAdaptor<TNativeType, TObjectType>::BindAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size) :
      BindObject(statement, name),
      _object(object),
-	 _data(new TNativeType[_size]),
+	 _data(new TNativeType[size]),
 	 _size(size)
 {
 	memset(_data, 0, _size * sizeof(TNativeType));
@@ -3893,7 +3942,7 @@ inline void BindsHolder::Clear()
 {
     std::vector<BindObject *>::iterator it, it_end;
 
-    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; it++)
+    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; ++it)
     {
         delete (*it);
     }
@@ -3905,7 +3954,7 @@ inline void BindsHolder::AddBindObject(BindObject *bindObject)
     {
         std::vector<BindObject *>::iterator it, it_end;
 
-        for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; it++)
+        for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; ++it)
         {
             if ((*it)->GetName() == bindObject->GetName())
             {
@@ -3922,7 +3971,7 @@ inline void BindsHolder::SetOutData()
 {
     std::vector<BindObject *>::iterator it, it_end;
 
-    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; it++)
+    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; ++it)
     {
 		(*it)->SetOutData();
     }
@@ -3932,7 +3981,7 @@ inline void BindsHolder::SetInData()
 {
     std::vector<BindObject *>::iterator it, it_end;
 
-    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; it++)
+    for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; ++it)
     {
 		(*it)->SetInData();
     }
@@ -4831,13 +4880,15 @@ inline void Statement::ReleaseResultsets()
 {
     if (_smartHandle)
     {
-        std::list<Handle *> &children = _smartHandle->GetChildren();
+        Lockable< std::list<Handle *> > &children = _smartHandle->GetChildren();
 
-        size_t nbHandles = children.size();
+		children.Lock();
+
+		size_t nbHandles = children.Data().size();
 
         while (nbHandles-- > 0)
         {
-            Resultset::SmartHandle *smartHandle = dynamic_cast<Resultset::SmartHandle *>(*children.begin());
+			Resultset::SmartHandle *smartHandle = dynamic_cast<Resultset::SmartHandle *>(*children.Data().begin());
 
             if (smartHandle)
             {
@@ -4846,6 +4897,8 @@ inline void Statement::ReleaseResultsets()
                 delete smartHandle;
             }
         }
+
+		children.Unlock();
     }
 }
 
@@ -5633,7 +5686,7 @@ inline void Message::SetConsumers(std::vector<Agent> &agents)
 
 	OCI_Agent ** pAgents = static_cast<OCI_Agent **>(buffer);
 
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; ++i)
     {
 		pAgents[i] = static_cast<const Agent &>(agents[i]);
     }
@@ -5798,7 +5851,7 @@ inline void Dequeue::SetAgents(std::vector<Agent> &agents)
 
 	OCI_Agent ** pAgents = static_cast<OCI_Agent **>(buffer);
 
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; ++i)
     {
 		pAgents[i] = static_cast<const Agent &>(agents[i]);
     }

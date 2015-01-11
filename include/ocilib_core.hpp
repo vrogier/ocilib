@@ -213,29 +213,37 @@ private:
 	size_t _size;
 };
 
-template <class TKey, class TValue>
-class ConcurrentPool
+template <class TType>
+class Lockable
 {
 public:
 
-    ConcurrentPool();
+    Lockable();
+    virtual ~Lockable();
 
-    void Initialize(unsigned int envMode);
-    void Release();
-
-    void Remove(TKey key);
-    TValue Get(TKey key) const;
-    void Set(TKey key, TValue value);
-
-private:
-
-    typedef std::map< TKey, TValue > ConcurrentPoolMap;
-
-    ConcurrentPoolMap  _map;
-    MutexHandle _mutex;
+    void SetLockMode(bool threaded);
 
     void Lock() const;
     void Unlock() const;
+
+    TType& Data();
+
+private:
+
+    MutexHandle _mutex;
+    TType _type;
+};
+
+template <class TKey, class TValue>
+class ConcurrentPool : private Lockable<std::map< TKey, TValue > >
+{
+public:
+
+    void SetLockMode(bool threaded);
+
+    void Remove(TKey key);
+    TValue Get(TKey key);
+    void Set(TKey key, TValue value);
 };
 
 class Handle
@@ -243,7 +251,7 @@ class Handle
 public:
 
     virtual ~Handle() {};
-    virtual std::list<Handle *> & GetChildren() = 0;
+	virtual Lockable< std::list<Handle *> > & GetChildren() = 0;
     virtual void DetachFromHolders() = 0;
     virtual void DetachFromParent() = 0;
 };
@@ -298,16 +306,16 @@ protected:
 		AnyPointer GetExtraInfos() const;
 		void  SetExtraInfos(AnyPointer extraInfo);
 
-        bool IsLastHolder(HandleHolder *holder) const;
+        bool IsLastHolder(HandleHolder *holder);
 
-        std::list<Handle *> & GetChildren();
+		Lockable< std::list<Handle *> > & GetChildren();
         void DetachFromHolders();
         void DetachFromParent();
 
     private:
 
-        std::list<HandleHolder *> _holders;
-        std::list<Handle *>  _children;
+		Lockable< std::list<HandleHolder *> > _holders;
+		Lockable< std::list<Handle *> >  _children;
 
         THandleType _handle;
         HandleFreeFunc _func;
