@@ -551,6 +551,7 @@ private:
 class Environment
 {
     friend class Connection;
+    friend class Pool;
     friend class Subscription;
     friend class Dequeue;
     template<class THandleType>
@@ -1024,6 +1025,7 @@ private:
 	class EnvironmentHandle : public HandleHolder<AnyPointer>
     {
         friend class Connection;
+        friend class Pool;
 
     public:
 

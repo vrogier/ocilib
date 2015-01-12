@@ -1140,7 +1140,7 @@ inline void Pool::Open(const ostring& db, const ostring& user, const ostring& pw
     Release();
 
     Acquire(Check(OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionFlags.GetValues(),
-            minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), 0);
+            minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), Environment::GetEnvironmentHandle().GetHandle());
 }
 
 inline void Pool::Close()
