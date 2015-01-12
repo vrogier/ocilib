@@ -382,25 +382,16 @@ template<class THandleType>
 inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFunc func, Handle *parent)
 {
     Release();
+  
+    _smartHandle = dynamic_cast<HandleHolder<THandleType>::SmartHandle *>(Environment::GetEnvironmentHandle().Handles.Get(handle));
 
-    if (func)
+    if (!_smartHandle)
     {
 		_smartHandle = new HandleHolder<THandleType>::SmartHandle(this, handle, func, parent);
-
-       Environment::GetEnvironmentHandle().Handles.Set(handle, _smartHandle);
     }
     else
     {
-        _smartHandle = dynamic_cast<HandleHolder<THandleType>::SmartHandle *>(Environment::GetEnvironmentHandle().Handles.Get(handle));
-
-        if (!_smartHandle)
-        {
-			_smartHandle = new HandleHolder<THandleType>::SmartHandle(this, handle, 0, parent);
-        }
-        else
-        {
-            _smartHandle->Acquire(this);
-        }
+        _smartHandle->Acquire(this);
     }
 }
 
@@ -676,6 +667,8 @@ inline HandleHolder<THandleType>::SmartHandle::SmartHandle(HandleHolder *holder,
 
     _holders.SetLocker(&_locker);
     _children.SetLocker(&_locker);
+
+    Environment::GetEnvironmentHandle().Handles.Set(handle, this);
 
     Acquire(holder);
 
