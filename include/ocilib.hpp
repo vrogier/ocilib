@@ -1021,23 +1021,24 @@ private:
     static void NotifyHandler(OCI_Event *pEvent);
     static void NotifyHandlerAQ(OCI_Dequeue *pDequeue);
 
-	typedef ConcurrentPool<AnyPointer, Handle *> HandlePool;
-	typedef ConcurrentPool<AnyPointer, CallbackPointer> CallbackPool;
-
 	class EnvironmentHandle : public HandleHolder<AnyPointer>
     {
         friend class Connection;
 
     public:
 
-        HandlePool   Handles;
-        CallbackPool Callbacks;
+        ConcurrentMap<AnyPointer, Handle *>   Handles;
+        ConcurrentMap<AnyPointer, CallbackPointer> Callbacks;
         unsigned int Mode;
 
         EnvironmentHandle();
 
 		void Initialize(AnyPointer pEnv, unsigned int envMode);
         void Finalize();
+
+    private:
+
+        Locker _locker;
     };
 
     static EnvironmentHandle& GetEnvironmentHandle();
@@ -5680,6 +5681,8 @@ public:
     void GetBatchErrors(std::vector<Exception> &exceptions);
 
 private:
+
+    static bool IsResultsetHandle(Handle *handle);
 
     Statement(OCI_Statement *stmt, Handle *parent = 0);
 

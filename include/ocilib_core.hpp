@@ -213,37 +213,83 @@ private:
 	size_t _size;
 };
 
-template <class TType>
+class Locker
+{
+public:
+
+    Locker();
+    virtual ~Locker();
+
+    void Lock();
+    void Unlock();
+
+    void SetAccessMode(bool threaded);
+
+private:
+
+    MutexHandle _mutex;
+};
+
 class Lockable
 {
 public:
 
     Lockable();
-    virtual ~Lockable();
+    virtual  ~Lockable();
 
-    void SetLockMode(bool threaded);
+    void SetLocker(Locker *locker);
 
-    void Lock() const;
-    void Unlock() const;
-
-    TType& Data();
+    void Lock();
+    void Unlock();
 
 private:
 
-    MutexHandle _mutex;
-    TType _type;
+    Locker *_locker;
 };
 
 template <class TKey, class TValue>
-class ConcurrentPool : private Lockable<std::map< TKey, TValue > >
+class ConcurrentMap : public Lockable
 {
 public:
 
-    void SetLockMode(bool threaded);
+    ConcurrentMap();
+    virtual ~ConcurrentMap();
 
     void Remove(TKey key);
     TValue Get(TKey key);
     void Set(TKey key, TValue value);
+    void Clear();
+    size_t GetSize();
+
+private:
+
+    std::map<TKey, TValue> _map;
+    
+};
+
+template <class TValue>
+class ConcurrentList : public Lockable
+{
+public:
+
+    ConcurrentList();
+    virtual ~ConcurrentList();
+
+    void Add(TValue value);
+    void Remove(TValue value);
+    void Clear();
+    size_t GetSize();
+    bool Exists(TValue value);
+ 
+    template<class TPredicate>
+    bool FindIf(TPredicate predicate, TValue &value);
+
+    template<class TAction>
+    void ForEach(TAction action);
+
+private:
+
+    std::list<TValue> _list;
 };
 
 class Handle
@@ -251,7 +297,7 @@ class Handle
 public:
 
     virtual ~Handle() {};
-	virtual Lockable< std::list<Handle *> > & GetChildren() = 0;
+    virtual ConcurrentList<Handle *> & GetChildren() = 0;
     virtual void DetachFromHolders() = 0;
     virtual void DetachFromParent() = 0;
 };
@@ -308,14 +354,19 @@ protected:
 
         bool IsLastHolder(HandleHolder *holder);
 
-		Lockable< std::list<Handle *> > & GetChildren();
+        ConcurrentList<Handle *> & GetChildren();
         void DetachFromHolders();
         void DetachFromParent();
 
     private:
 
-		Lockable< std::list<HandleHolder *> > _holders;
-		Lockable< std::list<Handle *> >  _children;
+        static void DeleteHandle(Handle *handle);
+        static void ResetHolder(HandleHolder *holder);
+
+        ConcurrentList<HandleHolder *> _holders;
+        ConcurrentList<Handle *>  _children;
+
+        Locker _locker;
 
         THandleType _handle;
         HandleFreeFunc _func;

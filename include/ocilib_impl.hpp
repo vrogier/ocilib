@@ -430,24 +430,18 @@ inline void HandleHolder<THandleType>::Release()
     _smartHandle = 0;
 }
 
-
-
-template <class TType>
-inline Lockable<TType>::Lockable() : _mutex(0), _type()
+inline Locker::Locker() : _mutex(0)
 {
-
+    SetAccessMode(false);
 }
 
-template <class TType>
-inline Lockable<TType>::~Lockable()
+inline Locker::~Locker()
 {
-    SetLockMode(false);
-   _type.clear();
+    SetAccessMode(false);
 }
 
 
-template <class TType>
-inline void Lockable<TType>::SetLockMode(bool threaded)
+inline void Locker::SetAccessMode(bool threaded)
 {
     if (threaded && !_mutex)
     {
@@ -460,8 +454,7 @@ inline void Lockable<TType>::SetLockMode(bool threaded)
     }
 }
 
-template <class TType>
-inline void Lockable<TType>::Lock()  const
+inline void Locker::Lock()
 {
     if (_mutex)
     {
@@ -469,8 +462,7 @@ inline void Lockable<TType>::Lock()  const
     }
 }
 
-template <class TType>
-inline void Lockable<TType>::Unlock() const
+inline void Locker::Unlock()
 {
     if (_mutex)
     {
@@ -478,68 +470,218 @@ inline void Lockable<TType>::Unlock() const
     }
 }
 
-template <class TType>
-inline TType& Lockable<TType>::Data()
+
+inline Lockable::Lockable() : _locker(0)
 {
-    return _type;
+
 }
 
-
-
-template <class TKey, class TValue>
-inline void ConcurrentPool<TKey, TValue>::SetLockMode(bool threaded)
+inline Lockable::~Lockable()
 {
-    Lockable<std::map< TKey, TValue > >::SetLockMode(threaded);
+
+}
+
+inline void Lockable::Lock()
+{
+    if (_locker)
+    {
+        _locker->Lock();
+    }
+}
+
+inline void Lockable::Unlock()
+{
+    if (_locker)
+    {
+        _locker->Unlock();
+    }
+}
+
+inline void Lockable::SetLocker(Locker *locker)
+{
+    _locker = locker;
 }
 
 template <class TKey, class TValue>
-inline void ConcurrentPool<TKey, TValue>::Remove(TKey key)
+inline ConcurrentMap<TKey, TValue>::ConcurrentMap()
 {
-    this->Lock();
-    this->Data().erase(key);
-    this->Unlock();
+
 }
 
 template <class TKey, class TValue>
-inline TValue ConcurrentPool<TKey, TValue>::Get(TKey key)
+inline ConcurrentMap<TKey, TValue>::~ConcurrentMap()
+{
+    Clear();
+}
+
+template <class TKey, class TValue>
+inline void ConcurrentMap<TKey, TValue>::Remove(TKey key)
+{
+    Lock();
+    _map.erase(key);
+    Unlock();
+}
+
+template <class TKey, class TValue>
+inline TValue ConcurrentMap<TKey, TValue>::Get(TKey key)
 {
     TValue value = 0;
 
-    this->Lock();
-    typename std::map< TKey, TValue >::const_iterator it = this->Data().find(key);
-    if (it != this->Data().end())
+    Lock();
+    typename std::map< TKey, TValue >::const_iterator it = _map.find(key);
+    if (it != _map.end())
     {
         value = it->second;
     }
-    this->Unlock();
+    Unlock();
 
     return value;
 }
 
 template <class TKey, class TValue>
-inline void ConcurrentPool<TKey, TValue>::Set(TKey key, TValue value)
+inline void ConcurrentMap<TKey, TValue>::Set(TKey key, TValue value)
 {
-    this->Lock();
-    this->Data()[key] = value;
-    this->Unlock();
+    Lock();
+    _map[key] = value;
+    Unlock();
+}
+
+template <class TKey, class TValue>
+inline void ConcurrentMap<TKey, TValue>::Clear()
+{
+    Lock();
+    _map.clear();
+    Unlock();
+}
+
+template <class TKey, class TValue>
+inline size_t ConcurrentMap<TKey, TValue>::GetSize()
+{
+    size_t size = 0;
+    Lock();
+    size = _map.size();
+    Unlock();
+
+    return size;
+}
+
+template <class TValue>
+inline ConcurrentList<TValue>::ConcurrentList()
+{
+
+}
+
+template <class TValue>
+inline ConcurrentList<TValue>::~ConcurrentList()
+{
+    Clear();
+}
+
+template <class TValue>
+inline void ConcurrentList<TValue>::Add(TValue value)
+{
+    Lock();
+    _list.push_back(value);
+    Unlock();
+}
+
+template <class TValue>
+inline void ConcurrentList<TValue>::Remove(TValue value)
+{
+    Lock();
+    _list.remove(value);
+    Unlock();
+}
+
+template <class TValue>
+inline void ConcurrentList<TValue>::Clear()
+{
+    Lock();
+    _list.clear();
+    Unlock();
+}
+
+template <class TValue>
+inline size_t ConcurrentList<TValue>::GetSize()
+{
+    size_t size = 0;
+    Lock();
+    size = _list.size();
+    Unlock();
+
+    return size;
+}
+
+template <class TValue>
+inline bool ConcurrentList<TValue>::Exists(TValue value)
+{
+    bool res = 0;
+    Lock();
+
+    for (typename std::list<TValue>::iterator it1 = _list.begin(), it2 = _list.end(); it1 != it2; ++it1)
+    {
+        if (*it1 == value)
+        {
+            res = true;
+            break;
+        }
+    }
+
+    Unlock();
+
+    return res;
+}
+
+template <class TValue>
+template <class TPredicate>
+inline bool ConcurrentList<TValue>::FindIf(TPredicate predicate, TValue &value)
+{
+    bool res = 0;
+    Lock();
+
+    for (typename std::list<TValue>::iterator it1 = _list.begin(), it2 = _list.end(); it1 != it2; ++it1)
+    {
+        if (predicate(*it1))
+        {
+            value = *it1;
+            res = true;
+            break;
+        }
+    }
+
+    Unlock();
+
+    return res;
+}
+
+template <class TValue>
+template <class TAction>
+inline void ConcurrentList<TValue>::ForEach(TAction action)
+{
+    Lock();
+
+    for (typename std::list<TValue>::iterator it1 = _list.begin(), it2 = _list.end(); it1 != it2; ++it1)
+    {
+        action(*it1);
+    }
+
+    Unlock();
 }
 
 template <class THandleType>
 inline HandleHolder<THandleType>::SmartHandle::SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc func, Handle *parent)
-    : _holders(), _children(), _handle(handle), _func(func), _parent(parent), _extraInfo(0)
+    : _holders(), _children(), _locker(), _handle(handle), _func(func), _parent(parent), _extraInfo(0)
 {
-    bool threaded = ((Environment::GetMode() & Environment::Threaded) == Environment::Threaded);
+    _locker.SetAccessMode((Environment::GetMode() & Environment::Threaded) == Environment::Threaded);
 
-    _holders.SetLockMode(threaded);
-    _children.SetLockMode(threaded);
+    _holders.SetLocker(&_locker);
+    _children.SetLocker(&_locker);
 
     Acquire(holder);
 
     if (_parent && _handle)
     {
-        _parent->GetChildren().Lock();
-        _parent->GetChildren().Data().push_back(this);
-        _parent->GetChildren().Unlock();
+        _parent->GetChildren().Add(this);
     }
 }
 
@@ -551,24 +693,14 @@ inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
 
     if (_parent && _handle)
     {
-        _parent->GetChildren().Lock();
-        _parent->GetChildren().Data().remove(this);
-        _parent->GetChildren().Unlock();
+        _parent->GetChildren().Remove(this);
     }
 
-	_children.Lock();
+    _children.ForEach(DeleteHandle);
+    _children.Clear();
 
-	for (std::list<Handle *>::iterator it1 = _children.Data().begin(), it2 = _children.Data().end(); it1 != it2;  ++it1)
-    {
-        Handle *handle = *it1;
-
-        handle->DetachFromParent();
-        handle->DetachFromHolders();
-
-        delete handle;
-    }
-
-	_children.Unlock();
+    _holders.SetLocker(0);
+    _children.SetLocker(0);
 
     Environment::GetEnvironmentHandle().Handles.Remove(_handle);
 
@@ -585,24 +717,38 @@ inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
 }
 
 template <class THandleType>
+inline void HandleHolder<THandleType>::SmartHandle::DeleteHandle(Handle *handle)
+{
+    if (handle)
+    {
+        handle->DetachFromParent();
+        handle->DetachFromHolders();
+
+        delete handle;
+    }
+}
+
+template <class THandleType>
+inline void HandleHolder<THandleType>::SmartHandle::ResetHolder(HandleHolder *holder)
+{
+    if (holder)
+    {
+        holder->_smartHandle = 0;
+    }
+}
+
+template <class THandleType>
 inline void HandleHolder<THandleType>::SmartHandle::Acquire(HandleHolder *holder)
 {
-    _holders.Lock();
-    _holders.Data().push_back(holder);
-    _holders.Unlock();
+    _holders.Add(holder);
 }
 
 template <class THandleType>
 inline void HandleHolder<THandleType>::SmartHandle::Release(HandleHolder *holder)
 {
-    _holders.Lock();
-    _holders.Data().remove(holder);
+    _holders.Remove(holder);
 
-    size_t count = _holders.Data().size();
-
-    _holders.Unlock();
-
-    if (count == 0)
+    if (_holders.GetSize() == 0)
     {
         delete this;
     }
@@ -613,15 +759,7 @@ inline void HandleHolder<THandleType>::SmartHandle::Release(HandleHolder *holder
 template <class THandleType>
 inline bool HandleHolder<THandleType>::SmartHandle::IsLastHolder(HandleHolder *holder)
 {
-    bool res = false;
-
-    _holders.Lock();
-
-    res = ((_holders.Data().size() == 1) && (*(_holders.Data().begin()) == holder));
-
-    _holders.Unlock();
-
-    return res;
+    return ( (_holders.GetSize() == 1) && _holders.Exists(holder));
 }
 
 template <class THandleType>
@@ -649,7 +787,7 @@ inline void HandleHolder<THandleType>::SmartHandle::SetExtraInfos(AnyPointer ext
 }
 
 template <class THandleType>
-inline Lockable< std::list<Handle *> > & HandleHolder<THandleType>::SmartHandle::GetChildren()
+inline ConcurrentList<Handle *> & HandleHolder<THandleType>::SmartHandle::GetChildren()
 {
     return _children;
 }
@@ -657,16 +795,8 @@ inline Lockable< std::list<Handle *> > & HandleHolder<THandleType>::SmartHandle:
 template <class THandleType>
 inline void HandleHolder<THandleType>::SmartHandle::DetachFromHolders()
 {
-    _holders.Lock();
-
-    for (typename std::list<HandleHolder<THandleType> *>::iterator it1 = _holders.Data().begin(), it2 = _holders.Data().end(); it1 != it2; ++it1)
-    {
-        (*it1)->_smartHandle = 0;
-    }
-
-    _holders.Data().clear();
-
-    _holders.Unlock();
+    _holders.ForEach(ResetHolder);
+    _holders.Clear();
 }
 
 template <class THandleType>
@@ -822,11 +952,9 @@ inline void Environment::ChangeUserPassword(const ostring& db, const ostring& us
 
 inline void Environment::SetHAHandler(HAHandlerProc handler)
 {
-    Environment::CallbackPool & pool = GetEnvironmentHandle().Callbacks;
-
 	Check(OCI_SetHAHandler(static_cast<POCI_HA_HANDLER>(handler != 0 ? Environment::HAHandler : 0)));
 
-    pool.Set(GetEnvironmentHandle(), reinterpret_cast<CallbackPointer>(handler));
+    GetEnvironmentHandle().Callbacks.Set(GetEnvironmentHandle(), reinterpret_cast<CallbackPointer>(handler));
 }
 
 inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp)
@@ -892,7 +1020,7 @@ inline Environment::EnvironmentHandle & Environment::GetEnvironmentHandle()
     return envHandle;
 }
 
-inline Environment::EnvironmentHandle::EnvironmentHandle() : Handles(), Callbacks(), Mode(0)
+inline Environment::EnvironmentHandle::EnvironmentHandle() : Handles(), Callbacks(), Mode(0), _locker()
 {
 
 }
@@ -901,18 +1029,20 @@ inline void Environment::EnvironmentHandle::Initialize(AnyPointer handle, unsign
 {
     Mode = envMode;
 
-    bool threaded = ((envMode & OCI_ENV_THREADED) == OCI_ENV_THREADED);
+    _locker.SetAccessMode((envMode & OCI_ENV_THREADED) == OCI_ENV_THREADED);
 
-    Callbacks.SetLockMode(threaded);
-    Handles.SetLockMode(threaded);
+    Callbacks.SetLocker(&_locker);
+    Handles.SetLocker(&_locker);
 
     Acquire(handle, 0, 0);
 }
 
 inline void Environment::EnvironmentHandle::Finalize()
 {
-    Callbacks.SetLockMode(false);
-    Handles.SetLockMode(false);
+    _locker.SetAccessMode(false);
+
+    Callbacks.SetLocker(0);
+    Handles.SetLocker(0);
 
     Release();
 }
@@ -1325,11 +1455,9 @@ inline bool Connection::IsTAFCapable() const
 
 inline void Connection::SetTAFHandler(TAFHandlerProc handler)
 {
-    Environment::CallbackPool & pool = Environment::GetEnvironmentHandle().Callbacks;
-
     Check(OCI_SetTAFHandler(*this, static_cast<POCI_TAF_HANDLER>(handler != 0 ? Environment::TAFHandler : 0 )));
 
-	pool.Set((OCI_Connection*)*this, reinterpret_cast<CallbackPointer>(handler));
+    Environment::GetEnvironmentHandle().Callbacks.Set((OCI_Connection*)*this, reinterpret_cast<CallbackPointer>(handler));
 }
 
 inline void* Connection::GetUserData()
@@ -4880,26 +5008,27 @@ inline void Statement::ReleaseResultsets()
 {
     if (_smartHandle)
     {
-        Lockable< std::list<Handle *> > &children = _smartHandle->GetChildren();
+        Handle *handle = 0;
 
-		children.Lock();
-
-		size_t nbHandles = children.Data().size();
-
-        while (nbHandles-- > 0)
+        while (_smartHandle->GetChildren().FindIf(IsResultsetHandle, handle))
         {
-			Resultset::SmartHandle *smartHandle = dynamic_cast<Resultset::SmartHandle *>(*children.Data().begin());
-
-            if (smartHandle)
+            if (handle)
             {
-                smartHandle->DetachFromHolders();
+                handle->DetachFromHolders();
 
-                delete smartHandle;
+                delete handle;
+
+                handle = 0;
             }
         }
-
-		children.Unlock();
     }
+}
+
+inline bool Statement::IsResultsetHandle(Handle *handle)
+{
+    Resultset::SmartHandle *smartHandle = dynamic_cast<Resultset::SmartHandle *>(handle);
+
+    return smartHandle != 0;
 }
 
 inline void Statement::SetLastBindMode(BindInfo::BindDirection mode)
