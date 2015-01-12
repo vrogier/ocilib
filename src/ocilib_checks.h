@@ -429,7 +429,7 @@
 
 #define OCI_CHECK_STMT_STATUS(st, v, ret)                                      \
                                                                                \
-    if ((st)->status && 0 == (v))                                              \
+    if ((((st)->status) & (v)) == 0)                                           \
     {                                                                          \
         OCI_ExceptionStatementState((st), v);                                  \
         return ret;                                                            \
