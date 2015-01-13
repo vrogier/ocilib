@@ -110,7 +110,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     4
 #define OCILIB_MINOR_VERSION     0
-#define OCILIB_REVISION_VERSION  0
+#define OCILIB_REVISION_VERSION  1
 
 /* Import mode */
 
