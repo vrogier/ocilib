@@ -1,4 +1,4 @@
-dnl Copyright (C) 2007-2014 Vincent Rogier <vince.rogier@gmail.com>
+dnl Copyright (C) 2007-2015 Vincent Rogier <vince.rogier@gmail.com>
 dnl  
 dnl This file is free software; as a special exception the author gives
 dnl unlimited permission to copy and/or distribute it, with or without 
