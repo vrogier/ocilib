@@ -240,7 +240,7 @@ extern "C" {
  * OCILIB main header file provides macro around most common string functions of
  * the C standard library.
  *
- * these macros are based on the model: ots[libc function name]()
+ * these macros are based on the model: ostr[libc function name]()
  *
  * xxx is the standard C library string function name without the character type prefix (str/wcs).
  *
@@ -252,7 +252,7 @@ extern "C" {
  * - ostrncat
  * - ostrlen
  * - ostrcmp
- * - sotrcasecmp
+ * - ostrcasecmp
  * - osprintf
  * - ostol
  *
@@ -669,7 +669,7 @@ typedef struct OCI_Ref OCI_Ref;
  * @struct OCI_TypeInfo
  *
  * @brief
- * Type info metadata handle.
+ * Type info meta data handle.
  *
  */
 
@@ -2459,7 +2459,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetDefaultFormatDate
  * @param format - Numeric format
  *
  * @note
- * Conversions are performed by Oracle buil-tin functions.
+ * Conversions are performed by Oracle built-in functions.
  * Possible values are the string numeric format supported by Oracle.
  * See documentation of Oracle SQL to_number() function for more details
  *
@@ -2765,7 +2765,7 @@ OCI_EXPORT OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
 
 /**
  * @brief
- * Verifiy if the given connection support TAF events
+ * Verify if the given connection support TAF events
  *
  * @param con - Connection handle
  *
@@ -5806,7 +5806,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  * @par Fetch Rows into user structures Example
  * @include fetch_struct.c
  *
- * @par Metadata Example
+ * @par Meta data Example
  * @include meta.c
  *
  * @par Ref cursor Example
@@ -6183,7 +6183,7 @@ OCI_EXPORT const otext * OCI_API OCI_ColumnGetSQLType
 /**
  * @brief
  * Return the Oracle SQL Full name including precision and size of the
- * column datatype
+ * column data type
  *
  * @param col    - Column handle
  * @param buffer - buffer to store the full column type name and size
@@ -6403,7 +6403,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetSubType
 
 /**
  * @brief
- * set the numeric datatype of the given structure member (identified from position in the
+ * set the numeric data type of the given structure member (identified from position in the
  * resultset)  to retrieve when calling OCI_GetStruct()
  *
  * @param rs    - Resultset handle
@@ -6481,7 +6481,7 @@ OCI_EXPORT boolean OCI_API OCI_SetStructNumericType2
  * @par User row structure
  *
  * The user structure must have the same members than the resultset.
- * Each column in the resutlset must have its equivalent in the structure.
+ * Each column in the resultset must have its equivalent in the structure.
  * Fields must be in the same order.
  *
  * The mapping rules are :
@@ -9508,7 +9508,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetLongMaxSize
 
 /**
  * @brief
- * Set the long datatype handling mode of a SQL statement
+ * Set the long data type handling mode of a SQL statement
  *
  * @param stmt - Statement handle
  * @param mode - long mode value
@@ -9531,7 +9531,7 @@ OCI_EXPORT boolean OCI_API OCI_SetLongMode
 
 /**
  * @brief
- * Return the long datatype handling mode of a SQL statement
+ * Return the long data type handling mode of a SQL statement
  *
  * @param stmt - Statement handle
  *
@@ -9732,7 +9732,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LobGetType
  *                  characters given by parameter 'offset'
  *
  * @note
- * - For CLOB and CLOB, offset in in characters
+ * - For CLOB and CLOB, offset in characters
  * - For BLOB and BFILE, offset is in bytes
  *
  * @note
@@ -11855,7 +11855,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampToCTime
 
 /**
  * @brief
- * Affect ISO C time datatypes values to an OCI_Timestamp handle
+ * Affect ISO C time data types values to an OCI_Timestamp handle
  *
  * @param tmsp  - Timestamp handle
  * @param ptm   - Pointer to a structure tm that hold the date/time value
@@ -12319,7 +12319,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectFree
 
 /**
  * @brief
- * Create an array of Object object
+ * Create an array of Object objects
  *
  * @param con    - Connection handle
  * @param typinf - Object type (type info handle)
@@ -13633,7 +13633,7 @@ OCI_EXPORT boolean OCI_API OCI_Break
  */
 
 /**
- * @defgroup OcilibCApiMetadata Describing Schema Metadata and Objects
+ * @defgroup OcilibCApiMetadata Describing Schema Meta data and Objects
  * @{
  *
  *
@@ -13732,7 +13732,7 @@ OCI_EXPORT boolean OCI_API OCI_TypeInfoFree
 
 /**
  * @brief
- * Retruns the number of columns of a table/view/object
+ * Return the number of columns of a table/view/object
  *
  * @param typinf - Type info handle
  *
@@ -13838,7 +13838,7 @@ OCI_EXPORT const otext * OCI_API OCI_TypeInfoGetName
  * Supported input identifiers :
  *
  * - '%s'  : (otext *) ----------> input string (quotes are added)
- * - '%m'  : (otext *) ----------> metadata string (no quotes added)
+ * - '%m'  : (otext *) ----------> meta data string (no quotes added)
  * - '%t'  : (OCI_Date *) -------> Date
  * - '%p'  : (OCI_Timestamp *) --> timestamp
  * - '%v'  : (OCI_Interval *) ---> Interval
@@ -14887,12 +14887,12 @@ OCI_EXPORT boolean OCI_API OCI_DirPathAbort
 
 /**
  * @brief
- * Execute a data savepoint (server side)
+ * Execute a data save-point (server side)
  *
  * @param dp - Direct path Handle
  *
  * @note
- * Executing a data savepoint is not allowed for LOBs
+ * Executing a data save-point is not allowed for LOBs
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15290,7 +15290,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  * Note that the only AQ features not supported yet by OCILIB are :
  *   - Payloads of type AnyData
  *   - Enqueuing/dequeuing arrays of messages
- *   - Optionnal delivery mode introduced in 10gR2
+ *   - Optional delivery mode introduced in 10gR2
  *
  * OCILIB provides as well a C API to administrate queues and queue tables initially
  * reserved to PL/SQL and Java (wrappers around PL/SQL calls).

@@ -4767,7 +4767,7 @@ public:
     {
 		/** Input bind variable (will be not modified as it is an input value for the server) */
         In = OCI_BDM_IN,
-		/** Output bind variable (will be modified  as it is an output vaule by the server ) */
+		/** Output bind variable (will be modified  as it is an output value by the server ) */
 		Out = OCI_BDM_OUT,
 		/** Input / Output bind variable (can be modified as it is an input value that can be modified by the server) */
 		InOut = OCI_BDM_IN_OUT
@@ -4848,7 +4848,7 @@ public:
 	* It must be done before an Execute() call
 	*
 	* @warning
-	* For handled based datatypes (non scalar types), OCILIB performs an extra
+	* For handled based data types (non scalar types), OCILIB performs an extra
 	* check on handles and set the bind status to null is the handle is null
 	*
 	* @warning
@@ -4883,7 +4883,7 @@ public:
 	* This call has to be made after Statement::Prepare() but before Statement::Execute()
 	*
 	* @warning
-	* This call does nothing the bind datatype is not ocilib::TypeString or ocilib::TypeLong
+	* This call does nothing the bind data type is not ocilib::TypeString or ocilib::TypeLong
 	*
 	*/
     void SetCharsetForm(CharsetForm value);
@@ -5002,7 +5002,7 @@ public:
 
 	/**
 	* @brief
-	* LONG datatype mapping modes enumerated values
+	* LONG data type mapping modes enumerated values
 	*
 	*/
     enum LongModeValues
@@ -5015,7 +5015,7 @@ public:
 
 	/**
 	* @brief
-	* LONG datatype mapping modes
+	* LONG data type mapping modes
 	*
 	* Possible values are Statement::LongModeValues
 	*
@@ -5057,20 +5057,20 @@ public:
 	* This call sends the SELECT SQL order to the server for retrieving the
 	* description of the select order only.
 	* The command is not executed.
-	* This call is only useful to retreive information on the associated resultet
+	* This call is only useful to retrieve information on the associated resultset
 	* Call GetResultet() after Describe() to access to SELECT list information
 	*
 	* @note
 	* This call prepares the statement (internal call to Prepare()) and ask
 	* the Oracle server to describe the output SELECT list.
-	* Execute() can be called after Desbribe() in order to execute the
+	* Execute() can be called after Describe() in order to execute the
 	* statement, which means that the server will parse, and describe again the SQL
 	* order.
 	*
 	* @warning
-	* Do not use Desbribe() unless you're only interested in the resultset
+	* Do not use Describe() unless you're only interested in the resultset
 	* information because the statement will be parsed again when executed and thus
-	* leading to unnecessary server roundtrips and less performance
+	* leading to unnecessary server round trips and less performance
 	*
 	*/
     void Describe(const ostring& sql);
@@ -5090,12 +5090,12 @@ public:
 	* This call prepares the statement (internal call to Prepare()) and ask
 	* the Oracle server to parse its SQL or PL/SQL command.
 	* Execute() can be call after Parse() in order to execute the
-	* statement, which means that the server will reparse again the command.
+	* statement, which means that the server will parse again the command.
 	*
 	* @warning
 	* Do not use Parse() unless you're only interested in the parsing result
 	* because the statement will be parsed again when executed and thus leading to
-	* unnecessary server roundtrips and less performance
+	* unnecessary server round trips and less performance
 	*
 	*/
     void Parse(const ostring& sql);
@@ -5181,8 +5181,8 @@ public:
 	* Each iteration generates a resultset that can be fetched like regular ones.
 	*
 	* @note
-	* Starting withOracle 12cR1, PL/SQ procedure and blocks ca return return multiple implicit resultsets
-	* Refer to  Oracle documentation for more informationb.
+	* Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implicit resultsets
+	* Refer to  Oracle documentation for more information.
 	*
 	*/
     Resultset GetNextResultset();
@@ -5231,8 +5231,8 @@ public:
 	* Default value is false
 	*
 	* @warning
-	* When using rebinding feature, host variable rebinded to a previously allocated
-	* bind MUST be of the same datatype !
+	* When using rebinding feature, host variable re-binded to a previously allocated
+	* bind MUST be of the same data type !
 	*
 	*/
     void AllowRebinding(bool value);
@@ -5311,11 +5311,11 @@ public:
 	* @param mode  - bind direction mode
 	*
 	* @warning
-	* This method has builtin specialized versions for all supported types except ostring, Clong and Blong variables.
+	* This method has built-in specialized versions for all supported types except ostring, Clong and Blong variables.
 	* For binding ostring, Clong and Blong variables, use the version with an extra parameter.
 	*
 	* @note
-	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
+	* It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
 	* automatically from the arguments.
 	*
 	*/
@@ -5335,11 +5335,11 @@ public:
 	* @param mode      - bind direction mode
 	*
 	* @warning
-	* This method has builtin specialized versions for ostring, Clong and Blong variables.
+	* This method has built-in specialized versions for ostring, Clong and Blong variables.
 	* Pass the maximum length/size of the variable in the parameter extraInfo
 	*
 	* @note
-	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
+	* It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
 	* automatically from the arguments.
 	*
 	*/
@@ -5357,11 +5357,11 @@ public:
 	* @param mode   - bind direction mode
 	*
 	* @warning
-	* This method has builtin specialized versions for all C++ native scalar types, Datetime and Statement objects.
+	* This method has built-in specialized versions for all C++ native scalar types, Date time and Statement objects.
 	* For others types (ostring, Clong, Blong, Raw, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
 	*
 	* @note
-	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
+	* It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
 	* automatically from the arguments.
 	*
 	*/
@@ -5380,10 +5380,10 @@ public:
 	* @param mode     - bind direction mode
 	*
 	* @warning
-	* This method has builtin specialized versions for Object, Reference, Collection.
+	* This method has built-in specialized versions for Object, Reference, Collection.
 	*
 	* @note
-	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
+	* It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
 	* automatically from the arguments.
 	*
 	*/
@@ -5403,12 +5403,12 @@ public:
 	* @param mode      - bind direction mode
 	*
 	* @warning
-	* This method has builtin specialized versions for ostring, Raw , Clong, Blong, Timestamp, Interval variables.
+	* This method has built-in specialized versions for ostring, Raw , Clong, Blong, Timestamp, Interval variables.
 	* - For ostring, Clong, Blong, Raw : Pass the maximum length/size of variables in the parameter extraInfo
 	* - For Timestamp, Interval : Pass a value of the matching C++ class GetType() property type OR the underlying enumeration type.
 	*
 	* @note
-	* It is not necessary to specify the template datatype in the bind call as all possible specializations can be resolved
+	* It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
 	* automatically from the arguments.
 	*
 	*/
@@ -5424,7 +5424,7 @@ public:
 	* @param name  - Bind name
 	*
 	* @warning
-	* This method has builtin specialized versions for all supported types except:
+	* This method has built-in specialized versions for all supported types except:
 	* - Timestamp and Interval, Object and Reference : use the version that takes a TypeInfo parameter
     * - ostring and Raw : use the version that takes an extraInfo parameter
 	*
@@ -5432,7 +5432,7 @@ public:
 	* Statement, Blong and Clong are not supported for register calls
 	*
 	* @warning
-	* It is necessary to specify the template datatype in the register call
+	* It is necessary to specify the template data type in the register call
 	*
 	*/
     template <class TDataType>
@@ -5449,10 +5449,10 @@ public:
 	* @param extraInfo - Extra information needed for the bind call
 	*
 	* @warning
-	* This method has builtin specialized versions for Object and Reference.
+	* This method has built-in specialized versions for Object and Reference.
 	*
 	* @warning
-	* It is necessary to specify the template datatype in the register call
+	* It is necessary to specify the template data type in the register call
 	*
 	*/
     template <class TDataType, class TExtraInfo>
@@ -5469,11 +5469,11 @@ public:
 	* @param extraInfo - Extra information needed for the bind call
 	*
 	* @warning
-	* This method has builtin specialized versions for ostring and Raw variables.
+	* This method has built-in specialized versions for ostring and Raw variables.
 	*  Pass the maximum length/size of variables in the parameter extraInfo
 	*
 	* @note
-	* It is necessary to specify the template datatype in the register call
+	* It is necessary to specify the template data type in the register call
 	*
 	*/
 	template <class TDataType, class TExtraInfo>
@@ -5514,7 +5514,7 @@ public:
 	* Return the fetch mode of a SQL statement
 	*
 	* @note
-	* Default value is Statment::FetchForward
+	* Default value is Statement::FetchForward
 	*
 	*/
     FetchMode GetFetchMode() const;
@@ -5533,7 +5533,7 @@ public:
 	* Return the binding mode of a SQL statement
 	*
 	* @note
-	* Default value is Statment::BindByName
+	* Default value is Statement::BindByName
 	*
 	*/
     BindMode GetBindMode() const;
@@ -5611,7 +5611,7 @@ public:
 
 	/**
 	* @brief
-	* Set the LONG datatype piece buffer size
+	* Set the LONG data type piece buffer size
 	*
 	* @param value - maximum size for long buffer
 	*
@@ -5620,7 +5620,7 @@ public:
 
 	/**
 	* @brief
-	* Return the LONG datatype piece buffer size
+	* Return the LONG data type piece buffer size
 	*
 	* @note
 	* Default value is set to constant OCI_SIZE_LONG
@@ -5630,7 +5630,7 @@ public:
 
 	/**
 	* @brief
-	* Set the long datatype handling mode of a SQL statement
+	* Set the long data type handling mode of a SQL statement
 	*
 	* @param value - long mode value
 	*
@@ -5642,7 +5642,7 @@ public:
 
 	/**
 	* @brief
-	* Return the long datatype handling mode of a SQL statement
+	* Return the long data type handling mode of a SQL statement
 	*
 	*/
     LongMode GetLongMode() const;
@@ -5754,7 +5754,7 @@ public:
 	* @param index - Column position
 	*
 	* @warning
-	* This method has builtin specialized versions for all supported types except RAW based types.
+	* This method has built-in specialized versions for all supported types except RAW based types.
 	* For RAWS, use the version with extra parameters
 	*
 	* @note
@@ -5773,7 +5773,7 @@ public:
 	* @param name  - Column name
 	*
 	* @warning
-	* This method has builtin specialized versions for all supported types except RAW based types.
+	* This method has built-in specialized versions for all supported types except RAW based types.
 	* For RAWS, use the version with extra parameters
 	*
 	* @note
@@ -6037,7 +6037,7 @@ public:
 
 	/**
 	* @brief
-	* Return the Oracle SQL type name of the column datatype
+	* Return the Oracle SQL type name of the column data type
 	*
 	* @note
 	* For possible values, consults Oracle Documentation
@@ -6048,7 +6048,7 @@ public:
 	/**
 	* @brief
 	* Return the Oracle SQL Full name including precision and size of the
-	* column datatype
+	* column data type
 	*
 	* @note
 	* This function returns a description that matches the one given by SQL*Plus
@@ -6207,7 +6207,7 @@ public:
 	*/
     enum ChangeTypesValues
     {
-		/**  Request for changes at objects (eg. tables) level (DDL / DML) */
+		/**  Request for changes at objects (e.g. tables) level (DDL / DML) */
 		ObjectChanges = OCI_CNT_OBJECTS,
 		/**  Request for changes at rows level (DML) */
 		RowChanges = OCI_CNT_ROWS,
@@ -6399,7 +6399,7 @@ public:
 	* Return the type of operation reported by a notification
 
 	* @note
-	* Thi call is only valid when GetType() reports the event type Event::ObjectChanged
+	* This call is only valid when GetType() reports the event type Event::ObjectChanged
 	*
 	*/
     ObjectEvent GetObjectEvent() const;
@@ -6506,7 +6506,7 @@ public:
 	* Get the given AQ agent address
 	*
 	* @note
-	* See SetAddress() ffor more details
+	* See SetAddress() for more details
 	*
 	*/
 	ostring GetAddress() const;
@@ -6594,7 +6594,7 @@ public:
 	* For Message handling Objects payloads, Get() returns a null Object until an object is assigned to the message.
 	*
 	* @note
-	* When a local Message object handle is enqueued, it keeps its attributes. If it's enqeued again, another
+	* When a local Message object handle is enqueued, it keeps its attributes. If it's enqueued again, another
 	* identical message is posted into the queue.
 	* To reset a message and empty all its properties, call Reset()
 	*
@@ -6759,7 +6759,7 @@ public:
 	* Return the original ID of the message in the last queue that generated this message
 	*
 	* @warning
-	* When a message is propagated from/to differents queues, this ID is the one generated for the
+	* When a message is propagated from/to different queues, this ID is the one generated for the
 	* message in the previous queue.
 	*
 	*/
@@ -6772,7 +6772,7 @@ public:
 	* @param value - Message ID
 	*
 	* @warning
-	* When a message is propagated from/to differents queues, this ID is the one generated for the
+	* When a message is propagated from/to different queues, this ID is the one generated for the
 	* message in the previous queue.
 	*
 	*/
@@ -6806,7 +6806,7 @@ public:
 	*
 	* @warning
 	* When calling this function on a message retrieved with Dequeue::Get(), the returned value is
-	* empty if the default exception queue associated with the current queue is used (eg. no user
+	* empty if the default exception queue associated with the current queue is used (e.g. no user
 	* defined specified at enqueue time for the message)
 	*
 	* @note
@@ -6969,7 +6969,7 @@ public:
 
 	/**
 	* @brief
-	* Get the enqueueing/locking behavior
+	* Get the enqueuing/locking behavior
 	*
 	* @note
 	* see SetVisibility() for more details
@@ -6981,7 +6981,7 @@ public:
 	* @brief
 	* Set whether the new message is enqueued as part of the current transaction
 	*
-	* @param value - Enqueueing visibility
+	* @param value - Enqueuing visibility
 	*
 	* @note
 	* Default value is Enqueue::OnCommit
@@ -6991,7 +6991,7 @@ public:
 
 	/**
 	* @brief
-	* Return the enqueing mode of messages to enqueue
+	* Return the enqueuing mode of messages to enqueue
 	*
 	* @note
 	* see SetMode() for more details
@@ -7001,9 +7001,9 @@ public:
 
 	/**
 	* @brief
-	* Set the enqueing mode of messages to put in the queue
+	* Set the enqueuing mode of messages to put in the queue
 	*
-	* @param value - enqueing mode
+	* @param value - enqueuing mode
 	*
 	* @note
 	* Default value is Enqueue::OnTop
@@ -7175,7 +7175,7 @@ public:
 	*
 	* @note
 	* If an Agent handle is returned, messages are available for this agent.
-	* In order to retrieve its messsages :
+	* In order to retrieve its messages :
 	* - call SetConsumer() with the name of agent using Agent::GetName()
 	* - call Get() to dequeue it's pending messages
 	*
@@ -7186,7 +7186,7 @@ public:
 
 	/**
 	* @brief
-	* Get the current consumer name associated with the dequeueing process.
+	* Get the current consumer name associated with the dequeuing process.
 	*
 	* @note
 	* see SetConsumer() for more details
@@ -7244,14 +7244,14 @@ public:
 	* @brief
 	* Set the message identifier of the message to be dequeued
 	*
-	* @param value    - message identitier
+	* @param value    - message identifier
 	*
 	*/
 	void SetRelativeMsgID(const Raw &value);
 
 	/**
 	* @brief
-	* Get the dequeueing/locking behavior
+	* Get the dequeuing/locking behavior
 	*
 	* @note
 	* see SetVisibility() for more details
@@ -7263,7 +7263,7 @@ public:
 	* @brief
 	* Set whether the new message is dequeued as part of the current transaction
 	*
-	* @param value - dequeueing mode
+	* @param value - dequeuing mode
 	*
 	* @warning
 	* The visibility parameter is ignored when using the dequeuing
@@ -7277,7 +7277,7 @@ public:
 
 	/**
 	* @brief
-	* Get the dequeueing/locking behavior
+	* Get the dequeuing/locking behavior
 	*
 	* @note
 	* see SetMode() for more details
@@ -7287,9 +7287,9 @@ public:
 
 	/**
 	* @brief
-	* Set the dequeueing/locking behavior
+	* Set the dequeuing/locking behavior
 	*
-	* @param value - dequeueing mode
+	* @param value - dequeuing mode
 	*
 	* @note
 	* Default value is Dequeue::Remove
@@ -7316,7 +7316,7 @@ public:
 	* @note
 	* The dequeuing uses the following sequence :
 	*   - find messages using the navigation position
-	*   - apply search criterias (message correlation)
+	*   - apply search criteria (message correlation)
 	*   - get message
 	*
 	* @note
@@ -7448,7 +7448,7 @@ public:
      * @param comment            - Description of the queue
      *
      * @note
-     * Parameter 'queue' can specify the shema where to create to queue ([schema.]queue_name)
+     * Parameter 'queue' can specify the schema where to create to queue ([schema.]queue_name)
      * Queue names cannot be longer than 24 characters (Oracle limit for user queues)
      *
      * @note
@@ -7528,7 +7528,7 @@ public:
     * @param queue       - Queue name
     * @param stopEnqueue - Disable enqueue
     * @param stopDequeue - Disable dequeue
-    * @param wait        - Wait for current pending enqueuues/dequeues
+    * @param wait        - Wait for current pending enqueues/dequeues
     *
     * @warning
     * A queue cannot be stopped if there are pending transactions against the queue.
@@ -7607,7 +7607,7 @@ public:
      * @param table              - Queue table name
      * @param payloadType        - Message type name
      * @param multipleConsumers  - Enable multiple consumers for each messages
-     * @param storageClause      - Optional Additionnal clauses for the table storage
+     * @param storageClause      - Optional Additional clauses for the table storage
      * @param sortList           - Optional Additional columns name to use for sorting
      * @param groupingMode       - Optional Specifies if messages are grouped within a transaction
      * @param comment            - Optional Description of the queue table
@@ -7616,7 +7616,7 @@ public:
      * @param compatible         - Optional lowest database version with which the queue table is compatible
      *
      * @note
-     * Parameter 'table' can specify the shema where to create to queue table ([schema.]queue_table)
+     * Parameter 'table' can specify the schema where to create to queue table ([schema.]queue_table)
      * Queue table names cannot be longer than 24 characters (Oracle limit for user queue tables)
      *
      * @note
@@ -7671,7 +7671,7 @@ public:
      * Possible values for 'force' :
      *  - true  : all queues using the queue table and their associated propagation schedules are
      *            dropped automatically
-     *  - false : All the queues using the giben queue table must be stopped and dropped before the
+     *  - false : All the queues using the given queue table must be stopped and dropped before the
      *            queue table can be dropped.
      *
      * @note
@@ -7689,14 +7689,14 @@ public:
      * @param table      - Queue table name
      * @param mode       - Type of message to purge
      * @param block      - Lock all queues using the queue table while doing the purge
-     * @param condition  - Optionnal SQL based conditions (see notes)
+     * @param condition  - Optional SQL based conditions (see notes)
      *
      * @note
      * For more information about the SQL purge conditions, refer to
      * Oracle Streams - Advanced Queuing User's Guide for more details
      *
      * @warning
-     * This feature is onyl available from ORacle 10gR2.
+     * This feature is only available from ORacle 10gR2.
      * This function does nothing and returns TRUE is the server version is < Oracle 10gR2
      *
      * @note
@@ -7761,7 +7761,7 @@ public:
 
 	/**
 	* @brief
-	* Direct Operation operation Result enumerated values
+	* Direct Operation Result enumerated values
 	*
 	*/
     enum ResultValues
@@ -7780,7 +7780,7 @@ public:
 
 	/**
 	* @brief
-	* Direct Operation operation Result
+	* Direct Operation Result
 	*
 	* Possible values are DirectPath::ResultValues
 	*
@@ -7853,7 +7853,7 @@ public:
      *
      * @warning
      * Current Direct Path OCILIB implementation DOES NOT support setting entry
-     * content piece by piece as mentionned above. It was planned in the original design
+     * content piece by piece as mentioned above. It was planned in the original design
      * but not supported yet. So, always set the complete parameter to true.
      * Setting entries content piece by piece may be supported in future releases
      *
@@ -7928,7 +7928,7 @@ public:
      * Terminate a direct path operation without committing changes
      *
      * @note
-     * Any pending loaded data are cancelled.
+     * Any pending loaded data are canceled.
      * Any load completion operations, such as index maintenance operations, are not performed.
      *
      * @warning
@@ -7939,10 +7939,10 @@ public:
 
     /**
      * @brief
-     * Execute a data savepoint (server side)
+     * Execute a data save-point (server side)
      *
      * @note
-     * Executing a data savepoint is not allowed for LOBs
+     * Executing a data save-point is not allowed for LOBs
      *
      */
     void Save();
@@ -8117,7 +8117,7 @@ public:
      * Return the index of a column which caused an error during data conversion
      *
      * @warning
-     * Direct path colmun indexes start at 1.
+     * Direct path column indexes start at 1.
      *
      * @note
      * Errors may happen while data is converted to direct path stream format
