@@ -4019,8 +4019,10 @@ inline void BindAdaptor<TNativeType, TObjectType>::SetInData()
 
 template <class TNativeType, class TObjectType>
 inline void BindAdaptor<TNativeType, TObjectType>::SetOutData()
-{
-	_object.assign(_data, _data + _size);
+{    
+    size_t size = Check(OCI_BindGetDataSize(Check(OCI_GetBind2(_pStatement, _name.c_str()))));
+
+    _object.assign(_data, _data + size);
 }
 
 template <class TNativeType, class TObjectType>
@@ -4067,6 +4069,8 @@ inline void BindsHolder::Clear()
     {
         delete (*it);
     }
+
+    _bindObjects.clear();
 }
 
 inline void BindsHolder::AddBindObject(BindObject *bindObject)

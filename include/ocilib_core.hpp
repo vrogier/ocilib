@@ -409,7 +409,7 @@ public:
     virtual void SetInData()  = 0;
     virtual void SetOutData() = 0;
 
-private:
+protected:
 
     ostring _name;
 	OCI_Statement *_pStatement;
