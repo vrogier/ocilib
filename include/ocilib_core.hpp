@@ -313,6 +313,7 @@ public:
 
     bool IsNull() const;
 
+    operator bool();
     operator bool() const;
     operator THandleType();
     operator THandleType() const;

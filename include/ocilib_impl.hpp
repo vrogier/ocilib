@@ -72,14 +72,12 @@ inline ostring MakeString(const otext *result)
 	return ostring(result ? result : OTEXT(""));
 }
 
-
 inline Raw MakeRaw(void *result, unsigned int size)
 {
-	unsigned char *start = static_cast<unsigned char *>(result);
+	unsigned char *ptr = static_cast<unsigned char *>(result);
 
-	return Raw(start, start + size);
+    return (ptr ? Raw(ptr, ptr + size) : Raw());
 }
-
 
 /* --------------------------------------------------------------------------------------------- *
  * Enum
@@ -105,7 +103,7 @@ inline TEnum Enum<TEnum>::GetValue()
 template<class TEnum>
 inline Enum<TEnum>::operator TEnum ()
 {
-    return _value;
+    return GetValue();
 }
 
 template<class TEnum>
@@ -278,6 +276,8 @@ inline Flags<TEnum> operator | (TEnum a, TEnum b) { return Flags<TEnum>(a) | Fla
 OCI_DEFINE_FLAG_OPERATORS(Environment::EnvironmentFlagsValues)
 OCI_DEFINE_FLAG_OPERATORS(Environment::SessionFlagsValues)
 OCI_DEFINE_FLAG_OPERATORS(Environment::StartFlagsValues)
+OCI_DEFINE_FLAG_OPERATORS(Environment::StartModeValues)
+OCI_DEFINE_FLAG_OPERATORS(Environment::ShutdownModeValues)
 OCI_DEFINE_FLAG_OPERATORS(Environment::ShutdownFlagsValues)
 OCI_DEFINE_FLAG_OPERATORS(Transaction::TransactionFlagsValues)
 OCI_DEFINE_FLAG_OPERATORS(Column::PropertyFlagsValues)
@@ -300,7 +300,7 @@ inline ManagedBuffer<TBufferType>::ManagedBuffer(TBufferType *buffer, size_t siz
 template< typename TBufferType>
 inline ManagedBuffer<TBufferType>::ManagedBuffer(size_t size) : _buffer(new TBufferType[size]), _size(size)
 {
-	memset(_buffer, 0, sizeof(TBufferType) * size);
+    memset(_buffer, 0, sizeof(TBufferType) * _size);
 }
 template< typename TBufferType>
 inline ManagedBuffer<TBufferType>::~ManagedBuffer()
@@ -367,9 +367,15 @@ inline HandleHolder<THandleType>::operator THandleType() const
 }
 
 template<class THandleType>
+inline HandleHolder<THandleType>::operator bool()
+{
+    return !IsNull();
+}
+
+template<class THandleType>
 inline HandleHolder<THandleType>::operator bool() const
 {
-    return IsNull();
+    return !IsNull();
 }
 
 template<class THandleType>
@@ -460,7 +466,6 @@ inline void Locker::Unlock()
         Mutex::Release(_mutex);
     }
 }
-
 
 inline Lockable::Lockable() : _locker(0)
 {
