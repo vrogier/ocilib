@@ -432,7 +432,8 @@ typedef Enum<LongTypeValues> LongType;
  */
 class Exception : public HandleHolder<OCI_Error *>, public std::exception
 {
-    friend void Check();
+    template<class TResultType>
+    friend TResultType Check(TResultType result);
     friend class Statement;
 
 public:

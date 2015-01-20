@@ -86,13 +86,6 @@ class BindInfo;
 
 /**
  * @brief Internal usage.
- * Checks if the last OCILIB method call has raised an error.
- * If so, it raises a C++ exception using the retrieved error handle
- */
-static void Check();
-
-/**
- * @brief Internal usage.
  * Checks if the last OCILIB function call has raised an error.
  * If so, it raises a C++ exception using the retrieved error handle
  */

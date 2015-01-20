@@ -49,20 +49,15 @@ namespace ocilib
  *                                         IMPLEMENTATION
  * ********************************************************************************************* */
 
-inline void Check()
+template<class TResultType>
+inline TResultType Check(TResultType result)
 {
     OCI_Error *err = OCI_GetLastError();
 
     if (err)
     {
-		throw Exception(err);
+        throw Exception(err);
     }
-}
-
-template<class TResultType>
-inline TResultType Check(TResultType result)
-{
-    Check();
 
     return result;
 }
@@ -914,9 +909,7 @@ inline unsigned int Environment::GetRuntimeVersion()
 
 inline void Environment::EnableWarnings(bool value)
 {
-    OCI_EnableWarnings((boolean) value);
-
-    Check();
+    OCI_EnableWarnings(static_cast<boolean>(value));
 }
 
 inline void Environment::StartDatabase(const ostring& db, const ostring& user, const ostring &pwd, Environment::StartFlags startFlags,
@@ -4352,7 +4345,9 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
  	BindArray * bnd = new BindArray(*this, name);
     bnd->SetVector<TObjectType, TDataType>(values, mode, sizeof(TDataType));
 
-    if (method(*this, name.c_str(), static_cast<TDataType *>(bnd->GetData<TObjectType, TDataType>()), 0))
+    boolean res = method(*this, name.c_str(), static_cast<TDataType *>(bnd->GetData<TObjectType, TDataType>()), 0);
+
+    if (res)
     {
         BindsHolder *bindsHolder = GetBindsHolder(true);
         bindsHolder->AddBindObject(bnd);
@@ -4363,7 +4358,7 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
         delete bnd;
     }
 
-    Check();
+    Check(res);
 }
 
 template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
@@ -4374,7 +4369,9 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
 	BindArray * bnd = new BindArray(*this, name);
 	bnd->SetVector<TObjectType, TDataType>(values, mode, sizeof(TDataType));
 
-    if (method(*this, name.c_str(), static_cast<TDataType *>(bnd->GetData<TObjectType, TDataType>()), type, 0))
+    boolean res = method(*this, name.c_str(), static_cast<TDataType *>(bnd->GetData<TObjectType, TDataType>()), type, 0);
+
+    if (res)
     {
         BindsHolder *bindsHolder = GetBindsHolder(true);
         bindsHolder->AddBindObject(bnd);
@@ -4385,7 +4382,7 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
         delete bnd;
     }
 
-    Check();
+    Check(res);
 }
 
 template <>
@@ -4534,7 +4531,9 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring 
 
 	BindAdaptor<otext, ostring> * bnd = new BindAdaptor<otext, ostring>(*this, name, value, maxSize + 1);
 
-    if (OCI_BindString(*this, name.c_str(), static_cast<otext *>(*bnd), maxSize))
+    boolean res = OCI_BindString(*this, name.c_str(), static_cast<otext *>(*bnd), maxSize);
+
+    if (res)
     {
         BindsHolder *bindsHolder = GetBindsHolder(true);
         bindsHolder->AddBindObject(bnd);
@@ -4545,7 +4544,7 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring 
         delete bnd;
     }
 
-    Check();
+    Check(res);
 }
 
 template <>
@@ -4566,7 +4565,9 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, Raw &value, 
 
 	BindAdaptor<unsigned char, Raw> * bnd = new BindAdaptor<unsigned char, Raw>(*this, name, value, maxSize + 1);
 
-	if (OCI_BindRaw(*this, name.c_str(), static_cast<unsigned char *>(*bnd), maxSize))
+    boolean res = OCI_BindRaw(*this, name.c_str(), static_cast<unsigned char *>(*bnd), maxSize);
+
+    if (res)
 	{
 		BindsHolder *bindsHolder = GetBindsHolder(true);
 		bindsHolder->AddBindObject(bnd);
@@ -4577,7 +4578,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, Raw &value, 
 		delete bnd;
 	}
 
-	Check();
+	Check(res);
 }
 
 template <>
@@ -4712,7 +4713,9 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vec
 	BindArray * bnd = new BindArray(*this, name);
     bnd->SetVector<ostring, otext>(values, mode, maxSize+1);
 
-    if (OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring, otext>(), maxSize, 0))
+    boolean res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring, otext>(), maxSize, 0);
+
+    if (res)
     {
         BindsHolder *bindsHolder = GetBindsHolder(true);
         bindsHolder->AddBindObject(bnd);
@@ -4723,7 +4726,7 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vec
         delete bnd;
     }
 
-    Check();
+    Check(res);
 }
 
 template <>
@@ -4738,7 +4741,9 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<
 	BindArray * bnd = new BindArray(*this, name);
 	bnd->SetVector<Raw, unsigned char>(values, mode, maxSize + 1);
 
-	if (OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw, unsigned char>(), maxSize, 0))
+    boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw, unsigned char>(), maxSize, 0);
+
+    if (res)
 	{
 		BindsHolder *bindsHolder = GetBindsHolder(true);
 		bindsHolder->AddBindObject(bnd);
@@ -4749,7 +4754,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<
 		delete bnd;
 	}
 
-	Check();
+	Check(res);
 }
 
 template<class TDataType>
