@@ -549,7 +549,7 @@ private:
  * Static class in charge of library initialization / cleanup
  *
  */
-class Environment : private HandleHolder<AnyPointer>
+class Environment
 {
     friend class Connection;
     friend class Pool;
@@ -1018,6 +1018,11 @@ public:
 
 private:
 
+    class EnvironmentHandle : HandleHolder < AnyPointer >
+    {
+        friend class Environment;
+    };
+
     static void HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp);
     static unsigned int TAFHandler(OCI_Connection *pConnection, unsigned int type, unsigned int event);
     static void NotifyHandler(OCI_Event *pEvent);
@@ -1043,9 +1048,10 @@ private:
 
     void SelfInitialize(EnvironmentFlags mode, const ostring& libpath);
     void SelfCleanup();
-
+        
     Locker _locker;
-    ConcurrentMap<AnyPointer, Handle *>   _handles;
+    EnvironmentHandle _handle;
+    ConcurrentMap<AnyPointer, Handle *>  _handles;
     ConcurrentMap<AnyPointer, CallbackPointer> _callbacks;
     EnvironmentFlags _mode;
 };

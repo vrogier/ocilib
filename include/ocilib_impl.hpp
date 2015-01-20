@@ -935,12 +935,12 @@ inline void Environment::SetHAHandler(HAHandlerProc handler)
 {
 	Check(OCI_SetHAHandler(static_cast<POCI_HA_HANDLER>(handler != 0 ? Environment::HAHandler : 0)));
 
-    Environment::SetUserCallback<HAHandlerProc>(Environment::GetInstance(), handler);
+    Environment::SetUserCallback<HAHandlerProc>(GetEnvironmentHandle(), handler);
 }
 
 inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp)
 {
-    HAHandlerProc handler = Environment::GetUserCallback<HAHandlerProc>(Environment::GetInstance());
+    HAHandlerProc handler = Environment::GetUserCallback<HAHandlerProc>(GetEnvironmentHandle());
 
     if (handler)
     {
@@ -1021,7 +1021,7 @@ inline THandleType Environment::GetSmartHandle(AnyPointer ptr)
 
 inline Handle * Environment::GetEnvironmentHandle()
 {
-    return GetInstance().GetHandle();
+    return GetInstance()._handle.GetHandle();
 }
 
 inline Environment& Environment::GetInstance()
@@ -1031,7 +1031,7 @@ inline Environment& Environment::GetInstance()
     return envHandle;
 }
 
-inline Environment::Environment() : _locker(), _handles(), _callbacks(), _mode()
+inline Environment::Environment() : _locker(), _handle(), _handles(), _callbacks(), _mode()
 {
 
 }
@@ -1042,13 +1042,12 @@ inline void Environment::SelfInitialize(EnvironmentFlags mode, const ostring& li
 
     Check(OCI_Initialize(0, libpath.c_str(), _mode.GetValues() | OCI_ENV_CONTEXT));
     
-
     _locker.SetAccessMode((_mode & Environment::Threaded) == Environment::Threaded);
 
     _callbacks.SetLocker(&_locker);
     _handles.SetLocker(&_locker);
 
-    Acquire(const_cast<AnyPointer>(Check(OCI_HandleGetEnvironment())), 0, 0);
+    _handle.Acquire(const_cast<AnyPointer>(Check(OCI_HandleGetEnvironment())), 0, 0);
 }
 
 inline void Environment::SelfCleanup()
@@ -1058,7 +1057,7 @@ inline void Environment::SelfCleanup()
     _callbacks.SetLocker(0);
     _handles.SetLocker(0);
 
-    Release();
+    _handle.Release();
 
     Check(OCI_Cleanup());
 }
@@ -1156,7 +1155,7 @@ inline void Pool::Open(const ostring& db, const ostring& user, const ostring& pw
     Release();
 
     Acquire(Check(OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionFlags.GetValues(),
-            minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), Environment::GetInstance().GetHandle());
+        minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), Environment::GetEnvironmentHandle());
 }
 
 inline void Pool::Close()
@@ -1246,7 +1245,7 @@ inline Connection::Connection(OCI_Connection *con,  Handle *parent)
 inline void Connection::Open(const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
 {
     Acquire(Check(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
-		    reinterpret_cast<HandleFreeFunc>(OCI_ConnectionFree), Environment::GetInstance().GetHandle());
+		    reinterpret_cast<HandleFreeFunc>(OCI_ConnectionFree), Environment::GetEnvironmentHandle());
 }
 
 inline void Connection::Close()
