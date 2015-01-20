@@ -548,7 +548,7 @@ private:
  * Static class in charge of library initialization / cleanup
  *
  */
-class Environment
+class Environment : private HandleHolder<AnyPointer>
 {
     friend class Connection;
     friend class Pool;
@@ -1022,28 +1022,31 @@ private:
     static void NotifyHandler(OCI_Event *pEvent);
     static void NotifyHandlerAQ(OCI_Dequeue *pDequeue);
 
-	class EnvironmentHandle : public HandleHolder<AnyPointer>
-    {
-        friend class Connection;
-        friend class Pool;
+    template <class TCallbackType>
+    static TCallbackType GetUserCallback(AnyPointer ptr);
 
-    public:
+    template <class TCallbackType>
+    static void SetUserCallback(AnyPointer ptr, TCallbackType callback);
 
-        ConcurrentMap<AnyPointer, Handle *>   Handles;
-        ConcurrentMap<AnyPointer, CallbackPointer> Callbacks;
-        unsigned int Mode;
+    template <class THandleType>
+    static void SetSmartHandle(AnyPointer ptr, THandleType handle);
 
-        EnvironmentHandle();
+    template <class THandleType>
+    static THandleType GetSmartHandle(AnyPointer ptr);
 
-		void Initialize(AnyPointer pEnv, unsigned int envMode);
-        void Finalize();
+    static Handle * GetEnvironmentHandle();
 
-    private:
+    static Environment& GetInstance();
 
-        Locker _locker;
-    };
+    Environment();
 
-    static EnvironmentHandle& GetEnvironmentHandle();
+    void SelfInitialize(EnvironmentFlags mode, const ostring& libpath);
+    void SelfCleanup();
+
+    Locker _locker;
+    ConcurrentMap<AnyPointer, Handle *>   _handles;
+    ConcurrentMap<AnyPointer, CallbackPointer> _callbacks;
+    EnvironmentFlags _mode;
 };
 
 /**

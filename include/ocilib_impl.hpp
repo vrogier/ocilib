@@ -389,7 +389,7 @@ inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFun
 {
     Release();
   
-    _smartHandle = dynamic_cast<HandleHolder<THandleType>::SmartHandle *>(Environment::GetEnvironmentHandle().Handles.Get(handle));
+    _smartHandle = Environment::GetSmartHandle<HandleHolder<THandleType>::SmartHandle*>(handle);
 
     if (!_smartHandle)
     {
@@ -673,7 +673,7 @@ inline HandleHolder<THandleType>::SmartHandle::SmartHandle(HandleHolder *holder,
     _holders.SetLocker(&_locker);
     _children.SetLocker(&_locker);
 
-    Environment::GetEnvironmentHandle().Handles.Set(handle, this);
+    Environment::SetSmartHandle<HandleHolder<THandleType>::SmartHandle*>(handle, this);
 
     Acquire(holder);
 
@@ -700,7 +700,7 @@ inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
     _holders.SetLocker(0);
     _children.SetLocker(0);
 
-    Environment::GetEnvironmentHandle().Handles.Remove(_handle);
+    Environment::SetSmartHandle<HandleHolder<THandleType>::SmartHandle*>(_handle, 0);
 
     if (_func)
     {
@@ -879,27 +879,17 @@ inline unsigned int Exception::GetRow() const
 
 inline void Environment::Initialize(EnvironmentFlags mode, const ostring& libpath)
 {
-    unsigned int ociMode =  mode.GetValues();
-
-    OCI_Initialize(0, libpath.c_str(),  ociMode | OCI_ENV_CONTEXT);
-
-    Check();
-
-	GetEnvironmentHandle().Initialize(const_cast<AnyPointer>(OCI_HandleGetEnvironment()), ociMode);
+    GetInstance().SelfInitialize(mode, libpath);
 }
 
 inline void Environment::Cleanup()
 {
-    GetEnvironmentHandle().Finalize();
-
-    OCI_Cleanup();
-
-    Check();
+    GetInstance().SelfCleanup();
 }
 
 inline Environment::EnvironmentFlags Environment::GetMode()
 {
-	return  EnvironmentFlags(static_cast<EnvironmentFlags::type>(GetEnvironmentHandle().Mode));
+	return GetInstance()._mode;
 }
 
 inline Environment::ImportMode Environment::GetImportMode()
@@ -952,12 +942,12 @@ inline void Environment::SetHAHandler(HAHandlerProc handler)
 {
 	Check(OCI_SetHAHandler(static_cast<POCI_HA_HANDLER>(handler != 0 ? Environment::HAHandler : 0)));
 
-    GetEnvironmentHandle().Callbacks.Set(GetEnvironmentHandle(), reinterpret_cast<CallbackPointer>(handler));
+    Environment::SetUserCallback<HAHandlerProc>(Environment::GetInstance(), handler);
 }
 
 inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp)
 {
-	HAHandlerProc handler = reinterpret_cast<HAHandlerProc>(GetEnvironmentHandle().Callbacks.Get(GetEnvironmentHandle()));
+    HAHandlerProc handler = Environment::GetUserCallback<HAHandlerProc>(Environment::GetInstance());
 
     if (handler)
     {
@@ -975,7 +965,7 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
 {
     unsigned int res = OCI_FOC_OK;
 
-	Connection::TAFHandlerProc handler = reinterpret_cast<Connection::TAFHandlerProc>(GetEnvironmentHandle().Callbacks.Get(pConnection));
+    Connection::TAFHandlerProc handler = Environment::GetUserCallback<Connection::TAFHandlerProc>(Check(pConnection));
 
     if (handler)
     {
@@ -991,7 +981,7 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
 
 inline void Environment::NotifyHandler(OCI_Event *pEvent)
 {
-	Subscription::NotifyHandlerProc handler = reinterpret_cast<Subscription::NotifyHandlerProc>(GetEnvironmentHandle().Callbacks.Get(Check(OCI_EventGetSubscription(pEvent))));
+    Subscription::NotifyHandlerProc handler = Environment::GetUserCallback<Subscription::NotifyHandlerProc>((Check(OCI_EventGetSubscription(pEvent))));
 
     if (handler)
     {
@@ -1002,7 +992,8 @@ inline void Environment::NotifyHandler(OCI_Event *pEvent)
 
 inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
 {
-	Dequeue::NotifyAQHandlerProc handler = reinterpret_cast<Dequeue::NotifyAQHandlerProc>(GetEnvironmentHandle().Callbacks.Get(Check(pDequeue)));
+    Dequeue::NotifyAQHandlerProc handler = Environment::GetUserCallback<Dequeue::NotifyAQHandlerProc>(Check(pDequeue));
+   
 
     if (handler)
     {
@@ -1011,38 +1002,72 @@ inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
     }
 }
 
-inline Environment::EnvironmentHandle & Environment::GetEnvironmentHandle()
+template <class TCallbackType>
+inline TCallbackType Environment::GetUserCallback(AnyPointer ptr)
 {
-    static EnvironmentHandle envHandle;
+    return reinterpret_cast<TCallbackType>(GetInstance()._callbacks.Get(ptr));
+}
+
+template <class TCallbackType>
+inline void Environment::SetUserCallback(AnyPointer ptr, TCallbackType callback)
+{
+
+}
+
+template <class THandleType>
+inline void Environment::SetSmartHandle(AnyPointer ptr, THandleType handle)
+{
+
+}
+
+template <class THandleType>
+inline THandleType Environment::GetSmartHandle(AnyPointer ptr)
+{
+    return dynamic_cast<THandleType>(GetInstance()._handles.Get(ptr));
+}
+
+inline Handle * Environment::GetEnvironmentHandle()
+{
+    return GetInstance().GetHandle();
+}
+
+inline Environment& Environment::GetInstance()
+{
+    static Environment envHandle;
 
     return envHandle;
 }
 
-inline Environment::EnvironmentHandle::EnvironmentHandle() : Handles(), Callbacks(), Mode(0), _locker()
+inline Environment::Environment() : _locker(), _handles(), _callbacks(), _mode()
 {
 
 }
 
-inline void Environment::EnvironmentHandle::Initialize(AnyPointer handle, unsigned int envMode)
+inline void Environment::SelfInitialize(EnvironmentFlags mode, const ostring& libpath)
 {
-    Mode = envMode;
+    _mode = mode;
 
-    _locker.SetAccessMode((envMode & OCI_ENV_THREADED) == OCI_ENV_THREADED);
+    Check(OCI_Initialize(0, libpath.c_str(), _mode.GetValues() | OCI_ENV_CONTEXT));
+    
 
-    Callbacks.SetLocker(&_locker);
-    Handles.SetLocker(&_locker);
+    _locker.SetAccessMode((_mode & Environment::Threaded) == Environment::Threaded);
 
-    Acquire(handle, 0, 0);
+    _callbacks.SetLocker(&_locker);
+    _handles.SetLocker(&_locker);
+
+    Acquire(const_cast<AnyPointer>(Check(OCI_HandleGetEnvironment())), 0, 0);
 }
 
-inline void Environment::EnvironmentHandle::Finalize()
+inline void Environment::SelfCleanup()
 {
     _locker.SetAccessMode(false);
 
-    Callbacks.SetLocker(0);
-    Handles.SetLocker(0);
+    _callbacks.SetLocker(0);
+    _handles.SetLocker(0);
 
     Release();
+
+    Check(OCI_Cleanup());
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1138,7 +1163,7 @@ inline void Pool::Open(const ostring& db, const ostring& user, const ostring& pw
     Release();
 
     Acquire(Check(OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionFlags.GetValues(),
-            minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), Environment::GetEnvironmentHandle().GetHandle());
+            minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), Environment::GetInstance().GetHandle());
 }
 
 inline void Pool::Close()
@@ -1228,7 +1253,7 @@ inline Connection::Connection(OCI_Connection *con,  Handle *parent)
 inline void Connection::Open(const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
 {
     Acquire(Check(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
-		    reinterpret_cast<HandleFreeFunc>(OCI_ConnectionFree), Environment::GetEnvironmentHandle().GetHandle());
+		    reinterpret_cast<HandleFreeFunc>(OCI_ConnectionFree), Environment::GetInstance().GetHandle());
 }
 
 inline void Connection::Close()
@@ -1455,7 +1480,7 @@ inline void Connection::SetTAFHandler(TAFHandlerProc handler)
 {
     Check(OCI_SetTAFHandler(*this, static_cast<POCI_TAF_HANDLER>(handler != 0 ? Environment::TAFHandler : 0 )));
 
-    Environment::GetEnvironmentHandle().Callbacks.Set((OCI_Connection*)*this, reinterpret_cast<CallbackPointer>(handler));
+    Environment::SetUserCallback<Connection::TAFHandlerProc>(static_cast<OCI_Connection*>(*this), handler);
 }
 
 inline void* Connection::GetUserData()
@@ -5548,12 +5573,13 @@ inline void Subscription::Register(const Connection &connection, const ostring& 
                                            static_cast<POCI_NOTIFY> (handler != 0 ? Environment::NotifyHandler : 0 ), port, timeout)),
                                            reinterpret_cast<HandleFreeFunc>(OCI_SubscriptionUnregister), 0);
 
-	Environment::GetEnvironmentHandle().Callbacks.Set(static_cast<OCI_Subscription*>(*this), reinterpret_cast<CallbackPointer>(handler));
+    Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), handler);
 }
 
 inline void Subscription::Unregister()
 {
-    Environment::GetEnvironmentHandle().Callbacks.Remove(*this);
+    Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), 0);
+
     Release();
 }
 
@@ -5994,7 +6020,7 @@ inline void Dequeue::Subscribe(unsigned int port, unsigned int timeout, NotifyAQ
 {
     Check(OCI_DequeueSubscribe(*this, port, timeout, static_cast<POCI_NOTIFY_AQ>(handler != 0 ? Environment::NotifyHandlerAQ : 0 )));
 
-	Environment::GetEnvironmentHandle().Callbacks.Set(static_cast<OCI_Dequeue*>(*this), reinterpret_cast<CallbackPointer>(handler));
+    Environment::SetUserCallback<Dequeue::NotifyAQHandlerProc>(static_cast<OCI_Dequeue*>(*this), handler);
 }
 
 inline void Dequeue::Unsubscribe()
