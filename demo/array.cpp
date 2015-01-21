@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "ocilib.hpp"
 
 using namespace ocilib;
@@ -14,7 +16,7 @@ int main(void)
 
         std::vector<int> ints;
         std::vector<ostring> strs;
-        
+
         Statement st(con);
         st.Prepare("insert into products values(:i, :s)");
         st.SetBindArraySize(ArraySize);
@@ -33,15 +35,15 @@ int main(void)
 
         st.Execute();
 
-        std::cout << "row processed : " << st.GetAffectedRows() << std::endl; 
+        std::cout << "row processed : " << st.GetAffectedRows() << std::endl;
 
     }
     catch(Exception &ex)
     {
-         std::cout << ex.GetMessage() << std::endl;
+         std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();
- 
+
     return EXIT_SUCCESS;
 }

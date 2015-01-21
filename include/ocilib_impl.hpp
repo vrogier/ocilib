@@ -1004,13 +1004,27 @@ inline TCallbackType Environment::GetUserCallback(AnyPointer ptr)
 template <class TCallbackType>
 inline void Environment::SetUserCallback(AnyPointer ptr, TCallbackType callback)
 {
-
+    if (callback)
+    {
+        GetInstance()._callbacks.Set(ptr, callback);
+    }
+    else
+    {
+        GetInstance()._callbacks.Remove(ptr);
+    }
 }
 
 template <class THandleType>
 inline void Environment::SetSmartHandle(AnyPointer ptr, THandleType handle)
 {
-
+    if (handle)
+    {
+        GetInstance()._handles.Set(ptr, handle);
+    }
+    else
+    {
+        GetInstance()._handles.Remove(ptr);
+    }
 }
 
 template <class THandleType>
@@ -1543,6 +1557,13 @@ inline Date::Date()
 	Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0);
 }
 
+inline Date::Date(const ostring& str, const ostring& format)
+{
+    Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0);
+
+    FromString(str, format);
+}
+
 inline Date::Date(OCI_Date *pDate, Handle *parent)
 {
     Acquire(pDate, 0, parent);
@@ -1858,6 +1879,13 @@ inline Interval::Interval(IntervalType type)
     Acquire(Check(OCI_IntervalCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 0);
 }
 
+inline Interval::Interval(IntervalType type, const ostring& data)
+{
+    Acquire(Check(OCI_IntervalCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 0);
+
+    FromString(data);
+}
+
 inline Interval::Interval(OCI_Interval *pInterval, Handle *parent)
 {
     Acquire(pInterval, 0, parent);
@@ -2116,6 +2144,12 @@ inline bool Interval::operator <= (const Interval& other) const
 inline Timestamp::Timestamp(TimestampType type)
 {
 	Acquire(Check(OCI_TimestampCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 0);
+}
+
+inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostring& format)
+{
+    Acquire(Check(OCI_TimestampCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 0);
+    FromString(data, format);
 }
 
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, Handle *parent)

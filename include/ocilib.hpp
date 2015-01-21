@@ -49,8 +49,6 @@
 
 #include <string>
 #include <list>
-#include <algorithm>
-#include <iostream>
 #include <vector>
 #include <map>
 
@@ -2341,6 +2339,20 @@ public:
     Date();
 
     /**
+    * @brief
+    * Create a date object with the value provided by the input date time string
+    *
+    * @param str    - String date time
+    * @param format - format of the date time provided in parameter 'data'
+    *
+    * @note
+    * For date time formats, refer to the Oracle SQL documentation
+    *
+    */
+    Date(const ostring& str, const ostring& format = OCI_STRING_FORMAT_DATE);
+
+
+    /**
      * @brief
      * Check if the given date is valid
      *
@@ -2760,6 +2772,19 @@ public:
 	*/
     Interval(IntervalType type);
 
+    /**
+    * @brief
+    * Create an interval object with the value provided by the input interval string
+    *
+    * @param type - Interval type to create
+    * @param data - String interval
+    *
+    * @note
+    * For interval format, refer to the Oracle SQL documentation
+    *
+    */
+    Interval(IntervalType type, const ostring& data);
+
 	/**
 	* @brief
 	* Return the type of the given interval object
@@ -3136,7 +3161,29 @@ public:
 	*/
     typedef Enum<TimestampTypeValues> TimestampType;
 
+    /**
+    * @brief
+    * Create a new instance of the given type
+    *
+    * @param type - Timestamp type to create
+    *
+    */
+
     Timestamp(TimestampType type);
+
+    /**
+    * @brief
+    * Creates a timestamp object with the value provided by the input date time string
+    *
+    * @param type   - Timestamp type to create
+    * @param data   - String date time
+    * @param format - format of the date time provided in parameter 'data'
+    *
+    * @note
+    * For date time formats, refer to the Oracle SQL documentation
+    *
+    */
+    Timestamp(TimestampType type, const ostring& data, const ostring& format = OCI_STRING_FORMAT_DATE);
 
 	/**
 	* @brief
@@ -3367,8 +3414,19 @@ public:
 	*/
     void GetTimeZoneOffset(int &hour, int &min) const;
 
-
-	static void Substract(const Timestamp &lsh, const Timestamp &rsh, Interval &result);
+    /**
+    * @brief
+    * Substract the given two timestamp and store the result into the given Interval
+    *
+    * @param lsh  - Timestamp value
+    * @param rsh  - Timestamp to substract 
+    * @param rsh  - result difference
+    *
+    * @param
+    * the Interval object type must match the type of range resulting from the timestamp difference
+    *
+    */
+    static void Substract(const Timestamp &lsh, const Timestamp &rsh, Interval &result);
 
 	/**
 	* @brief

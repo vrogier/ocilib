@@ -1,30 +1,35 @@
+#include <iostream>
+
 #include "ocilib.hpp"
 
 using namespace ocilib;
 
-static HANDLE evt;
+#ifdef _WINDOWS
+#define sleep(x) Sleep(x*1000)
+#endif
+
+#define wait_for_events() sleep(5)
+
 ThreadHandle thread;
 Connection con;
 
 void OracleCallProc(ThreadHandle handle, void *data)
-{ 
+{
     try
     {
         Statement st(con);
         st.Execute("select table_name from all_tables");
 
         Resultset rs = st.GetResultset();
-        while (rs.Next())
+        while (rs++)
         {
             std::cout << rs.Get<ostring>(1) << std::endl;
         }
     }
-    catch(Exception &ex)
+    catch (Exception &ex)
     {
-         std::cout << ex.GetMessage() << std::endl;
+        std::cout << ex.GetMessage() << std::endl;
     }
-
-    SetEvent(evt);
 }
 
 int main(void)
@@ -33,25 +38,22 @@ int main(void)
     {
         Environment::Initialize(Environment::Threaded);
 
-        con.Open("db", "usr", "pwd");      
+        con.Open("db", "usr", "pwd");
 
         thread = Thread::Create();
         Thread::Run(thread, OracleCallProc, 0);
 
-        Sleep(1000);
-        if (WaitForSingleObject(evt, 1000) != WAIT_OBJECT_0)
-        {
-            con.Break();
-        }
-
+        sleep(1);
+        con.Break();
+        
         Thread::Join(thread);
     }
-    catch(Exception &ex)
+    catch (Exception &ex)
     {
-         std::cout << ex.GetMessage() << std::endl;
+        std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();
- 
+
     return EXIT_SUCCESS;
 }

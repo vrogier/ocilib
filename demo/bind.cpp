@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "ocilib.hpp"
 
 using namespace ocilib;
@@ -8,26 +10,26 @@ int main(void)
     {
         Environment::Initialize();
 
-        Connection con("db", "usr", "pwd");      
+        Connection con("db", "usr", "pwd");
         Statement st(con);
         int code;
 
         st.Prepare("delete from test_fetch where code = :code");
-        st.Bind(":code", code, BindInfo::In);  
+        st.Bind(":code", code, BindInfo::In);
         code = 5;
         st.Execute();
 
         code = 12;
         st.Execute();
-   
+
         con.Commit();
     }
     catch(Exception &ex)
     {
-         std::cout << ex.GetMessage() << std::endl;
+         std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();
- 
+
     return EXIT_SUCCESS;
 }
