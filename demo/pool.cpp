@@ -1,13 +1,15 @@
+#include <iostream>
+
 #include "ocilib.hpp"
 
 using namespace ocilib;
 
-const int MaxThreads        = 50;
-const int MaxConnnections   = 10;
+const int MaxThreads = 50;
+const int MaxConnnections = 10;
 
 void worker(ThreadHandle handle, void *data)
 {
-    Connection con = ((Pool *) data)->GetConnection();
+    Connection con = ((Pool *)data)->GetConnection();
     Statement st(con);
     st.Execute("select to_char(sysdate, 'YYYYMMDD HH24:MI:SS') from dual");
     Resultset rs = st.GetResultset();
@@ -28,7 +30,7 @@ int main(void)
 
         for (int i = 0; i < MaxThreads; i++)
         {
-            ThreadHandle th = Thread::Create();            
+            ThreadHandle th = Thread::Create();
             threads.push_back(th);
             Thread::Run(th, worker, &pool);
         }
@@ -39,12 +41,12 @@ int main(void)
             Thread::Destroy(threads[i]);
         }
     }
-    catch(Exception &ex)
+    catch (Exception &ex)
     {
-         std::cout << ex.GetMessage() << std::endl;
+        std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();
- 
+
     return EXIT_SUCCESS;
 }

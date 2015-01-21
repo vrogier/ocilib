@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "ocilib.hpp"
 
 using namespace ocilib;
@@ -26,7 +28,7 @@ int main(int argc, char* argv[])
         Connection con("db", "usr", "pwd");
         con.SetAutoCommit(true);
 
-        Statement st(con);      
+        Statement st(con);
         st.Execute("create table table1(code number)");
         st.Execute("create table table2(str varchar2(10))");
 
@@ -38,7 +40,7 @@ int main(int argc, char* argv[])
         st.Execute("alter table table1 add price number");
         WaitForEvents();
 
-        st.Execute( "insert into table1 values(1, 10.5)");
+        st.Execute("insert into table1 values(1, 10.5)");
         st.Execute("insert into table2 values('shoes')");
         WaitForEvents();
 
@@ -50,7 +52,7 @@ int main(int argc, char* argv[])
         st.Execute("drop table table2");
         WaitForEvents();
 
-        con.Close();      
+        con.Close();
 
         /* start remote instance */
         Environment::StartDatabase("db", "sys_usr", "sys_pwd", Environment::StartForce, Environment::StartFull);
@@ -60,11 +62,11 @@ int main(int argc, char* argv[])
         WaitForDatabase();
 
         sub.Unregister();
-        
+
     }
-    catch(Exception &ex)
+    catch (Exception &ex)
     {
-         std::cout << ex.GetMessage() << std::endl;
+        std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();
@@ -72,32 +74,32 @@ int main(int argc, char* argv[])
 
 void SetupNames()
 {
-    EventTypes[ Event::DatabaseStart       ] = "Startup";
-    EventTypes[ Event::DatabaseShutdown    ] = "Shutdown";
-    EventTypes[ Event::DatabaseShutdownAny ]= "Shutdown Any";
-    EventTypes[ Event::DatabaseDrop        ] = "Drop Database";
-    EventTypes[ Event::Unregister          ] = "Unregister";
-    EventTypes[ Event::ObjectChanged       ] = "Object Changed";
+    EventTypes[Event::DatabaseStart] = "Startup";
+    EventTypes[Event::DatabaseShutdown] = "Shutdown";
+    EventTypes[Event::DatabaseShutdownAny] = "Shutdown Any";
+    EventTypes[Event::DatabaseDrop] = "Drop Database";
+    EventTypes[Event::Unregister] = "Unregister";
+    EventTypes[Event::ObjectChanged] = "Object Changed";
 
-    ObjectEvents[ Event::ObjectInserted    ] = "Insert";
-    ObjectEvents[ Event::ObjectUpdated     ] = "Update";
-    ObjectEvents[ Event::ObjectDeleted     ] = "Delete";
-    ObjectEvents[ Event::ObjectAltered     ] = "Alter";
-    ObjectEvents[ Event::ObjectDropped     ] = "Drop";
-    ObjectEvents[ Event::ObjectGeneric     ] = "Generic";
+    ObjectEvents[Event::ObjectInserted] = "Insert";
+    ObjectEvents[Event::ObjectUpdated] = "Update";
+    ObjectEvents[Event::ObjectDeleted] = "Delete";
+    ObjectEvents[Event::ObjectAltered] = "Alter";
+    ObjectEvents[Event::ObjectDropped] = "Drop";
+    ObjectEvents[Event::ObjectGeneric] = "Generic";
 }
 
 void EventHandler(Event &evt)
 {
     std::cout << "** Notification : " << evt.GetSubscription().GetName() << std::endl;
-    std::cout << "** Database     : " << evt.GetDatabaseName()           << std::endl;
-    std::cout << "** Event        : " << EventTypes[evt.GetType()]       << std::endl;
-    
+    std::cout << "** Database     : " << evt.GetDatabaseName() << std::endl;
+    std::cout << "** Event        : " << EventTypes[evt.GetType()] << std::endl;
+
     if (evt.GetType() == Event::ObjectChanged)
     {
-        std::cout << ".... Object : " << evt.GetObjectName()                << std::endl;
+        std::cout << ".... Object : " << evt.GetObjectName() << std::endl;
         std::cout << ".... Action : " << ObjectEvents[evt.GetObjectEvent()] << std::endl;
-        std::cout << ".... RowID  : " << evt.GetRowID()                     << std::endl;
+        std::cout << ".... RowID  : " << evt.GetRowID() << std::endl;
     }
 
     std::cout << std::endl;

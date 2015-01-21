@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "ocilib.hpp"
 
 using namespace ocilib;
@@ -9,25 +11,25 @@ int main(void)
         Environment::Initialize();
 
         Connection con("db", "usr", "pwd");
-        
+
         Statement st(con);
-        st.Execute("select * from products");
+        st.Execute("select * from all_users");
 
         Resultset rs = st.GetResultset();
-        while (rs.Next())
+        while (rs++)
         {
-            std::cout << "code:" << rs.Get<int>(1) << " name: " <<  rs.Get<ostring>(2) << std::endl;
+            std::cout << "UserName:" << rs.Get<ostring>("username") << " Created:" << rs.Get<ostring>("created") << std::endl;
         }
- 
+
         std::cout << "=> Total fetched rows : " << rs.GetCount() << std::endl;
 
     }
-    catch(Exception &ex)
+    catch (Exception &ex)
     {
-         std::cout << ex.GetMessage() << std::endl;
+        std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();
- 
+
     return EXIT_SUCCESS;
 }

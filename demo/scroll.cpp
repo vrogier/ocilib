@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "ocilib.hpp"
 
 using namespace ocilib;
@@ -11,10 +13,10 @@ int main(void)
         Connection con("db", "usr", "pwd");
 
         Statement st(con);
-        
+
         st.SetFetchMode(Statement::FetchScrollable);
-        st.Execute("select table_name from tabs");
-   
+        st.Execute("select table_name from all_tables where rownum < 10 ");
+
         Resultset rs = st.GetResultset();
 
         rs.Last();
@@ -44,12 +46,12 @@ int main(void)
         rs.Seek(Resultset::SeekRelative, -3);
         std::cout << "table " << rs.Get<ostring>(1) << std::endl;
     }
-    catch(Exception &ex)
+    catch (Exception &ex)
     {
-         std::cout << ex.GetMessage() << std::endl;
+        std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();
- 
+
     return EXIT_SUCCESS;
 }

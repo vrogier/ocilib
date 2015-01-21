@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "ocilib.hpp"
 
 using namespace ocilib;
@@ -18,20 +20,20 @@ int main(void)
 
         Resultset rs = st.GetResultset();
 
-        while (rs.Next())
+        while (rs++)
         {
             std::cout << "updated code is " << rs.Get<int>(1) << std::endl;
         }
- 
+
         std::cout << "=> Total updated rows : " << rs.GetCount() << std::endl;
 
     }
-    catch(Exception &ex)
+    catch (Exception &ex)
     {
-         std::cout << ex.GetMessage() << std::endl;
+        std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();
- 
+
     return EXIT_SUCCESS;
 }
