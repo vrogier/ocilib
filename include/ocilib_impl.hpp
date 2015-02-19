@@ -383,7 +383,7 @@ template<class THandleType>
 inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFunc func, Handle *parent)
 {
     Release();
-  
+
     _smartHandle = Environment::GetSmartHandle<HandleHolder<THandleType>::SmartHandle*>(handle);
 
     if (!_smartHandle)
@@ -986,7 +986,7 @@ inline void Environment::NotifyHandler(OCI_Event *pEvent)
 inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
 {
     Dequeue::NotifyAQHandlerProc handler = Environment::GetUserCallback<Dequeue::NotifyAQHandlerProc>(Check(pDequeue));
-   
+
 
     if (handler)
     {
@@ -1006,7 +1006,7 @@ inline void Environment::SetUserCallback(AnyPointer ptr, TCallbackType callback)
 {
     if (callback)
     {
-        GetInstance()._callbacks.Set(ptr, callback);
+        GetInstance()._callbacks.Set(ptr, reinterpret_cast<CallbackPointer>(callback));
     }
     else
     {
@@ -1055,7 +1055,7 @@ inline void Environment::SelfInitialize(EnvironmentFlags mode, const ostring& li
     _mode = mode;
 
     Check(OCI_Initialize(0, libpath.c_str(), _mode.GetValues() | OCI_ENV_CONTEXT));
-    
+
     _locker.SetAccessMode((_mode & Environment::Threaded) == Environment::Threaded);
 
     _callbacks.SetLocker(&_locker);
@@ -4069,7 +4069,7 @@ inline void BindAdaptor<TNativeType, TObjectType>::SetInData()
 
 template <class TNativeType, class TObjectType>
 inline void BindAdaptor<TNativeType, TObjectType>::SetOutData()
-{    
+{
     size_t size = Check(OCI_BindGetDataSize(Check(OCI_GetBind2(_pStatement, _name.c_str()))));
 
     _object.assign(_data, _data + size);
