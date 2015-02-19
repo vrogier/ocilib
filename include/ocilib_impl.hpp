@@ -1590,7 +1590,7 @@ inline bool Date::IsValid() const
 
 inline int Date::GetYear() const
 {
-    int year, month, day;
+    int year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
 
@@ -1599,7 +1599,7 @@ inline int Date::GetYear() const
 
 inline void Date::SetYear(int value)
 {
-    int year, month, day;
+    int year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
     SetDate(value, month, day);
@@ -1607,7 +1607,7 @@ inline void Date::SetYear(int value)
 
 inline int Date::GetMonth() const
 {
-    int year, month, day;
+    int year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
 
@@ -1616,7 +1616,7 @@ inline int Date::GetMonth() const
 
 inline void Date::SetMonth(int value)
 {
-    int year, month, day;
+    int year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
     SetDate(year, value, day);
@@ -1624,7 +1624,7 @@ inline void Date::SetMonth(int value)
 
 inline int Date::GetDay() const
 {
-    int year, month, day;
+    int year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
 
@@ -1633,7 +1633,7 @@ inline int Date::GetDay() const
 
 inline void Date::SetDay(int value)
 {
-    int year, month, day;
+    int year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
     SetDate(year, month, value);
@@ -1641,7 +1641,7 @@ inline void Date::SetDay(int value)
 
 inline int Date::GetHours() const
 {
-    int hour, minutes, seconds;
+    int hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
 
@@ -1650,7 +1650,7 @@ inline int Date::GetHours() const
 
 inline void Date::SetHours(int value)
 {
-    int hour, minutes, seconds;
+    int hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
     SetTime(value, minutes, seconds);
@@ -1658,7 +1658,7 @@ inline void Date::SetHours(int value)
 
 inline int Date::GetMinutes() const
 {
-    int hour, minutes, seconds;
+    int hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
 
@@ -1667,7 +1667,7 @@ inline int Date::GetMinutes() const
 
 inline void Date::SetMinutes(int value)
 {
-    int hour, minutes, seconds;
+    int hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
     SetTime(hour, value, seconds);
@@ -1675,7 +1675,7 @@ inline void Date::SetMinutes(int value)
 
 inline int Date::GetSeconds() const
 {
-    int hour, minutes, seconds;
+    int hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
 
@@ -1684,7 +1684,7 @@ inline int Date::GetSeconds() const
 
 inline void Date::SetSeconds(int value)
 {
-    int hour, minutes, seconds;
+    int hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
     SetTime(hour, minutes, value);
@@ -1917,7 +1917,7 @@ inline bool Interval::IsValid() const
 
 inline int Interval::GetYear() const
 {
-    int year, month;
+    int year = 0, month = 0;
 
     GetYearMonth(year, month);
 
@@ -1926,7 +1926,7 @@ inline int Interval::GetYear() const
 
 inline void Interval::SetYear(int value)
 {
-    int year, month;
+    int year = 0, month = 0;
 
     GetYearMonth(year, month);
     SetYearMonth(value, month);
@@ -1934,7 +1934,7 @@ inline void Interval::SetYear(int value)
 
 inline int Interval::GetMonth() const
 {
-    int year, month;
+    int year = 0, month = 0;
 
     GetYearMonth(year, month);
 
@@ -1943,7 +1943,7 @@ inline int Interval::GetMonth() const
 
 inline void Interval::SetMonth(int value)
 {
-    int year, month;
+    int year = 0, month = 0;
 
     GetYearMonth(year, month);
     SetYearMonth(year, value);
@@ -1951,7 +1951,7 @@ inline void Interval::SetMonth(int value)
 
 inline int Interval::GetDay() const
 {
-    int day, hour, minutes, seconds, milliseconds;
+    int day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
@@ -1960,7 +1960,7 @@ inline int Interval::GetDay() const
 
 inline void Interval::SetDay(int value)
 {
-    int day, hour, minutes, seconds, milliseconds;
+    int day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(value, hour, minutes, seconds, milliseconds);
@@ -1968,7 +1968,7 @@ inline void Interval::SetDay(int value)
 
 inline int Interval::GetHours() const
 {
-    int day, hour, minutes, seconds, milliseconds;
+    int day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
@@ -1977,7 +1977,7 @@ inline int Interval::GetHours() const
 
 inline void Interval::SetHours(int value)
 {
-    int day, hour, minutes, seconds, milliseconds;
+    int day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, value, minutes, seconds, milliseconds);
@@ -1985,7 +1985,7 @@ inline void Interval::SetHours(int value)
 
 inline int Interval::GetMinutes() const
 {
-    int day, hour, minutes, seconds, milliseconds;
+    int day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
@@ -1994,7 +1994,7 @@ inline int Interval::GetMinutes() const
 
 inline void Interval::SetMinutes(int value)
 {
-    int day, hour, minutes, seconds, milliseconds;
+    int day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, hour, value, seconds, milliseconds);
@@ -2011,7 +2011,7 @@ inline int Interval::GetSeconds() const
 
 inline void Interval::SetSeconds(int value)
 {
-    int day, hour, minutes, seconds, milliseconds;
+    int day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, hour, minutes, value, milliseconds);
@@ -2019,7 +2019,7 @@ inline void Interval::SetSeconds(int value)
 
 inline int Interval::GetMilliSeconds() const
 {
-    int day, hour, minutes, seconds, milliseconds;
+    int day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
@@ -2028,7 +2028,7 @@ inline int Interval::GetMilliSeconds() const
 
 inline void Interval::SetMilliSeconds(int value)
 {
-    int day, hour, minutes, seconds, milliseconds;
+    int day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, hour, minutes, seconds, value);
@@ -2270,7 +2270,7 @@ inline int Timestamp::GetMinutes() const
 
 inline void Timestamp::SetMinutes(int value)
 {
-	int hour, minutes, seconds, milliseconds;
+    int hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
 	GetTime(hour, minutes, seconds, milliseconds);
 	SetTime(hour, value, seconds, milliseconds);
@@ -2278,7 +2278,7 @@ inline void Timestamp::SetMinutes(int value)
 
 inline int Timestamp::GetSeconds() const
 {
-    int hour, minutes, seconds, milliseconds;
+    int hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetTime(hour, minutes, seconds, milliseconds);
 
@@ -2287,7 +2287,7 @@ inline int Timestamp::GetSeconds() const
 
 inline void Timestamp::SetSeconds(int value)
 {
-	int hour, minutes, seconds, milliseconds;
+    int hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
 	GetTime(hour, minutes, seconds, milliseconds);
 	SetTime(hour, minutes, value, milliseconds);
@@ -2295,7 +2295,7 @@ inline void Timestamp::SetSeconds(int value)
 
 inline int Timestamp::GetMilliSeconds() const
 {
-    int hour, minutes, seconds, milliseconds;
+    int hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetTime(hour, minutes, seconds, milliseconds);
 
@@ -2304,7 +2304,7 @@ inline int Timestamp::GetMilliSeconds() const
 
 inline void Timestamp::SetMilliSeconds(int value)
 {
-	int hour, minutes, seconds, milliseconds;
+    int hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
 	GetTime(hour, minutes, seconds, milliseconds);
 	SetTime(hour, minutes, seconds, value);
@@ -2327,15 +2327,15 @@ inline void Timestamp::GetDateTime(int &year, int &month, int &day, int &hour, i
 
 inline void Timestamp::SetDate(int year, int month, int day)
 {
-	int tmpYear, tmpMonth, tempDay, hour, minutes, seconds, milliseconds;
+    int tmpYear = 0, tmpMonth = 0, tempDay = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
-	GetDateTime(year, month, day, hour, tmpYear, tmpMonth, tempDay);
+    GetDateTime(tmpYear, tmpMonth, tempDay, hour, minutes, seconds, milliseconds);
 	SetDateTime(year, month, day, hour, minutes, seconds, milliseconds);
 }
 
 inline void Timestamp::SetTime(int hour, int min, int sec, int fsec)
 {
-	int year, month, day, tmpHour, tmpMinutes, tmpSeconds, tmpMilliseconds;
+    int year = 0, month = 0, day = 0, tmpHour = 0, tmpMinutes = 0, tmpSeconds = 0, tmpMilliseconds = 0;
 
 	GetDateTime(year, month, day, tmpHour, tmpMinutes, tmpSeconds, tmpMilliseconds);
 	SetDateTime(year, month, day, hour, min, sec, fsec);
@@ -2345,7 +2345,7 @@ inline void Timestamp::SetTimeZone(const ostring& timeZone)
 {
 	if (GetType() == Timestamp::WithTimeZone)
 	{
-		int year, month, day, hour, minutes, seconds, milliseconds;
+        int year = 0, month = 0, day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
 		GetDateTime(year, month, day, hour, minutes, seconds, milliseconds);
 		SetDateTime(year, month, day, hour, minutes, seconds, milliseconds, timeZone);
@@ -2697,12 +2697,6 @@ template<class TLobObjectType, int TLobOracleType>
 inline void Lob<TLobObjectType, TLobOracleType>::EnableBuffering(bool value)
 {
 	Check(OCI_LobEnableBuffering(*this, value));
-}
-
-template<class TLobObjectType, int TLobOracleType>
-inline Lob<TLobObjectType, TLobOracleType>::operator TLobObjectType () const
-{
-	return Lob<TLobObjectType, TLobOracleType>::GetContent();
 }
 
 template<class TLobObjectType, int TLobOracleType>

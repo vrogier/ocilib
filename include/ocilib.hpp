@@ -3869,13 +3869,6 @@ public:
 
 	/**
 	* @brief
-	* return the lob object content
-	*
-	*/
-	operator TLobObjectType() const;
-
-	/**
-	* @brief
 	* Appending the given lob content to the current lob content
 	*
 	*/
@@ -4481,6 +4474,9 @@ class Collection : public HandleHolder<OCI_Coll *>
 	template <class TOtherDataType>
 	friend class Collection;
 public:
+
+    class Element;
+    class Iterator;
 
 	/**
 	* @brief
