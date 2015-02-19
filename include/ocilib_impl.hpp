@@ -244,7 +244,7 @@ inline Flags<TEnum>& Flags<TEnum>::operator ^= (TEnum other)
 template<class TEnum>
 inline bool Flags<TEnum>::operator == (TEnum other) const
 {
-    return _flags == other;
+    return _flags == static_cast<unsigned int>(other);
 }
 
 template<class TEnum>
@@ -384,11 +384,11 @@ inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFun
 {
     Release();
 
-    _smartHandle = Environment::GetSmartHandle<HandleHolder<THandleType>::SmartHandle*>(handle);
+    _smartHandle = Environment::GetSmartHandle<typename HandleHolder<THandleType>::SmartHandle*>(handle);
 
     if (!_smartHandle)
     {
-		_smartHandle = new HandleHolder<THandleType>::SmartHandle(this, handle, func, parent);
+		_smartHandle = new SmartHandle(this, handle, func, parent);
     }
     else
     {
@@ -668,7 +668,7 @@ inline HandleHolder<THandleType>::SmartHandle::SmartHandle(HandleHolder *holder,
     _holders.SetLocker(&_locker);
     _children.SetLocker(&_locker);
 
-    Environment::SetSmartHandle<HandleHolder<THandleType>::SmartHandle*>(handle, this);
+    Environment::SetSmartHandle<typename HandleHolder<THandleType>::SmartHandle*>(handle, this);
 
     Acquire(holder);
 
@@ -695,7 +695,7 @@ inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
     _holders.SetLocker(0);
     _children.SetLocker(0);
 
-    Environment::SetSmartHandle<HandleHolder<THandleType>::SmartHandle*>(_handle, 0);
+    Environment::SetSmartHandle<typename HandleHolder<THandleType>::SmartHandle*>(_handle, 0);
 
     if (_func)
     {
