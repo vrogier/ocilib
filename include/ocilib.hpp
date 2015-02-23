@@ -5410,21 +5410,7 @@ public:
     template <class TDataType, class TExtraInfo>
     void Bind(const ostring& name, TDataType &value, TExtraInfo extraInfo, BindInfo::BindDirection mode);
 
-    /**
-    * @brief
-    * Bind a host collection variable
-    *
-    * @tparam TDataType - C++ type of the host collection variable
-    *
-    * @param name  - Bind name
-    * @param value - Host Collection variable
-    * @param mode  - bind direction mode
-    *
-    */
-    template <class TDataType>
-    void Bind(const ostring& name, Collection<TDataType> &value, BindInfo::BindDirection mode);
-    
-    /**
+	/**
 	* @brief
 	* Bind a vector of host variables
 	*
@@ -5458,7 +5444,7 @@ public:
 	* @param mode     - bind direction mode
 	*
 	* @warning
-	* This method has built-in specialized versions for Object, Reference.
+	* This method has built-in specialized versions for Object, Reference, Collection.
 	*
 	* @note
 	* It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
@@ -5467,21 +5453,6 @@ public:
 	*/
 	template <class TDataType>
 	void Bind(const ostring& name, std::vector<TDataType> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
-
-    /**
-    * @brief
-    * Bind a vector of host collection variables with Oracle type information
-    *
-    * @tparam TDataType  - collection C++ type of the host collection variables
-    *
-    * @param name     - Bind name
-    * @param values   - Vector of host collection variables
-    * @param typeInfo - Object type information
-    * @param mode     - bind direction mode
-    *
-    */
-    template <class TDataType>
-    void Bind(const ostring& name, std::vector<Collection<TDataType> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
 
 	/**
 	* @brief
