@@ -4669,9 +4669,9 @@ inline void Statement::Bind<Date>(const ostring& name, std::vector<Date> &values
 }
 
 template<class TDataType>
-inline void Statement::Bind(const ostring& name, TDataType &value, BindInfo::BindDirection mode)
+inline void Statement::Bind(const ostring& name, Collection<TDataType> &value, BindInfo::BindDirection mode)
 {
-	Bind(OCI_BindColl, name, value, BindValue<OCI_Coll *>(), mode);
+    Bind(OCI_BindColl, name, value, BindValue<OCI_Coll *>(), mode);
 }
 
 template <>
@@ -4732,6 +4732,12 @@ template <>
 inline void Statement::Bind<Reference>(const ostring& name, std::vector<Reference> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
 	Bind(OCI_BindArrayOfRefs, name, values, BindValue<OCI_Ref *>(), mode, static_cast<OCI_TypeInfo *>(typeInfo));
+}
+
+template <class TDataType>
+inline void Statement::Bind(const ostring& name, std::vector<Collection<TDataType> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
+{
+    Bind(OCI_BindArrayOfColls, name, values, BindValue<OCI_Coll *>(), mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
 template <>
