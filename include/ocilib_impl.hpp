@@ -2578,7 +2578,14 @@ inline Raw Lob<Raw, LobBinary>::Read(unsigned int length)
 template<class TLobObjectType, int TLobOracleType>
 inline unsigned int Lob<TLobObjectType, TLobOracleType>::Write(const TLobObjectType& content)
 {
-    return Check(OCI_LobWrite(*this, static_cast<AnyPointer>(const_cast<typename TLobObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
+    unsigned int res = 0;
+
+    if (content.size() > 0)
+    {
+        res = Check(OCI_LobWrite(*this, static_cast<AnyPointer>(const_cast<typename TLobObjectType::value_type *>(&content[0])), static_cast<unsigned int>(content.size())));
+    }
+
+    return res;
 }
 
 template<class TLobObjectType, int TLobOracleType>
@@ -2590,7 +2597,14 @@ inline void Lob<TLobObjectType, TLobOracleType>::Append(const Lob& other)
 template<class TLobObjectType, int TLobOracleType>
 inline unsigned int Lob<TLobObjectType, TLobOracleType>::Append(const TLobObjectType& content)
 {
-	return Check(OCI_LobAppend(*this, static_cast<AnyPointer>(const_cast<typename TLobObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
+    unsigned int res = 0;
+
+    if (content.size() > 0)
+    {
+        Check(OCI_LobAppend(*this, static_cast<AnyPointer>(const_cast<typename TLobObjectType::value_type *>(&content[0])), static_cast<unsigned int>(content.size())));
+    }
+
+    return res;
 }
 
 template<class TLobObjectType, int TLobOracleType>
@@ -3160,7 +3174,14 @@ inline void Object::Set<File>(const ostring& name, const File &value)
 template<>
 inline void Object::Set<Raw>(const ostring& name, const Raw &value)
 {
-	Check(OCI_ObjectSetRaw(*this, name.c_str(), static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
+    if (value.size() > 0)
+    {
+        Check(OCI_ObjectSetRaw(*this, name.c_str(), static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
+    }
+    else
+    {
+        Check(OCI_ObjectSetRaw(*this, name.c_str(), NULL, 0));
+    }
 }
 
 template<class TDataType>
@@ -3577,7 +3598,14 @@ inline void Collection<ostring>::SetElem(OCI_Elem *elem, const ostring& value)
 template<>
 inline void Collection<Raw>::SetElem(OCI_Elem *elem, const Raw &value)
 {
-	Check(OCI_ElemSetRaw(elem, static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
+    if (value.size() > 0)
+    {
+        Check(OCI_ElemSetRaw(elem, static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
+    }
+    else
+    {
+        Check(OCI_ElemSetRaw(elem, NULL, 0));
+    }
 }
 
 template<>
@@ -3775,7 +3803,14 @@ inline Long<TLongObjectType, TLongOracleType>::Long(OCI_Long *pLong, Handle* par
 template<class TLongObjectType, int TLongOracleType>
 inline unsigned int Long<TLongObjectType, TLongOracleType>::Write(const TLongObjectType& content)
 {
-	return Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<typename TLongObjectType::value_type *>(content.data())), static_cast<unsigned int>(content.size())));
+    unsigned int res = 0;
+
+    if (content.size() > 0)
+    {
+        res = Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<typename TLongObjectType::value_type *>(&content[0])), static_cast<unsigned int>(content.size())));
+    }
+
+    return res;
 }
 
 template<class TLongObjectType, int TLongOracleType>
@@ -3984,7 +4019,10 @@ inline void BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
 		{
 			Raw & value = *it;
 
-			memcpy(_data + (_elemSize * index), value.data(), (value.size() + 1) * sizeof(otext));
+            if (value.size() > 0)
+            {
+                memcpy(_data + (_elemSize * index), &value[0], (value.size() + 1) * sizeof(otext));
+            }
 		}
 	}
 }
@@ -4062,7 +4100,10 @@ inline void BindAdaptor<TNativeType, TObjectType>::SetInData()
 		size = _size;
     }
 
-	memcpy(_data, _object.data(), size * sizeof(TNativeType));
+    if (size > 0)
+    {
+        memcpy(_data, &_object[0], size * sizeof(TNativeType));
+    }
 
 	_data[size] = 0;
 }
