@@ -5810,7 +5810,14 @@ inline Raw Message::GetPayload<Raw>()
 template <>
 inline void Message::SetPayload<Raw>(const Raw &value)
 {
-	Check(OCI_MsgSetRaw(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
+    if (value.size() > 0)
+    {
+        Check(OCI_MsgSetRaw(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
+    }
+    else
+    {
+        Check(OCI_MsgSetRaw(*this, NULL, 0));
+    }
 }
 
 inline Date Message::GetEnqueueTime() const
@@ -5882,7 +5889,14 @@ inline Raw Message::GetOriginalID() const
 
 inline void Message::SetOriginalID(const Raw &value)
 {
-	Check(OCI_MsgSetOriginalID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
+    if (value.size() > 0)
+    {
+        Check(OCI_MsgSetOriginalID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
+    }
+    else
+    {
+        Check(OCI_MsgSetOriginalID(*this, NULL, 0));
+    }
 }
 
 inline ostring Message::GetCorrelation() const
@@ -5977,7 +5991,14 @@ inline Raw Enqueue::GetRelativeMsgID() const
 
 inline void Enqueue::SetRelativeMsgID(const Raw &value)
 {
-	Check(OCI_EnqueueSetRelativeMsgID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
+    if (value.size() > 0)
+    {
+        Check(OCI_EnqueueSetRelativeMsgID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
+    }
+    else
+    {
+        Check(OCI_EnqueueSetRelativeMsgID(*this, NULL, 0));
+    }
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -6037,7 +6058,14 @@ inline Raw Dequeue::GetRelativeMsgID() const
 
 inline void Dequeue::SetRelativeMsgID(const Raw &value)
 {
-	Check(OCI_DequeueSetRelativeMsgID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(value.data())), static_cast<unsigned int>(value.size())));
+    if (value.size() > 0)
+    {
+        Check(OCI_DequeueSetRelativeMsgID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
+    }
+    else
+    {
+        Check(OCI_DequeueSetRelativeMsgID(*this, NULL, 0));
+    }
 }
 
 inline Dequeue::DequeueVisibility Dequeue::GetVisibility() const
