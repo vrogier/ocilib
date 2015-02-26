@@ -63,8 +63,8 @@ OCI_Resultset * OCI_ResultsetCreate
 )
 {
     OCI_Resultset* rs  = NULL;
-    boolean        res = TRUE; 
- 
+    boolean        res = TRUE;
+
     /* allocate resultset structure */
 
     rs = (OCI_Resultset *) OCI_MemAlloc(OCI_IPC_RESULTSET, sizeof(*rs), (size_t) 1, TRUE);
@@ -75,7 +75,7 @@ OCI_Resultset * OCI_ResultsetCreate
     {
         ub4     nb  = 0;
         ub4     i;
-    
+
         rs->stmt         = stmt;
         rs->bof          = TRUE;
         rs->eof          = FALSE;
@@ -164,7 +164,7 @@ OCI_Resultset * OCI_ResultsetCreate
                 {
                     OCI_Define *def = &rs->defs[i];
 
-                    /* allocation of internal buffers for resultset content and 
+                    /* allocation of internal buffers for resultset content and
                        register OCILIB result buffers to OCI */
 
                     res = OCI_DefineAlloc(def) && OCI_DefineDef(def, i + 1);
@@ -213,7 +213,7 @@ OCI_Resultset * OCI_ResultsetCreate
                         break;
                     }
                     case OCI_CDT_NUMERIC:
-                    {   
+                    {
                         /* for integer types, set the bufsize here in order to
                            retrieve later the integer type (short, integer, big_int)
                            depending on the integer size */
@@ -234,7 +234,7 @@ OCI_Resultset * OCI_ResultsetCreate
 
                 /* map column and allocation of internal buffers for resultset content **/
 
-                res = OCI_ColumnMap(&def->col, rs->stmt) && OCI_DefineAlloc(def);               
+                res = OCI_ColumnMap(&def->col, rs->stmt) && OCI_DefineAlloc(def);
             }
         }
     }
@@ -360,7 +360,7 @@ boolean OCI_FetchPieces
                 /* update piece info */
 
                 if (res)
-                {              
+                {
                     lg->piecesize = bufsize;
 
                     if (OCI_CLONG == lg->type)
@@ -368,7 +368,7 @@ boolean OCI_FetchPieces
                         lg->piecesize /= sizeof(otext);
                         lg->piecesize *= sizeof(dbtext);
                         lg->piecesize -= (ub4) sizeof(dbtext);
-                    }                  
+                    }
 
                     OCI_CALL1
                     (
@@ -510,7 +510,7 @@ boolean OCI_FetchData
                                         (ub4) OCI_DEFAULT);
     }
 
- 
+
     if (OCI_ERROR == rs->fetch_status)
     {
         /* failure */
@@ -749,7 +749,7 @@ OCI_Resultset * OCI_API OCI_GetResultset
 
     /* if the sql statement does not return a result, we just return NULL and not
        throwing any exception
-       statements that can return a resultset are "SELECT..." and "... RETURNING INTO..." 
+       statements that can return a resultset are "SELECT..." and "... RETURNING INTO..."
     */
 
     if ((OCI_CST_SELECT == stmt->type) || (stmt->nb_rbinds > 0) || (stmt->nb_stmt > 0))
@@ -767,7 +767,7 @@ OCI_Resultset * OCI_API OCI_GetResultset
         {
             /* allocate memory for one resultset handle */
 
-            stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY, 
+            stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY,
                                                          sizeof(*stmt->rsts),
                                                          (size_t) 1, TRUE);
             if (stmt->rsts)
@@ -1082,7 +1082,7 @@ boolean OCI_API OCI_FetchNext
         {
             /* for regular resultsets */
 
-            if ((rs->row_cur == rs->row_fetched))
+            if (rs->row_cur == rs->row_fetched)
             {
                 if (OCI_NO_DATA == rs->fetch_status)
                 {
@@ -1134,7 +1134,7 @@ boolean OCI_API OCI_FetchNext
 
         res = res && !rs->eof;
     }
- 
+
     OCI_RESULT(!err);
 
     return res;
@@ -1350,9 +1350,9 @@ OCI_Column * OCI_API OCI_GetColumn2
 )
 {
     OCI_Column *col = NULL;
-    
+
     int index = OCI_GetDefineIndex(rs, name);
- 
+
     if (index >= 0)
     {
         OCI_Define *def = OCI_GetDefine(rs, index);
@@ -1384,7 +1384,7 @@ unsigned int OCI_API OCI_GetColumnIndex
     {
         index = 0;
     }
-    
+
     OCI_RESULT(TRUE);
 
     return (unsigned int) index;
@@ -1459,7 +1459,7 @@ boolean OCI_API OCI_GetStruct
         size_t align1 = 0;
         size_t align2 = 0;
         ub4 i;
-        
+
         for (i = 1; i <= rs->nb_defs; i++)
         {
             OCI_Column *col1 = &rs->defs[i-1].col;
@@ -1550,7 +1550,7 @@ boolean OCI_API OCI_GetStruct
                     }
                 }
             }
-            
+
             size += size1;
 
             ptr = ((char *) row_struct) + size;
@@ -1762,7 +1762,7 @@ const otext * OCI_API OCI_GetString
     OCI_Define *def = OCI_GetDefine(rs, index);
     otext *str      = NULL;
     boolean res     = FALSE;
-    
+
     if (def && OCI_DefineIsDataNotNull(def))
     {
         void *data = NULL;
@@ -1819,7 +1819,7 @@ const otext * OCI_API OCI_GetString
                 {
                     data = OCI_GetInterval(rs, index);
                     break;
-                }                    
+                }
                 case OCI_CDT_RAW:
                 {
                     data = OCI_DefineGetData(def);
@@ -1834,7 +1834,7 @@ const otext * OCI_API OCI_GetString
                 case OCI_CDT_LONG:
                 {
                     OCI_Long *lg = OCI_GetLong(rs, index);
-                     
+
                     if (lg)
                     {
                        /* here we have binary long, it will be output in hexa */
@@ -1852,7 +1852,7 @@ const otext * OCI_API OCI_GetString
                     if (lob)
                     {
                         bufsize = (unsigned int) OCI_LobGetLength(lob);;
-                     
+
                         if (OCI_BLONG == def->col.subtype)
                         {
                             /* here we have binary blob, it will be output in hexa */
@@ -1872,10 +1872,10 @@ const otext * OCI_API OCI_GetString
                 case OCI_CDT_OBJECT:
                 {
                     OCI_Object *obj = OCI_GetObject(rs, index);
-                 
+
                     if (obj)
                     {
-                        res = OCI_ObjectToText(obj, &bufsize, NULL);                        
+                        res = OCI_ObjectToText(obj, &bufsize, NULL);
                     }
 
                     data = obj;
@@ -1884,7 +1884,7 @@ const otext * OCI_API OCI_GetString
                 case OCI_CDT_COLLECTION:
                 {
                     OCI_Coll *coll = OCI_GetColl(rs, index);
-                 
+
                     if (coll)
                     {
                         res = OCI_CollToText(coll, &bufsize, NULL);
@@ -1902,7 +1902,7 @@ const otext * OCI_API OCI_GetString
             if (res)
             {
                 res =  OCI_StringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, bufsize);
-            
+
                 if (res)
                 {
                     bufsize = OCI_StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, FALSE);

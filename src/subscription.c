@@ -244,7 +244,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                     res, sub->err,
 
                     OCIAttrGet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                               (dvoid *) &sub->port, (ub4) 0,
+                               (dvoid *) &sub->port, (ub4*) NULL,
                                (ub4) OCI_ATTR_SUBSCR_PORTNO, sub->err)
                 )
             }

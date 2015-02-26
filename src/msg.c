@@ -901,7 +901,7 @@ OCI_Agent * OCI_API OCI_MsgGetSender
         OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
                    (dvoid *) &handle,
-                   (ub4    ) 0,
+                   (ub4  * ) NULL,
                    (ub4    ) OCI_ATTR_SENDER_ID,
                    msg->typinf->con->err)
     )

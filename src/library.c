@@ -399,7 +399,7 @@ OCILOBWRITEAPPEND2           OCILobWriteAppend2           = NULL;
 
 unsigned int OCI_ExternalSubTypeToSQLType
 (
-    unsigned int type, 
+    unsigned int type,
     unsigned int subtype
 )
 {
@@ -487,7 +487,7 @@ unsigned int OCI_ExternalSubTypeToSQLType
 
 unsigned int OCI_ExternalSubTypeToHandleType
 (
-    unsigned int type, 
+    unsigned int type,
     unsigned int subtype
 )
 {
@@ -688,7 +688,7 @@ boolean OCI_API OCI_Initialize
 
     if (lib_path && lib_path[0])
     {
-        strncat(path, lib_path, sizeof(path) - strlen(path));
+        strncat(path, lib_path, sizeof(path) - strlen(path) - 1);
 
         len = strlen(path);
     }
@@ -1283,7 +1283,7 @@ boolean OCI_API OCI_Initialize
     if (res)
     {
         ub4 oci_mode = OCI_ENV_MODE | OCI_OBJECT;
-    
+
         /* check modes */
 
         if (mode & OCI_ENV_THREADED)
@@ -1384,8 +1384,8 @@ boolean OCI_API OCI_Initialize
 
     /* test for XA support */
 
-#ifdef _WINDOWS               
-    #if OCI_VERSION_COMPILE >= OCI_10_1     
+#ifdef _WINDOWS
+    #if OCI_VERSION_COMPILE >= OCI_10_1
         OCILib.use_xa = (xaoEnv != NULL);
     #else
         OCILib.use_xa = FALSE;
@@ -1926,7 +1926,7 @@ boolean OCI_API OCI_SetHAHandler
     (
         res, OCILib.err,
 
-        OCIAttrSet((dvoid *) OCILib.env, (ub4) OCI_HTYPE_ENV, (dvoid *) callback, 
+        OCIAttrSet((dvoid *) OCILib.env, (ub4) OCI_HTYPE_ENV, (dvoid *) callback,
                    (ub4) 0, (ub4) OCI_ATTR_EVTCBK, OCILib.err)
     )
 
@@ -1937,7 +1937,7 @@ boolean OCI_API OCI_SetHAHandler
     OCI_RESULT(res);
 
 #else
-    
+
     OCI_NOT_USED(callback);
 
 #endif
