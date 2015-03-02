@@ -308,8 +308,8 @@ public:
 
     operator bool();
     operator bool() const;
-    operator THandleType();
-    operator THandleType() const;
+    operator const THandleType();
+    operator const THandleType() const;
 
 protected:
 
@@ -339,7 +339,7 @@ protected:
         void Acquire(HandleHolder *holder);
         void Release(HandleHolder *holder);
 
-		THandleType GetHandle() const;
+		const THandleType GetHandle() const;
 
 		Handle *GetParent() const;
 

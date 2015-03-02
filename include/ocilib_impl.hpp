@@ -350,13 +350,13 @@ inline bool HandleHolder<THandleType>::IsNull() const
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>::operator THandleType()
+inline HandleHolder<THandleType>::operator const THandleType()
 {
     return _smartHandle ? _smartHandle->GetHandle() : 0;
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>::operator THandleType() const
+inline HandleHolder<THandleType>::operator const THandleType() const
 {
     return _smartHandle ? _smartHandle->GetHandle() : 0;
 }
@@ -756,7 +756,7 @@ inline bool HandleHolder<THandleType>::SmartHandle::IsLastHolder(HandleHolder *h
 }
 
 template <class THandleType>
-inline THandleType HandleHolder<THandleType>::SmartHandle::GetHandle() const
+inline const THandleType HandleHolder<THandleType>::SmartHandle::GetHandle() const
 {
     return _handle;
 }

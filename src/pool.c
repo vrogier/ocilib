@@ -92,9 +92,9 @@ boolean OCI_PoolClose
             OCI_HandleFree((void *) pool->handle, (ub4) pool->htype);
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_9_2
+    #if OCI_VERSION_COMPILE >= OCI_11_2
 
-        /* close authentification handle */
+        /* close authentication handle */
 
         if (pool->authp)
         {
@@ -248,16 +248,16 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
         /* allocate authentification handle only if needed */
 
-   #if OCI_VERSION_COMPILE >= OCI_11_1
+   #if OCI_VERSION_COMPILE >= OCI_11_2
 
         if (res)
         {       
-            if ((OCI_HTYPE_SPOOL == pool->htype) && (OCILib.version_runtime >= OCI_11_1))
+            if ((OCI_HTYPE_SPOOL == pool->htype) && (OCILib.version_runtime >= OCI_11_2))
             {
                 int     dbsize = -1;
                 dbtext *dbstr  = OCI_StringGetOracleString(OCILIB_DRIVER_NAME, &dbsize);
                     
-                /* allocate authentification handle */
+                /* allocate authentication handle */
 
                 res = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *) OCILib.env,
                                                      (dvoid **) (void *) &pool->authp,
