@@ -2319,7 +2319,7 @@ private:
  * This class wraps the OCILIB object handle OCI_Date and its related methods
  *
  */
-class Date : public HandleHolder<OCI_Date *>
+class Date : public HandleHolder<OCI_Date *>, public Streamable
 {
     friend class Statement;
     friend class Resultset;
@@ -2590,7 +2590,7 @@ public:
 
 	/**
 	* @brief
-	* Convert the date value to a string
+	* Convert the date value to a string using the given format
 	*
 	* @param format - date time format to use
 	*
@@ -2598,7 +2598,17 @@ public:
 	* For date time formats, refer to the Oracle SQL documentation
 	*
 	*/
-	ostring ToString(const ostring& format = OCI_STRING_FORMAT_DATE) const;
+	ostring ToString(const ostring& format) const;
+
+    /**
+    * @brief
+    * Convert the date value to a string using default format OCI_STRING_FORMAT_DATE
+    *
+    * @note
+    * For date time formats, refer to the Oracle SQL documentation
+    *
+    */
+    ostring ToString() const;
 
 	/**
 	* @brief
@@ -2606,16 +2616,6 @@ public:
 	*
 	*/
 	Date Clone() const;
-
-	/**
-	* @brief
-	* Convenient operator converting the date value to a string
-	*
-	* @note
-	* It calls ToString() with default date time format
-	*
-	*/
-    operator ostring() const;
 
     /**
      * @brief
@@ -2729,7 +2729,7 @@ private:
  * This class wraps the OCILIB object handle OCI_Interval and its related methods
  *
  */
-class Interval : public HandleHolder<OCI_Interval *>
+class Interval : public HandleHolder<OCI_Interval *>, public Streamable
 {
     friend class Environment;
     friend class Statement;
@@ -3014,13 +3014,20 @@ public:
 
 	/**
 	* @brief
-	* Convert the interval value to a string
+	* Convert the interval value to a string using the given precisions
 	*
 	* @param leadingPrecision  - leading precision
 	* @param fractionPrecision - fraction precision
 	*
 	*/
-	ostring ToString(int leadingPrecision = 10, int fractionPrecision = 10) const;
+	ostring ToString(int leadingPrecision, int fractionPrecision) const;
+
+    /**
+    * @brief
+    * Convert the interval value to a string using the default precisions of 10
+    *
+    */
+    ostring ToString() const;
 
 	/**
 	* @brief
@@ -3028,16 +3035,6 @@ public:
 	*
 	*/
 	Interval Clone() const;
-
-	/**
-	* @brief
-	* Convenient operator converting the interval value to a string
-	*
-	* @note
-	* It calls ToString()
-	*
-	*/
-	operator ostring() const;
 
 	/**
 	* @brief
@@ -3124,7 +3121,7 @@ private:
  * This class wraps the OCILIB object handle OCI_Timestamp and its related methods
  *
  */
-class Timestamp : public HandleHolder<OCI_Timestamp *>
+class Timestamp : public HandleHolder<OCI_Timestamp *>, public Streamable
 {
     friend class Environment;
     friend class Statement;
@@ -3450,7 +3447,7 @@ public:
 
 	/**
 	* @brief
-	* Convert the timestamp value to a string
+	* Convert the timestamp value to a string using the given format and precision
 	*
 	* @param format    - date time / timestamp format to use
 	* @param precision - precision for milliseconds
@@ -3459,7 +3456,15 @@ public:
 	* For date time / timestamp formats, refer to the Oracle SQL documentation
 	*
 	*/
-    ostring ToString(const ostring& format = OCI_STRING_FORMAT_DATE, int precision = 0) const;
+    ostring ToString(const ostring& format, int precision) const;
+
+    /**
+    * @brief
+    * Convert the timestamp value to a string using default date format and no precision
+    *
+    */
+    ostring ToString() const;
+
 
 	/**
 	* @brief
@@ -3467,17 +3472,7 @@ public:
 	*
 	*/
 	Timestamp Clone() const;
-
-	/**
-	* @brief
-	* Convenient operator converting the timestamp value to a string
-	*
-	* @note
-	* It calls ToString() with default date time format
-	*
-	*/
-	operator ostring() const;
-
+    
 	/**
 	* @brief
 	* Increment the timestamp by 1 day
@@ -4172,6 +4167,12 @@ public:
 	*
 	*/
     TypeInfoType GetType() const;
+
+    /**
+    * @brief
+    * Return the type info name
+    *
+    */
     ostring GetName() const;
 
 	/**
@@ -4220,7 +4221,7 @@ private:
  * This class wraps the OCILIB object handle OCI_Object and its related methods
  *
  */
-class Object : public HandleHolder<OCI_Object *>
+class Object : public HandleHolder<OCI_Object *>, public Streamable
 {
     friend class Statement;
     friend class Resultset;
@@ -4349,16 +4350,6 @@ public:
 	*/
     ostring ToString() const;
 
-	/**
-	* @brief
-	* Convenient operator returning a string representation of the current object
-	*
-	* @note
-	* It calls ToString()
-	*
-	*/
-	operator ostring() const;
-
 private:
 
     Object(OCI_Object *pObject, Handle *parent = 0);
@@ -4371,7 +4362,7 @@ private:
  * This class wraps the OCILIB object handle OCI_Ref and its related methods
  *
  */
-class Reference : public HandleHolder<OCI_Ref *>
+class Reference : public HandleHolder<OCI_Ref *>, public Streamable
 {
     friend class Statement;
     friend class Resultset;
@@ -4439,16 +4430,6 @@ public:
 	*/
 	ostring ToString() const;
 
-	/**
-	* @brief
-	* Convenient operator returning a string representation of the current reference
-	*
-	* @note
-	* It calls ToString()
-	*
-	*/
-	operator ostring() const;
-
 private:
 
     Reference(OCI_Ref *pRef, Handle *parent = 0);
@@ -4462,7 +4443,7 @@ private:
  *
  */
 template <class TDataType>
-class Collection : public HandleHolder<OCI_Coll *>
+class Collection : public HandleHolder<OCI_Coll *>, public Streamable
 {
     friend class Statement;
     friend class Resultset;
@@ -4651,16 +4632,6 @@ public:
 	*
 	*/
 	ostring ToString() const;
-
-	/**
-	* @brief
-	* Convenient operator returning a string representation of the current collection
-	*
-	* @note
-	* It calls ToString()
-	*
-	*/
-	operator ostring() const;
 
 	/**
 	* @brief

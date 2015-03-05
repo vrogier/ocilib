@@ -64,7 +64,7 @@ inline TResultType Check(TResultType result)
 
 inline ostring MakeString(const otext *result)
 {
-	return ostring(result ? result : OTEXT(""));
+	return ostring(result ? result : ostring());
 }
 
 inline Raw MakeRaw(void *result, unsigned int size)
@@ -136,7 +136,7 @@ inline bool Enum<TEnum>::operator != (const TEnum& other) const
  * --------------------------------------------------------------------------------------------- */
 
 template<class TEnum>
-inline Flags<TEnum>::Flags(void) : _flags( (TEnum) 0)
+inline Flags<TEnum>::Flags(void) : _flags(static_cast<TEnum>(0))
 {
 }
 
@@ -152,7 +152,7 @@ inline Flags<TEnum>::Flags(const Flags& other) : _flags(other._flags)
 
 
 template<class TEnum>
-inline Flags<TEnum>::Flags(unsigned int flag) : _flags( (TEnum) flag)
+inline Flags<TEnum>::Flags(unsigned int flag) : _flags(static_cast<TEnum>(flag))
 {
 }
 
@@ -1779,9 +1779,9 @@ inline ostring Date::ToString(const ostring& format) const
 	return MakeString(static_cast<const otext *>(buffer));
 }
 
-inline Date::operator ostring() const
+inline ostring Date::ToString() const
 {
-    return ToString();
+    return ToString(OCI_STRING_FORMAT_DATE);
 }
 
 inline Date& Date::operator ++ ()
@@ -2074,9 +2074,9 @@ inline ostring Interval::ToString(int leadingPrecision, int fractionPrecision) c
 	return MakeString(static_cast<const otext *>(buffer));
 }
 
-inline Interval::operator ostring() const
+inline ostring Interval::ToString() const
 {
-    return ToString();
+    return ToString(10, 10);
 }
 
 inline Interval Interval::operator + (const Interval& other)
@@ -2401,9 +2401,9 @@ inline ostring Timestamp::ToString(const ostring& format, int precision) const
 	return MakeString(static_cast<const otext *>(buffer));
 }
 
-inline Timestamp::operator ostring() const
+inline ostring Timestamp::ToString() const
 {
-    return ToString();
+    return ToString(OCI_STRING_FORMAT_DATE, 10);
 }
 
 inline Timestamp& Timestamp::operator ++ ()
@@ -3203,11 +3203,6 @@ inline ostring Object::ToString() const
 	return MakeString(static_cast<const otext *>(buffer));
 }
 
-inline Object::operator ostring() const
-{
-    return ToString();
-}
-
 /* --------------------------------------------------------------------------------------------- *
  * Reference
  * --------------------------------------------------------------------------------------------- */
@@ -3261,11 +3256,6 @@ inline ostring Reference::ToString() const
     Check(OCI_RefToText(*this, size, buffer));
 
 	return MakeString(static_cast<const otext *>(buffer));
-}
-
-inline Reference::operator ostring() const
-{
-    return ToString();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3680,12 +3670,6 @@ inline ostring Collection<TDataType>::ToString() const
     Check(OCI_CollToText(*this, &len, buffer));
 
 	return MakeString(static_cast<const otext *>(buffer));
-}
-
-template<class TDataType>
-inline Collection<TDataType>::operator ostring() const
-{
-    return ToString();
 }
 
 template<class TDataType>

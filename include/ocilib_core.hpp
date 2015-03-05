@@ -373,6 +373,30 @@ protected:
     SmartHandle *_smartHandle;
  };
 
+/**
+* @brief
+* Abstract class allowing derived classes to be compatible
+* with any type supporting the operator << ocilib::ostring
+*/
+class Streamable
+{
+public:
+
+    operator ostring() const
+    {
+        return ToString();
+    }
+
+    virtual ostring ToString() const = 0;
+
+    template <class TStream>
+    friend TStream& operator << (TStream &lhs, const Streamable &rhs)
+    {
+        lhs << static_cast<ostring>(rhs);
+        return lhs;
+    }   
+};
+
 template <class TValueType>
 class BindValue
 {
