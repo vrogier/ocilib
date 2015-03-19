@@ -955,8 +955,8 @@ public:
     * @brief
     * Set the format string for implicit string conversions of the given type
     *
-    * @param type   - Type of format
-    * @param format - Format string
+    * @param formatType - Type of format
+    * @param format     - Format string
     *
     * Formats can set at 2 levels:
     * - Environment level
@@ -988,7 +988,7 @@ public:
     * @brief
     * Return the format string for implicit string conversions of the given type
     *
-    * @param type   - Type of format
+    * @param formatType   - Type of format
     *
     * @note
     *  See SetFormat() for possible values
@@ -1946,8 +1946,8 @@ public:
     * @brief
     * Set the format string for implicit string conversions of the given type
     *
-    * @param type   - Type of format
-    * @param format - Format string
+    * @param formatType - Type of format
+    * @param format     - Format string
     *
     * Formats can set at 2 levels:
     * - Environment level
@@ -1979,7 +1979,7 @@ public:
     * @brief
     * Return the format string for implicit string conversions of the given type
     *
-    * @param type - Type of format
+    * @param formatType - Type of format
     *
     * @note
     *  See SetFormat() for possible values
@@ -3481,11 +3481,11 @@ public:
     * @brief
     * Substract the given two timestamp and store the result into the given Interval
     *
-    * @param lsh  - Timestamp value
-    * @param rsh  - Timestamp to substract 
-    * @param rsh  - result difference
+    * @param lsh    - Timestamp value
+    * @param rsh    - Timestamp to substract 
+    * @param result - result difference
     *
-    * @param
+    * @note
     * the Interval object type must match the type of range resulting from the timestamp difference
     *
     */
