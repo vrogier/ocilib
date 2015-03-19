@@ -912,6 +912,16 @@ inline void Environment::EnableWarnings(bool value)
     OCI_EnableWarnings(static_cast<boolean>(value));
 }
 
+inline bool Environment::SetFormat(FormatType formatType, const ostring& format)
+{
+    return Check(OCI_SetFormat(NULL, formatType, format.c_str()) == TRUE);
+}
+
+inline ostring Environment::GetFormat(FormatType formatType)
+{
+    return MakeString(Check(OCI_GetFormat(NULL, formatType)));
+}
+
 inline void Environment::StartDatabase(const ostring& db, const ostring& user, const ostring &pwd, Environment::StartFlags startFlags,
                                        Environment::StartMode startMode, Environment::SessionFlags sessionFlags, const ostring& spfile)
 {
@@ -1367,24 +1377,14 @@ inline void Connection::SetTransaction(const Transaction &transaction)
     Check(OCI_SetTransaction(*this, transaction));
 }
 
-inline void Connection::SetDefaultDateFormat(const ostring& format)
+inline bool Connection::SetFormat(FormatType formatType, const ostring& format)
 {
-    Check(OCI_SetDefaultFormatDate(*this, format.c_str()));
+    return Check(OCI_SetFormat(*this, formatType, format.c_str()) == TRUE);
 }
 
-inline void Connection::SetDefaultNumericFormat(const ostring& format)
+inline ostring Connection::GetFormat(FormatType formatType)
 {
-    Check(OCI_SetDefaultFormatNumeric(*this, format.c_str()));
-}
-
-inline ostring  Connection::GetDefaultDateFormat() const
-{
-    return MakeString(Check(OCI_GetDefaultFormatDate(*this)));
-}
-
-inline ostring  Connection::GetDefaultNumericFormat() const
-{
-   return  MakeString(Check(OCI_GetDefaultFormatNumeric(*this)));
+    return MakeString(Check(OCI_GetFormat(*this, formatType)));
 }
 
 inline void Connection::EnableServerOutput(unsigned int bufsize, unsigned int arrsize, unsigned int lnsize)
@@ -1561,7 +1561,7 @@ inline Date::Date(const ostring& str, const ostring& format)
 {
     Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0);
 
-    FromString(str, format);
+    FromString(str, format.size() > 0 ? format : Environment::GetFormat(FormatDate));
 }
 
 inline Date::Date(OCI_Date *pDate, Handle *parent)
@@ -1781,7 +1781,7 @@ inline ostring Date::ToString(const ostring& format) const
 
 inline ostring Date::ToString() const
 {
-    return ToString(OCI_STRING_FORMAT_DATE);
+    return ToString(Environment::GetFormat(FormatDate));
 }
 
 inline Date& Date::operator ++ ()
@@ -2076,7 +2076,7 @@ inline ostring Interval::ToString(int leadingPrecision, int fractionPrecision) c
 
 inline ostring Interval::ToString() const
 {
-    return ToString(10, 10);
+    return ToString(OCI_STRING_DEFAULT_PREC, OCI_STRING_DEFAULT_PREC);
 }
 
 inline Interval Interval::operator + (const Interval& other)
@@ -2149,7 +2149,7 @@ inline Timestamp::Timestamp(TimestampType type)
 inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostring& format)
 {
     Acquire(Check(OCI_TimestampCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 0);
-    FromString(data, format);
+    FromString(data, format.size() > 0 ? format : Environment::GetFormat(FormatTimestamp));
 }
 
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, Handle *parent)
@@ -2403,7 +2403,7 @@ inline ostring Timestamp::ToString(const ostring& format, int precision) const
 
 inline ostring Timestamp::ToString() const
 {
-    return ToString(OCI_STRING_FORMAT_DATE, 10);
+    return ToString(Environment::GetFormat(FormatTimestamp), OCI_STRING_DEFAULT_PREC);
 }
 
 inline Timestamp& Timestamp::operator ++ ()

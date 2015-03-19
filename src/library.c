@@ -167,6 +167,24 @@ OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
     {OCI_SFC_ALTER_OPERATOR,           OTEXT("ALTER OPERATOR")                                       }
 };
 
+static unsigned int FormatTypeValues[] = 
+{
+    OCI_FMT_DATE, 
+    OCI_FMT_TIMESTAMP,
+    OCI_FMT_NUMERIC,
+    OCI_FMT_BINARY_DOUBLE,
+    OCI_FMT_BINARY_FLOAT
+};
+
+static otext * FormatDefaultValues[OCI_FMT_COUNT] =
+{
+    OCI_STRING_FORMAT_DATE,
+    OCI_STRING_FORMAT_TIMESTAMP,
+    OCI_STRING_FORMAT_NUM,
+    OCI_STRING_FORMAT_NUM_BDOUBLE,
+    OCI_STRING_FORMAT_NUM_BFLOAT
+};
+
 #ifdef OCI_IMPORT_RUNTIME
 
 /* OCI function pointers */
@@ -608,7 +626,8 @@ boolean OCI_API OCI_Initialize
     unsigned int mode
 )
 {
-    boolean res  = TRUE;
+    boolean      res  = TRUE;
+    unsigned int i    = 0;
 
 #ifdef OCI_IMPORT_RUNTIME
 
@@ -636,6 +655,11 @@ boolean OCI_API OCI_Initialize
     OCILib.charset              = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_ANSI;
     OCILib.use_wide_char_conv   = (OCILib.charset == OCI_CHAR_WIDE &&  (WCHAR_MAX == WCHAR_4_BYTES));
 
+    for (i = 0; i < OCI_FMT_COUNT; i++)
+    {
+        OCILib.formats[i] = ostrdup(FormatDefaultValues[i]);
+    }
+  
     /* test for UTF8 environment */
 
     if (OCI_CHAR_ANSI == OCILib.charset)
@@ -1406,7 +1430,8 @@ boolean OCI_API OCI_Cleanup
     void
 )
 {
-    boolean res = TRUE;
+    boolean      res = TRUE;
+    unsigned int i   = 0;
 
     /* free all arrays */
 
@@ -1441,6 +1466,11 @@ boolean OCI_API OCI_Cleanup
     OCILib.pools   = NULL;
     OCILib.subs    = NULL;
     OCILib.key_map = NULL;
+
+    for (i = 0; i < OCI_FMT_COUNT; i++)
+    {
+        OCI_FREE(OCILib.formats[i]);
+    }
 
     /* finalize OCIThread object support */
 
@@ -1943,4 +1973,60 @@ boolean OCI_API OCI_SetHAHandler
 #endif
 
     return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_SetFormat
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_SetFormat
+(
+    OCI_Connection *con,
+    unsigned int    type,
+    const otext    *format
+)
+{
+    boolean res = TRUE;
+
+    OCI_CHECK_INITIALIZED(FALSE);
+
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"), FALSE);
+
+    otext **value = con ? &con->formats[type-1] : &OCILib.formats[type-1];
+
+    OCI_FREE(*value);
+
+    *value = ostrdup(format ? format : FormatDefaultValues[type-1]);
+
+    res = (*value != NULL);
+
+    OCI_RESULT(res);
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_GetFormat
+* --------------------------------------------------------------------------------------------- */
+
+const otext * OCI_API OCI_GetFormat
+(
+    OCI_Connection *con,
+    unsigned int    type
+)
+{
+    OCI_CHECK_INITIALIZED(NULL);
+ 
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"), NULL);
+
+    OCI_RESULT(TRUE);
+
+    otext **value = con ? &con->formats[type-1] : &OCILib.formats[type-1];
+    
+    if (!*value)
+    {
+        OCI_SetFormat(con, type, NULL);
+    }
+
+    return *value;
 }

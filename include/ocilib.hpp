@@ -420,6 +420,35 @@ enum LongTypeValues
 */
 typedef Enum<LongTypeValues> LongType;
 
+
+/**
+* @brief
+* Format type enumerated values
+*
+*/
+enum FormatTypeValues
+{
+    /** Date */
+    FormatDate = OCI_FMT_DATE,
+    /** Timestamp */
+    FormatTimestamp = OCI_FMT_TIMESTAMP,
+    /** All numeric types */
+    FormatNumeric = OCI_FMT_NUMERIC,
+    /** BinaryDouble */
+    FormatBinaryDouble = OCI_FMT_BINARY_DOUBLE,
+    /** Binary Float */
+    FormatBinaryFloat = OCI_FMT_BINARY_FLOAT
+};
+
+/**
+* @brief
+* Format type
+*
+* Possible values are FormatTypeValues
+*
+*/
+typedef Enum<FormatTypeValues> FormatType;
+
 /**
  *
  * @brief
@@ -921,6 +950,51 @@ public:
      *
      */
     static void EnableWarnings(bool value);
+
+    /**s
+    * @brief
+    * Set the format string for implicit string conversions of the given type
+    *
+    * @param type   - Type of format
+    * @param format - Format string
+    *
+    * Formats can set at 2 levels:
+    * - Environment level
+    * - Connection level
+    *
+    * When the library needs to perform a string conversion, it search for a valid format using the
+    * following order:
+    * - Connection format
+    * - Library format
+    * - Default format
+    *
+    * @note
+    * Default format values are :
+    * - OCI_FMT_DATE          : constant OCI_STRING_FORMAT_DATE
+    * - OCI_FMT_TIMESTAMP     : constant OCI_STRING_FORMAT_TIMESTAMP
+    * - OCI_FMT_NUMERIC       : constant OCI_STRING_FORMAT_NUMERIC
+    * - OCI_FMT_BINARY_DOUBLE : constant OCI_STRING_FORMAT_BINARY_DOUBLE
+    * - OCI_FMT_BINARY FLOAT  : constant OCI_STRING_FORMAT_BINARY_FLOAT
+    *
+    * @note
+    * Conversions are performed by Oracle built-in functions whenever possible.
+    * For DATE, TIMESTAMP and numeric types, see documentation of Oracle SQL to_char() function for more details
+    * For BINARY_DOUBLE and BINARY_FLOAT, refer to the C Standard Library printf() family documentation
+    *
+    */
+    static bool SetFormat(FormatType formatType, const ostring& format);
+
+    /**
+    * @brief
+    * Return the format string for implicit string conversions of the given type
+    *
+    * @param type   - Type of format
+    *
+    * @note
+    *  See SetFormat() for possible values
+    *
+    */
+    static ostring GetFormat(FormatType formatType);
 
     /**
      * @brief
@@ -1869,63 +1943,49 @@ public:
     void SetTransaction(const Transaction &transaction);
 
     /**
-     * @brief
-     * Set the date format for implicit string / date conversions
-     *
-     * @param format - Date format
-     *
-     * @note
-     * Default format is 'YYYY-MM-DD' defined by the public constant OCI_STRING_FORMAT_DATE
-     *
-     * @note
-     * Conversions are performed by Oracle built-in functions.
-     * Possible values are string date formats supported by Oracle.
-     * See documentation of Oracle SQL to_date() function for more details
-     *
-     */
-    void SetDefaultDateFormat(const ostring& format);
+    * @brief
+    * Set the format string for implicit string conversions of the given type
+    *
+    * @param type   - Type of format
+    * @param format - Format string
+    *
+    * Formats can set at 2 levels:
+    * - Environment level
+    * - Connection level
+    *
+    * When the library needs to perform a string conversion, it search for a valid format using the
+    * following order:
+    * - Connection format
+    * - Environment format
+    * - Default format
+    *
+    * @note
+    * Default format values are :
+    * - OCI_FMT_DATE          : constant OCI_STRING_FORMAT_DATE
+    * - OCI_FMT_TIMESTAMP     : constant OCI_STRING_FORMAT_TIMESTAMP
+    * - OCI_FMT_NUMERIC       : constant OCI_STRING_FORMAT_NUMERIC
+    * - OCI_FMT_BINARY_DOUBLE : constant OCI_STRING_FORMAT_BINARY_DOUBLE
+    * - OCI_FMT_BINARY FLOAT  : constant OCI_STRING_FORMAT_BINARY_FLOAT
+    *
+    * @note
+    * Conversions are performed by Oracle built-in functions whenever possible.
+    * For DATE, TIMESTAMP and numeric types, see documentation of Oracle SQL to_char() function for more details
+    * For BINARY_DOUBLE and BINARY_FLOAT, refer to the C Standard Library printf() family documentation
+    *
+    */
+    bool SetFormat(FormatType formatType, const ostring& format);
 
     /**
-     * @brief
-     * Return the current date format for implicit string / date conversions
-     *
-     * @note
-     *  See SetDefaultDateFormat() for possible values
-     *
-     */
-    ostring  GetDefaultDateFormat() const;
-
-    /**
-     * @brief
-     * Set the numeric format for implicit string / numeric conversions
-     *
-     * @param format - Numeric format
-     *
-     * @note
-     * Conversions are performed by Oracle built-in functions.
-     * Possible format values are the numeric formats supported by Oracle.
-     * See documentation of Oracle SQL to_number() function for more details
-     *
-     * @note
-     * Default format is 'FM99999999999999999999999999999999999990.999999999999999999999999'
-     * defined by the public constant OCI_STRING_FORMAT_NUM
-     *
-     * @warning
-     * It does not applies to binary double and binary floats data types that
-     * are converted from/to strings using the standard C library
-     *
-     */
-    void SetDefaultNumericFormat(const ostring& format);
-
-    /**
-     * @brief
-     * Return the current numeric format for implicit string / numeric conversions
-     *
-     * @note
-     *  See SetDefaultNumericFormat() for possible values
-     *
-     */
-    ostring  GetDefaultNumericFormat() const;
+    * @brief
+    * Return the format string for implicit string conversions of the given type
+    *
+    * @param type - Type of format
+    *
+    * @note
+    *  See SetFormat() for possible values
+    *
+    */
+    ostring GetFormat(FormatType formatType);
 
     /**
      * @brief
@@ -2348,8 +2408,11 @@ public:
     * @note
     * For date time formats, refer to the Oracle SQL documentation
     *
+    * @note
+    * Default connection date format is computed from Environment::GetFormat()
+    *
     */
-    Date(const ostring& str, const ostring& format = OCI_STRING_FORMAT_DATE);
+    Date(const ostring& str, const ostring& format = OTEXT(""));
 
 
     /**
@@ -2584,9 +2647,12 @@ public:
 	*
 	* @note
 	* For date time formats, refer to the Oracle SQL documentation
-	*
-	*/
-    void FromString(const ostring& str, const ostring& format = OCI_STRING_FORMAT_DATE);
+    *
+    * @note
+    * Default connection date format is computed from Environment::GetFormat()
+    *
+    */
+    void FromString(const ostring& str, const ostring& format = OTEXT(""));
 
 	/**
 	* @brief
@@ -3180,7 +3246,7 @@ public:
     * For date time formats, refer to the Oracle SQL documentation
     *
     */
-    Timestamp(TimestampType type, const ostring& data, const ostring& format = OCI_STRING_FORMAT_DATE);
+    Timestamp(TimestampType type, const ostring& data, const ostring& format = OTEXT(""));
 
 	/**
 	* @brief

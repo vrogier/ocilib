@@ -630,7 +630,7 @@ unsigned int OCI_StringGetFromType
             if (ptr)
             {           
                 OCI_Date    *date = (OCI_Date*) data;
-                const otext *fmt  = OCI_GetDefaultFormatDate(con);
+                const otext *fmt  = OCI_GetFormat(con, OCI_FMT_DATE);
 
                 if (date)
                 {
@@ -649,7 +649,7 @@ unsigned int OCI_StringGetFromType
             if (ptr)
             {
                 OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
-                const otext   *fmt  = OCI_GetDefaultFormatDate(con);
+                const otext   *fmt = OCI_GetFormat(con, OCI_FMT_TIMESTAMP);
 
                 if (tmsp)
                 {

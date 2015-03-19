@@ -882,8 +882,9 @@ boolean OCI_ConnectionClose
     OCI_Connection *con
 )
 {
-    OCI_Error *err = NULL;
-
+    OCI_Error   *err = NULL;
+    unsigned int i   = 0;
+    
     OCI_CHECK(con == NULL, FALSE);
 
     /* clear connection reference from current error object */
@@ -912,9 +913,12 @@ boolean OCI_ConnectionClose
     OCI_ListFree(con->tinfs);
 
     /* free strings */
+    
+    for (i = 0; i < OCI_FMT_COUNT; i++)
+    {
+        OCI_FREE(con->formats[i]);
+    }
 
-    OCI_FREE(con->fmt_date);
-    OCI_FREE(con->fmt_num);
     OCI_FREE(con->ver_str);
     OCI_FREE(con->sess_tag);
     OCI_FREE(con->db_name);
@@ -1566,98 +1570,6 @@ unsigned int OCI_API OCI_GetVersionConnection
     /* return the minimum supported version */
 
     return (OCILib.version_runtime > con->ver_num) ? con->ver_num : OCILib.version_runtime;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_SetDefaultFormatDate
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_API OCI_SetDefaultFormatDate
-(
-    OCI_Connection *con,
-    const otext    *format
-)
-{
-    boolean res = TRUE;
-
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
-
-    OCI_FREE(con->fmt_date);
-
-    con->fmt_date = ostrdup(format ? format : OCI_STRING_FORMAT_DATE);
-
-    res = (con->fmt_date != NULL);
-
-    OCI_RESULT(res);
-
-    return res;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_GetDefaultFormatDate
- * --------------------------------------------------------------------------------------------- */
-
-const otext * OCI_API OCI_GetDefaultFormatDate
-(
-    OCI_Connection *con
-)
-{
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
-
-    OCI_RESULT(TRUE);
-
-    if (!con->fmt_date)
-    {
-        OCI_SetDefaultFormatDate(con, NULL);
-    }
-
-    return (con->fmt_date);
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_SetDefaultFormatNumeric
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_API OCI_SetDefaultFormatNumeric
-(
-    OCI_Connection *con,
-    const otext    *format
-)
-{
-    boolean res = TRUE;
-
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, FALSE);
-
-    OCI_FREE(con->fmt_num);
-
-    con->fmt_num = ostrdup(format ? format : OCI_STRING_FORMAT_NUM);
-
-    res = (con->fmt_num != NULL);
-
-    OCI_RESULT(res);
-
-    return res;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_GetDefaultFormatNumeric
- * --------------------------------------------------------------------------------------------- */
-
-const otext * OCI_API OCI_GetDefaultFormatNumeric
-(
-    OCI_Connection *con
-)
-{
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
-
-    OCI_RESULT(TRUE);
-
-    if (!con->fmt_num)
-    {
-        OCI_SetDefaultFormatNumeric(con, NULL);
-    }
-
-    return (con->fmt_num);
 }
 
 /* --------------------------------------------------------------------------------------------- *

@@ -211,7 +211,7 @@ boolean OCI_NumberFromString
     boolean res  = TRUE;
     boolean done = FALSE;
 
-    /* For binary types, perfom a C based conversion */
+    /* For binary types, perform a C based conversion */
 
     if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
     {
@@ -220,17 +220,15 @@ boolean OCI_NumberFromString
 
         if (OCILib.version_runtime >= OCI_10_1)
         {
+            const otext * fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
+
             if (type & OCI_NUM_DOUBLE)
             {
-                res = (osscanf(in_value,  OCI_STRING_FORMAT_NUM_BIN, (double *) out_value) == 1);
+                res = (osscanf(in_value, fmt, (double *)out_value) == 1);
             }
             else if (type & OCI_NUM_FLOAT)
             {
-                double tmp_value = 0.0;
-
-                res = (osscanf(in_value, OCI_STRING_FORMAT_NUM_BIN, &tmp_value) == 1);
-
-                *((float *) out_value) = (float) tmp_value;
+                res = (osscanf(in_value, fmt, (float *)out_value) == 1);
             }
 
             done = TRUE;
@@ -252,7 +250,7 @@ boolean OCI_NumberFromString
 
         if (!fmt)
         {
-            fmt = OCI_GetDefaultFormatNumeric(con);
+            fmt = OCI_GetFormat(con, OCI_FMT_NUMERIC);
         }
 
         dbstr1 = OCI_StringGetOracleString(in_value, &dbsize1);
@@ -308,16 +306,16 @@ boolean OCI_NumberToString
         {
             if (!fmt)
             {
-                fmt = OCI_STRING_FORMAT_NUM_BIN;
+                fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
             }
 
             if (type & OCI_NUM_DOUBLE && (SQLT_BDOUBLE == sqlcode))
             {
-                out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_BIN,  *((double *) number));
+                out_value_size = osprintf(out_value, out_value_size, fmt, *((double *)number));
             }
             else if (type & OCI_NUM_FLOAT && (SQLT_BFLOAT == sqlcode))
             {
-                 out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_BIN,  *((float *) number));
+                out_value_size = osprintf(out_value, out_value_size, fmt, *((float *)number));
             }
 
             done = TRUE;
@@ -352,7 +350,7 @@ boolean OCI_NumberToString
 
         if (!fmt)
         {
-            fmt = OCI_GetDefaultFormatNumeric(con);
+            fmt = OCI_GetFormat(con, OCI_FMT_NUMERIC);
         }
 
         dbstr1 = OCI_StringGetOracleString(out_value, &dbsize1);

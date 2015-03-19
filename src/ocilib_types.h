@@ -216,6 +216,7 @@ struct OCI_Library
     unsigned int         nb_objinst;              /* number of OCI objects allocated */
     OCI_HashTable       *sql_funcs;               /* hash table handle for sql function names */
     POCI_HA_HANDLER      ha_handler;              /* HA event callback*/
+    otext               *formats[OCI_FMT_COUNT];  /* string conversion default formats */
 #ifdef OCI_IMPORT_RUNTIME
     LIB_HANDLE           lib_handle;              /* handle of runtime shared library */
 #endif
@@ -272,8 +273,6 @@ struct OCI_Connection
     unsigned int      mode;         /* session mode */
     int               cstate;       /* connection state */
     void             *usrdata;      /* user data */
-    otext            *fmt_date;     /* date string format for conversion */
-    otext            *fmt_num;      /* numeric string format for conversion */
     otext            *ver_str;      /* string  server version*/
     unsigned int      ver_num;      /* numeric server version */
     OCI_TraceInfo    *trace;        /* trace information */
@@ -285,7 +284,8 @@ struct OCI_Connection
     otext            *server_name;  /* server name (hostname) */
     otext            *domain_name;  /* server domain name */
     OCI_Timestamp    *inst_startup; /* instance startup timestamp */
- };
+    otext            *formats[OCI_FMT_COUNT];  /* string conversion default formats */
+};
 
 /*
  * Transaction object

@@ -432,6 +432,8 @@
 
 #define OCI_SQLCMD_COUNT                126
 
+#define OCI_FMT_COUNT                   5
+
 #define OCI_ERR_MSG_SIZE                512
 
 #define OCI_DEF_ALIGN                   sizeof(void *)

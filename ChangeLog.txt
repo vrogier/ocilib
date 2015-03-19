@@ -1,3 +1,68 @@
+2015-03-16 Version 4.0.2 Vincent Rogier vince.rogier@ocilib.net
+
+    * C API
+
+        - Enhanced implicit string conversion for Date, Timestamps and Numeric values
+            * Conversion formats can be now set at both library and connection level
+                - The library is using its own default format if none are set
+                - Program can define formats at library level
+                - Program can define formats for a specific connection
+            * It is now possible define specific conversion formats for:
+                - OCI_Date
+                - OCI_Timestamp
+                - All Numeric types
+                - Binary double
+                - Binary float             
+            * Added new methods:
+                - OCI_SetFormat()
+                - OCI_GetFormat()
+            * Removed the following methods that are now defined as macros for backward compatibility reasons:
+                - OCI_SetDefaultFormatDate()
+                - OCI_GetDefaultFormatDate()
+                - OCI_SetDefaultFormatNumeric()
+                - OCI_GetDefaultFormatNumeric()
+
+        - Fixes      
+            * Fixed compilation under oracle 11gR1 caused by wrong oracle version checking in the file pool.c
+            * Fixed few warnings raised by Clang C compiler
+            * Fixed Binary Float implicit conversion to string
+
+        - Warning : Programs must be recompiled (with no code change needed) as some methods have been removed from the library
+
+    * C++ API      
+
+        - Enhancements
+            * Added abstract Streamable class:
+                - It allows derived classes to be compatible with any external stream class supporting the operator << (std::(w)string)
+                - The following classes derives now from Streamable : Date, Interval, Timestamp, Collection, Object and Reference
+            * Added Support for the enhancements made to the string conversion format in the C API:
+                - Added Enum FormatType
+                - Added Environment::GetFormat() and Environment::SetFormat()
+                - Added Connection::GetFormat() and Connection::SetFormat()
+                - Removed Connection::SetDefaultDateFormat() and Connection::GetDefaultDateFormat()
+                - Removed Connection::SetDefaultNumericFormat() and Connection::GetDefaultNumericFormat()
+            * Added support for Clang C++ compiler 
+            * Statement::Bind<>(): Added specializations for Collection and std::vector<Collection<T>> instead of relying on default the implementation that is now removed
+            * Added parametrized constructors for Date, Interval and Timestamp classes
+            * Made sure that translation from C raw buffer to the C++ Raw class does not fail in case of NULL buffers with non zero size parameter
+            * Modified internal access to environment singleton object instance
+        - Fixes        
+            * Fixed missing  operator "|" for recently Enum promoted to Flags
+            * Fixed HandleHolder<>::operator bool
+            * Fixed Statement::Prepare() and Statement::Execute() : when called again for the same object, the internal map of binds was not cleared although bind objects were freed, leading to a segfault
+            * Fixed Statement::Bind<ostring> : strings binded to statements with Out or InOut direction mode had their content padded up to max provided size after execution
+            * Fixed C++03 standard violation : Removed usage of std::vector::data() that was introduced in C++11 in order to be compliant with C++03
+            * Fixed Timestamp::SetDate()
+            * Removed unimplemented prototype Lob<TLobObjectType>:: operator TLobObjectType()
+        - C++ compilers validated versions:
+             * Microsoft C++ compiler : all versions from Visual Studio 2008
+             * GCC : all versions from 4.1 
+             * Clang : all versions from 3.1 
+             * OCILIB++ shall also compile with older versions of these compilers and with other C++ compilers, but not tested 
+        - Miscellaneous
+             * Internal code clean up
+             * Updated some demo files
+
 2015-01-13 Version 4.0.1 Vincent Rogier vince.rogier@ocilib.net
 
     * C API

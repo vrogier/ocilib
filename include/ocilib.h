@@ -109,8 +109,8 @@ extern "C" {
  * --------------------------------------------------------------------------------------------- */
 
 #define OCILIB_MAJOR_VERSION     4
-#define OCILIB_MINOR_VERSION     0
-#define OCILIB_REVISION_VERSION  1
+#define OCILIB_MINOR_VERSION     1
+#define OCILIB_REVISION_VERSION  0
 
 /* Import mode */
 
@@ -1506,6 +1506,14 @@ typedef unsigned int big_uint;
 #define OCI_TRS_LOOSE                       0x00010000
 #define OCI_TRS_TIGHT                       0x00020000
 
+/* format types */
+
+#define OCI_FMT_DATE                        1
+#define OCI_FMT_TIMESTAMP                   2
+#define OCI_FMT_NUMERIC                     3
+#define OCI_FMT_BINARY_DOUBLE               4
+#define OCI_FMT_BINARY_FLOAT                5
+
 /* sql function codes */
 
 #define OCI_SFC_CREATE_TABLE                1
@@ -1660,11 +1668,14 @@ typedef unsigned int big_uint;
 #define OCI_STRING_NULL                     OTEXT("NULL")
 #define OCI_STRING_EMPTY                    OTEXT("")
 #define OCI_STRING_FORMAT_DATE              OTEXT("YYYY-MM-DD")
+#define OCI_STRING_FORMAT_TIME              OTEXT("HH24:MI:SS")
+#define OCI_STRING_FORMAT_DATETIME          OTEXT("YYYY-MM-DD HH24:MI:SS")
+#define OCI_STRING_FORMAT_TIMESTAMP         OTEXT("YYYY-MM-DD HH24:MI:SS:FF3")
 #define OCI_STRING_DEFAULT_PREC             3
 #define OCI_STRING_FORMAT_NUM   \
     OTEXT("FM99999999999999999999999999999999999990.999999999999999999999999")
-#define OCI_STRING_FORMAT_NUM_BIN   \
-    OTEXT("%lf")
+#define OCI_STRING_FORMAT_NUM_BDOUBLE       OTEXT("%lf")
+#define OCI_STRING_FORMAT_NUM_BFLOAT        OTEXT("%f")
 
 #ifdef _WINDOWS
   #define OCI_CHAR_SLASH                    '\\'
@@ -2414,89 +2425,69 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion
 
 /**
  * @brief
- * Set the date format for implicit string / date conversions
+ * Set the format string for implicit string conversions of the given type
  *
- * @param con    - Connection handle
- * @param format - Date format
+ * @param con    - Connection handle (optional)
+ * @param type   - Type of format
+ * @param format - Format string
+ *
+ * Formats can set at 2 levels:
+ * - Library level: by passing a NULL Connection handle
+ * - Connection level: by passing a valid Connection handle
+ * 
+ * When the library needs to perform a string conversion, it search for a valid format using the 
+ * following order:
+ * - Connection format
+ * - Library format
+ * - Default format
  *
  * @note
- * Default format is 'YYYY-MM-DD' defined by the public constant OCI_STRING_FORMAT_DATE
+ * Possible values of parameter 'type' :
+ *
+ * - OCI_FMT_DATE          : format used to convert DATE to string
+ * - OCI_FMT_TIMESTAMP     : format used to convert TIMESTAMP to string
+ * - OCI_FMT_NUMERIC       : format used to convert numeric types to string
+ * - OCI_FMT_BINARY_DOUBLE : format used to convert BINARY_DOUBLE to string
+ * - OCI_FMT_BINARY FLOAT  : format used to convert BINARY_FLOAT to string
  *
  * @note
- * Conversions are performed by Oracle built-in functions.
- * Possible values are the string date format supported by Oracle.
- * See documentation of Oracle SQL to_date() function for more details
+ * Default format values are :
+ * - OCI_FMT_DATE          : constant OCI_STRING_FORMAT_DATE
+ * - OCI_FMT_TIMESTAMP     : constant OCI_STRING_FORMAT_TIMESTAMP
+ * - OCI_FMT_NUMERIC       : constant OCI_STRING_FORMAT_NUMERIC
+ * - OCI_FMT_BINARY_DOUBLE : constant OCI_STRING_FORMAT_BINARY_DOUBLE
+ * - OCI_FMT_BINARY FLOAT  : constant OCI_STRING_FORMAT_BINARY_FLOAT
+ *
+ * @note 
+ * Conversions are performed by Oracle built-in functions whenever possible.
+ * For DATE, TIMESTAMP and numeric types, see documentation of Oracle SQL to_char() function for more details
+ * For BINARY_DOUBLE and BINARY_FLOAT, refer to the C Standard Library printf() family documentation
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetDefaultFormatDate
+OCI_EXPORT boolean OCI_API OCI_SetFormat
 (
     OCI_Connection *con,
+    unsigned int    type,
     const otext    *format
 );
 
 /**
  * @brief
- * Return the current date format for implicit string / date conversions
- *
- * @param con - Connection handle
- *
- * @note
- *  See OCI_SetFormatDate() for possible values
- *
- */
-
-OCI_EXPORT const otext * OCI_API OCI_GetDefaultFormatDate
-(
-    OCI_Connection *con
-);
-
-/**
- * @brief
- * Set the numeric format for implicit string / numeric conversions
+ * Return the format string for implicit string conversions of the given type
  *
  * @param con    - Connection handle
- * @param format - Numeric format
+ * @param type   - Type of format
  *
  * @note
- * Conversions are performed by Oracle built-in functions.
- * Possible values are the string numeric format supported by Oracle.
- * See documentation of Oracle SQL to_number() function for more details
- *
- * @note
- * Default format is 'FM99999999999999999999999999999999999990.999999999999999999999999'
- * defined by the public constant OCI_STRING_FORMAT_NUM
- *
- * @warning
- * If data fetched from a string column cannot be converted to a number value
- * with the given format, an error will be raised
- *
- * @warning
- * It does not applies to binary double and binary floats data types that
- * are converted from/to strings using the standard C library
+ *  See OCI_SetFormat() for possible values
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetDefaultFormatNumeric
+OCI_EXPORT const otext * OCI_API OCI_GetFormat
 (
     OCI_Connection *con,
-    const otext    *format
-);
-
-/**
- * @brief
- * Return the current numeric format for implicit string / numeric conversions
- *
- * @param con - Connection handle
- *
- * @note
- *  See OCI_SetFormatNumeric() for possible values
- *
- */
-
-OCI_EXPORT const otext * OCI_API OCI_GetDefaultFormatNumeric
-(
-    OCI_Connection *con
+    unsigned int    type
 );
 
 /**
@@ -18259,6 +18250,16 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 #define dtsprintf       osprintf
 #define dtstol          ostrtol
 #define dtsscanf        osscanf
+
+/* macro added in version 4.1.0 */
+
+#define OCI_SetDefaultFormatDate(con, fmt)      OCI_SetFormat(cn, OCI_FMT_DATE, fmt)
+#define OCI_SetDefaultFormatNumeric(con, fmt)   OCI_SetFormat(cn, OCI_FMT_NUMERIC, fmt)
+
+#define OCI_GetDefaultFormatDate(con)           OCI_GetFormat(cn, OCI_FMT_DATE)
+#define OCI_GetDefaultFormatNumeric(con)        OCI_GetFormat(cn, OCI_FMT_NUMERIC)
+
+#define OCI_STRING_FORMAT_NUM_BIN               OCI_STRING_FORMAT_NUM_BDOUBLE
 
 /**
  * @}
