@@ -951,7 +951,7 @@ public:
      */
     static void EnableWarnings(bool value);
 
-    /**s
+    /**
     * @brief
     * Set the format string for implicit string conversions of the given type
     *
