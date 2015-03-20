@@ -346,7 +346,7 @@ inline HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (const H
 template<class THandleType>
 inline bool HandleHolder<THandleType>::IsNull() const
 {
-    return  (((THandleType) *this) == 0);
+    return (static_cast<THandleType>(*this) == 0);
 }
 
 template<class THandleType>
@@ -1774,7 +1774,7 @@ inline ostring Date::ToString(const ostring& format) const
 
     ManagedBuffer<otext> buffer(size + 1);
 
-    Check(OCI_DateToText(*this, format.c_str(), (int) size, buffer));
+    Check(OCI_DateToText(*this, format.c_str(), static_cast<int>(size), buffer));
 
 	return MakeString(static_cast<const otext *>(buffer));
 }
@@ -2069,7 +2069,7 @@ inline ostring Interval::ToString(int leadingPrecision, int fractionPrecision) c
 
 	ManagedBuffer<otext> buffer(size + 1);
 
-    Check(OCI_IntervalToText(*this, leadingPrecision, fractionPrecision,  (int) size, buffer));
+    Check(OCI_IntervalToText(*this, leadingPrecision, fractionPrecision,  static_cast<int>(size), buffer));
 
 	return MakeString(static_cast<const otext *>(buffer));
 }
@@ -2360,7 +2360,7 @@ inline ostring Timestamp::GetTimeZone() const
 
 		ManagedBuffer<otext> buffer(size + 1);
 
-		Check(OCI_TimestampGetTimeZoneName(*this, (int)size, buffer));
+		Check(OCI_TimestampGetTimeZoneName(*this, static_cast<int>(size), buffer) == TRUE);
 
 		return MakeString(static_cast<const otext *>(buffer));
 	}
@@ -3052,7 +3052,7 @@ inline Raw Object::Get<Raw>(const ostring& name) const
 
 	ManagedBuffer<unsigned char> buffer(size + 1);
 
-	size = Check(OCI_ObjectGetRaw(*this, name.c_str(), static_cast<AnyPointer>(buffer), size));
+	size = Check(OCI_ObjectGetRaw(*this, name.c_str(), static_cast<AnyPointer>(buffer), static_cast<int>(size)));
 
 	return MakeRaw(buffer, size);
 }
@@ -3673,7 +3673,7 @@ inline ostring Collection<TDataType>::ToString() const
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::Element Collection<TDataType>::operator [] (int index)
+inline typename Collection<TDataType>::Element Collection<TDataType>::operator [] (unsigned int index)
 {
 	return Element(*this, index);
 }
@@ -3691,7 +3691,7 @@ inline Collection<TDataType>::Iterator::Iterator(const Iterator& other) : _elem(
 template<class TDataType>
 inline bool Collection<TDataType>::Iterator::operator== (const Iterator& other)
 {
-	return _elem._pos == other._elem._pos && ((OCI_Coll *)(_elem._coll)) == ((OCI_Coll *)(other._elem._coll));
+	return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(_elem._coll)) == (static_cast<OCI_Coll *>(other._elem._coll));
 
 }
 
@@ -4203,7 +4203,7 @@ inline ostring BindInfo::GetName() const
 
 inline DataType BindInfo::GetType() const
 {
-	return DataType((DataType::type)Check(OCI_BindGetType(*this)));
+	return DataType(static_cast<DataType::type>(Check(OCI_BindGetType(*this))));
 }
 
 inline unsigned int BindInfo::GetSubType() const
@@ -4385,7 +4385,7 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, TObjectTy
 {
     ARG_NOT_USED(datatype);
 
-    Check(method(*this, name.c_str(), (TDataType) value));
+    Check(method(*this, name.c_str(), static_cast<TDataType>(value)));
     SetLastBindMode(mode);
 }
 
@@ -4790,7 +4790,7 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vec
 template <>
 inline void Statement::Bind<ostring, int>(const ostring& name, std::vector<ostring> &values, int maxSize, BindInfo::BindDirection mode)
 {
-    Bind<ostring, unsigned int>(name, values, ( unsigned int) maxSize, mode);
+    Bind<ostring, unsigned int>(name, values, static_cast<unsigned int>(maxSize), mode);
 }
 
 template <>
@@ -6054,7 +6054,7 @@ inline void Dequeue::SetRelativeMsgID(const Raw &value)
 
 inline Dequeue::DequeueVisibility Dequeue::GetVisibility() const
 {
-    return DequeueVisibility((DequeueVisibility::type) Check(OCI_DequeueGetVisibility(*this)));
+    return DequeueVisibility(static_cast<DequeueVisibility::type>(Check(OCI_DequeueGetVisibility(*this))));
 }
 
 inline void Dequeue::SetVisibility(DequeueVisibility value)
@@ -6064,7 +6064,7 @@ inline void Dequeue::SetVisibility(DequeueVisibility value)
 
 inline Dequeue::DequeueMode Dequeue::GetMode() const
 {
-    return DequeueMode((DequeueMode::type) Check(OCI_DequeueGetMode(*this)));
+    return DequeueMode(static_cast<DequeueMode::type>(Check(OCI_DequeueGetMode(*this))));
 }
 
 inline void Dequeue::SetMode(DequeueMode value)
@@ -6074,7 +6074,7 @@ inline void Dequeue::SetMode(DequeueMode value)
 
 inline Dequeue::NavigationMode Dequeue::GetNavigation() const
 {
-    return NavigationMode((NavigationMode::type) Check(OCI_DequeueGetNavigation(*this)));
+    return NavigationMode(static_cast<NavigationMode::type>(Check(OCI_DequeueGetNavigation(*this))));
 }
 
 inline void Dequeue::SetNavigation(NavigationMode value)
@@ -6151,12 +6151,12 @@ inline void DirectPath::Prepare()
 
 inline DirectPath::Result DirectPath::Convert()
 {
-    return Result((Result::type) Check(OCI_DirPathConvert(*this)));
+    return Result(static_cast<Result::type>(Check(OCI_DirPathConvert(*this))));
 }
 
 inline DirectPath::Result DirectPath::Load()
 {
-    return Result((Result::type) Check(OCI_DirPathLoad(*this)));
+    return Result(static_cast<Result::type>(Check(OCI_DirPathLoad(*this))));
 }
 
 inline void DirectPath::Finish()

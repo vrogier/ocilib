@@ -190,6 +190,7 @@ OCI_Resultset * OCI_ResultsetCreate
                 /* columns info */
 
                 def->col.sqlcode    = bnd->code;
+                def->col.libcode    = bnd->code;
                 def->col.name       = ostrdup(bnd->name);
                 def->col.size       = (ub2) bnd->size;
                 def->col.datatype   = bnd->type;

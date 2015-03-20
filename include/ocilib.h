@@ -414,7 +414,7 @@ OCI_EXPORT int ociwcscasecmp
 **/
 
 /**
- * @struct OCI_Pool
+ * @typedef OCI_Pool
  *
  * @brief
  * Pool object (session or connection)
@@ -426,7 +426,7 @@ OCI_EXPORT int ociwcscasecmp
 typedef struct OCI_Pool OCI_Pool;
 
 /**
- * @struct OCI_Connection
+ * @typedef OCI_Connection
  *
  * @brief
  * Oracle physical connection.
@@ -443,7 +443,7 @@ typedef struct OCI_Pool OCI_Pool;
 typedef struct OCI_Connection OCI_Connection;
 
 /**
- * @struct OCI_Statement
+ * @typedef OCI_Statement
  *
  * @brief
  * Oracle SQL or PL/SQL statement.
@@ -455,7 +455,7 @@ typedef struct OCI_Connection OCI_Connection;
 typedef struct OCI_Statement OCI_Statement;
 
 /**
- * @struct OCI_Bind
+ * @typedef OCI_Bind
  *
  * @brief
  * Internal bind representation.
@@ -467,7 +467,7 @@ typedef struct OCI_Statement OCI_Statement;
 typedef struct OCI_Bind OCI_Bind;
 
 /**
- * @struct OCI_Resultset
+ * @typedef OCI_Resultset
  *
  * @brief
  * Collection of output columns from a select statement.
@@ -482,7 +482,7 @@ typedef struct OCI_Bind OCI_Bind;
 typedef struct OCI_Resultset OCI_Resultset;
 
 /**
- * @struct OCI_Column
+ * @typedef OCI_Column
  *
  * @brief
  * Oracle SQL Column and Type member representation.
@@ -494,7 +494,7 @@ typedef struct OCI_Resultset OCI_Resultset;
 typedef struct OCI_Column OCI_Column;
 
 /**
- * @struct OCI_Lob
+ * @typedef OCI_Lob
  *
  * @brief
  * Oracle Internal Large objects:
@@ -517,7 +517,7 @@ typedef struct OCI_Column OCI_Column;
 typedef struct OCI_Lob OCI_Lob;
 
 /**
- * @struct OCI_File
+ * @typedef OCI_File
  *
  * @brief
  * Oracle External Large objects:
@@ -542,7 +542,7 @@ typedef struct OCI_Lob OCI_Lob;
 typedef struct OCI_File OCI_File;
 
 /**
- * @struct OCI_Transaction
+ * @typedef OCI_Transaction
  *
  * @brief
  * Oracle Transaction.
@@ -557,7 +557,7 @@ typedef struct OCI_File OCI_File;
 typedef struct OCI_Transaction OCI_Transaction;
 
 /**
- * @struct OCI_Long
+ * @typedef OCI_Long
  *
  * @brief Oracle Long data type.
  *
@@ -579,7 +579,7 @@ typedef struct OCI_Transaction OCI_Transaction;
 typedef struct OCI_Long OCI_Long;
 
 /**
- * @struct OCI_Date
+ * @typedef OCI_Date
  *
  * @brief
  * Oracle internal date representation.
@@ -589,7 +589,7 @@ typedef struct OCI_Long OCI_Long;
 typedef struct OCI_Date OCI_Date;
 
 /**
- * @struct OCI_Timestamp
+ * @typedef OCI_Timestamp
  *
  * @brief
  * Oracle internal timestamp representation.
@@ -599,7 +599,7 @@ typedef struct OCI_Date OCI_Date;
 typedef struct OCI_Timestamp OCI_Timestamp;
 
 /**
- * @struct OCI_Interval
+ * @typedef OCI_Interval
  *
  * @brief
  * Oracle internal interval representation.
@@ -609,7 +609,7 @@ typedef struct OCI_Timestamp OCI_Timestamp;
 typedef struct OCI_Interval OCI_Interval;
 
 /**
- * @struct OCI_Object
+ * @typedef OCI_Object
  *
  * @brief
  * Oracle Named types representation.
@@ -619,7 +619,7 @@ typedef struct OCI_Interval OCI_Interval;
 typedef struct OCI_Object OCI_Object;
 
 /**
- * @struct OCI_Coll
+ * @typedef OCI_Coll
  *
  * @brief
  * Oracle Collections (VARRAYs and Nested Tables) representation.
@@ -629,7 +629,7 @@ typedef struct OCI_Object OCI_Object;
 typedef struct OCI_Coll OCI_Coll;
 
 /**
- * @struct OCI_Elem
+ * @typedef OCI_Elem
  *
  * @brief
  * Oracle Collection item representation.
@@ -639,7 +639,7 @@ typedef struct OCI_Coll OCI_Coll;
 typedef struct OCI_Elem OCI_Elem;
 
 /**
- * @struct OCI_Iter
+ * @typedef OCI_Iter
  *
  * @brief
  * Oracle Collection iterator representation.
@@ -648,7 +648,7 @@ typedef struct OCI_Elem OCI_Elem;
 typedef struct OCI_Iter OCI_Iter;
 
 /**
- * @struct OCI_TypeInfo
+ * @typedef OCI_TypeInfo
  *
  * @brief
  * Type info metadata handle.
@@ -656,7 +656,7 @@ typedef struct OCI_Iter OCI_Iter;
  */
 
 /**
- * @struct OCI_Ref
+ * @typedef OCI_Ref
  *
  * @brief
  * Oracle REF type representation.
@@ -666,7 +666,7 @@ typedef struct OCI_Iter OCI_Iter;
 typedef struct OCI_Ref OCI_Ref;
 
 /**
- * @struct OCI_TypeInfo
+ * @typedef OCI_TypeInfo
  *
  * @brief
  * Type info meta data handle.
@@ -676,7 +676,7 @@ typedef struct OCI_Ref OCI_Ref;
 typedef struct OCI_TypeInfo OCI_TypeInfo;
 
 /**
- * @struct OCI_HashTable
+ * @typedef OCI_HashTable
  *
  * @brief
  * OCILIB implementation of hash tables.
@@ -686,7 +686,7 @@ typedef struct OCI_TypeInfo OCI_TypeInfo;
 typedef struct OCI_HashTable OCI_HashTable;
 
 /**
- * @struct OCI_Error
+ * @typedef OCI_Error
  *
  * @brief
  * Encapsulates an Oracle or OCILIB exception.
@@ -700,7 +700,7 @@ typedef struct OCI_HashTable OCI_HashTable;
 typedef struct OCI_Error OCI_Error;
 
 /**
- * @struct OCI_Mutex
+ * @typedef OCI_Mutex
  *
  * @brief
  * OCILIB encapsulation of OCI mutexes.
@@ -710,7 +710,7 @@ typedef struct OCI_Error OCI_Error;
 typedef struct OCI_Mutex OCI_Mutex;
 
 /**
- * @struct OCI_Thread
+ * @typedef OCI_Thread
  *
  * @brief
  * OCILIB encapsulation of OCI Threads.
@@ -720,7 +720,7 @@ typedef struct OCI_Mutex OCI_Mutex;
 typedef struct OCI_Thread OCI_Thread;
 
 /**
- * @struct OCI_DirPath
+ * @typedef OCI_DirPath
  *
  * @brief
  * OCILIB encapsulation of OCI Direct Path handle.
@@ -730,7 +730,7 @@ typedef struct OCI_Thread OCI_Thread;
 typedef struct OCI_DirPath OCI_DirPath;
 
 /**
- * @struct OCI_Subscription
+ * @typedef OCI_Subscription
  *
  * @brief
  * OCILIB encapsulation of Oracle DCN notification
@@ -740,7 +740,7 @@ typedef struct OCI_DirPath OCI_DirPath;
 typedef struct OCI_Subscription OCI_Subscription;
 
 /**
- * @struct OCI_Event
+ * @typedef OCI_Event
  *
  * @brief
  * OCILIB encapsulation of Oracle DCN event
@@ -750,7 +750,7 @@ typedef struct OCI_Subscription OCI_Subscription;
 typedef struct OCI_Event OCI_Event;
 
 /**
- * @struct OCI_Msg
+ * @typedef OCI_Msg
  *
  * @brief
  * OCILIB encapsulation of A/Q message
@@ -760,7 +760,7 @@ typedef struct OCI_Event OCI_Event;
 typedef struct OCI_Msg OCI_Msg;
 
 /**
- * @struct OCI_Agent
+ * @typedef OCI_Agent
  *
  * @brief
  * OCILIB encapsulation of A/Q Agent
@@ -770,7 +770,7 @@ typedef struct OCI_Msg OCI_Msg;
 typedef struct OCI_Agent OCI_Agent;
 
 /**
- * @struct OCI_Dequeue
+ * @typedef OCI_Dequeue
  *
  * @brief
  * OCILIB encapsulation of A/Q dequeuing operations
@@ -780,7 +780,7 @@ typedef struct OCI_Agent OCI_Agent;
 typedef struct OCI_Dequeue OCI_Dequeue;
 
 /**
- * @struct OCI_Enqueue
+ * @typedef OCI_Enqueue
  *
  * @brief
  * OCILIB encapsulation of A/Q enqueuing operations
@@ -946,7 +946,7 @@ typedef void (*POCI_HA_HANDLER)
 /* public structures */
 
 /**
- * @struct OCI_XID
+ * @typedef OCI_XID
  *
  * @brief
  * Global transaction identifier
@@ -967,7 +967,6 @@ typedef struct OCI_XID {
  * Internal Variant type based on union C type.
  *
  * @note
- *
  * Helpful for generic buffer, it reduces the amount of casts
  *
  */
@@ -1002,7 +1001,7 @@ typedef union OCI_Variant {
 } OCI_Variant;
 
 /**
-* @struct OCI_HashValue
+* @typedef OCI_HashValue
 *
 * @brief
 * Hash table entry value
@@ -1017,7 +1016,7 @@ typedef struct OCI_HashValue {
 } OCI_HashValue;
 
 /**
- * @struct OCI_HashEntry
+ * @typedef OCI_HashEntry
  *
  * @brief
  * Hash table entry
@@ -1754,14 +1753,11 @@ OCI_EXPORT boolean OCI_API OCI_Initialize
  * Clean up all resources allocated by the library
  *
  * @note
- *
- * This function must be the last OCILIB library function call.
- *
+ * * This function must be the last OCILIB library function call.
  * - It deallocates objects not explicitly freed by the program (connections, statements, ...)
  * - It unloads the Oracle shared library if it has been dynamically loaded
  *
  * @warning
- *
  * OCI_Cleanup() should be called <b>ONCE</b> per application
  *
  * @return TRUE
@@ -2434,8 +2430,8 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion
  * Formats can set at 2 levels:
  * - Library level: by passing a NULL Connection handle
  * - Connection level: by passing a valid Connection handle
- * 
- * When the library needs to perform a string conversion, it search for a valid format using the 
+ *
+ * When the library needs to perform a string conversion, it search for a valid format using the
  * following order:
  * - Connection format
  * - Library format
@@ -2458,7 +2454,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion
  * - OCI_FMT_BINARY_DOUBLE : constant OCI_STRING_FORMAT_BINARY_DOUBLE
  * - OCI_FMT_BINARY FLOAT  : constant OCI_STRING_FORMAT_BINARY_FLOAT
  *
- * @note 
+ * @note
  * Conversions are performed by Oracle built-in functions whenever possible.
  * For DATE, TIMESTAMP and numeric types, see documentation of Oracle SQL to_char() function for more details
  * For BINARY_DOUBLE and BINARY_FLOAT, refer to the C Standard Library printf() family documentation
@@ -2983,8 +2979,6 @@ OCI_EXPORT boolean OCI_API OCI_SetDefaultLobPrefetchSize
  * and 'pwd' parameters
  * If the param 'db' is NULL then a connection to the default local DB is done
  *
- * @note
- *
  * @return
  * Connection or session pool handle on success or NULL on failure
  *
@@ -3068,8 +3062,6 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_PoolGetConnection
  * @note
  * Timeout is not available for internal pooling implementation (client < 9i)
  *
- * @return
- *
  */
 
 OCI_EXPORT unsigned int OCI_API OCI_PoolGetTimeout
@@ -3089,8 +3081,6 @@ OCI_EXPORT unsigned int OCI_API OCI_PoolGetTimeout
  *
  * @note
  * This call has no effect if pooling is internally implemented (client < 9i)
- *
- * @return
  *
  */
 
@@ -3130,8 +3120,6 @@ OCI_EXPORT boolean OCI_API OCI_PoolGetNoWait
  * Pass :
  * - FALSE to wait for an available object if the pool is saturated
  * - TRUE to not wait for an available object
- *
- * @return
  *
  */
 
@@ -4372,7 +4360,6 @@ OCI_EXPORT boolean OCI_API OCI_BindString
  * @param data   - Array of string
  * @param len    - Max length of a single string element (in character without
  *                 the zero null terminal character)
- * @param nbelem - Number of element in the array
  * @param nbelem - Number of element in the array (PL/SQL table only)
  *
  * @warning
@@ -4383,7 +4370,7 @@ OCI_EXPORT boolean OCI_API OCI_BindString
  * parameter 'data' can NULL if the statement bind allocation mode
  * has been set to OCI_BAM_INTERNAL
  *
- * @note
+ * @warning
  * if len <= 0, it returns FALSE
  *
  * @return
@@ -5275,9 +5262,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetType
  * @param bnd - Bind handle
  *
  * @note
- *
- * This call is valid for the following OCILIB types:
- *
+ * * This call is valid for the following OCILIB types:
  * - OCI_CDT_NUMERIC
  * - OCI_CDT_LONG
  * - OCI_CDT_LOB
@@ -6351,7 +6336,6 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
  * @param col - Column handle
  *
  * @note
- *
  * This call is valid for the following OCILIB types:
  *
  * - OCI_CDT_LONG
@@ -7862,8 +7846,6 @@ OCI_EXPORT boolean OCI_API OCI_CollSetElem
  *
  * @param coll  - Collection handle
  * @param elem  - Element handle to add
- *
- * @note
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -10167,8 +10149,6 @@ OCI_EXPORT boolean OCI_API OCI_LobClose
  * @param lob  - Lob handle
  * @param lob2 - Lob2 handle
  *
- * @note
- *
  * @return
  * TRUE is the lobs are not null and equal otherwise FALSE
  *
@@ -10619,8 +10599,6 @@ OCI_EXPORT boolean OCI_API OCI_FileClose
  *
  * @param file  - File handle
  * @param file2 - File2 handle
- *
- * @note
  *
  * @return
  * TRUE is the lobs are not null and equal otherwise FALSE
@@ -11332,7 +11310,6 @@ OCI_EXPORT boolean OCI_API OCI_DateToCTime
  * @param t     - Value (time_t) that hold the date/time in the time_t format
  *
  * @note
- *
  * Both parameters 'ptm' and 'p' are optional but one of them has to be provided.
  * If 'ptm' is not null, its value is affected to the OCI_Timestamp handle,
  * otherwise the value of 't' is used.
@@ -11853,7 +11830,6 @@ OCI_EXPORT boolean OCI_API OCI_TimestampToCTime
  * @param t     - Value (time_t) that hold the date/time in the time_t format
  *
  * @note
- *
  * Both parameters 'ptm' and 'p' are optional but one of them has to be provided.
  * If 'ptm' is not null, its value is affected to the OCI_Timestamp handle,
  * otherwise the value of 't' is used.
@@ -11883,7 +11859,6 @@ OCI_EXPORT boolean OCI_API OCI_TimestampFromCTime
  *
  * @note
  * Interval type can be :
- *
  * - OCI_INTERVAL_YM : year / month interval
  * - OCI_INTERVAL_DS : date/ time interval
  *
@@ -13758,8 +13733,6 @@ OCI_EXPORT OCI_Column * OCI_API OCI_TypeInfoGetColumn
  * Return the name described by the type info object
  *
  * @param typinf - Type info handle
- *
- * @return
  *
  */
 

@@ -1120,7 +1120,7 @@ private:
 
     void SelfInitialize(EnvironmentFlags mode, const ostring& libpath);
     void SelfCleanup();
-        
+
     Locker _locker;
     EnvironmentHandle _handle;
     ConcurrentMap<AnyPointer, Handle *>  _handles;
@@ -1145,7 +1145,7 @@ public:
     /**
      * @typedef ThreadProc
      *
-     * @brief
+     * @brief Thread callback
      *
      */
     typedef POCI_THREAD ThreadProc;
@@ -1270,7 +1270,7 @@ public:
     /**
      * @typedef ThreadKeyFreeProc
      *
-     * @brief
+     * @brief Thread Key callback for freeing resources
      *
      */
     typedef POCI_THREADKEYDEST ThreadKeyFreeProc;
@@ -2244,9 +2244,6 @@ public:
      * Associate a pointer to user data to the given connection
      *
      * @param value - User data pointer
-     *
-     * @return
-     * TRUE on success otherwise FALSE
      *
      */
 	void SetUserData(AnyPointer value);
@@ -3482,7 +3479,7 @@ public:
     * Substract the given two timestamp and store the result into the given Interval
     *
     * @param lsh    - Timestamp value
-    * @param rsh    - Timestamp to substract 
+    * @param rsh    - Timestamp to substract
     * @param result - result difference
     *
     * @note
@@ -3538,7 +3535,7 @@ public:
 	*
 	*/
 	Timestamp Clone() const;
-    
+
 	/**
 	* @brief
 	* Increment the timestamp by 1 day
@@ -3751,9 +3748,6 @@ public:
 	* Append the given lob content to the lob
 	*
 	* @param other - source lob
-	*
-	* @return
-	* Number of character or bytes written into the lob
 	*
 	*/
 	void Append(const Lob& other);
@@ -4779,7 +4773,7 @@ public:
 	* Returns the element at a given position in the collection.
 	*
 	*/
-	Element operator [] (int index);
+	Element operator [] (unsigned int index);
 
 private:
 
@@ -5045,7 +5039,7 @@ public:
 		/** DECLARE statement */
 		TypeDeclare = OCI_CST_DECLARE,
 		/** CALL statement */
-		TypeCall = OCI_CST_CALL,
+		TypeCall = OCI_CST_CALL
     };
 
 	/**
@@ -5460,7 +5454,7 @@ public:
     */
     template <class TDataType>
     void Bind(const ostring& name, Collection<TDataType> &value, BindInfo::BindDirection mode);
-    
+
     /**
 	* @brief
 	* Bind a vector of host variables
@@ -7260,7 +7254,7 @@ public:
         NextMessage = OCI_ADN_NEXT_MSG,
 		/** Skips the remainder of the current transaction  group (if any)
 		    and retrieves the first message of the next transaction group.*/
-        NextTransaction = OCI_ADN_NEXT_TRANSACTION,
+        NextTransaction = OCI_ADN_NEXT_TRANSACTION
     };
 
 	/**

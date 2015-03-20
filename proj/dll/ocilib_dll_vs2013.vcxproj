@@ -276,6 +276,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)ocilib.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib32\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -307,6 +308,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)ocilib.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib64\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -336,6 +338,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib32\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -368,6 +371,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib64\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - ANSI|Win32'">
@@ -402,7 +406,7 @@
       <IgnoreSpecificDefaultLibraries>ocilib.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -413,6 +417,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(TargetDir)\ociliba.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib32\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -453,7 +458,7 @@
       <IgnoreSpecificDefaultLibraries>ocilib.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -464,6 +469,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(TargetDir)\ociliba.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib64\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -502,7 +508,7 @@
       <IgnoreSpecificDefaultLibraries>ocilib.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -513,6 +519,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(TargetDir)\ocilibw.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib32\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -553,7 +560,7 @@
       <IgnoreSpecificDefaultLibraries>ocilib.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -564,6 +571,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(TargetDir)\ocilibw.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib64\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -602,7 +610,7 @@
       <IgnoreSpecificDefaultLibraries>ocilib.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -613,6 +621,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(TargetDir)\ocilibm.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib32\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -653,7 +662,7 @@
       <IgnoreSpecificDefaultLibraries>ocilib.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -664,6 +673,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(TargetDir)\ocilibm.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib64\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -701,7 +711,7 @@
       <IgnoreSpecificDefaultLibraries>ocilib.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <LinkTimeCodeGeneration>
@@ -713,6 +723,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)ociliba.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib32\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -753,7 +764,7 @@
       <IgnoreSpecificDefaultLibraries>ocilib.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <LinkTimeCodeGeneration>
@@ -765,6 +776,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)ociliba.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <ProgramDatabaseFile>.\..\..\lib64\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>

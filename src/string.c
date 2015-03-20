@@ -619,7 +619,7 @@ unsigned int OCI_StringGetFromType
             len = OCI_SIZE_BUFFER;
             if (ptr)
             {
-                res = OCI_NumberToString(con, data, col->subtype, col->sqlcode, ptr, len, NULL);
+                res = OCI_NumberToString(con, data, col->subtype, col->libcode, ptr, len, NULL);
             }            
             break;
         }

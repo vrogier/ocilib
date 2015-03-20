@@ -608,7 +608,7 @@ boolean OCI_API OCI_DirPathSetColumn
             default:
             {
                 res = FALSE;
-                OCI_ExceptionDatatypeNotSupported(dp->con, NULL, col->sqlcode);
+                OCI_ExceptionDatatypeNotSupported(dp->con, NULL, col->libcode);
 
                 break;
             }

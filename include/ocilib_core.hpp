@@ -194,7 +194,7 @@ public:
     ManagedBuffer();
 	ManagedBuffer(size_t size);
 	ManagedBuffer(TBufferType *buffer, size_t size);
-	
+
 	~ManagedBuffer();
 
     operator TBufferType* () const;
@@ -257,7 +257,7 @@ public:
 private:
 
     std::map<TKey, TValue> _map;
-    
+
 };
 
 template <class TValue>
@@ -273,7 +273,7 @@ public:
     void Clear();
     size_t GetSize();
     bool Exists(TValue value);
- 
+
     template<class TPredicate>
     bool FindIf(TPredicate predicate, TValue &value);
 
@@ -289,7 +289,7 @@ class Handle
 {
 public:
 
-    virtual ~Handle() {};
+    virtual ~Handle() {}
     virtual ConcurrentList<Handle *> & GetChildren() = 0;
     virtual void DetachFromHolders() = 0;
     virtual void DetachFromParent() = 0;
@@ -382,6 +382,8 @@ class Streamable
 {
 public:
 
+    virtual ~Streamable() {}
+
     operator ostring() const
     {
         return ToString();
@@ -394,7 +396,7 @@ public:
     {
         lhs << static_cast<ostring>(rhs);
         return lhs;
-    }   
+    }
 };
 
 template <class TValueType>
