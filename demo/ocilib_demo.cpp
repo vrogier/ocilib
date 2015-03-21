@@ -107,12 +107,61 @@ using namespace ocilib;
 
 #define ARRAY_COUNT(t) (sizeof(t)/sizeof(t[0]))
 
-typedef struct test_t
+struct Test
 {
     void (*proc)(void); /* test procedure */
     int    execute;     /* do execute the procedure ? */
-}test_t;
+};
 
+struct Product
+{
+    int code;
+    ostring action;
+    double price;
+    Date date;
+};
+
+bool FillProductFromQuery(const Resultset &rs, Product &product)
+{
+    product.code = rs.Get<int>(1);
+    product.action = rs.Get<ostring>(2);
+    product.price = rs.Get<double>(3);
+    product.date = rs.Get<Date>(4);
+
+    return true;
+}
+
+Product CreateProductFromQuery(const Resultset &rs)
+{
+    Product p;
+
+    p.code = rs.Get<int>(1);
+    p.action = rs.Get<ostring>(2);
+    p.price = rs.Get<double>(3);
+    p.date = rs.Get<Date>(4);
+
+    return p;
+}
+
+bool PrintProductFromQuery(const Resultset &rs)
+{
+    ocout << OTEXT("> code   : ") << rs.Get<int>(1);
+    ocout << OTEXT(", action : ") << rs.Get<ostring>(2);
+    ocout << OTEXT(", price  : ") << rs.Get<double>(3);
+    ocout << OTEXT(", date   : ") << rs.Get<Date>(4);
+    ocout << std::endl;
+    return true;
+}
+
+bool PrintProductFromObject(const Product &p)
+{
+    ocout << OTEXT("> code   : ") << p.code;
+    ocout << OTEXT(", action : ") << p.action;
+    ocout << OTEXT(", price  : ") << p.price;
+    ocout << OTEXT(", date   : ") << p.date;
+    ocout << std::endl;
+    return true;
+}
 
 /* --------------------------------------------------------------------------------------------- *
 * prototypes
@@ -127,6 +176,9 @@ void test_format(void);
 void test_immediate(void);
 void test_immediate_format(void);
 void test_fetch(void);
+void test_fetch_translate(void);
+void test_foreach(void);
+void test_foreach_translate(void);
 void test_bind1(void);
 void test_bind2(void);
 void test_piecewise_insert(void);
@@ -150,9 +202,12 @@ void test_directpath(void);
 
 /* ocilib test functions array */
 
-test_t tab_test[] =
+Test tab_test[] =
 {
         {test_fetch,             TRUE},
+        {test_fetch_translate,   TRUE},
+        {test_foreach,           TRUE},
+        {test_foreach_translate, TRUE},
         {test_bind1,             TRUE},
         {test_bind2,             TRUE},
         {test_piecewise_insert,  TRUE},
@@ -255,6 +310,12 @@ int omain(int argc, oarg* argv[])
     catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
+    }
+
+    if (con)
+    {
+        drop_tables();
+        con.Close();
     }
 
     Environment::Cleanup();
@@ -486,11 +547,72 @@ void test_fetch(void)
         ocout << OTEXT("> code   : ") << rs.Get<int>(1);
         ocout << OTEXT(", action : ") << rs.Get<ostring>(2);
         ocout << OTEXT(", price  : ") << rs.Get<double>(3);
-        ocout << OTEXT(", date   : ");
-        ocout << rs.Get<Date>(4).ToString() << std::endl;
+        ocout << OTEXT(", date   : ") << rs.Get<Date>(4) << std::endl;
     }
 
     ocout << std::endl << rs.GetCount() << OTEXT(" row(s) fetched") << std::endl;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* test_fetch_translate
+* --------------------------------------------------------------------------------------------- */
+
+void test_fetch_translate(void)
+{
+    ocout << OTEXT("\n>>>>> SIMPLE TEST FETCH  WITH ROW TRANSLATION TO USER TYPE \n\n");
+
+    Statement st(con);
+    st.Execute(OTEXT("select * from test_fetch"));
+
+    Resultset rs = st.GetResultset();
+
+    ocout << std::endl;
+
+    while (rs++)
+    {
+        Product p;
+
+        if (rs.Get(p, FillProductFromQuery))
+        {
+            ocout << OTEXT("> code   : ") << p.code;
+            ocout << OTEXT(", action : ") << p.action;
+            ocout << OTEXT(", price  : ") << p.price;
+            ocout << OTEXT(", date   : ") << p.date;
+            ocout << std::endl;
+        }
+    }
+
+    ocout << std::endl << rs.GetCount() << OTEXT(" row(s) fetched") << std::endl;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* test_foreach
+* --------------------------------------------------------------------------------------------- */
+
+void test_foreach(void)
+{
+    ocout << OTEXT("\n>>>>> FOREACH FETCH\n\n");
+
+    Statement st(con);
+    st.Execute(OTEXT("select * from test_fetch"));
+
+    Resultset rs = st.GetResultset();
+    rs.ForEach(PrintProductFromQuery);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* test_foreach_translate
+* --------------------------------------------------------------------------------------------- */
+
+void test_foreach_translate(void)
+{
+    ocout << OTEXT("\n>>>>> FOREACH FETCH WITH TRANSLATION\n\n");
+
+    Statement st(con);
+    st.Execute(OTEXT("select * from test_fetch"));
+
+    Resultset rs = st.GetResultset();
+    rs.ForEach(PrintProductFromObject, CreateProductFromQuery);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -514,8 +636,7 @@ void test_bind1(void)
         ocout << OTEXT("> code   : ") << rs.Get<int>(1);
         ocout << OTEXT(", action : ") << rs.Get<ostring>(2);
         ocout << OTEXT(", price  : ") << rs.Get<double>(3);
-        ocout << OTEXT(", date   : ");
-        ocout << rs.Get<Date>(4).ToString() << std::endl;
+        ocout << OTEXT(", date   : ") << rs.Get<Date>(4) << std::endl;
     }
 
     ocout << std::endl << rs.GetCount() << OTEXT(" row(s) fetched") << std::endl;
@@ -558,7 +679,7 @@ void test_bind2(void)
     /* scalar types */
     int i = 1;
     double dbl = 3.14;
-    float flt = (float) 3.14;
+    float flt = 3.14f;
     ostring str = OTEXT("Name00");
 
     /* bind scalar C types arrays */
@@ -566,7 +687,7 @@ void test_bind2(void)
     st.Bind(OTEXT(":val_int"), i, BindInfo::In);
     st.Bind(OTEXT(":val_dbl"), dbl, BindInfo::In);
     st.Bind(OTEXT(":val_flt"), flt, BindInfo::In);
-    st.Bind(OTEXT(":val_str"), str, (unsigned int)str.size(), BindInfo::In);
+    st.Bind(OTEXT(":val_str"), str, static_cast<unsigned int>(str.size()), BindInfo::In);
 
     /* bind oracle types arrays */
 
@@ -593,15 +714,15 @@ void test_piecewise_insert(void)
     std::ifstream file(OCI_SHARED_LIB, std::ios::in | std::ios::binary | std::ios::ate);
     if (file.is_open())
     {
-        size_t size = (size_t)file.tellg();
+        size_t size = static_cast<size_t>(file.tellg());
         file.seekg(0, std::ios::beg);
         ocout << std::endl << size << OTEXT(" bytes to write") << std::endl;
 
         Statement st(con);
         Blong lg(st);
         st.Prepare(OTEXT("insert into test_long_raw(code, content) values (1, :data)"));
-        st.SetLongMaxSize((unsigned int)size);
-        st.Bind(OTEXT(":data"), lg, (int)size, BindInfo::In);
+        st.SetLongMaxSize(static_cast<unsigned int>(size));
+        st.Bind(OTEXT(":data"), lg, static_cast<unsigned int>(size), BindInfo::In);
         st.Execute();
 
         unsigned char *strBuffer = new unsigned char[size];
@@ -730,8 +851,7 @@ void test_ref_cursor(void)
         ocout << OTEXT("> code   : ") << rs.Get<int>(1);
         ocout << OTEXT(", action : ") << rs.Get<ostring>(2);
         ocout << OTEXT(", price  : ") << rs.Get<double>(3);
-        ocout << OTEXT(", date   : ");
-        ocout << rs.Get<Date>(4).ToString() << std::endl;
+        ocout << OTEXT(", date   : ") << rs.Get<Date>(4) << std::endl;
     }
 
     ocout << std::endl << rs.GetCount() << OTEXT(" row(s) fetched") << std::endl;
@@ -795,17 +915,17 @@ void test_dates(void)
 
     Date date;
 
-    date.FromString(OTEXT("13041978 20:20:12"), OTEXT("DDMMYYYY HH24:MI:SS"));
-    ocout << date.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
+    date.FromString(OTEXT("1978-04-13"));
+    ocout << date << std::endl;
 
     date.SysDate();
-    ocout << date.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
+    ocout << date << std::endl;
 
     date.AddDays(5);
     date.AddMonths(2);
-    ocout << OTEXT("Date + 5 days and 2 months is ") << date.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
+    ocout << OTEXT("Date + 5 days and 2 months is ") << date << std::endl;
 
-    ocout << OTEXT("Last day of the month : ") << date.LastDay().ToString(OTEXT("DD/MM/YYYY HH24:MI:SS")) << std::endl;
+    ocout << OTEXT("Last day of the month : ") << date.LastDay() << std::endl;
 
     ocout << OTEXT("Number of days until the end of the months : ") << date.LastDay().DaysBetween(date) << std::endl;
 }
@@ -834,7 +954,6 @@ void test_timestamp(void)
         Timestamp tm(Timestamp::NoTimeZone);
 
         tm.SysTimestamp();
-        ocout << OTEXT("Current timestamp : ") << tm.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS:FF3")) << std::endl;
 
         /* intervals raw oci functions have some troubles with Oracle 9i. So let's
         use it for the demo only if we're using 10g or above */
@@ -846,7 +965,7 @@ void test_timestamp(void)
             Interval itv(Interval::DaySecond);
             itv.SetDaySecond(1, 1, 1, 1, 0);
             tm += itv;
-            ocout << OTEXT("Current timestamp + Interval :") << tm.ToString(OTEXT("DD/MM/YYYY HH24:MI:SS:FF3")) << std::endl;
+            ocout << OTEXT("Current timestamp + Interval :") << tm << std::endl;
         }
     }
 }
@@ -913,7 +1032,7 @@ void test_returning(void)
         clob.Append(OTEXT("(modified)"));
         clob.Seek(SeekSet, 0);
 
-        ocout << OTEXT("> code : ") << rs.Get<int>(1) << OTEXT(" - ") << clob.Read((int)clob.GetLength()) << std::endl;
+        ocout << OTEXT("> code : ") << rs.Get<int>(1) << OTEXT(" - ") << clob.Read(static_cast<unsigned int>(clob.GetLength())) << std::endl;
     }
 
     con.Commit();
@@ -940,8 +1059,8 @@ void test_returning_array(void)
     for (int i = 0; i < SIZE_TAB; i++)
     {
         tab_int.push_back(i + 1);
-        tab_dbl.push_back(3.14*(double)(i + 1));
-        tab_flt.push_back((float) 3.14*(float)(i + 1));
+        tab_dbl.push_back(3.14*static_cast<double>(i + 1));
+        tab_flt.push_back(3.14f*static_cast<float>(i + 1));
 
         ostring str;
         str += OTEXT("Name");
@@ -1020,7 +1139,7 @@ void test_returning_array(void)
             ocout << OTEXT(".... val_str    : ") << rs.Get<ostring>(OTEXT(":OUT_STR")) << std::endl;
 
             Date date = rs.Get<Date>(OTEXT(":OUT_DATE"));
-            ocout << OTEXT(".... val_date   : ") << date.ToString(OTEXT("YYYY-MM-DD HH24:MI:SS")) << std::endl;
+            ocout << OTEXT(".... val_date   : ") << date << std::endl;
 
             Clob clob = rs.Get<Clob>(OTEXT(":OUT_LOB"));
             ocout << OTEXT(".... val_lob    : ") << clob.Read(SIZE_BUF) << std::endl;
@@ -1099,7 +1218,7 @@ void test_object_fetch(void)
         ocout << OTEXT(".... val_str      : ") << obj.Get<ostring>(OTEXT("VAL_STR")) << std::endl;
 
         Date date = obj.Get<Date>(OTEXT("VAL_DATE"));
-        ocout << OTEXT(".... val_date     : ") << date.ToString(OTEXT("YYYY-MM-DD HH24:MI:SS")) << std::endl;
+        ocout << OTEXT(".... val_date     : ") << date << std::endl;
 
         Clob clob = obj.Get<Clob>(OTEXT("VAL_LOB"));
         ocout << OTEXT(".... val_lob      : ") << clob.Read(SIZE_BUF) << std::endl;
@@ -1109,7 +1228,7 @@ void test_object_fetch(void)
 
         Raw raw = obj.Get<Raw>(OTEXT("VAL_RAW"));
         raw.push_back(0);
-        std::cout << ".... val_raw      : " << (char*)raw.data() << std::endl;
+        std::cout << ".... val_raw      : " << reinterpret_cast<char *>(raw.data()) << std::endl;
 
         Object obj2 = obj.Get<Object>(OTEXT("VAL_OBJ"));
         ocout << OTEXT(".... val_obj.code : ") << obj2.Get<int>(OTEXT("ID")) << std::endl;
@@ -1125,7 +1244,7 @@ void test_object_fetch(void)
     rs = st.GetResultset();
     while (rs++)
     {
-        ocout << rs.Get<Object>(1).ToString() << std::endl;
+        ocout << rs.Get<Object>(1) << std::endl;
     }
 }
 
@@ -1218,7 +1337,7 @@ void test_collection(void)
 
     ocout << OTEXT("\n>>>>> TEST VARRAY PRINTING \n\n");
 
-    ocout << coll.ToString() << std::endl;
+    ocout << coll << std::endl;
 
     ocout << OTEXT("\n>>>>> TEST VARRAY FETCHING WITH ITERATOR \n\n");
 
@@ -1250,7 +1369,7 @@ void test_collection(void)
         ocout << OTEXT("Department ID #") << rs.Get<int>(1) << std::endl;
 
         coll = rs.Get<Collection<ostring> >(2);
-        for (int index = 1, n = coll.GetSize(); index <= n; index++)
+        for (unsigned int index = 1, n = coll.GetSize(); index <= n; index++)
         {
             ocout << OTEXT("... Employee : ") << static_cast<ostring>(coll[index]) << std::endl;
         }

@@ -1561,7 +1561,7 @@ inline Date::Date(const ostring& str, const ostring& format)
 {
     Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0);
 
-    FromString(str, format.size() > 0 ? format : Environment::GetFormat(FormatDate));
+    FromString(str, format);
 }
 
 inline Date::Date(OCI_Date *pDate, Handle *parent)
@@ -1765,7 +1765,7 @@ inline void Date::ChangeTimeZone(const ostring& tzSrc, const ostring& tzDst)
 
 inline void Date::FromString(const ostring& str, const ostring& format)
 {
-	Check(OCI_DateFromText(*this, str.c_str(), format.c_str()));
+    Check(OCI_DateFromText(*this, str.c_str(), format.size() > 0 ? format.c_str() : Environment::GetFormat(FormatDate).c_str()));
 }
 
 inline ostring Date::ToString(const ostring& format) const
@@ -2149,7 +2149,7 @@ inline Timestamp::Timestamp(TimestampType type)
 inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostring& format)
 {
     Acquire(Check(OCI_TimestampCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 0);
-    FromString(data, format.size() > 0 ? format : Environment::GetFormat(FormatTimestamp));
+    FromString(data, format);
 }
 
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, Handle *parent)
@@ -2387,7 +2387,7 @@ inline void Timestamp::SysTimestamp()
 
 inline void Timestamp::FromString(const ostring& data, const ostring& format)
 {
-    Check(OCI_TimestampFromText(*this, data.c_str(), format.c_str()));
+    Check(OCI_TimestampFromText(*this, data.c_str(), format.size() > 0 ? format.c_str() : Environment::GetFormat(FormatTimestamp).c_str()));
 }
 
 inline ostring Timestamp::ToString(const ostring& format, int precision) const
@@ -5236,6 +5236,37 @@ inline bool Resultset::operator += (int offset)
 inline bool Resultset::operator -= (int offset)
 {
 	return Seek(Resultset::SeekRelative, -offset);
+}
+
+template<class TDataType, class TAdapter>
+inline bool Resultset::Get(TDataType& value, TAdapter adapter) const
+{
+    return adapter(static_cast<const Resultset&>(*this), value);
+}
+
+
+template<class TCallback>
+inline void Resultset::ForEach(TCallback callback)
+{
+    while (Next())
+    {
+        if (!callback(static_cast<const Resultset&>(*this)))
+        {
+            break;
+        }
+    }
+}
+
+template<class TAdapter, class TCallback>
+inline void Resultset::ForEach(TCallback callback, TAdapter adapter)
+{
+    while (Next())
+    {
+        if (!callback(adapter(static_cast<const Resultset&>(*this))))
+        {
+            break;
+        }
+    }
 }
 
 template<>

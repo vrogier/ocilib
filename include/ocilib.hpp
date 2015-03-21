@@ -5907,6 +5907,60 @@ public:
     template<class TDataType>
     TDataType Get(const ostring& name) const;
 
+    /**
+    * @brief
+    * Return a given user type from the current fetched row.
+    * It allow translating row column values returned by a query to a user defined type using the given adaptor type
+    *
+ 	* @param value    - User defined type value to be filled by the adaptor function
+    * @param adapter -  User defined adaptor function
+    * 
+    * @note
+    * The user defined adaptor function must conform to the following prototype:
+    * bool adaptor (const Resultset &, TDataType &)
+    * It shall return true if it has filled the value from the resultset otherwise false
+    *
+    */
+    template<class TDataType, class TAdapter>
+    bool Get(TDataType& value, TAdapter adapter) const;
+
+    /**
+    * @brief
+    * Fetch all rows in the resultset and call the given callback for row
+    *
+    * @param callback -  User defined callback
+    *
+    * @note
+    * The user defined adaptor function must conform to the following prototype: 
+    * bool callback(const Resultset &)
+    * It shall return true to continue fetching the resultset or false to stop the fetch
+    *
+    */
+    template<class TCallback>
+    void ForEach(TCallback callback);
+
+    /**
+    * @brief
+    * Fetch all rows in the resultset and call the given callback for row
+    * It allow translating row column values returned by a query to a user defined type using the given adaptor type
+    *
+    * @param callback -  User defined callback
+    * @param adapter  -  User defined adaptor function
+    *
+     * @note
+    * The user defined adaptor function must conform to the following prototype:
+    * [UserDefinedType] adaptor (const Resultset &)
+    * The return value type must match the parameter of the callback method
+    *
+    * @note
+    * The user defined callback function must conform to the following prototype:
+    * bool callback(const [UserDefinedType] &)
+    * It shall return true to continue fetching the resultset or false to stop the fetch
+    *
+    */
+    template<class TAdapter, class TCallback>
+    void ForEach(TCallback callback, TAdapter adapter);
+
 	/**
 	* @brief
 	* Fetch the next row of the resultset
