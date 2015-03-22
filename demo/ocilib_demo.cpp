@@ -349,8 +349,8 @@ void print_version(void)
     ocout << OTEXT("OCILIB major    version : ") << OCILIB_MAJOR_VERSION << std::endl;
     ocout << OTEXT("OCILIB minor    version : ") << OCILIB_MINOR_VERSION << std::endl;
     ocout << OTEXT("OCILIB revision version : ") << OCILIB_REVISION_VERSION << std::endl;
-    ocout << OTEXT("OCI compile     version : ") << OCI_VER_MAJ(Environment::GetCompileVersion()) << std::endl;
-    ocout << OTEXT("OCI runtime     version : ") << OCI_VER_MAJ(Environment::GetRuntimeVersion()) << std::endl;
+    ocout << OTEXT("OCI compile     version : ") << Environment::GetCompileMajorVersion() << std::endl;
+    ocout << OTEXT("OCI runtime     version : ") << Environment::GetRuntimeMajorVersion() << std::endl;
     ocout << OTEXT("Server major    version : ") << con.GetServerMajorVersion() << std::endl;
     ocout << OTEXT("Server minor    version : ") << con.GetServerMinorVersion() << std::endl;
     ocout << OTEXT("Server revision version : ") << con.GetServerRevisionVersion() << std::endl;
@@ -878,7 +878,7 @@ void test_plsql(void)
 #ifndef OCI_CHARSET_ANSI
 
     /* Oracle 8i has some troubles with SERVER OUTPUT in unicode */
-    if (Environment::GetRuntimeVersion() < OCI_9_0)
+    if (Environment::GetRuntimeVersion() < Oracle9iR1)
         return;
 
 #endif
@@ -913,9 +913,7 @@ void test_dates(void)
 {
     ocout << OTEXT("\n>>>>> TEST DATETIME MANIPULATION\n\n");
 
-    Date date;
-
-    date.FromString(OTEXT("1978-04-13"));
+    Date date(OTEXT("1978-04-13"));
     ocout << date << std::endl;
 
     date.SysDate();
@@ -943,11 +941,11 @@ void test_timestamp(void)
     /* Oracle 9i has some troubles with formatting Intervals/timestamps in
     an UTF16 context... */
 
-    if ((version >= OCI_9_0) || (version < OCI_10_1))
+    if ((version >= Oracle9iR1) || (version < Oracle10gR1))
         return;
 #endif
 
-    if (version >= OCI_9_0)
+    if (version >= Oracle9iR1)
     {
         ocout << OTEXT("\n>>>>> TEST TIMESTAMP\n\n");
 
@@ -958,7 +956,7 @@ void test_timestamp(void)
         /* intervals raw oci functions have some troubles with Oracle 9i. So let's
         use it for the demo only if we're using 10g or above */
 
-        if (version >= OCI_10_1)
+        if (version >= Oracle10gR1)
         {
             ocout << OTEXT("\n>>>>> TEST INTERVAL \n\n");
 
@@ -1254,7 +1252,7 @@ void test_object_fetch(void)
 
 void test_scrollable_cursor(void)
 {
-    if (Environment::GetRuntimeVersion() > OCI_9_0)
+    if (Environment::GetRuntimeVersion() > Oracle9iR1)
     {
         ocout << OTEXT("\n>>>>> TEST SCROLLABLE CURSORS \n\n");
 
@@ -1425,7 +1423,7 @@ void test_directpath(void)
     Anyway, we run this test case only if the major versions of client and server
     match
     */
-    if (OCI_VER_MAJ(Environment::GetCompileVersion()) == con.GetServerMajorVersion())
+    if (Environment::GetRuntimeMajorVersion() == con.GetServerMajorVersion())
     {
         /* commit any previous pending modifications */
 
@@ -1433,9 +1431,9 @@ void test_directpath(void)
 
         ocout << OTEXT("\n>>>>> TEST DIRECT PATH (10 loads of 100 rows) \n\n");
 
-        int i = 0, j = 0, nb_rows = SIZE_ARRAY;
+        int i = 0, j = 0, n = SIZE_ARRAY;
 
-        DirectPath directPath(TypeInfo(con, OTEXT("test_directpath"), TypeInfo::Table), NUM_COLS, nb_rows);
+        DirectPath directPath(TypeInfo(con, OTEXT("test_directpath"), TypeInfo::Table), NUM_COLS, n);
 
         /* optional attributes to set */
 
@@ -1443,7 +1441,7 @@ void test_directpath(void)
         directPath.SetNoLog(true);
         directPath.SetParallel(true);
 
-        if (Environment::GetCompileVersion() >= OCI_9_2)
+        if (Environment::GetCompileVersion() >= Oracle9iR2)
         {
             directPath.SetCacheSize(100);
         }
@@ -1458,13 +1456,13 @@ void test_directpath(void)
 
         directPath.Prepare();
 
-        nb_rows = directPath.GetMaxRows();
+        n = directPath.GetMaxRows();
 
         for (i = 0; i < NB_LOAD; i++)
         {
             directPath.Reset();
 
-            for (j = 1; j <= nb_rows; j++)
+            for (j = 1; j <= n; j++)
             {
                 std::oostringstream val1, val2, val3;
 

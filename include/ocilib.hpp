@@ -229,6 +229,33 @@ namespace ocilib
 
 /**
 * @brief
+* Oracle Version enumerated values
+*
+*/
+enum OracleVersionValues
+{
+    Oracle80 = OCI_8_0,
+    Oracle8i = OCI_8_1,
+    Oracle9iR1 = OCI_9_0,
+    Oracle9iR2 = OCI_9_2,
+    Oracle10gR1 = OCI_10_1,
+    Oracle10gR2 = OCI_10_2,
+    Oracle11gR1 = OCI_11_1,
+    Oracle11gR2 = OCI_11_2,
+    Oracle12cR1 = OCI_12_1
+};
+
+/**
+* @brief
+* Oracle Version 
+*
+* Possible values are DataTypeValues
+*
+*/
+typedef Enum<OracleVersionValues> OracleVersion;
+
+/**
+* @brief
 * Data type enumerated values
 *
 */
@@ -578,6 +605,7 @@ private:
  */
 class Environment
 {
+    friend class Mutex;
     friend class Connection;
     friend class Pool;
     friend class Subscription;
@@ -917,6 +945,13 @@ public:
     static Environment::CharsetMode GetCharset();
 
     /**
+    * @brief
+    * Return true if the environment has been successfully initialized
+    *
+    */
+    static bool Initialized();
+
+    /**
      * @brief
      * Return the version of OCI used for compiling OCILIB
      *
@@ -926,7 +961,28 @@ public:
      *   of OCI needed by OCILIB, not necessarily the real OCI version
      *
      */
-    static unsigned int GetCompileVersion();
+    static OracleVersion GetCompileVersion();
+
+    /**
+    * @brief
+    * Return the major version number of OCI used for compiling OCILIB
+    *
+    */
+    static unsigned int GetCompileMajorVersion();
+
+    /**
+    * @brief
+    * Return the minor version number of OCI used for compiling OCILIB
+    *
+    */
+    static unsigned int GetCompileMinorVersion();
+
+    /**
+    * @brief
+    * Return the revision version number of OCI used for compiling OCILIB
+    *
+    */
+    static unsigned int GetCompileRevisionVersion();
 
     /**
      * @brief
@@ -937,7 +993,28 @@ public:
      * - with runtime loading build option, the version determined from the symbols dynamically loaded.
      *
      */
-    static unsigned int GetRuntimeVersion();
+    static OracleVersion GetRuntimeVersion();
+
+    /**
+    * @brief
+    * Return the major version number of OCI used at runtime
+    *
+    */
+    static unsigned int GetRuntimeMajorVersion();
+
+    /**
+    * @brief
+    * Return the minor version number of OCI used at runtime
+    *
+    */
+    static unsigned int GetRuntimeMinorVersion();
+
+    /**
+    * @brief
+    * Return the revision version number of OCI used at runtime
+    *
+    */
+    static unsigned int GetRuntimeRevisionVersion();
 
     /**
      * @brief
@@ -1126,6 +1203,7 @@ private:
     ConcurrentMap<AnyPointer, Handle *>  _handles;
     ConcurrentMap<AnyPointer, CallbackPointer> _callbacks;
     EnvironmentFlags _mode;
+    bool _initialized;
 };
 
 /**
@@ -1853,19 +1931,9 @@ public:
      *
      * @note
      * The supported version is the lower version between client and server:
-     *  - OCI_UNKNOWN
-     *  - OCI_8_0
-     *  - OCI_8_1
-     *  - OCI_9_0
-     *  - OCI_9_2
-     *  - OCI_10_1
-     *  - OCI_10_2
-     *  - OCI_11_1
-     *  - OCI_11_2
-     *  - OCI_12_1
      *
      */
-    unsigned int GetVersion() const;
+    OracleVersion GetVersion() const;
 
     /**
      * @brief

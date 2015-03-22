@@ -897,14 +897,49 @@ inline Environment::CharsetMode Environment::GetCharset()
 	return CharsetMode(static_cast<CharsetMode::type>(Check(OCI_GetCharset())));
 }
 
-inline unsigned int Environment::GetCompileVersion()
+inline bool Environment::Initialized()
 {
-    return Check(OCI_GetOCICompileVersion());
+    return GetInstance()._initialized;
 }
 
-inline unsigned int Environment::GetRuntimeVersion()
+inline OracleVersion Environment::GetCompileVersion()
 {
-    return Check(OCI_GetOCIRuntimeVersion());
+    return OracleVersion(static_cast<OracleVersion::type>(Check(OCI_GetOCICompileVersion())));
+}
+
+inline OracleVersion Environment::GetRuntimeVersion()
+{
+    return  OracleVersion(static_cast<OracleVersion::type>(Check(OCI_GetOCIRuntimeVersion())));
+}
+
+inline unsigned int Environment::GetCompileMajorVersion()
+{
+    return OCI_VER_MAJ(Check(OCI_GetOCICompileVersion()));
+}
+
+inline unsigned int Environment::GetCompileMinorVersion()
+{
+    return OCI_VER_MIN(Check(OCI_GetOCICompileVersion()));
+}
+
+inline unsigned int Environment::GetCompileRevisionVersion()
+{
+    return OCI_VER_REV(Check(OCI_GetOCICompileVersion()));
+}
+
+inline unsigned int Environment::GetRuntimeMajorVersion()
+{
+    return OCI_VER_MAJ(Check(OCI_GetOCIRuntimeVersion()));
+}
+
+inline unsigned int Environment::GetRuntimeMinorVersion()
+{
+    return OCI_VER_MIN(Check(OCI_GetOCIRuntimeVersion()));
+}
+
+inline unsigned int Environment::GetRuntimeRevisionVersion()
+{
+    return OCI_VER_REV(Check(OCI_GetOCIRuntimeVersion()));
 }
 
 inline void Environment::EnableWarnings(bool value)
@@ -1055,7 +1090,7 @@ inline Environment& Environment::GetInstance()
     return envHandle;
 }
 
-inline Environment::Environment() : _locker(), _handle(), _handles(), _callbacks(), _mode()
+inline Environment::Environment() : _locker(), _handle(), _handles(), _callbacks(), _mode(), _initialized(false)
 {
 
 }
@@ -1065,6 +1100,8 @@ inline void Environment::SelfInitialize(EnvironmentFlags mode, const ostring& li
     _mode = mode;
 
     Check(OCI_Initialize(0, libpath.c_str(), _mode.GetValues() | OCI_ENV_CONTEXT));
+
+    _initialized = true;
 
     _locker.SetAccessMode((_mode & Environment::Threaded) == Environment::Threaded);
 
@@ -1083,7 +1120,12 @@ inline void Environment::SelfCleanup()
 
     _handle.Release();
 
-    Check(OCI_Cleanup());
+    if (_initialized)
+    {
+        Check(OCI_Cleanup());
+    }
+
+    _initialized = false;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1092,7 +1134,7 @@ inline void Environment::SelfCleanup()
 
 inline MutexHandle Mutex::Create()
 {
-    return Check(OCI_MutexCreate());
+    return Environment::GetInstance().Initialized() ? Check(OCI_MutexCreate()) : 0;
 }
 
 inline void Mutex::Destroy(MutexHandle mutex)
@@ -1327,9 +1369,9 @@ inline ostring Connection::GetPassword() const
     return MakeString(Check(OCI_GetPassword(*this)));
 }
 
-inline unsigned int Connection::GetVersion() const
+inline OracleVersion Connection::GetVersion() const
 {
-    return Check(OCI_GetVersionConnection(*this));
+    return OracleVersion(static_cast<OracleVersion::type>(Check(OCI_GetVersionConnection(*this))));
 }
 
 inline ostring Connection::GetServerVersion() const
