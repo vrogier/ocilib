@@ -56,6 +56,8 @@ inline TResultType Check(TResultType result)
 
     if (err)
     {
+        const char *s = OCI_ErrorGetString(err);
+
         throw Exception(err);
     }
 
@@ -1611,6 +1613,15 @@ inline Date::Date(OCI_Date *pDate, Handle *parent)
     Acquire(pDate, 0, parent);
 }
 
+inline Date Date::SysDate()
+{
+    Date result;
+
+    Check(OCI_DateSysDate(result));
+
+    return result;
+}
+
 inline Date Date::Clone() const
 {
 	Date result;
@@ -1775,11 +1786,6 @@ inline void Date::AddDays(int days)
 inline void Date::AddMonths(int months)
 {
     OCI_DateAddMonths(*this, months);
-}
-
-inline void Date::SysDate()
-{
-   Check(OCI_DateSysDate(*this));
 }
 
 inline Date Date::NextDay(const ostring& day) const
@@ -2422,9 +2428,13 @@ inline void Timestamp::Substract(const Timestamp &lsh, const Timestamp &rsh, Int
 	Check(OCI_TimestampSubtract(lsh, rsh, result));
 }
 
-inline void Timestamp::SysTimestamp()
+inline Timestamp Timestamp::SysTimestamp(TimestampType type)
 {
-    Check(OCI_TimestampSysTimestamp(*this));
+    Timestamp result(type);
+
+    Check(OCI_TimestampSysTimestamp(result));
+
+    return result;
 }
 
 inline void Timestamp::FromString(const ostring& data, const ostring& format)
@@ -4340,7 +4350,7 @@ inline void Statement::Prepare(const ostring& sql)
     Check(OCI_Prepare(*this, sql.c_str()));
 }
 
-inline void Statement::Execute()
+inline void Statement::ExecutePrepared()
 {
     ReleaseResultsets();
     SetInData();
@@ -4348,11 +4358,76 @@ inline void Statement::Execute()
     SetOutData();
 }
 
+
+template<class TFetchCallback>
+inline unsigned int Statement::ExecutePrepared(TFetchCallback callback)
+{
+    ExecutePrepared();
+
+    return Fetch(callback);
+}
+
+template<class TAdapter, class TFetchCallback>
+inline unsigned int Statement::ExecutePrepared(TFetchCallback callback, TAdapter adapter)
+{
+    ExecutePrepared();
+
+    return Fetch(callback, adapter);
+}
+
 inline void Statement::Execute(const ostring& sql)
 {
     ClearBinds();
     ReleaseResultsets();
     Check(OCI_ExecuteStmt(*this, sql.c_str()));
+}
+
+template<class TFetchCallback>
+inline unsigned int Statement::Execute(const ostring& sql, TFetchCallback callback)
+{
+    Execute(sql);
+ 
+    return Fetch(callback);
+}
+
+template<class TAdapter, class TFetchCallback>
+inline unsigned int Statement::Execute(const ostring& sql, TFetchCallback callback, TAdapter adapter)
+{
+    Execute(sql);
+
+    return Fetch(callback, adapter);
+}
+
+template<typename TFetchCallback>
+inline unsigned int  Statement::Fetch(TFetchCallback callback)
+{
+    unsigned int res = 0;
+
+    Resultset rs = GetResultset();
+
+    while (rs)
+    {
+        res += rs.ForEach(callback);
+        rs = GetNextResultset();
+    }
+
+    return res;
+}
+
+template<class TAdapter, class TFetchCallback>
+inline unsigned int Statement::Fetch(TFetchCallback callback, TAdapter adapter)
+{
+    unsigned int res = 0;
+
+    Resultset rs = GetResultset();
+
+    while (rs)
+    {
+        res += rs.ForEach(callback, adapter);
+        rs = GetNextResultset();
+    }
+
+    return res;
 }
 
 inline unsigned int Statement::GetAffectedRows() const
@@ -5288,7 +5363,7 @@ inline bool Resultset::Get(TDataType& value, TAdapter adapter) const
 
 
 template<class TCallback>
-inline void Resultset::ForEach(TCallback callback)
+inline  unsigned int Resultset::ForEach(TCallback callback)
 {
     while (Next())
     {
@@ -5297,10 +5372,12 @@ inline void Resultset::ForEach(TCallback callback)
             break;
         }
     }
+
+    return GetCurrentRow();
 }
 
 template<class TAdapter, class TCallback>
-inline void Resultset::ForEach(TCallback callback, TAdapter adapter)
+inline unsigned int Resultset::ForEach(TCallback callback, TAdapter adapter)
 {
     while (Next())
     {
@@ -5309,6 +5386,8 @@ inline void Resultset::ForEach(TCallback callback, TAdapter adapter)
             break;
         }
     }
+
+    return GetCurrentRow();
 }
 
 template<>

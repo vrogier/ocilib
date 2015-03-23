@@ -2457,6 +2457,13 @@ class Date : public HandleHolder<OCI_Date *>, public Streamable
 public:
 
     /**
+    * @brief
+    * Return the current system date time
+    *
+    */
+    static Date SysDate();
+
+    /**
      * @brief
      * Create an empty date object
      *
@@ -2478,8 +2485,7 @@ public:
     *
     */
     Date(const ostring& str, const ostring& format = OTEXT(""));
-
-
+    
     /**
      * @brief
      * Check if the given date is valid
@@ -2669,13 +2675,6 @@ public:
      *
      */
     void AddMonths(int months);
-
-    /**
-     * @brief
-     * Assign the current system date time to the current date object
-     *
-     */
-    void SysDate();
 
     /**
      * @brief
@@ -3282,7 +3281,7 @@ public:
 
 	/**
 	* @brief
-	* Type of Exception
+	* Type of timestamp
 	*
 	* Possible values are Timestamp::TimestampTypeValues
 	*
@@ -3291,12 +3290,20 @@ public:
 
     /**
     * @brief
+    * return the current system timestamp 
+    *
+    * @param type - Timestamp type to create
+    *
+    */
+    static Timestamp SysTimestamp(TimestampType type = NoTimeZone);
+
+    /**
+    * @brief
     * Create a new instance of the given type
     *
     * @param type - Timestamp type to create
     *
     */
-
     Timestamp(TimestampType type);
 
     /**
@@ -3555,13 +3562,6 @@ public:
     *
     */
     static void Substract(const Timestamp &lsh, const Timestamp &rsh, Interval &result);
-
-	/**
-	* @brief
-	* Assign the current system timestamp to the current timestamp object
-	*
-	*/
-    void SysTimestamp();
 
 	/**
 	* @brief
@@ -5280,7 +5280,7 @@ public:
 	* Execute a prepared SQL statement or PL/SQL block.
 	*
 	*/
-    void Execute();
+    void ExecutePrepared();
 
 	/**
 	* @brief
@@ -5290,6 +5290,82 @@ public:
 	*
 	*/
     void Execute(const ostring& sql);
+
+    /**
+    * @brief
+    * Execute the prepared statement, retrieve all resultsets, and call the given callback for each row of each resultsets
+    *
+    * @param callback -  User defined callback
+    *
+    * @note
+    * The user defined callback function must conform to the following prototype:
+    * bool callback(const Resultset &)
+    * It shall return true to continue fetching the resultset or false to stop the fetch
+    *
+    * @return
+    * The number of row fetched
+    *
+    */
+    template<class TFetchCallback>
+    unsigned int ExecutePrepared(TFetchCallback callback);
+
+    /**
+    * @brief
+    * Execute the prepared statement, retrieve all resultsets, and call the given callback 
+    * with adaptated type wit for each row of each resultsets
+    *
+    * @param callback -  User defined callback
+    * @param adapter  -  User defined adaptor function
+    *
+    * @note
+    * The user defined callback function must conform to the following prototype:
+    * bool callback(const Resultset &)
+    * It shall return true to continue fetching the resultset or false to stop the fetch
+    *
+    * @return
+    * The number of row fetched
+    *
+    */
+    template<class TAdapter, class TFetchCallback>
+    unsigned int ExecutePrepared(TFetchCallback callback, TAdapter adapter);
+
+    /**
+    * @brief
+    * Execute the given SQL statement, retrieve all resultsets, and call the given callback for each row of each resultsets
+    *
+    * @param callback -  User defined callback
+    *
+    * @note
+    * The user defined callback function must conform to the following prototype:
+    * bool callback(const Resultset &)
+    * It shall return true to continue fetching the resultset or false to stop the fetch
+    *
+    * @return
+    * The number of row fetched
+    *
+    */
+    template<class TFetchCallback>
+    unsigned int Execute(const ostring& sql, TFetchCallback callback);
+
+    /**
+    * @brief
+    * Execute the given SQL statement, retrieve all resultsets, and call the given callback
+    * with adaptated type wit for each row of each resultsets
+    *
+    * @param callback -  User defined callback
+    * @param adapter  -  User defined adaptor function
+    *
+    * @note
+    * The user defined callback function must conform to the following prototype:
+    * bool callback(const Resultset &)
+    * It shall return true to continue fetching the resultset or false to stop the fetch
+    *
+    * @return
+    * The number of row fetched
+    *
+    */
+    template<class TAdapter, class TFetchCallback>
+    unsigned int Execute(const ostring& sql, TFetchCallback callback, TAdapter adapter);
 
 	/**
 	* @brief
@@ -5901,6 +5977,12 @@ private:
 
     template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
     void Bind (TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode, TElemType type);
+
+    template<typename TFetchCallback>
+    unsigned int Fetch(TFetchCallback callback);
+
+    template<typename TAdapter, typename TFetchCallback>
+    unsigned int Fetch(TFetchCallback callback, TAdapter adapter);
 };
 
 /**
@@ -5999,13 +6081,16 @@ public:
     * @param callback -  User defined callback
     *
     * @note
-    * The user defined adaptor function must conform to the following prototype: 
+    * The user defined callback function must conform to the following prototype: 
     * bool callback(const Resultset &)
     * It shall return true to continue fetching the resultset or false to stop the fetch
     *
+    * @return
+    * The number of row fetched
+    *
     */
-    template<class TCallback>
-    void ForEach(TCallback callback);
+    template<typename TCallback>
+    unsigned int ForEach(TCallback callback);
 
     /**
     * @brief
@@ -6025,9 +6110,12 @@ public:
     * bool callback(const [UserDefinedType] &)
     * It shall return true to continue fetching the resultset or false to stop the fetch
     *
+    * @return
+    * The number of row fetched
+    *
     */
-    template<class TAdapter, class TCallback>
-    void ForEach(TCallback callback, TAdapter adapter);
+    template<typename TAdapter, typename TCallback>
+    unsigned int ForEach(TCallback callback, TAdapter adapter);
 
 	/**
 	* @brief
