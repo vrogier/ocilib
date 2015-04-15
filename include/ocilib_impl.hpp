@@ -804,7 +804,14 @@ inline void HandleHolder<THandleType>::SmartHandle::DetachFromParent()
  * Exception
  * --------------------------------------------------------------------------------------------- */
 
-inline Exception::Exception() : _what()
+inline Exception::Exception()
+    : _what(), 
+    _pStatement(0), 
+    _pConnnection(0),
+    _row(0), 
+    _type(static_cast<ExceptionType::type>(0)),
+    _errLib(0),
+    _errOracle(0)
 {
 
 }
@@ -814,11 +821,16 @@ inline Exception::~Exception() throw ()
 
 }
 
-inline Exception::Exception(OCI_Error *err) : _what()
+inline Exception::Exception(OCI_Error *err) 
+    : _what(),
+    _pStatement(OCI_ErrorGetStatement(err)), 
+    _pConnnection(OCI_ErrorGetConnection(err)),
+    _row(OCI_ErrorGetRow(err)), 
+    _type(static_cast<ExceptionType::type>(OCI_ErrorGetType(err))),
+    _errLib(OCI_ErrorGetInternalCode(err)),
+    _errOracle(OCI_ErrorGetOCICode(err))
 {
-	Acquire(err, 0, 0);
-
-	const otext *str = OCI_ErrorGetString(*this);
+    const otext *str = OCI_ErrorGetString(err);
 
 	if (str)
 	{
@@ -827,7 +839,7 @@ inline Exception::Exception(OCI_Error *err) : _what()
 		_what.resize(size);
 
 		while (i < size) { _what[i] = static_cast<char>(str[i]); ++i; }
-	}
+	}   
 }
 
 inline const char * Exception::what() const throw()
@@ -837,37 +849,37 @@ inline const char * Exception::what() const throw()
 
 inline ostring Exception::GetMessage() const
 {
-    return MakeString(OCI_ErrorGetString(*this));
+    return _what;
 }
 
 inline Exception::ExceptionType Exception::GetType() const
 {
-	return Exception::ExceptionType(static_cast<ExceptionType::type>(OCI_ErrorGetType(*this)));
+	return _type;
 }
 
 inline int Exception::GetOracleErrorCode() const
 {
-    return OCI_ErrorGetOCICode(*this);
+    return _errOracle;
 }
 
 inline int Exception::GetInternalErrorCode() const
 {
-    return OCI_ErrorGetInternalCode(*this);
+    return _errLib;
 }
 
 inline Statement Exception::GetStatement() const
 {
-    return Statement(OCI_ErrorGetStatement(*this), 0);
+    return Statement(_pStatement, 0);
 }
 
 inline Connection Exception::GetConnection() const
 {
-    return Connection(OCI_ErrorGetConnection(*this), 0);
+    return Connection(_pConnnection, 0);
 }
 
 inline unsigned int Exception::GetRow() const
 {
-    return OCI_ErrorGetRow(*this);
+    return _row;
 }
 
 /* --------------------------------------------------------------------------------------------- *

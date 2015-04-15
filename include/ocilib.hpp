@@ -484,7 +484,7 @@ typedef Enum<FormatTypeValues> FormatType;
  * This class wraps the OCILIB object handle OCI_Error and its related methods
  *
  */
-class Exception : public HandleHolder<OCI_Error *>, public std::exception
+class Exception : public std::exception
 {
     template<class TResultType>
     friend TResultType Check(TResultType result);
@@ -596,6 +596,12 @@ private:
     Exception(OCI_Error *err);
 
 	std::string _what;
+    OCI_Statement *_pStatement;
+    OCI_Connection *_pConnnection;
+    unsigned int _row;
+    ExceptionType _type;
+    unsigned int _errLib;
+    unsigned int _errOracle;
 };
 
 /**

@@ -609,9 +609,7 @@ void test_foreach(void)
     cout << text("\n>>>>> FOREACH FETCH\n\n");
 
     Statement st(con);
-    st.Execute(text("select * from test_fetch"));
-    Resultset rs = st.GetResultset();
-    rs.ForEach(PrintProductFromQuery);
+    st.Execute(text("select * from test_fetch"), PrintProductFromQuery);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -623,9 +621,7 @@ void test_foreach_translate(void)
     cout << text("\n>>>>> FOREACH FETCH WITH TRANSLATION\n\n");
 
     Statement st(con);
-    st.Execute(text("select * from test_fetch"));
-    Resultset rs = st.GetResultset();
-    rs.ForEach(PrintProductFromObject, CreateProductFromQuery);
+    st.Execute(text("select * from test_fetch"), PrintProductFromObject, CreateProductFromQuery);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -634,22 +630,16 @@ void test_foreach_translate(void)
 
 void test_bind1(void)
 {
-    int code = 1;
+    unsigned int code = 1, count = 0;
 
     cout << text("\n>>>>> TEST BINDING \n\n");
 
     Statement st(con);
     st.Prepare(text("select * from test_fetch where code = :code"));
     st.Bind(text(":code"), code, BindInfo::In);
-    st.Execute();
+    count = st.ExecutePrepared(PrintProductFromObject, CreateProductFromQuery);
 
-    Resultset rs = st.GetResultset();
-    while (rs++)
-    {
-        PrintProductFromQuery(rs);
-    }
-
-    cout <<endl << rs.GetCount() << text(" row(s) fetched") <<endl;
+    cout <<endl << count << text(" row(s) fetched") <<endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -707,7 +697,7 @@ void test_bind2(void)
 
     /* do insert */
 
-    st.Execute();
+    st.ExecutePrepared();
     con.Commit();
 
     cout <<endl << st.GetAffectedRows() << text(" row(s) inserted") <<endl;
@@ -733,7 +723,7 @@ void test_piecewise_insert(void)
         st.Prepare(text("insert into test_long_raw(code, content) values (1, :data)"));
         st.SetLongMaxSize(static_cast<unsigned int>(size));
         st.Bind(text(":data"), lg, static_cast<unsigned int>(size), BindInfo::In);
-        st.Execute();
+        st.ExecutePrepared();
 
         unsigned char *strBuffer = new unsigned char[size];
         file.read(reinterpret_cast<char *>(strBuffer), size);
@@ -849,7 +839,7 @@ void test_ref_cursor(void)
     Statement st(con);
     st.Prepare(text("begin open :c for select * from test_fetch; end;"));
     st.Bind(text(":c"), stBind, BindInfo::Out);
-    st.Execute();
+    st.ExecutePrepared();
 
     Resultset rs = stBind.GetResultset();
     while (rs++)
@@ -873,7 +863,7 @@ void test_plsql(void)
 
     st.Prepare(text("begin :res := trunc(sysdate+1)-trunc(sysdate-1); end;"));
     st.Bind(text(":res"), res, BindInfo::Out);
-    st.Execute();
+    st.ExecutePrepared();
     cout << text("PL/SQL : trunc(sysdate+1)-trunc(sysdate-1)") <<endl;
     cout << text("Result : ") << res <<endl;
 
@@ -947,9 +937,9 @@ void test_timestamp(void)
     {
         cout << text("\n>>>>> TEST TIMESTAMP\n\n");
 
-        Timestamp tm(Timestamp::NoTimeZone);
+        Timestamp tm = Timestamp::SysTimestamp();
 
-        tm.SysTimestamp();
+        cout << text("Current timestamp: ") << tm << endl;
 
         /* intervals raw oci functions have some troubles with Oracle 9i. So let's
         use it for the demo only if we're using 10g or above */
@@ -961,7 +951,7 @@ void test_timestamp(void)
             Interval itv(Interval::DaySecond);
             itv.SetDaySecond(1, 1, 1, 1, 0);
             tm += itv;
-            cout << text("Current timestamp + Interval :") << tm <<endl;
+            cout << text("Current timestamp + Interval: ") << tm <<endl;
         }
     }
 }
@@ -1019,7 +1009,7 @@ void test_returning(void)
     st.Prepare(text("update test_lob set code = code + 1 returning code, content into :i, :l"));
     st.Register<int>(text(":i"));
     st.Register<Clob>(text(":l"));
-    st.Execute();
+    st.ExecutePrepared();
 
     Resultset rs = st.GetResultset();
     while (rs++)
@@ -1063,9 +1053,7 @@ void test_returning_array(void)
         str += ((i + 1) + '0');
         tab_str.push_back(str);
 
-        Date date;
-        date.SysDate();
-        tab_date.push_back(date);
+        tab_date.push_back(Date::SysDate());
 
         Clob clob(con);
         clob.Write(text("Lob value ") + str);
@@ -1117,7 +1105,7 @@ void test_returning_array(void)
     st.Register<File   >(text(":out_file"));
     st.Register<ostring>(text(":out_str"), 30);
 
-    st.Execute();
+    st.ExecutePrepared();
     cout <<endl << st.GetAffectedRows() << text(" row(s) inserted") <<endl;
 
     int rowIndex = 0;
@@ -1183,7 +1171,7 @@ void test_object_insert(void)
     Statement st(con);
     st.Prepare(text("insert into test_object values(:obj)"));
     st.Bind(text(":obj"), obj1, BindInfo::In);
-    st.Execute();
+    st.ExecutePrepared();
 
     cout << text("Rows inserted :  ") << st.GetAffectedRows() <<endl;
 
@@ -1310,7 +1298,7 @@ void test_collection(void)
 
     st.Bind(text(":tab_emp"), coll, BindInfo::In);
     st.Bind(text(":id"), i, BindInfo::In);
-    st.Execute();
+    st.ExecutePrepared();
 
     cout << text("Department ID #") << i <<endl;
 
@@ -1391,7 +1379,7 @@ void test_ref(void)
                 text("end; "));
 
     st.Bind(text(":r"), ref, BindInfo::InOut);
-    st.Execute();
+    st.ExecutePrepared();
 
     Object obj = ref.GetObject();
     cout << obj.Get<int>(text("ID")) << text(" - ") << obj.Get<ostring>(text("NAME")) <<endl;
