@@ -61,7 +61,12 @@ void OCI_ErrorFree
     OCI_Error *err
 )
 {
-    OCI_FREE(err);
+    if (err == &OCILib.lib_err)
+    {
+        return;
+    }
+
+    OCI_FREE(err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -75,15 +80,14 @@ void OCI_ErrorReset
 {
     if (err)
     {
-        err->warning = FALSE;
-        err->raise   = TRUE;
-        err->active  = FALSE;
-        err->con     = NULL;
-        err->stmt    = NULL;
-        err->sqlcode = 0;
-        err->libcode = 0;
-        err->type    = 0;
-        err->str[0]  = 0;
+        err->raise      = FALSE;
+        err->active     = FALSE;
+        err->con        = NULL;
+        err->stmt       = NULL;
+        err->sqlcode    = 0;
+        err->libcode    = 0;
+        err->type       = 0;
+        err->str[0]     = 0;
     }
 }
 
@@ -93,20 +97,14 @@ void OCI_ErrorReset
 
 OCI_Error * OCI_ErrorGet
 (
-    boolean check,
-    boolean warning
+    boolean check
 )
 {
     OCI_Error *err = NULL;
 
-    if (warning && !OCILib.warnings_on)
+    if (OCILib.loaded && OCI_LIB_THREADED)
     {
-        return NULL;
-    }
-
-    if (OCILib.loaded)
-    {
-        if (OCI_ThreadKeyGet(OCILib.key_errs, ( void **) (dvoid *) &err))
+        if (OCI_ThreadKeyGet(OCILib.key_errs, (void **)(dvoid *)&err))
         {
             if (!err)
             {
@@ -117,23 +115,16 @@ OCI_Error * OCI_ErrorGet
                     OCI_ThreadKeySet(OCILib.key_errs, err);
                 }
             }
-            else if (check )
-            {
-                if (err->active)
-                {
-                    err = NULL;
-                }
-            }
         }
     }
     else
     {
         err = &OCILib.lib_err;
+    }
 
-        if (err && err->active)
-        {
-            err = NULL;
-        }
+    if (check && err->active)
+    {
+        err = NULL;
     }
 
     return err;
@@ -152,7 +143,7 @@ const otext * OCI_API OCI_ErrorGetString
     OCI_Error *err
 )
 {
-    OCI_CHECK(err == NULL, NULL);
+    OCI_CHECK(NULL == err, NULL);
 
     return err->str;
 }
@@ -166,7 +157,7 @@ unsigned int OCI_API OCI_ErrorGetType
     OCI_Error *err
 )
 {
-    OCI_CHECK(err == NULL, OCI_UNKNOWN);
+    OCI_CHECK(NULL == err, OCI_UNKNOWN);
 
     return err->type;
 }
@@ -180,7 +171,7 @@ int OCI_API OCI_ErrorGetOCICode
     OCI_Error *err
 )
 {
-    OCI_CHECK(err == NULL, OCI_UNKNOWN);
+    OCI_CHECK(NULL == err, OCI_UNKNOWN);
 
     return (int) err->sqlcode;
 }
@@ -194,7 +185,7 @@ int OCI_API OCI_ErrorGetInternalCode
     OCI_Error *err
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_ERROR, err, 0);
+    OCI_CHECK(NULL == err, 0);
 
     return err->libcode;
 }
@@ -208,7 +199,7 @@ OCI_Connection * OCI_API OCI_ErrorGetConnection
     OCI_Error *err
 )
 {
-    OCI_CHECK(err == NULL, NULL);
+    OCI_CHECK(NULL == err, NULL);
 
     return err->con;
 }
@@ -222,7 +213,7 @@ OCI_Statement * OCI_API OCI_ErrorGetStatement
     OCI_Error *err
 )
 {
-    OCI_CHECK(err == NULL, NULL);
+    OCI_CHECK(NULL == err, NULL);
 
     return err->stmt;
 }
@@ -236,7 +227,7 @@ unsigned int OCI_API OCI_ErrorGetRow
     OCI_Error *err
 )
 {
-    OCI_CHECK(err == NULL, 0);
+    OCI_CHECK(NULL == err, 0);
 
     return err->row;
 }

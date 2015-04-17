@@ -48,9 +48,42 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     (def && OCI_DefineIsDataNotNull(def) && (type == def->col.datatype))
 
 
-#define OCI_GET_BY_NAME(rs, name, func, res)                    \
-    int index = OCI_GetDefineIndex(rs, name);                    \
-    return (index > 0) ? func(rs, (unsigned int) index) : res;
+#define OCI_GET_BY_NAME(rs, name, func, type, res)                                              \
+    int index = -1;                                                                             \
+    OCI_LIB_CALL_ENTER(type, res)                                                               \
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                        \
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)                                                         \
+    index = OCI_GetDefineIndex(rs, name);                                                       \
+    if (index > 0)                                                                              \
+    {                                                                                           \
+        if (!call_err) call_err = OCI_ErrorGet(FALSE);                                          \
+        call_retval = func(rs, (unsigned int) index);                                           \
+        call_status = !call_err->raise;                                                         \
+    }                                                                                           \
+    OCI_LIB_CALL_EXIT()
+
+
+#define OCI_GET_NUMBER(rs, index, num_type, type, res)                                          \
+    OCI_LIB_CALL_ENTER(type, res)                                                               \
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                        \
+    OCI_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)                                       \
+    call_status = OCI_DefineGetNumber(rs, index, &call_retval, num_type, sizeof(call_retval));  \
+    OCI_LIB_CALL_EXIT()
+
+
+#define OCI_GET_HANDLE(rs, index, type, res, lib_type, func)                        \
+    OCI_Define *def = NULL;                                                         \
+    OCI_LIB_CALL_ENTER(type, res)                                                   \
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                            \
+    OCI_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)                           \
+    def = OCI_GetDefine(rs, index);                                                 \
+    if (OCI_MATCHING_TYPE(def, lib_type))                                           \
+    {                                                                               \
+        if (!call_err) call_err = OCI_ErrorGet(FALSE);                              \
+        call_retval = func;                                                         \
+        call_status = (NULL != call_retval);                                        \
+    }                                                                               \
+    OCI_LIB_CALL_EXIT()
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ResultsetCreate
@@ -109,7 +142,7 @@ OCI_Resultset * OCI_ResultsetCreate
         {
             rs->defs = (OCI_Define *) OCI_MemAlloc(OCI_IPC_DEFINE, sizeof(*rs->defs), (size_t) nb, TRUE);
 
-            res = (rs->defs != NULL);
+            res = (NULL != rs->defs);
         }
 
         /* describe select list */
@@ -200,7 +233,7 @@ OCI_Resultset * OCI_ResultsetCreate
                 {
                     case OCI_CDT_LOB:
                     {
-                        /* check national attribute for nclobs */
+                        /* check national attribute for national character large objects */
                         if (OCI_NCLOB == def->col.subtype)
                         {
                             def->col.csfrm = SQLCS_NCHAR;
@@ -215,7 +248,7 @@ OCI_Resultset * OCI_ResultsetCreate
                     }
                     case OCI_CDT_NUMERIC:
                     {
-                        /* for integer types, set the bufsize here in order to
+                        /* for integer types, set the buffer size here in order to
                            retrieve later the integer type (short, integer, big_int)
                            depending on the integer size */
                         def->col.bufsize = def->col.size;
@@ -223,7 +256,7 @@ OCI_Resultset * OCI_ResultsetCreate
                     }
                     case OCI_CDT_DATETIME:
                     {
-                        /* preset bufsize here to let OCI_ColumnMap() know we don't
+                        /* preset buffer size here to let OCI_ColumnMap() know we don't
                            want the column to mapped to SQLT_ODT */
                         if (SQLT_DAT == def->col.sqlcode)
                         {
@@ -240,7 +273,7 @@ OCI_Resultset * OCI_ResultsetCreate
         }
     }
 
-    if (!res)
+    if (!res && rs)
     {
         OCI_ResultsetFree(rs);
         rs = NULL;
@@ -265,7 +298,7 @@ boolean OCI_FetchPieces
     void *handle;
     ub4 i, j;
 
-    OCI_CHECK(rs == NULL, FALSE);
+    OCI_CHECK(NULL == rs, FALSE)
 
     /* reset long objects */
 
@@ -356,7 +389,7 @@ boolean OCI_FetchPieces
                                                         (size_t) lg->maxsize, 1);
                 }
 
-                res = (lg->buffer != NULL);
+                res = (NULL != lg->buffer);
 
                 /* update piece info */
 
@@ -382,7 +415,6 @@ boolean OCI_FetchPieces
                                             &lg->piecesize, piece,
                                             lg->def->buf.inds, (ub2 *) NULL)
                     )
-
                 }
 
                 break;
@@ -707,7 +739,7 @@ boolean OCI_ResultsetExpandStrings
     ub4 i;
     int j;
 
-    OCI_CHECK(rs == NULL, FALSE)
+    OCI_CHECK(NULL == rs, FALSE)
 
     for (i = 0; i < rs->nb_defs; i++)
     {
@@ -727,6 +759,171 @@ boolean OCI_ResultsetExpandStrings
     return TRUE;
 }
 
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ResultsetInit
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_ResultsetInit
+(
+OCI_Resultset *rs
+)
+{
+    rs->bof          = TRUE;
+    rs->eof          = FALSE;
+    rs->fetch_status = OCI_SUCCESS;
+    rs->row_count    = 0;
+    rs->row_cur      = 0;
+    rs->row_abs      = 0;
+    rs->row_fetched  = 0;
+
+    return TRUE;
+}
+
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ResultsetFree
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_ResultsetFree
+(
+OCI_Resultset *rs
+)
+{
+    boolean res = TRUE;
+    ub4 i, j;
+
+    OCI_CHECK(NULL == rs, FALSE)
+
+    for (i = 0; i < rs->nb_defs; i++)
+    {
+        OCI_Define *def = &(rs->defs[i]);
+
+        /* free buffer objects */
+
+        if (def->obj)
+        {
+            /* handy cast to set object state flag */
+
+            ((OCI_Datatype *)def->obj)->hstate = OCI_OBJECT_FETCHED_DIRTY;
+
+            switch (def->col.datatype)
+            {
+            case OCI_CDT_DATETIME:
+            {
+                OCI_DateFree((OCI_Date *)def->obj);
+                break;
+            }
+            case OCI_CDT_LOB:
+            {
+                OCI_LobFree((OCI_Lob *)def->obj);
+                break;
+            }
+            case OCI_CDT_FILE:
+            {
+                OCI_FileFree((OCI_File *)def->obj);
+                break;
+            }
+            case OCI_CDT_CURSOR:
+            {
+                OCI_StatementClose((OCI_Statement *)def->obj);
+                OCI_FREE(def->obj)
+                break;
+            }
+            case OCI_CDT_OBJECT:
+            {
+                OCI_ObjectFree((OCI_Object *)def->obj);
+                break;
+            }
+            case OCI_CDT_COLLECTION:
+            {
+                OCI_CollFree((OCI_Coll *)def->obj);
+                break;
+            }
+            case OCI_CDT_REF:
+            {
+                OCI_RefFree((OCI_Ref *)def->obj);
+                break;
+            }
+            case OCI_CDT_TIMESTAMP:
+            {
+                OCI_TimestampFree((OCI_Timestamp *)def->obj);
+                break;
+            }
+            case OCI_CDT_INTERVAL:
+            {
+                OCI_IntervalFree((OCI_Interval *)def->obj);
+                break;
+            }
+            }
+
+            def->obj = NULL;
+        }
+
+        /* free OCI handles */
+
+        if (OCI_UNKNOWN != def->col.handletype)
+        {
+            if (OCI_CDT_CURSOR == def->col.datatype)
+            {
+                if (def->buf.data)
+                {
+                    for (j = 0; j < def->buf.count; j++)
+                    {
+                        OCI_HandleFree((dvoid *)def->buf.data[j], (ub4)def->col.handletype);
+                    }
+                }
+            }
+            else
+            {
+                OCI_DescriptorArrayFree((dvoid *)def->buf.data,
+                    (ub4)def->col.handletype,
+                    (ub4)def->buf.count);
+            }
+        }
+
+        /* free OCI long buffers */
+
+        if ((OCI_CDT_LONG) == def->col.datatype && def->buf.data)
+        {
+            for (j = 0; j < def->buf.count; j++)
+            {
+                if (def->buf.data[j])
+                {
+                    ((OCI_Datatype *)def->buf.data[j])->hstate = OCI_OBJECT_FETCHED_DIRTY;
+
+                    OCI_LongFree((OCI_Long *)def->buf.data[j]);
+                }
+            }
+        }
+
+        /* free column pointers */
+
+        OCI_FREE(def->col.name)
+
+        /* free buffer pointers */
+
+        OCI_FREE(def->buf.data)
+        OCI_FREE(def->buf.inds)
+        OCI_FREE(def->buf.obj_inds)
+        OCI_FREE(def->buf.lens)
+        OCI_FREE(def->buf.tmpbuf)
+    }
+
+    /* free column map */
+
+    if (rs->map)
+    {
+        OCI_HashFree(rs->map);
+    }
+
+    /* free defines (column array) */
+
+    OCI_FREE(rs->defs)
+
+    OCI_FREE(rs)
+
+    return res;
+}
 
 /* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
@@ -741,12 +938,12 @@ OCI_Resultset * OCI_API OCI_GetResultset
     OCI_Statement *stmt
 )
 {
-    OCI_Resultset *rs = NULL;
-    boolean res       = TRUE;
+    OCI_LIB_CALL_ENTER(OCI_Resultset*, NULL)
 
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_DESCRIBED)
 
-    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_DESCRIBED, NULL);
+    call_status = TRUE;
 
     /* if the sql statement does not return a result, we just return NULL and not
        throwing any exception
@@ -759,12 +956,12 @@ OCI_Resultset * OCI_API OCI_GetResultset
 
         if (stmt->rsts && stmt->rsts[0])
         {
-            rs = stmt->rsts[0];
+            call_retval = stmt->rsts[0];
         }
 
         /* allocate resultset for select statements only */
 
-        if (!rs  && (OCI_CST_SELECT == stmt->type))
+        if (!call_retval && (OCI_CST_SELECT == stmt->type))
         {
             /* allocate memory for one resultset handle */
 
@@ -778,17 +975,15 @@ OCI_Resultset * OCI_API OCI_GetResultset
 
                 /* create resultset object */
 
-                rs = stmt->rsts[0] = OCI_ResultsetCreate(stmt, stmt->fetch_size);
+                call_retval = stmt->rsts[0] = OCI_ResultsetCreate(stmt, stmt->fetch_size);
             }
 
         }
 
-        res = (rs != NULL);
+        call_status = (NULL != call_retval);
     }
 
-    OCI_RESULT(res);
-
-    return rs;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -800,185 +995,19 @@ OCI_Resultset * OCI_API OCI_GetNextResultset
     OCI_Statement *stmt
 )
 {
-    OCI_Resultset *rs = NULL;
+    OCI_LIB_CALL_ENTER(OCI_Resultset*, NULL)
 
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_DESCRIBED)
+
+    call_status = TRUE;
 
     if (stmt->cur_rs < (stmt->nb_rs-1))
     {
-        rs = stmt->rsts[++stmt->cur_rs];
+        call_retval = stmt->rsts[++stmt->cur_rs];
     }
 
-    OCI_RESULT(TRUE);
-
-    return rs;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_ResultsetInit
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_ResultsetInit
-(
-    OCI_Resultset *rs
-)
-{
-    rs->bof          = TRUE;
-    rs->eof          = FALSE;
-    rs->fetch_status = OCI_SUCCESS;
-    rs->row_count    = 0;
-    rs->row_cur      = 0;
-    rs->row_abs      = 0;
-    rs->row_fetched  = 0;
-
-    return TRUE;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_ResultsetFree
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_ResultsetFree
-(
-    OCI_Resultset *rs
-)
-{
-    boolean res = TRUE;
-    ub4 i, j;
-
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
-
-    for (i = 0; i < rs->nb_defs; i++)
-    {
-        OCI_Define *def = &(rs->defs[i]);
-
-        /* free buffer objects */
-
-        if (def->obj)
-        {
-            /* handy cast to set object state flag */
-
-            ((OCI_Datatype *) def->obj)->hstate = OCI_OBJECT_FETCHED_DIRTY;
-
-            switch (def->col.datatype)
-            {
-                case OCI_CDT_DATETIME:
-                {
-                    OCI_DateFree((OCI_Date *) def->obj);
-                    break;
-                }
-                case OCI_CDT_LOB:
-                {
-                    OCI_LobFree((OCI_Lob *) def->obj);
-                    break;
-                }
-                case OCI_CDT_FILE:
-                {
-                    OCI_FileFree((OCI_File *) def->obj);
-                    break;
-                }
-                case OCI_CDT_CURSOR:
-                {
-                    OCI_StatementClose((OCI_Statement *) def->obj);
-                    OCI_FREE(def->obj);
-                    break;
-                }
-                case OCI_CDT_OBJECT:
-                {
-                    OCI_ObjectFree((OCI_Object *) def->obj);
-                    break;
-                }
-                case OCI_CDT_COLLECTION:
-                {
-                    OCI_CollFree((OCI_Coll *) def->obj);
-                    break;
-                }
-                case OCI_CDT_REF:
-                {
-                    OCI_RefFree((OCI_Ref *) def->obj);
-                    break;
-                }
-                case OCI_CDT_TIMESTAMP:
-                {
-                    OCI_TimestampFree((OCI_Timestamp *) def->obj);
-                    break;
-                }
-                case OCI_CDT_INTERVAL:
-                {
-                    OCI_IntervalFree((OCI_Interval *) def->obj);
-                    break;
-                }
-            }
-
-            def->obj = NULL;
-        }
-
-        /* free OCI handles */
-
-        if (OCI_UNKNOWN != def->col.handletype)
-        {
-            if (OCI_CDT_CURSOR == def->col.datatype)
-            {
-                if (def->buf.data)
-                {
-                    for(j=0; j < def->buf.count; j++)
-                    {
-                        OCI_HandleFree((dvoid *) def->buf.data[j], (ub4) def->col.handletype);
-                    }
-                }
-            }
-            else
-            {
-                OCI_DescriptorArrayFree((dvoid *) def->buf.data,
-                                        (ub4    ) def->col.handletype,
-                                        (ub4    ) def->buf.count);
-            }
-        }
-
-        /* free OCI long buffers */
-
-        if ((OCI_CDT_LONG) == def->col.datatype && def->buf.data)
-        {
-            for(j=0; j < def->buf.count; j++)
-            {
-                if (def->buf.data[j])
-                {
-                    ((OCI_Datatype *) def->buf.data[j])->hstate = OCI_OBJECT_FETCHED_DIRTY;
-
-                    OCI_LongFree((OCI_Long *) def->buf.data[j]);
-                }
-            }
-        }
-
-        /* free column pointers */
-
-        OCI_FREE(def->col.name);
-
-        /* free buffer pointers */
-
-        OCI_FREE(def->buf.data);
-        OCI_FREE(def->buf.inds);
-        OCI_FREE(def->buf.obj_inds);
-        OCI_FREE(def->buf.lens);
-        OCI_FREE(def->buf.tmpbuf);
-    }
-
-    /* free column map */
-
-    if (rs->map != NULL)
-    {
-        OCI_HashFree(rs->map);
-    }
-
-    /* free defines (column array) */
-
-    OCI_FREE(rs->defs);
-
-    OCI_FREE(rs);
-
-    OCI_RESULT(res);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -990,21 +1019,21 @@ boolean OCI_API OCI_FetchPrev
     OCI_Resultset *rs
 )
 {
-    boolean res = FALSE;
-    boolean err = FALSE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
-    OCI_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED, FALSE);
-
-    OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
+    OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
+    OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
+
+    call_status = TRUE;
 
     if (!rs->bof)
     {
-        res = TRUE;
+        call_retval = TRUE;
 
         if (rs->row_cur == 1)
         {
@@ -1025,9 +1054,9 @@ boolean OCI_API OCI_FetchPrev
                     offset = 1 - (rs->fetch_size + rs->row_fetched);
                 }
 
-                res = OCI_FetchData(rs, OCI_SFD_RELATIVE, offset, &err);
+                call_retval = OCI_FetchData(rs, OCI_SFD_RELATIVE, offset, &call_status);
 
-                if (res)
+                if (call_retval)
                 {
                     if (rs->fetch_size > rs->row_abs)
                     {
@@ -1050,14 +1079,12 @@ boolean OCI_API OCI_FetchPrev
 
         rs->eof = FALSE;
 
-        res = res && !rs->bof;
+        call_retval = call_retval && !rs->bof;
     }
 
 #endif
 
-    OCI_RESULT(!err);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1069,15 +1096,16 @@ boolean OCI_API OCI_FetchNext
     OCI_Resultset *rs
 )
 {
-    boolean res = FALSE;
-    boolean err = FALSE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
-    OCI_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
+
+    call_status = TRUE;
 
     if (!rs->eof)
     {
-        res = TRUE;
+        call_retval = TRUE;
 
         if (rs->stmt->nb_rbinds == 0)
         {
@@ -1091,9 +1119,9 @@ boolean OCI_API OCI_FetchNext
                 }
                 else
                 {
-                    res = OCI_FetchData(rs, OCI_SFD_NEXT, 0, &err);
+                    call_retval = OCI_FetchData(rs, OCI_SFD_NEXT, 0, &call_status);
 
-                    if (res)
+                    if (call_retval)
                     {
                         rs->bof     = FALSE;
                         rs->row_cur = 1;
@@ -1133,12 +1161,10 @@ boolean OCI_API OCI_FetchNext
             }
         }
 
-        res = res && !rs->eof;
+        call_retval = call_retval && !rs->eof;
     }
 
-    OCI_RESULT(!err);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1150,17 +1176,17 @@ boolean OCI_API OCI_FetchFirst
     OCI_Resultset *rs
 )
 {
-    boolean res = TRUE;
-    boolean err = FALSE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
-    OCI_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED, FALSE);
-
-    OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
+    OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
+    OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
+
+    call_status = TRUE;
 
     rs->bof = FALSE;
     rs->eof = FALSE;
@@ -1168,18 +1194,11 @@ boolean OCI_API OCI_FetchFirst
     rs->row_abs = 1;
     rs->row_cur = 1;
 
-    res = OCI_FetchData(rs, OCI_SFD_FIRST, 0, &err);
-
-#else
-
-    res = FALSE;
-    err = TRUE;
+    call_retval = (OCI_FetchData(rs, OCI_SFD_FIRST, 0, &call_status) && !rs->bof);
 
 #endif
 
-    OCI_RESULT(!err);
-
-    return (res && !rs->bof);
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1191,17 +1210,17 @@ boolean OCI_API OCI_FetchLast
     OCI_Resultset *rs
 )
 {
-    boolean res = TRUE;
-    boolean err = FALSE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
-    OCI_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED, FALSE);
-
-    OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
+    OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
+    OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
+
+    call_status = TRUE;
 
     rs->bof = FALSE;
     rs->eof = FALSE;
@@ -1209,20 +1228,13 @@ boolean OCI_API OCI_FetchLast
     rs->row_abs = 0;
     rs->row_cur = 1;
 
-    res = OCI_FetchData(rs, OCI_SFD_LAST, 0, &err);
+    call_retval = (OCI_FetchData(rs, OCI_SFD_LAST, 0, &call_status) && !rs->eof);
 
     rs->row_abs = rs->row_count;
 
-#else
-
-    res = FALSE;
-    err = TRUE;
-
 #endif
 
-    OCI_RESULT(!err);
-
-    return (res && !rs->eof);
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1236,35 +1248,29 @@ boolean OCI_API OCI_FetchSeek
     int            offset
 )
 {
-    boolean res = TRUE;
-    boolean err = FALSE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
-    OCI_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED, FALSE);
-
-    OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
+    OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt, FALSE);
+    OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
+    OCI_CHECK_ENUM_VALUE(rs->stmt->con, rs->stmt, mode, SeekModeValues, OTEXT("Fetch Seek Mode"))
 
-    OCI_CHECK_ENUM_VALUE(rs->stmt->con, rs->stmt, mode, SeekModeValues, OTEXT("Fetch Seek Mode"), FALSE);
+    call_status = TRUE;
 
-    res = OCI_FetchCustom(rs, mode, offset, &err);
+    call_retval = OCI_FetchCustom(rs, mode, offset, &call_status);
 
 #else
 
-    OCI_NOT_USED(mode);
-    OCI_NOT_USED(offset);
-
-    res = FALSE;
-    err = TRUE;
+    OCI_NOT_USED(mode)
+    OCI_NOT_USED(offset)
 
 #endif
 
-    OCI_RESULT(!err);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1276,11 +1282,14 @@ unsigned int OCI_API OCI_GetRowCount
     OCI_Resultset *rs
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, 0);
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
 
-    return rs->row_count;
+    call_retval = rs->row_count;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1292,11 +1301,14 @@ unsigned int OCI_API OCI_GetCurrentRow
     OCI_Resultset *rs
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, 0);
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
 
-    return rs->row_abs;
+    call_retval = rs->row_abs;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1308,11 +1320,14 @@ unsigned int OCI_API OCI_GetColumnCount
     OCI_Resultset *rs
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, 0);
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
 
-    return rs->nb_defs;
+    call_retval = rs->nb_defs;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1325,19 +1340,15 @@ OCI_Column * OCI_API OCI_GetColumn
     unsigned int   index
 )
 {
-    OCI_Define *def = NULL;
-    OCI_Column *col = NULL;
+    OCI_LIB_CALL_ENTER(OCI_Column*, NULL)
 
-    def = OCI_GetDefine(rs, index);
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
 
-    if (def)
-    {
-        col = &def->col;
-    }
+    call_retval = &rs->defs[index - 1].col;
+    call_status = TRUE;
 
-    OCI_RESULT(col != NULL);
-
-    return col;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1350,23 +1361,22 @@ OCI_Column * OCI_API OCI_GetColumn2
     const otext   *name
 )
 {
-    OCI_Column *col = NULL;
+    int index = -1;
 
-    int index = OCI_GetDefineIndex(rs, name);
+    OCI_LIB_CALL_ENTER(OCI_Column*, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)
+
+    index = OCI_GetDefineIndex(rs, name);
 
     if (index >= 0)
     {
-        OCI_Define *def = OCI_GetDefine(rs, index);
-
-        if (def)
-        {
-            col = &def->col;
-        }
+        call_retval = &rs->defs[index - 1].col;
+        call_status = TRUE;
     }
 
-    OCI_RESULT(col != NULL);
-
-    return col;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1379,16 +1389,22 @@ unsigned int OCI_API OCI_GetColumnIndex
     const otext   *name
 )
 {
-    int index = OCI_GetDefineIndex(rs, name);
+    int index = -1;
 
-    if (index <= 0)
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
+
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)
+
+    index = OCI_GetDefineIndex(rs, name);
+
+    if (index >= 0)
     {
-        index = 0;
+        call_retval = (unsigned int) index;
+        call_status = TRUE;
     }
 
-    OCI_RESULT(TRUE);
-
-    return (unsigned int) index;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1402,17 +1418,18 @@ boolean OCI_API OCI_SetStructNumericType
     unsigned int   type
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_BOUND(rs->stmt->con, index,  1,  rs->nb_defs, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_BOUND(rs->stmt->con, index,  1,  rs->nb_defs);
 
-    OCI_CHECK_COMPAT(rs->stmt->con, OCI_CDT_NUMERIC == rs->defs[index - 1].col.datatype, FALSE);
+    OCI_CHECK_COMPAT(rs->stmt->con, OCI_CDT_NUMERIC == rs->defs[index - 1].col.datatype);
 
     rs->defs[index-1].col.subtype = type;
 
-    OCI_RESULT(TRUE);
+    call_retval = call_status = TRUE;
 
-    return TRUE;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1426,9 +1443,21 @@ boolean OCI_API OCI_SetStructNumericType2
     unsigned int   type
 )
 {
-    int index = OCI_GetDefineIndex(rs, name);
+    int index = -1;
 
-    return (index > 0) ?  OCI_SetStructNumericType(rs, (unsigned int) index, type) : FALSE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)
+
+    index = OCI_GetDefineIndex(rs, name);
+
+    if (index >= 0)
+    {
+        call_retval = call_status = OCI_SetStructNumericType(rs, (unsigned int)index, type);
+    }
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1444,10 +1473,13 @@ boolean OCI_API OCI_GetStruct
 {
     char *ptr     = NULL;
     boolean *inds = NULL;
-    boolean res   = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_VOID, row_struct, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_PTR(OCI_IPC_VOID, row_struct)
+
+    call_status = TRUE;
 
     ptr  = (char    *) row_struct;
     inds = (boolean *) row_struct_ind;
@@ -1565,9 +1597,9 @@ boolean OCI_API OCI_GetStruct
         }
     }
 
-    OCI_RESULT(res);
+    call_retval = call_status = TRUE;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1580,11 +1612,7 @@ short OCI_API OCI_GetShort
     unsigned int   index
 )
 {
-    short value = 0;
-
-    OCI_DefineGetNumber(rs, index, &value, OCI_NUM_SHORT, sizeof(value));
-
-    return value;
+    OCI_GET_NUMBER(rs, index, OCI_NUM_SHORT, short, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1597,7 +1625,7 @@ short OCI_API OCI_GetShort2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetShort, 0)
+    OCI_GET_BY_NAME(rs, name, OCI_GetShort, short, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1610,11 +1638,7 @@ unsigned short OCI_API OCI_GetUnsignedShort
     unsigned int   index
 )
 {
-    unsigned short value = 0;
-
-    OCI_DefineGetNumber(rs, index, &value, OCI_NUM_USHORT, sizeof(value));
-
-    return value;
+    OCI_GET_NUMBER(rs, index, OCI_NUM_USHORT, unsigned short, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1627,7 +1651,7 @@ unsigned short OCI_API OCI_GetUnsignedShort2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedShort, 0)
+    OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedShort, unsigned short, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1640,11 +1664,7 @@ int OCI_API OCI_GetInt
     unsigned int   index
 )
 {
-    int value = 0;
-
-    OCI_DefineGetNumber(rs, index, &value, OCI_NUM_INT, sizeof(value));
-
-    return value;
+    OCI_GET_NUMBER(rs, index, OCI_NUM_INT, int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1657,7 +1677,7 @@ int OCI_API OCI_GetInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetInt, 0)
+    OCI_GET_BY_NAME(rs, name, OCI_GetInt, int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1670,11 +1690,7 @@ unsigned int OCI_API OCI_GetUnsignedInt
     unsigned int   index
 )
 {
-    unsigned int value = 0;
-
-    OCI_DefineGetNumber(rs, index, &value, OCI_NUM_UINT, sizeof(value));
-
-    return value;
+    OCI_GET_NUMBER(rs, index, OCI_NUM_UINT, unsigned int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1687,7 +1703,7 @@ unsigned int OCI_API OCI_GetUnsignedInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedInt, 0)
+    OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedInt, unsigned int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1700,11 +1716,7 @@ big_int OCI_API OCI_GetBigInt
     unsigned int   index
 )
 {
-    big_int value = 0;
-
-    OCI_DefineGetNumber(rs, index, &value, OCI_NUM_BIGINT, sizeof(value));
-
-    return value;
+    OCI_GET_NUMBER(rs, index, OCI_NUM_BIGINT, big_int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1717,7 +1729,7 @@ big_int OCI_API OCI_GetBigInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetBigInt, 0)
+    OCI_GET_BY_NAME(rs, name, OCI_GetBigInt, big_int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1730,11 +1742,7 @@ big_uint OCI_API OCI_GetUnsignedBigInt
     unsigned int   index
 )
 {
-    big_uint value = 0;
-
-    OCI_DefineGetNumber(rs, index, &value, OCI_NUM_BIGUINT, sizeof(value));
-
-    return value;
+    OCI_GET_NUMBER(rs, index, OCI_NUM_BIGUINT, big_uint, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1747,7 +1755,7 @@ big_uint OCI_API OCI_GetUnsignedBigInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedBigInt, 0)
+    OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedBigInt, big_uint, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1756,23 +1764,28 @@ big_uint OCI_API OCI_GetUnsignedBigInt2
 
 const otext * OCI_API OCI_GetString
 (
-    OCI_Resultset *rs,
-    unsigned int   index
+OCI_Resultset *rs,
+unsigned int   index
 )
 {
-    OCI_Define *def = OCI_GetDefine(rs, index);
-    otext *str      = NULL;
-    boolean res     = FALSE;
+    OCI_Define *def = NULL;
+
+    OCI_LIB_CALL_ENTER(otext *, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
+
+    def = OCI_GetDefine(rs, index);
 
     if (def && OCI_DefineIsDataNotNull(def))
     {
         void *data = NULL;
 
-        res = TRUE;
+        call_status = TRUE;
 
         if (OCI_CDT_TEXT == def->col.datatype)
         {
-            str = (otext *) OCI_DefineGetData(def);
+            call_retval = (otext *)OCI_DefineGetData(def);
 
             /* for long mapped to string, the zero terminal character is not
                 always added by Oracle ? or OCILIB issue ? Anyway we check the
@@ -1780,9 +1793,9 @@ const otext * OCI_API OCI_GetString
 
             if (OCI_CLONG == def->col.subtype)
             {
-                ub2* lens = (ub2 *) def->buf.lens;
+                ub2* lens = (ub2 *)def->buf.lens;
 
-                str[lens[rs->row_cur-1]] = 0;
+                call_retval[lens[rs->row_cur - 1]] = 0;
             }
         }
         else if ((OCI_CDT_LONG == def->col.datatype) && (OCI_CLONG == def->col.subtype))
@@ -1791,7 +1804,7 @@ const otext * OCI_API OCI_GetString
 
             if (lg)
             {
-                str = (otext *) OCI_LongGetBuffer(lg);
+                call_retval = (otext *)OCI_LongGetBuffer(lg);
             }
         }
         else
@@ -1801,125 +1814,123 @@ const otext * OCI_API OCI_GetString
 
             switch (def->col.datatype)
             {
-                case OCI_CDT_NUMERIC:
-                {
-                    data = OCI_DefineGetData(def);
-                    break;
-                }
-                case OCI_CDT_DATETIME:
-                {
-                    data = OCI_GetDate(rs, index);
-                    break;
-                }
-                case OCI_CDT_TIMESTAMP:
-                {
-                    data =  OCI_GetTimestamp(rs, index);
-                    break;
-                }
-                case OCI_CDT_INTERVAL:
-                {
-                    data = OCI_GetInterval(rs, index);
-                    break;
-                }
-                case OCI_CDT_RAW:
-                {
-                    data = OCI_DefineGetData(def);
-                    data_size = ((ub2*)def->buf.lens)[def->rs->row_cur-1];
-                    break;
-                }
-                case OCI_CDT_REF:
-                {
-                    data = OCI_GetRef(rs, index);
-                    break;
-                }
-                case OCI_CDT_LONG:
-                {
-                    OCI_Long *lg = OCI_GetLong(rs, index);
+            case OCI_CDT_NUMERIC:
+            {
+                data = OCI_DefineGetData(def);
+                break;
+            }
+            case OCI_CDT_DATETIME:
+            {
+                data = OCI_GetDate(rs, index);
+                break;
+            }
+            case OCI_CDT_TIMESTAMP:
+            {
+                data = OCI_GetTimestamp(rs, index);
+                break;
+            }
+            case OCI_CDT_INTERVAL:
+            {
+                data = OCI_GetInterval(rs, index);
+                break;
+            }
+            case OCI_CDT_RAW:
+            {
+                data = OCI_DefineGetData(def);
+                data_size = ((ub2*)def->buf.lens)[def->rs->row_cur - 1];
+                break;
+            }
+            case OCI_CDT_REF:
+            {
+                data = OCI_GetRef(rs, index);
+                break;
+            }
+            case OCI_CDT_LONG:
+            {
+                OCI_Long *lg = OCI_GetLong(rs, index);
 
-                    if (lg)
-                    {
-                       /* here we have binary long, it will be output in hexa */
-                       bufsize = OCI_LongGetSize(lg) * 2;
-                    }
-
-                    data = lg;
-                    break;
+                if (lg)
+                {
+                    /* here we have binary long, it will be output in hexadecimal */
+                    bufsize = OCI_LongGetSize(lg) * 2;
                 }
 
-                case OCI_CDT_LOB:
-                {
-                    OCI_Lob *lob = OCI_GetLob(rs, index);
-
-                    if (lob)
-                    {
-                        bufsize = (unsigned int) OCI_LobGetLength(lob);;
-
-                        if (OCI_BLONG == def->col.subtype)
-                        {
-                            /* here we have binary blob, it will be output in hexa */
-                            bufsize *= 2;
-                        }
-                    }
-
-                    data = lob;
-                    break;
-                }
-                case OCI_CDT_FILE:
-                {
-                    /* directory / name will be output */
-                    data = OCI_GetFile(rs, index);
-                    break;
-                }
-                case OCI_CDT_OBJECT:
-                {
-                    OCI_Object *obj = OCI_GetObject(rs, index);
-
-                    if (obj)
-                    {
-                        res = OCI_ObjectToText(obj, &bufsize, NULL);
-                    }
-
-                    data = obj;
-                    break;
-                }
-                case OCI_CDT_COLLECTION:
-                {
-                    OCI_Coll *coll = OCI_GetColl(rs, index);
-
-                    if (coll)
-                    {
-                        res = OCI_CollToText(coll, &bufsize, NULL);
-                    }
-
-                    data = coll;
-                    break;
-                }
-                default:
-                {
-                    break;
-                }
+                data = lg;
+                break;
             }
 
-            if (res)
+            case OCI_CDT_LOB:
             {
-                res =  OCI_StringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, bufsize);
+                OCI_Lob *lob = OCI_GetLob(rs, index);
 
-                if (res)
+                if (lob)
+                {
+                    bufsize = (unsigned int)OCI_LobGetLength(lob);;
+
+                    if (OCI_BLONG == def->col.subtype)
+                    {
+                        /* here we have binary blob, it will be output in hexadecimal */
+                        bufsize *= 2;
+                    }
+                }
+
+                data = lob;
+                break;
+            }
+            case OCI_CDT_FILE:
+            {
+                /* directory / name will be output */
+                data = OCI_GetFile(rs, index);
+                break;
+            }
+            case OCI_CDT_OBJECT:
+            {
+                OCI_Object *obj = OCI_GetObject(rs, index);
+
+                if (obj)
+                {
+                    call_status = OCI_ObjectToText(obj, &bufsize, NULL);
+                }
+
+                data = obj;
+                break;
+            }
+            case OCI_CDT_COLLECTION:
+            {
+                OCI_Coll *coll = OCI_GetColl(rs, index);
+
+                if (coll)
+                {
+                    call_status = OCI_CollToText(coll, &bufsize, NULL);
+                }
+
+                data = coll;
+                break;
+            }
+            default:
+            {
+                break;
+            }
+            }
+
+            if (call_status)
+            {
+                call_status = OCI_StringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, bufsize);
+
+                if (call_status)
                 {
                     bufsize = OCI_StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, FALSE);
 
                     if (bufsize > 0)
                     {
-                        str = def->buf.tmpbuf;
+                        call_retval = def->buf.tmpbuf;
                     }
                 }
             }
         }
     }
 
-    OCI_RESULT(res);
-
-    return str;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1932,7 +1943,7 @@ const otext * OCI_API OCI_GetString2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetString, NULL)
+    OCI_GET_BY_NAME(rs, name, OCI_GetString, const otext *, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1947,34 +1958,30 @@ unsigned int OCI_API OCI_GetRaw
     unsigned int   len
 )
 {
-    OCI_Define *def = OCI_GetDefine(rs, index);
-    boolean res     = FALSE;
-    ub2 count       = 0;
+    OCI_Define *def = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_VOID, buffer, 0);
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
+
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_PTR(OCI_IPC_VOID, buffer);
+    OCI_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
+
+    def = OCI_GetDefine(rs, index);
 
     if (OCI_MATCHING_TYPE(def, OCI_CDT_RAW))
     {
-        ub2 size = ((ub2*)def->buf.lens)[def->rs->row_cur-1];
+        unsigned int size = (unsigned int)(ub2)((ub2*)def->buf.lens)[def->rs->row_cur - 1];
 
-        count = (ub2) len;
-
-        if (count > size)
-        {
-            count = size;
-        }
-
-        res = TRUE;
+        call_retval = size < len ? size : len;
+        call_status = TRUE;
 
         /* for RAWs, we copy the data in the destination buffer instead of
-           returning internal buffer as we do for strings */
+        returning internal buffer as we do for strings */
 
-        memcpy(buffer, OCI_DefineGetData(def), (size_t) count);
+        memcpy(buffer, OCI_DefineGetData(def), (size_t)call_retval);
     }
 
-    OCI_RESULT(res);
-
-    return (unsigned int) count;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1989,9 +1996,35 @@ unsigned int OCI_API OCI_GetRaw2
     unsigned int   len
 )
 {
-    int index = OCI_GetDefineIndex(rs, name);
+    OCI_Define *def = NULL;
+    int index = -1;
 
-    return (index > 0) ? OCI_GetRaw(rs, (unsigned int) index, buffer, len) : 0;
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
+
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_PTR(OCI_IPC_VOID, buffer)
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)
+
+    index = OCI_GetDefineIndex(rs, name);
+    if (index > 0)
+    {
+        def = OCI_GetDefine(rs, index);
+
+        if (OCI_MATCHING_TYPE(def, OCI_CDT_RAW))
+        {
+            unsigned int size = (unsigned int)(ub2)((ub2*)def->buf.lens)[def->rs->row_cur - 1];
+
+            call_retval = size < len ? size : len;
+            call_status = TRUE;
+
+            /* for RAWs, we copy the data in the destination buffer instead of
+            returning internal buffer as we do for strings */
+
+            memcpy(buffer, OCI_DefineGetData(def), (size_t)call_retval);
+        }
+    }
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2004,11 +2037,7 @@ double OCI_API OCI_GetDouble
     unsigned int   index
 )
 {
-    double value = 0.0;
-
-    OCI_DefineGetNumber(rs, index, &value, OCI_NUM_DOUBLE, sizeof(value));
-
-    return value;
+    OCI_GET_NUMBER(rs, index, OCI_NUM_DOUBLE, double, 0.0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2021,7 +2050,7 @@ double OCI_API OCI_GetDouble2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetDouble, 0.0)
+    OCI_GET_BY_NAME(rs, name, OCI_GetDouble, double, 0.0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2034,11 +2063,7 @@ float OCI_API OCI_GetFloat
     unsigned int   index
 )
 {
-    float value = 0.0f;
-
-    OCI_DefineGetNumber(rs, index, &value, OCI_NUM_FLOAT, sizeof(value));
-
-    return value;
+    OCI_GET_NUMBER(rs, index, OCI_NUM_FLOAT, float, 0.0f)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2051,7 +2076,7 @@ float OCI_API OCI_GetFloat2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetFloat, 0.0f)
+    OCI_GET_BY_NAME(rs, name, OCI_GetFloat, float, 0.0f)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2064,20 +2089,14 @@ OCI_Date * OCI_API OCI_GetDate
     unsigned int   index
 )
 {
-    OCI_Define *def = OCI_GetDefine(rs, index);
-    OCI_Date *date  = NULL;
+    OCI_GET_HANDLE
+    (
+        rs, index, OCI_Date *, NULL, OCI_CDT_DATETIME,
 
-    if (OCI_MATCHING_TYPE(def, OCI_CDT_DATETIME))
-    {
-        date =  OCI_DateInit(rs->stmt->con,
-                             (OCI_Date **) &def->obj,
-                             (OCIDate *) OCI_DefineGetData(def), FALSE,
-                             (SQLT_DAT == def->col.libcode));
-    }
-
-    OCI_RESULT(date != NULL);
-
-    return date;
+        OCI_DateInit(rs->stmt->con, (OCI_Date **) &def->obj,
+                     (OCIDate *) OCI_DefineGetData(def), FALSE,
+                     (SQLT_DAT == def->col.libcode))
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2090,7 +2109,7 @@ OCI_Date * OCI_API OCI_GetDate2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetDate, NULL)
+    OCI_GET_BY_NAME(rs, name, OCI_GetDate, OCI_Date *, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2103,20 +2122,13 @@ OCI_Timestamp * OCI_API OCI_GetTimestamp
     unsigned int   index
 )
 {
-    OCI_Define *def     = OCI_GetDefine(rs, index);
-    OCI_Timestamp *tmsp = NULL;
+    OCI_GET_HANDLE
+    (
+        rs, index, OCI_Timestamp *, NULL, OCI_CDT_TIMESTAMP,
 
-    if (OCI_MATCHING_TYPE(def, OCI_CDT_TIMESTAMP))
-    {
-        tmsp =  OCI_TimestampInit(rs->stmt->con,
-                                  (OCI_Timestamp **) &def->obj,
-                                  (OCIDateTime *) OCI_DefineGetData(def),
-                                  def->col.subtype);
-    }
-
-    OCI_RESULT(tmsp != NULL);
-
-    return tmsp;
+        OCI_TimestampInit(rs->stmt->con, (OCI_Timestamp **) &def->obj,
+                         (OCIDateTime *) OCI_DefineGetData(def), def->col.subtype)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2129,7 +2141,7 @@ OCI_Timestamp * OCI_API OCI_GetTimestamp2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetTimestamp, NULL)
+    OCI_GET_BY_NAME(rs, name, OCI_GetTimestamp, OCI_Timestamp*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2142,20 +2154,13 @@ OCI_Interval * OCI_API OCI_GetInterval
     unsigned int   index
 )
 {
-    OCI_Define *def   = OCI_GetDefine(rs, index);
-    OCI_Interval *itv = NULL;
+    OCI_GET_HANDLE
+    (
+       rs, index, OCI_Interval *, NULL, OCI_CDT_INTERVAL,
 
-    if (OCI_MATCHING_TYPE(def, OCI_CDT_INTERVAL))
-    {
-        itv = OCI_IntervalInit(rs->stmt->con,
-                               (OCI_Interval **) &def->obj,
-                               (OCIInterval *) OCI_DefineGetData(def),
-                               def->col.subtype);
-    }
-
-    OCI_RESULT(itv != NULL);
-
-    return itv;
+       OCI_IntervalInit(rs->stmt->con, (OCI_Interval **) &def->obj,
+                        (OCIInterval *) OCI_DefineGetData(def), def->col.subtype)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2168,7 +2173,7 @@ OCI_Interval * OCI_API OCI_GetInterval2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetInterval, NULL)
+    OCI_GET_BY_NAME(rs, name, OCI_GetInterval, OCI_Interval*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2181,19 +2186,14 @@ OCI_Object * OCI_API OCI_GetObject
     unsigned int   index
 )
 {
-    OCI_Define *def = OCI_GetDefine(rs, index);
-    OCI_Object *obj =  NULL;
+    OCI_GET_HANDLE
+    (
+       rs, index, OCI_Object *, NULL, OCI_CDT_OBJECT,
 
-    if (OCI_MATCHING_TYPE(def, OCI_CDT_OBJECT))
-    {
-        obj =  OCI_ObjectInit(rs->stmt->con,
-                              (OCI_Object **) &def->obj,
-                              OCI_DefineGetData(def), def->col.typinf, NULL, -1, TRUE);
-    }
-
-    OCI_RESULT(obj != NULL);
-
-    return obj;
+       OCI_ObjectInit(rs->stmt->con, (OCI_Object **)&def->obj,
+                      OCI_DefineGetData(def), def->col.typinf,
+                      NULL, -1, TRUE)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2206,7 +2206,7 @@ OCI_Object * OCI_API OCI_GetObject2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetObject, NULL)
+    OCI_GET_BY_NAME(rs, name, OCI_GetObject, OCI_Object*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2219,18 +2219,13 @@ OCI_Coll * OCI_API OCI_GetColl
     unsigned int   index
 )
 {
-    OCI_Define *def = OCI_GetDefine(rs, index);
-    OCI_Coll *coll  = NULL;
+    OCI_GET_HANDLE
+    (
+       rs, index, OCI_Coll *, NULL, OCI_CDT_COLLECTION,
 
-    if (OCI_MATCHING_TYPE(def, OCI_CDT_COLLECTION))
-    {
-        coll = OCI_CollInit(rs->stmt->con, (OCI_Coll **) &def->obj,
-                            OCI_DefineGetData(def), def->col.typinf);
-    }
-
-    OCI_RESULT(coll != NULL);
-
-    return coll;
+       OCI_CollInit(rs->stmt->con, (OCI_Coll **)&def->obj,
+                    OCI_DefineGetData(def), def->col.typinf)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2243,7 +2238,7 @@ OCI_Coll * OCI_API OCI_GetColl2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetColl, NULL)
+    OCI_GET_BY_NAME(rs, name, OCI_GetColl, OCI_Coll*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2256,28 +2251,13 @@ OCI_Ref * OCI_API OCI_GetRef
     unsigned int   index
 )
 {
-    OCI_Define *def = OCI_GetDefine(rs, index);
-    OCI_Ref *ref    = NULL;
+    OCI_GET_HANDLE
+    (
+       rs, index, OCI_Ref *, NULL, OCI_CDT_REF,
 
-    if (OCI_MATCHING_TYPE(def, OCI_CDT_REF))
-    {
-        ref = OCI_RefInit(rs->stmt->con, def->col.typinf,
-                          (OCI_Ref **) &def->obj, OCI_DefineGetData(def));
-
-        /* if the ref object is retrieved from a register bind that has
-           no type info object associated, the type info object is retrieved
-           at the first fetch call by pinning the ref and we affect the type
-           info object handle to the define object */
-
-        if (!def->col.typinf && ref && ref->typinf)
-        {
-            def->col.typinf = ref->typinf;
-        }
-    }
-
-    OCI_RESULT(ref != NULL);
-
-    return ref;
+       OCI_RefInit(rs->stmt->con, &def->col.typinf,
+                   (OCI_Ref **)&def->obj, OCI_DefineGetData(def))
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2290,7 +2270,7 @@ OCI_Ref * OCI_API OCI_GetRef2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetRef, NULL)
+    OCI_GET_BY_NAME(rs, name, OCI_GetRef, OCI_Ref*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2303,18 +2283,13 @@ OCI_Statement * OCI_API OCI_GetStatement
     unsigned int   index
 )
 {
-    OCI_Define *def   = OCI_GetDefine(rs, index);
-    OCI_Statement *st = NULL;
+    OCI_GET_HANDLE
+    (
+       rs, index, OCI_Statement *, NULL, OCI_CDT_CURSOR,
 
-    if (OCI_MATCHING_TYPE(def, OCI_CDT_CURSOR))
-    {
-        st = OCI_StatementInit(rs->stmt->con,(OCI_Statement **) &def->obj,
-                               (OCIStmt *) OCI_DefineGetData(def), TRUE, def->col.name);
-    }
-
-    OCI_RESULT(st != NULL);
-
-    return st;
+       OCI_StatementInit(rs->stmt->con,(OCI_Statement **) &def->obj,
+                         (OCIStmt *) OCI_DefineGetData(def), TRUE, def->col.name)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2327,7 +2302,7 @@ OCI_Statement * OCI_API OCI_GetStatement2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetStatement, NULL)
+    OCI_GET_BY_NAME(rs, name, OCI_GetStatement, OCI_Statement*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2340,19 +2315,14 @@ OCI_Lob * OCI_API OCI_GetLob
     unsigned int   index
 )
 {
-    OCI_Define *def = OCI_GetDefine(rs, index);
-    OCI_Lob * lob   = NULL;
+    OCI_GET_HANDLE
+    (
+       rs, index, OCI_Lob *, NULL, OCI_CDT_LOB,
 
-    if (OCI_MATCHING_TYPE(def, OCI_CDT_LOB))
-    {
-        lob =  OCI_LobInit(rs->stmt->con,(OCI_Lob **) &def->obj,
-                           (OCILobLocator *) OCI_DefineGetData(def),
-                           def->col.subtype);
-    }
-
-    OCI_RESULT(lob != NULL);
-
-    return lob;
+       OCI_LobInit(rs->stmt->con,(OCI_Lob **) &def->obj,
+                   (OCILobLocator *) OCI_DefineGetData(def),
+                   def->col.subtype)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2365,7 +2335,7 @@ OCI_Lob * OCI_API OCI_GetLob2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetLob, NULL)
+    OCI_GET_BY_NAME(rs, name, OCI_GetLob, OCI_Lob*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2378,19 +2348,14 @@ OCI_File * OCI_API OCI_GetFile
     unsigned int   index
 )
 {
-    OCI_Define *def = OCI_GetDefine(rs, index);
-    OCI_File *file  = NULL;
+    OCI_GET_HANDLE
+    (
+       rs, index, OCI_File *, NULL, OCI_CDT_FILE,
 
-    if (OCI_MATCHING_TYPE(def, OCI_CDT_FILE))
-    {
-        file = OCI_FileInit(rs->stmt->con,(OCI_File **) &def->obj,
-                            (OCILobLocator *) OCI_DefineGetData(def),
-                            def->col.subtype);
-    }
-
-    OCI_RESULT(file != NULL);
-
-    return file;
+       OCI_FileInit(rs->stmt->con, (OCI_File **)&def->obj,
+                   (OCILobLocator *) OCI_DefineGetData(def),
+                   def->col.subtype)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2403,7 +2368,7 @@ OCI_File * OCI_API OCI_GetFile2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetFile, NULL)
+    OCI_GET_BY_NAME(rs, name, OCI_GetFile, OCI_File*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2416,17 +2381,12 @@ OCI_Long * OCI_API OCI_GetLong
     unsigned int   index
 )
 {
-    OCI_Define *def = OCI_GetDefine(rs, index);
-    OCI_Long *lg    = NULL;
+    OCI_GET_HANDLE
+    (
+       rs, index, OCI_Long *, NULL, OCI_CDT_LONG,
 
-    if (OCI_MATCHING_TYPE(def, OCI_CDT_LONG))
-    {
-        lg = (OCI_Long *) OCI_DefineGetData(def);
-    }
-
-    OCI_RESULT(lg != NULL);
-
-    return lg;
+       (OCI_Long * )OCI_DefineGetData(def)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2439,7 +2399,7 @@ OCI_Long * OCI_API OCI_GetLong2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetLong, NULL)
+    OCI_GET_BY_NAME(rs, name, OCI_GetLong, OCI_Long*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2452,11 +2412,19 @@ boolean OCI_API OCI_IsNull
     unsigned int   index
 )
 {
-    OCI_Define *def = OCI_GetDefine(rs, index);
+    OCI_Define *def = NULL;
 
-    OCI_RESULT(def != NULL);
+    OCI_LIB_CALL_ENTER(boolean, TRUE)
 
-    return (!OCI_DefineIsDataNotNull(def));
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
+
+    def = OCI_GetDefine(rs, index);
+
+    call_status = (NULL != def);
+    call_retval = !OCI_DefineIsDataNotNull(def);
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2469,9 +2437,22 @@ boolean OCI_API OCI_IsNull2
     const otext   *name
 )
 {
-    int index = OCI_GetDefineIndex(rs, name);
+    int index = -1;
 
-    return (index > 0) ? OCI_IsNull(rs, (unsigned int) index) : TRUE;
+    OCI_LIB_CALL_ENTER(boolean, TRUE)
+
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)
+
+    index = OCI_GetDefineIndex(rs, name);
+
+    if (index >= 0)
+    {
+        call_retval = OCI_IsNull(rs, (unsigned int)index);
+        call_status = TRUE;
+    }
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2483,11 +2464,14 @@ OCI_Statement * OCI_API OCI_ResultsetGetStatement
     OCI_Resultset *rs
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, FALSE);
+    OCI_LIB_CALL_ENTER(OCI_Statement *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
 
-    return rs->stmt;
+    call_retval = rs->stmt;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2500,17 +2484,20 @@ unsigned int OCI_API OCI_GetDataLength
     unsigned int   index
 )
 {
-    OCI_Define *def     = OCI_GetDefine(rs, index);
-    unsigned int length = 0;
-    boolean res         = FALSE;
+    OCI_Define *def = NULL;
+
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
+
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
+
+    def = OCI_GetDefine(rs, index);
 
     if (def && (rs->row_cur > 0))
     {
-        length = (unsigned int) ((ub2 *) def->buf.lens)[rs->row_cur-1];
-        res    = TRUE;
+        call_retval = (unsigned int)((ub2 *)def->buf.lens)[rs->row_cur - 1];
+        call_status = TRUE;
     }
 
-    OCI_RESULT(res);
-
-    return length;
+    OCI_LIB_CALL_EXIT()
 }

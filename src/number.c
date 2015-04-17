@@ -54,13 +54,13 @@ boolean OCI_NumberGet
 {
     boolean res = TRUE;
 
-    OCI_CHECK(con       == NULL, FALSE);
-    OCI_CHECK(number    == NULL, FALSE);
-    OCI_CHECK(out_value == NULL, FALSE);
+    OCI_CHECK(NULL == con, FALSE)
+    OCI_CHECK(NULL == number, FALSE)
+    OCI_CHECK(NULL == out_value, FALSE)
 
 #if OCI_VERSION_COMPILE < OCI_10_1
 
-    OCI_NOT_USED(sqlcode);
+    OCI_NOT_USED(sqlcode)
 
 #endif
 
@@ -133,13 +133,13 @@ boolean OCI_NumberSet
 {
     boolean res = TRUE;
 
-    OCI_CHECK(con       == NULL, FALSE);
-    OCI_CHECK(number    == NULL, FALSE);
-    OCI_CHECK(in_value  == NULL, FALSE);
+    OCI_CHECK(NULL == con, FALSE)
+    OCI_CHECK(NULL == number, FALSE)
+    OCI_CHECK(NULL == in_value, FALSE)
 
 #if OCI_VERSION_COMPILE < OCI_10_1
 
-    OCI_NOT_USED(sqlcode);
+    OCI_NOT_USED(sqlcode)
 
 #endif
 
@@ -220,7 +220,7 @@ boolean OCI_NumberFromString
 
         if (OCILib.version_runtime >= OCI_10_1)
         {
-            const otext * fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
+            fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
 
             if (type & OCI_NUM_DOUBLE)
             {
@@ -295,7 +295,7 @@ boolean OCI_NumberToString
 
     out_value[0] = 0;
 
-    /* For binary types, perfom a C based conversion */
+    /* For binary types, perform a C based conversion */
 
     if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
     {
@@ -333,7 +333,7 @@ boolean OCI_NumberToString
 
     #else
 
-        OCI_NOT_USED(sqlcode);
+        OCI_NOT_USED(sqlcode)
 
     #endif
 

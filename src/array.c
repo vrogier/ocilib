@@ -73,14 +73,12 @@ boolean OCI_ArrayInit
             {
                 OCI_DateInit(arr->con, (OCI_Date **) &arr->tab_obj[i],
                              (OCIDate *) handle, FALSE, FALSE);
-
                 break;
             }
             case OCI_CDT_LOB:
             {
                 OCI_LobInit(arr->con, (OCI_Lob **) &arr->tab_obj[i],
                             (OCILobLocator *) handle, arr->elem_subtype);
-
                 break;
             }
             case OCI_CDT_FILE:
@@ -93,33 +91,28 @@ boolean OCI_ArrayInit
             {
                 OCI_TimestampInit(arr->con, (OCI_Timestamp **) &arr->tab_obj[i],
                                   (OCIDateTime *) handle, arr->elem_subtype);
-
                 break;
             }
             case OCI_CDT_INTERVAL:
             {
                 OCI_IntervalInit(arr->con, (OCI_Interval **) &arr->tab_obj[i],
                                  (OCIInterval *) handle, arr->elem_subtype);
-
                 break;
             }
             case OCI_CDT_OBJECT:
             {
                 OCI_ObjectInit(arr->con, (OCI_Object **) &arr->tab_obj[i],
                                handle, typinf, NULL, -1, TRUE);
-
                 break;
             }
             case OCI_CDT_COLLECTION:
             {
                 OCI_CollInit(arr->con, (OCI_Coll **) &arr->tab_obj[i], handle, typinf);
-
                 break;
             }
             case OCI_CDT_REF:
             {
-                OCI_RefInit(arr->con, typinf, (OCI_Ref **) &arr->tab_obj[i], handle);
-
+                OCI_RefInit(arr->con, &typinf, (OCI_Ref **) &arr->tab_obj[i], handle);
                 break;
             }
         }
@@ -139,7 +132,7 @@ boolean OCI_ArrayClose
 {
     unsigned int i;
 
-    OCI_CHECK_PTR(OCI_IPC_ARRAY, arr, FALSE);
+    OCI_CHECK(NULL == arr, FALSE)
 
     if ( (OCI_CDT_NUMERIC != arr->elem_type ) &&
          (OCI_CDT_TEXT    != arr->elem_type ) && 
@@ -154,49 +147,41 @@ boolean OCI_ArrayClose
                 case OCI_CDT_DATETIME:
                 {
                     OCI_DateFree((OCI_Date *) arr->tab_obj[i]);
-
                     break;
                 }
                 case OCI_CDT_LOB:
                 {
                     OCI_LobFree((OCI_Lob *) arr->tab_obj[i]);
-
                     break;
                 }
                 case OCI_CDT_FILE:
                 {
                     OCI_FileFree((OCI_File *) arr->tab_obj[i]);
-
                     break;
                 }
                 case OCI_CDT_TIMESTAMP:
                 {
                     OCI_TimestampFree((OCI_Timestamp *) arr->tab_obj[i]);
-
                     break;
                 }
                 case OCI_CDT_INTERVAL:
                 {
                     OCI_IntervalFree((OCI_Interval *) arr->tab_obj[i]);
-
                     break;
                 }
                 case OCI_CDT_OBJECT:
                 {
                     OCI_ObjectFree((OCI_Object *) arr->tab_obj[i]);
-
                     break;
                 }
                 case OCI_CDT_COLLECTION:
                 {
                     OCI_CollFree((OCI_Coll *) arr->tab_obj[i]);
-
                     break;
                 }
                 case OCI_CDT_REF:
                 {
                     OCI_RefFree((OCI_Ref *) arr->tab_obj[i]);
-
                     break;
                 }
             }
@@ -215,9 +200,9 @@ boolean OCI_ArrayClose
         );
     }
 
-    OCI_FREE(arr->mem_handle);
-    OCI_FREE(arr->mem_struct);
-    OCI_FREE(arr->tab_obj);
+    OCI_FREE(arr->mem_handle)
+    OCI_FREE(arr->mem_struct)
+    OCI_FREE(arr->tab_obj)
 
     return TRUE;
 }
@@ -238,12 +223,9 @@ OCI_Array * OCI_ArrayCreate
     OCI_TypeInfo   *typinf
 )
 {
-    boolean res    = TRUE;
-    OCI_Array *arr = NULL;
-    OCI_Item *item = NULL;
-
-    OCI_CHECK_INITIALIZED(NULL);
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
+    boolean    res  = FALSE;
+    OCI_Array *arr  = NULL;
+    OCI_Item  *item = NULL;
 
     /* create array object */
 
@@ -251,6 +233,8 @@ OCI_Array * OCI_ArrayCreate
 
     if (item)
     {
+        res = TRUE;
+
         arr = (OCI_Array *) item->data;
 
         arr->con          = con;
@@ -271,7 +255,7 @@ OCI_Array * OCI_ArrayCreate
             {
                 arr->tab_obj = (void **) OCI_MemAlloc(OCI_IPC_VOID,  sizeof(void *), nb_elem, TRUE);
 
-                res = (arr->tab_obj != NULL) ;
+                res = (NULL != arr->tab_obj) ;
             }
         }
 
@@ -283,7 +267,7 @@ OCI_Array * OCI_ArrayCreate
             {
                 arr->mem_handle = (void **) OCI_MemAlloc(OCI_IPC_VOID, elem_size, nb_elem, TRUE);
 
-                res = (arr->mem_handle != NULL) ;
+                res = (NULL != arr->mem_handle);
             }
         }
 
@@ -295,7 +279,7 @@ OCI_Array * OCI_ArrayCreate
             {
                 arr->mem_struct = (void **) OCI_MemAlloc(OCI_IPC_VOID, struct_size, nb_elem, TRUE);
 
-                res = (arr->mem_struct != NULL) ;
+                res = (NULL != arr->mem_struct);
             }
         }
 
@@ -305,15 +289,12 @@ OCI_Array * OCI_ArrayCreate
         {
             if (handle_type != 0)
             {
-                res =  OCI_SUCCESSFUL(OCI_DescriptorArrayAlloc
-                       (
-                           (dvoid  *) arr->con->env,
-                           (dvoid **) arr->mem_handle,
-                           (ub4     ) handle_type,
-                           (ub4     ) nb_elem,
-                           (size_t  ) 0,
-                           (dvoid **) NULL
-                       ));
+                res =  OCI_SUCCESSFUL(OCI_DescriptorArrayAlloc((dvoid  *) arr->con->env,
+                                                               (dvoid **) arr->mem_handle,
+                                                               (ub4     ) handle_type,
+                                                               (ub4     ) nb_elem,
+                                                               (size_t  ) 0,
+                                                               (dvoid **) NULL));
             }
         }
 
@@ -322,20 +303,14 @@ OCI_Array * OCI_ArrayCreate
             res = OCI_ArrayInit(arr, typinf);
         }
     }
-    else
-    {
-        res = FALSE;
-    }
 
     /* check for failure */
 
     if (!res)
     {
         OCI_ArrayClose(arr);
-        OCI_FREE(arr);
+        OCI_FREE(arr)
     }
-
-    OCI_RESULT(res);
 
     return arr;
 }
@@ -349,14 +324,12 @@ boolean OCI_ArrayFreeFromHandles
     void **handles
 )
 {
-    boolean res    = FALSE;
-    OCI_List *list = OCILib.arrs;
-    OCI_Item *item = NULL;
-    OCI_Array *arr = NULL;
+    boolean    res  = TRUE;
+    OCI_List  *list = OCILib.arrs;
+    OCI_Item  *item = NULL;
+    OCI_Array *arr  = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_VOID, handles, FALSE);
-
-    OCI_CHECK(list == NULL, FALSE);
+    OCI_CHECK(NULL == list, FALSE)
 
     if (list->mutex)
     {
@@ -387,10 +360,8 @@ boolean OCI_ArrayFreeFromHandles
     {
         res = OCI_ListRemove(OCILib.arrs, arr);
         OCI_ArrayClose(arr);
-        OCI_FREE(arr);
+        OCI_FREE(arr)
     }
-
-    OCI_RESULT(res);
 
     return res;
 }
@@ -404,12 +375,12 @@ void * OCI_ArrayGetOCIHandlesFromHandles
     void **handles
 )
 {
-    OCI_List *list = OCILib.arrs;
-    void *ret      = NULL;
-    OCI_Item *item = NULL;
-    OCI_Array *arr = NULL;
+    OCI_List  *list = OCILib.arrs;
+    OCI_Item  *item = NULL;
+    OCI_Array *arr  = NULL;
+    void      *ret  = NULL;
 
-    OCI_CHECK(list == NULL, NULL);
+    OCI_CHECK(NULL == list, NULL)
 
     if (list->mutex)
     {

@@ -57,16 +57,15 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
 )
 {
     OCI_Dequeue *dequeue = NULL;
-    boolean res          = TRUE;
 
-    OCI_CHECK_INITIALIZED(NULL);
+    OCI_LIB_CALL_ENTER(OCI_Dequeue*, dequeue)
 
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf, NULL);
-    OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
+    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)
 
     /* allocate dequeue structure */
 
-    dequeue = (OCI_Dequeue *) OCI_MemAlloc(OCI_IPC_DEQUEUE, sizeof(*dequeue), (size_t) 1, TRUE);
+    dequeue = (OCI_Dequeue *)OCI_MemAlloc(OCI_IPC_DEQUEUE, sizeof(*dequeue), (size_t)1, TRUE);
 
     if (dequeue)
     {
@@ -75,34 +74,33 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
 
         /* allocate dequeue options descriptor */
 
-        res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid * ) dequeue->typinf->con->env,
-                                                 (dvoid **) &dequeue->opth,
-                                                 OCI_DTYPE_AQDEQ_OPTIONS,
-                                                 (size_t) 0, (dvoid **) NULL));
+        call_status = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid *)dequeue->typinf->con->env,
+                                                         (dvoid **) &dequeue->opth,
+                                                         OCI_DTYPE_AQDEQ_OPTIONS,
+                                                         (size_t) 0, (dvoid **) NULL));
 
         /* create local message for OCI_DequeueGet() */
 
-        if (res)
+        if (call_status)
         {
             dequeue->msg = OCI_MsgCreate(dequeue->typinf);
         }
 
-        res = (dequeue->msg != NULL);
-    }
-    else
-    {
-        res = FALSE;
+        call_status = (NULL !=  dequeue->msg);
     }
 
     /* check for failure */
 
-    if (!res)
+    if (call_status)
+    {
+        call_retval = dequeue;
+    }
+    else if (dequeue)
     {
         OCI_DequeueFree(dequeue);
-        dequeue = NULL;
     }
 
-    return dequeue;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -114,7 +112,9 @@ boolean OCI_API OCI_DequeueFree
     OCI_Dequeue *dequeue
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
     /* Unsubscribe notification if needed */
 
@@ -143,17 +143,19 @@ boolean OCI_API OCI_DequeueFree
 
     /* free strings  */
 
-    OCI_FREE(dequeue->name);
-    OCI_FREE(dequeue->pattern);
-    OCI_FREE(dequeue->consumer);
+    OCI_FREE(dequeue->name)
+    OCI_FREE(dequeue->pattern)
+    OCI_FREE(dequeue->consumer)
 
     /* free misc. */
 
-    OCI_FREE(dequeue->agent_list);
+    OCI_FREE(dequeue->agent_list)
 
-    OCI_FREE(dequeue);
+    OCI_FREE(dequeue)
 
-    return TRUE;
+    call_retval = call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -166,18 +168,20 @@ OCI_Agent * OCI_API OCI_DequeueListen
     int          timeout
 )
 {
-    boolean res        = TRUE;
-    OCI_Agent *agent   = NULL;
     OCIAQAgent *handle = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, NULL);
+    OCI_LIB_CALL_ENTER(OCI_Agent*, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
     /* listen only if OCI_DequeueSetAgentList has been called */
 
     if (dequeue->agent_list)
     {
-        sword ret;
-        sb4 code = OCI_SUCCESS;
+        sword ret  = OCI_SUCCESS;
+        sb4   code = OCI_SUCCESS;
+
+        call_status = TRUE;
 
         ret =  OCIAQListen(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
                            dequeue->agent_list, (ub4) dequeue->agent_count,
@@ -197,21 +201,19 @@ OCI_Agent * OCI_API OCI_DequeueListen
             {
                 OCI_ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE);
 
-                res = FALSE;
+                call_status = FALSE;
             }
         }
 
-        /* init local agent object */
+        /* initialize local agent object */
 
-        if (res && handle && OCI_SUCCESSFUL(ret))
+        if (call_status && handle && OCI_SUCCESSFUL(ret))
         {
-            agent = OCI_AgentInit(dequeue->typinf->con, &dequeue->agent, handle, NULL, NULL);
+            call_retval = OCI_AgentInit(dequeue->typinf->con, &dequeue->agent, handle, NULL, NULL);
         }
     }
 
-    OCI_RESULT(res);
-
-    return agent;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -223,18 +225,18 @@ OCI_Msg * OCI_API OCI_DequeueGet
     OCI_Dequeue *dequeue
 )
 {
-    boolean   res      = TRUE;
-    sword     ret      = OCI_SUCCESS;
-    OCI_Msg  *msg      = NULL;
-    void     *p_ind    = NULL;
+    sword  ret   = OCI_SUCCESS;
+    void  *p_ind = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, NULL);
+    OCI_LIB_CALL_ENTER(OCI_Msg*, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
     /* reset message */
 
-    res = OCI_MsgReset(dequeue->msg);
+    call_status = OCI_MsgReset(dequeue->msg);
 
-    if (res)
+    if (call_status)
     {
         int     dbsize = -1;
         dbtext *dbstr  = OCI_StringGetOracleString(dequeue->name, &dbsize);
@@ -248,7 +250,7 @@ OCI_Msg * OCI_API OCI_DequeueGet
 
         ret = OCIAQDeq(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
                        (OraText *) dbstr, dequeue->opth, dequeue->msg->proph,
-                       dequeue->typinf->tdo, &dequeue->msg->payload, 
+                       dequeue->typinf->tdo, &dequeue->msg->payload,
                        (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
 
         OCI_StringReleaseOracleString(dbstr);
@@ -269,14 +271,14 @@ OCI_Msg * OCI_API OCI_DequeueGet
             {
                 OCI_ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE);
 
-                res = FALSE;
+                call_status = FALSE;
             }
         }
     }
 
     /* reset message */
 
-    if (res && OCI_SUCCESSFUL(ret))
+    if (call_status && OCI_SUCCESSFUL(ret))
     {
         /* get payload */
 
@@ -291,21 +293,19 @@ OCI_Msg * OCI_API OCI_DequeueGet
                                                    dequeue->msg->payload, dequeue->typinf,
                                                    NULL, -1, TRUE);
 
-                res = dequeue->msg->obj != NULL;
+                call_status = (NULL != dequeue->msg->obj);
             }
         }
     }
 
-    /* on success return internla message handle */
+    /* on success return internal message handle */
 
-    if (res && OCI_SUCCESSFUL(ret))
+    if (call_status && OCI_SUCCESSFUL(ret))
     {
-        msg = dequeue->msg;
+        call_retval = dequeue->msg;
     }
 
-    OCI_RESULT(res);
-
-    return msg;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -317,22 +317,24 @@ const otext * OCI_API OCI_DequeueGetConsumer
     OCI_Dequeue *dequeue
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(const otext*, NULL)
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, NULL);
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+
+    call_status = TRUE;
 
     if (!dequeue->consumer)
     {
-        res = OCI_StringGetFromAttrHandle(dequeue->typinf->con,
-                                          dequeue->opth,
-                                          OCI_DTYPE_AQDEQ_OPTIONS,
-                                          OCI_ATTR_CONSUMER_NAME,
-                                          &dequeue->consumer);
+        call_status = OCI_GetStringAttribute(dequeue->typinf->con,
+                                             dequeue->opth,
+                                             OCI_DTYPE_AQDEQ_OPTIONS,
+                                             OCI_ATTR_CONSUMER_NAME,
+                                             &dequeue->consumer);
     }
+ 
+    call_retval = dequeue->consumer;
 
-    OCI_RESULT(res);
-
-    return dequeue->consumer;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -345,20 +347,17 @@ boolean OCI_API OCI_DequeueSetConsumer
     const otext *consumer
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    res =  OCI_StringSetToAttrHandle(dequeue->typinf->con,
-                                     dequeue->opth,
-                                     OCI_DTYPE_AQDEQ_OPTIONS,
-                                     OCI_ATTR_CONSUMER_NAME,
-                                     &dequeue->consumer,
-                                     consumer);
-
-    OCI_RESULT(res);
-
-    return res;
+    call_retval = call_status = OCI_SetStringAttribute( dequeue->typinf->con,
+                                                        dequeue->opth,
+                                                        OCI_DTYPE_AQDEQ_OPTIONS,
+                                                        OCI_ATTR_CONSUMER_NAME,
+                                                        &dequeue->consumer,
+                                                        consumer);
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -370,22 +369,24 @@ const otext * OCI_API OCI_DequeueGetCorrelation
     OCI_Dequeue *dequeue
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(const otext*, NULL)
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, NULL);
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+
+    call_status = TRUE;
 
     if (!dequeue->pattern)
     {
-        res = OCI_StringGetFromAttrHandle(dequeue->typinf->con,
-                                          dequeue->opth,
-                                          OCI_DTYPE_AQDEQ_OPTIONS,
-                                          OCI_ATTR_CORRELATION,
-                                          &dequeue->pattern);
+        call_status = OCI_GetStringAttribute(dequeue->typinf->con,
+                                             dequeue->opth,
+                                             OCI_DTYPE_AQDEQ_OPTIONS,
+                                             OCI_ATTR_CORRELATION,
+                                             &dequeue->pattern);
     }
+ 
+    call_retval = dequeue->pattern;
 
-    OCI_RESULT(res);
-
-    return dequeue->pattern;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -398,20 +399,18 @@ boolean OCI_API OCI_DequeueSetCorrelation
     const otext *pattern
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    res =  OCI_StringSetToAttrHandle(dequeue->typinf->con,
-                                     dequeue->opth,
-                                     OCI_DTYPE_AQDEQ_OPTIONS,
-                                     OCI_ATTR_CORRELATION,
-                                     &dequeue->pattern,
-                                     pattern);
+    call_retval = call_status = OCI_SetStringAttribute( dequeue->typinf->con,
+                                                        dequeue->opth,
+                                                        OCI_DTYPE_AQDEQ_OPTIONS,
+                                                        OCI_ATTR_CORRELATION,
+                                                        &dequeue->pattern,
+                                                        pattern);
 
-    OCI_RESULT(res);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -425,16 +424,19 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
     unsigned int *len
 )
 {
-    boolean res   = TRUE;
     OCIRaw *value = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_VOID,    id,      FALSE);
-    OCI_CHECK_PTR(OCI_IPC_VOID,    len,     FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+    OCI_CHECK_PTR(OCI_IPC_VOID, id)
+    OCI_CHECK_PTR(OCI_IPC_VOID, len)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, dequeue->typinf->con,
+        call_status, dequeue->typinf->con,
 
         OCIAttrGet((dvoid *) dequeue->opth,
                    (ub4    ) OCI_DTYPE_AQDEQ_OPTIONS,
@@ -444,7 +446,7 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
                    dequeue->typinf->con->err)
     )
 
-    if (value)
+    if (call_status && value)
     {
         ub4 raw_len = OCIRawSize(dequeue->typinf->con->env, value);
 
@@ -460,9 +462,9 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
         *len = 0;
     }
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -476,14 +478,17 @@ boolean OCI_API OCI_DequeueSetRelativeMsgID
     unsigned int  len
 )
 {
-    boolean res   = TRUE;
     OCIRaw *value = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, dequeue->typinf->con,
+        call_status, dequeue->typinf->con,
 
         OCIRawAssignBytes(dequeue->typinf->con->env, dequeue->typinf->con->err,
                           (ub1*) id, (ub4) len, (OCIRaw **) &value)
@@ -491,7 +496,7 @@ boolean OCI_API OCI_DequeueSetRelativeMsgID
 
     OCI_CALL2
     (
-        res, dequeue->typinf->con,
+        call_status, dequeue->typinf->con,
 
         OCIAttrSet((dvoid *) dequeue->opth,
                    (ub4    ) OCI_DTYPE_AQDEQ_OPTIONS,
@@ -501,9 +506,9 @@ boolean OCI_API OCI_DequeueSetRelativeMsgID
                    dequeue->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -515,26 +520,29 @@ unsigned int OCI_API OCI_DequeueGetVisibility
     OCI_Dequeue *dequeue
 )
 {
-    boolean res = TRUE;
-    ub4 ret     = 0;
+    ub4 value = OCI_UNKNOWN;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, 0);
+    OCI_LIB_CALL_ENTER(unsigned int, value)
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, dequeue->typinf->con,
+        call_status, dequeue->typinf->con,
 
         OCIAttrGet((dvoid *) dequeue->opth,
                    (ub4    ) OCI_DTYPE_AQDEQ_OPTIONS,
-                   (dvoid *) &ret,
+                   (dvoid *) &value,
                    (ub4   *) NULL,
                    (ub4    ) OCI_ATTR_VISIBILITY,
                    dequeue->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = (unsigned int) value;
 
-    return (int) ret;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -547,16 +555,18 @@ boolean OCI_API OCI_DequeueSetVisibility
     unsigned int visibility
 )
 {
-    boolean res = TRUE;
-    ub4 value   = (ub4) visibility;
+    ub4 value = (ub4) visibility;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_ENUM_VALUE(NULL, NULL, visibility, VisibilityModeValues, OTEXT("Visibility Mode"), FALSE);
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+    OCI_CHECK_ENUM_VALUE(NULL, NULL, visibility, VisibilityModeValues, OTEXT("Visibility Mode"))
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, dequeue->typinf->con,
+        call_status, dequeue->typinf->con,
 
         OCIAttrSet((dvoid *) dequeue->opth,
                    (ub4    ) OCI_DTYPE_AQDEQ_OPTIONS,
@@ -566,9 +576,9 @@ boolean OCI_API OCI_DequeueSetVisibility
                    dequeue->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -580,26 +590,29 @@ unsigned int OCI_API OCI_DequeueGetMode
     OCI_Dequeue *dequeue
 )
 {
-    boolean res = TRUE;
-    ub4 ret     = 0;
+    ub4 value = OCI_UNKNOWN;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, 0);
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, dequeue->typinf->con,
+        call_status, dequeue->typinf->con,
 
         OCIAttrGet((dvoid *) dequeue->opth,
                    (ub4    ) OCI_DTYPE_AQDEQ_OPTIONS,
-                   (dvoid *) &ret,
+                   (dvoid *) &value,
                    (ub4   *) NULL,
                    (ub4    ) OCI_ATTR_DEQ_MODE,
                    dequeue->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = value;
 
-    return (int) ret;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -612,16 +625,18 @@ boolean OCI_API OCI_DequeueSetMode
     unsigned int mode
 )
 {
-    boolean res = TRUE;
-    ub4 value   = (ub4) mode;
+    ub4 value = (ub4) mode;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_ENUM_VALUE(NULL, NULL, mode, DequeueModeValues, OTEXT("Dequeue Mode"), FALSE);
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+    OCI_CHECK_ENUM_VALUE(NULL, NULL, mode, DequeueModeValues, OTEXT("Dequeue Mode"))
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, dequeue->typinf->con,
+        call_status, dequeue->typinf->con,
 
         OCIAttrSet((dvoid *) dequeue->opth,
                    (ub4    ) OCI_DTYPE_AQDEQ_OPTIONS,
@@ -631,9 +646,9 @@ boolean OCI_API OCI_DequeueSetMode
                    dequeue->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -645,26 +660,29 @@ unsigned int OCI_API OCI_DequeueGetNavigation
     OCI_Dequeue *dequeue
 )
 {
-    boolean res = TRUE;
-    ub4 ret     = 0;
+    ub4 value = OCI_UNKNOWN;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, 0);
+    OCI_LIB_CALL_ENTER(unsigned int, value)
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, dequeue->typinf->con,
+        call_status, dequeue->typinf->con,
 
         OCIAttrGet((dvoid *) dequeue->opth,
                    (ub4    ) OCI_DTYPE_AQDEQ_OPTIONS,
-                   (dvoid *) &ret,
+                   (dvoid *) &value,
                    (ub4   *) NULL,
                    (ub4    ) OCI_ATTR_NAVIGATION,
                    dequeue->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = value;
 
-    return (int) ret;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -677,16 +695,18 @@ boolean OCI_API OCI_DequeueSetNavigation
     unsigned int position
 )
 {
-    boolean res = TRUE;
-    ub4 value   = (ub4) position;
+    ub4 value = (ub4) position;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_ENUM_VALUE(NULL, NULL, position, NavigationModeValues, OTEXT("Navigation Mode"), FALSE);
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+    OCI_CHECK_ENUM_VALUE(NULL, NULL, position, NavigationModeValues, OTEXT("Navigation Mode"))
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, dequeue->typinf->con,
+        call_status, dequeue->typinf->con,
 
         OCIAttrSet((dvoid *) dequeue->opth,
                    (ub4    ) OCI_DTYPE_AQDEQ_OPTIONS,
@@ -696,9 +716,9 @@ boolean OCI_API OCI_DequeueSetNavigation
                    dequeue->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -710,26 +730,29 @@ int OCI_API OCI_DequeueGetWaitTime
     OCI_Dequeue *dequeue
 )
 {
-    boolean res = TRUE;
-    sb4 ret     = 0;
+    sb4 value = 0;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, 0);
+    OCI_LIB_CALL_ENTER(unsigned int, value)
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, dequeue->typinf->con,
+        call_status, dequeue->typinf->con,
 
         OCIAttrGet((dvoid *) dequeue->opth,
                    (ub4    ) OCI_DTYPE_AQDEQ_OPTIONS,
-                   (dvoid *) &ret,
+                   (dvoid *) &value,
                    (ub4   *) NULL,
                    (ub4    )  OCI_ATTR_WAIT,
                    dequeue->typinf->con->err)
     )
 
-    OCI_RESULT(res);
-
-    return (int) ret;
+    call_retval = value;
+    
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -742,14 +765,17 @@ boolean OCI_API OCI_DequeueSetWaitTime
     int          timeout
 )
 {
-    boolean res = TRUE;
-    sb4 value   = (ub4) timeout;
+    sb4 value = (ub4) timeout;
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, dequeue->typinf->con,
+        call_status, dequeue->typinf->con,
 
         OCIAttrSet((dvoid *) dequeue->opth,
                    (ub4    ) OCI_DTYPE_AQDEQ_OPTIONS,
@@ -759,9 +785,9 @@ boolean OCI_API OCI_DequeueSetWaitTime
                    dequeue->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -775,11 +801,13 @@ boolean OCI_API OCI_DequeueSetAgentList
     unsigned int count
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, dequeue, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, dequeue)
 
-    OCI_FREE(dequeue->agent_list);
+    OCI_FREE(dequeue->agent_list)
+
+    call_status = TRUE;
 
     if (consumers && (count > 0))
     {
@@ -799,13 +827,13 @@ boolean OCI_API OCI_DequeueSetAgentList
         }
         else
         {
-            res = FALSE;
+            call_status = FALSE;
         }
     }
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -814,13 +842,12 @@ boolean OCI_API OCI_DequeueSetAgentList
 
 OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 (
-    OCI_Dequeue    *dequeue, 
-    unsigned int    port, 
+    OCI_Dequeue    *dequeue,
+    unsigned int    port,
     unsigned int    timeout,
     POCI_NOTIFY_AQ  callback
 )
 {
-    boolean res             = TRUE;
     ub4     oci_namespace   = OCI_SUBSCR_NAMESPACE_AQ;
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
@@ -833,11 +860,11 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 #endif
 
     OCI_Connection *con = NULL;
-     
-    OCI_CHECK_INITIALIZED(FALSE);
-    OCI_CHECK_DATABASE_NOTIFY_ENABLED(FALSE);
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_DATABASE_NOTIFY_ENABLED()
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
     con = dequeue->typinf->con;
 
@@ -845,12 +872,10 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 
     OCI_DequeueUnsubscribe(dequeue);
 
-    /* allocate subcription handle */
+    /* allocate subscription handle */
 
-    res = OCI_SUCCESSFUL(OCI_HandleAlloc(con->env,
-                                         (dvoid **) (void *) &dequeue->subhp,
-                                         OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
-                                         (dvoid **) NULL));
+    call_status = OCI_SUCCESSFUL(OCI_HandleAlloc(con->env, (dvoid **) (void *) &dequeue->subhp,
+                                                 OCI_HTYPE_SUBSCRIPTION, (size_t) 0, (dvoid **) NULL));
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -860,7 +885,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
     {
         OCI_CALL3
         (
-            res, con->err,
+            call_status, con->err,
 
             OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                         (dvoid *) &oci_port, (ub4) sizeof (oci_port),
@@ -874,7 +899,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
     {
         OCI_CALL3
         (
-            res, con->err,
+            call_status, con->err,
 
             OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                         (dvoid *) &oci_timeout, (ub4) sizeof (oci_timeout),
@@ -886,7 +911,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 
     OCI_CALL3
     (
-        res, con->err,
+        call_status, con->err,
 
         OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                     (dvoid *) &oci_protocol, (ub4) sizeof(oci_protocol),
@@ -897,7 +922,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 
     OCI_CALL3
     (
-        res, con->err,
+        call_status, con->err,
 
         OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                     (dvoid *) &oci_msgpres, (ub4) sizeof(oci_msgpres),
@@ -906,16 +931,16 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 
 #else
 
-    OCI_NOT_USED(port);
-    OCI_NOT_USED(timeout);
+    OCI_NOT_USED(port)
+    OCI_NOT_USED(timeout)
 
 #endif
-    
+
     /* set name  */
 
     if (dequeue->name)
     {
-        /* for AQ subscription, the name should be "[shema.]queue[:consumer]" */
+        /* for AQ subscription, the name should be "[schema.]queue[:consumer]" */
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
@@ -924,7 +949,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 
         dbtext *dbstr    = NULL;
         int     dbsize   = -1;
-            
+
         ostrncat(buffer, dequeue->name, size);
 
         if (dequeue->consumer)
@@ -934,7 +959,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
             size -= (size_t) 1;
 
             ostrncat(buffer, dequeue->consumer, size);
-        }           
+        }
 
         /* queue name must be uppercase */
 
@@ -947,7 +972,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 
         OCI_CALL3
         (
-            res, con->err,
+            call_status, con->err,
 
             OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                         (dvoid *) dbstr, (ub4) dbsize,
@@ -961,7 +986,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 
     OCI_CALL3
     (
-        res, con->err,
+        call_status, con->err,
 
         OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                     (dvoid *) &oci_namespace, (ub4) sizeof(oci_namespace),
@@ -972,13 +997,13 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 
     OCI_CALL3
     (
-        res, con->err,
+        call_status, con->err,
 
         OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                     (dvoid *) dequeue, (ub4) 0,
                     (ub4) OCI_ATTR_SUBSCR_CTX, con->err)
     )
-    
+
     /* On MSVC, casting a function pointer to a data pointer generates a warning.
         As there is no other to way to do regarding the OCI API, let's disable this
         warning just the time to set the callback attribute to the dequeue handle */
@@ -991,7 +1016,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 
     OCI_CALL3
     (
-        res, con->err,
+        call_status, con->err,
 
         OCIAttrSet((dvoid *) dequeue->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                     (dvoid *) OCI_ProcNotifyMessages, (ub4) 0,
@@ -1010,21 +1035,21 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
 
     OCI_CALL3
     (
-        res, con->err,
+        call_status, con->err,
 
         OCISubscriptionRegister(con->cxt, &dequeue->subhp, (ub2) 1, con->err,(ub4) OCI_DEFAULT)
     )
 
-    if (!res)
+    if (!call_status)
     {
         /* clear subscription on failure */
 
         OCI_DequeueUnsubscribe(dequeue);
     }
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1036,21 +1061,22 @@ OCI_EXPORT boolean OCI_API OCI_DequeueUnsubscribe
     OCI_Dequeue *dequeue
 )
 {
-    boolean res = TRUE;
- 
-    OCI_CHECK_DATABASE_NOTIFY_ENABLED(FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue, FALSE);
+    OCI_CHECK_DATABASE_NOTIFY_ENABLED()
+    OCI_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
     dequeue->callback = NULL;
-    
+
+    call_status = TRUE;
+
     if (dequeue->subhp)
     {
         /* unregister the subscription */
 
         OCI_CALL3
         (
-            res, dequeue->typinf->con->err,
+            call_status, dequeue->typinf->con->err,
 
             OCISubscriptionUnRegister(dequeue->typinf->con->cxt, dequeue->subhp,
                                       dequeue->typinf->con->err,(ub4) OCI_DEFAULT)
@@ -1063,7 +1089,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueUnsubscribe
         dequeue->subhp = NULL;
     }
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }

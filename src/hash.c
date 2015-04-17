@@ -35,6 +35,13 @@
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
+*                             PRIVATE VARIABLES
+* ********************************************************************************************* */
+
+static unsigned int HashTypeValues[] = { OCI_HASH_STRING, OCI_HASH_INTEGER, OCI_HASH_POINTER };
+
+
+/* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
@@ -52,8 +59,8 @@ unsigned int OCI_HashCompute
     otext *p;
     otext c;
 
-    OCI_CHECK(table == NULL, 0);
-    OCI_CHECK(str   == NULL, 0);
+    OCI_CHECK(NULL == table, 0);
+    OCI_CHECK(NULL == str, 0);
 
     for(h = 0, p = (otext *) str; (*p) != 0; p++)
     {
@@ -65,284 +72,9 @@ unsigned int OCI_HashCompute
     return (h % table->size);
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashCreate
- * --------------------------------------------------------------------------------------------- */
-
-OCI_HashTable * OCI_API OCI_HashCreate
-(
-    unsigned int size,
-    unsigned int type
-)
-{
-    OCI_HashTable *table = NULL;
-    boolean res          = FALSE;
-
-    /* allocate table structure */
-
-    table = (OCI_HashTable *) OCI_MemAlloc(OCI_IPC_HASHTABLE, sizeof(*table), (size_t) 1, TRUE);
-
-    /* set up attributes and allocate internal array of hash entry pointers */
-
-    if (table)
-    {
-        table->type  = type;
-        table->size  = 0;
-        table->count = 0;
-
-        table->items = (OCI_HashEntry **) OCI_MemAlloc(OCI_IPC_HASHENTRY_ARRAY,
-                                                       sizeof(*table->items),
-                                                       (size_t) size, TRUE);
-        if (table->items)
-        {
-            table->size = size;           
-            
-            res = TRUE;
-        }
-    }
-
-    if (!res)
-    {
-        OCI_HashFree(table);
-    }
-
-    OCI_RESULT(res);
-
-    return table;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_HashFree
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_API OCI_HashFree
-(
-    OCI_HashTable *table
-)
-{
-    unsigned int i;
-
-    OCI_HashEntry *e1 = NULL, *e2 = NULL;
-    OCI_HashValue *v1 = NULL, *v2 = NULL;
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, FALSE);
-
-    if (table->items)
-    {
-        for (i = 0; i < table->size; i++)
-        {
-            e1 = table->items[i];
-
-            while (e1)
-            {
-                e2 = e1;
-                e1 = e1->next;
-
-                v1 = e2->values;
-
-                while (v1)
-                {
-                    v2 = v1;
-                    v1 = v1->next;
-
-                    if (OCI_HASH_STRING == table->type)
-                    {
-                        OCI_FREE(v2->value.p_text);
-                    }
-
-                    OCI_FREE(v2);
-                }
-
-                if (e2->key)
-                {
-                    OCI_FREE(e2->key);
-                }
-
-                if (e2)
-                {
-                    OCI_FREE(e2);
-                }
-            }
-        }
-
-        OCI_FREE(table->items);
-    }
-
-    OCI_FREE(table);
-
-    OCI_RESULT(TRUE);
-
-    return TRUE;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetSize
- * --------------------------------------------------------------------------------------------- */
-
-unsigned int OCI_API OCI_HashGetSize
-(
-    OCI_HashTable *table
-)
-{
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, 0);
-
-    OCI_RESULT(TRUE);
-
-    return table->size;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetType
- * --------------------------------------------------------------------------------------------- */
-
-unsigned int OCI_API OCI_HashGetType
-(
-    OCI_HashTable *table
-)
-{
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, OCI_UNKNOWN);
-
-    OCI_RESULT(TRUE);
-
-    return table->type;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetValue
- * --------------------------------------------------------------------------------------------- */
-
-OCI_HashValue * OCI_API OCI_HashGetValue
-(
-    OCI_HashTable *table,
-    const otext   *key
-)
-{
-    OCI_HashEntry *e = NULL;
-    OCI_HashValue *v = NULL;
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, NULL);
-
-    e = OCI_HashLookup(table, key, FALSE);
-
-    if (e)
-    {
-        v = e->values;
-    }
-
-    OCI_RESULT(v != NULL);
-
-    return v;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetEntry
- * --------------------------------------------------------------------------------------------- */
-
-OCI_HashEntry * OCI_API OCI_HashGetEntry
-(
-    OCI_HashTable *table,
-    unsigned int   index
-)
-{
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, NULL);
-    OCI_CHECK_BOUND(NULL, index, 1, table->size, NULL);
-
-    OCI_RESULT(TRUE);
-
-    return table->items[index];
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetString
- * --------------------------------------------------------------------------------------------- */
-
-const otext * OCI_API OCI_HashGetString
-(
-    OCI_HashTable *table,
-    const otext   *key
-)
-{
-    OCI_HashValue *v   = NULL;
-    const otext *value = NULL;
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, NULL);
-    OCI_CHECK(table->type != OCI_HASH_STRING, NULL);
-
-    v = OCI_HashGetValue(table, key);
-
-    if (v)
-    {
-        value = v->value.p_text;
-    }
-
-    OCI_RESULT(v != NULL);
-
-    return value;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetInt
- * --------------------------------------------------------------------------------------------- */
-
-int OCI_API OCI_HashGetInt
-(
-    OCI_HashTable *table,
-    const otext   *key
-)
-{
-    OCI_HashValue *v = NULL;
-    int value        = 0;
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, 0);
-    OCI_CHECK(table->type != OCI_HASH_INTEGER, 0);
-
-    v = OCI_HashGetValue(table, key);
-
-    if (v)
-    {
-        value = v->value.num;
-    }
-
-    OCI_RESULT(v != NULL);
-
-    return value;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetPointer
- * --------------------------------------------------------------------------------------------- */
-
-void * OCI_API OCI_HashGetPointer
-(
-    OCI_HashTable *table,
-    const otext   *key
-)
-{
-    OCI_HashValue *v = NULL;
-    void *value      = NULL;
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, NULL);
-    OCI_CHECK(table->type != OCI_HASH_POINTER, NULL);
-
-    v = OCI_HashGetValue(table, key);
-
-    if (v)
-    {
-        value = v->value.p_void;
-    }
-
-    OCI_RESULT(v != NULL);
-
-    return value;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_HashAdd
- * --------------------------------------------------------------------------------------------- */
+* OCI_HashAdd
+* --------------------------------------------------------------------------------------------- */
 
 boolean OCI_HashAdd
 (
@@ -356,15 +88,15 @@ boolean OCI_HashAdd
     OCI_HashValue * v = NULL, *v1 = NULL, *v2 = NULL;
     boolean res = FALSE;
 
-    OCI_CHECK(table == NULL, FALSE);
-    OCI_CHECK(key   == NULL, FALSE);
-    OCI_CHECK(table->type != type, FALSE);
+    OCI_CHECK(NULL == table, FALSE)
+    OCI_CHECK(NULL == key, FALSE)
+    OCI_CHECK(table->type != type, FALSE)
 
     e = OCI_HashLookup(table, key, TRUE);
 
     if (e)
     {
-        v = (OCI_HashValue *) OCI_MemAlloc(OCI_IPC_HASHVALUE, sizeof(*v), (size_t) 1, TRUE);
+        v = (OCI_HashValue *)OCI_MemAlloc(OCI_IPC_HASHVALUE, sizeof(*v), (size_t)1, TRUE);
 
         if (v)
         {
@@ -401,10 +133,302 @@ boolean OCI_HashAdd
             res = TRUE;
         }
     }
-    
-    OCI_RESULT(res);
 
     return res;
+}
+
+/* ********************************************************************************************* *
+ *                            PUBLIC FUNCTIONS
+ * ********************************************************************************************* */
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_HashCreate
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_HashTable * OCI_API OCI_HashCreate
+(
+    unsigned int size,
+    unsigned int type
+)
+{
+    OCI_HashTable *table = NULL;
+
+    OCI_LIB_CALL_ENTER(OCI_HashTable*, table)
+
+    OCI_CHECK_ENUM_VALUE(NULL, NULL, type, HashTypeValues, OTEXT("Hash type"));
+
+    /* allocate table structure */
+
+    table = (OCI_HashTable *) OCI_MemAlloc(OCI_IPC_HASHTABLE, sizeof(*table), (size_t) 1, TRUE);
+
+    /* set up attributes and allocate internal array of hash entry pointers */
+
+    if (table)
+    {
+        table->type  = type;
+        table->size  = 0;
+        table->count = 0;
+
+        table->items = (OCI_HashEntry **) OCI_MemAlloc(OCI_IPC_HASHENTRY_ARRAY,
+                                                       sizeof(*table->items),
+                                                       (size_t) size, TRUE);
+        if (table->items)
+        {
+            table->size = size;           
+            
+            call_status = TRUE;
+        }
+    }
+
+    if (call_status)
+    {
+        call_retval = table;
+    }
+    else if (table)
+    {
+        OCI_HashFree(table);
+    }
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_HashFree
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_HashFree
+(
+    OCI_HashTable *table
+)
+{
+    unsigned int i;
+
+    OCI_HashEntry *e1 = NULL, *e2 = NULL;
+    OCI_HashValue *v1 = NULL, *v2 = NULL;
+
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+
+    if (table->items)
+    {
+        for (i = 0; i < table->size; i++)
+        {
+            e1 = table->items[i];
+
+            while (e1)
+            {
+                e2 = e1;
+                e1 = e1->next;
+
+                v1 = e2->values;
+
+                while (v1)
+                {
+                    v2 = v1;
+                    v1 = v1->next;
+
+                    if (OCI_HASH_STRING == table->type)
+                    {
+                        OCI_FREE(v2->value.p_text)
+                    }
+
+                    OCI_FREE(v2)
+                }
+
+                if (e2->key)
+                {
+                    OCI_FREE(e2->key)
+                }
+
+                if (e2)
+                {
+                    OCI_FREE(e2)
+                }
+            }
+        }
+
+        OCI_FREE(table->items)
+    }
+
+    OCI_FREE(table)
+
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_HashGetSize
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_HashGetSize
+(
+    OCI_HashTable *table
+)
+{
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
+
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+
+    call_retval = table->size;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_HashGetType
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_HashGetType
+(
+    OCI_HashTable *table
+)
+{
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
+
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+
+    call_retval = table->type;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_HashGetValue
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_HashValue * OCI_API OCI_HashGetValue
+(
+    OCI_HashTable *table,
+    const otext   *key
+)
+{
+    OCI_HashEntry *e = NULL;
+
+    OCI_LIB_CALL_ENTER(OCI_HashValue*, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+
+    e = OCI_HashLookup(table, key, FALSE);
+
+    if (e)
+    {
+        call_retval = e->values;
+    }
+
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_HashGetEntry
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_HashEntry * OCI_API OCI_HashGetEntry
+(
+    OCI_HashTable *table,
+    unsigned int   index
+)
+{
+    OCI_LIB_CALL_ENTER(OCI_HashEntry*, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CHECK_BOUND(NULL, index, 0, table->size-1)
+
+    call_retval = table->items[index];
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_HashGetString
+ * --------------------------------------------------------------------------------------------- */
+
+const otext * OCI_API OCI_HashGetString
+(
+    OCI_HashTable *table,
+    const otext   *key
+)
+{
+    OCI_HashValue *v = NULL;
+
+    OCI_LIB_CALL_ENTER(const otext *, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
+
+    v = OCI_HashGetValue(table, key);
+
+    if (v)
+    {
+        call_retval = v->value.p_text;     
+    }
+
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_HashGetInt
+ * --------------------------------------------------------------------------------------------- */
+
+int OCI_API OCI_HashGetInt
+(
+    OCI_HashTable *table,
+    const otext   *key
+)
+{
+    OCI_HashValue *v = NULL;
+
+    OCI_LIB_CALL_ENTER(int, 0)
+
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
+
+    v = OCI_HashGetValue(table, key);
+
+    if (v)
+    {
+        call_retval = v->value.num;
+    }
+
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_HashGetPointer
+ * --------------------------------------------------------------------------------------------- */
+
+void * OCI_API OCI_HashGetPointer
+(
+    OCI_HashTable *table,
+    const otext   *key
+)
+{
+    OCI_HashValue *v = NULL;
+
+    OCI_LIB_CALL_ENTER(void *, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
+
+    v = OCI_HashGetValue(table, key);
+
+    if (v)
+    {
+        call_retval = v->value.p_void;
+    }
+
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -418,18 +442,18 @@ boolean OCI_API OCI_HashAddString
     const otext   *value
 )
 {
-    boolean res = TRUE;
     OCI_Variant v;
 
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+        
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
 
     v.p_text = (otext *) value;
 
-    res = OCI_HashAdd(table, key, v, OCI_HASH_STRING);
+    call_retval = call_status = OCI_HashAdd(table, key, v, OCI_HASH_STRING);
 
-    OCI_RESULT(res);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -443,18 +467,18 @@ boolean OCI_API OCI_HashAddInt
     int            value
 )
 {
-    boolean res = TRUE;
     OCI_Variant v;
 
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
 
     v.num = value;
 
-    res = OCI_HashAdd(table, key, v, OCI_HASH_INTEGER);
+    call_retval = call_status = OCI_HashAdd(table, key, v, OCI_HASH_INTEGER);
 
-    OCI_RESULT(res);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -468,18 +492,18 @@ boolean OCI_API OCI_HashAddPointer
     void          *value
 )
 {
-    boolean res = TRUE;
     OCI_Variant v;
 
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
 
     v.p_void = value;
 
-    res = OCI_HashAdd(table, key, v, OCI_HASH_POINTER);
+    call_retval = call_status = OCI_HashAdd(table, key, v, OCI_HASH_POINTER);
 
-    OCI_RESULT(res);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -496,8 +520,10 @@ OCI_HashEntry * OCI_API OCI_HashLookup
     OCI_HashEntry *e = NULL, *e1 = NULL, *e2 = NULL;
     unsigned int i;
 
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table, NULL);
-    OCI_CHECK_PTR(OCI_IPC_STRING, key, NULL);
+    OCI_LIB_CALL_ENTER(OCI_HashEntry*, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CHECK_PTR(OCI_IPC_STRING, key)
 
     i = OCI_HashCompute(table, key);
 
@@ -539,7 +565,8 @@ OCI_HashEntry * OCI_API OCI_HashLookup
         }
     }
 
-    OCI_RESULT(e != NULL);
+    call_retval = e;
+    call_status = TRUE;
 
-    return e;
+    OCI_LIB_CALL_EXIT()
 }

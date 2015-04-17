@@ -56,7 +56,7 @@ int OCI_ParseSqlFmt
     otext *pb       = buf;
     const otext *pf = format;
 
-    OCI_CHECK(format == NULL, 0);
+    OCI_CHECK(NULL == format, 0);
 
     for (; *pf; pf++)
     {
@@ -301,7 +301,7 @@ int OCI_ParseSqlFmt
 
                 pf++;
 
-                /* short ints must be passed as int to va_args */
+                /* short int must be passed as int to va_args */
 
                 if (OTEXT('i') == *pf)
                 {

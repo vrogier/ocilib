@@ -1844,7 +1844,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetCharset
  *
  */
 
-OCI_EXPORT void OCI_API OCI_EnableWarnings
+OCI_EXPORT boolean OCI_API OCI_EnableWarnings
 (
     boolean value
 );
@@ -1860,7 +1860,7 @@ OCI_EXPORT void OCI_API OCI_EnableWarnings
  *
  */
 
-OCI_EXPORT void OCI_API OCI_SetErrorHandler
+OCI_EXPORT boolean OCI_API OCI_SetErrorHandler
 (
     POCI_ERROR handler
 );
@@ -1910,7 +1910,7 @@ OCI_EXPORT boolean OCI_API OCI_SetHAHandler
  * - On Oracle OCI API call error
  * - On Oracle SQL statement error
  * - On Internal OCILIB error (type checking, memory allocations ...)
- * - On Oracle warnings (OCI API or SQL) from v3.5.0 is warnings are enabled
+ * - On Oracle warnings (OCI API or SQL)
  *
  * If an error handler was provided to OCI_Initialize(), when an error occurs, the
  * library generates an OCI_Error handle and pass it to the error handler.
@@ -3583,7 +3583,7 @@ OCI_EXPORT boolean OCI_API OCI_StatementFree
  * @param sql  - SQL order or PL/SQL block
  *
  * @note
- * With version 1.3.0 and above, do not call this function for fetched statements (REF cursors)
+ * Do not call this function for fetched statements (REF cursors)
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -3871,8 +3871,8 @@ OCI_EXPORT const otext * OCI_API OCI_GetSQLVerb
  *
  * @par Internal Bind allocation mode
  *
- * From version 3.7.0, bind variables or arrays can be internally allocated by
- * OCILIB. That means that instead of allocating variables or arrays on the stack/heap
+ * Bind variables or arrays can be internally allocated by OCILIB. 
+ * That means that instead of allocating variables or arrays on the stack/heap
  * in the user program, bind contents can be allocated internally and thus :
  * - minimize the amount of program variables
  * - optimize internal memory management for arrays
@@ -14264,6 +14264,9 @@ OCI_EXPORT OCI_HashValue * OCI_API OCI_HashGetValue
  *
  * @param table - Table handle
  * @param index - index
+ *
+ * @warning
+ * Index start at at
  *
  * @return
  * Slot handle otherwise NULL

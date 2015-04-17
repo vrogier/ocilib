@@ -47,7 +47,7 @@ boolean OCI_EventReset
     OCI_Event *event
 )
 {
-    OCI_CHECK(event == NULL, FALSE);
+    OCI_CHECK(NULL == event, FALSE)
 
     event->op   = OCI_UNKNOWN;
     event->type = OCI_UNKNOWN;
@@ -83,11 +83,14 @@ unsigned int OCI_API OCI_EventGetType
     OCI_Event *event
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event, OCI_UNKNOWN);
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
 
-    return event->type;
+    call_retval = event->type;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -99,11 +102,14 @@ unsigned int OCI_API OCI_EventGetOperation
     OCI_Event *event
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event, OCI_UNKNOWN);
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
 
-    return event->op;
+    call_retval = event->op;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -115,11 +121,14 @@ const otext * OCI_API OCI_EventGetDatabase
     OCI_Event *event
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
+    OCI_LIB_CALL_ENTER(const otext *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
 
-    return event->dbname;
+    call_retval = event->dbname;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -131,12 +140,14 @@ const otext * OCI_API OCI_EventGetObject
     OCI_Event *event
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
+    OCI_LIB_CALL_ENTER(const otext *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
 
-    return event->objname;
-}
+    call_retval = event->objname;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()}
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_EventGetRowid
@@ -147,11 +158,14 @@ const otext * OCI_API OCI_EventGetRowid
     OCI_Event *event
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
+    OCI_LIB_CALL_ENTER(const otext *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
 
-    return event->rowid;
+    call_retval = event->rowid;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -163,10 +177,12 @@ OCI_Subscription * OCI_API OCI_EventGetSubscription
     OCI_Event *event
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event, NULL);
+    OCI_LIB_CALL_ENTER(OCI_Subscription *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
 
-    return event->sub;
-}
+    call_retval = event->sub;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()}
 

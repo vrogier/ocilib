@@ -95,7 +95,7 @@ boolean OCI_ThreadKeyFree
 {
     boolean res = TRUE;
 
-    OCI_CHECK(key == NULL, FALSE);
+    OCI_CHECK(NULL == key, FALSE);
 
     /* close key handle */
 
@@ -118,7 +118,7 @@ boolean OCI_ThreadKeyFree
 
     /* free key structure */
 
-    OCI_FREE(key);
+    OCI_FREE(key)
 
     return res;
 }
@@ -135,7 +135,7 @@ boolean OCI_ThreadKeySet
 {
     boolean res = TRUE;
 
-    OCI_CHECK(key == NULL, FALSE);
+    OCI_CHECK(NULL == key, FALSE);
 
     OCI_CALL3
     (
@@ -159,7 +159,7 @@ boolean OCI_ThreadKeyGet
 {
     boolean res = TRUE;
 
-    OCI_CHECK(key == NULL, FALSE);
+    OCI_CHECK(NULL == key, FALSE);
 
     OCI_CALL3
     (
@@ -186,11 +186,11 @@ boolean OCI_API OCI_ThreadKeyCreate
 )
 {
     OCI_ThreadKey *key = NULL;
-    boolean res        = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_INITIALIZED(FALSE);
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)
+    OCI_CHECK_INITIALIZED()
 
     if (!OCILib.key_map)
     {
@@ -201,11 +201,11 @@ boolean OCI_API OCI_ThreadKeyCreate
 
     }
 
-    res = (OCILib.key_map != NULL);
+    call_status = (NULL != OCILib.key_map);
 
     /* create key */
 
-    if (res)
+    if (call_status)
     {
         key = OCI_ThreadKeyCreateInternal(destfunc);
 
@@ -213,24 +213,24 @@ boolean OCI_API OCI_ThreadKeyCreate
 
         if (key)
         {
-            res = OCI_HashAddPointer(OCILib.key_map, name, key);
+            call_status = OCI_HashAddPointer(OCILib.key_map, name, key);
         }
         else
         {
-            res = FALSE;
+            call_status = FALSE;
         }
     }
 
     /* check errors */
 
-    if (!res)
+    if (!call_status && key)
     {
         OCI_ThreadKeyFree(key);
     }
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -243,18 +243,17 @@ boolean OCI_API OCI_ThreadKeySetValue
     void        *value
 )
 {
-    boolean res        = TRUE;
     OCI_ThreadKey *key = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)
 
     key = (OCI_ThreadKey *) OCI_HashGetPointer(OCILib.key_map, name);
 
-    res = OCI_ThreadKeySet(key, value);
+    call_retval = call_status = OCI_ThreadKeySet(key, value);
 
-    OCI_RESULT(res);
-
-    return TRUE;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -266,17 +265,15 @@ void * OCI_API OCI_ThreadKeyGetValue
     const otext *name
 )
 {
-    boolean res        = TRUE;
-    void * value       = NULL;
     OCI_ThreadKey* key = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
+    OCI_LIB_CALL_ENTER(void*, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)
 
     key = (OCI_ThreadKey *) OCI_HashGetPointer(OCILib.key_map, name);
 
-    res = OCI_ThreadKeyGet(key, &value);
+    call_status = OCI_ThreadKeyGet(key, &call_retval);
 
-    OCI_RESULT(res);
-
-    return value;
+    OCI_LIB_CALL_EXIT()
 }

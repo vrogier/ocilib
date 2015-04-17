@@ -404,6 +404,11 @@ boolean OCI_ElemSetNullIndicator
  * error.c
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Error * OCI_ErrorCreate
+(
+    void
+);
+
 void OCI_ErrorFree
 (
     OCI_Error *err
@@ -416,13 +421,14 @@ void OCI_ErrorReset
 
 OCI_Error * OCI_ErrorGet
 (
-    boolean check,
-    boolean warning
+    boolean check
 );
 
-OCI_Error * OCI_ErrorCreate
+void OCI_ErrorSet
 (
-    void
+    OCI_Error *err,
+    boolean    success,
+    boolean    reset
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -440,7 +446,7 @@ boolean OCI_EventReset
 
 OCI_Error * OCI_ExceptionGetError
 (
-    boolean warning
+    void
 );
 
 void OCI_ExceptionRaise
@@ -690,9 +696,15 @@ void OCI_SetLastError
     OCI_Error err
 );
 
-void OCI_SetStatus
+void OCI_ContextCallEnter
 (
-    boolean res
+    OCI_Error *err
+);
+
+void OCI_ContextCallExit
+(
+    OCI_Error *err,
+    boolean    success
 );
 
 boolean OCI_KeyMapFree
@@ -711,6 +723,46 @@ unsigned int OCI_ExternalSubTypeToHandleType
     unsigned int type, 
     unsigned int subtype
 );
+
+boolean OCI_GetStringAttribute
+(
+    OCI_Connection *con,
+    void           *handle,
+    unsigned int    type,
+    unsigned int    attr,
+    otext         **str
+);
+
+boolean OCI_SetStringAttribute
+(
+    OCI_Connection *con,
+    void           *handle,
+    unsigned int    type,
+    unsigned int    attr,
+    otext         **str,
+    const otext    *value
+);
+
+boolean OCI_GetNumericAttribute
+(
+    OCI_Connection *con,
+    void           *handle,
+    unsigned int    type,
+    unsigned int    attr,
+    unsigned int    size,
+    void          **value
+);
+
+boolean OCI_SetNumericAttribute
+(
+    OCI_Connection *con,
+    void           *handle,
+    unsigned int    type,
+    unsigned int    attr,
+    otext         **str,
+    unsigned int    size,
+    void           *value
+    );
 
 /* --------------------------------------------------------------------------------------------- *
  * list.c
@@ -1026,7 +1078,7 @@ boolean OCI_PoolClose
 OCI_Ref * OCI_RefInit
 (
     OCI_Connection *con,
-    OCI_TypeInfo   *typeinf,
+    OCI_TypeInfo  **typeinf,
     OCI_Ref       **pref,
     void           *handle
 );
@@ -1166,6 +1218,12 @@ boolean OCI_BatchErrorInit
     OCI_Statement *stmt
 );
 
+boolean OCI_API OCI_PrepareInternal
+(
+    OCI_Statement *stmt,
+    const otext   *sql
+);
+
 boolean OCI_API OCI_ExecuteInternal
 (
     OCI_Statement *stmt,
@@ -1261,25 +1319,6 @@ boolean OCI_StringToStringPtr
     OCIString  **str,
     OCIError    *err,
     const otext *value
-);
-
-boolean OCI_StringGetFromAttrHandle
-(
-    OCI_Connection *con,
-    void           *handle,
-    unsigned int    type,
-    unsigned int    attr,
-    otext         **str
-);
-
-boolean OCI_StringSetToAttrHandle
-(
-    OCI_Connection *con,
-    void           *handle,
-    unsigned int    type,
-    unsigned int    attr,
-    otext         **str,
-    const otext    *value
 );
 
 unsigned int OCI_StringGetFromType

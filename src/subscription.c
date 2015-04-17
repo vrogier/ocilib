@@ -49,11 +49,11 @@ boolean OCI_SubscriptionClose
 {
     boolean res = TRUE;
 
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, FALSE);
+    OCI_CHECK(NULL == sub, FALSE);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    /* deregister the subscription if connection still alive */
+    /* unregister the subscription if connection still alive */
 
     if (sub->subhp)
     {
@@ -92,16 +92,16 @@ boolean OCI_SubscriptionClose
 
     /* free event data */
 
-    OCI_FREE(sub->event.dbname);
-    OCI_FREE(sub->event.objname);
-    OCI_FREE(sub->event.rowid);
+    OCI_FREE(sub->event.dbname)
+    OCI_FREE(sub->event.objname)
+    OCI_FREE(sub->event.rowid)
 
     /* free strings */
 
-    OCI_FREE(sub->saved_db);
-    OCI_FREE(sub->saved_user);
-    OCI_FREE(sub->saved_pwd);
-    OCI_FREE(sub->name);
+    OCI_FREE(sub->saved_db)
+    OCI_FREE(sub->saved_user)
+    OCI_FREE(sub->saved_pwd)
+    OCI_FREE(sub->name)
 
     return res;
 }
@@ -118,7 +118,7 @@ boolean OCI_SubscriptionDetachConnection
     OCI_List *list = OCILib.subs;
     OCI_Item *item = NULL;
 
-    OCI_CHECK(list == NULL, FALSE);
+    OCI_CHECK(NULL == list, FALSE);
 
     if (list->mutex)
     {
@@ -173,14 +173,13 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 {
     OCI_Subscription *sub = NULL;
     OCI_Item *item        = NULL;
-    boolean res           = FALSE;
 
-    OCI_CHECK_INITIALIZED(NULL);
-    OCI_CHECK_DATABASE_NOTIFY_ENABLED(NULL);
+    OCI_LIB_CALL_ENTER(OCI_Subscription*, NULL)
 
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
-    OCI_CHECK_PTR(OCI_IPC_PROC, handler, NULL);
-    OCI_CHECK_PTR(OCI_IPC_STRING, name, NULL);
+    OCI_CHECK_DATABASE_NOTIFY_ENABLED()
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CHECK_PTR(OCI_IPC_PROC, handler)
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -194,22 +193,22 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
         /* allocate error handle */
 
-        res = OCI_SUCCESSFUL(OCI_HandleAlloc(con->env,
-                                             (dvoid **) (void *) &sub->err,
-                                             OCI_HTYPE_ERROR, (size_t) 0,
-                                             (dvoid **) NULL));
+        call_status = OCI_SUCCESSFUL(OCI_HandleAlloc(con->env,
+                                                     (dvoid **) (void *) &sub->err,
+                                                     OCI_HTYPE_ERROR, (size_t) 0,
+                                                     (dvoid **) NULL));
 
-        if (res)
+        if (call_status)
         {
-            /* allocate subcription handle */
+            /* allocate subscription handle */
 
-            res = OCI_SUCCESSFUL(OCI_HandleAlloc(con->env,
-                                                 (dvoid **) (void *) &sub->subhp,
-                                                 OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
-                                                 (dvoid **) NULL));
+            call_status = OCI_SUCCESSFUL(OCI_HandleAlloc(con->env,
+                                                         (dvoid **) (void *) &sub->subhp,
+                                                         OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
+                                                         (dvoid **) NULL));
         }
 
-        if (res)
+        if (call_status)
         {
             ub4     attr   = 0;
             int     dbsize = -1;
@@ -230,7 +229,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
             {
                 OCI_CALL3
                 (
-                    res, sub->err,
+                    call_status, sub->err,
 
                     OCIAttrSet((dvoid *) sub->subhp, (ub4)  OCI_HTYPE_SUBSCRIPTION,
                                (dvoid *) &sub->port, (ub4) sizeof (sub->port),
@@ -241,7 +240,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
             {
                 OCI_CALL3
                 (
-                    res, sub->err,
+                    call_status, sub->err,
 
                     OCIAttrGet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                                (dvoid *) &sub->port, (ub4*) NULL,
@@ -255,7 +254,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
             {
                 OCI_CALL3
                 (
-                    res, sub->err,
+                    call_status, sub->err,
 
                     OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                                (dvoid *) &sub->timeout, (ub4) sizeof (sub->timeout),
@@ -269,7 +268,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
             OCI_CALL3
             (
-                res, sub->err,
+                call_status, sub->err,
 
                 OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                            (dvoid *) dbstr, (ub4) dbsize,
@@ -284,7 +283,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
             OCI_CALL3
             (
-                res, sub->err,
+                call_status, sub->err,
 
                 OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                            (dvoid *) &attr, (ub4) sizeof(attr),
@@ -297,7 +296,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
             OCI_CALL3
             (
-                res, sub->err,
+                call_status, sub->err,
 
                 OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                            (dvoid *) &attr, (ub4) sizeof(attr),
@@ -316,7 +315,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
             OCI_CALL3
             (
-                res, sub->err,
+                call_status, sub->err,
 
                 OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                            (dvoid *) OCI_ProcNotifyChanges, (ub4) 0,
@@ -335,7 +334,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
                 OCI_CALL3
                 (
-                    res, sub->err,
+                    call_status, sub->err,
 
                     OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                                (dvoid *) &attr, (ub4) sizeof(attr),
@@ -343,11 +342,11 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
                 )
             }
 
-            /* set subsription context pointer to our subscription structure */
+            /* set subscription context pointer to our subscription structure */
 
             OCI_CALL3
             (
-                res, sub->err,
+                call_status, sub->err,
 
                 OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
                            (dvoid *) sub, (ub4) 0,
@@ -358,7 +357,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
             OCI_CALL3
             (
-                res, sub->err,
+                call_status, sub->err,
 
                 OCISubscriptionRegister(sub->con->cxt, &sub->subhp, (ub2) 1,
                                         sub->err,(ub4) OCI_DEFAULT)
@@ -367,28 +366,30 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
         }
     }
 
-    if (!res)
+    if (call_status)
+    {
+        call_retval = sub;
+    } 
+    else if (sub)
     {
         OCI_SubscriptionClose(sub);
         OCI_ListRemove(OCILib.subs, sub);
-        OCI_FREE(sub);
+        OCI_FREE(sub)
     }
 
 #else
 
-    OCI_NOT_USED(name);
-    OCI_NOT_USED(type);
-    OCI_NOT_USED(handler);
-    OCI_NOT_USED(port);
-    OCI_NOT_USED(timeout);
-    OCI_NOT_USED(con);
-    OCI_NOT_USED(item);
+    OCI_NOT_USED(name)
+    OCI_NOT_USED(type)
+    OCI_NOT_USED(handler)
+    OCI_NOT_USED(port)
+    OCI_NOT_USED(timeout)
+    OCI_NOT_USED(con)
+    OCI_NOT_USED(item)
 
 #endif
 
-    OCI_RESULT(res);
-
-    return sub;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -400,19 +401,17 @@ boolean OCI_API OCI_SubscriptionUnregister
     OCI_Subscription *sub
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
-    res = OCI_SubscriptionClose(sub);
+    call_retval = call_status = OCI_SubscriptionClose(sub);
 
     OCI_ListRemove(OCILib.subs, sub);
 
     OCI_FREE(sub);
 
-    OCI_RESULT(res);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -425,12 +424,13 @@ boolean OCI_API OCI_SubscriptionAddStatement
     OCI_Statement    *stmt
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
 
-    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED, FALSE);
+    call_status = TRUE;
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -440,21 +440,21 @@ boolean OCI_API OCI_SubscriptionAddStatement
     {
         OCI_CALL3
         (
-            res, sub->err,
+            call_status, sub->err,
 
             OCIAttrSet((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT,
                        (dvoid *) sub->subhp, (ub4) 0,
                        (ub4) OCI_ATTR_CHNF_REGHANDLE, sub->err)
         )
 
-        res = res && OCI_Execute(stmt) && (OCI_GetResultset(stmt) != NULL);
+        call_status = call_status && OCI_Execute(stmt) && (NULL != OCI_GetResultset(stmt));
     }
 
 #endif
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -466,11 +466,14 @@ const otext * OCI_API OCI_SubscriptionGetName
     OCI_Subscription *sub
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, NULL);
+    OCI_LIB_CALL_ENTER(const otext*, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
-    return sub->name;
+    call_retval = sub->name;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -482,12 +485,14 @@ unsigned int OCI_API OCI_SubscriptionGetPort
     OCI_Subscription *sub
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, 0);
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
-    return sub->port;
-}
+    call_retval = sub->port;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()}
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_SubscriptionGetTimeout
@@ -498,11 +503,14 @@ unsigned int OCI_API OCI_SubscriptionGetTimeout
     OCI_Subscription *sub
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, 0);
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
-    return sub->timeout;
+    call_retval = sub->timeout;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -514,11 +522,13 @@ OCI_Connection * OCI_API OCI_SubscriptionGetConnection
     OCI_Subscription *sub
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, NULL);
+    OCI_LIB_CALL_ENTER(OCI_Connection*, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
-    return sub->con;
-}
+    call_retval = sub->con;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()}
 
 

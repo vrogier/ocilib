@@ -53,7 +53,7 @@ OCI_List * OCI_ListCreate
 
     list = (OCI_List *) OCI_MemAlloc(OCI_IPC_LIST, sizeof(*list), (size_t) 1, TRUE);
 
-    /* create a mutex on multithreaded environments */
+    /* create a mutex on multi threaded environments */
 
     if (list)
     {
@@ -65,7 +65,7 @@ OCI_List * OCI_ListCreate
 
             if (!list->mutex)
             {
-                OCI_FREE(list);
+                OCI_FREE(list)
             }
         }
     }
@@ -84,7 +84,7 @@ boolean OCI_ListFree
 {
     boolean res = TRUE;
 
-    OCI_CHECK(list == NULL, FALSE);
+    OCI_CHECK(NULL == list,  FALSE)
 
     OCI_ListClear(list);
 
@@ -93,7 +93,7 @@ boolean OCI_ListFree
         res = OCI_MutexFree(list->mutex);
     }
 
-    OCI_FREE(list);
+    OCI_FREE(list)
 
     return res;
 }
@@ -122,7 +122,7 @@ OCI_Item * OCI_ListCreateItem
 
         if (!item->data)
         {
-            OCI_FREE(item);
+            OCI_FREE(item)
         }
     }
 
@@ -142,11 +142,11 @@ OCI_Item * OCI_ListAppend
     OCI_Item *item = NULL;
     OCI_Item *temp = NULL;
 
-    OCI_CHECK(list == NULL, NULL);
+    OCI_CHECK(NULL == list,  NULL);
 
     item = OCI_ListCreateItem(list->type, size);
 
-    OCI_CHECK(item == NULL, FALSE);
+    OCI_CHECK(NULL == item, FALSE)
 
     if (list->mutex)
     {
@@ -191,7 +191,7 @@ boolean OCI_ListClear
     OCI_Item *item = NULL;
     OCI_Item *temp = NULL;
 
-    OCI_CHECK(list == NULL, FALSE);
+    OCI_CHECK(NULL == list,  FALSE)
 
     if (list->mutex)
     {
@@ -209,8 +209,8 @@ boolean OCI_ListClear
 
         /* free data */
 
-        OCI_FREE(temp->data);
-        OCI_FREE(temp);
+        OCI_FREE(temp->data)
+        OCI_FREE(temp)
     }
 
     list->head  = NULL;
@@ -236,7 +236,7 @@ boolean OCI_ListForEach
 {
     OCI_Item *item = NULL;
 
-    OCI_CHECK(list == NULL, FALSE);
+    OCI_CHECK(NULL == list,  FALSE)
 
     if (list->mutex)
     {
@@ -274,8 +274,8 @@ boolean OCI_ListRemove
     OCI_Item *item = NULL;
     OCI_Item *temp = NULL;
 
-    OCI_CHECK(list == NULL, FALSE);
-    OCI_CHECK(data == NULL, FALSE);
+    OCI_CHECK(NULL == list,  FALSE)
+    OCI_CHECK(NULL == data, FALSE)
 
     if (list->mutex)
     {
@@ -301,7 +301,7 @@ boolean OCI_ListRemove
                 list->head = item->next;
             }
 
-            OCI_FREE(item);
+            OCI_FREE(item)
 
             break;
         }

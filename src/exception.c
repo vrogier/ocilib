@@ -91,7 +91,7 @@ static otext * OCILib_TypeNames[OCI_IPC_COUNT] =
     OTEXT("Internal hash value handle"),
     OTEXT("Internal thread key handle"),
     OTEXT("Internal Oracle date handle"),
-    OTEXT("Internal C tm structure"),
+    OTEXT("Internal C time structure"),
     OTEXT("Internal array of resultset handles"),
     OTEXT("Internal array of PL/SQL sizes integers"),
     OTEXT("Internal array of PL/SQL return codes integers"),
@@ -113,15 +113,15 @@ static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
     OTEXT("OCILIB has not been initialized"),
     OTEXT("Cannot load OCI shared library (%ls)"),
     OTEXT("Cannot load OCI symbols from shared library"),
-    OTEXT("OCILIB has not been initialized in multithreaded mode"),
+    OTEXT("OCILIB has not been initialized in multi threaded mode"),
     OTEXT("Memory allocation failure (type %ls, size : %d)"),
     OTEXT("Feature not available (%ls) "),
     OTEXT("A null %ls has been provided"),
-    OTEXT("Oracle datatype (sqlcode %d) not supported for this operation "),
+    OTEXT("Oracle data type (sql code %d) not supported for this operation "),
     OTEXT("Unknown identifier %c while parsing SQL"),
     OTEXT("Unknown argument %d while retrieving data"),
     OTEXT("Index %d out of bounds"),
-    OTEXT("Found %d unfreed %ls"),
+    OTEXT("Found %d non freed %ls"),
     OTEXT("Maximum number of binds (%d) already reached"),
     OTEXT("Object attribute '%ls' not found"),
     OTEXT("The integer parameter value must be at least %d"),
@@ -133,7 +133,7 @@ static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
     OTEXT("Column '%ls' not find in table '%ls'"),
     OTEXT("Unable to perform this operation on a %ls direct path process"),
     OTEXT("Cannot create OCI environment"),
-    OTEXT("Name or position '%ls' previously binded with different datatype"),
+    OTEXT("Name or position '%ls' previously binded with different data type"),
     OTEXT("Object '%ls' type does not match the requested object type"),
     OTEXT("Item '%ls' (type %d)  not found"),
     OTEXT("Argument '%ls' : Invalid value %d")
@@ -147,15 +147,15 @@ static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
     OTEXT("OCILIB has not been initialized"),
     OTEXT("Cannot load OCI shared library (%s)"),
     OTEXT("Cannot load OCI symbols from shared library"),
-    OTEXT("OCILIB has not been initialized in multithreaded mode"),
+    OTEXT("OCILIB has not been initialized in multi threaded mode"),
     OTEXT("Memory allocation failure (type %s, size : %d)"),
     OTEXT("Feature not available (%s) "),
     OTEXT("A null %s has been provided"),
-    OTEXT("Oracle datatype (sqlcode %d) not supported for this operation "),
+    OTEXT("Oracle data type (sql code %d) not supported for this operation "),
     OTEXT("Unknown identifier %c while parsing SQL : "),
     OTEXT("Unknown argument %d while retrieving data"),
     OTEXT("Index %d out of bounds"),
-    OTEXT("Found %d unfreed %s"),
+    OTEXT("Found %d non freed %s"),
     OTEXT("Maximum number of binds (%d) already reached"),
     OTEXT("Object attribute '%s' not found"),
     OTEXT("The integer parameter value must be at least %d"),
@@ -228,19 +228,15 @@ static otext * OCILib_HandleNames[OCI_HDLE_COUNT] =
 
 OCI_Error * OCI_ExceptionGetError
 (
-    boolean warning
+    void
 )
 {
-    OCI_Error *err = OCI_ErrorGet(TRUE, warning);
+    OCI_Error *err = OCI_ErrorGet(TRUE);
 
     if (err)
     {
         OCI_ErrorReset(err);
-
-        err->active  = TRUE;
-        err->warning = warning;
     }
-
     return err;
 }
 
@@ -255,6 +251,8 @@ void OCI_ExceptionRaise
 {
     if (err)
     {
+        err->active = TRUE;
+
         if (OCILib.error_handler)
         {
             OCILib.error_handler(err);
@@ -276,7 +274,7 @@ void OCI_ExceptionOCI
     boolean         warning
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(warning);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -308,7 +306,7 @@ void OCI_ExceptionNotInitialized
     void
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -332,7 +330,7 @@ void OCI_ExceptionLoadingSharedLib
 {
 #ifdef OCI_IMPORT_RUNTIME
 
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -358,7 +356,7 @@ void OCI_ExceptionLoadingSymbols
     void
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -380,7 +378,7 @@ void OCI_ExceptionNotMultithreaded
     void
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -402,7 +400,7 @@ void OCI_ExceptionNullPointer
     int type
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -429,7 +427,7 @@ void OCI_ExceptionMemory
     OCI_Statement  *stmt
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -458,7 +456,7 @@ void OCI_ExceptionNotAvailable
     int             feature
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -486,7 +484,7 @@ void OCI_ExceptionDatatypeNotSupported
     int             code
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -515,7 +513,7 @@ void OCI_ExceptionParsingToken
     otext           token
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -544,7 +542,7 @@ void OCI_ExceptionMappingArgument
     int             arg
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -572,7 +570,7 @@ void OCI_ExceptionOutOfBounds
     int             value
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -599,7 +597,7 @@ void OCI_ExceptionUnfreedData
     int nb_elem
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -624,7 +622,7 @@ void OCI_ExceptionMaxBind
     OCI_Statement *stmt
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -656,7 +654,7 @@ void OCI_ExceptionAttributeNotFound
     const otext    *attr
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -684,7 +682,7 @@ void OCI_ExceptionMinimumValue
     int             min
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -708,7 +706,7 @@ void OCI_ExceptionTypeNotCompatible
     OCI_Connection *con
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -732,7 +730,7 @@ void OCI_ExceptionStatementState
     int            state
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -774,7 +772,7 @@ void OCI_ExceptionStatementNotScrollable
     OCI_Statement *stmt
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -804,7 +802,7 @@ void OCI_ExceptionBindAlreadyUsed
     const otext  * bind
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -838,7 +836,7 @@ void OCI_ExceptionBindArraySize
     unsigned int   newsize
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -871,7 +869,7 @@ void OCI_ExceptionDirPathColNotFound
     const otext  *table
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -904,7 +902,7 @@ void OCI_ExceptionDirPathState
     int          state
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -935,7 +933,7 @@ void OCI_ExceptionOCIEnvironment
     void
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -958,7 +956,7 @@ void OCI_ExceptionRebindBadDatatype
     const otext  * bind
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -990,7 +988,7 @@ void OCI_ExceptionTypeInfoWrongType
     const otext  * name
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -1020,7 +1018,7 @@ void OCI_ExceptionItemNotFound
     unsigned int    type
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {
@@ -1050,7 +1048,7 @@ void OCI_ExceptionArgInvalidValue
     unsigned int    value
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError(FALSE);
+    OCI_Error *err = OCI_ExceptionGetError();
 
     if (err)
     {

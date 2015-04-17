@@ -56,7 +56,7 @@ size_t OCI_StringLength
 {
     int size = 0;
 
-    OCI_CHECK(ptr == NULL, 0);
+    OCI_CHECK(NULL == ptr, 0);
 
     if (OCILib.nls_utf8)
     {
@@ -351,7 +351,7 @@ void OCI_StringReleaseOracleString
     dbtext *str
 )
 {
-    if (OCILib.use_wide_char_conv && str != NULL)
+    if (OCILib.use_wide_char_conv && str)
     {
         OCI_MemFree(str);
     }
@@ -417,7 +417,7 @@ otext * OCI_StringFromStringPtr
 {
     dbtext *tmp = NULL;
 
-    OCI_CHECK(buffer == NULL, NULL);
+    OCI_CHECK(NULL == buffer, NULL);
 
     tmp = (dbtext *) OCIStringPtr(env, str);
 
@@ -451,7 +451,7 @@ boolean OCI_StringToStringPtr
     dbtext *dbstr  = NULL;
     int     dbsize = 0;
 
-    OCI_CHECK(str == NULL, FALSE);
+    OCI_CHECK(NULL == str, FALSE);
 
     dbsize = -1;
     dbstr  = OCI_StringGetOracleString(value, &dbsize);
@@ -469,10 +469,10 @@ boolean OCI_StringToStringPtr
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringGetFromAttrHandle
+ * OCI_GetStringAttribute
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StringGetFromAttrHandle
+boolean OCI_GetStringAttribute
 (
     OCI_Connection *con,
     void           *handle,
@@ -486,7 +486,7 @@ boolean OCI_StringGetFromAttrHandle
     int     dbsize  = -1;
     boolean is_ansi = FALSE;
 
-    OCI_CHECK(str == NULL, FALSE);
+    OCI_CHECK(NULL == str, FALSE);
 
     OCI_CALL2
     (
@@ -514,7 +514,7 @@ boolean OCI_StringGetFromAttrHandle
 
             if (ptr[0] != 0 && ptr[1] != 0)
             {
-               /* ansi buffer returned instead of an UTF16 one ! */
+               /* ANSI buffer returned instead of an UTF16 one ! */
                is_ansi = TRUE;
                dbsize  = (dbsize / sizeof(char)) * sizeof(dbtext);
             }
@@ -524,17 +524,17 @@ boolean OCI_StringGetFromAttrHandle
 
         OCI_StringTranslate(dbstr, *str, dbcharcount(dbsize), is_ansi ? sizeof(char) : sizeof(dbtext), sizeof(otext));
 
-        res = (*str != NULL);
+        res = (NULL != *str);
     }
 
     return res;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringSetToAttrHandle
+ * OCI_SetStringAttribute
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StringSetToAttrHandle
+boolean OCI_SetStringAttribute
 (
     OCI_Connection *con,
     void           *handle,
@@ -571,7 +571,7 @@ boolean OCI_StringSetToAttrHandle
 
     if (res && str)
     {
-        OCI_FREE(*str);
+        OCI_FREE(*str)
 
         if (value)
         {
@@ -777,14 +777,7 @@ unsigned int OCI_StringGetFromType
             if (ptr)
             {
                 OCI_Ref *ref = (OCI_Ref *) data;
-                if (ref)
-                {
-                    res = OCI_RefToText(ref, OCI_SIZE_BUFFER, ptr);
-                }
-                else
-                {
-                    res = FALSE;
-                }
+                res = ref ? OCI_RefToText(ref, OCI_SIZE_BUFFER, ptr) : FALSE;
             }
 
             break;
@@ -793,30 +786,14 @@ unsigned int OCI_StringGetFromType
         {
             OCI_Object *obj = (OCI_Object *) data;
             quote = FALSE;
-            if (obj != NULL)
-            {
-               res = OCI_ObjectToText(obj, &len, ptr);           
-            }
-            else
-            {
-                res = FALSE;
-            }
-
+            res = obj ? OCI_ObjectToText(obj, &len, ptr) : FALSE;
             break;
         }
         case OCI_CDT_COLLECTION:
         {
             OCI_Coll *coll = (OCI_Coll *) data;
             quote = FALSE;
-            if (coll != NULL)
-            {
-                OCI_CollToText(coll, &len, ptr);    
-            }
-            else
-            {
-                res = FALSE;
-            }
-
+            res = coll ? OCI_CollToText(coll, &len, ptr) : FALSE;
             break;
         }
         default:
@@ -1033,7 +1010,7 @@ char * ocistrdup
 {
     char *dst;
 
-    OCI_CHECK(src == NULL, NULL)
+    OCI_CHECK(NULL == src, NULL)
 
     dst = (char *) OCI_MemAlloc(OCI_IPC_STRING, 1, strlen(src) + 1, 0);
 
@@ -1114,7 +1091,7 @@ wchar_t * ociwcsdup
 {
     wchar_t *dst;
 
-    OCI_CHECK(src == NULL, NULL)
+    OCI_CHECK(NULL == src, NULL)
 
     dst = (wchar_t *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(wchar_t), wcslen(src) + 1, 0);
 

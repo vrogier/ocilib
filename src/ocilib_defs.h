@@ -403,7 +403,7 @@
 
 /* indicator and nullity handlers */
 
-#define OCI_IND(exp)                    (sb2) ((exp) ? 0 : -1)
+#define OCI_IND(exp)                    (sb2) ((exp) ? 0 : -1)  
 
 #define OCI_NOT_USED(p)                 (p) = (p);
 
@@ -415,10 +415,38 @@
 
 #define OCI_LIB_CONTEXT                 (OCILib.env_mode & OCI_ENV_CONTEXT)
 
-#define OCI_RESULT(res)                                                        \
-                                                                               \
-    if (OCI_LIB_CONTEXT)                                                       \
-        OCI_SetStatus(res);                                                    \
+#define OCI_LIB_CALL_ENTER(type, value)                                         \
+                                                                                \
+    type    call_retval = (type) value;                                         \
+    boolean call_status = FALSE;                                                \
+    OCI_Error * call_err = NULL;                                                \
+    if (OCI_LIB_CONTEXT)                                                        \
+    {                                                                           \
+        call_err = OCI_ErrorGet(FALSE);                                         \
+        OCI_ContextCallEnter(call_err);                                         \
+    }                                                                           \
+
+#define OCI_LIB_CALL_EXIT()                                                     \
+                                                                                \
+    ExitCall:                                                                   \
+    if (OCI_LIB_CONTEXT)                                                        \
+    {                                                                           \
+        OCI_ContextCallExit(call_err, call_status);                             \
+    }                                                                           \
+    return call_retval;
+
+#define OCI_LIB_CALL_GET_PROPERTY(object_type, object, type, value, prop)       \
+    \
+OCI_LIB_CALL_ENTER(type, value)\
+    \
+OCI_CHECK_PTR(object_type, object)\
+    \
+call_retval = object->prop;\
+call_status = TRUE;\
+    \
+OCI_LIB_CALL_EXIT()\
+
+
 
 #ifdef _WINDOWS
 

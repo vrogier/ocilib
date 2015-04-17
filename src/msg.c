@@ -48,11 +48,10 @@ OCI_Msg * OCI_API OCI_MsgCreate
 )
 {
     OCI_Msg *msg = NULL;
-    boolean res  = TRUE;
 
-    OCI_CHECK_INITIALIZED(NULL);
+    OCI_LIB_CALL_ENTER(OCI_Msg*, NULL)
 
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf, NULL);
+    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
 
     /* allocate message structure */
 
@@ -65,12 +64,12 @@ OCI_Msg * OCI_API OCI_MsgCreate
 
         /* allocate message properties descriptor */
 
-        res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid * ) msg->typinf->con->env,
-                                                 (dvoid **) &msg->proph,
-                                                 OCI_DTYPE_AQMSG_PROPERTIES,
-                                                 (size_t) 0, (dvoid **) NULL));
+        call_status = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid * ) msg->typinf->con->env,
+                                                                    (dvoid **) &msg->proph,
+                                                                    OCI_DTYPE_AQMSG_PROPERTIES,
+                                                                    (size_t) 0, (dvoid **) NULL));
 
-        if (res)
+        if (call_status)
         {
             /* allocate internal OCI_Object handle if payload is not RAW */
 
@@ -78,24 +77,24 @@ OCI_Msg * OCI_API OCI_MsgCreate
             {
                 msg->obj = OCI_ObjectCreate(typinf->con, typinf);
 
-                res = (msg->obj != NULL);
+                call_status = (NULL != msg->obj);
             }
         }
-    }
-    else
-    {
-        res = FALSE;
     }
 
     /* check for failure */
 
-    if (!res)
+    if (call_status)
+    {
+        call_retval = msg;
+    }
+    else if (msg)
     {
         OCI_MsgFree(msg);
         msg = NULL;
     }
 
-    return msg;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -107,9 +106,11 @@ boolean OCI_API OCI_MsgFree
     OCI_Msg *msg
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_retval = call_status = TRUE;
 
     /* free local OCI_Agent object */
 
@@ -135,7 +136,7 @@ boolean OCI_API OCI_MsgFree
     {
         OCI_CALL2
         (
-            res, msg->typinf->con,
+            call_status, msg->typinf->con,
 
             OCIRawResize(msg->typinf->con->env, msg->typinf->con->err, 0, (OCIRaw **) &msg->payload)
         )
@@ -148,7 +149,7 @@ boolean OCI_API OCI_MsgFree
 
         OCI_CALL2
         (
-            res, msg->typinf->con,
+            call_status, msg->typinf->con,
 
             OCIRawResize(msg->typinf->con->env, msg->typinf->con->err, 0, (OCIRaw **) &msg->id)
         )
@@ -160,9 +161,9 @@ boolean OCI_API OCI_MsgFree
 
     OCI_DescriptorFree((dvoid *) msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
 
-    OCI_FREE(msg);
+    OCI_FREE(msg)
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -174,19 +175,19 @@ boolean OCI_API OCI_MsgReset
     OCI_Msg *msg
 )
 {
-    boolean       res = TRUE;
     unsigned int  len = 0;
 
-    res =   (
-                OCI_MsgSetExpiration(msg, -1)            &&
-                OCI_MsgSetEnqueueDelay(msg, 0)           &&
-                OCI_MsgSetPriority(msg,0)                &&
-                OCI_MsgSetOriginalID(msg, NULL, len)     &&
-                OCI_MsgSetSender(msg, NULL)              &&
-                OCI_MsgSetConsumers(msg, NULL, len)      &&
-                OCI_MsgSetCorrelation(msg, NULL)         &&
-                OCI_MsgSetExceptionQueue(msg, NULL)
-            );
+    boolean res = 
+    (
+        OCI_MsgSetExpiration(msg, -1)            &&
+        OCI_MsgSetEnqueueDelay(msg, 0)           &&
+        OCI_MsgSetPriority(msg,0)                &&
+        OCI_MsgSetOriginalID(msg, NULL, len)     &&
+        OCI_MsgSetSender(msg, NULL)              &&
+        OCI_MsgSetConsumers(msg, NULL, len)      &&
+        OCI_MsgSetCorrelation(msg, NULL)         &&
+        OCI_MsgSetExceptionQueue(msg, NULL)
+    );
 
     if (res)
     {
@@ -212,19 +213,19 @@ OCI_Object * OCI_API OCI_MsgGetObject
     OCI_Msg *msg
 )
 {
-    OCI_Object *obj = NULL;
+    OCI_LIB_CALL_ENTER(OCI_Object *, NULL)
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, NULL);
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode != OCI_UNKNOWN, NULL);
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode != OCI_UNKNOWN)
 
     if (OCI_IND_NULL != msg->ind)
     {
-        obj = (OCI_Object *) msg->obj;
+        call_retval = (OCI_Object *) msg->obj;
     }
 
-    OCI_RESULT(TRUE);
+    call_status = TRUE;
 
-    return obj;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -237,31 +238,31 @@ boolean OCI_API OCI_MsgSetObject
     OCI_Object *obj
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
-
-    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode != OCI_UNKNOWN, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+    OCI_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode != OCI_UNKNOWN)
 
     if (obj)
     {
         /* assign the given object to the message internal object */
 
-        res = OCI_ObjectAssign((OCI_Object *) msg->obj, obj);
+        call_status = OCI_ObjectAssign((OCI_Object *) msg->obj, obj);
 
-        if (res)
+        if (call_status)
         {
             msg->ind = OCI_IND_NOTNULL;
         }
     }
     else
     {
-        msg->ind = OCI_IND_NULL;
+        call_status = TRUE;
+        msg->ind    = OCI_IND_NULL;
     }
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -275,11 +276,13 @@ boolean OCI_API OCI_MsgGetRaw
     unsigned int *size
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_VOID, raw, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_VOID, size, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_COMPAT(msg->typinf->con, OCI_UNKNOWN == msg->typinf->typecode, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+    OCI_CHECK_PTR(OCI_IPC_VOID, raw)
+    OCI_CHECK_PTR(OCI_IPC_VOID, size)
+
+    OCI_CHECK_COMPAT(msg->typinf->con, OCI_UNKNOWN == msg->typinf->typecode)
 
     if ((msg->payload) && (OCI_IND_NULL != msg->ind))
     {
@@ -297,9 +300,9 @@ boolean OCI_API OCI_MsgGetRaw
         *size = 0;
     }
 
-    OCI_RESULT(TRUE);
+    call_retval = call_status;
 
-    return TRUE;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -313,21 +316,22 @@ boolean OCI_API OCI_MsgSetRaw
     unsigned int  size
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+    OCI_CHECK_COMPAT(msg->typinf->con, OCI_UNKNOWN ==  msg->typinf->typecode)
 
-    OCI_CHECK_COMPAT(msg->typinf->con, OCI_UNKNOWN ==  msg->typinf->typecode, FALSE);
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIRawAssignBytes(msg->typinf->con->env, msg->typinf->con->err,
                           (ub1*) raw, (ub4) size, (OCIRaw **) &msg->payload)
     )
 
-    if (res && msg->payload && (size > 0))
+    if (call_status && msg->payload && (size > 0))
     {
         msg->ind = OCI_IND_NOTNULL;
     }
@@ -336,9 +340,9 @@ boolean OCI_API OCI_MsgSetRaw
         msg->ind = OCI_IND_NULL;
     }
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -350,26 +354,29 @@ int OCI_API OCI_MsgGetAttemptCount
     OCI_Msg *msg
 )
 {
-    boolean res = TRUE;
-    sb4 ret     = 0;
+    sb4 value = 0;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, 0);
+    OCI_LIB_CALL_ENTER(int, value)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &ret,
+                   (dvoid *) &value,
                    (ub4   *) NULL,
                    (ub4    ) OCI_ATTR_ATTEMPTS,
                    msg->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = value;
 
-    return (int) ret;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -381,26 +388,29 @@ int OCI_API OCI_MsgGetEnqueueDelay
     OCI_Msg *msg
 )
 {
-    boolean res = TRUE;
-    sb4 ret     = 0;
+    sb4 value = 0;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, 0);
+    OCI_LIB_CALL_ENTER(int, 0)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &ret,
+                   (dvoid *) &value,
                    (ub4   *) NULL,
                    (ub4    ) OCI_ATTR_DELAY,
                    msg->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = value;
 
-    return (int) ret;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -413,14 +423,17 @@ boolean OCI_API OCI_MsgSetEnqueueDelay
     int      value
 )
 {
-    boolean res = TRUE;
-    sb4 sval    = (sb4) value;
+    sb4 sval = (sb4) value;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, 0);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrSet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
@@ -430,9 +443,9 @@ boolean OCI_API OCI_MsgSetEnqueueDelay
                    msg->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -444,34 +457,34 @@ OCI_Date * OCI_API OCI_MsgGetEnqueueTime
     OCI_Msg *msg
 )
 {
-    boolean res    = TRUE;
-    OCI_Date *date = NULL;
-    OCIDate oci_date;
+    OCIDate date;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, NULL);
+    OCI_LIB_CALL_ENTER(OCI_Date*, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &oci_date,
+                   (dvoid *) &date,
                    (ub4   *) NULL,
                    (ub4    ) OCI_ATTR_ENQ_TIME,
                    msg->typinf->con->err)
     )
 
-    if (res)
+    if (call_status)
     {
-        date = OCI_DateInit(msg->typinf->con, &msg->date, &oci_date, FALSE, FALSE);
+        call_retval = OCI_DateInit(msg->typinf->con, &msg->date, &date, FALSE, FALSE);
 
-        res = (date != NULL);
+        call_status = (NULL != call_retval);
     }
 
-    OCI_RESULT(res);
-
-    return date;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -483,26 +496,29 @@ int OCI_API OCI_MsgGetExpiration
     OCI_Msg *msg
 )
 {
-    boolean res = TRUE;
-    sb4 ret     = 0;
+    sb4 value = 0;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, 0);
+    OCI_LIB_CALL_ENTER(int, 0)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &ret,
+                   (dvoid *) &value,
                    (ub4   *) NULL,
                    (ub4    ) OCI_ATTR_EXPIRATION,
                    msg->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = value;
 
-    return (int) ret;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -515,14 +531,17 @@ boolean OCI_API OCI_MsgSetExpiration
     int      value
 )
 {
-    boolean res = TRUE;
-    sb4 sval    = (sb4) value;
+    sb4 sval = (sb4) value;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrSet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
@@ -532,9 +551,9 @@ boolean OCI_API OCI_MsgSetExpiration
                    msg->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -546,18 +565,21 @@ unsigned int OCI_API OCI_MsgGetState
     OCI_Msg *msg
 )
 {
-    boolean res = TRUE;
-    sb4 ret     = 0;
+    sb4 value = 0;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, OCI_UNKNOWN);
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &ret,
+                   (dvoid *) &value,
                    (ub4   *) NULL,
                    (ub4    ) OCI_ATTR_MSG_STATE,
                    msg->typinf->con->err)
@@ -565,18 +587,12 @@ unsigned int OCI_API OCI_MsgGetState
 
     /* increment value to handle return code OCI_UNKNOWN on failure */
 
-    if (res)
+    if (call_status)
     {
-        ret++;
-    }
-    else
-    {
-        ret = OCI_UNKNOWN;
+        call_retval = ++value;
     }
 
-    OCI_RESULT(res);
-
-    return (int) ret;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -588,26 +604,29 @@ int OCI_API OCI_MsgGetPriority
     OCI_Msg *msg
 )
 {
-    boolean res = TRUE;
-    sb4 ret     = 0;
+    sb4 value = 0;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, 0);
+    OCI_LIB_CALL_ENTER(int, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
-                   (dvoid *) &ret,
+                   (dvoid *) &value,
                    (ub4   *) NULL,
                    (ub4    ) OCI_ATTR_PRIORITY,
                    msg->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = value;
 
-    return (int) ret;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -620,14 +639,17 @@ boolean OCI_API OCI_MsgSetPriority
     int      value
 )
 {
-    boolean res = TRUE;
-    sb4 sval    = (sb4) value;
+    sb4 sval = (sb4) value;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrSet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
@@ -637,9 +659,9 @@ boolean OCI_API OCI_MsgSetPriority
                    msg->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 
@@ -654,11 +676,11 @@ boolean OCI_API OCI_MsgGetID
     unsigned int *len
 )
 {
-    boolean res   = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_MSG,  msg, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_VOID, id,  FALSE);
-    OCI_CHECK_PTR(OCI_IPC_VOID, len, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+    OCI_CHECK_PTR(OCI_IPC_VOID, id)
+    OCI_CHECK_PTR(OCI_IPC_VOID, len)
 
     if (msg->id)
     {
@@ -676,9 +698,9 @@ boolean OCI_API OCI_MsgGetID
         *len = 0;
     }
 
-    OCI_RESULT(res);
+    call_retval = call_status = TRUE;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -692,16 +714,21 @@ boolean OCI_API OCI_MsgGetOriginalID
     unsigned int *len
 )
 {
-    boolean res   = TRUE;
     OCIRaw *value = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG,  msg, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_VOID, id,  FALSE);
-    OCI_CHECK_PTR(OCI_IPC_VOID, len, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+    OCI_CHECK_PTR(OCI_IPC_VOID, id)
+    OCI_CHECK_PTR(OCI_IPC_VOID, len)
+
+    *len = 0;
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
@@ -711,7 +738,7 @@ boolean OCI_API OCI_MsgGetOriginalID
                    msg->typinf->con->err)
     )
 
-    if (value)
+    if (call_status && value)
     {
         ub4 raw_len = OCIRawSize(msg->typinf->con->env, value);
 
@@ -722,14 +749,10 @@ boolean OCI_API OCI_MsgGetOriginalID
 
         memcpy(id, OCIRawPtr(msg->typinf->con->env, value), (size_t) (*len));
     }
-    else
-    {
-        *len = 0;
-    }
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -743,14 +766,17 @@ boolean OCI_API OCI_MsgSetOriginalID
     unsigned int len
 )
 {
-    boolean res   = TRUE;
     OCIRaw *value = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG,  msg, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIRawAssignBytes(msg->typinf->con->env, msg->typinf->con->err,
                           (ub1*) id, (ub4) len, (OCIRaw **) &value)
@@ -758,7 +784,7 @@ boolean OCI_API OCI_MsgSetOriginalID
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrSet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
@@ -768,9 +794,9 @@ boolean OCI_API OCI_MsgSetOriginalID
                    msg->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -782,22 +808,24 @@ const otext * OCI_API OCI_MsgGetCorrelation
     OCI_Msg *msg
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(const otext *, NULL)
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, NULL);
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     if (!msg->correlation)
     {
-        res = OCI_StringGetFromAttrHandle(msg->typinf->con,
+        call_status = OCI_GetStringAttribute(msg->typinf->con,
                                           msg->proph,
                                           OCI_DTYPE_AQMSG_PROPERTIES,
                                           OCI_ATTR_CORRELATION,
                                           &msg->correlation);
     }
 
-    OCI_RESULT(res);
+    call_retval = msg->correlation;
 
-    return msg->correlation;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -810,20 +838,20 @@ boolean OCI_API OCI_MsgSetCorrelation
     const otext *correlation
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
 
-    res =  OCI_StringSetToAttrHandle(msg->typinf->con,
+    call_status =  OCI_SetStringAttribute(msg->typinf->con,
                                      msg->proph,
                                      OCI_DTYPE_AQMSG_PROPERTIES,
                                      OCI_ATTR_CORRELATION,
                                      &msg->correlation,
                                      correlation);
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -835,22 +863,27 @@ const otext * OCI_API OCI_MsgGetExceptionQueue
     OCI_Msg *msg
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(const otext *, NULL)
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, NULL);
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     if (!msg->except_queue)
     {
-        res = OCI_StringGetFromAttrHandle(msg->typinf->con,
-                                          msg->proph,
-                                          OCI_DTYPE_AQMSG_PROPERTIES,
-                                          OCI_ATTR_EXCEPTION_QUEUE,
-                                          &msg->except_queue);
+        call_status = OCI_GetStringAttribute
+                        (
+                            msg->typinf->con,
+                            msg->proph,
+                            OCI_DTYPE_AQMSG_PROPERTIES,
+                            OCI_ATTR_EXCEPTION_QUEUE,
+                            &msg->except_queue
+                        );
     }
 
-    OCI_RESULT(res);
+    call_retval = msg->except_queue;
 
-    return msg->except_queue;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -863,20 +896,20 @@ boolean OCI_API OCI_MsgSetExceptionQueue
     const otext *queue
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
 
-    res =  OCI_StringSetToAttrHandle(msg->typinf->con,
+    call_status =  OCI_SetStringAttribute(msg->typinf->con,
                                      msg->proph,
                                      OCI_DTYPE_AQMSG_PROPERTIES,
                                      OCI_ATTR_EXCEPTION_QUEUE,
                                      &msg->except_queue,
                                      queue);
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -888,15 +921,17 @@ OCI_Agent * OCI_API OCI_MsgGetSender
     OCI_Msg   *msg
 )
 {
-    boolean res = TRUE;
     OCIAQAgent *handle = NULL;
-    OCI_Agent  *sender = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, NULL);
+    OCI_LIB_CALL_ENTER(OCI_Agent *, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrGet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
@@ -906,14 +941,13 @@ OCI_Agent * OCI_API OCI_MsgGetSender
                    msg->typinf->con->err)
     )
 
-    if (res && handle)
+    if (call_status && handle)
     {
-        sender = OCI_AgentInit(msg->typinf->con, &msg->sender, handle, NULL, NULL);
+        call_retval = OCI_AgentInit(msg->typinf->con, &msg->sender, handle, NULL, NULL);
+        call_status = (NULL != call_retval);
     }
 
-    OCI_RESULT(res);
-
-    return sender;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -926,13 +960,15 @@ boolean OCI_API OCI_MsgSetSender
     OCI_Agent *sender
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
+
+    call_status = TRUE;
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrSet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
@@ -942,9 +978,9 @@ boolean OCI_API OCI_MsgSetSender
                    msg->typinf->con->err)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -958,16 +994,17 @@ boolean OCI_API OCI_MsgSetConsumers
     unsigned int count
 )
 {
-    boolean res          = TRUE;
     OCIAQAgent **handles = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg, FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
 
     /* allocate local array of OCIAQAgent handles if needed */
 
     if (consumers && (count > 0))
     {
-        handles = (OCIAQAgent **) OCI_MemAlloc(OCI_IPC_ARRAY,sizeof(OCIAQAgent *), count, FALSE);
+        handles = (OCIAQAgent **)OCI_MemAlloc(OCI_IPC_ARRAY, sizeof(OCIAQAgent *), count, FALSE);
 
         if (handles)
         {
@@ -977,20 +1014,19 @@ boolean OCI_API OCI_MsgSetConsumers
             {
                 handles[i] = consumers[i]->handle;
             }
-        }
-        else
-        {
-            res = FALSE;
+
+            call_status = TRUE;
         }
     }
     else
     {
+        call_status = TRUE;
         count = 0;
     }
 
     OCI_CALL2
     (
-        res, msg->typinf->con,
+        call_status, msg->typinf->con,
 
         OCIAttrSet((dvoid *) msg->proph,
                    (ub4    ) OCI_DTYPE_AQMSG_PROPERTIES,
@@ -1005,10 +1041,10 @@ boolean OCI_API OCI_MsgSetConsumers
 
     if (handles)
     {
-        OCI_FREE(handles);
+        OCI_FREE(handles)
     }
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }

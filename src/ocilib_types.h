@@ -121,7 +121,8 @@ typedef struct OCI_TraceInfo OCI_TraceInfo;
 
 struct OCI_Error
 {
-    boolean         raise;                    /* Error flag */
+    unsigned int    depth;
+    boolean         raise;                    /* Must be raised to user */
     boolean         active;                   /* to avoid recursive exceptions */
     OCI_Connection *con;                      /* pointer to connection object */
     OCI_Statement  *stmt;                     /* pointer to statement object */
@@ -129,7 +130,6 @@ struct OCI_Error
     int             libcode;                  /* OCILIB internal error code */
     unsigned int    type;                     /* OCILIB error type */
     ub4             row;                      /* Error row offset (array DML) */
-    boolean         warning;                  /* is it a warning */
     otext           str[OCI_ERR_MSG_SIZE+1];  /* error message */
     otext           padding[3];               /* dummy variable for alignment */ 
 };
@@ -168,7 +168,7 @@ struct OCI_Thread
  * Thread key object
  *
  * Thread keys have their own error handle to avoid conflict using OCIErrorGet()
- * from differents threads
+ * from different s threads
  *
  */
 
@@ -208,7 +208,7 @@ struct OCI_Library
     unsigned int         charset;                 /* charset type */
     boolean              use_wide_char_conv;      /* are we on a unix like platform with unicode */
     boolean              warnings_on;             /* warnings enabled ? */
-    OCI_Error            lib_err;                 /* Error used when OCILIB is not loaded */
+    OCI_Error            lib_err;                 /* Global error */
     OCI_HashTable       *key_map;                 /* hash table for mapping name/key */
     OCI_ThreadKey       *key_errs;                /* Thread key to store thread errors */
     unsigned int         nb_hndlp;                /* number of OCI handles allocated */
@@ -309,7 +309,7 @@ struct OCI_Transaction
 
 struct OCI_Column
 {
-    /* 0racle infos */
+    /* Oracle infos */
     ub2    sqlcode;             /* Oracle SQL code */
     ub2    typecode;            /* Oracle type code */
     ub2    libcode;             /* Internal translated Oracle SQL code */

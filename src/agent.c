@@ -54,7 +54,7 @@ OCI_Agent * OCI_AgentInit
     OCI_Agent *agent = NULL;
     boolean    res   = FALSE;
 
-    OCI_CHECK(pagent == NULL, NULL);
+    OCI_CHECK(NULL == pagent, NULL)
 
     /* allocate agent structure */
 
@@ -65,12 +65,12 @@ OCI_Agent * OCI_AgentInit
 
     if (*pagent)
     {
-        agent = *pagent;
-
         res = TRUE;
 
-        OCI_FREE(agent->name);
-        OCI_FREE(agent->address);
+        agent = *pagent;
+
+        OCI_FREE(agent->name)
+        OCI_FREE(agent->address)
 
         agent->con    = con;
         agent->handle = handle;
@@ -106,7 +106,7 @@ OCI_Agent * OCI_AgentInit
 
     /* check for failure */
 
-    if (!res)
+    if (!res && agent)
     {
         OCI_AgentFree(agent);
         agent = NULL;
@@ -130,17 +130,14 @@ OCI_Agent * OCI_API OCI_AgentCreate
     const otext    *address
 )
 {
-    OCI_Agent *agent = NULL;
+    OCI_LIB_CALL_ENTER(OCI_Agent *, NULL)
 
-    OCI_CHECK_INITIALIZED(NULL);
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
+    call_retval = OCI_AgentInit(con, &call_retval, NULL, name, address);
+    call_status = (NULL != call_retval);
 
-    agent = OCI_AgentInit(con, &agent, NULL, name, address);
-
-    OCI_RESULT(agent != NULL);
-
-    return agent;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -152,22 +149,22 @@ boolean OCI_API OCI_AgentFree
     OCI_Agent *agent
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_AGENT, agent, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_AGENT, agent)
+
+    call_status = TRUE;
 
     if (OCI_OBJECT_ALLOCATED == agent->hstate)
     {
         OCI_DescriptorFree((dvoid *) agent->handle, OCI_DTYPE_AQAGENT);
     }
 
-    OCI_FREE(agent->address);
-    OCI_FREE(agent->name);
-    OCI_FREE(agent);
+    OCI_FREE(agent->address)
+    OCI_FREE(agent->name)
+    OCI_FREE(agent)
 
-    OCI_RESULT(res);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -179,19 +176,21 @@ const otext * OCI_API OCI_AgentGetName
     OCI_Agent *agent
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(otext *, NULL)
 
-    OCI_CHECK_PTR(OCI_IPC_AGENT, agent, NULL);
+    OCI_CHECK_PTR(OCI_IPC_AGENT, agent)
+
+    call_status = TRUE;
 
     if (!agent->name)
     {
-        res = OCI_StringGetFromAttrHandle(agent->con, agent->handle,  OCI_DTYPE_AQAGENT,
-                                          OCI_ATTR_AGENT_NAME,  &agent->name);
+        call_status = OCI_GetStringAttribute(agent->con, agent->handle,  OCI_DTYPE_AQAGENT,
+                                             OCI_ATTR_AGENT_NAME,  &agent->name);
     }
 
-    OCI_RESULT(res);
+    call_retval = agent->name;
 
-    return agent->name;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -204,16 +203,14 @@ boolean OCI_API OCI_AgentSetName
     const otext *name
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean , FALSE)
+        
+    OCI_CHECK_PTR(OCI_IPC_AGENT, agent)
 
-    OCI_CHECK_PTR(OCI_IPC_AGENT, agent, FALSE);
+    call_retval = call_status = OCI_SetStringAttribute(agent->con, agent->handle,  OCI_DTYPE_AQAGENT,
+                                                       OCI_ATTR_AGENT_NAME, &agent->name, name);
 
-    res =  OCI_StringSetToAttrHandle(agent->con, agent->handle,  OCI_DTYPE_AQAGENT,
-                                     OCI_ATTR_AGENT_NAME, &agent->name, name);
-
-    OCI_RESULT(res);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -225,19 +222,21 @@ const otext * OCI_API OCI_AgentGetAddress
     OCI_Agent *agent
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(otext *, NULL)
 
-    OCI_CHECK_PTR(OCI_IPC_AGENT, agent, NULL);
+    OCI_CHECK_PTR(OCI_IPC_AGENT, agent)
+
+    call_status = TRUE;
 
     if (!agent->address)
     {
-        res = OCI_StringGetFromAttrHandle(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
-                                          OCI_ATTR_AGENT_ADDRESS, &agent->address);
+        call_status = OCI_GetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
+                                             OCI_ATTR_AGENT_ADDRESS, &agent->address);
     }
 
-    OCI_RESULT(res);
+    call_retval = agent->address;
 
-    return agent->address;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -250,14 +249,12 @@ boolean OCI_API OCI_AgentSetAddress
     const otext *address
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_AGENT, agent, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_AGENT, agent)
 
-    res = OCI_StringSetToAttrHandle(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
-                                    OCI_ATTR_AGENT_ADDRESS, &agent->address, address);
-
-    OCI_RESULT(res);
-
-    return res;
+    call_retval = call_status = OCI_SetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
+                                                       OCI_ATTR_AGENT_ADDRESS, &agent->address, address);
+    
+    OCI_LIB_CALL_EXIT()
 }

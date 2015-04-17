@@ -47,7 +47,14 @@ const void * OCI_API OCI_HandleGetEnvironment
     void
 )
 {
-    return OCILib.env;
+    OCI_LIB_CALL_ENTER(const void *, NULL)
+
+    OCI_CHECK_INITIALIZED()
+
+    call_retval = OCILib.env;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -59,11 +66,14 @@ const void * OCI_API OCI_HandleGetContext
     OCI_Connection *con
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    return con->cxt;
+    call_retval = con->cxt;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -75,11 +85,15 @@ const void * OCI_API OCI_HandleGetServer
     OCI_Connection *con
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    return con->svr;
+    call_retval = con->svr;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -91,11 +105,14 @@ const void * OCI_API OCI_HandleGetError
     OCI_Connection *con
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    return con->err;
+    call_retval = con->err;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -107,11 +124,14 @@ const void * OCI_API OCI_HandleGetSession
     OCI_Connection *con
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    return con->ses;
+    call_retval = con->ses;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -123,11 +143,14 @@ const void * OCI_API OCI_HandleGetTransaction
     OCI_Transaction *trans
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_TRANSACTION, trans, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
 
-    return trans->htr;
+    call_retval = trans->htr;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -139,11 +162,15 @@ const void * OCI_API OCI_HandleGetStatement
     OCI_Statement *stmt
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
 
-    return stmt->stmt;
+    call_retval = stmt->stmt;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -155,11 +182,14 @@ const void * OCI_API OCI_HandleGetLob
     OCI_Lob *lob
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_LOB, lob, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_LOB, lob)
 
-    return lob->handle;
+    call_retval = lob->handle;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -171,11 +201,14 @@ const void * OCI_API OCI_HandleGetFile
     OCI_File *file
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_FILE, file, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_FILE, file)
 
-    return file->handle;
+    call_retval = file->handle;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -187,11 +220,14 @@ const void * OCI_API OCI_HandleGetDate
     OCI_Date *date
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_DATE, date, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_DATE, date)
 
-    return date->handle;
+    call_retval = date->handle;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -203,11 +239,14 @@ const void * OCI_API OCI_HandleGetTimestamp
     OCI_Timestamp *tmsp
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
 
-    return tmsp->handle;
+    call_retval = tmsp->handle;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -219,11 +258,14 @@ const void * OCI_API OCI_HandleGetInterval
     OCI_Interval *itv
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv)
 
-    return itv->handle;
+    call_retval = itv->handle;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -235,11 +277,14 @@ const void * OCI_API OCI_HandleGetObject
     OCI_Object *obj
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_OBJECT, obj, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
 
-    return obj->handle;
+    call_retval = obj->handle;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -251,11 +296,14 @@ const void * OCI_API OCI_HandleGetColl
     OCI_Coll *coll
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
 
-    return coll->handle;
+    call_retval = coll->handle;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -267,11 +315,14 @@ const void * OCI_API OCI_HandleGetRef
     OCI_Ref *ref
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_REF, ref, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_REF, ref)
 
-    return ref->handle;
+    call_retval = ref->handle;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -283,11 +334,14 @@ const void * OCI_API OCI_HandleGetMutex
     OCI_Mutex *mutex
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_MUTEX, mutex, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_MUTEX, mutex)
 
-    return mutex->handle;
+    call_retval = mutex->handle;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -299,11 +353,14 @@ const void * OCI_API OCI_HandleGetThreadID
     OCI_Thread *thread
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_THREAD, thread, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_THREAD, thread)
 
-    return thread->id;
+    call_retval = thread->id;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -315,12 +372,15 @@ const void * OCI_API OCI_HandleGetThread
     OCI_Thread *thread
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_THREAD, thread, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_THREAD, thread)
 
-    return thread->handle;
-}
+    call_retval = thread->handle;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+ }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_HandleGetDirPathCtx
@@ -331,11 +391,14 @@ const void * OCI_API OCI_HandleGetDirPathCtx
     OCI_DirPath *dp
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
 
-    return dp->ctx;
+    call_retval = dp->ctx;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -347,11 +410,15 @@ const void * OCI_API OCI_HandleGetDirPathColArray
     OCI_DirPath *dp
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
 
-    return dp->arr;
+    call_retval = dp->arr;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -363,11 +430,15 @@ const void * OCI_API OCI_HandleGetDirPathStream
     OCI_DirPath *dp
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
 
-    return dp->strm;
+    call_retval = dp->strm;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -379,10 +450,13 @@ const void * OCI_API OCI_HandleGetSubscription
     OCI_Subscription *sub
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub, NULL);
+    OCI_LIB_CALL_ENTER(const void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
-    return sub->subhp;
+    call_retval = sub->subhp;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 

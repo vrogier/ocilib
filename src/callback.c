@@ -55,20 +55,20 @@ sb4 OCI_ProcInBind
 )
 {
     OCI_Bind * bnd = (OCI_Bind *) ictxp;
-    sb2 *ind       = (sb2 *) bnd->buffer.inds;
-    ub4 i          = 0;
+    sb2       *ind = (sb2 *) bnd ? bnd->buffer.inds : NULL;
+    ub4        i   = 0;
 
     /* those checks may be not necessary but they keep away compilers warning
        away if the warning level is set to maximum !
     */
 
-    OCI_NOT_USED(index);
-    OCI_NOT_USED(bindp);
+    OCI_NOT_USED(index)
+    OCI_NOT_USED(bindp)
 
     /* check objects and bounds */
 
-    OCI_CHECK(bnd == NULL, OCI_ERROR);
-    OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR);
+    OCI_CHECK(NULL == bnd, OCI_ERROR)
+    OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR)
 
     /* indicators must be set to -1 depending on data type,
        so let's do it for all */
@@ -113,22 +113,22 @@ sb4 OCI_ProcOutBind
     ub2    **rcodep
 )
 {
-    OCI_Bind * bnd    = (OCI_Bind *) octxp;
-    OCI_Define *def   = NULL;
-    OCI_Resultset *rs = NULL;
-    boolean res       = TRUE;
-    ub4 rows          = 0;
+    OCI_Bind      *bnd  = (OCI_Bind *) octxp;
+    OCI_Define    *def  = NULL;
+    OCI_Resultset *rs   = NULL;
+    boolean        res  = TRUE;
+    ub4            rows = 0;
 
     /* those checks may be not necessary but they keep away compilers warning
        away if the warning level is set to maximum !
     */
 
-    OCI_NOT_USED(bindp);
+    OCI_NOT_USED(bindp)
 
     /* check objects and bounds */
 
-    OCI_CHECK(bnd == NULL, OCI_ERROR);
-    OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR);
+    OCI_CHECK(NULL == bnd, OCI_ERROR)
+    OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR)
 
     /* update statement status */
 
@@ -179,13 +179,13 @@ sb4 OCI_ProcOutBind
         }
     }
 
-    OCI_CHECK(bnd->stmt->rsts == NULL, OCI_ERROR);
+    OCI_CHECK(NULL == bnd->stmt->rsts, OCI_ERROR)
 
     rs = bnd->stmt->rsts[iter];
 
-    OCI_CHECK(rs == NULL, OCI_ERROR);
+    OCI_CHECK(NULL == rs, OCI_ERROR)
 
-    /* ok.. let's Oracle update its buffers */
+    /* Let's Oracle update its buffers */
 
     if (res)
     {
@@ -236,13 +236,13 @@ ub4 OCI_ProcNotifyMessages
 {
     OCI_Dequeue *dequeue = (OCI_Dequeue *) ctx;
 
-    OCI_NOT_USED(paylen);
-    OCI_NOT_USED(payload);
-    OCI_NOT_USED(mode);
-    OCI_NOT_USED(subscrhp);
-    OCI_NOT_USED(desc);
+    OCI_NOT_USED(paylen)
+    OCI_NOT_USED(payload)
+    OCI_NOT_USED(mode)
+    OCI_NOT_USED(subscrhp)
+    OCI_NOT_USED(desc)
 
-    OCI_CHECK(dequeue == NULL, OCI_SUCCESS);
+    OCI_CHECK(NULL == dequeue, OCI_ERROR)
   
     dequeue->callback(dequeue);
     
@@ -269,12 +269,12 @@ ub4 OCI_ProcNotifyChanges
     int     dbsize        = 0;
     ub4     type          = 0;
 
-    OCI_NOT_USED(paylen);
-    OCI_NOT_USED(payload);
-    OCI_NOT_USED(mode);
-    OCI_NOT_USED(subscrhp);
+    OCI_NOT_USED(paylen)
+    OCI_NOT_USED(payload)
+    OCI_NOT_USED(mode)
+    OCI_NOT_USED(subscrhp)
 
-    OCI_CHECK(sub == NULL, OCI_SUCCESS);
+    OCI_CHECK(NULL == sub, OCI_ERROR)
 
     OCI_EventReset(&sub->event);
 
@@ -530,14 +530,13 @@ ub4 OCI_ProcNotifyChanges
 
 #else
 
-    OCI_NOT_USED(ctx);
-    OCI_NOT_USED(desc);
-    OCI_NOT_USED(subscrhp);
-
-    OCI_NOT_USED(res);
-    OCI_NOT_USED(type);
-    OCI_NOT_USED(dbstr);
-    OCI_NOT_USED(dbsize);
+    OCI_NOT_USED(ctx)
+    OCI_NOT_USED(desc)
+    OCI_NOT_USED(subscrhp)
+    OCI_NOT_USED(res)
+    OCI_NOT_USED(type)
+    OCI_NOT_USED(dbstr)
+    OCI_NOT_USED(dbsize)
 
 #endif
 
@@ -560,8 +559,8 @@ sb4 OCI_ProcFailOver
     OCI_Connection *cn = (OCI_Connection *) fo_ctx;
     sb4 ret = OCI_FOC_OK;
 
-    OCI_NOT_USED(envhp);
-    OCI_NOT_USED(svchp);
+    OCI_NOT_USED(envhp)
+    OCI_NOT_USED(svchp)
 
     if (cn && cn->taf_handler)
     {
@@ -581,11 +580,11 @@ void OCI_ProcHAEvent
     dvoid     *eventptr
 )
 {
-    OCI_List       *list  = OCILib.cons;
-    OCI_Item       *item  = NULL;
-    OCIServer      *srvhp = NULL;
+    OCI_List  *list  = OCILib.cons;
+    OCI_Item  *item  = NULL;
+    OCIServer *srvhp = NULL;
 
-    OCI_NOT_USED(evtctx);
+    OCI_NOT_USED(evtctx)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -639,7 +638,7 @@ void OCI_ProcHAEvent
 
                     if (res)
                     {
-                        res = (OCI_TimestampInit(con, &tmsp, dth, OCI_TIMESTAMP) != NULL);
+                        res = (NULL != OCI_TimestampInit(con, &tmsp, dth, OCI_TIMESTAMP));
                     }
 
                     /* get status */
@@ -702,10 +701,10 @@ void OCI_ProcHAEvent
 
 #else
 
-    OCI_NOT_USED(eventptr);
-    OCI_NOT_USED(list);
-    OCI_NOT_USED(item);
-    OCI_NOT_USED(srvhp);
+    OCI_NOT_USED(eventptr)
+    OCI_NOT_USED(list)
+    OCI_NOT_USED(item)
+    OCI_NOT_USED(srvhp)
 
 #endif
 

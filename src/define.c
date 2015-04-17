@@ -50,9 +50,6 @@ OCI_Define * OCI_GetDefine
 {
     OCI_Define * def = NULL;
 
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, NULL);
-    OCI_CHECK_BOUND(rs->stmt->con, index,  1,  rs->nb_defs, NULL);
-
     if ((OCI_DESCRIBE_ONLY != rs->stmt->exec_mode) && (OCI_PARSE_ONLY != rs->stmt->exec_mode))
     {
         def =  &rs->defs[index-1];
@@ -74,9 +71,6 @@ int OCI_GetDefineIndex
     OCI_HashEntry *he = NULL;
     int index         = -1;
 
-    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs, -1);
-    OCI_CHECK_PTR(OCI_IPC_STRING, name, -1);
-
     if (!rs->map)
     {
         /* create the map at the first call to OCI_Getxxxxx2() to save
@@ -97,7 +91,7 @@ int OCI_GetDefineIndex
 
     /* check out we got our map object */
 
-    OCI_CHECK(rs->map == NULL, -1);
+    OCI_CHECK(NULL == rs->map, -1);
 
     he = OCI_HashLookup(rs->map, name, FALSE);
 
@@ -131,8 +125,8 @@ void * OCI_DefineGetData
     OCI_Define *def
 )
 {
-    OCI_CHECK(def == NULL, NULL);
-    OCI_CHECK(def->rs == NULL, NULL);
+    OCI_CHECK(NULL == def, NULL);
+    OCI_CHECK(NULL == def->rs, NULL);
     OCI_CHECK(def->rs->row_cur < 1, NULL);
 
     switch (def->col.datatype)
@@ -171,7 +165,7 @@ boolean OCI_DefineIsDataNotNull
 {
     boolean res = FALSE;
     
-    if ((def != NULL) && (def->rs->row_cur > 0))
+    if (def && def->rs->row_cur > 0)
     {
         OCIInd ind = OCI_IND_NULL;
 
@@ -205,8 +199,10 @@ boolean OCI_DefineGetNumber
     uword          size
 )
 {
-    OCI_Define *def = OCI_GetDefine(rs, index);
-    boolean res     = FALSE;
+    OCI_Define *def = NULL; 
+    boolean     res = FALSE;
+
+    def = OCI_GetDefine(rs, index);
 
     if (OCI_DefineIsDataNotNull(def))
     {
@@ -221,13 +217,12 @@ boolean OCI_DefineGetNumber
             }
             case OCI_CDT_TEXT:
             {
-                res = OCI_NumberFromString(rs->stmt->con, value, size, type, def->col.libcode, (const otext *) data, NULL);
+                res = OCI_NumberFromString(rs->stmt->con, value, size, type, def->col.libcode,
+                                           (const otext *) data, NULL);
                 break;
             }
         }
     }
-
-    OCI_RESULT(res);
 
     return res;
 }
@@ -248,7 +243,7 @@ boolean OCI_DefineAlloc
     /* this function allocates internal buffers, handles, indicators, arrays, ...
        for the given output define handle */
 
-    OCI_CHECK(def == NULL, FALSE);
+    OCI_CHECK(NULL == def, FALSE)
 
     /* Allocate null indicators array */
 
@@ -263,13 +258,13 @@ boolean OCI_DefineAlloc
 
     def->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, (size_t) indsize,
                                           (size_t) def->buf.count, TRUE);
-    res = (def->buf.inds != NULL);
+    res = (NULL != def->buf.inds);
 
     if (OCI_CDT_OBJECT == def->col.datatype)
     {
         def->buf.obj_inds = (void **) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(void *),
-                                                  (size_t) def->buf.count, TRUE);
-        res = (def->buf.obj_inds != NULL);
+                                                   (size_t) def->buf.count, TRUE);
+        res = (NULL != def->buf.obj_inds);
     }
 
     /* Allocate row data sizes array */
@@ -278,7 +273,7 @@ boolean OCI_DefineAlloc
     {
         def->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, (size_t) def->buf.sizelen,
                                               (size_t) def->buf.count, TRUE);
-        res = (def->buf.lens != NULL);
+        res = (NULL != def->buf.lens);
     }
 
     /* initialize length array with buffer default size.
@@ -314,53 +309,50 @@ boolean OCI_DefineAlloc
         def->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (size_t) bufsize,
                                                 (size_t) def->buf.count, TRUE);
 
-        res = (def->buf.data != NULL);
+        res = (NULL != def->buf.data);
     }
 
     /* Allocate descriptor for cursor, lob and file, interval and timestamp */
 
-    if (res)
+    if (res && OCI_UNKNOWN != def->col.handletype)
     {
-        if (OCI_UNKNOWN != def->col.handletype)
+        if (OCI_CDT_CURSOR == def->col.datatype)
         {
-            if (OCI_CDT_CURSOR == def->col.datatype)
+            for (i = 0; (i < def->buf.count) && res; i++)
             {
+                res = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid  *) def->rs->stmt->con->env,
+                                                        (dvoid **) &(def->buf.data[i]),
+                                                        (ub4) def->col.handletype,
+                                                        (size_t) 0, (dvoid **) NULL));
+            }
+        }
+        else
+        {
+            res = OCI_SUCCESSFUL(OCI_DescriptorArrayAlloc((dvoid  *) def->rs->stmt->con->env,
+                                                            (dvoid **) def->buf.data,
+                                                            (ub4) def->col.handletype,
+                                                            (ub4) def->buf.count,
+                                                            (size_t) 0, (dvoid **) NULL));
+
+            if (res && (OCI_CDT_LOB == def->col.datatype))
+            {
+                ub4 empty = 0;
+
                 for (i = 0; (i < def->buf.count) && res; i++)
                 {
-                    res = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid  *) def->rs->stmt->con->env,
-                                                         (dvoid **) &(def->buf.data[i]),
-                                                         (ub4) def->col.handletype,
-                                                         (size_t) 0, (dvoid **) NULL));
-                }
-            }
-            else
-            {
-                res = OCI_SUCCESSFUL(OCI_DescriptorArrayAlloc((dvoid  *) def->rs->stmt->con->env,
-                                                              (dvoid **) def->buf.data,
-                                                              (ub4) def->col.handletype,
-                                                              (ub4) def->buf.count,
-                                                              (size_t) 0, (dvoid **) NULL));
+                    OCI_CALL1
+                    (
+                        res, def->rs->stmt->con, def->rs->stmt,
 
-                if (res && (OCI_CDT_LOB == def->col.datatype))
-                {
-                    ub4 empty = 0;
-
-                    for (i = 0; (i < def->buf.count) && res; i++)
-                    {
-                        OCI_CALL1
-                        (
-                            res, def->rs->stmt->con, def->rs->stmt,
-
-                            OCIAttrSet((dvoid *) def->buf.data[i],  (ub4) def->col.handletype,
-                                       (void *) &empty, (ub4) sizeof(empty),
-                                       (ub4) OCI_ATTR_LOBEMPTY, def->rs->stmt->con->err)
-                        )
-                    }
+                        OCIAttrSet((dvoid *) def->buf.data[i],  (ub4) def->col.handletype,
+                                   (void *) &empty, (ub4) sizeof(empty),
+                                   (ub4) OCI_ATTR_LOBEMPTY, def->rs->stmt->con->err)
+                    )
                 }
             }
         }
     }
-
+ 
     return res;
 }
 
@@ -374,16 +366,16 @@ boolean OCI_DefineDef
     ub4         position
 )
 {
-    boolean res    = TRUE;
-    ub2 fetch_mode = OCI_DEFAULT;
+    boolean res  = TRUE;
+    ub2     mode = OCI_DEFAULT;
 
-    OCI_CHECK(def == NULL, FALSE);
+    OCI_CHECK(NULL == def, FALSE)
 
     /*check define mode for long columns */
 
     if (OCI_CDT_LONG == def->col.datatype)
     {
-        fetch_mode = OCI_DYNAMIC_FETCH;
+        mode = OCI_DYNAMIC_FETCH;
     }
 
     /* oracle defining */
@@ -402,7 +394,7 @@ boolean OCI_DefineDef
                        (void *) def->buf.inds,
                        (ub2  *) def->buf.lens,
                        (ub2  *) NULL,
-                       (ub4   ) fetch_mode)
+                       (ub4   ) mode)
     )
 
     if (SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode)

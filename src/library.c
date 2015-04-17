@@ -167,9 +167,9 @@ OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
     {OCI_SFC_ALTER_OPERATOR,           OTEXT("ALTER OPERATOR")                                       }
 };
 
-static unsigned int FormatTypeValues[] = 
+static unsigned int FormatTypeValues[] =
 {
-    OCI_FMT_DATE, 
+    OCI_FMT_DATE,
     OCI_FMT_TIMESTAMP,
     OCI_FMT_NUMERIC,
     OCI_FMT_BINARY_DOUBLE,
@@ -561,7 +561,7 @@ boolean OCI_KeyMapFree
     OCI_HashValue *v = NULL;
     int i, n, nb_err = 0;
 
-    OCI_CHECK(OCILib.key_map == NULL, TRUE)
+    OCI_CHECK(NULL == OCILib.key_map, TRUE)
 
     n = OCI_HashGetSize(OCILib.key_map);
 
@@ -595,19 +595,40 @@ boolean OCI_KeyMapFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetStatus
+ * OCI_ContextCallEnter
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_SetStatus
+void OCI_ContextCallEnter
 (
-    boolean res
+    OCI_Error *err
 )
 {
-    OCI_Error *err = OCI_ErrorGet(FALSE, FALSE);
-
     if (err)
     {
-        err->raise = (!res || (OCILib.warnings_on && err->warning));
+        if (err->depth == 0 && err->type != OCI_UNKNOWN)
+        {
+            OCI_ErrorReset(err);
+        }
+
+        err->depth++;
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ContextCallExit
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_ContextCallExit
+(
+    OCI_Error *err,
+    boolean    success
+)
+{
+    if (err)
+    {
+        if (err->depth > 0) err->depth--;
+
+        err->raise = err->depth == 0 && err->type != OCI_UNKNOWN && (!success || (OCI_ERR_WARNING == err->type && OCILib.warnings_on));
     }
 }
 
@@ -659,7 +680,7 @@ boolean OCI_API OCI_Initialize
     {
         OCILib.formats[i] = ostrdup(FormatDefaultValues[i]);
     }
-  
+
     /* test for UTF8 environment */
 
     if (OCI_CHAR_ANSI == OCILib.charset)
@@ -677,13 +698,13 @@ boolean OCI_API OCI_Initialize
                 *str = (char) toupper(*str);
             }
 
-            OCILib.nls_utf8 = (strstr(nls_lang, "UTF8") != NULL);
+            OCILib.nls_utf8 = (NULL != strstr(nls_lang, "UTF8"));
         }
     }
 
 #ifdef OCI_IMPORT_LINKAGE
 
-    OCI_NOT_USED(lib_path);
+    OCI_NOT_USED(lib_path)
 
     #if defined(OCI_BIG_UINT_ENABLED)
 
@@ -1356,7 +1377,7 @@ boolean OCI_API OCI_Initialize
         {
             OCILib.key_errs = OCI_ThreadKeyCreateInternal((POCI_THREADKEYDEST) OCI_ErrorFree);
 
-            res = (OCILib.key_errs != NULL);
+            res = (NULL != OCILib.key_errs);
         }
 
         /* allocate connections internal list */
@@ -1365,7 +1386,7 @@ boolean OCI_API OCI_Initialize
         {
             OCILib.cons = OCI_ListCreate(OCI_IPC_CONNECTION);
 
-            res = (OCILib.cons != NULL);
+            res = (NULL != OCILib.cons);
         }
 
         /* allocate pools internal list */
@@ -1375,7 +1396,7 @@ boolean OCI_API OCI_Initialize
 
             OCILib.pools = OCI_ListCreate(OCI_IPC_POOL);
 
-            res = (OCILib.pools != NULL);
+            res = (NULL != OCILib.pools);
         }
 
     #if OCI_VERSION_COMPILE >= OCI_10_2
@@ -1387,7 +1408,7 @@ boolean OCI_API OCI_Initialize
 
             OCILib.subs = OCI_ListCreate(OCI_IPC_NOTIFY);
 
-            res = (OCILib.subs != NULL);
+            res = (NULL != OCILib.subs);
         }
 
     #endif
@@ -1397,7 +1418,7 @@ boolean OCI_API OCI_Initialize
 
             OCILib.arrs = OCI_ListCreate(OCI_IPC_ARRAY);
 
-            res = (OCILib.arrs != NULL);
+            res = (NULL != OCILib.arrs);
         }
     }
 
@@ -1410,7 +1431,7 @@ boolean OCI_API OCI_Initialize
 
 #ifdef _WINDOWS
     #if OCI_VERSION_COMPILE >= OCI_10_1
-        OCILib.use_xa = (xaoEnv != NULL);
+        OCILib.use_xa = (NULL != xaoEnv);
     #else
         OCILib.use_xa = FALSE;
     #endif
@@ -1469,7 +1490,7 @@ boolean OCI_API OCI_Cleanup
 
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
-        OCI_FREE(OCILib.formats[i]);
+        OCI_FREE(OCILib.formats[i])
     }
 
     /* finalize OCIThread object support */
@@ -1488,14 +1509,7 @@ boolean OCI_API OCI_Cleanup
 
     if (OCILib.key_errs)
     {
-        OCI_ThreadKey *key = OCILib.key_errs;
-        OCI_Error *err     = OCI_ErrorGet(FALSE, FALSE);
-
-        OCILib.key_errs = NULL;
-
-        OCI_ErrorFree(err);
-        OCI_ThreadKeySet(key, NULL);
-        OCI_ThreadKeyFree(key);
+        OCI_ThreadKeyFree(OCILib.key_errs);
     }
 
     /* set unloaded flag */
@@ -1528,7 +1542,7 @@ boolean OCI_API OCI_Cleanup
 
 #endif
 
-    /* checks for unfreed handles */
+    /* checks for non freed handles */
 
     if (OCILib.nb_hndlp > 0)
     {
@@ -1536,7 +1550,7 @@ boolean OCI_API OCI_Cleanup
         res = FALSE;
     }
 
-    /* checks for unfreed descriptors */
+    /* checks for non freed descriptors */
 
     if (OCILib.nb_descp > 0)
     {
@@ -1544,7 +1558,7 @@ boolean OCI_API OCI_Cleanup
         res = FALSE;
     }
 
-    /* checks for unfreed objects */
+    /* checks for non freed objects */
 
     if (OCILib.nb_objinst > 0)
     {
@@ -1566,7 +1580,14 @@ unsigned int OCI_API OCI_GetOCICompileVersion
     void
 )
 {
-    return (unsigned int) OCILib.version_compile;
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
+
+    OCI_CHECK_INITIALIZED()
+
+    call_retval = OCILib.version_compile;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1578,7 +1599,14 @@ unsigned int OCI_API OCI_GetOCIRuntimeVersion
     void
 )
 {
-    return (unsigned int) OCILib.version_runtime;
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
+
+    OCI_CHECK_INITIALIZED()
+
+    call_retval = OCILib.version_runtime;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1590,7 +1618,14 @@ unsigned int OCI_API OCI_GetImportMode
     void
 )
 {
-    return (unsigned int) OCI_IMPORT_MODE;
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
+
+    OCI_CHECK_INITIALIZED()
+
+    call_retval = (unsigned int) OCI_IMPORT_MODE;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1602,7 +1637,14 @@ unsigned int OCI_API OCI_GetCharset
     void
 )
 {
-    return (unsigned int) OCI_CHAR_TEXT;
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
+
+    OCI_CHECK_INITIALIZED()
+
+    call_retval = (unsigned int) OCI_CHAR_TEXT;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1618,14 +1660,11 @@ OCI_Error * OCI_API OCI_GetLastError
 
     if (!OCILib.loaded || OCI_LIB_CONTEXT)
     {
-        err = OCI_ErrorGet(TRUE, FALSE);
+        err = OCI_ErrorGet(TRUE);
 
-        if (err)
+        if (err && (!err->raise))
         {
-            if (!err->raise)
-            {
-                err = NULL;
-            }
+            err = NULL;
         }
     }
 
@@ -1636,24 +1675,41 @@ OCI_Error * OCI_API OCI_GetLastError
  * OCI_EnableWarnings
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_API OCI_EnableWarnings
+boolean OCI_API OCI_EnableWarnings
 (
     boolean value
 )
 {
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_INITIALIZED()
+
     OCILib.warnings_on = value;
-}
+
+    call_retval = call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+ }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_SetErrorHandler
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_API OCI_SetErrorHandler
+boolean OCI_API OCI_SetErrorHandler
 (
     POCI_ERROR handler
 )
 {
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_INITIALIZED()
+
     OCILib.error_handler = handler;
+
+    call_retval = call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1671,42 +1727,47 @@ boolean OCI_API OCI_DatabaseStartup
     const otext *spfile
 )
 {
-    boolean res         = TRUE;
     OCI_Connection *con = NULL;
 
-    OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED(FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED()
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
+
+    call_status = TRUE;
 
     if (start_mode & OCI_DB_SPM_START)
     {
         OCIAdmin *adm = NULL;
 
-        /* connect with prelim authentication mode */
+        /* connect with preliminary authentication mode */
 
         con = OCI_ConnectionCreate(db, user, pwd, sess_mode | OCI_PRELIM_AUTH);
 
-        if (con)
+        call_status = (NULL != con);
+
+        if (call_status)
         {
             if (spfile && spfile[0])
             {
                 dbtext *dbstr  = NULL;
                 int     dbsize = -1;
 
-                /* allocate admin handle */
+                /* allocate administration handle */
 
-                res = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *) OCILib.env,
-                                                     (dvoid **) (void *) &adm,
-                                                     (ub4) OCI_HTYPE_ADMIN,
-                                                     (size_t) 0, (dvoid **) NULL));
+                call_status = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *) OCILib.env,
+                                                             (dvoid **) (void *) &adm,
+                                                             (ub4) OCI_HTYPE_ADMIN,
+                                                             (size_t) 0, (dvoid **) NULL));
 
-                /* set client spfile if provided */
+                /* set client file if provided */
 
                 dbstr = OCI_StringGetOracleString(spfile, &dbsize);
 
                 OCI_CALL2
                 (
-                    res, con,
+                    call_status, con,
 
                     OCIAttrSet((dvoid *) adm, (ub4) OCI_HTYPE_ADMIN,
                                (dvoid *) dbstr, (ub4) dbsize,
@@ -1720,12 +1781,12 @@ boolean OCI_API OCI_DatabaseStartup
 
             OCI_CALL2
             (
-                res, con,
+                call_status, con,
 
                 OCIDBStartup(con->cxt, con->err, (OCIAdmin *) adm, OCI_DEFAULT, start_flag)
             )
 
-            /* release security admin handle */
+            /* release security administration handle */
 
             if (adm)
             {
@@ -1736,21 +1797,19 @@ boolean OCI_API OCI_DatabaseStartup
 
             OCI_ConnectionFree(con);
         }
-        else
-        {
-            res = FALSE;
-        }
     }
 
-    if (res)
+    if (call_status)
     {
-        /* connect without prelim mode */
+        /* connect without preliminary mode */
 
         con = OCI_ConnectionCreate(db, user, pwd, sess_mode);
 
+        call_status = (NULL != con);
+
         /* alter database */
 
-        if (con)
+        if (call_status)
         {
             OCI_Statement *stmt = OCI_StatementCreate(con);
 
@@ -1758,14 +1817,14 @@ boolean OCI_API OCI_DatabaseStartup
 
             if (start_mode & OCI_DB_SPM_MOUNT)
             {
-                res = res && OCI_ExecuteStmt(stmt, OTEXT("ALTER DATABASE MOUNT"));
+                call_status = call_status && OCI_ExecuteStmt(stmt, OTEXT("ALTER DATABASE MOUNT"));
             }
 
             /* open database */
 
             if (start_mode & OCI_DB_SPM_OPEN)
             {
-                res = res && OCI_ExecuteStmt(stmt, OTEXT("ALTER DATABASE OPEN"));
+                call_status = call_status && OCI_ExecuteStmt(stmt, OTEXT("ALTER DATABASE OPEN"));
             }
 
             OCI_StatementFree(stmt);
@@ -1774,30 +1833,26 @@ boolean OCI_API OCI_DatabaseStartup
 
             OCI_ConnectionFree(con);
         }
-        else
-        {
-            res = FALSE;
-        }
     }
 
 #else
 
     res = FALSE;
 
-    OCI_NOT_USED(db);
-    OCI_NOT_USED(user);
-    OCI_NOT_USED(pwd);
-    OCI_NOT_USED(sess_mode);
-    OCI_NOT_USED(start_mode);
-    OCI_NOT_USED(start_flag);
-    OCI_NOT_USED(spfile);
-    OCI_NOT_USED(con);
+    OCI_NOT_USED(db)
+    OCI_NOT_USED(user)
+    OCI_NOT_USED(pwd)
+    OCI_NOT_USED(sess_mode)
+    OCI_NOT_USED(start_mode)
+    OCI_NOT_USED(start_flag)
+    OCI_NOT_USED(spfile)
+    OCI_NOT_USED(con)
 
 #endif
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1814,10 +1869,11 @@ boolean OCI_API OCI_DatabaseShutdown
     unsigned int shut_flag
 )
 {
-    boolean res         = TRUE;
     OCI_Connection *con = NULL;
 
-    OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED(FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED()
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -1825,7 +1881,9 @@ boolean OCI_API OCI_DatabaseShutdown
 
     con = OCI_ConnectionCreate(db, user, pwd, sess_mode);
 
-    if (con)
+    call_status = (NULL != con);
+
+    if (call_status)
     {
         /* delete current transaction before the abort */
 
@@ -1844,7 +1902,7 @@ boolean OCI_API OCI_DatabaseShutdown
 
             OCI_CALL2
             (
-                res, con,
+                call_status, con,
 
                 OCIDBShutdown(con->cxt, con->err, (OCIAdmin *) NULL, shut_flag)
             )
@@ -1852,7 +1910,7 @@ boolean OCI_API OCI_DatabaseShutdown
 
         /* alter database if we are not in abort mode */
 
-        if (res && (OCI_DB_SDF_ABORT != shut_flag))
+        if (call_status && (OCI_DB_SDF_ABORT != shut_flag))
         {
             OCI_Statement *stmt = OCI_StatementCreate(con);
 
@@ -1860,14 +1918,14 @@ boolean OCI_API OCI_DatabaseShutdown
 
             if (shut_mode & OCI_DB_SDM_CLOSE)
             {
-                res = res && OCI_ExecuteStmt(stmt, OTEXT("ALTER DATABASE CLOSE NORMAL"));
+                call_status = call_status && OCI_ExecuteStmt(stmt, OTEXT("ALTER DATABASE CLOSE NORMAL"));
             }
 
             /* unmount database */
 
             if (shut_mode & OCI_DB_SDM_DISMOUNT)
             {
-                res = res && OCI_ExecuteStmt(stmt, OTEXT( "ALTER DATABASE DISMOUNT"));
+                call_status = call_status && OCI_ExecuteStmt(stmt, OTEXT("ALTER DATABASE DISMOUNT"));
             }
 
             OCI_StatementFree(stmt);
@@ -1885,7 +1943,7 @@ boolean OCI_API OCI_DatabaseShutdown
 
             OCI_CALL2
             (
-                res, con,
+                call_status, con,
 
                 OCIDBShutdown(con->cxt, con->err, (OCIAdmin *) 0, OCI_DBSHUTDOWN_FINAL)
             )
@@ -1895,28 +1953,22 @@ boolean OCI_API OCI_DatabaseShutdown
 
         OCI_ConnectionFree(con);
     }
-    else
-    {
-        res = FALSE;
-    }
 
 #else
 
-    res = FALSE;
-
-    OCI_NOT_USED(db);
-    OCI_NOT_USED(user);
-    OCI_NOT_USED(pwd);
-    OCI_NOT_USED(sess_mode);
-    OCI_NOT_USED(shut_mode);
-    OCI_NOT_USED(shut_flag);
-    OCI_NOT_USED(con);
+    OCI_NOT_USED(db)
+    OCI_NOT_USED(user)
+    OCI_NOT_USED(pwd)
+    OCI_NOT_USED(sess_mode)
+    OCI_NOT_USED(shut_mode)
+    OCI_NOT_USED(shut_flag)
+    OCI_NOT_USED(con)
 
 #endif
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1928,16 +1980,16 @@ boolean OCI_API OCI_SetHAHandler
     POCI_HA_HANDLER  handler
 )
 {
-    boolean  res      = TRUE;
     void    *callback = NULL;
 
-    OCI_CHECK_INITIALIZED(FALSE)
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_HIGH_AVAILABILITY_ENABLED(FALSE)
-
-    OCILib.ha_handler = handler;
+    OCI_CHECK_INITIALIZED()
+    OCI_CHECK_HIGH_AVAILABILITY_ENABLED()
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
+
+    call_status = TRUE;
 
     /* On MSVC, casting a function pointer to a data pointer generates a warning.
        As there is no other to way to do regarding the OCI API, let's disable this
@@ -1954,25 +2006,30 @@ boolean OCI_API OCI_SetHAHandler
 
     OCI_CALL3
     (
-        res, OCILib.err,
+        call_status, OCILib.err,
 
         OCIAttrSet((dvoid *) OCILib.env, (ub4) OCI_HTYPE_ENV, (dvoid *) callback,
                    (ub4) 0, (ub4) OCI_ATTR_EVTCBK, OCILib.err)
     )
 
+    if (call_status)
+    {
+        OCILib.ha_handler = handler;
+    }
+
     #ifdef _MSC_VER
     #pragma warning(default: 4054)
     #endif
 
-    OCI_RESULT(res);
-
 #else
 
-    OCI_NOT_USED(callback);
+    OCI_NOT_USED(callback)
 
 #endif
 
-    return res;
+    call_retval = call_status;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1986,23 +2043,22 @@ boolean OCI_API OCI_SetFormat
     const otext    *format
 )
 {
-    boolean res = TRUE;
+    otext **value = NULL;
 
-    OCI_CHECK_INITIALIZED(FALSE);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"), FALSE);
+    OCI_CHECK_INITIALIZED()
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"))
 
-    otext **value = con ? &con->formats[type-1] : &OCILib.formats[type-1];
+    value = con ? &con->formats[type - 1] : &OCILib.formats[type - 1];
 
-    OCI_FREE(*value);
+    OCI_FREE(*value)
 
-    *value = ostrdup(format ? format : FormatDefaultValues[type-1]);
+   *value = ostrdup(format ? format : FormatDefaultValues[type-1]);
 
-    res = (*value != NULL);
+    call_retval = call_status = TRUE;
 
-    OCI_RESULT(res);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2015,18 +2071,21 @@ const otext * OCI_API OCI_GetFormat
     unsigned int    type
 )
 {
-    OCI_CHECK_INITIALIZED(NULL);
- 
-    OCI_CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"), NULL);
+    OCI_LIB_CALL_ENTER(const otext *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_INITIALIZED()
+
+    OCI_CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"))
 
     otext **value = con ? &con->formats[type-1] : &OCILib.formats[type-1];
-    
+
     if (!*value)
     {
         OCI_SetFormat(con, type, NULL);
     }
 
-    return *value;
+    call_retval = *value;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }

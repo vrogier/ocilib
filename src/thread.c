@@ -69,11 +69,11 @@ OCI_Thread * OCI_API OCI_ThreadCreate
 )
 {
     OCI_Thread *thread = NULL;
-    boolean res        = FALSE;
 
-    OCI_CHECK_INITIALIZED(NULL);
+    OCI_LIB_CALL_ENTER(OCI_Thread*, NULL)
 
-    OCI_CHECK_THREAD_ENABLED(NULL);
+    OCI_CHECK_INITIALIZED()
+    OCI_CHECK_THREAD_ENABLED()
 
     /* allocate thread structure */
 
@@ -83,16 +83,16 @@ OCI_Thread * OCI_API OCI_ThreadCreate
     {
         /* allocate error handle */
 
-        res = OCI_SUCCESSFUL(OCI_HandleAlloc(OCILib.env,
-                                             (dvoid **) (void *) &thread->err,
-                                             OCI_HTYPE_ERROR, (size_t) 0,
-                                             (dvoid **) NULL));
+        call_status = OCI_SUCCESSFUL(OCI_HandleAlloc(OCILib.env,
+                                                     (dvoid **) (void *) &thread->err,
+                                                     OCI_HTYPE_ERROR, (size_t) 0,
+                                                     (dvoid **) NULL));
 
         /* allocate thread handle */
 
         OCI_CALL3
         (
-            res, thread->err,
+            call_status, thread->err,
 
             OCIThreadHndInit(OCILib.env, thread->err, &thread->handle)
         )
@@ -101,21 +101,22 @@ OCI_Thread * OCI_API OCI_ThreadCreate
 
         OCI_CALL3
         (
-            res, thread->err,
+            call_status, thread->err,
 
             OCIThreadIdInit(OCILib.env, thread->err, &thread->id)
         )
     }
 
-    if (!res)
+    if (call_status)
+    {
+        call_retval = thread;
+    }
+    else if (thread)
     {
         OCI_ThreadFree(thread);
-        thread = NULL;
     }
 
-    OCI_RESULT(res);
-
-    return thread;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -127,11 +128,10 @@ boolean OCI_API OCI_ThreadFree
     OCI_Thread *thread
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_THREAD_ENABLED(FALSE);
-
-    OCI_CHECK_PTR(OCI_IPC_THREAD, thread, FALSE);
+    OCI_CHECK_THREAD_ENABLED()
+    OCI_CHECK_PTR(OCI_IPC_THREAD, thread)
 
     /* close thread handle */
 
@@ -139,14 +139,14 @@ boolean OCI_API OCI_ThreadFree
     {
         OCI_CALL0
         (
-            res, thread->err,
+            call_status, thread->err,
 
             OCIThreadClose(OCILib.env, thread->err, thread->handle)
         )
 
         OCI_CALL0
         (
-            res, thread->err,
+            call_status, thread->err,
 
             OCIThreadHndDestroy(OCILib.env, thread->err, &thread->handle)
         )
@@ -158,7 +158,7 @@ boolean OCI_API OCI_ThreadFree
     {
         OCI_CALL0
         (
-            res, thread->err,
+            call_status, thread->err,
 
             OCIThreadIdDestroy(OCILib.env, thread->err, &thread->id)
         )
@@ -171,13 +171,13 @@ boolean OCI_API OCI_ThreadFree
         OCI_HandleFree(thread->err, OCI_HTYPE_ERROR);
     }
 
-    /* free mutex structure */
+    /* free thread structure */
 
-    OCI_FREE(thread);
+    OCI_FREE(thread)
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -191,27 +191,27 @@ boolean OCI_API OCI_ThreadRun
     void       *arg
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_THREAD_ENABLED(FALSE);
-
-    OCI_CHECK_PTR(OCI_IPC_THREAD, thread, FALSE);
-    OCI_CHECK_PTR(OCI_IPC_PROC, proc, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_THREAD, thread)
+    OCI_CHECK_PTR(OCI_IPC_PROC, proc)
 
     thread->proc = proc;
     thread->arg  = arg;
 
+    call_status = TRUE;
+
     OCI_CALL3
     (
-        res, thread->err,
+        call_status, thread->err,
 
         OCIThreadCreate(OCILib.env, thread->err, OCI_ThreadProc,
                         thread, thread->id, thread->handle)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -223,20 +223,20 @@ boolean OCI_API OCI_ThreadJoin
     OCI_Thread *thread
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_THREAD_ENABLED(FALSE);
+    OCI_CHECK_PTR(OCI_IPC_THREAD, thread)
 
-    OCI_CHECK_PTR(OCI_IPC_THREAD, thread, FALSE);
+    call_status = TRUE;
 
     OCI_CALL3
     (
-        res, thread->err,
+        call_status, thread->err,
 
         OCIThreadJoin(OCILib.env, thread->err, thread->handle)
     )
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }

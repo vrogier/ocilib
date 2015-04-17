@@ -54,11 +54,15 @@ boolean OCI_BindFree
     OCI_Bind *bnd
 )
 {
+    boolean res = TRUE;
+
+    OCI_CHECK(NULL == bnd, FALSE)
+
     if (OCI_BAM_INTERNAL == bnd->stmt->bind_alloc_mode)
     {
         if (bnd->is_array)
         {
-            OCI_ArrayFreeFromHandles(bnd->input);
+            res = OCI_ArrayFreeFromHandles(bnd->input);
         }
         else
         {
@@ -71,7 +75,7 @@ boolean OCI_BindFree
                     
                     if (bnd->alloc)
                     {
-                        OCI_FREE(bnd->buffer.data);
+                        OCI_FREE(bnd->buffer.data)
                     }  
                     break;
                 }
@@ -126,20 +130,20 @@ boolean OCI_BindFree
     {
         if (bnd->alloc)
         {
-            OCI_FREE(bnd->buffer.data);
+            OCI_FREE(bnd->buffer.data)
         }
     }
 
-    OCI_FREE(bnd->buffer.inds);
-    OCI_FREE(bnd->buffer.obj_inds);
-    OCI_FREE(bnd->buffer.null_inds);
-    OCI_FREE(bnd->buffer.lens);
-    OCI_FREE(bnd->buffer.tmpbuf);
-    OCI_FREE(bnd->plrcds);
-    OCI_FREE(bnd->name);
-    OCI_FREE(bnd);
+    OCI_FREE(bnd->buffer.inds)
+    OCI_FREE(bnd->buffer.obj_inds)
+    OCI_FREE(bnd->buffer.null_inds)
+    OCI_FREE(bnd->buffer.lens)
+    OCI_FREE(bnd->buffer.tmpbuf)
+    OCI_FREE(bnd->plrcds)
+    OCI_FREE(bnd->name)
+    OCI_FREE(bnd)
 
-    return TRUE;
+    return res;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -151,7 +155,7 @@ boolean OCI_BindAllocData
     OCI_Bind *bnd
 )
 {
-    boolean res = FALSE;
+    OCI_CHECK(NULL == bnd, FALSE)
 
     if (bnd->is_array)
     {
@@ -434,9 +438,7 @@ boolean OCI_BindAllocData
         }
     }
 
-    res = (bnd->input != NULL);
-
-    return res;
+    return (NULL != bnd->input);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -450,15 +452,12 @@ boolean OCI_BindSetNullIndicator
     sb2          value
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
-    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count, FALSE);
+    OCI_CHECK(NULL == bnd, FALSE)
 
     if (bnd->buffer.inds)
     {
         ((sb2*) bnd->buffer.inds)[position-1] = value;
     }
-
-    OCI_RESULT(TRUE);
 
     return TRUE;
 }
@@ -476,11 +475,14 @@ const otext * OCI_API OCI_BindGetName
     OCI_Bind *bnd
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, NULL);
+    OCI_LIB_CALL_ENTER(const otext *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
 
-    return (const otext *) bnd->name;
+    call_retval = (const otext *)bnd->name;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -492,11 +494,14 @@ unsigned int OCI_API OCI_BindGetType
     OCI_Bind *bnd
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, OCI_UNKNOWN);
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
 
-    return (unsigned int) bnd->type;
+    call_retval = (unsigned int)bnd->type;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -508,11 +513,9 @@ unsigned int OCI_API OCI_BindGetSubtype
     OCI_Bind *bnd
 )
 {
-    unsigned int type = OCI_UNKNOWN;
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
 
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, OCI_UNKNOWN);
-
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
 
     if (OCI_CDT_NUMERIC   == bnd->type ||
         OCI_CDT_LONG      == bnd->type ||
@@ -521,10 +524,12 @@ unsigned int OCI_API OCI_BindGetSubtype
         OCI_CDT_TIMESTAMP == bnd->type ||
         OCI_CDT_INTERVAL  == bnd->type)
     {
-        type = bnd->subtype;
+        call_retval = (unsigned int)bnd->subtype;
     }
 
-    return type;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -536,11 +541,14 @@ unsigned int OCI_API OCI_BindGetDataCount
     OCI_Bind *bnd
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, 0);
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
 
-    return (unsigned int) bnd->buffer.count;
+    call_retval = (unsigned int)bnd->buffer.count;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -552,11 +560,14 @@ void * OCI_API OCI_BindGetData
     OCI_Bind *bnd
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, NULL);
+    OCI_LIB_CALL_ENTER(void *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
 
-    return (void *) bnd->input;
+    call_retval = (void *)bnd->input;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -568,11 +579,14 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement
     OCI_Bind *bnd
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, NULL);
+    OCI_LIB_CALL_ENTER(OCI_Statement *, NULL)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
 
-    return bnd->stmt;
+    call_retval = bnd->stmt;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -599,11 +613,13 @@ boolean OCI_API OCI_BindSetDataSizeAtPos
     unsigned int size
 )
 {
-    boolean res = FALSE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
-    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count, FALSE);
-    OCI_CHECK_MIN(bnd->stmt->con, bnd->stmt, size, 1, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
+    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
+    OCI_CHECK_MIN(bnd->stmt->con, bnd->stmt, size, 1)
+
+    call_status = TRUE;
 
     if (bnd->buffer.lens)
     {
@@ -619,12 +635,10 @@ boolean OCI_API OCI_BindSetDataSizeAtPos
 
         ((ub2 *) bnd->buffer.lens)[position-1] = (ub2) size;
 
-        res = TRUE;
+        call_retval = TRUE;
     }
 
-    OCI_RESULT(TRUE);
-
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -649,29 +663,29 @@ unsigned int OCI_API OCI_BindGetDataSizeAtPos
     unsigned int position
 )
 {
-    unsigned int size = 0;
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
 
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, 0);
-    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count, 0);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
+    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
+
+    call_status = TRUE;
 
     if (bnd->buffer.lens)
     {
-        size = (unsigned int) ((ub2 *) bnd->buffer.lens)[position-1];
+        call_retval = (unsigned int)((ub2 *)bnd->buffer.lens)[position - 1];
 
         if (OCI_CDT_TEXT == bnd->type)
         {
-            if (bnd->size == (sb4) size)
+            if (bnd->size == (sb4)call_retval)
             {
-                size -= (unsigned int) sizeof(dbtext);
+                call_retval -= (unsigned int) sizeof(dbtext);
             }
 
-            size /= (unsigned int) sizeof(dbtext);
+            call_retval /= (unsigned int) sizeof(dbtext);
         }
     }
 
-    OCI_RESULT(TRUE);
-
-    return size;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -684,7 +698,14 @@ boolean OCI_API OCI_BindSetNullAtPos
     unsigned int position
 )
 {
-    return OCI_BindSetNullIndicator(bnd, position, OCI_IND_NULL);
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
+    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
+
+    call_retval = call_status = OCI_BindSetNullIndicator(bnd, position, OCI_IND_NULL);
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -708,8 +729,15 @@ boolean OCI_API OCI_BindSetNotNullAtPos
     OCI_Bind    *bnd,
     unsigned int position
 )
-{
-    return OCI_BindSetNullIndicator(bnd, position, OCI_IND_NOTNULL);
+{   
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
+    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
+
+    call_retval = call_status = OCI_BindSetNullIndicator(bnd, position, OCI_IND_NOTNULL);
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -734,19 +762,19 @@ boolean OCI_API OCI_BindIsNullAtPos
     unsigned int position
 )
 {
-    boolean ret = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, TRUE)
 
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
-    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
+    OCI_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
+
+    call_status = TRUE;
 
     if (bnd->buffer.inds)
     {
-        ret = (OCI_IND_NULL == (((sb2*) bnd->buffer.inds)[position-1]));
+        call_retval = (OCI_IND_NULL == (((sb2*) bnd->buffer.inds)[position-1]));
     }
 
-    OCI_RESULT(TRUE);
-
-    return ret;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -771,11 +799,12 @@ boolean OCI_API OCI_BindSetCharsetForm
     unsigned int csfrm
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
+    OCI_CHECK_ENUM_VALUE(bnd->stmt->con, bnd->stmt, csfrm, CharsetFormValues, OTEXT("CharsetForm"))
 
-    OCI_CHECK_ENUM_VALUE(bnd->stmt->con, bnd->stmt, csfrm, CharsetFormValues, OTEXT("CharsetForm"), FALSE);
+    call_status = TRUE;
 
     if ((OCI_CDT_TEXT == bnd->type) || (OCI_CDT_LONG == bnd->type))
     {
@@ -790,7 +819,7 @@ boolean OCI_API OCI_BindSetCharsetForm
 
         OCI_CALL1
         (
-            res, bnd->stmt->con, bnd->stmt,
+            call_status, bnd->stmt->con, bnd->stmt,
 
             OCIAttrSet((dvoid *) bnd->buffer.handle,
                        (ub4    ) OCI_HTYPE_BIND,
@@ -801,9 +830,9 @@ boolean OCI_API OCI_BindSetCharsetForm
         )
     }
 
-    OCI_RESULT(res);
+    call_retval = call_status;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -816,17 +845,16 @@ boolean OCI_API OCI_BindSetDirection
     unsigned int direction
 )
 {
-    boolean res = TRUE;
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, FALSE);
-
-    OCI_CHECK_ENUM_VALUE(bnd->stmt->con, bnd->stmt, direction, BindDirectionValues, OTEXT("Direction"), FALSE);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
+    OCI_CHECK_ENUM_VALUE(bnd->stmt->con, bnd->stmt, direction, BindDirectionValues, OTEXT("Direction"))
 
     bnd->direction = (ub1) direction;
 
-    OCI_RESULT(res);
+    call_retval = call_status = TRUE;
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -838,10 +866,13 @@ unsigned int OCI_API OCI_BindGetDirection
     OCI_Bind *bnd
 )
 {
-    OCI_CHECK_PTR(OCI_IPC_BIND, bnd, OCI_UNKNOWN);
+    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
 
-    OCI_RESULT(TRUE);
+    OCI_CHECK_PTR(OCI_IPC_BIND, bnd)
 
-    return bnd->direction;
+    call_retval = (unsigned int) bnd->direction;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }
 

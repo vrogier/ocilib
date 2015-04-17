@@ -129,8 +129,8 @@ typedef   signed int sb4;
 #define ORAXB8_DEFINED
 #ifndef lint
   #ifndef __GNUC__
-typedef unsigned _int64 oraub8;
-typedef signed _int64 orasb8;
+typedef unsigned __int64 oraub8;
+typedef signed __int64 orasb8;
   #else
 typedef unsigned long long oraub8;
 typedef signed long long orasb8;
@@ -250,8 +250,8 @@ typedef   signed int sword;
 #ifdef _WIN64
 
   #ifndef lint
-typedef unsigned _int64 ubig_ora;
-typedef   signed _int64 sbig_ora;
+typedef unsigned __int64 ubig_ora;
+typedef   signed __int64 sbig_ora;
   #else
     #define ubig_ora unsigned _int64
     #define sbig_ora signed _int64

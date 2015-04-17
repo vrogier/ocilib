@@ -102,7 +102,7 @@
  * Conditional OCI call with return value checking
  *
  * @param res   - OCI call result
- * @param con   - OCILIB connection objet
+ * @param con   - OCILIB connection object
  * @param fct   - OCI function
  *
  * @note
@@ -241,30 +241,29 @@
  *
  * @param type  - Pointer type
  * @param ptr   - Pointer
- * @param ret   - Return value
  *
  * @note
  * Throws an exception if the pointer is null.
  *
  */
 
-#define OCI_CHECK_PTR(type, ptr, ret)                                          \
+#define OCI_CHECK_PTR(type, ptr)                                               \
                                                                                \
     if (!(ptr))                                                                \
     {                                                                          \
         OCI_ExceptionNullPointer(type);                                        \
-                                                                               \
-        return (ret);                                                          \
+        goto ExitCall;                                                         \
     }
 
 /**
  * @brief
  * Checks if the parameters of a bind call are valid
  *
- * @param stmt  - Statement handle
- * @param name  - Bind name/literal position
- * @param data  - Input pointer to bind
- * @param type  - Input pointer type
+ * @param stmt      - Statement handle
+ * @param name      - Bind name/literal position
+ * @param data      - Input pointer to bind
+ * @param type      - Input pointer type
+ * @param ext_only  - is it an external  bind to check to input checking
  *
  * @note
  * Throws an exception if one of the parameters is invalid and then returns
@@ -272,35 +271,16 @@
  *
  */
 
-#define OCI_CHECK_BIND_CALL1(stmt, name, data, type)                           \
-                                                                               \
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);                             \
-    OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);                                \
-    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED, FALSE);                     \
-    OCI_CHECK_PTR(type, data, FALSE);
-
-/**
- * @brief
- * Checks if the parameters of bind call are valid and bind allocation mode
- *
- * @param stmt  - Statement handle
- * @param name  - Bind name/literal position
- * @param data  - Input pointer to bind
- * @param type  - Input pointer type
- *
- * @note
- * Throws an exception if one of the parameters is invalid and then returns
- * FALSE.
- *
- */
-
-#define OCI_CHECK_BIND_CALL2(stmt, name, data, type)                           \
-                                                                               \
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);                             \
-    OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);                                \
-    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED, FALSE);                     \
-    if (OCI_BAM_EXTERNAL == stmt->bind_alloc_mode)                             \
-        OCI_CHECK_PTR(type, data, FALSE);
+#define OCI_CHECK_BIND_CALL(stmt, name, data, type, ext_only)               \
+                                                                            \
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt);                                 \
+    OCI_CHECK_PTR(OCI_IPC_STRING, name);                                    \
+    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED);                         \
+    {                                                                       \
+        boolean ext_only_value = ext_only;                                  \
+        if (ext_only_value || OCI_BAM_EXTERNAL == stmt->bind_alloc_mode)    \
+        OCI_CHECK_PTR(type, data);                                          \
+    }                                                                       \
 
 /**
  * @brief
@@ -315,8 +295,8 @@
  */
 #define OCI_CHECK_REGISTER_CALL(stmt, name)                                    \
                                                                                \
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt, FALSE);                             \
-    OCI_CHECK_PTR(OCI_IPC_STRING, name, FALSE);                                \
+    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt);                                    \
+    OCI_CHECK_PTR(OCI_IPC_STRING, name);                                       \
 
 
 /* ********************************************************************************************* *
@@ -331,20 +311,18 @@
  * @param v   - Integer value
  * @param b1  - Lower bound
  * @param b2  - Upper bound
- * @param ret - Return value
  *
  * @note
  * Throws an exception if the input value is out of bounds.
  *
  */
 
-#define OCI_CHECK_BOUND(con, v, b1, b2, ret)                                   \
+#define OCI_CHECK_BOUND(con, v, b1, b2)                                        \
                                                                                \
     if ((v < (b1)) || (v > (b2)))                                              \
     {                                                                          \
         OCI_ExceptionOutOfBounds((con), (v));                                  \
-                                                                               \
-        return (ret);                                                          \
+        goto ExitCall;                                                         \
     }
 
 /**
@@ -355,20 +333,18 @@
  * @param stmt - Statement handle
  * @param v    - Integer value
  * @param m    - Minimum value
- * @param ret  - Return value
  *
  * @note
  * Throws an exception if the input value is < < m.
  *
  */
 
-#define OCI_CHECK_MIN(con, stmt, v, m, ret)                                    \
+#define OCI_CHECK_MIN(con, stmt, v, m)                                         \
                                                                                \
     if ((v) < (m))                                                             \
     {                                                                          \
         OCI_ExceptionMinimumValue((con), (stmt), m);                           \
-                                                                               \
-        return (ret);                                                          \
+        goto ExitCall;                                                         \
     }
 
 /**
@@ -377,20 +353,18 @@
  *
  * @param con - Connection handle
  * @param exp - Equality expression
- * @param ret - Return value
  *
  * @note
  * Throws an exception if the 2 expressions are not compatible.
  *
  */
 
-#define OCI_CHECK_COMPAT(con, exp, ret)                                        \
+#define OCI_CHECK_COMPAT(con, exp)                                             \
                                                                                \
     if (!(exp))                                                                \
     {                                                                          \
         OCI_ExceptionTypeNotCompatible((con));                                 \
-                                                                               \
-        return (ret);                                                          \
+        goto ExitCall;                                                         \
     }
 
 /* ********************************************************************************************* *
@@ -409,10 +383,11 @@
  *
  */
 
-#define OCI_CHECK_OBJECT_FETCHED(obj, ret)                                     \
-                                                                               \
-    if (OCI_OBJECT_FETCHED_CLEAN == (obj)->hstate)                                                                                                                                   \
-        return (ret);
+#define OCI_CHECK_OBJECT_FETCHED(obj)                                         \
+                                                                              \
+    if (OCI_OBJECT_FETCHED_CLEAN == (obj)->hstate)                            \
+        goto ExitCall;                                                        
+
 
 /**
  * @brief
@@ -420,19 +395,18 @@
  *
  * @param st  - Statement handle
  * @param v   - Status to compare
- * @param ret - Return value
  *
  * @note
  * Throws an exception if the status of the statement equals the provided one.
  *
  */
 
-#define OCI_CHECK_STMT_STATUS(st, v, ret)                                      \
+#define OCI_CHECK_STMT_STATUS(st, v)                                           \
                                                                                \
     if ((((st)->status) & (v)) == 0)                                           \
     {                                                                          \
         OCI_ExceptionStatementState((st), v);                                  \
-        return ret;                                                            \
+        goto ExitCall;                                                         \
     }                                                                          \
 
 
@@ -441,20 +415,19 @@
  * Checks if the given statement is scrollable
  *
  * @param st  - Statement handle
- * @param ret - Return value
  *
  * @note
  * Throws an exception if the statement is not scrollable.
  *
  */
 
-#define OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(st, ret)                         \
+#define OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(st)                              \
                                                                                \
     if (((st)->nb_rbinds > 0) ||                                               \
         ((st)->exec_mode != OCI_STMT_SCROLLABLE_READONLY))                     \
     {                                                                          \
         OCI_ExceptionStatementNotScrollable(st);                               \
-        return ret;                                                            \
+        goto ExitCall;                                                         \
     }
 
 /**
@@ -464,19 +437,18 @@
  *
  * @param dp  - Direct path handle
  * @param v   - Status to compare
- * @param ret - Return value
  *
  * @note
  * Throws an exception if the status of the direct path handle is different than
  * the provided one.
  *
  */
-#define OCI_CHECK_DIRPATH_STATUS(dp, v, ret)                                   \
+#define OCI_CHECK_DIRPATH_STATUS(dp, v)                                        \
                                                                                \
     if ((dp)->status != (v))                                                   \
     {                                                                          \
         OCI_ExceptionDirPathState((dp), (dp)->status);                         \
-        return ret;                                                            \
+        goto ExitCall;                                                         \
     }
 
 /* ********************************************************************************************* *
@@ -487,19 +459,17 @@
  * @brief
  * Checks the library has been initialized
  *
- * @param ret - Return value
- *
  * @note
  * Returns 'ret' if the library has not been initialized
  *
  */
 
-#define OCI_CHECK_INITIALIZED(ret)                                             \
+#define OCI_CHECK_INITIALIZED()                                                \
                                                                                \
     if (!OCILib.loaded)                                                        \
     {                                                                          \
         OCI_ExceptionNotInitialized();                                         \
-        return ret;                                                            \
+        goto ExitCall;                                                         \
     }
 
 /**
@@ -509,26 +479,23 @@
  * @param con  - Connection handle
  * @param feat - Feature to check
  * @param ver  - OCI version that introduced the feature
- * @param ret  - Return value
-*
+ *
  * @note
  * Throws an exception the given feature is not available
  *
  */
 
-#define OCI_CHECK_FEATURE(con, feat, ver,  ret)                                    \
+#define OCI_CHECK_FEATURE(con, feat, ver)                                          \
                                                                                    \
-    if (OCILib.version_runtime < ver || (((con) != NULL) && (con)->ver_num < ver)) \
+    if (OCILib.version_runtime < ver || ((con) && (con)->ver_num < ver))           \
     {                                                                              \
         OCI_ExceptionNotAvailable(con, feat);                                      \
-        return ret;                                                                \
+        goto ExitCall;                                                             \
     }
 
 /**
  * @brief
  * Checks if multithreading mode is activated
- *
- * @param ret - Return value
  *
  * @note
  * Throws an exception the library has not been initialized with multithreading
@@ -536,12 +503,12 @@
  *
  */
 
-#define OCI_CHECK_THREAD_ENABLED(ret)                                      \
+#define OCI_CHECK_THREAD_ENABLED()                                         \
                                                                            \
     if (!(OCI_LIB_THREADED))                                               \
     {                                                                      \
         OCI_ExceptionNotMultithreaded();                                   \
-        return ret;                                                        \
+        goto ExitCall;                                                     \
     }
 
 /**
@@ -549,7 +516,6 @@
  * Checks if the timestamp datatype is supported by the connection
  *
  * @param con - Connection handle
- * @param ret - Return value
  *
  * @note
  * Throws an exception if the connection (client and server versions) does not
@@ -557,16 +523,15 @@
  *
  */
 
-#define OCI_CHECK_TIMESTAMP_ENABLED(con,  ret)                                 \
+#define OCI_CHECK_TIMESTAMP_ENABLED(con)                                       \
                                                                                \
-    OCI_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0, ret)
+    OCI_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0)  
 
 /**
  * @brief
  * Checks if the interval datatype is supported by the connection
  *
  * @param con - Connection handle
- * @param ret - Return value
  *
  * @note
  * Throws an exception if the connection (client and server versions) does not
@@ -581,7 +546,6 @@
  * Checks if the connection supports scrollable cursors
  *
  * @param con - Connection handle
- * @param ret - Return value
  *
  * @note
  * Throws an exception if the connection (client and server versions) does not
@@ -589,15 +553,13 @@
  *
  */
 
-#define OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(con, ret)                          \
+#define OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(con)                               \
                                                                                \
-    OCI_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9_0, ret)
+    OCI_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9_0)
 
 /**
  * @brief
  * Checks if the runtime OCI client supports statement caching
- *
- * @param ret - Return value
  *
  * @note
  * Throws an exception if the OCI client does not
@@ -605,12 +567,12 @@
  *
  */
 
-#define OCI_CHECK_STATEMENT_CACHING_ENABLED(ret)                               \
+#define OCI_CHECK_STATEMENT_CACHING_ENABLED()                                  \
                                                                                \
     if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
         OCI_ExceptionNotAvailable((dp)->con, OCI_FEATURE_STATEMENT_CACHING);   \
-        return ret;                                                            \
+        goto ExitCall;                                                         \
     }
 
 /**
@@ -618,107 +580,97 @@
  * Checks if the direct path date caching is available
  *
  * @param dp  - Direct path handle
- * @param ret - Return value
  *
  * @note
  * Throws an exception if the Oracle client does not support date caching
  *
  */
 
-#define OCI_CHECK_DIRPATH_DATE_CACHE_ENABLED(dp,  ret)                         \
+#define OCI_CHECK_DIRPATH_DATE_CACHE_ENABLED(dp)                               \
                                                                                \
     if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
         OCI_ExceptionNotAvailable((dp)->con, OCI_FEATURE_DIRPATH_DATE_CACHE);  \
-        return ret;                                                            \
+        goto ExitCall;                                                         \
     }
 
 /**
  * @brief
  * Checks if the current OCI client supports remote database startup/shutdown
  *
- * @param ret - Return value
- *
  * @note
  * Throws an exception if the Oracle client is < 10g R2
  *
  */
 
-#define OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED(ret)                              \
+#define OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED()                                 \
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_REMOTE_DBS_CONTROL);       \
-        return ret;                                                            \
+        goto ExitCall;                                                         \
     }
 
 /**
  * @brief
  * Checks if the current OCI client supports database notifications
  *
- * @param ret - Return value
- *
  * @note
  * Throws an exception if the Oracle client is < 10g R2
  *
  */
 
-#define OCI_CHECK_DATABASE_NOTIFY_ENABLED(ret)                                 \
+#define OCI_CHECK_DATABASE_NOTIFY_ENABLED()                                    \
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_DATABASE_NOTIFY);          \
-        return ret;                                                            \
+        goto ExitCall;                                                         \
     }
 
 /**
  * @brief
- * Checks if the runtime OCI version supports Oracle high availabality
- *
- * @param ret - Return value
+ * Checks if the runtime OCI version supports Oracle high availability
  *
  * @note
  * Throws an exception if the client version does not
- * support Oracle high availabality
+ * support Oracle high availability
  *
  */
 
-#define OCI_CHECK_HIGH_AVAILABILITY_ENABLED(ret)                               \
+#define OCI_CHECK_HIGH_AVAILABILITY_ENABLED()                                  \
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_HIGH_AVAILABILITY);        \
-        return ret;                                                            \
+        goto ExitCall;                                                         \
     }
 
 /**
  * @brief
  * Checks if the OCILIB runtime version supports Oracle XA
  *
- * @param ret - Return value
- *
  * @note
  * Throws an exception if the OCILIB that not support XA connections
  *
  */
 
-#define OCI_CHECK_XA_ENABLED(mode, ret)                                        \
+#define OCI_CHECK_XA_ENABLED(mode)                                             \
                                                                                \
     if ( (mode & OCI_SESSION_XA) && (!OCILib.use_xa) )                         \
     {                                                                          \
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_XA);                       \
-        return ret;                                                            \
+        goto ExitCall;                                                         \
     }
 
-
-#define OCI_CHECK_ENUM_VALUE(con, stmt, mode, values, name, ret)               \
+#define OCI_CHECK_ENUM_VALUE(con, stmt, mode, values, name)                    \
     {                                                                          \
         size_t ii = 0, nn = sizeof(values) / sizeof(values[0]);                \
         for (; ii < nn; ii++) { if (mode == values[ii]) break; }               \
         if (ii >= nn)                                                          \
         {                                                                      \
             OCI_ExceptionArgInvalidValue(con, stmt, name, mode);               \
-            return ret;                                                        \
+            goto ExitCall;                                                     \
         }                                                                      \
     }
 
