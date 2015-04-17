@@ -308,8 +308,9 @@ public:
 
     operator bool();
     operator bool() const;
-    operator const THandleType();
-    operator const THandleType() const;
+
+    operator THandleType();
+    operator THandleType() const;
 
 protected:
 

@@ -56,8 +56,6 @@ inline TResultType Check(TResultType result)
 
     if (err)
     {
-        const char *s = OCI_ErrorGetString(err);
-
         throw Exception(err);
     }
 
@@ -352,13 +350,13 @@ inline bool HandleHolder<THandleType>::IsNull() const
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>::operator const THandleType()
+inline HandleHolder<THandleType>::operator THandleType()
 {
     return _smartHandle ? _smartHandle->GetHandle() : 0;
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>::operator const THandleType() const
+inline HandleHolder<THandleType>::operator THandleType() const
 {
     return _smartHandle ? _smartHandle->GetHandle() : 0;
 }
@@ -805,10 +803,10 @@ inline void HandleHolder<THandleType>::SmartHandle::DetachFromParent()
  * --------------------------------------------------------------------------------------------- */
 
 inline Exception::Exception()
-    : _what(), 
-    _pStatement(0), 
+    : _what(),
+    _pStatement(0),
     _pConnnection(0),
-    _row(0), 
+    _row(0),
     _type(static_cast<ExceptionType::type>(0)),
     _errLib(0),
     _errOracle(0)
@@ -821,11 +819,11 @@ inline Exception::~Exception() throw ()
 
 }
 
-inline Exception::Exception(OCI_Error *err) 
+inline Exception::Exception(OCI_Error *err)
     : _what(),
-    _pStatement(OCI_ErrorGetStatement(err)), 
+    _pStatement(OCI_ErrorGetStatement(err)),
     _pConnnection(OCI_ErrorGetConnection(err)),
-    _row(OCI_ErrorGetRow(err)), 
+    _row(OCI_ErrorGetRow(err)),
     _type(static_cast<ExceptionType::type>(OCI_ErrorGetType(err))),
     _errLib(OCI_ErrorGetInternalCode(err)),
     _errOracle(OCI_ErrorGetOCICode(err))
@@ -839,7 +837,7 @@ inline Exception::Exception(OCI_Error *err)
 		_what.resize(size);
 
 		while (i < size) { _what[i] = static_cast<char>(str[i]); ++i; }
-	}   
+	}
 }
 
 inline const char * Exception::what() const throw()
@@ -4398,7 +4396,7 @@ template<class TFetchCallback>
 inline unsigned int Statement::Execute(const ostring& sql, TFetchCallback callback)
 {
     Execute(sql);
- 
+
     return Fetch(callback);
 }
 
