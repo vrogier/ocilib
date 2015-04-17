@@ -1,7 +1,13 @@
-2015-03-16 Version 4.0.2 Vincent Rogier vince.rogier@ocilib.net
+2015-04-21 Version 4.1.0 Vincent Rogier vince.rogier@ocilib.net
 
     * C API
 
+        - Major library code update:
+            * All public functions entry and exit points have been rewritten in order to satisfy requirements of the OCI_ENV_CONTEXT environment flag
+            * Fixed some functions that were not setting context result properly when using OCI_ENV_CONTEXT flag
+            * various internal code updates and minor fixes
+            * OCI_EnableWarnings() and OCI_SetErrorHandler() are now return a boolean values
+            
         - Enhanced implicit string conversion for Date, Timestamps and Numeric values
             * Conversion formats can be now set at both library and connection level
                 - The library is using its own default format if none are set
@@ -25,7 +31,7 @@
         - Fixes      
             * Fixed compilation under oracle 11gR1 caused by wrong oracle version checking in the file pool.c
             * Fixed few warnings raised by Clang C compiler
-            * Fixed Binary Float implicit conversion to string
+            * Fixed Binary Float implicit conversion to string when using Oracle 12g
 
         - Warning : Programs must be recompiled (with no code change needed) as some methods have been removed from the library
 
@@ -46,6 +52,24 @@
             * Added parametrized constructors for Date, Interval and Timestamp classes
             * Made sure that translation from C raw buffer to the C++ Raw class does not fail in case of NULL buffers with non zero size parameter
             * Modified internal access to environment singleton object instance
+            * Added enum values for Oracle Versions
+            * Added new template methods to Resultset class 
+                - Get<T1, T2>() : template method allowing to return a user defined type from a resultset current row content using a translator user defined method/functor/lambda (e.g. return an user defined struct/class from a select on a table)
+                - ForEach<T1>() : convenient method wrapping the while(rs.Next)) pattern and that call the an user defined method/functor/lambda for each row fetched
+                - ForEach<T1, T2>() : version of ForEach<T1> and Get<T1, T2> combined
+                - See the updated main demo application for examples
+            * Added template methods Statement::Execute() and Statement::ExecutePrepared():
+                - theses overloaded methods can take fetch callbacks and also datatype adater callbacks
+                - It makes the code much compact as it hides the resultset fetch calls
+                - It also allow adapting resultsets returned values to user defined types
+                - See the updated main demo application for examples
+                
+        - Changes:
+            * Exception class  does not derive any more from HandleHolder<>
+            * Date::SysDate() is now a static method that returns a now a Date Object with system date time
+            * Timestamp::SysTimestamp() is now a static method that returns a now a Timestamp Object with system timestamp
+            * Renamed Statement::Execute(void) to ExecutePrepared(void)
+
         - Fixes        
             * Fixed missing  operator "|" for recently Enum promoted to Flags
             * Fixed HandleHolder<>::operator bool
@@ -54,6 +78,7 @@
             * Fixed C++03 standard violation : Removed usage of std::vector::data() that was introduced in C++11 in order to be compliant with C++03
             * Fixed Timestamp::SetDate()
             * Removed unimplemented prototype Lob<TLobObjectType>:: operator TLobObjectType()
+            * Fixed segfault when Environment::Initialize() fails to load the oci shared library
         - C++ compilers validated versions:
              * Microsoft C++ compiler : all versions from Visual Studio 2008
              * GCC : all versions from 4.1 
