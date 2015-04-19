@@ -316,7 +316,7 @@ dbtext * OCI_StringGetOracleString
 
     if (*size == -1)
     {
-        len  = (int) OCI_StringLength( (void *) src, sizeof(otext));
+        COMPUTE_LENTGH(otext, src, len)
     }
     else
     {
