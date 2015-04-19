@@ -5365,12 +5365,23 @@ inline bool Resultset::operator -= (int offset)
 	return Seek(Resultset::SeekRelative, -offset);
 }
 
+template<class TDataType>
+inline void Resultset::Get(unsigned int index, TDataType& value) const
+{
+    value = Get<TDataType>(index);
+}
+
+template<class TDataType>
+inline void Resultset::Get(const ostring &name, TDataType& value) const
+{
+    value = Get<TDataType>(name);
+}
+
 template<class TDataType, class TAdapter>
 inline bool Resultset::Get(TDataType& value, TAdapter adapter) const
 {
     return adapter(static_cast<const Resultset&>(*this), value);
 }
-
 
 template<class TCallback>
 inline  unsigned int Resultset::ForEach(TCallback callback)

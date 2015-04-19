@@ -322,10 +322,10 @@ Product CreateProductFromQuery(const Resultset &rs)
 {
     Product p;
 
-    p.code = rs.Get<int>(1);
-    p.action = rs.Get<ostring>(2);
-    p.price = rs.Get<double>(3);
-    p.date = rs.Get<Date>(4);
+    rs.Get(1, p.code);
+    rs.Get(2, p.action);
+    rs.Get(3, p.price);
+    rs.Get(4, p.date);
 
     return p;
 }

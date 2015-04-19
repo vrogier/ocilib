@@ -6044,6 +6044,26 @@ public:
     template<class TDataType>
     TDataType Get(unsigned int index) const;
 
+    /**
+    * @brief
+    * Assign to the current value of the column at the given index in the resultset
+    *
+    * @tparam TDataType - C++ type of the value to retrieve
+    *
+    * @param index - Column position
+    * @param value - value to fill
+    *
+    * @warning
+    * This method has built-in specialized versions for all supported types except RAW based types.
+    * For RAWS, use the version with extra parameters
+    *
+    * @note
+    * Column position starts at 1.
+    *
+    */
+    template<class TDataType>
+    void Get(unsigned int index, TDataType &value) const;
+
 	/**
 	* @brief
 	* Return the current value of the column from its name in the resultset
@@ -6062,6 +6082,23 @@ public:
 	*/
     template<class TDataType>
     TDataType Get(const ostring& name) const;
+
+    /**
+    * @brief
+    * Assign to the current value of the column from its name in the resultset
+    *
+    * @tparam TDataType - C++ type of the value to retrieve
+    *
+    * @param index - Column name
+    * @param value - value to fill
+    *
+    * @warning
+    * This method has built-in specialized versions for all supported types except RAW based types.
+    * For RAWS, use the version with extra parameters
+    *
+    */
+    template<class TDataType>
+    void Get(const ostring &name, TDataType &value) const;
 
     /**
     * @brief
