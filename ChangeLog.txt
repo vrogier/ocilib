@@ -32,6 +32,7 @@
             * Fixed compilation under oracle 11gR1 caused by wrong oracle version checking in the file pool.c
             * Fixed few warnings raised by Clang C compiler
             * Fixed Binary Float implicit conversion to string when using Oracle 12g
+            * Fixed UTF8 strings bytes size computing when passing them to Oracle client
 
         - Warning : Programs must be recompiled (with no code change needed) as some methods have been removed from the library
 
@@ -64,7 +65,7 @@
                 - It also allow adapting resultsets returned values to user defined types
                 - See the updated main demo application for examples
             * Added Resultset::Get<>() overloads with input value arguments to fill instead of returning values. This allow to no specify the data type in the Get<>() call.
-                - void Get(unsigned int, TDataType &value) const
+                - void Get(unsigned int, TDataType &value) const        
                 - void Get(const ostring &name, TDataType &value) const;
                 
         - Changes:
