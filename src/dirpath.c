@@ -427,11 +427,13 @@ boolean OCI_API OCI_DirPathFree
     OCI_DirPath *dp
 )
 {
+    ub2 i = 0;
+
     OCI_LIB_CALL_ENTER(boolean, FALSE)
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
 
-    for (ub2 i = 0; i < dp->nb_cols; i++)
+    for (i = 0; i < dp->nb_cols; i++)
     {
         OCI_FREE(dp->cols[i].data)
         OCI_FREE(dp->cols[i].lens)
