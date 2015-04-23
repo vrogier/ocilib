@@ -2471,7 +2471,7 @@ public:
 
     /**
      * @brief
-     * Create an empty date object
+     * Create an empty null Date object
      *
      */
     Date();
@@ -2856,6 +2856,8 @@ private:
     int Compare(const Date& other) const;
 
     Date(OCI_Date *pDate, Handle *parent = 0);
+
+    void Allocate();
 };
 
 /**
@@ -2898,6 +2900,13 @@ public:
 	*
 	*/
     typedef Enum<IntervalTypeValues> IntervalType;
+
+    /**
+    * @brief
+    * Create an empty null Interval instance
+    *
+    */
+    Interval();
 
 	/**
 	* @brief
@@ -3302,6 +3311,13 @@ public:
     *
     */
     static Timestamp SysTimestamp(TimestampType type = NoTimeZone);
+
+    /**
+    * @brief
+    * Create an empty null timestamp instance
+    *
+    */
+    Timestamp();
 
     /**
     * @brief
@@ -3769,6 +3785,13 @@ class Lob : public HandleHolder<OCI_Lob *>
 
 public:
 
+    /**
+    * @brief
+    * Create an empty null Lob instance
+    *
+    */
+    Lob();
+
 	/**
 	* @brief
 	* Parametrized constructor
@@ -4076,6 +4099,13 @@ class File : public HandleHolder<OCI_File *>
     friend class Collection;
 
 public:
+
+    /**
+    * @brief
+    * Create an empty null File instance
+    *
+    */
+    File();
 
 	/**
 	* @brief
@@ -4391,6 +4421,13 @@ public:
 	*/
     typedef Enum<ObjectTypeValues> ObjectType;
 
+    /**
+    * @brief
+    * Create an empty null Object instance
+    *
+    */
+    Object();
+
 	/**
 	* @brief
 	* Parametrized constructor
@@ -4454,6 +4491,38 @@ public:
 	template<class TDataType>
     TDataType Get(const ostring& name) const;
 
+    /**
+    * @brief
+    * Assign the given value with the given object attribute value
+    *
+    * @tparam TDataType - C++ object type to retrieve
+    *
+    * @param name  - Attribute name
+    * @param value - value to assign
+    *
+    * @note
+    * Specialized version of this template function are provided for all supported types
+    *
+    */
+    template<class TDataType>
+    void Get(const ostring& name, TDataType &value) const;
+
+    /**
+    * @brief
+    * Assign the given collection with the given object attribute value of type collection
+    *
+    * @tparam TDataType - C++ object type of the collection to retrieve
+    *
+    * @param name  - Attribute name
+    * @param value - value to assign
+    *
+    * @note
+    * Specialized version of this template function are provided for all supported types
+    *
+    */
+    template<class TDataType>
+    void Get(const ostring& name, Collection<TDataType> &value) const;
+
 	/**
 	* @brief
 	* Set the given object attribute value
@@ -4469,8 +4538,8 @@ public:
 	*/
     template<class TDataType>
     void Set(const ostring& name, const TDataType &value);
-
-	/**
+    
+    /**
 	* @brief
 	* Clone the current instance to a new one performing deep copy
 	*
@@ -4506,6 +4575,13 @@ class Reference : public HandleHolder<OCI_Ref *>, public Streamable
     friend class Collection;
 
 public:
+
+    /**
+    * @brief
+    * Create an empty null Reference instance
+    *
+    */
+    Reference();
 
 	/**
 	* @brief
@@ -4615,6 +4691,13 @@ public:
 	*/
     typedef Enum<CollectionTypeValues> CollectionType;
 
+    /**
+    * @brief
+    * Create an empty null Collection instance
+    *
+    */
+    Collection();
+
 	/**
 	* @brief
 	* Parametrized constructor
@@ -4717,7 +4800,7 @@ public:
 	*/
     bool Delete(unsigned int index) const;
 
-	/**
+    /**
 	* @brief
 	* Return the collection element value at the given position
 	*
@@ -4873,6 +4956,14 @@ class Long : public HandleHolder<OCI_Long *>
     friend class BindArray;
 
 public:
+
+
+    /**
+    * @brief
+    * Create an empty null Long instance
+    *
+    */
+    Long();
 
 	/**
 	* @brief
@@ -5191,6 +5282,13 @@ public:
 	*/
     typedef Enum<LongModeValues> LongMode;
 
+    /**
+    * @brief
+    * Create an empty null Statement instance
+    *
+    */
+    Statement();
+
 	/**
 	* @brief
 	* Parametrized constructor
@@ -5318,10 +5416,10 @@ public:
     /**
     * @brief
     * Execute the prepared statement, retrieve all resultsets, and call the given callback 
-    * with adaptated type wit for each row of each resultsets
+    * with adapted type wit for each row of each resultsets
     *
     * @param callback -  User defined callback
-    * @param adapter  -  User defined adaptor function
+    * @param adapter  -  User defined adapter function
     *
     * @note
     * The user defined callback function must conform to the following prototype:
@@ -5359,7 +5457,7 @@ public:
     * with adaptated type wit for each row of each resultsets
     *
     * @param callback -  User defined callback
-    * @param adapter  -  User defined adaptor function
+    * @param adapter  -  User defined adapter function
     *
     * @note
     * The user defined callback function must conform to the following prototype:
@@ -6025,22 +6123,18 @@ public:
 	*/
 	typedef Enum<SeekModeValues> SeekMode;
 
-	/**
-	* @brief
-	* Return the current value of the column at the given index in the resultset
-	*
-	* @tparam TDataType - C++ type of the value to retrieve
-	*
-	* @param index - Column position
-	*
-	* @warning
-	* This method has built-in specialized versions for all supported types except RAW based types.
-	* For RAWS, use the version with extra parameters
-	*
-	* @note
-	* Column position starts at 1.
-	*
-	*/
+    /**
+    * @brief
+    * Return the current value of the column at the given index in the resultset
+    *
+    * @tparam TDataType - C++ type of the value to retrieve
+    *
+    * @param index - Column position
+    *
+    * @note
+    * Column position starts at 1.
+    *
+    */
     template<class TDataType>
     TDataType Get(unsigned int index) const;
 
@@ -6053,10 +6147,6 @@ public:
     * @param index - Column position
     * @param value - value to fill
     *
-    * @warning
-    * This method has built-in specialized versions for all supported types except RAW based types.
-    * For RAWS, use the version with extra parameters
-    *
     * @note
     * Column position starts at 1.
     *
@@ -6064,22 +6154,18 @@ public:
     template<class TDataType>
     void Get(unsigned int index, TDataType &value) const;
 
-	/**
-	* @brief
-	* Return the current value of the column from its name in the resultset
-	*
-	* @tparam TDataType - C++ type of the value to retrieve
-	*
-	* @param name  - Column name
-	*
-	* @warning
-	* This method has built-in specialized versions for all supported types except RAW based types.
-	* For RAWS, use the version with extra parameters
-	*
-	* @note
-	* The column name is case insensitive.
-	*
-	*/
+    /**
+    * @brief
+    * Return the current value of the column from its name in the resultset
+    *
+    * @tparam TDataType - C++ type of the value to retrieve
+    *
+    * @param name  - Column name
+    *
+    * @note
+    * The column name is case insensitive.
+    *
+    */
     template<class TDataType>
     TDataType Get(const ostring& name) const;
 
@@ -6092,10 +6178,6 @@ public:
     * @param index - Column name
     * @param value - value to fill
     *
-    * @warning
-    * This method has built-in specialized versions for all supported types except RAW based types.
-    * For RAWS, use the version with extra parameters
-    *
     */
     template<class TDataType>
     void Get(const ostring &name, TDataType &value) const;
@@ -6103,14 +6185,14 @@ public:
     /**
     * @brief
     * Return a given user type from the current fetched row.
-    * It allow translating row column values returned by a query to a user defined type using the given adaptor type
+    * It allow translating row column values returned by a query to a user defined type using the given adapter type
     *
- 	* @param value    - User defined type value to be filled by the adaptor function
-    * @param adapter -  User defined adaptor function
+ 	* @param value    - User defined type value to be filled by the adapter function
+    * @param adapter -  User defined adapter function
     * 
     * @note
-    * The user defined adaptor function must conform to the following prototype:
-    * bool adaptor (const Resultset &, TDataType &)
+    * The user defined adapter function must conform to the following prototype:
+    * bool adapter (const Resultset &, TDataType &)
     * It shall return true if it has filled the value from the resultset otherwise false
     *
     */
@@ -6138,14 +6220,14 @@ public:
     /**
     * @brief
     * Fetch all rows in the resultset and call the given callback for row
-    * It allow translating row column values returned by a query to a user defined type using the given adaptor type
+    * It allow translating row column values returned by a query to a user defined type using the given adapter type
     *
     * @param callback -  User defined callback
-    * @param adapter  -  User defined adaptor function
+    * @param adapter  -  User defined adapter function
     *
      * @note
-    * The user defined adaptor function must conform to the following prototype:
-    * [UserDefinedType] adaptor (const Resultset &)
+    * The user defined adapter function must conform to the following prototype:
+    * [UserDefinedType] adapter (const Resultset &)
     * The return value type must match the parameter of the callback method
     *
     * @note
