@@ -51,22 +51,22 @@ using namespace ocilib;
 * CONSTANTS
 * --------------------------------------------------------------------------------------------- */
 
-const int ArgDatabase = 1;
-const int ArgUser = 2;
-const int ArgPassword = 3;
-const int ArgHome = 4;
-const int ArgCount = 5;
-const int SizeString = 260;
-const int SizeBuffer = 2048;
-const int ElemCount = 5;
+const int ArgDatabase           = 1;
+const int ArgUser               = 2;
+const int ArgPassword           = 3;
+const int ArgHome               = 4;
+const int ArgCount              = 5;
+const int SizeString            = 260;
+const int SizeBuffer            = 2048;
+const int ElemCount             = 5;
 
-const int DirPathBufferSize = 64000;
-const int DirPathLoadSize = 100;
-const int DirPathLoadCount = 10;
-const int DirPathSizeColumn1 = 20;
-const int DirPathSizeColumn2 = 30;
-const int DirPathSizeColumn3 = 8;
-const int DirPathColumnCount = 3;
+const int DirPathBufferSize    = 64000;
+const int DirPathLoadSize      = 100;
+const int DirPathLoadCount     = 10;
+const int DirPathSizeColumn1   = 20;
+const int DirPathSizeColumn2   = 30;
+const int DirPathSizeColumn3   = 8;
+const int DirPathColumnCount   = 3;
 
 /* --------------------------------------------------------------------------------------------- *
 * DEFINES
@@ -123,7 +123,7 @@ const int DirPathColumnCount = 3;
 
 struct Test
 {
-    void(*proc)(void); /* test procedure */
+    void (*proc)(void); /* test procedure */
     int    execute;     /* do execute the procedure ? */
 };
 
@@ -135,19 +135,6 @@ struct Product
     double price;
     Date date;
 };
-
-// User translation of the test_array SQL table rows
-struct TestArray
-{
-    int val_int;
-    float val_flt;
-    double val_dbl;
-    ostring val_str;
-    Date val_date;
-    Clob val_lob;
-    File val_file;
-};
-
 
 /* --------------------------------------------------------------------------------------------- *
 * prototypes
@@ -194,29 +181,29 @@ bool PrintProductFromObject(const Product &p);
 
 Test tab_test[] =
 {
-    { test_fetch, TRUE },
-    { test_fetch_translate, TRUE },
-    { test_foreach, TRUE },
-    { test_foreach_translate, TRUE },
-    { test_bind1, TRUE },
-    { test_bind2, TRUE },
-    { test_piecewise_insert, TRUE },
-    { test_piecewise_fetch, TRUE },
-    { test_lob, TRUE },
-    { test_nested_table, TRUE },
-    { test_ref_cursor, TRUE },
-    { test_plsql, TRUE },
-    { test_dates, TRUE },
-    { test_timestamp, TRUE },
-    { test_describe, TRUE },
-    { test_returning, TRUE },
-    { test_returning_array, TRUE },
-    { test_object_insert, TRUE },
-    { test_object_fetch, TRUE },
-    { test_scrollable_cursor, TRUE },
-    { test_collection, TRUE },
-    { test_ref, TRUE },
-    { test_directpath, TRUE }
+        {test_fetch,             TRUE},
+        {test_fetch_translate,   TRUE},
+        {test_foreach,           TRUE},
+        {test_foreach_translate, TRUE},
+        {test_bind1,             TRUE},
+        {test_bind2,             TRUE},
+        {test_piecewise_insert,  TRUE},
+        {test_piecewise_fetch,   TRUE},
+        {test_lob,               TRUE},
+        {test_nested_table,      TRUE},
+        {test_ref_cursor,        TRUE},
+        {test_plsql,             TRUE},
+        {test_dates,             TRUE},
+        {test_timestamp,         TRUE},
+        {test_describe,          TRUE},
+        {test_returning,         TRUE},
+        {test_returning_array,   TRUE},
+        {test_object_insert,     TRUE},
+        {test_object_fetch,      TRUE},
+		{test_scrollable_cursor, TRUE},
+        {test_collection,        TRUE},
+        {test_ref,               TRUE},
+        {test_directpath,        TRUE}
 };
 
 /* --------------------------------------------------------------------------------------------- *
@@ -278,12 +265,11 @@ int omain(int argc, oarg* argv[])
 
         Environment::EnableWarnings(true);
 
-        cout << text("Connecting to ") << usr << text("/") << pwd << text("@") << dbs << endl << endl;
+        cout << text("Connecting to ") << usr << text("/") << pwd << text("@") << dbs <<endl <<endl;
 
         con.Open(dbs, usr, pwd, Environment::SessionDefault);
 
         print_version();
-        drop_tables();
         create_tables();
 
         /* execute tests */
@@ -299,7 +285,7 @@ int omain(int argc, oarg* argv[])
     }
     catch (std::exception &ex)
     {
-        cout << ex.what() << endl;
+        cout << ex.what() <<endl;
     }
 
     if (con)
@@ -328,7 +314,6 @@ bool FillProductFromQuery(const Resultset &rs, Product &p)
     p.action = rs.Get<ostring>(2);
     p.price = rs.Get<double>(3);
     p.date = rs.Get<Date>(4);
-
 
     return true;
 }
@@ -385,18 +370,18 @@ void print_version(void)
         cout << text("Charset type            : WIDE\n");
 
     cout << text("\n>>>>> VERSIONS INFORMATION \n\n");
-    cout << text("OCILIB major    version : ") << OCILIB_MAJOR_VERSION << endl;
-    cout << text("OCILIB minor    version : ") << OCILIB_MINOR_VERSION << endl;
-    cout << text("OCILIB revision version : ") << OCILIB_REVISION_VERSION << endl;
-    cout << text("OCI compile     version : ") << Environment::GetCompileMajorVersion() << endl;
-    cout << text("OCI runtime     version : ") << Environment::GetRuntimeMajorVersion() << endl;
-    cout << text("Server major    version : ") << con.GetServerMajorVersion() << endl;
-    cout << text("Server minor    version : ") << con.GetServerMinorVersion() << endl;
-    cout << text("Server revision version : ") << con.GetServerRevisionVersion() << endl;
-    cout << text("Connection      version : ") << static_cast<unsigned int>(con.GetVersion()) << endl;
+    cout << text("OCILIB major    version : ") << OCILIB_MAJOR_VERSION <<endl;
+    cout << text("OCILIB minor    version : ") << OCILIB_MINOR_VERSION <<endl;
+    cout << text("OCILIB revision version : ") << OCILIB_REVISION_VERSION <<endl;
+    cout << text("OCI compile     version : ") << Environment::GetCompileMajorVersion() <<endl;
+    cout << text("OCI runtime     version : ") << Environment::GetRuntimeMajorVersion() <<endl;
+    cout << text("Server major    version : ") << con.GetServerMajorVersion() <<endl;
+    cout << text("Server minor    version : ") << con.GetServerMinorVersion() <<endl;
+    cout << text("Server revision version : ") << con.GetServerRevisionVersion() <<endl;
+    cout << text("Connection      version : ") << static_cast<unsigned int>(con.GetVersion()) <<endl;
 
     cout << text("\n>>>>> SERVER VERSION BANNER \n\n");
-    cout << con.GetServerVersion() << endl << endl;
+    cout << con.GetServerVersion() <<endl <<endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -414,21 +399,21 @@ void execute_ddl(ostring sql)
     {
         switch (ex.GetType().GetValue())
         {
-        case Exception::OracleError:
-            cout << text("Oracle Error => ");
-            break;
-        case Exception::OracleWarning:
-            cout << text("Oracle Error => ");
-            break;
-        case Exception::OcilibError:
-            cout << text("OCILIB Error => ");
-            break;
-        default:
-            cout << text("Unknown Error => ");
-            break;
+            case Exception::OracleError:
+                cout << text("Oracle Error => ");
+                break;
+            case Exception::OracleWarning:
+                cout << text("Oracle Error => ");
+                break;
+            case Exception::OcilibError:
+                cout << text("OCILIB Error => ");
+                break;
+            default:
+                cout << text("Unknown Error => ");
+                break;
         }
 
-        cout << ex.what() << endl;
+        cout << ex.what() <<endl;
     }
 }
 
@@ -444,17 +429,17 @@ void create_tables(void)
     execute_ddl(text("create type type_t as OBJECT (id int, name varchar2(50))"));
 
     execute_ddl(text("create type test_t as object ")
-        text("( ")
-        text("    val_int  number, ")
-        text("    val_flt  float, ")
-        text("    val_dbl  float, ")
-        text("    val_str  varchar2(30), ")
-        text("    val_date date, ")
-        text("    val_lob  clob, ")
-        text("    val_file bfile, ")
-        text("    val_obj  type_t, ")
-        text("    val_raw  raw(10) ")
-        text(")"));
+                text("( ")
+                text("    val_int  number, ")
+                text("    val_flt  float, ")
+                text("    val_dbl  float, ")
+                text("    val_str  varchar2(30), ")
+                text("    val_date date, ")
+                text("    val_lob  clob, ")
+                text("    val_file bfile, ")
+                text("    val_obj  type_t, ")
+                text("    val_raw  raw(10) ")
+                text(")"));
 
     execute_ddl(text("create type t_tab1_emp as VARRAY(100) of varchar2(50)"));
 
@@ -462,7 +447,7 @@ void create_tables(void)
 
     /* create table for the demo */
     execute_ddl(text("create table test_fetch(code int, article ")
-        text("varchar2(30), price float, creation date)"));
+                text("varchar2(30), price float, creation date)"));
 
     execute_ddl(text("create table test_long_raw(code int, content long raw)"));
 
@@ -475,60 +460,60 @@ void create_tables(void)
     execute_ddl(text("create table test_table_obj of type_t"));
 
     execute_ddl(text("create table test_array ")
-        text("( ")
-        text("    val_int  number, ")
-        text("    val_dbl  float, ")
-        text("    val_flt  float, ")
-        text("    val_str  varchar2(30), ")
-        text("    val_date date, ")
-        text("    val_lob  clob, ")
-        text("    val_file bfile ")
-        text(")")
-        );
+                text("( ")
+                text("    val_int  number, ")
+                text("    val_dbl  float, ")
+                text("    val_flt  float, ")
+                text("    val_str  varchar2(30), ")
+                text("    val_date date, ")
+                text("    val_lob  clob, ")
+                text("    val_file bfile ")
+                text(")")
+                );
 
     execute_ddl(text("create table test_coll_varray ")
-        text("( ")
-        text("    departement number, ")
-        text("    employees   t_tab1_emp ")
-        text(")")
-        );
+                text("( ")
+                text("    departement number, ")
+                text("    employees   t_tab1_emp ")
+                text(")")
+                );
 
     execute_ddl(text("create table test_coll_nested ")
-        text("( ")
-        text("    departement number, ")
-        text("    employees   t_tab2_emp ")
-        text(") nested table employees store as test_table_emp")
-        );
+                text("( ")
+                text("    departement number, ")
+                text("    employees   t_tab2_emp ")
+                text(") nested table employees store as test_table_emp")
+                );
 
     execute_ddl(text("create table test_directpath(val_int number(8,4), ")
-        text(" val_str varchar2(30), val_date date)"));
+                text(" val_str varchar2(30), val_date date)"));
 
     /* insert data into the demo tables */
     execute_ddl(text("insert into test_fetch ")
-        text("(code, article, price, creation) ")
-        text("values (1, 'shoes', 3.14, to_date('1978-12-23', 'YYYY-MM-DD'))"));
+                text("(code, article, price, creation) ")
+                text("values (1, 'shoes', 3.14, to_date('1978-12-23', 'YYYY-MM-DD'))"));
 
     execute_ddl(text("insert into test_fetch ")
-        text("(code, article, price, creation) ")
-        text("values (2, 'shirt', 5.99, to_date('1999-09-12', 'YYYY-MM-DD'))"));
+                text("(code, article, price, creation) ")
+                text("values (2, 'shirt', 5.99, to_date('1999-09-12', 'YYYY-MM-DD'))"));
 
     execute_ddl(text("insert into test_lob(code,content)  ")
-        text("values (1, EMPTY_CLOB())"));
+                text("values (1, EMPTY_CLOB())"));
 
     execute_ddl(text("insert into test_long_str(code,content) ")
-        text("values (1, 'Rugby rocks !')"));
+                text("values (1, 'Rugby rocks !')"));
 
     execute_ddl(text("insert into test_coll_varray(departement,employees) ")
-        text("values (1, t_tab1_emp('Peter', 'John', 'Paula', 'Gina'))"));
+                text("values (1, t_tab1_emp('Peter', 'John', 'Paula', 'Gina'))"));
 
     execute_ddl(text("insert into test_coll_varray(departement,employees) ")
-        text("values (2, t_tab1_emp('Ben', 'Alice', 'Joel', 'Maria'))"));
+                 text("values (2, t_tab1_emp('Ben', 'Alice', 'Joel', 'Maria'))"));
 
     execute_ddl(text("insert into test_coll_nested(departement,employees) ")
-        text("values (1, t_tab2_emp('Vince', 'Richard', 'Rita', 'Sophia'))"));
+                text("values (1, t_tab2_emp('Vince', 'Richard', 'Rita', 'Sophia'))"));
 
     execute_ddl(text("insert into test_coll_nested(departement,employees) ")
-        text("values (2, t_tab2_emp('Paul', 'Sarah', 'Robert', 'Zoe'))"));
+                text("values (2, t_tab2_emp('Paul', 'Sarah', 'Robert', 'Zoe'))"));
 
     execute_ddl(text("insert into test_table_obj values(type_t(1, 'shoes'))"));
     execute_ddl(text("insert into test_table_obj values(type_t(2, 'pen'))"));
@@ -577,14 +562,14 @@ void test_fetch(void)
         cout << text("> Field : #") << i << text(" - Name : ") << rs.GetColumn(i).GetName() << endl;
     }
 
-    cout << endl;
+    cout <<endl;
 
     while (rs++)
     {
         PrintProductFromQuery(rs);
     }
 
-    cout << endl << rs.GetCount() << text(" row(s) fetched") << endl;
+    cout <<endl << rs.GetCount() << text(" row(s) fetched") <<endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -600,7 +585,7 @@ void test_fetch_translate(void)
 
     Resultset rs = st.GetResultset();
 
-    cout << endl;
+    cout <<endl;
 
     while (rs++)
     {
@@ -612,7 +597,7 @@ void test_fetch_translate(void)
         }
     }
 
-    cout << endl << rs.GetCount() << text(" row(s) fetched") << endl;
+    cout <<endl << rs.GetCount() << text(" row(s) fetched") <<endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -654,7 +639,7 @@ void test_bind1(void)
     st.Bind(text(":code"), code, BindInfo::In);
     count = st.ExecutePrepared(PrintProductFromObject, CreateProductFromQuery);
 
-    cout << endl << count << text(" row(s) fetched") << endl;
+    cout <<endl << count << text(" row(s) fetched") <<endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -666,51 +651,56 @@ void test_bind2(void)
     cout << text("\n>>>>> SINGLE BINDING \n\n");
 
     Statement st(con);
-    st.Prepare(text("insert into test_array ")
-        text("( ")
-        text("   val_int,  val_dbl, val_flt, val_str, val_date, ")
-        text("   val_lob, val_file ")
-        text(") ")
-        text("values ")
-        text("( ")
-        text("   :val_int, :val_dbl, :val_flt, :val_str, :val_date, ")
-        text("   :val_lob, :val_file ")
-        text(") "));
+    st.Prepare( text("insert into test_array ")
+                text("( ")
+                text("   val_int,  val_dbl, val_flt, val_str, val_date, ")
+                text("   val_lob, val_file ")
+                text(") ")
+                text("values ")
+                text("( ")
+                text("   :val_int, :val_dbl, :val_flt, :val_str, :val_date, ")
+                text("   :val_lob, :val_file ")
+                text(") "));
 
     /* create objects and set values */
 
-    TestArray t;
+    /* date */
+    Date date;
+    date.SysDate();
 
-    t.val_date = Date::SysDate();
-    t.val_int  = 1;
-    t.val_dbl  = 3.14;
-    t.val_flt  = 3.14f;
-    t.val_str  = text("Name00");
-    t.val_lob  = Clob(con);
-    t.val_file = File(con);
+    /* lob */
+    Clob clob(con);
+    clob.Write(text("lob value00"));
 
-    t.val_lob.Write(text("lob value00"));
-    t.val_file.SetInfos(text("mydir"), text("file00.txt"));
+    /* file */
+    File file(con);
+    file.SetInfos(text("mydir"), text("file00.txt"));
+
+    /* scalar types */
+    int i = 1;
+    double dbl = 3.14;
+    float flt = 3.14f;
+    ostring str = text("Name00");
 
     /* bind scalar C types arrays */
 
-    st.Bind(text(":val_int"), t.val_int, BindInfo::In);
-    st.Bind(text(":val_dbl"), t.val_dbl, BindInfo::In);
-    st.Bind(text(":val_flt"), t.val_flt, BindInfo::In);
-    st.Bind(text(":val_str"), t.val_str, static_cast<unsigned int>(t.val_str.size()), BindInfo::In);
+    st.Bind(text(":val_int"), i, BindInfo::In);
+    st.Bind(text(":val_dbl"), dbl, BindInfo::In);
+    st.Bind(text(":val_flt"), flt, BindInfo::In);
+    st.Bind(text(":val_str"), str, static_cast<unsigned int>(str.size()), BindInfo::In);
 
     /* bind oracle types arrays */
 
-    st.Bind(text(":val_date"), t.val_date, BindInfo::In);
-    st.Bind(text(":val_lob"), t.val_lob, BindInfo::In);
-    st.Bind(text(":val_file"), t.val_file, BindInfo::In);
+    st.Bind(text(":val_date"), date, BindInfo::In);
+    st.Bind(text(":val_lob"), clob, BindInfo::In);
+    st.Bind(text(":val_file"), file, BindInfo::In);
 
     /* do insert */
 
     st.ExecutePrepared();
     con.Commit();
 
-    cout << endl << st.GetAffectedRows() << text(" row(s) inserted") << endl;
+    cout <<endl << st.GetAffectedRows() << text(" row(s) inserted") <<endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -726,7 +716,7 @@ void test_piecewise_insert(void)
     {
         size_t size = static_cast<size_t>(file.tellg());
         file.seekg(0, std::ios::beg);
-        cout << endl << size << text(" bytes to write") << endl;
+        cout <<endl << size << text(" bytes to write") <<endl;
 
         Statement st(con);
         Blong lg(st);
@@ -741,7 +731,7 @@ void test_piecewise_insert(void)
 
         delete[] strBuffer;
 
-        cout << endl << lg.GetLength() << text(" bytes written") << endl;
+        cout <<endl << lg.GetLength() << text(" bytes written") <<endl;
 
         file.close();
         con.Commit();
@@ -763,10 +753,10 @@ void test_piecewise_fetch(void)
     while (rs1++)
     {
         Blong lg = rs1.Get<Blong>(1);
-        cout << endl << lg.GetLength() << text(" bytes read") << endl;
+        cout <<endl << lg.GetLength() << text(" bytes read") <<endl;
     }
 
-    cout << endl << rs1.GetCount() << text(" row(s) fetched") << endl;
+    cout <<endl << rs1.GetCount() << text(" row(s) fetched") <<endl;
 
     cout << text("\n>>>>> TEST LONG MAPPED TO STRING\n\n");
 
@@ -778,11 +768,11 @@ void test_piecewise_fetch(void)
     {
         ostring str = rs2.Get<ostring>(1);
 
-        cout << str << endl;
-        cout << str.size() << text(" bytes read") << endl;
+        cout << str <<endl;
+        cout << str.size() << text(" bytes read") <<endl;
     }
 
-    cout << endl << rs2.GetCount() << text(" row(s) fetched") << endl;
+    cout <<endl << rs2.GetCount() << text(" row(s) fetched") <<endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -805,12 +795,12 @@ void test_lob(void)
         clob.Append(text("i'm going to the cinema ! "));
         clob.Seek(SeekSet, 0);
 
-        cout << text("> code : ") << rs.Get<int>(1) << text(", content : ") << clob.Read(SizeString) << endl;
+        cout << text("> code : ") << rs.Get<int>(1) << text(", content : ") << clob.Read(SizeString) <<endl;
     }
 
     con.Commit();
 
-    cout << endl << rs.GetCount() << text(" row(s) fetched") << endl;
+    cout <<endl << rs.GetCount() << text(" row(s) fetched") <<endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -831,7 +821,7 @@ void test_nested_table(void)
         Resultset rs2 = st2.GetResultset();
         while (rs2++)
         {
-            cout << text("Article : ") << rs.Get<ostring>(1) << text(", Date : ") << rs2.Get<ostring>(1) << endl;
+            cout << text("Article : ") << rs.Get<ostring>(1) << text(", Date : ") << rs2.Get<ostring>(1) <<endl;
         }
     }
 }
@@ -857,7 +847,7 @@ void test_ref_cursor(void)
         PrintProductFromQuery(rs);
     }
 
-    cout << endl << rs.GetCount() << text(" row(s) fetched") << endl;
+    cout <<endl << rs.GetCount() << text(" row(s) fetched") <<endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -874,8 +864,8 @@ void test_plsql(void)
     st.Prepare(text("begin :res := trunc(sysdate+1)-trunc(sysdate-1); end;"));
     st.Bind(text(":res"), res, BindInfo::Out);
     st.ExecutePrepared();
-    cout << text("PL/SQL : trunc(sysdate+1)-trunc(sysdate-1)") << endl;
-    cout << text("Result : ") << res << endl;
+    cout << text("PL/SQL : trunc(sysdate+1)-trunc(sysdate-1)") <<endl;
+    cout << text("Result : ") << res <<endl;
 
 #ifndef OCI_CHARSET_ANSI
     /* Oracle 8i has some troubles with SERVER OUTPUT in unicode */
@@ -889,17 +879,17 @@ void test_plsql(void)
 
     con.EnableServerOutput(32000, 5, 255);
 
-    st.Execute(text("begin ")
-        text("   dbms_output.put_line('First  line'); ")
-        text("   dbms_output.put_line('Second line'); ")
-        text("   dbms_output.put_line('Third  line'); ")
-        text("end;")
+    st.Execute( text("begin ")
+                text("   dbms_output.put_line('First  line'); ")
+                text("   dbms_output.put_line('Second line'); ")
+                text("   dbms_output.put_line('Third  line'); ")
+                text("end;")
         );
 
     ostring line;
     while (con.GetServerOutput(line))
     {
-        cout << line << endl;
+        cout << line <<endl;
     }
 
     con.DisableServerOutput();
@@ -914,17 +904,17 @@ void test_dates(void)
     cout << text("\n>>>>> TEST DATETIME MANIPULATION\n\n");
 
     Date date(text("1978-04-13"));
-    cout << date << endl;
+    cout << date <<endl;
 
     date.SysDate();
-    cout << date << endl;
+    cout << date <<endl;
 
     date.AddDays(5);
     date.AddMonths(2);
 
-    cout << text("Date + 5 days and 2 months is ") << date << endl;
-    cout << text("Last day of the month : ") << date.LastDay() << endl;
-    cout << text("Number of days until the end of the months : ") << date.LastDay().DaysBetween(date) << endl;
+    cout << text("Date + 5 days and 2 months is ") << date <<endl;
+    cout << text("Last day of the month : ") << date.LastDay() <<endl;
+    cout << text("Number of days until the end of the months : ") << date.LastDay().DaysBetween(date) <<endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -942,7 +932,7 @@ void test_timestamp(void)
     if ((version >= Oracle9iR1) || (version < Oracle10gR1))
         return;
 #endif
-    
+
     if (version >= Oracle9iR1)
     {
         cout << text("\n>>>>> TEST TIMESTAMP\n\n");
@@ -961,7 +951,7 @@ void test_timestamp(void)
             Interval itv(Interval::DaySecond);
             itv.SetDaySecond(1, 1, 1, 1, 0);
             tm += itv;
-            cout << text("Current timestamp + Interval: ") << tm << endl;
+            cout << text("Current timestamp + Interval: ") << tm <<endl;
         }
     }
 }
@@ -973,8 +963,8 @@ void test_timestamp(void)
 void test_describe(void)
 {
     cout << text("\n>>>>> TEST DESCRIBING TABLE \n\n");
-    cout << text("Column Name         Type                ") << endl;
-    cout << text("----------------------------------------") << endl;
+    cout << text("Column Name         Type                ") <<endl;
+    cout << text("----------------------------------------") <<endl;
     cout << std::setiosflags(std::ios::left);
 
     TypeInfo table(con, text("test_fetch"), TypeInfo::Table);
@@ -983,16 +973,16 @@ void test_describe(void)
     {
         Column col = table.GetColumn(i);
 
-        cout << std::setw(20) << col.GetName().c_str()
-            << std::setw(20) << col.GetFullSQLType().c_str()
-            << endl;
+        cout  << std::setw(20) << col.GetName().c_str()
+              << std::setw(20) << col.GetFullSQLType().c_str()
+              << endl;
     }
 
     /* TEST DESCRIBING TYPE ------------------------------------------------- */
 
     cout << text("\n>>>>> TEST DESCRIBING TYPE \n\n");
-    cout << text("Column Name         Type                ") << endl;
-    cout << text("----------------------------------------") << endl;
+    cout << text("Column Name         Type                ") <<endl;
+    cout << text("----------------------------------------") <<endl;
     cout << std::setiosflags(std::ios::left);
 
     TypeInfo type(con, text("test_t"), TypeInfo::Type);
@@ -1001,9 +991,9 @@ void test_describe(void)
     {
         Column col = type.GetColumn(i);
 
-        cout << std::setw(20) << col.GetName().c_str()
-            << std::setw(20) << col.GetFullSQLType().c_str()
-            << endl;
+        cout  << std::setw(20) << col.GetName().c_str()
+              << std::setw(20) << col.GetFullSQLType().c_str()
+              <<endl;
     }
 }
 
@@ -1028,12 +1018,12 @@ void test_returning(void)
         clob.Append(text("(modified)"));
         clob.Seek(SeekSet, 0);
 
-        cout << text("> code : ") << rs.Get<int>(1) << text(" - ") << clob.Read(static_cast<unsigned int>(clob.GetLength())) << endl;
+        cout << text("> code : ") << rs.Get<int>(1) << text(" - ") << clob.Read(static_cast<unsigned int>(clob.GetLength())) <<endl;
     }
 
     con.Commit();
 
-    cout << endl << rs.GetCount() << text(" row(s) fetched") << endl;
+    cout <<endl << rs.GetCount() << text(" row(s) fetched") <<endl;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1051,7 +1041,6 @@ void test_returning_array(void)
     std::vector<Date>    tab_date;
     std::vector<Clob>    tab_lob;
     std::vector<File>    tab_file;
-
 
     for (int i = 0; i < ElemCount; i++)
     {
@@ -1079,22 +1068,22 @@ void test_returning_array(void)
 
     Statement st(con);
 
-    st.Prepare(text("insert into test_array ")
-        text("( ")
-        text("   val_int,  val_dbl, val_flt, val_str, val_date, ")
-        text("   val_lob, val_file ")
-        text(") ")
-        text("values ")
-        text("( ")
-        text("   :val_int, :val_dbl, :val_flt, :val_str, :val_date, ")
-        text("   :val_lob, :val_file ")
-        text(") ")
-        text("returning")
-        text("  val_int,  val_dbl, val_flt, val_str, val_date, ")
-        text("   val_lob, val_file ")
-        text("into  ")
-        text("  :out_int, :out_dbl, :out_flt,  :out_str, :out_date, ")
-        text("   :out_lob, :out_file "));
+    st.Prepare( text("insert into test_array ")
+                text("( ")
+                text("   val_int,  val_dbl, val_flt, val_str, val_date, ")
+                text("   val_lob, val_file ")
+                text(") ")
+                text("values ")
+                text("( ")
+                text("   :val_int, :val_dbl, :val_flt, :val_str, :val_date, ")
+                text("   :val_lob, :val_file ")
+                text(") ")
+                text("returning")
+                text("  val_int,  val_dbl, val_flt, val_str, val_date, ")
+                text("   val_lob, val_file ")
+                text("into  ")
+                text("  :out_int, :out_dbl, :out_flt,  :out_str, :out_date, ")
+                text("   :out_lob, :out_file "));
 
     st.SetBindArraySize(ElemCount);
 
@@ -1117,7 +1106,7 @@ void test_returning_array(void)
     st.Register<ostring>(text(":out_str"), 30);
 
     st.ExecutePrepared();
-    cout << endl << st.GetAffectedRows() << text(" row(s) inserted") << endl;
+    cout <<endl << st.GetAffectedRows() << text(" row(s) inserted") <<endl;
 
     int rowIndex = 0;
 
@@ -1126,19 +1115,19 @@ void test_returning_array(void)
     {
         while (rs++)
         {
-            cout << text("Row #") << ++rowIndex << text("---------------") << endl;
+            cout << text("Row #") << ++rowIndex << text("---------------") <<endl;
 
-            cout << text(".... val_int    : ") << rs.Get<int>(text(":OUT_INT")) << endl;
-            cout << text(".... val_dbl    : ") << rs.Get<double>(text(":OUT_DBL")) << endl;
-            cout << text(".... val_flt    : ") << rs.Get<float>(text(":OUT_FLT")) << endl;
-            cout << text(".... val_str    : ") << rs.Get<ostring>(text(":OUT_STR")) << endl;
+            cout << text(".... val_int    : ") << rs.Get<int>(text(":OUT_INT")) <<endl;
+            cout << text(".... val_dbl    : ") << rs.Get<double>(text(":OUT_DBL")) <<endl;
+            cout << text(".... val_flt    : ") << rs.Get<float>(text(":OUT_FLT")) <<endl;
+            cout << text(".... val_str    : ") << rs.Get<ostring>(text(":OUT_STR")) <<endl;
             cout << text(".... val_date   : ") << rs.Get<Date>(text(":OUT_DATE")) << endl;
 
             Clob clob = rs.Get<Clob>(text(":OUT_LOB"));
-            cout << text(".... val_lob    : ") << clob.Read(SizeBuffer) << endl;
+            cout << text(".... val_lob    : ") << clob.Read(SizeBuffer) <<endl;
 
             File file = rs.Get<File>(text(":OUT_FILE"));
-            cout << text(".... val_file   : ") << file.GetDirectory() << text("/") << file.GetName() << endl;
+            cout << text(".... val_file   : ") << file.GetDirectory() << text("/") << file.GetName() <<endl;
         }
 
         rs = st.GetNextResultset();
@@ -1159,7 +1148,8 @@ void test_object_insert(void)
     Clob clob(con);
     clob.Write(text("Lob Value"));
     File file(con, text("mydir"), text("myfile"));
-    Date date = Date::SysDate();
+    Date date;
+    date.SysDate();
 
     Object obj2(TypeInfo(con, text("type_t"), TypeInfo::Type));
 
@@ -1183,7 +1173,7 @@ void test_object_insert(void)
     st.Bind(text(":obj"), obj1, BindInfo::In);
     st.ExecutePrepared();
 
-    cout << text("Rows inserted :  ") << st.GetAffectedRows() << endl;
+    cout << text("Rows inserted :  ") << st.GetAffectedRows() <<endl;
 
     con.Commit();
 }
@@ -1204,25 +1194,25 @@ void test_object_fetch(void)
     {
         Object obj = rs.Get<Object>(1);
 
-        cout << text(".... val_int      : ") << obj.Get<int>(text("VAL_INT")) << endl;
-        cout << text(".... val_dbl      : ") << obj.Get<double>(text("VAL_DBL")) << endl;
-        cout << text(".... val_flt      : ") << obj.Get<float>(text("VAL_FLT")) << endl;
-        cout << text(".... val_str      : ") << obj.Get<ostring>(text("VAL_STR")) << endl;
+        cout << text(".... val_int      : ") << obj.Get<int>(text("VAL_INT")) <<endl;
+        cout << text(".... val_dbl      : ") << obj.Get<double>(text("VAL_DBL")) <<endl;
+        cout << text(".... val_flt      : ") << obj.Get<float>(text("VAL_FLT")) <<endl;
+        cout << text(".... val_str      : ") << obj.Get<ostring>(text("VAL_STR")) <<endl;
         cout << text(".... val_date     : ") << obj.Get<Date>(text("VAL_DATE")) << endl;
 
         Clob clob = obj.Get<Clob>(text("VAL_LOB"));
-        cout << text(".... val_lob      : ") << clob.Read(SizeBuffer) << endl;
+        cout << text(".... val_lob      : ") << clob.Read(SizeBuffer) <<endl;
 
         File file = obj.Get<File>(text("VAL_FILE"));
-        cout << text(".... val_file     : ") << file.GetDirectory() << text("/") << file.GetName() << endl;
+        cout << text(".... val_file     : ") << file.GetDirectory() << text("/") << file.GetName() <<endl;
 
         Raw raw = obj.Get<Raw>(text("VAL_RAW"));
         raw.push_back(0);
-        cout << text(".... val_raw      : ") << reinterpret_cast<char *>(raw.data()) << endl;
+        cout << text(".... val_raw      : ") << reinterpret_cast<char *>(raw.data()) <<endl;
 
         Object obj2 = obj.Get<Object>(text("VAL_OBJ"));
-        cout << text(".... val_obj.code : ") << obj2.Get<int>(text("ID")) << endl;
-        cout << text(".... val_obj.name : ") << obj2.Get<ostring>(text("NAME")) << endl;
+        cout << text(".... val_obj.code : ") << obj2.Get<int>(text("ID")) <<endl;
+        cout << text(".... val_obj.name : ") << obj2.Get<ostring>(text("NAME")) <<endl;
     }
 
     con.Commit();
@@ -1234,7 +1224,7 @@ void test_object_fetch(void)
     rs = st.GetResultset();
     while (rs++)
     {
-        cout << rs.Get<Object>(1) << endl;
+        cout << rs.Get<Object>(1) <<endl;
     }
 }
 
@@ -1252,37 +1242,37 @@ void test_scrollable_cursor(void)
 
         st.SetFetchMode(Statement::FetchScrollable);
         st.Execute(text("select table_name from user_tables where ")
-            text("table_name like 'TEST_%' order by table_name"));
+                   text("table_name like 'TEST_%' order by table_name"));
 
         Resultset rs = st.GetResultset();
 
         rs.Last();
-        cout << text("Total rows : ") << rs.GetCount() << endl;
+        cout << text("Total rows : ") << rs.GetCount() <<endl;
 
         cout << text("... Go to row 1\n");
         rs.First();
-        cout << text("table ") << rs.Get<ostring>(1) << endl;
+        cout << text("table ") << rs.Get<ostring>(1) <<endl;
 
-        cout << text("... Enumerate from row 2 to row ") << rs.GetCount() << text(" ") << endl;
+        cout << text("... Enumerate from row 2 to row ") << rs.GetCount() << text(" ") <<endl;
         while (rs++)
         {
-            cout << text("table ") << rs.Get<ostring>(1) << endl;
+            cout << text("table ") << rs.Get<ostring>(1) <<endl;
         }
 
-        cout << text("... Enumerate from row ") << rs.GetCount() - 1 << text(" back to row 1") << endl;
+        cout << text("... Enumerate from row ") << rs.GetCount() - 1 << text(" back to row 1") <<endl;
         while (rs.Prev())
         {
-            cout << text("table ") << rs.Get<ostring>(1) << endl;
+            cout << text("table ") << rs.Get<ostring>(1) <<endl;
         }
 
-        cout << text("... Go to the 3th row") << endl;
+        cout << text("... Go to the 3th row") <<endl;
         rs.Seek(Resultset::SeekAbsolute, 3);
-        cout << text("table ") << rs.Get<ostring>(1) << endl;
+        cout << text("table ") << rs.Get<ostring>(1) <<endl;
 
-        cout << text("... Fetch the next 2 rows") << endl;
+        cout << text("... Fetch the next 2 rows") <<endl;
         while (rs.GetCurrentRow() < 5 && rs++)
         {
-            cout << text("table ") << rs.Get<ostring>(1) << endl;
+            cout << text("table ") << rs.Get<ostring>(1) <<endl;
         }
     }
 }
@@ -1300,28 +1290,28 @@ void test_collection(void)
     TypeInfo type(con, text("T_TAB1_EMP"), TypeInfo::Type);
     Collection<ostring> coll(type);
 
-    st.Prepare(text("begin")
-        text("    select employees into :tab_emp ")
-        text("    from test_coll_varray ")
-        text("    where departement = :id; ")
-        text("end;"));
+    st.Prepare( text("begin")
+                text("    select employees into :tab_emp ")
+                text("    from test_coll_varray ")
+                text("    where departement = :id; ")
+                text("end;"));
 
     st.Bind(text(":tab_emp"), coll, BindInfo::In);
     st.Bind(text(":id"), i, BindInfo::In);
     st.ExecutePrepared();
 
-    cout << text("Department ID #") << i << endl;
+    cout << text("Department ID #") << i <<endl;
 
     Collection<ostring>::iterator it1 = coll.begin();
     Collection<ostring>::iterator it2 = coll.end();
 
     for (; it1 != it2; ++it1)
     {
-        cout << text("... Employee : ") << static_cast<ostring>(*it1) << endl;
+        cout << text("... Employee : ") << static_cast<ostring>(*it1) <<endl;
     }
 
     cout << text("\n>>>>> TEST VARRAY PRINTING \n\n");
-    cout << coll << endl;
+    cout << coll <<endl;
 
     cout << text("\n>>>>> TEST VARRAY FETCHING WITH ITERATOR \n\n");
 
@@ -1330,7 +1320,7 @@ void test_collection(void)
     Resultset rs = st.GetResultset();
     while (rs++)
     {
-        cout << text("Department ID #") << rs.Get<int>(1) << endl;
+        cout << text("Department ID #") << rs.Get<int>(1) <<endl;
 
         coll = rs.Get<Collection<ostring> >(2);
 
@@ -1339,7 +1329,7 @@ void test_collection(void)
 
         for (; it1 != it2; ++it1)
         {
-            cout << text("... Employee : ") << static_cast<ostring>(*it1) << endl;
+            cout << text("... Employee : ") << static_cast<ostring>(*it1) <<endl;
         }
     }
 
@@ -1350,12 +1340,12 @@ void test_collection(void)
     rs = st.GetResultset();
     while (rs++)
     {
-        cout << text("Department ID #") << rs.Get<int>(1) << endl;
+        cout << text("Department ID #") << rs.Get<int>(1) <<endl;
 
         coll = rs.Get<Collection<ostring> >(2);
         for (unsigned int index = 1, n = coll.GetSize(); index <= n; index++)
         {
-            cout << text("... Employee : ") << static_cast<ostring>(coll[index]) << endl;
+            cout << text("... Employee : ") << static_cast<ostring>(coll[index]) <<endl;
         }
     }
 }
@@ -1377,22 +1367,22 @@ void test_ref(void)
         Reference ref = rs.Get<Reference>(1);
         Object   obj = ref.GetObject();
 
-        cout << obj.Get<int>(text("ID")) << text(" - ") << obj.Get<ostring>(text("NAME")) << endl;
+        cout << obj.Get<int>(text("ID")) << text(" - ") << obj.Get<ostring>(text("NAME")) <<endl;
     }
 
     cout << text("\n>>>>> TEST REF PL/SQL BINDING \n\n");
 
     Reference ref(TypeInfo(con, text("type_t"), TypeInfo::Type));
 
-    st.Prepare(text("begin ")
-        text("  select ref(e) into :r from test_table_obj e where e.id = 1; ")
-        text("end; "));
+    st.Prepare( text("begin ")
+                text("  select ref(e) into :r from test_table_obj e where e.id = 1; ")
+                text("end; "));
 
     st.Bind(text(":r"), ref, BindInfo::InOut);
     st.ExecutePrepared();
 
     Object obj = ref.GetObject();
-    cout << obj.Get<int>(text("ID")) << text(" - ") << obj.Get<ostring>(text("NAME")) << endl;
+    cout << obj.Get<int>(text("ID")) << text(" - ") << obj.Get<ostring>(text("NAME")) <<endl;
 }
 
 
@@ -1409,7 +1399,7 @@ void test_directpath(void)
     Anyway, we run this test case only if the major versions of client and server
     match
     */
-    // if (Environment::GetRuntimeMajorVersion() == con.GetServerMajorVersion())
+   // if (Environment::GetRuntimeMajorVersion() == con.GetServerMajorVersion())
     {
         /* commit any previous pending modifications */
 

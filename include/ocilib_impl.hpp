@@ -1608,11 +1608,12 @@ inline unsigned int Transaction::GetTimeout() const
 
 inline Date::Date()
 {
+	Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0);
 }
 
 inline Date::Date(const ostring& str, const ostring& format)
 {
-    Allocate();
+    Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0);
 
     FromString(str, format);
 }
@@ -1622,16 +1623,9 @@ inline Date::Date(OCI_Date *pDate, Handle *parent)
     Acquire(pDate, 0, parent);
 }
 
-inline void Date::Allocate()
-{
-    Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0);
-}
-
 inline Date Date::SysDate()
 {
     Date result;
-
-    result.Allocate();
 
     Check(OCI_DateSysDate(result));
 
@@ -1640,9 +1634,7 @@ inline Date Date::SysDate()
 
 inline Date Date::Clone() const
 {
-    Date result;
-
-    result.Allocate();
+	Date result;
 
 	Check(OCI_DateAssign(result, *this));
 
@@ -1838,16 +1830,11 @@ inline ostring Date::ToString(const ostring& format) const
 {
     size_t size = OCI_SIZE_BUFFER;
 
-    if (!IsNull())
-    {
-         ManagedBuffer<otext> buffer(size + 1);
+    ManagedBuffer<otext> buffer(size + 1);
 
-        Check(OCI_DateToText(*this, format.c_str(), static_cast<int>(size), buffer));
+    Check(OCI_DateToText(*this, format.c_str(), static_cast<int>(size), buffer));
 
-        return MakeString(static_cast<const otext *>(buffer));
-    }
-
-    return OCI_STRING_NULL;
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline ostring Date::ToString() const
@@ -1944,10 +1931,6 @@ inline bool Date::operator <= (const Date& other) const
 /* --------------------------------------------------------------------------------------------- *
  * Interval
  * --------------------------------------------------------------------------------------------- */
-
-inline Interval::Interval()
-{
-}
 
 inline Interval::Interval(IntervalType type)
 {
@@ -2140,18 +2123,13 @@ inline void Interval::FromString(const ostring& data)
 
 inline ostring Interval::ToString(int leadingPrecision, int fractionPrecision) const
 {
-    if (!IsNull())
-    {
-        size_t size = OCI_SIZE_BUFFER;
+    size_t size = OCI_SIZE_BUFFER;
 
-        ManagedBuffer<otext> buffer(size + 1);
+	ManagedBuffer<otext> buffer(size + 1);
 
-        Check(OCI_IntervalToText(*this, leadingPrecision, fractionPrecision, static_cast<int>(size), buffer));
+    Check(OCI_IntervalToText(*this, leadingPrecision, fractionPrecision,  static_cast<int>(size), buffer));
 
-        return MakeString(static_cast<const otext *>(buffer));
-    }
-
-    return OCI_STRING_NULL;
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline ostring Interval::ToString() const
@@ -2220,10 +2198,6 @@ inline bool Interval::operator <= (const Interval& other) const
 /* --------------------------------------------------------------------------------------------- *
  * Timestamp
  * --------------------------------------------------------------------------------------------- */
-
-inline Timestamp::Timestamp()
-{
-}
 
 inline Timestamp::Timestamp(TimestampType type)
 {
@@ -2450,7 +2424,7 @@ inline ostring Timestamp::GetTimeZone() const
 	}
 	else
 	{
-        return ostring();
+		return "";
 	}
 }
 
@@ -2480,18 +2454,13 @@ inline void Timestamp::FromString(const ostring& data, const ostring& format)
 
 inline ostring Timestamp::ToString(const ostring& format, int precision) const
 {
-    if (!IsNull())
-    {
-        size_t size = OCI_SIZE_BUFFER;
+    size_t size = OCI_SIZE_BUFFER;
 
-        ManagedBuffer<otext> buffer(size + 1);
+	ManagedBuffer<otext> buffer(size + 1);
 
-        Check(OCI_TimestampToText(*this, format.c_str(), static_cast<int>(size), buffer, precision));
+    Check(OCI_TimestampToText(*this, format.c_str(), static_cast<int>(size), buffer, precision));
 
-        return MakeString(static_cast<const otext *>(buffer));
-    }
-
-    return OCI_STRING_NULL;
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 inline ostring Timestamp::ToString() const
@@ -2625,11 +2594,6 @@ inline bool Timestamp::operator <= (const Timestamp& other) const
 /* --------------------------------------------------------------------------------------------- *
  * Lob
  * --------------------------------------------------------------------------------------------- */
-
-template<class TLobObjectType, int TLobOracleType>
-inline Lob<TLobObjectType, TLobOracleType>::Lob()
-{
-}
 
 template<class TLobObjectType, int TLobOracleType>
 inline Lob<TLobObjectType, TLobOracleType>::Lob(const Connection &connection)
@@ -2834,10 +2798,6 @@ inline bool Lob<TLobObjectType, TLobOracleType>::operator != (const Lob<TLobObje
  * File
  * --------------------------------------------------------------------------------------------- */
 
-inline File::File()
-{
-}
-
 inline File::File(const Connection &connection)
 {
     Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), connection.GetHandle());
@@ -2985,10 +2945,6 @@ inline Column TypeInfo::GetColumn(unsigned int index) const
 /* --------------------------------------------------------------------------------------------- *
  * Object
  * --------------------------------------------------------------------------------------------- */
-
-inline Object::Object()
-{
-}
 
 inline Object::Object(const TypeInfo &typeInfo)
 {
@@ -3166,7 +3122,7 @@ inline Raw Object::Get<Raw>(const ostring& name) const
 template<class TDataType>
 inline TDataType Object::Get(const ostring& name) const
 {
-    return TDataType(Check(OCI_ObjectGetColl(*this, name.c_str())), GetHandle());
+	return TDataType(Check(OCI_ObjectGetColl(*this, name.c_str())), GetHandle());
 }
 
 template<>
@@ -3293,34 +3249,25 @@ inline void Object::Set<Raw>(const ostring& name, const Raw &value)
 template<class TDataType>
 inline void Object::Set(const ostring& name, const TDataType &value)
 {
-    Check(OCI_ObjectSetColl(*this, name.c_str(), value));
+	Check(OCI_ObjectSetColl(*this, name.c_str(), value));
 }
 
 inline ostring Object::ToString() const
 {
-    if (!IsNull())
-    {
-        unsigned int len = 0;
+    unsigned int len = 0;
 
-        Check(OCI_ObjectToText(*this, &len, 0));
+    Check(OCI_ObjectToText(*this, &len, 0));
 
-        ManagedBuffer<otext> buffer(len + 1);
+	ManagedBuffer<otext> buffer(len + 1);
 
-        Check(OCI_ObjectToText(*this, &len, buffer));
+    Check(OCI_ObjectToText(*this, &len, buffer));
 
-        return MakeString(static_cast<const otext *>(buffer));
-    }
-
-    return OCI_STRING_NULL;
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * Reference
  * --------------------------------------------------------------------------------------------- */
-
-inline Reference::Reference()
-{
-}
 
 inline Reference::Reference(const TypeInfo &typeInfo)
 {
@@ -3364,28 +3311,18 @@ inline void Reference::SetReferenceNull()
 
 inline ostring Reference::ToString() const
 {
-    if (!IsNull())
-    {
-        unsigned int size = Check(OCI_RefGetHexSize(*this));
+    unsigned int size = Check(OCI_RefGetHexSize(*this));
 
-        ManagedBuffer<otext> buffer(size + 1);
+	ManagedBuffer<otext> buffer(size + 1);
 
-        Check(OCI_RefToText(*this, size, buffer));
+    Check(OCI_RefToText(*this, size, buffer));
 
-        return MakeString(static_cast<const otext *>(buffer));
-    }
-
-    return OCI_STRING_NULL;
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * Collection
  * --------------------------------------------------------------------------------------------- */
-
-template<class TDataType>
-inline Collection<TDataType>::Collection()
-{
-}
 
 template<class TDataType>
 inline Collection<TDataType>::Collection(const TypeInfo &typeInfo)
@@ -3786,20 +3723,15 @@ inline void Collection<TDataType>::SetElem(OCI_Elem *elem, const TDataType &valu
 template<class TDataType>
 inline ostring Collection<TDataType>::ToString() const
 {
-    if (!IsNull())
-    {
-        unsigned int len = 0;
+    unsigned int len = 0;
 
-        Check(OCI_CollToText(*this, &len, 0));
+    Check(OCI_CollToText(*this, &len, 0));
 
-        ManagedBuffer<otext> buffer(len + 1);
+	ManagedBuffer<otext> buffer(len + 1);
 
-        Check(OCI_CollToText(*this, &len, buffer));
+    Check(OCI_CollToText(*this, &len, buffer));
 
-        return MakeString(static_cast<const otext *>(buffer));
-    }
-
-    return OCI_STRING_NULL;
+	return MakeString(static_cast<const otext *>(buffer));
 }
 
 template<class TDataType>
@@ -3901,12 +3833,6 @@ inline void Collection<TDataType>::Element::SetNull()
 /* --------------------------------------------------------------------------------------------- *
  * Long
  * --------------------------------------------------------------------------------------------- */
-
-
-template<class TLongObjectType, int TLongOracleType>
-inline Long<TLongObjectType, TLongOracleType>::Long()
-{
-}
 
 template<class TLongObjectType, int TLongOracleType>
 inline Long<TLongObjectType, TLongOracleType>::Long(const Statement &statement)
@@ -4387,10 +4313,6 @@ inline BindInfo::BindDirection BindInfo::GetDirection() const
 /* --------------------------------------------------------------------------------------------- *
  * Statement
  * --------------------------------------------------------------------------------------------- */
-
-inline Statement::Statement()
-{
-}
 
 inline Statement::Statement(const Connection &connection)
 {
