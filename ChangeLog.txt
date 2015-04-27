@@ -73,7 +73,12 @@
             * Date::SysDate() is now a static method that returns a now a Date Object with system date time
             * Timestamp::SysTimestamp() is now a static method that returns a now a Timestamp Object with system timestamp
             * Renamed Statement::Execute(void) to ExecutePrepared(void)
-
+            * Added default constructors for classes holding datatypes. 
+                - Using the default constructor, we have objects holding no C handles -
+                - Their IsNull() properties return is true. 
+                - They can now be stored in structures and classes without the need of passing parameters 
+                - Their initialization can be deferred from declaration using function return values or using their class constructor with class name
+                
         - Fixes        
             * Fixed missing  operator "|" for recently Enum promoted to Flags
             * Fixed HandleHolder<>::operator bool

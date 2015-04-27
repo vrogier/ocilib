@@ -92,6 +92,16 @@ namespace ocilib
  * - OCILIB++ allows simple and safe usage of Oracle client without the worries of memory leakages.
  * - Using stack objects also makes error handling easier and program logic more robust
  *
+ * @par C++ API classes usage
+ * Most C++ API classes wrap C API handles. 
+ * When instances are created using the default constructors, they hold no C handles and have 
+ * their method IsNull() returning true. 
+ * Any use of other methods and functions on such object methods will throw an C++ exception.
+ * Thus, in order to have a valid object :
+ * - use a parametrized constructor
+ * - use the default constructor and then later assign a value to the instance using assignment operator.
+ * In the later case, the value can be provided by a function return value or using the object class constructor
+ *
  * @par Exception model
  * - Any failure occurring within an OCILIB C API call will throw a ocilib::Exception
  * - For conformance reasons, this class derives from std::Exception
@@ -3573,10 +3583,10 @@ public:
 
     /**
     * @brief
-    * Substract the given two timestamp and store the result into the given Interval
+    * Subtract the given two timestamp and store the result into the given Interval
     *
     * @param lsh    - Timestamp value
-    * @param rsh    - Timestamp to substract
+    * @param rsh    - Timestamp to subtract
     * @param result - result difference
     *
     * @note
@@ -5399,6 +5409,8 @@ public:
     * @brief
     * Execute the prepared statement, retrieve all resultsets, and call the given callback for each row of each resultsets
     *
+    * @tparam TFetchCallback -  type of the fetch callback
+    *
     * @param callback -  User defined callback
     *
     * @note
@@ -5407,7 +5419,7 @@ public:
     * It shall return true to continue fetching the resultset or false to stop the fetch
     *
     * @return
-    * The number of row fetched
+    * The number of rows fetched
     *
     */
     template<class TFetchCallback>
@@ -5418,6 +5430,9 @@ public:
     * Execute the prepared statement, retrieve all resultsets, and call the given callback 
     * with adapted type wit for each row of each resultsets
     *
+    * @tparam TAdapter       -  type of the adapter callback
+    * @tparam TFetchCallback -  type of the fetch callback
+    *
     * @param callback -  User defined callback
     * @param adapter  -  User defined adapter function
     *
@@ -5427,7 +5442,7 @@ public:
     * It shall return true to continue fetching the resultset or false to stop the fetch
     *
     * @return
-    * The number of row fetched
+    * The number of rows fetched
     *
     */
     template<class TAdapter, class TFetchCallback>
@@ -5437,6 +5452,9 @@ public:
     * @brief
     * Execute the given SQL statement, retrieve all resultsets, and call the given callback for each row of each resultsets
     *
+    * @tparam TFetchCallback -  type of the fetch callback
+    *
+    * @param sql      - SQL order - PL/SQL block
     * @param callback -  User defined callback
     *
     * @note
@@ -5445,7 +5463,7 @@ public:
     * It shall return true to continue fetching the resultset or false to stop the fetch
     *
     * @return
-    * The number of row fetched
+    * The number of rows fetched
     *
     */
     template<class TFetchCallback>
@@ -5454,8 +5472,12 @@ public:
     /**
     * @brief
     * Execute the given SQL statement, retrieve all resultsets, and call the given callback
-    * with adaptated type wit for each row of each resultsets
+    * with adapted type wit for each row of each resultsets
     *
+    * @tparam TAdapter       -  type of the adapter callback
+    * @tparam TFetchCallback -  type of the fetch callback
+    *
+    * @param sql      - SQL order - PL/SQL block
     * @param callback -  User defined callback
     * @param adapter  -  User defined adapter function
     *
@@ -5465,7 +5487,7 @@ public:
     * It shall return true to continue fetching the resultset or false to stop the fetch
     *
     * @return
-    * The number of row fetched
+    * The number of rows fetched
     *
     */
     template<class TAdapter, class TFetchCallback>
@@ -6175,7 +6197,7 @@ public:
     *
     * @tparam TDataType - C++ type of the value to retrieve
     *
-    * @param index - Column name
+    * @param name - Column name
     * @param value - value to fill
     *
     */
@@ -6211,7 +6233,7 @@ public:
     * It shall return true to continue fetching the resultset or false to stop the fetch
     *
     * @return
-    * The number of row fetched
+    * The number of rows fetched
     *
     */
     template<typename TCallback>
@@ -6236,7 +6258,7 @@ public:
     * It shall return true to continue fetching the resultset or false to stop the fetch
     *
     * @return
-    * The number of row fetched
+    * The number of rows fetched
     *
     */
     template<typename TAdapter, typename TCallback>
@@ -6711,11 +6733,10 @@ public:
 
 	/**
 	* @brief
-	* Deregister a previously registered notification
+	* Unregister a previously registered notification
 	*
 	* @note
-	* Environment::Cleanup() will automatically deregister any non
-	* deregistered subscriptions
+	* Environment::Cleanup() will automatically unregister any non unregistered subscriptions
 	*
 	* @note
 	* If the database connection passed to Register()
