@@ -33,6 +33,7 @@
             * Fixed few warnings raised by Clang C compiler
             * Fixed Binary Float implicit conversion to string when using Oracle 12g
             * Fixed UTF8 strings bytes size computing when passing them to Oracle client
+            * Fixed binding double and float when Oracle client >= 10.1 and Oracle Server < 10.1 (usage of binary_double and binray_float supported by the client from 10gR1 but not supported by Oracle 8i and 9i)
 
         - Warning : Programs must be recompiled (with no code change needed) as some methods have been removed from the library
 
