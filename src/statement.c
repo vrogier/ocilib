@@ -2845,7 +2845,7 @@ boolean OCI_API OCI_BindDouble
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCILib.version_runtime >= OCI_10_1)
+    if ((OCILib.version_runtime >= OCI_10_1) && (stmt->con->ver_num >= OCI_10_1))
     {
         code = SQLT_BDOUBLE;
     }
@@ -2880,7 +2880,7 @@ boolean OCI_API OCI_BindArrayOfDoubles
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCILib.version_runtime >= OCI_10_1)
+    if ((OCILib.version_runtime >= OCI_10_1) && (stmt->con->ver_num >= OCI_10_1))
     {
         code = SQLT_BDOUBLE;
     }
@@ -2914,7 +2914,7 @@ boolean OCI_API OCI_BindFloat
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCILib.version_runtime >= OCI_10_1)
+    if ((OCILib.version_runtime >= OCI_10_1) && (stmt->con->ver_num >= OCI_10_1))
     {
         code = SQLT_BFLOAT;
     }
@@ -2949,7 +2949,7 @@ boolean OCI_API OCI_BindArrayOfFloats
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCILib.version_runtime >= OCI_10_1)
+    if ((OCILib.version_runtime >= OCI_10_1) && (stmt->con->ver_num >= OCI_10_1))
     {
         code = SQLT_BFLOAT;
     }
