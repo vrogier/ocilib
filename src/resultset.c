@@ -523,6 +523,8 @@ boolean OCI_FetchData
 
     *err = TRUE;
 
+    OCI_ClearFetchedObjectInstances(rs);
+
     /* internal fetch */
 
  #if defined(OCI_STMT_SCROLLABLE_READONLY)
@@ -806,54 +808,14 @@ OCI_Resultset *rs
 
             ((OCI_Datatype *)def->obj)->hstate = OCI_OBJECT_FETCHED_DIRTY;
 
-            switch (def->col.datatype)
-            {
-            case OCI_CDT_DATETIME:
-            {
-                OCI_DateFree((OCI_Date *)def->obj);
-                break;
-            }
-            case OCI_CDT_LOB:
-            {
-                OCI_LobFree((OCI_Lob *)def->obj);
-                break;
-            }
-            case OCI_CDT_FILE:
-            {
-                OCI_FileFree((OCI_File *)def->obj);
-                break;
-            }
-            case OCI_CDT_CURSOR:
+            if (OCI_CDT_CURSOR == def->col.datatype)
             {
                 OCI_StatementClose((OCI_Statement *)def->obj);
                 OCI_FREE(def->obj)
-                break;
             }
-            case OCI_CDT_OBJECT:
+            else
             {
-                OCI_ObjectFree((OCI_Object *)def->obj);
-                break;
-            }
-            case OCI_CDT_COLLECTION:
-            {
-                OCI_CollFree((OCI_Coll *)def->obj);
-                break;
-            }
-            case OCI_CDT_REF:
-            {
-                OCI_RefFree((OCI_Ref *)def->obj);
-                break;
-            }
-            case OCI_CDT_TIMESTAMP:
-            {
-                OCI_TimestampFree((OCI_Timestamp *)def->obj);
-                break;
-            }
-            case OCI_CDT_INTERVAL:
-            {
-                OCI_IntervalFree((OCI_Interval *)def->obj);
-                break;
-            }
+                OCI_FreeObjectFromType(def->obj, def->col.datatype);
             }
 
             def->obj = NULL;
@@ -896,6 +858,10 @@ OCI_Resultset *rs
             }
         }
 
+        /* free object instances from object cache */
+
+        OCI_ClearFetchedObjectInstances(rs);
+
         /* free column pointers */
 
         OCI_FREE(def->col.name)
@@ -921,6 +887,37 @@ OCI_Resultset *rs
     OCI_FREE(rs->defs)
 
     OCI_FREE(rs)
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ClearFetchedObjectInstances
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_ClearFetchedObjectInstances(OCI_Resultset *rs)
+{
+    boolean res = TRUE;
+    ub4 i, j;
+
+    OCI_CHECK(NULL == rs, FALSE)
+
+    for (i = 0; i < rs->nb_defs; i++)
+    {
+        OCI_Define *def = &(rs->defs[i]);
+
+        if (OCI_CDT_OBJECT == def->col.datatype && def->buf.data)
+        {
+            for (j = 0; j < def->buf.count; j++)
+            {
+                if (def->buf.data[j] != NULL)
+                {
+                    OCIObjectFree(rs->stmt->con->env, rs->stmt->con->err, def->buf.data[j], OCI_OBJECTFREE_FORCE);
+                    def->buf.data[j] = NULL;
+                }
+            }
+        }
+    }
 
     return res;
 }

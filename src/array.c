@@ -142,49 +142,7 @@ boolean OCI_ArrayClose
 
         for (i = 0; i < arr->nb_elem; i++)
         {
-            switch (arr->elem_type)
-            {
-                case OCI_CDT_DATETIME:
-                {
-                    OCI_DateFree((OCI_Date *) arr->tab_obj[i]);
-                    break;
-                }
-                case OCI_CDT_LOB:
-                {
-                    OCI_LobFree((OCI_Lob *) arr->tab_obj[i]);
-                    break;
-                }
-                case OCI_CDT_FILE:
-                {
-                    OCI_FileFree((OCI_File *) arr->tab_obj[i]);
-                    break;
-                }
-                case OCI_CDT_TIMESTAMP:
-                {
-                    OCI_TimestampFree((OCI_Timestamp *) arr->tab_obj[i]);
-                    break;
-                }
-                case OCI_CDT_INTERVAL:
-                {
-                    OCI_IntervalFree((OCI_Interval *) arr->tab_obj[i]);
-                    break;
-                }
-                case OCI_CDT_OBJECT:
-                {
-                    OCI_ObjectFree((OCI_Object *) arr->tab_obj[i]);
-                    break;
-                }
-                case OCI_CDT_COLLECTION:
-                {
-                    OCI_CollFree((OCI_Coll *) arr->tab_obj[i]);
-                    break;
-                }
-                case OCI_CDT_REF:
-                {
-                    OCI_RefFree((OCI_Ref *) arr->tab_obj[i]);
-                    break;
-                }
-            }
+            OCI_FreeObjectFromType(arr->tab_obj[i], arr->elem_type);
         }
     }
 

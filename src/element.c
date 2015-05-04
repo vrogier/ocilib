@@ -357,49 +357,7 @@ boolean OCI_API OCI_ElemFree
             data->hstate = OCI_OBJECT_FETCHED_DIRTY;
         }
 
-        switch (elem->typinf->cols[0].datatype)
-        {
-            case OCI_CDT_DATETIME:
-            {
-                OCI_DateFree((OCI_Date *) elem->obj);
-                break;
-            }
-            case OCI_CDT_LOB:
-            {
-                OCI_LobFree((OCI_Lob *) elem->obj);
-                break;
-            }
-            case OCI_CDT_FILE:
-            {
-                OCI_FileFree((OCI_File *) elem->obj);
-                break;
-            }
-            case OCI_CDT_OBJECT:
-            {
-                OCI_ObjectFree((OCI_Object *) elem->obj);
-                break;
-            }
-            case OCI_CDT_COLLECTION:
-            {
-                OCI_CollFree((OCI_Coll *) elem->obj);
-                break;
-            }
-            case OCI_CDT_TIMESTAMP:
-            {
-                OCI_TimestampFree((OCI_Timestamp *) elem->obj);
-                break;
-            }
-            case OCI_CDT_INTERVAL:
-            {
-                OCI_IntervalFree((OCI_Interval *) elem->obj);
-                break;
-            }
-            case OCI_CDT_REF:
-            {
-                OCI_RefFree((OCI_Ref *) elem->obj);
-                break;
-            }
-        }
+        OCI_FreeObjectFromType(elem->obj, elem->typinf->cols[0].datatype);
     }
 
     if ((OCI_OBJECT_ALLOCATED == elem->hstate) && (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype))

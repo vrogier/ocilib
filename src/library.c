@@ -548,6 +548,61 @@ unsigned int OCI_ExternalSubTypeToHandleType
 }
 
 /* --------------------------------------------------------------------------------------------- *
+* OCI_FreeObjectFromType
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_FreeObjectFromType(void *obj, unsigned int type)
+{
+    boolean res = FALSE;
+
+    switch (type)
+    {
+        case OCI_CDT_DATETIME:
+        {
+            res = OCI_DateFree((OCI_Date *)obj);
+            break;
+        }
+        case OCI_CDT_LOB:
+        {
+            res = OCI_LobFree((OCI_Lob *)obj);
+            break;
+        }
+        case OCI_CDT_FILE:
+        {
+            res = OCI_FileFree((OCI_File *)obj);
+            break;
+        }
+        case OCI_CDT_OBJECT:
+        {
+            res = OCI_ObjectFree((OCI_Object *)obj);
+            break;
+        }
+        case OCI_CDT_COLLECTION:
+        {
+            res = OCI_CollFree((OCI_Coll *)obj);
+            break;
+        }
+        case OCI_CDT_TIMESTAMP:
+        {
+            res = OCI_TimestampFree((OCI_Timestamp *)obj);
+            break;
+        }
+        case OCI_CDT_INTERVAL:
+        {
+            res = OCI_IntervalFree((OCI_Interval *)obj);
+            break;
+        }
+        case OCI_CDT_REF:
+        {
+            res= OCI_RefFree((OCI_Ref *)obj);
+            break;
+        }
+    }
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_KeyMapFree
  * --------------------------------------------------------------------------------------------- */
 

@@ -455,50 +455,8 @@ void OCI_ObjectReset
                 data->hstate =  OCI_OBJECT_FETCHED_DIRTY;
             }
 
-            switch (obj->typinf->cols[i].datatype)
-            {
-                case OCI_CDT_DATETIME:
-                {
-                    OCI_DateFree((OCI_Date *) obj->objs[i]);
-                    break;
-                }
-                case OCI_CDT_LOB:
-                {
-                    OCI_LobFree((OCI_Lob *) obj->objs[i]);
-                    break;
-                }
-                case OCI_CDT_FILE:
-                {
-                    OCI_FileFree((OCI_File *) obj->objs[i]);
-                    break;
-                }
-                case OCI_CDT_OBJECT:
-                {
-                    OCI_ObjectFree((OCI_Object *) obj->objs[i]);
-                    break;
-                }
-                case OCI_CDT_COLLECTION:
-                {
-                    OCI_CollFree((OCI_Coll *) obj->objs[i]);
-                    break;
-                }
-                case OCI_CDT_TIMESTAMP:
-                {
-                    OCI_TimestampFree((OCI_Timestamp *) obj->objs[i]);
-                    break;
-                }
-                case OCI_CDT_INTERVAL:
-                {
-                    OCI_IntervalFree((OCI_Interval *) obj->objs[i]);
-                    break;
-                }
-                case OCI_CDT_REF:
-                {
-                    OCI_RefFree((OCI_Ref *) obj->objs[i]);
-                    break;
-                }
-            }
-
+            OCI_FreeObjectFromType(obj->objs[i], obj->typinf->cols[i].datatype);
+            
             obj->objs[i] = NULL;
         }
     }
@@ -716,7 +674,7 @@ boolean OCI_API OCI_ObjectFree
 
     if ((OCI_OBJECT_ALLOCATED == obj->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate))
     {
-        OCI_OCIObjectFree(obj->con->env, obj->con->err,  obj->handle, OCI_OBJECTFREE_NONULL);
+        OCI_OCIObjectFree(obj->con->env, obj->con->err, obj->handle, OCI_OBJECTFREE_FORCE);
     }
 
     OCI_FREE(obj->tmpbuf)

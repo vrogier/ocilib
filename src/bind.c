@@ -79,49 +79,9 @@ boolean OCI_BindFree
                     }  
                     break;
                 }
-                case OCI_CDT_DATETIME:
-                {
-                    OCI_DateFree((OCI_Date *) bnd->input);
-                    break;
-                }
-                case OCI_CDT_LOB:
-                {
-                    OCI_LobFree((OCI_Lob *) bnd->input);
-                    break;
-                }
-                case OCI_CDT_FILE:
-                {
-                    OCI_FileFree((OCI_File *) bnd->input);
-                    break;
-                }
-                case OCI_CDT_OBJECT:
-                {
-                    OCI_ObjectFree((OCI_Object *) bnd->input);
-                    break;
-                }
-                case OCI_CDT_COLLECTION:
-                {
-                    OCI_CollFree((OCI_Coll *) bnd->input);
-                    break;
-                }
-                case OCI_CDT_TIMESTAMP:
-                {
-                    OCI_TimestampFree((OCI_Timestamp *) bnd->input);
-                    break;
-                }
-                case OCI_CDT_INTERVAL:
-                {
-                    OCI_IntervalFree((OCI_Interval *) bnd->input);
-                    break;
-                }
-                case OCI_CDT_REF:
-                {
-                    OCI_RefFree((OCI_Ref *) bnd->input);
-                    break;
-                }
                 default:
                 {
-                    OCI_MemFree(bnd->input);
+                    OCI_FreeObjectFromType(bnd->input, bnd->type);
                 }
             }
         }

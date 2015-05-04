@@ -724,6 +724,12 @@ unsigned int OCI_ExternalSubTypeToHandleType
     unsigned int subtype
 );
 
+boolean OCI_FreeObjectFromType
+(
+    void         *obj,
+    unsigned int  type
+);
+
 boolean OCI_GetStringAttribute
 (
     OCI_Connection *con,
@@ -1135,6 +1141,11 @@ boolean OCI_FetchCustom
 );
 
 boolean OCI_ResultsetExpandStrings
+(
+    OCI_Resultset *rs
+);
+
+boolean OCI_ClearFetchedObjectInstances
 (
     OCI_Resultset *rs
 );

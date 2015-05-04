@@ -423,12 +423,29 @@ otext * OCI_StringFromStringPtr
 
     if (tmp)
     {
-        int len = OCIStringSize(OCILib.env, str) / sizeof(dbtext);
-        *buffer = OCI_StringDuplicateFromOracleString(tmp, len);
+        size_t length = OCIStringSize(OCILib.env, str) / sizeof(dbtext);
+
+        if (!(*buffer))
+        {
+            *buffer = OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), length + 1, FALSE);
+        }
+        else if ((*buffer_size) < ((length + 1) * sizeof(otext)))
+        {
+            *buffer = OCI_MemRealloc((void*)  *buffer_size, OCI_IPC_STRING, sizeof(otext), length + 1);
+        }
 
         if (*buffer)
         {
-            *buffer_size = ( unsigned int ) len;
+            *buffer_size = (unsigned int) ( (length + 1) * sizeof(otext) );
+
+            if (OCILib.use_wide_char_conv)
+            {
+                OCI_StringUTF16ToUTF32((void *)tmp, (void *)*buffer, (int) length);
+            }
+            else
+            {
+                OCI_StringRawCopy((void *)tmp, (void *)*buffer, (int) length);
+            }
         }
     }
 
