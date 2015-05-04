@@ -431,7 +431,7 @@ otext * OCI_StringFromStringPtr
         }
         else if ((*buffer_size) < ((length + 1) * sizeof(otext)))
         {
-            *buffer = OCI_MemRealloc((void*)  *buffer_size, OCI_IPC_STRING, sizeof(otext), length + 1);
+            *buffer = OCI_MemRealloc((void*)  *buffer, OCI_IPC_STRING, sizeof(otext), length + 1);
         }
 
         if (*buffer)

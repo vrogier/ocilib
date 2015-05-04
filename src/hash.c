@@ -336,9 +336,12 @@ OCI_HashEntry * OCI_API OCI_HashGetEntry
     OCI_LIB_CALL_ENTER(OCI_HashEntry*, NULL)
 
     OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    OCI_CHECK_BOUND(NULL, index, 0, table->size-1)
+    
+    if (index < table->size)
+    {
+        call_retval = table->items[index];
+    }
 
-    call_retval = table->items[index];
     call_status = TRUE;
 
     OCI_LIB_CALL_EXIT()

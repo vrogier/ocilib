@@ -242,7 +242,7 @@ ub4 OCI_ProcNotifyMessages
     OCI_NOT_USED(subscrhp)
     OCI_NOT_USED(desc)
 
-    OCI_CHECK(NULL == dequeue, OCI_ERROR)
+    OCI_CHECK(NULL == dequeue, OCI_SUCCESS)
   
     dequeue->callback(dequeue);
     
@@ -274,7 +274,7 @@ ub4 OCI_ProcNotifyChanges
     OCI_NOT_USED(mode)
     OCI_NOT_USED(subscrhp)
 
-    OCI_CHECK(NULL == sub, OCI_ERROR)
+    OCI_CHECK(NULL == sub, OCI_SUCCESS)
 
     OCI_EventReset(&sub->event);
 
