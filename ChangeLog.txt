@@ -1,4 +1,4 @@
-2015-04-21 Version 4.1.0 Vincent Rogier vince.rogier@ocilib.net
+2015-05-05 Version 4.1.0 Vincent Rogier vince.rogier@ocilib.net
 
     * C API
 
@@ -7,7 +7,8 @@
             * Fixed some functions that were not setting context result properly when using OCI_ENV_CONTEXT flag
             * various internal code updates and minor fixes
             * OCI_EnableWarnings() and OCI_SetErrorHandler() are now return a boolean values
-            
+            * Factorized internal OCILIB objects clean up in various places
+           
         - Enhanced implicit string conversion for Date, Timestamps and Numeric values
             * Conversion formats can be now set at both library and connection level
                 - The library is using its own default format if none are set
@@ -34,7 +35,9 @@
             * Fixed Binary Float implicit conversion to string when using Oracle 12g
             * Fixed UTF8 strings bytes size computing when passing them to Oracle client
             * Fixed binding double and float when Oracle client >= 10.1 and Oracle Server < 10.1 (usage of binary_double and binray_float supported by the client from 10gR1 but not supported by Oracle 8i and 9i)
-
+            * Fixed memory leak in internal method OCI_StringFromStringPtr() used in OCI_ElemGetString() and OCI_ObjectGetString()
+            * Fixed possible memory retention related to OCI Object cache (depending on the Oracle Client version)
+ 
         - Warning : Programs must be recompiled (with no code change needed) as some methods have been removed from the library
 
     * C++ API      
