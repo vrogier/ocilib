@@ -48,7 +48,7 @@ static unsigned int ConversionModeValues[] = { OCI_DCM_DEFAULT, OCI_DCM_FORCE };
  * OCI_DirPathSetArray
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_DirPathSetArray
+boolean OCI_DirPathSetArray
 (
     OCI_DirPath *dp,
     ub4 row_from
@@ -68,17 +68,17 @@ int OCI_DirPathSetArray
     /* set entries */
 
     for (row = row_from; (row < dp->nb_cur) && res; row++)
-    { 
+    {
         for (col = 0; (col < dp->nb_cols) && res; col++)
         {
-            OCI_DirPathColumn *dpcol = &(dp->cols[col]); 
+            OCI_DirPathColumn *dpcol = &(dp->cols[col]);
 
             /* get internal data cell */
 
             data = ((ub1 *) dpcol->data) + (size_t) (row * dpcol->bufsize);
             size = dpcol->lens[row];
             flag = dpcol->flags[row];
-                 
+
             if (SQLT_NUM == dpcol->sqlcode)
             {
                 OCINumber *num = (OCINumber *) data;
@@ -120,7 +120,7 @@ unsigned int OCI_DirPathArrayToStream
 {
     unsigned int res  = OCI_DPR_COMPLETE;
     sword        ret  = OCI_SUCCESS;
-    
+
     /* convert the array to a stream */
 
     ret = OCIDirPathColArrayToStream(dp->arr, dp->ctx, dp->strm, dp->con->err, dp->nb_entries, (ub4) 0);
@@ -163,7 +163,7 @@ unsigned int OCI_DirPathArrayToStream
         ub4 err_row = 0;
         ub2 err_col = 0;
         ub4 size    = 0;
- 
+
         size = sizeof(err_col);
 
         OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &err_col,
@@ -179,7 +179,7 @@ unsigned int OCI_DirPathArrayToStream
 
         /* record errors index on real error */
         if (OCI_DPR_ERROR == res)
-        {           
+        {
             dp->err_rows[dp->nb_err] = row_from + err_row;
             dp->err_cols[dp->nb_err] = err_col;
 
@@ -188,7 +188,7 @@ unsigned int OCI_DirPathArrayToStream
     }
     else
     {
-        /* conversion is successful. the number of converted rows is the same 
+        /* conversion is successful. the number of converted rows is the same
            as the number of row set*/
         dp->nb_converted += dp->nb_entries;
     }
@@ -237,7 +237,7 @@ unsigned int OCI_DirPathLoadStream(OCI_DirPath *dp)
             break;
         }
     }
-        
+
     /* retrieve the number of rows loaded so far */
 
     OCIAttrGet(dp->strm, OCI_HTYPE_DIRPATH_STREAM, &nb_loaded,
@@ -290,7 +290,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
     {
         dbtext *dbstr  = NULL;
         int     dbsize = -1;
-    
+
         dp->con        = typinf->con;
         dp->status     = OCI_DPS_NOT_PREPARED;
         dp->cvt_mode   = OCI_DCM_DEFAULT;
@@ -338,7 +338,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
                 call_status, dp->con,
 
                 OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                           (dvoid *) dbstr, (ub4) dbsize, (ub4) OCI_ATTR_SCHEMA_NAME, 
+                           (dvoid *) dbstr, (ub4) dbsize, (ub4) OCI_ATTR_SCHEMA_NAME,
                            dp->con->err)
             )
 
@@ -357,7 +357,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
                 call_status, dp->con,
 
                 OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                           (dvoid *) dbstr, (ub4) dbsize, (ub4) OCI_ATTR_SUB_NAME, 
+                           (dvoid *) dbstr, (ub4) dbsize, (ub4) OCI_ATTR_SUB_NAME,
                            dp->con->err)
             )
 
@@ -395,7 +395,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 
         if (call_status)
         {
-            dp->cols = (OCI_DirPathColumn *) OCI_MemAlloc(OCI_IPC_DP_COL_ARRAY, 
+            dp->cols = (OCI_DirPathColumn *) OCI_MemAlloc(OCI_IPC_DP_COL_ARRAY,
                                                           sizeof(OCI_DirPathColumn),
                                                           (size_t) dp->nb_cols,
                                                           TRUE);
@@ -820,7 +820,7 @@ boolean OCI_API OCI_DirPathPrepare
 
         call_status = (NULL != dp->err_cols);
     }
-    
+
     /* now, we need to allocate internal buffers */
 
     if (call_status)
@@ -934,7 +934,7 @@ boolean OCI_API OCI_DirPathSetEntry
         }
 
         /* Process only if data is not null */
-        
+
         if (value)
         {
             /* for character based column, parameter size was the number of characters */
@@ -953,7 +953,7 @@ boolean OCI_API OCI_DirPathSetEntry
             if (OCI_DDT_TEXT == dpcol->type && OCILib.use_wide_char_conv)
             {
                 size = ocharcount(size);
-                OCI_StringUTF32ToUTF16(value, data, size);        
+                OCI_StringUTF32ToUTF16(value, data, size);
             }
             else if (OCI_DDT_OTHERS == dpcol->type && OCI_CHAR_WIDE == OCILib.charset)
             {
@@ -961,7 +961,7 @@ boolean OCI_API OCI_DirPathSetEntry
                    so, let's convert them to ANSI */
 
                 size = ocharcount(size);
-                OCI_StringNativeToAnsi(value, data, size);    
+                OCI_StringNativeToAnsi(value, data, size);
             }
             else if (OCI_DDT_NUMBER == dpcol->type)
             {
@@ -972,7 +972,7 @@ boolean OCI_API OCI_DirPathSetEntry
 
                 call_status = OCI_NumberFromString(dp->con, num, sizeof(*num), OCI_NUM_NUMBER,
                                                    SQLT_NUM, (dtext *)value, dpcol->format);
- 
+
                 if (call_status)
                 {
                     size = (unsigned int) num->OCINumberPart[0];
@@ -989,7 +989,7 @@ boolean OCI_API OCI_DirPathSetEntry
     }
 
     call_retval = call_status;
-    
+
     OCI_LIB_CALL_EXIT()
 }
 
@@ -1082,7 +1082,7 @@ unsigned int OCI_API OCI_DirPathConvert
     }
 
     /* reset conversion status back to default error value */
-    
+
     dp->res_conv = OCI_DPR_ERROR;
 
     /* set array values */
@@ -1119,12 +1119,12 @@ unsigned int OCI_API OCI_DirPathConvert
             }
         }
     }
-  
+
     dp->nb_processed = dp->nb_converted;
 
     call_status = call_status && (OCI_DPR_COMPLETE == dp->res_conv);
     call_retval = dp->res_conv;
- 
+
     OCI_LIB_CALL_EXIT()
 }
 
@@ -1579,7 +1579,7 @@ unsigned int OCI_API OCI_DirPathGetRowCount
     OCI_LIB_CALL_ENTER(unsigned int, 0)
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-        
+
     call_retval = dp->nb_loaded;
     call_status = TRUE;
 
@@ -1598,7 +1598,7 @@ unsigned int OCI_API OCI_DirPathGetAffectedRows
     OCI_LIB_CALL_ENTER(unsigned int, 0)
 
     OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-        
+
     call_retval = dp->nb_processed;
     call_status = TRUE;
 

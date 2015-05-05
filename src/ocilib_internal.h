@@ -347,23 +347,22 @@ boolean OCI_DefineIsDataNotNull
  * dirpath.c
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_DirPathSetArray
+boolean OCI_DirPathSetArray
 (
     OCI_DirPath *dp,
     ub4 row_from
 );
 
-unsigned int OCI_API OCI_DirPathArrayToStream
+unsigned int OCI_DirPathArrayToStream
 (
     OCI_DirPath *dp,
     ub4 row_from
 );
 
-unsigned int OCI_API OCI_DirPathLoadStream
+unsigned int OCI_DirPathLoadStream
 (
     OCI_DirPath *dp
 );
-
 
 /* --------------------------------------------------------------------------------------------- *
  * element.c
@@ -720,7 +719,7 @@ unsigned int OCI_ExternalSubTypeToSQLType
 
 unsigned int OCI_ExternalSubTypeToHandleType
 (
-    unsigned int type, 
+    unsigned int type,
     unsigned int subtype
 );
 
@@ -1359,7 +1358,7 @@ unsigned int OCI_StringGetTypeName
 
 unsigned int OCI_StringGetFullTypeName
 (
-    const otext  *schema, 
+    const otext  *schema,
     const otext  *type,
     const otext  *link,
     otext        *name,
