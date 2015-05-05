@@ -37,7 +37,7 @@ int main(void)
             rs = st.GetNextResultset();
         }
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

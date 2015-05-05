@@ -15,7 +15,7 @@ int main(void)
         Date date("1978-04-13 20:20:12", format);
         std::cout << date.ToString(format) << std::endl;
 
-        date.SysDate();
+        date = Date::SysDate();
         std::cout << date.ToString(format) << std::endl;
 
         date.AddDays(5);
@@ -27,7 +27,7 @@ int main(void)
         std::cout << "Number of days until the end of the months : " << date.LastDay().DaysBetween(date) << std::endl;
 
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

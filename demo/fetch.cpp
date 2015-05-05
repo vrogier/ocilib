@@ -24,7 +24,7 @@ int main(void)
         std::cout << "=> Total fetched rows : " << rs.GetCount() << std::endl;
 
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

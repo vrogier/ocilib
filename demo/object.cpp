@@ -54,14 +54,13 @@ int main(void)
         Statement st(con);
         st.Prepare("insert into sales values(:obj)");
         st.Bind(":obj", sale, BindInfo::In);
-        st.Execute();
+        st.ExecutePrepared();
 
         std::cout << "Rows inserted :  " << st.GetAffectedRows() << std::endl;
 
-
         con.Commit();
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

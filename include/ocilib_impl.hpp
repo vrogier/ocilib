@@ -2478,7 +2478,7 @@ inline void Timestamp::FromString(const ostring& data, const ostring& format)
     Check(OCI_TimestampFromText(*this, data.c_str(), format.size() > 0 ? format.c_str() : Environment::GetFormat(FormatTimestamp).c_str()));
 }
 
-inline ostring Timestamp::ToString(const ostring& format, int precision) const
+inline ostring Timestamp::ToString(const ostring& format, int precision = OCI_STRING_DEFAULT_PREC) const
 {
     if (!IsNull())
     {

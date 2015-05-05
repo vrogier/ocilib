@@ -19,7 +19,7 @@ int main(void)
 
         st.Prepare("begin load_array(:coll); end;");
         st.Bind(":coll", coll1, BindInfo::In);
-        st.Execute();
+        st.ExecutePrepared();
 
         Collection<ostring>::iterator it1 = coll1.begin();
         Collection<ostring>::iterator it2 = coll1.end();
@@ -48,7 +48,7 @@ int main(void)
             }
         }
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

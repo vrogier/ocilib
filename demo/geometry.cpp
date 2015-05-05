@@ -46,7 +46,7 @@ int main(void)
         /* prepare, bind and excute statement then commit*/
         st.Prepare("INSERT INTO test_insert (gid, geometry) VALUES (1, :sdo)");
         st.Bind("sdo", geometry, BindInfo::In);
-        st.Execute();
+        st.ExecutePrepared();
     }
     catch (std::exception &ex)
     {

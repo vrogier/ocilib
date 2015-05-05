@@ -23,17 +23,17 @@ int main(void)
         {
             Column col = table.GetColumn(i);
 
-            std::cout   << std::setw(20)    << col.GetName()
-                        << std::setw(10)    << col.GetSQLType()
-                        << std::setw(8)     << col.GetSize()
-                        << std::setw(8)     << col.GetPrecision()
-                        << std::setw(8)     << col.GetScale()
-                        << std::setw(2)     << col.IsNullable()
-                        << std::endl;
+            std::cout << std::setw(20) << col.GetName()
+                << std::setw(10) << col.GetSQLType()
+                << std::setw(8) << col.GetSize()
+                << std::setw(8) << col.GetPrecision()
+                << std::setw(8) << col.GetScale()
+                << std::setw(2) << col.IsNullable()
+                << std::endl;
         }
 
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

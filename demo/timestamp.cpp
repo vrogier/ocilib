@@ -13,7 +13,7 @@ int main(void)
         Timestamp tm(Timestamp::NoTimeZone);
         Interval itv(Interval::DaySecond);
 
-        tm.SysTimestamp();
+        tm = Timestamp::SysTimestamp();
         std::cout << tm.ToString("DD/MM/YYYY HH24:MI:SS:FF3") << std::endl;
 
         itv.SetDaySecond(1, 1, 1, 1, 0);

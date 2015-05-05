@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "ocilib.hpp"
 
 using namespace ocilib;
@@ -14,7 +16,7 @@ int main(void)
         /* shutdown remote instance */
         Environment::ShutdownDatabase("db", "sys_usr", "sys_pwd", Environment::ShutdownAbort, Environment::ShutdownFull);
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

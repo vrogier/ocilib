@@ -17,16 +17,16 @@ int main(void)
         st.Prepare("delete from test_fetch where code = :code");
         st.Bind(":code", code, BindInfo::In);
         code = 5;
-        st.Execute();
+        st.ExecutePrepared();
 
         code = 12;
-        st.Execute();
+        st.ExecutePrepared();
 
         con.Commit();
     }
-    catch(Exception &ex)
+    catch (std::exception &ex)
     {
-         std::cout << ex.what() << std::endl;
+        std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();

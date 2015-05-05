@@ -46,7 +46,7 @@ int main(void)
         rs.Seek(Resultset::SeekRelative, -3);
         std::cout << "table " << rs.Get<ostring>(1) << std::endl;
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

@@ -12,9 +12,9 @@ void worker(ThreadHandle handle, void *data)
 
     /* ... do some more processing here... */
 
-    std::cout << " Thread handle = "   << handle
-              << " Key (Thread Id) = " << ThreadKey::GetValue("ID")
-              << std::endl;
+    std::cout << " Thread handle = " << handle
+        << " Key (Thread Id) = " << ThreadKey::GetValue("ID")
+        << std::endl;
 }
 
 int main(void)

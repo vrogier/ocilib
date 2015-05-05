@@ -45,10 +45,10 @@ int main(void)
 
         sleep(1);
         con.Break();
-        
+
         Thread::Join(thread);
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

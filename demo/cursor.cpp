@@ -30,7 +30,7 @@ int main(void)
         }
 
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

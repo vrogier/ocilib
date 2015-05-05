@@ -16,7 +16,7 @@ int main(void)
 
         st.Prepare("update products set code = code+10 returning code into :i");
         st.Register<int>(":i");
-        st.Execute();
+        st.ExecutePrepared();
 
         Resultset rs = st.GetResultset();
 
@@ -28,7 +28,7 @@ int main(void)
         std::cout << "=> Total updated rows : " << rs.GetCount() << std::endl;
 
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

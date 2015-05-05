@@ -41,7 +41,7 @@ int main(void)
             Thread::Destroy(threads[i]);
         }
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

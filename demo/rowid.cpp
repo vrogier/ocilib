@@ -35,12 +35,12 @@ int main(void)
             /* updating value with some computation ... */
             code = (code + 4) % 2;
 
-            st1.Execute();
+            st1.ExecutePrepared();
         }
 
         con.Commit();
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }

@@ -23,24 +23,24 @@ int main(void)
         st.Bind(":i", ints, BindInfo::In);
         st.Bind(":s", strs, 20, BindInfo::In);
 
-        for(int i=0;i<ArraySize;i++)
+        for (int i = 0; i<ArraySize; i++)
         {
             ostring str;
             str += "Name";
-            str += ( (i+1) +'0');
+            str += ((i + 1) + '0');
 
-            ints.push_back(i+1);
+            ints.push_back(i + 1);
             strs.push_back(str);
         }
 
-        st.Execute();
+        st.ExecutePrepared();
 
         std::cout << "row processed : " << st.GetAffectedRows() << std::endl;
 
     }
-    catch(Exception &ex)
+    catch (std::exception &ex)
     {
-         std::cout << ex.what() << std::endl;
+        std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();
