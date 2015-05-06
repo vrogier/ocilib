@@ -1016,25 +1016,30 @@ const otext * OCI_API OCI_ColumnGetSQLType
     {
         case SQLT_AFC:
         {
-            call_retval = (SQLCS_NCHAR == col->csfrm) ? OTEXT("NCHAR") : OTEXT("CHAR");
+            call_retval = (SQLCS_NCHAR == col->csfrm) ? OTEXT("NCHAR") : OTEXT("CHAR");;
+            break;
         }
         case SQLT_AVC:
         case SQLT_STR:
         case SQLT_CHR:
         {
              call_retval = (SQLCS_NCHAR == col->csfrm) ? OTEXT("NVARCHAR2") : OTEXT("VARCHAR2");
+             break;
         }
         case SQLT_NUM:
         {
-              call_retval = (SCALE_FLOAT == col->scale && col->prec > 0) ? OTEXT("FLOAT") : OTEXT("NUMBER");
+            call_retval = (SCALE_FLOAT == col->scale && col->prec > 0) ? OTEXT("FLOAT") : OTEXT("NUMBER");
+            break;
         }
         case SQLT_INT:
         {
             call_retval = OTEXT("INTEGER");
+            break;
         }
         case SQLT_FLT:
         {
             call_retval = OTEXT("FLOAT");
+            break;
         }
 
     #if OCI_VERSION_COMPILE >= OCI_10_1
@@ -1043,11 +1048,13 @@ const otext * OCI_API OCI_ColumnGetSQLType
         case SQLT_IBFLOAT:
         {
             call_retval = OTEXT("BINARY FLOAT");
+            break;
         }
         case SQLT_BDOUBLE:
         case SQLT_IBDOUBLE:
         {
             call_retval = OTEXT("BINARY DOUBLE");
+            break;
         }
 
     #endif
@@ -1055,49 +1062,60 @@ const otext * OCI_API OCI_ColumnGetSQLType
         case SQLT_LNG:
         {
             call_retval = OTEXT("LONG");
+            break;
         }
         case SQLT_DAT:
         case SQLT_ODT:
         case SQLT_DATE:
         {
             call_retval = OTEXT("DATE");
+            break;
         }
         case SQLT_RDD:
         case SQLT_RID:
         {
             call_retval = OTEXT("ROWID");
+            break;
         }
         case SQLT_BIN:
         {
             call_retval = OTEXT("RAW");
+            break;
         }
         case SQLT_LBI:
         {
             call_retval = OTEXT("LONG RAW");
+            break;
         }
         case SQLT_RSET:
         {
             call_retval = OTEXT("RESULTSET");
+            break;
         }
         case SQLT_CUR:
         {
             call_retval = OTEXT("CURSOR");
+            break;
         }
         case SQLT_CLOB:
         {
             call_retval = (col->subtype == OCI_NCLOB) ? OTEXT("NCLOB") : OTEXT("CLOB");
+            break;
         }
         case SQLT_BLOB:
         {
             call_retval = OTEXT("BLOB");
+            break;
         }
         case SQLT_BFILE:
         {
             call_retval = OTEXT("BINARY FILE LOB");
+            break;
         }
         case SQLT_CFILE:
         {
             call_retval = OTEXT("CFILE");
+            break;
         }
 
     #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -1105,29 +1123,35 @@ const otext * OCI_API OCI_ColumnGetSQLType
         case SQLT_TIMESTAMP:
         {
             call_retval = OTEXT("TIMESTAMP");
+            break;
         }
         case SQLT_TIMESTAMP_TZ:
         {
             call_retval = OTEXT("TIMESTAMP WITH TIME ZONE");
+            break;
         }
         case SQLT_TIMESTAMP_LTZ:
         {
             call_retval = OTEXT("TIMESTAMP WITH LOCAL TIME ZONE");
+            break;
         }
         case SQLT_INTERVAL_YM:
         {
             call_retval = OTEXT("INTERVAL YEAR TO MONTH");
+            break;
         }
         case SQLT_INTERVAL_DS:
         {
             call_retval = OTEXT("INTERVAL DAY TO SECOND");
+            break;
         }
-           
+
     #endif
 
         case SQLT_REF:
         {
             call_retval = OTEXT("REF");
+            break;
         }
 
     #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -1139,6 +1163,7 @@ const otext * OCI_API OCI_ColumnGetSQLType
         case SQLT_NTY:
         {
             call_retval = col->typinf ? col->typinf->name : OTEXT("NAMED TYPE");
+            break;
         }
         default:
         {
