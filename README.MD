@@ -50,14 +50,14 @@ OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy
 
 ## 4. Installation
 
-# Windows platforms
+### Windows platforms
 
 - unzip the archive
 - copy ocilib\include\ocilib.h to any place located in your include’s path
 - copy ocilib\lib32|64\ocilib[x].lib to any place located in your libraries path
 - copy ocilib\lib32|64\ocilib[x].dll to any place located in your windows path
 
-# GNU (Unix / Linux) platforms
+### GNU (Unix / Linux) platforms
 
 - untar the archive
 - $ cd ocilib-x.y.z
