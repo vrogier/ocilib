@@ -22,7 +22,7 @@ $base-line-height: 1.5;
 $navbar-height: 44px;
 $navbar-color: $primary-color;
 $navbar-text-color:  #FFFFFF;//$complimentary-color;//$secondary-color;
-$navbar-hover-color: darken($complimentary-color, 75%);//$complimentary-color;
+$navbar-hover-color: darken($complimentary-color, 25%);//$complimentary-color;
 $navbar-active-color: darken($complimentary-color, 75%);
 $navbar-font-size: 13px;
 $navbar-font-family: "Open Sans", Helvetica, Arial, sans-serif;
