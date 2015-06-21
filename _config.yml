@@ -23,11 +23,6 @@ exclude: [.bundle, bin, vendor, Gemfile, Gemfile.lock, Rakefile, s3_website.yml,
 
 
 # Build settings
-markdown: kramdown
-kramdown:
-  input: GFM
-  hard_wrap: false
-
 destination: _site
 
 # Compress our Css
