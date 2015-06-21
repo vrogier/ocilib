@@ -13,8 +13,7 @@ wordpress_id: 65
 
 ### Example of a minimal OCILIB C application  
  
-```c
-
+```
     #include "ocilib.h"
     
     int main(int argc, char *argv[])
@@ -45,8 +44,7 @@ wordpress_id: 65
  
 ### Example of a minimal OCILIB C++ application
 
-```cpp
-
+```
     #include "ocilib.hpp"
     
     using namespace ocilib;
