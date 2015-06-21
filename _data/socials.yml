@@ -1,8 +1,8 @@
 - title: "feed"
-  href: "https://chrisanthropic.github.io/slim-pickins-jekyll-theme/atom.xml"
+  href: {{site.baseurl}}/atom.xml"
   
 - title: "twitter"
-  href: "https://twitter.com/"
+  href: "https://twitter.com/ocilib"
 
 - title: "github"
   href: "https://github.com/vrogier/ocilib"
