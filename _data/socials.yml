@@ -1,5 +1,5 @@
 - title: "feed"
-  href: {{site.baseurl}}/atom.xml"
+  href: http://vrogier.github.io/ocilib/atom.xml"
   
 - title: "twitter"
   href: "https://twitter.com/ocilib"

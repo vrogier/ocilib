@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases]]></title>
-  <link href="/slim-pickins-jekyll-theme/atom.xml" rel="self"/>
-  <link href="/slim-pickins-jekyll-theme/"/>
-  <updated>2015-06-21T16:55:17+02:00</updated>
-  <id>/slim-pickins-jekyll-theme/</id>
+  <link href="http://vrogier.github.io/ocilib//atom.xml" rel="self"/>
+  <link href="http://vrogier.github.io/ocilib//"/>
+  <updated>2015-06-21T17:12:30+02:00</updated>
+  <id>http://vrogier.github.io/ocilib//</id>
   <author>
     <name><![CDATA[]]></name>
     <email><![CDATA[vince.rogier@ocilib.net]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[OCILIB v4.1.0 now available for download !]]></title>
-    <link href="/slim-pickins-jekyll-theme/blog/2015/ocilib-v4-1-0-now-available-for-download?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBv4.1.0nowavailablefordownload!"/>
+    <link href="http://vrogier.github.io/ocilib//blog/2015/ocilib-v4-1-0-now-available-for-download?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBv4.1.0nowavailablefordownload!"/>
     <updated>2015-05-05T23:48:59+02:00</updated>
-    <id>/slim-pickins-jekyll-theme/blog/2015/ocilib-v4-1-0-now-available-for-download</id>
+    <id>http://vrogier.github.io/ocilib//blog/2015/ocilib-v4-1-0-now-available-for-download</id>
     <content type="html"><![CDATA[<p>Dear all,</p>
 
 <p>OCILIB v4.1.0 is now <a href="http://orclib.sourceforge.net/download/"><em>available for download</em></a> !</p>
@@ -51,9 +51,9 @@
   
   <entry>
     <title type="html"><![CDATA[OCILIB v4.0.1 now available for download !]]></title>
-    <link href="/slim-pickins-jekyll-theme/blog/2015/ocilib-v4-0-1-now-available-for-download?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBv4.0.1nowavailablefordownload!"/>
+    <link href="http://vrogier.github.io/ocilib//blog/2015/ocilib-v4-0-1-now-available-for-download?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBv4.0.1nowavailablefordownload!"/>
     <updated>2015-01-13T23:11:17+01:00</updated>
-    <id>/slim-pickins-jekyll-theme/blog/2015/ocilib-v4-0-1-now-available-for-download</id>
+    <id>http://vrogier.github.io/ocilib//blog/2015/ocilib-v4-0-1-now-available-for-download</id>
     <content type="html"><![CDATA[<p>Hello all,</p>
 
 <p>OCILIB v4.0.1 is now <a href="http://orclib.sourceforge.net/download/"><em>available for download</em></a> !</p>
@@ -93,9 +93,9 @@
   
   <entry>
     <title type="html"><![CDATA[OCILIB v4.0.0 now available for download !]]></title>
-    <link href="/slim-pickins-jekyll-theme/blog/2014/ocilib-v4-0-0-now-available-for-download?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBv4.0.0nowavailablefordownload!"/>
+    <link href="http://vrogier.github.io/ocilib//blog/2014/ocilib-v4-0-0-now-available-for-download?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBv4.0.0nowavailablefordownload!"/>
     <updated>2014-12-11T00:06:00+01:00</updated>
-    <id>/slim-pickins-jekyll-theme/blog/2014/ocilib-v4-0-0-now-available-for-download</id>
+    <id>http://vrogier.github.io/ocilib//blog/2014/ocilib-v4-0-0-now-available-for-download</id>
     <content type="html"><![CDATA[<p>Hello all,</p>
 
 <p>OCILIB v4.0.0 is now <a href="http://orclib.sourceforge.net/download/"><em>available for download</em></a> !</p>
@@ -140,9 +140,9 @@
   
   <entry>
     <title type="html"><![CDATA[OCILIB on twitter !]]></title>
-    <link href="/slim-pickins-jekyll-theme/blog/2013/ocilib-on-twitter?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBontwitter!"/>
+    <link href="http://vrogier.github.io/ocilib//blog/2013/ocilib-on-twitter?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBontwitter!"/>
     <updated>2013-09-26T00:59:19+02:00</updated>
-    <id>/slim-pickins-jekyll-theme/blog/2013/ocilib-on-twitter</id>
+    <id>http://vrogier.github.io/ocilib//blog/2013/ocilib-on-twitter</id>
     <content type="html"><![CDATA[<p>Hi all,</p>
 
 <p>I’ve created a twitter account for ocilib !</p>
@@ -154,9 +154,9 @@
   
   <entry>
     <title type="html"><![CDATA[OCILIB valided with Oracle 12c R1 ]]></title>
-    <link href="/slim-pickins-jekyll-theme/blog/2013/ocilib-valided-with-oracle-12c-r1?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBvalidedwithOracle12cR1"/>
+    <link href="http://vrogier.github.io/ocilib//blog/2013/ocilib-valided-with-oracle-12c-r1?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBvalidedwithOracle12cR1"/>
     <updated>2013-09-26T00:57:58+02:00</updated>
-    <id>/slim-pickins-jekyll-theme/blog/2013/ocilib-valided-with-oracle-12c-r1</id>
+    <id>http://vrogier.github.io/ocilib//blog/2013/ocilib-valided-with-oracle-12c-r1</id>
     <content type="html"><![CDATA[<p>Hi all,</p>
 
 <p>I finally found time for testing OCILIB against Oracle 12c R1 :)</p>
@@ -171,9 +171,9 @@ For the release 4.0.0, some new OCI features introduced in 12cR1 will be support
   
   <entry>
     <title type="html"><![CDATA[OCILIB 4.0 coming soon !]]></title>
-    <link href="/slim-pickins-jekyll-theme/blog/2013/ocilib-4-0-coming-soon?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIB4.0comingsoon!"/>
+    <link href="http://vrogier.github.io/ocilib//blog/2013/ocilib-4-0-coming-soon?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIB4.0comingsoon!"/>
     <updated>2013-09-25T00:53:40+02:00</updated>
-    <id>/slim-pickins-jekyll-theme/blog/2013/ocilib-4-0-coming-soon</id>
+    <id>http://vrogier.github.io/ocilib//blog/2013/ocilib-4-0-coming-soon</id>
     <content type="html"><![CDATA[<p>Hi all,</p>
 
 <p>OCILIB 4.0 is coming soon !</p>
@@ -189,9 +189,9 @@ I’m still (!!) working on the C++ documentation and fixing final details in th
   
   <entry>
     <title type="html"><![CDATA[OCILIB C++ API coming soon !]]></title>
-    <link href="/slim-pickins-jekyll-theme/blog/2013/ocilib-c-api-coming-soon?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBC++APIcomingsoon!"/>
+    <link href="http://vrogier.github.io/ocilib//blog/2013/ocilib-c-api-coming-soon?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBC++APIcomingsoon!"/>
     <updated>2013-06-05T00:11:37+02:00</updated>
-    <id>/slim-pickins-jekyll-theme/blog/2013/ocilib-c-api-coming-soon</id>
+    <id>http://vrogier.github.io/ocilib//blog/2013/ocilib-c-api-coming-soon</id>
     <content type="html"><![CDATA[<p>Hello all !</p>
 
 <p>OCILIB C++ API is coming soon ! 
@@ -247,9 +247,9 @@ int main(void)
   
   <entry>
     <title type="html"><![CDATA[Working on OCILIB C++ support]]></title>
-    <link href="/slim-pickins-jekyll-theme/blog/2013/working-on-ocilib-c-support?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=WorkingonOCILIBC++support"/>
+    <link href="http://vrogier.github.io/ocilib//blog/2013/working-on-ocilib-c-support?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=WorkingonOCILIBC++support"/>
     <updated>2013-03-27T00:54:19+01:00</updated>
-    <id>/slim-pickins-jekyll-theme/blog/2013/working-on-ocilib-c-support</id>
+    <id>http://vrogier.github.io/ocilib//blog/2013/working-on-ocilib-c-support</id>
     <content type="html"><![CDATA[<p>Hello all,</p>
 
 <p>I finally decided to work on a C++ wrapper around OCILIB !</p>
@@ -303,9 +303,9 @@ int main(int argc, char* argv[])
   
   <entry>
     <title type="html"><![CDATA[OCILIB v3.12.1 now available for download !]]></title>
-    <link href="/slim-pickins-jekyll-theme/blog/2013/ocilib-v3-12-1-now-available-for-download?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBv3.12.1nowavailablefordownload!"/>
+    <link href="http://vrogier.github.io/ocilib//blog/2013/ocilib-v3-12-1-now-available-for-download?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBv3.12.1nowavailablefordownload!"/>
     <updated>2013-03-05T20:31:38+01:00</updated>
-    <id>/slim-pickins-jekyll-theme/blog/2013/ocilib-v3-12-1-now-available-for-download</id>
+    <id>http://vrogier.github.io/ocilib//blog/2013/ocilib-v3-12-1-now-available-for-download</id>
     <content type="html"><![CDATA[<p>Hello all,</p>
 
 <p>OCILIB v3.12.1 is now <a href="http://orclib.sourceforge.net/download/"><em>available for download</em></a> !</p>
@@ -338,9 +338,9 @@ int main(int argc, char* argv[])
   
   <entry>
     <title type="html"><![CDATA[OCILIB v3.12.0 now available for download !]]></title>
-    <link href="/slim-pickins-jekyll-theme/blog/2013/ocilib-v3-12-0-now-available-for-download?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBv3.12.0nowavailablefordownload!"/>
+    <link href="http://vrogier.github.io/ocilib//blog/2013/ocilib-v3-12-0-now-available-for-download?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign=OCILIBv3.12.0nowavailablefordownload!"/>
     <updated>2013-02-06T23:35:01+01:00</updated>
-    <id>/slim-pickins-jekyll-theme/blog/2013/ocilib-v3-12-0-now-available-for-download</id>
+    <id>http://vrogier.github.io/ocilib//blog/2013/ocilib-v3-12-0-now-available-for-download</id>
     <content type="html"><![CDATA[<p>Hello all,</p>
 
 <p>OCILIB v3.12.0 is now <a href="http://orclib.sourceforge.net/download/"><em>available for download</em></a> !</p>
