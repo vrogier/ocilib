@@ -14,6 +14,7 @@ wordpress_id: 65
 ### Example of a minimal OCILIB C application  
  
 ```C
+
     #include "ocilib.h"
     
     int main(int argc, char *argv[])
@@ -44,7 +45,8 @@ wordpress_id: 65
  
 ### Example of a minimal OCILIB C++ application
 
-```C
+```C++
+
     #include "ocilib.hpp"
     
     using namespace ocilib;
