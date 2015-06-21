@@ -1,8 +1,0 @@
-2007-11-12 Version 1.1.0 Vincent Rogier vince_rogier@yahoo.fr
-
-    * Modified : the library comes with 2 archives : GNU et Win32
-    * Modified : interfaces and some functions calls
-    * Added    : use of GNU install tools
-    * Added    : options for building the library
-    * Fixed    : unicode support
-
