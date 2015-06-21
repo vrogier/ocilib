@@ -1,0 +1,103 @@
+2009-04-20 Version 3.2.0 Vincent Rogier vince.rogier@gmail.com
+
+    * Added support for Direct Path Loading
+    
+      - See section in the documentation (page <module>, section <Direct Path loading>)
+      - Added handle OCI_DirPath
+      - Added OCI_DirPathCreate()
+      - Added OCI_DirPathFree()
+      - Added OCI_DirPathSetColumn()
+      - Added OCI_DirPathPrepare()
+      - Added OCI_DirPathSetEntry()
+      - Added OCI_DirPathConvert()
+      - Added OCI_DirPathLoad()
+      - Added OCI_DirPathReset()
+      - Added OCI_DirPathFinish()
+      - Added OCI_DirPathAbort()
+      - Added OCI_DirPathSave()
+      - Added OCI_DirPathFlushRow()
+      - Added OCI_DirPathSetCurrentRows()
+      - Added OCI_DirPathGetCurrentRows()
+      - Added OCI_DirPathGetMaxRows()
+      - Added OCI_DirPathSetDateFormat()
+      - Added OCI_DirPathSetParallel()
+      - Added OCI_DirPathSetNoLog()
+      - Added OCI_DirPathSetCacheSize()
+      - Added OCI_DirPathSetBufferSize()
+      - Added OCI_DirPathGetAffectedRows()
+      - Added OCI_DirPathGetRowCount()
+      - Added OCI_DirPathGetErrorColumn()
+      - Added OCI_DirPathGetErrorRow() 
+      - added OCI_HandleGetDirPathStream()
+      - added OCI_HandleGetDirPathColArray()
+      - added OCI_HandleGetDirPathCtx()
+      - Added Exception type OCI_ERR_COLUMN_NOT_FOUND
+      - Added Exception type OCI_ERR_DIRPATH_STATE
+      - updated demo application with a direct path loading example
+      - Added source code of a standalone application in demo directory
+      
+    * Modified Database objects describe API
+
+      - OCI_Schema handle has been renamed to OCI_TypeInfo
+      - All OCI_SchemaXXX() functions have been renamed to OCI_TypeInfoXXX()
+      - Constants OCI_SCHEMA_XXX have been renamed to OCI_TIF_XXX
+      - Macro have been added to mapp old types, defines and names to new ones for backward compatibility
+
+    * Extended binding possibilities
+
+      - Added OCI_BindArrayGetSize()
+      - Added OCI_AllowRebinding()
+      - Different host variables can be binded to the same statement bind placeholder
+      - It's possible the update a bind array real number of element before execution
+      - Added exception type OCI_ERR_BIND_ARRAY_SIZE
+      - Fixed OCI_SetNullXXX() : the upper bound of an array bind was not checked
+
+    * Extended Object API
+
+      - Added OCI_ObjectGetStruct()
+      - Now it's possible to retrieve the underlying C (OTT style) structure of an OCI_Object handle
+
+    * Fixed OCI_Element API
+
+      - Modified OCI_ElemCreate() that takes now an OCI_TypeInfo handle instead of an OCI_Connection handle
+      - Fixed OCI_ElemFree() that could not free underlying sub objects OCI handles
+      - Fixed segfaults when using local instance of OCI_Elem objects created wit OCI_ElemCreate()
+
+    * Extended UROWID support
+
+      - Large UROWID hexadecimal strings where truncated to OCI_ROWID_SIZE (default 23) characters
+      - Now OCILIB handles correctly UROWID columns (size up to 4000 chars)
+         
+    * Miscellaneous fixes
+
+      - Fixed OCI_TimestampToCTime() : members tm_year and tm_mon of the tm structure passed to the function were not properly set
+      - Fixed memory leak : when re-executing a prepared statement that hold a SQL 'select', internal OCI column descriptor for each column of the resultset was not freed
+      - Fixed implicit conversion of numeric data to string when using OCI_GetString() in mixed and Unicode builds : Entire values had a trailing dot.
+      - Fixed OCI_LongRead() : internal offset variable was not reset across OCI_FetchNext() calls causing NULL reads after some fetch sequences
+      - Fixed memory leak in internal function OCI_ObjectInit()
+      - Fixed configure script for GNU package to detect OCI header location of some older versions ($ORACLE_HOME/rdbms/demo)
+      - Fixed internal OCI_StringCopy2to4bytes() when converting internal Oracle UTF16 strings with odd lengths to Unix UTF32 strings
+      - Renamed OCI_ColumnGetFractionnalPrecision() to OCI_ColumnGetFractionalPrecision() - added macro for backward compatibility
+      
+    * Updated windows package
+
+      - Added 2 code::blocks projects
+         - ocilib_static_lib_mingw.cbp : to build OCILIB as a 32 bits static library (ansi, mixed and unicode builds) in ocilib/proj/mingw
+         - ocilib_demo_codeblocks.cbp  : to build OCILIB 32 bits demo application (ansi, mixed and Unicode builds) in ocilib/proj/test
+      - Precompiled OCILIB 32 bits static libraries are now provided within the package :
+         - built with Code::Block 8.03 (minGW / gcc-core-3.4.5)
+         - available static libs in ocilib/lib32 : libociliba.a (ansi), libocilibm.a (mixed), libocilibw.a (unicode)
+      - OCILIB prebuilt Dlls are still compiled with Microsoft Visual Studio
+      
+    * Miscellaneous internal changes
+
+      - The object cache is now freed when a connection is terminated
+      - Internal source file schema.c has been renamed to typeinfo.c
+      - Internal source file dirpath.c has been added
+      - Fixed some internal calls to please GDCC and its aliasing warnings with -Wall options
+      
+    * Documentation updates 
+
+      - Added notes in OCI_ConnectionCreate() documentation for using External credentials
+      - Added notes in OCI_BindArraySetSize() documentation for modifying input array number of elements between statement executions
+      - All OCILIB headers and sources files (45 files - 43.000 lines) have been checked with spell checker to correct typos (my English remains not so good !)

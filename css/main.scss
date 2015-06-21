@@ -1,0 +1,559 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+---
+
+@charset "utf-8";
+
+// Variables
+@import "variables";
+
+// Navigation Menu
+@import "navigation";
+
+// Icomoon Font Icons
+@import "icomoon/base";
+
+// Core Layout
+@import "base";
+@import "layout";
+
+// Utility Classes
+@import "utility";
+
+// Zurb Foundation Stuff
+@import "foundation/components/grid";
+
+// Misc.
+
+html, body, div, span, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6,
+pre, form, fieldset, input, p, blockquote, th, td 
+{
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+}
+
+table 
+{
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+fieldset, img 
+{
+    border:0;
+}
+
+address, caption, cite, code, dfn, th, var, h1, h2, h3 
+{
+    font-style:normal;
+    font-weight:normal;
+}
+
+ol, ul 
+{
+    list-style:none;
+}
+
+caption, th 
+{
+    text-align:left;
+}
+
+q:before, q:after 
+{
+    content:'';
+}
+
+a img 
+{
+    border: none;
+}
+
+/* ----------------------------------------------------------------------------------
+	Basic elements
+----------------------------------------------------------------------------------- */
+
+body 
+{
+    background:white;
+    color: #444;
+    font-family: verdana;
+    font-size: 11px;
+}
+
+a:link, a:visited 
+{
+    color: #3366bb; 
+    text-decoration: none;
+}
+
+a:hover 
+{
+    text-decoration: underline;
+}
+
+h1, h2, h3, h4 
+{
+    color: #3366bb; /*#5AAFE0;*/ 
+    font-weight: normal;
+     margin-top:20px;
+}
+
+h1 
+{
+    font-size: 3.0em; 
+    line-height: 50px;
+}
+
+h1 a:hover, h2 a:hover 
+{
+    color: #c00; 
+    text-decoration: none;
+}
+
+h2 
+{
+    font-size: 20px;
+    letter-spacing: -1px;
+    border-bottom: 1px dotted #4395BC;
+    margin-bottom: 20px;
+}
+
+h3 
+{
+    font-size: 16px; 
+    line-height: 40px;
+}
+
+h4 
+{
+    font-size: 16px;
+    border-bottom: 1px dotted #4395BC;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+ul , #main-content ol 
+{
+    margin: 10px 0 10px 15px;
+}
+
+ul li 
+{
+    list-style-type: square;
+}
+
+ol li 
+{
+    list-style-type: decimal;
+}
+
+li li 
+{
+    margin-left: 25px;
+}
+
+#main-content p 
+{
+    margin: 10px 0;
+}
+
+#sidebar ul, #footer ul 
+{
+    margin-left: 15px;
+}
+
+#sidebar ul li, #footer ul li 
+{
+    list-style-type: circle;
+}
+
+#sidebar ul li a:link, #sidebar ul li a:visited,
+#footer ul li a:link, #footer ul li a:visited 
+{
+    color: #36b;
+}
+    
+#sidebar ul li a:hover, #footer ul li a:hover 
+{
+    color: #c00; 
+    text-decoration: none;
+}
+
+input, textarea 
+{
+    background: #f5f5f5; 
+    border: 1px solid #bbb; 
+    color: #999; 
+    margin: 10px 0; 
+    padding: 7px 10px;
+}
+
+input#searchsubmit, input#submit 
+{
+    background: #ddd; 
+    border: 1px solid #999; 
+    color: #555; 
+    padding: 6px 10px;
+}
+
+textarea#comment 
+{
+    width: 525px;
+}
+
+/* ----------------------------------------------------------------------------------
+	Generic classes
+----------------------------------------------------------------------------------- */
+
+.clear {clear: both;}
+.center {text-align: center;}
+.hidden {display: none;}
+.justify {text-align: justify;}
+.post-spt {border-top: 1px dashed #ccc; margin-bottom: 15px;}
+.post-meta {background: #eee; margin: 10px 0; padding: 2px 10px;}
+.post-tag {margin: 10px 0;}
+.sticky {background: #f6f6f6; border: 1px solid #ccc; margin: -10px -10px 10px -10px; padding: 0 10px;}
+.sticky .post-meta {border: 1px solid #bbb;}
+p.page-link span {border: 1px solid #ccc; padding: 3px 8px;}
+p.page-link a:hover {text-decoration: none;}
+.aligncenter {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.alignleft {
+	float: left;
+}
+
+.alignright {
+	float: right;
+}
+
+
+/* ----------------------------------------------------------------------------------
+	Basic layout
+----------------------------------------------------------------------------------- */
+
+#wrapper {text-align: center;}
+#container {
+background:white ;
+border-width: 0 0px;
+border-style: solid;
+border-color: #ddd;
+margin: 1px auto;
+text-align: left;
+width: 890px;
+}
+
+#header {
+padding: 20px;
+}
+
+#head-nav {
+font-size: 12px;
+margin: 0 10px; 
+border-bottom: 1px dashed #bbb; 
+border-left: 1px solid #bbb;
+}
+
+#main-content {
+border: 1px solid #ccc;
+float: left;
+margin: 10px;
+padding: 20px;
+width: 600px;
+}
+#sidebar {
+border: 0px solid #aaa;
+float: right;
+margin: 10px 0;
+padding: 0px 20px 20px 0;
+width: 200px;
+}
+#footer {padding: 10px 20px;}
+#foot-1, #foot-2, #foot-3 {width: 290px; border: 0px solid #bbb;}
+#foot-1, #foot-2 {float: left;}
+#foot-right, #foot-3 {float: right;}
+#foot-2 {margin: 0 15px;}
+#footer-credit {line-height: 28px; margin: 10px 20px;}
+#footer-desc {border-top: 1px dashed #ccc; font-style: italic; text-align: right;}
+
+
+/* ----------------------------------------------------------------------------------
+	Header navigation
+----------------------------------------------------------------------------------- */
+
+ul#nav li 
+{
+    float: left;
+    border-right: 1px solid #bbb;
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    margin-bottom: 10px;
+}
+ul#nav li a, ul#nav li a:visited 
+{
+    color: #444;
+    display: block;
+    font-size: 1.0em;
+    font-weight: normal;
+    line-height: 30px;
+    padding: 0 15px;
+}
+
+ul#nav li a:hover 
+{
+    background: #A0CEEB; 
+    text-decoration: none;
+}
+
+ul#nav li ul 
+{
+    display: none;
+}
+
+ul#nav li:hover ul 
+{
+    background: #f8f8f8;
+    border: 1px solid #aaa;
+    display: block;
+    position: absolute;
+}
+
+ul#nav li ul li 
+{
+    border-bottom: 1px solid #ccc;
+    border-right: 0;
+    border-top: 0;
+    float: none;
+    margin-bottom: 0;
+}
+
+ul#nav li ul li a:link, ul#nav li ul li a:visited 
+{
+    font-family: verdana;
+    font-size: 0.9em;
+    font-weight: normal;
+    line-height: 25px;
+    margin: 4px;
+    min-width: 122px;
+}
+
+ul#nav li ul li a:hover 
+{
+    background: #eee;
+}
+
+#head-nav ul#nav li ul li ul 
+{
+    display: none;
+}
+
+#head-nav ul#nav li ul li:hover ul 
+{
+    display: block;
+    margin: -34px 0 0 160px;
+}
+
+/* ----------------------------------------------------------------------------------
+	Page navigation and links
+----------------------------------------------------------------------------------- */
+
+.older a:link, .older a:visited 
+{
+    float: left;
+}
+
+.newer a:link, .newer a:visited 
+{
+    float: right;
+}
+.page-nav 
+{
+    margin-top: 10px;
+}
+
+a.more-link:link, a.more-link:visited 
+{
+    float: right;
+    margin-bottom: 10px;
+}
+
+/* ----------------------------------------------------------------------------------
+	Misc.
+----------------------------------------------------------------------------------- */
+
+blockquote 
+{
+    border-left: 2px solid #ccc;
+    color: #888;
+    margin: 15px 0 15px 60px; 
+    padding-left: 5px;
+    padding-bottom: 10px;
+    font-size: 10px;
+}
+code 
+{
+    color: #B03535;
+}
+
+/* ----------------------------------------------------------------------------------
+	Widgets
+----------------------------------------------------------------------------------- */
+
+.widget 
+{
+    margin-bottom: 15px;
+}
+
+.widget_author img 
+{
+    border: 1px solid #ccc; 
+    float: left; 
+    margin-right: 10px; 
+    padding: 5px;
+}
+
+.search-box 
+{
+    border: 1px solid #ccc; 
+    padding: 0 10px; 
+    text-align: center;
+}
+
+table#wp-calendar 
+{
+    text-align: center;
+}
+table#wp-calendar caption 
+{
+    font-size: 1.5em; 
+    margin-bottom: 10px; 
+    text-align: center;
+}
+table#wp-calendar thead tr th 
+{
+    background: #eee; 
+    border: 1px solid #ccc; 
+    font-weight: bold; 
+    padding: 4px 13px;
+}
+table#wp-calendar td 
+{
+    border: 1px solid #ccc; 
+    padding: 4px 13px;
+}
+
+#today 
+{
+    background: #eee;
+}
+
+a.follow:link, a.follow:visited 
+{
+    display: block;
+    background: #eee;
+    font-weight: bold;
+    margin-top: 15px;
+    padding: 5px 10px;
+    text-align: center;
+}
+
+
+/* ----------------------------------------------------------------------------------
+	Images and captions
+----------------------------------------------------------------------------------- */
+
+img.centered 
+{
+    display: block; 
+    margin: 10px auto;
+}
+
+img.alignright 
+{
+    padding: 4px; 
+    margin: 0 0 2px 7px; 
+    display: inline;
+ }
+
+img.alignleft 
+{
+    padding: 4px; 
+    margin: 0 7px 2px 0; 
+    display: inline;
+}
+
+.wp-caption 
+{
+    border: 1px solid #ccc; 
+    padding-top: 4px; 
+    text-align: center; 
+    margin: 10px;
+}
+.wp-caption img 
+{
+    margin: 0; 
+    padding: 0;
+}
+.wp-caption p.wp-caption-text 
+{
+    margin: 0; 
+    line-height: 17px;
+}
+
+/* ----------------------------------------------------------------------------------
+	Comment list
+----------------------------------------------------------------------------------- */
+
+#main-content ol.commentlist 
+{
+    margin-left: 0px;
+}
+
+#main-content ol.commentlist li 
+{
+    border: 1px solid #bbb;
+    list-style: none;
+    margin: 15px 0;
+    padding: 10px;
+}
+
+li.odd 
+{
+    background: #f8f8f8;
+}
+
+.commentlist li img.avatar 
+{
+    border: 1px solid #aaa; 
+    width: 32px; 
+    height: 32px;
+}
+
+#main-content ul.children li 
+{
+    margin-left: 70px;
+}
+
+.comment-author 
+{
+    background: #eee;
+}
+
+.comment-meta 
+{
+    border-bottom: 1px solid #ddd; 
+    text-align: right;
+}
+
+.comment-reply-link, #cancel-comment-reply-link 
+{
+    border: 1px solid #aaa; 
+    padding: 3px 10px;
+}

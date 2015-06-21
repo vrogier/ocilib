@@ -1,0 +1,87 @@
+2007-12-06 Version 1.3.0 Vincent Rogier vince_rogier@yahoo.fr
+
+    * Added Full BFILE support
+    
+      - Added Type OCI_File    
+      - Added OCI_FileCreate()    
+      - Added OCI_FileFree()    
+      - Added OCI_FileSeek()    
+      - Added OCI_FileGetOffset()    
+      - Added OCI_FileRead()    
+      - Added OCI_FileGetType()    
+      - Added OCI_FileGetSize()    
+      - Added OCI_FileExists()    
+      - Added OCI_FileSetName()    
+      - Added OCI_FileGetDirectory()    
+      - Added OCI_FileGetName()    
+      - Added OCI_FileOpen()    
+      - Added OCI_FileIsOpen()    
+      - Added OCI_FileClose()    
+      - Added OCI_FileIsEqual()
+
+    * Extended Lob support
+    
+      - Added OCI_LobCopyFromFile()    
+      - Added OCI_LobAppend()    
+      - Added OCI_LobOpen()    
+      - Added OCI_LobClose()    
+      - Added OCI_LobIsEqual()    
+      - Modified OCI_lobGetLenght()    
+      - Modified OCI_lobAppend()   
+        
+    * Added Pre-fetch support        
+    
+      - OCI_SetPrefetchSize()    
+      - OCI_GetPrefetchSize()
+
+    * Added Support for describing database objects (currently only table support)
+    
+      - Added Type OCI_Schema    
+      - Added OCI_SchemaGetTable()    
+      - Added OCI_SchemaGetTableColumnCount()    
+      - Added OCI_SchemaGetTableColumn()    
+      - Added OCI_SchemaFreeTable()
+            
+    * Modified and extended Column info API    
+    
+      - Modified type OCI_Column from private to public handle    
+      - Added OCI_GetColumn()    
+      - Added OCI_GetColumnSQLType()    
+      - Added OCI_GetColumnPrecision()    
+      - Added OCI_GetColumnScale()    
+      - Added OCI_GetColumnNullable()    
+      - Modified OCI_GetColumnType()    
+      - Modified OCI_GetColumnName()    
+      - Modified OCI_GetColumnSize()
+        
+    * Extended support for formatted functions
+    
+      - OCI_SqlImmediate() supports now ouput for OCI_Date*, OCI_Long*, OCI_Lob*, OCI_File*, OCI_Statement*
+ 
+    * Fixed OCILIB Objects binding:
+    
+      - for LOB, FILE and REF Cursors handles    
+      - corrected SQL type for CLOB
+                
+    * Miscellaneous internal fixes
+    
+      - Fixed dsizeof() macro    
+      - OCI_Cleanup() : fixed memory leak if object not explicitly freed (since internal version 0.9)     
+      - OCIEnvCreate() call : OCI_THREADED was missing (since internal version 0.9)    
+      - OCIEnvCreate() call : OCI_OJBECT was missing in unicode mode (since internal version 0.9)     
+      - Fixed memory leak when fetching OCI_Statement * Resultset columns
+        
+    * Miscellanious internal modifications
+    
+      - Modification of column's buffer internal implementation (use of unions)
+      - Modified ocistrdup()    
+      - Modified scope of few local functions (static where missing)    
+      - Redefinition of local structure members from type 'int' to 'boolean'    
+      - Updated logical tests to TRUE/FALSE for clarity     
+      - Now, Statement handle fetched from a cursor column MUST not be released as in earlier versions
+
+    * Performances improvement        
+    
+      - Statement handle is now allocated at on Statement creation and not at every prepare call
+         
+    * Updated Documentation

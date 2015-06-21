@@ -1,0 +1,29 @@
+---
+layout: null
+sitemap:
+  exclude: 'yes'
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[{{ site.title | cdata_escape }}]]></title>
+  <link href="{{ site.baseurl }}/atom.xml" rel="self"/>
+  <link href="{{ site.baseurl }}/"/>
+  <updated>{{ site.time | date_to_xmlschema }}</updated>
+  <id>{{ site.baseurl }}/</id>
+  <author>
+    <name><![CDATA[{{ site.author | strip_html }}]]></name>
+    {% if site.email %}<email><![CDATA[{{ site.email }}]]></email>{% endif %}
+  </author>
+  <generator uri="http://jekyllrb.com/">Jekyll</generator>
+
+  {% for post in site.posts limit: 10 %}
+  <entry>
+    <title type="html"><![CDATA[{% if site.titlecase %}{{ post.title | titlecase | cdata_escape }}{% else %}{{ post.title | cdata_escape }}{% endif %}]]></title>
+    <link href="{{ site.baseurl }}{{ post.url }}?utm_source=RSS&amp;utm_medium=RSS&amp;utm_campaign={{ post.title | replace: ',','' | replace: ' ', '' | xml_escape }}"/>
+    <updated>{{ post.date | date_to_xmlschema }}</updated>
+    <id>{{ site.baseurl }}{{ post.id }}</id>
+    <content type="html"><![CDATA[{{ post.content | expand_urls: site.baseurl | cdata_escape }}]]></content>
+  </entry>
+  {% endfor %}
+</feed>

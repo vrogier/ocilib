@@ -1,0 +1,5 @@
+2008-01-04 Version 1.5.1 Vincent Rogier vince_rogier@yahoo.fr
+
+    * Fixed : OCI_Execute() crashed with a ref cursor bind variable (since v1.5.0, arghhh !! )
+    * Fixed : OCI_ExecuteStmtFmt() was returning FALSE even on success
+

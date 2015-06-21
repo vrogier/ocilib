@@ -1,0 +1,17 @@
+2008-01-10 Version 1.5.4 Vincent Rogier vince_rogier@yahoo.fr
+
+    * Miscellaneous modifications and fixes
+
+      - Added    : OCI_REVISION_VERSION constant
+      - Fixed    : Statement handle on a statement bind call() was allocated again and not always freed and could
+                  lead to an ORA-1000 error (since version 1.3.0)
+      - Fixed    : OCI_Date * Array binding : wrong memory allocation size
+      - Fixed    : Strings Array binding didn't adjust the buffer size depending on the sizeof(dtext) and could
+                  make OCI_execute failed on an Unicode build
+      - Fixed    : OCI_Long * Type (CLONG or BLONG) was wrongly set
+      - Modified : Refactoring of internal datatypes allocation, binding and defining for better performances, 
+                  more comptact and safer code
+      - Modified : Object datatypes defining from query (User types and Refs) generates now an error
+      - Modified : Extended demo application with array binding support, ref cursor, nested tables, 
+                  timestamps and intervals
+      - Removed  : internal structure OCI_Data

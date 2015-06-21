@@ -1,0 +1,63 @@
+2008-03-04 Version 2.1.0 Vincent Rogier vince_rogier@yahoo.fr
+
+    * Added public retrieval of internal OCI handles :
+
+      - See new section in the documentation (page <module>, section <Using OCI Handles directly>)
+      - OCI_HandleGetEnvironment()
+      - OCI_HandleGetContext()
+      - OCI_HandleGetServer()
+      - OCI_HandleGetError()
+      - OCI_HandleGetSession()
+      - OCI_HandleGetTransaction()
+      - OCI_HandleGetStatement()
+      - OCI_HandleGetLob()
+      - OCI_HandleGetFile()
+      - OCI_HandleGetDate()
+      - OCI_HandleGetTimestamp()
+      - OCI_HandleGetInterval()
+      - OCI_HandleGetObject() 
+
+    * Extended Hash Tables support :
+
+      - See updated example in the documentation (page <module>, section <Hash tables>)
+      - Added OCI_HashGetEntry() to browse an OCILIB Hash Tables
+      - Added OCI_HashGetType()
+      - Added OCI_HashGetSize()
+ 
+    * Added support for Lobs larger > 4 Go (Oracle 10g)
+
+      - See updated section in the documentation (page <module>, section <Internal Large Objects (LOBs)>)
+      - Added type lobsize_t (unsigned int or unsigned long long depending platform and compiler)
+      - Modified OCI_Lob and OCI_File APIs to change lob size and offset type from unsigned int to lobsize_t 
+        
+    * Extended Oracle versions support
+
+      - Added OCI_GetVersionConnection()
+      - Building OCILIB with versions of Oracle < 10g and OCI_IMPORT_LINKAGE option could fail because :
+
+        * BINARY FLOAT and BINARY DOUBLE (introduced in 10g) type references were not excluded from 8i and 9i builds
+        * Some Timestamp and Interval (introduced in 9i) code portions were not excluded from 8i builds
+
+      - Modified Oracle version detection
+      - Rewritten conditional code compilation directives for handling correctly all versions of Oracle (8i -> 11g)
+      - The library has been through series of tests on the following environments:
+
+          * Servers : 10.2.0.1.0,  8.1.7.0.0           
+          * Clients : 11.1.0.6.0, 10.2.0.1.0, 9.2.0.1.0, 9.0.1.0.1
+
+      - few errors were encountered but always linked to Oracle known bugs identified on Metalink : nclobs on 8i, intervals on 9i, Full Unicode handling on 9i
+      - Known issues that are currently being investigated: 
+
+        * Oracle 8i only + "mixed charset" build : read/write on a CLOB fetched from a "return into" inserts '\0' between characters (looks like double unicode expansion..)
+
+    * Modified Error handling
+
+      - Added OCI_ErrorGetType()
+      - Removed error messages prefixes "(OCI_xxx) - "
+ 
+    * Fixed :
+
+      - OCI_RegisterDate() caused OCI_Execute() to crash with Oracle < 10g. It's a known Oracle bug (metalink id #3269146 : OCIBindDynamic() with SQL_ODT).
+      - OCI_RegisterDate() works nows on version < 10g (using SQLT_ODT for 10g and SQLT_DAT for 8i and 9i)
+      - OCI_LobAppendLob() caused an ORA-24805 on Oracle 8.1.x only
+      - OCI_xxxxToText() functions now initialize output buffers even on failure

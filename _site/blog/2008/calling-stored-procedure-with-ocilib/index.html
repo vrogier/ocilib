@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name=viewport content="width=device-width, initial-scale=1">
+  
+  <title>Calling stored procedure with OCILIB | OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases</title>
+  
+  
+  <meta name="description" content="OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases. It offers a full featured, easy and p...">
+  
+    <meta name="keywords" content="OCILIB, driver, Oracle, OCI, wrapper, open source, library, API, SQL, database, access , libraries, free, LGPL, GPL, PL/SQL, Oracle Call Interface">
+  
+    
+  <link href="/slim-pickins-jekyll-theme/css/main.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link rel="canonical" href="/slim-pickins-jekyll-theme/blog/2008/calling-stored-procedure-with-ocilib">
+  <link href="/slim-pickins-jekyll-theme/favicon.ico" rel="icon">
+  <link rel="alternate" type="application/atom+xml" title="OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases" href="/slim-pickins-jekyll-theme/atom.xml"/>
+  
+  <!-- Social media content metadata -->
+
+
+<meta property="twitter:card" content="summary" />
+<meta property="twitter:site" content="ocilib" />
+<meta property="twitter:url" content="/slim-pickins-jekyll-theme" />
+<meta property="twitter:title" content="Calling stored procedure with OCILIB" />
+<meta property="twitter:description" content="OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases. It offers a full featured, easy and productive API. Written in ISO C and C++ on top of ..." />
+<meta property="twitter:creator" content="ocilib" />
+<meta property="twitter:image:src" content="" />
+
+  
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-3399074-3', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+ 
+</head>
+  <body>
+    <main class="wrap">
+      
+    <header role="banner">
+      <a href="/slim-pickins-jekyll-theme"><img src="/slim-pickins-jekyll-theme/images/ocilib-header.png" srcset="/slim-pickins-jekyll-theme/images/banner-small.jpg 200w, /slim-pickins-jekyll-theme/images/banner-med.jpg 641w, /slim-pickins-jekyll-theme/images/banner-large.jpg 1025w, /slim-pickins-jekyll-theme/images/ocilib-header.png 1441w" alt="OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases banner image" title="OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases banner image" class="center"></a>
+    </header>
+  
+  
+      <nav class="navbar">
+  <nav class="row">
+    <div id="nav">
+      <ul class="columns medium-8 left primary-nav">
+
+	<li id="toggleMenu"><a href="#nav">Menu</a></li>
+	<li id="hideMenu"><a href="#toggleMenu">Menu</a></li>
+	
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/">Home</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/features">Features</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/download">Download</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/documentation">Documentation</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/support/">Support</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/changelogs/">Changes</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/projects/">Projects</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/blog/">Blog</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/about/">About</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/comments/">Comments</a></li>
+		    
+	  
+	
+      </ul>
+
+      <ul class="columns medium-4 right primary-nav">
+	
+	  <li class="right"><a href="https://chrisanthropic.github.io/slim-pickins-jekyll-theme/atom.xml"><span class="icon-feed socials"></span></a></li>
+	
+	  <li class="right"><a href="https://twitter.com/"><span class="icon-twitter socials"></span></a></li>
+	
+	  <li class="right"><a href="https://github.com/vrogier/ocilib"><span class="icon-github socials"></span></a></li>
+	
+      </ul>
+    </div>
+  </nav>
+</nav>
+      <article class="row post-content">
+
+    <header>
+      <h2 class="post-title">Calling stored procedure with OCILIB</h1>
+      <p class="post-meta">Jul 18, 2008 • admin</p>
+    </header>
+    <br/>
+toto  
+tto2    
+    <p>Today, I was asked on the OCILIB SourceForge forum if OCILIB could handle calls to stored procedures…</p>
+
+<p>Of course, it can ! Here is a basic simple example.</p>
+
+<p>Let’s say you’ve got the following stored procedure :</p>
+
+<pre><code>my_function(code in number, str out varchar) return number;
+</code></pre>
+
+<p>Here is a full working C program source code to call this procedure:</p>
+
+<pre><code>int main(int argc, char **argv)
+{
+    int code, res;
+    char str[31];
+    OCI_Connection *cn;
+    OCI_Statement *st;
+
+    OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT);
+
+    cn = OCI_ConnectionCreate("db", "user", "pwd", OCI_SESSION_DEFAULT);
+    st = OCI_StatementCreate(cn);
+
+    OCI_Prepare(st, "begin :res := my_function(:code, :str); end;");
+    OCI_BindInt(st, ":res", &amp;res;);
+    OCI_BindInt(st, ":code", &amp;code;);
+    OCI_BindString(st, ":str", str, 30);
+
+    code = 5;
+    res = 0;
+    str[0] = 0;
+
+    OCI_Execute(st);
+
+    printf("res = %d, str = %s", res, str);
+
+    OCI_Cleanup();
+
+    return EXIT_SUCCESS;
+}
+</code></pre>
+
+<p>That’s all ! Calling stored procedures is really easy with OCILIB</p>
+
+
+</article>
+
+    </main>
+      <footer class="site-footer">
+  <div class="row">
+    <div >
+<center>Copyright &copy; 2015 <b><a href="/slim-pickins-jekyll-theme">OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases</a></b>.</center>
+<center>OCILIB Logo designed by <b>abecrow</b>
+    </div>
+  </div>
+</footer> 
+
+  </body>
+</html>

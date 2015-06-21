@@ -1,0 +1,111 @@
+2008-02-16 Version 2.0.0 Vincent Rogier vince_rogier@yahoo.fr
+ 
+    * Added Support for Unicode build on Unix-like systems
+
+      - Now, Unicode is correctly handled on unixes (4 bytes wchar_t)
+ 
+    * Added support for Oracle Named types (Oracles Objects)
+
+      - OCI_ObjectCreate()
+      - OCI_ObjectFree()
+      - OCI_ObjectGetDate()
+      - OCI_ObjectGetDouble()
+      - OCI_ObjectGetFile()
+      - OCI_ObjectGetInt()
+      - OCI_ObjectGetInterval()
+      - OCI_ObjectGetLob()
+      - OCI_ObjectGetObject()
+      - OCI_ObjectGetRaw()
+      - OCI_ObjectGetString()
+      - OCI_ObjectGetTimeStamp()
+      - OCI_ObjectSetDouble()
+      - OCI_ObjectSetInt()
+      - OCI_ObjectSetRaw()
+      - OCI_ObjectSetString()
+      - OCI_ObjectSetNull()
+      - OCI_BindObject()
+      - OCI_BindArrayOfObjects()
+      - OCI_RegisterObject()
+      - OCI_GetObject()
+      - OCI_GetObject2()
+      - Known issue : OCI function internally used to set attributes values is causes a crash on Unicode Build
+      - So, DO NOT USE OCILIB Object API in Unicode build until i've sorted that with Oracle support
+
+    * Added National attribute (charsetform) support
+
+      - added OCI_GetColumnCharsetForm()
+      - added OCI_Lob type OCI_NCLOB
+      - added national charset support for binding, defining and lob manipulation
+
+    * Extended column information
+
+      - added OCI_GetColumnFullSQLType() that gives the same and exact output than SQL*Plus
+      - added OCI_GetColumnFractionnalPrecision() for timestamp/interval
+      - added OCI_GetColumnLeadingPrecision() for interval
+      - modified OCI_GetColumnPrecision() return non zero only for numeric/float
+
+    * Added support for SYSDBA, SYSOPER session modes
+
+      - modified OCI_CreateConnection() that takes a new extra parameter to manage the session mode
+      - added OCI_GetSessionMode()
+
+    * Added support for BINARY FLOAT and BINARY DOUBLE (introduced with Oracle 10g)
+ 
+    * Modified Input string buffer length parameters:
+
+      - Parameter 'len' of OCI_LobRead(), OCI_LobWrite(), OCI_LobAppend(), OCI_LongRead(), OCI_LongWrite() is now :
+
+        * Number of bytes for OCI_BLOB and OCI_BLONG
+        * Number of characters for OCI_CLOB/OCI_NCLOB and OCI_CLONG
+
+      - OCI_LobGetLength(), OCI_LobGetOffset() and OCI_LongGetSize() return now the length/offset expressed :
+
+        * In bytes for OCI_BLOB and OCI_BLONG
+        * In characters for OCI_CLOB/OCI_NCLOB and OCI_CLONG
+
+      - Parameter 'size' of OCI_DateToText(), OCI_TimestampToText(), OCI_TimestampGetTimeZoneName(), OCI_IntervalToText is now :
+
+        * Number of characters
+
+    * Modified OCI_Long objects
+
+      - Added OCI_LongGetBuffer()
+      - Modified: Long columns are complety read internally during fetch sequence
+      - Modified: OCILIB can handle more than one OCI_Long object in select resulset
+      - OCI_LongRead() still supported but obsolete, use intead OCI_LongGetBuffer() 
+      - Fixed : insert statement with OCI_Long bind variable that have inserted 0 bytes caused a crash when
+        the statement was freed
+
+    * Modified OCI_Schema public interface
+
+      - Extended support for describing Named types
+      - Renamed OCI_SchemaGetTable() to OCI_SchemaGet()
+      - Remaned OCI_SchemaGetTableColumn() to OCI_SchemaGetColumn()
+      - Remaned OCI_SchemaGetTableColumnCount() to OCI_SchemaGetColumnCount()
+      - Added OCI_SchemaGetType()
+      - Added OCI_SchemaGetName()
+
+    * Miscellaneous bugs fixes:
+
+      - Fixed : OCI_FetchNext() could return FALSE before the real end of the resultset
+      - Fixed : Simple bind of OCILIB objects could lead OCI to crash 
+      - Fixed : OCI_VERSION_REVISION was wrongly defined.
+      - Fixed : OCI_VERSION_xxx were not up to date
+      - Fixed : Modified few internal variables types (size and sign) to conform to Oracle Doc and to make
+        AIX "Strict" C Compiler happy !
+      - Fixed : Modified configure script for install options on GNU package
+      - Fixed : OCI_RegisterString() : the buffer size was wrongly calculated in mixed charset builds
+      - Fixed : Corrected spelling of OCI_LobGetLenght() -> OCI_LobGetLength()
+      - Fixed : If OCI_RegisterXXX() calls were made in a different order than the variable list in the returning 
+        clause, resultset columns were created in the wrong order and leaded to type mismatch
+
+    * Miscellaneous modifications:
+
+      - OCI_Initialize() takes a new param for future environment options and extra modes (by default OCI_ENV_DEFAULT)
+      - Sometimes, OCI client describes FLOAT as NUMBER... Added extra checks to correct that!
+      - Modification of configure script for 32 bits detection on 32/64bits systems
+      - Rewrote the demo app for keeping a unique source demo for all platforms and builds
+      - Added OCI_Object and RAWs output support fro OCI_Immediate() and OCI_ImmediateFmt()
+      - Added OCILIB own transaction types for OCI_CreateTransaction() and OCI_TransactionGetMode()
+      - Removed lots of typos in the source code comments and documentation! 
+

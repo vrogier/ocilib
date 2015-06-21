@@ -1,0 +1,36 @@
+2007-11-25 Version 1.2.0 Vincent Rogier vince_rogier@yahoo.fr
+
+    * Added Documentation
+    
+      - Full API documentation 
+      - Html help     
+      - Embedded documentation in source code
+
+    * Added Global Transaction support
+    
+      - Added OCI_Transaction structure and handle 
+      - Added OCI_XID structure and handle    
+      - Added OCI_CreateTransaction()    
+      - Added OCI_FreeTransaction()    
+      - Added OCI_PrepareTransaction()    
+      - Added OCI_ForgetTransaction()    
+      - Added OCI_ResumeTransaction()    
+      - Added OCI_TransactionGetMode()    
+      - Added OCI_TransactionGetTimeout()    
+      - Added OCI_GetTransaction()
+      - Added OCI_SetTransaction()    
+      - Modified OCI_StartTransaction() 
+
+    * Modified Lob support
+    
+      - Removed OCI_LobGetCacheMode()    
+      - Modified OCI_LobInit() (del cache param)    
+      - Modified OCI_Lob (del cache member)    
+      - Added OCI_LobErase()
+
+    * Modified Error Handling
+    
+      - Removed OCI_GetErrorCode()    
+      - Added OCI_ErrorGetOCICode()    
+      - Added OCI_ErrorGetInternalCode()
+

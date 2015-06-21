@@ -1,0 +1,110 @@
+2010-10-24 Version 3.8.0 Vincent Rogier vince.rogier@ocilib.net
+
+
+    * Added support for Oracle Streams AQ (Advanced Queues)
+
+      - See section in the documentation (page <module>, section <Oracle Advanced Queues (A/Q)>)
+      - Added demo file queue.c
+      - Added type OCI_Msg
+      - Added type OCI_Agent
+      - Added type OCI_Enqueue
+      - Added type OCI_Dequeue
+      - Added OCI_MsgCreate()
+      - Added OCI_MsgFree()
+      - Added OCI_MsgReset()
+      - Added OCI_MsgSetObject()
+      - Added OCI_MsgGetObject()
+      - Added OCI_MsgGetRaw()
+      - Added OCI_MsgSetRaw()
+      - Added OCI_MsgGetAttemptCount()
+      - Added OCI_MsgSetEnqueueDelay()
+      - Added OCI_MsgGetEnqueueTime()
+      - Added OCI_MsgGetExpiration()
+      - Added OCI_MsgSetExpiration()
+      - Added OCI_MsgGetState()
+      - Added OCI_MsgGetPriority()
+      - Added OCI_MsgSetPriority()
+      - Added OCI_MsgGetID()     
+      - Added OCI_MsgGetOriginalID()
+      - Added OCI_MsgSetOriginalID()
+      - Added OCI_MsgGetSender()
+      - Added OCI_MsgSetSender()
+      - Added OCI_MsgSetConsumers()
+      - Added OCI_MsgGetCorrelation()
+      - Added OCI_MsgSetCorrelation()
+      - Added OCI_MsgSetExceptionQueue()
+      - Added OCI_MsgGetExceptionQueue()
+      - Added OCI_EnqueueCreate()
+      - Added OCI_EnqueueFree()
+      - Added OCI_EnqueuePut()
+      - Added OCI_EnqueueSetSequenceDeviation()
+      - Added OCI_EnqueueGetSequenceDeviation()
+      - Added OCI_EnqueueSetVisibility()
+      - Added OCI_EnqueueGetVisibility()
+      - Added OCI_EnqueueSetRelativeMsgID()
+      - Added OCI_EnqueueGetRelativeMsgID()
+      - Added OCI_DequeueCreate()
+      - Added OCI_DequeueFree()
+      - Added OCI_DequeueGet()
+      - Added OCI_DequeueSetConsumer()
+      - Added OCI_DequeueGetConsumer()
+      - Added OCI_DequeueSetCorrelation()
+      - Added OCI_DequeueGetCorrelation()
+      - Added OCI_DequeueSetRelativeMsgID()
+      - Added OCI_DequeueGetRelativeMsgID()
+      - Added OCI_DequeueSetVisibility()
+      - Added OCI_DequeueGetVisibility()
+      - Added OCI_DequeueSetMode()
+      - Added OCI_DequeueGetMode
+      - Added OCI_DequeueSetNavigation()
+      - Added OCI_DequeueGetNavigation()
+      - Added OCI_DequeueSetWaitTime()
+      - Added OCI_DequeueGetWaitTime()
+      - Added OCI_DequeueListen()
+      - Added OCI_DequeueSetAgentList()
+      - Added OCI_AgentCreate()
+      - Added OCI_AgentFree()
+      - Added OCI_AgentSetName()
+      - Added OCI_AgentGetName()
+      - Added OCI_AgentSetAddress()
+      - Added OCI_AgentGetAddress()
+      - Added OCI_QueueCreate()
+      - Added OCI_QueueCreateNonPersistent()
+      - Added OCI_QueueAlter()
+      - Added OCI_QueueDrop()
+      - Added OCI_QueueStart()
+      - Added OCI_QueueStop()
+      - Added OCI_QueueTableCreate()
+      - Added OCI_QueueTableAlter()
+      - Added OCI_QueueTableDrop()
+      - Added OCI_QueueTablePurge()
+      - Added OCI_QueueTableMigrate()
+
+    * Added support for SQL parsing only
+ 
+      - Added OCI_Parse()
+      - Added OCI_ParseFmt()
+
+    * Miscellaneous changes
+
+      - All OCILIB source files have been reformatted using uncrustify (best source code formatter ever tried !!)
+      - Source code max line length have been modified (80 -> 100 characters)
+
+    * Miscellaneous fixes
+
+      - Fixed memory leak : if an OCI_Bindxxx() returned FALSE (eg. non present binds in the sql statment), the newly internal allocated bind object was not freed
+      - Fixed possible segfault in OCI_Cleanup() if OCI_SubscriptionRegister() had been previouly called call unsuccessfully
+      - Fixed internal array allocation when using OCI_ArraySetSize() called many times on the same prepared SQL statement
+      - Fixed OCI_ElemGetTimeStamp() and OCI_ElemGetInterval() when collections are retreived from the server 
+      - Fixed possible segfault in OCI_TimestampFromCTime() and OCI_TimestampFromCTime() if the libc function localtime() returns a NULL tm structure pointer
+      - Fixed OCI_GetSessionTag() linkage : the function was internally named OCI_GetSessionData() instead of OCI_GetSessionTag() in connection.c
+      - Fixed binding of date arrays : the introduction of OCI_XXXArrayCreate() in v3.6.0 has introduced a bug in dates array binding that would cause to pass NULL data for some elements of the array
+      - Fixed some API naming inconstancy (lower/upper case)
+
+        - OCI_ElemGetTimeStamp()      renamed to OCI_ElemGetTimestamp()
+        - OCI_ObjectGetTimeStamp()    renamed to OCI_ObjectGetTimestamp()
+        - OCI_TimestampSysTimeStamp() renamed to OCI_TimestampSysTimestamp()
+        - Macros have been added for backward compatibility
+
+        - Existing programs must be recompiled (in order to use this new version of ocilib) with no code change (as compatibility macros are provided)
+  

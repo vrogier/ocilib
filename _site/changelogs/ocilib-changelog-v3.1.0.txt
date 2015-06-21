@@ -1,0 +1,160 @@
+2009-01-23 Version 3.1.0 Vincent Rogier vince.rogier@gmail.com
+
+    * Added support for Oracle REF datatype
+
+      - Added OCI_RefCreate()
+      - Added OCI_RefFree()
+      - Added OCI_RefGetObject()
+      - Added OCI_RefAssign()
+      - Added OCI_RefIsNull()
+      - Added OCI_RefSetNull()
+      - Added OCI_RefToText()
+      - Added OCI_RefGetHexSize()
+      - Added OCI_GetRef2()
+      - Added OCI_GetRef()
+      - Added OCI_BindRef()
+      - Added OCI_BindArrayOfRefs()
+      - Added OCI_RegisterRef()
+      - Added OCI_ElemGetRef()
+      - Added OCI_HandleGetRef()
+      - Added OCI_ObjectGetRef()
+      - Added OCI_ObjectGetSelfRef()
+
+    * Added some tracing features
+
+      - Added OCI_SetTrace()
+      - Added OCI_GetTrace()
+
+    * Extended Object API
+
+      - Fixed internal handling of null attributes (it has been rewritten)
+      - Modified local (transients) objects creation. Now:
+
+        * By default, all attributes are set to NULL
+        * Non scalar attributes must be set by calling new functions OCI_ObjectSetXXX()
+
+      - Added setters functions for non scalar object attributes
+
+        * OCI_ObjectSetDate
+        * OCI_ObjectSetInterval
+        * OCI_ObjectSetTimestamp
+        * OCI_ObjectSetColl
+        * OCI_ObjectSetObject
+        * OCI_ObjectSetFile
+        * OCI_ObjectSetLob
+        * OCI_ObjectSetRef
+
+      - Added Miscellaneous Object functions
+
+        * Added OCI_ObjectIsNull()
+        * Added OCI_ObjectAssign()
+        * Added OCI_ObjectGetType()
+
+    * Extended Collection elements API
+
+      - Fixed : OCI_ElemSetNull() that was only updating null indicator
+      - Fixed : some functions were not checking input element handle nullity
+      - Added checks on element type in OCI_ElemGetXXX() calls that throw an exception if the element type is not the same type as the one requested
+      - Added setters functions for non scalar element base datatypes
+
+        * OCI_ElemSetDate()
+        * OCI_ElemSetInterval()
+        * OCI_ElemSetTimestamp()
+        * OCI_ElemSetColl()
+        * OCI_ElemSetObject()
+        * OCI_ElemSetFile()
+        * OCI_ElemSetLob()
+        * OCI_ElemSetRef()
+   
+    * Extended Bind informations
+
+      - Modified : OCI_Bind handles are now public and can be retrieved for public information
+      - Added OCI_GetBindCount()
+      - Added OCI_GetBind()
+      - Added OCI_GetBind2()
+      - Added OCI_BindGetName()
+      - Added OCI_BindGetType()
+      - Added OCI_BindGetSubtype()
+      - Added OCI_BindGetStatement()
+      - Added OCI_BindGetData()
+      - Added OCI_BindGetDataCount()
+      - Added OCI_BindGetDataSize()
+      - Added OCI_BindGetDataSizeAtPos()
+      - Added OCI_BindSetDataSize()
+      - Added OCI_BindSetDataSizeAtPos()
+      - Added OCI_SetNull2()
+      - Added OCI_SetNullAtPos2()
+      - Extended OCIBindxxx() calls satefy : 
+
+        * An error OCI_ERR_BIND_ALREADY_USED is now raised if the bind name or position is already binded to the statement
+        * With the bind mode by position, provided bind indexes <= 0  and > OCI_BIND_MAX will cause an error OCI_ERR_OUT_OF_BOUNDS
+
+      - Extended binds/registers limits :
+ 
+        * OCI implements the SQL returning clause through binds operations
+        * OCILIB wraps the result of the returning clause within OCI_Resultet object but has to use internal binds to create its resultset
+        * Prior to v3.1.0, OCI_BIND_MAX (default 512) was the maximum of OCI_Bindxxx() including OCI_Registerxxx() that an OCI_Statement could handle
+        * With v3.1.0, OCILIB can handle OCI_BIND_MAX user binds handle and OCI_BIND_MAX items in the returning clause
+
+    * Fixed Unicode support for Unixes platforms
+
+        * Unicode support for platforms with 4 bytes wchar_t was broken
+        * Fixed configure script was setting bad charset macros
+        * Fixed some internal buffer expansion functions
+
+    * Miscellaneous public modifications
+
+      - Added OCI_IsNull2()
+      - Added OCI_ResultsetGetStatement()
+      - Added OCI_BindArrayOfColls()
+      - Added OCI_GetDataLength()
+  
+      - Added functions to retrieve OCI_Schema object from various OCILIB object bases on Oracle object type :
+
+        * Added OCI_ObjectGetSchema()
+        * Added OCI_CollGetSchema()
+        * Added OCI_RefGetSchema()
+
+      - Added runtime information about OCILIB builds modes :
+
+        * Added OCI_GetImportMode()
+        * Added OCI_GetCharsetMetaData()
+        * Added OCI_GetCharsetUserData()
+
+      - On Oracle versions >= 11g, OCILIB now sets the client driver layer name information
+
+        * Value set to the constant OCILIB_DRIVER_NAME (by default "OCILIB") 
+        * It's recorded in the system views V$SESSION_CONNECT_INFO and GV$SESSION_CONNECT_INFO
+
+      - Modified ocilib demo to properly support MinGw and unix based unicode console output
+
+    * Miscellaneous internal modifications
+
+      - Added internal reference counter to OCI_Schema object 
+
+        * Some OCILIB objects keep a pointer to some OCI_schema objects
+        * If OCI_SchemaFree() was called, these objects were holding a reference to a freed block of memory and then accessing this reference could cause a segfault
+        * Now OCI_SchemaFree() only frees an schema object if its reference counter is zero.
+       
+    * Miscellaneous fixes
+
+      - OCI_FetchPrev() was returning FALSE if called directly after OCI_FetchLast() on resulsets with less then OCI_FETCH_SIZE rows (default set to 20)
+      - if OCI_FetchXXX calls were returning FALSE, internal error flag was wrongly set to TRUE and OCI_GetLastError() could return a previous OCI_Error handle
+      - OCI_Fetchxxx() functions could return TRUE even if the given SQL statement had some SQL conversion function that failed (like to_date(), etc..)
+      - OCI_Getxxx() functions could cause a segfault called before any OCI_Fetchxxx() calls 
+      - OCI_IsConnected() was always returning FALSE since v3.0.0
+      - OCI_SchemaGet() with OCI_SCHEMA_TABLE was causing an ORA-24328 with Oracle 8 and 9 (working fine with Oracle 10) since v3.0.0
+      - OCI_Execute() could raise an ORA-01483 if an OCI_Timestamp handle of type OCI_TIMESTAMP, initialized with OCI_TimestampSysTimeStamp() only, was binded to the statement
+      - Fixed OCI_TimestampIntervalAdd() and OCI_TimestampIntervalSub() that might have raised errors with OCI_Timestamp handles of type OCI_TIMESTAMP
+      - Fixed some preprocessor directives in oci_loader.h
+      - Fixed OCI_Object reusability: internal sub object could not be freed when fetching next object and thus lead to memory leaks
+      - Since v3.0.0, fetching LONG column with OCI_LONG_IMPLICIT mode was truncating data to its half length in Unicode and Mixed Builds 
+      - Fixed some preprocessor directives for MinGw support
+      - Fixed runtime loading of oracle libs that might have not worked if the provided OCI library location ended with an existing slash
+      - Fixed internal OCI_CopyString() that might caused some troubles in Unicode builds 
+      - Fixed some internal wrong arrays size used for memory allocation
+      - Fixed some OCI_Date and OCI_Timestamp decode functions to work properly on big-endian platforms
+      - Fixed string binding on mixed charset build iwth Oracle 8i
+      - since v3.0.0, OCILIB source compilation was broken for oracle 8i
+      - Fixed demo file output.c
+

@@ -1,0 +1,12 @@
+---
+author: admin
+comments: true
+date: 2010-07-23 11:00:32+00:00
+layout: post
+slug: '517'
+title: OCILIB 3.7.0 coming on July 27th !
+wordpress_id: 517
+categories:
+- News
+---
+

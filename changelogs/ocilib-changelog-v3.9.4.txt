@@ -1,0 +1,30 @@
+2012-06-29 Version 3.9.4 Vincent Rogier vince.rogier@ocilib.net
+
+    * Miscellaneous fixes
+
+      - Connection and Session Pools : Fixed few bugs related to OCILIB automatic adaptation to runtime client versions and features that could lead OCI_PoolGetConnection() to return NULL
+      - Statement cache was not properly activated when feature was available
+      - OCI_PoolGetStatementCacheSize() : an error was raised as an invalid internal oci attibute code was used
+      - Fixed broken compilation support for Oracle 8i and 9i clients on unix platforms when oracle shared lib import mode is OCI_IMPORT_LINKAGE
+      - Oracle 11g : OCILIB driver name could not be properly set in the view V$SESSION_CONNECT_INFO
+      - Oracle XA :
+          - Unix platforms : No change, XA is supported for all Oracle Clients >= 8i
+          - MS Windows Platforms :
+              * When using the Dlls provided in OCILIB releases, XA wis now enabled only if the Oracle client loaded at runtime has XA symbols embedded in oci.dll (usually >= Oracle 10g)
+              * When compiling yourself OCILIB, support is enabled only with Oracle Client 10g and above as on MS Windows, for 8i and 9i, specific import libraries are used and can be missing in some installations             
+              * So when XA is not enabled, using the flag OCI_SESSION_XA with OCI_ConnectionCreate() will now throw an exception
+     
+    * Miscellaneous changes
+    
+      - default transaction behavior :
+      
+          - Prior to v3.9.4, a default transaction object was created in OCI_ConnectionCreate() and associated to the returned connection object. 
+          - From v3.9.4
+              * No changes for regular standalone transactions and transactions retrieved from connection pool.
+              * For XA connections and connections retrieved from session pool, no transaction object is created anymore and thus, OCI_GetTransaction() will return NULL for newly created connections.
+              * Note that transaction objects must not be set to connections retrieved from a session pool or to XA connections
+              * For other types of connections (regular or retrieved from connection pool), transaction objects can be used as normal
+      
+      - Various internal minor code change
+      - Note that all sources files have been updated to include year 2012 in the copyright section 
+

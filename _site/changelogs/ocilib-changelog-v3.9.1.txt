@@ -1,0 +1,9 @@
+2011-07-08 Version 3.9.1 Vincent Rogier vince.rogier@ocilib.net
+
+    * Miscellaneous fixes
+
+      - Fixed OCI_BindString() : version 3.9.0 introduced a memory leak when using this method
+      - Fixed OCI_IsNull()     : version 3.7.0 introduced a bug when OCI_IsNull() was called for OCI_CDT_OBJECT columns. It always returned FALSE
+      - Fixed OCI_GetStruct()  : version 3.7.0 introduced a bug (same as above) that caused the indicator array parameter filled with wrong indicator values for OCI_CDT_OBJECT columns
+      - Fixed use of "Returning into" SQL clause : version 3.9.0 broke re-execution of a prepared statment that contains a "returning into" sql clause
+

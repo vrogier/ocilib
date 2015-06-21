@@ -1,0 +1,28 @@
+var group___ocilib_c_apidirect_path =
+[
+    [ "OCI_DirPathCreate", "group___ocilib_c_apidirect_path.html#ga33415cbda0a997c10ae0815256701935", null ],
+    [ "OCI_DirPathFree", "group___ocilib_c_apidirect_path.html#ga024f04e69293349e3882b2f367a03ed6", null ],
+    [ "OCI_DirPathSetColumn", "group___ocilib_c_apidirect_path.html#ga37fecbbc3ecaa6c3ecfe33539aef1f69", null ],
+    [ "OCI_DirPathPrepare", "group___ocilib_c_apidirect_path.html#ga31aae5239710847d43b90166fedf0419", null ],
+    [ "OCI_DirPathSetEntry", "group___ocilib_c_apidirect_path.html#gaaadd5e79891c24d0f9c99ed96e5fe608", null ],
+    [ "OCI_DirPathConvert", "group___ocilib_c_apidirect_path.html#ga8dd680e9664028af035e773275e5ab76", null ],
+    [ "OCI_DirPathLoad", "group___ocilib_c_apidirect_path.html#ga0c816466d046a3d8c179f779e273f456", null ],
+    [ "OCI_DirPathReset", "group___ocilib_c_apidirect_path.html#ga2efc984ff0647d3a3c4b29f7e9ec37e2", null ],
+    [ "OCI_DirPathFinish", "group___ocilib_c_apidirect_path.html#ga7c80a8db7ef79e4693ac0e770bb2018f", null ],
+    [ "OCI_DirPathAbort", "group___ocilib_c_apidirect_path.html#ga382a1cbd623aa97ca69fed7b26923d61", null ],
+    [ "OCI_DirPathSave", "group___ocilib_c_apidirect_path.html#ga39b093ea31cdee551552e35df8167a22", null ],
+    [ "OCI_DirPathFlushRow", "group___ocilib_c_apidirect_path.html#gafe3add5d1595fbabab7e197ce26f9a67", null ],
+    [ "OCI_DirPathSetCurrentRows", "group___ocilib_c_apidirect_path.html#ga0062665eba53e0b62be65d4f0ee0df55", null ],
+    [ "OCI_DirPathGetCurrentRows", "group___ocilib_c_apidirect_path.html#gafb5fd763a6a181a8aae27db13ca28735", null ],
+    [ "OCI_DirPathGetMaxRows", "group___ocilib_c_apidirect_path.html#ga2ff812128f1604615f186aa8bdf8269d", null ],
+    [ "OCI_DirPathSetDateFormat", "group___ocilib_c_apidirect_path.html#gaa94047ee1fd5f923159d49ec3435082b", null ],
+    [ "OCI_DirPathSetParallel", "group___ocilib_c_apidirect_path.html#gafab72b4c04bd2c5d3c850f58f5b22fd2", null ],
+    [ "OCI_DirPathSetNoLog", "group___ocilib_c_apidirect_path.html#ga59a031e1515afd31654105071dc7e371", null ],
+    [ "OCI_DirPathSetCacheSize", "group___ocilib_c_apidirect_path.html#gaa0976d38ccf4d6f09657115ad6e47880", null ],
+    [ "OCI_DirPathSetBufferSize", "group___ocilib_c_apidirect_path.html#gae25febeb9086f1604743fbf54a4cf677", null ],
+    [ "OCI_DirPathSetConvertMode", "group___ocilib_c_apidirect_path.html#gac471686c49662bda2071cc4d7058e47f", null ],
+    [ "OCI_DirPathGetRowCount", "group___ocilib_c_apidirect_path.html#gaffb07d43825826b0c9af060ee52fc3e0", null ],
+    [ "OCI_DirPathGetAffectedRows", "group___ocilib_c_apidirect_path.html#gaade590aadb20d903770d9dc9c82ddb0c", null ],
+    [ "OCI_DirPathGetErrorColumn", "group___ocilib_c_apidirect_path.html#ga957a4d36b54166195cebeca461ddc7c4", null ],
+    [ "OCI_DirPathGetErrorRow", "group___ocilib_c_apidirect_path.html#ga29e788b14e1e9ecd691c101c38f9e118", null ]
+];

@@ -1,0 +1,71 @@
+2009-06-30 Version 3.3.0 Vincent Rogier vince.rogier@gmail.com
+
+    * Added SQL command and verb retrieving
+
+      - Added OCI_GetSQLVerb()
+      - Added OCI_GetSQLCommand()
+      - Added OCI_SFC_XXXX constants for the 124 Oracle SQL command codes
+
+    * Added support for batched errors for Array DML
+
+      - Added OCI_ErrorGetRow()
+      - Added OCI_GetBatchError()
+      - Added OCI_GetBatchErrorCount()
+      - Updated array interface demo (demo/array.c)
+
+    * Extended Lob Support
+
+      - Added OCI_LobGetMaxSize()
+      - Added OCI_LobFlush()
+
+    * Extended Collection API
+
+      - Added OCI_CollClear()
+      - Modified OCI_CollTrim(), OCI_CollGetMax(), OCI_CollGetSize() that now take or return 'unsigned int' instead of 'int' type
+      - Modified OCI_CollTrim() to accept a zero value as number of elements to trim 
+   
+    * Modified and extended Bind API
+
+      - Added OCI_BindSetNull()
+      - Added OCI_BindSetNullAtPos()
+      - Added OCI_BindIsNull()
+      - Added OCI_BindIsNullAtPos()
+      - Modified OCI_SetNullxxx() calls that are now defined as obsolete macros around OCI_BindSetxxx() calls
+
+    * Extended OCI_ImmediateXXX() API
+
+     - Added missing support for Objects, Collection and REF
+     - Added OCI_ARG_OBJECT, OCI_ARG_COLLECTION and OCI_ARG_REF
+
+    * Extended OCI_XXXFmt() API
+
+     - Added support for REFs
+     - Added token identifier '%r' for REFs
+   
+    * Miscellaneous changes
+
+      - Added OCI_Ping()
+      - Added Exception type OCI_ERR_CREATE_OCI_ENVIRONMENT if internal Oracle OCI environment handle cannot be allocated
+      - Updated documentation (page <modules> <Installing OCILIB>)
+      - Modified GNU configure script : the Oracle OCI library folder search sequence is now : lib32, lib, lib64
+
+    * Miscellaneous fixes
+
+      - Fixed OCI_CollAssign() that was assigning destination collection to source collection
+      - Fixed missing const qualifier in some Direct Path functions prototypes	
+      - Fixed OCI_ElemSetXXX() for numeric types that was returning FALSE for local collection
+      - Fixed PL/SQL tables binds for non scalar types (wrong values handled since v3.2.0)
+      - Fixed possible infinite recursivity when calling some OCI_ErrorGetXXX() calls within an error handler at OCILIB initialization
+      - Fixed Error message if Oracle shared lib was not found : libray name was not correct on unicode builds
+      - Fixed OCI_GetString() : in mixed charset builds, the returned string was truncated for numeric columns 
+      - Fixed internal function OCI_MoveString() for inplace string buffers packing/expansion
+      - Fixed in/out or out string binds :
+        * bind indicator is now not reset to "not null" after an execute call if the statement is PL/SQL code
+        * wide string binds on Unixes platforms (Mixed and Unicode builds) : 
+          - the trailing null character was missing if the binded string had been shortened by some PL/SQL code or user
+          - internal initialization of bind array of data lens : the len was including null terminator character and could lead to some memory corruptions
+      - Fixed some demo example codes 
+      - Fixed computation of internal OCI_Object sub objects offsets in their parents indicator array (could have caused segfaults and/or bad indicator values)
+      - Fixed problems with OCI_Elem internal null indicators :
+          - In some cases, a segfault caused by a null pointer could happened
+          - For OCI_Object handles holded by an OCI_Elem handle, the object internal indicator strucure was not properly set/retreived

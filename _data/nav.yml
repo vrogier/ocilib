@@ -1,0 +1,29 @@
+- title: "Home"
+  href: "/"
+
+- title: "Features"
+  href: "/features"
+  
+- title: "Download"
+  href: "/download"
+
+- title: "Documentation"
+  href: "/documentation"
+
+- title: "Support"
+  href: "/support/"
+  
+- title: "Changes"
+  href: "/changelogs/"
+  
+- title: "Projects"
+  href: "/projects/"
+  
+- title: "Blog"
+  href: "/blog/"
+  
+- title: "About"
+  href: "/about/"
+  
+- title: "Comments"
+  href: "/comments/"

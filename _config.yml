@@ -1,0 +1,47 @@
+# Site settings
+title: OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases 
+email: vince.rogier@ocilib.net
+
+keywords: OCILIB, driver, Oracle, OCI, wrapper, open source, library, API, SQL, database, access , libraries, free, LGPL, GPL, PL/SQL, Oracle Call Interface
+description: OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases. It offers a full featured, easy and productive API. Written in ISO C and C++ on top of OCI, OCILIB runs on all Oracle platforms.
+
+baseurl: /slim-pickins-jekyll-theme
+url: / #Leave this, change the baseurl.
+
+projecturl: https://github.com/vrogier/ocilib
+meurl: https://github.com/vrogier/
+
+header: yes
+header_sm: images/banner-small.jpg
+header_med: images/banner-med.jpg
+header_large: images/banner-large.jpg
+header_xl: images/ocilib-header.png
+
+
+# Exclude our ruby stuff
+exclude: [.bundle, bin, vendor, Gemfile, Gemfile.lock, Rakefile, s3_website.yml, .last_optimized]
+
+
+# Build settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+destination: _site
+
+# Compress our Css
+#sass:
+#    style: :compressed
+
+permalink: /blog/:year/:title
+
+#### SEO Stuff
+# Google Analytics
+google_universal_analytics: UA-3399074-3
+google_universal_analytics_cookiedomain: auto
+
+# Twitter Cards
+twitter_user: ocilib
+twitter_card: true
+twitter_image: 

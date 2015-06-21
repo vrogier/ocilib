@@ -1,0 +1,7 @@
+2012-12-19 Version 3.11.1 Vincent Rogier vince.rogier@ocilib.net
+
+    * Fixed broken support for Oracle Database Change notifications
+    
+       - Fixed OCI_SubscriptionRegister() : Previous version 3.11.0 introduced a bug in subscription registration  
+
+    * OCILIB Thanks file was missing in 3.11.0 packages. It is reintroduced within this release.     

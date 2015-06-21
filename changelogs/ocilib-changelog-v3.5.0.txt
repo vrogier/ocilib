@@ -1,0 +1,77 @@
+2009-12-21 Version 3.5.0 Vincent Rogier vince.rogier@gmail.com
+
+    * Added support for Oracle Database Change notification / Continuous Query Notification
+
+      - Added type OCI_Subscription
+      - Added OCI_SubscriptionRegister()
+      - Added OCI_SubscriptionUnregister()
+      - Added OCI_SubscriptionAddStatement()
+      - Added OCI_SubscriptionGetName()
+      - Added OCI_SubscriptionGetPort()
+      - Added OCI_SubscriptionGetTimeout()
+      
+      - Added type OCI_Event
+      - Added OCI_EventGetType()
+      - Added OCI_EventGetOperation()
+      - Added OCI_EventGetDatabase()
+      - Added OCI_EventGetObject()
+      - Added OCI_EventGetRowid()
+      - Added OCI_EventGetSubscription()
+      
+      - Added new environment mode OCI_ENV_EVENTS to enable events
+      - Updated documentation (new page <modules> <Database Change Notification>)
+
+    * Added support for Oracle warning (grace period notification, SQL truncation, etc ...)
+
+      - Added OCI_EnableWarnings()
+      - Added error type OCI_ERR_WARNING
+      - Updated documentation (page <modules> <error handling>)
+
+    * New functions 
+
+      - OCI_CollGetAt2()
+      - OCI_SetUserPassword() to renew a user password (expired or active) 
+      - OCI_SetErrorHandler() to modify user error handler callback after library initialization
+
+    * Major Object API internal update, rewrite and improvement
+
+      - Speed improvements
+      - Now works on Unicode builds (tired to wait after Oracle fixes that never come, so i've reimplemented some buggy OCI calls)
+      - Smarter code
+
+    * Extended Lob Support
+
+      - Added OCI_LobEnableBuffering()
+      - Added OCI_LobGetChunkSize()
+      
+    * Native 64 bits fixes
+
+      - Fixed Direct Path API
+      - Added casts + modified some variables types
+
+    * PL/SQL support fixes
+      - Segmentation fault could happen when using OCI_Date binds in PL/SQL statements
+      - Binds values for OCI_Date and big_int variable where not updated after OCI_Execute for PL/SQL
+      - OCI_ServerGetOutput() : ouput was broken if PL/SQL statement/blocks were re-executed
+      - OCI_ServerGetOutput() : trash string was returned if the number of amount of output lines was greater than the value of the  <arrsize> parameter of OCI_ServerEnableOutput()
+       
+    * Miscellaneous fixes
+
+      - OCI_ImmediateFmt(), OCI_PrepareFmt(), OCI_ExecuteStmtFmt():  trailing character of formatted string representation of dates was missing on non windows platforms
+      - OCI_ObjectGetColl() : the internal OCI Collection handle of the returned OCI_Coll object was invalid and thus caused segfault when calling OCI_Coll functions afterwards for these objects
+      - OCI_DateNextDay() : On unixes platforms+Unicode builds -> wrong value passed to the OCI internal call
+      - OCI_Immediate() : if execution failed, internal OCI_Statement (and thus server cursor) was not deallocated 
+      - OCI_ConnectionFree() : removed internal call to object cache cleanup routine
+      - OCI_DatabaseShutdown() : a segfault happened if the connection to the server could not be done 
+      - fixed typos in OCILIB documentation (generated from OCILIB main header file: ocilib.h)
+
+    * Miscellaneous changes
+    
+      - OCI_RefToText() : parameter size is now if type <unsigned int> instead of <int>
+      - Modified : OCI_BIND_MAX (maximum number of binds for a statement) is now 1024 by default instead of 512
+      - Added Oracle spatial demo source (demo/geometry.c)
+      - Now, OCI_API is by default set to __stdcall when using MS visual studio if it's not already defined
+      - If client version >= 11.1, OCILIB Resultsets allocate internal OCI descriptors array in one call (lobs, files, timestamp and interval)
+ 
+    * Information : OCI_DatabaseStartup() fails on Unicode builds because OCI function OCIDBStartup() fails if OCI is initialized in UTF16 mode ! Another bug to report to Oracle !
+

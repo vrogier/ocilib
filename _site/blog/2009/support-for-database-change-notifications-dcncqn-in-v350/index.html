@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name=viewport content="width=device-width, initial-scale=1">
+  
+  <title>Support for Database Change Notifications (DCN/CQN) in v3.5.0 ! | OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases</title>
+  
+  
+  <meta name="description" content="OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases. It offers a full featured, easy and p...">
+  
+    <meta name="keywords" content="OCILIB, driver, Oracle, OCI, wrapper, open source, library, API, SQL, database, access , libraries, free, LGPL, GPL, PL/SQL, Oracle Call Interface">
+  
+    
+  <link href="/slim-pickins-jekyll-theme/css/main.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link rel="canonical" href="/slim-pickins-jekyll-theme/blog/2009/support-for-database-change-notifications-dcncqn-in-v350">
+  <link href="/slim-pickins-jekyll-theme/favicon.ico" rel="icon">
+  <link rel="alternate" type="application/atom+xml" title="OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases" href="/slim-pickins-jekyll-theme/atom.xml"/>
+  
+  <!-- Social media content metadata -->
+
+
+<meta property="twitter:card" content="summary" />
+<meta property="twitter:site" content="ocilib" />
+<meta property="twitter:url" content="/slim-pickins-jekyll-theme" />
+<meta property="twitter:title" content="Support for Database Change Notifications (DCN/CQN) in v3.5.0 !" />
+<meta property="twitter:description" content="OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases. It offers a full featured, easy and productive API. Written in ISO C and C++ on top of ..." />
+<meta property="twitter:creator" content="ocilib" />
+<meta property="twitter:image:src" content="" />
+
+  
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-3399074-3', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+ 
+</head>
+  <body>
+    <main class="wrap">
+      
+    <header role="banner">
+      <a href="/slim-pickins-jekyll-theme"><img src="/slim-pickins-jekyll-theme/images/ocilib-header.png" srcset="/slim-pickins-jekyll-theme/images/banner-small.jpg 200w, /slim-pickins-jekyll-theme/images/banner-med.jpg 641w, /slim-pickins-jekyll-theme/images/banner-large.jpg 1025w, /slim-pickins-jekyll-theme/images/ocilib-header.png 1441w" alt="OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases banner image" title="OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases banner image" class="center"></a>
+    </header>
+  
+  
+      <nav class="navbar">
+  <nav class="row">
+    <div id="nav">
+      <ul class="columns medium-8 left primary-nav">
+
+	<li id="toggleMenu"><a href="#nav">Menu</a></li>
+	<li id="hideMenu"><a href="#toggleMenu">Menu</a></li>
+	
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/">Home</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/features">Features</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/download">Download</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/documentation">Documentation</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/support/">Support</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/changelogs/">Changes</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/projects/">Projects</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/blog/">Blog</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/about/">About</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/comments/">Comments</a></li>
+		    
+	  
+	
+      </ul>
+
+      <ul class="columns medium-4 right primary-nav">
+	
+	  <li class="right"><a href="https://chrisanthropic.github.io/slim-pickins-jekyll-theme/atom.xml"><span class="icon-feed socials"></span></a></li>
+	
+	  <li class="right"><a href="https://twitter.com/"><span class="icon-twitter socials"></span></a></li>
+	
+	  <li class="right"><a href="https://github.com/vrogier/ocilib"><span class="icon-github socials"></span></a></li>
+	
+      </ul>
+    </div>
+  </nav>
+</nav>
+      <article class="row post-content">
+
+    <header>
+      <h2 class="post-title">Support for Database Change Notifications (DCN/CQN) in v3.5.0 !</h1>
+      <p class="post-meta">Dec 10, 2009 • admin</p>
+    </header>
+    <br/>
+toto  
+tto2    
+    <p>Hi all,</p>
+
+<p>Final version of OCILIB v3.5.0 supports Oracle Database Change Notifications (or Continuous Query Notification).</p>
+
+<p>It allows a program to be notified by Oracle servers of any DML / DDL actions on the underlying objects part of given tables or queries.</p>
+
+<p>Rowids of modified rows can also be retrieved.</p>
+
+<p>This feature is really interesting in application that caches data or need to be notified on some data sources changes.</p>
+
+<p>Here is a example program that illustrates the OCILIB implementation of ORACLE DCN/CQN :</p>
+
+<p><strong>[demo code edited on 2009-12-11 with final approved API]</strong></p>
+
+<pre><code>#include "ocilib.h"
+
+#ifdef _WINDOWS
+  #define sleep(x) Sleep(x*1000)
+#endif
+
+#define wait_for_events() sleep(5)
+
+void event_handler(OCI_Event *event);
+void error_handler(OCI_Error *err);
+
+int main(void)
+{
+    OCI_Connection   *con;
+    OCI_Subscription *sub;
+    OCI_Statement    *st;
+ 
+    printf("=&gt; Initializing OCILIB in event mode...\n\n");
+
+    if (!OCI_Initialize(error_handler, NULL, OCI_ENV_EVENTS))
+        return EXIT_FAILURE;
+
+    printf("=&gt; Connecting to winrest@winrest...\n\n");
+
+    con = OCI_ConnectionCreate("winrest", "winrest", "xxx", OCI_SESSION_DEFAULT);
+    
+    OCI_SetAutoCommit(con, TRUE);
+ 
+    printf("=&gt; Creating statement...\n\n");
+
+    st  = OCI_StatementCreate(con);
+
+    printf("=&gt; Creating tables...\n\n");
+
+    OCI_ExecuteStmt(st, "create table table1(code number)");
+    OCI_ExecuteStmt(st, "create table table2(str varchar2(10))");
+
+    printf("=&gt; Registering subscription...\n\n");
+
+    sub = OCI_SubscriptionRegister(con, "sub-00", OCI_CNT_ALL, event_handler, 5468, 0);
+
+    printf("=&gt; Adding queries to be notified...\n\n");
+
+    OCI_Prepare(st, "select * from table1");
+    OCI_SubscriptionAddStatement(sub, st);
+
+    OCI_Prepare(st, "select * from table2");
+    OCI_SubscriptionAddStatement(sub, st);
+
+    printf("=&gt; Executing some DDL operation...\n\n");
+
+    OCI_ExecuteStmt(st, "alter table table1 add price number");
+
+    wait_for_events();
+ 
+    printf("=&gt; Executing some DML operation...\n\n");
+
+    OCI_ExecuteStmt(st, "insert into table1 values(1, 10.5)");
+    OCI_ExecuteStmt(st, "insert into table2 values('shoes')");
+
+    OCI_ExecuteStmt(st, "update table1 set price = 13.5 where code = 1");
+    OCI_ExecuteStmt(st, "delete from table2 ");
+
+    wait_for_events();
+
+    printf("=&gt; Droping tables...\n\n");
+
+    OCI_ExecuteStmt(st, "drop table table1");
+    OCI_ExecuteStmt(st, "drop table table2");
+
+    wait_for_events();
+
+    printf("=&gt; Disconnecting from DB...\n\n");
+
+    OCI_ConnectionFree(con);
+
+    printf("=&gt; Stopping the remote database...\n\n");
+
+    OCI_DatabaseShutdown("winrest", "sys", "xxx",   
+                         OCI_SESSION_SYSDBA,
+                         OCI_DB_SDM_FULL,
+                         OCI_DB_SDF_IMMEDIATE);
+
+    wait_for_events();;
+
+    printf("=&gt; Starting the remote database...\n\n");
+
+    OCI_DatabaseStartup("winrest", "sys", "xxx",   
+                         OCI_SESSION_SYSDBA,
+                         OCI_DB_SPM_FULL,
+                         OCI_DB_SPF_FORCE,
+                         NULL);
+
+    wait_for_events();
+
+    printf("=&gt; Unregistering subscription...\n\n");
+
+    OCI_SubscriptionUnregister(sub);
+
+    printf("=&gt; Cleaning up OCILIB resources...\n\n");
+
+    OCI_Cleanup();
+
+    printf("=&gt; Done...\n\n");
+
+    return EXIT_SUCCESS;
+}
+
+void error_handler(OCI_Error *err)
+{
+    int         err_type = OCI_ErrorGetType(err);
+    const char *err_msg  = OCI_ErrorGetString(err);
+
+    printf("** %s - %s\n", err_type == OCI_ERR_WARNING ? "Warning" : "Error", err_msg);
+}
+
+void event_handler(OCI_Event *event)
+{
+    unsigned int type     = OCI_EventGetType(event);
+    unsigned int op       = OCI_EventGetOperation(event);
+    OCI_Subscription *sub = OCI_EventGetSubscription(event);
+
+    printf("** Notification      : %s\n\n", OCI_SubscriptionGetName(sub));
+    printf("...... Database      : %s\n",   OCI_EventGetDatabase(event));
+
+    switch (type)
+    {
+        case OCI_ENT_STARTUP:
+            printf("...... Event         : Startup\n");
+            break;
+        case OCI_ENT_SHUTDOWN:
+            printf("...... Event         : Shutdown\n");
+            break;
+        case OCI_ENT_SHUTDOWN_ANY:
+            printf("...... Event         : Shutdown any\n");
+            break;
+        case OCI_ENT_DROP_DATABASE:
+            printf("...... Event         : drop database\n");
+            break;
+        case OCI_ENT_DEREGISTER:
+            printf("...... Event         : deregister\n");
+            break;
+         case OCI_ENT_OBJECT_CHANGED:
+            
+            printf("...... Event         : object changed\n");
+            printf("........... Object   : %s\n", OCI_EventGetObject(event));
+      
+            switch (op)
+            {
+                case OCI_ONT_INSERT:
+                    printf("........... Action   : insert\n");
+                    break;
+                case OCI_ONT_UPDATE:
+                    printf("........... Action   : update\n");
+                    break;
+                case OCI_ONT_DELETE:
+                    printf("........... Action   : delete\n");
+                    break;
+                case OCI_ONT_ALTER:
+                    printf("........... Action   : alter\n");
+                    break;
+                case OCI_ONT_DROP:
+                    printf("........... Action   : drop\n");
+                    break;
+            }
+                    
+            if (op &lt; OCI_ONT_ALTER)
+                printf("........... Rowid    : %s\n",  OCI_EventGetRowid(event));
+        
+            break;
+    }
+    
+    printf("\n");
+}
+</code></pre>
+
+<p>And the outpout is :</p>
+
+<pre><code>=&gt; Initializing OCILIB in event mode...
+
+=&gt; Connecting to winrest@winrest...
+
+=&gt; Creating statement...
+
+=&gt; Creating tables...
+
+=&gt; Registering subscription...
+
+=&gt; Adding queries to be notified...
+
+=&gt; Executing some DDL operation...
+
+** Notification      : sub-00
+
+...... Database      : WINREST
+...... Event         : object changed
+........... Object   : WINREST.TABLE1
+........... Action   : alter
+
+=&gt; Executing some DML operation...
+
+** Notification      : sub-00
+
+...... Database      : WINREST
+...... Event         : object changed
+........... Object   : WINREST.TABLE1
+........... Action   : insert
+........... Rowid    : AAADJMAAEAAAw49AAA
+
+** Notification      : sub-00
+
+...... Database      : WINREST
+...... Event         : object changed
+........... Object   : WINREST.TABLE2
+........... Action   : insert
+........... Rowid    : AAADJNAAEAAAw5FAAA
+
+** Notification      : sub-00
+
+...... Database      : WINREST
+...... Event         : object changed
+........... Object   : WINREST.TABLE1
+........... Action   : update
+........... Rowid    : AAADJMAAEAAAw49AAA
+
+** Notification      : sub-00
+
+...... Database      : WINREST
+...... Event         : object changed
+........... Object   : WINREST.TABLE2
+........... Action   : delete
+........... Rowid    : AAADJNAAEAAAw5FAAA
+
+=&gt; Droping tables...
+
+** Notification      : sub-00
+
+...... Database      : WINREST
+...... Event         : object changed
+........... Object   : WINREST.TABLE1
+........... Action   : alter
+
+** Notification      : sub-00
+
+...... Database      : WINREST
+...... Event         : object changed
+........... Object   : WINREST.TABLE1
+........... Action   : drop
+
+** Notification      : sub-00
+
+...... Database      : WINREST
+...... Event         : object changed
+........... Object   : WINREST.TABLE2
+........... Action   : alter
+
+** Notification      : sub-00
+
+...... Database      : WINREST
+...... Event         : object changed
+........... Object   : WINREST.TABLE2
+........... Action   : drop
+
+=&gt; Disconnecting from DB...
+
+=&gt; Stopping the remote database...
+
+** Notification      : sub-00
+
+...... Database      : WINREST
+...... Event         : Shutdown
+
+=&gt; Starting the remote database...
+
+** Notification      : sub-00
+
+...... Database      : WINREST
+...... Event         : Startup
+
+=&gt; Unregistering subscription...
+
+=&gt; Cleaning up OCILIB resources...
+
+=&gt; Done...
+</code></pre>
+
+<p>Version OCILIB 3.5.0 is still in validation phase and should be released soon !</p>
+
+
+
+</article>
+
+    </main>
+      <footer class="site-footer">
+  <div class="row">
+    <div >
+<center>Copyright &copy; 2015 <b><a href="/slim-pickins-jekyll-theme">OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases</a></b>.</center>
+<center>OCILIB Logo designed by <b>abecrow</b>
+    </div>
+  </div>
+</footer> 
+
+  </body>
+</html>

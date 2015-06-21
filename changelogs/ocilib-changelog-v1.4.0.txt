@@ -1,0 +1,97 @@
+2007-12-29 Version 1.4.0 Vincent Rogier vince_rogier@yahoo.fr
+
+    * Resulset values can be retrieved now by column names
+
+      - OCI_GetInt2()    
+      - OCI_GetString2()    
+      - OCI_GetDouble2()    
+      - OCI_GetDate2()    
+      - OCI_GetStatement2()   
+      - OCI_GetLob2()    
+      - OCI_GetLong2()    
+      - OCI_GetTimestamp2()    
+      - OCI_GetInterval2()    
+      - OCI_GetColumn2()    
+      - OCI_GetColumnIndex()
+
+    * Added OCI version detection
+    
+      - Now, OCI versions are detected at compile and runtime    
+      - OCI_GetOCICompileVersion()    
+      - OCI_GetOCIRuntimeVersion()
+
+    * Added Timestamp datatype support
+    
+      - Type OCI_Timestamp    
+      - OCI_TimestampAssign()    
+      - OCI_TimestampCheck()     
+      - OCI_TimestampCompare()     
+      - OCI_TimestampConstruct()     
+      - OCI_TimestampConvert()     
+      - OCI_TimestampFromText()     
+      - OCI_TimestampGetDate()    
+      - OCI_TimestampGetTime()    
+      - OCI_TimestampGetTimeZoneName()     
+      - OCI_TimestampGetTimeZoneOffset()    
+      - OCI_TimestampIntervalAdd()    
+      - OCI_TimestampIntervalSub()
+      - OCI_TimestampSubtract()    
+      - OCI_TimestampSysTimeStamp()    
+      - OCI_TimestampToText()    
+      - OCI_BindTimestamp()    
+      - OCI_GetTimestamp()
+  
+    * Added Interval datatype support
+    
+      - Type OCI_Interval    
+      - OCI_IntervalCreate()    
+      - OCI_IntervalFree()    
+      - OCI_IntervalAssign()    
+      - OCI_IntervalCheck()     
+      - OCI_IntervalCompare()    
+      - OCI_IntervalFromText()    
+      - OCI_IntervalToText()    
+      - OCI_IntervalFromTimeZone()    
+      - OCI_IntervalGetDaySecond()     
+      - OCI_IntervalGetYearMonth()     
+      - OCI_IntervalSetDaySecond()   
+      - OCI_IntervalSetYearMonth()    
+      - OCI_IntervalAdd()    
+      - OCI_IntervalSubtract()    
+      - OCI_BindInterval()    
+      - OCI_GetInterval()
+
+    * Added Hash tables support
+    
+      - type OCI_HashTable    
+      - OCI_CreateHashTable()    
+      - OCI_FreeHashTable()    
+      - OCI_HashGetValue()    
+      - OCI_HashGetInt()    
+      - OCI_HashGetPointer()    
+      - OCI_HashAddString()    
+      - OCI_HashAddInt()    
+      - OCI_HashAddPointer()    
+      - OCI_HashLookup()    
+      - OCI_HashGetString()
+
+    * Added OCILIB C source compatibility for C++    
+    
+      - Modified OCI_ALLOC() macro to add cast to malloc    
+      - Added few cast required the C++    
+      - Modified internal OCI_ErrorHandler() in order to call handler after reset of connection 
+        status for C++ exceptions    
+      - Modified : now, OCILIB C source perfectly compiles with a C++ compiler
+
+    * Miscellanious modifications and fixes
+    
+      - Modified OCI_Variant type (from private to public scope)    
+      - Modified : Every call to execute frees previous resultsets    
+      - Fixed : OCI_FileIsEqual() was not exported    
+      - Fixed : implicit conversion to int and double (OCI_GetInt() and OCI_GetDouble()) from a text value 
+        column (OCI_CDT_TEXT) where not implemented in unicode    
+      - Modified OCILIB descriptors ( OCI_XXXFree() ) to correct some leeks and for compatibility with C++ 
+        destructors (for OCILIB++ that coming soon)    
+      - Modified : Mapping text macros scope moved from private to public for OCILIB++    
+      - Changed the statement types from OCI_STMT_XXX to OCI_CST_XXX    
+      - OCI_DateAssign() : the two handles were not in good order 

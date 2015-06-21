@@ -1,0 +1,78 @@
+2008-07-21 Version 2.5.0 Vincent Rogier vince.rogier@gmail.com
+
+    * Added support for PL/SQL tables (PL/SQL arrays)
+
+      - Bind (input, output) C arrays to PL/SQL using OCI_BindArrayOfxxx() functions
+      - All the OCI_BindArrayOfxxx() functions take now an extra param : the size of the array for PL/PL/SQL table
+      - For regular array interface bind, pass 0 for the array size which is set by OCI_BindArraySetSize() 
+
+    * Extended Date, timestamp and interval support
+
+      - Added OCI_DateGetDateTime()
+      - Added OCI_DateSetDateTime()
+      - Added support for converting C types (time_t, tm) to/from OCI_Date and OCI_Timestamp :
+
+        * Added OCI_DateFromCTime()
+        * Added OCI_DateToCTime()
+        * Added OCI_TimestampFromCTime()
+        * Added OCI_TimestampToCTime()
+
+      - Date, timestamp and interval can now be create outside a database connection:
+            
+        * To create a connection independent object, pass a NULL OCI_Connection pointer to OCI_DateCreate(), OCI_TimestampCreate() and OCI_intervalCreate() functions
+        * Keep in mind that using a connection pointer is still recommended because it's checking that the server is able to handle these datatypes
+
+      - Fixed OCI_TimestampIntervalAdd(), OCI_TimestampIntervalSub() : 
+
+        * If the timestamps type was not OCI_TIMESTAMP_TZ, an error occured
+        * Now, these functions changes the timestamps types for OCI raw call and set it back before returning
+        * Possible bug OCI -> Investigating with Oracle support 
+
+    * Extended OCI_Connection handle attributes
+
+      - Added OCI_IsConnected()
+      - Added OCI_SetUserData()
+      - Added OCI_GetUserData()
+
+    * Added Support for retrieving server output
+
+      - Added OCI_ServerEnableOutput()
+      - Added OCI_ServerDisableOutput()
+      - Added OCI_ServerGetOutput()
+
+    * Added Support for OCI Threadkeys
+     
+      - Thread Keys are kind of process wide variable identified by an string identifier with thread specific values
+      - See section in the documentation (page <module>, section <Threads and mutexes>)
+      - Added OCI_ThreadKeyCreate()
+      - Added OCI_ThreadKeyGetValue()
+      - Added OCI_ThreadKeySetValue()
+
+    * Extended runtime loading of Oracle shared libs on various Unix-like systems
+
+      - Added support for Mac OSX (handling 'dylib' lib extension)
+      - Added support for some HP/UX platforms (handling 'sl' lib extension)
+      - Modified dl_open() flags for AIX and HP/UX
+      - Modified configure script for Oracle shared Client library detection
+
+    * Added Support for Oracle Instant Client on Unix-like systems
+
+      - See section in the documentation (page <module>, section <Installation>)
+      - Added configure option : --with-oracle-headers-path
+      - Added configure option : --with-oracle-lib-path
+
+    * Extended OCILIB documentation:
+
+      - Added "Installation" page
+      - All examples have been checked, updated, corrected and extended
+      - All examples are now provided as full programs sources code
+
+    * Added more demo source code
+
+      - 26 full application sources codes are now provided in the ocilib/demo directory
+      - Theses application examples are now integrated in the OCILIB documentation
+ 
+    * Misc:
+
+      - Added const qualifier to return values of OCI_HandleXXX() calls
+      - Fixed parameter checking in some OCI_ObjectXXX() calls

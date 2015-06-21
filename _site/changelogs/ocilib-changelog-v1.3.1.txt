@@ -1,0 +1,11 @@
+2007-12-18 Version 1.3.1 Vincent Rogier vince_rogier@yahoo.fr
+
+  * Fixed sourceforge bug #1853369
+    
+      - Committed updates from others transactions where not seen until the next OCI_Commit() call due
+        to the default transaction object mode.    
+      - Mode changed from OCI_TRANS_SERIALIZABLE to OCI_TRANS_READWRITE
+
+    * Fixed missing Unicode _T() macros in demo source file on Microsoft Windows platform
+    * Fixed demo project on Microsoft Windows platform && Visual Studio (ocilib source was linked to exe
+      instead of using Dll's)

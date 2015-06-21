@@ -1,0 +1,252 @@
+2008-10-13 Version 3.0.0 Vincent Rogier vince.rogier@gmail.com
+
+    * Added support for scrollable cursors
+
+      - See section in the documentation (page <module>, section <Fetching data>)
+      - Added OCI_FetchPrev()
+      - Added OCI_FetchLast()
+      - Added OCI_FetchFirst()
+      - Added OCI_FetchSeek()
+      - Added OCI_SetFetchMode()
+      - Added OCI_GetFetchMode()
+      - Added OCI_GetCurrentRow()
+
+    * Added support for Collection types : VARRAYs and NESTED TABLES
+
+      - Added section in the documentation (page <module> - section <Oracle Collections (Varrays and Nested Tables)>)
+      - Added type OCI_Coll
+      - Added type OCI_Iter
+      - Added type OCI_Elem
+      - Added OCI_CollCreate()
+      - Added OCI_CollFree()
+      - Added OCI_CollAssign()
+      - Added OCI_CollGetType()
+      - Added OCI_CollGetMax()
+      - Added OCI_CollGetSize()
+      - Added OCI_CollTrim()
+      - Added OCI_CollGetAt()
+      - Added OCI_CollSetAt()
+      - Added OCI_CollAppend()
+      - Added OCI_BindColl()
+      - Added OCI_GetColl()
+      - Added OCI_GetColl2()
+      - Added OCI_ObjectGetColl()
+      - Added OCI_HandleGetColl()
+      - Added OCI_IterCreate()
+      - Added OCI_IterFree()
+      - Added OCI_IterGetNext()
+      - Added OCI_IterGetPrev()
+      - Added OCI_ElemCreate()
+      - Added OCI_ElemFree() 
+      - Added OCI_ElemGetShort()
+      - Added OCI_ElemGetUnsignedShort()
+      - Added OCI_ElemGetInt()
+      - Added OCI_ElemGetUnsignedInt()
+      - Added OCI_ElemGetBigInt()
+      - Added OCI_ElemGetUnsignedBigInt()
+      - Added OCI_ElemGetDouble()
+      - Added OCI_ElemGetString()
+      - Added OCI_ElemGetRaw()
+      - Added OCI_ElemGetDate()
+      - Added OCI_ElemGetTimeStamp()
+      - Added OCI_ElemGetInterval()
+      - Added OCI_ElemGetLob()
+      - Added OCI_ElemGetFile()
+      - Added OCI_ElemGetObject()
+      - Added OCI_ElemGetColl()
+      - Added OCI_ElemSetShort()
+      - Added OCI_ElemSetUnsignedShort()
+      - Added OCI_ElemSetInt()
+      - Added OCI_ElemSetUnsignedInt()
+      - Added OCI_ElemSetBigInt()
+      - Added OCI_ElemSetUnsignedBigInt()
+      - Added OCI_ElemSetDouble()
+      - Added OCI_ElemSetString()
+      - Added OCI_ElemSetRaw()
+      - Added OCI_ElemSetNull()
+      - Added OCI_ElemIsNull()    
+      
+    * Massive Library rewrite:
+
+      - Update OCILIB Full Name from "OCILIB (C Wrapper for Oracle OCI)" to "OCILIB - C Driver for Oracle"
+      - Split OCILIB main source file into 30 source files
+      - All public and internal functions have been partially / largely reorganized / rewritten  
+      - Miscellaneous code optimization, enhancement and cleanup
+      - OCILIB source code compilation procudes zero warnings with highest warning settings of GCC and Microsoft C compiler
+      - Note for GCC builds :
+
+        * OCILIB static/shared libs are now bigger because of the split sources and the autotools default CFLAG set to "-g -02"
+        * Stripping the library (using the command strip) will make it 3 times smaller.
+
+      - Standardization of functions implementation:
+      
+        * 1 - Checks
+        * 2 - Function code
+        * 3 - thread error status (optionnal)
+        * 4 - Single exit point
+        
+      - OCILIB main header file (ocilib.h) moved from folder ./src to folder ./include. 
+
+        - For MS windows users, don't forget to update your compiler/IDE settings for include paths
+ 
+    * Extended error handling
+
+      - Updated section in the documentation (page <module>, section <Error handling>)
+      - Major rewrite for the internal error handling code
+      - Added support for thread contextual error handling
+      
+        * New Flag OCI_ENV_CONTEXT for OCI_Initialize()
+        * Added OCI_GetLastError()
+        
+      - Enforced input parameter checking
+      - Added OCI_GetSqlErrorPos() to retrieve the position error in a SQL statement
+      - Now, OCILIB calls guaranties to raise an error in any situation where it should instead of just returning to caller as it was doing before
+      - Added some Memory checking:
+
+        * OCILIB now keeps counts of all internal allocated OCI handles, descriptors and objects
+        * OCI_Cleanup() will throw an error in case of unfreed OCI object and returns FALSE
+     
+      - Modified return values for OCi_ErrorGetType() :
+      
+        * OCI_ERR_ORACLE : OCI calls error, SQL errors, ...
+        * OCI_ERR_OCILIB : internal OCILIB and application logic errors
+        
+      - New exceptions are raised:
+      
+        * OCI_ERR_NONE                : "No error"
+        * OCI_ERR_NOT_INITIALIZED     : "OCILIB has not been initialized"
+        * OCI_ERR_LOADING_SHARED_LIB  : "Cannot load OCI shared library (%lib_name%)"
+        * OCI_ERR_LOADING_SYMBOLS     : "Cannot load OCI symbols from shared library"
+        * OCI_ERR_MULTITHREADED       : "OCILIB has not been initialized in multithreaded mode"
+        * OCI_ERR_MEMORY              : "Memory allocation failure (type %type_name%, size : %block_size%)"  
+        * OCI_ERR_NOT_AVAILABLE       : "Feature not available (%feature_name%) "
+        * OCI_ERR_NULL_POINTER        : "A null %type_name% has been provided"
+        * OCI_ERR_NOT_SUPPORTED       : "Oracle datatype not supported (sqlcode %oracle_code%) " (currently only REFs are not supported)
+        * OCI_ERR_PARSE_TOKEN         : "Unknown identifier %token% while parsing SQL"
+        * OCI_ERR_MAP_ARGUMENT        : "Unknown argument %arg_code% while retreiving data"
+        * OCI_ERR_OUT_OF_BOUNDS       : "Index %value% out of bounds. Must be between %min% and %max%"
+        * OCI_ERR_UNFREED_DATA        : "Found %nb% unfreed %data_type%"
+        * OCI_ERR_MAX_BIND            : "Maximum number of binds (%limit%) already reached" (currently 512)
+        * OCI_ERR_ATTR_NOT_FOUND      : "Object attribute '%name%' not found"
+        * OCI_ERR_MIN_VALUE           : "The integer parameter value must be at least %min%"
+        * OCI_ERR_NOT_COMPATIBLE      : "Elements are not compatibles (type 1 = %typecode1%, type 2 = %typecode2%)"
+        * OCI_ERR_STMT_STATE          : "Unable to perform this operation on a %stmt_state% statement"
+        * OCI_ERR_STMT_NOT_SCROLLABLE : "The statement is not scrollable"
+
+      - The exception OCI_ERR_NOT_INITIALIZED is only available with OCI_GetLastError(), even 
+        if OCI_ENV_CONTEXT is not used with OCI_Initialize(), and is raised when calling OCI_XXXXCreate()
+        to allocate OCILIB handles before any call to OCI_Initialize()
+
+    * Extended implicit datatype conversions
+
+      - Added OCI_SetDefaultFormatNumeric()
+      - Added OCI_GetDefaultFormatNumeric()
+      - Added OCI_SetDefaultFormatDate()
+      - Added OCI_GetDefaultFormatDate()
+      - Modified OCI_SetFormatDate() and OCI_GetFormatDate() that now are macro for compatibility with older code
+      - Added support for implicit conversion:
+
+        * String columns can be retrieved as numeric data
+        * OCI_GetString() and OCI_GetString() can return string data whatever the real type of the column (except for Object, Collection and Cursor based columns)
+
+    * Improved internal numeric datatypes handling
+
+      - Modified : public OCILIB datatype OCI_CDT_INTEGER and OCI_CDT_DOUBLE has been replaced by one datatype : OCI_CDT_NUMERIC
+      - Modified : Now, all fetched numeric columns are internally mapped to OCINumber OCI type and to public type OCI_CDT_NUMERIC
+      - Modified : Much cleaner, compact an easier code for handling OCI_GetXXXX() calls for all numeric types
+                    
+    * Extended Date, timestamp and interval support
+
+      - Added OCI_TimestampGetDateTime()
+      - Added checks for securing input integer pointer :
+
+        * OCI_DateGetTime(), OCI_DateGetDate(), OCI_DateGetDateTime()
+        * OCI_TimestampGetTime(), OCI_TimestampGetDate(), OCI_TimestampGetDateTime(), OCI_TimestampGetTimeZoneOffset()
+        * OCI_IntervalGetDaySecond(), OCI_IntervalGetYearMonth()
+
+    * Extended OCILIB documentation that has been updated and some precisions has been added:
+
+      - Added    : page <module> - section <PL/SQL support> with new code examples
+      - Added    : page <module> - section <Collections (Varrays and Nested Tables> with new code examples
+      - Extended : page <module> - section <Error handling> for thread contextual error handling
+      - Extended : page <module> - section <Fetching data> for scrollable cursors and string conversions
+      - Extended : page <module> - section <Library objects and datatypes>) for supported datatypes
+      - Updated  : page <module> - section <Charset support>
+      - Modified : page <module> - section <Build Options> content moved to page <module> - section <Installing OCILIB>
+      - Updated  : miscellaneous changes
+         
+    * Miscellaneous changes
+
+      - Modified : up to 110 various functions prototypes have been modified to change the type of the return value or some parameters from int -> unsigned int
+      - Modified : OCI_GetResultset() returns now the first resultset if it exists instead of creating a new one
+      - Modified : OCI_SetNull() and OCI_SetNullAtPos() : now indexes and positions start at 1
+      - Modified : OCI_BIND_MAX (maximum number of binds for a statement) is now 512 by default instead of 256
+      - Modified : OCI_BindArraySetSize() : param nbelem type modified from 'int' to 'unsigned int'
+      - Modified : OCI_HashGetEntry() : now indexes and positions start at 1
+      - Modified : Rearranged internal structures to respect alignment and avoid padding
+      - Modified : OCI_HashGetEntry() : now indexes and positions start at 1
+      - Modified : return value in case of failure for OCI_TransactionGetMode() [OCI_ERROR->OCI_UNKNOWN] and OCI_TransactionGetTimeout() [OCI_ERROR -> 0]
+      - Modified : OCI_GetColumnXXX() calls are now renamed to OCI_ColumnGetXXX() and old prototypes are maintained as macros for backward compatibility
+      - Added    : OCI_StatementGetConnection()
+      - Added    : OCI_ColumnGetSchema()
+      - Added    : OCI_ColumnGetSubType()
+      - Added    : support for MSVC6++/unicodes builds
+
+        * Inclusion of wchar.h is now done in extern C++ block for MSVC6++ and cpp applications
+        * swprintf() is mapped to _snwprintf() because VC6 C-library is not ISO C compliant
+ 
+    * Fixed some Connection pools problems
+ 
+      - Fixed : Connection pools : every call to OCI_ConnPoolGetConnection() was allocating internal data instead of using existing ones.
+      - Fixed : Memory leak : internal connection transaction handle was never freed
+      - Fixed : OCI_ConnPoolCreate() : parameter 'incr_con' was not used (value '1' used instead)
+
+    * Fixed some PL/SQL table problems
+ 
+      - Fixed : PL/SQL table pure IN binds was causing PL/SQL error when the table parameters was accessed by PL/SQL procedures
+      - Fixed : Passing the value 1 for array size in PL/SQL tables binds caused an ORA-06550
+  
+    * Fixed Oracle Long fetching
+
+      - Segmentation fault was happening if a select contained a LONG column + other columns
+      - Unnecessary reallocation of internal LONG buffers was done at every internal fetch call (by default every 20 rows)
+      - When using OCI_LONG_IMPLICIT (LONG mapped to VARCHAR), strings returned by OCI_GetString() might not have their final null character
+       
+    * Modified GNU configure scripts
+
+      - Added    : For GNU builds added configure option --with-custom-loader for platforms that are not using '-ldl' (if using option --with-oracle-linkage=runtime)
+      - Fixed    : Some configure options were broken
+      - Modified : Added some checks and some outputs
+
+    * Miscellaneous fixes
+
+      - Fixed : Replaced any references of 'long' C type with 'int' C types in unix wchar internal conversion functions (on 64bits platforms, 
+                sizeof(long) is 8 bytes so it lead to some buffer bad alignment)
+      - Fixed : Second parameter 'ptm' of OCI_DateToCTime() and OCI_TimestampToCTime() was not mandatory as it should have been
+      - Fixed : Unicode buffer conversion : Internal OCI_StringLength() could not work properly on some architectures
+      - Fixed : Binding 64bits integers was not working properly (wrong internal flags)
+      - Fixed : OCI_ObjectGetShort() and OCI_ObjectGetUnsignedShort() were missing in ocilib.c
+      - Fixed : the header "limits.h" was not included in ocilib.h and on some configurations the support of 'long long' could not be detected
+      - Fixed : CLOBs read/writes on OCILIB Unix/Unicode builds could not work properly (wrong buffer passed to OCI)
+      - Fixed : OCI_SetUserData() was not exported
+      - Fixed : return value of the declaration of OCI_GetVersionConnection() was wrong (boolean instead of unsigned int)
+      - Fixed : OCI_ServerEnableOutput() and OCI_ServerDisableOutput() prototypes didn't have the OCI_API call convention (for MS builds)
+      - Fixed : OCI_ObjectGetString() prototype was returning wrong type 'mtext *' instead of 'dtext *'
+
+    * Updated main demo application
+
+      - Added : Example for scrollable cursors and collections (varrays and nested tables)
+      - Fixed : some bad cast could lead buffer bad filling in mixed charset build
+
+    * Fixed Mixed charset builds (OCI_CHARSET_MIXED ONLY)
+
+      - Fixed : OCI_ObjectGetString() and OCI_ObjectSetString() were misunderstanding string buffers
+      - Fixed : OCI_ServerEnableOutput() was not allocating enough memory to hold output buffer lines
+      - Info  : OCILIB functions using the OCI functions OCIStringPtr() and OCIStringAssignText() have a limitation on mixed charset builds :
+
+        * In mixed builds, OCILIB Strings (dtext *) used for handling user data are wchar_t strings, but the underlying OCI API 
+          understands theses strings as not unicode but ansi or other encoding 
+        * So, there is now, when building OCILIB with OCI_CHARSET_MIXED, an internal conversion to/from ANSI data when using :
+          
+          - OCI_ObjectGetString() and OCI_ObjectSetString()
+          - OCI_ElemGetString() and OCI_ElemSetString()

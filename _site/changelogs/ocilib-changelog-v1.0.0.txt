@@ -1,0 +1,4 @@
+2007-10-19 Version 1.0.0 Vincent Rogier vince_rogier@yahoo.fr
+
+    * Added    : First public release.
+

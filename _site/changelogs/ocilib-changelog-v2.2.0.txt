@@ -1,0 +1,39 @@
+2008-03-19 Version 2.2.0 Vincent Rogier vince.rogier@gmail.com
+
+    * Public interface
+
+      - Added OCI_SetPrefetchMemory() (see documentation)
+      - Added OCI_GetPrefetchMemory()
+      - Added OCI_SetPassword()
+      - Added OCI_Break()
+      - See new section in the documentation (page <module>, section <Aborting long operations>)
+      - Modified few functions prototypes with no parameters -> from f() to f(void) for strict ansi C support 
+      - Added 'const' qualifier to nearly all string parameter and string return values
+
+    * Extended OCI_GetString() :
+
+      - Modified : Implicit conversion from double uses now '%f' instead of '%g'.
+      - Added support for OCI_Timestamp, OCI_Interval and implicit conversion
+
+    * Fixes
+
+      - Memory leak : If a statement that has returned a resulset is re-executed directly with OCI_Execute() (without any parse step), the previous resultset was not freed
+      - Some statements attributes (fetch size, pre-fetched size, bind mode, long mode, long size) where reinitialized at every SQL parsing. Now they are persistent.
+      - Constants OCI_FETCH_SIZE, OCI_PREFETCH_SIZE values were set to Oracle default values and were not assigned at statement creation time.
+        So, if the library was rebuilt with different values, the modified values where not applied! Now, theses attributes are internally set internally when a statement is created
+      - Now server version is initialized when the connection object is created (some tests for some features support could failed)
+
+    * Modifications
+
+      - Added support for OS authentification by passing NULL user and NULL password to OCI_CreateConnection()
+      - Modified default date format for implicit conversion (DD/MM/YYYY -> YYYY-MM-DD)
+      - Modified OCI_BindXX() calls : if bind mode is OCI_BIND_POS, the position used is now the given bind name (:1, :2, ...) instead of the internal bind object index
+      - Modified OCI_CreateConnection() : it returns now NULL id OCI_Initialize() has not been called
+      - Reintroduced support for native C++ compilation of OCILIB
+
+    * Miscellaneous
+
+      - Validation of LabWindow/LabView compilers
+      - change email -> vince.rogier@gmail.com
+      - Modified demo application: tests are now grouped in series of functions
+      - Object support in Unicode builds : Oracle confirmed the bug when setting objects attributes (bug #6885036 on Metalink)

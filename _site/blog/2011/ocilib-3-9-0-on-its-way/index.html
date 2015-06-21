@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name=viewport content="width=device-width, initial-scale=1">
+  
+  <title>OCILIB 3.9.0 on its way... | OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases</title>
+  
+  
+  <meta name="description" content="OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases. It offers a full featured, easy and p...">
+  
+    <meta name="keywords" content="OCILIB, driver, Oracle, OCI, wrapper, open source, library, API, SQL, database, access , libraries, free, LGPL, GPL, PL/SQL, Oracle Call Interface">
+  
+    
+  <link href="/slim-pickins-jekyll-theme/css/main.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link rel="canonical" href="/slim-pickins-jekyll-theme/blog/2011/ocilib-3-9-0-on-its-way">
+  <link href="/slim-pickins-jekyll-theme/favicon.ico" rel="icon">
+  <link rel="alternate" type="application/atom+xml" title="OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases" href="/slim-pickins-jekyll-theme/atom.xml"/>
+  
+  <!-- Social media content metadata -->
+
+
+<meta property="twitter:card" content="summary" />
+<meta property="twitter:site" content="ocilib" />
+<meta property="twitter:url" content="/slim-pickins-jekyll-theme" />
+<meta property="twitter:title" content="OCILIB 3.9.0 on its way..." />
+<meta property="twitter:description" content="OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases. It offers a full featured, easy and productive API. Written in ISO C and C++ on top of ..." />
+<meta property="twitter:creator" content="ocilib" />
+<meta property="twitter:image:src" content="" />
+
+  
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-3399074-3', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+ 
+</head>
+  <body>
+    <main class="wrap">
+      
+    <header role="banner">
+      <a href="/slim-pickins-jekyll-theme"><img src="/slim-pickins-jekyll-theme/images/ocilib-header.png" srcset="/slim-pickins-jekyll-theme/images/banner-small.jpg 200w, /slim-pickins-jekyll-theme/images/banner-med.jpg 641w, /slim-pickins-jekyll-theme/images/banner-large.jpg 1025w, /slim-pickins-jekyll-theme/images/ocilib-header.png 1441w" alt="OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases banner image" title="OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases banner image" class="center"></a>
+    </header>
+  
+  
+      <nav class="navbar">
+  <nav class="row">
+    <div id="nav">
+      <ul class="columns medium-8 left primary-nav">
+
+	<li id="toggleMenu"><a href="#nav">Menu</a></li>
+	<li id="hideMenu"><a href="#toggleMenu">Menu</a></li>
+	
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/">Home</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/features">Features</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/download">Download</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/documentation">Documentation</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/support/">Support</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/changelogs/">Changes</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/projects/">Projects</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/blog/">Blog</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/about/">About</a></li>
+		    
+	  
+	
+	  
+		  
+		  <li><a href="/slim-pickins-jekyll-theme/comments/">Comments</a></li>
+		    
+	  
+	
+      </ul>
+
+      <ul class="columns medium-4 right primary-nav">
+	
+	  <li class="right"><a href="https://chrisanthropic.github.io/slim-pickins-jekyll-theme/atom.xml"><span class="icon-feed socials"></span></a></li>
+	
+	  <li class="right"><a href="https://twitter.com/"><span class="icon-twitter socials"></span></a></li>
+	
+	  <li class="right"><a href="https://github.com/vrogier/ocilib"><span class="icon-github socials"></span></a></li>
+	
+      </ul>
+    </div>
+  </nav>
+</nav>
+      <article class="row post-content">
+
+    <header>
+      <h2 class="post-title">OCILIB 3.9.0 on its way...</h1>
+      <p class="post-meta">Mar 6, 2011 • admin</p>
+    </header>
+    <br/>
+toto  
+tto2    
+    <p>Hi all,</p>
+
+<p>I’m still working on finishing the version 3.9.0 of OCILIB.<br />
+All implementation is done, still some work to do on the documentation !</p>
+
+<p>Here is the summary of this version :</p>
+
+<ul>
+  <li>
+    <p>Added support Oracle XA</p>
+  </li>
+  <li>
+    <p>Added support for statement cache</p>
+  </li>
+  <li>
+    <p>Added support for TAF (Transparent Application Failover) and HA (High Availability)</p>
+  </li>
+  <li>
+    <p>Added support for new connection attributes introduced in Oracle 10gR2</p>
+  </li>
+  <li>
+    <p>Improved bind tuning</p>
+  </li>
+  <li>
+    <p>Miscellaneous new calls</p>
+  </li>
+  <li>
+    <p>Miscellaneous changes</p>
+  </li>
+  <li>
+    <p>Miscellaneous fixes</p>
+  </li>
+</ul>
+
+<p>Here is the changelog of this version</p>
+
+<pre><code>2011-03-XX Version 3.9.0 Vincent Rogier vince.rogier@ocilib.net
+
+    * Added support Oracle XA
+
+      - Oracle XA intregration in OCLIB is transparent by using OCI_ConnectionCreate() and requires just :
+      
+         - an XA db name for parameter "db"
+         - an extra flag OCI_SESSION_XA for parameter "mode"
+         - no user or password
+         
+      - See the OCI_ConnnectionCreate() documentation for the XA open string needed by OCILIB to pass to the TMP 
+
+    * Added support for statement cache
+
+      - Statement cache is now automatically enabled when using an Oracle client &gt;= 9.2
+      - Added statement cache size customization when using an Oracle client &gt;= 10.1 :
+        
+        - Added OCI_SetStatementCacheSize()
+        - Added OCI_GetStatementCacheSize()
+        - Added OCI_PoolSetStatementCacheSize()
+        - Added OCI_PoolGetStatementCacheSize()
+
+    * Added support for TAF (Transparent Application Failover) and HA (High Availability) 
+    
+      - The following handler has been added when using an Oracle client &gt;= 10.2
+
+        - Added OCI_IsTAFCapable()
+        - Added OCI_SetTAFHandler()
+        - Added OCI_SetHAHandler()
+
+    * Added support for Connection attributes introduced in Oracle 10gR2
+
+      - Added OCI_GetDDBName()
+      - Added OCI_GetInstanceName()
+      - Added OCI_GetServiceName()
+      - Added OCI_GetServerName()
+      - Added OCI_GetDomainName()
+      - Added OCI_GetInstanceStartTime()
+
+    * Improved bind tuning. Now it is possible to set the bind direction mode (in, out, in/out) for better performances
+    
+      - Added OCI_BindSetDirection()
+      - Added OCI_BindGetDirection()
+
+    * Miscellaneous new calls :
+
+      -  Added OCI_Describe() to enable the retrieving of an OCI_Resultset object for "select" statement without executing the SQL
+
+    * Miscellaneous changes :
+
+      - Re-enforced checks on OCI_Statement handle related methods that checks the statement state (prepared, executed, parsed,...) that now can throw more exceptions
+      - Manual update of source code formatted with Uncrustify (wrong indentation of preprocessor directives)
+
+    * Miscellaneous fixes :
+
+      - Fixed OCI_ImmediateFmt() : the method returned FALSE even on success
+      - Fixed 11Gr2 compile detection    
+      - Fixed OCI_PoolGetConnection() : OCILIB tried to set the driver name attribute (appeared in 10gR2) on the session that is not allowed in 11gR2
+      - Fixed OCI_SetFormatDate() : fixed macros parameters declaration
+      - Fixed OCI_GetColumnNullable() returned value
+      - Fixed OCI_Parse() wrong internal mode
+      - Fixed OCI_ConnectionCreate() : unfreed handles not freed if connection failed
+      - Fixed OCI_SetPrefetchSize(), OCI_SetPrefetchMemory() : the given value was not really passed to Oracle
+      - Fixed OCI_TypeInfoGet() called internally for fetch using object from different schema
+      - Fixed OCI_StringGetFromAttrHandle() allocation of insufficient buffer in Unicode mode
+      - Fixed OCI_ObjectSetxxx() could return true if attribute not found
+      - Fixed OCI_Parse() : the method was internally doing a describe operation instead of just a parse (which gave same results from an end user view)
+</code></pre>
+
+
+
+</article>
+
+    </main>
+      <footer class="site-footer">
+  <div class="row">
+    <div >
+<center>Copyright &copy; 2015 <b><a href="/slim-pickins-jekyll-theme">OCILIB (C and C++ Driver for Oracle) - Open source C and C++ library for accessing Oracle databases</a></b>.</center>
+<center>OCILIB Logo designed by <b>abecrow</b>
+    </div>
+  </div>
+</footer> 
+
+  </body>
+</html>
