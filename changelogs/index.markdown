@@ -14,7 +14,7 @@ Click on a change log entry to see the full details.
 <br/>
 <br/>
 
-_[2015-05-05 . version 4.1.0](ocilib/changelogs/ocilib-changelog-v4.1.0.txt)_
+_[2015-05-05 . version 4.1.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.1.0.txt)_
     
   * C API  : Major library code update  
   * C API  : Some enhancements   
@@ -22,7 +22,7 @@ _[2015-05-05 . version 4.1.0](ocilib/changelogs/ocilib-changelog-v4.1.0.txt)_
   * C++ API: Major enhancements
   * C++ API: Various bug fixes
 
-_[2015-01-13 . version 4.0.1](ocilib/changelogs/ocilib-changelog-v4.0.1.txt)_
+_[2015-01-13 . version 4.0.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.0.1.txt)_
   * C API : Fixed Object API with complex nested types
   * C API : New error OCI_ERR_ARG_INVALID_VALUE
   * C API : Miscellaneous Fixes
@@ -31,7 +31,7 @@ _[2015-01-13 . version 4.0.1](ocilib/changelogs/ocilib-changelog-v4.0.1.txt)_
   * C++ API : Fixed possible race conditions in multithreaded applications
   * C++ API : Miscellaneous enhancements
 
-_[2014-12-10 . version 4.0.0](ocilib/changelogs/ocilib-changelog-v4.0.0.txt)_
+_[2014-12-10 . version 4.0.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.0.0.txt)_
   * Introducing new C++ API
   * Added Support for some Oracle 12cR1 new features
   * Enhanced Collections support
@@ -41,10 +41,10 @@ _[2014-12-10 . version 4.0.0](ocilib/changelogs/ocilib-changelog-v4.0.0.txt)_
   * Miscellaneous changes
   * Miscellaneous fixes
 
-_[2013-03-04 . version 3.12.1](ocilib/changelogs/ocilib-changelog-v3.12.1.txt)_
+_[2013-03-04 . version 3.12.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.12.1.txt)_
   * Fixed Unicode support (OCI_CHARSET_WIDE and OCI_CHARSET_MIXED)
   * Miscellaneous fixes
-_[2013-02-07 . version 3.12.0](ocilib/changelogs/ocilib-changelog-v3.12.0.txt)_
+_[2013-02-07 . version 3.12.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.12.0.txt)_
   * Added support for lob prefetching introduced in 11gR1
   * Enhanced and fixed Direct Path API
   * Fixed Oracle Streams AQ (Advanced Queues) asynchrounous notifications
@@ -53,34 +53,34 @@ _[2013-02-07 . version 3.12.0](ocilib/changelogs/ocilib-changelog-v3.12.0.txt)_
   * Fixed numeric/ string conversions
   * Miscellaneous fixes
 
-_[2012-12-19 . version 3.11.1](ocilib/changelogs/ocilib-changelog-v3.11.1.txt)_
+_[2012-12-19 . version 3.11.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.11.1.txt)_
   * Fixed broken support for Oracle Database Change notifications
 
-_[2012-12-12 . version 3.11.0](ocilib/changelogs/ocilib-changelog-v3.11.0.txt)_
+_[2012-12-12 . version 3.11.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.11.0.txt)_
   * Extended Oracle Streams AQ (Advanced Queues) support
   * Fixed And Enhanced support of BINARY FLOAT and BINARY DOUBLE types
   * Miscellaneous changes
   * Miscellaneous fixes
 
-_[2012-08-08 . version 3.10.0](ocilib/changelogs/ocilib-changelog-v3.10.0.txt)_
+_[2012-08-08 . version 3.10.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.10.0.txt)_
   * Added support for native C float datatype
 
-_[2012-06-29 . version 3.9.4](ocilib/changelogs/ocilib-changelog-v3.9.4.txt)_
+_[2012-06-29 . version 3.9.4]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.9.4.txt)_
   * Miscellaneous fixes 
   * Miscellaneous changes 
 
-_[2011-12-05 . version 3.9.3](ocilib/changelogs/ocilib-changelog-v3.9.3.txt)_
+_[2011-12-05 . version 3.9.3]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.9.3.txt)_
   * Miscellaneous fixes 
   * Miscellaneous internal changes 
   * Documentation update
 
-_[2011-07-13 . version 3.9.2](ocilib/changelogs/ocilib-changelog-v3.9.2.txt)_
+_[2011-07-13 . version 3.9.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.9.2.txt)_
   * Miscellaneous fixes (Detection of the ‘long long’ type on unix/linux, repaired support of Oracle client versions < 10g broken by version 3.9.0)
 
-_[2011-07-08 . version 3.9.1](ocilib/changelogs/ocilib-changelog-v3.9.1.txt)_
+_[2011-07-08 . version 3.9.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.9.1.txt)_
   * Miscellaneous fixes (string binds, objects null attribute, "returning into" SQL clause)
 
-_[2011-04-27 . version 3.9.0](ocilib/changelogs/ocilib-changelog-v3.9.0.txt)_
+_[2011-04-27 . version 3.9.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.9.0.txt)_
   * Added support for Oracle XA connectivity (X/Open Distributed Transaction Processing XA interface)
   * Added support for TAF (Transparent Application Failover) and HA (High availability) 
      
@@ -91,17 +91,17 @@ _[2011-04-27 . version 3.9.0](ocilib/changelogs/ocilib-changelog-v3.9.0.txt)_
   * Miscellaneous changes
   * Miscellaneous fixes
 
-_[2010-12-13 . version 3.8.1](ocilib/changelogs/ocilib-changelog-v3.8.1.txt)_
+_[2010-12-13 . version 3.8.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.8.1.txt)_
   * Miscellaneous changes
   * Miscellaneous fixes
 
-_[2010-10-24 . version 3.8.0](ocilib/changelogs/ocilib-changelog-v3.8.0.txt)_
+_[2010-10-24 . version 3.8.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.8.0.txt)_
   * Added support for Oracle Streams AQ (Advanced Queues)
   * Added support for SQL parsing only
   * Miscellaneous changes
   * Miscellaneous fixes
 
-_[2010-07-26 . version 3.7.0](ocilib/changelogs/ocilib-changelog-v3.7.0.txt)_
+_[2010-07-26 . version 3.7.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.7.0.txt)_
   * Added support for Session Pools
   * Extended fetch interface
   * Improved Execute/Fetch performance
@@ -109,7 +109,7 @@ _[2010-07-26 . version 3.7.0](ocilib/changelogs/ocilib-changelog-v3.7.0.txt)_
   * Miscellaneous changes
   * Miscellaneous fixes
 
-_[2010-05-18 . version 3.6.0](ocilib/changelogs/ocilib-changelog-v3.6.0.txt)_
+_[2010-05-18 . version 3.6.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.6.0.txt)_
   * Improved Array interface
    
     
@@ -121,10 +121,10 @@ _[2010-05-18 . version 3.6.0](ocilib/changelogs/ocilib-changelog-v3.6.0.txt)_
   * Miscellaneous changes
   * Miscellaneous fixes
 
-_[2010-02-03 . version 3.5.1](ocilib/changelogs/ocilib-changelog-v3.5.1.txt)_
+_[2010-02-03 . version 3.5.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.5.1.txt)_
   * Miscelleanous fixes (see changelog)
 
-_[2009-12-21 . version 3.5.0](ocilib/changelogs/ocilib-changelog-v3.5.0.txt)_
+_[2009-12-21 . version 3.5.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.5.0.txt)_
   * Added support for Oracle Database Change notification / Continuous Query Notification
   * Added support for Oracle warning (grace period notification, SQL truncation, etc ...)
   * Major Object API internal update, rewrite and improvement
@@ -133,7 +133,7 @@ _[2009-12-21 . version 3.5.0](ocilib/changelogs/ocilib-changelog-v3.5.0.txt)_
   * Miscelleanous fixes (see changelog)
   * Miscelleanous modifications (see changelog)
 
-_[2009-30-07 . version 3.4.0](ocilib/changelogs/ocilib-changelog-v3.4.0.txt)_
+_[2009-30-07 . version 3.4.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.4.0.txt)_
 
   
   * Added support for Oracle 11g remote instance management
@@ -144,7 +144,7 @@ _[2009-30-07 . version 3.4.0](ocilib/changelogs/ocilib-changelog-v3.4.0.txt)_
   
   * Miscelleanous modifications (see changelog)
 
-_[2009-30-06 . version 3.3.0](ocilib/changelogs/ocilib-changelog-v3.3.0.txt)_
+_[2009-30-06 . version 3.3.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.3.0.txt)_
 
   
   * Added SQL command and verb retrieving
@@ -171,7 +171,7 @@ _[2009-30-06 . version 3.3.0](ocilib/changelogs/ocilib-changelog-v3.3.0.txt)_
   * Miscelleanous fixes (see changelog)
   * Miscelleanous modifications (see changelog)
 
-_[2009-20-04 . version 3.2.0](ocilib/changelogs/ocilib-changelog-v3.2.0.txt)_
+_[2009-20-04 . version 3.2.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.2.0.txt)_
   * support  for direct path loading
   * extended binding capabilities (rebinding, update of array size, ...)
   * extended objects API
@@ -182,7 +182,7 @@ _[2009-20-04 . version 3.2.0](ocilib/changelogs/ocilib-changelog-v3.2.0.txt)_
   * Miscelleanous fixes (see changelog)
   * Miscelleanous modifications (see changelog)
 
-_[2009-27-01 . version 3.1.0](ocilib/changelogs/ocilib-changelog-v3.1.0.txt)_
+_[2009-27-01 . version 3.1.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.1.0.txt)_
   * Added support for Oracle REF datatype
   * Added some tracing features
   * Extended Object API
@@ -196,11 +196,11 @@ _[2009-27-01 . version 3.1.0](ocilib/changelogs/ocilib-changelog-v3.1.0.txt)_
   * Miscelleanous fixes (see changelog)
   * Miscelleanous modifications (see changelog)
 
-_[2008-17-10 . version 3.0.1](ocilib/changelogs/ocilib-changelog-v3.0.1.txt)_
+_[2008-17-10 . version 3.0.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.0.1.txt)_
   * Fixed few memory leaks introduced in v3.0.0 (see changelog)
   * Fixed ocilib sources compilation with MSVC6++
 
-_[2008-13-10 . version 3.0.0](ocilib/changelogs/ocilib-changelog-v3.0.0.txt)_
+_[2008-13-10 . version 3.0.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v3.0.0.txt)_
   * Added support for scrollable cursors
   * Added Support for Oracle Collections (VARRAYs and Nested Tables)
   * Major library rewrite
@@ -214,7 +214,7 @@ _[2008-13-10 . version 3.0.0](ocilib/changelogs/ocilib-changelog-v3.0.0.txt)_
   * Miscelleanous fixes (see changelog)
   * Miscelleanous modifications (see changelog)
 
-_[2008-24-07 . version 2.5.1](ocilib/changelogs/ocilib-changelog-v2.5.1.txt)_
+_[2008-24-07 . version 2.5.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v2.5.1.txt)_
   * Fixed runtime loading of som     OCI symbols (broken since v2.5.0)
   * Fixed runtime loading of OCI shared library on Unix-like platforms(broken since v2.5.0)
   * Fixed connection pooling emulation for Oracle 8i
