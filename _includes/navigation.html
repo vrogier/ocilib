@@ -1,7 +1,7 @@
 <nav class="navbar">
   <nav class="row">
     <div id="nav">
-      <ul class="columns medium-8 left primary-nav">
+      <ul class="columns medium-10 left primary-nav">
 
 	<li id="toggleMenu"><a href="#nav">Menu</a></li>
 	<li id="hideMenu"><a href="#toggleMenu">Menu</a></li>
@@ -26,7 +26,7 @@
 		</ul>
 	    </li>
 		{% elsif nav.title == page.title %}
-		  <li class="active"><a href="{{ nav.href }}">{{ nav.title }}</a></li>
+		  <li class="active"><a href="{{ site.baseurl }}{{ nav.href }}">{{ nav.title }}</a></li>
 		{% else %}
 		  {% if nav.href %}
 		  <li><a href="{{ site.baseurl }}{{ nav.href }}">{{ nav.title }}</a></li>
