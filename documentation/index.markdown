@@ -13,7 +13,7 @@ wordpress_id: 65
 
 ### Example of a minimal OCILIB C application  
  
-```
+{% highlight c linenos %}
     #include "ocilib.h"
     
     int main(int argc, char *argv[])
@@ -40,11 +40,11 @@ wordpress_id: 65
      
         return EXIT_SUCCESS;
     }
-```
+{% endhighlight %}
  
 ### Example of a minimal OCILIB C++ application
 
-```
+{% highlight cpp linenos %}
     #include "ocilib.hpp"
     
     using namespace ocilib;
@@ -75,4 +75,4 @@ wordpress_id: 65
      
         return EXIT_SUCCESS;
     }
-```
+{% endhighlight %}
