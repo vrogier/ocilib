@@ -15,20 +15,21 @@ wordpress_id: 68
 ### Windows platforms
 
 {% highlight bash %}
-  * unzip the archive
-  * copy ocilib\include\ocilib.h to any place located in your include's path
-  * copy ocilib\lib32|64\ocilib[x].lib to any place located in your libraries path
-  * copy ocilib\lib32|64\ocilib[x].dll to any place located in your windows path
+- unzip the archive
+- copy ocilib\include\ocilib.h to any place located in your include's path
+- copy ocilib\lib32|64\ocilib[x].lib to any place located in your libraries path
+- copy ocilib\lib32|64\ocilib[x].dll to any place located in your windows path
 {% endhighlight %}
 
 ### GNU (Unix / Linux) platforms
 
 {% highlight bash %}
-  * untar the archive	
-  * $ cd ocilib-x.y.z
-  * $ ./configure
-  * $ make
-  * $ make install (you might need to `su` to make install)
+untar the archive	
+  
+> cd ocilib-x.y.z
+> ./configure
+> make
+> make install (you might need to `su` to make install)
 {% endhighlight %}
 
 Make sure Oracle and OCILIB libraries paths are defined in your shared library environment variable
