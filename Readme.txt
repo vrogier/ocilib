@@ -74,9 +74,9 @@ FEATURES
 DOWNLOAD
 ========
 
-Available at Sourceforge.net:
+Available at :
 
-URL : http://orclib.sourceforge.net
+URL : http://www.ocilib.net
 
 LICENSE
 =======
@@ -245,14 +245,14 @@ MAKE ANY PROGRAM WITH OCILIB (WINDOWS)
 FEED BACK, BUG REPORTS 
 ======================
 
-URL : http://sourceforge.net/projects/orclib
+URL : http://www.ocilib.net/support
 
 DOCUMENTATION
 =============
 
 Included in the archive  : ocilib\doc\html folder (index.html)
 
-Online URL : http://orclib.sourceforge.net/doc/index.html
+Online : http://www.ocilib.net/documentation/html
 
 USE OF OCILIB
 =============

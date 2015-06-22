@@ -4,7 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 Name: ocilib
 Description: OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases.
-URL: http://orclib.sourceforge.net/
+URL: http://www.ocilib.net
 Version: @VERSION@
 Libs: -L@libdir@ -locilib
 Cflags: -I@includedir@

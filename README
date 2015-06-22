@@ -76,7 +76,7 @@ DOWNLOAD
 
 Available at :
 
-URL : http://orclib.sourceforge.net
+URL : http://www.ocilib.net
 
 LICENSE
 =======
@@ -207,14 +207,14 @@ add -L$(ORACLE_HOME)/lib -lclntsh to your LDFLAGS
 FEED BACK, BUG REPORTS
 ======================
 
-URL : http://orclib.sourceforge.net
+URL : http://www.ocilib.net/support
 
 DOCUMENTATION
 =============
 
 Included in the library archive, it's installed in $(OCILIB_PREFIX)/share/doc/ocilib/html/
 
-Online : http://orclib.sourceforge.net/doc/html
+Online : http://www.ocilib.net/documentation/html
 
 USE OF OCILIB
 =============

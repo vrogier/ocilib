@@ -54,8 +54,7 @@ Current version :  <b>4.1.0 (2015-05-05)</b>
 
  @section Download Download
 
- Get OCILIB from <a href="http://orclib.sourceforge.net">OCILIB Project page</a>
- at Sourceforge Website
+ Get OCILIB from <a href="http://www.ocilib.net">OCILIB website</a>
 
  @section Author Author
 
