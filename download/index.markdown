@@ -14,7 +14,7 @@ wordpress_id: 68
 
 ### Windows platforms
 
-{% highlight %}
+{% highlight bash %}
   * unzip the archive
   * copy ocilib\include\ocilib.h to any place located in your include's path
   * copy ocilib\lib32|64\ocilib[x].lib to any place located in your libraries path
@@ -23,7 +23,7 @@ wordpress_id: 68
 
 ### GNU (Unix / Linux) platforms
 
-{% highlight %}
+{% highlight bash %}
   * untar the archive	
   * $ cd ocilib-x.y.z
   * $ ./configure
