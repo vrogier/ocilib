@@ -558,7 +558,8 @@ li.odd
     padding: 3px 10px;
 }
 
-.highlight  { background: #ffffff; }
+.highlight  {  color: #000000; background: #ffffff; }
+.highlight .n {  color: #000000; }
 .highlight .c { color: #999988; font-style: italic } /* Comment */
 .highlight .err { color: #a61717; background-color: #e3d2d2 } /* Error */
 .highlight .k { font-weight: bold } /* Keyword */
