@@ -28,8 +28,9 @@ Check project bug tracker at GitHub
 
 
 <br/>
-**Older and unsupported resources (from previous sourceforge hosting)**:
+Older and unsupported resources (from previous sourceforge hosting):
 <br/>
+
 * [**OCILIB Mailing lists archives**](http://sourceforge.net/mail/?group_id=140360)
 <br/>
 Archived ([users list](http://sourceforge.net/mailarchive/forum.php?forum_name=orclib-users) and [devel list](http://sourceforge.net/mailarchive/forum.php?forum_name=orclib-devel))
