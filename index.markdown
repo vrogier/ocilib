@@ -27,7 +27,13 @@ The OCILIB library  :
 ## Latest version
 
 The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/)
-  
+ 
+## Recent Posts
+
+{% for post in site.posts limit:5 site.recent_posts %}
+  *  [{% if site.titlecase %}{{ post.title | titlecase }}{% else %}{{ post.title }}{% endif %}]({{ site.baseurl }}{{ post.url }})
+{% endfor %}
+ 
 ## Testimonies
   
 >"OCILIB code is truly a really nice piece of code"
@@ -47,4 +53,3 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 ><br/>   
 >James D'Arcy
 >CommonwealthBank
-  
