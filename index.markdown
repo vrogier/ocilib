@@ -84,7 +84,7 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 			{
 			  total = total + data.assets[i].download_count;
 			}				
-			document.getElementById('DownloadCount').innerHTML =  '<br/>Total of download since fist release : ' + '<b>' + total + '</b>';
+			document.getElementById('DownloadCount').innerHTML =  '<br/>Total of download since first release : ' + '<b>' + total + '</b>';
 		});
 
 	}());
