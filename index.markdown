@@ -28,6 +28,8 @@ The OCILIB library  :
 
 The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/)
  
+ <p id="DownloadCount"></p>
+ 
 ## Recent Posts
 
 {% for post in site.posts limit:5 site.recent_posts %}
@@ -53,3 +55,37 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 ><br/>   
 >James D'Arcy
 >CommonwealthBank
+
+<script>
+	(function() {
+
+		var GetJson = function(url, successHandler, errorHandler) {
+			if (typeof XMLHttpRequest == 'undefined') {
+				return notSupported();
+			}
+			var xhr = new XMLHttpRequest();
+			xhr.open('get', url, true);
+			xhr.responseType = 'json';
+			xhr.onload = function() {
+				var status = xhr.status;
+				if (status == 200) {
+					successHandler && successHandler(xhr.response);
+				} else {
+					errorHandler && errorHandler(status);
+				}
+			};
+			xhr.send();
+		};
+
+		GetJson('https://api.github.com/repos/vrogier/ocilib/releases/latest', function(data)
+		{			
+			var total = 56163; // Value as 2015-06-22 from source forge
+			for (i in data.assets)
+			{
+			  total = total + data.assets[i].download_count;
+			}				
+			document.getElementById('DownloadCount').innerHTML =  '<br/>Total of download since fist release : ' + '<b>' + total + '</b>';
+		});
+
+	}());
+</script>
