@@ -57,13 +57,36 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 >CommonwealthBank
 
 <script>
+
+    function getHTTPObject()
+    {
+        if (typeof XMLHttpRequest != 'undefined') 
+        {
+            return new XMLHttpRequest();
+        }
+        try 
+        { 
+            return new ActiveXObject("Msxml2.XMLHTTP"); 
+        } catch (e)
+        { 
+            try 
+            { 
+               return new ActiveXObject("Microsoft.XMLHTTP"); 
+            } 
+            catch (e)
+            {
+            } 
+        }
+        return false;
+    }
+    
 	(function() {
 
 		var GetJson = function(url, successHandler, errorHandler) {
 			if (typeof XMLHttpRequest == 'undefined') {
 				return notSupported();
 			}
-			var xhr = new XMLHttpRequest();
+			var xhr = getHTTPObject();
 			xhr.open('get', url, true);
 			xhr.responseType = 'json';
 			xhr.onload = function() {
