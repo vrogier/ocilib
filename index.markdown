@@ -83,11 +83,9 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 	(function() {
 
 		var GetJson = function(url, successHandler, errorHandler) 
-        {
-			
+        {			
 			var xhr = getHTTPObject();
 			xhr.open('get', url, true);
-			xhr.responseType = 'json';
 			xhr.onload = function() {
 				var status = xhr.status;
 				if (status == 200) {
@@ -101,7 +99,7 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 
 		GetJson('https://api.github.com/repos/vrogier/ocilib/releases/latest', function(data)
 		{			
-			var total = 56163; // Value as 2015-06-22 from source forge
+			var total = 56163; // Value as 2015-06-22 from source forge. Need to add rest call to SF.Net
 			for (i in data.assets)
 			{
 			  total = total + data.assets[i].download_count;
