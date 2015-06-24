@@ -111,7 +111,7 @@
     OCI_CHECK_COMPAT(elem->con, OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)  \
                                                                                     \
     call_retval = call_status = OCI_ElemSetNumber(elem, (void *)&value,             \
-                                                  (uword) sizeof(call_retval),      \
+                                                  (uword) sizeof(value),            \
                                                   (uword)number_type);              \
                                                                                     \
     OCI_LIB_CALL_EXIT()
