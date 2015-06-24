@@ -82,10 +82,9 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
     
 	(function() {
 
-		var GetJson = function(url, successHandler, errorHandler) {
-			if (typeof XMLHttpRequest == 'undefined') {
-				return notSupported();
-			}
+		var GetJson = function(url, successHandler, errorHandler) 
+        {
+			
 			var xhr = getHTTPObject();
 			xhr.open('get', url, true);
 			xhr.responseType = 'json';
