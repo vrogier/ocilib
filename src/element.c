@@ -158,14 +158,6 @@ OCI_Elem * OCI_ElemInit
                 
         switch (elem->typinf->cols[0].datatype)
         {
-            case OCI_CDT_NUMERIC:
-            {
-                if (!elem->handle)
-                {
-                    elem->handle = (OCINumber *) OCI_MemAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
-                }
-                break;
-            }
             case OCI_CDT_TEXT:
             case OCI_CDT_TIMESTAMP:
             case OCI_CDT_INTERVAL:
@@ -358,11 +350,6 @@ boolean OCI_API OCI_ElemFree
         }
 
         OCI_FreeObjectFromType(elem->obj, elem->typinf->cols[0].datatype);
-    }
-
-    if ((OCI_OBJECT_ALLOCATED == elem->hstate) && (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype))
-    {
-        OCI_FREE(elem->handle)
     }
 
     OCI_FREE(elem->tmpbuf)
