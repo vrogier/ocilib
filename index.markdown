@@ -89,7 +89,7 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 			xhr.onload = function() {
 				var status = xhr.status;
 				if (status == 200) {
-					successHandler && successHandler(xhr.response);
+					successHandler && successHandler(JSON.parse(xhr.responseText));
 				} else {
 					errorHandler && errorHandler(status);
 				}
