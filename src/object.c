@@ -674,7 +674,7 @@ boolean OCI_API OCI_ObjectFree
 
     if ((OCI_OBJECT_ALLOCATED == obj->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate))
     {
-        OCI_OCIObjectFree(obj->con->env, obj->con->err, obj->handle, OCI_OBJECTFREE_FORCE);
+        OCI_OCIObjectFree(obj->con->env, obj->con->err, obj->handle, OCI_DEFAULT);
     }
 
     OCI_FREE(obj->tmpbuf)

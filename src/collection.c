@@ -155,7 +155,7 @@ boolean OCI_API OCI_CollFree
 
     if ((OCI_OBJECT_ALLOCATED == coll->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == coll->hstate))
     {
-        OCI_OCIObjectFree(coll->con->env, coll->typinf->con->err, coll->handle, OCI_OBJECTFREE_NONULL);
+        OCI_OCIObjectFree(coll->con->env, coll->typinf->con->err, coll->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != coll->hstate)

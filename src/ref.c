@@ -226,7 +226,7 @@ boolean OCI_API OCI_RefFree
 
     if ((OCI_OBJECT_ALLOCATED == ref->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == ref->hstate))
     {
-        OCI_OCIObjectFree(ref->con->env, ref->con->err,  ref->handle, OCI_OBJECTFREE_NONULL);
+        OCI_OCIObjectFree(ref->con->env, ref->con->err, ref->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != ref->hstate)
