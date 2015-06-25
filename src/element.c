@@ -279,7 +279,11 @@ boolean OCI_ElemGetNumber
     OCI_CHECK(NULL == elem, FALSE)
     OCI_CHECK(NULL == value, FALSE)
 
-    if (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)
+    if (OCI_ElemIsNull(elem))
+    {
+        res = TRUE;
+    }
+    else if (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)
     {
         OCINumber *num = (OCINumber *) elem->handle;
 
