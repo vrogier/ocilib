@@ -608,7 +608,7 @@ struct OCI_Elem
     OCI_TypeInfo    *typinf;     /* object type information */
     OCIInd          *pind;       /* indicator  pointer */
     OCIInd           ind;        /* internal temporary data state indicator */
-    char             padding[2]; /* dummy variable for alignment */ 
+    uword            alloc;      /* is handle locally allocated */ 
 };
 
 /*

@@ -145,6 +145,9 @@ OCI_Elem * OCI_ElemInit
 
     if (*pelem)
     {
+        void *prev_handle = (*pelem)->handle;
+        uword prev_alloc  = (*pelem)->alloc;
+
         res = TRUE;
 
         elem = *pelem;
@@ -154,10 +157,25 @@ OCI_Elem * OCI_ElemInit
         elem->typinf = typinf;
         elem->handle = handle;
         elem->init   = FALSE;
+        elem->alloc  = FALSE;
         elem->hstate = handle ? OCI_OBJECT_FETCHED_CLEAN : OCI_OBJECT_ALLOCATED;
                 
+        if (prev_alloc && prev_handle)
+        {
+            OCI_FREE(prev_handle)
+        }
+
         switch (elem->typinf->cols[0].datatype)
         {
+            case OCI_CDT_NUMERIC:
+            {
+                if (!elem->handle)
+                {
+                    elem->handle = (OCINumber *)OCI_MemAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
+                    elem->alloc  = TRUE;
+                }
+                break;
+            }
             case OCI_CDT_TEXT:
             case OCI_CDT_TIMESTAMP:
             case OCI_CDT_INTERVAL:
@@ -354,6 +372,11 @@ boolean OCI_API OCI_ElemFree
         }
 
         OCI_FreeObjectFromType(elem->obj, elem->typinf->cols[0].datatype);
+    }
+
+    if (elem->alloc)
+    {
+        OCI_FREE(elem->handle)
     }
 
     OCI_FREE(elem->tmpbuf)
