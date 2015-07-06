@@ -25,7 +25,7 @@ All resources have been moved:
 <li>Discussion (on google groups)</li>
 </ul>
 <br/>
-Refer to [support links](({{site.projecturl}}/support/)) for detailed resources links.
+Refer to [support links]({{site.baseurl}}/support/) for detailed resources links.
 <br/>
 <br/>
 Have a good day !

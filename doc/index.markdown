@@ -8,7 +8,7 @@ title: Documentation
 wordpress_id: 65
 ---
 
-* [Browse online HTML documentation]({{site.baseurl}}/documentation/html/)
+* [Browse online HTML documentation]({{site.baseurl}}/doc/html/)
 
 
 ### Example of a minimal OCILIB C application  

@@ -8,7 +8,7 @@ title: Download
 wordpress_id: 68
 ---
 
-* Get the lastest package from GitHub : [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/)
+* Get the lastest package from GitHub :[version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/)
 
 ## Installation
 
@@ -33,7 +33,7 @@ untar the archive
 {% endhighlight %}
 
 Make sure Oracle and OCILIB libraries paths are defined in your shared library environment variable
-You need to provide extra configure parameters when using Instant Clients - [see Installation section]({{site.baseurl}}//documentation/html/group___ocilib_c_api_installation.html))
+You need to provide extra configure parameters when using Instant Clients - [see Installation section]({{site.baseurl}}/doc/html/group___ocilib_c_api_installation.html))
 
 ### Compatibilities
 	
