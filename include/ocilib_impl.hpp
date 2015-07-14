@@ -384,15 +384,18 @@ inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFun
 {
     Release();
 
-    _smartHandle = Environment::GetSmartHandle<typename HandleHolder<THandleType>::SmartHandle*>(handle);
+    if (handle)
+    {
+        _smartHandle = Environment::GetSmartHandle<typename HandleHolder<THandleType>::SmartHandle*>(handle);
 
-    if (!_smartHandle)
-    {
-		_smartHandle = new SmartHandle(this, handle, func, parent);
-    }
-    else
-    {
-        _smartHandle->Acquire(this);
+        if (!_smartHandle)
+        {
+            _smartHandle = new SmartHandle(this, handle, func, parent);
+        }
+        else
+        {
+            _smartHandle->Acquire(this);
+        }
     }
 }
 
@@ -697,7 +700,7 @@ inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
 
     Environment::SetSmartHandle<typename HandleHolder<THandleType>::SmartHandle*>(_handle, 0);
 
-    if (_func)
+    if (_func && _handle)
     {
         ret = _func(_handle);
         chk = TRUE;

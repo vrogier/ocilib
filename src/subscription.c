@@ -47,7 +47,8 @@ boolean OCI_SubscriptionClose
     OCI_Subscription *sub
 )
 {
-    boolean res = TRUE;
+    boolean res   = TRUE;
+    boolean alloc = FALSE;
 
     OCI_CHECK(NULL == sub, FALSE);
 
@@ -61,6 +62,8 @@ boolean OCI_SubscriptionClose
         {
             sub->con = OCI_ConnectionCreate(sub->saved_db, sub->saved_user,
                                             sub->saved_pwd, OCI_SESSION_DEFAULT);
+
+            alloc = TRUE;
         }
 
         if (sub->con)
@@ -73,7 +76,10 @@ boolean OCI_SubscriptionClose
                                           sub->err,(ub4) OCI_DEFAULT)
             )
 
-            OCI_ConnectionFree(sub->con);
+            if (alloc)
+            {
+                OCI_ConnectionFree(sub->con);
+            }
         }
     }
 
