@@ -166,6 +166,7 @@
 
 /* -- external C pointers ---- */
 
+#define OCI_IPC_ORACLE           0
 #define OCI_IPC_VOID             1
 #define OCI_IPC_SHORT            2
 #define OCI_IPC_INT              3
@@ -235,7 +236,7 @@
 #define OCI_IPC_BATCH_ERRORS     61
 #define OCI_IPC_STATEMENT_ARRAY  62
 
-#define OCI_IPC_COUNT            OCI_IPC_STATEMENT_ARRAY
+#define OCI_IPC_COUNT            OCI_IPC_STATEMENT_ARRAY + 1
 
 /* --------------------------------------------------------------------------------------------- *
  * Oracle conditionnal features

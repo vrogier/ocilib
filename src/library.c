@@ -1399,7 +1399,10 @@ boolean OCI_API OCI_Initialize
         /* create environment on success */
 
         res = res && OCI_SUCCESSFUL(OCIEnvCreate(&OCILib.env, oci_mode,
-                                                 (dvoid *) NULL, NULL, NULL, NULL,
+                                                 (dvoid *) &OCILib, 
+                                                 OCI_MemAllocOracleClient,
+                                                 OCI_MemReallocOracleClient,
+                                                 OCI_MemFreeOracleClient,
                                                  (size_t) 0, (dvoid **) NULL));
 
         if (!res)
@@ -1424,6 +1427,10 @@ boolean OCI_API OCI_Initialize
             OCIThreadProcessInit();
 
             res = OCI_SUCCESSFUL(OCIThreadInit(OCILib.env, OCILib.err));
+
+            OCILib.mem_mutex = OCI_MutexCreateInternal();
+
+            res = (NULL != OCILib.mem_mutex);
         }
 
         /* create thread key for thread errors */
@@ -1552,6 +1559,13 @@ boolean OCI_API OCI_Cleanup
 
     if (OCI_LIB_THREADED)
     {
+        if (OCILib.mem_mutex)
+        {
+            OCI_MutexFree(OCILib.mem_mutex);
+        }
+
+        OCILib.mem_mutex = NULL;
+
         OCI_CALL0
         (
             res, OCILib.err,
@@ -1697,6 +1711,34 @@ unsigned int OCI_API OCI_GetCharset
     OCI_CHECK_INITIALIZED()
 
     call_retval = (unsigned int) OCI_CHAR_TEXT;
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_GetAllocatedBytes
+* --------------------------------------------------------------------------------------------- */
+
+big_uint OCI_API OCI_GetAllocatedBytes
+(
+    unsigned int mem_type
+)
+{
+    OCI_LIB_CALL_ENTER(big_uint, 0)
+
+    OCI_CHECK_INITIALIZED()
+
+    if (mem_type & OCI_MEM_ORACLE)
+    {
+        call_retval += OCILib.mem_bytes_oci;
+    }
+
+    if (mem_type & OCI_MEM_OCILIB)
+    {
+        call_retval += OCILib.mem_bytes_lib;
+    }
+
     call_status = TRUE;
 
     OCI_LIB_CALL_EXIT()

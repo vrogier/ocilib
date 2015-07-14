@@ -931,6 +931,31 @@ sword OCI_OCIObjectFree
     ub2       flags
 );
 
+void * OCI_MemAllocOracleClient
+(
+    void   *ctxp, 
+    size_t  size
+);
+
+void * OCI_MemReallocOracleClient
+(
+    void    *ctxp, 
+    void    *memptr, 
+    size_t  newsize
+);
+
+void OCI_MemFreeOracleClient
+(
+    void *ctxp,
+    void *memptr
+);
+
+void OCI_MemUpdateBytes
+(
+    unsigned int type,
+    big_int  size
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * mutex.c
  * --------------------------------------------------------------------------------------------- */

@@ -892,6 +892,30 @@ public:
 	*/
 	typedef Flags<ShutdownFlagsValues> ShutdownFlags;
 
+    /**
+    * @brief
+    * Allocated Bytes enumerated values
+    *
+    */
+    enum AllocatedBytesValues
+    {
+        /** Allocated bytes by Oracle Client*/
+        OracleClientBytes = OCI_MEM_ORACLE,
+        /** Allocated bytes by OCILIB */
+        OcilibBytes = OCI_MEM_OCILIB,
+        /** All Allocated bytes */
+        AllBytes = OCI_MEM_ALL
+    };
+
+    /**
+    * @brief
+    * Allocated Bytes 
+    *
+    * Possible values are Environment::AllocatedBytesValues
+    *
+    */
+    typedef Flags<AllocatedBytesValues> AllocatedBytesFlags;
+
 	/**
 	* @typedef HAHandlerProc
 	*
@@ -959,6 +983,16 @@ public:
      *
      */
     static Environment::CharsetMode GetCharset();
+
+
+    /**
+    * @brief
+    * Return the current number of bytes allocated internally in the library
+    *
+    * @param type : type of memory to request
+    *
+    */
+    static big_uint GetAllocatedBytes(AllocatedBytesFlags type);
 
     /**
     * @brief

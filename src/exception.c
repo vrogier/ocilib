@@ -40,6 +40,7 @@
 
 static otext * OCILib_TypeNames[OCI_IPC_COUNT] =
 {
+    OTEXT("Oracle memory"),
     OTEXT("generic pointer"),
     OTEXT("short pointer"),
     OTEXT("int pointer"),
@@ -409,7 +410,7 @@ void OCI_ExceptionNullPointer
 
         osprintf(err->str, osizeof(err->str) - (size_t) 1,
                  OCILib_ErrorMsg[OCI_ERR_NULL_POINTER],
-                 OCILib_TypeNames[type-1]);
+                 OCILib_TypeNames[type]);
     }
 
     OCI_ExceptionRaise(err);
@@ -439,7 +440,7 @@ void OCI_ExceptionMemory
         osprintf(err->str,
                  osizeof(err->str) - (size_t) 1,
                  OCILib_ErrorMsg[OCI_ERR_MEMORY],
-                 OCILib_TypeNames[type-1],
+                 OCILib_TypeNames[type],
                  nb_bytes);
     }
 

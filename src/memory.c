@@ -38,6 +38,20 @@
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
+#define OCI_MUTEXED_CALL(exp)               \
+                                            \
+    if (OCILib.mem_mutex)                   \
+    {                                       \
+       OCI_MutexAcquire(OCILib.mem_mutex);  \
+    }                                       \
+                                            \
+    exp;                                    \
+                                            \
+    if (OCILib.mem_mutex)                   \
+    {                                       \
+       OCI_MutexRelease(OCILib.mem_mutex);  \
+    }                                       \
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_MemAlloc
  * --------------------------------------------------------------------------------------------- */
@@ -50,24 +64,29 @@ void * OCI_MemAlloc
     boolean zero_fill
 )
 {
-    void * ptr  = NULL;
-    size_t size = (size_t) (block_size * block_count);
+    OCI_MemoryBlock * mem_block = NULL;
+    size_t size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
 
-    ptr = (void *) malloc(size);
+    mem_block = (OCI_MemoryBlock *)malloc(size);
 
-    if (ptr)
+    if (mem_block)
     {
         if (zero_fill)
         {
-            memset(ptr, 0, size);
+            memset(mem_block, 0, size);
         }
+
+        mem_block->type = ptr_type;
+        mem_block->size = (unsigned int) size;
+
+        OCI_MemUpdateBytes(mem_block->type, mem_block->size);
     }
     else
     {
         OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
     }
 
-    return ptr;
+    return ((unsigned char *) mem_block) + sizeof(mem_block);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -82,17 +101,37 @@ void * OCI_MemRealloc
     size_t block_count
 )
 {
-    size_t size = (size_t) (block_size * block_count);
-    void * ptr  = (void *) realloc(ptr_mem, size);
+    OCI_MemoryBlock * mem_block = NULL;
 
-    if (!ptr && ptr_mem)
+    if (ptr_mem)
     {
-        OCI_MemFree(ptr_mem);
-
-        OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
+        mem_block = (OCI_MemoryBlock *) (((unsigned char*)ptr_mem) - sizeof(*mem_block));
     }
 
-    return ptr;
+    size_t size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
+
+    if (mem_block->size < size)
+    {
+        mem_block = (OCI_MemoryBlock *)realloc(mem_block, size);
+
+        if (!mem_block && ptr_mem)
+        {
+            OCI_MemFree(ptr_mem);
+
+            OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
+        }
+        else
+        {
+            big_int size_diff = size - mem_block->size;
+
+            mem_block->type = ptr_type;
+            mem_block->size = (unsigned int) size;
+
+            OCI_MemUpdateBytes(mem_block->type, size_diff);
+        }
+    }
+
+    return ((unsigned char *)mem_block) + sizeof(mem_block);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -106,9 +145,39 @@ void OCI_MemFree
 {
     if (ptr_mem)
     {
-        free(ptr_mem);
+        OCI_MemoryBlock *mem_block = (OCI_MemoryBlock *)(((unsigned char*)ptr_mem) - sizeof(*mem_block));
+       
+        if (mem_block)
+        {
+            int prev_size = (int)mem_block->size;
+
+            OCI_MemUpdateBytes(mem_block->type, -prev_size);
+
+            free(mem_block);
+        }
     }
 }
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_MemUpdateBytes
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_MemUpdateBytes
+(
+    unsigned int type,
+    big_int size
+)
+{
+    if (OCI_IPC_ORACLE == type)
+    {
+        OCI_MUTEXED_CALL(OCILib.mem_bytes_oci += size)
+    }
+    else
+    {
+        OCI_MUTEXED_CALL(OCILib.mem_bytes_lib += size)
+    }
+}
+
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_HandleAlloc
@@ -127,7 +196,7 @@ sword OCI_HandleAlloc
 
     if (OCI_SUCCESSFUL(ret))
     {
-        OCILib.nb_hndlp++;
+        OCI_MUTEXED_CALL(OCILib.nb_hndlp++)
     }
 
     return ret;
@@ -147,7 +216,7 @@ sword OCI_HandleFree
 
     if (hndlp)
     {
-        OCILib.nb_hndlp--;
+        OCI_MUTEXED_CALL(OCILib.nb_hndlp--)
 
         ret = OCIHandleFree(hndlp, type);
     }
@@ -172,7 +241,7 @@ sword OCI_DescriptorAlloc
 
     if (OCI_SUCCESSFUL(ret))
     {
-        OCILib.nb_descp++;
+        OCI_MUTEXED_CALL(OCILib.nb_descp++)
     }
 
     return ret;
@@ -216,7 +285,7 @@ sword OCI_DescriptorArrayAlloc
 
     if (OCI_SUCCESSFUL(ret))
     {
-        OCILib.nb_descp += nb_elem;
+        OCI_MUTEXED_CALL(OCILib.nb_descp += nb_elem)
     }
 
     return ret;
@@ -236,7 +305,7 @@ sword OCI_DescriptorFree
 
     if (descp)
     {
-        OCILib.nb_descp--;
+        OCI_MUTEXED_CALL(OCILib.nb_descp--)
 
         ret = OCIDescriptorFree(descp, type);
     }
@@ -280,7 +349,7 @@ sword OCI_DescriptorArrayFree
             }
         }
 
-        OCILib.nb_descp -= nb_elem;
+        OCI_MUTEXED_CALL(OCILib.nb_descp -= nb_elem)
     }
 
     return ret;
@@ -307,7 +376,7 @@ sword OCI_ObjectNew
 
     if (OCI_SUCCESSFUL(ret))
     {
-        OCILib.nb_objinst++;
+        OCI_MUTEXED_CALL(OCILib.nb_objinst++)
     }
 
     return ret;
@@ -329,7 +398,7 @@ sword OCI_OCIObjectFree
 
     if (instance)
     {
-        OCILib.nb_objinst--;
+        OCI_MUTEXED_CALL(OCILib.nb_objinst--)
 
         ret = OCIObjectFree(env, err, instance, flags);
     }
@@ -337,3 +406,48 @@ sword OCI_OCIObjectFree
     return ret;
 }
 
+/* --------------------------------------------------------------------------------------------- *
+* OCI_MemAllocOracleClient
+* --------------------------------------------------------------------------------------------- */
+
+void * OCI_MemAllocOracleClient
+(
+    void *ctxp, 
+    size_t size
+)
+{
+    OCI_NOT_USED(ctxp)
+        
+    return OCI_MemAlloc(OCI_IPC_ORACLE, size, 1, FALSE);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_MemReallocOracleClient
+* --------------------------------------------------------------------------------------------- */
+
+void * OCI_MemReallocOracleClient
+(
+    void *ctxp, 
+    void *memptr, 
+    size_t newsize
+)
+{
+    OCI_NOT_USED(ctxp)
+        
+    return OCI_MemRealloc(memptr, OCI_IPC_ORACLE, newsize, 1);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_MemFreeOracleClient
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_MemFreeOracleClient
+(
+    void *ctxp,
+    void *memptr
+)
+{
+    OCI_NOT_USED(ctxp)
+
+    OCI_MemFree(memptr);
+}

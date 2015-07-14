@@ -274,6 +274,7 @@ OCI_DEFINE_FLAG_OPERATORS(Environment::StartFlagsValues)
 OCI_DEFINE_FLAG_OPERATORS(Environment::StartModeValues)
 OCI_DEFINE_FLAG_OPERATORS(Environment::ShutdownModeValues)
 OCI_DEFINE_FLAG_OPERATORS(Environment::ShutdownFlagsValues)
+OCI_DEFINE_FLAG_OPERATORS(Environment::AllocatedBytesValues)
 OCI_DEFINE_FLAG_OPERATORS(Transaction::TransactionFlagsValues)
 OCI_DEFINE_FLAG_OPERATORS(Column::PropertyFlagsValues)
 OCI_DEFINE_FLAG_OPERATORS(Subscription::ChangeTypesValues)
@@ -910,6 +911,11 @@ inline Environment::ImportMode Environment::GetImportMode()
 inline Environment::CharsetMode Environment::GetCharset()
 {
 	return CharsetMode(static_cast<CharsetMode::type>(Check(OCI_GetCharset())));
+}
+
+inline big_uint Environment::GetAllocatedBytes(AllocatedBytesFlags type)
+{
+    return Check(OCI_GetAllocatedBytes(type.GetValues()));
 }
 
 inline bool Environment::Initialized()

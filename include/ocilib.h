@@ -1137,6 +1137,12 @@ typedef unsigned int big_uint;
 
 #define OCI_ERR_COUNT                       28
 
+/* allocated bytes types */
+
+#define OCI_MEM_ORACLE                      1
+#define OCI_MEM_OCILIB                      2
+#define OCI_MEM_ALL                         OCI_MEM_ORACLE | OCI_MEM_OCILIB
+
 /* binding */
 
 #define OCI_BIND_BY_POS                     0
@@ -1831,6 +1837,25 @@ OCI_EXPORT unsigned int OCI_API OCI_GetImportMode
 OCI_EXPORT unsigned int OCI_API OCI_GetCharset
 (
     void
+);
+
+/**
+* @brief
+* Return the current number of bytes allocated internally in the library
+*
+* @param mem_type : type of memory to request
+* 
+* @note
+* Possible values are:
+* - OCI_MEM_ORACLE : bytes allocated by Oracle client library
+* - OCI_MEM_OCILIB : bytes allocated by OCILIB library
+* - OCI_MEM_ORACLE : bytes allocated by all libraries
+*
+*/
+
+OCI_EXPORT big_uint OCI_API OCI_GetAllocatedBytes
+(
+    unsigned int mem_type
 );
 
 /**

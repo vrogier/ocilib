@@ -42,6 +42,19 @@
  * ********************************************************************************************* */
 
 /*
+* OCI_MemoryBlock : Internal block of Memory.
+*
+*/
+
+struct OCI_MemoryBlock
+{
+    unsigned int type; /* type of allocated data */
+    unsigned int size; /* allocated memory size*/
+};
+
+typedef struct OCI_MemoryBlock OCI_MemoryBlock;
+
+/*
  * OCI_Item : Internal list entry.
  *
  * The library needs to manage internal list of objects in order to be able to
@@ -217,6 +230,9 @@ struct OCI_Library
     OCI_HashTable       *sql_funcs;               /* hash table handle for sql function names */
     POCI_HA_HANDLER      ha_handler;              /* HA event callback*/
     otext               *formats[OCI_FMT_COUNT];  /* string conversion default formats */
+    big_uint             mem_bytes_oci;           /* allocated bytes by OCI client */
+    big_uint             mem_bytes_lib;           /* allocated bytes by OCILIB */
+    OCI_Mutex           *mem_mutex;               /* mutex for memory counters */
 #ifdef OCI_IMPORT_RUNTIME
     LIB_HANDLE           lib_handle;              /* handle of runtime shared library */
 #endif
