@@ -57,8 +57,6 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 >CommonwealthBank
 
 <script>
- 
-    var total = 56242; // Value as 2015-07-15 from source forge. Need to add rest call to SF.Net
 
     function getHTTPObject()
     {
@@ -83,7 +81,7 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
     }
     
 	(function() {
-        
+
 		var GetJson = function(url, successHandler, errorHandler) 
         {			
 			var xhr = getHTTPObject();
@@ -101,23 +99,13 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 
 		GetJson('https://api.github.com/repos/vrogier/ocilib/releases/latest', function(data)
 		{			
+			var total = 56242; // Value as 2015-07-15 from source forge. Need to add rest call to SF.Net
 			for (i in data.assets)
 			{
 			  total = total + data.assets[i].download_count;
 			}				
-            
-            document.getElementById('DownloadCount').innerHTML =  '<br/>Total of download since first release : ' + '<b>' + total + '</b>';
+			document.getElementById('DownloadCount').innerHTML =  '<br/>Total of download since first release : ' + '<b>' + total + '</b>';
 		});
-        
-       <!-- 
-        GetJson('http://sourceforge.net/projects/orclib/files/stats/json?start_date=2007-1-1&end_date=' + GetDate(), function(data)
-		{		
-			var json = BufferToJson(data);
-
-			total = total + json.summaries.time.downloads;	
-
-            document.getElementById('DownloadCount').innerHTML =  '<br/>Total of download since first release : ' + '<b>' + total + '</b>';			
-		}); -->        
 
 	}());
 </script>
