@@ -122,7 +122,7 @@ void * OCI_MemRealloc
         }
         else
         {
-            big_int size_diff = size - mem_block->size;
+            big_int size_diff = (big_int) size - mem_block->size;
 
             mem_block->type = ptr_type;
             mem_block->size = (unsigned int) size;
@@ -149,9 +149,7 @@ void OCI_MemFree
        
         if (mem_block)
         {
-            int prev_size = (int)mem_block->size;
-
-            OCI_MemUpdateBytes(mem_block->type, -prev_size);
+            OCI_MemUpdateBytes(mem_block->type, (big_int) 0 - mem_block->size);
 
             free(mem_block);
         }

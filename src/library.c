@@ -1559,12 +1559,18 @@ boolean OCI_API OCI_Cleanup
 
     if (OCI_LIB_THREADED)
     {
-        if (OCILib.mem_mutex)
-        {
-            OCI_MutexFree(OCILib.mem_mutex);
-        }
+        /* free the memory mutex. We set its reference in the library structure to NULL first otherwise 
+           it would generate an OCI error when calling OCI_HandleAlloc() for freeing the mutex object error handle
+        */
 
+        OCI_Mutex * mutex = OCILib.mem_mutex;
+        
         OCILib.mem_mutex = NULL;
+
+        if (mutex)
+        {
+            OCI_MutexFree(mutex);
+        }
 
         OCI_CALL0
         (
