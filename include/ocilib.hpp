@@ -35,7 +35,7 @@
     |            This C++ header defines C++ wrapper classes around the OCILIB C API          |
     |            It requires a compatible version of OCILIB                                   |
     +-----------------------------------------------------------------------------------------+
-
+    
  */
 
 /* --------------------------------------------------------------------------------------------- *
@@ -271,32 +271,32 @@ typedef Enum<OracleVersionValues> OracleVersion;
 */
 enum DataTypeValues
 {
-	/** NUMERIC */
-	TypeNumeric = OCI_CDT_NUMERIC,
-	/** DATE */
-	TypeDate = OCI_CDT_DATETIME,
-	/** TEXT */
-	TypeString = OCI_CDT_TEXT,
-	/** LONG / LONG RAW */
-	TypeLong = OCI_CDT_LONG,
-	/** SQL CURSOR */
-	TypeStatement = OCI_CDT_CURSOR,
-	/** CLOB or BLOB */
-	TypeLob = OCI_CDT_LOB,
-	/** FILE */
-	TypeFile = OCI_CDT_FILE,
-	/** TIMESTAMP */
-	TypeTimestamp = OCI_CDT_TIMESTAMP,
-	/** INTERVAL */
-	TypeInterval = OCI_CDT_INTERVAL,
-	/** RAW */
-	TypeRaw = OCI_CDT_RAW,
-	/** Object type */
-	TypeObject = OCI_CDT_OBJECT,
-	/** Collection  */
-	TypeCollection = OCI_CDT_COLLECTION,
-	/** Object REF */
-	TypeReference = OCI_CDT_REF
+    /** NUMERIC */
+    TypeNumeric = OCI_CDT_NUMERIC,
+    /** DATE */
+    TypeDate = OCI_CDT_DATETIME,
+    /** TEXT */
+    TypeString = OCI_CDT_TEXT,
+    /** LONG / LONG RAW */
+    TypeLong = OCI_CDT_LONG,
+    /** SQL CURSOR */
+    TypeStatement = OCI_CDT_CURSOR,
+    /** CLOB or BLOB */
+    TypeLob = OCI_CDT_LOB,
+    /** FILE */
+    TypeFile = OCI_CDT_FILE,
+    /** TIMESTAMP */
+    TypeTimestamp = OCI_CDT_TIMESTAMP,
+    /** INTERVAL */
+    TypeInterval = OCI_CDT_INTERVAL,
+    /** RAW */
+    TypeRaw = OCI_CDT_RAW,
+    /** Object type */
+    TypeObject = OCI_CDT_OBJECT,
+    /** Collection  */
+    TypeCollection = OCI_CDT_COLLECTION,
+    /** Object REF */
+    TypeReference = OCI_CDT_REF
 };
 
 /**
@@ -315,22 +315,22 @@ typedef Enum<DataTypeValues> DataType;
 */
 enum NumericTypeValues
 {
-	/** Signed short */
-	NumericShort = OCI_NUM_SHORT,
-	/** Signed Integer */
-	NumericInt = OCI_NUM_INT,
-	/** Signed Big Integer (Integer or Long Integer depending on the compiler )*/
-	NumericBigInt = OCI_NUM_BIGINT,
-	/** Unsigned short */
-	NumericUnsignedShort = OCI_NUM_USHORT,
-	/** Unsigned Integer */
-	NumericUnsignedInt = OCI_NUM_UINT,
-	/** Unsigned Big Integer (Integer or Long Integer depending on the compiler )*/
-	NumericUnsignedBigInt = OCI_NUM_BIGUINT,
-	/** Double  */
-	NumericDouble = OCI_NUM_DOUBLE,
-	/** Float */
-	NumericFloat = OCI_NUM_FLOAT
+    /** Signed short */
+    NumericShort = OCI_NUM_SHORT,
+    /** Signed Integer */
+    NumericInt = OCI_NUM_INT,
+    /** Signed Big Integer (Integer or Long Integer depending on the compiler )*/
+    NumericBigInt = OCI_NUM_BIGINT,
+    /** Unsigned short */
+    NumericUnsignedShort = OCI_NUM_USHORT,
+    /** Unsigned Integer */
+    NumericUnsignedInt = OCI_NUM_UINT,
+    /** Unsigned Big Integer (Integer or Long Integer depending on the compiler )*/
+    NumericUnsignedBigInt = OCI_NUM_BIGUINT,
+    /** Double  */
+    NumericDouble = OCI_NUM_DOUBLE,
+    /** Float */
+    NumericFloat = OCI_NUM_FLOAT
 };
 
 /**
@@ -349,10 +349,10 @@ typedef Enum<NumericTypeValues> NumericType;
 */
 enum CharsetFormValues
 {
-	/** Database character set will be converted to the server national character set */
-	CharsetFormDefault = OCI_CSF_DEFAULT,
-	/** Client national character set will be converted to the server national character set */
-	CharsetFormNational = OCI_CSF_NATIONAL
+    /** Database character set will be converted to the server national character set */
+    CharsetFormDefault = OCI_CSF_DEFAULT,
+    /** Client national character set will be converted to the server national character set */
+    CharsetFormNational = OCI_CSF_NATIONAL
 };
 /**
 * @brief
@@ -371,12 +371,12 @@ typedef Enum<CharsetFormValues> CharsetForm;
 */
 enum SeekModeValues
 {
-	/** Set the current position within the stream to the given position */
-	SeekSet = OCI_SEEK_SET,
-	/** Set the current position within the stream begin position */
-	SeekEnd = OCI_SEEK_END,
-	/** Set the current position within the stream to the given value offset from the current position */
-	SeekOffset = OCI_SEEK_CUR
+    /** Set the current position within the stream to the given position */
+    SeekSet = OCI_SEEK_SET,
+    /** Set the current position within the stream begin position */
+    SeekEnd = OCI_SEEK_END,
+    /** Set the current position within the stream to the given value offset from the current position */
+    SeekOffset = OCI_SEEK_CUR
 };
 
 /**
@@ -395,10 +395,10 @@ typedef Enum<SeekModeValues> SeekMode;
 */
 enum OpenModeValues
 {
-	/** Stream is opened for read access */
-	ReadOnly = OCI_LOB_READONLY,
-	/** Stream is opened for read / write access */
-	ReadWrite = OCI_LOB_READWRITE
+    /** Stream is opened for read access */
+    ReadOnly = OCI_LOB_READONLY,
+    /** Stream is opened for read / write access */
+    ReadWrite = OCI_LOB_READWRITE
 };
 
 /**
@@ -417,12 +417,12 @@ typedef Enum<OpenModeValues> OpenMode;
 */
 enum LobTypeValues
 {
-	/** */
-	LobBinary = OCI_BLOB,
-	/**  */
-	LobCharacter = OCI_CLOB,
-	/**  */
-	LobNationalCharacter = OCI_NCLOB
+    /** */
+    LobBinary = OCI_BLOB,
+    /**  */
+    LobCharacter = OCI_CLOB,
+    /**  */
+    LobNationalCharacter = OCI_NCLOB
 };
 
 /**
@@ -442,10 +442,10 @@ typedef Enum<LobTypeValues> LobType;
 */
 enum LongTypeValues
 {
-	/** */
-	LongBinary = OCI_BLONG,
-	/**  */
-	LongCharacter = OCI_CLONG
+    /** */
+    LongBinary = OCI_BLONG,
+    /**  */
+    LongCharacter = OCI_CLONG
 };
 
 /**
@@ -502,13 +502,13 @@ class Exception : public std::exception
 
 public:
 
-	/**
-	* @brief
-	* Exception type enumerated values
-	*
-	*/
-	enum ExceptionTypeValues
-	{
+    /**
+    * @brief
+    * Exception type enumerated values
+    *
+    */
+    enum ExceptionTypeValues
+    {
         /** Exception caused by an Oracle error */
         OracleError  = OCI_ERR_ORACLE,
         /** Exception caused by an Ocilib error */
@@ -517,16 +517,16 @@ public:
         OracleWarning = OCI_ERR_WARNING
     };
 
-	/**
-	* @brief
-	* Type of Exception
-	*
-	* Possible values are Exception::ExceptionTypeValues
-	*
-	*/
-	typedef Enum<ExceptionTypeValues>  ExceptionType;
+    /**
+    * @brief
+    * Type of Exception
+    *
+    * Possible values are Exception::ExceptionTypeValues
+    *
+    */
+    typedef Enum<ExceptionTypeValues>  ExceptionType;
 
-	/**
+    /**
      * @brief
      * Retrieve the error message
      *
@@ -583,29 +583,29 @@ public:
      */
     unsigned int GetRow() const;
 
-	/**
-	* @brief
-	* Override the std::exception::what() method
-	*
-	* @return
-	*  - The same content as GetMessage() but as using const char * type
-	*
-	*/
-	virtual const char *what() const throw();
+    /**
+    * @brief
+    * Override the std::exception::what() method
+    *
+    * @return
+    *  - The same content as GetMessage() but as using const char * type
+    *
+    */
+    virtual const char *what() const throw();
 
-	/**
-	* @brief
-	* Virtual destructor required for deriving from std::exception
-	*
-	*/
-	virtual ~Exception() throw ();
+    /**
+    * @brief
+    * Virtual destructor required for deriving from std::exception
+    *
+    */
+    virtual ~Exception() throw ();
 
 private:
 
     Exception();
     Exception(OCI_Error *err);
 
-	std::string _what;
+    std::string _what;
     OCI_Statement *_pStatement;
     OCI_Connection *_pConnnection;
     unsigned int _row;
@@ -631,235 +631,235 @@ class Environment
 
 public:
 
-	/**
-	* @brief
-	* HA Event sources enumerated values
-	*
-	*/
-	enum HAEventSourceValues
-	{
-		/** The event has been generated by an Oracle instance */
-		SourceInstance = OCI_HES_INSTANCE,
-		/** The event has been generated by an Oracle database */
-		SourceDatabase = OCI_HES_DATABASE,
-		/** The event has been generated by an Oracle Node */
-		SourceNode = OCI_HES_NODE,
-		/** The event has been generated by an Oracle service */
-		SourceService = OCI_HES_SERVICE,
-		/** The event has been generated by an Oracle service member */
-		SourceServiceMember = OCI_HES_SERVICE_MEMBER,
-		/** The event has been generated by an Oracle ASM instance */
-		SourceASMInstance = OCI_HES_ASM_INSTANCE,
-		/** The event has been generated at service pre connecting stage */
-		SourcePreConnect = OCI_HES_PRECONNECT
-	};
-
-	/**
-	* @brief
-	* Source of HA events
-	*
-	* Possible values are Environment::HAEventSourceValues
-	*
-	*/
-	typedef Enum<HAEventSourceValues>  HAEventSource;
-
-	/**
-	* @brief
-	* HA Event types enumerated values
-	*
-	*/
-	enum HAEventTypeValues
-	{
-		/** The source of the event is down */
-		EventDown = OCI_HET_DOWN,
-		/** The source of the event is up (not generated yet by Oracle) */
-		EventUp = OCI_HET_UP
-	};
-
-	/**
-	* @brief
-	* Type of HA events
-	*
-	* Possible values are Environment::HAEventTypeValues
-	*
-	*/
-	typedef Enum<HAEventTypeValues>  HAEventType;
-
-	/**
-	* @brief
-	* Environment Flags enumerated values
-	*
-	*/
-	enum EnvironmentFlagsValues
-	{
-		/** Default mode */
-		Default = OCI_ENV_DEFAULT,
-		/** Enable support for multi-threading */
-		Threaded  = OCI_ENV_THREADED,
-		/** Enable support for events related to subscriptions, HA and AQ notifications */
-		Events = OCI_ENV_EVENTS
-	};
-
-	/**
-	* @brief
-	* Environment Flags
-	*
-	* Possible values are Environment::EnvironmentFlagsValues
-	*
-	*/
-	typedef Flags<EnvironmentFlagsValues> EnvironmentFlags;
-
-	/**
-	* @brief
-	* OCI libraries import mode enumerated values
-	*
-	*/
-	enum ImportModeValues
-	{
-		/** OCI libraries are linked at compile time */
-		ImportLinkage = OCI_IMPORT_MODE_LINKAGE,
-		/** OCI libraries are dynamically loaded at runtime */
-		ImportRuntime  = OCI_IMPORT_MODE_RUNTIME
-	};
-
-	/**
-	* @brief
-	* OCI libraries import mode
-	*
-	* Possible values are Environment::ImportMode
-	*
-	*/
-	typedef Enum<ImportModeValues> ImportMode;
-
-	/**
-	* @brief
-	* Charset mode enumerated values
-	*
-	*/
-	enum CharsetModeValues
-	{
-		/** Environment is ANSI string or UTF8 string */
-		CharsetAnsi = OCI_CHAR_ANSI,
-		/** Environment is UNICODE using wide character string  */
-		CharsetWide  = OCI_CHAR_WIDE
-	};
-
-	/**
-	* @brief
-	* Environment charset mode
-	*
-	* Possible values are Environment::CharsetModeValues
-	*
-	*/
-	typedef Enum<CharsetModeValues> CharsetMode;
-
-	/**
-	* @brief
-	* Session flags enumerated values
-	*
-	*/
-	enum SessionFlagsValues
-	{
-		/** Default session mode */
-		SessionDefault = OCI_SESSION_DEFAULT,
-		/** Requested session will be created through the XA interface */
-		SessionXa  = OCI_SESSION_XA,
-		/** the user is authenticated for SYSDBA access. */
-		SessionSysDba = OCI_SESSION_SYSDBA,
-		/** the user is authenticated for SYSOPER access */
-		SessionSysOper = OCI_SESSION_SYSOPER
-	};
-
-	/**
-	* @brief
-	* Sessions flags
+    /**
+    * @brief
+    * HA Event sources enumerated values
     *
-	* Possible values are Environment::SessionFlagsValues
-	*
-	*/
-	typedef Flags<SessionFlagsValues> SessionFlags;
+    */
+    enum HAEventSourceValues
+    {
+        /** The event has been generated by an Oracle instance */
+        SourceInstance = OCI_HES_INSTANCE,
+        /** The event has been generated by an Oracle database */
+        SourceDatabase = OCI_HES_DATABASE,
+        /** The event has been generated by an Oracle Node */
+        SourceNode = OCI_HES_NODE,
+        /** The event has been generated by an Oracle service */
+        SourceService = OCI_HES_SERVICE,
+        /** The event has been generated by an Oracle service member */
+        SourceServiceMember = OCI_HES_SERVICE_MEMBER,
+        /** The event has been generated by an Oracle ASM instance */
+        SourceASMInstance = OCI_HES_ASM_INSTANCE,
+        /** The event has been generated at service pre connecting stage */
+        SourcePreConnect = OCI_HES_PRECONNECT
+    };
 
-	/**
-	* @brief
-	* Oracle instance start modes enumerated values
-	*
-	*/
-	enum StartModeValues
-	{
-		/** Start the instance without mounting and opening it */
-		StartOnly = OCI_DB_SPM_START,
-		/** Mount (only) the instance */
-		StartMount  = OCI_DB_SPM_MOUNT,
-		/** Open (only)  the instance */
-		StartOpen = OCI_DB_SPM_OPEN,
-		/** Start, mount and open the instance */
-		StartFull = OCI_DB_SPM_FULL
-	};
+    /**
+    * @brief
+    * Source of HA events
+    *
+    * Possible values are Environment::HAEventSourceValues
+    *
+    */
+    typedef Enum<HAEventSourceValues>  HAEventSource;
 
-	/**
-	* @brief
-	* Oracle instance start modes
-	*
-	* Possible values are Environment::StartModeValues
-	*
-	*/
-	typedef Flags<StartModeValues> StartMode;
+    /**
+    * @brief
+    * HA Event types enumerated values
+    *
+    */
+    enum HAEventTypeValues
+    {
+        /** The source of the event is down */
+        EventDown = OCI_HET_DOWN,
+        /** The source of the event is up (not generated yet by Oracle) */
+        EventUp = OCI_HET_UP
+    };
 
-	/**
-	* @brief
-	* Oracle instance start flags enumerated values
-	*
-	*/
-	enum StartFlagsValues
-	{
-		/** Default start flags */
-		StartDefault = OCI_DB_SPF_DEFAULT,
-		/** Shuts down a running instance (if needed) using ABORT command and starts a new instance */
-		StartForce  = OCI_DB_SPF_FORCE,
-		/** Allows database access only to users with both CREATE SESSION and RESTRICTED SESSION privileges */
-		StartRestrict = OCI_DB_SPF_RESTRICT
-	};
+    /**
+    * @brief
+    * Type of HA events
+    *
+    * Possible values are Environment::HAEventTypeValues
+    *
+    */
+    typedef Enum<HAEventTypeValues>  HAEventType;
 
-	/**
-	* @brief
-	* Oracle instance start flags
-	*
-	* Possible values are Environment::StartFlagsValues
-	*
-	*/
-	typedef Flags<StartFlagsValues> StartFlags;
+    /**
+    * @brief
+    * Environment Flags enumerated values
+    *
+    */
+    enum EnvironmentFlagsValues
+    {
+        /** Default mode */
+        Default = OCI_ENV_DEFAULT,
+        /** Enable support for multi-threading */
+        Threaded  = OCI_ENV_THREADED,
+        /** Enable support for events related to subscriptions, HA and AQ notifications */
+        Events = OCI_ENV_EVENTS
+    };
 
-	/**
-	* @brief
-	* Oracle instance shutdown modes enumerated values
-	*
-	*/
-	enum ShutdownModeValues
-	{
-		/** Shutdown the instance */
-		ShutdownOnly = OCI_DB_SDM_SHUTDOWN,
-		/** Close (only) the instance */
-		ShutdownClose  = OCI_DB_SDM_CLOSE,
-		/** Dismount (only)  the instance */
-		ShutdownDismount = OCI_DB_SDM_DISMOUNT,
-		/** Shutdown, close and dismount the instance */
-		ShutdownFull = OCI_DB_SDM_FULL
-	};
+    /**
+    * @brief
+    * Environment Flags
+    *
+    * Possible values are Environment::EnvironmentFlagsValues
+    *
+    */
+    typedef Flags<EnvironmentFlagsValues> EnvironmentFlags;
 
-	/**
-	* @brief
-	* Oracle instance shutdown modes
-	*
-	* Possible values are Environment::ShutdownModeValues
-	*
-	*/
-	typedef Flags<ShutdownModeValues> ShutdownMode;
+    /**
+    * @brief
+    * OCI libraries import mode enumerated values
+    *
+    */
+    enum ImportModeValues
+    {
+        /** OCI libraries are linked at compile time */
+        ImportLinkage = OCI_IMPORT_MODE_LINKAGE,
+        /** OCI libraries are dynamically loaded at runtime */
+        ImportRuntime  = OCI_IMPORT_MODE_RUNTIME
+    };
 
-	/**
-	* @brief
-	* Oracle instance shutdown flags enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * OCI libraries import mode
+    *
+    * Possible values are Environment::ImportMode
+    *
+    */
+    typedef Enum<ImportModeValues> ImportMode;
+
+    /**
+    * @brief
+    * Charset mode enumerated values
+    *
+    */
+    enum CharsetModeValues
+    {
+        /** Environment is ANSI string or UTF8 string */
+        CharsetAnsi = OCI_CHAR_ANSI,
+        /** Environment is UNICODE using wide character string  */
+        CharsetWide  = OCI_CHAR_WIDE
+    };
+
+    /**
+    * @brief
+    * Environment charset mode
+    *
+    * Possible values are Environment::CharsetModeValues
+    *
+    */
+    typedef Enum<CharsetModeValues> CharsetMode;
+
+    /**
+    * @brief
+    * Session flags enumerated values
+    *
+    */
+    enum SessionFlagsValues
+    {
+        /** Default session mode */
+        SessionDefault = OCI_SESSION_DEFAULT,
+        /** Requested session will be created through the XA interface */
+        SessionXa  = OCI_SESSION_XA,
+        /** the user is authenticated for SYSDBA access. */
+        SessionSysDba = OCI_SESSION_SYSDBA,
+        /** the user is authenticated for SYSOPER access */
+        SessionSysOper = OCI_SESSION_SYSOPER
+    };
+
+    /**
+    * @brief
+    * Sessions flags
+    *
+    * Possible values are Environment::SessionFlagsValues
+    *
+    */
+    typedef Flags<SessionFlagsValues> SessionFlags;
+
+    /**
+    * @brief
+    * Oracle instance start modes enumerated values
+    *
+    */
+    enum StartModeValues
+    {
+        /** Start the instance without mounting and opening it */
+        StartOnly = OCI_DB_SPM_START,
+        /** Mount (only) the instance */
+        StartMount  = OCI_DB_SPM_MOUNT,
+        /** Open (only)  the instance */
+        StartOpen = OCI_DB_SPM_OPEN,
+        /** Start, mount and open the instance */
+        StartFull = OCI_DB_SPM_FULL
+    };
+
+    /**
+    * @brief
+    * Oracle instance start modes
+    *
+    * Possible values are Environment::StartModeValues
+    *
+    */
+    typedef Flags<StartModeValues> StartMode;
+
+    /**
+    * @brief
+    * Oracle instance start flags enumerated values
+    *
+    */
+    enum StartFlagsValues
+    {
+        /** Default start flags */
+        StartDefault = OCI_DB_SPF_DEFAULT,
+        /** Shuts down a running instance (if needed) using ABORT command and starts a new instance */
+        StartForce  = OCI_DB_SPF_FORCE,
+        /** Allows database access only to users with both CREATE SESSION and RESTRICTED SESSION privileges */
+        StartRestrict = OCI_DB_SPF_RESTRICT
+    };
+
+    /**
+    * @brief
+    * Oracle instance start flags
+    *
+    * Possible values are Environment::StartFlagsValues
+    *
+    */
+    typedef Flags<StartFlagsValues> StartFlags;
+
+    /**
+    * @brief
+    * Oracle instance shutdown modes enumerated values
+    *
+    */
+    enum ShutdownModeValues
+    {
+        /** Shutdown the instance */
+        ShutdownOnly = OCI_DB_SDM_SHUTDOWN,
+        /** Close (only) the instance */
+        ShutdownClose  = OCI_DB_SDM_CLOSE,
+        /** Dismount (only)  the instance */
+        ShutdownDismount = OCI_DB_SDM_DISMOUNT,
+        /** Shutdown, close and dismount the instance */
+        ShutdownFull = OCI_DB_SDM_FULL
+    };
+
+    /**
+    * @brief
+    * Oracle instance shutdown modes
+    *
+    * Possible values are Environment::ShutdownModeValues
+    *
+    */
+    typedef Flags<ShutdownModeValues> ShutdownMode;
+
+    /**
+    * @brief
+    * Oracle instance shutdown flags enumerated values
+    *
+    */
     enum ShutdownFlagsValues
     {
         /**  - Further connects are prohibited.
@@ -868,29 +868,29 @@ public:
         /**  - Further connects are prohibited
           *  - No new transactions are allowed. */
         ShutdowTrans  = OCI_DB_SDF_TRANS,
-		/**  - Further connects are prohibited
-		  *  - No new transactions are allowed.
-		  *  - Waits for active transactions to complete */
-		ShutdownTransLocal = OCI_DB_SDF_TRANS_LOCAL,
-		/**  - Does not wait for current calls to complete or users to disconnect from the database.
-	      *  - All uncommitted transactions are terminated and rolled back */
-		ShutdownImmediate = OCI_DB_SDF_IMMEDIATE,
-		/**  - Does not wait for current calls to complete or users to disconnect from the database.
-		  *  - All uncommitted transactions are terminated and are not rolled back.
-		  *  - This is the fastest possible way to shut down the database, but the next
-		  *    database startup may require instance recovery.
-		  *  - Therefore, this option should be used only in unusual circumstances */
-		ShutdownAbort = OCI_DB_SDF_ABORT
-	};
+        /**  - Further connects are prohibited
+          *  - No new transactions are allowed.
+          *  - Waits for active transactions to complete */
+        ShutdownTransLocal = OCI_DB_SDF_TRANS_LOCAL,
+        /**  - Does not wait for current calls to complete or users to disconnect from the database.
+          *  - All uncommitted transactions are terminated and rolled back */
+        ShutdownImmediate = OCI_DB_SDF_IMMEDIATE,
+        /**  - Does not wait for current calls to complete or users to disconnect from the database.
+          *  - All uncommitted transactions are terminated and are not rolled back.
+          *  - This is the fastest possible way to shut down the database, but the next
+          *    database startup may require instance recovery.
+          *  - Therefore, this option should be used only in unusual circumstances */
+        ShutdownAbort = OCI_DB_SDF_ABORT
+    };
 
-	/**
-	* @brief
-	* Oracle instance shutdown flags
-	*
-	* Possible values are Environment::ShutdownFlagsValues
-	*
-	*/
-	typedef Flags<ShutdownFlagsValues> ShutdownFlags;
+    /**
+    * @brief
+    * Oracle instance shutdown flags
+    *
+    * Possible values are Environment::ShutdownFlagsValues
+    *
+    */
+    typedef Flags<ShutdownFlagsValues> ShutdownFlags;
 
     /**
     * @brief
@@ -916,14 +916,14 @@ public:
     */
     typedef Flags<AllocatedBytesValues> AllocatedBytesFlags;
 
-	/**
-	* @typedef HAHandlerProc
-	*
-	* @brief
-	* User callback for HA event notifications
-	*
-	*/
-	typedef void(*HAHandlerProc) (Connection &con, HAEventSource eventSource, HAEventType eventType, Timestamp  &time);
+    /**
+    * @typedef HAHandlerProc
+    *
+    * @brief
+    * User callback for HA event notifications
+    *
+    */
+    typedef void(*HAHandlerProc) (Connection &con, HAEventSource eventSource, HAEventType eventType, Timestamp  &time);
 
     /**
      * @brief
@@ -1320,14 +1320,14 @@ public:
      */
     static void Join(ThreadHandle handle);
 
-	/**
-	* @brief
-	* Return the system Thread ID of the given thread handle
-	*
-	* @param handle - Thread handle
-	*
-	*/
-	static ThreadId GetThreadId(ThreadHandle handle);
+    /**
+    * @brief
+    * Return the system Thread ID of the given thread handle
+    *
+    * @param handle - Thread handle
+    *
+    */
+    static ThreadId GetThreadId(ThreadHandle handle);
 };
 
 /**
@@ -1425,7 +1425,7 @@ public:
      * @param value - user value to set
      *
      */
-	static void SetValue(const ostring& name, AnyPointer value);
+    static void SetValue(const ostring& name, AnyPointer value);
 
     /**
      * @brief
@@ -1437,7 +1437,7 @@ public:
      * Thread key value on success otherwise FALSE
      *
      */
-	static AnyPointer GetValue(const ostring& name);
+    static AnyPointer GetValue(const ostring& name);
 };
 
 /**
@@ -1464,13 +1464,13 @@ public:
         SessionPool  = OCI_POOL_SESSION
     };
 
-	/**
-	* @brief
-	* Type of Pool
-	*
-	* Possible values are Pool::PoolTypeValues
-	*
-	*/
+    /**
+    * @brief
+    * Type of Pool
+    *
+    * Possible values are Pool::PoolTypeValues
+    *
+    */
     typedef Enum<PoolTypeValues> PoolType;
 
     /**
@@ -1689,82 +1689,82 @@ class Connection : public HandleHolder<OCI_Connection *>
     friend class Resultset;
     friend class Subscription;
 
-	template<class TLobObjectType, int TLobOracleType>
-	friend class Lob;
-	template <class TDataType>
-	friend class Collection;
+    template<class TLobObjectType, int TLobOracleType>
+    friend class Lob;
+    template <class TDataType>
+    friend class Collection;
 public:
 
-	/**
-	* @brief
-	* Failover request enumerated values
-	*
-	*/
-	enum FailoverRequestValues
+    /**
+    * @brief
+    * Failover request enumerated values
+    *
+    */
+    enum FailoverRequestValues
     {
-		/** User has requested only session failover */
-		FailoverRequestSession = OCI_FOT_SESSION,
-		/** User has requested select failover as well */
-		FailoverRequestSelect = OCI_FOT_SELECT
+        /** User has requested only session failover */
+        FailoverRequestSession = OCI_FOT_SESSION,
+        /** User has requested select failover as well */
+        FailoverRequestSelect = OCI_FOT_SELECT
     };
 
-	/**
-	* @brief
-	* Failover requests
-	*
-	* Possible values are Connection::FailoverRequestValues
-	*
-	*/
+    /**
+    * @brief
+    * Failover requests
+    *
+    * Possible values are Connection::FailoverRequestValues
+    *
+    */
     typedef Enum<FailoverRequestValues> FailoverRequest;
 
-	/**
-	* @brief
-	* Failover events enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Failover events enumerated values
+    *
+    */
     enum FailoverEventValues
     {
-		/** Successful completion of failover */
+        /** Successful completion of failover */
         FailoverEventEnd = OCI_FOE_END,
-		/** Failover was unsuccessful. Retrying is not allowed */
+        /** Failover was unsuccessful. Retrying is not allowed */
         FailoverEventAbort = OCI_FOE_ABORT,
-		/** Multiple authentication and failover has occurred after the original authentication. User has been re authenticated */
+        /** Multiple authentication and failover has occurred after the original authentication. User has been re authenticated */
         FailoverEventReauthentificate = OCI_FOE_REAUTH,
-		/** Failover has detected a lost connection and failover is starting */
+        /** Failover has detected a lost connection and failover is starting */
         FailoverEventBegin = OCI_FOE_BEGIN,
-		/** Failover was unsuccessful. Retrying is allowed */
+        /** Failover was unsuccessful. Retrying is allowed */
         FailoverEventError = OCI_FOE_ERROR
     };
 
-	/**
-	* @brief
-	* Failover events
-	*
-	* Possible values are Connection::FailoverEventValues
-	*
-	*/
+    /**
+    * @brief
+    * Failover events
+    *
+    * Possible values are Connection::FailoverEventValues
+    *
+    */
     typedef Enum<FailoverEventValues> FailoverEvent;
 
-	/**
-	* @brief
-	* Failover callback results enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Failover callback results enumerated values
+    *
+    */
     enum FailoverResultValues
     {
-		/** Default acknowledgment of a failover event */
-		FailoverOk = OCI_FOC_OK,
-		/** Triggers a new failover attempt */
+        /** Default acknowledgment of a failover event */
+        FailoverOk = OCI_FOC_OK,
+        /** Triggers a new failover attempt */
         FailoverRetry = OCI_FOC_RETRY
     };
 
-	/**
-	* @brief
-	* Failover callback results
-	*
-	* Possible values are Connection::FailoverResultValues
-	*
-	*/
+    /**
+    * @brief
+    * Failover callback results
+    *
+    * Possible values are Connection::FailoverResultValues
+    *
+    */
     typedef Enum<FailoverResultValues> FailoverResult;
 
     /**
@@ -1784,23 +1784,23 @@ public:
         TraceDetail  = OCI_TRC_DETAIL
     };
 
-	/**
-	* @brief
-	* Session traces
-	*
-	* Possible values are Connection::SessionTraceValues
-	*
-	*/
+    /**
+    * @brief
+    * Session traces
+    *
+    * Possible values are Connection::SessionTraceValues
+    *
+    */
     typedef Enum<SessionTraceValues> SessionTrace;
 
-	/**
-	* @typedef TAFHandlerProc
-	*
-	* @brief
-	* User callback for TAF event notifications
-	*
-	*/
-	typedef FailoverResult(*TAFHandlerProc) (Connection &con, FailoverRequest failoverRequest, FailoverEvent failoverEvent);
+    /**
+    * @typedef TAFHandlerProc
+    *
+    * @brief
+    * User callback for TAF event notifications
+    *
+    */
+    typedef FailoverResult(*TAFHandlerProc) (Connection &con, FailoverRequest failoverRequest, FailoverEvent failoverEvent);
 
     /**
      * @brief
@@ -2319,9 +2319,9 @@ public:
      *
      * @note
      * Prefetch size is:
-	 * - number of bytes for BLOBs (Blob) and BFILEs (File)
-	 * - number of characters for CLOBs (Clob / NClob).
-	 *
+     * - number of bytes for BLOBs (Blob) and BFILEs (File)
+     * - number of characters for CLOBs (Clob / NClob).
+     *
      */
     void SetDefaultLobPrefetchSize(unsigned int value);
 
@@ -2355,7 +2355,7 @@ public:
      * Return the pointer to user data previously associated with the connection
      *
      */
-	AnyPointer GetUserData();
+    AnyPointer GetUserData();
 
     /**
      * @brief
@@ -2364,7 +2364,7 @@ public:
      * @param value - User data pointer
      *
      */
-	void SetUserData(AnyPointer value);
+    void SetUserData(AnyPointer value);
 
 private:
 
@@ -2406,13 +2406,13 @@ public:
         Serializable  = OCI_TRS_SERIALIZABLE
     };
 
-	/**
-	* @brief
-	* Transaction flags
-	*
-	* Possible values are Transaction::TransactionFlagsValues
-	*
-	*/
+    /**
+    * @brief
+    * Transaction flags
+    *
+    * Possible values are Transaction::TransactionFlagsValues
+    *
+    */
     typedef Flags<TransactionFlagsValues> TransactionFlags;
 
     /**
@@ -2500,7 +2500,7 @@ class Date : public HandleHolder<OCI_Date *>, public Streamable
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-	template <class TDataType>
+    template <class TDataType>
     friend class Collection;
     friend class Message;
 
@@ -2752,15 +2752,15 @@ public:
      */
     void ChangeTimeZone(const ostring& tzSrc, const ostring& tzDst);
 
-	/**
-	* @brief
-	* Assign to the date object the value provided by the input date time string
-	*
-	* @param str    - String date time
-	* @param format - format of the date time provided in parameter 'data'
-	*
-	* @note
-	* For date time formats, refer to the Oracle SQL documentation
+    /**
+    * @brief
+    * Assign to the date object the value provided by the input date time string
+    *
+    * @param str    - String date time
+    * @param format - format of the date time provided in parameter 'data'
+    *
+    * @note
+    * For date time formats, refer to the Oracle SQL documentation
     *
     * @note
     * Default connection date format is computed from Environment::GetFormat()
@@ -2768,17 +2768,17 @@ public:
     */
     void FromString(const ostring& str, const ostring& format = OTEXT(""));
 
-	/**
-	* @brief
-	* Convert the date value to a string using the given format
-	*
-	* @param format - date time format to use
-	*
-	* @note
-	* For date time formats, refer to the Oracle SQL documentation
-	*
-	*/
-	ostring ToString(const ostring& format) const;
+    /**
+    * @brief
+    * Convert the date value to a string using the given format
+    *
+    * @param format - date time format to use
+    *
+    * @note
+    * For date time formats, refer to the Oracle SQL documentation
+    *
+    */
+    ostring ToString(const ostring& format) const;
 
     /**
     * @brief
@@ -2790,110 +2790,110 @@ public:
     */
     ostring ToString() const;
 
-	/**
-	* @brief
-	* Clone the current instance to a new one performing deep copy
-	*
-	*/
-	Date Clone() const;
+    /**
+    * @brief
+    * Clone the current instance to a new one performing deep copy
+    *
+    */
+    Date Clone() const;
 
     /**
      * @brief
      * Increment the date by 1 day
      *
      */
-	Date& operator ++ ();
+    Date& operator ++ ();
 
     /**
      * @brief
      * Increment the date by 1 day
      *
      */
-	Date operator ++ (int);
+    Date operator ++ (int);
 
     /**
      * @brief
      * Decrement the date by 1 day
      *
      */
-	Date& operator -- ();
+    Date& operator -- ();
 
     /**
      * @brief
      * Decrement the date by 1 day
      *
      */
-	Date operator -- (int);
+    Date operator -- (int);
 
     /**
      * @brief
      * Return a new date holding the current date value incremented by the given number of days
      *
      */
-	Date operator + (int value);
+    Date operator + (int value);
 
     /**
      * @brief
-	 * Return a new date holding the current date value decremented by the given number of days
-	 *
+     * Return a new date holding the current date value decremented by the given number of days
+     *
      */
-	Date operator - (int value);
+    Date operator - (int value);
 
     /**
      * @brief
      * Increment the date by the given number of days
      *
      */
-	Date& operator += (int value);
+    Date& operator += (int value);
 
     /**
      * @brief
      * Decrement the date by the given number of days
      *
      */
-	Date& operator -= (int value);
+    Date& operator -= (int value);
 
-	/**
-	* @brief
-	* Indicates if the current date value is equal to the given date value
-	*
-	*/
-	bool operator == (const Date& other) const;
+    /**
+    * @brief
+    * Indicates if the current date value is equal to the given date value
+    *
+    */
+    bool operator == (const Date& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current date value is not equal the given date value
-	*
-	*/
-	bool operator != (const Date& other) const;
+    /**
+    * @brief
+    * Indicates if the current date value is not equal the given date value
+    *
+    */
+    bool operator != (const Date& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current date value is superior to the given date value
-	*
-	*/
-	bool operator > (const Date& other) const;
+    /**
+    * @brief
+    * Indicates if the current date value is superior to the given date value
+    *
+    */
+    bool operator > (const Date& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current date value is inferior to the given date value
-	*
-	*/
-	bool operator < (const Date& other) const;
+    /**
+    * @brief
+    * Indicates if the current date value is inferior to the given date value
+    *
+    */
+    bool operator < (const Date& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current date value is superior or equal to the given date value
-	*
-	*/
-	bool operator >= (const Date& other) const;
+    /**
+    * @brief
+    * Indicates if the current date value is superior or equal to the given date value
+    *
+    */
+    bool operator >= (const Date& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current date value is inferior or equal to the given date value
-	*
-	*/
-	bool operator <= (const Date& other) const;
+    /**
+    * @brief
+    * Indicates if the current date value is inferior or equal to the given date value
+    *
+    */
+    bool operator <= (const Date& other) const;
 
 private:
 
@@ -2918,31 +2918,31 @@ class Interval : public HandleHolder<OCI_Interval *>, public Streamable
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-	template <class TDataType>
+    template <class TDataType>
     friend class Collection;
 
 public:
 
-	 /**
-	 * @brief
-	 * Interval types enumerated values
+     /**
+     * @brief
+     * Interval types enumerated values
      *
      */
     enum IntervalTypeValues
     {
-		/** Interval unit range is months -> years */
-		YearMonth = OCI_INTERVAL_YM,
-		/** Interval unit range is seconds -> days */
-		DaySecond = OCI_INTERVAL_DS
+        /** Interval unit range is months -> years */
+        YearMonth = OCI_INTERVAL_YM,
+        /** Interval unit range is seconds -> days */
+        DaySecond = OCI_INTERVAL_DS
     };
 
-	/**
-	* @brief
-	* Interval types
-	*
-	* Possible values are Interval::IntervalTypeValues
-	*
-	*/
+    /**
+    * @brief
+    * Interval types
+    *
+    * Possible values are Interval::IntervalTypeValues
+    *
+    */
     typedef Enum<IntervalTypeValues> IntervalType;
 
     /**
@@ -2952,13 +2952,13 @@ public:
     */
     Interval();
 
-	/**
-	* @brief
-	* Create a new instance of the given type
-	*
-	* @param type - Interval type to create
-	*
-	*/
+    /**
+    * @brief
+    * Create a new instance of the given type
+    *
+    * @param type - Interval type to create
+    *
+    */
     Interval(IntervalType type);
 
     /**
@@ -2974,242 +2974,242 @@ public:
     */
     Interval(IntervalType type, const ostring& data);
 
-	/**
-	* @brief
-	* Return the type of the given interval object
-	*
-	*/
-	IntervalType GetType() const;
+    /**
+    * @brief
+    * Return the type of the given interval object
+    *
+    */
+    IntervalType GetType() const;
 
-	/**
-	* @brief
-	* Check if the given interval is valid
-	*
-	*/
-	bool IsValid() const;
+    /**
+    * @brief
+    * Check if the given interval is valid
+    *
+    */
+    bool IsValid() const;
 
-	/**
-	* @brief
-	* Return the interval year value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::YearMonth
-	*
-	*/
-	int GetYear() const;
+    /**
+    * @brief
+    * Return the interval year value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::YearMonth
+    *
+    */
+    int GetYear() const;
 
-	/**
-	* @brief
-	* Set the interval year value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::YearMonth
-	*
-	*/
-	void SetYear(int value);
+    /**
+    * @brief
+    * Set the interval year value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::YearMonth
+    *
+    */
+    void SetYear(int value);
 
-	/**
-	* @brief
-	* Return the interval month value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::YearMonth
-	*
-	*/
-	int GetMonth() const;
+    /**
+    * @brief
+    * Return the interval month value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::YearMonth
+    *
+    */
+    int GetMonth() const;
 
-	/**
-	* @brief
-	* Set the interval month value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::YearMonth
-	*
-	*/
-	void SetMonth(int value);
+    /**
+    * @brief
+    * Set the interval month value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::YearMonth
+    *
+    */
+    void SetMonth(int value);
 
-	/**
-	* @brief
-	* Return the interval day value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::DaySecond
-	*
-	*/
-	int GetDay() const;
+    /**
+    * @brief
+    * Return the interval day value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::DaySecond
+    *
+    */
+    int GetDay() const;
 
-	/**
-	* @brief
-	* Set the interval day value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::DaySecond
-	*
-	*/
-	void SetDay(int value);
+    /**
+    * @brief
+    * Set the interval day value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::DaySecond
+    *
+    */
+    void SetDay(int value);
 
-	/**
-	* @brief
-	* Return the interval hours value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::DaySecond
-	*
-	*/
-	int GetHours() const;
+    /**
+    * @brief
+    * Return the interval hours value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::DaySecond
+    *
+    */
+    int GetHours() const;
 
-	/**
-	* @brief
-	* Set the interval hours value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::DaySecond
-	*
-	*/
-	void SetHours(int value);
+    /**
+    * @brief
+    * Set the interval hours value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::DaySecond
+    *
+    */
+    void SetHours(int value);
 
-	/**
-	* @brief
-	* Return the interval minutes value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::DaySecond
-	*
-	*/
-	int GetMinutes() const;
+    /**
+    * @brief
+    * Return the interval minutes value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::DaySecond
+    *
+    */
+    int GetMinutes() const;
 
-	/**
-	* @brief
-	* Set the interval minutes value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::DaySecond
-	*
-	*/
-	void SetMinutes(int value);
+    /**
+    * @brief
+    * Set the interval minutes value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::DaySecond
+    *
+    */
+    void SetMinutes(int value);
 
-	/**
-	* @brief
-	* Return the interval seconds value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::DaySecond
-	*
-	*/
-	int GetSeconds() const;
+    /**
+    * @brief
+    * Return the interval seconds value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::DaySecond
+    *
+    */
+    int GetSeconds() const;
 
-	/**
-	* @brief
-	* Set the interval seconds value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::DaySecond
-	*
-	*/
-	void SetSeconds(int value);
+    /**
+    * @brief
+    * Set the interval seconds value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::DaySecond
+    *
+    */
+    void SetSeconds(int value);
 
-	/**
-	* @brief
-	* Return the interval seconds value
-	*
-	*/
+    /**
+    * @brief
+    * Return the interval seconds value
+    *
+    */
     int GetMilliSeconds() const;
 
-	/**
-	* @brief
-	* Set the interval milliseconds value
-	*
-	*/
-	void SetMilliSeconds(int value);
+    /**
+    * @brief
+    * Set the interval milliseconds value
+    *
+    */
+    void SetMilliSeconds(int value);
 
-	/**
-	* @brief
-	* Extract the date / second parts from the interval value
-	*
-	* @param day  - Place holder for Day value
-	* @param hour - Place holder for Hour value
-	* @param min  - Place holder for Minutes value
-	* @param sec  - Place holder for Seconds value
-	* @param fsec - Place holder for Milliseconds value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::DaySecond
-	*
-	*/
-	void GetDaySecond(int &day, int &hour, int &min, int &sec, int &fsec) const;
+    /**
+    * @brief
+    * Extract the date / second parts from the interval value
+    *
+    * @param day  - Place holder for Day value
+    * @param hour - Place holder for Hour value
+    * @param min  - Place holder for Minutes value
+    * @param sec  - Place holder for Seconds value
+    * @param fsec - Place holder for Milliseconds value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::DaySecond
+    *
+    */
+    void GetDaySecond(int &day, int &hour, int &min, int &sec, int &fsec) const;
 
-	/**
-	* @brief
-	* Set the Day / Second parts
-	*
-	* @param day  - Day value
-	* @param hour - Hour value
-	* @param min  - Minutes value
-	* @param sec  - Seconds value
-	* @param fsec - Milliseconds value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::DaySecond
-	*
-	*/
-	void SetDaySecond(int day, int hour, int min, int sec, int fsec);
+    /**
+    * @brief
+    * Set the Day / Second parts
+    *
+    * @param day  - Day value
+    * @param hour - Hour value
+    * @param min  - Minutes value
+    * @param sec  - Seconds value
+    * @param fsec - Milliseconds value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::DaySecond
+    *
+    */
+    void SetDaySecond(int day, int hour, int min, int sec, int fsec);
 
-	/**
-	* @brief
-	* Extract the year / month parts from the interval value
-	*
-	* @param year  - Place holder for year value
-	* @param month - Place holder for month value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::YearMonth
-	*
-	*/
-	void GetYearMonth(int &year, int &month) const;
+    /**
+    * @brief
+    * Extract the year / month parts from the interval value
+    *
+    * @param year  - Place holder for year value
+    * @param month - Place holder for month value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::YearMonth
+    *
+    */
+    void GetYearMonth(int &year, int &month) const;
 
-	/**
-	* @brief
-	* Set the Year / Month parts
-	*
-	* @param year  - Year value
-	* @param month - Month value
-	*
-	* @warning
-	* this call is only permitted if the current interval type is  Interval::YearMonth
-	*
-	*/
-	void SetYearMonth(int year, int month);
+    /**
+    * @brief
+    * Set the Year / Month parts
+    *
+    * @param year  - Year value
+    * @param month - Month value
+    *
+    * @warning
+    * this call is only permitted if the current interval type is  Interval::YearMonth
+    *
+    */
+    void SetYearMonth(int year, int month);
 
-	/**
-	* @brief
-	* Update the interval value with the given time zone
-	*
-	* @param timeZone - Time zone name
-	*
-	*/
+    /**
+    * @brief
+    * Update the interval value with the given time zone
+    *
+    * @param timeZone - Time zone name
+    *
+    */
     void UpdateTimeZone(const ostring& timeZone);
 
-	/**
-	* @brief
-	* Assign to the interval object the value provided by the input interval string
-	*
-	* @param data - String interval
-	*
-	* @note
-	* For interval format, refer to the Oracle SQL documentation
-	*
-	*/
+    /**
+    * @brief
+    * Assign to the interval object the value provided by the input interval string
+    *
+    * @param data - String interval
+    *
+    * @note
+    * For interval format, refer to the Oracle SQL documentation
+    *
+    */
     void FromString(const ostring& data);
 
-	/**
-	* @brief
-	* Convert the interval value to a string using the given precisions
-	*
-	* @param leadingPrecision  - leading precision
-	* @param fractionPrecision - fraction precision
-	*
-	*/
-	ostring ToString(int leadingPrecision, int fractionPrecision) const;
+    /**
+    * @brief
+    * Convert the interval value to a string using the given precisions
+    *
+    * @param leadingPrecision  - leading precision
+    * @param fractionPrecision - fraction precision
+    *
+    */
+    ostring ToString(int leadingPrecision, int fractionPrecision) const;
 
     /**
     * @brief
@@ -3218,86 +3218,86 @@ public:
     */
     ostring ToString() const;
 
-	/**
-	* @brief
-	* Clone the current instance to a new one performing deep copy
-	*
-	*/
-	Interval Clone() const;
+    /**
+    * @brief
+    * Clone the current instance to a new one performing deep copy
+    *
+    */
+    Interval Clone() const;
 
-	/**
-	* @brief
-	* Return a new Interval holding the sum of the current Interval value and the given Interval value
-	*
-	*/
-	Interval operator + (const Interval& other);
+    /**
+    * @brief
+    * Return a new Interval holding the sum of the current Interval value and the given Interval value
+    *
+    */
+    Interval operator + (const Interval& other);
 
-	/**
-	* @brief
-	* Return a new Interval holding the difference of the current Interval value and the given Interval value
-	*
-	*/
-	Interval operator - (const Interval& other);
+    /**
+    * @brief
+    * Return a new Interval holding the difference of the current Interval value and the given Interval value
+    *
+    */
+    Interval operator - (const Interval& other);
 
-	/**
-	* @brief
-	* Increment the current Value with the given Interval value
-	*
-	*/
-	Interval& operator += (const Interval& other);
+    /**
+    * @brief
+    * Increment the current Value with the given Interval value
+    *
+    */
+    Interval& operator += (const Interval& other);
 
-	/**
-	* @brief
-	* Decrement the current Value with the given Interval value
-	*
-	*/
-	Interval& operator -= (const Interval& other);
+    /**
+    * @brief
+    * Decrement the current Value with the given Interval value
+    *
+    */
+    Interval& operator -= (const Interval& other);
 
-	/**
-	* @brief
-	* Indicates if the current Interval value is equal to the given Interval value
-	*
-	*/
-	bool operator == (const Interval& other) const;
+    /**
+    * @brief
+    * Indicates if the current Interval value is equal to the given Interval value
+    *
+    */
+    bool operator == (const Interval& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current Interval value is not equal the given Interval value
-	*
-	*/
-	bool operator != (const Interval& other) const;
+    /**
+    * @brief
+    * Indicates if the current Interval value is not equal the given Interval value
+    *
+    */
+    bool operator != (const Interval& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current Interval value is superior to the given Interval value
-	*
-	*/
-	bool operator > (const Interval& other) const;
+    /**
+    * @brief
+    * Indicates if the current Interval value is superior to the given Interval value
+    *
+    */
+    bool operator > (const Interval& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current Interval value is inferior to the given Interval value
-	*
-	*/
-	bool operator < (const Interval& other) const;
+    /**
+    * @brief
+    * Indicates if the current Interval value is inferior to the given Interval value
+    *
+    */
+    bool operator < (const Interval& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current Interval value is superior or equal to the given Interval value
-	*
-	*/
-	bool operator >= (const Interval& other) const;
+    /**
+    * @brief
+    * Indicates if the current Interval value is superior or equal to the given Interval value
+    *
+    */
+    bool operator >= (const Interval& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current Interval value is inferior or equal to the given Interval value
-	*
-	*/
-	bool operator <= (const Interval& other) const;
+    /**
+    * @brief
+    * Indicates if the current Interval value is inferior or equal to the given Interval value
+    *
+    */
+    bool operator <= (const Interval& other) const;
 
 private:
 
-	int Compare(const Interval& other) const;
+    int Compare(const Interval& other) const;
 
     Interval(OCI_Interval *pInterval, Handle *parent = 0);
 };
@@ -3318,33 +3318,33 @@ class Timestamp : public HandleHolder<OCI_Timestamp *>, public Streamable
     friend class BindArray;
     friend class Object;
     friend class Connection;
-	template <class TDataType>
+    template <class TDataType>
     friend class Collection;
 
 public:
 
-	/**
-	* @brief
-	* Interval types enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Interval types enumerated values
+    *
+    */
     enum TimestampTypeValues
     {
-		/** Timestamp does not contains any time zone information */
-		NoTimeZone = OCI_TIMESTAMP,
-		/** Timestamp contains a given time zone */
-		WithTimeZone = OCI_TIMESTAMP_TZ,
-		/** Timestamp contains the user's local session time zone */
-		WithLocalTimeZone = OCI_TIMESTAMP_LTZ
+        /** Timestamp does not contains any time zone information */
+        NoTimeZone = OCI_TIMESTAMP,
+        /** Timestamp contains a given time zone */
+        WithTimeZone = OCI_TIMESTAMP_TZ,
+        /** Timestamp contains the user's local session time zone */
+        WithLocalTimeZone = OCI_TIMESTAMP_LTZ
     };
 
-	/**
-	* @brief
-	* Type of timestamp
-	*
-	* Possible values are Timestamp::TimestampTypeValues
-	*
-	*/
+    /**
+    * @brief
+    * Type of timestamp
+    *
+    * Possible values are Timestamp::TimestampTypeValues
+    *
+    */
     typedef Enum<TimestampTypeValues> TimestampType;
 
     /**
@@ -3386,233 +3386,233 @@ public:
     */
     Timestamp(TimestampType type, const ostring& data, const ostring& format = OTEXT(""));
 
-	/**
-	* @brief
-	* Return the type of the given timestamp object
-	*
-	*/
+    /**
+    * @brief
+    * Return the type of the given timestamp object
+    *
+    */
     TimestampType GetType() const;
 
-	/**
-	* @brief
-	* Convert the current timestamp to the type of the given timestamp.
-	*
-	* @param other - Timestamp to use for the type conversion
-	*
-	*/
+    /**
+    * @brief
+    * Convert the current timestamp to the type of the given timestamp.
+    *
+    * @param other - Timestamp to use for the type conversion
+    *
+    */
     void Convert(const Timestamp& other);
 
-	/**
-	* @brief
-	* Check if the given timestamp is valid
-	*
-	*/
-	bool IsValid() const;
-
-	/**
-	* @brief
-	* Return the timestamp year value
-	*
-	*/
-	int GetYear() const;
-
-	/**
-	* @brief
-	* Set the timestamp year value
-	*
-	*/
-	void SetYear(int value);
-
-	/**
-	* @brief
-	* Return the timestamp month value
-	*
-	*/
-	int GetMonth() const;
-
-	/**
-	* @brief
-	* Set the timestamp month value
-	*
-	*/
-	void SetMonth(int value);
-
-	/**
-	* @brief
-	* Return the timestamp day value
-	*
-	*/
-	int GetDay() const;
-
-	/**
-	* @brief
-	* Set the timestamp day value
-	*
-	*/
-	void SetDay(int value);
-
-	/**
-	* @brief
-	* Return the timestamp hours value
-	*
-	*/
-	int GetHours() const;
-
-	/**
-	* @brief
-	* Set the timestamp hours value
-	*
-	*/
-	void SetHours(int value);
-
-	/**
-	* @brief
-	* Return the timestamp minutes value
-	*
-	*/
-	int GetMinutes() const;
-
-	/**
-	* @brief
-	* Set the timestamp minutes value
-	*
-	*/
-	void SetMinutes(int value);
-
-	/**
-	* @brief
-	* Return the timestamp seconds value
-	*
-	*/
-	int GetSeconds() const;
-
-	/**
-	* @brief
-	* Set the timestamp seconds value
-	*
-	*/
-	void SetSeconds(int value);
-
-	/**
-	* @brief
-	* Return the timestamp seconds value
-	*
-	*/
-	int GetMilliSeconds() const;
-
-	/**
-	* @brief
-	* Set the timestamp milliseconds value
-	*
-	*/
-	void SetMilliSeconds(int value);
-
-	/**
-	* @brief
-	* Extract the date parts
-	*
-	* @param year  - Place holder for year value
-	* @param month - Place holder for month value
-	* @param day   - Place holder for day value
-	*
-	*/
-	void GetDate(int &year, int &month, int &day) const;
-
-	/**
-	* @brief
-	* Extract time parts
-	*
-	* @param hour  - Place holder for hour value
-	* @param min   - Place holder for minute value
-	* @param sec   - Place holder for second value
-	* @param fsec  - Place holder for fractional part of the seconds
-	*
-	*/
-	void GetTime(int &hour, int &min, int &sec, int &fsec) const;
-
-	/**
-	* @brief
-	* Set the date part
-	*
-	* @param year  - Year value
-	* @param month - Month value
-	* @param day   - Day value
-	*
-	*/
-	void SetDate(int year, int month, int day);
-
-	/**
-	* @brief
-	* Set the time part
-	*
-	* @param hour  - Hour value
-	* @param min   - Minute value
-	* @param sec   - Second value
-	* @param fsec  - Place holder for fractional part of the seconds
+    /**
+    * @brief
+    * Check if the given timestamp is valid
     *
-	*/
-	void SetTime(int hour, int min, int sec, int fsec);
+    */
+    bool IsValid() const;
 
-	/**
-	* @brief
-	* Extract date and time parts
-	*
-	* @param year     - Place holder for year value
-	* @param month    - Place holder for month value
-	* @param day      - Place holder for day value
-	* @param hour     - Place holder for hour value
-	* @param min      - Place holder for minute value
-	* @param sec      - Place holder for second value
-	* @param fsec     - Place holder for fractional part of the seconds
-	*
-	*/
-	void GetDateTime(int &year, int &month, int &day, int &hour, int &min, int &sec, int &fsec) const;
+    /**
+    * @brief
+    * Return the timestamp year value
+    *
+    */
+    int GetYear() const;
 
-	/**
-	* @brief
-	* Set the timestamp value from given date time parts
-	*
-	* @param year		- Year value
-	* @param month		- Month value
-	* @param day		- Day value
-	* @param hour		- Hour value
-	* @param min		- Minutes value
-	* @param sec		- Seconds value
-	* @param fsec		- Fractional part of seconds value
-	* @param timeZone	- name of a time zone to use [optional]
-	*
-	*/
-	void SetDateTime(int year, int month, int day, int hour, int min, int sec, int fsec, const ostring& timeZone = OTEXT(""));
+    /**
+    * @brief
+    * Set the timestamp year value
+    *
+    */
+    void SetYear(int value);
 
-	/**
-	* @brief
-	* Return the name of the current time zone
-	*
-	* @warning
-	* Returns an empty string if the timestamp type is TimeStamp::NoTimeZone
-	*
-	*/
+    /**
+    * @brief
+    * Return the timestamp month value
+    *
+    */
+    int GetMonth() const;
+
+    /**
+    * @brief
+    * Set the timestamp month value
+    *
+    */
+    void SetMonth(int value);
+
+    /**
+    * @brief
+    * Return the timestamp day value
+    *
+    */
+    int GetDay() const;
+
+    /**
+    * @brief
+    * Set the timestamp day value
+    *
+    */
+    void SetDay(int value);
+
+    /**
+    * @brief
+    * Return the timestamp hours value
+    *
+    */
+    int GetHours() const;
+
+    /**
+    * @brief
+    * Set the timestamp hours value
+    *
+    */
+    void SetHours(int value);
+
+    /**
+    * @brief
+    * Return the timestamp minutes value
+    *
+    */
+    int GetMinutes() const;
+
+    /**
+    * @brief
+    * Set the timestamp minutes value
+    *
+    */
+    void SetMinutes(int value);
+
+    /**
+    * @brief
+    * Return the timestamp seconds value
+    *
+    */
+    int GetSeconds() const;
+
+    /**
+    * @brief
+    * Set the timestamp seconds value
+    *
+    */
+    void SetSeconds(int value);
+
+    /**
+    * @brief
+    * Return the timestamp seconds value
+    *
+    */
+    int GetMilliSeconds() const;
+
+    /**
+    * @brief
+    * Set the timestamp milliseconds value
+    *
+    */
+    void SetMilliSeconds(int value);
+
+    /**
+    * @brief
+    * Extract the date parts
+    *
+    * @param year  - Place holder for year value
+    * @param month - Place holder for month value
+    * @param day   - Place holder for day value
+    *
+    */
+    void GetDate(int &year, int &month, int &day) const;
+
+    /**
+    * @brief
+    * Extract time parts
+    *
+    * @param hour  - Place holder for hour value
+    * @param min   - Place holder for minute value
+    * @param sec   - Place holder for second value
+    * @param fsec  - Place holder for fractional part of the seconds
+    *
+    */
+    void GetTime(int &hour, int &min, int &sec, int &fsec) const;
+
+    /**
+    * @brief
+    * Set the date part
+    *
+    * @param year  - Year value
+    * @param month - Month value
+    * @param day   - Day value
+    *
+    */
+    void SetDate(int year, int month, int day);
+
+    /**
+    * @brief
+    * Set the time part
+    *
+    * @param hour  - Hour value
+    * @param min   - Minute value
+    * @param sec   - Second value
+    * @param fsec  - Place holder for fractional part of the seconds
+    *
+    */
+    void SetTime(int hour, int min, int sec, int fsec);
+
+    /**
+    * @brief
+    * Extract date and time parts
+    *
+    * @param year     - Place holder for year value
+    * @param month    - Place holder for month value
+    * @param day      - Place holder for day value
+    * @param hour     - Place holder for hour value
+    * @param min      - Place holder for minute value
+    * @param sec      - Place holder for second value
+    * @param fsec     - Place holder for fractional part of the seconds
+    *
+    */
+    void GetDateTime(int &year, int &month, int &day, int &hour, int &min, int &sec, int &fsec) const;
+
+    /**
+    * @brief
+    * Set the timestamp value from given date time parts
+    *
+    * @param year       - Year value
+    * @param month      - Month value
+    * @param day        - Day value
+    * @param hour       - Hour value
+    * @param min        - Minutes value
+    * @param sec        - Seconds value
+    * @param fsec       - Fractional part of seconds value
+    * @param timeZone   - name of a time zone to use [optional]
+    *
+    */
+    void SetDateTime(int year, int month, int day, int hour, int min, int sec, int fsec, const ostring& timeZone = OTEXT(""));
+
+    /**
+    * @brief
+    * Return the name of the current time zone
+    *
+    * @warning
+    * Returns an empty string if the timestamp type is TimeStamp::NoTimeZone
+    *
+    */
     ostring GetTimeZone() const;
 
-	/**
-	* @brief
-	* Set the given time zone to the timestamp
-	*
-	* @warning
-	* - The timestamp must have a valid value before setting the timezone
-	* - Applies to TimeStamp::WithTimeZone only
-	*
-	*/
-	void SetTimeZone(const ostring& timeZone);
-
-	/**
-	* @brief
-	* Return the time zone (hour, minute) offsets
-	*
-	* @param hour  - Place holder for hour value
-	* @param min   - Place holder for min value
+    /**
+    * @brief
+    * Set the given time zone to the timestamp
     *
-	*/
+    * @warning
+    * - The timestamp must have a valid value before setting the timezone
+    * - Applies to TimeStamp::WithTimeZone only
+    *
+    */
+    void SetTimeZone(const ostring& timeZone);
+
+    /**
+    * @brief
+    * Return the time zone (hour, minute) offsets
+    *
+    * @param hour  - Place holder for hour value
+    * @param min   - Place holder for min value
+    *
+    */
     void GetTimeZoneOffset(int &hour, int &min) const;
 
     /**
@@ -3629,30 +3629,30 @@ public:
     */
     static void Substract(const Timestamp &lsh, const Timestamp &rsh, Interval &result);
 
-	/**
-	* @brief
-	* Assign to the timestamp object the value provided by the input date time string
-	*
-	* @param data   - String date time
-	* @param format - format of the date time provided in parameter 'data'
-	*
-	* @note
-	* For date time formats, refer to the Oracle SQL documentation
-	*
-	*/
-	void FromString(const ostring& data, const ostring& format = OCI_STRING_FORMAT_DATE);
+    /**
+    * @brief
+    * Assign to the timestamp object the value provided by the input date time string
+    *
+    * @param data   - String date time
+    * @param format - format of the date time provided in parameter 'data'
+    *
+    * @note
+    * For date time formats, refer to the Oracle SQL documentation
+    *
+    */
+    void FromString(const ostring& data, const ostring& format = OCI_STRING_FORMAT_DATE);
 
-	/**
-	* @brief
-	* Convert the timestamp value to a string using the given format and precision
-	*
-	* @param format    - date time / timestamp format to use
-	* @param precision - precision for milliseconds
-	*
-	* @note
-	* For date time / timestamp formats, refer to the Oracle SQL documentation
-	*
-	*/
+    /**
+    * @brief
+    * Convert the timestamp value to a string using the given format and precision
+    *
+    * @param format    - date time / timestamp format to use
+    * @param precision - precision for milliseconds
+    *
+    * @note
+    * For date time / timestamp formats, refer to the Oracle SQL documentation
+    *
+    */
     ostring ToString(const ostring& format, int precision) const;
 
     /**
@@ -3663,149 +3663,149 @@ public:
     ostring ToString() const;
 
 
-	/**
-	* @brief
-	* Clone the current instance to a new one performing deep copy
-	*
-	*/
-	Timestamp Clone() const;
+    /**
+    * @brief
+    * Clone the current instance to a new one performing deep copy
+    *
+    */
+    Timestamp Clone() const;
 
-	/**
-	* @brief
-	* Increment the timestamp by 1 day
-	*
-	*/
-	Timestamp& operator ++ ();
+    /**
+    * @brief
+    * Increment the timestamp by 1 day
+    *
+    */
+    Timestamp& operator ++ ();
 
-	/**
-	* @brief
-	* Increment the timestamp by 1 day
-	*
-	*/
-	Timestamp operator ++ (int);
+    /**
+    * @brief
+    * Increment the timestamp by 1 day
+    *
+    */
+    Timestamp operator ++ (int);
 
-	/**
-	* @brief
-	* Decrement the Timestamp by 1 day
-	*
-	*/
-	Timestamp& operator -- ();
+    /**
+    * @brief
+    * Decrement the Timestamp by 1 day
+    *
+    */
+    Timestamp& operator -- ();
 
-	/**
-	* @brief
-	* Decrement the Timestamp by 1 day
-	*
-	*/
-	Timestamp operator -- (int);
+    /**
+    * @brief
+    * Decrement the Timestamp by 1 day
+    *
+    */
+    Timestamp operator -- (int);
 
-	/**
-	* @brief
-	* Return a new Timestamp holding the current Timestamp value incremented by the given number of days
-	*
-	*/
-	Timestamp operator + (int value);
+    /**
+    * @brief
+    * Return a new Timestamp holding the current Timestamp value incremented by the given number of days
+    *
+    */
+    Timestamp operator + (int value);
 
-	/**
-	* @brief
-	* Return a new Timestamp holding the current Timestamp value decremented by the given number of days
-	*
-	*/
-	Timestamp operator - (int value);
+    /**
+    * @brief
+    * Return a new Timestamp holding the current Timestamp value decremented by the given number of days
+    *
+    */
+    Timestamp operator - (int value);
 
-	/**
-	* @brief
-	* Return an interval storing the difference between the current timestamp and the given one
-	*
-	*/
-	Interval operator - (const Timestamp& other);
+    /**
+    * @brief
+    * Return an interval storing the difference between the current timestamp and the given one
+    *
+    */
+    Interval operator - (const Timestamp& other);
 
-	/**
-	* @brief
-	* Increment the Timestamp by the given number of days
-	*
-	*/
-	Timestamp& operator += (int value);
+    /**
+    * @brief
+    * Increment the Timestamp by the given number of days
+    *
+    */
+    Timestamp& operator += (int value);
 
-	/**
-	* @brief
-	* Decrement the Timestamp by the given number of days
-	*
-	*/
-	Timestamp& operator -= (int value);
+    /**
+    * @brief
+    * Decrement the Timestamp by the given number of days
+    *
+    */
+    Timestamp& operator -= (int value);
 
-	/**
-	* @brief
-	* Return a new Timestamp holding the sum of the current Timestamp value and the given Interval value
-	*
-	*/
-	Timestamp operator + (const Interval& other);
+    /**
+    * @brief
+    * Return a new Timestamp holding the sum of the current Timestamp value and the given Interval value
+    *
+    */
+    Timestamp operator + (const Interval& other);
 
-	/**
-	* @brief
-	* Return a new Timestamp holding the difference of the current Timestamp value and the given Interval value
-	*
-	*/
-	Timestamp operator - (const Interval& other);
+    /**
+    * @brief
+    * Return a new Timestamp holding the difference of the current Timestamp value and the given Interval value
+    *
+    */
+    Timestamp operator - (const Interval& other);
 
-	/**
-	* @brief
-	* Increment the current Value with the given Interval value
-	*
-	*/
-	Timestamp& operator += (const Interval& other);
+    /**
+    * @brief
+    * Increment the current Value with the given Interval value
+    *
+    */
+    Timestamp& operator += (const Interval& other);
 
-	/**
-	* @brief
-	* Decrement the current Value with the given Interval value
-	*
-	*/
-	Timestamp& operator -= (const Interval& other);
+    /**
+    * @brief
+    * Decrement the current Value with the given Interval value
+    *
+    */
+    Timestamp& operator -= (const Interval& other);
 
-	/**
-	* @brief
-	* Indicates if the current Timestamp value is equal to the given Timestamp value
-	*
-	*/
-	bool operator == (const Timestamp& other) const;
+    /**
+    * @brief
+    * Indicates if the current Timestamp value is equal to the given Timestamp value
+    *
+    */
+    bool operator == (const Timestamp& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current Timestamp value is not equal the given Timestamp value
-	*
-	*/
-	bool operator != (const Timestamp& other) const;
+    /**
+    * @brief
+    * Indicates if the current Timestamp value is not equal the given Timestamp value
+    *
+    */
+    bool operator != (const Timestamp& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current Timestamp value is superior to the given Timestamp value
-	*
-	*/
-	bool operator > (const Timestamp& other) const;
+    /**
+    * @brief
+    * Indicates if the current Timestamp value is superior to the given Timestamp value
+    *
+    */
+    bool operator > (const Timestamp& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current Timestamp value is inferior to the given Timestamp value
-	*
-	*/
-	bool operator < (const Timestamp& other) const;
+    /**
+    * @brief
+    * Indicates if the current Timestamp value is inferior to the given Timestamp value
+    *
+    */
+    bool operator < (const Timestamp& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current Timestamp value is superior or equal to the given Timestamp value
-	*
-	*/
-	bool operator >= (const Timestamp& other) const;
+    /**
+    * @brief
+    * Indicates if the current Timestamp value is superior or equal to the given Timestamp value
+    *
+    */
+    bool operator >= (const Timestamp& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current Timestamp value is inferior or equal to the given Timestamp value
-	*
-	*/
-	bool operator <= (const Timestamp& other) const;
+    /**
+    * @brief
+    * Indicates if the current Timestamp value is inferior or equal to the given Timestamp value
+    *
+    */
+    bool operator <= (const Timestamp& other) const;
 
 private:
 
-	int Compare(const Timestamp& other) const;
+    int Compare(const Timestamp& other) const;
 
     Timestamp(OCI_Timestamp *pTimestamp, Handle *parent = 0);
 };
@@ -3820,12 +3820,12 @@ private:
 template<class TLobObjectType, int TLobOracleType>
 class Lob : public HandleHolder<OCI_Lob *>
 {
-	friend class Statement;
-	friend class Resultset;
-	friend class BindArray;
-	friend class Object;
-	template <class TDataType>
-	friend class Collection;
+    friend class Statement;
+    friend class Resultset;
+    friend class BindArray;
+    friend class Object;
+    template <class TDataType>
+    friend class Collection;
 
 public:
 
@@ -3836,259 +3836,259 @@ public:
     */
     Lob();
 
-	/**
-	* @brief
-	* Parametrized constructor
-	*
-	* @param connection - Parent connection
-	*
-	* @note
-	* the lob object must not be accessed anymore once the parent connection object gets out of scope
-	*
-	*/
-	Lob(const Connection &connection);
-
-	/**
-	* @brief
-	* Read a portion of a lob
-	*
-	* @param length - Maximum number of characters or bytes to read
-	*
-	* @return
-	* The content read from the lob
-	*
-	*/
-	TLobObjectType Read(unsigned int length);
-
-	/**
-	* @brief
-	* Write the given content at the current position within the lob
-	*
-	* @param content - content to write
-	*
-	* @return
-	* Number of character or bytes written into the lob
-	*
-	*/
-	unsigned int Write(const TLobObjectType &content);
-
-	/**
-	* @brief
-	* Append the given content to the lob
-	*
-	* @param content - content to write
-	*
-	* @return
-	* Number of character or bytes written into the lob
-	*
-	*/
-	unsigned int Append(const TLobObjectType& content);
-
-	/**
-	* @brief
-	* Append the given lob content to the lob
-	*
-	* @param other - source lob
-	*
-	*/
-	void Append(const Lob& other);
-
-	/**
-	* @brief
-	* Move the current position within the lob for read/write operations
-	*
-	* @param seekMode - Seek mode
-	* @param offset   - offset from current position
-	*
-	* @note
-	* Positions start at 0.
-	*
-	* @return
-	* true on success otherwise false
-	*
-	*/
-	bool Seek(SeekMode seekMode, big_uint offset);
-
-	/**
-	* @brief
-	* return the type of lob
-	*
-	*/
-	LobType GetType() const;
-
-	/**
-	* @brief
-	* Returns the current R/W offset within the lob
+    /**
+    * @brief
+    * Parametrized constructor
     *
-	*/
-	big_uint GetOffset() const;
+    * @param connection - Parent connection
+    *
+    * @note
+    * the lob object must not be accessed anymore once the parent connection object gets out of scope
+    *
+    */
+    Lob(const Connection &connection);
 
-	/**
-	* @brief
-	* Returns the number of characters or bytes contained in the lob
-	*
-	*/
-	big_uint GetLength() const;
+    /**
+    * @brief
+    * Read a portion of a lob
+    *
+    * @param length - Maximum number of characters or bytes to read
+    *
+    * @return
+    * The content read from the lob
+    *
+    */
+    TLobObjectType Read(unsigned int length);
 
-	/**
-	* @brief
-	* Returns the lob maximum possible size
-	*
-	*/
+    /**
+    * @brief
+    * Write the given content at the current position within the lob
+    *
+    * @param content - content to write
+    *
+    * @return
+    * Number of character or bytes written into the lob
+    *
+    */
+    unsigned int Write(const TLobObjectType &content);
+
+    /**
+    * @brief
+    * Append the given content to the lob
+    *
+    * @param content - content to write
+    *
+    * @return
+    * Number of character or bytes written into the lob
+    *
+    */
+    unsigned int Append(const TLobObjectType& content);
+
+    /**
+    * @brief
+    * Append the given lob content to the lob
+    *
+    * @param other - source lob
+    *
+    */
+    void Append(const Lob& other);
+
+    /**
+    * @brief
+    * Move the current position within the lob for read/write operations
+    *
+    * @param seekMode - Seek mode
+    * @param offset   - offset from current position
+    *
+    * @note
+    * Positions start at 0.
+    *
+    * @return
+    * true on success otherwise false
+    *
+    */
+    bool Seek(SeekMode seekMode, big_uint offset);
+
+    /**
+    * @brief
+    * return the type of lob
+    *
+    */
+    LobType GetType() const;
+
+    /**
+    * @brief
+    * Returns the current R/W offset within the lob
+    *
+    */
+    big_uint GetOffset() const;
+
+    /**
+    * @brief
+    * Returns the number of characters or bytes contained in the lob
+    *
+    */
+    big_uint GetLength() const;
+
+    /**
+    * @brief
+    * Returns the lob maximum possible size
+    *
+    */
     big_uint GetMaxSize() const;
 
-	/**
-	* @brief
-	* Returns the current lob chunk size
-	*
-	* @note
-	* This chunk size corresponds to the chunk size used by the LOB data layer
-	* when accessing and modifying the LOB value. According to Oracle
-	* documentation, performance will be improved if the application issues
-	* read or write requests using a multiple of this chunk size
-	*
-	*/
-	big_uint GetChunkSize() const;
+    /**
+    * @brief
+    * Returns the current lob chunk size
+    *
+    * @note
+    * This chunk size corresponds to the chunk size used by the LOB data layer
+    * when accessing and modifying the LOB value. According to Oracle
+    * documentation, performance will be improved if the application issues
+    * read or write requests using a multiple of this chunk size
+    *
+    */
+    big_uint GetChunkSize() const;
 
-	/**
-	* @brief
-	* Return the lob parent connection
-	*
-	*/
-	Connection GetConnection() const;
+    /**
+    * @brief
+    * Return the lob parent connection
+    *
+    */
+    Connection GetConnection() const;
 
-	/**
-	* @brief
-	* Truncate the lob to a shorter length
-	*
-	* @param length - New length in characters or bytes
-	*
-	*/
+    /**
+    * @brief
+    * Truncate the lob to a shorter length
+    *
+    * @param length - New length in characters or bytes
+    *
+    */
     void Truncate(big_uint length);
 
-	/**
-	* @brief
-	* Erase a portion of the lob at a given position
-	*
-	* @param offset - Absolute position in source lob
-	* @param length - Number of bytes or characters to erase
-	*
-	* @note
-	* Absolute position starts at 0.
-	* Erasing means that space or null values overwrite the existing LOB value.
-	*
-	* @return
-	* Number of characters or bytes erased
-	*
-	*/
+    /**
+    * @brief
+    * Erase a portion of the lob at a given position
+    *
+    * @param offset - Absolute position in source lob
+    * @param length - Number of bytes or characters to erase
+    *
+    * @note
+    * Absolute position starts at 0.
+    * Erasing means that space or null values overwrite the existing LOB value.
+    *
+    * @return
+    * Number of characters or bytes erased
+    *
+    */
     big_uint Erase(big_uint offset, big_uint length);
 
-	/**
-	* @brief
-	* Copy the given portion of the lob content to another one
-	*
-	* @param dest        - Destination lob
-	* @param offset      - Absolute position in the lob
-	* @param offsetDest  - Absolute position in the destination lob
-	* @param length      - Number of characters or bytes to copy
-	*
-	* @note
-	* Absolute position starts at 0.
-	*
-	*/
+    /**
+    * @brief
+    * Copy the given portion of the lob content to another one
+    *
+    * @param dest        - Destination lob
+    * @param offset      - Absolute position in the lob
+    * @param offsetDest  - Absolute position in the destination lob
+    * @param length      - Number of characters or bytes to copy
+    *
+    * @note
+    * Absolute position starts at 0.
+    *
+    */
     void Copy(Lob &dest, big_uint offset, big_uint offsetDest, big_uint length) const;
 
-	/**
-	* @brief
-	* Check if the given lob is a temporary lob
-	*
-	*/
+    /**
+    * @brief
+    * Check if the given lob is a temporary lob
+    *
+    */
     bool IsTemporary() const;
 
-	/**
-	* @brief
-	* Open explicitly a Lob
-	*
-	* @param mode - open mode
-	*
-	* @note
-	* - A call to Open() is not necessary to manipulate a Lob.
-	* - If a lob hasn't been opened explicitly, triggers are fired and
-	*   indexes updated at every read/write/append operation
-	*
-	*/
+    /**
+    * @brief
+    * Open explicitly a Lob
+    *
+    * @param mode - open mode
+    *
+    * @note
+    * - A call to Open() is not necessary to manipulate a Lob.
+    * - If a lob hasn't been opened explicitly, triggers are fired and
+    *   indexes updated at every read/write/append operation
+    *
+    */
     void Open(OpenMode mode);
 
-	/**
-	* @brief
-	* Flush the lob content to the server (if applicable)
-	*
-	*/
-	void Flush();
+    /**
+    * @brief
+    * Flush the lob content to the server (if applicable)
+    *
+    */
+    void Flush();
 
-	/**
-	* @brief
-	* Close explicitly a Lob
-	*
-	* @note
-	* - A call to Close() is not necessary to manipulate a Lob.
-	*
-	*/
-	void Close();
+    /**
+    * @brief
+    * Close explicitly a Lob
+    *
+    * @note
+    * - A call to Close() is not necessary to manipulate a Lob.
+    *
+    */
+    void Close();
 
-	/**
-	* @brief
-	* Enable / disable buffering mode on the given lob object
-	*
-	* @param value  - Enable/disable buffering mode
-	*
-	* @note
-	* Oracle "LOB Buffering Subsystem" allows client applications
-	* to speedup read/write of small buffers on Lobs Objects.
-	* Check Oracle Documentation for more details on "LOB Buffering Subsystem".
-	* This reduces the number of network round trips and LOB versions, thereby
-	* improving LOB performance significantly.
-	*
-	* @warning
-	* According to Oracle documentation the following operations are not permitted
-	* on Lobs when buffering is on : Copy(), Append(), Erase(), GetLength(), Truncate()
-	*
-	*/
+    /**
+    * @brief
+    * Enable / disable buffering mode on the given lob object
+    *
+    * @param value  - Enable/disable buffering mode
+    *
+    * @note
+    * Oracle "LOB Buffering Subsystem" allows client applications
+    * to speedup read/write of small buffers on Lobs Objects.
+    * Check Oracle Documentation for more details on "LOB Buffering Subsystem".
+    * This reduces the number of network round trips and LOB versions, thereby
+    * improving LOB performance significantly.
+    *
+    * @warning
+    * According to Oracle documentation the following operations are not permitted
+    * on Lobs when buffering is on : Copy(), Append(), Erase(), GetLength(), Truncate()
+    *
+    */
     void EnableBuffering(bool value);
 
-	/**
-	* @brief
-	* Clone the current instance to a new one performing deep copy
-	*
-	*/
-	Lob Clone() const;
+    /**
+    * @brief
+    * Clone the current instance to a new one performing deep copy
+    *
+    */
+    Lob Clone() const;
 
-	/**
-	* @brief
-	* Appending the given lob content to the current lob content
-	*
-	*/
-	Lob& operator += (const Lob& other);
+    /**
+    * @brief
+    * Appending the given lob content to the current lob content
+    *
+    */
+    Lob& operator += (const Lob& other);
 
-	/**
-	* @brief
-	* Indicates if the current lob value is equal to the given lob value
-	*
-	*/
-	bool operator == (const Lob& other) const;
+    /**
+    * @brief
+    * Indicates if the current lob value is equal to the given lob value
+    *
+    */
+    bool operator == (const Lob& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current lob value is not equal the given lob value
-	*
-	*/
-	bool operator != (const Lob& other) const;
+    /**
+    * @brief
+    * Indicates if the current lob value is not equal the given lob value
+    *
+    */
+    bool operator != (const Lob& other) const;
 
 private:
 
-	bool Equals(const Lob &other) const;
+    bool Equals(const Lob &other) const;
 
-	Lob(OCI_Lob *pLob, Handle *parent = 0);
+    Lob(OCI_Lob *pLob, Handle *parent = 0);
 
 };
 
@@ -4139,7 +4139,7 @@ class File : public HandleHolder<OCI_File *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-	template <class TDataType>
+    template <class TDataType>
     friend class Collection;
 
 public:
@@ -4151,166 +4151,166 @@ public:
     */
     File();
 
-	/**
-	* @brief
-	* Parametrized constructor
-	*
-	* @param connection - Parent connection
-	*
-	* @note
-	* the file object must not be accessed anymore once the parent connection object gets out of scope
-	*
-	*/
+    /**
+    * @brief
+    * Parametrized constructor
+    *
+    * @param connection - Parent connection
+    *
+    * @note
+    * the file object must not be accessed anymore once the parent connection object gets out of scope
+    *
+    */
     File(const Connection &connection);
 
-	/**
-	* @brief
-	* Parametrized constructor
-	*
-	* @param connection - Parent connection
-	* @param directory  - File directory
-	* @param name       - File name
-	*
-	* this convenient constructor calls File::SetInfos()
-	*
-	* @note
-	* the file object must not be accessed anymore once the parent connection object gets out of scope
-	*
-	*/
-	File(const Connection &connection, const ostring& directory, const ostring& name);
+    /**
+    * @brief
+    * Parametrized constructor
+    *
+    * @param connection - Parent connection
+    * @param directory  - File directory
+    * @param name       - File name
+    *
+    * this convenient constructor calls File::SetInfos()
+    *
+    * @note
+    * the file object must not be accessed anymore once the parent connection object gets out of scope
+    *
+    */
+    File(const Connection &connection, const ostring& directory, const ostring& name);
 
-	/**
-	* @brief
-	* Read a portion of a file
-	*
-	* @param size - Maximum number of bytes to read
-	*
-	* @return
-	* The content read from the file
-	*
-	*/
-	Raw Read(unsigned int size);
+    /**
+    * @brief
+    * Read a portion of a file
+    *
+    * @param size - Maximum number of bytes to read
+    *
+    * @return
+    * The content read from the file
+    *
+    */
+    Raw Read(unsigned int size);
 
-	/**
-	* @brief
-	* Move the current position within the file for read/write operations
-	*
-	* @param seekMode  - Seek mode
-	* @param offset    - offset from current position
-	*
-	* @note
-	* Positions start at 0.
-	*
-	* @return
-	* true on success otherwise false
-	*
-	*/
+    /**
+    * @brief
+    * Move the current position within the file for read/write operations
+    *
+    * @param seekMode  - Seek mode
+    * @param offset    - offset from current position
+    *
+    * @note
+    * Positions start at 0.
+    *
+    * @return
+    * true on success otherwise false
+    *
+    */
     bool Seek(SeekMode seekMode, big_uint offset);
 
-	/**
-	* @brief
-	* Check if the given file exists on server
-	*
-	* @note
-	* For local FILEs object, SetInfos() must be called before calling Exists()
-	*
-	*/
+    /**
+    * @brief
+    * Check if the given file exists on server
+    *
+    * @note
+    * For local FILEs object, SetInfos() must be called before calling Exists()
+    *
+    */
     bool Exists() const;
 
-	/**
-	* @brief
-	* Returns the current R/W offset within the file
-	*
-	*/
-	big_uint GetOffset() const;
+    /**
+    * @brief
+    * Returns the current R/W offset within the file
+    *
+    */
+    big_uint GetOffset() const;
 
-	/**
-	* @brief
-	* Returns the number of bytes contained in the file
-	*
-	*/
-	big_uint GetLength() const;
+    /**
+    * @brief
+    * Returns the number of bytes contained in the file
+    *
+    */
+    big_uint GetLength() const;
 
-	/**
-	* @brief
-	* Return the file parent connection
-	*
-	*/
-	Connection GetConnection() const;
+    /**
+    * @brief
+    * Return the file parent connection
+    *
+    */
+    Connection GetConnection() const;
 
-	/**
-	* @brief
-	* Set the directory and file name of our file object
-	*
-	* @param directory - File directory
-	* @param name      - File name
-	*
-	* @note
-	* - For local FILEs only
-	* - Files fetched from resultset can't be assigned a new directory and name
-	*
-	*/
+    /**
+    * @brief
+    * Set the directory and file name of our file object
+    *
+    * @param directory - File directory
+    * @param name      - File name
+    *
+    * @note
+    * - For local FILEs only
+    * - Files fetched from resultset can't be assigned a new directory and name
+    *
+    */
     void SetInfos(const ostring& directory, const ostring& name);
 
-	/**
-	* @brief
-	* Return the file name
-	*
-	*/
+    /**
+    * @brief
+    * Return the file name
+    *
+    */
     ostring GetName() const;
 
-	/**
-	* @brief
-	* Return the file directory
-	*
-	*/
+    /**
+    * @brief
+    * Return the file directory
+    *
+    */
     ostring GetDirectory() const;
 
-	/**
-	* @brief
-	* Open a file for reading on the server
-	*
-	*/
-	void Open();
+    /**
+    * @brief
+    * Open a file for reading on the server
+    *
+    */
+    void Open();
 
-	/**
-	* @brief
-	* Close the file on the server
-	*
-	*/
-	void Close();
+    /**
+    * @brief
+    * Close the file on the server
+    *
+    */
+    void Close();
 
-	/**
-	* @brief
-	* Check if the specified file is currently opened on the server by our object
-	*
-	*/
+    /**
+    * @brief
+    * Check if the specified file is currently opened on the server by our object
+    *
+    */
     bool IsOpened() const;
 
-	/**
-	* @brief
-	* Clone the current instance to a new one performing deep copy
-	*
-	*/
-	File Clone() const;
+    /**
+    * @brief
+    * Clone the current instance to a new one performing deep copy
+    *
+    */
+    File Clone() const;
 
-	/**
-	* @brief
-	* Indicates if the current file value is equal the given file value
-	*
-	*/
-	bool operator == (const File& other) const;
+    /**
+    * @brief
+    * Indicates if the current file value is equal the given file value
+    *
+    */
+    bool operator == (const File& other) const;
 
-	/**
-	* @brief
-	* Indicates if the current file value is not equal the given file value
-	*
-	*/
-	bool operator != (const File& other) const;
+    /**
+    * @brief
+    * Indicates if the current file value is not equal the given file value
+    *
+    */
+    bool operator != (const File& other) const;
 
 private:
 
-	bool Equals(const File &other) const;
+    bool Equals(const File &other) const;
 
     File(OCI_File *pFile, Handle *parent = 0);
 };
@@ -4326,54 +4326,54 @@ class TypeInfo : public HandleHolder<OCI_TypeInfo *>
 {
     friend class Object;
     friend class Reference;
-	template <class TDataType>
+    template <class TDataType>
     friend class Collection;
     friend class Column;
 public:
 
-	/**
-	* @brief
-	* Type of object information enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Type of object information enumerated values
+    *
+    */
     enum TypeInfoTypeValues
     {
-		/** Database Table information */
+        /** Database Table information */
         Table = OCI_TIF_TABLE,
-		/** Database View information */
-		View = OCI_TIF_VIEW,
-		/** Database type information */
-		Type = OCI_TIF_TYPE
+        /** Database View information */
+        View = OCI_TIF_VIEW,
+        /** Database type information */
+        Type = OCI_TIF_TYPE
     };
 
-	/**
-	* @brief
-	* Type of object information
-	*
-	* Possible values are TypeInfo::TypeInfoTypeValues
-	*
-	*/
+    /**
+    * @brief
+    * Type of object information
+    *
+    * Possible values are TypeInfo::TypeInfoTypeValues
+    *
+    */
     typedef Enum<TypeInfoTypeValues> TypeInfoType;
 
-	/**
-	* @brief
-	* Parametrized constructor
-	*
-	* @param connection - Parent connection
-	* @param name       - Type name
-	* @param type       - Kind of type to retrieve
-	*
-	* @note
-	* the TypeInfo object must not be accessed anymore once the parent connection object gets out of scope
-	*
-	*/
+    /**
+    * @brief
+    * Parametrized constructor
+    *
+    * @param connection - Parent connection
+    * @param name       - Type name
+    * @param type       - Kind of type to retrieve
+    *
+    * @note
+    * the TypeInfo object must not be accessed anymore once the parent connection object gets out of scope
+    *
+    */
     TypeInfo(const Connection &connection, const ostring& name, TypeInfoType type);
 
-	/**
-	* @brief
-	* Return the type of the given TypeInfo object
-	*
-	*/
+    /**
+    * @brief
+    * Return the type of the given TypeInfo object
+    *
+    */
     TypeInfoType GetType() const;
 
     /**
@@ -4383,38 +4383,38 @@ public:
     */
     ostring GetName() const;
 
-	/**
-	* @brief
-	* Return the connection associated with a statement
-	*
-	*/
+    /**
+    * @brief
+    * Return the connection associated with a statement
+    *
+    */
     Connection GetConnection() const;
 
-	/**
-	* @brief
-	* Return the number of columns contained in the type
-	*
-	* @note
-	* - For table and views, it is the number of columns
-	* - For types, it is the number of member properties
-	*
-	*/
+    /**
+    * @brief
+    * Return the number of columns contained in the type
+    *
+    * @note
+    * - For table and views, it is the number of columns
+    * - For types, it is the number of member properties
+    *
+    */
     unsigned int GetColumnCount() const;
 
-	/**
-	* @brief
-	* Return the column from its index in the resultset
-	*
-	* @param index  - Column index
-	*
-	* @note
-	* Column position starts at 1.
-	*
-	* @note
-	* - For table and views, the returned column object describes a table/view column
-	* - For types, the returned column object describes an object property
-	*
-	*/
+    /**
+    * @brief
+    * Return the column from its index in the resultset
+    *
+    * @param index  - Column index
+    *
+    * @note
+    * Column position starts at 1.
+    *
+    * @note
+    * - For table and views, the returned column object describes a table/view column
+    * - For types, the returned column object describes an object property
+    *
+    */
     Column GetColumn(unsigned int index) const;
 
 private:
@@ -4435,34 +4435,34 @@ class Object : public HandleHolder<OCI_Object *>, public Streamable
     friend class Resultset;
     friend class BindArray;
     friend class Reference;
-	template <class TDataType>
+    template <class TDataType>
     friend class Collection;
-	friend class Message;
+    friend class Message;
 
 public:
 
-	/**
-	* @brief
-	* Object Type enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Object Type enumerated values
+    *
+    */
     enum ObjectTypeValues
     {
-		/** The object is persistent in the database  */
+        /** The object is persistent in the database */
         Persistent = OCI_OBJ_PERSISTENT,
-		/** The object is Transient */
-		Transient = OCI_OBJ_TRANSIENT,
-		/** The object is a value member of another object	*/
-		Value = OCI_OBJ_VALUE
+        /** The object is Transient */
+        Transient = OCI_OBJ_TRANSIENT,
+        /** The object is a value member of another object */
+        Value = OCI_OBJ_VALUE
     };
 
-	/**
-	* @brief
-	* Object Type
-	*
-	* Possible values are Object::ObjectTypeValues
-	*
-	*/
+    /**
+    * @brief
+    * Object Type
+    *
+    * Possible values are Object::ObjectTypeValues
+    *
+    */
     typedef Enum<ObjectTypeValues> ObjectType;
 
     /**
@@ -4472,67 +4472,67 @@ public:
     */
     Object();
 
-	/**
-	* @brief
-	* Parametrized constructor
-	*
-	* @param typeInfo - type info descriptor
-	*
-	*/
+    /**
+    * @brief
+    * Parametrized constructor
+    *
+    * @param typeInfo - type info descriptor
+    *
+    */
     Object(const TypeInfo &typeInfo);
 
-	/**
-	* @brief
-	* Check if an object attribute is null
-	*
-	* @param name - Attribute name
-	*
-	*/
+    /**
+    * @brief
+    * Check if an object attribute is null
+    *
+    * @param name - Attribute name
+    *
+    */
     bool IsAttributeNull(const ostring& name) const;
 
-	/**
-	* @brief
-	* Set the given object attribute to null
-	*
-	* @param name - Attribute name
-	*
-	*/
+    /**
+    * @brief
+    * Set the given object attribute to null
+    *
+    * @param name - Attribute name
+    *
+    */
     void SetAttributeNull(const ostring& name);
 
-	/**
-	* @brief
-	* Return the TypeInfo object describing the object
-	*
-	*/
+    /**
+    * @brief
+    * Return the TypeInfo object describing the object
+    *
+    */
     TypeInfo GetTypeInfo() const;
 
-	/**
-	* @brief
-	* Creates a reference on the current object
-	*
-	*/
+    /**
+    * @brief
+    * Creates a reference on the current object
+    *
+    */
     Reference GetReference() const;
 
-	/**
-	* @brief
-	* Return the type of the given object
-	*
-	*/
+    /**
+    * @brief
+    * Return the type of the given object
+    *
+    */
     ObjectType GetType() const;
 
-	/**
-	* @brief
-	* Return the given object attribute value
-	*
-	* @tparam TDataType - C++ object type to retrieve
-	*
-	* @param name - Attribute name
-	*
-	* @note
-	* Specialized version of this template function are provided for all supported types
-	*
-	*/
-	template<class TDataType>
+    /**
+    * @brief
+    * Return the given object attribute value
+    *
+    * @tparam TDataType - C++ object type to retrieve
+    *
+    * @param name - Attribute name
+    *
+    * @note
+    * Specialized version of this template function are provided for all supported types
+    *
+    */
+    template<class TDataType>
     TDataType Get(const ostring& name) const;
 
     /**
@@ -4567,34 +4567,34 @@ public:
     template<class TDataType>
     void Get(const ostring& name, Collection<TDataType> &value) const;
 
-	/**
-	* @brief
-	* Set the given object attribute value
-	*
-	* @tparam TDataType - C++ object type to set
-	*
-	* @param name  - Attribute name
-	* @param value - Attribute value
-	*
-	* @note
-	* Specialized version of this template function are provided for all supported types
-	*
-	*/
+    /**
+    * @brief
+    * Set the given object attribute value
+    *
+    * @tparam TDataType - C++ object type to set
+    *
+    * @param name  - Attribute name
+    * @param value - Attribute value
+    *
+    * @note
+    * Specialized version of this template function are provided for all supported types
+    *
+    */
     template<class TDataType>
     void Set(const ostring& name, const TDataType &value);
     
     /**
-	* @brief
-	* Clone the current instance to a new one performing deep copy
-	*
-	*/
-	Object Clone() const;
+    * @brief
+    * Clone the current instance to a new one performing deep copy
+    *
+    */
+    Object Clone() const;
 
-	/**
-	* @brief
-	* return a string representation of the current object
-	*
-	*/
+    /**
+    * @brief
+    * return a string representation of the current object
+    *
+    */
     ostring ToString() const;
 
 private:
@@ -4615,7 +4615,7 @@ class Reference : public HandleHolder<OCI_Ref *>, public Streamable
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-	template <class TDataType>
+    template <class TDataType>
     friend class Collection;
 
 public:
@@ -4627,62 +4627,62 @@ public:
     */
     Reference();
 
-	/**
-	* @brief
-	* Parametrized constructor
-	*
-	* @param typeInfo - type info descriptor
-	*
-	*/
+    /**
+    * @brief
+    * Parametrized constructor
+    *
+    * @param typeInfo - type info descriptor
+    *
+    */
     Reference(const TypeInfo &typeInfo);
 
-	/**
-	* @brief
-	* Return the TypeInfo object describing the referenced object
-	*
-	*/
+    /**
+    * @brief
+    * Return the TypeInfo object describing the referenced object
+    *
+    */
     TypeInfo GetTypeInfo() const;
 
-	/**
-	* @brief
-	* Returns the object pointed by the reference
-	*
-	* @return
-	* The object may bu null is the current reference value is null
-	*
-	*/
+    /**
+    * @brief
+    * Returns the object pointed by the reference
+    *
+    * @return
+    * The object may bu null is the current reference value is null
+    *
+    */
     Object GetObject() const;
 
-	/**
-	* @brief
-	* Check if the reference points to an object or not.
-	*
-	*/
+    /**
+    * @brief
+    * Check if the reference points to an object or not.
+    *
+    */
     bool IsReferenceNull() const;
 
-	/**
-	* @brief
-	* Nullify the given Ref handle
-	*
-	* @note
-	* this call clears the reference to object pointed by the reference object.
-	*
-	*/
+    /**
+    * @brief
+    * Nullify the given Ref handle
+    *
+    * @note
+    * this call clears the reference to object pointed by the reference object.
+    *
+    */
     void SetReferenceNull();
 
-	/**
-	* @brief
-	* Clone the current instance to a new one performing deep copy
-	*
-	*/
-	Reference Clone() const;
+    /**
+    * @brief
+    * Clone the current instance to a new one performing deep copy
+    *
+    */
+    Reference Clone() const;
 
-	/**
-	* @brief
-	* return a string representation of the current reference
-	*
-	*/
-	ostring ToString() const;
+    /**
+    * @brief
+    * return a string representation of the current reference
+    *
+    */
+    ostring ToString() const;
 
 private:
 
@@ -4703,36 +4703,36 @@ class Collection : public HandleHolder<OCI_Coll *>, public Streamable
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-	template <class TOtherDataType>
+    template <class TOtherDataType>
     friend class CollectionIterator;
 
-	template <class TOtherDataType>
-	friend class Collection;
+    template <class TOtherDataType>
+    friend class Collection;
 public:
 
     class Element;
     class Iterator;
 
-	/**
-	* @brief
-	* Collection type enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Collection type enumerated values
+    *
+    */
     enum CollectionTypeValues
     {
-		/** Collection is a VARRAY */
+        /** Collection is a VARRAY */
         Varray = OCI_COLL_VARRAY,
-		/** Collection is a NESTED TABLE */
-		NestedTable = OCI_COLL_NESTED_TABLE
+        /** Collection is a NESTED TABLE */
+        NestedTable = OCI_COLL_NESTED_TABLE
     };
 
-	/**
-	* @brief
-	* Collection type
-	*
-	* Possible values are Collection::CollectionTypeValues
-	*
-	*/
+    /**
+    * @brief
+    * Collection type
+    *
+    * Possible values are Collection::CollectionTypeValues
+    *
+    */
     typedef Enum<CollectionTypeValues> CollectionType;
 
     /**
@@ -4742,245 +4742,245 @@ public:
     */
     Collection();
 
-	/**
-	* @brief
-	* Parametrized constructor
-	*
-	* @param typeInfo - type info descriptor
-	*
-	*/
+    /**
+    * @brief
+    * Parametrized constructor
+    *
+    * @param typeInfo - type info descriptor
+    *
+    */
     Collection(const TypeInfo &typeInfo);
 
-	/**
-	* @brief
-	* Return the type of the collection
-	*
-	*/
+    /**
+    * @brief
+    * Return the type of the collection
+    *
+    */
     CollectionType GetType() const;
 
-	/**
-	* @brief
-	* Returns the maximum number of elements for the collection
-	*
-	*/
+    /**
+    * @brief
+    * Returns the maximum number of elements for the collection
+    *
+    */
     unsigned int GetMax() const;
 
-	/**
-	* @brief
-	* Returns the total number of elements in the collection
-	*
-	*/
+    /**
+    * @brief
+    * Returns the total number of elements in the collection
+    *
+    */
     unsigned int GetSize() const;
 
-	/**
-	* @brief
-	* Returns the current number of elements in the collection
-	*
-	* @note
-	* - For VARRAYs, it returns the same value than GetSize() as VARRAYs cannot contains holes
-	* - For Nested Tables that are spare collections that can have holes, it returns the total number
-	*   of elements minus the total of deleted elements
-	*
-	*/
+    /**
+    * @brief
+    * Returns the current number of elements in the collection
+    *
+    * @note
+    * - For VARRAYs, it returns the same value than GetSize() as VARRAYs cannot contains holes
+    * - For Nested Tables that are spare collections that can have holes, it returns the total number
+    *   of elements minus the total of deleted elements
+    *
+    */
     unsigned int GetCount() const;
 
-	/**
-	* @brief
-	* Trim the given number of elements from the end of the collection
-	*
-	* @param size - Number of elements to trim
-	*
-	*/
+    /**
+    * @brief
+    * Trim the given number of elements from the end of the collection
+    *
+    * @param size - Number of elements to trim
+    *
+    */
     void Truncate(unsigned int size);
 
-	/**
-	* @brief
-	* Clear all items of the collection
-	*
-	*/
+    /**
+    * @brief
+    * Clear all items of the collection
+    *
+    */
 
     void Clear();
 
-	/**
-	* @brief
-	* check if the element at the given index is null
-	*
-	* @param index - Index of the element
-	*
-	*  @note
-	* Collection Index start at 1
-	*
-	*/
+    /**
+    * @brief
+    * check if the element at the given index is null
+    *
+    * @param index - Index of the element
+    *
+    *  @note
+    * Collection Index start at 1
+    *
+    */
     bool IsElementNull(unsigned int index) const;
 
-	/**
-	* @brief
-	* Nullify the element at the given index
-	*
-	* @param index - Index of the element
-	*
-	*  @note
-	* Collection Index start at 1
-	*
-	*/
+    /**
+    * @brief
+    * Nullify the element at the given index
+    *
+    * @param index - Index of the element
+    *
+    *  @note
+    * Collection Index start at 1
+    *
+    */
     void SetElementNull(unsigned int index);
 
-	/**
-	* @brief
-	* Delete the element at the given position in the Nested Table Collection
-	*
-	* @param index - Index of the element to delete
-	*
-	* @note
-	* Collection indexes start at position 1.
-	*
-	* @warning
-	* Delete() is only valid for nested tables (e.g. when collection type is Collection::NestedTable
-	*
-	* @return
-	* - if the input collection is a nested table, it returns true if the element  is successfully deleted
-	* - if the input collection is a VARRAY, it always returns false
-	*
-	*/
+    /**
+    * @brief
+    * Delete the element at the given position in the Nested Table Collection
+    *
+    * @param index - Index of the element to delete
+    *
+    * @note
+    * Collection indexes start at position 1.
+    *
+    * @warning
+    * Delete() is only valid for nested tables (e.g. when collection type is Collection::NestedTable
+    *
+    * @return
+    * - if the input collection is a nested table, it returns true if the element  is successfully deleted
+    * - if the input collection is a VARRAY, it always returns false
+    *
+    */
     bool Delete(unsigned int index) const;
 
     /**
-	* @brief
-	* Return the collection element value at the given position
-	*
-	* @param index - Index of the element
-	*
-	*/
+    * @brief
+    * Return the collection element value at the given position
+    *
+    * @param index - Index of the element
+    *
+    */
     TDataType Get(unsigned int index) const;
 
-	/**
-	* @brief
-	* Set the collection element value at the given position
-	*
-	* @param index - Index of the element
-	* @param value - Value to set
-	*
-	*/
-	void Set(unsigned int index, const TDataType &value);
+    /**
+    * @brief
+    * Set the collection element value at the given position
+    *
+    * @param index - Index of the element
+    * @param value - Value to set
+    *
+    */
+    void Set(unsigned int index, const TDataType &value);
 
-	/**
-	* @brief
-	* Append the given element value at the end of the collection
-	*
-	* @param data - Value to add
-	*
-	*
-	*/
+    /**
+    * @brief
+    * Append the given element value at the end of the collection
+    *
+    * @param data - Value to add
+    *
+    *
+    */
     void Append(const TDataType &data);
 
-	/**
-	* @brief
-	* Return the type information object associated to the collection
-	*
-	*/
+    /**
+    * @brief
+    * Return the type information object associated to the collection
+    *
+    */
     TypeInfo GetTypeInfo() const;
 
-	/**
-	* @brief
-	* Clone the current instance to a new one performing deep copy
-	*
-	*/
-	Collection Clone() const;
+    /**
+    * @brief
+    * Clone the current instance to a new one performing deep copy
+    *
+    */
+    Collection Clone() const;
 
-	/**
-	* @brief
-	* return a string representation of the current collection
-	*
-	*/
-	ostring ToString() const;
+    /**
+    * @brief
+    * return a string representation of the current collection
+    *
+    */
+    ostring ToString() const;
 
-	/**
-	* @brief
-	* Class used for handling transient collection value.
-	* it is used internally by:
-	* - the indexer operator in order to provide lvalue for write access
-	* - the Iterator class
-	* This class is  not meant to be publicly used !
-	*
-	*/
-	class Element
-	{
-		friend class Collection<TDataType>::Iterator;
+    /**
+    * @brief
+    * Class used for handling transient collection value.
+    * it is used internally by:
+    * - the indexer operator in order to provide lvalue for write access
+    * - the Iterator class
+    * This class is  not meant to be publicly used !
+    *
+    */
+    class Element
+    {
+        friend class Collection<TDataType>::Iterator;
 
-	public:
-		Element(Collection &coll, unsigned int pos);
-		operator TDataType() const;
-		Element& operator = (TDataType value);
-		bool IsNull() const;
-		void SetNull();
+    public:
+        Element(Collection &coll, unsigned int pos);
+        operator TDataType() const;
+        Element& operator = (TDataType value);
+        bool IsNull() const;
+        void SetNull();
 
-	private:
-		Collection & _coll;
-		unsigned int _pos;
-	};
+    private:
+        Collection & _coll;
+        unsigned int _pos;
+    };
 
-	/**
-	* @brief
-	* STL compliant bi-directional iterator class
-	*
-	*/
-	class Iterator : public std::iterator<std::bidirectional_iterator_tag, TDataType>
-	{
+    /**
+    * @brief
+    * STL compliant bi-directional iterator class
+    *
+    */
+    class Iterator : public std::iterator<std::bidirectional_iterator_tag, TDataType>
+    {
 
-	public:
+    public:
 
-		Iterator(Collection &collection, unsigned int pos);
-		Iterator(const Iterator& other);
+        Iterator(Collection &collection, unsigned int pos);
+        Iterator(const Iterator& other);
 
-		bool operator== (const Iterator& other);
-		bool operator!= (const Iterator& other);
+        bool operator== (const Iterator& other);
+        bool operator!= (const Iterator& other);
 
-		Element& operator*();
+        Element& operator*();
 
-		Iterator &operator--();
-		Iterator operator--(int);
+        Iterator &operator--();
+        Iterator operator--(int);
 
-		Iterator &operator++();
-		Iterator operator++(int);
+        Iterator &operator++();
+        Iterator operator++(int);
 
-	private:
+    private:
 
-		Element _elem;
-	};
+        Element _elem;
+    };
 
-	/**
-	* @brief
-	* common iterator declaration
-	*
-	*/
+    /**
+    * @brief
+    * common iterator declaration
+    *
+    */
     typedef Iterator iterator;
 
-	/**
-	* @brief
-	* Returns an iterator pointing to the first element in the collection
-	*
-	*/
-	Iterator begin();
+    /**
+    * @brief
+    * Returns an iterator pointing to the first element in the collection
+    *
+    */
+    Iterator begin();
 
-	/**
-	* @brief
-	* Returns an iterator referring to the past-the-end element in the collection
-	*
-	*/
-	Iterator end();
+    /**
+    * @brief
+    * Returns an iterator referring to the past-the-end element in the collection
+    *
+    */
+    Iterator end();
 
-	/**
-	* @brief
-	* Returns the element at a given position in the collection.
-	*
-	*/
-	Element operator [] (unsigned int index);
+    /**
+    * @brief
+    * Returns the element at a given position in the collection.
+    *
+    */
+    Element operator [] (unsigned int index);
 
 private:
 
-	TDataType GetElem(OCI_Elem *elem, Handle *parent) const;
+    TDataType GetElem(OCI_Elem *elem, Handle *parent) const;
 
-	void SetElem(OCI_Elem *elem, const TDataType &value);
+    void SetElem(OCI_Elem *elem, const TDataType &value);
 
     Collection(OCI_Coll *pColl, Handle *parent = 0);
 };
@@ -5009,40 +5009,40 @@ public:
     */
     Long();
 
-	/**
-	* @brief
-	* Constructor
-	*
-	* @param statement - statement object that will handle operations on the long buffer
-	*
-	*/
-	Long(const Statement &statement);
+    /**
+    * @brief
+    * Constructor
+    *
+    * @param statement - statement object that will handle operations on the long buffer
+    *
+    */
+    Long(const Statement &statement);
 
-	/**
-	* @brief
-	* Write the given string into the long Object
-	*
-	* @param content - string to write
-	*
-	* @return
-	* Number of character written
-	*
-	*/
-	unsigned int Write(const TLongObjectType& content);
+    /**
+    * @brief
+    * Write the given string into the long Object
+    *
+    * @param content - string to write
+    *
+    * @return
+    * Number of character written
+    *
+    */
+    unsigned int Write(const TLongObjectType& content);
 
-	/**
-	* @brief
-	* Return the buffer length
-	*
-	*/
-	unsigned int GetLength() const;
+    /**
+    * @brief
+    * Return the buffer length
+    *
+    */
+    unsigned int GetLength() const;
 
-	/**
-	* @brief
-	* Return the string read from a fetch sequence
-	*
-	*/
-	TLongObjectType GetContent() const;
+    /**
+    * @brief
+    * Return the string read from a fetch sequence
+    *
+    */
+    TLongObjectType GetContent() const;
 
 private:
 
@@ -5062,141 +5062,141 @@ class BindInfo : public HandleHolder<OCI_Bind *>
 
 public:
 
-	/**
-	* @brief
-	* Bind direction enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Bind direction enumerated values
+    *
+    */
     enum BindDirectionValues
     {
-		/** Input bind variable (will be not modified as it is an input value for the server) */
+        /** Input bind variable (will be not modified as it is an input value for the server) */
         In = OCI_BDM_IN,
-		/** Output bind variable (will be modified  as it is an output value by the server ) */
-		Out = OCI_BDM_OUT,
-		/** Input / Output bind variable (can be modified as it is an input value that can be modified by the server) */
-		InOut = OCI_BDM_IN_OUT
+        /** Output bind variable (will be modified  as it is an output value by the server ) */
+        Out = OCI_BDM_OUT,
+        /** Input / Output bind variable (can be modified as it is an input value that can be modified by the server) */
+        InOut = OCI_BDM_IN_OUT
     };
 
-	/**
-	* @brief
-	* Bind direction
-	*
-	* Possible values are BindInfo::BindDirectionValues
-	*
-	*/
+    /**
+    * @brief
+    * Bind direction
+    *
+    * Possible values are BindInfo::BindDirectionValues
+    *
+    */
     typedef Enum<BindDirectionValues> BindDirection;
 
-	/**
-	* @brief
-	* Return the name of the bind object
-	*
-	*/
+    /**
+    * @brief
+    * Return the name of the bind object
+    *
+    */
     ostring GetName() const;
 
-	/**
-	* @brief
-	* Return the OCILIB type of the data associated with the bind object
-	*
-	*/
-	DataType GetType() const;
+    /**
+    * @brief
+    * Return the OCILIB type of the data associated with the bind object
+    *
+    */
+    DataType GetType() const;
 
-	/**
-	* @brief
-	* Return the OCILIB object subtype of a column
-	*
-	* @note
-	* This call is valid for the following OCILIB types:
-	* - Scalar numeric types
-	* - Clong and Blong
-	* - Clob, NClob and Blob
-	* - File
-	* - Timestamp
-	* - Interval
-	*
-	* @warning
-	* - The returned values must be casted to the matching C++ class GetType() property type.
-	* - For scalar numeric types, returned value must be casted to ocilib::NumericType.
-	* - For a non valid type, it returns 0.
-	*
-	*/
+    /**
+    * @brief
+    * Return the OCILIB object subtype of a column
+    *
+    * @note
+    * This call is valid for the following OCILIB types:
+    * - Scalar numeric types
+    * - Clong and Blong
+    * - Clob, NClob and Blob
+    * - File
+    * - Timestamp
+    * - Interval
+    *
+    * @warning
+    * - The returned values must be casted to the matching C++ class GetType() property type.
+    * - For scalar numeric types, returned value must be casted to ocilib::NumericType.
+    * - For a non valid type, it returns 0.
+    *
+    */
     unsigned int GetSubType() const;
 
-	/**
-	* @brief
-	* Return the number of elements associated with the bind object
-	*
-	* @return
-	* - For single binds, it returns 1
-	* - For vector binds, it returns the number of element in the bind array
-	*
-	*/
+    /**
+    * @brief
+    * Return the number of elements associated with the bind object
+    *
+    * @return
+    * - For single binds, it returns 1
+    * - For vector binds, it returns the number of element in the bind array
+    *
+    */
     unsigned int GetDataCount() const;
 
-	/**
-	* @brief
-	* Return the statement associated with the bind object
-	*
-	*/
+    /**
+    * @brief
+    * Return the statement associated with the bind object
+    *
+    */
     Statement GetStatement() const;
 
-	/**
-	* @brief
-	* Mark as null or not null the current bind real value(s) used in SQL statements
-	*
-	* @param value - null status value
-	* @param index - Only valid for vectors : index of the element to check
-	*
-	* @note
-	* There is no notion of null value in C C++ for scalar types.
-	* It's necessary to explicitly tell Oracle that the bind has a null value.
-	* It must be done before an Execute() call
-	*
-	* @warning
-	* For handled based data types (non scalar types), OCILIB performs an extra
-	* check on handles and set the bind status to null is the handle is null
-	*
-	* @warning
-	* Index starts with 1
-	*
-	*/
-	void SetDataNull(bool value, unsigned int index = 1);
+    /**
+    * @brief
+    * Mark as null or not null the current bind real value(s) used in SQL statements
+    *
+    * @param value - null status value
+    * @param index - Only valid for vectors : index of the element to check
+    *
+    * @note
+    * There is no notion of null value in C C++ for scalar types.
+    * It's necessary to explicitly tell Oracle that the bind has a null value.
+    * It must be done before an Execute() call
+    *
+    * @warning
+    * For handled based data types (non scalar types), OCILIB performs an extra
+    * check on handles and set the bind status to null is the handle is null
+    *
+    * @warning
+    * Index starts with 1
+    *
+    */
+    void SetDataNull(bool value, unsigned int index = 1);
 
-	/**
-	* @brief
-	* Check if the current bind value(s) used in SQL statements is marked as NULL
-	*
-	* @param index - Only valid for vectors : index of the element to check
-	*
-	* @note
-	* If the bind is related to a single host variable, don't use the parameter index
-	* If the bind is related to host vectors, the parameter 'index' refers to the index in the vector
-	*
-	* @warning
-	* Index starts with 1
-	*
-	*/
-	bool IsDataNull(unsigned int index = 1) const;
+    /**
+    * @brief
+    * Check if the current bind value(s) used in SQL statements is marked as NULL
+    *
+    * @param index - Only valid for vectors : index of the element to check
+    *
+    * @note
+    * If the bind is related to a single host variable, don't use the parameter index
+    * If the bind is related to host vectors, the parameter 'index' refers to the index in the vector
+    *
+    * @warning
+    * Index starts with 1
+    *
+    */
+    bool IsDataNull(unsigned int index = 1) const;
 
-	/**
-	* @brief
-	* Set the charset form of the given character based bind object
-	*
-	* @param value - charset form
-	*
-	* @note
-	* This call has to be made after Statement::Prepare() but before Statement::Execute()
-	*
-	* @warning
-	* This call does nothing the bind data type is not ocilib::TypeString or ocilib::TypeLong
-	*
-	*/
+    /**
+    * @brief
+    * Set the charset form of the given character based bind object
+    *
+    * @param value - charset form
+    *
+    * @note
+    * This call has to be made after Statement::Prepare() but before Statement::Execute()
+    *
+    * @warning
+    * This call does nothing the bind data type is not ocilib::TypeString or ocilib::TypeLong
+    *
+    */
     void SetCharsetForm(CharsetForm value);
 
-	/**
-	* @brief
-	* Get the direction mode
-  	*
-	*/
+    /**
+    * @brief
+    * Get the direction mode
+      *
+    */
     BindDirection GetDirection() const;
 
 private:
@@ -5215,115 +5215,115 @@ class Statement : public HandleHolder<OCI_Statement *>
 {
     friend class Exception;
     friend class Resultset;
-	template<class TLongObjectType, int TLongOracleType>
-	friend class Long;
+    template<class TLongObjectType, int TLongOracleType>
+    friend class Long;
     friend class BindInfo;
-	friend class BindObject;
+    friend class BindObject;
 
 public:
 
-	/**
-	* @brief
-	* Statement Type enumerated values
+    /**
+    * @brief
+    * Statement Type enumerated values
     *
-	*/
+    */
     enum StatementTypeValues
     {
-		/** SELECT statement */
+        /** SELECT statement */
         TypeSelect = OCI_CST_SELECT,
-		/** UPDATE statement */
-		TypeUpdate = OCI_CST_UPDATE,
-		/** DELETE statement */
-		TypeDelete = OCI_CST_DELETE,
-		/** INSERT statement */
-		TypeInsert = OCI_CST_INSERT,
-		/** CREATE statement */
-		TypeCreate = OCI_CST_CREATE,
-		/** DROP statement */
-		TypeDrop = OCI_CST_DROP,
-		/** ALTER statement */
-		TypeAlter = OCI_CST_ALTER,
-		/** BEGIN statement */
-		TypeBegin = OCI_CST_BEGIN,
-		/** DECLARE statement */
-		TypeDeclare = OCI_CST_DECLARE,
-		/** CALL statement */
-		TypeCall = OCI_CST_CALL
+        /** UPDATE statement */
+        TypeUpdate = OCI_CST_UPDATE,
+        /** DELETE statement */
+        TypeDelete = OCI_CST_DELETE,
+        /** INSERT statement */
+        TypeInsert = OCI_CST_INSERT,
+        /** CREATE statement */
+        TypeCreate = OCI_CST_CREATE,
+        /** DROP statement */
+        TypeDrop = OCI_CST_DROP,
+        /** ALTER statement */
+        TypeAlter = OCI_CST_ALTER,
+        /** BEGIN statement */
+        TypeBegin = OCI_CST_BEGIN,
+        /** DECLARE statement */
+        TypeDeclare = OCI_CST_DECLARE,
+        /** CALL statement */
+        TypeCall = OCI_CST_CALL
     };
 
-	/**
-	* @brief
-	* Statement Type
-	*
-	* Possible values are Statement::StatementTypeValues
-	*
-	*/
+    /**
+    * @brief
+    * Statement Type
+    *
+    * Possible values are Statement::StatementTypeValues
+    *
+    */
     typedef Enum<StatementTypeValues> StatementType;
 
-	/**
-	* @brief
-	* Fetch Modes enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Fetch Modes enumerated values
+    *
+    */
     enum FetchModeValues
     {
-		/** Statement is forward only */
+        /** Statement is forward only */
         FetchForward = OCI_SFM_DEFAULT,
-		/** Statement is scrollable */
-		FetchScrollable = OCI_SFM_SCROLLABLE
+        /** Statement is scrollable */
+        FetchScrollable = OCI_SFM_SCROLLABLE
     };
 
-	/**
-	* @brief
-	* Fetch Modes
-	*
-	* Possible values are Statement::FetchModeValues
-	*
-	*/
+    /**
+    * @brief
+    * Fetch Modes
+    *
+    * Possible values are Statement::FetchModeValues
+    *
+    */
     typedef Enum<FetchModeValues> FetchMode;
 
-	/**
-	* @brief
-	* Bind Modes enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Bind Modes enumerated values
+    *
+    */
     enum BindModeValues
     {
-		/** Bind variables are binded by name */
+        /** Bind variables are binded by name */
         BindByPosition =  OCI_BIND_BY_POS,
-		/** Bind variables are binded by position */
-		BindByName = OCI_BIND_BY_NAME
+        /** Bind variables are binded by position */
+        BindByName = OCI_BIND_BY_NAME
     };
 
-	/**
-	* @brief
-	* Bind Modes
-	*
-	* Possible values are Statement::BindModeValues
-	*
-	*/
+    /**
+    * @brief
+    * Bind Modes
+    *
+    * Possible values are Statement::BindModeValues
+    *
+    */
     typedef Enum<BindModeValues> BindMode;
 
-	/**
-	* @brief
-	* LONG data type mapping modes enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * LONG data type mapping modes enumerated values
+    *
+    */
     enum LongModeValues
     {
-		/** LONG and LONG RAW are mapped to Long objects */
+        /** LONG and LONG RAW are mapped to Long objects */
         LongExplicit = OCI_LONG_EXPLICIT,
-		/** LONG and LONG RAW are mapped to ostring objects */
-		LongImplicit = OCI_LONG_IMPLICIT
+        /** LONG and LONG RAW are mapped to ostring objects */
+        LongImplicit = OCI_LONG_IMPLICIT
     };
 
-	/**
-	* @brief
-	* LONG data type mapping modes
-	*
-	* Possible values are Statement::LongModeValues
-	*
-	*/
+    /**
+    * @brief
+    * LONG data type mapping modes
+    *
+    * Possible values are Statement::LongModeValues
+    *
+    */
     typedef Enum<LongModeValues> LongMode;
 
     /**
@@ -5333,110 +5333,111 @@ public:
     */
     Statement();
 
-	/**
-	* @brief
-	* Parametrized constructor
-	*
-	* @param connection - Parent connection
-	*
-	* @note
-	* - The statement object must not be accessed anymore once the parent connection object gets out of scope
-	*
-	*/
+    /**
+    * @brief
+    * Parametrized constructor
+    *
+    * @param connection - Parent connection
+    *
+    * @note
+    * - The statement object must not be accessed anymore once the parent connection object gets out of scope
+    *
+    */
     Statement(const Connection &connection);
 
-	/**
-	* @brief
-	* Destructor
-	*
-	*/	~Statement();
+    /**
+    * @brief
+    * Destructor
+    *
+    */ 
+    ~Statement();
 
-	/**
-	* @brief
-	* Return the connection associated with a statement
-	*
-	*/
+    /**
+    * @brief
+    * Return the connection associated with a statement
+    *
+    */
     Connection GetConnection() const;
 
-	/**
-	* @brief
-	* Describe the select list of a SQL select statement.
-	*
-	* @param sql  - SELECT sql statement
-	*
-	* @note
-	* This call sends the SELECT SQL order to the server for retrieving the
-	* description of the select order only.
-	* The command is not executed.
-	* This call is only useful to retrieve information on the associated resultset
-	* Call GetResultet() after Describe() to access to SELECT list information
-	*
-	* @note
-	* This call prepares the statement (internal call to Prepare()) and ask
-	* the Oracle server to describe the output SELECT list.
-	* Execute() can be called after Describe() in order to execute the
-	* statement, which means that the server will parse, and describe again the SQL
-	* order.
-	*
-	* @warning
-	* Do not use Describe() unless you're only interested in the resultset
-	* information because the statement will be parsed again when executed and thus
-	* leading to unnecessary server round trips and less performance
-	*
-	*/
+    /**
+    * @brief
+    * Describe the select list of a SQL select statement.
+    *
+    * @param sql  - SELECT sql statement
+    *
+    * @note
+    * This call sends the SELECT SQL order to the server for retrieving the
+    * description of the select order only.
+    * The command is not executed.
+    * This call is only useful to retrieve information on the associated resultset
+    * Call GetResultet() after Describe() to access to SELECT list information
+    *
+    * @note
+    * This call prepares the statement (internal call to Prepare()) and ask
+    * the Oracle server to describe the output SELECT list.
+    * Execute() can be called after Describe() in order to execute the
+    * statement, which means that the server will parse, and describe again the SQL
+    * order.
+    *
+    * @warning
+    * Do not use Describe() unless you're only interested in the resultset
+    * information because the statement will be parsed again when executed and thus
+    * leading to unnecessary server round trips and less performance
+    *
+    */
     void Describe(const ostring& sql);
 
-	/**
-	* @brief
-	* Parse a SQL statement or PL/SQL block.
-	*
-	* @param sql  - SQL order - PL/SQL block
-	*
-	* @note
-	* This call sends the SQL or PL/SQL command to the server for parsing only.
-	* The command is not executed.
-	* This call is only useful to check is a command is valid or not.
-	*
-	* @note
-	* This call prepares the statement (internal call to Prepare()) and ask
-	* the Oracle server to parse its SQL or PL/SQL command.
-	* Execute() can be call after Parse() in order to execute the
-	* statement, which means that the server will parse again the command.
-	*
-	* @warning
-	* Do not use Parse() unless you're only interested in the parsing result
-	* because the statement will be parsed again when executed and thus leading to
-	* unnecessary server round trips and less performance
-	*
-	*/
+    /**
+    * @brief
+    * Parse a SQL statement or PL/SQL block.
+    *
+    * @param sql  - SQL order - PL/SQL block
+    *
+    * @note
+    * This call sends the SQL or PL/SQL command to the server for parsing only.
+    * The command is not executed.
+    * This call is only useful to check is a command is valid or not.
+    *
+    * @note
+    * This call prepares the statement (internal call to Prepare()) and ask
+    * the Oracle server to parse its SQL or PL/SQL command.
+    * Execute() can be call after Parse() in order to execute the
+    * statement, which means that the server will parse again the command.
+    *
+    * @warning
+    * Do not use Parse() unless you're only interested in the parsing result
+    * because the statement will be parsed again when executed and thus leading to
+    * unnecessary server round trips and less performance
+    *
+    */
     void Parse(const ostring& sql);
 
-	/**
-	* @brief
-	* Prepare a SQL statement or PL/SQL block.
-	*
-	* @param sql  - SQL order or PL/SQL block
-	*
-	* @note
-	* With version 1.3.0 and above, do not call this function for fetched statements (REF cursors)
-	*
-	*/
+    /**
+    * @brief
+    * Prepare a SQL statement or PL/SQL block.
+    *
+    * @param sql  - SQL order or PL/SQL block
+    *
+    * @note
+    * With version 1.3.0 and above, do not call this function for fetched statements (REF cursors)
+    *
+    */
     void Prepare(const ostring& sql);
 
-	/**
-	* @brief
-	* Execute a prepared SQL statement or PL/SQL block.
-	*
-	*/
+    /**
+    * @brief
+    * Execute a prepared SQL statement or PL/SQL block.
+    *
+    */
     void ExecutePrepared();
 
-	/**
-	* @brief
-	* Prepare and execute a SQL statement or PL/SQL block.
-	*
-	* @param sql  - SQL order - PL/SQL block
-	*
-	*/
+    /**
+    * @brief
+    * Prepare and execute a SQL statement or PL/SQL block.
+    *
+    * @param sql  - SQL order - PL/SQL block
+    *
+    */
     void Execute(const ostring& sql);
 
     /**
@@ -5527,221 +5528,221 @@ public:
     template<class TAdapter, class TFetchCallback>
     unsigned int Execute(const ostring& sql, TFetchCallback callback, TAdapter adapter);
 
-	/**
-	* @brief
-	* Return the number of rows affected by the SQL statement
+    /**
+    * @brief
+    * Return the number of rows affected by the SQL statement
     *
-	*
-	* The returned value is :
-	*  - For UPDATEs : number of rows updated
-	*  - For INSERTs : number of rows inserted
-	*  - For DELETEs : number of rows deleted
-	*
-	* @note
-	* For SELECTs  statements, use GetRowCount() instead
-	*
-	*/
+    *
+    * The returned value is :
+    *  - For UPDATEs : number of rows updated
+    *  - For INSERTs : number of rows inserted
+    *  - For DELETEs : number of rows deleted
+    *
+    * @note
+    * For SELECTs  statements, use GetRowCount() instead
+    *
+    */
     unsigned int GetAffectedRows() const;
 
-	/**
-	* @brief
-	* Return the last SQL or PL/SQL statement prepared or executed by the statement
-	*
-	*/
+    /**
+    * @brief
+    * Return the last SQL or PL/SQL statement prepared or executed by the statement
+    *
+    */
     ostring GetSql()  const;
 
-	/**
-	* @brief
-	* Retrieve the resultset from an executed statement
-	*
-	* @note
-	* See @ref OcilibCApiFetching for more details about what statements can return resultsets
-	*
-	* @warning
-	* If the statement has not been prepared and executed, null resultset object will be returned
-	*
-	*/
+    /**
+    * @brief
+    * Retrieve the resultset from an executed statement
+    *
+    * @note
+    * See @ref OcilibCApiFetching for more details about what statements can return resultsets
+    *
+    * @warning
+    * If the statement has not been prepared and executed, null resultset object will be returned
+    *
+    */
     Resultset GetResultset();
 
-	/**
-	* @brief
-	* Retrieve the next available resultset
-	*
-	* @note
-	* it is only valid for the following statements:
-	* - Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause
-	* - Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using
-	*   DBMS_SQL.RETURN_RESULT()
-	*
-	* @note
-	* SQL statements with a 'returning' clause can return multiple resultsets.
-	* When arrays of program variables are binded to the statement, Oracle will
-	* execute the statement for every row (iteration).
-	* Each iteration generates a resultset that can be fetched like regular ones.
-	*
-	* @note
-	* Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implicit resultsets
-	* Refer to  Oracle documentation for more information.
-	*
-	*/
+    /**
+    * @brief
+    * Retrieve the next available resultset
+    *
+    * @note
+    * it is only valid for the following statements:
+    * - Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause
+    * - Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using
+    *   DBMS_SQL.RETURN_RESULT()
+    *
+    * @note
+    * SQL statements with a 'returning' clause can return multiple resultsets.
+    * When arrays of program variables are binded to the statement, Oracle will
+    * execute the statement for every row (iteration).
+    * Each iteration generates a resultset that can be fetched like regular ones.
+    *
+    * @note
+    * Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implicit resultsets
+    * Refer to  Oracle documentation for more information.
+    *
+    */
     Resultset GetNextResultset();
 
-	/**
-	* @brief
-	* Set the input array size for bulk operations
-	*
-	* @param size - Array size
-	*
-	* @warning
-	* Do not use SetBindArraySize() for PL/SQL tables binding
-	*
-	* @note
-	* SetBindArraySize() is used to set the size of input bind array when using
-	* arrays for DML statements.
-	* SetBindArraySize() MUST be called to set the maximum size of the arrays
-	* to bind to the statement before any of its execution. This initial call must
-	* be bone AFTER OPrepare() and BEFORE any Bind() call taking vectors as parameter.
-	*
-	* @note
-	* SetBindArraySize() can optionally be called before any later Execute()
-	* call in order to notify the statement of the exact number of elements
-	* populating the input arrays for the next execution. The array size passed to
-	* later SetBindArraySize() calls cannot be greater than the initial size
-	* otherwise an exception will be thrown.
-	*
-	*/
+    /**
+    * @brief
+    * Set the input array size for bulk operations
+    *
+    * @param size - Array size
+    *
+    * @warning
+    * Do not use SetBindArraySize() for PL/SQL tables binding
+    *
+    * @note
+    * SetBindArraySize() is used to set the size of input bind array when using
+    * arrays for DML statements.
+    * SetBindArraySize() MUST be called to set the maximum size of the arrays
+    * to bind to the statement before any of its execution. This initial call must
+    * be bone AFTER OPrepare() and BEFORE any Bind() call taking vectors as parameter.
+    *
+    * @note
+    * SetBindArraySize() can optionally be called before any later Execute()
+    * call in order to notify the statement of the exact number of elements
+    * populating the input arrays for the next execution. The array size passed to
+    * later SetBindArraySize() calls cannot be greater than the initial size
+    * otherwise an exception will be thrown.
+    *
+    */
     void SetBindArraySize(unsigned int size);
 
-	/**
-	* @brief
-	* Return the current input array size for bulk operations
-	*
-	*/
+    /**
+    * @brief
+    * Return the current input array size for bulk operations
+    *
+    */
     unsigned int GetBindArraySize() const;
 
-	/**
-	* @brief
-	* Allow different host variables to be binded using the same bind name or
-	* position between executions of a prepared statement
+    /**
+    * @brief
+    * Allow different host variables to be binded using the same bind name or
+    * position between executions of a prepared statement
     *
-	* @param value - Rebinding mode allowed
-	*
-	* @note
-	* Default value is false
-	*
-	* @warning
-	* When using rebinding feature, host variable re-binded to a previously allocated
-	* bind MUST be of the same data type !
-	*
-	*/
+    * @param value - Rebinding mode allowed
+    *
+    * @note
+    * Default value is false
+    *
+    * @warning
+    * When using rebinding feature, host variable re-binded to a previously allocated
+    * bind MUST be of the same data type !
+    *
+    */
     void AllowRebinding(bool value);
 
-	/**
-	* @brief
-	* Indicate if rebinding is allowed on the statement
-	*
-	* @note
-	* See AllowRebinding() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Indicate if rebinding is allowed on the statement
+    *
+    * @note
+    * See AllowRebinding() for more details
+    *
+    */
     bool IsRebindingAllowed() const;
 
-	/**
-	* @brief
-	* Return the index of the bind from its name belonging to the statement
-	*
-	* @param name - Bind variable name
-	*
-	* @warning
-	* The bind name is case insensitive
-	*
-	* @note
-	* Bind indexes start with 1 in OCILIB
-	*
-	* @return
-	* Bind index on success or zero if the bind does not exists
-	*
-	*/
-	unsigned int GetBindIndex(const ostring& name) const;
+    /**
+    * @brief
+    * Return the index of the bind from its name belonging to the statement
+    *
+    * @param name - Bind variable name
+    *
+    * @warning
+    * The bind name is case insensitive
+    *
+    * @note
+    * Bind indexes start with 1 in OCILIB
+    *
+    * @return
+    * Bind index on success or zero if the bind does not exists
+    *
+    */
+    unsigned int GetBindIndex(const ostring& name) const;
 
-	/**
-	* @brief
-	* Return the number of binds currently associated to a statement
-	*
-	*/
+    /**
+    * @brief
+    * Return the number of binds currently associated to a statement
+    *
+    */
     unsigned int GetBindCount() const;
 
-	/**
-	* @brief
-	* Return the bind at the given index in the internal array of bind objects
-	*
-	* @param index - Bind position
-	*
-	* @warning
-	* Index starts at 1.
-	*
-	* @note
-	* Bind handle are created sequentially. For example, the third call to a
-	* Bind() call generates a bind object of index 3.
-	*
-	*/
+    /**
+    * @brief
+    * Return the bind at the given index in the internal array of bind objects
+    *
+    * @param index - Bind position
+    *
+    * @warning
+    * Index starts at 1.
+    *
+    * @note
+    * Bind handle are created sequentially. For example, the third call to a
+    * Bind() call generates a bind object of index 3.
+    *
+    */
     BindInfo GetBind(unsigned int index) const;
 
-	/**
-	* @brief
-	* Return a bind handle from its name
-	*
-	* @param name - Bind variable name
-	*
-	* @note
-	* Bind names must include a semicolon at the beginning.
-	*
-	*/
+    /**
+    * @brief
+    * Return a bind handle from its name
+    *
+    * @param name - Bind variable name
+    *
+    * @note
+    * Bind names must include a semicolon at the beginning.
+    *
+    */
     BindInfo GetBind(const ostring& name) const;
 
-	/**
-	* @brief
-	* Bind an host variable
-	*
-	* @tparam TDataType - C++ type of the host variable
+    /**
+    * @brief
+    * Bind an host variable
     *
-	* @param name  - Bind name
-	* @param value - Host variable
-	* @param mode  - bind direction mode
-	*
-	* @warning
-	* This method has built-in specialized versions for all supported types except ostring, Clong and Blong variables.
-	* For binding ostring, Clong and Blong variables, use the version with an extra parameter.
-	*
-	* @note
-	* It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
-	* automatically from the arguments.
-	*
-	*/
+    * @tparam TDataType - C++ type of the host variable
+    *
+    * @param name  - Bind name
+    * @param value - Host variable
+    * @param mode  - bind direction mode
+    *
+    * @warning
+    * This method has built-in specialized versions for all supported types except ostring, Clong and Blong variables.
+    * For binding ostring, Clong and Blong variables, use the version with an extra parameter.
+    *
+    * @note
+    * It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
+    * automatically from the arguments.
+    *
+    */
     template <class TDataType>
-	void Bind(const ostring& name, TDataType &value, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, TDataType &value, BindInfo::BindDirection mode);
 
-	/**
-	* @brief
-	* Bind an host variable with more information
-	*
-	* @tparam TDataType  - C++ type of the host variable
-	* @tparam TExtraInfo - C++ type if the extra information needed for the bind call
-	*
-	* @param name      - Bind name
-	* @param value     - Host variable
-	* @param extraInfo - Extra information needed for the bind call
-	* @param mode      - bind direction mode
-	*
-	* @warning
-	* This method has built-in specialized versions for ostring, Clong and Blong variables.
-	* Pass the maximum length/size of the variable in the parameter extraInfo
-	*
-	* @note
-	* It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
-	* automatically from the arguments.
-	*
-	*/
+    /**
+    * @brief
+    * Bind an host variable with more information
+    *
+    * @tparam TDataType  - C++ type of the host variable
+    * @tparam TExtraInfo - C++ type if the extra information needed for the bind call
+    *
+    * @param name      - Bind name
+    * @param value     - Host variable
+    * @param extraInfo - Extra information needed for the bind call
+    * @param mode      - bind direction mode
+    *
+    * @warning
+    * This method has built-in specialized versions for ostring, Clong and Blong variables.
+    * Pass the maximum length/size of the variable in the parameter extraInfo
+    *
+    * @note
+    * It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
+    * automatically from the arguments.
+    *
+    */
     template <class TDataType, class TExtraInfo>
     void Bind(const ostring& name, TDataType &value, TExtraInfo extraInfo, BindInfo::BindDirection mode);
 
@@ -5760,48 +5761,48 @@ public:
     void Bind(const ostring& name, Collection<TDataType> &value, BindInfo::BindDirection mode);
 
     /**
-	* @brief
-	* Bind a vector of host variables
-	*
-	* @tparam TDataType - C++ type of the host variable
-	*
-	* @param name   - Bind name
-	* @param values - Vector of host variables
-	* @param mode   - bind direction mode
-	*
-	* @warning
-	* This method has built-in specialized versions for all C++ native scalar types, Date time and Statement objects.
-	* For others types (ostring, Clong, Blong, Raw, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
-	*
-	* @note
-	* It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
-	* automatically from the arguments.
-	*
-	*/
+    * @brief
+    * Bind a vector of host variables
+    *
+    * @tparam TDataType - C++ type of the host variable
+    *
+    * @param name   - Bind name
+    * @param values - Vector of host variables
+    * @param mode   - bind direction mode
+    *
+    * @warning
+    * This method has built-in specialized versions for all C++ native scalar types, Date time and Statement objects.
+    * For others types (ostring, Clong, Blong, Raw, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
+    *
+    * @note
+    * It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
+    * automatically from the arguments.
+    *
+    */
     template <class TDataType>
     void Bind(const ostring& name, std::vector<TDataType> &values, BindInfo::BindDirection mode);
 
-	/**
-	* @brief
-	* Bind a vector of host variables with Oracle type information
-	*
-	* @tparam TDataType  - C++ type of the host variable
-	*
-	* @param name     - Bind name
-	* @param values   - Vector of host variables
-	* @param typeInfo - Object type information
-	* @param mode     - bind direction mode
-	*
-	* @warning
-	* This method has built-in specialized versions for Object, Reference.
-	*
-	* @note
-	* It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
-	* automatically from the arguments.
-	*
-	*/
-	template <class TDataType>
-	void Bind(const ostring& name, std::vector<TDataType> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
+    /**
+    * @brief
+    * Bind a vector of host variables with Oracle type information
+    *
+    * @tparam TDataType  - C++ type of the host variable
+    *
+    * @param name     - Bind name
+    * @param values   - Vector of host variables
+    * @param typeInfo - Object type information
+    * @param mode     - bind direction mode
+    *
+    * @warning
+    * This method has built-in specialized versions for Object, Reference.
+    *
+    * @note
+    * It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
+    * automatically from the arguments.
+    *
+    */
+    template <class TDataType>
+    void Bind(const ostring& name, std::vector<TDataType> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
 
     /**
     * @brief
@@ -5818,296 +5819,296 @@ public:
     template <class TDataType>
     void Bind(const ostring& name, std::vector<Collection<TDataType> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
 
-	/**
-	* @brief
-	* Bind a vector of host variables with more information
-	*
-	* @tparam TDataType  - C++ type of the host variable
-	* @tparam TExtraInfo - C++ type if the extra information needed for the bind call
-	*
-	* @param name      - Bind name
-	* @param values    - Vector of host variables
-	* @param extraInfo - Extra information needed for the bind call
-	* @param mode      - bind direction mode
-	*
-	* @warning
-	* This method has built-in specialized versions for ostring, Raw , Clong, Blong, Timestamp, Interval variables.
-	* - For ostring, Clong, Blong, Raw : Pass the maximum length/size of variables in the parameter extraInfo
-	* - For Timestamp, Interval : Pass a value of the matching C++ class GetType() property type OR the underlying enumeration type.
-	*
-	* @note
-	* It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
-	* automatically from the arguments.
-	*
-	*/
+    /**
+    * @brief
+    * Bind a vector of host variables with more information
+    *
+    * @tparam TDataType  - C++ type of the host variable
+    * @tparam TExtraInfo - C++ type if the extra information needed for the bind call
+    *
+    * @param name      - Bind name
+    * @param values    - Vector of host variables
+    * @param extraInfo - Extra information needed for the bind call
+    * @param mode      - bind direction mode
+    *
+    * @warning
+    * This method has built-in specialized versions for ostring, Raw , Clong, Blong, Timestamp, Interval variables.
+    * - For ostring, Clong, Blong, Raw : Pass the maximum length/size of variables in the parameter extraInfo
+    * - For Timestamp, Interval : Pass a value of the matching C++ class GetType() property type OR the underlying enumeration type.
+    *
+    * @note
+    * It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
+    * automatically from the arguments.
+    *
+    */
     template <class TDataType, class TExtraInfo>
     void Bind(const ostring& name, std::vector<TDataType> &values, TExtraInfo extraInfo, BindInfo::BindDirection mode);
 
-	/**
-	* @brief
-	* Register a host variable as an output for a column present in a SQL RETURNING INTO  clause
-	*
-	* @tparam TDataType - C++ type of the host variable
-	*
-	* @param name  - Bind name
-	*
-	* @warning
-	* This method has built-in specialized versions for all supported types except:
-	* - Timestamp and Interval, Object and Reference : use the version that takes a TypeInfo parameter
+    /**
+    * @brief
+    * Register a host variable as an output for a column present in a SQL RETURNING INTO  clause
+    *
+    * @tparam TDataType - C++ type of the host variable
+    *
+    * @param name  - Bind name
+    *
+    * @warning
+    * This method has built-in specialized versions for all supported types except:
+    * - Timestamp and Interval, Object and Reference : use the version that takes a TypeInfo parameter
     * - ostring and Raw : use the version that takes an extraInfo parameter
-	*
-	* @note
-	* Statement, Blong and Clong are not supported for register calls
-	*
-	* @warning
-	* It is necessary to specify the template data type in the register call
-	*
-	*/
+    *
+    * @note
+    * Statement, Blong and Clong are not supported for register calls
+    *
+    * @warning
+    * It is necessary to specify the template data type in the register call
+    *
+    */
     template <class TDataType>
     void Register(const ostring& name);
 
-	/**
-	* @brief
-	* Register a host variable with Oracle type information as an output for a column present in a SQL RETURNING INTO  clause
-	*
-	* @tparam TDataType  - C++ type of the host variable
-	* @tparam TExtraInfo - C++ type if the extra information needed for the bind call
+    /**
+    * @brief
+    * Register a host variable with Oracle type information as an output for a column present in a SQL RETURNING INTO  clause
     *
-	* @param name     - Bind name
-	* @param extraInfo - Extra information needed for the bind call
-	*
-	* @warning
-	* This method has built-in specialized versions for Object and Reference.
-	*
-	* @warning
-	* It is necessary to specify the template data type in the register call
-	*
-	*/
+    * @tparam TDataType  - C++ type of the host variable
+    * @tparam TExtraInfo - C++ type if the extra information needed for the bind call
+    *
+    * @param name     - Bind name
+    * @param extraInfo - Extra information needed for the bind call
+    *
+    * @warning
+    * This method has built-in specialized versions for Object and Reference.
+    *
+    * @warning
+    * It is necessary to specify the template data type in the register call
+    *
+    */
     template <class TDataType, class TExtraInfo>
-	void Register(const ostring& name, TExtraInfo& extraInfo);
+    void Register(const ostring& name, TExtraInfo& extraInfo);
 
-	/**
-	* @brief
-	* Register a host variable with more information as an output for a column present in a SQL RETURNING INTO  clause
-	*
-	* @tparam TDataType  - C++ type of the host variable
-	* @tparam TExtraInfo - C++ type if the extra information needed for the bind call
-	*
-	* @param name      - Bind name
-	* @param extraInfo - Extra information needed for the bind call
-	*
-	* @warning
-	* This method has built-in specialized versions for ostring and Raw variables.
-	*  Pass the maximum length/size of variables in the parameter extraInfo
-	*
-	* @note
-	* It is necessary to specify the template data type in the register call
-	*
-	*/
-	template <class TDataType, class TExtraInfo>
+    /**
+    * @brief
+    * Register a host variable with more information as an output for a column present in a SQL RETURNING INTO  clause
+    *
+    * @tparam TDataType  - C++ type of the host variable
+    * @tparam TExtraInfo - C++ type if the extra information needed for the bind call
+    *
+    * @param name      - Bind name
+    * @param extraInfo - Extra information needed for the bind call
+    *
+    * @warning
+    * This method has built-in specialized versions for ostring and Raw variables.
+    *  Pass the maximum length/size of variables in the parameter extraInfo
+    *
+    * @note
+    * It is necessary to specify the template data type in the register call
+    *
+    */
+    template <class TDataType, class TExtraInfo>
     void Register(const ostring& name, TExtraInfo extraInfo);
 
-	/**
-	* @brief
-	* Return the type of a SQL statement
-	*
-	*/
+    /**
+    * @brief
+    * Return the type of a SQL statement
+    *
+    */
     StatementType GetStatementType() const;
 
-	/**
-	* @brief
-	* Return the error position (in terms of characters) in the SQL statement
-	* where the error occurred in case of SQL parsing error
-	*
-	* @note
-	* Positions start at 1.
-	*
-	*/
+    /**
+    * @brief
+    * Return the error position (in terms of characters) in the SQL statement
+    * where the error occurred in case of SQL parsing error
+    *
+    * @note
+    * Positions start at 1.
+    *
+    */
     unsigned int GetSqlErrorPos() const;
 
-	/**
-	* @brief
-	* Set the fetch mode of a SQL statement
-	*
-	* @param value - fetch mode value
-	*
-	* @warning
-	* SetFetchMode() MUST be called before any Execute() call
-	*
-	*/
+    /**
+    * @brief
+    * Set the fetch mode of a SQL statement
+    *
+    * @param value - fetch mode value
+    *
+    * @warning
+    * SetFetchMode() MUST be called before any Execute() call
+    *
+    */
     void SetFetchMode(FetchMode value);
 
-	/**
-	* @brief
-	* Return the fetch mode of a SQL statement
-	*
-	* @note
-	* Default value is Statement::FetchForward
-	*
-	*/
+    /**
+    * @brief
+    * Return the fetch mode of a SQL statement
+    *
+    * @note
+    * Default value is Statement::FetchForward
+    *
+    */
     FetchMode GetFetchMode() const;
 
-	/**
-	* @brief
-	* Set the binding mode of a SQL statement
-	*
-	* @param value - binding mode value
-	*
-	*/
+    /**
+    * @brief
+    * Set the binding mode of a SQL statement
+    *
+    * @param value - binding mode value
+    *
+    */
     void SetBindMode(BindMode value);
 
-	/**
-	* @brief
-	* Return the binding mode of a SQL statement
-	*
-	* @note
-	* Default value is Statement::BindByName
-	*
-	*/
+    /**
+    * @brief
+    * Return the binding mode of a SQL statement
+    *
+    * @note
+    * Default value is Statement::BindByName
+    *
+    */
     BindMode GetBindMode() const;
 
-	/**
-	* @brief
-	* Set the number of rows fetched per internal server fetch call
-	*
-	* @param value - number of rows to fetch
-	*
-	*/
+    /**
+    * @brief
+    * Set the number of rows fetched per internal server fetch call
+    *
+    * @param value - number of rows to fetch
+    *
+    */
     void SetFetchSize(unsigned int value);
 
-	/**
-	* @brief
-	* Return the number of rows fetched per internal server fetch call
-	*
-	* @note
-	* Default value is set to constant OCI_FETCH_SIZE
-	*
-	*/
+    /**
+    * @brief
+    * Return the number of rows fetched per internal server fetch call
+    *
+    * @note
+    * Default value is set to constant OCI_FETCH_SIZE
+    *
+    */
     unsigned int GetFetchSize() const;
 
-	/**
-	* @brief
-	* Set the number of rows pre-fetched by OCI Client
-	*
-	* @param value - number of rows to pre-fetch
-	*
-	* @note
-	* To turn off pre-fetching, set both attributes (size and memory) to 0.
-	*
-	*/
+    /**
+    * @brief
+    * Set the number of rows pre-fetched by OCI Client
+    *
+    * @param value - number of rows to pre-fetch
+    *
+    * @note
+    * To turn off pre-fetching, set both attributes (size and memory) to 0.
+    *
+    */
     void SetPrefetchSize(unsigned int value);
 
-	/**
-	* @brief
-	* Return the number of rows pre-fetched by OCI Client
-	*
-	* @note
-	* Default value is set to constant OCI_PREFETCH_SIZE
-	*
-	*/
+    /**
+    * @brief
+    * Return the number of rows pre-fetched by OCI Client
+    *
+    * @note
+    * Default value is set to constant OCI_PREFETCH_SIZE
+    *
+    */
     unsigned int GetPrefetchSize() const;
 
-	/**
-	* @brief
-	* Set the amount of memory pre-fetched by OCI Client
-	*
-	* @param value - amount of memory to fetch
-	*
-	* @note
-	* Default value is 0 and the pre-fetch size attribute is used instead.
-	* When both attributes are set (pre-fetch size and memory) and pre-fetch memory
-	* value can hold more rows than specified by pre-fetch size, OCI uses pre-fetch
-	* size instead.
-	*
-	* @note
-	* OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
-	* To setup a big value for SetPrefetchMemory(), you must call
-	* SetPrefetchSize() to 0 to make OCI consider this attribute.
-	*
-	*/
+    /**
+    * @brief
+    * Set the amount of memory pre-fetched by OCI Client
+    *
+    * @param value - amount of memory to fetch
+    *
+    * @note
+    * Default value is 0 and the pre-fetch size attribute is used instead.
+    * When both attributes are set (pre-fetch size and memory) and pre-fetch memory
+    * value can hold more rows than specified by pre-fetch size, OCI uses pre-fetch
+    * size instead.
+    *
+    * @note
+    * OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
+    * To setup a big value for SetPrefetchMemory(), you must call
+    * SetPrefetchSize() to 0 to make OCI consider this attribute.
+    *
+    */
     void SetPrefetchMemory(unsigned int value);
 
-	/**
-	* @brief
-	* Return the amount of memory used to retrieve rows pre-fetched by OCI Client
+    /**
+    * @brief
+    * Return the amount of memory used to retrieve rows pre-fetched by OCI Client
     *
-	* @note
-	* Default value is 0
-	*
-	*/
+    * @note
+    * Default value is 0
+    *
+    */
     unsigned int GetPrefetchMemory() const;
 
-	/**
-	* @brief
-	* Set the LONG data type piece buffer size
-	*
-	* @param value - maximum size for long buffer
-	*
-	*/
+    /**
+    * @brief
+    * Set the LONG data type piece buffer size
+    *
+    * @param value - maximum size for long buffer
+    *
+    */
     void SetLongMaxSize(unsigned int value);
 
-	/**
-	* @brief
-	* Return the LONG data type piece buffer size
-	*
-	* @note
-	* Default value is set to constant OCI_SIZE_LONG
-	*
-	*/
+    /**
+    * @brief
+    * Return the LONG data type piece buffer size
+    *
+    * @note
+    * Default value is set to constant OCI_SIZE_LONG
+    *
+    */
     unsigned int GetLongMaxSize() const;
 
-	/**
-	* @brief
-	* Set the long data type handling mode of a SQL statement
-	*
-	* @param value - long mode value
-	*
-	* @note
-	* LONG RAWs can't be handled with Statement::LongImplicit mode
-	*
-	*/
+    /**
+    * @brief
+    * Set the long data type handling mode of a SQL statement
+    *
+    * @param value - long mode value
+    *
+    * @note
+    * LONG RAWs can't be handled with Statement::LongImplicit mode
+    *
+    */
     void SetLongMode(LongMode value);
 
-	/**
-	* @brief
-	* Return the long data type handling mode of a SQL statement
-	*
-	*/
+    /**
+    * @brief
+    * Return the long data type handling mode of a SQL statement
+    *
+    */
     LongMode GetLongMode() const;
 
-	/**
-	* @brief
-	* Return the Oracle SQL code the command held by the statement
-	*
-	* @warning
-	* GetSQLCommand() must be called after the statement has be executed
-	* because that's the server engine that computes the SQL command code
-	*
-	* @note
-	* The SQL command list is available in Oracle documentations and guides
+    /**
+    * @brief
+    * Return the Oracle SQL code the command held by the statement
     *
-	*/
+    * @warning
+    * GetSQLCommand() must be called after the statement has be executed
+    * because that's the server engine that computes the SQL command code
+    *
+    * @note
+    * The SQL command list is available in Oracle documentations and guides
+    *
+    */
     unsigned int GetSQLCommand() const;
 
-	/**
-	* @brief
-	* Return the verb of the SQL command held by the statement
-	*
-	* @warning
-	* GetSQLVerb() must be called after the statement has been executed
-	* because that's the server engine that computes the SQL verb
-	*
-	* @note
-	* The SQL verb list is available in Oracle documentations and guides
-	*
-	*/
+    /**
+    * @brief
+    * Return the verb of the SQL command held by the statement
+    *
+    * @warning
+    * GetSQLVerb() must be called after the statement has been executed
+    * because that's the server engine that computes the SQL verb
+    *
+    * @note
+    * The SQL verb list is available in Oracle documentations and guides
+    *
+    */
     ostring GetSQLVerb() const;
 
-	/**
-	* @brief
-	* Returns all errors that occurred within a DML array statement execution
-	*
-	*/
+    /**
+    * @brief
+    * Returns all errors that occurred within a DML array statement execution
+    *
+    */
     void GetBatchErrors(std::vector<Exception> &exceptions);
 
 private:
@@ -6157,27 +6158,27 @@ class Resultset : public HandleHolder<OCI_Resultset *>
     friend class Statement;
 public:
 
-	/**
-	* @brief
-	* Seek Modes enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Seek Modes enumerated values
+    *
+    */
     enum SeekModeValues
     {
-		/** Seek is performed using a given absolute offset. The statement must be scrollable */
+        /** Seek is performed using a given absolute offset. The statement must be scrollable */
         SeekAbsolute = OCI_SFD_ABSOLUTE,
-		/** Seek is performed using a given relative offset from the current position. The statement must be scrollable */
-		SeekRelative = OCI_SFD_RELATIVE
+        /** Seek is performed using a given relative offset from the current position. The statement must be scrollable */
+        SeekRelative = OCI_SFD_RELATIVE
     };
 
-	/**
-	* @brief
-	* Seek Modes
-	*
-	* Possible values are Resultset::SeekModeValues
-	*
-	*/
-	typedef Enum<SeekModeValues> SeekMode;
+    /**
+    * @brief
+    * Seek Modes
+    *
+    * Possible values are Resultset::SeekModeValues
+    *
+    */
+    typedef Enum<SeekModeValues> SeekMode;
 
     /**
     * @brief
@@ -6243,7 +6244,7 @@ public:
     * Return a given user type from the current fetched row.
     * It allow translating row column values returned by a query to a user defined type using the given adapter type
     *
- 	* @param value    - User defined type value to be filled by the adapter function
+     * @param value    - User defined type value to be filled by the adapter function
     * @param adapter -  User defined adapter function
     * 
     * @note
@@ -6298,206 +6299,206 @@ public:
     template<typename TAdapter, typename TCallback>
     unsigned int ForEach(TCallback callback, TAdapter adapter);
 
-	/**
-	* @brief
-	* Fetch the next row of the resultset
-	*
-	* @note
-	* Next() works for normal and scrollable resultsets
-	*
-	* @return
-	* true on success otherwise false if :
-	* - Empty resultset
-	* - Last row already fetched
-	*
-	*/
+    /**
+    * @brief
+    * Fetch the next row of the resultset
+    *
+    * @note
+    * Next() works for normal and scrollable resultsets
+    *
+    * @return
+    * true on success otherwise false if :
+    * - Empty resultset
+    * - Last row already fetched
+    *
+    */
     bool Next();
 
-	/**
-	* @brief
-	* Fetch the previous row of the resultset
-	*
-	* @note
-	* Prev() works ONLY for scrollable resultsets
-	*
-	* @return
-	* true on success otherwise false if :
-	* - Empty resultset
-	* - First row already fetched
-	*
-	*/
+    /**
+    * @brief
+    * Fetch the previous row of the resultset
+    *
+    * @note
+    * Prev() works ONLY for scrollable resultsets
+    *
+    * @return
+    * true on success otherwise false if :
+    * - Empty resultset
+    * - First row already fetched
+    *
+    */
     bool Prev();
 
-	/**
-	* @brief
-	* Fetch the first row of the resultset
-	*
-	* @note
-	* First() works ONLY for scrollable resultsets
-	*
-	* @return
-	* true on success otherwise false if  the resultset is empty
-	*
-	*/
+    /**
+    * @brief
+    * Fetch the first row of the resultset
+    *
+    * @note
+    * First() works ONLY for scrollable resultsets
+    *
+    * @return
+    * true on success otherwise false if  the resultset is empty
+    *
+    */
     bool First();
 
-	/**
-	* @brief
-	* Fetch the last row of the resultset
-	*
-	* @note
-	* Last() works ONLY for scrollable resultsets
-	*
-	* @return
-	* true on success otherwise false if  the resultset is empty
-	*
-	*/
+    /**
+    * @brief
+    * Fetch the last row of the resultset
+    *
+    * @note
+    * Last() works ONLY for scrollable resultsets
+    *
+    * @return
+    * true on success otherwise false if  the resultset is empty
+    *
+    */
     bool Last();
 
-	/**
-	* @brief
-	* Custom Fetch of the resultset
-	*
-	* @param mode    - Fetch direction
-	* @param offset  - Fetch offset
-	*
-	* @warning
-	* hSeek() works ONLY for scrollable resultsets
-	*
-	* @note
-	* If you intend to use Seek() on a scrollable statement and if any of the
-	* selected columns is a ref cursor or a nested table, you must set the fetching size
-	* to 1 using Statement::SetFetchSize() before calling Statement::GetResultset()
-	* Otherwise Seek() will fails with a OCI-10002 error
-	*
-	* @return
-	* true on success otherwise false the resultset is empty or seek offset out of bounds
-	*
-	*/
+    /**
+    * @brief
+    * Custom Fetch of the resultset
+    *
+    * @param mode    - Fetch direction
+    * @param offset  - Fetch offset
+    *
+    * @warning
+    * hSeek() works ONLY for scrollable resultsets
+    *
+    * @note
+    * If you intend to use Seek() on a scrollable statement and if any of the
+    * selected columns is a ref cursor or a nested table, you must set the fetching size
+    * to 1 using Statement::SetFetchSize() before calling Statement::GetResultset()
+    * Otherwise Seek() will fails with a OCI-10002 error
+    *
+    * @return
+    * true on success otherwise false the resultset is empty or seek offset out of bounds
+    *
+    */
     bool Seek(SeekMode mode, int offset);
 
-	/**
-	* @brief
-	* Retrieve the number of rows fetched so far
-	*
-	*/
+    /**
+    * @brief
+    * Retrieve the number of rows fetched so far
+    *
+    */
     unsigned int GetCount() const;
 
-	/**
-	* @brief
-	* Retrieve the current row index
-	*
-	* @note
-	* - GetCurrentRow() returns the current row number starting from 1
-	* - If the resultset has not been fetched or if the resultset is empty, it returns 0
-	* - If the resultset has been fully fetched, it returns the last fetched row number
-	*
-	*/
+    /**
+    * @brief
+    * Retrieve the current row index
+    *
+    * @note
+    * - GetCurrentRow() returns the current row number starting from 1
+    * - If the resultset has not been fetched or if the resultset is empty, it returns 0
+    * - If the resultset has been fully fetched, it returns the last fetched row number
+    *
+    */
     unsigned int GetCurrentRow() const;
 
-	/**
-	* @brief
-	* Return the index of the column in the result from its name
-	*
-	* @param name  - Column name
-	*
-	* @warning
-	* The column name is case insensitive
-	*
-	* @note
-	* Column position starts at 1.
-	*
-	*/
-	unsigned int GetColumnIndex(const ostring& name) const;
+    /**
+    * @brief
+    * Return the index of the column in the result from its name
+    *
+    * @param name  - Column name
+    *
+    * @warning
+    * The column name is case insensitive
+    *
+    * @note
+    * Column position starts at 1.
+    *
+    */
+    unsigned int GetColumnIndex(const ostring& name) const;
 
-	/**
-	* @brief
-	* Return the number of columns in the resultset
-	*
-	*/
-	unsigned int GetColumnCount() const;
+    /**
+    * @brief
+    * Return the number of columns in the resultset
+    *
+    */
+    unsigned int GetColumnCount() const;
 
-	/**
-	* @brief
-	* Return the column from its index in the resultset
-	*
-	* @param index  - Column index
-	*
-	* @note
-	* Column position starts at 1.
-	*
-	*/
-	Column GetColumn(unsigned int index) const;
+    /**
+    * @brief
+    * Return the column from its index in the resultset
+    *
+    * @param index  - Column index
+    *
+    * @note
+    * Column position starts at 1.
+    *
+    */
+    Column GetColumn(unsigned int index) const;
 
-	/**
-	* @brief
-	* Return the column from its name in the resultset
-	*
-	* @param name  - Column name
-	*
-	* @note
-	* The column name is case insensitive
-	*
-	*/
+    /**
+    * @brief
+    * Return the column from its name in the resultset
+    *
+    * @param name  - Column name
+    *
+    * @note
+    * The column name is case insensitive
+    *
+    */
     Column GetColumn(const ostring& name) const;
 
-	/**
-	* @brief
-	* Check if the current row value is null for the column at the given index
-	*
-	* @param index  - Column index
-	*
-	* @note
-	* Column position starts at 1.
-	*
-	*/
+    /**
+    * @brief
+    * Check if the current row value is null for the column at the given index
+    *
+    * @param index  - Column index
+    *
+    * @note
+    * Column position starts at 1.
+    *
+    */
     bool IsColumnNull(unsigned int index) const;
 
-	/**
-	* @brief
-	* Check if the current row value is null for the column of the given name
-	*
-	* @param name  - Column name
-	*
-	*/
+    /**
+    * @brief
+    * Check if the current row value is null for the column of the given name
+    *
+    * @param name  - Column name
+    *
+    */
     bool IsColumnNull(const ostring& name) const;
 
-	/**
-	* @brief
-	* Return the statement associated with the resultset
-	*
-	*/
+    /**
+    * @brief
+    * Return the statement associated with the resultset
+    *
+    */
     Statement GetStatement() const;
 
-	/**
-	* @brief
-	* Convenient operator overloading that performs a call to Next()
-	*
-	*/
+    /**
+    * @brief
+    * Convenient operator overloading that performs a call to Next()
+    *
+    */
     bool operator ++ (int);
 
-	/**
-	* @brief
-	* Convenient operator overloading that performs a call to Prev()
-	*
-	*/
-	bool operator -- (int);
+    /**
+    * @brief
+    * Convenient operator overloading that performs a call to Prev()
+    *
+    */
+    bool operator -- (int);
 
-	/**
-	* @brief
-	* Convenient operator overloading that performs a call to Seek()
-	* with Resultset::SeekRelative and the given offset
-	*
-	*/
+    /**
+    * @brief
+    * Convenient operator overloading that performs a call to Seek()
+    * with Resultset::SeekRelative and the given offset
+    *
+    */
     bool operator += (int offset);
 
-	/**
-	* @brief
-	* Convenient operator overloading that performs a call to Seek()
-	* with Resultset::SeekRelative and the given offset that is internally negated
-	*
-	*/
-	bool operator -= (int offset);
+    /**
+    * @brief
+    * Convenient operator overloading that performs a call to Seek()
+    * with Resultset::SeekRelative and the given offset that is internally negated
+    *
+    */
+    bool operator -= (int offset);
 
 private:
 
@@ -6518,170 +6519,170 @@ class Column : public HandleHolder<OCI_Column *>
 
 public:
 
-	/**
-	* @brief
-	* Column properties flags values
-	*
-	*/
+    /**
+    * @brief
+    * Column properties flags values
+    *
+    */
     enum PropertyFlagsValues
     {
-		/** The column has no flags or the OCI client does not support it */
-		NoFlags = OCI_CPF_NONE,
-		/** - If Set, the column is an IDENTITY column
+        /** The column has no flags or the OCI client does not support it */
+        NoFlags = OCI_CPF_NONE,
+        /** - If Set, the column is an IDENTITY column
             - Otherwise, it is not an IDENTITY column */
         IsIdentity = OCI_CPF_IS_IDENTITY,
-		/** Only valid when IsIdentity is set:
-	           - If set, means that the value is "ALWAYS GENERATED"
-	           - Otherwise mens that the value is "GENERATED BY" */
+        /** Only valid when IsIdentity is set:
+               - If set, means that the value is "ALWAYS GENERATED"
+               - Otherwise mens that the value is "GENERATED BY" */
         IsGeneratedAlways = OCI_CPF_IS_GEN_ALWAYS,
-		/** Only valid when IsIdentity is set:
-	           - If set, means that the value is generated by default on NULL */
+        /** Only valid when IsIdentity is set:
+               - If set, means that the value is generated by default on NULL */
         IsGeneratedByDefaultOnNull = OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL
     };
 
-	/**
-	* @brief
-	* Column properties flags
-	*
-	* Possible values are Column::PropertyFlagsValues
-	*
-	*/
+    /**
+    * @brief
+    * Column properties flags
+    *
+    * Possible values are Column::PropertyFlagsValues
+    *
+    */
     typedef Flags<PropertyFlagsValues> PropertyFlags;
 
     ostring GetName() const;
 
-	/**
-	* @brief
-	* Return the Oracle SQL type name of the column data type
-	*
-	* @note
-	* For possible values, consults Oracle Documentation
-	*
-	*/
+    /**
+    * @brief
+    * Return the Oracle SQL type name of the column data type
+    *
+    * @note
+    * For possible values, consults Oracle Documentation
+    *
+    */
     ostring GetSQLType() const;
 
-	/**
-	* @brief
-	* Return the Oracle SQL Full name including precision and size of the
-	* column data type
-	*
-	* @note
-	* This function returns a description that matches the one given by SQL*Plus
-	*
-	*/
+    /**
+    * @brief
+    * Return the Oracle SQL Full name including precision and size of the
+    * column data type
+    *
+    * @note
+    * This function returns a description that matches the one given by SQL*Plus
+    *
+    */
     ostring GetFullSQLType() const;
 
-	/**
-	* @brief
-	* Return the type of the given column
-	*
-	*/
-	DataType GetType() const;
+    /**
+    * @brief
+    * Return the type of the given column
+    *
+    */
+    DataType GetType() const;
 
-	/**
-	* @brief
-	* Return the OCILIB object subtype of a column
-	*
-	* @note
-	* This call is valid for the following OCILIB types:
-	* - Clong and Blong
-	* - Clob, NClob and Blob
-	* - File
-	* - Timestamp
-	* - Interval
-	*
-	* @warning
-	* - The returned values must be casted to the matching C++ class GetType() property type.
-	* - For a non valid type, it returns 0.
-	*
-	*/
+    /**
+    * @brief
+    * Return the OCILIB object subtype of a column
+    *
+    * @note
+    * This call is valid for the following OCILIB types:
+    * - Clong and Blong
+    * - Clob, NClob and Blob
+    * - File
+    * - Timestamp
+    * - Interval
+    *
+    * @warning
+    * - The returned values must be casted to the matching C++ class GetType() property type.
+    * - For a non valid type, it returns 0.
+    *
+    */
     unsigned int GetSubType() const;
 
-	/**
-	* @brief
-	* Return the charset form of the given column
-	*
-	*/
+    /**
+    * @brief
+    * Return the charset form of the given column
+    *
+    */
     CharsetForm GetCharsetForm() const;
 
-	/**
-	* @brief
-	* Return the size of the column
-	*
-	* @note
-	* For all types, the size is expressed is bytes, excepted for character
-	* based columns that were created with a character based size or of type NCHAR/NVARCHAR
-	*
-	*/
+    /**
+    * @brief
+    * Return the size of the column
+    *
+    * @note
+    * For all types, the size is expressed is bytes, excepted for character
+    * based columns that were created with a character based size or of type NCHAR/NVARCHAR
+    *
+    */
     unsigned int GetSize() const;
 
-	/**
-	* @brief
-	* Return the scale of the column for numeric columns
-	*
-	*/
+    /**
+    * @brief
+    * Return the scale of the column for numeric columns
+    *
+    */
     int GetScale() const;
 
-	/**
-	* @brief
-	* Return the precision of the column for numeric columns
-	*
-	*/
+    /**
+    * @brief
+    * Return the precision of the column for numeric columns
+    *
+    */
     int GetPrecision() const;
 
-	/**
-	* @brief
-	* Return the fractional precision of the column for Timestamp and Interval columns
+    /**
+    * @brief
+    * Return the fractional precision of the column for Timestamp and Interval columns
     *
-	*/
+    */
     int GetFractionalPrecision() const;
 
-	/**
-	* @brief
-	* Return the leading precision of the column for Interval columns
-	*
-	*/
+    /**
+    * @brief
+    * Return the leading precision of the column for Interval columns
+    *
+    */
     int GetLeadingPrecision() const;
 
-	/**
-	* @brief
-	* Return the column property flags
-	*
-	* @note
-	* This was introduced in Oracle 12cR1.
-	* It is currently used for identifying Identity columns.
-	* For earlier versions, it always return Columns::NoFlags
-	*
-	*/
+    /**
+    * @brief
+    * Return the column property flags
+    *
+    * @note
+    * This was introduced in Oracle 12cR1.
+    * It is currently used for identifying Identity columns.
+    * For earlier versions, it always return Columns::NoFlags
+    *
+    */
     PropertyFlags GetPropertyFlags() const;
 
-	/**
-	* @brief
-	* Return true if the column is nullable otherwise false
-	*
-	*/
+    /**
+    * @brief
+    * Return true if the column is nullable otherwise false
+    *
+    */
     bool IsNullable() const;
 
-	/**
-	* @brief
-	* Return true if the length of the column is character-length or  false if it is byte-length
+    /**
+    * @brief
+    * Return true if the length of the column is character-length or  false if it is byte-length
     *
-	* @note
-	* This was introduced in Oracle 9i. So for version that are not supporting this
-	* property, it always return false
-	*
-	*/
+    * @note
+    * This was introduced in Oracle 9i. So for version that are not supporting this
+    * property, it always return false
+    *
+    */
     bool IsCharSemanticUsed() const;
 
-	/**
-	* @brief
-	* Return the type information object associated to the column
-	*
-	* @note
-	* This call is used only for Named Object typed and collection columns.
-	* It returns a null object if the column is not a Named Object or a collection.
-	*
-	*/
+    /**
+    * @brief
+    * Return the type information object associated to the column
+    *
+    * @note
+    * This call is used only for Named Object typed and collection columns.
+    * It returns a null object if the column is not a Named Object or a collection.
+    *
+    */
     TypeInfo GetTypeInfo() const;
 
 private:
@@ -6709,114 +6710,114 @@ public:
      * @typedef NotifyHandlerProc
      *
      * @brief
-	 * User callback for subscriptions event notifications
+     * User callback for subscriptions event notifications
      *
      */
     typedef void (*NotifyHandlerProc) (Event &evt);
 
 
-	/**
-	* @brief
-	* Subscription changes flags values
-	*
-	*/
+    /**
+    * @brief
+    * Subscription changes flags values
+    *
+    */
     enum ChangeTypesValues
     {
-		/**  Request for changes at objects (e.g. tables) level (DDL / DML) */
-		ObjectChanges = OCI_CNT_OBJECTS,
-		/**  Request for changes at rows level (DML) */
-		RowChanges = OCI_CNT_ROWS,
-		/**  Request for changes at database level (startup, shutdown) */
+        /**  Request for changes at objects (e.g. tables) level (DDL / DML) */
+        ObjectChanges = OCI_CNT_OBJECTS,
+        /**  Request for changes at rows level (DML) */
+        RowChanges = OCI_CNT_ROWS,
+        /**  Request for changes at database level (startup, shutdown) */
         DatabaseChanges = OCI_CNT_DATABASES,
-		/**  Request for all changes */
-		AllChanges = OCI_CNT_ALL
+        /**  Request for all changes */
+        AllChanges = OCI_CNT_ALL
     };
 
-	/**
-	* @brief
-	* Subscription changes flags
-	*
-	* Possible values are Subscription::ChangeTypesValues
-	*
-	*/
+    /**
+    * @brief
+    * Subscription changes flags
+    *
+    * Possible values are Subscription::ChangeTypesValues
+    *
+    */
     typedef Flags<ChangeTypesValues> ChangeTypes;
 
-	/**
-	* @brief
-	* Default constructor
-	*
-	*/
+    /**
+    * @brief
+    * Default constructor
+    *
+    */
     Subscription();
 
-	/**
-	* @brief
-	* Register a notification against the given database
-	*
-	* @param connection  - Connection handle
-	* @param name        - Notification name
-	* @param changeTypes - Subscription type
-	* @param handler     - User handler callback
-	* @param port        - Port to use for notifications
-	* @param timeout     - notification timeout
-	*
-	* @note
-	* Requires Oracle Client 10gR2 or above
-	*
-	*/
+    /**
+    * @brief
+    * Register a notification against the given database
+    *
+    * @param connection  - Connection handle
+    * @param name        - Notification name
+    * @param changeTypes - Subscription type
+    * @param handler     - User handler callback
+    * @param port        - Port to use for notifications
+    * @param timeout     - notification timeout
+    *
+    * @note
+    * Requires Oracle Client 10gR2 or above
+    *
+    */
     void Register(const Connection &connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port = 0, unsigned int timeout = 0);
 
-	/**
-	* @brief
-	* Unregister a previously registered notification
-	*
-	* @note
-	* Environment::Cleanup() will automatically unregister any non unregistered subscriptions
-	*
-	* @note
-	* If the database connection passed to Register()
-	* has been closed by the time that the application calls
-	* Unregister(), the library internally reconnects
-	* to the given database, performs the deregistration and then disconnects
-	*
-	*/
+    /**
+    * @brief
+    * Unregister a previously registered notification
+    *
+    * @note
+    * Environment::Cleanup() will automatically unregister any non unregistered subscriptions
+    *
+    * @note
+    * If the database connection passed to Register()
+    * has been closed by the time that the application calls
+    * Unregister(), the library internally reconnects
+    * to the given database, performs the deregistration and then disconnects
+    *
+    */
     void Unregister();
 
-	/**
-	* @brief
-	* Add a SQL query to monitor
+    /**
+    * @brief
+    * Add a SQL query to monitor
     *
-	*/
+    */
     void Watch(const ostring& sql);
 
-	/**
-	* @brief
-	* Return the name of the given registered subscription
-	*
-	*/
+    /**
+    * @brief
+    * Return the name of the given registered subscription
+    *
+    */
     ostring GetName() const;
 
-	/**
-	* @brief
-	* Return the timeout of the given registered subscription
-	*
-	*/
+    /**
+    * @brief
+    * Return the timeout of the given registered subscription
+    *
+    */
     unsigned int GetTimeout() const;
 
-	/**
-	* @brief
-	* Return the port used by the notification
-	*
-	*/
+    /**
+    * @brief
+    * Return the port used by the notification
+    *
+    */
     unsigned int GetPort() const;
 
-	/**
-	* @brief
-	* Return the connection  associated with a subscription handle
-	*
-	* @note
-	* It may return a null connection object if the connection used at Register() time has been closed
-	*
-	*/
+    /**
+    * @brief
+    * Return the connection  associated with a subscription handle
+    *
+    * @note
+    * It may return a null connection object if the connection used at Register() time has been closed
+    *
+    */
     Connection GetConnection() const;
 
 private:
@@ -6841,112 +6842,112 @@ class Event : public HandleHolder<OCI_Event *>
 
 public:
 
-	/**
-	* @brief
-	* Event type enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Event type enumerated values
+    *
+    */
     enum EventTypeValues
     {
-		/** A database has been started up */
-		DatabaseStart = OCI_ENT_STARTUP,
-		/** A database has been shut down */
-		DatabaseShutdown = OCI_ENT_SHUTDOWN,
-		/** A database has been shut down (RAC) */
-		DatabaseShutdownAny = OCI_ENT_SHUTDOWN_ANY,
-		/** A database has been dropped */
-		DatabaseDrop = OCI_ENT_DROP_DATABASE,
-		/** The notification is timed out */
-		Unregister = OCI_ENT_DEREGISTER,
-		/** A database object has been modified */
+        /** A database has been started up */
+        DatabaseStart = OCI_ENT_STARTUP,
+        /** A database has been shut down */
+        DatabaseShutdown = OCI_ENT_SHUTDOWN,
+        /** A database has been shut down (RAC) */
+        DatabaseShutdownAny = OCI_ENT_SHUTDOWN_ANY,
+        /** A database has been dropped */
+        DatabaseDrop = OCI_ENT_DROP_DATABASE,
+        /** The notification is timed out */
+        Unregister = OCI_ENT_DEREGISTER,
+        /** A database object has been modified */
         ObjectChanged = OCI_ENT_OBJECT_CHANGED
     };
 
-	/**
-	* @brief
-	* Event type
-	*
-	* Possible values are Event::EventTypeValues
-	*
-	*/
+    /**
+    * @brief
+    * Event type
+    *
+    * Possible values are Event::EventTypeValues
+    *
+    */
     typedef Enum<EventTypeValues> EventType;
 
-	/**
-	* @brief
-	* Object events enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Object events enumerated values
+    *
+    */
     enum ObjectEventValues
     {
-		/** An insert has been performed */
+        /** An insert has been performed */
         ObjectInserted = OCI_ONT_INSERT,
-		/** An update has been performed */
-		ObjectUpdated = OCI_ONT_UPDATE,
-		/** A delete has been performed */
-		ObjectDeleted = OCI_ONT_DELETE,
-		/** An alter has been performed */
-		ObjectAltered = OCI_ONT_ALTER,
-		/** A drop has been performed */
-		ObjectDropped = OCI_ONT_DROP,
-		/** Generic undefined action * */
-		ObjectGeneric = OCI_ONT_GENERIC
+        /** An update has been performed */
+        ObjectUpdated = OCI_ONT_UPDATE,
+        /** A delete has been performed */
+        ObjectDeleted = OCI_ONT_DELETE,
+        /** An alter has been performed */
+        ObjectAltered = OCI_ONT_ALTER,
+        /** A drop has been performed */
+        ObjectDropped = OCI_ONT_DROP,
+        /** Generic undefined action * */
+        ObjectGeneric = OCI_ONT_GENERIC
     };
 
-	/**
-	* @brief
-	* Object events
-	*
-	* Possible values are Event::ObjectEventValues
-	*
-	*/
+    /**
+    * @brief
+    * Object events
+    *
+    * Possible values are Event::ObjectEventValues
+    *
+    */
     typedef Enum<ObjectEventValues> ObjectEvent;
 
-	/**
-	* @brief
-	* Return the type of event reported by a notification
-	*
-	*/
+    /**
+    * @brief
+    * Return the type of event reported by a notification
+    *
+    */
     EventType GetType() const;
 
-	/**
-	* @brief
-	* Return the type of operation reported by a notification
+    /**
+    * @brief
+    * Return the type of operation reported by a notification
 
-	* @note
-	* This call is only valid when GetType() reports the event type Event::ObjectChanged
-	*
-	*/
+    * @note
+    * This call is only valid when GetType() reports the event type Event::ObjectChanged
+    *
+    */
     ObjectEvent GetObjectEvent() const;
 
-	/**
-	* @brief
-	* Return the name of the database that generated the event
-	*
-	*/
+    /**
+    * @brief
+    * Return the name of the database that generated the event
+    *
+    */
     ostring GetDatabaseName() const;
 
-	/**
-	* @brief
-	* Return the name of the object that generated the event
-	*
-	* @note
-	* Database object name follows the pattern "[schema_name].object_name"
-	*
-	*/
+    /**
+    * @brief
+    * Return the name of the object that generated the event
+    *
+    * @note
+    * Database object name follows the pattern "[schema_name].object_name"
+    *
+    */
     ostring GetObjectName() const;
 
-	/**
-	* @brief
-	* Return the rowid of the altered database object row
-	*
-	*/
+    /**
+    * @brief
+    * Return the rowid of the altered database object row
+    *
+    */
     ostring GetRowID() const;
 
-	/**
-	* @brief
-	* Return the subscription that generated this event
-	*
-	*/
+    /**
+    * @brief
+    * Return the subscription that generated this event
+    *
+    */
     Subscription GetSubscription() const;
 
 private:
@@ -6969,75 +6970,75 @@ class Agent : public HandleHolder<OCI_Agent *>
 
 public:
 
-	/**
-	* @brief
-	* Create an AQ agent object
-	*
-	* @param connection - Connection object
-	* @param name       - Agent name
-	* @param address    - Agent address
-	*
-	* @note
-	* An AQ agent object is :
-	* - used as recipient information when enqueuing a message
-	* - used as sender information when dequeuing a message
-	* - used for listening message only from identified senders
-	*
-	* @note
-	* the AQ agent address can be any Oracle identifier, up to 128 bytes.
-	* the AQ agent name    can be any Oracle identifier, up to 30  bytes.
-	*
-	* @note
-	* the Agent object must not be accessed anymore once the parent connection object gets out of scope
-	*
-	*/
+    /**
+    * @brief
+    * Create an AQ agent object
+    *
+    * @param connection - Connection object
+    * @param name       - Agent name
+    * @param address    - Agent address
+    *
+    * @note
+    * An AQ agent object is :
+    * - used as recipient information when enqueuing a message
+    * - used as sender information when dequeuing a message
+    * - used for listening message only from identified senders
+    *
+    * @note
+    * the AQ agent address can be any Oracle identifier, up to 128 bytes.
+    * the AQ agent name    can be any Oracle identifier, up to 30  bytes.
+    *
+    * @note
+    * the Agent object must not be accessed anymore once the parent connection object gets out of scope
+    *
+    */
     Agent(const Connection &connection, const ostring& name = OTEXT(""), const ostring& address = OTEXT(""));
 
-	/**
-	* @brief
-	* Get the given AQ agent name
-	*
-	*/
+    /**
+    * @brief
+    * Get the given AQ agent name
+    *
+    */
     ostring GetName() const;
 
-	/**
-	* @brief
-	* Set the given AQ agent name
-	*
-	* @param value  - AQ agent name
-	*
-	* @note
-	* the AQ agent name is used to identified an message send or recipient when enqueuing/dequeuing a message
-	*
-	* @note
-	* the AQ agent name can be any Oracle identifier, up to 30 bytes.
-	*
-	*/
+    /**
+    * @brief
+    * Set the given AQ agent name
+    *
+    * @param value  - AQ agent name
+    *
+    * @note
+    * the AQ agent name is used to identified an message send or recipient when enqueuing/dequeuing a message
+    *
+    * @note
+    * the AQ agent name can be any Oracle identifier, up to 30 bytes.
+    *
+    */
     void SetName(const ostring& value);
 
-	/**
-	* @brief
-	* Get the given AQ agent address
-	*
-	* @note
-	* See SetAddress() for more details
-	*
-	*/
-	ostring GetAddress() const;
+    /**
+    * @brief
+    * Get the given AQ agent address
+    *
+    * @note
+    * See SetAddress() for more details
+    *
+    */
+    ostring GetAddress() const;
 
-	/**
-	* @brief
-	* Set the given AQ agent address
-	*
-	* @param value - AQ agent address
-	*
-	* @note
-	* the parameter 'address' must be of the form : [schema.]queue_name[\@dblink]
-	*
-	* @note
-	* the AQ agent address can be any Oracle identifier, up to 128 bytes.
-	*
-	*/
+    /**
+    * @brief
+    * Set the given AQ agent address
+    *
+    * @param value - AQ agent address
+    *
+    * @note
+    * the parameter 'address' must be of the form : [schema.]queue_name[\@dblink]
+    *
+    * @note
+    * the AQ agent address can be any Oracle identifier, up to 128 bytes.
+    *
+    */
     void SetAddress(const ostring& value);
 
 private:
@@ -7054,339 +7055,339 @@ private:
 */
 class Message : public HandleHolder<OCI_Msg *>
 {
-	friend class Dequeue;
+    friend class Dequeue;
 
 public:
 
-	/**
-	* @brief
-	* Message state enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Message state enumerated values
+    *
+    */
     enum MessageStateValues
     {
-		/** The message is ready to be processed */
-		Ready = OCI_AMS_READY,
-		/** The message delay has not yet completed */
-		Waiting = OCI_AMS_WAITING,
-		/** The message has been processed */
+        /** The message is ready to be processed */
+        Ready = OCI_AMS_READY,
+        /** The message delay has not yet completed */
+        Waiting = OCI_AMS_WAITING,
+        /** The message has been processed */
         Processed = OCI_AMS_PROCESSED,
-		/** The message has moved to exception queue */
-		Expired = OCI_AMS_EXPIRED
+        /** The message has moved to exception queue */
+        Expired = OCI_AMS_EXPIRED
     };
 
-	/**
-	* @brief
-	* Message state
-	*
-	* Possible values are Message::MessageStateValues
-	*
-	*/
+    /**
+    * @brief
+    * Message state
+    *
+    * Possible values are Message::MessageStateValues
+    *
+    */
     typedef Enum<MessageStateValues> MessageState;
 
-	/**
-	* @brief
-	* Create a message object based on the given payload type
-	*
-	* @param typeInfo - Type info object
-	*
-	* @note
-	* OCILIB supports 2 type of message payload :
-	* - Oracle types (UDT)
-	* - RAW data
-	*
-	* @note
-	* Oracle Type AnyData is not supported in the current version of OCILIB
-	*
-	* @note
-	* the parameter 'typinf' indicates the type of payload :
-	* - For object payload, retrieve the object type information object from the given type name
-	* - For RAW payload, you MUST pass the object type information object from the type name "SYS.RAW" as object type name
-	*
-	* @warning
-	* Newly created Message handles have NULL payloads.
-	* For Message handling Objects payloads, Get() returns a null Object until an object is assigned to the message.
-	*
-	* @note
-	* When a local Message object handle is enqueued, it keeps its attributes. If it's enqueued again, another
-	* identical message is posted into the queue.
-	* To reset a message and empty all its properties, call Reset()
-	*
-	*/
+    /**
+    * @brief
+    * Create a message object based on the given payload type
+    *
+    * @param typeInfo - Type info object
+    *
+    * @note
+    * OCILIB supports 2 type of message payload :
+    * - Oracle types (UDT)
+    * - RAW data
+    *
+    * @note
+    * Oracle Type AnyData is not supported in the current version of OCILIB
+    *
+    * @note
+    * the parameter 'typinf' indicates the type of payload :
+    * - For object payload, retrieve the object type information object from the given type name
+    * - For RAW payload, you MUST pass the object type information object from the type name "SYS.RAW" as object type name
+    *
+    * @warning
+    * Newly created Message handles have NULL payloads.
+    * For Message handling Objects payloads, Get() returns a null Object until an object is assigned to the message.
+    *
+    * @note
+    * When a local Message object handle is enqueued, it keeps its attributes. If it's enqueued again, another
+    * identical message is posted into the queue.
+    * To reset a message and empty all its properties, call Reset()
+    *
+    */
     Message(const TypeInfo &typeInfo);
 
-	/**
-	* @brief
-	* Reset all attributes of the message
-	*
-	* @warning
-	* Reset() clears the message payload and set it to NULL
-	*
-	*/
+    /**
+    * @brief
+    * Reset all attributes of the message
+    *
+    * @warning
+    * Reset() clears the message payload and set it to NULL
+    *
+    */
     void Reset();
 
-	/**
-	* @brief
-	* Get the object payload of the message
-	*
-	*/
-	template <class TPayloadType>
-	TPayloadType GetPayload();
+    /**
+    * @brief
+    * Get the object payload of the message
+    *
+    */
+    template <class TPayloadType>
+    TPayloadType GetPayload();
 
-	/**
-	* @brief
-	* Set the object payload of the message
-	*
-	* @param value - Object payload
-	*
-	*/
-	template <class TPayloadType>
-	void SetPayload(const TPayloadType &value);
+    /**
+    * @brief
+    * Set the object payload of the message
+    *
+    * @param value - Object payload
+    *
+    */
+    template <class TPayloadType>
+    void SetPayload(const TPayloadType &value);
 
-	/**
-	* @brief
-	* return the time the message was enqueued
-	*
-	* @note
-	* Only use this function for message dequeued from queues
-	*
-	*/
+    /**
+    * @brief
+    * return the time the message was enqueued
+    *
+    * @note
+    * Only use this function for message dequeued from queues
+    *
+    */
     Date GetEnqueueTime() const;
 
-	/**
-	* @brief
-	* Return the number of attempts that have been made to dequeue the message
-	*
-	*/
+    /**
+    * @brief
+    * Return the number of attempts that have been made to dequeue the message
+    *
+    */
     int GetAttemptCount() const;
 
-	/**
-	* @brief
-	* Return the state of the message at the time of the dequeue
-	*
-	*/
+    /**
+    * @brief
+    * Return the state of the message at the time of the dequeue
+    *
+    */
     MessageState GetState() const;
 
-	/**
-	* @brief
-	* Return the ID of the message
-	*
-	* @note
-	* The message ID is :
-	*  - generated when the message is enqueued in the queue
-	*  - retrieved when the message is dequeued from the queue
-	*
-	*/
-	Raw GetID() const;
+    /**
+    * @brief
+    * Return the ID of the message
+    *
+    * @note
+    * The message ID is :
+    *  - generated when the message is enqueued in the queue
+    *  - retrieved when the message is dequeued from the queue
+    *
+    */
+    Raw GetID() const;
 
-	/**
-	* @brief
-	* Return the duration that the message is available for dequeuing
-	*
-	* @note
-	* see SetExpiration() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Return the duration that the message is available for dequeuing
+    *
+    * @note
+    * see SetExpiration() for more details
+    *
+    */
     int GetExpiration() const;
 
-	/**
-	* @brief
-	* set the duration that the message is available for dequeuing
-	*
-	* @param value - duration in seconds
-	*
-	* @note
-	* This parameter is an offset from the delay (see SetEnqueueDelay())
-	* While waiting for expiration, the message state is set to Message::Ready.
-	* If the message is not dequeued before it expires, it will be moved to the exception queue
-	* with the state Message::Expired.
-	*
-	* @note
-	* If parameter 'value' is set to -1 (default value), the message will not expire
-	*
-	* @warning
-	* Expiration processing requires the queue monitor to be started.
-	*
-	*/
+    /**
+    * @brief
+    * set the duration that the message is available for dequeuing
+    *
+    * @param value - duration in seconds
+    *
+    * @note
+    * This parameter is an offset from the delay (see SetEnqueueDelay())
+    * While waiting for expiration, the message state is set to Message::Ready.
+    * If the message is not dequeued before it expires, it will be moved to the exception queue
+    * with the state Message::Expired.
+    *
+    * @note
+    * If parameter 'value' is set to -1 (default value), the message will not expire
+    *
+    * @warning
+    * Expiration processing requires the queue monitor to be started.
+    *
+    */
     void SetExpiration(int value);
 
-	/**
-	* @brief
-	* Return the number of seconds that a message is delayed for dequeuing
-	*
-	* @note
-	* see SetEnqueueDelay() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Return the number of seconds that a message is delayed for dequeuing
+    *
+    * @note
+    * see SetEnqueueDelay() for more details
+    *
+    */
     int GetEnqueueDelay() const;
 
-	/**
-	* @brief
-	* set the number of seconds to delay the enqueued message
-	*
-	* @param value - Delay in seconds
-	*
-	* @note
-	* The delay represents the number of seconds after which a message is available for dequeuing.
-	* When the message is enqueued, its state is set to Message::Waiting.
-	* When the delay expires, its state is set to Message::Ready.
-	*
-	* @note
-	* If parameter 'value' is set to zero (default value), the message will be immediately available
-	* for dequeuing
-	*
-	* @warning
-	* Dequeuing by Message ID overrides the delay specification.
-	*
-	* @warning
-	* Delaying processing requires the queue monitor to be started.
-	*
-	*/
+    /**
+    * @brief
+    * set the number of seconds to delay the enqueued message
+    *
+    * @param value - Delay in seconds
+    *
+    * @note
+    * The delay represents the number of seconds after which a message is available for dequeuing.
+    * When the message is enqueued, its state is set to Message::Waiting.
+    * When the delay expires, its state is set to Message::Ready.
+    *
+    * @note
+    * If parameter 'value' is set to zero (default value), the message will be immediately available
+    * for dequeuing
+    *
+    * @warning
+    * Dequeuing by Message ID overrides the delay specification.
+    *
+    * @warning
+    * Delaying processing requires the queue monitor to be started.
+    *
+    */
     void SetEnqueueDelay(int value);
 
-	/**
-	* @brief
-	* Return the priority of the message
+    /**
+    * @brief
+    * Return the priority of the message
     *
-	* @note
-	* see SetPriority() for more details
-	*
-	*/
+    * @note
+    * see SetPriority() for more details
+    *
+    */
     int GetPriority() const;
 
-	/**
-	* @brief
-	* Set the priority of the message
-	*
-	* @param value - Message priority
-	*
-	* @note
-	*   - The priority can be any number, including negative numbers.
-	*   - A smaller number indicates higher priority.
-	*   - Default value is zero.
-	*
-	*/
+    /**
+    * @brief
+    * Set the priority of the message
+    *
+    * @param value - Message priority
+    *
+    * @note
+    *   - The priority can be any number, including negative numbers.
+    *   - A smaller number indicates higher priority.
+    *   - Default value is zero.
+    *
+    */
     void SetPriority(int value);
 
-	/**
-	* @brief
-	* Return the original ID of the message in the last queue that generated this message
-	*
-	* @warning
-	* When a message is propagated from/to different queues, this ID is the one generated for the
-	* message in the previous queue.
-	*
-	*/
-	Raw GetOriginalID() const;
+    /**
+    * @brief
+    * Return the original ID of the message in the last queue that generated this message
+    *
+    * @warning
+    * When a message is propagated from/to different queues, this ID is the one generated for the
+    * message in the previous queue.
+    *
+    */
+    Raw GetOriginalID() const;
 
-	/**
-	* @brief
-	* Set the original ID of the message in the last queue that generated this message
-	*
-	* @param value - Message ID
-	*
-	* @warning
-	* When a message is propagated from/to different queues, this ID is the one generated for the
-	* message in the previous queue.
-	*
-	*/
-	void SetOriginalID(const Raw &value);
+    /**
+    * @brief
+    * Set the original ID of the message in the last queue that generated this message
+    *
+    * @param value - Message ID
+    *
+    * @warning
+    * When a message is propagated from/to different queues, this ID is the one generated for the
+    * message in the previous queue.
+    *
+    */
+    void SetOriginalID(const Raw &value);
 
-	/**
-	* @brief
-	* Get the correlation identifier of the message
-	*
-	* @note
-	* see SetCorrelation() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Get the correlation identifier of the message
+    *
+    * @note
+    * see SetCorrelation() for more details
+    *
+    */
     ostring GetCorrelation() const;
 
-	/**
-	* @brief
-	* Set the correlation identifier of the message
-	*
-	* @param value - Message correlation text
-	*
-	* @note
-	* see Dequeue::SetCorrelation() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Set the correlation identifier of the message
+    *
+    * @param value - Message correlation text
+    *
+    * @note
+    * see Dequeue::SetCorrelation() for more details
+    *
+    */
     void SetCorrelation(const ostring& value);
 
-	/**
-	* @brief
-	* Get the Exception queue name of the message
-	*
-	* @warning
-	* When calling this function on a message retrieved with Dequeue::Get(), the returned value is
-	* empty if the default exception queue associated with the current queue is used (e.g. no user
-	* defined specified at enqueue time for the message)
-	*
-	* @note
-	* see SetExceptionQueue() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Get the Exception queue name of the message
+    *
+    * @warning
+    * When calling this function on a message retrieved with Dequeue::Get(), the returned value is
+    * empty if the default exception queue associated with the current queue is used (e.g. no user
+    * defined specified at enqueue time for the message)
+    *
+    * @note
+    * see SetExceptionQueue() for more details
+    *
+    */
     ostring GetExceptionQueue() const;
 
-	/**
-	* @brief
-	* Set the name of the queue to which the message is moved to if it cannot be
-	* processed successfully
-	*
-	* @param value - Exception queue name
-	*
-	* @warning
-	* From Oracle Documentation :
-	*
-	* "Messages are moved into exception queues in two cases :
-	*  - If the number of unsuccessful dequeue attempts has exceeded the attribute 'max_retries' of
-	*    given queue
-	*  - if the message has expired.
-	*
-	* All messages in the exception queue are in the EXPIRED state.
-	*
-	* The default is the exception queue associated with the queue table.
-	*
-	* If the exception queue specified does not exist at the time of the move the message will be
-	* moved to the default exception queue associated with the queue table and a warning will be
-	* logged in the alert file.
-	*
-	* This attribute must refer to a valid queue name."
-	*
-	*/
+    /**
+    * @brief
+    * Set the name of the queue to which the message is moved to if it cannot be
+    * processed successfully
+    *
+    * @param value - Exception queue name
+    *
+    * @warning
+    * From Oracle Documentation :
+    *
+    * "Messages are moved into exception queues in two cases :
+    *  - If the number of unsuccessful dequeue attempts has exceeded the attribute 'max_retries' of
+    *    given queue
+    *  - if the message has expired.
+    *
+    * All messages in the exception queue are in the EXPIRED state.
+    *
+    * The default is the exception queue associated with the queue table.
+    *
+    * If the exception queue specified does not exist at the time of the move the message will be
+    * moved to the default exception queue associated with the queue table and a warning will be
+    * logged in the alert file.
+    *
+    * This attribute must refer to a valid queue name."
+    *
+    */
     void SetExceptionQueue(const ostring& value);
 
-	/**
-	* @brief
-	* Return the original sender of the message
-	*
-	* @return
-	* Valid agent object if set at enqueue time otherwise a null agent object
-	*
-	*/
+    /**
+    * @brief
+    * Return the original sender of the message
+    *
+    * @return
+    * Valid agent object if set at enqueue time otherwise a null agent object
+    *
+    */
     Agent GetSender() const;
 
-	/**
-	* @brief
-	* Set the original sender of the message
-	*
-	* @param agent - Message sender
-	*
-	*/
+    /**
+    * @brief
+    * Set the original sender of the message
+    *
+    * @param agent - Message sender
+    *
+    */
     void SetSender(const Agent &agent);
 
-	/**
-	* @brief
-	* Set the recipient list of a message to enqueue
-	*
-	* @param agents - Recipients list
-	*
-	* @warning
-	* This function should only be used for queues which allow multiple consumers.
-	* The default recipients are the queue subscribers.
-	*
-	*/
+    /**
+    * @brief
+    * Set the recipient list of a message to enqueue
+    *
+    * @param agents - Recipients list
+    *
+    * @warning
+    * This function should only be used for queues which allow multiple consumers.
+    * The default recipients are the queue subscribers.
+    *
+    */
     void SetConsumers(std::vector<Agent> &agents);
 
 private:
@@ -7405,160 +7406,160 @@ class Enqueue : public HandleHolder<OCI_Enqueue *>
 {
 public:
 
-	/**
-	* @brief
-	* Message enqueuing mode enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Message enqueuing mode enumerated values
+    *
+    */
     enum EnqueueModeValues
     {
-		/** Enqueue message before another message */
+        /** Enqueue message before another message */
         Before = OCI_ASD_BEFORE,
-		/** Enqueue message before all messages */
+        /** Enqueue message before all messages */
         OnTop  = OCI_ASD_TOP
     };
 
-	/**
-	* @brief
-	* Message enqueuing mode
-	*
-	* Possible values are Enqueue::EnqueueModeValues
-	*
-	*/
+    /**
+    * @brief
+    * Message enqueuing mode
+    *
+    * Possible values are Enqueue::EnqueueModeValues
+    *
+    */
     typedef Enum<EnqueueModeValues> EnqueueMode;
 
-	/**
-	* @brief
-	* Message visibility enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Message visibility enumerated values
+    *
+    */
     enum EnqueueVisibilityValues
     {
-		/** Enqueue is an independent transaction */
+        /** Enqueue is an independent transaction */
         Immediate = OCI_AMV_IMMEDIATE,
-		/** Enqueue is part of current transaction */
+        /** Enqueue is part of current transaction */
         OnCommit  = OCI_AMV_ON_COMMIT
     };
 
-	/**
-	* @brief
-	* Message visibility after begin queued
-	*
-	* Possible values are Enqueue::EnqueueVisibilityValues
-	*
-	*/
+    /**
+    * @brief
+    * Message visibility after begin queued
+    *
+    * Possible values are Enqueue::EnqueueVisibilityValues
+    *
+    */
     typedef Enum<EnqueueVisibilityValues> EnqueueVisibility;
 
-	/**
-	* @brief
-	* Create a Enqueue object for the given queue
-	*
-	* @param typeInfo  - Type info handle
-	* @param queueName - Queue name
-	*
-	* @note
-	* OCILIB supports 2 types of message payload :
-	* - Oracle types (UDT)
-	* - RAW data
-	*
-	* @note
-	* Oracle Type AnyData is not supported in the current version of OCILIB
-	*
-	* @note
-	* the parameter 'typeInfo' indicates the type of payload to enqueue to the given queue :
-	* - For object payload, retrieve the object type information object from the given type name
-	* - For RAW payload, you MUST pass the object type information object from the type name "SYS.RAW" as object type name
-	*
-	*/
-	Enqueue(const TypeInfo &typeInfo, const ostring& queueName);
+    /**
+    * @brief
+    * Create a Enqueue object for the given queue
+    *
+    * @param typeInfo  - Type info handle
+    * @param queueName - Queue name
+    *
+    * @note
+    * OCILIB supports 2 types of message payload :
+    * - Oracle types (UDT)
+    * - RAW data
+    *
+    * @note
+    * Oracle Type AnyData is not supported in the current version of OCILIB
+    *
+    * @note
+    * the parameter 'typeInfo' indicates the type of payload to enqueue to the given queue :
+    * - For object payload, retrieve the object type information object from the given type name
+    * - For RAW payload, you MUST pass the object type information object from the type name "SYS.RAW" as object type name
+    *
+    */
+    Enqueue(const TypeInfo &typeInfo, const ostring& queueName);
 
-	/**
-	* @brief
-	* Enqueue a message the on queue associated to the Enqueue object
-	*
-	* @param message  - Message  to enqueue
-	*
-	*/
+    /**
+    * @brief
+    * Enqueue a message the on queue associated to the Enqueue object
+    *
+    * @param message  - Message  to enqueue
+    *
+    */
     void Put(const Message &message);
 
-	/**
-	* @brief
-	* Get the enqueuing/locking behavior
-	*
-	* @note
-	* see SetVisibility() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Get the enqueuing/locking behavior
+    *
+    * @note
+    * see SetVisibility() for more details
+    *
+    */
     EnqueueVisibility GetVisibility() const;
 
-	/**
-	* @brief
-	* Set whether the new message is enqueued as part of the current transaction
-	*
-	* @param value - Enqueuing visibility
-	*
-	* @note
-	* Default value is Enqueue::OnCommit
-	*
-	*/
+    /**
+    * @brief
+    * Set whether the new message is enqueued as part of the current transaction
+    *
+    * @param value - Enqueuing visibility
+    *
+    * @note
+    * Default value is Enqueue::OnCommit
+    *
+    */
     void SetVisibility(EnqueueVisibility value);
 
-	/**
-	* @brief
-	* Return the enqueuing mode of messages to enqueue
-	*
-	* @note
-	* see SetMode() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Return the enqueuing mode of messages to enqueue
+    *
+    * @note
+    * see SetMode() for more details
+    *
+    */
     EnqueueMode GetMode() const;
 
-	/**
-	* @brief
-	* Set the enqueuing mode of messages to put in the queue
-	*
-	* @param value - enqueuing mode
-	*
-	* @note
-	* Default value is Enqueue::OnTop
-	*
-	* @note
-	* if the parameter 'value' is set to Enqueue::Before, the application must
-	* call SetRelativeMsgID() before enqueuing the next message in the queue.
-	*
-	* @note
-	* In order to stop enqueuing message using a sequence deviation, call
-	* SetMode() with the value Enqueue::OnTop
-	*
-	*/
+    /**
+    * @brief
+    * Set the enqueuing mode of messages to put in the queue
+    *
+    * @param value - enqueuing mode
+    *
+    * @note
+    * Default value is Enqueue::OnTop
+    *
+    * @note
+    * if the parameter 'value' is set to Enqueue::Before, the application must
+    * call SetRelativeMsgID() before enqueuing the next message in the queue.
+    *
+    * @note
+    * In order to stop enqueuing message using a sequence deviation, call
+    * SetMode() with the value Enqueue::OnTop
+    *
+    */
     void SetMode(EnqueueMode value);
 
-	/**
-	* @brief
-	* Get the current associated message identifier used for enqueuing messages
-	* using a sequence deviation
-	*
-	* @note
-	* see SetRelativeMsgID() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Get the current associated message identifier used for enqueuing messages
+    * using a sequence deviation
+    *
+    * @note
+    * see SetRelativeMsgID() for more details
+    *
+    */
 
-	Raw GetRelativeMsgID() const;
+    Raw GetRelativeMsgID() const;
 
-	/**
-	* @brief
-	* Set a message identifier to use for enqueuing messages using a sequence deviation
-	*
-	* @param value    - message identifier
-	*
-	* @note
-	* This call is only valid if SetMode() has been called with the value Enqueue::Before
-	*
-	* @note
-	* see SetMode() for more details
-	*
-	*/
-	void SetRelativeMsgID(const Raw &value);
+    /**
+    * @brief
+    * Set a message identifier to use for enqueuing messages using a sequence deviation
+    *
+    * @param value    - message identifier
+    *
+    * @note
+    * This call is only valid if SetMode() has been called with the value Enqueue::Before
+    *
+    * @note
+    * see SetMode() for more details
+    *
+    */
+    void SetRelativeMsgID(const Raw &value);
 };
 
 /**
@@ -7578,297 +7579,297 @@ public:
      * @typedef NotifyAQHandlerProc
      *
      * @brief
-	 * User callback for dequeue event notifications
-	 *
+     * User callback for dequeue event notifications
+     *
      */
     typedef void (*NotifyAQHandlerProc) (Dequeue &dequeue);
 
-	/**
-	* @brief
-	* Dequeue mode enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Dequeue mode enumerated values
+    *
+    */
     enum DequeueModeValues
     {
-		/** Read message without acquiring a lock */
+        /** Read message without acquiring a lock */
         Browse =  OCI_ADM_BROWSE,
-		/** Read and obtain write lock on message */
+        /** Read and obtain write lock on message */
         Locked = OCI_ADM_LOCKED,
-		/** Read the message and delete it */
+        /** Read the message and delete it */
         Remove = OCI_ADM_REMOVE,
-		/** Confirm receipt of the message, but do not deliver the actual message content */
+        /** Confirm receipt of the message, but do not deliver the actual message content */
         Confirm = OCI_ADM_REMOVE_NODATA
     };
 
-	/**
-	* @brief
-	* Dequeue mode
-	*
-	* Possible values are Dequeue::DequeueModeValues
-	*
-	*/
+    /**
+    * @brief
+    * Dequeue mode
+    *
+    * Possible values are Dequeue::DequeueModeValues
+    *
+    */
     typedef Enum<DequeueModeValues> DequeueMode;
 
-	/**
-	* @brief
-	* Message visibility enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Message visibility enumerated values
+    *
+    */
     enum DequeueVisibilityValues
     {
-		/** Dequeue is an independent transaction */
+        /** Dequeue is an independent transaction */
         Immediate = OCI_AMV_IMMEDIATE,
-		/** Dequeue is part of current transaction */
+        /** Dequeue is part of current transaction */
         OnCommit  = OCI_AMV_ON_COMMIT
     };
 
-	/**
-	* @brief
-	* Message visibility after begin dequeued
-	*
-	* Possible values are Dequeue::DequeueVisibilityValues
-	*
-	*/
+    /**
+    * @brief
+    * Message visibility after begin dequeued
+    *
+    * Possible values are Dequeue::DequeueVisibilityValues
+    *
+    */
     typedef Enum<DequeueVisibilityValues> DequeueVisibility;
 
-	/**
-	* @brief
-	* Navigation Mode enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Navigation Mode enumerated values
+    *
+    */
     enum NavigationModeValues
     {
-		/** Retrieves the first message which is available */
+        /** Retrieves the first message which is available */
         FirstMessage = OCI_ADN_FIRST_MSG,
-		/** Retrieves the next message which is available */
+        /** Retrieves the next message which is available */
         NextMessage = OCI_ADN_NEXT_MSG,
-		/** Skips the remainder of the current transaction  group (if any)
-		    and retrieves the first message of the next transaction group.*/
+        /** Skips the remainder of the current transaction  group (if any)
+            and retrieves the first message of the next transaction group.*/
         NextTransaction = OCI_ADN_NEXT_TRANSACTION
     };
 
-	/**
-	* @brief
-	* Navigation Mode
-	*
-	* Possible values are Dequeue::NavigationModeValues
-	*
-	*/
+    /**
+    * @brief
+    * Navigation Mode
+    *
+    * Possible values are Dequeue::NavigationModeValues
+    *
+    */
     typedef Enum<NavigationModeValues> NavigationMode;
 
-	/**
-	* @brief
-	* Parametrized constructor
-	*
-	* @param typeInfo  - Payload type info
-	* @param queueName - Queue name
-	*
-	*/
+    /**
+    * @brief
+    * Parametrized constructor
+    *
+    * @param typeInfo  - Payload type info
+    * @param queueName - Queue name
+    *
+    */
     Dequeue(const TypeInfo &typeInfo, const ostring& queueName);
 
-	/**
-	* @brief
-	* Dequeue messages from the given queue
-	*
-	* @warning
-	* When dequeuing from a multiple consumer queue, you need
-	* to set the navigation mode to NavigationMode::FirstMessage using
-	* SetNavigation()
-	*
-	* @return
-	* A valid Message handle on success otherwise a null Message on timeout
-	*
-	*/
+    /**
+    * @brief
+    * Dequeue messages from the given queue
+    *
+    * @warning
+    * When dequeuing from a multiple consumer queue, you need
+    * to set the navigation mode to NavigationMode::FirstMessage using
+    * SetNavigation()
+    *
+    * @return
+    * A valid Message handle on success otherwise a null Message on timeout
+    *
+    */
     Message Get();
 
-	/**
-	* @brief
-	* Listen for messages that match any recipient of the associated Agent list
-	*
-	* @param timeout - Timeout in second
-	*
-	* @note
-	* If an Agent handle is returned, messages are available for this agent.
-	* In order to retrieve its messages :
-	* - call SetConsumer() with the name of agent using Agent::GetName()
-	* - call Get() to dequeue it's pending messages
-	*
-	* @return
-	* An Agent handle for who messages are available on success otherwise an null agent object
-	*/
+    /**
+    * @brief
+    * Listen for messages that match any recipient of the associated Agent list
+    *
+    * @param timeout - Timeout in second
+    *
+    * @note
+    * If an Agent handle is returned, messages are available for this agent.
+    * In order to retrieve its messages :
+    * - call SetConsumer() with the name of agent using Agent::GetName()
+    * - call Get() to dequeue it's pending messages
+    *
+    * @return
+    * An Agent handle for who messages are available on success otherwise an null agent object
+    */
     Agent Listen(int timeout);
 
-	/**
-	* @brief
-	* Get the current consumer name associated with the dequeuing process.
-	*
-	* @note
-	* see SetConsumer() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Get the current consumer name associated with the dequeuing process.
+    *
+    * @note
+    * see SetConsumer() for more details
+    *
+    */
     ostring GetConsumer() const;
 
-	/**
-	* @brief
-	* Set the current consumer name to retrieve message for.
-	*
-	* @param value - consumer name
-	*
-	* @warning
-	* If a queue is not set up for multiple consumers, SetConsumer()
-	* should not be called or called with an empty value
-	*
-	*/
+    /**
+    * @brief
+    * Set the current consumer name to retrieve message for.
+    *
+    * @param value - consumer name
+    *
+    * @warning
+    * If a queue is not set up for multiple consumers, SetConsumer()
+    * should not be called or called with an empty value
+    *
+    */
     void SetConsumer(const ostring& value);
 
-	/**
-	* @brief
-	* Get the correlation identifier of the message to be dequeued
-	*
-	* @note
-	* see SetCorrelation() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Get the correlation identifier of the message to be dequeued
+    *
+    * @note
+    * see SetCorrelation() for more details
+    *
+    */
     ostring GetCorrelation() const;
 
-	/**
-	* @brief
-	* set the correlation identifier of the message to be dequeued
-	*
-	* @param value - correlation identifier
-	*
-	* @note
-	* Special pattern matching characters, such as "%" or "_" can be used.
-	* If more than one message satisfies the pattern, the order of dequeuing is undetermined.
-	*
-	*/
+    /**
+    * @brief
+    * set the correlation identifier of the message to be dequeued
+    *
+    * @param value - correlation identifier
+    *
+    * @note
+    * Special pattern matching characters, such as "%" or "_" can be used.
+    * If more than one message satisfies the pattern, the order of dequeuing is undetermined.
+    *
+    */
     void SetCorrelation(const ostring& value);
 
-	/**
-	* @brief
-	* Get the message identifier of the message to be dequeued
-	*
-	* @note
-	* see SetRelativeMsgID() for more details
-	*
-	*/
-	Raw GetRelativeMsgID() const;
+    /**
+    * @brief
+    * Get the message identifier of the message to be dequeued
+    *
+    * @note
+    * see SetRelativeMsgID() for more details
+    *
+    */
+    Raw GetRelativeMsgID() const;
 
-	/**
-	* @brief
-	* Set the message identifier of the message to be dequeued
-	*
-	* @param value    - message identifier
-	*
-	*/
-	void SetRelativeMsgID(const Raw &value);
+    /**
+    * @brief
+    * Set the message identifier of the message to be dequeued
+    *
+    * @param value    - message identifier
+    *
+    */
+    void SetRelativeMsgID(const Raw &value);
 
-	/**
-	* @brief
-	* Get the dequeuing/locking behavior
-	*
-	* @note
-	* see SetVisibility() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Get the dequeuing/locking behavior
+    *
+    * @note
+    * see SetVisibility() for more details
+    *
+    */
     DequeueVisibility GetVisibility() const;
 
-	/**
-	* @brief
-	* Set whether the new message is dequeued as part of the current transaction
-	*
-	* @param value - dequeuing mode
-	*
-	* @warning
-	* The visibility parameter is ignored when using the dequeuing
-	* mode is Dequeue::Browse
-	*
-	* @note
-	* Default value is Dequeue::OnCommit
-	*
-	*/
+    /**
+    * @brief
+    * Set whether the new message is dequeued as part of the current transaction
+    *
+    * @param value - dequeuing mode
+    *
+    * @warning
+    * The visibility parameter is ignored when using the dequeuing
+    * mode is Dequeue::Browse
+    *
+    * @note
+    * Default value is Dequeue::OnCommit
+    *
+    */
     void SetVisibility(DequeueVisibility value);
 
-	/**
-	* @brief
-	* Get the dequeuing/locking behavior
-	*
-	* @note
-	* see SetMode() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Get the dequeuing/locking behavior
+    *
+    * @note
+    * see SetMode() for more details
+    *
+    */
     DequeueMode GetMode() const;
 
-	/**
-	* @brief
-	* Set the dequeuing/locking behavior
-	*
-	* @param value - dequeuing mode
-	*
-	* @note
-	* Default value is Dequeue::Remove
-	*
-	*/
+    /**
+    * @brief
+    * Set the dequeuing/locking behavior
+    *
+    * @param value - dequeuing mode
+    *
+    * @note
+    * Default value is Dequeue::Remove
+    *
+    */
     void SetMode(DequeueMode value);
 
-	/**
-	* @brief
-	* Return the navigation position of messages to retrieve from the queue
-	*
-	* @note
-	* see SetNavigation() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Return the navigation position of messages to retrieve from the queue
+    *
+    * @note
+    * see SetNavigation() for more details
+    *
+    */
     NavigationMode GetNavigation() const;
 
-	/**
-	* @brief
-	* Set the position of messages to be retrieved.
-	*
-	* @param value - navigation position
-	*
-	* @note
-	* The dequeuing uses the following sequence :
-	*   - find messages using the navigation position
-	*   - apply search criteria (message correlation)
-	*   - get message
-	*
-	* @note
-	* Default value is Dequeue::NextMessage
-	*
-	* @warning
-	* Dequeue::NextTransaction can only be used if message grouping is enabled for the given queue.
-	*
-	*/
+    /**
+    * @brief
+    * Set the position of messages to be retrieved.
+    *
+    * @param value - navigation position
+    *
+    * @note
+    * The dequeuing uses the following sequence :
+    *   - find messages using the navigation position
+    *   - apply search criteria (message correlation)
+    *   - get message
+    *
+    * @note
+    * Default value is Dequeue::NextMessage
+    *
+    * @warning
+    * Dequeue::NextTransaction can only be used if message grouping is enabled for the given queue.
+    *
+    */
     void SetNavigation(NavigationMode value);
 
-	/**
-	* @brief
-	* Return the time that Get() waits for messages if no messages are currently available
-	*
-	* @note
-	* see SetWaitTime() for more details
-	*
-	*/
+    /**
+    * @brief
+    * Return the time that Get() waits for messages if no messages are currently available
+    *
+    * @note
+    * see SetWaitTime() for more details
+    *
+    */
     int GetWaitTime() const;
 
-	/**
-	* @brief
-	* Set the time that Get() waits for messages if no messages are currently available
-	*
-	* @param value - timeout in seconds
-	*
-	*@note
-	* - Any positive values in seconds are valid.
-	* - The value 0  is accepted and means Get() does not wait for
-	*   messages and returns immediately if no messages are available
-	* - The value -1 is accepted and means Get() waits for ever (until
-	*   a message is available in the queue)
-	*
-	* @note
-	* Default value is -1 (wait for ever)
-	*
-	*/
+    /**
+    * @brief
+    * Set the time that Get() waits for messages if no messages are currently available
+    *
+    * @param value - timeout in seconds
+    *
+    *@note
+    * - Any positive values in seconds are valid.
+    * - The value 0  is accepted and means Get() does not wait for
+    *   messages and returns immediately if no messages are available
+    * - The value -1 is accepted and means Get() waits for ever (until
+    *   a message is available in the queue)
+    *
+    * @note
+    * Default value is -1 (wait for ever)
+    *
+    */
     void SetWaitTime(int value);
 
     /**
@@ -7922,11 +7923,11 @@ class Queue
 {
 public:
 
-	/**
-	* @brief
-	* Queue Type enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Queue Type enumerated values
+    *
+    */
     enum QueueTypeValues
     {
         /** Normal queue */
@@ -7937,13 +7938,13 @@ public:
         NonPersistentQueue = OCI_AQT_NON_PERSISTENT
     };
 
-	/**
-	* @brief
-	* Queue Type
-	*
-	* Possible values are Queue::QueueTypeValues
-	*
-	*/
+    /**
+    * @brief
+    * Queue Type
+    *
+    * Possible values are Queue::QueueTypeValues
+    *
+    */
     typedef Enum<QueueTypeValues> QueueType;
 
     /**
@@ -8079,13 +8080,13 @@ public:
         Transactionnal = OCI_AGM_TRANSACTIONNAL
     };
 
-	/**
-	* @brief
-	* Grouping Mode
-	*
-	* Possible values are QueueTable::GroupingModeValues
-	*
-	*/
+    /**
+    * @brief
+    * Grouping Mode
+    *
+    * Possible values are QueueTable::GroupingModeValues
+    *
+    */
     typedef Enum<GroupingModeValues> GroupingMode;
 
     /**
@@ -8104,13 +8105,13 @@ public:
         All = OCI_APM_ALL
     };
 
-	/**
-	* @brief
-	* Purge mode
-	*
-	* Possible values are QueueTable::PurgeModeValues
-	*
-	*/
+    /**
+    * @brief
+    * Purge mode
+    *
+    * Possible values are QueueTable::PurgeModeValues
+    *
+    */
     typedef Enum<PurgeModeValues> PurgeMode;
 
     /**
@@ -8264,20 +8265,20 @@ public:
         Force = OCI_DCM_FORCE
     };
 
-	/**
-	* @brief
-	* Conversion Mode
-	*
-	* Possible values are DirectPath::ConversionModeValues
-	*
-	*/
+    /**
+    * @brief
+    * Conversion Mode
+    *
+    * Possible values are DirectPath::ConversionModeValues
+    *
+    */
     typedef Enum<ConversionModeValues> ConversionMode;
 
-	/**
-	* @brief
-	* Direct Operation Result enumerated values
-	*
-	*/
+    /**
+    * @brief
+    * Direct Operation Result enumerated values
+    *
+    */
     enum ResultValues
     {
         /** Conversion/load has been successful */
@@ -8292,13 +8293,13 @@ public:
         ResultEmpty = OCI_DPR_EMPTY
     };
 
-	/**
-	* @brief
-	* Direct Operation Result
-	*
-	* Possible values are DirectPath::ResultValues
-	*
-	*/
+    /**
+    * @brief
+    * Direct Operation Result
+    *
+    * Possible values are DirectPath::ResultValues
+    *
+    */
     typedef Enum<ResultValues> Result;
 
     /**
@@ -8346,9 +8347,9 @@ public:
      * @brief
      * Set the value of the given row/column array entry from the given string
      *
-	 * @tparam TDataType - type of data to set (only supported types are ostring and Raw)
+     * @tparam TDataType - type of data to set (only supported types are ostring and Raw)
      *
-	 * @param rowIndex  - Row index
+     * @param rowIndex  - Row index
      * @param colIndex  - Column index
      * @param value     - Value to set
      * @param complete  - Is the entry content fully provided ?
@@ -8372,8 +8373,8 @@ public:
      * Setting entries content piece by piece may be supported in future releases
      *
      */
-	template <class TDataType>
-	void SetEntry(unsigned int rowIndex, unsigned int colIndex, const TDataType& value, bool complete = true);
+    template <class TDataType>
+    void SetEntry(unsigned int rowIndex, unsigned int colIndex, const TDataType& value, bool complete = true);
 
     /**
      * @brief
@@ -8637,7 +8638,7 @@ public:
      * Errors may happen while data is converted to direct path stream format
      * using Convert().
      *
-	 * @par Usage after a Convert() call
+     * @par Usage after a Convert() call
      * - When using conversion mode DirectPath::Default, Convert() returns
      * DirectPath::ResultError on error and GetErrorColumn() returns the column index that
      * caused the error.
@@ -8668,7 +8669,7 @@ public:
      * - while data is converted to direct path stream format using Convert()
      * - while data is loaded to database using Load()
      *
-	 * @par Usage after a Convert() call
+     * @par Usage after a Convert() call
      * - When using conversion mode DirectPath::Default, Convert() returns
      *   DirectPath::ResultError on error and GetErrorRow() returns the row index that
      *   caused the error.

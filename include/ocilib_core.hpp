@@ -130,11 +130,11 @@ public:
     operator TEnum ();
     operator unsigned int ();
 
-	bool operator == (const Enum& other) const;
-	bool operator != (const Enum& other) const;
+    bool operator == (const Enum& other) const;
+    bool operator != (const Enum& other) const;
 
-	bool operator == (const TEnum& other) const;
-	bool operator != (const TEnum& other) const;
+    bool operator == (const TEnum& other) const;
+    bool operator != (const TEnum& other) const;
 
 private:
 
@@ -154,27 +154,27 @@ public:
 
     Flags();
     Flags(TEnum flag);
-	Flags(const Flags& other);
+    Flags(const Flags& other);
     Flags operator~ () const;
 
     Flags operator | (TEnum other) const;
     Flags operator & (TEnum other) const;
     Flags operator ^ (TEnum other) const;
 
-	Flags operator | (const Flags& other) const;
-	Flags operator & (const Flags& other) const;
-	Flags operator ^ (const Flags& other) const;
+    Flags operator | (const Flags& other) const;
+    Flags operator & (const Flags& other) const;
+    Flags operator ^ (const Flags& other) const;
 
     Flags& operator |= (TEnum other);
     Flags& operator &= (TEnum other);
     Flags& operator ^= (TEnum other);
 
-	Flags& operator |= (const Flags& other);
-	Flags& operator &= (const Flags& other);
-	Flags& operator ^= (const Flags& other);
+    Flags& operator |= (const Flags& other);
+    Flags& operator &= (const Flags& other);
+    Flags& operator ^= (const Flags& other);
 
     bool operator == (TEnum other) const;
-	bool operator == (const Flags& other) const;
+    bool operator == (const Flags& other) const;
 
     unsigned int GetValues() const;
 
@@ -192,10 +192,10 @@ class ManagedBuffer
 {
 public:
     ManagedBuffer();
-	ManagedBuffer(size_t size);
-	ManagedBuffer(TBufferType *buffer, size_t size);
+    ManagedBuffer(size_t size);
+    ManagedBuffer(TBufferType *buffer, size_t size);
 
-	~ManagedBuffer();
+    ~ManagedBuffer();
 
     operator TBufferType* () const;
     operator const TBufferType* () const;
@@ -203,7 +203,7 @@ public:
 private:
 
     TBufferType* _buffer;
-	size_t _size;
+    size_t _size;
 };
 
 class Locker
@@ -322,11 +322,11 @@ protected:
 
     HandleHolder& operator= (const HandleHolder &other);
 
-	typedef boolean(OCI_API *HandleFreeFunc)(AnyPointer handle);
+    typedef boolean(OCI_API *HandleFreeFunc)(AnyPointer handle);
 
     Handle* GetHandle() const;
 
-	void Acquire(THandleType handle, HandleFreeFunc func, Handle *parent);
+    void Acquire(THandleType handle, HandleFreeFunc func, Handle *parent);
     void Acquire(HandleHolder &other);
     void Release();
 
@@ -334,18 +334,18 @@ protected:
     {
     public:
 
-		SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc func, Handle *parent);
-		virtual ~SmartHandle();
+        SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc func, Handle *parent);
+        virtual ~SmartHandle();
 
         void Acquire(HandleHolder *holder);
         void Release(HandleHolder *holder);
 
-		const THandleType GetHandle() const;
+        const THandleType GetHandle() const;
 
-		Handle *GetParent() const;
+        Handle *GetParent() const;
 
-		AnyPointer GetExtraInfos() const;
-		void  SetExtraInfos(AnyPointer extraInfo);
+        AnyPointer GetExtraInfos() const;
+        void  SetExtraInfos(AnyPointer extraInfo);
 
         bool IsLastHolder(HandleHolder *holder);
 
@@ -366,7 +366,7 @@ protected:
         THandleType _handle;
         HandleFreeFunc _func;
         Handle *_parent;
-		AnyPointer _extraInfo;
+        AnyPointer _extraInfo;
     };
 
 protected:
@@ -419,13 +419,13 @@ class BindObject
 {
 public:
 
-	BindObject(const Statement &statement, const ostring& name);
+    BindObject(const Statement &statement, const ostring& name);
 
-	virtual ~BindObject();
+    virtual ~BindObject();
 
-	ostring GetName() const;
+    ostring GetName() const;
 
-	Statement GetStatement() const;
+    Statement GetStatement() const;
 
     virtual void SetInData()  = 0;
     virtual void SetOutData() = 0;
@@ -433,24 +433,24 @@ public:
 protected:
 
     ostring _name;
-	OCI_Statement *_pStatement;
+    OCI_Statement *_pStatement;
 };
 
 class BindArray : public BindObject
 {
 public:
 
-	 BindArray(const Statement &statement, const ostring& name);
+     BindArray(const Statement &statement, const ostring& name);
      virtual ~BindArray();
 
      template <class TObjectType, class TDataType>
-	 void SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemSize);
+     void SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemSize);
 
      template <class TObjectType, class TDataType>
      TDataType * GetData () const;
 
-	 void SetInData();
-	 void SetOutData();
+     void SetInData();
+     void SetOutData();
 
 private:
 
@@ -459,9 +459,9 @@ private:
     public:
         AbstractBindArrayObject()  { }
         virtual ~AbstractBindArrayObject()  { }
-		virtual void SetInData() = 0;
-		virtual void SetOutData() = 0;
-		ostring GetName();
+        virtual void SetInData() = 0;
+        virtual void SetOutData() = 0;
+        ostring GetName();
     };
 
     template <class TObjectType, class TDataType>
@@ -469,8 +469,8 @@ private:
     {
     private:
 
-		OCI_Statement *_pStatement;
-		ostring _name;
+        OCI_Statement *_pStatement;
+        ostring _name;
         std::vector<TObjectType> & _vector;
         TDataType *_data;
         unsigned int _mode;
@@ -479,19 +479,19 @@ private:
 
     public:
 
-		BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize);
-		virtual ~BindArrayObject();
-		void SetInData();
-		void SetOutData();
-		ostring GetName();
+        BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize);
+        virtual ~BindArrayObject();
+        void SetInData();
+        void SetOutData();
+        ostring GetName();
 
         operator std::vector<TObjectType> & () const;
         operator TDataType * () const;
 
-	private:
+    private:
 
-		void AllocData();
-		void FreeData();
+        void AllocData();
+        void FreeData();
     };
 
     AbstractBindArrayObject * _object;
@@ -504,17 +504,17 @@ class BindAdaptor : public BindObject
 
 public:
 
-	operator TNativeType *()  const;
+    operator TNativeType *()  const;
 
-	void SetInData();
-	void SetOutData();
+    void SetInData();
+    void SetOutData();
 
-	BindAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size);
-	virtual ~BindAdaptor();
+    BindAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size);
+    virtual ~BindAdaptor();
 
 private:
 
-	TObjectType&    _object;
+    TObjectType&    _object;
     TNativeType*    _data;
     unsigned int    _size;
 };
@@ -523,20 +523,20 @@ class BindsHolder
 {
 public:
 
-	BindsHolder(const Statement &statement);
+    BindsHolder(const Statement &statement);
     ~BindsHolder();
 
     void Clear();
 
     void AddBindObject(BindObject *bindObject);
 
-	void SetOutData();
-	void SetInData();
+    void SetOutData();
+    void SetInData();
 
 private:
 
     std::vector<BindObject *> _bindObjects;
-	OCI_Statement * _pStatement;
+    OCI_Statement * _pStatement;
 };
 
 }
