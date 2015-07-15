@@ -105,6 +105,8 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 			{
 			  total = total + data.assets[i].download_count;
 			}				
+            
+            document.getElementById('DownloadCount').innerHTML =  '<br/>Total of download since first release : ' + '<b>' + total + '</b>';
 		});
         
        <!-- 
@@ -112,10 +114,10 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 		{		
 			var json = BufferToJson(data);
 
-			total = total + json.summaries.time.downloads;				
-		}); -->
+			total = total + json.summaries.time.downloads;	
 
-        document.getElementById('DownloadCount').innerHTML =  '<br/>Total of download since first release : ' + '<b>' + total + '</b>';
+            document.getElementById('DownloadCount').innerHTML =  '<br/>Total of download since first release : ' + '<b>' + total + '</b>';			
+		}); -->        
 
 	}());
 </script>
