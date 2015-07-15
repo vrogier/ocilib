@@ -57,6 +57,8 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
 >CommonwealthBank
 
 <script>
+ 
+    var total = 56242; // Value as 2015-07-15 from source forge. Need to add rest call to SF.Net
 
     function getHTTPObject()
     {
@@ -81,8 +83,6 @@ The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/
     }
     
 	(function() {
-
-        var total = 56242; // Value as 2015-07-15 from source forge. Need to add rest call to SF.Net
         
 		var GetJson = function(url, successHandler, errorHandler) 
         {			
