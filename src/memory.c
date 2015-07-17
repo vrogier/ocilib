@@ -86,7 +86,7 @@ void * OCI_MemAlloc
         OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
     }
 
-    return ((unsigned char *) mem_block) + sizeof(mem_block);
+    return ((unsigned char *) mem_block) + sizeof(*mem_block);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -131,7 +131,7 @@ void * OCI_MemRealloc
         }
     }
 
-    return ((unsigned char *)mem_block) + sizeof(mem_block);
+    return ((unsigned char *)mem_block) + sizeof(*mem_block);
 }
 
 /* --------------------------------------------------------------------------------------------- *
