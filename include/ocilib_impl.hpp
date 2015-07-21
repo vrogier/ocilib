@@ -3052,6 +3052,12 @@ inline Object::ObjectType Object::GetType() const
 }
 
 template<>
+inline bool Object::Get<bool>(const ostring& name) const
+{
+    return (Check(OCI_ObjectGetBoolean(*this, name.c_str())) == TRUE);
+}
+
+template<>
 inline short Object::Get<short>(const ostring& name) const
 {
     return Check(OCI_ObjectGetShort(*this, name.c_str()));
@@ -3176,6 +3182,12 @@ template<class TDataType>
 inline TDataType Object::Get(const ostring& name) const
 {
     return TDataType(Check(OCI_ObjectGetColl(*this, name.c_str())), GetHandle());
+}
+
+template<>
+inline void Object::Set<bool>(const ostring& name, const bool &value)
+{
+    Check(OCI_ObjectSetBoolean(*this, name.c_str(), static_cast<boolean>(value)));
 }
 
 template<>
@@ -3521,6 +3533,14 @@ inline void Collection<TDataType>::Append(const TDataType &value)
 }
 
 template <>
+inline bool Collection<bool>::GetElem(OCI_Elem *elem, Handle *parent) const
+{
+    ARG_NOT_USED(parent);
+
+    return (Check(OCI_ElemGetBoolean(elem)) == TRUE);
+}
+
+template <>
 inline short Collection<short>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     ARG_NOT_USED(parent);
@@ -3663,6 +3683,12 @@ template<class TDataType>
 inline TDataType Collection<TDataType>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     return TDataType(Check(OCI_ElemGetColl(elem)), parent);
+}
+
+template<>
+inline void Collection<bool>::SetElem(OCI_Elem *elem, const bool &value)
+{
+    Check(OCI_ElemSetBoolean(elem, static_cast<boolean>(value)));
 }
 
 template<>
@@ -4216,11 +4242,11 @@ inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator TDataType *
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindAdaptor
+ * BindObjectAdaptor
  * --------------------------------------------------------------------------------------------- */
 
 template <class TNativeType, class TObjectType>
-inline void BindAdaptor<TNativeType, TObjectType>::SetInData()
+inline void BindObjectAdaptor<TNativeType, TObjectType>::SetInData()
 {
     size_t size = _object.size();
 
@@ -4238,7 +4264,7 @@ inline void BindAdaptor<TNativeType, TObjectType>::SetInData()
 }
 
 template <class TNativeType, class TObjectType>
-inline void BindAdaptor<TNativeType, TObjectType>::SetOutData()
+inline void BindObjectAdaptor<TNativeType, TObjectType>::SetOutData()
 {
     size_t size = Check(OCI_BindGetDataSize(Check(OCI_GetBind2(_pStatement, _name.c_str()))));
 
@@ -4246,7 +4272,7 @@ inline void BindAdaptor<TNativeType, TObjectType>::SetOutData()
 }
 
 template <class TNativeType, class TObjectType>
-inline BindAdaptor<TNativeType, TObjectType>::BindAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size) :
+inline BindObjectAdaptor<TNativeType, TObjectType>::BindObjectAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size) :
      BindObject(statement, name),
      _object(object),
      _data(new TNativeType[size]),
@@ -4256,13 +4282,50 @@ inline BindAdaptor<TNativeType, TObjectType>::BindAdaptor(const Statement &state
 }
 
 template <class TNativeType, class TObjectType>
-inline BindAdaptor<TNativeType, TObjectType>::~BindAdaptor()
+inline BindObjectAdaptor<TNativeType, TObjectType>::~BindObjectAdaptor()
 {
     delete [] _data;
 }
 
 template <class TNativeType, class TObjectType>
-inline BindAdaptor<TNativeType, TObjectType>::operator TNativeType *()  const
+inline BindObjectAdaptor<TNativeType, TObjectType>::operator TNativeType *()  const
+{
+    return _data;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * BindTypeAdaptor
+ * --------------------------------------------------------------------------------------------- */
+
+template <class TNativeType, class TObjectType>
+inline void BindTypeAdaptor<TNativeType, TObjectType>::SetInData()
+{
+    *_data = static_cast<TNativeType>(_object);
+}
+
+template <class TNativeType, class TObjectType>
+inline void BindTypeAdaptor<TNativeType, TObjectType>::SetOutData()
+{
+    _object = static_cast<TObjectType>(*_data);
+}
+
+template <class TNativeType, class TObjectType>
+inline BindTypeAdaptor<TNativeType, TObjectType>::BindTypeAdaptor(const Statement &statement, const ostring& name, TObjectType &object) :
+     BindObject(statement, name),
+     _object(object),
+     _data(new TNativeType)
+{
+
+}
+
+template <class TNativeType, class TObjectType>
+inline BindTypeAdaptor<TNativeType, TObjectType>::~BindTypeAdaptor()
+{
+    delete _data;
+}
+
+template <class TNativeType, class TObjectType>
+inline BindTypeAdaptor<TNativeType, TObjectType>::operator TNativeType *()  const
 {
     return _data;
 }
@@ -4652,6 +4715,27 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
 }
 
 template <>
+inline void Statement::Bind<bool>(const ostring& name, bool &value, BindInfo::BindDirection mode)
+{
+    BindTypeAdaptor<boolean, bool> * bnd = new BindTypeAdaptor<boolean, bool>(*this, name, value);
+
+    boolean res = OCI_BindBoolean(*this, name.c_str(), static_cast<boolean *>(*bnd));
+
+    if (res)
+    {
+        BindsHolder *bindsHolder = GetBindsHolder(true);
+        bindsHolder->AddBindObject(bnd);
+        SetLastBindMode(mode);
+    }
+    else
+    {
+        delete bnd;
+    }
+
+    Check(res);
+}
+
+template <>
 inline void Statement::Bind<short>(const ostring& name, short &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindShort, name, value, mode);
@@ -4795,7 +4879,7 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring 
 
     value.reserve(maxSize);
 
-    BindAdaptor<otext, ostring> * bnd = new BindAdaptor<otext, ostring>(*this, name, value, maxSize + 1);
+    BindObjectAdaptor<otext, ostring> * bnd = new BindObjectAdaptor<otext, ostring>(*this, name, value, maxSize + 1);
 
     boolean res = OCI_BindString(*this, name.c_str(), static_cast<otext *>(*bnd), maxSize);
 
@@ -4829,7 +4913,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, Raw &value, 
 
     value.reserve(maxSize);
 
-    BindAdaptor<unsigned char, Raw> * bnd = new BindAdaptor<unsigned char, Raw>(*this, name, value, maxSize + 1);
+    BindObjectAdaptor<unsigned char, Raw> * bnd = new BindObjectAdaptor<unsigned char, Raw>(*this, name, value, maxSize + 1);
 
     boolean res = OCI_BindRaw(*this, name.c_str(), static_cast<unsigned char *>(*bnd), maxSize);
 

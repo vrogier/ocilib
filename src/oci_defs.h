@@ -122,6 +122,11 @@
 
 #define SQLT_PNTY   241               /* pl/sql representation of named types */
 
+/* some pl/sql specific types */
+#define SQLT_REC    250                     /* pl/sql 'record' (or %rowtype) */
+#define SQLT_TAB    251                            /* pl/sql 'indexed table' */
+#define SQLT_BOL    252                                  /* pl/sql 'boolean' */
+
 /* CHAR/NCHAR/VARCHAR2/NVARCHAR2/CLOB/NCLOB char set "form" information */
 #define SQLCS_IMPLICIT 1     /* for CHAR, VARCHAR2, CLOB w/o a specified set */
 #define SQLCS_NCHAR    2                  /* for NCHAR, NCHAR VARYING, NCLOB */
@@ -274,6 +279,8 @@
 #define OCI_ATTR_COL_PROPERTIES        104              /* column properties */
 #define OCI_ATTR_REF_TDO               110     /* REF to the type descriptor */
 #define OCI_ATTR_LINK                  111         /* the database link name */
+#define OCI_ATTR_NUM_PARAMS            121           /* number of parameters */
+
 #define OCI_ATTR_PTYPE                 123      /* type of info described by */
 #define OCI_ATTR_PARAM                 124           /* parameter descriptor */
 #define OCI_ATTR_PARSE_ERROR_OFFSET    129             /* Parse Error offset */
@@ -503,6 +510,7 @@
 #define OCI_ATTR_TYPE_NAME      8             /* name of the named data type */
 #define OCI_ATTR_SCHEMA_NAME    9                         /* the schema name */
 #define OCI_ATTR_SUB_NAME       10      /* type name if package private type */
+#define OCI_ATTR_PACKAGE_NAME   12           /* package name of package type */
 
 /*------------------------Other Constants------------------------------------*/
 
@@ -830,8 +838,11 @@ typedef ub2 OCIDuration;
 
 /*------------------------------ TYPE CODE ----------------------------------*/
 
-#define OCI_TYPECODE_VARRAY      247         /* SQL VARRAY  OTS PAGED VARRAY */
-#define OCI_TYPECODE_TABLE       248              /* SQL TABLE  OTS MULTISET */
+
+#define OCI_TYPECODE_VARRAY         247      /* SQL VARRAY  OTS PAGED VARRAY */
+#define OCI_TYPECODE_TABLE          248           /* SQL TABLE  OTS MULTISET */
+#define OCI_TYPECODE_ITABLE         251               /* PLSQL indexed table */
+#define OCI_TYPECODE_PLS_INTEGER    266         /* type code for PLS_INTEGER */
 
 /*------------------------Piece Information----------------------------------*/
 #define OCI_PARAM_IN 0x01                                    /* in parameter */

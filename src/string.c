@@ -631,6 +631,30 @@ unsigned int OCI_StringGetFromType
             len += OCI_StringAddToBuffer(buffer, len, (otext *) data, quote); 
             break;
         }
+        case OCI_CDT_BOOLEAN:
+        {
+            if (ptr)
+            {
+                if (data)
+                {
+                    len += OCI_StringAddToBuffer(buffer, len, (*(boolean*)data) ? OCI_STRING_TRUE : OCI_STRING_FALSE, quote);
+                }
+                else
+                {
+                    res = FALSE;
+                }
+            }
+            else
+            {
+                len = OCI_STRING_FALSE_SIZE;
+                if (OCI_STRING_TRUE_SIZE > len)
+                {
+                    len = OCI_STRING_TRUE_SIZE;
+                }
+            }
+           
+            break;
+        }
         case OCI_CDT_NUMERIC:
         {
             len = OCI_SIZE_BUFFER;
@@ -977,11 +1001,12 @@ unsigned int OCI_StringGetTypeName
 
 unsigned int OCI_StringGetFullTypeName
 (
-    const otext *schema,
-    const otext *type,
-    const otext *link,
+    const otext  *schema,
+    const otext  *package,
+    const otext  *type,
+    const otext  *link,
     otext        *name,
-    unsigned int length
+    unsigned int  length
     )
 {
     unsigned int offset = 0;
@@ -990,6 +1015,17 @@ unsigned int OCI_StringGetFullTypeName
     {
         offset += OCI_StringGetTypeName(schema, name + offset, length - offset);
         
+        if (offset)
+        {
+            ostrncpy(name + offset, OTEXT("."), length - offset);
+            offset++;
+        }
+    }
+
+    if (package && package[0])
+    {
+        offset += OCI_StringGetTypeName(package, name + offset, length - offset);
+
         if (offset)
         {
             ostrncpy(name + offset, OTEXT("."), length - offset);

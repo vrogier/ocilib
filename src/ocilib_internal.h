@@ -952,7 +952,7 @@ void OCI_MemFreeOracleClient
 
 void OCI_MemUpdateBytes
 (
-    unsigned int type,
+    int type,
     big_int  size
 );
 
@@ -1384,6 +1384,7 @@ unsigned int OCI_StringGetTypeName
 unsigned int OCI_StringGetFullTypeName
 (
     const otext  *schema,
+    const otext  *package,
     const otext  *type,
     const otext  *link,
     otext        *name,

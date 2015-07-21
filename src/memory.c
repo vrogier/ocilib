@@ -162,7 +162,7 @@ void OCI_MemFree
 
 void OCI_MemUpdateBytes
 (
-    unsigned int type,
+    int type,
     big_int size
 )
 {

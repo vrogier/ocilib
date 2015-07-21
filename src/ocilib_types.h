@@ -48,7 +48,7 @@
 
 struct OCI_MemoryBlock
 {
-    unsigned int type; /* type of allocated data */
+    int          type; /* type of allocated data */
     unsigned int size; /* allocated memory size*/
 };
 

@@ -557,6 +557,20 @@
                                                                                \
     OCI_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9_0)
 
+
+/**
+* @brief
+* Checks if the runtime OCI version supports PL SQL Boolean, Records and Index Tables
+*
+* @note
+* Throws an exception if the connection (client and server versions) does not support it
+*
+*/
+
+#define OCI_CHECK_EXTENDED_PLSQLTYPES_ENABLED(con)                             \
+                                                                               \
+    OCI_CHECK_FEATURE(con, OCI_FEATURE_EXTENDED_PLSQLTYPES, OCI_12_1)
+
 /**
  * @brief
  * Checks if the runtime OCI client supports statement caching

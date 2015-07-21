@@ -498,7 +498,7 @@ private:
 };
 
 template <class TNativeType, class TObjectType>
-class BindAdaptor : public BindObject
+class BindObjectAdaptor : public BindObject
 {
     friend class Statement;
 
@@ -509,14 +509,35 @@ public:
     void SetInData();
     void SetOutData();
 
-    BindAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size);
-    virtual ~BindAdaptor();
+    BindObjectAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size);
+    virtual ~BindObjectAdaptor();
 
 private:
 
     TObjectType&    _object;
     TNativeType*    _data;
     unsigned int    _size;
+};
+
+template <class TNativeType, class TObjectType>
+class BindTypeAdaptor : public BindObject
+{
+    friend class Statement;
+
+public:
+
+    operator TNativeType *()  const;
+
+    void SetInData();
+    void SetOutData();
+
+    BindTypeAdaptor(const Statement &statement, const ostring& name, TObjectType &object);
+    virtual ~BindTypeAdaptor();
+
+private:
+
+    TObjectType&    _object;
+    TNativeType*    _data;
 };
 
 class BindsHolder

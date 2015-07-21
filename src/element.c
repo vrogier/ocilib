@@ -171,8 +171,17 @@ OCI_Elem * OCI_ElemInit
             {
                 if (!elem->handle)
                 {
-                    elem->handle = (OCINumber *)OCI_MemAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
+                    elem->handle = (OCINumber * )OCI_MemAlloc(OCI_IPC_VOID, elem->typinf->cols[0].size, 1, TRUE);
                     elem->alloc  = TRUE;
+                }
+                break;
+            }
+            case OCI_CDT_BOOLEAN:
+            {
+                if (!elem->handle)
+                {
+                    elem->handle = (boolean*) OCI_MemAlloc(OCI_IPC_VOID, sizeof(boolean), 1, TRUE);
+                    elem->alloc = TRUE;
                 }
                 break;
             }
@@ -268,9 +277,24 @@ boolean OCI_ElemSetNumber
     uword     flag
 )
 {
-  
-    boolean res = OCI_NumberSet(elem->con, (OCINumber *) elem->handle, size, 
-                                flag, elem->typinf->cols[0].libcode, value);
+     boolean res = TRUE;
+ 
+     OCI_Column *col = &elem->typinf->cols[0];
+
+    if (OCI_NUM_NUMBER != col->subtype)
+    {
+        /* for PL/SQL PLS_INTEGER and BINARY_INTEGER types, the values are not OCINumber but of scalar C int type !! */
+
+        OCINumber tmp;
+        memset(&tmp, 0, sizeof(tmp));
+
+        res = res && OCI_NumberSet(elem->typinf->con, &tmp, col->size, col->subtype, col->libcode, value);
+        res = res && OCI_NumberGet(elem->typinf->con, &tmp, size, flag, col->libcode, elem->handle);
+    }
+    else
+    {      
+        res = OCI_NumberSet(elem->con, (OCINumber *)elem->handle, size,  flag, col->libcode, value);
+    }
 
     if (res)
     {
@@ -303,9 +327,26 @@ boolean OCI_ElemGetNumber
     }
     else if (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)
     {
-        OCINumber *num = (OCINumber *) elem->handle;
+        OCI_Column *col = &elem->typinf->cols[0];
 
-        res = OCI_NumberGet(elem->con, num, size, flag, elem->typinf->cols[0].libcode, value);
+        res = TRUE;
+
+        if (OCI_NUM_NUMBER != col->subtype)
+        {
+            /* for PL/SQL PLS_INTEGER and BINARY_INTEGER types, the values are not OCINumber but of scalar C int type !! */
+
+            OCINumber tmp;
+            memset(&tmp, 0, sizeof(tmp));
+
+            res = res && OCI_NumberSet(elem->typinf->con, &tmp, col->size, col->subtype, col->libcode, elem->handle);
+            res = res && OCI_NumberGet(elem->typinf->con, &tmp, size, flag, col->libcode, value);
+        }
+        else
+        {
+            OCINumber *num = (OCINumber *)elem->handle;
+
+            res = OCI_NumberGet(elem->con, num, size, flag, col->libcode, value);
+        }
     }
     else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
     {
@@ -383,6 +424,35 @@ boolean OCI_API OCI_ElemFree
     OCI_FREE(elem)
 
     call_retval = call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ElemGetBoolean
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_ElemGetBoolean
+(
+    OCI_Elem *elem
+)
+{
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CHECK_COMPAT(elem->con, OCI_CDT_BOOLEAN == elem->typinf->cols[0].datatype)
+
+    call_status = TRUE;
+
+    if (!OCI_ElemIsNull(elem))
+    {
+        boolean *data = (boolean *)elem->handle;
+
+        if (data)
+        {
+            call_retval = *data;
+        }
+    }
 
     OCI_LIB_CALL_EXIT()
 }
@@ -732,6 +802,36 @@ OCI_Coll * OCI_API OCI_ElemGetColl
         OCI_CollInit(elem->con, (OCI_Coll **) &elem->obj,  (OCIColl *) elem->handle,
                      elem->typinf->cols[0].typinf)
     )
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ElemSetBoolean
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_ElemSetBoolean
+(
+    OCI_Elem *elem,
+    boolean   value
+)
+{
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CHECK_COMPAT(elem->con, OCI_CDT_BOOLEAN == elem->typinf->cols[0].datatype)
+ 
+    boolean *data = (boolean *) elem->handle;
+    
+    if (data)
+    {
+        call_status = TRUE;
+        *data = value;
+     
+        OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
+    }
+
+    call_retval = call_status;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *

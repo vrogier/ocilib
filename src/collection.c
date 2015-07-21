@@ -269,6 +269,15 @@ unsigned int OCI_API OCI_CollGetType
         call_retval = OCI_COLL_VARRAY;
     }
 
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+    else if (OCI_TYPECODE_ITABLE == coll->typinf->colcode)
+    {
+        call_retval = OCI_COLL_INDEXED_TABLE;
+    }
+
+#endif
+
     OCI_LIB_CALL_EXIT()
 }
 
@@ -659,6 +668,12 @@ boolean OCI_API OCI_CollToText
                 case OCI_CDT_NUMERIC:
                 {
                     data  = (void *) elem->handle;
+                    quote = FALSE;
+                    break;
+                }
+                case OCI_CDT_BOOLEAN:
+                {
+                    data = (void *)elem->handle;
                     quote = FALSE;
                     break;
                 }

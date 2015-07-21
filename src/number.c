@@ -213,12 +213,31 @@ boolean OCI_NumberFromString
 
     /* For binary types, perform a C based conversion */
 
-    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
+    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT || (SQLT_VNU != sqlcode))
     {
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+        if ((OCILib.version_runtime >= OCI_12_1) && ((SQLT_VNU != sqlcode)))
+        {
+            if (type & OCI_NUM_SHORT)
+            {
+                res = (osscanf(in_value, OCI_STRING_FORMAT_NUM_SHORT, (short *)out_value) == 1);
+                done = TRUE;
+            }
+
+            if (type & OCI_NUM_INT)
+            {
+                res = (osscanf(in_value, OCI_STRING_FORMAT_NUM_INT, (int *)out_value) == 1);
+                done = TRUE;
+            }
+        }
+
+#endif
 
     #if OCI_VERSION_COMPILE >= OCI_10_1
 
-        if (OCILib.version_runtime >= OCI_10_1)
+        if (!done && OCILib.version_runtime >= OCI_10_1)
         {
             fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
 
@@ -297,12 +316,31 @@ boolean OCI_NumberToString
 
     /* For binary types, perform a C based conversion */
 
-    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
+    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT || (SQLT_VNU != sqlcode))
     {
+
+    #if OCI_VERSION_COMPILE >= OCI_12_1
+
+        if ((OCILib.version_runtime >= OCI_12_1) && ((SQLT_VNU != sqlcode)))
+        {
+            if (type & OCI_NUM_SHORT)
+            {
+                out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_SHORT, *((short *)number));
+                done = TRUE;
+            }
+
+            if (type & OCI_NUM_INT)
+            {
+                out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_INT, *((int *)number));
+                done = TRUE;
+            }
+        }
+
+    #endif
 
     #if OCI_VERSION_COMPILE >= OCI_10_1
 
-        if ((OCILib.version_runtime >= OCI_10_1) && ((SQLT_VNU != sqlcode)))
+        if (!done && (OCILib.version_runtime >= OCI_10_1) && ((SQLT_VNU != sqlcode)))
         {
             if (!fmt)
             {

@@ -236,7 +236,8 @@ boolean OCI_BindCheck
 
                 /* for handles, check anyway the value for null data */
 
-                if ((OCI_CDT_NUMERIC != bnd->type) &&
+                if ((OCI_CDT_BOOLEAN != bnd->type) &&
+                    (OCI_CDT_NUMERIC != bnd->type) &&
                     (OCI_CDT_TEXT    != bnd->type) &&
                     (OCI_CDT_RAW     != bnd->type)  &&
                     (OCI_CDT_OBJECT  != bnd->type))
@@ -324,7 +325,8 @@ boolean OCI_BindCheck
 
                     /* for handles, check anyway the value for null data */
 
-                    if ((OCI_CDT_NUMERIC != bnd->type) &&
+                    if ((OCI_CDT_BOOLEAN != bnd->type) &&
+                        (OCI_CDT_NUMERIC != bnd->type) && 
                         (OCI_CDT_TEXT    != bnd->type) &&
                         (OCI_CDT_RAW     != bnd->type) &&
                         (OCI_CDT_OBJECT  != bnd->type))
@@ -773,6 +775,8 @@ boolean OCI_BindData
             if ((OCI_CDT_RAW     != type)  &&
                 (OCI_CDT_LONG    != type)  &&
                 (OCI_CDT_CURSOR  != type)  &&
+                (OCI_CDT_LONG    != type)  &&
+                (OCI_CDT_BOOLEAN != type)  &&
                 (OCI_CDT_NUMERIC != type || SQLT_VNU == code) &&
                 (OCI_CDT_TEXT    != type || OCILib.use_wide_char_conv))
             {
@@ -2450,6 +2454,39 @@ OCI_EXPORT boolean OCI_API OCI_IsRebindingAllowed
 
     call_retval = stmt->bind_reuse;
     call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_BindBoolean
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_BindBoolean
+(
+    OCI_Statement *stmt,
+    const otext   *name,
+    boolean       *data
+)
+{
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_BIND_CALL(stmt, name, data, OCI_IPC_BOOLEAN, TRUE)
+    OCI_CHECK_EXTENDED_PLSQLTYPES_ENABLED(stmt->con)
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+    call_status = OCI_BindData(stmt, data, sizeof(boolean), name, OCI_CDT_BOOLEAN,
+                               SQLT_BOL, OCI_BIND_INPUT, 0, NULL, 0);
+
+#else
+
+    OCI_NOT_USED(name)
+    OCI_NOT_USED(data)
+
+#endif
+
+    call_retval = call_status;
 
     OCI_LIB_CALL_EXIT()
 }

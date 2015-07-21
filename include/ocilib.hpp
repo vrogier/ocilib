@@ -296,7 +296,9 @@ enum DataTypeValues
     /** Collection  */
     TypeCollection = OCI_CDT_COLLECTION,
     /** Object REF */
-    TypeReference = OCI_CDT_REF
+    TypeReference = OCI_CDT_REF,
+    /** PL/SQL boolean */
+    TypeBoolean = OCI_CDT_BOOLEAN
 };
 
 /**
@@ -4723,7 +4725,9 @@ public:
         /** Collection is a VARRAY */
         Varray = OCI_COLL_VARRAY,
         /** Collection is a NESTED TABLE */
-        NestedTable = OCI_COLL_NESTED_TABLE
+        NestedTable = OCI_COLL_NESTED_TABLE,
+        /** Collection is a PL/SQL TABLE INDEX BY */
+        IndexedTable = OCI_COLL_NESTED_TABLE,
     };
 
     /**

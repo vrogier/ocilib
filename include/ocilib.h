@@ -1176,6 +1176,7 @@ typedef unsigned int big_uint;
 #define OCI_CDT_OBJECT                      12
 #define OCI_CDT_COLLECTION                  13
 #define OCI_CDT_REF                         14
+#define OCI_CDT_BOOLEAN                     15
 
 /* Data Type codes for OCI_ImmediateXXX() calls */
 
@@ -1383,6 +1384,7 @@ typedef unsigned int big_uint;
 
 #define OCI_COLL_VARRAY                     1
 #define OCI_COLL_NESTED_TABLE               2
+#define OCI_COLL_INDEXED_TABLE              3
 
 /* pool types */
 
@@ -1681,6 +1683,12 @@ typedef unsigned int big_uint;
     OTEXT("FM99999999999999999999999999999999999990.999999999999999999999999")
 #define OCI_STRING_FORMAT_NUM_BDOUBLE       OTEXT("%lf")
 #define OCI_STRING_FORMAT_NUM_BFLOAT        OTEXT("%f")
+#define OCI_STRING_FORMAT_NUM_SHORT         OTEXT("%hd")
+#define OCI_STRING_FORMAT_NUM_INT           OTEXT("%d")
+#define OCI_STRING_TRUE                     OTEXT("TRUE")
+#define OCI_STRING_FALSE                    OTEXT("FALSE")
+#define OCI_STRING_TRUE_SIZE                4
+#define OCI_STRING_FALSE_SIZE               5
 
 #ifdef _WINDOWS
   #define OCI_CHAR_SLASH                    '\\'
@@ -4036,6 +4044,32 @@ OCI_EXPORT boolean OCI_API OCI_IsRebindingAllowed
 );
 
 /**
+* @brief
+* Bind a boolean variable (PL/SQL ONLY)
+*
+* @param stmt - Statement handle
+* @param name - Variable name
+* @param data - Pointer to boolean variable
+*
+* @note
+* parameter 'data' can NULL if the statement bind allocation mode
+* has been set to OCI_BAM_INTERNAL
+*
+* @warning
+* - OCI_BindBoolean() CAN ONLY BE USED for PL/SQL boolean type when calling PL/SQL procedures/function
+* - ONLY supported by Oracle 12c and above !
+*
+* @return
+* TRUE on success otherwise FALSE
+*/
+OCI_EXPORT boolean OCI_API OCI_BindBoolean
+(
+    OCI_Statement *stmt,
+    const otext   *name,
+    boolean       *data
+);
+
+/**
  * @brief
  * Bind an short variable
  *
@@ -5269,6 +5303,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetDirection
  * - OCI_CDT_OBJECT      : OCI_Object *
  * - OCI_CDT_COLLECTION  : OCI_Coll *
  * - OCI_CDT_REF         : OCI_Ref *
+ * - OCI_CDT_BOOLEAN     : boolean
  *
  * @return
  * The column type or OCI_CDT_UNKNOWN on error
@@ -6135,6 +6170,7 @@ OCI_EXPORT const otext * OCI_API OCI_ColumnGetName
  * - OCI_CDT_OBJECT      : OCI_Object *
  * - OCI_CDT_COLLECTION  : OCI_Coll *
  * - OCI_CDT_REF         : OCI_Ref *
+ * - OCI_CDT_BOOLEAN     : boolean
  *
  * @return
  * The column type or OCI_CDT_UNKNOWN if index is out of bounds
@@ -8068,6 +8104,25 @@ OCI_EXPORT boolean OCI_API OCI_ElemFree
 );
 
 /**
+* @brief
+* Return the boolean value of the given collection element
+*
+* @param elem   - Element handle
+*
+* @warning
+* OCI_ElemGetBoolean() returns a valid value only for collection elements of PL/SQL boolean type
+*
+* @return
+* boolean value or FALSE on failure
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_ElemGetBoolean
+(
+    OCI_Elem *elem
+);
+
+/**
  * @brief
  * Return the short value of the given collection element
  *
@@ -8373,6 +8428,27 @@ OCI_EXPORT OCI_Coll * OCI_API OCI_ElemGetColl
 OCI_EXPORT OCI_Ref * OCI_API OCI_ElemGetRef
 (
     OCI_Elem *elem
+);
+
+/**
+* @brief
+* Set a boolean value to a collection element
+*
+* @param elem   - Element handle
+* @param value  - Short value
+*
+*@warning
+* OCI_ElemSetBoolean() is only valid value only for collection elements of PL / SQL boolean type
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_ElemSetBoolean
+(
+    OCI_Elem *elem,
+    boolean   value
 );
 
 /**
@@ -12436,6 +12512,32 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ObjectGetTypeInfo
 
 /**
  * @brief
+ * Return the boolean value of the given object attribute (ONLY for PL/SQL records)
+ *
+ * @param obj  - Object handle
+ * @param attr - Attribute name
+ *
+ * @note
+ * If the attribute is found in the object descriptor attributes list, then a
+ * data type check is performed for integrity.
+ * OCI_ObjectGetBoolean() returns a valid value only for PL/SQL boolean based attributes
+ *
+ * @warning
+ * - ONLY supported by Oracle 12c and above !
+ *
+ * @return
+ * Attribute value or 0 on failure or wrong attribute type
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectGetBoolean
+(
+    OCI_Object  *obj,
+    const otext *attr
+);
+
+/**
+ * @brief
  * Return the short value of the given object attribute
  *
  * @param obj  - Object handle
@@ -12874,6 +12976,29 @@ OCI_EXPORT OCI_File * OCI_API OCI_ObjectGetFile
 (
     OCI_Object  *obj,
     const otext *attr
+);
+
+/**
+ * @brief
+ * Set an object attribute of type boolean (ONLY for PL/SQL records)
+ *
+ * @param obj    - Object handle
+ * @param attr   - Attribute name
+ * @param value  - boolean value
+ *
+ * @warning
+ * - ONLY supported by Oracle 12c and above !
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_ObjectSetBoolean
+(
+    OCI_Object  *obj,
+    const otext *attr,
+    boolean      value
 );
 
 /**

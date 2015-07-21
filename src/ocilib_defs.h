@@ -166,7 +166,8 @@
 
 /* -- external C pointers ---- */
 
-#define OCI_IPC_ORACLE           0
+#define OCI_IPC_ORACLE          -1
+#define OCI_IPC_BOOLEAN          0
 #define OCI_IPC_VOID             1
 #define OCI_IPC_SHORT            2
 #define OCI_IPC_INT              3
@@ -236,23 +237,24 @@
 #define OCI_IPC_BATCH_ERRORS     61
 #define OCI_IPC_STATEMENT_ARRAY  62
 
-#define OCI_IPC_COUNT            OCI_IPC_STATEMENT_ARRAY + 1
+#define OCI_IPC_COUNT            OCI_IPC_STATEMENT_ARRAY + 2
 
 /* --------------------------------------------------------------------------------------------- *
  * Oracle conditionnal features
  * --------------------------------------------------------------------------------------------- */
 
-#define OCI_FEATURE_WIDE_USERDATA       1
-#define OCI_FEATURE_TIMESTAMP           2
-#define OCI_FEATURE_DIRPATH_DATE_CACHE  3
-#define OCI_FEATURE_STATEMENT_CACHING   4
-#define OCI_FEATURE_SCROLLABLE_CURSOR   5
-#define OCI_FEATURE_DATABASE_NOTIFY     6
-#define OCI_FEATURE_REMOTE_DBS_CONTROL  7
-#define OCI_FEATURE_HIGH_AVAILABILITY   8
-#define OCI_FEATURE_XA                  9
+#define OCI_FEATURE_WIDE_USERDATA        1
+#define OCI_FEATURE_TIMESTAMP            2
+#define OCI_FEATURE_DIRPATH_DATE_CACHE   3
+#define OCI_FEATURE_STATEMENT_CACHING    4
+#define OCI_FEATURE_SCROLLABLE_CURSOR    5
+#define OCI_FEATURE_DATABASE_NOTIFY      6
+#define OCI_FEATURE_REMOTE_DBS_CONTROL   7
+#define OCI_FEATURE_HIGH_AVAILABILITY    8
+#define OCI_FEATURE_XA                   9
+#define OCI_FEATURE_EXTENDED_PLSQLTYPES 10
 
-#define OCI_FEATURE_COUNT               OCI_FEATURE_XA
+#define OCI_FEATURE_COUNT               OCI_FEATURE_EXTENDED_PLSQLTYPES
 
 /* --------------------------------------------------------------------------------------------- *
  * handle types
@@ -306,10 +308,9 @@
  * --------------------------------------------------------------------------------------------- */
 
 #define OCI_DESC_RESULTSET              1
-#define OCI_DESC_COLUMN                 2
-#define OCI_DESC_TABLE                  3
-#define OCI_DESC_TYPE                   4
-#define OCI_DESC_COLLECTION             5
+#define OCI_DESC_TABLE                  2
+#define OCI_DESC_TYPE                   3
+#define OCI_DESC_COLLECTION             4
 
 /* --------------------------------------------------------------------------------------------- *
  * Direct path object status
@@ -351,7 +352,14 @@
  *  Internal integer types
  * --------------------------------------------------------------------------------------------- */
 
-#define OCI_NUM_NUMBER        0
+#define OCI_NUM_NUMBER                  0
+
+/* --------------------------------------------------------------------------------------------- *
+*  Undocumented OCI SQL TYPES
+* --------------------------------------------------------------------------------------------- */
+
+#define SQLT_UNDOCUMENTED_REC           245
+#define SQLT_UNDOCUMENTED_BIN_INTEGER   265
 
 /* --------------------------------------------------------------------------------------------- *
  *  Unicode constants

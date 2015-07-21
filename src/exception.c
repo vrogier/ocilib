@@ -41,6 +41,8 @@
 static otext * OCILib_TypeNames[OCI_IPC_COUNT] =
 {
     OTEXT("Oracle memory"),
+
+    OTEXT("boolean pointer"),
     OTEXT("generic pointer"),
     OTEXT("short pointer"),
     OTEXT("int pointer"),
@@ -51,7 +53,7 @@ static otext * OCILib_TypeNames[OCI_IPC_COUNT] =
     OTEXT("function callback"),
 
     OTEXT("Error handle"),
-    OTEXT("Schema handle"),
+    OTEXT("TypeInfo handle"),
     OTEXT("Connection handle"),
     OTEXT("Pool handle"),
     OTEXT("Transaction handle"),
@@ -186,7 +188,8 @@ static otext * OCILib_OraFeatures[OCI_FEATURE_COUNT] =
     OTEXT("Oracle 10g R2 Database change notification"),
     OTEXT("Oracle 10g R2 remote database startup/shutdown"),
     OTEXT("Oracle 10g R2 High Availability"),
-    OTEXT("Oracle XA Connections")
+    OTEXT("Oracle XA Connections"),
+    OTEXT("Oracle 12c R1 PL/SQL extended support")
 };
 
 typedef struct OCI_StmtStateTable
@@ -410,7 +413,7 @@ void OCI_ExceptionNullPointer
 
         osprintf(err->str, osizeof(err->str) - (size_t) 1,
                  OCILib_ErrorMsg[OCI_ERR_NULL_POINTER],
-                 OCILib_TypeNames[type]);
+                 OCILib_TypeNames[type+1]);
     }
 
     OCI_ExceptionRaise(err);
@@ -440,7 +443,7 @@ void OCI_ExceptionMemory
         osprintf(err->str,
                  osizeof(err->str) - (size_t) 1,
                  OCILib_ErrorMsg[OCI_ERR_MEMORY],
-                 OCILib_TypeNames[type],
+                 OCILib_TypeNames[type+1],
                  nb_bytes);
     }
 

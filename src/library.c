@@ -1940,8 +1940,6 @@ boolean OCI_API OCI_DatabaseStartup
 
 #else
 
-    res = FALSE;
-
     OCI_NOT_USED(db)
     OCI_NOT_USED(user)
     OCI_NOT_USED(pwd)

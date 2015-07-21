@@ -264,7 +264,17 @@ boolean OCI_ObjectGetAttrInfo
         {
             ub4 subtype = typinf->cols[index].subtype;
 
-            if (subtype & OCI_NUM_FLOAT)
+            if (subtype & OCI_NUM_SHORT)
+            {
+                *p_size  = sizeof(short);
+                *p_align = *p_size;
+            }
+            else if (subtype & OCI_NUM_INT)
+            {
+                *p_size  = sizeof(int);
+                *p_align = *p_size;
+            }
+            else if (subtype & OCI_NUM_FLOAT)
             {
                 *p_size  = sizeof(double);
                 *p_align = *p_size;
@@ -285,6 +295,12 @@ boolean OCI_ObjectGetAttrInfo
         {
             *p_size  = sizeof(OCIDate);
             *p_align = sizeof(sb2);
+            break;
+        }
+        case OCI_CDT_BOOLEAN:
+        {
+            *p_size  = sizeof(boolean);
+            *p_align = *p_size;
             break;
         }
         case OCI_CDT_OBJECT:
@@ -364,7 +380,7 @@ OCI_Object * OCI_ObjectInit
                 res, obj->con,
 
                 OCI_ObjectNew(obj->con->env,  obj->con->err, obj->con->cxt,
-                              (OCITypeCode) SQLT_NTY, obj->typinf->tdo, (dvoid *) NULL,
+                              (OCITypeCode) obj->typinf->typecode, obj->typinf->tdo, (dvoid *) NULL,
                               (OCIDuration) OCI_DURATION_SESSION, (boolean) TRUE,
                               (dvoid **) &obj->handle)
             )
@@ -557,10 +573,27 @@ boolean OCI_ObjectSetNumber
 
     if (index >= 0)
     {
-        OCIInd *ind = NULL;
-        void   *num = OCI_ObjectGetAttr(obj, index, &ind);
+        OCIInd     *ind = NULL;
+        void       *num = OCI_ObjectGetAttr(obj, index, &ind);
+        OCI_Column *col = &obj->typinf->cols[index];
 
-        call_status = OCI_NumberSet(obj->con, num, size, flag, obj->typinf->cols[index].libcode, value);
+        call_status = TRUE;
+
+        if (OCI_NUM_NUMBER != col->subtype)
+        {
+
+            /* for PL/SQL PLS_INTEGER and BINARY_INTEGER types, the values are not OCINumber but of scalar C int type !! */
+            
+            OCINumber tmp;
+            memset(&tmp, 0, sizeof(tmp));
+
+            call_status = call_status && OCI_NumberSet(obj->con, &tmp, col->size, col->subtype, col->libcode, value);
+            call_status = call_status && OCI_NumberGet(obj->con, &tmp, size, flag, col->libcode, num);
+        }
+        else
+        {
+            call_status = OCI_NumberSet(obj->con, num, size, flag, col->libcode, value);
+        }
 
         if (call_status)
         {
@@ -604,7 +637,25 @@ boolean OCI_ObjectGetNumber
 
         if (num && (OCI_IND_NULL != *ind))
         {
-            call_status = OCI_NumberGet(obj->con, num, size, flag, obj->typinf->cols[index].libcode, value);
+            OCI_Column *col = &obj->typinf->cols[index];
+            
+            call_status = TRUE;
+
+            if (OCI_NUM_NUMBER != col->subtype)
+            {
+                
+                /* for PL/SQL PLS_INTEGER and BINARY_INTEGER types, the values are not OCINumber but of scalar C int type !! */
+                
+                OCINumber tmp;
+                memset(&tmp, 0, sizeof(tmp));
+
+                call_status = call_status && OCI_NumberSet(obj->con, &tmp, col->size, col->subtype, col->libcode, num);
+                call_status = call_status && OCI_NumberGet(obj->con, &tmp, size, flag, col->libcode, value);
+            }
+            else
+            {
+                call_status = OCI_NumberGet(obj->con, num, size, flag, col->libcode, value);
+            }
         }
     }
     else
@@ -778,7 +829,44 @@ boolean OCI_API OCI_ObjectAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ObjectGetInt
+ * OCI_ObjectGetShort
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_ObjectGetBoolean
+(
+    OCI_Object  *obj,
+    const otext *attr
+)
+{
+    int index = -1;
+
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    OCI_CHECK_PTR(OCI_IPC_STRING, attr)
+
+    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_BOOLEAN);
+
+    if (index >= 0)
+    {
+        OCIInd *ind = NULL;
+        boolean *value = NULL;
+
+        call_status = TRUE;
+
+        value = (boolean *)OCI_ObjectGetAttr(obj, index, &ind);
+
+        if (value && ind && (OCI_IND_NULL != *ind))
+        {
+            call_retval = *value;
+        }
+    }
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ObjectGetShort
  * --------------------------------------------------------------------------------------------- */
 
 short OCI_API OCI_ObjectGetShort
@@ -795,7 +883,7 @@ short OCI_API OCI_ObjectGetShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ObjectGetUnsignedInt
+ * OCI_ObjectGetUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
 unsigned short OCI_API OCI_ObjectGetUnsignedShort
@@ -1251,6 +1339,45 @@ OCI_Ref * OCI_API OCI_ObjectGetRef
         OCIRef*,
         OCI_RefInit(obj->con, NULL, (OCI_Ref **) &obj->objs[index], *value)
     )
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ObjectSetBoolean
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_ObjectSetBoolean
+(
+    OCI_Object  *obj,
+    const otext *attr,
+    boolean      value
+)
+{
+    int index;
+
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    OCI_CHECK_PTR(OCI_IPC_STRING, attr)
+
+    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_BOOLEAN);
+
+    if (index >= 0)
+    {
+        OCIInd *ind = NULL;
+        boolean *data = (boolean *)OCI_ObjectGetAttr(obj, index, &ind);
+
+        if (data)
+        {
+            *data = value;
+            *ind = OCI_IND_NOTNULL;
+
+            call_status = TRUE;
+        }
+    }
+
+    call_retval = call_status;
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1820,6 +1947,13 @@ boolean OCI_API OCI_ObjectToText
                 case OCI_CDT_TEXT:
                 {
                     data  = (void *) OCI_ObjectGetString(obj, attr);
+                    break;
+                }
+                case OCI_CDT_BOOLEAN:
+                {
+                    OCIInd *ind = NULL;
+                    data = OCI_ObjectGetAttr(obj, i, &ind);
+                    quote = FALSE;
                     break;
                 }
                 case OCI_CDT_NUMERIC:

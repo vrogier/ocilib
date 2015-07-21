@@ -89,8 +89,10 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     OCI_TypeInfo *syn_typinf    = NULL;
     OCI_Item *item              = NULL;
     OCIDescribe *dschp          = NULL;
-    OCIParam *parmh1            = NULL;
-    OCIParam *parmh2            = NULL;
+    OCIParam *param_root        = NULL;
+    OCIParam *param_type        = NULL;
+    OCIParam *param_cols        = NULL;
+    OCIParam *param_list        = NULL;
     otext *str                  = NULL;
     int ptype                   = 0;
     ub1 desc_type               = 0;
@@ -189,7 +191,6 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
         {
             typinf = (OCI_TypeInfo *) item->data;
 
-            typinf->type        = type;
             typinf->con         = con;
             typinf->name        = ostrdup(obj_name);
             typinf->schema      = ostrdup(obj_schema);
@@ -200,7 +201,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                                                          (dvoid **) (void *) &dschp,
                                                          OCI_HTYPE_DESCRIBE, (size_t) 0,
                                                          (dvoid **) NULL));
-                }
+        }
 
         /* perform describe */
 
@@ -246,8 +247,8 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                 call_status, con,
 
                 OCIDescribeAny(con->cxt, con->err, (dvoid *) dbstr1,
-                                (ub4) dbsize1, OCI_OTYPE_NAME,
-                                OCI_DEFAULT, OCI_PTYPE_UNK, dschp)
+                               (ub4) dbsize1, OCI_OTYPE_NAME,
+                               OCI_DEFAULT, OCI_PTYPE_UNK, dschp)
             )
 
             OCI_StringReleaseOracleString(dbstr1);
@@ -258,17 +259,17 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
             (
                 call_status, con,
 
-                OCIAttrGet(dschp, OCI_HTYPE_DESCRIBE, &parmh1,
+                OCIAttrGet(dschp, OCI_HTYPE_DESCRIBE, &param_root,
                             NULL, OCI_ATTR_PARAM, con->err)
             )
             
-            /* get object type */
+            /* get describe type */
                 
             OCI_CALL2
             (
                 call_status, con,
 
-                OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &desc_type,
+                OCIAttrGet(param_root, OCI_DTYPE_PARAM, &desc_type,
                            NULL, OCI_ATTR_PTYPE, con->err)
             )
         }
@@ -281,22 +282,30 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
             switch (desc_type)
             {
                 case OCI_PTYPE_TYPE:
+                case OCI_PTYPE_LIST:
                 {
-                    if (OCI_UNKNOWN != typinf->type)
-                    {
-                        call_status = (OCI_TIF_TYPE == typinf->type);
-                    }
-
-                    typinf->type = OCI_TIF_TYPE;
+                    boolean pdt = FALSE;
+                    OCIRef *ref = NULL;
                     
+                    call_status = (OCI_TIF_TYPE == type);
+
                     if (call_status)
                     {
-                        boolean pdt = FALSE;
-                        OCIRef *ref = NULL;
+                        typinf->type = OCI_TIF_TYPE;
 
-                        attr_type = OCI_ATTR_LIST_TYPE_ATTRS;
-                        num_type  = OCI_ATTR_NUM_TYPE_ATTRS;
-                        ptype     = OCI_DESC_TYPE;
+                        if (OCI_PTYPE_LIST == desc_type)
+                        {
+                            OCI_CALL2
+                            (
+                                call_status, con,
+
+                                OCIParamGet((dvoid *)param_root, OCI_DTYPE_PARAM, con->err, (void**)&param_type, (ub4)0)
+                            )
+                        }
+                        else
+                        {
+                            param_type = param_root;
+                        }
 
                         /* get the object type descriptor */
 
@@ -304,8 +313,8 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                         (
                             call_status, con,
 
-                            OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &ref,
-                            NULL, OCI_ATTR_REF_TDO, con->err)
+                            OCIAttrGet(param_type, OCI_DTYPE_PARAM, &ref,
+                                       NULL, OCI_ATTR_REF_TDO, con->err)
                         )
 
                         OCI_CALL2
@@ -313,17 +322,17 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                             call_status, con,
 
                             OCITypeByRef(typinf->con->env, con->err, ref,
-                            OCI_DURATION_SESSION, OCI_TYPEGET_ALL,    &typinf->tdo)
+                                         OCI_DURATION_SESSION, OCI_TYPEGET_ALL, &typinf->tdo)
                         )
-                    
+
                         /* check if it's system predefined type if order to avoid the next call
-                           that is not allowed on system types */
+                        that is not allowed on system types */
 
                         OCI_CALL2
                         (
                             call_status, con,
 
-                            OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &pdt,
+                            OCIAttrGet(param_type, OCI_DTYPE_PARAM, &pdt,
                                        NULL, OCI_ATTR_IS_PREDEFINED_TYPE, con->err)
                         )
 
@@ -333,13 +342,50 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                             (
                                 call_status, con,
 
-                                OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->typecode,
+                                OCIAttrGet(param_type, OCI_DTYPE_PARAM, &typinf->typecode,
                                            NULL, OCI_ATTR_TYPECODE, con->err)
                             )
                         }
-                    
-                    }
 
+                        switch (typinf->typecode)
+                        {
+                            case  SQLT_NTY:
+                        #if OCI_VERSION_COMPILE >= OCI_12_1
+                            case  SQLT_REC:
+                        #endif
+                            {
+                                param_list = param_type;
+                                ptype      = OCI_DESC_TYPE;
+                                attr_type  = OCI_ATTR_LIST_TYPE_ATTRS;
+                                num_type   = OCI_ATTR_NUM_TYPE_ATTRS;
+                                break;
+                            }
+                            case SQLT_NCO:
+                            {
+                                typinf->nb_cols = 1;
+
+                                ptype      = OCI_DESC_COLLECTION;
+                                param_cols = param_type;
+
+                                OCI_CALL2
+                                (
+                                    call_status, con,
+
+                                    OCIAttrGet(param_type, OCI_DTYPE_PARAM, &typinf->colcode,
+                                                NULL, OCI_ATTR_COLLECTION_TYPECODE, con->err)
+                                )
+
+                                break;
+                            }  
+                            default:
+                            {
+                                call_status = FALSE;
+                                OCI_ExceptionDatatypeNotSupported(con, NULL, typinf->typecode);
+                                break;
+                            }
+                        }
+                    }
+                    
                     break;
                 }
                 case OCI_PTYPE_TABLE:
@@ -348,19 +394,16 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                 case OCI_PTYPE_TABLE_ALIAS:
             #endif
                 {
-                    if (OCI_UNKNOWN != typinf->type)
-                    {
-                        call_status = (((OCI_TIF_TABLE == typinf->type) && (OCI_PTYPE_VIEW != desc_type)) ||
-                                       ((OCI_TIF_VIEW  == typinf->type) && (OCI_PTYPE_VIEW == desc_type)));
-                    }
-
-                    typinf->type = (OCI_PTYPE_VIEW == desc_type ? OCI_TIF_VIEW : OCI_TIF_TABLE);
+                    call_status = (((OCI_TIF_TABLE == type) && (OCI_PTYPE_VIEW != desc_type)) ||
+                                   ((OCI_TIF_VIEW  == type) && (OCI_PTYPE_VIEW == desc_type)));
  
                     if (call_status)
                     {
-                        attr_type = OCI_ATTR_LIST_COLUMNS;
-                        num_type  = OCI_ATTR_NUM_COLS;
-                        ptype     = OCI_DESC_TABLE;             
+                        typinf->type = (OCI_PTYPE_VIEW == desc_type ? OCI_TIF_VIEW : OCI_TIF_TABLE);
+                        attr_type    = OCI_ATTR_LIST_COLUMNS;
+                        num_type     = OCI_ATTR_NUM_COLS;
+                        ptype        = OCI_DESC_TABLE; 
+                        param_list   = param_root;
                     }
                     
                     break;
@@ -375,24 +418,24 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                     /* get link schema, object and database link names */
 
-                    call_status = call_status && OCI_GetStringAttribute(con, parmh1, OCI_DTYPE_PARAM,
+                    call_status = call_status && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                           OCI_ATTR_SCHEMA_NAME, 
                                                                           &syn_schema_name);
                     
-                    call_status = call_status && OCI_GetStringAttribute(con, parmh1, OCI_DTYPE_PARAM,
+                    call_status = call_status && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                           OCI_ATTR_NAME, 
                                                                           &syn_object_name);
  
-                    call_status = call_status && OCI_GetStringAttribute(con, parmh1, OCI_DTYPE_PARAM,
+                    call_status = call_status && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                          OCI_ATTR_LINK, &syn_link_name);
 
                     /* compute link full name */
 
-                    OCI_StringGetFullTypeName(syn_schema_name, syn_object_name, syn_link_name, syn_fullname, (sizeof(syn_fullname) / sizeof(otext)) - 1);
+                    OCI_StringGetFullTypeName(syn_schema_name, NULL, syn_object_name, syn_link_name, syn_fullname, (sizeof(syn_fullname) / sizeof(otext)) - 1);
 
                     /* retrieve the type info of the real object */
 
-                    syn_typinf = OCI_TypeInfoGet (con, syn_fullname, typinf->type);
+                    syn_typinf = OCI_TypeInfoGet (con, syn_fullname, type);
                          
                     /* free temporaRy strings */
 
@@ -412,39 +455,23 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
             if (call_status && (OCI_UNKNOWN != ptype))
             {
-                /* do we need get more attributes for collections ? */
-
-                if (SQLT_NCO == typinf->typecode)
-                {
-                    typinf->nb_cols = 1;
-
-                    ptype  = OCI_DESC_COLLECTION;
-                    parmh2 = parmh1;
-
-                    OCI_CALL2
-                    (
-                        call_status, con,
-
-                        OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->colcode,
-                                   NULL, OCI_ATTR_COLLECTION_TYPECODE, con->err)
-                    )
-                }
-                else
+                /* retrieve the columns parameter if not already retrieved */
+                if (param_list)
                 {
                     OCI_CALL2
                     (
                         call_status, con,
 
-                        OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &parmh2,
-                                   NULL, attr_type, con->err)
+                        OCIAttrGet(param_list, OCI_DTYPE_PARAM, &param_cols,
+                                    NULL, attr_type, con->err)
                     )
 
                     OCI_CALL2
                     (
                         call_status, con,
 
-                        OCIAttrGet(parmh1, OCI_DTYPE_PARAM, &typinf->nb_cols,
-                                   NULL, num_type, con->err)
+                        OCIAttrGet(param_list, OCI_DTYPE_PARAM, &typinf->nb_cols,
+                                    NULL, num_type, con->err)
                     )
                 }
 
@@ -479,7 +506,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                         for (i = 0; i < typinf->nb_cols; i++)
                         {
                             call_status = call_status && OCI_ColumnDescribe(&typinf->cols[i], con,
-                                                                            NULL, parmh2, i + 1, ptype);
+                                                                            NULL, param_cols, i + 1, ptype);
 
                             call_status = call_status && OCI_ColumnMap(&typinf->cols[i], NULL);
 
@@ -507,20 +534,20 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
     /* increment type info reference counter on success */
 
-    if (typinf)
+    if (typinf && call_status)
     {
         typinf->refcount++;
 
         /* type checking sanity checks */
 
-        if ((type != OCI_UNKNOWN) && (typinf->type != type))
+        if ((type != OCI_UNKNOWN) && ((syn_typinf && syn_typinf->type != type) || (!syn_typinf && typinf->type != type)))
         {
             OCI_ExceptionTypeInfoWrongType(con, name);
 
             call_status = FALSE;
         }
     }
-
+        
     /* handle errors */
 
     if (!call_status || syn_typinf)

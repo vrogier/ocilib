@@ -60,6 +60,11 @@ boolean OCI_ColumnGetAttrInfo
 
     switch (col->datatype)
     {
+        case OCI_CDT_BOOLEAN:
+        {
+            *p_size = sizeof(boolean);
+            break;
+        }
         case OCI_CDT_NUMERIC:
         {
             int type = col->subtype;
@@ -149,7 +154,7 @@ boolean OCI_ColumnDescribe
 
             OCIParamGet((dvoid *) handle, htype,  con->err, (void**) &param, (ub4) index)
         )
-    }
+    }  
 
     /* sql code */
 
@@ -160,6 +165,17 @@ boolean OCI_ColumnDescribe
         OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM, (dvoid *) &col->sqlcode,
                    (ub4 *) NULL, (ub4) OCI_ATTR_DATA_TYPE, con->err)
     )
+
+    /* when the column is a record from a PL/SQL table, OCI returns an undocumented SQLT code */
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+    if (SQLT_UNDOCUMENTED_REC == col->sqlcode)
+    {
+        col->sqlcode = SQLT_REC;
+    }
+
+#endif
 
     /* size */
 
@@ -380,12 +396,21 @@ boolean OCI_ColumnDescribe
 
     /* user type descriptor */
 
-    if (SQLT_NTY == col->sqlcode || SQLT_REF == col->sqlcode)
+    if (
+        SQLT_NTY == col->sqlcode || 
+        SQLT_REF == col->sqlcode 
+#if OCI_VERSION_COMPILE >= OCI_12_1
+        || SQLT_REC == col->sqlcode
+        || SQLT_TAB == col->sqlcode
+#endif
+    )
     {
-        dbtext *dbstr_name   = NULL;
-        dbtext *dbstr_schema = NULL;
-        int    dbsize_name   = 0;
-        int    dbsize_schema = 0;
+        dbtext *dbstr_name    = NULL;
+        dbtext *dbstr_schema  = NULL;
+        dbtext *dbstr_package = NULL;
+        int    dbsize_name    = 0;
+        int    dbsize_schema  = 0;
+        int    dbsize_package = 0;
 
         OCI_CALL1
         (
@@ -401,15 +426,34 @@ boolean OCI_ColumnDescribe
             res, con, stmt,
 
             OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM,
-                       (dvoid *) &dbstr_schema, (ub4 *) &dbsize_schema,
-                       (ub4) OCI_ATTR_SCHEMA_NAME, con->err)
+                        (dvoid *) &dbstr_schema, (ub4 *) &dbsize_schema,
+                        (ub4) OCI_ATTR_SCHEMA_NAME, con->err)
         )
+
+    #if OCI_VERSION_COMPILE >= OCI_12_1
+
+
+        if (SQLT_REC == col->sqlcode || SQLT_TAB == col->sqlcode)
+        {
+            OCI_CALL1
+            (
+                res, con, stmt,
+
+                OCIAttrGet((dvoid *)handle, (ub4)OCI_DTYPE_PARAM,
+                           (dvoid *) &dbstr_package, (ub4 *) &dbsize_package,
+                           (ub4) OCI_ATTR_PACKAGE_NAME, con->err)
+            )
+        }
+
+    #endif
+
 
         if (res)
         {
             otext schema_name[OCI_SIZE_OBJ_NAME + 1] = OTEXT("");
-            otext type_name[OCI_SIZE_OBJ_NAME  + 1] = OTEXT("");
-            otext full_name[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
+            otext package_name[OCI_SIZE_OBJ_NAME + 1] = OTEXT("");
+            otext type_name[OCI_SIZE_OBJ_NAME + 1] = OTEXT("");
+            otext full_name[(OCI_SIZE_OBJ_NAME * 3) + 3] = OTEXT("");
 
             /* Retrieve correct schema name */
 
@@ -425,6 +469,13 @@ boolean OCI_ColumnDescribe
 
             /* Retrieve correct type name */
 
+            if (dbstr_package && (dbsize_package > 0))
+            {
+                OCI_StringOracleToNative(dbstr_package, package_name, dbcharcount(dbsize_package));
+            }
+
+            /* Retrieve correct type name */
+
             if (dbstr_name && (dbsize_name > 0))
             {
                 OCI_StringOracleToNative(dbstr_name, type_name, dbcharcount(dbsize_name));
@@ -432,7 +483,7 @@ boolean OCI_ColumnDescribe
 
             /* Format full type name respecting case sensitivity if needed in order to not fail type info retrieval.*/
 
-            OCI_StringGetFullTypeName(schema_name, type_name, NULL, full_name, (sizeof(full_name) / sizeof(otext)) - 1);
+            OCI_StringGetFullTypeName(schema_name, package_name, type_name, NULL, full_name, (sizeof(full_name) / sizeof(otext)) - 1);
 
             col->typinf = OCI_TypeInfoGet(con, full_name, OCI_TIF_TYPE);
 
@@ -471,15 +522,22 @@ boolean OCI_ColumnMap
     switch (col->libcode)
     {
         case SQLT_INT:
+        case SQLT_UNDOCUMENTED_BIN_INTEGER:
+        case OCI_TYPECODE_PLS_INTEGER:
         {
             col->datatype = OCI_CDT_NUMERIC;
-
+            col->libcode  = SQLT_INT;
             /* set buffer size only if it's not a "returning into" placeholder */
 
             if (0 == col->bufsize)
             {
                 col->subtype = OCI_NUM_INT;
                 col->bufsize = sizeof(int);
+            }
+
+            if (0 == col->size)
+            {
+                col->size = sizeof(int);
             }
             break;
         }
@@ -494,6 +552,11 @@ boolean OCI_ColumnMap
                 col->subtype = OCI_NUM_UINT;
                 col->bufsize = sizeof(unsigned int);
             }
+
+            if (0 == col->size)
+            {
+                col->size = sizeof(unsigned int);
+            }
             break;
         }
         case SQLT_FLT:
@@ -507,6 +570,20 @@ boolean OCI_ColumnMap
             col->bufsize  = sizeof(OCINumber);
             break;
         }
+
+    #if OCI_VERSION_COMPILE >= OCI_12_1
+
+        case SQLT_BOL:
+
+        {
+            col->datatype = OCI_CDT_BOOLEAN;
+            col->subtype  = 0;
+            col->libcode  = SQLT_BOL;
+            col->bufsize  = sizeof(boolean);
+            break;
+        }
+
+    #endif
 
     #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -734,6 +811,19 @@ boolean OCI_ColumnMap
             col->datatype = OCI_CDT_REF;
             break;
         }
+
+    #if OCI_VERSION_COMPILE >= OCI_12_1
+
+        case SQLT_REC:
+        {
+            col->libcode  = SQLT_REC;
+            col->bufsize  = (ub4) sizeof(void *);
+            col->datatype = OCI_CDT_OBJECT;
+            break;
+        }
+
+    #endif
+
         case SQLT_CHR:
         case SQLT_STR:
         case SQLT_VCS:
@@ -1165,6 +1255,44 @@ const otext * OCI_API OCI_ColumnGetSQLType
             call_retval = col->typinf ? col->typinf->name : OTEXT("NAMED TYPE");
             break;
         }
+
+
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+        case SQLT_BOL:
+        {
+            call_retval = OTEXT("PL/SQL BOOLEAN");
+            break;
+        }
+
+        case SQLT_REC:
+        case SQLT_UNDOCUMENTED_REC:
+        {
+            call_retval = col->typinf ? col->typinf->name : OTEXT("PL/SQL RECORD");
+            break;
+        }
+
+        case SQLT_TAB:
+        {
+            call_retval = col->typinf ? col->typinf->name : OTEXT("PL/SQL TABLE INDEX BY");
+            break;
+        }
+
+        case SQLT_UNDOCUMENTED_BIN_INTEGER:
+        {
+            call_retval = OTEXT("PL/SQL BINARY INTEGER");
+            break;
+        }
+
+        case OCI_TYPECODE_PLS_INTEGER:
+        {
+            call_retval = OTEXT("PL/SQL INTEGER");
+            break;
+        }
+
+#endif
+
         default:
         {
             /* unknown data type ? Should not happen because all
@@ -1392,6 +1520,43 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
             call_retval = osprintf(buffer, len, col->typinf ? col->typinf->name : OTEXT("NAMED TYPE"));
             break;
         }
+
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+        case SQLT_BOL:
+        {
+            call_retval = osprintf(buffer, len, OTEXT("PL/SQL BOOLEAN"));
+            break;
+        }
+
+        case SQLT_REC:
+        case SQLT_UNDOCUMENTED_REC:
+        {
+            call_retval = osprintf(buffer, len, col->typinf ? col->typinf->name : OTEXT("PL/SQL RECORD"));
+            break;
+        }
+
+        case SQLT_TAB:
+        {
+            call_retval = osprintf(buffer, len, col->typinf ? col->typinf->name : OTEXT("PL/SQL TABLE INDEX BY"));
+            break;
+        }
+
+        case SQLT_UNDOCUMENTED_BIN_INTEGER:
+        {
+            call_retval = osprintf(buffer, len, OTEXT("PL/SQL BINARY INTEGER"));
+            break;
+        }
+
+        case OCI_TYPECODE_PLS_INTEGER:
+        {
+            call_retval = osprintf(buffer, len, OTEXT("PL/SQL INTEGER"));
+            break;
+        }
+
+#endif
+
         default:
         {
             call_retval = osprintf(buffer, len, OTEXT("?"));
