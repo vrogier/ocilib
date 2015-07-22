@@ -379,7 +379,7 @@ int OCI_API OCI_TimestampCompare
         call_status, tmsp->err, tmsp->con,
 
         OCIDateTimeCompare((dvoid *) tmsp->env, tmsp->err,
-                           tmsp2->handle, tmsp2->handle, &value)
+                           tmsp->handle, tmsp2->handle, &value)
     )
 
 #endif
