@@ -67,10 +67,11 @@
 
 #define OCI_OBJECT_GET_VALUE(datatype, object_type, type, func)             \
                                                                             \
+    int index = 0;                                                          \
     OCI_LIB_CALL_ENTER(object_type, NULL)                                   \
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)                                      \
                                                                             \
-    int index = OCI_ObjectGetAttrIndex(obj, attr, datatype);                \
+    index = OCI_ObjectGetAttrIndex(obj, attr, datatype);                    \
     if (index >= 0)                                                         \
     {                                                                       \
         OCIInd *ind   = NULL;                                               \
