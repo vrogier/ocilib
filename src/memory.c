@@ -102,13 +102,14 @@ void * OCI_MemRealloc
 )
 {
     OCI_MemoryBlock * mem_block = NULL;
+	size_t size = 0;
 
     if (ptr_mem)
     {
         mem_block = (OCI_MemoryBlock *) (((unsigned char*)ptr_mem) - sizeof(*mem_block));
     }
 
-    size_t size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
+    size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
 
     if (mem_block->size < size)
     {

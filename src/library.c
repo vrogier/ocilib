@@ -2172,13 +2172,15 @@ const otext * OCI_API OCI_GetFormat
     unsigned int    type
 )
 {
+	const otext **value = NULL;
+
     OCI_LIB_CALL_ENTER(const otext *, NULL)
 
     OCI_CHECK_INITIALIZED()
 
     OCI_CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"))
 
-    otext **value = con ? &con->formats[type-1] : &OCILib.formats[type-1];
+    value = con ? &con->formats[type-1] : &OCILib.formats[type-1];
 
     if (!*value)
     {

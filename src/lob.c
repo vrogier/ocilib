@@ -1016,6 +1016,8 @@ boolean OCI_API OCI_LobAppend2
     ub2     csid  = 0;
     void   *obuf  = NULL;
 
+	OCI_LIB_CALL_DECL_VAR(boolean, FALSE)
+
     /* OCILobWriteAppend() seems to cause problems on Oracle client 8.1 and 9.0
     It's an Oracle known bug #886191
     So we use OCI_LobSeek() + OCI_LobWrite() instead */
@@ -1026,7 +1028,7 @@ boolean OCI_API OCI_LobAppend2
                OCI_LobWrite2(lob, buffer, char_count, byte_count);
     }
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+	OCI_LIB_CALL_CHECK_CTX()
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CHECK_PTR(OCI_IPC_INT, char_count)

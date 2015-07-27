@@ -818,13 +818,13 @@ boolean OCI_API OCI_ElemSetBoolean
 
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     OCI_CHECK_COMPAT(elem->con, OCI_CDT_BOOLEAN == elem->typinf->cols[0].datatype)
- 
-    boolean *data = (boolean *) elem->handle;
-    
-    if (data)
+     
+    if (elem->handle)
     {
+ 		boolean *data = (boolean *) elem->handle;
         call_status = TRUE;
-        *data = value;
+ 
+		*data = value;
      
         OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
     }

@@ -424,16 +424,24 @@
 
 #define OCI_LIB_CONTEXT                 (OCILib.env_mode & OCI_ENV_CONTEXT)
 
-#define OCI_LIB_CALL_ENTER(type, value)                                         \
+#define OCI_LIB_CALL_DECL_VAR(type, value)                                      \
                                                                                 \
     type    call_retval = (type) value;                                         \
     boolean call_status = FALSE;                                                \
     OCI_Error * call_err = NULL;                                                \
+
+#define OCI_LIB_CALL_CHECK_CTX()                                                \
+                                                                                \
     if (OCI_LIB_CONTEXT)                                                        \
     {                                                                           \
         call_err = OCI_ErrorGet(FALSE);                                         \
         OCI_ContextCallEnter(call_err);                                         \
-    }                                                                           \
+    }    
+
+#define OCI_LIB_CALL_ENTER(type, value)                                         \
+                                                                                \
+	OCI_LIB_CALL_DECL_VAR(type, value)                                          \
+	OCI_LIB_CALL_CHECK_CTX()                                                    \
 
 #define OCI_LIB_CALL_EXIT()                                                     \
                                                                                 \
