@@ -113,9 +113,9 @@ void * OCI_MemRealloc
 
     if (mem_block->size < size)
     {
-        mem_block = (OCI_MemoryBlock *)realloc(mem_block, size);
+        void *ptr_new = realloc(mem_block, size);
 
-        if (!mem_block && ptr_mem)
+        if (!ptr_new && ptr_mem)
         {
             OCI_MemFree(ptr_mem);
 
@@ -123,6 +123,8 @@ void * OCI_MemRealloc
         }
         else
         {
+            OCI_MemoryBlock * mem_block = (OCI_MemoryBlock *) ptr_new;
+
             big_int size_diff = (big_int) size - mem_block->size;
 
             mem_block->type = ptr_type;

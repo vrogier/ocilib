@@ -191,11 +191,11 @@ OCI_Connection * OCI_ConnectionAllocate
 
     /* update internal status */
 
-    if (res)
+    if (res && con)
     {
         con->cstate = OCI_CONN_ALLOCATED;
     }
-    else
+    else if (con)
     {
         OCI_ConnectionFree(con);
         con = NULL;
