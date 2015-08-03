@@ -74,6 +74,27 @@ inline Raw MakeRaw(void *result, unsigned int size)
     return (ptr ? Raw(ptr, ptr + size) : Raw());
 }
 
+template <class StringClass, class CharType>
+inline void ConverString(StringClass &dest, const CharType *src, size_t length)
+{
+    size_t i = 0;
+
+    dest.clear();
+
+    if (src)
+    {
+        dest.resize(length);
+
+        while (i < length)
+        { 
+            dest[i] = static_cast<const StringClass::value_type>(src[i]);
+            
+            ++i; 
+        }
+    }
+}
+
+
 /* --------------------------------------------------------------------------------------------- *
  * Enum
  * --------------------------------------------------------------------------------------------- */
@@ -836,11 +857,7 @@ inline Exception::Exception(OCI_Error *err)
 
     if (str)
     {
-        size_t i = 0, size = ostrlen(str);
-
-        _what.resize(size);
-
-        while (i < size) { _what[i] = static_cast<char>(str[i]); ++i; }
+        ConverString(_what, str, ostrlen(str));
     }
 }
 
@@ -851,7 +868,19 @@ inline const char * Exception::what() const throw()
 
 inline ostring Exception::GetMessage() const
 {
-    return _what;
+    ostring message;
+
+#ifdef OCI_CHARSET_WIDE
+
+    ConverString(message, _what.c_str(), _what.size());
+
+#else
+
+    message = _what;
+
+#endif
+
+    return message;
 }
 
 inline Exception::ExceptionType Exception::GetType() const
