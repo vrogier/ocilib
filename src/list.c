@@ -189,7 +189,6 @@ boolean OCI_ListClear
 )
 {
     OCI_Item *item = NULL;
-    OCI_Item *temp = NULL;
 
     OCI_CHECK(NULL == list,  FALSE)
 
@@ -204,7 +203,8 @@ boolean OCI_ListClear
 
     while (item)
     {
-        temp = item;
+		OCI_Item *temp = item;
+		
         item = item->next;
 
         /* free data */

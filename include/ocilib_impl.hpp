@@ -1845,11 +1845,11 @@ inline void Date::FromString(const ostring& str, const ostring& format)
 
 inline ostring Date::ToString(const ostring& format) const
 {
-    size_t size = OCI_SIZE_BUFFER;
-
     if (!IsNull())
     {
-         ManagedBuffer<otext> buffer(size + 1);
+        size_t size = OCI_SIZE_BUFFER;
+    
+        ManagedBuffer<otext> buffer(size + 1);
 
         Check(OCI_DateToText(*this, format.c_str(), static_cast<int>(size), buffer));
 

@@ -130,14 +130,14 @@ boolean OCI_ArrayClose
     OCI_Array *arr
 )
 {
-    unsigned int i;
-
     OCI_CHECK(NULL == arr, FALSE)
 
     if ( (OCI_CDT_NUMERIC != arr->elem_type ) &&
          (OCI_CDT_TEXT    != arr->elem_type ) && 
          (OCI_CDT_RAW     != arr->elem_type ) )
     {
+		unsigned int i;
+		
         /* Cleanup OCILIB Objects */
 
         for (i = 0; i < arr->nb_elem; i++)

@@ -95,10 +95,11 @@ unsigned int OCI_StringBinaryToString
  )
 {
     char          hex_str[] = "0123456789ABCDEF";
-    unsigned int  i;
 
     if (buffer)
     {
+		unsigned int  i;
+		
         for (i = 0; i < binary_size; i++)
         {
             buffer[i * 2 + 0] = hex_str[binary[i] >> 4  ];
@@ -501,7 +502,6 @@ boolean OCI_GetStringAttribute
     boolean res     = TRUE;
     dbtext *dbstr   = NULL;
     int     dbsize  = -1;
-    boolean is_ansi = FALSE;
 
     OCI_CHECK(NULL == str, FALSE);
 
@@ -519,6 +519,8 @@ boolean OCI_GetStringAttribute
 
     if (res && dbstr)
     {
+	    boolean is_ansi = FALSE;
+
         /*  Oracle BUG using OCI in Unicode mode (once again...) 
             Some connection server handle attributes are returned 
             as ANSI buffer even when OCI is initialized in UTF16 mode

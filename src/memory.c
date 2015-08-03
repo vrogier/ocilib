@@ -111,7 +111,7 @@ void * OCI_MemRealloc
 
     size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
 
-    if (mem_block->size < size)
+    if (!mem_block || mem_block->size < size)
     {
         void *ptr_new = realloc(mem_block, size);
 
@@ -134,7 +134,7 @@ void * OCI_MemRealloc
         }
     }
 
-    return ((unsigned char *)mem_block) + sizeof(*mem_block);
+    return mem_block ? ((unsigned char *)mem_block) + sizeof(*mem_block) : NULL;
 }
 
 /* --------------------------------------------------------------------------------------------- *

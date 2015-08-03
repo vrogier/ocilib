@@ -57,14 +57,13 @@ unsigned int OCI_HashCompute
 {
     unsigned int h;
     otext *p;
-    otext c;
 
     OCI_CHECK(NULL == table, 0);
     OCI_CHECK(NULL == str, 0);
 
     for(h = 0, p = (otext *) str; (*p) != 0; p++)
     {
-        c = *p;
+        otext c = *p;
 
         h = 31 * h + otoupper(c);
     }

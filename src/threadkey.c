@@ -47,7 +47,6 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
     POCI_THREADKEYDEST destfunc
 )
 {
-    boolean res        = TRUE;
     OCI_ThreadKey *key = NULL;
 
     /* allocate key structure */
@@ -58,10 +57,8 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
     {
         /* allocate error handle */
 
-        res = OCI_SUCCESSFUL(OCI_HandleAlloc(OCILib.env,
-                                             (dvoid **) (void *) &key->err,
-                                             OCI_HTYPE_ERROR, (size_t) 0,
-                                             (dvoid **) NULL));
+        boolean res = OCI_SUCCESSFUL(OCI_HandleAlloc(OCILib.env,(dvoid **) (void *) &key->err,
+                                              OCI_HTYPE_ERROR, (size_t) 0, (dvoid **) NULL));
 
         /* key initialization */
 

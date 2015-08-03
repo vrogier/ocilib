@@ -134,7 +134,6 @@ void OCI_ObjectGetStructSize
     size_t       *p_align
 )
 {
-    size_t size = 0;
 
     if (!typinf || !p_size || !p_align)
     {
@@ -143,6 +142,7 @@ void OCI_ObjectGetStructSize
 
     if (typinf->struct_size == 0)
     {
+        size_t size  = 0;
         size_t size1 = 0;
         size_t size2 = 0;
         size_t align = 0;
@@ -1068,7 +1068,7 @@ const otext * OCI_API OCI_ObjectGetString
 
                 if (call_status)
                 {
-                    len = OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbuf, FALSE);
+                    OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbuf, FALSE);
                     call_retval = obj->tmpbuf;
                 }
             }

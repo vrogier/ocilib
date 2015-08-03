@@ -140,8 +140,6 @@ boolean OCI_BindCheck
 )
 {
     boolean res   = TRUE;
-    OCI_Bind *bnd = NULL;
-    sb2 *ind      = NULL;
     ub4 i, j;
 
     OCI_CHECK(NULL == stmt, FALSE)
@@ -149,8 +147,8 @@ boolean OCI_BindCheck
 
     for(i = 0; i < stmt->nb_ubinds; i++)
     {
-        bnd = stmt->ubinds[i];
-        ind = (sb2 *) bnd->buffer.inds;
+        OCI_Bind *bnd = bnd = stmt->ubinds[i];
+        sb2      *ind = (sb2 *) bnd->buffer.inds;
 
         if (OCI_CDT_CURSOR == bnd->type)
         {
