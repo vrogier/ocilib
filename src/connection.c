@@ -2217,6 +2217,8 @@ boolean OCI_API OCI_IsTAFCapable
     OCI_Connection *con
 )
 {
+    boolean value = FALSE;
+
     OCI_LIB_CALL_ENTER(boolean, FALSE)
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
@@ -2231,13 +2233,15 @@ boolean OCI_API OCI_IsTAFCapable
         (
             call_status, con,
 
-            OCIAttrGet((dvoid **) con->svr, (ub4) OCI_HTYPE_SERVER, (dvoid *) &call_retval,
+            OCIAttrGet((dvoid **)con->svr, (ub4)OCI_HTYPE_SERVER, (dvoid *)&value,
                        (ub4 *) NULL,  (ub4) OCI_ATTR_TAF_ENABLED, con->err)
 
         )
     }
 
 #endif
+
+    call_retval = value;
 
     OCI_LIB_CALL_EXIT()
 }
@@ -2378,7 +2382,7 @@ boolean OCI_API OCI_SetStatementCacheSize
  * OCI_GetDefaultLobPrefetchSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
+unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
 (
     OCI_Connection *con
 )
@@ -2398,7 +2402,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
 
         OCI_CALL2
         (
-            call_retval, con,
+            call_status, con,
 
             OCIAttrGet((dvoid **) con->ses, (ub4) OCI_HTYPE_SESSION, (dvoid *) &prefetch_size,
                         (ub4 *) NULL,  (ub4) OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE, con->err)
@@ -2416,7 +2420,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
  * OCI_SetDefaultLobPrefetchSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT boolean OCI_API OCI_SetDefaultLobPrefetchSize
+boolean OCI_API OCI_SetDefaultLobPrefetchSize
 (
     OCI_Connection *con,
     unsigned int     value
@@ -2451,6 +2455,44 @@ OCI_EXPORT boolean OCI_API OCI_SetDefaultLobPrefetchSize
 #endif
 
     call_retval = call_status;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_GetMaxCursors
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_GetMaxCursors
+(
+    OCI_Connection *con
+)
+{
+    ub4 max_cursors = 0;
+
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
+
+    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
+
+    call_status = TRUE;
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+    if (con->ver_num >= OCI_12_1)
+    {
+
+        OCI_CALL2
+        (
+            call_status, con,
+
+            OCIAttrGet((dvoid **) con->ses, (ub4) OCI_HTYPE_SESSION, (dvoid *) &max_cursors,
+                        (ub4 *) NULL,  (ub4) OCI_ATTR_MAX_OPEN_CURSORS, con->err)
+        )
+    }
+
+#endif
+
+    call_retval = max_cursors;
 
     OCI_LIB_CALL_EXIT()
 }

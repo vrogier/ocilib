@@ -142,7 +142,7 @@ namespace ocilib
  * @par Using connection pools
  * @include pool.cpp
  *
- * @par Oracle 12g Implicit resultsets
+ * @par Oracle 12c Implicit resultsets
  * @include implicit_resultset.cpp
  *
  * @par Using Oracle objects
@@ -365,7 +365,6 @@ enum CharsetFormValues
 */
 typedef Enum<CharsetFormValues> CharsetForm;
 
-
 /**
 * @brief
 * Seek Modes enumerated values
@@ -436,7 +435,6 @@ enum LobTypeValues
 */
 typedef Enum<LobTypeValues> LobType;
 
-
 /**
 * @brief
 * Long types enumerated values
@@ -458,7 +456,6 @@ enum LongTypeValues
 *
 */
 typedef Enum<LongTypeValues> LongType;
-
 
 /**
 * @brief
@@ -985,7 +982,6 @@ public:
      *
      */
     static Environment::CharsetMode GetCharset();
-
 
     /**
     * @brief
@@ -2155,7 +2151,6 @@ public:
      */
     void GetServerOutput(std::vector<ostring> &lines) const;
 
-
     /**
      * @brief
      * Set tracing information for the session
@@ -2326,6 +2321,22 @@ public:
      *
      */
     void SetDefaultLobPrefetchSize(unsigned int value);
+
+    /**
+    * @brief
+    * Return the maximum number of SQL statements that can be opened in one session
+    *
+    * @warning
+    * Requires Oracle Client AND Server 12cR1 or above
+    *
+    * @note
+    * the returned value is the same as the db parameter 'open_cursors' from server's parameter file
+    *
+    * @note
+    * Return 0 if the client and server version are < 12cR1
+    *
+    */
+    unsigned int GetMaxCursors() const;
 
     /**
      * @brief
@@ -3663,7 +3674,6 @@ public:
     *
     */
     ostring ToString() const;
-
 
     /**
     * @brief
@@ -5004,7 +5014,6 @@ class Long : public HandleHolder<OCI_Long *>
     friend class BindArray;
 
 public:
-
 
     /**
     * @brief
@@ -6719,7 +6728,6 @@ public:
      */
     typedef void (*NotifyHandlerProc) (Event &evt);
 
-
     /**
     * @brief
     * Subscription changes flags values
@@ -6958,7 +6966,6 @@ private:
 
     Event(OCI_Event *pEvent);
 };
-
 
 /**
 * @brief
@@ -8700,7 +8707,6 @@ public:
 }
 
 #include "ocilib_impl.hpp"
-
 
 #endif
 

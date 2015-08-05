@@ -367,6 +367,9 @@
 #define OCI_ATTR_LOBPREFETCH_SIZE             439           /* prefetch size */
 #define OCI_ATTR_LOBPREFETCH_LENGTH           440 /* prefetch length & chunk */
 
+/* session handle attribute */
+#define OCI_ATTR_MAX_OPEN_CURSORS          471
+
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
 
 #define OCI_UCS2ID                     1000               /* UCS2 charset ID */

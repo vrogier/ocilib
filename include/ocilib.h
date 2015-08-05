@@ -2927,6 +2927,29 @@ OCI_EXPORT boolean OCI_API OCI_SetDefaultLobPrefetchSize
     unsigned int    value
 );
 
+
+/**
+* @brief
+* Return the maximum number of SQL statements that can be opened in one session
+*
+* @param con  - Connection handle
+*
+* @warning
+* Requires Oracle Client AND Server 12cR1 or above
+*
+* @note
+* the returned value is the same as the db parameter 'open_cursors' from server's parameter file
+*
+* @note
+* Return 0 if the client and server version are < 12cR1
+*
+*/
+
+OCI_EXPORT unsigned int OCI_API OCI_GetMaxCursors
+(
+    OCI_Connection *con
+);
+
 /**
  * @}
  */

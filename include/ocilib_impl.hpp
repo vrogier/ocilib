@@ -94,7 +94,6 @@ inline void ConverString(StringClass &dest, const CharType *src, size_t length)
     }
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
  * Enum
  * --------------------------------------------------------------------------------------------- */
@@ -114,7 +113,6 @@ inline TEnum Enum<TEnum>::GetValue()
 {
     return _value;
 }
-
 
 template<class TEnum>
 inline Enum<TEnum>::operator TEnum ()
@@ -170,7 +168,6 @@ template<class TEnum>
 inline Flags<TEnum>::Flags(const Flags& other) : _flags(other._flags)
 {
 }
-
 
 template<class TEnum>
 inline Flags<TEnum>::Flags(unsigned int flag) : _flags(static_cast<TEnum>(flag))
@@ -239,7 +236,6 @@ inline Flags<TEnum>& Flags<TEnum>::operator ^= (const Flags<TEnum>& other)
     _flags ^= other._flags;
     return *this;
 }
-
 
 template<class TEnum>
 inline Flags<TEnum>& Flags<TEnum>::operator |= (TEnum other)
@@ -456,7 +452,6 @@ inline Locker::~Locker()
 {
     SetAccessMode(false);
 }
-
 
 inline void Locker::SetAccessMode(bool threaded)
 {
@@ -1082,7 +1077,6 @@ inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
 {
     Dequeue::NotifyAQHandlerProc handler = Environment::GetUserCallback<Dequeue::NotifyAQHandlerProc>(Check(pDequeue));
 
-
     if (handler)
     {
         Dequeue dequeue(pDequeue);
@@ -1567,6 +1561,11 @@ inline unsigned int Connection::GetDefaultLobPrefetchSize() const
 inline void Connection::SetDefaultLobPrefetchSize(unsigned int value)
 {
     Check(OCI_SetDefaultLobPrefetchSize(*this, value));
+}
+
+inline unsigned int  Connection::GetMaxCursors() const
+{
+    return Check(OCI_GetMaxCursors(*this));
 }
 
 inline bool Connection::IsTAFCapable() const
@@ -3182,7 +3181,6 @@ inline NClob Object::Get<NClob>(const ostring& name) const
     return NClob(Check(OCI_ObjectGetLob(*this, name.c_str())), GetHandle());
 }
 
-
 template<>
 inline Blob Object::Get<Blob>(const ostring& name) const
 {
@@ -3520,7 +3518,6 @@ inline bool Collection<TDataType>::Delete(unsigned int index) const
 {
    return (Check(OCI_CollDeleteElem(*this, index)) == TRUE);
 }
-
 
 template <class TDataType>
 inline typename Collection<TDataType>::Iterator Collection<TDataType>::begin()
@@ -3966,7 +3963,6 @@ inline void Collection<TDataType>::Element::SetNull()
  * Long
  * --------------------------------------------------------------------------------------------- */
 
-
 template<class TLongObjectType, int TLongOracleType>
 inline Long<TLongObjectType, TLongOracleType>::Long()
 {
@@ -4015,7 +4011,6 @@ inline Raw Long<Raw, LongBinary>::GetContent() const
     return MakeRaw(Check(OCI_LongGetBuffer(*this)), GetLength());
 }
 
-
 /**
 *
 * @brief
@@ -4037,7 +4032,6 @@ typedef Long<ostring, LongCharacter> Clong;
 *
 */
 typedef Long<Raw, LongBinary> Blong;
-
 
 /* --------------------------------------------------------------------------------------------- *
  * BindValue
@@ -4188,7 +4182,6 @@ inline void BindArray::BindArrayObject<ostring, otext>::SetInData()
     }
 }
 
-
 template<>
 inline void BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
 {
@@ -4250,7 +4243,6 @@ inline void BindArray::BindArrayObject<Raw, unsigned char>::SetOutData()
         }
     }
 }
-
 
 template <class TObjectType, class TDataType>
 inline ostring BindArray::BindArrayObject<TObjectType, TDataType>::GetName()
@@ -4546,7 +4538,6 @@ inline void Statement::ExecutePrepared()
     Check(OCI_Execute(*this));
     SetOutData();
 }
-
 
 template<class TFetchCallback>
 inline unsigned int Statement::ExecutePrepared(TFetchCallback callback)
@@ -5285,7 +5276,6 @@ inline void Statement::Register<Raw, int>(const ostring& name, int len)
 {
     Register<Raw, unsigned int>(name, static_cast<unsigned int>(len));
 }
-
 
 inline Statement::StatementType Statement::GetStatementType() const
 {
