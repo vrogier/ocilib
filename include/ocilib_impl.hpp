@@ -4130,6 +4130,8 @@ template <class TObjectType, class TDataType>
 inline void BindArray::BindArrayObject<TObjectType, TDataType>::AllocData()
 {
     _data = new TDataType[_elemCount];
+
+    memset(_data, 0, sizeof(TDataType) * _elemCount);
 }
 
 template<>
@@ -4703,7 +4705,7 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
 {
     ARG_NOT_USED(datatype);
 
-     BindArray * bnd = new BindArray(*this, name);
+    BindArray * bnd = new BindArray(*this, name);
     bnd->SetVector<TObjectType, TDataType>(values, mode, sizeof(TDataType));
 
     boolean res = method(*this, name.c_str(), static_cast<TDataType *>(bnd->GetData<TObjectType, TDataType>()), 0);
