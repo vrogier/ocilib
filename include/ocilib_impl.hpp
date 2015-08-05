@@ -4198,7 +4198,7 @@ inline void BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
 
             if (value.size() > 0)
             {
-                memcpy(_data + (_elemSize * index), &value[0], (value.size() + 1) * sizeof(otext));
+                memcpy(_data + (_elemSize * index), &value[0], value.size());
             }
         }
     }
@@ -4349,6 +4349,18 @@ template <class TNativeType, class TObjectType>
 inline BindTypeAdaptor<TNativeType, TObjectType>::operator TNativeType *()  const
 {
     return _data;
+}
+
+template <>
+inline void BindTypeAdaptor<boolean, bool>::SetInData()
+{
+    *_data = (_object == true);
+}
+
+template <>
+inline void BindTypeAdaptor<boolean, bool>::SetOutData()
+{
+    _object = (*_data == TRUE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4933,7 +4945,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, Raw &value, 
 
     value.reserve(maxSize);
 
-    BindObjectAdaptor<unsigned char, Raw> * bnd = new BindObjectAdaptor<unsigned char, Raw>(*this, name, value, maxSize + 1);
+    BindObjectAdaptor<unsigned char, Raw> * bnd = new BindObjectAdaptor<unsigned char, Raw>(*this, name, value, maxSize);
 
     boolean res = OCI_BindRaw(*this, name.c_str(), static_cast<unsigned char *>(*bnd), maxSize);
 
@@ -5115,7 +5127,7 @@ template <>
 inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<Raw> &values, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     BindArray * bnd = new BindArray(*this, name);
-    bnd->SetVector<Raw, unsigned char>(values, mode, maxSize + 1);
+    bnd->SetVector<Raw, unsigned char>(values, mode, maxSize);
 
     boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw, unsigned char>(), maxSize, 0);
 
