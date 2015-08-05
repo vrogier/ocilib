@@ -1067,7 +1067,7 @@ boolean OCI_API OCI_ColumnGetCharUsed
  * OCI_ColumnGetPropertyFlags
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT unsigned int OCI_API OCI_ColumnGetPropertyFlags
+unsigned int OCI_API OCI_ColumnGetPropertyFlags
 (
     OCI_Column *col
 )

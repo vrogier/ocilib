@@ -534,7 +534,7 @@ void * OCI_API OCI_BindGetData
  * OCI_BindGetStatement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement
+OCI_Statement * OCI_API OCI_BindGetStatement
 (
     OCI_Bind *bnd
 )

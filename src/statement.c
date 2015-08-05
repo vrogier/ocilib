@@ -1225,7 +1225,7 @@ OCI_Statement * OCI_StatementInit
 )
 {
     OCI_Statement * stmt = NULL;
-    boolean res          = FALSE;
+    boolean res = FALSE;
 
     OCI_CHECK(NULL == pstmt, NULL);
 
@@ -1978,6 +1978,8 @@ boolean OCI_API OCI_ReleaseResultsets
     OCI_Statement *stmt
 )
 {
+    ub4 i;
+
     OCI_LIB_CALL_ENTER(boolean, FALSE)
 
     OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -1987,8 +1989,6 @@ boolean OCI_API OCI_ReleaseResultsets
     /* Release statements for implicit resultsets */
     if (stmt->stmts)
     {
-        ub4 i;
-
         for (i = 0; i  < stmt->nb_stmt; i++)
         {
             if (stmt->rsts[i])
@@ -2006,8 +2006,6 @@ boolean OCI_API OCI_ReleaseResultsets
     /* release resultsets */
     if (stmt->rsts)
     {
-        ub4 i;
-
         for (i = 0; i  < stmt->nb_rs; i++)
         {
             if (stmt->rsts[i])
@@ -2420,7 +2418,7 @@ unsigned int OCI_API OCI_BindArrayGetSize
  * OCI_AllowRebinding
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT boolean OCI_API OCI_AllowRebinding
+boolean OCI_API OCI_AllowRebinding
 (
     OCI_Statement *stmt,
     boolean        value
@@ -2441,7 +2439,7 @@ OCI_EXPORT boolean OCI_API OCI_AllowRebinding
  * OCI_IsRebindingAllowed
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT boolean OCI_API OCI_IsRebindingAllowed
+boolean OCI_API OCI_IsRebindingAllowed
 (
     OCI_Statement *stmt
 )
@@ -4394,7 +4392,7 @@ OCI_Bind * OCI_API OCI_GetBind2
 * OCI_GetBindIndex
 * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetBindIndex
+unsigned int OCI_API OCI_GetBindIndex
 (
     OCI_Statement *stmt,
     const otext   *name

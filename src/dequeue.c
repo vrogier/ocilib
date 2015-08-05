@@ -840,7 +840,7 @@ boolean OCI_API OCI_DequeueSetAgentList
  * OCI_DequeueSubscribe
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
+boolean OCI_API  OCI_DequeueSubscribe
 (
     OCI_Dequeue    *dequeue,
     unsigned int    port,
@@ -1056,7 +1056,7 @@ OCI_EXPORT boolean OCI_API  OCI_DequeueSubscribe
  * OCI_DequeueUnsubscribe
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueUnsubscribe
+boolean OCI_API OCI_DequeueUnsubscribe
 (
     OCI_Dequeue *dequeue
 )

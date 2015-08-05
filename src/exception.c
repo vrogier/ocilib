@@ -48,7 +48,7 @@ static otext * OCILib_TypeNames[OCI_IPC_COUNT] =
     OTEXT("int pointer"),
     OTEXT("big_int pointer"),
     OTEXT("double pointer"),
-    OTEXT("float    pointer"),
+    OTEXT("float pointer"),
     OTEXT("string pointer"),
     OTEXT("function callback"),
 
