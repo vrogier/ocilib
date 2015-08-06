@@ -4911,9 +4911,12 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring 
         maxSize = static_cast<unsigned int>(value.size());
     }
 
-    value.reserve(maxSize);
+    unsigned int lengthWithNull = static_cast<unsigned int>(value.length()+1);
+    lengthWithNull  = std::max(maxSize, lengthWithNull);
+    value.reserve(lengthWithNull);
 
     BindObjectAdaptor<otext, ostring> * bnd = new BindObjectAdaptor<otext, ostring>(*this, name, value, maxSize + 1);
+
 
     boolean res = OCI_BindString(*this, name.c_str(), static_cast<otext *>(*bnd), maxSize);
 
