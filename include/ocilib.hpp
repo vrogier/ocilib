@@ -4737,7 +4737,7 @@ public:
         /** Collection is a NESTED TABLE */
         NestedTable = OCI_COLL_NESTED_TABLE,
         /** Collection is a PL/SQL TABLE INDEX BY */
-        IndexedTable = OCI_COLL_NESTED_TABLE,
+        IndexedTable = OCI_COLL_INDEXED_TABLE
     };
 
     /**
