@@ -1399,7 +1399,7 @@ boolean OCI_API OCI_Initialize
         /* create environment on success */
 
         res = res && OCI_SUCCESSFUL(OCIEnvCreate(&OCILib.env, oci_mode,
-                                                 (dvoid *) &OCILib, 
+                                                 (dvoid *) &OCILib,
                                                  OCI_MemAllocOracleClient,
                                                  OCI_MemReallocOracleClient,
                                                  OCI_MemFreeOracleClient,
@@ -1559,12 +1559,12 @@ boolean OCI_API OCI_Cleanup
 
     if (OCI_LIB_THREADED)
     {
-        /* free the memory mutex. We set its reference in the library structure to NULL first otherwise 
+        /* free the memory mutex. We set its reference in the library structure to NULL first otherwise
            it would generate an OCI error when calling OCI_HandleAlloc() for freeing the mutex object error handle
         */
 
         OCI_Mutex * mutex = OCILib.mem_mutex;
-        
+
         OCILib.mem_mutex = NULL;
 
         if (mutex)
@@ -2172,7 +2172,7 @@ const otext * OCI_API OCI_GetFormat
     unsigned int    type
 )
 {
-	const otext **value = NULL;
+	otext **value = NULL;
 
     OCI_LIB_CALL_ENTER(const otext *, NULL)
 
