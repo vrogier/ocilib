@@ -434,9 +434,9 @@ public:
 
 protected:
 
+    OCI_Statement *_pStatement;
     ostring _name;
     unsigned int _mode;
-    OCI_Statement *_pStatement;
 };
 
 class BindArray : public BindObject
