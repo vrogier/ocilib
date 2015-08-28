@@ -609,8 +609,8 @@ private:
     OCI_Connection *_pConnnection;
     unsigned int _row;
     ExceptionType _type;
-    unsigned int _errLib;
-    unsigned int _errOracle;
+    int _errLib;
+    int _errOracle;
 };
 
 /**

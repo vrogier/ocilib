@@ -3200,7 +3200,7 @@ inline Raw Object::Get<Raw>(const ostring& name) const
 
     ManagedBuffer<unsigned char> buffer(size + 1);
 
-    size = Check(OCI_ObjectGetRaw(*this, name.c_str(), static_cast<AnyPointer>(buffer), static_cast<int>(size)));
+    size = static_cast<unsigned int>(Check(OCI_ObjectGetRaw(*this, name.c_str(), static_cast<AnyPointer>(buffer), size)));
 
     return MakeRaw(buffer, size);
 }
@@ -4059,7 +4059,7 @@ inline BindValue<TValueType>::operator TValueType() const
 * BindObject
 * --------------------------------------------------------------------------------------------- */
 
-inline BindObject::BindObject(const Statement &statement, const ostring& name, unsigned int mode) : _name(name), _mode(mode), _pStatement(statement)
+inline BindObject::BindObject(const Statement &statement, const ostring& name, unsigned int mode) : _pStatement(statement), _name(name), _mode(mode)
 {
 }
 
@@ -5072,25 +5072,25 @@ inline void Statement::Bind<Interval, Interval::IntervalType>(const ostring& nam
 template <>
 inline void Statement::Bind<Clob>(const ostring& name, std::vector<Clob> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, OCI_CLOB);
+    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, static_cast<unsigned int>(OCI_CLOB));
 }
 
 template <>
 inline void Statement::Bind<NClob>(const ostring& name, std::vector<NClob> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, OCI_NCLOB);
+    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, static_cast<unsigned int>(OCI_NCLOB));
 }
 
 template <>
 inline void Statement::Bind<Blob>(const ostring& name, std::vector<Blob> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, OCI_BLOB);
+    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, static_cast<unsigned int>(OCI_BLOB));
 }
 
 template <>
 inline void Statement::Bind<File>(const ostring& name, std::vector<File> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfFiles, name, values, BindValue<OCI_File *>(), mode, OCI_BFILE);
+    Bind(OCI_BindArrayOfFiles, name, values, BindValue<OCI_File *>(), mode, static_cast<unsigned int>(OCI_BFILE));
 }
 
 template <>
