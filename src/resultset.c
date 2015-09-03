@@ -1483,37 +1483,43 @@ boolean OCI_API OCI_GetStruct
 
     if (ptr)
     {
-        size_t size   = 0;
-        size_t size1  = 0;
-        size_t size2  = 0;
-        size_t align1 = 0;
-        size_t align2 = 0;
-        ub4 i;
+        size_t size1 = 0;
+        size_t size2 = 0;
+        size_t align = 0;
+        ub2 i;
+
+        size_t size = 0;
 
         for (i = 1; i <= rs->nb_defs; i++)
         {
-            OCI_Column *col1 = &rs->defs[i-1].col;
-            OCI_Column *col2 = &rs->defs[i  ].col;
+            OCI_Define *def = &rs->defs[i - 1];
 
-            boolean is_not_null = OCI_DefineIsDataNotNull(&rs->defs[i-1]);
+            boolean is_not_null = OCI_DefineIsDataNotNull(def);
 
-            OCI_ColumnGetAttrInfo(col1, rs->nb_defs, i-1, &size1, &align1);
-            OCI_ColumnGetAttrInfo(col2, rs->nb_defs, i  , &size2, &align2);
-
-            if (size2 > 0)
+            if (i == 1)
             {
-                size1 = ROUNDUP(size1, align2);
+                OCI_ColumnGetAttrInfo(&def->col, rs->nb_defs, i - 1, &size1, &align);
             }
+            else
+            {
+                size1 = size2;
+            }         
 
+            OCI_ColumnGetAttrInfo(&rs->defs[i].col, rs->nb_defs, i, &size2, &align);
+
+            size += size1;
+
+            size = ROUNDUP(size, align);
+                
             memset(ptr, 0, size1);
 
             if (is_not_null)
             {
-                switch (col1->datatype)
+                switch (def->col.datatype)
                 {
                     case OCI_CDT_NUMERIC:
                     {
-                        OCI_DefineGetNumber(rs, i, ptr, col1->subtype, (uword) size1);
+                        OCI_DefineGetNumber(rs, i, ptr, def->col.subtype, (uword)size1);
 
                         break;
                     }
@@ -1524,7 +1530,7 @@ boolean OCI_API OCI_GetStruct
                     }
                     case OCI_CDT_RAW:
                     {
-                        *((void **) ptr) = OCI_DefineGetData(&rs->defs[i]);
+                        *((void **) ptr) = OCI_DefineGetData(def);
                         break;
                     }
                     case OCI_CDT_LONG:
@@ -1580,8 +1586,6 @@ boolean OCI_API OCI_GetStruct
                     }
                 }
             }
-
-            size += size1;
 
             ptr = ((char *) row_struct) + size;
 
