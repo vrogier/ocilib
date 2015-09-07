@@ -3200,7 +3200,7 @@ inline Raw Object::Get<Raw>(const ostring& name) const
 
     ManagedBuffer<unsigned char> buffer(size + 1);
 
-    size = Check(OCI_ObjectGetRaw(*this, name.c_str(), static_cast<AnyPointer>(buffer), static_cast<int>(size)));
+    size = static_cast<unsigned int>(Check(OCI_ObjectGetRaw(*this, name.c_str(), static_cast<AnyPointer>(buffer), size)));
 
     return MakeRaw(buffer, size);
 }
@@ -4059,7 +4059,7 @@ inline BindValue<TValueType>::operator TValueType() const
 * BindObject
 * --------------------------------------------------------------------------------------------- */
 
-inline BindObject::BindObject(const Statement &statement, const ostring& name) :  _name(name), _pStatement(statement)
+inline BindObject::BindObject(const Statement &statement, const ostring& name, unsigned int mode) : _pStatement(statement), _name(name), _mode(mode)
 {
 }
 
@@ -4077,19 +4077,24 @@ inline Statement BindObject::GetStatement() const
     return Statement(_pStatement);
 }
 
+inline unsigned int BindObject::GetMode() const
+{
+    return _mode;
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * BindArray
  * --------------------------------------------------------------------------------------------- */
 
-inline BindArray::BindArray(const Statement &statement, const ostring& name) : BindObject(statement, name), _object(0)
+inline BindArray::BindArray(const Statement &statement, const ostring& name, unsigned int mode) : BindObject(statement, name, mode), _object(0)
 {
 
 }
 
 template <class TObjectType, class TDataType>
-inline void BindArray::SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemSize)
+inline void BindArray::SetVector(std::vector<TObjectType> & vector, unsigned int elemSize)
 {
-    _object = new BindArrayObject<TObjectType, TDataType>(GetStatement(), GetName(), vector, mode, elemSize);
+    _object = new BindArrayObject<TObjectType, TDataType>(GetStatement(), GetName(), vector, GetMode(), elemSize);
 }
 
 inline BindArray::~BindArray()
@@ -4105,12 +4110,18 @@ inline TDataType *  BindArray::GetData ()  const
 
 inline void BindArray::SetInData()
 {
-    _object->SetInData();
+    if (GetMode() & OCI_BDM_IN)
+    {
+        _object->SetInData();
+    }
 }
 
 inline void BindArray::SetOutData()
 {
-    _object->SetOutData();
+    if (GetMode() & OCI_BDM_OUT)
+    {
+        _object->SetOutData();
+    }
 }
 
 template <class TObjectType, class TDataType>
@@ -4151,57 +4162,48 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::FreeData()
 template <class TObjectType, class TDataType>
 inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetInData()
 {
-    if (_mode & OCI_BDM_IN)
+    typename std::vector<TObjectType>::iterator it, it_end;
+
+    unsigned int index = 0;
+    unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
+
+    for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
-        typename std::vector<TObjectType>::iterator it, it_end;
-
-        unsigned int index = 0;
-        unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
-
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
-        {
-            _data[index] = BindValue<TDataType>( *it);
-        }
+        _data[index] = BindValue<TDataType>( *it);
     }
 }
 
 template<>
 inline void BindArray::BindArrayObject<ostring, otext>::SetInData()
 {
-    if (_mode & OCI_BDM_IN)
+    std::vector<ostring>::iterator it, it_end;
+
+    unsigned int index = 0;
+    unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
+
+    for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
-        std::vector<ostring>::iterator it, it_end;
+        const  ostring & value = *it;
 
-        unsigned int index = 0;
-        unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
-
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
-        {
-           const  ostring & value = *it;
-
-            memcpy( _data + (_elemSize * index), value.c_str(), (value.size() + 1) * sizeof(otext));
-        }
+        memcpy( _data + (_elemSize * index), value.c_str(), (value.size() + 1) * sizeof(otext));
     }
 }
 
 template<>
 inline void BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
 {
-    if (_mode & OCI_BDM_IN)
+    std::vector<Raw>::iterator it, it_end;
+
+    unsigned int index = 0;
+    unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
+
+    for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
-        std::vector<Raw>::iterator it, it_end;
+        Raw & value = *it;
 
-        unsigned int index = 0;
-        unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
-
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
+        if (value.size() > 0)
         {
-            Raw & value = *it;
-
-            if (value.size() > 0)
-            {
-                memcpy(_data + (_elemSize * index), &value[0], value.size());
-            }
+            memcpy(_data + (_elemSize * index), &value[0], value.size());
         }
     }
 }
@@ -4209,40 +4211,34 @@ inline void BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
 template <class TObjectType, class TDataType>
 inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetOutData()
 {
-    if (_mode & OCI_BDM_OUT)
+    typename std::vector<TObjectType>::iterator it, it_end;
+
+    unsigned int index = 0;
+    unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
+
+    for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
-        typename std::vector<TObjectType>::iterator it, it_end;
+        TObjectType& object = *it;
 
-        unsigned int index = 0;
-        unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
-
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
-        {
-            TObjectType& object = *it;
-
-            object = static_cast<TDataType>(_data[index]);
-        }
+        object = static_cast<TDataType>(_data[index]);
     }
 }
 
 template<>
 inline void BindArray::BindArrayObject<Raw, unsigned char>::SetOutData()
 {
-    if (_mode & OCI_BDM_OUT)
+    std::vector<Raw>::iterator it, it_end;
+
+    OCI_Bind *pBind = Check(OCI_GetBind2(_pStatement, GetName().c_str()));
+
+    unsigned int index = 0;
+    unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
+
+    for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
-        std::vector<Raw>::iterator it, it_end;
+        unsigned char *currData = _data + (_elemSize * index);
 
-        OCI_Bind *pBind = Check(OCI_GetBind2(_pStatement, GetName().c_str()));
-
-        unsigned int index = 0;
-        unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
-
-        for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
-        {
-            unsigned char *currData = _data + (_elemSize * index);
-
-            (*it).assign(currData, currData + Check(OCI_BindGetDataSizeAtPos(pBind, index + 1)));
-        }
+        (*it).assign(currData, currData + Check(OCI_BindGetDataSizeAtPos(pBind, index + 1)));
     }
 }
 
@@ -4271,32 +4267,38 @@ inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator TDataType *
 template <class TNativeType, class TObjectType>
 inline void BindObjectAdaptor<TNativeType, TObjectType>::SetInData()
 {
-    size_t size = _object.size();
-
-    if (size > _size)
+    if (GetMode() & OCI_BDM_IN)
     {
-        size = _size;
-    }
+        size_t size = _object.size();
 
-    if (size > 0)
-    {
-        memcpy(_data, &_object[0], size * sizeof(TNativeType));
-    }
+        if (size > _size)
+        {
+            size = _size;
+        }
 
-    _data[size] = 0;
+        if (size > 0)
+        {
+            memcpy(_data, &_object[0], size * sizeof(TNativeType));
+        }
+
+        _data[size] = 0;
+    }
 }
 
 template <class TNativeType, class TObjectType>
 inline void BindObjectAdaptor<TNativeType, TObjectType>::SetOutData()
 {
-    size_t size = Check(OCI_BindGetDataSize(Check(OCI_GetBind2(_pStatement, _name.c_str()))));
+    if (GetMode() & OCI_BDM_OUT)
+    {
+        size_t size = Check(OCI_BindGetDataSize(Check(OCI_GetBind2(_pStatement, _name.c_str()))));
 
-    _object.assign(_data, _data + size);
+        _object.assign(_data, _data + size);
+    }
 }
 
 template <class TNativeType, class TObjectType>
-inline BindObjectAdaptor<TNativeType, TObjectType>::BindObjectAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size) :
-     BindObject(statement, name),
+inline BindObjectAdaptor<TNativeType, TObjectType>::BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object, unsigned int size) :
+     BindObject(statement, name, mode),
      _object(object),
      _data(new TNativeType[size]),
      _size(size)
@@ -4323,18 +4325,24 @@ inline BindObjectAdaptor<TNativeType, TObjectType>::operator TNativeType *()  co
 template <class TNativeType, class TObjectType>
 inline void BindTypeAdaptor<TNativeType, TObjectType>::SetInData()
 {
-    *_data = static_cast<TNativeType>(_object);
+    if (GetMode() & OCI_BDM_IN)
+    {
+        *_data = static_cast<TNativeType>(_object);
+    }
 }
 
 template <class TNativeType, class TObjectType>
 inline void BindTypeAdaptor<TNativeType, TObjectType>::SetOutData()
 {
-    _object = static_cast<TObjectType>(*_data);
+    if (GetMode() & OCI_BDM_OUT)
+    {
+        _object = static_cast<TObjectType>(*_data);
+    }
 }
 
 template <class TNativeType, class TObjectType>
-inline BindTypeAdaptor<TNativeType, TObjectType>::BindTypeAdaptor(const Statement &statement, const ostring& name, TObjectType &object) :
-     BindObject(statement, name),
+inline BindTypeAdaptor<TNativeType, TObjectType>::BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object) :
+     BindObject(statement, name, mode),
      _object(object),
      _data(new TNativeType)
 {
@@ -4356,13 +4364,19 @@ inline BindTypeAdaptor<TNativeType, TObjectType>::operator TNativeType *()  cons
 template <>
 inline void BindTypeAdaptor<boolean, bool>::SetInData()
 {
-    *_data = (_object == true);
+    if (GetMode() & OCI_BDM_IN)
+    {
+        *_data = (_object == true);
+    }
 }
 
 template <>
 inline void BindTypeAdaptor<boolean, bool>::SetOutData()
 {
-    _object = (*_data == TRUE);
+    if (GetMode() & OCI_BDM_OUT)
+    {
+        _object = (*_data == TRUE);
+    }
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4705,8 +4719,8 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
 {
     ARG_NOT_USED(datatype);
 
-    BindArray * bnd = new BindArray(*this, name);
-    bnd->SetVector<TObjectType, TDataType>(values, mode, sizeof(TDataType));
+    BindArray * bnd = new BindArray(*this, name, mode);
+    bnd->SetVector<TObjectType, TDataType>(values, sizeof(TDataType));
 
     boolean res = method(*this, name.c_str(), static_cast<TDataType *>(bnd->GetData<TObjectType, TDataType>()), 0);
 
@@ -4729,8 +4743,8 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
 {
     ARG_NOT_USED(datatype);
 
-    BindArray * bnd = new BindArray(*this, name);
-    bnd->SetVector<TObjectType, TDataType>(values, mode, sizeof(TDataType));
+    BindArray * bnd = new BindArray(*this, name, mode);
+    bnd->SetVector<TObjectType, TDataType>(values, sizeof(TDataType));
 
     boolean res = method(*this, name.c_str(), static_cast<TDataType *>(bnd->GetData<TObjectType, TDataType>()), type, 0);
 
@@ -4751,7 +4765,7 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
 template <>
 inline void Statement::Bind<bool>(const ostring& name, bool &value, BindInfo::BindDirection mode)
 {
-    BindTypeAdaptor<boolean, bool> * bnd = new BindTypeAdaptor<boolean, bool>(*this, name, value);
+    BindTypeAdaptor<boolean, bool> * bnd = new BindTypeAdaptor<boolean, bool>(*this, name, mode, value);
 
     boolean res = OCI_BindBoolean(*this, name.c_str(), static_cast<boolean *>(*bnd));
 
@@ -4915,7 +4929,7 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring 
     lengthWithNull  = std::max(maxSize, lengthWithNull);
     value.reserve(lengthWithNull);
 
-    BindObjectAdaptor<otext, ostring> * bnd = new BindObjectAdaptor<otext, ostring>(*this, name, value, maxSize + 1);
+    BindObjectAdaptor<otext, ostring> * bnd = new BindObjectAdaptor<otext, ostring>(*this, name, mode, value, maxSize + 1);
 
 
     boolean res = OCI_BindString(*this, name.c_str(), static_cast<otext *>(*bnd), maxSize);
@@ -4950,7 +4964,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, Raw &value, 
 
     value.reserve(maxSize);
 
-    BindObjectAdaptor<unsigned char, Raw> * bnd = new BindObjectAdaptor<unsigned char, Raw>(*this, name, value, maxSize);
+    BindObjectAdaptor<unsigned char, Raw> * bnd = new BindObjectAdaptor<unsigned char, Raw>(*this, name, mode, value, maxSize);
 
     boolean res = OCI_BindRaw(*this, name.c_str(), static_cast<unsigned char *>(*bnd), maxSize);
 
@@ -5061,25 +5075,25 @@ inline void Statement::Bind<Interval, Interval::IntervalType>(const ostring& nam
 template <>
 inline void Statement::Bind<Clob>(const ostring& name, std::vector<Clob> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, OCI_CLOB);
+    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, static_cast<unsigned int>(OCI_CLOB));
 }
 
 template <>
 inline void Statement::Bind<NClob>(const ostring& name, std::vector<NClob> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, OCI_NCLOB);
+    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, static_cast<unsigned int>(OCI_NCLOB));
 }
 
 template <>
 inline void Statement::Bind<Blob>(const ostring& name, std::vector<Blob> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, OCI_BLOB);
+    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, static_cast<unsigned int>(OCI_BLOB));
 }
 
 template <>
 inline void Statement::Bind<File>(const ostring& name, std::vector<File> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfFiles, name, values, BindValue<OCI_File *>(), mode, OCI_BFILE);
+    Bind(OCI_BindArrayOfFiles, name, values, BindValue<OCI_File *>(), mode, static_cast<unsigned int>(OCI_BFILE));
 }
 
 template <>
@@ -5103,8 +5117,8 @@ inline void Statement::Bind(const ostring& name, std::vector<Collection<TDataTyp
 template <>
 inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vector<ostring> &values,  unsigned int maxSize, BindInfo::BindDirection mode)
 {
-    BindArray * bnd = new BindArray(*this, name);
-    bnd->SetVector<ostring, otext>(values, mode, maxSize+1);
+    BindArray * bnd = new BindArray(*this, name, mode);
+    bnd->SetVector<ostring, otext>(values, maxSize+1);
 
     boolean res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring, otext>(), maxSize, 0);
 
@@ -5131,8 +5145,8 @@ inline void Statement::Bind<ostring, int>(const ostring& name, std::vector<ostri
 template <>
 inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<Raw> &values, unsigned int maxSize, BindInfo::BindDirection mode)
 {
-    BindArray * bnd = new BindArray(*this, name);
-    bnd->SetVector<Raw, unsigned char>(values, mode, maxSize);
+    BindArray * bnd = new BindArray(*this, name, mode);
+    bnd->SetVector<Raw, unsigned char>(values, maxSize);
 
     boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw, unsigned char>(), maxSize, 0);
 

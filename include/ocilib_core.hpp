@@ -419,32 +419,35 @@ class BindObject
 {
 public:
 
-    BindObject(const Statement &statement, const ostring& name);
+    BindObject(const Statement &statement, const ostring& name, unsigned int mode);
 
     virtual ~BindObject();
 
     ostring GetName() const;
 
     Statement GetStatement() const;
+    
+    unsigned int GetMode() const;
 
     virtual void SetInData()  = 0;
     virtual void SetOutData() = 0;
 
 protected:
 
-    ostring _name;
     OCI_Statement *_pStatement;
+    ostring _name;
+    unsigned int _mode;
 };
 
 class BindArray : public BindObject
 {
 public:
 
-     BindArray(const Statement &statement, const ostring& name);
+     BindArray(const Statement &statement, const ostring& name, unsigned int mode);
      virtual ~BindArray();
 
      template <class TObjectType, class TDataType>
-     void SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemSize);
+     void SetVector(std::vector<TObjectType> & vector, unsigned int elemSize);
 
      template <class TObjectType, class TDataType>
      TDataType * GetData () const;
@@ -509,7 +512,7 @@ public:
     void SetInData();
     void SetOutData();
 
-    BindObjectAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size);
+    BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object, unsigned int size);
     virtual ~BindObjectAdaptor();
 
 private:
@@ -531,7 +534,7 @@ public:
     void SetInData();
     void SetOutData();
 
-    BindTypeAdaptor(const Statement &statement, const ostring& name, TObjectType &object);
+    BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object);
     virtual ~BindTypeAdaptor();
 
 private:
