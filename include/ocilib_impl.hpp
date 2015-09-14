@@ -4140,9 +4140,9 @@ inline BindArray::BindArrayObject<TObjectType, TDataType>::~BindArrayObject()
 template <class TObjectType, class TDataType>
 inline void BindArray::BindArrayObject<TObjectType, TDataType>::AllocData()
 {
-    _data = new TDataType[_elemCount];
+    _data = new TDataType[_elemCount * _elemSize];
 
-    memset(_data, 0, sizeof(TDataType) * _elemCount);
+    memset(_data, 0, sizeof(TDataType) * _elemCount * _elemSize);
 }
 
 template<>
