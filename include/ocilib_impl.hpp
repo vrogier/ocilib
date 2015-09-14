@@ -4153,6 +4153,14 @@ inline void BindArray::BindArrayObject<ostring, otext>::AllocData()
     memset(_data, 0, _elemSize * _elemCount * sizeof(otext));
 }
 
+template<>
+inline void BindArray::BindArrayObject<Raw, unsigned char> ::AllocData()
+{
+    _data = new unsigned char[_elemSize * _elemCount];
+
+    memset(_data, 0, _elemSize * _elemCount * sizeof(unsigned char));
+}
+
 template <class TObjectType, class TDataType>
 inline void BindArray::BindArrayObject<TObjectType, TDataType>::FreeData()
 {
@@ -4205,6 +4213,8 @@ inline void BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
         {
             memcpy(_data + (_elemSize * index), &value[0], value.size());
         }
+
+        OCI_BindSetDataSizeAtPos(OCI_GetBind2(_pStatement, GetName().c_str()), index + 1, value.size());
     }
 }
 
