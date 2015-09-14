@@ -211,10 +211,8 @@ void OCI_ObjectGetUserStructSize
 
     for (i = 0; i < typinf->nb_cols; i++)
     {
-        align = FALSE;
-
         OCI_ColumnGetAttrInfo(&typinf->cols[i],   typinf->nb_cols, i, &size1, &align1);
-        OCI_ColumnGetAttrInfo(&typinf->cols[i+1], typinf->nb_cols, i, &size2, &align2);
+        OCI_ColumnGetAttrInfo(&typinf->cols[i+1], typinf->nb_cols, i+1, &size2, &align2);
 
         if (align < align1)
         {
@@ -248,7 +246,7 @@ boolean OCI_ObjectGetAttrInfo
 )
 {
     OCI_CHECK(typinf  == NULL, 0);
-    OCI_CHECK(p_align == NULL, 0);
+    OCI_CHECK(p_size  == NULL, 0);
     OCI_CHECK(p_align == NULL, 0);
 
 

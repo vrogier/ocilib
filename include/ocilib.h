@@ -18402,11 +18402,11 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 
 /* macro added in version 4.1.0 */
 
-#define OCI_SetDefaultFormatDate(con, fmt)      OCI_SetFormat(cn, OCI_FMT_DATE, fmt)
-#define OCI_SetDefaultFormatNumeric(con, fmt)   OCI_SetFormat(cn, OCI_FMT_NUMERIC, fmt)
+#define OCI_SetDefaultFormatDate(con, fmt)      OCI_SetFormat(con, OCI_FMT_DATE, fmt)
+#define OCI_SetDefaultFormatNumeric(con, fmt)   OCI_SetFormat(con, OCI_FMT_NUMERIC, fmt)
 
-#define OCI_GetDefaultFormatDate(con)           OCI_GetFormat(cn, OCI_FMT_DATE)
-#define OCI_GetDefaultFormatNumeric(con)        OCI_GetFormat(cn, OCI_FMT_NUMERIC)
+#define OCI_GetDefaultFormatDate(con)           OCI_GetFormat(con, OCI_FMT_DATE)
+#define OCI_GetDefaultFormatNumeric(con)        OCI_GetFormat(con, OCI_FMT_NUMERIC)
 
 #define OCI_STRING_FORMAT_NUM_BIN               OCI_STRING_FORMAT_NUM_BDOUBLE
 
