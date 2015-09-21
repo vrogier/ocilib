@@ -1,4 +1,4 @@
-2015-09-17 Version 4.2.0 Vincent Rogier vince.rogier@ocilib.net
+2015-09-21 Version 4.2.0 Vincent Rogier vince.rogier@ocilib.net
 
     * New Features:
                    
@@ -47,6 +47,7 @@
             
     * Fixes:
         
+        - C API: Fixed OCI_GetLastError() that returned NULL after OCI_Initialize() if OCI shared lib cannot be loaded
         - C API: Fixed OCI_ColumnGetSQLType() that has its break statements within the switch removed by mistake leading to return "?" in all cases
         - C API: Fixed OCI_ElemSetXXX() where XXX is a numeric type
         - C API: Fixed OCI_IterFree() when dealing with numbers
