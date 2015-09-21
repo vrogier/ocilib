@@ -86,10 +86,10 @@ inline void ConverString(StringClass &dest, const CharType *src, size_t length)
         dest.resize(length);
 
         while (i < length)
-        { 
-            dest[i] = static_cast<const StringClass::value_type>(src[i]);
-            
-            ++i; 
+        {
+            dest[i] = static_cast<typename StringClass::value_type>(src[i]);
+
+            ++i;
         }
     }
 }
@@ -1876,7 +1876,7 @@ inline ostring Date::ToString(const ostring& format) const
     if (!IsNull())
     {
         size_t size = OCI_SIZE_BUFFER;
-    
+
         ManagedBuffer<otext> buffer(size + 1);
 
         Check(OCI_DateToText(*this, format.c_str(), static_cast<int>(size), buffer));

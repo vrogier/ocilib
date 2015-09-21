@@ -111,7 +111,7 @@ const int DirPathColumnCount = 3;
 #define ocout             std::wcout
 #define oostringstream    std::wostringstream
 #else
-#define ocout             std::ocout
+#define ocout             std::cout
 #define oostringstream    std::ostringstream
 #endif
 
