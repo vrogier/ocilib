@@ -1765,7 +1765,7 @@ OCI_Error * OCI_API OCI_GetLastError
     {
         err = OCI_ErrorGet(TRUE);
 
-        if (err && (!err->raise))
+        if (err && (!err->raise && OCILib.loaded))
         {
             err = NULL;
         }
