@@ -1362,7 +1362,7 @@ boolean OCI_API OCI_Initialize
 
     /* Oracle 8i does not support full Unicode mode */
 
-    if (OCILib.version_runtime < OCI_9_0))
+    if (OCILib.version_runtime < OCI_9_0)
     {
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_WIDE_USERDATA);
         OCI_LIB_JUMP_EXIT()
