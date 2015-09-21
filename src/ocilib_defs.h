@@ -422,8 +422,6 @@
 
 #define OCI_LIB_THREADED                (OCILib.env_mode & OCI_ENV_THREADED)
 
-#define OCI_LIB_CONTEXT                 (OCILib.env_mode & OCI_ENV_CONTEXT)
-
 #define OCI_LIB_CALL_DECL_VAR(type, value)                                      \
                                                                                 \
     type    call_retval = (type) value;                                         \
@@ -432,7 +430,7 @@
 
 #define OCI_LIB_CALL_CHECK_CTX(mode)                                            \
                                                                                 \
-    if (mode && OCI_ENV_CONTEXT)                                                \
+    if (mode & OCI_ENV_CONTEXT)                                                 \
     {                                                                           \
         call_err = OCI_ErrorGet(FALSE);                                         \
         OCI_ContextCallEnter(call_err);                                         \
@@ -440,7 +438,7 @@
 
 #define OCI_LIB_CALL_SET_CTX(mode)                                              \
                                                                                 \
-    if (mode && OCI_ENV_CONTEXT)                                                \
+    if (mode & OCI_ENV_CONTEXT)                                                 \
     {                                                                           \
         OCI_ContextCallExit(call_err, call_status);                             \
     }  

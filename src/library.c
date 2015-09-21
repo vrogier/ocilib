@@ -703,9 +703,9 @@ boolean OCI_API OCI_Initialize
 )
 {
 	OCI_LIB_CALL_DECL_VAR(boolean, FALSE)
-	OCI_LIB_CALL_CHECK_CTX(mode)
 
     unsigned int i = 0;
+    ub4 oci_mode = OCI_ENV_MODE | OCI_OBJECT;
 
 #ifdef OCI_IMPORT_RUNTIME
 
@@ -714,6 +714,9 @@ boolean OCI_API OCI_Initialize
     size_t len = (size_t) 0;
 
 #endif
+
+	OCI_LIB_CALL_CHECK_CTX(mode)
+
 
     /* check if it was already initialized */
 
@@ -1372,10 +1375,6 @@ boolean OCI_API OCI_Initialize
 
     /* Initialize OCI environment */
 
-    ub4 oci_mode = OCI_ENV_MODE | OCI_OBJECT;
-
-    /* check modes */
-
     if (mode & OCI_ENV_THREADED)
     {
         oci_mode |= OCI_THREADED;
@@ -1746,7 +1745,7 @@ OCI_Error * OCI_API OCI_GetLastError
 {
     OCI_Error *err = NULL;
 
-    if (!OCILib.loaded || OCI_LIB_CONTEXT)
+    if (!OCILib.loaded || OCILib.env_mode & OCI_ENV_CONTEXT)
     {
         err = OCI_ErrorGet(TRUE);
 
