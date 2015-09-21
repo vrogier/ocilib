@@ -1,32 +1,21 @@
-﻿---
-
-author: admin
-
-comments: true
-
-date: 2008-08-16 21:08:33+00:00
-
-layout: page
-
-slug: changelogs
-
-title: Changelogs
-
-wordpress_id: 87
-
 ---
-
-
+author: admin
+comments: true
+date: 2008-08-16 21:08:33+00:00
+layout: page
+slug: changelogs
+title: Changelogs
+wordpress_id: 87
+---
 
 Here is the list of OCILIB changelogs. 
  <br/>
+ <br/>
+ 
 Click on a change log entry to see the full details.
 
 <br/>
 <br/>
-
-
-
 
 _[2015-09-21 . version 4.2.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.2.0.txt)_
   * Implemented Oracle 12c extended support for PL/SQL types

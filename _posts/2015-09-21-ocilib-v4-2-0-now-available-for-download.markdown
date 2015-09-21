@@ -11,12 +11,13 @@ categories:
 ---
 
 Dear all,
-
-
-OCILIB v4.2.0 is now [_available for download_]({{site.projecturl}}/releases/) ! 
 <br/>
-
+<br/>
+**OCILIB v4.2.0 is now [_available for download_]({{site.projecturl}}/releases/) ! **
+<br/>
+<br/>
 Get the release and enjoy it !
+<br/>
 <br/>
 
 ### New Features:
