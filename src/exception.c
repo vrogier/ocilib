@@ -340,6 +340,7 @@ void OCI_ExceptionLoadingSharedLib
     {
         err->type    = OCI_ERR_OCILIB;
         err->libcode = OCI_ERR_LOADING_SHARED_LIB;
+        err->raise = 1;
 
         osprintf(err->str, osizeof(err->str) - (size_t) 1,
                   OCILib_ErrorMsg[OCI_ERR_LOADING_SHARED_LIB],
