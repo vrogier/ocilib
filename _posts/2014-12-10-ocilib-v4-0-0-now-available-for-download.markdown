@@ -13,44 +13,29 @@ categories:
 ---
 
 Hello all,
-
-  
-
+<br/>
+<br/>
 OCILIB v4.0.0 is now [_available for download_](http://orclib.sourceforge.net/download/) ! 
-
+<br/>
+<br/>
 C API had been excended and a brand new C++ API is now available :)
-
-
-
-
-    
-  * Introducing new C++ API
-
-    
-  * Added Support for some Oracle 12cR1 new features
-
-    
-  * Enhanced Collections support
-
-    
-  * Refactored Oracle Pooling support
-
-    
-  * Enhanced string conversions
-
-    
-  * Miscellaneous new methods
-
-    
-  * Miscellaneous changes
-
-    
+<br/>
+<br/>   
+  * Introducing new C++ API   
+  * Added Support for some Oracle 12cR1 new features   
+  * Enhanced Collections support   
+  * Refactored Oracle Pooling support    
+  * Enhanced string conversions   
+  * Miscellaneous new methods   
+  * Miscellaneous changes   
   * Miscellaneous fixes
-
- 
+<br/>
+<br/>
 See the [_complete v4.0.0 change log here_](http://orclib.sourceforge.net/public/changelogs/ocilib-changelog-v4.0.0.txt)
-
+<br/>
+<br/>
 Get the release and enjoy it !
-
+<br/>
+<br/>
 Vincent
 

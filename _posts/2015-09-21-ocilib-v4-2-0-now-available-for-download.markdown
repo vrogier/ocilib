@@ -13,7 +13,7 @@ categories:
 Dear all,
 <br/>
 <br/>
-**OCILIB v4.2.0 is now [_available for download_]({{site.projecturl}}/releases/) ! **
+<b>OCILIB v4.2.0 is now [_available for download_]({{site.projecturl}}/releases/) !</b>
 <br/>
 <br/>
 Get the release and enjoy it !

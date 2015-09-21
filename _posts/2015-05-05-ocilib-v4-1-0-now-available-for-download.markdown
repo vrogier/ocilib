@@ -12,33 +12,22 @@ categories:
 ---
 
 Dear all,
-
-  
-
+<br/>
+<br/>
 OCILIB v4.1.0 is now [_available for download_](http://orclib.sourceforge.net/download/) ! 
-
-
-
-
     
-  * C API  : Major library code update
-
-    
-  * C API  : Some enhancements
-
-    
-  * C API  : Various Bug fixes
-
-    
-  * C++ API: Major enhancements
-
-    
+  * C API  : Major library code update 
+  * C API  : Some enhancements    
+  * C API  : Various Bug fixes   
+  * C++ API: Major enhancements   
   * C++ API: Various bug fixes
-
- 
+<br/>
+<br/> 
 See the [_complete v4.1.0 change log here_](http://orclib.sourceforge.net/public/changelogs/ocilib-changelog-v4.1.0.txt)
-
+<br/>
+<br/>
 Get the release and enjoy it !
-
+<br/>
+<br/>
 Vincent
 
