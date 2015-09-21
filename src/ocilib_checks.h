@@ -252,7 +252,7 @@
     if (!(ptr))                                                                \
     {                                                                          \
         OCI_ExceptionNullPointer(type);                                        \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /**
@@ -322,7 +322,7 @@
     if ((v < (b1)) || (v > (b2)))                                              \
     {                                                                          \
         OCI_ExceptionOutOfBounds((con), (v));                                  \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /**
@@ -344,7 +344,7 @@
     if ((v) < (m))                                                             \
     {                                                                          \
         OCI_ExceptionMinimumValue((con), (stmt), m);                           \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /**
@@ -364,7 +364,7 @@
     if (!(exp))                                                                \
     {                                                                          \
         OCI_ExceptionTypeNotCompatible((con));                                 \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /* ********************************************************************************************* *
@@ -386,7 +386,7 @@
 #define OCI_CHECK_OBJECT_FETCHED(obj)                                         \
                                                                               \
     if (OCI_OBJECT_FETCHED_CLEAN == (obj)->hstate)                            \
-        goto ExitCall;                                                        
+        OCI_LIB_JUMP_EXIT()                                                   
 
 
 /**
@@ -406,7 +406,7 @@
     if ((((st)->status) & (v)) == 0)                                           \
     {                                                                          \
         OCI_ExceptionStatementState((st), v);                                  \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }                                                                          \
 
 
@@ -427,7 +427,7 @@
         ((st)->exec_mode != OCI_STMT_SCROLLABLE_READONLY))                     \
     {                                                                          \
         OCI_ExceptionStatementNotScrollable(st);                               \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /**
@@ -448,7 +448,7 @@
     if ((dp)->status != (v))                                                   \
     {                                                                          \
         OCI_ExceptionDirPathState((dp), (dp)->status);                         \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /* ********************************************************************************************* *
@@ -469,7 +469,7 @@
     if (!OCILib.loaded)                                                        \
     {                                                                          \
         OCI_ExceptionNotInitialized();                                         \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /**
@@ -490,7 +490,7 @@
     if (OCILib.version_runtime < ver || ((con) && (con)->ver_num < ver))           \
     {                                                                              \
         OCI_ExceptionNotAvailable(con, feat);                                      \
-        goto ExitCall;                                                             \
+        OCI_LIB_JUMP_EXIT()                                                        \
     }
 
 /**
@@ -508,7 +508,7 @@
     if (!(OCI_LIB_THREADED))                                               \
     {                                                                      \
         OCI_ExceptionNotMultithreaded();                                   \
-        goto ExitCall;                                                     \
+        OCI_LIB_JUMP_EXIT()                                                \
     }
 
 /**
@@ -586,7 +586,7 @@
     if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
         OCI_ExceptionNotAvailable((dp)->con, OCI_FEATURE_STATEMENT_CACHING);   \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /**
@@ -605,7 +605,7 @@
     if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
         OCI_ExceptionNotAvailable((dp)->con, OCI_FEATURE_DIRPATH_DATE_CACHE);  \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /**
@@ -622,7 +622,7 @@
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_REMOTE_DBS_CONTROL);       \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /**
@@ -639,7 +639,7 @@
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_DATABASE_NOTIFY);          \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /**
@@ -657,7 +657,7 @@
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_HIGH_AVAILABILITY);        \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 /**
@@ -674,7 +674,7 @@
     if ( (mode & OCI_SESSION_XA) && (!OCILib.use_xa) )                         \
     {                                                                          \
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_XA);                       \
-        goto ExitCall;                                                         \
+        OCI_LIB_JUMP_EXIT()                                                    \
     }
 
 #define OCI_CHECK_ENUM_VALUE(con, stmt, mode, values, name)                    \
@@ -684,7 +684,7 @@
         if (ii >= nn)                                                          \
         {                                                                      \
             OCI_ExceptionArgInvalidValue(con, stmt, name, mode);               \
-            goto ExitCall;                                                     \
+            OCI_LIB_JUMP_EXIT()                                                \
         }                                                                      \
     }
 

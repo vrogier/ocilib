@@ -1028,7 +1028,7 @@ boolean OCI_API OCI_LobAppend2
                OCI_LobWrite2(lob, buffer, char_count, byte_count);
     }
 
-	OCI_LIB_CALL_CHECK_CTX()
+	OCI_LIB_CALL_CHECK_CTX(OCILib.env_mode)
 
     OCI_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CHECK_PTR(OCI_IPC_INT, char_count)

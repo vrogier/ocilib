@@ -702,8 +702,10 @@ boolean OCI_API OCI_Initialize
     unsigned int mode
 )
 {
-    boolean      res  = TRUE;
-    unsigned int i    = 0;
+	OCI_LIB_CALL_DECL_VAR(boolean, FALSE)
+	OCI_LIB_CALL_CHECK_CTX(mode)
+
+    unsigned int i = 0;
 
 #ifdef OCI_IMPORT_RUNTIME
 
@@ -1285,7 +1287,6 @@ boolean OCI_API OCI_Initialize
         LIB_SYMBOL(OCILib.lib_handle, "OCIStmtGetNextResult", OCIStmtGetNextResult,
                    OCISTMTGETNEXTRESULT);
 
-
         /* API Version checking */
 
         if (OCIStmtGetNextResult)
@@ -1327,41 +1328,33 @@ boolean OCI_API OCI_Initialize
         else
         {
             LIB_CLOSE(OCILib.lib_handle);
-
             OCI_ExceptionLoadingSymbols();
-
-            res = FALSE;
+            OCI_LIB_JUMP_EXIT()
         }
     }
     else
     {
         OCI_ExceptionLoadingSharedLib();
-
-        res = FALSE;
+        OCI_LIB_JUMP_EXIT()
     }
-
-    if (res)
-    {
 
     #if defined(OCI_BIG_UINT_ENABLED)
 
-        if ((OCILib.version_runtime >= OCI_10_1) && OCILobCopy2)
-        {
-            OCILib.use_lob_ub8 = TRUE;
-        }
+    if ((OCILib.version_runtime >= OCI_10_1) && OCILobCopy2)
+    {
+        OCILib.use_lob_ub8 = TRUE;
+    }
 
     #endif
 
     #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
-        if ((OCILib.version_runtime >= OCI_9_0) && OCIStmtFetch2)
-        {
-            OCILib.use_scrollable_cursors = TRUE;
-        }
+    if ((OCILib.version_runtime >= OCI_9_0) && OCIStmtFetch2)
+    {
+        OCILib.use_scrollable_cursors = TRUE;
+    }
 
     #endif
-
-    }
 
 #endif
 
@@ -1369,125 +1362,117 @@ boolean OCI_API OCI_Initialize
 
     /* Oracle 8i does not support full Unicode mode */
 
-    if (res && (OCILib.version_runtime < OCI_9_0))
+    if (OCILib.version_runtime < OCI_9_0))
     {
         OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_WIDE_USERDATA);
-
-        res = FALSE;
+        OCI_LIB_JUMP_EXIT()
     }
 
 #endif
 
     /* Initialize OCI environment */
 
-    if (res)
+    ub4 oci_mode = OCI_ENV_MODE | OCI_OBJECT;
+
+    /* check modes */
+
+    if (mode & OCI_ENV_THREADED)
     {
-        ub4 oci_mode = OCI_ENV_MODE | OCI_OBJECT;
+        oci_mode |= OCI_THREADED;
+    }
 
-        /* check modes */
+    if (mode & OCI_ENV_EVENTS)
+    {
+        oci_mode |= OCI_EVENTS;
+    }
 
-        if (mode & OCI_ENV_THREADED)
-        {
-            oci_mode |= OCI_THREADED;
-        }
+    /* create environment on success */
 
-        if (mode & OCI_ENV_EVENTS)
-        {
-            oci_mode |= OCI_EVENTS;
-        }
+    call_status = OCI_SUCCESSFUL(OCIEnvCreate(&OCILib.env, oci_mode,
+                                                (dvoid *) &OCILib,
+                                                OCI_MemAllocOracleClient,
+                                                OCI_MemReallocOracleClient,
+                                                OCI_MemFreeOracleClient,
+                                                (size_t) 0, (dvoid **) NULL));
 
-        /* create environment on success */
-
-        res = res && OCI_SUCCESSFUL(OCIEnvCreate(&OCILib.env, oci_mode,
-                                                 (dvoid *) &OCILib,
-                                                 OCI_MemAllocOracleClient,
-                                                 OCI_MemReallocOracleClient,
-                                                 OCI_MemFreeOracleClient,
-                                                 (size_t) 0, (dvoid **) NULL));
-
-        if (!res)
-        {
-            OCI_ExceptionOCIEnvironment();
-        }
-
-        /*  allocate error handle */
-
-        res = res && OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *) OCILib.env,
+    /*  allocate error handle */
+    if (call_status)
+    {
+        call_status = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *)OCILib.env,
                                                     (dvoid **) (void *) &OCILib.err,
                                                     (ub4) OCI_HTYPE_ERROR,
                                                     (size_t) 0, (dvoid **) NULL));
     }
+    else
+    {
+        OCI_ExceptionOCIEnvironment();
+        OCI_LIB_JUMP_EXIT()
+    }
 
     /* on success, we need to initialize OCIThread object support */
 
-    if (res)
+    if (call_status)
     {
         if (OCI_LIB_THREADED)
         {
             OCIThreadProcessInit();
 
-            res = OCI_SUCCESSFUL(OCIThreadInit(OCILib.env, OCILib.err));
+            call_status = OCI_SUCCESSFUL(OCIThreadInit(OCILib.env, OCILib.err));
 
             OCILib.mem_mutex = OCI_MutexCreateInternal();
 
-            res = (NULL != OCILib.mem_mutex);
+            call_status = (NULL != OCILib.mem_mutex);
         }
 
         /* create thread key for thread errors */
 
-        if (res)
+        if (call_status)
         {
             OCILib.key_errs = OCI_ThreadKeyCreateInternal((POCI_THREADKEYDEST) OCI_ErrorFree);
 
-            res = (NULL != OCILib.key_errs);
+            call_status = (NULL != OCILib.key_errs);
         }
 
         /* allocate connections internal list */
 
-        if (res)
+        if (call_status)
         {
             OCILib.cons = OCI_ListCreate(OCI_IPC_CONNECTION);
 
-            res = (NULL != OCILib.cons);
+            call_status = (NULL != OCILib.cons);
         }
 
         /* allocate pools internal list */
 
-        if (res)
+        if (call_status)
         {
-
             OCILib.pools = OCI_ListCreate(OCI_IPC_POOL);
 
-            res = (NULL != OCILib.pools);
+            call_status = (NULL != OCILib.pools);
         }
 
     #if OCI_VERSION_COMPILE >= OCI_10_2
 
         /* allocate connection pools internal list */
 
-        if (res)
+        if (call_status)
         {
-
             OCILib.subs = OCI_ListCreate(OCI_IPC_NOTIFY);
 
-            res = (NULL != OCILib.subs);
+            call_status = (NULL != OCILib.subs);
         }
 
     #endif
 
-        if (res)
+        if (call_status)
         {
-
             OCILib.arrs = OCI_ListCreate(OCI_IPC_ARRAY);
 
-            res = (NULL != OCILib.arrs);
+            call_status = (NULL != OCILib.arrs);
         }
     }
 
-    if (res )
-    {
-        OCILib.loaded = TRUE;
-    }
+    OCILib.loaded = call_retval = call_status;
 
     /* test for XA support */
 
@@ -1501,7 +1486,7 @@ boolean OCI_API OCI_Initialize
     OCILib.use_xa = TRUE;
 #endif
 
-    return res;
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1765,7 +1750,7 @@ OCI_Error * OCI_API OCI_GetLastError
     {
         err = OCI_ErrorGet(TRUE);
 
-        if (err && (!err->raise && OCILib.loaded))
+        if (err && (!err->raise))
         {
             err = NULL;
         }
