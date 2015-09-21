@@ -1,4 +1,4 @@
-2015-08-24 Version 4.2.0 Vincent Rogier vince.rogier@ocilib.net
+2015-09-17 Version 4.2.0 Vincent Rogier vince.rogier@ocilib.net
 
     * New Features:
                    
@@ -54,14 +54,17 @@
         - C API: Fixed OCI_ElemSetXXX() for numeric types when element is created using OCI_ElemCreate() instead of being retrieved with OCI_IterGetPrev() or OCI_IterGetNext()
         - C API: When OCI_SubscriptionRegister() failed, the input connection was freed leading the caller to hold a dangling pointer to the connection handle
         - C API: Fixed comparison call in OCI_TimestampCompare()
+        - C API: Fixed alignment computation in OCI_GetStruct()
+        - C API: Fixed alignment computation in OCI_ObjectGetUserStructSize()
         - C API: Fixed compilation under compilers that require variable to be declared at the beginning of blocks (example : VS2010)
-          C API: Fixed minor internal bugs and issues
+        - C API: Fixed minor internal bugs and issues
         - C++ API: ocilib::HandleHolder<T>::Acquire() => Made sure that a smart handle is not allocated if the input C handle is NULL (even if it shall not happen as the C API must raise an error if it cannot return a valid handle)
         - C++ API: ocilib::HandleHolder<T>::SmartHandle::~SmartHandle() => the C API handle free function is now called only if the handle is not NULL
         - C++ API: Fixed compilation error when using OCI_CHARSET_WIDE
         - C++ API: Fixed ocilib::Raw binding when using OCI_CHARSET_WIDE
         - C++ API: Fixed ocilib::BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
         - C++ API: Fixed binding array of Blobs
+        - C++ API: Fixed binding array of Raw
 
     * Miscellaneous
 
