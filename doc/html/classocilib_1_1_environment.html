@@ -25,7 +25,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.1.0</span>
+   &#160;<span id="projectnumber">4.2.0</span>
    </div>
   </td>
  </tr>
@@ -154,6 +154,12 @@ Public Types</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:a45b76afea0bc2e821b60f7a0d2d38f5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Oracle instance shutdown flags enumerated values.  <a href="classocilib_1_1_environment.html#a45b76afea0bc2e821b60f7a0d2d38f5e">More...</a><br /></td></tr>
 <tr class="separator:a45b76afea0bc2e821b60f7a0d2d38f5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f71b1f47ec35a84c94fcb125dc9aff1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1">AllocatedBytesValues</a> { <a class="el" href="classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1ae696a035cf1bb64aadc583eb85ca5fc5">OracleClientBytes</a> = OCI_MEM_ORACLE, 
+<a class="el" href="classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1a926be78565d4fc57fe7fa0c131dc0122">OcilibBytes</a> = OCI_MEM_OCILIB, 
+<a class="el" href="classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1ac5933ed7ecb03f34fd13b888e6ab971f">AllBytes</a> = OCI_MEM_ALL
+ }</td></tr>
+<tr class="memdesc:a9f71b1f47ec35a84c94fcb125dc9aff1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocated Bytes enumerated values.  <a href="classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1">More...</a><br /></td></tr>
+<tr class="separator:a9f71b1f47ec35a84c94fcb125dc9aff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1afec32c5e6d04095db2126b0eaa5788"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classocilib_1_1_enum.html">Enum</a>&lt; <a class="el" href="classocilib_1_1_environment.html#a872e754685d391c109c4fd9701ef3ff2">HAEventSourceValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_environment.html#a1afec32c5e6d04095db2126b0eaa5788">HAEventSource</a></td></tr>
 <tr class="memdesc:a1afec32c5e6d04095db2126b0eaa5788"><td class="mdescLeft">&#160;</td><td class="mdescRight">Source of HA events.  <a href="#a1afec32c5e6d04095db2126b0eaa5788">More...</a><br /></td></tr>
 <tr class="separator:a1afec32c5e6d04095db2126b0eaa5788"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -186,6 +192,10 @@ Public Types</h2></td></tr>
 &lt; <a class="el" href="classocilib_1_1_environment.html#a45b76afea0bc2e821b60f7a0d2d38f5e">ShutdownFlagsValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_environment.html#a066d7a87e23657970717ef6bd88feb42">ShutdownFlags</a></td></tr>
 <tr class="memdesc:a066d7a87e23657970717ef6bd88feb42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Oracle instance shutdown flags.  <a href="#a066d7a87e23657970717ef6bd88feb42">More...</a><br /></td></tr>
 <tr class="separator:a066d7a87e23657970717ef6bd88feb42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80290746feb702fe420f4ae71ce31616"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classocilib_1_1_flags.html">Flags</a><br class="typebreak" />
+&lt; <a class="el" href="classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1">AllocatedBytesValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_environment.html#a80290746feb702fe420f4ae71ce31616">AllocatedBytesFlags</a></td></tr>
+<tr class="memdesc:a80290746feb702fe420f4ae71ce31616"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocated Bytes.  <a href="#a80290746feb702fe420f4ae71ce31616">More...</a><br /></td></tr>
+<tr class="separator:a80290746feb702fe420f4ae71ce31616"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3755eb4b2ee104fa249e95267260ec46"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3755eb4b2ee104fa249e95267260ec46"></a>
 typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_environment.html#a3755eb4b2ee104fa249e95267260ec46">HAHandlerProc</a> )(<a class="el" href="classocilib_1_1_connection.html">Connection</a> &amp;con, <a class="el" href="classocilib_1_1_environment.html#a1afec32c5e6d04095db2126b0eaa5788">HAEventSource</a> eventSource, <a class="el" href="classocilib_1_1_environment.html#a97bc2a31992b9658502098e2e40b67e9">HAEventType</a> eventType, <a class="el" href="classocilib_1_1_timestamp.html">Timestamp</a> &amp;time)</td></tr>
 <tr class="memdesc:a3755eb4b2ee104fa249e95267260ec46"><td class="mdescLeft">&#160;</td><td class="mdescRight">User callback for HA event notifications. <br /></td></tr>
@@ -211,6 +221,9 @@ static <a class="el" href="classocilib_1_1_environment.html#a95cd8c5d23b64ddd215
 static <a class="el" href="classocilib_1_1_environment.html#ad698a9d167f6da8b6a977233927f504c">Environment::CharsetMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_environment.html#aab574a36efa9fd91350dd0f193cab08c">GetCharset</a> ()</td></tr>
 <tr class="memdesc:aab574a36efa9fd91350dd0f193cab08c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCILIB charset type. <br /></td></tr>
 <tr class="separator:aab574a36efa9fd91350dd0f193cab08c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62b413dd1056fc73daca8e579c2ed847"><td class="memItemLeft" align="right" valign="top">static big_uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_environment.html#a62b413dd1056fc73daca8e579c2ed847">GetAllocatedBytes</a> (<a class="el" href="classocilib_1_1_environment.html#a80290746feb702fe420f4ae71ce31616">AllocatedBytesFlags</a> type)</td></tr>
+<tr class="memdesc:a62b413dd1056fc73daca8e579c2ed847"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of bytes allocated internally in the library.  <a href="#a62b413dd1056fc73daca8e579c2ed847">More...</a><br /></td></tr>
+<tr class="separator:a62b413dd1056fc73daca8e579c2ed847"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa7d3f2ac54426c7f585a3e9c28a6119"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa7d3f2ac54426c7f585a3e9c28a6119"></a>
 static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_environment.html#aaa7d3f2ac54426c7f585a3e9c28a6119">Initialized</a> ()</td></tr>
 <tr class="memdesc:aaa7d3f2ac54426c7f585a3e9c28a6119"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if the environment has been successfully initialized. <br /></td></tr>
@@ -270,7 +283,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Static class in charge of library initialization / cleanup. </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00622">622</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00621">621</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a class="anchor" id="a1afec32c5e6d04095db2126b0eaa5788"></a>
 <div class="memitem">
@@ -285,7 +298,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <p>Source of HA events. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_environment.html#a872e754685d391c109c4fd9701ef3ff2" title="HA Event sources enumerated values. ">Environment::HAEventSourceValues</a> </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00664">664</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00663">663</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -302,7 +315,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <p>Type of HA events. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_environment.html#a2ecdc9815fb753aae6ca852aee9998c9" title="HA Event types enumerated values. ">Environment::HAEventTypeValues</a> </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00686">686</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00685">685</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -319,7 +332,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <p><a class="el" href="classocilib_1_1_environment.html" title="Static class in charge of library initialization / cleanup. ">Environment</a> <a class="el" href="classocilib_1_1_flags.html" title="Template Flags template class providing some type safety to some extends for manipulating flags set v...">Flags</a>. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_environment.html#a87b82fd52f230a521416ee49e2ace788" title="Environment Flags enumerated values. ">Environment::EnvironmentFlagsValues</a> </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00710">710</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00709">709</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -336,7 +349,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <p>OCI libraries import mode. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_environment.html#a95cd8c5d23b64ddd2156d80b4beff405" title="OCI libraries import mode. ">Environment::ImportMode</a> </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00732">732</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00731">731</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -353,7 +366,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <p><a class="el" href="classocilib_1_1_environment.html" title="Static class in charge of library initialization / cleanup. ">Environment</a> charset mode. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_environment.html#a0c5a4f467a27a13663e4c8db58674762" title="Charset mode enumerated values. ">Environment::CharsetModeValues</a> </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00754">754</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00753">753</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -370,7 +383,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <p>Sessions flags. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774ae" title="Session flags enumerated values. ">Environment::SessionFlagsValues</a> </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00780">780</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00779">779</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -387,7 +400,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <p>Oracle instance start modes. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_environment.html#a13bc1c46153530664fba7e79a8fad6fa" title="Oracle instance start modes enumerated values. ">Environment::StartModeValues</a> </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00806">806</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00805">805</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -404,7 +417,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <p>Oracle instance start flags. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_environment.html#a323b1b9f91731ba7af891c5b8f33cff9" title="Oracle instance start flags enumerated values. ">Environment::StartFlagsValues</a> </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00830">830</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00829">829</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -421,7 +434,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <p>Oracle instance shutdown modes. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_environment.html#adf147cb0c33421a41603036e10503c84" title="Oracle instance shutdown modes enumerated values. ">Environment::ShutdownModeValues</a> </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00856">856</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00855">855</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -438,7 +451,24 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <p>Oracle instance shutdown flags. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_environment.html#a45b76afea0bc2e821b60f7a0d2d38f5e" title="Oracle instance shutdown flags enumerated values. ">Environment::ShutdownFlagsValues</a> </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00893">893</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00892">892</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a80290746feb702fe420f4ae71ce31616"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classocilib_1_1_flags.html">Flags</a>&lt;<a class="el" href="classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1">AllocatedBytesValues</a>&gt; <a class="el" href="classocilib_1_1_environment.html#a80290746feb702fe420f4ae71ce31616">ocilib::Environment::AllocatedBytesFlags</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Allocated Bytes. </p>
+<p>Possible values are <a class="el" href="classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1" title="Allocated Bytes enumerated values. ">Environment::AllocatedBytesValues</a> </p>
+
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00916">916</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -478,7 +508,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00639">639</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00638">638</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -502,7 +532,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00671">671</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00670">670</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -529,7 +559,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00693">693</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00692">692</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -553,7 +583,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00717">717</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00716">716</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -577,7 +607,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00739">739</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00738">738</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -607,7 +637,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00761">761</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00760">760</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -637,7 +667,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00787">787</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00786">786</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -664,7 +694,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00813">813</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00812">812</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -694,7 +724,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00837">837</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00836">836</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -755,7 +785,34 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00863">863</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00862">862</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9f71b1f47ec35a84c94fcb125dc9aff1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1">ocilib::Environment::AllocatedBytesValues</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Allocated Bytes enumerated values. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a9f71b1f47ec35a84c94fcb125dc9aff1ae696a035cf1bb64aadc583eb85ca5fc5"></a>OracleClientBytes&#160;</td><td class="fielddoc">
+<p>Allocated bytes by Oracle Client </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a9f71b1f47ec35a84c94fcb125dc9aff1a926be78565d4fc57fe7fa0c131dc0122"></a>OcilibBytes&#160;</td><td class="fielddoc">
+<p>Allocated bytes by OCILIB </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a9f71b1f47ec35a84c94fcb125dc9aff1ac5933ed7ecb03f34fd13b888e6ab971f"></a>AllBytes&#160;</td><td class="fielddoc">
+<p>All Allocated bytes </p>
+</td></tr>
+</table>
+
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l00899">899</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -809,7 +866,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </ul>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00887">887</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00915">915</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 </div>
 </div>
@@ -842,7 +899,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>It should be called <b>ONCE</b> per application </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00892">892</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00920">920</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 </div>
 </div>
@@ -870,7 +927,43 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <p>Return the <a class="el" href="classocilib_1_1_environment.html" title="Static class in charge of library initialization / cleanup. ">Environment</a> mode flags. </p>
 <dl class="section note"><dt>Note</dt><dd>It returns the value of the parameter 'mode' passed to <a class="el" href="classocilib_1_1_environment.html#a83613d62908717ddf7d0ac797d63120a" title="Initialize the OCILIB environment. ">Initialize()</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00897">897</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00925">925</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a62b413dd1056fc73daca8e579c2ed847"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">big_uint ocilib::Environment::GetAllocatedBytes </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classocilib_1_1_environment.html#a80290746feb702fe420f4ae71ce31616">AllocatedBytesFlags</a>&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the current number of bytes allocated internally in the library. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>: type of memory to request </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00940">940</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+
+<p>References <a class="el" href="namespaceocilib.html#ada9a964035fd103d4ec07500f404a658">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_initialization.html#ga59c50704dae44e650bf53a963d32567b">OCI_GetAllocatedBytes()</a>.</p>
 
 </div>
 </div>
@@ -902,7 +995,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </ul>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00917">917</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00950">950</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p>References <a class="el" href="namespaceocilib.html#ada9a964035fd103d4ec07500f404a658">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_initialization.html#ga6fa5693d691752f93dbc6baf07e6cceb">OCI_GetOCICompileVersion()</a>.</p>
 
@@ -936,7 +1029,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </ul>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00922">922</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00955">955</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p>References <a class="el" href="namespaceocilib.html#ada9a964035fd103d4ec07500f404a658">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_initialization.html#ga771bf5d33dbd0b63d84242819209b35b">OCI_GetOCIRuntimeVersion()</a>.</p>
 
@@ -973,7 +1066,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Default value is false </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00957">957</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00990">990</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p>References <a class="el" href="group___ocilib_c_api_initialization.html#ga60f3ade91299999200076cd53ed9066e">OCI_EnableWarnings()</a>.</p>
 
@@ -1039,7 +1132,7 @@ static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <dd>
 Conversions are performed by Oracle built-in functions whenever possible. For DATE, TIMESTAMP and numeric types, see documentation of Oracle SQL to_char() function for more details For BINARY_DOUBLE and BINARY_FLOAT, refer to the C Standard Library printf() family documentation </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00962">962</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00995">995</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p>References <a class="el" href="namespaceocilib.html#ada9a964035fd103d4ec07500f404a658">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gade18954504b0d40e981e683f00d39951">OCI_SetFormat()</a>.</p>
 
@@ -1076,7 +1169,7 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 </dl>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="classocilib_1_1_environment.html#a0a67cffd57505db4a35005b8d373f5ba" title="Set the format string for implicit string conversions of the given type. ">SetFormat()</a> for possible values </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00967">967</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01000">1000</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p>References <a class="el" href="namespaceocilib.html#ada9a964035fd103d4ec07500f404a658">ocilib::Check()</a>, <a class="el" href="namespaceocilib.html#a5cd1f7bf7b526707a602632ac2d657f0">ocilib::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga4ed928994e00b49fe651b450d47baaf1">OCI_GetFormat()</a>.</p>
 
@@ -1167,7 +1260,7 @@ External credentials are supported by supplying a empty strings for the 'user' a
 <dd>
 If the client side spfile is not provided, the database is started with its server-side spfile. </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00972">972</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01005">1005</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p>References <a class="el" href="namespaceocilib.html#ada9a964035fd103d4ec07500f404a658">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_instances_management.html#ga1f7f4e4a1f7f32d70296281546276ce5">OCI_DatabaseStartup()</a>.</p>
 
@@ -1249,7 +1342,7 @@ Shutdown flag values are exclusive.</dd>
 <dd>
 External credentials are supported by supplying a empty strings for the 'user' and 'pwd' parameters If the param 'db' is empty then a connection to the default local DB is done. </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00979">979</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01012">1012</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p>References <a class="el" href="namespaceocilib.html#ada9a964035fd103d4ec07500f404a658">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_instances_management.html#ga6c4b72e7ad5c87691fdecca573dca41b">OCI_DatabaseShutdown()</a>.</p>
 
@@ -1310,7 +1403,7 @@ External credentials are supported by supplying a empty strings for the 'user' a
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00986">986</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01019">1019</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p>References <a class="el" href="namespaceocilib.html#ada9a964035fd103d4ec07500f404a658">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga029b4ed1c6396d6fa8d9552e19ca9c7d">OCI_SetUserPassword()</a>.</p>
 
@@ -1350,7 +1443,7 @@ External credentials are supported by supplying a empty strings for the 'user' a
 EnvMode::Events flag must be passed to <a class="el" href="classocilib_1_1_environment.html#a83613d62908717ddf7d0ac797d63120a" title="Initialize the OCILIB environment. ">Initialize()</a> to be able to use HA events</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00991">991</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01024">1024</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p>References <a class="el" href="namespaceocilib.html#ada9a964035fd103d4ec07500f404a658">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_initialization.html#ga6ba3f601a97363997f47c9bb0cd9e394">OCI_SetHAHandler()</a>.</p>
 
@@ -1362,7 +1455,7 @@ EnvMode::Events flag must be passed to <a class="el" href="classocilib_1_1_envir
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_environment.html">Environment</a></li>
-    <li class="footer">Generated on Tue May 5 2015 22:47:03 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Mon Sep 21 2015 18:48:25 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

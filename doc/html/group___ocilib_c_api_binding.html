@@ -25,7 +25,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.1.0</span>
+   &#160;<span id="projectnumber">4.2.0</span>
    </div>
   </td>
  </tr>
@@ -275,6 +275,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga58ca7a9092f9ae529057b368e87f497b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga58ca7a9092f9ae529057b368e87f497b">OCI_IsRebindingAllowed</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
 <tr class="memdesc:ga58ca7a9092f9ae529057b368e87f497b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate if rebinding is allowed on the given statement.  <a href="#ga58ca7a9092f9ae529057b368e87f497b">More...</a><br /></td></tr>
 <tr class="separator:ga58ca7a9092f9ae529057b368e87f497b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa099edd36010cb094279568dfdf6edf8"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#gaa099edd36010cb094279568dfdf6edf8">OCI_BindBoolean</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, boolean *data)</td></tr>
+<tr class="memdesc:gaa099edd36010cb094279568dfdf6edf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind a boolean variable (PL/SQL ONLY)  <a href="#gaa099edd36010cb094279568dfdf6edf8">More...</a><br /></td></tr>
+<tr class="separator:gaa099edd36010cb094279568dfdf6edf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga540c35832fdc8df0a34ea641c6366d63"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga540c35832fdc8df0a34ea641c6366d63">OCI_BindShort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, short *data)</td></tr>
 <tr class="memdesc:ga540c35832fdc8df0a34ea641c6366d63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind an short variable.  <a href="#ga540c35832fdc8df0a34ea641c6366d63">More...</a><br /></td></tr>
 <tr class="separator:ga540c35832fdc8df0a34ea641c6366d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -608,6 +611,57 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>TRUE if allowed otherwise FALSE </dd></dl>
 
 <p>Referenced by <a class="el" href="classocilib_1_1_statement.html#a0ba61596d6101564dcf874aaad9b6785">ocilib::Statement::IsRebindingAllowed()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="gaa099edd36010cb094279568dfdf6edf8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_EXPORT boolean OCI_API OCI_BindBoolean </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
+          <td class="paramname"><em>stmt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const otext *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">boolean *&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;ocilib.h&gt;</code></p>
+
+<p>Bind a boolean variable (PL/SQL ONLY) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
+    <tr><td class="paramname">name</td><td>- Variable name </td></tr>
+    <tr><td class="paramname">data</td><td>- Pointer to boolean variable</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd><ul>
+<li><a class="el" href="group___ocilib_c_api_binding.html#gaa099edd36010cb094279568dfdf6edf8" title="Bind a boolean variable (PL/SQL ONLY) ">OCI_BindBoolean()</a> CAN ONLY BE USED for PL/SQL boolean type when calling PL/SQL procedures/function</li>
+<li>ONLY supported by Oracle 12c and above !</li>
+</ul>
+</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
@@ -2967,6 +3021,7 @@ Default value is OCI_BDM_IN_OUT</dd></dl>
 <li>OCI_CDT_OBJECT : OCI_Object *</li>
 <li>OCI_CDT_COLLECTION : OCI_Coll *</li>
 <li>OCI_CDT_REF : OCI_Ref *</li>
+<li>OCI_CDT_BOOLEAN : boolean</li>
 </ul>
 <dl class="section return"><dt>Returns</dt><dd>The column type or OCI_CDT_UNKNOWN on error </dd></dl>
 
@@ -3564,7 +3619,7 @@ For handled based data types (non scalar types), OCILIB performs an extra check 
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue May 5 2015 22:47:03 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Mon Sep 21 2015 18:48:23 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

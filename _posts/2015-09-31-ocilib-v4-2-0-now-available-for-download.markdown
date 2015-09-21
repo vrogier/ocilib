@@ -1,0 +1,95 @@
+---
+author: admin
+comments: false
+date: 2015-09-05 21:00:00+00:00
+layout: post
+slug: ocilib-v4-2-0-now-available-for-download
+title: OCILIB v4.2.0 now available for download !
+categories:
+- News
+- Updates
+---
+
+Dear all,
+
+
+OCILIB v4.2.0 is now [_available for download_]({{site.projecturl}}/releases/) ! 
+### New Features:
+           
+###### Implemented Oracle 12c extended support for PL/SQL types
+
+    * Support for  PL/SQL boolean, records and index by tables
+    * These types can be now used in binding calls
+    * C API: PL/SQL records can now be used using OCI_Object
+    * C API: PL/SQL Index by tables can now be used using OCI_Coll
+    * C API: PL/SQL boolean can be used using boolean C type
+    * C API: Added OCI_BindBoolean()
+    * C API: Added OCI_ElemSetBoolean(), OCI_ElemGetBoolean()
+    * C API: Added OCI_ObjectSetBoolean(), OCI_ObjectGetBoolean()
+    * C API: OCI_TypeInfoGet() supports now records these PL/SQL types
+    * C API: Added collection type OCI_COLL_INDEXED_TABLE
+    * C API: Added data type OCI_CDT_BOOLEAN
+    * C++ API: PL/SQL records can now be used using ocilib::Object
+    * C++ API: PL/SQL Index by tables can now be used using ocilib::Collection<T>
+    * C++ API: PL/SQL boolean can be used using bool C++ type
+    * C++ API: Added template specializations for supporting PL/SQL boolean using C++ bool in the following calls:
+        - ocilib::Statement::Bind()
+        - ocilib::Object::Get()
+        - ocilib::Object::Set()
+    * C++ API: Added ocilib::Collection<T> specializations for supporting bool data type
+    * C++ API: Added ocilib::TypeBoolean
+    * C++ API: Added ocilib::Collection::IndexedTable
+    * C++ API: Added internal core class ocilib::BindTypeAdaptor<T1, T2>
+
+######  Added Memory usage information
+
+    * C API: Added OCI_GetAllocatedBytes
+    * C API: Added OCI_MEM_ORACLE, OCI_MEM_OCILIB and OCI_MEM_ALL
+    * C++ API: Added ocilib::Environment::GetAllocatedBytes()
+    * C++ API: Added ocilib::Environment::OracleClientBytes, ocilib::Environment::OcilibBytes, ocilib::Environment::AllBytes
+
+######  Added Session Max Cursor information
+
+    * C API: Added OCI_GetMaxCursors()
+    * C++ API: Added ocilib::Connection::GetMaxCursors()
+
+### Enhancements:
+
+######  C++ API:: Enhanced pre/post statement execution check for binds
+
+    * Before execution, bind buffers are only updated from host variables if Bind Direction has the ocilib::BindInfo::In flag
+    * After execution, host variables are only updated from bind buffers if Bind Direction has the ocilib::BindInfo::Out flag
+    
+### Fixes:
+
+    * C API: Fixed OCI_GetLastError() that returned NULL after OCI_Initialize() if OCI shared lib cannot be loaded
+    * C API: Fixed OCI_ColumnGetSQLType() that has its break statements within the switch removed by mistake leading to return "?" in all cases
+    * C API: Fixed OCI_ElemSetXXX() where XXX is a numeric type
+    * C API: Fixed OCI_IterFree() when dealing with numbers
+    * C API: Fixed Memory retention in local OCI objects cache when calling OCI_ObjectFree(): Objects indicator structures were not freed until calling OCI_Cleanup()
+    * C API: Fixed OCI_ElemSetXXX() for numeric types when element is created using OCI_ElemCreate() instead of being retrieved with OCI_IterGetPrev() or OCI_IterGetNext()
+    * C API: When OCI_SubscriptionRegister() failed, the input connection was freed leading the caller to hold a dangling pointer to the connection handle
+    * C API: Fixed comparison call in OCI_TimestampCompare()
+    * C API: Fixed alignment computation in OCI_GetStruct()
+    * C API: Fixed alignment computation in OCI_ObjectGetUserStructSize()
+    * C API: Fixed compilation under compilers that require variable to be declared at the beginning of blocks (example : VS2010)
+    * C API: Fixed minor internal bugs and issues
+    * C++ API: ocilib::HandleHolder<T>::Acquire() => Made sure that a smart handle is not allocated if the input C handle is NULL (even if it shall not happen as the C API must raise an error if it cannot return a valid handle)
+    * C++ API: ocilib::HandleHolder<T>::SmartHandle::~SmartHandle() => the C API handle free function is now called only if the handle is not NULL
+    * C++ API: Fixed compilation error when using OCI_CHARSET_WIDE
+    * C++ API: Fixed ocilib::Raw binding when using OCI_CHARSET_WIDE
+    * C++ API: Fixed ocilib::BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
+    * C++ API: Fixed binding array of Blobs
+    * C++ API: Fixed binding array of Raw
+
+### Miscellaneous
+
+    * Doxygen documentation: Added C and C++ data types mappings documentation page
+    * Removed references to sourceforge.net
+    * Minor internal code changes to fixing hypothetical issues found by code analysis (CppCheck)
+    * Fixed some typos and formatting issues
+
+Get the release and enjoy it !
+
+Vincent
+

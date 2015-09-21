@@ -10,6 +10,7 @@ var classocilib_1_1_environment =
     [ "StartFlags", "classocilib_1_1_environment.html#a90d0579b764742331c4a783293ad1bd1", null ],
     [ "ShutdownMode", "classocilib_1_1_environment.html#ac465d236370441e8155d352a2dd587ee", null ],
     [ "ShutdownFlags", "classocilib_1_1_environment.html#a066d7a87e23657970717ef6bd88feb42", null ],
+    [ "AllocatedBytesFlags", "classocilib_1_1_environment.html#a80290746feb702fe420f4ae71ce31616", null ],
     [ "HAHandlerProc", "classocilib_1_1_environment.html#a3755eb4b2ee104fa249e95267260ec46", null ],
     [ "HAEventSourceValues", "classocilib_1_1_environment.html#a872e754685d391c109c4fd9701ef3ff2", [
       [ "SourceInstance", "classocilib_1_1_environment.html#a872e754685d391c109c4fd9701ef3ff2af493b3e472c1151e85b908e0eed05b75", null ],
@@ -67,11 +68,17 @@ var classocilib_1_1_environment =
       [ "ShutdownImmediate", "classocilib_1_1_environment.html#a45b76afea0bc2e821b60f7a0d2d38f5eacd62fca9f402c08586471a2a6ff1e1ce", null ],
       [ "ShutdownAbort", "classocilib_1_1_environment.html#a45b76afea0bc2e821b60f7a0d2d38f5eade5e8adcc3a72196be4048a74ade6ffa", null ]
     ] ],
+    [ "AllocatedBytesValues", "classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1", [
+      [ "OracleClientBytes", "classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1ae696a035cf1bb64aadc583eb85ca5fc5", null ],
+      [ "OcilibBytes", "classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1a926be78565d4fc57fe7fa0c131dc0122", null ],
+      [ "AllBytes", "classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1ac5933ed7ecb03f34fd13b888e6ab971f", null ]
+    ] ],
     [ "Initialize", "classocilib_1_1_environment.html#a83613d62908717ddf7d0ac797d63120a", null ],
     [ "Cleanup", "classocilib_1_1_environment.html#a8c21dd437c424a1f6cb63ed66441c979", null ],
     [ "GetMode", "classocilib_1_1_environment.html#a478c259fcfeca352402478913e7f3049", null ],
     [ "GetImportMode", "classocilib_1_1_environment.html#aadbc0d6b12969d64e46a11aa43ac4ba0", null ],
     [ "GetCharset", "classocilib_1_1_environment.html#aab574a36efa9fd91350dd0f193cab08c", null ],
+    [ "GetAllocatedBytes", "classocilib_1_1_environment.html#a62b413dd1056fc73daca8e579c2ed847", null ],
     [ "Initialized", "classocilib_1_1_environment.html#aaa7d3f2ac54426c7f585a3e9c28a6119", null ],
     [ "GetCompileVersion", "classocilib_1_1_environment.html#a3785fef7232b7210fc619aa7f7d1d14e", null ],
     [ "GetCompileMajorVersion", "classocilib_1_1_environment.html#ab960dffe3b86e8748d5b518c64e52db2", null ],

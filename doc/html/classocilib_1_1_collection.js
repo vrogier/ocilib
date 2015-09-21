@@ -6,7 +6,8 @@ var classocilib_1_1_collection =
     [ "iterator", "classocilib_1_1_collection.html#aade7a5c445025968f0b91357a2925c5f", null ],
     [ "CollectionTypeValues", "classocilib_1_1_collection.html#a71184e168473a0c48994b2129029793a", [
       [ "Varray", "classocilib_1_1_collection.html#a71184e168473a0c48994b2129029793aae3f40a9c4a4cf57561ae1a2d3c8faa5d", null ],
-      [ "NestedTable", "classocilib_1_1_collection.html#a71184e168473a0c48994b2129029793aa1ef12ebe57fe692a8dc59a7d3512eb56", null ]
+      [ "NestedTable", "classocilib_1_1_collection.html#a71184e168473a0c48994b2129029793aa1ef12ebe57fe692a8dc59a7d3512eb56", null ],
+      [ "IndexedTable", "classocilib_1_1_collection.html#a71184e168473a0c48994b2129029793aa006fe0225ac94e28451b81a912612095", null ]
     ] ],
     [ "Collection", "classocilib_1_1_collection.html#a0f723e75bedfd51bfc3bc9108df63200", null ],
     [ "Collection", "classocilib_1_1_collection.html#a85de261b1f8af8b6609c5482923d7a90", null ],

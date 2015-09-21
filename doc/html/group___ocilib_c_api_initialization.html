@@ -25,7 +25,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.1.0</span>
+   &#160;<span id="projectnumber">4.2.0</span>
    </div>
   </td>
  </tr>
@@ -115,6 +115,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga19c86551503e6670c96ef3e81a1ce1ba"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga19c86551503e6670c96ef3e81a1ce1ba">OCI_GetCharset</a> (void)</td></tr>
 <tr class="memdesc:ga19c86551503e6670c96ef3e81a1ce1ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCILIB charset type.  <a href="#ga19c86551503e6670c96ef3e81a1ce1ba">More...</a><br /></td></tr>
 <tr class="separator:ga19c86551503e6670c96ef3e81a1ce1ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga59c50704dae44e650bf53a963d32567b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga59c50704dae44e650bf53a963d32567b">OCI_GetAllocatedBytes</a> (unsigned int mem_type)</td></tr>
+<tr class="memdesc:ga59c50704dae44e650bf53a963d32567b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of bytes allocated internally in the library.  <a href="#ga59c50704dae44e650bf53a963d32567b">More...</a><br /></td></tr>
+<tr class="separator:ga59c50704dae44e650bf53a963d32567b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga60f3ade91299999200076cd53ed9066e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga60f3ade91299999200076cd53ed9066e">OCI_EnableWarnings</a> (boolean value)</td></tr>
 <tr class="memdesc:ga60f3ade91299999200076cd53ed9066e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or disable Oracle warning notifications.  <a href="#ga60f3ade91299999200076cd53ed9066e">More...</a><br /></td></tr>
 <tr class="separator:ga60f3ade91299999200076cd53ed9066e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -321,6 +324,40 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ga59c50704dae44e650bf53a963d32567b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_EXPORT big_uint OCI_API OCI_GetAllocatedBytes </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>mem_type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;ocilib.h&gt;</code></p>
+
+<p>Return the current number of bytes allocated internally in the library. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mem_type</td><td>: type of memory to request</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Possible values are:<ul>
+<li>OCI_MEM_ORACLE : bytes allocated by Oracle client library</li>
+<li>OCI_MEM_OCILIB : bytes allocated by OCILIB library</li>
+<li>OCI_MEM_ORACLE : bytes allocated by all libraries </li>
+</ul>
+</dd></dl>
+
+<p>Referenced by <a class="el" href="classocilib_1_1_environment.html#a62b413dd1056fc73daca8e579c2ed847">ocilib::Environment::GetAllocatedBytes()</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="ga60f3ade91299999200076cd53ed9066e"></a>
 <div class="memitem">
 <div class="memproto">
@@ -415,7 +452,7 @@ OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_i
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue May 5 2015 22:47:02 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Mon Sep 21 2015 18:48:21 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

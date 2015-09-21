@@ -4,6 +4,7 @@ var group___ocilib_c_api_binding =
     [ "OCI_BindArrayGetSize", "group___ocilib_c_api_binding.html#gac4d78a514b3d9fa1cdeb561e98d8140d", null ],
     [ "OCI_AllowRebinding", "group___ocilib_c_api_binding.html#gaf1aa3a489ea1c2f53273b986d46e2d68", null ],
     [ "OCI_IsRebindingAllowed", "group___ocilib_c_api_binding.html#ga58ca7a9092f9ae529057b368e87f497b", null ],
+    [ "OCI_BindBoolean", "group___ocilib_c_api_binding.html#gaa099edd36010cb094279568dfdf6edf8", null ],
     [ "OCI_BindShort", "group___ocilib_c_api_binding.html#ga540c35832fdc8df0a34ea641c6366d63", null ],
     [ "OCI_BindArrayOfShorts", "group___ocilib_c_api_binding.html#ga9c0f044cc59fdaf5b07f4fc6b30d0635", null ],
     [ "OCI_BindUnsignedShort", "group___ocilib_c_api_binding.html#ga6122f4f01b666d14ba232dc3dd478b42", null ],

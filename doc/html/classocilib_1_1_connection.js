@@ -68,6 +68,7 @@ var classocilib_1_1_connection =
     [ "SetStatementCacheSize", "classocilib_1_1_connection.html#a633a95c4ccba6b647df22c678db63cf5", null ],
     [ "GetDefaultLobPrefetchSize", "classocilib_1_1_connection.html#a11e9d5c123ffb236d9718613e68a732b", null ],
     [ "SetDefaultLobPrefetchSize", "classocilib_1_1_connection.html#a7974876422e8ecd7f566091eb926313d", null ],
+    [ "GetMaxCursors", "classocilib_1_1_connection.html#ab6423a7725cb1dfbff3bfdc4bcdf792e", null ],
     [ "IsTAFCapable", "classocilib_1_1_connection.html#acb1b9159abfed7f5fca45a33a421680a", null ],
     [ "SetTAFHandler", "classocilib_1_1_connection.html#a6e83ffbf5d12d6fad2abc6c0ec72d5e7", null ],
     [ "GetUserData", "classocilib_1_1_connection.html#a4758404a8195d8f32bf71a98f53d0a35", null ],

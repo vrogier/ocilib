@@ -36,5 +36,6 @@ var group___ocilib_c_api_connections =
     [ "OCI_GetStatementCacheSize", "group___ocilib_c_api_connections.html#gabafb62291c1503ecff6ff4ee719a2ff1", null ],
     [ "OCI_SetStatementCacheSize", "group___ocilib_c_api_connections.html#gaf6001f3ffc1e8537a4e02bbfe8549d3f", null ],
     [ "OCI_GetDefaultLobPrefetchSize", "group___ocilib_c_api_connections.html#gaf1026309c40b8419b2a6cd24d71d8090", null ],
-    [ "OCI_SetDefaultLobPrefetchSize", "group___ocilib_c_api_connections.html#ga069d605439946b83a1fd930670bae710", null ]
+    [ "OCI_SetDefaultLobPrefetchSize", "group___ocilib_c_api_connections.html#ga069d605439946b83a1fd930670bae710", null ],
+    [ "OCI_GetMaxCursors", "group___ocilib_c_api_connections.html#ga2d69a4abb692871b3378e3d97c74c59e", null ]
 ];

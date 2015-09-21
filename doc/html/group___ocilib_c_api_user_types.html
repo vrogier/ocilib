@@ -25,7 +25,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.1.0</span>
+   &#160;<span id="projectnumber">4.2.0</span>
    </div>
   </td>
  </tr>
@@ -244,6 +244,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gae66be7279e535111fcec12f6c19c8540"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gae66be7279e535111fcec12f6c19c8540">OCI_ObjectGetTypeInfo</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *obj)</td></tr>
 <tr class="memdesc:gae66be7279e535111fcec12f6c19c8540"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type info object associated to the object.  <a href="#gae66be7279e535111fcec12f6c19c8540">More...</a><br /></td></tr>
 <tr class="separator:gae66be7279e535111fcec12f6c19c8540"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac9b5500d16bc31ab04ced1be6e4dffbf"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gac9b5500d16bc31ab04ced1be6e4dffbf">OCI_ObjectGetBoolean</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *obj, const otext *attr)</td></tr>
+<tr class="memdesc:gac9b5500d16bc31ab04ced1be6e4dffbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the boolean value of the given object attribute (ONLY for PL/SQL records)  <a href="#gac9b5500d16bc31ab04ced1be6e4dffbf">More...</a><br /></td></tr>
+<tr class="separator:gac9b5500d16bc31ab04ced1be6e4dffbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf2fb0148a7ca8e69c5d4cfb9c379d584"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT short OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gaf2fb0148a7ca8e69c5d4cfb9c379d584">OCI_ObjectGetShort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *obj, const otext *attr)</td></tr>
 <tr class="memdesc:gaf2fb0148a7ca8e69c5d4cfb9c379d584"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the short value of the given object attribute.  <a href="#gaf2fb0148a7ca8e69c5d4cfb9c379d584">More...</a><br /></td></tr>
 <tr class="separator:gaf2fb0148a7ca8e69c5d4cfb9c379d584"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -301,6 +304,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gab1c4556a72ea9e9d488a6ed32703665c"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gab1c4556a72ea9e9d488a6ed32703665c">OCI_ObjectGetFile</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *obj, const otext *attr)</td></tr>
 <tr class="memdesc:gab1c4556a72ea9e9d488a6ed32703665c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the file value of the given object attribute.  <a href="#gab1c4556a72ea9e9d488a6ed32703665c">More...</a><br /></td></tr>
 <tr class="separator:gab1c4556a72ea9e9d488a6ed32703665c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4f18b76016f2253ca0812c5f6cbf44f7"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga4f18b76016f2253ca0812c5f6cbf44f7">OCI_ObjectSetBoolean</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *obj, const otext *attr, boolean value)</td></tr>
+<tr class="memdesc:ga4f18b76016f2253ca0812c5f6cbf44f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set an object attribute of type boolean (ONLY for PL/SQL records)  <a href="#ga4f18b76016f2253ca0812c5f6cbf44f7">More...</a><br /></td></tr>
+<tr class="separator:ga4f18b76016f2253ca0812c5f6cbf44f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad5a8b9a85825583f4798758c4f9cc36d"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gad5a8b9a85825583f4798758c4f9cc36d">OCI_ObjectSetShort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *obj, const otext *attr, short value)</td></tr>
 <tr class="memdesc:gad5a8b9a85825583f4798758c4f9cc36d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set an object attribute of type short.  <a href="#gad5a8b9a85825583f4798758c4f9cc36d">More...</a><br /></td></tr>
 <tr class="separator:gad5a8b9a85825583f4798758c4f9cc36d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -690,6 +696,49 @@ The two object handles must have the same type otherwise an exception is thrown<
 </dl>
 
 <p>Referenced by <a class="el" href="classocilib_1_1_object.html#a36a28a9b7a7b1dd0db9d604a49d4b997">ocilib::Object::GetTypeInfo()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="gac9b5500d16bc31ab04ced1be6e4dffbf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_EXPORT boolean OCI_API OCI_ObjectGetBoolean </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *&#160;</td>
+          <td class="paramname"><em>obj</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const otext *&#160;</td>
+          <td class="paramname"><em>attr</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;ocilib.h&gt;</code></p>
+
+<p>Return the boolean value of the given object attribute (ONLY for PL/SQL records) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">obj</td><td>- Object handle </td></tr>
+    <tr><td class="paramname">attr</td><td>- Attribute name</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gac9b5500d16bc31ab04ced1be6e4dffbf" title="Return the boolean value of the given object attribute (ONLY for PL/SQL records) ">OCI_ObjectGetBoolean()</a> returns a valid value only for PL/SQL boolean based attributes</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd><ul>
+<li>ONLY supported by Oracle 12c and above !</li>
+</ul>
+</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Attribute value or 0 on failure or wrong attribute type </dd></dl>
 
 </div>
 </div>
@@ -1447,6 +1496,55 @@ The two object handles must have the same type otherwise an exception is thrown<
 </dl>
 <dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gab1c4556a72ea9e9d488a6ed32703665c" title="Return the file value of the given object attribute. ">OCI_ObjectGetFile()</a> returns a valid value only for files based attributes</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Attribute value or NULL on failure or wrong attribute type </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ga4f18b76016f2253ca0812c5f6cbf44f7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_EXPORT boolean OCI_API OCI_ObjectSetBoolean </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *&#160;</td>
+          <td class="paramname"><em>obj</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const otext *&#160;</td>
+          <td class="paramname"><em>attr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">boolean&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;ocilib.h&gt;</code></p>
+
+<p>Set an object attribute of type boolean (ONLY for PL/SQL records) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">obj</td><td>- Object handle </td></tr>
+    <tr><td class="paramname">attr</td><td>- Attribute name </td></tr>
+    <tr><td class="paramname">value</td><td>- boolean value</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd><ul>
+<li>ONLY supported by Oracle 12c and above !</li>
+</ul>
+</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
@@ -2839,7 +2937,7 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue May 5 2015 22:47:03 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Mon Sep 21 2015 18:48:23 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

@@ -26,7 +26,7 @@ The OCILIB library  :
   
 ## Latest version
 
-The latest version is [version 4.1.0 (2015-05-05)]({{site.projecturl}}/releases/)
+The latest version is [version 4.2.0 (2015-09-21)]({{site.projecturl}}/releases/)
  
  <p id="DownloadCount"></p>
  

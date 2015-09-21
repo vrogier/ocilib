@@ -25,7 +25,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.1.0</span>
+   &#160;<span id="projectnumber">4.2.0</span>
    </div>
   </td>
  </tr>
@@ -80,7 +80,7 @@ Description</h1>
 </ul>
 <h1><a class="anchor" id="Version"></a>
 Version information</h1>
-<p>Current version : <b>4.1.0 (2015-05-05)</b></p>
+<p>Current version : <b>4.2.0 (2015-09-21)</b></p>
 <h1><a class="anchor" id="Features"></a>
 Main features</h1>
 <ul>
@@ -115,7 +115,7 @@ Main features</h1>
 </ul>
 <h1><a class="anchor" id="Download"></a>
 Download</h1>
-<p>Get OCILIB from <a href="http://orclib.sourceforge.net">OCILIB Project page</a> at Sourceforge Website</p>
+<p>Get OCILIB from <a href="http://www.ocilib.net">OCILIB website</a></p>
 <h1><a class="anchor" id="Author"></a>
 Author</h1>
 <p>OCILIB is developed by <a href="#" onclick="location.href='mai'+'lto:'+'vin'+'ce'+'.ro'+'gi'+'er@'+'oc'+'ili'+'b.'+'net'; return false;">Vincent Rogier</a></p>
@@ -124,14 +124,90 @@ License</h1>
 <p>The source code is free source code. It's licensed under GNU LESSER GENERAL PUBLIC LICENSE (LGPL). (see the file lgpl-license.txt)</p>
 <h1><a class="anchor" id="Changelog"></a>
 ChangeLog</h1>
-<div class="fragment"><div class="line">2015-05-05 Version 4.1.0 Vincent Rogier vince.rogier@ocilib.net</div>
+<div class="fragment"><div class="line">2015-09-21 Version 4.2.0 Vincent Rogier vince.rogier@ocilib.net</div>
+<div class="line"></div>
+<div class="line">    * New Features:</div>
+<div class="line">                   </div>
+<div class="line">        - Implemented Oracle 12c extended support <span class="keywordflow">for</span> PL/SQL types (PL/SQL <span class="keywordtype">boolean</span>, records and index by tables)</div>
+<div class="line">        </div>
+<div class="line">            * These types can be now used in binding calls</div>
+<div class="line">            * C API: PL/SQL records can now be used <span class="keyword">using</span> <a class="code" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a></div>
+<div class="line">            * C API: PL/SQL Index by tables can now be used <span class="keyword">using</span> <a class="code" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a></div>
+<div class="line">            * C API: PL/SQL <span class="keywordtype">boolean</span> can be used <span class="keyword">using</span> <span class="keywordtype">boolean</span> C type</div>
+<div class="line">            * C API: Added <a class="code" href="group___ocilib_c_api_binding.html#gaa099edd36010cb094279568dfdf6edf8">OCI_BindBoolean</a>()</div>
+<div class="line">            * C API: Added <a class="code" href="group___ocilib_c_api_collections.html#gaa68c4552cf47b1029032b09ee0c6cdaf">OCI_ElemSetBoolean</a>(), <a class="code" href="group___ocilib_c_api_collections.html#gaad240c81595e28c31592376cc4072e4b">OCI_ElemGetBoolean</a>()</div>
+<div class="line">            * C API: Added <a class="code" href="group___ocilib_c_api_user_types.html#ga4f18b76016f2253ca0812c5f6cbf44f7">OCI_ObjectSetBoolean</a>(), <a class="code" href="group___ocilib_c_api_user_types.html#gac9b5500d16bc31ab04ced1be6e4dffbf">OCI_ObjectGetBoolean</a>()</div>
+<div class="line">            * C API: <a class="code" href="group___ocilib_c_api_metadata.html#ga541bb34a0a86c6296f59605f85931039">OCI_TypeInfoGet</a>() supports now records these PL/SQL types</div>
+<div class="line">            * C API: Added collection type OCI_COLL_INDEXED_TABLE</div>
+<div class="line">            * C API: Added data type OCI_CDT_BOOLEAN</div>
+<div class="line">            * C++ API: PL/SQL records can now be used using ocilib::Object</div>
+<div class="line">            * C++ API: PL/SQL Index by tables can now be used using ocilib::Collection&lt;T&gt;</div>
+<div class="line">            * C++ API: PL/SQL <span class="keywordtype">boolean</span> can be used using <span class="keywordtype">bool</span> C++ type</div>
+<div class="line">            * C++ API: Added template specializations for supporting PL/SQL <span class="keywordtype">boolean</span> using C++ <span class="keywordtype">bool</span> in the following calls:</div>
+<div class="line">                - ocilib::Statement::Bind()</div>
+<div class="line">                - ocilib::Object::Get()</div>
+<div class="line">                - ocilib::Object::Set()</div>
+<div class="line">            * C++ API: Added ocilib::Collection&lt;T&gt; specializations for supporting <span class="keywordtype">bool</span> data type</div>
+<div class="line">            * C++ API: Added ocilib::TypeBoolean</div>
+<div class="line">            * C++ API: Added ocilib::Collection::IndexedTable</div>
+<div class="line">            * C++ API: Added internal core class ocilib::BindTypeAdaptor&lt;T1, T2&gt;</div>
+<div class="line"></div>
+<div class="line">         - Added Memory usage information</div>
+<div class="line"></div>
+<div class="line">            * C API: Added <a class="code" href="group___ocilib_c_api_initialization.html#ga59c50704dae44e650bf53a963d32567b">OCI_GetAllocatedBytes</a></div>
+<div class="line">            * C API: Added OCI_MEM_ORACLE, OCI_MEM_OCILIB and OCI_MEM_ALL</div>
+<div class="line">            * C++ API: Added ocilib::Environment::GetAllocatedBytes()</div>
+<div class="line">            * C++ API: Added ocilib::Environment::OracleClientBytes, ocilib::Environment::OcilibBytes, ocilib::Environment::AllBytes</div>
+<div class="line"></div>
+<div class="line">         -  Added Session Max Cursor information</div>
+<div class="line">        </div>
+<div class="line">            * C API: Added <a class="code" href="group___ocilib_c_api_connections.html#ga2d69a4abb692871b3378e3d97c74c59e">OCI_GetMaxCursors</a>()</div>
+<div class="line">            * C++ API: Added ocilib::Connection::GetMaxCursors()</div>
+<div class="line"> </div>
+<div class="line">    * Enhancements:</div>
+<div class="line"></div>
+<div class="line">        - C++ API:: Enhanced pre/post statement execution check for binds</div>
+<div class="line">        </div>
+<div class="line">            * Before execution, bind buffers are only updated from host variables if Bind Direction has the ocilib::BindInfo::In flag</div>
+<div class="line">            * After execution, host variables are only updated from bind buffers if Bind Direction has the ocilib::BindInfo::Out flag</div>
+<div class="line">            </div>
+<div class="line">    * Fixes:</div>
+<div class="line">        </div>
+<div class="line">        - C API: Fixed <a class="code" href="group___ocilib_c_api_error_handling.html#gaf2abe52ad5b278f65dd97a44a2adac4c">OCI_GetLastError</a>() that returned NULL after <a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>() if OCI shared lib cannot be loaded</div>
+<div class="line">        - C API: Fixed <a class="code" href="group___ocilib_c_api_fetching.html#ga19dba5bae8437188ae3abdda7e498791">OCI_ColumnGetSQLType</a>() that has its break statements within the switch removed by mistake leading to return &quot;?&quot; in all cases</div>
+<div class="line">        - C API: Fixed OCI_ElemSetXXX() where XXX is a numeric type</div>
+<div class="line">        - C API: Fixed <a class="code" href="group___ocilib_c_api_collections.html#ga9b186234fa7bfd143e2fecb126c7a8a4">OCI_IterFree</a>() when dealing with numbers</div>
+<div class="line">        - C API: Fixed Memory retention in local OCI objects cache when calling <a class="code" href="group___ocilib_c_api_user_types.html#ga3fd2c9dfdcab2c56400c95c31cc0851e">OCI_ObjectFree</a>(): Objects indicator structures were not freed until calling <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>()</div>
+<div class="line">        - C API: Fixed OCI_ElemSetXXX() for numeric types when element is created using <a class="code" href="group___ocilib_c_api_collections.html#ga2103a0d8230001c7fc217189688244cb">OCI_ElemCreate</a>() instead of being retrieved with <a class="code" href="group___ocilib_c_api_collections.html#gad038e8b14740eba7409f6d0c5f871466">OCI_IterGetPrev</a>() or <a class="code" href="group___ocilib_c_api_collections.html#gadfd202892038306f96b043d06e795133">OCI_IterGetNext</a>()</div>
+<div class="line">        - C API: When <a class="code" href="group___ocilib_c_api_subscriptions.html#ga78afd31aa61d0ce04c535cd669e58e07">OCI_SubscriptionRegister</a>() failed, the input connection was freed leading the caller to hold a dangling pointer to the connection handle</div>
+<div class="line">        - C API: Fixed comparison call in <a class="code" href="group___ocilib_c_api_timestamps.html#ga8063cc410dc2ed2a80aa9a434e759b0b">OCI_TimestampCompare</a>()</div>
+<div class="line">        - C API: Fixed alignment computation in <a class="code" href="group___ocilib_c_api_fetching.html#ga0091425c55521bc0a3425f84043fd949">OCI_GetStruct</a>()</div>
+<div class="line">        - C API: Fixed alignment computation in OCI_ObjectGetUserStructSize()</div>
+<div class="line">        - C API: Fixed compilation under compilers that require variable to be declared at the beginning of blocks (example : VS2010)</div>
+<div class="line">        - C API: Fixed minor internal bugs and issues</div>
+<div class="line">        - C++ API: ocilib::HandleHolder&lt;T&gt;::Acquire() =&gt; Made sure that a smart handle is not allocated if the input C handle is NULL (even if it shall not happen as the C API must raise an error if it cannot return a valid handle)</div>
+<div class="line">        - C++ API: ocilib::HandleHolder&lt;T&gt;::SmartHandle::~SmartHandle() =&gt; the C API handle free function is now called only if the handle is not NULL</div>
+<div class="line">        - C++ API: Fixed compilation error when using OCI_CHARSET_WIDE</div>
+<div class="line">        - C++ API: Fixed ocilib::Raw binding when using OCI_CHARSET_WIDE</div>
+<div class="line">        - C++ API: Fixed ocilib::BindArray::BindArrayObject&lt;Raw, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>&gt;::SetInData()</div>
+<div class="line">        - C++ API: Fixed binding array of Blobs</div>
+<div class="line">        - C++ API: Fixed binding array of Raw</div>
+<div class="line"></div>
+<div class="line">    * Miscellaneous</div>
+<div class="line"></div>
+<div class="line">        - Doxygen documentation: Added C and C++ data types mappings documentation page</div>
+<div class="line">        - Removed references to sourceforge.net</div>
+<div class="line">        - Minor internal code changes to fixing hypothetical issues found by code analysis (CppCheck)</div>
+<div class="line">        - Fixed some typos and formatting issues</div>
+<div class="line"></div>
+<div class="line">2015-05-05 Version 4.1.0 Vincent Rogier vince.rogier@ocilib.net</div>
 <div class="line"></div>
 <div class="line">    * C API</div>
 <div class="line"></div>
 <div class="line">        - Major library code update:</div>
-<div class="line">            * All <span class="keyword">public</span> functions entry and exit points have been rewritten in order to satisfy requirements of the OCI_ENV_CONTEXT environment flag</div>
-<div class="line">            * Fixed some functions that were not setting context result properly when <span class="keyword">using</span> OCI_ENV_CONTEXT flag</div>
-<div class="line">            * various <span class="keyword">internal</span> code updates and minor fixes</div>
+<div class="line">            * All public functions entry and exit points have been rewritten in order to satisfy requirements of the OCI_ENV_CONTEXT environment flag</div>
+<div class="line">            * Fixed some functions that were not setting context result properly when using OCI_ENV_CONTEXT flag</div>
+<div class="line">            * various internal code updates and minor fixes</div>
 <div class="line">            * <a class="code" href="group___ocilib_c_api_initialization.html#ga60f3ade91299999200076cd53ed9066e">OCI_EnableWarnings</a>() and <a class="code" href="group___ocilib_c_api_initialization.html#ga1d8013908d583eb37f3e7b15556a3582">OCI_SetErrorHandler</a>() are now return a <span class="keywordtype">boolean</span> values</div>
 <div class="line">            * Factorized internal OCILIB objects clean up in various places</div>
 <div class="line">           </div>
@@ -2645,7 +2721,7 @@ ChangeLog</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue May 5 2015 22:47:06 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Mon Sep 21 2015 18:48:29 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>
