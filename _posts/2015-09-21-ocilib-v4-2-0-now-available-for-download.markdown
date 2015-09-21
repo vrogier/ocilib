@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: false
-date: 2015-09-05 21:00:00+00:00
+date: 2015-09-21 21:00:00+00:00
 layout: post
 slug: ocilib-v4-2-0-now-available-for-download
 title: OCILIB v4.2.0 now available for download !
@@ -14,6 +14,11 @@ Dear all,
 
 
 OCILIB v4.2.0 is now [_available for download_]({{site.projecturl}}/releases/) ! 
+<br/>
+
+Get the release and enjoy it !
+<br/>
+
 ### New Features:
            
 ###### Implemented Oracle 12c extended support for PL/SQL types
@@ -89,7 +94,7 @@ OCILIB v4.2.0 is now [_available for download_]({{site.projecturl}}/releases/) !
     * Minor internal code changes to fixing hypothetical issues found by code analysis (CppCheck)
     * Fixed some typos and formatting issues
 
-Get the release and enjoy it !
+<br/>
 
 Vincent
 

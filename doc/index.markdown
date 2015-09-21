@@ -66,7 +66,7 @@ wordpress_id: 65
                 std::cout << rs.Get<int>(1) << " - " <<  rs.Get<ostring>(2) << std::endl;
             }
         }
-        catch(std::exception &ex;)
+        catch(std::exception &ex)
         {
              std::cout << ex.what() << std::endl;
         }
