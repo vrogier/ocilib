@@ -91,6 +91,7 @@ extern "C" {
 /* symbol list */
 
 extern OCIENVCREATE                 OCIEnvCreate;
+extern OCITERMINATE                 OCITerminate;
 extern OCISERVERATTACH              OCIServerAttach;
 extern OCISERVERDETACH              OCIServerDetach;
 extern OCIHANDLEALLOC               OCIHandleAlloc;

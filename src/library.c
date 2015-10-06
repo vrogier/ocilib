@@ -190,6 +190,7 @@ static otext * FormatDefaultValues[OCI_FMT_COUNT] =
 /* OCI function pointers */
 
 OCIENVCREATE                 OCIEnvCreate                 = NULL;
+OCITERMINATE                 OCITerminate                 = NULL;
 OCISERVERATTACH              OCIServerAttach              = NULL;
 OCISERVERDETACH              OCIServerDetach              = NULL;
 OCIHANDLEALLOC               OCIHandleAlloc               = NULL;
@@ -820,7 +821,8 @@ boolean OCI_API OCI_Initialize
 
         LIB_SYMBOL(OCILib.lib_handle, "OCIEnvCreate", OCIEnvCreate,
                    OCIENVCREATE);
-
+        LIB_SYMBOL(OCILib.lib_handle, "OCITerminate", OCITerminate,
+                   OCITERMINATE);
         LIB_SYMBOL(OCILib.lib_handle, "OCIServerAttach", OCIServerAttach,
                    OCISERVERATTACH);
         LIB_SYMBOL(OCILib.lib_handle, "OCIServerDetach", OCIServerDetach,
@@ -1591,6 +1593,8 @@ boolean OCI_API OCI_Cleanup
     {
         OCIHandleFree(OCILib.env, OCI_HTYPE_ENV);
     }
+
+    OCITerminate(OCI_DEFAULT);
 
 #ifdef OCI_IMPORT_RUNTIME
 
