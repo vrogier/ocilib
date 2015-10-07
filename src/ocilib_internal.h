@@ -1064,7 +1064,8 @@ int OCI_ObjectGetAttrIndex
 (
     OCI_Object  *obj,
     const otext *attr,
-    int          type
+    int          type,
+    boolean      check
 );
 
 void * OCI_ObjectGetAttr

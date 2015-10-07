@@ -45,7 +45,7 @@
     }                                                                       \
     else                                                                    \
     {                                                                       \
-        int index = OCI_ObjectGetAttrIndex(obj, attr, datatype);            \
+        int index = OCI_ObjectGetAttrIndex(obj, attr, datatype, TRUE);      \
                                                                             \
         if (index >= 0)                                                     \
         {                                                                   \
@@ -71,7 +71,7 @@
     OCI_LIB_CALL_ENTER(object_type, NULL)                                   \
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)                                      \
                                                                             \
-    index = OCI_ObjectGetAttrIndex(obj, attr, datatype);                    \
+    index = OCI_ObjectGetAttrIndex(obj, attr, datatype, TRUE);              \
     if (index >= 0)                                                         \
     {                                                                       \
         OCIInd *ind   = NULL;                                               \
@@ -485,7 +485,8 @@ int OCI_ObjectGetAttrIndex
 (
     OCI_Object  *obj,
     const otext *attr,
-    int          type
+    int          type,
+    boolean      check
 )
 {
     int res = -1;
@@ -505,7 +506,7 @@ int OCI_ObjectGetAttrIndex
         }
     }
 
-    if (res == -1)
+    if (check && res == -1)
     {
         OCI_ExceptionAttributeNotFound(obj->con, attr);
     }
@@ -568,7 +569,7 @@ boolean OCI_ObjectSetNumber
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_NUMERIC);
+    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_NUMERIC, TRUE);
 
     if (index >= 0)
     {
@@ -625,7 +626,7 @@ boolean OCI_ObjectGetNumber
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_NUMERIC);
+    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_NUMERIC, FALSE);
 
     if (index >= 0)
     {
@@ -659,13 +660,18 @@ boolean OCI_ObjectGetNumber
     }
     else
     {
-        index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT);
+        index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT, FALSE);
 
         if (index >= 0)
         {
             call_status = OCI_NumberFromString(obj->con, value, size, flag, obj->typinf->cols[index].libcode,
                                                OCI_ObjectGetString(obj, attr), NULL);
         }
+    }
+
+    if (index == -1)
+    {
+        OCI_ExceptionAttributeNotFound(obj->con, attr);
     }
 
     call_retval = call_status;
@@ -844,7 +850,7 @@ boolean OCI_API OCI_ObjectGetBoolean
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_BOOLEAN);
+    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
 
     if (index >= 0)
     {
@@ -1017,7 +1023,7 @@ const otext * OCI_API OCI_ObjectGetString
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT);
+    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT, FALSE);
 
     if (index >= 0)
     {
@@ -1035,7 +1041,7 @@ const otext * OCI_API OCI_ObjectGetString
     }
     else
     {
-        index = OCI_ObjectGetAttrIndex(obj, attr, -1);
+        index = OCI_ObjectGetAttrIndex(obj, attr, -1, FALSE);
 
         if (index >= 0)
         {
@@ -1073,6 +1079,11 @@ const otext * OCI_API OCI_ObjectGetString
         }
     }
 
+    if (index == -1)
+    {
+        OCI_ExceptionAttributeNotFound(obj->con, attr);
+    }
+
     OCI_LIB_CALL_EXIT()
 }
 
@@ -1095,7 +1106,7 @@ int OCI_API OCI_ObjectGetRaw
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW);
+    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW, TRUE);
 
     if (index >= 0)
     {
@@ -1142,7 +1153,7 @@ unsigned int OCI_API OCI_ObjectGetRawSize
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW);
+    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW, TRUE);
 
     if (index >= 0)
     {
@@ -1358,7 +1369,7 @@ boolean OCI_API OCI_ObjectSetBoolean
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_BOOLEAN);
+    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
 
     if (index >= 0)
     {
@@ -1513,7 +1524,7 @@ boolean OCI_API OCI_ObjectSetString
     }
     else
     {
-        int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT);
+        int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT, TRUE);
 
         if (index >= 0)
         {
@@ -1746,7 +1757,7 @@ boolean OCI_API OCI_ObjectSetNull
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = OCI_ObjectGetAttrIndex(obj, attr, -1);
+    index = OCI_ObjectGetAttrIndex(obj, attr, -1, TRUE);
 
     if (index >= 0)
     {
@@ -1779,7 +1790,7 @@ boolean OCI_API OCI_ObjectIsNull
     OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = OCI_ObjectGetAttrIndex(obj, attr, -1);
+    index = OCI_ObjectGetAttrIndex(obj, attr, -1, TRUE);
 
     if (index >= 0)
     {
