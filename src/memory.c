@@ -123,7 +123,7 @@ void * OCI_MemRealloc
         }
         else
         {
-            OCI_MemoryBlock * mem_block = (OCI_MemoryBlock *) ptr_new;
+            mem_block = (OCI_MemoryBlock *) ptr_new;
 
             big_int size_diff = (big_int) size - mem_block->size;
 
