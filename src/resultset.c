@@ -514,14 +514,14 @@ boolean OCI_FetchData
     OCI_Resultset *rs,
     int            mode,
     int            offset,
-    boolean       *err
+    boolean       *success
 )
 {
     boolean res = TRUE;
 
-    /* let's initialize the error flag to TRUE until the process completes */
+    /* let's initialize the success flag to FALSE until the process completes */
 
-    *err = TRUE;
+    *success = FALSE;
 
     OCI_ClearFetchedObjectInstances(rs);
 
@@ -583,11 +583,6 @@ boolean OCI_FetchData
         ub4 row_count   = 0;
         ub4 row_fetched = 0;
 
-        if (OCI_SUCCESS_WITH_INFO == rs->fetch_status)
-        {
-            OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, TRUE);
-        }
-
     #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
         if (OCI_SFM_SCROLLABLE == rs->stmt->exec_mode)
@@ -631,7 +626,7 @@ boolean OCI_FetchData
 
         /* so far, no OCI error occurred, let's clear the error flag */
 
-        *err = FALSE;
+        *success = TRUE;
 
         /* check if internal fetch was successful */
 
