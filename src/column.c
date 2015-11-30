@@ -523,7 +523,9 @@ boolean OCI_ColumnMap
     {
         case SQLT_INT:
         case SQLT_UNDOCUMENTED_BIN_INTEGER:
+#if OCI_VERSION_COMPILE >= OCI_12_1
         case OCI_TYPECODE_PLS_INTEGER:
+#endif 
         {
             col->datatype = OCI_CDT_NUMERIC;
             col->libcode  = SQLT_INT;

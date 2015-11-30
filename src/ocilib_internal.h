@@ -1272,7 +1272,7 @@ boolean OCI_API OCI_ExecuteInternal
 
 size_t OCI_StringLength
 (
-    void  *ptr,
+    void const  *ptr,
     size_t size_elem
 );
 

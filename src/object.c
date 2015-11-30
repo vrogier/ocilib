@@ -1218,6 +1218,7 @@ OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp
 #else
 
     OCI_LIB_CALL_ENTER( OCI_Timestamp *, NULL)
+    OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
     call_status = TRUE;
     OCI_LIB_CALL_EXIT()
 
@@ -1247,7 +1248,8 @@ OCI_Interval * OCI_API OCI_ObjectGetInterval
 
 #else
 
-    OCI_LIB_CALL_ENTER( OCI_Timestamp *, NULL)
+    OCI_LIB_CALL_ENTER(OCI_Interval *, NULL)
+    OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
     call_status = TRUE;
     OCI_LIB_CALL_EXIT()
 
@@ -1607,7 +1609,8 @@ boolean OCI_API OCI_ObjectSetTimestamp
 #else
 
     OCI_LIB_CALL_ENTER(boolean, FALSE)
-    call_retval = call_status = TRUE;
+    OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    call_status = TRUE;
     OCI_LIB_CALL_EXIT()
 
 #endif
@@ -1636,7 +1639,8 @@ boolean OCI_API OCI_ObjectSetInterval
 #else
 
     OCI_LIB_CALL_ENTER(boolean, FALSE)
-    call_retval = call_status = TRUE;
+    OCI_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    call_status = TRUE;
     OCI_LIB_CALL_EXIT()
 
 #endif

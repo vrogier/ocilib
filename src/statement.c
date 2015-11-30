@@ -3097,7 +3097,6 @@ boolean OCI_API OCI_BindArrayOfTimestamps
 
     OCI_NOT_USED(name)
     OCI_NOT_USED(type)
-    OCI_NOT_USED(code)
     OCI_NOT_USED(nbelem)
 
 #endif
@@ -3132,7 +3131,6 @@ boolean OCI_API OCI_BindInterval
 #else
 
     OCI_NOT_USED(name)
-    OCI_NOT_USED(code)
 
 #endif
 
@@ -3171,7 +3169,6 @@ boolean OCI_API OCI_BindArrayOfIntervals
 
     OCI_NOT_USED(name)
     OCI_NOT_USED(type)
-    OCI_NOT_USED(code)
     OCI_NOT_USED(nbelem)
 
 #endif
@@ -3264,7 +3261,10 @@ boolean OCI_API OCI_BindArrayOfLobs
     OCI_LIB_CALL_ENTER(boolean, FALSE)
 
     OCI_CHECK_BIND_CALL(stmt, name, data, OCI_IPC_LOB, FALSE)
+
+#if OCI_VERSION_COMPILE >= OCI_9_0
     OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, LobTypeValues, OTEXT("Lob type"))
+#endif 
 
     call_status = OCI_BindData(stmt, data, sizeof(OCILobLocator*), name, OCI_CDT_LOB,
                                OCI_ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
@@ -3784,7 +3784,10 @@ boolean OCI_API OCI_RegisterLob
     OCI_LIB_CALL_ENTER(boolean, FALSE)
 
     OCI_CHECK_REGISTER_CALL(stmt, name)
+
+#if OCI_VERSION_COMPILE >= OCI_9_0
     OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, LobTypeValues, OTEXT("Lob type"))
+#endif
 
     call_status = OCI_BindData(stmt, NULL, sizeof(OCILobLocator*), name, OCI_CDT_LOB,
                                OCI_ExternalSubTypeToSQLType(OCI_CDT_LOB, type),

@@ -152,7 +152,10 @@ OCI_Interval * OCI_API OCI_IntervalCreate
 
     OCI_CHECK_INITIALIZED()
     OCI_CHECK_INTERVAL_ENABLED(con)
+
+#if OCI_VERSION_COMPILE >= OCI_9_0
     OCI_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"));
+#endif
 
     call_retval = OCI_IntervalInit(con, &call_retval, NULL, type);
     call_status = (NULL != call_retval);
@@ -207,7 +210,10 @@ OCI_Interval ** OCI_API OCI_IntervalArrayCreate
 
     OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CHECK_INTERVAL_ENABLED(con)
+
+#if OCI_VERSION_COMPILE >= OCI_9_0
     OCI_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"))
+#endif
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 

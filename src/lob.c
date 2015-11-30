@@ -461,7 +461,7 @@ boolean OCI_API OCI_LobRead2
 
         if (OCILib.nls_utf8)
         {
-            (*char_count) = OCI_StringUTF8Length((const char *) buffer);
+            (*char_count) = (ub4) OCI_StringLength((const char *)buffer, sizeof(char));
         }
 
     #endif
@@ -575,7 +575,7 @@ boolean OCI_API OCI_LobWrite2
 
         #ifndef OCI_LOB2_API_ENABLED
 
-                (*char_count) = OCI_StringLength((const char *) buffer, sizeof(char));
+                (*char_count) = (ub4) OCI_StringLength((const char *)buffer, sizeof(char));
 
         #endif
 
@@ -1062,7 +1062,7 @@ boolean OCI_API OCI_LobAppend2
 
             #ifndef OCI_LOB2_API_ENABLED
 
-                (*char_count) = OCI_StringLength((const char *) buffer, sizeof(char));
+                (*char_count) = (ub4) OCI_StringLength((const char *)buffer, sizeof(char));
 
             #endif
 

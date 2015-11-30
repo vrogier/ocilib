@@ -50,7 +50,7 @@
 
 size_t OCI_StringLength
 (
-    void  *ptr,
+    const void  *ptr,
     size_t size_elem
 )
 {

@@ -678,6 +678,7 @@ OCI_Timestamp * OCI_API OCI_ElemGetTimestamp
 #else
 
     OCI_LIB_CALL_ENTER( OCI_Timestamp *, NULL)
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     call_status = TRUE;
     OCI_LIB_CALL_EXIT()
 
@@ -706,6 +707,7 @@ OCI_Interval * OCI_API OCI_ElemGetInterval
 #else
 
     OCI_LIB_CALL_ENTER( OCI_Interval *, NULL)
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     call_status = TRUE;
     OCI_LIB_CALL_EXIT()
 
@@ -1058,8 +1060,8 @@ boolean OCI_API OCI_ElemSetTimestamp
 #else
 
     OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     call_status = TRUE;
-    call_retval = FALSE;
     OCI_LIB_CALL_EXIT()
 
 #endif
@@ -1090,8 +1092,8 @@ boolean OCI_API OCI_ElemSetInterval
 #else
 
     OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     call_status = TRUE;
-    call_retval = FALSE;
     OCI_LIB_CALL_EXIT()
 
 #endif
