@@ -971,7 +971,7 @@ boolean OCI_API OCI_DirPathSetEntry
                 OCINumber *num = (OCINumber *) data;
 
                 call_status = OCI_NumberFromString(dp->con, num, sizeof(*num), OCI_NUM_NUMBER,
-                                                   SQLT_NUM, (dtext *)value, dpcol->format);
+                                                   SQLT_VNU, (dtext *)value, dpcol->format);
 
                 if (call_status)
                 {
