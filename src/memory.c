@@ -117,9 +117,10 @@ void * OCI_MemRealloc
 
         if (ptr_new)
         {
+            big_int size_diff = 0;
             mem_block = (OCI_MemoryBlock *) ptr_new;
 
-            big_int size_diff = (big_int) size - mem_block->size;
+            size_diff = (big_int) size - mem_block->size;
 
             mem_block->type = ptr_type;
             mem_block->size = (unsigned int) size;
