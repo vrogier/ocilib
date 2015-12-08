@@ -147,7 +147,7 @@ boolean OCI_BindCheck
 
     for(i = 0; i < stmt->nb_ubinds; i++)
     {
-        OCI_Bind *bnd = bnd = stmt->ubinds[i];
+        OCI_Bind *bnd = stmt->ubinds[i];
         sb2      *ind = (sb2 *) bnd->buffer.inds;
 
         if (OCI_CDT_CURSOR == bnd->type)
@@ -176,7 +176,8 @@ boolean OCI_BindCheck
             }
         }
 
-        if (bnd->direction & OCI_BDM_IN)
+        if ((bnd->direction & OCI_BDM_IN) ||
+            (bnd->alloc && OCI_CDT_DATETIME != bnd->type && OCI_CDT_TEXT != bnd->type && OCI_CDT_NUMERIC != bnd->type))
         {
             /* for strings, re-initialize length array with buffer default size */
 
