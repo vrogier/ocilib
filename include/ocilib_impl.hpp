@@ -4214,7 +4214,7 @@ inline void BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
             memcpy(_data + (_elemSize * index), &value[0], value.size());
         }
 
-        OCI_BindSetDataSizeAtPos(OCI_GetBind2(_pStatement, GetName().c_str()), index + 1, value.size());
+        OCI_BindSetDataSizeAtPos(OCI_GetBind2(_pStatement, GetName().c_str()), index + 1, static_cast<unsigned int>(value.size()));
     }
 }
 
