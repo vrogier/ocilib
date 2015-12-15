@@ -69,7 +69,7 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
        res = assign(dst, src);                                      \
     }                                                               \
 
-#define OCI_BIND_CALL(stmt, name, data, check, type, func)          \
+#define OCI_BIND_CALL(stmt, name, data, type, check, func)          \
                                                                     \
     OCI_LIB_CALL_ENTER(boolean, FALSE)                              \
                                                                     \
