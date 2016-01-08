@@ -1567,8 +1567,16 @@ boolean OCI_API OCI_Cleanup
     /* free error thread key */
 
     if (OCILib.key_errs)
-    {
-        OCI_ThreadKeyFree(OCILib.key_errs);
+    {        
+        OCI_ThreadKey *key = OCILib.key_errs;
+        OCI_Error     *err = OCI_ErrorGet(FALSE);
+
+        OCILib.key_errs = NULL;
+
+        OCI_ErrorFree(err);
+        OCI_ThreadKeySet(key, NULL);
+        OCI_ThreadKeyFree(key);
+
     }
 
     /* set unloaded flag */
