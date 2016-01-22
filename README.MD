@@ -1,6 +1,6 @@
 # OCILIB - C and C++ Drivers for Oracle  
 
-## 1. About OCILIB
+## 1. About
 
 OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases.
 
@@ -16,7 +16,11 @@ The OCILIB library :
 
 OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy it !
 
-## 2. Features 
+## 2. License
+
+The source code is free source code licensed under **LGPL v2.1** - see [LICENSE file](lgpl-license.txt)
+
+## 3. Features 
  
 - ISO C API
 - ISO C ++ API
@@ -48,12 +52,12 @@ OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy
 - Portable Threads and mutexes API
 
 
-## 4. Installation
+## 5. Installation
 
 ### Windows platforms
 
 - unzip the archive
-- copy ocilib\include\ocilib.h to any place located in your include’s path
+- copy ocilib\include\ocilib.h to any place located in your includeâ€™s path
 - copy ocilib\lib32|64\ocilib[x].lib to any place located in your libraries path
 - copy ocilib\lib32|64\ocilib[x].dll to any place located in your windows path
 
@@ -66,9 +70,9 @@ OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy
 - $ make install (you might need to `su` to make install)
 
 Make sure Oracle and OCILIB libraries paths are defined in your shared library environment variable
-You need to provide extra configure parameters when using Instant Clients – see Installation section)
+You need to provide extra configure parameters when using Instant Clients â€“ see Installation section)
 
-## 5. Examples
+## 6. Examples
 
 Example of a minimal OCILIB C application
 
