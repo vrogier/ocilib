@@ -486,6 +486,32 @@ boolean OCI_StringToStringPtr
     return res;
 }
 
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_StringFreeStringPtr
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_StringFreeStringPtr
+(
+    OCIEnv      *env,
+    OCIString  **str,
+    OCIError    *err
+)
+{
+    boolean res = TRUE;
+
+    OCI_CHECK(NULL == str, FALSE);
+
+    OCI_CALL3
+    (
+        res, err,
+
+        OCIStringResize(env, err, (ub4)0, str)
+    )
+
+    return res;
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_GetStringAttribute
  * --------------------------------------------------------------------------------------------- */

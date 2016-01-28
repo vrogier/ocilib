@@ -308,6 +308,7 @@ OCINUMBERFROMTEXT            OCINumberFromText            = NULL;
 OCISTRINGPTR                 OCIStringPtr                 = NULL;
 OCISTRINGSIZE                OCIStringSize                = NULL;
 OCISTRINGASSIGNTEXT          OCIStringAssignText          = NULL;
+OCISTRINGRESIZE              OCIStringResize              = NULL;
 OCIRAWPTR                    OCIRawPtr                    = NULL;
 OCIRAWASSIGNBYTES            OCIRawAssignBytes            = NULL;
 OCIRAWRESIZE                 OCIRawResize                 = NULL;
@@ -1094,7 +1095,8 @@ boolean OCI_API OCI_Initialize
                    OCISTRINGSIZE);
         LIB_SYMBOL(OCILib.lib_handle, "OCIStringAssignText", OCIStringAssignText,
                    OCISTRINGASSIGNTEXT);
-
+        LIB_SYMBOL(OCILib.lib_handle, "OCIStringResize", OCIStringResize,
+                   OCISTRINGRESIZE);
         LIB_SYMBOL(OCILib.lib_handle, "OCIRawPtr", OCIRawPtr,
                    OCIRAWPTR);
         LIB_SYMBOL(OCILib.lib_handle, "OCIRawAssignBytes", OCIRawAssignBytes,

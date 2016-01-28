@@ -209,6 +209,7 @@ extern OCINUMBERFROMTEXT            OCINumberFromText;
 extern OCISTRINGPTR                 OCIStringPtr;
 extern OCISTRINGSIZE                OCIStringSize;
 extern OCISTRINGASSIGNTEXT          OCIStringAssignText;
+extern OCISTRINGRESIZE              OCIStringResize;
 extern OCIRAWPTR                    OCIRawPtr;
 extern OCIRAWASSIGNBYTES            OCIRawAssignBytes;
 extern OCIRAWRESIZE                 OCIRawResize;

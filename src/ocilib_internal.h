@@ -1357,6 +1357,13 @@ boolean OCI_StringToStringPtr
     const otext *value
 );
 
+boolean OCI_StringFreeStringPtr
+(
+    OCIEnv      *env,
+    OCIString  **str,
+    OCIError    *err
+);
+
 unsigned int OCI_StringGetFromType
 (
     OCI_Connection   *con,

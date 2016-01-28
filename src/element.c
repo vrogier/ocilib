@@ -121,6 +121,29 @@
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
+* OCI_ElemFreeAllocatedData
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_ElemFreeAllocatedData
+(
+    OCI_Elem *elem
+)
+{
+    if (elem->alloc && elem->handle)
+    {
+        switch (elem->typinf->cols[0].datatype)
+        {
+        case OCI_CDT_TEXT:
+            OCI_StringFreeStringPtr(elem->con->env, (OCIString **) &elem->handle, elem->con->err);
+            break;
+        default:
+            OCI_FREE(elem->handle)
+                break;
+        }
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ElemInit
  * --------------------------------------------------------------------------------------------- */
 
@@ -145,26 +168,23 @@ OCI_Elem * OCI_ElemInit
 
     if (*pelem)
     {
-        void *prev_handle = (*pelem)->handle;
-        uword prev_alloc  = (*pelem)->alloc;
-
         res = TRUE;
 
         elem = *pelem;
+   
+        elem->con = con;
 
-        elem->con    = con;
+        // Free previously allocated data before reassign new one
+        OCI_ElemFreeAllocatedData(elem);
+
+        // Reset members
         elem->ind    = OCI_IND_NULL;
         elem->typinf = typinf;
         elem->handle = handle;
         elem->init   = FALSE;
         elem->alloc  = FALSE;
         elem->hstate = handle ? OCI_OBJECT_FETCHED_CLEAN : OCI_OBJECT_ALLOCATED;
-                
-        if (prev_alloc && prev_handle)
-        {
-            OCI_FREE(prev_handle)
-        }
-
+    
         switch (elem->typinf->cols[0].datatype)
         {
             case OCI_CDT_NUMERIC:
@@ -415,10 +435,7 @@ boolean OCI_API OCI_ElemFree
         OCI_FreeObjectFromType(elem->obj, elem->typinf->cols[0].datatype);
     }
 
-    if (elem->alloc)
-    {
-        OCI_FREE(elem->handle)
-    }
+    OCI_ElemFreeAllocatedData(elem);
 
     OCI_FREE(elem->tmpbuf)
     OCI_FREE(elem)
@@ -961,9 +978,10 @@ boolean OCI_API OCI_ElemSetString
     }
     else
     {
-        call_status = OCI_StringToStringPtr(elem->con->env,
-                                    (OCIString **) &elem->handle,
-                                    elem->con->err, value);
+        elem->alloc = (elem->alloc || elem->handle == NULL);
+
+        call_status = OCI_StringToStringPtr(elem->con->env,  (OCIString **) &elem->handle,
+                                            elem->con->err, value);
 
         if (call_status)
         {

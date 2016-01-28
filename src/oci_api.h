@@ -1344,6 +1344,14 @@ typedef sword (*OCISTRINGASSIGNTEXT)
     OCIString    **lhs
 );
 
+typedef sword (*OCISTRINGRESIZE)
+(
+    OCIEnv      *env, 
+    OCIError    *err, 
+    ub4         new_size,
+    OCIString **str
+);
+
 typedef ub1 * (*OCIRAWPTR)
 (
     OCIEnv      * env,
