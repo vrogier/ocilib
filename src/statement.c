@@ -410,7 +410,7 @@ boolean OCI_BindReset
                that can have output values
             */
 
-            if ((OCI_CST_BEGIN != stmt->type) && (OCI_CST_DECLARE != stmt->type))
+            if (!(OCI_IS_PLSQL_STMT(stmt->type)))
             {
                 memset(bnd->buffer.inds, 0, ((size_t) bnd->buffer.count) * sizeof(sb2));
             }
@@ -669,7 +669,7 @@ boolean OCI_BindData
         {
             /* is it a pl/sql table bind ? */
 
-            if ((OCI_CST_BEGIN == stmt->type) || (OCI_CST_DECLARE == stmt->type))
+            if (OCI_IS_PLSQL_STMT(stmt->type))
             {
                 is_pltbl = TRUE;
                 is_array = TRUE;

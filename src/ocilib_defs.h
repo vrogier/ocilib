@@ -458,6 +458,10 @@
                                                                                 \
     goto ExitCall;                                                              \
 
+
+#define OCI_IS_PLSQL_STMT(type)                                                 \
+    ((OCI_CST_BEGIN == type) || (OCI_CST_DECLARE == type) || (OCI_CST_CALL == type))
+
 #ifdef _WINDOWS
 
     #define OCI_CVT_CHAR                  1
