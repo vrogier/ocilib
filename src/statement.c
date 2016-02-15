@@ -4048,10 +4048,10 @@ boolean OCI_API OCI_SetPrefetchSize
 
     call_status = TRUE;
 
+    stmt->prefetch_size = size;
+
     if (stmt->stmt)
     {
-        stmt->prefetch_size = size;
-
         OCI_CALL1
         (
             call_status, stmt->con, stmt,
@@ -4103,10 +4103,10 @@ boolean OCI_API OCI_SetPrefetchMemory
 
     call_status = TRUE;
 
+    stmt->prefetch_mem = size;
+
     if (stmt->stmt)
     {
-        stmt->prefetch_mem = size;
-
         OCI_CALL1
         (
             call_status, stmt->con, stmt,
