@@ -2530,8 +2530,10 @@ public:
      * @brief
      * Create an empty null Date object
      *
+     * @param create - Indicates if a Oracle Date object must be must be created
+     *
      */
-    Date();
+    Date(bool create = false);
 
     /**
     * @brief

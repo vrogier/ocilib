@@ -1643,8 +1643,12 @@ inline unsigned int Transaction::GetTimeout() const
  * Date
  * --------------------------------------------------------------------------------------------- */
 
-inline Date::Date()
+inline Date::Date(bool create)
 {
+    if (create)
+    {
+        Allocate();
+    }
 }
 
 inline Date::Date(const ostring& str, const ostring& format)
@@ -4352,9 +4356,9 @@ inline void BindTypeAdaptor<TNativeType, TObjectType>::SetOutData()
 
 template <class TNativeType, class TObjectType>
 inline BindTypeAdaptor<TNativeType, TObjectType>::BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object) :
-     BindObject(statement, name, mode),
-     _object(object),
-     _data(new TNativeType)
+BindObject(statement, name, mode),
+_object(object),
+_data(new TNativeType)
 {
 
 }
