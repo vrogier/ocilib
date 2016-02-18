@@ -164,16 +164,9 @@ boolean OCI_BindCheck
                                                  (dvoid **) (void *) &bnd_stmt->stmt,
                                                  (ub4) OCI_HTYPE_STMT,
                                                  (size_t) 0, (dvoid **) NULL));
-            if (res)
-            {
-                ub4 size = 0;
 
-                size = bnd_stmt->prefetch_size ? bnd_stmt->prefetch_size : OCI_PREFETCH_SIZE;
-                res  = (res && OCI_SetPrefetchSize(bnd_stmt, size));
-
-                size = bnd_stmt->fetch_size ? bnd_stmt->fetch_size : OCI_FETCH_SIZE;
-                res  = (res && OCI_SetFetchSize(bnd_stmt, size));
-            }
+            res = (res && OCI_SetPrefetchSize(stmt, stmt->prefetch_size));
+            res = (res && OCI_SetFetchSize(stmt, stmt->fetch_size));
         }
 
         if ((bnd->direction & OCI_BDM_IN) ||
@@ -1248,6 +1241,8 @@ OCI_Statement * OCI_StatementInit
         stmt->bind_mode       = OCI_BIND_BY_NAME;
         stmt->long_mode       = OCI_LONG_EXPLICIT;
         stmt->bind_alloc_mode = OCI_BAM_EXTERNAL;
+        stmt->fetch_size      = OCI_FETCH_SIZE;
+        stmt->prefetch_size   = OCI_PREFETCH_SIZE;
 
         res = TRUE;
 
@@ -1288,8 +1283,10 @@ OCI_Statement * OCI_StatementInit
                 }
             }
 
-            res = (res && OCI_SetPrefetchSize(stmt, OCI_PREFETCH_SIZE));
-            res = (res && OCI_SetFetchSize(stmt, OCI_FETCH_SIZE));
+            /* Setting fetch attributes here as the statement is already prepared */
+
+            res = (res && OCI_SetPrefetchSize(stmt, stmt->prefetch_size));
+            res = (res && OCI_SetFetchSize(stmt, stmt->fetch_size));
         }
         else
         {
@@ -1758,11 +1755,8 @@ boolean OCI_API OCI_PrepareInternal
 
         stmt->status = OCI_STMT_PREPARED;
 
-        size = stmt->prefetch_size ? stmt->prefetch_size : OCI_PREFETCH_SIZE;
-        res  = (res && OCI_SetPrefetchSize(stmt, size));
-
-        size = stmt->fetch_size ? stmt->fetch_size : OCI_FETCH_SIZE;
-        res  = (res && OCI_SetFetchSize(stmt, size));
+        res = (res && OCI_SetPrefetchSize(stmt, stmt->prefetch_size));
+        res = (res && OCI_SetFetchSize(stmt, stmt->fetch_size));
     }
 
     return res;
