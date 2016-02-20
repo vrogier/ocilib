@@ -8,7 +8,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-INCLUDES= @ORACLE_INCLUDES@ -I$(top_srcdir)/include
+AM_CPPFLAGS= @ORACLE_INCLUDES@ -I$(top_srcdir)/include
 
 lib_LTLIBRARIES= libocilib.la
 
