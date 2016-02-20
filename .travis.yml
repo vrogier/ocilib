@@ -1,0 +1,4 @@
+language: c
+compiler: gcc
+
+./configure --with-oracle-import=runtime && make && make install
