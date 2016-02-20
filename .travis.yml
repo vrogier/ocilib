@@ -1,4 +1,7 @@
 language: c
 compiler: gcc
 sudo: required
-script: sudo ./configure --with-oracle-import=runtime && make && make install
+script:
+  - ./configure --with-oracle-import=runtime 
+  - make
+  - sudo make install
