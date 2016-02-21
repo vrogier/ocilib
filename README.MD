@@ -1,4 +1,7 @@
-# OCILIB - C and C++ Drivers for Oracle  [![Build Status](https://travis-ci.org/vrogier/ocilib.svg?branch=master)](https://travis-ci.org/vrogier/ocilib)
+﻿# OCILIB - C and C++ Drivers for Oracle  [![Build Status](https://travis-ci.org/vrogier/ocilib.svg?branch=master)](https://travis-ci.org/vrogier/ocilib) <a href="https://scan.coverity.com/projects/vrogier-ocilib">
+<img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/8019/badge.svg"/>
+</a>
 
 ## 1. About
 
