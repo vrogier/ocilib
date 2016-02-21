@@ -27,8 +27,14 @@ The OCILIB library  :
 ## Latest version
 
 The latest version is [version 4.2.0 (2015-09-21)]({{site.projecturl}}/releases/)
- 
- <p id="DownloadCount"></p>
+<br/>
+[![Build Status](https://img.shields.io/travis/vrogier/ocilib/master.svg)](https://travis-ci.org/vrogier/ocilib)
+[![Code Analysis](https://img.shields.io/coverity/scan/8019.svg)](https://scan.coverity.com/projects/vrogier-ocilib)
+<br/>
+Github downloads: https://img.shields.io/github/downloads/vrogier/ocilib/total.svg
+<br/>
+SF.NET downloads: https://img.shields.io/sourceforge/dt/orclib.svg 
+<br/>
  
 ## Recent Posts
 
@@ -56,56 +62,3 @@ The latest version is [version 4.2.0 (2015-09-21)]({{site.projecturl}}/releases/
 >James D'Arcy
 >CommonwealthBank
 
-<script>
-
-    function getHTTPObject()
-    {
-        if (typeof XMLHttpRequest != 'undefined') 
-        {
-            return new XMLHttpRequest();
-        }
-        try 
-        { 
-            return new ActiveXObject("Msxml2.XMLHTTP"); 
-        } catch (e)
-        { 
-            try 
-            { 
-               return new ActiveXObject("Microsoft.XMLHTTP"); 
-            } 
-            catch (e)
-            {
-            } 
-        }
-        return false;
-    }
-    
-	(function() {
-
-		var GetJson = function(url, successHandler, errorHandler) 
-        {			
-			var xhr = getHTTPObject();
-			xhr.open('get', url, true);
-			xhr.onload = function() {
-				var status = xhr.status;
-				if (status == 200) {
-					successHandler && successHandler(JSON.parse(xhr.responseText));
-				} else {
-					errorHandler && errorHandler(status);
-				}
-			};
-			xhr.send();
-		};
-
-		GetJson('https://api.github.com/repos/vrogier/ocilib/releases/latest', function(data)
-		{			
-			var total = 56242; // Value as 2015-07-15 from source forge. Need to add rest call to SF.Net
-			for (i in data.assets)
-			{
-			  total = total + data.assets[i].download_count;
-			}				
-			document.getElementById('DownloadCount').innerHTML =  '<br/>Total of download since first release : ' + '<b>' + total + '</b>';
-		});
-
-	}());
-</script>
