@@ -110,7 +110,7 @@ OCI_Date * OCI_DateInit
 
         /* if the input buffer is an SQLT_DAT buffer, we need to convert it */
 
-        if (ansi && buffer)
+        if (ansi && date && date->handle && buffer)
         {
             unsigned char *d = (unsigned char *) buffer;
 
@@ -813,7 +813,7 @@ boolean OCI_API OCI_DateToCTime
 )
 {
     time_t time = (time_t) -1;
-    struct tm t;
+    struct tm t = { 0 };
 
     OCI_LIB_CALL_ENTER(boolean, FALSE)
 

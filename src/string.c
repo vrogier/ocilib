@@ -675,10 +675,6 @@ unsigned int OCI_StringGetFromType
             else
             {
                 len = OCI_STRING_FALSE_SIZE;
-                if (OCI_STRING_TRUE_SIZE > len)
-                {
-                    len = OCI_STRING_TRUE_SIZE;
-                }
             }
            
             break;
@@ -1012,7 +1008,7 @@ unsigned int OCI_StringGetTypeName
     }
 
     ostrncpy(dest + offset, source, length - offset);
-    offset = (unsigned int)ostrlen(dest);
+    offset += (unsigned int)ostrlen(source);
 
     if (quote)
     {

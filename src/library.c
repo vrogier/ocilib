@@ -735,7 +735,7 @@ boolean OCI_API OCI_Initialize
 
     OCILib.env_mode             = mode;
     OCILib.charset              = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_ANSI;
-    OCILib.use_wide_char_conv   = (OCILib.charset == OCI_CHAR_WIDE &&  (WCHAR_MAX == WCHAR_4_BYTES));
+    OCILib.use_wide_char_conv   = (OCILib.charset == OCI_CHAR_WIDE && (WCHAR_MAX == WCHAR_4_BYTES));
 
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
@@ -801,7 +801,7 @@ boolean OCI_API OCI_Initialize
 
     #endif
 
-    if ((len > (size_t) 0) && (len < sizeof(path)) && (OCI_CHAR_SLASH != path[len - (size_t) 1]))
+    if ((len > (size_t) 0) && (len < sizeof(path) -1) && (OCI_CHAR_SLASH != path[len - (size_t) 1]))
     {
         path[len] = OCI_CHAR_SLASH;
         len++;

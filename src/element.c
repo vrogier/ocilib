@@ -234,7 +234,7 @@ OCI_Elem * OCI_ElemInit
 
     /* check for failure */
 
-    if (!res && elem)
+    if (!res)
     {
         OCI_ElemFree(elem);
         *pelem = elem = NULL;
@@ -1016,6 +1016,8 @@ boolean OCI_API OCI_ElemSetRaw
     }
     else
     {
+        call_status = TRUE;
+
         OCI_CALL2
         (
             call_status, elem->con,

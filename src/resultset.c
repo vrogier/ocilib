@@ -204,7 +204,7 @@ OCI_Resultset * OCI_ResultsetCreate
                 }
             }
         }
-        else
+        else if (rs->defs)
         {
             /* get info from register binds */
 

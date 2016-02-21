@@ -308,7 +308,7 @@ boolean OCI_BindCheck
                         }
                         else
                         {
-                            if (bnd->input[j])
+                            if (bnd->input[j] && bnd->buffer.data)
                             {
                                 bnd->buffer.data[j] = ((OCI_Datatype *) bnd->input[j])->handle;
                             }
@@ -321,9 +321,9 @@ boolean OCI_BindCheck
                         (OCI_CDT_NUMERIC != bnd->type) && 
                         (OCI_CDT_TEXT    != bnd->type) &&
                         (OCI_CDT_RAW     != bnd->type) &&
-                        (OCI_CDT_OBJECT  != bnd->type))
+                        (OCI_CDT_OBJECT  != bnd->type) && ind)
                     {
-                        if (ind && *ind != ((sb2) OCI_IND_NULL))
+                        if (*ind != ((sb2) OCI_IND_NULL))
                         {
                             if (bnd->input[j])
                             {
@@ -338,11 +338,16 @@ boolean OCI_BindCheck
 
                     /* update bind object indicator pointer with object indicator */
 
-                    if (OCI_CDT_OBJECT == bnd->type)
+                    if (OCI_CDT_OBJECT == bnd->type && ind)
                     {
                         if (*ind != ((sb2) OCI_IND_NULL) && bnd->buffer.data)
                         {
-                            bnd->buffer.obj_inds[j] = ((OCI_Object *) bnd->input[j])->tab_ind;
+                            OCI_Object *obj = (OCI_Object *) bnd->input[j];
+
+                            if (obj)
+                            {
+                                bnd->buffer.obj_inds[j] = obj->tab_ind;
+                            }
                         }
                         else
                         {
@@ -1827,12 +1832,16 @@ boolean OCI_API OCI_ExecuteInternal
 
     /* Oracle execute call */
 
-    status = OCIStmtExecute(stmt->con->cxt, stmt->stmt, stmt->con->err, iters,
-                            (ub4) 0, (OCISnapshot *) NULL, (OCISnapshot *) NULL, mode);
+    if (res)
+    {
 
-    /* reset input binds indicators status even if execution failed */
+        status = OCIStmtExecute(stmt->con->cxt, stmt->stmt, stmt->con->err, iters,
+                                (ub4)0, (OCISnapshot *)NULL, (OCISnapshot *)NULL, mode);
 
-    OCI_BindReset(stmt);
+        /* reset input binds indicators status even if execution failed */
+
+        OCI_BindReset(stmt);
+    } 
 
     /* check result */
 

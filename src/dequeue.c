@@ -945,20 +945,20 @@ boolean OCI_API  OCI_DequeueSubscribe
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
         otext *str  = NULL;
-        size_t size = sizeof(buffer)/sizeof(otext);
+        size_t max_chars = sizeof(buffer) / sizeof(otext) - 1;
 
         dbtext *dbstr    = NULL;
         int     dbsize   = -1;
 
-        ostrncat(buffer, dequeue->name, size);
+        ostrncat(buffer, dequeue->name, max_chars);
 
         if (dequeue->consumer)
         {
-            size -= ostrlen(dequeue->name);
-            ostrncat(buffer, OTEXT(":"), size);
-            size -= (size_t) 1;
+            max_chars -= ostrlen(dequeue->name);
+            ostrncat(buffer, OTEXT(":"), max_chars);
+            max_chars -= (size_t)1;
 
-            ostrncat(buffer, dequeue->consumer, size);
+            ostrncat(buffer, dequeue->consumer, max_chars);
         }
 
         /* queue name must be uppercase */

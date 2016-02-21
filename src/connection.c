@@ -1906,13 +1906,12 @@ boolean OCI_API OCI_SetTrace
     if (call_status)
     {
         dbtext *dbstr  = NULL;
-        int     dbsize = -1;
+        int     dbsize = 0;
 
-        dbstr = OCI_StringGetOracleString(str, &dbsize);
-
-        if (!str)
+        if (str)
         {
-            dbsize = 0;
+            dbsize = -1;
+            dbstr  = OCI_StringGetOracleString(str, &dbsize);
         }
 
         OCI_CALL2

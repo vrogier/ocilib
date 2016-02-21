@@ -209,7 +209,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
         {
             otext buffer[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
-            size_t  size    = sizeof(buffer)/sizeof(otext);
+            size_t  max_chars = sizeof(buffer) / sizeof(otext) - 1;
             dbtext *dbstr1  = NULL;
             int     dbsize1 = -1;
             sb4     pbsp    = 1;
@@ -220,13 +220,14 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
             if (typinf->schema && typinf->schema[0])
             {
-                str   = ostrncat(buffer, typinf->schema, size);
-                size -= ostrlen(typinf->schema);
-                str   = ostrncat(str, OTEXT("."), size);
-                size -= (size_t) 1;
+                str = ostrncat(buffer, typinf->schema, max_chars);
+                max_chars -= ostrlen(typinf->schema);
+
+                str = ostrncat(str, OTEXT("."), max_chars);
+                max_chars -= (size_t)1;
             }
 
-            ostrncat(str, typinf->name, size);
+            ostrncat(str, typinf->name, max_chars);
 
             dbstr1 = OCI_StringGetOracleString(str, &dbsize1);
 

@@ -147,7 +147,7 @@ typedef struct test_t
   #define omain           main
   #define oarg            char
   #define print_args(x)   printf(x)
-  #define GET_ARG(s, i)   strncat(s, argv[i], sizeof(s))
+  #define GET_ARG(s, i)   strncat(s, argv[i], sizeof(s)-1)
 
 #endif
 

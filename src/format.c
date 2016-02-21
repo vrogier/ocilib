@@ -96,7 +96,7 @@ int OCI_ParseSqlFmt
 
                 if (str && str[0])
                 {
-                    len = (int) (str ? ostrlen(str) : OCI_SIZE_NULL);
+                    len = (int) ostrlen(str);
 
                     if (quote && (*pf != OTEXT('m')))
                     {

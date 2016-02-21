@@ -125,7 +125,7 @@ OCI_Error * OCI_ErrorGet
         err = &OCILib.lib_err;
     }
 
-    if (check && err->active)
+    if (check && err && err->active)
     {
         err = NULL;
     }
