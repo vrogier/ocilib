@@ -1,5 +1,7 @@
 language: c
-compiler: gcc
+compiler: 
+  - gcc
+  - clang
 sudo: required
 script:
   - touch configure.ac aclocal.m4 configure Makefile.am Makefile.in config.h.in
