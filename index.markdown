@@ -35,6 +35,7 @@ The latest version is [version 4.2.0 (2015-09-21)]({{site.projecturl}}/releases/
 <br/>
 Github downloads : <img alt="Github downloads" src="https://img.shields.io/github/downloads/vrogier/ocilib/total.svg"/>
 <br/>
+<br/>
 SF.NETdownloads: <img alt="SF.NET downloads" src="https://img.shields.io/sourceforge/dt/orclib.svg"/>
 <br/>
  
