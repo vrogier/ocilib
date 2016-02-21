@@ -2,6 +2,7 @@ language: c
 compiler: gcc
 sudo: required
 script:
+  - touch configure.ac aclocal.m4 configure Makefile.am Makefile.in config.h.in
   - ./configure --with-oracle-import=runtime 
   - make
   - sudo make install
