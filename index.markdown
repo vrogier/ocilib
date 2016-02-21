@@ -28,12 +28,14 @@ The OCILIB library  :
 
 The latest version is [version 4.2.0 (2015-09-21)]({{site.projecturl}}/releases/)
 <br/>
+<br/>
 [![Build Status](https://img.shields.io/travis/vrogier/ocilib/master.svg)](https://travis-ci.org/vrogier/ocilib)
 [![Code Analysis](https://img.shields.io/coverity/scan/8019.svg)](https://scan.coverity.com/projects/vrogier-ocilib)
 <br/>
-Github downloads: https://img.shields.io/github/downloads/vrogier/ocilib/total.svg
 <br/>
-SF.NET downloads: https://img.shields.io/sourceforge/dt/orclib.svg 
+Github downloads : <img alt="Github downloads" src="https://img.shields.io/github/downloads/vrogier/ocilib/total.svg"/>
+<br/>
+SF.NETdownloads: <img alt="SF.NET downloads" src="https://img.shields.io/sourceforge/dt/orclib.svg"/>
 <br/>
  
 ## Recent Posts
