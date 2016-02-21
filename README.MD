@@ -1,4 +1,4 @@
-# OCILIB - C and C++ Drivers for Oracle  
+# OCILIB - C and C++ Drivers for Oracle  [![Build Status](https://travis-ci.org/vrogier/ocilib.svg?branch=master)](https://travis-ci.org/vrogier/ocilib)
 
 ## 1. About
 
