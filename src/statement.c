@@ -242,7 +242,7 @@ boolean OCI_BindCheck
 
                 /* update bind object indicator pointer with object indicator */
 
-                if (OCI_CDT_OBJECT == bnd->type)
+                if (OCI_CDT_OBJECT == bnd->type && ind)
                 {
                    if (*ind != ((sb2) OCI_IND_NULL) && bnd->buffer.data)
                    {

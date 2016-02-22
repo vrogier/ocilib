@@ -807,7 +807,7 @@ boolean OCI_API OCI_Initialize
         len++;
     }
 
-    strncat(path, OCI_DL_ANSI_NAME, sizeof(path) - len);
+    strncat(path, OCI_DL_ANSI_NAME, sizeof(path) - len - 1);
 
     OCILib.lib_handle = LIB_OPEN(path);
 
