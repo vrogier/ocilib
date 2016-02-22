@@ -246,7 +246,12 @@ boolean OCI_BindCheck
                 {
                    if (*ind != ((sb2) OCI_IND_NULL) && bnd->buffer.data)
                    {
-                        bnd->buffer.obj_inds[0] = ((OCI_Object *) bnd->input)->tab_ind;
+                        OCI_Object *obj = (OCI_Object *)bnd->input;
+
+                        if (obj)
+                        {
+                            bnd->buffer.obj_inds[0] = obj->tab_ind;
+                        }
                    }
                    else
                    {
@@ -263,7 +268,7 @@ boolean OCI_BindCheck
             }
             else
             {
-                for (j = 0; j < bnd->buffer.count; j++, ind++)
+                for (j = 0; j < bnd->buffer.count && ind; j++, ind++)
                 {
 
                     /* - For big integer (64 bits), we use an OCINumber.
