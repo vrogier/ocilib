@@ -1322,7 +1322,7 @@ boolean OCI_API OCI_Initialize
         {
             OCILib.version_runtime = OCI_9_0;
         }
-        else if (OCIThreadProcessInit)
+        else if (OCIThreadCreate)
         {
             OCILib.version_runtime = OCI_8_1;
         }
