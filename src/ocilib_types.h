@@ -233,6 +233,7 @@ struct OCI_Library
     big_uint             mem_bytes_oci;           /* allocated bytes by OCI client */
     big_uint             mem_bytes_lib;           /* allocated bytes by OCILIB */
     OCI_Mutex           *mem_mutex;               /* mutex for memory counters */
+    boolean              env_vars[OCI_VARS_COUNT];/* specific environment variables */
 #ifdef OCI_IMPORT_RUNTIME
     LIB_HANDLE           lib_handle;              /* handle of runtime shared library */
 #endif
@@ -919,6 +920,39 @@ typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;
 
 extern OCI_Library OCILib;
 extern OCI_SQLCmdInfo SQLCmds[];
+
+/* Start of Experimental section containing some Oracle opaque structure definitions 
+
+   These partial structures are "guessed" from memory analysis in order to 
+   find workarounds to bugs that Oracle does not / refuses to fix.
+
+   These structures are not used in OCILIB unless specific environment variables are set
+*/
+
+
+/* The following structures contain definitions for a structure matching an Oracle Parameter  
+   retrieved from a statement handle when describing columns from resultsets.
+   They were added in order to implement a workaround for the unfixed Oracle Bug 9838993 
+*/
+
+struct OCIParamStructColumnInfo
+{
+    unsigned char unknown_fields[6 * sizeof(int) + 3 * sizeof(void*)];
+    char *name;
+};
+
+typedef struct OCIParamStructColumnInfo OCIParamStructColumnInfo;
+
+struct OCIParamStruct
+{
+    unsigned char unknown_fields[2 * sizeof(void*) + 1 * sizeof(int)];
+
+    OCIParamStructColumnInfo *column_info;
+};
+
+typedef struct OCIParamStruct OCIParamStruct;
+
+/* End of Experimental section */
 
 #endif /* OCILIB_OCILIB_TYPES_H_INCLUDED */
 

@@ -39,6 +39,12 @@
  * ********************************************************************************************* */
 OCI_Library OCILib;
 
+char * EnvironmentVarNames[OCI_VARS_COUNT] =
+{
+    VAR_OCILIB_WORKAROUND_UTF16_COLUMN_NAME
+};
+
+
 OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
 {
     {OCI_SFC_CREATE_TABLE,             OTEXT("CREATE TABLE")                                         },
@@ -740,6 +746,15 @@ boolean OCI_API OCI_Initialize
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
         OCILib.formats[i] = ostrdup(FormatDefaultValues[i]);
+    }
+
+    /* load any specific environment variable */
+
+    for (i = 0; i < OCI_VARS_COUNT; i++)
+    {
+        char *value = getenv(EnvironmentVarNames[i]);
+
+        OCILib.env_vars[i] = value && (stricmp(value, OCI_VARS_TRUE_VALUE) == 0 || atoi(value) == 1);
     }
 
     /* test for UTF8 environment */

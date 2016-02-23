@@ -374,26 +374,53 @@ boolean OCI_ColumnDescribe
 
     if (res)
     {
-        dbtext *dbstr    = NULL;
-        int     dbsize   = 0;
-        ub4     attrname = (OCI_DESC_COLLECTION == ptype) ? OCI_ATTR_TYPE_NAME : OCI_ATTR_NAME;
 
-        OCI_CALL1
-        (
-            res, con, stmt,
+#if defined(OCI_CHARSET_WIDE)
 
-            OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM, (dvoid *) &dbstr,
-                       (ub4 *) &dbsize, (ub4) attrname, con->err)
-        )
+        // Ugly workaround for Oracle Bug 9838993 
 
-        if (res && dbstr)
+        if ((OCI_DESC_RESULTSET == ptype) && (OCILib.env_vars[OCI_VARS_WORKAROUND_UTF16_COLUMN_NAME]))
         {
-            col->name = OCI_StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
+            OCIParamStruct *param_struct = (OCIParamStruct*) param;
 
-            res = (NULL != col->name);
+            if (param_struct && param_struct->column_info && param_struct->column_info->name)
+            {
+                size_t char_count = OCI_StringLength(param_struct->column_info->name, sizeof(char));
+                col->name = OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), char_count + 1, 1);
+                OCI_StringAnsiToNative(param_struct->column_info->name, col->name, char_count);
+
+                res = TRUE;
+            }
+            else
+            {
+                res = FALSE;
+            }
+        }
+        else
+
+#endif
+
+        {
+            dbtext *dbstr    = NULL;
+            int     dbsize   = 0;
+            ub4     attrname = (OCI_DESC_COLLECTION == ptype) ? OCI_ATTR_TYPE_NAME : OCI_ATTR_NAME;
+                      
+             OCI_CALL1
+            (
+                res, con, stmt,
+
+                OCIAttrGet((dvoid *) param, (ub4) OCI_DTYPE_PARAM, (dvoid *) &dbstr,
+                           (ub4 *) &dbsize, (ub4) attrname, con->err)
+            )
+
+            if (res && dbstr)
+            {
+                col->name = OCI_StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
+
+                res = (NULL != col->name);
+            }
         }
     }
-
     /* user type descriptor */
 
     if (

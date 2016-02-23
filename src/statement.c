@@ -1761,8 +1761,6 @@ boolean OCI_API OCI_PrepareInternal
 
     if (res)
     {
-        ub4 size = 0;
-
         stmt->status = OCI_STMT_PREPARED;
 
         res = (res && OCI_SetPrefetchSize(stmt, stmt->prefetch_size));
