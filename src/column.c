@@ -387,7 +387,7 @@ boolean OCI_ColumnDescribe
             {
                 size_t char_count = OCI_StringLength(param_struct->column_info->name, sizeof(char));
                 col->name = OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), char_count + 1, 1);
-                OCI_StringAnsiToNative(param_struct->column_info->name, col->name, char_count);
+                OCI_StringAnsiToNative(param_struct->column_info->name, col->name, (int) char_count);
 
                 res = TRUE;
             }
