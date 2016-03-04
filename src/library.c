@@ -754,7 +754,7 @@ boolean OCI_API OCI_Initialize
     {
         char *value = getenv(EnvironmentVarNames[i]);
 
-        OCILib.env_vars[i] = value && (stricmp(value, OCI_VARS_TRUE_VALUE) == 0 || atoi(value) == 1);
+        OCILib.env_vars[i] = value && (ostrcasecmp(value, OCI_VARS_TRUE_VALUE) == 0 || atoi(value) == 1);
     }
 
     /* test for UTF8 environment */
