@@ -19,7 +19,7 @@
 
  @section Version Version information
 
-Current version :  <b>4.2.0 (2015-09-21)</b>
+Current version :  <b>4.2.1 (2016-03-21)</b>
 
  @section Features Main features
 
@@ -61,8 +61,8 @@ Current version :  <b>4.2.0 (2015-09-21)</b>
  OCILIB is developed by <a href="mailto:vince.rogier@ocilib.net">Vincent Rogier</a>
 
  @section License License 
- The source code is free source code. It's licensed under GNU LESSER GENERAL PUBLIC LICENSE (LGPL).
- (see the file lgpl-license.txt)
+ The source code is free source code licensed under the Apache License, Version 2.0.
+ (see the file license.txt)
 
  @section Changelog ChangeLog
 

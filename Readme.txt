@@ -81,11 +81,9 @@ URL : http://www.ocilib.net
 LICENSE
 =======
 
-The source code is free source code.
+The source code is free source code licensed under the Apache License, Version 2.0.
 
-It's licensed under GNU LESSER GENERAL PUBLIC LICENSE (LGPL).
-
-(see the file lgpl-license.txt)
+(see the file license.txt)
 
 COMPATIBILITY 
 =============

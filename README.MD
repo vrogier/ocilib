@@ -1,4 +1,4 @@
-# OCILIB - C and C++ Drivers for Oracle 
+﻿# OCILIB - C and C++ Drivers for Oracle 
 [![Build Status](https://img.shields.io/travis/vrogier/ocilib/master.svg)](https://travis-ci.org/vrogier/ocilib)
 [![Code Analysis](https://img.shields.io/coverity/scan/8019.svg)](https://scan.coverity.com/projects/vrogier-ocilib)
 
@@ -20,7 +20,9 @@ OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy
 
 ## 2. License
 
-The source code is free source code licensed under **LGPL v2.1** - see [LICENSE file](lgpl-license.txt)
+Current releases up to version 4.2.0 are licensed under **LGPL v2.1**
+
+From version 4.2.1, OCILIB will be relicensed under **Apache License, Version 2.0** - see [LICENSE file](license.txt)
 
 ## 3. Features 
  
