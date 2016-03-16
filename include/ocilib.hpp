@@ -5346,13 +5346,6 @@ public:
 
     /**
     * @brief
-    * Destructor
-    *
-    */ 
-    ~Statement();
-
-    /**
-    * @brief
     * Return the connection associated with a statement
     *
     */
@@ -6113,6 +6106,7 @@ public:
 private:
 
     static bool IsResultsetHandle(Handle *handle);
+    static void OnFreeSmartHandle(SmartHandle *smartHandle);
 
     Statement(OCI_Statement *stmt, Handle *parent = 0);
 

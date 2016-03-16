@@ -307,10 +307,12 @@ protected:
     HandleHolder& operator= (const HandleHolder &other);
 
     typedef boolean(OCI_API *HandleFreeFunc)(AnyPointer handle);
+    
+    typedef void(*SmartHandleFreeNotifyFunc)(SmartHandle *smartHandle);
 
     Handle* GetHandle() const;
 
-    void Acquire(THandleType handle, HandleFreeFunc func, Handle *parent);
+    void Acquire(THandleType handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent);
     void Acquire(HandleHolder &other);
     void Release();
 
@@ -318,7 +320,7 @@ protected:
     {
     public:
 
-        SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc func, Handle *parent);
+        SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent);
         virtual ~SmartHandle();
 
         void Acquire(HandleHolder *holder);
@@ -330,8 +332,6 @@ protected:
 
         AnyPointer GetExtraInfos() const;
         void  SetExtraInfos(AnyPointer extraInfo);
-
-        bool IsLastHolder(HandleHolder *holder);
 
         ConcurrentList<Handle *> & GetChildren();
         void DetachFromHolders();
@@ -348,7 +348,8 @@ protected:
         Locker _locker;
 
         THandleType _handle;
-        HandleFreeFunc _func;
+        HandleFreeFunc _handleFreeFunc;
+        SmartHandleFreeNotifyFunc _freeNotifyFunc;
         Handle *_parent;
         AnyPointer _extraInfo;
     };

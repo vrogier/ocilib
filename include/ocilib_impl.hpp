@@ -329,7 +329,7 @@ inline HandleHolder<THandleType>::HandleHolder() :  _smartHandle(0)
 template<class THandleType>
 inline HandleHolder<THandleType>::HandleHolder(const HandleHolder &other) :  _smartHandle(0)
 {
-    Acquire(other, 0,  other._smartHandle ? other._smartHandle->GetParent() : 0);
+    Acquire(other, 0, 0, other._smartHandle ? other._smartHandle->GetParent() : 0);
 }
 
 template<class THandleType>
@@ -341,7 +341,7 @@ inline HandleHolder<THandleType>::~HandleHolder()
 template<class THandleType>
 inline HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (const HandleHolder<THandleType> &other)
 {
-    Acquire(other, 0, other._smartHandle ? other._smartHandle->GetParent() : 0);
+    Acquire(other, 0, 0, other._smartHandle ? other._smartHandle->GetParent() : 0);
     return *this;
 }
 
@@ -382,7 +382,7 @@ inline Handle * HandleHolder<THandleType>::GetHandle() const
 }
 
 template<class THandleType>
-inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFunc func, Handle *parent)
+inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent)
 {
     Release();
 
@@ -392,7 +392,7 @@ inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFun
 
         if (!_smartHandle)
         {
-            _smartHandle = new SmartHandle(this, handle, func, parent);
+            _smartHandle = new SmartHandle(this, handle, handleFreefunc, freeNotifyFunc, parent);
         }
         else
         {
@@ -664,8 +664,13 @@ inline void ConcurrentList<TValue>::ForEach(TAction action)
 }
 
 template <class THandleType>
-inline HandleHolder<THandleType>::SmartHandle::SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc func, Handle *parent)
-    : _holders(), _children(), _locker(), _handle(handle), _func(func), _parent(parent), _extraInfo(0)
+inline HandleHolder<THandleType>::SmartHandle::SmartHandle
+(
+    HandleHolder *holder, THandleType handle, HandleFreeFunc handleFreefunc,
+    SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent
+)
+    : _holders(), _children(), _locker(), _handle(handle), _handleFreeFunc(handleFreefunc),
+      _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(0)
 {
     _locker.SetAccessMode((Environment::GetMode() & Environment::Threaded) == Environment::Threaded);
 
@@ -701,9 +706,14 @@ inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
 
     Environment::SetSmartHandle<typename HandleHolder<THandleType>::SmartHandle*>(_handle, 0);
 
-    if (_func && _handle)
+    if (_freeNotifyFunc)
     {
-        ret = _func(_handle);
+        _freeNotifyFunc(this);
+    }
+
+    if (_handleFreeFunc && _handle)
+    {
+        ret = _handleFreeFunc(_handle);
         chk = TRUE;
     }
 
@@ -751,12 +761,6 @@ inline void HandleHolder<THandleType>::SmartHandle::Release(HandleHolder *holder
     }
 
     holder->_smartHandle = 0;
-}
-
-template <class THandleType>
-inline bool HandleHolder<THandleType>::SmartHandle::IsLastHolder(HandleHolder *holder)
-{
-    return ( (_holders.GetSize() == 1) && _holders.Exists(holder));
 }
 
 template <class THandleType>
@@ -1136,7 +1140,7 @@ inline void Environment::SelfInitialize(EnvironmentFlags mode, const ostring& li
     _callbacks.SetLocker(&_locker);
     _handles.SetLocker(&_locker);
 
-    _handle.Acquire(const_cast<AnyPointer>(Check(OCI_HandleGetEnvironment())), 0, 0);
+    _handle.Acquire(const_cast<AnyPointer>(Check(OCI_HandleGetEnvironment())), 0, 0, 0);
 }
 
 inline void Environment::SelfCleanup()
@@ -1249,7 +1253,7 @@ inline void Pool::Open(const ostring& db, const ostring& user, const ostring& pw
     Release();
 
     Acquire(Check(OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionFlags.GetValues(),
-        minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), Environment::GetEnvironmentHandle());
+            minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), 0, Environment::GetEnvironmentHandle());
 }
 
 inline void Pool::Close()
@@ -1333,13 +1337,13 @@ inline Connection::Connection(const ostring& db, const ostring& user, const ostr
 
 inline Connection::Connection(OCI_Connection *con,  Handle *parent)
 {
-    Acquire(con, reinterpret_cast<HandleFreeFunc>(parent ? OCI_ConnectionFree : 0), parent);
+    Acquire(con, reinterpret_cast<HandleFreeFunc>(parent ? OCI_ConnectionFree : 0), 0, parent);
 }
 
 inline void Connection::Open(const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
 {
     Acquire(Check(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
-            reinterpret_cast<HandleFreeFunc>(OCI_ConnectionFree), Environment::GetEnvironmentHandle());
+            reinterpret_cast<HandleFreeFunc>(OCI_ConnectionFree), 0, Environment::GetEnvironmentHandle());
 }
 
 inline void Connection::Close()
@@ -1580,12 +1584,12 @@ inline void Connection::SetUserData(AnyPointer value)
 
 inline Transaction::Transaction(const Connection &connection, unsigned int timeout, TransactionFlags flags, OCI_XID *pxid)
 {
-    Acquire(Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), reinterpret_cast<HandleFreeFunc>(OCI_TransactionFree), 0);
+    Acquire(Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), reinterpret_cast<HandleFreeFunc>(OCI_TransactionFree), 0, 0);
 }
 
 inline Transaction::Transaction(OCI_Transaction *trans)
 {
-    Acquire(trans, 0, 0);
+    Acquire(trans, 0, 0, 0);
 }
 
 inline void Transaction::Prepare()
@@ -1644,12 +1648,12 @@ inline Date::Date(const ostring& str, const ostring& format)
 
 inline Date::Date(OCI_Date *pDate, Handle *parent)
 {
-    Acquire(pDate, 0, parent);
+    Acquire(pDate, 0, 0, parent);
 }
 
 inline void Date::Allocate()
 {
-    Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0);
+    Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0, 0);
 }
 
 inline Date Date::SysDate()
@@ -1976,19 +1980,19 @@ inline Interval::Interval()
 
 inline Interval::Interval(IntervalType type)
 {
-    Acquire(Check(OCI_IntervalCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 0);
+    Acquire(Check(OCI_IntervalCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 0, 0);
 }
 
 inline Interval::Interval(IntervalType type, const ostring& data)
 {
-    Acquire(Check(OCI_IntervalCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 0);
+    Acquire(Check(OCI_IntervalCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 0, 0);
 
     FromString(data);
 }
 
 inline Interval::Interval(OCI_Interval *pInterval, Handle *parent)
 {
-    Acquire(pInterval, 0, parent);
+    Acquire(pInterval, 0, 0, parent);
 }
 
 inline Interval Interval::Clone() const
@@ -2252,18 +2256,18 @@ inline Timestamp::Timestamp()
 
 inline Timestamp::Timestamp(TimestampType type)
 {
-    Acquire(Check(OCI_TimestampCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 0);
+    Acquire(Check(OCI_TimestampCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 0, 0);
 }
 
 inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostring& format)
 {
-    Acquire(Check(OCI_TimestampCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 0);
+    Acquire(Check(OCI_TimestampCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 0, 0);
     FromString(data, format);
 }
 
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, Handle *parent)
 {
-    Acquire(pTimestamp, 0, parent);
+    Acquire(pTimestamp, 0, 0, parent);
 }
 
 inline Timestamp Timestamp::Clone() const
@@ -2659,13 +2663,13 @@ inline Lob<TLobObjectType, TLobOracleType>::Lob()
 template<class TLobObjectType, int TLobOracleType>
 inline Lob<TLobObjectType, TLobOracleType>::Lob(const Connection &connection)
 {
-    Acquire(Check(OCI_LobCreate(connection, TLobOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LobFree), connection.GetHandle());
+    Acquire(Check(OCI_LobCreate(connection, TLobOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LobFree), 0, connection.GetHandle());
 }
 
 template<class TLobObjectType, int TLobOracleType>
 inline Lob<TLobObjectType, TLobOracleType>::Lob(OCI_Lob *pLob, Handle *parent)
 {
-    Acquire(pLob, 0, parent);
+    Acquire(pLob, 0, 0, parent);
 }
 
 template<>
@@ -2865,19 +2869,19 @@ inline File::File()
 
 inline File::File(const Connection &connection)
 {
-    Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), connection.GetHandle());
+    Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), 0, connection.GetHandle());
 }
 
 inline File::File(const Connection &connection, const ostring& directory, const ostring& name)
 {
-    Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), connection.GetHandle());
+    Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), 0, connection.GetHandle());
 
     SetInfos(directory, name);
 }
 
 inline File::File(OCI_File *pFile, Handle *parent)
 {
-    Acquire(pFile, 0, parent);
+    Acquire(pFile, 0, 0, parent);
 }
 
 inline Raw File::Read(unsigned int size)
@@ -2974,12 +2978,12 @@ inline bool File::operator != (const File& other) const
 
 inline TypeInfo::TypeInfo(const Connection &connection, const ostring& name, TypeInfoType type)
 {
-    Acquire(Check(OCI_TypeInfoGet(connection, name.c_str(), type)), reinterpret_cast<HandleFreeFunc>(0), connection.GetHandle());
+    Acquire(Check(OCI_TypeInfoGet(connection, name.c_str(), type)), reinterpret_cast<HandleFreeFunc>(0), 0, connection.GetHandle());
 }
 
 inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
 {
-    Acquire(pTypeInfo, 0, 0);
+    Acquire(pTypeInfo, 0, 0, 0);
 }
 
 inline TypeInfo::TypeInfoType TypeInfo::GetType() const
@@ -3018,12 +3022,12 @@ inline Object::Object()
 inline Object::Object(const TypeInfo &typeInfo)
 {
     Connection connection = typeInfo.GetConnection();
-    Acquire(Check(OCI_ObjectCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_ObjectFree), connection.GetHandle());
+    Acquire(Check(OCI_ObjectCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_ObjectFree), 0, connection.GetHandle());
 }
 
 inline Object::Object(OCI_Object *pObject, Handle *parent)
 {
-    Acquire(pObject, 0, parent);
+    Acquire(pObject, 0, 0, parent);
 }
 
 inline Object Object::Clone() const
@@ -3361,12 +3365,12 @@ inline Reference::Reference()
 inline Reference::Reference(const TypeInfo &typeInfo)
 {
     Connection connection = typeInfo.GetConnection();
-    Acquire(Check(OCI_RefCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_RefFree), connection.GetHandle());
+    Acquire(Check(OCI_RefCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_RefFree), 0, connection.GetHandle());
 }
 
 inline Reference::Reference(OCI_Ref *pRef, Handle *parent)
 {
-    Acquire(pRef, 0, parent);
+    Acquire(pRef, 0, 0, parent);
 }
 
 inline TypeInfo Reference::GetTypeInfo() const
@@ -3426,13 +3430,13 @@ inline Collection<TDataType>::Collection()
 template<class TDataType>
 inline Collection<TDataType>::Collection(const TypeInfo &typeInfo)
 {
-    Acquire(Check(OCI_CollCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_CollFree), typeInfo.GetConnection().GetHandle());
+    Acquire(Check(OCI_CollCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_CollFree), 0, typeInfo.GetConnection().GetHandle());
 }
 
 template<class TDataType>
 inline Collection<TDataType>::Collection(OCI_Coll *pColl, Handle *parent)
 {
-     Acquire(pColl, 0, parent);
+     Acquire(pColl, 0, 0, parent);
 }
 
 template<class TDataType>
@@ -3959,13 +3963,13 @@ inline Long<TLongObjectType, TLongOracleType>::Long()
 template<class TLongObjectType, int TLongOracleType>
 inline Long<TLongObjectType, TLongOracleType>::Long(const Statement &statement)
 {
-    Acquire(Check(OCI_LongCreate(statement, TLongOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), statement.GetHandle());
+    Acquire(Check(OCI_LongCreate(statement, TLongOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), 0, statement.GetHandle());
 }
 
 template<class TLongObjectType, int TLongOracleType>
 inline Long<TLongObjectType, TLongOracleType>::Long(OCI_Long *pLong, Handle* parent)
 {
-    Acquire(pLong, 0, parent);
+    Acquire(pLong, 0, 0, parent);
 }
 
 template<class TLongObjectType, int TLongOracleType>
@@ -4448,7 +4452,7 @@ inline void BindsHolder::SetInData()
 
 inline BindInfo::BindInfo(OCI_Bind *pBind, Handle *parent)
 {
-    Acquire(pBind, 0, parent);
+    Acquire(pBind, 0, 0, parent);
 }
 
 inline ostring BindInfo::GetName() const
@@ -4513,22 +4517,12 @@ inline Statement::Statement()
 
 inline Statement::Statement(const Connection &connection)
 {
-    Acquire(Check(OCI_StatementCreate(connection)), reinterpret_cast<HandleFreeFunc>(OCI_StatementFree), connection.GetHandle());
+    Acquire(Check(OCI_StatementCreate(connection)), reinterpret_cast<HandleFreeFunc>(OCI_StatementFree), OnFreeSmartHandle, connection.GetHandle());
 }
 
 inline Statement::Statement(OCI_Statement *stmt, Handle *parent)
 {
-    Acquire(stmt, reinterpret_cast<HandleFreeFunc>(parent ? OCI_StatementFree : 0), parent);
-}
-
-inline Statement::~Statement()
-{
-    if (_smartHandle && _smartHandle->IsLastHolder(this))
-    {
-        BindsHolder *bindsHolder = GetBindsHolder(false);
-
-        delete bindsHolder;
-    }
+    Acquire(stmt, reinterpret_cast<HandleFreeFunc>(parent ? OCI_StatementFree : 0), OnFreeSmartHandle, parent);
 }
 
 inline Connection Statement::GetConnection() const
@@ -5457,11 +5451,23 @@ inline void Statement::ReleaseResultsets()
     }
 }
 
-inline bool Statement::IsResultsetHandle(Handle *handle)
+bool Statement::IsResultsetHandle(Handle *handle)
 {
     Resultset::SmartHandle *smartHandle = dynamic_cast<Resultset::SmartHandle *>(handle);
 
     return smartHandle != 0;
+}
+
+void Statement::OnFreeSmartHandle(SmartHandle *smartHandle)
+{
+    if (smartHandle)
+    {
+        BindsHolder *bindsHolder = static_cast<BindsHolder *>(smartHandle->GetExtraInfos());
+        
+        smartHandle->SetExtraInfos(0);
+
+        delete bindsHolder;
+    }
 }
 
 inline void Statement::SetLastBindMode(BindInfo::BindDirection mode)
@@ -5488,7 +5494,7 @@ inline BindsHolder * Statement::GetBindsHolder(bool create)
 
 inline Resultset::Resultset(OCI_Resultset *resultset, Handle *parent)
 {
-    Acquire(resultset, 0, parent);
+    Acquire(resultset, 0, 0, parent);
 }
 
 inline bool Resultset::Next()
@@ -5921,7 +5927,7 @@ inline TDataType Resultset::Get(const ostring& name) const
 
 inline Column::Column(OCI_Column *pColumn, Handle *parent)
 {
-    Acquire(pColumn, 0, parent);
+    Acquire(pColumn, 0, 0, parent);
 }
 
 inline ostring Column::GetName() const
@@ -6016,14 +6022,14 @@ inline Subscription::Subscription()
 
 inline Subscription::Subscription(OCI_Subscription *pSubcription)
 {
-    Acquire(pSubcription, 0, 0);
+    Acquire(pSubcription, 0, 0, 0);
 }
 
 inline void Subscription::Register(const Connection &connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
 {
     Acquire(Check(OCI_SubscriptionRegister(connection, name.c_str(), changeTypes.GetValues(),
                                            static_cast<POCI_NOTIFY> (handler != 0 ? Environment::NotifyHandler : 0 ), port, timeout)),
-                                           reinterpret_cast<HandleFreeFunc>(OCI_SubscriptionUnregister), 0);
+                                           reinterpret_cast<HandleFreeFunc>(OCI_SubscriptionUnregister), 0, 0);
 
     Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), handler);
 }
@@ -6070,7 +6076,7 @@ inline Connection Subscription::GetConnection() const
 
 inline Event::Event(OCI_Event *pEvent)
 {
-    Acquire(pEvent, 0, 0);
+    Acquire(pEvent, 0, 0, 0);
 }
 
 inline Event::EventType Event::GetType() const
@@ -6109,12 +6115,12 @@ inline Subscription Event::GetSubscription() const
 
 inline Agent::Agent(const Connection &connection, const ostring& name, const ostring& address)
 {
-    Acquire(Check(OCI_AgentCreate(connection, name.c_str(), address.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_AgentFree), 0);
+    Acquire(Check(OCI_AgentCreate(connection, name.c_str(), address.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_AgentFree), 0, 0);
 }
 
 inline Agent::Agent(OCI_Agent *pAgent, Handle *parent)
 {
-    Acquire(pAgent, 0, parent);
+    Acquire(pAgent, 0, 0, parent);
 }
 
 inline ostring Agent::GetName() const
@@ -6143,12 +6149,12 @@ inline void Agent::SetAddress(const ostring& value)
 
 inline Message::Message(const TypeInfo &typeInfo)
 {
-    Acquire(Check(OCI_MsgCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_MsgFree), 0);
+    Acquire(Check(OCI_MsgCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_MsgFree), 0, 0);
 }
 
 inline Message::Message(OCI_Msg *pMessage, Handle *parent)
 {
-    Acquire(pMessage, 0, parent);
+    Acquire(pMessage, 0, 0, parent);
 }
 
 inline void Message::Reset()
@@ -6323,7 +6329,7 @@ inline void Message::SetConsumers(std::vector<Agent> &agents)
 
 inline Enqueue::Enqueue(const TypeInfo &typeInfo, const ostring& queueName)
 {
-   Acquire(Check(OCI_EnqueueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_EnqueueFree), 0);
+    Acquire(Check(OCI_EnqueueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_EnqueueFree), 0, 0);
 }
 
 inline void Enqueue::Put(const Message &message)
@@ -6380,12 +6386,12 @@ inline void Enqueue::SetRelativeMsgID(const Raw &value)
 
 inline Dequeue::Dequeue(const TypeInfo &typeInfo, const ostring& queueName)
 {
-   Acquire(Check(OCI_DequeueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_DequeueFree), 0);
+    Acquire(Check(OCI_DequeueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_DequeueFree), 0, 0);
 }
 
 inline Dequeue::Dequeue(OCI_Dequeue *pDequeue)
 {
-    Acquire(pDequeue, 0, 0);
+    Acquire(pDequeue, 0, 0, 0);
 }
 
 inline Message Dequeue::Get()
@@ -6514,7 +6520,7 @@ inline void Dequeue::Unsubscribe()
 
 inline DirectPath::DirectPath(const TypeInfo &typeInfo, unsigned int nbCols, unsigned int  nbRows, const ostring& partition)
 {
-    Acquire(Check(OCI_DirPathCreate(typeInfo, partition.c_str(), nbCols, nbRows)), reinterpret_cast<HandleFreeFunc>(OCI_DirPathFree), 0);
+    Acquire(Check(OCI_DirPathCreate(typeInfo, partition.c_str(), nbCols, nbRows)), reinterpret_cast<HandleFreeFunc>(OCI_DirPathFree), 0, 0);
 }
 
 inline void DirectPath::SetColumn(unsigned int colIndex, const ostring& name, unsigned int maxSize,  const ostring& format)
