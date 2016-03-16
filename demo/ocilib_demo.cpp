@@ -915,8 +915,7 @@ void test_dates(void)
     Date date(otext("1978-04-13"));
     ocout << date << oendl;
 
-    date.SysDate();
-    ocout << date << oendl;
+    ocout << date.SysDate() << oendl;
 
     date.AddDays(5);
     date.AddMonths(2);

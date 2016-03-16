@@ -1646,6 +1646,13 @@ inline Date::Date(const ostring& str, const ostring& format)
     FromString(str, format);
 }
 
+inline Date::Date(const otext* str, const otext* format)
+{
+    Allocate();
+
+    FromString(str, format);
+}
+
 inline Date::Date(OCI_Date *pDate, Handle *parent)
 {
     Acquire(pDate, 0, 0, parent);

@@ -2533,6 +2533,23 @@ public:
     * Default connection date format is computed from Environment::GetFormat()
     *
     */
+    Date(const otext* str, const otext* format = OTEXT(""));
+
+    /**
+    * @brief
+    * Create a date object with the value provided by the input date time string
+    *
+    * @param str    - String date time
+    * @param format - format of the date time provided in parameter 'data'
+    *
+    * @note
+    * For date time formats, refer to the Oracle SQL documentation
+    *
+    * @note
+    * Default connection date format is computed from Environment::GetFormat()
+    *
+    */
+
     Date(const ostring& str, const ostring& format = OTEXT(""));
     
     /**
