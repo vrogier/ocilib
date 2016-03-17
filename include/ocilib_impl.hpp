@@ -5458,14 +5458,14 @@ inline void Statement::ReleaseResultsets()
     }
 }
 
-bool Statement::IsResultsetHandle(Handle *handle)
+inline bool Statement::IsResultsetHandle(Handle *handle)
 {
     Resultset::SmartHandle *smartHandle = dynamic_cast<Resultset::SmartHandle *>(handle);
 
     return smartHandle != 0;
 }
 
-void Statement::OnFreeSmartHandle(SmartHandle *smartHandle)
+inline void Statement::OnFreeSmartHandle(SmartHandle *smartHandle)
 {
     if (smartHandle)
     {
