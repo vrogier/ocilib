@@ -133,9 +133,10 @@ ChangeLog</h1>
 <div class="line">        </div>
 <div class="line">    * Fixes</div>
 <div class="line"></div>
+<div class="line">        - C++ API: Fixed memory leak caused by Statement::Bind() with non scalar types when Connection objects are closed before their child Statement objects get out of scope</div>
 <div class="line">        - C++ API: Fixed minor compilation warnings</div>
 <div class="line">        - C API: Compilation was broken when targeting Oracle 8i</div>
-<div class="line">        - C API: PL/SQL statements starting with keyword <span class="stringliteral">&quot;CALL&quot;</span> where not identified as PL/SQL commands and thus output bind buffers were not updated accordingly</div>
+<div class="line">        - C API: PL/SQL statements starting with keyword &quot;CALL&quot; where not identified as PL/SQL commands and thus output bind buffers were not updated accordingly</div>
 <div class="line">        - C API: <a class="code" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450">OCI_Execute</a>() ignored custom fetch and prefetch values with Oracle clients &gt;= 9.2</div>
 <div class="line">        - C API: <a class="code" href="group___ocilib_c_api_collections.html#gab03293d560949a855df2629381599f09">OCI_ElemSetString</a>() caused memory retention when dealing repetitively with <span class="keywordtype">string</span> attributes</div>
 <div class="line">        - C API: <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>() leaked of few bytes</div>
@@ -2753,7 +2754,7 @@ ChangeLog</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Mar 21 2016 21:10:56 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Mon Mar 21 2016 22:26:41 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>
