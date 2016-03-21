@@ -1,6 +1,7 @@
 var classocilib_1_1_date =
 [
-    [ "Date", "classocilib_1_1_date.html#a4836866c8763c24a09c80dcbd28d2767", null ],
+    [ "Date", "classocilib_1_1_date.html#aeb0f3012f217aaaa9fc5686288f091e2", null ],
+    [ "Date", "classocilib_1_1_date.html#a3e1c5c1a999a51ddc267fd3f0b77c975", null ],
     [ "Date", "classocilib_1_1_date.html#ad493a3b361497700feaa1af17d02a3e8", null ],
     [ "SysDate", "classocilib_1_1_date.html#a5d7ee0191341605450e52102ad6a92f7", null ],
     [ "IsValid", "classocilib_1_1_date.html#aa5af08a9dbee0ba203e34fd66a1da47c", null ],

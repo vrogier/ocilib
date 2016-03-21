@@ -8,7 +8,7 @@ title: Download
 wordpress_id: 68
 ---
 
-* Get the lastest package from GitHub :[version 4.2.0 (2015-09-21)]({{site.projecturl}}/releases/)
+* Get the lastest package from GitHub :[version 4.2.1 (2016-03-21)]({{site.projecturl}}/releases/)
 
 ## Installation
 

@@ -30,7 +30,6 @@ var classocilib_1_1_statement =
     ] ],
     [ "Statement", "classocilib_1_1_statement.html#a1e7b82a348cb55cc04b01c7bf38e55d2", null ],
     [ "Statement", "classocilib_1_1_statement.html#a04d273b9516f7ebf7d9c326df3f36697", null ],
-    [ "~Statement", "classocilib_1_1_statement.html#a992bbdef4319cfd2f851bed0e6c25fef", null ],
     [ "GetConnection", "classocilib_1_1_statement.html#a72d8b46a2d58ab1b10f68e487b641b70", null ],
     [ "Describe", "classocilib_1_1_statement.html#ac967f297cfd4ca08f431c647c2fdc793", null ],
     [ "Parse", "classocilib_1_1_statement.html#aa13843de1251c79b09a1329b40d41d42", null ],

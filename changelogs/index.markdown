@@ -17,6 +17,12 @@ Click on a change log entry to see the full details.
 <br/>
 <br/>
 
+_[2016-03-21 . version 4.2.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.2.1.txt)_
+
+  * Re-licensed OCILIB under Apache License Version 2.0 instead of LGPL 2.1
+  * Various Bug fixes
+  * Some minor changes
+
 _[2015-09-21 . version 4.2.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.2.0.txt)_
   * Implemented Oracle 12c extended support for PL/SQL types
   * Added Memory usage information

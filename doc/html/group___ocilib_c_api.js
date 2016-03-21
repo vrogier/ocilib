@@ -31,5 +31,6 @@ var group___ocilib_c_api =
     [ "Database Change notifications (DCN or CQN)", "group___ocilib_c_api_subscriptions.html", "group___ocilib_c_api_subscriptions" ],
     [ "Remote Instance startup/shutdown", "group___ocilib_c_api_instances_management.html", "group___ocilib_c_api_instances_management" ],
     [ "Using OCI Handles directly", "group___ocilib_c_api_raw_handles.html", "group___ocilib_c_api_raw_handles" ],
+    [ "Environment Variables", "group___ocilib_c_api_environment_variables.html", null ],
     [ "OCILIB main demo application code", "group___ocilib_c_api_demo_application.html", null ]
 ];

@@ -1,5 +1,6 @@
 var NAVTREEINDEX5 =
 {
+"group___ocilib_c_api_fetching.html#ga2a7ec7c2c056dd145ab32bc41fabcd2d":[1,2,9,62],
 "group___ocilib_c_api_fetching.html#ga2b6cb330cfc05cb6510917563698de62":[1,2,9,21],
 "group___ocilib_c_api_fetching.html#ga2fcdb71d8b82e97e87be7e256a8fb109":[1,2,9,27],
 "group___ocilib_c_api_fetching.html#ga36ac26dcea78f6074421781e401f97ba":[1,2,9,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX5 =
 "group___ocilib_c_api_subscriptions.html#ga6a8667ed40a4be1eb47b1a0552791407":[1,2,28,12],
 "group___ocilib_c_api_subscriptions.html#ga748e045e9c97b31e83cd52926ba62509":[1,2,28,6],
 "group___ocilib_c_api_subscriptions.html#ga78afd31aa61d0ce04c535cd669e58e07":[1,2,28,0],
-"group___ocilib_c_api_subscriptions.html#ga9266ae54a6e23a280cb6a34fa90bf81a":[1,2,28,3],
-"group___ocilib_c_api_subscriptions.html#gaac2b2c3f7bc5e07f230cb4f797f95e8c":[1,2,28,4]
+"group___ocilib_c_api_subscriptions.html#ga9266ae54a6e23a280cb6a34fa90bf81a":[1,2,28,3]
 };
