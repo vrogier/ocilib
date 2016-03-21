@@ -262,7 +262,7 @@ int omain(int argc, oarg* argv[])
         home = GetArg(argv[ArgHome]);
     }
 
-//    try
+    try
     {
         Environment::Initialize(Environment::Default | Environment::Threaded, home);
 
@@ -286,7 +286,7 @@ int omain(int argc, oarg* argv[])
         drop_tables();
         con.Close();
     }
-  //  catch (std::exception &ex)
+    catch (std::exception &ex)
     {
         ocout << ex.what() << oendl;
     }
