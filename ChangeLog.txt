@@ -6,6 +6,7 @@
         
     * Fixes
 
+        - C++ API: Fixed memory leak caused by Statement::Bind() with non scalar types when Connection objects are closed before their child Statement objects get out of scope
         - C++ API: Fixed minor compilation warnings
         - C API: Compilation was broken when targeting Oracle 8i
         - C API: PL/SQL statements starting with keyword "CALL" where not identified as PL/SQL commands and thus output bind buffers were not updated accordingly
