@@ -7424,6 +7424,51 @@ OCI_EXPORT boolean OCI_API OCI_IsNull
 
 /**
  * @brief
+ * Return the size of the value of the column at the given index in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param index - Column position
+ *
+ * @note
+ * Column position starts at 1.
+ *
+ * @warning
+ * For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in
+ * number of characters.
+ *
+ * @return value size of 0 if the value is NULL
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetDataSize
+(
+    OCI_Resultset *rs,
+    unsigned int   index
+);
+
+/**
+ * @brief
+ * Return the size of the value of the column from its name in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param name  - Column name
+ *
+ * @warning
+ * For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in
+ * number of characters.
+ *
+ * @return value size of 0 if the value is NULL
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetDataSize2
+(
+    OCI_Resultset *rs,
+    const otext   *name
+);
+
+/**
+ * @brief
  * Check if the current row value is null for the column of the given name in the resultset
  *
  * @param rs    - Resultset handle

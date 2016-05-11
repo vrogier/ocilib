@@ -1746,8 +1746,8 @@ big_uint OCI_API OCI_GetUnsignedBigInt2
 
 const otext * OCI_API OCI_GetString
 (
-OCI_Resultset *rs,
-unsigned int   index
+    OCI_Resultset *rs,
+    unsigned int   index
 )
 {
     OCI_Define *def = NULL;
@@ -2382,6 +2382,72 @@ OCI_Long * OCI_API OCI_GetLong2
 )
 {
     OCI_GET_BY_NAME(rs, name, OCI_GetLong, OCI_Long*, NULL)
+}
+
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_GetDataSize
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_GetDataSize
+(
+    OCI_Resultset *rs,
+    unsigned int   index
+)
+{
+    OCI_Define *def = NULL;
+
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
+
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
+
+    def = OCI_GetDefine(rs, index);
+
+    if (def && OCI_DefineIsDataNotNull(def))
+    {
+        ub2* lens = (ub2 *)def->buf.lens;
+
+        if (lens)
+        {
+            call_retval = lens[rs->row_cur - 1];
+
+            if (OCI_CDT_TEXT == def->col.datatype)
+            {
+                call_retval /= sizeof(otext);
+            }
+        }
+    }
+
+    OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_GetDataSize2
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_GetDataSize2
+(
+    OCI_Resultset *rs,
+    const otext   *name
+)
+{
+    int index = -1;
+
+    OCI_LIB_CALL_ENTER(unsigned int, 0)
+        
+    OCI_CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    OCI_CHECK_PTR(OCI_IPC_STRING, name)
+
+    index = OCI_GetDefineIndex(rs, name);
+
+    if (index >= 0)
+    {
+        call_retval = OCI_GetDataSize(rs, (unsigned int)index);
+        call_status = TRUE;
+    }
+
+    OCI_LIB_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
