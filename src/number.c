@@ -267,7 +267,9 @@ boolean OCI_NumberFromString
 
     if (!done)
     {
-        for (int i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
+        int i;
+
+        for (i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
         {
             MagicNumber *mag_num = &MagicNumbers[i];
 
@@ -403,8 +405,9 @@ boolean OCI_NumberToString
 
     if (!done)
     {
-        
-        for (int i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
+        int i;
+
+        for (i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
         {
             MagicNumber *mag_num = &MagicNumbers[i];
 
