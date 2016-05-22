@@ -316,7 +316,9 @@ enum NumericTypeValues
     /** Double  */
     NumericDouble = OCI_NUM_DOUBLE,
     /** Float */
-    NumericFloat = OCI_NUM_FLOAT
+    NumericFloat = OCI_NUM_FLOAT,
+    /** Number */
+    NumericNumber = OCI_NUM_NUMBER
 };
 
 /**
@@ -2482,6 +2484,120 @@ public:
 private:
 
     Transaction(OCI_Transaction *trans);
+};
+
+/**
+* @brief
+* Object identifying the SQL data type NUMBER.
+*
+* This class wraps the OCILIB object handle OCI_Number and its related methods
+*
+* NUMBERs can be handled using native scalar types
+* This class is optional and exposes some special NUMBER properties
+*
+*/
+class Number : public HandleHolder<OCI_Number *>, public Streamable
+{
+    friend class Statement;
+    friend class Resultset;
+    friend class BindArray;
+    friend class Object;
+    template <class TDataType>
+    friend class Collection;
+
+public:
+
+    /**
+    * @brief
+    * Create an empty null number object
+    *
+    * @param create - Indicates if a Oracle Number object must be must be created
+    *
+    */
+    Number(bool create = false);
+
+    /**
+    * @brief
+    * Create a Number object with the value provided by the input Number string
+    *
+    * @param str    - String Number
+    * @param format - format of the Number provided in parameter 'data'
+    *
+    * @note
+    * For Number formats, refer to the Oracle SQL documentation
+    *
+    * @note
+    * Default connection Number format is computed from Environment::GetFormat()
+    *
+    */
+    Number(const otext* str, const otext* format = OTEXT(""));
+
+    /**
+    * @brief
+    * Create a Number object with the value provided by the input Number string
+    *
+    * @param str    - String Number
+    * @param format - format of the Number provided in parameter 'data'
+    *
+    * @note
+    * ForNumber formats, refer to the Oracle SQL documentation
+    *
+    * @note
+    * Default connection Number format is computed from Environment::GetFormat()
+    *
+    */
+    Number(const ostring& str, const ostring& format = OTEXT(""));
+
+    /**
+    * @brief
+    * Assign to the number object the value provided by the input number time string
+    *
+    * @param str    - String number time
+    * @param format - format of the number time provided in parameter 'data'
+    *
+    * @note
+    * For number formats, refer to the Oracle SQL documentation
+    *
+    * @note
+    * Default connection number format is computed from Environment::GetFormat()
+    *
+    */
+    void FromString(const ostring& str, const ostring& format = OTEXT(""));
+
+    /**
+    * @brief
+    * Convert the number value to a string using the given format
+    *
+    * @param format - number time format to use
+    *
+    * @note
+    * For number formats, refer to the Oracle SQL documentation
+    *
+    */
+    ostring ToString(const ostring& format) const;
+
+    /**
+    * @brief
+    * Convert the number value to a string using default format OCI_STRING_FORMAT_NUMERIC
+    *
+    * @note
+    * For number formats, refer to the Oracle SQL documentation
+    *
+    */
+    ostring ToString() const;
+
+    /**
+    * @brief
+    * Clone the current instance to a new one performing deep copy
+    *
+    */
+    Number Clone() const;
+
+private:
+
+    Number(OCI_Number *pNumber, Handle *parent = 0);
+
+    void Allocate();
 };
 
 /**

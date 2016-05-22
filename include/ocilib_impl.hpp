@@ -1628,6 +1628,79 @@ inline unsigned int Transaction::GetTimeout() const
 }
 
 /* --------------------------------------------------------------------------------------------- *
+* Number
+* --------------------------------------------------------------------------------------------- */
+
+inline Number::Number(bool create)
+{
+    if (create)
+    {
+        Allocate();
+    }
+}
+
+inline Number::Number(OCI_Number *pNumber, Handle *parent)
+{
+    Acquire(pNumber, 0, 0, parent);
+}
+
+inline Number::Number(const ostring& str, const ostring& format)
+{
+    Allocate();
+
+    FromString(str, format);
+}
+
+inline Number::Number(const otext* str, const otext* format)
+{
+    Allocate();
+
+    FromString(str, format);
+}
+
+inline void Number::Allocate()
+{
+    Acquire(Check(OCI_NumberCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_NumberFree), 0, 0);
+}
+
+inline void Number::FromString(const ostring& str, const ostring& format)
+{
+    Check(OCI_NumberFromText(*this, str.c_str(), format.size() > 0 ? format.c_str() : Environment::GetFormat(FormatNumeric).c_str()));
+}
+
+inline ostring Number::ToString(const ostring& format) const
+{
+    if (!IsNull())
+    {
+        size_t size = OCI_SIZE_BUFFER;
+
+        ManagedBuffer<otext> buffer(size + 1);
+
+        Check(OCI_NumberToText(*this, format.c_str(), static_cast<int>(size), buffer));
+
+        return MakeString(static_cast<const otext *>(buffer));
+    }
+
+    return OCI_STRING_NULL;
+}
+
+inline ostring Number::ToString() const
+{
+    return ToString(Environment::GetFormat(FormatNumeric));
+}
+
+inline Number Number::Clone() const
+{
+    Number result;
+
+    result.Allocate();
+
+    Check(OCI_NumberAssign(result, *this));
+
+    return result;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * Date
  * --------------------------------------------------------------------------------------------- */
 
@@ -3133,6 +3206,12 @@ inline double Object::Get<double>(const ostring& name) const
 }
 
 template<>
+inline Number Object::Get<Number>(const ostring& name) const
+{
+    return Number(Check(OCI_ObjectGetNumber(*this, name.c_str())), GetHandle());
+}
+
+template<>
 inline ostring Object::Get<ostring>(const ostring& name) const
 {
     return MakeString(Check(OCI_ObjectGetString(*this,name.c_str())));
@@ -3262,6 +3341,12 @@ template<>
 inline void Object::Set<double>(const ostring& name, const double &value)
 {
     Check(OCI_ObjectSetDouble(*this, name.c_str(), value));
+}
+
+template<>
+inline void Object::Set<Number>(const ostring& name, const Number &value)
+{
+    Check(OCI_ObjectSetNumber(*this, name.c_str(), value));
 }
 
 template<>
@@ -3630,6 +3715,12 @@ inline double Collection<double>::GetElem(OCI_Elem *elem, Handle *parent) const
 }
 
 template<>
+inline Number Collection<Number>::GetElem(OCI_Elem *elem, Handle *parent) const
+{
+    return Number(Check(OCI_ElemGetNumber(elem)), parent);
+}
+
+template<>
 inline ostring Collection<ostring>::GetElem(OCI_Elem *elem, Handle *parent) const
 {
     ARG_NOT_USED(parent);
@@ -3762,6 +3853,12 @@ template<>
 inline void Collection<double>::SetElem(OCI_Elem *elem, const double &value)
 {
     Check(OCI_ElemSetDouble(elem, value));
+}
+
+template<>
+inline void Collection<Number>::SetElem(OCI_Elem *elem, const Number &value)
+{
+    Check(OCI_ElemSetNumber(elem, value));
 }
 
 template <>
@@ -4831,6 +4928,12 @@ inline void Statement::Bind<double>(const ostring& name, double &value, BindInfo
 }
 
 template <>
+inline void Statement::Bind<Number>(const ostring& name, Number &value, BindInfo::BindDirection mode)
+{
+    Bind(OCI_BindNumber, name, value, BindValue<OCI_Number *>(), mode);
+}
+
+template <>
 inline void Statement::Bind<Date>(const ostring& name, Date &value, BindInfo::BindDirection mode)
 {
     Bind(OCI_BindDate, name, value, BindValue<OCI_Date *>(),  mode);
@@ -5038,6 +5141,12 @@ inline void Statement::Bind<Date>(const ostring& name, std::vector<Date> &values
     Bind(OCI_BindArrayOfDates, name, values, BindValue<OCI_Date *>(), mode);
 }
 
+template <>
+inline void Statement::Bind<Number>(const ostring& name, std::vector<Number> &values, BindInfo::BindDirection mode)
+{
+    Bind(OCI_BindArrayOfNumbers, name, values, BindValue<OCI_Number *>(), mode);
+}
+
 template<class TDataType>
 inline void Statement::Bind(const ostring& name, Collection<TDataType> &value, BindInfo::BindDirection mode)
 {
@@ -5212,6 +5321,12 @@ template <>
 inline void Statement::Register<double>(const ostring& name)
 {
     Check(OCI_RegisterDouble(*this, name.c_str()));
+}
+
+template <>
+inline void Statement::Register<Number>(const ostring& name)
+{
+    Check(OCI_RegisterNumber(*this, name.c_str()));
 }
 
 template <>
@@ -5734,6 +5849,18 @@ template<>
 inline double Resultset::Get<double>(const ostring& name) const
 {
     return Check(OCI_GetDouble2(*this, name.c_str()));
+}
+
+template<>
+inline Number Resultset::Get<Number>(unsigned int index) const
+{
+    return Number(Check(OCI_GetNumber(*this, index)), GetHandle());
+}
+
+template<>
+inline Number Resultset::Get<Number>(const ostring& name) const
+{
+    return Number(Check(OCI_GetNumber2(*this, name.c_str())), GetHandle());
 }
 
 template<>
