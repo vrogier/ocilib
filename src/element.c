@@ -83,9 +83,9 @@
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                            \
     OCI_CHECK_COMPAT(elem->con, OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)  \
                                                                                     \
-    call_status = OCI_ElemGetNumber(elem, (void *)&call_retval,                     \
-                                    (uword) sizeof(call_retval),                    \
-                                    (uword)number_type);                            \
+    call_status = OCI_ElemGetNumberInternal(elem, (void *)&call_retval,             \
+                                                  (uword) sizeof(call_retval),      \
+                                                  (uword)number_type);              \
                                                                                     \
     OCI_LIB_CALL_EXIT()
 
@@ -95,9 +95,9 @@
     OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                            \
     OCI_CHECK_COMPAT(elem->con, OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)  \
                                                                                     \
-    call_retval = call_status = OCI_ElemSetNumber(elem, (void *)&value,             \
-                                                  (uword) sizeof(value),            \
-                                                  (uword)number_type);              \
+    call_retval = call_status = OCI_ElemSetNumberInternal(elem, (void *)&value,     \
+                                                          (uword) sizeof(value),    \
+                                                          (uword)number_type);      \
                                                                                     \
     OCI_LIB_CALL_EXIT()
 
@@ -271,10 +271,10 @@ boolean OCI_ElemSetNullIndicator
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetNumber
+ * OCI_ElemSetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ElemSetNumber
+boolean OCI_ElemSetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -310,10 +310,10 @@ boolean OCI_ElemSetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetNumber
+ * OCI_ElemGetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ElemGetNumber
+boolean OCI_ElemGetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -457,6 +457,23 @@ boolean OCI_API OCI_ElemGetBoolean
     }
 
     OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ElemGetNumber
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Number * OCI_API OCI_ElemGetNumber
+(
+    OCI_Elem *elem
+)
+{
+    OCI_ELEM_GET_VALUE
+    (
+        OCI_CDT_NUMERIC,
+        OCI_Number *,
+        OCI_NumberInit(elem->con, (OCI_Number **) &elem->obj, (OCINumber *) elem->handle)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -836,6 +853,25 @@ boolean OCI_API OCI_ElemSetBoolean
     call_retval = call_status;
 
     OCI_LIB_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ElemSetNumber
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_ElemSetNumber
+(
+    OCI_Elem   *elem,
+    OCI_Number *value
+)
+{
+    OCI_ELEM_SET_VALUE
+    (
+        OCI_CDT_NUMERIC,
+        OCI_Number*,
+        OCI_NumberInit(elem->con, (OCI_Number **)&elem->obj, (OCINumber *)elem->handle),
+        OCI_NumberAssign((OCI_Number *)elem->obj, value)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *

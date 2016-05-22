@@ -298,6 +298,7 @@ OCINUMBERTOREAL              OCINumberToReal              = NULL;
 OCINUMBERFROMREAL            OCINumberFromReal            = NULL;
 OCINUMBERTOTEXT              OCINumberToText              = NULL;
 OCINUMBERFROMTEXT            OCINumberFromText            = NULL;
+OCINUMBERASSIGN              OCINumberAssign              = NULL;
 OCISTRINGPTR                 OCIStringPtr                 = NULL;
 OCISTRINGSIZE                OCIStringSize                = NULL;
 OCISTRINGASSIGNTEXT          OCIStringAssignText          = NULL;
@@ -551,6 +552,11 @@ boolean OCI_FreeObjectFromType(void *obj, unsigned int type)
 
     switch (type)
     {
+        case OCI_CDT_NUMERIC:
+        {
+            res = OCI_NumberFree((OCI_Number *)obj);
+            break;
+        }
         case OCI_CDT_DATETIME:
         {
             res = OCI_DateFree((OCI_Date *)obj);
@@ -1090,6 +1096,9 @@ boolean OCI_API OCI_Initialize
                    OCINUMBERTOTEXT);
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberFromText", OCINumberFromText,
                    OCINUMBERFROMTEXT);
+
+        LIB_SYMBOL(OCILib.lib_handle, "OCINumberAssign", OCINumberAssign,
+            OCINUMBERASSIGN);
 
         LIB_SYMBOL(OCILib.lib_handle, "OCIStringPtr", OCIStringPtr,
                    OCISTRINGPTR);

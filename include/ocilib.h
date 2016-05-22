@@ -561,6 +561,15 @@ typedef struct OCI_Transaction OCI_Transaction;
 typedef struct OCI_Long OCI_Long;
 
 /**
+* @typedef OCI_Number
+*
+* @brief
+* Oracle NUMBER representation.
+*
+*/
+typedef struct OCI_Number OCI_Number;
+
+/**
  * @typedef OCI_Date
  *
  * @brief
@@ -1307,6 +1316,7 @@ typedef unsigned int big_uint;
 #define OCI_NUM_BIGINT                      16
 #define OCI_NUM_FLOAT                       32
 #define OCI_NUM_DOUBLE                      64
+#define OCI_NUM_NUMBER                      128
 
 #define OCI_NUM_USHORT                      (OCI_NUM_SHORT  | OCI_NUM_UNSIGNED)
 #define OCI_NUM_UINT                        (OCI_NUM_INT    | OCI_NUM_UNSIGNED)
@@ -4075,6 +4085,58 @@ OCI_EXPORT boolean OCI_API OCI_BindBoolean
 );
 
 /**
+* @brief
+* Bind an Number variable
+*
+* @param stmt - Statement handle
+* @param name - Variable name
+* @param data - Pointer to short variable
+*
+* @note
+* parameter 'data' can NULL if the statement bind allocation mode
+* has been set to OCI_BAM_INTERNAL
+*
+* @return
+* TRUE on success otherwise FALSE
+*/
+
+OCI_EXPORT boolean OCI_API OCI_BindNumber
+(
+    OCI_Statement *stmt,
+    const otext   *name,
+    OCI_Number    *data
+);
+
+/**
+* @brief
+* Bind an array of Number
+*
+* @param stmt   - Statement handle
+* @param name   - Variable name
+* @param data   - Array of numbers
+* @param nbelem - Number of element in the array (PL/SQL table only)
+*
+* @warning
+* Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
+* For regular DML array operations, pass the value 0.
+*
+* @note
+* parameter 'data' can NULL if the statement bind allocation mode
+* has been set to OCI_BAM_INTERNAL
+*
+* @return
+* TRUE on success otherwise FALSE
+*/
+
+OCI_EXPORT boolean OCI_API OCI_BindArrayOfNumbers
+(
+    OCI_Statement *stmt,
+    const otext   *name,
+    OCI_Number   **data,
+    unsigned int   nbelem
+);
+
+/**
  * @brief
  * Bind an short variable
  *
@@ -6565,6 +6627,48 @@ OCI_EXPORT boolean OCI_API OCI_GetStruct
 );
 
 /**
+* @brief
+* Return the current Number value of the column at the given index in the resultset
+*
+* @param rs    - Resultset handle
+* @param index - Column position
+*
+* @note
+* Column position starts at 1.
+*
+* @return
+* The column current row value or 0 if index is out of bounds
+*
+*/
+OCI_EXPORT OCI_Number * OCI_API OCI_GetNumber
+(
+    OCI_Resultset *rs,
+    unsigned int   index
+);
+
+/**
+* @brief
+* Return the current number value of the column from its name in the resultset
+*
+* @param rs    - Resultset handle
+* @param name  - Column name
+*
+* @note
+* The column name is case insensitive
+*
+* @return
+* The column current row value or 0 if no column found with the given name
+*
+*/
+
+OCI_EXPORT OCI_Number * OCI_API OCI_GetNumber2
+(
+    OCI_Resultset *rs,
+    const otext   *name
+);
+
+
+/**
  * @brief
  * Return the current short value of the column at the given index in the resultset
  *
@@ -8173,6 +8277,22 @@ OCI_EXPORT boolean OCI_API OCI_ElemGetBoolean
 );
 
 /**
+* @brief
+* Return the number value of the given collection element
+*
+* @param elem   - Element handle
+*
+* @return
+* number handle or NULL on failure
+*
+*/
+
+OCI_EXPORT OCI_Number* OCI_API OCI_ElemGetNumber
+(
+    OCI_Elem *elem
+);
+
+/**
  * @brief
  * Return the short value of the given collection element
  *
@@ -8499,6 +8619,24 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetBoolean
 (
     OCI_Elem *elem,
     boolean   value
+);
+
+/**
+* @brief
+* Set a number value to a collection element
+*
+* @param elem   - Element handle
+* @param value  - number value
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_ElemSetNumber
+(
+    OCI_Elem   *elem,
+    OCI_Number *value
 );
 
 /**
@@ -8979,6 +9117,24 @@ OCI_EXPORT OCI_Resultset * OCI_API OCI_GetNextResultset
 );
 
 /**
+* @brief
+* Register a register output bind placeholder
+*
+* @param stmt - Statement handle
+* @param name - Output bind name
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_RegisterNumber
+(
+    OCI_Statement *stmt,
+    const otext   *name
+);
+
+/**
  * @brief
  * Register a short output bind placeholder
  *
@@ -9447,6 +9603,10 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBindMode
  *
  * @param stmt - Statement handle
  * @param mode - bind allocation mode value
+ *
+ * @warning
+ * @note
+ * This call has to be made after OCI_Prepare() but before any OCI_BindXXX() calls
  *
  * @note
  * Possible values are :
@@ -10967,6 +11127,171 @@ OCI_EXPORT void * OCI_API OCI_LongGetBuffer
 (
     OCI_Long *lg
 );
+
+/**
+* @}
+*/
+
+/**
+* @defgroup OcilibCApiOracleNumber Oracle NUMBER manipulation
+* @{
+*
+* @par Example
+*
+*/
+
+/**
+* @brief
+* Create a local number object
+*
+* @param con - Connection handle
+*
+* @note
+* Parameter 'con' can be NULL in order to manipulate numbers
+* independently from database connections
+*
+* @return
+* Return the number handle on success otherwise NULL on failure
+*
+*/
+
+OCI_EXPORT OCI_Number * OCI_API OCI_NumberCreate
+(
+    OCI_Connection *con
+);
+
+/**
+* @brief
+* Free a number object
+*
+* @param number - Number handle
+*
+* @warning
+* Only Numbers created with OCI_NumberCreate() should be freed by OCI_NumberFree()
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_NumberFree
+(
+    OCI_Number *number
+);
+
+/**
+* @brief
+* Create an array of number object
+*
+* @param con    - Connection handle
+* @param nbelem - number of elements in the array
+*
+* @note
+* see OCI_NumberCreate() for more details
+*
+* @return
+* Return the number handle array on success otherwise NULL on failure
+*
+*/
+
+OCI_EXPORT OCI_Number ** OCI_API OCI_NumberArrayCreate
+(
+    OCI_Connection *con,
+    unsigned int    nbelem
+);
+
+/**
+* @brief
+* Free an array of number objects
+*
+* @param dates - Array of number objects
+*
+* @warning
+* Only arrays of numbers created with OCI_NumberArrayCreate() should be freed by OCI_NumberArrayFree()
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
+(
+    OCI_Number **numbers
+);
+
+/**
+* @brief
+* Assign the value of a number handle to another one
+*
+* @param date     - Destination number handle
+* @param date_src - Source number handle
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT int OCI_API OCI_NumberAssign
+(
+    OCI_Number *number,
+    OCI_Number *number_src
+);
+
+/**
+* @brief
+* Convert a number value from the given number handle to a string
+*
+* @param date - source number handle
+* @param fmt  - Number format
+* @param size - Destination string size in characters
+* @param str  - Destination date string
+*
+* @note
+* Output string can be one the following 'magic strings':
+*   - '~'  for positive infinity
+*   - '-~' for negative infinity
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_NumberToText
+(
+    OCI_Number      *number,
+    const otext     *fmt,
+    int              size,
+    otext           *str
+);
+
+/**
+* @brief
+* Convert a string to a number and store it in the given number handle
+*
+* @param date - Destination number handle
+* @param str  - Source number string
+* @param fmt  - Number format
+*
+* @note
+* Input string can be one the following 'magic strings':
+*   - '~'  for positive infinity
+*   - '-~' for negative infinity
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_NumberFromText
+(
+    OCI_Number      *number,
+    const otext     *str,
+    const otext     *fmt
+);
+
+/**
+* @}
+*/
 
 /**
  * @}
@@ -12587,6 +12912,29 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetBoolean
 );
 
 /**
+* @brief
+* Return the number value of the given object attribute
+*
+* @param obj  - Object handle
+* @param attr - Attribute name
+*
+* @note
+* If the attribute is found in the object descriptor attributes list, then a
+* data type check is performed for integrity.
+* OCI_ObjectGetNumber() returns a valid value only for number based attributes
+*
+* @return
+* Attribute value or NULL on failure or wrong attribute type
+*
+*/
+
+OCI_EXPORT OCI_Number* OCI_API OCI_ObjectGetNumber
+(
+    OCI_Object  *obj,
+    const otext *attr
+);
+
+/**
  * @brief
  * Return the short value of the given object attribute
  *
@@ -13049,6 +13397,26 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetBoolean
     OCI_Object  *obj,
     const otext *attr,
     boolean      value
+);
+
+/**
+* @brief
+* Set an object attribute of type number
+*
+* @param obj    - Object handle
+* @param attr   - Attribute name
+* @param value  - number value
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_ObjectSetNumber
+(
+    OCI_Object  *obj,
+    const otext *attr,
+    OCI_Number  *value
 );
 
 /**

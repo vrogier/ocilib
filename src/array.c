@@ -44,6 +44,10 @@ boolean OCI_ArrayInit
         {
             handle = &(((OCIDate *)(arr->mem_handle))[i]);
         }
+        else if (OCI_IS_OCI_NUMBER(arr->elem_type, arr->elem_subtype))
+        {
+            handle = &(((OCINumber *)(arr->mem_handle))[i]);
+        }
         else
         {
             handle = ((void **)(arr->mem_handle))[i];
@@ -55,6 +59,15 @@ boolean OCI_ArrayInit
 
         switch (arr->elem_type)
         {
+            case OCI_CDT_NUMERIC:
+            {
+                if (OCI_NUM_NUMBER == arr->elem_subtype)
+                {
+                    OCI_NumberInit(arr->con, (OCI_Number **)&arr->tab_obj[i],
+                                   (OCINumber *) handle);
+                }
+                break;
+            }
             case OCI_CDT_DATETIME:
             {
                 OCI_DateInit(arr->con, (OCI_Date **) &arr->tab_obj[i],
@@ -118,9 +131,7 @@ boolean OCI_ArrayClose
 {
     OCI_CHECK(NULL == arr, FALSE)
 
-    if ( (OCI_CDT_NUMERIC != arr->elem_type ) &&
-         (OCI_CDT_TEXT    != arr->elem_type ) && 
-         (OCI_CDT_RAW     != arr->elem_type ) )
+    if (OCI_IS_OCILIB_OBJECT(arr->elem_type, arr->elem_subtype))
     {
 		unsigned int i;
 		
@@ -193,9 +204,7 @@ OCI_Array * OCI_ArrayCreate
 
         if (res)
         {
-            if ( (OCI_CDT_NUMERIC != arr->elem_type ) &&
-                 (OCI_CDT_TEXT    != arr->elem_type ) && 
-                 (OCI_CDT_RAW     != arr->elem_type ) )
+            if (OCI_IS_OCILIB_OBJECT(arr->elem_type, arr->elem_subtype))
             {
                 arr->tab_obj = (void **) OCI_MemAlloc(OCI_IPC_VOID,  sizeof(void *), nb_elem, TRUE);
 

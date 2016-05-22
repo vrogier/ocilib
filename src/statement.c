@@ -73,6 +73,199 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
     call_retval = call_status = func;                               \
     OCI_LIB_CALL_EXIT()                                             \
 
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_BindCheckData
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_BindCheckData(OCI_Bind *bnd, sb2 *ind, ub1 *src, ub1 *dst, unsigned int index)
+{
+    boolean res = TRUE;
+
+    if (!bnd || !src || !dst || !ind)
+    {
+        return FALSE;
+    }
+
+    // Non-scalar type binds
+    if (bnd->alloc)
+    {
+        // OCI_Number binds
+        if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
+        {
+            if (OCI_NUM_NUMBER == bnd->subtype)
+            {
+                OCINumber *src_num = ((OCI_Number *)src)->handle;
+                OCINumber *dst_num = (OCINumber *)(dst + index * sizeof(OCINumber));
+
+                OCI_CALL1
+                (
+                    res, bnd->stmt->con, bnd->stmt,
+
+                    OCINumberAssign(bnd->stmt->con->err, src_num, dst_num)
+                )
+            }
+            else if (OCI_NUM_BIGINT == bnd->subtype)
+            {
+                big_int   *src_bint = (big_int *)(src + index * sizeof(big_int));
+                OCINumber *dst_num  = (OCINumber *)dst;
+
+                res = OCI_NumberSet
+                (
+                    bnd->stmt->con,
+                    dst_num,
+                    (uword) sizeof(big_int), bnd->subtype, bnd->code,
+                    src_bint
+                );
+            }
+
+        }
+        // OCI_Date binds
+        else if (OCI_CDT_DATETIME == bnd->type)
+        {
+            OCIDate *dst_date = (OCIDate *)(dst + index * sizeof(OCIDate));
+            OCIDate *src_date = ((OCI_Date *)src)->handle;
+
+            OCI_CALL1
+            (
+                res, bnd->stmt->con, bnd->stmt,
+
+                OCIDateAssign(bnd->stmt->con->err, src_date, dst_date)
+            )
+        }
+        // String binds that may required conversion on systems where wchar_t is UTF32
+        else if (OCI_CDT_TEXT == bnd->type)
+        {
+            if (OCILib.use_wide_char_conv)
+            {
+                int size = (bnd->size / sizeof(dbtext));
+
+                OCI_StringUTF32ToUTF16
+                (
+                    (src + (index * size * sizeof(otext))),
+                    (dst + (index * bnd->size)),
+                    size - 1
+                );
+            }
+        }
+        // otherwise we have an ocilib handle based type
+        else 
+        {
+            ((void**)dst)[index] = ((OCI_Datatype *)src)->handle;
+        }
+    }
+
+    /* for handles, check anyway the value for null data */
+
+    if (OCI_IS_OCILIB_OBJECT(bnd->type, bnd->subtype) && OCI_CDT_OBJECT != bnd->type)
+    {
+        if (*ind != ((sb2) OCI_IND_NULL))
+        {
+            *ind = OCI_IND(dst);
+        }
+    }
+
+    /* update bind object indicator pointer with object indicator */
+
+    if (OCI_CDT_OBJECT == bnd->type)
+    {
+        if (*ind != ((sb2) OCI_IND_NULL))
+        {
+            OCI_Object *obj = (OCI_Object *) src;
+
+            if (obj)
+            {
+                bnd->buffer.obj_inds[0] = obj->tab_ind;
+            }
+        }
+        else
+        {
+            *ind = bnd->buffer.null_inds[0] = OCI_IND_NULL;
+
+            bnd->buffer.obj_inds[0] = (void*)&bnd->buffer.null_inds[0];
+        }
+    }
+
+    return res;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_BindResetData
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_BindResetData(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
+{
+    boolean res = TRUE;
+
+    if (!bnd || !src || !dst)
+    {
+        return FALSE;
+    }
+
+    // OCI_Number binds
+    if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
+    {
+        if (OCI_NUM_NUMBER == bnd->subtype)
+        {
+            OCINumber *src_num = (OCINumber *)(src + index * sizeof(OCINumber));
+            OCINumber *dst_num = ((OCI_Number *)dst)->handle;
+
+            OCI_CALL1
+            (
+                res, bnd->stmt->con, bnd->stmt,
+
+                OCINumberAssign(bnd->stmt->con->err, src_num, dst_num)
+            )
+        } 
+        else if (OCI_NUM_BIGINT == bnd->subtype)
+        {
+            OCINumber *src_number = (OCINumber *)(src + index * sizeof(OCINumber));
+            big_int   *dst_bint   = (big_int *)(dst + index * sizeof(big_int));
+
+            res = OCI_NumberGet
+            (
+               bnd->stmt->con, src_number, (uword) sizeof(big_int), bnd->subtype, bnd->code, dst_bint
+            );
+        }
+    }
+    // OCI_Date binds
+    else if (OCI_CDT_DATETIME == bnd->type)
+    {
+        OCIDate *dst_date = ((OCI_Date *)dst)->handle;
+        OCIDate *src_date = (OCIDate *)(src + index * sizeof(OCIDate));
+
+        OCI_CALL1
+        (
+            res, bnd->stmt->con, bnd->stmt,
+
+            OCIDateAssign(bnd->stmt->con->err, src_date, dst_date)
+        )
+    }
+    // String binds that may required conversion on systems where wchar_t is UTF32
+    else if (OCI_CDT_TEXT == bnd->type)
+    {
+        if (OCILib.use_wide_char_conv)
+        {
+            int size = (bnd->size / sizeof(dbtext));
+
+            OCI_StringUTF16ToUTF32
+            (
+                (src + (index * size * sizeof(otext))),
+                (dst + (index * bnd->size)),
+                size - 1
+            );
+        }
+    }
+    else if (OCI_CDT_OBJECT == bnd->type)
+    {
+        /* update object indicator with bind object indicator pointer */
+
+        ((OCI_Object *)dst)->tab_ind = (sb2*)bnd->buffer.obj_inds[0];
+    }
+
+    return res;
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_BindFreeAll
  * --------------------------------------------------------------------------------------------- */
@@ -131,7 +324,7 @@ boolean OCI_BindCheck
     OCI_CHECK(NULL == stmt, FALSE)
     OCI_CHECK(NULL == stmt->ubinds, TRUE);
 
-    for(i = 0; i < stmt->nb_ubinds; i++)
+    for(i = 0; i < stmt->nb_ubinds && res; i++)
     {
         OCI_Bind *bnd = stmt->ubinds[i];
         sb2      *ind = (sb2 *) bnd->buffer.inds;
@@ -170,188 +363,18 @@ boolean OCI_BindCheck
 
             /* extra work for internal allocated binds buffers */
 
-            if (!bnd->is_array)
+            if (bnd->alloc)
             {
-                /* - For big integer (64 bits), we use an OCINumber.
-
-                   - Oracle date/time type is the only non scalar type
-                     implemented by oracle through a public structure instead
-                     of using a handle. So we need to copy the value
-                */
-
-                if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
+                if (bnd->is_array)
                 {
-                    res = OCI_NumberSet(stmt->con,  (OCINumber *) bnd->buffer.data,
-                                        (uword) sizeof(big_int), bnd->subtype, bnd->code,
-                                        (void *) bnd->input);
-                }
-                else if (bnd->alloc)
-                {
-                    if (OCI_CDT_DATETIME == bnd->type)
+                    for (j = 0; j < bnd->buffer.count && ind && res; j++, ind++)
                     {
-                        if (bnd->input)
-                        {
-                            memcpy((void *) bnd->buffer.data, ((OCI_Date *) bnd->input)->handle, sizeof(OCIDate));
-                        }
-                    }
-                    else if (OCI_CDT_TEXT == bnd->type)
-                    {
-                        if (OCILib.use_wide_char_conv)
-                        {
-                            /* need conversion if bind buffer was allocated */
-
-                            OCI_StringUTF32ToUTF16(bnd->input, bnd->buffer.data, (bnd->size / sizeof(dbtext)) - 1);
-                        }
-                    }
-                    else
-                    {
-                        if (bnd->input)
-                        {
-                            bnd->buffer.data[0] = ((OCI_Datatype *) bnd->input)->handle;
-                        }
+                        res = OCI_BindCheckData(bnd, ind, (ub1*) bnd->input[j], (ub1*) bnd->buffer.data, j);
                     }
                 }
-
-                /* for handles, check anyway the value for null data */
-
-                if ((OCI_CDT_BOOLEAN != bnd->type) &&
-                    (OCI_CDT_NUMERIC != bnd->type) &&
-                    (OCI_CDT_TEXT    != bnd->type) &&
-                    (OCI_CDT_RAW     != bnd->type)  &&
-                    (OCI_CDT_OBJECT  != bnd->type))
+                else
                 {
-                    if (ind && *ind != ((sb2) OCI_IND_NULL))
-                    {
-                        *ind = OCI_IND(bnd->buffer.data);
-                    }
-                }
-
-                /* update bind object indicator pointer with object indicator */
-
-                if (OCI_CDT_OBJECT == bnd->type && ind)
-                {
-                   if (*ind != ((sb2) OCI_IND_NULL) && bnd->buffer.data)
-                   {
-                        OCI_Object *obj = (OCI_Object *)bnd->input;
-
-                        if (obj)
-                        {
-                            bnd->buffer.obj_inds[0] = obj->tab_ind;
-                        }
-                   }
-                   else
-                   {
-                       *ind = bnd->buffer.null_inds[0] = OCI_IND_NULL;
-
-                       bnd->buffer.obj_inds[0] = (void* ) &bnd->buffer.null_inds[0];
-                   }
-                }
-
-                if (!res)
-                {
-                    break;
-                }
-            }
-            else
-            {
-                for (j = 0; j < bnd->buffer.count && ind; j++, ind++)
-                {
-
-                    /* - For big integer (64 bits), we use an OCINumber.
-
-                       - Oracle date/time type is the only non scalar type
-                         implemented by oracle through a public structure instead
-                         of using a handle. So we need to copy the value
-                    */
-
-                    if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
-                    {
-                        res = OCI_NumberSet(stmt->con,
-                                            (OCINumber *) ((ub1 *) bnd->buffer.data +
-                                            (size_t) (j*bnd->size)),
-                                            (uword) sizeof(big_int), bnd->subtype, bnd->code,
-                                            (void *) (((ub1 *) bnd->input) +
-                                            (((size_t)j)*sizeof(big_int))));
-                    }
-                    else if (bnd->alloc)
-                    {
-                        if (OCI_CDT_DATETIME == bnd->type)
-                        {
-                            if (bnd->input[j])
-                            {
-                                memcpy(((ub1 *) bnd->buffer.data) + (size_t) (j*bnd->size),
-                                       ((OCI_Date *) bnd->input[j])->handle, sizeof(OCIDate));
-                            }
-                        }
-                        else if (OCI_CDT_TEXT == bnd->type)
-                        {
-                            if (OCILib.use_wide_char_conv)
-                            {
-                                /* need conversion if bind buffer was allocated */
-
-                                int offset1 = (bnd->size/sizeof(dbtext))*sizeof(otext);
-                                int offset2 = bnd->size;
-
-                                OCI_StringUTF32ToUTF16( (((ub1 *) bnd->input      ) + (j*offset1)),
-                                                        (((ub1 *) bnd->buffer.data) + (j*offset2)),
-                                                        (bnd->size / sizeof(dbtext)) - 1);
-                            }
-                        }
-                        else
-                        {
-                            if (bnd->input[j] && bnd->buffer.data)
-                            {
-                                bnd->buffer.data[j] = ((OCI_Datatype *) bnd->input[j])->handle;
-                            }
-                        }
-                    }
-
-                    /* for handles, check anyway the value for null data */
-
-                    if ((OCI_CDT_BOOLEAN != bnd->type) &&
-                        (OCI_CDT_NUMERIC != bnd->type) && 
-                        (OCI_CDT_TEXT    != bnd->type) &&
-                        (OCI_CDT_RAW     != bnd->type) &&
-                        (OCI_CDT_OBJECT  != bnd->type) && ind)
-                    {
-                        if (*ind != ((sb2) OCI_IND_NULL))
-                        {
-                            if (bnd->input[j])
-                            {
-                                *ind = OCI_IND((((OCI_Datatype *)bnd->input[j])->handle));
-                            }
-                            else
-                            {
-                                *ind = OCI_IND_NULL;
-                            }
-                        }
-                    }
-
-                    /* update bind object indicator pointer with object indicator */
-
-                    if (OCI_CDT_OBJECT == bnd->type && ind)
-                    {
-                        if (*ind != ((sb2) OCI_IND_NULL) && bnd->buffer.data)
-                        {
-                            OCI_Object *obj = (OCI_Object *) bnd->input[j];
-
-                            if (obj)
-                            {
-                                bnd->buffer.obj_inds[j] = obj->tab_ind;
-                            }
-                        }
-                        else
-                        {
-                            *ind = bnd->buffer.null_inds[j] = OCI_IND_NULL;
-
-                            bnd->buffer.obj_inds[j] = (void* ) &bnd->buffer.null_inds[j];
-                        }
-                    }
-
-                    if (!res)
-                    {
-                        break;
-                    }
+                    res = OCI_BindCheckData(bnd, ind, (ub1*) bnd->input, (ub1*) bnd->buffer.data, 0);
                 }
             }
         }
@@ -403,115 +426,20 @@ boolean OCI_BindReset
             {
                 memset(bnd->buffer.inds, 0, ((size_t) bnd->buffer.count) * sizeof(sb2));
             }
-            else
+
+            if (bnd->alloc)
             {
-                /* extra work for internal allocated binds buffers with PL/SQL */
-
-                if (!bnd->is_array)
+                if (bnd->is_array)
                 {
-                    /* - For big integer (64 bits), we use an OCINumber.
-
-                       - Oracle date/time type is the only non scalar type
-                         implemented by oracle through a public structure instead
-                         of using a handle. So we need to copy the value
-                    */
-
-                    if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
+                    for (j = 0; j < bnd->buffer.count && res; j++)
                     {
-                        res = OCI_NumberGet(stmt->con, (OCINumber *) bnd->buffer.data,
-                                            (uword) sizeof(big_int), bnd->subtype, bnd->code,
-                                            (void *) bnd->input);
-                    }
-                    else if (bnd->alloc)
-                    {
-
-                        if (OCI_CDT_DATETIME == bnd->type)
-                        {
-                            if (bnd->input)
-                            {
-                                memcpy(((OCI_Date *) bnd->input)->handle,
-                                       (void *) bnd->buffer.data, sizeof(OCIDate));
-                            }
-                        }
-                        else if (OCI_CDT_TEXT == bnd->type)
-                        {
-                            if (bnd->input && OCILib.use_wide_char_conv)
-                            {
-                                /* need conversion if bind buffer was allocated */
-
-                                OCI_StringUTF16ToUTF32(bnd->buffer.data, bnd->input, (bnd->size / sizeof(dbtext)) - 1);
-                            }
-                        }
-                        else if (OCI_CDT_OBJECT == bnd->type)
-                        {
-                            /* update object indicator with bind object indicator pointer */
-
-                            if (bnd->input)
-                            {
-                                ((OCI_Object *) bnd->input)->tab_ind = (sb2*) bnd->buffer.obj_inds[0];
-                            }
-                        }
+                        res = OCI_BindResetData(bnd, (ub1*) bnd->buffer.data, (ub1*) bnd->input[j], j);
                     }
                 }
                 else
                 {
-                    for (j = 0; j < bnd->buffer.count; j++)
-                    {
-
-                        /* - For big integer (64 bits), we use an OCINumber.
-
-                           - Oracle date/time type is the only non scalar type
-                             implemented by oracle through a public structure instead
-                             of using a handle. So we need to copy the value
-                        */
-
-                        if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
-                        {
-
-                            res = OCI_NumberGet(stmt->con,
-                                                (OCINumber *) ((ub1 *) bnd->buffer.data +
-                                                (size_t) (j*bnd->size)),
-                                                (uword) sizeof(big_int), bnd->subtype, bnd->code,
-                                                (void *) (((ub1 *) bnd->input) +
-                                                (((size_t)j)*sizeof(big_int))));
-                        }
-                        else if (bnd->alloc)
-                        {
-                            if (OCI_CDT_DATETIME == bnd->type)
-                            {
-                                if (bnd->input[j])
-                                {
-                                    memcpy(((OCI_Date *) bnd->input[j])->handle,
-                                           ((ub1 *) bnd->buffer.data) + (size_t) (j*bnd->size),
-                                           sizeof(OCIDate));
-                                }
-                            }
-                            else if (OCI_CDT_TEXT == bnd->type)
-                            {
-                                if (OCILib.use_wide_char_conv)
-                                {
-                                    /* need conversion if bind buffer was allocated */
-
-                                    int offset1 = (bnd->size / sizeof(dbtext))*sizeof(otext);
-                                    int offset2 = bnd->size;
-
-                                    OCI_StringUTF16ToUTF32((((ub1 *)bnd->buffer.data) + (j*offset2)),
-                                        (((ub1 *)bnd->input) + (j*offset1)),
-                                        (bnd->size / sizeof(dbtext)) - 1);
-                                }
-                            }
-                            else if (OCI_CDT_OBJECT == bnd->type)
-                            {
-                                /* update bind object indicator pointer with object indicator */
-
-                                if (bnd->input)
-                                {
-                                    ((OCI_Object *) bnd->input[j])->tab_ind = (sb2 *) bnd->buffer.obj_inds[j];
-                                }
-                            }
-                        }
-                    }
-                }
+                    res = OCI_BindResetData(bnd, (ub1*) bnd->buffer.data, (ub1*) bnd->input, 0);
+                }  
             }
         }
     }
@@ -2481,6 +2409,47 @@ boolean OCI_API OCI_BindBoolean
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_BindNumber
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_BindNumber
+(
+    OCI_Statement *stmt,
+    const otext   *name,
+    OCI_Number    *data
+)
+{
+    OCI_BIND_CALL
+    (
+        stmt, name, data, OCI_IPC_SHORT, FALSE,
+
+        OCI_BindData(stmt, data, sizeof(OCINumber), name, OCI_CDT_NUMERIC,
+                     SQLT_VNU, OCI_BIND_INPUT, OCI_NUM_NUMBER, NULL, 0)
+    )
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_BindArrayOfNumbers
+* --------------------------------------------------------------------------------------------- */
+
+OCI_EXPORT boolean OCI_API OCI_BindArrayOfNumbers
+(
+    OCI_Statement *stmt,
+    const otext   *name,
+    OCI_Number   **data,
+    unsigned int   nbelem
+)
+{
+    OCI_BIND_CALL
+    (
+        stmt, name, data, OCI_IPC_NUMBER, FALSE,
+
+        OCI_BindData(stmt, data, sizeof(OCINumber), name, OCI_CDT_NUMERIC,
+                     SQLT_VNU, OCI_BIND_INPUT, OCI_NUM_NUMBER, NULL, nbelem)
+    )
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_BindShort
  * --------------------------------------------------------------------------------------------- */
 
@@ -3439,6 +3408,25 @@ boolean OCI_API OCI_BindLong
         OCI_BindData(stmt, data, size, name, OCI_CDT_LONG,
                      OCI_ExternalSubTypeToSQLType(OCI_CDT_LONG, data->type),
                      OCI_BIND_INPUT, data->type, NULL, 0)
+    )
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_RegisterNumber
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_RegisterNumber
+(
+    OCI_Statement *stmt,
+    const otext   *name
+)
+{
+    OCI_REGISTER_CALL
+    (
+        stmt, name,
+
+        OCI_BindData(stmt, NULL, sizeof(OCINumber), name, OCI_CDT_NUMERIC,
+        SQLT_VNU, OCI_BIND_OUTPUT, OCI_NUM_NUMBER, NULL, 0)
     )
 }
 

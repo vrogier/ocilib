@@ -192,6 +192,7 @@ extern OCINUMBERTOREAL              OCINumberToReal;
 extern OCINUMBERFROMREAL            OCINumberFromReal;
 extern OCINUMBERTOTEXT              OCINumberToText;
 extern OCINUMBERFROMTEXT            OCINumberFromText;
+extern OCINUMBERASSIGN              OCINumberAssign;
 extern OCISTRINGPTR                 OCIStringPtr;
 extern OCISTRINGSIZE                OCIStringSize;
 extern OCISTRINGASSIGNTEXT          OCIStringAssignText;

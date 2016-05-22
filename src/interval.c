@@ -69,16 +69,8 @@ OCI_Interval * OCI_IntervalInit
 
         /* get the right error handle */
 
-        if (con)
-        {
-            itv->err = con->err;
-            itv->env = con->env;
-        }
-        else
-        {
-            itv->err = OCILib.err;
-            itv->env = OCILib.env;
-        }
+        itv->err = con ? con->err : OCILib.err;
+        itv->env = con ? con->env : OCILib.env;
 
         /* allocate buffer if needed */
 

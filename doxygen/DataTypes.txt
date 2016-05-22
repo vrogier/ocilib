@@ -12,6 +12,7 @@
  * NUMBER                          | double            |                        | double                    |                       |   
  * FLOAT                           | double            |                        | double                    |                       |   
  * BINARY FLOAT                    | float             |                        | float                     |                       |   
+ * NUMBER                          | NUMBER            |                        | ocilib::number            |                       |   
  * CHAR                            | otext *           |                        | ocilib::ostring           |                       |   
  * VARCHAR                         | otext *           |                        | ocilib::ostring           |                       |   
  * VARCHAR2                        | otext *           |                        | ocilib::ostring           |                       |   

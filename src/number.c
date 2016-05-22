@@ -24,6 +24,22 @@
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
+
+typedef struct MagicNumber
+{
+    unsigned char number[3];
+    otext* name;
+} MagicNumber;
+
+static MagicNumber MagicNumbers[] = 
+{
+    { { 2, 255, 101 }, OTEXT("~") },
+    { { 1,   0,   0 }, OTEXT("-~") }
+};
+
+#define OCI_MAGIC_NUMBER_COUNT 2
+
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_NumberGet
  * --------------------------------------------------------------------------------------------- */
@@ -129,7 +145,11 @@ boolean OCI_NumberSet
 
 #endif
 
-    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
+    if (type & OCI_NUM_NUMBER)
+    {
+        memcpy(number, in_value, sizeof(OCINumber));
+    }
+    else if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
     {
 
     #if OCI_VERSION_COMPILE >= OCI_10_1
@@ -247,34 +267,50 @@ boolean OCI_NumberFromString
 
     if (!done)
     {
-        dbtext *dbstr1  = NULL;
-        dbtext *dbstr2  = NULL;
-        int     dbsize1 = -1;
-        int     dbsize2 = -1;
-        OCINumber number;
-
-        if (!fmt)
+        for (int i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
         {
-            fmt = OCI_GetFormat(con, OCI_FMT_NUMERIC);
+            MagicNumber *mag_num = &MagicNumbers[i];
+
+            if (ostrcmp(in_value, mag_num->name) == 0)
+            {
+                memset(out_value, 0, sizeof(OCINumber));
+                memcpy(out_value, mag_num->number, sizeof(mag_num->number));
+                res = done = TRUE;
+                break;
+            }
         }
 
-        dbstr1 = OCI_StringGetOracleString(in_value, &dbsize1);
-        dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
+        if (!done)
+        {
+            dbtext *dbstr1  = NULL;
+            dbtext *dbstr2  = NULL;
+            int     dbsize1 = -1;
+            int     dbsize2 = -1;
+            OCINumber number;
 
-        memset(&number, 0, sizeof(number));
+            if (!fmt)
+            {
+                fmt = OCI_GetFormat(con, OCI_FMT_NUMERIC);
+            }
 
-        OCI_CALL2
-        (
-            res, con,
+            dbstr1 = OCI_StringGetOracleString(in_value, &dbsize1);
+            dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
-            OCINumberFromText(con->err, (oratext *) dbstr1, (ub4) dbsize1, (oratext *) dbstr2,
-                                (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
-        )
+            memset(&number, 0, sizeof(number));
 
-        OCI_StringReleaseOracleString(dbstr2);
-        OCI_StringReleaseOracleString(dbstr1);
+            OCI_CALL2
+            (
+                res, con,
 
-        res = res && OCI_NumberGet(con, (void *) &number, size, type, sqlcode, out_value);
+                OCINumberFromText(con->err, (oratext *) dbstr1, (ub4) dbsize1, (oratext *) dbstr2,
+                                    (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
+            )
+
+            OCI_StringReleaseOracleString(dbstr2);
+            OCI_StringReleaseOracleString(dbstr1);
+
+            res = res && OCI_NumberGet(con, (void *) &number, size, type, sqlcode, out_value);
+        }
     }
 
     return res;
@@ -288,7 +324,7 @@ boolean OCI_NumberToString
 (
     OCI_Connection *con,
     void           *number,
-    uword           type,
+    unsigned int    type,
     int             sqlcode,
     otext          *out_value,
     int             out_value_size,
@@ -367,33 +403,49 @@ boolean OCI_NumberToString
 
     if (!done)
     {
-        dbtext *dbstr1  = NULL;
-        dbtext *dbstr2  = NULL;
-        int     dbsize1 = out_value_size * (int) sizeof(otext);
-        int     dbsize2 = -1;
-
-        if (!fmt)
+        
+        for (int i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
         {
-            fmt = OCI_GetFormat(con, OCI_FMT_NUMERIC);
+            MagicNumber *mag_num = &MagicNumbers[i];
+
+            if (memcmp(number, mag_num->number, sizeof(mag_num->number)) == 0)
+            {
+                ostrcpy(out_value, mag_num->name);
+                res = done = TRUE;
+                break;
+            }
         }
 
-        dbstr1 = OCI_StringGetOracleString(out_value, &dbsize1);
-        dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
+        if (!done)
+        {
+            dbtext *dbstr1 = NULL;
+            dbtext *dbstr2 = NULL;
+            int     dbsize1 = out_value_size * (int) sizeof(otext);
+            int     dbsize2 = -1;
 
-        OCI_CALL2
-        (
-            res, con,
+            if (!fmt)
+            {
+                fmt = OCI_GetFormat(con, OCI_FMT_NUMERIC);
+            }
 
-            OCINumberToText(con->err, (OCINumber *) number,  (oratext *) dbstr2,
-                            (ub4) dbsize2, (oratext *) NULL,  (ub4) 0,
-                            (ub4 *) &dbsize1, (oratext *) dbstr1)
-        )
+            dbstr1 = OCI_StringGetOracleString(out_value, &dbsize1);
+            dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
-        OCI_StringCopyOracleStringToNativeString(dbstr1, out_value, dbcharcount(dbsize1));
-        OCI_StringReleaseOracleString(dbstr2);
-        OCI_StringReleaseOracleString(dbstr1);
+            OCI_CALL2
+            (
+                res, con,
 
-        out_value_size = (dbsize1 / (int) sizeof(dbtext));
+                OCINumberToText(con->err, (OCINumber *)number, (oratext *)dbstr2,
+                (ub4)dbsize2, (oratext *)NULL, (ub4)0,
+                (ub4 *)&dbsize1, (oratext *)dbstr1)
+            )
+
+            OCI_StringCopyOracleStringToNativeString(dbstr1, out_value, dbcharcount(dbsize1));
+            OCI_StringReleaseOracleString(dbstr2);
+            OCI_StringReleaseOracleString(dbstr1);
+
+            out_value_size = (dbsize1 / (int) sizeof(dbtext));
+        }
     }
 
     /* do we need to suppress last '.' or ',' from integers */
@@ -408,4 +460,204 @@ boolean OCI_NumberToString
     }
 
     return res;
+}
+
+OCI_Number * OCI_NumberInit
+(
+    OCI_Connection  *con,
+    OCI_Number     **pnumber,
+    OCINumber        *buffer
+)
+{
+    OCI_Number *number = NULL;
+    boolean res = FALSE;
+
+    OCI_CHECK(NULL == pnumber, NULL);
+
+    if (!*pnumber)
+    {
+        *pnumber = (OCI_Number *)OCI_MemAlloc(OCI_IPC_NUMBER, sizeof(*number), (size_t) 1, TRUE);
+    }
+
+    if (*pnumber)
+    {
+        res = TRUE;
+
+        number = *pnumber;
+
+        number->con = con;
+        number->handle = buffer;
+
+        /* get the right error handle */
+
+        number->err = con ? con->err : OCILib.err;
+        number->env = con ? con->env : OCILib.env;
+
+        /* allocate buffer if needed */
+
+        if (!number->handle || (OCI_OBJECT_ALLOCATED_ARRAY == number->hstate))
+        {
+            if (OCI_OBJECT_ALLOCATED_ARRAY != number->hstate)
+            {
+                number->hstate = OCI_OBJECT_ALLOCATED;
+                number->handle = (OCINumber *)OCI_MemAlloc(OCI_IPC_NUMBER, sizeof(*number->handle), (size_t)1, TRUE);
+
+                res = (NULL != number->handle);
+            }
+        }
+        else
+        {
+            number->hstate = OCI_OBJECT_FETCHED_CLEAN;
+        }
+    }
+
+    /* check for failure */
+
+    if (!res && number)
+    {
+        OCI_NumberFree(number);
+        *pnumber = number = NULL;
+    }
+
+    return number;
+}
+
+
+OCI_Number * OCI_API OCI_NumberCreate
+(
+    OCI_Connection *con
+)
+{
+    OCI_LIB_CALL_ENTER(OCI_Number*, NULL)
+
+    OCI_CHECK_INITIALIZED()
+
+    call_retval = OCI_NumberInit(con, &call_retval, NULL);
+    call_status = (NULL != call_retval);
+
+    OCI_LIB_CALL_EXIT()
+}
+
+boolean OCI_API OCI_NumberFree
+(
+    OCI_Number *number
+)
+{
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_CHECK_OBJECT_FETCHED(number);
+
+    if (OCI_OBJECT_ALLOCATED == number->hstate)
+    {
+        OCI_FREE(number->handle)
+    }
+
+    if (OCI_OBJECT_ALLOCATED_ARRAY != number->hstate)
+    {
+        OCI_FREE(number)
+    }
+
+    call_retval = call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+OCI_Number ** OCI_API OCI_NumberArrayCreate
+(
+    OCI_Connection *con,
+    unsigned int    nbelem
+)
+{
+    OCI_Array *arr = NULL;
+
+    OCI_LIB_CALL_ENTER(OCI_Number **, NULL)
+
+    OCI_CHECK_INITIALIZED()
+
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_NUMERIC, OCI_NUM_NUMBER, sizeof(OCINumber), sizeof(OCI_Number), 0, NULL);
+
+    if (arr)
+    {
+        call_retval = (OCI_Number **)arr->tab_obj;
+        call_status = TRUE;
+    }
+
+    OCI_LIB_CALL_EXIT()
+}
+
+OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
+(
+    OCI_Number **numbmers
+)
+{
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_ARRAY, numbmers)
+
+    call_retval = call_status = OCI_ArrayFreeFromHandles((void **)numbmers);
+
+    OCI_LIB_CALL_EXIT()
+
+}
+
+boolean OCI_API OCI_NumberAssign
+(
+    OCI_Number *number,
+    OCI_Number *number_src
+)
+{
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
+
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number_src)
+
+    call_status = TRUE;
+
+    OCI_CALL4
+    (
+        call_status, number->err, number->con,
+
+        OCINumberAssign(number->err, number_src->handle, number->handle)
+    )
+
+    call_retval = call_status;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+
+boolean OCI_API OCI_NumberToText
+(
+    OCI_Number  *number,
+    const otext *fmt,
+    int          size,
+    otext       *str
+)
+{
+    OCI_LIB_CALL_ENTER(boolean, OCI_UNKNOWN)
+
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
+
+    call_retval = OCI_NumberToString(number->con, number->handle, OCI_NUM_NUMBER, SQLT_VNU, str, size, fmt);
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+boolean OCI_API OCI_NumberFromText
+(
+    OCI_Number  *number,
+    const otext *str,
+    const otext *fmt
+)
+{
+    OCI_LIB_CALL_ENTER(boolean, OCI_UNKNOWN)
+
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
+
+    call_retval = OCI_NumberFromString(number->con, number->handle, sizeof(OCINumber), OCI_NUM_NUMBER, SQLT_VNU, str, fmt);
+    call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
 }

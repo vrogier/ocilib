@@ -536,10 +536,10 @@ void * OCI_ObjectGetAttr
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ObjectSetNumber
+ * OCI_ObjectSetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ObjectSetNumber
+boolean OCI_ObjectSetNumberInternal
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -593,10 +593,10 @@ boolean OCI_ObjectSetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ObjectGetNumber
+ * OCI_ObjectGetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ObjectGetNumber
+boolean OCI_ObjectGetNumberInternal
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -857,6 +857,25 @@ boolean OCI_API OCI_ObjectGetBoolean
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_ObjectGetNumber
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Number * OCI_API OCI_ObjectGetNumber
+(
+    OCI_Object  *obj,
+    const otext *attr
+)
+{
+    OCI_OBJECT_GET_VALUE
+    (
+        OCI_CDT_NUMERIC,
+        OCI_Number*,
+        OCINumber*,
+        OCI_NumberInit(obj->con, (OCI_Number **)&obj->objs[index], (OCINumber *) value)
+    )
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetShort
  * --------------------------------------------------------------------------------------------- */
 
@@ -868,7 +887,7 @@ short OCI_API OCI_ObjectGetShort
 {
     short value = 0;
 
-    OCI_ObjectGetNumber(obj, attr, &value, sizeof(value), OCI_NUM_SHORT);
+    OCI_ObjectGetNumberInternal(obj, attr, &value, sizeof(value), OCI_NUM_SHORT);
 
     return value;
 }
@@ -885,7 +904,7 @@ unsigned short OCI_API OCI_ObjectGetUnsignedShort
 {
     unsigned short value = 0;
 
-    OCI_ObjectGetNumber(obj, attr, &value, sizeof(value), OCI_NUM_USHORT);
+    OCI_ObjectGetNumberInternal(obj, attr, &value, sizeof(value), OCI_NUM_USHORT);
 
     return value;
 }
@@ -902,7 +921,7 @@ int OCI_API OCI_ObjectGetInt
 {
     int value = 0;
 
-    OCI_ObjectGetNumber(obj, attr, &value, sizeof(value), OCI_NUM_INT);
+    OCI_ObjectGetNumberInternal(obj, attr, &value, sizeof(value), OCI_NUM_INT);
 
     return value;
 }
@@ -919,7 +938,7 @@ unsigned int OCI_API OCI_ObjectGetUnsignedInt
 {
     unsigned int value = 0;
 
-    OCI_ObjectGetNumber(obj, attr, &value, sizeof(value), OCI_NUM_UINT);
+    OCI_ObjectGetNumberInternal(obj, attr, &value, sizeof(value), OCI_NUM_UINT);
 
     return value;
 }
@@ -936,7 +955,7 @@ big_int OCI_API OCI_ObjectGetBigInt
 {
     big_int value = 0;
 
-    OCI_ObjectGetNumber(obj, attr, &value, sizeof(value), OCI_NUM_BIGINT);
+    OCI_ObjectGetNumberInternal(obj, attr, &value, sizeof(value), OCI_NUM_BIGINT);
 
     return value;
 }
@@ -953,7 +972,7 @@ big_uint OCI_API OCI_ObjectGetUnsignedBigInt
 {
     big_uint value = 0;
 
-    OCI_ObjectGetNumber(obj, attr, &value, sizeof(value), OCI_NUM_BIGUINT);
+    OCI_ObjectGetNumberInternal(obj, attr, &value, sizeof(value), OCI_NUM_BIGUINT);
 
     return value;
 }
@@ -970,7 +989,7 @@ double OCI_API OCI_ObjectGetDouble
 {
     double value = 0.0;
 
-    OCI_ObjectGetNumber(obj, attr, &value, sizeof(value), OCI_NUM_DOUBLE);
+    OCI_ObjectGetNumberInternal(obj, attr, &value, sizeof(value), OCI_NUM_DOUBLE);
 
     return value;
 }
@@ -987,7 +1006,7 @@ float OCI_API OCI_ObjectGetFloat
 {
     float value = 0.0f;
 
-    OCI_ObjectGetNumber(obj, attr, &value, sizeof(value), OCI_NUM_FLOAT);
+    OCI_ObjectGetNumberInternal(obj, attr, &value, sizeof(value), OCI_NUM_FLOAT);
 
     return value;
 }
@@ -1379,6 +1398,25 @@ boolean OCI_API OCI_ObjectSetBoolean
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_ObjectSetNumber
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_ObjectSetNumber
+(
+    OCI_Object  *obj,
+    const otext *attr,
+    OCI_Number  *value
+)
+{
+    OCI_OBJECT_SET_VALUE
+    (
+        OCI_CDT_NUMERIC,
+        OCINumber,
+        OCINumberAssign( obj->con->err, value->handle, data)
+    )
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectSetShort
  * --------------------------------------------------------------------------------------------- */
 
@@ -1389,7 +1427,7 @@ boolean OCI_API OCI_ObjectSetShort
     short        value
 )
 {
-    return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value), (uword) OCI_NUM_SHORT);
+    return OCI_ObjectSetNumberInternal(obj, attr, &value, sizeof(value), (uword) OCI_NUM_SHORT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1403,7 +1441,7 @@ boolean OCI_API OCI_ObjectSetUnsignedShort
     unsigned short value
 )
 {
-    return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value), (uword) OCI_NUM_USHORT);
+    return OCI_ObjectSetNumberInternal(obj, attr, &value, sizeof(value), (uword) OCI_NUM_USHORT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1417,7 +1455,7 @@ boolean OCI_API OCI_ObjectSetInt
     int          value
 )
 {
-    return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value), (uword) OCI_NUM_INT);
+    return OCI_ObjectSetNumberInternal(obj, attr, &value, sizeof(value), (uword) OCI_NUM_INT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1431,7 +1469,7 @@ boolean OCI_API OCI_ObjectSetUnsignedInt
     unsigned int value
 )
 {
-    return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value), (uword) OCI_NUM_UINT);
+    return OCI_ObjectSetNumberInternal(obj, attr, &value, sizeof(value), (uword) OCI_NUM_UINT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1445,7 +1483,7 @@ boolean OCI_API OCI_ObjectSetBigInt
     big_int      value
 )
 {
-    return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value), (uword) OCI_NUM_BIGINT);
+    return OCI_ObjectSetNumberInternal(obj, attr, &value, sizeof(value), (uword) OCI_NUM_BIGINT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1459,7 +1497,7 @@ boolean OCI_API OCI_ObjectSetUnsignedBigInt
     big_uint     value
 )
 {
-    return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value), (uword) OCI_NUM_BIGUINT);
+    return OCI_ObjectSetNumberInternal(obj, attr, &value, sizeof(value), (uword) OCI_NUM_BIGUINT);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1473,7 +1511,7 @@ boolean OCI_API OCI_ObjectSetDouble
     double       value
 )
 {
-    return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value), (uword) OCI_NUM_DOUBLE);
+    return OCI_ObjectSetNumberInternal(obj, attr, &value, sizeof(value), (uword) OCI_NUM_DOUBLE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1487,7 +1525,7 @@ boolean OCI_API OCI_ObjectSetFloat
     float        value
 )
 {
-    return OCI_ObjectSetNumber(obj, attr, &value, sizeof(value), (uword) OCI_NUM_FLOAT);
+    return OCI_ObjectSetNumberInternal(obj, attr, &value, sizeof(value), (uword) OCI_NUM_FLOAT);
 }
 
 /* --------------------------------------------------------------------------------------------- *

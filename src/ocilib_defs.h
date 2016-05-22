@@ -183,45 +183,46 @@
 #define OCI_IPC_COLLECTION       24
 #define OCI_IPC_ITERATOR         25
 #define OCI_IPC_ELEMENT          26
-#define OCI_IPC_HASHTABLE        27
-#define OCI_IPC_THREAD           28
-#define OCI_IPC_MUTEX            29
-#define OCI_IPC_BIND             30
-#define OCI_IPC_REF              31
-#define OCI_IPC_DIRPATH          32
-#define OCI_IPC_NOTIFY           33
-#define OCI_IPC_EVENT            34
-#define OCI_IPC_ARRAY            35
-#define OCI_IPC_MSG              36
-#define OCI_IPC_ENQUEUE          37
-#define OCI_IPC_DEQUEUE          38
-#define OCI_IPC_AGENT            39
+#define OCI_IPC_NUMBER           27
+#define OCI_IPC_HASHTABLE        28
+#define OCI_IPC_THREAD           29
+#define OCI_IPC_MUTEX            30
+#define OCI_IPC_BIND             31
+#define OCI_IPC_REF              32
+#define OCI_IPC_DIRPATH          33
+#define OCI_IPC_NOTIFY           34
+#define OCI_IPC_EVENT            35
+#define OCI_IPC_ARRAY            36
+#define OCI_IPC_MSG              37
+#define OCI_IPC_ENQUEUE          38
+#define OCI_IPC_DEQUEUE          39
+#define OCI_IPC_AGENT            40
 
 /* ---- Internal pointers ----- */
 
-#define OCI_IPC_LIST             40
-#define OCI_IPC_LIST_ITEM        41
-#define OCI_IPC_BIND_ARRAY       42
-#define OCI_IPC_DEFINE           43
-#define OCI_IPC_DEFINE_ARRAY     44
-#define OCI_IPC_HASHENTRY        45
-#define OCI_IPC_HASHENTRY_ARRAY  46
-#define OCI_IPC_HASHVALUE        47
-#define OCI_IPC_THREADKEY        48
-#define OCI_IPC_OCIDATE          49
-#define OCI_IPC_TM               50
-#define OCI_IPC_RESULTSET_ARRAY  51
-#define OCI_IPC_PLS_SIZE_ARRAY   52
-#define OCI_IPC_PLS_RCODE_ARRAY  53
-#define OCI_IPC_SERVER_OUPUT     54
-#define OCI_IPC_INDICATOR_ARRAY  55
-#define OCI_IPC_LEN_ARRAY        56
-#define OCI_IPC_BUFF_ARRAY       57
-#define OCI_IPC_LONG_BUFFER      58
-#define OCI_IPC_TRACE_INFO       59
-#define OCI_IPC_DP_COL_ARRAY     60
-#define OCI_IPC_BATCH_ERRORS     61
-#define OCI_IPC_STATEMENT_ARRAY  62
+#define OCI_IPC_LIST             41
+#define OCI_IPC_LIST_ITEM        42
+#define OCI_IPC_BIND_ARRAY       43
+#define OCI_IPC_DEFINE           44
+#define OCI_IPC_DEFINE_ARRAY     45
+#define OCI_IPC_HASHENTRY        46
+#define OCI_IPC_HASHENTRY_ARRAY  47
+#define OCI_IPC_HASHVALUE        48
+#define OCI_IPC_THREADKEY        49
+#define OCI_IPC_OCIDATE          50
+#define OCI_IPC_TM               51
+#define OCI_IPC_RESULTSET_ARRAY  52
+#define OCI_IPC_PLS_SIZE_ARRAY   53
+#define OCI_IPC_PLS_RCODE_ARRAY  54
+#define OCI_IPC_SERVER_OUPUT     55
+#define OCI_IPC_INDICATOR_ARRAY  56
+#define OCI_IPC_LEN_ARRAY        57
+#define OCI_IPC_BUFF_ARRAY       58
+#define OCI_IPC_LONG_BUFFER      59
+#define OCI_IPC_TRACE_INFO       60
+#define OCI_IPC_DP_COL_ARRAY     61
+#define OCI_IPC_BATCH_ERRORS     62
+#define OCI_IPC_STATEMENT_ARRAY  63
 
 #define OCI_IPC_COUNT            OCI_IPC_STATEMENT_ARRAY + 2
 
@@ -335,12 +336,6 @@
 #define OCI_OUPUT_LSIZE_10G             32767
 
 /* --------------------------------------------------------------------------------------------- *
- *  Internal integer types
- * --------------------------------------------------------------------------------------------- */
-
-#define OCI_NUM_NUMBER                  0
-
-/* --------------------------------------------------------------------------------------------- *
 *  Undocumented OCI SQL TYPES
 * --------------------------------------------------------------------------------------------- */
 
@@ -447,6 +442,15 @@
 
 #define OCI_IS_PLSQL_STMT(type)                                                 \
     ((OCI_CST_BEGIN == type) || (OCI_CST_DECLARE == type) || (OCI_CST_CALL == type))
+
+#define OCI_IS_OCI_NUMBER(type, subtype)                                        \
+   (OCI_CDT_NUMERIC == type && OCI_NUM_NUMBER == subtype)
+
+#define OCI_IS_OCILIB_OBJECT(type, subtype)                                     \
+    ( (OCI_IS_OCI_NUMBER(type, subtype)) ||                                     \
+      (OCI_CDT_TEXT    != type &&                                               \
+       OCI_CDT_RAW     != type &&                                               \
+       OCI_CDT_BOOLEAN != type))
 
 #ifdef _WINDOWS
 

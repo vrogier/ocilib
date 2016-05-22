@@ -56,6 +56,7 @@ static otext * OCILib_TypeNames[OCI_IPC_COUNT] =
     OTEXT("Collection handle"),
     OTEXT("Collection iterator handle"),
     OTEXT("Collection element handle"),
+    OTEXT("Number handle"),
     OTEXT("Hash Table handle"),
     OTEXT("Thread handle"),
     OTEXT("Mutex handle"),

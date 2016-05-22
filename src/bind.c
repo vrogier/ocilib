@@ -204,7 +204,13 @@ boolean OCI_BindAllocData
             {
                 case OCI_CDT_NUMERIC:
                 {
-                    if (SQLT_VNU == bnd->code)
+                    if (bnd->subtype == OCI_NUM_NUMBER)
+                    {
+                        bnd->buffer.data = (void **)arr->mem_handle;
+                        bnd->input       = (void **)arr->tab_obj;
+
+                    }
+                    else if (SQLT_VNU == bnd->code)
                     {
                         bnd->buffer.data = (void **) arr->mem_handle;
                         bnd->input       = (void **) arr->mem_struct;
@@ -261,7 +267,18 @@ boolean OCI_BindAllocData
         {
             case OCI_CDT_NUMERIC:
             {
-                if (SQLT_VNU == bnd->code)
+                if (bnd->subtype == OCI_NUM_NUMBER)
+                {
+                    OCI_Number *number = OCI_NumberCreate(bnd->stmt->con);
+
+                    if (number)
+                    {
+                        bnd->input       = (void **)number;
+                        bnd->buffer.data = (void **)number->handle;
+                    }
+
+                }
+                else if (SQLT_VNU == bnd->code)
                 {
                     bnd->input       = (void **) OCI_MemAlloc(OCI_IPC_VOID, sizeof(big_int),   1, TRUE);
                     bnd->buffer.data = (void **) OCI_MemAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);

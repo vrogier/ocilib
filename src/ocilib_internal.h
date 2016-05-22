@@ -354,7 +354,7 @@ unsigned int OCI_DirPathLoadStream
  * element.c
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ElemGetNumber
+boolean OCI_ElemGetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -362,7 +362,7 @@ boolean OCI_ElemGetNumber
     uword     flag
 );
 
-boolean OCI_ElemSetNumber
+boolean OCI_ElemSetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -963,8 +963,7 @@ boolean OCI_NumberGet
     uword           type,
     int             sqlcode,
     void           *out_value
-)
-;
+);
 
 boolean OCI_NumberSet
 (
@@ -974,6 +973,13 @@ boolean OCI_NumberSet
     uword           type,
     int             sqlcode,
     void           *in_value
+);
+
+OCI_Number * OCI_NumberInit
+(
+    OCI_Connection  *con,
+    OCI_Number     **pnumber,
+    OCINumber        *buffer
 );
 
 boolean OCI_NumberFromString
@@ -991,7 +997,7 @@ boolean OCI_NumberToString
 (
     OCI_Connection *con,
     void           *number,
-    uword           type,
+    unsigned int    type,
     int             sqlcode,
     otext          *out_value,
     int             out_value_size,
@@ -1061,7 +1067,7 @@ void * OCI_ObjectGetAttr
     OCIInd     **pind
 );
 
-boolean OCI_ObjectSetNumber
+boolean OCI_ObjectSetNumberInternal
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1070,7 +1076,7 @@ boolean OCI_ObjectSetNumber
     uword        flag
 );
 
-boolean OCI_ObjectGetNumber
+boolean OCI_ObjectGetNumberInternal
 (
     OCI_Object  *obj,
     const otext *attr,

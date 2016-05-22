@@ -1585,6 +1585,37 @@ boolean OCI_API OCI_GetStruct
 }
 
 /* --------------------------------------------------------------------------------------------- *
+* OCI_GetNumber
+* --------------------------------------------------------------------------------------------- */
+
+OCI_Number * OCI_API OCI_GetNumber
+(
+    OCI_Resultset *rs,
+    unsigned int   index
+)
+{
+    OCI_GET_HANDLE
+    (
+        rs, index, OCI_Number *, NULL, OCI_CDT_NUMERIC,
+
+        OCI_NumberInit(rs->stmt->con, (OCI_Number **) &def->obj, (OCINumber *) OCI_DefineGetData(def))
+    )
+}
+
+/* --------------------------------------------------------------------------------------------- * 
+ * OCI_GetNumber2
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Number * OCI_API OCI_GetNumber2
+(
+    OCI_Resultset *rs,
+    const otext   *name
+)
+{
+    OCI_GET_BY_NAME(rs, name, OCI_GetNumber, OCI_Number *, NULL)
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_GetShort
  * --------------------------------------------------------------------------------------------- */
 

@@ -57,6 +57,8 @@ void test_scrollable_cursor(void);
 void test_collection(void);
 void test_ref(void);
 void test_directpath(void);
+void test_bigint(void);
+void test_number(void);
 
 
 /* ocilib test functions array */
@@ -86,7 +88,9 @@ test_t tab_test[] =
         {test_scrollable_cursor, TRUE},
         {test_collection,        TRUE},
         {test_ref,               TRUE},
-        {test_directpath,        TRUE}
+        {test_directpath,           TRUE},
+        {test_bigint,               TRUE},
+        {test_number,               TRUE}
 };
 
 /* --------------------------------------------------------------------------------------------- *
@@ -348,6 +352,13 @@ void create_tables(void)
     OCI_ExecuteStmt(st, OTEXT("create table test_directpath(val_int number(8,4), ")
                         OTEXT(" val_str varchar2(30), val_date date)"));
 
+    OCI_ExecuteStmt(st, OTEXT("create type test_num_coll_t as varray(10) of number"));
+
+    OCI_ExecuteStmt(st, OTEXT("create type test_num_t as object (value number)"));
+
+    OCI_ExecuteStmt(st, OTEXT("create table test_number (value number)"));
+
+
     /* insert data into the demo tables */
     OCI_ExecuteStmt(st, OTEXT("insert into test_fetch ")
                         OTEXT("(code, article, price, creation) ")
@@ -378,6 +389,9 @@ void create_tables(void)
     OCI_ExecuteStmt(st, OTEXT("insert into test_table_obj values(type_t(1, 'shoes'))"));
     OCI_ExecuteStmt(st, OTEXT("insert into test_table_obj values(type_t(2, 'pen'))"));
 
+    OCI_ExecuteStmt(st, OTEXT("insert into test_number values(3.14)"));
+    OCI_ExecuteStmt(st, OTEXT("insert into test_number values(5.28)"));
+
     OCI_Commit(cn);
 }
 
@@ -399,12 +413,14 @@ void drop_tables(void)
     OCI_ExecuteStmt(st, OTEXT("drop table test_coll_nested"));
     OCI_ExecuteStmt(st, OTEXT("drop table test_table_obj"));
     OCI_ExecuteStmt(st, OTEXT("drop table test_directpath"));
+    OCI_ExecuteStmt(st, OTEXT("drop table test_number"));
 
     OCI_ExecuteStmt(st, OTEXT("drop type  test_t"));
     OCI_ExecuteStmt(st, OTEXT("drop type  type_t"));
     OCI_ExecuteStmt(st, OTEXT("drop type  t_tab1_emp"));
     OCI_ExecuteStmt(st, OTEXT("drop type  t_tab2_emp"));
-
+    OCI_ExecuteStmt(st, OTEXT("drop type test_num_coll_t"));
+    OCI_ExecuteStmt(st, OTEXT("drop type test_num_t"));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1711,3 +1727,175 @@ void test_directpath(void)
    }
 }
 
+/* --------------------------------------------------------------------------------------------- *
+* test_bigint
+* --------------------------------------------------------------------------------------------- */
+
+void test_bigint(void)
+{
+    big_int value1 = 12345, value2 = 0;
+
+    print_text("\n>>>>> TEST BINDING BIG INT \n\n");
+
+    OCI_Prepare(st, OTEXT("begin :value2 := :value1 * :value1; end;"));
+    OCI_BindBigInt(st, OTEXT(":value1"), &value1);
+    OCI_BindBigInt(st, OTEXT(":value2"), &value2);
+    OCI_Execute(st);
+
+    printf("\n%d * %d = %d \n", value1, value1, value2);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* test_number
+* --------------------------------------------------------------------------------------------- */
+
+void test_number()
+{
+    OCI_Resultset  *rs = NULL;
+    OCI_TypeInfo   *tc = NULL;
+    OCI_TypeInfo   *to = NULL;
+    OCI_Number     *nm = NULL;
+    OCI_Coll       *cl = NULL;
+    OCI_Elem       *el = NULL;
+    OCI_Object     *ob = NULL;
+    OCI_Number     *no = NULL;
+    OCI_Number     *nt = NULL;
+    OCI_Number    **ar = NULL;
+
+    unsigned int i, n;
+ 
+    print_text("\n>>>>> TEST ORACLE NUMBER \n\n");
+
+    tc = OCI_TypeInfoGet(cn, OTEXT("test_num_coll_t"), OCI_TIF_TYPE);
+    to = OCI_TypeInfoGet(cn, OTEXT("test_num_t"), OCI_TIF_TYPE);
+    cl = OCI_CollCreate(tc);
+    ob = OCI_ObjectCreate(cn, to);
+    el = OCI_ElemCreate(tc);
+    nm = OCI_NumberCreate(cn);
+    ar = OCI_NumberArrayCreate(cn, 5);
+
+    // Testing fetching numbers (as number and using implicit conversion number to string)
+    OCI_Prepare(st, OTEXT("select value from test_number"));
+    OCI_Execute(st);
+    rs = OCI_GetResultset(st);
+    while (OCI_FetchNext(rs))
+    {
+        OCI_Number  *n = OCI_GetNumber(rs, 1);
+        const otext *s = OCI_GetString(rs, 1);
+
+        OCI_NumberToText(n, NULL, SIZE_STR, str);
+
+        print_ostr(str);
+        print_text(" - ");
+        print_ostr(s);
+        print_text("\n");
+    }
+
+    // Testing binding external single number
+    OCI_Prepare(st, OTEXT("begin :1 := :1 *2 ; end;"));
+    OCI_BindNumber(st, OTEXT(":1"), nm);
+    OCI_NumberFromText(nm, OTEXT("1234.4321"), NULL);
+    OCI_Execute(st);
+    OCI_NumberToText(nm, NULL, SIZE_STR, str);
+    print_ostr(str);
+    print_text("\n");
+
+    // Testing binding internal single number
+    OCI_Prepare(st, OTEXT("begin :1 := :1 *2 ; end;"));
+    OCI_SetBindAllocation(st, OCI_BAM_INTERNAL);
+    OCI_BindNumber(st, OTEXT(":1"), NULL);
+    nt = OCI_BindGetData(OCI_GetBind(st, 1));
+    OCI_NumberFromText(nt, OTEXT("1234.4321"), NULL);
+    OCI_Execute(st);
+    OCI_NumberToText(nt, NULL, SIZE_STR, str);
+    print_ostr(str);
+    print_text("\n");
+    OCI_SetBindAllocation(st, OCI_BAM_EXTERNAL);
+
+    // Testing registering number for a returning into statement
+    OCI_Prepare(st, OTEXT("update test_number set value  = value *2 returning value into :1"));
+    OCI_RegisterNumber(st, OTEXT(":1"));
+    OCI_Execute(st);
+    rs = OCI_GetResultset(st);
+    while (OCI_FetchNext(rs))
+    {
+        print_ostr(OCI_GetString(rs, 1));
+        print_text("\n");
+    }
+
+    // testing Collections
+    OCI_NumberFromText(nm, OTEXT("1111.2222"), NULL);
+    OCI_ElemSetNumber(el, nm);
+    OCI_CollAppend(cl, el);
+    OCI_NumberFromText(nm, OTEXT("3333.4444"), NULL);
+    OCI_ElemSetNumber(el, nm);
+    OCI_CollAppend(cl, el);
+
+    for (i = 1, n = OCI_CollGetCount(cl); i <= n; i++)
+    {
+        OCI_Elem   *e = OCI_CollGetElem(cl, i);
+        OCI_Number *n = OCI_ElemGetNumber(e);
+        OCI_NumberToText(n, NULL, SIZE_STR, str);
+        print_ostr(str);
+        print_text("\n");
+    }
+
+    // Testing objects
+    OCI_NumberFromText(nm, OTEXT("5555.6666"), NULL);
+    OCI_NumberToText(nm, NULL, SIZE_STR, str);
+    print_ostr(str);
+    print_text("\n");
+    OCI_ObjectSetNumber(ob, OTEXT("value"), nm);
+    no = OCI_ObjectGetNumber(ob, OTEXT("value"));
+    OCI_NumberToText(no, NULL, SIZE_STR, str);
+    print_ostr(str);
+    print_text("\n");
+
+    // Testing fetching infinite values to string
+    OCI_Prepare(st, OTEXT("SELECT utl_raw.cast_to_number('FF65'), utl_raw.cast_to_number('00') from dual"));
+    OCI_Execute(st);
+    rs = OCI_GetResultset(st);
+    while (OCI_FetchNext(rs))
+    {
+        print_text("pos infinite = ");
+        print_ostr(OCI_GetString(rs, 1));
+        print_text("\n");
+
+        print_text("neg infinite = ");
+        print_ostr(OCI_GetString(rs, 2));
+        print_text("\n");
+    }
+
+    // Testing array of numbers
+    OCI_NumberFromText(ar[0], OTEXT("1.2"), NULL);
+    OCI_NumberFromText(ar[1], OTEXT("~"), NULL);
+    OCI_NumberFromText(ar[2], OTEXT("5.6"), NULL);
+    OCI_NumberFromText(ar[3], OTEXT("-~"), NULL);
+    OCI_NumberFromText(ar[4], OTEXT("9.2"), NULL);
+
+    OCI_NumberToText(ar[0], NULL, SIZE_STR, str);
+    print_ostr(str);
+    print_text("\n");
+
+    OCI_NumberToText(ar[1], NULL, SIZE_STR, str);
+    print_ostr(str);
+    print_text("\n");
+
+    OCI_NumberToText(ar[2], NULL, SIZE_STR, str);
+    print_ostr(str);
+    print_text("\n");
+
+    OCI_NumberToText(ar[3], NULL, SIZE_STR, str);
+    print_ostr(str);
+    print_text("\n");
+
+    OCI_NumberToText(ar[4], NULL, SIZE_STR, str);
+    print_ostr(str);
+    print_text("\n");
+
+    OCI_NumberArrayFree(ar);
+    OCI_NumberFree(nm);
+    OCI_ElemFree(el);
+    OCI_CollFree(cl);
+    OCI_ObjectFree(ob);
+}

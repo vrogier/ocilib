@@ -57,16 +57,8 @@ OCI_Date * OCI_DateInit
 
         /* get the right error handle */
 
-        if (con)
-        {
-            date->err = con->err;
-            date->env = con->env;
-        }
-        else
-        {
-            date->err = OCILib.err;
-            date->env = OCILib.env;
-        }
+        date->err = con ? con->err : OCILib.err;
+        date->env = con ? con->env : OCILib.env;
 
         /* allocate buffer if needed */
 

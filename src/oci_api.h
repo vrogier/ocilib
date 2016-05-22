@@ -1305,6 +1305,13 @@ typedef sword (*OCINUMBERFROMTEXT)
     OCINumber     *number
 );
 
+typedef sword (*OCINUMBERASSIGN)
+(
+    OCIError        *err, 
+    CONST OCINumber *from,
+    OCINumber       *to
+);
+
 typedef oratext * (*OCISTRINGPTR)
 (
     OCIEnv          *env,

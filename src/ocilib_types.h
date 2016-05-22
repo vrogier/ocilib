@@ -522,6 +522,20 @@ struct OCI_Long
 };
 
 /*
+* Number object
+*
+*/
+
+struct OCI_Number
+{
+    OCINumber      *handle;     /* OCI handle */
+    ub4             hstate;     /* object variable state */
+    OCI_Connection *con;        /* pointer to connection object */
+    OCIError       *err;        /* OCI error handle */
+    OCIEnv         *env;        /* OCI environment handle */
+};
+
+/*
  * Date object
  *
  */
