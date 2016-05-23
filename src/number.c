@@ -39,6 +39,36 @@ static MagicNumber MagicNumbers[] =
 
 #define OCI_MAGIC_NUMBER_COUNT 2
 
+/* --------------------------------------------------------------------------------------------- *
+* OCI_GetNumericTypeSize
+* --------------------------------------------------------------------------------------------- */
+
+uword OCI_GetNumericTypeSize(unsigned int type)
+{
+    uword size = 0;
+
+    if (type & OCI_NUM_SHORT)
+    {
+        size = sizeof(short);
+    }
+    else if (type & OCI_NUM_INT)
+    {
+        size = sizeof(int);
+    }
+    else if (type & OCI_NUM_BIGINT)
+    {
+        size = sizeof(big_int);
+    }
+    else if (type & OCI_NUM_FLOAT)
+    {
+        size = sizeof(float);
+    }
+    else if (type & OCI_NUM_DOUBLE)
+    {
+        size = sizeof(double);
+    }
+    return size;
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_NumberGet
@@ -661,6 +691,79 @@ boolean OCI_API OCI_NumberFromText
 
     call_retval = OCI_NumberFromString(number->con, number->handle, sizeof(OCINumber), OCI_NUM_NUMBER, SQLT_VNU, str, fmt);
     call_status = TRUE;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+
+unsigned char * OCI_API OCI_NumberGetContent
+(
+    OCI_Number *number
+)
+{
+    OCI_LIB_CALL_ENTER(unsigned char *, NULL)
+
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
+
+    call_status = TRUE;
+
+    if (number->handle)
+    {
+        call_retval = number->handle->OCINumberPart;
+    }
+
+    OCI_LIB_CALL_EXIT()
+}
+
+boolean OCI_API OCI_NumberSetContent
+(
+    OCI_Number     *number,
+    unsigned char  *content
+)
+{
+    OCI_LIB_CALL_ENTER(boolean, OCI_UNKNOWN)
+
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_CHECK_PTR(OCI_IPC_VOID, content)
+
+    call_retval = call_status = TRUE;
+
+    if (number->handle)
+    {
+        memcpy(number->handle->OCINumberPart, content, sizeof(number->handle->OCINumberPart));
+    }
+
+    OCI_LIB_CALL_EXIT()
+}
+
+boolean OCI_API OCI_NumberSetValue
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
+)
+{
+    OCI_LIB_CALL_ENTER(boolean, OCI_UNKNOWN)
+
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
+
+    call_status = call_retval = OCI_NumberSet(number->con, number->handle, OCI_GetNumericTypeSize(type), type, SQLT_VNU, value);
+
+    OCI_LIB_CALL_EXIT()
+}
+
+boolean OCI_API OCI_NumberGetValue
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
+)
+{
+    OCI_LIB_CALL_ENTER(boolean, OCI_UNKNOWN)
+
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
+
+    call_status = call_retval = OCI_NumberGet(number->con, number->handle, OCI_GetNumericTypeSize(type), type, SQLT_VNU, value);
 
     OCI_LIB_CALL_EXIT()
 }

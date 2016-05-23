@@ -11204,7 +11204,7 @@ OCI_EXPORT OCI_Number ** OCI_API OCI_NumberArrayCreate
 * @brief
 * Free an array of number objects
 *
-* @param dates - Array of number objects
+* @param numbers - Array of number objects
 *
 * @warning
 * Only arrays of numbers created with OCI_NumberArrayCreate() should be freed by OCI_NumberArrayFree()
@@ -11223,8 +11223,8 @@ OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
 * @brief
 * Assign the value of a number handle to another one
 *
-* @param date     - Destination number handle
-* @param date_src - Source number handle
+* @param number     - Destination number handle
+* @param number_src - Source number handle
 *
 * @return
 * TRUE on success otherwise FALSE
@@ -11241,10 +11241,10 @@ OCI_EXPORT int OCI_API OCI_NumberAssign
 * @brief
 * Convert a number value from the given number handle to a string
 *
-* @param date - source number handle
-* @param fmt  - Number format
-* @param size - Destination string size in characters
-* @param str  - Destination date string
+* @param number - source number handle
+* @param fmt    - Number format
+* @param size   - Destination string size in characters
+* @param str    - Destination date string
 *
 * @note
 * Output string can be one the following 'magic strings':
@@ -11268,9 +11268,9 @@ OCI_EXPORT boolean OCI_API OCI_NumberToText
 * @brief
 * Convert a string to a number and store it in the given number handle
 *
-* @param date - Destination number handle
-* @param str  - Source number string
-* @param fmt  - Number format
+* @param number - Destination number handle
+* @param str    - Source number string
+* @param fmt    - Number format
 *
 * @note
 * Input string can be one the following 'magic strings':
@@ -11287,6 +11287,94 @@ OCI_EXPORT boolean OCI_API OCI_NumberFromText
     OCI_Number      *number,
     const otext     *str,
     const otext     *fmt
+);
+
+/**
+* @brief
+* Return the number value content
+*
+* @param number  - number handle
+*
+* @note
+* Returned content is a buffer of 22 bytes corresponding to Oracle C native 
+* representation of NUMBEr values
+* See oracle Documentation of its layout
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT unsigned char * OCI_API OCI_NumberGetContent
+(
+    OCI_Number *number
+);
+
+/**
+* @brief
+* Assign the number value content
+*
+* @param number  - number handle
+* @param content - raw number content
+*
+* @note
+* See OCI_NumberSetContent() for more information
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_NumberSetContent
+(
+    OCI_Number     *number,
+    unsigned char  *content
+);
+
+/**
+* @brief
+* Assign the number value with the value of a native C numeric type
+*
+* @param number - number handle
+* @param type   - native C type to assign
+* @param fmt    - pointer to a native C variable
+*
+* @note
+* See OCI_NumberSetValue() for more information
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_NumberSetValue
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
+);
+
+/**
+* @brief
+* Assign the number value to a native C numeric type
+*
+* @param number - number handle
+* @param type   - native C type to assign
+* @param fmt    - pointer to a native C variable 
+*
+* @note
+* See OCI_NumberSetValue() for more information
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_NumberGetValue
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
 );
 
 /**
