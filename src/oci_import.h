@@ -197,6 +197,7 @@ extern OCINUMBERADD                 OCINumberAdd;
 extern OCINUMBERSUB                 OCINumberSub;
 extern OCINUMBERMUL                 OCINumberMul;
 extern OCINUMBERDIV                 OCINumberDiv;
+extern OCINUMBERCMP                 OCINumberCmp;
 extern OCISTRINGPTR                 OCIStringPtr;
 extern OCISTRINGSIZE                OCIStringSize;
 extern OCISTRINGASSIGNTEXT          OCIStringAssignText;

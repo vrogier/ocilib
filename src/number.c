@@ -915,3 +915,36 @@ boolean OCI_API OCI_NumberDivide
 }
 
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberCompare
+ * --------------------------------------------------------------------------------------------- */
+
+int OCI_API OCI_NumberCompare
+(
+    OCI_Number *number1,
+    OCI_Number *number2
+)
+{
+    sword value = OCI_ERROR;
+
+    OCI_LIB_CALL_ENTER(int, value)
+
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number1)
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number2)
+
+    call_status = TRUE;
+
+    OCI_CALL4
+    (
+        call_status, number1->err, number1->con,
+
+        OCINumberCmp(number1->err, number1->handle, number1->handle, &value)
+    )
+
+    call_retval = (int) value;
+
+    OCI_LIB_CALL_EXIT()
+}
+
+
+

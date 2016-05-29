@@ -303,6 +303,7 @@ OCINUMBERADD                 OCINumberAdd                 = NULL;
 OCINUMBERSUB                 OCINumberSub                 = NULL;
 OCINUMBERMUL                 OCINumberMul                 = NULL;
 OCINUMBERDIV                 OCINumberDiv                 = NULL;
+OCINUMBERCMP                 OCINumberCmp                 = NULL;
 OCISTRINGPTR                 OCIStringPtr                 = NULL;
 OCISTRINGSIZE                OCIStringSize                = NULL;
 OCISTRINGASSIGNTEXT          OCIStringAssignText          = NULL;
@@ -1099,18 +1100,17 @@ boolean OCI_API OCI_Initialize
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberFromText", OCINumberFromText,
                    OCINUMBERFROMTEXT);
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberAssign", OCINumberAssign,
-            OCINUMBERASSIGN);
+                   OCINUMBERASSIGN);
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberAdd", OCINumberAdd,
-            OCINUMBERADD);
-
+                   OCINUMBERADD);
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberSub", OCINumberSub,
-            OCINUMBERSUB);
-
+                   OCINUMBERSUB);
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberMul", OCINumberMul,
-            OCINUMBERMUL);
-
+                   OCINUMBERMUL);
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberDiv", OCINumberDiv,
-            OCINUMBERDIV);
+                   OCINUMBERDIV);
+        LIB_SYMBOL(OCILib.lib_handle, "OCINumberCmp", OCINumberCmp,
+                   OCINUMBERCMP);
 
         LIB_SYMBOL(OCILib.lib_handle, "OCIStringPtr", OCIStringPtr,
                    OCISTRINGPTR);

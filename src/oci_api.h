@@ -1344,6 +1344,14 @@ typedef sword (*OCINUMBERDIV)
     OCINumber       *result
 );
 
+typedef sword(*OCINUMBERCMP)
+(
+    OCIError            *err,
+    const OCINumber     *number1,
+    const OCINumber     *number2,
+    sword               *result
+);
+
 typedef oratext * (*OCISTRINGPTR)
 (
     OCIEnv          *env,

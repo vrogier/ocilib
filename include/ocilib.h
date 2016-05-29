@@ -11485,6 +11485,26 @@ OCI_EXPORT boolean OCI_API OCI_NumberDivide
 );
 
 /**
+ * @brief
+ * Compares two number handles
+ *
+ * @param number1 - number1 handle
+ * @param number2 - number2 handle
+ *
+ * @return
+ * - -1 if number1 is smaller than number2,
+ * -  0 if they are equal
+ * -  1 if number1 is greater than number2.
+ *
+ */
+
+OCI_EXPORT int OCI_API OCI_NumberCompare
+(
+    OCI_Number *number1,
+    OCI_Number *number2
+);
+
+/**
 * @}
 */
 

@@ -339,6 +339,7 @@ int OCI_API OCI_DateCompare
     OCI_LIB_CALL_ENTER(int, value)
 
     OCI_CHECK_PTR(OCI_IPC_DATE, date)
+    OCI_CHECK_PTR(OCI_IPC_DATE, date2)
 
     call_status = TRUE;
 
