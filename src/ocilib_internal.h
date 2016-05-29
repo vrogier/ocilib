@@ -955,7 +955,7 @@ OCI_Mutex * OCI_MutexCreateInternal
  * number.c
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_NumberGet
+boolean OCI_NumberGetNativeValue
 (
     OCI_Connection *con,
     void           *number,
@@ -965,7 +965,7 @@ boolean OCI_NumberGet
     void           *out_value
 );
 
-boolean OCI_NumberSet
+boolean OCI_NumberSetNativeValue
 (
     OCI_Connection *con,
     void           *number,

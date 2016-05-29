@@ -293,12 +293,12 @@ boolean OCI_ElemSetNumberInternal
         OCINumber tmp;
         memset(&tmp, 0, sizeof(tmp));
 
-        res = res && OCI_NumberSet(elem->typinf->con, &tmp, col->size, col->subtype, col->libcode, value);
-        res = res && OCI_NumberGet(elem->typinf->con, &tmp, size, flag, col->libcode, elem->handle);
+        res = res && OCI_NumberSetNativeValue(elem->typinf->con, &tmp, col->size, col->subtype, col->libcode, value);
+        res = res && OCI_NumberGetNativeValue(elem->typinf->con, &tmp, size, flag, col->libcode, elem->handle);
     }
     else
     {      
-        res = OCI_NumberSet(elem->con, (OCINumber *)elem->handle, size,  flag, col->libcode, value);
+        res = OCI_NumberSetNativeValue(elem->con, (OCINumber *)elem->handle, size, flag, col->libcode, value);
     }
 
     if (res)
@@ -343,14 +343,14 @@ boolean OCI_ElemGetNumberInternal
             OCINumber tmp;
             memset(&tmp, 0, sizeof(tmp));
 
-            res = res && OCI_NumberSet(elem->typinf->con, &tmp, col->size, col->subtype, col->libcode, elem->handle);
-            res = res && OCI_NumberGet(elem->typinf->con, &tmp, size, flag, col->libcode, value);
+            res = res && OCI_NumberSetNativeValue(elem->typinf->con, &tmp, col->size, col->subtype, col->libcode, elem->handle);
+            res = res && OCI_NumberGetNativeValue(elem->typinf->con, &tmp, size, flag, col->libcode, value);
         }
         else
         {
             OCINumber *num = (OCINumber *)elem->handle;
 
-            res = OCI_NumberGet(elem->con, num, size, flag, col->libcode, value);
+            res = OCI_NumberGetNativeValue(elem->con, num, size, flag, col->libcode, value);
         }
     }
     else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)

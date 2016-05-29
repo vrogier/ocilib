@@ -573,12 +573,12 @@ boolean OCI_ObjectSetNumberInternal
             OCINumber tmp;
             memset(&tmp, 0, sizeof(tmp));
 
-            call_status = call_status && OCI_NumberSet(obj->con, &tmp, col->size, col->subtype, col->libcode, value);
-            call_status = call_status && OCI_NumberGet(obj->con, &tmp, size, flag, col->libcode, num);
+            call_status = call_status && OCI_NumberSetNativeValue(obj->con, &tmp, col->size, col->subtype, col->libcode, value);
+            call_status = call_status && OCI_NumberGetNativeValue(obj->con, &tmp, size, flag, col->libcode, num);
         }
         else
         {
-            call_status = OCI_NumberSet(obj->con, num, size, flag, col->libcode, value);
+            call_status = OCI_NumberSetNativeValue(obj->con, num, size, flag, col->libcode, value);
         }
 
         if (call_status)
@@ -635,12 +635,12 @@ boolean OCI_ObjectGetNumberInternal
                 OCINumber tmp;
                 memset(&tmp, 0, sizeof(tmp));
 
-                call_status = call_status && OCI_NumberSet(obj->con, &tmp, col->size, col->subtype, col->libcode, num);
-                call_status = call_status && OCI_NumberGet(obj->con, &tmp, size, flag, col->libcode, value);
+                call_status = call_status && OCI_NumberSetNativeValue(obj->con, &tmp, col->size, col->subtype, col->libcode, num);
+                call_status = call_status && OCI_NumberGetNativeValue(obj->con, &tmp, size, flag, col->libcode, value);
             }
             else
             {
-                call_status = OCI_NumberGet(obj->con, num, size, flag, col->libcode, value);
+                call_status = OCI_NumberGetNativeValue(obj->con, num, size, flag, col->libcode, value);
             }
         }
     }

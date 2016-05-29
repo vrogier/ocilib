@@ -198,7 +198,7 @@ boolean OCI_DefineGetNumber
         {
             case OCI_CDT_NUMERIC:
             {
-                res = OCI_NumberGet(rs->stmt->con, data, size, type, def->col.libcode, value);
+                res = OCI_NumberGetNativeValue(rs->stmt->con, data, size, type, def->col.libcode, value);
                 break;
             }
             case OCI_CDT_TEXT:

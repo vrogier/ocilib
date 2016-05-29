@@ -110,7 +110,7 @@ boolean OCI_BindCheckData(OCI_Bind *bnd, sb2 *ind, ub1 *src, ub1 *dst, unsigned 
                 big_int   *src_bint = (big_int *)(src + index * sizeof(big_int));
                 OCINumber *dst_num  = (OCINumber *)dst;
 
-                res = OCI_NumberSet
+                res = OCI_NumberSetNativeValue
                 (
                     bnd->stmt->con,
                     dst_num,
@@ -222,7 +222,7 @@ boolean OCI_BindResetData(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
             OCINumber *src_number = (OCINumber *)(src + index * sizeof(OCINumber));
             big_int   *dst_bint   = (big_int *)(dst + index * sizeof(big_int));
 
-            res = OCI_NumberGet
+            res = OCI_NumberGetNativeValue
             (
                bnd->stmt->con, src_number, (uword) sizeof(big_int), bnd->subtype, bnd->code, dst_bint
             );

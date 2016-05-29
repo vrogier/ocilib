@@ -24,7 +24,6 @@
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
-
 typedef struct MagicNumber
 {
     unsigned char number[3];
@@ -38,6 +37,32 @@ static MagicNumber MagicNumbers[] =
 };
 
 #define OCI_MAGIC_NUMBER_COUNT 2
+
+
+#define OCI_NUMBER_OPERATION(func)                                                  \
+                                                                                    \
+    OCI_LIB_CALL_ENTER(boolean, FALSE)                                              \
+    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)                                           \
+                                                                                    \
+    OCINumber src_num = { 0 };                                                      \
+                                                                                    \
+    call_status = OCI_NumberSetNativeValue(number->con, &src_num,                   \
+                                           OCI_GetNumericTypeSize(type),            \
+                                           type, SQLT_VNU, value);                  \
+                                                                                    \
+    if (call_status)                                                                \
+    {                                                                               \
+        OCI_CALL4                                                                   \
+        (                                                                           \
+            call_status, number->err, number->con,                                  \
+                                                                                    \
+            func(number->err, number->handle, &src_num, number->handle)             \
+        )                                                                           \
+    }                                                                               \
+                                                                                    \
+    call_retval = call_status;                                                      \
+    OCI_LIB_CALL_EXIT()                                                             \
+
 
 /* --------------------------------------------------------------------------------------------- *
 * OCI_GetNumericTypeSize
@@ -71,10 +96,10 @@ uword OCI_GetNumericTypeSize(unsigned int type)
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberGet
+ * OCI_NumberGetNativeValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_NumberGet
+boolean OCI_NumberGetNativeValue
 (
     OCI_Connection *con,
     void           *number,
@@ -84,9 +109,10 @@ boolean OCI_NumberGet
     void           *out_value
 )
 {
-    boolean res = TRUE;
+    boolean   res = TRUE;
+    OCIError *err = con ? con->err : OCILib.err;
 
-    OCI_CHECK(NULL == con, FALSE)
+    OCI_CHECK(NULL == err, FALSE)
     OCI_CHECK(NULL == number, FALSE)
     OCI_CHECK(NULL == out_value, FALSE)
 
@@ -126,11 +152,11 @@ boolean OCI_NumberGet
     #endif
 
         {
-            OCI_CALL2
+            OCI_CALL4
             (
-                res, con,
+                res, err, con,
 
-                OCINumberToReal(con->err, (OCINumber *) number, size, out_value)
+                OCINumberToReal(err, (OCINumber *) number, size, out_value)
             )
         }
     }
@@ -138,11 +164,11 @@ boolean OCI_NumberGet
     {
         uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
 
-        OCI_CALL2
+        OCI_CALL4
         (
-            res, con,
+            res, err, con, 
 
-            OCINumberToInt(con->err, (OCINumber *) number, size, sign, out_value)
+            OCINumberToInt(err, (OCINumber *) number, size, sign, out_value)
         )
     }
 
@@ -150,10 +176,10 @@ boolean OCI_NumberGet
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberSet
+ * OCI_NumberSetNativeValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_NumberSet
+boolean OCI_NumberSetNativeValue
 (
     OCI_Connection *con,
     void           *number,
@@ -163,9 +189,10 @@ boolean OCI_NumberSet
     void           *in_value
 )
 {
-    boolean res = TRUE;
+    boolean   res = TRUE;
+    OCIError *err = con ? con->err : OCILib.err;
 
-    OCI_CHECK(NULL == con, FALSE)
+    OCI_CHECK(NULL == err, FALSE)
     OCI_CHECK(NULL == number, FALSE)
     OCI_CHECK(NULL == in_value, FALSE)
 
@@ -205,11 +232,11 @@ boolean OCI_NumberSet
     #endif
 
         {
-            OCI_CALL2
+            OCI_CALL4
             (
-                res, con,
+                res, err, con,
 
-                OCINumberFromReal(con->err, in_value, size, (OCINumber *) number)
+                OCINumberFromReal(err, in_value, size, (OCINumber *) number)
             )
         }
     }
@@ -217,11 +244,11 @@ boolean OCI_NumberSet
     {
         uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
 
-        OCI_CALL2
+        OCI_CALL4
         (
-            res, con,
+            res, err, con,
 
-            OCINumberFromInt(con->err, in_value, size, sign, (OCINumber *) number)
+            OCINumberFromInt(err, in_value, size, sign, (OCINumber *) number)
         )
     }
 
@@ -244,8 +271,13 @@ boolean OCI_NumberFromString
     const otext   * fmt
 )
 {
-    boolean res  = TRUE;
-    boolean done = FALSE;
+    boolean   res  = TRUE;
+    boolean   done = FALSE;
+    OCIError *err  = con ? con->err : OCILib.err;
+
+    OCI_CHECK(NULL == err, FALSE)
+    OCI_CHECK(NULL == out_value, FALSE)
+    OCI_CHECK(NULL == in_value, FALSE)
 
     /* For binary types, perform a C based conversion */
 
@@ -330,18 +362,18 @@ boolean OCI_NumberFromString
 
             memset(&number, 0, sizeof(number));
 
-            OCI_CALL2
+            OCI_CALL4
             (
-                res, con,
+                res, err, con,
 
-                OCINumberFromText(con->err, (oratext *) dbstr1, (ub4) dbsize1, (oratext *) dbstr2,
-                                    (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
+                OCINumberFromText(err, (oratext *) dbstr1, (ub4) dbsize1, (oratext *) dbstr2,
+                                   (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
             )
 
             OCI_StringReleaseOracleString(dbstr2);
             OCI_StringReleaseOracleString(dbstr1);
 
-            res = res && OCI_NumberGet(con, (void *) &number, size, type, sqlcode, out_value);
+            res = res && OCI_NumberGetNativeValue(con, (void *)&number, size, type, sqlcode, out_value);
         }
     }
 
@@ -363,8 +395,13 @@ boolean OCI_NumberToString
     const otext   * fmt
 )
 {
-    boolean res  = TRUE;
-    boolean done = FALSE;
+    boolean   res  = TRUE;
+    boolean   done = FALSE;
+    OCIError *err  = con ? con->err : OCILib.err;
+
+    OCI_CHECK(NULL == err, FALSE)
+    OCI_CHECK(NULL == out_value, FALSE)
+    OCI_CHECK(NULL == number, FALSE)
 
     out_value[0] = 0;
 
@@ -464,13 +501,13 @@ boolean OCI_NumberToString
             dbstr1 = OCI_StringGetOracleString(out_value, &dbsize1);
             dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
-            OCI_CALL2
+            OCI_CALL4
             (
-                res, con,
+                res, err, con,
 
-                OCINumberToText(con->err, (OCINumber *)number, (oratext *)dbstr2,
-                (ub4)dbsize2, (oratext *)NULL, (ub4)0,
-                (ub4 *)&dbsize1, (oratext *)dbstr1)
+                OCINumberToText(err, (OCINumber *)number, (oratext *)dbstr2,
+                                (ub4)dbsize2, (oratext *)NULL, (ub4)0,
+                                (ub4 *)&dbsize1, (oratext *)dbstr1)
             )
 
             OCI_StringCopyOracleStringToNativeString(dbstr1, out_value, dbcharcount(dbsize1));
@@ -494,6 +531,10 @@ boolean OCI_NumberToString
 
     return res;
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberInit
+ * --------------------------------------------------------------------------------------------- */
 
 OCI_Number * OCI_NumberInit
 (
@@ -555,6 +596,13 @@ OCI_Number * OCI_NumberInit
     return number;
 }
 
+/* ********************************************************************************************* *
+ *                            PUBLIC FUNCTIONS
+ * ********************************************************************************************* */
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberCreate
+ * --------------------------------------------------------------------------------------------- */
 
 OCI_Number * OCI_API OCI_NumberCreate
 (
@@ -570,6 +618,10 @@ OCI_Number * OCI_API OCI_NumberCreate
 
     OCI_LIB_CALL_EXIT()
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberAssign
+ * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_NumberFree
 (
@@ -596,6 +648,10 @@ boolean OCI_API OCI_NumberFree
     OCI_LIB_CALL_EXIT()
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberArrayCreate
+ * --------------------------------------------------------------------------------------------- */
+
 OCI_Number ** OCI_API OCI_NumberArrayCreate
 (
     OCI_Connection *con,
@@ -619,6 +675,10 @@ OCI_Number ** OCI_API OCI_NumberArrayCreate
     OCI_LIB_CALL_EXIT()
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberArrayFree
+ * --------------------------------------------------------------------------------------------- */
+
 OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
 (
     OCI_Number **numbmers
@@ -633,6 +693,10 @@ OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
     OCI_LIB_CALL_EXIT()
 
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberAssign
+ * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_NumberAssign
 (
@@ -659,6 +723,9 @@ boolean OCI_API OCI_NumberAssign
     OCI_LIB_CALL_EXIT()
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberToText
+ * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_NumberToText
 (
@@ -678,6 +745,10 @@ boolean OCI_API OCI_NumberToText
     OCI_LIB_CALL_EXIT()
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberFromText
+ * --------------------------------------------------------------------------------------------- */
+
 boolean OCI_API OCI_NumberFromText
 (
     OCI_Number  *number,
@@ -695,6 +766,9 @@ boolean OCI_API OCI_NumberFromText
     OCI_LIB_CALL_EXIT()
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberGetContent
+ * --------------------------------------------------------------------------------------------- */
 
 unsigned char * OCI_API OCI_NumberGetContent
 (
@@ -714,6 +788,10 @@ unsigned char * OCI_API OCI_NumberGetContent
 
     OCI_LIB_CALL_EXIT()
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberSetContent
+ * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_NumberSetContent
 (
@@ -736,6 +814,10 @@ boolean OCI_API OCI_NumberSetContent
     OCI_LIB_CALL_EXIT()
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberSetValue
+ * --------------------------------------------------------------------------------------------- */
+
 boolean OCI_API OCI_NumberSetValue
 (
     OCI_Number     *number,
@@ -743,14 +825,20 @@ boolean OCI_API OCI_NumberSetValue
     void           *value
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, OCI_UNKNOWN)
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
     OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
 
-    call_status = call_retval = OCI_NumberSet(number->con, number->handle, OCI_GetNumericTypeSize(type), type, SQLT_VNU, value);
+    call_status = call_retval = OCI_NumberSetNativeValue(number->con, number->handle, 
+                                                         OCI_GetNumericTypeSize(type), 
+                                                         type, SQLT_VNU, value);
 
     OCI_LIB_CALL_EXIT()
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberGetValue
+ * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_NumberGetValue
 (
@@ -759,11 +847,71 @@ boolean OCI_API OCI_NumberGetValue
     void           *value
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, OCI_UNKNOWN)
+    OCI_LIB_CALL_ENTER(boolean, FALSE)
 
     OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
 
-    call_status = call_retval = OCI_NumberGet(number->con, number->handle, OCI_GetNumericTypeSize(type), type, SQLT_VNU, value);
+    call_status = call_retval = OCI_NumberGetNativeValue(number->con, number->handle,
+                                                              OCI_GetNumericTypeSize(type),
+                                                              type, SQLT_VNU, value);
 
     OCI_LIB_CALL_EXIT()
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberAdd
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_NumberAdd
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
+)
+{
+    OCI_NUMBER_OPERATION(OCINumberAdd)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberSub
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_NumberSub
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
+)
+{
+    OCI_NUMBER_OPERATION(OCINumberSub)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberMultiply
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_NumberMultiply
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
+)
+{
+    OCI_NUMBER_OPERATION(OCINumberMul)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_NumberDivide
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_NumberDivide
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
+)
+{
+    OCI_NUMBER_OPERATION(OCINumberDiv)
+}
+
+

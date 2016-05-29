@@ -11133,10 +11133,16 @@ OCI_EXPORT void * OCI_API OCI_LongGetBuffer
 */
 
 /**
-* @defgroup OcilibCApiOracleNumber Oracle NUMBER manipulation
+* @defgroup OcilibCApiOracleNumber Oracle NUMBER manipulation (optional)
 * @{
 *
+* OCILIB encapsulates Oracle SQL all Numeric types using C native data types.
+* But it also provides an optional OCI_Number handle for manipulating and accessing Oracle NUMBER type.
+* OCI_Number provides management for some special value that cannot be addressed in C such as positive 
+* and negative infinity.
+*
 * @par Example
+* @include number.c
 *
 */
 
@@ -11297,7 +11303,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberFromText
 *
 * @note
 * Returned content is a buffer of 22 bytes corresponding to Oracle C native 
-* representation of NUMBEr values
+* representation of NUMBER values
 * See oracle Documentation of its layout
 *
 * @return
@@ -11337,10 +11343,19 @@ OCI_EXPORT boolean OCI_API OCI_NumberSetContent
 *
 * @param number - number handle
 * @param type   - native C type to assign
-* @param fmt    - pointer to a native C variable
+* @param value  - pointer to value to set
 *
 * @note
-* See OCI_NumberSetValue() for more information
+* parameter @type can be :
+*
+* - OCI_NUM_SHORT     : value is a pointer to a signed short
+* - OCI_NUM_USHORT    : value is a pointer to an unsigned short
+* - OCI_NUM_INT       : value is a pointer to a signed int
+* - OCI_NUM_UINT      : value is a pointer to an unsigned short
+* - OCI_NUM_BIGINT    : value is a pointer to a signed big_int
+* - OCI_NUM_BIGUINT   : value is a pointer to an unsigned big_uint
+* - OCI_NUM_FLOAT     : value is a pointer to an float
+* - OCI_NUM_DOUBLE    : value is a pointer to a double
 *
 * @return
 * TRUE on success otherwise FALSE
@@ -11360,7 +11375,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberSetValue
 *
 * @param number - number handle
 * @param type   - native C type to assign
-* @param fmt    - pointer to a native C variable 
+* @param value  - pointer to a native C variable 
 *
 * @note
 * See OCI_NumberSetValue() for more information
@@ -11371,6 +11386,98 @@ OCI_EXPORT boolean OCI_API OCI_NumberSetValue
 */
 
 OCI_EXPORT boolean OCI_API OCI_NumberGetValue
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
+);
+
+/**
+* @brief
+* Add the value of a native C numeric type to the given number
+*
+* @param number - number handle
+* @param type   - native C type of the variable
+* @param value  - pointer to a native C variable to add
+*
+* @note
+* See OCI_NumberSetValue() for more information
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_NumberAdd
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
+);
+
+/**
+* @brief
+* Subtract the value of a native C numeric type to the given number
+*
+* @param number - number handle
+* @param type   - native C type of the variable
+* @param value  - pointer to a native C variable to subtract
+*
+* @note
+* See OCI_NumberSetValue() for more information
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_NumberSub
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
+);
+
+/**
+* @brief
+* Multiply the given number with the value of a native C numeric
+*
+* @param number - number handle
+* @param type   - native C type of the variable
+* @param value  - pointer to a native C variable to multiply by
+*
+* @note
+* See OCI_NumberSetValue() for more information
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_NumberMultiply
+(
+    OCI_Number     *number,
+    unsigned int    type,
+    void           *value
+);
+
+/**
+* @brief
+* Divide the given number with the value of a native C numeric
+*
+* @param number - number handle
+* @param type   - native C type of the variable
+* @param value  - pointer to a native C variable to divide by
+*
+* @note
+* See OCI_NumberSetValue() for more information
+*
+* @return
+* TRUE on success otherwise FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_NumberDivide
 (
     OCI_Number     *number,
     unsigned int    type,
