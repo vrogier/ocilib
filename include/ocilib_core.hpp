@@ -69,6 +69,12 @@ class Mutex;
 class BindInfo;
 
 /**
+* @brief Internal usage.
+* Allow resolving a native type used by C API from a C++ type in binding operations
+*/
+template<class T> struct BindResolver {};
+
+/**
  * @brief Internal usage.
  * Checks if the last OCILIB function call has raised an error.
  * If so, it raises a C++ exception using the retrieved error handle
@@ -385,21 +391,6 @@ public:
     }
 };
 
-template <class TValueType>
-class BindValue
-{
-public:
-
-    BindValue();
-    BindValue(TValueType value);
-
-    operator TValueType() const;
-
-private:
-
-    TValueType _value;
-};
-
 class BindObject
 {
 public:
@@ -431,11 +422,11 @@ public:
      BindArray(const Statement &statement, const ostring& name, unsigned int mode);
      virtual ~BindArray();
 
-     template <class TObjectType, class TDataType>
+     template <class TObjectType>
      void SetVector(std::vector<TObjectType> & vector, unsigned int elemSize);
 
-     template <class TObjectType, class TDataType>
-     TDataType * GetData () const;
+     template <class TObjectType>
+     typename BindResolver<TObjectType>::OutputType * GetData() const;
 
      void SetInData();
      void SetOutData();
@@ -452,20 +443,13 @@ private:
         ostring GetName();
     };
 
-    template <class TObjectType, class TDataType>
+    template <class TObjectType>
     class BindArrayObject : public  AbstractBindArrayObject
     {
-    private:
-
-        OCI_Statement *_pStatement;
-        ostring _name;
-        std::vector<TObjectType> & _vector;
-        TDataType *_data;
-        unsigned int _mode;
-        unsigned int _elemCount;
-        unsigned int _elemSize;
-
     public:
+
+        typedef TObjectType ObjectType;
+        typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
         BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize);
         virtual ~BindArrayObject();
@@ -473,59 +457,73 @@ private:
         void SetOutData();
         ostring GetName();
 
-        operator std::vector<TObjectType> & () const;
-        operator TDataType * () const;
+        operator std::vector<ObjectType> & () const;
+        operator NativeType * () const;
 
     private:
 
         void AllocData();
         void FreeData();
+
+        OCI_Statement *_pStatement;
+        ostring _name;
+        std::vector<ObjectType> & _vector;
+        NativeType *_data;
+        unsigned int _mode;
+        unsigned int _elemCount;
+        unsigned int _elemSize;
     };
 
     AbstractBindArrayObject * _object;
 };
 
-template <class TNativeType, class TObjectType>
+template <class TObjectType>
 class BindObjectAdaptor : public BindObject
 {
     friend class Statement;
 
 public:
 
-    operator TNativeType *()  const;
+    typedef TObjectType ObjectType;
+    typedef typename BindResolver<ObjectType>::OutputType NativeType;
+ 
+    operator NativeType *()  const;
 
     void SetInData();
     void SetOutData();
 
-    BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object, unsigned int size);
+    BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object, unsigned int size);
     virtual ~BindObjectAdaptor();
 
 private:
 
-    TObjectType&    _object;
-    TNativeType*    _data;
-    unsigned int    _size;
+    ObjectType&    _object;
+    NativeType*    _data;
+    unsigned int   _size;
 };
 
-template <class TNativeType, class TObjectType>
+template <class TObjectType>
 class BindTypeAdaptor : public BindObject
 {
     friend class Statement;
 
 public:
 
-    operator TNativeType *()  const;
+    typedef TObjectType ObjectType;
+    typedef typename BindResolver<ObjectType>::OutputType NativeType;
+
+    operator NativeType *()  const;
 
     void SetInData();
     void SetOutData();
 
-    BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object);
+    BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object);
     virtual ~BindTypeAdaptor();
 
 private:
 
-    TObjectType&    _object;
-    TNativeType*    _data;
+    ObjectType& _object;
+    NativeType* _data;
 };
 
 class BindsHolder

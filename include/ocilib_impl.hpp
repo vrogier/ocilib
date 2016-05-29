@@ -21,7 +21,7 @@
 /*
  * IMPORTANT NOTICE
  *
- * This C++ header defines C++ wrapper classes around the OCILIB C API 
+ * This C++ header defines C++ wrapper classes around the OCILIB C API
  * It requires a compatible version of OCILIB
  *
  */
@@ -32,6 +32,89 @@ namespace ocilib
 /* ********************************************************************************************* *
  *                                         IMPLEMENTATION
  * ********************************************************************************************* */
+
+/**
+*
+* @brief
+* Class handling LONG oracle type
+*
+* @note
+* Length and size arguments / returned values are expressed in number of characters
+*
+*/
+typedef Long<ostring, LongCharacter> Clong;
+
+/**
+*
+* @brief
+* Class handling LONG RAW oracle type
+*
+* @note
+* Length and size arguments / returned values are expressed in number of bytes
+*
+*/
+typedef Long<Raw, LongBinary> Blong;
+
+/**
+*
+* @brief Resolve a bind input / output types
+*
+*/
+template <class TInputType, class TOutputType>
+struct BindResolverType
+{
+    typedef TInputType InputType;
+    typedef TOutputType OutputType;
+};
+
+/**
+*
+* @brief Simplified resolver for scalar types that do not need translation
+*
+*/
+template <class TType>
+struct BindResolverScalarType : BindResolverType<TType, TType> {};
+
+template<> struct BindResolver<bool> : BindResolverType<bool, boolean>{};
+template<> struct BindResolver<short> : BindResolverScalarType<short>{};
+template<> struct BindResolver<unsigned short> : BindResolverScalarType<unsigned short>{};
+template<> struct BindResolver<int> : BindResolverScalarType<int>{};
+template<> struct BindResolver<unsigned int> : BindResolverScalarType<unsigned  int>{};
+template<> struct BindResolver<big_int> : BindResolverScalarType<big_int>{};
+template<> struct BindResolver<big_uint> : BindResolverScalarType<big_uint>{};
+template<> struct BindResolver<float> : BindResolverScalarType<float>{};
+template<> struct BindResolver<double> : BindResolverScalarType<double>{};
+template<> struct BindResolver<ostring> : BindResolverType<ostring, otext>{};
+template<> struct BindResolver<Raw> : BindResolverType<ostring, unsigned char>{};
+template<> struct BindResolver<Number> : BindResolverType<Number, OCI_Number*>{};
+template<> struct BindResolver<Date> : BindResolverType<Date, OCI_Date*>{};
+template<> struct BindResolver<Timestamp> : BindResolverType<Timestamp, OCI_Timestamp*>{};
+template<> struct BindResolver<Interval> : BindResolverType<Interval, OCI_Interval*>{};
+template<> struct BindResolver<Clob> : BindResolverType<Clob, OCI_Lob*>{};
+template<> struct BindResolver<NClob> : BindResolverType<NClob, OCI_Lob*>{};
+template<> struct BindResolver<Blob> : BindResolverType<Blob, OCI_Lob*>{};
+template<> struct BindResolver<File> : BindResolverType<File, OCI_File*>{};
+template<> struct BindResolver<Clong> : BindResolverType<Clong, OCI_Long*>{};
+template<> struct BindResolver<Blong> : BindResolverType<Blong, OCI_Long*>{};
+template<> struct BindResolver<Reference> : BindResolverType<Reference, OCI_Ref*>{};
+template<> struct BindResolver<Object> : BindResolverType<Object, OCI_Object*>{};
+template<> struct BindResolver<Statement> : BindResolverType<Statement, OCI_Statement*>{};
+
+/**
+* @brief Allow resolving a the C API numeric enumerated type from a C++ type
+*/
+template<class T> struct NumericTypeResolver{};
+
+template<> struct NumericTypeResolver<OCI_Number*>    { enum { Value = NumericNumber }; };
+template<> struct NumericTypeResolver<Number>         { enum { Value = NumericNumber }; };
+template<> struct NumericTypeResolver<short>          { enum { Value = NumericShort }; };
+template<> struct NumericTypeResolver<unsigned short> { enum { Value = NumericUnsignedShort }; };
+template<> struct NumericTypeResolver<int>            { enum { Value = NumericInt }; };
+template<> struct NumericTypeResolver<unsigned int>   { enum { Value = NumericUnsignedInt }; };
+template<> struct NumericTypeResolver<big_int>        { enum { Value = NumericBigInt }; };
+template<> struct NumericTypeResolver<big_uint>       { enum { Value = NumericUnsignedBigInt }; };
+template<> struct NumericTypeResolver<double>         { enum { Value = NumericDouble }; };
+template<> struct NumericTypeResolver<float>          { enum { Value = NumericFloat }; };
 
 template<class TResultType>
 inline TResultType Check(TResultType result)
@@ -1698,6 +1781,191 @@ inline Number Number::Clone() const
     Check(OCI_NumberAssign(result, *this));
 
     return result;
+}
+
+inline int Number::Compare(const Number& other) const
+{
+    return Check(OCI_NumberCompare(*this, other));
+}
+
+template <class T>
+inline T Number::GetValue() const
+{
+    T value;
+
+    Check(OCI_NumberGetValue(*this, NumericTypeResolver<T>::Value, &value));
+
+    return value;
+}
+
+template <class TValueType>
+inline Number& Number::SetValue(const TValueType &value)
+{
+    if (IsNull())
+    {
+        Allocate();
+    }
+
+    Check(OCI_NumberSetValue(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
+
+    return *this;
+}
+
+template <class TValueType>
+void Number::Add(const TValueType &value)
+{
+    Check(OCI_NumberAdd(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
+}
+
+template <class TValueType>
+void Number::Sub(const TValueType &value)
+{
+    Check(OCI_NumberSub(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
+}
+
+template <class TValueType>
+void Number::Multiply(const TValueType &value)
+{
+    Check(OCI_NumberMultiply(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
+}
+
+template <class TValueType>
+void Number::Divide(const TValueType &value)
+{
+    Check(OCI_NumberDivide(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
+}
+
+inline Number& Number::operator = (OCI_Number * &lhs)
+{
+    Acquire(lhs, reinterpret_cast<HandleFreeFunc>(OCI_NumberFree), 0, 0);
+    return *this;
+}
+
+template<class T>
+inline Number& Number::operator = (const T &lhs)
+{
+    SetValue<T>(lhs);
+    return *this;
+}
+
+template<class T>
+inline Number::operator T() const
+{
+    return GetValue<T>();
+}
+
+template <class T>
+Number Number::operator + (const T &value)
+{
+    Number result = Clone();
+    result.Add(value);
+    return result;
+}
+
+template <class T>
+Number Number::operator - (const T &value)
+{
+    Number result = Clone();
+    result.Sub(value);
+    return result;
+}
+
+template <class T>
+Number Number::operator * (const T &value)
+{
+    Number result = Clone();
+    result.Multiply(value);
+    return result;
+}
+
+template <class T>
+Number Number::operator / (const T &value)
+{
+    Number result = Clone();
+    result.Divide(value);
+    return result;
+}
+
+template <class T>
+Number& Number::operator += (const T &value)
+{
+    Add<T>(value);
+    return *this;
+}
+
+template <class T>
+Number& Number::operator -= (const T &value)
+{
+    Sub<T>(value);
+    return *this;
+}
+
+template <class T>
+Number& Number::operator *= (const T &value)
+{
+    Multiply<T>(value);
+    return *this;
+}
+
+template <class T>
+Number& Number::operator /= (const T &value)
+{
+    Divide<T>(value);
+    return *this;
+}
+
+Number& Number::operator ++ ()
+{
+    return *this += 1;
+}
+
+Number& Number::operator -- ()
+{
+    return *this += 1;
+}
+
+Number Number::operator ++ (int)
+{
+    return *this + 1;
+}
+
+Number Number::operator -- (int)
+{
+    return *this - 1;
+}
+
+inline bool Number::operator == (const Number& other) const
+{
+    return Compare(other) == 0;
+}
+
+inline bool Number::operator != (const Number& other) const
+{
+    return (!(*this == other));
+}
+
+inline bool Number::operator > (const Number& other) const
+{
+    return (Compare(other) > 0);
+}
+
+inline bool Number::operator < (const Number& other) const
+{
+    return (Compare(other) < 0);
+}
+
+inline bool Number::operator >= (const Number& other) const
+{
+    int res = Compare(other);
+
+    return (res == 0 || res < 0);
+}
+
+inline bool Number::operator <= (const Number& other) const
+{
+    int res = Compare(other);
+
+    return (res == 0 || res > 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4107,53 +4375,9 @@ inline Raw Long<Raw, LongBinary>::GetContent() const
     return MakeRaw(Check(OCI_LongGetBuffer(*this)), GetLength());
 }
 
-/**
-*
-* @brief
-* Class handling LONG oracle type
-*
-* @note
-* Length and size arguments / returned values are expressed in number of characters
-*
-*/
-typedef Long<ostring, LongCharacter> Clong;
-
-/**
-*
-* @brief
-* Class handling LONG RAW oracle type
-*
-* @note
-* Length and size arguments / returned values are expressed in number of bytes
-*
-*/
-typedef Long<Raw, LongBinary> Blong;
-
 /* --------------------------------------------------------------------------------------------- *
- * BindValue
+ * BindObject
  * --------------------------------------------------------------------------------------------- */
-
-template<class TValueType>
-inline BindValue<TValueType>::BindValue() : _value(0)
-{
-
-}
-
-template<class TValueType>
-inline BindValue<TValueType>::BindValue(TValueType value) : _value(value)
-{
-
-}
-
-template<class TValueType>
-inline BindValue<TValueType>::operator TValueType() const
-{
-    return _value;
-}
-
-/* --------------------------------------------------------------------------------------------- *
-* BindObject
-* --------------------------------------------------------------------------------------------- */
 
 inline BindObject::BindObject(const Statement &statement, const ostring& name, unsigned int mode) : _pStatement(statement), _name(name), _mode(mode)
 {
@@ -4187,10 +4411,10 @@ inline BindArray::BindArray(const Statement &statement, const ostring& name, uns
 
 }
 
-template <class TObjectType, class TDataType>
+template <class TObjectType>
 inline void BindArray::SetVector(std::vector<TObjectType> & vector, unsigned int elemSize)
 {
-    _object = new BindArrayObject<TObjectType, TDataType>(GetStatement(), GetName(), vector, GetMode(), elemSize);
+    _object = new BindArrayObject<TObjectType>(GetStatement(), GetName(), vector, GetMode(), elemSize);
 }
 
 inline BindArray::~BindArray()
@@ -4198,10 +4422,10 @@ inline BindArray::~BindArray()
     delete _object;
 }
 
-template <class TObjectType, class TDataType>
-inline TDataType *  BindArray::GetData ()  const
+template <class TObjectType>
+inline typename BindResolver<TObjectType>::OutputType * BindArray::GetData()  const
 {
-    return static_cast<TDataType *>(*(dynamic_cast< BindArrayObject<TObjectType, TDataType> * > (_object)));
+    return static_cast<typename BindResolver<TObjectType>::OutputType *>(*(dynamic_cast< BindArrayObject<TObjectType> * > (_object)));
 }
 
 inline void BindArray::SetInData()
@@ -4220,29 +4444,29 @@ inline void BindArray::SetOutData()
     }
 }
 
-template <class TObjectType, class TDataType>
-inline BindArray::BindArrayObject<TObjectType, TDataType>::BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize)
+template <class TObjectType>
+inline BindArray::BindArrayObject<TObjectType>::BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize)
     : _pStatement(statement), _name(name), _vector(vector), _data(0), _mode(mode), _elemCount(statement.GetBindArraySize()), _elemSize(elemSize)
 {
     AllocData();
 }
 
-template <class TObjectType, class TDataType>
-inline BindArray::BindArrayObject<TObjectType, TDataType>::~BindArrayObject()
+template <class TObjectType>
+inline BindArray::BindArrayObject<TObjectType>::~BindArrayObject()
 {
     FreeData();
 }
 
-template <class TObjectType, class TDataType>
-inline void BindArray::BindArrayObject<TObjectType, TDataType>::AllocData()
+template <class TObjectType>
+inline void BindArray::BindArrayObject<TObjectType>::AllocData()
 {
-    _data = new TDataType[_elemCount];
+    _data = new NativeType[_elemCount];
 
-    memset(_data, 0, sizeof(TDataType) * _elemCount);
+    memset(_data, 0, sizeof(NativeType) * _elemCount);
 }
 
 template<>
-inline void BindArray::BindArrayObject<ostring, otext>::AllocData()
+inline void BindArray::BindArrayObject<ostring>::AllocData()
 {
     _data = new otext[_elemSize * _elemCount];
 
@@ -4250,21 +4474,21 @@ inline void BindArray::BindArrayObject<ostring, otext>::AllocData()
 }
 
 template<>
-inline void BindArray::BindArrayObject<Raw, unsigned char> ::AllocData()
+inline void BindArray::BindArrayObject<Raw> ::AllocData()
 {
     _data = new unsigned char[_elemSize * _elemCount];
 
     memset(_data, 0, _elemSize * _elemCount * sizeof(unsigned char));
 }
 
-template <class TObjectType, class TDataType>
-inline void BindArray::BindArrayObject<TObjectType, TDataType>::FreeData()
+template <class TObjectType>
+inline void BindArray::BindArrayObject<TObjectType>::FreeData()
 {
     delete [] _data ;
 }
 
-template <class TObjectType, class TDataType>
-inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetInData()
+template <class TObjectType>
+inline void BindArray::BindArrayObject<TObjectType>::SetInData()
 {
     typename std::vector<TObjectType>::iterator it, it_end;
 
@@ -4273,12 +4497,13 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetInData()
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
-        _data[index] = BindValue<TDataType>( *it);
+
+        _data[index] = static_cast<NativeType>(*it);
     }
 }
 
 template<>
-inline void BindArray::BindArrayObject<ostring, otext>::SetInData()
+inline void BindArray::BindArrayObject<ostring>::SetInData()
 {
     std::vector<ostring>::iterator it, it_end;
 
@@ -4294,7 +4519,7 @@ inline void BindArray::BindArrayObject<ostring, otext>::SetInData()
 }
 
 template<>
-inline void BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
+inline void BindArray::BindArrayObject<Raw>::SetInData()
 {
     std::vector<Raw>::iterator it, it_end;
 
@@ -4314,8 +4539,8 @@ inline void BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
     }
 }
 
-template <class TObjectType, class TDataType>
-inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetOutData()
+template <class TObjectType>
+inline void BindArray::BindArrayObject<TObjectType>::SetOutData()
 {
     typename std::vector<TObjectType>::iterator it, it_end;
 
@@ -4326,12 +4551,12 @@ inline void BindArray::BindArrayObject<TObjectType, TDataType>::SetOutData()
     {
         TObjectType& object = *it;
 
-        object = static_cast<TDataType>(_data[index]);
+        object = static_cast<NativeType>(_data[index]);
     }
 }
 
 template<>
-inline void BindArray::BindArrayObject<Raw, unsigned char>::SetOutData()
+inline void BindArray::BindArrayObject<Raw>::SetOutData()
 {
     std::vector<Raw>::iterator it, it_end;
 
@@ -4348,20 +4573,20 @@ inline void BindArray::BindArrayObject<Raw, unsigned char>::SetOutData()
     }
 }
 
-template <class TObjectType, class TDataType>
-inline ostring BindArray::BindArrayObject<TObjectType, TDataType>::GetName()
+template <class TObjectType>
+inline ostring BindArray::BindArrayObject<TObjectType>::GetName()
 {
     return _name;
 }
 
-template <class TObjectType, class TDataType>
-inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator std::vector<TObjectType> & ()  const
+template <class TObjectType>
+inline BindArray::BindArrayObject<TObjectType>:: operator std::vector<TObjectType> & ()  const
 {
     return _vector;
 }
 
-template <class TObjectType, class TDataType>
-inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator TDataType * ()  const
+template <class TObjectType>
+inline BindArray::BindArrayObject<TObjectType>:: operator NativeType * ()  const
 {
     return _data;
 }
@@ -4370,8 +4595,8 @@ inline BindArray::BindArrayObject<TObjectType, TDataType>:: operator TDataType *
  * BindObjectAdaptor
  * --------------------------------------------------------------------------------------------- */
 
-template <class TNativeType, class TObjectType>
-inline void BindObjectAdaptor<TNativeType, TObjectType>::SetInData()
+template <class TObjectType>
+inline void BindObjectAdaptor<TObjectType>::SetInData()
 {
     if (GetMode() & OCI_BDM_IN)
     {
@@ -4384,15 +4609,15 @@ inline void BindObjectAdaptor<TNativeType, TObjectType>::SetInData()
 
         if (size > 0)
         {
-            memcpy(_data, &_object[0], size * sizeof(TNativeType));
+            memcpy(_data, &_object[0], size * sizeof(NativeType));
         }
 
         _data[size] = 0;
     }
 }
 
-template <class TNativeType, class TObjectType>
-inline void BindObjectAdaptor<TNativeType, TObjectType>::SetOutData()
+template <class TObjectType>
+inline void BindObjectAdaptor<TObjectType>::SetOutData()
 {
     if (GetMode() & OCI_BDM_OUT)
     {
@@ -4402,24 +4627,24 @@ inline void BindObjectAdaptor<TNativeType, TObjectType>::SetOutData()
     }
 }
 
-template <class TNativeType, class TObjectType>
-inline BindObjectAdaptor<TNativeType, TObjectType>::BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object, unsigned int size) :
+template <class TObjectType>
+inline BindObjectAdaptor<TObjectType>::BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object, unsigned int size) :
      BindObject(statement, name, mode),
      _object(object),
-     _data(new TNativeType[size]),
+     _data(new NativeType[size]),
      _size(size)
 {
-    memset(_data, 0, _size * sizeof(TNativeType));
+    memset(_data, 0, _size * sizeof(NativeType));
 }
 
-template <class TNativeType, class TObjectType>
-inline BindObjectAdaptor<TNativeType, TObjectType>::~BindObjectAdaptor()
+template <class TObjectType>
+inline BindObjectAdaptor<TObjectType>::~BindObjectAdaptor()
 {
     delete [] _data;
 }
 
-template <class TNativeType, class TObjectType>
-inline BindObjectAdaptor<TNativeType, TObjectType>::operator TNativeType *()  const
+template <class TObjectType>
+inline BindObjectAdaptor<TObjectType>::operator NativeType *()  const
 {
     return _data;
 }
@@ -4428,17 +4653,17 @@ inline BindObjectAdaptor<TNativeType, TObjectType>::operator TNativeType *()  co
  * BindTypeAdaptor
  * --------------------------------------------------------------------------------------------- */
 
-template <class TNativeType, class TObjectType>
-inline void BindTypeAdaptor<TNativeType, TObjectType>::SetInData()
+template <class TObjectType>
+inline void BindTypeAdaptor<TObjectType>::SetInData()
 {
     if (GetMode() & OCI_BDM_IN)
     {
-        *_data = static_cast<TNativeType>(_object);
+        *_data = static_cast<NativeType>(_object);
     }
 }
 
-template <class TNativeType, class TObjectType>
-inline void BindTypeAdaptor<TNativeType, TObjectType>::SetOutData()
+template <class TObjectType>
+inline void BindTypeAdaptor<TObjectType>::SetOutData()
 {
     if (GetMode() & OCI_BDM_OUT)
     {
@@ -4446,29 +4671,29 @@ inline void BindTypeAdaptor<TNativeType, TObjectType>::SetOutData()
     }
 }
 
-template <class TNativeType, class TObjectType>
-inline BindTypeAdaptor<TNativeType, TObjectType>::BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object) :
+template <class TObjectType>
+inline BindTypeAdaptor<TObjectType>::BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object) :
 BindObject(statement, name, mode),
 _object(object),
-_data(new TNativeType)
+_data(new NativeType)
 {
 
 }
 
-template <class TNativeType, class TObjectType>
-inline BindTypeAdaptor<TNativeType, TObjectType>::~BindTypeAdaptor()
+template <class TObjectType>
+inline BindTypeAdaptor<TObjectType>::~BindTypeAdaptor()
 {
     delete _data;
 }
 
-template <class TNativeType, class TObjectType>
-inline BindTypeAdaptor<TNativeType, TObjectType>::operator TNativeType *()  const
+template <class TObjectType>
+inline BindTypeAdaptor<TObjectType>::operator NativeType *()  const
 {
     return _data;
 }
 
 template <>
-inline void BindTypeAdaptor<boolean, bool>::SetInData()
+inline void BindTypeAdaptor<bool>::SetInData()
 {
     if (GetMode() & OCI_BDM_IN)
     {
@@ -4477,7 +4702,7 @@ inline void BindTypeAdaptor<boolean, bool>::SetInData()
 }
 
 template <>
-inline void BindTypeAdaptor<boolean, bool>::SetOutData()
+inline void BindTypeAdaptor<bool>::SetOutData()
 {
     if (GetMode() & OCI_BDM_OUT)
     {
@@ -4795,30 +5020,26 @@ inline BindInfo Statement::GetBind(const ostring& name) const
 }
 
 template <typename TBindMethod, class TDataType>
-inline void Statement::Bind (TBindMethod &method, const ostring& name, TDataType& value, BindInfo::BindDirection mode)
+inline void Statement::Bind1(TBindMethod &method, const ostring& name, TDataType& value, BindInfo::BindDirection mode)
 {
     Check(method(*this, name.c_str(), &value));
     SetLastBindMode(mode);
 }
 
-template <typename TBindMethod, class TObjectType, class TDataType>
-inline void Statement::Bind (TBindMethod &method, const ostring& name, TObjectType& value, BindValue<TDataType> datatype, BindInfo::BindDirection mode)
+template <typename TBindMethod, class TObjectType>
+inline void Statement::Bind2(TBindMethod &method, const ostring& name, TObjectType& value, BindInfo::BindDirection mode)
 {
-    ARG_NOT_USED(datatype);
-
-    Check(method(*this, name.c_str(), static_cast<TDataType>(value)));
+    Check(method(*this, name.c_str(), static_cast<typename BindResolver<TObjectType>::OutputType>(value)));
     SetLastBindMode(mode);
 }
 
-template <typename TBindMethod, class TObjectType, class TDataType>
-inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode)
+template <typename TBindMethod, class TObjectType>
+inline void Statement::BindVector1(TBindMethod &method, const ostring& name, std::vector<TObjectType> &values,  BindInfo::BindDirection mode)
 {
-    ARG_NOT_USED(datatype);
-
     BindArray * bnd = new BindArray(*this, name, mode);
-    bnd->SetVector<TObjectType, TDataType>(values, sizeof(TDataType));
+    bnd->SetVector<TObjectType>(values, sizeof(typename BindResolver<TObjectType>::OutputType));
 
-    boolean res = method(*this, name.c_str(), static_cast<TDataType *>(bnd->GetData<TObjectType, TDataType>()), 0);
+    boolean res = method(*this, name.c_str(), bnd->GetData<TObjectType>(), 0);
 
     if (res)
     {
@@ -4834,15 +5055,13 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
     Check(res);
 }
 
-template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
-inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode, TElemType type)
+template <typename TBindMethod, class TObjectType, class TElemType>
+inline void Statement::BindVector2(TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindInfo::BindDirection mode, TElemType type)
 {
-    ARG_NOT_USED(datatype);
-
     BindArray * bnd = new BindArray(*this, name, mode);
-    bnd->SetVector<TObjectType, TDataType>(values, sizeof(TDataType));
+    bnd->SetVector<TObjectType>(values, sizeof(typename BindResolver<TObjectType>::OutputType));
 
-    boolean res = method(*this, name.c_str(), static_cast<TDataType *>(bnd->GetData<TObjectType, TDataType>()), type, 0);
+    boolean res = method(*this, name.c_str(), bnd->GetData<TObjectType>(), type, 0);
 
     if (res)
     {
@@ -4861,7 +5080,7 @@ inline void Statement::Bind (TBindMethod &method, const ostring& name, std::vect
 template <>
 inline void Statement::Bind<bool>(const ostring& name, bool &value, BindInfo::BindDirection mode)
 {
-    BindTypeAdaptor<boolean, bool> * bnd = new BindTypeAdaptor<boolean, bool>(*this, name, mode, value);
+    BindTypeAdaptor<bool> * bnd = new BindTypeAdaptor<bool>(*this, name, mode, value);
 
     boolean res = OCI_BindBoolean(*this, name.c_str(), static_cast<boolean *>(*bnd));
 
@@ -4882,115 +5101,115 @@ inline void Statement::Bind<bool>(const ostring& name, bool &value, BindInfo::Bi
 template <>
 inline void Statement::Bind<short>(const ostring& name, short &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindShort, name, value, mode);
+    Bind1(OCI_BindShort, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<unsigned short>(const ostring& name, unsigned short &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindUnsignedShort, name, value, mode);
+    Bind1(OCI_BindUnsignedShort, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<int>(const ostring& name, int &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindInt, name, value, mode);
+    Bind1(OCI_BindInt, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<unsigned int>(const ostring& name, unsigned int &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindUnsignedInt, name, value, mode);
+    Bind1(OCI_BindUnsignedInt, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<big_int>(const ostring& name, big_int &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindBigInt, name, value, mode);
+    Bind1(OCI_BindBigInt, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<big_uint>(const ostring& name, big_uint &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindUnsignedBigInt, name, value, mode);
+    Bind1(OCI_BindUnsignedBigInt, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<float>(const ostring& name, float &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindFloat, name, value, mode);
+    Bind1(OCI_BindFloat, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<double>(const ostring& name, double &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindDouble, name, value, mode);
+    Bind1(OCI_BindDouble, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<Number>(const ostring& name, Number &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindNumber, name, value, BindValue<OCI_Number *>(), mode);
+    Bind2(OCI_BindNumber, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<Date>(const ostring& name, Date &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindDate, name, value, BindValue<OCI_Date *>(),  mode);
+    Bind2(OCI_BindDate, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<Timestamp>(const ostring& name, Timestamp &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindTimestamp, name, value, BindValue<OCI_Timestamp *>(), mode);
+    Bind2(OCI_BindTimestamp, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<Interval>(const ostring& name, Interval &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindInterval, name, value, BindValue<OCI_Interval *>(), mode);
+    Bind2(OCI_BindInterval, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<Clob>(const ostring& name, Clob &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindLob, name, value, BindValue<OCI_Lob *>(), mode);
+    Bind2(OCI_BindLob, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<NClob>(const ostring& name, NClob &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindLob, name, value, BindValue<OCI_Lob *>(), mode);
+    Bind2(OCI_BindLob, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<Blob>(const ostring& name, Blob &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindLob, name, value, BindValue<OCI_Lob *>(), mode);
+    Bind2(OCI_BindLob, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<File>(const ostring& name, File &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindFile, name, value, BindValue<OCI_File *>(), mode);
+    Bind2(OCI_BindFile, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<Object>(const ostring& name, Object &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindObject, name, value, BindValue<OCI_Object *>(), mode);
+    Bind2(OCI_BindObject, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<Reference>(const ostring& name, Reference &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindRef, name, value, BindValue<OCI_Ref *>(), mode);
+    Bind2(OCI_BindRef, name, value, mode);
 }
 
 template <>
 inline void Statement::Bind<Statement>(const ostring& name, Statement &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindStatement, name, value, BindValue<OCI_Statement *>(), mode);
+    Bind2(OCI_BindStatement, name, value, mode);
 }
 
 template <>
@@ -5029,7 +5248,7 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring 
 
     value.reserve(maxSize);
 
-    BindObjectAdaptor<otext, ostring> * bnd = new BindObjectAdaptor<otext, ostring>(*this, name, mode, value, maxSize + 1);
+    BindObjectAdaptor<ostring> * bnd = new BindObjectAdaptor<ostring>(*this, name, mode, value, maxSize + 1);
 
     boolean res = OCI_BindString(*this, name.c_str(), static_cast<otext *>(*bnd), maxSize);
 
@@ -5063,7 +5282,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, Raw &value, 
 
     value.reserve(maxSize);
 
-    BindObjectAdaptor<unsigned char, Raw> * bnd = new BindObjectAdaptor<unsigned char, Raw>(*this, name, mode, value, maxSize);
+    BindObjectAdaptor<Raw> * bnd = new BindObjectAdaptor<Raw>(*this, name, mode, value, maxSize);
 
     boolean res = OCI_BindRaw(*this, name.c_str(), static_cast<unsigned char *>(*bnd), maxSize);
 
@@ -5090,73 +5309,74 @@ inline void Statement::Bind<Raw, int>(const ostring& name, Raw &value,  int maxS
 template <>
 inline void Statement::Bind<short>(const ostring& name, std::vector<short> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfShorts, name, values, BindValue<short>(), mode);
+    BindVector1(OCI_BindArrayOfShorts, name, values, mode);
 }
 
 template <>
 inline void Statement::Bind<unsigned short>(const ostring& name, std::vector<unsigned short> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfUnsignedShorts, name, values, BindValue<unsigned short>(), mode);
+    BindVector1(OCI_BindArrayOfUnsignedShorts, name, values, mode);
 }
 
 template <>
 inline void Statement::Bind<int>(const ostring& name, std::vector<int> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfInts, name, values, BindValue<int>(), mode);
+    BindVector1(OCI_BindArrayOfInts, name, values, mode);
 }
 
 template <>
 inline void Statement::Bind<unsigned int>(const ostring& name, std::vector<unsigned int> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfUnsignedInts, name, values, BindValue<unsigned int>(), mode);
+    BindVector1(OCI_BindArrayOfUnsignedInts, name, values, mode);
 }
 
 template <>
 inline void Statement::Bind<big_int>(const ostring& name, std::vector<big_int> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfBigInts, name, values, BindValue<big_int>(), mode);
+    BindVector1(OCI_BindArrayOfBigInts, name, values, mode);
 }
 
 template <>
 inline void Statement::Bind<big_uint>(const ostring& name, std::vector<big_uint> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfUnsignedBigInts, name, values, BindValue<big_uint>(), mode);
+    BindVector1(OCI_BindArrayOfUnsignedBigInts, name, values, mode);
 }
 
 template <>
 inline void Statement::Bind<float>(const ostring& name, std::vector<float> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfFloats, name, values, BindValue<float>(), mode);
+    BindVector1(OCI_BindArrayOfFloats, name, values, mode);
 }
 
 template <>
 inline void Statement::Bind<double>(const ostring& name, std::vector<double> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfDoubles, name, values, BindValue<double>(), mode);
+    BindVector1(OCI_BindArrayOfDoubles, name, values, mode);
 }
 
 template <>
 inline void Statement::Bind<Date>(const ostring& name, std::vector<Date> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfDates, name, values, BindValue<OCI_Date *>(), mode);
+    BindVector1(OCI_BindArrayOfDates, name, values, mode);
 }
 
 template <>
 inline void Statement::Bind<Number>(const ostring& name, std::vector<Number> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfNumbers, name, values, BindValue<OCI_Number *>(), mode);
+    BindVector1(OCI_BindArrayOfNumbers, name, values, mode);
 }
 
 template<class TDataType>
 inline void Statement::Bind(const ostring& name, Collection<TDataType> &value, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindColl, name, value, BindValue<OCI_Coll *>(), mode);
+    Check(OCI_BindColl(*this, name.c_str(), value));
+    SetLastBindMode(mode);
 }
 
 template <>
 inline void Statement::Bind<Timestamp, Timestamp::TimestampTypeValues>(const ostring& name, std::vector<Timestamp> &values, Timestamp::TimestampTypeValues type, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfTimestamps, name, values, BindValue<OCI_Timestamp *>(), mode, type);
+    BindVector2(OCI_BindArrayOfTimestamps, name, values, mode, type);
 }
 
 template <>
@@ -5168,7 +5388,7 @@ inline void Statement::Bind<Timestamp, Timestamp::TimestampType>(const ostring& 
 template <>
 inline void Statement::Bind<Interval, Interval::IntervalTypeValues>(const ostring& name, std::vector<Interval> &values, Interval::IntervalTypeValues type, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfIntervals, name, values, BindValue<OCI_Interval *>(), mode, type);
+    BindVector2(OCI_BindArrayOfIntervals, name, values, mode, type);
 }
 
 template <>
@@ -5180,52 +5400,52 @@ inline void Statement::Bind<Interval, Interval::IntervalType>(const ostring& nam
 template <>
 inline void Statement::Bind<Clob>(const ostring& name, std::vector<Clob> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, static_cast<unsigned int>(OCI_CLOB));
+    BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_CLOB));
 }
 
 template <>
 inline void Statement::Bind<NClob>(const ostring& name, std::vector<NClob> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, static_cast<unsigned int>(OCI_NCLOB));
+    BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_NCLOB));
 }
 
 template <>
 inline void Statement::Bind<Blob>(const ostring& name, std::vector<Blob> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfLobs, name, values, BindValue<OCI_Lob *>(), mode, static_cast<unsigned int>(OCI_BLOB));
+    BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_BLOB));
 }
 
 template <>
 inline void Statement::Bind<File>(const ostring& name, std::vector<File> &values, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfFiles, name, values, BindValue<OCI_File *>(), mode, static_cast<unsigned int>(OCI_BFILE));
+    BindVector2(OCI_BindArrayOfFiles, name, values, mode, static_cast<unsigned int>(OCI_BFILE));
 }
 
 template <>
 inline void Statement::Bind<Object>(const ostring& name, std::vector<Object> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfObjects, name, values, BindValue<OCI_Object *>(), mode, static_cast<OCI_TypeInfo *>(typeInfo));
+    BindVector2(OCI_BindArrayOfObjects, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
 template <>
 inline void Statement::Bind<Reference>(const ostring& name, std::vector<Reference> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfRefs, name, values, BindValue<OCI_Ref *>(), mode, static_cast<OCI_TypeInfo *>(typeInfo));
+    BindVector2(OCI_BindArrayOfRefs, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
 template <class TDataType>
 inline void Statement::Bind(const ostring& name, std::vector<Collection<TDataType> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfColls, name, values, BindValue<OCI_Coll *>(), mode, static_cast<OCI_TypeInfo *>(typeInfo));
+    BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
 template <>
 inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vector<ostring> &values,  unsigned int maxSize, BindInfo::BindDirection mode)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
-    bnd->SetVector<ostring, otext>(values, maxSize+1);
+    bnd->SetVector<ostring>(values, maxSize+1);
 
-    boolean res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring, otext>(), maxSize, 0);
+    boolean res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring>(), maxSize, 0);
 
     if (res)
     {
@@ -5251,9 +5471,9 @@ template <>
 inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<Raw> &values, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
-    bnd->SetVector<Raw, unsigned char>(values, maxSize);
+    bnd->SetVector<Raw>(values, maxSize);
 
-    boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw, unsigned char>(), maxSize, 0);
+    boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw>(), maxSize, 0);
 
     if (res)
     {
@@ -5272,7 +5492,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<
 template<class TDataType>
 void Statement::Bind(const ostring& name, std::vector<TDataType> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
-    Bind(OCI_BindArrayOfColls, name, values, BindValue<OCI_Coll *>(), mode, static_cast<OCI_TypeInfo *>(typeInfo));
+    BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
 template <>
@@ -5585,7 +5805,7 @@ inline void Statement::OnFreeSmartHandle(SmartHandle *smartHandle)
     if (smartHandle)
     {
         BindsHolder *bindsHolder = static_cast<BindsHolder *>(smartHandle->GetExtraInfos());
-        
+
         smartHandle->SetExtraInfos(0);
 
         delete bindsHolder;

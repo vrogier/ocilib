@@ -21,7 +21,7 @@
 /*
  * IMPORTANT NOTICE
  *
- * This C++ header defines C++ wrapper classes around the OCILIB C API 
+ * This C++ header defines C++ wrapper classes around the OCILIB C API
  * It requires a compatible version of OCILIB
  *
  */
@@ -77,9 +77,9 @@ namespace ocilib
  * - Using stack objects also makes error handling easier and program logic more robust
  *
  * @par C++ API classes usage
- * Most C++ API classes wrap C API handles. 
- * When instances are created using the default constructors, they hold no C handles and have 
- * their method IsNull() returning true. 
+ * Most C++ API classes wrap C API handles.
+ * When instances are created using the default constructors, they hold no C handles and have
+ * their method IsNull() returning true.
  * Any use of other methods and functions on such object methods will throw an C++ exception.
  * Thus, in order to have a valid object :
  * - use a parametrized constructor
@@ -241,7 +241,7 @@ enum OracleVersionValues
 
 /**
 * @brief
-* Oracle Version 
+* Oracle Version
 *
 * Possible values are DataTypeValues
 *
@@ -894,7 +894,7 @@ public:
 
     /**
     * @brief
-    * Allocated Bytes 
+    * Allocated Bytes
     *
     * Possible values are Environment::AllocatedBytesValues
     *
@@ -2593,11 +2593,75 @@ public:
     */
     Number Clone() const;
 
+    Number& operator ++ ();
+    Number& operator -- ();
+    Number operator ++ (int);
+    Number operator -- (int);
+
+    bool operator == (const Number& other) const;
+    bool operator != (const Number& other) const;
+    bool operator > (const Number& other) const;
+    bool operator < (const Number& other) const;
+    bool operator >= (const Number& other) const;
+    bool operator <= (const Number& other) const;
+
+    template<class T>
+    Number& operator = (const T &lhs);
+
+    template<class T>
+    operator T() const;
+
+    template <class T>
+    Number operator - (const T &value);
+
+    template <class T>
+    Number operator + (const T &value);
+
+    template <class T>
+    Number operator * (const T &value);
+
+    template <class T>
+    Number operator / (const T &value);
+
+    template <class T>
+    Number& operator += (const T &value);
+
+    template <class T>
+    Number& operator -= (const T &value);
+
+    template <class T>
+    Number& operator *= (const T &value);
+
+    template <class T>
+    Number& operator /= (const T &value);
+
 private:
 
     Number(OCI_Number *pNumber, Handle *parent = 0);
 
     void Allocate();
+
+    int Compare(const Number& other) const;
+
+    template <class T>
+    inline T GetValue() const;
+
+    template <class TValueType>
+    Number& SetValue(const TValueType &value);
+
+    template <class TValueType>
+    void Add(const TValueType &value);
+
+    template <class TValueType>
+    void Sub(const TValueType &value);
+
+    template <class TValueType>
+    void Multiply(const TValueType &value);
+
+    template <class TValueType>
+    void Divide(const TValueType &value);
+
+    Number& operator = (OCI_Number * &lhs);
 };
 
 /**
@@ -2667,7 +2731,7 @@ public:
     */
 
     Date(const ostring& str, const ostring& format = OTEXT(""));
-    
+
     /**
      * @brief
      * Check if the given date is valid
@@ -3481,7 +3545,7 @@ public:
 
     /**
     * @brief
-    * return the current system timestamp 
+    * return the current system timestamp
     *
     * @param type - Timestamp type to create
     *
@@ -4713,7 +4777,7 @@ public:
     */
     template<class TDataType>
     void Set(const ostring& name, const TDataType &value);
-    
+
     /**
     * @brief
     * Clone the current instance to a new one performing deep copy
@@ -5587,7 +5651,7 @@ public:
 
     /**
     * @brief
-    * Execute the prepared statement, retrieve all resultsets, and call the given callback 
+    * Execute the prepared statement, retrieve all resultsets, and call the given callback
     * with adapted type wit for each row of each resultsets
     *
     * @tparam TAdapter       -  type of the adapter callback
@@ -6254,16 +6318,16 @@ private:
     void ClearBinds();
 
     template <typename TBindMethod, class TDataType>
-    void Bind (TBindMethod &method, const ostring& name, TDataType& value, BindInfo::BindDirection mode);
+    void Bind1 (TBindMethod &method, const ostring& name, TDataType& value, BindInfo::BindDirection mode);
 
-    template <typename TBindMethod, class TObjectType, class TDataType>
-    void Bind (TBindMethod &method, const ostring& name, TObjectType &value, BindValue<TDataType> datatype, BindInfo::BindDirection mode);
+    template <typename TBindMethod, class TObjectType>
+    void Bind2 (TBindMethod &method, const ostring& name, TObjectType &value, BindInfo::BindDirection mode);
 
-    template <typename TBindMethod, class TObjectType, class TDataType>
-    void Bind (TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode);
+    template <typename TBindMethod, class TObjectType>
+    void BindVector1(TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindInfo::BindDirection mode);
 
-    template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
-    void Bind (TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode, TElemType type);
+    template <typename TBindMethod, class TObjectType, class TElemType>
+    void BindVector2(TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindInfo::BindDirection mode, TElemType type);
 
     template<typename TFetchCallback>
     unsigned int Fetch(TFetchCallback callback);
@@ -6372,7 +6436,7 @@ public:
     *
      * @param value    - User defined type value to be filled by the adapter function
     * @param adapter -  User defined adapter function
-    * 
+    *
     * @note
     * The user defined adapter function must conform to the following prototype:
     * bool adapter (const Resultset &, TDataType &)
@@ -6389,7 +6453,7 @@ public:
     * @param callback -  User defined callback
     *
     * @note
-    * The user defined callback function must conform to the following prototype: 
+    * The user defined callback function must conform to the following prototype:
     * bool callback(const Resultset &)
     * It shall return true to continue fetching the resultset or false to stop the fetch
     *
