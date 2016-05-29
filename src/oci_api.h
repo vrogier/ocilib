@@ -1312,6 +1312,38 @@ typedef sword (*OCINUMBERASSIGN)
     OCINumber       *to
 );
 
+typedef sword (*OCINUMBERADD)
+(
+    OCIError        *err, 
+    const OCINumber *number1,
+    const OCINumber *number2,
+    OCINumber       *result
+);
+
+typedef sword (*OCINUMBERSUB)
+(
+    OCIError        *err, 
+    const OCINumber *number1,
+    const OCINumber *number2,
+    OCINumber       *result
+);
+
+typedef sword (*OCINUMBERMUL)
+(
+    OCIError        *err, 
+    const OCINumber *number1,
+    const OCINumber *number2,
+    OCINumber       *result
+);
+
+typedef sword (*OCINUMBERDIV)
+(
+    OCIError        *err, 
+    const OCINumber *number1,
+    const OCINumber *number2,
+    OCINumber       *result
+);
+
 typedef oratext * (*OCISTRINGPTR)
 (
     OCIEnv          *env,

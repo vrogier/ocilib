@@ -299,6 +299,10 @@ OCINUMBERFROMREAL            OCINumberFromReal            = NULL;
 OCINUMBERTOTEXT              OCINumberToText              = NULL;
 OCINUMBERFROMTEXT            OCINumberFromText            = NULL;
 OCINUMBERASSIGN              OCINumberAssign              = NULL;
+OCINUMBERADD                 OCINumberAdd                 = NULL;
+OCINUMBERSUB                 OCINumberSub                 = NULL;
+OCINUMBERMUL                 OCINumberMul                 = NULL;
+OCINUMBERDIV                 OCINumberDiv                 = NULL;
 OCISTRINGPTR                 OCIStringPtr                 = NULL;
 OCISTRINGSIZE                OCIStringSize                = NULL;
 OCISTRINGASSIGNTEXT          OCIStringAssignText          = NULL;
@@ -1086,19 +1090,27 @@ boolean OCI_API OCI_Initialize
                    OCINUMBERTOINT);
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberFromInt", OCINumberFromInt,
                    OCINUMBERFROMINT);
-
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberToReal", OCINumberToReal,
                    OCINUMBERTOREAL);
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberFromReal", OCINumberFromReal,
                    OCINUMBERFROMREAL);
-
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberToText", OCINumberToText,
                    OCINUMBERTOTEXT);
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberFromText", OCINumberFromText,
                    OCINUMBERFROMTEXT);
-
         LIB_SYMBOL(OCILib.lib_handle, "OCINumberAssign", OCINumberAssign,
             OCINUMBERASSIGN);
+        LIB_SYMBOL(OCILib.lib_handle, "OCINumberAdd", OCINumberAdd,
+            OCINUMBERADD);
+
+        LIB_SYMBOL(OCILib.lib_handle, "OCINumberSub", OCINumberSub,
+            OCINUMBERSUB);
+
+        LIB_SYMBOL(OCILib.lib_handle, "OCINumberMul", OCINumberMul,
+            OCINUMBERMUL);
+
+        LIB_SYMBOL(OCILib.lib_handle, "OCINumberDiv", OCINumberDiv,
+            OCINUMBERDIV);
 
         LIB_SYMBOL(OCILib.lib_handle, "OCIStringPtr", OCIStringPtr,
                    OCISTRINGPTR);
