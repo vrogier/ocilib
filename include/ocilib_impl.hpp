@@ -1812,25 +1812,25 @@ inline Number& Number::SetValue(const TValueType &value)
 }
 
 template <class TValueType>
-void Number::Add(const TValueType &value)
+inline void Number::Add(const TValueType &value)
 {
     Check(OCI_NumberAdd(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
 }
 
 template <class TValueType>
-void Number::Sub(const TValueType &value)
+inline void Number::Sub(const TValueType &value)
 {
     Check(OCI_NumberSub(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
 }
 
 template <class TValueType>
-void Number::Multiply(const TValueType &value)
+inline void Number::Multiply(const TValueType &value)
 {
     Check(OCI_NumberMultiply(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
 }
 
 template <class TValueType>
-void Number::Divide(const TValueType &value)
+inline void Number::Divide(const TValueType &value)
 {
     Check(OCI_NumberDivide(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
 }
@@ -1855,7 +1855,7 @@ inline Number::operator T() const
 }
 
 template <class T>
-Number Number::operator + (const T &value)
+inline Number Number::operator + (const T &value)
 {
     Number result = Clone();
     result.Add(value);
@@ -1863,7 +1863,7 @@ Number Number::operator + (const T &value)
 }
 
 template <class T>
-Number Number::operator - (const T &value)
+inline Number Number::operator - (const T &value)
 {
     Number result = Clone();
     result.Sub(value);
@@ -1871,7 +1871,7 @@ Number Number::operator - (const T &value)
 }
 
 template <class T>
-Number Number::operator * (const T &value)
+inline Number Number::operator * (const T &value)
 {
     Number result = Clone();
     result.Multiply(value);
@@ -1879,7 +1879,7 @@ Number Number::operator * (const T &value)
 }
 
 template <class T>
-Number Number::operator / (const T &value)
+inline Number Number::operator / (const T &value)
 {
     Number result = Clone();
     result.Divide(value);
@@ -1887,49 +1887,49 @@ Number Number::operator / (const T &value)
 }
 
 template <class T>
-Number& Number::operator += (const T &value)
+inline Number& Number::operator += (const T &value)
 {
     Add<T>(value);
     return *this;
 }
 
 template <class T>
-Number& Number::operator -= (const T &value)
+inline Number& Number::operator -= (const T &value)
 {
     Sub<T>(value);
     return *this;
 }
 
 template <class T>
-Number& Number::operator *= (const T &value)
+inline Number& Number::operator *= (const T &value)
 {
     Multiply<T>(value);
     return *this;
 }
 
 template <class T>
-Number& Number::operator /= (const T &value)
+inline Number& Number::operator /= (const T &value)
 {
     Divide<T>(value);
     return *this;
 }
 
-Number& Number::operator ++ ()
+inline Number& Number::operator ++ ()
 {
     return *this += 1;
 }
 
-Number& Number::operator -- ()
+inline Number& Number::operator -- ()
 {
     return *this += 1;
 }
 
-Number Number::operator ++ (int)
+inline Number Number::operator ++ (int)
 {
     return *this + 1;
 }
 
-Number Number::operator -- (int)
+inline Number Number::operator -- (int)
 {
     return *this - 1;
 }
