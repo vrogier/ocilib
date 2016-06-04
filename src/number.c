@@ -30,7 +30,7 @@ typedef struct MagicNumber
     otext* name;
 } MagicNumber;
 
-static MagicNumber MagicNumbers[] = 
+static MagicNumber MagicNumbers[] =
 {
     { { 2, 255, 101 }, OTEXT("~") },
     { { 1,   0,   0 }, OTEXT("-~") }
@@ -41,10 +41,10 @@ static MagicNumber MagicNumbers[] =
 
 #define OCI_NUMBER_OPERATION(func)                                                  \
                                                                                     \
+    OCINumber src_num = { {0} };                                                    \
+                                                                                    \
     OCI_LIB_CALL_ENTER(boolean, FALSE)                                              \
     OCI_CHECK_PTR(OCI_IPC_NUMBER, number)                                           \
-                                                                                    \
-    OCINumber src_num = { 0 };                                                      \
                                                                                     \
     call_status = OCI_NumberSetNativeValue(number->con, &src_num,                   \
                                            OCI_GetNumericTypeSize(type),            \
@@ -166,7 +166,7 @@ boolean OCI_NumberGetNativeValue
 
         OCI_CALL4
         (
-            res, err, con, 
+            res, err, con,
 
             OCINumberToInt(err, (OCINumber *) number, size, sign, out_value)
         )
@@ -829,8 +829,8 @@ boolean OCI_API OCI_NumberSetValue
 
     OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
 
-    call_status = call_retval = OCI_NumberSetNativeValue(number->con, number->handle, 
-                                                         OCI_GetNumericTypeSize(type), 
+    call_status = call_retval = OCI_NumberSetNativeValue(number->con, number->handle,
+                                                         OCI_GetNumericTypeSize(type),
                                                          type, SQLT_VNU, value);
 
     OCI_LIB_CALL_EXIT()
