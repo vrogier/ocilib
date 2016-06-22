@@ -45,7 +45,7 @@
 
         #define OCI_VERSION_COMPILE OCI_12_1
         #define OCI_VERSION_RUNTIME OCI_12_1
-  
+
     #elif defined(OCI_FNCODE_LOBGETCONTENTTYPE)  /* = OCI_11_2 */
 
         #define OCI_VERSION_COMPILE OCI_11_2
@@ -98,7 +98,7 @@
 /* tries to enable Oracle 10g support for lobs > 4Go with OCILobxxx2() calls */
 
 #if defined(OCI_BIG_UINT_ENABLED) && defined(ORAXB8_DEFINED)
-  
+
     #define OCI_LOB2_API_ENABLED
 
 #endif
@@ -120,12 +120,12 @@
 
 #if  defined (OCI_CHARSET_ANSI)
 
-    typedef otext           dbtext;         
-  
+    typedef otext           dbtext;
+
 #else
- 
-    typedef unsigned short  dbtext;   
-    
+
+    typedef unsigned short  dbtext;
+
 #endif
 
 /* ********************************************************************************************* *
@@ -349,7 +349,7 @@
 /* OCI unicode flag */
 
 #ifndef OCI_UTF16ID
-  
+
     #define OCI_UTF16ID                   OCI_UCS2ID
 
 #endif
@@ -393,7 +393,7 @@
 
 /* indicator and nullity handlers */
 
-#define OCI_IND(exp)                    (sb2) ((exp) ? 0 : -1)  
+#define OCI_IND(exp)                    (sb2) ((exp) ? 0 : -1)
 
 #define OCI_NOT_USED(p)                 (p) = (p);
 
@@ -421,14 +421,14 @@
     {                                                                           \
         ctx->call_err = OCI_ErrorGet(FALSE);                                    \
         OCI_ContextCallEnter(ctx);                                              \
-    }    
+    }
 
 #define OCI_CALL_CONTEXT_EXIT(mode)                                             \
                                                                                 \
     if (mode & OCI_ENV_CONTEXT)                                                 \
     {                                                                           \
         OCI_ContextCallExit(ctx);                                               \
-    }  
+    }
 
 #define OCI_CALL_ENTER(type, value)                                             \
                                                                                 \
@@ -475,7 +475,7 @@
     OCI_CALL_ENTER(type, value)                                                 \
     OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
     OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
-    OCI_RETVAL = (type) (obj)->##prop;                                          \
+    OCI_RETVAL = (type) obj->prop;                                              \
     OCI_CALL_EXIT()                                                             \
 
 #define OCI_SET_PROP(type, obj_type, obj, prop, value, con, stmt, err)          \
@@ -483,7 +483,7 @@
     OCI_CALL_ENTER(boolean, FALSE)                                              \
     OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
     OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
-    (obj)->##prop = (type)value;                                                \
+    obj->prop = (type) value;                                                   \
     OCI_RETVAL = OCI_STATUS;                                                    \
     OCI_CALL_EXIT()                                                             \
 
@@ -493,7 +493,7 @@
     OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
     OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
     OCI_CALL_CHECK_ENUM_VALUE((con),(stmt), (value), (enums), (msg))            \
-    (obj)->##prop = (type)value;                                                \
+    obj->prop = (type) value;                                                   \
     OCI_RETVAL = OCI_STATUS;                                                    \
     OCI_CALL_EXIT()                                                             \
 

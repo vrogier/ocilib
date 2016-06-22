@@ -131,7 +131,7 @@ boolean OCI_ColumnDescribe
         ub4 htype = (OCI_DESC_RESULTSET == ptype) ? OCI_HTYPE_STMT : OCI_DTYPE_PARAM;
 
         OCI_EXEC(OCIParamGet((dvoid *) handle, htype,  con->err, (void**) &param, (ub4) index))
-    }  
+    }
 
     /* sql code */
     OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_DATA_TYPE, param, &col->sqlcode, NULL)
@@ -263,7 +263,7 @@ boolean OCI_ColumnDescribe
 
 #if defined(OCI_CHARSET_WIDE)
 
-        // Ugly workaround for Oracle Bug 9838993 
+        // Ugly workaround for Oracle Bug 9838993
 
         if ((OCI_DESC_RESULTSET == ptype) && (OCILib.env_vars[OCI_VARS_WORKAROUND_UTF16_COLUMN_NAME]))
         {
@@ -275,11 +275,11 @@ boolean OCI_ColumnDescribe
                 col->name = OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), char_count + 1, 1);
                 OCI_StringAnsiToNative(param_struct->column_info->name, col->name, (int) char_count);
 
-                res = TRUE;
+                OCI_STATUS = TRUE;
             }
             else
             {
-                res = FALSE;
+                OCI_STATUS = FALSE;
             }
         }
         else
@@ -290,7 +290,7 @@ boolean OCI_ColumnDescribe
             dbtext *dbstr    = NULL;
             int     dbsize   = 0;
             ub4     attrname = (OCI_DESC_COLLECTION == ptype) ? OCI_ATTR_TYPE_NAME : OCI_ATTR_NAME;
-                      
+
             OCI_GET_ATTRIB(OCI_DTYPE_PARAM, attrname, param, &dbstr, &dbsize)
 
             if (OCI_STATUS && dbstr)
@@ -305,8 +305,8 @@ boolean OCI_ColumnDescribe
     /* user type descriptor */
 
     if (
-        SQLT_NTY == col->sqlcode || 
-        SQLT_REF == col->sqlcode 
+        SQLT_NTY == col->sqlcode ||
+        SQLT_REF == col->sqlcode
 #if OCI_VERSION_COMPILE >= OCI_12_1
         || SQLT_REC == col->sqlcode
         || SQLT_TAB == col->sqlcode
@@ -411,7 +411,7 @@ boolean OCI_ColumnMap
         case SQLT_UNDOCUMENTED_BIN_INTEGER:
 #if OCI_VERSION_COMPILE >= OCI_12_1
         case OCI_TYPECODE_PLS_INTEGER:
-#endif 
+#endif
         {
             col->datatype = OCI_CDT_NUMERIC;
             col->libcode  = SQLT_INT;
@@ -610,7 +610,7 @@ boolean OCI_ColumnMap
             if ((SQLT_LNG ==col->libcode || SQLT_LVC == col->libcode) &&
                 (stmt && OCI_LONG_IMPLICIT == stmt->long_mode))
             {
-                col->datatype = OCI_CDT_TEXT;               
+                col->datatype = OCI_CDT_TEXT;
                 col->subtype  = OCI_CLONG;
                 col->bufsize  = (OCI_SIZE_LONG+1) * char_size;
 
@@ -676,7 +676,7 @@ boolean OCI_ColumnMap
             col->bufsize    = (ub4) sizeof(OCIInterval *);
             break;
         }
-            
+
     #endif
 
     #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -781,7 +781,7 @@ unsigned int OCI_API OCI_ColumnGetCharsetForm
     {
         OCI_RETVAL = OCI_CSF_DEFAULT;
     }
-    
+
     OCI_CALL_EXIT()
 }
 
@@ -1173,8 +1173,8 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
     {
         case SQLT_AFC:
         {
-        
-        #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)            
+
+        #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
             OCI_RETVAL = osprintf(buffer, len, OTEXT("%lsCHAR(%i%ls)"),
         #else
             OCI_RETVAL = osprintf(buffer, len, OTEXT("%sCHAR(%i%s)"),

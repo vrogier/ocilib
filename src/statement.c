@@ -141,7 +141,7 @@ boolean OCI_BindCheckData(OCI_Bind *bnd, sb2 *ind, ub1 *src, ub1 *dst, unsigned 
             }
         }
         // otherwise we have an ocilib handle based type
-        else 
+        else
         {
             ((void**)dst)[index] = ((OCI_Datatype *)src)->handle;
         }
@@ -205,7 +205,7 @@ boolean OCI_BindResetData(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
             OCINumber *dst_num = ((OCI_Number *)dst)->handle;
 
             OCI_EXEC(OCINumberAssign(bnd->stmt->con->err, src_num, dst_num))
-        } 
+        }
         else if (OCI_NUM_BIGINT == bnd->subtype)
         {
             OCINumber *src_number = (OCINumber *)(src + index * sizeof(OCINumber));
@@ -420,7 +420,7 @@ boolean OCI_BindReset
                 else
                 {
                     res = OCI_BindResetData(bnd, (ub1*) bnd->buffer.data, (ub1*) bnd->input, 0);
-                }  
+                }
             }
         }
     }
@@ -446,7 +446,7 @@ boolean OCI_BindData
     unsigned int   nbelem
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)     
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET(stmt->con, stmt, stmt->con->err)
 
     OCI_Bind *bnd    = NULL;
@@ -837,7 +837,7 @@ boolean OCI_BindData
         if ((OCI_CDT_LOB == bnd->type) && (OCI_NCLOB == bnd->subtype))
         {
             ub1 csfrm = SQLCS_NCHAR;
-           
+
             OCI_SET_ATTRIB(OCI_HTYPE_BIND, OCI_ATTR_CHARSET_FORM, bnd->buffer.handle, &csfrm, sizeof(csfrm))
         }
     }
@@ -1098,11 +1098,10 @@ OCI_Statement * OCI_StatementInit
     const otext    *sql
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)     
+    OCI_CALL_DECLARE_CONTEXT(FALSE)
     OCI_CALL_CONTEXT_SET(con, NULL, con->err)
 
     OCI_Statement * stmt = NULL;
-    boolean res = FALSE;
 
     OCI_CHECK(NULL == pstmt, NULL);
 
@@ -1340,7 +1339,7 @@ boolean OCI_StatementCheckImplicitResultsets
     OCI_Statement *stmt
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)     
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET(stmt->con, stmt, stmt->con->err)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
@@ -1413,7 +1412,7 @@ boolean OCI_BatchErrorInit
     OCI_Statement *stmt
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)     
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET(stmt->con, stmt, stmt->con->err)
 
     ub4 err_count = 0;
@@ -1524,7 +1523,7 @@ boolean OCI_API OCI_PrepareInternal
     const otext   *sql
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)     
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET(stmt->con, stmt, stmt->con->err)
 
     dbtext *dbstr  = NULL;
@@ -1605,9 +1604,9 @@ boolean OCI_API OCI_ExecuteInternal
     ub4            mode
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)     
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET(stmt->con, stmt, stmt->con->err)
-   
+
     sword status = OCI_SUCCESS;
     ub4 iters    = 0;
 
@@ -1671,7 +1670,7 @@ boolean OCI_API OCI_ExecuteInternal
         /* reset input binds indicators status even if execution failed */
 
         OCI_BindReset(stmt);
-    } 
+    }
 
     /* check result */
 
@@ -1911,7 +1910,7 @@ boolean OCI_API OCI_ExecuteStmt
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
     OCI_CALL_CONTEXT_SET(stmt->con, stmt, stmt->con->err)
 
-     OCI_PrepareInternal(stmt, sql) && OCI_ExecuteInternal(stmt, OCI_DEFAULT);
+    OCI_STATUS = OCI_PrepareInternal(stmt, sql) && OCI_ExecuteInternal(stmt, OCI_DEFAULT);
 
     OCI_RETVAL = OCI_STATUS;
 
@@ -1934,7 +1933,7 @@ boolean OCI_API OCI_Parse
     OCI_CALL_CONTEXT_SET(stmt->con, stmt, stmt->con->err)
 
     OCI_STATUS = OCI_PrepareInternal(stmt, sql) && OCI_ExecuteInternal(stmt, OCI_PARSE_ONLY);
-    
+
     OCI_RETVAL = OCI_STATUS;
 
     OCI_CALL_EXIT()
@@ -4037,14 +4036,13 @@ OCI_Bind * OCI_API OCI_GetBind2
     const otext   *name
 )
 {
-    OCI_Bind *bnd = NULL;
     int index = -1;
 
     OCI_CALL_ENTER(OCI_Bind*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
     OCI_CALL_CONTEXT_SET(stmt->con, stmt, stmt->con->err)
- 
+
     index = OCI_BindGetInternalIndex(stmt, name);
 
     if (index > 0)

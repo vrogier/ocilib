@@ -718,7 +718,7 @@ boolean OCI_API OCI_PoolSetStatementCacheSize
     {
         if (OCI_HTYPE_SPOOL == pool->htype)
         {
-            OCI_SET_ATTRIB(pool->htype, OCI_ATTR_SPOOL_STMTCACHESIZE, pool->handle, cache_size, sizeof(cache_size))
+            OCI_SET_ATTRIB(pool->htype, OCI_ATTR_SPOOL_STMTCACHESIZE, pool->handle, &cache_size, sizeof(cache_size))
         }
     }
 
