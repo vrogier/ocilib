@@ -147,12 +147,7 @@ boolean OCI_ArrayClose
 
     if (OCI_UNKNOWN != arr->handle_type)
     {
-        OCI_DescriptorArrayFree
-        (
-            (dvoid **) arr->mem_handle,
-            (ub4     ) arr->handle_type,
-            (ub4     ) arr->nb_elem
-        );
+        OCI_DescriptorArrayFree((dvoid **) arr->mem_handle, (ub4) arr->handle_type, (ub4) arr->nb_elem);
     }
 
     OCI_FREE(arr->mem_handle)
@@ -242,12 +237,7 @@ OCI_Array * OCI_ArrayCreate
         {
             if (handle_type != 0)
             {
-                res =  OCI_SUCCESSFUL(OCI_DescriptorArrayAlloc((dvoid  *) arr->con->env,
-                                                               (dvoid **) arr->mem_handle,
-                                                               (ub4     ) handle_type,
-                                                               (ub4     ) nb_elem,
-                                                               (size_t  ) 0,
-                                                               (dvoid **) NULL));
+                res = OCI_DescriptorArrayAlloc((dvoid  *)arr->con->env, (dvoid **)arr->mem_handle, (ub4)handle_type, (ub4)nb_elem);
             }
         }
 

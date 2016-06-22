@@ -33,12 +33,11 @@ OCI_Iter * OCI_API OCI_IterCreate
 OCI_Coll *coll
 )
 {
-
     OCI_Iter *iter = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Iter*, iter);
-
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_ENTER(OCI_Iter*, iter);
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
 
     /* allocate iterator structure */
 
@@ -46,7 +45,7 @@ OCI_Coll *coll
 
     if (iter)
     {
-        call_status = TRUE;
+        OCI_STATUS = TRUE;
 
         iter->coll  = coll;
         iter->eoc   = FALSE;
@@ -55,35 +54,30 @@ OCI_Coll *coll
 
         /* create iterator */
 
-        OCI_CALL2
-        (
-            call_status, iter->coll->con,
-
-            OCIIterCreate(iter->coll->con->env, iter->coll->con->err, coll->handle, &iter->handle)
-        )
+        OCI_EXEC(OCIIterCreate(iter->coll->con->env, iter->coll->con->err, coll->handle, &iter->handle))
 
         /* create data element */
 
-        if (call_status)
+        if (OCI_STATUS)
         {
             iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL, (OCIInd *)NULL, coll->typinf);
 
-            call_status = (NULL != iter->elem);
+            OCI_STATUS = (NULL != iter->elem);
         }
     }
 
     /* check for success */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
-        call_retval = iter;
+        OCI_RETVAL = iter;
     }
     else if (iter)
     {
         OCI_IterFree(iter);
    }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -95,22 +89,15 @@ boolean OCI_API OCI_IterFree
     OCI_Iter *iter
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
+    OCI_CALL_CONTEXT_SET(iter->coll->con, NULL, iter->coll->con->err)
 
     /* close iterator handle */
 
-    call_status = TRUE;
-
     if (iter->handle)
     {
-        OCI_CALL2
-        (
-            call_status, iter->coll->con,
-
-            OCIIterDelete(iter->coll->con->env, iter->coll->con->err, &iter->handle)
-        )
+        OCI_EXEC(OCIIterDelete(iter->coll->con->env, iter->coll->con->err, &iter->handle))
     }
 
     /* free data element */
@@ -126,9 +113,9 @@ boolean OCI_API OCI_IterFree
 
     OCI_FREE(iter)
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
     
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -143,32 +130,24 @@ OCI_Elem * OCI_API OCI_IterGetNext
     void     *data  = NULL;
     OCIInd   *p_ind = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Elem *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(OCI_Elem *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
+    OCI_CALL_CONTEXT_SET(iter->coll->con, NULL, iter->coll->con->err)
 
     if (!iter->eoc)
     {
-        OCI_CALL2
-        (
-            call_status, iter->coll->con,
+        OCI_EXEC(OCIIterNext(iter->coll->con->env, iter->coll->con->err, iter->handle, &data, (dvoid **) &p_ind, &iter->eoc))
 
-            OCIIterNext(iter->coll->con->env, iter->coll->con->err, iter->handle,
-                        &data, (dvoid **) &p_ind, &iter->eoc)
-        )
-
-        if (call_status && !iter->eoc)
+        if (OCI_STATUS && !iter->eoc)
         {
-            call_retval = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
+            OCI_RETVAL = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
 
             iter->dirty = FALSE;
             iter->boc   = FALSE;
         }
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -183,32 +162,24 @@ OCI_Elem * OCI_API OCI_IterGetPrev
     void     *data  = NULL;
     OCIInd   *p_ind = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Elem *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(OCI_Elem *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
+    OCI_CALL_CONTEXT_SET(iter->coll->con, NULL, iter->coll->con->err)
 
     if (!iter->boc)
     {
-        OCI_CALL2
-        (
-            call_status, iter->coll->con,
+        OCI_EXEC(OCIIterPrev(iter->coll->con->env, iter->coll->con->err, iter->handle, &data, (dvoid **) &p_ind, &iter->boc))
 
-            OCIIterPrev(iter->coll->con->env, iter->coll->con->err, iter->handle,
-                        &data, (dvoid **) &p_ind, &iter->boc)
-        )
-
-        if (call_status && !iter->boc)
+        if (OCI_STATUS && !iter->boc)
         {
-            call_retval = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
+            OCI_RETVAL = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
 
             iter->dirty = FALSE;
             iter->eoc   = FALSE;
         }
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -220,16 +191,14 @@ OCI_Elem * OCI_API OCI_IterGetCurrent
     OCI_Iter *iter
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Elem*, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_ITERATOR, iter)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(OCI_Elem*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
+    OCI_CALL_CONTEXT_SET(iter->coll->con, NULL, iter->coll->con->err)
 
     if (iter->elem && !iter->boc && !iter->eoc && !iter->dirty)
     {
-        call_retval = iter->elem;
+        OCI_RETVAL = iter->elem;
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }

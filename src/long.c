@@ -89,15 +89,15 @@ OCI_Long * OCI_API OCI_LongCreate
     unsigned int   type
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Long*, NULL)
+    OCI_CALL_ENTER(OCI_Long*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    OCI_CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, LongTypeValues, OTEXT("Long Type"))
+    OCI_CALL_CONTEXT_SET(stmt->con, stmt, stmt->con->err)
 
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, LongTypeValues, OTEXT("Long Type"))
+    OCI_RETVAL = OCI_LongInit(stmt, &OCI_RETVAL, NULL, type);
+    OCI_STATUS = (NULL != OCI_RETVAL);
 
-    call_retval = OCI_LongInit(stmt, &call_retval, NULL, type);
-    call_status = (NULL != call_retval);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -109,17 +109,17 @@ boolean OCI_API OCI_LongFree
     OCI_Long *lg
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-    OCI_CHECK_OBJECT_FETCHED(lg)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    OCI_CALL_CHECK_OBJECT_FETCHED(lg)
+    OCI_CALL_CONTEXT_SET(lg->stmt->con, lg->stmt, lg->stmt->con->err)
 
     OCI_FREE(lg->buffer)
     OCI_FREE(lg)
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -131,14 +131,7 @@ unsigned int OCI_API OCI_LongGetType
     OCI_Long *lg
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-
-    call_retval = lg->type;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_LONG, lg, type, lg->stmt->con, lg->stmt, lg->stmt->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -154,13 +147,13 @@ unsigned int OCI_API OCI_LongRead
 {
     unsigned int fact = 1;
 
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, buffer)
+    OCI_CALL_CONTEXT_SET(lg->stmt->con, lg->stmt, lg->stmt->con->err)
 
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-    OCI_CHECK_PTR(OCI_IPC_VOID, buffer)
-
-    call_status = TRUE;
-    call_retval = len;
+    OCI_STATUS = TRUE;
+    OCI_RETVAL = len;
 
     /* lg->size and lg offset are still expressed in db text units even
        if the buffer had already been expanded to otext *
@@ -168,30 +161,30 @@ unsigned int OCI_API OCI_LongRead
 
     if (OCI_CLONG == lg->type)
     {
-        call_retval *= (unsigned int) sizeof(dbtext);
+        OCI_RETVAL *= (unsigned int) sizeof(dbtext);
     }
 
     /* check buffer size to read */
 
-    if ((call_retval + lg->offset) > lg->size)
+    if ((OCI_RETVAL + lg->offset) > lg->size)
     {
-        call_retval = lg->size - lg->offset;
+        OCI_RETVAL = lg->size - lg->offset;
     }
 
     /* copy buffer */
 
-    memcpy(buffer, lg->buffer + (size_t) lg->offset*fact, (size_t) (call_retval*fact));
+    memcpy(buffer, lg->buffer + (size_t) lg->offset*fact, (size_t) (OCI_RETVAL*fact));
 
-    lg->offset += call_retval;
+    lg->offset += OCI_RETVAL;
 
     if (OCI_CLONG == lg->type)
     {
-        ((otext *)buffer)[call_retval] = 0;
+        ((otext *)buffer)[OCI_RETVAL] = 0;
 
-        call_retval /= (unsigned int) sizeof(otext);
+        OCI_RETVAL /= (unsigned int) sizeof(otext);
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -215,12 +208,10 @@ unsigned int OCI_API OCI_LongWrite
     ub4 dx       = 0;
     ub4 count    = 0;
 
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_VOID, buffer)
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, buffer)
+    OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    OCI_CALL_CONTEXT_SET(lg->stmt->con, lg->stmt, lg->stmt->con->err)
 
     if (OCI_CLONG == lg->type)
     {
@@ -234,13 +225,7 @@ unsigned int OCI_API OCI_LongWrite
 
     /* get piece info */
 
-    OCI_CALL1
-    (
-        call_status, lg->stmt->con, lg->stmt,
-
-        OCIStmtGetPieceInfo(lg->stmt->stmt, lg->stmt->con->err, &handle,
-                            &type, &in_out, &iter, &dx, &piece)
-    )
+    OCI_EXEC(OCIStmtGetPieceInfo(lg->stmt->stmt, lg->stmt->con->err, &handle, &type, &in_out, &iter, &dx, &piece))
 
     /* set up piece type */
 
@@ -267,17 +252,11 @@ unsigned int OCI_API OCI_LongWrite
 
     /* set up info for writing */
 
-    OCI_CALL1
-    (
-        call_status, lg->stmt->con, lg->stmt,
-
-        OCIStmtSetPieceInfo(handle, type, lg->stmt->con->err, (dvoid *) obuf,
-                            &count,  piece, (dvoid *) NULL, (ub2 *) NULL)
-    )
+    OCI_EXEC(OCIStmtSetPieceInfo(handle, type, lg->stmt->con->err, (dvoid *) obuf, &count,  piece, (dvoid *) NULL, (ub2 *) NULL))
 
     /* perform write call */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         code = OCIStmtExecute(lg->stmt->con->cxt, lg->stmt->stmt,
                               lg->stmt->con->err, (ub4) 1, (ub4) 0,
@@ -287,9 +266,9 @@ unsigned int OCI_API OCI_LongWrite
 
     if (OCI_FAILURE(code) && (OCI_NEED_DATA != code))
     {
-        call_status = (OCI_SUCCESS_WITH_INFO == code);
+        OCI_STATUS = (OCI_SUCCESS_WITH_INFO == code);
 
-        OCI_ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt, call_status);
+        OCI_ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt, OCI_STATUS);
     }
 
     if (OCI_CLONG == lg->type)
@@ -299,7 +278,7 @@ unsigned int OCI_API OCI_LongWrite
 
     /* update size */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         lg->size += count;
 
@@ -313,9 +292,9 @@ unsigned int OCI_API OCI_LongWrite
 
     }
 
-    call_retval = count;
+    OCI_RETVAL = count;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -327,20 +306,18 @@ unsigned int OCI_API OCI_LongGetSize
     OCI_Long *lg
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    OCI_CALL_CONTEXT_SET(lg->stmt->con, lg->stmt, lg->stmt->con->err)
 
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-
-    call_retval = lg->size;
+    OCI_RETVAL = lg->size;
 
     if (OCI_CLONG == lg->type)
     {
-        call_retval /= (unsigned int) sizeof(dbtext);
+        OCI_RETVAL /= (unsigned int) sizeof(dbtext);
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -352,12 +329,5 @@ void * OCI_API OCI_LongGetBuffer
     OCI_Long *lg
 )
 {
-    OCI_LIB_CALL_ENTER(void *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-
-    call_retval = lg->buffer;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(void *, NULL, OCI_IPC_LONG, lg, buffer, lg->stmt->con, lg->stmt, lg->stmt->con->err)
 }

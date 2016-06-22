@@ -56,10 +56,9 @@ OCI_Thread * OCI_API OCI_ThreadCreate
 {
     OCI_Thread *thread = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Thread*, NULL)
-
-    OCI_CHECK_INITIALIZED()
-    OCI_CHECK_THREAD_ENABLED()
+    OCI_CALL_ENTER(OCI_Thread*, NULL)
+    OCI_CALL_CHECK_INITIALIZED()
+    OCI_CALL_CHECK_THREAD_ENABLED()
 
     /* allocate thread structure */
 
@@ -69,40 +68,27 @@ OCI_Thread * OCI_API OCI_ThreadCreate
     {
         /* allocate error handle */
 
-        call_status = OCI_SUCCESSFUL(OCI_HandleAlloc(OCILib.env,
-                                                     (dvoid **) (void *) &thread->err,
-                                                     OCI_HTYPE_ERROR, (size_t) 0,
-                                                     (dvoid **) NULL));
+        OCI_STATUS = OCI_HandleAlloc(OCILib.env, (dvoid **)(void *)&thread->err, OCI_HTYPE_ERROR);
 
         /* allocate thread handle */
 
-        OCI_CALL3
-        (
-            call_status, thread->err,
-
-            OCIThreadHndInit(OCILib.env, thread->err, &thread->handle)
-        )
+        OCI_EXEC(OCIThreadHndInit(OCILib.env, thread->err, &thread->handle))
 
         /* allocate thread ID */
 
-        OCI_CALL3
-        (
-            call_status, thread->err,
-
-            OCIThreadIdInit(OCILib.env, thread->err, &thread->id)
-        )
+        OCI_EXEC(OCIThreadIdInit(OCILib.env, thread->err, &thread->id))
     }
 
-    if (call_status)
+    if (OCI_STATUS)
     {
-        call_retval = thread;
+        OCI_RETVAL = thread;
     }
     else if (thread)
     {
         OCI_ThreadFree(thread);
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -114,40 +100,24 @@ boolean OCI_API OCI_ThreadFree
     OCI_Thread *thread
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_THREAD_ENABLED()
-    OCI_CHECK_PTR(OCI_IPC_THREAD, thread)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_THREAD_ENABLED()
+    OCI_CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
+    OCI_CALL_CONTEXT_SET(NULL, NULL, thread->err)
 
     /* close thread handle */
 
     if (thread->handle)
     {
-        OCI_CALL0
-        (
-            call_status, thread->err,
-
-            OCIThreadClose(OCILib.env, thread->err, thread->handle)
-        )
-
-        OCI_CALL0
-        (
-            call_status, thread->err,
-
-            OCIThreadHndDestroy(OCILib.env, thread->err, &thread->handle)
-        )
+        OCI_EXEC(OCIThreadClose(OCILib.env, thread->err, thread->handle))
+        OCI_EXEC(OCIThreadHndDestroy(OCILib.env, thread->err, &thread->handle))
     }
 
     /* close thread id */
 
     if (thread->id)
     {
-        OCI_CALL0
-        (
-            call_status, thread->err,
-
-            OCIThreadIdDestroy(OCILib.env, thread->err, &thread->id)
-        )
+        OCI_EXEC(OCIThreadIdDestroy(OCILib.env, thread->err, &thread->id))
     }
 
     /* close error handle */
@@ -161,9 +131,9 @@ boolean OCI_API OCI_ThreadFree
 
     OCI_FREE(thread)
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -177,27 +147,19 @@ boolean OCI_API OCI_ThreadRun
     void       *arg
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_THREAD, thread)
-    OCI_CHECK_PTR(OCI_IPC_PROC, proc)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
+    OCI_CALL_CHECK_PTR(OCI_IPC_PROC, proc)
+    OCI_CALL_CONTEXT_SET(NULL, NULL, thread->err)
 
     thread->proc = proc;
     thread->arg  = arg;
 
-    call_status = TRUE;
+    OCI_EXEC(OCIThreadCreate(OCILib.env, thread->err, OCI_ThreadProc, thread, thread->id, thread->handle))
 
-    OCI_CALL3
-    (
-        call_status, thread->err,
+    OCI_RETVAL = OCI_STATUS;
 
-        OCIThreadCreate(OCILib.env, thread->err, OCI_ThreadProc,
-                        thread, thread->id, thread->handle)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -209,20 +171,13 @@ boolean OCI_API OCI_ThreadJoin
     OCI_Thread *thread
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
+    OCI_CALL_CONTEXT_SET(NULL, NULL, thread->err)
 
-    OCI_CHECK_PTR(OCI_IPC_THREAD, thread)
+    OCI_EXEC(OCIThreadJoin(OCILib.env, thread->err, thread->handle))
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL3
-    (
-        call_status, thread->err,
-
-        OCIThreadJoin(OCILib.env, thread->err, thread->handle)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }

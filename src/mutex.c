@@ -33,8 +33,9 @@ OCI_Mutex * OCI_MutexCreateInternal
     void
 )
 {
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     OCI_Mutex *mutex = NULL;
-    boolean    res   = FALSE;
 
     /* allocate mutex structure */
 
@@ -44,20 +45,14 @@ OCI_Mutex * OCI_MutexCreateInternal
     {
         /* allocate error handle */
 
-        res = OCI_SUCCESSFUL(OCI_HandleAlloc(OCILib.env, (dvoid **) (void *) &mutex->err,
-                                             OCI_HTYPE_ERROR, (size_t) 0, (dvoid **) NULL));
+        OCI_STATUS = OCI_HandleAlloc(OCILib.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR);
 
         /* allocate mutex handle */
 
-        OCI_CALL3
-        (
-            res, mutex->err,
-
-            OCIThreadMutexInit(OCILib.env, mutex->err, &mutex->handle)
-        )
+        OCI_EXEC(OCIThreadMutexInit(OCILib.env, mutex->err, &mutex->handle))
     }
 
-    if (!res && mutex)
+    if (!OCI_STATUS && mutex)
     {
         OCI_MutexFree(mutex);
         mutex = NULL;
@@ -79,14 +74,13 @@ OCI_Mutex * OCI_API OCI_MutexCreate
     void
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Mutex*, NULL)
+    OCI_CALL_ENTER(OCI_Mutex*, NULL)
+    OCI_CALL_CHECK_INITIALIZED()
 
-    OCI_CHECK_INITIALIZED()
+    OCI_RETVAL = OCI_MutexCreateInternal();
+    OCI_STATUS = (NULL != OCI_RETVAL);
 
-    call_retval = OCI_MutexCreateInternal();
-    call_status = (NULL != call_retval);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -98,20 +92,15 @@ boolean OCI_API OCI_MutexFree
     OCI_Mutex *mutex
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_CALL_CONTEXT_SET(NULL, NULL, mutex->err)
 
     /* close mutex handle */
 
     if (mutex->handle)
     {
-        OCI_CALL0
-        (
-            call_status, mutex->err,
-
-            OCIThreadMutexDestroy(OCILib.env, mutex->err, &mutex->handle)
-        )
+        OCI_EXEC(OCIThreadMutexDestroy(OCILib.env, mutex->err, &mutex->handle))
     }
 
     /* close error handle */
@@ -125,9 +114,9 @@ boolean OCI_API OCI_MutexFree
 
     OCI_FREE(mutex)
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
     
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -139,20 +128,15 @@ boolean OCI_API OCI_MutexAcquire
     OCI_Mutex *mutex
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_CALL_CONTEXT_SET(NULL, NULL, mutex->err)
 
-    OCI_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_EXEC(OCIThreadMutexAcquire(OCILib.env, mutex->err, mutex->handle))
 
-    OCI_CALL0
-    (
-        call_status, mutex->err,
+    OCI_RETVAL = OCI_STATUS;
 
-        OCIThreadMutexAcquire(OCILib.env, mutex->err, mutex->handle)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -164,18 +148,13 @@ boolean OCI_API OCI_MutexRelease
     OCI_Mutex *mutex
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_CALL_CONTEXT_SET(NULL, NULL, mutex->err)
 
-    OCI_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_EXEC(OCIThreadMutexRelease(OCILib.env, mutex->err, mutex->handle))
+ 
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL0
-    (
-        call_status, mutex->err,
-
-        OCIThreadMutexRelease(OCILib.env, mutex->err, mutex->handle)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }

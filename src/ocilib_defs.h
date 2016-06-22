@@ -403,41 +403,59 @@
 
 #define OCI_LIB_THREADED                (OCILib.env_mode & OCI_ENV_THREADED)
 
-#define OCI_LIB_CALL_DECL_VAR(type, value)                                      \
+#define OCI_CALL_DECLARE_CONTEXT(status)                                        \
                                                                                 \
-    type    call_retval = (type) value;                                         \
-    boolean call_status = FALSE;                                                \
-    OCI_Error * call_err = NULL;                                                \
+    OCI_CallContext ctx_obj = { NULL, NULL, NULL, NULL, FALSE };                \
+    OCI_CallContext* ctx = &ctx_obj;                                            \
+    ctx_obj.oci_err    = OCILib.err;                                            \
+    ctx_obj.call_status = (status);                                             \
 
-#define OCI_LIB_CALL_CHECK_CTX(mode)                                            \
+#define OCI_CALL_DECLARE_VARIABLES(type, value, status)                         \
+                                                                                \
+    type call_retval = (type) value;                                            \
+    OCI_CALL_DECLARE_CONTEXT(status);                                           \
+
+#define OCI_CALL_CONTEXT_ENTER(mode)                                            \
                                                                                 \
     if (mode & OCI_ENV_CONTEXT)                                                 \
     {                                                                           \
-        call_err = OCI_ErrorGet(FALSE);                                         \
-        OCI_ContextCallEnter(call_err);                                         \
+        ctx->call_err = OCI_ErrorGet(FALSE);                                    \
+        OCI_ContextCallEnter(ctx);                                              \
     }    
 
-#define OCI_LIB_CALL_SET_CTX(mode)                                              \
+#define OCI_CALL_CONTEXT_EXIT(mode)                                             \
                                                                                 \
     if (mode & OCI_ENV_CONTEXT)                                                 \
     {                                                                           \
-        OCI_ContextCallExit(call_err, call_status);                             \
+        OCI_ContextCallExit(ctx);                                               \
     }  
 
-#define OCI_LIB_CALL_ENTER(type, value)                                         \
+#define OCI_CALL_ENTER(type, value)                                             \
                                                                                 \
-	OCI_LIB_CALL_DECL_VAR(type, value)                                          \
-	OCI_LIB_CALL_CHECK_CTX(OCILib.env_mode)                                     \
+	OCI_CALL_DECLARE_VARIABLES(type, value, TRUE)                               \
+	OCI_CALL_CONTEXT_ENTER(OCILib.env_mode)                                     \
 
-#define OCI_LIB_CALL_EXIT()                                                     \
+#define OCI_CALL_EXIT()                                                         \
                                                                                 \
     ExitCall:                                                                   \
-    OCI_LIB_CALL_SET_CTX(OCILib.env_mode)                                       \
+    OCI_CALL_CONTEXT_EXIT(OCILib.env_mode)                                      \
     return call_retval;
 
-#define OCI_LIB_JUMP_EXIT()                                                     \
+#define OCI_CALL_JUMP_EXIT()                                                    \
                                                                                 \
     goto ExitCall;                                                              \
+
+
+#define OCI_CALL_CONTEXT_SET(con, stmt, err)                                    \
+    ctx->lib_con      = (con);                                                  \
+    ctx->lib_stmt     = (stmt);                                                 \
+    ctx->oci_err      = (err);                                                  \
+
+#define OCI_RAISE_EXCEPTION(exp)                                                \
+                                                                                \
+    exp;                                                                        \
+    OCI_STATUS = FALSE;                                                         \
+    OCI_CALL_JUMP_EXIT()                                                        \
 
 
 #define OCI_IS_PLSQL_STMT(type)                                                 \
@@ -451,6 +469,48 @@
       (OCI_CDT_TEXT    != type &&                                               \
        OCI_CDT_RAW     != type &&                                               \
        OCI_CDT_BOOLEAN != type))
+
+#define OCI_GET_PROP(type, value, obj_type, obj, prop, con, stmt, err)          \
+                                                                                \
+    OCI_CALL_ENTER(type, value)                                                 \
+    OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
+    OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
+    OCI_RETVAL = (type) (obj)->##prop;                                          \
+    OCI_CALL_EXIT()                                                             \
+
+#define OCI_SET_PROP(type, obj_type, obj, prop, value, con, stmt, err)          \
+                                                                                \
+    OCI_CALL_ENTER(boolean, FALSE)                                              \
+    OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
+    OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
+    (obj)->##prop = (type)value;                                                \
+    OCI_RETVAL = OCI_STATUS;                                                    \
+    OCI_CALL_EXIT()                                                             \
+
+#define OCI_SET_PROP_ENUM(type, obj_type, obj, prop, value, enums, msg, con, stmt, err)\
+                                                                                \
+    OCI_CALL_ENTER(boolean, FALSE)                                              \
+    OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
+    OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
+    OCI_CALL_CHECK_ENUM_VALUE((con),(stmt), (value), (enums), (msg))            \
+    (obj)->##prop = (type)value;                                                \
+    OCI_RETVAL = OCI_STATUS;                                                    \
+    OCI_CALL_EXIT()                                                             \
+
+#define OCI_GET_LIB_PROP(type, value, prop)                                     \
+                                                                                \
+    OCI_CALL_ENTER(type, value)                                                 \
+    OCI_CALL_CHECK_INITIALIZED()                                                \
+    OCI_RETVAL = (type) prop;                                                   \
+    OCI_CALL_EXIT()                                                             \
+
+#define OCI_SET_LIB_PROP(prop, value)                                           \
+                                                                                \
+    OCI_CALL_ENTER(boolean, FALSE)                                              \
+    OCI_CALL_CHECK_INITIALIZED()                                                \
+    prop = value;                                                               \
+    OCI_RETVAL = OCI_STATUS;                                                    \
+    OCI_CALL_EXIT()                                                             \
 
 #ifdef _WINDOWS
 

@@ -683,13 +683,12 @@ void OCI_SetLastError
 
 void OCI_ContextCallEnter
 (
-    OCI_Error *err
+    OCI_CallContext *ctx
 );
 
 void OCI_ContextCallExit
 (
-    OCI_Error *err,
-    boolean    success
+    OCI_CallContext *ctx
 );
 
 boolean OCI_KeyMapFree
@@ -849,47 +848,41 @@ void OCI_MemFree
     void * ptr_mem
 );
 
-sword OCI_HandleAlloc
+boolean OCI_HandleAlloc
 (
     CONST dvoid *parenth,
     dvoid      **hndlpp,
-    CONST ub4    type,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
+    CONST ub4    type
 );
 
-sword OCI_HandleFree
+boolean OCI_HandleFree
 (
     dvoid    *hndlp,
     CONST ub4 type
 );
 
-sword OCI_DescriptorAlloc
+boolean OCI_DescriptorAlloc
+(
+    CONST dvoid *parenth,
+    dvoid      **descpp,
+    CONST ub4    type
+);
+
+boolean OCI_DescriptorArrayAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
     CONST ub4    type,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
-);
+    ub4          nb_elem
+ );
 
-sword OCI_DescriptorArrayAlloc
-(
-    CONST dvoid *parenth,
-    dvoid      **descpp,
-    CONST ub4    type,
-    ub4          nb_elem,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
-);
-
-sword OCI_DescriptorFree
+boolean OCI_DescriptorFree
 (
     void     *descp,
     CONST ub4 type
 );
 
-sword OCI_DescriptorArrayFree
+boolean OCI_DescriptorArrayFree
 (
     void    **descp,
     CONST ub4 type,

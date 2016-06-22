@@ -86,10 +86,7 @@ OCI_Timestamp * OCI_TimestampInit
         {
             if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
             {
-                res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid  *) tmsp->env,
-                                                         (dvoid **) (void *) &tmsp->handle,
-                                                         (ub4)OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type),
-                                                         (size_t) 0, (dvoid **) NULL));
+                res = OCI_DescriptorAlloc((dvoid  *)tmsp->env, (dvoid **)(void *)&tmsp->handle, (ub4)OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type));
                 tmsp->hstate = OCI_OBJECT_ALLOCATED;
             }
         }
@@ -132,17 +129,17 @@ OCI_Timestamp * OCI_API OCI_TimestampCreate
     unsigned int    type
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Timestamp*, NULL)
-
-    OCI_CHECK_INITIALIZED()
-    OCI_CHECK_TIMESTAMP_ENABLED(con)
+    OCI_CALL_ENTER(OCI_Timestamp*, NULL)
+    OCI_CALL_CHECK_INITIALIZED()
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(con)
+    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CHECK_ENUM_VALUE(con, NULL, type, TimestampTypeValues, OTEXT("Timestamp type"))
+    OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, TimestampTypeValues, OTEXT("Timestamp type"))
 
-    call_retval = OCI_TimestampInit(con, &call_retval, NULL, type);
-    call_status = (NULL != call_retval);
+    OCI_RETVAL = OCI_TimestampInit(con, &OCI_RETVAL, NULL, type);
+    OCI_STATUS = (NULL != OCI_RETVAL);
 
 #else
 
@@ -150,7 +147,7 @@ OCI_Timestamp * OCI_API OCI_TimestampCreate
 
 #endif
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -162,14 +159,14 @@ boolean OCI_API OCI_TimestampFree
     OCI_Timestamp *tmsp
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CHECK_OBJECT_FETCHED(tmsp)
+    OCI_CALL_CHECK_OBJECT_FETCHED(tmsp)
 
     if (OCI_OBJECT_ALLOCATED == tmsp->hstate)
     {
@@ -183,9 +180,9 @@ boolean OCI_API OCI_TimestampFree
 
 #endif
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS = TRUE;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -201,14 +198,14 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
 {
     OCI_Array *arr = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Timestamp **, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CHECK_TIMESTAMP_ENABLED(con)
+    OCI_CALL_ENTER(OCI_Timestamp **, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(con)
+    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CHECK_ENUM_VALUE(con, NULL, type, TimestampTypeValues, OTEXT("Timestamp type"))
+    OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, TimestampTypeValues, OTEXT("Timestamp type"))
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type,
                           sizeof(OCIDateTime *), sizeof(OCI_Timestamp),
@@ -216,8 +213,8 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
 
     if (arr)
     {
-        call_retval = (OCI_Timestamp **) arr->tab_obj;
-        call_status = TRUE;
+        OCI_RETVAL = (OCI_Timestamp **) arr->tab_obj;
+        OCI_STATUS = TRUE;
     }
 
 #else
@@ -228,7 +225,7 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
 
 #endif
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -240,13 +237,12 @@ boolean OCI_API OCI_TimestampArrayFree
     OCI_Timestamp **tmsps
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, tmsps)
 
-    OCI_CHECK_PTR(OCI_IPC_ARRAY, tmsps)
+    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **) tmsps);
 
-    call_retval = call_status = OCI_ArrayFreeFromHandles((void **) tmsps);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -258,15 +254,7 @@ unsigned int OCI_API OCI_TimestampGetType
     OCI_Timestamp *tmsp
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_retval = tmsp->type;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_TIMESTAMP, tmsp, type, tmsp->con, NULL, tmsp->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -279,29 +267,21 @@ boolean OCI_API OCI_TimestampAssign
     OCI_Timestamp *tmsp_src
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
-
-        OCIDateTimeAssign((dvoid *) tmsp->env, tmsp->err,
-                          tmsp_src->handle, tmsp->handle)
-    )
+    OCI_EXEC(OCIDateTimeAssign((dvoid *)tmsp->env, tmsp->err, tmsp_src->handle, tmsp->handle))
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -315,27 +295,20 @@ int OCI_API OCI_TimestampCheck
 {
     ub4 value = 0;
 
-    OCI_LIB_CALL_ENTER(int, value)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(int, value)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
-
-        OCIDateTimeCheck((dvoid *) tmsp->env, tmsp->err, tmsp->handle, &value)
-    )
+    OCI_EXEC(OCIDateTimeCheck((dvoid *)tmsp->env, tmsp->err, tmsp->handle, &value))
 
 #endif
 
-    call_retval = value;
+    OCI_RETVAL = value;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -350,29 +323,21 @@ int OCI_API OCI_TimestampCompare
 {
     sword value = OCI_ERROR;
 
-    OCI_LIB_CALL_ENTER(int, value)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(int, value)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
-
-        OCIDateTimeCompare((dvoid *) tmsp->env, tmsp->err,
-                           tmsp->handle, tmsp2->handle, &value)
-    )
+    OCI_EXEC(OCIDateTimeCompare((dvoid *)tmsp->env, tmsp->err, tmsp->handle, tmsp2->handle, &value))
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -392,19 +357,15 @@ boolean OCI_API OCI_TimestampConstruct
     const otext   *time_zone
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL4
+    OCI_EXEC
     (
-        call_status, tmsp->err, tmsp->con,
-
         OCIDateTimeConstruct((dvoid *) tmsp->env, tmsp->err,
                              tmsp->handle,
                              (sb2) year, (ub1) month, (ub1) day,
@@ -426,9 +387,9 @@ boolean OCI_API OCI_TimestampConstruct
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -441,29 +402,21 @@ boolean OCI_API OCI_TimestampConvert
     OCI_Timestamp *tmsp_src
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
-
-        OCIDateTimeConvert((dvoid *) tmsp->env, tmsp->err,
-                           tmsp_src->handle, tmsp->handle)
-    )
+    OCI_EXEC(OCIDateTimeConvert((dvoid *)tmsp->env, tmsp->err, tmsp_src->handle, tmsp->handle))
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -482,13 +435,11 @@ boolean OCI_API OCI_TimestampFromText
     int      dbsize1 = -1;
     int      dbsize2 = -1;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_STRING, str)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -500,10 +451,8 @@ boolean OCI_API OCI_TimestampFromText
     dbstr1 = OCI_StringGetOracleString(str, &dbsize1);
     dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
-    OCI_CALL4
+    OCI_EXEC
     (
-        call_status, tmsp->err, tmsp->con,
-
         OCIDateTimeFromText((dvoid *) tmsp->env, tmsp->err,
                             (OraText *) dbstr1, (size_t) dbsize1,
                             (OraText *) dbstr2, (ub1) dbsize2,
@@ -523,9 +472,9 @@ boolean OCI_API OCI_TimestampFromText
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -546,18 +495,16 @@ boolean OCI_API OCI_TimestampToText
     int     dbsize1 = size * (int) sizeof(otext);
     int     dbsize2 = -1;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_STRING, str)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
     /* initialize output buffer in case of OCI failure */
 
     str[0] = 0;
 
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -569,16 +516,13 @@ boolean OCI_API OCI_TimestampToText
     dbstr1 = OCI_StringGetOracleString(str, &dbsize1);
     dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
-    OCI_CALL4
+    OCI_EXEC
     (
-        call_status, tmsp->err, tmsp->con,
-
         OCIDateTimeToText((dvoid *) tmsp->env, tmsp->err,
                           tmsp->handle, (OraText *) dbstr2,
                           (ub1) dbsize2, (ub1) precision,
                           (OraText *) NULL, (size_t) 0,
                           (ub4*) &dbsize1, (OraText *) dbstr1)
-
     )
 
     OCI_StringCopyOracleStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
@@ -600,9 +544,9 @@ boolean OCI_API OCI_TimestampToText
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -621,25 +565,17 @@ boolean OCI_API OCI_TimestampGetDate
     ub1 mt = 0;
     ub1 dy = 0;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_INT, year)
-    OCI_CHECK_PTR(OCI_IPC_INT, month)
-    OCI_CHECK_PTR(OCI_IPC_INT, day)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INT, year)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INT, month)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INT, day)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
-
-        OCIDateTimeGetDate((dvoid *) tmsp->env, tmsp->err, tmsp->handle,
-                           &yr, &mt, &dy)
-    )
+    OCI_EXEC(OCIDateTimeGetDate((dvoid *)tmsp->env, tmsp->err, tmsp->handle, &yr, &mt, &dy))
 
     *year  = (int) yr;
     *month = (int) mt;
@@ -656,9 +592,9 @@ boolean OCI_API OCI_TimestampGetDate
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -679,16 +615,14 @@ boolean OCI_API OCI_TimestampGetTime
     ub1 sc = 0;
     ub4 fs = 0;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_INT, hour)
-    OCI_CHECK_PTR(OCI_IPC_INT, min)
-    OCI_CHECK_PTR(OCI_IPC_INT, sec)
-    OCI_CHECK_PTR(OCI_IPC_INT, fsec)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INT, hour)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INT, min)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INT, sec)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INT, fsec)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
     *hour = 0;
     *min  = 0;
@@ -697,13 +631,7 @@ boolean OCI_API OCI_TimestampGetTime
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
-
-        OCIDateTimeGetTime((dvoid *) tmsp->env, tmsp->err, tmsp->handle,
-                           &hr, &mn, &sc, &fs)
-    )
+    OCI_EXEC(OCIDateTimeGetTime((dvoid *)tmsp->env, tmsp->err, tmsp->handle, &hr, &mn, &sc, &fs))
 
     *hour = (int) hr;
     *min  = (int) mn;
@@ -723,9 +651,9 @@ boolean OCI_API OCI_TimestampGetTime
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -762,25 +690,17 @@ boolean OCI_API OCI_TimestampGetTimeZoneName
     dbtext *dbstr  = NULL;
     int     dbsize  = size * (int) sizeof(otext);
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_STRING, str)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     dbstr = OCI_StringGetOracleString(str, &dbsize);
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
-
-        OCIDateTimeGetTimeZoneName((dvoid *) tmsp->env, tmsp->err, tmsp->handle,
-                                   (ub1*) dbstr, (ub4*) &dbsize)
-    )
+    OCI_EXEC(OCIDateTimeGetTimeZoneName((dvoid *)tmsp->env, tmsp->err, tmsp->handle, (ub1*) dbstr, (ub4*) &dbsize))
 
     OCI_StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
     OCI_StringReleaseOracleString(dbstr);
@@ -798,9 +718,9 @@ boolean OCI_API OCI_TimestampGetTimeZoneName
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -816,25 +736,16 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset
 {
     sb1 sb_hour = 0, sb_min = 0;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_INT, hour)
-    OCI_CHECK_PTR(OCI_IPC_INT, min)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INT, hour)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INT, min)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
-
-        OCIDateTimeGetTimeZoneOffset((dvoid *) tmsp->env, tmsp->err,
-                                     tmsp->handle, &sb_hour, &sb_min)
-    )
-
+    OCI_EXEC(OCIDateTimeGetTimeZoneOffset((dvoid *)tmsp->env, tmsp->err, tmsp->handle, &sb_hour, &sb_min))
 
     *hour = sb_hour;
     *min  = sb_min;
@@ -846,9 +757,9 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -863,13 +774,11 @@ boolean OCI_API OCI_TimestampIntervalAdd
 {
     OCI_Timestamp *tmp = NULL;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -879,26 +788,20 @@ boolean OCI_API OCI_TimestampIntervalAdd
     {
         tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
-        call_status = OCI_TimestampConvert(tmp, tmsp);
+        OCI_STATUS = OCI_TimestampConvert(tmp, tmsp);
     }
     else
     {
         tmp = tmsp;
     }
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
-
-        OCIDateTimeIntervalAdd((dvoid *) tmp->env, tmp->err, tmp->handle,
-                               itv->handle, tmp->handle)
-    )
+    OCI_EXEC(OCIDateTimeIntervalAdd((dvoid *)tmp->env, tmp->err, tmp->handle, itv->handle, tmp->handle))
 
     /* converting back */
 
-    if (call_status && (OCI_TIMESTAMP_TZ != tmsp->type))
+    if (OCI_STATUS && (OCI_TIMESTAMP_TZ != tmsp->type))
     {
-        call_status = OCI_TimestampConvert(tmsp, tmp);
+        OCI_STATUS = OCI_TimestampConvert(tmsp, tmp);
     }
 
     if (tmsp != tmp)
@@ -912,9 +815,9 @@ boolean OCI_API OCI_TimestampIntervalAdd
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -929,13 +832,11 @@ boolean OCI_API OCI_TimestampIntervalSub
 {
     OCI_Timestamp *tmp = NULL;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status  = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -945,26 +846,20 @@ boolean OCI_API OCI_TimestampIntervalSub
     {
         tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
-        call_status = OCI_TimestampConvert(tmp, tmsp);
+        OCI_STATUS = OCI_TimestampConvert(tmp, tmsp);
     }
     else
     {
         tmp = tmsp;
     }
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
-
-        OCIDateTimeIntervalSub((dvoid *) tmp->env, tmp->err, tmp->handle,
-                               itv->handle, tmp->handle)
-    )
+    OCI_EXEC(OCIDateTimeIntervalSub((dvoid *)tmp->env, tmp->err, tmp->handle, itv->handle, tmp->handle))
 
     /* converting back */
 
-    if (call_status && (OCI_TIMESTAMP_TZ != tmsp->type))
+    if (OCI_STATUS && (OCI_TIMESTAMP_TZ != tmsp->type))
     {
-        call_status = OCI_TimestampConvert(tmsp, tmp);
+        OCI_STATUS = OCI_TimestampConvert(tmsp, tmp);
     }
 
     if (tmsp != tmp)
@@ -978,9 +873,9 @@ boolean OCI_API OCI_TimestampIntervalSub
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -994,30 +889,23 @@ boolean OCI_API OCI_TimestampSubtract
     OCI_Interval  *itv
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
 
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2)
-    OCI_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2)
+    OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
-
-        OCIDateTimeSubtract((dvoid *) tmsp->env, tmsp->err, tmsp->handle,
-                            tmsp2->handle, itv->handle)
-    )
+    OCI_EXEC(OCIDateTimeSubtract((dvoid *)tmsp->env, tmsp->err, tmsp->handle, tmsp2->handle, itv->handle))
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1032,12 +920,10 @@ boolean OCI_API OCI_TimestampSysTimestamp
     OCI_Timestamp *tmp  = NULL;
     OCIDateTime *handle = NULL;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -1060,16 +946,11 @@ boolean OCI_API OCI_TimestampSysTimestamp
         handle = tmsp->handle;
     }
 
-    OCI_CALL4
-    (
-        call_status, tmsp->err, tmsp->con,
+    OCI_EXEC(OCIDateTimeSysTimeStamp((dvoid *) tmsp->env, tmsp->err, handle))
 
-        OCIDateTimeSysTimeStamp((dvoid *) tmsp->env, tmsp->err, handle)
-    )
-
-    if (call_status && (OCI_TIMESTAMP == tmsp->type))
+    if (OCI_STATUS && (OCI_TIMESTAMP == tmsp->type))
     {
-        call_status = OCI_TimestampConvert(tmsp, tmp);
+        OCI_STATUS = OCI_TimestampConvert(tmsp, tmp);
     }
 
     if (tmsp != tmp)
@@ -1084,9 +965,9 @@ boolean OCI_API OCI_TimestampSysTimestamp
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1104,16 +985,15 @@ boolean OCI_API OCI_TimestampToCTime
     int    msec = 0;
     struct tm t = { 0 };
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_STATUS = OCI_TimestampGetDateTime(tmsp, &t.tm_year, &t.tm_mon, &t.tm_mday,
+                                           &t.tm_hour, &t.tm_min, &t.tm_sec, &msec);
 
-    call_status = OCI_TimestampGetDateTime(tmsp, &t.tm_year, &t.tm_mon, &t.tm_mday,
-                                           &t.tm_hour, &t.tm_min, &t.tm_sec,
-                                           &msec);
-
-    if (call_status)
+    if (OCI_STATUS)
     {
         t.tm_year -= 1900;
         t.tm_mon  -= 1;
@@ -1134,12 +1014,12 @@ boolean OCI_API OCI_TimestampToCTime
         }
     }
 
-    if (call_status)
+    if (OCI_STATUS)
     {
-        call_retval = (time != (time_t)-1);
+        OCI_RETVAL = (time != (time_t)-1);
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1153,22 +1033,16 @@ boolean OCI_API OCI_TimestampFromCTime
     time_t         t
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-
-    OCI_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
+    OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
 
     if (ptm && t == (time_t) 0)
     {
         OCI_ExceptionNullPointer(OCI_IPC_TM);
     }
     else
-    {
-        call_status = TRUE;
-    }
-
-    if (call_status)
     {
         if (ptm)
         {
@@ -1177,7 +1051,7 @@ boolean OCI_API OCI_TimestampFromCTime
 
         if (ptm)
         {
-            call_status = OCI_TimestampConstruct( tmsp,
+            OCI_STATUS = OCI_TimestampConstruct( tmsp,
                                                   ptm->tm_year + 1900,
                                                   ptm->tm_mon  + 1,
                                                   ptm->tm_mday,
@@ -1191,11 +1065,11 @@ boolean OCI_API OCI_TimestampFromCTime
         {
             OCI_ExceptionNullPointer(OCI_IPC_TM);
 
-            call_status = FALSE;
+            OCI_STATUS = FALSE;
         }
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-   OCI_LIB_CALL_EXIT()
+   OCI_CALL_EXIT()
 }

@@ -90,13 +90,11 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
     otext obj_name[OCI_SIZE_OBJ_NAME + 1];
 
-    OCI_LIB_CALL_ENTER(OCI_TypeInfo*, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CHECK_ENUM_VALUE(con, NULL, type, TypeInfoTypeValues, OTEXT("Type"))
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(OCI_TypeInfo*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, TypeInfoTypeValues, OTEXT("Type"))
+    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
 
     obj_schema[0] = 0;
     obj_name[0]   = 0;
@@ -169,11 +167,11 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     {
         item = OCI_ListAppend(con->tinfs, sizeof(OCI_TypeInfo));
 
-        call_status = (NULL != item);
+        OCI_STATUS = (NULL != item);
 
         /* allocate describe handle */
 
-        if (call_status)
+        if (OCI_STATUS)
         {
             typinf = (OCI_TypeInfo *) item->data;
 
@@ -183,15 +181,12 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
             typinf->struct_size = 0;
             typinf->align       = 0;
 
-            call_status = OCI_SUCCESSFUL(OCI_HandleAlloc(typinf->con->env,
-                                                         (dvoid **) (void *) &dschp,
-                                                         OCI_HTYPE_DESCRIBE, (size_t) 0,
-                                                         (dvoid **) NULL));
+            OCI_STATUS = OCI_HandleAlloc(typinf->con->env, (dvoid **)(void *)&dschp, OCI_HTYPE_DESCRIBE);
         }
 
         /* perform describe */
 
-        if (call_status)
+        if (OCI_STATUS)
         {
             otext buffer[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
@@ -219,20 +214,12 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
             /* set public scope to include synonyms */
                 
-            OCI_CALL2
-            (
-                call_status, con,
-
-                OCIAttrSet(dschp, OCI_HTYPE_DESCRIBE, &pbsp, (ub4) sizeof(pbsp), 
-                            OCI_ATTR_DESC_PUBLIC, con->err)
-            )
-
+            OCI_SET_ATTRIB(OCI_HTYPE_DESCRIBE, OCI_ATTR_DESC_PUBLIC, dschp, &pbsp, sizeof(pbsp))
+ 
             /* describe call */
 
-            OCI_CALL2
+            OCI_EXEC
             (
-                call_status, con,
-
                 OCIDescribeAny(con->cxt, con->err, (dvoid *) dbstr1,
                                (ub4) dbsize1, OCI_OTYPE_NAME,
                                OCI_DEFAULT, OCI_PTYPE_UNK, dschp)
@@ -242,29 +229,17 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
             /* get parameter handle */
                 
-            OCI_CALL2
-            (
-                call_status, con,
-
-                OCIAttrGet(dschp, OCI_HTYPE_DESCRIBE, &param_root,
-                            NULL, OCI_ATTR_PARAM, con->err)
-            )
-            
+            OCI_GET_ATTRIB(OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM, dschp, &param_root, NULL)
+          
             /* get describe type */
-                
-            OCI_CALL2
-            (
-                call_status, con,
 
-                OCIAttrGet(param_root, OCI_DTYPE_PARAM, &desc_type,
-                           NULL, OCI_ATTR_PTYPE, con->err)
-            )
+            OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_PTYPE, param_root, &desc_type, NULL)
         }
 
         /* on successful describe call, retrieve all information about the object 
            if it is not a synonym */
 
-        if (call_status)
+        if (OCI_STATUS)
         {
             switch (desc_type)
             {
@@ -274,20 +249,15 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                     boolean pdt = FALSE;
                     OCIRef *ref = NULL;
                     
-                    call_status = (OCI_TIF_TYPE == type);
+                    OCI_STATUS = (OCI_TIF_TYPE == type);
 
-                    if (call_status)
+                    if (OCI_STATUS)
                     {
                         typinf->type = OCI_TIF_TYPE;
 
                         if (OCI_PTYPE_LIST == desc_type)
                         {
-                            OCI_CALL2
-                            (
-                                call_status, con,
-
-                                OCIParamGet((dvoid *)param_root, OCI_DTYPE_PARAM, con->err, (void**)&param_type, (ub4)0)
-                            )
+                            OCI_EXEC(OCIParamGet((dvoid *)param_root, OCI_DTYPE_PARAM, con->err, (void**)&param_type, (ub4)0))
                         }
                         else
                         {
@@ -296,42 +266,18 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                         /* get the object type descriptor */
 
-                        OCI_CALL2
-                        (
-                            call_status, con,
+                        OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_REF_TDO, param_type, &ref, NULL)
 
-                            OCIAttrGet(param_type, OCI_DTYPE_PARAM, &ref,
-                                       NULL, OCI_ATTR_REF_TDO, con->err)
-                        )
-
-                        OCI_CALL2
-                        (
-                            call_status, con,
-
-                            OCITypeByRef(typinf->con->env, con->err, ref,
-                                         OCI_DURATION_SESSION, OCI_TYPEGET_ALL, &typinf->tdo)
-                        )
+                        OCI_EXEC(OCITypeByRef(typinf->con->env, con->err, ref, OCI_DURATION_SESSION, OCI_TYPEGET_ALL, &typinf->tdo))
 
                         /* check if it's system predefined type if order to avoid the next call
                         that is not allowed on system types */
 
-                        OCI_CALL2
-                        (
-                            call_status, con,
-
-                            OCIAttrGet(param_type, OCI_DTYPE_PARAM, &pdt,
-                                       NULL, OCI_ATTR_IS_PREDEFINED_TYPE, con->err)
-                        )
+                        OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_IS_PREDEFINED_TYPE, param_type, &pdt, NULL)
 
                         if (!pdt)
                         {
-                            OCI_CALL2
-                            (
-                                call_status, con,
-
-                                OCIAttrGet(param_type, OCI_DTYPE_PARAM, &typinf->typecode,
-                                           NULL, OCI_ATTR_TYPECODE, con->err)
-                            )
+                            OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_TYPECODE, param_type, &typinf->typecode, NULL)
                         }
 
                         switch (typinf->typecode)
@@ -354,19 +300,12 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                                 ptype      = OCI_DESC_COLLECTION;
                                 param_cols = param_type;
 
-                                OCI_CALL2
-                                (
-                                    call_status, con,
-
-                                    OCIAttrGet(param_type, OCI_DTYPE_PARAM, &typinf->colcode,
-                                                NULL, OCI_ATTR_COLLECTION_TYPECODE, con->err)
-                                )
-
+                                OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_COLLECTION_TYPECODE, param_type, &typinf->colcode, NULL)
                                 break;
                             }  
                             default:
                             {
-                                call_status = FALSE;
+                                OCI_STATUS = FALSE;
                                 OCI_ExceptionDatatypeNotSupported(con, NULL, typinf->typecode);
                                 break;
                             }
@@ -381,10 +320,10 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                 case OCI_PTYPE_TABLE_ALIAS:
             #endif
                 {
-                    call_status = (((OCI_TIF_TABLE == type) && (OCI_PTYPE_VIEW != desc_type)) ||
+                    OCI_STATUS = (((OCI_TIF_TABLE == type) && (OCI_PTYPE_VIEW != desc_type)) ||
                                    ((OCI_TIF_VIEW  == type) && (OCI_PTYPE_VIEW == desc_type)));
  
-                    if (call_status)
+                    if (OCI_STATUS)
                     {
                         typinf->type = (OCI_PTYPE_VIEW == desc_type ? OCI_TIF_VIEW : OCI_TIF_TABLE);
                         attr_type    = OCI_ATTR_LIST_COLUMNS;
@@ -405,15 +344,15 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                     /* get link schema, object and database link names */
 
-                    call_status = call_status && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
+                    OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                           OCI_ATTR_SCHEMA_NAME, 
                                                                           &syn_schema_name);
                     
-                    call_status = call_status && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
+                    OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                           OCI_ATTR_NAME, 
                                                                           &syn_object_name);
  
-                    call_status = call_status && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
+                    OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                          OCI_ATTR_LINK, &syn_link_name);
 
                     /* compute link full name */
@@ -432,7 +371,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                     
                     /* do we have a valid object ? */
 
-                    call_status = (NULL != syn_typinf);
+                    OCI_STATUS = (NULL != syn_typinf);
 
                     break;
                 }
@@ -440,40 +379,25 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
             /*  did we handle a supported object other than a synonym */
 
-            if (call_status && (OCI_UNKNOWN != ptype))
+            if (OCI_STATUS && (OCI_UNKNOWN != ptype))
             {
                 /* retrieve the columns parameter if not already retrieved */
                 if (param_list)
                 {
-                    OCI_CALL2
-                    (
-                        call_status, con,
-
-                        OCIAttrGet(param_list, OCI_DTYPE_PARAM, &param_cols,
-                                    NULL, attr_type, con->err)
-                    )
-
-                    OCI_CALL2
-                    (
-                        call_status, con,
-
-                        OCIAttrGet(param_list, OCI_DTYPE_PARAM, &typinf->nb_cols,
-                                    NULL, num_type, con->err)
-                    )
+                    OCI_GET_ATTRIB(OCI_DTYPE_PARAM, attr_type, param_list, &param_cols, NULL)
+                    OCI_GET_ATTRIB(OCI_DTYPE_PARAM, num_type, param_list, &typinf->nb_cols, NULL)
                 }
 
                 /* allocates memory for cached offsets */
 
                 if (typinf->nb_cols > 0)
                 {
-                    typinf->offsets = (int *) OCI_MemAlloc(OCI_IPC_ARRAY,
-                                                           sizeof(*typinf->offsets),
-                                                           (size_t) typinf->nb_cols,
-                                                           FALSE);
+                    typinf->offsets = (int *) OCI_MemAlloc(OCI_IPC_ARRAY,  sizeof(*typinf->offsets),
+                                                           (size_t) typinf->nb_cols, FALSE);
 
-                    call_status = (NULL != typinf->offsets);
+                    OCI_STATUS = (NULL != typinf->offsets);
 
-                    if (call_status)
+                    if (OCI_STATUS)
                     {
                         memset(typinf->offsets, -1, sizeof(*typinf->offsets) * typinf->nb_cols);
                     }
@@ -483,7 +407,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                 if (typinf->nb_cols > 0)
                 {
-                    typinf->cols = (OCI_Column *) OCI_MemAlloc(OCI_IPC_COLUMN,  sizeof(*typinf->cols),
+                    typinf->cols = (OCI_Column *) OCI_MemAlloc(OCI_IPC_COLUMN,  sizeof(*typinf->cols), 
                                                                (size_t) typinf->nb_cols, TRUE);
 
                     /* describe children */
@@ -492,12 +416,12 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                     {
                         for (i = 0; i < typinf->nb_cols; i++)
                         {
-                            call_status = call_status && OCI_ColumnDescribe(&typinf->cols[i], con,
+                            OCI_STATUS = OCI_STATUS && OCI_ColumnDescribe(&typinf->cols[i], con,
                                                                             NULL, param_cols, i + 1, ptype);
 
-                            call_status = call_status && OCI_ColumnMap(&typinf->cols[i], NULL);
+                            OCI_STATUS = OCI_STATUS && OCI_ColumnMap(&typinf->cols[i], NULL);
 
-                            if (!call_status)
+                            if (!OCI_STATUS)
                             {
                                 break;
                             }
@@ -505,7 +429,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                     }
                     else
                     {
-                        call_status = FALSE;
+                        OCI_STATUS = FALSE;
                     }
                 }
             }
@@ -521,7 +445,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
     /* increment type info reference counter on success */
 
-    if (typinf && call_status)
+    if (typinf && OCI_STATUS)
     {
         typinf->refcount++;
 
@@ -531,25 +455,25 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
         {
             OCI_ExceptionTypeInfoWrongType(con, name);
 
-            call_status = FALSE;
+            OCI_STATUS = FALSE;
         }
     }
         
     /* handle errors */
 
-    if (!call_status || syn_typinf)
+    if (!OCI_STATUS || syn_typinf)
     {
         OCI_TypeInfoFree(typinf);
         typinf = NULL;
     }
 
 
-    if (call_status)
+    if (OCI_STATUS)
     {
-        call_retval = syn_typinf ? syn_typinf : typinf;
+        OCI_RETVAL = syn_typinf ? syn_typinf : typinf;
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -561,9 +485,9 @@ boolean OCI_API OCI_TypeInfoFree
     OCI_TypeInfo *typinf
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    OCI_CALL_CONTEXT_SET(typinf->con, NULL, typinf->con->err)
 
     typinf->refcount--;
 
@@ -576,9 +500,9 @@ boolean OCI_API OCI_TypeInfoFree
         OCI_FREE(typinf)
     }
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -590,14 +514,7 @@ unsigned int OCI_API OCI_TypeInfoGetType
     OCI_TypeInfo *typinf
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-
-    call_retval = typinf->type;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_TYPE_INFO, typinf, type, typinf->con, NULL, typinf->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -609,14 +526,7 @@ OCI_Connection * OCI_API OCI_TypeInfoGetConnection
     OCI_TypeInfo *typinf
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Connection*, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-
-    call_retval =  typinf->con;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(OCI_Connection*, NULL, OCI_IPC_TYPE_INFO, typinf, con, typinf->con, NULL, typinf->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -628,14 +538,7 @@ unsigned int OCI_API OCI_TypeInfoGetColumnCount
     OCI_TypeInfo *typinf
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-
-    call_retval = typinf->nb_cols;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, 0, OCI_IPC_TYPE_INFO, typinf, nb_cols, typinf->con, NULL, typinf->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -648,15 +551,14 @@ OCI_Column * OCI_API OCI_TypeInfoGetColumn
     unsigned int  index
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Column *, NULL)
+    OCI_CALL_ENTER(OCI_Column *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    OCI_CALL_CHECK_BOUND(typinf->con, index, 1,  typinf->nb_cols)
+    OCI_CALL_CONTEXT_SET(typinf->con, NULL, typinf->con->err)
 
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CHECK_BOUND(typinf->con, index, 1,  typinf->nb_cols)
+    OCI_RETVAL = &(typinf->cols[index - 1]);
 
-    call_retval = &(typinf->cols[index - 1]);
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -668,12 +570,5 @@ const otext * OCI_API OCI_TypeInfoGetName
     OCI_TypeInfo *typinf
 )
 {
-    OCI_LIB_CALL_ENTER(const otext*, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-
-    call_retval = typinf->name;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(const otext*, NULL, OCI_IPC_TYPE_INFO, typinf, name, typinf->con, NULL, typinf->con->err)
 }

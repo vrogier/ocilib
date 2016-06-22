@@ -222,7 +222,8 @@ boolean OCI_DefineAlloc
     OCI_Define *def
 )
 {
-    boolean res = TRUE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    
     ub4 indsize = 0;
     ub4 i;
 
@@ -230,6 +231,8 @@ boolean OCI_DefineAlloc
        for the given output define handle */
 
     OCI_CHECK(NULL == def, FALSE)
+
+    OCI_CALL_CONTEXT_SET(def->rs->stmt->con, def->rs->stmt, def->rs->stmt->con->err);
 
     /* Allocate null indicators array */
 
@@ -242,30 +245,27 @@ boolean OCI_DefineAlloc
         indsize = (ub4) sizeof(sb2);
     }
 
-    def->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, (size_t) indsize,
-                                          (size_t) def->buf.count, TRUE);
-    res = (NULL != def->buf.inds);
+    def->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, (size_t) indsize, (size_t) def->buf.count, TRUE);
+    OCI_STATUS = (NULL != def->buf.inds);
 
     if (OCI_CDT_OBJECT == def->col.datatype)
     {
-        def->buf.obj_inds = (void **) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(void *),
-                                                   (size_t) def->buf.count, TRUE);
-        res = (NULL != def->buf.obj_inds);
+        def->buf.obj_inds = (void **) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(void *), (size_t) def->buf.count, TRUE);
+        OCI_STATUS = (NULL != def->buf.obj_inds);
     }
 
     /* Allocate row data sizes array */
 
-    if (res)
+    if (OCI_STATUS)
     {
-        def->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, (size_t) def->buf.sizelen,
-                                              (size_t) def->buf.count, TRUE);
-        res = (NULL != def->buf.lens);
+        def->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, (size_t) def->buf.sizelen, (size_t) def->buf.count, TRUE);
+        OCI_STATUS = (NULL != def->buf.lens);
     }
 
     /* initialize length array with buffer default size.
        But, Oracle uses different sizes for static fetch and callback fetch....*/
 
-    if (res)
+    if (OCI_STATUS)
     {
        ub4 bufsize = 0;
 
@@ -292,54 +292,39 @@ boolean OCI_DefineAlloc
             bufsize = def->col.bufsize;
         }
 
-        def->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (size_t) bufsize,
-                                                (size_t) def->buf.count, TRUE);
+        def->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (size_t) bufsize, (size_t) def->buf.count, TRUE);
 
-        res = (NULL != def->buf.data);
+        OCI_STATUS = (NULL != def->buf.data);
     }
 
     /* Allocate descriptor for cursor, lob and file, interval and timestamp */
 
-    if (res && OCI_UNKNOWN != def->col.handletype)
+    if (OCI_STATUS && OCI_UNKNOWN != def->col.handletype)
     {
         if (OCI_CDT_CURSOR == def->col.datatype)
         {
-            for (i = 0; (i < def->buf.count) && res; i++)
+            for (i = 0; (i < def->buf.count) && OCI_STATUS; i++)
             {
-                res = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid  *) def->rs->stmt->con->env,
-                                                        (dvoid **) &(def->buf.data[i]),
-                                                        (ub4) def->col.handletype,
-                                                        (size_t) 0, (dvoid **) NULL));
+                OCI_STATUS = OCI_HandleAlloc((dvoid  *)def->rs->stmt->con->env, (dvoid **) &(def->buf.data[i]), (ub4) def->col.handletype);
             }
         }
         else
         {
-            res = OCI_SUCCESSFUL(OCI_DescriptorArrayAlloc((dvoid  *) def->rs->stmt->con->env,
-                                                            (dvoid **) def->buf.data,
-                                                            (ub4) def->col.handletype,
-                                                            (ub4) def->buf.count,
-                                                            (size_t) 0, (dvoid **) NULL));
+            OCI_STATUS = OCI_DescriptorArrayAlloc((dvoid  *)def->rs->stmt->con->env, (dvoid **)def->buf.data, (ub4)def->col.handletype, (ub4)def->buf.count);
 
-            if (res && (OCI_CDT_LOB == def->col.datatype))
+            if (OCI_STATUS && (OCI_CDT_LOB == def->col.datatype))
             {
                 ub4 empty = 0;
 
-                for (i = 0; (i < def->buf.count) && res; i++)
+                for (i = 0; (i < def->buf.count) && OCI_STATUS; i++)
                 {
-                    OCI_CALL1
-                    (
-                        res, def->rs->stmt->con, def->rs->stmt,
-
-                        OCIAttrSet((dvoid *) def->buf.data[i],  (ub4) def->col.handletype,
-                                   (void *) &empty, (ub4) sizeof(empty),
-                                   (ub4) OCI_ATTR_LOBEMPTY, def->rs->stmt->con->err)
-                    )
+                    OCI_SET_ATTRIB(def->col.handletype, OCI_ATTR_LOBEMPTY, def->buf.data[i], &empty, sizeof(empty))
                 }
             }
         }
     }
  
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -352,10 +337,13 @@ boolean OCI_DefineDef
     ub4         position
 )
 {
-    boolean res  = TRUE;
-    ub2     mode = OCI_DEFAULT;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    
+    ub2 mode = OCI_DEFAULT;
 
     OCI_CHECK(NULL == def, FALSE)
+
+    OCI_CALL_CONTEXT_SET(def->rs->stmt->con, def->rs->stmt, def->rs->stmt->con->err);
 
     /*check define mode for long columns */
 
@@ -366,10 +354,8 @@ boolean OCI_DefineDef
 
     /* oracle defining */
 
-    OCI_CALL1
+    OCI_EXEC
     (
-        res, def->rs->stmt->con, def->rs->stmt,
-
         OCIDefineByPos(def->rs->stmt->stmt,
                        (OCIDefine **) &def->buf.handle,
                        def->rs->stmt->con->err,
@@ -385,11 +371,9 @@ boolean OCI_DefineDef
 
     if (SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode)
     {
-        OCI_CALL1
+        OCI_EXEC
         (
-            res, def->rs->stmt->con, def->rs->stmt,
-
-            OCIDefineObject((OCIDefine *) def->buf.handle,
+            OCIDefineObject((OCIDefine *)def->buf.handle,
                             def->rs->stmt->con->err,
                             def->col.typinf->tdo,
                             (void **) def->buf.data,
@@ -409,19 +393,9 @@ boolean OCI_DefineDef
         {
             ub1 csfrm = SQLCS_NCHAR;
 
-            OCI_CALL1
-            (
-                res, def->rs->stmt->con, def->rs->stmt,
-
-                OCIAttrSet((dvoid *) def->buf.handle,
-                           (ub4    ) OCI_HTYPE_DEFINE,
-                           (dvoid *) &csfrm,
-                           (ub4    ) sizeof(csfrm),
-                           (ub4    ) OCI_ATTR_CHARSET_FORM,
-                           def->rs->stmt->con->err)
-            )
+            OCI_SET_ATTRIB(OCI_HTYPE_DEFINE, OCI_ATTR_CHARSET_FORM, def->buf.handle, &csfrm, sizeof(csfrm))
         }
     }
 
-    return res;
+    return OCI_STATUS;
 }

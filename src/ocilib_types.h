@@ -916,6 +916,19 @@ struct OCI_SQLCmdInfo
 
 typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;
 
+/* OCI Call context */
+
+struct OCI_CallContext
+{
+    OCI_Connection *lib_con;
+    OCI_Statement  *lib_stmt;
+    OCIError       *oci_err;
+    OCI_Error      *call_err;
+    boolean         call_status;
+};
+
+typedef struct OCI_CallContext OCI_CallContext;
+
 /* static and unique OCI_Library object */
 
 extern OCI_Library OCILib;

@@ -451,25 +451,22 @@ boolean OCI_StringToStringPtr
     const otext *value
 )
 {
-    boolean res    = TRUE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+
     dbtext *dbstr  = NULL;
     int     dbsize = 0;
 
     OCI_CHECK(NULL == str, FALSE);
+    OCI_CALL_CONTEXT_SET(NULL, NULL, err)
 
     dbsize = -1;
     dbstr  = OCI_StringGetOracleString(value, &dbsize);
 
-    OCI_CALL3
-    (
-        res, err,
-
-        OCIStringAssignText(env, err, (oratext *) dbstr, (ub4) dbsize, str)
-    )
+    OCI_EXEC(OCIStringAssignText(env, err, (oratext *) dbstr, (ub4) dbsize, str))
 
     OCI_StringReleaseOracleString(dbstr);
 
-    return res;
+    return OCI_STATUS;
 }
 
 
@@ -484,18 +481,13 @@ boolean OCI_StringFreeStringPtr
     OCIError    *err
 )
 {
-    boolean res = TRUE;
-
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CHECK(NULL == str, FALSE);
+    OCI_CALL_CONTEXT_SET(NULL, NULL, err)
 
-    OCI_CALL3
-    (
-        res, err,
+    OCI_EXEC(OCIStringResize(env, err, (ub4)0, str))
 
-        OCIStringResize(env, err, (ub4)0, str)
-    )
-
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -511,25 +503,17 @@ boolean OCI_GetStringAttribute
     otext         **str
 )
 {
-    boolean res     = TRUE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     dbtext *dbstr   = NULL;
     int     dbsize  = -1;
 
     OCI_CHECK(NULL == str, FALSE);
+    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
 
-    OCI_CALL2
-    (
-        res, con,
+    OCI_GET_ATTRIB(type, attr, handle, &dbstr, &dbsize)
 
-        OCIAttrGet((dvoid *) handle,
-                   (ub4    ) type,
-                   (dvoid *) &dbstr,
-                   (ub4   *) &dbsize,
-                   (ub4    ) attr,
-                   con->err)
-    )
-
-    if (res && dbstr)
+    if (OCI_STATUS && dbstr)
     {
 	    boolean is_ansi = FALSE;
 
@@ -555,10 +539,10 @@ boolean OCI_GetStringAttribute
 
         OCI_StringTranslate(dbstr, *str, dbcharcount(dbsize), is_ansi ? sizeof(char) : sizeof(dbtext), sizeof(otext));
 
-        res = (NULL != *str);
+        OCI_STATUS = (NULL != *str);
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -575,9 +559,12 @@ boolean OCI_SetStringAttribute
     const otext    *value
 )
 {
-    boolean res    = TRUE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+
     dbtext *dbstr  = NULL;
     int     dbsize = -1;
+
+    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
 
     dbstr = OCI_StringGetOracleString(value, &dbsize);
 
@@ -586,21 +573,11 @@ boolean OCI_SetStringAttribute
         dbsize = 0;
     }
 
-    OCI_CALL2
-    (
-        res, con,
-
-        OCIAttrSet((dvoid *) handle,
-                   (ub4    ) type,
-                   (dvoid *) dbstr,
-                   (ub4    ) dbsize,
-                   (ub4    ) attr,
-                   con->err)
-    )
+    OCI_SET_ATTRIB(type, attr, handle, dbstr, dbsize)
 
     OCI_StringReleaseOracleString(dbstr);
 
-    if (res && str)
+    if (OCI_STATUS && str)
     {
         OCI_FREE(*str)
 
@@ -610,7 +587,7 @@ boolean OCI_SetStringAttribute
         }
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *

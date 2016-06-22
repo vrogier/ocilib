@@ -173,30 +173,28 @@ void OCI_MemUpdateBytes
  * OCI_HandleAlloc
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_HandleAlloc
+boolean OCI_HandleAlloc
 (
     CONST dvoid *parenth,
     dvoid      **hndlpp,
-    CONST ub4    type,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
-)
+    CONST ub4    type
+ )
 {
-    sword ret = OCIHandleAlloc(parenth, hndlpp, type, xtramem_sz, usrmempp);
+    sword ret = OCIHandleAlloc(parenth, hndlpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
         OCI_MUTEXED_CALL(OCILib.nb_hndlp++)
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_HandleFree
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_HandleFree
+boolean OCI_HandleFree
 (
     dvoid    *hndlp,
     CONST ub4 type
@@ -211,44 +209,40 @@ sword OCI_HandleFree
         ret = OCIHandleFree(hndlp, type);
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_DescriptorAlloc
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_DescriptorAlloc
+boolean OCI_DescriptorAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
-    CONST ub4    type,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
-)
+    CONST ub4    type
+ )
 {
-    sword ret = OCIDescriptorAlloc(parenth, descpp, type, xtramem_sz, usrmempp);
+    sword ret = OCIDescriptorAlloc(parenth, descpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
         OCI_MUTEXED_CALL(OCILib.nb_descp++)
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_DescriptorArrayAlloc
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_DescriptorArrayAlloc
+boolean OCI_DescriptorArrayAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
     CONST ub4    type,
-    ub4          nb_elem,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
+    ub4          nb_elem
 )
 {
     sword ret = OCI_SUCCESS;
@@ -257,7 +251,7 @@ sword OCI_DescriptorArrayAlloc
 
     if (OCILib.version_runtime >= OCI_11_1)
     {
-        ret = OCIArrayDescriptorAlloc(parenth, descpp, type, nb_elem, xtramem_sz, usrmempp);
+        ret = OCIArrayDescriptorAlloc(parenth, descpp, type, nb_elem, 0, NULL);
 
     }
     else
@@ -269,7 +263,7 @@ sword OCI_DescriptorArrayAlloc
 
         for (i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
         {
-            ret = OCIDescriptorAlloc(parenth, &descpp[i], type, xtramem_sz, usrmempp);
+            ret = OCIDescriptorAlloc(parenth, &descpp[i], type, 0, NULL);
         }
     }
 
@@ -278,14 +272,14 @@ sword OCI_DescriptorArrayAlloc
         OCI_MUTEXED_CALL(OCILib.nb_descp += nb_elem)
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_DescriptorFree
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_DescriptorFree
+boolean OCI_DescriptorFree
 (
     dvoid    *descp,
     CONST ub4 type
@@ -300,14 +294,14 @@ sword OCI_DescriptorFree
         ret = OCIDescriptorFree(descp, type);
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_DescriptorFree
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_DescriptorArrayFree
+boolean OCI_DescriptorArrayFree
 (
     dvoid   **descp,
     CONST ub4 type,
@@ -342,7 +336,7 @@ sword OCI_DescriptorArrayFree
         OCI_MUTEXED_CALL(OCILib.nb_descp -= nb_elem)
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *

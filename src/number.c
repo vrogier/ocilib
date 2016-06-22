@@ -43,25 +43,18 @@ static MagicNumber MagicNumbers[] =
                                                                                     \
     OCINumber src_num = { {0} };                                                    \
                                                                                     \
-    OCI_LIB_CALL_ENTER(boolean, FALSE)                                              \
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)                                           \
+    OCI_CALL_ENTER(boolean, FALSE)                                            \
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)                                      \
+    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)                            \
                                                                                     \
-    call_status = OCI_NumberSetNativeValue(number->con, &src_num,                   \
+    OCI_STATUS = OCI_NumberSetNativeValue(number->con, &src_num,                    \
                                            OCI_GetNumericTypeSize(type),            \
                                            type, SQLT_VNU, value);                  \
                                                                                     \
-    if (call_status)                                                                \
-    {                                                                               \
-        OCI_CALL4                                                                   \
-        (                                                                           \
-            call_status, number->err, number->con,                                  \
+    OCI_EXEC(func(number->err, number->handle, &src_num, number->handle))           \
                                                                                     \
-            func(number->err, number->handle, &src_num, number->handle)             \
-        )                                                                           \
-    }                                                                               \
-                                                                                    \
-    call_retval = call_status;                                                      \
-    OCI_LIB_CALL_EXIT()                                                             \
+    OCI_RETVAL = OCI_STATUS;                                                        \
+    OCI_CALL_EXIT()                                                                 \
 
 
 /* --------------------------------------------------------------------------------------------- *
@@ -109,12 +102,12 @@ boolean OCI_NumberGetNativeValue
     void           *out_value
 )
 {
-    boolean   res = TRUE;
-    OCIError *err = con ? con->err : OCILib.err;
-
-    OCI_CHECK(NULL == err, FALSE)
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     OCI_CHECK(NULL == number, FALSE)
     OCI_CHECK(NULL == out_value, FALSE)
+
+    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err);
 
 #if OCI_VERSION_COMPILE < OCI_10_1
 
@@ -152,27 +145,17 @@ boolean OCI_NumberGetNativeValue
     #endif
 
         {
-            OCI_CALL4
-            (
-                res, err, con,
-
-                OCINumberToReal(err, (OCINumber *) number, size, out_value)
-            )
+            OCI_EXEC(OCINumberToReal(ctx->oci_err, (OCINumber *) number, size, out_value))
         }
     }
     else
     {
         uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
 
-        OCI_CALL4
-        (
-            res, err, con,
-
-            OCINumberToInt(err, (OCINumber *) number, size, sign, out_value)
-        )
+        OCI_EXEC(OCINumberToInt(ctx->oci_err, (OCINumber *) number, size, sign, out_value))
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -189,12 +172,12 @@ boolean OCI_NumberSetNativeValue
     void           *in_value
 )
 {
-    boolean   res = TRUE;
-    OCIError *err = con ? con->err : OCILib.err;
-
-    OCI_CHECK(NULL == err, FALSE)
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     OCI_CHECK(NULL == number, FALSE)
     OCI_CHECK(NULL == in_value, FALSE)
+
+    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err);
 
 #if OCI_VERSION_COMPILE < OCI_10_1
 
@@ -232,27 +215,17 @@ boolean OCI_NumberSetNativeValue
     #endif
 
         {
-            OCI_CALL4
-            (
-                res, err, con,
-
-                OCINumberFromReal(err, in_value, size, (OCINumber *) number)
-            )
+            OCI_EXEC(OCINumberFromReal(ctx->oci_err, in_value, size, (OCINumber *) number))
         }
     }
     else
     {
         uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
 
-        OCI_CALL4
-        (
-            res, err, con,
-
-            OCINumberFromInt(err, in_value, size, sign, (OCINumber *) number)
-        )
+        OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, size, sign, (OCINumber *)number))
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 
@@ -271,13 +244,14 @@ boolean OCI_NumberFromString
     const otext   * fmt
 )
 {
-    boolean   res  = TRUE;
-    boolean   done = FALSE;
-    OCIError *err  = con ? con->err : OCILib.err;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
+    boolean done = FALSE;
 
-    OCI_CHECK(NULL == err, FALSE)
     OCI_CHECK(NULL == out_value, FALSE)
     OCI_CHECK(NULL == in_value, FALSE)
+
+    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err);
 
     /* For binary types, perform a C based conversion */
 
@@ -290,13 +264,13 @@ boolean OCI_NumberFromString
         {
             if (type & OCI_NUM_SHORT)
             {
-                res = (osscanf(in_value, OCI_STRING_FORMAT_NUM_SHORT, (short *)out_value) == 1);
+                OCI_STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_SHORT, (short *)out_value) == 1);
                 done = TRUE;
             }
 
             if (type & OCI_NUM_INT)
             {
-                res = (osscanf(in_value, OCI_STRING_FORMAT_NUM_INT, (int *)out_value) == 1);
+                OCI_STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_INT, (int *)out_value) == 1);
                 done = TRUE;
             }
         }
@@ -311,11 +285,11 @@ boolean OCI_NumberFromString
 
             if (type & OCI_NUM_DOUBLE)
             {
-                res = (osscanf(in_value, fmt, (double *)out_value) == 1);
+                OCI_STATUS = (osscanf(in_value, fmt, (double *)out_value) == 1);
             }
             else if (type & OCI_NUM_FLOAT)
             {
-                res = (osscanf(in_value, fmt, (float *)out_value) == 1);
+                OCI_STATUS = (osscanf(in_value, fmt, (float *)out_value) == 1);
             }
 
             done = TRUE;
@@ -339,7 +313,7 @@ boolean OCI_NumberFromString
             {
                 memset(out_value, 0, sizeof(OCINumber));
                 memcpy(out_value, mag_num->number, sizeof(mag_num->number));
-                res = done = TRUE;
+                OCI_STATUS = done = TRUE;
                 break;
             }
         }
@@ -362,22 +336,20 @@ boolean OCI_NumberFromString
 
             memset(&number, 0, sizeof(number));
 
-            OCI_CALL4
+            OCI_EXEC
             (
-                res, err, con,
-
-                OCINumberFromText(err, (oratext *) dbstr1, (ub4) dbsize1, (oratext *) dbstr2,
+                OCINumberFromText(ctx->oci_err, (oratext *) dbstr1, (ub4) dbsize1, (oratext *) dbstr2,
                                    (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
             )
 
             OCI_StringReleaseOracleString(dbstr2);
             OCI_StringReleaseOracleString(dbstr1);
 
-            res = res && OCI_NumberGetNativeValue(con, (void *)&number, size, type, sqlcode, out_value);
+            OCI_STATUS = OCI_STATUS && OCI_NumberGetNativeValue(con, (void *)&number, size, type, sqlcode, out_value);
         }
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -395,13 +367,14 @@ boolean OCI_NumberToString
     const otext   * fmt
 )
 {
-    boolean   res  = TRUE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     boolean   done = FALSE;
-    OCIError *err  = con ? con->err : OCILib.err;
 
-    OCI_CHECK(NULL == err, FALSE)
     OCI_CHECK(NULL == out_value, FALSE)
     OCI_CHECK(NULL == number, FALSE)
+
+    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err);
 
     out_value[0] = 0;
 
@@ -481,7 +454,7 @@ boolean OCI_NumberToString
             if (memcmp(number, mag_num->number, sizeof(mag_num->number)) == 0)
             {
                 ostrcpy(out_value, mag_num->name);
-                res = done = TRUE;
+                OCI_STATUS = done = TRUE;
                 break;
             }
         }
@@ -501,11 +474,9 @@ boolean OCI_NumberToString
             dbstr1 = OCI_StringGetOracleString(out_value, &dbsize1);
             dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
 
-            OCI_CALL4
+            OCI_EXEC
             (
-                res, err, con,
-
-                OCINumberToText(err, (OCINumber *)number, (oratext *)dbstr2,
+                OCINumberToText(ctx->oci_err, (OCINumber *)number, (oratext *)dbstr2,
                                 (ub4)dbsize2, (oratext *)NULL, (ub4)0,
                                 (ub4 *)&dbsize1, (oratext *)dbstr1)
             )
@@ -529,7 +500,7 @@ boolean OCI_NumberToString
         }
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -609,14 +580,13 @@ OCI_Number * OCI_API OCI_NumberCreate
     OCI_Connection *con
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Number*, NULL)
+    OCI_CALL_ENTER(OCI_Number*, NULL)
+    OCI_CALL_CHECK_INITIALIZED()
 
-    OCI_CHECK_INITIALIZED()
+    OCI_RETVAL = OCI_NumberInit(con, &OCI_RETVAL, NULL);
+    OCI_STATUS = (NULL != OCI_RETVAL);
 
-    call_retval = OCI_NumberInit(con, &call_retval, NULL);
-    call_status = (NULL != call_retval);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -628,10 +598,10 @@ boolean OCI_API OCI_NumberFree
     OCI_Number *number
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CHECK_OBJECT_FETCHED(number);
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_CALL_CHECK_OBJECT_FETCHED(number);
+    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
 
     if (OCI_OBJECT_ALLOCATED == number->hstate)
     {
@@ -643,9 +613,9 @@ boolean OCI_API OCI_NumberFree
         OCI_FREE(number)
     }
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -660,19 +630,18 @@ OCI_Number ** OCI_API OCI_NumberArrayCreate
 {
     OCI_Array *arr = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Number **, NULL)
-
-    OCI_CHECK_INITIALIZED()
+    OCI_CALL_ENTER(OCI_Number **, NULL)
+    OCI_CALL_CHECK_INITIALIZED()
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_NUMERIC, OCI_NUM_NUMBER, sizeof(OCINumber), sizeof(OCI_Number), 0, NULL);
 
     if (arr)
     {
-        call_retval = (OCI_Number **)arr->tab_obj;
-        call_status = TRUE;
+        OCI_RETVAL = (OCI_Number **)arr->tab_obj;
+        OCI_STATUS = TRUE;
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -684,14 +653,12 @@ OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
     OCI_Number **numbmers
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, numbmers)
 
-    OCI_CHECK_PTR(OCI_IPC_ARRAY, numbmers)
+    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **)numbmers);
 
-    call_retval = call_status = OCI_ArrayFreeFromHandles((void **)numbmers);
-
-    OCI_LIB_CALL_EXIT()
-
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -704,23 +671,16 @@ boolean OCI_API OCI_NumberAssign
     OCI_Number *number_src
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number_src)
+    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
 
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number_src)
+    OCI_EXEC(OCINumberAssign(number->err, number_src->handle, number->handle))
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL4
-    (
-        call_status, number->err, number->con,
-
-        OCINumberAssign(number->err, number_src->handle, number->handle)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -735,14 +695,13 @@ boolean OCI_API OCI_NumberToText
     otext       *str
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, OCI_UNKNOWN)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
 
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_RETVAL = OCI_NumberToString(number->con, number->handle, OCI_NUM_NUMBER, SQLT_VNU, str, size, fmt);
 
-    call_retval = OCI_NumberToString(number->con, number->handle, OCI_NUM_NUMBER, SQLT_VNU, str, size, fmt);
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -756,14 +715,13 @@ boolean OCI_API OCI_NumberFromText
     const otext *fmt
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, OCI_UNKNOWN)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
 
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_RETVAL = OCI_NumberFromString(number->con, number->handle, sizeof(OCINumber), OCI_NUM_NUMBER, SQLT_VNU, str, fmt);
 
-    call_retval = OCI_NumberFromString(number->con, number->handle, sizeof(OCINumber), OCI_NUM_NUMBER, SQLT_VNU, str, fmt);
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -775,18 +733,16 @@ unsigned char * OCI_API OCI_NumberGetContent
     OCI_Number *number
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned char *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(unsigned char *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
 
     if (number->handle)
     {
-        call_retval = number->handle->OCINumberPart;
+        OCI_RETVAL = number->handle->OCINumberPart;
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -799,19 +755,19 @@ boolean OCI_API OCI_NumberSetContent
     unsigned char  *content
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, OCI_UNKNOWN)
-
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CHECK_PTR(OCI_IPC_VOID, content)
-
-    call_retval = call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, content)
+    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
 
     if (number->handle)
     {
         memcpy(number->handle->OCINumberPart, content, sizeof(number->handle->OCINumberPart));
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_RETVAL = OCI_STATUS;
+
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -825,15 +781,15 @@ boolean OCI_API OCI_NumberSetValue
     void           *value
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
 
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
-
-    call_status = call_retval = OCI_NumberSetNativeValue(number->con, number->handle,
+    OCI_STATUS = OCI_RETVAL = OCI_NumberSetNativeValue(number->con, number->handle,
                                                          OCI_GetNumericTypeSize(type),
                                                          type, SQLT_VNU, value);
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -847,15 +803,15 @@ boolean OCI_API OCI_NumberGetValue
     void           *value
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
+    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
 
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number)
-
-    call_status = call_retval = OCI_NumberGetNativeValue(number->con, number->handle,
+    OCI_STATUS = OCI_RETVAL = OCI_NumberGetNativeValue(number->con, number->handle,
                                                               OCI_GetNumericTypeSize(type),
                                                               type, SQLT_VNU, value);
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -914,7 +870,6 @@ boolean OCI_API OCI_NumberDivide
     OCI_NUMBER_OPERATION(OCINumberDiv)
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
  * OCI_NumberCompare
  * --------------------------------------------------------------------------------------------- */
@@ -927,23 +882,16 @@ int OCI_API OCI_NumberCompare
 {
     sword value = OCI_ERROR;
 
-    OCI_LIB_CALL_ENTER(int, value)
+    OCI_CALL_ENTER(int, value)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number1)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number2)
+    OCI_CALL_CONTEXT_SET(number1->con, NULL, number1->err)
 
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number1)
-    OCI_CHECK_PTR(OCI_IPC_NUMBER, number2)
+    OCI_EXEC(OCINumberCmp(number1->err, number1->handle, number1->handle, &value))
 
-    call_status = TRUE;
+    OCI_RETVAL = (int) value;
 
-    OCI_CALL4
-    (
-        call_status, number1->err, number1->con,
-
-        OCINumberCmp(number1->err, number1->handle, number1->handle, &value)
-    )
-
-    call_retval = (int) value;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 
