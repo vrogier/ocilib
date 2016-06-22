@@ -5112,6 +5112,9 @@ public:
         void SetNull();
 
     private:
+
+        Element& operator=(Element const &src);
+
         Collection & _coll;
         unsigned int _pos;
     };

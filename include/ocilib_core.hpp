@@ -449,6 +449,7 @@ private:
     public:
 
         typedef TObjectType ObjectType;
+        typedef std::vector<ObjectType> ObjectTypeVector;
         typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
         BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize);
@@ -457,17 +458,19 @@ private:
         void SetOutData();
         ostring GetName();
 
-        operator std::vector<ObjectType> & () const;
+        operator ObjectTypeVector & () const;
         operator NativeType * () const;
 
     private:
+
+        BindArrayObject& operator=(BindArrayObject const &src);
 
         void AllocData();
         void FreeData();
 
         OCI_Statement *_pStatement;
         ostring _name;
-        std::vector<ObjectType> & _vector;
+        ObjectTypeVector& _vector;
         NativeType *_data;
         unsigned int _mode;
         unsigned int _elemCount;
@@ -497,6 +500,8 @@ public:
 
 private:
 
+    BindObjectAdaptor& operator=(BindObjectAdaptor const &src);
+
     ObjectType&    _object;
     NativeType*    _data;
     unsigned int   _size;
@@ -521,6 +526,8 @@ public:
     virtual ~BindTypeAdaptor();
 
 private:
+
+    BindTypeAdaptor& operator=(BindTypeAdaptor const &src);
 
     ObjectType& _object;
     NativeType* _data;

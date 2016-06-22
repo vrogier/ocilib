@@ -4445,7 +4445,7 @@ inline void BindArray::SetOutData()
 }
 
 template <class TObjectType>
-inline BindArray::BindArrayObject<TObjectType>::BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize)
+inline BindArray::BindArrayObject<TObjectType>::BindArrayObject(const Statement &statement, const ostring& name, ObjectTypeVector &vector, unsigned int mode, unsigned int elemSize)
     : _pStatement(statement), _name(name), _vector(vector), _data(0), _mode(mode), _elemCount(statement.GetBindArraySize()), _elemSize(elemSize)
 {
     AllocData();
@@ -4490,7 +4490,7 @@ inline void BindArray::BindArrayObject<TObjectType>::FreeData()
 template <class TObjectType>
 inline void BindArray::BindArrayObject<TObjectType>::SetInData()
 {
-    typename std::vector<TObjectType>::iterator it, it_end;
+    typename ObjectTypeVector::iterator it, it_end;
 
     unsigned int index = 0;
     unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
@@ -4542,7 +4542,7 @@ inline void BindArray::BindArrayObject<Raw>::SetInData()
 template <class TObjectType>
 inline void BindArray::BindArrayObject<TObjectType>::SetOutData()
 {
-    typename std::vector<TObjectType>::iterator it, it_end;
+    typename ObjectTypeVector::iterator it, it_end;
 
     unsigned int index = 0;
     unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
@@ -4580,13 +4580,13 @@ inline ostring BindArray::BindArrayObject<TObjectType>::GetName()
 }
 
 template <class TObjectType>
-inline BindArray::BindArrayObject<TObjectType>:: operator std::vector<TObjectType> & ()  const
+inline BindArray::BindArrayObject<TObjectType>::operator ObjectTypeVector & ()  const
 {
     return _vector;
 }
 
 template <class TObjectType>
-inline BindArray::BindArrayObject<TObjectType>:: operator NativeType * ()  const
+inline BindArray::BindArrayObject<TObjectType>::operator NativeType * ()  const
 {
     return _data;
 }
