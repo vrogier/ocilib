@@ -133,6 +133,8 @@ OCI_Pool * OCI_API OCI_PoolCreate
     OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, type, PoolTypeValues, OTEXT("Pool Type"))
     OCI_CALL_CHECK_MIN(NULL, NULL, max_con, 1)
 
+    OCI_STATUS = FALSE;
+
     /* make sure that we do not have a XA session flag */
     
     mode &= ~OCI_SESSION_XA;

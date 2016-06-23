@@ -47,10 +47,10 @@ OCI_Date * OCI_DateInit
         *pdate = (OCI_Date *) OCI_MemAlloc(OCI_IPC_DATE, sizeof(*date), (size_t) 1, TRUE);
     }
 
-    if (*pdate)
-    {
-        res = TRUE;
+    res = (NULL != *pdate);
 
+    if (res)
+    {
         date = *pdate;
 
         date->con = con;
@@ -181,11 +181,11 @@ OCI_Date ** OCI_API OCI_DateArrayCreate
     OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err)
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
+    OCI_STATUS = (NULL != arr);
 
-    if (arr)
+    if (OCI_STATUS)
     {
         OCI_RETVAL = (OCI_Date **) arr->tab_obj;
-        OCI_STATUS = TRUE;
     }
 
     OCI_CALL_EXIT()
@@ -540,7 +540,7 @@ boolean OCI_API OCI_DateSetDate
 
     OCIDateSetDate(date->handle, (sb2) year, (ub1) month, (ub1) day);
 
-    OCI_RETVAL = OCI_STATUS = TRUE;
+    OCI_RETVAL = TRUE;
 
     OCI_CALL_EXIT()
 }
@@ -563,7 +563,7 @@ boolean OCI_API OCI_DateSetTime
 
     OCIDateSetTime(date->handle, (ub1) hour, (ub1) min, (ub1) sec);
 
-    OCI_RETVAL = OCI_STATUS = TRUE;
+    OCI_RETVAL = TRUE;
 
     OCI_CALL_EXIT()
 }
@@ -655,7 +655,6 @@ boolean OCI_API OCI_DateToText
     /* set null string terminator */
 
     str[dbcharcount(dbsize1)] = 0;
-
 
     OCI_RETVAL = OCI_STATUS;
 
@@ -790,7 +789,7 @@ boolean OCI_API OCI_DateFromCTime
         OCI_RAISE_EXCEPTION(OCI_ExceptionNullPointer(OCI_IPC_TM))
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    OCI_RETVAL = TRUE;
 
     OCI_CALL_EXIT()
 }

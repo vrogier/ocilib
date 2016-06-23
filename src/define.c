@@ -203,8 +203,7 @@ boolean OCI_DefineGetNumber
             }
             case OCI_CDT_TEXT:
             {
-                res = OCI_NumberFromString(rs->stmt->con, value, size, type, def->col.libcode,
-                                           (const otext *) data, NULL);
+                res = OCI_NumberFromString(rs->stmt->con, value, size, type, def->col.libcode, (const otext *) data, NULL);
                 break;
             }
         }
@@ -248,7 +247,7 @@ boolean OCI_DefineAlloc
     def->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, (size_t) indsize, (size_t) def->buf.count, TRUE);
     OCI_STATUS = (NULL != def->buf.inds);
 
-    if (OCI_CDT_OBJECT == def->col.datatype)
+    if (OCI_STATUS && OCI_CDT_OBJECT == def->col.datatype)
     {
         def->buf.obj_inds = (void **) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(void *), (size_t) def->buf.count, TRUE);
         OCI_STATUS = (NULL != def->buf.obj_inds);
@@ -293,7 +292,6 @@ boolean OCI_DefineAlloc
         }
 
         def->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (size_t) bufsize, (size_t) def->buf.count, TRUE);
-
         OCI_STATUS = (NULL != def->buf.data);
     }
 

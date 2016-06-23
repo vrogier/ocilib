@@ -785,7 +785,7 @@ boolean OCI_API OCI_NumberSetValue
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
 
-    OCI_STATUS = OCI_RETVAL = OCI_NumberSetNativeValue(number->con, number->handle,
+    OCI_RETVAL = OCI_STATUS = OCI_NumberSetNativeValue(number->con, number->handle,
                                                          OCI_GetNumericTypeSize(type),
                                                          type, SQLT_VNU, value);
 
@@ -807,7 +807,7 @@ boolean OCI_API OCI_NumberGetValue
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
 
-    OCI_STATUS = OCI_RETVAL = OCI_NumberGetNativeValue(number->con, number->handle,
+    OCI_RETVAL = OCI_STATUS = OCI_NumberGetNativeValue(number->con, number->handle,
                                                               OCI_GetNumericTypeSize(type),
                                                               type, SQLT_VNU, value);
 

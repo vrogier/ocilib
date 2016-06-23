@@ -52,8 +52,9 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
     /* allocate dequeue structure */
 
     dequeue = (OCI_Dequeue *)OCI_MemAlloc(OCI_IPC_DEQUEUE, sizeof(*dequeue), (size_t)1, TRUE);
+    OCI_STATUS = (NULL != dequeue);
 
-    if (dequeue)
+    if (OCI_STATUS)
     {
         dequeue->typinf = typinf;
         dequeue->name   = ostrdup(name);
@@ -67,9 +68,8 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
         if (OCI_STATUS)
         {
             dequeue->msg = OCI_MsgCreate(dequeue->typinf);
+            OCI_STATUS = (NULL != dequeue->msg);
         }
-
-        OCI_STATUS = (NULL !=  dequeue->msg);
     }
 
     /* check for failure */
@@ -132,7 +132,7 @@ boolean OCI_API OCI_DequeueFree
     OCI_FREE(dequeue->agent_list)
     OCI_FREE(dequeue)
 
-    OCI_RETVAL = OCI_STATUS;
+    OCI_RETVAL = TRUE;
 
     OCI_CALL_EXIT()
 }
@@ -159,8 +159,6 @@ OCI_Agent * OCI_API OCI_DequeueListen
     {
         sword ret  = OCI_SUCCESS;
         sb4   code = OCI_SUCCESS;
-
-        OCI_STATUS = TRUE;
 
         ret =  OCIAQListen(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
                            dequeue->agent_list, (ub4) dequeue->agent_count,
@@ -298,11 +296,8 @@ const otext * OCI_API OCI_DequeueGetConsumer
 
     if (!dequeue->consumer)
     {
-        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con,
-                                             dequeue->opth,
-                                             OCI_DTYPE_AQDEQ_OPTIONS,
-                                             OCI_ATTR_CONSUMER_NAME,
-                                             &dequeue->consumer);
+        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
+                                            OCI_ATTR_CONSUMER_NAME, &dequeue->consumer);
     }
  
     OCI_RETVAL = dequeue->consumer;
@@ -324,12 +319,8 @@ boolean OCI_API OCI_DequeueSetConsumer
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
     OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
 
-    OCI_RETVAL = OCI_STATUS = OCI_SetStringAttribute( dequeue->typinf->con,
-                                                        dequeue->opth,
-                                                        OCI_DTYPE_AQDEQ_OPTIONS,
-                                                        OCI_ATTR_CONSUMER_NAME,
-                                                        &dequeue->consumer,
-                                                        consumer);
+    OCI_RETVAL = OCI_STATUS = OCI_SetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
+                                                     OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, consumer);
     OCI_CALL_EXIT()
 }
 
@@ -349,11 +340,8 @@ const otext * OCI_API OCI_DequeueGetCorrelation
 
     if (!dequeue->pattern)
     {
-        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con,
-                                             dequeue->opth,
-                                             OCI_DTYPE_AQDEQ_OPTIONS,
-                                             OCI_ATTR_CORRELATION,
-                                             &dequeue->pattern);
+        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
+                                            OCI_ATTR_CORRELATION, &dequeue->pattern);
     }
  
     OCI_RETVAL = dequeue->pattern;
@@ -375,12 +363,8 @@ boolean OCI_API OCI_DequeueSetCorrelation
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
     OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
 
-    OCI_RETVAL = OCI_STATUS = OCI_SetStringAttribute( dequeue->typinf->con,
-                                                        dequeue->opth,
-                                                        OCI_DTYPE_AQDEQ_OPTIONS,
-                                                        OCI_ATTR_CORRELATION,
-                                                        &dequeue->pattern,
-                                                        pattern);
+    OCI_RETVAL = OCI_STATUS = OCI_SetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
+                                                     OCI_ATTR_CORRELATION, &dequeue->pattern, pattern);
 
     OCI_CALL_EXIT()
 }
@@ -656,21 +640,18 @@ boolean OCI_API OCI_DequeueSetAgentList
     if (consumers && (count > 0))
     {
         dequeue->agent_list = (OCIAQAgent **) OCI_MemAlloc(OCI_IPC_ARRAY,  sizeof(OCIAQAgent *), count, FALSE);
+        OCI_STATUS = (NULL != dequeue->agent_list);
 
-        if (dequeue->agent_list)
+        if (OCI_STATUS)
         {
             unsigned int i;
 
-            for(i = 0; i < count; i++)
+            for (i = 0; i < count; i++)
             {
                 dequeue->agent_list[i] = consumers[i]->handle;
             }
 
-            dequeue->agent_count = (ub4) count;
-        }
-        else
-        {
-            OCI_STATUS = FALSE;
+            dequeue->agent_count = (ub4)count;
         }
     }
 

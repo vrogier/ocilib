@@ -105,11 +105,13 @@ OCI_Coll * OCI_API OCI_CollCreate
     OCI_TypeInfo *typinf
 )
 {
+    OCI_Coll *coll = NULL;
+
     OCI_CALL_ENTER(OCI_Coll *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CONTEXT_SET(typinf->con, NULL, typinf->con->err)
 
-    OCI_RETVAL = OCI_CollInit(typinf->con, &OCI_RETVAL, (OCIColl *) NULL, typinf);
+    OCI_RETVAL = OCI_CollInit(typinf->con, &coll, (OCIColl *)NULL, typinf);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -174,10 +176,11 @@ OCI_Coll ** OCI_API OCI_CollArrayCreate
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, sizeof(OCIColl *), sizeof(OCI_Coll), 0, typinf);
 
-    if (arr)
+    OCI_STATUS = (arr != NULL);
+
+    if (OCI_STATUS)
     {
         OCI_RETVAL = (OCI_Coll **) arr->tab_obj;
-        OCI_STATUS = TRUE;
     }
 
     OCI_CALL_EXIT()

@@ -358,7 +358,6 @@ boolean OCI_ConnectionLogon
         }
 
         con->cxt = xaoSvcCtx((OraText *) (dbname[0] ? dbname : NULL ));
-
         OCI_STATUS = (NULL != con->cxt);
 
         OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL);
@@ -822,7 +821,7 @@ boolean OCI_API OCI_ConnectionFree
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CONTEXT_SET(con, NULL, con->err)
 
-    OCI_STATUS = OCI_RETVAL = OCI_ConnectionClose(con);
+    OCI_RETVAL = OCI_STATUS = OCI_ConnectionClose(con);
 
     OCI_ListRemove(OCILib.cons, con);
     OCI_FREE(con)
@@ -964,7 +963,6 @@ boolean OCI_API OCI_SetSessionTag
     if (tag && con->pool && (OCI_HTYPE_SPOOL == con->pool->htype))
     {
         con->sess_tag = ostrdup(tag);
-
         OCI_STATUS = (NULL != con->sess_tag);
     }
 
@@ -1097,7 +1095,6 @@ boolean OCI_API OCI_SetUserPassword
     OCI_CALL_CHECK_INITIALIZED();
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, pwd)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, new_pwd)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
 
     con = OCI_ConnectionAllocate(NULL, db, user, pwd, OCI_AUTH);
 
@@ -1222,7 +1219,6 @@ unsigned int OCI_API OCI_GetServerMajorVersion
     }
 
     OCI_RETVAL = (unsigned int) OCI_VER_MAJ(con->ver_num);
-    OCI_STATUS = (OCI_UNKNOWN != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
@@ -1246,7 +1242,6 @@ unsigned int OCI_API OCI_GetServerMinorVersion
     }
 
     OCI_RETVAL = (unsigned int) OCI_VER_MIN(con->ver_num);
-    OCI_STATUS = (OCI_UNKNOWN != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
@@ -1270,7 +1265,6 @@ unsigned int OCI_API OCI_GetServerRevisionVersion
     }
 
     OCI_RETVAL = (unsigned int) OCI_VER_REV(con->ver_num);
-    OCI_STATUS = (OCI_UNKNOWN != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
@@ -1307,14 +1301,14 @@ boolean OCI_API OCI_SetTransaction
         OCI_STATUS = OCI_TransactionStop(con->trs);
     }
 
-     OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_TRANS, con->cxt, trans->htr, sizeof(trans->htr));
+    OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_TRANS, con->cxt, trans->htr, sizeof(trans->htr));
 
-     if (OCI_STATUS)
-     {
-         con->trs = trans;
-     }
+    if (OCI_STATUS)
+    {
+        con->trs = trans;
+    }
 
-     OCI_RETVAL = OCI_STATUS;
+    OCI_RETVAL = OCI_STATUS;
 
     OCI_CALL_EXIT()
 }
@@ -1379,9 +1373,7 @@ boolean OCI_API OCI_ServerEnableOutput
 
     if (!con->svopt)
     {
-        con->svopt = (OCI_ServerOutput *) OCI_MemAlloc(OCI_IPC_SERVER_OUPUT, sizeof(*con->svopt),
-                                                       (size_t) 1, TRUE);
-
+        con->svopt = (OCI_ServerOutput *) OCI_MemAlloc(OCI_IPC_SERVER_OUPUT, sizeof(*con->svopt), (size_t) 1, TRUE);
         OCI_STATUS = (NULL != con->svopt);
     }
 
@@ -1393,23 +1385,13 @@ boolean OCI_API OCI_ServerEnableOutput
 
         /* check parameter ranges ( Oracle 10g increased the size of output line */
 
-        if (con->ver_num >= OCI_10_2)
+        if (con->ver_num >= OCI_10_2 && lnsize > OCI_OUPUT_LSIZE_10G)
         {
-            if (lnsize < OCI_OUPUT_LSIZE)
-            {
-                lnsize = OCI_OUPUT_LSIZE;
-            }
-            else if (lnsize > OCI_OUPUT_LSIZE_10G)
-            {
-                lnsize = OCI_OUPUT_LSIZE_10G;
-            }
+            lnsize = OCI_OUPUT_LSIZE_10G;
         }
-        else
+        else  if (lnsize > OCI_OUPUT_LSIZE)
         {
-            if (lnsize > OCI_OUPUT_LSIZE)
-            {
-                lnsize = OCI_OUPUT_LSIZE;
-            }
+            lnsize = OCI_OUPUT_LSIZE;
         }
 
         con->svopt->arrsize = arrsize;
@@ -1417,10 +1399,7 @@ boolean OCI_API OCI_ServerEnableOutput
 
         /* allocate internal string (line) array */
 
-        con->svopt->arrbuf = (ub1 *) OCI_MemAlloc(OCI_IPC_STRING,
-                                                  ((size_t)(con->svopt->lnsize + 1)) * charsize,
-                                                  (size_t) con->svopt->arrsize, TRUE);
-
+        con->svopt->arrbuf = (ub1 *) OCI_MemAlloc(OCI_IPC_STRING, ((size_t)(con->svopt->lnsize + 1)) * charsize, (size_t) con->svopt->arrsize, TRUE);
         OCI_STATUS = (NULL != con->svopt->arrbuf);
     }
 
@@ -1429,6 +1408,7 @@ boolean OCI_API OCI_ServerEnableOutput
         if (!con->svopt->stmt)
         {
             con->svopt->stmt = OCI_StatementCreate(con);
+            OCI_STATUS = (NULL != con->svopt->stmt);
         }
 
         if (con->svopt->stmt)
@@ -1448,7 +1428,10 @@ boolean OCI_API OCI_ServerEnableOutput
 
             /* prepare the retrieval statement call */
 
-            con->svopt->cursize = con->svopt->arrsize;
+            if (OCI_STATUS)
+            {
+                con->svopt->cursize = con->svopt->arrsize;
+            }
 
             OCI_STATUS = OCI_STATUS && OCI_Prepare(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.GET_LINES(:s, :i); END;"));
 
@@ -1929,24 +1912,21 @@ boolean OCI_API OCI_SetTAFHandler
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    if (OCILib.version_runtime >= OCI_10_2)
+    if (OCI_RETVAL && OCILib.version_runtime >= OCI_10_2)
     {
-        if (OCI_RETVAL)
+        OCIFocbkStruct fo_struct;
+
+        memset(&fo_struct, 0, sizeof(fo_struct));
+
+        con->taf_handler = handler;
+
+        if (con->taf_handler)
         {
-            OCIFocbkStruct fo_struct;
-
-            memset(&fo_struct, 0, sizeof(fo_struct));
-
-            con->taf_handler = handler;
-
-            if (con->taf_handler)
-            {
-                fo_struct.callback_function = (OCICallbackFailover) OCI_ProcFailOver;
-                fo_struct.fo_ctx            = (dvoid *) con;
-            }
-
-            OCI_SET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_FOCBK, con->svr, &fo_struct, 0);
+            fo_struct.callback_function = (OCICallbackFailover) OCI_ProcFailOver;
+            fo_struct.fo_ctx            = (dvoid *) con;
         }
+
+        OCI_SET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_FOCBK, con->svr, &fo_struct, 0);
     }
 
 #endif
@@ -2133,8 +2113,9 @@ boolean OCI_Immediate
     /* First, execute SQL */
 
     stmt = OCI_StatementCreate(con);
-
-    if (stmt)
+    OCI_STATUS = (NULL != stmt);
+    
+    if (OCI_STATUS)
     {
         OCI_STATUS = OCI_ExecuteStmt(stmt, sql);
 
@@ -2176,8 +2157,9 @@ boolean OCI_ImmediateFmt
     OCI_CALL_CONTEXT_SET(con, NULL, con->err)
 
     stmt = OCI_StatementCreate(con);
+    OCI_STATUS = (NULL != stmt);
 
-    if (stmt)
+    if (OCI_STATUS)
     {
         int     size = 0;
         va_list args;

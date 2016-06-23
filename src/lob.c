@@ -603,7 +603,7 @@ boolean OCI_API OCI_LobWrite2
         }
     }
 
-    if (!OCILib.nls_utf8 && OCI_CLOB == lob->type)
+    if (obuf != buffer)
     {
         OCI_StringReleaseOracleString((dbtext *) obuf);
     }
@@ -1027,7 +1027,7 @@ boolean OCI_API OCI_LobAppend2
         }
     }
 
-    if (!OCILib.nls_utf8 && OCI_CLOB == lob->type)
+    if (obuf != buffer)
     {
         OCI_StringReleaseOracleString((dbtext *) obuf);
     }
