@@ -49,7 +49,7 @@ OCI_Date * OCI_DateInit
 
     res = (NULL != *pdate);
 
-    if (res)
+    if (*pdate)
     {
         date = *pdate;
 
