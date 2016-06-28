@@ -374,7 +374,7 @@ OCI_Connection * OCI_API OCI_PoolGetConnection
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCI_RETVAL && (OCI_HTYPE_CPOOL == pool->htype))
+    if (OCI_RETVAL)
     {
         unsigned int cache_size = OCI_PoolGetStatementCacheSize(pool);
 

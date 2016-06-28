@@ -1200,7 +1200,13 @@ boolean OCI_StatementReset
         /*  if we had registered binds, we must delete the statement from the cache.
             Because, if we execute another sql with "returning into clause",
             OCI_ProcInBind won't be called by OCI. Nice Oracle bug ! */
-        mode = OCI_STRLS_CACHE_DELETE;
+       
+        unsigned int cache_size = OCI_GetStatementCacheSize(stmt->con);
+
+        if (cache_size > 0)
+        {
+            mode = OCI_STRLS_CACHE_DELETE;
+        }
     }
 
 #endif
