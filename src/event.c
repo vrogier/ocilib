@@ -69,7 +69,7 @@ unsigned int OCI_API OCI_EventGetType
     OCI_Event *event
 )
 {
-    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_EVENT, event, type, event->sub ? event->sub->con : NULL, NULL, event->sub ? event->sub->err : OCILib.err)
+    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_EVENT, event, type, OCI_GET_CONN(event->sub), NULL, OCI_GET_ERR(event->sub))
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -81,7 +81,7 @@ unsigned int OCI_API OCI_EventGetOperation
     OCI_Event *event
 )
 {
-    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_EVENT, event, op, event->sub ? event->sub->con : NULL, NULL, event->sub ? event->sub->err : OCILib.err)
+    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_EVENT, event, op, OCI_GET_CONN(event->sub), NULL, OCI_GET_ERR(event->sub))
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -93,7 +93,7 @@ const otext * OCI_API OCI_EventGetDatabase
     OCI_Event *event
 )
 {
-    OCI_GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, dbname, event->sub ? event->sub->con : NULL, NULL, event->sub ? event->sub->err : OCILib.err)
+    OCI_GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, dbname, OCI_GET_CONN(event->sub), NULL, OCI_GET_ERR(event->sub))
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -105,7 +105,7 @@ const otext * OCI_API OCI_EventGetObject
     OCI_Event *event
 )
 {
-    OCI_GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, objname, event->sub ? event->sub->con : NULL, NULL, event->sub ? event->sub->err : OCILib.err)
+    OCI_GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, objname, OCI_GET_CONN(event->sub), NULL, OCI_GET_ERR(event->sub))
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -117,7 +117,7 @@ const otext * OCI_API OCI_EventGetRowid
     OCI_Event *event
 )
 {
-    OCI_GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, rowid, event->sub ? event->sub->con : NULL, NULL, event->sub ? event->sub->err : OCILib.err)
+    OCI_GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, rowid, OCI_GET_CONN(event->sub), NULL, OCI_GET_ERR(event->sub))
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -129,5 +129,5 @@ OCI_Subscription * OCI_API OCI_EventGetSubscription
     OCI_Event *event
 )
 {
-    OCI_GET_PROP(OCI_Subscription *, NULL, OCI_IPC_EVENT, event, sub, event->sub ? event->sub->con : NULL, NULL, event->sub ? event->sub->err : OCILib.err)
+    OCI_GET_PROP(OCI_Subscription *, NULL, OCI_IPC_EVENT, event, sub, OCI_GET_CONN(event->sub), NULL, OCI_GET_ERR(event->sub))
 }

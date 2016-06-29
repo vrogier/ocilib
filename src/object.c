@@ -24,7 +24,7 @@
                                                                             \
     OCI_CALL_ENTER(boolean, FALSE)                                          \
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)                                 \
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)                     \
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)                     \
                                                                             \
     OCI_STATUS = FALSE;                                                     \
                                                                             \
@@ -61,7 +61,7 @@
                                                                             \
     OCI_CALL_ENTER(object_type, NULL)                                       \
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)                                 \
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)                     \
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)                     \
                                                                             \
     OCI_STATUS = FALSE;                                                     \
                                                                             \
@@ -334,7 +334,7 @@ OCI_Object * OCI_ObjectInit
 
     OCI_CHECK(NULL == pobj, NULL)
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (!*pobj)
     {
@@ -561,7 +561,7 @@ boolean OCI_ObjectSetNumberInternal
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     OCI_STATUS = FALSE;
 
@@ -620,7 +620,7 @@ boolean OCI_ObjectGetNumberInternal
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
     
     OCI_STATUS = FALSE;
 
@@ -694,7 +694,7 @@ OCI_Object * OCI_API OCI_ObjectCreate
     OCI_CALL_ENTER(OCI_Object *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_RETVAL = OCI_ObjectInit(con, &OCI_RETVAL, NULL, typinf, NULL, -1, TRUE);
     OCI_STATUS = (NULL != OCI_RETVAL);
@@ -714,7 +714,7 @@ boolean OCI_API OCI_ObjectFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_OBJECT_FETCHED(obj)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     /* if the object has sub-objects that have been fetched, we need to free
        these objects */
@@ -759,7 +759,7 @@ OCI_Object ** OCI_API OCI_ObjectArrayCreate
     OCI_CALL_ENTER(OCI_Object **, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0, sizeof(void *), sizeof(OCI_Object), 0, typinf);
 
@@ -803,7 +803,7 @@ boolean OCI_API OCI_ObjectAssign
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj_src);
     OCI_CALL_CHECK_COMPAT(obj->con, obj->typinf->tdo == obj_src->typinf->tdo)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     OCI_EXEC
     (
@@ -840,7 +840,7 @@ boolean OCI_API OCI_ObjectGetBoolean
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     OCI_STATUS = FALSE;
 
@@ -1034,7 +1034,7 @@ const otext * OCI_API OCI_ObjectGetString
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     OCI_STATUS = FALSE;
 
@@ -1119,7 +1119,7 @@ int OCI_API OCI_ObjectGetRaw
     OCI_CALL_ENTER(int, 0);
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     OCI_STATUS = FALSE;
 
@@ -1168,7 +1168,7 @@ unsigned int OCI_API OCI_ObjectGetRawSize
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     OCI_STATUS = FALSE;
 
@@ -1386,7 +1386,7 @@ boolean OCI_API OCI_ObjectSetBoolean
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     OCI_STATUS = FALSE;
 
@@ -1556,7 +1556,7 @@ boolean OCI_API OCI_ObjectSetString
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     OCI_STATUS = FALSE;
 
@@ -1797,7 +1797,7 @@ boolean OCI_API OCI_ObjectSetNull
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     index = OCI_ObjectGetAttrIndex(obj, attr, -1, TRUE);
 
@@ -1830,7 +1830,7 @@ boolean OCI_API OCI_ObjectIsNull
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     index = OCI_ObjectGetAttrIndex(obj, attr, -1, TRUE);
 
@@ -1884,7 +1884,7 @@ boolean OCI_API OCI_ObjectGetSelfRef
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
     OCI_CALL_CHECK_COMPAT(obj->con, obj->typinf->tdo == ref->typinf->tdo)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     OCI_EXEC(OCIObjectGetObjectRef(obj->con->env, obj->con->err, obj->handle, ref->handle))
 
@@ -1912,7 +1912,7 @@ boolean OCI_API OCI_ObjectGetStruct
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     if (pp_struct)
     {
@@ -1949,7 +1949,7 @@ boolean OCI_API OCI_ObjectToText
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
-    OCI_CALL_CONTEXT_SET(obj->con, NULL, obj->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
     if (str)
     {

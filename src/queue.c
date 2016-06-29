@@ -56,7 +56,7 @@ boolean OCI_API OCI_QueueCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, queue_type, QueueTypeValues, OTEXT("Queue type"))
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     st = OCI_StatementCreate(con);
 
@@ -123,7 +123,7 @@ boolean OCI_API OCI_QueueAlter
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     st = OCI_StatementCreate(con);
 
@@ -175,7 +175,7 @@ boolean OCI_API OCI_QueueDrop
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     st = OCI_StatementCreate(con);
 
@@ -221,7 +221,7 @@ boolean OCI_API OCI_QueueStart
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     st = OCI_StatementCreate(con);
 
@@ -281,7 +281,7 @@ boolean OCI_API OCI_QueueStop
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     st = OCI_StatementCreate(con);
 
@@ -356,7 +356,7 @@ boolean OCI_API OCI_QueueTableCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_payload_type)
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, message_grouping, GroupingModeValues, OTEXT("Grouping mode"))
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     st = OCI_StatementCreate(con);
 
@@ -426,7 +426,7 @@ boolean OCI_API OCI_QueueTableAlter
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     st = OCI_StatementCreate(con);
 
@@ -477,7 +477,7 @@ boolean OCI_API OCI_QueueTableDrop
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     st = OCI_StatementCreate(con);
 
@@ -530,7 +530,7 @@ boolean OCI_API OCI_QueueTablePurge
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, delivery_mode, DeliveryModeValues, OTEXT("Delivery mode"))
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (con->ver_num >= OCI_10_1)
     {
@@ -600,7 +600,7 @@ boolean OCI_API OCI_QueueTableMigrate
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, compatible)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     st = OCI_StatementCreate(con);
 

@@ -132,7 +132,7 @@ OCI_Timestamp * OCI_API OCI_TimestampCreate
     OCI_CALL_ENTER(OCI_Timestamp*, NULL)
     OCI_CALL_CHECK_INITIALIZED()
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -162,7 +162,7 @@ boolean OCI_API OCI_TimestampFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -201,7 +201,7 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
     OCI_CALL_ENTER(OCI_Timestamp **, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -271,7 +271,7 @@ boolean OCI_API OCI_TimestampAssign
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -298,7 +298,7 @@ int OCI_API OCI_TimestampCheck
     OCI_CALL_ENTER(int, value)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -327,7 +327,7 @@ int OCI_API OCI_TimestampCompare
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -360,7 +360,7 @@ boolean OCI_API OCI_TimestampConstruct
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -406,7 +406,7 @@ boolean OCI_API OCI_TimestampConvert
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -439,7 +439,7 @@ boolean OCI_API OCI_TimestampFromText
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -498,7 +498,7 @@ boolean OCI_API OCI_TimestampToText
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -571,7 +571,7 @@ boolean OCI_API OCI_TimestampGetDate
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, month)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, day)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -622,7 +622,7 @@ boolean OCI_API OCI_TimestampGetTime
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, sec)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, fsec)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
     *hour = 0;
     *min  = 0;
@@ -694,7 +694,7 @@ boolean OCI_API OCI_TimestampGetTimeZoneName
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -741,7 +741,7 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, hour)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, min)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -778,7 +778,7 @@ boolean OCI_API OCI_TimestampIntervalAdd
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -836,7 +836,7 @@ boolean OCI_API OCI_TimestampIntervalSub
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -895,7 +895,7 @@ boolean OCI_API OCI_TimestampSubtract
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -923,7 +923,7 @@ boolean OCI_API OCI_TimestampSysTimestamp
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -988,7 +988,7 @@ boolean OCI_API OCI_TimestampToCTime
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
     OCI_STATUS = OCI_TimestampGetDateTime(tmsp, &t.tm_year, &t.tm_mon, &t.tm_mday,
                                            &t.tm_hour, &t.tm_min, &t.tm_sec, &msec);
@@ -1036,7 +1036,7 @@ boolean OCI_API OCI_TimestampFromCTime
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    OCI_CALL_CONTEXT_SET(tmsp->con ? tmsp->con : NULL, NULL, tmsp->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
     if (ptm && t == (time_t) 0)
     {

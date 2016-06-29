@@ -33,9 +33,7 @@ OCI_Error * OCI_ErrorCreate
     void
 )
 {
-    OCI_Error *err = (OCI_Error *) calloc(1, sizeof(*err));
-
-    return err;
+    return (OCI_Error *) calloc(1, sizeof(OCI_Error));
 }
 
 /* --------------------------------------------------------------------------------------------- *

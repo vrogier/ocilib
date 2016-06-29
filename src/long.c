@@ -92,7 +92,7 @@ OCI_Long * OCI_API OCI_LongCreate
     OCI_CALL_ENTER(OCI_Long*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, LongTypeValues, OTEXT("Long Type"))
-    OCI_CALL_CONTEXT_SET(stmt->con, stmt, stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     OCI_RETVAL = OCI_LongInit(stmt, &OCI_RETVAL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
@@ -112,7 +112,7 @@ boolean OCI_API OCI_LongFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
     OCI_CALL_CHECK_OBJECT_FETCHED(lg)
-    OCI_CALL_CONTEXT_SET(lg->stmt->con, lg->stmt, lg->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(lg->stmt)
 
     OCI_FREE(lg->buffer)
     OCI_FREE(lg)
@@ -150,7 +150,7 @@ unsigned int OCI_API OCI_LongRead
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, buffer)
-    OCI_CALL_CONTEXT_SET(lg->stmt->con, lg->stmt, lg->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(lg->stmt)
 
     OCI_STATUS = TRUE;
     OCI_RETVAL = len;
@@ -211,7 +211,7 @@ unsigned int OCI_API OCI_LongWrite
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, buffer)
     OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
-    OCI_CALL_CONTEXT_SET(lg->stmt->con, lg->stmt, lg->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(lg->stmt)
 
     if (OCI_CLONG == lg->type)
     {
@@ -308,7 +308,7 @@ unsigned int OCI_API OCI_LongGetSize
 {
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
-    OCI_CALL_CONTEXT_SET(lg->stmt->con, lg->stmt, lg->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(lg->stmt)
 
     OCI_RETVAL = lg->size;
 

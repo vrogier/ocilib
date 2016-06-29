@@ -43,7 +43,7 @@ boolean OCI_PoolClose
 
     OCI_CHECK(NULL == pool, FALSE)
 
-    OCI_CALL_CONTEXT_SET(NULL, NULL, pool->err);
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err);
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -340,7 +340,7 @@ boolean OCI_API OCI_PoolFree
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, pool->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
     OCI_STATUS = OCI_PoolClose(pool);
 
@@ -365,7 +365,7 @@ OCI_Connection * OCI_API OCI_PoolGetConnection
 {
     OCI_CALL_ENTER(OCI_Connection*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, pool->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
     OCI_RETVAL = OCI_ConnectionCreateInternal(pool, pool->db, pool->user, pool->pwd, pool->mode, tag);
 
@@ -401,7 +401,7 @@ unsigned int OCI_API OCI_PoolGetTimeout
 
     OCI_CALL_ENTER(unsigned int, value)
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, pool->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -445,7 +445,7 @@ boolean OCI_API OCI_PoolSetTimeout
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, pool->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -491,7 +491,7 @@ boolean OCI_API OCI_PoolGetNoWait
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, pool->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -536,7 +536,7 @@ boolean OCI_API OCI_PoolSetNoWait
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, pool->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -585,7 +585,7 @@ unsigned int OCI_API OCI_PoolGetBusyCount
 
     OCI_CALL_ENTER(unsigned int, value)
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, pool->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -630,7 +630,7 @@ unsigned int OCI_API OCI_PoolGetOpenedCount
 
     OCI_CALL_ENTER(unsigned int, value)
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, pool->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -712,7 +712,7 @@ boolean OCI_API OCI_PoolSetStatementCacheSize
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, pool->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -749,7 +749,7 @@ unsigned int OCI_API OCI_PoolGetStatementCacheSize
 
     OCI_CALL_ENTER(unsigned int, cache_size)
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, pool->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 

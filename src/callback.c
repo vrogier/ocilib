@@ -101,7 +101,7 @@ sb4 OCI_ProcOutBind
 {
     OCI_CALL_DECLARE_CONTEXT(TRUE)
         
-    OCI_Bind      *bnd = (OCI_Bind *)octxp;
+    OCI_Bind      *bnd  = (OCI_Bind *)octxp;
     OCI_Define    *def  = NULL;
     OCI_Resultset *rs   = NULL;
     ub4            rows = 0;
@@ -117,7 +117,7 @@ sb4 OCI_ProcOutBind
     OCI_CHECK(NULL == bnd, OCI_ERROR)
     OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR)
 
-    OCI_CALL_CONTEXT_SET(bnd->stmt->con, bnd->stmt, bnd->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
     /* update statement status */
 
@@ -261,7 +261,7 @@ ub4 OCI_ProcNotifyChanges
 
     OCI_CHECK(NULL == sub, OCI_SUCCESS)
 
-    OCI_CALL_CONTEXT_SET(NULL, NULL, sub->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(sub->err)
 
     OCI_EventReset(&sub->event);
 
@@ -506,8 +506,6 @@ void OCI_ProcHAEvent
     {
         return;    
     }    
-    
-    OCI_CALL_CONTEXT_SET(NULL, NULL, OCILib.err)
 
     if (OCILib.version_runtime >= OCI_10_2)
     {

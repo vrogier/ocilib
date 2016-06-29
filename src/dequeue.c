@@ -47,7 +47,7 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
     OCI_CALL_ENTER(OCI_Dequeue*, dequeue)
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CALL_CONTEXT_SET(typinf->con, NULL, typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
 
     /* allocate dequeue structure */
 
@@ -97,7 +97,7 @@ boolean OCI_API OCI_DequeueFree
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     /* Unsubscribe notification if needed */
 
@@ -132,7 +132,7 @@ boolean OCI_API OCI_DequeueFree
     OCI_FREE(dequeue->agent_list)
     OCI_FREE(dequeue)
 
-    OCI_RETVAL = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
     OCI_CALL_EXIT()
 }
@@ -151,7 +151,7 @@ OCI_Agent * OCI_API OCI_DequeueListen
 
     OCI_CALL_ENTER(OCI_Agent*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     /* listen only if OCI_DequeueSetAgentList has been called */
 
@@ -205,7 +205,7 @@ OCI_Msg * OCI_API OCI_DequeueGet
 
     OCI_CALL_ENTER(OCI_Msg*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     /* reset message */
 
@@ -292,11 +292,11 @@ const otext * OCI_API OCI_DequeueGetConsumer
 {
     OCI_CALL_ENTER(const otext*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     if (!dequeue->consumer)
     {
-        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
+        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS, 
                                             OCI_ATTR_CONSUMER_NAME, &dequeue->consumer);
     }
  
@@ -317,7 +317,7 @@ boolean OCI_API OCI_DequeueSetConsumer
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_RETVAL = OCI_STATUS = OCI_SetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
                                                      OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, consumer);
@@ -336,7 +336,7 @@ const otext * OCI_API OCI_DequeueGetCorrelation
     OCI_CALL_ENTER(const otext*, NULL)
 
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     if (!dequeue->pattern)
     {
@@ -361,7 +361,7 @@ boolean OCI_API OCI_DequeueSetCorrelation
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_RETVAL = OCI_STATUS = OCI_SetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
                                                      OCI_ATTR_CORRELATION, &dequeue->pattern, pattern);
@@ -386,7 +386,9 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, id)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, len)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+
+    *len = 0;
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MSGID, dequeue->opth, &value, NULL)
 
@@ -400,10 +402,6 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
         }
 
         memcpy(id, OCIRawPtr(dequeue->typinf->con->env, value), (size_t) (*len));
-    }
-    else
-    {
-        *len = 0;
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -426,7 +424,7 @@ boolean OCI_API OCI_DequeueSetRelativeMsgID
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_EXEC(OCIRawAssignBytes(dequeue->typinf->con->env, dequeue->typinf->con->err, (ub1*) id, (ub4) len, (OCIRaw **) &value))
 
@@ -450,7 +448,7 @@ unsigned int OCI_API OCI_DequeueGetVisibility
 
     OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_VISIBILITY, dequeue->opth, &value, NULL)
 
@@ -474,7 +472,7 @@ boolean OCI_API OCI_DequeueSetVisibility
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
     OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, visibility, VisibilityModeValues, OTEXT("Visibility Mode"))
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_SET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_VISIBILITY, dequeue->opth, &value, 0)
 
@@ -496,7 +494,7 @@ unsigned int OCI_API OCI_DequeueGetMode
 
     OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MODE, dequeue->opth, &value, NULL)
 
@@ -520,7 +518,7 @@ boolean OCI_API OCI_DequeueSetMode
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
     OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, mode, DequeueModeValues, OTEXT("Dequeue Mode"))
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_SET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MODE, dequeue->opth, &value, 0)
 
@@ -542,7 +540,7 @@ unsigned int OCI_API OCI_DequeueGetNavigation
 
     OCI_CALL_ENTER(unsigned int, value)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_NAVIGATION, dequeue->opth, &value, NULL)
 
@@ -566,7 +564,7 @@ boolean OCI_API OCI_DequeueSetNavigation
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
     OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, position, NavigationModeValues, OTEXT("Navigation Mode"))
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_SET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_NAVIGATION, dequeue->opth, &value, 0)
 
@@ -588,7 +586,7 @@ int OCI_API OCI_DequeueGetWaitTime
 
     OCI_CALL_ENTER(unsigned int, value)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_WAIT, dequeue->opth, &value, NULL)
 
@@ -611,7 +609,7 @@ boolean OCI_API OCI_DequeueSetWaitTime
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_SET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_WAIT, dequeue->opth, &value, 0)
 
@@ -633,7 +631,7 @@ boolean OCI_API OCI_DequeueSetAgentList
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_ENQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     OCI_FREE(dequeue->agent_list)
 
@@ -688,7 +686,7 @@ boolean OCI_API  OCI_DequeueSubscribe
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_DATABASE_NOTIFY_ENABLED()
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     con = dequeue->typinf->con;
 
@@ -826,7 +824,7 @@ boolean OCI_API OCI_DequeueUnsubscribe
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_DATABASE_NOTIFY_ENABLED()
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET(dequeue->typinf->con, NULL, dequeue->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
     dequeue->callback = NULL;
 

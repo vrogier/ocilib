@@ -36,16 +36,14 @@ OCI_Ref * OCI_RefInit
     void           *handle
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_DECLARE_CONTEXT(FALSE)
 
     OCI_Ref *ref = NULL;
 
-    OCI_CHECK(NULL == pref, NULL);
-    OCI_CHECK(NULL == con, NULL);
+    OCI_CHECK(NULL == pref, NULL)
+    OCI_CHECK(NULL == con, NULL)
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
-
-    OCI_STATUS = FALSE;
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (!*pref)
     {
@@ -116,7 +114,7 @@ boolean OCI_RefPin
 
     OCI_CHECK(NULL == ref, FALSE)
 
-    OCI_CALL_CONTEXT_SET(ref->con, NULL, ref->con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con);
 
     OCI_RefUnpin(ref);
 
@@ -151,7 +149,7 @@ boolean OCI_RefUnpin
     OCI_CHECK(NULL == ref, FALSE)
     OCI_CHECK(NULL == ref->obj, FALSE)
 
-    OCI_CALL_CONTEXT_SET(ref->con, NULL, ref->con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con);
 
     if (ref->pinned)
     {
@@ -187,7 +185,7 @@ OCI_Ref * OCI_API OCI_RefCreate
     OCI_CALL_ENTER(OCI_Ref *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_RETVAL = OCI_RefInit(con, &typinf, &OCI_RETVAL, NULL);
     OCI_STATUS = (NULL != OCI_RETVAL);
@@ -207,7 +205,7 @@ boolean OCI_API OCI_RefFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
     OCI_CALL_CHECK_OBJECT_FETCHED(ref)
-    OCI_CALL_CONTEXT_SET(ref->con, NULL, ref->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
     OCI_RefUnpin(ref);
 
@@ -242,7 +240,7 @@ OCI_Ref ** OCI_API OCI_RefArrayCreate
     OCI_CALL_ENTER(OCI_Ref **, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0, sizeof(OCIRef *), sizeof(OCI_Ref), 0, typinf);
 
@@ -283,7 +281,7 @@ OCI_Object * OCI_API OCI_RefGetObject
 {
     OCI_CALL_ENTER(OCI_Object*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
-    OCI_CALL_CONTEXT_SET(ref->con, NULL, ref->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
     if (!OCI_RefIsNull(ref))
     {
@@ -312,7 +310,7 @@ boolean OCI_API OCI_RefAssign
     OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
     OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref_src)
     OCI_CALL_CHECK_COMPAT(ref->con, ref->typinf->tdo == ref_src->typinf->tdo)
-    OCI_CALL_CONTEXT_SET(ref->con, NULL, ref->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
     OCI_EXEC(OCIRefAssign(ref->con->env, ref->con->err, ref_src->handle, &ref->handle))
 
@@ -344,7 +342,7 @@ boolean OCI_API OCI_RefIsNull
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
-    OCI_CALL_CONTEXT_SET(ref->con, NULL, ref->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
     OCI_RETVAL = OCIRefIsNull(ref->con->env, ref->handle);
 
@@ -362,7 +360,7 @@ boolean OCI_API OCI_RefSetNull
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
-    OCI_CALL_CONTEXT_SET(ref->con, NULL, ref->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
     OCI_STATUS = OCI_RefUnpin(ref);
 
@@ -399,7 +397,7 @@ boolean OCI_API OCI_RefToText
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    OCI_CALL_CONTEXT_SET(ref->con, NULL, ref->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -434,7 +432,7 @@ unsigned int OCI_API OCI_RefGetHexSize
 
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
-    OCI_CALL_CONTEXT_SET(ref->con, NULL, ref->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
     size = OCIRefHexSize(ref->con->env, (const OCIRef *)ref->handle) / (ub4) sizeof(dbtext);
 

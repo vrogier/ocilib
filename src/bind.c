@@ -96,10 +96,6 @@ boolean OCI_BindFree
  * OCI_BindAllocData
  * --------------------------------------------------------------------------------------------- */
 
-/* --------------------------------------------------------------------------------------------- *
-* OCI_BindAllocData
-* --------------------------------------------------------------------------------------------- */
-
 boolean OCI_BindAllocData
 (
     OCI_Bind *bnd
@@ -468,7 +464,7 @@ unsigned int OCI_API OCI_BindGetSubtype
 {
     OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
     OCI_CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
-    OCI_CALL_CONTEXT_SET(bnd->stmt->con, bnd->stmt, bnd->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
     if (OCI_CDT_NUMERIC   == bnd->type ||
         OCI_CDT_LONG      == bnd->type ||
@@ -547,7 +543,7 @@ boolean OCI_API OCI_BindSetDataSizeAtPos
     OCI_CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
     OCI_CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
     OCI_CALL_CHECK_MIN(bnd->stmt->con, bnd->stmt, size, 1)
-    OCI_CALL_CONTEXT_SET(bnd->stmt->con, bnd->stmt, bnd->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
     if (bnd->buffer.lens)
     {
@@ -594,7 +590,7 @@ unsigned int OCI_API OCI_BindGetDataSizeAtPos
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
     OCI_CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
-    OCI_CALL_CONTEXT_SET(bnd->stmt->con, bnd->stmt, bnd->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
     if (bnd->buffer.lens)
     {
@@ -627,7 +623,7 @@ boolean OCI_API OCI_BindSetNullAtPos
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
     OCI_CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
-    OCI_CALL_CONTEXT_SET(bnd->stmt->con, bnd->stmt, bnd->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
     OCI_RETVAL = OCI_STATUS = OCI_BindSetNullIndicator(bnd, position, OCI_IND_NULL);
 
@@ -659,7 +655,7 @@ boolean OCI_API OCI_BindSetNotNullAtPos
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
     OCI_CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
-    OCI_CALL_CONTEXT_SET(bnd->stmt->con, bnd->stmt, bnd->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
     OCI_RETVAL = OCI_STATUS = OCI_BindSetNullIndicator(bnd, position, OCI_IND_NOTNULL);
 
@@ -691,7 +687,7 @@ boolean OCI_API OCI_BindIsNullAtPos
     OCI_CALL_ENTER(boolean, TRUE)
     OCI_CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
     OCI_CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
-    OCI_CALL_CONTEXT_SET(bnd->stmt->con, bnd->stmt, bnd->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
     if (bnd->buffer.inds)
     {
@@ -726,7 +722,7 @@ boolean OCI_API OCI_BindSetCharsetForm
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
     OCI_CALL_CHECK_ENUM_VALUE(bnd->stmt->con, bnd->stmt, csfrm, CharsetFormValues, OTEXT("CharsetForm"))
-    OCI_CALL_CONTEXT_SET(bnd->stmt->con, bnd->stmt, bnd->stmt->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
     if ((OCI_CDT_TEXT == bnd->type) || (OCI_CDT_LONG == bnd->type))
     {

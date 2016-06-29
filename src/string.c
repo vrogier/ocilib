@@ -457,7 +457,7 @@ boolean OCI_StringToStringPtr
     int     dbsize = 0;
 
     OCI_CHECK(NULL == str, FALSE);
-    OCI_CALL_CONTEXT_SET(NULL, NULL, err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(err)
 
     dbsize = -1;
     dbstr  = OCI_StringGetOracleString(value, &dbsize);
@@ -483,7 +483,7 @@ boolean OCI_StringFreeStringPtr
 {
     OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CHECK(NULL == str, FALSE);
-    OCI_CALL_CONTEXT_SET(NULL, NULL, err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(err)
 
     OCI_EXEC(OCIStringResize(env, err, (ub4)0, str))
 
@@ -508,8 +508,9 @@ boolean OCI_GetStringAttribute
     dbtext *dbstr   = NULL;
     int     dbsize  = -1;
 
-    OCI_CHECK(NULL == str, FALSE);
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CHECK(NULL == str, FALSE)
+ 
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_GET_ATTRIB(type, attr, handle, &dbstr, &dbsize)
 
@@ -564,7 +565,7 @@ boolean OCI_SetStringAttribute
     dbtext *dbstr  = NULL;
     int     dbsize = -1;
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     dbstr = OCI_StringGetOracleString(value, &dbsize);
 

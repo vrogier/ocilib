@@ -126,7 +126,7 @@ OCI_Interval * OCI_API OCI_IntervalCreate
     OCI_CALL_ENTER(OCI_Interval*, NULL)
     OCI_CALL_CHECK_INITIALIZED()
     OCI_CALL_CHECK_INTERVAL_ENABLED(con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"));
@@ -151,7 +151,7 @@ boolean OCI_API OCI_IntervalFree
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_INTERVAL_ENABLED(itv->con)
     OCI_CALL_CHECK_OBJECT_FETCHED(itv);
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
     if (OCI_OBJECT_ALLOCATED == itv->hstate)
     {
@@ -184,7 +184,7 @@ OCI_Interval ** OCI_API OCI_IntervalArrayCreate
     OCI_CALL_ENTER(OCI_Interval **, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_INTERVAL_ENABLED(con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"))
@@ -255,7 +255,7 @@ boolean OCI_API OCI_IntervalAssign
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv_src)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -281,7 +281,7 @@ int OCI_API OCI_IntervalCheck
     
     OCI_CALL_ENTER(int, value)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -309,7 +309,7 @@ int OCI_API OCI_IntervalCompare
     OCI_CALL_ENTER(int, value)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv2)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -338,7 +338,7 @@ boolean OCI_API OCI_IntervalFromText
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
     dbstr = OCI_StringGetOracleString(str, &dbsize);
 
@@ -375,7 +375,7 @@ boolean OCI_API OCI_IntervalToText
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -434,7 +434,7 @@ boolean OCI_API OCI_IntervalFromTimeZone
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
     dbstr = OCI_StringGetOracleString(str, &dbsize);
 
@@ -471,7 +471,7 @@ boolean OCI_API OCI_IntervalGetDaySecond
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, min)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, sec)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, fsec)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
     *day  = 0;
     *hour = 0;
@@ -518,7 +518,7 @@ boolean OCI_API OCI_IntervalGetYearMonth
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, year)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, month)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
     *year  = 0;
     *month = 0;
@@ -550,7 +550,7 @@ boolean OCI_API OCI_IntervalSetDaySecond
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -589,7 +589,7 @@ boolean OCI_API OCI_IntervalSetYearMonth
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -620,7 +620,7 @@ boolean OCI_API OCI_IntervalAdd
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv2)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -646,7 +646,7 @@ boolean OCI_API OCI_IntervalSubtract
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     OCI_CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv2)
-    OCI_CALL_CONTEXT_SET(itv->con ? itv->con : NULL, NULL, itv->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 

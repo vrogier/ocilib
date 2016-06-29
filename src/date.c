@@ -37,9 +37,9 @@ OCI_Date * OCI_DateInit
     boolean         ansi
 )
 {
+    OCI_CALL_DECLARE_CONTEXT(FALSE)
     OCI_Date *date = NULL;
-    boolean   res  = FALSE;
-
+ 
     OCI_CHECK(NULL == pdate, NULL);
 
     if (!*pdate)
@@ -47,7 +47,7 @@ OCI_Date * OCI_DateInit
         *pdate = (OCI_Date *) OCI_MemAlloc(OCI_IPC_DATE, sizeof(*date), (size_t) 1, TRUE);
     }
 
-    res = (NULL != *pdate);
+    OCI_STATUS = (NULL != *pdate);
 
     if (*pdate)
     {
@@ -73,7 +73,7 @@ OCI_Date * OCI_DateInit
 
             date->handle = (OCIDate *) OCI_MemAlloc(OCI_IPC_OCIDATE, sizeof(*date->handle), (size_t) 1, TRUE);
 
-            res = (NULL != date->handle);
+            OCI_STATUS = (NULL != date->handle);
         }
         else
         {
@@ -103,7 +103,7 @@ OCI_Date * OCI_DateInit
 
     /* check for failure */
 
-    if (!res && date)
+    if (!OCI_STATUS && date)
     {
         OCI_DateFree(date);
         *pdate = date = NULL;
@@ -127,7 +127,7 @@ OCI_Date * OCI_API OCI_DateCreate
 {
     OCI_CALL_ENTER(OCI_Date*, NULL)
     OCI_CALL_CHECK_INITIALIZED()
-    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_RETVAL = OCI_DateInit(con, &OCI_RETVAL, NULL, TRUE, FALSE);
     OCI_STATUS = (NULL != OCI_RETVAL);
@@ -147,7 +147,7 @@ boolean OCI_API OCI_DateFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
     OCI_CALL_CHECK_OBJECT_FETCHED(date)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     if (date->allocated)
     {
@@ -176,9 +176,9 @@ OCI_Date ** OCI_API OCI_DateArrayCreate
 {
     OCI_Array *arr = NULL;
 
-    OCI_CALL_ENTER(OCI_Date **, NULL)      
+    OCI_CALL_ENTER(OCI_Date **, NULL)
     OCI_CALL_CHECK_INITIALIZED()
-    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
     OCI_STATUS = (NULL != arr);
@@ -220,7 +220,7 @@ boolean OCI_API OCI_DateAddDays
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
     
     OCI_EXEC(OCIDateAddDays(date->err, date->handle, (sb4)nb, date->handle))
 
@@ -241,7 +241,7 @@ boolean OCI_API OCI_DateAddMonths
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     OCI_EXEC(OCIDateAddMonths(date->err, date->handle, (sb4) nb, date->handle) )
 
@@ -263,7 +263,7 @@ boolean OCI_API OCI_DateAssign
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date_src)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     OCI_EXEC(OCIDateAssign(date->err, date_src->handle, date->handle))
 
@@ -285,7 +285,7 @@ int OCI_API OCI_DateCheck
 
     OCI_CALL_ENTER(int, valid)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     OCI_EXEC(OCIDateCheck(date->err, date->handle, &valid))
     
@@ -309,7 +309,7 @@ int OCI_API OCI_DateCompare
     OCI_CALL_ENTER(int, value)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date2)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     OCI_EXEC(OCIDateCompare(date->err, date->handle, date2->handle, &value))
 
@@ -333,7 +333,7 @@ int OCI_API OCI_DateDaysBetween
     OCI_CALL_ENTER(int, diff)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date);
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date2);
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     OCI_EXEC(OCIDateDaysBetween(date->err, date->handle, date2->handle, &diff))
 
@@ -361,7 +361,7 @@ boolean OCI_API OCI_DateFromText
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     if (!fmt || !fmt[0])
     {
@@ -408,7 +408,7 @@ boolean OCI_API OCI_DateGetDate
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, year)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, month)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, day)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     OCIDateGetDate(date->handle, &yr, &mt, &dy);
 
@@ -442,7 +442,7 @@ boolean OCI_API OCI_DateGetTime
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, hour)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, min)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, sec)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     OCIDateGetTime(date->handle, &hr, &mn, &sc);
 
@@ -484,7 +484,7 @@ boolean OCI_API OCI_DateLastDay
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     OCI_EXEC(OCIDateLastDay(date->err, date->handle, date->handle))
 
@@ -509,7 +509,7 @@ boolean OCI_API OCI_DateNextDay
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, day)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     dbstr = OCI_StringGetOracleString(day, &dbsize);
 
@@ -536,7 +536,7 @@ boolean OCI_API OCI_DateSetDate
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     OCIDateSetDate(date->handle, (sb2) year, (ub1) month, (ub1) day);
 
@@ -559,7 +559,7 @@ boolean OCI_API OCI_DateSetTime
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     OCIDateSetTime(date->handle, (ub1) hour, (ub1) min, (ub1) sec);
 
@@ -597,7 +597,7 @@ boolean OCI_API OCI_DateSysDate
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     OCI_EXEC(OCIDateSysDate(date->err, date->handle))
 
@@ -626,7 +626,7 @@ boolean OCI_API OCI_DateToText
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -681,7 +681,7 @@ boolean OCI_API OCI_DateZoneToZone
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, zone1)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, zone2)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     dbstr1 = OCI_StringGetOracleString(zone1, &dbsize1);
     dbstr2 = OCI_StringGetOracleString(zone2, &dbsize2);
@@ -718,7 +718,7 @@ boolean OCI_API OCI_DateToCTime
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     t.tm_year = date->handle->OCIDateYYYY - 1900;
     t.tm_mon  = date->handle->OCIDateMM - 1;
@@ -762,7 +762,7 @@ boolean OCI_API OCI_DateFromCTime
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    OCI_CALL_CONTEXT_SET(date->con ? date->con : NULL, NULL, date->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
     if (!ptm && (t == (time_t) 0))
     {

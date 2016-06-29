@@ -94,7 +94,7 @@ boolean OCI_API OCI_MutexFree
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, mutex->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(mutex->err)
 
     /* close mutex handle */
 
@@ -130,7 +130,7 @@ boolean OCI_API OCI_MutexAcquire
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, mutex->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(mutex->err)
 
     OCI_EXEC(OCIThreadMutexAcquire(OCILib.env, mutex->err, mutex->handle))
 
@@ -150,7 +150,7 @@ boolean OCI_API OCI_MutexRelease
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, mutex->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(mutex->err)
 
     OCI_EXEC(OCIThreadMutexRelease(OCILib.env, mutex->err, mutex->handle))
  

@@ -42,17 +42,17 @@ OCI_Coll * OCI_CollInit
 
     OCI_CHECK(NULL == pcoll, NULL)
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (!*pcoll)
     {
         *pcoll = (OCI_Coll *) OCI_MemAlloc(OCI_IPC_COLLECTION, sizeof(*coll), (size_t) 1, TRUE);
     }
 
+    OCI_STATUS = (NULL != *pcoll);
+
     if (*pcoll)
     {
-        OCI_STATUS = TRUE;
-
         coll = *pcoll;
 
         coll->con    = con;
@@ -105,13 +105,11 @@ OCI_Coll * OCI_API OCI_CollCreate
     OCI_TypeInfo *typinf
 )
 {
-    OCI_Coll *coll = NULL;
-
     OCI_CALL_ENTER(OCI_Coll *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CALL_CONTEXT_SET(typinf->con, NULL, typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
 
-    OCI_RETVAL = OCI_CollInit(typinf->con, &coll, (OCIColl *)NULL, typinf);
+    OCI_RETVAL = OCI_CollInit(typinf->con, &OCI_RETVAL, (OCIColl *)NULL, typinf);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -129,7 +127,7 @@ boolean OCI_API OCI_CollFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
     OCI_CALL_CHECK_OBJECT_FETCHED(coll)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     /* free data element */
 
@@ -172,7 +170,7 @@ OCI_Coll ** OCI_API OCI_CollArrayCreate
 
     OCI_CALL_ENTER(OCI_Coll **, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, sizeof(OCIColl *), sizeof(OCI_Coll), 0, typinf);
 
@@ -217,7 +215,7 @@ boolean OCI_API OCI_CollAssign
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll_src)
     OCI_CALL_CHECK_COMPAT(coll->con, coll->typinf->cols[0].libcode == coll_src->typinf->cols[0].libcode)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     OCI_EXEC(OCICollAssign(coll->con->env, coll->con->err, coll_src->handle, coll->handle))
 
@@ -237,7 +235,7 @@ unsigned int OCI_API OCI_CollGetType
 {
     OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
@@ -271,7 +269,7 @@ unsigned int OCI_API OCI_CollGetMax
 {
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     OCI_RETVAL = (unsigned int) OCICollMax(coll->con->env, coll->handle);
 
@@ -291,7 +289,7 @@ unsigned int OCI_API OCI_CollGetSize
 
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     OCI_EXEC(OCICollSize(coll->con->env, coll->con->err, coll->handle, &value))
 
@@ -313,7 +311,7 @@ boolean OCI_API OCI_CollTrim
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
     OCI_CALL_CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) OCI_CollGetSize(coll));
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     OCI_EXEC(OCICollTrim(coll->con->env, coll->con->err, (sb4) nb_elem, coll->handle))
 
@@ -338,7 +336,7 @@ OCI_Elem * OCI_API OCI_CollGetElem
 
     OCI_CALL_ENTER(OCI_Elem*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     OCI_EXEC(OCICollGetElem(coll->con->env, coll->con->err, coll->handle, (sb4) index-1, &exists, &data, (dvoid **) (dvoid *) &p_ind))
 
@@ -369,7 +367,7 @@ boolean OCI_API OCI_CollGetElem2
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
     OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     OCI_CALL_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     OCI_EXEC(OCICollGetElem(coll->con->env, coll->con->err, coll->handle, (sb4) index-1, &exists, &data, (dvoid **) (dvoid *) &p_ind))
 
@@ -402,7 +400,7 @@ boolean OCI_API OCI_CollSetElem
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
     OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     OCI_CALL_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     OCI_EXEC(OCICollAssignElem(coll->con->env, coll->con->err, (sb4) index-1, elem->handle, elem->pind, coll->handle))
 
@@ -425,7 +423,7 @@ boolean OCI_API OCI_CollAppend
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
     OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     OCI_CALL_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     OCI_EXEC(OCICollAppend(coll->con->env, coll->con->err, elem->handle, elem->pind, coll->handle))
 
@@ -457,7 +455,7 @@ boolean OCI_API OCI_CollClear
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     OCI_RETVAL = OCI_STATUS = OCI_CollTrim(coll, OCI_CollGetSize(coll));
 
@@ -476,7 +474,7 @@ boolean OCI_API OCI_CollDeleteElem
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
@@ -501,7 +499,7 @@ unsigned int OCI_API OCI_CollGetCount
 
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
@@ -535,7 +533,7 @@ boolean OCI_API OCI_CollToText
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     if (str)
     {

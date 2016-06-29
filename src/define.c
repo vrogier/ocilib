@@ -231,18 +231,12 @@ boolean OCI_DefineAlloc
 
     OCI_CHECK(NULL == def, FALSE)
 
-    OCI_CALL_CONTEXT_SET(def->rs->stmt->con, def->rs->stmt, def->rs->stmt->con->err);
+    OCI_CALL_CONTEXT_SET_FROM_STMT(def->rs->stmt)
 
     /* Allocate null indicators array */
 
-    if (SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode)
-    {
-        indsize = (ub4) sizeof(void*);
-    }
-    else
-    {
-        indsize = (ub4) sizeof(sb2);
-    }
+    indsize = (ub4)(SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode ? sizeof(void*) : sizeof(sb2));
+
 
     def->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, (size_t) indsize, (size_t) def->buf.count, TRUE);
     OCI_STATUS = (NULL != def->buf.inds);
@@ -282,15 +276,7 @@ boolean OCI_DefineAlloc
 
         /* Allocate buffer array */
 
-        if (OCI_CDT_LONG == def->col.datatype)
-        {
-            bufsize = (ub4) sizeof(OCI_Long *);
-        }
-        else
-        {
-            bufsize = def->col.bufsize;
-        }
-
+        bufsize = (ub4)(OCI_CDT_LONG == def->col.datatype ? sizeof(OCI_Long *) : def->col.bufsize);
         def->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (size_t) bufsize, (size_t) def->buf.count, TRUE);
         OCI_STATUS = (NULL != def->buf.data);
     }
@@ -341,7 +327,7 @@ boolean OCI_DefineDef
 
     OCI_CHECK(NULL == def, FALSE)
 
-    OCI_CALL_CONTEXT_SET(def->rs->stmt->con, def->rs->stmt, def->rs->stmt->con->err);
+    OCI_CALL_CONTEXT_SET_FROM_STMT(def->rs->stmt)
 
     /*check define mode for long columns */
 

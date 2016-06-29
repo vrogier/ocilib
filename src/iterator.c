@@ -37,7 +37,7 @@ OCI_Coll *coll
 
     OCI_CALL_ENTER(OCI_Iter*, iter);
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CONTEXT_SET(coll->con, NULL, coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     /* allocate iterator structure */
 
@@ -91,7 +91,7 @@ boolean OCI_API OCI_IterFree
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
-    OCI_CALL_CONTEXT_SET(iter->coll->con, NULL, iter->coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(iter->coll->con)
 
     /* close iterator handle */
 
@@ -132,7 +132,7 @@ OCI_Elem * OCI_API OCI_IterGetNext
 
     OCI_CALL_ENTER(OCI_Elem *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
-    OCI_CALL_CONTEXT_SET(iter->coll->con, NULL, iter->coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(iter->coll->con)
 
     if (!iter->eoc)
     {
@@ -164,7 +164,7 @@ OCI_Elem * OCI_API OCI_IterGetPrev
 
     OCI_CALL_ENTER(OCI_Elem *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
-    OCI_CALL_CONTEXT_SET(iter->coll->con, NULL, iter->coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(iter->coll->con)
 
     if (!iter->boc)
     {
@@ -193,7 +193,7 @@ OCI_Elem * OCI_API OCI_IterGetCurrent
 {
     OCI_CALL_ENTER(OCI_Elem*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
-    OCI_CALL_CONTEXT_SET(iter->coll->con, NULL, iter->coll->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(iter->coll->con)
 
     if (iter->elem && !iter->boc && !iter->eoc && !iter->dirty)
     {

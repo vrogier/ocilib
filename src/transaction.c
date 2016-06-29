@@ -71,7 +71,7 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
 
     OCI_CALL_ENTER(OCI_Transaction *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     /* create transaction object */
 
@@ -124,7 +124,7 @@ boolean OCI_API OCI_TransactionFree
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET(trans->con, NULL, trans->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
 
     OCI_STATUS = OCI_TransactionClose(trans);
 
@@ -150,7 +150,7 @@ boolean OCI_API OCI_TransactionStart
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET(trans->con, NULL, trans->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
 
     OCI_EXEC(OCITransStart(trans->con->cxt, trans->con->err, (uword) trans->timeout,  (ub4) trans->mode))
 
@@ -170,7 +170,7 @@ boolean OCI_API OCI_TransactionStop
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET(trans->con, NULL, trans->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
 
     /* commit or rollback upon auto commit mode */
 
@@ -199,7 +199,7 @@ boolean OCI_API OCI_TransactionResume
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET(trans->con, NULL, trans->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
 
     OCI_EXEC(OCITransStart(trans->con->cxt, trans->con->err, (uword) trans->timeout, (ub4) OCI_TRANS_RESUME))
 
@@ -219,7 +219,7 @@ boolean OCI_API OCI_TransactionPrepare
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET(trans->con, NULL, trans->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
 
     OCI_EXEC(OCITransPrepare(trans->con->cxt, trans->con->err, (ub4) OCI_DEFAULT))
 
@@ -239,7 +239,7 @@ boolean OCI_API OCI_TransactionForget
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET(trans->con, NULL, trans->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
 
     OCI_EXEC(OCITransForget(trans->con->cxt, trans->con->err, (ub4) OCI_DEFAULT))
 

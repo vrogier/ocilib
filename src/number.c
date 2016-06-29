@@ -45,7 +45,7 @@ static MagicNumber MagicNumbers[] =
                                                                                     \
     OCI_CALL_ENTER(boolean, FALSE)                                            \
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)                                      \
-    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)                            \
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)                            \
                                                                                     \
     OCI_STATUS = OCI_NumberSetNativeValue(number->con, &src_num,                    \
                                            OCI_GetNumericTypeSize(type),            \
@@ -107,7 +107,7 @@ boolean OCI_NumberGetNativeValue
     OCI_CHECK(NULL == number, FALSE)
     OCI_CHECK(NULL == out_value, FALSE)
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE < OCI_10_1
 
@@ -177,7 +177,7 @@ boolean OCI_NumberSetNativeValue
     OCI_CHECK(NULL == number, FALSE)
     OCI_CHECK(NULL == in_value, FALSE)
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE < OCI_10_1
 
@@ -251,7 +251,7 @@ boolean OCI_NumberFromString
     OCI_CHECK(NULL == out_value, FALSE)
     OCI_CHECK(NULL == in_value, FALSE)
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     /* For binary types, perform a C based conversion */
 
@@ -374,7 +374,7 @@ boolean OCI_NumberToString
     OCI_CHECK(NULL == out_value, FALSE)
     OCI_CHECK(NULL == number, FALSE)
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con ? con->err : OCILib.err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     out_value[0] = 0;
 
@@ -601,7 +601,7 @@ boolean OCI_API OCI_NumberFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CHECK_OBJECT_FETCHED(number);
-    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
     if (OCI_OBJECT_ALLOCATED == number->hstate)
     {
@@ -674,7 +674,7 @@ boolean OCI_API OCI_NumberAssign
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number_src)
-    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
     OCI_EXEC(OCINumberAssign(number->err, number_src->handle, number->handle))
 
@@ -697,7 +697,7 @@ boolean OCI_API OCI_NumberToText
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
     OCI_RETVAL = OCI_NumberToString(number->con, number->handle, OCI_NUM_NUMBER, SQLT_VNU, str, size, fmt);
 
@@ -717,7 +717,7 @@ boolean OCI_API OCI_NumberFromText
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
     OCI_RETVAL = OCI_NumberFromString(number->con, number->handle, sizeof(OCINumber), OCI_NUM_NUMBER, SQLT_VNU, str, fmt);
 
@@ -735,7 +735,7 @@ unsigned char * OCI_API OCI_NumberGetContent
 {
     OCI_CALL_ENTER(unsigned char *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
     if (number->handle)
     {
@@ -758,7 +758,7 @@ boolean OCI_API OCI_NumberSetContent
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, content)
-    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
     if (number->handle)
     {
@@ -783,7 +783,7 @@ boolean OCI_API OCI_NumberSetValue
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
     OCI_RETVAL = OCI_STATUS = OCI_NumberSetNativeValue(number->con, number->handle,
                                                          OCI_GetNumericTypeSize(type),
@@ -805,7 +805,7 @@ boolean OCI_API OCI_NumberGetValue
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CONTEXT_SET(number->con, NULL, number->err)
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
     OCI_RETVAL = OCI_STATUS = OCI_NumberGetNativeValue(number->con, number->handle,
                                                               OCI_GetNumericTypeSize(type),
@@ -885,7 +885,7 @@ int OCI_API OCI_NumberCompare
     OCI_CALL_ENTER(int, value)
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number1)
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number2)
-    OCI_CALL_CONTEXT_SET(number1->con, NULL, number1->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(number1->con)
 
     OCI_EXEC(OCINumberCmp(number1->err, number1->handle, number1->handle, &value))
 

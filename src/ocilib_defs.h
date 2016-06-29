@@ -446,10 +446,15 @@
     goto ExitCall;                                                              \
 
 
-#define OCI_CALL_CONTEXT_SET(con, stmt, err)                                    \
-    ctx->lib_con      = (con);                                                  \
-    ctx->lib_stmt     = (stmt);                                                 \
-    ctx->oci_err      = (err);                                                  \
+#define OCI_CALL_CONTEXT_SET(c, s, e)                                           \
+    ctx->lib_con      = (c);                                                    \
+    ctx->lib_stmt     = (s);                                                    \
+    ctx->oci_err      = (e) ? (e) : OCILib.err;                                 \
+
+#define OCI_CALL_CONTEXT_SET_FROM_CONN(con)   OCI_CALL_CONTEXT_SET((con), NULL, ((con) ? (con)->err : OCILib.err))
+#define OCI_CALL_CONTEXT_SET_FROM_OBJ(obj)    OCI_CALL_CONTEXT_SET(((obj)->con), NULL, ((obj)->err))
+#define OCI_CALL_CONTEXT_SET_FROM_ERR(err)    OCI_CALL_CONTEXT_SET(NULL, NULL, (err))
+#define OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)  OCI_CALL_CONTEXT_SET(((stmt)->con), (stmt), ((stmt)->con->err))
 
 #define OCI_RAISE_EXCEPTION(exp)                                                \
                                                                                 \
@@ -511,6 +516,12 @@
     prop = value;                                                               \
     OCI_RETVAL = OCI_STATUS;                                                    \
     OCI_CALL_EXIT()                                                             \
+
+
+#define OCI_GET_CONN(obj) (obj ? obj->con : NULL)
+#define OCI_GET_ERR(obj)  (obj ? obj->err : NULL)
+#define OCI_GET_CONN_ERR(obj) (obj && obj->con ? obj->con->err : NULL)
+
 
 #ifdef _WINDOWS
 

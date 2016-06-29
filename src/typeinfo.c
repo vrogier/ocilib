@@ -94,7 +94,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, TypeInfoTypeValues, OTEXT("Type"))
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     obj_schema[0] = 0;
     obj_name[0]   = 0;
@@ -487,7 +487,7 @@ boolean OCI_API OCI_TypeInfoFree
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CALL_CONTEXT_SET(typinf->con, NULL, typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
 
     typinf->refcount--;
 
@@ -554,7 +554,7 @@ OCI_Column * OCI_API OCI_TypeInfoGetColumn
     OCI_CALL_ENTER(OCI_Column *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CHECK_BOUND(typinf->con, index, 1,  typinf->nb_cols)
-    OCI_CALL_CONTEXT_SET(typinf->con, NULL, typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
 
     OCI_RETVAL = &(typinf->cols[index - 1]);
 

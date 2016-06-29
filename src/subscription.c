@@ -38,7 +38,8 @@ boolean OCI_SubscriptionClose
     boolean alloc = FALSE;
 
     OCI_CHECK(NULL == sub, FALSE);
-    OCI_CALL_CONTEXT_SET(sub->con, NULL, sub->err)
+  
+    OCI_CALL_CONTEXT_SET_FROM_CONN(sub->con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -167,7 +168,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_PROC, handler)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -310,7 +311,7 @@ boolean OCI_API OCI_SubscriptionUnregister
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
-    OCI_CALL_CONTEXT_SET(sub->con, NULL, sub->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(sub->err)
 
     OCI_RETVAL = OCI_STATUS = OCI_SubscriptionClose(sub);
 
@@ -335,7 +336,7 @@ boolean OCI_API OCI_SubscriptionAddStatement
     OCI_CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
-    OCI_CALL_CONTEXT_SET(sub->con, NULL, sub->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(sub->con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 

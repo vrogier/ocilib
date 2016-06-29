@@ -116,7 +116,7 @@ boolean OCI_ColumnDescribe
 )
 {
     OCI_CALL_DECLARE_CONTEXT(TRUE)
-    OCI_CALL_CONTEXT_SET(con, stmt, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt);
 
     void *param = NULL;
 
@@ -1435,8 +1435,6 @@ unsigned int OCI_API OCI_ColumnGetSubType
     {
         OCI_RETVAL = col->subtype;
     }
-
-    OCI_STATUS = TRUE;
 
     OCI_CALL_EXIT()
 }

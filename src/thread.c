@@ -103,7 +103,7 @@ boolean OCI_API OCI_ThreadFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_THREAD_ENABLED()
     OCI_CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, thread->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(thread->err)
 
     /* close thread handle */
 
@@ -150,7 +150,7 @@ boolean OCI_API OCI_ThreadRun
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
     OCI_CALL_CHECK_PTR(OCI_IPC_PROC, proc)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, thread->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(thread->err)
 
     thread->proc = proc;
     thread->arg  = arg;
@@ -173,7 +173,7 @@ boolean OCI_API OCI_ThreadJoin
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
-    OCI_CALL_CONTEXT_SET(NULL, NULL, thread->err)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(thread->err)
 
     OCI_EXEC(OCIThreadJoin(OCILib.env, thread->err, thread->handle))
 

@@ -37,7 +37,7 @@ OCI_Msg * OCI_API OCI_MsgCreate
 
     OCI_CALL_ENTER(OCI_Msg*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CALL_CONTEXT_SET(typinf->con, NULL, typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
 
     /* allocate message structure */
 
@@ -91,7 +91,7 @@ boolean OCI_API OCI_MsgFree
 {
     OCI_CALL_ENTER(boolean, TRUE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     /* free local OCI_Agent object */
 
@@ -187,7 +187,7 @@ OCI_Object * OCI_API OCI_MsgGetObject
     OCI_CALL_ENTER(OCI_Object *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
     OCI_CALL_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode != OCI_UNKNOWN)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     if (OCI_IND_NULL != msg->ind)
     {
@@ -210,7 +210,7 @@ boolean OCI_API OCI_MsgSetObject
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
     OCI_CALL_CHECK_COMPAT(msg->typinf->con, msg->typinf->typecode != OCI_UNKNOWN)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     if (obj)
     {
@@ -250,7 +250,7 @@ boolean OCI_API OCI_MsgGetRaw
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, raw)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
     OCI_CALL_CHECK_COMPAT(msg->typinf->con, OCI_UNKNOWN == msg->typinf->typecode)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     if ((msg->payload) && (OCI_IND_NULL != msg->ind))
     {
@@ -286,7 +286,7 @@ boolean OCI_API OCI_MsgSetRaw
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_EXEC(OCIRawAssignBytes(msg->typinf->con->env, msg->typinf->con->err, (ub1*) raw, (ub4) size, (OCIRaw **) &msg->payload))
 
@@ -317,7 +317,7 @@ int OCI_API OCI_MsgGetAttemptCount
 
     OCI_CALL_ENTER(int, value)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ATTEMPTS, msg->proph, &value, NULL)
 
@@ -339,7 +339,7 @@ int OCI_API OCI_MsgGetEnqueueDelay
 
     OCI_CALL_ENTER(int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_DELAY, msg->proph, &value, NULL)
 
@@ -362,7 +362,7 @@ boolean OCI_API OCI_MsgSetEnqueueDelay
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_SET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_DELAY, msg->proph, &sval, sizeof(sval))
 
@@ -384,7 +384,7 @@ OCI_Date * OCI_API OCI_MsgGetEnqueueTime
 
     OCI_CALL_ENTER(OCI_Date*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ENQ_TIME, msg->proph, &date, NULL)
 
@@ -411,7 +411,7 @@ int OCI_API OCI_MsgGetExpiration
 
     OCI_CALL_ENTER(int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_EXPIRATION, msg->proph, &value, NULL)
 
@@ -434,7 +434,7 @@ boolean OCI_API OCI_MsgSetExpiration
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_SET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_EXPIRATION, msg->proph, &sval, sizeof(sval))
 
@@ -456,7 +456,7 @@ unsigned int OCI_API OCI_MsgGetState
 
     OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_MSG_STATE, msg->proph, &value, NULL)
 
@@ -483,7 +483,7 @@ int OCI_API OCI_MsgGetPriority
 
     OCI_CALL_ENTER(int, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_PRIORITY, msg->proph, &value, NULL)
 
@@ -506,7 +506,7 @@ boolean OCI_API OCI_MsgSetPriority
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_SET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_PRIORITY, msg->proph, &sval, sizeof(sval))
 
@@ -531,7 +531,7 @@ boolean OCI_API OCI_MsgGetID
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, id)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, len)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     if (msg->id)
     {
@@ -571,7 +571,7 @@ boolean OCI_API OCI_MsgGetOriginalID
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, id)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, len)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     *len = 0;
 
@@ -609,7 +609,7 @@ boolean OCI_API OCI_MsgSetOriginalID
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_EXEC(OCIRawAssignBytes(msg->typinf->con->env, msg->typinf->con->err, (ub1*) id, (ub4) len, (OCIRaw **) &value))
     OCI_SET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ORIGINAL_MSGID, msg->proph, &value, 0)
@@ -630,7 +630,7 @@ const otext * OCI_API OCI_MsgGetCorrelation
 {
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     if (!msg->correlation)
     {
@@ -658,7 +658,7 @@ boolean OCI_API OCI_MsgSetCorrelation
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_STATUS =  OCI_SetStringAttribute(msg->typinf->con,
                                          msg->proph,
@@ -683,7 +683,7 @@ const otext * OCI_API OCI_MsgGetExceptionQueue
 {
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     if (!msg->except_queue)
     {
@@ -714,7 +714,7 @@ boolean OCI_API OCI_MsgSetExceptionQueue
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_STATUS =  OCI_SetStringAttribute(msg->typinf->con,
                                          msg->proph,
@@ -741,7 +741,7 @@ OCI_Agent * OCI_API OCI_MsgGetSender
 
     OCI_CALL_ENTER(OCI_Agent *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_GET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_SENDER_ID, msg->proph, &handle, NULL)
 
@@ -766,7 +766,7 @@ boolean OCI_API OCI_MsgSetSender
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     OCI_SET_ATTRIB(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_SENDER_ID, msg->proph, (sender ? sender->handle : NULL), 0)
 
@@ -790,7 +790,7 @@ boolean OCI_API OCI_MsgSetConsumers
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CALL_CONTEXT_SET(msg->typinf->con, NULL, msg->typinf->con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
     /* allocate local array of OCIAQAgent handles if needed */
 

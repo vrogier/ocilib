@@ -233,7 +233,7 @@ boolean OCI_ConnectionAttach
     OCI_CHECK(NULL == con, FALSE)
     OCI_CHECK(con->cstate != OCI_CONN_ALLOCATED, FALSE)
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con);
 
     /* allocate server handle for non session pooled connection */
 
@@ -291,7 +291,7 @@ boolean OCI_ConnectionDetach
     OCI_CHECK(NULL == con, FALSE)
     OCI_CHECK(con->cstate != OCI_CONN_ATTACHED, FALSE)
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con);
 
     if (con->alloc_handles && con->svr)
     {
@@ -334,7 +334,7 @@ boolean OCI_ConnectionLogon
 
     OCI_CHECK(NULL == con, FALSE)
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con);
 
 #if OCI_VERSION_COMPILE < OCI_9_2
 
@@ -599,7 +599,7 @@ boolean OCI_ConnectionLogOff
     OCI_CHECK(NULL == con, FALSE)
     OCI_CHECK(con->cstate != OCI_CONN_LOGGED, FALSE)
 
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con);
 
     /* close opened files */
 
@@ -819,7 +819,7 @@ boolean OCI_API OCI_ConnectionFree
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_RETVAL = OCI_STATUS = OCI_ConnectionClose(con);
 
@@ -840,7 +840,7 @@ boolean OCI_API OCI_Commit
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_EXEC(OCITransCommit(con->cxt, con->err, (ub4)OCI_DEFAULT));
 
@@ -860,7 +860,7 @@ boolean OCI_API OCI_Rollback
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_EXEC(OCITransRollback(con->cxt, con->err, (ub4)OCI_DEFAULT));
 
@@ -908,7 +908,7 @@ boolean OCI_API OCI_IsConnected
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_SERVER_STATUS, con->svr, &status, &size)
 
@@ -954,7 +954,7 @@ boolean OCI_API OCI_SetSessionTag
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_FREE(con->sess_tag)
 
@@ -1039,7 +1039,7 @@ boolean OCI_API OCI_SetPassword
 
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, password)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (OCI_CONN_LOGGED != con->cstate)
     {
@@ -1092,7 +1092,7 @@ boolean OCI_API OCI_SetUserPassword
 
     /* let's be sure OCI_Initialize() has been called */
 
-    OCI_CALL_CHECK_INITIALIZED();
+    OCI_CALL_CHECK_INITIALIZED()
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, pwd)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, new_pwd)
 
@@ -1142,7 +1142,7 @@ const otext * OCI_API OCI_GetVersionServer
 {
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     /* no version available in preliminary authentication mode */
 
@@ -1211,7 +1211,7 @@ unsigned int OCI_API OCI_GetServerMajorVersion
 {
     OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (OCI_UNKNOWN == con->ver_num)
     {
@@ -1234,7 +1234,7 @@ unsigned int OCI_API OCI_GetServerMinorVersion
 {
     OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (OCI_UNKNOWN == con->ver_num)
     {
@@ -1257,7 +1257,7 @@ unsigned int OCI_API OCI_GetServerRevisionVersion
 {
     OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (OCI_UNKNOWN == con->ver_num)
     {
@@ -1294,7 +1294,7 @@ boolean OCI_API OCI_SetTransaction
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (con->trs)
     {
@@ -1324,7 +1324,7 @@ unsigned int OCI_API OCI_GetVersionConnection
 {
     OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     /* return the minimum supported version */
 
@@ -1344,7 +1344,7 @@ boolean OCI_API OCI_Break
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_EXEC(OCIBreak((dvoid *) con->cxt, con->err))
 
@@ -1367,7 +1367,7 @@ boolean OCI_API OCI_ServerEnableOutput
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     /* initialize the output buffer on server side */
 
@@ -1465,7 +1465,7 @@ boolean OCI_API OCI_ServerDisableOutput
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (con->svopt)
     {
@@ -1497,7 +1497,7 @@ const otext * OCI_API OCI_ServerGetOutput
 {
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (con->svopt)
     {
@@ -1541,7 +1541,7 @@ boolean OCI_API OCI_SetTrace
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, trace, TraceTypeValues, OTEXT("Trace Type"))
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     /* allocate trace info structure only if trace functions are used */
 
@@ -1640,7 +1640,7 @@ const otext * OCI_API OCI_GetTrace
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, trace, TraceTypeValues, OTEXT("Trace Type"))
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     if (con->trace)
     {
@@ -1683,7 +1683,7 @@ boolean OCI_API OCI_Ping
 {
     OCI_CALL_ENTER(boolean , FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -1710,7 +1710,7 @@ const otext * OCI_API OCI_GetDBName
 {
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -1737,7 +1737,7 @@ const otext * OCI_API OCI_GetInstanceName
 {
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -1764,7 +1764,7 @@ const otext * OCI_API OCI_GetServiceName
 {
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -1791,7 +1791,7 @@ const otext * OCI_API OCI_GetServerName
 {
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -1818,7 +1818,7 @@ const otext * OCI_API OCI_GetDomainName
 {
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -1845,7 +1845,7 @@ OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
 {
     OCI_CALL_ENTER(OCI_Timestamp*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -1878,7 +1878,7 @@ boolean OCI_API OCI_IsTAFCapable
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -1906,7 +1906,7 @@ boolean OCI_API OCI_SetTAFHandler
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_RETVAL = OCI_IsTAFCapable(con);
 
@@ -1949,7 +1949,7 @@ unsigned int OCI_API OCI_GetStatementCacheSize
 
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
@@ -1979,7 +1979,7 @@ boolean OCI_API OCI_SetStatementCacheSize
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
@@ -2012,7 +2012,7 @@ unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
 
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
@@ -2042,7 +2042,7 @@ boolean OCI_API OCI_SetDefaultLobPrefetchSize
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
@@ -2075,7 +2075,7 @@ unsigned int OCI_API OCI_GetMaxCursors
 
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -2108,7 +2108,7 @@ boolean OCI_Immediate
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     /* First, execute SQL */
 
@@ -2154,7 +2154,7 @@ boolean OCI_ImmediateFmt
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
-    OCI_CALL_CONTEXT_SET(con, NULL, con->err)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     stmt = OCI_StatementCreate(con);
     OCI_STATUS = (NULL != stmt);
