@@ -92,7 +92,7 @@ OCI_Resultset * OCI_ResultsetCreate
 
     OCI_CHECK(stmt == NULL, NULL)
 
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     /* allocate resultset structure */
 
