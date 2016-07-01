@@ -25,7 +25,7 @@
     OCI_CALL_ENTER(boolean, FALSE)                                                  \
     OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                       \
     OCI_CALL_CHECK_COMPAT(elem->con, elemtype == elem->typinf->cols[0].datatype)    \
-    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)                           \
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)                                       \
                                                                                     \
     if (!value)                                                                     \
     {                                                                               \
@@ -84,11 +84,11 @@
     OCI_CALL_ENTER(type, value)                                                          \
     OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                            \
     OCI_CALL_CHECK_COMPAT(elem->con, OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)  \
-    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)                                \
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)                                            \
                                                                                          \
     OCI_STATUS = OCI_ElemGetNumberInternal(elem, (void *)&OCI_RETVAL,                    \
-                                                  (uword) sizeof(OCI_RETVAL),            \
-                                                  (uword)number_type);                   \
+                                           (uword) sizeof(OCI_RETVAL),                   \
+                                           (uword)number_type);                          \
                                                                                          \
     OCI_CALL_EXIT()
 
@@ -100,8 +100,8 @@
     OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)                                \
                                                                                          \
     OCI_RETVAL = OCI_STATUS = OCI_ElemSetNumberInternal(elem, (void *)&value,            \
-                                                          (uword) sizeof(value),         \
-                                                          (uword)number_type);           \
+                                                        (uword) sizeof(value),           \
+                                                        (uword)number_type);             \
                                                                                          \
     OCI_CALL_EXIT()
 
@@ -145,8 +145,8 @@ OCI_Elem * OCI_ElemInit
     OCI_TypeInfo   *typinf
 )
 {
+    OCI_CALL_DECLARE_CONTEXT(FALSE)
     OCI_Elem *elem = NULL;
-    boolean   res  = FALSE;
 
     OCI_CHECK(NULL == pelem, NULL);
 
@@ -155,9 +155,9 @@ OCI_Elem * OCI_ElemInit
         *pelem = (OCI_Elem *) OCI_MemAlloc(OCI_IPC_ELEMENT, sizeof(*elem), (size_t) 1, TRUE);
     }
 
-    res = (NULL != *pelem);
+    OCI_STATUS = (NULL != *pelem);
 
-    if (*pelem)
+    if (OCI_STATUS)
     {
         elem = *pelem;
    
@@ -181,7 +181,8 @@ OCI_Elem * OCI_ElemInit
                 if (!elem->handle)
                 {
                     elem->handle = (OCINumber * )OCI_MemAlloc(OCI_IPC_VOID, elem->typinf->cols[0].size, 1, TRUE);
-                    elem->alloc  = TRUE;
+                    OCI_STATUS = (NULL != elem->handle);
+                    elem->alloc = TRUE;
                 }
                 break;
             }
@@ -190,6 +191,7 @@ OCI_Elem * OCI_ElemInit
                 if (!elem->handle)
                 {
                     elem->handle = (boolean*) OCI_MemAlloc(OCI_IPC_VOID, sizeof(boolean), 1, TRUE);
+                    OCI_STATUS = (NULL != elem->handle);
                     elem->alloc = TRUE;
                 }
                 break;
@@ -223,7 +225,7 @@ OCI_Elem * OCI_ElemInit
 
     /* check for failure */
 
-    if (!res && elem)
+    if (!OCI_STATUS && elem)
     {
         OCI_ElemFree(elem);
         *pelem = elem = NULL;

@@ -39,7 +39,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     OCI_CALL_ENTER(type, res)                                                                   \
     OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                   \
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)                                                    \
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)                           \
+    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)                                                    \
     OCI_STATUS = FALSE;                                                                         \
     index = OCI_GetDefineIndex(rs, name);                                                       \
     if (index > 0)                                                                              \
@@ -55,7 +55,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     OCI_CALL_ENTER(type, res)                                                                   \
     OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                   \
     OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)                                  \
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)                           \
+    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)                                                    \
     OCI_STATUS = OCI_DefineGetNumber(rs, index, &OCI_RETVAL, num_type, sizeof(OCI_RETVAL));     \
     OCI_CALL_EXIT()
 
@@ -65,7 +65,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     OCI_CALL_ENTER(type, res)                                                                   \
     OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                   \
     OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)                                  \
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)                           \
+    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)                                                    \
     OCI_STATUS = FALSE;                                                                         \
     def = OCI_GetDefine(rs, index);                                                             \
     if (OCI_MATCHING_TYPE(def, lib_type))                                                       \
@@ -97,10 +97,11 @@ OCI_Resultset * OCI_ResultsetCreate
     /* allocate resultset structure */
 
     rs = (OCI_Resultset *) OCI_MemAlloc(OCI_IPC_RESULTSET, sizeof(*rs), (size_t) 1, TRUE);
+    OCI_STATUS = (NULL != rs);
 
     /* set attributes */
 
-    if (rs)
+    if (OCI_STATUS)
     {
         ub4     nb  = 0;
         ub4     i;
@@ -130,7 +131,6 @@ OCI_Resultset * OCI_ResultsetCreate
         if (OCI_STATUS)
         {
             rs->defs = (OCI_Define *) OCI_MemAlloc(OCI_IPC_DEFINE, sizeof(*rs->defs), (size_t) nb, TRUE);
-
             OCI_STATUS = (NULL != rs->defs);
         }
 
@@ -159,12 +159,8 @@ OCI_Resultset * OCI_ResultsetCreate
 
                 /* mapping to OCILIB internal types */
 
-                if (OCI_STATUS)
-                {
-                    OCI_STATUS = OCI_ColumnMap(&def->col, rs->stmt);
-                }
-
-            #if defined(OCI_STMT_SCROLLABLE_READONLY)
+                OCI_STATUS = OCI_STATUS && OCI_ColumnMap(&def->col, rs->stmt);
+             #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
                 if (OCI_SFM_SCROLLABLE == rs->stmt->exec_mode)
                 {
@@ -362,8 +358,12 @@ boolean OCI_FetchPieces
                     lg->maxsize = bufsize;
 
                     lg->buffer = (ub1 *) OCI_MemAlloc(OCI_IPC_LONG_BUFFER, (size_t) lg->maxsize, (size_t) 1, FALSE);
+                    OCI_STATUS = (NULL != lg->buffer);
 
-                    lg->buffer[0] = 0;
+                    if (OCI_STATUS)
+                    {
+                        lg->buffer[0] = 0;
+                    }
                 }
                 else if ((lg->size*char_fact) >= (lg->maxsize - trailing_size))
                 {
@@ -922,7 +922,9 @@ OCI_Resultset * OCI_API OCI_GetResultset
             /* allocate memory for one resultset handle */
 
             stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY, sizeof(*stmt->rsts), (size_t) 1, TRUE);
-            if (stmt->rsts)
+            OCI_STATUS = (NULL != stmt->rsts);
+           
+            if (OCI_STATUS)
             {
                 stmt->nb_rs  = 1;
                 stmt->cur_rs = 0;

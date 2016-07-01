@@ -514,8 +514,8 @@ OCI_Number * OCI_NumberInit
     OCINumber        *buffer
 )
 {
+    OCI_CALL_DECLARE_CONTEXT(FALSE)
     OCI_Number *number = NULL;
-    boolean res = FALSE;
 
     OCI_CHECK(NULL == pnumber, NULL);
 
@@ -524,10 +524,10 @@ OCI_Number * OCI_NumberInit
         *pnumber = (OCI_Number *)OCI_MemAlloc(OCI_IPC_NUMBER, sizeof(*number), (size_t) 1, TRUE);
     }
 
-    if (*pnumber)
-    {
-        res = TRUE;
+    OCI_STATUS = (NULL != *pnumber);
 
+    if (OCI_STATUS)
+    {
         number = *pnumber;
 
         number->con = con;
@@ -546,8 +546,7 @@ OCI_Number * OCI_NumberInit
             {
                 number->hstate = OCI_OBJECT_ALLOCATED;
                 number->handle = (OCINumber *)OCI_MemAlloc(OCI_IPC_NUMBER, sizeof(*number->handle), (size_t)1, TRUE);
-
-                res = (NULL != number->handle);
+                OCI_STATUS = (NULL != number->handle);
             }
         }
         else
@@ -558,7 +557,7 @@ OCI_Number * OCI_NumberInit
 
     /* check for failure */
 
-    if (!res && number)
+    if (!OCI_STATUS && number)
     {
         OCI_NumberFree(number);
         *pnumber = number = NULL;
@@ -582,6 +581,7 @@ OCI_Number * OCI_API OCI_NumberCreate
 {
     OCI_CALL_ENTER(OCI_Number*, NULL)
     OCI_CALL_CHECK_INITIALIZED()
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_RETVAL = OCI_NumberInit(con, &OCI_RETVAL, NULL);
     OCI_STATUS = (NULL != OCI_RETVAL);
@@ -634,11 +634,11 @@ OCI_Number ** OCI_API OCI_NumberArrayCreate
     OCI_CALL_CHECK_INITIALIZED()
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_NUMERIC, OCI_NUM_NUMBER, sizeof(OCINumber), sizeof(OCI_Number), 0, NULL);
+    OCI_STATUS = (NULL != arr);
 
-    if (arr)
+    if (OCI_STATUS)
     {
         OCI_RETVAL = (OCI_Number **)arr->tab_obj;
-        OCI_STATUS = TRUE;
     }
 
     OCI_CALL_EXIT()
@@ -786,8 +786,8 @@ boolean OCI_API OCI_NumberSetValue
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
     OCI_RETVAL = OCI_STATUS = OCI_NumberSetNativeValue(number->con, number->handle,
-                                                         OCI_GetNumericTypeSize(type),
-                                                         type, SQLT_VNU, value);
+                                                       OCI_GetNumericTypeSize(type),
+                                                       type, SQLT_VNU, value);
 
     OCI_CALL_EXIT()
 }
@@ -808,8 +808,8 @@ boolean OCI_API OCI_NumberGetValue
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
     OCI_RETVAL = OCI_STATUS = OCI_NumberGetNativeValue(number->con, number->handle,
-                                                              OCI_GetNumericTypeSize(type),
-                                                              type, SQLT_VNU, value);
+                                                       OCI_GetNumericTypeSize(type),
+                                                       type, SQLT_VNU, value);
 
     OCI_CALL_EXIT()
 }

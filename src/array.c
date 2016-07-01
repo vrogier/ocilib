@@ -173,18 +173,20 @@ OCI_Array * OCI_ArrayCreate
     OCI_TypeInfo   *typinf
 )
 {
-    boolean    res  = FALSE;
-    OCI_Array *arr  = NULL;
+    OCI_CALL_DECLARE_CONTEXT(FALSE)
+   
+    OCI_Array *arr = NULL;
     OCI_Item  *item = NULL;
+
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     /* create array object */
 
     item = OCI_ListAppend(OCILib.arrs, sizeof(*arr));
+    OCI_STATUS = (NULL != item);
 
-    if (item)
+    if (OCI_STATUS)
     {
-        res = TRUE;
-
         arr = (OCI_Array *) item->data;
 
         arr->con          = con;
@@ -197,59 +199,44 @@ OCI_Array * OCI_ArrayCreate
 
         /* allocate OCILIB Object array */
 
-        if (res)
+        if (OCI_IS_OCILIB_OBJECT(arr->elem_type, arr->elem_subtype))
         {
-            if (OCI_IS_OCILIB_OBJECT(arr->elem_type, arr->elem_subtype))
-            {
-                arr->tab_obj = (void **) OCI_MemAlloc(OCI_IPC_VOID,  sizeof(void *), nb_elem, TRUE);
-
-                res = (NULL != arr->tab_obj) ;
-            }
+            arr->tab_obj = (void **) OCI_MemAlloc(OCI_IPC_VOID,  sizeof(void *), nb_elem, TRUE);
+            OCI_STATUS = (NULL != arr->tab_obj);
         }
 
         /* allocate OCI handle array */
 
-        if (res)
+        if (OCI_STATUS && arr->elem_size > 0)
         {
-            if (arr->elem_size > 0)
-            {
-                arr->mem_handle = (void **) OCI_MemAlloc(OCI_IPC_VOID, elem_size, nb_elem, TRUE);
-
-                res = (NULL != arr->mem_handle);
-            }
+            arr->mem_handle = (void **) OCI_MemAlloc(OCI_IPC_VOID, elem_size, nb_elem, TRUE);
+            OCI_STATUS = (NULL != arr->mem_handle);
         }
 
         /* allocate OCILIB structure array */
 
-        if (res)
+        if (OCI_STATUS && arr->struct_size > 0)
         {
-            if (arr->struct_size > 0)
-            {
-                arr->mem_struct = (void **) OCI_MemAlloc(OCI_IPC_VOID, struct_size, nb_elem, TRUE);
-
-                res = (NULL != arr->mem_struct);
-            }
+            arr->mem_struct = (void **) OCI_MemAlloc(OCI_IPC_VOID, struct_size, nb_elem, TRUE);
+            OCI_STATUS = (NULL != arr->mem_struct);
         }
 
         /* allocate OCI handle descriptors */
 
-        if (res)
+        if (OCI_STATUS && handle_type != 0)
         {
-            if (handle_type != 0)
-            {
-                res = OCI_DescriptorArrayAlloc((dvoid  *)arr->con->env, (dvoid **)arr->mem_handle, (ub4)handle_type, (ub4)nb_elem);
-            }
+            OCI_STATUS = OCI_DescriptorArrayAlloc((dvoid  *)arr->con->env, (dvoid **)arr->mem_handle, (ub4)handle_type, (ub4)nb_elem);
         }
 
-        if (res && arr->tab_obj && arr->mem_handle)
+        if (OCI_STATUS && arr->tab_obj && arr->mem_handle)
         {
-            res = OCI_ArrayInit(arr, typinf);
+            OCI_STATUS = OCI_ArrayInit(arr, typinf);
         }
     }
 
     /* check for failure */
 
-    if (!res)
+    if (!OCI_STATUS)
     {
         OCI_ArrayClose(arr);
         OCI_FREE(arr)

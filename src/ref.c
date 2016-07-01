@@ -50,10 +50,10 @@ OCI_Ref * OCI_RefInit
         *pref = (OCI_Ref *) OCI_MemAlloc(OCI_IPC_REF, sizeof(*ref), (size_t) 1, TRUE);
     }
 
-    if (*pref)
-    {
-        OCI_STATUS = TRUE;
+    OCI_STATUS = (NULL != *pref);
 
+    if (OCI_STATUS)
+    {
         ref = *pref;
 
         ref->handle = handle;
@@ -243,11 +243,11 @@ OCI_Ref ** OCI_API OCI_RefArrayCreate
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0, sizeof(OCIRef *), sizeof(OCI_Ref), 0, typinf);
+    OCI_STATUS = (NULL != arr);
 
-    if (arr)
+    if (OCI_STATUS)
     {
         OCI_RETVAL = (OCI_Ref **) arr->tab_obj;
-        OCI_STATUS = TRUE;
     }
 
     OCI_CALL_EXIT()

@@ -78,7 +78,7 @@ boolean OCI_DirPathSetArray
             /* set entry value */
 
             OCI_EXEC(OCIDirPathColArrayEntrySet(dp->arr, dp->con->err, (ub4) dp->nb_entries,
-                                                   (ub2) (col), (ub1*) data, (ub4) size, flag))
+                                                (ub2) (col), (ub1*) data, (ub4) size, flag))
         }
 
         /* increment number of item set */

@@ -44,11 +44,10 @@ OCI_Interval * OCI_IntervalInit
     ub4             type
 )
 {
+    OCI_CALL_DECLARE_CONTEXT(FALSE)
     OCI_Interval *itv = NULL;
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
-
-    boolean res = FALSE;
 
     OCI_CHECK(NULL == pitv, NULL);
 
@@ -57,10 +56,10 @@ OCI_Interval * OCI_IntervalInit
         *pitv = (OCI_Interval *) OCI_MemAlloc(OCI_IPC_INTERVAL, sizeof(*itv), (size_t) 1, TRUE);
     }
 
-    if (*pitv)
-    {
-        res = TRUE;
+    OCI_STATUS = (NULL != *pitv);
 
+    if (OCI_STATUS)
+    {
         itv = *pitv;
 
         itv->con    = con;
@@ -78,7 +77,7 @@ OCI_Interval * OCI_IntervalInit
         {
             if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
             {
-                res = OCI_DescriptorAlloc((dvoid  *)itv->env, (dvoid **)(void *)&itv->handle, (ub4)OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
+                OCI_STATUS = OCI_DescriptorAlloc((dvoid  *)itv->env, (dvoid **)(void *)&itv->handle, (ub4)OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
 
                 itv->hstate = OCI_OBJECT_ALLOCATED;
             }
@@ -91,7 +90,7 @@ OCI_Interval * OCI_IntervalInit
 
     /* check for failure */
 
-    if (!res && itv)
+    if (!OCI_STATUS && itv)
     {
         OCI_IntervalFree(itv);
         *pitv = itv = NULL;
@@ -196,10 +195,11 @@ OCI_Interval ** OCI_API OCI_IntervalArrayCreate
                           sizeof(OCIInterval *), sizeof(OCI_Interval), 
                           OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
 
-    if (arr)
+    OCI_STATUS = (NULL != arr);
+
+    if (OCI_STATUS)
     {
         OCI_RETVAL = (OCI_Interval **) arr->tab_obj;
-        OCI_STATUS = TRUE;
     }
 
 #else

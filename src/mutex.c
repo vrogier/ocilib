@@ -40,8 +40,9 @@ OCI_Mutex * OCI_MutexCreateInternal
     /* allocate mutex structure */
 
     mutex = (OCI_Mutex *) OCI_MemAlloc(OCI_IPC_MUTEX, sizeof(*mutex), (size_t) 1, TRUE);
+    OCI_STATUS = (NULL != mutex);
 
-    if (mutex)
+    if (OCI_STATUS)
     {
         /* allocate error handle */
 

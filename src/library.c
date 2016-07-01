@@ -1437,7 +1437,6 @@ boolean OCI_API OCI_Initialize
             OCI_STATUS = OCI_SUCCESSFUL(OCIThreadInit(OCILib.env, OCILib.err));
 
             OCILib.mem_mutex = OCI_MutexCreateInternal();
-
             OCI_STATUS = (NULL != OCILib.mem_mutex);
         }
 
@@ -1446,7 +1445,6 @@ boolean OCI_API OCI_Initialize
         if (OCI_STATUS)
         {
             OCILib.key_errs = OCI_ThreadKeyCreateInternal((POCI_THREADKEYDEST) OCI_ErrorFree);
-
             OCI_STATUS = (NULL != OCILib.key_errs);
         }
 
@@ -1455,7 +1453,6 @@ boolean OCI_API OCI_Initialize
         if (OCI_STATUS)
         {
             OCILib.cons = OCI_ListCreate(OCI_IPC_CONNECTION);
-
             OCI_STATUS = (NULL != OCILib.cons);
         }
 
@@ -1464,7 +1461,6 @@ boolean OCI_API OCI_Initialize
         if (OCI_STATUS)
         {
             OCILib.pools = OCI_ListCreate(OCI_IPC_POOL);
-
             OCI_STATUS = (NULL != OCILib.pools);
         }
 
@@ -1484,12 +1480,11 @@ boolean OCI_API OCI_Initialize
         if (OCI_STATUS)
         {
             OCILib.arrs = OCI_ListCreate(OCI_IPC_ARRAY);
-
             OCI_STATUS = (NULL != OCILib.arrs);
         }
     }
 
-    OCILib.loaded = call_retval = OCI_STATUS;
+    OCILib.loaded = OCI_RETVAL = OCI_STATUS;
 
     /* test for XA support */
 

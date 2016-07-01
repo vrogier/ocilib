@@ -51,7 +51,7 @@ OCI_Coll * OCI_CollInit
 
     OCI_STATUS = (NULL != *pcoll);
 
-    if (*pcoll)
+    if (OCI_STATUS)
     {
         coll = *pcoll;
 
@@ -173,7 +173,6 @@ OCI_Coll ** OCI_API OCI_CollArrayCreate
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, sizeof(OCIColl *), sizeof(OCI_Coll), 0, typinf);
-
     OCI_STATUS = (arr != NULL);
 
     if (OCI_STATUS)

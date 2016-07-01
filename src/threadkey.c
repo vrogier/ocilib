@@ -40,8 +40,9 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
     /* allocate key structure */
 
     key = (OCI_ThreadKey *) OCI_MemAlloc(OCI_IPC_THREADKEY, sizeof(*key), (size_t) 1, TRUE);
+    OCI_STATUS = (NULL != key);
 
-    if (key)
+    if (OCI_STATUS)
     {
         /* allocate error handle */
 
@@ -161,27 +162,19 @@ boolean OCI_API OCI_ThreadKeyCreate
            time and memory when it's not needed */
 
         OCILib.key_map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_POINTER);
-
+        OCI_STATUS = (NULL != OCILib.key_map);
     }
-
-    OCI_STATUS = (NULL != OCILib.key_map);
 
     /* create key */
 
     if (OCI_STATUS)
     {
         key = OCI_ThreadKeyCreateInternal(destfunc);
-
+        OCI_STATUS = (NULL != key);
+       
         /* add key to internal key hash table */
 
-        if (key)
-        {
-            OCI_STATUS = OCI_HashAddPointer(OCILib.key_map, name, key);
-        }
-        else
-        {
-            OCI_STATUS = FALSE;
-        }
+        OCI_STATUS = OCI_STATUS && OCI_HashAddPointer(OCILib.key_map, name, key);
     }
 
     /* check errors */

@@ -117,13 +117,13 @@
 
 #define OCI_CALL_CHECK_BIND(stmt, name, data, type, ext_only)               \
                                                                             \
-    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt);                            \
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name);                               \
-    OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED);                    \
+    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)                             \
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)                                \
+    OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)                     \
     {                                                                       \
         boolean ext_only_value = ext_only;                                  \
         if (ext_only_value || OCI_BAM_EXTERNAL == stmt->bind_alloc_mode)    \
-        OCI_CALL_CHECK_PTR(type, data);                                     \
+        OCI_CALL_CHECK_PTR(type, data)                                      \
     }                                                                       \
 
 /**
@@ -139,8 +139,8 @@
  */
 #define OCI_CALL_CHECK_REGISTER(stmt, name)                                    \
                                                                                \
-    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt);                               \
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name);                                  \
+    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)                                \
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)                                   \
 
 /* ********************************************************************************************* *
                         MISCELLANEOUS CHECKING MACROS
@@ -439,7 +439,7 @@
     if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
         OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable((dp)->con,               \
-                            OCI_FEATURE_DIRPATH_DATE_CACHE);                   \
+                            OCI_FEATURE_DIRPATH_DATE_CACHE)                    \
     }
 
 /**

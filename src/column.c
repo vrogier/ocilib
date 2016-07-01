@@ -116,9 +116,17 @@ boolean OCI_ColumnDescribe
 )
 {
     OCI_CALL_DECLARE_CONTEXT(TRUE)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt);
 
     void *param = NULL;
+
+    if (stmt)
+    {
+        OCI_CALL_CONTEXT_SET_FROM_STMT(stmt);
+    }
+    else
+    {
+        OCI_CALL_CONTEXT_SET_FROM_CONN(con);
+    }
 
     /* get descriptor */
 
@@ -274,8 +282,6 @@ boolean OCI_ColumnDescribe
                 size_t char_count = OCI_StringLength(param_struct->column_info->name, sizeof(char));
                 col->name = OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), char_count + 1, 1);
                 OCI_StringAnsiToNative(param_struct->column_info->name, col->name, (int) char_count);
-
-                OCI_STATUS = TRUE;
             }
             else
             {

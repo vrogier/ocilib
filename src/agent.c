@@ -52,7 +52,7 @@ OCI_Agent * OCI_AgentInit
 
     OCI_STATUS = (NULL != *pagent);
 
-    if (*pagent)
+    if (OCI_STATUS)
     {
         agent = *pagent;
 

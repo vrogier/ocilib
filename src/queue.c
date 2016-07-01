@@ -576,7 +576,6 @@ boolean OCI_API OCI_QueueTablePurge
     }
     else
     {
-        OCI_STATUS = TRUE;
         OCI_RETVAL = FALSE;
     }
 

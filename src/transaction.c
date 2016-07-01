@@ -77,7 +77,9 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
 
     item = OCI_ListAppend(con->trsns, sizeof(*trans));
 
-    if (item)
+    OCI_STATUS = ((NULL != item) && (NULL != item->data));
+    
+    if (OCI_STATUS)
     {
         trans = (OCI_Transaction *) item->data;
 
@@ -102,13 +104,14 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
 
     /* handle errors */
 
-    if (!OCI_STATUS)
+    if (OCI_STATUS)
+    {
+        OCI_RETVAL = trans;
+    }
+    else if (trans)
     {
         OCI_TransactionFree(trans);
-        trans = NULL;
     }
-
-    OCI_RETVAL = trans;
 
     OCI_CALL_EXIT()
 }

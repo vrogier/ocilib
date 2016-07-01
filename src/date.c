@@ -49,7 +49,7 @@ OCI_Date * OCI_DateInit
 
     OCI_STATUS = (NULL != *pdate);
 
-    if (*pdate)
+    if (OCI_STATUS)
     {
         date = *pdate;
 
@@ -72,7 +72,6 @@ OCI_Date * OCI_DateInit
             }
 
             date->handle = (OCIDate *) OCI_MemAlloc(OCI_IPC_OCIDATE, sizeof(*date->handle), (size_t) 1, TRUE);
-
             OCI_STATUS = (NULL != date->handle);
         }
         else

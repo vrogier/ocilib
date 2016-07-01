@@ -462,7 +462,6 @@
     OCI_STATUS = FALSE;                                                         \
     OCI_CALL_JUMP_EXIT()                                                        \
 
-
 #define OCI_IS_PLSQL_STMT(type)                                                 \
     ((OCI_CST_BEGIN == type) || (OCI_CST_DECLARE == type) || (OCI_CST_CALL == type))
 
@@ -516,12 +515,6 @@
     prop = value;                                                               \
     OCI_RETVAL = OCI_STATUS;                                                    \
     OCI_CALL_EXIT()                                                             \
-
-
-#define OCI_GET_CONN(obj) (obj ? obj->con : NULL)
-#define OCI_GET_ERR(obj)  (obj ? obj->err : NULL)
-#define OCI_GET_CONN_ERR(obj) (obj && obj->con ? obj->con->err : NULL)
-
 
 #ifdef _WINDOWS
 

@@ -138,10 +138,7 @@ sb4 OCI_ProcOutBind
                                                               sizeof(*bnd->stmt->rsts),
                                                               (size_t) bnd->stmt->nb_rs, TRUE);
 
-            if (!bnd->stmt->rsts)
-            {
-                OCI_STATUS = FALSE;
-            }
+            OCI_STATUS = (NULL != bnd->stmt->rsts);
         }
 
         /* create resultset as needed */

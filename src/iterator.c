@@ -42,11 +42,10 @@ OCI_Coll *coll
     /* allocate iterator structure */
 
     iter = (OCI_Iter *)OCI_MemAlloc(OCI_IPC_ITERATOR, sizeof(*iter), (size_t)1, TRUE);
+    OCI_STATUS = (NULL != iter);
 
-    if (iter)
+    if (OCI_STATUS)
     {
-        OCI_STATUS = TRUE;
-
         iter->coll  = coll;
         iter->eoc   = FALSE;
         iter->boc   = TRUE;
@@ -61,7 +60,6 @@ OCI_Coll *coll
         if (OCI_STATUS)
         {
             iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL, (OCIInd *)NULL, coll->typinf);
-
             OCI_STATUS = (NULL != iter->elem);
         }
     }

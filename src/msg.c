@@ -42,8 +42,9 @@ OCI_Msg * OCI_API OCI_MsgCreate
     /* allocate message structure */
 
     msg = (OCI_Msg *) OCI_MemAlloc(OCI_IPC_MSG, sizeof(*msg), (size_t) 1, TRUE);
+    OCI_STATUS = (NULL != msg);
 
-    if (msg)
+    if (OCI_STATUS)
     {
         msg->typinf = typinf;
         msg->ind    = OCI_IND_NULL;
@@ -391,7 +392,6 @@ OCI_Date * OCI_API OCI_MsgGetEnqueueTime
     if (OCI_STATUS)
     {
         OCI_RETVAL = OCI_DateInit(msg->typinf->con, &msg->date, &date, FALSE, FALSE);
-
         OCI_STATUS = (NULL != OCI_RETVAL);
     }
 
@@ -797,8 +797,9 @@ boolean OCI_API OCI_MsgSetConsumers
     if (consumers && (count > 0))
     {
         handles = (OCIAQAgent **)OCI_MemAlloc(OCI_IPC_ARRAY, sizeof(OCIAQAgent *), count, FALSE);
-
-        if (handles)
+        OCI_STATUS = (NULL != handles);
+        
+        if (OCI_STATUS)
         {
             unsigned int i;
 
@@ -806,13 +807,10 @@ boolean OCI_API OCI_MsgSetConsumers
             {
                 handles[i] = consumers[i]->handle;
             }
-
-            OCI_STATUS = TRUE;
         }
     }
     else
     {
-        OCI_STATUS = TRUE;
         count = 0;
     }
 

@@ -24,7 +24,7 @@
                                                                             \
     OCI_CALL_ENTER(boolean, FALSE)                                          \
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)                                 \
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)                     \
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)                                \
                                                                             \
     OCI_STATUS = FALSE;                                                     \
                                                                             \
@@ -61,7 +61,7 @@
                                                                             \
     OCI_CALL_ENTER(object_type, NULL)                                       \
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)                                 \
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)                     \
+    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)                                \
                                                                             \
     OCI_STATUS = FALSE;                                                     \
                                                                             \
@@ -341,10 +341,10 @@ OCI_Object * OCI_ObjectInit
         *pobj = (OCI_Object *) OCI_MemAlloc(OCI_IPC_OBJECT, sizeof(*obj), (size_t) 1, TRUE);
     }
 
-    if (*pobj)
-    {
-        OCI_STATUS = TRUE;
+    OCI_STATUS = (NULL != *pobj);
 
+    if (OCI_STATUS)
+    {
         obj = *pobj;
 
         obj->con    = con;
@@ -353,15 +353,13 @@ OCI_Object * OCI_ObjectInit
 
         if (!obj->objs)
         {
-            obj->objs = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(void *),
-                                               (size_t) typinf->nb_cols, TRUE);
+            obj->objs = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(void *),  (size_t) typinf->nb_cols, TRUE);
+            OCI_STATUS = (NULL != obj->objs);
         }
         else
         {
             OCI_ObjectReset(obj);
-        }
-
-        OCI_STATUS = (NULL != obj->objs);
+        }        
 
         if (OCI_STATUS && (!obj->handle || (OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate)))
         {
@@ -762,11 +760,11 @@ OCI_Object ** OCI_API OCI_ObjectArrayCreate
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0, sizeof(void *), sizeof(OCI_Object), 0, typinf);
+    OCI_STATUS = (NULL != arr);
 
-    if (arr)
+    if (OCI_STATUS)
     {
         OCI_RETVAL = (OCI_Object **) arr->tab_obj;
-        OCI_STATUS = TRUE;
     }
 
     OCI_CALL_EXIT()

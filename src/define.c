@@ -237,7 +237,6 @@ boolean OCI_DefineAlloc
 
     indsize = (ub4)(SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode ? sizeof(void*) : sizeof(sb2));
 
-
     def->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, (size_t) indsize, (size_t) def->buf.count, TRUE);
     OCI_STATUS = (NULL != def->buf.inds);
 

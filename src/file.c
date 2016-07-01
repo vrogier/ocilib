@@ -43,8 +43,8 @@ OCI_File * OCI_FileInit
     ub4             type
 )
 {
+    OCI_CALL_DECLARE_CONTEXT(FALSE)
     OCI_File *file = NULL;
-    boolean   res  = FALSE;
 
     OCI_CHECK(NULL == pfile, NULL);
 
@@ -53,11 +53,10 @@ OCI_File * OCI_FileInit
         *pfile = (OCI_File *) OCI_MemAlloc(OCI_IPC_FILE, sizeof(*file), (size_t) 1, TRUE);
     }
 
-    if (*pfile)
+    OCI_STATUS = (NULL != *pfile);
+
+    if (OCI_STATUS)
     {
-
-        res = TRUE;
-
         file = *pfile;
 
         file->type   = type;
@@ -83,7 +82,7 @@ OCI_File * OCI_FileInit
 
             file->hstate = OCI_OBJECT_ALLOCATED;
 
-            res = OCI_DescriptorAlloc((dvoid *)file->con->env, (dvoid **)(void *)&file->handle, (ub4)OCI_DTYPE_LOB);
+            OCI_STATUS = OCI_DescriptorAlloc((dvoid *)file->con->env, (dvoid **)(void *)&file->handle, (ub4)OCI_DTYPE_LOB);
         }
         else if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
         {
@@ -93,7 +92,7 @@ OCI_File * OCI_FileInit
 
     /* check for failure */
 
-    if (!res && file)
+    if (!OCI_STATUS && file)
     {
         OCI_FileFree(file);
         *pfile = file = NULL;
@@ -124,7 +123,6 @@ boolean OCI_FileGetInfo
         if (!file->dir)
         {
             file->dir = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), (size_t) (OCI_SIZE_DIRECTORY + 1), TRUE);
-
             OCI_STATUS = (NULL != file->dir);
         }
         else
@@ -140,7 +138,6 @@ boolean OCI_FileGetInfo
         if (!file->name )
         {
             file->name = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), (size_t)( OCI_SIZE_FILENAME + 1), TRUE);
-
             OCI_STATUS = (NULL != file->name);
 
         }
@@ -265,13 +262,12 @@ OCI_File ** OCI_API OCI_FileArrayCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_FILE, type, sizeof(OCILobLocator *),
-                          sizeof(OCI_File), OCI_DTYPE_LOB, NULL);
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_FILE, type, sizeof(OCILobLocator *), sizeof(OCI_File), OCI_DTYPE_LOB, NULL);
+    OCI_STATUS = (NULL != arr);
 
     if (arr)
     {
         OCI_RETVAL = (OCI_File **)arr->tab_obj;
-        OCI_STATUS = (NULL != OCI_RETVAL);
     }
 
     OCI_CALL_EXIT()

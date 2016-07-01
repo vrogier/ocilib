@@ -1152,13 +1152,17 @@ const otext * OCI_API OCI_GetVersionServer
         dbtext *dbstr  = NULL;
 
         con->ver_str = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), OCI_SIZE_BUFFER + 1, TRUE);
+        OCI_STATUS = (NULL != con->ver_str);
 
-        dbstr = OCI_StringGetOracleString(con->ver_str, &dbsize);
+        if (OCI_STATUS)
+        {
+            dbstr = OCI_StringGetOracleString(con->ver_str, &dbsize);
 
-        OCI_EXEC(OCIServerVersion((dvoid *) con->cxt, con->err, (OraText *) dbstr, (ub4) dbsize, (ub1) OCI_HTYPE_SVCCTX))
+            OCI_EXEC(OCIServerVersion((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX))
 
-        OCI_StringCopyOracleStringToNativeString(dbstr, con->ver_str, dbcharcount(dbsize));
-        OCI_StringReleaseOracleString(dbstr);
+            OCI_StringCopyOracleStringToNativeString(dbstr, con->ver_str, dbcharcount(dbsize));
+            OCI_StringReleaseOracleString(dbstr);
+        }
 
         if (OCI_STATUS)
         {
@@ -2177,8 +2181,9 @@ boolean OCI_ImmediateFmt
             /* allocate buffer */
 
             otext  *sql_fmt = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), (size_t) (size+1), TRUE);
+            OCI_STATUS = (NULL != sql_fmt);
 
-            if (sql_fmt)
+            if (OCI_STATUS)
             {
                 /* format buffer */
 

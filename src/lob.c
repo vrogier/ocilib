@@ -57,10 +57,10 @@ OCI_Lob * OCI_LobInit
         *plob = (OCI_Lob *) OCI_MemAlloc(OCI_IPC_LOB, sizeof(*lob), (size_t) 1, TRUE);
     }
 
+    OCI_STATUS = (NULL != *plob);
+
     if (*plob)
     {
-        OCI_STATUS = TRUE;
-
         lob = *plob;
 
         lob->type   = type;
@@ -156,7 +156,7 @@ boolean OCI_API OCI_LobFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CALL_CHECK_OBJECT_FETCHED(lob)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     if (OCI_LobIsTemporary(lob))
     {
@@ -196,13 +196,12 @@ OCI_Lob ** OCI_API OCI_LobArrayCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, LobTypeValues, OTEXT("Lob type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_LOB, type, sizeof(OCILobLocator *),
-                          sizeof(OCI_Lob), OCI_DTYPE_LOB, NULL);
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_LOB, type, sizeof(OCILobLocator *), sizeof(OCI_Lob), OCI_DTYPE_LOB, NULL);
+    OCI_STATUS = (NULL != arr);
 
-    if (arr)
+    if (OCI_STATUS)
     {
         OCI_RETVAL = (OCI_Lob **)arr->tab_obj;
-        OCI_STATUS = TRUE;
     }
 
     OCI_CALL_EXIT()
@@ -253,7 +252,7 @@ boolean OCI_API OCI_LobSeek
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CALL_CHECK_ENUM_VALUE(lob->con, NULL, mode, SeekModeValues, OTEXT("Seek Mode"))
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     size = OCI_LobGetLength(lob);
 
@@ -302,7 +301,7 @@ big_uint OCI_API OCI_LobGetOffset
 {
     OCI_CALL_ENTER(big_uint, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob);
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     OCI_RETVAL = lob->offset - 1;
     OCI_STATUS = TRUE;
@@ -329,7 +328,7 @@ boolean OCI_API OCI_LobRead2
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, char_count)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, byte_count)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     if (OCI_BLOB != lob->type)
     {
@@ -491,7 +490,7 @@ boolean OCI_API OCI_LobWrite2
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, char_count)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, byte_count)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     if (OCI_BLOB != lob->type)
     {
@@ -660,7 +659,7 @@ boolean OCI_API OCI_LobTruncate
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
 #ifdef OCI_LOB2_API_ENABLED
 
@@ -695,7 +694,7 @@ big_uint OCI_API OCI_LobErase
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob);
     OCI_CALL_CHECK_MIN(lob->con, NULL, size, 1);
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
 #ifdef OCI_LOB2_API_ENABLED
 
@@ -735,7 +734,7 @@ big_uint OCI_API OCI_LobGetLength
 {
     OCI_CALL_ENTER(big_uint, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
 #ifdef OCI_LOB2_API_ENABLED
 
@@ -775,11 +774,11 @@ unsigned int OCI_API OCI_LobGetChunkSize
 
     OCI_CALL_ENTER(unsigned int, size)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     OCI_EXEC(OCILobGetChunkSize(lob->con->cxt, lob->con->err, lob->handle, &size))
 
-    OCI_RETVAL = size;
+    OCI_RETVAL = (unsigned int) size;
 
     OCI_CALL_EXIT()
 }
@@ -800,7 +799,7 @@ boolean OCI_API OCI_LobCopy
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob_src)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
 #ifdef OCI_LOB2_API_ENABLED
 
@@ -849,7 +848,7 @@ boolean OCI_API OCI_LobCopyFromFile
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
 #ifdef OCI_LOB2_API_ENABLED
 
@@ -917,7 +916,7 @@ boolean OCI_API OCI_LobAppend2
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, char_count)
     OCI_CALL_CHECK_PTR(OCI_IPC_INT, byte_count)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     if (OCI_BLOB != lob->type)
     {
@@ -1085,7 +1084,7 @@ boolean OCI_API OCI_LobAppendLob
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob_src)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     OCI_EXEC(OCILobAppend(lob->con->cxt, lob->con->err, lob->handle, lob_src->handle))
 
@@ -1110,7 +1109,7 @@ boolean OCI_API OCI_LobIsTemporary
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     OCI_EXEC(OCILobIsTemporary(lob->con->env, lob->con->err, lob->handle, &OCI_RETVAL))
 
@@ -1130,7 +1129,7 @@ boolean OCI_API OCI_LobOpen
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CALL_CHECK_ENUM_VALUE(lob->con, NULL, mode, OpenModeValues, OTEXT("Open mode"))
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     OCI_EXEC(OCILobOpen(lob->con->cxt, lob->con->err, lob->handle, (ub1) mode))
 
@@ -1150,7 +1149,7 @@ boolean OCI_API OCI_LobClose
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     OCI_EXEC(OCILobClose(lob->con->cxt, lob->con->err, lob->handle))
 
@@ -1172,7 +1171,7 @@ boolean OCI_API OCI_LobIsEqual
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob2)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     OCI_EXEC(OCILobIsEqual(lob->con->env, lob->handle, lob2->handle, &OCI_RETVAL))
 
@@ -1192,7 +1191,7 @@ boolean OCI_API OCI_LobAssign
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob_src)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     if ((OCI_OBJECT_ALLOCATED == lob->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == lob->hstate))
     {
@@ -1219,7 +1218,7 @@ big_uint OCI_API OCI_LobGetMaxSize
 {
     OCI_CALL_ENTER(big_uint, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
 #ifdef OCI_LOB2_API_ENABLED
 
@@ -1248,7 +1247,7 @@ boolean OCI_API OCI_LobFlush
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     OCI_EXEC(OCILobFlushBuffer(lob->con->cxt, lob->con->err, lob->handle, (ub4) OCI_DEFAULT))
 
@@ -1269,7 +1268,7 @@ boolean OCI_API OCI_LobEnableBuffering
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
-   OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
     if (value)
     {

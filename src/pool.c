@@ -143,6 +143,8 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
     item = OCI_ListAppend(OCILib.pools, sizeof(*pool));
 
+    OCI_STATUS = (NULL != item);
+
     if (item)
     {
         pool = (OCI_Pool *) item->data;
@@ -154,8 +156,6 @@ OCI_Pool * OCI_API OCI_PoolCreate
         pool->db   = ostrdup(db   ? db   : OTEXT(""));
         pool->user = ostrdup(user ? user : OTEXT(""));
         pool->pwd  = ostrdup(pwd  ? pwd  : OTEXT(""));
-
-        OCI_STATUS = TRUE;
     }
 
 #if OCI_VERSION_COMPILE < OCI_9_2

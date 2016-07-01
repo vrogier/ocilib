@@ -144,21 +144,22 @@ OCI_HashTable * OCI_API OCI_HashCreate
     /* allocate table structure */
 
     table = (OCI_HashTable *) OCI_MemAlloc(OCI_IPC_HASHTABLE, sizeof(*table), (size_t) 1, TRUE);
+    OCI_STATUS = (NULL != table);
 
     /* set up attributes and allocate internal array of hash entry pointers */
 
-    if (table)
+    if (OCI_STATUS)
     {
         table->type  = type;
         table->size  = 0;
         table->count = 0;
 
         table->items = (OCI_HashEntry **) OCI_MemAlloc(OCI_IPC_HASHENTRY_ARRAY, sizeof(*table->items), (size_t) size, TRUE);
-        if (table->items)
+        OCI_STATUS = (NULL != table->items);
+        
+        if (OCI_STATUS)
         {
             table->size = size;           
-            
-            OCI_STATUS = TRUE;
         }
     }
 
@@ -231,6 +232,8 @@ boolean OCI_API OCI_HashFree
 
         OCI_FREE(table->items)
     }
+
+    OCI_RETVAL = TRUE;
 
     OCI_FREE(table)
 
@@ -499,8 +502,9 @@ OCI_HashEntry * OCI_API OCI_HashLookup
         if (!e && create)
         {
             e = (OCI_HashEntry *) OCI_MemAlloc(OCI_IPC_HASHENTRY, sizeof(*e), (size_t) 1, TRUE);
-
-            if (e)
+            OCI_STATUS = (NULL != e);
+           
+            if (OCI_STATUS)
             {
                 e->key = ostrdup(key);
 
@@ -524,7 +528,14 @@ OCI_HashEntry * OCI_API OCI_HashLookup
         }
     }
 
-    OCI_RETVAL = e;
+    if (OCI_STATUS)
+    {
+        OCI_RETVAL = e;
+    }
+    else if (e)
+    {
+        OCI_FREE(e)
+    }
 
     OCI_CALL_EXIT()
 }

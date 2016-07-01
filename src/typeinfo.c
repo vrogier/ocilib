@@ -166,7 +166,6 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     if (!found)
     {
         item = OCI_ListAppend(con->tinfs, sizeof(OCI_TypeInfo));
-
         OCI_STATUS = (NULL != item);
 
         /* allocate describe handle */
@@ -321,7 +320,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
             #endif
                 {
                     OCI_STATUS = (((OCI_TIF_TABLE == type) && (OCI_PTYPE_VIEW != desc_type)) ||
-                                   ((OCI_TIF_VIEW  == type) && (OCI_PTYPE_VIEW == desc_type)));
+                                  ((OCI_TIF_VIEW  == type) && (OCI_PTYPE_VIEW == desc_type)));
  
                     if (OCI_STATUS)
                     {
@@ -392,9 +391,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                 if (typinf->nb_cols > 0)
                 {
-                    typinf->offsets = (int *) OCI_MemAlloc(OCI_IPC_ARRAY,  sizeof(*typinf->offsets),
-                                                           (size_t) typinf->nb_cols, FALSE);
-
+                    typinf->offsets = (int *) OCI_MemAlloc(OCI_IPC_ARRAY,  sizeof(*typinf->offsets), (size_t) typinf->nb_cols, FALSE);
                     OCI_STATUS = (NULL != typinf->offsets);
 
                     if (OCI_STATUS)
@@ -407,12 +404,11 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                 if (typinf->nb_cols > 0)
                 {
-                    typinf->cols = (OCI_Column *) OCI_MemAlloc(OCI_IPC_COLUMN,  sizeof(*typinf->cols), 
-                                                               (size_t) typinf->nb_cols, TRUE);
+                    typinf->cols = (OCI_Column *) OCI_MemAlloc(OCI_IPC_COLUMN,  sizeof(*typinf->cols), (size_t) typinf->nb_cols, TRUE);
+                    OCI_STATUS = (NULL != typinf->cols);
 
                     /* describe children */
-
-                    if (typinf->cols)
+                    if (OCI_STATUS)
                     {
                         for (i = 0; i < typinf->nb_cols; i++)
                         {
