@@ -86,7 +86,7 @@ OCI_Date * OCI_DateInit
 
         /* if the input buffer is an SQLT_DAT buffer, we need to convert it */
 
-        if (ansi && date && date->handle && buffer)
+        if (ansi && date->handle && buffer)
         {
             unsigned char *d = (unsigned char *) buffer;
 
