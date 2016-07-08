@@ -10818,6 +10818,11 @@ OCI_EXPORT boolean OCI_API OCI_FileExists
  * - For local FILEs only
  * - Files fetched from resultset can't be assigned a new directory and name
  *
+ * @warning
+ * Oracle directories names and files names are case sensitive!
+ * if the Oracle Directory has been created in the database without quotes, it must be provided in upper case
+ * Otherwise, the directory name casing must match the one used at its declaration time in the database
+ *
  * @return
  * TRUE on success otherwise FALSE
  *

@@ -10,7 +10,9 @@ int main(void)
     char name[50];
   
     if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
+    {
         return EXIT_FAILURE;
+    }
 
     cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);

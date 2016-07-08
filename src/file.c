@@ -401,6 +401,8 @@ unsigned int OCI_API OCI_FileRead
                         (ub1) OCI_ONE_PIECE, (dvoid *) NULL,
                         NULL, (ub2) 0, (ub1) SQLCS_IMPLICIT)
         )
+
+        size_out = (ub4) size_byte;
     }
 
     else
