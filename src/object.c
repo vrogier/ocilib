@@ -351,6 +351,18 @@ OCI_Object * OCI_ObjectInit
         obj->handle = handle;
         obj->typinf = typinf;
 
+        if (!obj->tmpbufs)
+        {
+            obj->tmpbufs = (otext **)OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(otext *), (size_t)typinf->nb_cols, TRUE);
+            OCI_STATUS = (NULL != obj->tmpbufs);
+        }
+
+        if (!obj->tmpsizes)
+        {
+            obj->tmpsizes = (unsigned int *)OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(unsigned int), (size_t)typinf->nb_cols, TRUE);
+            OCI_STATUS = (NULL != obj->tmpsizes);
+        }
+
         if (!obj->objs)
         {
             obj->objs = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(void *),  (size_t) typinf->nb_cols, TRUE);
@@ -466,6 +478,10 @@ void OCI_ObjectReset
             
             obj->objs[i] = NULL;
         }
+
+        OCI_FREE(obj->tmpbufs[i])
+
+        obj->tmpsizes[i] = 0;
     }
 }
 
@@ -719,17 +735,14 @@ boolean OCI_API OCI_ObjectFree
 
     OCI_ObjectReset(obj);
 
-    if (obj->objs)
-    {
-        OCI_FREE(obj->objs)
-    }
+    OCI_FREE(obj->objs)
+    OCI_FREE(obj->tmpbufs)
+    OCI_FREE(obj->tmpsizes)
 
     if ((OCI_OBJECT_ALLOCATED == obj->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate))
     {
         OCI_OCIObjectFree(obj->con->env, obj->con->err, obj->handle, OCI_DEFAULT);
     }
-
-    OCI_FREE(obj->tmpbuf)
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != obj->hstate)
     {
@@ -1049,7 +1062,14 @@ const otext * OCI_API OCI_ObjectGetString
 
         if (value && ind && (OCI_IND_NULL != *ind))
         {
-            OCI_RETVAL = OCI_StringFromStringPtr(obj->con->env, *value,  &obj->tmpbuf, &obj->tmpsize);
+            if (OCILib.use_wide_char_conv)
+            {
+                OCI_RETVAL = OCI_StringFromStringPtr(obj->con->env, *value, &obj->tmpbufs[index], &obj->tmpsizes[index]);
+            }
+            else
+            {
+                OCI_RETVAL = (otext *)OCIStringPtr(obj->con->env, *value);
+            }
         }
     }
     else
@@ -1081,12 +1101,12 @@ const otext * OCI_API OCI_ObjectGetString
 
             if (len > 0)
             {
-                OCI_STATUS = OCI_StringRequestBuffer(&obj->tmpbuf, &obj->tmpsize, len);
+                OCI_STATUS = OCI_StringRequestBuffer(&obj->tmpbufs[index], &obj->tmpsizes[index], len);
 
                 if (OCI_STATUS)
                 {
-                    OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbuf, FALSE);
-                    OCI_RETVAL = obj->tmpbuf;
+                    OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbufs[index], FALSE);
+                    OCI_RETVAL = obj->tmpbufs[index];
                 }
             }
         }

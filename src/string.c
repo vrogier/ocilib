@@ -301,6 +301,12 @@ dbtext * OCI_StringGetOracleString
     dbtext  *dst = NULL;
     int      len = 0;
 
+    if (!src)
+    {
+        *size = 0;
+        return dst;
+    }
+
     if (*size == -1)
     {
         COMPUTE_LENTGH(otext, src, len)

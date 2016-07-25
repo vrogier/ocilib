@@ -162,7 +162,6 @@ boolean OCI_DefineIsDataNotNull
         else
         {
             ind = ((OCIInd *) (def->buf.inds))[def->rs->row_cur-1];
-
         }
         
         res = (ind != OCI_IND_NULL);

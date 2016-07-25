@@ -603,8 +603,8 @@ struct OCI_Object
     OCIObjectLifetime type;         /* object type */
     sb2              *tab_ind;      /* indicators for root instance */
     ub2               idx_ind;      /* instance indicator offset / indicator table */
-    otext            *tmpbuf;       /* temporary buffer */
-    unsigned int      tmpsize;      /* temporary buffer size */
+    otext           **tmpbufs;      /* temporary buffer  per column */
+    unsigned int     *tmpsizes;     /* temporary buffer size per column */
     char              padding[2];   /* dummy variable for alignment */ 
 };
 
