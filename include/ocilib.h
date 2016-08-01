@@ -1711,10 +1711,6 @@ typedef unsigned int big_uint;
  *
  * All other standalone object instances (mutexes, threads, dates, lobs, ...) <b>ARE NOT</b> freed.
  *
- * @par Example
- *
- * @include init.c
- *
  */
 
 /**
@@ -10813,7 +10809,7 @@ OCI_EXPORT boolean OCI_API OCI_FileExists
  * @param file  - File handle
  * @param dir   - File directory
  * @param name  - File name
- *
+ *in
  * @note
  * - For local FILEs only
  * - Files fetched from resultset can't be assigned a new directory and name

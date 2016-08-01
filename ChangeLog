@@ -1,11 +1,11 @@
-2016-06-28 Version 4.3.0 Vincent Rogier vince.rogier@ocilib.net
+2016-08-03 Version 4.3.0 Vincent Rogier vince.rogier@ocilib.net
 
     * New Features: 
     
          - Added NUMBER SQL type native wrapping 
          
             * Optional type as NUMBER type can still be fetched/binded using regular C native numeric types
-            * New OCI_Number type can be used when precision matters or for dealing with special values such positive and negative infinity
+            * New OCI_Number type can be used when precision matters or for dealing with special values such as positive and negative infinity
             * C API : 
                 - Added OCI_NUM_NUMBER numeric type
                 - Added OCI_Number type
@@ -39,18 +39,30 @@
                 - Added ocilib::Number type encapsulating the C API OCI_Number type
                 - This new type comes with all possible operator overloads for better usability
  
+    * Fixes:
+
+        - OCI_ObjectGetString(): Fixed usage of internal temporary buffers
+        - OCI_FileRead(): Return value was not the correct one
+ 
     * Miscellaneous:
     
-        - Major internal code re-factoring
+        - C API: Major internal code re-factoring
         
             * Code factorization
             * Replaced verbose macros with more compact ones
             * Code base reduced by few thousands lines of code
             * Fixed some error handling logic
             
-        - Added OCI_GetDataSize() and OCI_GetDataSize2()
- 
- 2016-03-21 Version 4.2.1 Vincent Rogier vince.rogier@ocilib.net
+        - C API: Added OCI_GetDataSize() and OCI_GetDataSize2()
+        
+        - C++ API: Added const iterators for ocilib::Collection<>
+
+        - Updated samples in folder /demo
+
+            * Added required DDL and DML for all samples
+            * Updated some samples
+                 
+2016-03-21 Version 4.2.1 Vincent Rogier vince.rogier@ocilib.net
 
     * Licensing
     
@@ -81,7 +93,7 @@
         - C API: Added support for specific environment variables: Now specific documented environment variables can be set for activating
           experimental or optional behaviours mostly for implementing workaround for Oracle Bugs.
         - C API: Added experimental workaround for unsolved Oracle OCI bug #9838993 using the environment variable "OCILIB_WORKAROUND_UTF16_COLUMN_NAME"
-        
+
 2015-09-21 Version 4.2.0 Vincent Rogier vince.rogier@ocilib.net
 
     * New Features:
