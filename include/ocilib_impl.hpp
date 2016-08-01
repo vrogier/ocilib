@@ -3878,9 +3878,21 @@ inline typename Collection<TDataType>::Iterator Collection<TDataType>::begin()
 }
 
 template <class TDataType>
+inline typename Collection<TDataType>::ConstIterator Collection<TDataType>::begin() const
+{
+    return ConstIterator(*this, 1);
+}
+
+template <class TDataType>
 inline typename Collection<TDataType>::Iterator Collection<TDataType>::end()
 {
     return Iterator(*this, GetCount() + 1);
+}
+
+template <class TDataType>
+inline typename Collection<TDataType>::ConstIterator Collection<TDataType>::end() const
+{
+    return ConstIterator(*this, GetCount() + 1);
 }
 
 template <class TDataType>
@@ -4234,6 +4246,12 @@ inline typename Collection<TDataType>::Element Collection<TDataType>::operator [
 }
 
 template<class TDataType>
+inline typename Collection<TDataType>::ConstElement Collection<TDataType>::operator [] (unsigned int index) const
+{
+    return ConstElement(*this, index);
+} 
+
+template<class TDataType>
 inline Collection<TDataType>::Iterator::Iterator(Collection &coll, unsigned int pos) : _elem(coll, pos)
 {
 }
@@ -4244,14 +4262,14 @@ inline Collection<TDataType>::Iterator::Iterator(const Iterator& other) : _elem(
 }
 
 template<class TDataType>
-inline bool Collection<TDataType>::Iterator::operator== (const Iterator& other)
+inline bool Collection<TDataType>::Iterator::operator== (const Iterator& other) const
 {
     return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(_elem._coll)) == (static_cast<OCI_Coll *>(other._elem._coll));
 
 }
 
 template<class TDataType>
-inline bool Collection<TDataType>::Iterator::operator!= (const Iterator& other)
+inline bool Collection<TDataType>::Iterator::operator!= (const Iterator& other) const
 {
     return !(*this == other);
 }
@@ -4290,6 +4308,83 @@ inline typename Collection<TDataType>::Iterator Collection<TDataType>::Iterator:
     Iterator old(*this);
     ++(*this);
     return old;
+}
+
+template<class TDataType>
+inline Collection<TDataType>::ConstIterator::ConstIterator(const Collection &coll, unsigned int pos) : _elem(coll, pos)
+{
+}
+
+template<class TDataType>
+inline Collection<TDataType>::ConstIterator::ConstIterator(const ConstIterator& other) : _elem(other._elem)
+{
+}
+
+template<class TDataType>
+inline bool Collection<TDataType>::ConstIterator::operator== (const ConstIterator& other) const
+{
+    return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(_elem._coll)) == (static_cast<OCI_Coll *>(other._elem._coll));
+
+}
+
+template<class TDataType>
+inline bool Collection<TDataType>::ConstIterator::operator!= (const ConstIterator& other) const
+{
+    return !(*this == other);
+}
+
+template<class TDataType>
+inline const typename Collection<TDataType>::ConstElement& Collection<TDataType>::ConstIterator::operator*() const
+{
+    return _elem;
+}
+
+template<class TDataType>
+inline typename Collection<TDataType>::ConstIterator & Collection<TDataType>::ConstIterator::operator--()
+{
+    _elem._pos--;
+    return (*this);
+}
+
+template<class TDataType>
+inline typename Collection<TDataType>::ConstIterator Collection<TDataType>::ConstIterator::operator--(int)
+{
+    ConstIterator old(*this);
+    --(*this);
+    return old;
+}
+
+template<class TDataType>
+inline typename Collection<TDataType>::ConstIterator  & Collection<TDataType>::ConstIterator::operator++()
+{
+    ++_elem._pos;
+    return (*this);
+}
+
+template<class TDataType>
+inline typename Collection<TDataType>::ConstIterator Collection<TDataType>::ConstIterator::operator++(int)
+{
+    ConstIterator old(*this);
+    ++(*this);
+    return old;
+}
+
+template<class TDataType>
+inline Collection<TDataType>::ConstElement::ConstElement(const Collection &coll, unsigned int pos) : _coll(coll), _pos(pos)
+{
+
+}
+
+template<class TDataType>
+inline Collection<TDataType>::ConstElement::operator TDataType() const
+{
+    return _coll.Get(_pos);
+}
+
+template<class TDataType>
+inline bool Collection<TDataType>::ConstElement::IsNull() const
+{
+    return _coll->IsElementNull(_pos);
 }
 
 template<class TDataType>

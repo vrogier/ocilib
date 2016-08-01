@@ -5093,9 +5093,35 @@ public:
 
     /**
     * @brief
+    * Class used for handling const transient collection value.
+    * it is used internally by:
+    * - the Collection<> const indexer operator in order to provide lvalue for read access
+    * - the Const Iterator class
+    * This class is  not meant to be publicly used !
+    *
+    */ 
+    class ConstElement
+    {
+        friend class Collection<TDataType>::ConstIterator;
+
+    public:
+        ConstElement(const Collection &coll, unsigned int pos);
+        operator TDataType() const;
+        bool IsNull() const;
+
+    private:
+
+        ConstElement& operator=(ConstElement const &src);
+
+        const Collection & _coll;
+        unsigned int _pos;
+    };
+
+    /**
+    * @brief
     * Class used for handling transient collection value.
     * it is used internally by:
-    * - the indexer operator in order to provide lvalue for write access
+    * - the Collection<> indexer operator in order to provide lvalue for read/write access
     * - the Iterator class
     * This class is  not meant to be publicly used !
     *
@@ -5121,19 +5147,41 @@ public:
 
     /**
     * @brief
-    * STL compliant bi-directional iterator class
+    * STL compliant bi-directional const iterator class
     *
     */
+    class ConstIterator : public std::iterator<std::bidirectional_iterator_tag, TDataType>
+    {
+    public:
+
+        ConstIterator(const Collection &collection, unsigned int pos);
+        ConstIterator(const ConstIterator& other);
+
+        bool operator== (const ConstIterator& other) const;
+        bool operator!= (const ConstIterator& other) const;
+
+        const ConstElement& operator*() const;
+
+        ConstIterator &operator--();
+        ConstIterator operator--(int);
+
+        ConstIterator &operator++();
+        ConstIterator operator++(int);
+
+    private:
+
+        ConstElement _elem;
+    };
+
     class Iterator : public std::iterator<std::bidirectional_iterator_tag, TDataType>
     {
-
     public:
 
         Iterator(Collection &collection, unsigned int pos);
         Iterator(const Iterator& other);
 
-        bool operator== (const Iterator& other);
-        bool operator!= (const Iterator& other);
+        bool operator== (const Iterator& other) const;
+        bool operator!= (const Iterator& other) const;
 
         Element& operator*();
 
@@ -5155,12 +5203,20 @@ public:
     */
     typedef Iterator iterator;
 
+    typedef ConstIterator const_iterator;
     /**
     * @brief
     * Returns an iterator pointing to the first element in the collection
     *
     */
     Iterator begin();
+
+    /**
+    * @brief
+    * Returns a const iterator pointing to the first element in the collection
+    *
+    */
+    ConstIterator begin() const;
 
     /**
     * @brief
@@ -5171,10 +5227,24 @@ public:
 
     /**
     * @brief
+    * Returns a const iterator referring to the past-the-end element in the collection
+    *
+    */
+    ConstIterator end() const;
+
+    /**
+    * @brief
     * Returns the element at a given position in the collection.
     *
     */
     Element operator [] (unsigned int index);
+
+    /**
+    * @brief
+    * Returns the element at a given position in the collection.
+    *
+    */
+    ConstElement operator [] (unsigned int index) const;
 
 private:
 
