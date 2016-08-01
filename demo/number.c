@@ -1,5 +1,12 @@
 #include "ocilib.h"
 
+/* requires script demo/number.sql */
+
+void err_handler(OCI_Error *err)
+{
+    printf("%s\n", OCI_ErrorGetString(err));
+}
+
 int main(void)
 {
     OCI_Connection *cn = NULL;
@@ -18,17 +25,13 @@ int main(void)
     unsigned int i, n;
     otext buf[128] = "";
 
-    if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
+    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    {
         return EXIT_FAILURE;
+    }
 
     cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
-
-    OCI_ExecuteStmt(st, "create type test_num_coll_t as varray(10) of number");
-    OCI_ExecuteStmt(st, "create type test_num_t as object (value number)");
-    OCI_ExecuteStmt(st, "create table test_number (value number)");
-    OCI_ExecuteStmt(st, "insert into test_number values (3.14)");
-    OCI_ExecuteStmt(st, "insert into test_number values (5.28)");
 
     tc = OCI_TypeInfoGet(cn, "test_num_coll_t", OCI_TIF_TYPE);
     to = OCI_TypeInfoGet(cn, "test_num_t", OCI_TIF_TYPE);
@@ -44,7 +47,7 @@ int main(void)
     rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        OCI_Number *n = OCI_GetNumber(rs, 1);
+        OCI_Number  *n = OCI_GetNumber(rs, 1);
         const otext *s = OCI_GetString(rs, 1);
 
         OCI_NumberToText(n, NULL, sizeof(buf), buf);
@@ -68,7 +71,7 @@ int main(void)
     OCI_NumberFromText(nt, "1234.4321", NULL);
     OCI_Execute(st);
     OCI_NumberToText(nt, NULL, sizeof(buf), buf);
-    printf("%s\n", buf);       
+    printf("%s\n", buf);
     OCI_SetBindAllocation(st, OCI_BAM_EXTERNAL);
 
     // Testing registering number for a returning into statement
@@ -116,7 +119,7 @@ int main(void)
         printf("pos infinite = [%s]\n", OCI_GetString(rs, 1));
         printf("neg infinite = [%s]\n", OCI_GetString(rs, 2));
     }
-   
+
     // Testing array of numbers
     OCI_NumberFromText(ar[0], "1.2", NULL);
     OCI_NumberFromText(ar[1], "~", NULL);
@@ -135,16 +138,14 @@ int main(void)
     OCI_NumberToText(ar[4], NULL, sizeof(buf), buf);
     printf("%s\n", buf);
 
-    OCI_ExecuteStmt(st, "drop table test_number");
-    OCI_ExecuteStmt(st, "drop type test_num_coll_t");
-    OCI_ExecuteStmt(st, "drop type test_num_t");
-
     OCI_NumberArrayFree(ar);
     OCI_NumberFree(nm);
-    OCI_ElemFree(el); 
+    OCI_ElemFree(el);
     OCI_CollFree(cl);
     OCI_ObjectFree(ob);
-    
+
+    OCI_StatementFree(st);
+    OCI_ConnectionFree(cn);
     OCI_Cleanup();
 
     return EXIT_SUCCESS;

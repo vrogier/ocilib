@@ -1,112 +1,83 @@
 #include "ocilib.h"
 
-int main(void)
+/* requires script demo/collections.sql */
+
+void err_handler(OCI_Error *err)
 {
-    OCI_Connection *cn;
-    OCI_Statement *st;
-    OCI_Resultset *rs;
-    OCI_Coll *coll;
-    OCI_Iter *iter;
-    OCI_Elem *elem;
-    OCI_TypeInfo *type;
-    OCI_Object *obj;
-    int i, n;
+    printf("%s\n", OCI_ErrorGetString(err));
+}
 
-    if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
-       return EXIT_FAILURE;
+void print_elem(OCI_Object *product)
+{
+    printf("...product: code %d, %s\n", OCI_ObjectGetInt(product, "code"), OCI_ObjectGetString(product, "name"));
+}
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+void print_coll(OCI_Coll *coll)
+{
+    OCI_Iter *iter = OCI_IterCreate(coll);
+    OCI_Elem *elem = OCI_IterGetNext(iter);
 
-
-    /* Varray binding -------------------------------------------------------- */
-
-    st = OCI_StatementCreate(cn);
-
-    /* create the collection */
-
-    type = OCI_TypeInfoGet(cn, "Varray_type", OCI_TIF_TYPE);
-    coll = OCI_CollCreate(type);
-
-    /* bind the local collection to a PL/SQL procedure */
-    
-    OCI_Prepare(st, "begin load_array(:array); end;");
-    OCI_BindColl(st, ":array", coll);
-    OCI_Execute(st);
- 
-    /* the procedure has filled the collection and 
-       we can iterate it using an iterator */
-    
-    iter = OCI_IterCreate(coll);
-    elem = OCI_IterGetNext(iter);
-
-    while (elem != NULL)
+    while (elem)
     {
-        printf("value %s\n", OCI_ElemGetString(elem));
+        print_elem(OCI_ElemGetObject(elem));
         elem = OCI_IterGetNext(iter);
     }
 
     OCI_IterFree(iter);
+}
+
+void bind_coll(OCI_Connection *cn)
+{
+    OCI_Coll *coll = OCI_CollCreate(OCI_TypeInfoGet(cn, "product_varray_t", OCI_TIF_TYPE));
+    OCI_Statement *st = OCI_StatementCreate(cn);
+
+    OCI_Prepare(st, "begin :array := product_varray_t(product_t(123, 'name 123'), product_t(456, 'name 456'), product_t(789, 'name 789')); end;");
+    OCI_BindColl(st, ":array", coll);
+    OCI_Execute(st);
+
+    print_coll(coll);
+
     OCI_CollFree(coll);
- 
-    /* Varray SQL fetch ------------------------------------------------------- */
-  
-    /* query on a table with varray column */
- 
-    OCI_ExecuteStmt(st, "SELECT * from table_article");
+    OCI_StatementFree(st);
+}
+
+void fetch_coll(OCI_Connection *cn, otext * table_name)
+{
+    OCI_Statement *st = OCI_StatementCreate(cn);
+    OCI_Resultset *rs = NULL;
+
+    OCI_ExecuteStmtFmt(st, "SELECT * from %m", table_name);
 
     rs = OCI_GetResultset(st);
 
     while (OCI_FetchNext(rs))
     {
-        /* iterate the collection using an iterator */
+        printf("#%s\n", OCI_GetString(rs, 1));
 
-        coll = OCI_GetColl(rs, 2);
-
-        iter = OCI_IterCreate(coll);
-        elem = OCI_IterGetNext(iter);
-
-        printf("article #%d\n", OCI_GetInt(rs, 1));
-
-        while (elem != NULL)
-        {
-            obj = OCI_ElemGetObject(elem);
-            printf(".... code %d, name%s \n", OCI_ObjectGetInt(obj, "ID"),
-                                              OCI_ObjectGetString(obj, "NAME"));
-            elem = OCI_IterGetNext(iter);
-        }
-
-        OCI_IterFree(iter);
+        print_coll(OCI_GetColl(rs, 2));
     }
 
-    /* Nested table fetch ------------------------------------------------------- */
-    
-    /* query on a table with nested table column */
- 
-    OCI_ExecuteStmt(st, "SELECT * from table_sales");
+    OCI_StatementFree(st);
+}
 
-    rs = OCI_GetResultset(st);
+int main(void)
+{
+    OCI_Connection *cn;
 
-    while (OCI_FetchNext(rs))
+    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
     {
-        coll = OCI_GetColl(rs, 2);
-
-        printf("Sale #%d\n", OCI_GetInt(rs, 1));
-
-        /* iterate the collection by accessing element by index */
-   
-        n = OCI_CollGetSize(coll);
-
-        for(i = 1; i <= n; i++)
-        {
-            elem = OCI_CollGetAt(coll, i);
-            obj  = OCI_ElemGetObject(elem);
-
-            printf(".... employee %s, amount %s \n", OCI_ObjectGetString(obj, "EMP"),
-                                                     OCI_ObjectGetString(obj, "AMOUNT"));
-        }
+        return EXIT_FAILURE;
     }
 
+    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+
+    bind_coll(cn);
+
+    fetch_coll(cn, "products_varray");
+    fetch_coll(cn, "products_nested_table");
+
+    OCI_ConnectionFree(cn);
     OCI_Cleanup();
-    
+
     return EXIT_SUCCESS;
 }

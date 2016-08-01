@@ -2,6 +2,8 @@
 
 #include "ocilib.hpp"
 
+/* requires script demo/geometry.sql */
+
 using namespace ocilib;
 
 const int ElemCount = 50;
@@ -44,9 +46,11 @@ int main(void)
         geometry.Set("sdo_ordinates", ordinates);
 
         /* prepare, bind and excute statement then commit*/
-        st.Prepare("INSERT INTO test_insert (gid, geometry) VALUES (1, :sdo)");
+        st.Prepare("INSERT INTO geometry (code, obj) VALUES (1, :sdo)");
         st.Bind("sdo", geometry, BindInfo::In);
         st.ExecutePrepared();
+
+        std::cout << st.GetAffectedRows() << " rows inserted" << std::endl;
     }
     catch (std::exception &ex)
     {

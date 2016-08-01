@@ -4,6 +4,11 @@
 
 using namespace ocilib;
 
+void print_row(Resultset &rs)
+{
+    std::cout << rs.Get<int>(1) << " - " << rs.Get<ostring>(2) << std::endl;
+}
+
 int main(void)
 {
     try
@@ -15,7 +20,7 @@ int main(void)
         Statement st(con);
 
         st.SetFetchMode(Statement::FetchScrollable);
-        st.Execute("select table_name from all_tables where rownum < 10 ");
+        st.Execute("select rownum, 'Row ' || rownum from (select 1 from dual connect by level <= 65)");
 
         Resultset rs = st.GetResultset();
 
@@ -23,28 +28,29 @@ int main(void)
         std::cout << "Total rows : " << rs.GetCount() << std::endl;
 
         rs.First();
-        std::cout << "table " << rs.Get<ostring>(1) << std::endl;
+        print_row(rs);
 
         while (rs.Next())
         {
-            std::cout << "table " << rs.Get<ostring>(1) << std::endl;
+            print_row(rs);
         }
 
         while (rs.Prev())
         {
-            std::cout << "table " << rs.Get<ostring>(1) << std::endl;
+            print_row(rs);
         }
 
-        rs.Seek(Resultset::SeekRelative, 6);
-        std::cout << "table " << rs.Get<ostring>(1) << std::endl;
+        rs.Seek(Resultset::SeekAbsolute, 30);
+        print_row(rs);
 
-        while (rs.Next())
+        while (rs.GetCurrentRow() < 60 && rs.Next())
         {
-            std::cout << "table " << rs.Get<ostring>(1) << std::endl;
+            print_row(rs);
         }
 
-        rs.Seek(Resultset::SeekRelative, -3);
-        std::cout << "table " << rs.Get<ostring>(1) << std::endl;
+        rs.Seek(Resultset::SeekRelative, -15);
+        print_row(rs);
+
     }
     catch (std::exception &ex)
     {

@@ -2,14 +2,21 @@
 
 #define SIZE_STR 260
 
+void err_handler(OCI_Error *err)
+{
+    printf("%s\n", OCI_ErrorGetString(err));
+}
+
 int main(void)
 {
     OCI_Date *d1, *d2;
 
-    char str[SIZE_STR+1];
-   
-    if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
+    char str[SIZE_STR + 1];
+
+    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    {
         return EXIT_FAILURE;
+    }
 
     d1 = OCI_DateCreate(NULL);
     d2 = OCI_DateCreate(NULL);
@@ -34,13 +41,12 @@ int main(void)
     OCI_DateToText(d1, "DD/MM/YYYY HH24:MI:SS", SIZE_STR, str);
     printf("\nLast day of the month : %s\n", str);
 
-    printf("\nNumber of days until the end of the months : %i\n",
-            OCI_DateDaysBetween(d1, d2));
+    printf("\nNumber of days until the end of the months : %i\n", OCI_DateDaysBetween(d1, d2));
 
     OCI_DateFree(d1);
     OCI_DateFree(d2);
 
     OCI_Cleanup();
- 
+
     return EXIT_SUCCESS;
 }
