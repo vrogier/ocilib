@@ -1,22 +1,22 @@
 /*
- * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
- *
- * Website: http://www.ocilib.net
- *
- * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+*
+* Website: http://www.ocilib.net
+*
+* Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 #include "ocilib.hpp"
 
@@ -671,11 +671,11 @@ void test_bind2(void)
     TestArray t;
 
     t.val_date = Date::SysDate();
-    t.val_int  = 1;
-    t.val_dbl  = 3.14;
-    t.val_flt  = 3.14f;
-    t.val_str  = otext("Name00");
-    t.val_lob  = Clob(con);
+    t.val_int = 1;
+    t.val_dbl = 3.14;
+    t.val_flt = 3.14f;
+    t.val_str = otext("Name00");
+    t.val_lob = Clob(con);
     t.val_file = File(con);
 
     t.val_lob.Write(otext("lob value00"));
@@ -1158,7 +1158,7 @@ void test_object_insert(void)
 
     obj1.Set<int>(otext("VAL_INT"), 1);
     obj1.Set<double>(otext("VAL_DBL"), 3.14);
-    obj1.Set<float>(otext("VAL_FLT"), (float) 3.14);
+    obj1.Set<float>(otext("VAL_FLT"), static_cast<float>(3.14));
     obj1.Set<ostring>(otext("VAL_STR"), otext("USB KEY 2go"));
     obj1.Set<Raw>(otext("VAL_RAW"), rawData);
     obj1.Set<Date>(otext("VAL_DATE"), date);
@@ -1322,12 +1322,12 @@ void test_collection(void)
 
         coll = rs.Get<Collection<ostring> >(2);
 
-        Collection<ostring>::iterator it1 = coll.begin();
-        Collection<ostring>::iterator it2 = coll.end();
+        Collection<ostring>::iterator it3 = coll.begin();
+        Collection<ostring>::iterator it4 = coll.end();
 
-        for (; it1 != it2; ++it1)
+        for (; it3 != it4; ++it3)
         {
-            ocout << otext("... Employee : ") << static_cast<ostring>(*it1) << oendl;
+            ocout << otext("... Employee : ") << static_cast<ostring>(*it3) << oendl;
         }
     }
 

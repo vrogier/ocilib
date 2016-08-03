@@ -55,8 +55,12 @@
             
         - C API: Added OCI_GetDataSize() and OCI_GetDataSize2()
         
-        - C++ API: Added const iterators for ocilib::Collection<>
+        - C++ API: 
 
+            * Added const iterators for ocilib::Collection<>
+            * Addressed code analysis hints
+            * Added C++ compiler capabilities detection (C+11)
+            
         - Updated samples in folder /demo
 
             * Added required DDL and DML for all samples

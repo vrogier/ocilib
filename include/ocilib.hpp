@@ -34,7 +34,6 @@
 #include <string>
 #include <list>
 #include <vector>
-#include <map>
 
 #include "ocilib.h"
 
@@ -1399,7 +1398,7 @@ public:
      * the program to deal with the thread specific value of the key
      *
      */
-    static void Create(const ostring& name, ThreadKeyFreeProc freeProc = 0);
+    static void Create(const ostring& name, ThreadKeyFreeProc freeProc = nullptr);
 
     /**
      * @brief
@@ -2427,7 +2426,7 @@ public:
      * For local transaction,  don't use the 'pxid' parameter
      *
      */
-   Transaction(const Connection &connection, unsigned int timeout, TransactionFlags flags, OCI_XID *pxid = NULL);
+    Transaction(const Connection &connection, unsigned int timeout, TransactionFlags flags, OCI_XID *pxid = nullptr);
 
    /**
      * @brief
@@ -2562,7 +2561,7 @@ public:
     * Default connection number format is computed from Environment::GetFormat()
     *
     */
-    void FromString(const ostring& str, const ostring& format = OTEXT(""));
+    void FromString(const ostring& str, const ostring& format = OTEXT("")) const;
 
     /**
     * @brief
@@ -2637,7 +2636,7 @@ public:
 
 private:
 
-    Number(OCI_Number *pNumber, Handle *parent = 0);
+    Number(OCI_Number *pNumber, Handle *parent = nullptr);
 
     void Allocate();
 
@@ -3026,14 +3025,14 @@ public:
      * Return a new date holding the current date value incremented by the given number of days
      *
      */
-    Date operator + (int value);
+    Date operator + (int value) const;
 
     /**
      * @brief
      * Return a new date holding the current date value decremented by the given number of days
      *
      */
-    Date operator - (int value);
+    Date operator - (int value) const;
 
     /**
      * @brief
@@ -3095,7 +3094,7 @@ private:
 
     int Compare(const Date& other) const;
 
-    Date(OCI_Date *pDate, Handle *parent = 0);
+    Date(OCI_Date *pDate, Handle *parent = nullptr);
 
     void Allocate();
 };
@@ -3426,14 +3425,14 @@ public:
     * Return a new Interval holding the sum of the current Interval value and the given Interval value
     *
     */
-    Interval operator + (const Interval& other);
+    Interval operator + (const Interval& other) const;
 
     /**
     * @brief
     * Return a new Interval holding the difference of the current Interval value and the given Interval value
     *
     */
-    Interval operator - (const Interval& other);
+    Interval operator - (const Interval& other) const;
 
     /**
     * @brief
@@ -3495,7 +3494,7 @@ private:
 
     int Compare(const Interval& other) const;
 
-    Interval(OCI_Interval *pInterval, Handle *parent = 0);
+    Interval(OCI_Interval *pInterval, Handle *parent = nullptr);
 };
 
 /**
@@ -3898,14 +3897,14 @@ public:
     * Return a new Timestamp holding the current Timestamp value incremented by the given number of days
     *
     */
-    Timestamp operator + (int value);
+    Timestamp operator + (int value) const;
 
     /**
     * @brief
     * Return a new Timestamp holding the current Timestamp value decremented by the given number of days
     *
     */
-    Timestamp operator - (int value);
+    Timestamp operator - (int value) const;
 
     /**
     * @brief
@@ -3933,14 +3932,14 @@ public:
     * Return a new Timestamp holding the sum of the current Timestamp value and the given Interval value
     *
     */
-    Timestamp operator + (const Interval& other);
+    Timestamp operator + (const Interval& other) const;
 
     /**
     * @brief
     * Return a new Timestamp holding the difference of the current Timestamp value and the given Interval value
     *
     */
-    Timestamp operator - (const Interval& other);
+    Timestamp operator - (const Interval& other) const;
 
     /**
     * @brief
@@ -4002,7 +4001,7 @@ private:
 
     int Compare(const Timestamp& other) const;
 
-    Timestamp(OCI_Timestamp *pTimestamp, Handle *parent = 0);
+    Timestamp(OCI_Timestamp *pTimestamp, Handle *parent = nullptr);
 };
 
 /**
@@ -4283,7 +4282,7 @@ private:
 
     bool Equals(const Lob &other) const;
 
-    Lob(OCI_Lob *pLob, Handle *parent = 0);
+    Lob(OCI_Lob *pLob, Handle *parent = nullptr);
 
 };
 
@@ -4507,7 +4506,7 @@ private:
 
     bool Equals(const File &other) const;
 
-    File(OCI_File *pFile, Handle *parent = 0);
+    File(OCI_File *pFile, Handle *parent = nullptr);
 };
 
 /**
@@ -4794,7 +4793,7 @@ public:
 
 private:
 
-    Object(OCI_Object *pObject, Handle *parent = 0);
+    Object(OCI_Object *pObject, Handle *parent = nullptr);
 };
 
 /**
@@ -4881,7 +4880,7 @@ public:
 
 private:
 
-    Reference(OCI_Ref *pRef, Handle *parent = 0);
+    Reference(OCI_Ref *pRef, Handle *parent = nullptr);
 };
 
 /**
@@ -5099,10 +5098,11 @@ public:
     * - the Const Iterator class
     * This class is  not meant to be publicly used !
     *
-    */ 
+    */
+
     class ConstElement
     {
-        friend class Collection<TDataType>::ConstIterator;
+        friend class ConstIterator;
 
     public:
         ConstElement(const Collection &coll, unsigned int pos);
@@ -5128,7 +5128,7 @@ public:
     */
     class Element
     {
-        friend class Collection<TDataType>::Iterator;
+        friend class Iterator;
 
     public:
         Element(Collection &coll, unsigned int pos);
@@ -5198,12 +5198,18 @@ public:
 
     /**
     * @brief
-    * common iterator declaration
+    * Common iterator declaration
     *
     */
     typedef Iterator iterator;
 
+    /**
+    * @brief
+    * Common const iterator declaration
+    *
+    */
     typedef ConstIterator const_iterator;
+
     /**
     * @brief
     * Returns an iterator pointing to the first element in the collection
@@ -5248,11 +5254,11 @@ public:
 
 private:
 
-    TDataType GetElem(OCI_Elem *elem, Handle *parent) const;
+    static TDataType GetElem(OCI_Elem *elem, Handle *parent);
 
-    void SetElem(OCI_Elem *elem, const TDataType &value);
+    static void SetElem(OCI_Elem *elem, const TDataType &value);
 
-    Collection(OCI_Coll *pColl, Handle *parent = 0);
+    Collection(OCI_Coll *pColl, Handle *parent = nullptr);
 };
 
 /**
@@ -5315,7 +5321,7 @@ public:
 
 private:
 
-    Long(OCI_Long *pLong, Handle *parent = 0);
+    Long(OCI_Long *pLong, Handle *parent = nullptr);
 };
 
 /**
@@ -6378,17 +6384,17 @@ private:
     static bool IsResultsetHandle(Handle *handle);
     static void OnFreeSmartHandle(SmartHandle *smartHandle);
 
-    Statement(OCI_Statement *stmt, Handle *parent = 0);
+    Statement(OCI_Statement *stmt, Handle *parent = nullptr);
 
-    BindsHolder *GetBindsHolder(bool allocate);
+    BindsHolder *GetBindsHolder(bool allocate) const;
 
-    void ReleaseResultsets();
+    void ReleaseResultsets() const;
 
     void SetLastBindMode(BindInfo::BindDirection mode);
 
-    void SetInData();
-    void SetOutData();
-    void ClearBinds();
+    void SetInData() const;
+    void SetOutData() const;
+    void ClearBinds() const;
 
     template <typename TBindMethod, class TDataType>
     void Bind1 (TBindMethod &method, const ostring& name, TDataType& value, BindInfo::BindDirection mode);

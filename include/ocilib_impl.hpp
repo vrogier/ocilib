@@ -117,7 +117,7 @@ template<> struct NumericTypeResolver<double>         { enum { Value = NumericDo
 template<> struct NumericTypeResolver<float>          { enum { Value = NumericFloat }; };
 
 template<class TResultType>
-inline TResultType Check(TResultType result)
+TResultType Check(TResultType result)
 {
     OCI_Error *err = OCI_GetLastError();
 
@@ -142,7 +142,7 @@ inline Raw MakeRaw(void *result, unsigned int size)
 }
 
 template <class StringClass, class CharType>
-inline void ConverString(StringClass &dest, const CharType *src, size_t length)
+void ConverString(StringClass &dest, const CharType *src, size_t length)
 {
     size_t i = 0;
 
@@ -166,53 +166,53 @@ inline void ConverString(StringClass &dest, const CharType *src, size_t length)
  * --------------------------------------------------------------------------------------------- */
 
 template<class TEnum>
-inline Enum<TEnum>::Enum(void) : _value(0)
+Enum<TEnum>::Enum(void) : _value(0)
 {
 }
 
 template<class TEnum>
-inline Enum<TEnum>::Enum(TEnum value) : _value(value)
+Enum<TEnum>::Enum(TEnum value) : _value(value)
 {
 }
 
 template<class TEnum>
-inline TEnum Enum<TEnum>::GetValue()
+TEnum Enum<TEnum>::GetValue()
 {
     return _value;
 }
 
 template<class TEnum>
-inline Enum<TEnum>::operator TEnum ()
+Enum<TEnum>::operator TEnum ()
 {
     return GetValue();
 }
 
 template<class TEnum>
-inline Enum<TEnum>::operator unsigned int ()
+Enum<TEnum>::operator unsigned int () const
 {
     return static_cast<unsigned int>(_value);
 }
 
 template<class TEnum>
-inline bool Enum<TEnum>::operator == (const Enum& other) const
+bool Enum<TEnum>::operator == (const Enum& other) const
 {
     return other._value == _value;
 }
 
 template<class TEnum>
-inline bool Enum<TEnum>::operator != (const Enum& other) const
+bool Enum<TEnum>::operator != (const Enum& other) const
 {
     return !(*this == other);
 }
 
 template<class TEnum>
-inline bool Enum<TEnum>::operator == (const TEnum& other) const
+bool Enum<TEnum>::operator == (const TEnum& other) const
 {
     return other == _value;
 }
 
 template<class TEnum>
-inline bool Enum<TEnum>::operator != (const TEnum& other) const
+bool Enum<TEnum>::operator != (const TEnum& other) const
 {
     return !(*this == other);
 }
@@ -222,129 +222,129 @@ inline bool Enum<TEnum>::operator != (const TEnum& other) const
  * --------------------------------------------------------------------------------------------- */
 
 template<class TEnum>
-inline Flags<TEnum>::Flags(void) : _flags(static_cast<TEnum>(0))
+Flags<TEnum>::Flags(void) : _flags(static_cast<TEnum>(0))
 {
 }
 
 template<class TEnum>
-inline Flags<TEnum>::Flags(TEnum flag) : _flags( flag)
+Flags<TEnum>::Flags(TEnum flag) : _flags( flag)
 {
 }
 
 template<class TEnum>
-inline Flags<TEnum>::Flags(const Flags& other) : _flags(other._flags)
+Flags<TEnum>::Flags(const Flags& other) : _flags(other._flags)
 {
 }
 
 template<class TEnum>
-inline Flags<TEnum>::Flags(unsigned int flag) : _flags(static_cast<TEnum>(flag))
+Flags<TEnum>::Flags(unsigned int flag) : _flags(static_cast<TEnum>(flag))
 {
 }
 
 template<class TEnum>
-inline Flags<TEnum> Flags<TEnum>::operator~ () const
+Flags<TEnum> Flags<TEnum>::operator~ () const
 {
     return Flags<TEnum>(~_flags);
 }
 
 template<class TEnum>
-inline Flags<TEnum> Flags<TEnum>::operator | (const Flags& other) const
+Flags<TEnum> Flags<TEnum>::operator | (const Flags& other) const
 {
     return Flags<TEnum>(_flags | other._flags);
 }
 
 template<class TEnum>
-inline Flags<TEnum> Flags<TEnum>::operator & (const Flags& other) const
+Flags<TEnum> Flags<TEnum>::operator & (const Flags& other) const
 {
     return Flags<TEnum>(_flags & other._flags);
 }
 
 template<class TEnum>
-inline Flags<TEnum> Flags<TEnum>::operator ^ (const Flags& other) const
+Flags<TEnum> Flags<TEnum>::operator ^ (const Flags& other) const
 {
     return Flags<TEnum>(_flags ^ other._flags);
 }
 
 template<class TEnum>
-inline Flags<TEnum> Flags<TEnum>::operator | (TEnum other) const
+Flags<TEnum> Flags<TEnum>::operator | (TEnum other) const
 {
     return Flags<TEnum>(_flags | other);
 }
 
 template<class TEnum>
-inline Flags<TEnum> Flags<TEnum>::operator & (TEnum other) const
+Flags<TEnum> Flags<TEnum>::operator & (TEnum other) const
 {
     return Flags<TEnum>(_flags & other);
 }
 
 template<class TEnum>
-inline Flags<TEnum> Flags<TEnum>::operator ^ (TEnum other) const
+Flags<TEnum> Flags<TEnum>::operator ^ (TEnum other) const
 {
     return Flags<TEnum>(_flags ^ other);
 }
 
 template<class TEnum>
-inline Flags<TEnum>& Flags<TEnum>::operator |= (const Flags<TEnum>& other)
+Flags<TEnum>& Flags<TEnum>::operator |= (const Flags<TEnum>& other)
 {
     _flags |= other._flags;
     return *this;
 }
 
 template<class TEnum>
-inline Flags<TEnum>& Flags<TEnum>::operator &= (const Flags<TEnum>& other)
+Flags<TEnum>& Flags<TEnum>::operator &= (const Flags<TEnum>& other)
 {
     _flags &= other._flags;
     return *this;
 }
 
 template<class TEnum>
-inline Flags<TEnum>& Flags<TEnum>::operator ^= (const Flags<TEnum>& other)
+Flags<TEnum>& Flags<TEnum>::operator ^= (const Flags<TEnum>& other)
 {
     _flags ^= other._flags;
     return *this;
 }
 
 template<class TEnum>
-inline Flags<TEnum>& Flags<TEnum>::operator |= (TEnum other)
+Flags<TEnum>& Flags<TEnum>::operator |= (TEnum other)
 {
     _flags |= other;
     return *this;
 }
 
 template<class TEnum>
-inline Flags<TEnum>& Flags<TEnum>::operator &= (TEnum other)
+Flags<TEnum>& Flags<TEnum>::operator &= (TEnum other)
 {
     _flags &= other;
     return *this;
 }
 
 template<class TEnum>
-inline Flags<TEnum>& Flags<TEnum>::operator ^= (TEnum other)
+Flags<TEnum>& Flags<TEnum>::operator ^= (TEnum other)
 {
     _flags ^= other;
     return *this;
 }
 
 template<class TEnum>
-inline bool Flags<TEnum>::operator == (TEnum other) const
+bool Flags<TEnum>::operator == (TEnum other) const
 {
     return _flags == static_cast<unsigned int>(other);
 }
 
 template<class TEnum>
-inline bool Flags<TEnum>::operator == (const Flags& other) const
+bool Flags<TEnum>::operator == (const Flags& other) const
 {
     return _flags == other._flags;
 }
 
 template<class TEnum>
-inline bool Flags<TEnum>::IsSet(TEnum other) const
+bool Flags<TEnum>::IsSet(TEnum other) const
 {
     return ((_flags & other) == _flags);
 }
 
 template<class TEnum>
-inline unsigned int Flags<TEnum>::GetValues() const
+unsigned int Flags<TEnum>::GetValues() const
 {
     return _flags;
 }
@@ -368,34 +368,34 @@ OCI_DEFINE_FLAG_OPERATORS(Subscription::ChangeTypesValues)
  * --------------------------------------------------------------------------------------------- */
 
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::ManagedBuffer() : _buffer(NULL), _size(0)
+ManagedBuffer<TBufferType>::ManagedBuffer() : _buffer(nullptr), _size(0)
 {
 }
 
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::ManagedBuffer(TBufferType *buffer, size_t size) : _buffer(buffer), _size(size)
+ManagedBuffer<TBufferType>::ManagedBuffer(TBufferType *buffer, size_t size) : _buffer(buffer), _size(size)
 {
 }
 
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::ManagedBuffer(size_t size) : _buffer(new TBufferType[size]), _size(size)
+ManagedBuffer<TBufferType>::ManagedBuffer(size_t size) : _buffer(new TBufferType[size]), _size(size)
 {
     memset(_buffer, 0, sizeof(TBufferType) * _size);
 }
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::~ManagedBuffer()
+ManagedBuffer<TBufferType>::~ManagedBuffer()
 {
     delete [] _buffer;
 }
 
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::operator TBufferType* () const
+ManagedBuffer<TBufferType>::operator TBufferType* () const
 {
     return  _buffer;
 }
 
 template< typename TBufferType>
-inline ManagedBuffer<TBufferType>::operator const TBufferType* () const
+ManagedBuffer<TBufferType>::operator const TBufferType* () const
 {
     return  _buffer;
 }
@@ -405,73 +405,73 @@ inline ManagedBuffer<TBufferType>::operator const TBufferType* () const
  * --------------------------------------------------------------------------------------------- */
 
 template<class THandleType>
-inline HandleHolder<THandleType>::HandleHolder() :  _smartHandle(0)
+HandleHolder<THandleType>::HandleHolder() : _smartHandle(nullptr)
 {
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>::HandleHolder(const HandleHolder &other) :  _smartHandle(0)
+HandleHolder<THandleType>::HandleHolder(const HandleHolder &other) : _smartHandle(nullptr)
 {
-    Acquire(other, 0, 0, other._smartHandle ? other._smartHandle->GetParent() : 0);
+    Acquire(other, nullptr, nullptr, other._smartHandle ? other._smartHandle->GetParent() : nullptr);
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>::~HandleHolder()
+HandleHolder<THandleType>::~HandleHolder()
 {
     Release();
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (const HandleHolder<THandleType> &other)
+HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (const HandleHolder<THandleType> &other)
 {
-    Acquire(other, 0, 0, other._smartHandle ? other._smartHandle->GetParent() : 0);
+    Acquire(other, nullptr, nullptr, other._smartHandle ? other._smartHandle->GetParent() : nullptr);
     return *this;
 }
 
 template<class THandleType>
-inline bool HandleHolder<THandleType>::IsNull() const
+bool HandleHolder<THandleType>::IsNull() const
 {
     return (static_cast<THandleType>(*this) == 0);
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>::operator THandleType()
+HandleHolder<THandleType>::operator THandleType()
 {
-    return _smartHandle ? _smartHandle->GetHandle() : 0;
+    return _smartHandle ? _smartHandle->GetHandle() : nullptr;
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>::operator THandleType() const
+HandleHolder<THandleType>::operator THandleType() const
 {
-    return _smartHandle ? _smartHandle->GetHandle() : 0;
+    return _smartHandle ? _smartHandle->GetHandle() : nullptr;
 }
 
 template<class THandleType>
-inline HandleHolder<THandleType>::operator bool()
-{
-    return !IsNull();
-}
-
-template<class THandleType>
-inline HandleHolder<THandleType>::operator bool() const
+HandleHolder<THandleType>::operator bool()
 {
     return !IsNull();
 }
 
 template<class THandleType>
-inline Handle * HandleHolder<THandleType>::GetHandle() const
+HandleHolder<THandleType>::operator bool() const
+{
+    return !IsNull();
+}
+
+template<class THandleType>
+Handle * HandleHolder<THandleType>::GetHandle() const
 {
     return static_cast<Handle *>(_smartHandle);
 }
 
 template<class THandleType>
-inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent)
+void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent)
 {
     Release();
 
     if (handle)
     {
-        _smartHandle = Environment::GetSmartHandle<typename HandleHolder<THandleType>::SmartHandle*>(handle);
+        _smartHandle = Environment::GetSmartHandle<SmartHandle*>(handle);
 
         if (!_smartHandle)
         {
@@ -485,7 +485,7 @@ inline void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFun
 }
 
 template<class THandleType>
-inline void HandleHolder<THandleType>::Acquire(HandleHolder<THandleType> &other)
+void HandleHolder<THandleType>::Acquire(HandleHolder<THandleType> &other)
 {
     if (&other != this && _smartHandle != other._smartHandle)
     {
@@ -500,17 +500,17 @@ inline void HandleHolder<THandleType>::Acquire(HandleHolder<THandleType> &other)
 }
 
 template<class THandleType>
-inline void HandleHolder<THandleType>::Release()
+void HandleHolder<THandleType>::Release()
 {
     if (_smartHandle)
     {
         _smartHandle->Release(this);
     }
 
-    _smartHandle = 0;
+    _smartHandle = nullptr;
 }
 
-inline Locker::Locker() : _mutex(0)
+inline Locker::Locker() : _mutex(nullptr)
 {
     SetAccessMode(false);
 }
@@ -529,11 +529,11 @@ inline void Locker::SetAccessMode(bool threaded)
     else if (!threaded && _mutex)
     {
         Mutex::Destroy(_mutex);
-        _mutex = 0;
+        _mutex = nullptr;
     }
 }
 
-inline void Locker::Lock()
+inline void Locker::Lock() const
 {
     if (_mutex)
     {
@@ -541,7 +541,7 @@ inline void Locker::Lock()
     }
 }
 
-inline void Locker::Unlock()
+inline void Locker::Unlock() const
 {
     if (_mutex)
     {
@@ -549,7 +549,7 @@ inline void Locker::Unlock()
     }
 }
 
-inline Lockable::Lockable() : _locker(0)
+inline Lockable::Lockable() : _locker(nullptr)
 {
 
 }
@@ -559,7 +559,7 @@ inline Lockable::~Lockable()
 
 }
 
-inline void Lockable::Lock()
+inline void Lockable::Lock() const
 {
     if (_locker)
     {
@@ -567,7 +567,7 @@ inline void Lockable::Lock()
     }
 }
 
-inline void Lockable::Unlock()
+inline void Lockable::Unlock() const
 {
     if (_locker)
     {
@@ -581,19 +581,19 @@ inline void Lockable::SetLocker(Locker *locker)
 }
 
 template <class TKey, class TValue>
-inline ConcurrentMap<TKey, TValue>::ConcurrentMap()
+ConcurrentMap<TKey, TValue>::ConcurrentMap()
 {
 
 }
 
 template <class TKey, class TValue>
-inline ConcurrentMap<TKey, TValue>::~ConcurrentMap()
+ConcurrentMap<TKey, TValue>::~ConcurrentMap()
 {
     Clear();
 }
 
 template <class TKey, class TValue>
-inline void ConcurrentMap<TKey, TValue>::Remove(TKey key)
+void ConcurrentMap<TKey, TValue>::Remove(TKey key)
 {
     Lock();
     _map.erase(key);
@@ -601,7 +601,7 @@ inline void ConcurrentMap<TKey, TValue>::Remove(TKey key)
 }
 
 template <class TKey, class TValue>
-inline TValue ConcurrentMap<TKey, TValue>::Get(TKey key)
+TValue ConcurrentMap<TKey, TValue>::Get(TKey key)
 {
     TValue value = 0;
 
@@ -617,7 +617,7 @@ inline TValue ConcurrentMap<TKey, TValue>::Get(TKey key)
 }
 
 template <class TKey, class TValue>
-inline void ConcurrentMap<TKey, TValue>::Set(TKey key, TValue value)
+void ConcurrentMap<TKey, TValue>::Set(TKey key, TValue value)
 {
     Lock();
     _map[key] = value;
@@ -625,7 +625,7 @@ inline void ConcurrentMap<TKey, TValue>::Set(TKey key, TValue value)
 }
 
 template <class TKey, class TValue>
-inline void ConcurrentMap<TKey, TValue>::Clear()
+void ConcurrentMap<TKey, TValue>::Clear()
 {
     Lock();
     _map.clear();
@@ -633,7 +633,7 @@ inline void ConcurrentMap<TKey, TValue>::Clear()
 }
 
 template <class TKey, class TValue>
-inline size_t ConcurrentMap<TKey, TValue>::GetSize()
+size_t ConcurrentMap<TKey, TValue>::GetSize()
 {
     size_t size = 0;
     Lock();
@@ -644,19 +644,19 @@ inline size_t ConcurrentMap<TKey, TValue>::GetSize()
 }
 
 template <class TValue>
-inline ConcurrentList<TValue>::ConcurrentList()
+ConcurrentList<TValue>::ConcurrentList()
 {
 
 }
 
 template <class TValue>
-inline ConcurrentList<TValue>::~ConcurrentList()
+ConcurrentList<TValue>::~ConcurrentList()
 {
     Clear();
 }
 
 template <class TValue>
-inline void ConcurrentList<TValue>::Add(TValue value)
+void ConcurrentList<TValue>::Add(TValue value)
 {
     Lock();
     _list.push_back(value);
@@ -664,7 +664,7 @@ inline void ConcurrentList<TValue>::Add(TValue value)
 }
 
 template <class TValue>
-inline void ConcurrentList<TValue>::Remove(TValue value)
+void ConcurrentList<TValue>::Remove(TValue value)
 {
     Lock();
     _list.remove(value);
@@ -672,7 +672,7 @@ inline void ConcurrentList<TValue>::Remove(TValue value)
 }
 
 template <class TValue>
-inline void ConcurrentList<TValue>::Clear()
+void ConcurrentList<TValue>::Clear()
 {
     Lock();
     _list.clear();
@@ -680,7 +680,7 @@ inline void ConcurrentList<TValue>::Clear()
 }
 
 template <class TValue>
-inline size_t ConcurrentList<TValue>::GetSize()
+size_t ConcurrentList<TValue>::GetSize()
 {
     size_t size = 0;
     Lock();
@@ -691,7 +691,7 @@ inline size_t ConcurrentList<TValue>::GetSize()
 }
 
 template <class TValue>
-inline bool ConcurrentList<TValue>::Exists(TValue value)
+bool ConcurrentList<TValue>::Exists(TValue value)
 {
     bool res = 0;
     Lock();
@@ -712,7 +712,7 @@ inline bool ConcurrentList<TValue>::Exists(TValue value)
 
 template <class TValue>
 template <class TPredicate>
-inline bool ConcurrentList<TValue>::FindIf(TPredicate predicate, TValue &value)
+bool ConcurrentList<TValue>::FindIf(TPredicate predicate, TValue &value)
 {
     bool res = 0;
     Lock();
@@ -734,7 +734,7 @@ inline bool ConcurrentList<TValue>::FindIf(TPredicate predicate, TValue &value)
 
 template <class TValue>
 template <class TAction>
-inline void ConcurrentList<TValue>::ForEach(TAction action)
+void ConcurrentList<TValue>::ForEach(TAction action)
 {
     Lock();
 
@@ -747,20 +747,20 @@ inline void ConcurrentList<TValue>::ForEach(TAction action)
 }
 
 template <class THandleType>
-inline HandleHolder<THandleType>::SmartHandle::SmartHandle
+HandleHolder<THandleType>::SmartHandle::SmartHandle
 (
     HandleHolder *holder, THandleType handle, HandleFreeFunc handleFreefunc,
     SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent
 )
     : _holders(), _children(), _locker(), _handle(handle), _handleFreeFunc(handleFreefunc),
-      _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(0)
+      _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr)
 {
     _locker.SetAccessMode((Environment::GetMode() & Environment::Threaded) == Environment::Threaded);
 
     _holders.SetLocker(&_locker);
     _children.SetLocker(&_locker);
 
-    Environment::SetSmartHandle<typename HandleHolder<THandleType>::SmartHandle*>(handle, this);
+    Environment::SetSmartHandle<SmartHandle*>(handle, this);
 
     Acquire(holder);
 
@@ -771,7 +771,7 @@ inline HandleHolder<THandleType>::SmartHandle::SmartHandle
 }
 
 template <class THandleType>
-inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
+HandleHolder<THandleType>::SmartHandle::~SmartHandle()
 {
     boolean ret = TRUE;
     boolean chk = FALSE;
@@ -784,10 +784,10 @@ inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
     _children.ForEach(DeleteHandle);
     _children.Clear();
 
-    _holders.SetLocker(0);
-    _children.SetLocker(0);
+    _holders.SetLocker(nullptr);
+    _children.SetLocker(nullptr);
 
-    Environment::SetSmartHandle<typename HandleHolder<THandleType>::SmartHandle*>(_handle, 0);
+    Environment::SetSmartHandle<SmartHandle*>(_handle, nullptr);
 
     if (_freeNotifyFunc)
     {
@@ -807,7 +807,7 @@ inline HandleHolder<THandleType>::SmartHandle::~SmartHandle()
 }
 
 template <class THandleType>
-inline void HandleHolder<THandleType>::SmartHandle::DeleteHandle(Handle *handle)
+void HandleHolder<THandleType>::SmartHandle::DeleteHandle(Handle *handle)
 {
     if (handle)
     {
@@ -819,7 +819,7 @@ inline void HandleHolder<THandleType>::SmartHandle::DeleteHandle(Handle *handle)
 }
 
 template <class THandleType>
-inline void HandleHolder<THandleType>::SmartHandle::ResetHolder(HandleHolder *holder)
+void HandleHolder<THandleType>::SmartHandle::ResetHolder(HandleHolder *holder)
 {
     if (holder)
     {
@@ -828,13 +828,13 @@ inline void HandleHolder<THandleType>::SmartHandle::ResetHolder(HandleHolder *ho
 }
 
 template <class THandleType>
-inline void HandleHolder<THandleType>::SmartHandle::Acquire(HandleHolder *holder)
+void HandleHolder<THandleType>::SmartHandle::Acquire(HandleHolder *holder)
 {
     _holders.Add(holder);
 }
 
 template <class THandleType>
-inline void HandleHolder<THandleType>::SmartHandle::Release(HandleHolder *holder)
+void HandleHolder<THandleType>::SmartHandle::Release(HandleHolder *holder)
 {
     _holders.Remove(holder);
 
@@ -843,50 +843,50 @@ inline void HandleHolder<THandleType>::SmartHandle::Release(HandleHolder *holder
         delete this;
     }
 
-    holder->_smartHandle = 0;
+    holder->_smartHandle = nullptr;
 }
 
 template <class THandleType>
-inline const THandleType HandleHolder<THandleType>::SmartHandle::GetHandle() const
+THandleType HandleHolder<THandleType>::SmartHandle::GetHandle() const
 {
     return _handle;
 }
 
 template <class THandleType>
-inline Handle * HandleHolder<THandleType>::SmartHandle::GetParent() const
+Handle * HandleHolder<THandleType>::SmartHandle::GetParent() const
 {
     return _parent;
 }
 
 template <class THandleType>
-inline AnyPointer HandleHolder<THandleType>::SmartHandle::GetExtraInfos() const
+AnyPointer HandleHolder<THandleType>::SmartHandle::GetExtraInfos() const
 {
     return _extraInfo;
 }
 
 template <class THandleType>
-inline void HandleHolder<THandleType>::SmartHandle::SetExtraInfos(AnyPointer extraInfo)
+void HandleHolder<THandleType>::SmartHandle::SetExtraInfos(AnyPointer extraInfo)
 {
     _extraInfo = extraInfo;
 }
 
 template <class THandleType>
-inline ConcurrentList<Handle *> & HandleHolder<THandleType>::SmartHandle::GetChildren()
+ConcurrentList<Handle *> & HandleHolder<THandleType>::SmartHandle::GetChildren()
 {
     return _children;
 }
 
 template <class THandleType>
-inline void HandleHolder<THandleType>::SmartHandle::DetachFromHolders()
+void HandleHolder<THandleType>::SmartHandle::DetachFromHolders()
 {
     _holders.ForEach(ResetHolder);
     _holders.Clear();
 }
 
 template <class THandleType>
-inline void HandleHolder<THandleType>::SmartHandle::DetachFromParent()
+void HandleHolder<THandleType>::SmartHandle::DetachFromParent()
 {
-    _parent = 0;
+    _parent = nullptr;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -895,8 +895,8 @@ inline void HandleHolder<THandleType>::SmartHandle::DetachFromParent()
 
 inline Exception::Exception()
     : _what(),
-    _pStatement(0),
-    _pConnnection(0),
+    _pStatement(nullptr),
+    _pConnnection(nullptr),
     _row(0),
     _type(static_cast<ExceptionType::type>(0)),
     _errLib(0),
@@ -966,12 +966,12 @@ inline int Exception::GetInternalErrorCode() const
 
 inline Statement Exception::GetStatement() const
 {
-    return Statement(_pStatement, 0);
+    return Statement(_pStatement, nullptr);
 }
 
 inline Connection Exception::GetConnection() const
 {
-    return Connection(_pConnnection, 0);
+    return Connection(_pConnnection, nullptr);
 }
 
 inline unsigned int Exception::GetRow() const
@@ -1065,12 +1065,12 @@ inline void Environment::EnableWarnings(bool value)
 
 inline bool Environment::SetFormat(FormatType formatType, const ostring& format)
 {
-    return Check(OCI_SetFormat(NULL, formatType, format.c_str()) == TRUE);
+    return Check(OCI_SetFormat(nullptr, formatType, format.c_str()) == TRUE);
 }
 
 inline ostring Environment::GetFormat(FormatType formatType)
 {
-    return MakeString(Check(OCI_GetFormat(NULL, formatType)));
+    return MakeString(Check(OCI_GetFormat(nullptr, formatType)));
 }
 
 inline void Environment::StartDatabase(const ostring& db, const ostring& user, const ostring &pwd, Environment::StartFlags startFlags,
@@ -1094,7 +1094,7 @@ inline void Environment::ChangeUserPassword(const ostring& db, const ostring& us
 
 inline void Environment::SetHAHandler(HAHandlerProc handler)
 {
-    Check(OCI_SetHAHandler(static_cast<POCI_HA_HANDLER>(handler != 0 ? Environment::HAHandler : 0)));
+    Check(OCI_SetHAHandler(static_cast<POCI_HA_HANDLER>(handler != nullptr ? Environment::HAHandler : nullptr)));
 
     Environment::SetUserCallback<HAHandlerProc>(GetEnvironmentHandle(), handler);
 }
@@ -1105,7 +1105,7 @@ inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int sou
 
     if (handler)
     {
-        Connection connection(pConnection, 0);
+        Connection connection(pConnection, nullptr);
         Timestamp timestamp(pTimestamp, connection.GetHandle());
 
         handler(connection,
@@ -1123,7 +1123,7 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
 
     if (handler)
     {
-        Connection connection(pConnection, 0);
+        Connection connection(pConnection, nullptr);
 
         res = handler(connection,
                       Connection::FailoverRequest( static_cast<Connection::FailoverRequest::type> (type)),
@@ -1156,13 +1156,13 @@ inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
 }
 
 template <class TCallbackType>
-inline TCallbackType Environment::GetUserCallback(AnyPointer ptr)
+TCallbackType Environment::GetUserCallback(AnyPointer ptr)
 {
     return reinterpret_cast<TCallbackType>(GetInstance()._callbacks.Get(ptr));
 }
 
 template <class TCallbackType>
-inline void Environment::SetUserCallback(AnyPointer ptr, TCallbackType callback)
+void Environment::SetUserCallback(AnyPointer ptr, TCallbackType callback)
 {
     if (callback)
     {
@@ -1175,7 +1175,7 @@ inline void Environment::SetUserCallback(AnyPointer ptr, TCallbackType callback)
 }
 
 template <class THandleType>
-inline void Environment::SetSmartHandle(AnyPointer ptr, THandleType handle)
+void Environment::SetSmartHandle(AnyPointer ptr, THandleType handle)
 {
     if (handle)
     {
@@ -1188,7 +1188,7 @@ inline void Environment::SetSmartHandle(AnyPointer ptr, THandleType handle)
 }
 
 template <class THandleType>
-inline THandleType Environment::GetSmartHandle(AnyPointer ptr)
+THandleType Environment::GetSmartHandle(AnyPointer ptr)
 {
     return dynamic_cast<THandleType>(GetInstance()._handles.Get(ptr));
 }
@@ -1214,7 +1214,7 @@ inline void Environment::SelfInitialize(EnvironmentFlags mode, const ostring& li
 {
     _mode = mode;
 
-    Check(OCI_Initialize(0, libpath.c_str(), _mode.GetValues() | OCI_ENV_CONTEXT));
+    Check(OCI_Initialize(nullptr, libpath.c_str(), _mode.GetValues() | OCI_ENV_CONTEXT));
 
     _initialized = true;
 
@@ -1223,15 +1223,15 @@ inline void Environment::SelfInitialize(EnvironmentFlags mode, const ostring& li
     _callbacks.SetLocker(&_locker);
     _handles.SetLocker(&_locker);
 
-    _handle.Acquire(const_cast<AnyPointer>(Check(OCI_HandleGetEnvironment())), 0, 0, 0);
+    _handle.Acquire(const_cast<AnyPointer>(Check(OCI_HandleGetEnvironment())), nullptr, nullptr, nullptr);
 }
 
 inline void Environment::SelfCleanup()
 {
     _locker.SetAccessMode(false);
 
-    _callbacks.SetLocker(0);
-    _handles.SetLocker(0);
+    _callbacks.SetLocker(nullptr);
+    _handles.SetLocker(nullptr);
 
     _handle.Release();
 
@@ -1249,7 +1249,7 @@ inline void Environment::SelfCleanup()
 
 inline MutexHandle Mutex::Create()
 {
-    return Environment::GetInstance().Initialized() ? Check(OCI_MutexCreate()) : 0;
+    return Environment::GetInstance().Initialized() ? Check(OCI_MutexCreate()) : nullptr;
 }
 
 inline void Mutex::Destroy(MutexHandle mutex)
@@ -1336,7 +1336,7 @@ inline void Pool::Open(const ostring& db, const ostring& user, const ostring& pw
     Release();
 
     Acquire(Check(OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionFlags.GetValues(),
-            minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), 0, Environment::GetEnvironmentHandle());
+        minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), nullptr, Environment::GetEnvironmentHandle());
 }
 
 inline void Pool::Close()
@@ -1420,13 +1420,13 @@ inline Connection::Connection(const ostring& db, const ostring& user, const ostr
 
 inline Connection::Connection(OCI_Connection *con,  Handle *parent)
 {
-    Acquire(con, reinterpret_cast<HandleFreeFunc>(parent ? OCI_ConnectionFree : 0), 0, parent);
+    Acquire(con, reinterpret_cast<HandleFreeFunc>(parent ? OCI_ConnectionFree : nullptr), nullptr, parent);
 }
 
 inline void Connection::Open(const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
 {
     Acquire(Check(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
-            reinterpret_cast<HandleFreeFunc>(OCI_ConnectionFree), 0, Environment::GetEnvironmentHandle());
+        reinterpret_cast<HandleFreeFunc>(OCI_ConnectionFree), nullptr, Environment::GetEnvironmentHandle());
 }
 
 inline void Connection::Close()
@@ -1560,7 +1560,7 @@ inline bool Connection::GetServerOutput(ostring &line) const
 
     line = MakeString(str);
 
-    return (str != 0);
+    return (str != nullptr);
 }
 
 inline void Connection::GetServerOutput(std::vector<ostring> &lines) const
@@ -1646,7 +1646,7 @@ inline bool Connection::IsTAFCapable() const
 
 inline void Connection::SetTAFHandler(TAFHandlerProc handler)
 {
-    Check(OCI_SetTAFHandler(*this, static_cast<POCI_TAF_HANDLER>(handler != 0 ? Environment::TAFHandler : 0 )));
+    Check(OCI_SetTAFHandler(*this, static_cast<POCI_TAF_HANDLER>(handler != nullptr ? Environment::TAFHandler : nullptr)));
 
     Environment::SetUserCallback<Connection::TAFHandlerProc>(static_cast<OCI_Connection*>(*this), handler);
 }
@@ -1667,12 +1667,12 @@ inline void Connection::SetUserData(AnyPointer value)
 
 inline Transaction::Transaction(const Connection &connection, unsigned int timeout, TransactionFlags flags, OCI_XID *pxid)
 {
-    Acquire(Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), reinterpret_cast<HandleFreeFunc>(OCI_TransactionFree), 0, 0);
+    Acquire(Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), reinterpret_cast<HandleFreeFunc>(OCI_TransactionFree), nullptr, nullptr);
 }
 
 inline Transaction::Transaction(OCI_Transaction *trans)
 {
-    Acquire(trans, 0, 0, 0);
+    Acquire(trans, nullptr, nullptr, nullptr);
 }
 
 inline void Transaction::Prepare()
@@ -1724,7 +1724,7 @@ inline Number::Number(bool create)
 
 inline Number::Number(OCI_Number *pNumber, Handle *parent)
 {
-    Acquire(pNumber, 0, 0, parent);
+    Acquire(pNumber, nullptr, nullptr, parent);
 }
 
 inline Number::Number(const ostring& str, const ostring& format)
@@ -1743,10 +1743,10 @@ inline Number::Number(const otext* str, const otext* format)
 
 inline void Number::Allocate()
 {
-    Acquire(Check(OCI_NumberCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_NumberFree), 0, 0);
+    Acquire(Check(OCI_NumberCreate(nullptr)), reinterpret_cast<HandleFreeFunc>(OCI_NumberFree), nullptr, nullptr);
 }
 
-inline void Number::FromString(const ostring& str, const ostring& format)
+inline void Number::FromString(const ostring& str, const ostring& format) const
 {
     Check(OCI_NumberFromText(*this, str.c_str(), format.size() > 0 ? format.c_str() : Environment::GetFormat(FormatNumeric).c_str()));
 }
@@ -1789,7 +1789,7 @@ inline int Number::Compare(const Number& other) const
 }
 
 template <class T>
-inline T Number::GetValue() const
+T Number::GetValue() const
 {
     T value;
 
@@ -1799,7 +1799,7 @@ inline T Number::GetValue() const
 }
 
 template <class TValueType>
-inline Number& Number::SetValue(const TValueType &value)
+Number& Number::SetValue(const TValueType &value)
 {
     if (IsNull())
     {
@@ -1812,50 +1812,50 @@ inline Number& Number::SetValue(const TValueType &value)
 }
 
 template <class TValueType>
-inline void Number::Add(const TValueType &value)
+void Number::Add(const TValueType &value)
 {
     Check(OCI_NumberAdd(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
 }
 
 template <class TValueType>
-inline void Number::Sub(const TValueType &value)
+void Number::Sub(const TValueType &value)
 {
     Check(OCI_NumberSub(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
 }
 
 template <class TValueType>
-inline void Number::Multiply(const TValueType &value)
+void Number::Multiply(const TValueType &value)
 {
     Check(OCI_NumberMultiply(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
 }
 
 template <class TValueType>
-inline void Number::Divide(const TValueType &value)
+void Number::Divide(const TValueType &value)
 {
     Check(OCI_NumberDivide(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
 }
 
 inline Number& Number::operator = (OCI_Number * &lhs)
 {
-    Acquire(lhs, reinterpret_cast<HandleFreeFunc>(OCI_NumberFree), 0, 0);
+    Acquire(lhs, reinterpret_cast<HandleFreeFunc>(OCI_NumberFree), nullptr, nullptr);
     return *this;
 }
 
 template<class T>
-inline Number& Number::operator = (const T &lhs)
+Number& Number::operator = (const T &lhs)
 {
     SetValue<T>(lhs);
     return *this;
 }
 
 template<class T>
-inline Number::operator T() const
+Number::operator T() const
 {
     return GetValue<T>();
 }
 
 template <class T>
-inline Number Number::operator + (const T &value)
+Number Number::operator + (const T &value)
 {
     Number result = Clone();
     result.Add(value);
@@ -1863,7 +1863,7 @@ inline Number Number::operator + (const T &value)
 }
 
 template <class T>
-inline Number Number::operator - (const T &value)
+Number Number::operator - (const T &value)
 {
     Number result = Clone();
     result.Sub(value);
@@ -1871,7 +1871,7 @@ inline Number Number::operator - (const T &value)
 }
 
 template <class T>
-inline Number Number::operator * (const T &value)
+Number Number::operator * (const T &value)
 {
     Number result = Clone();
     result.Multiply(value);
@@ -1879,7 +1879,7 @@ inline Number Number::operator * (const T &value)
 }
 
 template <class T>
-inline Number Number::operator / (const T &value)
+Number Number::operator / (const T &value)
 {
     Number result = Clone();
     result.Divide(value);
@@ -1887,28 +1887,28 @@ inline Number Number::operator / (const T &value)
 }
 
 template <class T>
-inline Number& Number::operator += (const T &value)
+Number& Number::operator += (const T &value)
 {
     Add<T>(value);
     return *this;
 }
 
 template <class T>
-inline Number& Number::operator -= (const T &value)
+Number& Number::operator -= (const T &value)
 {
     Sub<T>(value);
     return *this;
 }
 
 template <class T>
-inline Number& Number::operator *= (const T &value)
+Number& Number::operator *= (const T &value)
 {
     Multiply<T>(value);
     return *this;
 }
 
 template <class T>
-inline Number& Number::operator /= (const T &value)
+Number& Number::operator /= (const T &value)
 {
     Divide<T>(value);
     return *this;
@@ -1941,31 +1941,31 @@ inline bool Number::operator == (const Number& other) const
 
 inline bool Number::operator != (const Number& other) const
 {
-    return (!(*this == other));
+    return !(*this == other);
 }
 
 inline bool Number::operator > (const Number& other) const
 {
-    return (Compare(other) > 0);
+    return Compare(other) > 0;
 }
 
 inline bool Number::operator < (const Number& other) const
 {
-    return (Compare(other) < 0);
+    return Compare(other) < 0;
 }
 
 inline bool Number::operator >= (const Number& other) const
 {
     int res = Compare(other);
 
-    return (res == 0 || res < 0);
+    return res == 0 || res < 0;
 }
 
 inline bool Number::operator <= (const Number& other) const
 {
     int res = Compare(other);
 
-    return (res == 0 || res > 0);
+    return res == 0 || res > 0;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1996,12 +1996,12 @@ inline Date::Date(const otext* str, const otext* format)
 
 inline Date::Date(OCI_Date *pDate, Handle *parent)
 {
-    Acquire(pDate, 0, 0, parent);
+    Acquire(pDate, nullptr, nullptr, parent);
 }
 
 inline void Date::Allocate()
 {
-    Acquire(Check(OCI_DateCreate(NULL)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), 0, 0);
+    Acquire(Check(OCI_DateCreate(nullptr)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), nullptr, nullptr);
 }
 
 inline Date Date::SysDate()
@@ -2253,20 +2253,20 @@ inline Date& Date::operator -- ()
 
 inline Date Date::operator -- (int)
 {
-       Date result = Clone();
+    Date result = Clone();
 
-     *this -= 1;
+    *this -= 1;
 
     return result;
 }
 
-inline Date Date::operator + (int value)
+inline Date Date::operator + (int value) const
 {
     Date result = Clone();
     return result += value;
 }
 
-inline Date Date::operator - (int value)
+inline Date Date::operator - (int value) const
 {
     Date result = Clone();
     return result -= value;
@@ -2291,31 +2291,31 @@ inline bool Date::operator == (const Date& other) const
 
 inline bool Date::operator != (const Date& other) const
 {
-    return (!(*this == other));
+    return !(*this == other);
 }
 
 inline bool Date::operator > (const Date& other) const
 {
-    return (Compare(other) > 0);
+    return Compare(other) > 0;
 }
 
 inline bool Date::operator < (const Date& other) const
 {
-    return (Compare(other) < 0);
+    return Compare(other) < 0;
 }
 
 inline bool Date::operator >= (const Date& other) const
 {
     int res = Compare(other);
 
-    return (res == 0 || res < 0);
+    return res == 0 || res < 0;
 }
 
 inline bool Date::operator <= (const Date& other) const
 {
     int res = Compare(other);
 
-    return (res == 0 || res > 0);
+    return res == 0 || res > 0;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2328,19 +2328,19 @@ inline Interval::Interval()
 
 inline Interval::Interval(IntervalType type)
 {
-    Acquire(Check(OCI_IntervalCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 0, 0);
+    Acquire(Check(OCI_IntervalCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), nullptr, nullptr);
 }
 
 inline Interval::Interval(IntervalType type, const ostring& data)
 {
-    Acquire(Check(OCI_IntervalCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 0, 0);
+    Acquire(Check(OCI_IntervalCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), nullptr, nullptr);
 
     FromString(data);
 }
 
 inline Interval::Interval(OCI_Interval *pInterval, Handle *parent)
 {
-    Acquire(pInterval, 0, 0, parent);
+    Acquire(pInterval, nullptr, nullptr, parent);
 }
 
 inline Interval Interval::Clone() const
@@ -2536,13 +2536,13 @@ inline ostring Interval::ToString() const
     return ToString(OCI_STRING_DEFAULT_PREC, OCI_STRING_DEFAULT_PREC);
 }
 
-inline Interval Interval::operator + (const Interval& other)
+inline Interval Interval::operator + (const Interval& other) const
 {
     Interval result = Clone();
     return result += other;
 }
 
-inline Interval Interval::operator - (const Interval& other)
+inline Interval Interval::operator - (const Interval& other) const
 {
     Interval result = Clone();
     return result -= other;
@@ -2604,18 +2604,18 @@ inline Timestamp::Timestamp()
 
 inline Timestamp::Timestamp(TimestampType type)
 {
-    Acquire(Check(OCI_TimestampCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 0, 0);
+    Acquire(Check(OCI_TimestampCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), nullptr, nullptr);
 }
 
 inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostring& format)
 {
-    Acquire(Check(OCI_TimestampCreate(NULL, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 0, 0);
+    Acquire(Check(OCI_TimestampCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), nullptr, nullptr);
     FromString(data, format);
 }
 
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, Handle *parent)
 {
-    Acquire(pTimestamp, 0, 0, parent);
+    Acquire(pTimestamp, nullptr, nullptr, parent);
 }
 
 inline Timestamp Timestamp::Clone() const
@@ -2804,7 +2804,7 @@ inline void Timestamp::SetTime(int hour, int min, int sec, int fsec)
 
 inline void Timestamp::SetTimeZone(const ostring& timeZone)
 {
-    if (GetType() == Timestamp::WithTimeZone)
+    if (GetType() == WithTimeZone)
     {
         int year = 0, month = 0, day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
@@ -2815,7 +2815,7 @@ inline void Timestamp::SetTimeZone(const ostring& timeZone)
 
 inline ostring Timestamp::GetTimeZone() const
 {
-    if (GetType() != Timestamp::NoTimeZone)
+    if (GetType() != NoTimeZone)
     {
         size_t size = OCI_SIZE_BUFFER;
 
@@ -2825,10 +2825,8 @@ inline ostring Timestamp::GetTimeZone() const
 
         return MakeString(static_cast<const otext *>(buffer));
     }
-    else
-    {
-        return ostring();
-    }
+
+    return ostring();
 }
 
 inline void Timestamp::GetTimeZoneOffset(int &hour, int &min) const
@@ -2904,7 +2902,7 @@ inline Timestamp Timestamp::operator -- (int)
     return result;
 }
 
-inline Timestamp Timestamp::operator + (int value)
+inline Timestamp Timestamp::operator + (int value) const
 {
     Timestamp result = Clone();
     Interval interval(Interval::DaySecond);
@@ -2912,7 +2910,7 @@ inline Timestamp Timestamp::operator + (int value)
     return result += value;
 }
 
-inline Timestamp Timestamp::operator - (int value)
+inline Timestamp Timestamp::operator - (int value) const
 {
     Timestamp result = Clone();
     Interval interval(Interval::DaySecond);
@@ -2927,13 +2925,13 @@ inline Interval Timestamp::operator - (const Timestamp& other)
     return interval;
 }
 
-inline Timestamp Timestamp::operator + (const Interval& other)
+inline Timestamp Timestamp::operator + (const Interval& other) const
 {
     Timestamp result = Clone();
     return result += other;
 }
 
-inline Timestamp Timestamp::operator - (const Interval& other)
+inline Timestamp Timestamp::operator - (const Interval& other) const
 {
     Timestamp result = Clone();
     return result -= other;
@@ -3009,15 +3007,15 @@ inline Lob<TLobObjectType, TLobOracleType>::Lob()
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline Lob<TLobObjectType, TLobOracleType>::Lob(const Connection &connection)
+Lob<TLobObjectType, TLobOracleType>::Lob(const Connection &connection)
 {
-    Acquire(Check(OCI_LobCreate(connection, TLobOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LobFree), 0, connection.GetHandle());
+    Acquire(Check(OCI_LobCreate(connection, TLobOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LobFree), nullptr, connection.GetHandle());
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline Lob<TLobObjectType, TLobOracleType>::Lob(OCI_Lob *pLob, Handle *parent)
+Lob<TLobObjectType, TLobOracleType>::Lob(OCI_Lob *pLob, Handle *parent)
 {
-    Acquire(pLob, 0, 0, parent);
+    Acquire(pLob, nullptr, nullptr, parent);
 }
 
 template<>
@@ -3051,7 +3049,7 @@ inline Raw Lob<Raw, LobBinary>::Read(unsigned int length)
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline unsigned int Lob<TLobObjectType, TLobOracleType>::Write(const TLobObjectType& content)
+unsigned int Lob<TLobObjectType, TLobOracleType>::Write(const TLobObjectType& content)
 {
     unsigned int res = 0;
 
@@ -3064,13 +3062,13 @@ inline unsigned int Lob<TLobObjectType, TLobOracleType>::Write(const TLobObjectT
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline void Lob<TLobObjectType, TLobOracleType>::Append(const Lob& other)
+void Lob<TLobObjectType, TLobOracleType>::Append(const Lob& other)
 {
     Check(OCI_LobAppendLob(*this, other));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline unsigned int Lob<TLobObjectType, TLobOracleType>::Append(const TLobObjectType& content)
+unsigned int Lob<TLobObjectType, TLobOracleType>::Append(const TLobObjectType& content)
 {
     unsigned int res = 0;
 
@@ -3083,13 +3081,13 @@ inline unsigned int Lob<TLobObjectType, TLobOracleType>::Append(const TLobObject
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline bool Lob<TLobObjectType, TLobOracleType>::Seek(SeekMode seekMode, big_uint offset)
+bool Lob<TLobObjectType, TLobOracleType>::Seek(SeekMode seekMode, big_uint offset)
 {
     return (Check(OCI_LobSeek(*this, offset, seekMode)) == TRUE);
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline Lob<TLobObjectType, TLobOracleType> Lob<TLobObjectType, TLobOracleType>::Clone() const
+Lob<TLobObjectType, TLobOracleType> Lob<TLobObjectType, TLobOracleType>::Clone() const
 {
     Lob result(GetConnection());
 
@@ -3099,112 +3097,112 @@ inline Lob<TLobObjectType, TLobOracleType> Lob<TLobObjectType, TLobOracleType>::
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline bool Lob<TLobObjectType, TLobOracleType>::Equals(const Lob &other) const
+bool Lob<TLobObjectType, TLobOracleType>::Equals(const Lob &other) const
 {
     return (Check(OCI_LobIsEqual(*this, other)) == TRUE);
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline LobType Lob<TLobObjectType, TLobOracleType>::GetType() const
+LobType Lob<TLobObjectType, TLobOracleType>::GetType() const
 {
     return LobType(static_cast<LobType::type>(Check(OCI_LobGetType(*this))));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline big_uint Lob<TLobObjectType, TLobOracleType>::GetOffset() const
+big_uint Lob<TLobObjectType, TLobOracleType>::GetOffset() const
 {
     return Check(OCI_LobGetOffset(*this));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline big_uint Lob<TLobObjectType, TLobOracleType>::GetLength() const
+big_uint Lob<TLobObjectType, TLobOracleType>::GetLength() const
 {
     return Check(OCI_LobGetLength(*this));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline big_uint Lob<TLobObjectType, TLobOracleType>::GetMaxSize() const
+big_uint Lob<TLobObjectType, TLobOracleType>::GetMaxSize() const
 {
     return Check(OCI_LobGetMaxSize(*this));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline big_uint Lob<TLobObjectType, TLobOracleType>::GetChunkSize() const
+big_uint Lob<TLobObjectType, TLobOracleType>::GetChunkSize() const
 {
     return Check(OCI_LobGetChunkSize(*this));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline Connection Lob<TLobObjectType, TLobOracleType>::GetConnection() const
+Connection Lob<TLobObjectType, TLobOracleType>::GetConnection() const
 {
-    return Connection(Check(OCI_LobGetConnection(*this)), 0);
+    return Connection(Check(OCI_LobGetConnection(*this)), nullptr);
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline void Lob<TLobObjectType, TLobOracleType>::Truncate(big_uint length)
+void Lob<TLobObjectType, TLobOracleType>::Truncate(big_uint length)
 {
     Check(OCI_LobTruncate(*this, length));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline big_uint Lob<TLobObjectType, TLobOracleType>::Erase(big_uint offset, big_uint length)
+big_uint Lob<TLobObjectType, TLobOracleType>::Erase(big_uint offset, big_uint length)
 {
     return Check(OCI_LobErase(*this, offset, length));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline void Lob<TLobObjectType, TLobOracleType>::Copy(Lob &dest, big_uint offset, big_uint offsetDest, big_uint size) const
+void Lob<TLobObjectType, TLobOracleType>::Copy(Lob &dest, big_uint offset, big_uint offsetDest, big_uint size) const
 {
     Check(OCI_LobCopy(dest, *this, offsetDest, offset, size));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline bool Lob<TLobObjectType, TLobOracleType>::IsTemporary() const
+bool Lob<TLobObjectType, TLobOracleType>::IsTemporary() const
 {
     return (Check(OCI_LobIsTemporary(*this)) == TRUE);
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline void Lob<TLobObjectType, TLobOracleType>::Open(OpenMode mode)
+void Lob<TLobObjectType, TLobOracleType>::Open(OpenMode mode)
 {
     Check(OCI_LobOpen(*this, mode));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline void Lob<TLobObjectType, TLobOracleType>::Flush()
+void Lob<TLobObjectType, TLobOracleType>::Flush()
 {
     Check(OCI_LobFlush(*this));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline void Lob<TLobObjectType, TLobOracleType>::Close()
+void Lob<TLobObjectType, TLobOracleType>::Close()
 {
     Check(OCI_LobClose(*this));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline void Lob<TLobObjectType, TLobOracleType>::EnableBuffering(bool value)
+void Lob<TLobObjectType, TLobOracleType>::EnableBuffering(bool value)
 {
     Check(OCI_LobEnableBuffering(*this, value));
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline Lob<TLobObjectType, TLobOracleType>& Lob<TLobObjectType, TLobOracleType>::operator += (const Lob<TLobObjectType, TLobOracleType>& other)
+Lob<TLobObjectType, TLobOracleType>& Lob<TLobObjectType, TLobOracleType>::operator += (const Lob<TLobObjectType, TLobOracleType>& other)
 {
     Append(other);
     return *this;
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline bool Lob<TLobObjectType, TLobOracleType>::operator == (const Lob<TLobObjectType, TLobOracleType>& other) const
+bool Lob<TLobObjectType, TLobOracleType>::operator == (const Lob<TLobObjectType, TLobOracleType>& other) const
 {
     return Equals(other);
 }
 
 template<class TLobObjectType, int TLobOracleType>
-inline bool Lob<TLobObjectType, TLobOracleType>::operator != (const Lob<TLobObjectType, TLobOracleType>& other) const
+bool Lob<TLobObjectType, TLobOracleType>::operator != (const Lob<TLobObjectType, TLobOracleType>& other) const
 {
-    return (!(*this == other));
+    return !(*this == other);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3217,19 +3215,19 @@ inline File::File()
 
 inline File::File(const Connection &connection)
 {
-    Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), 0, connection.GetHandle());
+    Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), nullptr, connection.GetHandle());
 }
 
 inline File::File(const Connection &connection, const ostring& directory, const ostring& name)
 {
-    Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), 0, connection.GetHandle());
+    Acquire(Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), nullptr, connection.GetHandle());
 
     SetInfos(directory, name);
 }
 
 inline File::File(OCI_File *pFile, Handle *parent)
 {
-    Acquire(pFile, 0, 0, parent);
+    Acquire(pFile, nullptr, nullptr, parent);
 }
 
 inline Raw File::Read(unsigned int size)
@@ -3272,7 +3270,7 @@ inline big_uint File::GetLength() const
 
 inline Connection File::GetConnection() const
 {
-    return Connection(Check(OCI_FileGetConnection(*this)), 0);
+    return Connection(Check(OCI_FileGetConnection(*this)), nullptr);
 }
 
 inline bool File::Exists() const
@@ -3326,12 +3324,12 @@ inline bool File::operator != (const File& other) const
 
 inline TypeInfo::TypeInfo(const Connection &connection, const ostring& name, TypeInfoType type)
 {
-    Acquire(Check(OCI_TypeInfoGet(connection, name.c_str(), type)), reinterpret_cast<HandleFreeFunc>(0), 0, connection.GetHandle());
+    Acquire(Check(OCI_TypeInfoGet(connection, name.c_str(), type)), static_cast<HandleFreeFunc>(nullptr), nullptr, connection.GetHandle());
 }
 
 inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
 {
-    Acquire(pTypeInfo, 0, 0, 0);
+    Acquire(pTypeInfo, nullptr, nullptr, nullptr);
 }
 
 inline TypeInfo::TypeInfoType TypeInfo::GetType() const
@@ -3346,7 +3344,7 @@ inline ostring TypeInfo::GetName() const
 
 inline Connection TypeInfo::GetConnection() const
 {
-    return Connection(Check(OCI_TypeInfoGetConnection(*this)), 0);
+    return Connection(Check(OCI_TypeInfoGetConnection(*this)), nullptr);
 }
 
 inline unsigned int TypeInfo::GetColumnCount() const
@@ -3370,12 +3368,12 @@ inline Object::Object()
 inline Object::Object(const TypeInfo &typeInfo)
 {
     Connection connection = typeInfo.GetConnection();
-    Acquire(Check(OCI_ObjectCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_ObjectFree), 0, connection.GetHandle());
+    Acquire(Check(OCI_ObjectCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_ObjectFree), nullptr, connection.GetHandle());
 }
 
 inline Object::Object(OCI_Object *pObject, Handle *parent)
 {
-    Acquire(pObject, 0, 0, parent);
+    Acquire(pObject, nullptr, nullptr, parent);
 }
 
 inline Object Object::Clone() const
@@ -3552,7 +3550,7 @@ inline Raw Object::Get<Raw>(const ostring& name) const
 }
 
 template<class TDataType>
-inline TDataType Object::Get(const ostring& name) const
+TDataType Object::Get(const ostring& name) const
 {
     return TDataType(Check(OCI_ObjectGetColl(*this, name.c_str())), GetHandle());
 }
@@ -3686,12 +3684,12 @@ inline void Object::Set<Raw>(const ostring& name, const Raw &value)
     }
     else
     {
-        Check(OCI_ObjectSetRaw(*this, name.c_str(), NULL, 0));
+        Check(OCI_ObjectSetRaw(*this, name.c_str(), nullptr, 0));
     }
 }
 
 template<class TDataType>
-inline void Object::Set(const ostring& name, const TDataType &value)
+void Object::Set(const ostring& name, const TDataType &value)
 {
     Check(OCI_ObjectSetColl(*this, name.c_str(), value));
 }
@@ -3702,7 +3700,7 @@ inline ostring Object::ToString() const
     {
         unsigned int len = 0;
 
-        Check(OCI_ObjectToText(*this, &len, 0));
+        Check(OCI_ObjectToText(*this, &len, nullptr));
 
         ManagedBuffer<otext> buffer(len + 1);
 
@@ -3725,12 +3723,12 @@ inline Reference::Reference()
 inline Reference::Reference(const TypeInfo &typeInfo)
 {
     Connection connection = typeInfo.GetConnection();
-    Acquire(Check(OCI_RefCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_RefFree), 0, connection.GetHandle());
+    Acquire(Check(OCI_RefCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_RefFree), nullptr, connection.GetHandle());
 }
 
 inline Reference::Reference(OCI_Ref *pRef, Handle *parent)
 {
-    Acquire(pRef, 0, 0, parent);
+    Acquire(pRef, nullptr, nullptr, parent);
 }
 
 inline TypeInfo Reference::GetTypeInfo() const
@@ -3783,24 +3781,24 @@ inline ostring Reference::ToString() const
  * --------------------------------------------------------------------------------------------- */
 
 template<class TDataType>
-inline Collection<TDataType>::Collection()
+Collection<TDataType>::Collection()
 {
 }
 
 template<class TDataType>
-inline Collection<TDataType>::Collection(const TypeInfo &typeInfo)
+Collection<TDataType>::Collection(const TypeInfo &typeInfo)
 {
-    Acquire(Check(OCI_CollCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_CollFree), 0, typeInfo.GetConnection().GetHandle());
+    Acquire(Check(OCI_CollCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_CollFree), nullptr, typeInfo.GetConnection().GetHandle());
 }
 
 template<class TDataType>
-inline Collection<TDataType>::Collection(OCI_Coll *pColl, Handle *parent)
+Collection<TDataType>::Collection(OCI_Coll *pColl, Handle *parent)
 {
-     Acquire(pColl, 0, 0, parent);
+    Acquire(pColl, nullptr, nullptr, parent);
 }
 
 template<class TDataType>
-inline Collection<TDataType> Collection<TDataType>::Clone() const
+Collection<TDataType> Collection<TDataType>::Clone() const
 {
     Collection<TDataType> result(GetTypeInfo());
 
@@ -3810,99 +3808,99 @@ inline Collection<TDataType> Collection<TDataType>::Clone() const
 }
 
 template<class TDataType>
-inline TypeInfo Collection<TDataType>::GetTypeInfo() const
+TypeInfo Collection<TDataType>::GetTypeInfo() const
 {
     return TypeInfo(Check(OCI_CollGetTypeInfo(*this)));
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::CollectionType Collection<TDataType>::GetType() const
+typename Collection<TDataType>::CollectionType Collection<TDataType>::GetType() const
 {
-    return Collection<TDataType>::CollectionType(static_cast<typename Collection<TDataType>::CollectionType::type>(Check(OCI_CollGetType(*this))));
+    return CollectionType(Check(OCI_CollGetType(*this)));
 }
 
 template<class TDataType>
-inline unsigned int Collection<TDataType>::GetMax() const
+unsigned int Collection<TDataType>::GetMax() const
 {
     return Check(OCI_CollGetMax(*this));
 }
 
 template<class TDataType>
-inline unsigned int Collection<TDataType>::GetSize() const
+unsigned int Collection<TDataType>::GetSize() const
 
 {
     return Check(OCI_CollGetSize(*this));
 }
 
 template<class TDataType>
-inline unsigned int Collection<TDataType>::GetCount() const
+unsigned int Collection<TDataType>::GetCount() const
 
 {
     return Check(OCI_CollGetCount(*this));
 }
 
 template<class TDataType>
-inline void Collection<TDataType>::Truncate(unsigned int size)
+void Collection<TDataType>::Truncate(unsigned int size)
 {
     Check(OCI_CollTrim(*this, size));
 }
 
 template<class TDataType>
-inline void Collection<TDataType>::Clear()
+void Collection<TDataType>::Clear()
 {
     Check(OCI_CollClear(*this));
 }
 
 template<class TDataType>
-inline bool Collection<TDataType>::IsElementNull(unsigned int index) const
+bool Collection<TDataType>::IsElementNull(unsigned int index) const
 {
    return (Check(OCI_ElemIsNull(Check(OCI_CollGetElem(*this, index)))) == TRUE);
 }
 
 template<class TDataType>
-inline void Collection<TDataType>::SetElementNull(unsigned int index)
+void Collection<TDataType>::SetElementNull(unsigned int index)
 {
     Check(OCI_ElemSetNull(Check(OCI_CollGetElem(*this, index))));
 }
 
 template<class TDataType>
-inline bool Collection<TDataType>::Delete(unsigned int index) const
+bool Collection<TDataType>::Delete(unsigned int index) const
 {
    return (Check(OCI_CollDeleteElem(*this, index)) == TRUE);
 }
 
 template <class TDataType>
-inline typename Collection<TDataType>::Iterator Collection<TDataType>::begin()
+typename Collection<TDataType>::Iterator Collection<TDataType>::begin()
 {
     return Iterator(*this, 1);
 }
 
 template <class TDataType>
-inline typename Collection<TDataType>::ConstIterator Collection<TDataType>::begin() const
+typename Collection<TDataType>::ConstIterator Collection<TDataType>::begin() const
 {
     return ConstIterator(*this, 1);
 }
 
 template <class TDataType>
-inline typename Collection<TDataType>::Iterator Collection<TDataType>::end()
+typename Collection<TDataType>::Iterator Collection<TDataType>::end()
 {
     return Iterator(*this, GetCount() + 1);
 }
 
 template <class TDataType>
-inline typename Collection<TDataType>::ConstIterator Collection<TDataType>::end() const
+typename Collection<TDataType>::ConstIterator Collection<TDataType>::end() const
 {
     return ConstIterator(*this, GetCount() + 1);
 }
 
 template <class TDataType>
-inline TDataType Collection<TDataType>::Get(unsigned int index) const
+TDataType Collection<TDataType>::Get(unsigned int index) const
 {
     return GetElem(Check(OCI_CollGetElem(*this, index)), GetHandle());
 }
 
 template <class TDataType>
-inline void Collection<TDataType>::Set(unsigned int index, const TDataType &data)
+void Collection<TDataType>::Set(unsigned int index, const TDataType &data)
 {
     OCI_Elem * elem = Check(OCI_CollGetElem(*this, index));
 
@@ -3912,7 +3910,7 @@ inline void Collection<TDataType>::Set(unsigned int index, const TDataType &data
 }
 
 template <class TDataType>
-inline void Collection<TDataType>::Append(const TDataType &value)
+void Collection<TDataType>::Append(const TDataType &value)
 {
     OCI_Elem * elem = Check(OCI_ElemCreate(OCI_CollGetTypeInfo(*this)));
 
@@ -3923,7 +3921,7 @@ inline void Collection<TDataType>::Append(const TDataType &value)
 }
 
 template <>
-inline bool Collection<bool>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline bool Collection<bool>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
 
@@ -3931,7 +3929,7 @@ inline bool Collection<bool>::GetElem(OCI_Elem *elem, Handle *parent) const
 }
 
 template <>
-inline short Collection<short>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline short Collection<short>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
 
@@ -3939,7 +3937,7 @@ inline short Collection<short>::GetElem(OCI_Elem *elem, Handle *parent) const
 }
 
 template<>
-inline unsigned short Collection<unsigned short>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline unsigned short Collection<unsigned short>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
 
@@ -3947,7 +3945,7 @@ inline unsigned short Collection<unsigned short>::GetElem(OCI_Elem *elem, Handle
 }
 
 template<>
-inline int Collection<int>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline int Collection<int>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
 
@@ -3955,7 +3953,7 @@ inline int Collection<int>::GetElem(OCI_Elem *elem, Handle *parent) const
 }
 
 template<>
-inline unsigned int Collection<unsigned int>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline unsigned int Collection<unsigned int>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
 
@@ -3963,7 +3961,7 @@ inline unsigned int Collection<unsigned int>::GetElem(OCI_Elem *elem, Handle *pa
 }
 
 template<>
-inline big_int Collection<big_int>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline big_int Collection<big_int>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
 
@@ -3971,7 +3969,7 @@ inline big_int Collection<big_int>::GetElem(OCI_Elem *elem, Handle *parent) cons
 }
 
 template<>
-inline big_uint Collection<big_uint>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline big_uint Collection<big_uint>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
 
@@ -3979,7 +3977,7 @@ inline big_uint Collection<big_uint>::GetElem(OCI_Elem *elem, Handle *parent) co
 }
 
 template<>
-inline float Collection<float>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline float Collection<float>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
 
@@ -3987,7 +3985,7 @@ inline float Collection<float>::GetElem(OCI_Elem *elem, Handle *parent) const
 }
 
 template<>
-inline double Collection<double>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline double Collection<double>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
 
@@ -3995,13 +3993,13 @@ inline double Collection<double>::GetElem(OCI_Elem *elem, Handle *parent) const
 }
 
 template<>
-inline Number Collection<Number>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline Number Collection<Number>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return Number(Check(OCI_ElemGetNumber(elem)), parent);
 }
 
 template<>
-inline ostring Collection<ostring>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline ostring Collection<ostring>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
 
@@ -4009,7 +4007,7 @@ inline ostring Collection<ostring>::GetElem(OCI_Elem *elem, Handle *parent) cons
 }
 
 template<>
-inline Raw Collection<Raw>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline Raw Collection<Raw>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
 
@@ -4023,60 +4021,60 @@ inline Raw Collection<Raw>::GetElem(OCI_Elem *elem, Handle *parent) const
 }
 
 template<>
-inline Date Collection<Date>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline Date Collection<Date>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return Date(Check(OCI_ElemGetDate(elem)), parent);
 }
 
 template<>
-inline Timestamp Collection<Timestamp>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline Timestamp Collection<Timestamp>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return Timestamp(Check(OCI_ElemGetTimestamp(elem)), parent);
 }
 
 template<>
-inline Interval Collection<Interval>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline Interval Collection<Interval>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return Interval(Check(OCI_ElemGetInterval(elem)), parent);
 }
 
 template<>
-inline Object Collection<Object>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline Object Collection<Object>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return Object(Check(OCI_ElemGetObject(elem)), parent);
 }
 
 template<>
-inline Reference Collection<Reference>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline Reference Collection<Reference>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return Reference(Check(OCI_ElemGetRef(elem)), parent);
 }
 
 template<>
-inline Clob Collection<Clob>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline Clob Collection<Clob>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return Clob(Check(OCI_ElemGetLob(elem)), parent);
 }
 
 template<>
-inline NClob Collection<NClob>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline NClob Collection<NClob>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return NClob(Check(OCI_ElemGetLob(elem)), parent);
 }
 template<>
-inline Blob Collection<Blob>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline Blob Collection<Blob>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return Blob(Check(OCI_ElemGetLob(elem)), parent);
 }
 
 template<>
-inline File Collection<File>::GetElem(OCI_Elem *elem, Handle *parent) const
+inline File Collection<File>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return File(Check(OCI_ElemGetFile(elem)), parent);
 }
 
 template<class TDataType>
-inline TDataType Collection<TDataType>::GetElem(OCI_Elem *elem, Handle *parent) const
+TDataType Collection<TDataType>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     return TDataType(Check(OCI_ElemGetColl(elem)), parent);
 }
@@ -4156,7 +4154,7 @@ inline void Collection<Raw>::SetElem(OCI_Elem *elem, const Raw &value)
     }
     else
     {
-        Check(OCI_ElemSetRaw(elem, NULL, 0));
+        Check(OCI_ElemSetRaw(elem, nullptr, 0));
     }
 }
 
@@ -4215,19 +4213,19 @@ inline void Collection<File>::SetElem(OCI_Elem *elem, const File &value)
 }
 
 template <class TDataType>
-inline void Collection<TDataType>::SetElem(OCI_Elem *elem, const TDataType &value)
+void Collection<TDataType>::SetElem(OCI_Elem *elem, const TDataType &value)
 {
     Check(OCI_ElemSetColl(elem, value));
 }
 
 template<class TDataType>
-inline ostring Collection<TDataType>::ToString() const
+ostring Collection<TDataType>::ToString() const
 {
     if (!IsNull())
     {
         unsigned int len = 0;
 
-        Check(OCI_CollToText(*this, &len, 0));
+        Check(OCI_CollToText(*this, &len, nullptr));
 
         ManagedBuffer<otext> buffer(len + 1);
 
@@ -4240,55 +4238,55 @@ inline ostring Collection<TDataType>::ToString() const
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::Element Collection<TDataType>::operator [] (unsigned int index)
+typename Collection<TDataType>::Element Collection<TDataType>::operator [] (unsigned int index)
 {
     return Element(*this, index);
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::ConstElement Collection<TDataType>::operator [] (unsigned int index) const
+typename Collection<TDataType>::ConstElement Collection<TDataType>::operator [] (unsigned int index) const
 {
     return ConstElement(*this, index);
-} 
+}
 
 template<class TDataType>
-inline Collection<TDataType>::Iterator::Iterator(Collection &coll, unsigned int pos) : _elem(coll, pos)
+Collection<TDataType>::Iterator::Iterator(Collection &coll, unsigned int pos) : _elem(coll, pos)
 {
 }
 
 template<class TDataType>
-inline Collection<TDataType>::Iterator::Iterator(const Iterator& other) : _elem(other._elem)
+Collection<TDataType>::Iterator::Iterator(const Iterator& other) : _elem(other._elem)
 {
 }
 
 template<class TDataType>
-inline bool Collection<TDataType>::Iterator::operator== (const Iterator& other) const
+bool Collection<TDataType>::Iterator::operator== (const Iterator& other) const
 {
     return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(_elem._coll)) == (static_cast<OCI_Coll *>(other._elem._coll));
 
 }
 
 template<class TDataType>
-inline bool Collection<TDataType>::Iterator::operator!= (const Iterator& other) const
+bool Collection<TDataType>::Iterator::operator!= (const Iterator& other) const
 {
     return !(*this == other);
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::Element& Collection<TDataType>::Iterator::operator*()
+typename Collection<TDataType>::Element& Collection<TDataType>::Iterator::operator*()
 {
      return _elem;
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::Iterator & Collection<TDataType>::Iterator::operator--()
+typename Collection<TDataType>::Iterator & Collection<TDataType>::Iterator::operator--()
 {
-    _elem._pos--;
+    --_elem._pos;
     return (*this);
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::Iterator Collection<TDataType>::Iterator::operator--(int)
+typename Collection<TDataType>::Iterator Collection<TDataType>::Iterator::operator--(int)
 {
     Iterator old(*this);
     --(*this);
@@ -4296,14 +4294,14 @@ inline typename Collection<TDataType>::Iterator Collection<TDataType>::Iterator:
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::Iterator  & Collection<TDataType>::Iterator::operator++()
+typename Collection<TDataType>::Iterator  & Collection<TDataType>::Iterator::operator++()
 {
     ++_elem._pos;
     return (*this);
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::Iterator Collection<TDataType>::Iterator::operator++(int)
+typename Collection<TDataType>::Iterator Collection<TDataType>::Iterator::operator++(int)
 {
     Iterator old(*this);
     ++(*this);
@@ -4311,43 +4309,43 @@ inline typename Collection<TDataType>::Iterator Collection<TDataType>::Iterator:
 }
 
 template<class TDataType>
-inline Collection<TDataType>::ConstIterator::ConstIterator(const Collection &coll, unsigned int pos) : _elem(coll, pos)
+Collection<TDataType>::ConstIterator::ConstIterator(const Collection &coll, unsigned int pos) : _elem(coll, pos)
 {
 }
 
 template<class TDataType>
-inline Collection<TDataType>::ConstIterator::ConstIterator(const ConstIterator& other) : _elem(other._elem)
+Collection<TDataType>::ConstIterator::ConstIterator(const ConstIterator& other) : _elem(other._elem)
 {
 }
 
 template<class TDataType>
-inline bool Collection<TDataType>::ConstIterator::operator== (const ConstIterator& other) const
+bool Collection<TDataType>::ConstIterator::operator== (const ConstIterator& other) const
 {
     return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(_elem._coll)) == (static_cast<OCI_Coll *>(other._elem._coll));
 
 }
 
 template<class TDataType>
-inline bool Collection<TDataType>::ConstIterator::operator!= (const ConstIterator& other) const
+bool Collection<TDataType>::ConstIterator::operator!= (const ConstIterator& other) const
 {
     return !(*this == other);
 }
 
 template<class TDataType>
-inline const typename Collection<TDataType>::ConstElement& Collection<TDataType>::ConstIterator::operator*() const
+const typename Collection<TDataType>::ConstElement& Collection<TDataType>::ConstIterator::operator*() const
 {
     return _elem;
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::ConstIterator & Collection<TDataType>::ConstIterator::operator--()
+typename Collection<TDataType>::ConstIterator & Collection<TDataType>::ConstIterator::operator--()
 {
-    _elem._pos--;
+    --_elem._pos;
     return (*this);
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::ConstIterator Collection<TDataType>::ConstIterator::operator--(int)
+typename Collection<TDataType>::ConstIterator Collection<TDataType>::ConstIterator::operator--(int)
 {
     ConstIterator old(*this);
     --(*this);
@@ -4355,14 +4353,14 @@ inline typename Collection<TDataType>::ConstIterator Collection<TDataType>::Cons
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::ConstIterator  & Collection<TDataType>::ConstIterator::operator++()
+typename Collection<TDataType>::ConstIterator  & Collection<TDataType>::ConstIterator::operator++()
 {
     ++_elem._pos;
     return (*this);
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::ConstIterator Collection<TDataType>::ConstIterator::operator++(int)
+typename Collection<TDataType>::ConstIterator Collection<TDataType>::ConstIterator::operator++(int)
 {
     ConstIterator old(*this);
     ++(*this);
@@ -4370,50 +4368,50 @@ inline typename Collection<TDataType>::ConstIterator Collection<TDataType>::Cons
 }
 
 template<class TDataType>
-inline Collection<TDataType>::ConstElement::ConstElement(const Collection &coll, unsigned int pos) : _coll(coll), _pos(pos)
+Collection<TDataType>::ConstElement::ConstElement(const Collection &coll, unsigned int pos) : _coll(coll), _pos(pos)
 {
 
 }
 
 template<class TDataType>
-inline Collection<TDataType>::ConstElement::operator TDataType() const
+Collection<TDataType>::ConstElement::operator TDataType() const
 {
     return _coll.Get(_pos);
 }
 
 template<class TDataType>
-inline bool Collection<TDataType>::ConstElement::IsNull() const
+bool Collection<TDataType>::ConstElement::IsNull() const
 {
     return _coll->IsElementNull(_pos);
 }
 
 template<class TDataType>
-inline Collection<TDataType>::Element::Element(Collection &coll, unsigned int pos) : _coll(coll), _pos(pos)
+Collection<TDataType>::Element::Element(Collection &coll, unsigned int pos) : _coll(coll), _pos(pos)
 {
 
 }
 
 template<class TDataType>
-inline Collection<TDataType>::Element::operator TDataType() const
+Collection<TDataType>::Element::operator TDataType() const
 {
     return _coll.Get(_pos);
 }
 
 template<class TDataType>
-inline typename Collection<TDataType>::Element& Collection<TDataType>::Element::operator = (TDataType value)
+typename Collection<TDataType>::Element& Collection<TDataType>::Element::operator = (TDataType value)
 {
     _coll.Set(_pos, value);
     return *this;
 }
 
 template<class TDataType>
-inline bool Collection<TDataType>::Element::IsNull() const
+bool Collection<TDataType>::Element::IsNull() const
 {
     return _coll->IsElementNull(_pos);
 }
 
 template<class TDataType>
-inline void Collection<TDataType>::Element::SetNull()
+void Collection<TDataType>::Element::SetNull()
 {
     _coll->SetElementNull(_pos);
 }
@@ -4423,24 +4421,24 @@ inline void Collection<TDataType>::Element::SetNull()
  * --------------------------------------------------------------------------------------------- */
 
 template<class TLongObjectType, int TLongOracleType>
-inline Long<TLongObjectType, TLongOracleType>::Long()
+Long<TLongObjectType, TLongOracleType>::Long()
 {
 }
 
 template<class TLongObjectType, int TLongOracleType>
-inline Long<TLongObjectType, TLongOracleType>::Long(const Statement &statement)
+Long<TLongObjectType, TLongOracleType>::Long(const Statement &statement)
 {
-    Acquire(Check(OCI_LongCreate(statement, TLongOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), 0, statement.GetHandle());
+    Acquire(Check(OCI_LongCreate(statement, TLongOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), nullptr, statement.GetHandle());
 }
 
 template<class TLongObjectType, int TLongOracleType>
-inline Long<TLongObjectType, TLongOracleType>::Long(OCI_Long *pLong, Handle* parent)
+Long<TLongObjectType, TLongOracleType>::Long(OCI_Long *pLong, Handle* parent)
 {
-    Acquire(pLong, 0, 0, parent);
+    Acquire(pLong, nullptr, nullptr, parent);
 }
 
 template<class TLongObjectType, int TLongOracleType>
-inline unsigned int Long<TLongObjectType, TLongOracleType>::Write(const TLongObjectType& content)
+unsigned int Long<TLongObjectType, TLongOracleType>::Write(const TLongObjectType& content)
 {
     unsigned int res = 0;
 
@@ -4453,7 +4451,7 @@ inline unsigned int Long<TLongObjectType, TLongOracleType>::Write(const TLongObj
 }
 
 template<class TLongObjectType, int TLongOracleType>
-inline unsigned int Long<TLongObjectType, TLongOracleType>::GetLength() const
+unsigned int Long<TLongObjectType, TLongOracleType>::GetLength() const
 {
     return Check(OCI_LongGetSize(*this));
 }
@@ -4501,13 +4499,13 @@ inline unsigned int BindObject::GetMode() const
  * BindArray
  * --------------------------------------------------------------------------------------------- */
 
-inline BindArray::BindArray(const Statement &statement, const ostring& name, unsigned int mode) : BindObject(statement, name, mode), _object(0)
+inline BindArray::BindArray(const Statement &statement, const ostring& name, unsigned int mode) : BindObject(statement, name, mode), _object(nullptr)
 {
 
 }
 
 template <class TObjectType>
-inline void BindArray::SetVector(std::vector<TObjectType> & vector, unsigned int elemSize)
+void BindArray::SetVector(std::vector<TObjectType> & vector, unsigned int elemSize)
 {
     _object = new BindArrayObject<TObjectType>(GetStatement(), GetName(), vector, GetMode(), elemSize);
 }
@@ -4518,7 +4516,7 @@ inline BindArray::~BindArray()
 }
 
 template <class TObjectType>
-inline typename BindResolver<TObjectType>::OutputType * BindArray::GetData()  const
+typename BindResolver<TObjectType>::OutputType * BindArray::GetData()  const
 {
     return static_cast<typename BindResolver<TObjectType>::OutputType *>(*(dynamic_cast< BindArrayObject<TObjectType> * > (_object)));
 }
@@ -4540,20 +4538,20 @@ inline void BindArray::SetOutData()
 }
 
 template <class TObjectType>
-inline BindArray::BindArrayObject<TObjectType>::BindArrayObject(const Statement &statement, const ostring& name, ObjectTypeVector &vector, unsigned int mode, unsigned int elemSize)
-    : _pStatement(statement), _name(name), _vector(vector), _data(0), _mode(mode), _elemCount(statement.GetBindArraySize()), _elemSize(elemSize)
+BindArray::BindArrayObject<TObjectType>::BindArrayObject(const Statement &statement, const ostring& name, ObjectTypeVector &vector, unsigned int mode, unsigned int elemSize)
+    : _pStatement(statement), _name(name), _vector(vector), _data(nullptr), _mode(mode), _elemCount(statement.GetBindArraySize()), _elemSize(elemSize)
 {
     AllocData();
 }
 
 template <class TObjectType>
-inline BindArray::BindArrayObject<TObjectType>::~BindArrayObject()
+BindArray::BindArrayObject<TObjectType>::~BindArrayObject()
 {
     FreeData();
 }
 
 template <class TObjectType>
-inline void BindArray::BindArrayObject<TObjectType>::AllocData()
+void BindArray::BindArrayObject<TObjectType>::AllocData()
 {
     _data = new NativeType[_elemCount];
 
@@ -4577,13 +4575,13 @@ inline void BindArray::BindArrayObject<Raw> ::AllocData()
 }
 
 template <class TObjectType>
-inline void BindArray::BindArrayObject<TObjectType>::FreeData()
+void BindArray::BindArrayObject<TObjectType>::FreeData() const
 {
     delete [] _data ;
 }
 
 template <class TObjectType>
-inline void BindArray::BindArrayObject<TObjectType>::SetInData()
+void BindArray::BindArrayObject<TObjectType>::SetInData()
 {
     typename ObjectTypeVector::iterator it, it_end;
 
@@ -4592,7 +4590,6 @@ inline void BindArray::BindArrayObject<TObjectType>::SetInData()
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
-
         _data[index] = static_cast<NativeType>(*it);
     }
 }
@@ -4607,7 +4604,7 @@ inline void BindArray::BindArrayObject<ostring>::SetInData()
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
-        const  ostring & value = *it;
+        const ostring & value = *it;
 
         memcpy( _data + (_elemSize * index), value.c_str(), (value.size() + 1) * sizeof(otext));
     }
@@ -4635,7 +4632,7 @@ inline void BindArray::BindArrayObject<Raw>::SetInData()
 }
 
 template <class TObjectType>
-inline void BindArray::BindArrayObject<TObjectType>::SetOutData()
+void BindArray::BindArrayObject<TObjectType>::SetOutData()
 {
     typename ObjectTypeVector::iterator it, it_end;
 
@@ -4669,19 +4666,19 @@ inline void BindArray::BindArrayObject<Raw>::SetOutData()
 }
 
 template <class TObjectType>
-inline ostring BindArray::BindArrayObject<TObjectType>::GetName()
+ostring BindArray::BindArrayObject<TObjectType>::GetName()
 {
     return _name;
 }
 
 template <class TObjectType>
-inline BindArray::BindArrayObject<TObjectType>::operator ObjectTypeVector & ()  const
+BindArray::BindArrayObject<TObjectType>::operator ObjectTypeVector & ()  const
 {
     return _vector;
 }
 
 template <class TObjectType>
-inline BindArray::BindArrayObject<TObjectType>::operator NativeType * ()  const
+BindArray::BindArrayObject<TObjectType>::operator NativeType * ()  const
 {
     return _data;
 }
@@ -4691,7 +4688,7 @@ inline BindArray::BindArrayObject<TObjectType>::operator NativeType * ()  const
  * --------------------------------------------------------------------------------------------- */
 
 template <class TObjectType>
-inline void BindObjectAdaptor<TObjectType>::SetInData()
+void BindObjectAdaptor<TObjectType>::SetInData()
 {
     if (GetMode() & OCI_BDM_IN)
     {
@@ -4712,7 +4709,7 @@ inline void BindObjectAdaptor<TObjectType>::SetInData()
 }
 
 template <class TObjectType>
-inline void BindObjectAdaptor<TObjectType>::SetOutData()
+void BindObjectAdaptor<TObjectType>::SetOutData()
 {
     if (GetMode() & OCI_BDM_OUT)
     {
@@ -4723,7 +4720,7 @@ inline void BindObjectAdaptor<TObjectType>::SetOutData()
 }
 
 template <class TObjectType>
-inline BindObjectAdaptor<TObjectType>::BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object, unsigned int size) :
+BindObjectAdaptor<TObjectType>::BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object, unsigned int size) :
      BindObject(statement, name, mode),
      _object(object),
      _data(new NativeType[size]),
@@ -4733,13 +4730,13 @@ inline BindObjectAdaptor<TObjectType>::BindObjectAdaptor(const Statement &statem
 }
 
 template <class TObjectType>
-inline BindObjectAdaptor<TObjectType>::~BindObjectAdaptor()
+BindObjectAdaptor<TObjectType>::~BindObjectAdaptor()
 {
     delete [] _data;
 }
 
 template <class TObjectType>
-inline BindObjectAdaptor<TObjectType>::operator NativeType *()  const
+BindObjectAdaptor<TObjectType>::operator NativeType *()  const
 {
     return _data;
 }
@@ -4749,7 +4746,7 @@ inline BindObjectAdaptor<TObjectType>::operator NativeType *()  const
  * --------------------------------------------------------------------------------------------- */
 
 template <class TObjectType>
-inline void BindTypeAdaptor<TObjectType>::SetInData()
+void BindTypeAdaptor<TObjectType>::SetInData()
 {
     if (GetMode() & OCI_BDM_IN)
     {
@@ -4758,7 +4755,7 @@ inline void BindTypeAdaptor<TObjectType>::SetInData()
 }
 
 template <class TObjectType>
-inline void BindTypeAdaptor<TObjectType>::SetOutData()
+void BindTypeAdaptor<TObjectType>::SetOutData()
 {
     if (GetMode() & OCI_BDM_OUT)
     {
@@ -4767,7 +4764,7 @@ inline void BindTypeAdaptor<TObjectType>::SetOutData()
 }
 
 template <class TObjectType>
-inline BindTypeAdaptor<TObjectType>::BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object) :
+BindTypeAdaptor<TObjectType>::BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object) :
 BindObject(statement, name, mode),
 _object(object),
 _data(new NativeType)
@@ -4776,13 +4773,13 @@ _data(new NativeType)
 }
 
 template <class TObjectType>
-inline BindTypeAdaptor<TObjectType>::~BindTypeAdaptor()
+BindTypeAdaptor<TObjectType>::~BindTypeAdaptor()
 {
     delete _data;
 }
 
 template <class TObjectType>
-inline BindTypeAdaptor<TObjectType>::operator NativeType *()  const
+BindTypeAdaptor<TObjectType>::operator NativeType *()  const
 {
     return _data;
 }
@@ -4876,7 +4873,7 @@ inline void BindsHolder::SetInData()
 
 inline BindInfo::BindInfo(OCI_Bind *pBind, Handle *parent)
 {
-    Acquire(pBind, 0, 0, parent);
+    Acquire(pBind, nullptr, nullptr, parent);
 }
 
 inline ostring BindInfo::GetName() const
@@ -4946,12 +4943,12 @@ inline Statement::Statement(const Connection &connection)
 
 inline Statement::Statement(OCI_Statement *stmt, Handle *parent)
 {
-    Acquire(stmt, reinterpret_cast<HandleFreeFunc>(parent ? OCI_StatementFree : 0), OnFreeSmartHandle, parent);
+    Acquire(stmt, reinterpret_cast<HandleFreeFunc>(parent ? OCI_StatementFree : nullptr), OnFreeSmartHandle, parent);
 }
 
 inline Connection Statement::GetConnection() const
 {
-    return Connection(Check(OCI_StatementGetConnection(*this)), 0);
+    return Connection(Check(OCI_StatementGetConnection(*this)), nullptr);
 }
 
 inline void Statement::Describe(const ostring& sql)
@@ -4984,7 +4981,7 @@ inline void Statement::ExecutePrepared()
 }
 
 template<class TFetchCallback>
-inline unsigned int Statement::ExecutePrepared(TFetchCallback callback)
+unsigned int Statement::ExecutePrepared(TFetchCallback callback)
 {
     ExecutePrepared();
 
@@ -4992,7 +4989,7 @@ inline unsigned int Statement::ExecutePrepared(TFetchCallback callback)
 }
 
 template<class TAdapter, class TFetchCallback>
-inline unsigned int Statement::ExecutePrepared(TFetchCallback callback, TAdapter adapter)
+unsigned int Statement::ExecutePrepared(TFetchCallback callback, TAdapter adapter)
 {
     ExecutePrepared();
 
@@ -5007,7 +5004,7 @@ inline void Statement::Execute(const ostring& sql)
 }
 
 template<class TFetchCallback>
-inline unsigned int Statement::Execute(const ostring& sql, TFetchCallback callback)
+unsigned int Statement::Execute(const ostring& sql, TFetchCallback callback)
 {
     Execute(sql);
 
@@ -5015,7 +5012,7 @@ inline unsigned int Statement::Execute(const ostring& sql, TFetchCallback callba
 }
 
 template<class TAdapter, class TFetchCallback>
-inline unsigned int Statement::Execute(const ostring& sql, TFetchCallback callback, TAdapter adapter)
+unsigned int Statement::Execute(const ostring& sql, TFetchCallback callback, TAdapter adapter)
 {
     Execute(sql);
 
@@ -5023,7 +5020,7 @@ inline unsigned int Statement::Execute(const ostring& sql, TFetchCallback callba
 }
 
 template<typename TFetchCallback>
-inline unsigned int  Statement::Fetch(TFetchCallback callback)
+unsigned int  Statement::Fetch(TFetchCallback callback)
 {
     unsigned int res = 0;
 
@@ -5039,7 +5036,7 @@ inline unsigned int  Statement::Fetch(TFetchCallback callback)
 }
 
 template<class TAdapter, class TFetchCallback>
-inline unsigned int Statement::Fetch(TFetchCallback callback, TAdapter adapter)
+unsigned int Statement::Fetch(TFetchCallback callback, TAdapter adapter)
 {
     unsigned int res = 0;
 
@@ -5115,21 +5112,21 @@ inline BindInfo Statement::GetBind(const ostring& name) const
 }
 
 template <typename TBindMethod, class TDataType>
-inline void Statement::Bind1(TBindMethod &method, const ostring& name, TDataType& value, BindInfo::BindDirection mode)
+void Statement::Bind1(TBindMethod &method, const ostring& name, TDataType& value, BindInfo::BindDirection mode)
 {
     Check(method(*this, name.c_str(), &value));
     SetLastBindMode(mode);
 }
 
 template <typename TBindMethod, class TObjectType>
-inline void Statement::Bind2(TBindMethod &method, const ostring& name, TObjectType& value, BindInfo::BindDirection mode)
+void Statement::Bind2(TBindMethod &method, const ostring& name, TObjectType& value, BindInfo::BindDirection mode)
 {
     Check(method(*this, name.c_str(), static_cast<typename BindResolver<TObjectType>::OutputType>(value)));
     SetLastBindMode(mode);
 }
 
 template <typename TBindMethod, class TObjectType>
-inline void Statement::BindVector1(TBindMethod &method, const ostring& name, std::vector<TObjectType> &values,  BindInfo::BindDirection mode)
+void Statement::BindVector1(TBindMethod &method, const ostring& name, std::vector<TObjectType> &values,  BindInfo::BindDirection mode)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
     bnd->SetVector<TObjectType>(values, sizeof(typename BindResolver<TObjectType>::OutputType));
@@ -5151,7 +5148,7 @@ inline void Statement::BindVector1(TBindMethod &method, const ostring& name, std
 }
 
 template <typename TBindMethod, class TObjectType, class TElemType>
-inline void Statement::BindVector2(TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindInfo::BindDirection mode, TElemType type)
+void Statement::BindVector2(TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindInfo::BindDirection mode, TElemType type)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
     bnd->SetVector<TObjectType>(values, sizeof(typename BindResolver<TObjectType>::OutputType));
@@ -5462,7 +5459,7 @@ inline void Statement::Bind<Number>(const ostring& name, std::vector<Number> &va
 }
 
 template<class TDataType>
-inline void Statement::Bind(const ostring& name, Collection<TDataType> &value, BindInfo::BindDirection mode)
+void Statement::Bind(const ostring& name, Collection<TDataType> &value, BindInfo::BindDirection mode)
 {
     Check(OCI_BindColl(*this, name.c_str(), value));
     SetLastBindMode(mode);
@@ -5529,7 +5526,7 @@ inline void Statement::Bind<Reference>(const ostring& name, std::vector<Referenc
 }
 
 template <class TDataType>
-inline void Statement::Bind(const ostring& name, std::vector<Collection<TDataType> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
+void Statement::Bind(const ostring& name, std::vector<Collection<TDataType> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
     BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
@@ -5838,7 +5835,7 @@ inline void Statement::GetBatchErrors(std::vector<Exception> &exceptions)
     }
 }
 
-inline void Statement::ClearBinds()
+inline void Statement::ClearBinds() const
 {
     BindsHolder *bindsHolder = GetBindsHolder(false);
 
@@ -5848,7 +5845,7 @@ inline void Statement::ClearBinds()
     }
 }
 
-inline void Statement::SetOutData()
+inline void Statement::SetOutData() const
 {
     BindsHolder *bindsHolder = GetBindsHolder(false);
 
@@ -5858,7 +5855,7 @@ inline void Statement::SetOutData()
     }
 }
 
-inline void Statement::SetInData()
+inline void Statement::SetInData() const
 {
     BindsHolder *bindsHolder = GetBindsHolder(false);
 
@@ -5868,11 +5865,11 @@ inline void Statement::SetInData()
     }
 }
 
-inline void Statement::ReleaseResultsets()
+inline void Statement::ReleaseResultsets() const
 {
     if (_smartHandle)
     {
-        Handle *handle = 0;
+        Handle *handle = nullptr;
 
         while (_smartHandle->GetChildren().FindIf(IsResultsetHandle, handle))
         {
@@ -5882,7 +5879,7 @@ inline void Statement::ReleaseResultsets()
 
                 delete handle;
 
-                handle = 0;
+                handle = nullptr;
             }
         }
     }
@@ -5892,7 +5889,7 @@ inline bool Statement::IsResultsetHandle(Handle *handle)
 {
     Resultset::SmartHandle *smartHandle = dynamic_cast<Resultset::SmartHandle *>(handle);
 
-    return smartHandle != 0;
+    return smartHandle != nullptr;
 }
 
 inline void Statement::OnFreeSmartHandle(SmartHandle *smartHandle)
@@ -5901,7 +5898,7 @@ inline void Statement::OnFreeSmartHandle(SmartHandle *smartHandle)
     {
         BindsHolder *bindsHolder = static_cast<BindsHolder *>(smartHandle->GetExtraInfos());
 
-        smartHandle->SetExtraInfos(0);
+        smartHandle->SetExtraInfos(nullptr);
 
         delete bindsHolder;
     }
@@ -5912,11 +5909,11 @@ inline void Statement::SetLastBindMode(BindInfo::BindDirection mode)
     Check(OCI_BindSetDirection(Check(OCI_GetBind(*this, Check(OCI_GetBindCount(*this)))),  mode));
 }
 
-inline BindsHolder * Statement::GetBindsHolder(bool create)
+inline BindsHolder * Statement::GetBindsHolder(bool create) const
 {
     BindsHolder * bindsHolder = static_cast<BindsHolder *>(_smartHandle->GetExtraInfos());
 
-    if (bindsHolder == 0 && create)
+    if (bindsHolder == nullptr && create)
     {
         bindsHolder = new BindsHolder(*this);
         _smartHandle->SetExtraInfos(bindsHolder);
@@ -5931,7 +5928,7 @@ inline BindsHolder * Statement::GetBindsHolder(bool create)
 
 inline Resultset::Resultset(OCI_Resultset *resultset, Handle *parent)
 {
-    Acquire(resultset, 0, 0, parent);
+    Acquire(resultset, nullptr, nullptr, parent);
 }
 
 inline bool Resultset::Next()
@@ -6001,7 +5998,7 @@ inline bool Resultset::IsColumnNull(const ostring& name) const
 
 inline Statement Resultset::GetStatement() const
 {
-    return Statement( Check(OCI_ResultsetGetStatement(*this)), 0);
+    return Statement( Check(OCI_ResultsetGetStatement(*this)), nullptr);
 }
 
 inline bool Resultset::operator ++ (int)
@@ -6016,34 +6013,34 @@ inline bool Resultset::operator -- (int)
 
 inline bool Resultset::operator += (int offset)
 {
-    return Seek(Resultset::SeekRelative, offset);
+    return Seek(SeekRelative, offset);
 }
 
 inline bool Resultset::operator -= (int offset)
 {
-    return Seek(Resultset::SeekRelative, -offset);
+    return Seek(SeekRelative, -offset);
 }
 
 template<class TDataType>
-inline void Resultset::Get(unsigned int index, TDataType& value) const
+void Resultset::Get(unsigned int index, TDataType& value) const
 {
     value = Get<TDataType>(index);
 }
 
 template<class TDataType>
-inline void Resultset::Get(const ostring &name, TDataType& value) const
+void Resultset::Get(const ostring &name, TDataType& value) const
 {
     value = Get<TDataType>(name);
 }
 
 template<class TDataType, class TAdapter>
-inline bool Resultset::Get(TDataType& value, TAdapter adapter) const
+bool Resultset::Get(TDataType& value, TAdapter adapter) const
 {
     return adapter(static_cast<const Resultset&>(*this), value);
 }
 
 template<class TCallback>
-inline  unsigned int Resultset::ForEach(TCallback callback)
+unsigned int Resultset::ForEach(TCallback callback)
 {
     while (Next())
     {
@@ -6057,7 +6054,7 @@ inline  unsigned int Resultset::ForEach(TCallback callback)
 }
 
 template<class TAdapter, class TCallback>
-inline unsigned int Resultset::ForEach(TCallback callback, TAdapter adapter)
+unsigned int Resultset::ForEach(TCallback callback, TAdapter adapter)
 {
     while (Next())
     {
@@ -6359,13 +6356,13 @@ inline Blong Resultset::Get<Blong>(const ostring& name) const
 }
 
 template<class TDataType>
-inline TDataType Resultset::Get(unsigned int index) const
+TDataType Resultset::Get(unsigned int index) const
 {
     return TDataType(Check(OCI_GetColl(*this, index)), GetHandle());
 }
 
 template<class TDataType>
-inline TDataType Resultset::Get(const ostring& name) const
+TDataType Resultset::Get(const ostring& name) const
 {
     return TDataType(Check(OCI_GetColl2(*this, name.c_str())), GetHandle());
 }
@@ -6376,7 +6373,7 @@ inline TDataType Resultset::Get(const ostring& name) const
 
 inline Column::Column(OCI_Column *pColumn, Handle *parent)
 {
-    Acquire(pColumn, 0, 0, parent);
+    Acquire(pColumn, nullptr, nullptr, parent);
 }
 
 inline ostring Column::GetName() const
@@ -6471,21 +6468,21 @@ inline Subscription::Subscription()
 
 inline Subscription::Subscription(OCI_Subscription *pSubcription)
 {
-    Acquire(pSubcription, 0, 0, 0);
+    Acquire(pSubcription, nullptr, nullptr, nullptr);
 }
 
 inline void Subscription::Register(const Connection &connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
 {
     Acquire(Check(OCI_SubscriptionRegister(connection, name.c_str(), changeTypes.GetValues(),
-                                           static_cast<POCI_NOTIFY> (handler != 0 ? Environment::NotifyHandler : 0 ), port, timeout)),
-                                           reinterpret_cast<HandleFreeFunc>(OCI_SubscriptionUnregister), 0, 0);
+        static_cast<POCI_NOTIFY> (handler != nullptr ? Environment::NotifyHandler : nullptr), port, timeout)),
+                                           reinterpret_cast<HandleFreeFunc>(OCI_SubscriptionUnregister), nullptr, nullptr);
 
     Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), handler);
 }
 
 inline void Subscription::Unregister()
 {
-    Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), 0);
+    Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), nullptr);
 
     Release();
 }
@@ -6516,7 +6513,7 @@ inline unsigned int Subscription::GetPort() const
 
 inline Connection Subscription::GetConnection() const
 {
-    return Connection(Check(OCI_SubscriptionGetConnection(*this)), 0);
+    return Connection(Check(OCI_SubscriptionGetConnection(*this)), nullptr);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -6525,7 +6522,7 @@ inline Connection Subscription::GetConnection() const
 
 inline Event::Event(OCI_Event *pEvent)
 {
-    Acquire(pEvent, 0, 0, 0);
+    Acquire(pEvent, nullptr, nullptr, nullptr);
 }
 
 inline Event::EventType Event::GetType() const
@@ -6564,12 +6561,12 @@ inline Subscription Event::GetSubscription() const
 
 inline Agent::Agent(const Connection &connection, const ostring& name, const ostring& address)
 {
-    Acquire(Check(OCI_AgentCreate(connection, name.c_str(), address.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_AgentFree), 0, 0);
+    Acquire(Check(OCI_AgentCreate(connection, name.c_str(), address.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_AgentFree), nullptr, nullptr);
 }
 
 inline Agent::Agent(OCI_Agent *pAgent, Handle *parent)
 {
-    Acquire(pAgent, 0, 0, parent);
+    Acquire(pAgent, nullptr, nullptr, parent);
 }
 
 inline ostring Agent::GetName() const
@@ -6598,12 +6595,12 @@ inline void Agent::SetAddress(const ostring& value)
 
 inline Message::Message(const TypeInfo &typeInfo)
 {
-    Acquire(Check(OCI_MsgCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_MsgFree), 0, 0);
+    Acquire(Check(OCI_MsgCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_MsgFree), nullptr, nullptr);
 }
 
 inline Message::Message(OCI_Msg *pMessage, Handle *parent)
 {
-    Acquire(pMessage, 0, 0, parent);
+    Acquire(pMessage, nullptr, nullptr, parent);
 }
 
 inline void Message::Reset()
@@ -6614,7 +6611,7 @@ inline void Message::Reset()
 template <>
 inline Object Message::GetPayload<Object>()
 {
-    return Object(Check(OCI_MsgGetObject(*this)), 0);
+    return Object(Check(OCI_MsgGetObject(*this)), nullptr);
 }
 
 template <>
@@ -6644,13 +6641,13 @@ inline void Message::SetPayload<Raw>(const Raw &value)
     }
     else
     {
-        Check(OCI_MsgSetRaw(*this, NULL, 0));
+        Check(OCI_MsgSetRaw(*this, nullptr, 0));
     }
 }
 
 inline Date Message::GetEnqueueTime() const
 {
-    return Date(Check(OCI_MsgGetEnqueueTime(*this)), 0);
+    return Date(Check(OCI_MsgGetEnqueueTime(*this)), nullptr);
 }
 
 inline int Message::GetAttemptCount() const
@@ -6723,7 +6720,7 @@ inline void Message::SetOriginalID(const Raw &value)
     }
     else
     {
-        Check(OCI_MsgSetOriginalID(*this, NULL, 0));
+        Check(OCI_MsgSetOriginalID(*this, nullptr, 0));
     }
 }
 
@@ -6749,7 +6746,7 @@ inline void Message::SetExceptionQueue(const ostring& value)
 
 inline Agent Message::GetSender() const
 {
-    return Agent(Check(OCI_MsgGetSender(*this)), 0);
+    return Agent(Check(OCI_MsgGetSender(*this)), nullptr);
 }
 
 inline void Message::SetSender(const Agent &agent)
@@ -6778,7 +6775,7 @@ inline void Message::SetConsumers(std::vector<Agent> &agents)
 
 inline Enqueue::Enqueue(const TypeInfo &typeInfo, const ostring& queueName)
 {
-    Acquire(Check(OCI_EnqueueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_EnqueueFree), 0, 0);
+    Acquire(Check(OCI_EnqueueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_EnqueueFree), nullptr, nullptr);
 }
 
 inline void Enqueue::Put(const Message &message)
@@ -6825,7 +6822,7 @@ inline void Enqueue::SetRelativeMsgID(const Raw &value)
     }
     else
     {
-        Check(OCI_EnqueueSetRelativeMsgID(*this, NULL, 0));
+        Check(OCI_EnqueueSetRelativeMsgID(*this, nullptr, 0));
     }
 }
 
@@ -6835,22 +6832,22 @@ inline void Enqueue::SetRelativeMsgID(const Raw &value)
 
 inline Dequeue::Dequeue(const TypeInfo &typeInfo, const ostring& queueName)
 {
-    Acquire(Check(OCI_DequeueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_DequeueFree), 0, 0);
+    Acquire(Check(OCI_DequeueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_DequeueFree), nullptr, nullptr);
 }
 
 inline Dequeue::Dequeue(OCI_Dequeue *pDequeue)
 {
-    Acquire(pDequeue, 0, 0, 0);
+    Acquire(pDequeue, nullptr, nullptr, nullptr);
 }
 
 inline Message Dequeue::Get()
 {
-    return Message(Check(OCI_DequeueGet(*this)), 0);
+    return Message(Check(OCI_DequeueGet(*this)), nullptr);
 }
 
 inline Agent Dequeue::Listen(int timeout)
 {
-    return Agent(Check(OCI_DequeueListen(*this, timeout)), 0);
+    return Agent(Check(OCI_DequeueListen(*this, timeout)), nullptr);
 }
 
 inline ostring Dequeue::GetConsumer() const
@@ -6892,7 +6889,7 @@ inline void Dequeue::SetRelativeMsgID(const Raw &value)
     }
     else
     {
-        Check(OCI_DequeueSetRelativeMsgID(*this, NULL, 0));
+        Check(OCI_DequeueSetRelativeMsgID(*this, nullptr, 0));
     }
 }
 
@@ -6953,9 +6950,9 @@ inline void Dequeue::SetAgents(std::vector<Agent> &agents)
 
 inline void Dequeue::Subscribe(unsigned int port, unsigned int timeout, NotifyAQHandlerProc handler)
 {
-    Check(OCI_DequeueSubscribe(*this, port, timeout, static_cast<POCI_NOTIFY_AQ>(handler != 0 ? Environment::NotifyHandlerAQ : 0 )));
+    Check(OCI_DequeueSubscribe(*this, port, timeout, static_cast<POCI_NOTIFY_AQ>(handler != nullptr ? Environment::NotifyHandlerAQ : nullptr)));
 
-    Environment::SetUserCallback<Dequeue::NotifyAQHandlerProc>(static_cast<OCI_Dequeue*>(*this), handler);
+    Environment::SetUserCallback<NotifyAQHandlerProc>(static_cast<OCI_Dequeue*>(*this), handler);
 }
 
 inline void Dequeue::Unsubscribe()
@@ -6969,7 +6966,7 @@ inline void Dequeue::Unsubscribe()
 
 inline DirectPath::DirectPath(const TypeInfo &typeInfo, unsigned int nbCols, unsigned int  nbRows, const ostring& partition)
 {
-    Acquire(Check(OCI_DirPathCreate(typeInfo, partition.c_str(), nbCols, nbRows)), reinterpret_cast<HandleFreeFunc>(OCI_DirPathFree), 0, 0);
+    Acquire(Check(OCI_DirPathCreate(typeInfo, partition.c_str(), nbCols, nbRows)), reinterpret_cast<HandleFreeFunc>(OCI_DirPathFree), nullptr, nullptr);
 }
 
 inline void DirectPath::SetColumn(unsigned int colIndex, const ostring& name, unsigned int maxSize,  const ostring& format)

@@ -21,17 +21,45 @@
 /*
  * IMPORTANT NOTICE
  *
- * This C++ header defines C++ wrapper classes around the OCILIB C API 
+ * This C++ header defines C++ wrapper classes around the OCILIB C API
  * It requires a compatible version of OCILIB
  *
  */
 
+#include <map>
+
 namespace ocilib
 {
 
+/* Try to guess C++ Compiler capabilities ... */
+
+#define CPP_98 199711L
+#define CPP_11 201103L
+#define CPP_14 201402L
+
+#if __cplusplus < CPP_11
+    #if defined(__GNUC__)
+        #if defined(__GXX_EXPERIMENTAL_CXX0X__)
+             #define HAVE_NULLPTR
+        #endif
+    #elif defined(_MSC_VER)
+        #if _MSC_VER >= 1600
+            #define HAVE_NULLPTR
+        #endif
+    #endif
+#else
+    #define HAVE_NULLPTR
+#endif
+
+/* guessing if nullptr is supported */
+
+#ifndef HAVE_NULLPTR
+    #define nullptr 0
+#endif
+
 #define ARG_NOT_USED(a) (a) = (a)
 
-/** class pre declarations */
+/* class forward declarations */
 
 class Exception;
 class Connection;
@@ -103,7 +131,7 @@ class HandleHolder;
 
 /**
  * @brief
- * Template Enum template class providing some type safety to some extends for manipulating enum variables
+ * Template Enumeration template class providing some type safety to some extends for manipulating enumerated variables
  */
 template <class TEnum>
 class Enum
@@ -118,7 +146,7 @@ public:
     TEnum GetValue();
 
     operator TEnum ();
-    operator unsigned int ();
+    operator unsigned int () const;
 
     bool operator == (const Enum& other) const;
     bool operator != (const Enum& other) const;
@@ -203,8 +231,8 @@ public:
     Locker();
     virtual ~Locker();
 
-    void Lock();
-    void Unlock();
+    void Lock() const;
+    void Unlock() const;
 
     void SetAccessMode(bool threaded);
 
@@ -222,8 +250,8 @@ public:
 
     void SetLocker(Locker *locker);
 
-    void Lock();
-    void Unlock();
+    void Lock() const;
+    void Unlock() const;
 
 private:
 
@@ -313,7 +341,7 @@ protected:
     HandleHolder& operator= (const HandleHolder &other);
 
     typedef boolean(OCI_API *HandleFreeFunc)(AnyPointer handle);
-    
+
     typedef void(*SmartHandleFreeNotifyFunc)(SmartHandle *smartHandle);
 
     Handle* GetHandle() const;
@@ -332,7 +360,7 @@ protected:
         void Acquire(HandleHolder *holder);
         void Release(HandleHolder *holder);
 
-        const THandleType GetHandle() const;
+        THandleType GetHandle() const;
 
         Handle *GetParent() const;
 
@@ -359,8 +387,6 @@ protected:
         Handle *_parent;
         AnyPointer _extraInfo;
     };
-
-protected:
 
     SmartHandle *_smartHandle;
  };
@@ -402,7 +428,7 @@ public:
     ostring GetName() const;
 
     Statement GetStatement() const;
-    
+
     unsigned int GetMode() const;
 
     virtual void SetInData()  = 0;
@@ -440,7 +466,7 @@ private:
         virtual ~AbstractBindArrayObject()  { }
         virtual void SetInData() = 0;
         virtual void SetOutData() = 0;
-        ostring GetName();
+        virtual ostring GetName() = 0;
     };
 
     template <class TObjectType>
@@ -456,7 +482,7 @@ private:
         virtual ~BindArrayObject();
         void SetInData();
         void SetOutData();
-        ostring GetName();
+        virtual ostring GetName();
 
         operator ObjectTypeVector & () const;
         operator NativeType * () const;
@@ -466,7 +492,7 @@ private:
         BindArrayObject& operator=(BindArrayObject const &src);
 
         void AllocData();
-        void FreeData();
+        void FreeData() const;
 
         OCI_Statement *_pStatement;
         ostring _name;
@@ -489,7 +515,7 @@ public:
 
     typedef TObjectType ObjectType;
     typedef typename BindResolver<ObjectType>::OutputType NativeType;
- 
+
     operator NativeType *()  const;
 
     void SetInData();
