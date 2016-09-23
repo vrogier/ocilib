@@ -41,15 +41,19 @@ namespace ocilib
     #if defined(__GNUC__)
         #if defined(__GXX_EXPERIMENTAL_CXX0X__)
              #define HAVE_NULLPTR
+             #define HAVE_MOVE_SEMANTICS
         #endif
     #elif defined(_MSC_VER)
         #if _MSC_VER >= 1600
             #define HAVE_NULLPTR
+            #define HAVE_MOVE_SEMANTICS
         #endif
     #endif
 #else
     #define HAVE_NULLPTR
+    #define HAVE_MOVE_SEMANTICS
 #endif
+
 
 /* guessing if nullptr is supported */
 
@@ -114,7 +118,7 @@ static TResultType Check(TResultType result);
  * @brief Internal usage.
  * Constructs a C++ string object from the given OCILIB string pointer
  */
-ostring MakeString(const otext *result);
+ostring MakeString(const otext *result, int size = -1);
 
 /**
 * @brief Internal usage.
@@ -335,8 +339,15 @@ protected:
     class SmartHandle;
 
     HandleHolder(const HandleHolder &other);
-    HandleHolder();
+	HandleHolder();
     ~HandleHolder();
+
+#ifdef HAVE_MOVE_SEMANTICS
+
+	HandleHolder(HandleHolder &&other);
+	HandleHolder<THandleType>& operator= (HandleHolder &&other);
+
+#endif
 
     HandleHolder& operator= (const HandleHolder &other);
 
@@ -478,7 +489,7 @@ private:
         typedef std::vector<ObjectType> ObjectTypeVector;
         typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
-        BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize);
+        BindArrayObject(const Statement &statement, const ostring& name, ObjectTypeVector &vector, unsigned int mode, unsigned int elemSize);
         virtual ~BindArrayObject();
         void SetInData();
         void SetOutData();
@@ -488,8 +499,6 @@ private:
         operator NativeType * () const;
 
     private:
-
-        BindArrayObject& operator=(BindArrayObject const &src);
 
         void AllocData();
         void FreeData() const;
@@ -526,8 +535,6 @@ public:
 
 private:
 
-    BindObjectAdaptor& operator=(BindObjectAdaptor const &src);
-
     ObjectType&    _object;
     NativeType*    _data;
     unsigned int   _size;
@@ -552,8 +559,6 @@ public:
     virtual ~BindTypeAdaptor();
 
 private:
-
-    BindTypeAdaptor& operator=(BindTypeAdaptor const &src);
 
     ObjectType& _object;
     NativeType* _data;

@@ -35,7 +35,9 @@
 #include <list>
 #include <vector>
 
+extern "C"{
 #include "ocilib.h"
+}
 
 /**
  * @namespace ocilib
@@ -180,7 +182,7 @@ typedef std::vector<unsigned char> Raw;
  * Alias for an OCI_Mutex pointer
  *
  */
-typedef OCI_Mutex *  MutexHandle ;
+typedef OCI_Mutex *  MutexHandle;
 
 /**
  * @typedef ocilib::ThreadHandle

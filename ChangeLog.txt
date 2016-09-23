@@ -46,24 +46,26 @@
  
     * Miscellaneous:
     
+        - C API: Added OCI_GetDataSize() and OCI_GetDataSize2()
+ 
         - C API: Major internal code re-factoring
         
             * Code factorization
             * Replaced verbose macros with more compact ones
             * Code base reduced by few thousands lines of code
             * Fixed some error handling logic
-            
-        - C API: Added OCI_GetDataSize() and OCI_GetDataSize2()
-        
+            * Addressed code analysis hints
+      
         - C++ API: 
 
             * Added const iterators for ocilib::Collection<>
-            * Addressed code analysis hints
             * Added C++ compiler capabilities detection (C+11)
+            * Addressed code analysis hints
+            * Internal rewrite of how C API types are resolved from C++ types in templated binding operations
             
         - Updated samples in folder /demo
 
-            * Added required DDL and DML for all samples
+            * Added SQL files with required DDL and DML for all samples
             * Updated some samples
                               
 2016-03-21 Version 4.2.1 Vincent Rogier vince.rogier@ocilib.net

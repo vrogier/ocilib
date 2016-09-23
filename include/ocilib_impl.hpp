@@ -129,16 +129,16 @@ TResultType Check(TResultType result)
     return result;
 }
 
-inline ostring MakeString(const otext *result)
+inline ostring MakeString(const otext *result, int size)
 {
-    return ostring(result ? result : ostring());
+    return result ? (size >= 0 ? ostring(result, result + size) : ostring(result)) : (ostring());
 }
 
 inline Raw MakeRaw(void *result, unsigned int size)
 {
     unsigned char *ptr = static_cast<unsigned char *>(result);
 
-    return (ptr ? Raw(ptr, ptr + size) : Raw());
+    return (ptr && size > 0 ? Raw(ptr, ptr + size) : Raw());
 }
 
 template <class StringClass, class CharType>
@@ -427,6 +427,28 @@ HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (const HandleHo
     Acquire(other, nullptr, nullptr, other._smartHandle ? other._smartHandle->GetParent() : nullptr);
     return *this;
 }
+
+#ifdef HAVE_MOVE_SEMANTICS
+
+template<class THandleType>
+HandleHolder<THandleType>::HandleHolder(HandleHolder<THandleType> && other)  : _smartHandle(nullptr)
+{
+	std::swap(_smartHandle, other._smartHandle);
+}
+
+template<class THandleType>
+HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (HandleHolder<THandleType> && other)
+{
+	if (this != &other)
+	{
+		Release();
+		std::swap(_smartHandle, other._smartHandle);
+	}
+
+	return *this;
+}
+
+#endif
 
 template<class THandleType>
 bool HandleHolder<THandleType>::IsNull() const
@@ -3023,9 +3045,9 @@ inline ostring Lob<ostring, LobCharacter>::Read(unsigned int length)
 {
     ManagedBuffer<otext> buffer(length + 1);
 
-    Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), length));
+    length = Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), length));
 
-    return MakeString(static_cast<const otext *>(buffer));
+    return MakeString(static_cast<const otext *>(buffer), static_cast<int>(length));
 }
 
 template<>
@@ -3033,9 +3055,9 @@ inline ostring Lob<ostring, LobNationalCharacter>::Read(unsigned int length)
 {
     ManagedBuffer<otext> buffer(length + 1);
 
-    Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), length));
+    length = Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), length));
 
-    return MakeString(static_cast<const otext *>(buffer));
+    return MakeString(static_cast<const otext *>(buffer), static_cast<int>(length));
 }
 
 template<>
@@ -3706,7 +3728,7 @@ inline ostring Object::ToString() const
 
         Check(OCI_ObjectToText(*this, &len, buffer));
 
-        return MakeString(static_cast<const otext *>(buffer));
+        return MakeString(static_cast<const otext *>(buffer), static_cast<int>(len));
     }
 
     return OCI_STRING_NULL;
@@ -3770,7 +3792,7 @@ inline ostring Reference::ToString() const
 
         Check(OCI_RefToText(*this, size, buffer));
 
-        return MakeString(static_cast<const otext *>(buffer));
+        return MakeString(static_cast<const otext *>(buffer), static_cast<int>(size));
     }
 
     return OCI_STRING_NULL;
@@ -4231,7 +4253,7 @@ ostring Collection<TDataType>::ToString() const
 
         Check(OCI_CollToText(*this, &len, buffer));
 
-        return MakeString(static_cast<const otext *>(buffer));
+        return MakeString(static_cast<const otext *>(buffer), static_cast<int>(len));
     }
 
     return OCI_STRING_NULL;
@@ -4720,7 +4742,7 @@ void BindObjectAdaptor<TObjectType>::SetOutData()
 }
 
 template <class TObjectType>
-BindObjectAdaptor<TObjectType>::BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object, unsigned int size) :
+BindObjectAdaptor<TObjectType>::BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object, unsigned int size) :
      BindObject(statement, name, mode),
      _object(object),
      _data(new NativeType[size]),
@@ -4764,7 +4786,7 @@ void BindTypeAdaptor<TObjectType>::SetOutData()
 }
 
 template <class TObjectType>
-BindTypeAdaptor<TObjectType>::BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, TObjectType &object) :
+BindTypeAdaptor<TObjectType>::BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object) :
 BindObject(statement, name, mode),
 _object(object),
 _data(new NativeType)
