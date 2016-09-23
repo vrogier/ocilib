@@ -11,7 +11,7 @@ The OCILIB library :
 - offers a rich, full featured and easy to use API
 - runs on all Oracle platforms
 - is written in pure ISO C99 code with native ISO C Unicode support
-- provides also a C++ API written isn standard C++03 with some support for some C++11 features
+- provides also a C++ API written isn standard C++ 3 with support for some C++11 features
 - Enables high productivity
 - encapsulates OCI (Oracle Call Interface)
 - is the most complete available OCI wrapper
