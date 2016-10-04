@@ -15,11 +15,11 @@
  - Encapsulates OCI (Oracle Call Interface)
  - Is the most complete available OCI wrapper
  - C API written in standard C99 code with native Unicode support
- - C++ API written in standard C++03 based on STL paradigms
+ - C++ API written in standard C++03 (uses C++11 features only if supported by compilers)
 
  @section Version Version information
 
-Current version :  <b>4.3.0 (2016-08-03)</b>
+Current version :  <b>4.3.0 (2016-09-12)</b>
 
  @section Features Main features
 

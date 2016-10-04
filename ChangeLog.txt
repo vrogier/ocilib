@@ -1,4 +1,4 @@
-2016-08-03 Version 4.3.0 Vincent Rogier vince.rogier@ocilib.net
+2016-09-12 Version 4.3.0 Vincent Rogier vince.rogier@ocilib.net
 
     * New Features: 
     
@@ -46,26 +46,28 @@
  
     * Miscellaneous:
     
-        - C API: Added OCI_GetDataSize() and OCI_GetDataSize2()
- 
         - C API: Major internal code re-factoring
         
             * Code factorization
             * Replaced verbose macros with more compact ones
             * Code base reduced by few thousands lines of code
             * Fixed some error handling logic
-            * Addressed code analysis hints
-      
+            
+        - C API: 
+        
+            * Added OCI_GetDataSize() and OCI_GetDataSize2()
+        
         - C++ API: 
 
-            * Added const iterators for ocilib::Collection<>
+            * Rewrote iterators for ocilib::Collection<> 
+                - Collection Iterators are now random iterators allowing Collections being used with STL algorithms such as std::sort()
+                - Added Collection const_iterators
+            * Addressed various code analysis hints
             * Added C++ compiler capabilities detection (C+11)
-            * Addressed code analysis hints
-            * Internal rewrite of how C API types are resolved from C++ types in templated binding operations
-            
+
         - Updated samples in folder /demo
 
-            * Added SQL files with required DDL and DML for all samples
+            * Added required DDL and DML for all samples
             * Updated some samples
                               
 2016-03-21 Version 4.2.1 Vincent Rogier vince.rogier@ocilib.net

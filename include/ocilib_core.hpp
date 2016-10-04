@@ -26,6 +26,8 @@
  *
  */
 
+#pragma once
+
 #include <map>
 
 namespace ocilib
@@ -40,13 +42,17 @@ namespace ocilib
 #if __cplusplus < CPP_11
     #if defined(__GNUC__)
         #if defined(__GXX_EXPERIMENTAL_CXX0X__)
-             #define HAVE_NULLPTR
-             #define HAVE_MOVE_SEMANTICS
+            #define HAVE_NULLPTR
+            #define HAVE_MOVE_SEMANTICS
+        #else
+            #define override
         #endif
     #elif defined(_MSC_VER)
         #if _MSC_VER >= 1600
             #define HAVE_NULLPTR
             #define HAVE_MOVE_SEMANTICS
+        #else
+            #define override
         #endif
     #endif
 #else
@@ -77,13 +83,17 @@ class Interval;
 class TypeInfo;
 class Reference;
 class Object;
-template <class TDataType>
+template<class>
+class Element;
+template<class>
+class Iterator;
+template<class>
 class Collection;
-template<class TLobObjectType, int TLobOracleType>
+template<class, int>
 class Lob;
 class File;
 class Pool;
-template<class TLongObjectType, int TLongOracleType>
+template<class, int>
 class Long;
 class Column;
 class Subscription;
@@ -111,8 +121,8 @@ template<class T> struct BindResolver {};
  * Checks if the last OCILIB function call has raised an error.
  * If so, it raises a C++ exception using the retrieved error handle
  */
-template<class TResultType>
-static TResultType Check(TResultType result);
+template<class T>
+static T Check(T result);
 
 /**
  * @brief Internal usage.
@@ -130,77 +140,77 @@ Raw MakeRaw(void *result, unsigned int size);
  * @brief
  * Template class providing OCILIB handles auto memory, life cycle and scope management
  */
-template <class THandleType>
+template<class>
 class HandleHolder;
 
 /**
  * @brief
  * Template Enumeration template class providing some type safety to some extends for manipulating enumerated variables
  */
-template <class TEnum>
+template<class T>
 class Enum
 {
 public:
 
-    typedef TEnum type;
+    typedef T Type;
 
     Enum();
-    Enum(TEnum value);
+    Enum(T value);
 
-    TEnum GetValue();
+    T GetValue();
 
-    operator TEnum ();
+    operator T ();
     operator unsigned int () const;
 
     bool operator == (const Enum& other) const;
     bool operator != (const Enum& other) const;
 
-    bool operator == (const TEnum& other) const;
-    bool operator != (const TEnum& other) const;
+    bool operator == (const T& other) const;
+    bool operator != (const T& other) const;
 
 private:
 
-    TEnum _value;
+    T _value;
 };
 
 /**
  * @brief
  * Template Flags template class providing some type safety to some extends for manipulating flags set variables
  */
-template <class TEnum>
+template<class T>
 class Flags
 {
 public:
 
-    typedef TEnum type;
+	typedef T Type;
 
     Flags();
-    Flags(TEnum flag);
+    Flags(T flag);
     Flags(const Flags& other);
     Flags operator~ () const;
 
-    Flags operator | (TEnum other) const;
-    Flags operator & (TEnum other) const;
-    Flags operator ^ (TEnum other) const;
+    Flags operator | (T other) const;
+    Flags operator & (T other) const;
+    Flags operator ^ (T other) const;
 
     Flags operator | (const Flags& other) const;
     Flags operator & (const Flags& other) const;
     Flags operator ^ (const Flags& other) const;
 
-    Flags& operator |= (TEnum other);
-    Flags& operator &= (TEnum other);
-    Flags& operator ^= (TEnum other);
+    Flags& operator |= (T other);
+    Flags& operator &= (T other);
+    Flags& operator ^= (T other);
 
     Flags& operator |= (const Flags& other);
     Flags& operator &= (const Flags& other);
     Flags& operator ^= (const Flags& other);
 
-    bool operator == (TEnum other) const;
+    bool operator == (T other) const;
     bool operator == (const Flags& other) const;
 
     unsigned int GetValues() const;
 
-    bool IsSet(TEnum other) const;
+    bool IsSet(T other) const;
 
 private:
 
@@ -209,22 +219,22 @@ private:
     unsigned int _flags;
 };
 
-template< typename TBufferType>
+template< typename T>
 class ManagedBuffer
 {
 public:
     ManagedBuffer();
     ManagedBuffer(size_t size);
-    ManagedBuffer(TBufferType *buffer, size_t size);
+    ManagedBuffer(T *buffer, size_t size);
 
     ~ManagedBuffer();
 
-    operator TBufferType* () const;
-    operator const TBufferType* () const;
+    operator T* () const;
+    operator const T* () const;
 
 private:
 
-    TBufferType* _buffer;
+    T* _buffer;
     size_t _size;
 };
 
@@ -262,7 +272,7 @@ private:
     Locker *_locker;
 };
 
-template <class TKey, class TValue>
+template<class K, class V>
 class ConcurrentMap : public Lockable
 {
 public:
@@ -270,19 +280,19 @@ public:
     ConcurrentMap();
     virtual ~ConcurrentMap();
 
-    void Remove(TKey key);
-    TValue Get(TKey key);
-    void Set(TKey key, TValue value);
+    void Remove(K key);
+    V Get(K key);
+    void Set(K key, V value);
     void Clear();
     size_t GetSize();
 
 private:
 
-    std::map<TKey, TValue> _map;
+    std::map<K, V> _map;
 
 };
 
-template <class TValue>
+template<class T>
 class ConcurrentList : public Lockable
 {
 public:
@@ -290,21 +300,21 @@ public:
     ConcurrentList();
     virtual ~ConcurrentList();
 
-    void Add(TValue value);
-    void Remove(TValue value);
+    void Add(T value);
+    void Remove(T value);
     void Clear();
     size_t GetSize();
-    bool Exists(TValue value);
+    bool Exists(const T &value);
 
-    template<class TPredicate>
-    bool FindIf(TPredicate predicate, TValue &value);
+    template<class P>
+    bool FindIf(P predicate, T &value);
 
-    template<class TAction>
-    void ForEach(TAction action);
+    template<class A>
+    void ForEach(A action);
 
 private:
 
-    std::list<TValue> _list;
+    std::list<T> _list;
 };
 
 class Handle
@@ -321,7 +331,7 @@ public:
 * @brief
 * Smart pointer class with reference counting for managing OCILIB object handles
 */
-template<class THandleType>
+template<class T>
 class HandleHolder
 {
 public:
@@ -331,8 +341,8 @@ public:
     operator bool();
     operator bool() const;
 
-    operator THandleType();
-    operator THandleType() const;
+    operator T();
+    operator T() const;
 
 protected:
 
@@ -345,7 +355,7 @@ protected:
 #ifdef HAVE_MOVE_SEMANTICS
 
 	HandleHolder(HandleHolder &&other);
-	HandleHolder<THandleType>& operator= (HandleHolder &&other);
+	HandleHolder<T>& operator= (HandleHolder &&other);
 
 #endif
 
@@ -357,7 +367,7 @@ protected:
 
     Handle* GetHandle() const;
 
-    void Acquire(THandleType handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent);
+    void Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent);
     void Acquire(HandleHolder &other);
     void Release();
 
@@ -365,22 +375,22 @@ protected:
     {
     public:
 
-        SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent);
+        SmartHandle(HandleHolder *holder, T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent);
         virtual ~SmartHandle();
 
         void Acquire(HandleHolder *holder);
         void Release(HandleHolder *holder);
 
-        THandleType GetHandle() const;
+        T GetHandle() const;
 
         Handle *GetParent() const;
 
         AnyPointer GetExtraInfos() const;
         void  SetExtraInfos(AnyPointer extraInfo);
 
-        ConcurrentList<Handle *> & GetChildren();
-        void DetachFromHolders();
-        void DetachFromParent();
+        ConcurrentList<Handle *> & GetChildren() override;
+        void DetachFromHolders() override;
+        void DetachFromParent() override;
 
     private:
 
@@ -392,7 +402,7 @@ protected:
 
         Locker _locker;
 
-        THandleType _handle;
+        T _handle;
         HandleFreeFunc _handleFreeFunc;
         SmartHandleFreeNotifyFunc _freeNotifyFunc;
         Handle *_parent;
@@ -420,8 +430,8 @@ public:
 
     virtual ostring ToString() const = 0;
 
-    template <class TStream>
-    friend TStream& operator << (TStream &lhs, const Streamable &rhs)
+    template<class T>
+    friend T& operator << (T &lhs, const Streamable &rhs)
     {
         lhs << static_cast<ostring>(rhs);
         return lhs;
@@ -459,14 +469,14 @@ public:
      BindArray(const Statement &statement, const ostring& name, unsigned int mode);
      virtual ~BindArray();
 
-     template <class TObjectType>
-     void SetVector(std::vector<TObjectType> & vector, unsigned int elemSize);
+     template<class T>
+     void SetVector(std::vector<T> & vector, unsigned int elemSize);
 
-     template <class TObjectType>
-     typename BindResolver<TObjectType>::OutputType * GetData() const;
+     template<class T>
+     typename BindResolver<T>::OutputType * GetData() const;
 
-     void SetInData();
-     void SetOutData();
+     void SetInData() override;
+     void SetOutData() override;
 
 private:
 
@@ -480,22 +490,22 @@ private:
         virtual ostring GetName() = 0;
     };
 
-    template <class TObjectType>
+    template<class T>
     class BindArrayObject : public  AbstractBindArrayObject
     {
     public:
 
-        typedef TObjectType ObjectType;
-        typedef std::vector<ObjectType> ObjectTypeVector;
+		typedef T ObjectType;
+		typedef std::vector<ObjectType> ObjectVector;
         typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
-        BindArrayObject(const Statement &statement, const ostring& name, ObjectTypeVector &vector, unsigned int mode, unsigned int elemSize);
+        BindArrayObject(const Statement &statement, const ostring& name, ObjectVector &vector, unsigned int mode, unsigned int elemSize);
         virtual ~BindArrayObject();
-        void SetInData();
-        void SetOutData();
-        virtual ostring GetName();
+        void SetInData() override;
+        void SetOutData() override;
+        ostring GetName() override;
 
-        operator ObjectTypeVector & () const;
+        operator ObjectVector & () const;
         operator NativeType * () const;
 
     private:
@@ -505,7 +515,7 @@ private:
 
         OCI_Statement *_pStatement;
         ostring _name;
-        ObjectTypeVector& _vector;
+        ObjectVector& _vector;
         NativeType *_data;
         unsigned int _mode;
         unsigned int _elemCount;
@@ -515,20 +525,20 @@ private:
     AbstractBindArrayObject * _object;
 };
 
-template <class TObjectType>
+template<class T>
 class BindObjectAdaptor : public BindObject
 {
     friend class Statement;
 
 public:
 
-    typedef TObjectType ObjectType;
+    typedef T ObjectType;
     typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
     operator NativeType *()  const;
 
-    void SetInData();
-    void SetOutData();
+    void SetInData() override;
+    void SetOutData() override;
 
     BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object, unsigned int size);
     virtual ~BindObjectAdaptor();
@@ -540,20 +550,20 @@ private:
     unsigned int   _size;
 };
 
-template <class TObjectType>
+template<class T>
 class BindTypeAdaptor : public BindObject
 {
     friend class Statement;
 
 public:
 
-    typedef TObjectType ObjectType;
+    typedef T ObjectType;
     typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
     operator NativeType *()  const;
 
-    void SetInData();
-    void SetOutData();
+    void SetInData() override;
+    void SetOutData() override;
 
     BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object);
     virtual ~BindTypeAdaptor();

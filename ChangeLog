@@ -1,4 +1,4 @@
-2016-08-03 Version 4.3.0 Vincent Rogier vince.rogier@ocilib.net
+2016-09-12 Version 4.3.0 Vincent Rogier vince.rogier@ocilib.net
 
     * New Features: 
     
@@ -53,12 +53,16 @@
             * Code base reduced by few thousands lines of code
             * Fixed some error handling logic
             
-        - C API: Added OCI_GetDataSize() and OCI_GetDataSize2()
+        - C API: 
+        
+            * Added OCI_GetDataSize() and OCI_GetDataSize2()
         
         - C++ API: 
 
-            * Added const iterators for ocilib::Collection<>
-            * Addressed code analysis hints
+            * Rewrote iterators for ocilib::Collection<> 
+                - Collection Iterators are now random iterators allowing Collections being used with STL algorithms such as std::sort()
+                - Added Collection const_iterators
+            * Addressed various code analysis hints
             * Added C++ compiler capabilities detection (C+11)
 
         - Updated samples in folder /demo

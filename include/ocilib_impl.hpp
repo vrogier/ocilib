@@ -26,6 +26,10 @@
  *
  */
 
+#pragma once
+
+#include <algorithm>
+
 namespace ocilib
 {
 
@@ -60,11 +64,11 @@ typedef Long<Raw, LongBinary> Blong;
 * @brief Resolve a bind input / output types
 *
 */
-template <class TInputType, class TOutputType>
+template<class I, class O>
 struct BindResolverType
 {
-    typedef TInputType InputType;
-    typedef TOutputType OutputType;
+    typedef I InputType;
+    typedef O OutputType;
 };
 
 /**
@@ -72,8 +76,8 @@ struct BindResolverType
 * @brief Simplified resolver for scalar types that do not need translation
 *
 */
-template <class TType>
-struct BindResolverScalarType : BindResolverType<TType, TType> {};
+template<class T>
+struct BindResolverScalarType : BindResolverType<T, T> {};
 
 template<> struct BindResolver<bool> : BindResolverType<bool, boolean>{};
 template<> struct BindResolver<short> : BindResolverScalarType<short>{};
@@ -116,8 +120,8 @@ template<> struct NumericTypeResolver<big_uint>       { enum { Value = NumericUn
 template<> struct NumericTypeResolver<double>         { enum { Value = NumericDouble }; };
 template<> struct NumericTypeResolver<float>          { enum { Value = NumericFloat }; };
 
-template<class TResultType>
-TResultType Check(TResultType result)
+template<class T>
+T Check(T result)
 {
     OCI_Error *err = OCI_GetLastError();
 
@@ -141,8 +145,8 @@ inline Raw MakeRaw(void *result, unsigned int size)
     return (ptr && size > 0 ? Raw(ptr, ptr + size) : Raw());
 }
 
-template <class StringClass, class CharType>
-void ConverString(StringClass &dest, const CharType *src, size_t length)
+template<class S, class C>
+void ConverString(S &dest, const C *src, size_t length)
 {
     size_t i = 0;
 
@@ -154,7 +158,7 @@ void ConverString(StringClass &dest, const CharType *src, size_t length)
 
         while (i < length)
         {
-            dest[i] = static_cast<typename StringClass::value_type>(src[i]);
+            dest[i] = static_cast<typename S::value_type>(src[i]);
 
             ++i;
         }
@@ -165,54 +169,54 @@ void ConverString(StringClass &dest, const CharType *src, size_t length)
  * Enum
  * --------------------------------------------------------------------------------------------- */
 
-template<class TEnum>
-Enum<TEnum>::Enum(void) : _value(0)
+template<class T>
+Enum<T>::Enum(void) : _value(0)
 {
 }
 
-template<class TEnum>
-Enum<TEnum>::Enum(TEnum value) : _value(value)
+template<class T>
+Enum<T>::Enum(T value) : _value(value)
 {
 }
 
-template<class TEnum>
-TEnum Enum<TEnum>::GetValue()
+template<class T>
+T Enum<T>::GetValue()
 {
     return _value;
 }
 
-template<class TEnum>
-Enum<TEnum>::operator TEnum ()
+template<class T>
+Enum<T>::operator T ()
 {
     return GetValue();
 }
 
-template<class TEnum>
-Enum<TEnum>::operator unsigned int () const
+template<class T>
+Enum<T>::operator unsigned int () const
 {
     return static_cast<unsigned int>(_value);
 }
 
-template<class TEnum>
-bool Enum<TEnum>::operator == (const Enum& other) const
+template<class T>
+bool Enum<T>::operator == (const Enum& other) const
 {
     return other._value == _value;
 }
 
-template<class TEnum>
-bool Enum<TEnum>::operator != (const Enum& other) const
+template<class T>
+bool Enum<T>::operator != (const Enum& other) const
 {
     return !(*this == other);
 }
 
-template<class TEnum>
-bool Enum<TEnum>::operator == (const TEnum& other) const
+template<class T>
+bool Enum<T>::operator == (const T& other) const
 {
     return other == _value;
 }
 
-template<class TEnum>
-bool Enum<TEnum>::operator != (const TEnum& other) const
+template<class T>
+bool Enum<T>::operator != (const T& other) const
 {
     return !(*this == other);
 }
@@ -221,136 +225,136 @@ bool Enum<TEnum>::operator != (const TEnum& other) const
  * Flags
  * --------------------------------------------------------------------------------------------- */
 
-template<class TEnum>
-Flags<TEnum>::Flags(void) : _flags(static_cast<TEnum>(0))
+template<class T>
+Flags<T>::Flags(void) : _flags(static_cast<T>(0))
 {
 }
 
-template<class TEnum>
-Flags<TEnum>::Flags(TEnum flag) : _flags( flag)
+template<class T>
+Flags<T>::Flags(T flag) : _flags( flag)
 {
 }
 
-template<class TEnum>
-Flags<TEnum>::Flags(const Flags& other) : _flags(other._flags)
+template<class T>
+Flags<T>::Flags(const Flags& other) : _flags(other._flags)
 {
 }
 
-template<class TEnum>
-Flags<TEnum>::Flags(unsigned int flag) : _flags(static_cast<TEnum>(flag))
+template<class T>
+Flags<T>::Flags(unsigned int flag) : _flags(static_cast<T>(flag))
 {
 }
 
-template<class TEnum>
-Flags<TEnum> Flags<TEnum>::operator~ () const
+template<class T>
+Flags<T> Flags<T>::operator~ () const
 {
-    return Flags<TEnum>(~_flags);
+    return Flags<T>(~_flags);
 }
 
-template<class TEnum>
-Flags<TEnum> Flags<TEnum>::operator | (const Flags& other) const
+template<class T>
+Flags<T> Flags<T>::operator | (const Flags& other) const
 {
-    return Flags<TEnum>(_flags | other._flags);
+    return Flags<T>(_flags | other._flags);
 }
 
-template<class TEnum>
-Flags<TEnum> Flags<TEnum>::operator & (const Flags& other) const
+template<class T>
+Flags<T> Flags<T>::operator & (const Flags& other) const
 {
-    return Flags<TEnum>(_flags & other._flags);
+    return Flags<T>(_flags & other._flags);
 }
 
-template<class TEnum>
-Flags<TEnum> Flags<TEnum>::operator ^ (const Flags& other) const
+template<class T>
+Flags<T> Flags<T>::operator ^ (const Flags& other) const
 {
-    return Flags<TEnum>(_flags ^ other._flags);
+    return Flags<T>(_flags ^ other._flags);
 }
 
-template<class TEnum>
-Flags<TEnum> Flags<TEnum>::operator | (TEnum other) const
+template<class T>
+Flags<T> Flags<T>::operator | (T other) const
 {
-    return Flags<TEnum>(_flags | other);
+    return Flags<T>(_flags | other);
 }
 
-template<class TEnum>
-Flags<TEnum> Flags<TEnum>::operator & (TEnum other) const
+template<class T>
+Flags<T> Flags<T>::operator & (T other) const
 {
-    return Flags<TEnum>(_flags & other);
+    return Flags<T>(_flags & other);
 }
 
-template<class TEnum>
-Flags<TEnum> Flags<TEnum>::operator ^ (TEnum other) const
+template<class T>
+Flags<T> Flags<T>::operator ^ (T other) const
 {
-    return Flags<TEnum>(_flags ^ other);
+    return Flags<T>(_flags ^ other);
 }
 
-template<class TEnum>
-Flags<TEnum>& Flags<TEnum>::operator |= (const Flags<TEnum>& other)
+template<class T>
+Flags<T>& Flags<T>::operator |= (const Flags<T>& other)
 {
     _flags |= other._flags;
     return *this;
 }
 
-template<class TEnum>
-Flags<TEnum>& Flags<TEnum>::operator &= (const Flags<TEnum>& other)
+template<class T>
+Flags<T>& Flags<T>::operator &= (const Flags<T>& other)
 {
     _flags &= other._flags;
     return *this;
 }
 
-template<class TEnum>
-Flags<TEnum>& Flags<TEnum>::operator ^= (const Flags<TEnum>& other)
+template<class T>
+Flags<T>& Flags<T>::operator ^= (const Flags<T>& other)
 {
     _flags ^= other._flags;
     return *this;
 }
 
-template<class TEnum>
-Flags<TEnum>& Flags<TEnum>::operator |= (TEnum other)
+template<class T>
+Flags<T>& Flags<T>::operator |= (T other)
 {
     _flags |= other;
     return *this;
 }
 
-template<class TEnum>
-Flags<TEnum>& Flags<TEnum>::operator &= (TEnum other)
+template<class T>
+Flags<T>& Flags<T>::operator &= (T other)
 {
     _flags &= other;
     return *this;
 }
 
-template<class TEnum>
-Flags<TEnum>& Flags<TEnum>::operator ^= (TEnum other)
+template<class T>
+Flags<T>& Flags<T>::operator ^= (T other)
 {
     _flags ^= other;
     return *this;
 }
 
-template<class TEnum>
-bool Flags<TEnum>::operator == (TEnum other) const
+template<class T>
+bool Flags<T>::operator == (T other) const
 {
     return _flags == static_cast<unsigned int>(other);
 }
 
-template<class TEnum>
-bool Flags<TEnum>::operator == (const Flags& other) const
+template<class T>
+bool Flags<T>::operator == (const Flags& other) const
 {
     return _flags == other._flags;
 }
 
-template<class TEnum>
-bool Flags<TEnum>::IsSet(TEnum other) const
+template<class T>
+bool Flags<T>::IsSet(T other) const
 {
     return ((_flags & other) == _flags);
 }
 
-template<class TEnum>
-unsigned int Flags<TEnum>::GetValues() const
+template<class T>
+unsigned int Flags<T>::GetValues() const
 {
     return _flags;
 }
 
-#define OCI_DEFINE_FLAG_OPERATORS(TEnum) \
-inline Flags<TEnum> operator | (TEnum a, TEnum b) { return Flags<TEnum>(a) | Flags<TEnum>(b); } \
+#define OCI_DEFINE_FLAG_OPERATORS(T) \
+inline Flags<T> operator | (T a, T b) { return Flags<T>(a) | Flags<T>(b); } \
 
 OCI_DEFINE_FLAG_OPERATORS(Environment::EnvironmentFlagsValues)
 OCI_DEFINE_FLAG_OPERATORS(Environment::SessionFlagsValues)
@@ -367,35 +371,35 @@ OCI_DEFINE_FLAG_OPERATORS(Subscription::ChangeTypesValues)
  * ManagedBuffer
  * --------------------------------------------------------------------------------------------- */
 
-template< typename TBufferType>
-ManagedBuffer<TBufferType>::ManagedBuffer() : _buffer(nullptr), _size(0)
+template<typename T>
+ManagedBuffer<T>::ManagedBuffer() : _buffer(nullptr), _size(0)
 {
 }
 
-template< typename TBufferType>
-ManagedBuffer<TBufferType>::ManagedBuffer(TBufferType *buffer, size_t size) : _buffer(buffer), _size(size)
+template<typename T>
+ManagedBuffer<T>::ManagedBuffer(T *buffer, size_t size) : _buffer(buffer), _size(size)
 {
 }
 
-template< typename TBufferType>
-ManagedBuffer<TBufferType>::ManagedBuffer(size_t size) : _buffer(new TBufferType[size]), _size(size)
+template<typename T>
+ManagedBuffer<T>::ManagedBuffer(size_t size) : _buffer(new T[size]), _size(size)
 {
-    memset(_buffer, 0, sizeof(TBufferType) * _size);
+    memset(_buffer, 0, sizeof(T) * _size);
 }
-template< typename TBufferType>
-ManagedBuffer<TBufferType>::~ManagedBuffer()
+template<typename T>
+ManagedBuffer<T>::~ManagedBuffer()
 {
     delete [] _buffer;
 }
 
-template< typename TBufferType>
-ManagedBuffer<TBufferType>::operator TBufferType* () const
+template<typename T>
+ManagedBuffer<T>::operator T* () const
 {
     return  _buffer;
 }
 
-template< typename TBufferType>
-ManagedBuffer<TBufferType>::operator const TBufferType* () const
+template<typename T>
+ManagedBuffer<T>::operator const T* () const
 {
     return  _buffer;
 }
@@ -404,25 +408,25 @@ ManagedBuffer<TBufferType>::operator const TBufferType* () const
  * Handle
  * --------------------------------------------------------------------------------------------- */
 
-template<class THandleType>
-HandleHolder<THandleType>::HandleHolder() : _smartHandle(nullptr)
+template<class T>
+HandleHolder<T>::HandleHolder() : _smartHandle(nullptr)
 {
 }
 
-template<class THandleType>
-HandleHolder<THandleType>::HandleHolder(const HandleHolder &other) : _smartHandle(nullptr)
+template<class T>
+HandleHolder<T>::HandleHolder(const HandleHolder &other) : _smartHandle(nullptr)
 {
     Acquire(other, nullptr, nullptr, other._smartHandle ? other._smartHandle->GetParent() : nullptr);
 }
 
-template<class THandleType>
-HandleHolder<THandleType>::~HandleHolder()
+template<class T>
+HandleHolder<T>::~HandleHolder()
 {
     Release();
 }
 
-template<class THandleType>
-HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (const HandleHolder<THandleType> &other)
+template<class T>
+HandleHolder<T>& HandleHolder<T>::operator = (const HandleHolder<T> &other)
 {
     Acquire(other, nullptr, nullptr, other._smartHandle ? other._smartHandle->GetParent() : nullptr);
     return *this;
@@ -430,14 +434,14 @@ HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (const HandleHo
 
 #ifdef HAVE_MOVE_SEMANTICS
 
-template<class THandleType>
-HandleHolder<THandleType>::HandleHolder(HandleHolder<THandleType> && other)  : _smartHandle(nullptr)
+template<class T>
+HandleHolder<T>::HandleHolder(HandleHolder<T> && other)  : _smartHandle(nullptr)
 {
 	std::swap(_smartHandle, other._smartHandle);
 }
 
-template<class THandleType>
-HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (HandleHolder<THandleType> && other)
+template<class T>
+HandleHolder<T>& HandleHolder<T>::operator = (HandleHolder<T> && other)
 {
 	if (this != &other)
 	{
@@ -450,44 +454,44 @@ HandleHolder<THandleType>& HandleHolder<THandleType>::operator = (HandleHolder<T
 
 #endif
 
-template<class THandleType>
-bool HandleHolder<THandleType>::IsNull() const
+template<class T>
+bool HandleHolder<T>::IsNull() const
 {
-    return (static_cast<THandleType>(*this) == 0);
+    return (static_cast<T>(*this) == 0);
 }
 
-template<class THandleType>
-HandleHolder<THandleType>::operator THandleType()
-{
-    return _smartHandle ? _smartHandle->GetHandle() : nullptr;
-}
-
-template<class THandleType>
-HandleHolder<THandleType>::operator THandleType() const
+template<class T>
+HandleHolder<T>::operator T()
 {
     return _smartHandle ? _smartHandle->GetHandle() : nullptr;
 }
 
-template<class THandleType>
-HandleHolder<THandleType>::operator bool()
+template<class T>
+HandleHolder<T>::operator T() const
+{
+    return _smartHandle ? _smartHandle->GetHandle() : nullptr;
+}
+
+template<class T>
+HandleHolder<T>::operator bool()
 {
     return !IsNull();
 }
 
-template<class THandleType>
-HandleHolder<THandleType>::operator bool() const
+template<class T>
+HandleHolder<T>::operator bool() const
 {
     return !IsNull();
 }
 
-template<class THandleType>
-Handle * HandleHolder<THandleType>::GetHandle() const
+template<class T>
+Handle * HandleHolder<T>::GetHandle() const
 {
     return static_cast<Handle *>(_smartHandle);
 }
 
-template<class THandleType>
-void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent)
+template<class T>
+void HandleHolder<T>::Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent)
 {
     Release();
 
@@ -506,8 +510,8 @@ void HandleHolder<THandleType>::Acquire(THandleType handle, HandleFreeFunc handl
     }
 }
 
-template<class THandleType>
-void HandleHolder<THandleType>::Acquire(HandleHolder<THandleType> &other)
+template<class T>
+void HandleHolder<T>::Acquire(HandleHolder<T> &other)
 {
     if (&other != this && _smartHandle != other._smartHandle)
     {
@@ -521,8 +525,8 @@ void HandleHolder<THandleType>::Acquire(HandleHolder<THandleType> &other)
     }
 }
 
-template<class THandleType>
-void HandleHolder<THandleType>::Release()
+template<class T>
+void HandleHolder<T>::Release()
 {
     if (_smartHandle)
     {
@@ -602,33 +606,33 @@ inline void Lockable::SetLocker(Locker *locker)
     _locker = locker;
 }
 
-template <class TKey, class TValue>
-ConcurrentMap<TKey, TValue>::ConcurrentMap()
+template<class K, class V>
+ConcurrentMap<K, V>::ConcurrentMap()
 {
 
 }
 
-template <class TKey, class TValue>
-ConcurrentMap<TKey, TValue>::~ConcurrentMap()
+template<class K, class V>
+ConcurrentMap<K, V>::~ConcurrentMap()
 {
     Clear();
 }
 
-template <class TKey, class TValue>
-void ConcurrentMap<TKey, TValue>::Remove(TKey key)
+template<class K, class V>
+void ConcurrentMap<K, V>::Remove(K key)
 {
     Lock();
     _map.erase(key);
     Unlock();
 }
 
-template <class TKey, class TValue>
-TValue ConcurrentMap<TKey, TValue>::Get(TKey key)
+template<class K, class V>
+V ConcurrentMap<K, V>::Get(K key)
 {
-    TValue value = 0;
+    V value = 0;
 
     Lock();
-    typename std::map< TKey, TValue >::const_iterator it = _map.find(key);
+    typename std::map< K, V >::const_iterator it = _map.find(key);
     if (it != _map.end())
     {
         value = it->second;
@@ -638,93 +642,104 @@ TValue ConcurrentMap<TKey, TValue>::Get(TKey key)
     return value;
 }
 
-template <class TKey, class TValue>
-void ConcurrentMap<TKey, TValue>::Set(TKey key, TValue value)
+template<class K, class V>
+void ConcurrentMap<K, V>::Set(K key, V value)
 {
     Lock();
     _map[key] = value;
     Unlock();
 }
 
-template <class TKey, class TValue>
-void ConcurrentMap<TKey, TValue>::Clear()
+template<class K, class V>
+void ConcurrentMap<K, V>::Clear()
 {
     Lock();
     _map.clear();
     Unlock();
 }
 
-template <class TKey, class TValue>
-size_t ConcurrentMap<TKey, TValue>::GetSize()
+template<class K, class V>
+size_t ConcurrentMap<K, V>::GetSize()
 {
-    size_t size = 0;
     Lock();
-    size = _map.size();
+    size_t size = _map.size();
     Unlock();
 
     return size;
 }
 
-template <class TValue>
-ConcurrentList<TValue>::ConcurrentList()
+template<class T>
+ConcurrentList<T>::ConcurrentList()
 {
 
 }
 
-template <class TValue>
-ConcurrentList<TValue>::~ConcurrentList()
+template<class T>
+ConcurrentList<T>::~ConcurrentList()
 {
     Clear();
 }
 
-template <class TValue>
-void ConcurrentList<TValue>::Add(TValue value)
+template<class T>
+void ConcurrentList<T>::Add(T value)
 {
     Lock();
     _list.push_back(value);
     Unlock();
 }
 
-template <class TValue>
-void ConcurrentList<TValue>::Remove(TValue value)
+template<class T>
+void ConcurrentList<T>::Remove(T value)
 {
     Lock();
     _list.remove(value);
     Unlock();
 }
 
-template <class TValue>
-void ConcurrentList<TValue>::Clear()
+template<class T>
+void ConcurrentList<T>::Clear()
 {
     Lock();
     _list.clear();
     Unlock();
 }
 
-template <class TValue>
-size_t ConcurrentList<TValue>::GetSize()
+template<class T>
+size_t ConcurrentList<T>::GetSize()
 {
-    size_t size = 0;
     Lock();
-    size = _list.size();
+    size_t size = _list.size();
     Unlock();
 
     return size;
 }
 
-template <class TValue>
-bool ConcurrentList<TValue>::Exists(TValue value)
+template<class T>
+bool ConcurrentList<T>::Exists(const T &value)
 {
-    bool res = 0;
     Lock();
 
-    for (typename std::list<TValue>::iterator it1 = _list.begin(), it2 = _list.end(); it1 != it2; ++it1)
-    {
-        if (*it1 == value)
-        {
-            res = true;
-            break;
-        }
+	bool res = std::find(_list.begin(), _list.end(), value) != _list.end();
+
+    Unlock();
+
+    return res;
+}
+
+template<class T>
+template<class P>
+bool ConcurrentList<T>::FindIf(P predicate, T &value)
+{
+    bool res = false;
+   
+	Lock();
+
+	typename std::list<T>::iterator it = std::find_if(_list.begin(), _list.end(), predicate);
+	
+	if (it != _list.end())
+	{
+        value = *it;
+        res = true;
     }
 
     Unlock();
@@ -732,46 +747,21 @@ bool ConcurrentList<TValue>::Exists(TValue value)
     return res;
 }
 
-template <class TValue>
-template <class TPredicate>
-bool ConcurrentList<TValue>::FindIf(TPredicate predicate, TValue &value)
-{
-    bool res = 0;
-    Lock();
-
-    for (typename std::list<TValue>::iterator it1 = _list.begin(), it2 = _list.end(); it1 != it2; ++it1)
-    {
-        if (predicate(*it1))
-        {
-            value = *it1;
-            res = true;
-            break;
-        }
-    }
-
-    Unlock();
-
-    return res;
-}
-
-template <class TValue>
-template <class TAction>
-void ConcurrentList<TValue>::ForEach(TAction action)
+template<class T>
+template<class A>
+void ConcurrentList<T>::ForEach(A action)
 {
     Lock();
 
-    for (typename std::list<TValue>::iterator it1 = _list.begin(), it2 = _list.end(); it1 != it2; ++it1)
-    {
-        action(*it1);
-    }
+	std::for_each(_list.begin(), _list.end(), action);
 
     Unlock();
 }
 
-template <class THandleType>
-HandleHolder<THandleType>::SmartHandle::SmartHandle
+template<class T>
+HandleHolder<T>::SmartHandle::SmartHandle
 (
-    HandleHolder *holder, THandleType handle, HandleFreeFunc handleFreefunc,
+    HandleHolder *holder, T handle, HandleFreeFunc handleFreefunc,
     SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent
 )
     : _holders(), _children(), _locker(), _handle(handle), _handleFreeFunc(handleFreefunc),
@@ -792,8 +782,8 @@ HandleHolder<THandleType>::SmartHandle::SmartHandle
     }
 }
 
-template <class THandleType>
-HandleHolder<THandleType>::SmartHandle::~SmartHandle()
+template<class T>
+HandleHolder<T>::SmartHandle::~SmartHandle()
 {
     boolean ret = TRUE;
     boolean chk = FALSE;
@@ -828,8 +818,8 @@ HandleHolder<THandleType>::SmartHandle::~SmartHandle()
     }
 }
 
-template <class THandleType>
-void HandleHolder<THandleType>::SmartHandle::DeleteHandle(Handle *handle)
+template<class T>
+void HandleHolder<T>::SmartHandle::DeleteHandle(Handle *handle)
 {
     if (handle)
     {
@@ -840,8 +830,8 @@ void HandleHolder<THandleType>::SmartHandle::DeleteHandle(Handle *handle)
     }
 }
 
-template <class THandleType>
-void HandleHolder<THandleType>::SmartHandle::ResetHolder(HandleHolder *holder)
+template<class T>
+void HandleHolder<T>::SmartHandle::ResetHolder(HandleHolder *holder)
 {
     if (holder)
     {
@@ -849,14 +839,14 @@ void HandleHolder<THandleType>::SmartHandle::ResetHolder(HandleHolder *holder)
     }
 }
 
-template <class THandleType>
-void HandleHolder<THandleType>::SmartHandle::Acquire(HandleHolder *holder)
+template<class T>
+void HandleHolder<T>::SmartHandle::Acquire(HandleHolder *holder)
 {
     _holders.Add(holder);
 }
 
-template <class THandleType>
-void HandleHolder<THandleType>::SmartHandle::Release(HandleHolder *holder)
+template<class T>
+void HandleHolder<T>::SmartHandle::Release(HandleHolder *holder)
 {
     _holders.Remove(holder);
 
@@ -868,45 +858,45 @@ void HandleHolder<THandleType>::SmartHandle::Release(HandleHolder *holder)
     holder->_smartHandle = nullptr;
 }
 
-template <class THandleType>
-THandleType HandleHolder<THandleType>::SmartHandle::GetHandle() const
+template<class T>
+T HandleHolder<T>::SmartHandle::GetHandle() const
 {
     return _handle;
 }
 
-template <class THandleType>
-Handle * HandleHolder<THandleType>::SmartHandle::GetParent() const
+template<class T>
+Handle * HandleHolder<T>::SmartHandle::GetParent() const
 {
     return _parent;
 }
 
-template <class THandleType>
-AnyPointer HandleHolder<THandleType>::SmartHandle::GetExtraInfos() const
+template<class T>
+AnyPointer HandleHolder<T>::SmartHandle::GetExtraInfos() const
 {
     return _extraInfo;
 }
 
-template <class THandleType>
-void HandleHolder<THandleType>::SmartHandle::SetExtraInfos(AnyPointer extraInfo)
+template<class T>
+void HandleHolder<T>::SmartHandle::SetExtraInfos(AnyPointer extraInfo)
 {
     _extraInfo = extraInfo;
 }
 
-template <class THandleType>
-ConcurrentList<Handle *> & HandleHolder<THandleType>::SmartHandle::GetChildren()
+template<class T>
+ConcurrentList<Handle *> & HandleHolder<T>::SmartHandle::GetChildren()
 {
     return _children;
 }
 
-template <class THandleType>
-void HandleHolder<THandleType>::SmartHandle::DetachFromHolders()
+template<class T>
+void HandleHolder<T>::SmartHandle::DetachFromHolders()
 {
     _holders.ForEach(ResetHolder);
     _holders.Clear();
 }
 
-template <class THandleType>
-void HandleHolder<THandleType>::SmartHandle::DetachFromParent()
+template<class T>
+void HandleHolder<T>::SmartHandle::DetachFromParent()
 {
     _parent = nullptr;
 }
@@ -920,7 +910,7 @@ inline Exception::Exception()
     _pStatement(nullptr),
     _pConnnection(nullptr),
     _row(0),
-    _type(static_cast<ExceptionType::type>(0)),
+    _type(static_cast<ExceptionType::Type>(0)),
     _errLib(0),
     _errOracle(0)
 {
@@ -937,7 +927,7 @@ inline Exception::Exception(OCI_Error *err)
     _pStatement(OCI_ErrorGetStatement(err)),
     _pConnnection(OCI_ErrorGetConnection(err)),
     _row(OCI_ErrorGetRow(err)),
-    _type(static_cast<ExceptionType::type>(OCI_ErrorGetType(err))),
+    _type(static_cast<ExceptionType::Type>(OCI_ErrorGetType(err))),
     _errLib(OCI_ErrorGetInternalCode(err)),
     _errOracle(OCI_ErrorGetOCICode(err))
 {
@@ -1022,12 +1012,12 @@ inline Environment::EnvironmentFlags Environment::GetMode()
 
 inline Environment::ImportMode Environment::GetImportMode()
 {
-    return ImportMode(static_cast<ImportMode::type>(Check(OCI_GetImportMode())));
+    return ImportMode(static_cast<ImportMode::Type>(Check(OCI_GetImportMode())));
 }
 
 inline Environment::CharsetMode Environment::GetCharset()
 {
-    return CharsetMode(static_cast<CharsetMode::type>(Check(OCI_GetCharset())));
+    return CharsetMode(static_cast<CharsetMode::Type>(Check(OCI_GetCharset())));
 }
 
 inline big_uint Environment::GetAllocatedBytes(AllocatedBytesFlags type)
@@ -1042,12 +1032,12 @@ inline bool Environment::Initialized()
 
 inline OracleVersion Environment::GetCompileVersion()
 {
-    return OracleVersion(static_cast<OracleVersion::type>(Check(OCI_GetOCICompileVersion())));
+    return OracleVersion(static_cast<OracleVersion::Type>(Check(OCI_GetOCICompileVersion())));
 }
 
 inline OracleVersion Environment::GetRuntimeVersion()
 {
-    return  OracleVersion(static_cast<OracleVersion::type>(Check(OCI_GetOCIRuntimeVersion())));
+    return  OracleVersion(static_cast<OracleVersion::Type>(Check(OCI_GetOCIRuntimeVersion())));
 }
 
 inline unsigned int Environment::GetCompileMajorVersion()
@@ -1131,8 +1121,8 @@ inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int sou
         Timestamp timestamp(pTimestamp, connection.GetHandle());
 
         handler(connection,
-                HAEventSource(static_cast<HAEventSource::type>(source)),
-                HAEventType  (static_cast<HAEventType::type>  (event)),
+                HAEventSource(static_cast<HAEventSource::Type>(source)),
+                HAEventType  (static_cast<HAEventType::Type>  (event)),
                 timestamp);
     }
 }
@@ -1148,8 +1138,8 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
         Connection connection(pConnection, nullptr);
 
         res = handler(connection,
-                      Connection::FailoverRequest( static_cast<Connection::FailoverRequest::type> (type)),
-                      Connection::FailoverEvent  ( static_cast<Connection::FailoverEvent::type>   (event)));
+                      Connection::FailoverRequest( static_cast<Connection::FailoverRequest::Type> (type)),
+                      Connection::FailoverEvent  ( static_cast<Connection::FailoverEvent::Type>   (event)));
     }
 
     return res;
@@ -1177,14 +1167,14 @@ inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
     }
 }
 
-template <class TCallbackType>
-TCallbackType Environment::GetUserCallback(AnyPointer ptr)
+template<class T>
+T Environment::GetUserCallback(AnyPointer ptr)
 {
-    return reinterpret_cast<TCallbackType>(GetInstance()._callbacks.Get(ptr));
+    return reinterpret_cast<T>(GetInstance()._callbacks.Get(ptr));
 }
 
-template <class TCallbackType>
-void Environment::SetUserCallback(AnyPointer ptr, TCallbackType callback)
+template<class T>
+void Environment::SetUserCallback(AnyPointer ptr, T callback)
 {
     if (callback)
     {
@@ -1196,8 +1186,8 @@ void Environment::SetUserCallback(AnyPointer ptr, TCallbackType callback)
     }
 }
 
-template <class THandleType>
-void Environment::SetSmartHandle(AnyPointer ptr, THandleType handle)
+template<class T>
+void Environment::SetSmartHandle(AnyPointer ptr, T handle)
 {
     if (handle)
     {
@@ -1209,10 +1199,10 @@ void Environment::SetSmartHandle(AnyPointer ptr, THandleType handle)
     }
 }
 
-template <class THandleType>
-THandleType Environment::GetSmartHandle(AnyPointer ptr)
+template<class T>
+T Environment::GetSmartHandle(AnyPointer ptr)
 {
-    return dynamic_cast<THandleType>(GetInstance()._handles.Get(ptr));
+    return dynamic_cast<T>(GetInstance()._handles.Get(ptr));
 }
 
 inline Handle * Environment::GetEnvironmentHandle()
@@ -1508,7 +1498,7 @@ inline ostring Connection::GetPassword() const
 
 inline OracleVersion Connection::GetVersion() const
 {
-    return OracleVersion(static_cast<OracleVersion::type>(Check(OCI_GetVersionConnection(*this))));
+    return OracleVersion(static_cast<OracleVersion::Type>(Check(OCI_GetVersionConnection(*this))));
 }
 
 inline ostring Connection::GetServerVersion() const
@@ -1724,7 +1714,7 @@ inline void Transaction::Forget()
 
 inline Transaction::TransactionFlags Transaction::GetFlags() const
 {
-    return TransactionFlags(static_cast<TransactionFlags::type>(Check(OCI_TransactionGetMode(*this))));
+    return TransactionFlags(static_cast<TransactionFlags::Type>(Check(OCI_TransactionGetMode(*this))));
 }
 
 inline unsigned int Transaction::GetTimeout() const
@@ -1810,7 +1800,7 @@ inline int Number::Compare(const Number& other) const
     return Check(OCI_NumberCompare(*this, other));
 }
 
-template <class T>
+template<class T>
 T Number::GetValue() const
 {
     T value;
@@ -1820,41 +1810,41 @@ T Number::GetValue() const
     return value;
 }
 
-template <class TValueType>
-Number& Number::SetValue(const TValueType &value)
+template<class T>
+Number& Number::SetValue(const T &value)
 {
     if (IsNull())
     {
         Allocate();
     }
 
-    Check(OCI_NumberSetValue(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
+    Check(OCI_NumberSetValue(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
 
     return *this;
 }
 
-template <class TValueType>
-void Number::Add(const TValueType &value)
+template<class T>
+void Number::Add(const T &value)
 {
-    Check(OCI_NumberAdd(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
+    Check(OCI_NumberAdd(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
 }
 
-template <class TValueType>
-void Number::Sub(const TValueType &value)
+template<class T>
+void Number::Sub(const T &value)
 {
-    Check(OCI_NumberSub(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
+    Check(OCI_NumberSub(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
 }
 
-template <class TValueType>
-void Number::Multiply(const TValueType &value)
+template<class T>
+void Number::Multiply(const T &value)
 {
-    Check(OCI_NumberMultiply(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
+    Check(OCI_NumberMultiply(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
 }
 
-template <class TValueType>
-void Number::Divide(const TValueType &value)
+template<class T>
+void Number::Divide(const T &value)
 {
-    Check(OCI_NumberDivide(*this, NumericTypeResolver<TValueType>::Value, reinterpret_cast<void*>(const_cast<TValueType*>(&value))));
+    Check(OCI_NumberDivide(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
 }
 
 inline Number& Number::operator = (OCI_Number * &lhs)
@@ -1876,7 +1866,7 @@ Number::operator T() const
     return GetValue<T>();
 }
 
-template <class T>
+template<class T>
 Number Number::operator + (const T &value)
 {
     Number result = Clone();
@@ -1884,7 +1874,7 @@ Number Number::operator + (const T &value)
     return result;
 }
 
-template <class T>
+template<class T>
 Number Number::operator - (const T &value)
 {
     Number result = Clone();
@@ -1892,7 +1882,7 @@ Number Number::operator - (const T &value)
     return result;
 }
 
-template <class T>
+template<class T>
 Number Number::operator * (const T &value)
 {
     Number result = Clone();
@@ -1900,7 +1890,7 @@ Number Number::operator * (const T &value)
     return result;
 }
 
-template <class T>
+template<class T>
 Number Number::operator / (const T &value)
 {
     Number result = Clone();
@@ -1908,28 +1898,28 @@ Number Number::operator / (const T &value)
     return result;
 }
 
-template <class T>
+template<class T>
 Number& Number::operator += (const T &value)
 {
     Add<T>(value);
     return *this;
 }
 
-template <class T>
+template<class T>
 Number& Number::operator -= (const T &value)
 {
     Sub<T>(value);
     return *this;
 }
 
-template <class T>
+template<class T>
 Number& Number::operator *= (const T &value)
 {
     Multiply<T>(value);
     return *this;
 }
 
-template <class T>
+template<class T>
 Number& Number::operator /= (const T &value)
 {
     Divide<T>(value);
@@ -2381,7 +2371,7 @@ inline int Interval::Compare(const Interval& other) const
 
 inline Interval::IntervalType Interval::GetType() const
 {
-    return IntervalType(static_cast<IntervalType::type>(Check(OCI_IntervalGetType(*this))));
+    return IntervalType(static_cast<IntervalType::Type>(Check(OCI_IntervalGetType(*this))));
 }
 
 inline bool Interval::IsValid() const
@@ -2656,7 +2646,7 @@ inline int Timestamp::Compare(const Timestamp& other) const
 
 inline Timestamp::TimestampType Timestamp::GetType() const
 {
-    return TimestampType(static_cast<TimestampType::type>(Check(OCI_TimestampGetType(*this))));
+    return TimestampType(static_cast<TimestampType::Type>(Check(OCI_TimestampGetType(*this))));
 }
 
 inline void Timestamp::SetDateTime(int year, int month, int day, int hour, int min, int sec, int fsec, const ostring& timeZone)
@@ -3023,19 +3013,19 @@ inline bool Timestamp::operator <= (const Timestamp& other) const
  * Lob
  * --------------------------------------------------------------------------------------------- */
 
-template<class TLobObjectType, int TLobOracleType>
-inline Lob<TLobObjectType, TLobOracleType>::Lob()
+template<class T, int U>
+inline Lob<T, U>::Lob()
 {
 }
 
-template<class TLobObjectType, int TLobOracleType>
-Lob<TLobObjectType, TLobOracleType>::Lob(const Connection &connection)
+template<class T, int U>
+Lob<T, U>::Lob(const Connection &connection)
 {
-    Acquire(Check(OCI_LobCreate(connection, TLobOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LobFree), nullptr, connection.GetHandle());
+    Acquire(Check(OCI_LobCreate(connection, U)), reinterpret_cast<HandleFreeFunc>(OCI_LobFree), nullptr, connection.GetHandle());
 }
 
-template<class TLobObjectType, int TLobOracleType>
-Lob<TLobObjectType, TLobOracleType>::Lob(OCI_Lob *pLob, Handle *parent)
+template<class T, int U>
+Lob<T, U>::Lob(OCI_Lob *pLob, Handle *parent)
 {
     Acquire(pLob, nullptr, nullptr, parent);
 }
@@ -3070,46 +3060,46 @@ inline Raw Lob<Raw, LobBinary>::Read(unsigned int length)
     return MakeRaw(buffer, length);
 }
 
-template<class TLobObjectType, int TLobOracleType>
-unsigned int Lob<TLobObjectType, TLobOracleType>::Write(const TLobObjectType& content)
+template<class T, int U>
+unsigned int Lob<T, U>::Write(const T& content)
 {
     unsigned int res = 0;
 
     if (content.size() > 0)
     {
-        res = Check(OCI_LobWrite(*this, static_cast<AnyPointer>(const_cast<typename TLobObjectType::value_type *>(&content[0])), static_cast<unsigned int>(content.size())));
+        res = Check(OCI_LobWrite(*this, static_cast<AnyPointer>(const_cast<typename T::value_type *>(&content[0])), static_cast<unsigned int>(content.size())));
     }
 
     return res;
 }
 
-template<class TLobObjectType, int TLobOracleType>
-void Lob<TLobObjectType, TLobOracleType>::Append(const Lob& other)
+template<class T, int U>
+void Lob<T, U>::Append(const Lob& other)
 {
     Check(OCI_LobAppendLob(*this, other));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-unsigned int Lob<TLobObjectType, TLobOracleType>::Append(const TLobObjectType& content)
+template<class T, int U>
+unsigned int Lob<T, U>::Append(const T& content)
 {
     unsigned int res = 0;
 
     if (content.size() > 0)
     {
-        Check(OCI_LobAppend(*this, static_cast<AnyPointer>(const_cast<typename TLobObjectType::value_type *>(&content[0])), static_cast<unsigned int>(content.size())));
+        Check(OCI_LobAppend(*this, static_cast<AnyPointer>(const_cast<typename T::value_type *>(&content[0])), static_cast<unsigned int>(content.size())));
     }
 
     return res;
 }
 
-template<class TLobObjectType, int TLobOracleType>
-bool Lob<TLobObjectType, TLobOracleType>::Seek(SeekMode seekMode, big_uint offset)
+template<class T, int U>
+bool Lob<T, U>::Seek(SeekMode seekMode, big_uint offset)
 {
     return (Check(OCI_LobSeek(*this, offset, seekMode)) == TRUE);
 }
 
-template<class TLobObjectType, int TLobOracleType>
-Lob<TLobObjectType, TLobOracleType> Lob<TLobObjectType, TLobOracleType>::Clone() const
+template<class T, int U>
+Lob<T, U> Lob<T, U>::Clone() const
 {
     Lob result(GetConnection());
 
@@ -3118,111 +3108,111 @@ Lob<TLobObjectType, TLobOracleType> Lob<TLobObjectType, TLobOracleType>::Clone()
     return result;
 }
 
-template<class TLobObjectType, int TLobOracleType>
-bool Lob<TLobObjectType, TLobOracleType>::Equals(const Lob &other) const
+template<class T, int U>
+bool Lob<T, U>::Equals(const Lob &other) const
 {
     return (Check(OCI_LobIsEqual(*this, other)) == TRUE);
 }
 
-template<class TLobObjectType, int TLobOracleType>
-LobType Lob<TLobObjectType, TLobOracleType>::GetType() const
+template<class T, int U>
+LobType Lob<T, U>::GetType() const
 {
-    return LobType(static_cast<LobType::type>(Check(OCI_LobGetType(*this))));
+    return LobType(static_cast<LobType::Type>(Check(OCI_LobGetType(*this))));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-big_uint Lob<TLobObjectType, TLobOracleType>::GetOffset() const
+template<class T, int U>
+big_uint Lob<T, U>::GetOffset() const
 {
     return Check(OCI_LobGetOffset(*this));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-big_uint Lob<TLobObjectType, TLobOracleType>::GetLength() const
+template<class T, int U>
+big_uint Lob<T, U>::GetLength() const
 {
     return Check(OCI_LobGetLength(*this));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-big_uint Lob<TLobObjectType, TLobOracleType>::GetMaxSize() const
+template<class T, int U>
+big_uint Lob<T, U>::GetMaxSize() const
 {
     return Check(OCI_LobGetMaxSize(*this));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-big_uint Lob<TLobObjectType, TLobOracleType>::GetChunkSize() const
+template<class T, int U>
+big_uint Lob<T, U>::GetChunkSize() const
 {
     return Check(OCI_LobGetChunkSize(*this));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-Connection Lob<TLobObjectType, TLobOracleType>::GetConnection() const
+template<class T, int U>
+Connection Lob<T, U>::GetConnection() const
 {
     return Connection(Check(OCI_LobGetConnection(*this)), nullptr);
 }
 
-template<class TLobObjectType, int TLobOracleType>
-void Lob<TLobObjectType, TLobOracleType>::Truncate(big_uint length)
+template<class T, int U>
+void Lob<T, U>::Truncate(big_uint length)
 {
     Check(OCI_LobTruncate(*this, length));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-big_uint Lob<TLobObjectType, TLobOracleType>::Erase(big_uint offset, big_uint length)
+template<class T, int U>
+big_uint Lob<T, U>::Erase(big_uint offset, big_uint length)
 {
     return Check(OCI_LobErase(*this, offset, length));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-void Lob<TLobObjectType, TLobOracleType>::Copy(Lob &dest, big_uint offset, big_uint offsetDest, big_uint size) const
+template<class T, int U>
+void Lob<T, U>::Copy(Lob &dest, big_uint offset, big_uint offsetDest, big_uint size) const
 {
     Check(OCI_LobCopy(dest, *this, offsetDest, offset, size));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-bool Lob<TLobObjectType, TLobOracleType>::IsTemporary() const
+template<class T, int U>
+bool Lob<T, U>::IsTemporary() const
 {
     return (Check(OCI_LobIsTemporary(*this)) == TRUE);
 }
 
-template<class TLobObjectType, int TLobOracleType>
-void Lob<TLobObjectType, TLobOracleType>::Open(OpenMode mode)
+template<class T, int U>
+void Lob<T, U>::Open(OpenMode mode)
 {
     Check(OCI_LobOpen(*this, mode));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-void Lob<TLobObjectType, TLobOracleType>::Flush()
+template<class T, int U>
+void Lob<T, U>::Flush()
 {
     Check(OCI_LobFlush(*this));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-void Lob<TLobObjectType, TLobOracleType>::Close()
+template<class T, int U>
+void Lob<T, U>::Close()
 {
     Check(OCI_LobClose(*this));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-void Lob<TLobObjectType, TLobOracleType>::EnableBuffering(bool value)
+template<class T, int U>
+void Lob<T, U>::EnableBuffering(bool value)
 {
     Check(OCI_LobEnableBuffering(*this, value));
 }
 
-template<class TLobObjectType, int TLobOracleType>
-Lob<TLobObjectType, TLobOracleType>& Lob<TLobObjectType, TLobOracleType>::operator += (const Lob<TLobObjectType, TLobOracleType>& other)
+template<class T, int U>
+Lob<T, U>& Lob<T, U>::operator += (const Lob<T, U>& other)
 {
     Append(other);
     return *this;
 }
 
-template<class TLobObjectType, int TLobOracleType>
-bool Lob<TLobObjectType, TLobOracleType>::operator == (const Lob<TLobObjectType, TLobOracleType>& other) const
+template<class T, int U>
+bool Lob<T, U>::operator == (const Lob<T, U>& other) const
 {
     return Equals(other);
 }
 
-template<class TLobObjectType, int TLobOracleType>
-bool Lob<TLobObjectType, TLobOracleType>::operator != (const Lob<TLobObjectType, TLobOracleType>& other) const
+template<class T, int U>
+bool Lob<T, U>::operator != (const Lob<T, U>& other) const
 {
     return !(*this == other);
 }
@@ -3356,7 +3346,7 @@ inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
 
 inline TypeInfo::TypeInfoType TypeInfo::GetType() const
 {
-    return TypeInfoType(static_cast<TypeInfoType::type>(Check(OCI_TypeInfoGetType(*this))));
+    return TypeInfoType(static_cast<TypeInfoType::Type>(Check(OCI_TypeInfoGetType(*this))));
 }
 
 inline ostring TypeInfo::GetName() const
@@ -3436,7 +3426,7 @@ inline Reference Object::GetReference() const
 
 inline Object::ObjectType Object::GetType() const
 {
-    return ObjectType(static_cast<ObjectType::type>(Check(OCI_ObjectGetType(*this))));
+    return ObjectType(static_cast<ObjectType::Type>(Check(OCI_ObjectGetType(*this))));
 }
 
 template<>
@@ -3571,10 +3561,10 @@ inline Raw Object::Get<Raw>(const ostring& name) const
     return MakeRaw(buffer, size);
 }
 
-template<class TDataType>
-TDataType Object::Get(const ostring& name) const
+template<class T>
+T Object::Get(const ostring& name) const
 {
-    return TDataType(Check(OCI_ObjectGetColl(*this, name.c_str())), GetHandle());
+    return T(Check(OCI_ObjectGetColl(*this, name.c_str())), GetHandle());
 }
 
 template<>
@@ -3710,8 +3700,8 @@ inline void Object::Set<Raw>(const ostring& name, const Raw &value)
     }
 }
 
-template<class TDataType>
-void Object::Set(const ostring& name, const TDataType &value)
+template<class T>
+void Object::Set(const ostring& name, const T &value)
 {
     Check(OCI_ObjectSetColl(*this, name.c_str(), value));
 }
@@ -3802,127 +3792,127 @@ inline ostring Reference::ToString() const
  * Collection
  * --------------------------------------------------------------------------------------------- */
 
-template<class TDataType>
-Collection<TDataType>::Collection()
+template<class T>
+Collection<T>::Collection()
 {
 }
 
-template<class TDataType>
-Collection<TDataType>::Collection(const TypeInfo &typeInfo)
+template<class T>
+Collection<T>::Collection(const TypeInfo &typeInfo)
 {
     Acquire(Check(OCI_CollCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_CollFree), nullptr, typeInfo.GetConnection().GetHandle());
 }
 
-template<class TDataType>
-Collection<TDataType>::Collection(OCI_Coll *pColl, Handle *parent)
+template<class T>
+Collection<T>::Collection(OCI_Coll *pColl, Handle *parent)
 {
     Acquire(pColl, nullptr, nullptr, parent);
 }
 
-template<class TDataType>
-Collection<TDataType> Collection<TDataType>::Clone() const
+template<class T>
+Collection<T> Collection<T>::Clone() const
 {
-    Collection<TDataType> result(GetTypeInfo());
+    Collection<T> result(GetTypeInfo());
 
     Check(OCI_CollAssign(result, *this));
 
     return result;
 }
 
-template<class TDataType>
-TypeInfo Collection<TDataType>::GetTypeInfo() const
+template<class T>
+TypeInfo Collection<T>::GetTypeInfo() const
 {
     return TypeInfo(Check(OCI_CollGetTypeInfo(*this)));
 }
 
-template<class TDataType>
-typename Collection<TDataType>::CollectionType Collection<TDataType>::GetType() const
+template<class T>
+typename Collection<T>::CollectionType Collection<T>::GetType() const
 {
     return CollectionType(Check(OCI_CollGetType(*this)));
 }
 
-template<class TDataType>
-unsigned int Collection<TDataType>::GetMax() const
+template<class T>
+unsigned int Collection<T>::GetMax() const
 {
     return Check(OCI_CollGetMax(*this));
 }
 
-template<class TDataType>
-unsigned int Collection<TDataType>::GetSize() const
+template<class T>
+unsigned int Collection<T>::GetSize() const
 
 {
     return Check(OCI_CollGetSize(*this));
 }
 
-template<class TDataType>
-unsigned int Collection<TDataType>::GetCount() const
+template<class T>
+unsigned int Collection<T>::GetCount() const
 
 {
     return Check(OCI_CollGetCount(*this));
 }
 
-template<class TDataType>
-void Collection<TDataType>::Truncate(unsigned int size)
+template<class T>
+void Collection<T>::Truncate(unsigned int size)
 {
     Check(OCI_CollTrim(*this, size));
 }
 
-template<class TDataType>
-void Collection<TDataType>::Clear()
+template<class T>
+void Collection<T>::Clear()
 {
     Check(OCI_CollClear(*this));
 }
 
-template<class TDataType>
-bool Collection<TDataType>::IsElementNull(unsigned int index) const
+template<class T>
+bool Collection<T>::IsElementNull(unsigned int index) const
 {
    return (Check(OCI_ElemIsNull(Check(OCI_CollGetElem(*this, index)))) == TRUE);
 }
 
-template<class TDataType>
-void Collection<TDataType>::SetElementNull(unsigned int index)
+template<class T>
+void Collection<T>::SetElementNull(unsigned int index)
 {
     Check(OCI_ElemSetNull(Check(OCI_CollGetElem(*this, index))));
 }
 
-template<class TDataType>
-bool Collection<TDataType>::Delete(unsigned int index) const
+template<class T>
+bool Collection<T>::Delete(unsigned int index) const
 {
    return (Check(OCI_CollDeleteElem(*this, index)) == TRUE);
 }
 
-template <class TDataType>
-typename Collection<TDataType>::Iterator Collection<TDataType>::begin()
+template<class T>
+typename Collection<T>::iterator Collection<T>::begin()
 {
-    return Iterator(*this, 1);
+    return iterator(this, 1);
 }
 
-template <class TDataType>
-typename Collection<TDataType>::ConstIterator Collection<TDataType>::begin() const
+template<class T>
+typename Collection<T>::const_iterator Collection<T>::begin() const
 {
-    return ConstIterator(*this, 1);
+    return const_iterator(const_cast<Collection*>(this), 1);
 }
 
-template <class TDataType>
-typename Collection<TDataType>::Iterator Collection<TDataType>::end()
+template<class T>
+typename Collection<T>::iterator Collection<T>::end()
 {
-    return Iterator(*this, GetCount() + 1);
+    return iterator(const_cast<Collection*>(this), GetCount() + 1);
 }
 
-template <class TDataType>
-typename Collection<TDataType>::ConstIterator Collection<TDataType>::end() const
+template<class T>
+typename Collection<T>::const_iterator Collection<T>::end() const
 {
-    return ConstIterator(*this, GetCount() + 1);
+    return const_iterator(const_cast<Collection*>(this), GetCount() + 1);
 }
 
-template <class TDataType>
-TDataType Collection<TDataType>::Get(unsigned int index) const
+template<class T>
+T Collection<T>::Get(unsigned int index) const
 {
     return GetElem(Check(OCI_CollGetElem(*this, index)), GetHandle());
 }
 
-template <class TDataType>
-void Collection<TDataType>::Set(unsigned int index, const TDataType &data)
+template<class T>
+void Collection<T>::Set(unsigned int index, const T &data)
 {
     OCI_Elem * elem = Check(OCI_CollGetElem(*this, index));
 
@@ -3931,8 +3921,8 @@ void Collection<TDataType>::Set(unsigned int index, const TDataType &data)
     Check(OCI_CollSetElem(*this, index, elem));
 }
 
-template <class TDataType>
-void Collection<TDataType>::Append(const TDataType &value)
+template<class T>
+void Collection<T>::Append(const T &value)
 {
     OCI_Elem * elem = Check(OCI_ElemCreate(OCI_CollGetTypeInfo(*this)));
 
@@ -3942,7 +3932,7 @@ void Collection<TDataType>::Append(const TDataType &value)
     Check(OCI_ElemFree(elem));
 }
 
-template <>
+template<>
 inline bool Collection<bool>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
@@ -3950,7 +3940,7 @@ inline bool Collection<bool>::GetElem(OCI_Elem *elem, Handle *parent)
     return (Check(OCI_ElemGetBoolean(elem)) == TRUE);
 }
 
-template <>
+template<>
 inline short Collection<short>::GetElem(OCI_Elem *elem, Handle *parent)
 {
     ARG_NOT_USED(parent);
@@ -4095,10 +4085,10 @@ inline File Collection<File>::GetElem(OCI_Elem *elem, Handle *parent)
     return File(Check(OCI_ElemGetFile(elem)), parent);
 }
 
-template<class TDataType>
-TDataType Collection<TDataType>::GetElem(OCI_Elem *elem, Handle *parent)
+template<class T>
+ T Collection<T>::GetElem(OCI_Elem *elem, Handle *parent)
 {
-    return TDataType(Check(OCI_ElemGetColl(elem)), parent);
+    return T(Check(OCI_ElemGetColl(elem)), parent);
 }
 
 template<>
@@ -4161,7 +4151,7 @@ inline void Collection<Number>::SetElem(OCI_Elem *elem, const Number &value)
     Check(OCI_ElemSetNumber(elem, value));
 }
 
-template <>
+template<>
 inline void Collection<ostring>::SetElem(OCI_Elem *elem, const ostring& value)
 {
     Check(OCI_ElemSetString(elem, value.c_str()));
@@ -4234,14 +4224,14 @@ inline void Collection<File>::SetElem(OCI_Elem *elem, const File &value)
     Check(OCI_ElemSetFile(elem, value));
 }
 
-template <class TDataType>
-void Collection<TDataType>::SetElem(OCI_Elem *elem, const TDataType &value)
+template<class T>
+void Collection<T>::SetElem(OCI_Elem *elem, const T &value)
 {
     Check(OCI_ElemSetColl(elem, value));
 }
 
-template<class TDataType>
-ostring Collection<TDataType>::ToString() const
+template<class T>
+ostring Collection<T>::ToString() const
 {
     if (!IsNull())
     {
@@ -4259,181 +4249,195 @@ ostring Collection<TDataType>::ToString() const
     return OCI_STRING_NULL;
 }
 
-template<class TDataType>
-typename Collection<TDataType>::Element Collection<TDataType>::operator [] (unsigned int index)
+template<class T>
+CollectionElement<T> Collection<T>::operator [] (unsigned int index)
 {
-    return Element(*this, index);
+    return CollectionElement<T>(this, index);
 }
 
-template<class TDataType>
-typename Collection<TDataType>::ConstElement Collection<TDataType>::operator [] (unsigned int index) const
+template<class T>
+const CollectionElement<T> Collection<T>::operator [] (unsigned int index) const
 {
-    return ConstElement(*this, index);
+    return  CollectionElement<T>(this, index);
 }
 
-template<class TDataType>
-Collection<TDataType>::Iterator::Iterator(Collection &coll, unsigned int pos) : _elem(coll, pos)
-{
-}
-
-template<class TDataType>
-Collection<TDataType>::Iterator::Iterator(const Iterator& other) : _elem(other._elem)
-{
-}
-
-template<class TDataType>
-bool Collection<TDataType>::Iterator::operator== (const Iterator& other) const
-{
-    return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(_elem._coll)) == (static_cast<OCI_Coll *>(other._elem._coll));
-
-}
-
-template<class TDataType>
-bool Collection<TDataType>::Iterator::operator!= (const Iterator& other) const
-{
-    return !(*this == other);
-}
-
-template<class TDataType>
-typename Collection<TDataType>::Element& Collection<TDataType>::Iterator::operator*()
-{
-     return _elem;
-}
-
-template<class TDataType>
-typename Collection<TDataType>::Iterator & Collection<TDataType>::Iterator::operator--()
-{
-    --_elem._pos;
-    return (*this);
-}
-
-template<class TDataType>
-typename Collection<TDataType>::Iterator Collection<TDataType>::Iterator::operator--(int)
-{
-    Iterator old(*this);
-    --(*this);
-    return old;
-}
-
-template<class TDataType>
-typename Collection<TDataType>::Iterator  & Collection<TDataType>::Iterator::operator++()
-{
-    ++_elem._pos;
-    return (*this);
-}
-
-template<class TDataType>
-typename Collection<TDataType>::Iterator Collection<TDataType>::Iterator::operator++(int)
-{
-    Iterator old(*this);
-    ++(*this);
-    return old;
-}
-
-template<class TDataType>
-Collection<TDataType>::ConstIterator::ConstIterator(const Collection &coll, unsigned int pos) : _elem(coll, pos)
-{
-}
-
-template<class TDataType>
-Collection<TDataType>::ConstIterator::ConstIterator(const ConstIterator& other) : _elem(other._elem)
-{
-}
-
-template<class TDataType>
-bool Collection<TDataType>::ConstIterator::operator== (const ConstIterator& other) const
-{
-    return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(_elem._coll)) == (static_cast<OCI_Coll *>(other._elem._coll));
-
-}
-
-template<class TDataType>
-bool Collection<TDataType>::ConstIterator::operator!= (const ConstIterator& other) const
-{
-    return !(*this == other);
-}
-
-template<class TDataType>
-const typename Collection<TDataType>::ConstElement& Collection<TDataType>::ConstIterator::operator*() const
-{
-    return _elem;
-}
-
-template<class TDataType>
-typename Collection<TDataType>::ConstIterator & Collection<TDataType>::ConstIterator::operator--()
-{
-    --_elem._pos;
-    return (*this);
-}
-
-template<class TDataType>
-typename Collection<TDataType>::ConstIterator Collection<TDataType>::ConstIterator::operator--(int)
-{
-    ConstIterator old(*this);
-    --(*this);
-    return old;
-}
-
-template<class TDataType>
-typename Collection<TDataType>::ConstIterator  & Collection<TDataType>::ConstIterator::operator++()
-{
-    ++_elem._pos;
-    return (*this);
-}
-
-template<class TDataType>
-typename Collection<TDataType>::ConstIterator Collection<TDataType>::ConstIterator::operator++(int)
-{
-    ConstIterator old(*this);
-    ++(*this);
-    return old;
-}
-
-template<class TDataType>
-Collection<TDataType>::ConstElement::ConstElement(const Collection &coll, unsigned int pos) : _coll(coll), _pos(pos)
+template<class T>
+CollectionIterator<T>::CollectionIterator() : _elem()
 {
 
 }
 
-template<class TDataType>
-Collection<TDataType>::ConstElement::operator TDataType() const
-{
-    return _coll.Get(_pos);
-}
-
-template<class TDataType>
-bool Collection<TDataType>::ConstElement::IsNull() const
-{
-    return _coll->IsElementNull(_pos);
-}
-
-template<class TDataType>
-Collection<TDataType>::Element::Element(Collection &coll, unsigned int pos) : _coll(coll), _pos(pos)
+template<class T>
+CollectionIterator<T>::CollectionIterator(CollectionType *collection, unsigned int pos) : _elem(collection, pos)
 {
 
 }
 
-template<class TDataType>
-Collection<TDataType>::Element::operator TDataType() const
+template<class T>
+CollectionIterator<T>::CollectionIterator(const CollectionIterator& other) : _elem(other._elem)
 {
-    return _coll.Get(_pos);
+
 }
 
-template<class TDataType>
-typename Collection<TDataType>::Element& Collection<TDataType>::Element::operator = (TDataType value)
+template<class T>
+CollectionIterator<T>& CollectionIterator<T>::operator = (const CollectionIterator& other)
 {
-    _coll.Set(_pos, value);
+	_elem._pos  = other._elem._pos;
+	_elem._coll = other._elem._coll;
+
+	return *this;
+}
+
+template<class T>
+CollectionIterator<T>& CollectionIterator<T>::operator += (difference_type value)
+{
+	_elem._pos += static_cast<unsigned int>(value);
+	return *this;
+}
+
+template<class T>
+CollectionIterator<T>& CollectionIterator<T>::operator -= (difference_type value)
+{
+	_elem._pos -= static_cast<unsigned int>(value);
+	return *this;
+}
+
+template<class T>
+T& CollectionIterator<T>::operator*()
+{
+	return _elem;
+}
+
+template<class T>
+T* CollectionIterator<T>::operator->()
+{
+	return &_elem;
+}
+
+template<class T>
+CollectionIterator<T>& CollectionIterator<T>::operator--()
+{
+	--_elem._pos;
+	return *this;
+}
+
+template<class T>
+CollectionIterator<T>& CollectionIterator<T>::operator++()
+{
+	++*(const_cast<unsigned int*>(&_elem._pos));
+	return *this;
+}
+
+template<class T>
+CollectionIterator<T> CollectionIterator<T>::operator++(int)
+{
+	CollectionIterator res(_elem._coll, _elem._pos);
+	++(*this);
+	return res;
+}
+
+template<class T>
+CollectionIterator<T> CollectionIterator<T>::operator--(int)
+{
+	CollectionIterator res(_elem);
+	--(*this);
+	return res;
+}
+
+template<class T>
+CollectionIterator<T>  CollectionIterator<T>::operator + (difference_type value)
+{
+	return CollectionIterator(_elem._coll, _elem._pos + static_cast<unsigned int>(value));
+}
+
+template<class T>
+CollectionIterator<T> CollectionIterator<T>::operator - (difference_type value)
+{
+	return CollectionIterator(_elem._coll, _elem._pos - static_cast<unsigned int>(value));
+}
+
+template<class T>
+typename CollectionIterator<T>::difference_type CollectionIterator<T>::operator - (const CollectionIterator &value)
+{
+	return static_cast<difference_type>(_elem._pos - value._elem._pos);
+}
+
+template<class T>
+bool CollectionIterator<T>::operator == (const CollectionIterator& other)
+{
+	return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(*_elem._coll)) == (static_cast<OCI_Coll *>(*other._elem._coll));
+}
+
+template<class T>
+bool CollectionIterator<T>::operator != (const CollectionIterator& other)
+{
+	return !(*this == other);
+}
+
+template<class T>
+bool CollectionIterator<T>::operator > (const CollectionIterator& other)
+{
+	return _elem._pos > other._elem._pos;
+}
+
+template<class T>
+bool CollectionIterator<T>::operator < (const CollectionIterator& other)
+{
+	return _elem._pos < other._elem._pos;
+}
+
+template<class T>
+bool CollectionIterator<T>::operator >= (const CollectionIterator& other)
+{
+	return _elem._pos >= other._elem._pos;
+}
+
+template<class T>
+bool CollectionIterator<T>::operator <= (const CollectionIterator& other)
+{
+	return _elem._pos <= other._elem._pos;
+}
+
+template<class T>
+CollectionElement<T>::CollectionElement() : _coll(nullptr), _pos(0)
+{
+
+}
+
+template<class T>
+CollectionElement<T>::CollectionElement(CollectionType *coll, unsigned int pos) : _coll(coll), _pos(pos)
+{
+
+}
+
+template<class T>
+CollectionElement<T>::operator T() const
+{
+    return _coll->Get(_pos);
+}
+
+template<class T>
+CollectionElement<T>& CollectionElement<T>::operator = (const ValueType& value)
+{
+    _coll->Set(_pos, value);
     return *this;
 }
 
-template<class TDataType>
-bool Collection<TDataType>::Element::IsNull() const
+template<class T>
+CollectionElement<T>& CollectionElement<T>::operator = (const CollectionElement &other)
+{
+	_coll->Set(_pos, static_cast<T>(other));
+	return *this;
+}
+
+template<class T>
+bool CollectionElement<T>::IsNull() const
 {
     return _coll->IsElementNull(_pos);
 }
 
-template<class TDataType>
-void Collection<TDataType>::Element::SetNull()
+template<class T>
+void CollectionElement<T>::SetNull()
 {
     _coll->SetElementNull(_pos);
 }
@@ -4442,38 +4446,38 @@ void Collection<TDataType>::Element::SetNull()
  * Long
  * --------------------------------------------------------------------------------------------- */
 
-template<class TLongObjectType, int TLongOracleType>
-Long<TLongObjectType, TLongOracleType>::Long()
+template<class T, int U>
+Long<T, U>::Long()
 {
 }
 
-template<class TLongObjectType, int TLongOracleType>
-Long<TLongObjectType, TLongOracleType>::Long(const Statement &statement)
+template<class T, int U>
+Long<T, U>::Long(const Statement &statement)
 {
-    Acquire(Check(OCI_LongCreate(statement, TLongOracleType)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), nullptr, statement.GetHandle());
+    Acquire(Check(OCI_LongCreate(statement, U)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), nullptr, statement.GetHandle());
 }
 
-template<class TLongObjectType, int TLongOracleType>
-Long<TLongObjectType, TLongOracleType>::Long(OCI_Long *pLong, Handle* parent)
+template<class T, int U>
+Long<T, U>::Long(OCI_Long *pLong, Handle* parent)
 {
     Acquire(pLong, nullptr, nullptr, parent);
 }
 
-template<class TLongObjectType, int TLongOracleType>
-unsigned int Long<TLongObjectType, TLongOracleType>::Write(const TLongObjectType& content)
+template<class T, int U>
+unsigned int Long<T, U>::Write(const T& content)
 {
     unsigned int res = 0;
 
     if (content.size() > 0)
     {
-        res = Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<typename TLongObjectType::value_type *>(&content[0])), static_cast<unsigned int>(content.size())));
+        res = Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<typename T::value_type *>(&content[0])), static_cast<unsigned int>(content.size())));
     }
 
     return res;
 }
 
-template<class TLongObjectType, int TLongOracleType>
-unsigned int Long<TLongObjectType, TLongOracleType>::GetLength() const
+template<class T, int U>
+unsigned int Long<T, U>::GetLength() const
 {
     return Check(OCI_LongGetSize(*this));
 }
@@ -4526,10 +4530,10 @@ inline BindArray::BindArray(const Statement &statement, const ostring& name, uns
 
 }
 
-template <class TObjectType>
-void BindArray::SetVector(std::vector<TObjectType> & vector, unsigned int elemSize)
+template<class T>
+void BindArray::SetVector(std::vector<T> & vector, unsigned int elemSize)
 {
-    _object = new BindArrayObject<TObjectType>(GetStatement(), GetName(), vector, GetMode(), elemSize);
+    _object = new BindArrayObject<T>(GetStatement(), GetName(), vector, GetMode(), elemSize);
 }
 
 inline BindArray::~BindArray()
@@ -4537,10 +4541,10 @@ inline BindArray::~BindArray()
     delete _object;
 }
 
-template <class TObjectType>
-typename BindResolver<TObjectType>::OutputType * BindArray::GetData()  const
+template<class T>
+typename BindResolver<T>::OutputType * BindArray::GetData()  const
 {
-    return static_cast<typename BindResolver<TObjectType>::OutputType *>(*(dynamic_cast< BindArrayObject<TObjectType> * > (_object)));
+    return static_cast<typename BindResolver<T>::OutputType *>(*(dynamic_cast< BindArrayObject<T> * > (_object)));
 }
 
 inline void BindArray::SetInData()
@@ -4559,21 +4563,21 @@ inline void BindArray::SetOutData()
     }
 }
 
-template <class TObjectType>
-BindArray::BindArrayObject<TObjectType>::BindArrayObject(const Statement &statement, const ostring& name, ObjectTypeVector &vector, unsigned int mode, unsigned int elemSize)
+template<class T>
+BindArray::BindArrayObject<T>::BindArrayObject(const Statement &statement, const ostring& name, ObjectVector &vector, unsigned int mode, unsigned int elemSize)
     : _pStatement(statement), _name(name), _vector(vector), _data(nullptr), _mode(mode), _elemCount(statement.GetBindArraySize()), _elemSize(elemSize)
 {
     AllocData();
 }
 
-template <class TObjectType>
-BindArray::BindArrayObject<TObjectType>::~BindArrayObject()
+template<class T>
+BindArray::BindArrayObject<T>::~BindArrayObject()
 {
     FreeData();
 }
 
-template <class TObjectType>
-void BindArray::BindArrayObject<TObjectType>::AllocData()
+template<class T>
+void BindArray::BindArrayObject<T>::AllocData()
 {
     _data = new NativeType[_elemCount];
 
@@ -4596,16 +4600,16 @@ inline void BindArray::BindArrayObject<Raw> ::AllocData()
     memset(_data, 0, _elemSize * _elemCount * sizeof(unsigned char));
 }
 
-template <class TObjectType>
-void BindArray::BindArrayObject<TObjectType>::FreeData() const
+template<class T>
+void BindArray::BindArrayObject<T>::FreeData() const
 {
     delete [] _data ;
 }
 
-template <class TObjectType>
-void BindArray::BindArrayObject<TObjectType>::SetInData()
+template<class T>
+void BindArray::BindArrayObject<T>::SetInData()
 {
-    typename ObjectTypeVector::iterator it, it_end;
+    typename ObjectVector::iterator it, it_end;
 
     unsigned int index = 0;
     unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
@@ -4653,17 +4657,17 @@ inline void BindArray::BindArrayObject<Raw>::SetInData()
     }
 }
 
-template <class TObjectType>
-void BindArray::BindArrayObject<TObjectType>::SetOutData()
+template<class T>
+void BindArray::BindArrayObject<T>::SetOutData()
 {
-    typename ObjectTypeVector::iterator it, it_end;
+    typename ObjectVector::iterator it, it_end;
 
     unsigned int index = 0;
     unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
-        TObjectType& object = *it;
+        T& object = *it;
 
         object = static_cast<NativeType>(_data[index]);
     }
@@ -4687,20 +4691,20 @@ inline void BindArray::BindArrayObject<Raw>::SetOutData()
     }
 }
 
-template <class TObjectType>
-ostring BindArray::BindArrayObject<TObjectType>::GetName()
+template<class T>
+ostring BindArray::BindArrayObject<T>::GetName()
 {
     return _name;
 }
 
-template <class TObjectType>
-BindArray::BindArrayObject<TObjectType>::operator ObjectTypeVector & ()  const
+template<class T>
+BindArray::BindArrayObject<T>::operator ObjectVector & ()  const
 {
     return _vector;
 }
 
-template <class TObjectType>
-BindArray::BindArrayObject<TObjectType>::operator NativeType * ()  const
+template<class T>
+BindArray::BindArrayObject<T>::operator NativeType * ()  const
 {
     return _data;
 }
@@ -4709,8 +4713,8 @@ BindArray::BindArrayObject<TObjectType>::operator NativeType * ()  const
  * BindObjectAdaptor
  * --------------------------------------------------------------------------------------------- */
 
-template <class TObjectType>
-void BindObjectAdaptor<TObjectType>::SetInData()
+template<class T>
+void BindObjectAdaptor<T>::SetInData()
 {
     if (GetMode() & OCI_BDM_IN)
     {
@@ -4730,8 +4734,8 @@ void BindObjectAdaptor<TObjectType>::SetInData()
     }
 }
 
-template <class TObjectType>
-void BindObjectAdaptor<TObjectType>::SetOutData()
+template<class T>
+void BindObjectAdaptor<T>::SetOutData()
 {
     if (GetMode() & OCI_BDM_OUT)
     {
@@ -4741,8 +4745,8 @@ void BindObjectAdaptor<TObjectType>::SetOutData()
     }
 }
 
-template <class TObjectType>
-BindObjectAdaptor<TObjectType>::BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object, unsigned int size) :
+template<class T>
+BindObjectAdaptor<T>::BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object, unsigned int size) :
      BindObject(statement, name, mode),
      _object(object),
      _data(new NativeType[size]),
@@ -4751,14 +4755,14 @@ BindObjectAdaptor<TObjectType>::BindObjectAdaptor(const Statement &statement, co
     memset(_data, 0, _size * sizeof(NativeType));
 }
 
-template <class TObjectType>
-BindObjectAdaptor<TObjectType>::~BindObjectAdaptor()
+template<class T>
+BindObjectAdaptor<T>::~BindObjectAdaptor()
 {
     delete [] _data;
 }
 
-template <class TObjectType>
-BindObjectAdaptor<TObjectType>::operator NativeType *()  const
+template<class T>
+BindObjectAdaptor<T>::operator NativeType *()  const
 {
     return _data;
 }
@@ -4767,8 +4771,8 @@ BindObjectAdaptor<TObjectType>::operator NativeType *()  const
  * BindTypeAdaptor
  * --------------------------------------------------------------------------------------------- */
 
-template <class TObjectType>
-void BindTypeAdaptor<TObjectType>::SetInData()
+template<class T>
+void BindTypeAdaptor<T>::SetInData()
 {
     if (GetMode() & OCI_BDM_IN)
     {
@@ -4776,17 +4780,17 @@ void BindTypeAdaptor<TObjectType>::SetInData()
     }
 }
 
-template <class TObjectType>
-void BindTypeAdaptor<TObjectType>::SetOutData()
+template<class T>
+void BindTypeAdaptor<T>::SetOutData()
 {
     if (GetMode() & OCI_BDM_OUT)
     {
-        _object = static_cast<TObjectType>(*_data);
+        _object = static_cast<T>(*_data);
     }
 }
 
-template <class TObjectType>
-BindTypeAdaptor<TObjectType>::BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object) :
+template<class T>
+BindTypeAdaptor<T>::BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object) :
 BindObject(statement, name, mode),
 _object(object),
 _data(new NativeType)
@@ -4794,19 +4798,19 @@ _data(new NativeType)
 
 }
 
-template <class TObjectType>
-BindTypeAdaptor<TObjectType>::~BindTypeAdaptor()
+template<class T>
+BindTypeAdaptor<T>::~BindTypeAdaptor()
 {
     delete _data;
 }
 
-template <class TObjectType>
-BindTypeAdaptor<TObjectType>::operator NativeType *()  const
+template<class T>
+BindTypeAdaptor<T>::operator NativeType *()  const
 {
     return _data;
 }
 
-template <>
+template<>
 inline void BindTypeAdaptor<bool>::SetInData()
 {
     if (GetMode() & OCI_BDM_IN)
@@ -4815,7 +4819,7 @@ inline void BindTypeAdaptor<bool>::SetInData()
     }
 }
 
-template <>
+template<>
 inline void BindTypeAdaptor<bool>::SetOutData()
 {
     if (GetMode() & OCI_BDM_OUT)
@@ -4905,7 +4909,7 @@ inline ostring BindInfo::GetName() const
 
 inline DataType BindInfo::GetType() const
 {
-    return DataType(static_cast<DataType::type>(Check(OCI_BindGetType(*this))));
+    return DataType(static_cast<DataType::Type>(Check(OCI_BindGetType(*this))));
 }
 
 inline unsigned int BindInfo::GetSubType() const
@@ -4947,7 +4951,7 @@ inline void BindInfo::SetCharsetForm(CharsetForm value)
 
 inline BindInfo::BindDirection BindInfo::GetDirection() const
 {
-    return BindDirection(static_cast<BindDirection::type>(Check(OCI_BindGetDirection(*this))));
+    return BindDirection(static_cast<BindDirection::Type>(Check(OCI_BindGetDirection(*this))));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -5002,16 +5006,16 @@ inline void Statement::ExecutePrepared()
     SetOutData();
 }
 
-template<class TFetchCallback>
-unsigned int Statement::ExecutePrepared(TFetchCallback callback)
+template<class T>
+unsigned int Statement::ExecutePrepared(T callback)
 {
     ExecutePrepared();
 
     return Fetch(callback);
 }
 
-template<class TAdapter, class TFetchCallback>
-unsigned int Statement::ExecutePrepared(TFetchCallback callback, TAdapter adapter)
+template<class T, class U>
+unsigned int Statement::ExecutePrepared(T callback, U adapter)
 {
     ExecutePrepared();
 
@@ -5025,24 +5029,24 @@ inline void Statement::Execute(const ostring& sql)
     Check(OCI_ExecuteStmt(*this, sql.c_str()));
 }
 
-template<class TFetchCallback>
-unsigned int Statement::Execute(const ostring& sql, TFetchCallback callback)
+template<class T>
+unsigned int Statement::Execute(const ostring& sql, T callback)
 {
     Execute(sql);
 
     return Fetch(callback);
 }
 
-template<class TAdapter, class TFetchCallback>
-unsigned int Statement::Execute(const ostring& sql, TFetchCallback callback, TAdapter adapter)
+template<class T, class U>
+unsigned int Statement::Execute(const ostring& sql, T callback, U adapter)
 {
     Execute(sql);
 
     return Fetch(callback, adapter);
 }
 
-template<typename TFetchCallback>
-unsigned int  Statement::Fetch(TFetchCallback callback)
+template<typename T>
+unsigned int  Statement::Fetch(T callback)
 {
     unsigned int res = 0;
 
@@ -5057,8 +5061,8 @@ unsigned int  Statement::Fetch(TFetchCallback callback)
     return res;
 }
 
-template<class TAdapter, class TFetchCallback>
-unsigned int Statement::Fetch(TFetchCallback callback, TAdapter adapter)
+template<class T, class U>
+unsigned int Statement::Fetch(T callback, U adapter)
 {
     unsigned int res = 0;
 
@@ -5133,27 +5137,27 @@ inline BindInfo Statement::GetBind(const ostring& name) const
     return BindInfo(Check(OCI_GetBind2(*this, name.c_str())), GetHandle());
 }
 
-template <typename TBindMethod, class TDataType>
-void Statement::Bind1(TBindMethod &method, const ostring& name, TDataType& value, BindInfo::BindDirection mode)
+template<typename M, class T>
+void Statement::Bind1(M &method, const ostring& name, T& value, BindInfo::BindDirection mode)
 {
     Check(method(*this, name.c_str(), &value));
     SetLastBindMode(mode);
 }
 
-template <typename TBindMethod, class TObjectType>
-void Statement::Bind2(TBindMethod &method, const ostring& name, TObjectType& value, BindInfo::BindDirection mode)
+template<typename M, class T>
+void Statement::Bind2(M &method, const ostring& name, T& value, BindInfo::BindDirection mode)
 {
-    Check(method(*this, name.c_str(), static_cast<typename BindResolver<TObjectType>::OutputType>(value)));
+    Check(method(*this, name.c_str(), static_cast<typename BindResolver<T>::OutputType>(value)));
     SetLastBindMode(mode);
 }
 
-template <typename TBindMethod, class TObjectType>
-void Statement::BindVector1(TBindMethod &method, const ostring& name, std::vector<TObjectType> &values,  BindInfo::BindDirection mode)
+template<typename M, class T>
+void Statement::BindVector1(M &method, const ostring& name, std::vector<T> &values,  BindInfo::BindDirection mode)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
-    bnd->SetVector<TObjectType>(values, sizeof(typename BindResolver<TObjectType>::OutputType));
+    bnd->SetVector<T>(values, sizeof(typename BindResolver<T>::OutputType));
 
-    boolean res = method(*this, name.c_str(), bnd->GetData<TObjectType>(), 0);
+    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), 0);
 
     if (res)
     {
@@ -5169,13 +5173,13 @@ void Statement::BindVector1(TBindMethod &method, const ostring& name, std::vecto
     Check(res);
 }
 
-template <typename TBindMethod, class TObjectType, class TElemType>
-void Statement::BindVector2(TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindInfo::BindDirection mode, TElemType type)
+template<typename M, class T, class U>
+void Statement::BindVector2(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, U type)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
-    bnd->SetVector<TObjectType>(values, sizeof(typename BindResolver<TObjectType>::OutputType));
+    bnd->SetVector<T>(values, sizeof(typename BindResolver<T>::OutputType));
 
-    boolean res = method(*this, name.c_str(), bnd->GetData<TObjectType>(), type, 0);
+    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), type, 0);
 
     if (res)
     {
@@ -5191,7 +5195,7 @@ void Statement::BindVector2(TBindMethod &method, const ostring& name, std::vecto
     Check(res);
 }
 
-template <>
+template<>
 inline void Statement::Bind<bool>(const ostring& name, bool &value, BindInfo::BindDirection mode)
 {
     BindTypeAdaptor<bool> * bnd = new BindTypeAdaptor<bool>(*this, name, mode, value);
@@ -5212,147 +5216,147 @@ inline void Statement::Bind<bool>(const ostring& name, bool &value, BindInfo::Bi
     Check(res);
 }
 
-template <>
+template<>
 inline void Statement::Bind<short>(const ostring& name, short &value, BindInfo::BindDirection mode)
 {
     Bind1(OCI_BindShort, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<unsigned short>(const ostring& name, unsigned short &value, BindInfo::BindDirection mode)
 {
     Bind1(OCI_BindUnsignedShort, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<int>(const ostring& name, int &value, BindInfo::BindDirection mode)
 {
     Bind1(OCI_BindInt, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<unsigned int>(const ostring& name, unsigned int &value, BindInfo::BindDirection mode)
 {
     Bind1(OCI_BindUnsignedInt, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<big_int>(const ostring& name, big_int &value, BindInfo::BindDirection mode)
 {
     Bind1(OCI_BindBigInt, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<big_uint>(const ostring& name, big_uint &value, BindInfo::BindDirection mode)
 {
     Bind1(OCI_BindUnsignedBigInt, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<float>(const ostring& name, float &value, BindInfo::BindDirection mode)
 {
     Bind1(OCI_BindFloat, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<double>(const ostring& name, double &value, BindInfo::BindDirection mode)
 {
     Bind1(OCI_BindDouble, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Number>(const ostring& name, Number &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindNumber, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Date>(const ostring& name, Date &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindDate, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Timestamp>(const ostring& name, Timestamp &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindTimestamp, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Interval>(const ostring& name, Interval &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindInterval, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Clob>(const ostring& name, Clob &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindLob, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<NClob>(const ostring& name, NClob &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindLob, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Blob>(const ostring& name, Blob &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindLob, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<File>(const ostring& name, File &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindFile, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Object>(const ostring& name, Object &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindObject, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Reference>(const ostring& name, Reference &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindRef, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Statement>(const ostring& name, Statement &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindStatement, name, value, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Clong, unsigned int>(const ostring& name, Clong &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     Check(OCI_BindLong(*this, name.c_str(), value, maxSize));
     SetLastBindMode(mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Clong, int>(const ostring& name, Clong &value, int maxSize, BindInfo::BindDirection mode)
 {
     Bind<Clong, unsigned int>(name, value, static_cast<unsigned int>(maxSize), mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Blong, unsigned int>(const ostring& name, Blong &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     Check(OCI_BindLong(*this, name.c_str(), value, maxSize));
     SetLastBindMode(mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Blong, int>(const ostring& name, Blong &value, int maxSize, BindInfo::BindDirection mode)
 {
     Bind<Blong, unsigned int>(name, value, static_cast<unsigned int>(maxSize), mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     if (maxSize == 0)
@@ -5380,13 +5384,13 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring 
     Check(res);
 }
 
-template <>
+template<>
 inline void Statement::Bind<ostring, int>(const ostring& name, ostring &value, int maxSize, BindInfo::BindDirection mode)
 {
     Bind<ostring, unsigned int>(name, value, static_cast<unsigned int>(maxSize),  mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Raw, unsigned int>(const ostring& name, Raw &value, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     if (maxSize == 0)
@@ -5414,146 +5418,146 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, Raw &value, 
     Check(res);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Raw, int>(const ostring& name, Raw &value,  int maxSize, BindInfo::BindDirection mode)
 {
     Bind<Raw, unsigned int>(name, value, static_cast<unsigned int>(maxSize), mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<short>(const ostring& name, std::vector<short> &values, BindInfo::BindDirection mode)
 {
     BindVector1(OCI_BindArrayOfShorts, name, values, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<unsigned short>(const ostring& name, std::vector<unsigned short> &values, BindInfo::BindDirection mode)
 {
     BindVector1(OCI_BindArrayOfUnsignedShorts, name, values, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<int>(const ostring& name, std::vector<int> &values, BindInfo::BindDirection mode)
 {
     BindVector1(OCI_BindArrayOfInts, name, values, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<unsigned int>(const ostring& name, std::vector<unsigned int> &values, BindInfo::BindDirection mode)
 {
     BindVector1(OCI_BindArrayOfUnsignedInts, name, values, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<big_int>(const ostring& name, std::vector<big_int> &values, BindInfo::BindDirection mode)
 {
     BindVector1(OCI_BindArrayOfBigInts, name, values, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<big_uint>(const ostring& name, std::vector<big_uint> &values, BindInfo::BindDirection mode)
 {
     BindVector1(OCI_BindArrayOfUnsignedBigInts, name, values, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<float>(const ostring& name, std::vector<float> &values, BindInfo::BindDirection mode)
 {
     BindVector1(OCI_BindArrayOfFloats, name, values, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<double>(const ostring& name, std::vector<double> &values, BindInfo::BindDirection mode)
 {
     BindVector1(OCI_BindArrayOfDoubles, name, values, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Date>(const ostring& name, std::vector<Date> &values, BindInfo::BindDirection mode)
 {
     BindVector1(OCI_BindArrayOfDates, name, values, mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Number>(const ostring& name, std::vector<Number> &values, BindInfo::BindDirection mode)
 {
     BindVector1(OCI_BindArrayOfNumbers, name, values, mode);
 }
 
-template<class TDataType>
-void Statement::Bind(const ostring& name, Collection<TDataType> &value, BindInfo::BindDirection mode)
+template<class T>
+void Statement::Bind(const ostring& name, Collection<T> &value, BindInfo::BindDirection mode)
 {
     Check(OCI_BindColl(*this, name.c_str(), value));
     SetLastBindMode(mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Timestamp, Timestamp::TimestampTypeValues>(const ostring& name, std::vector<Timestamp> &values, Timestamp::TimestampTypeValues type, BindInfo::BindDirection mode)
 {
     BindVector2(OCI_BindArrayOfTimestamps, name, values, mode, type);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Timestamp, Timestamp::TimestampType>(const ostring& name, std::vector<Timestamp> &values, Timestamp::TimestampType type, BindInfo::BindDirection mode)
 {
     Bind<Timestamp, Timestamp::TimestampTypeValues>(name, values, type.GetValue(), mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Interval, Interval::IntervalTypeValues>(const ostring& name, std::vector<Interval> &values, Interval::IntervalTypeValues type, BindInfo::BindDirection mode)
 {
     BindVector2(OCI_BindArrayOfIntervals, name, values, mode, type);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Interval, Interval::IntervalType>(const ostring& name, std::vector<Interval> &values, Interval::IntervalType type, BindInfo::BindDirection mode)
 {
     Bind<Interval, Interval::IntervalTypeValues>(name, values, type.GetValue(), mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Clob>(const ostring& name, std::vector<Clob> &values, BindInfo::BindDirection mode)
 {
     BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_CLOB));
 }
 
-template <>
+template<>
 inline void Statement::Bind<NClob>(const ostring& name, std::vector<NClob> &values, BindInfo::BindDirection mode)
 {
     BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_NCLOB));
 }
 
-template <>
+template<>
 inline void Statement::Bind<Blob>(const ostring& name, std::vector<Blob> &values, BindInfo::BindDirection mode)
 {
     BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_BLOB));
 }
 
-template <>
+template<>
 inline void Statement::Bind<File>(const ostring& name, std::vector<File> &values, BindInfo::BindDirection mode)
 {
     BindVector2(OCI_BindArrayOfFiles, name, values, mode, static_cast<unsigned int>(OCI_BFILE));
 }
 
-template <>
+template<>
 inline void Statement::Bind<Object>(const ostring& name, std::vector<Object> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
     BindVector2(OCI_BindArrayOfObjects, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
-template <>
+template<>
 inline void Statement::Bind<Reference>(const ostring& name, std::vector<Reference> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
     BindVector2(OCI_BindArrayOfRefs, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
-template <class TDataType>
-void Statement::Bind(const ostring& name, std::vector<Collection<TDataType> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
+template<class T>
+void Statement::Bind(const ostring& name, std::vector<Collection<T> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
     BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
-template <>
+template<>
 inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vector<ostring> &values,  unsigned int maxSize, BindInfo::BindDirection mode)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
@@ -5575,13 +5579,13 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vec
     Check(res);
 }
 
-template <>
+template<>
 inline void Statement::Bind<ostring, int>(const ostring& name, std::vector<ostring> &values, int maxSize, BindInfo::BindDirection mode)
 {
     Bind<ostring, unsigned int>(name, values, static_cast<unsigned int>(maxSize), mode);
 }
 
-template <>
+template<>
 inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<Raw> &values, unsigned int maxSize, BindInfo::BindDirection mode)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
@@ -5603,151 +5607,151 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<
     Check(res);
 }
 
-template<class TDataType>
-void Statement::Bind(const ostring& name, std::vector<TDataType> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
+template<class T>
+void Statement::Bind(const ostring& name, std::vector<T> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
 {
     BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
 }
 
-template <>
+template<>
 inline void Statement::Register<unsigned short>(const ostring& name)
 {
     Check(OCI_RegisterUnsignedShort(*this, name.c_str()));
 }
 
-template <>
+template<>
 inline void Statement::Register<short>(const ostring& name)
 {
     Check(OCI_RegisterShort(*this, name.c_str()));
 }
 
-template <>
+template<>
 inline void Statement::Register<unsigned int>(const ostring& name)
 {
     Check(OCI_RegisterUnsignedInt(*this, name.c_str()));
 }
 
-template <>
+template<>
 inline void Statement::Register<int>(const ostring& name)
 {
     Check(OCI_RegisterInt(*this, name.c_str()));
 }
 
-template <>
+template<>
 inline void Statement::Register<big_uint>(const ostring& name)
 {
     Check(OCI_RegisterUnsignedBigInt(*this, name.c_str()));
 }
 
-template <>
+template<>
 inline void Statement::Register<big_int>(const ostring& name)
 {
     Check(OCI_RegisterBigInt(*this, name.c_str()));
 }
 
-template <>
+template<>
 inline void Statement::Register<float>(const ostring& name)
 {
     Check(OCI_RegisterFloat(*this, name.c_str()));
 }
 
-template <>
+template<>
 inline void Statement::Register<double>(const ostring& name)
 {
     Check(OCI_RegisterDouble(*this, name.c_str()));
 }
 
-template <>
+template<>
 inline void Statement::Register<Number>(const ostring& name)
 {
     Check(OCI_RegisterNumber(*this, name.c_str()));
 }
 
-template <>
+template<>
 inline void Statement::Register<Date>(const ostring& name)
 {
     Check(OCI_RegisterDate(*this, name.c_str()));
 }
 
-template <>
+template<>
 inline void Statement::Register<Timestamp, Timestamp::TimestampTypeValues>(const ostring& name, Timestamp::TimestampTypeValues type)
 {
     Check(OCI_RegisterTimestamp(*this, name.c_str(), type));
 }
 
-template <>
+template<>
 inline void Statement::Register<Timestamp, Timestamp::TimestampType>(const ostring& name, Timestamp::TimestampType type)
 {
     Register<Timestamp, Timestamp::TimestampTypeValues>(name, type.GetValue());
 }
 
-template <>
+template<>
 inline void Statement::Register<Interval, Interval::IntervalTypeValues>(const ostring& name, Interval::IntervalTypeValues type)
 {
     Check(OCI_RegisterInterval(*this, name.c_str(), type));
 }
 
-template <>
+template<>
 inline void Statement::Register<Interval, Interval::IntervalType>(const ostring& name, Interval::IntervalType type)
 {
     Register<Interval, Interval::IntervalTypeValues>(name, type.GetValue());
 }
 
-template <>
+template<>
 inline void Statement::Register<Clob>(const ostring& name)
 {
     Check(OCI_RegisterLob(*this, name.c_str(), OCI_CLOB));
 }
 
-template <>
+template<>
 inline void Statement::Register<NClob>(const ostring& name)
 {
     Check(OCI_RegisterLob(*this, name.c_str(), OCI_NCLOB));
 }
 
-template <>
+template<>
 inline void Statement::Register<Blob>(const ostring& name)
 {
     Check(OCI_RegisterLob(*this, name.c_str(), OCI_BLOB));
 }
 
-template <>
+template<>
 inline void Statement::Register<File>(const ostring& name)
 {
     Check(OCI_RegisterFile(*this, name.c_str(), OCI_BFILE));
 }
 
-template <>
+template<>
 inline void Statement::Register<Object, TypeInfo>(const ostring& name, TypeInfo& typeInfo)
 {
     Check(OCI_RegisterObject(*this, name.c_str(), typeInfo));
 }
 
-template <>
+template<>
 inline void Statement::Register<Reference, TypeInfo>(const ostring& name, TypeInfo& typeInfo)
 {
     Check(OCI_RegisterRef(*this, name.c_str(), typeInfo));
 }
 
-template <>
+template<>
 inline void Statement::Register<ostring, unsigned int>(const ostring& name, unsigned int len)
 {
    Check(OCI_RegisterString(*this, name.c_str(), len));
 }
 
-template <>
+template<>
 inline void Statement::Register<ostring, int>(const ostring& name, int len)
 {
     Register<ostring, unsigned int>(name, static_cast<unsigned int>(len));
 }
 
-template <>
+template<>
 inline void Statement::Register<Raw, unsigned int>(const ostring& name, unsigned int len)
 {
     Check(OCI_RegisterRaw(*this, name.c_str(), len));
 }
 
-template <>
+template<>
 inline void Statement::Register<Raw, int>(const ostring& name, int len)
 {
     Register<Raw, unsigned int>(name, static_cast<unsigned int>(len));
@@ -5755,7 +5759,7 @@ inline void Statement::Register<Raw, int>(const ostring& name, int len)
 
 inline Statement::StatementType Statement::GetStatementType() const
 {
-    return StatementType(static_cast<StatementType::type>(Check(OCI_GetStatementType(*this))));
+    return StatementType(static_cast<StatementType::Type>(Check(OCI_GetStatementType(*this))));
 }
 
 inline unsigned int Statement::GetSqlErrorPos() const
@@ -5770,7 +5774,7 @@ inline void Statement::SetFetchMode(FetchMode value)
 
 inline Statement::FetchMode Statement::GetFetchMode() const
 {
-    return FetchMode(static_cast<FetchMode::type>(Check(OCI_GetFetchMode(*this))));
+    return FetchMode(static_cast<FetchMode::Type>(Check(OCI_GetFetchMode(*this))));
 }
 
 inline void Statement::SetBindMode(BindMode value)
@@ -5780,7 +5784,7 @@ inline void Statement::SetBindMode(BindMode value)
 
 inline Statement::BindMode Statement::GetBindMode() const
 {
-    return BindMode(static_cast<BindMode::type>(Check(OCI_GetBindMode(*this))));
+    return BindMode(static_cast<BindMode::Type>(Check(OCI_GetBindMode(*this))));
 }
 
 inline void Statement::SetFetchSize(unsigned int value)
@@ -5830,7 +5834,7 @@ inline void Statement::SetLongMode(LongMode value)
 
 inline Statement::LongMode Statement::GetLongMode() const
 {
-    return LongMode(static_cast<LongMode::type>(Check(OCI_GetLongMode(*this))));
+    return LongMode(static_cast<LongMode::Type>(Check(OCI_GetLongMode(*this))));
 }
 
 inline unsigned int Statement::GetSQLCommand() const
@@ -6043,20 +6047,20 @@ inline bool Resultset::operator -= (int offset)
     return Seek(SeekRelative, -offset);
 }
 
-template<class TDataType>
-void Resultset::Get(unsigned int index, TDataType& value) const
+template<class T>
+void Resultset::Get(unsigned int index, T& value) const
 {
-    value = Get<TDataType>(index);
+    value = Get<T>(index);
 }
 
-template<class TDataType>
-void Resultset::Get(const ostring &name, TDataType& value) const
+template<class T>
+void Resultset::Get(const ostring &name, T& value) const
 {
-    value = Get<TDataType>(name);
+    value = Get<T>(name);
 }
 
-template<class TDataType, class TAdapter>
-bool Resultset::Get(TDataType& value, TAdapter adapter) const
+template<class T, class TAdapter>
+bool Resultset::Get(T& value, TAdapter adapter) const
 {
     return adapter(static_cast<const Resultset&>(*this), value);
 }
@@ -6075,8 +6079,8 @@ unsigned int Resultset::ForEach(TCallback callback)
     return GetCurrentRow();
 }
 
-template<class TAdapter, class TCallback>
-unsigned int Resultset::ForEach(TCallback callback, TAdapter adapter)
+template<class T, class U>
+unsigned int Resultset::ForEach(T callback, U adapter)
 {
     while (Next())
     {
@@ -6377,16 +6381,16 @@ inline Blong Resultset::Get<Blong>(const ostring& name) const
     return Blong(Check(OCI_GetLong2(*this,name.c_str())), GetHandle());
 }
 
-template<class TDataType>
-TDataType Resultset::Get(unsigned int index) const
+template<class T>
+T Resultset::Get(unsigned int index) const
 {
-    return TDataType(Check(OCI_GetColl(*this, index)), GetHandle());
+    return T(Check(OCI_GetColl(*this, index)), GetHandle());
 }
 
-template<class TDataType>
-TDataType Resultset::Get(const ostring& name) const
+template<class T>
+T Resultset::Get(const ostring& name) const
 {
-    return TDataType(Check(OCI_GetColl2(*this, name.c_str())), GetHandle());
+    return T(Check(OCI_GetColl2(*this, name.c_str())), GetHandle());
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -6421,7 +6425,7 @@ inline ostring Column::GetFullSQLType() const
 
 inline DataType Column::GetType() const
 {
-    return DataType(static_cast<DataType::type>(Check(OCI_ColumnGetType(*this))));
+    return DataType(static_cast<DataType::Type>(Check(OCI_ColumnGetType(*this))));
 }
 
 inline unsigned int Column::GetSubType() const
@@ -6431,7 +6435,7 @@ inline unsigned int Column::GetSubType() const
 
 inline CharsetForm Column::GetCharsetForm() const
 {
-    return CharsetForm(static_cast<CharsetForm::type>(Check(OCI_ColumnGetCharsetForm(*this))));
+    return CharsetForm(static_cast<CharsetForm::Type>(Check(OCI_ColumnGetCharsetForm(*this))));
 }
 
 inline unsigned int Column::GetSize() const
@@ -6461,7 +6465,7 @@ inline int Column::GetLeadingPrecision() const
 
 inline Column::PropertyFlags Column::GetPropertyFlags() const
 {
-    return PropertyFlags(static_cast<PropertyFlags::type>(Check(OCI_ColumnGetPropertyFlags(*this))));
+    return PropertyFlags(static_cast<PropertyFlags::Type>(Check(OCI_ColumnGetPropertyFlags(*this))));
 }
 
 inline bool Column::IsNullable() const
@@ -6549,12 +6553,12 @@ inline Event::Event(OCI_Event *pEvent)
 
 inline Event::EventType Event::GetType() const
 {
-    return EventType(static_cast<EventType::type>(Check(OCI_EventGetType(*this))));
+    return EventType(static_cast<EventType::Type>(Check(OCI_EventGetType(*this))));
 }
 
 inline Event::ObjectEvent Event::GetObjectEvent() const
 {
-    return ObjectEvent(static_cast<ObjectEvent::type>(Check(OCI_EventGetOperation(*this))));
+    return ObjectEvent(static_cast<ObjectEvent::Type>(Check(OCI_EventGetOperation(*this))));
 }
 
 inline ostring Event::GetDatabaseName() const
@@ -6630,19 +6634,19 @@ inline void Message::Reset()
     Check(OCI_MsgReset(*this));
 }
 
-template <>
+template<>
 inline Object Message::GetPayload<Object>()
 {
     return Object(Check(OCI_MsgGetObject(*this)), nullptr);
 }
 
-template <>
+template<>
 inline void Message::SetPayload<Object>(const Object &value)
 {
     Check(OCI_MsgSetObject(*this, value));
 }
 
-template <>
+template<>
 inline Raw Message::GetPayload<Raw>()
 {
     unsigned int size = 0;
@@ -6654,7 +6658,7 @@ inline Raw Message::GetPayload<Raw>()
     return MakeRaw(buffer, size);
 }
 
-template <>
+template<>
 inline void Message::SetPayload<Raw>(const Raw &value)
 {
     if (value.size() > 0)
@@ -6679,7 +6683,7 @@ inline int Message::GetAttemptCount() const
 
 inline Message::MessageState Message::GetState() const
 {
-    return MessageState(static_cast<MessageState::type>(Check(OCI_MsgGetState(*this))));
+    return MessageState(static_cast<MessageState::Type>(Check(OCI_MsgGetState(*this))));
 }
 
 inline Raw Message::GetID() const
@@ -6807,7 +6811,7 @@ inline void Enqueue::Put(const Message &message)
 
 inline Enqueue::EnqueueVisibility Enqueue::GetVisibility() const
 {
-    return EnqueueVisibility(static_cast<EnqueueVisibility::type>(Check(OCI_EnqueueGetVisibility(*this))));
+    return EnqueueVisibility(static_cast<EnqueueVisibility::Type>(Check(OCI_EnqueueGetVisibility(*this))));
 }
 
 inline void Enqueue::SetVisibility(EnqueueVisibility value)
@@ -6817,7 +6821,7 @@ inline void Enqueue::SetVisibility(EnqueueVisibility value)
 
 inline Enqueue::EnqueueMode Enqueue::GetMode() const
 {
-    return EnqueueMode(static_cast<EnqueueMode::type>(Check(OCI_EnqueueGetSequenceDeviation(*this))));
+    return EnqueueMode(static_cast<EnqueueMode::Type>(Check(OCI_EnqueueGetSequenceDeviation(*this))));
 }
 
 inline void Enqueue::SetMode(EnqueueMode value)
@@ -6917,7 +6921,7 @@ inline void Dequeue::SetRelativeMsgID(const Raw &value)
 
 inline Dequeue::DequeueVisibility Dequeue::GetVisibility() const
 {
-    return DequeueVisibility(static_cast<DequeueVisibility::type>(Check(OCI_DequeueGetVisibility(*this))));
+    return DequeueVisibility(static_cast<DequeueVisibility::Type>(Check(OCI_DequeueGetVisibility(*this))));
 }
 
 inline void Dequeue::SetVisibility(DequeueVisibility value)
@@ -6927,7 +6931,7 @@ inline void Dequeue::SetVisibility(DequeueVisibility value)
 
 inline Dequeue::DequeueMode Dequeue::GetMode() const
 {
-    return DequeueMode(static_cast<DequeueMode::type>(Check(OCI_DequeueGetMode(*this))));
+    return DequeueMode(static_cast<DequeueMode::Type>(Check(OCI_DequeueGetMode(*this))));
 }
 
 inline void Dequeue::SetMode(DequeueMode value)
@@ -6937,7 +6941,7 @@ inline void Dequeue::SetMode(DequeueMode value)
 
 inline Dequeue::NavigationMode Dequeue::GetNavigation() const
 {
-    return NavigationMode(static_cast<NavigationMode::type>(Check(OCI_DequeueGetNavigation(*this))));
+    return NavigationMode(static_cast<NavigationMode::Type>(Check(OCI_DequeueGetNavigation(*this))));
 }
 
 inline void Dequeue::SetNavigation(NavigationMode value)
@@ -6996,10 +7000,10 @@ inline void DirectPath::SetColumn(unsigned int colIndex, const ostring& name, un
     Check(OCI_DirPathSetColumn(*this, colIndex, name.c_str(), maxSize, format.c_str()));
 }
 
-template <class TDataType>
-inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex, const TDataType &value, bool complete)
+template<class T>
+inline void DirectPath::SetEntry(unsigned int rowIndex, unsigned int colIndex, const T &value, bool complete)
 {
-    Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, static_cast<const AnyPointer>(const_cast<typename TDataType::value_type *>(value.c_str())), static_cast<unsigned int>(value.size()), complete));
+    Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, static_cast<const AnyPointer>(const_cast<typename T::value_type *>(value.c_str())), static_cast<unsigned int>(value.size()), complete));
 }
 
 inline void DirectPath::Reset()
@@ -7014,12 +7018,12 @@ inline void DirectPath::Prepare()
 
 inline DirectPath::Result DirectPath::Convert()
 {
-    return Result(static_cast<Result::type>(Check(OCI_DirPathConvert(*this))));
+    return Result(static_cast<Result::Type>(Check(OCI_DirPathConvert(*this))));
 }
 
 inline DirectPath::Result DirectPath::Load()
 {
-    return Result(static_cast<Result::type>(Check(OCI_DirPathLoad(*this))));
+    return Result(static_cast<Result::Type>(Check(OCI_DirPathLoad(*this))));
 }
 
 inline void DirectPath::Finish()
