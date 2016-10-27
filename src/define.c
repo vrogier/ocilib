@@ -154,16 +154,16 @@ boolean OCI_DefineIsDataNotNull
     if (def && def->rs->row_cur > 0)
     {
         OCIInd ind = OCI_IND_NULL;
-
-        if (OCI_CDT_OBJECT == def->col.datatype)
+        
+        if (SQLT_NTY == def->col.sqlcode)
         {
-           ind =  * (OCIInd *) def->buf.obj_inds[def->rs->row_cur-1];
+            ind = *(OCIInd *)def->buf.obj_inds[def->rs->row_cur - 1];
         }
         else
         {
-            ind = ((OCIInd *) (def->buf.inds))[def->rs->row_cur-1];
+            ind = def->buf.inds[def->rs->row_cur - 1];
         }
-        
+
         res = (ind != OCI_IND_NULL);
     }
 
@@ -232,16 +232,14 @@ boolean OCI_DefineAlloc
 
     OCI_CALL_CONTEXT_SET_FROM_STMT(def->rs->stmt)
 
-    /* Allocate null indicators array */
+    /* Allocate indicators */
 
-    indsize = (ub4)(SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode ? sizeof(void*) : sizeof(sb2));
-
-    def->buf.inds = (void *) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, (size_t) indsize, (size_t) def->buf.count, TRUE);
+    def->buf.inds = (void *)OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(OCIInd), (size_t)def->buf.count, TRUE);
     OCI_STATUS = (NULL != def->buf.inds);
 
-    if (OCI_STATUS && OCI_CDT_OBJECT == def->col.datatype)
+    if (OCI_STATUS && SQLT_NTY == def->col.sqlcode)
     {
-        def->buf.obj_inds = (void **) OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(void *), (size_t) def->buf.count, TRUE);
+        def->buf.obj_inds = (void *)OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(void*), (size_t)def->buf.count, TRUE);
         OCI_STATUS = (NULL != def->buf.obj_inds);
     }
 
@@ -338,30 +336,34 @@ boolean OCI_DefineDef
 
     OCI_EXEC
     (
-        OCIDefineByPos(def->rs->stmt->stmt,
-                       (OCIDefine **) &def->buf.handle,
-                       def->rs->stmt->con->err,
-                       position,
-                       (void *) def->buf.data,
-                       (sb4   ) def->col.bufsize,
-                       (ub2   ) def->col.libcode,
-                       (void *) def->buf.inds,
-                       (ub2  *) def->buf.lens,
-                       (ub2  *) NULL,
-                       (ub4   ) mode)
+        OCIDefineByPos(
+                        def->rs->stmt->stmt,
+                        (OCIDefine **) &def->buf.handle,
+                        def->rs->stmt->con->err,
+                        position,
+                        (void *) def->buf.data,
+                        (sb4   ) def->col.bufsize,
+                        (ub2   ) def->col.libcode,
+                        (void *) def->buf.inds,
+                        (ub2  *) def->buf.lens,
+                        (ub2  *) NULL,
+                        (ub4   ) mode
+                      )
     )
 
     if (SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode)
     {
         OCI_EXEC
         (
-            OCIDefineObject((OCIDefine *)def->buf.handle,
-                            def->rs->stmt->con->err,
-                            def->col.typinf->tdo,
-                            (void **) def->buf.data,
-                            (ub4   *) NULL,
-                            (void **) def->buf.obj_inds,
-                            (ub4   *) NULL)
+            OCIDefineObject(
+                                (OCIDefine *)def->buf.handle,
+                                def->rs->stmt->con->err,
+                                def->col.typinf->tdo,
+                                (void **) def->buf.data,
+                                (ub4   *) NULL,
+                                (void **) def->buf.obj_inds,
+                                (ub4   *) NULL
+                            )
         )
     }
 

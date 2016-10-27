@@ -160,6 +160,7 @@ OCI_Resultset * OCI_ResultsetCreate
                 /* mapping to OCILIB internal types */
 
                 OCI_STATUS = OCI_STATUS && OCI_ColumnMap(&def->col, rs->stmt);
+
              #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
                 if (OCI_SFM_SCROLLABLE == rs->stmt->exec_mode)

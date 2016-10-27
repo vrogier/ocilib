@@ -1169,12 +1169,12 @@ boolean OCI_BindFreeAll
     OCI_Statement *stmt
 );
 
-boolean OCI_BindCheck
+boolean OCI_BindCheckAll
 (
     OCI_Statement *stmt
 );
 
-boolean OCI_BindReset
+boolean OCI_BindUpdateAll
 (
     OCI_Statement *stmt
 );

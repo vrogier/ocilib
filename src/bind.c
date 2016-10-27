@@ -82,7 +82,6 @@ boolean OCI_BindFree
 
     OCI_FREE(bnd->buffer.inds)
     OCI_FREE(bnd->buffer.obj_inds)
-    OCI_FREE(bnd->buffer.null_inds)
     OCI_FREE(bnd->buffer.lens)
     OCI_FREE(bnd->buffer.tmpbuf)
     OCI_FREE(bnd->plrcds)
@@ -419,7 +418,7 @@ boolean OCI_BindSetNullIndicator
 
     if (bnd->buffer.inds)
     {
-        ((sb2*) bnd->buffer.inds)[position-1] = value;
+        bnd->buffer.inds[position - 1] = value;
     }
 
     return TRUE;
@@ -691,7 +690,7 @@ boolean OCI_API OCI_BindIsNullAtPos
 
     if (bnd->buffer.inds)
     {
-        OCI_RETVAL = (OCI_IND_NULL == (((sb2*) bnd->buffer.inds)[position-1]));
+        OCI_RETVAL = (OCI_IND_NULL == bnd->buffer.inds[position - 1]);
     }
 
     OCI_CALL_EXIT()

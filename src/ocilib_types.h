@@ -343,14 +343,14 @@ struct OCI_Buffer
 {
     void            *handle;       /* OCI handle (bind or define) */
     void           **data;         /* data / array of data */
-    void            *inds;         /* array of indicators */
     void            *lens;         /* array of lengths */
     ub4              count;        /* number of elements in the buffer */
     int              sizelen;      /* size of an element in the lens array */
-    void           **obj_inds;     /* array of indicators structure object */
-    sb2             *null_inds;    /* null indicators for objects */
     otext           *tmpbuf;       /* temporary buffer */
     unsigned int     tmpsize;      /* temporary buffer size */
+    OCIInd*          inds;         /* indicators */
+    void**           obj_inds;     /* object indicators */
+
 };
 
 typedef struct OCI_Buffer OCI_Buffer;
