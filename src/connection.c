@@ -73,11 +73,11 @@ OCI_Connection * OCI_ConnectionAllocate
     unsigned int mode
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
     OCI_Connection *con  = NULL;
     OCI_Item       *item = NULL;
- 
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+
     /* create connection object */
 
     item = OCI_ListAppend(OCILib.cons, sizeof(*con));
@@ -143,7 +143,7 @@ OCI_Connection * OCI_ConnectionAllocate
 
                 memset(dbname, 0, sizeof(dbname));
 
-                if (con->db && con->db[0])
+                if (OCI_STRING_VALID(con->db))
                 {
                     OCI_StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));
                 }
@@ -327,10 +327,10 @@ boolean OCI_ConnectionLogon
     const otext    *tag
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
     dbtext *dbstr  = NULL;
     int     dbsize = -1;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == con, FALSE)
 
@@ -352,7 +352,7 @@ boolean OCI_ConnectionLogon
 
         memset(dbname, 0, sizeof(dbname));
 
-        if (con->db && con->db[0])
+        if (OCI_STRING_VALID(con->db))
         {
             OCI_StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));
         }
@@ -385,7 +385,7 @@ boolean OCI_ConnectionLogon
  
         /* modify user password if needed */
 
-        if (new_pwd && new_pwd[0])
+        if (OCI_STRING_VALID(new_pwd))
         {
             int dbsize1 = -1;
             int dbsize2 = -1;
@@ -425,7 +425,7 @@ boolean OCI_ConnectionLogon
         {
             /* set session login attribute */
 
-            if (OCI_STATUS && con->user && con->user[0])
+            if (OCI_STATUS && OCI_STRING_VALID(con->user))
             {
                 dbsize = -1;
                 dbstr  = OCI_StringGetOracleString(con->user, &dbsize);
@@ -437,7 +437,7 @@ boolean OCI_ConnectionLogon
 
             /* set session password attribute */
 
-            if (OCI_STATUS && con->pwd && con->pwd[0])
+            if (OCI_STATUS && OCI_STRING_VALID(con->pwd))
             {
                 dbsize = -1;
                 dbstr  = OCI_StringGetOracleString(con->pwd, &dbsize);
@@ -471,7 +471,7 @@ boolean OCI_ConnectionLogon
                 ub4 credt = OCI_CRED_RDBMS;
                 ub4 mode  = con->mode;
 
-                if  ((!con->user || !con->user[0]) && (!con->pwd || !con->pwd[0]))
+                if (!OCI_STRING_VALID(con->user) && !OCI_STRING_VALID(con->pwd))
                 {
                     credt = OCI_CRED_EXT;
                 }
@@ -543,7 +543,7 @@ boolean OCI_ConnectionLogon
 
             mode = OCI_SESSGET_SPOOL;
 
-            if (tag && tag[0])
+            if (OCI_STRING_VALID(tag))
             {
                 dbsize_tag = -1;
                 dbstr_tag  = OCI_StringGetOracleString(tag, &dbsize_tag);
@@ -1151,8 +1151,7 @@ const otext * OCI_API OCI_GetVersionServer
         int     dbsize = OCI_SIZE_BUFFER * (int) sizeof(dbtext);
         dbtext *dbstr  = NULL;
 
-        con->ver_str = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), OCI_SIZE_BUFFER + 1, TRUE);
-        OCI_STATUS = (NULL != con->ver_str);
+        OCI_ALLOCATE_DATA(OCI_IPC_STRING, con->ver_str, OCI_SIZE_BUFFER + 1)
 
         if (OCI_STATUS)
         {
@@ -1375,11 +1374,7 @@ boolean OCI_API OCI_ServerEnableOutput
 
     /* initialize the output buffer on server side */
 
-    if (!con->svopt)
-    {
-        con->svopt = (OCI_ServerOutput *) OCI_MemAlloc(OCI_IPC_SERVER_OUPUT, sizeof(*con->svopt), (size_t) 1, TRUE);
-        OCI_STATUS = (NULL != con->svopt);
-    }
+    OCI_ALLOCATE_DATA(OCI_IPC_SERVER_OUPUT, con->svopt, 1)
 
     /* allocation internal buffer if needed */
 
@@ -1403,8 +1398,7 @@ boolean OCI_API OCI_ServerEnableOutput
 
         /* allocate internal string (line) array */
 
-        con->svopt->arrbuf = (ub1 *) OCI_MemAlloc(OCI_IPC_STRING, ((size_t)(con->svopt->lnsize + 1)) * charsize, (size_t) con->svopt->arrsize, TRUE);
-        OCI_STATUS = (NULL != con->svopt->arrbuf);
+        OCI_ALLOCATE_BUFFER(OCI_IPC_STRING, con->svopt->arrbuf, (con->svopt->lnsize + 1) * charsize, con->svopt->arrsize)
     }
 
     if (OCI_STATUS)
@@ -1549,11 +1543,7 @@ boolean OCI_API OCI_SetTrace
 
     /* allocate trace info structure only if trace functions are used */
 
-    if (!con->trace)
-    {
-        con->trace = (OCI_TraceInfo *) OCI_MemAlloc(OCI_IPC_TRACE_INFO, sizeof(*con->trace), (size_t) 1, TRUE);
-        OCI_STATUS = (NULL != con->trace);
-    }
+    OCI_ALLOCATE_DATA(OCI_IPC_TRACE_INFO, con->trace, 1)
 
     /* set trace properties */
 
@@ -1858,8 +1848,8 @@ OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
         OCIDateTime *handle = NULL;
 
         OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_INSTSTARTTIME, con->svr, &handle, NULL);
-
-        OCI_STATUS = OCI_STATUS && (NULL != OCI_TimestampInit(con, &con->inst_startup, handle, OCI_TIMESTAMP));
+        con->inst_startup = OCI_TimestampInit(con, NULL, handle, OCI_TIMESTAMP);
+        OCI_STATUS = OCI_STATUS && (NULL != con->inst_startup);
     }
 
 #endif
@@ -2180,9 +2170,10 @@ boolean OCI_ImmediateFmt
         {
             /* allocate buffer */
 
-            otext  *sql_fmt = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), (size_t) (size+1), TRUE);
-            OCI_STATUS = (NULL != sql_fmt);
+            otext  *sql_fmt = NULL;
 
+            OCI_ALLOCATE_DATA(OCI_IPC_STRING, sql_fmt, size + 1)
+    
             if (OCI_STATUS)
             {
                 /* format buffer */

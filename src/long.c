@@ -37,24 +37,18 @@ static unsigned int LongTypeValues[] = { OCI_CLONG, OCI_BLONG };
 OCI_Long * OCI_LongInit
 (
     OCI_Statement *stmt,
-    OCI_Long     **plg,
+    OCI_Long      *lg,
     OCI_Define    *def,
     unsigned int   type
 )
 {
-    OCI_Long *lg = NULL;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_CHECK(NULL == plg, NULL);
+    OCI_ALLOCATE_DATA(OCI_IPC_LONG, lg, 1);
 
-    if (!*plg )
+    if (OCI_STATUS)
     {
-        *plg = (OCI_Long *) OCI_MemAlloc(OCI_IPC_LONG, sizeof(*lg), (size_t) 1, TRUE);
-    }
-
-    if (*plg)
-    {
-        lg = *plg;
-
         lg->size        = 0;
         lg->maxsize     = 0;
         lg->stmt        = stmt;
@@ -94,7 +88,7 @@ OCI_Long * OCI_API OCI_LongCreate
     OCI_CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, LongTypeValues, OTEXT("Long Type"))
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_RETVAL = OCI_LongInit(stmt, &OCI_RETVAL, NULL, type);
+    OCI_RETVAL = OCI_LongInit(stmt, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()

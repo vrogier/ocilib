@@ -98,13 +98,13 @@ sb4 OCI_ProcOutBind
     dvoid  **indp,
     ub2    **rcodep
 )
-{
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
+{        
     OCI_Bind      *bnd  = (OCI_Bind *)octxp;
     OCI_Define    *def  = NULL;
     OCI_Resultset *rs   = NULL;
     ub4            rows = 0;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     /* those checks may be not necessary but they keep away compilers warning
        away if the warning level is set to maximum !
@@ -132,14 +132,7 @@ sb4 OCI_ProcOutBind
 
         /* allocate resultset handles array */
 
-        if (!bnd->stmt->rsts)
-        {
-            bnd->stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY,
-                                                              sizeof(*bnd->stmt->rsts),
-                                                              (size_t) bnd->stmt->nb_rs, TRUE);
-
-            OCI_STATUS = (NULL != bnd->stmt->rsts);
-        }
+        OCI_ALLOCATE_DATA(OCI_IPC_RESULTSET_ARRAY, bnd->stmt->rsts, bnd->stmt->nb_rs)
 
         /* create resultset as needed */
 
@@ -243,13 +236,13 @@ ub4 OCI_ProcNotifyChanges
     ub4              mode
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
     OCI_Subscription *sub = (OCI_Subscription *)oci_ctx;
     boolean res           = TRUE;
     void   *dbstr         = NULL;
     int     dbsize        = 0;
     ub4     type          = 0;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_NOT_USED(paylen)
     OCI_NOT_USED(payload)
@@ -489,11 +482,11 @@ void OCI_ProcHAEvent
     dvoid     *eventptr
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
     OCI_List  *list  = OCILib.cons;
     OCI_Item  *item  = NULL;
     OCIServer *srvhp = NULL;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_NOT_USED(evtctx)
 
@@ -535,8 +528,8 @@ void OCI_ProcHAEvent
                     /* get event timestamp */
 
                     OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_TIMESTAMP, eventhp, &dth, NULL)
-
-                    OCI_STATUS = (OCI_STATUS && NULL != OCI_TimestampInit(con, &tmsp, dth, OCI_TIMESTAMP));
+                    tmsp = OCI_TimestampInit(con, tmsp, dth, OCI_TIMESTAMP);
+                    OCI_STATUS = (OCI_STATUS && NULL != tmsp);
 
                     /* get status */
 

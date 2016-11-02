@@ -71,7 +71,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     if (OCI_MATCHING_TYPE(def, lib_type))                                                       \
     {                                                                                           \
         if (!ctx->call_err) ctx->call_err = OCI_ErrorGet(FALSE);                                \
-        OCI_RETVAL = func;                                                                      \
+        def->obj = OCI_RETVAL = func;                                                                      \
         OCI_STATUS = (NULL != OCI_RETVAL);                                                      \
     }                                                                                           \
     OCI_CALL_EXIT()
@@ -86,18 +86,17 @@ OCI_Resultset * OCI_ResultsetCreate
     int            size
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
     OCI_Resultset* rs = NULL;
 
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     OCI_CHECK(stmt == NULL, NULL)
 
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     /* allocate resultset structure */
 
-    rs = (OCI_Resultset *) OCI_MemAlloc(OCI_IPC_RESULTSET, sizeof(*rs), (size_t) 1, TRUE);
-    OCI_STATUS = (NULL != rs);
+    OCI_ALLOCATE_DATA(OCI_IPC_RESULTSET, rs, 1)
 
     /* set attributes */
 
@@ -128,11 +127,7 @@ OCI_Resultset * OCI_ResultsetCreate
 
         /* allocate columns array */
 
-        if (OCI_STATUS)
-        {
-            rs->defs = (OCI_Define *) OCI_MemAlloc(OCI_IPC_DEFINE, sizeof(*rs->defs), (size_t) nb, TRUE);
-            OCI_STATUS = (NULL != rs->defs);
-        }
+        OCI_ALLOCATE_DATA(OCI_IPC_DEFINE, rs->defs, nb)
 
         /* describe select list */
 
@@ -277,12 +272,12 @@ boolean OCI_FetchPieces
     OCI_Resultset *rs
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
     ub4 type, iter, dx;
     ub1 in_out, piece;
     void *handle;
     ub4 i, j;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == rs, FALSE)
 
@@ -298,7 +293,7 @@ boolean OCI_FetchPieces
         {
             for (j = 0; j < def->buf.count; j++)
             {
-                OCI_LongInit(rs->stmt, (OCI_Long **) &def->buf.data[j], def, def->col.subtype);
+                def->buf.data[j] = OCI_LongInit(rs->stmt, (OCI_Long *)def->buf.data[j], def, def->col.subtype);
             }
         }
     }
@@ -358,13 +353,7 @@ boolean OCI_FetchPieces
                 {
                     lg->maxsize = bufsize;
 
-                    lg->buffer = (ub1 *) OCI_MemAlloc(OCI_IPC_LONG_BUFFER, (size_t) lg->maxsize, (size_t) 1, FALSE);
-                    OCI_STATUS = (NULL != lg->buffer);
-
-                    if (OCI_STATUS)
-                    {
-                        lg->buffer[0] = 0;
-                    }
+                    OCI_ALLOCATE_DATA(OCI_IPC_LONG_BUFFER, lg->buffer, lg->maxsize)
                 }
                 else if ((lg->size*char_fact) >= (lg->maxsize - trailing_size))
                 {
@@ -922,8 +911,7 @@ OCI_Resultset * OCI_API OCI_GetResultset
         {
             /* allocate memory for one resultset handle */
 
-            stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY, sizeof(*stmt->rsts), (size_t) 1, TRUE);
-            OCI_STATUS = (NULL != stmt->rsts);
+            OCI_ALLOCATE_DATA(OCI_IPC_RESULTSET_ARRAY, stmt->rsts, 1)
            
             if (OCI_STATUS)
             {
@@ -1546,7 +1534,7 @@ OCI_Number * OCI_API OCI_GetNumber
     (
         rs, index, OCI_Number *, NULL, OCI_CDT_NUMERIC,
 
-        OCI_NumberInit(rs->stmt->con, (OCI_Number **) &def->obj, (OCINumber *) OCI_DefineGetData(def))
+        OCI_NumberInit(rs->stmt->con, (OCI_Number *) def->obj, (OCINumber *) OCI_DefineGetData(def))
     )
 }
 
@@ -2060,7 +2048,7 @@ OCI_Date * OCI_API OCI_GetDate
     (
         rs, index, OCI_Date *, NULL, OCI_CDT_DATETIME,
 
-        OCI_DateInit(rs->stmt->con, (OCI_Date **) &def->obj,
+        OCI_DateInit(rs->stmt->con, (OCI_Date *) def->obj,
                      (OCIDate *) OCI_DefineGetData(def), FALSE,
                      (SQLT_DAT == def->col.libcode))
     )
@@ -2093,7 +2081,7 @@ OCI_Timestamp * OCI_API OCI_GetTimestamp
     (
         rs, index, OCI_Timestamp *, NULL, OCI_CDT_TIMESTAMP,
 
-        OCI_TimestampInit(rs->stmt->con, (OCI_Timestamp **) &def->obj,
+        OCI_TimestampInit(rs->stmt->con, (OCI_Timestamp *) def->obj,
                          (OCIDateTime *) OCI_DefineGetData(def), def->col.subtype)
     )
 }
@@ -2125,7 +2113,7 @@ OCI_Interval * OCI_API OCI_GetInterval
     (
        rs, index, OCI_Interval *, NULL, OCI_CDT_INTERVAL,
 
-       OCI_IntervalInit(rs->stmt->con, (OCI_Interval **) &def->obj,
+       OCI_IntervalInit(rs->stmt->con, (OCI_Interval *) def->obj,
                         (OCIInterval *) OCI_DefineGetData(def), def->col.subtype)
     )
 }
@@ -2157,7 +2145,7 @@ OCI_Object * OCI_API OCI_GetObject
     (
        rs, index, OCI_Object *, NULL, OCI_CDT_OBJECT,
 
-       OCI_ObjectInit(rs->stmt->con, (OCI_Object **)&def->obj,
+       OCI_ObjectInit(rs->stmt->con, (OCI_Object *) def->obj,
                       OCI_DefineGetData(def), def->col.typinf,
                       NULL, -1, TRUE)
     )
@@ -2190,8 +2178,7 @@ OCI_Coll * OCI_API OCI_GetColl
     (
        rs, index, OCI_Coll *, NULL, OCI_CDT_COLLECTION,
 
-       OCI_CollInit(rs->stmt->con, (OCI_Coll **)&def->obj,
-                    OCI_DefineGetData(def), def->col.typinf)
+       OCI_CollInit(rs->stmt->con, (OCI_Coll *) def->obj, OCI_DefineGetData(def), def->col.typinf)
     )
 }
 
@@ -2222,8 +2209,7 @@ OCI_Ref * OCI_API OCI_GetRef
     (
        rs, index, OCI_Ref *, NULL, OCI_CDT_REF,
 
-       OCI_RefInit(rs->stmt->con, &def->col.typinf,
-                   (OCI_Ref **)&def->obj, OCI_DefineGetData(def))
+       OCI_RefInit(rs->stmt->con, def->col.typinf, (OCI_Ref *) def->obj, OCI_DefineGetData(def))
     )
 }
 
@@ -2254,7 +2240,7 @@ OCI_Statement * OCI_API OCI_GetStatement
     (
        rs, index, OCI_Statement *, NULL, OCI_CDT_CURSOR,
 
-       OCI_StatementInit(rs->stmt->con,(OCI_Statement **) &def->obj,
+       OCI_StatementInit(rs->stmt->con,(OCI_Statement *) def->obj,
                          (OCIStmt *) OCI_DefineGetData(def), TRUE, def->col.name)
     )
 }
@@ -2286,7 +2272,7 @@ OCI_Lob * OCI_API OCI_GetLob
     (
        rs, index, OCI_Lob *, NULL, OCI_CDT_LOB,
 
-       OCI_LobInit(rs->stmt->con,(OCI_Lob **) &def->obj,
+       OCI_LobInit(rs->stmt->con,(OCI_Lob *) def->obj,
                    (OCILobLocator *) OCI_DefineGetData(def),
                    def->col.subtype)
     )
@@ -2319,7 +2305,7 @@ OCI_File * OCI_API OCI_GetFile
     (
        rs, index, OCI_File *, NULL, OCI_CDT_FILE,
 
-       OCI_FileInit(rs->stmt->con, (OCI_File **)&def->obj,
+       OCI_FileInit(rs->stmt->con, (OCI_File *) def->obj,
                    (OCILobLocator *) OCI_DefineGetData(def),
                    def->col.subtype)
     )
@@ -2352,7 +2338,7 @@ OCI_Long * OCI_API OCI_GetLong
     (
        rs, index, OCI_Long *, NULL, OCI_CDT_LONG,
 
-       (OCI_Long * )OCI_DefineGetData(def)
+       (OCI_Long *) OCI_DefineGetData(def)
     )
 }
 

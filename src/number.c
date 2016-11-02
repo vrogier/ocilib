@@ -43,9 +43,9 @@ static MagicNumber MagicNumbers[] =
                                                                                     \
     OCINumber src_num = { {0} };                                                    \
                                                                                     \
-    OCI_CALL_ENTER(boolean, FALSE)                                            \
+    OCI_CALL_ENTER(boolean, FALSE)                                                  \
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)                                      \
-    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)                            \
+    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)                                           \
                                                                                     \
     OCI_STATUS = OCI_NumberSetNativeValue(number->con, &src_num,                    \
                                            OCI_GetNumericTypeSize(type),            \
@@ -244,10 +244,10 @@ boolean OCI_NumberFromString
     const otext   * fmt
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
     boolean done = FALSE;
 
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     OCI_CHECK(NULL == out_value, FALSE)
     OCI_CHECK(NULL == in_value, FALSE)
 
@@ -367,10 +367,10 @@ boolean OCI_NumberToString
     const otext   * fmt
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
     boolean   done = FALSE;
 
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     OCI_CHECK(NULL == out_value, FALSE)
     OCI_CHECK(NULL == number, FALSE)
 
@@ -510,26 +510,17 @@ boolean OCI_NumberToString
 OCI_Number * OCI_NumberInit
 (
     OCI_Connection  *con,
-    OCI_Number     **pnumber,
-    OCINumber        *buffer
+    OCI_Number      *number,
+    OCINumber       *buffer
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)
-    OCI_Number *number = NULL;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK(NULL == pnumber, NULL);
-
-    if (!*pnumber)
-    {
-        *pnumber = (OCI_Number *)OCI_MemAlloc(OCI_IPC_NUMBER, sizeof(*number), (size_t) 1, TRUE);
-    }
-
-    OCI_STATUS = (NULL != *pnumber);
+    OCI_ALLOCATE_DATA(OCI_IPC_NUMBER, number, 1);
 
     if (OCI_STATUS)
     {
-        number = *pnumber;
-
         number->con = con;
         number->handle = buffer;
 
@@ -545,8 +536,7 @@ OCI_Number * OCI_NumberInit
             if (OCI_OBJECT_ALLOCATED_ARRAY != number->hstate)
             {
                 number->hstate = OCI_OBJECT_ALLOCATED;
-                number->handle = (OCINumber *)OCI_MemAlloc(OCI_IPC_NUMBER, sizeof(*number->handle), (size_t)1, TRUE);
-                OCI_STATUS = (NULL != number->handle);
+                OCI_ALLOCATE_DATA(OCI_IPC_ARRAY, number->handle, 1)
             }
         }
         else
@@ -560,7 +550,7 @@ OCI_Number * OCI_NumberInit
     if (!OCI_STATUS && number)
     {
         OCI_NumberFree(number);
-        *pnumber = number = NULL;
+        number = NULL;
     }
 
     return number;
@@ -583,7 +573,7 @@ OCI_Number * OCI_API OCI_NumberCreate
     OCI_CALL_CHECK_INITIALIZED()
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_NumberInit(con, &OCI_RETVAL, NULL);
+    OCI_RETVAL = OCI_NumberInit(con, NULL, NULL);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()

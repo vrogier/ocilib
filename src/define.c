@@ -150,11 +150,11 @@ boolean OCI_DefineIsDataNotNull
 )
 {
     boolean res = FALSE;
-    
+
     if (def && def->rs->row_cur > 0)
     {
         OCIInd ind = OCI_IND_NULL;
-        
+
         if (SQLT_NTY == def->col.sqlcode)
         {
             ind = *(OCIInd *)def->buf.obj_inds[def->rs->row_cur - 1];
@@ -184,7 +184,7 @@ boolean OCI_DefineGetNumber
     uword          size
 )
 {
-    OCI_Define *def = NULL; 
+    OCI_Define *def = NULL;
     boolean     res = FALSE;
 
     def = OCI_GetDefine(rs, index);
@@ -220,13 +220,9 @@ boolean OCI_DefineAlloc
     OCI_Define *def
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-    
-    ub4 indsize = 0;
     ub4 i;
 
-    /* this function allocates internal buffers, handles, indicators, arrays, ...
-       for the given output define handle */
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == def, FALSE)
 
@@ -234,47 +230,41 @@ boolean OCI_DefineAlloc
 
     /* Allocate indicators */
 
-    def->buf.inds = (void *)OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(OCIInd), (size_t)def->buf.count, TRUE);
-    OCI_STATUS = (NULL != def->buf.inds);
+    OCI_ALLOCATE_DATA(OCI_IPC_INDICATOR_ARRAY, def->buf.inds, def->buf.count);
 
-    if (OCI_STATUS && SQLT_NTY == def->col.sqlcode)
+    if (SQLT_NTY == def->col.sqlcode)
     {
-        def->buf.obj_inds = (void *)OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(void*), (size_t)def->buf.count, TRUE);
-        OCI_STATUS = (NULL != def->buf.obj_inds);
+        OCI_ALLOCATE_DATA(OCI_IPC_INDICATOR_ARRAY, def->buf.obj_inds, def->buf.count);
     }
 
     /* Allocate row data sizes array */
 
-    if (OCI_STATUS)
-    {
-        def->buf.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, (size_t) def->buf.sizelen, (size_t) def->buf.count, TRUE);
-        OCI_STATUS = (NULL != def->buf.lens);
-    }
+    OCI_ALLOCATE_BUFFER(OCI_IPC_LEN_ARRAY, def->buf.lens, def->buf.sizelen, def->buf.count)
 
     /* initialize length array with buffer default size.
        But, Oracle uses different sizes for static fetch and callback fetch....*/
 
     if (OCI_STATUS)
     {
-       ub4 bufsize = 0;
+       /* Allocate buffer array */
 
-        for (i=0; i < def->buf.count; i++)
+       ub4 bufsize = (ub4)(OCI_CDT_LONG == def->col.datatype ? sizeof(OCI_Long *) : def->col.bufsize);
+
+       OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, def->buf.data, bufsize, def->buf.count)
+
+       /* Allocate buffer length array */
+
+        for (i = 0; i < def->buf.count; i++)
         {
             if (def->buf.sizelen == (int) sizeof(ub2))
             {
-                *(ub2*)(((ub1 *)def->buf.lens) + (size_t) (def->buf.sizelen*i)) = (ub2) def->col.bufsize;
+                OCI_ARRAY_SET_AT(def->buf.lens, ub2, i, def->col.bufsize)
             }
             else if (def->buf.sizelen == (int) sizeof(ub4))
             {
-                *(ub4*)(((ub1 *)def->buf.lens) + (size_t) (def->buf.sizelen*i)) = (ub4) def->col.bufsize;
+                OCI_ARRAY_SET_AT(def->buf.lens, ub4, i, def->col.bufsize)
             }
         }
-
-        /* Allocate buffer array */
-
-        bufsize = (ub4)(OCI_CDT_LONG == def->col.datatype ? sizeof(OCI_Long *) : def->col.bufsize);
-        def->buf.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (size_t) bufsize, (size_t) def->buf.count, TRUE);
-        OCI_STATUS = (NULL != def->buf.data);
     }
 
     /* Allocate descriptor for cursor, lob and file, interval and timestamp */
@@ -303,7 +293,7 @@ boolean OCI_DefineAlloc
             }
         }
     }
- 
+
     return OCI_STATUS;
 }
 
@@ -317,9 +307,9 @@ boolean OCI_DefineDef
     ub4         position
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-    
     ub2 mode = OCI_DEFAULT;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == def, FALSE)
 

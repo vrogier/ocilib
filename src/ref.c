@@ -31,34 +31,21 @@
 OCI_Ref * OCI_RefInit
 (
     OCI_Connection *con,
-    OCI_TypeInfo  **typinf,
-    OCI_Ref       **pref,
+    OCI_TypeInfo   *typinf,
+    OCI_Ref        *ref,
     void           *handle
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)
-
-    OCI_Ref *ref = NULL;
-
-    OCI_CHECK(NULL == pref, NULL)
-    OCI_CHECK(NULL == con, NULL)
-
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    if (!*pref)
-    {
-        *pref = (OCI_Ref *) OCI_MemAlloc(OCI_IPC_REF, sizeof(*ref), (size_t) 1, TRUE);
-    }
-
-    OCI_STATUS = (NULL != *pref);
+    OCI_ALLOCATE_DATA(OCI_IPC_REF, ref, 1);
 
     if (OCI_STATUS)
     {
-        ref = *pref;
-
         ref->handle = handle;
         ref->con    = con;
-        ref->typinf = typinf ? *typinf : NULL;
+        ref->typinf = typinf;
 
         if (!ref->handle || (OCI_OBJECT_ALLOCATED_ARRAY == ref->hstate))
         {
@@ -93,7 +80,7 @@ OCI_Ref * OCI_RefInit
     if (!OCI_STATUS && ref)
     {
         OCI_RefFree(ref);
-        *pref = ref = NULL;
+        ref = NULL;
     }
 
     return ref;
@@ -108,9 +95,9 @@ boolean OCI_RefPin
     OCI_Ref *ref
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
     void *obj_handle = NULL;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == ref, FALSE)
 
@@ -126,10 +113,9 @@ boolean OCI_RefPin
 
     if (OCI_STATUS)
     {
-        OCI_Object *obj = OCI_ObjectInit(ref->con, (OCI_Object **) &ref->obj, obj_handle,
-                                         ref->typinf, NULL, -1, TRUE);
+        ref->obj = OCI_ObjectInit(ref->con, (OCI_Object *) ref->obj, obj_handle, ref->typinf, NULL, -1, TRUE);
 
-        OCI_STATUS = ref->pinned = (NULL != obj);
+        OCI_STATUS = ref->pinned = (NULL != ref->obj);
     }
 
     return OCI_STATUS;
@@ -187,7 +173,7 @@ OCI_Ref * OCI_API OCI_RefCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_RefInit(con, &typinf, &OCI_RETVAL, NULL);
+    OCI_RETVAL = OCI_RefInit(con, typinf, NULL, NULL);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()

@@ -115,9 +115,9 @@ boolean OCI_ColumnDescribe
     int             ptype
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
     void *param = NULL;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     if (stmt)
     {
@@ -280,8 +280,13 @@ boolean OCI_ColumnDescribe
             if (param_struct && param_struct->column_info && param_struct->column_info->name)
             {
                 size_t char_count = OCI_StringLength(param_struct->column_info->name, sizeof(char));
-                col->name = OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), char_count + 1, 1);
-                OCI_StringAnsiToNative(param_struct->column_info->name, col->name, (int) char_count);
+
+                OCI_ALLOCATE_DATA(OCI_IPC_STRING, col->name, char_count + 1)
+
+                if (OCI_STATUS)
+                {
+                    OCI_StringAnsiToNative(param_struct->column_info->name, col->name, (int) char_count);=
+                }
             }
             else
             {

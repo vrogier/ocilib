@@ -31,30 +31,18 @@
 OCI_Coll * OCI_CollInit
 (
     OCI_Connection *con,
-    OCI_Coll      **pcoll,
+    OCI_Coll       *coll,
     void           *handle,
     OCI_TypeInfo   *typinf
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)
-
-    OCI_Coll *coll = NULL;
-
-    OCI_CHECK(NULL == pcoll, NULL)
-
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    if (!*pcoll)
-    {
-        *pcoll = (OCI_Coll *) OCI_MemAlloc(OCI_IPC_COLLECTION, sizeof(*coll), (size_t) 1, TRUE);
-    }
-
-    OCI_STATUS = (NULL != *pcoll);
+    OCI_ALLOCATE_DATA(OCI_IPC_COLLECTION, coll, 1);
 
     if (OCI_STATUS)
     {
-        coll = *pcoll;
-
         coll->con    = con;
         coll->handle = handle;
         coll->typinf = typinf;
@@ -86,7 +74,7 @@ OCI_Coll * OCI_CollInit
     if (!OCI_STATUS && coll)
     {
         OCI_CollFree(coll);
-        *pcoll = coll = NULL;
+        coll = NULL;
     }
 
     return coll;
@@ -109,7 +97,7 @@ OCI_Coll * OCI_API OCI_CollCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
 
-    OCI_RETVAL = OCI_CollInit(typinf->con, &OCI_RETVAL, (OCIColl *)NULL, typinf);
+    OCI_RETVAL = OCI_CollInit(typinf->con, NULL, NULL, typinf);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -168,8 +156,8 @@ OCI_Coll ** OCI_API OCI_CollArrayCreate
 {
     OCI_Array *arr = NULL;
 
-    OCI_CALL_ENTER(OCI_Coll **, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_ENTER(OCI_Coll **, NULL)    
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)        
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, sizeof(OCIColl *), sizeof(OCI_Coll), 0, typinf);
@@ -341,7 +329,7 @@ OCI_Elem * OCI_API OCI_CollGetElem
 
     if (OCI_STATUS && exists && data)
     {
-        OCI_RETVAL = coll->elem = OCI_ElemInit(coll->con, &coll->elem, data, p_ind, coll->typinf);
+        OCI_RETVAL = coll->elem = OCI_ElemInit(coll->con, coll->elem, data, p_ind, coll->typinf);
     }
 
     OCI_CALL_EXIT()
@@ -372,7 +360,8 @@ boolean OCI_API OCI_CollGetElem2
 
     if (OCI_STATUS && exists && data)
     {
-        OCI_STATUS = (NULL != OCI_ElemInit(coll->con, &elem, data, p_ind, coll->typinf));
+        elem = OCI_ElemInit(coll->con, elem, data, p_ind, coll->typinf);
+        OCI_STATUS = (NULL != elem);
     }
     else
     {

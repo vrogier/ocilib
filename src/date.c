@@ -31,28 +31,19 @@
 OCI_Date * OCI_DateInit
 (
     OCI_Connection *con,
-    OCI_Date      **pdate,
+    OCI_Date       *date,
     OCIDate        *buffer,
     boolean         allocate,
     boolean         ansi
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)
-    OCI_Date *date = NULL;
- 
-    OCI_CHECK(NULL == pdate, NULL);
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    if (!*pdate)
+    OCI_ALLOCATE_DATA(OCI_IPC_DATE, date, 1);
+
+    if (OCI_STATUS) 
     {
-        *pdate = (OCI_Date *) OCI_MemAlloc(OCI_IPC_DATE, sizeof(*date), (size_t) 1, TRUE);
-    }
-
-    OCI_STATUS = (NULL != *pdate);
-
-    if (OCI_STATUS)
-    {
-        date = *pdate;
-
         date->con = con;
 
         /* get the right error handle */
@@ -71,8 +62,7 @@ OCI_Date * OCI_DateInit
                 date->hstate = OCI_OBJECT_ALLOCATED;
             }
 
-            date->handle = (OCIDate *) OCI_MemAlloc(OCI_IPC_OCIDATE, sizeof(*date->handle), (size_t) 1, TRUE);
-            OCI_STATUS = (NULL != date->handle);
+            OCI_ALLOCATE_DATA(OCI_IPC_OCIDATE, date->handle, 1);
         }
         else
         {
@@ -105,7 +95,7 @@ OCI_Date * OCI_DateInit
     if (!OCI_STATUS && date)
     {
         OCI_DateFree(date);
-        *pdate = date = NULL;
+        date = NULL;
     }
 
     return date;
@@ -128,7 +118,7 @@ OCI_Date * OCI_API OCI_DateCreate
     OCI_CALL_CHECK_INITIALIZED()
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_DateInit(con, &OCI_RETVAL, NULL, TRUE, FALSE);
+    OCI_RETVAL = OCI_DateInit(con, NULL, NULL, TRUE, FALSE);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -362,7 +352,7 @@ boolean OCI_API OCI_DateFromText
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
-    if (!fmt || !fmt[0])
+    if (!OCI_STRING_VALID(fmt))
     {
         fmt = OCI_GetFormat(date->con, OCI_FMT_DATE);
     }
@@ -631,7 +621,7 @@ boolean OCI_API OCI_DateToText
 
     str[0] = 0;
 
-    if (!fmt || !fmt[0])
+    if (!OCI_STRING_VALID(fmt))
     {
         fmt = OCI_GetFormat(date->con, OCI_FMT_DATE);
     }

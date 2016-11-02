@@ -281,8 +281,9 @@ boolean OCI_BindCheckAll
     OCI_Statement *stmt
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
     ub4 i, j;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == stmt, FALSE)
     OCI_CHECK(NULL == stmt->ubinds, TRUE);
@@ -351,8 +352,9 @@ boolean OCI_BindUpdateAll
     OCI_Statement *stmt
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
     ub4 i, j;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == stmt, FALSE)
     OCI_CHECK(NULL == stmt->ubinds, FALSE);
@@ -415,9 +417,6 @@ boolean OCI_BindData
     unsigned int   nbelem
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
-
     OCI_Bind *bnd    = NULL;
     ub4 exec_mode    = OCI_DEFAULT;
     boolean is_pltbl = FALSE;
@@ -427,6 +426,9 @@ boolean OCI_BindData
     int index        = 0;
     int prev_index   = -1;
     size_t nballoc   = (size_t) nbelem;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     /* check index if necessary */
 
@@ -490,11 +492,7 @@ boolean OCI_BindData
 
             /* allocate user bind array if necessary */
 
-            if (OCI_STATUS && !stmt->ubinds)
-            {
-                stmt->ubinds = (OCI_Bind **) OCI_MemAlloc(OCI_IPC_BIND_ARRAY, sizeof(*stmt->ubinds), (size_t) OCI_BIND_MAX, TRUE);
-                OCI_STATUS = (NULL != stmt->ubinds);
-            }
+            OCI_ALLOCATE_DATA(OCI_IPC_BIND_ARRAY, stmt->ubinds, OCI_BIND_MAX)
         }
         else
         {
@@ -506,11 +504,7 @@ boolean OCI_BindData
 
             /* allocate register bind array if necessary */
 
-            if (OCI_STATUS && !stmt->rbinds)
-            {
-                stmt->rbinds = (OCI_Bind **) OCI_MemAlloc(OCI_IPC_BIND_ARRAY, sizeof(*stmt->rbinds), (size_t) OCI_BIND_MAX, TRUE);
-                OCI_STATUS = (NULL != stmt->rbinds);
-            }
+            OCI_ALLOCATE_DATA(OCI_IPC_BIND_ARRAY, stmt->rbinds, OCI_BIND_MAX)
         }
     }
 
@@ -553,24 +547,15 @@ boolean OCI_BindData
 
     /* allocate bind object */
 
-    if (OCI_STATUS && !bnd)
-    {
-        bnd = (OCI_Bind *) OCI_MemAlloc(OCI_IPC_BIND, sizeof(*bnd), (size_t) 1, TRUE);
-        OCI_STATUS = (NULL != bnd);
-    }
+    OCI_ALLOCATE_DATA(OCI_IPC_BIND, bnd, 1)
 
     /* allocate indicators array */
 
-    if (OCI_STATUS && !bnd->buffer.inds)
-    {
-        bnd->buffer.inds = (void *)OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(sb2), nballoc, TRUE);
-        OCI_STATUS = (NULL != bnd->buffer.inds);
-    }
+    OCI_ALLOCATE_DATA(OCI_IPC_BIND, bnd->buffer.inds, nballoc)
 
-    if (OCI_STATUS && SQLT_NTY == code && !bnd->buffer.obj_inds)
+    if (SQLT_NTY == code)
     {
-        bnd->buffer.obj_inds = (void *)OCI_MemAlloc(OCI_IPC_INDICATOR_ARRAY, sizeof(void*), nballoc, TRUE);
-        OCI_STATUS = (NULL != bnd->buffer.obj_inds);
+        OCI_ALLOCATE_DATA(OCI_IPC_INDICATOR_ARRAY, bnd->buffer.obj_inds, nballoc)
     }
 
     /* check need for PL/SQL table extra info */
@@ -582,11 +567,7 @@ boolean OCI_BindData
 
         /* allocate array of returned codes */
 
-        if (!bnd->plrcds)
-        {
-            bnd->plrcds = (ub2 *) OCI_MemAlloc(OCI_IPC_PLS_RCODE_ARRAY, sizeof(ub2), nballoc, TRUE);
-            OCI_STATUS = (NULL != bnd->plrcds);
-        }
+        OCI_ALLOCATE_DATA(OCI_IPC_PLS_RCODE_ARRAY, bnd->plrcds, nballoc)
     }
 
     /* for handle based data types, we need to allocate an array of handles for
@@ -611,11 +592,7 @@ boolean OCI_BindData
                     OCI_FREE(bnd->buffer.data)
                 }
 
-                if (!bnd->buffer.data)
-                {
-                    bnd->buffer.data = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (size_t) size, (size_t) nballoc, TRUE);
-                    OCI_STATUS = (NULL != bnd->buffer.data);
-                }
+                OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, bnd->buffer.data, size, nballoc)
             }
             else
             {
@@ -628,11 +605,7 @@ boolean OCI_BindData
 
     if (OCI_STATUS && ((OCI_CDT_RAW == type) || (OCI_CDT_TEXT == type)))
     {
-        if (!bnd->buffer.lens)
-        {
-            bnd->buffer.lens = (void *) OCI_MemAlloc(OCI_IPC_LEN_ARRAY, sizeof(ub2), nballoc, TRUE);
-            OCI_STATUS = (NULL != bnd->buffer.lens);
-        }
+        OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, bnd->buffer.lens, sizeof(ub2), nballoc)
 
         /* initialize length array with buffer default size */
 
@@ -1043,30 +1016,19 @@ boolean OCI_FetchIntoUserVariables
 OCI_Statement * OCI_StatementInit
 (
     OCI_Connection *con,
-    OCI_Statement **pstmt,
+    OCI_Statement  *stmt,
     OCIStmt        *handle,
     boolean         is_desc,
     const otext    *sql
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_Statement * stmt = NULL;
-
-    OCI_CHECK(NULL == pstmt, NULL);
-
-    if (!*pstmt)
-    {
-        *pstmt = (OCI_Statement *) OCI_MemAlloc(OCI_IPC_STATEMENT, sizeof(*stmt), (size_t) 1, TRUE);
-    }
-
-    OCI_STATUS = (NULL != *pstmt);
+    OCI_ALLOCATE_DATA(OCI_IPC_STATEMENT, stmt, 1);
 
     if (OCI_STATUS)
-    {
-        stmt = *pstmt;
-
+    { 
         stmt->con  = con;
         stmt->stmt = handle;
 
@@ -1126,7 +1088,7 @@ OCI_Statement * OCI_StatementInit
     if (!OCI_STATUS && stmt)
     {
         OCI_StatementFree(stmt);
-        *pstmt = stmt = NULL;
+        stmt = NULL;
     }
 
     return stmt;
@@ -1141,11 +1103,11 @@ boolean OCI_StatementReset
     OCI_Statement *stmt
 )
 {
+    ub4 mode = OCI_DEFAULT;
+
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
-
-    ub4 mode = OCI_DEFAULT;
 
     if ((OCILib.version_runtime >= OCI_9_2) && (stmt->nb_rbinds > 0))
     {
@@ -1160,6 +1122,11 @@ boolean OCI_StatementReset
             mode = OCI_STRLS_CACHE_DELETE;
         }
     }
+
+
+#else
+
+    OCI_NOT_USED(mode)
 
 #endif
 
@@ -1317,20 +1284,14 @@ boolean OCI_StatementCheckImplicitResultsets
 
             /* allocate resultset handles array */
 
-            stmt->stmts = (OCI_Statement **) OCI_MemAlloc(OCI_IPC_STATEMENT_ARRAY, sizeof(*stmt->stmts),(size_t) stmt->nb_stmt, TRUE);
-            OCI_STATUS = (NULL != stmt->stmts);
-
-            if (OCI_STATUS)
-            {
-                stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY, sizeof(*stmt->rsts), (size_t) stmt->nb_stmt, TRUE);
-                OCI_STATUS = (NULL != stmt->rsts);
-            }
+            OCI_ALLOCATE_DATA(OCI_IPC_STATEMENT_ARRAY, stmt->stmts, stmt->nb_stmt)
+            OCI_ALLOCATE_DATA(OCI_IPC_RESULTSET_ARRAY, stmt->rsts, stmt->nb_stmt)
 
             while (OCI_STATUS && OCI_SUCCESS == OCIStmtGetNextResult(stmt->stmt, stmt->con->err, (dvoid  **)&result, &rs_type, OCI_DEFAULT))
             {
                 if (OCI_RESULT_TYPE_SELECT == rs_type)
                 {
-                    stmt->stmts[i] = OCI_StatementInit(stmt->con, &stmt->stmts[i], result, TRUE, NULL);
+                    stmt->stmts[i] = OCI_StatementInit(stmt->con, NULL, result, TRUE, NULL);
                     OCI_STATUS = (NULL != stmt->stmts[i]);
                     
                     if (OCI_STATUS)
@@ -1363,10 +1324,10 @@ boolean OCI_BatchErrorInit
     OCI_Statement *stmt
 )
 {
+    ub4 err_count = 0;
+
     OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
-
-    ub4 err_count = 0;
 
     OCI_BatchErrorClear(stmt);
 
@@ -1381,16 +1342,11 @@ boolean OCI_BatchErrorInit
 
         /* allocate batch error structure */
 
-        stmt->batch = (OCI_BatchErrors *) OCI_MemAlloc(OCI_IPC_BATCH_ERRORS, sizeof(*stmt->batch), (size_t) 1, TRUE);
-        OCI_STATUS = (NULL != stmt->batch);
+        OCI_ALLOCATE_DATA(OCI_IPC_BATCH_ERRORS, stmt->batch, 1)
 
         /* allocate array of error objects */
 
-        if (OCI_STATUS)
-        {
-            stmt->batch->errs = (OCI_Error *) OCI_MemAlloc(OCI_IPC_ERROR, sizeof(*stmt->batch->errs), (size_t) err_count, TRUE);
-            OCI_STATUS = (NULL != stmt->batch->errs);
-        }
+        OCI_ALLOCATE_DATA(OCI_IPC_ERROR, stmt->batch->errs, err_count)
 
         if (OCI_STATUS)
         {
@@ -1472,11 +1428,11 @@ boolean OCI_API OCI_PrepareInternal
     const otext   *sql
 )
 {
+    dbtext *dbstr = NULL;
+    int     dbsize = -1;
+
     OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
-
-    dbtext *dbstr  = NULL;
-    int     dbsize = -1;
 
     /* reset statement */
 
@@ -1553,11 +1509,11 @@ boolean OCI_API OCI_ExecuteInternal
     ub4            mode
 )
 {
+    sword status = OCI_SUCCESS;
+    ub4 iters = 0;
+
     OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
-
-    sword status = OCI_SUCCESS;
-    ub4 iters    = 0;
 
     /* set up iterations and mode values for execution */
 
@@ -1717,7 +1673,7 @@ OCI_Statement * OCI_API OCI_StatementCreate
 
     if (item)
     {
-        OCI_RETVAL = OCI_StatementInit(con, (OCI_Statement **) &item->data, NULL, FALSE, NULL);
+        item->data = OCI_RETVAL = OCI_StatementInit(con, (OCI_Statement *) item->data, NULL, FALSE, NULL);
         OCI_STATUS = (NULL != OCI_RETVAL);
     }
 
@@ -1936,10 +1892,11 @@ boolean OCI_PrepareFmt
 
     if (size > 0)
     {
-        /* allocate buffer */
+        otext *sql_fmt = NULL;
 
-        otext *sql_fmt = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), (size_t) (size+1), TRUE);
-        OCI_STATUS = (NULL != sql_fmt);
+        /* allocate buffer */
+        
+        OCI_ALLOCATE_DATA(OCI_IPC_STRING, sql_fmt, size + 1)
        
         if (OCI_STATUS)
         {
@@ -1994,10 +1951,11 @@ boolean OCI_ExecuteStmtFmt
 
     if (size > 0)
     {
+        otext *sql_fmt = NULL;
+
         /* allocate buffer */
 
-        otext *sql_fmt = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), (size_t) (size+1), TRUE);
-        OCI_STATUS = (NULL != sql_fmt);
+        OCI_ALLOCATE_DATA(OCI_IPC_STRING, sql_fmt, size + 1)
 
         if (OCI_STATUS)
         {
@@ -2052,10 +2010,11 @@ boolean OCI_ParseFmt
 
     if (size > 0)
     {
+        otext *sql_fmt = NULL;
+
         /* allocate buffer */
 
-        otext  *sql_fmt = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), (size_t) (size+1), TRUE);
-        OCI_STATUS = (NULL != sql_fmt);
+        OCI_ALLOCATE_DATA(OCI_IPC_STRING, sql_fmt, size + 1)
 
         if (OCI_STATUS)
         {
@@ -2110,10 +2069,11 @@ boolean OCI_DescribeFmt
 
     if (size > 0)
     {
+        otext *sql_fmt = NULL;
+
         /* allocate buffer */
 
-        otext *sql_fmt = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), (size_t) (size+1), TRUE);
-        OCI_STATUS = (NULL != sql_fmt);
+        OCI_ALLOCATE_DATA(OCI_IPC_STRING, sql_fmt, size + 1)
 
         if (OCI_STATUS)
         {

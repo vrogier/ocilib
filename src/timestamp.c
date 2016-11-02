@@ -39,29 +39,20 @@ static unsigned int TimestampTypeValues[] = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, O
 OCI_Timestamp * OCI_TimestampInit
 (
     OCI_Connection *con,
-    OCI_Timestamp **ptmsp,
+    OCI_Timestamp  *tmsp,
     OCIDateTime    *buffer,
     ub4             type
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)
-    OCI_Timestamp *tmsp = NULL;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CHECK(NULL == ptmsp, NULL);
-
-    if (!*ptmsp)
-    {
-        *ptmsp = (OCI_Timestamp *) OCI_MemAlloc(OCI_IPC_TIMESTAMP, sizeof(*tmsp), (size_t) 1, TRUE);
-    }
-
-    OCI_STATUS = (NULL != *ptmsp);
+    OCI_ALLOCATE_DATA(OCI_IPC_TIMESTAMP, tmsp, 1);
 
     if (OCI_STATUS)
     {
-        tmsp = *ptmsp;
-
         tmsp->con    = con;
         tmsp->handle = buffer;
         tmsp->type   = type;
@@ -100,7 +91,7 @@ OCI_Timestamp * OCI_TimestampInit
     if (!OCI_STATUS && tmsp)
     {
         OCI_TimestampFree(tmsp);
-        *ptmsp = tmsp = NULL;
+        tmsp = NULL;
     }
 #else
 
@@ -137,7 +128,7 @@ OCI_Timestamp * OCI_API OCI_TimestampCreate
 
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, TimestampTypeValues, OTEXT("Timestamp type"))
 
-    OCI_RETVAL = OCI_TimestampInit(con, &OCI_RETVAL, NULL, type);
+    OCI_RETVAL = OCI_TimestampInit(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
 #else
@@ -443,7 +434,7 @@ boolean OCI_API OCI_TimestampFromText
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (!fmt || !fmt[0])
+    if (!OCI_STRING_VALID(fmt))
     {
         fmt = OCI_GetFormat(tmsp->con, OCI_FMT_TIMESTAMP);
     }
@@ -508,7 +499,7 @@ boolean OCI_API OCI_TimestampToText
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (!fmt || !fmt[0])
+    if (!OCI_STRING_VALID(fmt))
     {
         fmt = OCI_GetFormat(tmsp->con, OCI_FMT_TIMESTAMP);
     }

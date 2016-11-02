@@ -31,31 +31,19 @@
 OCI_Agent * OCI_AgentInit
 (
     OCI_Connection *con,
-    OCI_Agent     **pagent,
+    OCI_Agent      *agent,
     OCIAQAgent     *handle,
     const otext    *name,
     const otext    *address
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_Agent *agent = NULL;
-
-    OCI_CHECK(NULL == pagent, NULL)
-
-    /* allocate agent structure */
-
-    if (!*pagent)
-    {
-        *pagent = (OCI_Agent *) OCI_MemAlloc(OCI_IPC_AGENT, sizeof(*agent),  (size_t) 1, TRUE);
-    }
-
-    OCI_STATUS = (NULL != *pagent);
+    OCI_ALLOCATE_DATA(OCI_IPC_AGENT, agent, 1);
 
     if (OCI_STATUS)
     {
-        agent = *pagent;
-
         OCI_FREE(agent->name)
         OCI_FREE(agent->address)
 
@@ -75,14 +63,14 @@ OCI_Agent * OCI_AgentInit
 
         /* set name attribute if provided */
 
-        if (OCI_STATUS && name && name[0])
+        if (OCI_STATUS && OCI_STRING_VALID(name))
         {
             OCI_STATUS = OCI_AgentSetName(agent, name);
         }
 
         /* set address attribute if provided */
 
-        if (OCI_STATUS && address && address[0])
+        if (OCI_STATUS && OCI_STRING_VALID(address))
         {
             OCI_STATUS = OCI_AgentSetAddress(agent, address);
         }
@@ -118,7 +106,7 @@ OCI_Agent * OCI_API OCI_AgentCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_AgentInit(con, &OCI_RETVAL, NULL, name, address);
+    OCI_RETVAL = OCI_AgentInit(con, NULL, NULL, name, address);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()

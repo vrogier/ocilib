@@ -40,7 +40,7 @@ extern "C"
 OCI_Agent * OCI_AgentInit
 (
     OCI_Connection *con,
-    OCI_Agent     **pagent,
+    OCI_Agent      *agent,
     OCIAQAgent     *handle,
     const otext    *name,
     const otext    *address
@@ -181,7 +181,7 @@ void OCI_ProcHAEvent
 OCI_Coll * OCI_CollInit
 (
     OCI_Connection *con,
-    OCI_Coll      **pcoll,
+    OCI_Coll       *Coll,
     void           *handle,
     OCI_TypeInfo   *typeinf
 );
@@ -277,7 +277,7 @@ boolean OCI_ConnectionClose
 OCI_Date * OCI_DateInit
 (
     OCI_Connection *con,
-    OCI_Date      **pdate,
+    OCI_Date       *date,
     OCIDate        *buffer,
     boolean         allocate,
     boolean         ansi
@@ -373,7 +373,7 @@ boolean OCI_ElemSetNumberInternal
 OCI_Elem * OCI_ElemInit
 (
     OCI_Connection *con,
-    OCI_Elem      **pelem,
+    OCI_Elem       *elem,
     void           *handle,
     OCIInd         *pind,
     OCI_TypeInfo   *typeinf
@@ -620,7 +620,7 @@ void OCI_ExceptionArgInvalidValue
 OCI_File * OCI_FileInit
 (
     OCI_Connection *con,
-    OCI_File      **pfile,
+    OCI_File       *file,
     OCILobLocator  *handle,
     ub4             type
 );
@@ -667,7 +667,7 @@ boolean OCI_HashAdd
 OCI_Interval * OCI_IntervalInit
 (
     OCI_Connection *con,
-    OCI_Interval  **pitv,
+    OCI_Interval   *itv,
     OCIInterval    *buffer,
     ub4             type
 );
@@ -806,7 +806,7 @@ boolean OCI_ListRemove
 OCI_Lob * OCI_LobInit
 (
     OCI_Connection *con,
-    OCI_Lob       **plob,
+    OCI_Lob        *lob,
     OCILobLocator  *handle,
     ub4             type
 );
@@ -818,7 +818,7 @@ OCI_Lob * OCI_LobInit
 OCI_Long * OCI_LongInit
 (
     OCI_Statement *stmt,
-    OCI_Long     **plg,
+    OCI_Long      *lg,
     OCI_Define    *def,
     unsigned int   type
 );
@@ -971,7 +971,7 @@ boolean OCI_NumberSetNativeValue
 OCI_Number * OCI_NumberInit
 (
     OCI_Connection  *con,
-    OCI_Number     **pnumber,
+    OCI_Number      *number,
     OCINumber        *buffer
 );
 
@@ -1032,7 +1032,7 @@ ub2 OCI_ObjectGetIndOffset
 OCI_Object * OCI_ObjectInit
 (
     OCI_Connection *con,
-    OCI_Object    **pobj,
+    OCI_Object     *obj,
     void           *handle,
     OCI_TypeInfo   *typinf,
     OCI_Object     *parent,
@@ -1094,8 +1094,8 @@ boolean OCI_PoolClose
 OCI_Ref * OCI_RefInit
 (
     OCI_Connection *con,
-    OCI_TypeInfo  **typeinf,
-    OCI_Ref       **pref,
+    OCI_TypeInfo   *typeinf,
+    OCI_Ref        *ref,
     void           *handle
 );
 
@@ -1218,7 +1218,7 @@ boolean OCI_StatementClose
 OCI_Statement * OCI_StatementInit
 (
     OCI_Connection *con,
-    OCI_Statement **pstmt,
+    OCI_Statement  *stmt,
     OCIStmt        *handle,
     boolean         is_desc,
     const otext    *sql
@@ -1440,7 +1440,7 @@ boolean OCI_ThreadKeyGet
 OCI_Timestamp * OCI_TimestampInit
 (
     OCI_Connection *con,
-    OCI_Timestamp **ptmsp,
+    OCI_Timestamp  *tmsp,
     OCIDateTime    *buffer,
     ub4             type
 );

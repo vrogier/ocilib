@@ -39,29 +39,20 @@ static unsigned int IntervalTypeValues[] = { OCI_INTERVAL_YM, OCI_INTERVAL_DS };
 OCI_Interval * OCI_IntervalInit
 (
     OCI_Connection *con,
-    OCI_Interval  **pitv,
+    OCI_Interval   *itv,
     OCIInterval    *buffer,
     ub4             type
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)
-    OCI_Interval *itv = NULL;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
-
-    OCI_CHECK(NULL == pitv, NULL);
-
-    if (!*pitv)
-    {
-        *pitv = (OCI_Interval *) OCI_MemAlloc(OCI_IPC_INTERVAL, sizeof(*itv), (size_t) 1, TRUE);
-    }
-
-    OCI_STATUS = (NULL != *pitv);
+ 
+    OCI_ALLOCATE_DATA(OCI_IPC_INTERVAL, itv, 1);
 
     if (OCI_STATUS)
     {
-        itv = *pitv;
-
         itv->con    = con;
         itv->handle = buffer;
         itv->type   = type;
@@ -93,7 +84,7 @@ OCI_Interval * OCI_IntervalInit
     if (!OCI_STATUS && itv)
     {
         OCI_IntervalFree(itv);
-        *pitv = itv = NULL;
+        itv = NULL;
     }
 
 #else
@@ -131,7 +122,7 @@ OCI_Interval * OCI_API OCI_IntervalCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"));
 #endif
 
-    OCI_RETVAL = OCI_IntervalInit(con, &OCI_RETVAL, NULL, type);
+    OCI_RETVAL = OCI_IntervalInit(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()

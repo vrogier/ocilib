@@ -41,8 +41,7 @@ OCI_Coll *coll
 
     /* allocate iterator structure */
 
-    iter = (OCI_Iter *)OCI_MemAlloc(OCI_IPC_ITERATOR, sizeof(*iter), (size_t)1, TRUE);
-    OCI_STATUS = (NULL != iter);
+    OCI_ALLOCATE_DATA(OCI_IPC_ITERATOR, iter, 1)
 
     if (OCI_STATUS)
     {
@@ -59,7 +58,7 @@ OCI_Coll *coll
 
         if (OCI_STATUS)
         {
-            iter->elem = OCI_ElemInit(coll->con, &iter->elem, NULL, (OCIInd *)NULL, coll->typinf);
+            iter->elem = OCI_ElemInit(coll->con, iter->elem, NULL, (OCIInd *)NULL, coll->typinf);
             OCI_STATUS = (NULL != iter->elem);
         }
     }
@@ -138,7 +137,7 @@ OCI_Elem * OCI_API OCI_IterGetNext
 
         if (OCI_STATUS && !iter->eoc)
         {
-            OCI_RETVAL = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
+            OCI_RETVAL = iter->elem = OCI_ElemInit(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
 
             iter->dirty = FALSE;
             iter->boc   = FALSE;
@@ -170,7 +169,7 @@ OCI_Elem * OCI_API OCI_IterGetPrev
 
         if (OCI_STATUS && !iter->boc)
         {
-            OCI_RETVAL = OCI_ElemInit(iter->coll->con, &iter->elem, data, p_ind, iter->coll->typinf);
+            OCI_RETVAL = iter->elem = OCI_ElemInit(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
 
             iter->dirty = FALSE;
             iter->eoc   = FALSE;

@@ -33,14 +33,13 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
     POCI_THREADKEYDEST destfunc
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
     OCI_ThreadKey *key = NULL;
 
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     /* allocate key structure */
 
-    key = (OCI_ThreadKey *) OCI_MemAlloc(OCI_IPC_THREADKEY, sizeof(*key), (size_t) 1, TRUE);
-    OCI_STATUS = (NULL != key);
+    OCI_ALLOCATE_DATA(OCI_IPC_THREADKEY, key, 1)
 
     if (OCI_STATUS)
     {

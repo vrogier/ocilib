@@ -445,7 +445,6 @@
                                                                                 \
     goto ExitCall;                                                              \
 
-
 #define OCI_CALL_CONTEXT_SET(c, s, e)                                           \
     ctx->lib_con      = (c);                                                    \
     ctx->lib_stmt     = (s);                                                    \
@@ -515,6 +514,23 @@
     prop = value;                                                               \
     OCI_RETVAL = OCI_STATUS;                                                    \
     OCI_CALL_EXIT()                                                             \
+
+#define OCI_ALLOCATE_BUFFER(type, ptr, size, count)                             \
+                                                                                \
+    if (OCI_STATUS && size > 0 && !ptr)                                         \
+    {                                                                           \
+        ptr = OCI_MemAlloc(type, size, (size_t) count, TRUE);                   \
+    }                                                                           \
+                                                                                \
+    OCI_STATUS = (NULL != ptr);                                                 \
+
+#define OCI_ALLOCATE_DATA(type, ptr, count)   OCI_ALLOCATE_BUFFER(type,ptr, sizeof(*ptr), count)
+
+#define OCI_ARRAY_GET_AT(ptr, size, offset)  (((ub1 *) ptr) + (size_t)(size*i))
+#define OCI_ARRAY_SET_AT(ptr, type, offset, value)  *(type*)(OCI_ARRAY_GET_AT(ptr, sizeof(type), i)) = (type) value;
+
+
+#define OCI_STRING_VALID(s) ((s) && ((s)[0]))
 
 #ifdef _WINDOWS
 

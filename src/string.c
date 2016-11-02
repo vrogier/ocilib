@@ -80,7 +80,7 @@ unsigned int OCI_StringBinaryToString
     otext         *buffer
  )
 {
-    char          hex_str[] = "0123456789ABCDEF";
+    char hex_str[] = "0123456789ABCDEF";
 
     if (buffer)
     {
@@ -457,15 +457,15 @@ boolean OCI_StringToStringPtr
     const otext *value
 )
 {
+    dbtext *dbstr = NULL;
+    int     dbsize = -1;
+
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
-    dbtext *dbstr  = NULL;
-    int     dbsize = 0;
-
     OCI_CHECK(NULL == str, FALSE);
+
     OCI_CALL_CONTEXT_SET_FROM_ERR(err)
 
-    dbsize = -1;
     dbstr  = OCI_StringGetOracleString(value, &dbsize);
 
     OCI_EXEC(OCIStringAssignText(env, err, (oratext *) dbstr, (ub4) dbsize, str))
@@ -487,8 +487,8 @@ boolean OCI_StringFreeStringPtr
     OCIError    *err
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-    OCI_CHECK(NULL == str, FALSE);
+    OCI_CALL_DECLARE_CONTEXT(TRUE)    
+    OCI_CHECK(NULL == str, FALSE);    
     OCI_CALL_CONTEXT_SET_FROM_ERR(err)
 
     OCI_EXEC(OCIStringResize(env, err, (ub4)0, str))
@@ -509,11 +509,11 @@ boolean OCI_GetStringAttribute
     otext         **str
 )
 {
+    dbtext *dbstr = NULL;
+    int     dbsize = -1;
+
     OCI_CALL_DECLARE_CONTEXT(TRUE)
         
-    dbtext *dbstr   = NULL;
-    int     dbsize  = -1;
-
     OCI_CHECK(NULL == str, FALSE)
  
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
@@ -566,11 +566,10 @@ boolean OCI_SetStringAttribute
     const otext    *value
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
-    dbtext *dbstr  = NULL;
+    dbtext *dbstr = NULL;
     int     dbsize = -1;
 
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     dbstr = OCI_StringGetOracleString(value, &dbsize);
@@ -948,7 +947,7 @@ unsigned int OCI_StringGetTypeName
     boolean      quote  = FALSE;
     unsigned int offset = 0;
 
-    if (!source || !source[0] || !dest)
+    if (!OCI_STRING_VALID(source) || !dest)
     {
         return 0;
     }
@@ -1005,7 +1004,7 @@ unsigned int OCI_StringGetFullTypeName
 {
     unsigned int offset = 0;
 
-    if (schema && schema[0])
+    if (OCI_STRING_VALID(schema))
     {
         offset += OCI_StringGetTypeName(schema, name + offset, length - offset);
         
@@ -1016,7 +1015,7 @@ unsigned int OCI_StringGetFullTypeName
         }
     }
 
-    if (package && package[0])
+    if (OCI_STRING_VALID(package))
     {
         offset += OCI_StringGetTypeName(package, name + offset, length - offset);
 
@@ -1027,12 +1026,12 @@ unsigned int OCI_StringGetFullTypeName
         }
     }
 
-    if (type && type[0])
+    if (OCI_STRING_VALID(type))
     {
         offset += OCI_StringGetTypeName(type, name + offset, length - offset);
     }
 
-    if (link && link[0])
+    if (OCI_STRING_VALID(link))
     {
         ostrncpy(name + offset, OTEXT("@"), length - offset);
         offset++;

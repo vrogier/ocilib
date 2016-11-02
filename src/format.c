@@ -80,7 +80,7 @@ int OCI_ParseSqlFmt
             {
                 const otext *str = (const otext *) va_arg(*pargs, const otext *);
 
-                if (str && str[0])
+                if (OCI_STRING_VALID(str))
                 {
                     len = (int) ostrlen(str);
 

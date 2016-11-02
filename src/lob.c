@@ -39,30 +39,18 @@ static unsigned int LobTypeValues[]  = { OCI_CLOB, OCI_NCLOB, OCI_BLOB };
 OCI_Lob * OCI_LobInit
 (
     OCI_Connection *con,
-    OCI_Lob       **plob,
+    OCI_Lob        *lob,
     OCILobLocator  *handle,
     ub4             type
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)
-        
-    OCI_Lob * lob = NULL;
-
-    OCI_CHECK(NULL == plob, NULL);
-
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    if (!*plob)
+    OCI_ALLOCATE_DATA(OCI_IPC_LOB, lob, 1);
+
+    if (OCI_STATUS)
     {
-        *plob = (OCI_Lob *) OCI_MemAlloc(OCI_IPC_LOB, sizeof(*lob), (size_t) 1, TRUE);
-    }
-
-    OCI_STATUS = (NULL != *plob);
-
-    if (*plob)
-    {
-        lob = *plob;
-
         lob->type   = type;
         lob->con    = con;
         lob->handle = handle;
@@ -113,7 +101,7 @@ OCI_Lob * OCI_LobInit
     if (!OCI_STATUS && lob)
     {
         OCI_LobFree(lob);
-        *plob = lob = NULL;
+        lob = NULL;
     }
 
     return lob;
@@ -138,7 +126,7 @@ OCI_Lob * OCI_API OCI_LobCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, LobTypeValues, OTEXT("Lob type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_LobInit(con, &OCI_RETVAL, NULL, type);
+    OCI_RETVAL = OCI_LobInit(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()

@@ -198,7 +198,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
             /* compute full object name */
 
-            if (typinf->schema && typinf->schema[0])
+            if (OCI_STRING_VALID(typinf->schema))
             {
                 str = ostrncat(buffer, typinf->schema, max_chars);
                 max_chars -= ostrlen(typinf->schema);
@@ -391,8 +391,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                 if (typinf->nb_cols > 0)
                 {
-                    typinf->offsets = (int *) OCI_MemAlloc(OCI_IPC_ARRAY,  sizeof(*typinf->offsets), (size_t) typinf->nb_cols, FALSE);
-                    OCI_STATUS = (NULL != typinf->offsets);
+                    OCI_ALLOCATE_DATA(OCI_IPC_ARRAY, typinf->offsets, typinf->nb_cols)
 
                     if (OCI_STATUS)
                     {
@@ -404,17 +403,14 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                 if (typinf->nb_cols > 0)
                 {
-                    typinf->cols = (OCI_Column *) OCI_MemAlloc(OCI_IPC_COLUMN,  sizeof(*typinf->cols), (size_t) typinf->nb_cols, TRUE);
-                    OCI_STATUS = (NULL != typinf->cols);
+                    OCI_ALLOCATE_DATA(OCI_IPC_COLUMN, typinf->cols, typinf->nb_cols)
 
                     /* describe children */
                     if (OCI_STATUS)
                     {
                         for (i = 0; i < typinf->nb_cols; i++)
                         {
-                            OCI_STATUS = OCI_STATUS && OCI_ColumnDescribe(&typinf->cols[i], con,
-                                                                            NULL, param_cols, i + 1, ptype);
-
+                            OCI_STATUS = OCI_STATUS && OCI_ColumnDescribe(&typinf->cols[i], con, NULL, param_cols, i + 1, ptype);
                             OCI_STATUS = OCI_STATUS && OCI_ColumnMap(&typinf->cols[i], NULL);
 
                             if (!OCI_STATUS)

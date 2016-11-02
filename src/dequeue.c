@@ -51,8 +51,7 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
 
     /* allocate dequeue structure */
 
-    dequeue = (OCI_Dequeue *)OCI_MemAlloc(OCI_IPC_DEQUEUE, sizeof(*dequeue), (size_t)1, TRUE);
-    OCI_STATUS = (NULL != dequeue);
+    OCI_ALLOCATE_DATA(OCI_IPC_DEQUEUE, dequeue, 1)
 
     if (OCI_STATUS)
     {
@@ -184,7 +183,7 @@ OCI_Agent * OCI_API OCI_DequeueListen
 
         if (OCI_STATUS && handle && OCI_SUCCESSFUL(ret))
         {
-            OCI_RETVAL = OCI_AgentInit(dequeue->typinf->con, &dequeue->agent, handle, NULL, NULL);
+            OCI_RETVAL = dequeue->agent = OCI_AgentInit(dequeue->typinf->con, dequeue->agent, handle, NULL, NULL);
         }
     }
 
@@ -262,7 +261,7 @@ OCI_Msg * OCI_API OCI_DequeueGet
                 dequeue->msg->ind = *(OCIInd *) p_ind;
 
                 dequeue->msg->obj = OCI_ObjectInit(dequeue->typinf->con,
-                                                   (OCI_Object **) &dequeue->msg->obj,
+                                                   (OCI_Object *) dequeue->msg->obj,
                                                    dequeue->msg->payload, dequeue->typinf,
                                                    NULL, -1, TRUE);
 
@@ -637,8 +636,7 @@ boolean OCI_API OCI_DequeueSetAgentList
 
     if (consumers && (count > 0))
     {
-        dequeue->agent_list = (OCIAQAgent **) OCI_MemAlloc(OCI_IPC_ARRAY,  sizeof(OCIAQAgent *), count, FALSE);
-        OCI_STATUS = (NULL != dequeue->agent_list);
+        OCI_ALLOCATE_DATA(OCI_IPC_ARRAY, dequeue->agent_list, count)
 
         if (OCI_STATUS)
         {

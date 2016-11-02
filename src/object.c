@@ -77,7 +77,7 @@
                                                                             \
         if (value && ind && (OCI_IND_NULL != *ind))                         \
         {                                                                   \
-            OCI_RETVAL = func;                                              \
+            OCI_RETVAL = obj->objs[index] = func;                           \
             OCI_STATUS = (NULL != OCI_RETVAL);                              \
         }                                                                   \
     }                                                                       \
@@ -320,7 +320,7 @@ boolean OCI_ObjectGetAttrInfo
 OCI_Object * OCI_ObjectInit
 (
     OCI_Connection *con,
-    OCI_Object    **pobj,
+    OCI_Object     *obj,
     void           *handle,
     OCI_TypeInfo   *typinf,
     OCI_Object     *parent,
@@ -328,50 +328,22 @@ OCI_Object * OCI_ObjectInit
     boolean         reset
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)
-
-    OCI_Object * obj = NULL;
-
-    OCI_CHECK(NULL == pobj, NULL)
-
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    if (!*pobj)
-    {
-        *pobj = (OCI_Object *) OCI_MemAlloc(OCI_IPC_OBJECT, sizeof(*obj), (size_t) 1, TRUE);
-    }
-
-    OCI_STATUS = (NULL != *pobj);
+    OCI_ALLOCATE_DATA(OCI_IPC_OBJECT, obj, 1);
 
     if (OCI_STATUS)
     {
-        obj = *pobj;
-
         obj->con    = con;
         obj->handle = handle;
         obj->typinf = typinf;
 
-        if (!obj->tmpbufs)
-        {
-            obj->tmpbufs = (otext **)OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(otext *), (size_t)typinf->nb_cols, TRUE);
-            OCI_STATUS = (NULL != obj->tmpbufs);
-        }
+        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpbufs, typinf->nb_cols)
+        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpsizes, typinf->nb_cols)
+        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->objs, typinf->nb_cols)
 
-        if (!obj->tmpsizes)
-        {
-            obj->tmpsizes = (unsigned int *)OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(unsigned int), (size_t)typinf->nb_cols, TRUE);
-            OCI_STATUS = (NULL != obj->tmpsizes);
-        }
-
-        if (!obj->objs)
-        {
-            obj->objs = (void **) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(void *),  (size_t) typinf->nb_cols, TRUE);
-            OCI_STATUS = (NULL != obj->objs);
-        }
-        else
-        {
-            OCI_ObjectReset(obj);
-        }        
+        OCI_ObjectReset(obj);
 
         if (OCI_STATUS && (!obj->handle || (OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate)))
         {
@@ -441,7 +413,7 @@ OCI_Object * OCI_ObjectInit
     if (!OCI_STATUS && obj)
     {
         OCI_ObjectFree(obj);
-        *pobj = obj = NULL;
+        obj = NULL;
     }
 
     return obj;
@@ -710,7 +682,7 @@ OCI_Object * OCI_API OCI_ObjectCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_ObjectInit(con, &OCI_RETVAL, NULL, typinf, NULL, -1, TRUE);
+    OCI_RETVAL = OCI_ObjectInit(con, NULL, NULL, typinf, NULL, -1, TRUE);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -890,7 +862,7 @@ OCI_Number * OCI_API OCI_ObjectGetNumber
         OCI_CDT_NUMERIC,
         OCI_Number*,
         OCINumber*,
-        OCI_NumberInit(obj->con, (OCI_Number **)&obj->objs[index], (OCINumber *) value)
+        OCI_NumberInit(obj->con, (OCI_Number *) obj->objs[index], (OCINumber *) value)
     )
 }
 
@@ -1227,7 +1199,7 @@ OCI_Date * OCI_API OCI_ObjectGetDate
         OCI_CDT_DATETIME,
         OCI_Date*,
         OCIDate,
-        OCI_DateInit(obj->con, (OCI_Date **) &obj->objs[index], value, FALSE, FALSE)
+        OCI_DateInit(obj->con, (OCI_Date *) obj->objs[index], value, FALSE, FALSE)
     )
  }
 
@@ -1248,7 +1220,7 @@ OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp
         OCI_CDT_TIMESTAMP,
         OCI_Timestamp*,
         OCIDateTime*,
-        OCI_TimestampInit(obj->con, (OCI_Timestamp **) &obj->objs[index],
+        OCI_TimestampInit(obj->con, (OCI_Timestamp *) obj->objs[index],
                           (OCIDateTime *) *value, obj->typinf->cols[index].subtype)
     )
 
@@ -1278,7 +1250,7 @@ OCI_Interval * OCI_API OCI_ObjectGetInterval
         OCI_CDT_INTERVAL,
         OCI_Interval*,
         OCIInterval *,
-        OCI_IntervalInit(obj->con, (OCI_Interval **) &obj->objs[index],
+        OCI_IntervalInit(obj->con, (OCI_Interval *) obj->objs[index],
                          (OCIInterval *) *value, obj->typinf->cols[index].subtype)
     )
 
@@ -1306,8 +1278,7 @@ OCI_Coll * OCI_API OCI_ObjectGetColl
         OCI_CDT_COLLECTION,
         OCI_Coll*,
         OCIColl*,
-        OCI_CollInit(obj->con, (OCI_Coll **) &obj->objs[index],
-                     (OCIColl *) *value, obj->typinf->cols[index].typinf)
+        OCI_CollInit(obj->con, (OCI_Coll *) obj->objs[index], (OCIColl *) *value, obj->typinf->cols[index].typinf)
     )
 }
 
@@ -1326,7 +1297,7 @@ OCI_Object * OCI_API OCI_ObjectGetObject
         OCI_CDT_OBJECT,
         OCI_Object*,
         void,
-        OCI_ObjectInit(obj->con, (OCI_Object **) &obj->objs[index], value,
+        OCI_ObjectInit(obj->con, (OCI_Object *) obj->objs[index], value,
                        obj->typinf->cols[index].typinf,  obj, index, FALSE)
     )
  }
@@ -1346,7 +1317,7 @@ OCI_Lob * OCI_API OCI_ObjectGetLob
         OCI_CDT_LOB,
         OCI_Lob*,
         OCILobLocator*,
-        OCI_LobInit(obj->con, (OCI_Lob **) &obj->objs[index], *value, obj->typinf->cols[index].subtype)
+        OCI_LobInit(obj->con, (OCI_Lob *) obj->objs[index], *value, obj->typinf->cols[index].subtype)
     )
 }
 
@@ -1365,7 +1336,7 @@ OCI_File * OCI_API OCI_ObjectGetFile
         OCI_CDT_FILE,
         OCI_File *,
         OCILobLocator*,
-        OCI_FileInit(obj->con, (OCI_File **) &obj->objs[index], *value, obj->typinf->cols[index].subtype)
+        OCI_FileInit(obj->con, (OCI_File *) obj->objs[index], *value, obj->typinf->cols[index].subtype)
     )
  }
 
@@ -1384,7 +1355,7 @@ OCI_Ref * OCI_API OCI_ObjectGetRef
         OCI_CDT_REF,
         OCI_Ref*,
         OCIRef*,
-        OCI_RefInit(obj->con, NULL, (OCI_Ref **) &obj->objs[index], *value)
+        OCI_RefInit(obj->con, NULL, (OCI_Ref *) obj->objs[index], *value)
     )
 }
 

@@ -33,10 +33,10 @@ boolean OCI_SubscriptionClose
     OCI_Subscription *sub
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
     boolean alloc = FALSE;
 
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     OCI_CHECK(NULL == sub, FALSE);
   
     OCI_CALL_CONTEXT_SET_FROM_CONN(sub->con)

@@ -50,8 +50,7 @@ OCI_Enqueue * OCI_API OCI_EnqueueCreate
 
     /* allocate enqueue structure */
 
-    enqueue = (OCI_Enqueue *) OCI_MemAlloc(OCI_IPC_ENQUEUE, sizeof(*enqueue), (size_t) 1, TRUE);
-    OCI_STATUS = (NULL != enqueue);
+    OCI_ALLOCATE_DATA(OCI_IPC_ENQUEUE, enqueue, 1)
 
     if (OCI_STATUS)
     {

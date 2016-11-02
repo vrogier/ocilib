@@ -38,27 +38,18 @@ static unsigned int FileTypeValues[] = { OCI_CFILE, OCI_BFILE };
 OCI_File * OCI_FileInit
 (
     OCI_Connection *con,
-    OCI_File      **pfile,
+    OCI_File       *file,
     OCILobLocator  *handle,
     ub4             type
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(FALSE)
-    OCI_File *file = NULL;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK(NULL == pfile, NULL);
-
-    if (!*pfile)
-    {
-        *pfile = (OCI_File *) OCI_MemAlloc(OCI_IPC_FILE, sizeof(*file), (size_t) 1, TRUE);
-    }
-
-    OCI_STATUS = (NULL != *pfile);
+    OCI_ALLOCATE_DATA(OCI_IPC_FILE, file, 1);
 
     if (OCI_STATUS)
     {
-        file = *pfile;
-
         file->type   = type;
         file->con    = con;
         file->handle = handle;
@@ -95,7 +86,7 @@ OCI_File * OCI_FileInit
     if (!OCI_STATUS && file)
     {
         OCI_FileFree(file);
-        *pfile = file = NULL;
+        file = NULL;
     }
 
     return file;
@@ -118,33 +109,20 @@ boolean OCI_FileGetInfo
 
     /* directory name */
 
+    OCI_ALLOCATE_DATA(OCI_IPC_STRING, file->dir, OCI_SIZE_DIRECTORY + 1)
+
     if (OCI_STATUS)
     {
-        if (!file->dir)
-        {
-            file->dir = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), (size_t) (OCI_SIZE_DIRECTORY + 1), TRUE);
-            OCI_STATUS = (NULL != file->dir);
-        }
-        else
-        {
-            file->dir[0] = 0;
-        }
+        file->dir[0] = 0;
     }
 
     /* file name */
 
+    OCI_ALLOCATE_DATA(OCI_IPC_STRING, file->name, OCI_SIZE_FILENAME + 1)
+    
     if (OCI_STATUS)
     {
-        if (!file->name )
-        {
-            file->name = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), (size_t)( OCI_SIZE_FILENAME + 1), TRUE);
-            OCI_STATUS = (NULL != file->name);
-
-        }
-        else
-        {
-            file->name[0] = 0;
-        }
+        file->name[0] = 0;
     }
 
     /* retrieve name */
@@ -206,7 +184,7 @@ OCI_File * OCI_API OCI_FileCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_FileInit(con, &OCI_RETVAL, NULL, type);
+    OCI_RETVAL = OCI_FileInit(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -556,7 +534,7 @@ const otext * OCI_API OCI_FileGetDirectory
     OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
     OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    if (!file->dir || !file->dir[0])
+    if (!OCI_STRING_VALID(file->dir))
     {
         OCI_STATUS = OCI_FileGetInfo(file);
     }
@@ -579,7 +557,7 @@ const otext * OCI_API OCI_FileGetName
     OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
     OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    if (!file->name || !file->name[0])
+    if (!OCI_STRING_VALID(file->name))
     {
         OCI_STATUS = OCI_FileGetInfo(file);
     }

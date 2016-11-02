@@ -40,13 +40,15 @@ boolean OCI_DirPathSetArray
     ub4 row_from
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
     ub1     *data    = NULL;
     ub4      size    = 0;
     ub1      flag    = 0;
     ub2      col     = 0;
     ub4      row     = 0;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+  
+    OCI_CHECK(NULL == dp, FALSE)
 
     OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
@@ -102,10 +104,12 @@ unsigned int OCI_DirPathArrayToStream
     ub4 row_from
 )
 {
+    unsigned int res = OCI_DPR_COMPLETE;
+    sword        ret = OCI_SUCCESS;
+
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
-    unsigned int res = OCI_DPR_COMPLETE;
-    sword        ret  = OCI_SUCCESS;
+    OCI_CHECK(NULL == dp, OCI_DPR_ERROR)
 
     OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
@@ -187,13 +191,15 @@ unsigned int OCI_DirPathArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
 unsigned int OCI_DirPathLoadStream(OCI_DirPath *dp)
-{
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
+{       
     unsigned int res = OCI_DPR_COMPLETE;
     sword ret        = OCI_SUCCESS;
     ub4 nb_loaded    = 0;
     ub4 size         = sizeof(nb_loaded);
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+
+    OCI_CHECK(NULL == dp, OCI_DPR_ERROR)
 
     /* load the stream */
 
@@ -271,9 +277,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 
     /* allocate direct path structure */
 
-    dp = (OCI_DirPath *)OCI_MemAlloc(OCI_IPC_DIRPATH, sizeof(*dp), (size_t)1, TRUE);
-    
-    OCI_STATUS = (NULL != dp);
+    OCI_ALLOCATE_DATA(OCI_IPC_DIRPATH, dp, 1)
 
     if (OCI_STATUS)
     {
@@ -308,7 +312,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 
         /* set schema name attribute */
 
-        if (OCI_STATUS && dp->typinf->schema && dp->typinf->schema[0])
+        if (OCI_STATUS && OCI_STRING_VALID(dp->typinf->schema))
         {
             dbsize = -1;
             dbstr  = OCI_StringGetOracleString(dp->typinf->schema, &dbsize);
@@ -320,7 +324,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 
         /* set partition name attribute */
 
-        if (OCI_STATUS && partition && partition[0])
+        if (OCI_STATUS && OCI_STRING_VALID(partition))
         {
             dbsize = -1;
             dbstr  = OCI_StringGetOracleString(partition, &dbsize);
@@ -345,11 +349,7 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 
         /* allocating the column array */
 
-        if (OCI_STATUS)
-        {
-            dp->cols = (OCI_DirPathColumn *) OCI_MemAlloc(OCI_IPC_DP_COL_ARRAY, sizeof(OCI_DirPathColumn), (size_t) dp->nb_cols, TRUE);
-            OCI_STATUS = (NULL != dp->cols);
-        }
+        OCI_ALLOCATE_DATA(OCI_IPC_DP_COL_ARRAY, dp->cols, dp->nb_cols)
     }
 
     /* handle errors */
@@ -481,7 +481,7 @@ boolean OCI_API OCI_DirPathSetColumn
             }
             case OCI_CDT_NUMERIC:
             {
-                if (format && format[0])
+                if (OCI_STRING_VALID(format))
                 {
                     dpcol->format      = ostrdup(format);
                     dpcol->format_size = (ub4) ostrlen(format);
@@ -502,7 +502,7 @@ boolean OCI_API OCI_DirPathSetColumn
             {
                 dpcol->type = OCI_DDT_OTHERS;
 
-                if (format && format[0])
+                if (OCI_STRING_VALID(format))
                 {
                     dpcol->format      = ostrdup(format);
                     dpcol->format_size = (ub4) ostrlen(format);
@@ -661,19 +661,12 @@ boolean OCI_API OCI_DirPathPrepare
 
     /* allocate array of errs rows */
 
-    if (OCI_STATUS)
-    {
-        dp->err_rows = (ub4 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(*dp->err_rows), (size_t) dp->nb_cur, TRUE);
-        OCI_STATUS = (NULL != dp->err_rows);
-    }
+    OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, dp->err_rows, dp->nb_cur)
+
 
     /* allocate array of errs cols */
 
-    if (OCI_STATUS)
-    {
-        dp->err_cols = (ub2 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(*dp->err_cols), (size_t) dp->nb_cur, TRUE);
-        OCI_STATUS = (NULL != dp->err_cols);
-    }
+    OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, dp->err_cols, dp->nb_cur)
 
     /* now, we need to allocate internal buffers */
 
@@ -685,29 +678,9 @@ boolean OCI_API OCI_DirPathPrepare
         {
             OCI_DirPathColumn *col = &dp->cols[i];
 
-            /* data buffers */
-
-            if (OCI_STATUS)
-            {
-                col->data = (ub1 *)OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, (size_t)col->bufsize, (size_t)dp->nb_cur, TRUE);
-                OCI_STATUS = (NULL != col->data);
-            }
-
-            /* data sizes */
-
-            if (OCI_STATUS)
-            {
-                col->lens = (ub4 *)OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(ub4), (size_t)dp->nb_cur, TRUE);
-                OCI_STATUS = (NULL != col->lens);
-            }
-
-            /* data flags */
-
-            if (OCI_STATUS)
-            {
-                col->flags = (ub1 *)OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(ub1), (size_t)dp->nb_cur, TRUE);
-                OCI_STATUS = (NULL != col->flags);
-            }
+            OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, col->data, col->bufsize, dp->nb_cur)
+            OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, col->lens, sizeof(ub4),  dp->nb_cur)
+            OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, col->flags, sizeof(ub1), dp->nb_cur)
         }
     }
 
