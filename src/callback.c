@@ -76,7 +76,7 @@ sb4 OCI_ProcInBind
 
     *bufpp  = (dvoid *) 0;
     *alenp  = (ub4    ) 0;
-    *indp   = (dvoid *) bnd ? bnd->buffer.inds : NULL;
+    *indp   = (dvoid *) bnd->buffer.inds;
     *piecep = (ub1    ) OCI_ONE_PIECE;
 
     return OCI_CONTINUE;
