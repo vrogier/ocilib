@@ -1,4 +1,4 @@
-2016-09-12 Version 4.3.0 Vincent Rogier vince.rogier@ocilib.net
+2016-11-09 Version 4.3.0 Vincent Rogier vince.rogier@ocilib.net
 
     * New Features: 
     
@@ -43,7 +43,9 @@
 
         - OCI_ObjectGetString(): Fixed usage of internal temporary buffers
         - OCI_FileRead(): Return value was not the correct one
- 
+        - Fix indicators usage for collections : OCI_IsNull() always returned FALSE even if fetched collection was NULL
+        - Fix compilation under C compilers not supporting C99 feature allowing declaring variables anywhere in blocks
+        
     * Miscellaneous:
     
         - C API: Major internal code re-factoring
