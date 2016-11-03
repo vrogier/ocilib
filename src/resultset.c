@@ -857,13 +857,14 @@ boolean OCI_ClearFetchedObjectInstances(OCI_Resultset *rs)
     {
         OCI_Define *def = &(rs->defs[i]);
 
-        if (OCI_CDT_OBJECT == def->col.datatype && def->buf.data)
+        if (SQLT_NTY == def->col.sqlcode && def->buf.data)
         {
+            sword ret = 0;
             for (j = 0; j < def->buf.count; j++)
             {
                 if (def->buf.data[j] != NULL)
                 {
-                    OCIObjectFree(rs->stmt->con->env, rs->stmt->con->err, def->buf.data[j], OCI_DEFAULT);
+                    ret = OCIObjectFree(rs->stmt->con->env, rs->stmt->con->err, def->buf.data[j], OCI_OBJECTFREE_FORCE);
                     def->buf.data[j] = NULL;
                 }
             }
