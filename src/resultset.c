@@ -864,7 +864,7 @@ boolean OCI_ClearFetchedObjectInstances(OCI_Resultset *rs)
             {
                 if (def->buf.data[j] != NULL)
                 {
-                    ret = OCIObjectFree(rs->stmt->con->env, rs->stmt->con->err, def->buf.data[j], OCI_OBJECTFREE_FORCE);
+                    ret = OCIObjectFree(rs->stmt->con->env, rs->stmt->con->err, def->buf.data[j], OCI_DEFAULT);
                     def->buf.data[j] = NULL;
                 }
             }
