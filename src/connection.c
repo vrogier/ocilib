@@ -531,7 +531,7 @@ boolean OCI_ConnectionLogon
     {
         if (OCILib.version_runtime >= OCI_9_0)
         {
-            ub4      mode       = OCI_DEFAULT;
+            ub4      sess_mode  = OCI_SESSGET_SPOOL;
             boolean  found      = FALSE;
             dbtext  *dbstr_tag  = NULL;
             int      dbsize_tag = 0;
@@ -541,7 +541,10 @@ boolean OCI_ConnectionLogon
             dbsize = -1;
             dbstr  = OCI_StringGetOracleString(con->pool->name, &dbsize);
 
-            mode = OCI_SESSGET_SPOOL;
+            if (!OCI_STRING_VALID(con->pool->user) && !OCI_STRING_VALID(con->pool->pwd))
+            {
+                sess_mode |= OCI_SESSGET_CREDEXT;
+            }
 
             if (OCI_STRING_VALID(tag))
             {
@@ -553,7 +556,7 @@ boolean OCI_ConnectionLogon
             (
                 OCISessionGet(con->env, con->err, &con->cxt, NULL,
                               (OraText  *) dbstr, (ub4) dbsize, (OraText *) dbstr_tag, dbsize_tag,
-                              (OraText **) &dbstr_ret, &dbsize_ret, &found, mode)
+                              (OraText **) &dbstr_ret, &dbsize_ret, &found, sess_mode)
             )
 
             OCI_StringReleaseOracleString(dbstr);

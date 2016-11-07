@@ -263,6 +263,13 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
             else
             {
+                ub4 sess_mode = OCI_DEFAULT;
+                
+                if (OCI_STRING_VALID(pool->user) && OCI_STRING_VALID(pool->pwd))
+                {
+                    sess_mode |= OCI_SPC_HOMOGENEOUS;
+                }
+
                 OCI_EXEC
                 (
                     OCISessionPoolCreate(OCILib.env, pool->err, (OCISPool *) pool->handle,
@@ -272,7 +279,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
                                          (ub4) pool->min, (ub4) pool->max,
                                          (ub4) pool->incr, (OraText *) dbstr_user,
                                          (sb4) dbsize_user, (OraText *) dbstr_pwd,
-                                         (sb4) dbsize_pwd,  (ub4) OCI_SPC_HOMOGENEOUS)
+                                         (sb4) dbsize_pwd,  (ub4) sess_mode)
                 )
             }
 
