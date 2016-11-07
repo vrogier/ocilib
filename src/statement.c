@@ -551,11 +551,14 @@ boolean OCI_BindData
 
     /* allocate indicators array */
 
-    OCI_ALLOCATE_DATA(OCI_IPC_BIND, bnd->buffer.inds, nballoc)
-
-    if (SQLT_NTY == code)
+    if (OCI_STATUS)
     {
-        OCI_ALLOCATE_DATA(OCI_IPC_INDICATOR_ARRAY, bnd->buffer.obj_inds, nballoc)
+        OCI_ALLOCATE_DATA(OCI_IPC_BIND, bnd->buffer.inds, nballoc)
+
+        if (OCI_STATUS && SQLT_NTY == code)
+        {
+            OCI_ALLOCATE_DATA(OCI_IPC_INDICATOR_ARRAY, bnd->buffer.obj_inds, nballoc)
+        }
     }
 
     /* check need for PL/SQL table extra info */
