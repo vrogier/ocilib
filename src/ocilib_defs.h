@@ -517,7 +517,7 @@
 
 #define OCI_ALLOCATE_BUFFER(type, ptr, size, count)                             \
                                                                                 \
-    if (OCI_STATUS && size > 0 && !ptr)                                         \
+    if (OCI_STATUS && !ptr)                                                     \
     {                                                                           \
         ptr = OCI_MemAlloc(type, size, (size_t) count, TRUE);                   \
     }                                                                           \

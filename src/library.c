@@ -708,8 +708,6 @@ boolean OCI_API OCI_Initialize
     unsigned int mode
 )
 {
-	OCI_CALL_DECLARE_VARIABLES(boolean, FALSE, TRUE)
-
     unsigned int i = 0;
     ub4 oci_mode = OCI_ENV_MODE | OCI_OBJECT;
 
@@ -721,6 +719,7 @@ boolean OCI_API OCI_Initialize
 
 #endif
 
+    OCI_CALL_DECLARE_VARIABLES(boolean, FALSE, TRUE)
     OCI_CALL_CONTEXT_ENTER(mode)
 
     /* check if it was already initialized */

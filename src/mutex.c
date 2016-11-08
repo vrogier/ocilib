@@ -33,9 +33,9 @@ OCI_Mutex * OCI_MutexCreateInternal
     void
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
     OCI_Mutex *mutex = NULL;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)        
 
     /* allocate mutex structure */
 
