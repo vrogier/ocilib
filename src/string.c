@@ -754,25 +754,30 @@ unsigned int OCI_StringGetFromType
 
             if (lob)
             {
-                otext lob_buf[OCI_SIZE_BUFFER + 1 ];
+                unsigned char lob_buf[(OCI_SIZE_BUFFER + 1) * UTF8_BYTES_PER_CHAR];
 
-                unsigned int read = 0;    
+                while (res)
+                {      
+                    unsigned int bytes_count = OCI_SIZE_BUFFER * UTF8_BYTES_PER_CHAR;
+                    unsigned int char_count = 0;
 
-                do
-                {                        
-                    read = OCI_LobRead(lob, lob_buf, OCI_SIZE_BUFFER);
+                    res = OCI_LobRead2(lob, lob_buf, &char_count, &bytes_count);
+
+                    if (bytes_count == 0)
+                    {
+                        // lob eof reached
+                        break;
+                    }
 
                     if (OCI_CLOB == lob->type)
                     {
-                        lob_buf[read] = 0;
                         len += OCI_StringAddToBuffer(buffer, len, lob_buf, quote);
                     }
                     else
                     {
-                        len += OCI_StringBinaryToString((unsigned char *) lob_buf, read, ptr ? ptr + len : ptr);  
+                        len += OCI_StringBinaryToString((unsigned char *)lob_buf, bytes_count, ptr ? ptr + len : ptr);
                     }  
                 }
-                while (read >= OCI_SIZE_BUFFER);
 
                 OCI_LobSeek(lob, 0, OCI_SEEK_SET);
             }
