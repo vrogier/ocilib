@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2016-09-11 22:35:00+01:00
+date: 2016-11-09 22:35:00+01:00
 layout: page
 slug: about
 title: About
@@ -30,6 +30,6 @@ Few years later and thousand of hours spent on it, OCILIB had became the referen
 
 I'm French, 38 years old and live/work in France around Paris.
 <br/>
-I'm currently working at [Capsule Technologie](http://www.capsuletech.com) - a [QualcommLife]((http://www.QualcommLife.com) subsidiary as Principal Software Engineer in our R&D software development department.
+I'm currently working at [Capsule Technologie](http://www.capsuletech.com) - a [QualcommLife](http://www.QualcommLife.com) subsidiary as Principal Software Engineer in our R&D department.
 <br/>
 Previously I was working as a Senior Software Engineer for a French company that develops computerized integrated food management systems for hospitals and health care institutions. I was in charge of the conception, the implementation and the packaging of our main software solution.

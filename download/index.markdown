@@ -1,14 +1,14 @@
 ---
 author: admin
 comments: true
-date: 2008-08-16 20:57:20+00:00
+date: 2016-11-09 22:35:00+01:00
 layout: page
 slug: download
 title: Download
 wordpress_id: 68
 ---
 
-* Get the lastest package from GitHub :[version 4.2.1 (2016-03-21)]({{site.projecturl}}/releases/)
+* Get the lastest package from GitHub :[version 4.3.0 (2016-11-09)]({{site.projecturl}}/releases/)
 
 ## Installation
 
