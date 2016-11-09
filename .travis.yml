@@ -10,7 +10,7 @@ script:
   - sudo make uninstall
   - make clean
   - ./configure --with-oracle-import=runtime --with-oracle-charset=wide
-   - make
+  - make
   - sudo make install
   - sudo make uninstall
 env:
