@@ -285,7 +285,7 @@ boolean OCI_ColumnDescribe
 
                 if (OCI_STATUS)
                 {
-                    OCI_StringAnsiToNative(param_struct->column_info->name, col->name, (int) char_count);=
+                    OCI_StringAnsiToNative(param_struct->column_info->name, col->name, (int) char_count);
                 }
             }
             else

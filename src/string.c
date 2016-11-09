@@ -771,11 +771,11 @@ unsigned int OCI_StringGetFromType
 
                     if (OCI_CLOB == lob->type)
                     {
-                        len += OCI_StringAddToBuffer(buffer, len, lob_buf, quote);
+                        len += OCI_StringAddToBuffer(buffer, len, (otext*) lob_buf, quote);
                     }
                     else
                     {
-                        len += OCI_StringBinaryToString((unsigned char *)lob_buf, bytes_count, ptr ? ptr + len : ptr);
+                        len += OCI_StringBinaryToString(lob_buf, bytes_count, ptr ? ptr + len : ptr);
                     }  
                 }
 
