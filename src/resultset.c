@@ -859,12 +859,11 @@ boolean OCI_ClearFetchedObjectInstances(OCI_Resultset *rs)
 
         if (SQLT_NTY == def->col.sqlcode && def->buf.data)
         {
-            sword ret = 0;
             for (j = 0; j < def->buf.count; j++)
             {
                 if (def->buf.data[j] != NULL)
                 {
-                    ret = OCIObjectFree(rs->stmt->con->env, rs->stmt->con->err, def->buf.data[j], OCI_DEFAULT);
+                    OCIObjectFree(rs->stmt->con->env, rs->stmt->con->err, def->buf.data[j], OCI_DEFAULT);
                     def->buf.data[j] = NULL;
                 }
             }
