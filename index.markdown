@@ -26,7 +26,7 @@ The OCILIB library  :
   
 ## Latest version
 
-The latest version is [version 4.3.0 (2016-11-091)]({{site.projecturl}}/releases/)
+The latest version is [version 4.3.0 (2016-11-09)]({{site.projecturl}}/releases/)
 <br/>
 <br/>
 [![Build Status](https://img.shields.io/travis/vrogier/ocilib/master.svg)](https://travis-ci.org/vrogier/ocilib)
