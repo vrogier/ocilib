@@ -14,6 +14,6 @@ var classocilib_1_1_exception =
     [ "GetStatement", "classocilib_1_1_exception.html#a06d8376fd56b161935de9392c9ff157d", null ],
     [ "GetConnection", "classocilib_1_1_exception.html#ab7f1bac3d9da27011bc4a977af1c8b48", null ],
     [ "GetRow", "classocilib_1_1_exception.html#accf209fd09b2b98375f41792bf8ab0ac", null ],
-    [ "what", "classocilib_1_1_exception.html#af890462b7d593b7166d8ecff2e3b111f", null ],
-    [ "Check", "classocilib_1_1_exception.html#a626299379190975d6768ab87ee8afd9c", null ]
+    [ "what", "classocilib_1_1_exception.html#a7a94601dfe775a845516810716bc1d09", null ],
+    [ "Check", "classocilib_1_1_exception.html#ad3fde29600e69dd993abf5d317fc325c", null ]
 ];

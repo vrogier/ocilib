@@ -31,6 +31,8 @@ var group___ocilib_c_api_fetching =
     [ "OCI_SetStructNumericType", "group___ocilib_c_api_fetching.html#ga096c5eed488bc9d20e4320c58536df1b", null ],
     [ "OCI_SetStructNumericType2", "group___ocilib_c_api_fetching.html#ga035066416ddc9103955c2920396836c4", null ],
     [ "OCI_GetStruct", "group___ocilib_c_api_fetching.html#ga0091425c55521bc0a3425f84043fd949", null ],
+    [ "OCI_GetNumber", "group___ocilib_c_api_fetching.html#ga780c4c0eac2932be03ded727f4973f4d", null ],
+    [ "OCI_GetNumber2", "group___ocilib_c_api_fetching.html#ga7b66a287aa431226c6b7920778a47215", null ],
     [ "OCI_GetShort", "group___ocilib_c_api_fetching.html#gaeb764f2f4929df12d7293df195ebed8f", null ],
     [ "OCI_GetShort2", "group___ocilib_c_api_fetching.html#gacd96d7839d849aba1690542e4f4bd910", null ],
     [ "OCI_GetUnsignedShort", "group___ocilib_c_api_fetching.html#ga4806cb6d6ead3a3ef04be924517aee1c", null ],
@@ -72,6 +74,8 @@ var group___ocilib_c_api_fetching =
     [ "OCI_GetLong", "group___ocilib_c_api_fetching.html#ga8c750dc1ea6d90c61cc2ebff5fb0c561", null ],
     [ "OCI_GetLong2", "group___ocilib_c_api_fetching.html#ga98beb743ff2f9225603b61926c0e2244", null ],
     [ "OCI_IsNull", "group___ocilib_c_api_fetching.html#ga70e925d3109ab04ecfeba024765c36bc", null ],
+    [ "OCI_GetDataSize", "group___ocilib_c_api_fetching.html#ga513f1cb4342ea4e7ddbb6329b42de3c4", null ],
+    [ "OCI_GetDataSize2", "group___ocilib_c_api_fetching.html#ga69634b4928ed28c0de1b1b881188262a", null ],
     [ "OCI_IsNull2", "group___ocilib_c_api_fetching.html#ga044208eb8d8cc91f673f55d422f3788c", null ],
     [ "OCI_ResultsetGetStatement", "group___ocilib_c_api_fetching.html#ga090e11bacc3f267859902e98b71e26fd", null ],
     [ "OCI_GetDataLength", "group___ocilib_c_api_fetching.html#gadf36f1e4b9b955350dec1882d1c2102b", null ]

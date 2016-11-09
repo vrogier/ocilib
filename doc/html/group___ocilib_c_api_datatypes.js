@@ -11,6 +11,7 @@ var group___ocilib_c_api_datatypes =
     [ "OCI_File", "group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d", null ],
     [ "OCI_Transaction", "group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128", null ],
     [ "OCI_Long", "group___ocilib_c_api_datatypes.html#ga95e122a9e888afdd674803e521557aba", null ],
+    [ "OCI_Number", "group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6", null ],
     [ "OCI_Date", "group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614", null ],
     [ "OCI_Timestamp", "group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47", null ],
     [ "OCI_Interval", "group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c", null ],

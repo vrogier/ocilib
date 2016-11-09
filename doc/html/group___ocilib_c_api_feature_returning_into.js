@@ -1,6 +1,7 @@
 var group___ocilib_c_api_feature_returning_into =
 [
     [ "OCI_GetNextResultset", "group___ocilib_c_api_feature_returning_into.html#ga67cbb956e8d721c8397e3f897a57b224", null ],
+    [ "OCI_RegisterNumber", "group___ocilib_c_api_feature_returning_into.html#gaaf3b03d15c93a0441473f2bcf86453d6", null ],
     [ "OCI_RegisterShort", "group___ocilib_c_api_feature_returning_into.html#ga75b56f19cf0c858b2e4a2b81ef15b5ea", null ],
     [ "OCI_RegisterUnsignedShort", "group___ocilib_c_api_feature_returning_into.html#gad86a6a528899cae1272b88e06e3d2043", null ],
     [ "OCI_RegisterInt", "group___ocilib_c_api_feature_returning_into.html#ga4c215f37902cc9045c27ae1bdd3b2844", null ],

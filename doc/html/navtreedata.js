@@ -21,8 +21,8 @@ var NAVTREE =
         [ "Enumerator", "namespacemembers_eval.html", null ]
       ] ]
     ] ],
-    [ "Classes", null, [
-      [ "Class List", "annotated.html", "annotated" ],
+    [ "Classes", "annotated.html", [
+      [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
@@ -42,12 +42,12 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"classocilib_1_1_direct_path.html#aa7784b877512190c4c90274e5a599685",
-"classocilib_1_1_long.html#ae36ce43f57230c6c28bc29d9a5344807",
-"classocilib_1_1_timestamp.html#a02e61b3823bd2c30cfd8c88c5b020c97",
-"group___ocilib_c_api_binding.html#ga6fe7cc3597c3362094ce526faa79fc8b",
-"group___ocilib_c_api_fetching.html#ga2a7ec7c2c056dd145ab32bc41fabcd2d",
-"group___ocilib_c_api_subscriptions.html#gaac2b2c3f7bc5e07f230cb4f797f95e8c"
+"classocilib_1_1_direct_path.html#a8f04ce5a447056ee80faea698f37713b",
+"classocilib_1_1_long.html#a039a79be8c50426fc8e9060246bb28a5",
+"classocilib_1_1_thread.html#aa19db6d3acc420f737051ac959a82b00",
+"group___ocilib_c_api_binding.html#ga4d59c09e2ffd81029034cafeb735748e",
+"group___ocilib_c_api_feature_returning_into.html#gad86a6a528899cae1272b88e06e3d2043",
+"group___ocilib_c_api_statement_control.html#ga33e12da2d28c8a8a73165230a54c91cb"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

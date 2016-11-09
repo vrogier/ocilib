@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2008-08-16 21:08:33+00:00
+date: 2016-09-11 22:35:00+01:00
 layout: page
 slug: changelogs
 title: Changelogs
@@ -16,6 +16,12 @@ Click on a change log entry to see the full details.
 
 <br/>
 <br/>
+
+_[2016-09-11 . version 4.3.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.3.0.txt)_
+
+  * Added NUMBER SQL type native wrapping 
+  * Various Bug fixes
+  * Major internal refactoring
 
 _[2016-03-21 . version 4.2.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.2.1.txt)_
 

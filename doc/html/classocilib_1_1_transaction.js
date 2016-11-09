@@ -9,7 +9,7 @@ var classocilib_1_1_transaction =
       [ "ReadWrite", "classocilib_1_1_transaction.html#aad56be300eb5c62bea0e622eb25416b4a4545bd6054a1841d65ac77340661965d", null ],
       [ "Serializable", "classocilib_1_1_transaction.html#aad56be300eb5c62bea0e622eb25416b4ac2d7a8f0588816018384575b92632806", null ]
     ] ],
-    [ "Transaction", "classocilib_1_1_transaction.html#a91734fb6f2111307c621d779699c1a41", null ],
+    [ "Transaction", "classocilib_1_1_transaction.html#a5d7965922a67ec4fb9f9759de9539a54", null ],
     [ "Prepare", "classocilib_1_1_transaction.html#ac3b4d4b7e11700048400ec7264fb10a5", null ],
     [ "Start", "classocilib_1_1_transaction.html#a2abaae7bfa114d944b1a29ee66286383", null ],
     [ "Stop", "classocilib_1_1_transaction.html#adcfc66c5dbea6f6c88ee10a947a80a44", null ],
