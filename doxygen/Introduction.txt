@@ -15,11 +15,11 @@
  - Encapsulates OCI (Oracle Call Interface)
  - Is the most complete available OCI wrapper
  - C API written in standard C99 code with native Unicode support
- - C++ API written in standard C++03 based on STL paradigms
+ - C++ API written in standard C++03 (uses C++11 features only if supported by compilers)
 
  @section Version Version information
 
-Current version :  <b>4.1.0 (2015-05-05)</b>
+Current version :  <b>4.3.0 (2016-11-09)</b>
 
  @section Features Main features
 
@@ -61,8 +61,8 @@ Current version :  <b>4.1.0 (2015-05-05)</b>
  OCILIB is developed by <a href="mailto:vince.rogier@ocilib.net">Vincent Rogier</a>
 
  @section License License 
- The source code is free source code. It's licensed under GNU LESSER GENERAL PUBLIC LICENSE (LGPL).
- (see the file lgpl-license.txt)
+ The source code is free source code licensed under the Apache License, Version 2.0.
+ (see the file license.txt)
 
  @section Changelog ChangeLog
 

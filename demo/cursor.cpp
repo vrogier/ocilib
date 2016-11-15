@@ -14,7 +14,7 @@ int main(void)
 
         Statement st(con);
 
-        st.Execute("select table_name, cursor(select sysdate from dual) from all_tables");
+        st.Execute("select rownum, cursor(select sysdate from dual) from (select 1 from dual connect by level <= 10)");
 
         Resultset rs = st.GetResultset();
 

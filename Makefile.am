@@ -1,4 +1,4 @@
-# Copyright (C) 2007 Vincent Rogier <vince_rogier@yahoo.fr>
+# Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
 #  
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without 
@@ -8,6 +8,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = doc/html reconf configure VERSION acocilib.m4
 SUBDIRS = doc/html src demo
 DISTCLEANFILES = *~ \#*\#

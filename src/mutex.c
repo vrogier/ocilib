@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: mutex.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
@@ -48,30 +34,25 @@ OCI_Mutex * OCI_MutexCreateInternal
 )
 {
     OCI_Mutex *mutex = NULL;
-    boolean    res   = FALSE;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)        
 
     /* allocate mutex structure */
 
-    mutex = (OCI_Mutex *) OCI_MemAlloc(OCI_IPC_MUTEX, sizeof(*mutex), (size_t) 1, TRUE);
+    OCI_ALLOCATE_DATA(OCI_IPC_MUTEX, mutex, 1)
 
-    if (mutex)
+    if (OCI_STATUS)
     {
         /* allocate error handle */
 
-        res = OCI_SUCCESSFUL(OCI_HandleAlloc(OCILib.env, (dvoid **) (void *) &mutex->err,
-                                             OCI_HTYPE_ERROR, (size_t) 0, (dvoid **) NULL));
+        OCI_STATUS = OCI_HandleAlloc(OCILib.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR);
 
         /* allocate mutex handle */
 
-        OCI_CALL3
-        (
-            res, mutex->err,
-
-            OCIThreadMutexInit(OCILib.env, mutex->err, &mutex->handle)
-        )
+        OCI_EXEC(OCIThreadMutexInit(OCILib.env, mutex->err, &mutex->handle))
     }
 
-    if (!res && mutex)
+    if (!OCI_STATUS && mutex)
     {
         OCI_MutexFree(mutex);
         mutex = NULL;
@@ -93,14 +74,13 @@ OCI_Mutex * OCI_API OCI_MutexCreate
     void
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Mutex*, NULL)
+    OCI_CALL_ENTER(OCI_Mutex*, NULL)
+    OCI_CALL_CHECK_INITIALIZED()
 
-    OCI_CHECK_INITIALIZED()
+    OCI_RETVAL = OCI_MutexCreateInternal();
+    OCI_STATUS = (NULL != OCI_RETVAL);
 
-    call_retval = OCI_MutexCreateInternal();
-    call_status = (NULL != call_retval);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -112,20 +92,15 @@ boolean OCI_API OCI_MutexFree
     OCI_Mutex *mutex
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(mutex->err)
 
     /* close mutex handle */
 
     if (mutex->handle)
     {
-        OCI_CALL0
-        (
-            call_status, mutex->err,
-
-            OCIThreadMutexDestroy(OCILib.env, mutex->err, &mutex->handle)
-        )
+        OCI_EXEC(OCIThreadMutexDestroy(OCILib.env, mutex->err, &mutex->handle))
     }
 
     /* close error handle */
@@ -139,9 +114,9 @@ boolean OCI_API OCI_MutexFree
 
     OCI_FREE(mutex)
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
     
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -153,20 +128,15 @@ boolean OCI_API OCI_MutexAcquire
     OCI_Mutex *mutex
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(mutex->err)
 
-    OCI_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_EXEC(OCIThreadMutexAcquire(OCILib.env, mutex->err, mutex->handle))
 
-    OCI_CALL0
-    (
-        call_status, mutex->err,
+    OCI_RETVAL = OCI_STATUS;
 
-        OCIThreadMutexAcquire(OCILib.env, mutex->err, mutex->handle)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -178,18 +148,13 @@ boolean OCI_API OCI_MutexRelease
     OCI_Mutex *mutex
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(mutex->err)
 
-    OCI_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    OCI_EXEC(OCIThreadMutexRelease(OCILib.env, mutex->err, mutex->handle))
+ 
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL0
-    (
-        call_status, mutex->err,
-
-        OCIThreadMutexRelease(OCILib.env, mutex->err, mutex->handle)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }

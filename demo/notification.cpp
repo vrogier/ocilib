@@ -4,8 +4,10 @@
 
 using namespace ocilib;
 
-#ifdef _WINDOWS
-#define sleep(x) Sleep(x*1000)
+#if defined(_WINDOWS)
+    #define sleep(x) Sleep(x*1000)
+#else
+    #include <unistd.h>
 #endif
 
 #define WaitForEvents()   sleep(5)

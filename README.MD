@@ -1,6 +1,8 @@
-# OCILIB - C and C++ Drivers for Oracle  
+ï»¿# OCILIB - C and C++ Drivers for Oracle 
+[![Build Status](https://img.shields.io/travis/vrogier/ocilib/master.svg)](https://travis-ci.org/vrogier/ocilib)
+[![Code Analysis](https://img.shields.io/coverity/scan/8019.svg)](https://scan.coverity.com/projects/vrogier-ocilib)
 
-## 1. About OCILIB
+## 1. About
 
 OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases.
 
@@ -9,14 +11,18 @@ The OCILIB library :
 - offers a rich, full featured and easy to use API
 - runs on all Oracle platforms
 - is written in pure ISO C99 code with native ISO C Unicode support
-- provides also a C++ API written in standard C++03
+- provides also a C++ API written isn standard C++ 3 with support for some C++11 features
 - Enables high productivity
 - encapsulates OCI (Oracle Call Interface)
 - is the most complete available OCI wrapper
 
 OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy it !
 
-## 2. Features 
+## 2. License
+
+The source code is free source code licensed under **Apache License, Version 2.0** - see [LICENSE file](license.txt)
+
+## 3. Features 
  
 - ISO C API
 - ISO C ++ API
@@ -47,13 +53,12 @@ OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy
 - Hash tables API
 - Portable Threads and mutexes API
 
-
-## 4. Installation
+## 5. Installation
 
 ### Windows platforms
 
 - unzip the archive
-- copy ocilib\include\ocilib.h to any place located in your include’s path
+- copy ocilib\include\ocilib.h to any place located in your includeâ€™s path
 - copy ocilib\lib32|64\ocilib[x].lib to any place located in your libraries path
 - copy ocilib\lib32|64\ocilib[x].dll to any place located in your windows path
 
@@ -66,9 +71,9 @@ OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy
 - $ make install (you might need to `su` to make install)
 
 Make sure Oracle and OCILIB libraries paths are defined in your shared library environment variable
-You need to provide extra configure parameters when using Instant Clients – see Installation section)
+You need to provide extra configure parameters when using Instant Clients â€“ see Installation section)
 
-## 5. Examples
+## 6. Examples
 
 Example of a minimal OCILIB C application
 

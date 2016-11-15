@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_types.h, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #ifndef OCILIB_OCILIB_TYPES_H_INCLUDED
 #define OCILIB_OCILIB_TYPES_H_INCLUDED
@@ -233,6 +219,7 @@ struct OCI_Library
     big_uint             mem_bytes_oci;           /* allocated bytes by OCI client */
     big_uint             mem_bytes_lib;           /* allocated bytes by OCILIB */
     OCI_Mutex           *mem_mutex;               /* mutex for memory counters */
+    boolean              env_vars[OCI_VARS_COUNT];/* specific environment variables */
 #ifdef OCI_IMPORT_RUNTIME
     LIB_HANDLE           lib_handle;              /* handle of runtime shared library */
 #endif
@@ -356,14 +343,14 @@ struct OCI_Buffer
 {
     void            *handle;       /* OCI handle (bind or define) */
     void           **data;         /* data / array of data */
-    void            *inds;         /* array of indicators */
     void            *lens;         /* array of lengths */
     ub4              count;        /* number of elements in the buffer */
     int              sizelen;      /* size of an element in the lens array */
-    void           **obj_inds;     /* array of indicators structure object */
-    sb2             *null_inds;    /* null indicators for objects */
     otext           *tmpbuf;       /* temporary buffer */
     unsigned int     tmpsize;      /* temporary buffer size */
+    OCIInd*          inds;         /* indicators */
+    void**           obj_inds;     /* object indicators */
+
 };
 
 typedef struct OCI_Buffer OCI_Buffer;
@@ -535,6 +522,20 @@ struct OCI_Long
 };
 
 /*
+* Number object
+*
+*/
+
+struct OCI_Number
+{
+    OCINumber      *handle;     /* OCI handle */
+    ub4             hstate;     /* object variable state */
+    OCI_Connection *con;        /* pointer to connection object */
+    OCIError       *err;        /* OCI error handle */
+    OCIEnv         *env;        /* OCI environment handle */
+};
+
+/*
  * Date object
  *
  */
@@ -602,8 +603,8 @@ struct OCI_Object
     OCIObjectLifetime type;         /* object type */
     sb2              *tab_ind;      /* indicators for root instance */
     ub2               idx_ind;      /* instance indicator offset / indicator table */
-    otext            *tmpbuf;       /* temporary buffer */
-    unsigned int      tmpsize;      /* temporary buffer size */
+    otext           **tmpbufs;      /* temporary buffer  per column */
+    unsigned int     *tmpsizes;     /* temporary buffer size per column */
     char              padding[2];   /* dummy variable for alignment */ 
 };
 
@@ -915,10 +916,56 @@ struct OCI_SQLCmdInfo
 
 typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;
 
+/* OCI Call context */
+
+struct OCI_CallContext
+{
+    OCI_Connection *lib_con;
+    OCI_Statement  *lib_stmt;
+    OCIError       *oci_err;
+    OCI_Error      *call_err;
+    boolean         call_status;
+};
+
+typedef struct OCI_CallContext OCI_CallContext;
+
 /* static and unique OCI_Library object */
 
 extern OCI_Library OCILib;
 extern OCI_SQLCmdInfo SQLCmds[];
+
+/* Start of Experimental section containing some Oracle opaque structure definitions 
+
+   These partial structures are "guessed" from memory analysis in order to 
+   find workarounds to bugs that Oracle does not / refuses to fix.
+
+   These structures are not used in OCILIB unless specific environment variables are set
+*/
+
+
+/* The following structures contain definitions for a structure matching an Oracle Parameter  
+   retrieved from a statement handle when describing columns from resultsets.
+   They were added in order to implement a workaround for the unfixed Oracle Bug 9838993 
+*/
+
+struct OCIParamStructColumnInfo
+{
+    unsigned char unknown_fields[6 * sizeof(int) + 3 * sizeof(void*)];
+    char *name;
+};
+
+typedef struct OCIParamStructColumnInfo OCIParamStructColumnInfo;
+
+struct OCIParamStruct
+{
+    unsigned char unknown_fields[2 * sizeof(void*) + 1 * sizeof(int)];
+
+    OCIParamStructColumnInfo *column_info;
+};
+
+typedef struct OCIParamStruct OCIParamStruct;
+
+/* End of Experimental section */
 
 #endif /* OCILIB_OCILIB_TYPES_H_INCLUDED */
 

@@ -1,10 +1,10 @@
 ****************************************************************************
- 
+
    +----------------------------------------------------------------------+   
    |                                                                      |
-   |                       OCILIB - C Driver for Oracle                   |
+   |                     OCILIB - C Driver for Oracle                     |
    |                                                                      |
-   |                        (C Wrapper for Oracle OCI)                    |
+   |                      (C Wrapper for Oracle OCI)                      |
    |                                                                      |
    +----------------------------------------------------------------------+
    |                                                                      |
@@ -12,7 +12,7 @@
    |                                                                      |
    +----------------------------------------------------------------------+
    |                                                                      |
-   |               Copyright (c) 2007-2015 Vincent ROGIER                 |
+   |   Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>   |
    |                                                                      |
    +----------------------------------------------------------------------+
    |                                                                      |
@@ -38,7 +38,7 @@ The OCILIB library :
 VERSION 
 ========
 
-4.0.0
+4.3.0
 
 
 FEATURES 
@@ -81,11 +81,9 @@ URL : http://www.ocilib.net
 LICENSE
 =======
 
-The source code is free source code.
+The source code is free source code licensed under the Apache License, Version 2.0.
 
-It's licensed under GNU LESSER GENERAL PUBLIC LICENSE (LGPL).
-
-(see the file lgpl-license.txt)
+(see the file license.txt)
 
 COMPATIBILITY 
 =============

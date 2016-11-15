@@ -1,42 +1,28 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: event.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
-*                             PRIVATE VARIABLES
-* ********************************************************************************************* */
+ *                             PRIVATE VARIABLES
+ * ********************************************************************************************* */
 
 static unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
 static unsigned int EnqueueModeValues[] = { OCI_ASD_BEFORE, OCI_ASD_TOP };
@@ -55,43 +41,39 @@ OCI_Enqueue * OCI_API OCI_EnqueueCreate
     const otext  *name
 )
 {
-
     OCI_Enqueue *enqueue = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Enqueue*, enqueue)
-
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CHECK_PTR(OCI_IPC_STRING, name)
+    OCI_CALL_ENTER(OCI_Enqueue*, enqueue)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
 
     /* allocate enqueue structure */
 
-    enqueue = (OCI_Enqueue *) OCI_MemAlloc(OCI_IPC_ENQUEUE, sizeof(*enqueue), (size_t) 1, TRUE);
+    OCI_ALLOCATE_DATA(OCI_IPC_ENQUEUE, enqueue, 1)
 
-    if (enqueue)
+    if (OCI_STATUS)
     {
         enqueue->typinf = typinf;
         enqueue->name = ostrdup(name);
 
         /* allocate enqueue options descriptor */
 
-        call_status = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid * ) enqueue->typinf->con->env,
-                                                         (dvoid **) &enqueue->opth,
-                                                         OCI_DTYPE_AQENQ_OPTIONS,
-                                                         (size_t) 0, (dvoid **) NULL));
+        OCI_STATUS = OCI_DescriptorAlloc((dvoid * ) enqueue->typinf->con->env, (dvoid **) &enqueue->opth, OCI_DTYPE_AQENQ_OPTIONS);
     }
 
     /* check for failure */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
-        call_retval = enqueue;
+        OCI_RETVAL = enqueue;
     }
     else if (enqueue)
     {
         OCI_EnqueueFree(enqueue);
    }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -103,9 +85,9 @@ boolean OCI_API OCI_EnqueueFree
     OCI_Enqueue *enqueue
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(enqueue->typinf->con)
 
     /* free OCI descriptor */
 
@@ -114,9 +96,9 @@ boolean OCI_API OCI_EnqueueFree
     OCI_FREE(enqueue->name)
     OCI_FREE(enqueue)
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -129,19 +111,16 @@ boolean OCI_API OCI_EnqueuePut
     OCI_Msg     *msg
 )
 {
-    dbtext *dbstr   = NULL;
-    int     dbsize  = -1;
+    dbtext *dbstr    = NULL;
+    int     dbsize   = -1;
+    void   *payload  = NULL;
+    void   *ind      = NULL;
 
-    void *payload  = NULL;
-    void *ind      = NULL;
-
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    OCI_CHECK_PTR(OCI_IPC_MSG, msg)
-    OCI_CHECK_COMPAT(enqueue->typinf->con, enqueue->typinf->tdo == msg->typinf->tdo)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
+    OCI_CALL_CHECK_COMPAT(enqueue->typinf->con, enqueue->typinf->tdo == msg->typinf->tdo)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(enqueue->typinf->con)
 
     dbstr = OCI_StringGetOracleString(enqueue->name, &dbsize);
 
@@ -163,10 +142,8 @@ boolean OCI_API OCI_EnqueuePut
 
     /* enqueue message */
 
-    OCI_CALL2
+    OCI_EXEC
     (
-        call_status, enqueue->typinf->con,
-
         OCIAQEnq(enqueue->typinf->con->cxt, enqueue->typinf->con->err,
                  (OraText *) dbstr, enqueue->opth, msg->proph, enqueue->typinf->tdo,
                  &payload, &ind, NULL, OCI_DEFAULT);
@@ -174,9 +151,9 @@ boolean OCI_API OCI_EnqueuePut
 
     OCI_StringReleaseOracleString(dbstr);
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -190,27 +167,15 @@ unsigned int OCI_API OCI_EnqueueGetVisibility
 {
     ub4 ret = OCI_UNKNOWN;
 
-    OCI_LIB_CALL_ENTER(unsigned int, ret)
+    OCI_CALL_ENTER(unsigned int, ret)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(enqueue->typinf->con)
 
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, enqueue->typinf->con,
-
-        OCIAttrGet((dvoid *) enqueue->opth,
-                   (ub4    ) OCI_DTYPE_AQENQ_OPTIONS,
-                   (dvoid *) &ret,
-                   (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_VISIBILITY,
-                   enqueue->typinf->con->err)
-    )
+    OCI_GET_ATTRIB(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY, enqueue->opth, &ret, NULL)
     
-    call_retval = ret;
+    OCI_RETVAL = ret;
  
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -225,28 +190,16 @@ boolean OCI_API OCI_EnqueueSetVisibility
 {
     ub4 value = (ub4) visibility;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, visibility, VisibilityModeValues, OTEXT("Visibility Mode"))
+    OCI_CALL_CONTEXT_SET_FROM_CONN(enqueue->typinf->con)
 
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    OCI_CHECK_ENUM_VALUE(NULL, NULL, visibility, VisibilityModeValues, OTEXT("Visibility Mode"))
+    OCI_SET_ATTRIB(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY, enqueue->opth, &value, 0)
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL2
-    (
-        call_status, enqueue->typinf->con,
-
-        OCIAttrSet((dvoid *) enqueue->opth,
-                   (ub4    ) OCI_DTYPE_AQENQ_OPTIONS,
-                   (dvoid *) &value,
-                   (ub4    ) 0,
-                   (ub4    ) OCI_ATTR_VISIBILITY,
-                   enqueue->typinf->con->err)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -260,27 +213,15 @@ unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
 {
     ub4 ret = OCI_UNKNOWN;
 
-    OCI_LIB_CALL_ENTER(unsigned int, ret)
+    OCI_CALL_ENTER(unsigned int, ret)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(enqueue->typinf->con)
 
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    OCI_GET_ATTRIB(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION, enqueue->opth, &ret, NULL)
 
-    call_status = TRUE;
+    OCI_RETVAL = (unsigned int) ret;
 
-    OCI_CALL2
-    (
-        call_status, enqueue->typinf->con,
-
-        OCIAttrGet((dvoid *) enqueue->opth,
-                   (ub4    ) OCI_DTYPE_AQENQ_OPTIONS,
-                   (dvoid *) &ret,
-                   (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_SEQUENCE_DEVIATION,
-                   enqueue->typinf->con->err)
-    )
-
-    call_retval = (unsigned int) ret;
-
-    OCI_LIB_CALL_EXIT();
+    OCI_CALL_EXIT();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -295,28 +236,16 @@ boolean OCI_API OCI_EnqueueSetSequenceDeviation
 {
     ub4 value = (ub4) sequence;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, sequence, EnqueueModeValues, OTEXT("Sequence Deviation"))
+    OCI_CALL_CONTEXT_SET_FROM_CONN(enqueue->typinf->con)
 
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    OCI_CHECK_ENUM_VALUE(NULL, NULL, sequence, EnqueueModeValues, OTEXT("Sequence Deviation"))
+    OCI_SET_ATTRIB(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION, enqueue->opth, &value, 0)
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL2
-    (
-        call_status, enqueue->typinf->con,
-
-        OCIAttrSet((dvoid *) enqueue->opth,
-                   (ub4    ) OCI_DTYPE_AQENQ_OPTIONS,
-                   (dvoid *) &value,
-                   (ub4    ) 0,
-                   (ub4    ) OCI_ATTR_SEQUENCE_DEVIATION,
-                   enqueue->typinf->con->err)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -332,27 +261,15 @@ boolean OCI_API OCI_EnqueueGetRelativeMsgID
 {
     OCIRaw *value = NULL;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, id);
+    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, len);
+    OCI_CALL_CONTEXT_SET_FROM_CONN(enqueue->typinf->con)
 
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    OCI_CHECK_PTR(OCI_IPC_VOID,    id);
-    OCI_CHECK_PTR(OCI_IPC_VOID,    len);
-
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, enqueue->typinf->con,
-
-        OCIAttrGet((dvoid *) enqueue->opth,
-                   (ub4    ) OCI_DTYPE_AQENQ_OPTIONS,
-                   (dvoid *) &value,
-                   (ub4   *) NULL,
-                   (ub4    ) OCI_ATTR_RELATIVE_MSGID,
-                   enqueue->typinf->con->err)
-    )
-
-    if (call_status && value)
+    OCI_GET_ATTRIB(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID, enqueue->opth, &value, NULL)
+    
+    if (OCI_STATUS && value)
     {
         ub4 raw_len = OCIRawSize(enqueue->typinf->con->env, value);
 
@@ -368,9 +285,9 @@ boolean OCI_API OCI_EnqueueGetRelativeMsgID
         *len = 0;
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -386,34 +303,14 @@ boolean OCI_API OCI_EnqueueSetRelativeMsgID
 {
     OCIRaw *value = NULL;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(enqueue->typinf->con)
 
-    OCI_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    OCI_EXEC(OCIRawAssignBytes(enqueue->typinf->con->env, enqueue->typinf->con->err,  (ub1*) id, (ub4) len, (OCIRaw **) &value))
+    OCI_SET_ATTRIB(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID, enqueue->opth, &value, 0)
+    
+    OCI_RETVAL = OCI_STATUS;
 
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, enqueue->typinf->con,
-
-        OCIRawAssignBytes(enqueue->typinf->con->env, enqueue->typinf->con->err,
-                          (ub1*) id, (ub4) len, (OCIRaw **) &value)
-    )
-
-    OCI_CALL2
-    (
-        call_status, enqueue->typinf->con,
-
-        OCIAttrSet((dvoid *) enqueue->opth,
-                   (ub4    ) OCI_DTYPE_AQENQ_OPTIONS,
-                   (dvoid *) &value,
-                   (ub4    ) 0,
-                   (ub4    ) OCI_ATTR_RELATIVE_MSGID,
-                   enqueue->typinf->con->err)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
-

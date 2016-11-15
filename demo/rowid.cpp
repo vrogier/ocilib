@@ -2,6 +2,8 @@
 
 #include "ocilib.hpp"
 
+/* requires script demo/products.sql */
+
 using namespace ocilib;
 
 int main(void)
@@ -12,33 +14,22 @@ int main(void)
 
         Connection con("db", "usr", "pwd");
 
-        Statement st1(con);
-        Statement st2(con);
+        Statement st(con);
 
         ostring rowid;
-        int code;
 
-        st1.Prepare("update test_fetch set code = :i where rowid = : s");
-        st1.Bind<ostring>(":s", rowid, 50, BindInfo::In);
-        st1.Bind<int>(":i", code, BindInfo::In);
+        st.Execute("select rowid from products where code = 1");
+        Resultset rs = st.GetResultset();
+        rs.Next();
+        rowid = rs.Get<ostring>(1);
 
-        st2.Execute("select code, rowid from test_fetch for update");
-        Resultset rs = st2.GetResultset();
+        st.Prepare("select code, name, rowid from products where rowid = :id");
+        st.Bind(":id", rowid, 20, BindInfo::In);
+        st.ExecutePrepared();
+        rs = st.GetResultset();
+        rs.Next();
 
-        while (rs++)
-        {
-            std::cout << "updated code is " << rs.Get<int>(1) << std::endl;
-
-            code = rs.Get<int>(1);
-            rowid = rs.Get<ostring>(2);
-
-            /* updating value with some computation ... */
-            code = (code + 4) % 2;
-
-            st1.ExecutePrepared();
-        }
-
-        con.Commit();
+        std::cout << "code  [" << rs.Get<int>(1) << "] name [" << rs.Get<ostring>(2) << "] rowid [" << rs.Get<ostring>(3) << "]" << std::endl;
     }
     catch (std::exception &ex)
     {

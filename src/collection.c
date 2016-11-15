@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: collection.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
@@ -45,27 +31,18 @@
 OCI_Coll * OCI_CollInit
 (
     OCI_Connection *con,
-    OCI_Coll      **pcoll,
+    OCI_Coll       *coll,
     void           *handle,
     OCI_TypeInfo   *typinf
 )
 {
-    OCI_Coll *coll = NULL;
-    boolean   res  = FALSE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK(NULL == pcoll, NULL)
+    OCI_ALLOCATE_DATA(OCI_IPC_COLLECTION, coll, 1);
 
-    if (!*pcoll)
+    if (OCI_STATUS)
     {
-        *pcoll = (OCI_Coll *) OCI_MemAlloc(OCI_IPC_COLLECTION, sizeof(*coll), (size_t) 1, TRUE);
-    }
-
-    if (*pcoll)
-    {
-        res = TRUE;
-
-        coll = *pcoll;
-
         coll->con    = con;
         coll->handle = handle;
         coll->typinf = typinf;
@@ -79,10 +56,8 @@ OCI_Coll * OCI_CollInit
                 coll->hstate = OCI_OBJECT_ALLOCATED;
             }
 
-            OCI_CALL2
+            OCI_EXEC
             (
-                res, con,
-
                 OCI_ObjectNew(coll->con->env, coll->con->err, coll->con->cxt,
                               typinf->colcode, typinf->tdo, (void *) NULL,
                               OCI_DURATION_SESSION, TRUE, (dvoid **) &coll->handle)
@@ -96,10 +71,10 @@ OCI_Coll * OCI_CollInit
 
     /* check for failure */
 
-    if (!res && coll)
+    if (!OCI_STATUS && coll)
     {
         OCI_CollFree(coll);
-        *pcoll = coll = NULL;
+        coll = NULL;
     }
 
     return coll;
@@ -118,14 +93,14 @@ OCI_Coll * OCI_API OCI_CollCreate
     OCI_TypeInfo *typinf
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Coll *, NULL)
+    OCI_CALL_ENTER(OCI_Coll *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
 
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    OCI_RETVAL = OCI_CollInit(typinf->con, NULL, NULL, typinf);
+    OCI_STATUS = (NULL != OCI_RETVAL);
 
-    call_retval = OCI_CollInit(typinf->con, &call_retval, (OCIColl *) NULL, typinf);
-    call_status = (NULL != call_retval);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -137,10 +112,10 @@ boolean OCI_API OCI_CollFree
     OCI_Coll *coll
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CHECK_OBJECT_FETCHED(coll)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CHECK_OBJECT_FETCHED(coll)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     /* free data element */
 
@@ -163,9 +138,9 @@ boolean OCI_API OCI_CollFree
         OCI_FREE(coll)
     }
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = TRUE;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -181,20 +156,19 @@ OCI_Coll ** OCI_API OCI_CollArrayCreate
 {
     OCI_Array *arr = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Coll **, NULL)
+    OCI_CALL_ENTER(OCI_Coll **, NULL)    
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)        
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, sizeof(OCIColl *), sizeof(OCI_Coll), 0, typinf);
+    OCI_STATUS = (arr != NULL);
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, sizeof(OCIColl *),
-                          sizeof(OCI_Coll), 0, typinf);
-
-    if (arr)
+    if (OCI_STATUS)
     {
-        call_retval = (OCI_Coll **) arr->tab_obj;
-        call_status = TRUE;
+        OCI_RETVAL = (OCI_Coll **) arr->tab_obj;
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -206,13 +180,12 @@ boolean OCI_API OCI_CollArrayFree
     OCI_Coll **colls
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, colls)
 
-    OCI_CHECK_PTR(OCI_IPC_ARRAY, colls)
+    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **)colls);
 
-    call_retval = call_status = OCI_ArrayFreeFromHandles((void **)colls);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -225,24 +198,17 @@ boolean OCI_API OCI_CollAssign
     OCI_Coll *coll_src
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll_src)
+    OCI_CALL_CHECK_COMPAT(coll->con, coll->typinf->cols[0].libcode == coll_src->typinf->cols[0].libcode)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll_src)
-    OCI_CHECK_COMPAT(coll->con, coll->typinf->cols[0].libcode == coll_src->typinf->cols[0].libcode)
+    OCI_EXEC(OCICollAssign(coll->con->env, coll->con->err, coll_src->handle, coll->handle))
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL2
-    (
-        call_status, coll->con,
-
-        OCICollAssign(coll->con->env, coll->con->err, coll_src->handle, coll->handle)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -254,31 +220,29 @@ unsigned int OCI_API OCI_CollGetType
     OCI_Coll *coll
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
-        call_retval = OCI_COLL_NESTED_TABLE;
+        OCI_RETVAL = OCI_COLL_NESTED_TABLE;
     }
     else if (OCI_TYPECODE_VARRAY == coll->typinf->colcode)
     {
-        call_retval = OCI_COLL_VARRAY;
+        OCI_RETVAL = OCI_COLL_VARRAY;
     }
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
     else if (OCI_TYPECODE_ITABLE == coll->typinf->colcode)
     {
-        call_retval = OCI_COLL_INDEXED_TABLE;
+        OCI_RETVAL = OCI_COLL_INDEXED_TABLE;
     }
 
 #endif
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -290,14 +254,13 @@ unsigned int OCI_API OCI_CollGetMax
     OCI_Coll *coll
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_RETVAL = (unsigned int) OCICollMax(coll->con->env, coll->handle);
 
-    call_retval = (unsigned int) OCICollMax(coll->con->env, coll->handle);
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -311,22 +274,15 @@ unsigned int OCI_API OCI_CollGetSize
 {
     sb4 value = 0;
 
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_EXEC(OCICollSize(coll->con->env, coll->con->err, coll->handle, &value))
 
-    call_status = TRUE;
+    OCI_RETVAL = (unsigned int)value;
 
-    OCI_CALL2
-    (
-        call_status, coll->con,
-
-        OCICollSize(coll->con->env, coll->con->err, coll->handle, &value)
-    )
-
-    call_retval = (unsigned int)value;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -339,23 +295,16 @@ boolean OCI_API OCI_CollTrim
     unsigned int  nb_elem
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) OCI_CollGetSize(coll));
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) OCI_CollGetSize(coll));
+    OCI_EXEC(OCICollTrim(coll->con->env, coll->con->err, (sb4) nb_elem, coll->handle))
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL2
-    (
-        call_status, coll->con,
-
-        OCICollTrim(coll->con->env, coll->con->err, (sb4) nb_elem, coll->handle)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -372,26 +321,18 @@ OCI_Elem * OCI_API OCI_CollGetElem
     void    *data   = NULL;
     OCIInd  *p_ind  = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Elem*, NULL)
+    OCI_CALL_ENTER(OCI_Elem*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_EXEC(OCICollGetElem(coll->con->env, coll->con->err, coll->handle, (sb4) index-1, &exists, &data, (dvoid **) (dvoid *) &p_ind))
 
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, coll->con,
-
-        OCICollGetElem(coll->con->env, coll->con->err, coll->handle, (sb4) index-1,
-                       &exists, &data, (dvoid **) (dvoid *) &p_ind)
-    )
-
-    if (call_status && exists && data)
+    if (OCI_STATUS && exists && data)
     {
-        call_retval = coll->elem = OCI_ElemInit(coll->con, &coll->elem, data, p_ind, coll->typinf);
+        OCI_RETVAL = coll->elem = OCI_ElemInit(coll->con, coll->elem, data, p_ind, coll->typinf);
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -409,34 +350,27 @@ boolean OCI_API OCI_CollGetElem2
     void    *data   = NULL;
     OCIInd  *p_ind  = NULL;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
+    OCI_EXEC(OCICollGetElem(coll->con->env, coll->con->err, coll->handle, (sb4) index-1, &exists, &data, (dvoid **) (dvoid *) &p_ind))
 
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, coll->con,
-
-        OCICollGetElem(coll->con->env, coll->con->err, coll->handle, (sb4) index-1,
-                       &exists, &data, (dvoid **) (dvoid *) &p_ind)
-    )
-
-    if (call_status && exists && data)
+    if (OCI_STATUS && exists && data)
     {
-        call_status = (NULL != OCI_ElemInit(coll->con, &elem, data, p_ind, coll->typinf));
+        elem = OCI_ElemInit(coll->con, elem, data, p_ind, coll->typinf);
+        OCI_STATUS = (NULL != elem);
     }
     else
     {
-        call_status = OCI_ElemSetNullIndicator(elem, OCI_IND_NULL);
+        OCI_STATUS = OCI_ElemSetNullIndicator(elem, OCI_IND_NULL);
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -450,25 +384,17 @@ boolean OCI_API OCI_CollSetElem
     OCI_Elem     *elem
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
+    OCI_EXEC(OCICollAssignElem(coll->con->env, coll->con->err, (sb4) index-1, elem->handle, elem->pind, coll->handle))
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL2
-    (
-        call_status, coll->con,
-
-        OCICollAssignElem(coll->con->env, coll->con->err, (sb4) index-1, 
-                          elem->handle, elem->pind, coll->handle)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -481,24 +407,17 @@ boolean OCI_API OCI_CollAppend
     OCI_Elem *elem
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    OCI_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
+    OCI_EXEC(OCICollAppend(coll->con->env, coll->con->err, elem->handle, elem->pind, coll->handle))
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL2
-    (
-        call_status, coll->con,
-
-        OCICollAppend(coll->con->env, coll->con->err, elem->handle, elem->pind, coll->handle)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -510,14 +429,7 @@ OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo
     OCI_Coll *coll
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_TypeInfo *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-
-    call_retval = coll->typinf;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(OCI_TypeInfo*, NULL, OCI_IPC_COLLECTION, coll, typinf, coll->con, NULL, coll->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -529,13 +441,13 @@ boolean OCI_API OCI_CollClear
     OCI_Coll *coll
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_RETVAL = OCI_STATUS = OCI_CollTrim(coll, OCI_CollGetSize(coll));
 
-    call_retval = call_status = OCI_CollTrim(coll, OCI_CollGetSize(coll));
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -548,25 +460,18 @@ boolean OCI_API OCI_CollDeleteElem
     unsigned int index
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
-        OCI_CALL2
-        (
-            call_status, coll->con,
-
-            OCITableDelete(coll->con->env, coll->con->err, (sb4) index-1, coll->handle)
-        )
+        OCI_EXEC(OCITableDelete(coll->con->env, coll->con->err, (sb4) index-1, coll->handle))
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -580,34 +485,22 @@ unsigned int OCI_API OCI_CollGetCount
 {
     sb4 value = 0;
 
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
-        OCI_CALL2
-        (
-            call_status, coll->con,
-
-            OCITableSize(coll->con->env, coll->con->err, coll->handle, &value)
-        )
+        OCI_EXEC(OCITableSize(coll->con->env, coll->con->err, coll->handle, &value))
     }
     else
     {
-        OCI_CALL2
-        (
-            call_status, coll->con,
-
-            OCICollSize(coll->con->env, coll->con->err, coll->handle, &value)
-        )
+        OCI_EXEC(OCICollSize(coll->con->env, coll->con->err, coll->handle, &value))
     }
 
-    call_retval = (unsigned int)value;
+    OCI_RETVAL = (unsigned int) value;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -621,17 +514,14 @@ boolean OCI_API OCI_CollToText
     otext        *str
 )
 {
-    boolean      quote  = TRUE;
-    unsigned int len    = 0;
-
+    boolean quote  = TRUE;
+    unsigned int len = 0;
     int i, n;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CHECK_PTR(OCI_IPC_VOID, size)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     if (str)
     {
@@ -730,9 +620,9 @@ boolean OCI_API OCI_CollToText
                 }
             }
 
-            call_status = (NULL != data);
+            OCI_STATUS = (NULL != data);
 
-            if (call_status)
+            if (OCI_STATUS)
             {
                 otext *tmpbuf = str;
 
@@ -755,7 +645,7 @@ boolean OCI_API OCI_CollToText
         }
     }
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         len += OCI_StringAddToBuffer(str, len, OTEXT(")"), FALSE);
 
@@ -771,7 +661,7 @@ boolean OCI_API OCI_CollToText
         }
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }

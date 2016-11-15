@@ -1,3 +1,187 @@
+2016-11-09 Version 4.3.0 Vincent Rogier vince.rogier@ocilib.net
+
+    * New Features: 
+    
+         - Added NUMBER SQL type native wrapping 
+         
+            * Optional type as NUMBER type can still be fetched/binded using regular C native numeric types
+            * New OCI_Number type can be used when precision matters or for dealing with special values such as positive and negative infinity
+            * C API : 
+                - Added OCI_NUM_NUMBER numeric type
+                - Added OCI_Number type
+                - Added OCI_NumberCreate()
+                - Added OCI_NumberFree()
+                - Added OCI_NumberArrayCreate()
+                - Added OCI_NumberArrayFree()
+                - Added OCI_NumberAssign()
+                - Added OCI_NumberGetContent()
+                - Added OCI_NumberSetContent()
+                - Added OCI_NumberSetValue()
+                - Added OCI_NumberGetValue()
+                - Added OCI_NumberAdd()
+                - Added OCI_NumberSub()
+                - Added OCI_NumberMultiply()
+                - Added OCI_NumberDivide()
+                - Added OCI_NumberCompare()
+                - Added OCI_GetNumber()
+                - Added OCI_GetNumber2()
+                - Added OCI_BindNumber()
+                - Added OCI_BindArrayOfNumbers()
+                - Added OCI_RegisterNumber()
+                - Added OCI_NumberFromText()
+                - Added OCI_NumberToText()
+                - Added OCI_ElemGetNumber()
+                - Added OCI_ElemSetNumber()
+                - Added OCI_ObjectGetNumber()
+                - Added OCI_ObjectSetNumber()
+                
+            * C++ API: 
+                - Added ocilib::Number type encapsulating the C API OCI_Number type
+                - This new type comes with all possible operator overloads for better usability
+ 
+    * Fixes:
+
+        - OCI_ObjectGetString(): Fixed usage of internal temporary buffers
+        - OCI_FileRead(): Return value was not the correct one
+        - OCI_PoolGetConnection() : was returning NULL connections for session pool using external credentials
+        - OCI_StringGetFromType() : Fixed segfault when converting CLOBs (with length > to 512) to UTF8 strings in OCI_GetString() if an UTF8 charset is used
+        - Fix indicators usage for collections : OCI_IsNull() always returned FALSE even if fetched collection was NULL
+        - Fix compilation under C compilers not supporting C99 feature allowing declaring variables anywhere in blocks
+        
+    * Miscellaneous:
+    
+        - C API: Major internal code re-factoring
+        
+            * Code factorization
+            * Replaced verbose macros with more compact ones
+            * Code base reduced by few thousands lines of code
+            * Fixed some error handling logic
+            
+        - C API: 
+        
+            * Added OCI_GetDataSize() and OCI_GetDataSize2()
+        
+        - C++ API: 
+
+            * Rewrote iterators for ocilib::Collection<> 
+                - Collection Iterators are now random iterators allowing Collections being used with STL algorithms such as std::sort()
+                - Added Collection const_iterators
+            * Addressed various code analysis hints
+            * Added C++ compiler capabilities detection (C+11)
+
+        - Updated samples in folder /demo
+
+            * Added required DDL and DML for all samples
+            * Updated some samples
+                 
+2016-03-21 Version 4.2.1 Vincent Rogier vince.rogier@ocilib.net
+
+    * Licensing
+    
+        - Re-licensing OCILIB to Apache License Version 2.0 instead of LGPL 2.1: this is merely for overcoming the static linkage issue of the LGPL V2.1
+        
+    * Fixes
+
+        - C++ API: Fixed memory leak caused by Statement::Bind() with non scalar types when Connection objects are closed before their child Statement objects get out of scope
+        - C++ API: Fixed minor compilation warnings
+        - C API: Compilation was broken when targeting Oracle 8i
+        - C API: PL/SQL statements starting with keyword "CALL" where not identified as PL/SQL commands and thus output bind buffers were not updated accordingly
+        - C API: OCI_Execute() ignored custom fetch and prefetch values with Oracle clients >= 9.2
+        - C API: OCI_ElemSetString() caused memory retention when dealing repetitively with string attributes
+        - C API: OCI_Cleanup() leaked of few bytes
+        - C API: OCI_BindLob() caused access violation when binding CLOB/BLOB to PL/SQL OUT parameters using OCI_BDM_OUT bind direction mode   
+        - C API: OCI_DirPathSetEntry() may passed Wrong SQL type passed to OCI_NumberFromString() for some numeric columns
+        - C API: OCI_GetLastError() wWas not reporting errors/warnings after the following calls: OCI_FetchPrev(), OCI_FetchNext(), OCI_FetchFirst() and OCI_FetchLast()
+        - C API: OCI_MemRealloc() may manipulate dandling pointers
+        - C API: Fixed some usage of OCI_BIND_CALL() macro
+        - C API: OCI_ObjectGettring(): When the attribute type was not a string, the application error handler
+          was called with error code OCI_ERR_ATTR_NOT_FOUND and then the method was converting the attribute to a string without problem as expected.
+     
+    * Changes
+
+        - Added "Environment Variables" section in the C API documentation
+        - C++ API: Added silent parameter to Date::Date()
+        - C API: Fetch and Prefetch values are not reset any more to default values when statement is re-prepared
+        - C API: Added support for specific environment variables: Now specific documented environment variables can be set for activating
+          experimental or optional behaviours mostly for implementing workaround for Oracle Bugs.
+        - C API: Added experimental workaround for unsolved Oracle OCI bug #9838993 using the environment variable "OCILIB_WORKAROUND_UTF16_COLUMN_NAME"
+
+2015-09-21 Version 4.2.0 Vincent Rogier vince.rogier@ocilib.net
+
+    * New Features:
+                   
+        - Implemented Oracle 12c extended support for PL/SQL types (PL/SQL boolean, records and index by tables)
+        
+            * These types can be now used in binding calls
+            * C API: PL/SQL records can now be used using OCI_Object
+            * C API: PL/SQL Index by tables can now be used using OCI_Coll
+            * C API: PL/SQL boolean can be used using boolean C type
+            * C API: Added OCI_BindBoolean()
+            * C API: Added OCI_ElemSetBoolean(), OCI_ElemGetBoolean()
+            * C API: Added OCI_ObjectSetBoolean(), OCI_ObjectGetBoolean()
+            * C API: OCI_TypeInfoGet() supports now records these PL/SQL types
+            * C API: Added collection type OCI_COLL_INDEXED_TABLE
+            * C API: Added data type OCI_CDT_BOOLEAN
+            * C++ API: PL/SQL records can now be used using ocilib::Object
+            * C++ API: PL/SQL Index by tables can now be used using ocilib::Collection<T>
+            * C++ API: PL/SQL boolean can be used using bool C++ type
+            * C++ API: Added template specializations for supporting PL/SQL boolean using C++ bool in the following calls:
+                - ocilib::Statement::Bind()
+                - ocilib::Object::Get()
+                - ocilib::Object::Set()
+            * C++ API: Added ocilib::Collection<T> specializations for supporting bool data type
+            * C++ API: Added ocilib::TypeBoolean
+            * C++ API: Added ocilib::Collection::IndexedTable
+            * C++ API: Added internal core class ocilib::BindTypeAdaptor<T1, T2>
+
+         - Added Memory usage information
+
+            * C API: Added OCI_GetAllocatedBytes
+            * C API: Added OCI_MEM_ORACLE, OCI_MEM_OCILIB and OCI_MEM_ALL
+            * C++ API: Added ocilib::Environment::GetAllocatedBytes()
+            * C++ API: Added ocilib::Environment::OracleClientBytes, ocilib::Environment::OcilibBytes, ocilib::Environment::AllBytes
+
+         -  Added Session Max Cursor information
+        
+            * C API: Added OCI_GetMaxCursors()
+            * C++ API: Added ocilib::Connection::GetMaxCursors()
+ 
+    * Enhancements:
+
+        - C++ API:: Enhanced pre/post statement execution check for binds
+        
+            * Before execution, bind buffers are only updated from host variables if Bind Direction has the ocilib::BindInfo::In flag
+            * After execution, host variables are only updated from bind buffers if Bind Direction has the ocilib::BindInfo::Out flag
+            
+    * Fixes:
+        
+        - C API: Fixed OCI_GetLastError() that returned NULL after OCI_Initialize() if OCI shared lib cannot be loaded
+        - C API: Fixed OCI_ColumnGetSQLType() that has its break statements within the switch removed by mistake leading to return "?" in all cases
+        - C API: Fixed OCI_ElemSetXXX() where XXX is a numeric type
+        - C API: Fixed OCI_IterFree() when dealing with numbers
+        - C API: Fixed Memory retention in local OCI objects cache when calling OCI_ObjectFree(): Objects indicator structures were not freed until calling OCI_Cleanup()
+        - C API: Fixed OCI_ElemSetXXX() for numeric types when element is created using OCI_ElemCreate() instead of being retrieved with OCI_IterGetPrev() or OCI_IterGetNext()
+        - C API: When OCI_SubscriptionRegister() failed, the input connection was freed leading the caller to hold a dangling pointer to the connection handle
+        - C API: Fixed comparison call in OCI_TimestampCompare()
+        - C API: Fixed alignment computation in OCI_GetStruct()
+        - C API: Fixed alignment computation in OCI_ObjectGetUserStructSize()
+        - C API: Fixed compilation under compilers that require variable to be declared at the beginning of blocks (example : VS2010)
+        - C API: Fixed minor internal bugs and issues
+        - C++ API: ocilib::HandleHolder<T>::Acquire() => Made sure that a smart handle is not allocated if the input C handle is NULL (even if it shall not happen as the C API must raise an error if it cannot return a valid handle)
+        - C++ API: ocilib::HandleHolder<T>::SmartHandle::~SmartHandle() => the C API handle free function is now called only if the handle is not NULL
+        - C++ API: Fixed compilation error when using OCI_CHARSET_WIDE
+        - C++ API: Fixed ocilib::Raw binding when using OCI_CHARSET_WIDE
+        - C++ API: Fixed ocilib::BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
+        - C++ API: Fixed binding array of Blobs
+        - C++ API: Fixed binding array of Raw
+
+    * Miscellaneous
+
+        - Doxygen documentation: Added C and C++ data types mappings documentation page
+        - Removed references to sourceforge.net
+        - Minor internal code changes to fixing hypothetical issues found by code analysis (CppCheck)
+        - Fixed some typos and formatting issues
+
 2015-05-05 Version 4.1.0 Vincent Rogier vince.rogier@ocilib.net
 
     * C API

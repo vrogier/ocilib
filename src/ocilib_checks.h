@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_checks.h, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #ifndef OCILIB_OCILIB_CHECKS_H_INCLUDED
 #define OCILIB_OCILIB_CHECKS_H_INCLUDED
@@ -39,183 +25,42 @@
                         MACROS FOR CHECKING OCI CALLS
  * ********************************************************************************************* */
 
-/**
- * @brief
- * Direct OCI call with return value checking
- *
- * @param res   - OCI call result
- * @param err   - OCI error handle
- * @param fct   - OCI function
- *
- * @note
- * Throws an exception on failure
- *
- */
+#define OCI_RETVAL          call_retval
+#define OCI_STATUS          ((ctx)->call_status)
 
-#define OCI_CALL0(res, err, fct)                                               \
-                                                                               \
+#define OCI_EXEC(fct)                                                          \
+    if (OCI_STATUS)                                                            \
     {                                                                          \
-        (res) = (boolean) fct;                                                 \
-        if (OCI_FAILURE((res)))                                                \
+        OCI_STATUS = fct;                                                      \
+        if (OCI_FAILURE(OCI_STATUS))                                           \
         {                                                                      \
-            (res) = OCI_SUCCESS_WITH_INFO  == (res);                           \
-            OCI_ExceptionOCI((err), NULL, NULL, res);                          \
+            OCI_STATUS = (OCI_SUCCESS_WITH_INFO == OCI_STATUS);                \
+            OCI_ExceptionOCI(ctx->oci_err, ctx->lib_con,                       \
+                             ctx->lib_stmt, OCI_STATUS);                       \
         }                                                                      \
         else                                                                   \
-            (res) = TRUE;                                                      \
-    }
-
-/**
- * @brief
- * Conditional OCI call with return value checking
- *
- * @param res   - OCI call result
- * @param con   - OCILIB connection objet
- * @param stmt  - OCILIB statement object
- * @param fct   - OCI function
- *
- * @note
- * Calls the OCI function only if the 'res' variable is TRUE
- * Throws an exception on failure.
- * Uses the OCI error handle of the connection object
- *
- */
-
-#define OCI_CALL1(res, con, stmt, fct)                                         \
-                                                                               \
-    {                                                                          \
-        if (res)                                                               \
         {                                                                      \
-            (res) = (boolean) fct;                                             \
-            if (OCI_FAILURE((res)))                                            \
-            {                                                                  \
-                (res) = OCI_SUCCESS_WITH_INFO  == (res);                       \
-                OCI_ExceptionOCI((con)->err, (con), (stmt), res);              \
-            }                                                                  \
-            else                                                               \
-                (res) = TRUE;                                                  \
+           OCI_STATUS = TRUE;                                                  \
         }                                                                      \
     }
 
-/**
- * @brief
- * Conditional OCI call with return value checking
- *
- * @param res   - OCI call result
- * @param con   - OCILIB connection object
- * @param fct   - OCI function
- *
- * @note
- * Calls the OCI function only if the 'res' variable is TRUE
- * Throws an exception on failure.
- * Uses the OCI error handle of the connection object
- *
- */
 
-#define OCI_CALL2(res, con, fct)                                               \
-                                                                               \
-    {                                                                          \
-        if (res)                                                               \
-        {                                                                      \
-            (res) = (boolean) fct;                                             \
-            if (OCI_FAILURE((res)))                                            \
-            {                                                                  \
-               (res) = OCI_SUCCESS_WITH_INFO  == (res);                        \
-                OCI_ExceptionOCI((con)->err, (con), NULL, res);                \
-            }                                                                  \
-            else                                                               \
-                (res) = TRUE;                                                  \
-        }                                                                      \
-    }
+#define OCI_GET_ATTRIB(htype, atype, handle, value, size)                                           \
+                                                                                                    \
+    OCI_EXEC                                                                                        \
+    (                                                                                               \
+        OCIAttrGet((void*)handle, (ub4)htype, (void*)value, (ub4*)size, (ub4)atype, (ctx)->oci_err) \
+    )                                                                                               \
 
-/**
- * @brief
- * Conditional OCI call with return value checking
- *
- * @param res   - OCI call result
- * @param err   - OCI error handle
- * @param fct   - OCI function
- *
- * @note
- * Throws an exception on failure
- *
- */
+#define OCI_SET_ATTRIB(htype, atype, handle, value, size)                                           \
+                                                                                                    \
+    OCI_EXEC                                                                                        \
+    (                                                                                               \
+        OCIAttrSet((void*) handle, (ub4) htype, (void*) value,                                      \
+                   (ub4) size, (ub4)atype, (ctx)->oci_err)                                          \
+    )                                                                                               \
 
-#define OCI_CALL3(res, err, fct)                                               \
-                                                                               \
-    {                                                                          \
-        if (res)                                                               \
-        {                                                                      \
-            (res) = (boolean) fct;                                             \
-            if (OCI_FAILURE((res)))                                            \
-            {                                                                  \
-                (res) = OCI_SUCCESS_WITH_INFO  == (res);                       \
-                OCI_ExceptionOCI((err), NULL, NULL, res);                      \
-            }                                                                  \
-            else                                                               \
-                (res) = TRUE;                                                  \
-        }                                                                      \
-    }
 
-/**
- * @brief
- * Conditional OCI call with return value checking
- *
- * @param res   - OCI call result
- * @param err   - OCI error handle
- * @param con   - OCILIB connection objet
- * @param fct   - OCI function
- *
- * @note
- * Calls the OCI function only if the 'res' variable is TRUE
- * Throws an exception on failure.
- *
- */
-
-#define OCI_CALL4(res, err, con, fct)                                          \
-                                                                               \
-    {                                                                          \
-        if (res)                                                               \
-        {                                                                      \
-            (res) = (boolean) fct;                                             \
-            if (OCI_FAILURE((res)))                                            \
-            {                                                                  \
-                (res) = OCI_SUCCESS_WITH_INFO  == (res);                       \
-                OCI_ExceptionOCI((err), (con), NULL, res);                     \
-            }                                                                  \
-            else                                                               \
-                (res) = TRUE;                                                  \
-        }                                                                      \
-    }
-
-/**
- * @brief
- * Direct OCI call with return value checking
-
- * @param res   - OCI call result
- * @param con   - OCILIB connection objet
- * @param stmt  - OCILIB statement object
- * @param fct   - OCI function
- *
- * @note
- * Calls the OCI function only if the 'res' variable is TRUE
- * Throws an exception on failure.
- * Uses the OCI error handle of the connection object
- *
- */
-
-#define OCI_CALL5(res, con, stmt, fct)                                         \
-                                                                               \
-    {                                                                          \
-        (res) = (boolean) fct;                                                 \
-        if (OCI_FAILURE((res)))                                                \
-        {                                                                      \
-            (res) = OCI_SUCCESS_WITH_INFO  == (res);                           \
-            OCI_WarningOCI((con)->err, (con), (stmt), res);                    \
-        }                                                                      \
-        else                                                                   \
-            (res) = TRUE;                                                      \
-    }
 
 /* ********************************************************************************************* *
                         PARAMETER CHECKING MACROS
@@ -247,12 +92,11 @@
  *
  */
 
-#define OCI_CHECK_PTR(type, ptr)                                               \
+#define OCI_CALL_CHECK_PTR(type, ptr)                                          \
                                                                                \
     if (!(ptr))                                                                \
     {                                                                          \
-        OCI_ExceptionNullPointer(type);                                        \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionNullPointer(type))                    \
     }
 
 /**
@@ -271,15 +115,15 @@
  *
  */
 
-#define OCI_CHECK_BIND_CALL(stmt, name, data, type, ext_only)               \
+#define OCI_CALL_CHECK_BIND(stmt, name, data, type, ext_only)               \
                                                                             \
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt);                                 \
-    OCI_CHECK_PTR(OCI_IPC_STRING, name);                                    \
-    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED);                         \
+    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)                             \
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)                                \
+    OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)                     \
     {                                                                       \
         boolean ext_only_value = ext_only;                                  \
         if (ext_only_value || OCI_BAM_EXTERNAL == stmt->bind_alloc_mode)    \
-        OCI_CHECK_PTR(type, data);                                          \
+        OCI_CALL_CHECK_PTR(type, data)                                      \
     }                                                                       \
 
 /**
@@ -293,11 +137,10 @@
  * Throws an exception if one of the parameters is invalid and returns FALSE.
  *
  */
-#define OCI_CHECK_REGISTER_CALL(stmt, name)                                    \
+#define OCI_CALL_CHECK_REGISTER(stmt, name)                                    \
                                                                                \
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt);                                    \
-    OCI_CHECK_PTR(OCI_IPC_STRING, name);                                       \
-
+    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)                                \
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)                                   \
 
 /* ********************************************************************************************* *
                         MISCELLANEOUS CHECKING MACROS
@@ -317,12 +160,11 @@
  *
  */
 
-#define OCI_CHECK_BOUND(con, v, b1, b2)                                        \
+#define OCI_CALL_CHECK_BOUND(con, v, b1, b2)                                   \
                                                                                \
     if ((v < (b1)) || (v > (b2)))                                              \
     {                                                                          \
-        OCI_ExceptionOutOfBounds((con), (v));                                  \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionOutOfBounds((con), (v)))              \
     }
 
 /**
@@ -339,12 +181,11 @@
  *
  */
 
-#define OCI_CHECK_MIN(con, stmt, v, m)                                         \
+#define OCI_CALL_CHECK_MIN(con, stmt, v, m)                                    \
                                                                                \
     if ((v) < (m))                                                             \
     {                                                                          \
-        OCI_ExceptionMinimumValue((con), (stmt), m);                           \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionMinimumValue((con), (stmt), (m)))     \
     }
 
 /**
@@ -359,12 +200,11 @@
  *
  */
 
-#define OCI_CHECK_COMPAT(con, exp)                                             \
+#define OCI_CALL_CHECK_COMPAT(con, exp)                                        \
                                                                                \
     if (!(exp))                                                                \
     {                                                                          \
-        OCI_ExceptionTypeNotCompatible((con));                                 \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionTypeNotCompatible((con)))             \
     }
 
 /* ********************************************************************************************* *
@@ -383,10 +223,10 @@
  *
  */
 
-#define OCI_CHECK_OBJECT_FETCHED(obj)                                         \
+#define OCI_CALL_CHECK_OBJECT_FETCHED(obj)                                    \
                                                                               \
     if (OCI_OBJECT_FETCHED_CLEAN == (obj)->hstate)                            \
-        goto ExitCall;                                                        
+        OCI_CALL_JUMP_EXIT()                                                   
 
 
 /**
@@ -401,12 +241,11 @@
  *
  */
 
-#define OCI_CHECK_STMT_STATUS(st, v)                                           \
+#define OCI_CALL_CHECK_STMT_STATUS(st, v)                                      \
                                                                                \
     if ((((st)->status) & (v)) == 0)                                           \
     {                                                                          \
-        OCI_ExceptionStatementState((st), v);                                  \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionStatementState((st), v))              \
     }                                                                          \
 
 
@@ -421,13 +260,12 @@
  *
  */
 
-#define OCI_CHECK_SCROLLABLE_CURSOR_ACTIVATED(st)                              \
+#define OCI_CALL_CHECK_SCROLLABLE_CURSOR_ACTIVATED(st)                         \
                                                                                \
     if (((st)->nb_rbinds > 0) ||                                               \
         ((st)->exec_mode != OCI_STMT_SCROLLABLE_READONLY))                     \
     {                                                                          \
-        OCI_ExceptionStatementNotScrollable(st);                               \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionStatementNotScrollable(st))           \
     }
 
 /**
@@ -443,12 +281,11 @@
  * the provided one.
  *
  */
-#define OCI_CHECK_DIRPATH_STATUS(dp, v)                                        \
+#define OCI_CALL_CHECK_DIRPATH_STATUS(dp, v)                                   \
                                                                                \
     if ((dp)->status != (v))                                                   \
     {                                                                          \
-        OCI_ExceptionDirPathState((dp), (dp)->status);                         \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionDirPathState((dp), (dp)->status))     \
     }
 
 /* ********************************************************************************************* *
@@ -464,12 +301,11 @@
  *
  */
 
-#define OCI_CHECK_INITIALIZED()                                                \
+#define OCI_CALL_CHECK_INITIALIZED()                                           \
                                                                                \
     if (!OCILib.loaded)                                                        \
     {                                                                          \
-        OCI_ExceptionNotInitialized();                                         \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionNotInitialized())                     \
     }
 
 /**
@@ -485,12 +321,11 @@
  *
  */
 
-#define OCI_CHECK_FEATURE(con, feat, ver)                                          \
+#define OCI_CALL_CHECK_FEATURE(con, feat, ver)                                     \
                                                                                    \
     if (OCILib.version_runtime < ver || ((con) && (con)->ver_num < ver))           \
     {                                                                              \
-        OCI_ExceptionNotAvailable(con, feat);                                      \
-        goto ExitCall;                                                             \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(con, feat))                  \
     }
 
 /**
@@ -503,12 +338,11 @@
  *
  */
 
-#define OCI_CHECK_THREAD_ENABLED()                                         \
+#define OCI_CALL_CHECK_THREAD_ENABLED()                                    \
                                                                            \
     if (!(OCI_LIB_THREADED))                                               \
     {                                                                      \
-        OCI_ExceptionNotMultithreaded();                                   \
-        goto ExitCall;                                                     \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionNotMultithreaded())               \
     }
 
 /**
@@ -523,9 +357,9 @@
  *
  */
 
-#define OCI_CHECK_TIMESTAMP_ENABLED(con)                                       \
+#define OCI_CALL_CHECK_TIMESTAMP_ENABLED(con)                                  \
                                                                                \
-    OCI_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0)  
+    OCI_CALL_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0)  
 
 /**
  * @brief
@@ -539,7 +373,7 @@
  *
  */
 
-#define OCI_CHECK_INTERVAL_ENABLED OCI_CHECK_TIMESTAMP_ENABLED
+#define OCI_CALL_CHECK_INTERVAL_ENABLED OCI_CALL_CHECK_TIMESTAMP_ENABLED
 
 /**
  * @brief
@@ -553,9 +387,9 @@
  *
  */
 
-#define OCI_CHECK_SCROLLABLE_CURSOR_ENABLED(con)                               \
+#define OCI_CALL_CHECK_SCROLLABLE_CURSOR_ENABLED(con)                          \
                                                                                \
-    OCI_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9_0)
+    OCI_CALL_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9_0)
 
 
 /**
@@ -567,9 +401,9 @@
 *
 */
 
-#define OCI_CHECK_EXTENDED_PLSQLTYPES_ENABLED(con)                             \
+#define OCI_CALL_CHECK_EXTENDED_PLSQLTYPES_ENABLED(con)                        \
                                                                                \
-    OCI_CHECK_FEATURE(con, OCI_FEATURE_EXTENDED_PLSQLTYPES, OCI_12_1)
+    OCI_CALL_CHECK_FEATURE(con, OCI_FEATURE_EXTENDED_PLSQLTYPES, OCI_12_1)
 
 /**
  * @brief
@@ -581,12 +415,12 @@
  *
  */
 
-#define OCI_CHECK_STATEMENT_CACHING_ENABLED()                                  \
+#define OCI_CALL_CHECK_STATEMENT_CACHING_ENABLED()                             \
                                                                                \
     if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
-        OCI_ExceptionNotAvailable((dp)->con, OCI_FEATURE_STATEMENT_CACHING);   \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable((dp)->con,               \
+                            OCI_FEATURE_STATEMENT_CACHING))                    \
     }
 
 /**
@@ -600,12 +434,12 @@
  *
  */
 
-#define OCI_CHECK_DIRPATH_DATE_CACHE_ENABLED(dp)                               \
+#define OCI_CALL_CHECK_DIRPATH_DATE_CACHE_ENABLED(dp)                          \
                                                                                \
     if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
-        OCI_ExceptionNotAvailable((dp)->con, OCI_FEATURE_DIRPATH_DATE_CACHE);  \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable((dp)->con,               \
+                            OCI_FEATURE_DIRPATH_DATE_CACHE)                    \
     }
 
 /**
@@ -617,12 +451,12 @@
  *
  */
 
-#define OCI_CHECK_REMOTE_DBS_CONTROL_ENABLED()                                 \
+#define OCI_CALL_CHECK_REMOTE_DBS_CONTROL_ENABLED()                            \
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
-        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_REMOTE_DBS_CONTROL);       \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(NULL,                    \
+                            OCI_FEATURE_REMOTE_DBS_CONTROL))                   \
     }
 
 /**
@@ -634,12 +468,12 @@
  *
  */
 
-#define OCI_CHECK_DATABASE_NOTIFY_ENABLED()                                    \
+#define OCI_CALL_CHECK_DATABASE_NOTIFY_ENABLED()                               \
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
-        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_DATABASE_NOTIFY);          \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(NULL,                    \
+                            OCI_FEATURE_DATABASE_NOTIFY))                      \
     }
 
 /**
@@ -652,12 +486,12 @@
  *
  */
 
-#define OCI_CHECK_HIGH_AVAILABILITY_ENABLED()                                  \
+#define OCI_CALL_CHECK_HIGH_AVAILABILITY_ENABLED()                             \
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
-        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_HIGH_AVAILABILITY);        \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(NULL,                    \
+                            OCI_FEATURE_HIGH_AVAILABILITY))                    \
     }
 
 /**
@@ -669,22 +503,21 @@
  *
  */
 
-#define OCI_CHECK_XA_ENABLED(mode)                                             \
+#define OCI_CALL_CHECK_XA_ENABLED(mode)                                        \
                                                                                \
     if ( (mode & OCI_SESSION_XA) && (!OCILib.use_xa) )                         \
     {                                                                          \
-        OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_XA);                       \
-        goto ExitCall;                                                         \
+        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_XA))   \
     }
 
-#define OCI_CHECK_ENUM_VALUE(con, stmt, mode, values, name)                    \
+#define OCI_CALL_CHECK_ENUM_VALUE(con, stmt, mode, values, name)               \
     {                                                                          \
         size_t ii = 0, nn = sizeof(values) / sizeof(values[0]);                \
         for (; ii < nn; ii++) { if (mode == values[ii]) break; }               \
         if (ii >= nn)                                                          \
         {                                                                      \
-            OCI_ExceptionArgInvalidValue(con, stmt, name, mode);               \
-            goto ExitCall;                                                     \
+            OCI_RAISE_EXCEPTION(OCI_ExceptionArgInvalidValue(con, stmt,        \
+                                                             name, mode))      \
         }                                                                      \
     }
 

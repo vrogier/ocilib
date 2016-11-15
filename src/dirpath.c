@@ -1,42 +1,28 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: dirpath.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
-*                             PRIVATE VARIABLES
-* ********************************************************************************************* */
+ *                             PRIVATE VARIABLES
+ * ********************************************************************************************* */
 
 static unsigned int ConversionModeValues[] = { OCI_DCM_DEFAULT, OCI_DCM_FORCE };
 
@@ -54,12 +40,17 @@ boolean OCI_DirPathSetArray
     ub4 row_from
 )
 {
-    boolean  res     = TRUE;
     ub1     *data    = NULL;
     ub4      size    = 0;
     ub1      flag    = 0;
     ub2      col     = 0;
     ub4      row     = 0;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+  
+    OCI_CHECK(NULL == dp, FALSE)
+
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     /* reset the number of entries et */
 
@@ -67,9 +58,9 @@ boolean OCI_DirPathSetArray
 
     /* set entries */
 
-    for (row = row_from; (row < dp->nb_cur) && res; row++)
+    for (row = row_from; (row < dp->nb_cur) && OCI_STATUS; row++)
     {
-        for (col = 0; (col < dp->nb_cols) && res; col++)
+        for (col = 0; (col < dp->nb_cols) && OCI_STATUS; col++)
         {
             OCI_DirPathColumn *dpcol = &(dp->cols[col]);
 
@@ -88,24 +79,19 @@ boolean OCI_DirPathSetArray
 
             /* set entry value */
 
-            OCI_CALL2
-            (
-                res, dp->con,
-
-                OCIDirPathColArrayEntrySet(dp->arr, dp->con->err, (ub4) dp->nb_entries,
-                                            (ub2) (col), (ub1*) data, (ub4) size, flag)
-            )
+            OCI_EXEC(OCIDirPathColArrayEntrySet(dp->arr, dp->con->err, (ub4) dp->nb_entries,
+                                                (ub2) (col), (ub1*) data, (ub4) size, flag))
         }
 
         /* increment number of item set */
 
-        if (res)
+        if (OCI_STATUS)
         {
             dp->nb_entries++;
         }
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -118,8 +104,14 @@ unsigned int OCI_DirPathArrayToStream
     ub4 row_from
 )
 {
-    unsigned int res  = OCI_DPR_COMPLETE;
-    sword        ret  = OCI_SUCCESS;
+    unsigned int res = OCI_DPR_COMPLETE;
+    sword        ret = OCI_SUCCESS;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+
+    OCI_CHECK(NULL == dp, OCI_DPR_ERROR)
+
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     /* convert the array to a stream */
 
@@ -166,13 +158,11 @@ unsigned int OCI_DirPathArrayToStream
 
         size = sizeof(err_col);
 
-        OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &err_col,
-                    &size, OCI_ATTR_COL_COUNT, dp->con->err);
+        OCI_GET_ATTRIB(OCI_HTYPE_DIRPATH_COLUMN_ARRAY, OCI_ATTR_COL_COUNT, dp->arr, &err_col, &size)
 
         size = sizeof(err_row);
 
-        OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &err_row,
-                    &size, OCI_ATTR_ROW_COUNT, dp->con->err);
+        OCI_GET_ATTRIB(OCI_HTYPE_DIRPATH_COLUMN_ARRAY, OCI_ATTR_ROW_COUNT, dp->arr, &err_row, &size)
 
         /* update converted rows so far */
         dp->nb_converted += err_row;
@@ -201,11 +191,15 @@ unsigned int OCI_DirPathArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
 unsigned int OCI_DirPathLoadStream(OCI_DirPath *dp)
-{
+{       
     unsigned int res = OCI_DPR_COMPLETE;
     sword ret        = OCI_SUCCESS;
     ub4 nb_loaded    = 0;
     ub4 size         = sizeof(nb_loaded);
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+
+    OCI_CHECK(NULL == dp, OCI_DPR_ERROR)
 
     /* load the stream */
 
@@ -240,8 +234,7 @@ unsigned int OCI_DirPathLoadStream(OCI_DirPath *dp)
 
     /* retrieve the number of rows loaded so far */
 
-    OCIAttrGet(dp->strm, OCI_HTYPE_DIRPATH_STREAM, &nb_loaded,
-                &size, OCI_ATTR_ROW_COUNT, dp->con->err);
+    OCI_GET_ATTRIB(OCI_HTYPE_DIRPATH_STREAM, OCI_ATTR_ROW_COUNT, dp->strm, &nb_loaded, &size)
 
     dp->nb_loaded    += nb_loaded;
     dp->nb_processed += nb_loaded;
@@ -276,17 +269,17 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 {
     OCI_DirPath *dp = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_DirPath*, dp)
-
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CHECK_COMPAT(typinf->con, typinf->type != OCI_TIF_TYPE)
-    OCI_CHECK_BOUND(typinf->con, nb_cols, 1, typinf->nb_cols)
+    OCI_CALL_ENTER(OCI_DirPath*, dp)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    OCI_CALL_CHECK_COMPAT(typinf->con, typinf->type != OCI_TIF_TYPE)
+    OCI_CALL_CHECK_BOUND(typinf->con, nb_cols, 1, typinf->nb_cols)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
 
     /* allocate direct path structure */
 
-    dp = (OCI_DirPath *)OCI_MemAlloc(OCI_IPC_DIRPATH, sizeof(*dp), (size_t)1, TRUE);
+    OCI_ALLOCATE_DATA(OCI_IPC_DIRPATH, dp, 1)
 
-    if (dp)
+    if (OCI_STATUS)
     {
         dbtext *dbstr  = NULL;
         int     dbsize = -1;
@@ -303,63 +296,40 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 
         /* allocates direct context handle */
 
-        call_status = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *)dp->con->env,
-                                                     (dvoid **) (void *) &dp->ctx,
-                                                     (ub4) OCI_HTYPE_DIRPATH_CTX,
-                                                     (size_t) 0, (dvoid **) NULL));
+        OCI_STATUS = OCI_HandleAlloc((dvoid *)dp->con->env, (dvoid **) (void *) &dp->ctx, OCI_HTYPE_DIRPATH_CTX);
 
         /* set table name attribute */
 
-        if (call_status)
+        if (OCI_STATUS)
         {
             dbsize = -1;
             dbstr  = OCI_StringGetOracleString(dp->typinf->name, &dbsize);
 
-            OCI_CALL2
-            (
-                call_status, dp->con,
-
-                OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                           (dvoid *) dbstr, (ub4) dbsize, (ub4) OCI_ATTR_NAME, dp->con->err)
-            )
+            OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_NAME, dp->ctx, dbstr, dbsize)
 
             OCI_StringReleaseOracleString(dbstr);
         }
 
         /* set schema name attribute */
 
-        if (call_status && dp->typinf->schema && dp->typinf->schema[0])
+        if (OCI_STATUS && OCI_STRING_VALID(dp->typinf->schema))
         {
             dbsize = -1;
             dbstr  = OCI_StringGetOracleString(dp->typinf->schema, &dbsize);
 
-            OCI_CALL2
-            (
-                call_status, dp->con,
-
-                OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                           (dvoid *) dbstr, (ub4) dbsize, (ub4) OCI_ATTR_SCHEMA_NAME,
-                           dp->con->err)
-            )
+            OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_SCHEMA_NAME, dp->ctx, dbstr, dbsize)
 
             OCI_StringReleaseOracleString(dbstr);
         }
 
         /* set partition name attribute */
 
-        if (call_status && partition && partition[0])
+        if (OCI_STATUS && OCI_STRING_VALID(partition))
         {
             dbsize = -1;
             dbstr  = OCI_StringGetOracleString(partition, &dbsize);
 
-            OCI_CALL2
-            (
-                call_status, dp->con,
-
-                OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                           (dvoid *) dbstr, (ub4) dbsize, (ub4) OCI_ATTR_SUB_NAME,
-                           dp->con->err)
-            )
+            OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_SUB_NAME, dp->ctx, dbstr, dbsize)
 
             OCI_StringReleaseOracleString(dbstr);
         }
@@ -370,52 +340,30 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 
             /* set array size attribute */
 
-            OCI_CALL2
-            (
-                call_status, dp->con,
-
-                OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                           (dvoid *) &num_rows, (ub4) sizeof(num_rows),
-                           (ub4) OCI_ATTR_NUM_ROWS, dp->con->err)
-            )
+            OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_NUM_ROWS, dp->ctx, &num_rows, sizeof(num_rows))
         }
 
         /* set columns count attribute */
 
-        OCI_CALL2
-        (
-            call_status, dp->con,
-
-            OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                       (dvoid *) &dp->nb_cols, (ub4) sizeof(dp->nb_cols),
-                       (ub4) OCI_ATTR_NUM_COLS, dp->con->err)
-        )
+        OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_NUM_COLS, dp->ctx, &dp->nb_cols, sizeof(dp->nb_cols))
 
         /* allocating the column array */
 
-        if (call_status)
-        {
-            dp->cols = (OCI_DirPathColumn *) OCI_MemAlloc(OCI_IPC_DP_COL_ARRAY,
-                                                          sizeof(OCI_DirPathColumn),
-                                                          (size_t) dp->nb_cols,
-                                                          TRUE);
-
-            call_status = (NULL != dp->cols);
-        }
+        OCI_ALLOCATE_DATA(OCI_IPC_DP_COL_ARRAY, dp->cols, dp->nb_cols)
     }
 
     /* handle errors */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
-        call_retval = dp;
+        OCI_RETVAL = dp;
     }
     else if (dp)
     {
         OCI_DirPathFree(dp);
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -429,9 +377,9 @@ boolean OCI_API OCI_DirPathFree
 {
     ub2 i = 0;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     for (i = 0; i < dp->nb_cols; i++)
     {
@@ -451,9 +399,9 @@ boolean OCI_API OCI_DirPathFree
 
     OCI_FREE(dp)
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -478,14 +426,12 @@ boolean OCI_API OCI_DirPathSetColumn
 
     ub2 i = 0;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
-    OCI_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CHECK_BOUND(dp->con, index, 1, dp->nb_cols)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    OCI_CALL_CHECK_BOUND(dp->con, index, 1, dp->nb_cols)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     /* check if column exists */
 
@@ -501,14 +447,12 @@ boolean OCI_API OCI_DirPathSetColumn
 
     if (i >= dp->typinf->nb_cols)
     {
-        OCI_ExceptionDirPathColNotFound(dp, name, dp->typinf->name);
-
-        call_status = FALSE;
+        OCI_RAISE_EXCEPTION(OCI_ExceptionDirPathColNotFound(dp, name, dp->typinf->name))
     }
 
     /* set column information */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         col   = &dp->typinf->cols[i];
         dpcol = &dp->cols[index-1];
@@ -537,7 +481,7 @@ boolean OCI_API OCI_DirPathSetColumn
             }
             case OCI_CDT_NUMERIC:
             {
-                if (format && format[0])
+                if (OCI_STRING_VALID(format))
                 {
                     dpcol->format      = ostrdup(format);
                     dpcol->format_size = (ub4) ostrlen(format);
@@ -558,7 +502,7 @@ boolean OCI_API OCI_DirPathSetColumn
             {
                 dpcol->type = OCI_DDT_OTHERS;
 
-                if (format && format[0])
+                if (OCI_STRING_VALID(format))
                 {
                     dpcol->format      = ostrdup(format);
                     dpcol->format_size = (ub4) ostrlen(format);
@@ -574,7 +518,6 @@ boolean OCI_API OCI_DirPathSetColumn
                     dpcol->type    = OCI_DDT_BINARY;
                     dpcol->sqlcode = SQLT_BIN;
                 }
-
                 break;
             }
             case OCI_CDT_LONG:
@@ -594,8 +537,7 @@ boolean OCI_API OCI_DirPathSetColumn
             }
             default:
             {
-                call_status = FALSE;
-                OCI_ExceptionDatatypeNotSupported(dp->con, NULL, col->libcode);
+                OCI_RAISE_EXCEPTION(OCI_ExceptionDatatypeNotSupported(dp->con, NULL, col->libcode))
                 break;
             }
         }
@@ -603,110 +545,58 @@ boolean OCI_API OCI_DirPathSetColumn
 
     /* if supported data type, set direct path column attributes */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         /* get column parameter list handle */
 
-        OCI_CALL2
-        (
-            call_status, dp->con,
-
-            OCIAttrGet(dp->ctx, OCI_HTYPE_DIRPATH_CTX, &hlist, NULL, OCI_ATTR_LIST_COLUMNS, dp->con->err)
-        )
+        OCI_GET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_LIST_COLUMNS, dp->ctx, &hlist, NULL)
 
         /* get column attribute handle */
 
-        OCI_CALL2
-        (
-            call_status, dp->con,
-
-            OCIParamGet((dvoid *) hlist, OCI_DTYPE_PARAM, dp->con->err,
-                        (dvoid** ) (dvoid *) &hattr, (ub4) index)
-        )
+        OCI_EXEC(OCIParamGet((dvoid *) hlist, OCI_DTYPE_PARAM, dp->con->err, (dvoid** ) (dvoid *) &hattr, (ub4) index))
 
         /* set column name */
 
-        if (call_status)
+        if (OCI_STATUS)
         {
             dbsize = -1;
             dbstr  = OCI_StringGetOracleString(name, &dbsize);
 
-            OCI_CALL2
-            (
-                call_status, dp->con,
-
-                OCIAttrSet((dvoid *) hattr, (ub4) OCI_DTYPE_PARAM,
-                           (dvoid *) dbstr, (ub4) dbsize, (ub4) OCI_ATTR_NAME, dp->con->err)
-            )
+            OCI_SET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_NAME, hattr, dbstr, dbsize)
 
             OCI_StringReleaseOracleString(dbstr);
         }
 
         /* set column type */
 
-        OCI_CALL2
-        (
-            call_status, dp->con,
-
-            OCIAttrSet((dvoid *) hattr, (ub4) OCI_DTYPE_PARAM,
-                       (dvoid *) &dpcol->sqlcode, sizeof(dpcol->sqlcode),
-                       (ub4) OCI_ATTR_DATA_TYPE, dp->con->err)
-        )
+        OCI_SET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_DATA_TYPE, hattr, &dpcol->sqlcode, sizeof(dpcol->sqlcode))
 
         /* set column size */
 
-        OCI_CALL2
-        (
-            call_status, dp->con,
-
-            OCIAttrSet((dvoid *) hattr, (ub4) OCI_DTYPE_PARAM,
-                       (dvoid *) &dpcol->maxsize, sizeof(dpcol->maxsize),
-                       (ub4) OCI_ATTR_DATA_SIZE, dp->con->err)
-        )
+        OCI_SET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_DATA_SIZE, hattr, &dpcol->maxsize, sizeof(dpcol->maxsize))
 
         /* set column precision */
 
         if (col->prec != 0)
         {
-            OCI_CALL2
-            (
-                call_status, dp->con,
-
-                OCIAttrSet((dvoid *) hattr, (ub4) OCI_DTYPE_PARAM,
-                           (dvoid *) &col->prec, sizeof(col->prec),
-                           (ub4) OCI_ATTR_PRECISION, dp->con->err)
-            )
+            OCI_SET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_PRECISION, hattr, &col->prec, sizeof(col->prec))
         }
 
         /* set column scale */
 
         if (col->scale != 0)
         {
-            OCI_CALL2
-            (
-                call_status, dp->con,
-
-                OCIAttrSet((dvoid *) hattr, (ub4) OCI_DTYPE_PARAM,
-                           (dvoid *) &col->scale, sizeof(col->scale),
-                           (ub4) OCI_ATTR_SCALE, dp->con->err)
-            )
+            OCI_SET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_SCALE, hattr, &col->scale, sizeof(col->scale))
         }
 
         /* set column date/time format attribute */
 
-        if (call_status && dpcol->format && dpcol->format[0] && (OCI_DDT_NUMBER != dpcol->type))
+        if (OCI_STATUS && dpcol->format && dpcol->format[0] && (OCI_DDT_NUMBER != dpcol->type))
         {
             dbsize = -1;
             dbstr  = OCI_StringGetOracleString(dpcol->format, &dbsize);
 
-            OCI_CALL2
-            (
-                call_status, dp->con,
-
-                OCIAttrSet((dvoid *) hattr, (ub4) OCI_DTYPE_PARAM,
-                           (dvoid *) dbstr, (ub4) dbsize,
-                           (ub4) OCI_ATTR_DATEFORMAT, dp->con->err)
-            )
+            OCI_SET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_DATEFORMAT, hattr, dbstr, dbsize)
 
             OCI_StringReleaseOracleString(dbstr);
         }
@@ -717,14 +607,7 @@ boolean OCI_API OCI_DirPathSetColumn
         {
             ub2 csid = OCI_UTF16ID;
 
-            OCI_CALL2
-            (
-                call_status, dp->con,
-
-                OCIAttrSet((dvoid *) hattr, (ub4) OCI_DTYPE_PARAM,
-                           (dvoid *) &csid,  (ub4) sizeof(csid),
-                           (ub4) OCI_ATTR_CHARSET_ID,  dp->con->err)
-            )
+            OCI_SET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_CHARSET_ID, hattr, &csid, sizeof(csid))
         }
 
         /* free param handle */
@@ -732,9 +615,9 @@ boolean OCI_API OCI_DirPathSetColumn
         OCIDescriptorFree(hattr, OCI_DTYPE_PARAM);
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -746,56 +629,31 @@ boolean OCI_API OCI_DirPathPrepare
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     /* prepare direct path operation */
 
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIDirPathPrepare(dp->ctx, dp->con->cxt, dp->con->err)
-    )
+    OCI_EXEC(OCIDirPathPrepare(dp->ctx, dp->con->cxt, dp->con->err))
 
     /* allocate column array handle */
 
-    if (call_status)
-    {
-        call_status = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *)dp->ctx,
-                                                     (dvoid **) (void *) &dp->arr,
-                                                     (ub4) OCI_HTYPE_DIRPATH_COLUMN_ARRAY,
-                                                     (size_t) 0, (dvoid **) NULL));
-    }
+    OCI_STATUS = OCI_STATUS &&  OCI_HandleAlloc((dvoid *)dp->ctx, (dvoid **)(void *)&dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
 
     /* allocate stream handle */
 
-    if (call_status)
-    {
-        call_status = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *)dp->ctx,
-                                                     (dvoid **) (void *) &dp->strm,
-                                                     (ub4) OCI_HTYPE_DIRPATH_STREAM,
-                                                     (size_t) 0, (dvoid **) NULL));
-    }
+    OCI_STATUS = OCI_STATUS && OCI_HandleAlloc((dvoid *)dp->ctx, (dvoid **)(void *)&dp->strm, OCI_HTYPE_DIRPATH_STREAM);
 
     /* check the number of rows allocated */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         ub4 num_rows = 0;
         ub4 size     = sizeof(num_rows);
 
-        OCI_CALL2
-        (
-            call_status, dp->con,
-
-            OCIAttrGet(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY, &num_rows,
-                       &size, OCI_ATTR_NUM_ROWS, dp->con->err)
-        )
+        OCI_GET_ATTRIB(OCI_HTYPE_DIRPATH_COLUMN_ARRAY, OCI_ATTR_NUM_ROWS, dp->arr, &num_rows, &size)
 
         dp->nb_cur  = (ub2) num_rows;
         dp->nb_rows = (ub2) num_rows;
@@ -803,78 +661,37 @@ boolean OCI_API OCI_DirPathPrepare
 
     /* allocate array of errs rows */
 
-    if (call_status)
-    {
-        dp->err_rows = (ub4 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(*dp->err_rows),
-                                            (size_t) dp->nb_cur, TRUE);
+    OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, dp->err_rows, dp->nb_cur)
 
-        call_status = (NULL != dp->err_rows);
-    }
 
     /* allocate array of errs cols */
 
-    if (call_status)
-    {
-        dp->err_cols = (ub2 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(*dp->err_cols),
-                                            (size_t) dp->nb_cur, TRUE);
-
-        call_status = (NULL != dp->err_cols);
-    }
+    OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, dp->err_cols, dp->nb_cur)
 
     /* now, we need to allocate internal buffers */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         ub2 i;
 
-        for (i = 0; i < dp->nb_cols; i++)
+        for (i = 0; i < dp->nb_cols && OCI_STATUS; i++)
         {
             OCI_DirPathColumn *col = &dp->cols[i];
 
-            /* data buffers */
-
-            col->data = (ub1 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY,
-                                             (size_t) col->bufsize,
-                                             (size_t) dp->nb_cur, TRUE);
-
-            if (!col->data)
-            {
-                call_status = FALSE;
-                break;
-            }
-
-            /* data sizes */
-
-            col->lens = (ub4 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(ub4),
-                                             (size_t) dp->nb_cur, TRUE);
-
-            if (!col->lens)
-            {
-                call_status = FALSE;
-                break;
-            }
-
-            /* data flags */
-
-            col->flags = (ub1 *) OCI_MemAlloc(OCI_IPC_BUFF_ARRAY, sizeof(ub1),
-                                              (size_t) dp->nb_cur, TRUE);
-
-            if (!col->flags)
-            {
-                call_status = FALSE;
-                break;
-            }
+            OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, col->data, col->bufsize, dp->nb_cur)
+            OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, col->lens, sizeof(ub4),  dp->nb_cur)
+            OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, col->flags, sizeof(ub1), dp->nb_cur)
         }
     }
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         dp->status = OCI_DPS_PREPARED;
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -896,21 +713,19 @@ boolean OCI_API OCI_DirPathSetEntry
     ub1 *data;
     ub1 flag;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
-    OCI_CHECK_BOUND(dp->con, index, 1, dp->nb_cols)
-    OCI_CHECK_BOUND(dp->con, row, 1, dp->nb_cur)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
+    OCI_CALL_CHECK_BOUND(dp->con, index, 1, dp->nb_cols)
+    OCI_CALL_CHECK_BOUND(dp->con, row, 1, dp->nb_cur)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     dpcol = &dp->cols[index-1];
+    OCI_STATUS = (NULL != dpcol);
 
-    if (dpcol)
+    if (OCI_STATUS)
     {
-        call_status = TRUE;
-
-        /* check size */
+       /* check size */
 
         if (size > dpcol->maxsize)
         {
@@ -970,10 +785,10 @@ boolean OCI_API OCI_DirPathSetEntry
 
                 OCINumber *num = (OCINumber *) data;
 
-                call_status = OCI_NumberFromString(dp->con, num, sizeof(*num), OCI_NUM_NUMBER,
-                                                   SQLT_NUM, (dtext *)value, dpcol->format);
+                OCI_STATUS = OCI_NumberFromString(dp->con, num, sizeof(*num), OCI_NUM_NUMBER,
+                                                   SQLT_VNU, (dtext *)value, dpcol->format);
 
-                if (call_status)
+                if (OCI_STATUS)
                 {
                     size = (unsigned int) num->OCINumberPart[0];
                 }
@@ -988,9 +803,9 @@ boolean OCI_API OCI_DirPathSetEntry
         dpcol->flags[row-1] = flag;
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1002,11 +817,9 @@ boolean OCI_API OCI_DirPathReset
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     /* reset conversion and loading variables */
 
@@ -1018,25 +831,15 @@ boolean OCI_API OCI_DirPathReset
 
     /* reset array */
 
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIDirPathColArrayReset(dp->arr, dp->con->err)
-    )
+    OCI_EXEC(OCIDirPathColArrayReset(dp->arr, dp->con->err))
 
     /* reset stream */
 
-    OCI_CALL2
-    (
-        call_status, dp->con,
+    OCI_EXEC(OCIDirPathStreamReset(dp->strm, dp->con->err))
 
-        OCIDirPathStreamReset(dp->strm, dp->con->err)
-    )
+    OCI_RETVAL = OCI_STATUS;
 
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1050,12 +853,10 @@ unsigned int OCI_API OCI_DirPathConvert
 {
     ub4 row_from = 0;
 
-    OCI_LIB_CALL_ENTER(unsigned int, OCI_DPR_ERROR)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(unsigned int, OCI_DPR_ERROR)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     /* reset the number of processed rows */
 
@@ -1073,12 +874,7 @@ unsigned int OCI_API OCI_DirPathConvert
 
     if (OCI_DPR_FULL == dp->res_conv)
     {
-        OCI_CALL2
-        (
-            call_status, dp->con,
-
-            OCIDirPathStreamReset(dp->strm, dp->con->err)
-        )
+        OCI_EXEC(OCIDirPathStreamReset(dp->strm, dp->con->err))
     }
 
     /* reset conversion status back to default error value */
@@ -1087,7 +883,7 @@ unsigned int OCI_API OCI_DirPathConvert
 
     /* set array values */
 
-    if (call_status && OCI_DirPathSetArray(dp, row_from))
+    if (OCI_STATUS && OCI_DirPathSetArray(dp, row_from))
     {
         /* try to convert values from array into stream */
 
@@ -1100,7 +896,7 @@ unsigned int OCI_API OCI_DirPathConvert
         {
             /* perform conversion until all non erred rows are converted */
 
-            while (call_status && (OCI_DPR_ERROR == dp->res_conv) && (dp->nb_err <= dp->nb_cur))
+            while (OCI_STATUS && (OCI_DPR_ERROR == dp->res_conv) && (dp->nb_err <= dp->nb_cur))
             {
                 /* start from the row that follows the last erred row */
 
@@ -1108,9 +904,9 @@ unsigned int OCI_API OCI_DirPathConvert
 
                 /* set values again */
 
-                call_status = OCI_DirPathSetArray(dp, row_from);
+                OCI_STATUS = OCI_DirPathSetArray(dp, row_from);
 
-                if (call_status)
+                if (OCI_STATUS)
                 {
                      /* perform conversion again */
 
@@ -1122,10 +918,10 @@ unsigned int OCI_API OCI_DirPathConvert
 
     dp->nb_processed = dp->nb_converted;
 
-    call_status = call_status && (OCI_DPR_COMPLETE == dp->res_conv);
-    call_retval = dp->res_conv;
+    OCI_STATUS = OCI_STATUS && (OCI_DPR_COMPLETE == dp->res_conv);
+    OCI_RETVAL = dp->res_conv;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1137,12 +933,10 @@ unsigned int OCI_API OCI_DirPathLoad
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, OCI_DPR_ERROR)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_CONVERTED)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(unsigned int, OCI_DPR_ERROR)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_CONVERTED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     /* reset the number of processed rows */
 
@@ -1166,10 +960,10 @@ unsigned int OCI_API OCI_DirPathLoad
         dp->res_load = OCI_DirPathLoadStream(dp);
     }
 
-    call_status = call_status && (OCI_DPR_COMPLETE == dp->res_load);
-    call_retval = dp->res_load;
+    OCI_STATUS = OCI_STATUS && (OCI_DPR_COMPLETE == dp->res_load);
+    OCI_RETVAL = dp->res_load;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1181,28 +975,21 @@ boolean OCI_API OCI_DirPathFinish
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
+    OCI_EXEC(OCIDirPathFinish(dp->ctx, dp->con->err))
 
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIDirPathFinish(dp->ctx, dp->con->err)
-    )
-
-    if (call_status)
+    if (OCI_STATUS)
     {
         dp->status = OCI_DPS_TERMINATED;
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1214,28 +1001,21 @@ boolean OCI_API OCI_DirPathAbort
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
+    OCI_EXEC(OCIDirPathAbort(dp->ctx, dp->con->err))
 
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIDirPathAbort(dp->ctx, dp->con->err)
-    )
-
-    if (call_status)
+    if (OCI_STATUS)
     {
         dp->status = OCI_DPS_TERMINATED;
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1247,23 +1027,16 @@ boolean OCI_API OCI_DirPathSave
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
+    OCI_EXEC(OCIDirPathDataSave(dp->ctx, dp->con->err, OCI_DIRPATH_DATASAVE_SAVEONLY))
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIDirPathDataSave(dp->ctx, dp->con->err, OCI_DIRPATH_DATASAVE_SAVEONLY)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1275,23 +1048,16 @@ boolean OCI_API OCI_DirPathFlushRow
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
+    OCI_EXEC(OCIDirPathFlushRow(dp->ctx, dp->con->err))
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIDirPathFlushRow(dp->ctx, dp->con->err)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1304,17 +1070,17 @@ boolean OCI_API OCI_DirPathSetCurrentRows
     unsigned int nb_rows
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
-    OCI_CHECK_BOUND(dp->con, nb_rows, 1, dp->nb_rows)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
+    OCI_CALL_CHECK_BOUND(dp->con, nb_rows, 1, dp->nb_rows)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     dp->nb_cur = (ub2) nb_rows;
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = TRUE;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1326,14 +1092,7 @@ unsigned int OCI_API OCI_DirPathGetCurrentRows
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-
-    call_retval = dp->nb_cur;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, 0, OCI_IPC_DIRPATH, dp, nb_cur, dp->con, NULL, dp->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1345,14 +1104,7 @@ unsigned int OCI_API OCI_DirPathGetMaxRows
     OCI_DirPath *dp
 )
 {
-   OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-
-    call_retval = dp->nb_rows;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+   OCI_GET_PROP(unsigned int, 0, OCI_IPC_DIRPATH, dp, nb_rows, dp->con, NULL, dp->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1368,29 +1120,21 @@ boolean OCI_API OCI_DirPathSetDateFormat
     dbtext  *dbstr = NULL;
     int     dbsize = -1;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     dbsize = -1;
     dbstr  = OCI_StringGetOracleString(format, &dbsize);
 
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                   (dvoid *) dbstr, (ub4) dbsize, (ub4) OCI_ATTR_DATEFORMAT, dp->con->err)
-    )
+    OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_DATEFORMAT, dp->ctx, dbstr, dbsize)
 
     OCI_StringReleaseOracleString(dbstr);
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1405,25 +1149,16 @@ boolean OCI_API OCI_DirPathSetParallel
 {
     ub1 enabled = (ub1) value;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_DIRPATH_PARALLEL, dp->ctx, &enabled, sizeof(enabled))
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                   (dvoid *) &enabled, (ub4) sizeof(enabled),
-                   (ub4) OCI_ATTR_DIRPATH_PARALLEL, dp->con->err)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1438,25 +1173,16 @@ boolean OCI_API OCI_DirPathSetNoLog
 {
     ub1 nolog = (ub1) value;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_DIRPATH_NOLOG, dp->ctx, &nolog, sizeof(nolog))
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                   (dvoid *) &nolog, (ub4) sizeof(nolog),
-                   (ub4) OCI_ATTR_DIRPATH_NOLOG, dp->con->err)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1472,32 +1198,16 @@ boolean OCI_API OCI_DirPathSetCacheSize
     ub4 cache_size  = size;
     boolean enabled = FALSE;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                   (dvoid *) &cache_size, (ub4) sizeof(cache_size),
-                   (ub4) OCI_ATTR_DIRPATH_DCACHE_SIZE, dp->con->err)
-    )
-
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                   (dvoid *) &enabled, (ub4) sizeof(enabled),
-                   (ub4) OCI_ATTR_DIRPATH_DCACHE_DISABLE, dp->con->err)
-    )
+    OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_DIRPATH_DCACHE_SIZE, dp->ctx, &cache_size, sizeof(cache_size))
+    OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_DIRPATH_DCACHE_DISABLE, dp->ctx, &enabled, sizeof(enabled))
 
 #else
 
@@ -1506,9 +1216,9 @@ boolean OCI_API OCI_DirPathSetCacheSize
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1523,25 +1233,16 @@ boolean OCI_API OCI_DirPathSetBufferSize
 {
     ub4 bufsize = (ub4) size;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_BUF_SIZE, dp->ctx, &bufsize, sizeof(bufsize))
 
-    call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_CALL2
-    (
-        call_status, dp->con,
-
-        OCIAttrSet((dvoid *) dp->ctx, (ub4) OCI_HTYPE_DIRPATH_CTX,
-                   (dvoid *) &bufsize, (ub4) sizeof(bufsize),
-                   (ub4) OCI_ATTR_BUF_SIZE, dp->con->err)
-    )
-
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1554,17 +1255,17 @@ boolean OCI_API OCI_DirPathSetConvertMode
     unsigned int mode
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
+    OCI_CALL_CHECK_ENUM_VALUE(dp->con, NULL, mode, ConversionModeValues, OTEXT("Conversion mode"))
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-    OCI_CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
-    OCI_CHECK_ENUM_VALUE(dp->con, NULL, mode, ConversionModeValues, OTEXT("Conversion mode"))
+    dp->cvt_mode = (ub2)mode;
 
-    dp->cvt_mode = (ub2) mode;
+    OCI_RETVAL = OCI_STATUS;
 
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1576,14 +1277,7 @@ unsigned int OCI_API OCI_DirPathGetRowCount
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-
-    call_retval = dp->nb_loaded;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, 0, OCI_IPC_DIRPATH, dp, nb_loaded, dp->con, NULL, dp->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1595,14 +1289,8 @@ unsigned int OCI_API OCI_DirPathGetAffectedRows
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
-
-    call_retval = dp->nb_processed;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()}
+    OCI_GET_PROP(unsigned int, 0, OCI_IPC_DIRPATH, dp, nb_processed, dp->con, NULL, dp->con->err)
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_DirPathGetErrorColumn
@@ -1613,18 +1301,16 @@ unsigned int OCI_API OCI_DirPathGetErrorColumn
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     if (dp->idx_err_col < dp->nb_err)
     {
-        call_retval = (unsigned int) dp->err_cols[dp->idx_err_col++] + 1;
+        OCI_RETVAL = (unsigned int) dp->err_cols[dp->idx_err_col++] + 1;
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1636,16 +1322,14 @@ unsigned int OCI_API OCI_DirPathGetErrorRow
     OCI_DirPath *dp
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     if (dp->idx_err_row < dp->nb_err)
     {
-        call_retval = (unsigned int) dp->err_rows[dp->idx_err_row++] + 1;
+        OCI_RETVAL = (unsigned int) dp->err_rows[dp->idx_err_row++] + 1;
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }

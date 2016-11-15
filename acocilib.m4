@@ -48,7 +48,7 @@ AC_DEFUN([OCILIB_PATH],
   doc_files=`(cd ${srcdir:-.}/doc/html && ls -1 *.html *.css *.png)`
   OCILIB_DOCS=`echo $doc_files | sed 's,$, ,g'`
 
-  demo_sources_files=`(cd ${srcdir:-.}/demo/ && ls -1 *.c *.h *.cpp)`
+  demo_sources_files=`(cd ${srcdir:-.}/demo/ && ls -1 *.c *.h *.cpp *.sql)`
   OCILIB_DEMO_SOURCES=`echo $demo_sources_files | sed 's,$, ,g'`
 
   AC_SUBST(OCILIB_PREFIX)

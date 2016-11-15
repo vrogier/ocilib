@@ -1,4 +1,4 @@
-# Copyright (C) 2007 Vincent Rogier <vince_rogier@yahoo.fr>
+# Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
 #  
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without 
@@ -10,19 +10,22 @@
 
 builtin(include, acocilib.m4)
 
-AC_INIT()
+AC_INIT(ocilib, m4_esyscmd([tr -d '\n' < VERSION]))
+
+m4_pattern_allow([LT_MAJOR])
 
 AC_CONFIG_SRCDIR([src/library.c])
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(ocilib, `cat VERSION`)
+AC_CONFIG_MACRO_DIR([m4])
+AM_INIT_AUTOMAKE()
 
-enable_dlopen=yes
+LT_INIT()
 
 AC_PROG_CC()
 AC_PROG_INSTALL()
+AC_LIBTOOL_DLOPEN()
 AC_PROG_LIBTOOL()
-AC_PROG_RANLIB()
 
 OCILIB_PATH()
 OCILIB_VERSION()

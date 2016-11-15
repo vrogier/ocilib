@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: callback.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
@@ -112,12 +98,13 @@ sb4 OCI_ProcOutBind
     dvoid  **indp,
     ub2    **rcodep
 )
-{
-    OCI_Bind      *bnd  = (OCI_Bind *) octxp;
+{        
+    OCI_Bind      *bnd  = (OCI_Bind *)octxp;
     OCI_Define    *def  = NULL;
     OCI_Resultset *rs   = NULL;
-    boolean        res  = TRUE;
     ub4            rows = 0;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     /* those checks may be not necessary but they keep away compilers warning
        away if the warning level is set to maximum !
@@ -129,6 +116,8 @@ sb4 OCI_ProcOutBind
 
     OCI_CHECK(NULL == bnd, OCI_ERROR)
     OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR)
+
+    OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
     /* update statement status */
 
@@ -143,31 +132,15 @@ sb4 OCI_ProcOutBind
 
         /* allocate resultset handles array */
 
-        if (!bnd->stmt->rsts)
-        {
-            bnd->stmt->rsts = (OCI_Resultset **) OCI_MemAlloc(OCI_IPC_RESULTSET_ARRAY,
-                                                              sizeof(*bnd->stmt->rsts),
-                                                              (size_t) bnd->stmt->nb_rs, TRUE);
-
-            if (!bnd->stmt->rsts)
-            {
-                res = FALSE;
-            }
-        }
+        OCI_ALLOCATE_DATA(OCI_IPC_RESULTSET_ARRAY, bnd->stmt->rsts, bnd->stmt->nb_rs)
 
         /* create resultset as needed */
 
-        if (res && !bnd->stmt->rsts[iter])
+        if (OCI_STATUS && !bnd->stmt->rsts[iter])
         {
-            OCI_CALL1
-            (
-                res, bnd->stmt->con, bnd->stmt,
+            OCI_GET_ATTRIB(OCI_HTYPE_BIND, OCI_ATTR_ROWS_RETURNED, bnd->buffer.handle, &rows, NULL)
 
-                OCIAttrGet(bnd->buffer.handle, (ub4) OCI_HTYPE_BIND, (void *) &rows, (ub4 *) NULL,
-                           (ub4) OCI_ATTR_ROWS_RETURNED, bnd->stmt->con->err)
-            )
-
-            if (res)
+            if (OCI_STATUS)
             {
                 bnd->stmt->rsts[iter] = OCI_ResultsetCreate(bnd->stmt, rows);
 
@@ -187,7 +160,7 @@ sb4 OCI_ProcOutBind
 
     /* Let's Oracle update its buffers */
 
-    if (res)
+    if (OCI_STATUS)
     {
         /* update pointers contents */
 
@@ -217,7 +190,7 @@ sb4 OCI_ProcOutBind
         *rcodep = (ub2   *) NULL;
     }
 
-    return (res ? OCI_CONTINUE : OCI_ERROR);
+    return (OCI_STATUS ? OCI_CONTINUE : OCI_ERROR);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -234,7 +207,7 @@ ub4 OCI_ProcNotifyMessages
     ub4              mode
 )
 {
-    OCI_Dequeue *dequeue = (OCI_Dequeue *) ctx;
+    OCI_Dequeue *dequeue = (OCI_Dequeue *)ctx;
 
     OCI_NOT_USED(paylen)
     OCI_NOT_USED(payload)
@@ -255,7 +228,7 @@ ub4 OCI_ProcNotifyMessages
 
 ub4 OCI_ProcNotifyChanges
 (
-    void            *ctx,
+    void            *oci_ctx,
     OCISubscription *subscrhp,
     void            *payload,
     ub4              paylen,
@@ -263,11 +236,13 @@ ub4 OCI_ProcNotifyChanges
     ub4              mode
 )
 {
-    OCI_Subscription *sub = (OCI_Subscription *) ctx;
+    OCI_Subscription *sub = (OCI_Subscription *)oci_ctx;
     boolean res           = TRUE;
     void   *dbstr         = NULL;
     int     dbsize        = 0;
     ub4     type          = 0;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_NOT_USED(paylen)
     OCI_NOT_USED(payload)
@@ -276,19 +251,15 @@ ub4 OCI_ProcNotifyChanges
 
     OCI_CHECK(NULL == sub, OCI_SUCCESS)
 
+    OCI_CALL_CONTEXT_SET_FROM_ERR(sub->err)
+
     OCI_EventReset(&sub->event);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* get database that generated the notification */
 
-    OCI_CALL3
-    (
-        res, sub->err,
-
-        OCIAttrGet((dvoid *) desc, (ub4) OCI_DTYPE_CHDES, (dvoid *) &dbstr, (ub4 *) &dbsize,
-                   (ub4) OCI_ATTR_CHDES_DBNAME, sub->err)
-    )
+    OCI_GET_ATTRIB(OCI_DTYPE_CHDES, OCI_ATTR_CHDES_DBNAME, desc, &dbstr, &dbsize)
 
     /* buffer is ANSI  */
     if (res &&  OCI_StringRequestBuffer(&sub->event.dbname, &sub->event.dbname_size, dbsize)) 
@@ -298,14 +269,7 @@ ub4 OCI_ProcNotifyChanges
 
     /* get notification type */
 
-    OCI_CALL3
-    (
-        res, sub->err,
-
-        OCIAttrGet((dvoid *) desc, (ub4) OCI_DTYPE_CHDES,
-                   (dvoid *) &type, (ub4 *) NULL,
-                   (ub4) OCI_ATTR_CHDES_NFYTYPE, sub->err)
-    )
+    OCI_GET_ATTRIB(OCI_DTYPE_CHDES, OCI_ATTR_CHDES_NFYTYPE, desc, &type, NULL)
 
     switch(type)
     {
@@ -346,13 +310,7 @@ ub4 OCI_ProcNotifyChanges
 
         /* get collection of modified tables */
 
-        OCI_CALL3
-        (
-            res, sub->err,
-
-            OCIAttrGet((dvoid *) desc, (ub4) OCI_DTYPE_CHDES, (dvoid *) &tables,
-                       (ub4   *) NULL, (ub4) OCI_ATTR_CHDES_TABLE_CHANGES,  sub->err)
-        )
+        OCI_GET_ATTRIB(OCI_DTYPE_CHDES, OCI_ATTR_CHDES_TABLE_CHANGES, desc, &tables, NULL)
 
         if (tables)
         {
@@ -365,12 +323,7 @@ ub4 OCI_ProcNotifyChanges
             
             /* get number of tables in the collection */
 
-            OCI_CALL3
-            (
-                res, sub->err,
-
-                OCICollSize(sub->env, sub->err, tables, &nb_tables)
-            )
+            OCI_EXEC(OCICollSize(sub->env, sub->err, tables, &nb_tables))
 
             for (i = 0; i < nb_tables; i++)
             {
@@ -390,26 +343,11 @@ ub4 OCI_ProcNotifyChanges
 
                 /* get table element */
 
-                OCI_CALL3
-                (
-                    res, sub->err,
-
-                    OCICollGetElem(sub->env, sub->err,  tables, i, &tbl_exist,
-                                   (dvoid**) (dvoid*) &tbl_elem, (dvoid**) &tbl_ind)
-                )
+                OCI_EXEC(OCICollGetElem(sub->env, sub->err,  tables, i, &tbl_exist, (dvoid**) (dvoid*) &tbl_elem, (dvoid**) &tbl_ind))
 
                 /* get table name */
 
-                OCI_CALL3
-                (
-                    res, sub->err,
-
-                    OCIAttrGet((dvoid *) *tbl_elem,
-                               (ub4) OCI_DTYPE_TABLE_CHDES,
-                               (dvoid *) &dbstr, (ub4 *) &dbsize,
-                               (ub4) OCI_ATTR_CHDES_TABLE_NAME,
-                               sub->err)
-                )
+                OCI_GET_ATTRIB(OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_NAME, *tbl_elem, &dbstr, &dbsize)
 
                 /* buffer is ANSI  */
                 if (res &&  OCI_StringRequestBuffer(&sub->event.objname, &sub->event.objname_size, dbsize)) 
@@ -419,14 +357,7 @@ ub4 OCI_ProcNotifyChanges
 
                 /* get table modification type */
 
-                OCI_CALL3
-                (
-                    res, sub->err,
-
-                    OCIAttrGet((dvoid *) *tbl_elem, (ub4) OCI_DTYPE_TABLE_CHDES,
-                               (dvoid *) &sub->event.op, (ub4*) NULL,
-                               (ub4) OCI_ATTR_CHDES_TABLE_OPFLAGS, sub->err)
-                )
+                OCI_GET_ATTRIB(OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_OPFLAGS, *tbl_elem, &sub->event.op, NULL)
 
                 sub->event.op = sub->event.op & (~OCI_OPCODE_ALLROWS);
                 sub->event.op = sub->event.op & (~OCI_OPCODE_ALLOPS);
@@ -439,14 +370,7 @@ ub4 OCI_ProcNotifyChanges
 
                     /* get collection of modified rows */
 
-                    OCI_CALL3
-                    (
-                        res, sub->err,
-
-                        OCIAttrGet((dvoid *) *tbl_elem, (ub4) OCI_DTYPE_TABLE_CHDES,
-                                   (dvoid *) &rows, (ub4 *) NULL,
-                                   (ub4    ) OCI_ATTR_CHDES_TABLE_ROW_CHANGES, sub->err)
-                    )
+                    OCI_GET_ATTRIB(OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_ROW_CHANGES, *tbl_elem, &rows, NULL)
 
                     if (rows)
                     {
@@ -457,12 +381,7 @@ ub4 OCI_ProcNotifyChanges
 
                         /* get number of rows */
 
-                        OCI_CALL3
-                        (
-                            res, sub->err,
-
-                            OCICollSize(sub->env, sub->err, rows, &nb_rows)
-                        )
+                        OCI_EXEC(OCICollSize(sub->env, sub->err, rows, &nb_rows))
 
                         for (j = 0; j < nb_rows; j++)
                         {
@@ -475,35 +394,18 @@ ub4 OCI_ProcNotifyChanges
 
                             /* get row element */
 
-                            OCI_CALL3
+                            OCI_EXEC
                             (
-                                res, sub->err,
-
-                                OCICollGetElem(sub->env, sub->err, rows, j, &row_exist,
-                                               (dvoid**) (dvoid*) &row_elem, (dvoid**) &row_ind)
+                                OCICollGetElem(sub->env, sub->err, rows, j, &row_exist, (dvoid**) (dvoid*) &row_elem, (dvoid**) &row_ind)
                             )
 
                             /* get rowid  */
 
-                            OCI_CALL3
-                            (
-                                res, sub->err,
-
-                                OCIAttrGet((dvoid *) *row_elem, (ub4) OCI_DTYPE_ROW_CHDES,
-                                           (dvoid *) &dbstr, (ub4 *) &dbsize,
-                                           (ub4) OCI_ATTR_CHDES_ROW_ROWID, sub->err)
-                            )
+                            OCI_GET_ATTRIB(OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_ROWID, *row_elem, &dbstr, &dbsize)
 
                             /* get opcode  */
-
-                            OCI_CALL3
-                            (
-                                res, sub->err,
-
-                                OCIAttrGet((dvoid *) *row_elem, (ub4) OCI_DTYPE_ROW_CHDES,
-                                           &sub->event.op, (ub4*) NULL,
-                                           (ub4) OCI_ATTR_CHDES_ROW_OPFLAGS, sub->err)
-                            )
+                   
+                            OCI_GET_ATTRIB(OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_OPFLAGS, *row_elem, &sub->event.op, NULL)
 
                             /* buffer is ANSI  */ 
                             if (res &&  OCI_StringRequestBuffer(&sub->event.rowid, &sub->event.rowid_size, dbsize)) 
@@ -584,6 +486,8 @@ void OCI_ProcHAEvent
     OCI_Item  *item  = NULL;
     OCIServer *srvhp = NULL;
 
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+
     OCI_NOT_USED(evtctx)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
@@ -592,17 +496,15 @@ void OCI_ProcHAEvent
     {
         return;    
     }    
-    
+
     if (OCILib.version_runtime >= OCI_10_2)
     {
         OCIEvent        *eventhp = (OCIEvent *) eventptr;
         OCI_Timestamp   *tmsp    = NULL;
-        sword            ret;
  
-        ret = OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &srvhp,
-                         (ub4 *) NULL, (ub4) OCI_ATTR_HA_SRVFIRST, OCILib.err);
+        OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVFIRST, eventhp, &srvhp, NULL)
 
-        while ((OCI_SUCCESS == ret) && srvhp)
+        while (OCI_STATUS && srvhp)
         {
             if (list->mutex)
             {
@@ -623,55 +525,23 @@ void OCI_ProcHAEvent
 
                 if (con && (con->svr == srvhp))
                 {
-                    boolean res = TRUE;
- 
                     /* get event timestamp */
 
-                    OCI_CALL2
-                    (
-                        res, con,
-
-                        OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &dth,
-                                   (ub4 *) NULL,  (ub4) OCI_ATTR_HA_TIMESTAMP, con->err)
-
-                    )
-
-                    if (res)
-                    {
-                        res = (NULL != OCI_TimestampInit(con, &tmsp, dth, OCI_TIMESTAMP));
-                    }
+                    OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_TIMESTAMP, eventhp, &dth, NULL)
+                    tmsp = OCI_TimestampInit(con, tmsp, dth, OCI_TIMESTAMP);
+                    OCI_STATUS = (OCI_STATUS && NULL != tmsp);
 
                     /* get status */
 
-                    if (res)
-                    {
-                        OCI_CALL2
-                        (
-                            res, con,
-
-                            OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &event,
-                                       (ub4 *) NULL,  (ub4) OCI_ATTR_HA_STATUS, con->err)
-
-                        )
-                    }
+                    OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_STATUS, eventhp, &event, NULL)
 
                     /* get source */
 
-                    if (res)
-                    {
-                        OCI_CALL2
-                        (
-                            res, con,
-
-                            OCIAttrGet((dvoid **) eventhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &source,
-                                       (ub4 *) NULL,  (ub4) OCI_ATTR_HA_SOURCE, con->err)
-
-                        )
-                    }
+                    OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SOURCE, eventhp, &source, NULL)
 
                     /* on success, call the user callback */
 
-                    if (res)
+                    if (OCI_STATUS)
                     {
                         OCILib.ha_handler(con, (unsigned int) source, (unsigned int) event, tmsp);
                     }
@@ -685,9 +555,7 @@ void OCI_ProcHAEvent
                 OCI_MutexRelease(list->mutex);
             }
 
-            ret = OCIAttrGet((dvoid **) srvhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &srvhp,
-                             (ub4 *) NULL,  (ub4) OCI_ATTR_HA_SRVNEXT, OCILib.err);
-
+            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT, eventhp, &srvhp, NULL)
         }
 
         /* free temporary timestamp object */

@@ -1,53 +1,75 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                                                                                         |
-    |                          OCILIB ++ - C++ wrapper around OCILIB                          |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-
-    +-----------------------------------------------------------------------------------------+
-    |                                     IMPORTANT NOTICE                                    |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |            This C++ header defines C++ wrapper classes around the OCILIB C API          |
-    |            It requires a compatible version of OCILIB                                   |
-    +-----------------------------------------------------------------------------------------+
-
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-/* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_core.hpp, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+/*
+ * IMPORTANT NOTICE
+ *
+ * This C++ header defines C++ wrapper classes around the OCILIB C API
+ * It requires a compatible version of OCILIB
+ *
+ */
+
+#pragma once
+
+#include <map>
 
 namespace ocilib
 {
 
+/* Try to guess C++ Compiler capabilities ... */
+
+#define CPP_98 199711L
+#define CPP_11 201103L
+#define CPP_14 201402L
+
+#if __cplusplus < CPP_11
+    #if defined(__GNUC__)
+        #if defined(__GXX_EXPERIMENTAL_CXX0X__)
+            #define HAVE_NULLPTR
+            #define HAVE_MOVE_SEMANTICS
+        #else
+            #define override
+        #endif
+    #elif defined(_MSC_VER)
+        #if _MSC_VER >= 1600
+            #define HAVE_NULLPTR
+            #define HAVE_MOVE_SEMANTICS
+        #else
+            #define override
+        #endif
+    #endif
+#else
+    #define HAVE_NULLPTR
+    #define HAVE_MOVE_SEMANTICS
+#endif
+
+
+/* guessing if nullptr is supported */
+
+#ifndef HAVE_NULLPTR
+    #define nullptr 0
+#endif
+
 #define ARG_NOT_USED(a) (a) = (a)
 
-/** class pre declarations */
+/* class forward declarations */
 
 class Exception;
 class Connection;
@@ -61,13 +83,17 @@ class Interval;
 class TypeInfo;
 class Reference;
 class Object;
-template <class TDataType>
+template<class>
+class Element;
+template<class>
+class Iterator;
+template<class>
 class Collection;
-template<class TLobObjectType, int TLobOracleType>
+template<class, int>
 class Lob;
 class File;
 class Pool;
-template<class TLongObjectType, int TLongOracleType>
+template<class, int>
 class Long;
 class Column;
 class Subscription;
@@ -85,18 +111,24 @@ class Mutex;
 class BindInfo;
 
 /**
+* @brief Internal usage.
+* Allow resolving a native type used by C API from a C++ type in binding operations
+*/
+template<class T> struct BindResolver {};
+
+/**
  * @brief Internal usage.
  * Checks if the last OCILIB function call has raised an error.
  * If so, it raises a C++ exception using the retrieved error handle
  */
-template<class TResultType>
-static TResultType Check(TResultType result);
+template<class T>
+static T Check(T result);
 
 /**
  * @brief Internal usage.
  * Constructs a C++ string object from the given OCILIB string pointer
  */
-ostring MakeString(const otext *result);
+ostring MakeString(const otext *result, int size = -1);
 
 /**
 * @brief Internal usage.
@@ -108,77 +140,77 @@ Raw MakeRaw(void *result, unsigned int size);
  * @brief
  * Template class providing OCILIB handles auto memory, life cycle and scope management
  */
-template <class THandleType>
+template<class>
 class HandleHolder;
 
 /**
  * @brief
- * Template Enum template class providing some type safety to some extends for manipulating enum variables
+ * Template Enumeration template class providing some type safety to some extends for manipulating enumerated variables
  */
-template <class TEnum>
+template<class T>
 class Enum
 {
 public:
 
-    typedef TEnum type;
+    typedef T Type;
 
     Enum();
-    Enum(TEnum value);
+    Enum(T value);
 
-    TEnum GetValue();
+    T GetValue();
 
-    operator TEnum ();
-    operator unsigned int ();
+    operator T ();
+    operator unsigned int () const;
 
     bool operator == (const Enum& other) const;
     bool operator != (const Enum& other) const;
 
-    bool operator == (const TEnum& other) const;
-    bool operator != (const TEnum& other) const;
+    bool operator == (const T& other) const;
+    bool operator != (const T& other) const;
 
 private:
 
-    TEnum _value;
+    T _value;
 };
 
 /**
  * @brief
  * Template Flags template class providing some type safety to some extends for manipulating flags set variables
  */
-template <class TEnum>
+template<class T>
 class Flags
 {
 public:
 
-    typedef TEnum type;
+	typedef T Type;
 
     Flags();
-    Flags(TEnum flag);
+    Flags(T flag);
     Flags(const Flags& other);
     Flags operator~ () const;
 
-    Flags operator | (TEnum other) const;
-    Flags operator & (TEnum other) const;
-    Flags operator ^ (TEnum other) const;
+    Flags operator | (T other) const;
+    Flags operator & (T other) const;
+    Flags operator ^ (T other) const;
 
     Flags operator | (const Flags& other) const;
     Flags operator & (const Flags& other) const;
     Flags operator ^ (const Flags& other) const;
 
-    Flags& operator |= (TEnum other);
-    Flags& operator &= (TEnum other);
-    Flags& operator ^= (TEnum other);
+    Flags& operator |= (T other);
+    Flags& operator &= (T other);
+    Flags& operator ^= (T other);
 
     Flags& operator |= (const Flags& other);
     Flags& operator &= (const Flags& other);
     Flags& operator ^= (const Flags& other);
 
-    bool operator == (TEnum other) const;
+    bool operator == (T other) const;
     bool operator == (const Flags& other) const;
 
     unsigned int GetValues() const;
 
-    bool IsSet(TEnum other) const;
+    bool IsSet(T other) const;
 
 private:
 
@@ -187,22 +219,22 @@ private:
     unsigned int _flags;
 };
 
-template< typename TBufferType>
+template< typename T>
 class ManagedBuffer
 {
 public:
     ManagedBuffer();
     ManagedBuffer(size_t size);
-    ManagedBuffer(TBufferType *buffer, size_t size);
+    ManagedBuffer(T *buffer, size_t size);
 
     ~ManagedBuffer();
 
-    operator TBufferType* () const;
-    operator const TBufferType* () const;
+    operator T* () const;
+    operator const T* () const;
 
 private:
 
-    TBufferType* _buffer;
+    T* _buffer;
     size_t _size;
 };
 
@@ -213,8 +245,8 @@ public:
     Locker();
     virtual ~Locker();
 
-    void Lock();
-    void Unlock();
+    void Lock() const;
+    void Unlock() const;
 
     void SetAccessMode(bool threaded);
 
@@ -232,15 +264,15 @@ public:
 
     void SetLocker(Locker *locker);
 
-    void Lock();
-    void Unlock();
+    void Lock() const;
+    void Unlock() const;
 
 private:
 
     Locker *_locker;
 };
 
-template <class TKey, class TValue>
+template<class K, class V>
 class ConcurrentMap : public Lockable
 {
 public:
@@ -248,19 +280,19 @@ public:
     ConcurrentMap();
     virtual ~ConcurrentMap();
 
-    void Remove(TKey key);
-    TValue Get(TKey key);
-    void Set(TKey key, TValue value);
+    void Remove(K key);
+    V Get(K key);
+    void Set(K key, V value);
     void Clear();
     size_t GetSize();
 
 private:
 
-    std::map<TKey, TValue> _map;
+    std::map<K, V> _map;
 
 };
 
-template <class TValue>
+template<class T>
 class ConcurrentList : public Lockable
 {
 public:
@@ -268,21 +300,21 @@ public:
     ConcurrentList();
     virtual ~ConcurrentList();
 
-    void Add(TValue value);
-    void Remove(TValue value);
+    void Add(T value);
+    void Remove(T value);
     void Clear();
     size_t GetSize();
-    bool Exists(TValue value);
+    bool Exists(const T &value);
 
-    template<class TPredicate>
-    bool FindIf(TPredicate predicate, TValue &value);
+    template<class P>
+    bool FindIf(P predicate, T &value);
 
-    template<class TAction>
-    void ForEach(TAction action);
+    template<class A>
+    void ForEach(A action);
 
 private:
 
-    std::list<TValue> _list;
+    std::list<T> _list;
 };
 
 class Handle
@@ -299,7 +331,7 @@ public:
 * @brief
 * Smart pointer class with reference counting for managing OCILIB object handles
 */
-template<class THandleType>
+template<class T>
 class HandleHolder
 {
 public:
@@ -309,24 +341,33 @@ public:
     operator bool();
     operator bool() const;
 
-    operator THandleType();
-    operator THandleType() const;
+    operator T();
+    operator T() const;
 
 protected:
 
     class SmartHandle;
 
     HandleHolder(const HandleHolder &other);
-    HandleHolder();
+	HandleHolder();
     ~HandleHolder();
+
+#ifdef HAVE_MOVE_SEMANTICS
+
+	HandleHolder(HandleHolder &&other);
+	HandleHolder<T>& operator= (HandleHolder &&other);
+
+#endif
 
     HandleHolder& operator= (const HandleHolder &other);
 
     typedef boolean(OCI_API *HandleFreeFunc)(AnyPointer handle);
 
+    typedef void(*SmartHandleFreeNotifyFunc)(SmartHandle *smartHandle);
+
     Handle* GetHandle() const;
 
-    void Acquire(THandleType handle, HandleFreeFunc func, Handle *parent);
+    void Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent);
     void Acquire(HandleHolder &other);
     void Release();
 
@@ -334,24 +375,22 @@ protected:
     {
     public:
 
-        SmartHandle(HandleHolder *holder, THandleType handle, HandleFreeFunc func, Handle *parent);
+        SmartHandle(HandleHolder *holder, T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent);
         virtual ~SmartHandle();
 
         void Acquire(HandleHolder *holder);
         void Release(HandleHolder *holder);
 
-        const THandleType GetHandle() const;
+        T GetHandle() const;
 
         Handle *GetParent() const;
 
         AnyPointer GetExtraInfos() const;
         void  SetExtraInfos(AnyPointer extraInfo);
 
-        bool IsLastHolder(HandleHolder *holder);
-
-        ConcurrentList<Handle *> & GetChildren();
-        void DetachFromHolders();
-        void DetachFromParent();
+        ConcurrentList<Handle *> & GetChildren() override;
+        void DetachFromHolders() override;
+        void DetachFromParent() override;
 
     private:
 
@@ -363,13 +402,12 @@ protected:
 
         Locker _locker;
 
-        THandleType _handle;
-        HandleFreeFunc _func;
+        T _handle;
+        HandleFreeFunc _handleFreeFunc;
+        SmartHandleFreeNotifyFunc _freeNotifyFunc;
         Handle *_parent;
         AnyPointer _extraInfo;
     };
-
-protected:
 
     SmartHandle *_smartHandle;
  };
@@ -392,34 +430,19 @@ public:
 
     virtual ostring ToString() const = 0;
 
-    template <class TStream>
-    friend TStream& operator << (TStream &lhs, const Streamable &rhs)
+    template<class T>
+    friend T& operator << (T &lhs, const Streamable &rhs)
     {
         lhs << static_cast<ostring>(rhs);
         return lhs;
     }
 };
 
-template <class TValueType>
-class BindValue
-{
-public:
-
-    BindValue();
-    BindValue(TValueType value);
-
-    operator TValueType() const;
-
-private:
-
-    TValueType _value;
-};
-
 class BindObject
 {
 public:
 
-    BindObject(const Statement &statement, const ostring& name);
+    BindObject(const Statement &statement, const ostring& name, unsigned int mode);
 
     virtual ~BindObject();
 
@@ -427,30 +450,33 @@ public:
 
     Statement GetStatement() const;
 
+    unsigned int GetMode() const;
+
     virtual void SetInData()  = 0;
     virtual void SetOutData() = 0;
 
 protected:
 
-    ostring _name;
     OCI_Statement *_pStatement;
+    ostring _name;
+    unsigned int _mode;
 };
 
 class BindArray : public BindObject
 {
 public:
 
-     BindArray(const Statement &statement, const ostring& name);
+     BindArray(const Statement &statement, const ostring& name, unsigned int mode);
      virtual ~BindArray();
 
-     template <class TObjectType, class TDataType>
-     void SetVector(std::vector<TObjectType> & vector, unsigned int mode, unsigned int elemSize);
+     template<class T>
+     void SetVector(std::vector<T> & vector, unsigned int elemSize);
 
-     template <class TObjectType, class TDataType>
-     TDataType * GetData () const;
+     template<class T>
+     typename BindResolver<T>::OutputType * GetData() const;
 
-     void SetInData();
-     void SetOutData();
+     void SetInData() override;
+     void SetOutData() override;
 
 private:
 
@@ -461,83 +487,91 @@ private:
         virtual ~AbstractBindArrayObject()  { }
         virtual void SetInData() = 0;
         virtual void SetOutData() = 0;
-        ostring GetName();
+        virtual ostring GetName() = 0;
     };
 
-    template <class TObjectType, class TDataType>
+    template<class T>
     class BindArrayObject : public  AbstractBindArrayObject
     {
-    private:
-
-        OCI_Statement *_pStatement;
-        ostring _name;
-        std::vector<TObjectType> & _vector;
-        TDataType *_data;
-        unsigned int _mode;
-        unsigned int _elemCount;
-        unsigned int _elemSize;
-
     public:
 
-        BindArrayObject(const Statement &statement, const ostring& name, std::vector<TObjectType> &vector, unsigned int mode, unsigned int elemSize);
-        virtual ~BindArrayObject();
-        void SetInData();
-        void SetOutData();
-        ostring GetName();
+		typedef T ObjectType;
+		typedef std::vector<ObjectType> ObjectVector;
+        typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
-        operator std::vector<TObjectType> & () const;
-        operator TDataType * () const;
+        BindArrayObject(const Statement &statement, const ostring& name, ObjectVector &vector, unsigned int mode, unsigned int elemSize);
+        virtual ~BindArrayObject();
+        void SetInData() override;
+        void SetOutData() override;
+        ostring GetName() override;
+
+        operator ObjectVector & () const;
+        operator NativeType * () const;
 
     private:
 
         void AllocData();
-        void FreeData();
+        void FreeData() const;
+
+        OCI_Statement *_pStatement;
+        ostring _name;
+        ObjectVector& _vector;
+        NativeType *_data;
+        unsigned int _mode;
+        unsigned int _elemCount;
+        unsigned int _elemSize;
     };
 
     AbstractBindArrayObject * _object;
 };
 
-template <class TNativeType, class TObjectType>
+template<class T>
 class BindObjectAdaptor : public BindObject
 {
     friend class Statement;
 
 public:
 
-    operator TNativeType *()  const;
+    typedef T ObjectType;
+    typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
-    void SetInData();
-    void SetOutData();
+    operator NativeType *()  const;
 
-    BindObjectAdaptor(const Statement &statement, const ostring& name, TObjectType &object, unsigned int size);
+    void SetInData() override;
+    void SetOutData() override;
+
+    BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object, unsigned int size);
     virtual ~BindObjectAdaptor();
 
 private:
 
-    TObjectType&    _object;
-    TNativeType*    _data;
-    unsigned int    _size;
+    ObjectType&    _object;
+    NativeType*    _data;
+    unsigned int   _size;
 };
 
-template <class TNativeType, class TObjectType>
+template<class T>
 class BindTypeAdaptor : public BindObject
 {
     friend class Statement;
 
 public:
 
-    operator TNativeType *()  const;
+    typedef T ObjectType;
+    typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
-    void SetInData();
-    void SetOutData();
+    operator NativeType *()  const;
 
-    BindTypeAdaptor(const Statement &statement, const ostring& name, TObjectType &object);
+    void SetInData() override;
+    void SetOutData() override;
+
+    BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object);
     virtual ~BindTypeAdaptor();
 
 private:
 
-    TObjectType&    _object;
-    TNativeType*    _data;
+    ObjectType& _object;
+    NativeType* _data;
 };
 
 class BindsHolder

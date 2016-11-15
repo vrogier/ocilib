@@ -1,46 +1,30 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                                                                                         |
-    |                          OCILIB ++ - C++ wrapper around OCILIB                          |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-
-    +-----------------------------------------------------------------------------------------+
-    |                                     IMPORTANT NOTICE                                    |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |            This C++ header defines C++ wrapper classes around the OCILIB C API          |
-    |            It requires a compatible version of OCILIB                                   |
-    +-----------------------------------------------------------------------------------------+
-    
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-/* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib.hpp, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+/*
+ * IMPORTANT NOTICE
+ *
+ * This C++ header defines C++ wrapper classes around the OCILIB C API
+ * It requires a compatible version of OCILIB
+ *
+ */
 
 #ifndef OCILIBCPP_H_INCLUDED
 #define OCILIBCPP_H_INCLUDED
@@ -50,9 +34,10 @@
 #include <string>
 #include <list>
 #include <vector>
-#include <map>
 
+extern "C"{
 #include "ocilib.h"
+}
 
 /**
  * @namespace ocilib
@@ -93,9 +78,9 @@ namespace ocilib
  * - Using stack objects also makes error handling easier and program logic more robust
  *
  * @par C++ API classes usage
- * Most C++ API classes wrap C API handles. 
- * When instances are created using the default constructors, they hold no C handles and have 
- * their method IsNull() returning true. 
+ * Most C++ API classes wrap C API handles.
+ * When instances are created using the default constructors, they hold no C handles and have
+ * their method IsNull() returning true.
  * Any use of other methods and functions on such object methods will throw an C++ exception.
  * Thus, in order to have a valid object :
  * - use a parametrized constructor
@@ -142,7 +127,7 @@ namespace ocilib
  * @par Using connection pools
  * @include pool.cpp
  *
- * @par Oracle 12g Implicit resultsets
+ * @par Oracle 12c Implicit resultsets
  * @include implicit_resultset.cpp
  *
  * @par Using Oracle objects
@@ -197,7 +182,7 @@ typedef std::vector<unsigned char> Raw;
  * Alias for an OCI_Mutex pointer
  *
  */
-typedef OCI_Mutex *  MutexHandle ;
+typedef OCI_Mutex *  MutexHandle;
 
 /**
  * @typedef ocilib::ThreadHandle
@@ -257,7 +242,7 @@ enum OracleVersionValues
 
 /**
 * @brief
-* Oracle Version 
+* Oracle Version
 *
 * Possible values are DataTypeValues
 *
@@ -332,7 +317,9 @@ enum NumericTypeValues
     /** Double  */
     NumericDouble = OCI_NUM_DOUBLE,
     /** Float */
-    NumericFloat = OCI_NUM_FLOAT
+    NumericFloat = OCI_NUM_FLOAT,
+    /** Number */
+    NumericNumber = OCI_NUM_NUMBER
 };
 
 /**
@@ -364,7 +351,6 @@ enum CharsetFormValues
 *
 */
 typedef Enum<CharsetFormValues> CharsetForm;
-
 
 /**
 * @brief
@@ -436,7 +422,6 @@ enum LobTypeValues
 */
 typedef Enum<LobTypeValues> LobType;
 
-
 /**
 * @brief
 * Long types enumerated values
@@ -458,7 +443,6 @@ enum LongTypeValues
 *
 */
 typedef Enum<LongTypeValues> LongType;
-
 
 /**
 * @brief
@@ -498,8 +482,8 @@ typedef Enum<FormatTypeValues> FormatType;
  */
 class Exception : public std::exception
 {
-    template<class TResultType>
-    friend TResultType Check(TResultType result);
+    template<class T>
+    friend T Check(T result);
     friend class Statement;
 
 public:
@@ -593,7 +577,7 @@ public:
     *  - The same content as GetMessage() but as using const char * type
     *
     */
-    virtual const char *what() const throw();
+    const char *what() const throw() override;
 
     /**
     * @brief
@@ -612,8 +596,8 @@ private:
     OCI_Connection *_pConnnection;
     unsigned int _row;
     ExceptionType _type;
-    unsigned int _errLib;
-    unsigned int _errOracle;
+    int _errLib;
+    int _errOracle;
 };
 
 /**
@@ -628,7 +612,7 @@ class Environment
     friend class Pool;
     friend class Subscription;
     friend class Dequeue;
-    template<class THandleType>
+    template<class>
     friend class HandleHolder;
 
 public:
@@ -911,7 +895,7 @@ public:
 
     /**
     * @brief
-    * Allocated Bytes 
+    * Allocated Bytes
     *
     * Possible values are Environment::AllocatedBytesValues
     *
@@ -985,7 +969,6 @@ public:
      *
      */
     static Environment::CharsetMode GetCharset();
-
 
     /**
     * @brief
@@ -1229,17 +1212,17 @@ private:
     static void NotifyHandler(OCI_Event *pEvent);
     static void NotifyHandlerAQ(OCI_Dequeue *pDequeue);
 
-    template <class TCallbackType>
-    static TCallbackType GetUserCallback(AnyPointer ptr);
+    template<class T>
+    static T GetUserCallback(AnyPointer ptr);
 
-    template <class TCallbackType>
-    static void SetUserCallback(AnyPointer ptr, TCallbackType callback);
+    template<class T>
+    static void SetUserCallback(AnyPointer ptr, T callback);
 
-    template <class THandleType>
-    static void SetSmartHandle(AnyPointer ptr, THandleType handle);
+    template<class T>
+    static void SetSmartHandle(AnyPointer ptr, T handle);
 
-    template <class THandleType>
-    static THandleType GetSmartHandle(AnyPointer ptr);
+    template<class T>
+    static T GetSmartHandle(AnyPointer ptr);
 
     static Handle * GetEnvironmentHandle();
 
@@ -1417,7 +1400,7 @@ public:
      * the program to deal with the thread specific value of the key
      *
      */
-    static void Create(const ostring& name, ThreadKeyFreeProc freeProc = 0);
+    static void Create(const ostring& name, ThreadKeyFreeProc freeProc = nullptr);
 
     /**
      * @brief
@@ -1691,9 +1674,9 @@ class Connection : public HandleHolder<OCI_Connection *>
     friend class Resultset;
     friend class Subscription;
 
-    template<class TLobObjectType, int TLobOracleType>
+    template<class, int>
     friend class Lob;
-    template <class TDataType>
+    template<class>
     friend class Collection;
 public:
 
@@ -2155,7 +2138,6 @@ public:
      */
     void GetServerOutput(std::vector<ostring> &lines) const;
 
-
     /**
      * @brief
      * Set tracing information for the session
@@ -2328,6 +2310,22 @@ public:
     void SetDefaultLobPrefetchSize(unsigned int value);
 
     /**
+    * @brief
+    * Return the maximum number of SQL statements that can be opened in one session
+    *
+    * @warning
+    * Requires Oracle Client AND Server 12cR1 or above
+    *
+    * @note
+    * the returned value is the same as the db parameter 'open_cursors' from server's parameter file
+    *
+    * @note
+    * Return 0 if the client and server version are < 12cR1
+    *
+    */
+    unsigned int GetMaxCursors() const;
+
+    /**
      * @brief
      * Verify if the connection support TAF events
      *
@@ -2430,7 +2428,7 @@ public:
      * For local transaction,  don't use the 'pxid' parameter
      *
      */
-   Transaction(const Connection &connection, unsigned int timeout, TransactionFlags flags, OCI_XID *pxid = NULL);
+    Transaction(const Connection &connection, unsigned int timeout, TransactionFlags flags, OCI_XID *pxid = nullptr);
 
    /**
      * @brief
@@ -2490,6 +2488,184 @@ private:
 };
 
 /**
+* @brief
+* Object identifying the SQL data type NUMBER.
+*
+* This class wraps the OCILIB object handle OCI_Number and its related methods
+*
+* NUMBERs can be handled using native scalar types
+* This class is optional and exposes some special NUMBER properties
+*
+*/
+class Number : public HandleHolder<OCI_Number *>, public Streamable
+{
+    friend class Statement;
+    friend class Resultset;
+    friend class BindArray;
+    friend class Object;
+    template<class>
+    friend class Collection;
+
+public:
+
+    /**
+    * @brief
+    * Create an empty null number object
+    *
+    * @param create - Indicates if a Oracle Number object must be must be created
+    *
+    */
+    Number(bool create = false);
+
+    /**
+    * @brief
+    * Create a Number object with the value provided by the input Number string
+    *
+    * @param str    - String Number
+    * @param format - format of the Number provided in parameter 'data'
+    *
+    * @note
+    * For Number formats, refer to the Oracle SQL documentation
+    *
+    * @note
+    * Default connection Number format is computed from Environment::GetFormat()
+    *
+    */
+    Number(const otext* str, const otext* format = OTEXT(""));
+
+    /**
+    * @brief
+    * Create a Number object with the value provided by the input Number string
+    *
+    * @param str    - String Number
+    * @param format - format of the Number provided in parameter 'data'
+    *
+    * @note
+    * ForNumber formats, refer to the Oracle SQL documentation
+    *
+    * @note
+    * Default connection Number format is computed from Environment::GetFormat()
+    *
+    */
+    Number(const ostring& str, const ostring& format = OTEXT(""));
+
+    /**
+    * @brief
+    * Assign to the number object the value provided by the input number time string
+    *
+    * @param str    - String number time
+    * @param format - format of the number time provided in parameter 'data'
+    *
+    * @note
+    * For number formats, refer to the Oracle SQL documentation
+    *
+    * @note
+    * Default connection number format is computed from Environment::GetFormat()
+    *
+    */
+    void FromString(const ostring& str, const ostring& format = OTEXT("")) const;
+
+    /**
+    * @brief
+    * Convert the number value to a string using the given format
+    *
+    * @param format - number time format to use
+    *
+    * @note
+    * For number formats, refer to the Oracle SQL documentation
+    *
+    */
+    ostring ToString(const ostring& format) const;
+
+    /**
+    * @brief
+    * Convert the number value to a string using default format OCI_STRING_FORMAT_NUMERIC
+    *
+    * @note
+    * For number formats, refer to the Oracle SQL documentation
+    *
+    */
+    ostring ToString() const override;
+
+    /**
+    * @brief
+    * Clone the current instance to a new one performing deep copy
+    *
+    */
+    Number Clone() const;
+
+    Number& operator ++ ();
+    Number& operator -- ();
+    Number operator ++ (int);
+    Number operator -- (int);
+
+    bool operator == (const Number& other) const;
+    bool operator != (const Number& other) const;
+    bool operator > (const Number& other) const;
+    bool operator < (const Number& other) const;
+    bool operator >= (const Number& other) const;
+    bool operator <= (const Number& other) const;
+
+    template<class T>
+    Number& operator = (const T &lhs);
+
+    template<class T>
+    operator T() const;
+
+    template<class T>
+    Number operator - (const T &value);
+
+    template<class T>
+    Number operator + (const T &value);
+
+    template<class T>
+    Number operator * (const T &value);
+
+    template<class T>
+    Number operator / (const T &value);
+
+    template<class T>
+    Number& operator += (const T &value);
+
+    template<class T>
+    Number& operator -= (const T &value);
+
+    template<class T>
+    Number& operator *= (const T &value);
+
+    template<class T>
+    Number& operator /= (const T &value);
+
+private:
+
+    Number(OCI_Number *pNumber, Handle *parent = nullptr);
+
+    void Allocate();
+
+    int Compare(const Number& other) const;
+
+    template<class T>
+    inline T GetValue() const;
+
+    template<class T>
+    Number& SetValue(const T &value);
+
+    template<class T>
+    void Add(const T &value);
+
+    template<class T>
+    void Sub(const T &value);
+
+    template<class T>
+    void Multiply(const T &value);
+
+    template<class T>
+    void Divide(const T &value);
+
+    Number& operator = (OCI_Number * &lhs);
+};
+
+/**
  * @brief
  * Object identifying the SQL data type DATE.
  *
@@ -2502,7 +2678,7 @@ class Date : public HandleHolder<OCI_Date *>, public Streamable
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-    template <class TDataType>
+    template<class>
     friend class Collection;
     friend class Message;
 
@@ -2519,8 +2695,10 @@ public:
      * @brief
      * Create an empty null Date object
      *
+     * @param create - Indicates if a Oracle Date object must be must be created
+     *
      */
-    Date();
+    Date(bool create = false);
 
     /**
     * @brief
@@ -2536,8 +2714,25 @@ public:
     * Default connection date format is computed from Environment::GetFormat()
     *
     */
+    Date(const otext* str, const otext* format = OTEXT(""));
+
+    /**
+    * @brief
+    * Create a date object with the value provided by the input date time string
+    *
+    * @param str    - String date time
+    * @param format - format of the date time provided in parameter 'data'
+    *
+    * @note
+    * For date time formats, refer to the Oracle SQL documentation
+    *
+    * @note
+    * Default connection date format is computed from Environment::GetFormat()
+    *
+    */
+
     Date(const ostring& str, const ostring& format = OTEXT(""));
-    
+
     /**
      * @brief
      * Check if the given date is valid
@@ -2790,7 +2985,7 @@ public:
     * For date time formats, refer to the Oracle SQL documentation
     *
     */
-    ostring ToString() const;
+    ostring ToString() const override;
 
     /**
     * @brief
@@ -2832,14 +3027,14 @@ public:
      * Return a new date holding the current date value incremented by the given number of days
      *
      */
-    Date operator + (int value);
+    Date operator + (int value) const;
 
     /**
      * @brief
      * Return a new date holding the current date value decremented by the given number of days
      *
      */
-    Date operator - (int value);
+    Date operator - (int value) const;
 
     /**
      * @brief
@@ -2901,7 +3096,7 @@ private:
 
     int Compare(const Date& other) const;
 
-    Date(OCI_Date *pDate, Handle *parent = 0);
+    Date(OCI_Date *pDate, Handle *parent = nullptr);
 
     void Allocate();
 };
@@ -2920,7 +3115,7 @@ class Interval : public HandleHolder<OCI_Interval *>, public Streamable
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-    template <class TDataType>
+    template<class>
     friend class Collection;
 
 public:
@@ -3218,7 +3413,7 @@ public:
     * Convert the interval value to a string using the default precisions of 10
     *
     */
-    ostring ToString() const;
+    ostring ToString() const override;
 
     /**
     * @brief
@@ -3232,14 +3427,14 @@ public:
     * Return a new Interval holding the sum of the current Interval value and the given Interval value
     *
     */
-    Interval operator + (const Interval& other);
+    Interval operator + (const Interval& other) const;
 
     /**
     * @brief
     * Return a new Interval holding the difference of the current Interval value and the given Interval value
     *
     */
-    Interval operator - (const Interval& other);
+    Interval operator - (const Interval& other) const;
 
     /**
     * @brief
@@ -3301,7 +3496,7 @@ private:
 
     int Compare(const Interval& other) const;
 
-    Interval(OCI_Interval *pInterval, Handle *parent = 0);
+    Interval(OCI_Interval *pInterval, Handle *parent = nullptr);
 };
 
 /**
@@ -3320,7 +3515,7 @@ class Timestamp : public HandleHolder<OCI_Timestamp *>, public Streamable
     friend class BindArray;
     friend class Object;
     friend class Connection;
-    template <class TDataType>
+    template<class>
     friend class Collection;
 
 public:
@@ -3351,7 +3546,7 @@ public:
 
     /**
     * @brief
-    * return the current system timestamp 
+    * return the current system timestamp
     *
     * @param type - Timestamp type to create
     *
@@ -3662,8 +3857,7 @@ public:
     * Convert the timestamp value to a string using default date format and no precision
     *
     */
-    ostring ToString() const;
-
+    ostring ToString() const override;
 
     /**
     * @brief
@@ -3705,14 +3899,14 @@ public:
     * Return a new Timestamp holding the current Timestamp value incremented by the given number of days
     *
     */
-    Timestamp operator + (int value);
+    Timestamp operator + (int value) const;
 
     /**
     * @brief
     * Return a new Timestamp holding the current Timestamp value decremented by the given number of days
     *
     */
-    Timestamp operator - (int value);
+    Timestamp operator - (int value) const;
 
     /**
     * @brief
@@ -3740,14 +3934,14 @@ public:
     * Return a new Timestamp holding the sum of the current Timestamp value and the given Interval value
     *
     */
-    Timestamp operator + (const Interval& other);
+    Timestamp operator + (const Interval& other) const;
 
     /**
     * @brief
     * Return a new Timestamp holding the difference of the current Timestamp value and the given Interval value
     *
     */
-    Timestamp operator - (const Interval& other);
+    Timestamp operator - (const Interval& other) const;
 
     /**
     * @brief
@@ -3809,7 +4003,7 @@ private:
 
     int Compare(const Timestamp& other) const;
 
-    Timestamp(OCI_Timestamp *pTimestamp, Handle *parent = 0);
+    Timestamp(OCI_Timestamp *pTimestamp, Handle *parent = nullptr);
 };
 
 /**
@@ -3819,14 +4013,14 @@ private:
  * This class wraps the OCILIB object handle OCI_Lob and its related methods
  *
  */
-template<class TLobObjectType, int TLobOracleType>
+template<class T, int U>
 class Lob : public HandleHolder<OCI_Lob *>
 {
     friend class Statement;
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-    template <class TDataType>
+    template<class>
     friend class Collection;
 
 public:
@@ -3860,7 +4054,7 @@ public:
     * The content read from the lob
     *
     */
-    TLobObjectType Read(unsigned int length);
+    T Read(unsigned int length);
 
     /**
     * @brief
@@ -3872,7 +4066,7 @@ public:
     * Number of character or bytes written into the lob
     *
     */
-    unsigned int Write(const TLobObjectType &content);
+    unsigned int Write(const T &content);
 
     /**
     * @brief
@@ -3884,7 +4078,7 @@ public:
     * Number of character or bytes written into the lob
     *
     */
-    unsigned int Append(const TLobObjectType& content);
+    unsigned int Append(const T& content);
 
     /**
     * @brief
@@ -4090,7 +4284,7 @@ private:
 
     bool Equals(const Lob &other) const;
 
-    Lob(OCI_Lob *pLob, Handle *parent = 0);
+    Lob(OCI_Lob *pLob, Handle *parent = nullptr);
 
 };
 
@@ -4141,7 +4335,7 @@ class File : public HandleHolder<OCI_File *>
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-    template <class TDataType>
+    template<class>
     friend class Collection;
 
 public:
@@ -4314,7 +4508,7 @@ private:
 
     bool Equals(const File &other) const;
 
-    File(OCI_File *pFile, Handle *parent = 0);
+    File(OCI_File *pFile, Handle *parent = nullptr);
 };
 
 /**
@@ -4328,7 +4522,7 @@ class TypeInfo : public HandleHolder<OCI_TypeInfo *>
 {
     friend class Object;
     friend class Reference;
-    template <class TDataType>
+    template<class>
     friend class Collection;
     friend class Column;
 public:
@@ -4437,7 +4631,7 @@ class Object : public HandleHolder<OCI_Object *>, public Streamable
     friend class Resultset;
     friend class BindArray;
     friend class Reference;
-    template <class TDataType>
+    template<class>
     friend class Collection;
     friend class Message;
 
@@ -4526,7 +4720,7 @@ public:
     * @brief
     * Return the given object attribute value
     *
-    * @tparam TDataType - C++ object type to retrieve
+    * @tparam T - C++ object type to retrieve
     *
     * @param name - Attribute name
     *
@@ -4534,14 +4728,14 @@ public:
     * Specialized version of this template function are provided for all supported types
     *
     */
-    template<class TDataType>
-    TDataType Get(const ostring& name) const;
+    template<class T>
+    T Get(const ostring& name) const;
 
     /**
     * @brief
     * Assign the given value with the given object attribute value
     *
-    * @tparam TDataType - C++ object type to retrieve
+    * @tparam T - C++ object type to retrieve
     *
     * @param name  - Attribute name
     * @param value - value to assign
@@ -4550,14 +4744,14 @@ public:
     * Specialized version of this template function are provided for all supported types
     *
     */
-    template<class TDataType>
-    void Get(const ostring& name, TDataType &value) const;
+    template<class T>
+    void Get(const ostring& name, T &value) const;
 
     /**
     * @brief
     * Assign the given collection with the given object attribute value of type collection
     *
-    * @tparam TDataType - C++ object type of the collection to retrieve
+    * @tparam T - C++ object type of the collection to retrieve
     *
     * @param name  - Attribute name
     * @param value - value to assign
@@ -4566,14 +4760,14 @@ public:
     * Specialized version of this template function are provided for all supported types
     *
     */
-    template<class TDataType>
-    void Get(const ostring& name, Collection<TDataType> &value) const;
+    template<class T>
+    void Get(const ostring& name, Collection<T> &value) const;
 
     /**
     * @brief
     * Set the given object attribute value
     *
-    * @tparam TDataType - C++ object type to set
+    * @tparam T - C++ object type to set
     *
     * @param name  - Attribute name
     * @param value - Attribute value
@@ -4582,9 +4776,9 @@ public:
     * Specialized version of this template function are provided for all supported types
     *
     */
-    template<class TDataType>
-    void Set(const ostring& name, const TDataType &value);
-    
+    template<class T>
+    void Set(const ostring& name, const T &value);
+
     /**
     * @brief
     * Clone the current instance to a new one performing deep copy
@@ -4601,7 +4795,7 @@ public:
 
 private:
 
-    Object(OCI_Object *pObject, Handle *parent = 0);
+    Object(OCI_Object *pObject, Handle *parent = nullptr);
 };
 
 /**
@@ -4617,7 +4811,7 @@ class Reference : public HandleHolder<OCI_Ref *>, public Streamable
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-    template <class TDataType>
+    template<class>
     friend class Collection;
 
 public:
@@ -4684,11 +4878,103 @@ public:
     * return a string representation of the current reference
     *
     */
-    ostring ToString() const;
+    ostring ToString() const override;
 
 private:
 
-    Reference(OCI_Ref *pRef, Handle *parent = 0);
+    Reference(OCI_Ref *pRef, Handle *parent = nullptr);
+};
+
+/**
+* @brief
+* Class used for handling transient collection value.
+* it is used internally by the Collection<T> class:
+* - the Collection<> indexer operator in order to provide lvalue for read/write access
+* - the CollectionIterator class
+*
+*/
+template<class T>
+class CollectionElement
+{
+	template<class>
+	friend class CollectionIterator;
+
+public:
+
+	typedef T ValueType;
+	typedef Collection<ValueType> CollectionType;
+
+	CollectionElement();
+	CollectionElement(CollectionType *coll, unsigned int pos);
+	operator T() const;
+	CollectionElement& operator = (const ValueType& value);
+	CollectionElement& operator = (const CollectionElement& other);
+	bool IsNull() const;
+	void SetNull();
+
+private:
+
+	CollectionType* _coll;
+	unsigned int _pos;
+};
+
+/**
+* @brief
+* STL compliant Collection Random iterator class
+*
+* @warning this iterator does not support the operator[]
+*
+*/
+template<class T>
+class CollectionIterator
+{
+public:
+	
+	template<class>
+	friend class Collection;
+
+	typedef typename T::ValueType value_type;
+	typedef Collection<value_type> CollectionType;
+
+	typedef std::random_access_iterator_tag iterator_category;
+	typedef ptrdiff_t difference_type;
+	typedef ptrdiff_t distance_type;
+	typedef value_type* pointer;
+	typedef value_type& reference;
+
+	CollectionIterator();
+	CollectionIterator(const CollectionIterator& other);
+
+	CollectionIterator& operator = (const CollectionIterator& other);
+	CollectionIterator& operator += (difference_type value);
+	CollectionIterator& operator -= (difference_type value);
+
+	T& operator*();
+	T* operator->();
+
+	CollectionIterator& operator++();
+	CollectionIterator& operator--();
+
+	CollectionIterator operator++(int);
+	CollectionIterator operator--(int);
+
+	CollectionIterator operator + (difference_type value);
+	CollectionIterator operator - (difference_type value);
+
+	difference_type operator - (const CollectionIterator &other);
+
+	bool operator == (const CollectionIterator& other);
+	bool operator != (const CollectionIterator& other);
+	bool operator >  (const CollectionIterator& other);
+	bool operator <  (const CollectionIterator& other);
+	bool operator >= (const CollectionIterator& other);
+	bool operator <= (const CollectionIterator& other);
+
+protected:
+
+	CollectionIterator(CollectionType *collection, unsigned int pos);
+
+	T _elem;
 };
 
 /**
@@ -4698,24 +4984,21 @@ private:
  * This class wraps the OCILIB object handle OCI_Coll and its related methods
  *
  */
-template <class TDataType>
+template<class T>
 class Collection : public HandleHolder<OCI_Coll *>, public Streamable
 {
     friend class Statement;
     friend class Resultset;
     friend class BindArray;
     friend class Object;
-    template <class TOtherDataType>
+    template<class>
     friend class CollectionIterator;
-
-    template <class TOtherDataType>
+    template<class>
     friend class Collection;
+
 public:
 
-    class Element;
-    class Iterator;
-
-    /**
+   /**
     * @brief
     * Collection type enumerated values
     *
@@ -4727,7 +5010,7 @@ public:
         /** Collection is a NESTED TABLE */
         NestedTable = OCI_COLL_NESTED_TABLE,
         /** Collection is a PL/SQL TABLE INDEX BY */
-        IndexedTable = OCI_COLL_NESTED_TABLE,
+        IndexedTable = OCI_COLL_INDEXED_TABLE
     };
 
     /**
@@ -4855,7 +5138,7 @@ public:
     * @param index - Index of the element
     *
     */
-    TDataType Get(unsigned int index) const;
+	T Get(unsigned int index) const;
 
     /**
     * @brief
@@ -4865,7 +5148,7 @@ public:
     * @param value - Value to set
     *
     */
-    void Set(unsigned int index, const TDataType &value);
+    void Set(unsigned int index, const T &value);
 
     /**
     * @brief
@@ -4875,7 +5158,7 @@ public:
     *
     *
     */
-    void Append(const TDataType &data);
+    void Append(const T &data);
 
     /**
     * @brief
@@ -4896,97 +5179,71 @@ public:
     * return a string representation of the current collection
     *
     */
-    ostring ToString() const;
+    ostring ToString() const override;
 
     /**
     * @brief
-    * Class used for handling transient collection value.
-    * it is used internally by:
-    * - the indexer operator in order to provide lvalue for write access
-    * - the Iterator class
-    * This class is  not meant to be publicly used !
+    * Common iterator declaration
     *
     */
-    class Element
-    {
-        friend class Collection<TDataType>::Iterator;
-
-    public:
-        Element(Collection &coll, unsigned int pos);
-        operator TDataType() const;
-        Element& operator = (TDataType value);
-        bool IsNull() const;
-        void SetNull();
-
-    private:
-        Collection & _coll;
-        unsigned int _pos;
-    };
+    typedef CollectionIterator<CollectionElement<T> > iterator;
 
     /**
     * @brief
-    * STL compliant bi-directional iterator class
+    * Common const iterator declaration
     *
     */
-    class Iterator : public std::iterator<std::bidirectional_iterator_tag, TDataType>
-    {
-
-    public:
-
-        Iterator(Collection &collection, unsigned int pos);
-        Iterator(const Iterator& other);
-
-        bool operator== (const Iterator& other);
-        bool operator!= (const Iterator& other);
-
-        Element& operator*();
-
-        Iterator &operator--();
-        Iterator operator--(int);
-
-        Iterator &operator++();
-        Iterator operator++(int);
-
-    private:
-
-        Element _elem;
-    };
-
-    /**
-    * @brief
-    * common iterator declaration
-    *
-    */
-    typedef Iterator iterator;
+    typedef CollectionIterator<const CollectionElement<T> > const_iterator;
 
     /**
     * @brief
     * Returns an iterator pointing to the first element in the collection
     *
     */
-    Iterator begin();
+	iterator begin();
+
+    /**
+    * @brief
+    * Returns a const iterator pointing to the first element in the collection
+    *
+    */
+	const_iterator begin() const;
 
     /**
     * @brief
     * Returns an iterator referring to the past-the-end element in the collection
     *
     */
-    Iterator end();
+	iterator end();
+
+    /**
+    * @brief
+    * Returns a const iterator referring to the past-the-end element in the collection
+    *
+    */
+	const_iterator end() const;
 
     /**
     * @brief
     * Returns the element at a given position in the collection.
     *
     */
-    Element operator [] (unsigned int index);
+    CollectionElement<T> operator [] (unsigned int index);
+
+    /**
+    * @brief
+    * Returns the element at a given position in the collection.
+    *
+    */
+    const CollectionElement<T> operator [] (unsigned int index) const;
 
 private:
 
-    TDataType GetElem(OCI_Elem *elem, Handle *parent) const;
+    static T GetElem(OCI_Elem *elem, Handle *parent);
 
-    void SetElem(OCI_Elem *elem, const TDataType &value);
+    static void SetElem(OCI_Elem *elem, const T &value);
 
-    Collection(OCI_Coll *pColl, Handle *parent = 0);
+    Collection(OCI_Coll *pColl, Handle *parent = nullptr);
 };
 
 /**
@@ -4996,7 +5253,7 @@ private:
  * This class wraps the OCILIB object handle OCI_LONG of type OCI_CLONG and its related methods
  *
  */
-template<class TLongObjectType, int TLongOracleType>
+template<class T, int U>
 class Long : public HandleHolder<OCI_Long *>
 {
     friend class Statement;
@@ -5004,7 +5261,6 @@ class Long : public HandleHolder<OCI_Long *>
     friend class BindArray;
 
 public:
-
 
     /**
     * @brief
@@ -5032,7 +5288,7 @@ public:
     * Number of character written
     *
     */
-    unsigned int Write(const TLongObjectType& content);
+    unsigned int Write(const T& content);
 
     /**
     * @brief
@@ -5046,11 +5302,11 @@ public:
     * Return the string read from a fetch sequence
     *
     */
-    TLongObjectType GetContent() const;
+    T GetContent() const;
 
 private:
 
-    Long(OCI_Long *pLong, Handle *parent = 0);
+    Long(OCI_Long *pLong, Handle *parent = nullptr);
 };
 
 /**
@@ -5219,7 +5475,7 @@ class Statement : public HandleHolder<OCI_Statement *>
 {
     friend class Exception;
     friend class Resultset;
-    template<class TLongObjectType, int TLongOracleType>
+    template<class, int>
     friend class Long;
     friend class BindInfo;
     friend class BindObject;
@@ -5351,13 +5607,6 @@ public:
 
     /**
     * @brief
-    * Destructor
-    *
-    */ 
-    ~Statement();
-
-    /**
-    * @brief
     * Return the connection associated with a statement
     *
     */
@@ -5461,12 +5710,12 @@ public:
     * The number of rows fetched
     *
     */
-    template<class TFetchCallback>
-    unsigned int ExecutePrepared(TFetchCallback callback);
+    template<class T>
+    unsigned int ExecutePrepared(T callback);
 
     /**
     * @brief
-    * Execute the prepared statement, retrieve all resultsets, and call the given callback 
+    * Execute the prepared statement, retrieve all resultsets, and call the given callback
     * with adapted type wit for each row of each resultsets
     *
     * @tparam TAdapter       -  type of the adapter callback
@@ -5484,8 +5733,8 @@ public:
     * The number of rows fetched
     *
     */
-    template<class TAdapter, class TFetchCallback>
-    unsigned int ExecutePrepared(TFetchCallback callback, TAdapter adapter);
+    template<class T, class U>
+    unsigned int ExecutePrepared(T callback, U adapter);
 
     /**
     * @brief
@@ -5505,8 +5754,8 @@ public:
     * The number of rows fetched
     *
     */
-    template<class TFetchCallback>
-    unsigned int Execute(const ostring& sql, TFetchCallback callback);
+    template<class T>
+    unsigned int Execute(const ostring& sql, T callback);
 
     /**
     * @brief
@@ -5529,8 +5778,8 @@ public:
     * The number of rows fetched
     *
     */
-    template<class TAdapter, class TFetchCallback>
-    unsigned int Execute(const ostring& sql, TFetchCallback callback, TAdapter adapter);
+    template<class T, class U>
+    unsigned int Execute(const ostring& sql, T callback, U adapter);
 
     /**
     * @brief
@@ -5708,7 +5957,7 @@ public:
     * @brief
     * Bind an host variable
     *
-    * @tparam TDataType - C++ type of the host variable
+    * @tparam T - C++ type of the host variable
     *
     * @param name  - Bind name
     * @param value - Host variable
@@ -5723,14 +5972,14 @@ public:
     * automatically from the arguments.
     *
     */
-    template <class TDataType>
-    void Bind(const ostring& name, TDataType &value, BindInfo::BindDirection mode);
+    template<class T>
+    void Bind(const ostring& name, T &value, BindInfo::BindDirection mode);
 
     /**
     * @brief
     * Bind an host variable with more information
     *
-    * @tparam TDataType  - C++ type of the host variable
+    * @tparam T  - C++ type of the host variable
     * @tparam TExtraInfo - C++ type if the extra information needed for the bind call
     *
     * @param name      - Bind name
@@ -5747,28 +5996,28 @@ public:
     * automatically from the arguments.
     *
     */
-    template <class TDataType, class TExtraInfo>
-    void Bind(const ostring& name, TDataType &value, TExtraInfo extraInfo, BindInfo::BindDirection mode);
+    template<class T, class U>
+    void Bind(const ostring& name, T &value,U extraInfo, BindInfo::BindDirection mode);
 
     /**
     * @brief
     * Bind a host collection variable
     *
-    * @tparam TDataType - C++ type of the host collection variable
+    * @tparam T - C++ type of the host collection variable
     *
     * @param name  - Bind name
     * @param value - Host Collection variable
     * @param mode  - bind direction mode
     *
     */
-    template <class TDataType>
-    void Bind(const ostring& name, Collection<TDataType> &value, BindInfo::BindDirection mode);
+    template<class T>
+    void Bind(const ostring& name, Collection<T> &value, BindInfo::BindDirection mode);
 
     /**
     * @brief
     * Bind a vector of host variables
     *
-    * @tparam TDataType - C++ type of the host variable
+    * @tparam T - C++ type of the host variable
     *
     * @param name   - Bind name
     * @param values - Vector of host variables
@@ -5783,14 +6032,14 @@ public:
     * automatically from the arguments.
     *
     */
-    template <class TDataType>
-    void Bind(const ostring& name, std::vector<TDataType> &values, BindInfo::BindDirection mode);
+    template<class T>
+    void Bind(const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode);
 
     /**
     * @brief
     * Bind a vector of host variables with Oracle type information
     *
-    * @tparam TDataType  - C++ type of the host variable
+    * @tparam T  - C++ type of the host variable
     *
     * @param name     - Bind name
     * @param values   - Vector of host variables
@@ -5805,14 +6054,14 @@ public:
     * automatically from the arguments.
     *
     */
-    template <class TDataType>
-    void Bind(const ostring& name, std::vector<TDataType> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
+    template<class T>
+    void Bind(const ostring& name, std::vector<T> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
 
     /**
     * @brief
     * Bind a vector of host collection variables with Oracle type information
     *
-    * @tparam TDataType  - collection C++ type of the host collection variables
+    * @tparam T  - collection C++ type of the host collection variables
     *
     * @param name     - Bind name
     * @param values   - Vector of host collection variables
@@ -5820,14 +6069,14 @@ public:
     * @param mode     - bind direction mode
     *
     */
-    template <class TDataType>
-    void Bind(const ostring& name, std::vector<Collection<TDataType> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
+    template<class T>
+    void Bind(const ostring& name, std::vector<Collection<T> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
 
     /**
     * @brief
     * Bind a vector of host variables with more information
     *
-    * @tparam TDataType  - C++ type of the host variable
+    * @tparam T  - C++ type of the host variable
     * @tparam TExtraInfo - C++ type if the extra information needed for the bind call
     *
     * @param name      - Bind name
@@ -5845,14 +6094,14 @@ public:
     * automatically from the arguments.
     *
     */
-    template <class TDataType, class TExtraInfo>
-    void Bind(const ostring& name, std::vector<TDataType> &values, TExtraInfo extraInfo, BindInfo::BindDirection mode);
+    template<class T, class U>
+    void Bind(const ostring& name, std::vector<T> &values, U extraInfo, BindInfo::BindDirection mode);
 
     /**
     * @brief
     * Register a host variable as an output for a column present in a SQL RETURNING INTO  clause
     *
-    * @tparam TDataType - C++ type of the host variable
+    * @tparam T - C++ type of the host variable
     *
     * @param name  - Bind name
     *
@@ -5868,14 +6117,14 @@ public:
     * It is necessary to specify the template data type in the register call
     *
     */
-    template <class TDataType>
+    template<class T>
     void Register(const ostring& name);
 
     /**
     * @brief
     * Register a host variable with Oracle type information as an output for a column present in a SQL RETURNING INTO  clause
     *
-    * @tparam TDataType  - C++ type of the host variable
+    * @tparam T  - C++ type of the host variable
     * @tparam TExtraInfo - C++ type if the extra information needed for the bind call
     *
     * @param name     - Bind name
@@ -5888,14 +6137,14 @@ public:
     * It is necessary to specify the template data type in the register call
     *
     */
-    template <class TDataType, class TExtraInfo>
-    void Register(const ostring& name, TExtraInfo& extraInfo);
+    template<class T, class U>
+    void Register(const ostring& name, U& extraInfo);
 
     /**
     * @brief
     * Register a host variable with more information as an output for a column present in a SQL RETURNING INTO  clause
     *
-    * @tparam TDataType  - C++ type of the host variable
+    * @tparam T  - C++ type of the host variable
     * @tparam TExtraInfo - C++ type if the extra information needed for the bind call
     *
     * @param name      - Bind name
@@ -5909,8 +6158,8 @@ public:
     * It is necessary to specify the template data type in the register call
     *
     */
-    template <class TDataType, class TExtraInfo>
-    void Register(const ostring& name, TExtraInfo extraInfo);
+    template<class T, class U>
+    void Register(const ostring& name, U extraInfo);
 
     /**
     * @brief
@@ -6118,36 +6367,37 @@ public:
 private:
 
     static bool IsResultsetHandle(Handle *handle);
+    static void OnFreeSmartHandle(SmartHandle *smartHandle);
 
-    Statement(OCI_Statement *stmt, Handle *parent = 0);
+    Statement(OCI_Statement *stmt, Handle *parent = nullptr);
 
-    BindsHolder *GetBindsHolder(bool allocate);
+    BindsHolder *GetBindsHolder(bool allocate) const;
 
-    void ReleaseResultsets();
+    void ReleaseResultsets() const;
 
     void SetLastBindMode(BindInfo::BindDirection mode);
 
-    void SetInData();
-    void SetOutData();
-    void ClearBinds();
+    void SetInData() const;
+    void SetOutData() const;
+    void ClearBinds() const;
 
-    template <typename TBindMethod, class TDataType>
-    void Bind (TBindMethod &method, const ostring& name, TDataType& value, BindInfo::BindDirection mode);
+    template<typename M, class T>
+    void Bind1 (M &method, const ostring& name, T& value, BindInfo::BindDirection mode);
 
-    template <typename TBindMethod, class TObjectType, class TDataType>
-    void Bind (TBindMethod &method, const ostring& name, TObjectType &value, BindValue<TDataType> datatype, BindInfo::BindDirection mode);
+    template<typename M, class T>
+    void Bind2 (M &method, const ostring& name, T &value, BindInfo::BindDirection mode);
 
-    template <typename TBindMethod, class TObjectType, class TDataType>
-    void Bind (TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode);
+    template<typename M, class T>
+    void BindVector1(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode);
 
-    template <typename TBindMethod, class TObjectType, class TDataType, class TElemType>
-    void Bind (TBindMethod &method, const ostring& name, std::vector<TObjectType> &values, BindValue<TDataType> datatype, BindInfo::BindDirection mode, TElemType type);
+    template<typename M, class T, class U>
+    void BindVector2(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, U type);
 
-    template<typename TFetchCallback>
-    unsigned int Fetch(TFetchCallback callback);
+    template<typename T>
+    unsigned int Fetch(T callback);
 
-    template<typename TAdapter, typename TFetchCallback>
-    unsigned int Fetch(TFetchCallback callback, TAdapter adapter);
+    template<typename T, typename U>
+    unsigned int Fetch(T callback, U adapter);
 };
 
 /**
@@ -6188,7 +6438,7 @@ public:
     * @brief
     * Return the current value of the column at the given index in the resultset
     *
-    * @tparam TDataType - C++ type of the value to retrieve
+    * @tparam T - C++ type of the value to retrieve
     *
     * @param index - Column position
     *
@@ -6196,14 +6446,14 @@ public:
     * Column position starts at 1.
     *
     */
-    template<class TDataType>
-    TDataType Get(unsigned int index) const;
+    template<class T>
+    T Get(unsigned int index) const;
 
     /**
     * @brief
     * Assign to the current value of the column at the given index in the resultset
     *
-    * @tparam TDataType - C++ type of the value to retrieve
+    * @tparam T - C++ type of the value to retrieve
     *
     * @param index - Column position
     * @param value - value to fill
@@ -6212,14 +6462,14 @@ public:
     * Column position starts at 1.
     *
     */
-    template<class TDataType>
-    void Get(unsigned int index, TDataType &value) const;
+    template<class T>
+    void Get(unsigned int index, T &value) const;
 
     /**
     * @brief
     * Return the current value of the column from its name in the resultset
     *
-    * @tparam TDataType - C++ type of the value to retrieve
+    * @tparam T - C++ type of the value to retrieve
     *
     * @param name  - Column name
     *
@@ -6227,21 +6477,21 @@ public:
     * The column name is case insensitive.
     *
     */
-    template<class TDataType>
-    TDataType Get(const ostring& name) const;
+    template<class T>
+    T Get(const ostring& name) const;
 
     /**
     * @brief
     * Assign to the current value of the column from its name in the resultset
     *
-    * @tparam TDataType - C++ type of the value to retrieve
+    * @tparam T - C++ type of the value to retrieve
     *
     * @param name - Column name
     * @param value - value to fill
     *
     */
-    template<class TDataType>
-    void Get(const ostring &name, TDataType &value) const;
+    template<class T>
+    void Get(const ostring &name, T &value) const;
 
     /**
     * @brief
@@ -6250,15 +6500,15 @@ public:
     *
      * @param value    - User defined type value to be filled by the adapter function
     * @param adapter -  User defined adapter function
-    * 
+    *
     * @note
     * The user defined adapter function must conform to the following prototype:
-    * bool adapter (const Resultset &, TDataType &)
+    * bool adapter (const Resultset &, T &)
     * It shall return true if it has filled the value from the resultset otherwise false
     *
     */
-    template<class TDataType, class TAdapter>
-    bool Get(TDataType& value, TAdapter adapter) const;
+    template<class T, class U>
+    bool Get(T& value, U adapter) const;
 
     /**
     * @brief
@@ -6267,7 +6517,7 @@ public:
     * @param callback -  User defined callback
     *
     * @note
-    * The user defined callback function must conform to the following prototype: 
+    * The user defined callback function must conform to the following prototype:
     * bool callback(const Resultset &)
     * It shall return true to continue fetching the resultset or false to stop the fetch
     *
@@ -6275,8 +6525,8 @@ public:
     * The number of rows fetched
     *
     */
-    template<typename TCallback>
-    unsigned int ForEach(TCallback callback);
+    template<typename T>
+    unsigned int ForEach(T callback);
 
     /**
     * @brief
@@ -6300,8 +6550,8 @@ public:
     * The number of rows fetched
     *
     */
-    template<typename TAdapter, typename TCallback>
-    unsigned int ForEach(TCallback callback, TAdapter adapter);
+    template<typename T, typename U>
+    unsigned int ForEach(T callback, U adapter);
 
     /**
     * @brief
@@ -6719,7 +6969,6 @@ public:
      */
     typedef void (*NotifyHandlerProc) (Event &evt);
 
-
     /**
     * @brief
     * Subscription changes flags values
@@ -6959,7 +7208,6 @@ private:
     Event(OCI_Event *pEvent);
 };
 
-
 /**
 * @brief
 * AQ identified agent for messages delivery
@@ -7135,8 +7383,8 @@ public:
     * Get the object payload of the message
     *
     */
-    template <class TPayloadType>
-    TPayloadType GetPayload();
+    template<class T>
+    T GetPayload();
 
     /**
     * @brief
@@ -7145,8 +7393,8 @@ public:
     * @param value - Object payload
     *
     */
-    template <class TPayloadType>
-    void SetPayload(const TPayloadType &value);
+    template<class T>
+    void SetPayload(const T &value);
 
     /**
     * @brief
@@ -8351,7 +8599,7 @@ public:
      * @brief
      * Set the value of the given row/column array entry from the given string
      *
-     * @tparam TDataType - type of data to set (only supported types are ostring and Raw)
+     * @tparam T - type of data to set (only supported types are ostring and Raw)
      *
      * @param rowIndex  - Row index
      * @param colIndex  - Column index
@@ -8377,8 +8625,8 @@ public:
      * Setting entries content piece by piece may be supported in future releases
      *
      */
-    template <class TDataType>
-    void SetEntry(unsigned int rowIndex, unsigned int colIndex, const TDataType& value, bool complete = true);
+    template<class T>
+    void SetEntry(unsigned int rowIndex, unsigned int colIndex, const T& value, bool complete = true);
 
     /**
      * @brief
@@ -8700,7 +8948,6 @@ public:
 }
 
 #include "ocilib_impl.hpp"
-
 
 #endif
 

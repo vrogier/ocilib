@@ -1,42 +1,28 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: Pool.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
-*                             PRIVATE VARIABLES
-* ********************************************************************************************* */
+ *                             PRIVATE VARIABLES
+ * ********************************************************************************************* */
 
 static unsigned int PoolTypeValues[] = { OCI_POOL_CONNECTION, OCI_POOL_SESSION };
 
@@ -53,9 +39,11 @@ boolean OCI_PoolClose
     OCI_Pool *pool
 )
 {
-    boolean res = TRUE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == pool, FALSE)
+
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err);
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -67,24 +55,14 @@ boolean OCI_PoolClose
         {
             if (OCI_HTYPE_CPOOL == pool->htype)
             {
-                OCI_CALL0
-                (
-                    res, pool->err,
-
-                    OCIConnectionPoolDestroy((OCICPool *) pool->handle, pool->err, (ub4) OCI_DEFAULT)
-                )
+               OCI_EXEC(OCIConnectionPoolDestroy((OCICPool *) pool->handle, pool->err, (ub4) OCI_DEFAULT))
             }
 
         #if OCI_VERSION_COMPILE >= OCI_9_2
 
             else
             {
-                OCI_CALL0
-                (
-                    res, pool->err,
-
-                    OCISessionPoolDestroy((OCISPool *) pool->handle, pool->err, (ub4) OCI_SPD_FORCE)
-                )
+                OCI_EXEC(OCISessionPoolDestroy((OCISPool *) pool->handle, pool->err, (ub4) OCI_SPD_FORCE))
             }
 
         #endif
@@ -98,7 +76,7 @@ boolean OCI_PoolClose
 
         if (pool->authp)
         {
-            OCI_HandleFree((void *) pool->authp, (ub4) OCI_HTYPE_AUTHINFO);
+            OCI_HandleFree((void *) pool->authp, OCI_HTYPE_AUTHINFO);
         }
 
     #endif
@@ -107,7 +85,7 @@ boolean OCI_PoolClose
 
         if (pool->err)
         {
-            OCI_HandleFree((void *) pool->err, (ub4) OCI_HTYPE_ERROR);
+            OCI_HandleFree((void *) pool->err, OCI_HTYPE_ERROR);
         }
     }
 
@@ -124,7 +102,7 @@ boolean OCI_PoolClose
     OCI_FREE(pool->user)
     OCI_FREE(pool->pwd)
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* ********************************************************************************************* *
@@ -150,11 +128,12 @@ OCI_Pool * OCI_API OCI_PoolCreate
     OCI_Pool *pool = NULL;
     OCI_Item *item = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Pool*, NULL)
+    OCI_CALL_ENTER(OCI_Pool*, NULL)
+    OCI_CALL_CHECK_INITIALIZED()
+    OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, type, PoolTypeValues, OTEXT("Pool Type"))
+    OCI_CALL_CHECK_MIN(NULL, NULL, max_con, 1)
 
-    OCI_CHECK_INITIALIZED()
-    OCI_CHECK_ENUM_VALUE(NULL, NULL, type, PoolTypeValues, OTEXT("Pool Type"))
-    OCI_CHECK_MIN(NULL, NULL, max_con, 1)
+    OCI_STATUS = FALSE;
 
     /* make sure that we do not have a XA session flag */
     
@@ -163,6 +142,8 @@ OCI_Pool * OCI_API OCI_PoolCreate
     /* create pool object */
 
     item = OCI_ListAppend(OCILib.pools, sizeof(*pool));
+
+    OCI_STATUS = (NULL != item);
 
     if (item)
     {
@@ -175,8 +156,6 @@ OCI_Pool * OCI_API OCI_PoolCreate
         pool->db   = ostrdup(db   ? db   : OTEXT(""));
         pool->user = ostrdup(user ? user : OTEXT(""));
         pool->pwd  = ostrdup(pwd  ? pwd  : OTEXT(""));
-
-        call_status = TRUE;
     }
 
 #if OCI_VERSION_COMPILE < OCI_9_2
@@ -187,7 +166,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         if (OCI_POOL_CONNECTION == type)
         {
@@ -215,31 +194,17 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
         /* allocate error handle */
 
-        if (call_status)
-        {
-            call_status = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *)OCILib.env,
-                                                         (dvoid **) (void *) &pool->err,
-                                                         (ub4) OCI_HTYPE_ERROR,
-                                                         (size_t) 0,
-                                                         (dvoid **) NULL));
-        }
+        OCI_STATUS = OCI_STATUS && OCI_HandleAlloc((dvoid *)OCILib.env, (dvoid **)(void *)&pool->err, OCI_HTYPE_ERROR);
 
         /* allocate pool handle */
 
-        if (call_status)
-        {
-            call_status = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *)OCILib.env,
-                                                         (dvoid **) (void *) &pool->handle,
-                                                         (ub4) pool->htype,
-                                                         (size_t) 0,
-                                                         (dvoid **) NULL));
-        }
+        OCI_STATUS = OCI_STATUS && OCI_HandleAlloc((dvoid *)OCILib.env, (dvoid **)(void *)&pool->handle, (ub4)pool->htype);
 
         /* allocate authentication handle only if needed */
 
    #if OCI_VERSION_COMPILE >= OCI_11_2
 
-        if (call_status)
+        if (OCI_STATUS)
         {       
             if ((OCI_HTYPE_SPOOL == pool->htype) && (OCILib.version_runtime >= OCI_11_2))
             {
@@ -248,38 +213,19 @@ OCI_Pool * OCI_API OCI_PoolCreate
                     
                 /* allocate authentication handle */
 
-                call_status = OCI_SUCCESSFUL(OCI_HandleAlloc((dvoid *)OCILib.env,
-                                                             (dvoid **) (void *) &pool->authp,
-                                                             (ub4) OCI_HTYPE_AUTHINFO,
-                                                             (size_t) 0,
-                                                             (dvoid **) NULL));
-
+                OCI_STATUS = OCI_HandleAlloc((dvoid *)OCILib.env, (dvoid **)(void *)&pool->authp, OCI_HTYPE_AUTHINFO);
 
                 /* set OCILIB's driver layer name attribute only for session pools here
                     For standalone connections and connection pool this attribute is set
                     in OCI_ConnectionLogon() */
 
-                OCI_CALL3
-                (
-                    call_status, pool->err,
-
-                    OCIAttrSet((dvoid *) pool->authp, (ub4) OCI_HTYPE_AUTHINFO,
-                                (dvoid *) dbstr, (ub4) dbsize,
-                                (ub4) OCI_ATTR_DRIVER_NAME, pool->err)
-                )
+                OCI_SET_ATTRIB(OCI_HTYPE_AUTHINFO, OCI_ATTR_DRIVER_NAME, pool->authp, dbstr, dbsize)
                 
                 OCI_StringReleaseOracleString(dbstr);
 
                 /* set authentication handle on the session pool */
 
-                OCI_CALL3
-                (
-                    call_status, pool->err,
-
-                    OCIAttrSet((dvoid *) pool->handle, (ub4) OCI_HTYPE_SPOOL,
-                                (dvoid *) pool->authp, (ub4) sizeof(pool->authp),
-                                (ub4) OCI_ATTR_SPOOL_AUTH, pool->err)
-                ) 
+                OCI_SET_ATTRIB(OCI_HTYPE_SPOOL, OCI_ATTR_SPOOL_AUTH, pool->handle, pool->authp, sizeof(pool->authp))
             }
         }
 
@@ -287,7 +233,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
         /* create the pool */
 
-        if (call_status)
+        if (OCI_STATUS)
         {
             dbtext *dbstr_user  = NULL;
             dbtext *dbstr_pwd   = NULL;
@@ -300,10 +246,8 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
             if (OCI_HTYPE_CPOOL == pool->htype)
             {
-                OCI_CALL3
+                OCI_EXEC
                 (
-                    call_status, pool->err,
-
                     OCIConnectionPoolCreate(OCILib.env, pool->err, (OCICPool *) pool->handle,
                                             (OraText **) (dvoid *) &dbstr_name,
                                             (sb4*) &dbsize_name,
@@ -319,10 +263,15 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
             else
             {
-                OCI_CALL3
-                (
-                    call_status, pool->err,
+                ub4 sess_mode = OCI_DEFAULT;
+                
+                if (OCI_STRING_VALID(pool->user) && OCI_STRING_VALID(pool->pwd))
+                {
+                    sess_mode |= OCI_SPC_HOMOGENEOUS;
+                }
 
+                OCI_EXEC
+                (
                     OCISessionPoolCreate(OCILib.env, pool->err, (OCISPool *) pool->handle,
                                          (OraText **) (dvoid *) &dbstr_name,
                                          (ub4*) &dbsize_name,
@@ -330,7 +279,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
                                          (ub4) pool->min, (ub4) pool->max,
                                          (ub4) pool->incr, (OraText *) dbstr_user,
                                          (sb4) dbsize_user, (OraText *) dbstr_pwd,
-                                         (sb4) dbsize_pwd,  (ub4) OCI_SPC_HOMOGENEOUS)
+                                         (sb4) dbsize_pwd,  (ub4) sess_mode)
                 )
             }
 
@@ -341,11 +290,11 @@ OCI_Pool * OCI_API OCI_PoolCreate
             OCI_StringReleaseOracleString(dbstr_pwd);
         }
 
-        if (call_status && dbstr_name)
+        if (OCI_STATUS && dbstr_name)
         {
             pool->name = OCI_StringDuplicateFromOracleString(dbstr_name, dbcharcount(dbsize_name));
 
-            call_status = (NULL != pool->name);
+            OCI_STATUS = (NULL != pool->name);
         }
     }
 
@@ -354,7 +303,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
     /* on success, we allocate internal OCI connection objects for pool
        minimum size */
 
-    if (call_status)
+    if (OCI_STATUS)
     {     
 
     #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -375,16 +324,16 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
     }
 
-    if (call_status)
+    if (OCI_STATUS)
     {
-        call_retval = pool;
+        OCI_RETVAL = pool;
     }
     else if (pool)
     {
         OCI_PoolFree(pool);
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -396,19 +345,19 @@ boolean OCI_API OCI_PoolFree
     OCI_Pool *pool
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_status = OCI_PoolClose(pool);
+    OCI_STATUS = OCI_PoolClose(pool);
 
     OCI_ListRemove(OCILib.pools, pool);
 
     OCI_FREE(pool)
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -421,29 +370,29 @@ OCI_Connection * OCI_API OCI_PoolGetConnection
     const otext *tag
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Connection*, NULL)
-    
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
+    OCI_CALL_ENTER(OCI_Connection*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
-    call_retval = OCI_ConnectionCreateInternal(pool, pool->db, pool->user, pool->pwd, pool->mode, tag);
+    OCI_RETVAL = OCI_ConnectionCreateInternal(pool, pool->db, pool->user, pool->pwd, pool->mode, tag);
 
     /* for regular connection pool, set the statement cache size to 
        retrieved connection */
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (call_retval && (OCI_HTYPE_CPOOL == pool->htype))
+    if (OCI_RETVAL)
     {
         unsigned int cache_size = OCI_PoolGetStatementCacheSize(pool);
 
-        OCI_SetStatementCacheSize(call_retval, cache_size);
+        OCI_SetStatementCacheSize(OCI_RETVAL, cache_size);
     }
 
 #endif
 
-    call_status = (NULL != call_retval);
+    OCI_STATUS = (NULL != OCI_RETVAL);
     
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -457,11 +406,9 @@ unsigned int OCI_API OCI_PoolGetTimeout
 {
     ub4 value = 0;
 
-    OCI_LIB_CALL_ENTER(unsigned int, value)
-
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(unsigned int, value)
+    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -483,21 +430,14 @@ unsigned int OCI_API OCI_PoolGetTimeout
 
     #endif
 
-        OCI_CALL3
-        (
-            call_status, pool->err,
-
-            OCIAttrGet((dvoid *)pool->handle, (ub4)pool->htype,
-                        (dvoid *)&value, (ub4 *)NULL,
-                        (ub4)attr, pool->err)
-        )
+        OCI_GET_ATTRIB(pool->htype, attr, pool->handle, &value, NULL)
     }
 
 #endif
 
-    call_retval = (unsigned int)value;
+    OCI_RETVAL = (unsigned int)value;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -510,11 +450,9 @@ boolean OCI_API OCI_PoolSetTimeout
     unsigned int value
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -537,21 +475,14 @@ boolean OCI_API OCI_PoolSetTimeout
 
     #endif
 
-        OCI_CALL3
-        (
-            call_status, pool->err,
-
-            OCIAttrSet((dvoid *) pool->handle, (ub4) pool->htype,
-                       (dvoid *) &timeout,(ub4) sizeof(timeout),
-                       (ub4) attr, pool->err)
-        )
+        OCI_SET_ATTRIB(pool->htype, attr, pool->handle, &timeout, sizeof(timeout))
     }
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -565,11 +496,9 @@ boolean OCI_API OCI_PoolGetNoWait
 {
     ub1 value = 0;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -592,21 +521,14 @@ boolean OCI_API OCI_PoolGetNoWait
 
     #endif
 
-        OCI_CALL3
-        (
-            call_status, pool->err,
-
-            OCIAttrGet((dvoid *)pool->handle, (ub4)pool->htype,
-                        (dvoid *)&value, (ub4 *)NULL,
-                        (ub4)attr, pool->err)
-        )
+        OCI_GET_ATTRIB(pool->htype, attr, pool->handle, &value, NULL)
     }
 
 #endif
 
-    call_retval = (boolean)value;
+    OCI_RETVAL = (boolean)value;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -619,11 +541,9 @@ boolean OCI_API OCI_PoolSetNoWait
     boolean   value
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -649,21 +569,14 @@ boolean OCI_API OCI_PoolSetNoWait
 
    #endif
 
-        OCI_CALL3
-        (
-            call_status, pool->err,
-
-            OCIAttrSet((dvoid *) pool->handle, (ub4) pool->htype,
-                       (dvoid *) &nowait, (ub4) sizeof(nowait),
-                       (ub4) attr, pool->err)
-        )
+        OCI_SET_ATTRIB(pool->htype, attr, pool->handle, &nowait, sizeof(nowait))
     }
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -677,11 +590,9 @@ unsigned int OCI_API OCI_PoolGetBusyCount
 {
     ub4 value = 0;
 
-    OCI_LIB_CALL_ENTER(unsigned int, value)
-
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(unsigned int, value)
+    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -703,21 +614,14 @@ unsigned int OCI_API OCI_PoolGetBusyCount
 
     #endif
 
-        OCI_CALL3
-        (
-            call_status, pool->err,
-
-            OCIAttrGet((dvoid *) pool->handle,(ub4) pool->htype,
-                       (dvoid *) &value, (ub4 *) NULL,
-                       (ub4) attr, pool->err)
-        )
+        OCI_GET_ATTRIB(pool->htype, attr, pool->handle, &value, NULL)
     }
 
 #endif
 
-    call_retval = value;
+    OCI_RETVAL = value;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -731,11 +635,9 @@ unsigned int OCI_API OCI_PoolGetOpenedCount
 {
     ub4 value = 0;
 
-    OCI_LIB_CALL_ENTER(unsigned int, value)
-
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(unsigned int, value)
+    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -757,21 +659,14 @@ unsigned int OCI_API OCI_PoolGetOpenedCount
 
     #endif
 
-        OCI_CALL3
-        (
-            call_status, pool->err,
-
-            OCIAttrGet((dvoid *) pool->handle, (ub4) pool->htype,
-                       (dvoid *) &value, (ub4 *) NULL,
-                       (ub4) attr, pool->err)
-        )
+        OCI_GET_ATTRIB(pool->htype, attr, pool->handle, &value, NULL)
     }
 
 #endif
 
-    call_retval = value;
+    OCI_RETVAL = value;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -783,14 +678,7 @@ unsigned int OCI_API OCI_PoolGetMin
     OCI_Pool *pool
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_retval = pool->min;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, 0, OCI_IPC_POOL, pool, min, NULL, NULL, pool->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -802,14 +690,8 @@ unsigned int OCI_API OCI_PoolGetMax
     OCI_Pool *pool
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_retval = pool->max;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()}
+    OCI_GET_PROP(unsigned int, 0, OCI_IPC_POOL, pool, max, NULL, NULL, pool->err)
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_PoolGetIncrement
@@ -820,14 +702,7 @@ unsigned int OCI_API OCI_PoolGetIncrement
     OCI_Pool *pool
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_retval = pool->incr;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, 0, OCI_IPC_POOL, pool, incr, NULL, NULL, pool->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -842,11 +717,9 @@ boolean OCI_API OCI_PoolSetStatementCacheSize
 {
     ub4 cache_size = value;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -854,27 +727,20 @@ boolean OCI_API OCI_PoolSetStatementCacheSize
     {
         if (OCI_HTYPE_SPOOL == pool->htype)
         {
-            OCI_CALL3
-            (
-                call_status, pool->err,
-
-                OCIAttrSet((dvoid *) pool->handle, (ub4) pool->htype,
-                           (dvoid *) &cache_size, (ub4) sizeof(cache_size),
-                           (ub4) OCI_ATTR_SPOOL_STMTCACHESIZE, pool->err)
-            )
+            OCI_SET_ATTRIB(pool->htype, OCI_ATTR_SPOOL_STMTCACHESIZE, pool->handle, &cache_size, sizeof(cache_size))
         }
     }
 
 #endif
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         pool->cache_size = cache_size;
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -888,11 +754,9 @@ unsigned int OCI_API OCI_PoolGetStatementCacheSize
 {
     ub4 cache_size = 0;
 
-    OCI_LIB_CALL_ENTER(unsigned int, cache_size)
-
-    OCI_CHECK_PTR(OCI_IPC_POOL, pool)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(unsigned int, cache_size)
+    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -900,21 +764,14 @@ unsigned int OCI_API OCI_PoolGetStatementCacheSize
     {
         if (OCI_HTYPE_SPOOL == pool->htype)
         {
-            OCI_CALL3
-            (
-                call_status, pool->err,
-
-                OCIAttrGet((dvoid **) pool->handle, (ub4) pool->htype,
-                           (dvoid *) &cache_size, (ub4 *) NULL,  
-                           (ub4) OCI_ATTR_SPOOL_STMTCACHESIZE, pool->err)
-            )
+            OCI_GET_ATTRIB(pool->htype, OCI_ATTR_SPOOL_STMTCACHESIZE, pool->handle, &cache_size, NULL)
         }
         else
         {
             cache_size = pool->cache_size;
         }
         
-        if (call_status)
+        if (OCI_STATUS)
         {
             pool->cache_size = cache_size;
         }
@@ -926,11 +783,11 @@ unsigned int OCI_API OCI_PoolGetStatementCacheSize
 
 #endif
 
-    if (call_status)
+    if (OCI_STATUS)
     {
-        call_retval = pool->cache_size;
+        OCI_RETVAL = pool->cache_size;
    } 
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 

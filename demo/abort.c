@@ -1,51 +1,55 @@
-#include "windows.h"
-#include "process.h"
 #include "ocilib.h"
 
-/* Example on Microsoft platform */
+#if defined(_WINDOWS)
+    #define sleep(x) Sleep(x*1000)
+#else
+    #include <unistd.h>
+#endif
 
-static HANDLE evt;
-
-void long_oracle_call(void *data)
+void long_oracle_call(OCI_Thread *thread, void *data)
 {
-    OCI_Statement *st  = OCI_StatementCreate((OCI_Connection *) data); 
-    OCI_Resultset *rs;
+    clock_t t_start = clock();
+    int err_code = 0;
 
-    /* execute a query that takes a long time to process */
-
-    OCI_ExecuteStmt(st, "select code, content from huge_table");
-
-    rs = OCI_GetResultset(st);
-
-    while (OCI_FetchNext(rs))
+    if (!OCI_ExecuteStmt((OCI_Statement *)data, "begin dbms_lock.sleep(10); end;"))
     {
-        printf("%i - %s", OCI_GetInt(rs, 1), OCI_GetString(rs, 2));
+        OCI_Error *err = OCI_GetLastError();
+        if (err)
+        {
+            err_code = OCI_ErrorGetOCICode(err);
+        }
     }
-
-    SetEvent(evt);
+    
+    printf("call duration %d, expected oracle error is 1013, got %d", clock() - t_start, err_code);
 }
 
 
 int main(void)
 {
-   OCI_Connection *cn;
+    OCI_Connection *cn;
+    OCI_Statement *st;
+    OCI_Thread *th;
 
-   if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
-        return EXIT_FAILURE;
-
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    evt = CreateEvent(0, TRUE, FALSE, 0);
-
-    _beginthread(long_oracle_call, 0, cn);
-
-    if (WaitForSingleObject(evt, 10000) != WAIT_OBJECT_0)
+    if (!OCI_Initialize(NULL, NULL, OCI_ENV_THREADED | OCI_ENV_CONTEXT))
     {
-        OCI_Break(cn);
-        Sleep(2000);
+        return EXIT_FAILURE;
     }
 
+    th = OCI_ThreadCreate();
+    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    st = OCI_StatementCreate(cn);
+
+    OCI_ThreadRun(th, long_oracle_call, st);
+
+    sleep(1);
+    OCI_Break(cn);
+
+    OCI_ThreadJoin(th);
+    OCI_ThreadFree(th);
+
+    OCI_StatementFree(st);
+    OCI_ConnectionFree(cn);
     OCI_Cleanup();
 
- 
     return EXIT_SUCCESS;
 }

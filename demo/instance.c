@@ -1,8 +1,13 @@
 #include "ocilib.h"
 
+void err_handler(OCI_Error *err)
+{
+    printf("%s\n", OCI_ErrorGetString(err));
+}
+
 int main(void)
 { 
-    OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT);
+    OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT);
 
     /* start remote instance */
 

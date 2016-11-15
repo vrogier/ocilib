@@ -1,0 +1,51 @@
+/**
+ * @defgroup OcilibCApiDataTypes DataTypes
+ * @{
+ *
+ * DATABASE TYPE                   | C API TYPE                     | C API SUBTYPE          | C++ API                          | C++ API SUBTYPE       |
+ * ------------------------------- | ------------------------------ | ---------------------- | -------------------------------- | --------------------- |
+ * PL/SQL BOOLEAN                  | boolean                        |                        | bool                             |                       |   
+ * NUMBER                          | short                          |                        | short                            |                       |   
+ * NUMBER                          | unsigned short                 |                        | unsigned short                   |                       |   
+ * NUMBER                          | int                            |                        | int                              |                       |   
+ * NUMBER                          | unsigned int                   |                        | unsigned int                     |                       |   
+ * NUMBER                          | big_int (long long)            |                        | big_int (long long               |                       |   
+ * NUMBER                          | big_uint (unsigned long long)  |                        | big_uint (unsigned long long)    |                       |   
+ * NUMBER                          | float                          |                        | float                            |                       |   
+ * NUMBER                          | double                         |                        | double                           |                       |   
+ * FLOAT                           | double                         |                        | double                           |                       |   
+ * BINARY FLOAT                    | float                          |                        | float                            |                       |   
+ * BINARY DOUBLE                   | double                         |                        | float                            |                       |   
+ * NUMBER                          | OCI_Number *                   |                        | ocilib::number                   |                       |   
+ * CHAR                            | otext *                        |                        | ocilib::ostring                  |                       |   
+ * VARCHAR                         | otext *                        |                        | ocilib::ostring                  |                       |   
+ * VARCHAR2                        | otext *                        |                        | ocilib::ostring                  |                       |   
+ * NVARCHAR                        | otext *                        |                        | ocilib::ostring                  |                       |   
+ * NVARCHAR2                       | otext *                        |                        | ocilib::ostring                  |                       |   
+ * ROWID                           | otext *                        |                        | ocilib::ostring                  |                       |   
+ * UROWID                          | otext *                        |                        | ocilib::ostring                  |                       |   
+ * VARRAW                          | void *                         |                        | ocilib::Raw                      |                       |   
+ * RAW                             | void *                         |                        | ocilib::Raw                      |                       |   
+ * LONG                            | OCI_Long *                     | OCI_CLONG              | ocilib::Clong                    |                       |   
+ * LONG VARCHAR                    | OCI_Long *                     | OCI_CLONG              | ocilib::Clong                    |                       |   
+ * LONG RAW                        | OCI_Long *                     | OCI_BLONG              | ocilib::Blong                    |                       |   
+ * DATE                            | OCI_Date*                      |                        | ocilib::Date                     |                       |   
+ * TIMESTAMP                       | OCI_Timestamp *                | OCI_TIMESTAMP          | ocilib::Timestamp                | NoTimeZone            |   
+ * TIMESTAMP WITH TIME ZONE        | OCI_Timestamp *                | OCI_TIMESTAMP_TZ       | ocilib::Timestamp                | WithTimeZone          |   
+ * TIMESTAMP WITH LOCAL TIME ZONE  | OCI_Timestamp *                | OCI_TIMESTAMP_LTZ      | ocilib::Timestamp                | WithLocalTimeZone     |   
+ * INTERVAL YEAR TO MONTH          | OCI_Interval *                 | OCI_INTERVAL_YM        | ocilib::Interval                 | YearMonth             |   
+ * INTERVAL DAY TO SECOND          | OCI_Interval *                 | OCI_INTERVAL_DS        | ocilib::Interval                 | DaySecond             |
+ * Character LOB                   | OCI_Lob *                      | OCI_CLOB               | ocilib::Clob                     | LobCharacter          |   
+ * National Character LOB          | OCI_Lob *                      | OCI__NCLOB             | ocilib::NClob                    | LobNationalCharacter  |   
+ * Binary LOB                      | OCI_Lob *                      | OCI_BLOB               | ocilib::Blob                     | LobBinary             |   
+ * Binary FILE                     | OCI_File *                     | OCI_BFILE              | ocilib::File                     |                       |   
+ * VARRAY                          | OCI_Coll *                     | OCI_COLL_VARRAY        | ocilib::Collection               | Varray                |   
+ * NESTED TABLE                    | OCI_Coll *                     | OCI_COLL_NESTED_TABLE  | ocilib::Collection               | NestedTable           |   
+ * PL/SQL INDEXED TABLE            | OCI_Coll *                     | OCI_COLL_INDEXED_TABLE | ocilib::Collection               | IndexedTable          |   
+ * NAMED DATATYPE (TYPE, OBJECT)   | OCI_Object *                   |                        | ocilib::Object                   |                       |   
+ * PL/SQL RECORD                   | OCI_Object *                   |                        | ocilib::Object                   |                       |   
+ * REF                             | OCI_Ref *                      |                        | ocilib::Reference                |                       |   
+ *
+ * @}
+ *
+ */

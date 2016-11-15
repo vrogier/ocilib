@@ -1,124 +1,136 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: element.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
-
 #define OCI_ELEM_SET_VALUE(elemtype, type, func_init, func_assign)                  \
                                                                                     \
-    OCI_LIB_CALL_ENTER(boolean, FALSE)                                              \
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                            \
-    OCI_CHECK_COMPAT(elem->con, elemtype == elem->typinf->cols[0].datatype)         \
+    OCI_CALL_ENTER(boolean, FALSE)                                                  \
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                       \
+    OCI_CALL_CHECK_COMPAT(elem->con, elemtype == elem->typinf->cols[0].datatype)    \
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)                                       \
                                                                                     \
     if (!value)                                                                     \
     {                                                                               \
-        call_status = OCI_ElemSetNull(elem);                                        \
+        OCI_STATUS = OCI_ElemSetNull(elem);                                         \
     }                                                                               \
     else                                                                            \
     {                                                                               \
         if (!elem->obj)                                                             \
         {                                                                           \
-            func_init;                                                              \
+            elem->obj = func_init;                                                  \
         }                                                                           \
                                                                                     \
         if (elem->obj)                                                              \
         {                                                                           \
-            call_status = func_assign;                                              \
+            OCI_STATUS = func_assign;                                               \
                                                                                     \
-            if (call_status)                                                        \
+            if (OCI_STATUS)                                                         \
             {                                                                       \
                 OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);                    \
                 elem->handle = ((type) elem->obj)->handle;                          \
             }                                                                       \
         }                                                                           \
     }                                                                               \
-    call_retval = call_status;                                                      \
-    OCI_LIB_CALL_EXIT()
+                                                                                    \
+    OCI_RETVAL = OCI_STATUS;                                                        \
+    OCI_CALL_EXIT()
 
 #define OCI_ELEM_GET_VALUE(elemtype, type, func)                                    \
                                                                                     \
-    OCI_LIB_CALL_ENTER(type, NULL)                                                  \
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                            \
-    OCI_CHECK_COMPAT(elem->con, elemtype == elem->typinf->cols[0].datatype)         \
-                                                                                    \
-    call_status = TRUE;                                                             \
+    OCI_CALL_ENTER(type, NULL)                                                      \
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                       \
+    OCI_CALL_CHECK_COMPAT(elem->con, elemtype == elem->typinf->cols[0].datatype)    \
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)                                       \
                                                                                     \
     if (OCI_IND_NULL != *elem->pind)                                                \
     {                                                                               \
         if (!elem->init)                                                            \
         {                                                                           \
-            call_retval = func;                                                     \
+            elem->obj = OCI_RETVAL = func;                                          \
                                                                                     \
-            elem->init = (NULL != call_retval);                                     \
+            elem->init = (NULL != OCI_RETVAL);                                      \
         }                                                                           \
         else                                                                        \
         {                                                                           \
-            call_retval = (type) elem->obj;                                         \
+            OCI_RETVAL = (type) elem->obj;                                          \
         }                                                                           \
                                                                                     \
-        call_status = elem->init;                                                   \
+        OCI_STATUS = elem->init;                                                    \
     }                                                                               \
-    OCI_LIB_CALL_EXIT()
+                                                                                    \
+    OCI_CALL_EXIT()
 
 
-#define OCI_ELEM_GET_NUMBER(elem, number_type, type, value)                         \
-                                                                                    \
-    OCI_LIB_CALL_ENTER(type, value)                                                 \
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                            \
-    OCI_CHECK_COMPAT(elem->con, OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)  \
-                                                                                    \
-    call_status = OCI_ElemGetNumber(elem, (void *)&call_retval,                     \
-                                    (uword) sizeof(call_retval),                    \
-                                    (uword)number_type);                            \
-                                                                                    \
-    OCI_LIB_CALL_EXIT()
+#define OCI_ELEM_GET_NUMBER(elem, number_type, type, value)                              \
+                                                                                         \
+    OCI_CALL_ENTER(type, value)                                                          \
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                            \
+    OCI_CALL_CHECK_COMPAT(elem->con, OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)  \
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)                                            \
+                                                                                         \
+    OCI_STATUS = OCI_ElemGetNumberInternal(elem, (void *)&OCI_RETVAL,                    \
+                                           (uword) sizeof(OCI_RETVAL),                   \
+                                           (uword)number_type);                          \
+                                                                                         \
+    OCI_CALL_EXIT()
 
-#define OCI_ELEM_SET_NUMBER(elem, value, number_type)                               \
-                                                                                    \
-    OCI_LIB_CALL_ENTER(boolean, FALSE)                                              \
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                            \
-    OCI_CHECK_COMPAT(elem->con, OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)  \
-                                                                                    \
-    call_retval = call_status = OCI_ElemSetNumber(elem, (void *)&value,             \
-                                                  (uword) sizeof(value),            \
-                                                  (uword)number_type);              \
-                                                                                    \
-    OCI_LIB_CALL_EXIT()
+#define OCI_ELEM_SET_NUMBER(elem, value, number_type)                                    \
+                                                                                         \
+    OCI_CALL_ENTER(boolean, FALSE)                                                       \
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)                                            \
+    OCI_CALL_CHECK_COMPAT(elem->con, OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)  \
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)                                \
+                                                                                         \
+    OCI_RETVAL = OCI_STATUS = OCI_ElemSetNumberInternal(elem, (void *)&value,            \
+                                                        (uword) sizeof(value),           \
+                                                        (uword)number_type);             \
+                                                                                         \
+    OCI_CALL_EXIT()
 
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ElemFreeAllocatedData
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_ElemFreeAllocatedData
+(
+    OCI_Elem *elem
+)
+{
+    if (elem->alloc && elem->handle)
+    {
+        switch (elem->typinf->cols[0].datatype)
+        {
+        case OCI_CDT_TEXT:
+            OCI_StringFreeStringPtr(elem->con->env, (OCIString **) &elem->handle, elem->con->err);
+            break;
+        default:
+            OCI_FREE(elem->handle)
+                break;
+        }
+    }
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ElemInit
@@ -127,52 +139,40 @@
 OCI_Elem * OCI_ElemInit
 (
     OCI_Connection *con,
-    OCI_Elem      **pelem,
+    OCI_Elem       *elem,
     void           *handle,
     OCIInd         *pind,
     OCI_TypeInfo   *typinf
 )
 {
-    OCI_Elem *elem = NULL;
-    boolean   res  = FALSE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK(NULL == pelem, NULL);
+    OCI_ALLOCATE_DATA(OCI_IPC_ELEMENT, elem, 1);
 
-    if (!*pelem)
-    {
-        *pelem = (OCI_Elem *) OCI_MemAlloc(OCI_IPC_ELEMENT, sizeof(*elem), (size_t) 1, TRUE);
-    }
+    if (OCI_STATUS)
+    {   
+        elem->con = con;
 
-    if (*pelem)
-    {
-        void *prev_handle = (*pelem)->handle;
-        uword prev_alloc  = (*pelem)->alloc;
+        // Free previously allocated data before reassign new one
+        OCI_ElemFreeAllocatedData(elem);
 
-        res = TRUE;
-
-        elem = *pelem;
-
-        elem->con    = con;
+        // Reset members
         elem->ind    = OCI_IND_NULL;
         elem->typinf = typinf;
         elem->handle = handle;
         elem->init   = FALSE;
         elem->alloc  = FALSE;
         elem->hstate = handle ? OCI_OBJECT_FETCHED_CLEAN : OCI_OBJECT_ALLOCATED;
-                
-        if (prev_alloc && prev_handle)
-        {
-            OCI_FREE(prev_handle)
-        }
-
+    
         switch (elem->typinf->cols[0].datatype)
         {
             case OCI_CDT_NUMERIC:
             {
                 if (!elem->handle)
                 {
-                    elem->handle = (OCINumber * )OCI_MemAlloc(OCI_IPC_VOID, elem->typinf->cols[0].size, 1, TRUE);
-                    elem->alloc  = TRUE;
+                    OCI_ALLOCATE_BUFFER(OCI_IPC_VOID, elem->handle, elem->typinf->cols[0].size, 1)
+                    elem->alloc = TRUE;
                 }
                 break;
             }
@@ -180,7 +180,7 @@ OCI_Elem * OCI_ElemInit
             {
                 if (!elem->handle)
                 {
-                    elem->handle = (boolean*) OCI_MemAlloc(OCI_IPC_VOID, sizeof(boolean), 1, TRUE);
+                    OCI_ALLOCATE_BUFFER(OCI_IPC_VOID, elem->handle, sizeof(boolean), 1)
                     elem->alloc = TRUE;
                 }
                 break;
@@ -214,10 +214,10 @@ OCI_Elem * OCI_ElemInit
 
     /* check for failure */
 
-    if (!res && elem)
+    if (!OCI_STATUS && elem)
     {
         OCI_ElemFree(elem);
-        *pelem = elem = NULL;
+        elem = NULL;
     }
 
     return elem;
@@ -266,10 +266,10 @@ boolean OCI_ElemSetNullIndicator
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetNumber
+ * OCI_ElemSetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ElemSetNumber
+boolean OCI_ElemSetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -288,12 +288,12 @@ boolean OCI_ElemSetNumber
         OCINumber tmp;
         memset(&tmp, 0, sizeof(tmp));
 
-        res = res && OCI_NumberSet(elem->typinf->con, &tmp, col->size, col->subtype, col->libcode, value);
-        res = res && OCI_NumberGet(elem->typinf->con, &tmp, size, flag, col->libcode, elem->handle);
+        res = res && OCI_NumberSetNativeValue(elem->typinf->con, &tmp, col->size, col->subtype, col->libcode, value);
+        res = res && OCI_NumberGetNativeValue(elem->typinf->con, &tmp, size, flag, col->libcode, elem->handle);
     }
     else
     {      
-        res = OCI_NumberSet(elem->con, (OCINumber *)elem->handle, size,  flag, col->libcode, value);
+        res = OCI_NumberSetNativeValue(elem->con, (OCINumber *)elem->handle, size, flag, col->libcode, value);
     }
 
     if (res)
@@ -305,10 +305,10 @@ boolean OCI_ElemSetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetNumber
+ * OCI_ElemGetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ElemGetNumber
+boolean OCI_ElemGetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -338,21 +338,19 @@ boolean OCI_ElemGetNumber
             OCINumber tmp;
             memset(&tmp, 0, sizeof(tmp));
 
-            res = res && OCI_NumberSet(elem->typinf->con, &tmp, col->size, col->subtype, col->libcode, elem->handle);
-            res = res && OCI_NumberGet(elem->typinf->con, &tmp, size, flag, col->libcode, value);
+            res = res && OCI_NumberSetNativeValue(elem->typinf->con, &tmp, col->size, col->subtype, col->libcode, elem->handle);
+            res = res && OCI_NumberGetNativeValue(elem->typinf->con, &tmp, size, flag, col->libcode, value);
         }
         else
         {
             OCINumber *num = (OCINumber *)elem->handle;
 
-            res = OCI_NumberGet(elem->con, num, size, flag, col->libcode, value);
+            res = OCI_NumberGetNativeValue(elem->con, num, size, flag, col->libcode, value);
         }
     }
     else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
     {
-        res = OCI_NumberFromString(elem->con, value, size, flag,
-                                   elem->typinf->cols[0].libcode, 
-                                   OCI_ElemGetString(elem), NULL);
+        res = OCI_NumberFromString(elem->con, value, size, flag, elem->typinf->cols[0].libcode, OCI_ElemGetString(elem), NULL);
     }
     else
     {
@@ -376,14 +374,13 @@ OCI_Elem * OCI_API OCI_ElemCreate
     OCI_TypeInfo *typinf
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Elem*, NULL)
+    OCI_CALL_ENTER(OCI_Elem*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
 
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-
-    call_retval = OCI_ElemInit(typinf->con, &call_retval, NULL, (OCIInd *)NULL, typinf);
-    call_status = (NULL != call_retval);
+    OCI_RETVAL = OCI_ElemInit(typinf->con, NULL, NULL, (OCIInd *)NULL, typinf);
+    OCI_STATUS = (NULL != OCI_RETVAL);
   
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -395,10 +392,10 @@ boolean OCI_API OCI_ElemFree
     OCI_Elem *elem
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    OCI_CHECK_OBJECT_FETCHED(elem)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CHECK_OBJECT_FETCHED(elem)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
     /* if the element has sub-objects that have been fetched, we need to free
        these objects */
@@ -415,17 +412,14 @@ boolean OCI_API OCI_ElemFree
         OCI_FreeObjectFromType(elem->obj, elem->typinf->cols[0].datatype);
     }
 
-    if (elem->alloc)
-    {
-        OCI_FREE(elem->handle)
-    }
+    OCI_ElemFreeAllocatedData(elem);
 
     OCI_FREE(elem->tmpbuf)
     OCI_FREE(elem)
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -437,12 +431,10 @@ boolean OCI_API OCI_ElemGetBoolean
     OCI_Elem *elem
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    OCI_CHECK_COMPAT(elem->con, OCI_CDT_BOOLEAN == elem->typinf->cols[0].datatype)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CHECK_COMPAT(elem->con, OCI_CDT_BOOLEAN == elem->typinf->cols[0].datatype)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
     if (!OCI_ElemIsNull(elem))
     {
@@ -450,11 +442,28 @@ boolean OCI_API OCI_ElemGetBoolean
 
         if (data)
         {
-            call_retval = *data;
+            OCI_RETVAL = *data;
         }
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ElemGetNumber
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Number * OCI_API OCI_ElemGetNumber
+(
+    OCI_Elem *elem
+)
+{
+    OCI_ELEM_GET_VALUE
+    (
+        OCI_CDT_NUMERIC,
+        OCI_Number *,
+        OCI_NumberInit(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -562,19 +571,17 @@ const otext * OCI_API OCI_ElemGetString
     OCI_Elem *elem
 )
 {
-    OCI_LIB_CALL_ENTER(otext *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    OCI_CHECK_COMPAT(elem->con, OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
+    OCI_CALL_ENTER(otext *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CHECK_COMPAT(elem->con, OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
     if (elem->handle)
     {
-        call_retval = OCI_StringFromStringPtr(elem->con->env, (OCIString *) elem->handle, &elem->tmpbuf, &elem->tmpsize);
+        OCI_RETVAL = OCI_StringFromStringPtr(elem->con->env, (OCIString *) elem->handle, &elem->tmpbuf, &elem->tmpsize);
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -588,10 +595,10 @@ unsigned int OCI_API OCI_ElemGetRaw
     unsigned int len
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    OCI_CHECK_COMPAT(elem->con, OCI_CDT_RAW == elem->typinf->cols[0].datatype)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CHECK_COMPAT(elem->con, OCI_CDT_RAW == elem->typinf->cols[0].datatype)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
     if (elem->handle)
     {
@@ -605,12 +612,10 @@ unsigned int OCI_API OCI_ElemGetRaw
 
         memcpy(value, OCIRawPtr(elem->con->env, raw), (size_t) len);
         
-        call_retval = TRUE;
+        OCI_RETVAL = raw_len;
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* -------------------------------------------------------------------------------------------- *
@@ -622,20 +627,18 @@ unsigned int OCI_API OCI_ElemGetRawSize
     OCI_Elem    *elem
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    OCI_CHECK_COMPAT(elem->con, OCI_CDT_RAW == elem->typinf->cols[0].datatype)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CHECK_COMPAT(elem->con, OCI_CDT_RAW == elem->typinf->cols[0].datatype)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
     if (elem->handle)
     {
         OCIRaw *raw = (OCIRaw *)elem->handle;
-        call_retval = OCIRawSize(elem->con->env, raw);
+        OCI_RETVAL = OCIRawSize(elem->con->env, raw);
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -651,7 +654,7 @@ OCI_Date * OCI_API OCI_ElemGetDate
     (
         OCI_CDT_DATETIME,
         OCI_Date *,
-        OCI_DateInit(elem->con, (OCI_Date **) &elem->obj, (OCIDate *) elem->handle, FALSE, FALSE)
+        OCI_DateInit(elem->con, (OCI_Date *) elem->obj, (OCIDate *) elem->handle, FALSE, FALSE)
     )
 }
 
@@ -670,16 +673,14 @@ OCI_Timestamp * OCI_API OCI_ElemGetTimestamp
     (
         OCI_CDT_TIMESTAMP,
         OCI_Timestamp *,
-        OCI_TimestampInit(elem->con, (OCI_Timestamp **) &elem->obj, 
-                          (OCIDateTime *) elem->handle,
-                          elem->typinf->cols[0].subtype)
+        OCI_TimestampInit(elem->con, (OCI_Timestamp *) elem->obj, (OCIDateTime *) elem->handle, elem->typinf->cols[0].subtype)
     )
 
 #else
 
-    OCI_LIB_CALL_ENTER( OCI_Timestamp *, NULL)
-    call_status = TRUE;
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_ENTER( OCI_Timestamp *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_EXIT()
 
 #endif
 }
@@ -699,15 +700,13 @@ OCI_Interval * OCI_API OCI_ElemGetInterval
     (
         OCI_CDT_INTERVAL,
         OCI_Interval *,
-        OCI_IntervalInit(elem->con, (OCI_Interval **) &elem->obj, 
-                         (OCIInterval *) elem->handle,
-                         elem->typinf->cols[0].subtype)
+        OCI_IntervalInit(elem->con, (OCI_Interval *) elem->obj, (OCIInterval *) elem->handle, elem->typinf->cols[0].subtype)
     )
 #else
 
-    OCI_LIB_CALL_ENTER( OCI_Interval *, NULL)
-    call_status = TRUE;
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_ENTER( OCI_Interval *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_EXIT()
 
 #endif
 }
@@ -725,9 +724,7 @@ OCI_Lob * OCI_API OCI_ElemGetLob
     (
         OCI_CDT_LOB, 
         OCI_Lob*,
-        OCI_LobInit(elem->con, (OCI_Lob **) &elem->obj, 
-                    (OCILobLocator *) elem->handle,
-                    elem->typinf->cols[0].subtype)
+        OCI_LobInit(elem->con, (OCI_Lob *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype)
     )
 }
 
@@ -744,9 +741,7 @@ OCI_File * OCI_API OCI_ElemGetFile
     (
         OCI_CDT_FILE,
         OCI_File*,
-        OCI_FileInit(elem->con, (OCI_File **) &elem->obj, 
-                     (OCILobLocator *) elem->handle,
-                     elem->typinf->cols[0].subtype)
+        OCI_FileInit(elem->con, (OCI_File *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype)
     )
 }
 
@@ -763,8 +758,7 @@ OCI_Ref * OCI_API OCI_ElemGetRef
     (
         OCI_CDT_REF,
         OCI_Ref*,
-        OCI_RefInit(elem->con, &elem->typinf->cols[0].typinf,
-                    (OCI_Ref **) &elem->obj,  (OCIRef *) elem->handle)
+        OCI_RefInit(elem->con, elem->typinf->cols[0].typinf, (OCI_Ref *) elem->obj, (OCIRef *) elem->handle)
     )
 }
 
@@ -781,8 +775,7 @@ OCI_Object * OCI_API OCI_ElemGetObject
     (
         OCI_CDT_OBJECT,
         OCI_Object*,
-        OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj, elem->handle,
-                       elem->typinf->cols[0].typinf, NULL, -1, TRUE)
+        OCI_ObjectInit(elem->con, (OCI_Object *) elem->obj, elem->handle, elem->typinf->cols[0].typinf, NULL, -1, TRUE)
     )
 }
 
@@ -799,8 +792,7 @@ OCI_Coll * OCI_API OCI_ElemGetColl
     (
         OCI_CDT_COLLECTION,
         OCI_Coll*,
-        OCI_CollInit(elem->con, (OCI_Coll **) &elem->obj,  (OCIColl *) elem->handle,
-                     elem->typinf->cols[0].typinf)
+        OCI_CollInit(elem->con, (OCI_Coll *) elem->obj,  (OCIColl *) elem->handle, elem->typinf->cols[0].typinf)
     )
 }
 
@@ -814,24 +806,42 @@ boolean OCI_API OCI_ElemSetBoolean
     boolean   value
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CHECK_COMPAT(elem->con, OCI_CDT_BOOLEAN == elem->typinf->cols[0].datatype)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    OCI_CHECK_COMPAT(elem->con, OCI_CDT_BOOLEAN == elem->typinf->cols[0].datatype)
-     
     if (elem->handle)
     {
  		boolean *data = (boolean *) elem->handle;
-        call_status = TRUE;
  
 		*data = value;
      
         OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ElemSetNumber
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_ElemSetNumber
+(
+    OCI_Elem   *elem,
+    OCI_Number *value
+)
+{
+    OCI_ELEM_SET_VALUE
+    (
+        OCI_CDT_NUMERIC,
+        OCI_Number*,
+        OCI_NumberInit(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle),
+        OCI_NumberAssign((OCI_Number *) elem->obj, value)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -948,30 +958,30 @@ boolean OCI_API OCI_ElemSetString
     const otext *value
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    OCI_CHECK_COMPAT(elem->con, OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CHECK_COMPAT(elem->con, OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
     if (!value)
     {
-        call_status = OCI_ElemSetNull(elem);
+        OCI_STATUS = OCI_ElemSetNull(elem);
     }
     else
     {
-        call_status = OCI_StringToStringPtr(elem->con->env,
-                                    (OCIString **) &elem->handle,
-                                    elem->con->err, value);
+        elem->alloc = (elem->alloc || elem->handle == NULL);
 
-        if (call_status)
+        OCI_STATUS = OCI_StringToStringPtr(elem->con->env,  (OCIString **) &elem->handle, elem->con->err, value);
+
+        if (OCI_STATUS)
         {
             OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
         }
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -985,34 +995,28 @@ boolean OCI_API OCI_ElemSetRaw
     unsigned int len
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    OCI_CHECK_COMPAT(elem->con, OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CHECK_COMPAT(elem->con, OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
     if (!value)
     {
-        call_status = OCI_ElemSetNull(elem);
+        OCI_STATUS = OCI_ElemSetNull(elem);
     }
     else
     {
-        OCI_CALL2
-        (
-            call_status, elem->con,
+        OCI_EXEC(OCIRawAssignBytes(elem->con->env, elem->con->err, (ub1*) value, len, (OCIRaw **) &elem->handle))
 
-            OCIRawAssignBytes(elem->con->env, elem->con->err, (ub1*) value,
-                              len, (OCIRaw **) &elem->handle)
-        )
-
-        if (call_status)
+        if (OCI_STATUS)
         {
             OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
         }
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1029,7 +1033,7 @@ boolean OCI_API OCI_ElemSetDate
     (
         OCI_CDT_DATETIME,
         OCI_Date*,
-        OCI_DateInit(elem->con, (OCI_Date **) &elem->obj, (OCIDate *) elem->handle, TRUE, FALSE),
+        OCI_DateInit(elem->con, (OCI_Date *) elem->obj, (OCIDate *) elem->handle, TRUE, FALSE),
         OCI_DateAssign((OCI_Date *) elem->obj, value)
     )
 }
@@ -1050,17 +1054,15 @@ boolean OCI_API OCI_ElemSetTimestamp
     (
         OCI_CDT_TIMESTAMP, 
         OCI_Timestamp*,
-        OCI_TimestampInit(elem->con, (OCI_Timestamp **) &elem->obj,
-                          (OCIDateTime *) elem->handle,  elem->typinf->cols[0].subtype),
+        OCI_TimestampInit(elem->con, (OCI_Timestamp *) elem->obj, (OCIDateTime *) elem->handle,  elem->typinf->cols[0].subtype),
         OCI_TimestampAssign((OCI_Timestamp *) elem->obj, value)
     )
 
 #else
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-    call_status = TRUE;
-    call_retval = FALSE;
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_EXIT()
 
 #endif
 }
@@ -1082,17 +1084,15 @@ boolean OCI_API OCI_ElemSetInterval
     ( 
         OCI_CDT_INTERVAL,
         OCI_Interval*,
-        OCI_IntervalInit(elem->con, (OCI_Interval **) &elem->obj,
-                         (OCIInterval *) elem->handle, elem->typinf->cols[0].subtype),
+        OCI_IntervalInit(elem->con, (OCI_Interval *) elem->obj, (OCIInterval *) elem->handle, elem->typinf->cols[0].subtype),
         OCI_IntervalAssign((OCI_Interval *) elem->obj, value)
     )
 
 #else
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-    call_status = TRUE;
-    call_retval = FALSE;
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_EXIT()
 
 #endif
 }
@@ -1111,8 +1111,7 @@ boolean OCI_API OCI_ElemSetColl
     (
         OCI_CDT_COLLECTION,
         OCI_Coll*,
-        OCI_CollInit(elem->con, (OCI_Coll **) &elem->obj,
-                         (OCIColl *) elem->handle, elem->typinf->cols[0].typinf),
+        OCI_CollInit(elem->con, (OCI_Coll *) elem->obj, (OCIColl *) elem->handle, elem->typinf->cols[0].typinf),
         OCI_CollAssign((OCI_Coll *) elem->obj, value)
     )
 }
@@ -1131,8 +1130,7 @@ boolean OCI_API OCI_ElemSetObject
     (
         OCI_CDT_OBJECT,
         OCI_Object*,
-        OCI_ObjectInit(elem->con, (OCI_Object **) &elem->obj, elem->handle, 
-                       elem->typinf->cols[0].typinf, NULL, -1, TRUE),
+        OCI_ObjectInit(elem->con, (OCI_Object *) elem->obj, elem->handle, elem->typinf->cols[0].typinf, NULL, -1, TRUE),
         OCI_ObjectAssign((OCI_Object *) elem->obj, value)
     )
  }
@@ -1151,8 +1149,7 @@ boolean OCI_API OCI_ElemSetLob
     (
         OCI_CDT_LOB,
         OCI_Lob*,
-        OCI_LobInit(elem->con, (OCI_Lob **) &elem->obj, (OCILobLocator *) elem->handle,
-                    elem->typinf->cols[0].subtype),
+        OCI_LobInit(elem->con, (OCI_Lob *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype),
         OCI_LobAssign((OCI_Lob *) elem->obj, value)
     )
 }
@@ -1171,8 +1168,7 @@ boolean OCI_API OCI_ElemSetFile
     (
         OCI_CDT_FILE,
         OCI_File*,
-        OCI_FileInit(elem->con, (OCI_File **) &elem->obj, (OCILobLocator *) elem->handle,
-                     elem->typinf->cols[0].subtype),
+        OCI_FileInit(elem->con, (OCI_File *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype),
         OCI_FileAssign((OCI_File *) elem->obj, value)
     )
 }
@@ -1191,8 +1187,7 @@ boolean OCI_API OCI_ElemSetRef
     (
         OCI_CDT_REF,
         OCI_Ref*,
-        OCI_RefInit(elem->con, &elem->typinf->cols[0].typinf, (OCI_Ref **) &elem->obj,
-                    (OCIRef *) elem->handle),
+        OCI_RefInit(elem->con, elem->typinf->cols[0].typinf, (OCI_Ref *) elem->obj, (OCIRef *) elem->handle),
         OCI_RefAssign((OCI_Ref *) elem->obj, value)
     )
 }
@@ -1206,20 +1201,18 @@ boolean OCI_API OCI_ElemIsNull
     OCI_Elem *elem
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
     if (elem->pind)
     {
-        call_status = (OCI_IND_NULL == *elem->pind);
+        OCI_STATUS = (OCI_IND_NULL == *elem->pind);
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1231,11 +1224,11 @@ boolean OCI_API OCI_ElemSetNull
     OCI_Elem *elem
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
-    OCI_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    OCI_RETVAL = OCI_STATUS = OCI_ElemSetNullIndicator(elem, OCI_IND_NULL);
 
-    call_retval = call_status = OCI_ElemSetNullIndicator(elem, OCI_IND_NULL);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }

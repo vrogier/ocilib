@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: ocilib_internal.h, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #ifndef OCILIB_OCILIB_INTERNAL_H_INCLUDED
 #define OCILIB_OCILIB_INTERNAL_H_INCLUDED
@@ -54,7 +40,7 @@ extern "C"
 OCI_Agent * OCI_AgentInit
 (
     OCI_Connection *con,
-    OCI_Agent     **pagent,
+    OCI_Agent      *agent,
     OCIAQAgent     *handle,
     const otext    *name,
     const otext    *address
@@ -195,7 +181,7 @@ void OCI_ProcHAEvent
 OCI_Coll * OCI_CollInit
 (
     OCI_Connection *con,
-    OCI_Coll      **pcoll,
+    OCI_Coll       *Coll,
     void           *handle,
     OCI_TypeInfo   *typeinf
 );
@@ -291,7 +277,7 @@ boolean OCI_ConnectionClose
 OCI_Date * OCI_DateInit
 (
     OCI_Connection *con,
-    OCI_Date      **pdate,
+    OCI_Date       *date,
     OCIDate        *buffer,
     boolean         allocate,
     boolean         ansi
@@ -368,7 +354,7 @@ unsigned int OCI_DirPathLoadStream
  * element.c
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ElemGetNumber
+boolean OCI_ElemGetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -376,7 +362,7 @@ boolean OCI_ElemGetNumber
     uword     flag
 );
 
-boolean OCI_ElemSetNumber
+boolean OCI_ElemSetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -387,7 +373,7 @@ boolean OCI_ElemSetNumber
 OCI_Elem * OCI_ElemInit
 (
     OCI_Connection *con,
-    OCI_Elem      **pelem,
+    OCI_Elem       *elem,
     void           *handle,
     OCIInd         *pind,
     OCI_TypeInfo   *typeinf
@@ -634,7 +620,7 @@ void OCI_ExceptionArgInvalidValue
 OCI_File * OCI_FileInit
 (
     OCI_Connection *con,
-    OCI_File      **pfile,
+    OCI_File       *file,
     OCILobLocator  *handle,
     ub4             type
 );
@@ -681,7 +667,7 @@ boolean OCI_HashAdd
 OCI_Interval * OCI_IntervalInit
 (
     OCI_Connection *con,
-    OCI_Interval  **pitv,
+    OCI_Interval   *itv,
     OCIInterval    *buffer,
     ub4             type
 );
@@ -697,13 +683,12 @@ void OCI_SetLastError
 
 void OCI_ContextCallEnter
 (
-    OCI_Error *err
+    OCI_CallContext *ctx
 );
 
 void OCI_ContextCallExit
 (
-    OCI_Error *err,
-    boolean    success
+    OCI_CallContext *ctx
 );
 
 boolean OCI_KeyMapFree
@@ -821,7 +806,7 @@ boolean OCI_ListRemove
 OCI_Lob * OCI_LobInit
 (
     OCI_Connection *con,
-    OCI_Lob       **plob,
+    OCI_Lob        *lob,
     OCILobLocator  *handle,
     ub4             type
 );
@@ -833,7 +818,7 @@ OCI_Lob * OCI_LobInit
 OCI_Long * OCI_LongInit
 (
     OCI_Statement *stmt,
-    OCI_Long     **plg,
+    OCI_Long      *lg,
     OCI_Define    *def,
     unsigned int   type
 );
@@ -863,47 +848,41 @@ void OCI_MemFree
     void * ptr_mem
 );
 
-sword OCI_HandleAlloc
+boolean OCI_HandleAlloc
 (
     CONST dvoid *parenth,
     dvoid      **hndlpp,
-    CONST ub4    type,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
+    CONST ub4    type
 );
 
-sword OCI_HandleFree
+boolean OCI_HandleFree
 (
     dvoid    *hndlp,
     CONST ub4 type
 );
 
-sword OCI_DescriptorAlloc
+boolean OCI_DescriptorAlloc
+(
+    CONST dvoid *parenth,
+    dvoid      **descpp,
+    CONST ub4    type
+);
+
+boolean OCI_DescriptorArrayAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
     CONST ub4    type,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
-);
+    ub4          nb_elem
+ );
 
-sword OCI_DescriptorArrayAlloc
-(
-    CONST dvoid *parenth,
-    dvoid      **descpp,
-    CONST ub4    type,
-    ub4          nb_elem,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
-);
-
-sword OCI_DescriptorFree
+boolean OCI_DescriptorFree
 (
     void     *descp,
     CONST ub4 type
 );
 
-sword OCI_DescriptorArrayFree
+boolean OCI_DescriptorArrayFree
 (
     void    **descp,
     CONST ub4 type,
@@ -969,7 +948,7 @@ OCI_Mutex * OCI_MutexCreateInternal
  * number.c
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_NumberGet
+boolean OCI_NumberGetNativeValue
 (
     OCI_Connection *con,
     void           *number,
@@ -977,10 +956,9 @@ boolean OCI_NumberGet
     uword           type,
     int             sqlcode,
     void           *out_value
-)
-;
+);
 
-boolean OCI_NumberSet
+boolean OCI_NumberSetNativeValue
 (
     OCI_Connection *con,
     void           *number,
@@ -988,6 +966,13 @@ boolean OCI_NumberSet
     uword           type,
     int             sqlcode,
     void           *in_value
+);
+
+OCI_Number * OCI_NumberInit
+(
+    OCI_Connection  *con,
+    OCI_Number      *number,
+    OCINumber        *buffer
 );
 
 boolean OCI_NumberFromString
@@ -1005,7 +990,7 @@ boolean OCI_NumberToString
 (
     OCI_Connection *con,
     void           *number,
-    uword           type,
+    unsigned int    type,
     int             sqlcode,
     otext          *out_value,
     int             out_value_size,
@@ -1047,7 +1032,7 @@ ub2 OCI_ObjectGetIndOffset
 OCI_Object * OCI_ObjectInit
 (
     OCI_Connection *con,
-    OCI_Object    **pobj,
+    OCI_Object     *obj,
     void           *handle,
     OCI_TypeInfo   *typinf,
     OCI_Object     *parent,
@@ -1064,7 +1049,8 @@ int OCI_ObjectGetAttrIndex
 (
     OCI_Object  *obj,
     const otext *attr,
-    int          type
+    int          type,
+    boolean      check
 );
 
 void * OCI_ObjectGetAttr
@@ -1074,7 +1060,7 @@ void * OCI_ObjectGetAttr
     OCIInd     **pind
 );
 
-boolean OCI_ObjectSetNumber
+boolean OCI_ObjectSetNumberInternal
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1083,7 +1069,7 @@ boolean OCI_ObjectSetNumber
     uword        flag
 );
 
-boolean OCI_ObjectGetNumber
+boolean OCI_ObjectGetNumberInternal
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1108,8 +1094,8 @@ boolean OCI_PoolClose
 OCI_Ref * OCI_RefInit
 (
     OCI_Connection *con,
-    OCI_TypeInfo  **typeinf,
-    OCI_Ref       **pref,
+    OCI_TypeInfo   *typeinf,
+    OCI_Ref        *ref,
     void           *handle
 );
 
@@ -1183,12 +1169,12 @@ boolean OCI_BindFreeAll
     OCI_Statement *stmt
 );
 
-boolean OCI_BindCheck
+boolean OCI_BindCheckAll
 (
     OCI_Statement *stmt
 );
 
-boolean OCI_BindReset
+boolean OCI_BindUpdateAll
 (
     OCI_Statement *stmt
 );
@@ -1232,7 +1218,7 @@ boolean OCI_StatementClose
 OCI_Statement * OCI_StatementInit
 (
     OCI_Connection *con,
-    OCI_Statement **pstmt,
+    OCI_Statement  *stmt,
     OCIStmt        *handle,
     boolean         is_desc,
     const otext    *sql
@@ -1271,7 +1257,7 @@ boolean OCI_API OCI_ExecuteInternal
 
 size_t OCI_StringLength
 (
-    void  *ptr,
+    void const  *ptr,
     size_t size_elem
 );
 
@@ -1354,6 +1340,13 @@ boolean OCI_StringToStringPtr
     OCIString  **str,
     OCIError    *err,
     const otext *value
+);
+
+boolean OCI_StringFreeStringPtr
+(
+    OCIEnv      *env,
+    OCIString  **str,
+    OCIError    *err
 );
 
 unsigned int OCI_StringGetFromType
@@ -1447,7 +1440,7 @@ boolean OCI_ThreadKeyGet
 OCI_Timestamp * OCI_TimestampInit
 (
     OCI_Connection *con,
-    OCI_Timestamp **ptmsp,
+    OCI_Timestamp  *tmsp,
     OCIDateTime    *buffer,
     ub4             type
 );

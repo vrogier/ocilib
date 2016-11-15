@@ -1,42 +1,28 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: hash.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
-*                             PRIVATE VARIABLES
-* ********************************************************************************************* */
+ *                             PRIVATE VARIABLES
+ * ********************************************************************************************* */
 
 static unsigned int HashTypeValues[] = { OCI_HASH_STRING, OCI_HASH_INTEGER, OCI_HASH_POINTER };
 
@@ -57,14 +43,13 @@ unsigned int OCI_HashCompute
 {
     unsigned int h;
     otext *p;
-    otext c;
 
     OCI_CHECK(NULL == table, 0);
     OCI_CHECK(NULL == str, 0);
 
     for(h = 0, p = (otext *) str; (*p) != 0; p++)
     {
-        c = *p;
+        otext c = *p;
 
         h = 31 * h + otoupper(c);
     }
@@ -153,43 +138,41 @@ OCI_HashTable * OCI_API OCI_HashCreate
 {
     OCI_HashTable *table = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_HashTable*, table)
-
-    OCI_CHECK_ENUM_VALUE(NULL, NULL, type, HashTypeValues, OTEXT("Hash type"));
+    OCI_CALL_ENTER(OCI_HashTable*, table)
+    OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, type, HashTypeValues, OTEXT("Hash type"));
 
     /* allocate table structure */
 
     table = (OCI_HashTable *) OCI_MemAlloc(OCI_IPC_HASHTABLE, sizeof(*table), (size_t) 1, TRUE);
+    OCI_STATUS = (NULL != table);
 
     /* set up attributes and allocate internal array of hash entry pointers */
 
-    if (table)
+    if (OCI_STATUS)
     {
         table->type  = type;
         table->size  = 0;
         table->count = 0;
 
-        table->items = (OCI_HashEntry **) OCI_MemAlloc(OCI_IPC_HASHENTRY_ARRAY,
-                                                       sizeof(*table->items),
-                                                       (size_t) size, TRUE);
-        if (table->items)
+        table->items = (OCI_HashEntry **) OCI_MemAlloc(OCI_IPC_HASHENTRY_ARRAY, sizeof(*table->items), (size_t) size, TRUE);
+        OCI_STATUS = (NULL != table->items);
+        
+        if (OCI_STATUS)
         {
             table->size = size;           
-            
-            call_status = TRUE;
         }
     }
 
-    if (call_status)
+    if (OCI_STATUS)
     {
-        call_retval = table;
+        OCI_RETVAL = table;
     }
     else if (table)
     {
         OCI_HashFree(table);
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -206,9 +189,8 @@ boolean OCI_API OCI_HashFree
     OCI_HashEntry *e1 = NULL, *e2 = NULL;
     OCI_HashValue *v1 = NULL, *v2 = NULL;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
     if (table->items)
     {
@@ -251,11 +233,11 @@ boolean OCI_API OCI_HashFree
         OCI_FREE(table->items)
     }
 
+    OCI_RETVAL = TRUE;
+
     OCI_FREE(table)
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -267,14 +249,12 @@ unsigned int OCI_API OCI_HashGetSize
     OCI_HashTable *table
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_RETVAL = table->size;
 
-    call_retval = table->size;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -286,14 +266,12 @@ unsigned int OCI_API OCI_HashGetType
     OCI_HashTable *table
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
+    OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_RETVAL = table->type;
 
-    call_retval = table->type;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()}
+    OCI_CALL_EXIT()}
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_HashGetValue
@@ -307,20 +285,17 @@ OCI_HashValue * OCI_API OCI_HashGetValue
 {
     OCI_HashEntry *e = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_HashValue*, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CALL_ENTER(OCI_HashValue*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
     e = OCI_HashLookup(table, key, FALSE);
 
     if (e)
     {
-        call_retval = e->values;
+        OCI_RETVAL = e->values;
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -333,18 +308,15 @@ OCI_HashEntry * OCI_API OCI_HashGetEntry
     unsigned int   index
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_HashEntry*, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CALL_ENTER(OCI_HashEntry*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
     
     if (index < table->size)
     {
-        call_retval = table->items[index];
+        OCI_RETVAL = table->items[index];
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -359,21 +331,18 @@ const otext * OCI_API OCI_HashGetString
 {
     OCI_HashValue *v = NULL;
 
-    OCI_LIB_CALL_ENTER(const otext *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
+    OCI_CALL_ENTER(const otext *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
 
     v = OCI_HashGetValue(table, key);
 
     if (v)
     {
-        call_retval = v->value.p_text;     
+        OCI_RETVAL = v->value.p_text;     
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -388,21 +357,18 @@ int OCI_API OCI_HashGetInt
 {
     OCI_HashValue *v = NULL;
 
-    OCI_LIB_CALL_ENTER(int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
+    OCI_CALL_ENTER(int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
 
     v = OCI_HashGetValue(table, key);
 
     if (v)
     {
-        call_retval = v->value.num;
+        OCI_RETVAL = v->value.num;
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -417,21 +383,18 @@ void * OCI_API OCI_HashGetPointer
 {
     OCI_HashValue *v = NULL;
 
-    OCI_LIB_CALL_ENTER(void *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
+    OCI_CALL_ENTER(void *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
 
     v = OCI_HashGetValue(table, key);
 
     if (v)
     {
-        call_retval = v->value.p_void;
+        OCI_RETVAL = v->value.p_void;
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -447,16 +410,15 @@ boolean OCI_API OCI_HashAddString
 {
     OCI_Variant v;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-        
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
 
     v.p_text = (otext *) value;
 
-    call_retval = call_status = OCI_HashAdd(table, key, v, OCI_HASH_STRING);
+    OCI_RETVAL = OCI_STATUS = OCI_HashAdd(table, key, v, OCI_HASH_STRING);
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -472,16 +434,15 @@ boolean OCI_API OCI_HashAddInt
 {
     OCI_Variant v;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
 
     v.num = value;
 
-    call_retval = call_status = OCI_HashAdd(table, key, v, OCI_HASH_INTEGER);
+    OCI_RETVAL = OCI_STATUS = OCI_HashAdd(table, key, v, OCI_HASH_INTEGER);
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -497,16 +458,15 @@ boolean OCI_API OCI_HashAddPointer
 {
     OCI_Variant v;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    OCI_CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
 
     v.p_void = value;
 
-    call_retval = call_status = OCI_HashAdd(table, key, v, OCI_HASH_POINTER);
+    OCI_RETVAL = OCI_STATUS = OCI_HashAdd(table, key, v, OCI_HASH_POINTER);
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -523,10 +483,9 @@ OCI_HashEntry * OCI_API OCI_HashLookup
     OCI_HashEntry *e = NULL, *e1 = NULL, *e2 = NULL;
     unsigned int i;
 
-    OCI_LIB_CALL_ENTER(OCI_HashEntry*, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    OCI_CHECK_PTR(OCI_IPC_STRING, key)
+    OCI_CALL_ENTER(OCI_HashEntry*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, key)
 
     i = OCI_HashCompute(table, key);
 
@@ -543,8 +502,9 @@ OCI_HashEntry * OCI_API OCI_HashLookup
         if (!e && create)
         {
             e = (OCI_HashEntry *) OCI_MemAlloc(OCI_IPC_HASHENTRY, sizeof(*e), (size_t) 1, TRUE);
-
-            if (e)
+            OCI_STATUS = (NULL != e);
+           
+            if (OCI_STATUS)
             {
                 e->key = ostrdup(key);
 
@@ -568,8 +528,14 @@ OCI_HashEntry * OCI_API OCI_HashLookup
         }
     }
 
-    call_retval = e;
-    call_status = TRUE;
+    if (OCI_STATUS)
+    {
+        OCI_RETVAL = e;
+    }
+    else if (e)
+    {
+        OCI_FREE(e)
+    }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }

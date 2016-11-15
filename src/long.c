@@ -1,42 +1,28 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: long.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
-*                             PRIVATE VARIABLES
-* ********************************************************************************************* */
+ *                             PRIVATE VARIABLES
+ * ********************************************************************************************* */
 
 static unsigned int LongTypeValues[] = { OCI_CLONG, OCI_BLONG };
 
@@ -51,24 +37,18 @@ static unsigned int LongTypeValues[] = { OCI_CLONG, OCI_BLONG };
 OCI_Long * OCI_LongInit
 (
     OCI_Statement *stmt,
-    OCI_Long     **plg,
+    OCI_Long      *lg,
     OCI_Define    *def,
     unsigned int   type
 )
 {
-    OCI_Long *lg = NULL;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_CHECK(NULL == plg, NULL);
+    OCI_ALLOCATE_DATA(OCI_IPC_LONG, lg, 1);
 
-    if (!*plg )
+    if (OCI_STATUS)
     {
-        *plg = (OCI_Long *) OCI_MemAlloc(OCI_IPC_LONG, sizeof(*lg), (size_t) 1, TRUE);
-    }
-
-    if (*plg)
-    {
-        lg = *plg;
-
         lg->size        = 0;
         lg->maxsize     = 0;
         lg->stmt        = stmt;
@@ -103,15 +83,15 @@ OCI_Long * OCI_API OCI_LongCreate
     unsigned int   type
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Long*, NULL)
+    OCI_CALL_ENTER(OCI_Long*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    OCI_CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, LongTypeValues, OTEXT("Long Type"))
+    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    OCI_CHECK_ENUM_VALUE(stmt->con, stmt, type, LongTypeValues, OTEXT("Long Type"))
+    OCI_RETVAL = OCI_LongInit(stmt, NULL, NULL, type);
+    OCI_STATUS = (NULL != OCI_RETVAL);
 
-    call_retval = OCI_LongInit(stmt, &call_retval, NULL, type);
-    call_status = (NULL != call_retval);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -123,17 +103,17 @@ boolean OCI_API OCI_LongFree
     OCI_Long *lg
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-    OCI_CHECK_OBJECT_FETCHED(lg)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    OCI_CALL_CHECK_OBJECT_FETCHED(lg)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(lg->stmt)
 
     OCI_FREE(lg->buffer)
     OCI_FREE(lg)
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -145,14 +125,7 @@ unsigned int OCI_API OCI_LongGetType
     OCI_Long *lg
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-
-    call_retval = lg->type;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_LONG, lg, type, lg->stmt->con, lg->stmt, lg->stmt->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -168,13 +141,13 @@ unsigned int OCI_API OCI_LongRead
 {
     unsigned int fact = 1;
 
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, buffer)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(lg->stmt)
 
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-    OCI_CHECK_PTR(OCI_IPC_VOID, buffer)
-
-    call_status = TRUE;
-    call_retval = len;
+    OCI_STATUS = TRUE;
+    OCI_RETVAL = len;
 
     /* lg->size and lg offset are still expressed in db text units even
        if the buffer had already been expanded to otext *
@@ -182,30 +155,30 @@ unsigned int OCI_API OCI_LongRead
 
     if (OCI_CLONG == lg->type)
     {
-        call_retval *= (unsigned int) sizeof(dbtext);
+        OCI_RETVAL *= (unsigned int) sizeof(dbtext);
     }
 
     /* check buffer size to read */
 
-    if ((call_retval + lg->offset) > lg->size)
+    if ((OCI_RETVAL + lg->offset) > lg->size)
     {
-        call_retval = lg->size - lg->offset;
+        OCI_RETVAL = lg->size - lg->offset;
     }
 
     /* copy buffer */
 
-    memcpy(buffer, lg->buffer + (size_t) lg->offset*fact, (size_t) (call_retval*fact));
+    memcpy(buffer, lg->buffer + (size_t) lg->offset*fact, (size_t) (OCI_RETVAL*fact));
 
-    lg->offset += call_retval;
+    lg->offset += OCI_RETVAL;
 
     if (OCI_CLONG == lg->type)
     {
-        ((otext *)buffer)[call_retval] = 0;
+        ((otext *)buffer)[OCI_RETVAL] = 0;
 
-        call_retval /= (unsigned int) sizeof(otext);
+        OCI_RETVAL /= (unsigned int) sizeof(otext);
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -229,12 +202,10 @@ unsigned int OCI_API OCI_LongWrite
     ub4 dx       = 0;
     ub4 count    = 0;
 
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_VOID, buffer)
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, buffer)
+    OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(lg->stmt)
 
     if (OCI_CLONG == lg->type)
     {
@@ -248,13 +219,7 @@ unsigned int OCI_API OCI_LongWrite
 
     /* get piece info */
 
-    OCI_CALL1
-    (
-        call_status, lg->stmt->con, lg->stmt,
-
-        OCIStmtGetPieceInfo(lg->stmt->stmt, lg->stmt->con->err, &handle,
-                            &type, &in_out, &iter, &dx, &piece)
-    )
+    OCI_EXEC(OCIStmtGetPieceInfo(lg->stmt->stmt, lg->stmt->con->err, &handle, &type, &in_out, &iter, &dx, &piece))
 
     /* set up piece type */
 
@@ -281,17 +246,11 @@ unsigned int OCI_API OCI_LongWrite
 
     /* set up info for writing */
 
-    OCI_CALL1
-    (
-        call_status, lg->stmt->con, lg->stmt,
-
-        OCIStmtSetPieceInfo(handle, type, lg->stmt->con->err, (dvoid *) obuf,
-                            &count,  piece, (dvoid *) NULL, (ub2 *) NULL)
-    )
+    OCI_EXEC(OCIStmtSetPieceInfo(handle, type, lg->stmt->con->err, (dvoid *) obuf, &count,  piece, (dvoid *) NULL, (ub2 *) NULL))
 
     /* perform write call */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         code = OCIStmtExecute(lg->stmt->con->cxt, lg->stmt->stmt,
                               lg->stmt->con->err, (ub4) 1, (ub4) 0,
@@ -301,9 +260,9 @@ unsigned int OCI_API OCI_LongWrite
 
     if (OCI_FAILURE(code) && (OCI_NEED_DATA != code))
     {
-        call_status = (OCI_SUCCESS_WITH_INFO == code);
+        OCI_STATUS = (OCI_SUCCESS_WITH_INFO == code);
 
-        OCI_ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt, call_status);
+        OCI_ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt, OCI_STATUS);
     }
 
     if (OCI_CLONG == lg->type)
@@ -313,7 +272,7 @@ unsigned int OCI_API OCI_LongWrite
 
     /* update size */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         lg->size += count;
 
@@ -327,9 +286,9 @@ unsigned int OCI_API OCI_LongWrite
 
     }
 
-    call_retval = count;
+    OCI_RETVAL = count;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -341,20 +300,18 @@ unsigned int OCI_API OCI_LongGetSize
     OCI_Long *lg
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(lg->stmt)
 
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-
-    call_retval = lg->size;
+    OCI_RETVAL = lg->size;
 
     if (OCI_CLONG == lg->type)
     {
-        call_retval /= (unsigned int) sizeof(dbtext);
+        OCI_RETVAL /= (unsigned int) sizeof(dbtext);
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -366,12 +323,5 @@ void * OCI_API OCI_LongGetBuffer
     OCI_Long *lg
 )
 {
-    OCI_LIB_CALL_ENTER(void *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_LONG, lg)
-
-    call_retval = lg->buffer;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(void *, NULL, OCI_IPC_LONG, lg, buffer, lg->stmt->con, lg->stmt, lg->stmt->con->err)
 }

@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: threadkey.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
@@ -47,34 +33,27 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
     POCI_THREADKEYDEST destfunc
 )
 {
-    boolean res        = TRUE;
     OCI_ThreadKey *key = NULL;
 
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     /* allocate key structure */
 
-    key = (OCI_ThreadKey *) OCI_MemAlloc(OCI_IPC_THREADKEY, sizeof(*key), (size_t) 1, TRUE);
+    OCI_ALLOCATE_DATA(OCI_IPC_THREADKEY, key, 1)
 
-    if (key)
+    if (OCI_STATUS)
     {
         /* allocate error handle */
 
-        res = OCI_SUCCESSFUL(OCI_HandleAlloc(OCILib.env,
-                                             (dvoid **) (void *) &key->err,
-                                             OCI_HTYPE_ERROR, (size_t) 0,
-                                             (dvoid **) NULL));
+        OCI_STATUS = OCI_HandleAlloc(OCILib.env, (dvoid **)(void *)&key->err, OCI_HTYPE_ERROR);
 
         /* key initialization */
 
-        OCI_CALL3
-        (
-            res, key->err,
-
-            OCIThreadKeyInit(OCILib.env, key->err, &key->handle, destfunc)
-        )
+        OCI_EXEC(OCIThreadKeyInit(OCILib.env, key->err, &key->handle, destfunc))
 
         /* check errors */
 
-        if (!res)
+        if (!OCI_STATUS)
         {
             OCI_ThreadKeyFree(key);
             key = NULL;
@@ -93,7 +72,7 @@ boolean OCI_ThreadKeyFree
     OCI_ThreadKey *key
 )
 {
-    boolean res = TRUE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == key, FALSE);
 
@@ -101,12 +80,7 @@ boolean OCI_ThreadKeyFree
 
     if (key->handle)
     {
-        OCI_CALL0
-        (
-            res, key->err,
-
-            OCIThreadKeyDestroy(OCILib.env, key->err, &key->handle)
-        )
+        OCI_EXEC(OCIThreadKeyDestroy(OCILib.env, key->err, &key->handle))
     }
 
     /* close error handle */
@@ -120,7 +94,7 @@ boolean OCI_ThreadKeyFree
 
     OCI_FREE(key)
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -133,18 +107,13 @@ boolean OCI_ThreadKeySet
     void          *value
 )
 {
-    boolean res = TRUE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == key, FALSE);
 
-    OCI_CALL3
-    (
-        res, key->err,
+    OCI_EXEC(OCIThreadKeySet(OCILib.env, key->err, key->handle, value))
 
-        OCIThreadKeySet(OCILib.env, key->err, key->handle, value)
-    )
-
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -157,18 +126,13 @@ boolean OCI_ThreadKeyGet
     void         **value
 )
 {
-    boolean res = TRUE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == key, FALSE);
 
-    OCI_CALL3
-    (
-        res, key->err,
+    OCI_EXEC(OCIThreadKeyGet(OCILib.env, key->err, key->handle, value))
 
-        OCIThreadKeyGet(OCILib.env, key->err, key->handle, value)
-    )
-
-    return res;
+    return OCI_STATUS;
 }
 
 /* ********************************************************************************************* *
@@ -187,10 +151,9 @@ boolean OCI_API OCI_ThreadKeyCreate
 {
     OCI_ThreadKey *key = NULL;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CHECK_INITIALIZED()
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    OCI_CALL_CHECK_INITIALIZED()
 
     if (!OCILib.key_map)
     {
@@ -198,39 +161,31 @@ boolean OCI_API OCI_ThreadKeyCreate
            time and memory when it's not needed */
 
         OCILib.key_map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_POINTER);
-
+        OCI_STATUS = (NULL != OCILib.key_map);
     }
-
-    call_status = (NULL != OCILib.key_map);
 
     /* create key */
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         key = OCI_ThreadKeyCreateInternal(destfunc);
-
+        OCI_STATUS = (NULL != key);
+       
         /* add key to internal key hash table */
 
-        if (key)
-        {
-            call_status = OCI_HashAddPointer(OCILib.key_map, name, key);
-        }
-        else
-        {
-            call_status = FALSE;
-        }
+        OCI_STATUS = OCI_STATUS && OCI_HashAddPointer(OCILib.key_map, name, key);
     }
 
     /* check errors */
 
-    if (!call_status && key)
+    if (!OCI_STATUS && key)
     {
         OCI_ThreadKeyFree(key);
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -245,15 +200,14 @@ boolean OCI_API OCI_ThreadKeySetValue
 {
     OCI_ThreadKey *key = NULL;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_STRING, name)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
 
     key = (OCI_ThreadKey *) OCI_HashGetPointer(OCILib.key_map, name);
 
-    call_retval = call_status = OCI_ThreadKeySet(key, value);
+    OCI_RETVAL = OCI_STATUS = OCI_ThreadKeySet(key, value);
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -267,13 +221,12 @@ void * OCI_API OCI_ThreadKeyGetValue
 {
     OCI_ThreadKey* key = NULL;
 
-    OCI_LIB_CALL_ENTER(void*, NULL)
+    OCI_CALL_ENTER(void*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
 
-    OCI_CHECK_PTR(OCI_IPC_STRING, name)
+    key = (OCI_ThreadKey *)OCI_HashGetPointer(OCILib.key_map, name);
 
-    key = (OCI_ThreadKey *) OCI_HashGetPointer(OCILib.key_map, name);
+    OCI_STATUS = OCI_ThreadKeyGet(key, &OCI_RETVAL);
 
-    call_status = OCI_ThreadKeyGet(key, &call_retval);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }

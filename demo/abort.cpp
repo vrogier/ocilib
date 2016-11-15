@@ -2,13 +2,13 @@
 
 #include "ocilib.hpp"
 
-using namespace ocilib;
-
-#ifdef _WINDOWS
-#define sleep(x) Sleep(x*1000)
+#if defined(_WINDOWS)
+    #define sleep(x) Sleep(x*1000)
+#else
+    #include <unistd.h>
 #endif
 
-#define wait_for_events() sleep(5)
+using namespace ocilib;
 
 ThreadHandle thread;
 Connection con;
@@ -18,17 +18,11 @@ void OracleCallProc(ThreadHandle handle, void *data)
     try
     {
         Statement st(con);
-        st.Execute("select table_name from all_tables");
-
-        Resultset rs = st.GetResultset();
-        while (rs++)
-        {
-            std::cout << rs.Get<ostring>(1) << std::endl;
-        }
+        st.Execute("begin dbms_lock.sleep(10); end;");
     }
-    catch (Exception &ex)
+    catch (std::exception &ex)
     {
-        std::cout << ex.GetMessage() << std::endl;
+        std::cout << ex.what() << std::endl;
     }
 }
 

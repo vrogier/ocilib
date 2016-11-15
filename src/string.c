@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: string.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
@@ -50,7 +36,7 @@
 
 size_t OCI_StringLength
 (
-    void  *ptr,
+    const void  *ptr,
     size_t size_elem
 )
 {
@@ -94,11 +80,12 @@ unsigned int OCI_StringBinaryToString
     otext         *buffer
  )
 {
-    char          hex_str[] = "0123456789ABCDEF";
-    unsigned int  i;
+    char hex_str[] = "0123456789ABCDEF";
 
     if (buffer)
     {
+		unsigned int  i;
+		
         for (i = 0; i < binary_size; i++)
         {
             buffer[i * 2 + 0] = hex_str[binary[i] >> 4  ];
@@ -135,7 +122,7 @@ boolean OCI_StringRequestBuffer
 
     if (!*buffer)
     {
-       *buffer = (otext *) OCI_MemAlloc(OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
+       *buffer = (otext *) OCI_MemAlloc(OCI_IPC_STRING, (size_t) request_size, (size_t) 1, FALSE);
     }
     else if (*buffer_size < request_size)
     {
@@ -314,6 +301,12 @@ dbtext * OCI_StringGetOracleString
     dbtext  *dst = NULL;
     int      len = 0;
 
+    if (!src)
+    {
+        *size = 0;
+        return dst;
+    }
+
     if (*size == -1)
     {
         COMPUTE_LENTGH(otext, src, len)
@@ -464,25 +457,43 @@ boolean OCI_StringToStringPtr
     const otext *value
 )
 {
-    boolean res    = TRUE;
-    dbtext *dbstr  = NULL;
-    int     dbsize = 0;
+    dbtext *dbstr = NULL;
+    int     dbsize = -1;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == str, FALSE);
 
-    dbsize = -1;
+    OCI_CALL_CONTEXT_SET_FROM_ERR(err)
+
     dbstr  = OCI_StringGetOracleString(value, &dbsize);
 
-    OCI_CALL3
-    (
-        res, err,
-
-        OCIStringAssignText(env, err, (oratext *) dbstr, (ub4) dbsize, str)
-    )
+    OCI_EXEC(OCIStringAssignText(env, err, (oratext *) dbstr, (ub4) dbsize, str))
 
     OCI_StringReleaseOracleString(dbstr);
 
-    return res;
+    return OCI_STATUS;
+}
+
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_StringFreeStringPtr
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_StringFreeStringPtr
+(
+    OCIEnv      *env,
+    OCIString  **str,
+    OCIError    *err
+)
+{
+    OCI_CALL_DECLARE_CONTEXT(TRUE)    
+    OCI_CHECK(NULL == str, FALSE);    
+    OCI_CALL_CONTEXT_SET_FROM_ERR(err)
+
+    OCI_EXEC(OCIStringResize(env, err, (ub4)0, str))
+
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -498,27 +509,21 @@ boolean OCI_GetStringAttribute
     otext         **str
 )
 {
-    boolean res     = TRUE;
-    dbtext *dbstr   = NULL;
-    int     dbsize  = -1;
-    boolean is_ansi = FALSE;
+    dbtext *dbstr = NULL;
+    int     dbsize = -1;
 
-    OCI_CHECK(NULL == str, FALSE);
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
+    OCI_CHECK(NULL == str, FALSE)
+ 
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CALL2
-    (
-        res, con,
+    OCI_GET_ATTRIB(type, attr, handle, &dbstr, &dbsize)
 
-        OCIAttrGet((dvoid *) handle,
-                   (ub4    ) type,
-                   (dvoid *) &dbstr,
-                   (ub4   *) &dbsize,
-                   (ub4    ) attr,
-                   con->err)
-    )
-
-    if (res && dbstr)
+    if (OCI_STATUS && dbstr)
     {
+	    boolean is_ansi = FALSE;
+
         /*  Oracle BUG using OCI in Unicode mode (once again...) 
             Some connection server handle attributes are returned 
             as ANSI buffer even when OCI is initialized in UTF16 mode
@@ -541,10 +546,10 @@ boolean OCI_GetStringAttribute
 
         OCI_StringTranslate(dbstr, *str, dbcharcount(dbsize), is_ansi ? sizeof(char) : sizeof(dbtext), sizeof(otext));
 
-        res = (NULL != *str);
+        OCI_STATUS = (NULL != *str);
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -561,9 +566,11 @@ boolean OCI_SetStringAttribute
     const otext    *value
 )
 {
-    boolean res    = TRUE;
-    dbtext *dbstr  = NULL;
+    dbtext *dbstr = NULL;
     int     dbsize = -1;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     dbstr = OCI_StringGetOracleString(value, &dbsize);
 
@@ -572,21 +579,11 @@ boolean OCI_SetStringAttribute
         dbsize = 0;
     }
 
-    OCI_CALL2
-    (
-        res, con,
-
-        OCIAttrSet((dvoid *) handle,
-                   (ub4    ) type,
-                   (dvoid *) dbstr,
-                   (ub4    ) dbsize,
-                   (ub4    ) attr,
-                   con->err)
-    )
+    OCI_SET_ATTRIB(type, attr, handle, dbstr, dbsize)
 
     OCI_StringReleaseOracleString(dbstr);
 
-    if (res && str)
+    if (OCI_STATUS && str)
     {
         OCI_FREE(*str)
 
@@ -596,7 +593,7 @@ boolean OCI_SetStringAttribute
         }
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -647,10 +644,6 @@ unsigned int OCI_StringGetFromType
             else
             {
                 len = OCI_STRING_FALSE_SIZE;
-                if (OCI_STRING_TRUE_SIZE > len)
-                {
-                    len = OCI_STRING_TRUE_SIZE;
-                }
             }
            
             break;
@@ -761,25 +754,30 @@ unsigned int OCI_StringGetFromType
 
             if (lob)
             {
-                otext lob_buf[OCI_SIZE_BUFFER + 1 ];
+                unsigned char lob_buf[(OCI_SIZE_BUFFER + 1) * UTF8_BYTES_PER_CHAR];
 
-                unsigned int read = 0;    
+                while (res)
+                {      
+                    unsigned int bytes_count = OCI_SIZE_BUFFER * UTF8_BYTES_PER_CHAR;
+                    unsigned int char_count = 0;
 
-                do
-                {                        
-                    read = OCI_LobRead(lob, lob_buf, OCI_SIZE_BUFFER);
+                    res = OCI_LobRead2(lob, lob_buf, &char_count, &bytes_count);
+
+                    if (bytes_count == 0)
+                    {
+                        // lob eof reached
+                        break;
+                    }
 
                     if (OCI_CLOB == lob->type)
                     {
-                        lob_buf[read] = 0;
-                        len += OCI_StringAddToBuffer(buffer, len, lob_buf, quote);
+                        len += OCI_StringAddToBuffer(buffer, len, (otext*) lob_buf, quote);
                     }
                     else
                     {
-                        len += OCI_StringBinaryToString((unsigned char *) lob_buf, read, ptr ? ptr + len : ptr);  
+                        len += OCI_StringBinaryToString(lob_buf, bytes_count, ptr ? ptr + len : ptr);
                     }  
                 }
-                while (read >= OCI_SIZE_BUFFER);
 
                 OCI_LobSeek(lob, 0, OCI_SEEK_SET);
             }
@@ -954,7 +952,7 @@ unsigned int OCI_StringGetTypeName
     boolean      quote  = FALSE;
     unsigned int offset = 0;
 
-    if (!source || !source[0] || !dest)
+    if (!OCI_STRING_VALID(source) || !dest)
     {
         return 0;
     }
@@ -984,7 +982,7 @@ unsigned int OCI_StringGetTypeName
     }
 
     ostrncpy(dest + offset, source, length - offset);
-    offset = (unsigned int)ostrlen(dest);
+    offset += (unsigned int)ostrlen(source);
 
     if (quote)
     {
@@ -1011,7 +1009,7 @@ unsigned int OCI_StringGetFullTypeName
 {
     unsigned int offset = 0;
 
-    if (schema && schema[0])
+    if (OCI_STRING_VALID(schema))
     {
         offset += OCI_StringGetTypeName(schema, name + offset, length - offset);
         
@@ -1022,7 +1020,7 @@ unsigned int OCI_StringGetFullTypeName
         }
     }
 
-    if (package && package[0])
+    if (OCI_STRING_VALID(package))
     {
         offset += OCI_StringGetTypeName(package, name + offset, length - offset);
 
@@ -1033,12 +1031,12 @@ unsigned int OCI_StringGetFullTypeName
         }
     }
 
-    if (type && type[0])
+    if (OCI_STRING_VALID(type))
     {
         offset += OCI_StringGetTypeName(type, name + offset, length - offset);
     }
 
-    if (link && link[0])
+    if (OCI_STRING_VALID(link))
     {
         ostrncpy(name + offset, OTEXT("@"), length - offset);
         offset++;

@@ -2,9 +2,8 @@ OCILIB THANKS file
 
 OCILIB has originally been written by Vincent Rogier.
 
-Many people have further contributed to OCILIB by reporting problems, 
-suggesting various improvements, or submitting actual code. Here is
-a list of these people. 
+Many people have further contributed to OCILIB by reporting problems and
+suggesting various improvements. Here is a list of these people. 
 
 Help me keep it complete and exempt of errors.
 
@@ -28,7 +27,7 @@ Help me keep it complete and exempt of errors.
         - Oleg Finkelshteyn
         - sylvain benilan
         - Petr vanek
-		- Jakub Zakrzewski
+        - Jakub Zakrzewski
 
     * Improvements suggestions
 
@@ -41,7 +40,7 @@ Help me keep it complete and exempt of errors.
         - Guillaume Laudet
         - Sandeep Yaramakala
         - Petr vanek
-		- Jakub Zakrzewski
+        - Jakub Zakrzewski
  
     * Special Thanks
 

@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: event.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
@@ -83,18 +69,11 @@ unsigned int OCI_API OCI_EventGetType
     OCI_Event *event
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
-
-    call_retval = event->type;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_EVENT, event, type, event->sub->con, NULL, event->sub->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EventGetType
+ * OCI_EventGetOperation
  * --------------------------------------------------------------------------------------------- */
 
 unsigned int OCI_API OCI_EventGetOperation
@@ -102,18 +81,11 @@ unsigned int OCI_API OCI_EventGetOperation
     OCI_Event *event
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
-
-    call_retval = event->op;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_EVENT, event, op, event->sub->con, NULL, event->sub->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EventGetObject
+ * OCI_EventGetDatabase
  * --------------------------------------------------------------------------------------------- */
 
 const otext * OCI_API OCI_EventGetDatabase
@@ -121,14 +93,7 @@ const otext * OCI_API OCI_EventGetDatabase
     OCI_Event *event
 )
 {
-    OCI_LIB_CALL_ENTER(const otext *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
-
-    call_retval = event->dbname;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, dbname, event->sub->con, NULL, event->sub->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -140,14 +105,8 @@ const otext * OCI_API OCI_EventGetObject
     OCI_Event *event
 )
 {
-    OCI_LIB_CALL_ENTER(const otext *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
-
-    call_retval = event->objname;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()}
+    OCI_GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, objname, event->sub->con, NULL, event->sub->err)
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_EventGetRowid
@@ -158,14 +117,7 @@ const otext * OCI_API OCI_EventGetRowid
     OCI_Event *event
 )
 {
-    OCI_LIB_CALL_ENTER(const otext *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
-
-    call_retval = event->rowid;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, rowid, event->sub->con, NULL, event->sub->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -177,12 +129,5 @@ OCI_Subscription * OCI_API OCI_EventGetSubscription
     OCI_Event *event
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Subscription *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_EVENT, event)
-
-    call_retval = event->sub;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()}
-
+    OCI_GET_PROP(OCI_Subscription *, NULL, OCI_IPC_EVENT, event, sub, event->sub->con, NULL, event->sub->err)
+}

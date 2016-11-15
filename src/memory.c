@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: memory.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
@@ -111,28 +97,33 @@ void * OCI_MemRealloc
 
     size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
 
-    if (mem_block->size < size)
+    if (!mem_block || mem_block->size < size)
     {
-        mem_block = (OCI_MemoryBlock *)realloc(mem_block, size);
+        void *ptr_new = realloc(mem_block, size);
 
-        if (!mem_block && ptr_mem)
+        if (ptr_new)
         {
-            OCI_MemFree(ptr_mem);
+            big_int size_diff = 0;
+            mem_block = (OCI_MemoryBlock *) ptr_new;
 
-            OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
-        }
-        else
-        {
-            big_int size_diff = (big_int) size - mem_block->size;
+            size_diff = (big_int) size - mem_block->size;
 
             mem_block->type = ptr_type;
             mem_block->size = (unsigned int) size;
 
             OCI_MemUpdateBytes(mem_block->type, size_diff);
         }
+        else if (ptr_mem)
+        { 
+            OCI_MemFree(ptr_mem);
+
+            OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
+
+            mem_block = NULL;
+        }
     }
 
-    return ((unsigned char *)mem_block) + sizeof(*mem_block);
+    return mem_block ? ((unsigned char *)mem_block) + sizeof(*mem_block) : NULL;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -182,30 +173,28 @@ void OCI_MemUpdateBytes
  * OCI_HandleAlloc
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_HandleAlloc
+boolean OCI_HandleAlloc
 (
     CONST dvoid *parenth,
     dvoid      **hndlpp,
-    CONST ub4    type,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
-)
+    CONST ub4    type
+ )
 {
-    sword ret = OCIHandleAlloc(parenth, hndlpp, type, xtramem_sz, usrmempp);
+    sword ret = OCIHandleAlloc(parenth, hndlpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
         OCI_MUTEXED_CALL(OCILib.nb_hndlp++)
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_HandleFree
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_HandleFree
+boolean OCI_HandleFree
 (
     dvoid    *hndlp,
     CONST ub4 type
@@ -220,44 +209,40 @@ sword OCI_HandleFree
         ret = OCIHandleFree(hndlp, type);
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_DescriptorAlloc
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_DescriptorAlloc
+boolean OCI_DescriptorAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
-    CONST ub4    type,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
-)
+    CONST ub4    type
+ )
 {
-    sword ret = OCIDescriptorAlloc(parenth, descpp, type, xtramem_sz, usrmempp);
+    sword ret = OCIDescriptorAlloc(parenth, descpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
         OCI_MUTEXED_CALL(OCILib.nb_descp++)
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_DescriptorArrayAlloc
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_DescriptorArrayAlloc
+boolean OCI_DescriptorArrayAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
     CONST ub4    type,
-    ub4          nb_elem,
-    CONST size_t xtramem_sz,
-    dvoid      **usrmempp
+    ub4          nb_elem
 )
 {
     sword ret = OCI_SUCCESS;
@@ -266,7 +251,7 @@ sword OCI_DescriptorArrayAlloc
 
     if (OCILib.version_runtime >= OCI_11_1)
     {
-        ret = OCIArrayDescriptorAlloc(parenth, descpp, type, nb_elem, xtramem_sz, usrmempp);
+        ret = OCIArrayDescriptorAlloc(parenth, descpp, type, nb_elem, 0, NULL);
 
     }
     else
@@ -278,7 +263,7 @@ sword OCI_DescriptorArrayAlloc
 
         for (i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
         {
-            ret = OCIDescriptorAlloc(parenth, &descpp[i], type, xtramem_sz, usrmempp);
+            ret = OCIDescriptorAlloc(parenth, &descpp[i], type, 0, NULL);
         }
     }
 
@@ -287,14 +272,14 @@ sword OCI_DescriptorArrayAlloc
         OCI_MUTEXED_CALL(OCILib.nb_descp += nb_elem)
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_DescriptorFree
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_DescriptorFree
+boolean OCI_DescriptorFree
 (
     dvoid    *descp,
     CONST ub4 type
@@ -309,14 +294,14 @@ sword OCI_DescriptorFree
         ret = OCIDescriptorFree(descp, type);
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_DescriptorFree
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_DescriptorArrayFree
+boolean OCI_DescriptorArrayFree
 (
     dvoid   **descp,
     CONST ub4 type,
@@ -351,7 +336,7 @@ sword OCI_DescriptorArrayFree
         OCI_MUTEXED_CALL(OCILib.nb_descp -= nb_elem)
     }
 
-    return ret;
+    return OCI_SUCCESSFUL(ret);
 }
 
 /* --------------------------------------------------------------------------------------------- *

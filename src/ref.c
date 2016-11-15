@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: ref.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
@@ -45,30 +31,21 @@
 OCI_Ref * OCI_RefInit
 (
     OCI_Connection *con,
-    OCI_TypeInfo  **typinf,
-    OCI_Ref       **pref,
+    OCI_TypeInfo   *typinf,
+    OCI_Ref        *ref,
     void           *handle
 )
 {
-    boolean  res = FALSE;
-    OCI_Ref *ref = NULL;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK(NULL == pref, NULL);
+    OCI_ALLOCATE_DATA(OCI_IPC_REF, ref, 1);
 
-    if (!*pref)
+    if (OCI_STATUS)
     {
-        *pref = (OCI_Ref *) OCI_MemAlloc(OCI_IPC_REF, sizeof(*ref), (size_t) 1, TRUE);
-    }
-
-    if (*pref)
-    {
-        res = TRUE;
-
-        ref = *pref;
-
         ref->handle = handle;
         ref->con    = con;
-        ref->typinf = typinf ? *typinf : NULL;
+        ref->typinf = typinf;
 
         if (!ref->handle || (OCI_OBJECT_ALLOCATED_ARRAY == ref->hstate))
         {
@@ -79,10 +56,8 @@ OCI_Ref * OCI_RefInit
                 ref->hstate = OCI_OBJECT_ALLOCATED;
             }
 
-            OCI_CALL2
+            OCI_EXEC
             (
-                res, ref->con,
-
                 OCI_ObjectNew(ref->con->env, ref->con->err, ref->con->cxt,
                               (OCITypeCode) SQLT_REF,
                               (OCIType*) NULL,
@@ -102,10 +77,10 @@ OCI_Ref * OCI_RefInit
 
     /* check for failure */
 
-    if (!res && ref)
+    if (!OCI_STATUS && ref)
     {
         OCI_RefFree(ref);
-        *pref = ref = NULL;
+        ref = NULL;
     }
 
     return ref;
@@ -120,31 +95,30 @@ boolean OCI_RefPin
     OCI_Ref *ref
 )
 {
-    boolean res      = TRUE;
     void *obj_handle = NULL;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == ref, FALSE)
 
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con);
+
     OCI_RefUnpin(ref);
 
-    OCI_CALL2
+    OCI_EXEC
     (
-        res, ref->con,
-
-        OCIObjectPin(ref->con->env, ref->con->err, ref->handle,
-                     (OCIComplexObject *) 0, OCI_PIN_ANY, OCI_DURATION_SESSION,
-                     OCI_LOCK_NONE, &obj_handle)
+        OCIObjectPin(ref->con->env, ref->con->err, ref->handle, (OCIComplexObject *) 0, 
+                     OCI_PIN_ANY, OCI_DURATION_SESSION, OCI_LOCK_NONE, &obj_handle)
     )
 
-    if (res)
+    if (OCI_STATUS)
     {
-        OCI_Object *obj = OCI_ObjectInit(ref->con, (OCI_Object **) &ref->obj, obj_handle,
-                                         ref->typinf, NULL, -1, TRUE);
+        ref->obj = OCI_ObjectInit(ref->con, (OCI_Object *) ref->obj, obj_handle, ref->typinf, NULL, -1, TRUE);
 
-        res = ref->pinned = (NULL != obj);
+        OCI_STATUS = ref->pinned = (NULL != ref->obj);
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -156,19 +130,16 @@ boolean OCI_RefUnpin
     OCI_Ref *ref
 )
 {
-    boolean res = TRUE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == ref, FALSE)
     OCI_CHECK(NULL == ref->obj, FALSE)
 
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con);
+
     if (ref->pinned)
     {
-        OCI_CALL2
-        (
-            res, ref->con,
-
-            OCIObjectUnpin(ref->con->env, ref->con->err, ref->obj->handle)
-        )
+        OCI_EXEC(OCIObjectUnpin(ref->con->env, ref->con->err, ref->obj->handle))
 
         ref->pinned = FALSE;
     }
@@ -180,7 +151,7 @@ boolean OCI_RefUnpin
         ref->obj = NULL;
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* ********************************************************************************************* *
@@ -197,15 +168,15 @@ OCI_Ref * OCI_API OCI_RefCreate
     OCI_TypeInfo   *typinf
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Ref *, NULL)
+    OCI_CALL_ENTER(OCI_Ref *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    OCI_RETVAL = OCI_RefInit(con, typinf, NULL, NULL);
+    OCI_STATUS = (NULL != OCI_RETVAL);
 
-    call_retval = OCI_RefInit(con, &typinf, &call_retval, NULL);
-    call_status = (NULL != call_retval);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -217,10 +188,10 @@ boolean OCI_API OCI_RefFree
     OCI_Ref *ref
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_REF, ref)
-    OCI_CHECK_OBJECT_FETCHED(ref)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    OCI_CALL_CHECK_OBJECT_FETCHED(ref)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
     OCI_RefUnpin(ref);
 
@@ -234,9 +205,9 @@ boolean OCI_API OCI_RefFree
         OCI_FREE(ref)
     }
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -252,20 +223,20 @@ OCI_Ref ** OCI_API OCI_RefArrayCreate
 {
     OCI_Array *arr = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Ref **, NULL)
-    
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CHECK_PTR(OCI_IPC_TYPE_INFO, con)
+    OCI_CALL_ENTER(OCI_Ref **, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0, sizeof(OCIRef *), sizeof(OCI_Ref), 0, typinf);
+    OCI_STATUS = (NULL != arr);
 
-    if (arr)
+    if (OCI_STATUS)
     {
-        call_retval = (OCI_Ref **) arr->tab_obj;
-        call_status = TRUE;
+        OCI_RETVAL = (OCI_Ref **) arr->tab_obj;
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -277,13 +248,12 @@ boolean OCI_API OCI_RefArrayFree
     OCI_Ref **refs
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, refs)
 
-    OCI_CHECK_PTR(OCI_IPC_ARRAY, refs)
+    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **)refs);
 
-    call_retval = call_status = OCI_ArrayFreeFromHandles((void **)refs);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -295,23 +265,21 @@ OCI_Object * OCI_API OCI_RefGetObject
     OCI_Ref *ref
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Object*, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_REF, ref)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(OCI_Object*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
     if (!OCI_RefIsNull(ref))
     {
-        call_status = OCI_RefPin(ref);
+        OCI_STATUS = OCI_RefPin(ref);
 
-        if (call_status)
+        if (OCI_STATUS)
         {
-            call_retval = ref->obj;
+            OCI_RETVAL = ref->obj;
         }
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -324,22 +292,15 @@ boolean OCI_API OCI_RefAssign
     OCI_Ref *ref_src
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref_src)
+    OCI_CALL_CHECK_COMPAT(ref->con, ref->typinf->tdo == ref_src->typinf->tdo)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
-    OCI_CHECK_PTR(OCI_IPC_REF, ref)
-    OCI_CHECK_PTR(OCI_IPC_REF, ref_src)
-    OCI_CHECK_COMPAT(ref->con, ref->typinf->tdo == ref_src->typinf->tdo)
+    OCI_EXEC(OCIRefAssign(ref->con->env, ref->con->err, ref_src->handle, &ref->handle))
 
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, ref->con,
-
-        OCIRefAssign(ref->con->env, ref->con->err, ref_src->handle, &ref->handle)
-    )
-
-    if (call_status)
+    if (OCI_STATUS)
     {
         if (ref->obj)
         {
@@ -351,9 +312,9 @@ boolean OCI_API OCI_RefAssign
         ref->pinned = ref_src->pinned;
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -365,14 +326,13 @@ boolean OCI_API OCI_RefIsNull
     OCI_Ref *ref
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, TRUE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
-    OCI_CHECK_PTR(OCI_IPC_REF, ref)
+    OCI_RETVAL = OCIRefIsNull(ref->con->env, ref->handle);
 
-    call_retval = OCIRefIsNull(ref->con->env, ref->handle);
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -384,13 +344,13 @@ boolean OCI_API OCI_RefSetNull
     OCI_Ref *ref
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
-    OCI_CHECK_PTR(OCI_IPC_REF, ref)
+    OCI_STATUS = OCI_RefUnpin(ref);
 
-    call_status = OCI_RefUnpin(ref);
-
-    if (call_status)
+    if (OCI_STATUS)
     {
         OCIRefClear(ref->con->env, ref->handle);
 
@@ -401,9 +361,9 @@ boolean OCI_API OCI_RefSetNull
         }
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -420,12 +380,10 @@ boolean OCI_API OCI_RefToText
     dbtext *dbstr  = NULL;
     int     dbsize = (int) size * (int) sizeof(otext);
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-    
-    OCI_CHECK_PTR(OCI_IPC_REF, ref)
-    OCI_CHECK_PTR(OCI_IPC_STRING, str)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -433,13 +391,7 @@ boolean OCI_API OCI_RefToText
 
     dbstr = OCI_StringGetOracleString(str, &dbsize);
 
-    OCI_CALL2
-    (
-        call_status, ref->con,
-
-        OCIRefToHex(ref->con->env, ref->con->err, ref->handle,
-                    (OraText *) dbstr, (ub4 *) &dbsize)
-    )
+    OCI_EXEC(OCIRefToHex(ref->con->env, ref->con->err, ref->handle, (OraText *) dbstr, (ub4 *) &dbsize))
 
     OCI_StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
     OCI_StringReleaseOracleString(dbstr);
@@ -448,9 +400,9 @@ boolean OCI_API OCI_RefToText
 
     str[dbcharcount(dbsize)] = 0;
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -464,18 +416,15 @@ unsigned int OCI_API OCI_RefGetHexSize
 {
     ub4 size = 0;
 
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
-    OCI_CHECK_PTR(OCI_IPC_REF, ref)
+    size = OCIRefHexSize(ref->con->env, (const OCIRef *)ref->handle) / (ub4) sizeof(dbtext);
 
-    size = OCIRefHexSize(ref->con->env, (const OCIRef *) ref->handle);
+    OCI_RETVAL = size;
 
-    size /= (ub4) sizeof(dbtext);
-
-    call_retval = size;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -487,13 +436,6 @@ OCI_TypeInfo * OCI_API OCI_RefGetTypeInfo
     OCI_Ref *ref
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_TypeInfo*, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_REF, ref)
-
-    call_retval = ref->typinf;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(OCI_TypeInfo*, NULL, OCI_IPC_REF, ref, typinf, ref->con, NULL, ref->con->err)
 }
 

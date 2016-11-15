@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: subscriptions.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
@@ -47,10 +33,13 @@ boolean OCI_SubscriptionClose
     OCI_Subscription *sub
 )
 {
-    boolean res   = TRUE;
     boolean alloc = FALSE;
 
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+        
     OCI_CHECK(NULL == sub, FALSE);
+  
+    OCI_CALL_CONTEXT_SET_FROM_CONN(sub->con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -68,14 +57,8 @@ boolean OCI_SubscriptionClose
 
         if (sub->con)
         {
-            OCI_CALL3
-            (
-                res, sub->err,
-
-                OCISubscriptionUnRegister(sub->con->cxt, sub->subhp,
-                                          sub->err,(ub4) OCI_DEFAULT)
-            )
-
+            OCI_EXEC(OCISubscriptionUnRegister(sub->con->cxt, sub->subhp, sub->err, (ub4)OCI_DEFAULT))
+ 
             if (alloc)
             {
                 OCI_ConnectionFree(sub->con);
@@ -109,7 +92,7 @@ boolean OCI_SubscriptionClose
     OCI_FREE(sub->saved_pwd)
     OCI_FREE(sub->name)
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -180,12 +163,12 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
     OCI_Subscription *sub = NULL;
     OCI_Item *item        = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_Subscription*, NULL)
-
-    OCI_CHECK_DATABASE_NOTIFY_ENABLED()
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CHECK_PTR(OCI_IPC_PROC, handler)
-    OCI_CHECK_PTR(OCI_IPC_STRING, name)
+    OCI_CALL_ENTER(OCI_Subscription*, NULL)
+    OCI_CALL_CHECK_DATABASE_NOTIFY_ENABLED()
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CHECK_PTR(OCI_IPC_PROC, handler)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -199,22 +182,13 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
         /* allocate error handle */
 
-        call_status = OCI_SUCCESSFUL(OCI_HandleAlloc(con->env,
-                                                     (dvoid **) (void *) &sub->err,
-                                                     OCI_HTYPE_ERROR, (size_t) 0,
-                                                     (dvoid **) NULL));
+        OCI_STATUS = OCI_HandleAlloc(con->env, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR);
 
-        if (call_status)
-        {
-            /* allocate subscription handle */
+        /* allocate subscription handle */
 
-            call_status = OCI_SUCCESSFUL(OCI_HandleAlloc(con->env,
-                                                         (dvoid **) (void *) &sub->subhp,
-                                                         OCI_HTYPE_SUBSCRIPTION, (size_t) 0,
-                                                         (dvoid **) NULL));
-        }
+        OCI_STATUS = OCI_STATUS && OCI_HandleAlloc(con->env, (dvoid **)(void *)&sub->subhp, OCI_HTYPE_SUBSCRIPTION);
 
-        if (call_status)
+        if (OCI_STATUS)
         {
             ub4     attr   = 0;
             int     dbsize = -1;
@@ -233,81 +207,38 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
             if (sub->port > 0)
             {
-                OCI_CALL3
-                (
-                    call_status, sub->err,
 
-                    OCIAttrSet((dvoid *) sub->subhp, (ub4)  OCI_HTYPE_SUBSCRIPTION,
-                               (dvoid *) &sub->port, (ub4) sizeof (sub->port),
-                               (ub4) OCI_ATTR_SUBSCR_PORTNO, sub->err)
-                )
+                OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_PORTNO, sub->subhp, &sub->port, sizeof(sub->port))
             }
             else
             {
-                OCI_CALL3
-                (
-                    call_status, sub->err,
-
-                    OCIAttrGet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                               (dvoid *) &sub->port, (ub4*) NULL,
-                               (ub4) OCI_ATTR_SUBSCR_PORTNO, sub->err)
-                )
+                OCI_GET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_PORTNO, sub->subhp, &sub->port,NULL)
             }
 
             /* set timeout */
 
             if(sub->timeout > 0)
             {
-                OCI_CALL3
-                (
-                    call_status, sub->err,
-
-                    OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                               (dvoid *) &sub->timeout, (ub4) sizeof (sub->timeout),
-                               (ub4) OCI_ATTR_SUBSCR_TIMEOUT, sub->err)
-                )
+                OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_TIMEOUT, sub->subhp, &sub->timeout, sizeof(sub->timeout))
             }
 
             /* name  */
 
             dbstr = OCI_StringGetOracleString(sub->name, &dbsize);
 
-            OCI_CALL3
-            (
-                call_status, sub->err,
-
-                OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                           (dvoid *) dbstr, (ub4) dbsize,
-                           (ub4) OCI_ATTR_SUBSCR_NAME, sub->err)
-            )
+            OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME, sub->subhp, dbstr, dbsize)
 
             OCI_StringReleaseOracleString(dbstr);
 
             /* namespace for CDN */
 
             attr =  OCI_SUBSCR_NAMESPACE_DBCHANGE;
-
-            OCI_CALL3
-            (
-                call_status, sub->err,
-
-                OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                           (dvoid *) &attr, (ub4) sizeof(attr),
-                           (ub4) OCI_ATTR_SUBSCR_NAMESPACE, sub->err)
-            )
+            OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAMESPACE, sub->subhp, &attr, sizeof(attr))
 
             /* protocol for CDN */
 
             attr =  OCI_SUBSCR_PROTO_OCI;
-
-            OCI_CALL3
-            (
-                call_status, sub->err,
-
-                OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                           (dvoid *) &attr, (ub4) sizeof(attr),
-                           (ub4) OCI_ATTR_SUBSCR_RECPTPROTO, sub->err)
-            )
+            OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPROTO, sub->subhp, &attr, sizeof(attr))
 
            /* On MSVC, casting a function pointer to a data pointer generates a warning.
               As there is no other to way to do regarding the OCI API, let's disable this
@@ -319,14 +250,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
             /* internal callback handler */
 
-            OCI_CALL3
-            (
-                call_status, sub->err,
-
-                OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                           (dvoid *) OCI_ProcNotifyChanges, (ub4) 0,
-                           (ub4) OCI_ATTR_SUBSCR_CALLBACK, sub->err)
-            )
+            OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, sub->subhp, OCI_ProcNotifyChanges, 0)
 
             #ifdef _MSC_VER
             #pragma warning(default: 4054)
@@ -337,44 +261,22 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
             if (sub->type & OCI_CNT_ROWS)
             {
                 attr = TRUE;
-
-                OCI_CALL3
-                (
-                    call_status, sub->err,
-
-                    OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                               (dvoid *) &attr, (ub4) sizeof(attr),
-                               (ub4) OCI_ATTR_CHNF_ROWIDS, sub->err)
-                )
+                OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_CHNF_ROWIDS, sub->subhp, &attr, sizeof(attr))
             }
 
             /* set subscription context pointer to our subscription structure */
 
-            OCI_CALL3
-            (
-                call_status, sub->err,
-
-                OCIAttrSet((dvoid *) sub->subhp, (ub4) OCI_HTYPE_SUBSCRIPTION,
-                           (dvoid *) sub, (ub4) 0,
-                           (ub4) OCI_ATTR_SUBSCR_CTX, sub->err)
-            )
+            OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CTX, sub->subhp, sub, 0)
 
             /* all attributes set, let's register the subscription ! */
 
-            OCI_CALL3
-            (
-                call_status, sub->err,
-
-                OCISubscriptionRegister(sub->con->cxt, &sub->subhp, (ub2) 1,
-                                        sub->err,(ub4) OCI_DEFAULT)
-
-            )
+            OCI_EXEC(OCISubscriptionRegister(sub->con->cxt, &sub->subhp, (ub2) 1, sub->err,(ub4) OCI_DEFAULT))
         }
     }
 
-    if (call_status)
+    if (OCI_STATUS)
     {
-        call_retval = sub;
+        OCI_RETVAL = sub;
     } 
     else if (sub)
     {
@@ -395,7 +297,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
 #endif
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -407,17 +309,17 @@ boolean OCI_API OCI_SubscriptionUnregister
     OCI_Subscription *sub
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
+    OCI_CALL_CONTEXT_SET_FROM_ERR(sub->err)
 
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
-
-    call_retval = call_status = OCI_SubscriptionClose(sub);
+    OCI_RETVAL = OCI_STATUS = OCI_SubscriptionClose(sub);
 
     OCI_ListRemove(OCILib.subs, sub);
 
     OCI_FREE(sub);
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -430,13 +332,11 @@ boolean OCI_API OCI_SubscriptionAddStatement
     OCI_Statement    *stmt
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
-    OCI_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    OCI_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(sub->con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -444,23 +344,16 @@ boolean OCI_API OCI_SubscriptionAddStatement
 
     if (sub->type & OCI_CNT_OBJECTS)
     {
-        OCI_CALL3
-        (
-            call_status, sub->err,
+        OCI_SET_ATTRIB(OCI_HTYPE_STMT, OCI_ATTR_CHNF_REGHANDLE, stmt->stmt, sub->subhp, 0)
 
-            OCIAttrSet((dvoid *) stmt->stmt, (ub4) OCI_HTYPE_STMT,
-                       (dvoid *) sub->subhp, (ub4) 0,
-                       (ub4) OCI_ATTR_CHNF_REGHANDLE, sub->err)
-        )
-
-        call_status = call_status && OCI_Execute(stmt) && (NULL != OCI_GetResultset(stmt));
+        OCI_STATUS = OCI_STATUS && OCI_Execute(stmt) && (NULL != OCI_GetResultset(stmt));
     }
 
 #endif
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -472,14 +365,7 @@ const otext * OCI_API OCI_SubscriptionGetName
     OCI_Subscription *sub
 )
 {
-    OCI_LIB_CALL_ENTER(const otext*, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
-
-    call_retval = sub->name;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(const otext*, NULL, OCI_IPC_NOTIFY, sub, name, sub->con, NULL, sub->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -491,14 +377,8 @@ unsigned int OCI_API OCI_SubscriptionGetPort
     OCI_Subscription *sub
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
-
-    call_retval = sub->port;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()}
+    OCI_GET_PROP(unsigned int, 0, OCI_IPC_NOTIFY, sub, port, sub->con, NULL, sub->err)
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_SubscriptionGetTimeout
@@ -509,14 +389,7 @@ unsigned int OCI_API OCI_SubscriptionGetTimeout
     OCI_Subscription *sub
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
-
-    call_retval = sub->timeout;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, 0, OCI_IPC_NOTIFY, sub, timeout, sub->con, NULL, sub->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -528,13 +401,6 @@ OCI_Connection * OCI_API OCI_SubscriptionGetConnection
     OCI_Subscription *sub
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Connection*, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_NOTIFY, sub)
-
-    call_retval = sub->con;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()}
-
+    OCI_GET_PROP(OCI_Connection*, NULL, OCI_IPC_NOTIFY, sub, con, sub->con, NULL, sub->err)
+}
 

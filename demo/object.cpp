@@ -2,28 +2,7 @@
 
 #include "ocilib.hpp"
 
-/*
-DML for the test
-
-create type t_vendor as object
-(
-code  number,
-name  varchar2(30)
-);
-/
-create type t_sale as object
-(
-code  number,
-price  float,
-name  varchar2(30),
-ref  varchar2(30),
-date_sale date,
-vendor  t_vendor
-);
-/
-create table sales(item t_sale);
-
-*/
+/* requires script demo/object.sql */
 
 using namespace ocilib;
 
@@ -41,15 +20,15 @@ int main(void)
         Object sale(TypeInfo(con, "t_sale", TypeInfo::Type));
         Object vendor(TypeInfo(con, "t_vendor", TypeInfo::Type));
 
-        vendor.Set<int>("CODE", 134);
-        vendor.Set<ostring>("NAME", "JOHN SMITH");
+        vendor.Set<int>("code", 134);
+        vendor.Set<ostring>("name", "JOHN SMITH");
 
-        sale.Set<int>("CODE", 1);
-        sale.Set<double>("PRICE", 12.99);
-        sale.Set<ostring>("NAME", "USB KEY 2go");
-        sale.Set<ostring>("REF", "A56547WSAA");
-        sale.Set<Date>("DATE_SALE", date);
-        sale.Set<Object>("VENDOR", vendor);
+        sale.Set<int>("code", 1);
+        sale.Set<double>("price", 12.99);
+        sale.Set<ostring>("name", "USB KEY 2go");
+        sale.Set<ostring>("ref", "A56547WSAA");
+        sale.Set<Date>("date_sale", date);
+        sale.Set<Object>("vendor", vendor);
 
         Statement st(con);
         st.Prepare("insert into sales values(:obj)");

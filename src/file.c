@@ -1,42 +1,28 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: file.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
 /* ********************************************************************************************* *
-*                             PRIVATE VARIABLES
-* ********************************************************************************************* */
+ *                             PRIVATE VARIABLES
+ * ********************************************************************************************* */
 
 static unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
 static unsigned int FileTypeValues[] = { OCI_CFILE, OCI_BFILE };
@@ -52,28 +38,18 @@ static unsigned int FileTypeValues[] = { OCI_CFILE, OCI_BFILE };
 OCI_File * OCI_FileInit
 (
     OCI_Connection *con,
-    OCI_File      **pfile,
+    OCI_File       *file,
     OCILobLocator  *handle,
     ub4             type
 )
 {
-    OCI_File *file = NULL;
-    boolean   res  = FALSE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK(NULL == pfile, NULL);
+    OCI_ALLOCATE_DATA(OCI_IPC_FILE, file, 1);
 
-    if (!*pfile)
+    if (OCI_STATUS)
     {
-        *pfile = (OCI_File *) OCI_MemAlloc(OCI_IPC_FILE, sizeof(*file), (size_t) 1, TRUE);
-    }
-
-    if (*pfile)
-    {
-
-        res = TRUE;
-
-        file = *pfile;
-
         file->type   = type;
         file->con    = con;
         file->handle = handle;
@@ -97,10 +73,7 @@ OCI_File * OCI_FileInit
 
             file->hstate = OCI_OBJECT_ALLOCATED;
 
-            res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid *) file->con->env,
-                                                     (dvoid **) (void *) &file->handle,
-                                                     (ub4) OCI_DTYPE_LOB,
-                                                     (size_t) 0, (dvoid **) NULL));
+            OCI_STATUS = OCI_DescriptorAlloc((dvoid *)file->con->env, (dvoid **)(void *)&file->handle, (ub4)OCI_DTYPE_LOB);
         }
         else if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
         {
@@ -110,10 +83,10 @@ OCI_File * OCI_FileInit
 
     /* check for failure */
 
-    if (!res && file)
+    if (!OCI_STATUS && file)
     {
         OCI_FileFree(file);
-        *pfile = file = NULL;
+        file = NULL;
     }
 
     return file;
@@ -128,49 +101,33 @@ boolean OCI_FileGetInfo
     OCI_File *file
 )
 {
-    boolean res = TRUE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == file, FALSE)
 
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
+
     /* directory name */
 
-    if (res)
-    {
-        if (!file->dir)
-        {
-            file->dir = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext),
-                                                (size_t) (OCI_SIZE_DIRECTORY + 1), TRUE);
+    OCI_ALLOCATE_DATA(OCI_IPC_STRING, file->dir, OCI_SIZE_DIRECTORY + 1)
 
-            res = (NULL != file->dir);
-        }
-        else
-        {
-            file->dir[0] = 0;
-        }
+    if (OCI_STATUS)
+    {
+        file->dir[0] = 0;
     }
 
     /* file name */
 
-    if (res)
+    OCI_ALLOCATE_DATA(OCI_IPC_STRING, file->name, OCI_SIZE_FILENAME + 1)
+    
+    if (OCI_STATUS)
     {
-        if (!file->name )
-        {
-            file->name = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext),
-                                                (size_t)( OCI_SIZE_FILENAME + 1),
-                                                TRUE);
-
-            res = (NULL != file->name);
-
-        }
-        else
-        {
-            file->name[0] = 0;
-        }
+        file->name[0] = 0;
     }
 
     /* retrieve name */
 
-    if (res)
+    if (OCI_STATUS)
     {
         dbtext *dbstr1 = NULL;
         dbtext *dbstr2 = NULL;
@@ -188,10 +145,8 @@ boolean OCI_FileGetInfo
         usize1 = (ub2) dbsize1;
         usize2 = (ub2) dbsize2;
 
-        OCI_CALL2
+        OCI_EXEC
         (
-            res, file->con,
-
             OCILobFileGetName(file->con->env, file->con->err, file->handle,
                               (OraText *) dbstr1, (ub2*) &usize1,
                               (OraText *) dbstr2, (ub2*) &usize2)
@@ -207,7 +162,7 @@ boolean OCI_FileGetInfo
         OCI_StringReleaseOracleString(dbstr2);
     }
 
-    return res;
+    return OCI_STATUS;
 }
 
 /* ********************************************************************************************* *
@@ -224,15 +179,15 @@ OCI_File * OCI_API OCI_FileCreate
     unsigned int    type
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_File *, NULL)
+    OCI_CALL_ENTER(OCI_File *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"))
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"))
+    OCI_RETVAL = OCI_FileInit(con, NULL, NULL, type);
+    OCI_STATUS = (NULL != OCI_RETVAL);
 
-    call_retval = OCI_FileInit(con, &call_retval, NULL, type);
-    call_status = (NULL != call_retval);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -244,10 +199,10 @@ boolean OCI_API OCI_FileFree
     OCI_File *file
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-    OCI_CHECK_OBJECT_FETCHED(file)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CHECK_OBJECT_FETCHED(file)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
     OCI_FREE(file->dir)
     OCI_FREE(file->name)
@@ -262,9 +217,9 @@ boolean OCI_API OCI_FileFree
         OCI_FREE(file)
     }
 
-    call_retval = call_status = TRUE;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -280,21 +235,20 @@ OCI_File ** OCI_API OCI_FileArrayCreate
 {
     OCI_Array *arr = NULL;
 
-    OCI_LIB_CALL_ENTER(OCI_File **, NULL)
+    OCI_CALL_ENTER(OCI_File **, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"))
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"))
-
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_FILE, type, sizeof(OCILobLocator *),
-                          sizeof(OCI_File), OCI_DTYPE_LOB, NULL);
+    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_FILE, type, sizeof(OCILobLocator *), sizeof(OCI_File), OCI_DTYPE_LOB, NULL);
+    OCI_STATUS = (NULL != arr);
 
     if (arr)
     {
-        call_retval = (OCI_File **)arr->tab_obj;
-        call_status = (NULL != call_retval);
+        OCI_RETVAL = (OCI_File **)arr->tab_obj;
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -306,13 +260,12 @@ boolean OCI_API OCI_FileArrayFree
     OCI_File **files
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, files)
 
-    OCI_CHECK_PTR(OCI_IPC_ARRAY, files)
+    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **)files);
 
-    call_retval = call_status = OCI_ArrayFreeFromHandles((void **)files);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -328,10 +281,10 @@ boolean OCI_API OCI_FileSeek
 {
     big_uint size = 0;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-    OCI_CHECK_ENUM_VALUE(file->con, NULL, mode, SeekModeValues, OTEXT("Seek Mode"))
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CHECK_ENUM_VALUE(file->con, NULL, mode, SeekModeValues, OTEXT("Seek Mode"))
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
     size = OCI_FileGetSize(file);
 
@@ -342,7 +295,7 @@ boolean OCI_API OCI_FileSeek
             if ((offset + file->offset - 1) <= size) 
             {
                 file->offset += offset;
-                call_retval   = TRUE;
+                OCI_RETVAL   = TRUE;
             }
             break;
         }
@@ -351,7 +304,7 @@ boolean OCI_API OCI_FileSeek
             if (offset <= size) 
             {
                 file->offset = offset + 1;
-                call_retval  = TRUE;
+                OCI_RETVAL  = TRUE;
             }
             break;
         }
@@ -360,15 +313,13 @@ boolean OCI_API OCI_FileSeek
             if (offset <= size) 
             {
                 file->offset = size - offset + 1;
-                call_retval  = TRUE;
+                OCI_RETVAL  = TRUE;
             }
             break;
         }
     }
 
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -380,14 +331,13 @@ big_uint OCI_API OCI_FileGetOffset
     OCI_File *file
 )
 {
-    OCI_LIB_CALL_ENTER(big_uint, 0)
+    OCI_CALL_ENTER(big_uint, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_RETVAL = file->offset - 1;
 
-    call_retval = file->offset - 1;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -404,14 +354,14 @@ unsigned int OCI_API OCI_FileRead
     ub4 size_in  = 0;
     ub4 size_out = 0;
 
-    OCI_LIB_CALL_ENTER(unsigned int, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-    OCI_CHECK_MIN(file->con, NULL, len, 1)
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CHECK_MIN(file->con, NULL, len, 1)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
     size_out = size_in = len;
 
-    call_status = TRUE;
+    OCI_STATUS = TRUE;
 
 #ifdef OCI_LOB2_API_ENABLED
 
@@ -420,10 +370,8 @@ unsigned int OCI_API OCI_FileRead
         ub8 size_char = (ub8) len;
         ub8 size_byte = (ub8) size_in;
 
-        OCI_CALL2
+        OCI_EXEC
         (
-            call_status, file->con,
-
             OCILobRead2(file->con->cxt, file->con->err,
                         file->handle, &size_byte,
                         &size_char, (ub8) file->offset,
@@ -431,6 +379,8 @@ unsigned int OCI_API OCI_FileRead
                         (ub1) OCI_ONE_PIECE, (dvoid *) NULL,
                         NULL, (ub2) 0, (ub1) SQLCS_IMPLICIT)
         )
+
+        size_out = (ub4) size_byte;
     }
 
     else
@@ -440,10 +390,8 @@ unsigned int OCI_API OCI_FileRead
     {
         ub4 offset = (ub4) file->offset;
 
-        OCI_CALL2
+        OCI_EXEC
         (
-            call_status, file->con,
-
             OCILobRead(file->con->cxt, file->con->err,
                        file->handle,  &size_out, offset,
                        buffer, size_in, (dvoid *) NULL,
@@ -451,13 +399,14 @@ unsigned int OCI_API OCI_FileRead
         )
     }
 
-    if (call_status)
+    if (OCI_STATUS)
     {
         file->offset += (big_uint) size_out;
-        call_retval   = size_out;
+        
+        OCI_RETVAL = size_out;
     }
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -469,14 +418,7 @@ unsigned int OCI_API OCI_FileGetType
     OCI_File *file
 )
 {
-    OCI_LIB_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-
-    call_retval = file->type;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_FILE, file, type, file->con, NULL, file->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -490,23 +432,15 @@ big_uint OCI_API OCI_FileGetSize
 {
     big_uint size = 0;
 
-    OCI_LIB_CALL_ENTER(big_uint, 0)
-
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(big_uint, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
 #ifdef OCI_LOB2_API_ENABLED
 
     if (OCILib.use_lob_ub8)
     {
-        OCI_CALL2
-        (
-            call_status, file->con,
-
-            OCILobGetLength2(file->con->cxt, file->con->err, file->handle, (ub8 *) &size)
-        )
-
+        OCI_EXEC(OCILobGetLength2(file->con->cxt, file->con->err, file->handle, (ub8 *) &size))
     }
     else
 
@@ -515,19 +449,14 @@ big_uint OCI_API OCI_FileGetSize
     {
         ub4 size32 = (ub4) size;
 
-        OCI_CALL2
-        (
-            call_status, file->con,
-
-            OCILobGetLength(file->con->cxt, file->con->err, file->handle, &size32)
-        )
+        OCI_EXEC(OCILobGetLength(file->con->cxt, file->con->err, file->handle, &size32))
 
         size = (big_uint) size32;
     }
 
-    call_retval = size;
+    OCI_RETVAL = size;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -539,24 +468,13 @@ boolean OCI_API OCI_FileExists
     OCI_File *file
 )
 {
-    boolean value = FALSE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_EXEC(OCILobFileExists(file->con->cxt, file->con->err, file->handle, &OCI_RETVAL))
 
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, file->con,
-
-        OCILobFileExists(file->con->cxt, file->con->err, file->handle, &value)
-    )
-
-    call_retval = value;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -575,19 +493,15 @@ boolean OCI_API OCI_FileSetName
     int     dbsize1 = -1;
     int     dbsize2 = -1;
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
     dbstr1 = OCI_StringGetOracleString(dir,  &dbsize1);
     dbstr2 = OCI_StringGetOracleString(name, &dbsize2);
 
-    OCI_CALL2
+    OCI_EXEC
     (
-        call_status, file->con,
-
         OCILobFileSetName(file->con->env, file->con->err,
                           &file->handle,
                           (OraText *) dbstr1, (ub2) dbsize1,
@@ -597,14 +511,14 @@ boolean OCI_API OCI_FileSetName
     OCI_StringReleaseOracleString(dbstr1);
     OCI_StringReleaseOracleString(dbstr2);
 
-    if (call_status)
+    if (OCI_STATUS)
     {
-        call_status = OCI_FileGetInfo(file);
+        OCI_STATUS = OCI_FileGetInfo(file);
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -616,20 +530,18 @@ const otext * OCI_API OCI_FileGetDirectory
     OCI_File *file
 )
 {
-    OCI_LIB_CALL_ENTER(const otext *, NULL)
+    OCI_CALL_ENTER(const otext *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-
-    call_status = TRUE;
-
-    if (!file->dir || !file->dir[0])
+    if (!OCI_STRING_VALID(file->dir))
     {
-        call_status = OCI_FileGetInfo(file);
+        OCI_STATUS = OCI_FileGetInfo(file);
     }
 
-    call_retval = file->dir;
+    OCI_RETVAL = file->dir;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -641,20 +553,18 @@ const otext * OCI_API OCI_FileGetName
     OCI_File *file
 )
 {
-    OCI_LIB_CALL_ENTER(const otext *, NULL)
+    OCI_CALL_ENTER(const otext *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-
-    call_status = TRUE;
-
-    if (!file->name || !file->name[0])
+    if (!OCI_STRING_VALID(file->name))
     {
-        call_status = OCI_FileGetInfo(file);
+        OCI_STATUS = OCI_FileGetInfo(file);
     }
 
-    call_retval = file->name;
+    OCI_RETVAL = file->name;
    
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -666,27 +576,20 @@ boolean OCI_API OCI_FileOpen
     OCI_File *file
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_EXEC(OCILobFileOpen(file->con->cxt, file->con->err, file->handle, (ub1) OCI_LOB_READONLY))
 
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, file->con,
-
-        OCILobFileOpen(file->con->cxt, file->con->err, file->handle, (ub1) OCI_LOB_READONLY)
-    )
-
-    if (call_status)
+    if (OCI_STATUS)
     {
         file->con->nb_files++;
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -698,24 +601,13 @@ boolean OCI_API OCI_FileIsOpen
     OCI_File *file
 )
 {
-    boolean value = FALSE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, file->con,
-
-        OCILobFileIsOpen(file->con->cxt, file->con->err, file->handle, &value)
-    )
-
-    call_retval = value;
+    OCI_EXEC(OCILobFileIsOpen(file->con->cxt, file->con->err, file->handle, &OCI_RETVAL))
     
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -727,27 +619,20 @@ boolean OCI_API OCI_FileClose
     OCI_File *file
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_EXEC(OCILobFileClose(file->con->cxt, file->con->err, file->handle))
 
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, file->con,
-
-        OCILobFileClose(file->con->cxt, file->con->err, file->handle)
-    )
-
-    if (call_status)
+    if (OCI_STATUS)
     {
         file->con->nb_files--;
     }
 
-    call_retval = call_status;
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -760,25 +645,14 @@ boolean OCI_API OCI_FileIsEqual
     OCI_File *file2
 )
 {
-    boolean value = FALSE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file2)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_EXEC(OCILobIsEqual(file->con->env, file->handle, file2->handle, &OCI_RETVAL))
 
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-    OCI_CHECK_PTR(OCI_IPC_FILE, file2)
-
-    call_status = TRUE;
-
-    OCI_CALL2
-    (
-        call_status, file->con,
-
-        OCILobIsEqual(file->con->env, file->handle, file2->handle, &value)
-    )
-
-    call_retval = value;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -791,40 +665,23 @@ boolean OCI_API OCI_FileAssign
     OCI_File *file_src
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-    OCI_CHECK_PTR(OCI_IPC_FILE, file_src)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
+    OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file_src)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
     if ((OCI_OBJECT_ALLOCATED == file->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == file->hstate))
     {
-        OCI_CALL2
-        (
-            call_status, file->con,
-
-            OCILobLocatorAssign(file->con->cxt, file->con->err, file_src->handle, &file->handle)
-        )
+        OCI_EXEC(OCILobLocatorAssign(file->con->cxt, file->con->err, file_src->handle, &file->handle))
     }
     else
     {
-        OCI_CALL2
-        (
-            call_status, file->con,
-
-            OCILobAssign(file->con->env, file->con->err, file_src->handle, &file->handle)
-        )
+        OCI_EXEC(OCILobAssign(file->con->env, file->con->err, file_src->handle, &file->handle))
     }
 
-    if (call_status)
-    {
-        OCI_FileGetInfo(file);
-    }
+    OCI_RETVAL = OCI_STATUS = OCI_STATUS && OCI_FileGetInfo(file);
 
-    call_retval = call_status;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -836,12 +693,5 @@ OCI_Connection * OCI_API OCI_FileGetConnection
     OCI_File *file
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Connection*,  NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_FILE, file)
-
-    call_retval = file->con;
-    call_status = TRUE;
-
-    OCI_LIB_CALL_EXIT()
+    OCI_GET_PROP(OCI_Connection *, NULL, OCI_IPC_FILE, file, con, file->con, NULL, file->con->err)
 }

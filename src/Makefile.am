@@ -1,4 +1,4 @@
-# Copyright (C) 2007 Vincent Rogier <vince_rogier@yahoo.fr>
+# Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
 #  
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without 
@@ -8,7 +8,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-INCLUDES= @ORACLE_INCLUDES@ -I$(top_srcdir)/include
+AM_CPPFLAGS= @ORACLE_INCLUDES@ -I$(top_srcdir)/include
 
 lib_LTLIBRARIES= libocilib.la
 

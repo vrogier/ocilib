@@ -1,36 +1,22 @@
 /*
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |                               OCILIB - C Driver for Oracle                              |
-    |                                                                                         |
-    |                                (C Wrapper for Oracle OCI)                               |
-    |                                                                                         |
-    |                              Website : http://www.ocilib.net                            |
-    |                                                                                         |
-    |             Copyright (c) 2007-2015 Vincent ROGIER <vince.rogier@ocilib.net>            |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-    |                                                                                         |
-    |             This library is free software; you can redistribute it and/or               |
-    |             modify it under the terms of the GNU Lesser General Public                  |
-    |             License as published by the Free Software Foundation; either                |
-    |             version 2 of the License, or (at your option) any later version.            |
-    |                                                                                         |
-    |             This library is distributed in the hope that it will be useful,             |
-    |             but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-    |             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU           |
-    |             Lesser General Public License for more details.                             |
-    |                                                                                         |
-    |             You should have received a copy of the GNU Lesser General Public            |
-    |             License along with this library; if not, write to the Free                  |
-    |             Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.          |
-    |                                                                                         |
-    +-----------------------------------------------------------------------------------------+
-*/
-
-/* --------------------------------------------------------------------------------------------- *
- * $Id: agent.c, Vincent Rogier $
- * --------------------------------------------------------------------------------------------- */
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "ocilib_internal.h"
 
@@ -45,30 +31,19 @@
 OCI_Agent * OCI_AgentInit
 (
     OCI_Connection *con,
-    OCI_Agent     **pagent,
+    OCI_Agent      *agent,
     OCIAQAgent     *handle,
     const otext    *name,
     const otext    *address
 )
 {
-    OCI_Agent *agent = NULL;
-    boolean    res   = FALSE;
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK(NULL == pagent, NULL)
+    OCI_ALLOCATE_DATA(OCI_IPC_AGENT, agent, 1);
 
-    /* allocate agent structure */
-
-    if (!*pagent)
+    if (OCI_STATUS)
     {
-        *pagent = (OCI_Agent *) OCI_MemAlloc(OCI_IPC_AGENT, sizeof(*agent),  (size_t) 1, TRUE);
-    }
-
-    if (*pagent)
-    {
-        res = TRUE;
-
-        agent = *pagent;
-
         OCI_FREE(agent->name)
         OCI_FREE(agent->address)
 
@@ -79,10 +54,7 @@ OCI_Agent * OCI_AgentInit
         {
             agent->hstate = OCI_OBJECT_ALLOCATED;
 
-            res = OCI_SUCCESSFUL(OCI_DescriptorAlloc((dvoid * ) agent->con->env,
-                                                     (dvoid **) &agent->handle,
-                                                     OCI_DTYPE_AQAGENT,
-                                                     (size_t) 0, (dvoid **) NULL));
+            OCI_STATUS = OCI_DescriptorAlloc((dvoid *)agent->con->env, (dvoid **)&agent->handle, OCI_DTYPE_AQAGENT);
         }
         else
         {
@@ -91,22 +63,22 @@ OCI_Agent * OCI_AgentInit
 
         /* set name attribute if provided */
 
-        if (res && name && name[0])
+        if (OCI_STATUS && OCI_STRING_VALID(name))
         {
-            res = OCI_AgentSetName(agent, name);
+            OCI_STATUS = OCI_AgentSetName(agent, name);
         }
 
         /* set address attribute if provided */
 
-        if (res && address && address[0])
+        if (OCI_STATUS && OCI_STRING_VALID(address))
         {
-            res = OCI_AgentSetAddress(agent, address);
+            OCI_STATUS = OCI_AgentSetAddress(agent, address);
         }
     }
 
     /* check for failure */
 
-    if (!res && agent)
+    if (!OCI_STATUS && agent)
     {
         OCI_AgentFree(agent);
         agent = NULL;
@@ -130,14 +102,14 @@ OCI_Agent * OCI_API OCI_AgentCreate
     const otext    *address
 )
 {
-    OCI_LIB_CALL_ENTER(OCI_Agent *, NULL)
+    OCI_CALL_ENTER(OCI_Agent *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_RETVAL = OCI_AgentInit(con, NULL, NULL, name, address);
+    OCI_STATUS = (NULL != OCI_RETVAL);
 
-    call_retval = OCI_AgentInit(con, &call_retval, NULL, name, address);
-    call_status = (NULL != call_retval);
-
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -149,11 +121,9 @@ boolean OCI_API OCI_AgentFree
     OCI_Agent *agent
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
-
-    OCI_CHECK_PTR(OCI_IPC_AGENT, agent)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(agent->con)
 
     if (OCI_OBJECT_ALLOCATED == agent->hstate)
     {
@@ -164,7 +134,7 @@ boolean OCI_API OCI_AgentFree
     OCI_FREE(agent->name)
     OCI_FREE(agent)
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -176,21 +146,19 @@ const otext * OCI_API OCI_AgentGetName
     OCI_Agent *agent
 )
 {
-    OCI_LIB_CALL_ENTER(otext *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_AGENT, agent)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(otext *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(agent->con)
 
     if (!agent->name)
     {
-        call_status = OCI_GetStringAttribute(agent->con, agent->handle,  OCI_DTYPE_AQAGENT,
-                                             OCI_ATTR_AGENT_NAME,  &agent->name);
+        OCI_STATUS = OCI_GetStringAttribute(agent->con, agent->handle,  OCI_DTYPE_AQAGENT,
+                                            OCI_ATTR_AGENT_NAME,  &agent->name);
     }
 
-    call_retval = agent->name;
+    OCI_RETVAL = agent->name;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -203,14 +171,14 @@ boolean OCI_API OCI_AgentSetName
     const otext *name
 )
 {
-    OCI_LIB_CALL_ENTER(boolean , FALSE)
-        
-    OCI_CHECK_PTR(OCI_IPC_AGENT, agent)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(agent->con)
 
-    call_retval = call_status = OCI_SetStringAttribute(agent->con, agent->handle,  OCI_DTYPE_AQAGENT,
-                                                       OCI_ATTR_AGENT_NAME, &agent->name, name);
+    OCI_STATUS = OCI_SetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_NAME, &agent->name, name);
+    OCI_RETVAL = OCI_STATUS;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -222,21 +190,19 @@ const otext * OCI_API OCI_AgentGetAddress
     OCI_Agent *agent
 )
 {
-    OCI_LIB_CALL_ENTER(otext *, NULL)
-
-    OCI_CHECK_PTR(OCI_IPC_AGENT, agent)
-
-    call_status = TRUE;
+    OCI_CALL_ENTER(otext *, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(agent->con)
 
     if (!agent->address)
     {
-        call_status = OCI_GetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
-                                             OCI_ATTR_AGENT_ADDRESS, &agent->address);
+        OCI_STATUS = OCI_GetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
+                                            OCI_ATTR_AGENT_ADDRESS, &agent->address);
     }
 
-    call_retval = agent->address;
+    OCI_RETVAL = agent->address;
 
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -249,12 +215,12 @@ boolean OCI_API OCI_AgentSetAddress
     const otext *address
 )
 {
-    OCI_LIB_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(agent->con)
 
-    OCI_CHECK_PTR(OCI_IPC_AGENT, agent)
-
-    call_retval = call_status = OCI_SetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
-                                                       OCI_ATTR_AGENT_ADDRESS, &agent->address, address);
+    OCI_STATUS = OCI_SetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_ADDRESS, &agent->address, address);
+    OCI_RETVAL = OCI_STATUS;
     
-    OCI_LIB_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
