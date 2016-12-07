@@ -97,15 +97,18 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
         {
             if (OCI_NUM_NUMBER == bnd->subtype)
             {
-                OCINumber *src_num = ((OCI_Number *)src)->handle;
-                OCINumber *dst_num = (OCINumber *)(dst + index * sizeof(OCINumber));
+                OCI_Number *src_num = ((OCI_Number **) src)[index];
+                OCINumber  *dst_num = (OCINumber *)(dst + index * sizeof(OCINumber));
 
-                OCI_EXEC(OCINumberAssign(bnd->stmt->con->err, src_num, dst_num))
+                if (src_num)
+                {
+                    OCI_EXEC(OCINumberAssign(bnd->stmt->con->err, src_num->handle, dst_num))
+                }
             }
             else if (OCI_NUM_BIGINT == bnd->subtype)
             {
-                big_int   *src_bint = (big_int *)(src + index * sizeof(big_int));
-                OCINumber *dst_num  = (OCINumber *)dst;
+                big_int   *src_bint = (big_int*)(src + index * sizeof(big_int));
+                OCINumber *dst_num  = (OCINumber *)(dst + index * sizeof(OCINumber));
 
                 OCI_STATUS = OCI_NumberSetNativeValue
                 (
@@ -116,10 +119,13 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
         // OCI_Date binds
         else if (OCI_CDT_DATETIME == bnd->type)
         {
-            OCIDate *dst_date = (OCIDate *)(dst + index * sizeof(OCIDate));
-            OCIDate *src_date = ((OCI_Date *)src)->handle;
+            OCI_Date *src_date = ((OCI_Date **)src)[index];
+            OCIDate *dst_date  = (OCIDate *)(dst + index * sizeof(OCIDate));
 
-            OCI_EXEC(OCIDateAssign(bnd->stmt->con->err, src_date, dst_date))
+            if (src_date)
+            {
+                OCI_EXEC(OCIDateAssign(bnd->stmt->con->err, src_date->handle, dst_date))
+            }
         }
         // String binds that may required conversion on systems where wchar_t is UTF32
         else if (OCI_CDT_TEXT == bnd->type)
@@ -134,7 +140,11 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
         // otherwise we have an ocilib handle based type
         else
         {
-            ((void**)dst)[index] = ((OCI_Datatype *)src)->handle;
+            OCI_Datatype *src_handle = ((OCI_Datatype **)src)[index];
+            if (src_handle)
+            {
+                ((void**)dst)[index] = src_handle->handle;
+            }
         }
     }
 
@@ -154,7 +164,7 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
     {
         if (OCI_CDT_OBJECT == bnd->type && bnd->buffer.inds[index] != OCI_IND_NULL && src)
         {
-            bnd->buffer.obj_inds[index] = ((OCI_Object *)src)->tab_ind;
+            bnd->buffer.obj_inds[index] = (((OCI_Object **)src)[index])->tab_ind;
         }
         else
         {
@@ -185,15 +195,18 @@ boolean OCI_BindUpdate(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
     {
         if (OCI_NUM_NUMBER == bnd->subtype)
         {
-            OCINumber *src_num = (OCINumber *)(src + index * sizeof(OCINumber));
-            OCINumber *dst_num = ((OCI_Number *)dst)->handle;
+            OCINumber  *src_num = (OCINumber *)(src + index * sizeof(OCINumber));
+            OCI_Number *dst_num = ((OCI_Number **)dst)[index];
 
-            OCI_EXEC(OCINumberAssign(bnd->stmt->con->err, src_num, dst_num))
+            if (dst_num)
+            {
+                OCI_EXEC(OCINumberAssign(bnd->stmt->con->err, src_num, dst_num->handle))
+            }
         }
         else if (OCI_NUM_BIGINT == bnd->subtype)
         {
             OCINumber *src_number = (OCINumber *)(src + index * sizeof(OCINumber));
-            big_int   *dst_bint   = (big_int *)(dst + index * sizeof(big_int));
+            big_int   *dst_bint = (big_int*)(dst + index * sizeof(big_int));
 
             OCI_STATUS = OCI_NumberGetNativeValue
             (
@@ -204,10 +217,13 @@ boolean OCI_BindUpdate(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
     // OCI_Date binds
     else if (OCI_CDT_DATETIME == bnd->type)
     {
-        OCIDate *dst_date = ((OCI_Date *)dst)->handle;
-        OCIDate *src_date = (OCIDate *)(src + index * sizeof(OCIDate));
+        OCIDate  *src_date = (OCIDate *)(src + index * sizeof(OCIDate));
+        OCI_Date *dst_date = ((OCI_Date **)dst)[index];
 
-        OCI_EXEC(OCIDateAssign(bnd->stmt->con->err, src_date, dst_date))
+        if (dst_date)
+        {
+            OCI_EXEC(OCIDateAssign(bnd->stmt->con->err, src_date, dst_date->handle))
+        }
     }
     // String binds that may required conversion on systems where wchar_t is UTF32
     else if (OCI_CDT_TEXT == bnd->type)
@@ -223,7 +239,7 @@ boolean OCI_BindUpdate(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
     {
         /* update object indicator with bind object indicator pointer */
 
-        ((OCI_Object *)dst)->tab_ind = (sb2*)bnd->buffer.obj_inds[index];
+        (((OCI_Object **)dst)[index])->tab_ind = (sb2*)bnd->buffer.obj_inds[index];
     }
 
     return OCI_STATUS;
@@ -329,7 +345,7 @@ boolean OCI_BindCheckAll
                 {
                     for (j = 0; j < bnd->buffer.count && OCI_STATUS; j++)
                     {
-                        OCI_STATUS = OCI_BindCheck(bnd, (ub1*)bnd->input[j], (ub1*)bnd->buffer.data, j);
+                        OCI_STATUS = OCI_BindCheck(bnd, (ub1*)bnd->input, (ub1*)bnd->buffer.data, j);
                     }
                 }
                 else
@@ -385,7 +401,7 @@ boolean OCI_BindUpdateAll
                 {
                     for (j = 0; j < bnd->buffer.count && OCI_STATUS; j++)
                     {
-                        OCI_STATUS = OCI_BindUpdate(bnd, (ub1*)bnd->buffer.data, (ub1*)bnd->input[j], j);
+                        OCI_STATUS = OCI_BindUpdate(bnd, (ub1*)bnd->buffer.data, (ub1*)bnd->input, j);
                     }
                 }
                 else

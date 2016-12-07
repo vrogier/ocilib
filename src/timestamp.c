@@ -944,7 +944,7 @@ boolean OCI_API OCI_TimestampSysTimestamp
         OCI_STATUS = OCI_TimestampConvert(tmsp, tmp);
     }
 
-    if (tmsp != tmp)
+    if (tmp && tmsp != tmp)
     {
         OCI_TimestampFree(tmp);
     }
