@@ -73,6 +73,9 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
     OCI_RETVAL = OCI_STATUS;                                        \
     OCI_CALL_EXIT()                                                 \
 
+#define OCI_BIND_GET_SCALAR(s, t, i) bnd->is_array ? ((t *) s) + i : (t *) s
+#define OCI_BIND_GET_HANDLE(s, t, i) bnd->is_array ? ((t **) s)[i] : (t *) s
+#define OCI_BIND_GET_BUFFER(d, t, i) (t *)(d + i * sizeof(t))
 
 /* --------------------------------------------------------------------------------------------- *
 * OCI_BindCheck
@@ -97,8 +100,8 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
         {
             if (OCI_NUM_NUMBER == bnd->subtype)
             {
-                OCI_Number *src_num = ((OCI_Number **) src)[index];
-                OCINumber  *dst_num = (OCINumber *)(dst + index * sizeof(OCINumber));
+                OCI_Number *src_num = OCI_BIND_GET_HANDLE(src, OCI_Number, index);
+                OCINumber  *dst_num = OCI_BIND_GET_BUFFER(dst, OCINumber, index);
 
                 if (src_num)
                 {
@@ -107,8 +110,8 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
             }
             else if (OCI_NUM_BIGINT == bnd->subtype)
             {
-                big_int   *src_bint = (big_int*)(src + index * sizeof(big_int));
-                OCINumber *dst_num  = (OCINumber *)(dst + index * sizeof(OCINumber));
+                big_int   *src_bint = OCI_BIND_GET_SCALAR(src, big_int, index);
+                OCINumber *dst_num  = OCI_BIND_GET_BUFFER(dst, OCINumber, index);
 
                 OCI_STATUS = OCI_NumberSetNativeValue
                 (
@@ -119,8 +122,8 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
         // OCI_Date binds
         else if (OCI_CDT_DATETIME == bnd->type)
         {
-            OCI_Date *src_date = ((OCI_Date **)src)[index];
-            OCIDate *dst_date  = (OCIDate *)(dst + index * sizeof(OCIDate));
+            OCI_Date *src_date = OCI_BIND_GET_HANDLE(src, OCI_Date, index);
+            OCIDate  *dst_date = OCI_BIND_GET_BUFFER(dst, OCIDate, index);
 
             if (src_date)
             {
@@ -140,7 +143,8 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
         // otherwise we have an ocilib handle based type
         else
         {
-            OCI_Datatype *src_handle = ((OCI_Datatype **)src)[index];
+            OCI_Datatype *src_handle = OCI_BIND_GET_HANDLE(src, OCI_Datatype, index);      
+
             if (src_handle)
             {
                 ((void**)dst)[index] = src_handle->handle;
@@ -164,7 +168,12 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
     {
         if (OCI_CDT_OBJECT == bnd->type && bnd->buffer.inds[index] != OCI_IND_NULL && src)
         {
-            bnd->buffer.obj_inds[index] = (((OCI_Object **)src)[index])->tab_ind;
+            OCI_Object *obj = OCI_BIND_GET_HANDLE(src, OCI_Object, index);
+
+            if (obj)
+            {
+                bnd->buffer.obj_inds[index] = obj->tab_ind;
+            }
         }
         else
         {
@@ -195,8 +204,8 @@ boolean OCI_BindUpdate(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
     {
         if (OCI_NUM_NUMBER == bnd->subtype)
         {
-            OCINumber  *src_num = (OCINumber *)(src + index * sizeof(OCINumber));
-            OCI_Number *dst_num = ((OCI_Number **)dst)[index];
+            OCINumber  *src_num = OCI_BIND_GET_BUFFER(src, OCINumber, index);
+            OCI_Number *dst_num = OCI_BIND_GET_HANDLE(dst, OCI_Number, index);
 
             if (dst_num)
             {
@@ -205,20 +214,23 @@ boolean OCI_BindUpdate(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
         }
         else if (OCI_NUM_BIGINT == bnd->subtype)
         {
-            OCINumber *src_number = (OCINumber *)(src + index * sizeof(OCINumber));
-            big_int   *dst_bint = (big_int*)(dst + index * sizeof(big_int));
+            OCINumber *src_number = OCI_BIND_GET_BUFFER(src, OCINumber, index);
+            big_int   *dst_bint = OCI_BIND_GET_SCALAR(dst, big_int, index);
 
-            OCI_STATUS = OCI_NumberGetNativeValue
-            (
-               bnd->stmt->con, src_number, (uword) sizeof(big_int), bnd->subtype, bnd->code, dst_bint
-            );
+            if (dst_bint)
+            {
+                OCI_STATUS = OCI_NumberGetNativeValue
+                (
+                   bnd->stmt->con, src_number, (uword) sizeof(big_int), bnd->subtype, bnd->code, dst_bint
+                );
+            }
         }
     }
     // OCI_Date binds
     else if (OCI_CDT_DATETIME == bnd->type)
     {
-        OCIDate  *src_date = (OCIDate *)(src + index * sizeof(OCIDate));
-        OCI_Date *dst_date = ((OCI_Date **)dst)[index];
+        OCIDate  *src_date = OCI_BIND_GET_BUFFER(src, OCIDate, index);
+        OCI_Date *dst_date = OCI_BIND_GET_HANDLE(dst, OCI_Date, index);
 
         if (dst_date)
         {
@@ -239,7 +251,12 @@ boolean OCI_BindUpdate(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
     {
         /* update object indicator with bind object indicator pointer */
 
-        (((OCI_Object **)dst)[index])->tab_ind = (sb2*)bnd->buffer.obj_inds[index];
+        OCI_Object *obj = OCI_BIND_GET_HANDLE(dst, OCI_Object, index);
+
+        if (obj)
+        {
+            obj->tab_ind = (sb2*)bnd->buffer.obj_inds[index];
+        }
     }
 
     return OCI_STATUS;
