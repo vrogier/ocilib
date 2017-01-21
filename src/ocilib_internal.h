@@ -840,7 +840,8 @@ void * OCI_MemRealloc
     void * ptr_mem,
     int    ptr_type,
     size_t block_size,
-    size_t block_count
+    size_t block_count,
+	boolean zero_fill
 );
 
 void OCI_MemFree

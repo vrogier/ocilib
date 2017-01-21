@@ -359,7 +359,7 @@ boolean OCI_FetchPieces
                 {
                     lg->maxsize = (lg->size + trailing_size + bufsize) * char_fact;
 
-                    lg->buffer = (ub1 *) OCI_MemRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER, (size_t) lg->maxsize, 1);
+                    lg->buffer = (ub1 *) OCI_MemRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER, (size_t) lg->maxsize, 1, TRUE);
                 }
 
                 /* update piece info */

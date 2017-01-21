@@ -520,11 +520,36 @@
     if (OCI_STATUS && !ptr)                                                     \
     {                                                                           \
         ptr = OCI_MemAlloc(type, size, (size_t) count, TRUE);                   \
-    }                                                                           \
                                                                                 \
-    OCI_STATUS = (NULL != ptr);                                                 \
+		OCI_STATUS = (NULL != ptr);                                             \
+    }                                                                           \
 
-#define OCI_ALLOCATE_DATA(type, ptr, count)   OCI_ALLOCATE_BUFFER(type,ptr, sizeof(*ptr), count)
+#define OCI_REALLOCATE_BUFFER(type, ptr, size, current, allocated, requested)   \
+                                                                                \
+    if (OCI_STATUS)																\
+	{																			\
+		if (!ptr)																\
+		{                                                                       \
+			ptr = OCI_MemAlloc(type, size, (size_t)requested, TRUE);            \
+	        if (ptr) allocated = requested;                                     \
+      	}                                                                       \
+		else if (current >= allocated)			    	        				\
+		{																		\
+			ptr = OCI_MemRealloc(ptr, type, size, (size_t) requested, TRUE);    \
+            if (ptr) allocated = requested;                                     \
+		}                                                                       \
+                                                                                \
+		OCI_STATUS = (NULL != ptr);                                             \
+    }                                                                           \
+
+
+#define OCI_ALLOCATE_DATA(type, ptr, count)										\
+                                                                                \
+	OCI_ALLOCATE_BUFFER(type, ptr, sizeof(*ptr), count)
+
+#define OCI_REALLOCATE_DATA(type, ptr, cur, alloc, inc)					    	\
+                                                                                \
+	OCI_REALLOCATE_BUFFER(type, ptr, sizeof(*ptr), cur, alloc, inc)
 
 #define OCI_ARRAY_GET_AT(ptr, size, offset)  (((ub1 *) ptr) + (size_t)(size*i))
 #define OCI_ARRAY_SET_AT(ptr, type, offset, value)  *(type*)(OCI_ARRAY_GET_AT(ptr, sizeof(type), i)) = (type) value;
@@ -547,6 +572,8 @@
 #define OCI_FMT_COUNT                   5
 
 #define OCI_ERR_MSG_SIZE                512
+
+#define OCI_BIND_ARRAY_GROWTH_FACTOR	128
 
 #define OCI_DEF_ALIGN                   sizeof(void *)
 

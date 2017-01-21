@@ -1139,7 +1139,7 @@ typedef unsigned int big_uint;
 #define OCI_BIND_BY_POS                     0
 #define OCI_BIND_BY_NAME                    1
 #define OCI_BIND_SIZE                       6
-#define OCI_BIND_MAX                        1024
+#define OCI_BIND_MAX                        65535
 
 /* fetching */
 

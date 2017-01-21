@@ -126,7 +126,7 @@ boolean OCI_StringRequestBuffer
     }
     else if (*buffer_size < request_size)
     {
-        *buffer = (otext *) OCI_MemRealloc(*buffer, OCI_IPC_STRING, (size_t) request_size, (size_t) 1);
+        *buffer = (otext *) OCI_MemRealloc(*buffer, OCI_IPC_STRING, (size_t) request_size, (size_t) 1, FALSE);
     }
 
     if (*buffer)
@@ -424,7 +424,7 @@ otext * OCI_StringFromStringPtr
         }
         else if ((*buffer_size) < ((length + 1) * sizeof(otext)))
         {
-            *buffer = OCI_MemRealloc((void*)  *buffer, OCI_IPC_STRING, sizeof(otext), length + 1);
+            *buffer = OCI_MemRealloc((void*)  *buffer, OCI_IPC_STRING, sizeof(otext), length + 1, FALSE);
         }
 
         if (*buffer)

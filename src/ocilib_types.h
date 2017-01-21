@@ -448,8 +448,10 @@ struct OCI_Statement
     OCI_Bind       **ubinds;            /* array of user bind objects */
     OCI_Bind       **rbinds;            /* array of register bind objects */
     OCI_HashTable   *map;               /* hash table handle for mapping bind name/index */
-    ub2              nb_ubinds;         /* number of elements in the bind array */
-    ub2              nb_rbinds;         /* number of output binds */
+    ub2              nb_ubinds;         /* number of used user binds */
+    ub2              nb_rbinds;         /* number of used register binds */
+    ub2              allocated_ubinds;  /* number of allocated user binds */
+    ub2              allocated_rbinds;  /* number of allocated register binds */
     boolean          bind_reuse;        /* rebind data allowed ? */
     unsigned int     bind_mode;         /* type of binding */
     unsigned int     bind_alloc_mode;   /* type of bind allocation */

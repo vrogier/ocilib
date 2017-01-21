@@ -525,7 +525,14 @@ boolean OCI_BindData
 
             /* allocate user bind array if necessary */
 
-            OCI_ALLOCATE_DATA(OCI_IPC_BIND_ARRAY, stmt->ubinds, OCI_BIND_MAX)
+			OCI_REALLOCATE_DATA
+			(
+				OCI_IPC_BIND_ARRAY, 
+				stmt->ubinds,
+                stmt->nb_ubinds,
+                stmt->allocated_ubinds,
+                min(stmt->nb_ubinds + OCI_BIND_ARRAY_GROWTH_FACTOR, OCI_BIND_MAX)
+			)
         }
         else
         {
@@ -537,8 +544,15 @@ boolean OCI_BindData
 
             /* allocate register bind array if necessary */
 
-            OCI_ALLOCATE_DATA(OCI_IPC_BIND_ARRAY, stmt->rbinds, OCI_BIND_MAX)
-        }
+			OCI_REALLOCATE_DATA
+			(
+				OCI_IPC_BIND_ARRAY,
+				stmt->rbinds, 
+                stmt->nb_rbinds,
+                stmt->allocated_rbinds,
+                min(stmt->nb_rbinds + OCI_BIND_ARRAY_GROWTH_FACTOR, OCI_BIND_MAX)
+			)
+		}
     }
 
     /* checks done */

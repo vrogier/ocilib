@@ -84,7 +84,8 @@ void * OCI_MemRealloc
     void * ptr_mem,
     int    ptr_type,
     size_t block_size,
-    size_t block_count
+    size_t block_count,
+	boolean zero_fill
 )
 {
     OCI_MemoryBlock * mem_block = NULL;
@@ -107,6 +108,11 @@ void * OCI_MemRealloc
             mem_block = (OCI_MemoryBlock *) ptr_new;
 
             size_diff = (big_int) size - mem_block->size;
+
+			if (zero_fill)
+			{
+                memset(((unsigned char *)mem_block) + mem_block->size, 0, size - mem_block->size);
+			}
 
             mem_block->type = ptr_type;
             mem_block->size = (unsigned int) size;
@@ -418,7 +424,7 @@ void * OCI_MemReallocOracleClient
 {
     OCI_NOT_USED(ctxp)
         
-    return OCI_MemRealloc(memptr, OCI_IPC_ORACLE, newsize, 1);
+    return OCI_MemRealloc(memptr, OCI_IPC_ORACLE, newsize, 1, FALSE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
