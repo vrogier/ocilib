@@ -161,11 +161,6 @@ void OCI_ObjectGetStructSize
 
             OCI_ObjectGetAttrInfo(typinf, i + 1, &size2, &align);
 
-            if (align > typinf->align)
-            {
-                typinf->align = align;
-            }
-
             size += size1;
 
             size = ROUNDUP(size, align);
@@ -309,6 +304,12 @@ boolean OCI_ObjectGetAttrInfo
             break;
         }
     }
+
+	if (*p_align > typinf->align)
+	{
+		typinf->align = *p_align;
+	}
+
 
     return TRUE;
 }
