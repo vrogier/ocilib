@@ -29,6 +29,7 @@
 #pragma once
 
 #include <map>
+#include <cstddef>
 
 namespace ocilib
 {
