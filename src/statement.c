@@ -1635,7 +1635,8 @@ boolean OCI_API OCI_ExecuteInternal
 
     /* check result */
 
-    OCI_STATUS = ((OCI_SUCCESS == status) || (OCI_SUCCESS_WITH_INFO == status) || (OCI_NEED_DATA == status));
+    OCI_STATUS = ((OCI_SUCCESS   == status) || (OCI_SUCCESS_WITH_INFO == status) ||
+                  (OCI_NEED_DATA == status) || (OCI_NO_DATA == status));
 
     if (OCI_SUCCESS_WITH_INFO == status)
     {
