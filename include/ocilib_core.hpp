@@ -352,13 +352,6 @@ protected:
 	HandleHolder();
     ~HandleHolder();
 
-#ifdef HAVE_MOVE_SEMANTICS
-
-	HandleHolder(HandleHolder &&other);
-	HandleHolder<T>& operator= (HandleHolder &&other);
-
-#endif
-
     HandleHolder& operator= (const HandleHolder &other);
 
     typedef boolean(OCI_API *HandleFreeFunc)(AnyPointer handle);

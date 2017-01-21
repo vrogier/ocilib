@@ -432,28 +432,6 @@ HandleHolder<T>& HandleHolder<T>::operator = (const HandleHolder<T> &other)
     return *this;
 }
 
-#ifdef HAVE_MOVE_SEMANTICS
-
-template<class T>
-HandleHolder<T>::HandleHolder(HandleHolder<T> && other)  : _smartHandle(nullptr)
-{
-	std::swap(_smartHandle, other._smartHandle);
-}
-
-template<class T>
-HandleHolder<T>& HandleHolder<T>::operator = (HandleHolder<T> && other)
-{
-	if (this != &other)
-	{
-		Release();
-		std::swap(_smartHandle, other._smartHandle);
-	}
-
-	return *this;
-}
-
-#endif
-
 template<class T>
 bool HandleHolder<T>::IsNull() const
 {
