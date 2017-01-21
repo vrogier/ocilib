@@ -85,7 +85,7 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
 {
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
-    if (!bnd || !src || !dst)
+    if (!bnd || !dst)
     {
         return FALSE;
     }
@@ -93,19 +93,22 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
     OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
     // Non-scalar type binds
-    if (bnd->alloc)
+    if (bnd->alloc && src)
     {
         // OCI_Number binds
         if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
         {
             if (OCI_NUM_NUMBER == bnd->subtype)
             {
-                OCI_Number *src_num = OCI_BIND_GET_HANDLE(src, OCI_Number, index);
-                OCINumber  *dst_num = OCI_BIND_GET_BUFFER(dst, OCINumber, index);
-
-                if (src_num)
+                if (bnd->buffer.inds[index] != OCI_IND_NULL)
                 {
-                    OCI_EXEC(OCINumberAssign(bnd->stmt->con->err, src_num->handle, dst_num))
+                    OCI_Number *src_num = OCI_BIND_GET_HANDLE(src, OCI_Number, index);
+                    OCINumber  *dst_num = OCI_BIND_GET_BUFFER(dst, OCINumber, index);
+
+                    if (src_num)
+                    {
+                        OCI_EXEC(OCINumberAssign(bnd->stmt->con->err, src_num->handle, dst_num))
+                    }
                 }
             }
             else if (OCI_NUM_BIGINT == bnd->subtype)
@@ -204,12 +207,15 @@ boolean OCI_BindUpdate(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
     {
         if (OCI_NUM_NUMBER == bnd->subtype)
         {
-            OCINumber  *src_num = OCI_BIND_GET_BUFFER(src, OCINumber, index);
-            OCI_Number *dst_num = OCI_BIND_GET_HANDLE(dst, OCI_Number, index);
-
-            if (dst_num)
+            if (bnd->buffer.inds[index] != OCI_IND_NULL)
             {
-                OCI_EXEC(OCINumberAssign(bnd->stmt->con->err, src_num, dst_num->handle))
+                OCINumber  *src_num = OCI_BIND_GET_BUFFER(src, OCINumber, index);
+                OCI_Number *dst_num = OCI_BIND_GET_HANDLE(dst, OCI_Number, index);
+
+                if (dst_num)
+                {
+                    OCI_EXEC(OCINumberAssign(bnd->stmt->con->err, src_num, dst_num->handle))
+                }
             }
         }
         else if (OCI_NUM_BIGINT == bnd->subtype)
@@ -525,14 +531,14 @@ boolean OCI_BindData
 
             /* allocate user bind array if necessary */
 
-			OCI_REALLOCATE_DATA
-			(
-				OCI_IPC_BIND_ARRAY, 
-				stmt->ubinds,
+            OCI_REALLOCATE_DATA
+            (
+                OCI_IPC_BIND_ARRAY, 
+                stmt->ubinds,
                 stmt->nb_ubinds,
                 stmt->allocated_ubinds,
                 min(stmt->nb_ubinds + OCI_BIND_ARRAY_GROWTH_FACTOR, OCI_BIND_MAX)
-			)
+            )
         }
         else
         {
@@ -544,15 +550,15 @@ boolean OCI_BindData
 
             /* allocate register bind array if necessary */
 
-			OCI_REALLOCATE_DATA
-			(
-				OCI_IPC_BIND_ARRAY,
-				stmt->rbinds, 
+            OCI_REALLOCATE_DATA
+            (
+                OCI_IPC_BIND_ARRAY,
+                stmt->rbinds, 
                 stmt->nb_rbinds,
                 stmt->allocated_rbinds,
                 min(stmt->nb_rbinds + OCI_BIND_ARRAY_GROWTH_FACTOR, OCI_BIND_MAX)
-			)
-		}
+            )
+        }
     }
 
     /* checks done */
