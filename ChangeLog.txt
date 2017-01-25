@@ -8,7 +8,7 @@
             * Even if OCI_BindSetNullAtPos() was called, attempting to bind a non initialized or null OCI_Number led to statement execution failure
         - Issue #68: Fixed OCI_Excecute() behavior with PL/SQL "select into" and no data found
             * When executing a PL/SQL block with inner PL/SQL code like "select into :<bind_variable> from table" that does fetch anything, Oracle call OCIStmtExecute() returns OCI_NO_DATA, which is handled by OCILIB as an failure
-            * Now OCI_Excecute() considers OCI_NO_DATA as success
+            * Now OCI_Execute() considers OCI_NO_DATA as success
             * Updated OCI_GetAffectedRows() documentation for determining if inner PL/SQL "select into" was successful
             
     * Fixes (C++ API) 
