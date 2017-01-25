@@ -1,3 +1,28 @@
+2017-01-25 Version 4.3.1 Vincent Rogier vince.rogier@ocilib.net
+
+    * Fixes (C API) 
+    
+        - Issue #60: Fixed bug introduced in v4.3.0 related to binding arrays of big ints
+        - Issue #64: Fixed structure size computation for Object members that are Objects
+        - Issue #65: Fixed Binding null/non initialized OCI_Number
+            * Even if OCI_BindSetNullAtPos() was called, attempting to bind a non initialized or null OCI_Number led to statement execution failure
+        - Issue #68: Fixed OCI_Excecute() behavior with PL/SQL "select into" and no data found
+            * When executing a PL/SQL block with inner PL/SQL code like "select into :<bind_variable> from table" that does fetch anything, Oracle call OCIStmtExecute() returns OCI_NO_DATA, which is handled by OCILIB as an failure
+            * Now OCI_Excecute() considers OCI_NO_DATA as success
+            * Updated OCI_GetAffectedRows() documentation for determining if inner PL/SQL "select into" was successful
+            
+    * Fixes (C++ API) 
+
+        - Issue #63: Added cstddef header in ocilib_core.hpp as on some platorms/compiler versions, it was reported as needed
+        - Issue #67: Fixed memory leak when using Number objects
+            * Removed attempt to use move semantics 
+            * It is currently causing memory leaks  and does not bring that much as C API handles are already handled using smart pointers
+
+    * Changes:
+        - Request #66: Increased value of OCI_BIND_MAX
+            * Increased value of OCI_BIND_MAX from 1024 to 65535
+            * Now Internal Arrays of OCI_Bind can grow and are reallocated by blocks of 128 binds
+ 
 2016-11-09 Version 4.3.0 Vincent Rogier vince.rogier@ocilib.net
 
     * New Features: 

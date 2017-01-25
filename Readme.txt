@@ -38,7 +38,7 @@ The OCILIB library :
 VERSION 
 ========
 
-4.3.0
+4.3.1
 
 
 FEATURES 
