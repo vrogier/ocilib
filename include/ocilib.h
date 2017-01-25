@@ -3805,6 +3805,12 @@ OCI_EXPORT unsigned int OCI_API OCI_GetSqlErrorPos
  * @note
  * For SELECTs  statements, use OCI_GetRowCount() instead
  *
+ * @note
+ * For PL/SQL blocks performing "select into :<bind>":
+ *  - it returns the number of rows selected from PL/SQL
+ *  - Up to version 4.3.0, OCI_Execute() returned FALSE and generated an error ORA-01403 - "No Data Found"
+ *  - From version 4.3.1, OCI_Execute() returns 0 if no data found, otherwise the number of selected rows
+ *
  */
 
 OCI_EXPORT unsigned int OCI_API OCI_GetAffectedRows
