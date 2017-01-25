@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.3.0</span>
+   &#160;<span id="projectnumber">4.3.1</span>
    </div>
   </td>
  </tr>
@@ -130,7 +130,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <p>This class wraps the OCILIB object handle OCI_Subscription and its related methods</p>
 <dl class="section warning"><dt>Warning</dt><dd><a class="el" href="classocilib_1_1_environment.html#a87b82fd52f230a521416ee49e2ace788a64dea47e6ace702d102d856a6401ecaa">Environment::Events</a> flag must be passed to <a class="el" href="classocilib_1_1_environment.html#a83613d62908717ddf7d0ac797d63120a" title="Initialize the OCILIB environment. ">Environment::Initialize()</a> to be able to use subscriptions </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l06957">6957</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l06958">6958</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a class="anchor" id="a9eeec89f2f59ad49a7db7501a41b96f9"></a>
 <div class="memitem">
@@ -145,7 +145,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <p><a class="el" href="classocilib_1_1_subscription.html" title="Subscription to database or objects changes. ">Subscription</a> changes flags. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_subscription.html#aa2667ca0384af70f0c17d6bdc28ed082" title="Subscription changes flags values. ">Subscription::ChangeTypesValues</a> </p>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l06996">6996</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l06997">6997</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -176,7 +176,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l06977">6977</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib_8hpp_source.html#l06978">6978</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -251,7 +251,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Requires Oracle Client 10gR2 or above </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l06500">6500</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l06478">6478</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p>References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="group___ocilib_c_api_subscriptions.html#ga78afd31aa61d0ce04c535cd669e58e07">OCI_SubscriptionRegister()</a>, and <a class="el" href="group___ocilib_c_api_subscriptions.html#gaee7e14ee05f2368b4843aaf61d284341">OCI_SubscriptionUnregister()</a>.</p>
 
@@ -283,7 +283,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <dd>
 If the database connection passed to <a class="el" href="classocilib_1_1_subscription.html#a44f8bca8a9479fe38dde565890850389" title="Register a notification against the given database. ">Register()</a> has been closed by the time that the application calls <a class="el" href="classocilib_1_1_subscription.html#a1f6e12327beee0faef2d15e0244d090a" title="Unregister a previously registered notification. ">Unregister()</a>, the library internally reconnects to the given database, performs the deregistration and then disconnects </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l06509">6509</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l06487">6487</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 </div>
 </div>
@@ -311,7 +311,7 @@ If the database connection passed to <a class="el" href="classocilib_1_1_subscri
 <p>Return the connection associated with a subscription handle. </p>
 <dl class="section note"><dt>Note</dt><dd>It may return a null connection object if the connection used at <a class="el" href="classocilib_1_1_subscription.html#a44f8bca8a9479fe38dde565890850389" title="Register a notification against the given database. ">Register()</a> time has been closed </dd></dl>
 
-<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l06540">6540</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p>Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l06518">6518</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p>References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_subscriptions.html#ga748e045e9c97b31e83cd52926ba62509">OCI_SubscriptionGetConnection()</a>.</p>
 
@@ -323,7 +323,7 @@ If the database connection passed to <a class="el" href="classocilib_1_1_subscri
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_subscription.html">Subscription</a></li>
-    <li class="footer">Generated on Wed Nov 9 2016 21:12:52 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed Jan 25 2017 22:59:35 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

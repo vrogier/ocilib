@@ -1,11 +1,10 @@
 ---
 author: admin
 comments: true
-date: 2016-11-09 22:35:00+01:00
+date: 2017-01-25 22:35:00+01:00
 layout: page
 slug: home
 title: Home
-wordpress_id: 2
 ---
 
 Welcome to **OCILIB - C and C++ Driver for Oracle** website !
@@ -26,7 +25,7 @@ The OCILIB library  :
   
 ## Latest version
 
-The latest version is [version 4.3.0 (2016-11-09)]({{site.projecturl}}/releases/)
+The latest version is [version 4.3.1 (2017-01-25)]({{site.projecturl}}/releases/)
 <br/>
 <br/>
 [![Build Status](https://img.shields.io/travis/vrogier/ocilib/master.svg)](https://travis-ci.org/vrogier/ocilib)
@@ -36,7 +35,7 @@ The latest version is [version 4.3.0 (2016-11-09)]({{site.projecturl}}/releases/
 Github downloads: <img alt="Github downloads" src="https://img.shields.io/github/downloads/vrogier/ocilib/total.svg"/>
 <br/>
 <br/>
-SF.NETdownloads: <img alt="SF.NET downloads" src="https://img.shields.io/sourceforge/dt/orclib.svg"/>
+SF.NET downloads: <img alt="SF.NET downloads" src="https://img.shields.io/sourceforge/dt/orclib.svg"/>
 <br/>
  
 ## Recent Posts

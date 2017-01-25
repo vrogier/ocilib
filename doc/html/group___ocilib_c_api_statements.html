@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.3.0</span>
+   &#160;<span id="projectnumber">4.3.1</span>
    </div>
   </td>
  </tr>
@@ -476,7 +476,14 @@ This call prepares the statement (internal call to <a class="el" href="group___o
 <li>For INSERTs : number of rows inserted</li>
 <li>For DELETEs : number of rows deleted</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>For SELECTs statements, use <a class="el" href="group___ocilib_c_api_fetching.html#ga93bd9197720088dbda2bef593ad1c07c" title="Retrieve the number of rows fetched so far. ">OCI_GetRowCount()</a> instead </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For SELECTs statements, use <a class="el" href="group___ocilib_c_api_fetching.html#ga93bd9197720088dbda2bef593ad1c07c" title="Retrieve the number of rows fetched so far. ">OCI_GetRowCount()</a> instead</dd>
+<dd>
+For PL/SQL blocks performing "select into :&lt;bind&gt;":<ul>
+<li>it returns the number of rows selected from PL/SQL</li>
+<li>Up to version 4.3.0, <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block. ">OCI_Execute()</a> returned FALSE and generated an error ORA-01403 - "No Data Found"</li>
+<li>From version 4.3.1, <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block. ">OCI_Execute()</a> returns 0 if no data found, otherwise the number of selected rows </li>
+</ul>
+</dd></dl>
 
 <p>Referenced by <a class="el" href="classocilib_1_1_statement.html#a5e268232a710bf97f711f74dddc9c134">ocilib::Statement::GetAffectedRows()</a>.</p>
 
@@ -548,7 +555,7 @@ This call prepares the statement (internal call to <a class="el" href="group___o
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Nov 9 2016 21:12:49 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed Jan 25 2017 22:59:33 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

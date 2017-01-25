@@ -1,11 +1,10 @@
 ---
 author: admin
 comments: true
-date: 2016-11-09 22:35:00+01:00
+date: 2017-01-25 22:35:00+01:00
 layout: page
 slug: changelogs
 title: Changelogs
-wordpress_id: 87
 ---
 
 Here is the list of OCILIB changelogs. 
@@ -16,6 +15,11 @@ Click on a change log entry to see the full details.
 
 <br/>
 <br/>
+
+_[2017-01-25 . version 4.3.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.3.1.txt)_
+
+  * Some C API Bug fixes
+  * Some C++ API Bug fixes
 
 _[2016-11-09 . version 4.3.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.3.0.txt)_
 
