@@ -605,6 +605,13 @@
 
 #define OCI_VARS_WORKAROUND_UTF16_COLUMN_NAME  0
 
+#ifndef min
+  #define min(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+
+#ifndef max
+  #define max(a, b) (((a) > (b)) ? (a) : (b))
+#endif
 
 #endif    /* OCILIB_OCILIB_DEFS_H_INCLUDED */
 
