@@ -3907,7 +3907,7 @@ OCI_Connection * OCI_API OCI_StatementGetConnection
     OCI_Statement *stmt
 )
 {
-    OCI_GET_PROP(OCI_Connection*, NULL, OCI_IPC_STATEMENT, stmt, sql, stmt->con, stmt, stmt->con->err)
+    OCI_GET_PROP(OCI_Connection*, NULL, OCI_IPC_STATEMENT, stmt, con, stmt->con, stmt, stmt->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
