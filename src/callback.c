@@ -238,8 +238,6 @@ ub4 OCI_ProcNotifyChanges
 {
     OCI_Subscription *sub = (OCI_Subscription *)oci_ctx;
     boolean res           = TRUE;
-    void   *dbstr         = NULL;
-    int     dbsize        = 0;
     ub4     type          = 0;
 
     OCI_CALL_DECLARE_CONTEXT(TRUE)
@@ -259,13 +257,7 @@ ub4 OCI_ProcNotifyChanges
 
     /* get database that generated the notification */
 
-    OCI_GET_ATTRIB(OCI_DTYPE_CHDES, OCI_ATTR_CHDES_DBNAME, desc, &dbstr, &dbsize)
-
-    /* buffer is ANSI  */
-    if (res &&  OCI_StringRequestBuffer(&sub->event.dbname, &sub->event.dbname_size, dbsize)) 
-    {
-        OCI_StringAnsiToNative(dbstr, sub->event.dbname, dbsize);
-    }
+    OCI_GetStringAttribute(sub->con, desc, OCI_DTYPE_CHDES,    OCI_ATTR_CHDES_DBNAME, &sub->event.dbname, &sub->event.dbname_size);
 
     /* get notification type */
 
@@ -347,13 +339,7 @@ ub4 OCI_ProcNotifyChanges
 
                 /* get table name */
 
-                OCI_GET_ATTRIB(OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_NAME, *tbl_elem, &dbstr, &dbsize)
-
-                /* buffer is ANSI  */
-                if (res &&  OCI_StringRequestBuffer(&sub->event.objname, &sub->event.objname_size, dbsize)) 
-                {
-                    OCI_StringAnsiToNative(dbstr, sub->event.objname, dbsize);
-                }
+                OCI_GetStringAttribute(sub->con, *tbl_elem, OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_NAME, &sub->event.objname, &sub->event.objname_size);
 
                 /* get table modification type */
 
@@ -401,17 +387,11 @@ ub4 OCI_ProcNotifyChanges
 
                             /* get rowid  */
 
-                            OCI_GET_ATTRIB(OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_ROWID, *row_elem, &dbstr, &dbsize)
+                            OCI_GetStringAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_ROWID, &sub->event.rowid, &sub->event.rowid_size);
 
                             /* get opcode  */
                    
                             OCI_GET_ATTRIB(OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_OPFLAGS, *row_elem, &sub->event.op, NULL)
-
-                            /* buffer is ANSI  */ 
-                            if (res &&  OCI_StringRequestBuffer(&sub->event.rowid, &sub->event.rowid_size, dbsize)) 
-                            {
-                                OCI_StringAnsiToNative(dbstr, sub->event.rowid, dbsize);
-                            }
 
                             sub->handler(&sub->event);
                         }

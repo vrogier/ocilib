@@ -720,7 +720,8 @@ boolean OCI_GetStringAttribute
     void           *handle,
     unsigned int    type,
     unsigned int    attr,
-    otext         **str
+    otext         **str,
+    unsigned int   *size
 );
 
 boolean OCI_SetStringAttribute
@@ -841,7 +842,7 @@ void * OCI_MemRealloc
     int    ptr_type,
     size_t block_size,
     size_t block_count,
-	boolean zero_fill
+    boolean zero_fill
 );
 
 void OCI_MemFree

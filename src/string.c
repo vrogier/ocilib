@@ -84,8 +84,8 @@ unsigned int OCI_StringBinaryToString
 
     if (buffer)
     {
-		unsigned int  i;
-		
+        unsigned int  i;
+        
         for (i = 0; i < binary_size; i++)
         {
             buffer[i * 2 + 0] = hex_str[binary[i] >> 4  ];
@@ -111,7 +111,7 @@ boolean OCI_StringRequestBuffer
 {
     boolean res = FALSE;
 
-    if (!buffer || buffer_size == 0)
+    if (!buffer || !buffer_size)
     {
         return FALSE;
     }
@@ -122,17 +122,16 @@ boolean OCI_StringRequestBuffer
 
     if (!*buffer)
     {
-       *buffer = (otext *) OCI_MemAlloc(OCI_IPC_STRING, (size_t) request_size, (size_t) 1, FALSE);
+       *buffer = (otext *) OCI_MemAlloc(OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
     }
     else if (*buffer_size < request_size)
     {
-        *buffer = (otext *) OCI_MemRealloc(*buffer, OCI_IPC_STRING, (size_t) request_size, (size_t) 1, FALSE);
+        *buffer = (otext *) OCI_MemRealloc(*buffer, OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
     }
 
     if (*buffer)
     {
         *buffer_size = request_size;
-        memset(*buffer, 0, *buffer_size);
         res = TRUE;
     }
 
@@ -506,27 +505,30 @@ boolean OCI_GetStringAttribute
     void           *handle,
     unsigned int    type,
     unsigned int    attr,
-    otext         **str
+    otext         **str,
+    unsigned int   *size
+
 )
 {
-    dbtext *dbstr = NULL;
+    dbtext *dbstr  = NULL;
     int     dbsize = -1;
+    int     len    = 0;
 
     OCI_CALL_DECLARE_CONTEXT(TRUE)
         
-    OCI_CHECK(NULL == str, FALSE)
- 
+    OCI_CHECK(NULL == str,  FALSE)
+    OCI_CHECK(NULL == size, FALSE)
+
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     OCI_GET_ATTRIB(type, attr, handle, &dbstr, &dbsize)
 
     if (OCI_STATUS && dbstr)
     {
-	    boolean is_ansi = FALSE;
+        boolean is_ansi = FALSE;
 
         /*  Oracle BUG using OCI in Unicode mode (once again...) 
-            Some connection server handle attributes are returned 
-            as ANSI buffer even when OCI is initialized in UTF16 mode
+            Some attributes are returned as ANSI buffer even when OCI is initialized in UTF16 mode
             Some we check if the first character slot has any zero bytes set 
             to detect this defect ! */
     
@@ -536,15 +538,22 @@ boolean OCI_GetStringAttribute
 
             if (ptr[0] != 0 && ptr[1] != 0)
             {
-               /* ANSI buffer returned instead of an UTF16 one ! */
-               is_ansi = TRUE;
-               dbsize  = (dbsize / sizeof(char)) * sizeof(dbtext);
+                /* ANSI buffer returned instead of an UTF16 one ! */
+                is_ansi = TRUE;
+                len = dbsize;
             }
         }
 
-        *str = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), dbcharcount(dbsize) + 1, TRUE);
+        // if the input buffer was not ANSI while using an UTF16 environment, compute string length from returned buffer size
+        if (len == 0)
+        {
+            len = dbcharcount(dbsize);
+        }
 
-        OCI_StringTranslate(dbstr, *str, dbcharcount(dbsize), is_ansi ? sizeof(char) : sizeof(dbtext), sizeof(otext));
+        if (OCI_StringRequestBuffer(str, size, len))
+        {
+            OCI_StringTranslate(dbstr, *str, len, is_ansi ? sizeof(char) : sizeof(dbtext), sizeof(otext));
+        }
 
         OCI_STATUS = (NULL != *str);
     }

@@ -295,8 +295,10 @@ const otext * OCI_API OCI_DequeueGetConsumer
 
     if (!dequeue->consumer)
     {
-        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS, 
-                                            OCI_ATTR_CONSUMER_NAME, &dequeue->consumer);
+        unsigned int size = 0;
+        
+        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
+                                            OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, &size);
     }
  
     OCI_RETVAL = dequeue->consumer;
@@ -339,8 +341,10 @@ const otext * OCI_API OCI_DequeueGetCorrelation
 
     if (!dequeue->pattern)
     {
+        unsigned int size = 0;
+        
         OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                            OCI_ATTR_CORRELATION, &dequeue->pattern);
+                                            OCI_ATTR_CORRELATION, &dequeue->pattern, &size);
     }
  
     OCI_RETVAL = dequeue->pattern;

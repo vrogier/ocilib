@@ -339,20 +339,22 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                     otext *syn_object_name   = NULL;
                     otext *syn_link_name     = NULL;
 
+                    unsigned int size_schema = 0;
+                    unsigned int size_object = 0;
+                    unsigned int size_link = 0;
+
                     otext syn_fullname[(OCI_SIZE_OBJ_NAME * 3) + 3] = OTEXT("");
 
                     /* get link schema, object and database link names */
 
                     OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
-                                                                          OCI_ATTR_SCHEMA_NAME, 
-                                                                          &syn_schema_name);
+                                                                      OCI_ATTR_SCHEMA_NAME, &syn_schema_name, &size_schema);
                     
                     OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
-                                                                          OCI_ATTR_NAME, 
-                                                                          &syn_object_name);
+                                                                      OCI_ATTR_NAME, &syn_object_name, &size_object);
  
                     OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
-                                                                         OCI_ATTR_LINK, &syn_link_name);
+                                                                         OCI_ATTR_LINK, &syn_link_name, &size_link);
 
                     /* compute link full name */
 

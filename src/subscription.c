@@ -39,7 +39,7 @@ boolean OCI_SubscriptionClose
         
     OCI_CHECK(NULL == sub, FALSE);
   
-    OCI_CALL_CONTEXT_SET_FROM_CONN(sub->con)
+    OCI_CALL_CONTEXT_SET(sub->con, NULL, sub->err)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -57,8 +57,30 @@ boolean OCI_SubscriptionClose
 
         if (sub->con)
         {
-            OCI_EXEC(OCISubscriptionUnRegister(sub->con->cxt, sub->subhp, sub->err, (ub4)OCI_DEFAULT))
- 
+            // OCISubscriptionUnRegister() seems to partially fail when OCI is initialized in UTF16 mode as it returns ORA-24915
+            // Thus, if using OCI in Unicode mode, discard  error ORA-24915
+
+            sword res = OCISubscriptionUnRegister(sub->con->cxt, sub->subhp, sub->err, (ub4) OCI_DEFAULT);
+
+#if defined(OCI_CHARSET_WIDE)
+
+            if (OCI_FAILURE(res))
+            {
+                sb4 code = 0;
+
+                OCIErrorGet((dvoid *)sub->err, (ub4)1, (OraText *)NULL, &code, (OraText *)NULL, (ub4)0, (ub4)OCI_HTYPE_ERROR);
+
+                if (OCI_ERR_SUB_BUG_OCI_UTF16 != code)
+                {
+                    OCI_ExceptionOCI(sub->err, sub->con, NULL, FALSE);
+                    OCI_STATUS = FALSE;
+                }
+            }
+#else
+
+            OCI_EXEC(res);
+#endif
+
             if (alloc)
             {
                 OCI_ConnectionFree(sub->con);
@@ -311,7 +333,7 @@ boolean OCI_API OCI_SubscriptionUnregister
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(sub->err)
+    OCI_CALL_CONTEXT_SET(sub->con, NULL, sub->err)
 
     OCI_RETVAL = OCI_STATUS = OCI_SubscriptionClose(sub);
 
@@ -336,7 +358,8 @@ boolean OCI_API OCI_SubscriptionAddStatement
     OCI_CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(sub->con)
+    
+    OCI_CALL_CONTEXT_SET(sub->con, stmt, sub->err)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 

@@ -633,11 +633,14 @@ const otext * OCI_API OCI_MsgGetCorrelation
 
     if (!msg->correlation)
     {
+        unsigned int size = 0;
+        
         OCI_STATUS = OCI_GetStringAttribute(msg->typinf->con,
                                             msg->proph,
                                             OCI_DTYPE_AQMSG_PROPERTIES,
                                             OCI_ATTR_CORRELATION,
-                                            &msg->correlation);
+                                            &msg->correlation,
+                                            &size);
     }
 
     OCI_RETVAL = msg->correlation;
@@ -686,13 +689,16 @@ const otext * OCI_API OCI_MsgGetExceptionQueue
 
     if (!msg->except_queue)
     {
+        unsigned int size = 0;
+        
         OCI_STATUS = OCI_GetStringAttribute
                         (
                             msg->typinf->con,
                             msg->proph,
                             OCI_DTYPE_AQMSG_PROPERTIES,
                             OCI_ATTR_EXCEPTION_QUEUE,
-                            &msg->except_queue
+                            &msg->except_queue,
+                            &size
                         );
     }
 

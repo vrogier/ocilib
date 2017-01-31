@@ -152,8 +152,10 @@ const otext * OCI_API OCI_AgentGetName
 
     if (!agent->name)
     {
-        OCI_STATUS = OCI_GetStringAttribute(agent->con, agent->handle,  OCI_DTYPE_AQAGENT,
-                                            OCI_ATTR_AGENT_NAME,  &agent->name);
+        unsigned int size = 0;
+        
+        OCI_STATUS = OCI_GetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
+                                            OCI_ATTR_AGENT_NAME,  &agent->name, &size);
     }
 
     OCI_RETVAL = agent->name;
@@ -190,14 +192,17 @@ const otext * OCI_API OCI_AgentGetAddress
     OCI_Agent *agent
 )
 {
+    
     OCI_CALL_ENTER(otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
     OCI_CALL_CONTEXT_SET_FROM_CONN(agent->con)
 
     if (!agent->address)
     {
+        unsigned int size = 0;
+        
         OCI_STATUS = OCI_GetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
-                                            OCI_ATTR_AGENT_ADDRESS, &agent->address);
+                                            OCI_ATTR_AGENT_ADDRESS, &agent->address, &size);
     }
 
     OCI_RETVAL = agent->address;

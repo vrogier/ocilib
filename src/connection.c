@@ -1713,7 +1713,9 @@ const otext * OCI_API OCI_GetDBName
 
     if (!con->db_name)
     {
-        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBNAME, &con->db_name);
+        unsigned int size = 0;
+        
+        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBNAME, &con->db_name, &size);
     }
 
 #endif
@@ -1740,7 +1742,9 @@ const otext * OCI_API OCI_GetInstanceName
 
     if (!con->inst_name)
     {
-        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_INSTNAME, &con->inst_name);
+        unsigned int size = 0;
+        
+        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_INSTNAME, &con->inst_name, &size);
     }
 
 #endif
@@ -1767,7 +1771,9 @@ const otext * OCI_API OCI_GetServiceName
 
     if (!con->service_name)
     {
-        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_SERVICENAME, &con->service_name);
+        unsigned int size = 0;
+        
+        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_SERVICENAME, &con->service_name, &size);
     }
 
 #endif
@@ -1794,7 +1800,9 @@ const otext * OCI_API OCI_GetServerName
 
     if (!con->server_name)
     {
-        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_HOSTNAME, &con->server_name);
+        unsigned int size = 0;
+        
+        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_HOSTNAME, &con->server_name, &size);
     }
 
 #endif
@@ -1821,7 +1829,9 @@ const otext * OCI_API OCI_GetDomainName
 
     if (!con->domain_name)
     {
-        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBDOMAIN, &con->domain_name);
+        unsigned int size = 0;
+        
+        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBDOMAIN, &con->domain_name, &size);
     }
 
 #endif
