@@ -98,7 +98,7 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
         // OCI_Number binds
         if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
         {
-            if (OCI_NUM_NUMBER == bnd->subtype)
+            if (OCI_NUM_NUMBER & bnd->subtype)
             {
                 if (bnd->buffer.inds[index] != OCI_IND_NULL)
                 {
@@ -111,7 +111,7 @@ boolean OCI_BindCheck(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
                     }
                 }
             }
-            else if (OCI_NUM_BIGINT == bnd->subtype)
+            else if (OCI_NUM_BIGINT & bnd->subtype)
             {
                 big_int   *src_bint = OCI_BIND_GET_SCALAR(src, big_int, index);
                 OCINumber *dst_num  = OCI_BIND_GET_BUFFER(dst, OCINumber, index);
@@ -205,7 +205,7 @@ boolean OCI_BindUpdate(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
     // OCI_Number binds
     if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
     {
-        if (OCI_NUM_NUMBER == bnd->subtype)
+        if (OCI_NUM_NUMBER & bnd->subtype)
         {
             if (bnd->buffer.inds[index] != OCI_IND_NULL)
             {
@@ -218,7 +218,7 @@ boolean OCI_BindUpdate(OCI_Bind *bnd, ub1 *src, ub1 *dst, unsigned int index)
                 }
             }
         }
-        else if (OCI_NUM_BIGINT == bnd->subtype)
+        else if (OCI_NUM_BIGINT & bnd->subtype)
         {
             OCINumber *src_number = OCI_BIND_GET_BUFFER(src, OCINumber, index);
             big_int   *dst_bint = OCI_BIND_GET_SCALAR(dst, big_int, index);
