@@ -74,7 +74,6 @@ OCI_Msg * OCI_API OCI_MsgCreate
     else if (msg)
     {
         OCI_MsgFree(msg);
-        msg = NULL;
     }
 
     OCI_CALL_EXIT()

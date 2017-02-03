@@ -61,9 +61,9 @@ extern "C" {
 #include <stdio.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <wctype.h>
 #include <string.h>
 #include <time.h>
-#include <errno.h>
 #include <limits.h>
 
 /* --------------------------------------------------------------------------------------------- *
@@ -239,8 +239,6 @@ extern "C" {
  * - ostol
  *
 **/
-
-#include <wctype.h>
 
 #if defined(__cplusplus) && defined(_MSC_VER) && (_MSC_VER < 1300)
 extern "C++" {

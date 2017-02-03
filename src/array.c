@@ -38,9 +38,9 @@ boolean OCI_ArrayInit
 
     for (i = 0; i < arr->nb_elem; i++)
     {
-        void *handle = NULL;
+		void *handle = NULL;
 
-        if (OCI_CDT_DATETIME == arr->elem_type)
+		if (OCI_CDT_DATETIME == arr->elem_type)
         {
             handle = &(((OCIDate *)(arr->mem_handle))[i]);
         }

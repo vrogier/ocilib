@@ -61,7 +61,10 @@ static MagicNumber MagicNumbers[] =
 * OCI_GetNumericTypeSize
 * --------------------------------------------------------------------------------------------- */
 
-uword OCI_GetNumericTypeSize(unsigned int type)
+uword OCI_GetNumericTypeSize
+(
+    unsigned int type
+)
 {
     uword size = 0;
 
@@ -103,7 +106,7 @@ boolean OCI_NumberGetNativeValue
 )
 {
     OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
+
     OCI_CHECK(NULL == number, FALSE)
     OCI_CHECK(NULL == out_value, FALSE)
 
@@ -173,7 +176,7 @@ boolean OCI_NumberSetNativeValue
 )
 {
     OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
+
     OCI_CHECK(NULL == number, FALSE)
     OCI_CHECK(NULL == in_value, FALSE)
 
@@ -247,7 +250,7 @@ boolean OCI_NumberFromString
     boolean done = FALSE;
 
     OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
+
     OCI_CHECK(NULL == out_value, FALSE)
     OCI_CHECK(NULL == in_value, FALSE)
 
@@ -370,7 +373,7 @@ boolean OCI_NumberToString
     boolean   done = FALSE;
 
     OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
+
     OCI_CHECK(NULL == out_value, FALSE)
     OCI_CHECK(NULL == number, FALSE)
 

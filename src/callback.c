@@ -237,8 +237,7 @@ ub4 OCI_ProcNotifyChanges
 )
 {
     OCI_Subscription *sub = (OCI_Subscription *)oci_ctx;
-    boolean res           = TRUE;
-    ub4     type          = 0;
+    ub4 type = 0;
 
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 

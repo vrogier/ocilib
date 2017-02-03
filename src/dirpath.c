@@ -538,7 +538,6 @@ boolean OCI_API OCI_DirPathSetColumn
             default:
             {
                 OCI_RAISE_EXCEPTION(OCI_ExceptionDatatypeNotSupported(dp->con, NULL, col->libcode))
-                break;
             }
         }
     }
