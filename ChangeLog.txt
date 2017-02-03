@@ -1,3 +1,27 @@
+2017-02-05 Version 4.3.2 Vincent Rogier vince.rogier@ocilib.net
+
+    * Fixes (C API) 
+    
+        - Issue #69: Fixed OCI_StatementGetConnection() that was returning erroneous values
+        - Issue #70: Fixed Subscriptions issues when OCILIB charset is OCI_CHARSET_WIDE (Unicode builds)
+		    * Bug with table names, objects names and rowids reported from CDN event callbacks:
+				- Up to Oracle 10g, theses strings were reported as ANSI strings instead of UTF16 strings, thus OCILIB was doing a translation to UTF16 before calling user callbacks
+				- From Oracle 11g, this Oracle bug seems fixed while OCILIB is still trying to perform translation fron ANSI to UTF16
+				- Thus, now OCILIB, in Unicode builds, is performing the translation to UTF16 only if reported strings seems to be ANSI
+			* Bug with Oracle call OCISubscriptonUnRegister()
+				- OCI_SubscriptionUnregister() encounters an error ora-24015 when calling OCISubscriptonUnRegister() in Unicode build but not in ANSI builds 
+				- Error ORA-24915 is now discarded if returned from OCISubscriptonUnRegister() in OCI_SubscriptionUnregister()
+		- Issue #71: Fixed regresson introduced in v4.3.0 about binding big_uint variables (only unsigned 64bit integers)
+			* Pre and post statement execution methods were only handling big_int and not big_uint host variables
+			* Root cause was a wrong numeric sub type check (using == instead of operator &) as subtypes are handled using flags not unitary values
+				
+	* Miscellaneous
+	
+	    - Removed outdated unmaintained Visual Studio 2005, 2008 an 2010 projects for building OCILIB DDL and C/C++ tests apps
+		- Keeping visual Studio 2013 projects
+        - Added Visual Studio 2015 projects
+		- Prebuilt Windows OCILIB dlls are now compiled using Visual Studio 2015
+		
 2017-01-25 Version 4.3.1 Vincent Rogier vince.rogier@ocilib.net
 
     * Fixes (C API) 
