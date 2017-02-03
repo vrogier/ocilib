@@ -679,7 +679,7 @@ big_uint OCI_API OCI_LobErase
     big_uint size
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(big_uint, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob);
     OCI_CALL_CHECK_MIN(lob->con, NULL, size, 1);
     OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
@@ -706,7 +706,7 @@ big_uint OCI_API OCI_LobErase
         size = (big_uint) lob_size;
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    OCI_RETVAL = size;
 
     OCI_CALL_EXIT()
 }
