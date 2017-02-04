@@ -1742,7 +1742,7 @@ void test_bigint(void)
     OCI_BindBigInt(st, OTEXT(":value2"), &value2);
     OCI_Execute(st);
 
-    printf("\n%d * %d = %d \n", value1, value1, value2);
+    printf("\n%lld * %lld = %lld \n", value1, value1, value2);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1751,7 +1751,6 @@ void test_bigint(void)
 
 void test_number()
 {
-    OCI_Resultset  *rs = NULL;
     OCI_TypeInfo   *tc = NULL;
     OCI_TypeInfo   *to = NULL;
     OCI_Number     *nm = NULL;
@@ -1780,14 +1779,14 @@ void test_number()
     rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        OCI_Number  *n = OCI_GetNumber(rs, 1);
-        const otext *s = OCI_GetString(rs, 1);
+        OCI_Number  *num = OCI_GetNumber(rs, 1);
+        const otext *buf = OCI_GetString(rs, 1);
 
-        OCI_NumberToText(n, NULL, SIZE_STR, str);
+        OCI_NumberToText(num, NULL, SIZE_STR, str);
 
         print_ostr(str);
         print_text(" - ");
-        print_ostr(s);
+        print_ostr(buf);
         print_text("\n");
     }
 
@@ -1834,8 +1833,8 @@ void test_number()
     for (i = 1, n = OCI_CollGetCount(cl); i <= n; i++)
     {
         OCI_Elem   *e = OCI_CollGetElem(cl, i);
-        OCI_Number *n = OCI_ElemGetNumber(e);
-        OCI_NumberToText(n, NULL, SIZE_STR, str);
+        OCI_Number *num = OCI_ElemGetNumber(e);
+        OCI_NumberToText(num, NULL, SIZE_STR, str);
         print_ostr(str);
         print_text("\n");
     }
