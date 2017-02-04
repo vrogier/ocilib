@@ -58,6 +58,11 @@ build/
 *.pidb
 *.log
 *.scc
+*.db
+*.idb
+*.bsc
+*.lastbuildstate
+*.tlog
 
 # Visual C++ cache files
 ipch/
@@ -167,4 +172,3 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 *.opendb
-proj/dll/ocilib_dll_vs2015.VC.db
