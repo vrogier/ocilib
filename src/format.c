@@ -324,7 +324,23 @@ int OCI_ParseSqlFmt
 
                 break;
             }
-            case OTEXT('r'):
+			case OTEXT('n'):
+			{
+				otext temp[128];
+
+				temp[0] = 0;
+
+				OCI_NumberToText(va_arg(*pargs, OCI_Number*), NULL, 128, temp);
+				len = (int) ostrlen(temp);
+
+				if (buf && (len > 0))
+				{
+					ostrcpy(pb, temp);
+				}
+
+				break;
+			}
+			case OTEXT('r'):
             {
                 otext temp[128];
 

@@ -1187,6 +1187,7 @@ typedef unsigned int big_uint;
 #define OCI_ARG_COLLECTION                  16
 #define OCI_ARG_REF                         17
 #define OCI_ARG_FLOAT                       18
+#define OCI_ARG_NUMBER                      19
 
 /* statement types */
 
@@ -14560,6 +14561,7 @@ OCI_EXPORT const otext * OCI_API OCI_TypeInfoGetName
  * - OCI_ARG_BIGUINT ----> unsigned big_int *
  * - OCI_ARG_DOUBLE  ----> double *
  * - OCI_ARG_FLOAT ------> float *
+ * - OCI_ARG_NUMBER -----> OCI_Number *
  * - OCI_ARG_TEXT -------> otext *
  * - OCI_ARG_RAW --------> void *
  * - OCI_ARG_DATETIME ---> OCI_Date *
@@ -14596,6 +14598,7 @@ OCI_EXPORT const otext * OCI_API OCI_TypeInfoGetName
  * - '%hi' : (short) ------------> signed 16 bits integer
  * - '%hu' : (unsigned short) ---> unsigned 16 bits integer
  * - '%g'  : (double, float ) ---> Numerics
+ * - '%n'  : (OCI_Number *) -----> Number
  * - '%r'  : (OCI_Ref *) --------> Reference
  * - '%o'  : (OCI_Object *) -----> Object  (not implemented yet)
  * - '%c'  : (OCI_Coll *) -------> collection  (not implemented yet)

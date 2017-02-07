@@ -326,7 +326,7 @@ int OCI_API OCI_TimestampCompare
 
 #endif
 
-    OCI_RETVAL = OCI_STATUS;
+    OCI_RETVAL = value;
 
     OCI_CALL_EXIT()
 }
