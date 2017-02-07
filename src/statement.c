@@ -1012,6 +1012,11 @@ boolean OCI_FetchIntoUserVariables
                     SET_ARG_NUM(float, OCI_GetFloat);
                     break;
                 }
+				case OCI_ARG_NUMBER:
+				{
+					SET_ARG_HANDLE(OCI_Number, OCI_GetNumber, OCI_NumberAssign);
+					break;
+				}
                 case OCI_ARG_DATETIME:
                 {
                     SET_ARG_HANDLE(OCI_Date, OCI_GetDate, OCI_DateAssign);
