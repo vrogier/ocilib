@@ -135,7 +135,7 @@ T Check(T result)
 
 inline ostring MakeString(const otext *result, int size)
 {
-    return result ? (size >= 0 ? ostring(result, result + size) : ostring(result)) : (ostring());
+    return result ? (size >= 0 ? ostring(result, result + size) : ostring(result)) : ostring();
 }
 
 inline Raw MakeRaw(void *result, unsigned int size)
@@ -170,7 +170,7 @@ void ConverString(S &dest, const C *src, size_t length)
  * --------------------------------------------------------------------------------------------- */
 
 template<class T>
-Enum<T>::Enum(void) : _value(0)
+Enum<T>::Enum() : _value(0)
 {
 }
 
@@ -226,7 +226,7 @@ bool Enum<T>::operator != (const T& other) const
  * --------------------------------------------------------------------------------------------- */
 
 template<class T>
-Flags<T>::Flags(void) : _flags(static_cast<T>(0))
+Flags<T>::Flags() : _flags(static_cast<T>(0))
 {
 }
 
