@@ -1865,6 +1865,13 @@ void test_number()
         print_text("\n");
     }
 
+    // Testing formatting
+    OCI_NumberFromText(nm, OTEXT("1234.4321"), NULL);
+    OCI_ImmediateFmt(cn, OTEXT("select %n * 2 from dual"), nm, OCI_ARG_NUMBER, nm);
+    OCI_NumberToText(nm, NULL, SIZE_STR, str);
+    print_ostr(str);
+    print_text("\n");
+
     // Testing array of numbers
     OCI_NumberFromText(ar[0], OTEXT("1.2"), NULL);
     OCI_NumberFromText(ar[1], OTEXT("~"), NULL);
