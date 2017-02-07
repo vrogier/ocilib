@@ -446,6 +446,8 @@
 #define OCI_OBJECT          0x00000002  /* application in object environment */
 #define OCI_EVENTS          0x00000004  /* application is enabled for events */
 #define OCI_UTF16           0x00004000        /* mode for all UTF16 metadata */
+#define OCI_NCHAR_LITERAL_REPLACE_ON  0x00400000 /* nchar literal replace on */
+#define OCI_NCHAR_LITERAL_REPLACE_OFF 0x00800000 /* nchar literal replace off*/
 
 /*------------------------Authentication Modes-------------------------------*/
 #define OCI_SYSDBA          0x00000002           /* for SYSDBA authorization */
