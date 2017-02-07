@@ -708,8 +708,8 @@ boolean OCI_API OCI_Initialize
     unsigned int mode
 )
 {
-	unsigned int i = 0;
-	ub4 oci_mode = OCI_ENV_MODE | OCI_OBJECT;
+    unsigned int i = 0;
+    ub4 oci_mode = OCI_ENV_MODE | OCI_OBJECT;
 
 #ifdef OCI_IMPORT_RUNTIME
 
@@ -731,9 +731,9 @@ boolean OCI_API OCI_Initialize
 
 #if defined(OCI_CHARSET_WIDE) && (OCI_VERSION_COMPILE >= OCI_10_2)
 
-	/* activate support for N' substitution (nchar replacement in SQL statement strings) */
+    /* activate support for N' substitution (nchar replacement in SQL statement strings) */
 
-	oci_mode |= OCI_NCHAR_LITERAL_REPLACE_ON;
+    oci_mode |= OCI_NCHAR_LITERAL_REPLACE_ON;
 
 #endif
 
@@ -2091,7 +2091,7 @@ const otext * OCI_API OCI_GetFormat
     unsigned int    type
 )
 {
-	otext **value = NULL;
+    otext **value = NULL;
 
     OCI_CALL_ENTER(const otext *, NULL)
     OCI_CALL_CHECK_INITIALIZED()
