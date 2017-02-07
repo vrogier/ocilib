@@ -1201,16 +1201,14 @@ boolean OCI_API OCI_ElemIsNull
     OCI_Elem *elem
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_ENTER(boolean, TRUE)
     OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
     if (elem->pind)
     {
-        OCI_STATUS = (OCI_IND_NULL == *elem->pind);
+		OCI_RETVAL = (OCI_IND_NULL == *elem->pind);
     }
-
-    OCI_RETVAL = OCI_STATUS;
 
     OCI_CALL_EXIT()
 }
