@@ -139,9 +139,8 @@
  *
  * @note
  *
- * The OCI import mode (OCI_IMPORT_LINKAGE or OCI_IMPORT_RUNTIME is only used when
- * compiling OCILIB source code
-
+ * The OCI import mode (OCI_IMPORT_LINKAGE or OCI_IMPORT_RUNTIME is only used when compiling OCILIB source code
+ *
  * @par Oracle Instant Client Support
  *
  * OCILIB supports Oracle Instant Client.
