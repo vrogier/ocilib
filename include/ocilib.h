@@ -6937,18 +6937,17 @@ OCI_EXPORT big_uint OCI_API OCI_GetUnsignedBigInt2
  *
  * - Numerics (based on the current connection handle numeric format)
  * - Binary doubles and floats (using the standard C Library functions)
+ * - OCI_Number (based on the current connection handle numeric format)
  * - OCI_Date (based on the current connection handle date format)
  * - OCI_Timestamp (based on the current connection handle date format)
  * - OCI_Interval (based on Oracle default conversion)
- * - OCI_Lob (maximum number of character is defined by OCI_SIZE_BUFFER)
- * - OCI_Long
- * - OCI_File (maximum number of character is defined by OCI_SIZE_BUFFER)
- * - RAW buffer
- *
- * The following type are not supported for implicit conversion:
- * - OCI_Statement
- * - OCI_Coll
- * - OCI_Object
+ * - OCI_Lob (for BLOBs, output is expressed in hexadecimal)
+ * - OCI_Long  (for BLONGs, output is expressed in hexadecimal)
+ * - OCI_File ("[directory]/[name]" will be output)
+ * - OCI_Object (Textual SQL string representation)
+ * - OCI_Coll (Textual SQL string representation)
+ * - RAW buffer (expressed in hexadecimal)
+ * - OCI_Statement (SQL statement string or cursor name)
  *
  * @return
  * The column current row value or NULL if index is out of bounds

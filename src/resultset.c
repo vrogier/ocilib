@@ -1760,7 +1760,7 @@ const otext * OCI_API OCI_GetString
         }
         else
         {
-            unsigned int bufsize = OCI_SIZE_BUFFER;
+            unsigned int bufsize = OCI_SIZE_TMP_CVT;
             unsigned int data_size = 0;
 
             switch (def->col.datatype)
@@ -1802,8 +1802,13 @@ const otext * OCI_API OCI_GetString
 
                 if (lg)
                 {
-                    /* here we have binary long, it will be output in hexadecimal */
-                    bufsize = OCI_LongGetSize(lg) * 2;
+                    bufsize = OCI_LongGetSize(lg);
+
+                    if (OCI_BLONG == def->col.subtype)
+                    {
+                        /* here we have binary long, it will be output in hexadecimal */
+                        bufsize *= 2;
+                    }
                 }
 
                 data = lg;
@@ -1816,9 +1821,9 @@ const otext * OCI_API OCI_GetString
 
                 if (lob)
                 {
-                    bufsize = (unsigned int)OCI_LobGetLength(lob);;
+                    bufsize = (unsigned int)OCI_LobGetLength(lob);
 
-                    if (OCI_BLONG == def->col.subtype)
+                    if (OCI_BLOB == def->col.subtype)
                     {
                         /* here we have binary blob, it will be output in hexadecimal */
                         bufsize *= 2;
@@ -1831,7 +1836,20 @@ const otext * OCI_API OCI_GetString
             case OCI_CDT_FILE:
             {
                 /* directory / name will be output */
-                data = OCI_GetFile(rs, index);
+
+                OCI_File * file = OCI_GetFile(rs, index);
+
+                if (file)
+                {
+                    bufsize = (unsigned int) ostrlen(OTEXT("/"));
+
+                    OCI_FileGetInfo(file);
+
+                    bufsize += (unsigned int) (file->dir ? ostrlen(file->dir) : 0);
+                    bufsize += (unsigned int) (file->name ? ostrlen(file->name) : 0);
+                }
+
+                data = file;
                 break;
             }
             case OCI_CDT_OBJECT:
@@ -1856,6 +1874,18 @@ const otext * OCI_API OCI_GetString
                 }
 
                 data = coll;
+                break;
+            }
+            case OCI_CDT_CURSOR:
+            {
+                OCI_Statement *stmt = OCI_GetStatement(rs, index);
+
+                if (stmt && stmt->sql)
+                {
+                    bufsize = (unsigned int) ostrlen(stmt->sql);
+                }
+
+                data = stmt;
                 break;
             }
             default:

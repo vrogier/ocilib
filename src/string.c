@@ -659,7 +659,7 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_NUMERIC:
         {
-            len = OCI_SIZE_BUFFER;
+            len = OCI_SIZE_TMP_CVT;
             if (ptr)
             {
                 res = OCI_NumberToString(con, data, col->subtype, col->libcode, ptr, len, NULL);
@@ -668,7 +668,7 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_DATETIME:
         {
-            len = OCI_SIZE_BUFFER;
+            len = OCI_SIZE_TMP_CVT;
 
             if (ptr)
             {           
@@ -688,7 +688,7 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_TIMESTAMP:
         {
-            len = OCI_SIZE_BUFFER;
+            len = OCI_SIZE_TMP_CVT;
             if (ptr)
             {
                 OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
@@ -707,7 +707,7 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_INTERVAL:
         {
-            len = OCI_SIZE_BUFFER;
+            len = OCI_SIZE_TMP_CVT;
             if (ptr)
             {
                 OCI_Interval *itv = (OCI_Interval * ) data;
@@ -821,11 +821,11 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_REF:
         {
-            len = OCI_SIZE_BUFFER;
+            len = OCI_SIZE_TMP_CVT;
             if (ptr)
             {
                 OCI_Ref *ref = (OCI_Ref *) data;
-                res = ref ? OCI_RefToText(ref, OCI_SIZE_BUFFER, ptr) : FALSE;
+                res = ref ? OCI_RefToText(ref, OCI_SIZE_TMP_CVT, ptr) : FALSE;
             }
 
             break;
@@ -842,6 +842,20 @@ unsigned int OCI_StringGetFromType
             OCI_Coll *coll = (OCI_Coll *) data;
             quote = FALSE;
             res = coll ? OCI_CollToText(coll, &len, ptr) : FALSE;
+            break;
+        }
+        case OCI_CDT_CURSOR:
+        {
+            OCI_Statement *stmt = (OCI_Statement *)data;
+            quote = TRUE;
+            if (stmt)
+            {
+                len = OCI_StringAddToBuffer(buffer, len, stmt->sql, quote);
+            }
+            else
+            {
+                res = FALSE;
+            }
             break;
         }
         default:
