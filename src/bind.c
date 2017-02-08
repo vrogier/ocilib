@@ -44,7 +44,7 @@ boolean OCI_BindFree
 
     OCI_CHECK(NULL == bnd, FALSE)
 
-    if (OCI_BAM_INTERNAL == bnd->stmt->bind_alloc_mode)
+    if (OCI_BAM_INTERNAL == bnd->alloc_mode)
     {
         if (bnd->is_array)
         {
@@ -57,12 +57,23 @@ boolean OCI_BindFree
                 case OCI_CDT_NUMERIC:
                 case OCI_CDT_TEXT:
                 {
-                    OCI_MemFree(bnd->input);
-                    
-                    if (bnd->alloc)
+                    /* OCINumber binds */
+
+                    if (bnd->type == OCI_CDT_NUMERIC && bnd->subtype == OCI_NUM_NUMBER)
                     {
-                        OCI_FREE(bnd->buffer.data)
-                    }  
+                        OCI_FreeObjectFromType(bnd->input, bnd->type);
+                    }
+                    else
+                    {
+                        /* strings requiring otext / dbtext conversions and 64 bit integers */
+
+                        OCI_MemFree(bnd->input);
+
+                        if (bnd->alloc)
+                        {
+                            OCI_FREE(bnd->buffer.data)
+                        }
+                    }
                     break;
                 }
                 default:

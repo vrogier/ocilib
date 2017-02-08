@@ -633,12 +633,16 @@ boolean OCI_BindData
         OCI_ALLOCATE_DATA(OCI_IPC_PLS_RCODE_ARRAY, bnd->plrcds, nballoc)
     }
 
+    /* set allocation mode prior any required data allocation */
+
+    bnd->alloc_mode = (ub1) stmt->bind_alloc_mode;
+
     /* for handle based data types, we need to allocate an array of handles for
        bind calls because OCILIB uses external arrays of OCILIB Objects */
 
     if (OCI_STATUS && (OCI_BIND_INPUT == mode))
     {
-        if (OCI_BAM_EXTERNAL == stmt->bind_alloc_mode)
+        if (OCI_BAM_EXTERNAL == bnd->alloc_mode)
         {
             if ((OCI_CDT_RAW     != type)  &&
                 (OCI_CDT_LONG    != type)  &&
@@ -711,7 +715,7 @@ boolean OCI_BindData
 
         /* internal allocation if needed */
 
-        if (!data && (OCI_BAM_INTERNAL == stmt->bind_alloc_mode))
+        if (!data && (OCI_BAM_INTERNAL == bnd->alloc_mode))
         {
             OCI_STATUS = OCI_BindAllocData(bnd);
         }

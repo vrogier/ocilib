@@ -130,7 +130,6 @@ struct OCI_Error
     unsigned int    type;                     /* OCILIB error type */
     ub4             row;                      /* Error row offset (array DML) */
     otext           str[OCI_ERR_MSG_SIZE+1];  /* error message */
-    otext           padding[3];               /* dummy variable for alignment */ 
 };
 
 /*
@@ -378,7 +377,7 @@ struct OCI_Bind
     ub1             alloc;       /* is buffer allocated or mapped to input */
     ub1             csfrm;       /* charset form */
     ub1             direction;   /* in, out or in/out bind */
-    char            padding[3];  /* dummy variable for alignment */ 
+    ub1             alloc_mode;  /* allocation mode : internal or external */
 }
 ;
 
@@ -472,7 +471,6 @@ struct OCI_Statement
     boolean          bind_array;        /* has array binds ? */
     OCI_BatchErrors *batch;             /* error handling for array DML */
     ub2              err_pos;           /* error position in sql statement */
-    char             padding[2];        /* dummy variable for alignment */ 
 };
 
 /*
@@ -607,7 +605,6 @@ struct OCI_Object
     ub2               idx_ind;      /* instance indicator offset / indicator table */
     otext           **tmpbufs;      /* temporary buffer  per column */
     unsigned int     *tmpsizes;     /* temporary buffer size per column */
-    char              padding[2];   /* dummy variable for alignment */ 
 };
 
 /*
@@ -713,7 +710,6 @@ struct OCI_DirPathColumn
     ub1   *data;                  /* array of data */
     ub1   *flags;                 /* array of row flags */
     ub2    maxsize;               /* input max size */
-    char   padding[2];            /* dummy variable for alignment */ 
 };
 
 typedef struct OCI_DirPathColumn OCI_DirPathColumn;
@@ -747,7 +743,6 @@ struct OCI_DirPath
     unsigned int        res_load;       /* status of the last load */
     ub4                *err_rows;       /* array of err rows index */
     ub2                *err_cols;       /* array of err col index */
-    char                padding[2];     /* dummy variable for alignment */ 
 };
 
 /*
@@ -821,7 +816,6 @@ struct OCI_Msg
     OCI_Agent          *sender;        /* sender */
     OCI_Object         *obj;           /* OCILIB object handle for object payloads */
     OCIInd              ind;           /* message payload indicator pointer */
-    char                padding[2];    /* dummy variable for alignment */ 
 };
 
 /*
