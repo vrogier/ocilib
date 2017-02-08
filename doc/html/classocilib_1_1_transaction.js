@@ -15,6 +15,6 @@ var classocilib_1_1_transaction =
     [ "Stop", "classocilib_1_1_transaction.html#adcfc66c5dbea6f6c88ee10a947a80a44", null ],
     [ "Resume", "classocilib_1_1_transaction.html#a33334401b173df447f3f2e0e77c1bdbb", null ],
     [ "Forget", "classocilib_1_1_transaction.html#a38c31438fa22d1d83c0aba3084b925fe", null ],
-    [ "GetFlags", "classocilib_1_1_transaction.html#a4903f1ea8e9aff97d2f6984f54bde917", null ],
-    [ "GetTimeout", "classocilib_1_1_transaction.html#a5a313e69f4dc0b34122562a64a9bd44b", null ]
+    [ "GetFlags", "classocilib_1_1_transaction.html#a1a89940069c67aae6a5b861557067f22", null ],
+    [ "GetTimeout", "classocilib_1_1_transaction.html#ad7087c3f40b68f08074f97d515bca19d", null ]
 ];

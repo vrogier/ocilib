@@ -12,8 +12,8 @@ var classocilib_1_1_subscription =
     [ "Register", "classocilib_1_1_subscription.html#a44f8bca8a9479fe38dde565890850389", null ],
     [ "Unregister", "classocilib_1_1_subscription.html#a1f6e12327beee0faef2d15e0244d090a", null ],
     [ "Watch", "classocilib_1_1_subscription.html#a0bbced3f0c3111880bff1d9f8b607a38", null ],
-    [ "GetName", "classocilib_1_1_subscription.html#abae63e20c73fdf494c6538bb78559e56", null ],
-    [ "GetTimeout", "classocilib_1_1_subscription.html#a83d352299128fa542985fed08afa645d", null ],
-    [ "GetPort", "classocilib_1_1_subscription.html#ae55df645e1a7ae1df185e3da057a1053", null ],
-    [ "GetConnection", "classocilib_1_1_subscription.html#ab37547d82959a93300707f8c40a57e2d", null ]
+    [ "GetName", "classocilib_1_1_subscription.html#a92517e6ef6bf355fbe99f77a4302a455", null ],
+    [ "GetTimeout", "classocilib_1_1_subscription.html#a5ebcdbd6229c7222c89be43a8c562044", null ],
+    [ "GetPort", "classocilib_1_1_subscription.html#ac928d03b25df753c3ea61b6d74f58234", null ],
+    [ "GetConnection", "classocilib_1_1_subscription.html#a4e6aaf207d301b2ec51f63ddfd60f5a5", null ]
 ];

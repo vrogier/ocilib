@@ -1,0 +1,39 @@
+2017-02-08 Version 4.3.2 Vincent Rogier vince.rogier@ocilib.net
+
+    * Fixes (C API)
+    
+        - Issue #69: Fixed OCI_StatementGetConnection() that was returning erroneous values (regression introduced in v4.3.0)
+        - Issue #70: Fixed Subscriptions issues when OCILIB charset is OCI_CHARSET_WIDE (Unicode builds)
+		    * Bug with table names, objects names and rowids reported from CDN event callbacks:
+				- Up to Oracle 10g, theses strings were reported as ANSI strings instead of UTF16 strings, thus OCILIB was doing a translation to UTF16 before calling user callbacks
+				- From Oracle 11g, this Oracle bug seems fixed while OCILIB is still trying to perform translation fron ANSI to UTF16
+				- Thus, now OCILIB, in Unicode builds, is performing the translation to UTF16 only if reported strings seems to be ANSI
+			* Bug with Oracle call OCISubscriptonUnRegister()
+				- OCI_SubscriptionUnregister() encounters an error ora-24015 when calling OCISubscriptonUnRegister() in Unicode build but not in ANSI builds 
+				- Error ORA-24915 is now discarded if returned from OCISubscriptonUnRegister() in OCI_SubscriptionUnregister()
+        - Issue #71: Fixed regresson introduced in v4.3.0 about binding big_uint variables (only unsigned 64bit integers)
+			* Pre and post statement execution methods were only handling big_int and not big_uint host variables
+			* Root cause was a wrong numeric sub type check (using == instead of operator &) as subtypes are handled using flags not unitary values
+        - Issue #72: Fixed OCI_LobErase() return value that was wrong since v4.3.0 (1 on success and 0 on failure) instead of the number of elements erased from the LOB
+        - Issue #75: Fixed OCI_ElemIsNull() that was marking the call as failed is the value was not NULL (regression introduced in v4.3.0)
+        - Issue #78: Fixed usage of OCI_SetBindAllocation() when switching bind allocation mode that may result in memory leaks
+        - Issue #79: Fixed issues in implicit conversion in OCI_GetString()
+			* Updated outdated OCI_GetString() documentation
+			* Reduce temporary buffer size in  OCI_GetString() conversions
+			* Fixed implicit conversions in OCI_GetString() for LONG, BLOB
+
+    * Changes and Enhancements
+	
+        - Issue #73: Activate support for N' substitution (nchar replacement in SQL statement strings) when source code is unicode (Only for Oracle Client >= 10gR2)
+        - Issue #74: Added support for OCI_Number in format calls	   
+			* Added token '%n' for parsing OCI_Number in OCI_xxxFmt() calls
+			* Added OCI_ARG_NUMBER for fetching OCI_Number in OCI_Immediate() and OCI_ImmediateFmt() calls
+        - Issue #79: Added support for OCI_Statement (cursors) in OCI_GetString()
+			
+    * Miscellaneous
+	
+        - Removed outdated unmaintained Visual Studio 2005, 2008 an 2010 projects for building OCILIB DLLs and C/C++ tests apps
+		- Keeping visual Studio 2013 projects
+        - Added Visual Studio 2015 projects
+		- Prebuilt Windows OCILIB dlls are now compiled using Visual Studio 2015
+		

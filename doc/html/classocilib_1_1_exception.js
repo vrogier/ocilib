@@ -7,13 +7,13 @@ var classocilib_1_1_exception =
       [ "OracleWarning", "classocilib_1_1_exception.html#a1c4917298b7dee8f7b0bcd5279bffb8caaab61cccf5ae513931572515748156ad", null ]
     ] ],
     [ "~Exception", "classocilib_1_1_exception.html#a5a9f6c690534edd884eac929b15e69e8", null ],
-    [ "GetMessage", "classocilib_1_1_exception.html#a96fe3496e4dd86c5ebef77f66fd01c43", null ],
-    [ "GetType", "classocilib_1_1_exception.html#a33972f176e066ac07a728d8920d4774e", null ],
-    [ "GetOracleErrorCode", "classocilib_1_1_exception.html#a8667e939c09790cb7585e44a092e9db0", null ],
-    [ "GetInternalErrorCode", "classocilib_1_1_exception.html#a78d1e1669acb25b25c2a90b7c1c5c461", null ],
-    [ "GetStatement", "classocilib_1_1_exception.html#a06d8376fd56b161935de9392c9ff157d", null ],
-    [ "GetConnection", "classocilib_1_1_exception.html#ab7f1bac3d9da27011bc4a977af1c8b48", null ],
-    [ "GetRow", "classocilib_1_1_exception.html#accf209fd09b2b98375f41792bf8ab0ac", null ],
-    [ "what", "classocilib_1_1_exception.html#a7a94601dfe775a845516810716bc1d09", null ],
+    [ "GetMessage", "classocilib_1_1_exception.html#a23ee359af658d3a068a0f5256ca16b55", null ],
+    [ "GetType", "classocilib_1_1_exception.html#a96a5dcf8511d0d8fa30e9d98dab66f5a", null ],
+    [ "GetOracleErrorCode", "classocilib_1_1_exception.html#a6cdb247ecc20e7e0f8815797669b8e97", null ],
+    [ "GetInternalErrorCode", "classocilib_1_1_exception.html#aa32d9d5eb10b364d276ce2ba6a74a921", null ],
+    [ "GetStatement", "classocilib_1_1_exception.html#ad0feb150c8d52f3f5fd646e3e9c5435d", null ],
+    [ "GetConnection", "classocilib_1_1_exception.html#aa27e74a7461709afabac83d71628a2d1", null ],
+    [ "GetRow", "classocilib_1_1_exception.html#a8c06341ba16889cf92da380789fd8cd2", null ],
+    [ "what", "classocilib_1_1_exception.html#a6ace067c331ec12cdb7ef3b810e74068", null ],
     [ "Check", "classocilib_1_1_exception.html#ad3fde29600e69dd993abf5d317fc325c", null ]
 ];

@@ -7,9 +7,9 @@ var classocilib_1_1_type_info =
       [ "Type", "classocilib_1_1_type_info.html#a7369d09e8bd979f61371c80c46ee894eaa7acfaf3f68a4866b13bd14b7e7611ca", null ]
     ] ],
     [ "TypeInfo", "classocilib_1_1_type_info.html#a114309a1e5ffbec615b550785d933933", null ],
-    [ "GetType", "classocilib_1_1_type_info.html#a6bb0ec0286f84e7c8c84512569bd9bfb", null ],
-    [ "GetName", "classocilib_1_1_type_info.html#a224793996709210185c89041a12a99a7", null ],
-    [ "GetConnection", "classocilib_1_1_type_info.html#a16c51630afbeabc58e17cfbc05225ef1", null ],
-    [ "GetColumnCount", "classocilib_1_1_type_info.html#a20551b76a66450d25401696d758ec048", null ],
-    [ "GetColumn", "classocilib_1_1_type_info.html#a8860f26c1aa2cb48fcce8f1990bed239", null ]
+    [ "GetType", "classocilib_1_1_type_info.html#ad508995a65ad96abc9ad2ebb29cf8a8a", null ],
+    [ "GetName", "classocilib_1_1_type_info.html#a7d185d9312f718c60397feb62710b9b9", null ],
+    [ "GetConnection", "classocilib_1_1_type_info.html#a772ab3b35bd92ffa36a4a4cb26e37050", null ],
+    [ "GetColumnCount", "classocilib_1_1_type_info.html#a9ec4e860843139c1829ac4251470f3a7", null ],
+    [ "GetColumn", "classocilib_1_1_type_info.html#ac0c5e0ec558a4133f5986e2e85fa8a8a", null ]
 ];

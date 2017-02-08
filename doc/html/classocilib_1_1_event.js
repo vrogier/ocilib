@@ -18,10 +18,10 @@ var classocilib_1_1_event =
       [ "ObjectDropped", "classocilib_1_1_event.html#a019d692c5e22a1c59dcfc640ae19f679af7865c5e76785c0a0c0a7fc01e41ada5", null ],
       [ "ObjectGeneric", "classocilib_1_1_event.html#a019d692c5e22a1c59dcfc640ae19f679a342c800268d4273d162804a90bc68f96", null ]
     ] ],
-    [ "GetType", "classocilib_1_1_event.html#a412601315112f24603345fc7dc9061ef", null ],
-    [ "GetObjectEvent", "classocilib_1_1_event.html#ae8d1ec68b3c19c437ac94964356c3eca", null ],
-    [ "GetDatabaseName", "classocilib_1_1_event.html#a6c060227178b17fc97b02526e1707c08", null ],
-    [ "GetObjectName", "classocilib_1_1_event.html#a150ab653e087b76fdd9e4ca9a083afc1", null ],
-    [ "GetRowID", "classocilib_1_1_event.html#a2fa9783b57dfeabaef53ce19f2211575", null ],
-    [ "GetSubscription", "classocilib_1_1_event.html#afea9cc576043252bb27ed52b2b13f257", null ]
+    [ "GetType", "classocilib_1_1_event.html#ade44e537f50ac722530f82c0f73db6d2", null ],
+    [ "GetObjectEvent", "classocilib_1_1_event.html#a71186b0875124925cc7a5df4abeef653", null ],
+    [ "GetDatabaseName", "classocilib_1_1_event.html#ab5916f85034d50780067d34b1bef69a9", null ],
+    [ "GetObjectName", "classocilib_1_1_event.html#a6838809560aba4bcc0fb71a0bea4bcf9", null ],
+    [ "GetRowID", "classocilib_1_1_event.html#a0d80123251af1a33c093fafc2ee9b9ca", null ],
+    [ "GetSubscription", "classocilib_1_1_event.html#a545a749a11dedb46a93f49db2dd1657b", null ]
 ];

@@ -12,10 +12,10 @@ var classocilib_1_1_enqueue =
     ] ],
     [ "Enqueue", "classocilib_1_1_enqueue.html#ac5f4eb750aab446607db4244a4d25f2a", null ],
     [ "Put", "classocilib_1_1_enqueue.html#af97c67d859f5983ed094839ee6cd5e85", null ],
-    [ "GetVisibility", "classocilib_1_1_enqueue.html#ae669e66f46187e6081e4c3acd0a0dec4", null ],
+    [ "GetVisibility", "classocilib_1_1_enqueue.html#a2cb186ded3ec763d17b8759bbbf65471", null ],
     [ "SetVisibility", "classocilib_1_1_enqueue.html#a00a93dce396bf6fc5642b60b7ecdf57e", null ],
-    [ "GetMode", "classocilib_1_1_enqueue.html#a6820e76a522b311b92e0af37b6d6d9eb", null ],
+    [ "GetMode", "classocilib_1_1_enqueue.html#a2f6d48e90d9a84866f8a6582d1d92652", null ],
     [ "SetMode", "classocilib_1_1_enqueue.html#a6259485a6962e526739c33b7cce4da81", null ],
-    [ "GetRelativeMsgID", "classocilib_1_1_enqueue.html#a8c7779b801f47b43ca0b4705699b6623", null ],
+    [ "GetRelativeMsgID", "classocilib_1_1_enqueue.html#a921a9b3d2b38dc71cb34489c0799dbc1", null ],
     [ "SetRelativeMsgID", "classocilib_1_1_enqueue.html#a9c2a10425d82e93a25f9be9a9ba5b521", null ]
 ];

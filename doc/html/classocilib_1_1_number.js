@@ -3,8 +3,8 @@ var classocilib_1_1_number =
     [ "Number", "classocilib_1_1_number.html#a5a7daa4f309c64b9170a24395410d45a", null ],
     [ "Number", "classocilib_1_1_number.html#a445cd661a6c1fcb7eb8d67d3a061d91e", null ],
     [ "Number", "classocilib_1_1_number.html#ae18ee9902c947edc9adeefdf5aff2376", null ],
-    [ "FromString", "classocilib_1_1_number.html#afefaaf0ea22a53d9b55ea62dbf945516", null ],
-    [ "ToString", "classocilib_1_1_number.html#a16d88a35f54aac2b1b4123cc7c1fe917", null ],
-    [ "ToString", "classocilib_1_1_number.html#ad2f85582e5a0734a4e5f721d9a038553", null ],
-    [ "Clone", "classocilib_1_1_number.html#a62b8f2cbc54c76a578a268183d7cd794", null ]
+    [ "FromString", "classocilib_1_1_number.html#a5b10645346c76c78c40505d2ebcf1ee1", null ],
+    [ "ToString", "classocilib_1_1_number.html#add6f329e7d59cae03ed7939ab8d7d661", null ],
+    [ "ToString", "classocilib_1_1_number.html#a59adc1be9880aa25eb34ffca1403be9c", null ],
+    [ "Clone", "classocilib_1_1_number.html#a0db71b6dcfaf63f01076f0216a3574fc", null ]
 ];
