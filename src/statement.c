@@ -635,7 +635,10 @@ boolean OCI_BindData
 
     /* set allocation mode prior any required data allocation */
 
-    bnd->alloc_mode = (ub1) stmt->bind_alloc_mode;
+    if (OCI_STATUS)
+    {
+        bnd->alloc_mode = (ub1)stmt->bind_alloc_mode;
+    }
 
     /* for handle based data types, we need to allocate an array of handles for
        bind calls because OCILIB uses external arrays of OCILIB Objects */
