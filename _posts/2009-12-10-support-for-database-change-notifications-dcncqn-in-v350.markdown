@@ -39,7 +39,7 @@ Here is a example program that illustrates the OCILIB implementation of ORACLE D
 
 
     
-    
+{% highlight c linenos %}     
     #include "ocilib.h"
     
     #ifdef _WINDOWS
@@ -214,7 +214,7 @@ Here is a example program that illustrates the OCILIB implementation of ORACLE D
         
         printf("\n");
     }
-    
+ {% endhighlight %}    
     
 
 
@@ -224,7 +224,7 @@ And the outpout is :
 
     
     
-    
+ {% highlight log %}   
     => Initializing OCILIB in event mode...
     
     => Connecting to winrest@winrest...
@@ -331,7 +331,7 @@ And the outpout is :
     => Cleaning up OCILIB resources...
     
     => Done...
-    
+{% endhighlight %}     
     
 
 

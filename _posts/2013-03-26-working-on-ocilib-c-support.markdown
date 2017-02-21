@@ -26,7 +26,7 @@ Here is an example of my early basic implementation :
 
 
     
-    
+{% highlight c linenos %}    
     #include "ocilib++"
     
     using namespace ocilib;
@@ -61,7 +61,7 @@ Here is an example of my early basic implementation :
             
         Environment::Cleanup();
     }
-    
+{% endhighlight %}    
 
 
 

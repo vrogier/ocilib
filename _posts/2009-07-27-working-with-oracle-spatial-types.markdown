@@ -37,7 +37,7 @@ Here is the code :
 
 
     
-    
+{% highlight c linenos %}      
     #include "ocilib.h"
     
     #define NB_ELEM 500
@@ -143,7 +143,7 @@ Here is the code :
         
         return EXIT_SUCCESS;
     } 
-    
+ {% endhighlight %}     
 
 
 

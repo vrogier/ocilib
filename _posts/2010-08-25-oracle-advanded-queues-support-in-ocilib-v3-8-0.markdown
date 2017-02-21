@@ -66,7 +66,7 @@ Advanced queues has never been so easy ;)
 
 
     
-    
+{% highlight c linenos %}    
     #include "ocilib.h"
     
     int main(int argc, char *argv[])
@@ -167,7 +167,7 @@ Advanced queues has never been so easy ;)
      
        return EXIT_SUCCESS;
     }
-    
+{% endhighlight %}         
 
 
 
@@ -175,10 +175,10 @@ And the output is :
 
 
     
-    
+{% highlight log %}    
     MSG 'NEXT MEETING FOR AGENT 1' => 12:00 PM IN STARBUCKS
     MSG 'NEXT MEETING FOR AGENT 2' => 14:00 PM IN NERO
-    
+{% endhighlight %}   
 
 
 

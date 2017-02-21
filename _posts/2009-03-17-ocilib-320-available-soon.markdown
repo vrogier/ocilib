@@ -41,7 +41,7 @@ It shows some possibilities of the direct path implementation :
 
 
     
-    
+{% highlight c linenos %} 
     #include "ocilib.h"
     
     #define SIZE_TAB  1000
@@ -148,7 +148,7 @@ It shows some possibilities of the direct path implementation :
     
         OCI_Cleanup();
     }
-    
+{% endhighlight %}     
     
 
 

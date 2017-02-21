@@ -43,7 +43,7 @@ This version will be released by mi july !
 Here is an example of basic AQ use in OCILIB :
 
     
-    
+{% highlight c linenos %}    
     #include "ocilib.h"
     
     int main(int argc, char *argv[])
@@ -96,5 +96,5 @@ Here is an example of basic AQ use in OCILIB :
     
        return EXIT_SUCCESS;
     }
-    
+{% endhighlight %}   
     

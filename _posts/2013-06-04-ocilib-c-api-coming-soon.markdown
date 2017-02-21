@@ -29,7 +29,7 @@ here is a basic example :
 
 
     
-    
+{% highlight c linenos %}   
     #include "ocilib.hpp"
     
     using namespace ocilib;
@@ -63,7 +63,7 @@ here is a basic example :
      
         return EXIT_SUCCESS;
     }
-    
+{% endhighlight %}     
 
 
 

@@ -31,7 +31,7 @@ Here is a sample app that startups a remote instance and then shuts it down :
 
 
     
-    
+{% highlight c linenos %}     
     #include "ocilib.h"
     
     int main(int argc, char **argv)
@@ -62,7 +62,7 @@ Here is a sample app that startups a remote instance and then shuts it down :
         
         return EXIT_SUCCESS;
     }   
-    
+{% endhighlight %}   
 
 
 

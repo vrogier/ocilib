@@ -26,7 +26,7 @@ As mentioned in my previous post, Oracle AQ administration is now available in C
 
     
     
-    
+{% highlight c linenos %}      
     #include "ocilib.h"
     
     int main(void)
@@ -79,7 +79,7 @@ As mentioned in my previous post, Oracle AQ administration is now available in C
     
         return EXIT_SUCCESS;
     }
-    
+{% endhighlight %}     
     
 
 
