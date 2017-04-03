@@ -260,10 +260,7 @@ boolean OCI_NumberFromString
 
     if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT || (SQLT_VNU != sqlcode))
     {
-
-#if OCI_VERSION_COMPILE >= OCI_12_1
-
-        if ((OCILib.version_runtime >= OCI_12_1) && ((SQLT_VNU != sqlcode)))
+        if (SQLT_VNU != sqlcode)
         {
             if (type & OCI_NUM_SHORT)
             {
@@ -278,24 +275,27 @@ boolean OCI_NumberFromString
             }
         }
 
-#endif
-
     #if OCI_VERSION_COMPILE >= OCI_10_1
 
         if (!done && OCILib.version_runtime >= OCI_10_1)
         {
-            fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
+            const otext *tmp_fmt = fmt;
+
+            if (!tmp_fmt)
+            {
+                tmp_fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
+            }
 
             if (type & OCI_NUM_DOUBLE)
             {
-                OCI_STATUS = (osscanf(in_value, fmt, (double *)out_value) == 1);
+                OCI_STATUS = (osscanf(in_value, tmp_fmt, (double *)out_value) == 1);
+                done = TRUE;
             }
             else if (type & OCI_NUM_FLOAT)
             {
-                OCI_STATUS = (osscanf(in_value, fmt, (float *)out_value) == 1);
+                OCI_STATUS = (osscanf(in_value, tmp_fmt, (float *)out_value) == 1);
+                done = TRUE;
             }
-
-            done = TRUE;
         }
 
     #endif
@@ -385,10 +385,7 @@ boolean OCI_NumberToString
 
     if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT || (SQLT_VNU != sqlcode))
     {
-
-    #if OCI_VERSION_COMPILE >= OCI_12_1
-
-        if ((OCILib.version_runtime >= OCI_12_1) && ((SQLT_VNU != sqlcode)))
+        if (SQLT_VNU != sqlcode)
         {
             if (type & OCI_NUM_SHORT)
             {
@@ -403,36 +400,39 @@ boolean OCI_NumberToString
             }
         }
 
-    #endif
-
     #if OCI_VERSION_COMPILE >= OCI_10_1
 
         if (!done && (OCILib.version_runtime >= OCI_10_1) && ((SQLT_VNU != sqlcode)))
         {
-            if (!fmt)
+            const otext *tmp_fmt = fmt;
+
+            if (!tmp_fmt)
             {
-                fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
+                tmp_fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
             }
 
             if (type & OCI_NUM_DOUBLE && (SQLT_BDOUBLE == sqlcode))
             {
-                out_value_size = osprintf(out_value, out_value_size, fmt, *((double *)number));
+                out_value_size = osprintf(out_value, out_value_size, tmp_fmt, *((double *)number));
+                done = TRUE;
             }
             else if (type & OCI_NUM_FLOAT && (SQLT_BFLOAT == sqlcode))
             {
-                out_value_size = osprintf(out_value, out_value_size, fmt, *((float *)number));
+                out_value_size = osprintf(out_value, out_value_size, tmp_fmt, *((float *)number));
+                done = TRUE;
             }
 
-            done = TRUE;
-
-            if ((out_value_size) > 0)
+            if (done)
             {
-                while (out_value[out_value_size-1] == OTEXT('0'))
+                if ((out_value_size) > 0)
                 {
-                    out_value[out_value_size-1] = 0;
-                }
+                    while (out_value[out_value_size - 1] == OTEXT('0'))
+                    {
+                        out_value[out_value_size - 1] = 0;
+                    }
 
-                out_value--;
+                    out_value--;
+                }
             }
         }
 
