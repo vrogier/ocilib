@@ -5407,6 +5407,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetType
  * - OCI_NUM_BIGUINT
  * - OCI_NUM_DOUBLE
  * - OCI_NUM_FLOAT
+ * - OCI_NUM_NUMBER
  *
  * For OCI_Long type the possible values are:
  * - OCI_BLONG
@@ -6472,6 +6473,7 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
  * - OCI_CDT_FILE
  * - OCI_CDT_TIMESTAMP
  * - OCI_CDT_INTERVAL
+ * - OCI_CDT_NUMERIC
  *
  * For OCI_Long type the possible values are:
  * - OCI_BLONG
@@ -6494,6 +6496,26 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
  * For OCI_Interval type the possible values are:
  * - OCI_INTERVAL_YM
  * - OCI_INTERVAL_DS
+ *
+ * For numeric columns the possible values are:
+ * - OCI_NUM_SHORT
+ * - OCI_NUM_INT
+ * - OCI_NUM_BIGINT
+ * - OCI_NUM_USHORT
+ * - OCI_NUM_UINT
+ * - OCI_NUM_BIGUINT
+ * - OCI_NUM_DOUBLE
+ * - OCI_NUM_FLOAT
+ * - OCI_NUM_NUMBER
+ *
+ * @warning
+ * For numeric columns, the value may be not accurate at all!
+ * OCI does not allow to find out the real SQL precise type of an numeric column (int, real, ...). 
+ * OCI based libraries can only 'guess' some types in some situations : float, binary_float, binary_float, number.
+ * For example:
+ * - with the statement 'select 101 from dual', OCI would report numeric type NUMBER.
+ * - if a column is declared as "INT", OCI would report also NUMBER.
+ *  
  *
  * @note
  * For all other OCILIB types, it returns OCI_UNKNOWN
@@ -6524,6 +6546,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetSubType
  * - OCI_NUM_BIGUINT
  * - OCI_NUM_DOUBLE
  * - OCI_NUM_FLOAT
+ * - OCI_NUM_NUMBER
  *
  * @return
  * Return TRUE on success otherwise FALSE
@@ -6556,6 +6579,7 @@ OCI_EXPORT boolean OCI_API OCI_SetStructNumericType
  *   - OCI_NUM_BIGUINT
  *   - OCI_NUM_DOUBLE
  *   - OCI_NUM_FLOAT
+ *   - OCI_NUM_NUMBER
  *
  * @return
  * Return TRUE on success otherwise FALSE
@@ -11356,6 +11380,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberSetContent
 * - OCI_NUM_BIGUINT   : value is a pointer to an unsigned big_uint
 * - OCI_NUM_FLOAT     : value is a pointer to an float
 * - OCI_NUM_DOUBLE    : value is a pointer to a double
+* - OCI_NUM_NUMBER    : value is a pointer to a OCI_Number
 *
 * @return
 * TRUE on success otherwise FALSE

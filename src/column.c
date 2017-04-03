@@ -1442,7 +1442,8 @@ unsigned int OCI_API OCI_ColumnGetSubType
         OCI_CDT_LOB       == col->datatype  ||
         OCI_CDT_FILE      == col->datatype  ||
         OCI_CDT_TIMESTAMP == col->datatype  ||
-        OCI_CDT_INTERVAL  == col->datatype)
+        OCI_CDT_INTERVAL  == col->datatype  ||
+        OCI_CDT_NUMERIC   == col->datatype)
     {
         OCI_RETVAL = col->subtype;
     }
