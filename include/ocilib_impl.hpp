@@ -5342,9 +5342,12 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring 
         maxSize = static_cast<unsigned int>(value.size());
     }
 
-    value.reserve(maxSize);
+    unsigned int lengthWithNull = static_cast<unsigned int>(value.length()+1);
+    lengthWithNull  = std::max(maxSize, lengthWithNull);
+    value.reserve(lengthWithNull);
 
     BindObjectAdaptor<ostring> * bnd = new BindObjectAdaptor<ostring>(*this, name, mode, value, maxSize + 1);
+
 
     boolean res = OCI_BindString(*this, name.c_str(), static_cast<otext *>(*bnd), maxSize);
 
@@ -6194,6 +6197,20 @@ inline ostring Resultset::Get<ostring>(const ostring& name) const
 template<>
 inline Raw Resultset::Get<Raw>(unsigned int index) const
 {
+   if (this->GetColumn(index).GetType() == ocilib::DataTypeValues::TypeLong)
+   {
+      OCI_Long *lg = OCI_GetLong(*this, index);
+      if (lg)
+      {
+	    unsigned char *buffer = (unsigned char *)OCI_LongGetBuffer(lg);
+	    unsigned int size = OCI_LongGetSize(lg);
+	    Raw result = MakeRaw(buffer, size);
+	    OCI_LongFree(lg);
+	    return result;
+      }
+      return Raw();
+   }
+
     unsigned int size = Check(OCI_GetDataLength(*this,index));
 
     ManagedBuffer<unsigned char> buffer(size + 1);
