@@ -82,6 +82,8 @@ unsigned int OCI_StringBinaryToString
 {
     char hex_str[] = "0123456789ABCDEF";
 
+    unsigned int len = binary_size * 2;
+
     if (buffer)
     {
         unsigned int  i;
@@ -91,11 +93,11 @@ unsigned int OCI_StringBinaryToString
             buffer[i * 2 + 0] = hex_str[binary[i] >> 4  ];
             buffer[i * 2 + 1] = hex_str[binary[i] & 0x0F];
         }  
-        
-        buffer[binary_size * 2] = 0;
+
+        buffer[len] = 0;
     }
 
-    return (binary_size * 2 + 1);
+    return len;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -739,7 +741,7 @@ unsigned int OCI_StringGetFromType
                 }
                 else
                 {
-                    len = OCI_StringBinaryToString((unsigned char *) data, len, ptr);  
+                    len = OCI_StringBinaryToString((unsigned char *) data, len, ptr); 
                 }
             }
             else
