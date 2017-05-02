@@ -1646,10 +1646,6 @@ boolean OCI_API OCI_ExecuteInternal
 
         status = OCIStmtExecute(stmt->con->cxt, stmt->stmt, stmt->con->err, iters,
                                 (ub4)0, (OCISnapshot *)NULL, (OCISnapshot *)NULL, mode);
-
-        /* reset input binds indicators status even if execution failed */
-
-        OCI_BindUpdateAll(stmt);
     }
 
     /* check result */
@@ -1694,6 +1690,10 @@ boolean OCI_API OCI_ExecuteInternal
             stmt->status |= OCI_STMT_PARSED;
             stmt->status |= OCI_STMT_DESCRIBED;
             stmt->status |= OCI_STMT_EXECUTED;
+
+            /* reset binds indicators */
+
+            OCI_BindUpdateAll(stmt);
 
             /* commit if necessary */
 
