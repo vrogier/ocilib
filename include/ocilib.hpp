@@ -35,6 +35,7 @@
 #include <list>
 #include <vector>
 #include <iterator>
+#include <cstddef>
 
 extern "C"{
 #include "ocilib.h"
