@@ -144,9 +144,11 @@ boolean OCI_BindCheck
         {
             if (OCILib.use_wide_char_conv)
             {
-                int size = (bnd->size / sizeof(dbtext));
+                int max_chars = bnd->size / sizeof(dbtext);
+                size_t src_offset = index * max_chars * sizeof(otext);
+                size_t dst_offset = index * max_chars * sizeof(dbtext);
 
-                OCI_StringUTF32ToUTF16((src + (index * size * sizeof(otext))), (dst + (index * bnd->size)), size - 1);
+                OCI_StringUTF32ToUTF16(src + src_offset, dst + dst_offset, max_chars - 1);
             }
         }
         // otherwise we have an ocilib handle based type
@@ -259,9 +261,11 @@ boolean OCI_BindUpdate
     {
         if (OCILib.use_wide_char_conv)
         {
-            int size = (bnd->size / sizeof(dbtext));
+            int max_chars = bnd->size / sizeof(dbtext);
+            size_t src_offset = index * max_chars * sizeof(dbtext);
+            size_t dst_offset = index * max_chars * sizeof(otext);
 
-            OCI_StringUTF16ToUTF32((src + (index * size * sizeof(otext))), (dst + (index * bnd->size)), size - 1);
+           OCI_StringUTF16ToUTF32(src + src_offset, dst + dst_offset, max_chars - 1);
         }
     }
     else if (OCI_CDT_OBJECT == bnd->type)

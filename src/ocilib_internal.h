@@ -1287,22 +1287,22 @@ void OCI_StringTranslate
 );
 
 #define OCI_StringAnsiToNative(s, d, l)    \
-    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(char),   sizeof(otext) )
+    OCI_StringTranslate( (void *) (s), (void *) (d), l, sizeof(char),   sizeof(otext) )
 
 #define OCI_StringNativeToAnsi(s, d, l)     \
-    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(otext),  sizeof(char)  )
+    OCI_StringTranslate( (void *) (s), (void *) (d), l, sizeof(otext),  sizeof(char)  )
 
 #define OCI_StringUTF16ToUTF32(s, d, l)     \
-    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(short),  sizeof(int)   )
+    OCI_StringTranslate( (void *) (s), (void *) (d), l, sizeof(short),  sizeof(int)   )
 
 #define OCI_StringUTF32ToUTF16(s, d, l)    \
-    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(int),    sizeof(short) )
+    OCI_StringTranslate( (void *) (s), (void *) (d), l, sizeof(int),    sizeof(short) )
 
 #define OCI_StringOracleToNative(s, d, l)  \
-    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(dbtext), sizeof(otext) )
+    OCI_StringTranslate( (void *) (s), (void *) (d), l, sizeof(dbtext), sizeof(otext) )
 
 #define OCI_StringRawCopy(s, d, l)          \
-    OCI_StringTranslate( (void *) s, (void *) d, l, sizeof(otext),  sizeof(otext) )
+    OCI_StringTranslate( (void *) (s), (void *) (d), l, sizeof(otext),  sizeof(otext) )
 
 dbtext * OCI_StringGetOracleString
 (
