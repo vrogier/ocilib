@@ -61,6 +61,11 @@ typedef sword (*OCIENVCREATE)
     void   **usrmempp
 );
 
+typedef sword(*OCITERMINATE)
+(
+    ub4 mode
+);
+
 typedef sword (*OCIHANDLEALLOC)
 (
     const void  *parenth,
