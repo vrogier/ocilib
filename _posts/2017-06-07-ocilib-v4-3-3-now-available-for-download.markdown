@@ -27,14 +27,17 @@ Get the release and enjoy it !
         - Column is string based
         - Oracle client < 12gR1
         - Using OCI_GetInt() or OCI_GetUnsignedInt()
+        
 - Issue #86: Fixed wrong error information when statement execution failed involving 64bit integer binds
     * It occurred under following conditions:     
         - Binding 64bit integer host variables with OCI_BDM_OUT flag set (default if OCI_BindSetDirection() has not been called)
         - Statement execution failed on the server for any reasons (server side error, constraint violation, ..) 
     * Real server side error information was not reported by OCI_GetLastError() or error callback
     * Instead an error "OCI-22060: argument [2] is an invalid or uninitialized number" was reported
+    
 - Issue #88: Fixed OCI_GetString() on BLOB columns with blob size > 1024 bytes
     * Filling the resulting string with BLOB data led to a buffer overflow 
+    
 - Issue #89: Fixed Segfault occurring in OCI_Execute()
     * The issue was a wrong offset computation when trying to update user strings after execution.
     * It occurred under following conditions:     

@@ -16,7 +16,7 @@ Click on a change log entry to see the full details.
 <br/>
 <br/>
 
-_[2017-02-08 . version 4.3.3]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.3.3.txt)_
+_[2017-06-07 . version 4.3.3]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.3.3.txt)_
 
   * Some C API Bug fixes
   
