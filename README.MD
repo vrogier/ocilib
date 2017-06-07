@@ -20,7 +20,7 @@ OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy
 
 ## 2. License
 
-The source code is free source code licensed under **Apache License, Version 2.0** - see [LICENSE file](license.txt)
+The source code is free source code licensed under **Apache License, Version 2.0** - see [LICENSE file](LICENSE)
 
 ## 3. Features 
  

@@ -19,7 +19,7 @@
 
  @section Version Version information
 
-Current version :  <b>4.3.2 (2017-02-08)</b>
+Current version :  <b>4.3.3 (2017-06-07)</b>
 
  @section Features Main features
 
@@ -62,11 +62,11 @@ Current version :  <b>4.3.2 (2017-02-08)</b>
 
  @section License License 
  The source code is free source code licensed under the Apache License, Version 2.0.
- (see the file license.txt)
+ (see the file LICENSE)
 
  @section Changelog ChangeLog
 
- @include ChangeLog.txt
+ @include ChangeLog
 
  */
 

@@ -38,7 +38,7 @@ The OCILIB library :
 VERSION 
 ========
 
-4.3.2
+4.3.3
 
 
 FEATURES 
@@ -83,7 +83,7 @@ LICENSE
 
 The source code is free source code licensed under the Apache License, Version 2.0.
 
-(see the file license.txt)
+(see the file LICENSE)
 
 COMPATIBILITY 
 =============

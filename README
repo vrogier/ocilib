@@ -1,5 +1,3 @@
-****************************************************************************
-
    +----------------------------------------------------------------------+   
    |                                                                      |
    |                     OCILIB - C Driver for Oracle                     |
@@ -12,15 +10,9 @@
    |                                                                      |
    +----------------------------------------------------------------------+
    |                                                                      |
-   |   Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>   |
+   |   Copyright (c) 2007-2017 Vincent ROGIER <vince.rogier@ocilib.net>   |
    |                                                                      |
    +----------------------------------------------------------------------+
-   |                                                                      |
-   |                              (GNU PACKAGE)                           |
-   |                                                                      |
-   +----------------------------------------------------------------------+   
-
-****************************************************************************
 
 DESCRIPTION 
 ===========
@@ -81,7 +73,9 @@ URL : http://www.ocilib.net
 LICENSE
 =======
 
-see COPYING file.
+The source code is free source code licensed under the Apache License, Version 2.0.
+
+(see the file LICENSE)
 
 COMPATIBILITY
 =============
@@ -113,9 +107,14 @@ for ansi version and C99 for unicode versions.
  - Oracle 9i 
  - Oracle 10g 
  - Oracle 11g 
-
-INSTALLATION AND LIBRARY BUILDS  
+ - Oracle 12c
+ 
+INSTALLATION AND LIBRARY BUILDS
 ===============================
+
+OCILIB is avialable on MS Windows and Linux /Unix systems.
+
+Installation on Linux / Unix systems
 
 see INSTALL file for installation options.
 

@@ -2,8 +2,8 @@
 #include "resource.h"
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,3,2,0
- PRODUCTVERSION 4,3,2,0
+ FILEVERSION 4,3,3,0
+ PRODUCTVERSION 4,3,3,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -20,11 +20,11 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Vincent Rogier"
             VALUE "FileDescription", "Open source C driver for Oracle databases"
-            VALUE "FileVersion", "4.3.2.0"
+            VALUE "FileVersion", "4.3.3.0"
             VALUE "InternalName", "OCILIB"
             VALUE "LegalCopyright", "Copyright © 2007-2017"
             VALUE "ProductName", "OCILIB (C driver for Oracle)"
-            VALUE "ProductVersion", "4.3.2.0"
+            VALUE "ProductVersion", "4.3.3.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -34,8 +34,8 @@ BEGIN
 END
 
 IDR_VERSION VERSIONINFO
- FILEVERSION 4,3,2,0
- PRODUCTVERSION 4,3,2,0
+ FILEVERSION 4,3,3,0
+ PRODUCTVERSION 4,3,3,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -52,12 +52,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Vincent Rogier"
             VALUE "FileDescription", "Open source C driver for Oracle databases"
-            VALUE "FileVersion", "4.3.2.0"
+            VALUE "FileVersion", "4.3.3.0"
             VALUE "InternalName", "OCILIB.dll"
             VALUE "LegalCopyright", "Copyright © 2007-2017"
             VALUE "OriginalFilename", "OCILIB.dll"
             VALUE "ProductName", "OCILIB (C driver for Oracle)"
-            VALUE "ProductVersion", "4.3.2.0"
+            VALUE "ProductVersion", "4.3.3.0"
         END
     END
     BLOCK "VarFileInfo"

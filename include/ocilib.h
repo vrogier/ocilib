@@ -92,7 +92,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     4
 #define OCILIB_MINOR_VERSION     3
-#define OCILIB_REVISION_VERSION  2
+#define OCILIB_REVISION_VERSION  3
 
 /* Import mode */
 
@@ -950,7 +950,7 @@ typedef struct OCI_XID {
 } OCI_XID;
 
 /**
- * @union OCI_Variant
+ * @typedef OCI_Variant
  *
  * @brief
  * Internal Variant type based on union C type.
@@ -11370,7 +11370,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberSetContent
 * @param value  - pointer to value to set
 *
 * @note
-* parameter @type can be :
+* Argument @param type can be :
 *
 * - OCI_NUM_SHORT     : value is a pointer to a signed short
 * - OCI_NUM_USHORT    : value is a pointer to an unsigned short
