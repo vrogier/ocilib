@@ -206,7 +206,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/README.in \
 	$(top_srcdir)/config/config.sub \
 	$(top_srcdir)/config/install-sh $(top_srcdir)/config/ltmain.sh \
 	$(top_srcdir)/config/missing AUTHORS COPYING ChangeLog INSTALL \
-	NEWS README THANKS config/compile config/config.guess \
+	NEWS README THANKS LICENSE config/compile config/config.guess \
 	config/config.sub config/install-sh config/ltmain.sh \
 	config/missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
