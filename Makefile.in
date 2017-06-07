@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# Copyright (c) 2007-2016 Vincent ROGIER <vince.rogier@ocilib.net>
+# Copyright (c) 2007-2017 Vincent ROGIER <vince.rogier@ocilib.net>
 #  
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without 
@@ -206,7 +206,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/README.in \
 	$(top_srcdir)/config/config.sub \
 	$(top_srcdir)/config/install-sh $(top_srcdir)/config/ltmain.sh \
 	$(top_srcdir)/config/missing AUTHORS COPYING ChangeLog INSTALL \
-	NEWS README THANKS LICENSE config/compile config/config.guess \
+	README THANKS LICENSE config/compile config/config.guess \
 	config/config.sub config/install-sh config/ltmain.sh \
 	config/missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
