@@ -205,7 +205,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/README.in \
 	$(top_srcdir)/config/compile $(top_srcdir)/config/config.guess \
 	$(top_srcdir)/config/config.sub \
 	$(top_srcdir)/config/install-sh $(top_srcdir)/config/ltmain.sh \
-	$(top_srcdir)/config/missing AUTHORS COPYING ChangeLog INSTALL \
+	$(top_srcdir)/config/missing AUTHORS ChangeLog INSTALL \
 	README THANKS LICENSE config/compile config/config.guess \
 	config/config.sub config/install-sh config/ltmain.sh \
 	config/missing
