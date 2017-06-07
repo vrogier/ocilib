@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.3.3</span>
    </div>
   </td>
  </tr>
@@ -1423,6 +1423,7 @@ Return the number of characters written into the buffer </dd></dl>
 <li>OCI_CDT_FILE</li>
 <li>OCI_CDT_TIMESTAMP</li>
 <li>OCI_CDT_INTERVAL</li>
+<li>OCI_CDT_NUMERIC</li>
 </ul>
 <p>For OCI_Long type the possible values are:</p><ul>
 <li>OCI_BLONG</li>
@@ -1446,6 +1447,22 @@ Return the number of characters written into the buffer </dd></dl>
 <li>OCI_INTERVAL_YM</li>
 <li>OCI_INTERVAL_DS</li>
 </ul>
+<p>For numeric columns the possible values are:</p><ul>
+<li>OCI_NUM_SHORT</li>
+<li>OCI_NUM_INT</li>
+<li>OCI_NUM_BIGINT</li>
+<li>OCI_NUM_USHORT</li>
+<li>OCI_NUM_UINT</li>
+<li>OCI_NUM_BIGUINT</li>
+<li>OCI_NUM_DOUBLE</li>
+<li>OCI_NUM_FLOAT</li>
+<li>OCI_NUM_NUMBER</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>For numeric columns, the value may be not accurate at all! OCI does not allow to find out the real SQL precise type of an numeric column (int, real, ...). OCI based libraries can only 'guess' some types in some situations : float, binary_float, binary_float, number. For example:<ul>
+<li>with the statement 'select 101 from dual', OCI would report numeric type NUMBER.</li>
+<li>if a column is declared as "INT", OCI would report also NUMBER.</li>
+</ul>
+</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>For all other OCILIB types, it returns OCI_UNKNOWN </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_column.html#ad3cd153f4138ebee0c394a4602c23615">ocilib::Column::GetSubType()</a>.</p>
@@ -1504,6 +1521,7 @@ Return the number of characters written into the buffer </dd></dl>
 <li>OCI_NUM_BIGUINT</li>
 <li>OCI_NUM_DOUBLE</li>
 <li>OCI_NUM_FLOAT</li>
+<li>OCI_NUM_NUMBER</li>
 </ul>
 </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Return TRUE on success otherwise FALSE </dd></dl>
@@ -1562,6 +1580,7 @@ Return the number of characters written into the buffer </dd></dl>
 <li>OCI_NUM_BIGUINT</li>
 <li>OCI_NUM_DOUBLE</li>
 <li>OCI_NUM_FLOAT</li>
+<li>OCI_NUM_NUMBER</li>
 </ul>
 </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Return TRUE on success otherwise FALSE </dd></dl>
@@ -3727,7 +3746,7 @@ Return the number of characters written into the buffer </dd></dl>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Feb 8 2017 22:19:52 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed Jun 7 2017 21:05:26 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

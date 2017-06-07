@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.3.3</span>
    </div>
   </td>
  </tr>
@@ -60,7 +60,6 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_datatypes.html','
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle">
 <div class="title">Data types<div class="ingroups"><a class="el" href="group___ocilib_c_api.html">C API</a></div></div>  </div>
@@ -94,12 +93,6 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_datatypes.html','
 <p>Instead of directly manipulating the structures and their members, the library has functions to access the underlying members.</p>
 <p>It's designed to make the user code as more independent as possible of the library details. </p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">union &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="union_o_c_i___variant.html">OCI_Variant</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal Variant type based on union C type.  <a href="union_o_c_i___variant.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:ga03591b6a21bfc75df4bbd9c9005307fa"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a></td></tr>
@@ -239,6 +232,9 @@ typedef struct <a class="el" href="group___ocilib_c_api_datatypes.html#ga0d226bd
 typedef struct OCI_XID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datatypes.html#ga56df9baec6ef3397e359102b323b3d7e">OCI_XID</a></td></tr>
 <tr class="memdesc:ga56df9baec6ef3397e359102b323b3d7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global transaction identifier. <br /></td></tr>
 <tr class="separator:ga56df9baec6ef3397e359102b323b3d7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac5f6e0444dd008148afbad207c8dd630"><td class="memItemLeft" align="right" valign="top">typedef union OCI_Variant&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datatypes.html#gac5f6e0444dd008148afbad207c8dd630">OCI_Variant</a></td></tr>
+<tr class="memdesc:gac5f6e0444dd008148afbad207c8dd630"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal Variant type based on union C type.  <a href="#gac5f6e0444dd008148afbad207c8dd630">More...</a><br /></td></tr>
+<tr class="separator:gac5f6e0444dd008148afbad207c8dd630"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9eae5234e3ca61b6dc51747bc8ce97e4"><td class="memItemLeft" align="right" valign="top">typedef struct OCI_HashValue&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datatypes.html#ga9eae5234e3ca61b6dc51747bc8ce97e4">OCI_HashValue</a></td></tr>
 <tr class="memdesc:ga9eae5234e3ca61b6dc51747bc8ce97e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hash table entry value.  <a href="#ga9eae5234e3ca61b6dc51747bc8ce97e4">More...</a><br /></td></tr>
 <tr class="separator:ga9eae5234e3ca61b6dc51747bc8ce97e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -762,6 +758,25 @@ Possible values for parameter 'event' :<ul>
 
 </div>
 </div>
+<a id="gac5f6e0444dd008148afbad207c8dd630"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac5f6e0444dd008148afbad207c8dd630">&#9670;&nbsp;</a></span>OCI_Variant</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_Variant</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;ocilib.h&gt;</code></p>
+
+<p>Internal Variant type based on union C type. </p>
+<dl class="section note"><dt>Note</dt><dd>Helpful for generic buffer, it reduces the amount of casts </dd></dl>
+
+</div>
+</div>
 <a id="ga9eae5234e3ca61b6dc51747bc8ce97e4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga9eae5234e3ca61b6dc51747bc8ce97e4">&#9670;&nbsp;</a></span>OCI_HashValue</h2>
 
@@ -786,7 +801,7 @@ Possible values for parameter 'event' :<ul>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Feb 8 2017 22:19:52 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed Jun 7 2017 21:05:25 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

@@ -1,6 +1,5 @@
 var group___ocilib_c_api_datatypes =
 [
-    [ "OCI_Variant", "union_o_c_i___variant.html", null ],
     [ "OCI_Pool", "group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa", null ],
     [ "OCI_Connection", "group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77", null ],
     [ "OCI_Statement", "group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d", null ],
@@ -40,6 +39,7 @@ var group___ocilib_c_api_datatypes =
     [ "POCI_TAF_HANDLER", "group___ocilib_c_api_datatypes.html#ga67e0f339111bb2d9243582e129697873", null ],
     [ "POCI_HA_HANDLER", "group___ocilib_c_api_datatypes.html#ga9d59cd068ba0758bc5c022de48b8de4c", null ],
     [ "OCI_XID", "group___ocilib_c_api_datatypes.html#ga56df9baec6ef3397e359102b323b3d7e", null ],
+    [ "OCI_Variant", "group___ocilib_c_api_datatypes.html#gac5f6e0444dd008148afbad207c8dd630", null ],
     [ "OCI_HashValue", "group___ocilib_c_api_datatypes.html#ga9eae5234e3ca61b6dc51747bc8ce97e4", null ],
     [ "OCI_HashEntry", "group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f", null ],
     [ "big_int", "group___ocilib_c_api_datatypes.html#ga88d4b7a22a0996612532961510afb861", null ]

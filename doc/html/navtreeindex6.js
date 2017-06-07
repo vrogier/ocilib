@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"group___ocilib_c_api_statement_control.html#ga1f051eb0e55245280385a19f20efe59a":[1,2,14,17],
 "group___ocilib_c_api_statement_control.html#ga33e12da2d28c8a8a73165230a54c91cb":[1,2,14,3],
 "group___ocilib_c_api_statement_control.html#ga3d36730fe81e7bdaef5d5bbb066265a6":[1,2,14,5],
 "group___ocilib_c_api_statement_control.html#ga50e9b5456cb68d38a3b24e05bcd3f0e3":[1,2,14,11],
@@ -222,8 +223,8 @@ var NAVTREEINDEX6 =
 "namespacemembers_eval.html":[2,1,4],
 "namespacemembers_func.html":[2,1,1],
 "namespacemembers_type.html":[2,1,2],
-"namespaceocilib.html":[3,0,0],
 "namespaceocilib.html":[2,0,0],
+"namespaceocilib.html":[3,0,0],
 "namespaces.html":[2,0],
 "ocilib_8h_source.html":[4,0,0],
 "ocilib_8hpp_source.html":[4,0,1],
@@ -233,6 +234,5 @@ var NAVTREEINDEX6 =
 "structocilib_1_1_bind_resolver.html":[3,0,0,2],
 "structocilib_1_1_bind_resolver_scalar_type.html":[3,0,0,3],
 "structocilib_1_1_bind_resolver_type.html":[3,0,0,4],
-"structocilib_1_1_numeric_type_resolver.html":[3,0,0,27],
-"union_o_c_i___variant.html":[1,2,1,0]
+"structocilib_1_1_numeric_type_resolver.html":[3,0,0,27]
 };

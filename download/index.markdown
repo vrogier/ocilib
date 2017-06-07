@@ -1,13 +1,13 @@
 ---
 author: admin
 comments: true
-date: 2017-02-08 22:35:00+01:00
+date: 2017-06-07 22:35:00+01:00
 layout: page
 slug: download
 title: Download
 ---
 
-* Get the lastest package from GitHub :[version 4.3.2 (2017-02-08)]({{site.projecturl}}/releases/)
+* Get the lastest package from GitHub :[version 4.3.3 (2017-06-07)]({{site.projecturl}}/releases/)
 
 ## Installation
 
@@ -41,4 +41,4 @@ You need to provide extra configure parameters when using Instant Clients - [see
   * Validated platforms : Windows, Linux, HP/UX, Solaris, AIX, Mac OS X, OpenVMS
   * Validated C compilers : Microsoft C compiler, GCC, MinGW, IMB XLC, LabView, various CCs
   * Validated C++ compilers : Microsoft C++ compiler, G++, Clang
-  * Validated Oracle versions : 8i, 9i, 10g, 11g
+  * Validated Oracle versions : 8i, 9i, 10g, 11g, 12c

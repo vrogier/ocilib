@@ -28,7 +28,7 @@ Few years later and thousand of hours spent on it, OCILIB had became the referen
   
 ## About me
 
-I'm French, 38 years old and live/work in France around Paris.
+I'm French, 39 years old and live/work in France around Paris.
 <br/>
 I'm the Principal Software Engineer at [Capsule Technologie](http://www.capsuletech.com), a [QualcommLife](http://www.QualcommLife.com) company.
 <br/>

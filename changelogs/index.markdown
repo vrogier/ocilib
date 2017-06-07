@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2017-02-08 22:35:00+01:00
+date: 2017-06-07 22:35:00+01:00
 layout: page
 slug: changelogs
 title: Changelogs
@@ -16,6 +16,10 @@ Click on a change log entry to see the full details.
 <br/>
 <br/>
 
+_[2017-02-08 . version 4.3.3]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.3.3.txt)_
+
+  * Some C API Bug fixes
+  
 _[2017-02-08 . version 4.3.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.3.2.txt)_
 
   * Some C API Bug fixes 

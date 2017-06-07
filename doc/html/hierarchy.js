@@ -134,7 +134,6 @@ var hierarchy =
     ] ],
     [ "ocilib::Mutex", "classocilib_1_1_mutex.html", null ],
     [ "ocilib::NumericTypeResolver< T >", "structocilib_1_1_numeric_type_resolver.html", null ],
-    [ "OCI_Variant", "union_o_c_i___variant.html", null ],
     [ "ocilib::Queue", "classocilib_1_1_queue.html", null ],
     [ "ocilib::QueueTable", "classocilib_1_1_queue_table.html", null ],
     [ "ocilib::Streamable", "classocilib_1_1_streamable.html", [
