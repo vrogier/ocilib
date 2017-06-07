@@ -14,8 +14,9 @@
    |                                                                      |
    +----------------------------------------------------------------------+
 
+===========================================================================
 DESCRIPTION 
-===========
+===========================================================================
 
 OCILIB is an open source and portable Oracle Driver that delivers really fast and reliable access to Oracle databases.
 
@@ -27,14 +28,16 @@ The OCILIB library :
     * encapsulates OCI (Oracle Call Interface)
     * is the most complete available OCI wrapper
  
+===========================================================================
 VERSION 
-========
+===========================================================================
 
 see VERSION file.
 
 
+===========================================================================
 FEATURES 
-========
+===========================================================================
    
     * Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
     * Full 32/64 bits compatibility
@@ -63,22 +66,25 @@ FEATURES
     * Hash tables API
     * Portable Threads and mutexes API
 
+===========================================================================
 DOWNLOAD 
-========
+===========================================================================
 
 Available at :
 
 URL : http://www.ocilib.net
 
+===========================================================================
 LICENSE
-=======
+===========================================================================
 
 The source code is free source code licensed under the Apache License, Version 2.0.
 
 (see the file LICENSE)
 
+===========================================================================
 COMPATIBILITY
-=============
+===========================================================================
 
 This current source is pure ISO C and should compile with any C90 Compliant compiler
 for ansi version and C99 for unicode versions.
@@ -108,11 +114,136 @@ for ansi version and C99 for unicode versions.
  - Oracle 10g 
  - Oracle 11g 
  - Oracle 12c
- 
-INSTALLATION AND LIBRARY BUILDS
-===============================
 
-OCILIB is avialable on MS Windows and Linux /Unix systems.
+
+===========================================================================
+INSTALLATION AND LIBRARY BUILDS ON MS WINDOWS
+===========================================================================
+
+Precompiled OCILIB dynamic libraries are provided for Microsoft Windows :
+
+     - ocilib\lib32 : 32bits binaires
+     - ocilib\lib64 : 64bits binaires
+
+Precompiled OCILIB static libraries are provided for Microsoft Windows :
+
+     - ocilib\lib32 : 32bits binaries
+
+2 methods :
+
+1/
+     - add the ocilib\include  directory to your include's path
+     - add the ocilib\lib32|64 directory to your libraries path
+     - add the ocilib\lib32|64 directory to your windows path
+
+2/
+     - copy  ocilib\include\ocilib.h to any place located in your include's path
+     - copy  ocilib\lib32|64\ocilib[x].lib to any place located in your libraries path
+     - copy  ocilib\lib32|64\ocilib[x].dll to any place located in your windows path
+     - copy  ocilib\lib32\libocilib[x].a to any place located in your windows path
+
+* BUILDING OCILIB FROM SOURCES *
+
+OCILIB supports 3 builds options on Windows platforms :
+
+1/ oracle import (linkage or runtime loading)
+
+On win32, the provided build were compiled using is runtime loading.
+If you want to import Oracle OCI at linkage time , you need to rebuild the libraries
+
+Defines :
+
+     - OCI_IMPORT_LINKAGE for linkage at compile time
+     - OCI_IMPORT_RUNTIME for runtime loading
+
+if no import mode is set, the library sets the default to OCI_IMPORT_LINKAGE
+
+2/ charset (ansi, wide, mixed)
+
+this pakcage provides 2 OCILIB Dlls (32bits and 64bits) :
+
+      - ociliba.dll (ANSI / UTF8 version)
+      - ocilibw.dll (UNICODE/UFT16/USC2/wchar_t version) 
+
+this package provides 3 OCILIB static libs (32 bits only) :
+
+      - libociliba.a (ANSI / UTF8 version)
+      - libocilibw.a (UNICODE/UFT16/USC2/wchar_t version)  
+
+Defines :
+
+     - OCI_CHARSET_ANSI for ansi / UTF8
+     - OCI_CHARSET_WIDE for unicode (wide strings)
+
+if no charset mode is set, the library sets the default to OCI_CHARSET_ANSI 
+
+3/ calling convention
+
+On win32, the default calling convention is __stdcall.
+So the OCILIB function using a variable number or parameters (OCI_xxxxFmt) won't work
+If you need them, modify the preprocessor options to change OCI_API to __cdecl and rebuild !
+
+Defines :
+
+     - OCI_API =  __stdcall to link OCILIB to any language independent module
+     - OCI_API = __cdecl (or no value) for C/C++ only !
+
+if no charset mode is set, the library sets the default to no value
+
+
+To rebuild the dynamic libraries (MS Visual Studio) :
+
+      - open the dll project ocilib\proj\dll\ocilib_dll_vs200x.sln
+      - do a batch build
+
+To rebuild the static libraries (Code::blocks) :
+
+      - open the static project ocilib\proj\mingw\ocilib_static_lib_mingw.cbp
+      - do a batch build
+
+* BUILDING THE DEMO *
+
+1/ run an already built demo
+
+     - run ocilib_demo.exe located in ocilib\proj\test\Win32|64\release [build]
+
+2/ build a demo 
+
+     - open the test project ocilib\proj\test\ocilib_demo_vs200x.sln or ocilib_demo_codeblocks.cbp
+     - choose an configuration
+     - build
+
+* MAKE ANY PROGRAM WITH OCILIB *
+
+1/ use the prebuilt Dlls
+
+     - add ocilib/include folder to your compiler includes path
+     - add ocilib/lib folder to your linker library path
+     - For MinGW only, rename/copy ocilib[x].lib to libocilib[x].a
+     - add ocilib[x].lib (or -locilib[x] from MinGw) to your linking options
+     - add OCI_CHARSET_XXX macro to your preprocessor options
+     - add OCI_API macro definition to your preprocessor options (set it to __stdcall)
+
+2/ use the prebuilt Dlls
+
+     - add ocilib/include folder to your compiler includes path
+     - add ocilib/lib folder to your linker library path
+     - add libocilib[x].a to your linking options
+     - add OCI_CHARSET_XXX macro to your preprocessor options
+     - add OCI_API macro definition to your preprocessor options (set it to __stdcall)
+
+3/ link source code
+
+     - add the source files located in ocilib/src to your project and defines the 3 build options
+ 
+ 
+===========================================================================
+INSTALLATION AND LIBRARY BUILDS ON LINUX AND UNIX BASED SYSTEMS
+===========================================================================
+
+OCILIB is available on MS Windows and Linux /Unix systems.
+
+* BUILDING OCILIB FROM SOURCES *
 
 Installation on Linux / Unix systems
 
@@ -170,8 +301,7 @@ Custom install options
      Only used if import mode is runtime
 
 
-BUILD DEMO
-==========
+* BUILDING THE DEMO *
 
 copy demo.c and Makefile_demo from the folder $(OCILIB_PREFIX)/share/doc/ocilib/demo
 
@@ -181,8 +311,7 @@ to any of our full access directory and then compile :
 
 >make -f Makefile_demo
 
-MAKE ANY PROGRAM WITH OCILIB
-============================
+* MAKE ANY PROGRAM WITH OCILIB *
 
 Add the following to your makefile
 
@@ -203,20 +332,23 @@ where OCILIB_PREFIX is the installation lib folder - default is /usr/local
 add -L$(ORACLE_HOME)/lib -lclntsh to your LDFLAGS
 
 
+===========================================================================
 FEED BACK, BUG REPORTS
-======================
+===========================================================================
 
 URL : http://www.ocilib.net/support
 
+===========================================================================
 DOCUMENTATION
-=============
+===========================================================================
 
 Included in the library archive, it's installed in $(OCILIB_PREFIX)/share/doc/ocilib/html/
 
 Online : http://www.ocilib.net/documentation/html
 
+===========================================================================
 USE OF OCILIB
-=============
+===========================================================================
 
 Please, Let me know about projects using OCILIB.
 
