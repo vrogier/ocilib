@@ -5825,7 +5825,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  * Oracle 9i introduced scrollable cursors (resultsets in OCILIB) that can be
  * fetched:
  *
- * - Sequentially in both directions: OCI_FetchPrev() and OCI_FetchPrev()
+ * - Sequentially in both directions: OCI_FetchPrev() and OCI_FetchNext()
  * - To a relative position in the resultset: OCI_FetchSeek() with OCI_SFD_RELATIVE
  * - To an absolute position in the resultset: OCI_FetchSeek() with OCI_SFD_ABOSLUTE
  * - To the first or last row in the resultset: OCI_FetchFirst() and OCI_FetchLast()
