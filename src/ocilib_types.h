@@ -946,7 +946,8 @@ extern OCI_SQLCmdInfo SQLCmds[];
 
 struct OCIParamStructColumnInfo
 {
-    unsigned char unknown_fields[6 * sizeof(int) + 3 * sizeof(void*)];
+    unsigned char unknown_fields[6 * sizeof(int) + 2 * sizeof(void*)];
+    unsigned char attributes[sizeof(void *)];
     char *name;
 };
 
@@ -954,7 +955,7 @@ typedef struct OCIParamStructColumnInfo OCIParamStructColumnInfo;
 
 struct OCIParamStruct
 {
-    unsigned char unknown_fields[2 * sizeof(void*) + 1 * sizeof(int)];
+    unsigned char unknown_fields[3 * sizeof(void*)];
 
     OCIParamStructColumnInfo *column_info;
 };

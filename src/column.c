@@ -277,9 +277,9 @@ boolean OCI_ColumnDescribe
         {
             OCIParamStruct *param_struct = (OCIParamStruct*) param;
 
-            if (param_struct && param_struct->column_info && param_struct->column_info->name)
+            if (param_struct && param_struct->column_info && param_struct->column_info->name && (param_struct->column_info->attributes[1] != 0))
             {
-                size_t char_count = OCI_StringLength(param_struct->column_info->name, sizeof(char));
+                size_t char_count = param_struct->column_info->attributes[1];
 
                 OCI_ALLOCATE_DATA(OCI_IPC_STRING, col->name, char_count + 1)
 
