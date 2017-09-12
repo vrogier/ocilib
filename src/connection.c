@@ -86,7 +86,7 @@ OCI_Connection * OCI_ConnectionAllocate
     {
         con = (OCI_Connection *) item->data;
 
-        con->alloc_handles = (0 == (con->mode & OCI_SESSION_XA));
+        con->alloc_handles = (0 == (mode & OCI_SESSION_XA));
 
         /* create internal lists */
 
@@ -364,7 +364,7 @@ boolean OCI_ConnectionLogon
         OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL);
         OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, &con->user, NULL);
     }
-
+    else
 #endif
 
     /* 2 - regular connection and connection from connection pool */
