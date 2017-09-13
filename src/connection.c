@@ -149,6 +149,11 @@ OCI_Connection * OCI_ConnectionAllocate
                 }
 
                 con->env = xaoEnv((OraText *) (dbname[0] ? dbname : NULL ));
+
+                if (NULL == con->env)
+                {
+                    OCI_ExceptionEnvFromXaString(con->db);
+                }
             }
             else
 
@@ -348,7 +353,9 @@ boolean OCI_ConnectionLogon
 
     if (con->mode & OCI_SESSION_XA)
     {
-        char dbname[OCI_SIZE_BUFFER+1];
+        dbtext *dbstr_user = NULL;
+        int     dbsize_user = 0;
+        char    dbname[OCI_SIZE_BUFFER + 1];
 
         memset(dbname, 0, sizeof(dbname));
 
@@ -360,11 +367,25 @@ boolean OCI_ConnectionLogon
         con->cxt = xaoSvcCtx((OraText *) (dbname[0] ? dbname : NULL ));
         OCI_STATUS = (NULL != con->cxt);
 
-        OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL);
-        OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL);
-        OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, &con->user, NULL);
+        OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL)
+        OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL)
+        OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, &dbstr, &dbsize)
+
+        if (NULL == con->ses)
+        {
+            OCI_STATUS = FALSE;
+            OCI_ExceptionConnFromXaString(con->db);
+        }
+
+        if (OCI_STATUS && dbstr)
+        {
+            OCI_FREE(con->user)
+
+            con->user = OCI_StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
+        }
     }
     else
+
 #endif
 
     /* 2 - regular connection and connection from connection pool */

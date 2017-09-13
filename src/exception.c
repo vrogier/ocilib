@@ -126,7 +126,9 @@ static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
     OTEXT("Name or position '%ls' previously binded with different data type"),
     OTEXT("Object '%ls' type does not match the requested object type"),
     OTEXT("Item '%ls' (type %d)  not found"),
-    OTEXT("Argument '%ls' : Invalid value %d")
+    OTEXT("Argument '%ls' : Invalid value %d"),
+    OTEXT("Cannot retrieve OCI environment from XA connection string '%ls'"),
+    OTEXT("Cannot connect to database using XA connection string '%ls'")
 };
 
 #else
@@ -160,7 +162,9 @@ static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
     OTEXT("Name or position '%s' previously binded with different datatype"),
     OTEXT("Object '%s' type does not match the requested object type"),
     OTEXT("Item '%s' (type %d)  not found"),
-    OTEXT("Argument '%s' : Invalid value %d")
+    OTEXT("Argument '%s' : Invalid value %d"),
+    OTEXT("Cannot retrieve OCI environment from XA connection string '%s'"),
+    OTEXT("Cannot connect to database using XA connection string '%s'")
 };
 
 #endif
@@ -1057,3 +1061,56 @@ void OCI_ExceptionArgInvalidValue
     OCI_ExceptionRaise(err);
 }
 
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ExceptionEnvFromXaString
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_ExceptionEnvFromXaString
+(
+    const otext *value
+)
+{
+    OCI_Error *err = OCI_ExceptionGetError();
+
+    if (err)
+    {
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_XA_ENV_FROM_STRING;
+        err->stmt    = NULL;
+        err->con     = NULL;
+
+        osprintf(err->str,
+            osizeof(err->str) - (size_t)1,
+            OCILib_ErrorMsg[OCI_ERR_XA_ENV_FROM_STRING],
+            value);
+    }
+
+    OCI_ExceptionRaise(err);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ExceptionConnFromXaString
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_ExceptionConnFromXaString
+(
+    const otext *value
+)
+{
+    OCI_Error *err = OCI_ExceptionGetError();
+
+    if (err)
+    {
+        err->type    = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_XA_CONN_FROM_STRING;
+        err->stmt    = NULL;
+        err->con     = NULL;
+
+        osprintf(err->str,
+            osizeof(err->str) - (size_t)1,
+            OCILib_ErrorMsg[OCI_ERR_XA_CONN_FROM_STRING],
+            value);
+    }
+
+    OCI_ExceptionRaise(err);
+}

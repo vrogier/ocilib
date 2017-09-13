@@ -1123,8 +1123,11 @@ typedef unsigned int big_uint;
 #define OCI_ERR_TYPEINFO_DATATYPE           25
 #define OCI_ERR_ITEM_NOT_FOUND              26
 #define OCI_ERR_ARG_INVALID_VALUE           27
+#define OCI_ERR_XA_ENV_FROM_STRING          28
+#define OCI_ERR_XA_CONN_FROM_STRING         29
 
-#define OCI_ERR_COUNT                       28
+#define OCI_ERR_COUNT                       30   
+
 
 /* allocated bytes types */
 
@@ -5825,7 +5828,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  * Oracle 9i introduced scrollable cursors (resultsets in OCILIB) that can be
  * fetched:
  *
- * - Sequentially in both directions: OCI_FetchPrev() and OCI_FetchPrev()
+ * - Sequentially in both directions: OCI_FetchPrev() and OCI_FetchNext()
  * - To a relative position in the resultset: OCI_FetchSeek() with OCI_SFD_RELATIVE
  * - To an absolute position in the resultset: OCI_FetchSeek() with OCI_SFD_ABOSLUTE
  * - To the first or last row in the resultset: OCI_FetchFirst() and OCI_FetchLast()

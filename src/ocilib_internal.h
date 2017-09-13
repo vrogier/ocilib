@@ -613,6 +613,16 @@ void OCI_ExceptionArgInvalidValue
     unsigned int    value
 );
 
+void OCI_ExceptionEnvFromXaString
+(
+    const otext *value
+);
+
+void OCI_ExceptionConnFromXaString
+(
+    const otext *value
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * file.c
  * --------------------------------------------------------------------------------------------- */
