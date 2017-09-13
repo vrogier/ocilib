@@ -277,9 +277,9 @@ boolean OCI_ColumnDescribe
         {
             OCIParamStruct *param_struct = (OCIParamStruct*) param;
 
-            if (param_struct && param_struct->column_info && param_struct->column_info->name)
+            if (param_struct && param_struct->column_info && param_struct->column_info->name && (param_struct->column_info->attributes[1] != 0))
             {
-                size_t char_count = OCI_StringLength(param_struct->column_info->name, sizeof(char));
+                size_t char_count = param_struct->column_info->attributes[1];
 
                 OCI_ALLOCATE_DATA(OCI_IPC_STRING, col->name, char_count + 1)
 
@@ -811,7 +811,7 @@ unsigned int OCI_API OCI_ColumnGetSize
 
     /* Oracle 9i introduced CHAR attribute on string columns to indicate the
        size of the column is not in bytes (default) but in chars
-       OCI_ColumnDescribe() already managed the Oracle compatibly
+       OCI_ColumnDescribe() already managed the Oracle compatibility
        version, so if the column character size member is zero it means :
        - the column is not a string column
        - the size is not in char
