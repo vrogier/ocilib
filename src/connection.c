@@ -369,7 +369,7 @@ boolean OCI_ConnectionLogon
 
         OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL)
         OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL)
-        OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, &dbstr, &dbsize)
+        OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, &dbstr_user, &dbsize_user)
 
         if (NULL == con->ses)
         {
@@ -377,11 +377,11 @@ boolean OCI_ConnectionLogon
             OCI_ExceptionConnFromXaString(con->db);
         }
 
-        if (OCI_STATUS && dbstr)
+        if (OCI_STATUS && dbstr_user)
         {
             OCI_FREE(con->user)
 
-            con->user = OCI_StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
+            con->user = OCI_StringDuplicateFromOracleString(dbstr_user, dbcharcount(dbsize_user));
         }
     }
     else
