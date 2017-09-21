@@ -215,6 +215,7 @@ extern OCIOBJECTPIN                 OCIObjectPin;
 extern OCIOBJECTUNPIN               OCIObjectUnpin;
 extern OCIOBJECTCOPY                OCIObjectCopy;
 extern OCIOBJECTGETOBJECTREF        OCIObjectGetObjectRef;
+extern OCIOBJECTGETTYPEREF          OCIObjectGetTypeRef;
 extern OCIOBJECTGETPROPERTY         OCIObjectGetProperty;
 extern OCIOBJECTGETIND              OCIObjectGetInd;
 extern OCIREFASSIGN                 OCIRefAssign;

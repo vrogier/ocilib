@@ -88,6 +88,116 @@
  *                            PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
+OCI_TypeInfo * OCI_ObectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
+{
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+
+    OCI_TypeInfo *result = typinf;
+
+    if (!result)
+    {
+        return result;
+    }
+
+    OCI_CALL_CONTEXT_SET_FROM_CONN(result->con)
+
+    /* if the type is related to UTDs and is virtual (e.g. non final), we must find the real type of the instance */
+
+    if (object && result->type == OCI_TIF_TYPE && !result->is_final)
+    {
+        OCIRef	*ref = NULL;
+        OCIType *tdo = NULL;
+
+        /* create a local REF to store a REF to the object real type */
+
+        OCI_EXEC(OCI_ObjectNew(result->con->env, result->con->err, result->con->cxt, SQLT_REF, (OCIType *)0, NULL, OCI_DURATION_SESSION, 0, &ref))
+        OCI_EXEC(OCIObjectGetTypeRef(result->con->env, result->con->err, (dvoid*)object, ref))
+        OCI_EXEC(OCITypeByRef(result->con->env, result->con->err, ref, OCI_DURATION_SESSION, OCI_TYPEGET_HEADER, &tdo))
+
+        /* the object instance type pointer is different only if the instance is from an inherited type */
+
+        if (tdo && tdo != result->tdo)
+        {
+            /* first try to find it in list */
+
+            OCI_List * list = typinf->con->tinfs;
+            OCI_Item *item = NULL;
+            boolean  found = FALSE;
+
+            if (list->mutex)
+            {
+                OCI_MutexAcquire(list->mutex);
+            }
+
+            item = list->head;
+
+            /* walk along the list to find the type */
+
+            while (item)
+            {
+                OCI_TypeInfo *tmp = (OCI_TypeInfo *)item->data;
+
+                if (tmp->tdo == tdo)
+                {
+                    result = tmp;
+                    found = TRUE;
+                    break;
+                }
+
+                item = item->next;
+            }
+
+            if (list->mutex)
+            {
+                OCI_MutexRelease(list->mutex);
+            }
+
+            if (!found)
+            {
+                OCIDescribe *descr = NULL;
+                OCIParam    *param = NULL;
+                otext *schema_name = NULL;
+                otext *object_name = NULL;
+
+                unsigned int size_schema = 0;
+                unsigned int size_object = 0;
+
+                otext fullname[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
+
+                OCI_STATUS = OCI_HandleAlloc(result->con->env, (void**) &descr, OCI_HTYPE_DESCRIBE);
+
+                OCI_EXEC(OCIDescribeAny(result->con->cxt, result->con->err, (dvoid *)tdo, 0, OCI_OTYPE_PTR, OCI_DEFAULT, OCI_PTYPE_UNK, descr))
+                OCI_GET_ATTRIB(OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM, descr, &param, NULL)
+
+                OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(result->con, param, OCI_DTYPE_PARAM, OCI_ATTR_SCHEMA_NAME, &schema_name, &size_schema);
+                OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(result->con, param, OCI_DTYPE_PARAM, OCI_ATTR_NAME, &object_name, &size_object);
+
+                if (OCI_STATUS)
+                {
+                    /* compute link full name */
+
+                    OCI_StringGetFullTypeName(schema_name, NULL, object_name, NULL, fullname, (sizeof(fullname) / sizeof(otext)) - 1);
+
+                    /* retrieve the type info of the real object */
+
+                    result = OCI_TypeInfoGet(result->con, fullname, OCI_TIF_TYPE);
+
+                    /* reset ocilib object cached buffers as real type defintion is different */
+                }
+
+                OCI_HandleFree(descr, OCI_HTYPE_DESCRIBE);
+            }
+        }
+
+        /* free local REF */
+
+        OCI_OCIObjectFree(result->con->env, result->con->err, ref, OCI_DEFAULT);
+
+    }
+
+    return result;
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetIndicatorOffset
  * --------------------------------------------------------------------------------------------- */
@@ -329,20 +439,33 @@ OCI_Object * OCI_ObjectInit
     boolean         reset
 )
 {
+    OCI_TypeInfo *real_typinf = NULL;
+    
     OCI_CALL_DECLARE_CONTEXT(TRUE)
+
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+
+    real_typinf = OCI_ObectGetRealTypeInfo(typinf, handle);
+    OCI_STATUS = (NULL != real_typinf);
 
     OCI_ALLOCATE_DATA(OCI_IPC_OBJECT, obj, 1);
 
     if (OCI_STATUS)
-    {
+    {      
         obj->con    = con;
         obj->handle = handle;
-        obj->typinf = typinf;
+        obj->typinf = real_typinf;
 
-        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpbufs, typinf->nb_cols)
-        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpsizes, typinf->nb_cols)
-        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->objs, typinf->nb_cols)
+        if (real_typinf != typinf)
+        {
+            OCI_FREE(obj->objs)
+            OCI_FREE(obj->tmpbufs)
+            OCI_FREE(obj->tmpsizes)
+        }
+
+        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpbufs, obj->typinf->nb_cols)
+        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpsizes, obj->typinf->nb_cols)
+        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->objs, obj->typinf->nb_cols)
 
         OCI_ObjectReset(obj);
 
@@ -1878,7 +2001,7 @@ boolean OCI_API OCI_ObjectGetSelfRef
 
     OCI_EXEC(OCIObjectGetObjectRef(obj->con->env, obj->con->err, obj->handle, ref->handle))
 
-    if (OCI_STATUS && ref->obj)
+    if (!OCI_STATUS && ref->obj)
     {
         OCI_ObjectFree(ref->obj);
         ref->obj = NULL;

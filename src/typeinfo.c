@@ -140,6 +140,11 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
     /* first try to find it in list */
 
+    if (con->tinfs->mutex)
+    {
+        OCI_MutexAcquire(con->tinfs->mutex);
+    }
+
     item = con->tinfs->head;
 
     /* walk along the list to find the type */
@@ -269,8 +274,11 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                         OCI_EXEC(OCITypeByRef(typinf->con->env, con->err, ref, OCI_DURATION_SESSION, OCI_TYPEGET_ALL, &typinf->tdo))
 
-                        /* check if it's system predefined type if order to avoid the next call
-                        that is not allowed on system types */
+                        /* check the type is not final, e.g. can beinherited */
+
+                        OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_IS_FINAL_TYPE, param_type, &typinf->is_final, NULL)
+
+                        /* check if it's system predefined type if order to avoid the next call that is not allowed on system types */
 
                         OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_IS_PREDEFINED_TYPE, param_type, &pdt, NULL)
 
@@ -430,12 +438,14 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
         }
     }
 
+    if (con->tinfs->mutex)
+    {
+        OCI_MutexAcquire(con->tinfs->mutex);
+    }
+
     /* free describe handle */
 
-    if (dschp)
-    {
-        OCI_HandleFree(dschp, OCI_HTYPE_DESCRIBE);
-    }
+    OCI_HandleFree(dschp, OCI_HTYPE_DESCRIBE);
 
     /* increment type info reference counter on success */
 

@@ -1212,6 +1212,14 @@ typedef sword (*OCIOBJECTGETIND)
     dvoid   **null_struct
 );
 
+typedef sword (*OCIOBJECTGETTYPEREF)
+(
+    OCIEnv        *env,
+    OCIError      *err,
+    void          *instance,
+    OCIRef        *type_ref
+);
+
 typedef sword (*OCIREFASSIGN)
 (
     OCIEnv       *env,

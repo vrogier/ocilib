@@ -301,6 +301,8 @@
 
 #define OCI_ATTR_CLIENT_IDENTIFIER     278       /* value of client id to set*/
 
+#define OCI_ATTR_IS_FINAL_TYPE         279                /* is final type ? */
+
 #define OCI_ATTR_CHAR_USED             285          /* char length semantics */
 #define OCI_ATTR_CHAR_SIZE             286                    /* char length */
 

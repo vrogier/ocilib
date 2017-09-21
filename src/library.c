@@ -321,6 +321,7 @@ OCIOBJECTPIN                 OCIObjectPin                 = NULL;
 OCIOBJECTUNPIN               OCIObjectUnpin               = NULL;
 OCIOBJECTCOPY                OCIObjectCopy                = NULL;
 OCIOBJECTGETOBJECTREF        OCIObjectGetObjectRef        = NULL;
+OCIOBJECTGETTYPEREF          OCIObjectGetTypeRef          = NULL;
 OCIOBJECTGETPROPERTY         OCIObjectGetProperty         = NULL;
 OCIOBJECTGETIND              OCIObjectGetInd              = NULL;
 OCIREFASSIGN                 OCIRefAssign                 = NULL;
@@ -1158,6 +1159,8 @@ boolean OCI_API OCI_Initialize
                    OCIOBJECTGETPROPERTY);
         LIB_SYMBOL(OCILib.lib_handle, "OCIObjectGetInd", OCIObjectGetInd,
                    OCIOBJECTGETIND);
+        LIB_SYMBOL(OCILib.lib_handle, "OCIObjectGetTypeRef", OCIObjectGetTypeRef,
+            OCIOBJECTGETOBJECTREF);
 
         LIB_SYMBOL(OCILib.lib_handle, "OCIRefAssign", OCIRefAssign,
                    OCIREFASSIGN);
