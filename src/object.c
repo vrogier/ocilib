@@ -88,7 +88,11 @@
  *                            PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
-OCI_TypeInfo * OCI_ObectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
+ /* --------------------------------------------------------------------------------------------- *
+ * OCI_ObjectGetRealTypeInfo
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_TypeInfo * OCI_ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 {
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
@@ -445,7 +449,7 @@ OCI_Object * OCI_ObjectInit
 
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    real_typinf = OCI_ObectGetRealTypeInfo(typinf, handle);
+    real_typinf = OCI_ObjectGetRealTypeInfo(typinf, handle);
     OCI_STATUS = (NULL != real_typinf);
 
     OCI_ALLOCATE_DATA(OCI_IPC_OBJECT, obj, 1);
