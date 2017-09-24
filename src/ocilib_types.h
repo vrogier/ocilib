@@ -311,6 +311,10 @@ struct OCI_Transaction
 
 struct OCI_Column
 {
+    /* OCILIB infos */
+    OCI_TypeInfo *typinf;       /* user type descriptor */
+    ub4           bufsize;      /* element size */
+    ub4           subtype;      /* object type */
     /* Oracle infos */
     ub2    sqlcode;             /* Oracle SQL code */
     ub2    typecode;            /* Oracle type code */
@@ -327,10 +331,7 @@ struct OCI_Column
     ub1    csfrm;               /* charset form */
     ub1    handletype;          /* oracle handle type */
     ub4    props;               /* column properties */
-    /* OCILIB infos */
-    ub4           bufsize;      /* element size */
-    OCI_TypeInfo *typinf;       /* user type descriptor */
-    ub4           subtype;      /* object type */
+    ub4    collation_id;        /* collation id */
 };
 
 /*

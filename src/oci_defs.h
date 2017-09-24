@@ -354,6 +354,8 @@
 /* session handle attribute */
 #define OCI_ATTR_MAX_OPEN_CURSORS          471
 
+#define OCI_ATTR_COLLATION_ID              499               /* Collation ID */
+
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
 
 #define OCI_UCS2ID                     1000               /* UCS2 charset ID */

@@ -1080,6 +1080,7 @@ typedef unsigned int big_uint;
 #define OCI_11_1                            1110
 #define OCI_11_2                            1120
 #define OCI_12_1                            1210
+#define OCI_12_2                            1220
 
 /* versions extract macros */
 
@@ -1306,6 +1307,23 @@ typedef unsigned int big_uint;
 #define OCI_CPF_IS_IDENTITY                 1
 #define OCI_CPF_IS_GEN_ALWAYS               2
 #define OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL   4
+
+/* Column collation IDs     */
+
+#define OCI_CCI_NONE                        0x00000000
+#define OCI_CCI_NLS_COMP                    0x00003FFE
+#define OCI_CCI_NLS_SORT                    0x00003FFD
+#define OCI_CCI_NLS_SORT_CI                 0x00003FFC
+#define OCI_CCI_NLS_SORT_AI                 0x00003FFB
+#define OCI_CCI_NLS_SORT_CS                 0x00003FFA
+#define OCI_CCI_NLS_SORT_VAR1               0x00003FF9
+#define OCI_CCI_NLS_SORT_VAR1_CI            0x00003FF8
+#define OCI_CCI_NLS_SORT_VAR1_AI            0x00003FF7
+#define OCI_CCI_NLS_SORT_VAR1_CS            0x00003FF6
+#define OCI_CCI_BINARY                      0x00003FFF
+#define OCI_CCI_BINARY_CI                   0x00023FFF
+#define OCI_CCI_BINARY_AI                   0x00013FFF
+
 
 /* Integer sign flag */
 
@@ -6461,6 +6479,38 @@ OCI_EXPORT boolean OCI_API OCI_ColumnGetCharUsed
  */
 
 OCI_EXPORT unsigned int OCI_API OCI_ColumnGetPropertyFlags
+(
+    OCI_Column *col
+);
+
+/**
+* @brief
+* Return the column collation ID
+*
+* @param col - Column handle
+*
+* Possible values:
+*  - OCI_CCI_NONE  
+*  - OCI_CCI_NLS_COMP 
+*  - OCI_CCI_NLS_SORT
+*  - OCI_CCI_NLS_SORT_CI
+*  - OCI_CCI_NLS_SORT_AI
+*  - OCI_CCI_NLS_SORT_CS
+*  - OCI_CCI_NLS_SORT_VAR1 
+*  - OCI_CCI_NLS_SORT_VAR1_CI
+*  - OCI_CCI_NLS_SORT_VAR1_AI
+*  - OCI_CCI_NLS_SORT_VAR1_CS
+*  - OCI_CCI_BINARY
+*  - OCI_CCI_BINARY_CI
+*  - OCI_CCI_BINARY_AI
+*
+* @note
+* This was introduced in Oracle 12cR2.
+* For earlier versions, it always return OCI_CCI_NONE
+*
+*/
+
+OCI_EXPORT unsigned int OCI_API OCI_ColumnGetCollationID
 (
     OCI_Column *col
 );

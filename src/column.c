@@ -202,6 +202,8 @@ boolean OCI_ColumnDescribe
         OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_CHAR_SIZE, param, &col->charsize, NULL)
     }
 
+#endif
+
     if ((OCILib.version_runtime >= OCI_9_0) && (con->ver_num >= OCI_9_0))
     {
         /* fractional time precision for timestamps */
@@ -219,6 +221,16 @@ boolean OCI_ColumnDescribe
         {
             OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_LFPRECISION, param, &col->prec, NULL)
             OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_FSPRECISION, param, &col->prec2, NULL)
+        }
+    }
+
+#if OCI_VERSION_COMPILE >= OCI_12_2
+
+    if ((OCILib.version_runtime >= OCI_12_2) && (con->ver_num >= OCI_12_2))
+    {
+        if (OCI_DESC_RESULTSET == ptype)
+        {
+            OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_COLLATION_ID, param, &col->collation_id, NULL)
         }
     }
 
@@ -932,6 +944,18 @@ unsigned int OCI_API OCI_ColumnGetPropertyFlags
 )
 {
     OCI_GET_PROP(unsigned int, 0, OCI_IPC_COLUMN, col, props, NULL, NULL, NULL)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ColumnGetCollationID
+* --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_ColumnGetCollationID
+(
+    OCI_Column *col
+)
+{
+    OCI_GET_PROP(unsigned int, OCI_CCI_NONE, OCI_IPC_COLUMN, col, collation_id, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
