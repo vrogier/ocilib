@@ -778,3 +778,14 @@ unsigned int OCI_API OCI_BindGetDirection
     OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_BIND, bnd, direction, bnd->stmt->con, bnd->stmt, bnd->stmt->con->err)
 }
 
+/* --------------------------------------------------------------------------------------------- *
+* OCI_BindGetAllocationMode
+* --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_BindGetAllocationMode
+(
+    OCI_Bind *bnd
+)
+{
+    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_BIND, bnd, alloc_mode, bnd->stmt->con, bnd->stmt, bnd->stmt->con->err)
+}

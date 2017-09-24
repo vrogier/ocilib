@@ -5775,6 +5775,26 @@ boolean OCI_API OCI_BindSetCharsetForm
 );
 
 /**
+ * @brief
+ * Get the allocaton mode of a bind handle
+ *
+ * @param bnd - Bind handle
+ *
+ * @note
+ * Possible values are :
+ *  - OCI_BAM_EXTERNAL : bind variable is allocated by user code
+ *  - OCI_BAM_INTERNAL : bind variable is allocated internally
+ *
+ * return the allocaton direction mode on success otherwise OCI_UNKNWON
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_BindGetAllocationMode
+(
+    OCI_Bind *bnd
+);
+
+/**
  * @}
  */
 
@@ -9626,20 +9646,25 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBindMode
 
 /**
  * @brief
- * Set the bind allocation mode of a SQL statement
+ * Set the current bind allocation mode that will be used for subsequent binding calls
  *
  * @param stmt - Statement handle
  * @param mode - bind allocation mode value
- *
- * @warning
- * @note
- * This call has to be made after OCI_Prepare() but before any OCI_BindXXX() calls
  *
  * @note
  * Possible values are :
  *  - OCI_BAM_EXTERNAL : bind variable are allocated by user code
  *  - OCI_BAM_INTERNAL : bind variable are allocated internally
  *
+ * @warning
+ * This call has to be made after preparing a statement as OCI_Prepare() reset it by default to OCI_BAM_EXTERNAL.
+ * When calling an OCI_BindXXXX() call, this value is used and stored in the OCI_Bind object created during the bind call.
+ * Each bind can have is own allocation mode that is returned by OCI_BindGetAllocationMode()
+ * OCI_SetBindAllocation() can be called before each binding call if needed, resulting having some bind allocated externally and other ones internally.
+ *
+ * @note
+ * Refer to the section "Binding variables and arrays" of the documention about allocation mode as OCI_BAM_INTERNAL is not compatible with all bind calls
+ * 
  */
 
 OCI_EXPORT boolean OCI_API OCI_SetBindAllocation
@@ -9650,13 +9675,17 @@ OCI_EXPORT boolean OCI_API OCI_SetBindAllocation
 
 /**
  * @brief
- * Return the bind allocation mode of a SQL statement
+ * Return the current bind allocation mode used for subsequent binding calls
  *
  * @param stmt - Statement handle
  *
  * @note
  * See OCI_SetBindAllocation() for possible values
  * Default value is OCI_BAM_EXTERNAL
+ *
+ * @warning
+ * Each OCI_Bind object has its own allocation mode that may differ from the one returned by OCI_GetBindAllocation()
+ * The return value of OCI_GetBindAllocation() is the mode that will be used for any subsequent OCI_BindXXXX() calls
  *
  * @note
  * if stmt is NULL, the return value is OCI_UNKNOWN
