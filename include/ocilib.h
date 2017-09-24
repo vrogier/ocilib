@@ -1659,7 +1659,7 @@ typedef unsigned int big_uint;
 #define OCI_SIZE_FILENAME                   255
 #define OCI_SIZE_FORMAT_NUMS                40
 #define OCI_SIZE_FORMAT_NUML                65
-#define OCI_SIZE_OBJ_NAME                   32
+#define OCI_SIZE_OBJ_NAME                   128
 
 #define OCI_HASH_DEFAULT_SIZE               256
 
@@ -5785,7 +5785,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  *  - OCI_BAM_EXTERNAL : bind variable is allocated by user code
  *  - OCI_BAM_INTERNAL : bind variable is allocated internally
  *
- * return the allocaton direction mode on success otherwise OCI_UNKNWON
+ * return the allocaton mode on success otherwise OCI_UNKNWON
  *
  */
 
