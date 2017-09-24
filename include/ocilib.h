@@ -1215,11 +1215,17 @@ typedef unsigned int big_uint;
 
 /* sessions modes */
 
-#define OCI_SESSION_DEFAULT                 0
-#define OCI_SESSION_XA                      1
-#define OCI_SESSION_SYSDBA                  2
-#define OCI_SESSION_SYSOPER                 4
-#define OCI_SESSION_PRELIM_AUTH             8
+#define OCI_SESSION_DEFAULT                 0x00000000  /* any version */
+#define OCI_SESSION_SYSDBA                  0x00000002  /* any version */
+#define OCI_SESSION_SYSOPER                 0x00000004  /* any version */
+#define OCI_SESSION_SYSASM                  0x00008000  /* From 11gR1  */
+#define OCI_SESSION_SYSBKP                  0x00020000  /* From 12cR1  */
+#define OCI_SESSION_SYSDGD                  0x00040000  /* From 12cR1  */
+#define OCI_SESSION_SYSKMT                  0x00080000  /* From 12cR1  */
+#define OCI_SESSION_SYSRAC                  0x00100000  /* From 12cR2  */
+
+#define OCI_SESSION_XA                      0x00000001
+#define OCI_SESSION_PRELIM_AUTH             0x00000008
 
 /* change notification types */
 
