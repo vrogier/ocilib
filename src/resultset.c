@@ -1902,7 +1902,7 @@ const otext * OCI_API OCI_GetString
                 {
                     bufsize = OCI_StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, FALSE);
 
-                    if (bufsize > 0)
+                    if (bufsize > 0 || (def->col.datatype == OCI_CDT_LOB && data))
                     {
                         OCI_RETVAL = def->buf.tmpbuf;
                     }

@@ -625,6 +625,7 @@ unsigned int OCI_StringGetFromType
     unsigned int len = 0;
 
     otext *ptr = buffer;
+    *ptr = '\0';
 
     if (quote)
     {
