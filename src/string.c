@@ -781,7 +781,7 @@ unsigned int OCI_StringGetFromType
                         }
                         else
                         {
-                            len += OCI_StringBinaryToString(lob_buf, bytes_count, ptr ? ptr + len : ptr);
+                            len += OCI_StringBinaryToString(lob_buf, bytes_count, ptr + len);
                         }
                     }
 
