@@ -1366,8 +1366,9 @@ unsigned int OCI_StringGetFromType
     OCI_Connection   *con,
     OCI_Column       *col,
     void             *data,
-    unsigned int      size,
+    unsigned int      data_size,
     otext            *buffer,
+    unsigned int      buffer_size,
     boolean           quote
 );
 

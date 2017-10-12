@@ -1197,7 +1197,7 @@ const otext * OCI_API OCI_ObjectGetString
                 }
             }
 
-            len = OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, NULL, FALSE);
+            len = OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, NULL, 0, FALSE);
 
             if (len > 0)
             {
@@ -1205,8 +1205,12 @@ const otext * OCI_API OCI_ObjectGetString
 
                 if (OCI_STATUS)
                 {
-                    OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbufs[index], FALSE);
-                    OCI_RETVAL = obj->tmpbufs[index];
+                    unsigned int real_tmpsize = OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbufs[index], obj->tmpsizes[index], FALSE);
+                    
+                    if (real_tmpsize > 0)
+                    {
+                        OCI_RETVAL = obj->tmpbufs[index];
+                    }
                 }
             }
         }
@@ -2177,7 +2181,7 @@ boolean OCI_API OCI_ObjectToText
                     tmpbuf += len;
                 }
 
-                len += OCI_StringGetFromType(obj->con, &obj->typinf->cols[i], data, data_size, tmpbuf, quote);
+                len += OCI_StringGetFromType(obj->con, &obj->typinf->cols[i], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0,  quote);
             }
             else
             {

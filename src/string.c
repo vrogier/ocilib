@@ -616,20 +616,27 @@ unsigned int OCI_StringGetFromType
     OCI_Connection   *con,
     OCI_Column       *col,
     void             *data,
-    unsigned int      size,
+    unsigned int      data_size,
     otext            *buffer,
+    unsigned int      buffer_size,
     boolean           quote
 )
 {
     boolean      res = TRUE;
     unsigned int len = 0;
 
+    /* if buffer is not null, then buffer_size must the > 0 */
+
     otext *ptr = buffer;
 
     if (quote)
     {
         len = OCI_StringAddToBuffer(ptr, len, OTEXT("'"), FALSE); 
-        if (ptr) ptr++;
+        if (ptr)
+        {
+            ptr++;
+            buffer_size--;
+        }
     }
   
     switch (col->datatype)
@@ -661,72 +668,58 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_NUMERIC:
         {
-            len = OCI_SIZE_TMP_CVT;
             if (ptr)
             {
-                res = OCI_NumberToString(con, data, col->subtype, col->libcode, ptr, len, NULL);
-            }            
+                res = OCI_NumberToString(con, data, col->subtype, col->libcode, ptr, buffer_size, NULL);
+            }    
+            else
+            {
+                len = OCI_SIZE_TMP_CVT;
+            }
             break;
         }
         case OCI_CDT_DATETIME:
         {
-            len = OCI_SIZE_TMP_CVT;
-
             if (ptr)
             {           
                 OCI_Date    *date = (OCI_Date*) data;
                 const otext *fmt  = OCI_GetFormat(con, OCI_FMT_DATE);
 
-                if (date)
-                {
-                    res = OCI_DateToText(date, fmt, len, ptr); 
-                }
-                else
-                {
-                    res = FALSE;
-                }
+                res = date ? OCI_DateToText(date, fmt, buffer_size, ptr) : FALSE;
+            }
+            else
+            {
+                len = OCI_SIZE_TMP_CVT;
             }
             break;
         }
         case OCI_CDT_TIMESTAMP:
         {
-            len = OCI_SIZE_TMP_CVT;
             if (ptr)
             {
                 OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
                 const otext   *fmt = OCI_GetFormat(con, OCI_FMT_TIMESTAMP);
 
-                if (tmsp)
-                {
-                    res = OCI_TimestampToText(tmsp, fmt, len, ptr, 0);
-                }
-                else
-                {
-                    res = FALSE;
-                }
+                 res = tmsp ? OCI_TimestampToText(tmsp, fmt, buffer_size, ptr, 0) : FALSE;
+            }
+            else
+            {
+                len = OCI_SIZE_TMP_CVT;
             }
             break;
         }
         case OCI_CDT_INTERVAL:
         {
-            len = OCI_SIZE_TMP_CVT;
             if (ptr)
             {
                 OCI_Interval *itv = (OCI_Interval * ) data;
 
-                if (itv)
-                {
-                    res = OCI_IntervalToText(  itv,
-                                               OCI_STRING_DEFAULT_PREC,
-                                               OCI_STRING_DEFAULT_PREC,
-                                               len,  ptr);
-                }
-                else
-                {
-                    res = FALSE;
-                }
+                res = itv ? OCI_IntervalToText(itv, OCI_STRING_DEFAULT_PREC, OCI_STRING_DEFAULT_PREC, buffer_size, ptr) : FALSE;
             }
-
+            else
+            {
+                len = OCI_SIZE_TMP_CVT;
+            }
             break;
         }
         case OCI_CDT_LONG:
@@ -741,7 +734,7 @@ unsigned int OCI_StringGetFromType
                 }
                 else
                 {
-                    len = OCI_StringBinaryToString((unsigned char *) data, len, ptr); 
+                    len = OCI_StringBinaryToString((unsigned char *) data, buffer_size, ptr); 
                 }
             }
             else
@@ -755,7 +748,7 @@ unsigned int OCI_StringGetFromType
         {
             if (data)
             {
-                len = OCI_StringBinaryToString((unsigned char *) data, size, ptr);
+                len = OCI_StringBinaryToString((unsigned char *) data, data_size, ptr);
             }
             break;
         }
@@ -765,32 +758,45 @@ unsigned int OCI_StringGetFromType
 
             if (lob)
             {
-                unsigned char lob_buf[(OCI_SIZE_BUFFER + 1) * UTF8_BYTES_PER_CHAR];
+                if (ptr)
+                {
+                    unsigned char lob_buf[(OCI_SIZE_BUFFER + 1) * UTF8_BYTES_PER_CHAR];
 
-                while (res)
-                {      
-                    unsigned int bytes_count = OCI_SIZE_BUFFER * UTF8_BYTES_PER_CHAR;
-                    unsigned int char_count = 0;
-
-                    res = OCI_LobRead2(lob, lob_buf, &char_count, &bytes_count);
-
-                    if (bytes_count == 0)
+                    while (res)
                     {
-                        // lob eof reached
-                        break;
+                        unsigned int bytes_count = OCI_SIZE_BUFFER * UTF8_BYTES_PER_CHAR;
+                        unsigned int char_count = 0;
+
+                        res = OCI_LobRead2(lob, lob_buf, &char_count, &bytes_count);
+
+                        if (bytes_count == 0)
+                        {
+                            // lob eof reached
+                            break;
+                        }
+
+                        if (OCI_CLOB == lob->type)
+                        {
+                            len += OCI_StringAddToBuffer(buffer, len, (otext*)lob_buf, quote);
+                        }
+                        else
+                        {
+                            len += OCI_StringBinaryToString(lob_buf, bytes_count, ptr ? ptr + len : ptr);
+                        }
                     }
 
-                    if (OCI_CLOB == lob->type)
-                    {
-                        len += OCI_StringAddToBuffer(buffer, len, (otext*) lob_buf, quote);
-                    }
-                    else
-                    {
-                        len += OCI_StringBinaryToString(lob_buf, bytes_count, ptr ? ptr + len : ptr);
-                    }  
+                    OCI_LobSeek(lob, 0, OCI_SEEK_SET);
                 }
+                else
+                {
+                    len = (unsigned int)OCI_LobGetLength(lob);
 
-                OCI_LobSeek(lob, 0, OCI_SEEK_SET);
+                    if (OCI_BLOB == lob->type)
+                    {
+                        /* here we have binary blob, it will be output in hexadecimal */
+                        len *= 2;
+                    }
+                }
             }
             else
             {
@@ -823,27 +829,33 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_REF:
         {
-            len = OCI_SIZE_TMP_CVT;
             if (ptr)
             {
                 OCI_Ref *ref = (OCI_Ref *) data;
-                res = ref ? OCI_RefToText(ref, OCI_SIZE_TMP_CVT, ptr) : FALSE;
+                res = ref ? OCI_RefToText(ref, buffer_size, ptr) : FALSE;
             }
-
+            else
+            {
+                len = OCI_SIZE_TMP_CVT;
+            }
             break;
         }
         case OCI_CDT_OBJECT:
         {
             OCI_Object *obj = (OCI_Object *) data;
+            unsigned int real_size = buffer_size;
             quote = FALSE;
-            res = obj ? OCI_ObjectToText(obj, &len, ptr) : FALSE;
+            res = obj ? OCI_ObjectToText(obj, &real_size, ptr) : FALSE;
+            len = real_size;
             break;
         }
         case OCI_CDT_COLLECTION:
         {
             OCI_Coll *coll = (OCI_Coll *) data;
+            unsigned int real_size = buffer_size;
             quote = FALSE;
-            res = coll ? OCI_CollToText(coll, &len, ptr) : FALSE;
+            res = coll ? OCI_CollToText(coll, &real_size, ptr) : FALSE;
+            len = real_size;
             break;
         }
         case OCI_CDT_CURSOR:
@@ -869,12 +881,13 @@ unsigned int OCI_StringGetFromType
 
     if (res)
     {
-        if (buffer)
+        if (buffer && buffer_size > len)
         {
+            /* the resulting string shall be computed as it was not known in advanded (e.g. numeric types) */
             len = (unsigned int) ostrlen(buffer);
         }
 
-        if (quote )
+        if (quote)
         {
             len += OCI_StringAddToBuffer(buffer, len, OTEXT("'"), FALSE); 
         }
@@ -882,6 +895,18 @@ unsigned int OCI_StringGetFromType
     else
     {
         len = 0;
+    }
+
+    /* make sure it is null terminated */
+    if (buffer)
+    {
+        /* if computed length > buffer_size, something went wrong, consider this as failure */
+        if (len > buffer_size)
+        {
+            len = 0;
+        }
+
+        buffer[len] = 0;
     }
 
     return len;

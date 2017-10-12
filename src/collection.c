@@ -631,7 +631,7 @@ boolean OCI_API OCI_CollToText
                     tmpbuf += len;
                 }
 
-                len += OCI_StringGetFromType(coll->con, &coll->typinf->cols[0], data, data_size, tmpbuf, quote);
+                len += OCI_StringGetFromType(coll->con, &coll->typinf->cols[0], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0, quote);
             }
             else
             {
