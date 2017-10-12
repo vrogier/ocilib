@@ -1894,19 +1894,13 @@ const otext * OCI_API OCI_GetString
             }
             }
 
-            if (OCI_STATUS && bufsize > 0)
+            OCI_STATUS = OCI_STATUS && OCI_StringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, bufsize);
+
+            if (OCI_STATUS)
             {
-                OCI_STATUS = OCI_StringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, bufsize);
+                OCI_StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, bufsize, FALSE);
 
-                if (OCI_STATUS)
-                {
-                    unsigned int real_bufsize = OCI_StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, bufsize, FALSE);
-
-                    if (real_bufsize > 0)
-                    {
-                        OCI_RETVAL = def->buf.tmpbuf;
-                    }
-                }
+                OCI_RETVAL = def->buf.tmpbuf;
             }
         }
     }
