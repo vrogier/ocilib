@@ -91,8 +91,8 @@ extern "C" {
  * --------------------------------------------------------------------------------------------- */
 
 #define OCILIB_MAJOR_VERSION     4
-#define OCILIB_MINOR_VERSION     3
-#define OCILIB_REVISION_VERSION  3
+#define OCILIB_MINOR_VERSION     4
+#define OCILIB_REVISION_VERSION  0
 
 /* Import mode */
 
@@ -3905,7 +3905,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetSQLVerb
  * - Basic data types: string (char/wchar_t *), int, float, double, raw
  * - Object data types: lobs, files,longs, dates, cursors, statements,
  *                      timestamps, intervals, objects
- *
+ *  
  * To use binding:
  *
  * - Prepare a statement with OCI_Prepare() (see Executing statements)
@@ -3916,6 +3916,17 @@ OCI_EXPORT const otext * OCI_API OCI_GetSQLVerb
  * - Each OCI_Execute() call may be preceded by an update of the program
  *   variables (for INSERTs for example)
  *
+ * Bindings can be:
+ *  - IN (host variable are not used anymore after statement execution)
+ *  - OUT (host variable are set during statement execution)
+ *  - IN/OUT (default)
+ * Use OCI_BindSetDirectionTo() to change a host variable bind direction mode after the binding call but before statement execution. 
+ * Note that each direction mode may have a little overhead depending on the SQL type as OCILIB may have to do checks/conversions/mappings between host variable and buffers.
+ * Thus, to maximize performances:
+ *  - set direction mode to OCI_BDM_IN  if host variable is not updated by statement execution
+ *  - set direction mode to OCI_BDM_OUT if host variable value does not matter prior to statement execution
+ *  - set direction mode to OCI_BDM_IN_OUT when host variable value is used for execution and updated by statement execution
+ *  
  * OCILIB supports the OCI array Interface by binding arrays of C scalar types
  * and OCILIB object types.
  *

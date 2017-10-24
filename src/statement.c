@@ -1752,7 +1752,7 @@ OCI_Statement * OCI_API OCI_StatementCreate
 
     if (OCI_STATUS)
     {
-        OCI_RETVAL = OCI_RETVAL = OCI_StatementInit(con, (OCI_Statement *) OCI_RETVAL, NULL, FALSE, NULL);
+        OCI_RETVAL = OCI_StatementInit(con, (OCI_Statement *) OCI_RETVAL, NULL, FALSE, NULL);
         OCI_STATUS = (NULL != OCI_RETVAL);
     }
 
