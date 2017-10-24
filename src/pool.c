@@ -126,7 +126,6 @@ OCI_Pool * OCI_API OCI_PoolCreate
 )
 {
     OCI_Pool *pool = NULL;
-    OCI_Item *item = NULL;
 
     OCI_CALL_ENTER(OCI_Pool*, NULL)
     OCI_CALL_CHECK_INITIALIZED()
@@ -141,13 +140,11 @@ OCI_Pool * OCI_API OCI_PoolCreate
     
     /* create pool object */
 
-    item = OCI_ListAppend(OCILib.pools, sizeof(*pool));
+    pool = OCI_ListAppend(OCILib.pools, sizeof(*pool));
+    OCI_STATUS = (NULL != pool);
 
-    OCI_STATUS = (NULL != item);
-
-    if (item)
+    if (OCI_STATUS)
     {
-        pool = (OCI_Pool *) item->data;
         pool->mode = mode;
         pool->min  = min_con;
         pool->max  = max_con;

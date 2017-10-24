@@ -24,6 +24,14 @@
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
+typedef struct HAEventParams
+{
+    OCIServer *srvhp;
+    OCIDateTime *dthp;
+    ub4 source;
+    ub4 event;
+} HAEventParams;
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ProcInBind
  * --------------------------------------------------------------------------------------------- */
@@ -452,6 +460,32 @@ sb4 OCI_ProcFailOver
 }
 
 /* --------------------------------------------------------------------------------------------- *
+* OCI_ProcHAEventInvoke
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_ProcHAEventInvoke
+(
+    OCI_Connection *con,
+    HAEventParams * ha_params
+)
+{
+    OCI_Timestamp *tmsp = NULL;
+
+    if (con && (con->svr == ha_params->srvhp))
+    {
+        tmsp = OCI_TimestampInit(NULL, tmsp, ha_params->dthp, OCI_TIMESTAMP);
+
+        OCILib.ha_handler(con, (unsigned int)ha_params->source, (unsigned int)ha_params->event, tmsp);
+    }
+
+    if (tmsp)
+    {
+        tmsp->hstate = OCI_OBJECT_FETCHED_DIRTY;
+        OCI_TimestampFree(tmsp);
+    }          
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ProcHAEvent
  * --------------------------------------------------------------------------------------------- */
 
@@ -461,97 +495,55 @@ void OCI_ProcHAEvent
     dvoid     *eventptr
 )
 {
-    OCI_List  *list  = OCILib.cons;
-    OCI_Item  *item  = NULL;
-    OCIServer *srvhp = NULL;
-
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_NOT_USED(evtctx)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    if (!list || !OCILib.ha_handler)
+    if (!OCILib.ha_handler)
     {
         return;    
     }    
 
     if (OCILib.version_runtime >= OCI_10_2)
-    {
-        OCIEvent        *eventhp = (OCIEvent *) eventptr;
-        OCI_Timestamp   *tmsp    = NULL;
+    {       
+        HAEventParams params;
+
+        OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVFIRST, (OCIEvent *)eventptr, &params.srvhp, NULL)
+
+        while (OCI_STATUS && params.srvhp)
+        {   
+            params.dthp   = NULL;
+            params.event  = OCI_HA_STATUS_DOWN;
+            params.source = OCI_HA_SOURCE_INSTANCE;
+
+            /* get event timestamp */
+
+            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_TIMESTAMP, params.srvhp, &params.dthp, NULL)
+
+            /* get status */
+
+            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_STATUS, params.srvhp, &params.event, NULL)
+
+            /* get source */
+
+            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SOURCE, params.srvhp, &params.source, NULL)
+
+            /* notify all related connections */
+
+            if (OCI_STATUS)
+            {
+                OCI_ListForEachWithParam(OCILib.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM)OCI_ProcHAEventInvoke);
+            }
  
-        OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVFIRST, eventhp, &srvhp, NULL)
-
-        while (OCI_STATUS && srvhp)
-        {
-            if (list->mutex)
-            {
-                OCI_MutexAcquire(list->mutex);
-            }
-
-            item = list->head;
-
-            /* for each item in the list, check the connection */
-
-            while (item)
-            {
-                OCI_Connection *con  = (OCI_Connection *) item->data;        
-                OCIDateTime    *dth  = NULL;
-
-                ub4 event  = OCI_HA_STATUS_DOWN;
-                ub4 source = OCI_HA_SOURCE_INSTANCE;
-
-                if (con && (con->svr == srvhp))
-                {
-                    /* get event timestamp */
-
-                    OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_TIMESTAMP, eventhp, &dth, NULL)
-                    tmsp = OCI_TimestampInit(con, tmsp, dth, OCI_TIMESTAMP);
-                    OCI_STATUS = (OCI_STATUS && NULL != tmsp);
-
-                    /* get status */
-
-                    OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_STATUS, eventhp, &event, NULL)
-
-                    /* get source */
-
-                    OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SOURCE, eventhp, &source, NULL)
-
-                    /* on success, call the user callback */
-
-                    if (OCI_STATUS)
-                    {
-                        OCILib.ha_handler(con, (unsigned int) source, (unsigned int) event, tmsp);
-                    }
-
-                    item = item->next;
-                }
-            }
-
-            if (list->mutex)
-            {
-                OCI_MutexRelease(list->mutex);
-            }
-
-            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT, eventhp, &srvhp, NULL)
-        }
-
-        /* free temporary timestamp object */
-
-        if (tmsp)
-        {
-            tmsp->hstate = OCI_OBJECT_FETCHED_DIRTY;
-            OCI_TimestampFree(tmsp);
+            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT, (OCIEvent *)eventptr, &params.srvhp, NULL)
         }
     }
 
 #else
 
     OCI_NOT_USED(eventptr)
-    OCI_NOT_USED(list)
-    OCI_NOT_USED(item)
-    OCI_NOT_USED(srvhp)
 
 #endif
 

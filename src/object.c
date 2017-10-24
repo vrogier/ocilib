@@ -123,38 +123,7 @@ OCI_TypeInfo * OCI_ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
         if (tdo && tdo != result->tdo)
         {
             /* first try to find it in list */
-
-            OCI_List * list = typinf->con->tinfs;
-            OCI_Item *item = NULL;
-            boolean  found = FALSE;
-
-            if (list->mutex)
-            {
-                OCI_MutexAcquire(list->mutex);
-            }
-
-            item = list->head;
-
-            /* walk along the list to find the type */
-
-            while (item)
-            {
-                OCI_TypeInfo *tmp = (OCI_TypeInfo *)item->data;
-
-                if (tmp->tdo == tdo)
-                {
-                    result = tmp;
-                    found = TRUE;
-                    break;
-                }
-
-                item = item->next;
-            }
-
-            if (list->mutex)
-            {
-                OCI_MutexRelease(list->mutex);
-            }
+            boolean  found = OCI_ListExists(typinf->con->tinfs, tdo);
 
             if (!found)
             {
@@ -185,8 +154,6 @@ OCI_TypeInfo * OCI_ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
                     /* retrieve the type info of the real object */
 
                     result = OCI_TypeInfoGet(result->con, fullname, OCI_TIF_TYPE);
-
-                    /* reset ocilib object cached buffers as real type defintion is different */
                 }
 
                 OCI_HandleFree(descr, OCI_HTYPE_DESCRIBE);
@@ -196,7 +163,6 @@ OCI_TypeInfo * OCI_ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
         /* free local REF */
 
         OCI_OCIObjectFree(result->con->env, result->con->err, ref, OCI_DEFAULT);
-
     }
 
     return result;
@@ -869,7 +835,7 @@ OCI_Object ** OCI_API OCI_ObjectArrayCreate
 
     OCI_CALL_ENTER(OCI_Object **, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, con)
+    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0, sizeof(void *), sizeof(OCI_Object), 0, typinf);

@@ -24,6 +24,24 @@
  *                            PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
+ /* --------------------------------------------------------------------------------------------- *
+ * OCI_ArrayFindAny
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_ArrayFindAny(OCI_Array *arr, void**handles)
+{
+    return arr && (arr->tab_obj == handles || arr->mem_struct == handles);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ArrayFindObjects
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_ArrayFindObjects(OCI_Array *arr, void**handles)
+{
+    return arr && arr->tab_obj == handles;
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ArrayInit
  * --------------------------------------------------------------------------------------------- */
@@ -167,20 +185,17 @@ OCI_Array * OCI_ArrayCreate
 )
 {   
     OCI_Array *arr = NULL;
-    OCI_Item  *item = NULL;
 
     OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     /* create array object */
 
-    item = OCI_ListAppend(OCILib.arrs, sizeof(*arr));
-    OCI_STATUS = (NULL != item);
+    arr = OCI_ListAppend(OCILib.arrs, sizeof(*arr));
+    OCI_STATUS = (NULL != arr);
 
     if (OCI_STATUS)
     {
-        arr = (OCI_Array *) item->data;
-
         arr->con          = con;
         arr->elem_type    = elem_type;
         arr->elem_subtype = elem_subtype;
@@ -232,37 +247,8 @@ boolean OCI_ArrayFreeFromHandles
     void **handles
 )
 {
-    boolean    res  = TRUE;
-    OCI_List  *list = OCILib.arrs;
-    OCI_Item  *item = NULL;
-    OCI_Array *arr  = NULL;
-
-    OCI_CHECK(NULL == list, FALSE)
-
-    if (list->mutex)
-    {
-        OCI_MutexAcquire(list->mutex);
-    }
-
-    item = list->head;
-
-    while (item)
-    {
-        OCI_Array * tmp_arr = (OCI_Array *) item->data;
-
-        if (tmp_arr && ((tmp_arr->tab_obj == handles) || tmp_arr->mem_struct == handles))
-        {
-            arr = tmp_arr;
-            break;
-        }
-
-        item = item->next;
-    }
-
-    if (list->mutex)
-    {
-        OCI_MutexRelease(list->mutex);
-    }
+    boolean    res  = FALSE;
+    OCI_Array *arr = OCI_ListFind(OCILib.arrs, (POCI_LIST_FIND) OCI_ArrayFindAny, handles);
 
     if (arr)
     {
@@ -283,37 +269,8 @@ void * OCI_ArrayGetOCIHandlesFromHandles
     void **handles
 )
 {
-    OCI_List  *list = OCILib.arrs;
-    OCI_Item  *item = NULL;
-    OCI_Array *arr  = NULL;
-    void      *ret  = NULL;
-
-    OCI_CHECK(NULL == list, NULL)
-
-    if (list->mutex)
-    {
-        OCI_MutexAcquire(list->mutex);
-    }
-
-    item = list->head;
-
-    while (item)
-    {
-        OCI_Array * tmp_arr = (OCI_Array *) item->data;
-
-        if (tmp_arr && (tmp_arr->tab_obj == handles))
-        {
-            arr = tmp_arr;
-            break;
-        }
-
-        item = item->next;
-    }
-
-    if (list->mutex)
-    {
-        OCI_MutexRelease(list->mutex);
-    }
+    void      *ret = NULL;
+    OCI_Array *arr = OCI_ListFind(OCILib.arrs, (POCI_LIST_FIND)OCI_ArrayFindObjects, handles);
 
     if (arr)
     {

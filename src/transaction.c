@@ -66,7 +66,6 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
     OCI_XID        *pxid
 )
 {
-    OCI_Item *item = NULL;
     OCI_Transaction *trans = NULL;
 
     OCI_CALL_ENTER(OCI_Transaction *, NULL)
@@ -75,14 +74,11 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
 
     /* create transaction object */
 
-    item = OCI_ListAppend(con->trsns, sizeof(*trans));
-
-    OCI_STATUS = ((NULL != item) && (NULL != item->data));
+    trans = OCI_ListAppend(con->trsns, sizeof(*trans));
+    OCI_STATUS = (NULL != trans);
     
     if (OCI_STATUS)
     {
-        trans = (OCI_Transaction *) item->data;
-
         trans->con = con;
         trans->mode = mode;
         trans->timeout = timeout;

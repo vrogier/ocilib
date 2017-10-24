@@ -31,6 +31,22 @@ static unsigned int TraceTypeValues[] = { OCI_TRC_IDENTITY, OCI_TRC_MODULE, OCI_
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_ConnectionDetachSubscriptions
+ * --------------------------------------------------------------------------------------------- */
+
+void OCI_ConnectionDetachSubscriptions(OCI_Subscription *sub, OCI_Connection *con)
+{
+    if (sub && (sub->con == con))
+    {
+        sub->con = NULL;
+
+        sub->saved_db = ostrdup(con->db);
+        sub->saved_user = ostrdup(con->user);
+        sub->saved_pwd = ostrdup(con->pwd);
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
 * OCI_ConnectionCreateInternal
 * --------------------------------------------------------------------------------------------- */
 
@@ -74,18 +90,16 @@ OCI_Connection * OCI_ConnectionAllocate
 )
 {
     OCI_Connection *con  = NULL;
-    OCI_Item       *item = NULL;
 
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     /* create connection object */
 
-    item = OCI_ListAppend(OCILib.cons, sizeof(*con));
+    con = OCI_ListAppend(OCILib.cons, sizeof(*con));
+    OCI_STATUS = (NULL != con);
 
-    if (item)
+    if (OCI_STATUS)
     {
-        con = (OCI_Connection *) item->data;
-
         con->alloc_handles = (0 == (mode & OCI_SESSION_XA));
 
         /* create internal lists */
@@ -169,10 +183,6 @@ OCI_Connection * OCI_ConnectionAllocate
         /*  allocate error handle */
 
         OCI_STATUS = OCI_STATUS && OCI_HandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->err, OCI_HTYPE_ERROR);
-    }
-    else
-    {
-        OCI_STATUS = FALSE;
     }
 
     /* update internal status */
@@ -634,7 +644,7 @@ boolean OCI_ConnectionLogOff
 
     /* dissociate connection from existing subscriptions */
 
-    OCI_SubscriptionDetachConnection(con);
+    OCI_ListForEachWithParam(OCILib.subs, con, (POCI_LIST_FOR_EACH_WITH_PARAM) OCI_ConnectionDetachSubscriptions);
 
     /* free all statements */
 

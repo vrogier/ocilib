@@ -26,9 +26,30 @@
 
 static unsigned int TypeInfoTypeValues[] = { OCI_TIF_TABLE, OCI_TIF_VIEW, OCI_TIF_TYPE };
 
+typedef struct TypeInfoFindParams
+{
+    unsigned int type;
+    otext * schema;
+    otext * name;
+} TypeInfoFindParams;
+
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_TypeInfoFind
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_TypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find_params)
+{
+    return  
+        typinf && 
+        find_params &&
+        typinf->type == find_params->type &&
+        ostrcasecmp(typinf->name, find_params->name) == 0 &&
+        ostrcasecmp(typinf->schema, find_params->schema) == 0;
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_TypeInfoClose
@@ -71,9 +92,10 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     unsigned int    type
 )
 {
+    TypeInfoFindParams find_params;
+
     OCI_TypeInfo *typinf        = NULL;
     OCI_TypeInfo *syn_typinf    = NULL;
-    OCI_Item *item              = NULL;
     OCIDescribe *dschp          = NULL;
     OCIParam *param_root        = NULL;
     OCIParam *param_type        = NULL;
@@ -84,7 +106,6 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     ub1 desc_type               = 0;
     ub4 attr_type               = 0;
     ub4 num_type                = 0;
-    boolean found               = FALSE;
     ub2 i;
 
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
@@ -140,45 +161,23 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
     /* first try to find it in list */
 
-    if (con->tinfs->mutex)
-    {
-        OCI_MutexAcquire(con->tinfs->mutex);
-    }
+    find_params.type = type;
+    find_params.name = obj_name;
+    find_params.schema = obj_schema;
 
-    item = con->tinfs->head;
-
-    /* walk along the list to find the type */
-
-    while (item)
-    {
-        typinf = (OCI_TypeInfo *) item->data;
-
-        if (typinf && (typinf->type == type))
-        {
-            if ((ostrcasecmp(typinf->name,   obj_name  ) == 0) &&
-                (ostrcasecmp(typinf->schema, obj_schema) == 0))
-            {
-                found = TRUE;
-                break;
-            }
-        }
-
-        item = item->next;
-    }
-
+    typinf = OCI_ListFind(con->tinfs, (POCI_LIST_FIND) OCI_TypeInfoFind, &find_params);
+  
     /* Not found, so create type object */
 
-    if (!found)
+    if (!typinf)
     {
-        item = OCI_ListAppend(con->tinfs, sizeof(OCI_TypeInfo));
-        OCI_STATUS = (NULL != item);
+        typinf = OCI_ListAppend(con->tinfs, sizeof(OCI_TypeInfo));
+        OCI_STATUS = (NULL != typinf);
 
         /* allocate describe handle */
 
         if (OCI_STATUS)
         {
-            typinf = (OCI_TypeInfo *) item->data;
-
             typinf->con         = con;
             typinf->name        = ostrdup(obj_name);
             typinf->schema      = ostrdup(obj_schema);

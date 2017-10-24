@@ -117,53 +117,6 @@ boolean OCI_SubscriptionClose
     return OCI_STATUS;
 }
 
-/* --------------------------------------------------------------------------------------------- *
- * OCI_SubscriptionDetachConnection
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_SubscriptionDetachConnection
-(
-    OCI_Connection *con
-)
-{
-    OCI_List *list = OCILib.subs;
-    OCI_Item *item = NULL;
-
-    OCI_CHECK(NULL == list, FALSE);
-
-    if (list->mutex)
-    {
-        OCI_MutexAcquire(list->mutex);
-    }
-
-    item = list->head;
-
-    /* for each item in the list, check the connection */
-
-    while (item)
-    {
-        OCI_Subscription * sub = (OCI_Subscription *) item->data;
-
-        if (sub && (sub->con == con))
-        {
-            sub->con = NULL;
-
-            sub->saved_db   = ostrdup(con->db);
-            sub->saved_user = ostrdup(con->user);
-            sub->saved_pwd  = ostrdup(con->pwd);
-        }
-
-        item = item->next;
-    }
-
-    if (list->mutex)
-    {
-        OCI_MutexRelease(list->mutex);
-    }
-
-    return TRUE;
-}
-
 /* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
  * ********************************************************************************************* */
@@ -183,7 +136,6 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 )
 {
     OCI_Subscription *sub = NULL;
-    OCI_Item *item        = NULL;
 
     OCI_CALL_ENTER(OCI_Subscription*, NULL)
     OCI_CALL_CHECK_DATABASE_NOTIFY_ENABLED()
@@ -196,12 +148,11 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
     /* create subscription object */
 
-    item = OCI_ListAppend(OCILib.subs, sizeof(*sub));
+    sub = OCI_ListAppend(OCILib.subs, sizeof(*sub));
+    OCI_STATUS = (NULL != sub);
 
-    if (item)
+    if (sub)
     {
-        sub = (OCI_Subscription *) item->data;
-
         /* allocate error handle */
 
         OCI_STATUS = OCI_HandleAlloc(con->env, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR);

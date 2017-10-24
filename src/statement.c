@@ -1741,20 +1741,25 @@ OCI_Statement * OCI_API OCI_StatementCreate
     OCI_Connection *con
 )
 {
-    OCI_Item *item = NULL;
-
     OCI_CALL_ENTER(OCI_Statement *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     /* create statement object */
 
-    item = OCI_ListAppend(con->stmts, sizeof(*OCI_RETVAL));
+    OCI_RETVAL = OCI_ListAppend(con->stmts, sizeof(*OCI_RETVAL));
+    OCI_STATUS = (NULL != OCI_RETVAL);
 
-    if (item)
+    if (OCI_STATUS)
     {
-        item->data = OCI_RETVAL = OCI_StatementInit(con, (OCI_Statement *) item->data, NULL, FALSE, NULL);
+        OCI_RETVAL = OCI_RETVAL = OCI_StatementInit(con, (OCI_Statement *) OCI_RETVAL, NULL, FALSE, NULL);
         OCI_STATUS = (NULL != OCI_RETVAL);
+    }
+
+    if (!OCI_STATUS && OCI_RETVAL)
+    {
+        OCI_StatementFree(OCI_RETVAL);
+        OCI_RETVAL = NULL;
     }
 
     OCI_CALL_EXIT()

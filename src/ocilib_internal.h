@@ -744,27 +744,6 @@ boolean OCI_SetStringAttribute
     const otext    *value
 );
 
-boolean OCI_GetNumericAttribute
-(
-    OCI_Connection *con,
-    void           *handle,
-    unsigned int    type,
-    unsigned int    attr,
-    unsigned int    size,
-    void          **value
-);
-
-boolean OCI_SetNumericAttribute
-(
-    OCI_Connection *con,
-    void           *handle,
-    unsigned int    type,
-    unsigned int    attr,
-    otext         **str,
-    unsigned int    size,
-    void           *value
-    );
-
 /* --------------------------------------------------------------------------------------------- *
  * list.c
  * --------------------------------------------------------------------------------------------- */
@@ -779,13 +758,7 @@ boolean OCI_ListFree
     OCI_List *list
 );
 
-OCI_Item * OCI_ListCreateItem
-(
-    int type,
-    int size
-);
-
-OCI_Item * OCI_ListAppend
+void * OCI_ListAppend
 (
     OCI_List *list,
     int       size
@@ -796,7 +769,7 @@ boolean OCI_ListClear
     OCI_List *list
 );
 
-typedef boolean (*POCI_LIST_FOR_EACH)(void *ptr);
+typedef void (*POCI_LIST_FOR_EACH)(void *data);
 
 boolean OCI_ListForEach
 (
@@ -804,10 +777,34 @@ boolean OCI_ListForEach
     POCI_LIST_FOR_EACH proc
 );
 
+typedef void(*POCI_LIST_FOR_EACH_WITH_PARAM)(void *data, void *param);
+
+boolean OCI_ListForEachWithParam
+(
+    OCI_List          *list,
+    void              *param,
+    POCI_LIST_FOR_EACH_WITH_PARAM proc
+);
+
 boolean OCI_ListRemove
 (
     OCI_List *list,
     void     *data
+);
+
+boolean OCI_ListExists
+(
+    OCI_List *list,
+    void     *data
+);
+
+typedef boolean(*POCI_LIST_FIND)(void *data, void *param);
+
+void * OCI_ListFind
+(
+    OCI_List        *list,
+    POCI_LIST_FIND   proc,
+    void            *param
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1404,11 +1401,6 @@ unsigned int OCI_StringGetFullTypeName
 boolean OCI_SubscriptionClose
 (
     OCI_Subscription *sub
-);
-
-boolean OCI_SubscriptionDetachConnection
-(
-    OCI_Connection *con
 );
 
 /* --------------------------------------------------------------------------------------------- *
