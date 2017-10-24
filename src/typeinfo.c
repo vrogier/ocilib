@@ -437,11 +437,6 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
         }
     }
 
-    if (con->tinfs->mutex)
-    {
-        OCI_MutexAcquire(con->tinfs->mutex);
-    }
-
     /* free describe handle */
 
     OCI_HandleFree(dschp, OCI_HTYPE_DESCRIBE);
