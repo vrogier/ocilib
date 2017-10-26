@@ -26,6 +26,7 @@ var group___ocilib_c_api_fetching =
     [ "OCI_ColumnGetNullable", "group___ocilib_c_api_fetching.html#ga741f0a6b17d20da49772c564bf2657cd", null ],
     [ "OCI_ColumnGetCharUsed", "group___ocilib_c_api_fetching.html#gacd8908bfa3c30b6a0ce9889061b9039c", null ],
     [ "OCI_ColumnGetPropertyFlags", "group___ocilib_c_api_fetching.html#gaa64a5169815f2254ef46ba1860572582", null ],
+    [ "OCI_ColumnGetCollationID", "group___ocilib_c_api_fetching.html#ga4dd67a5e61b56641896af942f6e0a9e6", null ],
     [ "OCI_ColumnGetTypeInfo", "group___ocilib_c_api_fetching.html#ga4638a266fa95226c070848877ecd3c2d", null ],
     [ "OCI_ColumnGetSubType", "group___ocilib_c_api_fetching.html#ga2fcdb71d8b82e97e87be7e256a8fb109", null ],
     [ "OCI_SetStructNumericType", "group___ocilib_c_api_fetching.html#ga096c5eed488bc9d20e4320c58536df1b", null ],

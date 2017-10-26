@@ -1,5 +1,7 @@
 var NAVTREEINDEX6 =
 {
+"group___ocilib_c_api_statement_control.html":[1,2,14],
+"group___ocilib_c_api_statement_control.html#ga0aec6183761a7d90307ba785733888e0":[1,2,14,13],
 "group___ocilib_c_api_statement_control.html#ga1f051eb0e55245280385a19f20efe59a":[1,2,14,17],
 "group___ocilib_c_api_statement_control.html#ga33e12da2d28c8a8a73165230a54c91cb":[1,2,14,3],
 "group___ocilib_c_api_statement_control.html#ga3d36730fe81e7bdaef5d5bbb066265a6":[1,2,14,5],

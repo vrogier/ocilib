@@ -1,13 +1,13 @@
 ---
 author: admin
 comments: true
-date: 2017-06-07 22:35:00+01:00
+date: 2017-10-25 22:35:00+01:00
 layout: page
 slug: download
 title: Download
 ---
 
-* Get the lastest package from GitHub :[version 4.3.3 (2017-06-07)]({{site.projecturl}}/releases/)
+* Get the lastest package from GitHub :[version 4.4.0 (2017-10-25)]({{site.projecturl}}/releases/)
 
 ## Installation
 

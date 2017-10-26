@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.3.3</span>
+   &#160;<span id="projectnumber">4.4.0</span>
    </div>
   </td>
  </tr>
@@ -85,6 +85,14 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_binding.html','')
 <li>Call <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block. ">OCI_Execute()</a> as many times as needed</li>
 <li>Each <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block. ">OCI_Execute()</a> call may be preceded by an update of the program variables (for INSERTs for example)</li>
 </ul>
+<p>Bindings can be:</p><ul>
+<li>IN (host variable are not used anymore after statement execution)</li>
+<li>OUT (host variable are set during statement execution)</li>
+<li>IN/OUT (default) Use OCI_BindSetDirectionTo() to change a host variable bind direction mode after the binding call but before statement execution. Note that each direction mode may have a little overhead depending on the SQL type as OCILIB may have to do checks/conversions/mappings between host variable and buffers. Thus, to maximize performances:</li>
+<li>set direction mode to OCI_BDM_IN if host variable is not updated by statement execution</li>
+<li>set direction mode to OCI_BDM_OUT if host variable value does not matter prior to statement execution</li>
+<li>set direction mode to OCI_BDM_IN_OUT when host variable value is used for execution and updated by statement execution</li>
+</ul>
 <p>OCILIB supports the OCI array Interface by binding arrays of C scalar types and OCILIB object types.</p>
 <ul>
 <li>all types supported the library can be used for array binding except OCI_Statement and OCI_Long</li>
@@ -106,7 +114,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_binding.html','')
 <li>optimize internal memory management for arrays</li>
 </ul>
 <p>To do so :</p><ul>
-<li>Call <a class="el" href="group___ocilib_c_api_statement_control.html#ga3d36730fe81e7bdaef5d5bbb066265a6" title="Set the bind allocation mode of a SQL statement. ">OCI_SetBindAllocation()</a> with the mode OCI_BAM_INTERNAL</li>
+<li>Call <a class="el" href="group___ocilib_c_api_statement_control.html#ga3d36730fe81e7bdaef5d5bbb066265a6" title="Set the current bind allocation mode that will be used for subsequent binding calls. ">OCI_SetBindAllocation()</a> with the mode OCI_BAM_INTERNAL</li>
 <li>pass a NULL variable or array to OCI_BindXXX() calls</li>
 <li>Retrieve the bind content allocated by OCILIB with <a class="el" href="group___ocilib_c_api_binding.html#gaeb67c6ebd7cfa3ef22ec71ea1933fabf" title="Return the user defined data associated with a bind handle. ">OCI_BindGetData()</a></li>
 </ul>
@@ -340,6 +348,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gacdafaff6e6722820f15b4c9ec79bb20f"><td class="memItemLeft" align="right" valign="top">boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#gacdafaff6e6722820f15b4c9ec79bb20f">OCI_BindSetCharsetForm</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7bf7e94c3be66d0a7c8edad675133f41">OCI_Bind</a> *bnd, unsigned int csfrm)</td></tr>
 <tr class="memdesc:gacdafaff6e6722820f15b4c9ec79bb20f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the charset form of the given character based bind variable.  <a href="#gacdafaff6e6722820f15b4c9ec79bb20f">More...</a><br /></td></tr>
 <tr class="separator:gacdafaff6e6722820f15b4c9ec79bb20f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac2c4748f8f723885f5d80c959b095952"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#gac2c4748f8f723885f5d80c959b095952">OCI_BindGetAllocationMode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7bf7e94c3be66d0a7c8edad675133f41">OCI_Bind</a> *bnd)</td></tr>
+<tr class="memdesc:gac2c4748f8f723885f5d80c959b095952"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the allocaton mode of a bind handle.  <a href="#gac2c4748f8f723885f5d80c959b095952">More...</a><br /></td></tr>
+<tr class="separator:gac2c4748f8f723885f5d80c959b095952"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ga60d87fbeb94afeaf410ec243eb8c0f98"></a>
@@ -3814,12 +3825,46 @@ For handled based data types (non scalar types), OCILIB performs an extra check 
 
 </div>
 </div>
+<a id="gac2c4748f8f723885f5d80c959b095952"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac2c4748f8f723885f5d80c959b095952">&#9670;&nbsp;</a></span>OCI_BindGetAllocationMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_BindGetAllocationMode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7bf7e94c3be66d0a7c8edad675133f41">OCI_Bind</a> *&#160;</td>
+          <td class="paramname"><em>bnd</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;ocilib.h&gt;</code></p>
+
+<p>Get the allocaton mode of a bind handle. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bnd</td><td>- Bind handle</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Possible values are :<ul>
+<li>OCI_BAM_EXTERNAL : bind variable is allocated by user code</li>
+<li>OCI_BAM_INTERNAL : bind variable is allocated internally</li>
+</ul>
+</dd></dl>
+<p>return the allocaton mode on success otherwise OCI_UNKNWON </p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Jun 7 2017 21:05:25 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 24 2017 22:35:15 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

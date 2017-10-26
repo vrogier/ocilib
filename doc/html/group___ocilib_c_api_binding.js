@@ -69,5 +69,6 @@ var group___ocilib_c_api_binding =
     [ "OCI_BindSetNotNullAtPos", "group___ocilib_c_api_binding.html#ga3f5860da4e3e54d2abeef17350402626", null ],
     [ "OCI_BindIsNull", "group___ocilib_c_api_binding.html#gaf2e64f19b3d6a9646d4d6ed7a2d5b7db", null ],
     [ "OCI_BindIsNullAtPos", "group___ocilib_c_api_binding.html#ga000ea280074b61764f414d6dc1e65ec9", null ],
-    [ "OCI_BindSetCharsetForm", "group___ocilib_c_api_binding.html#gacdafaff6e6722820f15b4c9ec79bb20f", null ]
+    [ "OCI_BindSetCharsetForm", "group___ocilib_c_api_binding.html#gacdafaff6e6722820f15b4c9ec79bb20f", null ],
+    [ "OCI_BindGetAllocationMode", "group___ocilib_c_api_binding.html#gac2c4748f8f723885f5d80c959b095952", null ]
 ];
