@@ -3,8 +3,8 @@ author: admin
 comments: false
 date: 2017-10-25 22:35:00+01:00
 layout: post
-slug: ocilib-v4-3-3-now-available-for-download
-title: OCILIB v4.3.3 now available for download !
+slug: ocilib-v4-4-0-now-available-for-download
+title: OCILIB v4.4.0 now available for download !
 categories:
 - News
 - Updates
