@@ -1388,7 +1388,16 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 
         case SQLT_NTY:
         {
-            OCI_RETVAL = osprintf(buffer, len, col->typinf ? col->typinf->name : OTEXT("NAMED TYPE"));
+            if (col->typinf)
+            {
+                otext fullname[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
+                OCI_StringGetFullTypeName(col->typinf->schema, NULL, col->typinf->name, NULL, fullname, (sizeof(fullname) / sizeof(otext)) - 1);
+                OCI_RETVAL = osprintf(buffer, len, fullname);
+            }
+            else
+            {
+                OCI_RETVAL = osprintf(buffer, len, OTEXT("NAMED TYPE"));
+            }
             break;
         }
 
