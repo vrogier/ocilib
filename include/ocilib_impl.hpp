@@ -6416,6 +6416,11 @@ inline CharsetForm Column::GetCharsetForm() const
     return CharsetForm(static_cast<CharsetForm::Type>(Check(OCI_ColumnGetCharsetForm(*this))));
 }
 
+inline CollationID Column::GetCollationID() const
+{
+    return CollationID(static_cast<CollationID::Type>(Check(OCI_ColumnGetCollationID(*this))));
+}
+
 inline unsigned int Column::GetSize() const
 {
     return Check(OCI_ColumnGetSize(*this));

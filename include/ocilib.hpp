@@ -345,6 +345,7 @@ enum CharsetFormValues
     /** Client national character set will be converted to the server national character set */
     CharsetFormNational = OCI_CSF_NATIONAL
 };
+
 /**
 * @brief
 * Type of charsetForm
@@ -353,6 +354,51 @@ enum CharsetFormValues
 *
 */
 typedef Enum<CharsetFormValues> CharsetForm;
+
+/**
+* @brief
+* Collation ID enumerated values
+*
+*/
+enum CollationIDValues
+{
+    /** None */
+    CollationIDNone = OCI_CCI_NONE,
+    /**  Compare */
+    CollationIDNlsComp = OCI_CCI_NLS_COMP,
+    /** Sort */
+    CollationIDNlsSort = OCI_CCI_NLS_SORT,
+    /** Sort CI */
+    CollationIDNlsSortCI = OCI_CCI_NLS_SORT_CI,
+    /** Sort AI */
+    CollationIDNlsSortAI = OCI_CCI_NLS_SORT_AI,
+    /** Sort CS */
+    CollationIDNlsSortCS = OCI_CCI_NLS_SORT_CS,
+    /** Sort VAR 1 */
+    CollationIDNlsSortVar1 = OCI_CCI_NLS_SORT_VAR1,
+    /** Sort VAR 1 CI */
+    CollationIDNlsSortVar1CI = OCI_CCI_NLS_SORT_VAR1_CI,
+    /** Sort VAR 1 AI */
+    CollationIDNlsSortVar1AI = OCI_CCI_NLS_SORT_VAR1_AI,
+    /** Sort VAR 1 CS */
+    CollationIDNlsSortVar1CS = OCI_CCI_NLS_SORT_VAR1_CS,
+    /** Binary */
+    CollationIDBinary = OCI_CCI_BINARY,
+    /** Binary CI */
+    CollationIDBinaryCI = OCI_CCI_BINARY_CI,
+    /** Binary AI */
+    CollationIDBinaryAI = OCI_CCI_BINARY_AI
+};
+
+/**
+* @brief
+* Type of Collation ID
+*
+* Possible values are CollationIDValues
+*
+*/
+typedef Enum<CollationIDValues> CollationID;
+
 
 /**
 * @brief
@@ -6805,6 +6851,11 @@ public:
     */
     typedef Flags<PropertyFlagsValues> PropertyFlags;
 
+    /**
+    * @brief
+    * Return the Column name
+    *
+    */
     ostring GetName() const;
 
     /**
@@ -6860,6 +6911,13 @@ public:
     *
     */
     CharsetForm GetCharsetForm() const;
+
+    /**
+    * @brief
+    * Return the collation ID of the given column
+    *
+    */
+    CollationID GetCollationID() const;
 
     /**
     * @brief
