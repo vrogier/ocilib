@@ -797,11 +797,23 @@ public:
         /** Default session mode */
         SessionDefault = OCI_SESSION_DEFAULT,
         /** Requested session will be created through the XA interface */
-        SessionXa  = OCI_SESSION_XA,
+        SessionXa = OCI_SESSION_XA,
         /** the user is authenticated for SYSDBA access. */
         SessionSysDba = OCI_SESSION_SYSDBA,
         /** the user is authenticated for SYSOPER access */
-        SessionSysOper = OCI_SESSION_SYSOPER
+        SessionSysOper = OCI_SESSION_SYSOPER,
+        /** the user is authenticated for SYSASM access */
+        SessionSysAsm = OCI_SESSION_SYSASM,
+        /** the user is authenticated for SYSBKP access */
+        SessionSysBkp = OCI_SESSION_SYSBKP,
+        /** the user is authenticated for SYSDGD access */
+        SessionSysDgD = OCI_SESSION_SYSDGD,
+        /** the user is authenticated for SYSKMT access */
+        SessionSysKmt = OCI_SESSION_SYSKMT,
+        /** the user is authenticated for SYSRAC access */
+        SessionSysRac = OCI_SESSION_SYSRAC,
+        /** the user is authenticated for PRELIM_AUTH access */
+        SessionPreAuth = OCI_SESSION_PRELIM_AUTH
     };
 
     /**
