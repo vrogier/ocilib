@@ -5556,7 +5556,9 @@ public:
         /** DECLARE statement */
         TypeDeclare = OCI_CST_DECLARE,
         /** CALL statement */
-        TypeCall = OCI_CST_CALL
+        TypeCall = OCI_CST_CALL,
+        /** MERGE statement */
+        TypeMerge = OCI_CST_MERGE
     };
 
     /**
