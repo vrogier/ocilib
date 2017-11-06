@@ -1205,6 +1205,7 @@ typedef unsigned int big_uint;
 #define OCI_CST_BEGIN                       8
 #define OCI_CST_DECLARE                     9
 #define OCI_CST_CALL                        10
+#define OCI_CST_MERGE                       16
 
 /* environment modes */
 
@@ -9620,6 +9621,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterRef
  * - OCI_CST_BEGIN   : begin (pl/sql) statement
  * - OCI_CST_DECLARE : declare (pl/sql) statement
  * - OCI_CST_CALL    : kpu call
+ * - OCI_CST_MERGE   : merge statement
  *
  * @return
  * The statement type on success or OCI_UNKOWN on error
