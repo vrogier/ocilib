@@ -510,6 +510,8 @@ void OCI_ProcHAEvent
     {       
         HAEventParams params;
 
+        memset(&params, 0, sizeof(params));
+
         OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVFIRST, (OCIEvent *)eventptr, &params.srvhp, NULL)
 
         while (OCI_STATUS && params.srvhp)
