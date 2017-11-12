@@ -880,7 +880,7 @@ int OCI_API OCI_NumberCompare
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number2)
     OCI_CALL_CONTEXT_SET_FROM_CONN(number1->con)
 
-    OCI_EXEC(OCINumberCmp(number1->err, number1->handle, number1->handle, &value))
+    OCI_EXEC(OCINumberCmp(number1->err, number1->handle, number2->handle, &value))
 
     OCI_RETVAL = (int) value;
 
