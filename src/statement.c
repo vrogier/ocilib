@@ -274,7 +274,7 @@ boolean OCI_BindUpdate
 
         OCI_Object *obj = OCI_BIND_GET_HANDLE(dst, OCI_Object, index);
 
-        if (obj)
+        if (obj && bnd->buffer.inds[index] != OCI_IND_NULL)
         {
             obj->tab_ind = (sb2*)bnd->buffer.obj_inds[index];
         }
