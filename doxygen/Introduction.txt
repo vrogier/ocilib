@@ -19,7 +19,7 @@
 
  @section Version Version information
 
-Current version :  <b>4.4.0 (2017-10-25)</b>
+Current version :  <b>4.4.1 (2017-11-12)</b>
 
  @section Features Main features
 
