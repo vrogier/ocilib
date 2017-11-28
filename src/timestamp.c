@@ -436,7 +436,7 @@ boolean OCI_API OCI_TimestampFromText
 
     if (!OCI_STRING_VALID(fmt))
     {
-        fmt = OCI_GetFormat(tmsp->con, OCI_FMT_TIMESTAMP);
+        fmt = OCI_GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
     dbstr1 = OCI_StringGetOracleString(str, &dbsize1);
@@ -501,7 +501,7 @@ boolean OCI_API OCI_TimestampToText
 
     if (!OCI_STRING_VALID(fmt))
     {
-        fmt = OCI_GetFormat(tmsp->con, OCI_FMT_TIMESTAMP);
+        fmt = OCI_GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
     dbstr1 = OCI_StringGetOracleString(str, &dbsize1);

@@ -1539,6 +1539,7 @@ typedef unsigned int big_uint;
 #define OCI_FMT_NUMERIC                     3
 #define OCI_FMT_BINARY_DOUBLE               4
 #define OCI_FMT_BINARY_FLOAT                5
+#define OCI_FMT_TIMESTAMP_TZ                6
 
 /* sql function codes */
 
@@ -1697,6 +1698,7 @@ typedef unsigned int big_uint;
 #define OCI_STRING_FORMAT_TIME              OTEXT("HH24:MI:SS")
 #define OCI_STRING_FORMAT_DATETIME          OTEXT("YYYY-MM-DD HH24:MI:SS")
 #define OCI_STRING_FORMAT_TIMESTAMP         OTEXT("YYYY-MM-DD HH24:MI:SS.FF")
+#define OCI_STRING_FORMAT_TIMESTAMP_TZ      OTEXT("YYYY-MM-DD HH24:MI:SS.FF TZR")
 #define OCI_STRING_DEFAULT_PREC             3
 #define OCI_STRING_FORMAT_NUM   \
     OTEXT("FM99999999999999999999999999999999999990.999999999999999999999999")
@@ -2489,7 +2491,8 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion
  * Possible values of parameter 'type' :
  *
  * - OCI_FMT_DATE          : format used to convert DATE to string
- * - OCI_FMT_TIMESTAMP     : format used to convert TIMESTAMP to string
+ * - OCI_FMT_TIMESTAMP     : format used to convert TIMESTAMP and TIMESTAMP WITH LOCAL TIMEZONE to string
+ * - OCI_FMT_TIMESTAMP_TZ  : format used to convert TIMESTAMP WITH TIME ZONE to string
  * - OCI_FMT_NUMERIC       : format used to convert numeric types to string
  * - OCI_FMT_BINARY_DOUBLE : format used to convert BINARY_DOUBLE to string
  * - OCI_FMT_BINARY FLOAT  : format used to convert BINARY_FLOAT to string
@@ -2498,6 +2501,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion
  * Default format values are :
  * - OCI_FMT_DATE          : constant OCI_STRING_FORMAT_DATE
  * - OCI_FMT_TIMESTAMP     : constant OCI_STRING_FORMAT_TIMESTAMP
+ * - OCI_FMT_TIMESTAMP_TZ  : constant OCI_STRING_FORMAT_TIMESTAMP_TZ
  * - OCI_FMT_NUMERIC       : constant OCI_STRING_FORMAT_NUMERIC
  * - OCI_FMT_BINARY_DOUBLE : constant OCI_STRING_FORMAT_BINARY_DOUBLE
  * - OCI_FMT_BINARY FLOAT  : constant OCI_STRING_FORMAT_BINARY_FLOAT

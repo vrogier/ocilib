@@ -572,7 +572,7 @@
 
 #define OCI_SQLCMD_COUNT                126
 
-#define OCI_FMT_COUNT                   5
+#define OCI_FMT_COUNT                   6
 
 #define OCI_ERR_MSG_SIZE                512
 

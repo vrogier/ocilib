@@ -698,7 +698,7 @@ unsigned int OCI_StringGetFromType
             if (ptr)
             {
                 OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
-                const otext   *fmt = OCI_GetFormat(con, OCI_FMT_TIMESTAMP);
+                const otext   *fmt = OCI_GetFormat(con, tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
 
                  res = tmsp ? OCI_TimestampToText(tmsp, fmt, buffer_size, ptr, 0) : FALSE;
             }
