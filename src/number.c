@@ -315,7 +315,7 @@ boolean OCI_NumberFromString
             if (ostrcmp(in_value, mag_num->name) == 0)
             {
                 memset(out_value, 0, sizeof(OCINumber));
-                memcpy(out_value, mag_num->number, sizeof(mag_num->number));
+                memcpy(out_value, mag_num->number, mag_num->number[0] + 1);
                 OCI_STATUS = done = TRUE;
                 break;
             }
@@ -454,7 +454,7 @@ boolean OCI_NumberToString
         {
             MagicNumber *mag_num = &MagicNumbers[i];
 
-            if (memcmp(number, mag_num->number, sizeof(mag_num->number)) == 0)
+            if (memcmp(number, mag_num->number, mag_num->number[0] + 1) == 0)
             {
                 ostrcpy(out_value, mag_num->name);
                 OCI_STATUS = done = TRUE;
