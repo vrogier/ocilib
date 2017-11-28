@@ -506,7 +506,7 @@ boolean OCI_API OCI_DirPathSetColumn
                 {
                     dpcol->format      = ostrdup(format);
                     dpcol->format_size = (ub4) ostrlen(format);
-                    dpcol->maxsize     = (ub2) dpcol->format_size;
+                    dpcol->maxsize     = (ub2) max(dpcol->format_size, maxsize);
                     dpcol->bufsize    *= sizeof(otext);
                 }
                 break;
