@@ -7,7 +7,7 @@ slug: download
 title: Download
 ---
 
-* Get the lastest package from GitHub :[version 4.4.1 (2017-11-29]({{site.projecturl}}/releases/)
+* Get the lastest package from GitHub :[version 4.4.1 (2017-11-29)]({{site.projecturl}}/releases/)
 
 ## Installation
 
@@ -15,7 +15,7 @@ title: Download
 
 {% highlight bash %}
 - unzip the archive
-- copy ocilib\include\ocilib.h to any place located in your include's path
+- copy ocilib\include\ocilib.h to any place located in your includes path
 - copy ocilib\lib32|64\ocilib[x].lib to any place located in your libraries path
 - copy ocilib\lib32|64\ocilib[x].dll to any place located in your windows path
 {% endhighlight %}
