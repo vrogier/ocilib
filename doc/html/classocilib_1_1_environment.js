@@ -42,7 +42,13 @@ var classocilib_1_1_environment =
       [ "SessionDefault", "classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774aeaafa2fca26ddd12a45b9f5e2972f41c27", null ],
       [ "SessionXa", "classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774aea63c82b745712845c4171577f3d037fa9", null ],
       [ "SessionSysDba", "classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774aeabfa7f4b4f2f84db56201f02bff1238c3", null ],
-      [ "SessionSysOper", "classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774aea5a285b358bcbdbc8af078cf6c0f4da2f", null ]
+      [ "SessionSysOper", "classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774aea5a285b358bcbdbc8af078cf6c0f4da2f", null ],
+      [ "SessionSysAsm", "classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774aea97b1b3a57ee23feee3ad453af7d94c40", null ],
+      [ "SessionSysBkp", "classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774aeac61a349e165ec79eec614b4de385cb46", null ],
+      [ "SessionSysDgD", "classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774aeac237b5821c1b9e37954153ace4543b32", null ],
+      [ "SessionSysKmt", "classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774aea317b5b45bc9c5a7a5f62e10a110d01dd", null ],
+      [ "SessionSysRac", "classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774aea8266797f13f06da53d542d1708ed676c", null ],
+      [ "SessionPreAuth", "classocilib_1_1_environment.html#ac583b9f6d4fd1da0282afe6e8fb774aea9f05a43c6f26f64ef60a7a951ff6ab30", null ]
     ] ],
     [ "StartModeValues", "classocilib_1_1_environment.html#a13bc1c46153530664fba7e79a8fad6fa", [
       [ "StartOnly", "classocilib_1_1_environment.html#a13bc1c46153530664fba7e79a8fad6faa44940f7928cab2ee1c6859818bdfe908", null ],

@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2017-10-25 22:35:00+01:00
+date: 2017-11-29 10:00:00+01:00
 layout: page
 slug: home
 title: Home
@@ -25,7 +25,7 @@ The OCILIB library  :
   
 ## Latest version
 
-The latest version is [version 4.4.0(2017-10-25)]({{site.projecturl}}/releases/)
+The latest version is [version 4.4.1(2017-11-29)]({{site.projecturl}}/releases/)
 <br/>
 <br/>
 [![Build Status](https://img.shields.io/travis/vrogier/ocilib/master.svg)](https://travis-ci.org/vrogier/ocilib)

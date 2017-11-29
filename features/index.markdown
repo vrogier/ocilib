@@ -1,11 +1,10 @@
 ---
 author: admin
 comments: true
-date: 2008-08-16 21:00:36+00:00
+date: 2017-11-29 10:00:00+01:00
 layout: page
 slug: features
 title: Features
-wordpress_id: 76
 ---
     
 + ISO C API

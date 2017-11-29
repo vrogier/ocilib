@@ -1,11 +1,10 @@
 ---
 author: admin
 comments: true
-date: 2017-01-25 22:35:00+01:00
+date: 2017-11-29 10:00:00+01:00
 layout: page
 slug: blog
 title: Blog
-
 ---
 
 <div>

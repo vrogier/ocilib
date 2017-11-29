@@ -14,7 +14,8 @@ var classocilib_1_1_statement =
       [ "TypeAlter", "classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832af131bb05db5da494c4625da5cc5c1272", null ],
       [ "TypeBegin", "classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832a8fcdc012c176700c5770fc53e11c6d15", null ],
       [ "TypeDeclare", "classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832afb542b59092185efc97aa02ffc887993", null ],
-      [ "TypeCall", "classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832ada98b8a1b4b407f56067652c86a5f4c3", null ]
+      [ "TypeCall", "classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832ada98b8a1b4b407f56067652c86a5f4c3", null ],
+      [ "TypeMerge", "classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832a3e95595d943945fcff538998f03d6609", null ]
     ] ],
     [ "FetchModeValues", "classocilib_1_1_statement.html#a8c77708b4c2fd86c3605544a62bce00e", [
       [ "FetchForward", "classocilib_1_1_statement.html#a8c77708b4c2fd86c3605544a62bce00ea14b515c5a730cee38039148f4fd2f2ed", null ],

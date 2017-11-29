@@ -1,0 +1,49 @@
+---
+author: admin
+comments: false
+date: 2017-11-29 10:00:00+01:00
+layout: post
+slug: ocilib-v4-4-1-now-available-for-download
+title: OCILIB v4.4.1 now available for download !
+---
+
+Dear all,
+<br/>
+<br/>
+<b>OCILIB v4.4.1 is now [_available for download_]({{site.projecturl}}/releases/) !</b>
+<br/>
+<br/>
+Get the release and enjoy it !
+<br/>
+<br/>
+
+### Enhancements (C API)
+   
+- Issue #116: OCI_ColumnGetFullSQLType() returns now [schema].[typename] for UDTs (instead of [typename] only
+- Issue #122: Added default format OCI_FMT_TIMESTAMP_TZ when converting TIMESTAMP WITH TIMEZONE from/to strings
+- Added OCI_CST_MERGE statement type
+  
+### Enhancements (C++ API)
+
+- Added support for new methods and constants added in C API v4.4.0:
+    * Added Column::GetCollationID()
+    * Added CollationID enumeration
+    * Extended StatementType enumeration: added TypeMerge  
+    * Extended SessionFlags values: Added SessionSysAsm, SessionSysBkp SessionSysDgD, SessionSysKmt, SessionSysRac, SessionPreAuth 
+    
+### Fixes (C API)
+
+- Issue #117 : Fixed segfault in OCI_StatementFree() when OCI_Objects were binded to a statement and nullified with OCI_BindSetNull() 
+- Issue #118 : Fixed OCI_NumberCompare() that was comparing the first number with itself
+- Issue #121 : Updated magic numbers (positive and negative infinity) handling in OCI_NumberToString() and OCI_NumberFromString()
+- Issue #124 : OCI_DirPathSetColumn() might use a buffer to small to convert datetime/timestamp/interval values
+
+### Miscellaneous:
+
+- Visual studio solutions/projects updates and cleanup 
+		
+
+<br/>
+
+Vincent
+

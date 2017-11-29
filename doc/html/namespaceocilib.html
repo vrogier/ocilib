@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.4.0</span>
+   &#160;<span id="projectnumber">4.4.1</span>
    </div>
   </td>
  </tr>
@@ -242,6 +242,9 @@ typedef void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
 <tr class="memitem:ab8d95014748930f93170fb1725821ea5"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classocilib_1_1_enum.html">Enum</a>&lt; <a class="el" href="namespaceocilib.html#a26c5b6c40c0d4f9bff59ae8ff442263d">CharsetFormValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceocilib.html#ab8d95014748930f93170fb1725821ea5">CharsetForm</a></td></tr>
 <tr class="memdesc:ab8d95014748930f93170fb1725821ea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of charsetForm.  <a href="#ab8d95014748930f93170fb1725821ea5">More...</a><br /></td></tr>
 <tr class="separator:ab8d95014748930f93170fb1725821ea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8ff948932447b8b18e8534fa3d458d5"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classocilib_1_1_enum.html">Enum</a>&lt; <a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617">CollationIDValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceocilib.html#aa8ff948932447b8b18e8534fa3d458d5">CollationID</a></td></tr>
+<tr class="memdesc:aa8ff948932447b8b18e8534fa3d458d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of Collation ID.  <a href="#aa8ff948932447b8b18e8534fa3d458d5">More...</a><br /></td></tr>
+<tr class="separator:aa8ff948932447b8b18e8534fa3d458d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0015e01ea7eeb0c410b2d0f846114104"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classocilib_1_1_enum.html">Enum</a>&lt; <a class="el" href="namespaceocilib.html#a4f93943c01043379927c2944b0c92576">SeekModeValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceocilib.html#a0015e01ea7eeb0c410b2d0f846114104">SeekMode</a></td></tr>
 <tr class="memdesc:a0015e01ea7eeb0c410b2d0f846114104"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seek Modes.  <a href="#a0015e01ea7eeb0c410b2d0f846114104">More...</a><br /></td></tr>
 <tr class="separator:a0015e01ea7eeb0c410b2d0f846114104"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -321,6 +324,27 @@ Enumerations</h2></td></tr>
  }<tr class="memdesc:a26c5b6c40c0d4f9bff59ae8ff442263d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Charset form enumerated values.  <a href="namespaceocilib.html#a26c5b6c40c0d4f9bff59ae8ff442263d">More...</a><br /></td></tr>
 </td></tr>
 <tr class="separator:a26c5b6c40c0d4f9bff59ae8ff442263d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a51d116768accdb6d5b867ac26a8617"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617">CollationIDValues</a> { <br />
+&#160;&#160;<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617aa41630025f81bdbc1366212d0c12caf9">CollationIDNone</a> = OCI_CCI_NONE, 
+<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617ac463503ecceab7b21035c1334f786645">CollationIDNlsComp</a> = OCI_CCI_NLS_COMP, 
+<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617ab12f400f0ffa000be2fc27259b79ea89">CollationIDNlsSort</a> = OCI_CCI_NLS_SORT, 
+<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a7eb27ad7f40a053c0dc58036af8e796a">CollationIDNlsSortCI</a> = OCI_CCI_NLS_SORT_CI, 
+<br />
+&#160;&#160;<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a17f3720a88e7ff335d5fc4fa4399bc7a">CollationIDNlsSortAI</a> = OCI_CCI_NLS_SORT_AI, 
+<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617ac088effce0dd33f4007e831210b2cd61">CollationIDNlsSortCS</a> = OCI_CCI_NLS_SORT_CS, 
+<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a546c1992f64f26b42ef41b3950c5d9ba">CollationIDNlsSortVar1</a> = OCI_CCI_NLS_SORT_VAR1, 
+<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a7f99a9c6e1d8b5bcc3b09d88008d9903">CollationIDNlsSortVar1CI</a> = OCI_CCI_NLS_SORT_VAR1_CI, 
+<br />
+&#160;&#160;<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a83a4bd17cc35b93b73256e441fff2178">CollationIDNlsSortVar1AI</a> = OCI_CCI_NLS_SORT_VAR1_AI, 
+<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617ac317c26b7ab9a8f527ce7e5adfa9081f">CollationIDNlsSortVar1CS</a> = OCI_CCI_NLS_SORT_VAR1_CS, 
+<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617ac0ddf8221256d47f331c5e84de7865bd">CollationIDBinary</a> = OCI_CCI_BINARY, 
+<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a96b16590bf2e3fe139e974f18d117136">CollationIDBinaryCI</a> = OCI_CCI_BINARY_CI, 
+<br />
+&#160;&#160;<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a1797ac904df2c6ab343cb26d23de60df">CollationIDBinaryAI</a> = OCI_CCI_BINARY_AI
+<br />
+ }<tr class="memdesc:a3a51d116768accdb6d5b867ac26a8617"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collation ID enumerated values.  <a href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:a3a51d116768accdb6d5b867ac26a8617"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f93943c01043379927c2944b0c92576"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceocilib.html#a4f93943c01043379927c2944b0c92576">SeekModeValues</a> { <a class="el" href="namespaceocilib.html#a4f93943c01043379927c2944b0c92576a6cb13438b0bad43b2d4b112c6017ce81">SeekSet</a> = OCI_SEEK_SET, 
 <a class="el" href="namespaceocilib.html#a4f93943c01043379927c2944b0c92576ac13e9b641b5902f46defb8bdfd280495">SeekEnd</a> = OCI_SEEK_END, 
 <a class="el" href="namespaceocilib.html#a4f93943c01043379927c2944b0c92576a66cecebd6af72acf437ebd2a9703dad0">SeekOffset</a> = OCI_SEEK_CUR
@@ -469,7 +493,26 @@ template&lt;class T &gt; </td></tr>
 <p>Type of charsetForm. </p>
 <p>Possible values are CharsetFormValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00355">355</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00356">356</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa8ff948932447b8b18e8534fa3d458d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8ff948932447b8b18e8534fa3d458d5">&#9670;&nbsp;</a></span>CollationID</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classocilib_1_1_enum.html">Enum</a>&lt;<a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617">CollationIDValues</a>&gt; <a class="el" href="namespaceocilib.html#aa8ff948932447b8b18e8534fa3d458d5">ocilib::CollationID</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Type of Collation ID. </p>
+<p>Possible values are CollationIDValues </p>
+
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00400">400</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -488,7 +531,7 @@ template&lt;class T &gt; </td></tr>
 <p>Seek Modes. </p>
 <p>Possible values are SeekModeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00379">379</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00425">425</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -507,7 +550,7 @@ template&lt;class T &gt; </td></tr>
 <p>Open Modes. </p>
 <p>Possible values are OpenModeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00401">401</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00447">447</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -526,7 +569,7 @@ template&lt;class T &gt; </td></tr>
 <p>Type of <a class="el" href="classocilib_1_1_lob.html" title="Object identifying the SQL data type LOB (CLOB, NCLOB and BLOB) ">Lob</a>. </p>
 <p>Possible values are LobTypeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00425">425</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00471">471</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -545,7 +588,7 @@ template&lt;class T &gt; </td></tr>
 <p>Type of <a class="el" href="classocilib_1_1_long.html" title="Object identifying the SQL data type LONG. ">Long</a>. </p>
 <p>Possible values are LongTypeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00447">447</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00493">493</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -564,7 +607,7 @@ template&lt;class T &gt; </td></tr>
 <p>Format type. </p>
 <p>Possible values are FormatTypeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00475">475</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00521">521</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -583,7 +626,7 @@ template&lt;class T &gt; </td></tr>
 <p>Class handling CLOB oracle type. </p>
 <dl class="section note"><dt>Note</dt><dd>Length and size arguments / returned values are expressed in number of characters </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04302">4302</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04360">4360</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -602,7 +645,7 @@ template&lt;class T &gt; </td></tr>
 <p>Class handling NCLOB oracle type. </p>
 <dl class="section note"><dt>Note</dt><dd>Length and size arguments / returned values are expressed in number of characters </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04313">4313</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04371">4371</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -621,7 +664,7 @@ template&lt;class T &gt; </td></tr>
 <p>Class handling BLOB oracle type. </p>
 <dl class="section note"><dt>Note</dt><dd>Length and size arguments / returned values are expressed in number of bytes </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04324">4324</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04382">4382</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -774,6 +817,52 @@ template&lt;class T &gt; </td></tr>
 
 </div>
 </div>
+<a id="a3a51d116768accdb6d5b867ac26a8617"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a51d116768accdb6d5b867ac26a8617">&#9670;&nbsp;</a></span>CollationIDValues</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617">ocilib::CollationIDValues</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Collation ID enumerated values. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617aa41630025f81bdbc1366212d0c12caf9"></a>CollationIDNone&#160;</td><td class="fielddoc"><p>None </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617ac463503ecceab7b21035c1334f786645"></a>CollationIDNlsComp&#160;</td><td class="fielddoc"><p>Compare </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617ab12f400f0ffa000be2fc27259b79ea89"></a>CollationIDNlsSort&#160;</td><td class="fielddoc"><p>Sort </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617a7eb27ad7f40a053c0dc58036af8e796a"></a>CollationIDNlsSortCI&#160;</td><td class="fielddoc"><p>Sort CI </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617a17f3720a88e7ff335d5fc4fa4399bc7a"></a>CollationIDNlsSortAI&#160;</td><td class="fielddoc"><p>Sort AI </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617ac088effce0dd33f4007e831210b2cd61"></a>CollationIDNlsSortCS&#160;</td><td class="fielddoc"><p>Sort CS </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617a546c1992f64f26b42ef41b3950c5d9ba"></a>CollationIDNlsSortVar1&#160;</td><td class="fielddoc"><p>Sort VAR 1 </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617a7f99a9c6e1d8b5bcc3b09d88008d9903"></a>CollationIDNlsSortVar1CI&#160;</td><td class="fielddoc"><p>Sort VAR 1 CI </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617a83a4bd17cc35b93b73256e441fff2178"></a>CollationIDNlsSortVar1AI&#160;</td><td class="fielddoc"><p>Sort VAR 1 AI </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617ac317c26b7ab9a8f527ce7e5adfa9081f"></a>CollationIDNlsSortVar1CS&#160;</td><td class="fielddoc"><p>Sort VAR 1 CS </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617ac0ddf8221256d47f331c5e84de7865bd"></a>CollationIDBinary&#160;</td><td class="fielddoc"><p>Binary </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617a96b16590bf2e3fe139e974f18d117136"></a>CollationIDBinaryCI&#160;</td><td class="fielddoc"><p>Binary CI </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3a51d116768accdb6d5b867ac26a8617a1797ac904df2c6ab343cb26d23de60df"></a>CollationIDBinaryAI&#160;</td><td class="fielddoc"><p>Binary AI </p>
+</td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00363">363</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a4f93943c01043379927c2944b0c92576"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4f93943c01043379927c2944b0c92576">&#9670;&nbsp;</a></span>SeekModeValues</h2>
 
@@ -796,7 +885,7 @@ template&lt;class T &gt; </td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00362">362</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00408">408</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -820,7 +909,7 @@ template&lt;class T &gt; </td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00386">386</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00432">432</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -850,7 +939,7 @@ template&lt;class T &gt; </td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00454">454</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00500">500</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -860,7 +949,7 @@ template&lt;class T &gt; </td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li>
-    <li class="footer">Generated on Tue Oct 24 2017 22:35:16 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Nov 28 2017 22:33:57 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

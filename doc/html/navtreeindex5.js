@@ -1,5 +1,14 @@
 var NAVTREEINDEX5 =
 {
+"group___ocilib_c_api_feature_returning_into.html#ga34cb87ebfa9f43b1474f192515562271":[1,2,12,18],
+"group___ocilib_c_api_feature_returning_into.html#ga47f7026a1340f47106bb68e640721e7b":[1,2,12,10],
+"group___ocilib_c_api_feature_returning_into.html#ga4c215f37902cc9045c27ae1bdd3b2844":[1,2,12,4],
+"group___ocilib_c_api_feature_returning_into.html#ga67cbb956e8d721c8397e3f897a57b224":[1,2,12,0],
+"group___ocilib_c_api_feature_returning_into.html#ga75b56f19cf0c858b2e4a2b81ef15b5ea":[1,2,12,2],
+"group___ocilib_c_api_feature_returning_into.html#ga7f993f07ff0296c7f6961298e473ebbe":[1,2,12,6],
+"group___ocilib_c_api_feature_returning_into.html#ga8620b248d8f5a8d869b9144cfb4d27e3":[1,2,12,9],
+"group___ocilib_c_api_feature_returning_into.html#gaa54a5be8206d27268e574c0c4f6695a1":[1,2,12,5],
+"group___ocilib_c_api_feature_returning_into.html#gaae282a931f8f23e4abe066a9a82ba45f":[1,2,12,17],
 "group___ocilib_c_api_feature_returning_into.html#gaaf3b03d15c93a0441473f2bcf86453d6":[1,2,12,1],
 "group___ocilib_c_api_feature_returning_into.html#gaaf804e8eb11f4b040e23ce4f164f279c":[1,2,12,16],
 "group___ocilib_c_api_feature_returning_into.html#gad86a6a528899cae1272b88e06e3d2043":[1,2,12,3],
@@ -240,14 +249,5 @@ var NAVTREEINDEX5 =
 "group___ocilib_c_api_raw_handles.html#gaa77980531a35fa442bfa3ef49f1a87af":[1,15,17],
 "group___ocilib_c_api_raw_handles.html#gaa870054550e796984ea130b6b319e6fc":[1,15,6],
 "group___ocilib_c_api_raw_handles.html#gab7663ce1fd7cfbe74631ea01f3c580a6":[1,15,10],
-"group___ocilib_c_api_raw_handles.html#gac271bea5fea0f4db1061c36abb585abf":[1,15,5],
-"group___ocilib_c_api_raw_handles.html#gac61db6d07b9e402fe60c5e4cda17fc00":[1,15,13],
-"group___ocilib_c_api_raw_handles.html#gacba3e4f3a6097cb9670240ead348aa50":[1,15,0],
-"group___ocilib_c_api_raw_handles.html#gacfedb6c29c35b21f6e7137fa22181392":[1,15,1],
-"group___ocilib_c_api_raw_handles.html#gad4007ce71e3a4df9e28777f2631190e7":[1,15,21],
-"group___ocilib_c_api_raw_handles.html#gad5024a0096e3cfd751cd94d49d195e53":[1,15,18],
-"group___ocilib_c_api_raw_handles.html#gadc8c52919edd87057b8b1d0bf54344c5":[1,15,20],
-"group___ocilib_c_api_raw_handles.html#gaf0b3b3abf1d48da90f37b564dafeac93":[1,15,15],
-"group___ocilib_c_api_raw_handles.html#gaf74c060b9a861979b9a3af9bfc3904ed":[1,15,4],
-"group___ocilib_c_api_row_ids.html":[1,2,13]
+"group___ocilib_c_api_raw_handles.html#gac271bea5fea0f4db1061c36abb585abf":[1,15,5]
 };

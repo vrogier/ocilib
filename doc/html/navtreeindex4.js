@@ -1,5 +1,14 @@
 var NAVTREEINDEX4 =
 {
+"group___ocilib_c_api_binding.html#ga296a1d0d48327b72d0121f07becb439d":[1,2,8,34],
+"group___ocilib_c_api_binding.html#ga342fa303508d07900648dce6c052328f":[1,2,8,30],
+"group___ocilib_c_api_binding.html#ga39a7c00c63640c59bee21d62713a1d60":[1,2,8,47],
+"group___ocilib_c_api_binding.html#ga3b14174ebbbf8086e01d5120f9db0676":[1,2,8,43],
+"group___ocilib_c_api_binding.html#ga3f5860da4e3e54d2abeef17350402626":[1,2,8,66],
+"group___ocilib_c_api_binding.html#ga424b99d1f260854febd37746ece9bd59":[1,2,8,5],
+"group___ocilib_c_api_binding.html#ga4511e140401a5d5da71ed4f62d71354b":[1,2,8,14],
+"group___ocilib_c_api_binding.html#ga46c3e24c0f2c1445c8eb87363a3d0be5":[1,2,8,36],
+"group___ocilib_c_api_binding.html#ga4d2472242c1ba3d071490352f55c9821":[1,2,8,45],
 "group___ocilib_c_api_binding.html#ga4d59c09e2ffd81029034cafeb735748e":[1,2,8,64],
 "group___ocilib_c_api_binding.html#ga4eb6c1d2ff0cd4ee7ee4a015c5693129":[1,2,8,48],
 "group___ocilib_c_api_binding.html#ga521577b21e83e8ea5ac19099b1d2a3f7":[1,2,8,53],
@@ -240,14 +249,5 @@ var NAVTREEINDEX4 =
 "group___ocilib_c_api_feature_returning_into.html":[1,2,12],
 "group___ocilib_c_api_feature_returning_into.html#ga1a22763f9e2f04525d4c9ed84ad3e3ab":[1,2,12,7],
 "group___ocilib_c_api_feature_returning_into.html#ga24570345dff59944656f2cf537de0693":[1,2,12,14],
-"group___ocilib_c_api_feature_returning_into.html#ga334374bb86c0562ab453a45a56c62dac":[1,2,12,11],
-"group___ocilib_c_api_feature_returning_into.html#ga34cb87ebfa9f43b1474f192515562271":[1,2,12,18],
-"group___ocilib_c_api_feature_returning_into.html#ga47f7026a1340f47106bb68e640721e7b":[1,2,12,10],
-"group___ocilib_c_api_feature_returning_into.html#ga4c215f37902cc9045c27ae1bdd3b2844":[1,2,12,4],
-"group___ocilib_c_api_feature_returning_into.html#ga67cbb956e8d721c8397e3f897a57b224":[1,2,12,0],
-"group___ocilib_c_api_feature_returning_into.html#ga75b56f19cf0c858b2e4a2b81ef15b5ea":[1,2,12,2],
-"group___ocilib_c_api_feature_returning_into.html#ga7f993f07ff0296c7f6961298e473ebbe":[1,2,12,6],
-"group___ocilib_c_api_feature_returning_into.html#ga8620b248d8f5a8d869b9144cfb4d27e3":[1,2,12,9],
-"group___ocilib_c_api_feature_returning_into.html#gaa54a5be8206d27268e574c0c4f6695a1":[1,2,12,5],
-"group___ocilib_c_api_feature_returning_into.html#gaae282a931f8f23e4abe066a9a82ba45f":[1,2,12,17]
+"group___ocilib_c_api_feature_returning_into.html#ga334374bb86c0562ab453a45a56c62dac":[1,2,12,11]
 };

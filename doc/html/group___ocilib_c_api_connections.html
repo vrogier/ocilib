@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.4.0</span>
+   &#160;<span id="projectnumber">4.4.1</span>
    </div>
   </td>
  </tr>
@@ -875,7 +875,8 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 <dl class="section note"><dt>Note</dt><dd>Possible values of parameter 'type' :</dd></dl>
 <ul>
 <li>OCI_FMT_DATE : format used to convert DATE to string</li>
-<li>OCI_FMT_TIMESTAMP : format used to convert TIMESTAMP to string</li>
+<li>OCI_FMT_TIMESTAMP : format used to convert TIMESTAMP and TIMESTAMP WITH LOCAL TIMEZONE to string</li>
+<li>OCI_FMT_TIMESTAMP_TZ : format used to convert TIMESTAMP WITH TIME ZONE to string</li>
 <li>OCI_FMT_NUMERIC : format used to convert numeric types to string</li>
 <li>OCI_FMT_BINARY_DOUBLE : format used to convert BINARY_DOUBLE to string</li>
 <li>OCI_FMT_BINARY FLOAT : format used to convert BINARY_FLOAT to string</li>
@@ -883,6 +884,7 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 <dl class="section note"><dt>Note</dt><dd>Default format values are :<ul>
 <li>OCI_FMT_DATE : constant OCI_STRING_FORMAT_DATE</li>
 <li>OCI_FMT_TIMESTAMP : constant OCI_STRING_FORMAT_TIMESTAMP</li>
+<li>OCI_FMT_TIMESTAMP_TZ : constant OCI_STRING_FORMAT_TIMESTAMP_TZ</li>
 <li>OCI_FMT_NUMERIC : constant OCI_STRING_FORMAT_NUMERIC</li>
 <li>OCI_FMT_BINARY_DOUBLE : constant OCI_STRING_FORMAT_BINARY_DOUBLE</li>
 <li>OCI_FMT_BINARY FLOAT : constant OCI_STRING_FORMAT_BINARY_FLOAT</li>
@@ -1668,7 +1670,7 @@ Return 0 if the client and server version are &lt; 12cR1 </dd></dl>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 24 2017 22:35:15 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Nov 28 2017 22:33:56 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

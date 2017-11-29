@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.4.0</span>
+   &#160;<span id="projectnumber">4.4.1</span>
    </div>
   </td>
  </tr>
@@ -89,7 +89,8 @@ Public Types</h2></td></tr>
 <a class="el" href="classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832a8fcdc012c176700c5770fc53e11c6d15">TypeBegin</a> = OCI_CST_BEGIN, 
 <br />
 &#160;&#160;<a class="el" href="classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832afb542b59092185efc97aa02ffc887993">TypeDeclare</a> = OCI_CST_DECLARE, 
-<a class="el" href="classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832ada98b8a1b4b407f56067652c86a5f4c3">TypeCall</a> = OCI_CST_CALL
+<a class="el" href="classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832ada98b8a1b4b407f56067652c86a5f4c3">TypeCall</a> = OCI_CST_CALL, 
+<a class="el" href="classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832a3e95595d943945fcff538998f03d6609">TypeMerge</a> = OCI_CST_MERGE
 <br />
  }<tr class="memdesc:a1cceff980b5e9c407e7fdafbbc107832"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classocilib_1_1_statement.html" title="Object used for executing SQL or PL/SQL statement and returning the produced results. ">Statement</a> Type enumerated values.  <a href="classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832">More...</a><br /></td></tr>
 </td></tr>
@@ -311,7 +312,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <div class="textblock"><p><a class="el" href="classocilib_1_1_object.html" title="Object identifying the SQL data type OBJECT. ">Object</a> used for executing SQL or PL/SQL statement and returning the produced results. </p>
 <p>This class wraps the OCILIB object handle OCI_Statement and its related methods </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05476">5476</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05534">5534</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a7695e9e2becdbc289b8abcb3db8f19d1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7695e9e2becdbc289b8abcb3db8f19d1">&#9670;&nbsp;</a></span>StatementType</h2>
@@ -328,7 +329,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p><a class="el" href="classocilib_1_1_statement.html" title="Object used for executing SQL or PL/SQL statement and returning the produced results. ">Statement</a> Type. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832" title="Statement Type enumerated values. ">Statement::StatementTypeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05523">5523</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05583">5583</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -347,7 +348,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Fetch Modes. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a8c77708b4c2fd86c3605544a62bce00e" title="Fetch Modes enumerated values. ">Statement::FetchModeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05545">5545</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05605">5605</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -366,7 +367,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Bind Modes. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a639c366a350bbf314767144abc005187" title="Bind Modes enumerated values. ">Statement::BindModeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05567">5567</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05627">5627</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -385,7 +386,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>LONG data type mapping modes. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a095c882ba807ccba7bf693b5652385e1" title="LONG data type mapping modes enumerated values. ">Statement::LongModeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05589">5589</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05649">5649</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -424,9 +425,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </td></tr>
 <tr><td class="fieldname"><a id="a1cceff980b5e9c407e7fdafbbc107832ada98b8a1b4b407f56067652c86a5f4c3"></a>TypeCall&#160;</td><td class="fielddoc"><p>CALL statement </p>
 </td></tr>
+<tr><td class="fieldname"><a id="a1cceff980b5e9c407e7fdafbbc107832a3e95595d943945fcff538998f03d6609"></a>TypeMerge&#160;</td><td class="fielddoc"><p>MERGE statement </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05492">5492</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05550">5550</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -450,7 +453,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05530">5530</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05590">5590</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -474,7 +477,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05552">5552</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05612">5612</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -498,7 +501,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05574">5574</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l05634">5634</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -2375,7 +2378,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_statement.html">Statement</a></li>
-    <li class="footer">Generated on Tue Oct 24 2017 22:35:17 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Nov 28 2017 22:33:58 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

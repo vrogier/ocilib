@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2017-10-25 22:35:00+01:00
+date: 2017-11-29 10:00:00+01:00
 layout: page
 slug: changelogs
 title: Changelogs
@@ -15,6 +15,11 @@ Click on a change log entry to see the full details.
 
 <br/>
 <br/>
+
+
+_[2017-11-29 . version 4.4.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.4.1.txt)_
+
+  * Some C API and C++ API enhancements and Bug fixes 
 
 _[2017-10-25 . version 4.4.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.4.0.txt)_
 
