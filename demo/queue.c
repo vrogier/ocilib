@@ -52,6 +52,8 @@ int main(int argc, char *argv[])
 
     printf("MSG '%s' => %s\n", OCI_ObjectGetString(obj, "title"),  OCI_ObjectGetString(obj, "content"));
 
+    OCI_ObjectFree(obj);
+    
     OCI_EnqueueFree(enq);
     OCI_DequeueFree(deq);
 
