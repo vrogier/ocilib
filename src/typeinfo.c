@@ -249,7 +249,8 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                 case OCI_PTYPE_TYPE:
                 case OCI_PTYPE_LIST:
                 {
-                    boolean pdt = FALSE;
+                    ub1 pdt = 0; // Is Predefined Type
+                    ub1 ist = 0; // Is Sub Type 
                     OCIRef *ref = NULL;
                     
                     OCI_STATUS = (OCI_TIF_TYPE == type);
@@ -273,7 +274,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                         OCI_EXEC(OCITypeByRef(typinf->con->env, con->err, ref, OCI_DURATION_SESSION, OCI_TYPEGET_ALL, &typinf->tdo))
 
-                        /* check the type is not final, e.g. can beinherited */
+                        /* check if the type is not final, e.g. can be inherited */
 
                         OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_IS_FINAL_TYPE, param_type, &typinf->is_final, NULL)
 
@@ -284,6 +285,46 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                         if (!pdt)
                         {
                             OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_TYPECODE, param_type, &typinf->typecode, NULL)
+                        }
+
+                        /* check if the type is a subtype derived from a supertype */
+
+                        OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_IS_SUBTYPE, param_type, &ist, NULL)
+
+                        if (ist)
+                        {
+                            otext *sp_schema_name   = NULL;
+                            otext *sp_object_name   = NULL;
+
+                            unsigned int size_schema = 0;
+                            unsigned int size_object = 0;
+
+                            otext sp_fullname[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
+
+                            /* get super type schema and name */
+
+                            OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
+                                                                              OCI_ATTR_SUPERTYPE_SCHEMA_NAME, 
+                                                                              &sp_schema_name, &size_schema);
+                    
+                            OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
+                                                                              OCI_ATTR_SUPERTYPE_NAME, 
+                                                                              &sp_object_name, &size_object);
+
+                            /* compute super type full name */
+
+                            OCI_StringGetFullTypeName(sp_schema_name, NULL, sp_object_name, NULL, sp_fullname, (sizeof(sp_fullname) / sizeof(otext)) - 1);
+
+                            /* retrieve the type info of the real object */
+
+                            typinf->parent_type = OCI_TypeInfoGet(con, sp_fullname, type);
+                         
+                            /* free temporary strings */
+
+                            OCI_MemFree (sp_schema_name);
+                            OCI_MemFree (sp_object_name);
+
+                            OCI_STATUS = (NULL != typinf->parent_type);
                         }
 
                         switch (typinf->typecode)
@@ -371,7 +412,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                     syn_typinf = OCI_TypeInfoGet (con, syn_fullname, type);
                          
-                    /* free temporaRy strings */
+                    /* free temporary strings */
 
                     OCI_MemFree (syn_link_name);
                     OCI_MemFree (syn_object_name);
@@ -569,4 +610,28 @@ const otext * OCI_API OCI_TypeInfoGetName
 )
 {
     OCI_GET_PROP(const otext*, NULL, OCI_IPC_TYPE_INFO, typinf, name, typinf->con, NULL, typinf->con->err)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_TypeInfoIsFinalType
+* --------------------------------------------------------------------------------------------- */
+
+OCI_EXPORT boolean OCI_API OCI_TypeInfoIsFinalType
+(
+    OCI_TypeInfo *typinf
+)
+{
+    OCI_GET_PROP(boolean, TRUE, OCI_IPC_TYPE_INFO, typinf, is_final, typinf->con, NULL, typinf->con->err)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_TypeInfoGetSuperType
+* --------------------------------------------------------------------------------------------- */
+
+OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
+(
+    OCI_TypeInfo *typinf
+)
+{
+    OCI_GET_PROP(OCI_TypeInfo*, NULL, OCI_IPC_TYPE_INFO, typinf, parent_type, typinf->con, NULL, typinf->con->err)
 }

@@ -4673,6 +4673,36 @@ public:
     */
     Column GetColumn(unsigned int index) const;
 
+    /**
+    * @brief
+    * Indicate if the given UDT type is final
+    *
+    * @note
+    * Non-final types are virtual UDT type that can be inherited
+    *
+    * @return
+    * - For table and views, it returns true
+    * - For types, it returns true if the type is final and false if it is virtual
+    *
+    */
+    boolean IsFinalType() const;
+
+    /**
+    * @brief
+    * Return the super type of the given type (e.g. parent type for a derived ORACLE UDT type)
+    *
+    * @note
+    *  This property is only valid for types
+    *
+    * @return
+    *  - For table and views, it return a null TypeInfo object
+    *  - For types:
+    *       - returns a valid Typeinfo object wrapping the parent super type
+    *       - returns a null TypeInfo object if the given type is NOT deriving from a base type
+    *
+    */
+    TypeInfo GetSuperType() const;
+
 private:
 
     TypeInfo(OCI_TypeInfo *pTypeInfo);

@@ -299,6 +299,10 @@
 
 #define OCI_ATTR_DESC_PUBLIC           250                  /* public object */
 
+#define OCI_ATTR_IS_SUBTYPE            258             /* Is this a subtype? */
+#define OCI_ATTR_SUPERTYPE_SCHEMA_NAME 259   /* Name of the supertype schema */
+#define OCI_ATTR_SUPERTYPE_NAME        260          /* Name of the supertype */
+
 #define OCI_ATTR_CLIENT_IDENTIFIER     278       /* value of client id to set*/
 
 #define OCI_ATTR_IS_FINAL_TYPE         279                /* is final type ? */

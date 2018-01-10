@@ -692,6 +692,7 @@ struct OCI_TypeInfo
     int            *offsets;     /* cached offsets */
     size_t          struct_size; /* cached structure size */
     size_t          align;       /* cached structure alignment */
+    OCI_TypeInfo   *parent_type; /* parent super type for derived type */
     ub1             is_final;    /* is is a virtual type that can be inherited ? */
 };
 

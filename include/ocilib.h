@@ -14560,7 +14560,7 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_TypeInfoGet
  * @note
  * Possible values for parameter type are :
  *
- * - OCI_UNKNOWM
+ * - OCI_UNKNOWN
  * - OCI_TIF_TABLE
  * - OCI_TIF_VIEW
  * - OCI_TIF_TYPE
@@ -14650,6 +14650,53 @@ OCI_EXPORT OCI_Column * OCI_API OCI_TypeInfoGetColumn
  */
 
 OCI_EXPORT const otext * OCI_API OCI_TypeInfoGetName
+(
+    OCI_TypeInfo *typinf
+);
+
+/**
+* @brief
+* Indicate if the given UDT type if final
+*
+* @note
+* Non-final types are virtual UDT type that can be inherited
+* 
+* @param typinf - Type info handle
+* @param index  - Column position
+*
+* @note
+*  This property is only valid for UDTs (OCI_TIF_TYPE)
+*  
+* @return
+*  - when OCI_TypeInfoGetType() returns OCI_UNKNOWN, OCI_TIF_TABLE, OCI_TIF_VIEW: returns TRUE
+*  - when OCI_TypeInfoGetType() returns OCI_TIF_TYPE: returns TRUE if the type is final and FALSE if it is virtual
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_TypeInfoIsFinalType
+(
+    OCI_TypeInfo *typinf
+);
+
+/**
+* @brief
+* Return the super type of the given type (e.g. parent type for a derived ORACLE UDT type)
+*
+* @param typinf - Type info handle
+*
+* @note
+*  This property is only valid for UDTs (OCI_TIF_TYPE)
+*  
+* @return
+*  - when OCI_TypeInfoGetType() returns OCI_UNKNOWN, OCI_TIF_TABLE, OCI_TIF_VIEW: 
+*       - returns NULL
+*  - when OCI_TypeInfoGetType() returns OCI_TIF_TYPE: 
+*       - returns the TypeInfo handle wrapping the parent super type
+*       - returns NULL if the given type is NOT deriving from a base type
+*
+*/
+
+OCI_EXPORT OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
 (
     OCI_TypeInfo *typinf
 );

@@ -3347,6 +3347,16 @@ inline Column TypeInfo::GetColumn(unsigned int index) const
     return Column(Check(OCI_TypeInfoGetColumn(*this, index)), GetHandle());
 }
 
+inline boolean TypeInfo::IsFinalType() const
+{
+    return (Check(OCI_TypeInfoIsFinalType(*this)) == TRUE);
+}
+
+inline TypeInfo TypeInfo::GetSuperType() const
+{
+    return TypeInfo(Check(OCI_TypeInfoGetSuperType(*this)));
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * Object
  * --------------------------------------------------------------------------------------------- */

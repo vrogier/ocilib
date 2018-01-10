@@ -222,9 +222,39 @@ void OCI_ObjectGetStructSize
         size_t size2 = 0;
         size_t align = 0;
 
-        ub2 i;
+        ub2 i = 0;
 
-        for (i = 0; i < typinf->nb_cols; i++)
+        /* if the type is a sub type, then it is a subset containing all of his parent members */
+
+        if (typinf->parent_type)
+        {
+            /* if super type information has not been already cached, then let's compute it now */
+            
+            if (typinf->parent_type->struct_size == 0)
+            {
+                OCI_ObjectGetStructSize(typinf->parent_type, &size, &align);
+            }
+
+            /* copy super type members offsets to the current sub type of members offsets */
+
+            for (; i < typinf->parent_type->nb_cols; i++)
+            {
+                typinf->offsets[i] = typinf->parent_type->offsets[i];
+            }
+
+            /* adjust current member index to start to compute with the first of the derived type */
+            
+            i = typinf->parent_type->nb_cols;
+
+            /* compute the first derived member in order to not touch to the next for loop code that is working :) */
+            
+            if (i < typinf->nb_cols)
+            {
+                OCI_ObjectGetAttrInfo(typinf, i, &size2, &align);
+            }
+        }
+
+        for (; i < typinf->nb_cols; i++)
         {
             if (i > 0)
             {
@@ -701,7 +731,7 @@ boolean OCI_ObjectGetNumberInternal
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
     OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
-    
+
     OCI_STATUS = FALSE;
 
     index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_NUMERIC, FALSE);
