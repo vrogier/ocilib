@@ -230,10 +230,7 @@ void OCI_ObjectGetStructSize
         {
             /* if super type information has not been already cached, then let's compute it now */
             
-            if (typinf->parent_type->struct_size == 0)
-            {
-                OCI_ObjectGetStructSize(typinf->parent_type, &size, &align);
-            }
+            OCI_ObjectGetStructSize(typinf->parent_type, &size, &align);
 
             /* copy super type members offsets to the current sub type of members offsets */
 
