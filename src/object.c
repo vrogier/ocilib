@@ -2054,6 +2054,7 @@ boolean OCI_API OCI_ObjectToText
     otext        *str
 )
 {
+    OCI_Error   *err   = NULL;
     otext       *attr  = NULL;
     boolean      quote = TRUE;
     unsigned int len   = 0;
@@ -2065,6 +2066,8 @@ boolean OCI_API OCI_ObjectToText
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
     OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
+    err = OCI_ErrorGet(TRUE);
+
     if (str)
     {
         *str = 0;
@@ -2073,7 +2076,7 @@ boolean OCI_API OCI_ObjectToText
     len += OCI_StringAddToBuffer(str, len, obj->typinf->name, FALSE);
     len += OCI_StringAddToBuffer(str, len, OTEXT("("), FALSE);
 
-    for (i = 0; i < obj->typinf->nb_cols; i++)
+    for (i = 0; i < obj->typinf->nb_cols && OCI_STATUS; i++)
     {
         attr  = obj->typinf->cols[i].name;
         quote = TRUE;
@@ -2084,7 +2087,7 @@ boolean OCI_API OCI_ObjectToText
         }
         else
         {
-            void        *data      = NULL;
+            void *data = NULL;
             unsigned int data_size = 0;
 
             switch (obj->typinf->cols[i].datatype)
@@ -2163,7 +2166,7 @@ boolean OCI_API OCI_ObjectToText
                 }
             }
 
-            OCI_STATUS = (NULL != data);
+            OCI_STATUS = (NULL != data) && (NULL == err || !err->raise);
 
             if (OCI_STATUS)
             {
@@ -2175,14 +2178,12 @@ boolean OCI_API OCI_ObjectToText
                 }
 
                 len += OCI_StringGetFromType(obj->con, &obj->typinf->cols[i], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0,  quote);
-            }
-            else
-            {
-                break;
+
+                OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
             }
         }
 
-        if (i < (obj->typinf->nb_cols-1))
+        if (OCI_STATUS && i < (obj->typinf->nb_cols-1))
         {
             len += OCI_StringAddToBuffer(str, len, OTEXT(", "), quote);
         }

@@ -514,6 +514,7 @@ boolean OCI_API OCI_CollToText
     otext        *str
 )
 {
+    OCI_Error *err = NULL;
     boolean quote  = TRUE;
     unsigned int len = 0;
     int i, n;
@@ -522,6 +523,8 @@ boolean OCI_API OCI_CollToText
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
     OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
+
+    err = OCI_ErrorGet(TRUE);
 
     if (str)
     {
@@ -533,7 +536,7 @@ boolean OCI_API OCI_CollToText
 
     n = OCI_CollGetSize(coll);
 
-    for (i = 1; i <= n; i++)
+    for (i = 1; i <= n && OCI_STATUS; i++)
     {
         OCI_Elem *elem = OCI_CollGetAt(coll, i);
 
@@ -620,7 +623,7 @@ boolean OCI_API OCI_CollToText
                 }
             }
 
-            OCI_STATUS = (NULL != data);
+            OCI_STATUS = (NULL != data) && (NULL == err || !err->raise);
 
             if (OCI_STATUS)
             {
@@ -632,14 +635,12 @@ boolean OCI_API OCI_CollToText
                 }
 
                 len += OCI_StringGetFromType(coll->con, &coll->typinf->cols[0], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0, quote);
-            }
-            else
-            {
-                break;
+       
+                OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
             }
         }
 
-        if (i < n)
+        if (OCI_STATUS && i < n)
         {
             len += OCI_StringAddToBuffer(str, len, OTEXT(", "), FALSE);
         }
