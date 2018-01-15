@@ -1760,6 +1760,8 @@ const otext * OCI_API OCI_GetString
         }
         else
         {
+            OCI_Error *err = OCI_ErrorGet(TRUE);
+
             unsigned int bufsize = OCI_SIZE_TMP_CVT;
             unsigned int data_size = 0;
 
@@ -1894,13 +1896,20 @@ const otext * OCI_API OCI_GetString
             }
             }
 
+            OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
+
             OCI_STATUS = OCI_STATUS && OCI_StringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, bufsize);
 
             if (OCI_STATUS)
             {
                 OCI_StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, bufsize, FALSE);
+                
+                OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
-                OCI_RETVAL = def->buf.tmpbuf;
+                if (OCI_STATUS)
+                {
+                    OCI_RETVAL = def->buf.tmpbuf;
+                }
             }
         }
     }

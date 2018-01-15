@@ -1178,6 +1178,7 @@ const otext * OCI_API OCI_ObjectGetString
 
         if (index >= 0)
         {
+            OCI_Error   *err   = OCI_ErrorGet(TRUE);
             OCIInd      *ind   = NULL;
             void        *value = NULL;
             unsigned int size  = 0;
@@ -1198,16 +1199,19 @@ const otext * OCI_API OCI_ObjectGetString
             }
 
             len = OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, NULL, 0, FALSE);
+            OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
-            if (len > 0)
+            if (OCI_STATUS && len > 0)
             {
                 OCI_STATUS = OCI_StringRequestBuffer(&obj->tmpbufs[index], &obj->tmpsizes[index], len);
 
                 if (OCI_STATUS)
                 {
                     unsigned int real_tmpsize = OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbufs[index], obj->tmpsizes[index], FALSE);
-                    
-                    if (real_tmpsize > 0)
+                
+                    OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
+
+                    if (OCI_STATUS && real_tmpsize > 0)
                     {
                         OCI_RETVAL = obj->tmpbufs[index];
                     }
