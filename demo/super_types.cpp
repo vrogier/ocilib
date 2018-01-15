@@ -12,21 +12,23 @@ int main(void)
     {
         Environment::Initialize();
 
-        Connection con("db12c", "usr", "pwd");
+        Connection con("db", "usr", "pwd");
 
-        Object obj(TypeInfo(con, "derived_type", TypeInfo::Type));
+        Object obj(TypeInfo(con, "racing_car_type", TypeInfo::Type));
 
         Statement st(con);
-        st.Prepare("begin :obj := derived_type(1, 'Car', 31245.99); end; ");
+        st.Prepare("begin :obj := racing_car_type(1,'Formula1', 123456789, 300); end; ");
         st.Bind(":obj", obj, BindInfo::InOut);
         st.ExecutePrepared();
 
-        TypeInfo derivedTypeInfo = obj.GetTypeInfo();
-        TypeInfo baseTypeInfo = derivedTypeInfo.GetSuperType();
+        TypeInfo RacingCarTypeInfo = obj.GetTypeInfo();
+        TypeInfo CarTypeTypeInfo = RacingCarTypeInfo.GetSuperType();
+        TypeInfo VehiculeTypeInfo = CarTypeTypeInfo.GetSuperType();
 
         std::cout << "Object => " << obj << std::endl;
-        std::cout << "Is derived type '" << derivedTypeInfo.GetName() << "' final => " << derivedTypeInfo.IsFinalType() << std::endl;
-        std::cout << "Is base type '" << baseTypeInfo.GetName() << "' final => " << baseTypeInfo.IsFinalType() << std::endl;
+        std::cout << "Is type '" << RacingCarTypeInfo.GetName() << "' final => " << RacingCarTypeInfo.IsFinalType() << std::endl;
+        std::cout << "Is type '" << CarTypeTypeInfo.GetName() << "' final => " << CarTypeTypeInfo.IsFinalType() << std::endl;
+        std::cout << "Is type '" << VehiculeTypeInfo.GetName() << "' final => " << VehiculeTypeInfo.IsFinalType() << std::endl;
     }
     catch (std::exception &ex)
     {
