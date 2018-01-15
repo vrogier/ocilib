@@ -209,7 +209,6 @@ void OCI_ObjectGetStructSize
     size_t       *p_align
 )
 {
-
     if (!typinf || !p_size || !p_align)
     {
         return;
@@ -247,7 +246,15 @@ void OCI_ObjectGetStructSize
             
             if (i < typinf->nb_cols)
             {
-                OCI_ObjectGetAttrInfo(typinf, i, &size2, &align);
+                size_t dummy_align = 0;
+
+                /* get next member size and discard its alignment computation */
+
+                OCI_ObjectGetAttrInfo(typinf, i, &size2, &dummy_align);
+
+                /* use parent structure alignment instead */
+
+                typinf->align = align;
             }
         }
 
