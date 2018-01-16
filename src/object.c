@@ -223,7 +223,8 @@ void OCI_ObjectGetStructSize
 
         ub2 i = 0;
 
-        /* if the type is a sub type, then it is a subset containing all of his parent members */
+        /* if the type is a sub type, then it is a subset containing all of his parent members
+           In that case the first member is a buffer holding a parent object structure */
 
         if (typinf->parent_type)
         {
@@ -246,15 +247,19 @@ void OCI_ObjectGetStructSize
             
             if (i < typinf->nb_cols)
             {
-                size_t dummy_align = 0;
+                size_t next_align = 0;
 
-                /* get next member size and discard its alignment computation */
-
-                OCI_ObjectGetAttrInfo(typinf, i, &size2, &dummy_align);
-
-                /* use parent structure alignment instead */
+                /* set current alignment to the parent one as it is the first member of the current structure */
 
                 typinf->align = align;
+
+                /* get current type self first member information (after parent type) */
+
+                OCI_ObjectGetAttrInfo(typinf, i, &size2, &next_align);
+
+                /* make sure that parent field is aligned */
+
+                size = ROUNDUP(size, next_align);
             }
         }
 
