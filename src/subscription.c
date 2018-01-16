@@ -169,28 +169,22 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
             sub->con       = con;
             sub->env       = con->env;
-            sub->port      = (ub4) port;
-            sub->timeout   = (ub4) timeout;
+            sub->timeout = (ub4)timeout;
             sub->handler   = handler;
             sub->type      = type;
             sub->name      = ostrdup(name);
             sub->event.sub = sub;
 
-            /* set/get port number */
+            /* set port number */
 
-            if (sub->port > 0)
+            if (port > 0)
             {
-
-                OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_PORTNO, sub->subhp, &sub->port, sizeof(sub->port))
-            }
-            else
-            {
-                OCI_GET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_PORTNO, sub->subhp, &sub->port,NULL)
+                OCI_SET_ATTRIB(OCI_HTYPE_ENV, OCI_ATTR_SUBSCR_PORTNO, sub->env, &port, sizeof(port))
             }
 
             /* set timeout */
 
-            if(sub->timeout > 0)
+            if (sub->timeout > 0)
             {
                 OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_TIMEOUT, sub->subhp, &sub->timeout, sizeof(sub->timeout))
             }
@@ -244,6 +238,10 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
             /* all attributes set, let's register the subscription ! */
 
             OCI_EXEC(OCISubscriptionRegister(sub->con->cxt, &sub->subhp, (ub2) 1, sub->err,(ub4) OCI_DEFAULT))
+
+            /* get real port number */
+
+            OCI_GET_ATTRIB(OCI_HTYPE_ENV, OCI_ATTR_SUBSCR_PORTNO, sub->env, &sub->port, sizeof(sub->port))
         }
     }
 

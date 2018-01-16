@@ -18103,9 +18103,18 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
  * - OCI_CNT_ALL       : request for all changes
  *
  * @note
+ * Parameter @port and @timeout are optional (use value 0 a optional value)
+ * 
+ * @note
  * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
  * subscriptions
  *
+ * @ @warning Port usage
+ * All notifications are using the same port. 
+ * Port numbe can be either:
+ *   - determined automatically by Oracle client once the first subscription had been created and can be retrieved using OCI_SubscriptionGetPort()
+ *   - Set by the parameter @port during the first call to OCI_SubscriptionRegister(). In this case later calls can provide same port number or 0
+ * 
  * @note
  * Requires Oracle Client 10gR2 or above
  *
