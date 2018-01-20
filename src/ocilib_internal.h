@@ -960,7 +960,7 @@ OCI_Mutex * OCI_MutexCreateInternal
 boolean OCI_NumberGetNativeValue
 (
     OCI_Connection *con,
-    void           *number,
+    OCINumber      *number,
     uword           size,
     uword           type,
     int             sqlcode,
@@ -970,7 +970,7 @@ boolean OCI_NumberGetNativeValue
 boolean OCI_NumberSetNativeValue
 (
     OCI_Connection *con,
-    void           *number,
+    OCINumber      *number,
     uword           size,
     uword           type,
     int             sqlcode,

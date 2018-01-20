@@ -448,7 +448,7 @@ boolean OCI_ColumnMap
 
             if (0 == col->size)
             {
-                col->size = sizeof(int);
+                col->size = col->bufsize;
             }
             break;
         }
@@ -466,7 +466,7 @@ boolean OCI_ColumnMap
 
             if (0 == col->size)
             {
-                col->size = sizeof(unsigned int);
+                col->size = col->bufsize;
             }
             break;
         }
@@ -479,6 +479,11 @@ boolean OCI_ColumnMap
             col->subtype  = OCI_NUM_NUMBER;
             col->libcode  = SQLT_VNU;
             col->bufsize  = sizeof(OCINumber);
+
+            if (0 == col->size)
+            {
+                col->size = col->bufsize;
+            }
             break;
         }
 
@@ -491,6 +496,11 @@ boolean OCI_ColumnMap
             col->subtype  = 0;
             col->libcode  = SQLT_BOL;
             col->bufsize  = sizeof(boolean);
+
+            if (0 == col->size)
+            {
+                col->size = col->bufsize;
+            }
             break;
         }
 
@@ -505,6 +515,11 @@ boolean OCI_ColumnMap
             col->subtype  = OCI_NUM_FLOAT;
             col->libcode  = SQLT_BFLOAT;
             col->bufsize  = sizeof(float);
+
+            if (0 == col->size)
+            {
+                col->size = col->bufsize;
+            }
             break;
         }
 
@@ -519,6 +534,11 @@ boolean OCI_ColumnMap
             col->subtype  = OCI_NUM_DOUBLE;
             col->libcode  = SQLT_BDOUBLE;
             col->bufsize  = sizeof(double);
+
+            if (0 == col->size)
+            {
+                col->size = col->bufsize;
+            }
             break;
         }
 

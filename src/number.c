@@ -98,7 +98,7 @@ uword OCI_GetNumericTypeSize
 boolean OCI_NumberGetNativeValue
 (
     OCI_Connection *con,
-    void           *number,
+    OCINumber      *number,
     uword           size,
     uword           type,
     int             sqlcode,
@@ -120,42 +120,17 @@ boolean OCI_NumberGetNativeValue
 
     if (OCI_NUM_NUMBER == type)
     {
-        memcpy(out_value, number, size);
+        memcpy(out_value, number, sizeof(*number));
     }
     else if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
     {
-
-    #if OCI_VERSION_COMPILE >= OCI_10_1
-
-        if ((OCILib.version_runtime >= OCI_10_1) && ((sqlcode != SQLT_VNU)))
-        {
-            if (((type & OCI_NUM_DOUBLE) && (SQLT_BDOUBLE == sqlcode)) ||
-                ((type & OCI_NUM_FLOAT ) && (SQLT_BFLOAT  == sqlcode)))
-            {
-                memcpy(out_value, number, size);
-            }
-            else if (type & OCI_NUM_DOUBLE && (SQLT_BFLOAT == sqlcode))
-            {
-                *((double *) out_value) = (double) *((float *) number);
-            }
-            else if (type & OCI_NUM_FLOAT && (SQLT_BDOUBLE == sqlcode))
-            {
-                 *((float *) out_value) = (float) *((double *) number);
-            }
-        }
-        else
-
-    #endif
-
-        {
-            OCI_EXEC(OCINumberToReal(ctx->oci_err, (OCINumber *) number, size, out_value))
-        }
+        OCI_EXEC(OCINumberToReal(ctx->oci_err, number, size, out_value))
     }
     else
     {
         uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
 
-        OCI_EXEC(OCINumberToInt(ctx->oci_err, (OCINumber *) number, size, sign, out_value))
+        OCI_EXEC(OCINumberToInt(ctx->oci_err, number, size, sign, out_value))
     }
 
     return OCI_STATUS;
@@ -168,7 +143,7 @@ boolean OCI_NumberGetNativeValue
 boolean OCI_NumberSetNativeValue
 (
     OCI_Connection *con,
-    void           *number,
+    OCINumber      *number,
     uword           size,
     uword           type,
     int             sqlcode,
@@ -190,42 +165,17 @@ boolean OCI_NumberSetNativeValue
 
     if (type & OCI_NUM_NUMBER)
     {
-        memcpy(number, in_value, sizeof(OCINumber));
+        memcpy(number, in_value, sizeof(*number));
     }
     else if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
     {
-
-    #if OCI_VERSION_COMPILE >= OCI_10_1
-
-        if ((OCILib.version_runtime >= OCI_10_1) && ((sqlcode != SQLT_VNU)))
-        {
-            if (((type & OCI_NUM_DOUBLE) && (SQLT_BDOUBLE == sqlcode)) ||
-                ((type & OCI_NUM_FLOAT ) && (SQLT_BFLOAT  == sqlcode)))
-            {
-                memcpy(number, in_value, size);
-            }
-            else if (type & OCI_NUM_DOUBLE && SQLT_BFLOAT == sqlcode)
-            {
-                *((double *) number) = (double) *((float *) in_value);
-            }
-            else if (type & OCI_NUM_FLOAT && SQLT_BDOUBLE == sqlcode)
-            {
-                 *((float *) number) = (float) *((double *) in_value);
-            }
-        }
-        else
-
-    #endif
-
-        {
-            OCI_EXEC(OCINumberFromReal(ctx->oci_err, in_value, size, (OCINumber *) number))
-        }
+        OCI_EXEC(OCINumberFromReal(ctx->oci_err, in_value, size, number))
     }
     else
     {
         uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
 
-        OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, size, sign, (OCINumber *)number))
+        OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, size, sign, number))
     }
 
     return OCI_STATUS;

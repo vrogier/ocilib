@@ -696,9 +696,9 @@ boolean OCI_ObjectSetNumberInternal
 
         if (OCI_NUM_NUMBER != col->subtype)
         {
+            /* for PL/SQL PLS_INTEGER and BINARY_INTEGER, BINARY_FLOAT and BINARY_DOUBLE types,
+               values are not OCINumber but of scalar C int type ! */
 
-            /* for PL/SQL PLS_INTEGER and BINARY_INTEGER types, the values are not OCINumber but of scalar C int type !! */
-            
             OCINumber tmp;
             memset(&tmp, 0, sizeof(tmp));
 
@@ -747,32 +747,35 @@ boolean OCI_ObjectGetNumberInternal
 
     if (index >= 0)
     {
-        OCIInd *ind = NULL;
-        void   *num = NULL;
+        OCIInd *ind  = NULL;
+        void   *attr = NULL;
 
-        num = OCI_ObjectGetAttr(obj, index, &ind);
+        attr = OCI_ObjectGetAttr(obj, index, &ind);
 
-        if (num && (OCI_IND_NULL != *ind))
+        if (attr && (OCI_IND_NULL != *ind))
         {
             OCI_Column *col = &obj->typinf->cols[index];
-            
+            OCINumber  *num = NULL;
+
+            OCINumber tmp;
+
             OCI_STATUS = TRUE;
 
             if (OCI_NUM_NUMBER != col->subtype)
             {
-                
-                /* for PL/SQL PLS_INTEGER and BINARY_INTEGER types, the values are not OCINumber but of scalar C int type !! */
-                
-                OCINumber tmp;
-                memset(&tmp, 0, sizeof(tmp));
+                /* for PL/SQL PLS_INTEGER and BINARY_INTEGER, BINARY_FLOAT and BINARY_DOUBLE types,
+                   values are not OCINumber but of scalar C int type ! */
 
-                OCI_STATUS = OCI_STATUS && OCI_NumberSetNativeValue(obj->con, &tmp, col->size, col->subtype, col->libcode, num);
-                OCI_STATUS = OCI_STATUS && OCI_NumberGetNativeValue(obj->con, &tmp, size, flag, col->libcode, value);
+                num = &tmp;
+                memset(&tmp, 0, sizeof(tmp));
+                OCI_STATUS = OCI_NumberSetNativeValue(obj->typinf->con, num, col->size, col->subtype, col->libcode, attr);
             }
             else
             {
-                OCI_STATUS = OCI_NumberGetNativeValue(obj->con, num, size, flag, col->libcode, value);
+                num = (OCINumber *) attr;
             }
+
+            OCI_STATUS = OCI_STATUS && OCI_NumberGetNativeValue(obj->typinf->con, num, size, flag, col->libcode, value);
         }
     }
     else

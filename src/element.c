@@ -283,7 +283,8 @@ boolean OCI_ElemSetNumberInternal
 
     if (OCI_NUM_NUMBER != col->subtype)
     {
-        /* for PL/SQL PLS_INTEGER and BINARY_INTEGER types, the values are not OCINumber but of scalar C int type !! */
+        /* for PL/SQL PLS_INTEGER and BINARY_INTEGER, BINARY_FLOAT and BINARY_DOUBLE types,
+           values are not OCINumber but of scalar C int type ! */
 
         OCINumber tmp;
         memset(&tmp, 0, sizeof(tmp));
@@ -328,25 +329,26 @@ boolean OCI_ElemGetNumberInternal
     else if (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)
     {
         OCI_Column *col = &elem->typinf->cols[0];
+        OCINumber  *num = NULL;
+        OCINumber tmp;
 
         res = TRUE;
 
         if (OCI_NUM_NUMBER != col->subtype)
         {
-            /* for PL/SQL PLS_INTEGER and BINARY_INTEGER types, the values are not OCINumber but of scalar C int type !! */
+            /* for PL/SQL PLS_INTEGER and BINARY_INTEGER, BINARY_FLOAT and BINARY_DOUBLE types, 
+               values are not OCINumber but of scalar C int type ! */
 
-            OCINumber tmp;
+            num = &tmp;
             memset(&tmp, 0, sizeof(tmp));
-
-            res = res && OCI_NumberSetNativeValue(elem->typinf->con, &tmp, col->size, col->subtype, col->libcode, elem->handle);
-            res = res && OCI_NumberGetNativeValue(elem->typinf->con, &tmp, size, flag, col->libcode, value);
+            res = OCI_NumberSetNativeValue(elem->typinf->con, num, col->size, col->subtype, col->libcode, elem->handle);
         }
         else
         {
-            OCINumber *num = (OCINumber *)elem->handle;
-
-            res = OCI_NumberGetNativeValue(elem->con, num, size, flag, col->libcode, value);
+            num = (OCINumber *)elem->handle;
         }
+
+        res = res && OCI_NumberGetNativeValue(elem->con, num, size, flag, col->libcode, value);
     }
     else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
     {

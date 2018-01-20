@@ -237,71 +237,35 @@ inline ostring GetArg(oarg *arg)
 
 int omain(int argc, oarg* argv[])
 {
-    ostring home;
-    ostring dbs;
-    ostring usr;
-    ostring pwd;
-
-    size_t i;
-
-    /* CHECK COMMAND LINE --------------------------------------------------- */
-
-    if (argc < (ArgCount - 1))
-    {
-        return EXIT_FAILURE;
-    }
-
-    /* GET ARGUMENTS ---------------------------------------------------------*/
-
-    dbs = GetArg(argv[ArgDatabase]);
-    usr = GetArg(argv[ArgUser]);
-    pwd = GetArg(argv[ArgPassword]);
-
-    if (argc == ArgCount)
-    {
-        home = GetArg(argv[ArgHome]);
-    }
-
     try
     {
-        Environment::Initialize(Environment::Default | Environment::Threaded, home);
+        Environment::Initialize();
 
-        Environment::EnableWarnings(true);
+        Connection con("db12c", "usr", "pwd");
 
-        ocout << otext("Connecting to ") << usr << otext("/") << pwd << otext("@") << dbs << oendl << oendl;
+        Object obj(TypeInfo(con, "racing_car_type", TypeInfo::Type));
 
-        con.Open(dbs, usr, pwd, Environment::SessionDefault);
+        Statement st(con);
+        st.Prepare("begin :obj := racing_car_type(1,'Formula1', 123456789, 300); end; ");
+        st.Bind(":obj", obj, BindInfo::InOut);
+        st.ExecutePrepared();
 
-        print_version();
-        create_tables();
+        TypeInfo RacingCarTypeInfo = obj.GetTypeInfo();
+        TypeInfo CarTypeTypeInfo = RacingCarTypeInfo.GetSuperType();
+        TypeInfo VehiculeTypeInfo = CarTypeTypeInfo.GetSuperType();
 
-        /* execute tests */
+        std::cout << "Object => " << obj << std::endl;
+        std::cout << "Is type '" << RacingCarTypeInfo.GetName() << "' final => " << RacingCarTypeInfo.IsFinalType() << std::endl;
+        std::cout << "Is type '" << CarTypeTypeInfo.GetName() << "' final => " << CarTypeTypeInfo.IsFinalType() << std::endl;
+        std::cout << "Is type '" << VehiculeTypeInfo.GetName() << "' final => " << VehiculeTypeInfo.IsFinalType() << std::endl;
 
-        for (i = 0; i < ARRAY_COUNT(tab_test); i++)
-        {
-            if (tab_test[i].execute)
-                tab_test[i].proc();
-        }
-
-        drop_tables();
-        con.Close();
     }
     catch (std::exception &ex)
     {
-        ocout << ex.what() << oendl;
-    }
-
-    if (con)
-    {
-        drop_tables();
-        con.Close();
+        std::cout << ex.what() << std::endl;
     }
 
     Environment::Cleanup();
-
-    ocout << otext("\nPress any key to exit...");
-
-    getchar();
 
     return EXIT_SUCCESS;
 }
