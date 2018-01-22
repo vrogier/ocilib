@@ -222,9 +222,7 @@ boolean OCI_NumberFromString
 (
     OCI_Connection *con,
     void           *out_value,
-    uword           size,
     uword           type,
-    int             sqlcode,
     const otext    *in_value,
     const otext   * fmt
 )
@@ -240,21 +238,17 @@ boolean OCI_NumberFromString
 
     /* For binary types, perform a C based conversion */
 
-    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT || (SQLT_VNU != sqlcode))
+    if (type != OCI_NUM_NUMBER)
     {
-        if (SQLT_VNU != sqlcode)
+        if (type & OCI_NUM_SHORT)
         {
-            if (type & OCI_NUM_SHORT)
-            {
-                OCI_STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_SHORT, (short *)out_value) == 1);
-                done = TRUE;
-            }
-
-            if (type & OCI_NUM_INT)
-            {
-                OCI_STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_INT, (int *)out_value) == 1);
-                done = TRUE;
-            }
+            OCI_STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_SHORT, (short *)out_value) == 1);
+            done = TRUE;
+        }
+        else if (type & OCI_NUM_INT)
+        {
+            OCI_STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_INT, (int *)out_value) == 1);
+            done = TRUE;
         }
 
     #if OCI_VERSION_COMPILE >= OCI_10_1
@@ -346,7 +340,6 @@ boolean OCI_NumberToString
     OCI_Connection *con,
     void           *number,
     unsigned int    type,
-    int             sqlcode,
     otext          *out_value,
     int             out_value_size,
     const otext   * fmt
@@ -365,26 +358,22 @@ boolean OCI_NumberToString
 
     /* For binary types, perform a C based conversion */
 
-    if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT || (SQLT_VNU != sqlcode))
+    if (type != OCI_NUM_NUMBER)
     {
-        if (SQLT_VNU != sqlcode)
+        if (type & OCI_NUM_SHORT)
         {
-            if (type & OCI_NUM_SHORT)
-            {
-                out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_SHORT, *((short *)number));
-                done = TRUE;
-            }
-
-            if (type & OCI_NUM_INT)
-            {
-                out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_INT, *((int *)number));
-                done = TRUE;
-            }
+            out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_SHORT, *((short *)number));
+            done = TRUE;
+        }
+        else if (type & OCI_NUM_INT)
+        {
+            out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_INT, *((int *)number));
+            done = TRUE;
         }
 
     #if OCI_VERSION_COMPILE >= OCI_10_1
 
-        if (!done && (OCILib.version_runtime >= OCI_10_1) && ((SQLT_VNU != sqlcode)))
+        if (!done && (OCILib.version_runtime >= OCI_10_1))
         {
             const otext *tmp_fmt = fmt;
 
@@ -393,12 +382,12 @@ boolean OCI_NumberToString
                 tmp_fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
             }
 
-            if (type & OCI_NUM_DOUBLE && (SQLT_BDOUBLE == sqlcode))
+            if (type & OCI_NUM_DOUBLE)
             {
                 out_value_size = osprintf(out_value, out_value_size, tmp_fmt, *((double *)number));
                 done = TRUE;
             }
-            else if (type & OCI_NUM_FLOAT && (SQLT_BFLOAT == sqlcode))
+            else if (type & OCI_NUM_FLOAT)
             {
                 out_value_size = osprintf(out_value, out_value_size, tmp_fmt, *((float *)number));
                 done = TRUE;
@@ -417,10 +406,6 @@ boolean OCI_NumberToString
                 }
             }
         }
-
-    #else
-
-        OCI_NOT_USED(sqlcode)
 
     #endif
 
@@ -674,7 +659,7 @@ boolean OCI_API OCI_NumberToText
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_NumberToString(number->con, number->handle, OCI_NUM_NUMBER, SQLT_VNU, str, size, fmt);
+    OCI_RETVAL = OCI_NumberToString(number->con, number->handle, OCI_NUM_NUMBER, str, size, fmt);
 
     OCI_CALL_EXIT()
 }
@@ -694,7 +679,7 @@ boolean OCI_API OCI_NumberFromText
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_NumberFromString(number->con, number->handle, sizeof(OCINumber), OCI_NUM_NUMBER, SQLT_VNU, str, fmt);
+    OCI_RETVAL = OCI_NumberFromString(number->con, number->handle, OCI_NUM_NUMBER, str, fmt);
 
     OCI_CALL_EXIT()
 }

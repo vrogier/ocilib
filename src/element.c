@@ -316,7 +316,7 @@ boolean OCI_ElemGetNumberInternal
     }
     else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
     {
-        res = OCI_NumberFromString(elem->con, value, size, flag, elem->typinf->cols[0].libcode, OCI_ElemGetString(elem), NULL);
+        res = OCI_NumberFromString(elem->con, value, flag, OCI_ElemGetString(elem), NULL);
     }
     else
     {

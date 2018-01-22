@@ -977,9 +977,7 @@ boolean OCI_NumberFromString
 (
     OCI_Connection *con,
     void           *out_value,
-    uword           size,
     uword           type,
-    int             sqlcode,
     const otext    *in_value,
     const otext   * fmt
 );
@@ -989,7 +987,6 @@ boolean OCI_NumberToString
     OCI_Connection *con,
     void           *number,
     unsigned int    type,
-    int             sqlcode,
     otext          *out_value,
     int             out_value_size,
     const otext   * fmt

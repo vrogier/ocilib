@@ -202,7 +202,7 @@ boolean OCI_DefineGetNumber
             }
             case OCI_CDT_TEXT:
             {
-                res = OCI_NumberFromString(rs->stmt->con, value, size, type, def->col.libcode, (const otext *) data, NULL);
+                res = OCI_NumberFromString(rs->stmt->con, value, type, (const otext *) data, NULL);
                 break;
             }
         }

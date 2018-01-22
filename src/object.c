@@ -749,8 +749,7 @@ boolean OCI_ObjectGetNumberInternal
 
         if (index >= 0)
         {
-            OCI_STATUS = OCI_NumberFromString(obj->con, value, size, flag, obj->typinf->cols[index].libcode,
-                                               OCI_ObjectGetString(obj, attr), NULL);
+            OCI_STATUS = OCI_NumberFromString(obj->con, value, flag, OCI_ObjectGetString(obj, attr), NULL);
         }
     }
 
