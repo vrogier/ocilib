@@ -107,8 +107,19 @@ boolean OCI_TranslateNumericValue
     uword           out_type
 )
 {
+    /* translate numeric values:
+        - signed/unsigned integers (short, int, big_int) to double, float and OCINumber
+        - double, float to signed/unsigned integers and OCINumber
+        - OCINumber to signed/unsigned integers, double, and float
+    */
+
     uword in_size  = OCI_GetNumericTypeSize(in_type);
     uword out_size = OCI_GetNumericTypeSize(out_type);
+    uword in_sign  = (in_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+    uword out_sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+
+    OCINumber tmp;
+    memset(&tmp, 0, sizeof(tmp));
 
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
@@ -119,28 +130,37 @@ boolean OCI_TranslateNumericValue
 
     if (in_type == out_type)
     {
+        /* same type, no conversions needed. Just copy memory.
+           We could have used assignments but it would require explicit casting using a switch statement
+        */
         memcpy(out_value, in_value, out_size);
     }
     else if (OCI_NUM_NUMBER == in_type)
     {
         if (out_type & OCI_NUM_DOUBLE || out_type & OCI_NUM_FLOAT)
-        {    
+        {
+            /* OCINumber to double / float */
+
             OCI_EXEC(OCINumberToReal(ctx->oci_err, in_value, out_size, out_value))
         }
         else
         {
-            uword sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
-            OCI_EXEC(OCINumberToInt(ctx->oci_err, in_value, out_size, sign, out_value))
+            /* OCINumber to integers */
+
+            OCI_EXEC(OCINumberToInt(ctx->oci_err, in_value, out_size, out_sign, out_value))
         }
     }
     else if (in_type & OCI_NUM_DOUBLE || in_type & OCI_NUM_FLOAT)
     {
         if (out_type == OCI_NUM_NUMBER)
         {
+            /* double / float to OCINumber */
+
             OCI_EXEC(OCINumberFromReal(ctx->oci_err, in_value, in_size, (OCINumber *)out_value))
         }
         else  if (out_type & OCI_NUM_DOUBLE || out_type & OCI_NUM_FLOAT)
         {
+            /* double to float and float to double */
 
         #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -161,42 +181,34 @@ boolean OCI_TranslateNumericValue
         }
         else
         {
-            OCINumber tmp;
-            uword sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
-
-            memset(&tmp, 0, sizeof(tmp));
+            /* double / float to integers */
 
             OCI_EXEC(OCINumberFromReal(ctx->oci_err, in_value, in_size, (OCINumber *)&tmp))
-            OCI_EXEC(OCINumberToReal(ctx->oci_err, in_value, out_size, out_value))
+            OCI_EXEC(OCINumberToInt(ctx->oci_err, &tmp, out_size, out_sign, out_value))
         }
     }
     else
     {
+        OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, in_size, in_sign, (OCINumber *)&tmp))
+            
         if (out_type == OCI_NUM_NUMBER)
         {
-            uword sign = (in_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
-            OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, in_size, sign, (OCINumber *) out_value))
-        }
-        else if (in_type & OCI_NUM_DOUBLE || in_type & OCI_NUM_FLOAT)
-        {
-            OCINumber tmp;
-            uword sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+            /* integers to OCINumber */
 
-            memset(&tmp, 0, sizeof(tmp));
-            OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, in_size, sign, (OCINumber *)&tmp))
+            memcpy(out_value, &tmp, sizeof(tmp));
+        }
+        else if (out_type & OCI_NUM_DOUBLE || out_type & OCI_NUM_FLOAT)
+        {
+            /* integers to double / float */
+
             OCI_EXEC(OCINumberToReal(ctx->oci_err, &tmp, out_size, out_value))
         }
         else
-        {
-            OCINumber tmp;           
-            uword in_sign = (in_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
-            uword out_sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
-            memset(&tmp, 0, sizeof(tmp));
-            
-            OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, in_size, in_sign, (OCINumber *) &tmp))
+        {    
+            /* only for conversions between integers with different sizes or sign */
+
             OCI_EXEC(OCINumberToInt(ctx->oci_err, &tmp, out_size, out_sign, out_value))
         }
-
     }
 
     return OCI_STATUS;
