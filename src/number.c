@@ -47,9 +47,8 @@ static MagicNumber MagicNumbers[] =
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)                                      \
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)                                           \
                                                                                     \
-    OCI_STATUS = OCI_NumberSetNativeValue(number->con, &src_num,                    \
-                                           OCI_GetNumericTypeSize(type),            \
-                                           type, SQLT_VNU, value);                  \
+    OCI_STATUS = OCI_TranslateNumericValue(number->con, value, type,                \
+                                           &src_num, OCI_NUM_NUMBER);               \
                                                                                     \
     OCI_EXEC(func(number->err, number->handle, &src_num, number->handle))           \
                                                                                     \
@@ -88,99 +87,120 @@ uword OCI_GetNumericTypeSize
     {
         size = sizeof(double);
     }
+    else if (type & OCI_NUM_NUMBER)
+    {
+        size = sizeof(OCINumber);
+    }
     return size;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberGetNativeValue
+ * OCI_TranslateNumericValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_NumberGetNativeValue
+boolean OCI_TranslateNumericValue
 (
     OCI_Connection *con,
-    OCINumber      *number,
-    uword           size,
-    uword           type,
-    int             sqlcode,
-    void           *out_value
+    void           *in_value,
+    uword           in_type,
+    void           *out_value,
+    uword           out_type
 )
 {
+    uword in_size  = OCI_GetNumericTypeSize(in_type);
+    uword out_size = OCI_GetNumericTypeSize(out_type);
+
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
-    OCI_CHECK(NULL == number, FALSE)
+    OCI_CHECK(NULL == in_value, FALSE)
     OCI_CHECK(NULL == out_value, FALSE)
 
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-#if OCI_VERSION_COMPILE < OCI_10_1
-
-    OCI_NOT_USED(sqlcode)
-
-#endif
-
-    if (OCI_NUM_NUMBER == type)
+    if (in_type == out_type)
     {
-        memcpy(out_value, number, sizeof(*number));
+        memcpy(out_value, in_value, out_size);
     }
-    else if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
+    else if (OCI_NUM_NUMBER == in_type)
     {
-        OCI_EXEC(OCINumberToReal(ctx->oci_err, number, size, out_value))
+        if (out_type & OCI_NUM_DOUBLE || out_type & OCI_NUM_FLOAT)
+        {    
+            OCI_EXEC(OCINumberToReal(ctx->oci_err, in_value, out_size, out_value))
+        }
+        else
+        {
+            uword sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+            OCI_EXEC(OCINumberToInt(ctx->oci_err, in_value, out_size, sign, out_value))
+        }
+    }
+    else if (in_type & OCI_NUM_DOUBLE || in_type & OCI_NUM_FLOAT)
+    {
+        if (out_type == OCI_NUM_NUMBER)
+        {
+            OCI_EXEC(OCINumberFromReal(ctx->oci_err, in_value, in_size, (OCINumber *)out_value))
+        }
+        else  if (out_type & OCI_NUM_DOUBLE || out_type & OCI_NUM_FLOAT)
+        {
+
+        #if OCI_VERSION_COMPILE >= OCI_10_1
+
+            if (OCILib.version_runtime >= OCI_10_1)
+            {
+                if (in_type & OCI_NUM_FLOAT && (out_type & OCI_NUM_DOUBLE))
+                {
+                    *((double *)out_value) = (double) *((float *)in_value);
+                }
+                else if (in_type & OCI_NUM_DOUBLE && (out_type & OCI_NUM_FLOAT))
+                {
+                    *((float *)out_value) = (float) *((double *)in_value);
+                }
+            }
+
+        #endif     
+
+        }
+        else
+        {
+            OCINumber tmp;
+            uword sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+
+            memset(&tmp, 0, sizeof(tmp));
+
+            OCI_EXEC(OCINumberFromReal(ctx->oci_err, in_value, in_size, (OCINumber *)&tmp))
+            OCI_EXEC(OCINumberToReal(ctx->oci_err, in_value, out_size, out_value))
+        }
     }
     else
     {
-        uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+        if (out_type == OCI_NUM_NUMBER)
+        {
+            uword sign = (in_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+            OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, in_size, sign, (OCINumber *) out_value))
+        }
+        else if (in_type & OCI_NUM_DOUBLE || in_type & OCI_NUM_FLOAT)
+        {
+            OCINumber tmp;
+            uword sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
 
-        OCI_EXEC(OCINumberToInt(ctx->oci_err, number, size, sign, out_value))
+            memset(&tmp, 0, sizeof(tmp));
+            OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, in_size, sign, (OCINumber *)&tmp))
+            OCI_EXEC(OCINumberToReal(ctx->oci_err, &tmp, out_size, out_value))
+        }
+        else
+        {
+            OCINumber tmp;           
+            uword in_sign = (in_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+            uword out_sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+            memset(&tmp, 0, sizeof(tmp));
+            
+            OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, in_size, in_sign, (OCINumber *) &tmp))
+            OCI_EXEC(OCINumberToInt(ctx->oci_err, &tmp, out_size, out_sign, out_value))
+        }
+
     }
 
     return OCI_STATUS;
 }
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_NumberSetNativeValue
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_NumberSetNativeValue
-(
-    OCI_Connection *con,
-    OCINumber      *number,
-    uword           size,
-    uword           type,
-    int             sqlcode,
-    void           *in_value
-)
-{
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
-    OCI_CHECK(NULL == number, FALSE)
-    OCI_CHECK(NULL == in_value, FALSE)
-
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
-
-#if OCI_VERSION_COMPILE < OCI_10_1
-
-    OCI_NOT_USED(sqlcode)
-
-#endif
-
-    if (type & OCI_NUM_NUMBER)
-    {
-        memcpy(number, in_value, sizeof(*number));
-    }
-    else if (type & OCI_NUM_DOUBLE || type & OCI_NUM_FLOAT)
-    {
-        OCI_EXEC(OCINumberFromReal(ctx->oci_err, in_value, size, number))
-    }
-    else
-    {
-        uword sign = (type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
-
-        OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, size, sign, number))
-    }
-
-    return OCI_STATUS;
-}
-
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_NumberFromString
@@ -298,7 +318,7 @@ boolean OCI_NumberFromString
             OCI_StringReleaseOracleString(dbstr2);
             OCI_StringReleaseOracleString(dbstr1);
 
-            OCI_STATUS = OCI_STATUS && OCI_NumberGetNativeValue(con, (void *)&number, size, type, sqlcode, out_value);
+            OCI_STATUS = OCI_STATUS && OCI_TranslateNumericValue(con, &number, OCI_NUM_NUMBER, out_value, type);
         }
     }
 
@@ -728,9 +748,7 @@ boolean OCI_API OCI_NumberSetValue
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_STATUS = OCI_NumberSetNativeValue(number->con, number->handle,
-                                                       OCI_GetNumericTypeSize(type),
-                                                       type, SQLT_VNU, value);
+    OCI_RETVAL = OCI_STATUS = OCI_TranslateNumericValue(number->con, value, type, number->handle, OCI_NUM_NUMBER);
 
     OCI_CALL_EXIT()
 }
@@ -750,9 +768,7 @@ boolean OCI_API OCI_NumberGetValue
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_STATUS = OCI_NumberGetNativeValue(number->con, number->handle,
-                                                       OCI_GetNumericTypeSize(type),
-                                                       type, SQLT_VNU, value);
+    OCI_RETVAL = OCI_STATUS = OCI_TranslateNumericValue(number->con, number->handle, OCI_NUM_NUMBER, value, type);
 
     OCI_CALL_EXIT()
 }

@@ -692,23 +692,7 @@ boolean OCI_ObjectSetNumberInternal
         void       *num = OCI_ObjectGetAttr(obj, index, &ind);
         OCI_Column *col = &obj->typinf->cols[index];
 
-        OCI_STATUS = TRUE;
-
-        if (OCI_NUM_NUMBER != col->subtype)
-        {
-            /* for PL/SQL PLS_INTEGER and BINARY_INTEGER, BINARY_FLOAT and BINARY_DOUBLE types,
-               values are not OCINumber but of scalar C int type ! */
-
-            OCINumber tmp;
-            memset(&tmp, 0, sizeof(tmp));
-
-            OCI_STATUS = OCI_STATUS && OCI_NumberSetNativeValue(obj->con, &tmp, col->size, col->subtype, col->libcode, value);
-            OCI_STATUS = OCI_STATUS && OCI_NumberGetNativeValue(obj->con, &tmp, size, flag, col->libcode, num);
-        }
-        else
-        {
-            OCI_STATUS = OCI_NumberSetNativeValue(obj->con, num, size, flag, col->libcode, value);
-        }
+        OCI_STATUS = OCI_TranslateNumericValue(obj->con, value, flag, num, col->subtype);
 
         if (OCI_STATUS)
         {
@@ -755,27 +739,8 @@ boolean OCI_ObjectGetNumberInternal
         if (attr && (OCI_IND_NULL != *ind))
         {
             OCI_Column *col = &obj->typinf->cols[index];
-            OCINumber  *num = NULL;
 
-            OCINumber tmp;
-
-            OCI_STATUS = TRUE;
-
-            if (OCI_NUM_NUMBER != col->subtype)
-            {
-                /* for PL/SQL PLS_INTEGER and BINARY_INTEGER, BINARY_FLOAT and BINARY_DOUBLE types,
-                   values are not OCINumber but of scalar C int type ! */
-
-                num = &tmp;
-                memset(&tmp, 0, sizeof(tmp));
-                OCI_STATUS = OCI_NumberSetNativeValue(obj->typinf->con, num, col->size, col->subtype, col->libcode, attr);
-            }
-            else
-            {
-                num = (OCINumber *) attr;
-            }
-
-            OCI_STATUS = OCI_STATUS && OCI_NumberGetNativeValue(obj->typinf->con, num, size, flag, col->libcode, value);
+            OCI_STATUS = OCI_TranslateNumericValue(obj->con, attr, col->subtype, value, flag);
         }
     }
     else

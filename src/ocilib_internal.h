@@ -957,31 +957,20 @@ OCI_Mutex * OCI_MutexCreateInternal
  * number.c
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_NumberGetNativeValue
+boolean OCI_TranslateNumericValue
 (
     OCI_Connection *con,
-    OCINumber      *number,
-    uword           size,
-    uword           type,
-    int             sqlcode,
-    void           *out_value
-);
-
-boolean OCI_NumberSetNativeValue
-(
-    OCI_Connection *con,
-    OCINumber      *number,
-    uword           size,
-    uword           type,
-    int             sqlcode,
-    void           *in_value
+    void           *in_value,
+    uword           in_type,
+    void           *out_value,
+    uword           out_type
 );
 
 OCI_Number * OCI_NumberInit
 (
     OCI_Connection  *con,
     OCI_Number      *number,
-    OCINumber        *buffer
+    OCINumber       *buffer
 );
 
 boolean OCI_NumberFromString
