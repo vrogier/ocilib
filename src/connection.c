@@ -1621,7 +1621,7 @@ boolean OCI_API OCI_SetTrace
                 attrib = OCI_ATTR_CLIENT_INFO;
             #endif
                 con->trace->info[0] = 0;
-                ostrncat(con->trace->info, value,  OCI_SIZE_TRACE_INF0);
+                ostrncat(con->trace->info, value,  OCI_SIZE_TRACE_INFO);
                 str = con->trace->info;
                 break;
             }

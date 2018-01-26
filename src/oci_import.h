@@ -70,9 +70,9 @@ extern "C" {
 
 /* Meta string version of Oracle shared lib */
 
-  #define OCI_DL_META_GET(s)  OCI_DL_META_CVT(s)
-  #define OCI_DL_META_CVT(s)  MT(# s)
-  #define OCI_DL_META_NAME    OCI_DL_META_GET(OCI_DL)
+  #define OCI_DL_GET(s)  OCI_DL_CVT(s)
+  #define OCI_DL_CVT(s)  OTEXT(# s)
+  #define OCI_DL_NAME    OCI_DL_GET(OCI_DL)
 
 /* symbol list */
 

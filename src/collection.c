@@ -538,7 +538,7 @@ boolean OCI_API OCI_CollToText
 
     for (i = 1; i <= n && OCI_STATUS; i++)
     {
-        OCI_Elem *elem = OCI_CollGetAt(coll, i);
+        OCI_Elem *elem = OCI_CollGetElem(coll, i);
 
         quote = TRUE;
 

@@ -245,15 +245,10 @@ void print_version(void)
     else
         print_text("OCI import mode         : RUNTIME\n");
 
-    if (OCI_GetCharsetMetaData() == OCI_CHAR_ANSI)
-        print_text("MetaData  char type     : ANSI\n");
+    if (OCI_GetCharset() == OCI_CHAR_ANSI)
+        print_text("char type               : ANSI\n");
     else
-        print_text("MetaData  char type     : WIDE\n");
-
-    if (OCI_GetCharsetUserData() == OCI_CHAR_ANSI)
-        print_text("UserData  char type     : ANSI\n");
-    else
-        print_text("UserData  char type     : WIDE\n");
+        print_text("char type               : WIDE\n");
 
     print_text("\n>>>>> VERSIONS INFORMATION \n\n");
 
@@ -946,7 +941,7 @@ void test_timestamp(void)
 
         tmsp = OCI_TimestampCreate(NULL, OCI_TIMESTAMP);
 
-        OCI_TimestampSysTimeStamp(tmsp);
+        OCI_TimestampSysTimestamp(tmsp);
 
         OCI_TimestampToText(tmsp, OTEXT("YYYY-MM-DD HH24:MI:SS:FF\n"), SIZE_STR, str, 3);
 
@@ -1563,7 +1558,7 @@ void test_collection(void)
 
         for(i = 1; i <= n; i++)
         {
-            elem = OCI_CollGetAt(coll, i);
+            elem = OCI_CollGetElem(coll, i);
 
             print_text("... Employee : ");
             print_ostr(OCI_ElemGetString(elem));

@@ -109,7 +109,7 @@ struct OCI_TraceInfo
     otext identifier[OCI_SIZE_TRACE_ID+1];
     otext module[OCI_SIZE_TRACE_MODULE+1];
     otext action[OCI_SIZE_TRACE_ACTION+1];
-    otext info[OCI_SIZE_TRACE_INF0+1];
+    otext info[OCI_SIZE_TRACE_INFO+1];
 };
 
 typedef struct OCI_TraceInfo OCI_TraceInfo;

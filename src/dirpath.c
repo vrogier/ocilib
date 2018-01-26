@@ -784,7 +784,7 @@ boolean OCI_API OCI_DirPathSetEntry
 
                 OCINumber *num = (OCINumber *) data;
 
-                OCI_STATUS = OCI_NumberFromString(dp->con, num, OCI_NUM_NUMBER, (dtext *)value, dpcol->format);
+                OCI_STATUS = OCI_NumberFromString(dp->con, num, OCI_NUM_NUMBER, (dbtext *)value, dpcol->format);
 
                 if (OCI_STATUS)
                 {
