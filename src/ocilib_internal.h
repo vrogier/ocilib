@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2017 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2018 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -304,8 +304,7 @@ boolean OCI_DefineGetNumber
     OCI_Resultset *rs,
     unsigned int   index,
     void          *value,
-    uword          type,
-    uword          size
+    uword          type
 );
 
 boolean OCI_DefineAlloc
@@ -358,7 +357,6 @@ boolean OCI_ElemGetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
-    uword     size,
     uword     flag
 );
 
@@ -366,7 +364,6 @@ boolean OCI_ElemSetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
-    uword     size,
     uword     flag
 );
 
@@ -1060,7 +1057,6 @@ boolean OCI_ObjectSetNumberInternal
     OCI_Object  *obj,
     const otext *attr,
     void        *value,
-    uword        size,
     uword        flag
 );
 
@@ -1069,7 +1065,6 @@ boolean OCI_ObjectGetNumberInternal
     OCI_Object  *obj,
     const otext *attr,
     void        *value,
-    uword        size,
     uword        flag
 );
 

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2017 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2018 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,6 @@
     OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)                                            \
                                                                                          \
     OCI_STATUS = OCI_ElemGetNumberInternal(elem, (void *)&OCI_RETVAL,                    \
-                                           (uword) sizeof(OCI_RETVAL),                   \
                                            (uword)number_type);                          \
                                                                                          \
     OCI_CALL_EXIT()
@@ -100,8 +99,7 @@
     OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)                                \
                                                                                          \
     OCI_RETVAL = OCI_STATUS = OCI_ElemSetNumberInternal(elem, (void *)&value,            \
-                                                        (uword) sizeof(value),           \
-                                                        (uword)number_type);             \
+                                                        (uword) number_type);            \
                                                                                          \
     OCI_CALL_EXIT()
 
@@ -273,7 +271,6 @@ boolean OCI_ElemSetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
-    uword     size,
     uword     flag
 )
 {
@@ -296,7 +293,6 @@ boolean OCI_ElemGetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
-    uword     size,
     uword     flag
 )
 {

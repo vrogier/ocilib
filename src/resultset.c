@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2017 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2018 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                   \
     OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)                                  \
     OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)                                                    \
-    OCI_STATUS = OCI_DefineGetNumber(rs, index, &OCI_RETVAL, num_type, sizeof(OCI_RETVAL));     \
+    OCI_STATUS = OCI_DefineGetNumber(rs, index, &OCI_RETVAL, num_type);                         \
     OCI_CALL_EXIT()
 
 
@@ -1436,7 +1436,7 @@ boolean OCI_API OCI_GetStruct
                 {
                     case OCI_CDT_NUMERIC:
                     {
-                        OCI_DefineGetNumber(rs, i, ptr, def->col.subtype, (uword)size1);
+                        OCI_DefineGetNumber(rs, i, ptr, def->col.subtype);
 
                         break;
                     }

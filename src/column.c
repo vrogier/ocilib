@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2017 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2018 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -448,7 +448,7 @@ boolean OCI_ColumnMap
 
             if (0 == col->size)
             {
-                col->size = col->bufsize;
+                col->size = (ub2) col->bufsize;
             }
             break;
         }
@@ -466,7 +466,7 @@ boolean OCI_ColumnMap
 
             if (0 == col->size)
             {
-                col->size = col->bufsize;
+                col->size = (ub2) col->bufsize;
             }
             break;
         }
@@ -482,7 +482,7 @@ boolean OCI_ColumnMap
 
             if (0 == col->size)
             {
-                col->size = col->bufsize;
+                col->size = (ub2) col->bufsize;
             }
             break;
         }
@@ -499,7 +499,7 @@ boolean OCI_ColumnMap
 
             if (0 == col->size)
             {
-                col->size = col->bufsize;
+                col->size = (ub2) col->bufsize;
             }
             break;
         }
@@ -518,7 +518,7 @@ boolean OCI_ColumnMap
 
             if (0 == col->size)
             {
-                col->size = col->bufsize;
+                col->size = (ub2) col->bufsize;
             }
             break;
         }
@@ -537,7 +537,7 @@ boolean OCI_ColumnMap
 
             if (0 == col->size)
             {
-                col->size = col->bufsize;
+                col->size = (ub2) col->bufsize;
             }
             break;
         }
