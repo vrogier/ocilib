@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2017 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2018 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,8 +91,8 @@ extern "C" {
  * --------------------------------------------------------------------------------------------- */
 
 #define OCILIB_MAJOR_VERSION     4
-#define OCILIB_MINOR_VERSION     4
-#define OCILIB_REVISION_VERSION  1
+#define OCILIB_MINOR_VERSION     5
+#define OCILIB_REVISION_VERSION  0
 
 /* Import mode */
 
@@ -14662,7 +14662,6 @@ OCI_EXPORT const otext * OCI_API OCI_TypeInfoGetName
 * Non-final types are virtual UDT type that can be inherited
 * 
 * @param typinf - Type info handle
-* @param index  - Column position
 *
 * @note
 *  This property is only valid for UDTs (OCI_TIF_TYPE)
@@ -18103,7 +18102,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
  * - OCI_CNT_ALL       : request for all changes
  *
  * @note
- * Parameter @port and @timeout are optional (use value 0 a optional value)
+ * Parameter 'port' and 'timeout' are optional (use value 0 a optional value)
  * 
  * @note
  * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
@@ -18113,7 +18112,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
  * All notifications are using the same port. 
  * Port numbe can be either:
  *   - determined automatically by Oracle client once the first subscription had been created and can be retrieved using OCI_SubscriptionGetPort()
- *   - Set by the parameter @port during the first call to OCI_SubscriptionRegister(). In this case later calls can provide same port number or 0
+ *   - Set by the parameter 'port' during the first call to OCI_SubscriptionRegister(). In this case later calls can provide same port number or 0
  * 
  * @note
  * Requires Oracle Client 10gR2 or above
@@ -19025,119 +19024,14 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 
 /* macro added in version 3.3.0 */
 
-/**
- * @brief
- * [OBSOLETE] Set the bind variable at the given index to null
- *
- * @param stmt  - Statement handle
- * @param index - Index of the bind variable
- *
- * @warning
- * This call is obsolete ! Use OCI_BindSetNull() instead.
- *
- * @note
- * There is no notion of null value in C.
- * It's necessary to explicitly tell Oracle that the bind has a null value.
- * It must be done before an OCI_Execute() call
- *
- * @warning
- * Index starts with 1
- *
- * @note
- * For handled based data types (non scalar types), OCILIB performs an extra
- * check on handles and set the bind status to null is the handle is null
- *
- * @return
- * TRUE on success otherwise FALSE
- */
-
 #define OCI_SetNull(stmt, index)                                               \
     OCI_BindSetNull(OCI_GetBind(stmt, index))
-
-/**
- * @brief
- * [OBSOLETE] Set the bind variable of the given name to null
- *
- * @param stmt  - Statement handle
- * @param name  - Bind variable name
- *
- * @warning
- * This call is obsolete ! Use OCI_BindSetNull() instead.
- *
- * @note
- * There is no notion of null value in C.
- * it's necessary to explicitly tell Oracle that the bind has a null value.
- * It must be done before an OCI_Execute() call
- *
- * @note
- * For handled based data types (non scalar types), OCILIB performs an extra
- * check on handles and set the bind status to null is the handle is null
- *
- * @return
- * TRUE on success otherwise FALSE
- */
 
 #define OCI_SetNull2(stmt, name)                                               \
     OCI_BindSetNull(OCI_GetBind2(stmt, name))
 
-/**
- * @brief
- * [OBSOLETE] Set to null the bind variable at the given position in an input array
- *
- * @param stmt     - Statement handle
- * @param index    - Index of the bind variable
- * @param position - Position in the array
- *
- * @warning
- * This call is obsolete ! Use OCI_BindSetNullAtPos() instead.
- *
- * @note
- * There is no notion of null value in C.
- * It's necessary to explicitly tell Oracle that the bind has a null value.
- * It must be done before an OCI_Execute() call
- *
- * @warning
- * Index and Position starts with 1
- *
- * @note
- * For handled based data types (non scalar types), OCILIB performs an extra
- * check on handles and set the bind status to null is the handle is null
- *
- * @return
- * TRUE on success otherwise FALSE
- *
- */
-
 #define OCI_SetNullAtPos(stmt, index, position)                                \
     OCI_BindSetNullAtPos(OCI_GetBind(stmt, index), position)
-
-/**
- * @brief
- * [OBSOLETE] Set to null the bind variable of the given name in an input array
- *
- * @param stmt     - Statement handle
- * @param name     - Bind variable name
- * @param position - Position in the array
- *
- * @warning
- * This call is obsolete ! Use OCI_BindSetNullAtPos() instead.
- *
- * @note
- * There is no notion of null value in C.
- * It's necessary to explicitly tell Oracle that the bind has a null value.
- * It must be done before an OCI_Execute() call
- *
- * @warning
- * Position starts with 1
- *
- * @note
- * For handled based data types (non scalar types), OCILIB performs an extra
- * check on handles and set the bind status to null is the handle is null
- *
- * @return
- * TRUE on success otherwise FALSE
- *
- */
 
 #define OCI_SetNullAtPos2(stmt, name, position)                                \
     OCI_BindSetNullAtPos(OCI_GetBind2(stmt, name), position)

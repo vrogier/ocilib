@@ -1,3 +1,25 @@
+2018-01-29 Version 4.5.0 Vincent Rogier vince.rogier@ocilib.net
+
+    * Enhancements (C and C++ API)
+
+        - Extended support for non final UTDs
+            * Added OCI_TypeInfoGetSuperType() and ocilib::TypeInfo::GetSuperType()
+            * Added OCI_TypeInfoIsFinalType() and ocilib::TypeInfo::IsFinalType()
+            * Added C and C++ demos about super types and sub types    
+
+    * Fixes (C API)
+    
+        - Issue #132, #133, #135: Fixed segfault while accessing to derived UTDs members (due to wrong members offset computation)
+        - Issue #134: OCI_ObjectToText() and OCI_CollToText() were mangling conversion errors leading OCI_GetLastError() to not report conversion errors         
+        - Issue #136: OCI_RegisterSubscription() was not correctly setting port number if provided
+        - Issue #137: BINARY_DOUBLE and BINARY_FLOAT values could not be set or retrieved from OCI_Elem and OCI_Object
+
+    * Miscellaneous:
+
+        - Refactored internal numeric types conversions
+        - Removed usage of deprecated symbols
+        - Some code cleanup
+        
 2017-11-29 Version 4.4.1 Vincent Rogier vince.rogier@ocilib.net
 
     * Enhancements (C API)
