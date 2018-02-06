@@ -541,11 +541,6 @@ const otext * OCI_API OCI_ElemGetString
     if (elem->handle)
     {
         OCI_RETVAL = OCI_StringFromStringPtr(elem->con->env, (OCIString *) elem->handle, &elem->tmpbuf, &elem->tmpsize);
-
-        if (!OCI_RETVAL)
-        {
-            OCI_RETVAL = OCILib.empty_str;
-        }
     }
 
     OCI_CALL_EXIT()

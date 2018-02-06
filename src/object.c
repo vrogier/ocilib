@@ -1140,11 +1140,6 @@ const otext * OCI_API OCI_ObjectGetString
             {
                 OCI_RETVAL = (otext *)OCIStringPtr(obj->con->env, *value);
             }
-
-            if (!OCI_RETVAL)
-            {
-                OCI_RETVAL = OCILib.empty_str;
-            }
         }
     }
     else
@@ -2075,8 +2070,9 @@ boolean OCI_API OCI_ObjectToText
         {
             void *data = NULL;
             unsigned int data_size = 0;
+            unsigned int data_type = obj->typinf->cols[i].datatype;
 
-            switch (obj->typinf->cols[i].datatype)
+            switch (data_type)
             {
                 case OCI_CDT_TEXT:
                 {
@@ -2152,7 +2148,7 @@ boolean OCI_API OCI_ObjectToText
                 }
             }
 
-            OCI_STATUS = (NULL != data) && (NULL == err || !err->raise);
+            OCI_STATUS = (NULL != data || OCI_CDT_TEXT == data_type) && (NULL == err || !err->raise);
 
             if (OCI_STATUS)
             {
@@ -2163,7 +2159,14 @@ boolean OCI_API OCI_ObjectToText
                     tmpbuf += len;
                 }
 
-                len += OCI_StringGetFromType(obj->con, &obj->typinf->cols[i], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0,  quote);
+                if (data)
+                {
+                    len += OCI_StringGetFromType(obj->con, &obj->typinf->cols[i], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0, quote);
+                }
+                else
+                {
+                    len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, FALSE);
+                }
 
                 OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
             }

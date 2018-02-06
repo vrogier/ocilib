@@ -548,10 +548,11 @@ boolean OCI_API OCI_CollToText
         }
         else
         {
-            void    *data       = NULL;
-            unsigned data_size  = 0;
+            void *data = NULL;
+            unsigned int data_size = 0;
+            unsigned int data_type = coll->typinf->cols[0].datatype;
 
-            switch (coll->typinf->cols[0].datatype)
+            switch (data_type)
             {
                 case OCI_CDT_TEXT:
                 {
@@ -623,7 +624,7 @@ boolean OCI_API OCI_CollToText
                 }
             }
 
-            OCI_STATUS = (NULL != data) && (NULL == err || !err->raise);
+            OCI_STATUS = (NULL != data || OCI_CDT_TEXT == data_type) && (NULL == err || !err->raise);
 
             if (OCI_STATUS)
             {
@@ -634,8 +635,14 @@ boolean OCI_API OCI_CollToText
                     tmpbuf += len;
                 }
 
-                len += OCI_StringGetFromType(coll->con, &coll->typinf->cols[0], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0, quote);
-       
+                if (data)
+                {
+                    len += OCI_StringGetFromType(coll->con, &coll->typinf->cols[0], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0, quote);
+                }
+                else
+                {
+                    len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, FALSE);
+                }
                 OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
             }
         }

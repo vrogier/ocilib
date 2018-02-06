@@ -629,7 +629,7 @@ unsigned int OCI_StringGetFromType
 
     otext *ptr = buffer;
 
-    if (quote)
+    if (quote && data)
     {
         len = OCI_StringAddToBuffer(ptr, len, OTEXT("'"), FALSE); 
         if (ptr)
@@ -887,7 +887,7 @@ unsigned int OCI_StringGetFromType
             len = (unsigned int) ostrlen(buffer);
         }
 
-        if (quote)
+        if (quote && data)
         {
             len += OCI_StringAddToBuffer(buffer, len, OTEXT("'"), FALSE); 
         }

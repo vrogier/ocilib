@@ -222,8 +222,6 @@ struct OCI_Library
 #ifdef OCI_IMPORT_RUNTIME
     LIB_HANDLE           lib_handle;              /* handle of runtime shared library */
 #endif
-    otext                empty_str[1];
-
 };
 
 typedef struct OCI_Library OCI_Library;
