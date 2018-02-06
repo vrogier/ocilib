@@ -1140,6 +1140,11 @@ const otext * OCI_API OCI_ObjectGetString
             {
                 OCI_RETVAL = (otext *)OCIStringPtr(obj->con->env, *value);
             }
+
+            if (!OCI_RETVAL)
+            {
+                OCI_RETVAL = OCILib.empty_str;
+            }
         }
     }
     else
