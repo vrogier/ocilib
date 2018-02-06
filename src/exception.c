@@ -869,7 +869,7 @@ void OCI_ExceptionDirPathColNotFound
     if (err)
     {
         err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_DIRPATH_STATE;
+        err->libcode = OCI_ERR_COLUMN_NOT_FOUND;
         err->stmt    = NULL;
 
         if (dp)
@@ -1048,7 +1048,7 @@ void OCI_ExceptionArgInvalidValue
     if (err)
     {
         err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_ITEM_NOT_FOUND;
+        err->libcode = OCI_ERR_ARG_INVALID_VALUE;
         err->stmt    = stmt;
         err->con     = con;
 
