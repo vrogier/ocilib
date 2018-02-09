@@ -2637,8 +2637,16 @@ boolean OCI_API OCI_BindRaw
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_BIND(stmt, name, data, OCI_IPC_VOID, FALSE)
-    OCI_CALL_CHECK_MIN(stmt->con, stmt, len, 1)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
+
+    if (len == 0 && !data)
+    {
+        /* if data is NULL, it means that binding mode is OCI_BAM_INTERNAL.
+        An invalid length passed to the function, we do not have a valid length to
+        allocate internal array, thus we need to raise an exception */
+
+        OCI_RAISE_EXCEPTION(OCI_ExceptionMinimumValue(stmt->con, stmt, 1))
+    }
 
     OCI_STATUS = OCI_BindData(stmt, data, len, name, OCI_CDT_RAW,
                               SQLT_BIN, OCI_BIND_INPUT, 0, NULL, 0);

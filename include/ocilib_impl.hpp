@@ -4737,7 +4737,7 @@ template<class T>
 BindObjectAdaptor<T>::BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object, unsigned int size) :
      BindObject(statement, name, mode),
      _object(object),
-     _data(new NativeType[size]),
+     _data(new NativeType[size + 1]),
      _size(size)
 {
     memset(_data, 0, _size * sizeof(NativeType));
