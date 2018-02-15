@@ -199,11 +199,11 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
         /* allocate authentication handle only if needed */
 
-   #if OCI_VERSION_COMPILE >= OCI_11_2
+   #if OCI_VERSION_COMPILE >= OCI_11_1
 
         if (OCI_STATUS)
         {       
-            if ((OCI_HTYPE_SPOOL == pool->htype) && (OCILib.version_runtime >= OCI_11_2))
+            if ((OCI_HTYPE_SPOOL == pool->htype) && (OCILib.version_runtime >= OCI_11_1))
             {
                 int     dbsize = -1;
                 dbtext *dbstr  = NULL;
