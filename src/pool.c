@@ -206,8 +206,20 @@ OCI_Pool * OCI_API OCI_PoolCreate
             if ((OCI_HTYPE_SPOOL == pool->htype) && (OCILib.version_runtime >= OCI_11_2))
             {
                 int     dbsize = -1;
-                dbtext *dbstr  = OCI_StringGetOracleString(OCILIB_DRIVER_NAME, &dbsize);
-                    
+                dbtext *dbstr  = NULL;
+
+                otext driver_version[OCI_SIZE_FORMAT];
+
+                osprintf(driver_version,
+                    osizeof(driver_version) - (size_t)1,
+                    OTEXT("%s : %d.%d.%d"),
+                    OCILIB_DRIVER_NAME,
+                    OCILIB_MAJOR_VERSION,
+                    OCILIB_MINOR_VERSION,
+                    OCILIB_REVISION_VERSION);
+
+                dbstr = OCI_StringGetOracleString(driver_version, &dbsize);
+
                 /* allocate authentication handle */
 
                 OCI_STATUS = OCI_HandleAlloc((dvoid *)OCILib.env, (dvoid **)(void *)&pool->authp, OCI_HTYPE_AUTHINFO);
