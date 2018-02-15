@@ -485,8 +485,18 @@ boolean OCI_ConnectionLogon
 
             if (OCI_STATUS && (OCILib.version_runtime >= OCI_11_1))
             {
+                otext driver_version[OCI_SIZE_FORMAT];
+
+                osprintf(driver_version, 
+                         osizeof(driver_version) - (size_t) 1,
+                         OTEXT("%s : %d.%d.%d"), 
+                         OCILIB_DRIVER_NAME, 
+                         OCILIB_MAJOR_VERSION, 
+                         OCILIB_MINOR_VERSION,
+                         OCILIB_REVISION_VERSION);
+
                 dbsize = -1;
-                dbstr  = OCI_StringGetOracleString(OCILIB_DRIVER_NAME, &dbsize);
+                dbstr  = OCI_StringGetOracleString(driver_version, &dbsize);
 
                 OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_DRIVER_NAME, con->ses, dbstr, dbsize);
 
