@@ -517,7 +517,6 @@ boolean OCI_API OCI_CollToText
     OCI_Error *err = NULL;
     boolean quote  = TRUE;
     unsigned int len = 0;
-    int i, n;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
@@ -534,9 +533,9 @@ boolean OCI_API OCI_CollToText
     len += OCI_StringAddToBuffer(str, len, coll->typinf->name, FALSE);
     len += OCI_StringAddToBuffer(str, len, OTEXT("("), FALSE);
 
-    n = OCI_CollGetSize(coll);
+    const int n = OCI_CollGetSize(coll);
 
-    for (i = 1; i <= n && OCI_STATUS; i++)
+    for (int i = 1; i <= n && OCI_STATUS; i++)
     {
         OCI_Elem *elem = OCI_CollGetElem(coll, i);
 
@@ -550,7 +549,7 @@ boolean OCI_API OCI_CollToText
         {
             void *data = NULL;
             unsigned int data_size = 0;
-            unsigned int data_type = coll->typinf->cols[0].datatype;
+            const unsigned int data_type = coll->typinf->cols[0].datatype;
 
             switch (data_type)
             {

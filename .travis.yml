@@ -8,11 +8,13 @@ compiler:
 sudo: required
 script:
   - touch configure.ac aclocal.m4 configure Makefile.am Makefile.in config.h.in
+  - ./reconf
   - ./configure --with-oracle-import=runtime --with-oracle-charset=ansi
   - make
   - sudo make install
   - sudo make uninstall
   - make clean
+  - ./reconf
   - ./configure --with-oracle-import=runtime --with-oracle-charset=wide
   - make
   - sudo make install

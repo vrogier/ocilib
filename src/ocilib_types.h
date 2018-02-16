@@ -909,8 +909,8 @@ typedef struct OCI_Datatype OCI_Datatype;
 
 struct OCI_SQLCmdInfo
 {
-    unsigned int code; /* SQL command code */
-    otext       *verb; /* SQL command verb */
+    unsigned int  code; /* SQL command code */
+    const otext  *verb; /* SQL command verb */
 };
 
 typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;
@@ -931,7 +931,7 @@ typedef struct OCI_CallContext OCI_CallContext;
 /* static and unique OCI_Library object */
 
 extern OCI_Library OCILib;
-extern OCI_SQLCmdInfo SQLCmds[];
+extern const OCI_SQLCmdInfo SQLCmds[];
 
 /* Start of Experimental section containing some Oracle opaque structure definitions 
 

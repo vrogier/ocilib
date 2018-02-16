@@ -31,7 +31,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
  * ********************************************************************************************* */
 
 #define OCI_MATCHING_TYPE(def, type) \
-    (def && OCI_DefineIsDataNotNull(def) && (type == def->col.datatype))
+    ((def) && OCI_DefineIsDataNotNull(def) && ((type) == (def)->col.datatype))
 
 
 #define OCI_GET_BY_NAME(rs, name, func, type, res)                                              \
@@ -39,7 +39,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     OCI_CALL_ENTER(type, res)                                                                   \
     OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                   \
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)                                                    \
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)                                                    \
+    OCI_CALL_CONTEXT_SET_FROM_STMT((rs)->stmt)                                                  \
     OCI_STATUS = FALSE;                                                                         \
     index = OCI_GetDefineIndex(rs, name);                                                       \
     if (index > 0)                                                                              \
@@ -54,8 +54,8 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
 #define OCI_GET_NUMBER(rs, index, num_type, type, res)                                          \
     OCI_CALL_ENTER(type, res)                                                                   \
     OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                   \
-    OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)                                  \
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)                                                    \
+    OCI_CALL_CHECK_BOUND((rs)->stmt->con, index, 1, (rs)->nb_defs)                              \
+    OCI_CALL_CONTEXT_SET_FROM_STMT((rs)->stmt)                                                  \
     OCI_STATUS = OCI_DefineGetNumber(rs, index, &OCI_RETVAL, num_type);                         \
     OCI_CALL_EXIT()
 
@@ -64,14 +64,14 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     OCI_Define *def = NULL;                                                                     \
     OCI_CALL_ENTER(type, res)                                                                   \
     OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                   \
-    OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)                                  \
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)                                                    \
+    OCI_CALL_CHECK_BOUND((rs)->stmt->con, index, 1, (rs)->nb_defs)                              \
+    OCI_CALL_CONTEXT_SET_FROM_STMT((rs)->stmt)                                                  \
     OCI_STATUS = FALSE;                                                                         \
     def = OCI_GetDefine(rs, index);                                                             \
     if (OCI_MATCHING_TYPE(def, lib_type))                                                       \
     {                                                                                           \
         if (!ctx->call_err) ctx->call_err = OCI_ErrorGet(FALSE);                                \
-        def->obj = OCI_RETVAL = func;                                                                      \
+        def->obj = OCI_RETVAL = func;                                                           \
         OCI_STATUS = (NULL != OCI_RETVAL);                                                      \
     }                                                                                           \
     OCI_CALL_EXIT()
@@ -272,9 +272,8 @@ boolean OCI_FetchPieces
     OCI_Resultset *rs
 )
 {
-    ub4 type, iter, dx;
-    ub1 in_out, piece;
-    void *handle;
+    ub4 type, dx;
+    ub1 in_out;
     ub4 i, j;
 
     OCI_CALL_DECLARE_CONTEXT(TRUE)
@@ -302,9 +301,9 @@ boolean OCI_FetchPieces
 
     while (OCI_STATUS && (OCI_NEED_DATA == rs->fetch_status))
     {
-        piece  = OCI_NEXT_PIECE;
-        iter   = 0;
-        handle = NULL;
+        ub1   piece  = OCI_NEXT_PIECE;
+        ub4   iter   = 0;
+        void *handle = NULL;
 
         /* get piece information */
 
@@ -458,7 +457,7 @@ boolean OCI_FetchPieces
 
                 if (lg->buffer)
                 {
-                    int len  = (int) ( lg->size / sizeof(dbtext) );
+                    const int len  = (int) ( lg->size / sizeof(dbtext) );
 
                     ((dbtext *)lg->buffer)[len] = 0;
 
@@ -633,7 +632,7 @@ boolean OCI_FetchCustom
             }
             else
             {
-                int offset_save = offset;
+                const int offset_save = offset;
 
                 offset      = offset - rs->row_fetched + rs->row_cur;
                 rs->row_cur = 1;
@@ -691,18 +690,15 @@ boolean OCI_ResultsetExpandStrings
     OCI_Resultset *rs
 )
 {
-    ub4 i;
-    int j;
-
     OCI_CHECK(NULL == rs, FALSE)
 
-    for (i = 0; i < rs->nb_defs; i++)
+    for (ub4 i = 0; i < rs->nb_defs; i++)
     {
         OCI_Define *def = &rs->defs[i];
 
         if (OCI_CDT_TEXT == def->col.datatype)
         {
-            for (j = (int) (def->buf.count-1); j >= 0; j--)
+            for (int j = (int) (def->buf.count-1); j >= 0; j--)
             {
                 ub1 * tmpbuf = ((ub1*) def->buf.data) + (def->col.bufsize * j);
 
@@ -744,12 +740,11 @@ boolean OCI_ResultsetFree
 OCI_Resultset *rs
 )
 {
-    boolean res = TRUE;
-    ub4 i, j;
+    ub4 j;
 
     OCI_CHECK(NULL == rs, FALSE)
 
-    for (i = 0; i < rs->nb_defs; i++)
+    for (ub4 i = 0; i < rs->nb_defs; i++)
     {
         OCI_Define *def = &(rs->defs[i]);
 
@@ -839,7 +834,7 @@ OCI_Resultset *rs
 
     OCI_FREE(rs)
 
-    return res;
+    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -848,18 +843,15 @@ OCI_Resultset *rs
 
 boolean OCI_ClearFetchedObjectInstances(OCI_Resultset *rs)
 {
-    boolean res = TRUE;
-    ub4 i, j;
-
     OCI_CHECK(NULL == rs, FALSE)
 
-    for (i = 0; i < rs->nb_defs; i++)
+    for (ub4 i = 0; i < rs->nb_defs; i++)
     {
         OCI_Define *def = &(rs->defs[i]);
 
         if (SQLT_NTY == def->col.sqlcode && def->buf.data)
         {
-            for (j = 0; j < def->buf.count; j++)
+            for (ub4 j = 0; j < def->buf.count; j++)
             {
                 if (def->buf.data[j] != NULL)
                 {
@@ -870,7 +862,7 @@ boolean OCI_ClearFetchedObjectInstances(OCI_Resultset *rs)
         }
     }
 
-    return res;
+    return TRUE;
 }
 
 /* ********************************************************************************************* *
@@ -1403,15 +1395,14 @@ boolean OCI_API OCI_GetStruct
         size_t size1 = 0;
         size_t size2 = 0;
         size_t align = 0;
-        ub2 i;
 
         size_t size = 0;
 
-        for (i = 1; i <= rs->nb_defs; i++)
+        for (ub2 i = 1; i <= rs->nb_defs; i++)
         {
             OCI_Define *def = &rs->defs[i - 1];
 
-            boolean is_not_null = OCI_DefineIsDataNotNull(def);
+            const boolean is_not_null = OCI_DefineIsDataNotNull(def);
 
             if (i == 1)
             {

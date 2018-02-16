@@ -703,11 +703,13 @@ boolean OCI_API OCI_DateToCTime
 )
 {
     time_t time = (time_t) -1;
-    struct tm t = { 0 };
+    struct tm t;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DATE, date)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
+
+    memset(&t, 0, sizeof(t));
 
     t.tm_year = date->handle->OCIDateYYYY - 1900;
     t.tm_mon  = date->handle->OCIDateMM - 1;

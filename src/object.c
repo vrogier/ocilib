@@ -123,7 +123,7 @@ OCI_TypeInfo * OCI_ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
         if (tdo && tdo != result->tdo)
         {
             /* first try to find it in list */
-            boolean  found = OCI_ListExists(typinf->con->tinfs, tdo);
+            const boolean found = OCI_ListExists(typinf->con->tinfs, tdo);
 
             if (!found)
             {
@@ -309,8 +309,6 @@ void OCI_ObjectGetUserStructSize
     size_t align2 = 0;
     size_t align  = 0;
 
-    ub2 i;
-
     size_t size = 0;
 
     if (!typinf || !p_size || !p_align)
@@ -318,7 +316,7 @@ void OCI_ObjectGetUserStructSize
         return;
     }
 
-    for (i = 0; i < typinf->nb_cols; i++)
+    for (ub2 i = 0; i < typinf->nb_cols; i++)
     {
         OCI_ColumnGetAttrInfo(&typinf->cols[i],   typinf->nb_cols, i, &size1, &align1);
         OCI_ColumnGetAttrInfo(&typinf->cols[i+1], typinf->nb_cols, i+1, &size2, &align2);
@@ -370,7 +368,7 @@ boolean OCI_ObjectGetAttrInfo
     {
         case OCI_CDT_NUMERIC:
         {
-            ub4 subtype = typinf->cols[index].subtype;
+            const ub4 subtype = typinf->cols[index].subtype;
 
             if (subtype & OCI_NUM_SHORT)
             {
@@ -561,14 +559,12 @@ void OCI_ObjectReset
     OCI_Object *obj
 )
 {
-    ub2 i;
-
     if (!obj)
     {
         return;
     }
    
-    for (i = 0; i < obj->typinf->nb_cols; i++)
+    for (ub2 i = 0; i < obj->typinf->nb_cols; i++)
     {
         if (obj->objs[i])
         {
@@ -603,12 +599,11 @@ int OCI_ObjectGetAttrIndex
 )
 {
     int res = -1;
-    ub2 i;
 
     OCI_CHECK(obj  == NULL, res)
     OCI_CHECK(attr == NULL, res);
 
-    for (i = 0; i < obj->typinf->nb_cols; i++)
+    for (ub2 i = 0; i < obj->typinf->nb_cols; i++)
     {
         OCI_Column *col = &obj->typinf->cols[i];
 
@@ -654,7 +649,7 @@ void * OCI_ObjectGetAttr
 
     if (pind)
     {
-        int ind_index = obj->idx_ind + OCI_ObjectGetIndOffset(obj->typinf, index);
+        const int ind_index = obj->idx_ind + OCI_ObjectGetIndOffset(obj->typinf, index);
 
         *pind = &obj->tab_ind[ind_index];
     }
@@ -1177,7 +1172,7 @@ const otext * OCI_API OCI_ObjectGetString
 
                 if (OCI_STATUS)
                 {
-                    unsigned int real_tmpsize = OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbufs[index], obj->tmpsizes[index], FALSE);
+                    const unsigned int real_tmpsize = OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbufs[index], obj->tmpsizes[index], FALSE);
                 
                     OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
@@ -1232,7 +1227,7 @@ int OCI_API OCI_ObjectGetRaw
 
         if (value && ind && (OCI_IND_NULL != *ind))
         {
-            ub4 raw_len = OCIRawSize(obj->con->env, *value);
+            const ub4 raw_len = OCIRawSize(obj->con->env, *value);
 
             if (len > raw_len)
             {
@@ -1476,8 +1471,6 @@ boolean OCI_API OCI_ObjectSetBoolean
     boolean      value
 )
 {
-    int index;
-
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
@@ -1485,7 +1478,7 @@ boolean OCI_API OCI_ObjectSetBoolean
 
     OCI_STATUS = FALSE;
 
-    index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
+    const int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
 
     if (index >= 0)
     {
@@ -1661,7 +1654,7 @@ boolean OCI_API OCI_ObjectSetString
     }
     else
     {
-        int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT, TRUE);
+        const int index = OCI_ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT, TRUE);
 
         if (index >= 0)
         {
@@ -1887,18 +1880,16 @@ boolean OCI_API OCI_ObjectSetNull
     const otext *attr
 )
 {
-    int index;
-
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
     OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
-    index = OCI_ObjectGetAttrIndex(obj, attr, -1, TRUE);
+    const int index = OCI_ObjectGetAttrIndex(obj, attr, -1, TRUE);
 
     if (index >= 0)
     {
-        int ind_index = obj->idx_ind + OCI_ObjectGetIndOffset(obj->typinf, index);
+        const int ind_index = obj->idx_ind + OCI_ObjectGetIndOffset(obj->typinf, index);
 
         obj->tab_ind[ind_index] = OCI_IND_NULL;
 
@@ -1931,7 +1922,7 @@ boolean OCI_API OCI_ObjectIsNull
 
     if (index >= 0)
     {
-        int ind_index = obj->idx_ind + OCI_ObjectGetIndOffset(obj->typinf, index);
+        const int ind_index = obj->idx_ind + OCI_ObjectGetIndOffset(obj->typinf, index);
 
         OCI_RETVAL = (OCI_IND_NOTNULL != obj->tab_ind[ind_index]);
 
@@ -2040,8 +2031,6 @@ boolean OCI_API OCI_ObjectToText
     boolean      quote = TRUE;
     unsigned int len   = 0;
 
-    int i;
-
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
@@ -2057,7 +2046,7 @@ boolean OCI_API OCI_ObjectToText
     len += OCI_StringAddToBuffer(str, len, obj->typinf->name, FALSE);
     len += OCI_StringAddToBuffer(str, len, OTEXT("("), FALSE);
 
-    for (i = 0; i < obj->typinf->nb_cols && OCI_STATUS; i++)
+    for (int i = 0; i < obj->typinf->nb_cols && OCI_STATUS; i++)
     {
         attr  = obj->typinf->cols[i].name;
         quote = TRUE;
@@ -2070,7 +2059,7 @@ boolean OCI_API OCI_ObjectToText
         {
             void *data = NULL;
             unsigned int data_size = 0;
-            unsigned int data_type = obj->typinf->cols[i].datatype;
+            const unsigned int data_type = obj->typinf->cols[i].datatype;
 
             switch (data_type)
             {

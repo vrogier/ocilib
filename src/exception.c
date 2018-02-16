@@ -24,7 +24,7 @@
  *                            STRINGS MESSAGES
  * ********************************************************************************************* */
 
-static otext * OCILib_TypeNames[OCI_IPC_COUNT] =
+static const otext * OCILib_TypeNames[OCI_IPC_COUNT] =
 {
     OTEXT("Oracle memory"),
 
@@ -97,7 +97,7 @@ static otext * OCILib_TypeNames[OCI_IPC_COUNT] =
 
 #if defined(OCI_CHARSET_WIDE) && !defined(_MSC_VER)
 
-static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
+static const otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
 {
     OTEXT("No error"),
     OTEXT("OCILIB has not been initialized"),
@@ -133,7 +133,7 @@ static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
 
 #else
 
-static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
+static const otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
 {
     OTEXT("No error"),
     OTEXT("OCILIB has not been initialized"),
@@ -169,7 +169,7 @@ static otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
 
 #endif
 
-static otext * OCILib_OraFeatures[OCI_FEATURE_COUNT] =
+static const otext * OCILib_OraFeatures[OCI_FEATURE_COUNT] =
 {
     OTEXT("Oracle 9.0 support for Unicode data"),
     OTEXT("Oracle 9.0 Timestamps and Intervals"),
@@ -185,11 +185,11 @@ static otext * OCILib_OraFeatures[OCI_FEATURE_COUNT] =
 
 typedef struct OCI_StmtStateTable
 {
-    int    state;
-    otext *name;
+    int state;
+    const otext *name;
 } OCI_StmtStateTable;
 
-static OCI_StmtStateTable OCILib_StmtStates[OCI_STMT_STATES_COUNT] =
+static const OCI_StmtStateTable OCILib_StmtStates[OCI_STMT_STATES_COUNT] =
 {
     { OCI_STMT_CLOSED,    OTEXT("closed")        },
     { OCI_STMT_PARSED,    OTEXT("parsed")        },
@@ -198,7 +198,7 @@ static OCI_StmtStateTable OCILib_StmtStates[OCI_STMT_STATES_COUNT] =
     { OCI_STMT_EXECUTED,  OTEXT("executed")      }
 };
 
-static otext * OCILib_DirPathStates[OCI_DPS_COUNT] =
+static const otext * OCILib_DirPathStates[OCI_DPS_COUNT] =
 {
     OTEXT("non prepared"),
     OTEXT("prepared"),
@@ -206,7 +206,7 @@ static otext * OCILib_DirPathStates[OCI_DPS_COUNT] =
     OTEXT("terminated")
 };
 
-static otext * OCILib_HandleNames[OCI_HDLE_COUNT] =
+static const otext * OCILib_HandleNames[OCI_HDLE_COUNT] =
 {
     OTEXT("OCI handle"),
     OTEXT("OCI descriptors"),
@@ -729,7 +729,7 @@ void OCI_ExceptionStatementState
 
     if (err)
     {
-        int i, index = 0;
+        int index = 0;
 
         err->type    = OCI_ERR_OCILIB;
         err->libcode = OCI_ERR_STMT_STATE;
@@ -740,7 +740,7 @@ void OCI_ExceptionStatementState
             err->con = stmt->con;
         }
 
-        for(i = 0; i < OCI_STMT_STATES_COUNT; i++)
+        for(int i = 0; i < OCI_STMT_STATES_COUNT; i++)
         {
             if (state == OCILib_StmtStates[i].state)
             {

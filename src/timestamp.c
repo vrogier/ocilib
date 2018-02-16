@@ -974,12 +974,14 @@ boolean OCI_API OCI_TimestampToCTime
 {
     time_t time = (time_t) -1;
     int    msec = 0;
-    struct tm t = { 0 };
+    struct tm t;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
+
+    memset(&t, 0, sizeof(t));
 
     OCI_STATUS = OCI_TimestampGetDateTime(tmsp, &t.tm_year, &t.tm_mon, &t.tm_mday,
                                           &t.tm_hour, &t.tm_min, &t.tm_sec, &msec);

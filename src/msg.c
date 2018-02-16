@@ -145,7 +145,7 @@ boolean OCI_API OCI_MsgReset
     OCI_Msg *msg
 )
 {
-    unsigned int  len = 0;
+    const unsigned int  len = 0;
 
     boolean res = 
     (
@@ -253,7 +253,7 @@ boolean OCI_API OCI_MsgGetRaw
 
     if ((msg->payload) && (OCI_IND_NULL != msg->ind))
     {
-        unsigned int raw_size = OCIRawSize(msg->typinf->con->env, (OCIRaw *) msg->payload);
+        const unsigned int raw_size = OCIRawSize(msg->typinf->con->env, (OCIRaw *) msg->payload);
 
         if (*size > raw_size)
         {
@@ -533,7 +533,7 @@ boolean OCI_API OCI_MsgGetID
 
     if (msg->id)
     {
-        ub4 raw_len = OCIRawSize(msg->typinf->con->env, msg->id);
+        const ub4 raw_len = OCIRawSize(msg->typinf->con->env, msg->id);
 
         if (*len > raw_len)
         {
@@ -577,7 +577,7 @@ boolean OCI_API OCI_MsgGetOriginalID
 
     if (OCI_STATUS && value)
     {
-        ub4 raw_len = OCIRawSize(msg->typinf->con->env, value);
+        const ub4 raw_len = OCIRawSize(msg->typinf->con->env, value);
 
         if (*len > raw_len)
         {
@@ -804,9 +804,7 @@ boolean OCI_API OCI_MsgSetConsumers
 
         if (OCI_STATUS)
         {
-            unsigned int i;
-
-            for(i = 0; i < count; i++)
+            for(unsigned int i = 0; i < count; i++)
             {
                 handles[i] = consumers[i]->handle;
             }

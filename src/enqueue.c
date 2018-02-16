@@ -24,8 +24,8 @@
  *                             PRIVATE VARIABLES
  * ********************************************************************************************* */
 
-static unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
-static unsigned int EnqueueModeValues[] = { OCI_ASD_BEFORE, OCI_ASD_TOP };
+static const unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
+static const unsigned int EnqueueModeValues[]    = { OCI_ASD_BEFORE, OCI_ASD_TOP };
 
 /* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
@@ -271,7 +271,7 @@ boolean OCI_API OCI_EnqueueGetRelativeMsgID
     
     if (OCI_STATUS && value)
     {
-        ub4 raw_len = OCIRawSize(enqueue->typinf->con->env, value);
+        const ub4 raw_len = OCIRawSize(enqueue->typinf->con->env, value);
 
         if (*len > raw_len)
         {

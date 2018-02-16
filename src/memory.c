@@ -31,7 +31,7 @@
        OCI_MutexAcquire(OCILib.mem_mutex);  \
     }                                       \
                                             \
-    exp;                                    \
+    (exp);                                  \
                                             \
     if (OCILib.mem_mutex)                   \
     {                                       \
@@ -51,7 +51,7 @@ void * OCI_MemAlloc
 )
 {
     OCI_MemoryBlock * mem_block = NULL;
-    size_t size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
+    const size_t size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
 
     mem_block = (OCI_MemoryBlock *)malloc(size);
 
@@ -183,10 +183,10 @@ boolean OCI_HandleAlloc
 (
     CONST dvoid *parenth,
     dvoid      **hndlpp,
-    CONST ub4    type
+    ub4          type
  )
 {
-    sword ret = OCIHandleAlloc(parenth, hndlpp, type, 0, NULL);
+    const sword ret = OCIHandleAlloc(parenth, hndlpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
@@ -202,8 +202,8 @@ boolean OCI_HandleAlloc
 
 boolean OCI_HandleFree
 (
-    dvoid    *hndlp,
-    CONST ub4 type
+    dvoid *hndlp,
+    ub4    type
 )
 {
     sword ret = OCI_SUCCESS;
@@ -226,10 +226,10 @@ boolean OCI_DescriptorAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
-    CONST ub4    type
+    ub4          type
  )
 {
-    sword ret = OCIDescriptorAlloc(parenth, descpp, type, 0, NULL);
+    const sword ret = OCIDescriptorAlloc(parenth, descpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
@@ -247,7 +247,7 @@ boolean OCI_DescriptorArrayAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
-    CONST ub4    type,
+    ub4          type,
     ub4          nb_elem
 )
 {
@@ -265,9 +265,7 @@ boolean OCI_DescriptorArrayAlloc
 #endif
 
     {
-        ub4 i;
-
-        for (i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
+        for (ub4 i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
         {
             ret = OCIDescriptorAlloc(parenth, &descpp[i], type, 0, NULL);
         }
@@ -287,8 +285,8 @@ boolean OCI_DescriptorArrayAlloc
 
 boolean OCI_DescriptorFree
 (
-    dvoid    *descp,
-    CONST ub4 type
+    dvoid *descp,
+    ub4   type
 )
 {
     sword ret = OCI_SUCCESS;
@@ -310,7 +308,7 @@ boolean OCI_DescriptorFree
 boolean OCI_DescriptorArrayFree
 (
     dvoid   **descp,
-    CONST ub4 type,
+    ub4       type,
     ub4       nb_elem
 )
 {
@@ -331,9 +329,7 @@ boolean OCI_DescriptorArrayFree
     #endif
 
         {
-            ub4 i;
-
-            for (i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
+            for (ub4 i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
             {
                 ret = OCIDescriptorFree(descp[i], type);
             }
@@ -362,7 +358,7 @@ sword OCI_ObjectNew
     dvoid          **instance
 )
 {
-    sword ret = OCIObjectNew(env, err, svc, typecode, tdo, table, duration, value, instance);
+    const sword ret = OCIObjectNew(env, err, svc, typecode, tdo, table, duration, value, instance);
 
     if (OCI_SUCCESSFUL(ret))
     {

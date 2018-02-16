@@ -25,10 +25,10 @@
  * ********************************************************************************************* */
 
 #define COMPUTE_LENTGH(type, ptr, size)     \
-    const type *s = (const type *) ptr;     \
-    const type *e = (const type *) ptr;     \
+    const type *s = (const type *) (ptr);   \
+    const type *e = (const type *) (ptr);   \
     while (*e++) ;                          \
-    size = (int) (e - s - (size_t) 1);      \
+    (size) = (int) (e - s - (size_t) 1);    \
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_StringLength
@@ -75,20 +75,18 @@ size_t OCI_StringLength
 
 unsigned int OCI_StringBinaryToString
 (
-    unsigned char *binary,
-    unsigned int   binary_size,
-    otext         *buffer
- )
+    const unsigned char *binary,
+    unsigned int         binary_size,
+    otext               *buffer
+)
 {
     char hex_str[] = "0123456789ABCDEF";
 
-    unsigned int len = binary_size * 2;
+    const unsigned int len = binary_size * 2;
 
     if (buffer)
     {
-        unsigned int  i;
-        
-        for (i = 0; i < binary_size; i++)
+        for (unsigned int i = 0; i < binary_size; i++)
         {
             buffer[i * 2 + 0] = hex_str[binary[i] >> 4  ];
             buffer[i * 2 + 1] = hex_str[binary[i] & 0x0F];
@@ -120,7 +118,7 @@ boolean OCI_StringRequestBuffer
 
     request_size++;
 
-    request_size *= OCILib.nls_utf8 ? UTF8_BYTES_PER_CHAR :  sizeof(otext);
+    request_size *= OCILib.nls_utf8 ? OCI_UTF8_BYTES_PER_CHAR :  sizeof(otext);
 
     if (!*buffer)
     {
@@ -153,7 +151,7 @@ void OCI_StringTranslate
     size_t size_char_out
 )
 {
-    int len = char_count;
+    const int len = char_count;
 
     if (!src || !dst)
     {
@@ -417,7 +415,7 @@ otext * OCI_StringFromStringPtr
 
     if (tmp)
     {
-        size_t length = OCIStringSize(OCILib.env, str) / sizeof(dbtext);
+        const size_t length = OCIStringSize(OCILib.env, str) / sizeof(dbtext);
 
         if (!(*buffer))
         {
@@ -760,11 +758,11 @@ unsigned int OCI_StringGetFromType
             {
                 if (ptr)
                 {
-                    unsigned char lob_buf[(OCI_SIZE_BUFFER + 1) * UTF8_BYTES_PER_CHAR];
+                    unsigned char lob_buf[(OCI_SIZE_BUFFER + 1) * OCI_UTF8_BYTES_PER_CHAR];
 
                     while (res)
                     {
-                        unsigned int bytes_count = OCI_SIZE_BUFFER * UTF8_BYTES_PER_CHAR;
+                        unsigned int bytes_count = OCI_SIZE_BUFFER * OCI_UTF8_BYTES_PER_CHAR;
                         unsigned int char_count = 0;
 
                         res = OCI_LobRead2(lob, lob_buf, &char_count, &bytes_count);
@@ -1109,11 +1107,9 @@ char * ocistrdup
     const char * src
 )
 {
-    char *dst;
-
     OCI_CHECK(NULL == src, NULL)
 
-    dst = (char *) OCI_MemAlloc(OCI_IPC_STRING, 1, strlen(src) + 1, 0);
+    char *dst = (char *) OCI_MemAlloc(OCI_IPC_STRING, 1, strlen(src) + 1, 0);
 
     if (dst)
     {
@@ -1170,11 +1166,10 @@ int ocisprintf
 )
 {
     va_list args;
-    int n;
 
     va_start(args, format);
 
-    n = (int) vsnprintf(str, (size_t) size, format, args);
+    const int n = (int) vsnprintf(str, (size_t) size, format, args);
 
     va_end(args);
 
@@ -1190,11 +1185,9 @@ wchar_t * ociwcsdup
     const wchar_t * src
 )
 {
-    wchar_t *dst;
-
     OCI_CHECK(NULL == src, NULL)
 
-    dst = (wchar_t *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(wchar_t), wcslen(src) + 1, 0);
+    wchar_t *dst = (wchar_t *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(wchar_t), wcslen(src) + 1, 0);
 
     if (dst)
     {

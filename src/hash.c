@@ -24,7 +24,7 @@
  *                             PRIVATE VARIABLES
  * ********************************************************************************************* */
 
-static unsigned int HashTypeValues[] = { OCI_HASH_STRING, OCI_HASH_INTEGER, OCI_HASH_POINTER };
+static const unsigned int HashTypeValues[] = { OCI_HASH_STRING, OCI_HASH_INTEGER, OCI_HASH_POINTER };
 
 
 /* ********************************************************************************************* *
@@ -49,9 +49,7 @@ unsigned int OCI_HashCompute
 
     for(h = 0, p = (otext *) str; (*p) != 0; p++)
     {
-        otext c = *p;
-
-        h = 31 * h + otoupper(c);
+        h = 31 * h + otoupper(*p);
     }
 
     return (h % table->size);
@@ -184,8 +182,6 @@ boolean OCI_API OCI_HashFree
     OCI_HashTable *table
 )
 {
-    unsigned int i;
-
     OCI_HashEntry *e1 = NULL, *e2 = NULL;
     OCI_HashValue *v1 = NULL, *v2 = NULL;
 
@@ -194,7 +190,7 @@ boolean OCI_API OCI_HashFree
 
     if (table->items)
     {
-        for (i = 0; i < table->size; i++)
+        for (unsigned int i = 0; i < table->size; i++)
         {
             e1 = table->items[i];
 
@@ -481,13 +477,12 @@ OCI_HashEntry * OCI_API OCI_HashLookup
 )
 {
     OCI_HashEntry *e = NULL, *e1 = NULL, *e2 = NULL;
-    unsigned int i;
 
     OCI_CALL_ENTER(OCI_HashEntry*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, key)
 
-    i = OCI_HashCompute(table, key);
+    const unsigned int i = OCI_HashCompute(table, key);
 
     if (i < table->size)
     {

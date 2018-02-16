@@ -24,8 +24,8 @@
  *                             PRIVATE VARIABLES
  * ********************************************************************************************* */
 
-static unsigned int CharsetFormValues[]   = { OCI_CSF_DEFAULT, OCI_CSF_NATIONAL };
-static unsigned int BindDirectionValues[] = { OCI_BDM_IN, OCI_BDM_OUT, OCI_BDM_IN_OUT };
+static const unsigned int CharsetFormValues[]   = { OCI_CSF_DEFAULT, OCI_CSF_NATIONAL };
+static const unsigned int BindDirectionValues[] = { OCI_BDM_IN, OCI_BDM_OUT, OCI_BDM_IN_OUT };
 
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS

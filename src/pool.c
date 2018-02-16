@@ -211,12 +211,12 @@ OCI_Pool * OCI_API OCI_PoolCreate
                 otext driver_version[OCI_SIZE_FORMAT];
 
                 osprintf(driver_version,
-                    osizeof(driver_version) - (size_t)1,
-                    OTEXT("%s : %d.%d.%d"),
-                    OCILIB_DRIVER_NAME,
-                    OCILIB_MAJOR_VERSION,
-                    OCILIB_MINOR_VERSION,
-                    OCILIB_REVISION_VERSION);
+                         osizeof(driver_version) - (size_t)1,
+                         OTEXT("%s : %d.%d.%d"),
+                         OCILIB_DRIVER_NAME,
+                         OCILIB_MAJOR_VERSION,
+                         OCILIB_MINOR_VERSION,
+                         OCILIB_REVISION_VERSION);
 
                 dbstr = OCI_StringGetOracleString(driver_version, &dbsize);
 
@@ -392,7 +392,7 @@ OCI_Connection * OCI_API OCI_PoolGetConnection
 
     if (OCI_RETVAL)
     {
-        unsigned int cache_size = OCI_PoolGetStatementCacheSize(pool);
+        const unsigned int cache_size = OCI_PoolGetStatementCacheSize(pool);
 
         OCI_SetStatementCacheSize(OCI_RETVAL, cache_size);
     }

@@ -60,11 +60,9 @@ boolean OCI_TypeInfoClose
     OCI_TypeInfo *typinf
 )
 {
-    ub2 i;
-
     OCI_CHECK(NULL == typinf, FALSE);
 
-    for (i=0; i < typinf->nb_cols; i++)
+    for (ub2 i = 0; i < typinf->nb_cols; i++)
     {
         OCI_FREE(typinf->cols[i].name)
     }
@@ -106,7 +104,6 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     ub1 desc_type               = 0;
     ub4 attr_type               = 0;
     ub4 num_type                = 0;
-    ub2 i;
 
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
     otext obj_name[OCI_SIZE_OBJ_NAME + 1];
@@ -458,7 +455,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                     /* describe children */
                     if (OCI_STATUS)
                     {
-                        for (i = 0; i < typinf->nb_cols; i++)
+                        for (ub2 i = 0; i < typinf->nb_cols; i++)
                         {
                             OCI_STATUS = OCI_STATUS && OCI_ColumnDescribe(&typinf->cols[i], con, NULL, param_cols, i + 1, ptype);
                             OCI_STATUS = OCI_STATUS && OCI_ColumnMap(&typinf->cols[i], NULL);
@@ -503,7 +500,6 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     if (!OCI_STATUS || syn_typinf)
     {
         OCI_TypeInfoFree(typinf);
-        typinf = NULL;
     }
 
 

@@ -1084,9 +1084,9 @@ typedef unsigned int big_uint;
 
 /* versions extract macros */
 
-#define OCI_VER_MAJ(v)                      (unsigned int) (v/100)
-#define OCI_VER_MIN(v)                      (unsigned int) ((v/10) - ((v/100)*10))
-#define OCI_VER_REV(v)                      (unsigned int) ((v) - ((v/10)*10))
+#define OCI_VER_MAJ(v)                      (unsigned int) ((v)/100)
+#define OCI_VER_MIN(v)                      (unsigned int) (((v)/10) - (((v)/100)*10))
+#define OCI_VER_REV(v)                      (unsigned int) ((v) - (((v)/10)*10))
 
 /* OCILIB Error types */
 
@@ -1134,7 +1134,7 @@ typedef unsigned int big_uint;
 
 #define OCI_MEM_ORACLE                      1
 #define OCI_MEM_OCILIB                      2
-#define OCI_MEM_ALL                         OCI_MEM_ORACLE | OCI_MEM_OCILIB
+#define OCI_MEM_ALL                         (OCI_MEM_ORACLE | OCI_MEM_OCILIB)
 
 /* binding */
 
@@ -1233,7 +1233,7 @@ typedef unsigned int big_uint;
 #define OCI_CNT_OBJECTS                     1
 #define OCI_CNT_ROWS                        2
 #define OCI_CNT_DATABASES                   4
-#define OCI_CNT_ALL                         OCI_CNT_OBJECTS | OCI_CNT_ROWS | OCI_CNT_DATABASES
+#define OCI_CNT_ALL                         (OCI_CNT_OBJECTS | OCI_CNT_ROWS | OCI_CNT_DATABASES)
 
 /* event notification types */
 
@@ -1258,7 +1258,7 @@ typedef unsigned int big_uint;
 #define OCI_DB_SPM_START                    1
 #define OCI_DB_SPM_MOUNT                    2
 #define OCI_DB_SPM_OPEN                     4
-#define OCI_DB_SPM_FULL                     OCI_DB_SPM_START | OCI_DB_SPM_MOUNT | OCI_DB_SPM_OPEN
+#define OCI_DB_SPM_FULL                     (OCI_DB_SPM_START | OCI_DB_SPM_MOUNT | OCI_DB_SPM_OPEN)
 
 /* database startup flags */
 
@@ -1271,7 +1271,7 @@ typedef unsigned int big_uint;
 #define OCI_DB_SDM_SHUTDOWN                 1
 #define OCI_DB_SDM_CLOSE                    2
 #define OCI_DB_SDM_DISMOUNT                 4
-#define OCI_DB_SDM_FULL                     OCI_DB_SDM_SHUTDOWN | OCI_DB_SDM_CLOSE | OCI_DB_SDM_DISMOUNT
+#define OCI_DB_SDM_FULL                     (OCI_DB_SDM_SHUTDOWN | OCI_DB_SDM_CLOSE | OCI_DB_SDM_DISMOUNT)
 
 /* database shutdown flags */
 
@@ -1674,7 +1674,7 @@ typedef unsigned int big_uint;
 
 #define OCI_SIZE_FORMAT                     64
 #define OCI_SIZE_BUFFER                     512
-#define OCI_SIZE_LONG                       (64*1024)-1
+#define OCI_SIZE_LONG                       ((64*1024)-1)
 #define OCI_SIZE_DATE                       45
 #define OCI_SIZE_TIMESTAMP                  54
 #define OCI_SIZE_FORMAT_TODATE              14

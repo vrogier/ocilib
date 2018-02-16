@@ -53,7 +53,7 @@ boolean OCI_ColumnGetAttrInfo
         }
         case OCI_CDT_NUMERIC:
         {
-            int type = col->subtype;
+            const int type = col->subtype;
 
             if (type & OCI_NUM_SHORT)
             {
@@ -136,7 +136,7 @@ boolean OCI_ColumnDescribe
     }
     else
     {
-        ub4 htype = (OCI_DESC_RESULTSET == ptype) ? OCI_HTYPE_STMT : OCI_DTYPE_PARAM;
+        const ub4 htype = (OCI_DESC_RESULTSET == ptype) ? OCI_HTYPE_STMT : OCI_DTYPE_PARAM;
 
         OCI_EXEC(OCIParamGet((dvoid *) handle, htype,  con->err, (void**) &param, (ub4) index))
     }
@@ -310,9 +310,9 @@ boolean OCI_ColumnDescribe
 #endif
 
         {
-            dbtext *dbstr    = NULL;
-            int     dbsize   = 0;
-            ub4     attrname = (OCI_DESC_COLLECTION == ptype) ? OCI_ATTR_TYPE_NAME : OCI_ATTR_NAME;
+            int       dbsize   = 0;
+            dbtext   *dbstr    = NULL;
+            const ub4 attrname = (OCI_DESC_COLLECTION == ptype) ? OCI_ATTR_TYPE_NAME : OCI_ATTR_NAME;
 
             OCI_GET_ATTRIB(OCI_DTYPE_PARAM, attrname, param, &dbstr, &dbsize)
 
@@ -418,9 +418,7 @@ boolean OCI_ColumnMap
     OCI_Statement *stmt
 )
 {
-    ub2 char_size = (ub2) ( (OCILib.nls_utf8 ) ? UTF8_BYTES_PER_CHAR : sizeof(otext) );
-
-    boolean res = TRUE;
+    const ub2 char_size = (ub2) ( (OCILib.nls_utf8 ) ? OCI_UTF8_BYTES_PER_CHAR : sizeof(otext) );
 
     OCI_CHECK(NULL == col, FALSE)
 
@@ -773,7 +771,7 @@ boolean OCI_ColumnMap
         }
     }
 
-    return res;
+    return TRUE;
 }
 
 /* ********************************************************************************************* *

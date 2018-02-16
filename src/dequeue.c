@@ -24,9 +24,9 @@
  *                             PRIVATE VARIABLES
  * ********************************************************************************************* */
 
-static unsigned int NavigationModeValues[] = { OCI_ADN_FIRST_MSG, OCI_ADN_NEXT_MSG, OCI_ADN_NEXT_TRANSACTION };
-static unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
-static unsigned int DequeueModeValues[]    = { OCI_ADM_BROWSE, OCI_ADM_LOCKED, OCI_ADM_REMOVE, OCI_ADM_REMOVE_NODATA };
+static const unsigned int NavigationModeValues[] = { OCI_ADN_FIRST_MSG, OCI_ADN_NEXT_MSG, OCI_ADN_NEXT_TRANSACTION };
+static const unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
+static const unsigned int DequeueModeValues[]    = { OCI_ADM_BROWSE, OCI_ADM_LOCKED, OCI_ADM_REMOVE, OCI_ADM_REMOVE_NODATA };
 
 /* ********************************************************************************************* *
  *                            PUBLIC FUNCTIONS
@@ -397,7 +397,7 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
 
     if (OCI_STATUS && value)
     {
-        ub4 raw_len = OCIRawSize(dequeue->typinf->con->env, value);
+        const ub4 raw_len = OCIRawSize(dequeue->typinf->con->env, value);
 
         if (*len > raw_len)
         {
@@ -644,9 +644,7 @@ boolean OCI_API OCI_DequeueSetAgentList
 
         if (OCI_STATUS)
         {
-            unsigned int i;
-
-            for (i = 0; i < count; i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 dequeue->agent_list[i] = consumers[i]->handle;
             }

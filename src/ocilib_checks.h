@@ -49,15 +49,16 @@
                                                                                                     \
     OCI_EXEC                                                                                        \
     (                                                                                               \
-        OCIAttrGet((void*)handle, (ub4)htype, (void*)value, (ub4*)size, (ub4)atype, (ctx)->oci_err) \
+        OCIAttrGet((void*) (handle), (ub4) (htype), (void*) (value),                                \
+                   (ub4*) (size), (ub4) (atype), (ctx)->oci_err)                                   \
     )                                                                                               \
 
 #define OCI_SET_ATTRIB(htype, atype, handle, value, size)                                           \
                                                                                                     \
     OCI_EXEC                                                                                        \
     (                                                                                               \
-        OCIAttrSet((void*) handle, (ub4) htype, (void*) value,                                      \
-                   (ub4) size, (ub4)atype, (ctx)->oci_err)                                          \
+        OCIAttrSet((void*) (handle), (ub4) (htype), (void*) (value),                                \
+                   (ub4) (size), (ub4) (atype), (ctx)->oci_err)                                     \
     )                                                                                               \
 
 
@@ -121,8 +122,8 @@
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)                                \
     OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)                     \
     {                                                                       \
-        boolean ext_only_value = ext_only;                                  \
-        if (ext_only_value || OCI_BAM_EXTERNAL == stmt->bind_alloc_mode)    \
+        const boolean ext_only_value = ext_only;                            \
+        if ((ext_only_value) || OCI_BAM_EXTERNAL == (stmt)->bind_alloc_mode)\
         OCI_CALL_CHECK_PTR(type, data)                                      \
     }                                                                       \
 
@@ -162,7 +163,7 @@
 
 #define OCI_CALL_CHECK_BOUND(con, v, b1, b2)                                   \
                                                                                \
-    if ((v < (b1)) || (v > (b2)))                                              \
+    if (((v) < (b1)) || ((v) > (b2)))                                          \
     {                                                                          \
         OCI_RAISE_EXCEPTION(OCI_ExceptionOutOfBounds((con), (v)))              \
     }
@@ -323,7 +324,7 @@
 
 #define OCI_CALL_CHECK_FEATURE(con, feat, ver)                                     \
                                                                                    \
-    if (OCILib.version_runtime < ver || ((con) && (con)->ver_num < ver))           \
+    if (OCILib.version_runtime < (ver) || ((con) && (con)->ver_num < (ver)))       \
     {                                                                              \
         OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(con, feat))                  \
     }
@@ -505,15 +506,15 @@
 
 #define OCI_CALL_CHECK_XA_ENABLED(mode)                                        \
                                                                                \
-    if ( (mode & OCI_SESSION_XA) && (!OCILib.use_xa) )                         \
+    if ( ((mode) & OCI_SESSION_XA) && (!OCILib.use_xa) )                       \
     {                                                                          \
         OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_XA))   \
     }
 
 #define OCI_CALL_CHECK_ENUM_VALUE(con, stmt, mode, values, name)               \
     {                                                                          \
-        size_t ii = 0, nn = sizeof(values) / sizeof(values[0]);                \
-        for (; ii < nn; ii++) { if (mode == values[ii]) break; }               \
+        size_t ii = 0, nn = sizeof(values) / sizeof((values)[0]);              \
+        for (; ii < nn; ii++) { if ((mode) == (values)[ii]) break; }           \
         if (ii >= nn)                                                          \
         {                                                                      \
             OCI_RAISE_EXCEPTION(OCI_ExceptionArgInvalidValue(con, stmt,        \

@@ -24,9 +24,9 @@
  *                             PRIVATE VARIABLES
  * ********************************************************************************************* */
 
-static unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
-static unsigned int OpenModeValues[] = { OCI_LOB_READONLY, OCI_LOB_READWRITE };
-static unsigned int LobTypeValues[]  = { OCI_CLOB, OCI_NCLOB, OCI_BLOB };
+static const unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
+static const unsigned int OpenModeValues[] = { OCI_LOB_READONLY, OCI_LOB_READWRITE };
+static const unsigned int LobTypeValues[]  = { OCI_CLOB, OCI_NCLOB, OCI_BLOB };
 
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
@@ -58,7 +58,7 @@ OCI_Lob * OCI_LobInit
 
         if (!lob->handle || (OCI_OBJECT_ALLOCATED_ARRAY == lob->hstate))
         {
-            ub2 csid    = OCI_DEFAULT;
+            const ub2 csid    = OCI_DEFAULT;
             ub1 csfrm   = OCI_DEFAULT;
             ub1 lobtype = 0;
             ub4 empty   = 0;
@@ -329,7 +329,7 @@ boolean OCI_API OCI_LobRead2
         {
             if (OCILib.nls_utf8)
             {
-                (*byte_count) = (*char_count) * (ub4) UTF8_BYTES_PER_CHAR;
+                (*byte_count) = (*char_count) * (ub4)OCI_UTF8_BYTES_PER_CHAR;
             }
             else
             {

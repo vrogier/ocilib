@@ -152,7 +152,7 @@
 
 /* -- external C pointers ---- */
 
-#define OCI_IPC_ORACLE          -1
+#define OCI_IPC_ORACLE          (-1)
 #define OCI_IPC_BOOLEAN          0
 #define OCI_IPC_VOID             1
 #define OCI_IPC_SHORT            2
@@ -224,7 +224,7 @@
 #define OCI_IPC_BATCH_ERRORS     62
 #define OCI_IPC_STATEMENT_ARRAY  63
 
-#define OCI_IPC_COUNT            OCI_IPC_STATEMENT_ARRAY + 2
+#define OCI_IPC_COUNT            (OCI_IPC_STATEMENT_ARRAY + 2)
 
 /* --------------------------------------------------------------------------------------------- *
  * Oracle conditionnal features
@@ -350,36 +350,13 @@
 
 #ifndef OCI_UTF16ID
 
-    #define OCI_UTF16ID                   OCI_UCS2ID
+    #define OCI_UTF16ID OCI_UCS2ID
 
 #endif
 
-/* unicode constants */
 
-#define UNI_SHIFT             ((int) 10 )
-#define UNI_BASE              ((unsigned int) 0x0010000UL)
-#define UNI_MASK              ((unsigned int) 0x3FFUL)
-#define UNI_REPLACEMENT_CHAR  ((unsigned int) 0x0000FFFD)
-#define UNI_MAX_BMP           ((unsigned int) 0x0000FFFF)
-#define UNI_MAX_UTF16         ((unsigned int) 0x0010FFFF)
-#define UNI_MAX_UTF32         ((unsigned int) 0x7FFFFFFF)
-#define UNI_MAX_LEGAL_UTF32   ((unsigned int) 0x0010FFFF)
-#define UNI_SUR_HIGH_START    ((unsigned int) 0xD800)
-#define UNI_SUR_HIGH_END      ((unsigned int) 0xDBFF)
-#define UNI_SUR_LOW_START     ((unsigned int) 0xDC00)
-#define UNI_SUR_LOW_END       ((unsigned int) 0xDFFF)
-
-#define CVT_SRC_ILLEGAL         0
-#define CVT_SRC_EXHAUSTED      -1
-#define CVT_DST_EXHAUSTED      -2
-
-#define CVT_STRICT              0
-#define CVT_LENIENT             1
-
-#define UTF8_BYTES_PER_CHAR     4
-
+#define OCI_UTF8_BYTES_PER_CHAR 4
 #define OCI_SIZE_TMP_CVT        128
-
 
 /* --------------------------------------------------------------------------------------------- *
  * Local helper macros
@@ -392,7 +369,7 @@
 
 /* memory management helpers */
 
-#define OCI_FREE(ptr)                   OCI_MemFree(ptr), ptr = NULL;
+#define OCI_FREE(ptr)                   { OCI_MemFree(ptr), (ptr) = NULL; }
 
 /* indicator and nullity handlers */
 
@@ -415,12 +392,12 @@
 
 #define OCI_CALL_DECLARE_VARIABLES(type, value, status)                         \
                                                                                 \
-    type call_retval = (type) value;                                            \
+    type call_retval = (type) (value);                                          \
     OCI_CALL_DECLARE_CONTEXT(status);                                           \
 
 #define OCI_CALL_CONTEXT_ENTER(mode)                                            \
                                                                                 \
-    if (mode & OCI_ENV_CONTEXT)                                                 \
+    if ((mode) & OCI_ENV_CONTEXT)                                               \
     {                                                                           \
         ctx->call_err = OCI_ErrorGet(FALSE);                                    \
         OCI_ContextCallEnter(ctx);                                              \
@@ -428,7 +405,7 @@
 
 #define OCI_CALL_CONTEXT_EXIT(mode)                                             \
                                                                                 \
-    if (mode & OCI_ENV_CONTEXT)                                                 \
+    if ((mode) & OCI_ENV_CONTEXT)                                               \
     {                                                                           \
         OCI_ContextCallExit(ctx);                                               \
     }
@@ -465,23 +442,23 @@
     OCI_CALL_JUMP_EXIT()                                                        \
 
 #define OCI_IS_PLSQL_STMT(type)                                                 \
-    ((OCI_CST_BEGIN == type) || (OCI_CST_DECLARE == type) || (OCI_CST_CALL == type))
+    ((OCI_CST_BEGIN == (type)) || (OCI_CST_DECLARE == (type)) || (OCI_CST_CALL == (type)))
 
 #define OCI_IS_OCI_NUMBER(type, subtype)                                        \
-   (OCI_CDT_NUMERIC == type && OCI_NUM_NUMBER == subtype)
+   (OCI_CDT_NUMERIC == (type) && OCI_NUM_NUMBER == (subtype))
 
 #define OCI_IS_OCILIB_OBJECT(type, subtype)                                     \
     ( (OCI_IS_OCI_NUMBER(type, subtype)) ||                                     \
-      (OCI_CDT_TEXT    != type &&                                               \
-       OCI_CDT_RAW     != type &&                                               \
-       OCI_CDT_BOOLEAN != type))
+      (OCI_CDT_TEXT    != (type) &&                                             \
+       OCI_CDT_RAW     != (type) &&                                             \
+       OCI_CDT_BOOLEAN != (type)))
 
 #define OCI_GET_PROP(type, value, obj_type, obj, prop, con, stmt, err)          \
                                                                                 \
     OCI_CALL_ENTER(type, value)                                                 \
     OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
     OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
-    OCI_RETVAL = (type) obj->prop;                                              \
+    OCI_RETVAL = (type) ((obj)->prop);                                          \
     OCI_CALL_EXIT()                                                             \
 
 #define OCI_SET_PROP(type, obj_type, obj, prop, value, con, stmt, err)          \
@@ -489,7 +466,7 @@
     OCI_CALL_ENTER(boolean, FALSE)                                              \
     OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
     OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
-    obj->prop = (type) value;                                                   \
+    (obj)->prop = (type) (value);                                               \
     OCI_RETVAL = OCI_STATUS;                                                    \
     OCI_CALL_EXIT()                                                             \
 
@@ -499,7 +476,7 @@
     OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
     OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
     OCI_CALL_CHECK_ENUM_VALUE((con),(stmt), (value), (enums), (msg))            \
-    obj->prop = (type) value;                                                   \
+    (obj)->prop = (type) (value);                                               \
     OCI_RETVAL = OCI_STATUS;                                                    \
     OCI_CALL_EXIT()                                                             \
 
@@ -507,55 +484,55 @@
                                                                                 \
     OCI_CALL_ENTER(type, value)                                                 \
     OCI_CALL_CHECK_INITIALIZED()                                                \
-    OCI_RETVAL = (type) prop;                                                   \
+    OCI_RETVAL = (type) (prop);                                                 \
     OCI_CALL_EXIT()                                                             \
 
 #define OCI_SET_LIB_PROP(prop, value)                                           \
                                                                                 \
     OCI_CALL_ENTER(boolean, FALSE)                                              \
     OCI_CALL_CHECK_INITIALIZED()                                                \
-    prop = value;                                                               \
+    (prop) = (value);                                                           \
     OCI_RETVAL = OCI_STATUS;                                                    \
     OCI_CALL_EXIT()                                                             \
 
 #define OCI_ALLOCATE_BUFFER(type, ptr, size, count)                             \
                                                                                 \
-    if (OCI_STATUS && !ptr)                                                     \
+    if (OCI_STATUS && !(ptr))                                                   \
     {                                                                           \
-        ptr = OCI_MemAlloc(type, size, (size_t) count, TRUE);                   \
+        (ptr) = OCI_MemAlloc(type, size, (size_t) (count), TRUE);               \
                                                                                 \
-        OCI_STATUS = (NULL != ptr);                                             \
+        OCI_STATUS = (NULL != (ptr));                                           \
     }                                                                           \
 
 #define OCI_REALLOCATE_BUFFER(type, ptr, size, current, allocated, requested)   \
                                                                                 \
     if (OCI_STATUS)                                                             \
     {                                                                           \
-        if (!ptr)                                                               \
+        if (!(ptr))                                                             \
         {                                                                       \
-            ptr = OCI_MemAlloc(type, size, (size_t)requested, TRUE);            \
-            if (ptr) allocated = requested;                                     \
+            (ptr) = OCI_MemAlloc(type, size, (size_t) (requested), TRUE);       \
+            if (ptr) (allocated) = (requested);                                 \
         }                                                                       \
-        else if (current >= allocated)                                          \
+        else if ((current) >= (allocated))                                      \
         {                                                                       \
-            ptr = OCI_MemRealloc(ptr, type, size, (size_t) requested, TRUE);    \
-            if (ptr) allocated = requested;                                     \
+            (ptr) = OCI_MemRealloc(ptr, type, size, (size_t) (requested), TRUE);\
+            if (ptr) (allocated) = (requested);                                 \
         }                                                                       \
                                                                                 \
-        OCI_STATUS = (NULL != ptr);                                             \
+        OCI_STATUS = (NULL != (ptr));                                           \
     }                                                                           \
 
 
 #define OCI_ALLOCATE_DATA(type, ptr, count)                                     \
                                                                                 \
-    OCI_ALLOCATE_BUFFER(type, ptr, sizeof(*ptr), count)
+    OCI_ALLOCATE_BUFFER(type, ptr, sizeof(*(ptr)), count)
 
 #define OCI_REALLOCATE_DATA(type, ptr, cur, alloc, inc)                         \
                                                                                 \
-    OCI_REALLOCATE_BUFFER(type, ptr, sizeof(*ptr), cur, alloc, inc)
+    OCI_REALLOCATE_BUFFER(type, ptr, sizeof(*(ptr)), cur, alloc, inc)
 
-#define OCI_ARRAY_GET_AT(ptr, size, offset)  (((ub1 *) ptr) + (size_t)(size*i))
-#define OCI_ARRAY_SET_AT(ptr, type, offset, value)  *(type*)(OCI_ARRAY_GET_AT(ptr, sizeof(type), i)) = (type) value;
+#define OCI_ARRAY_GET_AT(ptr, size, offset)  (((ub1 *) (ptr)) + (size_t)((size)*i))
+#define OCI_ARRAY_SET_AT(ptr, type, offset, value)  *(type*)(OCI_ARRAY_GET_AT(ptr, sizeof(type), i)) = (type) (value);
 
 
 #define OCI_STRING_VALID(s) ((s) && ((s)[0]))
@@ -584,25 +561,21 @@
                                                                                \
     (((unsigned long)(amount)+((align)-1))&~((align)-1))
 
-#define OCI_SIZEOF_NUMBER               22
-#define OCI_SIZEOF_DATE                 7
-
 #define osizeof(s) (sizeof(s) / sizeof(otext))
 
-#define ocharcount(l) (l / sizeof(otext))
-#define dbcharcount(l) (l / sizeof(dbtext))
+#define ocharcount(l)  ((l) / sizeof(otext))
+#define dbcharcount(l) ((l) / sizeof(dbtext))
 
 #define OCI_ERR_AQ_LISTEN_TIMEOUT      25254
 #define OCI_ERR_AQ_DEQUEUE_TIMEOUT     25228
 #define OCI_ERR_SUB_BUG_OCI_UTF16      24915
-
 
 #define OCI_DEFAUT_STMT_CACHE_SIZE     20
 
 #define WCHAR_2_BYTES   0xFFFF
 #define WCHAR_4_BYTES   0x7FFFFFFF
 
-#define SCALE_FLOAT     -127
+#define SCALE_FLOAT     (-127)
 
 #define OCI_VARS_COUNT 1
 

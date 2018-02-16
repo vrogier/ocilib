@@ -22,11 +22,11 @@
 #define OCILIB_OCI_LOADER_H_INCLUDED
 
 #if defined(_AIX)
-  #define  LIB_OPEN_FLAGS        RTLD_NOW | RTLD_GLOBAL | RTLD_MEMBER
+  #define  LIB_OPEN_FLAGS        (RTLD_NOW | RTLD_GLOBAL | RTLD_MEMBER)
 #elif defined(__hpux)
-  #define  LIB_OPEN_FLAGS        BIND_DEFERRED |BIND_VERBOSE| DYNAMIC_PATH
+  #define  LIB_OPEN_FLAGS        (BIND_DEFERRED |BIND_VERBOSE| DYNAMIC_PATH)
 #else
-  #define  LIB_OPEN_FLAGS        RTLD_NOW | RTLD_GLOBAL
+  #define  LIB_OPEN_FLAGS        (RTLD_NOW | RTLD_GLOBAL)
 #endif
 
 #if defined(_WINDOWS)

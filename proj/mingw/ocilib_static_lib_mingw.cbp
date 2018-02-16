@@ -7,181 +7,186 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release - ANSI">
-				<Option output="..\..\lib32\libociliba.a" prefix_auto="0" extension_auto="0" />
+				<Option output="../../lib32/libociliba.a" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
-				<Option object_output="obj\Release\" />
+				<Option object_output="obj/Release/" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-Wall" />
+					<Add option="-std=c99" />
 					<Add option="-DOCI_CHARSET_ANSI" />
 					<Add option="-DOCI_IMPORT_RUNTIME" />
 					<Add option="-DOCI_API=__stdcall" />
-					<Add directory="..\..\include" />
+					<Add directory="../../include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 				</Linker>
 			</Target>
 			<Target title="Release - UNICODE">
-				<Option output="..\..\lib32\libocilibw.a" prefix_auto="0" extension_auto="0" />
+				<Option output="../../lib32/libocilibw.a" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
-				<Option object_output="obj\Release\" />
+				<Option object_output="obj/Release/" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-Wall" />
+					<Add option="-std=c99" />
 					<Add option="-DOCI_CHARSET_WIDE" />
 					<Add option="-DOCI_IMPORT_RUNTIME" />
 					<Add option="-DOCI_API=__stdcall" />
-					<Add directory="..\..\include" />
+					<Add directory="../../include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 				</Linker>
 			</Target>
 		</Build>
-		<Unit filename="..\..\include\ocilib.h" />
-		<Unit filename="..\..\src\agent.c">
+		<Compiler>
+			<Add option="-std=c99" />
+		</Compiler>
+		<Unit filename="../../include/ocilib.h" />
+		<Unit filename="../../src/agent.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\array.c">
+		<Unit filename="../../src/array.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\bind.c">
+		<Unit filename="../../src/bind.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\callback.c">
+		<Unit filename="../../src/callback.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\collection.c">
+		<Unit filename="../../src/collection.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\column.c">
+		<Unit filename="../../src/column.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\connection.c">
+		<Unit filename="../../src/connection.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\date.c">
+		<Unit filename="../../src/date.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\define.c">
+		<Unit filename="../../src/define.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\dequeue.c">
+		<Unit filename="../../src/dequeue.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\dirpath.c">
+		<Unit filename="../../src/dirpath.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\element.c">
+		<Unit filename="../../src/element.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\enqueue.c">
+		<Unit filename="../../src/enqueue.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\error.c">
+		<Unit filename="../../src/error.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\event.c">
+		<Unit filename="../../src/event.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\exception.c">
+		<Unit filename="../../src/exception.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\file.c">
+		<Unit filename="../../src/file.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\format.c">
+		<Unit filename="../../src/format.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\handle.c">
+		<Unit filename="../../src/handle.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\hash.c">
+		<Unit filename="../../src/hash.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\interval.c">
+		<Unit filename="../../src/interval.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\iterator.c">
+		<Unit filename="../../src/iterator.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\library.c">
+		<Unit filename="../../src/library.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\list.c">
+		<Unit filename="../../src/list.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\lob.c">
+		<Unit filename="../../src/lob.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\long.c">
+		<Unit filename="../../src/long.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\memory.c">
+		<Unit filename="../../src/memory.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\msg.c">
+		<Unit filename="../../src/msg.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\mutex.c">
+		<Unit filename="../../src/mutex.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\number.c">
+		<Unit filename="../../src/number.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\object.c">
+		<Unit filename="../../src/object.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\oci_api.h" />
-		<Unit filename="..\..\src\oci_defs.h" />
-		<Unit filename="..\..\src\oci_import.h" />
-		<Unit filename="..\..\src\oci_loader.h" />
-		<Unit filename="..\..\src\oci_types.h" />
-		<Unit filename="..\..\src\ocilib_checks.h" />
-		<Unit filename="..\..\src\ocilib_defs.h" />
-		<Unit filename="..\..\src\ocilib_internal.h" />
-		<Unit filename="..\..\src\ocilib_types.h" />
-		<Unit filename="..\..\src\pool.c">
+		<Unit filename="../../src/oci_api.h" />
+		<Unit filename="../../src/oci_defs.h" />
+		<Unit filename="../../src/oci_import.h" />
+		<Unit filename="../../src/oci_loader.h" />
+		<Unit filename="../../src/oci_types.h" />
+		<Unit filename="../../src/ocilib_checks.h" />
+		<Unit filename="../../src/ocilib_defs.h" />
+		<Unit filename="../../src/ocilib_internal.h" />
+		<Unit filename="../../src/ocilib_types.h" />
+		<Unit filename="../../src/pool.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\queue.c">
+		<Unit filename="../../src/queue.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\ref.c">
+		<Unit filename="../../src/ref.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\resultset.c">
+		<Unit filename="../../src/resultset.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\statement.c">
+		<Unit filename="../../src/statement.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\string.c">
+		<Unit filename="../../src/string.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\subscription.c">
+		<Unit filename="../../src/subscription.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\thread.c">
+		<Unit filename="../../src/thread.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\threadkey.c">
+		<Unit filename="../../src/threadkey.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\timestamp.c">
+		<Unit filename="../../src/timestamp.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\transaction.c">
+		<Unit filename="../../src/transaction.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\typeinfo.c">
+		<Unit filename="../../src/typeinfo.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>

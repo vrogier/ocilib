@@ -24,7 +24,7 @@
  *                             PRIVATE VARIABLES
  * ********************************************************************************************* */
 
-static unsigned int LongTypeValues[] = { OCI_CLONG, OCI_BLONG };
+static const unsigned int LongTypeValues[] = { OCI_CLONG, OCI_BLONG };
 
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
@@ -139,8 +139,6 @@ unsigned int OCI_API OCI_LongRead
     unsigned int len
 )
 {
-    unsigned int fact = 1;
-
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_LONG, lg)
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, buffer)
@@ -167,7 +165,7 @@ unsigned int OCI_API OCI_LongRead
 
     /* copy buffer */
 
-    memcpy(buffer, lg->buffer + (size_t) lg->offset*fact, (size_t) (OCI_RETVAL*fact));
+    memcpy(buffer, lg->buffer + (size_t) lg->offset, (size_t) (OCI_RETVAL));
 
     lg->offset += OCI_RETVAL;
 

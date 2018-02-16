@@ -73,9 +73,9 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
     OCI_RETVAL = OCI_STATUS;                                        \
     OCI_CALL_EXIT()                                                 \
 
-#define OCI_BIND_GET_SCALAR(s, t, i) bnd->is_array ? ((t *) s) + i : (t *) s
-#define OCI_BIND_GET_HANDLE(s, t, i) bnd->is_array ? ((t **) s)[i] : (t *) s
-#define OCI_BIND_GET_BUFFER(d, t, i) (t *)(d + i * sizeof(t))
+#define OCI_BIND_GET_SCALAR(s, t, i) bnd->is_array ? ((t *) (s)) + (i) : (t *) (s)
+#define OCI_BIND_GET_HANDLE(s, t, i) bnd->is_array ? ((t **) (s))[i] : (t *) (s)
+#define OCI_BIND_GET_BUFFER(d, t, i) (t *)((d) + (i) * sizeof(t))
 
 /* --------------------------------------------------------------------------------------------- *
 * OCI_BindCheck
@@ -141,9 +141,9 @@ boolean OCI_BindCheck
         {
             if (OCILib.use_wide_char_conv)
             {
-                int max_chars = bnd->size / sizeof(dbtext);
-                size_t src_offset = index * max_chars * sizeof(otext);
-                size_t dst_offset = index * max_chars * sizeof(dbtext);
+                const int    max_chars  = bnd->size / sizeof(dbtext);
+                const size_t src_offset = index * max_chars * sizeof(otext);
+                const size_t dst_offset = index * max_chars * sizeof(dbtext);
 
                 OCI_StringUTF32ToUTF16(src + src_offset, dst + dst_offset, max_chars - 1);
             }
@@ -255,9 +255,9 @@ boolean OCI_BindUpdate
     {
         if (OCILib.use_wide_char_conv)
         {
-            int max_chars = bnd->size / sizeof(dbtext);
-            size_t src_offset = index * max_chars * sizeof(dbtext);
-            size_t dst_offset = index * max_chars * sizeof(otext);
+            const int    max_chars  = bnd->size / sizeof(dbtext);
+            const size_t src_offset = index * max_chars * sizeof(dbtext);
+            const size_t dst_offset = index * max_chars * sizeof(otext);
 
            OCI_StringUTF16ToUTF32(src + src_offset, dst + dst_offset, max_chars - 1);
         }
@@ -329,14 +329,14 @@ boolean OCI_BindCheckAll
     OCI_Statement *stmt
 )
 {
-    ub4 i, j;
+    ub4 j;
 
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == stmt, FALSE)
     OCI_CHECK(NULL == stmt->ubinds, TRUE);
 
-    for (i = 0; i < stmt->nb_ubinds && OCI_STATUS; i++)
+    for (ub4 i = 0; i < stmt->nb_ubinds && OCI_STATUS; i++)
     {
         OCI_Bind *bnd = stmt->ubinds[i];
 
@@ -400,14 +400,12 @@ boolean OCI_BindUpdateAll
     OCI_Statement *stmt
 )
 {
-    ub4 i, j;
-
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == stmt, FALSE)
     OCI_CHECK(NULL == stmt->ubinds, FALSE);
 
-    for (i = 0; i < stmt->nb_ubinds && OCI_STATUS; i++)
+    for (ub4 i = 0; i < stmt->nb_ubinds && OCI_STATUS; i++)
     {
         OCI_Bind *bnd = stmt->ubinds[i];
 
@@ -427,7 +425,7 @@ boolean OCI_BindUpdateAll
             {
                 if (bnd->is_array)
                 {
-                    for (j = 0; j < bnd->buffer.count && OCI_STATUS; j++)
+                    for (ub4 j = 0; j < bnd->buffer.count && OCI_STATUS; j++)
                     {
                         OCI_STATUS = OCI_BindUpdate(bnd, (ub1*)bnd->buffer.data, (ub1*)bnd->input, j);
                     }
@@ -679,9 +677,7 @@ boolean OCI_BindData
 
         if (OCI_STATUS)
         {
-            unsigned int i;
-
-            for (i=0; i < nbelem; i++)
+            for (unsigned int i = 0; i < nbelem; i++)
             {
                 *(ub2*)(((ub1 *)bnd->buffer.lens) + sizeof(ub2) * (size_t) i) = (ub2) size;
             }
@@ -953,17 +949,14 @@ boolean OCI_FetchIntoUserVariables
         {
             OCI_Column *col = OCI_GetColumn(rs, i);
 
-            int type = va_arg(args, int);
+            const int type = va_arg(args, int);
 
             switch (type)
             {
                case OCI_ARG_TEXT:
                 {
-                    const otext *src;
-                    otext *dst;
-
-                    src = OCI_GetString(rs, i);
-                    dst = va_arg(args, otext *);
+                    const otext *src = OCI_GetString(rs, i);
+                    otext *dst = va_arg(args, otext *);
 
                     if (dst)
                     {
@@ -1188,7 +1181,7 @@ boolean OCI_StatementReset
             Because, if we execute another sql with "returning into clause",
             OCI_ProcInBind won't be called by OCI. Nice Oracle bug ! */
 
-        unsigned int cache_size = OCI_GetStatementCacheSize(stmt->con);
+        const unsigned int cache_size = OCI_GetStatementCacheSize(stmt->con);
 
         if (cache_size > 0)
         {
@@ -1432,11 +1425,9 @@ boolean OCI_BatchErrorInit
 
         if (OCI_STATUS)
         {
-            ub4 i;
-
             stmt->batch->count = err_count;
 
-            for (i = 0; i < stmt->batch->count; i++)
+            for (ub4 i = 0; i < stmt->batch->count; i++)
             {
                 int dbsize  = -1;
                 dbtext *dbstr = NULL;
@@ -1948,7 +1939,6 @@ boolean OCI_PrepareFmt
 )
 {
     va_list args;
-    int     size;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -1959,7 +1949,7 @@ boolean OCI_PrepareFmt
 
     va_start(args, sql);
 
-    size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
+    const int size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
 
     va_end(args);
 
@@ -2007,7 +1997,6 @@ boolean OCI_ExecuteStmtFmt
 )
 {
     va_list args;
-    int     size;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -2018,7 +2007,7 @@ boolean OCI_ExecuteStmtFmt
 
     va_start(args, sql);
 
-    size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
+   const int size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
 
     va_end(args);
 
@@ -2066,7 +2055,6 @@ boolean OCI_ParseFmt
 )
 {
     va_list args;
-    int     size;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -2077,7 +2065,7 @@ boolean OCI_ParseFmt
 
     va_start(args, sql);
 
-    size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
+    const int size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
 
     va_end(args);
 
@@ -2125,7 +2113,6 @@ boolean OCI_DescribeFmt
 )
 {
     va_list args;
-    int     size;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -2136,7 +2123,7 @@ boolean OCI_DescribeFmt
 
     va_start(args, sql);
 
-    size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
+    const int size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
 
     va_end(args);
 
@@ -4115,9 +4102,7 @@ const otext * OCI_API OCI_GetSQLVerb
 
     if (OCI_UNKNOWN != code)
     {
-        int i;
-
-        for (i = 0; i < OCI_SQLCMD_COUNT; i++)
+        for (int i = 0; i < OCI_SQLCMD_COUNT; i++)
         {
             if (code == SQLCmds[i].code)
             {

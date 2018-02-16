@@ -60,7 +60,7 @@ boolean OCI_SubscriptionClose
             // OCISubscriptionUnRegister() seems to partially fail when OCI is initialized in UTF16 mode as it returns ORA-24915
             // Thus, if using OCI in Unicode mode, discard  error ORA-24915
 
-            sword res = OCISubscriptionUnRegister(sub->con->cxt, sub->subhp, sub->err, (ub4) OCI_DEFAULT);
+            const sword res = OCISubscriptionUnRegister(sub->con->cxt, sub->subhp, sub->err, (ub4) OCI_DEFAULT);
 
 #if defined(OCI_CHARSET_WIDE)
 

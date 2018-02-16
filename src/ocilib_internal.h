@@ -858,41 +858,41 @@ boolean OCI_HandleAlloc
 (
     CONST dvoid *parenth,
     dvoid      **hndlpp,
-    CONST ub4    type
+    ub4          type
 );
 
 boolean OCI_HandleFree
 (
     dvoid    *hndlp,
-    CONST ub4 type
+    ub4       type
 );
 
 boolean OCI_DescriptorAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
-    CONST ub4    type
+    ub4          type
 );
 
 boolean OCI_DescriptorArrayAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
-    CONST ub4    type,
+    ub4          type,
     ub4          nb_elem
  );
 
 boolean OCI_DescriptorFree
 (
-    void     *descp,
-    CONST ub4 type
+    void *descp,
+    ub4   type
 );
 
 boolean OCI_DescriptorArrayFree
 (
-    void    **descp,
-    CONST ub4 type,
-    ub4       nb_elem
+    void **descp,
+    ub4    type,
+    ub4    nb_elem
 );
 
 sword OCI_ObjectNew
@@ -1253,9 +1253,9 @@ size_t OCI_StringLength
 
 unsigned int OCI_StringBinaryToString
 (
-    unsigned char *binary,
-    unsigned int   binary_size,
-    otext         *buffer
+    const unsigned char *binary,
+    unsigned int         binary_size,
+    otext               *buffer
 );
 
 boolean OCI_StringRequestBuffer

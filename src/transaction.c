@@ -33,7 +33,7 @@ boolean OCI_TransactionClose
 OCI_Transaction * trans
 )
 {
-    boolean res = OCI_TransactionStop(trans);
+    const boolean res = OCI_TransactionStop(trans);
 
     /* close transaction handle */
 

@@ -24,7 +24,7 @@
  *                             PRIVATE VARIABLES
  * ********************************************************************************************* */
 
-static unsigned int ConversionModeValues[] = { OCI_DCM_DEFAULT, OCI_DCM_FORCE };
+static const unsigned int ConversionModeValues[] = { OCI_DCM_DEFAULT, OCI_DCM_FORCE };
 
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
@@ -475,7 +475,7 @@ boolean OCI_API OCI_DirPathSetColumn
 
                 if (OCILib.nls_utf8)
                 {
-                    dpcol->bufsize *= UTF8_BYTES_PER_CHAR;
+                    dpcol->bufsize *= OCI_UTF8_BYTES_PER_CHAR;
                 }
                 break;
             }
@@ -671,9 +671,7 @@ boolean OCI_API OCI_DirPathPrepare
 
     if (OCI_STATUS)
     {
-        ub2 i;
-
-        for (i = 0; i < dp->nb_cols && OCI_STATUS; i++)
+        for (ub2 i = 0; i < dp->nb_cols && OCI_STATUS; i++)
         {
             OCI_DirPathColumn *col = &dp->cols[i];
 
@@ -709,8 +707,7 @@ boolean OCI_API OCI_DirPathSetEntry
 {
     OCI_DirPathColumn *dpcol = NULL;
 
-    ub1 *data;
-    ub1 flag;
+    ub1 flag = 0;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)
@@ -760,7 +757,7 @@ boolean OCI_API OCI_DirPathSetEntry
 
             /* get internal data cell */
 
-            data = ((ub1 *) dpcol->data) + (size_t) ((row-1) * dpcol->bufsize);
+            ub1 *data = ((ub1 *) dpcol->data) + (size_t) ((row-1) * dpcol->bufsize);
 
             /* we weed to pack the buffer if wchar_t is 4 bytes */
 

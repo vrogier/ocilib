@@ -24,8 +24,8 @@
  *                             PRIVATE VARIABLES
  * ********************************************************************************************* */
 
-static unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
-static unsigned int FileTypeValues[] = { OCI_CFILE, OCI_BFILE };
+static const unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
+static const unsigned int FileTypeValues[] = { OCI_CFILE, OCI_BFILE };
 
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
@@ -388,7 +388,7 @@ unsigned int OCI_API OCI_FileRead
  #endif
 
     {
-        ub4 offset = (ub4) file->offset;
+        const ub4 offset = (ub4) file->offset;
 
         OCI_EXEC
         (

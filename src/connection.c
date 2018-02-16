@@ -24,7 +24,7 @@
  *                             PRIVATE VARIABLES
  * ********************************************************************************************* */
 
-static unsigned int TraceTypeValues[] = { OCI_TRC_IDENTITY, OCI_TRC_MODULE, OCI_TRC_ACTION, OCI_TRC_DETAIL };
+static const unsigned int TraceTypeValues[] = { OCI_TRC_IDENTITY, OCI_TRC_MODULE, OCI_TRC_ACTION, OCI_TRC_DETAIL };
 
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
@@ -1424,7 +1424,7 @@ boolean OCI_API OCI_ServerEnableOutput
 
     if (OCI_STATUS && !con->svopt->arrbuf)
     {
-        unsigned int charsize = sizeof(otext);
+        const unsigned int charsize = sizeof(otext);
 
         /* check parameter ranges ( Oracle 10g increased the size of output line */
 
@@ -1552,7 +1552,7 @@ const otext * OCI_API OCI_ServerGetOutput
 
         if (OCI_STATUS && (con->svopt->cursize > 0))
         {
-            unsigned int charsize = sizeof(otext);
+            const unsigned int charsize = sizeof(otext);
 
             OCI_RETVAL = (const otext*)(con->svopt->arrbuf + (size_t)(((con->svopt->lnsize + 1) * charsize) * con->svopt->curpos++));
         }

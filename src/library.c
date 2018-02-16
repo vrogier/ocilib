@@ -26,13 +26,13 @@
 
 OCI_Library OCILib;
 
-char * EnvironmentVarNames[OCI_VARS_COUNT] =
+const char * EnvironmentVarNames[OCI_VARS_COUNT] =
 {
     VAR_OCILIB_WORKAROUND_UTF16_COLUMN_NAME
 };
 
 
-OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
+const OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
 {
     {OCI_SFC_CREATE_TABLE,             OTEXT("CREATE TABLE")                                         },
     {OCI_SFC_SET_ROLE,                 OTEXT("SET ROLE")                                             },
@@ -160,7 +160,7 @@ OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
     {OCI_SFC_ALTER_OPERATOR,           OTEXT("ALTER OPERATOR")                                       }
 };
 
-static unsigned int FormatTypeValues[] =
+static const unsigned int FormatTypeValues[] =
 {
     OCI_FMT_DATE,
     OCI_FMT_TIMESTAMP,
@@ -170,7 +170,7 @@ static unsigned int FormatTypeValues[] =
     OCI_FMT_TIMESTAMP_TZ
 };
 
-static otext * FormatDefaultValues[OCI_FMT_COUNT] =
+static const otext * FormatDefaultValues[OCI_FMT_COUNT] =
 {
     OCI_STRING_FORMAT_DATE,
     OCI_STRING_FORMAT_TIMESTAMP,
@@ -622,13 +622,13 @@ boolean OCI_KeyMapFree
     boolean res      = TRUE;
     OCI_HashEntry *e = NULL;
     OCI_HashValue *v = NULL;
-    int i, n, nb_err = 0;
+    int nb_err       = 0;
 
     OCI_CHECK(NULL == OCILib.key_map, TRUE)
 
-    n = OCI_HashGetSize(OCILib.key_map);
+    const int n = OCI_HashGetSize(OCILib.key_map);
 
-    for (i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
         e = OCI_HashGetEntry(OCILib.key_map, i);
 

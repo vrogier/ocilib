@@ -318,13 +318,12 @@ ub4 OCI_ProcNotifyChanges
             boolean tbl_exist = FALSE;
             sb4     nb_tables = 0;
             sb4     nb_rows   = 0;
-            sb4     i;
-            
+
             /* get number of tables in the collection */
 
             OCI_EXEC(OCICollSize(sub->env, sub->err, tables, &nb_tables))
 
-            for (i = 0; i < nb_tables; i++)
+            for (sb4 i = 0; i < nb_tables; i++)
             {
                 nb_rows = 0;
 
@@ -370,13 +369,12 @@ ub4 OCI_ProcNotifyChanges
                         dvoid **row_elem  = NULL;
                         dvoid  *row_ind   = NULL;
                         boolean row_exist = FALSE;
-                        sb4 j;
 
                         /* get number of rows */
 
                         OCI_EXEC(OCICollSize(sub->env, sub->err, rows, &nb_rows))
 
-                        for (j = 0; j < nb_rows; j++)
+                        for (sb4 j = 0; j < nb_rows; j++)
                         {
                             /* partial reset of the event  */
 

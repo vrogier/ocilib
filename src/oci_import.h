@@ -300,32 +300,32 @@ extern OCILOBWRITEAPPEND2           OCILobWriteAppend2;
 
 #endif
 
-  #define OCIDateGetTime(date, hour, min, sec) \
-    { \
-        *hour = (date)->OCIDateTime.OCITimeHH; \
-        *min  = (date)->OCIDateTime.OCITimeMI; \
-        *sec  = (date)->OCIDateTime.OCITimeSS; \
+  #define OCIDateGetTime(date, hour, min, sec)   \
+    {                                            \
+        *(hour) = (date)->OCIDateTime.OCITimeHH; \
+        *(min)  = (date)->OCIDateTime.OCITimeMI; \
+        *(sec)  = (date)->OCIDateTime.OCITimeSS; \
     }
 
   #define OCIDateGetDate(date, year, month, day) \
-    { \
-        *year  = (date)->OCIDateYYYY; \
-        *month = (date)->OCIDateMM; \
-        *day   = (date)->OCIDateDD; \
+    {                                            \
+        *(year)  = (date)->OCIDateYYYY;          \
+        *(month) = (date)->OCIDateMM;            \
+        *(day)   = (date)->OCIDateDD;            \
     }
 
-  #define OCIDateSetTime(date, hour, min, sec) \
-    { \
-        (date)->OCIDateTime.OCITimeHH = hour; \
-        (date)->OCIDateTime.OCITimeMI = min; \
-        (date)->OCIDateTime.OCITimeSS = sec; \
+  #define OCIDateSetTime(date, hour, min, sec)   \
+    {                                            \
+        (date)->OCIDateTime.OCITimeHH = hour;    \
+        (date)->OCIDateTime.OCITimeMI = min;     \
+        (date)->OCIDateTime.OCITimeSS = sec;     \
     }
 
   #define OCIDateSetDate(date, year, month, day) \
-    { \
-        (date)->OCIDateYYYY = year; \
-        (date)->OCIDateMM   = month; \
-        (date)->OCIDateDD   = day; \
+    {                                            \
+        (date)->OCIDateYYYY = year;              \
+        (date)->OCIDateMM   = month;             \
+        (date)->OCIDateDD   = day;               \
     }
 
 #endif

@@ -66,9 +66,7 @@ int OCI_GetDefineIndex
 
         if (rs->map)
         {
-            ub4 i;
-
-            for (i = 0; i < rs->nb_defs; i++)
+            for (ub4 i = 0; i < rs->nb_defs; i++)
             {
                 OCI_HashAddInt(rs->map, rs->defs[i].col.name, (i+1));
             }
@@ -245,13 +243,13 @@ boolean OCI_DefineAlloc
 
     if (OCI_STATUS)
     {
-       /* Allocate buffer array */
+        /* Allocate buffer array */
 
-       ub4 bufsize = (ub4)(OCI_CDT_LONG == def->col.datatype ? sizeof(OCI_Long *) : def->col.bufsize);
+        const ub4 bufsize = (ub4)(OCI_CDT_LONG == def->col.datatype ? sizeof(OCI_Long *) : def->col.bufsize);
 
-       OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, def->buf.data, bufsize, def->buf.count)
+        OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, def->buf.data, bufsize, def->buf.count)
 
-       /* Allocate buffer length array */
+        /* Allocate buffer length array */
 
         for (i = 0; i < def->buf.count; i++)
         {

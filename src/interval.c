@@ -25,7 +25,7 @@
  * ********************************************************************************************* */
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
-static unsigned int IntervalTypeValues[] = { OCI_INTERVAL_YM, OCI_INTERVAL_DS };
+static const unsigned int IntervalTypeValues[] = { OCI_INTERVAL_YM, OCI_INTERVAL_DS };
 #endif
 
 /* ********************************************************************************************* *

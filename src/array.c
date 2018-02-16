@@ -52,9 +52,7 @@ boolean OCI_ArrayInit
     OCI_TypeInfo *typinf
 )
 {
-    unsigned int i;
-
-    for (i = 0; i < arr->nb_elem; i++)
+    for (unsigned int i = 0; i < arr->nb_elem; i++)
     {
 		void *handle = NULL;
 
@@ -144,11 +142,9 @@ boolean OCI_ArrayClose
 
     if (OCI_IS_OCILIB_OBJECT(arr->elem_type, arr->elem_subtype))
     {
-		unsigned int i;
-		
         /* Cleanup OCILIB Objects */
 
-        for (i = 0; i < arr->nb_elem; i++)
+        for (unsigned int i = 0; i < arr->nb_elem; i++)
         {
             OCI_FreeObjectFromType(arr->tab_obj[i], arr->elem_type);
         }

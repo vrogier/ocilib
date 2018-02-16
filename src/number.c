@@ -27,10 +27,10 @@
 typedef struct MagicNumber
 {
     unsigned char number[3];
-    otext* name;
+    const otext  *name;
 } MagicNumber;
 
-static MagicNumber MagicNumbers[] =
+static const MagicNumber MagicNumbers[] =
 {
     { { 2, 255, 101 }, OTEXT("~") },
     { { 1,   0,   0 }, OTEXT("-~") }
@@ -113,10 +113,10 @@ boolean OCI_TranslateNumericValue
         - OCINumber to signed/unsigned integers, double, and float
     */
 
-    uword in_size  = OCI_GetNumericTypeSize(in_type);
-    uword out_size = OCI_GetNumericTypeSize(out_type);
-    uword in_sign  = (in_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
-    uword out_sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+    const uword in_size  = OCI_GetNumericTypeSize(in_type);
+    const uword out_size = OCI_GetNumericTypeSize(out_type);
+    const uword in_sign  = (in_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
+    const uword out_sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
 
     OCINumber tmp;
     memset(&tmp, 0, sizeof(tmp));
@@ -282,11 +282,9 @@ boolean OCI_NumberFromString
 
     if (!done)
     {
-        int i;
-
-        for (i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
+        for (int i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
         {
-            MagicNumber *mag_num = &MagicNumbers[i];
+            const MagicNumber *mag_num = &MagicNumbers[i];
 
             if (ostrcmp(in_value, mag_num->name) == 0)
             {
@@ -415,11 +413,9 @@ boolean OCI_NumberToString
 
     if (!done)
     {
-        int i;
-
-        for (i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
+        for (int i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
         {
-            MagicNumber *mag_num = &MagicNumbers[i];
+            const MagicNumber *mag_num = &MagicNumbers[i];
 
             if (memcmp(number, mag_num->number, mag_num->number[0] + 1) == 0)
             {
