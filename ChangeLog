@@ -1,3 +1,24 @@
+2018-MM-DD Version 4.5.1 Vincent Rogier vince.rogier@ocilib.net
+
+    * Changes (C API)
+
+        - Driver information set by OCILIB (visible in V$SESSION_CONNECT_INFO) is now including OCILIB version (e.g. "OCILIB : x.y.z")
+        
+    * Fixes (C API)
+    
+        - Issue #141: OCIBindRaw() now accept empty buffers
+ 
+    * Fixes (C++ API)
+    
+        - Issue #141: ocilib::Statement::Bind<ocilib::Raw, unsigned int>() accepts now empty ocilib::Raw
+
+    * Miscellaneous:
+
+        - Addressed static code analysis hints and warnings
+        - OCILIB requires now C99 to be activated for compiling:
+            * When using autotools (Unixes): Enforcing C99 compiler flags using AC_PROG_CC_STDC() macro
+            * When using Visual Studio: OCILIB cannot be compiled anymore with VS2010 and earlier veriosn
+       
 2018-02-07 Version 4.5.0 Vincent Rogier vince.rogier@ocilib.net
 
     * Enhancements (C and C++ API)
