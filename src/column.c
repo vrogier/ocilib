@@ -370,7 +370,7 @@ boolean OCI_ColumnDescribe
             {
                 OCI_StringOracleToNative(dbstr_schema, schema_name, dbcharcount(dbsize_schema));
 
-                if (0 == ostrcasecmp(dbstr_schema, OTEXT("PUBLIC")))
+                if (0 == ostrcasecmp(schema_name, OTEXT("PUBLIC")))
                 {
                     schema_name[0] = 0;
                 }
