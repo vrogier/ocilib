@@ -87,6 +87,21 @@ boolean OCI_ArrayFreeFromHandles
  * bind.c
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Bind* OCI_BindCreate
+(
+    OCI_Context   *ctx,
+    OCI_Statement *stmt,
+    void          *data,
+    const otext   *name,
+    unsigned int   mode,
+    ub4            size,
+    ub1            type,
+    unsigned int   code,
+    unsigned int   subtype,
+    OCI_TypeInfo  *typinf,
+    unsigned int   nbelem
+);
+
 boolean OCI_BindFree
 (
     OCI_Bind *bnd
@@ -969,6 +984,12 @@ boolean OCI_ResultsetFree
 /* --------------------------------------------------------------------------------------------- *
  * statement.c
  * --------------------------------------------------------------------------------------------- */
+
+int OCI_BindGetInternalIndex
+(
+    OCI_Statement *stmt,
+    const otext   *name
+);
 
 boolean OCI_FetchIntoUserVariables
 (
