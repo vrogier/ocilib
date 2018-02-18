@@ -17,7 +17,7 @@ int main(void)
     OCI_Error      *err;
 
     int tab_int[ARRAY_SIZE];
-    char tab_str[ARRAY_SIZE][STRING_SIZE];
+    char tab_str[ARRAY_SIZE][STRING_SIZE+1];
 
     int i;
 
@@ -34,7 +34,7 @@ int main(void)
     OCI_BindArrayOfInts(st, ":i", (int*)tab_int, 0);
     OCI_BindArrayOfStrings(st, ":s", (char*)tab_str, STRING_SIZE, 0);
 
-    for (i = 0; i<1000; i++)
+    for (i = 0; i < ARRAY_SIZE; i++)
     {
         tab_int[i] = i + 1;
         sprintf(tab_str[i], "Name %d", i + 1);

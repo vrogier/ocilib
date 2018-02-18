@@ -24,6 +24,10 @@
  *                            PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
+#define OCI_ARRAY_INIT_HANDLE(type, func)                                   \
+    arr->tab_obj[i] = func;                                                 \
+    ((void **)(arr->mem_handle))[i] = ((type *) arr->tab_obj[i])->handle;   \
+
  /* --------------------------------------------------------------------------------------------- *
  * OCI_ArrayFindAny
  * --------------------------------------------------------------------------------------------- */
@@ -90,37 +94,37 @@ boolean OCI_ArrayInit
             }
             case OCI_CDT_LOB:
             {
-                arr->tab_obj[i] = OCI_LobInit(arr->con, (OCI_Lob *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype);
+                OCI_ARRAY_INIT_HANDLE(OCI_Lob, OCI_LobInit(arr->con, (OCI_Lob *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_FILE:
             {
-                arr->tab_obj[i] = OCI_FileInit(arr->con, (OCI_File *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype);
+                OCI_ARRAY_INIT_HANDLE(OCI_File, OCI_FileInit(arr->con, (OCI_File *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_TIMESTAMP:
             {
-                arr->tab_obj[i] = OCI_TimestampInit(arr->con, (OCI_Timestamp *) arr->tab_obj[i], (OCIDateTime *) handle, arr->elem_subtype);
+                OCI_ARRAY_INIT_HANDLE(OCI_Timestamp, OCI_TimestampInit(arr->con, (OCI_Timestamp *) arr->tab_obj[i], (OCIDateTime *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_INTERVAL:
             {
-                arr->tab_obj[i] = OCI_IntervalInit(arr->con, (OCI_Interval *) arr->tab_obj[i], (OCIInterval *) handle, arr->elem_subtype);
+                OCI_ARRAY_INIT_HANDLE(OCI_Interval, OCI_IntervalInit(arr->con, (OCI_Interval *) arr->tab_obj[i], (OCIInterval *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_OBJECT:
             {
-                arr->tab_obj[i] = OCI_ObjectInit(arr->con, (OCI_Object *) arr->tab_obj[i], handle, typinf, NULL, -1, TRUE);
+                OCI_ARRAY_INIT_HANDLE(OCI_Object, OCI_ObjectInit(arr->con, (OCI_Object *)arr->tab_obj[i], handle, typinf, NULL, -1, TRUE))
                 break;
             }
             case OCI_CDT_COLLECTION:
             {
-                arr->tab_obj[i] = OCI_CollInit(arr->con, (OCI_Coll *) arr->tab_obj[i], handle, typinf);
+                OCI_ARRAY_INIT_HANDLE(OCI_Coll, OCI_CollInit(arr->con, (OCI_Coll *) arr->tab_obj[i], handle, typinf))
                 break;
             }
             case OCI_CDT_REF:
             {
-                arr->tab_obj[i] = OCI_RefInit(arr->con, typinf, (OCI_Ref *) arr->tab_obj[i], handle);
+                OCI_ARRAY_INIT_HANDLE(OCI_Ref, OCI_RefInit(arr->con, typinf, (OCI_Ref *) arr->tab_obj[i], handle))
                 break;
             }
         }
