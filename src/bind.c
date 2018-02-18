@@ -31,8 +31,301 @@ static const unsigned int BindDirectionValues[] = { OCI_BDM_IN, OCI_BDM_OUT, OCI
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
+
+
+
+void  OCI_BindAllocateBuffers
+(
+    OCI_Context *ctx,
+    OCI_Bind    *bnd,
+    unsigned int mode,
+    boolean      reused,
+    unsigned int nballoc,
+    unsigned int nbelem,
+    boolean      plsql_table
+)
+{
+    /* allocate indicators array */
+
+    if (OCI_STATUS)
+    {
+        OCI_ALLOCATE_DATA(OCI_IPC_BIND, bnd->buffer.inds, nballoc)
+
+        if (OCI_STATUS && SQLT_NTY == bnd->code)
+        {
+            OCI_ALLOCATE_DATA(OCI_IPC_INDICATOR_ARRAY, bnd->buffer.obj_inds, nballoc)
+        }
+    }
+
+    /* check need for PL/SQL table extra info */
+
+    if (OCI_STATUS && plsql_table)
+    {
+        bnd->nbelem = nbelem;
+
+        /* allocate array of returned codes */
+
+        OCI_ALLOCATE_DATA(OCI_IPC_PLS_RCODE_ARRAY, bnd->plrcds, nballoc)
+    }
+
+    /* set allocation mode prior any required data allocation */
+
+    if (OCI_STATUS)
+    {
+        bnd->alloc_mode = (ub1)bnd->stmt->bind_alloc_mode;
+    }
+
+    /* for handle based data types, we need to allocate an array of handles for
+       bind calls because OCILIB uses external arrays of OCILIB Objects */
+
+    if (OCI_STATUS && (OCI_BIND_INPUT == mode))
+    {
+        if (OCI_BAM_EXTERNAL == bnd->alloc_mode)
+        {
+            if ((OCI_CDT_RAW     != bnd->type)  &&
+                (OCI_CDT_LONG    != bnd->type)  &&
+                (OCI_CDT_CURSOR  != bnd->type)  &&
+                (OCI_CDT_LONG    != bnd->type)  &&
+                (OCI_CDT_BOOLEAN != bnd->type)  &&
+                (OCI_CDT_NUMERIC != bnd->type || SQLT_VNU == bnd->code) &&
+                (OCI_CDT_TEXT    != bnd->type || OCILib.use_wide_char_conv))
+            {
+                bnd->alloc = TRUE;
+
+                if (reused)
+                {
+                    OCI_FREE(bnd->buffer.data)
+                }
+
+                OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, bnd->buffer.data, bnd->size, nballoc)
+            }
+            else
+            {
+                bnd->buffer.data = (void **)bnd->input;
+            }
+        }
+    }
+
+    /* setup data length array */
+
+    if (OCI_STATUS && ((OCI_CDT_RAW == bnd->type) || (OCI_CDT_TEXT == bnd->type)))
+    {
+        OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, bnd->buffer.lens, sizeof(ub2), nballoc)
+
+        /* initialize length array with buffer default size */
+
+        if (OCI_STATUS)
+        {
+            for (unsigned int i = 0; i < nbelem; i++)
+            {
+                *(ub2*)(((ub1 *)bnd->buffer.lens) + sizeof(ub2) * (size_t) i) = (ub2)bnd->size;
+            }
+        }
+    }
+
+    /* internal allocation if needed */
+
+    if (!bnd->input && (OCI_BAM_INTERNAL == bnd->alloc_mode))
+    {
+        OCI_STATUS = OCI_BindAllocData(bnd);
+    }
+
+}
+
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindFree
+* OCI_BindCheckAvailability
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_BindCheckAvailability
+(
+    OCI_Context   *ctx,
+    OCI_Statement *stmt,
+    unsigned int   mode,
+    boolean        reused
+)
+{
+    if (OCI_STATUS && !reused)
+    {
+        if (OCI_BIND_INPUT == mode)
+        {
+            if (stmt->nb_ubinds >= OCI_BIND_MAX)
+            {
+                OCI_ExceptionMaxBind(stmt);
+                OCI_STATUS = FALSE;
+            }
+
+            /* allocate user bind array if necessary */
+
+            OCI_REALLOCATE_DATA
+            (
+                OCI_IPC_BIND_ARRAY,
+                stmt->ubinds,
+                stmt->nb_ubinds,
+                stmt->allocated_ubinds,
+                min(stmt->nb_ubinds + OCI_BIND_ARRAY_GROWTH_FACTOR, OCI_BIND_MAX)
+            )
+        }
+        else
+        {
+            if (stmt->nb_rbinds >= OCI_BIND_MAX)
+            {
+                OCI_ExceptionMaxBind(stmt);
+                OCI_STATUS = FALSE;
+            }
+
+            /* allocate register bind array if necessary */
+
+            OCI_REALLOCATE_DATA
+            (
+                OCI_IPC_BIND_ARRAY,
+                stmt->rbinds,
+                stmt->nb_rbinds,
+                stmt->allocated_rbinds,
+                min(stmt->nb_rbinds + OCI_BIND_ARRAY_GROWTH_FACTOR, OCI_BIND_MAX)
+            )
+        }
+    }
+}
+
+ /* --------------------------------------------------------------------------------------------- *
+  * OCI_BindPerformBinding
+  * --------------------------------------------------------------------------------------------- */
+
+void OCI_BindPerformBinding
+(
+    OCI_Context  *ctx, 
+    OCI_Bind     *bnd,
+    unsigned int  mode,
+    unsigned int  index,
+    unsigned int  exec_mode,
+    boolean       plsql_table
+)
+{
+    if (OCI_BIND_BY_POS == bnd->stmt->bind_mode)
+    {
+        OCI_EXEC
+        (
+            OCIBindByPos
+            (
+                bnd->stmt->stmt,
+                (OCIBind **)&bnd->buffer.handle,
+                bnd->stmt->con->err,
+                (ub4)index,
+                (void *)bnd->buffer.data,
+                bnd->size,
+                bnd->code,
+                (void *)bnd->buffer.inds,
+                (ub2 *)bnd->buffer.lens,
+                bnd->plrcds,
+                (ub4)(plsql_table ? bnd->nbelem : 0),
+                (ub4*)(plsql_table ? &bnd->nbelem : NULL),
+                (ub4) exec_mode
+            )
+        )
+    }
+    else
+    {
+        dbtext * dbstr = NULL;
+        int      dbsize = -1;
+
+        dbstr = OCI_StringGetOracleString(bnd->name, &dbsize);
+
+        OCI_EXEC
+        (
+            OCIBindByName
+            (
+                bnd->stmt->stmt,
+                (OCIBind **)&bnd->buffer.handle,
+                bnd->stmt->con->err,
+                (OraText *)dbstr,
+                (sb4)dbsize,
+                (void *)bnd->buffer.data,
+                bnd->size,
+                bnd->code,
+                (void *)bnd->buffer.inds,
+                (ub2 *)bnd->buffer.lens,
+                bnd->plrcds,
+                (ub4)(plsql_table ? bnd->nbelem : 0),
+                (ub4*)(plsql_table ? &bnd->nbelem : NULL),
+                (ub4) exec_mode
+            )
+        )
+
+            OCI_StringReleaseOracleString(dbstr);
+    }
+
+    if (SQLT_NTY == bnd->code || SQLT_REF == bnd->code)
+    {
+        OCI_EXEC
+        (
+            OCIBindObject
+            (
+                (OCIBind *)bnd->buffer.handle,
+                bnd->stmt->con->err,
+                (OCIType *)bnd->typinf->tdo,
+                (void **)bnd->buffer.data,
+                (ub4 *)NULL,
+                (void **)bnd->buffer.obj_inds,
+                (ub4 *)NULL
+            )
+        )
+    }
+
+    if (OCI_BIND_OUTPUT == mode)
+    {
+        /* register output placeholder */
+
+        OCI_EXEC
+        (
+            OCIBindDynamic
+            (
+                (OCIBind *)bnd->buffer.handle, 
+                bnd->stmt->con->err, 
+                (dvoid *)bnd, 
+                OCI_ProcInBind, 
+                (dvoid *)bnd, 
+                OCI_ProcOutBind
+            )
+        )
+    }
+}
+
+ /* --------------------------------------------------------------------------------------------- *
+  * OCI_BindAddToStatement
+  * --------------------------------------------------------------------------------------------- */
+
+void OCI_BindAddToStatement
+(
+    OCI_Bind     *bnd,
+    unsigned int  mode,
+    boolean       reused
+)
+{
+    if (OCI_BIND_INPUT == mode)
+    {
+        if (!reused)
+        {
+            bnd->stmt->ubinds[bnd->stmt->nb_ubinds++] = bnd;
+
+            /* for user binds, add a positive index */
+
+            OCI_HashAddInt(bnd->stmt->map, bnd->name, bnd->stmt->nb_ubinds);
+        }
+    }
+    else
+    {
+        /* for register binds, add a negative index */
+
+        bnd->stmt->rbinds[bnd->stmt->nb_rbinds++] = bnd;
+
+        const int index = (int)bnd->stmt->nb_rbinds;
+
+        OCI_HashAddInt(bnd->stmt->map, bnd->name, -index);
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_BindCreate
  * --------------------------------------------------------------------------------------------- */
 
 OCI_Bind* OCI_BindCreate
@@ -50,15 +343,14 @@ OCI_Bind* OCI_BindCreate
     unsigned int   nbelem
 )
 {
-    OCI_Bind *bnd    = NULL;
-    ub4 exec_mode    = OCI_DEFAULT;
-    boolean is_pltbl = FALSE;
-    boolean is_array = FALSE;
-    boolean reused   = FALSE;
-    ub4 *pnbelem     = NULL;
-    int index        = 0;
-    int prev_index   = -1;
-    size_t nballoc   = (size_t) nbelem;
+    OCI_Bind *bnd        = NULL;
+    ub4 exec_mode        = OCI_DEFAULT;
+    boolean plsql_table  = FALSE;
+    boolean is_array     = FALSE;
+    boolean reused       = FALSE;
+    int index            = 0;
+    int prev_index       = -1;
+    unsigned int nballoc = nbelem;
 
     /* check index if necessary */
 
@@ -110,47 +402,7 @@ OCI_Bind* OCI_BindCreate
 
     /* check if we can handle another bind */
 
-    if (OCI_STATUS)
-    {
-        if (OCI_BIND_INPUT == mode)
-        {
-            if (stmt->nb_ubinds >= OCI_BIND_MAX)
-            {
-                OCI_ExceptionMaxBind(stmt);
-                OCI_STATUS = FALSE;
-            }
-
-            /* allocate user bind array if necessary */
-
-            OCI_REALLOCATE_DATA
-            (
-                OCI_IPC_BIND_ARRAY,
-                stmt->ubinds,
-                stmt->nb_ubinds,
-                stmt->allocated_ubinds,
-                min(stmt->nb_ubinds + OCI_BIND_ARRAY_GROWTH_FACTOR, OCI_BIND_MAX)
-            )
-        }
-        else
-        {
-            if (stmt->nb_rbinds >= OCI_BIND_MAX)
-            {
-                OCI_ExceptionMaxBind(stmt);
-                OCI_STATUS = FALSE;
-            }
-
-            /* allocate register bind array if necessary */
-
-            OCI_REALLOCATE_DATA
-            (
-                OCI_IPC_BIND_ARRAY,
-                stmt->rbinds,
-                stmt->nb_rbinds,
-                stmt->allocated_rbinds,
-                min(stmt->nb_rbinds + OCI_BIND_ARRAY_GROWTH_FACTOR, OCI_BIND_MAX)
-            )
-        }
-    }
+    OCI_BindCheckAvailability(ctx, stmt, mode, reused);
 
     /* checks done */
 
@@ -164,8 +416,8 @@ OCI_Bind* OCI_BindCreate
 
             if (OCI_IS_PLSQL_STMT(stmt->type))
             {
-                is_pltbl = TRUE;
-                is_array = TRUE;
+                plsql_table = TRUE;
+                is_array    = TRUE;
             }
         }
         else
@@ -193,85 +445,6 @@ OCI_Bind* OCI_BindCreate
 
     OCI_ALLOCATE_DATA(OCI_IPC_BIND, bnd, 1)
 
-    /* allocate indicators array */
-
-    if (OCI_STATUS)
-    {
-        OCI_ALLOCATE_DATA(OCI_IPC_BIND, bnd->buffer.inds, nballoc)
-
-        if (OCI_STATUS && SQLT_NTY == code)
-        {
-            OCI_ALLOCATE_DATA(OCI_IPC_INDICATOR_ARRAY, bnd->buffer.obj_inds, nballoc)
-        }
-    }
-
-    /* check need for PL/SQL table extra info */
-
-    if (OCI_STATUS && is_pltbl)
-    {
-        bnd->nbelem = nbelem;
-        pnbelem     = &bnd->nbelem;
-
-        /* allocate array of returned codes */
-
-        OCI_ALLOCATE_DATA(OCI_IPC_PLS_RCODE_ARRAY, bnd->plrcds, nballoc)
-    }
-
-    /* set allocation mode prior any required data allocation */
-
-    if (OCI_STATUS)
-    {
-        bnd->alloc_mode = (ub1)stmt->bind_alloc_mode;
-    }
-
-    /* for handle based data types, we need to allocate an array of handles for
-       bind calls because OCILIB uses external arrays of OCILIB Objects */
-
-    if (OCI_STATUS && (OCI_BIND_INPUT == mode))
-    {
-        if (OCI_BAM_EXTERNAL == bnd->alloc_mode)
-        {
-            if ((OCI_CDT_RAW     != type)  &&
-                (OCI_CDT_LONG    != type)  &&
-                (OCI_CDT_CURSOR  != type)  &&
-                (OCI_CDT_LONG    != type)  &&
-                (OCI_CDT_BOOLEAN != type)  &&
-                (OCI_CDT_NUMERIC != type || SQLT_VNU == code) &&
-                (OCI_CDT_TEXT    != type || OCILib.use_wide_char_conv))
-            {
-                bnd->alloc = TRUE;
-
-                if (reused && bnd->buffer.data && (bnd->size != (sb4) size))
-                {
-                    OCI_FREE(bnd->buffer.data)
-                }
-
-                OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, bnd->buffer.data, size, nballoc)
-            }
-            else
-            {
-                bnd->buffer.data = (void **) data;
-            }
-        }
-    }
-
-    /* setup data length array */
-
-    if (OCI_STATUS && ((OCI_CDT_RAW == type) || (OCI_CDT_TEXT == type)))
-    {
-        OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, bnd->buffer.lens, sizeof(ub2), nballoc)
-
-        /* initialize length array with buffer default size */
-
-        if (OCI_STATUS)
-        {
-            for (unsigned int i = 0; i < nbelem; i++)
-            {
-                *(ub2*)(((ub1 *)bnd->buffer.lens) + sizeof(ub2) * (size_t) i) = (ub2) size;
-            }
-        }
-    }
-
     /* initialize bind object */
 
     if (OCI_STATUS)
@@ -285,6 +458,7 @@ OCI_Bind* OCI_BindCreate
         bnd->code      = (ub2) code;
         bnd->subtype   = (ub1) subtype;
         bnd->is_array  = is_array;
+        bnd->typinf    = typinf;
         bnd->csfrm     = OCI_CSF_NONE;
         bnd->direction = OCI_BDM_IN_OUT;
 
@@ -298,13 +472,8 @@ OCI_Bind* OCI_BindCreate
         bnd->buffer.count   = nbelem;
         bnd->buffer.sizelen = sizeof(ub2);
 
-        /* internal allocation if needed */
-
-        if (!data && (OCI_BAM_INTERNAL == bnd->alloc_mode))
-        {
-            OCI_STATUS = OCI_BindAllocData(bnd);
-        }
-
+        OCI_BindAllocateBuffers(ctx, bnd, mode, reused, nballoc, nbelem, plsql_table);
+          
         /* if we bind an OCI_Long or any output bind, we need to change the
            execution mode to provide data at execute time */
 
@@ -331,79 +500,7 @@ OCI_Bind* OCI_BindCreate
 
     if (OCI_STATUS)
     {
-        if (OCI_BIND_BY_POS == stmt->bind_mode)
-        {
-            OCI_EXEC
-            (
-                OCIBindByPos(
-                                stmt->stmt,
-                                (OCIBind **) &bnd->buffer.handle,
-                                stmt->con->err,
-                                (ub4) index,
-                                (void *) bnd->buffer.data,
-                                bnd->size,
-                                bnd->code,
-                                (void *)bnd->buffer.inds,
-                                (ub2 *) bnd->buffer.lens,
-                                bnd->plrcds,
-                                (ub4) (is_pltbl ? nbelem : 0),
-                                pnbelem,
-                                exec_mode
-                            )
-            )
-        }
-        else
-        {
-            dbtext * dbstr  = NULL;
-            int      dbsize = -1;
-
-            dbstr = OCI_StringGetOracleString(bnd->name, &dbsize);
-
-            OCI_EXEC
-            (
-                OCIBindByName(
-                                stmt->stmt,
-                                (OCIBind **) &bnd->buffer.handle,
-                                stmt->con->err,
-                                (OraText *) dbstr,
-                                (sb4) dbsize,
-                                (void *) bnd->buffer.data,
-                                bnd->size,
-                                bnd->code,
-                                (void *)bnd->buffer.inds,
-                                (ub2 *)bnd->buffer.lens,
-                                bnd->plrcds,
-                                (ub4) (is_pltbl ? nbelem : 0),
-                                pnbelem,
-                                exec_mode
-                             )
-            )
-
-            OCI_StringReleaseOracleString(dbstr);
-        }
-
-        if (SQLT_NTY == code || SQLT_REF == code)
-        {
-            OCI_EXEC
-            (
-                OCIBindObject(
-                                (OCIBind *) bnd->buffer.handle,
-                                stmt->con->err,
-                                (OCIType *) typinf->tdo,
-                                (void **) bnd->buffer.data,
-                                (ub4 *) NULL,
-                                (void **)bnd->buffer.obj_inds,
-                                (ub4 *) NULL
-                              )
-            )
-        }
-
-        if (OCI_BIND_OUTPUT == mode)
-        {
-            /* register output placeholder */
-
-            OCI_EXEC(OCIBindDynamic((OCIBind *) bnd->buffer.handle, stmt->con->err, (dvoid *) bnd, OCI_ProcInBind, (dvoid *) bnd, OCI_ProcOutBind))
-        }
+        OCI_BindPerformBinding(ctx, bnd, mode, index, exec_mode, plsql_table);
     }
 
     /* set charset form */
@@ -425,27 +522,7 @@ OCI_Bind* OCI_BindCreate
 
     if (OCI_STATUS)
     {
-        if (OCI_BIND_INPUT == mode)
-        {
-            if (!reused)
-            {
-                stmt->ubinds[stmt->nb_ubinds++] = bnd;
-
-                /* for user binds, add a positive index */
-
-                OCI_HashAddInt(stmt->map, name, stmt->nb_ubinds);
-            }
-        }
-        else
-        {
-            /* for register binds, add a negative index */
-
-            stmt->rbinds[stmt->nb_rbinds++] = bnd;
-
-            index = (int) stmt->nb_rbinds;
-
-            OCI_HashAddInt(stmt->map, name, -index);
-        }
+        OCI_BindAddToStatement(bnd, mode, reused);
     }
 
     if (!OCI_STATUS)
