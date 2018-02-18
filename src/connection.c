@@ -40,15 +40,15 @@ void OCI_ConnectionDetachSubscriptions(OCI_Subscription *sub, OCI_Connection *co
     {
         sub->con = NULL;
 
-        sub->saved_db = ostrdup(con->db);
+        sub->saved_db   = ostrdup(con->db);
         sub->saved_user = ostrdup(con->user);
-        sub->saved_pwd = ostrdup(con->pwd);
+        sub->saved_pwd  = ostrdup(con->pwd);
     }
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ConnectionCreateInternal
-* --------------------------------------------------------------------------------------------- */
+ * OCI_ConnectionCreateInternal
+ * --------------------------------------------------------------------------------------------- */
 
 OCI_Connection * OCI_ConnectionCreateInternal
 (
@@ -332,6 +332,276 @@ boolean OCI_ConnectionDetach
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_ConnectionLogonXA
+ * --------------------------------------------------------------------------------------------- */
+
+void OCI_ConnectionLogonXA
+(
+    OCI_CallContext *ctx,
+    OCI_Connection  *con
+)
+{
+    dbtext *dbstr_user  = NULL;
+    int     dbsize_user = 0;
+    char    dbname[OCI_SIZE_BUFFER + 1];
+
+    memset(dbname, 0, sizeof(dbname));
+
+    if (OCI_STRING_VALID(con->db))
+    {
+        OCI_StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));
+    }
+
+    con->cxt = xaoSvcCtx((OraText *) (dbname[0] ? dbname : NULL ));
+    OCI_STATUS = (NULL != con->cxt);
+
+    OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL)
+    OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL)
+    OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, &dbstr_user, &dbsize_user)
+
+    if (NULL == con->ses)
+    {
+        OCI_STATUS = FALSE;
+        OCI_ExceptionConnFromXaString(con->db);
+    }
+
+    if (OCI_STATUS && dbstr_user)
+    {
+        OCI_FREE(con->user)
+
+        con->user = OCI_StringDuplicateFromOracleString(dbstr_user, dbcharcount(dbsize_user));
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ConnectionLogonRegular
+ * --------------------------------------------------------------------------------------------- */
+
+void OCI_ConnectionLogonRegular
+(
+    OCI_CallContext *ctx,
+    OCI_Connection  *con,
+    const otext     *new_pwd
+)
+{
+    /* allocate session handle */
+
+    OCI_HandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->ses, OCI_HTYPE_SESSION);
+
+    /* allocate context handle */
+
+    OCI_HandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->cxt, OCI_HTYPE_SVCCTX);
+
+    /* set context server attribute */
+
+    OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, con->svr, sizeof(con->svr));
+
+    /* modify user password if needed */
+
+    if (OCI_STRING_VALID(new_pwd))
+    {
+        int dbsize1 = -1;
+        int dbsize2 = -1;
+        int dbsize3 = -1;
+
+        dbtext *dbstr1 = NULL;
+        dbtext *dbstr2 = NULL;
+        dbtext *dbstr3 = NULL;
+
+        dbstr1 = OCI_StringGetOracleString(con->user, &dbsize1);
+        dbstr2 = OCI_StringGetOracleString(con->pwd, &dbsize2);
+        dbstr3 = OCI_StringGetOracleString(new_pwd, &dbsize3);
+
+        OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, con->ses, sizeof(con->ses));
+
+        OCI_EXEC
+        (
+            OCIPasswordChange(con->cxt, con->err, (OraText *)dbstr1, (ub4)dbsize1,
+                              (OraText *)dbstr2, (ub4)dbsize2,
+                              (OraText *)dbstr3, (ub4)dbsize3, OCI_AUTH)
+        )
+
+        OCI_StringReleaseOracleString(dbstr1);
+        OCI_StringReleaseOracleString(dbstr2);
+        OCI_StringReleaseOracleString(dbstr3);
+
+        if (OCI_STATUS)
+        {
+            OCI_FREE(con->pwd)
+            con->pwd = ostrdup(new_pwd);
+        }
+    }
+    else
+    {
+        int     dbsize = -1;
+        dbtext *dbstr  = NULL;
+
+        /* set session login attribute */
+
+        if (OCI_STATUS && OCI_STRING_VALID(con->user))
+        {
+            dbsize = -1;
+            dbstr  = OCI_StringGetOracleString(con->user, &dbsize);
+
+            OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, dbstr, dbsize);
+
+            OCI_StringReleaseOracleString(dbstr);
+        }
+
+        /* set session password attribute */
+
+        if (OCI_STATUS && OCI_STRING_VALID(con->pwd))
+        {
+            dbsize = -1;
+            dbstr  = OCI_StringGetOracleString(con->pwd, &dbsize);
+
+            OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_PASSWORD, con->ses, dbstr, dbsize);
+
+            OCI_StringReleaseOracleString(dbstr);
+        }
+
+        /* set OCILIB's driver layer name attribute */
+
+#if OCI_VERSION_COMPILE >= OCI_11_1
+
+        if (OCI_STATUS && (OCILib.version_runtime >= OCI_11_1))
+        {
+            otext driver_version[OCI_SIZE_FORMAT];
+
+            osprintf(driver_version,
+                     osizeof(driver_version) - (size_t)1,
+                     OTEXT("%s : %d.%d.%d"),
+                     OCILIB_DRIVER_NAME,
+                     OCILIB_MAJOR_VERSION,
+                     OCILIB_MINOR_VERSION,
+                     OCILIB_REVISION_VERSION);
+
+            dbsize = -1;
+            dbstr = OCI_StringGetOracleString(driver_version, &dbsize);
+
+            OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_DRIVER_NAME, con->ses, dbstr, dbsize);
+
+            OCI_StringReleaseOracleString(dbstr);
+        }
+
+#endif
+
+        /* start session */
+
+        if (OCI_STATUS)
+        {
+            ub4 credt = OCI_CRED_RDBMS;
+            ub4 mode  = con->mode;
+
+            if (!OCI_STRING_VALID(con->user) && !OCI_STRING_VALID(con->pwd))
+            {
+                credt = OCI_CRED_EXT;
+            }
+
+#if OCI_VERSION_COMPILE >= OCI_9_2
+
+            /* activate statement cache is the OCI version supports it */
+
+            if (OCILib.version_runtime >= OCI_9_2)
+            {
+                mode |= OCI_STMT_CACHE;
+            }
+
+#endif
+
+            /* start session */
+
+            OCI_EXEC(OCISessionBegin(con->cxt, con->err, con->ses, credt, mode));
+
+            OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, con->ses, sizeof(con->ses));
+
+            if (OCI_STATUS)
+            {
+                if (!(con->mode & OCI_PRELIM_AUTH))
+                {
+                    /* create default transaction object */
+
+                    OCI_Transaction *trs = OCI_TransactionCreate(con, 1, OCI_TRANS_READWRITE, NULL);
+
+                    if (trs && OCI_SetTransaction(con, trs))
+                    {
+                        /* start transaction */
+
+                        OCI_STATUS = OCI_TransactionStart(trs);
+                    }
+                }
+            }
+            else
+            {
+                /* could not start session, must free the session and context handles */
+
+                OCI_HandleFree((dvoid *)con->ses, OCI_HTYPE_SESSION);
+                OCI_HandleFree((dvoid *)con->cxt, OCI_HTYPE_SVCCTX);
+
+                con->ses = NULL;
+                con->cxt = NULL;
+            }
+        }
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ConnectionLogonSessionPool
+ * --------------------------------------------------------------------------------------------- */
+
+void OCI_ConnectionLogonSessionPool
+(
+    OCI_CallContext *ctx,
+    OCI_Connection  *con,
+    const otext     *tag
+)
+{
+    ub4      sess_mode  = OCI_SESSGET_SPOOL;
+    boolean  found      = FALSE;
+    int      dbsize     = -1;
+    dbtext  *dbstr      = NULL;
+    dbtext  *dbstr_tag  = NULL;
+    int      dbsize_tag = 0;
+    OraText *dbstr_ret  = NULL;
+    ub4      dbsize_ret = 0;
+
+    if (!OCI_STRING_VALID(con->pool->user) && !OCI_STRING_VALID(con->pool->pwd))
+    {
+        sess_mode |= OCI_SESSGET_CREDEXT;
+    }
+
+    if (OCI_STRING_VALID(con->pool->name))
+    {
+        dbsize = -1;
+        dbstr  = OCI_StringGetOracleString(con->pool->name, &dbsize);
+    }
+
+    if (OCI_STRING_VALID(tag))
+    {
+        dbsize_tag = -1;
+        dbstr_tag  = OCI_StringGetOracleString(tag, &dbsize_tag);
+    }
+
+    OCI_EXEC
+    (
+        OCISessionGet(con->env, con->err, &con->cxt, NULL,
+                      (OraText  *)dbstr, (ub4)dbsize, (OraText *)dbstr_tag, dbsize_tag,
+                      (OraText **)&dbstr_ret, &dbsize_ret, &found, sess_mode)
+    )
+
+    OCI_StringReleaseOracleString(dbstr);
+    OCI_StringReleaseOracleString(dbstr_tag);
+
+    OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL)
+    OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL)
+
+    if (OCI_STATUS && found)
+    {
+        OCI_SetSessionTag(con, tag);
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_ConnectionLogon
  * --------------------------------------------------------------------------------------------- */
 
@@ -342,9 +612,6 @@ boolean OCI_ConnectionLogon
     const otext    *tag
 )
 {
-    dbtext *dbstr  = NULL;
-    int     dbsize = -1;
-
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == con, FALSE)
@@ -363,36 +630,7 @@ boolean OCI_ConnectionLogon
 
     if (con->mode & OCI_SESSION_XA)
     {
-        dbtext *dbstr_user = NULL;
-        int     dbsize_user = 0;
-        char    dbname[OCI_SIZE_BUFFER + 1];
-
-        memset(dbname, 0, sizeof(dbname));
-
-        if (OCI_STRING_VALID(con->db))
-        {
-            OCI_StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));
-        }
-
-        con->cxt = xaoSvcCtx((OraText *) (dbname[0] ? dbname : NULL ));
-        OCI_STATUS = (NULL != con->cxt);
-
-        OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL)
-        OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL)
-        OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, &dbstr_user, &dbsize_user)
-
-        if (NULL == con->ses)
-        {
-            OCI_STATUS = FALSE;
-            OCI_ExceptionConnFromXaString(con->db);
-        }
-
-        if (OCI_STATUS && dbstr_user)
-        {
-            OCI_FREE(con->user)
-
-            con->user = OCI_StringDuplicateFromOracleString(dbstr_user, dbcharcount(dbsize_user));
-        }
+        OCI_ConnectionLogonXA(ctx, con);
     }
     else
 
@@ -402,215 +640,16 @@ boolean OCI_ConnectionLogon
 
     if (con->alloc_handles)
     {
-        /* allocate session handle */
-
-        OCI_STATUS = OCI_HandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->ses, OCI_HTYPE_SESSION);
-
-        /* allocate context handle */
-
-        OCI_STATUS = OCI_STATUS && OCI_HandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->cxt, OCI_HTYPE_SVCCTX);
- 
-        /* set context server attribute */
-
-        OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, con->svr, sizeof(con->svr));
- 
-        /* modify user password if needed */
-
-        if (OCI_STRING_VALID(new_pwd))
-        {
-            int dbsize1 = -1;
-            int dbsize2 = -1;
-            int dbsize3 = -1;
-
-            dbtext *dbstr1  = NULL;
-            dbtext *dbstr2  = NULL;
-            dbtext *dbstr3  = NULL;
-
-            dbstr1 = OCI_StringGetOracleString(con->user, &dbsize1);
-            dbstr2 = OCI_StringGetOracleString(con->pwd,  &dbsize2);
-            dbstr3 = OCI_StringGetOracleString(new_pwd,   &dbsize3);
-
-            OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, con->ses, sizeof(con->ses));
-
-            OCI_EXEC
-            (
-                OCIPasswordChange(con->cxt, con->err,
-                                  (OraText *) dbstr1, (ub4) dbsize1,
-                                  (OraText *) dbstr2, (ub4) dbsize2,
-                                  (OraText *) dbstr3, (ub4) dbsize3,
-                                  OCI_AUTH)
-            )
-
-            OCI_StringReleaseOracleString(dbstr1);
-            OCI_StringReleaseOracleString(dbstr2);
-            OCI_StringReleaseOracleString(dbstr3);
-
-            if (OCI_STATUS)
-            {
-                OCI_FREE(con->pwd)
-
-                con->pwd = ostrdup(new_pwd);
-            }
-        }
-        else
-        {
-            /* set session login attribute */
-
-            if (OCI_STATUS && OCI_STRING_VALID(con->user))
-            {
-                dbsize = -1;
-                dbstr  = OCI_StringGetOracleString(con->user, &dbsize);
-
-                OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, dbstr, dbsize);
-
-                OCI_StringReleaseOracleString(dbstr);
-            }
-
-            /* set session password attribute */
-
-            if (OCI_STATUS && OCI_STRING_VALID(con->pwd))
-            {
-                dbsize = -1;
-                dbstr  = OCI_StringGetOracleString(con->pwd, &dbsize);
-
-                OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_PASSWORD, con->ses, dbstr, dbsize);
-
-                OCI_StringReleaseOracleString(dbstr);
-            }
-
-
-            /* set OCILIB's driver layer name attribute */
-
-        #if OCI_VERSION_COMPILE >= OCI_11_1
-
-            if (OCI_STATUS && (OCILib.version_runtime >= OCI_11_1))
-            {
-                otext driver_version[OCI_SIZE_FORMAT];
-
-                osprintf(driver_version, 
-                         osizeof(driver_version) - (size_t) 1,
-                         OTEXT("%s : %d.%d.%d"), 
-                         OCILIB_DRIVER_NAME, 
-                         OCILIB_MAJOR_VERSION, 
-                         OCILIB_MINOR_VERSION,
-                         OCILIB_REVISION_VERSION);
-
-                dbsize = -1;
-                dbstr  = OCI_StringGetOracleString(driver_version, &dbsize);
-
-                OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_DRIVER_NAME, con->ses, dbstr, dbsize);
-
-                OCI_StringReleaseOracleString(dbstr);
-            }
-
-        #endif
-
-            /* start session */
-
-            if (OCI_STATUS)
-            {
-                ub4 credt = OCI_CRED_RDBMS;
-                ub4 mode  = con->mode;
-
-                if (!OCI_STRING_VALID(con->user) && !OCI_STRING_VALID(con->pwd))
-                {
-                    credt = OCI_CRED_EXT;
-                }
-
-            #if OCI_VERSION_COMPILE >= OCI_9_2
-
-                /* activate statement cache is the OCI version supports it */
-
-                if (OCILib.version_runtime >= OCI_9_2)
-                {
-                    mode |= OCI_STMT_CACHE;
-                }
-
-            #endif
-
-                /* start session */
-
-                OCI_EXEC(OCISessionBegin(con->cxt, con->err, con->ses, credt, mode));
-
-                OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, con->ses, sizeof(con->ses));
-
-                if (OCI_STATUS)
-                {
-                    if (!(con->mode & OCI_PRELIM_AUTH))
-                    {
-                        /* create default transaction object */
-
-                        OCI_Transaction *trs = OCI_TransactionCreate(con, 1, OCI_TRANS_READWRITE, NULL);
-
-                        if (trs && OCI_SetTransaction(con, trs))
-                        {
-                            /* start transaction */
-
-                            OCI_STATUS = OCI_TransactionStart(trs);
-                        }
-                    }
-                }
-                else
-                {
-                    /* could not start session, must free the session and context handles */
-
-                    OCI_HandleFree((dvoid *)con->ses, OCI_HTYPE_SESSION);
-                    OCI_HandleFree((dvoid *)con->cxt, OCI_HTYPE_SVCCTX);
-
-                    con->ses = NULL;
-                    con->cxt = NULL;
-                }
-            }
-        }
+        OCI_ConnectionLogonRegular(ctx, con, new_pwd);
     }
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
    /* 3 - connection from session pool */
 
-    else
+    else if (OCILib.version_runtime >= OCI_9_2)
     {
-        if (OCILib.version_runtime >= OCI_9_0)
-        {
-            ub4      sess_mode  = OCI_SESSGET_SPOOL;
-            boolean  found      = FALSE;
-            dbtext  *dbstr_tag  = NULL;
-            int      dbsize_tag = 0;
-            OraText *dbstr_ret  = NULL;
-            ub4      dbsize_ret = 0;
-
-            dbsize = -1;
-            dbstr  = OCI_StringGetOracleString(con->pool->name, &dbsize);
-
-            if (!OCI_STRING_VALID(con->pool->user) && !OCI_STRING_VALID(con->pool->pwd))
-            {
-                sess_mode |= OCI_SESSGET_CREDEXT;
-            }
-
-            if (OCI_STRING_VALID(tag))
-            {
-                dbsize_tag = -1;
-                dbstr_tag  = OCI_StringGetOracleString(tag, &dbsize_tag);
-            }
-
-            OCI_EXEC
-            (
-                OCISessionGet(con->env, con->err, &con->cxt, NULL,
-                              (OraText  *) dbstr, (ub4) dbsize, (OraText *) dbstr_tag, dbsize_tag,
-                              (OraText **) &dbstr_ret, &dbsize_ret, &found, sess_mode)
-            )
-
-            OCI_StringReleaseOracleString(dbstr);
-            OCI_StringReleaseOracleString(dbstr_tag);
-
-            OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL)
-            OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL)
-
-            if (OCI_STATUS && found)
-            {
-                OCI_SetSessionTag(con, tag);
-            }
-        }
+        OCI_ConnectionLogonSessionPool(ctx, con, tag);
     }
 
 #endif
@@ -627,6 +666,92 @@ boolean OCI_ConnectionLogon
     }
 
     return OCI_STATUS;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ConnectionLogoffRegular
+ * --------------------------------------------------------------------------------------------- */
+
+void OCI_ConnectionLogoffRegular
+(
+    OCI_CallContext *ctx,
+    OCI_Connection  *con
+)
+{
+    /* close any server files not explicitly closed - no check of return code */
+
+    if  (con->cxt && con->err && con->ses)
+    {
+        OCI_EXEC(OCISessionEnd(con->cxt, con->err, con->ses, (ub4)OCI_DEFAULT));
+
+        /* close session handle */
+
+        if (con->ses)
+        {
+            OCI_HandleFree((dvoid *) con->ses, OCI_HTYPE_SESSION);
+
+            con->ses = NULL;
+        }
+
+        /* close context handle */
+
+        if (con->cxt)
+        {
+            OCI_HandleFree((dvoid *) con->cxt, OCI_HTYPE_SVCCTX);
+
+            con->cxt = NULL;
+        }
+    }    
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ConnectionLogoffSessionPool
+ * --------------------------------------------------------------------------------------------- */
+
+void OCI_ConnectionLogoffSessionPool
+(
+    OCI_CallContext *ctx,
+    OCI_Connection  *con
+)
+{
+    /* No explicit transaction object => commit if needed otherwise rollback changes */
+
+    if (con->autocom)
+    {
+        OCI_Commit(con);
+    }
+    else
+    {
+        OCI_Rollback(con);
+    }
+
+#if OCI_VERSION_COMPILE >= OCI_9_2
+
+    if (OCILib.version_runtime >= OCI_9_2)
+    {
+        dbtext *dbstr  = NULL;
+        int     dbsize = 0;
+        ub4     mode   = OCI_DEFAULT;
+
+        /* Clear session tag if connection was retrieved from session pool */
+
+        if (con->pool && con->sess_tag && ( OCI_HTYPE_SPOOL == con->pool->htype))
+        {
+            dbsize = -1;
+            dbstr  = OCI_StringGetOracleString(con->sess_tag, &dbsize);
+            mode   = OCI_SESSRLS_RETAG;
+        }
+
+        OCI_EXEC(OCISessionRelease(con->cxt, con->err, (OraText*)dbstr, (ub4)dbsize, mode));
+ 
+        OCI_StringReleaseOracleString(dbstr);
+
+        con->cxt = NULL;
+        con->ses = NULL;
+        con->svr = NULL;
+    }
+
+    #endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -671,76 +796,35 @@ boolean OCI_ConnectionLogOff
     OCI_ListForEach(con->trsns, (POCI_LIST_FOR_EACH) OCI_TransactionClose);
     OCI_ListClear(con->trsns);
 
-    /* close session */
+    /* 1 - XA connection */
+
+#if OCI_VERSION_COMPILE >= OCI_10_1
+
+    if (con->mode & OCI_SESSION_XA)
+    {
+        /* nothing to do */
+    }
+    else
+
+#endif
+
+    /* 2 - regular connection and connection from connection pool */
 
     if (con->alloc_handles)
     {
-        /* close any server files not explicitly closed - no check of return code */
-
-        if  (con->cxt && con->err && con->ses)
-        {
-            OCI_EXEC(OCISessionEnd(con->cxt, con->err, con->ses, (ub4)OCI_DEFAULT));
-
-            /* close session handle */
-
-            if (con->ses)
-            {
-                OCI_HandleFree((dvoid *) con->ses, OCI_HTYPE_SESSION);
-
-                con->ses = NULL;
-            }
-
-            /* close context handle */
-
-            if (con->cxt)
-            {
-                OCI_HandleFree((dvoid *) con->cxt, OCI_HTYPE_SVCCTX);
-
-                con->cxt = NULL;
-            }
-        }
+        OCI_ConnectionLogoffRegular(ctx, con);
     }
-    else
+
+#if OCI_VERSION_COMPILE >= OCI_9_2
+
+   /* 3 - connection from session pool */
+
+    else if (OCILib.version_runtime >= OCI_9_0)
     {
-        /* No explicit transaction object => commit if needed otherwise rollback changes */
-
-        if (con->autocom)
-        {
-             OCI_Commit(con);
-        }
-        else
-        {
-             OCI_Rollback(con);
-        }
-
-    #if OCI_VERSION_COMPILE >= OCI_9_2
-
-        if (OCILib.version_runtime >= OCI_9_0)
-        {
-            dbtext *dbstr  = NULL;
-            int     dbsize = 0;
-            ub4     mode   = OCI_DEFAULT;
-
-            /* Clear session tag if connection was retrieved from session pool */
-
-            if (con->pool && con->sess_tag && ( OCI_HTYPE_SPOOL == con->pool->htype))
-            {
-                dbsize = -1;
-                dbstr  = OCI_StringGetOracleString(con->sess_tag, &dbsize);
-                mode   = OCI_SESSRLS_RETAG;
-            }
-
-            OCI_EXEC(OCISessionRelease(con->cxt, con->err, (OraText*)dbstr, (ub4)dbsize, mode));
- 
-            OCI_StringReleaseOracleString(dbstr);
-
-            con->cxt = NULL;
-            con->ses = NULL;
-            con->svr = NULL;
-        }
-
-        #endif
+        OCI_ConnectionLogoffSessionPool(ctx, con);
     }
+
+#endif
 
     /* update internal status */
 
