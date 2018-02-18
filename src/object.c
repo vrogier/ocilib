@@ -88,6 +88,14 @@
  *                            PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
+boolean OCI_ObjectGetAttrInfo
+(
+    OCI_TypeInfo *typinf,
+    int           index,
+    size_t       *p_size,
+    size_t       *p_align
+);
+
  /* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectGetRealTypeInfo
  * --------------------------------------------------------------------------------------------- */
@@ -431,6 +439,43 @@ boolean OCI_ObjectGetAttrInfo
     return TRUE;
 }
 
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ObjectReset
+ * --------------------------------------------------------------------------------------------- */
+
+void OCI_ObjectReset
+(
+    OCI_Object *obj
+)
+{
+    if (!obj)
+    {
+        return;
+    }
+   
+    for (ub2 i = 0; i < obj->typinf->nb_cols; i++)
+    {
+        if (obj->objs[i])
+        {
+            OCI_Datatype * data = (OCI_Datatype *) obj->objs[i];
+
+            if (OCI_OBJECT_FETCHED_CLEAN == data->hstate)
+            {
+                data->hstate =  OCI_OBJECT_FETCHED_DIRTY;
+            }
+
+            OCI_FreeObjectFromType(obj->objs[i], obj->typinf->cols[i].datatype);
+            
+            obj->objs[i] = NULL;
+        }
+
+        OCI_FREE(obj->tmpbufs[i])
+
+        obj->tmpsizes[i] = 0;
+    }
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ObjectInit
  * --------------------------------------------------------------------------------------------- */
@@ -548,42 +593,6 @@ OCI_Object * OCI_ObjectInit
     }
 
     return obj;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_ObjectReset
- * --------------------------------------------------------------------------------------------- */
-
-void OCI_ObjectReset
-(
-    OCI_Object *obj
-)
-{
-    if (!obj)
-    {
-        return;
-    }
-   
-    for (ub2 i = 0; i < obj->typinf->nb_cols; i++)
-    {
-        if (obj->objs[i])
-        {
-            OCI_Datatype * data = (OCI_Datatype *) obj->objs[i];
-
-            if (OCI_OBJECT_FETCHED_CLEAN == data->hstate)
-            {
-                data->hstate =  OCI_OBJECT_FETCHED_DIRTY;
-            }
-
-            OCI_FreeObjectFromType(obj->objs[i], obj->typinf->cols[i].datatype);
-            
-            obj->objs[i] = NULL;
-        }
-
-        OCI_FREE(obj->tmpbufs[i])
-
-        obj->tmpsizes[i] = 0;
-    }
 }
 
 /* --------------------------------------------------------------------------------------------- *

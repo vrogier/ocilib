@@ -83,11 +83,6 @@ boolean OCI_ArrayFreeFromHandles
     void ** handles
 );
 
-void * OCI_ArrayGetOCIHandlesFromHandles
-(
-    void ** handles
-);
-
 /* --------------------------------------------------------------------------------------------- *
  * bind.c
  * --------------------------------------------------------------------------------------------- */
@@ -100,13 +95,6 @@ boolean OCI_BindFree
 boolean OCI_BindAllocData
 (
     OCI_Bind *bnd
-);
-
-boolean OCI_BindSetNullIndicator
-(
-    OCI_Bind    *bnd,
-    unsigned int position,
-    sb2          value
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -167,7 +155,6 @@ sb4 OCI_ProcFailOver
     ub4    fo_event
 );
 
-
 void OCI_ProcHAEvent
 (
     dvoid     *evtctx,
@@ -227,42 +214,6 @@ OCI_Connection * OCI_ConnectionCreateInternal
     const otext *pwd,
     unsigned int mode,
     const otext *tag
-);
-
-OCI_Connection * OCI_ConnectionAllocate
-(
-    OCI_Pool    *pool,
-    const otext *db,
-    const otext *user,
-    const otext *pwd,
-    unsigned int mode
-);
-
-boolean OCI_ConnectionDeallocate
-(
-    OCI_Connection *con
-);
-
-boolean OCI_ConnectionAttach
-(
-    OCI_Connection *con
-);
-
-boolean OCI_ConnectionLogon
-(
-    OCI_Connection *con,
-    const otext    *password,
-    const otext    *tag
-);
-
-boolean OCI_ConnectionDetach
-(
-    OCI_Connection *con
-);
-
-boolean OCI_ConnectionLogOff
-(
-    OCI_Connection *con
 );
 
 boolean OCI_ConnectionClose
@@ -329,43 +280,8 @@ boolean OCI_DefineIsDataNotNull
 );
 
 /* --------------------------------------------------------------------------------------------- *
- * dirpath.c
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_DirPathSetArray
-(
-    OCI_DirPath *dp,
-    ub4 row_from
-);
-
-unsigned int OCI_DirPathArrayToStream
-(
-    OCI_DirPath *dp,
-    ub4 row_from
-);
-
-unsigned int OCI_DirPathLoadStream
-(
-    OCI_DirPath *dp
-);
-
-/* --------------------------------------------------------------------------------------------- *
  * element.c
  * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_ElemGetNumberInternal
-(
-    OCI_Elem *elem,
-    void     *value,
-    uword     flag
-);
-
-boolean OCI_ElemSetNumberInternal
-(
-    OCI_Elem *elem,
-    void     *value,
-    uword     flag
-);
 
 OCI_Elem * OCI_ElemInit
 (
@@ -404,13 +320,6 @@ void OCI_ErrorReset
 OCI_Error * OCI_ErrorGet
 (
     boolean check
-);
-
-void OCI_ErrorSet
-(
-    OCI_Error *err,
-    boolean    success,
-    boolean    reset
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -682,11 +591,6 @@ OCI_Interval * OCI_IntervalInit
 /* --------------------------------------------------------------------------------------------- *
  * library.c
  * --------------------------------------------------------------------------------------------- */
-
-void OCI_SetLastError
-(
-    OCI_Error err
-);
 
 void OCI_ContextCallEnter
 (
@@ -993,32 +897,11 @@ boolean OCI_NumberToString
  * object.c
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ObjectGetAttrInfo
-(
-    OCI_TypeInfo *typinf,
-    int           index,
-    size_t       *p_size,
-    size_t       *p_align
-);
-
-void OCI_ObjectGetStructSize
-(
-    OCI_TypeInfo *typinf,
-    size_t       *p_size,
-    size_t       *p_align
-);
-
 void OCI_ObjectGetUserStructSize
 (
     OCI_TypeInfo *typinf,
     size_t       *p_size,
     size_t       *p_align
-);
-
-ub2 OCI_ObjectGetIndOffset
-(
-    OCI_TypeInfo *typinf,
-    int           index
 );
 
 OCI_Object * OCI_ObjectInit
@@ -1030,42 +913,6 @@ OCI_Object * OCI_ObjectInit
     OCI_Object     *parent,
     int             index,
     boolean         reset
-);
-
-void OCI_ObjectReset
-(
-    OCI_Object *obj
-);
-
-int OCI_ObjectGetAttrIndex
-(
-    OCI_Object  *obj,
-    const otext *attr,
-    int          type,
-    boolean      check
-);
-
-void * OCI_ObjectGetAttr
-(
-    OCI_Object  *obj,
-    unsigned int index,
-    OCIInd     **pind
-);
-
-boolean OCI_ObjectSetNumberInternal
-(
-    OCI_Object  *obj,
-    const otext *attr,
-    void        *value,
-    uword        flag
-);
-
-boolean OCI_ObjectGetNumberInternal
-(
-    OCI_Object  *obj,
-    const otext *attr,
-    void        *value,
-    uword        flag
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1119,85 +966,14 @@ boolean OCI_ResultsetFree
     OCI_Resultset *rs
 );
 
-boolean OCI_FetchPieces
-(
-    OCI_Resultset *rs
-);
-
-boolean OCI_FetchData
-(
-    OCI_Resultset *rs,
-    int            mode,
-    int            offset,
-    boolean       *err
-);
-
-boolean OCI_FetchCustom
-(
-    OCI_Resultset *rs,
-    int            mode,
-    int            offset,
-    boolean       *err
-);
-
-boolean OCI_ResultsetExpandStrings
-(
-    OCI_Resultset *rs
-);
-
-boolean OCI_ClearFetchedObjectInstances
-(
-    OCI_Resultset *rs
-);
-
 /* --------------------------------------------------------------------------------------------- *
  * statement.c
  * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_BindFreeAll
-(
-    OCI_Statement *stmt
-);
-
-boolean OCI_BindCheckAll
-(
-    OCI_Statement *stmt
-);
-
-boolean OCI_BindUpdateAll
-(
-    OCI_Statement *stmt
-);
-
-boolean OCI_BindData
-(
-    OCI_Statement *stmt,
-    void          *data,
-    ub4            size,
-    const otext   *name,
-    ub1            type,
-    unsigned int   code,
-    unsigned int   mode,
-    unsigned int   subtype,
-    OCI_TypeInfo  *typinf,
-    unsigned int   nbelem
-);
-
-int OCI_BindGetInternalIndex
-(
-    OCI_Statement *stmt,
-    const otext   *name
-);
 
 boolean OCI_FetchIntoUserVariables
 (
     OCI_Statement *stmt,
     va_list        args
-);
-
-boolean OCI_StatementReset
-(
-    OCI_Statement *stmt
 );
 
 boolean OCI_StatementClose
@@ -1212,21 +988,6 @@ OCI_Statement * OCI_StatementInit
     OCIStmt        *handle,
     boolean         is_desc,
     const otext    *sql
-);
-
-boolean OCI_StatementCheckImplicitResultsets
-(
-    OCI_Statement *stmt
-);
-
-boolean OCI_BatchErrorClear
-(
-    OCI_Statement *stmt
-);
-
-boolean OCI_BatchErrorInit
-(
-    OCI_Statement *stmt
 );
 
 boolean OCI_API OCI_PrepareInternal

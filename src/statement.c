@@ -78,6 +78,230 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
 #define OCI_BIND_GET_BUFFER(d, t, i) (t *)((d) + (i) * sizeof(t))
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_BindGetInternalIndex
+ * --------------------------------------------------------------------------------------------- */
+
+int OCI_BindGetInternalIndex
+(
+    OCI_Statement *stmt,
+    const otext   *name
+)
+{
+    OCI_HashEntry *he = NULL;
+    int index         = -1;
+
+    if (stmt->map)
+    {
+        he = OCI_HashLookup(stmt->map, name, FALSE);
+
+        while (he)
+        {
+            /* no more entries or key matched => so we got it ! */
+
+            if (!he->next || ostrcasecmp(he->key, name) == 0)
+            {
+                /* in order to use the same map for user binds and
+                   register binds :
+                      - user binds are stored as positive values
+                      - registers binds are stored as negatives values
+                */
+
+                index = he->values->value.num;
+
+                if (index < 0)
+                {
+                    index = -index;
+                }
+
+                break;
+            }
+        }
+    }
+
+    return index;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_BatchErrorClear
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_BatchErrorClear
+(
+    OCI_Statement *stmt
+)
+{
+    if (stmt->batch)
+    {
+        /* free internal array of OCI_Errors */
+
+        OCI_FREE(stmt->batch->errs)
+
+        /* free batch structure */
+
+        OCI_FREE(stmt->batch)
+    }
+
+    return TRUE;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_BindFreeAll
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_BindFreeAll
+(
+    OCI_Statement *stmt
+)
+{
+    int i;
+
+    OCI_CHECK(NULL == stmt, FALSE);
+
+    /* free user binds */
+
+    if (stmt->ubinds)
+    {
+        for(i = 0; i < stmt->nb_ubinds; i++)
+        {
+            OCI_BindFree(stmt->ubinds[i]);
+        }
+
+        OCI_FREE(stmt->ubinds)
+    }
+
+    /* free register binds */
+
+    if (stmt->rbinds)
+    {
+        for(i = 0; i < stmt->nb_rbinds; i++)
+        {
+            OCI_BindFree(stmt->rbinds[i]);
+        }
+
+        OCI_FREE(stmt->rbinds)
+    }
+
+    stmt->nb_ubinds = 0;
+    stmt->nb_rbinds = 0;
+
+    return TRUE;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_StatementReset
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_StatementReset
+(
+    OCI_Statement *stmt
+)
+{
+    ub4 mode = OCI_DEFAULT;
+
+    OCI_CALL_DECLARE_CONTEXT(TRUE)
+
+#if OCI_VERSION_COMPILE >= OCI_9_2
+
+    if ((OCILib.version_runtime >= OCI_9_2) && (stmt->nb_rbinds > 0))
+    {
+        /*  if we had registered binds, we must delete the statement from the cache.
+            Because, if we execute another sql with "returning into clause",
+            OCI_ProcInBind won't be called by OCI. Nice Oracle bug ! */
+
+        const unsigned int cache_size = OCI_GetStatementCacheSize(stmt->con);
+
+        if (cache_size > 0)
+        {
+            mode = OCI_STRLS_CACHE_DELETE;
+        }
+    }
+
+
+#else
+
+    OCI_NOT_USED(mode)
+
+#endif
+
+    /* reset batch errors */
+
+    OCI_STATUS = OCI_BatchErrorClear(stmt);
+
+    /* free resultsets */
+
+    OCI_STATUS = OCI_STATUS && OCI_ReleaseResultsets(stmt);
+
+    /* free in/out binds */
+
+    OCI_STATUS = OCI_STATUS && OCI_BindFreeAll(stmt);
+
+    /* free bind map */
+
+    if (stmt->map)
+    {
+        OCI_STATUS = OCI_STATUS && OCI_HashFree(stmt->map);
+    }
+
+    /* free handle if needed */
+
+    if (OCI_STATUS && stmt->stmt)
+    {
+        if (OCI_OBJECT_ALLOCATED == stmt->hstate)
+        {
+
+        #if OCI_VERSION_COMPILE >= OCI_9_2
+
+            if (OCILib.version_runtime >= OCI_9_2)
+            {
+                OCI_EXEC(OCIStmtRelease(stmt->stmt, stmt->con->err, NULL, 0, mode))
+            }
+            else
+
+        #endif
+
+            {
+                OCI_STATUS = OCI_HandleFree((dvoid *)stmt->stmt, OCI_HTYPE_STMT);
+            }
+
+            stmt->stmt = NULL;
+        }
+        else if (OCI_OBJECT_ALLOCATED_BIND_STMT == stmt->hstate)
+        {
+            OCI_STATUS = OCI_HandleFree((dvoid *) stmt->stmt, OCI_HTYPE_STMT);
+
+            stmt->stmt = NULL;
+        }
+    }
+
+    if (OCI_STATUS)
+    {
+        /* free sql statement */
+
+        OCI_FREE(stmt->sql)
+
+        stmt->rsts          = NULL;
+        stmt->stmts         = NULL;
+        stmt->sql           = NULL;
+        stmt->map           = NULL;
+        stmt->batch         = NULL;
+
+        stmt->nb_rs         = 0;
+        stmt->nb_stmt       = 0;
+
+        stmt->status        = OCI_STMT_CLOSED;
+        stmt->type          = OCI_UNKNOWN;
+        stmt->bind_array    = FALSE;
+
+        stmt->nb_iters      = 1;
+        stmt->nb_iters_init = 1;
+        stmt->dynidx        = 0;
+        stmt->err_pos       = 0;
+    }
+
+    return OCI_STATUS;
+}
+
+/* --------------------------------------------------------------------------------------------- *
 * OCI_BindCheck
 * --------------------------------------------------------------------------------------------- */
 
@@ -275,49 +499,6 @@ boolean OCI_BindUpdate
     }
 
     return OCI_STATUS;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_BindFreeAll
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_BindFreeAll
-(
-    OCI_Statement *stmt
-)
-{
-    int i;
-
-    OCI_CHECK(NULL == stmt, FALSE);
-
-    /* free user binds */
-
-    if (stmt->ubinds)
-    {
-        for(i = 0; i < stmt->nb_ubinds; i++)
-        {
-            OCI_BindFree(stmt->ubinds[i]);
-        }
-
-        OCI_FREE(stmt->ubinds)
-    }
-
-    /* free register binds */
-
-    if (stmt->rbinds)
-    {
-        for(i = 0; i < stmt->nb_rbinds; i++)
-        {
-            OCI_BindFree(stmt->rbinds[i]);
-        }
-
-        OCI_FREE(stmt->rbinds)
-    }
-
-    stmt->nb_ubinds = 0;
-    stmt->nb_rbinds = 0;
-
-    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -872,50 +1053,6 @@ boolean OCI_BindData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetInternalIndex
- * --------------------------------------------------------------------------------------------- */
-
-int OCI_BindGetInternalIndex
-(
-    OCI_Statement *stmt,
-    const otext   *name
-)
-{
-    OCI_HashEntry *he = NULL;
-    int index         = -1;
-
-    if (stmt->map)
-    {
-        he = OCI_HashLookup(stmt->map, name, FALSE);
-
-        while (he)
-        {
-            /* no more entries or key matched => so we got it ! */
-
-            if (!he->next || ostrcasecmp(he->key, name) == 0)
-            {
-                /* in order to use the same map for user binds and
-                   register binds :
-                      - user binds are stored as positive values
-                      - registers binds are stored as negatives values
-                */
-
-                index = he->values->value.num;
-
-                if (index < 0)
-                {
-                    index = -index;
-                }
-
-                break;
-            }
-        }
-    }
-
-    return index;
-}
-
-/* --------------------------------------------------------------------------------------------- *
  * OCI_FetchIntoUserVariables
  * --------------------------------------------------------------------------------------------- */
 
@@ -1161,120 +1298,6 @@ OCI_Statement * OCI_StatementInit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StatementReset
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_StatementReset
-(
-    OCI_Statement *stmt
-)
-{
-    ub4 mode = OCI_DEFAULT;
-
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-
-#if OCI_VERSION_COMPILE >= OCI_9_2
-
-    if ((OCILib.version_runtime >= OCI_9_2) && (stmt->nb_rbinds > 0))
-    {
-        /*  if we had registered binds, we must delete the statement from the cache.
-            Because, if we execute another sql with "returning into clause",
-            OCI_ProcInBind won't be called by OCI. Nice Oracle bug ! */
-
-        const unsigned int cache_size = OCI_GetStatementCacheSize(stmt->con);
-
-        if (cache_size > 0)
-        {
-            mode = OCI_STRLS_CACHE_DELETE;
-        }
-    }
-
-
-#else
-
-    OCI_NOT_USED(mode)
-
-#endif
-
-    /* reset batch errors */
-
-    OCI_STATUS = OCI_BatchErrorClear(stmt);
-
-    /* free resultsets */
-
-    OCI_STATUS = OCI_STATUS && OCI_ReleaseResultsets(stmt);
-
-    /* free in/out binds */
-
-    OCI_STATUS = OCI_STATUS && OCI_BindFreeAll(stmt);
-
-    /* free bind map */
-
-    if (stmt->map)
-    {
-        OCI_STATUS = OCI_STATUS && OCI_HashFree(stmt->map);
-    }
-
-    /* free handle if needed */
-
-    if (OCI_STATUS && stmt->stmt)
-    {
-        if (OCI_OBJECT_ALLOCATED == stmt->hstate)
-        {
-
-        #if OCI_VERSION_COMPILE >= OCI_9_2
-
-            if (OCILib.version_runtime >= OCI_9_2)
-            {
-                OCI_EXEC(OCIStmtRelease(stmt->stmt, stmt->con->err, NULL, 0, mode))
-            }
-            else
-
-        #endif
-
-            {
-                OCI_STATUS = OCI_HandleFree((dvoid *)stmt->stmt, OCI_HTYPE_STMT);
-            }
-
-            stmt->stmt = NULL;
-        }
-        else if (OCI_OBJECT_ALLOCATED_BIND_STMT == stmt->hstate)
-        {
-            OCI_STATUS = OCI_HandleFree((dvoid *) stmt->stmt, OCI_HTYPE_STMT);
-
-            stmt->stmt = NULL;
-        }
-    }
-
-    if (OCI_STATUS)
-    {
-        /* free sql statement */
-
-        OCI_FREE(stmt->sql)
-
-        stmt->rsts          = NULL;
-        stmt->stmts         = NULL;
-        stmt->sql           = NULL;
-        stmt->map           = NULL;
-        stmt->batch         = NULL;
-
-        stmt->nb_rs         = 0;
-        stmt->nb_stmt       = 0;
-
-        stmt->status        = OCI_STMT_CLOSED;
-        stmt->type          = OCI_UNKNOWN;
-        stmt->bind_array    = FALSE;
-
-        stmt->nb_iters      = 1;
-        stmt->nb_iters_init = 1;
-        stmt->dynidx        = 0;
-        stmt->err_pos       = 0;
-    }
-
-    return OCI_STATUS;
-}
-
-/* --------------------------------------------------------------------------------------------- *
  * OCI_StatementClose
  * --------------------------------------------------------------------------------------------- */
 
@@ -1299,29 +1322,6 @@ boolean OCI_StatementClose
     /* reset data */
 
     return OCI_StatementReset(stmt);
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_BatchErrorClear
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_BatchErrorClear
-(
-    OCI_Statement *stmt
-)
-{
-    if (stmt->batch)
-    {
-        /* free internal array of OCI_Errors */
-
-        OCI_FREE(stmt->batch->errs)
-
-        /* free batch structure */
-
-        OCI_FREE(stmt->batch)
-    }
-
-    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- *

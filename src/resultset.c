@@ -263,6 +263,36 @@ OCI_Resultset * OCI_ResultsetCreate
     return rs;
 }
 
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ResultsetExpandStrings
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_ResultsetExpandStrings
+(
+    OCI_Resultset *rs
+)
+{
+    OCI_CHECK(NULL == rs, FALSE)
+
+    for (ub4 i = 0; i < rs->nb_defs; i++)
+    {
+        OCI_Define *def = &rs->defs[i];
+
+        if (OCI_CDT_TEXT == def->col.datatype)
+        {
+            for (int j = (int) (def->buf.count-1); j >= 0; j--)
+            {
+                ub1 * tmpbuf = ((ub1*) def->buf.data) + (def->col.bufsize * j);
+
+                OCI_StringUTF16ToUTF32(tmpbuf, tmpbuf, (def->col.bufsize / sizeof(otext) ) -1);
+            }
+        }
+    }
+
+    return TRUE;
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * OCI_FetchPieces
  * --------------------------------------------------------------------------------------------- */
@@ -474,6 +504,34 @@ boolean OCI_FetchPieces
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_ClearFetchedObjectInstances
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_ClearFetchedObjectInstances(OCI_Resultset *rs)
+{
+    OCI_CHECK(NULL == rs, FALSE)
+
+    for (ub4 i = 0; i < rs->nb_defs; i++)
+    {
+        OCI_Define *def = &(rs->defs[i]);
+
+        if (SQLT_NTY == def->col.sqlcode && def->buf.data)
+        {
+            for (ub4 j = 0; j < def->buf.count; j++)
+            {
+                if (def->buf.data[j] != NULL)
+                {
+                    OCIObjectFree(rs->stmt->con->env, rs->stmt->con->err, def->buf.data[j], OCI_DEFAULT);
+                    def->buf.data[j] = NULL;
+                }
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_FetchData
  * --------------------------------------------------------------------------------------------- */
 
@@ -682,37 +740,8 @@ boolean OCI_FetchCustom
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ResultsetExpandStrings
+ * OCI_ResultsetInit
  * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_ResultsetExpandStrings
-(
-    OCI_Resultset *rs
-)
-{
-    OCI_CHECK(NULL == rs, FALSE)
-
-    for (ub4 i = 0; i < rs->nb_defs; i++)
-    {
-        OCI_Define *def = &rs->defs[i];
-
-        if (OCI_CDT_TEXT == def->col.datatype)
-        {
-            for (int j = (int) (def->buf.count-1); j >= 0; j--)
-            {
-                ub1 * tmpbuf = ((ub1*) def->buf.data) + (def->col.bufsize * j);
-
-                OCI_StringUTF16ToUTF32(tmpbuf, tmpbuf, (def->col.bufsize / sizeof(otext) ) -1);
-            }
-        }
-    }
-
-    return TRUE;
-}
-
-/* --------------------------------------------------------------------------------------------- *
-* OCI_ResultsetInit
-* --------------------------------------------------------------------------------------------- */
 
 boolean OCI_ResultsetInit
 (
@@ -730,10 +759,9 @@ OCI_Resultset *rs
     return TRUE;
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ResultsetFree
-* --------------------------------------------------------------------------------------------- */
+ * OCI_ResultsetFree
+ * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_ResultsetFree
 (
@@ -833,34 +861,6 @@ OCI_Resultset *rs
     OCI_FREE(rs->defs)
 
     OCI_FREE(rs)
-
-    return TRUE;
-}
-
-/* --------------------------------------------------------------------------------------------- *
-* OCI_ClearFetchedObjectInstances
-* --------------------------------------------------------------------------------------------- */
-
-boolean OCI_ClearFetchedObjectInstances(OCI_Resultset *rs)
-{
-    OCI_CHECK(NULL == rs, FALSE)
-
-    for (ub4 i = 0; i < rs->nb_defs; i++)
-    {
-        OCI_Define *def = &(rs->defs[i]);
-
-        if (SQLT_NTY == def->col.sqlcode && def->buf.data)
-        {
-            for (ub4 j = 0; j < def->buf.count; j++)
-            {
-                if (def->buf.data[j] != NULL)
-                {
-                    OCIObjectFree(rs->stmt->con->env, rs->stmt->con->err, def->buf.data[j], OCI_DEFAULT);
-                    def->buf.data[j] = NULL;
-                }
-            }
-        }
-    }
 
     return TRUE;
 }

@@ -47,36 +47,6 @@ void OCI_ConnectionDetachSubscriptions(OCI_Subscription *sub, OCI_Connection *co
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionCreateInternal
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Connection * OCI_ConnectionCreateInternal
-(
-    OCI_Pool    *pool,
-    const otext *db,
-    const otext *user,
-    const otext *pwd,
-    unsigned int mode,
-    const otext *tag
-)
-{
-    /* create connection */
-
-    OCI_Connection *con = OCI_ConnectionAllocate(pool, db, user, pwd, mode);
-
-    if (con)
-    {
-        if (!OCI_ConnectionAttach(con) || !OCI_ConnectionLogon(con, NULL, tag))
-        {
-            OCI_ConnectionFree(con);
-            con = NULL;
-        }
-    }
-
-    return con;
-}
-
-/* --------------------------------------------------------------------------------------------- *
  * OCI_ConnectionAllocate
  * --------------------------------------------------------------------------------------------- */
 
@@ -908,6 +878,37 @@ boolean OCI_ConnectionClose
     con->tinfs = NULL;
 
     return TRUE;
+}
+
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ConnectionCreateInternal
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Connection * OCI_ConnectionCreateInternal
+(
+    OCI_Pool    *pool,
+    const otext *db,
+    const otext *user,
+    const otext *pwd,
+    unsigned int mode,
+    const otext *tag
+)
+{
+    /* create connection */
+
+    OCI_Connection *con = OCI_ConnectionAllocate(pool, db, user, pwd, mode);
+
+    if (con)
+    {
+        if (!OCI_ConnectionAttach(con) || !OCI_ConnectionLogon(con, NULL, tag))
+        {
+            OCI_ConnectionFree(con);
+            con = NULL;
+        }
+    }
+
+    return con;
 }
 
 /* ********************************************************************************************* *
