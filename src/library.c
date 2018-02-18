@@ -658,12 +658,12 @@ boolean OCI_KeyMapFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ContextCallEnter
+ * OCI_CallEnter
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ContextCallEnter
+void OCI_CallEnter
 (
-    OCI_CallContext *ctx
+    OCI_Context *ctx
 )
 {
     if (ctx && ctx->call_err)
@@ -678,12 +678,12 @@ void OCI_ContextCallEnter
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ContextCallExit
+* OCI_CallExit
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_ContextCallExit
+void OCI_CallExit
 (
-    OCI_CallContext *ctx
+    OCI_Context *ctx
 )
 {
     if (ctx && ctx->call_err)

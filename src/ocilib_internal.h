@@ -592,14 +592,14 @@ OCI_Interval * OCI_IntervalInit
  * library.c
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ContextCallEnter
+void OCI_CallEnter
 (
-    OCI_CallContext *ctx
+    OCI_Context *ctx
 );
 
-void OCI_ContextCallExit
+void OCI_CallExit
 (
-    OCI_CallContext *ctx
+    OCI_Context *ctx
 );
 
 boolean OCI_KeyMapFree

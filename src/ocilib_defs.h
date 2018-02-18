@@ -385,8 +385,8 @@
 
 #define OCI_CALL_DECLARE_CONTEXT(status)                                        \
                                                                                 \
-    OCI_CallContext ctx_obj = { NULL, NULL, NULL, NULL, FALSE };                \
-    OCI_CallContext* ctx = &ctx_obj;                                            \
+    OCI_Context ctx_obj = { NULL, NULL, NULL, NULL, FALSE };                    \
+    OCI_Context* ctx = &ctx_obj;                                                \
     ctx_obj.oci_err    = OCILib.err;                                            \
     ctx_obj.call_status = (status);                                             \
 
@@ -400,14 +400,14 @@
     if ((mode) & OCI_ENV_CONTEXT)                                               \
     {                                                                           \
         ctx->call_err = OCI_ErrorGet(FALSE);                                    \
-        OCI_ContextCallEnter(ctx);                                              \
+        OCI_CallEnter(ctx);                                                     \
     }
 
 #define OCI_CALL_CONTEXT_EXIT(mode)                                             \
                                                                                 \
     if ((mode) & OCI_ENV_CONTEXT)                                               \
     {                                                                           \
-        OCI_ContextCallExit(ctx);                                               \
+        OCI_CallExit(ctx);                                                      \
     }
 
 #define OCI_CALL_ENTER(type, value)                                             \

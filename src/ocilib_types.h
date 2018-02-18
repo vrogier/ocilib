@@ -915,9 +915,9 @@ struct OCI_SQLCmdInfo
 
 typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;
 
-/* OCI Call context */
+/* OCI context */
 
-struct OCI_CallContext
+struct OCI_Context
 {
     OCI_Connection *lib_con;
     OCI_Statement  *lib_stmt;
@@ -926,7 +926,7 @@ struct OCI_CallContext
     boolean         call_status;
 };
 
-typedef struct OCI_CallContext OCI_CallContext;
+typedef struct OCI_Context OCI_Context;
 
 /* static and unique OCI_Library object */
 

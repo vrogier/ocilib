@@ -307,8 +307,8 @@ boolean OCI_ConnectionDetach
 
 void OCI_ConnectionLogonXA
 (
-    OCI_CallContext *ctx,
-    OCI_Connection  *con
+    OCI_Context    *ctx,
+    OCI_Connection *con
 )
 {
     dbtext *dbstr_user  = NULL;
@@ -349,9 +349,9 @@ void OCI_ConnectionLogonXA
 
 void OCI_ConnectionLogonRegular
 (
-    OCI_CallContext *ctx,
-    OCI_Connection  *con,
-    const otext     *new_pwd
+    OCI_Context    *ctx,
+    OCI_Connection *con,
+    const otext    *new_pwd
 )
 {
     /* allocate session handle */
@@ -521,9 +521,9 @@ void OCI_ConnectionLogonRegular
 
 void OCI_ConnectionLogonSessionPool
 (
-    OCI_CallContext *ctx,
-    OCI_Connection  *con,
-    const otext     *tag
+    OCI_Context    *ctx,
+    OCI_Connection *con,
+    const otext    *tag
 )
 {
     ub4      sess_mode  = OCI_SESSGET_SPOOL;
@@ -644,8 +644,8 @@ boolean OCI_ConnectionLogon
 
 void OCI_ConnectionLogoffRegular
 (
-    OCI_CallContext *ctx,
-    OCI_Connection  *con
+    OCI_Context    *ctx,
+    OCI_Connection *con
 )
 {
     /* close any server files not explicitly closed - no check of return code */
@@ -680,8 +680,8 @@ void OCI_ConnectionLogoffRegular
 
 void OCI_ConnectionLogoffSessionPool
 (
-    OCI_CallContext *ctx,
-    OCI_Connection  *con
+    OCI_Context    *ctx,
+    OCI_Connection *con
 )
 {
     /* No explicit transaction object => commit if needed otherwise rollback changes */
