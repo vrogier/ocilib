@@ -1476,6 +1476,7 @@ typedef unsigned int big_uint;
 #define OCI_SIZE_TRACE_MODULE               48
 #define OCI_SIZE_TRACE_ACTION               32
 #define OCI_SIZE_TRACE_INFO                 64
+#define OCI_SIZE_TRACE_OPERATION            32
 
 /* trace types */
 
@@ -1483,6 +1484,7 @@ typedef unsigned int big_uint;
 #define OCI_TRC_MODULE                      2
 #define OCI_TRC_ACTION                      3
 #define OCI_TRC_DETAIL                      4
+#define OCI_TRC_OPERATION                   5
 
 /* HA event type */
 
@@ -2617,7 +2619,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetVersionConnection
  * Store current trace information to the given connection handle.
  * These information:
  *
- * - is stored in the system view V$SESSION
+ * - is stored in system view V$SESSION and/or V$SQL_MONITOR
  * - can be retrieved from the connection property of an OCI_Error handle
  *
  * @note
@@ -2635,19 +2637,24 @@ OCI_EXPORT unsigned int OCI_API OCI_GetVersionConnection
  * - OCI_TRC_DETAIL   : Client application additional information.
  *                      It's recorded in the column CLIENT_INFO of the
  *                      system view V$SESSION
+ * - OCI_TRC_OPERATION: Client application database operation.
+ *                      It's recorded in the column DBOP_NAME of the
+ *                      system view V$SQL_MONITOR
+ * @warning
+ * The system view V$SESSION is updated on Oracle versions >= 10gR1
+ * The system view V$SQL_MONITOR is updated on Oracle versions >= 12cR1
  *
  * @warning
- * The system view V$SESSION is updated on Oracle versions >= 10g
- *
- * @warning
- * Oracle limits the size of these traces content and thus OCILIB will truncate
- * the given values if needed :
+ * Oracle limits the size of these traces content: 
  *
  * - OCI_TRC_IDENTITY : 64 bytes
  * - OCI_TRC_MODULE   : 48 bytes
  * - OCI_TRC_ACTION   : 32 bytes
  * - OCI_TRC_DETAIL   : 64 bytes
+ * - OCI_TRC_OPERATION: 32 bytes
  *
+ * OCILIB truncates input values to match theses limits
+ * 
  */
 
 OCI_EXPORT boolean OCI_API OCI_SetTrace

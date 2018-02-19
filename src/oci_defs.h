@@ -358,6 +358,9 @@
 /* session handle attribute */
 #define OCI_ATTR_MAX_OPEN_CURSORS          471
 
+/* add attribute for DBOP: DataBase OPeration */
+#define OCI_ATTR_DBOP                      485
+
 #define OCI_ATTR_COLLATION_ID              499               /* Collation ID */
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */

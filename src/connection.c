@@ -24,11 +24,29 @@
  *                             PRIVATE VARIABLES
  * ********************************************************************************************* */
 
-static const unsigned int TraceTypeValues[] = { OCI_TRC_IDENTITY, OCI_TRC_MODULE, OCI_TRC_ACTION, OCI_TRC_DETAIL };
+static const unsigned int TraceTypeValues[] = 
+{ 
+    OCI_TRC_IDENTITY, 
+    OCI_TRC_MODULE,
+    OCI_TRC_ACTION, 
+    OCI_TRC_DETAIL, 
+    OCI_TRC_OPERATION 
+};
 
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
+
+#define OCI_SET_TRACE(prop)                                              \
+    con->trace->prop[0] = 0;                                             \
+    if (value)                                                           \
+    {                                                                    \
+        ostrncat(con->trace->prop, value, osizeof(con->trace->prop)-1);  \
+        str = con->trace->prop;                                          \
+    }
+
+#define OCI_GET_TRACE(prop)                                              \
+    OCI_RETVAL = con->trace->prop[0] ? con->trace->prop : NULL;
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ConnectionDetachSubscriptions
@@ -860,6 +878,7 @@ boolean OCI_ConnectionClose
     OCI_FREE(con->server_name)
     OCI_FREE(con->db_name)
     OCI_FREE(con->domain_name)
+    OCI_FREE(con->trace)
 
     if (!con->pool)
     {
@@ -1658,12 +1677,7 @@ boolean OCI_API OCI_SetTrace
 )
 {
     const otext *str = NULL;
-
-#if OCI_VERSION_COMPILE >= OCI_10_1
-
-    ub4 attrib = 0;
-
-#endif
+    ub4 attrib = OCI_UNKNOWN;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
@@ -1685,9 +1699,7 @@ boolean OCI_API OCI_SetTrace
             #if OCI_VERSION_COMPILE >= OCI_10_1
                 attrib = OCI_ATTR_CLIENT_IDENTIFIER;
             #endif
-                con->trace->identifier[0] = 0;
-                ostrncat(con->trace->identifier, value, OCI_SIZE_TRACE_ID);
-                str = con->trace->identifier;
+                OCI_SET_TRACE(identifier)
                 break;
             }
             case OCI_TRC_MODULE:
@@ -1695,9 +1707,7 @@ boolean OCI_API OCI_SetTrace
             #if OCI_VERSION_COMPILE >= OCI_10_1
                 attrib = OCI_ATTR_MODULE;
             #endif
-                con->trace->module[0] = 0;
-                ostrncat(con->trace->module, value, OCI_SIZE_TRACE_MODULE);
-                str = con->trace->module;
+                OCI_SET_TRACE(module)
                 break;
             }
             case OCI_TRC_ACTION:
@@ -1705,9 +1715,7 @@ boolean OCI_API OCI_SetTrace
             #if OCI_VERSION_COMPILE >= OCI_10_1
                 attrib = OCI_ATTR_ACTION;
             #endif
-                con->trace->action[0] = 0;
-                ostrncat(con->trace->action, value, OCI_SIZE_TRACE_ACTION);
-                str = con->trace->action;
+                OCI_SET_TRACE(action)
                 break;
             }
             case OCI_TRC_DETAIL:
@@ -1715,19 +1723,25 @@ boolean OCI_API OCI_SetTrace
             #if OCI_VERSION_COMPILE >= OCI_10_1
                 attrib = OCI_ATTR_CLIENT_INFO;
             #endif
-                con->trace->info[0] = 0;
-                ostrncat(con->trace->info, value,  OCI_SIZE_TRACE_INFO);
-                str = con->trace->info;
+                OCI_SET_TRACE(info)
                 break;
+            }
+            case OCI_TRC_OPERATION:
+            {
+#if OCI_VERSION_COMPILE >= OCI_12_1
+                attrib = OCI_ATTR_DBOP;
+#endif
+                OCI_SET_TRACE(operation)
+           break;
             }
         }
     }
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    /* On success, we give the value to Oracle to record it in system session view */
+    /* On success, we give the value to Oracle to record it in system views */
 
-    if (OCI_STATUS)
+    if (OCI_STATUS && attrib != OCI_UNKNOWN)
     {
         dbtext *dbstr  = NULL;
         int     dbsize = 0;
@@ -1771,22 +1785,27 @@ const otext * OCI_API OCI_GetTrace
         {
             case OCI_TRC_IDENTITY:
             {
-                OCI_RETVAL = con->trace->identifier;
+                OCI_GET_TRACE(identifier)
                 break;
             }
             case OCI_TRC_MODULE:
             {
-                OCI_RETVAL = con->trace->module;
+                OCI_GET_TRACE(module)
                 break;
             }
             case OCI_TRC_ACTION:
             {
-                OCI_RETVAL = con->trace->action;
+                OCI_GET_TRACE(action)
                 break;
             }
             case OCI_TRC_DETAIL:
             {
-                OCI_RETVAL = con->trace->info;
+                OCI_GET_TRACE(info)
+                break;
+            }
+            case OCI_TRC_OPERATION:
+            {
+                OCI_GET_TRACE(operation)
                 break;
             }
         }
