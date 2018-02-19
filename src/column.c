@@ -53,7 +53,7 @@ boolean OCI_ColumnGetAttrInfo
         }
         case OCI_CDT_NUMERIC:
         {
-            const int type = col->subtype;
+            const unsigned int type = col->subtype;
 
             if (type & OCI_NUM_SHORT)
             {

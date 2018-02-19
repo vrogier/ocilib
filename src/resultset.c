@@ -1331,7 +1331,7 @@ boolean OCI_API OCI_SetStructNumericType
     OCI_CALL_CHECK_COMPAT(rs->stmt->con, OCI_CDT_NUMERIC == rs->defs[index - 1].col.datatype);
     OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
 
-    rs->defs[index-1].col.subtype = type;
+    rs->defs[index-1].col.struct_subtype = type;
 
     OCI_RETVAL = OCI_STATUS;
 
@@ -1427,7 +1427,13 @@ boolean OCI_API OCI_GetStruct
                 {
                     case OCI_CDT_NUMERIC:
                     {
-                        OCI_DefineGetNumber(rs, i, ptr, def->col.subtype);
+                        ub2 type = def->col.struct_subtype;
+                        if (type == OCI_UNKNOWN)
+                        {
+                            type = def->col.subtype;
+                        }
+
+                        OCI_DefineGetNumber(rs, i, ptr, type);
 
                         break;
                     }

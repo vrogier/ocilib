@@ -315,8 +315,9 @@ struct OCI_Column
 {
     /* OCILIB infos */
     OCI_TypeInfo *typinf;       /* user type descriptor */
-    ub4           bufsize;      /* element size */
-    ub4           subtype;      /* object type */
+    ub4    bufsize;             /* element size */
+    ub2    subtype;             /* Ocilib sub type */
+    ub2    struct_subtype;      /* Ocilib numeric sub type for OCI_GetStruct() :( */
     /* Oracle infos */
     ub2    sqlcode;             /* Oracle SQL code */
     ub2    typecode;            /* Oracle type code */
