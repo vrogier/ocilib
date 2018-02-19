@@ -8,6 +8,7 @@ create table test_number (value number);
 
 insert into test_number values(3.14);
 insert into test_number values(5.28);
+commit;
 
 -- Cleanup
 

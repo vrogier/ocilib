@@ -96,7 +96,7 @@ int main(int argc, char **argv)
     OCI_Execute(st);
     OCI_Commit(cn);
 
-    printf("\n%d row inserted.\n", OCI_GetAffectedRows);
+    printf("\n%d row inserted.\n", OCI_GetAffectedRows(st));
 
     /* free local objects */
     OCI_ObjectFree(obj_sdo);
