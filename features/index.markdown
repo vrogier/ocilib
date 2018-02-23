@@ -17,7 +17,7 @@ title: Features
 + Built-in error handling (global and thread context)
 + Full support for SQL API and Object API
 + Full support for ALL Oracle SQL and PL/SQL data types (scalars, objects, refs, collections, ..)
-+ Full support for PL/SQL (blocks, cursors, Index by Tables and Nested tables)
++ Full support for PL/SQL (blocks, cursors, records, Index by Tables and Nested tables)
 + Support for non scalar data types with trough library objects    
 + Oracle Pooling (connections and sessions pools)
 + Oracle XA connectivity (X/Open Distributed Transaction Processing XA interface)
