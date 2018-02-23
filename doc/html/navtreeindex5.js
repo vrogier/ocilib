@@ -1,5 +1,7 @@
 var NAVTREEINDEX5 =
 {
+"group___ocilib_c_api_feature_returning_into.html#ga24570345dff59944656f2cf537de0693":[1,2,12,14],
+"group___ocilib_c_api_feature_returning_into.html#ga334374bb86c0562ab453a45a56c62dac":[1,2,12,11],
 "group___ocilib_c_api_feature_returning_into.html#ga34cb87ebfa9f43b1474f192515562271":[1,2,12,18],
 "group___ocilib_c_api_feature_returning_into.html#ga47f7026a1340f47106bb68e640721e7b":[1,2,12,10],
 "group___ocilib_c_api_feature_returning_into.html#ga4c215f37902cc9045c27ae1bdd3b2844":[1,2,12,4],
@@ -192,6 +194,8 @@ var NAVTREEINDEX5 =
 "group___ocilib_c_api_longs.html#gaee33459c8a44c3216df4335627cac818":[1,2,17,6],
 "group___ocilib_c_api_longs.html#gaf7ed15bc901e38b9bc3394f334bf8d4c":[1,2,17,5],
 "group___ocilib_c_api_metadata.html":[1,7],
+"group___ocilib_c_api_metadata.html#ga32139839e23dd22c496227f3fa244514":[1,7,7],
+"group___ocilib_c_api_metadata.html#ga4386b90cd5c09a1b67615eb8b17b4a59":[1,7,8],
 "group___ocilib_c_api_metadata.html#ga5413bb8ad987dd0ccf415e6058958d82":[1,7,2],
 "group___ocilib_c_api_metadata.html#ga541bb34a0a86c6296f59605f85931039":[1,7,0],
 "group___ocilib_c_api_metadata.html#ga5d8b11bf30702727e7c0499875ab9142":[1,7,3],
@@ -245,9 +249,5 @@ var NAVTREEINDEX5 =
 "group___ocilib_c_api_raw_handles.html#ga9427148da9fece5cf726ebac1f85037a":[1,15,11],
 "group___ocilib_c_api_raw_handles.html#ga94df890665f1f2ea39c3f4f4a00f9987":[1,15,16],
 "group___ocilib_c_api_raw_handles.html#ga95406cd5356e04357fdd5b4adf93d370":[1,15,9],
-"group___ocilib_c_api_raw_handles.html#gaa73f88244e2242363b3694ffa19fa6f4":[1,15,19],
-"group___ocilib_c_api_raw_handles.html#gaa77980531a35fa442bfa3ef49f1a87af":[1,15,17],
-"group___ocilib_c_api_raw_handles.html#gaa870054550e796984ea130b6b319e6fc":[1,15,6],
-"group___ocilib_c_api_raw_handles.html#gab7663ce1fd7cfbe74631ea01f3c580a6":[1,15,10],
-"group___ocilib_c_api_raw_handles.html#gac271bea5fea0f4db1061c36abb585abf":[1,15,5]
+"group___ocilib_c_api_raw_handles.html#gaa73f88244e2242363b3694ffa19fa6f4":[1,15,19]
 };

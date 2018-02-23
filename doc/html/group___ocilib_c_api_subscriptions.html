@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.4.1</span>
+   &#160;<span id="projectnumber">4.5.0</span>
    </div>
   </td>
  </tr>
@@ -207,9 +207,15 @@ Functions</h2></td></tr>
 <li>OCI_CNT_DATABASES : request for changes at database level (startup, shutdown)</li>
 <li>OCI_CNT_ALL : request for all changes</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library. ">OCI_Initialize()</a> to be able to use subscriptions</dd>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'port' and 'timeout' are optional (use value 0 a optional value)</dd>
 <dd>
-Requires Oracle Client 10gR2 or above</dd>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library. ">OCI_Initialize()</a> to be able to use subscriptions</dd></dl>
+<p>@ </p><dl class="section warning"><dt>Warning</dt><dd>Port usage All notifications are using the same port. Port numbe can be either:<ul>
+<li>determined automatically by Oracle client once the first subscription had been created and can be retrieved using <a class="el" href="group___ocilib_c_api_subscriptions.html#gaac2b2c3f7bc5e07f230cb4f797f95e8c" title="Return the port used by the notification. ">OCI_SubscriptionGetPort()</a></li>
+<li>Set by the parameter 'port' during the first call to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga78afd31aa61d0ce04c535cd669e58e07" title="Register a notification against the given database. ">OCI_SubscriptionRegister()</a>. In this case later calls can provide same port number or 0</li>
+</ul>
+</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Requires Oracle Client 10gR2 or above</dd>
 <dd>
 Subscription handles are automatically managed by the library</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Subscription handle on success or NULL on failure </dd></dl>
@@ -646,7 +652,7 @@ if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscripti
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Nov 28 2017 22:33:56 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Feb 6 2018 22:02:21 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

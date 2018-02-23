@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.4.1</span>
+   &#160;<span id="projectnumber">4.5.0</span>
    </div>
   </td>
  </tr>
@@ -110,6 +110,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac0c5e0ec558a4133f5986e2e85fa8a8a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classocilib_1_1_column.html">Column</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_type_info.html#ac0c5e0ec558a4133f5986e2e85fa8a8a">GetColumn</a> (unsigned int index) const</td></tr>
 <tr class="memdesc:ac0c5e0ec558a4133f5986e2e85fa8a8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the column from its index in the resultset.  <a href="#ac0c5e0ec558a4133f5986e2e85fa8a8a">More...</a><br /></td></tr>
 <tr class="separator:ac0c5e0ec558a4133f5986e2e85fa8a8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fcc98463e8e0b2e25a52b89f11b048b"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_type_info.html#a6fcc98463e8e0b2e25a52b89f11b048b">IsFinalType</a> () const</td></tr>
+<tr class="memdesc:a6fcc98463e8e0b2e25a52b89f11b048b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate if the given UDT type is final.  <a href="#a6fcc98463e8e0b2e25a52b89f11b048b">More...</a><br /></td></tr>
+<tr class="separator:a6fcc98463e8e0b2e25a52b89f11b048b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7adab8e0f94ebdb34bb6b818b23bae2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classocilib_1_1_type_info.html">TypeInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_type_info.html#ae7adab8e0f94ebdb34bb6b818b23bae2">GetSuperType</a> () const</td></tr>
+<tr class="memdesc:ae7adab8e0f94ebdb34bb6b818b23bae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the super type of the given type (e.g. parent type for a derived ORACLE UDT type)  <a href="#ae7adab8e0f94ebdb34bb6b818b23bae2">More...</a><br /></td></tr>
+<tr class="separator:ae7adab8e0f94ebdb34bb6b818b23bae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provides type information on Oracle Database objects. </p>
@@ -303,13 +309,91 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a6fcc98463e8e0b2e25a52b89f11b048b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fcc98463e8e0b2e25a52b89f11b048b">&#9670;&nbsp;</a></span>IsFinalType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean ocilib::TypeInfo::IsFinalType </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Indicate if the given UDT type is final. </p>
+<dl class="section note"><dt>Note</dt><dd>Non-final types are virtual UDT type that can be inherited</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><ul>
+<li>For table and views, it returns true</li>
+<li>For types, it returns true if the type is final and false if it is virtual </li>
+</ul>
+</dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l03350">3350</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_metadata.html#ga32139839e23dd22c496227f3fa244514">OCI_TypeInfoIsFinalType()</a>.</p>
+
+</div>
+</div>
+<a id="ae7adab8e0f94ebdb34bb6b818b23bae2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7adab8e0f94ebdb34bb6b818b23bae2">&#9670;&nbsp;</a></span>GetSuperType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classocilib_1_1_type_info.html">TypeInfo</a> ocilib::TypeInfo::GetSuperType </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the super type of the given type (e.g. parent type for a derived ORACLE UDT type) </p>
+<dl class="section note"><dt>Note</dt><dd>This property is only valid for types</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><ul>
+<li>For table and views, it return a null <a class="el" href="classocilib_1_1_type_info.html" title="Provides type information on Oracle Database objects. ">TypeInfo</a> object</li>
+<li>For types:<ul>
+<li>returns a valid Typeinfo object wrapping the parent super type</li>
+<li>returns a null <a class="el" href="classocilib_1_1_type_info.html" title="Provides type information on Oracle Database objects. ">TypeInfo</a> object if the given type is NOT deriving from a base type </li>
+</ul>
+</li>
+</ul>
+</dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l03355">3355</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_metadata.html#ga4386b90cd5c09a1b67615eb8b17b4a59">OCI_TypeInfoGetSuperType()</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_type_info.html">TypeInfo</a></li>
-    <li class="footer">Generated on Tue Nov 28 2017 22:33:58 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Feb 6 2018 22:02:23 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

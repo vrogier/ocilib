@@ -6,5 +6,7 @@ var group___ocilib_c_api_metadata =
     [ "OCI_TypeInfoFree", "group___ocilib_c_api_metadata.html#ga5d8b11bf30702727e7c0499875ab9142", null ],
     [ "OCI_TypeInfoGetColumnCount", "group___ocilib_c_api_metadata.html#ga9c93a72421d19de30acbf05a53353c93", null ],
     [ "OCI_TypeInfoGetColumn", "group___ocilib_c_api_metadata.html#gab22a6fcb3d64c74adfc7506f1ce343d7", null ],
-    [ "OCI_TypeInfoGetName", "group___ocilib_c_api_metadata.html#ga7060bac83043e839ff2741373c756b22", null ]
+    [ "OCI_TypeInfoGetName", "group___ocilib_c_api_metadata.html#ga7060bac83043e839ff2741373c756b22", null ],
+    [ "OCI_TypeInfoIsFinalType", "group___ocilib_c_api_metadata.html#ga32139839e23dd22c496227f3fa244514", null ],
+    [ "OCI_TypeInfoGetSuperType", "group___ocilib_c_api_metadata.html#ga4386b90cd5c09a1b67615eb8b17b4a59", null ]
 ];

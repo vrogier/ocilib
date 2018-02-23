@@ -1,0 +1,41 @@
+2018-02-21 Version 4.5.1 Vincent Rogier vince.rogier@ocilib.net
+
+    * Changes (C API)
+
+        - Updated driver information set by OCILIB since v3.1.0 (column CLIENT_DRIVER in V$SESSION_CONNECT_INFO)
+            * it is now including OCILIB version (e.g. "OCILIB : x.y.z" instead of "OCILIB")
+         - Extended OCI_SeTrace() and OCI_GetTrace():
+            * Added OCI_TRC_OPERATION: Name of the database operation set by the client application to be monitored (according Oracle docs)
+            * This value is stored the database in the column DBOP_NAME of the system view V$SQLMONITOR
+            * OCI_GetTrace() returns now NULL instead of an empty string if the given trace is not set or nullified
+        - Release Windows binaries are now built using VS 2017 15.5.6 (instead of VS2017 15.3.2)
+
+    * Fixes (C API)
+    
+		- Driver information (introduced in Oracle 11gR1: was set by OCILIB if
+			- Oracle version >= 11gR1 for standalone connections and connections retrieved from connection pools
+			- Oracle version >= 11gR2 for connections retrieved from session pools
+			- Now it sets it correctly in all cases when Oracle version >= 11gR1 
+		- Issue #141: OCIBindRaw() now accepts empty buffers (non null data with size = 0)
+        - Issue #142: OCI_GetStruct() was filling numeric fields with garbage values since v4.5.0
+        - Issue #143: OCI_SetTrace(): passing NULL values for clearing trace information leads to segfaults
+        - Issue #144: OCI_SetTrace(); If called at least once, it was causing small memory leak in OCI_ConnectionFree()
+        - Issue #145: Using OCI_BAM_INTERNAL for types using handles was leading to segfault when executing the statement
+            * Impacted types:OCI_Object, OCI_Lob, OCI_File, OCI_Timestamp, OCI_Interval, OCI_Ref and OCI_Collection
+        
+    * Fixes (C++ API)
+    
+        - Issue #141: ocilib::Statement::Bind<ocilib::Raw, unsigned int>() accepts now empty ocilib::Raw
+
+    * Miscellaneous:
+
+        - OCILIB requires now C99 to be activated for compiling:
+            * When using autotools (Unixes): Enforcing C99 compiler flags using AC_PROG_CC_STDC() macro
+            * When using Visual Studio: OCILIB cannot be compiled anymore with VS2010 and earlier versions (released binaries use VS 2017)
+			* This was motivated for using variadic macros and allow variable declarations not only at beginning of blocks
+        - Addressed static code analysis hints and warnings
+        - Internal code refactoring and factorization
+        - Reduced cyclomatic complexity of some internal functions
+            * Some methods (connection logon/logoff, bindings) were far too long and had been decomposed and split in smaller ones
+       - Fixed demo an script files
+       

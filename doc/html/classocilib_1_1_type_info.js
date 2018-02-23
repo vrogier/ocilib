@@ -11,5 +11,7 @@ var classocilib_1_1_type_info =
     [ "GetName", "classocilib_1_1_type_info.html#a7d185d9312f718c60397feb62710b9b9", null ],
     [ "GetConnection", "classocilib_1_1_type_info.html#a772ab3b35bd92ffa36a4a4cb26e37050", null ],
     [ "GetColumnCount", "classocilib_1_1_type_info.html#a9ec4e860843139c1829ac4251470f3a7", null ],
-    [ "GetColumn", "classocilib_1_1_type_info.html#ac0c5e0ec558a4133f5986e2e85fa8a8a", null ]
+    [ "GetColumn", "classocilib_1_1_type_info.html#ac0c5e0ec558a4133f5986e2e85fa8a8a", null ],
+    [ "IsFinalType", "classocilib_1_1_type_info.html#a6fcc98463e8e0b2e25a52b89f11b048b", null ],
+    [ "GetSuperType", "classocilib_1_1_type_info.html#ae7adab8e0f94ebdb34bb6b818b23bae2", null ]
 ];
