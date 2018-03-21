@@ -5854,7 +5854,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetAllocationMode
  *
  * ONLY the following statements can return resultsets that can be fetched by host programs:
  * - Statements executing SQL SELECT
- * - Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause
+ * - Statements executing SQL INSERT/UPDATE/DELETE using a RETURNING INTO clause
  * - Statements binded to PL/SQL OPEN FOR argument
  * - Statements binded to PL/SQL procedure OUT variables
  * - Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using
@@ -11492,7 +11492,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberSetContent
 * - OCI_NUM_BIGUINT   : value is a pointer to an unsigned big_uint
 * - OCI_NUM_FLOAT     : value is a pointer to an float
 * - OCI_NUM_DOUBLE    : value is a pointer to a double
-* - OCI_NUM_NUMBER    : value is a pointer to a OCI_Number
+* - OCI_NUM_NUMBER    : value is a pointer to the return value of OCI_NumberGetContent()
 *
 * @return
 * TRUE on success otherwise FALSE
@@ -11839,6 +11839,8 @@ OCI_EXPORT int OCI_API OCI_DateCompare
  * @param date  - Date1 handle
  * @param date2 - Date2 handle
  *
+ * The number of days is the difference of (date2 - date)
+ * 
  * @return
  * Number of days on success otherwise OCI_ERROR on failure
  *
