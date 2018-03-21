@@ -1286,7 +1286,9 @@ boolean OCI_API OCI_ExecuteInternal
 
         /* (one of the rare OCI call not enclosed with a OCI_CALLX macro ...) */
 
-        OCI_GET_ATTRIB(OCI_HTYPE_STMT, OCI_ATTR_PARSE_ERROR_OFFSET, stmt->stmt, &stmt->err_pos, NULL)
+        OCIAttrGet((dvoid *)stmt->stmt, (ub4)OCI_HTYPE_STMT,
+                  (dvoid *)&stmt->err_pos, (ub4 *)NULL,
+                  (ub4)OCI_ATTR_PARSE_ERROR_OFFSET, stmt->con->err);
 
         /* raise exception */
 
