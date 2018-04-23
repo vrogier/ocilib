@@ -12294,6 +12294,9 @@ OCI_EXPORT unsigned int OCI_API OCI_TimestampGetType
  * @param tmsp     - Destination Timestamp handle
  * @param tmsp_src - Source Timestamp handle
  *
+ * @note
+ * Both timestamp handles must be of the same type
+ *
  * @return
  * TRUE on success otherwise FALSE
  *

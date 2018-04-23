@@ -257,15 +257,53 @@ boolean OCI_API OCI_TimestampAssign
     OCI_Timestamp *tmsp_src
 )
 {
+    OCI_Timestamp *tmp_tmsp = NULL;
+    OCI_Timestamp *tmp_tmsp_src = NULL;
+
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     OCI_CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    OCI_CALL_CHECK_COMPAT(tmsp->con, tmsp->type == tmsp_src->type)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(tmsp)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_EXEC(OCIDateTimeAssign((dvoid *)tmsp->env, tmsp->err, tmsp_src->handle, tmsp->handle))
+    /* OCIDateTimeAssign() fails with OCI_TIMESTAMP_LTZ timestamps */
+
+    if (OCI_TIMESTAMP_LTZ == tmsp_src->type)
+    {
+        tmp_tmsp_src = OCI_TimestampCreate(tmsp_src->con, OCI_TIMESTAMP_TZ);
+        tmp_tmsp     = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
+
+        OCI_STATUS = OCI_STATUS && OCI_TimestampConvert(tmp_tmsp_src, tmsp_src);
+        OCI_STATUS = OCI_STATUS && OCI_TimestampConvert(tmp_tmsp, tmsp);
+    }
+    else
+    {
+        tmp_tmsp_src = tmsp_src;
+        tmp_tmsp     = tmsp;
+    }
+
+    OCI_EXEC(OCIDateTimeAssign((dvoid *)tmp_tmsp->env, tmp_tmsp->err, tmp_tmsp_src->handle, tmp_tmsp->handle))
+
+    /* converting back */
+
+    if (OCI_TIMESTAMP_LTZ == tmsp_src->type)
+    {
+        OCI_STATUS = OCI_STATUS && OCI_TimestampConvert(tmsp_src, tmp_tmsp_src);
+        OCI_STATUS = OCI_STATUS && OCI_TimestampConvert(tmsp, tmp_tmsp);
+    }
+
+    if (tmsp != tmp_tmsp)
+    {
+        OCI_TimestampFree(tmp_tmsp);
+    }
+
+    if (tmsp_src != tmp_tmsp_src)
+    {
+        OCI_TimestampFree(tmp_tmsp_src);
+    }
 
 #endif
 
