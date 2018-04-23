@@ -2298,14 +2298,14 @@ inline bool Date::operator >= (const Date& other) const
 {
     int res = Compare(other);
 
-    return res == 0 || res < 0;
+    return res == 0 || res > 0;
 }
 
 inline bool Date::operator <= (const Date& other) const
 {
     int res = Compare(other);
 
-    return res == 0 || res > 0;
+    return res == 0 || res < 0;
 }
 
 /* --------------------------------------------------------------------------------------------- *
