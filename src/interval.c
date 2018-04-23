@@ -286,7 +286,7 @@ int OCI_API OCI_IntervalCheck
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_IntervalCompare
- * ----------------------------------------------------------------------- */
+ * --------------------------------------------------------------------------------------------- */
 
 int OCI_API OCI_IntervalCompare
 (
@@ -303,7 +303,7 @@ int OCI_API OCI_IntervalCompare
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_EXEC(OCIIntervalCompare((dvoid *) itv->env, itv->err, itv2->handle, itv2->handle, &value))
+    OCI_EXEC(OCIIntervalCompare((dvoid *) itv->env, itv->err, itv->handle, itv2->handle, &value))
 
  #endif
 
