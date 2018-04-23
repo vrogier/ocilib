@@ -863,7 +863,9 @@ struct OCI_Dequeue
 
 struct OCI_Array
 {
-    OCI_Connection *con;            /* pointer to connection info object */
+    OCIError       *err;            /* OCI context handle */
+    OCIEnv         *env;            /* OCI environment handle */
+    OCI_Connection *con;            /* Connection object for type dependent on connections */
     unsigned int    elem_type;      /* array element type */
     unsigned int    elem_subtype;   /* array element subtype */
     unsigned int    elem_size;      /* array element handle size */

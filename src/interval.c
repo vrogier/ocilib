@@ -172,7 +172,6 @@ OCI_Interval ** OCI_API OCI_IntervalArrayCreate
     OCI_Array *arr = NULL;
 
     OCI_CALL_ENTER(OCI_Interval **, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_INTERVAL_ENABLED(con)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 

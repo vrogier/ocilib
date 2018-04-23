@@ -197,6 +197,8 @@ OCI_Array * OCI_ArrayCreate
     if (OCI_STATUS)
     {
         arr->con          = con;
+        arr->err          = con ? con->err : OCILib.err;
+        arr->env          = con ? con->env : OCILib.env;
         arr->elem_type    = elem_type;
         arr->elem_subtype = elem_subtype;
         arr->elem_size    = elem_size;
@@ -218,7 +220,7 @@ OCI_Array * OCI_ArrayCreate
 
         if (OCI_STATUS && handle_type != 0)
         {
-            OCI_STATUS = OCI_DescriptorArrayAlloc((dvoid  *)arr->con->env, (dvoid **)arr->mem_handle, (ub4)handle_type, (ub4)nb_elem);
+            OCI_STATUS = OCI_DescriptorArrayAlloc((dvoid  *)arr->env, (dvoid **)arr->mem_handle, (ub4)handle_type, (ub4)nb_elem);
         }
 
         if (OCI_STATUS && arr->tab_obj && arr->mem_handle)

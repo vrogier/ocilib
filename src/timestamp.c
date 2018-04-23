@@ -189,7 +189,6 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
     OCI_Array *arr = NULL;
 
     OCI_CALL_ENTER(OCI_Timestamp **, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_TIMESTAMP_ENABLED(con)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
