@@ -10319,6 +10319,9 @@ OCI_EXPORT boolean OCI_API OCI_LobWrite2
  * - Bytes for BLOBs
  * - Characters for CLOBs/NCLOBs
  *
+ * @note
+ * If current offset was beyond the new size, it is then updated to an eof position in order for further write calls to append data
+ *
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -10378,7 +10381,9 @@ OCI_EXPORT unsigned int OCI_API OCI_LobGetChunkSize
  *
  * @note
  * Absolute position starts at 0.
- * Erasing means that spaces overwrite the existing LOB value.
+ * Erasing means "overwriting" the range of values at the given offset with:
+ *   - spaces for CLOB/NCLOB
+ *   - 'zero' bytes for BLOB  
  *
  * @return
  * Number of bytes (BLOB) or characters (CLOB/NCLOB) erased on success

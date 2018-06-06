@@ -663,7 +663,16 @@ boolean OCI_API OCI_LobTruncate
         OCI_EXEC(OCILobTrim(lob->con->cxt, lob->con->err, lob->handle, (ub4) size))
     }
 
+    if (OCI_STATUS)
+    {
+        if (lob->offset > size)
+        {
+            lob->offset = OCI_LobGetLength(lob) + 1;
+        }
+    }
+
     OCI_RETVAL = OCI_STATUS;
+
 
     OCI_CALL_EXIT()
 }
@@ -706,7 +715,10 @@ big_uint OCI_API OCI_LobErase
         size = (big_uint) lob_size;
     }
 
-    OCI_RETVAL = size;
+    if (OCI_SUCCESS)
+    {
+        OCI_RETVAL = size;
+    }
 
     OCI_CALL_EXIT()
 }
