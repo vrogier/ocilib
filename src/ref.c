@@ -133,7 +133,7 @@ boolean OCI_RefUnpin
     OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     OCI_CHECK(NULL == ref, FALSE)
-    OCI_CHECK(NULL == ref->obj, FALSE)
+    OCI_CHECK(NULL == ref->obj, TRUE)
 
     OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con);
 
