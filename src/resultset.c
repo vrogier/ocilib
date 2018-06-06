@@ -209,6 +209,7 @@ OCI_Resultset * OCI_ResultsetCreate
                 def->col.size       = (ub2) bnd->size;
                 def->col.datatype   = bnd->type;
                 def->col.subtype    = bnd->subtype;
+                def->col.typinf     = bnd->typinf;
 
                 switch (def->col.datatype)
                 {
