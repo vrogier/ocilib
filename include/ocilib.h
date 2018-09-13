@@ -4795,7 +4795,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfDates
  * @param data - Timestamp handle
  *
  * @note
- * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
+ * parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4851,7 +4851,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfTimestamps
  * @param data - Interval handle
  *
  * @note
- * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
+ * parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4909,7 +4909,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfIntervals
  * @param data - Lob handle
  *
  * @note
- * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
+ * parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -4965,7 +4965,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfLobs
  * @param data - File handle
  *
  * @note
- * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
+ * parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -5021,7 +5021,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfFiles
  * @param data - Object handle
  *
  * @note
- * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
+ * parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -5076,7 +5076,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfObjects
  * @param data - Collection handle to bind
  *
  * @note
- * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
+ * parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -5133,7 +5133,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfColls
  * @param data - Ref handle to bind
  *
  * @note
- * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
+ * parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -5187,7 +5187,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfRefs
  * @param data - Statement handle to bind
  *
  * @note
- * parameter 'data' CANNOT be NULL whatever the statement bind allocation mode
+ * parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported
  *
  * @return
  * TRUE on success otherwise FALSE
