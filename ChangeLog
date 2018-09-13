@@ -1,10 +1,34 @@
+2018-09-13 Version 4.5.2 Vincent Rogier vince.rogier@ocilib.net
+ 
+    * Fixes (C API)
+
+        - Issue #152: Wrong error reporting when calling OCI_Execute() on a non prepared statement
+        - Issue #153: OCI_GetSqlErrorPos() not working since v4.3.0
+        - Issue #158: OCI_IntervalCompare() always returns 0 (equality)
+        - Issue #159 (workaround for oracle Bug): OCI_TimestampAssign() returns ORA-00932 when timestamp type is OCI_DTYPE_TIMESTAMP_LTZ
+        - Issue #161: Current offset not updated when calling OCI_LobTruncate()
+        - Issue #162: OCI_RegisterObject() and OCI_RegisterRef() failure
+        - Issue #164: OCI_RefSetNull() fails if already null or if its underlying object has not been pinned
+        - OCI_IntervalArrayCreate() and OCI_TimestampArrayCreate() did not allow to create arrays if the connection handle was null
+  
+    * Fixes (C++ API)
+    
+        - Issue #155: ocilib::Date::operator inverted operator >= and <=    
+        
+    * Miscellaneous:
+
+        - Documentation updates
+        - Added Google Test suite for the C API 
+            * Work In Progress
+            * VS2017 (only) project using Google test nugets
+            
 2018-02-21 Version 4.5.1 Vincent Rogier vince.rogier@ocilib.net
 
     * Changes (C API)
 
         - Updated driver information set by OCILIB since v3.1.0 (column CLIENT_DRIVER in V$SESSION_CONNECT_INFO)
             * it is now including OCILIB version (e.g. "OCILIB : x.y.z" instead of "OCILIB")
-         - Extended OCI_SeTrace() and OCI_GetTrace():
+        - Extended OCI_SeTrace() and OCI_GetTrace():
             * Added OCI_TRC_OPERATION: Name of the database operation set by the client application to be monitored (according Oracle docs)
             * This value is stored the database in the column DBOP_NAME of the system view V$SQLMONITOR
             * OCI_GetTrace() returns now NULL instead of an empty string if the given trace is not set or nullified

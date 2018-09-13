@@ -115,7 +115,7 @@
       <DebugInformationFormat>
       </DebugInformationFormat>
       <CompileAs>CompileAsC</CompileAs>
-      <DisableSpecificWarnings>4255;4668;4996;4710;4711;4738;4774;4820</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4255;4668;4996;4710;4711;4738;4774;4820;5045</DisableSpecificWarnings>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>OCI_CHARSET_ANSI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -167,7 +167,7 @@
       <DebugInformationFormat>
       </DebugInformationFormat>
       <CompileAs>CompileAsC</CompileAs>
-      <DisableSpecificWarnings>4255;4668;4996;4710;4711;4738;4774;4820</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4255;4668;4996;4710;4711;4738;4774;4820;5045</DisableSpecificWarnings>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>OCI_CHARSET_ANSI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -216,7 +216,7 @@
       <DebugInformationFormat>
       </DebugInformationFormat>
       <CompileAs>CompileAsC</CompileAs>
-      <DisableSpecificWarnings>4255;4668;4996;4710;4711;4738;4774;4820</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4255;4668;4996;4710;4711;4738;4774;4820;5045</DisableSpecificWarnings>
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <ResourceCompile>
@@ -269,7 +269,7 @@
       <DebugInformationFormat>
       </DebugInformationFormat>
       <CompileAs>CompileAsC</CompileAs>
-      <DisableSpecificWarnings>4255;4668;4996;4710;4711;4738;4774;4820</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4255;4668;4996;4710;4711;4738;4774;4820;5045</DisableSpecificWarnings>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>OCI_CHARSET_WIDE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
