@@ -128,7 +128,8 @@ static const otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
     OTEXT("Item '%ls' (type %d)  not found"),
     OTEXT("Argument '%ls' : Invalid value %d"),
     OTEXT("Cannot retrieve OCI environment from XA connection string '%ls'"),
-    OTEXT("Cannot connect to database using XA connection string '%ls'")
+    OTEXT("Cannot connect to database using XA connection string '%ls'"),
+    OTEXT("Binding '%ls': Passing non NULL host variable is not allowed when bind allocation mode is internal")
 };
 
 #else
@@ -164,7 +165,8 @@ static const otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
     OTEXT("Item '%s' (type %d)  not found"),
     OTEXT("Argument '%s' : Invalid value %d"),
     OTEXT("Cannot retrieve OCI environment from XA connection string '%s'"),
-    OTEXT("Cannot connect to database using XA connection string '%s'")
+    OTEXT("Cannot connect to database using XA connection string '%s'"),
+    OTEXT("Binding '%s': Passing non NULL host variable is not allowed when bind allocation mode is internal")
 };
 
 #endif
@@ -1113,4 +1115,37 @@ void OCI_ExceptionConnFromXaString
     }
 
     OCI_ExceptionRaise(err);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_ExceptionExternalBindingNotAllowed
+* --------------------------------------------------------------------------------------------- */
+
+void OCI_ExceptionExternalBindingNotAllowed
+(
+    OCI_Statement *stmt,
+    const otext   *bind
+)
+{
+    OCI_Error *err = OCI_ExceptionGetError();
+
+    if (err)
+    {
+        err->type = OCI_ERR_OCILIB;
+        err->libcode = OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED;
+        err->stmt = stmt;
+
+        if (stmt)
+        {
+            err->con = stmt->con;
+        }
+
+        osprintf(err->str,
+            osizeof(err->str) - (size_t)1,
+            OCILib_ErrorMsg[OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED],
+            bind);
+    }
+
+    OCI_ExceptionRaise(err);
+
 }

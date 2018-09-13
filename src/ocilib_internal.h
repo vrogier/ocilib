@@ -544,6 +544,12 @@ void OCI_ExceptionConnFromXaString
     const otext *value
 );
 
+void OCI_ExceptionExternalBindingNotAllowed
+(
+    OCI_Statement *stmt,
+    const otext   *bind
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * file.c
  * --------------------------------------------------------------------------------------------- */

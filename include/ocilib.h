@@ -1126,8 +1126,9 @@ typedef unsigned int big_uint;
 #define OCI_ERR_ARG_INVALID_VALUE           27
 #define OCI_ERR_XA_ENV_FROM_STRING          28
 #define OCI_ERR_XA_CONN_FROM_STRING         29
+#define OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED   30
 
-#define OCI_ERR_COUNT                       30   
+#define OCI_ERR_COUNT                       31   
 
 
 /* allocated bytes types */

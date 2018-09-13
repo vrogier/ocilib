@@ -116,16 +116,25 @@
  *
  */
 
-#define OCI_CALL_CHECK_BIND(stmt, name, data, type, ext_only)               \
-                                                                            \
-    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)                             \
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)                                \
-    OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)                     \
-    {                                                                       \
-        const boolean ext_only_value = ext_only;                            \
-        if ((ext_only_value) || OCI_BAM_EXTERNAL == (stmt)->bind_alloc_mode)\
-        OCI_CALL_CHECK_PTR(type, data)                                      \
-    }                                                                       \
+#define OCI_CALL_CHECK_BIND(stmt, name, data, type, ext_only)                       \
+                                                                                    \
+    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)                                     \
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)                                        \
+    OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)                             \
+    {                                                                               \
+        const boolean ext_only_value = (ext_only);                                  \
+        if ((ext_only_value) &&                                                     \
+            (OCI_BAM_INTERNAL == (stmt)->bind_alloc_mode) &&                        \
+            ((data) != NULL))                                                       \
+        {                                                                           \
+            OCI_RAISE_EXCEPTION(OCI_ExceptionExternalBindingNotAllowed(stmt, name)) \
+        }                                                                           \
+                                                                                    \
+        if ((ext_only_value) || OCI_BAM_EXTERNAL == (stmt)->bind_alloc_mode)        \
+        {                                                                           \
+            OCI_CALL_CHECK_PTR(type, data)                                          \
+        }                                                                           \
+    }                                                                               \
 
 /**
  * @brief

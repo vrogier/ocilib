@@ -2758,8 +2758,7 @@ boolean OCI_API OCI_BindStatement
     OCI_CALL_CHECK_BIND(stmt, name, data, OCI_IPC_STATEMENT, TRUE)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_STATUS = OCI_BindCreate(ctx, stmt, data, name, OCI_BIND_INPUT, sizeof(OCIStmt*),
-                                OCI_CDT_CURSOR, SQLT_RSET, 0, NULL, 0) != NULL;
+    OCI_BIND_DATA(sizeof(OCIStmt*), OCI_CDT_CURSOR, SQLT_RSET, 0, NULL, 0)
 
     OCI_RETVAL = OCI_STATUS;
     OCI_CALL_EXIT()
