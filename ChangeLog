@@ -17,6 +17,7 @@
         
     * Miscellaneous:
 
+        - MS Windows DLLs build with VS2017 15.8.3
         - Documentation updates
         - Added Google Test suite for the C API 
             * Work In Progress
