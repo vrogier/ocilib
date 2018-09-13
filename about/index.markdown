@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2017-11-29 10:00:00+01:00
+date: 2018-09-13 10:00:00+01:00
 layout: page
 slug: about
 title: About
@@ -27,7 +27,7 @@ Few years later and thousand of hours spent on it, OCILIB had became the referen
   
 ## About me
 
-I'm French, 39 years old and live/work in France around Paris.
+I'm French, 40 years old and live/work in France around Paris.
 <br/>
 I'm the Principal Software Engineer at [Capsule Technologie](http://www.capsuletech.com), a [QualcommLife](http://www.QualcommLife.com) company.
 <br/>

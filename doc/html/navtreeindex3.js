@@ -110,7 +110,6 @@ var NAVTREEINDEX3 =
 "classocilib_1_1_type_info.html#ad508995a65ad96abc9ad2ebb29cf8a8a":[3,0,0,41,3],
 "classocilib_1_1_type_info.html#ae7adab8e0f94ebdb34bb6b818b23bae2":[3,0,0,41,9],
 "classocilib_1_1_type_info.html#aeefeda7c30a90bb7d47f585f5a1813b6":[3,0,0,41,0],
-"config_8h_source.html":[4,0,0],
 "files.html":[4,0],
 "functions.html":[3,2,0],
 "functions.html":[3,2,0,0],
@@ -249,5 +248,6 @@ var NAVTREEINDEX3 =
 "group___ocilib_c_api_binding.html#ga174d5aaf85e65773a2a1ac843426ae87":[1,2,8,18],
 "group___ocilib_c_api_binding.html#ga1a48f44b5448ebbd3cc10120af6b8ff5":[1,2,8,52],
 "group___ocilib_c_api_binding.html#ga1b1e4bc13b2cbb3c86b2391756981cbe":[1,2,8,27],
-"group___ocilib_c_api_binding.html#ga1ee0c51cda4555f81daf800fe0522619":[1,2,8,55]
+"group___ocilib_c_api_binding.html#ga1ee0c51cda4555f81daf800fe0522619":[1,2,8,55],
+"group___ocilib_c_api_binding.html#ga20ed307eeebd5ae100341ff9eccc31dd":[1,2,8,25]
 };

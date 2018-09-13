@@ -1,6 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"group___ocilib_c_api_raw_handles.html#gaa73f88244e2242363b3694ffa19fa6f4":[1,15,19],
 "group___ocilib_c_api_raw_handles.html#gaa77980531a35fa442bfa3ef49f1a87af":[1,15,17],
 "group___ocilib_c_api_raw_handles.html#gaa870054550e796984ea130b6b319e6fc":[1,15,6],
 "group___ocilib_c_api_raw_handles.html#gab7663ce1fd7cfbe74631ea01f3c580a6":[1,15,10],
@@ -224,8 +223,8 @@ var NAVTREEINDEX6 =
 "group___ocilib_cpp_api_main_demo_application.html":[1,18,1],
 "group___ocilib_cpp_api_overview.html":[1,18,0],
 "hierarchy.html":[3,1],
-"index.html":[0],
 "index.html":[],
+"index.html":[0],
 "index.html#Author":[0,4],
 "index.html#Changelog":[0,6],
 "index.html#Download":[0,3],
@@ -239,15 +238,16 @@ var NAVTREEINDEX6 =
 "namespacemembers_eval.html":[2,1,4],
 "namespacemembers_func.html":[2,1,1],
 "namespacemembers_type.html":[2,1,2],
-"namespaceocilib.html":[3,0,0],
 "namespaceocilib.html":[2,0,0],
+"namespaceocilib.html":[3,0,0],
 "namespaces.html":[2,0],
-"ocilib_8h_source.html":[4,0,1],
-"ocilib_8hpp_source.html":[4,0,2],
-"ocilib__core_8hpp_source.html":[4,0,3],
-"ocilib__impl_8hpp_source.html":[4,0,4],
+"ocilib_8h_source.html":[4,0,0],
+"ocilib_8hpp_source.html":[4,0,1],
+"ocilib__core_8hpp_source.html":[4,0,2],
+"ocilib__impl_8hpp_source.html":[4,0,3],
 "pages.html":[],
 "structocilib_1_1_bind_resolver.html":[3,0,0,2],
 "structocilib_1_1_bind_resolver_scalar_type.html":[3,0,0,3],
-"structocilib_1_1_bind_resolver_type.html":[3,0,0,4]
+"structocilib_1_1_bind_resolver_type.html":[3,0,0,4],
+"structocilib_1_1_numeric_type_resolver.html":[3,0,0,27]
 };

@@ -16,6 +16,9 @@ Click on a change log entry to see the full details.
 <br/>
 <br/>
 
+_[2018-09-13 . version 4.5.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.5.2.txt)_
+
+  * Some C API and C++ API Bug fixes 
 
 _[2018-02-21 . version 4.5.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.5.1.txt)_
 
