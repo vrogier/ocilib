@@ -17,8 +17,9 @@
         
     * Miscellaneous:
 
-        - MS Windows DLLs build with VS2017 15.8.3
-        - Documentation updates
+        - Updated compilers for MS Windows pre built binaries
+            * VS2017 15.8.3 for 32/64 bit DLLs
+            * Code::Blocks 17.12 (TDM-GCC 5.1.0) for 32 bit MinGW static libs
         - Added Google Test suite for the C API 
             * Work In Progress
             * VS2017 (only) project using Google test nugets
