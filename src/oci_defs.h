@@ -1000,7 +1000,8 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_ATTR_COL_PROPERTY_IS_IDENTITY           0x0000000000000001 
 #define OCI_ATTR_COL_PROPERTY_IS_GEN_ALWAYS         0x0000000000000002 
 #define OCI_ATTR_COL_PROPERTY_IS_GEN_BY_DEF_ON_NULL 0x0000000000000004 
-
+#define OCI_ATTR_COL_PROPERTY_IS_LPART              0x0000000000000008 
+#define OCI_ATTR_COL_PROPERTY_IS_CONID              0x0000000000000010 
 
 /*-----------------Macros to get the various version number components------ */
 

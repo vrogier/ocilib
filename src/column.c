@@ -260,6 +260,16 @@ boolean OCI_ColumnDescribe
             {
                 col->props |=  OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL;
             }
+
+            if (value & OCI_ATTR_COL_PROPERTY_IS_LPART)
+            {
+                col->props |= OCI_CPF_IS_LPART;
+            }
+
+            if (value & OCI_ATTR_COL_PROPERTY_IS_CONID)
+            {
+                col->props |= OCI_CPF_IS_CONID;
+            }
         }
     }
 
