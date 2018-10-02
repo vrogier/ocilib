@@ -2145,12 +2145,26 @@ typedef sword (*OCILOBGETCONTENTTYPE)
 
 typedef sword (*OCISTMTGETNEXTRESULT)
 (
-    OCIStmt *stmthp,
-    OCIError *errhp,
-    void **result, 
-    ub4 *rtype,
-    ub4 mode
+    OCIStmt     *stmthp,
+    OCIError    *errhp,
+    void       **result, 
+    ub4         *rtype,
+    ub4          mode
 );
+
+/* API introduced in 18.3 */
+
+typedef sword(*OCISERVERRELEASE2)
+(
+    void        *hndlp,
+    OCIError    *errhp, 
+    OraText     *bufp, 
+    ub4          bufsz, 
+    ub1          hndltype, 
+    ub4         *versionp, 
+    ub4          mode
+);
+
 
 #endif /* OCILIB_OCI_API_H_INCLUDED */
 

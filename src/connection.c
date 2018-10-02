@@ -1296,26 +1296,47 @@ const otext * OCI_API OCI_GetVersionServer
 
     if (!con->ver_str && (!(con->mode & OCI_PRELIM_AUTH)))
     {
-        int     dbsize = OCI_SIZE_BUFFER * (int) sizeof(dbtext);
-        dbtext *dbstr  = NULL;
+        int     dbsize  = OCI_SIZE_BUFFER * (int) sizeof(dbtext);
+        dbtext *dbstr   = NULL;
+        ub4     version = 0;
 
         OCI_ALLOCATE_DATA(OCI_IPC_STRING, con->ver_str, OCI_SIZE_BUFFER + 1)
 
         if (OCI_STATUS)
-        {
+        {    
             dbstr = OCI_StringGetOracleString(con->ver_str, &dbsize);
+
+         #if OCI_VERSION_COMPILE >= OCI_18_3
+   
+            OCI_EXEC(OCIServerRelease2((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX, &version, OCI_DEFAULT))
+
+        #else
 
             OCI_EXEC(OCIServerVersion((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX))
 
+        #endif
+
             OCI_StringCopyOracleStringToNativeString(dbstr, con->ver_str, dbcharcount(dbsize));
             OCI_StringReleaseOracleString(dbstr);
+            
         }
 
         if (OCI_STATUS)
         {
-            otext *p = NULL;
-
             int ver_maj = 0, ver_min = 0, ver_rev = 0;
+
+        #if OCI_VERSION_COMPILE >= OCI_18_3
+
+
+            ver_maj = OCI_SERVER_RELEASE_REL(version);
+            ver_min = OCI_SERVER_RELEASE_REL_UPD(version);
+            ver_rev = OCI_SERVER_RELEASE_REL_UPD_REV(version);
+
+            con->ver_num = ver_maj * 100 + ver_min * 10 + ver_rev;
+
+        #else
+
+            otext *p = NULL;
 
             con->ver_str[ocharcount(dbsize)] = 0;
 
@@ -1339,6 +1360,9 @@ const otext * OCI_API OCI_GetVersionServer
                     break;
                 }
             }
+
+        #endif
+
         }
         else
         {

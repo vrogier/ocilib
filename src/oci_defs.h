@@ -1001,5 +1001,39 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_ATTR_COL_PROPERTY_IS_GEN_ALWAYS         0x0000000000000002 
 #define OCI_ATTR_COL_PROPERTY_IS_GEN_BY_DEF_ON_NULL 0x0000000000000004 
 
+
+/*-----------------Macros to get the various version number components------ */
+
+#define OCI_SERVER_RELEASE_REL(v) ((sword)(((v) >> 24) & 0x000000FF))
+ /* old: version number */
+/* new: feature release */
+#define OCI_SERVER_RELEASE_REL_UPD(v)\
+  ((OCI_SERVER_RELEASE_REL(v) < 18)? \
+   ((sword)(((v) >> 20) & 0x0000000F)):\
+   ((sword)(((v) >> 16) & 0x000000FF)))               /* old: release number */
+                                                      /* new: release update */
+
+#define OCI_SERVER_RELEASE_REL_UPD_REV(v)\
+  ((OCI_SERVER_RELEASE_REL(v) < 18)? \
+   ((sword)(((v) >> 12) & 0x000000FF)):\
+   ((sword)(((v) >> 12) & 0x0000000F)))
+                                                       /* old: update number */
+                                             /* new: release update revision */
+
+#define OCI_SERVER_RELEASE_REL_UPD_INC(v)\
+  ((OCI_SERVER_RELEASE_REL(v) < 18)? \
+   ((sword)(((v) >> 8) & 0x0000000F)):\
+   ((sword)(((v) >> 4) & 0x0000000FF)))
+                                              /* old: porting release number */
+                                            /* new: release update increment */
+
+#define OCI_SERVER_RELEASE_EXT(v)\
+  ((OCI_SERVER_RELEASE_REL(v) < 18)? \
+   ((sword)(((v) >> 0) & 0x000000FF)):\
+   ((sword)(((v) >> 0) & 0x0000000F)))    
+                                               /* old: porting update number */
+                                                           /* new: extension */
+
+
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */
 

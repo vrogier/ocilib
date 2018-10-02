@@ -1081,6 +1081,7 @@ typedef unsigned int big_uint;
 #define OCI_11_2                            1120
 #define OCI_12_1                            1210
 #define OCI_12_2                            1220
+#define OCI_18_3                            1830
 
 /* versions extract macros */
 
@@ -2601,6 +2602,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTransaction
  * - OCI_11_1
  * - OCI_11_2
  * - OCI_12_1
+ * - OCI_18_3
  *
  */
 
