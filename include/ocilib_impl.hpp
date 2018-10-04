@@ -3051,7 +3051,7 @@ unsigned int Lob<T, U>::Write(const T& content)
  
         if (Check(OCI_LobWrite2(*this, buffer, &charCount, &byteCount)))
         {
-            res = U == OCI_BLOB ? byteCount : charCount;
+            res = U == LobBinary ? byteCount : charCount;
         }
     }    
     
