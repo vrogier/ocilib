@@ -1308,17 +1308,20 @@ const otext * OCI_API OCI_GetVersionServer
 
          #if OCI_VERSION_COMPILE >= OCI_18_3
    
-            OCI_EXEC(OCIServerRelease2((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX, &version, OCI_DEFAULT))
-
-        #else
-
-            OCI_EXEC(OCIServerVersion((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX))
+            if (OCILib.version_runtime >= OCI_18_3)
+            {
+                OCI_EXEC(OCIServerRelease2((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX, &version, OCI_DEFAULT))
+            }
+            else
 
         #endif
+            
+            {
+                OCI_EXEC(OCIServerVersion((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX))
+            }
 
             OCI_StringCopyOracleStringToNativeString(dbstr, con->ver_str, dbcharcount(dbsize));
-            OCI_StringReleaseOracleString(dbstr);
-            
+            OCI_StringReleaseOracleString(dbstr);            
         }
 
         if (OCI_STATUS)
@@ -1327,42 +1330,44 @@ const otext * OCI_API OCI_GetVersionServer
 
         #if OCI_VERSION_COMPILE >= OCI_18_3
 
-
-            ver_maj = OCI_SERVER_RELEASE_REL(version);
-            ver_min = OCI_SERVER_RELEASE_REL_UPD(version);
-            ver_rev = OCI_SERVER_RELEASE_REL_UPD_REV(version);
-
-            con->ver_num = ver_maj * 100 + ver_min * 10 + ver_rev;
-
-        #else
-
-            otext *p = NULL;
-
-            con->ver_str[ocharcount(dbsize)] = 0;
-
-            /* parse server version string to find the version information
-                **/
-
-            for (p = con->ver_str; p && *p; p++)
+            if (OCILib.version_runtime >= OCI_18_3)
             {
-                if (oisdigit((unsigned char) *p) &&
-                    (*(p + (size_t) 1) != 0) &&
-                    (*(p + (size_t) 1) == OTEXT('.') || (*(p + (size_t) 2) == OTEXT('.') )))
-                {
-                    if (OCI_NB_ARG_VERSION == osscanf(p, OTEXT("%d.%d.%d"),
-                                                        (int *) &ver_maj,
-                                                        (int *) &ver_min,
-                                                        (int *) &ver_rev))
-                    {
-                        con->ver_num = ver_maj*100 + ver_min*10 + ver_rev;
-                    }
+                ver_maj = OCI_SERVER_RELEASE_REL(version);
+                ver_min = OCI_SERVER_RELEASE_REL_UPD(version);
+                ver_rev = OCI_SERVER_RELEASE_REL_UPD_REV(version);
 
-                    break;
-                }
+                con->ver_num = ver_maj * 100 + ver_min * 10 + ver_rev;
             }
+            else
 
         #endif
 
+            {
+                otext *p = NULL;
+
+                con->ver_str[ocharcount(dbsize)] = 0;
+
+                /* parse server version string to find the version information
+                    **/
+
+                for (p = con->ver_str; p && *p; p++)
+                {
+                    if (oisdigit((unsigned char) *p) &&
+                        (*(p + (size_t) 1) != 0) &&
+                        (*(p + (size_t) 1) == OTEXT('.') || (*(p + (size_t) 2) == OTEXT('.') )))
+                    {
+                        if (OCI_NB_ARG_VERSION == osscanf(p, OTEXT("%d.%d.%d"),
+                                                            (int *) &ver_maj,
+                                                            (int *) &ver_min,
+                                                            (int *) &ver_rev))
+                        {
+                            con->ver_num = ver_maj*100 + ver_min*10 + ver_rev;
+                        }
+
+                        break;
+                    }
+                }
+            }
         }
         else
         {
