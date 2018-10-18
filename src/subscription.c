@@ -264,7 +264,6 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
     OCI_NOT_USED(port)
     OCI_NOT_USED(timeout)
     OCI_NOT_USED(con)
-    OCI_NOT_USED(item)
 
 #endif
 
