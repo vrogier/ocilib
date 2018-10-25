@@ -5147,12 +5147,12 @@ void Statement::Bind2(M &method, const ostring& name, T& value, BindInfo::BindDi
 }
 
 template<typename M, class T>
-void Statement::BindVector1(M &method, const ostring& name, std::vector<T> &values,  BindInfo::BindDirection mode)
+void Statement::BindVector1(M &method, const ostring& name, std::vector<T> &values,  BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
     bnd->SetVector<T>(values, sizeof(typename BindResolver<T>::OutputType));
 
-    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), 0);
+    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), GetArraysize(type, values));
 
     if (res)
     {
@@ -5169,12 +5169,12 @@ void Statement::BindVector1(M &method, const ostring& name, std::vector<T> &valu
 }
 
 template<typename M, class T, class U>
-void Statement::BindVector2(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, U type)
+void Statement::BindVector2(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, U subType, BindInfo::VectorType type)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
     bnd->SetVector<T>(values, sizeof(typename BindResolver<T>::OutputType));
 
-    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), type, 0);
+    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), subType, GetArraysize(type, values));
 
     if (res)
     {
@@ -5188,6 +5188,12 @@ void Statement::BindVector2(M &method, const ostring& name, std::vector<T> &valu
     }
 
     Check(res);
+}
+
+template<class T>
+unsigned int Statement::GetArraysize(BindInfo::VectorType type, std::vector<T> &values)
+{
+    return type == BindInfo::AsPlSqlTable ? static_cast<unsigned int>(values.size()) : 0;
 }
 
 template<>
@@ -5420,63 +5426,63 @@ inline void Statement::Bind<Raw, int>(const ostring& name, Raw &value,  int maxS
 }
 
 template<>
-inline void Statement::Bind<short>(const ostring& name, std::vector<short> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<short>(const ostring& name, std::vector<short> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector1(OCI_BindArrayOfShorts, name, values, mode);
+    BindVector1(OCI_BindArrayOfShorts, name, values, mode, type);
 }
 
 template<>
-inline void Statement::Bind<unsigned short>(const ostring& name, std::vector<unsigned short> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<unsigned short>(const ostring& name, std::vector<unsigned short> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector1(OCI_BindArrayOfUnsignedShorts, name, values, mode);
+    BindVector1(OCI_BindArrayOfUnsignedShorts, name, values, mode, type);
 }
 
 template<>
-inline void Statement::Bind<int>(const ostring& name, std::vector<int> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<int>(const ostring& name, std::vector<int> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector1(OCI_BindArrayOfInts, name, values, mode);
+    BindVector1(OCI_BindArrayOfInts, name, values, mode, type);
 }
 
 template<>
-inline void Statement::Bind<unsigned int>(const ostring& name, std::vector<unsigned int> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<unsigned int>(const ostring& name, std::vector<unsigned int> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector1(OCI_BindArrayOfUnsignedInts, name, values, mode);
+    BindVector1(OCI_BindArrayOfUnsignedInts, name, values, mode, type);
 }
 
 template<>
-inline void Statement::Bind<big_int>(const ostring& name, std::vector<big_int> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<big_int>(const ostring& name, std::vector<big_int> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector1(OCI_BindArrayOfBigInts, name, values, mode);
+    BindVector1(OCI_BindArrayOfBigInts, name, values, mode, type);
 }
 
 template<>
-inline void Statement::Bind<big_uint>(const ostring& name, std::vector<big_uint> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<big_uint>(const ostring& name, std::vector<big_uint> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector1(OCI_BindArrayOfUnsignedBigInts, name, values, mode);
+    BindVector1(OCI_BindArrayOfUnsignedBigInts, name, values, mode, type);
 }
 
 template<>
-inline void Statement::Bind<float>(const ostring& name, std::vector<float> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<float>(const ostring& name, std::vector<float> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector1(OCI_BindArrayOfFloats, name, values, mode);
+    BindVector1(OCI_BindArrayOfFloats, name, values, mode, type);
 }
 
 template<>
-inline void Statement::Bind<double>(const ostring& name, std::vector<double> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<double>(const ostring& name, std::vector<double> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector1(OCI_BindArrayOfDoubles, name, values, mode);
+    BindVector1(OCI_BindArrayOfDoubles, name, values, mode, type);
 }
 
 template<>
-inline void Statement::Bind<Date>(const ostring& name, std::vector<Date> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<Date>(const ostring& name, std::vector<Date> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector1(OCI_BindArrayOfDates, name, values, mode);
+    BindVector1(OCI_BindArrayOfDates, name, values, mode, type);
 }
 
 template<>
-inline void Statement::Bind<Number>(const ostring& name, std::vector<Number> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<Number>(const ostring& name, std::vector<Number> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector1(OCI_BindArrayOfNumbers, name, values, mode);
+    BindVector1(OCI_BindArrayOfNumbers, name, values, mode, type);
 }
 
 template<class T>
@@ -5487,78 +5493,78 @@ void Statement::Bind(const ostring& name, Collection<T> &value, BindInfo::BindDi
 }
 
 template<>
-inline void Statement::Bind<Timestamp, Timestamp::TimestampTypeValues>(const ostring& name, std::vector<Timestamp> &values, Timestamp::TimestampTypeValues type, BindInfo::BindDirection mode)
+inline void Statement::Bind<Timestamp, Timestamp::TimestampTypeValues>(const ostring& name, std::vector<Timestamp> &values, Timestamp::TimestampTypeValues subType, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector2(OCI_BindArrayOfTimestamps, name, values, mode, type);
+    BindVector2(OCI_BindArrayOfTimestamps, name, values, mode, subType, type);
 }
 
 template<>
-inline void Statement::Bind<Timestamp, Timestamp::TimestampType>(const ostring& name, std::vector<Timestamp> &values, Timestamp::TimestampType type, BindInfo::BindDirection mode)
+inline void Statement::Bind<Timestamp, Timestamp::TimestampType>(const ostring& name, std::vector<Timestamp> &values, Timestamp::TimestampType subType, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    Bind<Timestamp, Timestamp::TimestampTypeValues>(name, values, type.GetValue(), mode);
+    Bind<Timestamp, Timestamp::TimestampTypeValues>(name, values, subType.GetValue(), mode, type);
 }
 
 template<>
-inline void Statement::Bind<Interval, Interval::IntervalTypeValues>(const ostring& name, std::vector<Interval> &values, Interval::IntervalTypeValues type, BindInfo::BindDirection mode)
+inline void Statement::Bind<Interval, Interval::IntervalTypeValues>(const ostring& name, std::vector<Interval> &values, Interval::IntervalTypeValues subType, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector2(OCI_BindArrayOfIntervals, name, values, mode, type);
+    BindVector2(OCI_BindArrayOfIntervals, name, values, mode, subType, type);
 }
 
 template<>
-inline void Statement::Bind<Interval, Interval::IntervalType>(const ostring& name, std::vector<Interval> &values, Interval::IntervalType type, BindInfo::BindDirection mode)
+inline void Statement::Bind<Interval, Interval::IntervalType>(const ostring& name, std::vector<Interval> &values, Interval::IntervalType subType, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    Bind<Interval, Interval::IntervalTypeValues>(name, values, type.GetValue(), mode);
+    Bind<Interval, Interval::IntervalTypeValues>(name, values, subType.GetValue(), mode, type);
 }
 
 template<>
-inline void Statement::Bind<Clob>(const ostring& name, std::vector<Clob> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<Clob>(const ostring& name, std::vector<Clob> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_CLOB));
+    BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_CLOB), type);
 }
 
 template<>
-inline void Statement::Bind<NClob>(const ostring& name, std::vector<NClob> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<NClob>(const ostring& name, std::vector<NClob> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_NCLOB));
+    BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_NCLOB), type);
 }
 
 template<>
-inline void Statement::Bind<Blob>(const ostring& name, std::vector<Blob> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<Blob>(const ostring& name, std::vector<Blob> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_BLOB));
+    BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<unsigned int>(OCI_BLOB), type);
 }
 
 template<>
-inline void Statement::Bind<File>(const ostring& name, std::vector<File> &values, BindInfo::BindDirection mode)
+inline void Statement::Bind<File>(const ostring& name, std::vector<File> &values, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector2(OCI_BindArrayOfFiles, name, values, mode, static_cast<unsigned int>(OCI_BFILE));
+    BindVector2(OCI_BindArrayOfFiles, name, values, mode, static_cast<unsigned int>(OCI_BFILE), type);
 }
 
 template<>
-inline void Statement::Bind<Object>(const ostring& name, std::vector<Object> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
+inline void Statement::Bind<Object>(const ostring& name, std::vector<Object> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector2(OCI_BindArrayOfObjects, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
+    BindVector2(OCI_BindArrayOfObjects, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo), type);
 }
 
 template<>
-inline void Statement::Bind<Reference>(const ostring& name, std::vector<Reference> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
+inline void Statement::Bind<Reference>(const ostring& name, std::vector<Reference> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector2(OCI_BindArrayOfRefs, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
+    BindVector2(OCI_BindArrayOfRefs, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo), type);
 }
 
 template<class T>
-void Statement::Bind(const ostring& name, std::vector<Collection<T> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
+void Statement::Bind(const ostring& name, std::vector<Collection<T> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
+    BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo), type);
 }
 
 template<>
-inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vector<ostring> &values,  unsigned int maxSize, BindInfo::BindDirection mode)
+inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vector<ostring> &values,  unsigned int maxSize, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
     bnd->SetVector<ostring>(values, maxSize+1);
 
-    boolean res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring>(), maxSize, 0);
+    boolean res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring>(), maxSize, GetArraysize(type, values));
 
     if (res)
     {
@@ -5575,18 +5581,18 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vec
 }
 
 template<>
-inline void Statement::Bind<ostring, int>(const ostring& name, std::vector<ostring> &values, int maxSize, BindInfo::BindDirection mode)
+inline void Statement::Bind<ostring, int>(const ostring& name, std::vector<ostring> &values, int maxSize, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    Bind<ostring, unsigned int>(name, values, static_cast<unsigned int>(maxSize), mode);
+    Bind<ostring, unsigned int>(name, values, static_cast<unsigned int>(maxSize), mode, type);
 }
 
 template<>
-inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<Raw> &values, unsigned int maxSize, BindInfo::BindDirection mode)
+inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<Raw> &values, unsigned int maxSize, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
     bnd->SetVector<Raw>(values, maxSize);
 
-    boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw>(), maxSize, 0);
+    boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw>(), maxSize, GetArraysize(type, values));
 
     if (res)
     {
@@ -5603,9 +5609,9 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<
 }
 
 template<class T>
-void Statement::Bind(const ostring& name, std::vector<T> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode)
+void Statement::Bind(const ostring& name, std::vector<T> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo));
+    BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo *>(typeInfo), GetArraysize(type, values));
 }
 
 template<>

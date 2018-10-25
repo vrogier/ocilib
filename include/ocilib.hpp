@@ -5438,6 +5438,28 @@ public:
 
     /**
     * @brief
+    * Vector type values
+    *
+    */
+    enum VectorTypeValues
+    {
+        /** Vector is binded as an array in a regular DML array operation */
+        AsArray = 1,
+        /** Vector is binded as a PL/SQL index by table */
+        AsPlSqlTable = 2
+    };
+
+    /**
+    * @brief
+    * Vector type
+    *
+    * Possible values are BindInfo::VectorTypeValues
+    *
+    */
+    typedef Enum<VectorTypeValues> VectorType;
+
+    /**
+    * @brief
     * Return the name of the bind object
     *
     */
@@ -6114,6 +6136,7 @@ public:
     * @param name   - Bind name
     * @param values - Vector of host variables
     * @param mode   - bind direction mode
+    * @param type   - vector type (regular array or PL/SQL table)
     *
     * @warning
     * This method has built-in specialized versions for all C++ native scalar types, Date time and Statement objects.
@@ -6125,7 +6148,7 @@ public:
     *
     */
     template<class T>
-    void Bind(const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
     /**
     * @brief
@@ -6137,6 +6160,7 @@ public:
     * @param values   - Vector of host variables
     * @param typeInfo - Object type information
     * @param mode     - bind direction mode
+    * @param type     - vector type (regular array or PL/SQL table)
     *
     * @warning
     * This method has built-in specialized versions for Object, Reference.
@@ -6147,7 +6171,7 @@ public:
     *
     */
     template<class T>
-    void Bind(const ostring& name, std::vector<T> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, std::vector<T> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
     /**
     * @brief
@@ -6159,10 +6183,11 @@ public:
     * @param values   - Vector of host collection variables
     * @param typeInfo - Object type information
     * @param mode     - bind direction mode
+    * @param type     - vector type (regular array or PL/SQL table)
     *
     */
     template<class T>
-    void Bind(const ostring& name, std::vector<Collection<T> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, std::vector<Collection<T> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
     /**
     * @brief
@@ -6175,6 +6200,7 @@ public:
     * @param values    - Vector of host variables
     * @param extraInfo - Extra information needed for the bind call
     * @param mode      - bind direction mode
+    * @param type      - vector type (regular array or PL/SQL table)
     *
     * @warning
     * This method has built-in specialized versions for ostring, Raw , Clong, Blong, Timestamp, Interval variables.
@@ -6187,7 +6213,7 @@ public:
     *
     */
     template<class T, class U>
-    void Bind(const ostring& name, std::vector<T> &values, U extraInfo, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, std::vector<T> &values, U extraInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
     /**
     * @brief
@@ -6480,10 +6506,13 @@ private:
     void Bind2 (M &method, const ostring& name, T &value, BindInfo::BindDirection mode);
 
     template<typename M, class T>
-    void BindVector1(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode);
+    void BindVector1(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, BindInfo::VectorType type);
 
     template<typename M, class T, class U>
-    void BindVector2(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, U type);
+    void BindVector2(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, U subType, BindInfo::VectorType type);
+
+    template<class T>
+    unsigned int GetArraysize(BindInfo::VectorType type, std::vector<T> &values);
 
     template<typename T>
     unsigned int Fetch(T callback);
