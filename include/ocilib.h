@@ -9669,6 +9669,13 @@ OCI_EXPORT unsigned int OCI_API OCI_GetStatementType
  *  - OCI_SFM_DEFAULT
  *  - OCI_SFM_SCROLLABLE
  *
+ * @warning
+ * if Oracle Client is 9iR1:
+ *  - when setting OCI_SFM_SCROLLABLE, OCI_SetPrefetch() is internally called with value 0 
+ *    to disable prefetching (to avoid an oracle bug).
+ *  - when re-setting OCI_SFM_DEFAULT after having set OCI_SFM_SCROLLABLE, OCI_SetPrefetch() 
+ *    is internally called with value OCI_PREFETCH_SIZE
+ * 
  */
 
 OCI_EXPORT boolean OCI_API OCI_SetFetchMode
@@ -9830,6 +9837,10 @@ OCI_EXPORT unsigned int OCI_API OCI_GetFetchSize
  * @note
  * To turn off pre-fetching, set both attributes (size and memory) to 0.
  *
+ * @warning
+ * Prefetch is not working with scrollable cursors in Oracle 9iR1
+ * In that case, argument 'size' is not used and replace by 0.
+ * 
  * @return
  * TRUE on success otherwise FALSE
  *

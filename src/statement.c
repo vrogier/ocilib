@@ -3164,13 +3164,30 @@ boolean OCI_API OCI_SetFetchMode
     unsigned int   mode
 )
 {
+    unsigned int old_exec_mode = OCI_UNKNOWN;
+
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CHECK_SCROLLABLE_CURSOR_ENABLED(stmt->con)
     OCI_CALL_CHECK_ENUM_VALUE(stmt->con, stmt, mode, FetchModeValues, OTEXT("Fetch mode"))
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
+    old_exec_mode = stmt->exec_mode;
     stmt->exec_mode = mode;
+
+    if (stmt->con->ver_num == OCI_9_0)
+    {
+        if (old_exec_mode == OCI_SFM_DEFAULT && stmt->exec_mode == OCI_SFM_SCROLLABLE)
+        {
+            // Disabling prefetch that causes bugs for 9iR1 for scrollable cursors
+            OCI_SetPrefetchSize(stmt, 0);
+        }
+        else if (old_exec_mode == OCI_SFM_SCROLLABLE && stmt->exec_mode == OCI_SFM_DEFAULT)
+        {
+            // Re-enable prefetch previously disabled
+            OCI_SetPrefetchSize(stmt, OCI_PREFETCH_SIZE);
+        }
+    }
 
     OCI_RETVAL = OCI_STATUS;
 
@@ -3274,7 +3291,7 @@ unsigned int OCI_API OCI_GetFetchSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * "PrefetchSize
+ * OCI_PrefetchSize
  * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_SetPrefetchSize
@@ -3288,6 +3305,13 @@ boolean OCI_API OCI_SetPrefetchSize
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     stmt->prefetch_size = size;
+
+    /* Prefetch is not working with scrollable cursors in Oracle 9iR1, thus disable it */
+
+    if (stmt->exec_mode == OCI_SFM_SCROLLABLE && stmt->con->ver_num == OCI_9_0)
+    {
+        stmt->prefetch_size = 0;
+    }
 
     if (stmt->stmt)
     {
