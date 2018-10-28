@@ -1871,6 +1871,115 @@ boolean OCI_API OCI_Ping
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OCI_SetTimeout
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_SetTimeout
+(
+    OCI_Connection *con,
+    unsigned int    type,
+    unsigned int    value
+)
+{
+    ub4 timeout = value;
+
+    OCI_CALL_ENTER(boolean , FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+    if (OCILib.version_runtime >= OCI_12_1)
+    {
+        switch (type)
+        {
+            case OCI_NTO_SEND:
+            {
+                OCI_SET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_SEND_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+                OCI_RETVAL = OCI_STATUS;
+            }
+            case OCI_NTO_RECEIVE:
+            {
+                OCI_SET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+                OCI_RETVAL = OCI_STATUS;
+            }
+
+         #if OCI_VERSION_COMPILE >= OCI_18_1
+
+            case OCI_NTO_CALL:
+            {
+                if (OCILib.version_runtime >= OCI_12_1)
+                {
+                    OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
+                    OCI_RETVAL = OCI_STATUS;
+                }
+            }
+
+        #endif
+        
+        }
+    }
+
+#endif
+
+    OCI_CALL_EXIT()    
+}
+
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_GetTimeout
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_GetTimeout
+(
+    OCI_Connection *con,
+    unsigned int    type
+)
+{
+    ub4 timeout = 0;
+
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+    if (OCILib.version_runtime >= OCI_12_1)
+    {
+        switch (type)
+        {
+            case OCI_NTO_SEND:
+            {
+                OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_SEND_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+            }
+            case OCI_NTO_RECEIVE:
+            {
+                OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+            }
+
+        #if OCI_VERSION_COMPILE >= OCI_18_1
+
+            case OCI_NTO_CALL:
+            {
+                if (OCILib.version_runtime >= OCI_12_1)
+                {
+                    OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
+                }
+            }
+            
+         #endif
+
+        }
+    }
+
+#endif
+
+    OCI_RETVAL = timeout;
+
+    OCI_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OCI_GetDBName
  * --------------------------------------------------------------------------------------------- */
 

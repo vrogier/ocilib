@@ -345,6 +345,10 @@
 #define OCI_ATTR_HA_SRVNEXT            404
 #define OCI_ATTR_TAF_ENABLED           405
 #define OCI_ATTR_DRIVER_NAME           424                    /* Driver Name */
+
+#define OCI_ATTR_SEND_TIMEOUT          435           /* NS send timeout */
+#define OCI_ATTR_RECEIVE_TIMEOUT       436        /* NS receive timeout */
+
 #define OCI_ATTR_SPOOL_AUTH            460      /* Auth handle on pool handle*/
 
 #define OCI_ATTR_IMPLICIT_RESULT_COUNT 463
@@ -362,6 +366,8 @@
 #define OCI_ATTR_DBOP                      485
 
 #define OCI_ATTR_COLLATION_ID              499               /* Collation ID */
+
+#define OCI_ATTR_CALL_TIMEOUT              531
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
 

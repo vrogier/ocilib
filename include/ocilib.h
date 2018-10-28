@@ -1492,6 +1492,12 @@ typedef unsigned int big_uint;
 #define OCI_TRC_DETAIL                      4
 #define OCI_TRC_OPERATION                   5
 
+/* Network timeout type */
+
+#define OCI_NTO_SEND                        1
+#define OCI_NTO_RECEIVE                     2
+#define OCI_NTO_CALL                        3
+
 /* HA event type */
 
 #define OCI_HET_DOWN                        0
@@ -2707,6 +2713,77 @@ OCI_EXPORT const otext * OCI_API OCI_GetTrace
 OCI_EXPORT boolean OCI_API OCI_Ping
 (
     OCI_Connection *con
+);
+
+/**
+ * @brief
+ * Set a given timeout for OCI calls that require server round-trips to the given database
+ *
+ * @param con   - Connection handle
+ * @param type  - Type of timeout to set
+ * @param value - Timeout in milliseconds
+ *
+ * Possible values for parameter 'type':
+ * - OCI_NTO_SEND
+ *   - Time to wait for send operations completion to the database server
+ *   - Requires Oracle 12cR1 client
+ * - OCI_NTO_RECEIVE
+ *   - Time to wait for read operations completion from the database server
+ *   - Requires Oracle 12cR1 client
+ * - OCI_NTO_CALL
+ *   - Time to wait for a database round-trip to complete ( Client processing is not taken into account)
+ *   - Requires Oracle 18c client
+ *
+ * OCI client raises an timeout type related error when a given timeout is reached.
+ * 
+ * @note
+ * To disable a given timeout, pass the value 0
+ *
+ * @warning
+ * OCI client is using the following precedence rules when applying timeouts:
+ *   - 1 - Timeout set using OCI_NTO_CALL (all other timeouts are discarded)
+ *   - 2 - Timeouts set using OCI_NTO_SEND and/or OCI_NTO_RECEIVE
+ *   - 3 - Timeouts set in sqlnet.ora file
+ * 
+ * Here is a summary:
+ * 
+ * FLAG            | Min. Version | OCI Error raised | OCI Error description          | sqlnet.ora equivalent |
+ * --------------- | ------------ | ---------------- | ------------------------------ | --------------------- |
+ * OCI_NTO_SEND    | OCI_12_1     | ORA-12608        | TNS: Send timeout occurred     | SQLNET.SEND_TIMEOUT   |
+ * OCI_NTO_RECEIVE | OCI_12_1     | ORA-12609        | TNS: Receive timeout occurred  | SQLNET.RECV_TIMEOUT   | 
+ * OCI_NTO_CALL    | OCI_18_1     | ORA-03136        | inbound connection timed out   |         ---           |  
+ *
+ * @warning
+ * Returns FALSE without throwing any exception if the Oracle client does not support the given flag
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetTimeout
+(
+    OCI_Connection *con,
+    unsigned int    type,
+    unsigned int    value
+);
+
+/**
+ * @brief
+ * Returns the requested timeout value for OCI calls that require server round-trips to the given database
+ *
+ * @param con   - Connection handle
+ * @param type  - Type of timeout to set
+ *
+ * @note:
+ * See OCI_SetTimeout() for more information
+ *
+ * @return
+ * The given timeout value if supported, otherwise 0
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetTimeout
+(
+    OCI_Connection *con,
+    unsigned int    type
 );
 
 /**
