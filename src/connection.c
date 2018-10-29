@@ -33,6 +33,13 @@ static const unsigned int TraceTypeValues[] =
     OCI_TRC_OPERATION 
 };
 
+static const unsigned int TimeoutTypeValues[] =
+{
+    OCI_NTO_SEND,
+    OCI_NTO_RECEIVE,
+    OCI_NTO_CALL
+};
+
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
@@ -1885,6 +1892,7 @@ boolean OCI_API OCI_SetTimeout
 
     OCI_CALL_ENTER(boolean , FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CHECK_ENUM_VALUE(con, FALSE, type, TimeoutTypeValues, OTEXT("timeout type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
@@ -1940,6 +1948,7 @@ unsigned int OCI_API OCI_GetTimeout
 
     OCI_CALL_ENTER(unsigned int, 0)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CHECK_ENUM_VALUE(con, 0, type, TimeoutTypeValues, OTEXT("timeout type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
