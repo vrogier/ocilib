@@ -366,9 +366,8 @@
 #define OCI_ATTR_DBOP                      485
 
 #define OCI_ATTR_COLLATION_ID              499               /* Collation ID */
-
 #define OCI_ATTR_SQL_ID                    504        /* SQL ID in text form */
-
+#define OCI_ATTR_LOB_REMOTE                520               /* remote lob ? */
 #define OCI_ATTR_CALL_TIMEOUT              531
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */

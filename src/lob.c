@@ -1295,3 +1295,28 @@ OCI_Connection * OCI_API OCI_LobGetConnection
 {
     OCI_GET_PROP(OCI_Connection *, NULL, OCI_IPC_LOB, lob, con, lob->con, NULL, lob->con->err)
 }
+
+/* --------------------------------------------------------------------------------------------- *
+* OCI_LobIsRemote
+* --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_LobIsRemote
+(
+    OCI_Lob *lob
+)
+{
+    OCI_CALL_ENTER(boolean, FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_LOB, lob)
+    OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
+
+#if OCI_VERSION_COMPILE >= OCI_12_2
+
+    if (lob->con->ver_num >= OCI_12_2)
+    {
+        OCI_GET_ATTRIB(OCI_DTYPE_LOB, OCI_ATTR_LOB_REMOTE, lob->handle, &OCI_RETVAL, sizeof(OCI_RETVAL))
+    }
+
+#endif
+
+    OCI_CALL_EXIT()
+}

@@ -10823,6 +10823,22 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_LobGetConnection
 );
 
 /**
+* @brief
+* Indicates if the given lob belongs to a local or remote database table
+*
+* @param lob - lob handle
+*
+* @warning
+* Requires Oracle 12cR2 (both client and server side), otherwise it returns FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_LobIsRemote
+(
+    OCI_Lob *lob
+);
+
+/**
  * @}
  */
 
