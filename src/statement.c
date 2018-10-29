@@ -309,6 +309,7 @@ boolean OCI_StatementReset
         stmt->nb_iters_init = 1;
         stmt->dynidx        = 0;
         stmt->err_pos       = 0;
+        stmt->server_id     = 0;
     }
 
     return OCI_STATUS;
@@ -1109,10 +1110,24 @@ boolean OCI_API OCI_PrepareInternal
 
         if (OCILib.version_runtime >= OCI_9_2)
         {
+            ub4 mode = OCI_DEFAULT;
+
+        #if OCI_VERSION_COMPILE >= OCI_12_2
+
+            if (stmt->con->ver_num >= OCI_12_2)
+            {
+                mode |= OCI_PREP2_GET_SQL_ID;
+            }
+
+        #endif
+
             OCI_EXEC
             (
-                OCIStmtPrepare2(stmt->con->cxt, &stmt->stmt, stmt->con->err, (OraText *) dbstr,
-                               (ub4) dbsize, NULL, 0, (ub4) OCI_NTV_SYNTAX, (ub4) OCI_DEFAULT)
+                OCIStmtPrepare2
+                (
+                    stmt->con->cxt, &stmt->stmt, stmt->con->err, (OraText *) dbstr,
+                    (ub4) dbsize, NULL, 0, (ub4) OCI_NTV_SYNTAX, (ub4) mode
+                )
             )
         }
         else
@@ -1122,7 +1137,11 @@ boolean OCI_API OCI_PrepareInternal
         {
             OCI_EXEC
             (
-                OCIStmtPrepare(stmt->stmt,stmt->con->err, (OraText *) dbstr, (ub4) dbsize, (ub4) OCI_NTV_SYNTAX, (ub4) OCI_DEFAULT)
+                OCIStmtPrepare
+                (
+                    stmt->stmt,stmt->con->err, (OraText *) dbstr, (ub4) dbsize,
+                    (ub4) OCI_NTV_SYNTAX, (ub4) OCI_DEFAULT
+                )
             )
         }
 
@@ -1262,6 +1281,16 @@ boolean OCI_API OCI_ExecuteInternal
             stmt->status |= OCI_STMT_PARSED;
             stmt->status |= OCI_STMT_DESCRIBED;
             stmt->status |= OCI_STMT_EXECUTED;
+
+    #if OCI_VERSION_COMPILE >= OCI_12_2
+
+            if (stmt->con->ver_num >= OCI_12_2)
+            {
+                OCI_GET_ATTRIB(OCI_HTYPE_STMT, OCI_ATTR_SQL_ID, stmt->stmt, &stmt->server_id, NULL)
+            }
+
+    #endif
+
 
             /* reset binds indicators */
 
@@ -3455,6 +3484,19 @@ const otext * OCI_API OCI_GetSql
 {
     OCI_GET_PROP(const otext*, NULL, OCI_IPC_STATEMENT, stmt, sql, stmt->con, stmt, stmt->con->err)
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_GetStatementId
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetStatementId
+(
+    OCI_Statement *stmt
+)
+{
+    OCI_GET_PROP(unsigned int, 0, OCI_IPC_STATEMENT, stmt, server_id, stmt->con, stmt, stmt->con->err)
+}
+
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_GetSqlErrorPos

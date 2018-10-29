@@ -367,6 +367,8 @@
 
 #define OCI_ATTR_COLLATION_ID              499               /* Collation ID */
 
+#define OCI_ATTR_SQL_ID                    504        /* SQL ID in text form */
+
 #define OCI_ATTR_CALL_TIMEOUT              531
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
@@ -521,6 +523,21 @@
 #define OCI_ERROR_MAXMSG_SIZE   1024         /* max size of an error message */
 #define OCI_LOBMAXSIZE          MINUB4MAXVAL        /* maximum lob data size */
 #define OCI_ROWID_LEN           23
+
+/*---------------------OCIStmtPrepare2 Modes---------------------------------*/
+#define OCI_PREP2_CACHE_SEARCHONLY    0x0010                  /* ONly Search */
+#define OCI_PREP2_GET_PLSQL_WARNINGS  0x0020         /* Get PL/SQL warnings  */
+#define OCI_PREP2_RESERVED_1          0x0040                     /* reserved */
+#define OCI_PREP2_RESERVED_2          0x0080                     /* reserved */
+#define OCI_PREP2_RESERVED_3          0x0100                     /* reserved */
+#define OCI_PREP2_RESERVED_4          0x0200                     /* reserved */
+#define OCI_PREP2_IMPL_RESULTS_CLIENT 0x0400  /* client for implicit results */
+#define OCI_PREP2_RESERVED_5          0x0800                     /* reserved */
+#define OCI_PREP2_RESERVED_6          0x1000                     /* reserved */
+#define OCI_PREP2_GET_SQL_ID          0x2000  /* Get SQL_ID for the SQL stmt */
+#define OCI_PREP2_RESERVED_7          0x4000                     /* reserved */
+#define OCI_PREP2_RESERVED_8          0x8000                     /* reserved */
+#define OCI_PREP2_RESERVED_9          0x10000                    /* reserved */
 
 /*---------------------OCIStmtRelease Modes----------------------------------*/
 #define OCI_STRLS_CACHE_DELETE   0x0010                 /* Delete from Cache */

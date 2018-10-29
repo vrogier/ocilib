@@ -2004,7 +2004,7 @@ OCI_EXPORT boolean OCI_API OCI_SetHAHandler
  * @par Example with thread context
  * @include err_ctx.c
  *
- *@par Example of warning handling
+ * @par Example of warning handling
  * @include err_warning.c
  *
  */
@@ -2770,7 +2770,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTimeout
  * Returns the requested timeout value for OCI calls that require server round-trips to the given database
  *
  * @param con   - Connection handle
- * @param type  - Type of timeout to set
+ * @param type  - Type of timeout
  *
  * @note:
  * See OCI_SetTimeout() for more information
@@ -3892,6 +3892,25 @@ OCI_EXPORT boolean OCI_API OCI_Describe
  */
 
 OCI_EXPORT const otext * OCI_API OCI_GetSql
+(
+    OCI_Statement *stmt
+);
+
+/**
+* @brief
+* Returns the statement SQL_ID from the server
+*
+* @param stmt - Statement handle
+*
+* @note
+* The statement must be executed first
+*
+* @warning
+* Requires Oracle 12cR2 (both client and server side), otherwise it returns 0
+* 
+*/
+
+OCI_EXPORT unsigned int OCI_API OCI_GetStatementId
 (
     OCI_Statement *stmt
 );
@@ -8820,7 +8839,7 @@ OCI_EXPORT OCI_Ref * OCI_API OCI_ElemGetRef
 * @param elem   - Element handle
 * @param value  - Short value
 *
-*@warning
+* @warning
 * OCI_ElemSetBoolean() is only valid value only for collection elements of PL / SQL boolean type
 *
 * @return
@@ -16346,7 +16365,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  * administrate queues (See Oracle Streams - Advanced Queuing User's Guide for more informations
  * on these privileges)
  *
- *@par Example
+ * @par Example
  * @include queue.c
  *
  */
@@ -17537,7 +17556,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DequeueGetNavigation
  * @param dequeue - Dequeue handle
  * @param timeout - timeout in seconds
  *
- *@note
+ * @note
  * - Any positive values in seconds are valid.
  * - The value 0  is accepted and means OCIDequeueGet() does not wait for
  *   messages and returns immediately if no messages are available
