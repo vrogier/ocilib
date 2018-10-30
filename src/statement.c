@@ -291,10 +291,12 @@ boolean OCI_StatementReset
         /* free sql statement */
 
         OCI_FREE(stmt->sql)
+        OCI_FREE(stmt->sql_id)
 
         stmt->rsts          = NULL;
         stmt->stmts         = NULL;
         stmt->sql           = NULL;
+        stmt->sql_id        = NULL;
         stmt->map           = NULL;
         stmt->batch         = NULL;
 
@@ -309,7 +311,6 @@ boolean OCI_StatementReset
         stmt->nb_iters_init = 1;
         stmt->dynidx        = 0;
         stmt->err_pos       = 0;
-        stmt->server_id     = 0;
     }
 
     return OCI_STATUS;
@@ -1286,12 +1287,13 @@ boolean OCI_API OCI_ExecuteInternal
 
             if (stmt->con->ver_num >= OCI_12_2)
             {
-                OCI_GET_ATTRIB(OCI_HTYPE_STMT, OCI_ATTR_SQL_ID, stmt->stmt, &stmt->server_id, NULL)
+                unsigned int size_id = 0;
+
+                OCI_GetStringAttribute(stmt->con, stmt->stmt, OCI_HTYPE_STMT, OCI_ATTR_SQL_ID, &stmt->sql_id, &size_id);
             }
 
     #endif
-
-
+            
             /* reset binds indicators */
 
             OCI_BindUpdateAll(stmt);
@@ -3486,15 +3488,15 @@ const otext * OCI_API OCI_GetSql
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetStatementId
+ * OCI_GetSqlIdentifier
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetStatementId
+OCI_EXPORT const otext* OCI_API OCI_GetSqlIdentifier
 (
     OCI_Statement *stmt
 )
 {
-    OCI_GET_PROP(unsigned int, 0, OCI_IPC_STATEMENT, stmt, server_id, stmt->con, stmt, stmt->con->err)
+    OCI_GET_PROP(const otext*, NULL, OCI_IPC_STATEMENT, stmt, sql_id, stmt->con, stmt, stmt->con->err)
 }
 
 

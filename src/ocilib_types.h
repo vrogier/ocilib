@@ -448,6 +448,7 @@ struct OCI_Statement
     OCI_Statement  **stmts;             /* pointer to implicit statement resultset list */
     OCI_Connection  *con;               /* pointer to connection object */
     otext           *sql;               /* SQL statement */
+    otext           *sql_id;            /* server statement sql id */
     OCI_Bind       **ubinds;            /* array of user bind objects */
     OCI_Bind       **rbinds;            /* array of register bind objects */
     OCI_HashTable   *map;               /* hash table handle for mapping bind name/index */
@@ -463,7 +464,6 @@ struct OCI_Statement
     ub4              prefetch_size;     /* pre-fetch size */
     ub4              prefetch_mem;      /* pre-fetch memory */
     ub4              long_size;         /* default size for LONG columns */
-    ub4              server_id;         /* server stmt id */
     ub1              long_mode;         /* LONG datatype handling mode */
     ub1              status;            /* statement status */
     ub2              type;              /* type of SQL statement */

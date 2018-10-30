@@ -3906,11 +3906,11 @@ OCI_EXPORT const otext * OCI_API OCI_GetSql
 * The statement must be executed first
 *
 * @warning
-* Requires Oracle 12cR2 (both client and server side), otherwise it returns 0
+* Requires Oracle 12cR2 (both client and server side), otherwise it returns NULL
 * 
 */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetStatementId
+OCI_EXPORT const otext* OCI_API OCI_GetSqlIdentifier
 (
     OCI_Statement *stmt
 );
