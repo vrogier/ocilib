@@ -647,7 +647,7 @@ size_t ConcurrentMap<K, V>::GetSize()
 }
 
 template<class T>
-ConcurrentList<T>::ConcurrentList()
+ConcurrentList<T>::ConcurrentList() : _list()
 {
 
 }
@@ -709,11 +709,11 @@ template<class P>
 bool ConcurrentList<T>::FindIf(P predicate, T &value)
 {
     bool res = false;
-   
+
 	Lock();
 
 	typename std::list<T>::iterator it = std::find_if(_list.begin(), _list.end(), predicate);
-	
+
 	if (it != _list.end())
 	{
         value = *it;
@@ -813,7 +813,7 @@ void HandleHolder<T>::SmartHandle::ResetHolder(HandleHolder *holder)
 {
     if (holder)
     {
-        holder->_smartHandle = 0;
+        holder->_smartHandle = nullptr;
     }
 }
 
@@ -3048,13 +3048,13 @@ unsigned int Lob<T, U>::Write(const T& content)
         unsigned int charCount = 0;
         unsigned int byteCount = static_cast<unsigned int>(content.size());
         AnyPointer buffer = static_cast<AnyPointer>(const_cast<typename T::value_type *>(&content[0]));
- 
+
         if (Check(OCI_LobWrite2(*this, buffer, &charCount, &byteCount)))
         {
             res = U == LobBinary ? byteCount : charCount;
         }
-    }    
-    
+    }
+
     return res;
 }
 
