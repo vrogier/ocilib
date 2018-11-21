@@ -1694,6 +1694,16 @@ inline void Connection::SetUserData(AnyPointer value)
     Check(OCI_SetUserData(*this, value));
 }
 
+inline unsigned int Connection::GetTimeout(TimeoutType timeout)
+{
+    return Check(OCI_GetTimeout(*this, timeout));
+}
+
+inline void Connection::SetTimeout(TimeoutType timeout, unsigned int value)
+{
+    Check(OCI_SetTimeout(*this, timeout, value));
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * Transaction
  * --------------------------------------------------------------------------------------------- */
@@ -3213,6 +3223,12 @@ template<class T, int U>
 bool Lob<T, U>::IsTemporary() const
 {
     return (Check(OCI_LobIsTemporary(*this)) == TRUE);
+}
+
+template<class T, int U>
+bool Lob<T, U>::IsRemote() const
+{
+    return (Check(OCI_LobIsRemote(*this)) == TRUE);
 }
 
 template<class T, int U>
@@ -5136,6 +5152,11 @@ inline unsigned int Statement::GetAffectedRows() const
 inline ostring Statement::GetSql() const
 {
     return MakeString(Check(OCI_GetSql(*this)));
+}
+
+inline ostring Statement::GetSqlIdentifier() const
+{
+    return MakeString(Check(OCI_GetSqlIdentifier(*this)));
 }
 
 inline Resultset Statement::GetResultset()
