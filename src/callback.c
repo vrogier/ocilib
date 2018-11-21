@@ -420,10 +420,7 @@ ub4 OCI_ProcNotifyChanges
     OCI_NOT_USED(ctx)
     OCI_NOT_USED(desc)
     OCI_NOT_USED(subscrhp)
-    OCI_NOT_USED(res)
     OCI_NOT_USED(type)
-    OCI_NOT_USED(dbstr)
-    OCI_NOT_USED(dbsize)
 
 #endif
 

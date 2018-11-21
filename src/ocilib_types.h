@@ -448,6 +448,7 @@ struct OCI_Statement
     OCI_Statement  **stmts;             /* pointer to implicit statement resultset list */
     OCI_Connection  *con;               /* pointer to connection object */
     otext           *sql;               /* SQL statement */
+    otext           *sql_id;            /* server statement sql id */
     OCI_Bind       **ubinds;            /* array of user bind objects */
     OCI_Bind       **rbinds;            /* array of register bind objects */
     OCI_HashTable   *map;               /* hash table handle for mapping bind name/index */

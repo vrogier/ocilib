@@ -33,7 +33,7 @@
     /* for runtime loading, set compile time version to the highest minimum
        version needed by OCILIB encapsulation of OCI */
 
-    #define OCI_VERSION_COMPILE OCI_12_1
+    #define OCI_VERSION_COMPILE OCI_18_3
 
     /* set runtime version to unknown, it will be guessed from symbols loading */
 
@@ -41,7 +41,12 @@
 
 #else
 
-    #if defined(OCI_FNCODE_BINDBYPOS2)  /* = OCI_12_1 */
+    #if defined(OCI_FNCODE_LOBGETCHUNKSIZE)  /* = OCI_18_3 */
+
+        #define OCI_VERSION_COMPILE OCI_18_3
+        #define OCI_VERSION_RUNTIME OCI_18_3
+
+    #elif defined(OCI_FNCODE_BINDBYPOS2)  /* = OCI_12_1 */
 
         #define OCI_VERSION_COMPILE OCI_12_1
         #define OCI_VERSION_RUNTIME OCI_12_1

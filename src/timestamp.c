@@ -98,7 +98,6 @@ OCI_Timestamp * OCI_TimestampInit
     OCI_NOT_USED(con)
     OCI_NOT_USED(type)
     OCI_NOT_USED(buffer)
-    OCI_NOT_USED(ptmsp)
 
 #endif
 

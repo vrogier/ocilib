@@ -239,7 +239,10 @@ enum OracleVersionValues
     Oracle10gR2 = OCI_10_2,
     Oracle11gR1 = OCI_11_1,
     Oracle11gR2 = OCI_11_2,
-    Oracle12cR1 = OCI_12_1
+    Oracle12cR1 = OCI_12_1,
+    Oracle18cR1 = OCI_18_1,
+    Oracle18cR2 = OCI_18_2,
+    Oracle18cR3 = OCI_18_3
 };
 
 /**
@@ -1031,6 +1034,17 @@ public:
     static Environment::CharsetMode GetCharset();
 
     /**
+     * @brief
+     * Return maximum size for a character
+     *
+     * @note
+     * When Charset is Environment::CharsetAnsi and NLS_LANG is UTF8 based, return value is 4
+     * Otherwise, it is sizeof(ostring::value_type)
+     *
+     */
+    static unsigned int GetCharMaxSize();
+
+    /**
     * @brief
     * Return the current number of bytes allocated internally in the library
     *
@@ -1298,6 +1312,7 @@ private:
     ConcurrentMap<AnyPointer, Handle *>  _handles;
     ConcurrentMap<AnyPointer, CallbackPointer> _callbacks;
     EnvironmentFlags _mode;
+    unsigned int _charMaxSize;
     bool _initialized;
 };
 
@@ -1739,6 +1754,39 @@ class Connection : public HandleHolder<OCI_Connection *>
     template<class>
     friend class Collection;
 public:
+
+    /**
+    * @brief
+    * Timeout enumerated values
+    *
+    */
+    enum TimeoutTypeValues
+    {
+        /**  
+         *   - Time to wait for send operations completion to the database server
+         *   - Requires Oracle 12cR1 client
+         */
+        TimeoutSend = OCI_NTO_SEND,
+        /**
+         *   - Time to wait for read operations completion from the database server
+         *   - Requires Oracle 12cR1 client
+         */
+        TimeoutReceive = OCI_NTO_RECEIVE,
+        /**
+         *   - Time to wait for a database round-trip to complete ( Client processing is not taken into account)
+         *   - Requires Oracle 18c client
+         */
+        TimeoutCall = OCI_NTO_CALL
+    };
+
+    /**
+    * @brief
+    * Timeout Types
+    *
+    * Possible values are Connection::TimeoutValues
+    *
+    */
+    typedef Enum<TimeoutTypeValues> TimeoutType;
 
     /**
     * @brief
@@ -2425,6 +2473,50 @@ public:
      *
      */
     void SetUserData(AnyPointer value);
+
+    /**
+     * @brief
+     * Returns the requested timeout value for OCI calls that require server round-trips to the given database
+     *
+     * @param timeout  - Type of timeout
+     *
+     * @note:
+     * See Connection::SetTimeout() for more information
+     *
+     * @return
+     * The given timeout value if supported, otherwise 0
+     *
+     */
+    unsigned int GetTimeout(TimeoutType timeout);
+
+    /**
+     * @brief
+     * Set a given timeout for OCI calls that require server round-trips to the given database
+     *
+     * @param type  - Type of timeout to set
+     * @param value - Timeout in milliseconds
+     *
+     * OCI client raises an timeout type related error when a given timeout is reached.
+     *
+     * @note
+     * To disable a given timeout, pass the value 0
+     *
+     * @warning
+     * OCI client is using the following precedence rules when applying timeouts:
+     *   - 1 - Timeout set using TimeoutCall (all other timeouts are discarded)
+     *   - 2 - Timeouts set using TimeoutSend and/or TimeoutReceive
+     *   - 3 - Timeouts set in sqlnet.ora file
+     *
+     * Here is a summary:
+     *
+     * FLAG            | Min. Version | OCI Error raised | OCI Error description          | sqlnet.ora equivalent |
+     * --------------- | ------------ | ---------------- | ------------------------------ | --------------------- |
+     * TimeoutSend     | OCI_12_1     | ORA-12608        | TNS: Send timeout occurred     | SQLNET.SEND_TIMEOUT   |
+     * TimeoutReceive  | OCI_12_1     | ORA-12609        | TNS: Receive timeout occurred  | SQLNET.RECV_TIMEOUT   |
+     * TimeoutCall     | OCI_18_1     | ORA-03136        | inbound connection timed out   |         ---           |
+     *
+     */
+    void SetTimeout(TimeoutType timeout, unsigned int value);
 
 private:
 
@@ -4263,6 +4355,13 @@ public:
 
     /**
     * @brief
+    * Check if the given lob is a remote lob
+    *
+    */
+    bool IsRemote() const;
+
+    /**
+    * @brief
     * Open explicitly a Lob
     *
     * @param mode - open mode
@@ -5438,6 +5537,28 @@ public:
 
     /**
     * @brief
+    * Vector type values
+    *
+    */
+    enum VectorTypeValues
+    {
+        /** Vector is binded as an array in a regular DML array operation */
+        AsArray = 1,
+        /** Vector is binded as a PL/SQL index by table */
+        AsPlSqlTable = 2
+    };
+
+    /**
+    * @brief
+    * Vector type
+    *
+    * Possible values are BindInfo::VectorTypeValues
+    *
+    */
+    typedef Enum<VectorTypeValues> VectorType;
+
+    /**
+    * @brief
     * Return the name of the bind object
     *
     */
@@ -5898,6 +6019,13 @@ public:
 
     /**
     * @brief
+    * Return the server SQL_ID of the last SQL or PL/SQL statement prepared or executed by the statement
+    *
+    */
+    ostring GetSqlIdentifier()  const;
+
+    /**
+    * @brief
     * Retrieve the resultset from an executed statement
     *
     * @note
@@ -6114,6 +6242,7 @@ public:
     * @param name   - Bind name
     * @param values - Vector of host variables
     * @param mode   - bind direction mode
+    * @param type   - vector type (regular array or PL/SQL table)
     *
     * @warning
     * This method has built-in specialized versions for all C++ native scalar types, Date time and Statement objects.
@@ -6125,7 +6254,7 @@ public:
     *
     */
     template<class T>
-    void Bind(const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
     /**
     * @brief
@@ -6137,6 +6266,7 @@ public:
     * @param values   - Vector of host variables
     * @param typeInfo - Object type information
     * @param mode     - bind direction mode
+    * @param type     - vector type (regular array or PL/SQL table)
     *
     * @warning
     * This method has built-in specialized versions for Object, Reference.
@@ -6147,7 +6277,7 @@ public:
     *
     */
     template<class T>
-    void Bind(const ostring& name, std::vector<T> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, std::vector<T> &values, TypeInfo &typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
     /**
     * @brief
@@ -6159,10 +6289,11 @@ public:
     * @param values   - Vector of host collection variables
     * @param typeInfo - Object type information
     * @param mode     - bind direction mode
+    * @param type     - vector type (regular array or PL/SQL table)
     *
     */
     template<class T>
-    void Bind(const ostring& name, std::vector<Collection<T> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, std::vector<Collection<T> > &values, TypeInfo &typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
     /**
     * @brief
@@ -6175,6 +6306,7 @@ public:
     * @param values    - Vector of host variables
     * @param extraInfo - Extra information needed for the bind call
     * @param mode      - bind direction mode
+    * @param type      - vector type (regular array or PL/SQL table)
     *
     * @warning
     * This method has built-in specialized versions for ostring, Raw , Clong, Blong, Timestamp, Interval variables.
@@ -6187,7 +6319,7 @@ public:
     *
     */
     template<class T, class U>
-    void Bind(const ostring& name, std::vector<T> &values, U extraInfo, BindInfo::BindDirection mode);
+    void Bind(const ostring& name, std::vector<T> &values, U extraInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
     /**
     * @brief
@@ -6480,10 +6612,13 @@ private:
     void Bind2 (M &method, const ostring& name, T &value, BindInfo::BindDirection mode);
 
     template<typename M, class T>
-    void BindVector1(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode);
+    void BindVector1(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, BindInfo::VectorType type);
 
     template<typename M, class T, class U>
-    void BindVector2(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, U type);
+    void BindVector2(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, U subType, BindInfo::VectorType type);
+
+    template<class T>
+    unsigned int GetArraysize(BindInfo::VectorType type, std::vector<T> &values);
 
     template<typename T>
     unsigned int Fetch(T callback);
@@ -6883,7 +7018,11 @@ public:
         IsGeneratedAlways = OCI_CPF_IS_GEN_ALWAYS,
         /** Only valid when IsIdentity is set:
                - If set, means that the value is generated by default on NULL */
-        IsGeneratedByDefaultOnNull = OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL
+        IsGeneratedByDefaultOnNull = OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL,
+        /**  If set, Column is an implicitly generated logical partitioning column for container_map enabled object */
+        IsLogicalPartitioning = OCI_CPF_IS_LPART,
+        /**  If set, Column is a CON_ID column implicitly generated by CONTAINERS() or is an ORIGIN_CON_ID column implicitly generated for Extended Data Link */
+        IsGeneratedByContainers = OCI_CPF_IS_CONID
     };
 
     /**

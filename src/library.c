@@ -394,6 +394,7 @@ XAOSVCCTX                    xaoSvcCtx                    = NULL;
 XAOENV                       xaoEnv                       = NULL;
 OCILOBGETCONTENTTYPE         OCILobGetContentType         = NULL;
 OCISTMTGETNEXTRESULT         OCIStmtGetNextResult         = NULL;
+OCISERVERRELEASE2            OCIServerRelease2            = NULL;
 
 #ifdef ORAXB8_DEFINED
 
@@ -1327,9 +1328,16 @@ boolean OCI_API OCI_Initialize
         LIB_SYMBOL(OCILib.lib_handle, "OCIStmtGetNextResult", OCIStmtGetNextResult,
                    OCISTMTGETNEXTRESULT);
 
+        LIB_SYMBOL(OCILib.lib_handle, "OCIServerRelease2", OCIServerRelease2,
+                   OCISERVERRELEASE2);
+
         /* API Version checking */
 
-        if (OCIStmtGetNextResult)
+        if (OCIServerRelease2)
+        {
+            OCILib.version_runtime = OCI_18_3;
+        }
+        else if (OCIStmtGetNextResult)
         {
             OCILib.version_runtime = OCI_12_1;
         }

@@ -91,8 +91,8 @@ extern "C" {
  * --------------------------------------------------------------------------------------------- */
 
 #define OCILIB_MAJOR_VERSION     4
-#define OCILIB_MINOR_VERSION     5
-#define OCILIB_REVISION_VERSION  2
+#define OCILIB_MINOR_VERSION     6
+#define OCILIB_REVISION_VERSION  0
 
 /* Import mode */
 
@@ -1081,6 +1081,9 @@ typedef unsigned int big_uint;
 #define OCI_11_2                            1120
 #define OCI_12_1                            1210
 #define OCI_12_2                            1220
+#define OCI_18_1                            1810
+#define OCI_18_2                            1820
+#define OCI_18_3                            1830
 
 /* versions extract macros */
 
@@ -1315,6 +1318,8 @@ typedef unsigned int big_uint;
 #define OCI_CPF_IS_IDENTITY                 1
 #define OCI_CPF_IS_GEN_ALWAYS               2
 #define OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL   4
+#define OCI_CPF_IS_LPART                    8
+#define OCI_CPF_IS_CONID                   16
 
 /* Column collation IDs     */
 
@@ -1486,6 +1491,12 @@ typedef unsigned int big_uint;
 #define OCI_TRC_ACTION                      3
 #define OCI_TRC_DETAIL                      4
 #define OCI_TRC_OPERATION                   5
+
+/* Network timeout type */
+
+#define OCI_NTO_SEND                        1
+#define OCI_NTO_RECEIVE                     2
+#define OCI_NTO_CALL                        3
 
 /* HA event type */
 
@@ -1993,7 +2004,7 @@ OCI_EXPORT boolean OCI_API OCI_SetHAHandler
  * @par Example with thread context
  * @include err_ctx.c
  *
- *@par Example of warning handling
+ * @par Example of warning handling
  * @include err_warning.c
  *
  */
@@ -2601,6 +2612,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTransaction
  * - OCI_11_1
  * - OCI_11_2
  * - OCI_12_1
+ * - OCI_18_3
  *
  */
 
@@ -2701,6 +2713,77 @@ OCI_EXPORT const otext * OCI_API OCI_GetTrace
 OCI_EXPORT boolean OCI_API OCI_Ping
 (
     OCI_Connection *con
+);
+
+/**
+ * @brief
+ * Set a given timeout for OCI calls that require server round-trips to the given database
+ *
+ * @param con   - Connection handle
+ * @param type  - Type of timeout to set
+ * @param value - Timeout in milliseconds
+ *
+ * Possible values for parameter 'type':
+ * - OCI_NTO_SEND
+ *   - Time to wait for send operations completion to the database server
+ *   - Requires Oracle 12cR1 client
+ * - OCI_NTO_RECEIVE
+ *   - Time to wait for read operations completion from the database server
+ *   - Requires Oracle 12cR1 client
+ * - OCI_NTO_CALL
+ *   - Time to wait for a database round-trip to complete ( Client processing is not taken into account)
+ *   - Requires Oracle 18c client
+ *
+ * OCI client raises an timeout type related error when a given timeout is reached.
+ * 
+ * @note
+ * To disable a given timeout, pass the value 0
+ *
+ * @warning
+ * OCI client is using the following precedence rules when applying timeouts:
+ *   - 1 - Timeout set using OCI_NTO_CALL (all other timeouts are discarded)
+ *   - 2 - Timeouts set using OCI_NTO_SEND and/or OCI_NTO_RECEIVE
+ *   - 3 - Timeouts set in sqlnet.ora file
+ * 
+ * Here is a summary:
+ * 
+ * FLAG            | Min. Version | OCI Error raised | OCI Error description          | sqlnet.ora equivalent |
+ * --------------- | ------------ | ---------------- | ------------------------------ | --------------------- |
+ * OCI_NTO_SEND    | OCI_12_1     | ORA-12608        | TNS: Send timeout occurred     | SQLNET.SEND_TIMEOUT   |
+ * OCI_NTO_RECEIVE | OCI_12_1     | ORA-12609        | TNS: Receive timeout occurred  | SQLNET.RECV_TIMEOUT   | 
+ * OCI_NTO_CALL    | OCI_18_1     | ORA-03136        | inbound connection timed out   |         ---           |  
+ *
+ * @warning
+ * Returns FALSE without throwing any exception if the Oracle client does not support the given flag
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetTimeout
+(
+    OCI_Connection *con,
+    unsigned int    type,
+    unsigned int    value
+);
+
+/**
+ * @brief
+ * Returns the requested timeout value for OCI calls that require server round-trips to the given database
+ *
+ * @param con   - Connection handle
+ * @param type  - Type of timeout
+ *
+ * @note:
+ * See OCI_SetTimeout() for more information
+ *
+ * @return
+ * The given timeout value if supported, otherwise 0
+ *
+ */
+
+OCI_EXPORT unsigned int OCI_API OCI_GetTimeout
+(
+    OCI_Connection *con,
+    unsigned int    type
 );
 
 /**
@@ -3809,6 +3892,25 @@ OCI_EXPORT boolean OCI_API OCI_Describe
  */
 
 OCI_EXPORT const otext * OCI_API OCI_GetSql
+(
+    OCI_Statement *stmt
+);
+
+/**
+* @brief
+* Returns the statement SQL_ID from the server
+*
+* @param stmt - Statement handle
+*
+* @note
+* The statement must be executed first
+*
+* @warning
+* Requires Oracle 12cR2 (both client and server side), otherwise it returns NULL
+* 
+*/
+
+OCI_EXPORT const otext* OCI_API OCI_GetSqlIdentifier
 (
     OCI_Statement *stmt
 );
@@ -6492,18 +6594,21 @@ OCI_EXPORT boolean OCI_API OCI_ColumnGetCharUsed
  *
  * For flags are:
  * - OCI_CPF_NONE : The column has no flags or the OCI client does not support this call
- * - OCI_CPF_IS_IDENTITY :
+ * - OCI_CPF_IS_IDENTITY:
  *      - If Set, the column is an IDENTITY column
  *      - Otherwise, it is not an IDENTITY column
- * - OCI_CPF_IS_GEN_ALWAYS (only if OCI_CPF_IS_IDENTITY is set) :
+ * - OCI_CPF_IS_GEN_ALWAYS:
  *      - If set, means that the value is "ALWAYS GENERATED"
  *      - Otherwise mens that the value is "GENERATED BY"
- * - OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL (only if OCI_CPF_IS_IDENTITY is set):
+ * - OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL:
  *      - If set, means that the value is generated by default on NULL
+  * - OCI_CPF_IS_LPART:
+ *      - If set, Column is an implicitly generated logical partitioning column for container_map enabled object
+ * - OCI_CPF_IS_CONID:
+ *      - If set, Column is a CON_ID column implicitly generated by CONTAINERS() or is an ORIGIN_CON_ID column implicitly generated for Extended Data Link
  *
  * @note
  * This was introduced in Oracle 12cR1.
- * It is currently used for identifying Identity columns.
  * For earlier versions, it always return OCI_CPF_NONE
  *
  */
@@ -8734,7 +8839,7 @@ OCI_EXPORT OCI_Ref * OCI_API OCI_ElemGetRef
 * @param elem   - Element handle
 * @param value  - Short value
 *
-*@warning
+* @warning
 * OCI_ElemSetBoolean() is only valid value only for collection elements of PL / SQL boolean type
 *
 * @return
@@ -9660,6 +9765,13 @@ OCI_EXPORT unsigned int OCI_API OCI_GetStatementType
  *  - OCI_SFM_DEFAULT
  *  - OCI_SFM_SCROLLABLE
  *
+ * @warning
+ * if Oracle Client is 9iR1:
+ *  - when setting OCI_SFM_SCROLLABLE, OCI_SetPrefetch() is internally called with value 0 
+ *    to disable prefetching (to avoid an oracle bug).
+ *  - when re-setting OCI_SFM_DEFAULT after having set OCI_SFM_SCROLLABLE, OCI_SetPrefetch() 
+ *    is internally called with value OCI_PREFETCH_SIZE
+ * 
  */
 
 OCI_EXPORT boolean OCI_API OCI_SetFetchMode
@@ -9821,6 +9933,10 @@ OCI_EXPORT unsigned int OCI_API OCI_GetFetchSize
  * @note
  * To turn off pre-fetching, set both attributes (size and memory) to 0.
  *
+ * @warning
+ * Prefetch is not working with scrollable cursors in Oracle 9iR1
+ * In that case, argument 'size' is not used and replace by 0.
+ * 
  * @return
  * TRUE on success otherwise FALSE
  *
@@ -10702,6 +10818,22 @@ OCI_EXPORT boolean OCI_API OCI_LobEnableBuffering
 */
 
 OCI_EXPORT OCI_Connection * OCI_API OCI_LobGetConnection
+(
+    OCI_Lob *lob
+);
+
+/**
+* @brief
+* Indicates if the given lob belongs to a local or remote database table
+*
+* @param lob - lob handle
+*
+* @warning
+* Requires Oracle 12cR2 (both client and server side), otherwise it returns FALSE
+*
+*/
+
+OCI_EXPORT boolean OCI_API OCI_LobIsRemote
 (
     OCI_Lob *lob
 );
@@ -16249,7 +16381,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  * administrate queues (See Oracle Streams - Advanced Queuing User's Guide for more informations
  * on these privileges)
  *
- *@par Example
+ * @par Example
  * @include queue.c
  *
  */
@@ -17440,7 +17572,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DequeueGetNavigation
  * @param dequeue - Dequeue handle
  * @param timeout - timeout in seconds
  *
- *@note
+ * @note
  * - Any positive values in seconds are valid.
  * - The value 0  is accepted and means OCIDequeueGet() does not wait for
  *   messages and returns immediately if no messages are available

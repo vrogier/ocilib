@@ -345,6 +345,10 @@
 #define OCI_ATTR_HA_SRVNEXT            404
 #define OCI_ATTR_TAF_ENABLED           405
 #define OCI_ATTR_DRIVER_NAME           424                    /* Driver Name */
+
+#define OCI_ATTR_SEND_TIMEOUT          435           /* NS send timeout */
+#define OCI_ATTR_RECEIVE_TIMEOUT       436        /* NS receive timeout */
+
 #define OCI_ATTR_SPOOL_AUTH            460      /* Auth handle on pool handle*/
 
 #define OCI_ATTR_IMPLICIT_RESULT_COUNT 463
@@ -362,6 +366,9 @@
 #define OCI_ATTR_DBOP                      485
 
 #define OCI_ATTR_COLLATION_ID              499               /* Collation ID */
+#define OCI_ATTR_SQL_ID                    504        /* SQL ID in text form */
+#define OCI_ATTR_LOB_REMOTE                520               /* remote lob ? */
+#define OCI_ATTR_CALL_TIMEOUT              531
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
 
@@ -515,6 +522,21 @@
 #define OCI_ERROR_MAXMSG_SIZE   1024         /* max size of an error message */
 #define OCI_LOBMAXSIZE          MINUB4MAXVAL        /* maximum lob data size */
 #define OCI_ROWID_LEN           23
+
+/*---------------------OCIStmtPrepare2 Modes---------------------------------*/
+#define OCI_PREP2_CACHE_SEARCHONLY    0x0010                  /* ONly Search */
+#define OCI_PREP2_GET_PLSQL_WARNINGS  0x0020         /* Get PL/SQL warnings  */
+#define OCI_PREP2_RESERVED_1          0x0040                     /* reserved */
+#define OCI_PREP2_RESERVED_2          0x0080                     /* reserved */
+#define OCI_PREP2_RESERVED_3          0x0100                     /* reserved */
+#define OCI_PREP2_RESERVED_4          0x0200                     /* reserved */
+#define OCI_PREP2_IMPL_RESULTS_CLIENT 0x0400  /* client for implicit results */
+#define OCI_PREP2_RESERVED_5          0x0800                     /* reserved */
+#define OCI_PREP2_RESERVED_6          0x1000                     /* reserved */
+#define OCI_PREP2_GET_SQL_ID          0x2000  /* Get SQL_ID for the SQL stmt */
+#define OCI_PREP2_RESERVED_7          0x4000                     /* reserved */
+#define OCI_PREP2_RESERVED_8          0x8000                     /* reserved */
+#define OCI_PREP2_RESERVED_9          0x10000                    /* reserved */
 
 /*---------------------OCIStmtRelease Modes----------------------------------*/
 #define OCI_STRLS_CACHE_DELETE   0x0010                 /* Delete from Cache */
@@ -1000,6 +1022,41 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_ATTR_COL_PROPERTY_IS_IDENTITY           0x0000000000000001 
 #define OCI_ATTR_COL_PROPERTY_IS_GEN_ALWAYS         0x0000000000000002 
 #define OCI_ATTR_COL_PROPERTY_IS_GEN_BY_DEF_ON_NULL 0x0000000000000004 
+#define OCI_ATTR_COL_PROPERTY_IS_LPART              0x0000000000000008 
+#define OCI_ATTR_COL_PROPERTY_IS_CONID              0x0000000000000010 
+
+/*-----------------Macros to get the various version number components------ */
+
+#define OCI_SERVER_RELEASE_REL(v) ((sword)(((v) >> 24) & 0x000000FF))
+ /* old: version number */
+/* new: feature release */
+#define OCI_SERVER_RELEASE_REL_UPD(v)\
+  ((OCI_SERVER_RELEASE_REL(v) < 18)? \
+   ((sword)(((v) >> 20) & 0x0000000F)):\
+   ((sword)(((v) >> 16) & 0x000000FF)))               /* old: release number */
+                                                      /* new: release update */
+
+#define OCI_SERVER_RELEASE_REL_UPD_REV(v)\
+  ((OCI_SERVER_RELEASE_REL(v) < 18)? \
+   ((sword)(((v) >> 12) & 0x000000FF)):\
+   ((sword)(((v) >> 12) & 0x0000000F)))
+                                                       /* old: update number */
+                                             /* new: release update revision */
+
+#define OCI_SERVER_RELEASE_REL_UPD_INC(v)\
+  ((OCI_SERVER_RELEASE_REL(v) < 18)? \
+   ((sword)(((v) >> 8) & 0x0000000F)):\
+   ((sword)(((v) >> 4) & 0x0000000FF)))
+                                              /* old: porting release number */
+                                            /* new: release update increment */
+
+#define OCI_SERVER_RELEASE_EXT(v)\
+  ((OCI_SERVER_RELEASE_REL(v) < 18)? \
+   ((sword)(((v) >> 0) & 0x000000FF)):\
+   ((sword)(((v) >> 0) & 0x0000000F)))    
+                                               /* old: porting update number */
+                                                           /* new: extension */
+
 
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */
 

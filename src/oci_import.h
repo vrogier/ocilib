@@ -286,7 +286,8 @@ extern XAOSVCCTX                    xaoSvcCtx;
 extern XAOENV                       xaoEnv;
 extern OCILOBGETCONTENTTYPE         OCILobGetContentType;
 extern OCISTMTGETNEXTRESULT         OCIStmtGetNextResult;
-            
+extern OCISERVERRELEASE2            OCIServerRelease2;
+
 #ifdef ORAXB8_DEFINED
 
 extern OCILOBCOPY2                  OCILobCopy2;

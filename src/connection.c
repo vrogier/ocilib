@@ -33,6 +33,13 @@ static const unsigned int TraceTypeValues[] =
     OCI_TRC_OPERATION 
 };
 
+static const unsigned int TimeoutTypeValues[] =
+{
+    OCI_NTO_SEND,
+    OCI_NTO_RECEIVE,
+    OCI_NTO_CALL
+};
+
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
@@ -1296,47 +1303,76 @@ const otext * OCI_API OCI_GetVersionServer
 
     if (!con->ver_str && (!(con->mode & OCI_PRELIM_AUTH)))
     {
-        int     dbsize = OCI_SIZE_BUFFER * (int) sizeof(dbtext);
-        dbtext *dbstr  = NULL;
+        int     dbsize  = OCI_SIZE_BUFFER * (int) sizeof(dbtext);
+        dbtext *dbstr   = NULL;
+        ub4     version = 0;
 
         OCI_ALLOCATE_DATA(OCI_IPC_STRING, con->ver_str, OCI_SIZE_BUFFER + 1)
 
         if (OCI_STATUS)
-        {
+        {    
             dbstr = OCI_StringGetOracleString(con->ver_str, &dbsize);
 
-            OCI_EXEC(OCIServerVersion((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX))
+         #if OCI_VERSION_COMPILE >= OCI_18_3
+   
+            if (OCILib.version_runtime >= OCI_18_3)
+            {
+                OCI_EXEC(OCIServerRelease2((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX, &version, OCI_DEFAULT))
+            }
+            else
+
+        #endif
+            
+            {
+                OCI_EXEC(OCIServerVersion((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX))
+            }
 
             OCI_StringCopyOracleStringToNativeString(dbstr, con->ver_str, dbcharcount(dbsize));
-            OCI_StringReleaseOracleString(dbstr);
+            OCI_StringReleaseOracleString(dbstr);            
         }
 
         if (OCI_STATUS)
         {
-            otext *p = NULL;
-
             int ver_maj = 0, ver_min = 0, ver_rev = 0;
 
-            con->ver_str[ocharcount(dbsize)] = 0;
+        #if OCI_VERSION_COMPILE >= OCI_18_3
 
-            /* parse server version string to find the version information
-                **/
-
-            for (p = con->ver_str; p && *p; p++)
+            if (OCILib.version_runtime >= OCI_18_3)
             {
-                if (oisdigit((unsigned char) *p) &&
-                    (*(p + (size_t) 1) != 0) &&
-                    (*(p + (size_t) 1) == OTEXT('.') || (*(p + (size_t) 2) == OTEXT('.') )))
-                {
-                    if (OCI_NB_ARG_VERSION == osscanf(p, OTEXT("%d.%d.%d"),
-                                                        (int *) &ver_maj,
-                                                        (int *) &ver_min,
-                                                        (int *) &ver_rev))
-                    {
-                        con->ver_num = ver_maj*100 + ver_min*10 + ver_rev;
-                    }
+                ver_maj = OCI_SERVER_RELEASE_REL(version);
+                ver_min = OCI_SERVER_RELEASE_REL_UPD(version);
+                ver_rev = OCI_SERVER_RELEASE_REL_UPD_REV(version);
 
-                    break;
+                con->ver_num = ver_maj * 100 + ver_min * 10 + ver_rev;
+            }
+            else
+
+        #endif
+
+            {
+                otext *p = NULL;
+
+                con->ver_str[ocharcount(dbsize)] = 0;
+
+                /* parse server version string to find the version information
+                    **/
+
+                for (p = con->ver_str; p && *p; p++)
+                {
+                    if (oisdigit((unsigned char) *p) &&
+                        (*(p + (size_t) 1) != 0) &&
+                        (*(p + (size_t) 1) == OTEXT('.') || (*(p + (size_t) 2) == OTEXT('.') )))
+                    {
+                        if (OCI_NB_ARG_VERSION == osscanf(p, OTEXT("%d.%d.%d"),
+                                                            (int *) &ver_maj,
+                                                            (int *) &ver_min,
+                                                            (int *) &ver_rev))
+                        {
+                            con->ver_num = ver_maj*100 + ver_min*10 + ver_rev;
+                        }
+
+                        break;
+                    }
                 }
             }
         }
@@ -1837,6 +1873,117 @@ boolean OCI_API OCI_Ping
     }
 
 #endif
+
+    OCI_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_SetTimeout
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_SetTimeout
+(
+    OCI_Connection *con,
+    unsigned int    type,
+    unsigned int    value
+)
+{
+    ub4 timeout = value;
+
+    OCI_CALL_ENTER(boolean , FALSE)
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CHECK_ENUM_VALUE(con, FALSE, type, TimeoutTypeValues, OTEXT("timeout type"))
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+    if (OCILib.version_runtime >= OCI_12_1)
+    {
+        switch (type)
+        {
+            case OCI_NTO_SEND:
+            {
+                OCI_SET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_SEND_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+                OCI_RETVAL = OCI_STATUS;
+            }
+            case OCI_NTO_RECEIVE:
+            {
+                OCI_SET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+                OCI_RETVAL = OCI_STATUS;
+            }
+
+         #if OCI_VERSION_COMPILE >= OCI_18_1
+
+            case OCI_NTO_CALL:
+            {
+                if (OCILib.version_runtime >= OCI_12_1)
+                {
+                    OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
+                    OCI_RETVAL = OCI_STATUS;
+                }
+            }
+
+        #endif
+        
+        }
+    }
+
+#endif
+
+    OCI_CALL_EXIT()    
+}
+
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_GetTimeout
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_GetTimeout
+(
+    OCI_Connection *con,
+    unsigned int    type
+)
+{
+    ub4 timeout = 0;
+
+    OCI_CALL_ENTER(unsigned int, 0)
+    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    OCI_CALL_CHECK_ENUM_VALUE(con, 0, type, TimeoutTypeValues, OTEXT("timeout type"))
+    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+    if (OCILib.version_runtime >= OCI_12_1)
+    {
+        switch (type)
+        {
+            case OCI_NTO_SEND:
+            {
+                OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_SEND_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+            }
+            case OCI_NTO_RECEIVE:
+            {
+                OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+            }
+
+        #if OCI_VERSION_COMPILE >= OCI_18_1
+
+            case OCI_NTO_CALL:
+            {
+                if (OCILib.version_runtime >= OCI_12_1)
+                {
+                    OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
+                }
+            }
+            
+         #endif
+
+        }
+    }
+
+#endif
+
+    OCI_RETVAL = timeout;
 
     OCI_CALL_EXIT()
 }

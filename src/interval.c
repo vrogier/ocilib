@@ -90,7 +90,6 @@ OCI_Interval * OCI_IntervalInit
 #else
 
     OCI_NOT_USED(con)
-    OCI_NOT_USED(pitv)
     OCI_NOT_USED(type)
     OCI_NOT_USED(buffer)
 

@@ -27,15 +27,15 @@
 #if OCI_VERSION_COMPILE >= OCI_9_0
 static unsigned int TimestampTypeValues[]  = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
 static unsigned int IntervalTypeValues[]   = { OCI_INTERVAL_YM, OCI_INTERVAL_DS };
-static unsigned int LobTypeValues[]        = { OCI_CLOB, OCI_NCLOB, OCI_BLOB };
 #endif
 
+static unsigned int LobTypeValues[]        = { OCI_CLOB, OCI_NCLOB, OCI_BLOB };
 static unsigned int FileTypeValues[]       = { OCI_CFILE, OCI_BFILE };
 
 static unsigned int FetchModeValues[]      = { OCI_SFM_DEFAULT, OCI_SFM_SCROLLABLE };
 static unsigned int BindModeValues[]       = { OCI_BIND_BY_POS, OCI_BIND_BY_NAME };
 static unsigned int BindAllocationValues[] = { OCI_BAM_EXTERNAL, OCI_BAM_INTERNAL };
-static unsigned int LongModeValues[] = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLICIT };
+static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLICIT };
 
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
@@ -291,10 +291,12 @@ boolean OCI_StatementReset
         /* free sql statement */
 
         OCI_FREE(stmt->sql)
+        OCI_FREE(stmt->sql_id)
 
         stmt->rsts          = NULL;
         stmt->stmts         = NULL;
         stmt->sql           = NULL;
+        stmt->sql_id        = NULL;
         stmt->map           = NULL;
         stmt->batch         = NULL;
 
@@ -1109,10 +1111,24 @@ boolean OCI_API OCI_PrepareInternal
 
         if (OCILib.version_runtime >= OCI_9_2)
         {
+            ub4 mode = OCI_DEFAULT;
+
+        #if OCI_VERSION_COMPILE >= OCI_12_2
+
+            if (stmt->con->ver_num >= OCI_12_2)
+            {
+                mode |= OCI_PREP2_GET_SQL_ID;
+            }
+
+        #endif
+
             OCI_EXEC
             (
-                OCIStmtPrepare2(stmt->con->cxt, &stmt->stmt, stmt->con->err, (OraText *) dbstr,
-                               (ub4) dbsize, NULL, 0, (ub4) OCI_NTV_SYNTAX, (ub4) OCI_DEFAULT)
+                OCIStmtPrepare2
+                (
+                    stmt->con->cxt, &stmt->stmt, stmt->con->err, (OraText *) dbstr,
+                    (ub4) dbsize, NULL, 0, (ub4) OCI_NTV_SYNTAX, (ub4) mode
+                )
             )
         }
         else
@@ -1122,7 +1138,11 @@ boolean OCI_API OCI_PrepareInternal
         {
             OCI_EXEC
             (
-                OCIStmtPrepare(stmt->stmt,stmt->con->err, (OraText *) dbstr, (ub4) dbsize, (ub4) OCI_NTV_SYNTAX, (ub4) OCI_DEFAULT)
+                OCIStmtPrepare
+                (
+                    stmt->stmt,stmt->con->err, (OraText *) dbstr, (ub4) dbsize,
+                    (ub4) OCI_NTV_SYNTAX, (ub4) OCI_DEFAULT
+                )
             )
         }
 
@@ -1263,6 +1283,17 @@ boolean OCI_API OCI_ExecuteInternal
             stmt->status |= OCI_STMT_DESCRIBED;
             stmt->status |= OCI_STMT_EXECUTED;
 
+    #if OCI_VERSION_COMPILE >= OCI_12_2
+
+            if (stmt->con->ver_num >= OCI_12_2)
+            {
+                unsigned int size_id = 0;
+
+                OCI_GetStringAttribute(stmt->con, stmt->stmt, OCI_HTYPE_STMT, OCI_ATTR_SQL_ID, &stmt->sql_id, &size_id);
+            }
+
+    #endif
+            
             /* reset binds indicators */
 
             OCI_BindUpdateAll(stmt);
@@ -3164,13 +3195,30 @@ boolean OCI_API OCI_SetFetchMode
     unsigned int   mode
 )
 {
+    unsigned int old_exec_mode = OCI_UNKNOWN;
+
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CHECK_SCROLLABLE_CURSOR_ENABLED(stmt->con)
     OCI_CALL_CHECK_ENUM_VALUE(stmt->con, stmt, mode, FetchModeValues, OTEXT("Fetch mode"))
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
+    old_exec_mode = stmt->exec_mode;
     stmt->exec_mode = mode;
+
+    if (stmt->con->ver_num == OCI_9_0)
+    {
+        if (old_exec_mode == OCI_SFM_DEFAULT && stmt->exec_mode == OCI_SFM_SCROLLABLE)
+        {
+            // Disabling prefetch that causes bugs for 9iR1 for scrollable cursors
+            OCI_SetPrefetchSize(stmt, 0);
+        }
+        else if (old_exec_mode == OCI_SFM_SCROLLABLE && stmt->exec_mode == OCI_SFM_DEFAULT)
+        {
+            // Re-enable prefetch previously disabled
+            OCI_SetPrefetchSize(stmt, OCI_PREFETCH_SIZE);
+        }
+    }
 
     OCI_RETVAL = OCI_STATUS;
 
@@ -3274,7 +3322,7 @@ unsigned int OCI_API OCI_GetFetchSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * "PrefetchSize
+ * OCI_PrefetchSize
  * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_SetPrefetchSize
@@ -3288,6 +3336,13 @@ boolean OCI_API OCI_SetPrefetchSize
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     stmt->prefetch_size = size;
+
+    /* Prefetch is not working with scrollable cursors in Oracle 9iR1, thus disable it */
+
+    if (stmt->exec_mode == OCI_SFM_SCROLLABLE && stmt->con->ver_num == OCI_9_0)
+    {
+        stmt->prefetch_size = 0;
+    }
 
     if (stmt->stmt)
     {
@@ -3431,6 +3486,19 @@ const otext * OCI_API OCI_GetSql
 {
     OCI_GET_PROP(const otext*, NULL, OCI_IPC_STATEMENT, stmt, sql, stmt->con, stmt, stmt->con->err)
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_GetSqlIdentifier
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_EXPORT const otext* OCI_API OCI_GetSqlIdentifier
+(
+    OCI_Statement *stmt
+)
+{
+    OCI_GET_PROP(const otext*, NULL, OCI_IPC_STATEMENT, stmt, sql_id, stmt->con, stmt, stmt->con->err)
+}
+
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_GetSqlErrorPos
