@@ -3112,7 +3112,7 @@ unsigned int Lob<T, U>::Write(const T& content)
     if (content.size() > 0)
     {
         unsigned int charCount = 0;
-        unsigned int byteCount = static_cast<unsigned int>(content.size() * sizeof(T::value_type));
+        unsigned int byteCount = static_cast<unsigned int>(content.size() * sizeof(typename T::value_type));
         AnyPointer buffer = static_cast<AnyPointer>(const_cast<typename T::value_type *>(&content[0]));
 
         if (Check(OCI_LobWrite2(*this, buffer, &charCount, &byteCount)))
