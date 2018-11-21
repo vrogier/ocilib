@@ -165,6 +165,42 @@ void ConverString(S &dest, const C *src, size_t length)
     }
 }
 
+inline unsigned int ComputeCharMaxSize(Environment::CharsetMode charsetMode)
+{
+    const int UTF8_BytesPerChar = 4;
+
+    unsigned int res = sizeof(ostring::value_type);
+    
+    if (charsetMode == Environment::CharsetAnsi)
+    {
+#ifdef _MSC_VER
+#pragma warning(disable: 4996)
+#endif
+        char *str = getenv("NLS_LANG");
+
+#ifdef _MSC_VER
+#pragma warning(default: 4996)
+#endif
+
+        if (str)
+        {
+            std::string nlsLang = str;
+
+            for (int i = 0; i < nlsLang.size(); ++i)
+            {
+                nlsLang[i] = static_cast<std::string::value_type>(toupper(nlsLang[i]));
+            }
+
+            if (ostring::npos != nlsLang.find("UTF8"))
+            {
+                res = UTF8_BytesPerChar;
+            }
+        }
+    }
+
+    return res;
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * Enum
  * --------------------------------------------------------------------------------------------- */
@@ -998,6 +1034,11 @@ inline Environment::CharsetMode Environment::GetCharset()
     return CharsetMode(static_cast<CharsetMode::Type>(Check(OCI_GetCharset())));
 }
 
+inline unsigned int Environment::GetCharMaxSize()
+{
+    return GetInstance()._charMaxSize;
+}
+
 inline big_uint Environment::GetAllocatedBytes(AllocatedBytesFlags type)
 {
     return Check(OCI_GetAllocatedBytes(type.GetValues()));
@@ -1214,6 +1255,8 @@ inline void Environment::SelfInitialize(EnvironmentFlags mode, const ostring& li
     _handles.SetLocker(&_locker);
 
     _handle.Acquire(const_cast<AnyPointer>(Check(OCI_HandleGetEnvironment())), nullptr, nullptr, nullptr);
+
+    _charMaxSize = ComputeCharMaxSize(GetCharset());
 }
 
 inline void Environment::SelfCleanup()
@@ -3011,9 +3054,15 @@ Lob<T, U>::Lob(OCI_Lob *pLob, Handle *parent)
 template<>
 inline ostring Lob<ostring, LobCharacter>::Read(unsigned int length)
 {
-    ManagedBuffer<otext> buffer(length + 1);
+    ManagedBuffer<otext> buffer(Environment::GetCharMaxSize() * (length + 1));
 
-    length = Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), length));
+    unsigned int charCount = length;
+    unsigned int byteCount = 0;
+
+    if (Check(OCI_LobRead2(*this, static_cast<AnyPointer>(buffer), &charCount, &byteCount)))
+    {
+        length = byteCount / sizeof(otext);
+    }
 
     return MakeString(static_cast<const otext *>(buffer), static_cast<int>(length));
 }
@@ -3021,11 +3070,18 @@ inline ostring Lob<ostring, LobCharacter>::Read(unsigned int length)
 template<>
 inline ostring Lob<ostring, LobNationalCharacter>::Read(unsigned int length)
 {
-    ManagedBuffer<otext> buffer(length + 1);
+    ManagedBuffer<otext> buffer(Environment::GetCharMaxSize() * (length + 1));
 
-    length = Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer), length));
+    unsigned int charCount = length;
+    unsigned int byteCount = 0;
+
+    if (Check(OCI_LobRead2(*this, static_cast<AnyPointer>(buffer), &charCount, &byteCount)))
+    {
+        length = byteCount / sizeof(otext);
+    }
 
     return MakeString(static_cast<const otext *>(buffer), static_cast<int>(length));
+
 }
 
 template<>
@@ -3046,7 +3102,7 @@ unsigned int Lob<T, U>::Write(const T& content)
     if (content.size() > 0)
     {
         unsigned int charCount = 0;
-        unsigned int byteCount = static_cast<unsigned int>(content.size());
+        unsigned int byteCount = static_cast<unsigned int>(content.size() * sizeof(T::value_type));
         AnyPointer buffer = static_cast<AnyPointer>(const_cast<typename T::value_type *>(&content[0]));
 
         if (Check(OCI_LobWrite2(*this, buffer, &charCount, &byteCount)))

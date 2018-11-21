@@ -1031,6 +1031,17 @@ public:
     static Environment::CharsetMode GetCharset();
 
     /**
+     * @brief
+     * Return maximum size for a character
+     *
+     * @note
+     * When Charset is Environment::CharsetAnsi and NLS_LANG is UTF8 based, return value is 4
+     * Otherwise, it is sizeof(ostring::value_type)
+     *
+     */
+    static unsigned int GetCharMaxSize();
+
+    /**
     * @brief
     * Return the current number of bytes allocated internally in the library
     *
@@ -1298,6 +1309,7 @@ private:
     ConcurrentMap<AnyPointer, Handle *>  _handles;
     ConcurrentMap<AnyPointer, CallbackPointer> _callbacks;
     EnvironmentFlags _mode;
+    unsigned int _charMaxSize;
     bool _initialized;
 };
 
