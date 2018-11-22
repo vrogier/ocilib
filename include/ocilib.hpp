@@ -2493,8 +2493,8 @@ public:
      * @brief
      * Set a given timeout for OCI calls that require server round-trips to the given database
      *
-     * @param type  - Type of timeout to set
-     * @param value - Timeout in milliseconds
+     * @param timeout - Type of timeout to set
+     * @param value   - Timeout in milliseconds
      *
      * OCI client raises an timeout type related error when a given timeout is reached.
      *

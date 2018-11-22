@@ -12,21 +12,21 @@
 
             * Extended Column property flags:
                 - C API: extended OCI_ColumnGetPropertyFlags() with new flags OCI_CPF_IS_LPART and OCI_CPF_IS_CONID
-                - C++ API: Extented PropertyFlagsValues enum with IsLogicalPartitioning and IsGeneratedByContainers
+                - C++ API: extended PropertyFlagsValues enum with IsLogicalPartitioning and IsGeneratedByContainers
 
             * Added the ability to retrieve the SQL_ID of an SQL statement:
                  - C API: added function OCI_GetSqlIdentifier()
                  - C++API: added function Statement::GetSqlIdentifier()
              
             * Added the ability to find out if a CLOB/NCLOB/BLOB is remote
-                 - C API: Added function OCI_LobIsRemote()
+                 - C API: added function OCI_LobIsRemote()
                  - C++API: added function Lob<T, U>::IsRemote()
 
             * Added network timeout management support         
                 - C API: added functions  OCI_SetTimeout() and OCI_GetTimeout()
                 - C API: added timeout types: OCI_NTO_SEND, OCI_NTO_RECEIVE, OCI_NTO_CALL
-                - C API: added functions  Connection::SetTimeout() and Connection::GetTimeout()
-                - C API: added Connection::TimeoutTypeValues enum
+                - C++ API: added functions  Connection::SetTimeout() and Connection::GetTimeout()
+                - C++ API: added Connection::TimeoutTypeValues enum
         
          - C++ API: 
          
