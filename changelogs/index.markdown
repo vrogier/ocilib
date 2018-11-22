@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2018-02-21 10:00:00+01:00
+date: 2018-11-21 10:00:00+01:00
 layout: page
 slug: changelogs
 title: Changelogs
@@ -15,6 +15,13 @@ Click on a change log entry to see the full details.
 
 <br/>
 <br/>
+
+_[2018-11-21 . version 4.6.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.6.0.txt)_
+
+    * Enhanced Oracle 18c support     
+    * Added network timeout management support        
+    * Some C API and C++ API Bug fixes 
+    * Some C API and C++ API Bug fixes 
 
 _[2018-09-13 . version 4.5.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.5.2.txt)_
 

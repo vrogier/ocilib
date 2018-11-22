@@ -1,0 +1,51 @@
+2018-11-21 Version 4.6.0 Vincent Rogier vince.rogier@ocilib.net
+ 
+    * Changes   
+        
+        - Enhanced Oracle 18c support
+        
+           * Fixed Oracle minor and revision version when Oracle version  >= 18c (due to breaking in OCI API)
+           
+           * Added new version constants
+                - C API: added OCI_18_1, OCI_18_2, OCI_18_3 v
+                - C++ API: extended OracleVersionValues with Oracle18cR1, Oracle18cR2, Oracle18cR3
+
+            * Extended Column property flags:
+                - C API: extended OCI_ColumnGetPropertyFlags() with new flags OCI_CPF_IS_LPART and OCI_CPF_IS_CONID
+                - C++ API: extended PropertyFlagsValues enum with IsLogicalPartitioning and IsGeneratedByContainers
+
+            * Added the ability to retrieve the SQL_ID of an SQL statement:
+                 - C API: added function OCI_GetSqlIdentifier()
+                 - C++API: added function Statement::GetSqlIdentifier()
+             
+            * Added the ability to find out if a CLOB/NCLOB/BLOB is remote
+                 - C API: added function OCI_LobIsRemote()
+                 - C++API: added function Lob<T, U>::IsRemote()
+
+            * Added network timeout management support         
+                - C API: added functions  OCI_SetTimeout() and OCI_GetTimeout()
+                - C API: added timeout types: OCI_NTO_SEND, OCI_NTO_RECEIVE, OCI_NTO_CALL
+                - C++ API: added functions  Connection::SetTimeout() and Connection::GetTimeout()
+                - C++ API: added Connection::TimeoutTypeValues enum
+        
+         - C++ API: 
+         
+             * Added Environment::GetCharMaxSize()
+
+    * Fixes (C API)
+
+        - Fixed compilation with OCI_IMPORT_LINKAGE when compile time OCI version is OCI_8_1 or OCI_9_1 or OCI_9_2 (e.g. on Unix based system with very old Oracle clients)   
+    
+    * Fixes (C++ API)
+    
+        - Issue #170: How to write a clob using utf-8 encoding charset
+        - Issue #181: Problem with utf-8 in LobNationalCharacter
+        - Issue #182: Cannot bind a std::vector as a PL/SQL Table 
+ 
+   * Miscellaneous:
+
+        - Issue #180 : Added workaround for OCI bug related to prefetching with Oracle 9i clients
+ 
+        - Updated compilers for MS Windows pre built binaries
+            * VS2017 15.9.1 for 32/64 bit DLLs
+            * Code::Blocks 17.12 (TDM-GCC 5.1.0) for 32 bit MinGW static libs
