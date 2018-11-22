@@ -1,10 +1,16 @@
 var classocilib_1_1_connection =
 [
+    [ "TimeoutType", "classocilib_1_1_connection.html#a0aeff9065ffc4bb5890c52adc2efddc8", null ],
     [ "FailoverRequest", "classocilib_1_1_connection.html#a2d463d1a09bef7ceeb8b18c0c880ab95", null ],
     [ "FailoverEvent", "classocilib_1_1_connection.html#a474638b06cc140cde3b6cb7bc8212ae5", null ],
     [ "FailoverResult", "classocilib_1_1_connection.html#a4d2ea6149d4d38adaef41bfc98950676", null ],
     [ "SessionTrace", "classocilib_1_1_connection.html#a721d1de749a6e6849b30928c2227556c", null ],
     [ "TAFHandlerProc", "classocilib_1_1_connection.html#a5e5c2e19a29bfedc7d0ea538884eea31", null ],
+    [ "TimeoutTypeValues", "classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9ad", [
+      [ "TimeoutSend", "classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9adac74d1e28ac893980301957cf4b614d09", null ],
+      [ "TimeoutReceive", "classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9ada45c92c37a7275af078fbf60f230a2b29", null ],
+      [ "TimeoutCall", "classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9adab43e87bfed53b35326a69d721a49483e", null ]
+    ] ],
     [ "FailoverRequestValues", "classocilib_1_1_connection.html#a8e6889724f15cc94b14a0d161c01b7c2", [
       [ "FailoverRequestSession", "classocilib_1_1_connection.html#a8e6889724f15cc94b14a0d161c01b7c2a619c9f1d1b8c4a09db5d1b578659f12f", null ],
       [ "FailoverRequestSelect", "classocilib_1_1_connection.html#a8e6889724f15cc94b14a0d161c01b7c2a40840e32dce71d774497122c71128897", null ]
@@ -72,5 +78,7 @@ var classocilib_1_1_connection =
     [ "IsTAFCapable", "classocilib_1_1_connection.html#a823b6cc30418baae943fd29d2280418b", null ],
     [ "SetTAFHandler", "classocilib_1_1_connection.html#a6e83ffbf5d12d6fad2abc6c0ec72d5e7", null ],
     [ "GetUserData", "classocilib_1_1_connection.html#a4758404a8195d8f32bf71a98f53d0a35", null ],
-    [ "SetUserData", "classocilib_1_1_connection.html#a9a290370df27e4e843fc01fd1c9396ba", null ]
+    [ "SetUserData", "classocilib_1_1_connection.html#a9a290370df27e4e843fc01fd1c9396ba", null ],
+    [ "GetTimeout", "classocilib_1_1_connection.html#a6607849329f328582edbb2958ae651d6", null ],
+    [ "SetTimeout", "classocilib_1_1_connection.html#ab6423c3a50332ad7a46de77da2e02a6e", null ]
 ];

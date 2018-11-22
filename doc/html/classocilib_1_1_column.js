@@ -5,7 +5,9 @@ var classocilib_1_1_column =
       [ "NoFlags", "classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3affcfb9a37acec1b89be83c4368a3fc5c", null ],
       [ "IsIdentity", "classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3ace16a6cc7e7015721b56eb6a16820235", null ],
       [ "IsGeneratedAlways", "classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3a0b6cacb8ddb56da9cd8bb2d0589a16db", null ],
-      [ "IsGeneratedByDefaultOnNull", "classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3afd40f7f0eb1cee692fdb0cb9f4260b15", null ]
+      [ "IsGeneratedByDefaultOnNull", "classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3afd40f7f0eb1cee692fdb0cb9f4260b15", null ],
+      [ "IsLogicalPartitioning", "classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3abc86d2c287fb9f194be09e4dffba0d87", null ],
+      [ "IsGeneratedByContainers", "classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3a16019d6dff37c2b44fe4b8ab603a000d", null ]
     ] ],
     [ "GetName", "classocilib_1_1_column.html#a923091dd7e86eb436320db73e4f4f8e8", null ],
     [ "GetSQLType", "classocilib_1_1_column.html#a0b795409c60244f3893dbfacb398fc53", null ],

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.5.2</span>
+   &#160;<span id="projectnumber">4.6.0</span>
    </div>
   </td>
  </tr>
@@ -189,6 +189,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gac9f62083e75fba01cfbc13f6c5c282c4"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gac9f62083e75fba01cfbc13f6c5c282c4">OCI_LobGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
 <tr class="memdesc:gac9f62083e75fba01cfbc13f6c5c282c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve connection handle from the lob handle.  <a href="#gac9f62083e75fba01cfbc13f6c5c282c4">More...</a><br /></td></tr>
 <tr class="separator:gac9f62083e75fba01cfbc13f6c5c282c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf8d80a35664751afc19537bd8aeb081b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gaf8d80a35664751afc19537bd8aeb081b">OCI_LobIsRemote</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:gaf8d80a35664751afc19537bd8aeb081b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates if the given lob belongs to a local or remote database table.  <a href="#gaf8d80a35664751afc19537bd8aeb081b">More...</a><br /></td></tr>
+<tr class="separator:gaf8d80a35664751afc19537bd8aeb081b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ga318f1273603e24b51c3d9e4c29f42685"></a>
@@ -525,8 +528,6 @@ Position in the Lob buffer starts at 0.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This call is obsolete ! Use <a class="el" href="group___ocilib_c_api_lobs.html#ga62d12eaf92b7e5554c4b1cce854e4441" title="Read a portion of a lob into the given buffer. ">OCI_LobRead2()</a> instead.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of bytes/characters read on success otherwise 0 on failure </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="classocilib_1_1_lob.html#afe6de3289a23c0f5d93b13be66508461">ocilib::Lob&lt; T, U &gt;::Lob()</a>.</p>
-
 </div>
 </div>
 <a id="ga62d12eaf92b7e5554c4b1cce854e4441"></a>
@@ -588,6 +589,8 @@ For BLOBs, only the parameter 'byte_count' is used For CLOBs, both parameters ca
 </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_lob.html#afe6de3289a23c0f5d93b13be66508461">ocilib::Lob&lt; T, U &gt;::Lob()</a>.</p>
+
 </div>
 </div>
 <a id="ga949f7050609430486c9ef0f3c488d38a"></a>
@@ -640,8 +643,6 @@ For BLOBs, only the parameter 'byte_count' is used For CLOBs, both parameters ca
 </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This call is obsolete ! Use <a class="el" href="group___ocilib_c_api_lobs.html#ga4cbd00ede807989ab817361ac2e4223b" title="Write a buffer into a LOB. ">OCI_LobWrite2()</a> instead.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of bytes / characters written on success otherwise 0 on failure </dd></dl>
-
-<p class="reference">Referenced by <a class="el" href="classocilib_1_1_lob.html#a133c9c17dc7bd3b2fc809d976453fc8e">ocilib::Lob&lt; T, U &gt;::Write()</a>.</p>
 
 </div>
 </div>
@@ -703,6 +704,8 @@ For BLOBs, only the parameter 'byte_count' is used For CLOBs, both parameters ca
 </ul>
 </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_lob.html#a133c9c17dc7bd3b2fc809d976453fc8e">ocilib::Lob&lt; T, U &gt;::Write()</a>.</p>
 
 </div>
 </div>
@@ -1500,12 +1503,43 @@ Absolute position starts at 0. </dd></dl>
 
 </div>
 </div>
+<a id="gaf8d80a35664751afc19537bd8aeb081b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf8d80a35664751afc19537bd8aeb081b">&#9670;&nbsp;</a></span>OCI_LobIsRemote()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobIsRemote </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
+          <td class="paramname"><em>lob</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;ocilib.h&gt;</code></p>
+
+<p>Indicates if the given lob belongs to a local or remote database table. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lob</td><td>- lob handle</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle 12cR2 (both client and server side), otherwise it returns FALSE </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_lob.html#a6ae3b89d68c6c031dec69c0f081f9fb1">ocilib::Lob&lt; T, U &gt;::IsRemote()</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Sep 13 2018 23:06:48 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Thu Nov 22 2018 10:17:58 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

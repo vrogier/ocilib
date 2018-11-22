@@ -84,6 +84,7 @@ var classocilib_1_1_environment =
     [ "GetMode", "classocilib_1_1_environment.html#a478c259fcfeca352402478913e7f3049", null ],
     [ "GetImportMode", "classocilib_1_1_environment.html#aadbc0d6b12969d64e46a11aa43ac4ba0", null ],
     [ "GetCharset", "classocilib_1_1_environment.html#aab574a36efa9fd91350dd0f193cab08c", null ],
+    [ "GetCharMaxSize", "classocilib_1_1_environment.html#ace607c519e68d4d154014dc59fc1e0f1", null ],
     [ "GetAllocatedBytes", "classocilib_1_1_environment.html#a62b413dd1056fc73daca8e579c2ed847", null ],
     [ "Initialized", "classocilib_1_1_environment.html#aaa7d3f2ac54426c7f585a3e9c28a6119", null ],
     [ "GetCompileVersion", "classocilib_1_1_environment.html#a3785fef7232b7210fc619aa7f7d1d14e", null ],

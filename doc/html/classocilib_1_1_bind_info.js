@@ -1,10 +1,15 @@
 var classocilib_1_1_bind_info =
 [
     [ "BindDirection", "classocilib_1_1_bind_info.html#ab09b89e7139c7013946b4e12970ab05d", null ],
+    [ "VectorType", "classocilib_1_1_bind_info.html#a91896a32dfca8184f6d99c18fc31d6d7", null ],
     [ "BindDirectionValues", "classocilib_1_1_bind_info.html#a08f96498d216e0ad14ab8e7a35406533", [
       [ "In", "classocilib_1_1_bind_info.html#a08f96498d216e0ad14ab8e7a35406533a026e00fee6fd4ae470376643180eba05", null ],
       [ "Out", "classocilib_1_1_bind_info.html#a08f96498d216e0ad14ab8e7a35406533a67779a9cdb0260b28a91337466ff0aaa", null ],
       [ "InOut", "classocilib_1_1_bind_info.html#a08f96498d216e0ad14ab8e7a35406533a401b5f2ceea3399cf4846b8383b2584e", null ]
+    ] ],
+    [ "VectorTypeValues", "classocilib_1_1_bind_info.html#a061da468fee527c2359b5af7372f940a", [
+      [ "AsArray", "classocilib_1_1_bind_info.html#a061da468fee527c2359b5af7372f940aaaac88e22ca31167897cc88b2e41098f4", null ],
+      [ "AsPlSqlTable", "classocilib_1_1_bind_info.html#a061da468fee527c2359b5af7372f940aa804e4fb625c467f2a7ce91cce2f3c472", null ]
     ] ],
     [ "GetName", "classocilib_1_1_bind_info.html#afb8482c390d55170fadb0a2a95ed4dd4", null ],
     [ "GetType", "classocilib_1_1_bind_info.html#a0c48dd99a88459f2cf8a2e8193b1ed09", null ],

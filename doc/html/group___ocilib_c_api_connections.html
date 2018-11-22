@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.5.2</span>
+   &#160;<span id="projectnumber">4.6.0</span>
    </div>
   </td>
  </tr>
@@ -148,6 +148,12 @@ Functions</h2></td></tr>
 <tr class="memitem:gaa4a9ff378dba28920b81b8b71e2372f5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaa4a9ff378dba28920b81b8b71e2372f5">OCI_Ping</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
 <tr class="memdesc:gaa4a9ff378dba28920b81b8b71e2372f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a round trip call to the server to confirm that the connection and the server are active.  <a href="#gaa4a9ff378dba28920b81b8b71e2372f5">More...</a><br /></td></tr>
 <tr class="separator:gaa4a9ff378dba28920b81b8b71e2372f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaba3523c60736722aa61e1c245d92cb08"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaba3523c60736722aa61e1c245d92cb08">OCI_SetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, unsigned int value)</td></tr>
+<tr class="memdesc:gaba3523c60736722aa61e1c245d92cb08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a given timeout for OCI calls that require server round-trips to the given database.  <a href="#gaba3523c60736722aa61e1c245d92cb08">More...</a><br /></td></tr>
+<tr class="separator:gaba3523c60736722aa61e1c245d92cb08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2fc44c0b2803a612b77f566c1a7cf787"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga2fc44c0b2803a612b77f566c1a7cf787">OCI_GetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type)</td></tr>
+<tr class="memdesc:ga2fc44c0b2803a612b77f566c1a7cf787"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the requested timeout value for OCI calls that require server round-trips to the given database.  <a href="#ga2fc44c0b2803a612b77f566c1a7cf787">More...</a><br /></td></tr>
+<tr class="separator:ga2fc44c0b2803a612b77f566c1a7cf787"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga98877db184e1d8d5bf50be1fb6906dc2"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga98877db184e1d8d5bf50be1fb6906dc2">OCI_GetDBName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
 <tr class="memdesc:ga98877db184e1d8d5bf50be1fb6906dc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server database name of the connected database/service name.  <a href="#ga98877db184e1d8d5bf50be1fb6906dc2">More...</a><br /></td></tr>
 <tr class="separator:ga98877db184e1d8d5bf50be1fb6906dc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1051,7 +1057,8 @@ Returns one of the following values:</dd></dl>
 <li>OCI_10_2</li>
 <li>OCI_11_1</li>
 <li>OCI_11_2</li>
-<li>OCI_12_1 </li>
+<li>OCI_12_1</li>
+<li>OCI_18_3 </li>
 </ul>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#acfceaeaf9a2ee7f638a0a83e669c43f2">ocilib::Connection::GetVersion()</a>.</p>
@@ -1199,6 +1206,134 @@ Oracle limits the size of these traces content:</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10g. For previous versions, it returns FALSE without throwing any exception. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#aeba71bddbb789e27f3b12f3db6a8a757">ocilib::Connection::PingServer()</a>.</p>
+
+</div>
+</div>
+<a id="gaba3523c60736722aa61e1c245d92cb08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaba3523c60736722aa61e1c245d92cb08">&#9670;&nbsp;</a></span>OCI_SetTimeout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetTimeout </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
+          <td class="paramname"><em>con</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;ocilib.h&gt;</code></p>
+
+<p>Set a given timeout for OCI calls that require server round-trips to the given database. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">type</td><td>- Type of timeout to set </td></tr>
+    <tr><td class="paramname">value</td><td>- Timeout in milliseconds</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Possible values for parameter 'type':</p><ul>
+<li>OCI_NTO_SEND<ul>
+<li>Time to wait for send operations completion to the database server</li>
+<li>Requires Oracle 12cR1 client</li>
+</ul>
+</li>
+<li>OCI_NTO_RECEIVE<ul>
+<li>Time to wait for read operations completion from the database server</li>
+<li>Requires Oracle 12cR1 client</li>
+</ul>
+</li>
+<li>OCI_NTO_CALL<ul>
+<li>Time to wait for a database round-trip to complete ( Client processing is not taken into account)</li>
+<li>Requires Oracle 18c client</li>
+</ul>
+</li>
+</ul>
+<p>OCI client raises an timeout type related error when a given timeout is reached.</p>
+<dl class="section note"><dt>Note</dt><dd>To disable a given timeout, pass the value 0</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>OCI client is using the following precedence rules when applying timeouts:<ul>
+<li>1 - Timeout set using OCI_NTO_CALL (all other timeouts are discarded)</li>
+<li>2 - Timeouts set using OCI_NTO_SEND and/or OCI_NTO_RECEIVE</li>
+<li>3 - Timeouts set in sqlnet.ora file</li>
+</ul>
+</dd></dl>
+<p>Here is a summary:</p>
+<table class="doxtable">
+<tr>
+<th>FLAG </th><th>Min. Version </th><th>OCI Error raised </th><th>OCI Error description </th><th>sqlnet.ora equivalent  </th></tr>
+<tr>
+<td>OCI_NTO_SEND </td><td>OCI_12_1 </td><td>ORA-12608 </td><td>TNS: Send timeout occurred </td><td>SQLNET.SEND_TIMEOUT </td></tr>
+<tr>
+<td>OCI_NTO_RECEIVE </td><td>OCI_12_1 </td><td>ORA-12609 </td><td>TNS: Receive timeout occurred </td><td>SQLNET.RECV_TIMEOUT </td></tr>
+<tr>
+<td>OCI_NTO_CALL </td><td>OCI_18_1 </td><td>ORA-03136 </td><td>inbound connection timed out </td><td>&mdash; </td></tr>
+</table>
+<dl class="section warning"><dt>Warning</dt><dd>Returns FALSE without throwing any exception if the Oracle client does not support the given flag </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#ab6423c3a50332ad7a46de77da2e02a6e">ocilib::Connection::SetTimeout()</a>.</p>
+
+</div>
+</div>
+<a id="ga2fc44c0b2803a612b77f566c1a7cf787"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2fc44c0b2803a612b77f566c1a7cf787">&#9670;&nbsp;</a></span>OCI_GetTimeout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetTimeout </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
+          <td class="paramname"><em>con</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>type</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;ocilib.h&gt;</code></p>
+
+<p>Returns the requested timeout value for OCI calls that require server round-trips to the given database. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">type</td><td>- Type of timeout</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>: See <a class="el" href="group___ocilib_c_api_connections.html#gaba3523c60736722aa61e1c245d92cb08" title="Set a given timeout for OCI calls that require server round-trips to the given database. ">OCI_SetTimeout()</a> for more information</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The given timeout value if supported, otherwise 0 </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a6607849329f328582edbb2958ae651d6">ocilib::Connection::GetTimeout()</a>.</p>
 
 </div>
 </div>
@@ -1671,7 +1806,7 @@ Return 0 if the client and server version are &lt; 12cR1 </dd></dl>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Sep 13 2018 23:06:46 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Thu Nov 22 2018 10:17:58 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

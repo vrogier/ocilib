@@ -25,6 +25,8 @@ var group___ocilib_c_api_connections =
     [ "OCI_SetTrace", "group___ocilib_c_api_connections.html#gad7b3c1053b3324192089ab8289df3e57", null ],
     [ "OCI_GetTrace", "group___ocilib_c_api_connections.html#ga2744cf73d308f9d65f94fd695084ee76", null ],
     [ "OCI_Ping", "group___ocilib_c_api_connections.html#gaa4a9ff378dba28920b81b8b71e2372f5", null ],
+    [ "OCI_SetTimeout", "group___ocilib_c_api_connections.html#gaba3523c60736722aa61e1c245d92cb08", null ],
+    [ "OCI_GetTimeout", "group___ocilib_c_api_connections.html#ga2fc44c0b2803a612b77f566c1a7cf787", null ],
     [ "OCI_GetDBName", "group___ocilib_c_api_connections.html#ga98877db184e1d8d5bf50be1fb6906dc2", null ],
     [ "OCI_GetInstanceName", "group___ocilib_c_api_connections.html#gac3ee48e0bfd6b606328bdbbd670cfdb0", null ],
     [ "OCI_GetServiceName", "group___ocilib_c_api_connections.html#gabf76c1f95bcfb75e8ce887c84642f14f", null ],

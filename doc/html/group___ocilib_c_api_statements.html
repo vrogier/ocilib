@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.5.2</span>
+   &#160;<span id="projectnumber">4.6.0</span>
    </div>
   </td>
  </tr>
@@ -108,6 +108,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gabb4eca3a2c07a9f031c3f2f257663da8"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gabb4eca3a2c07a9f031c3f2f257663da8">OCI_GetSql</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
 <tr class="memdesc:gabb4eca3a2c07a9f031c3f2f257663da8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last SQL or PL/SQL statement prepared or executed by the statement.  <a href="#gabb4eca3a2c07a9f031c3f2f257663da8">More...</a><br /></td></tr>
 <tr class="separator:gabb4eca3a2c07a9f031c3f2f257663da8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga129f5173f76224ecd934bfad650a22f3"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga129f5173f76224ecd934bfad650a22f3">OCI_GetSqlIdentifier</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:ga129f5173f76224ecd934bfad650a22f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the statement SQL_ID from the server.  <a href="#ga129f5173f76224ecd934bfad650a22f3">More...</a><br /></td></tr>
+<tr class="separator:ga129f5173f76224ecd934bfad650a22f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaddfbdd24d8686d908e560611bb7b6cc7"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gaddfbdd24d8686d908e560611bb7b6cc7">OCI_GetSqlErrorPos</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
 <tr class="memdesc:gaddfbdd24d8686d908e560611bb7b6cc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the error position (in terms of characters) in the SQL statement where the error occurred in case of SQL parsing error.  <a href="#gaddfbdd24d8686d908e560611bb7b6cc7">More...</a><br /></td></tr>
 <tr class="separator:gaddfbdd24d8686d908e560611bb7b6cc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -434,6 +437,38 @@ This call prepares the statement (internal call to <a class="el" href="group___o
 
 </div>
 </div>
+<a id="ga129f5173f76224ecd934bfad650a22f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga129f5173f76224ecd934bfad650a22f3">&#9670;&nbsp;</a></span>OCI_GetSqlIdentifier()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetSqlIdentifier </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
+          <td class="paramname"><em>stmt</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;ocilib.h&gt;</code></p>
+
+<p>Returns the statement SQL_ID from the server. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stmt</td><td>- Statement handle</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>The statement must be executed first</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle 12cR2 (both client and server side), otherwise it returns NULL </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#a28a90625c0d8c2348300d858af65c8eb">ocilib::Statement::GetSqlIdentifier()</a>.</p>
+
+</div>
+</div>
 <a id="gaddfbdd24d8686d908e560611bb7b6cc7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaddfbdd24d8686d908e560611bb7b6cc7">&#9670;&nbsp;</a></span>OCI_GetSqlErrorPos()</h2>
 
@@ -578,7 +613,7 @@ For PL/SQL blocks performing "select into :&lt;bind&gt;":<ul>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Sep 13 2018 23:06:47 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Thu Nov 22 2018 10:17:58 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

@@ -8,6 +8,7 @@ var group___ocilib_c_api_statements =
     [ "OCI_Parse", "group___ocilib_c_api_statements.html#gab8b38d31d356d3ca17640b272bb90401", null ],
     [ "OCI_Describe", "group___ocilib_c_api_statements.html#ga420f21e4b00ce3e35ee15ed1e109ead1", null ],
     [ "OCI_GetSql", "group___ocilib_c_api_statements.html#gabb4eca3a2c07a9f031c3f2f257663da8", null ],
+    [ "OCI_GetSqlIdentifier", "group___ocilib_c_api_statements.html#ga129f5173f76224ecd934bfad650a22f3", null ],
     [ "OCI_GetSqlErrorPos", "group___ocilib_c_api_statements.html#gaddfbdd24d8686d908e560611bb7b6cc7", null ],
     [ "OCI_GetAffectedRows", "group___ocilib_c_api_statements.html#ga1cf932261960da80cd36d650a08565c3", null ],
     [ "OCI_GetSQLCommand", "group___ocilib_c_api_statements.html#ga2927470291ccc2230da272c3573b4879", null ],

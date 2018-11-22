@@ -28,5 +28,6 @@ var group___ocilib_c_api_lobs =
     [ "OCI_LobGetMaxSize", "group___ocilib_c_api_lobs.html#gaed9377d01703f9ba727acc71ee04aa4a", null ],
     [ "OCI_LobFlush", "group___ocilib_c_api_lobs.html#ga1657f17bba0ed7bdbe71293b65aeb25d", null ],
     [ "OCI_LobEnableBuffering", "group___ocilib_c_api_lobs.html#ga04033eb79a2815d59ab17d2d72761a19", null ],
-    [ "OCI_LobGetConnection", "group___ocilib_c_api_lobs.html#gac9f62083e75fba01cfbc13f6c5c282c4", null ]
+    [ "OCI_LobGetConnection", "group___ocilib_c_api_lobs.html#gac9f62083e75fba01cfbc13f6c5c282c4", null ],
+    [ "OCI_LobIsRemote", "group___ocilib_c_api_lobs.html#gaf8d80a35664751afc19537bd8aeb081b", null ]
 ];

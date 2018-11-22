@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.5.2</span>
+   &#160;<span id="projectnumber">4.6.0</span>
    </div>
   </td>
  </tr>
@@ -210,7 +210,12 @@ Functions</h2></td></tr>
 <dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_statement_control.html#ga83e1c31e40926a84651eb60fefd50d5e" title="Set the fetch mode of a SQL statement. ">OCI_SetFetchMode()</a> MUST be called before any OCI_ExecuteXXX() call</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Possible values are :<ul>
 <li>OCI_SFM_DEFAULT</li>
-<li>OCI_SFM_SCROLLABLE </li>
+<li>OCI_SFM_SCROLLABLE</li>
+</ul>
+</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>if Oracle Client is 9iR1:<ul>
+<li>when setting OCI_SFM_SCROLLABLE, OCI_SetPrefetch() is internally called with value 0 to disable prefetching (to avoid an oracle bug).</li>
+<li>when re-setting OCI_SFM_DEFAULT after having set OCI_SFM_SCROLLABLE, OCI_SetPrefetch() is internally called with value OCI_PREFETCH_SIZE </li>
 </ul>
 </dd></dl>
 
@@ -515,6 +520,7 @@ if stmt is NULL, the return value is OCI_UNKNOWN </dd></dl>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>To turn off pre-fetching, set both attributes (size and memory) to 0.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Prefetch is not working with scrollable cursors in Oracle 9iR1 In that case, argument 'size' is not used and replace by 0.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#afff79afbf2152a74383a0af97e120906">ocilib::Statement::SetPrefetchSize()</a>.</p>
@@ -815,7 +821,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Sep 13 2018 23:06:48 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Thu Nov 22 2018 10:17:58 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

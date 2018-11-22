@@ -17,6 +17,7 @@ var classocilib_1_1_lob =
     [ "Erase", "classocilib_1_1_lob.html#ab6fdd8cf14bc8814922793c4d83d2b06", null ],
     [ "Copy", "classocilib_1_1_lob.html#a250c9870d55a9a69906b305d4f301c32", null ],
     [ "IsTemporary", "classocilib_1_1_lob.html#a2e2fb48070924721883e9f0efc9fd2c0", null ],
+    [ "IsRemote", "classocilib_1_1_lob.html#a6ae3b89d68c6c031dec69c0f081f9fb1", null ],
     [ "Open", "classocilib_1_1_lob.html#ab6d8cab71937c5dc182c47d5a3202f38", null ],
     [ "Flush", "classocilib_1_1_lob.html#a3a768db3ca614d314b4a29d096115b0b", null ],
     [ "Close", "classocilib_1_1_lob.html#a5c22c6102ad8990df1c025c63ddc33a9", null ],

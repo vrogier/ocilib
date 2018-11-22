@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.5.2</span>
+   &#160;<span id="projectnumber">4.6.0</span>
    </div>
   </td>
  </tr>
@@ -77,6 +77,12 @@ $(document).ready(function(){initNavTree('classocilib_1_1_connection.html','');}
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
+<tr class="memitem:ae396b27f72ebf09567a3bef79552e9ad"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9ad">TimeoutTypeValues</a> { <a class="el" href="classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9adac74d1e28ac893980301957cf4b614d09">TimeoutSend</a> = OCI_NTO_SEND, 
+<a class="el" href="classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9ada45c92c37a7275af078fbf60f230a2b29">TimeoutReceive</a> = OCI_NTO_RECEIVE, 
+<a class="el" href="classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9adab43e87bfed53b35326a69d721a49483e">TimeoutCall</a> = OCI_NTO_CALL
+ }<tr class="memdesc:ae396b27f72ebf09567a3bef79552e9ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Timeout enumerated values.  <a href="classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9ad">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:ae396b27f72ebf09567a3bef79552e9ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e6889724f15cc94b14a0d161c01b7c2"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_connection.html#a8e6889724f15cc94b14a0d161c01b7c2">FailoverRequestValues</a> { <a class="el" href="classocilib_1_1_connection.html#a8e6889724f15cc94b14a0d161c01b7c2a619c9f1d1b8c4a09db5d1b578659f12f">FailoverRequestSession</a> = OCI_FOT_SESSION, 
 <a class="el" href="classocilib_1_1_connection.html#a8e6889724f15cc94b14a0d161c01b7c2a40840e32dce71d774497122c71128897">FailoverRequestSelect</a> = OCI_FOT_SELECT
  }<tr class="memdesc:a8e6889724f15cc94b14a0d161c01b7c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Failover request enumerated values.  <a href="classocilib_1_1_connection.html#a8e6889724f15cc94b14a0d161c01b7c2">More...</a><br /></td></tr>
@@ -105,6 +111,9 @@ Public Types</h2></td></tr>
  }<tr class="memdesc:aaa8c5b75fa417fbf2838c8a87976e773"><td class="mdescLeft">&#160;</td><td class="mdescRight">Session trace enumerated values.  <a href="classocilib_1_1_connection.html#aaa8c5b75fa417fbf2838c8a87976e773">More...</a><br /></td></tr>
 </td></tr>
 <tr class="separator:aaa8c5b75fa417fbf2838c8a87976e773"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0aeff9065ffc4bb5890c52adc2efddc8"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classocilib_1_1_enum.html">Enum</a>&lt; <a class="el" href="classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9ad">TimeoutTypeValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_connection.html#a0aeff9065ffc4bb5890c52adc2efddc8">TimeoutType</a></td></tr>
+<tr class="memdesc:a0aeff9065ffc4bb5890c52adc2efddc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Timeout Types.  <a href="#a0aeff9065ffc4bb5890c52adc2efddc8">More...</a><br /></td></tr>
+<tr class="separator:a0aeff9065ffc4bb5890c52adc2efddc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d463d1a09bef7ceeb8b18c0c880ab95"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classocilib_1_1_enum.html">Enum</a>&lt; <a class="el" href="classocilib_1_1_connection.html#a8e6889724f15cc94b14a0d161c01b7c2">FailoverRequestValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_connection.html#a2d463d1a09bef7ceeb8b18c0c880ab95">FailoverRequest</a></td></tr>
 <tr class="memdesc:a2d463d1a09bef7ceeb8b18c0c880ab95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Failover requests.  <a href="#a2d463d1a09bef7ceeb8b18c0c880ab95">More...</a><br /></td></tr>
 <tr class="separator:a2d463d1a09bef7ceeb8b18c0c880ab95"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -277,13 +286,38 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a9a290370df27e4e843fc01fd1c9396ba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_connection.html#a9a290370df27e4e843fc01fd1c9396ba">SetUserData</a> (<a class="el" href="namespaceocilib.html#aaad26690e8171c4564d66776987e1bd2">AnyPointer</a> value)</td></tr>
 <tr class="memdesc:a9a290370df27e4e843fc01fd1c9396ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate a pointer to user data to the given connection.  <a href="#a9a290370df27e4e843fc01fd1c9396ba">More...</a><br /></td></tr>
 <tr class="separator:a9a290370df27e4e843fc01fd1c9396ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6607849329f328582edbb2958ae651d6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_connection.html#a6607849329f328582edbb2958ae651d6">GetTimeout</a> (<a class="el" href="classocilib_1_1_connection.html#a0aeff9065ffc4bb5890c52adc2efddc8">TimeoutType</a> timeout)</td></tr>
+<tr class="memdesc:a6607849329f328582edbb2958ae651d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the requested timeout value for OCI calls that require server round-trips to the given database.  <a href="#a6607849329f328582edbb2958ae651d6">More...</a><br /></td></tr>
+<tr class="separator:a6607849329f328582edbb2958ae651d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6423c3a50332ad7a46de77da2e02a6e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_connection.html#ab6423c3a50332ad7a46de77da2e02a6e">SetTimeout</a> (<a class="el" href="classocilib_1_1_connection.html#a0aeff9065ffc4bb5890c52adc2efddc8">TimeoutType</a> timeout, unsigned int value)</td></tr>
+<tr class="memdesc:ab6423c3a50332ad7a46de77da2e02a6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a given timeout for OCI calls that require server round-trips to the given database.  <a href="#ab6423c3a50332ad7a46de77da2e02a6e">More...</a><br /></td></tr>
+<tr class="separator:ab6423c3a50332ad7a46de77da2e02a6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A connection or session with a specific database. </p>
 <p>This class wraps the OCILIB object handle OCI_Connection and its related methods </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01723">1723</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01738">1738</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a0aeff9065ffc4bb5890c52adc2efddc8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0aeff9065ffc4bb5890c52adc2efddc8">&#9670;&nbsp;</a></span>TimeoutType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classocilib_1_1_enum.html">Enum</a>&lt;<a class="el" href="classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9ad">TimeoutTypeValues</a>&gt; <a class="el" href="classocilib_1_1_connection.html#a0aeff9065ffc4bb5890c52adc2efddc8">ocilib::Connection::TimeoutType</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Timeout Types. </p>
+<p>Possible values are Connection::TimeoutValues </p>
+
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01789">1789</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a2d463d1a09bef7ceeb8b18c0c880ab95"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2d463d1a09bef7ceeb8b18c0c880ab95">&#9670;&nbsp;</a></span>FailoverRequest</h2>
 
@@ -299,7 +333,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Failover requests. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_connection.html#a8e6889724f15cc94b14a0d161c01b7c2" title="Failover request enumerated values. ">Connection::FailoverRequestValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01763">1763</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01811">1811</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -318,7 +352,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Failover events. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_connection.html#a4b5f2fc31fda9512a162278e415aa1b9" title="Failover events enumerated values. ">Connection::FailoverEventValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01791">1791</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01839">1839</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -337,7 +371,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Failover callback results. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_connection.html#ad7d48faf0f7dd59bc08120882ce1eac6" title="Failover callback results enumerated values. ">Connection::FailoverResultValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01813">1813</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01861">1861</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -356,11 +390,46 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Session traces. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_connection.html#aaa8c5b75fa417fbf2838c8a87976e773" title="Session trace enumerated values. ">Connection::SessionTraceValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01839">1839</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01887">1887</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="ae396b27f72ebf09567a3bef79552e9ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae396b27f72ebf09567a3bef79552e9ad">&#9670;&nbsp;</a></span>TimeoutTypeValues</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9ad">ocilib::Connection::TimeoutTypeValues</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Timeout enumerated values. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ae396b27f72ebf09567a3bef79552e9adac74d1e28ac893980301957cf4b614d09"></a>TimeoutSend&#160;</td><td class="fielddoc"><ul>
+<li>Time to wait for send operations completion to the database server</li>
+<li>Requires Oracle 12cR1 client </li>
+</ul>
+</td></tr>
+<tr><td class="fieldname"><a id="ae396b27f72ebf09567a3bef79552e9ada45c92c37a7275af078fbf60f230a2b29"></a>TimeoutReceive&#160;</td><td class="fielddoc"><ul>
+<li>Time to wait for read operations completion from the database server</li>
+<li>Requires Oracle 12cR1 client </li>
+</ul>
+</td></tr>
+<tr><td class="fieldname"><a id="ae396b27f72ebf09567a3bef79552e9adab43e87bfed53b35326a69d721a49483e"></a>TimeoutCall&#160;</td><td class="fielddoc"><ul>
+<li>Time to wait for a database round-trip to complete ( Client processing is not taken into account)</li>
+<li>Requires Oracle 18c client </li>
+</ul>
+</td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01763">1763</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a8e6889724f15cc94b14a0d161c01b7c2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8e6889724f15cc94b14a0d161c01b7c2">&#9670;&nbsp;</a></span>FailoverRequestValues</h2>
 
@@ -381,7 +450,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01748">1748</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01796">1796</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -411,7 +480,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01770">1770</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01818">1818</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -435,7 +504,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01798">1798</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01846">1846</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -463,7 +532,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01820">1820</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l01868">1868</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -526,7 +595,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </dl>
 <dl class="section note"><dt>Note</dt><dd>it calls <a class="el" href="classocilib_1_1_connection.html#a7cb9e2d4c98a3753325f88504c311be3" title="Create a physical connection to an Oracle database server. ">Open()</a> with the given parameters </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01406">1406</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01449">1449</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_connection.html#a6dffda522466a7fde513f6f1e2331ff9">Connection()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree()</a>.</p>
 
@@ -610,7 +679,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </ul>
 <dl class="section note"><dt>Note</dt><dd>On success, a local transaction is automatically created and started ONLY for regular standalone connections and connections retrieved from connection pools. No transaction is created for a XA connection or q connection retrieved from session pools. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01416">1416</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01459">1459</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree()</a>.</p>
 
@@ -642,7 +711,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Perform an immediate abort of any currently Oracle OCI call on the given connection. </p>
 <dl class="section note"><dt>Note</dt><dd>The current call will abort and will raise an exception </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01437">1437</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01480">1480</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_abort.html#gaf34a39ddfb3b6677eab1add1a4052e4d">OCI_Break()</a>.</p>
 
@@ -680,7 +749,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01442">1442</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01485">1485</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_transactions.html#ga8a21e8ab3893ae71ff8d8f6c9795566d">OCI_SetAutoCommit()</a>.</p>
 
@@ -712,7 +781,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Indicate if the connection is still connected to the server. </p>
 <dl class="section note"><dt>Note</dt><dd>the returned value is not real-time and is based on client library last heart beat status </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01452">1452</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01495">1495</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gaaa13dc7489eeebcc6bd2a54fb88248b7">OCI_IsConnected()</a>.</p>
 
@@ -744,7 +813,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Performs a round trip call to the server to confirm that the connection to the server is still valid. </p>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10g. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01457">1457</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01500">1500</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gaa4a9ff378dba28920b81b8b71e2372f5">OCI_Ping()</a>.</p>
 
@@ -776,7 +845,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Return the name of the connected database/service name. </p>
 <dl class="section note"><dt>Note</dt><dd>The returned value is the value of the 'db' parameter of the <a class="el" href="classocilib_1_1_connection.html#a7cb9e2d4c98a3753325f88504c311be3" title="Create a physical connection to an Oracle database server. ">Open()</a> method </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01462">1462</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01505">1505</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="namespaceocilib.html#a325b20344734ebf632686066cea27b24">ocilib::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga644896376cffbd498d928bec9ba4b379">OCI_GetDatabase()</a>.</p>
 
@@ -808,7 +877,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Return the current logged user name. </p>
 <dl class="section note"><dt>Note</dt><dd>The returned value is the value of the 'user' parameter of the <a class="el" href="classocilib_1_1_connection.html#a7cb9e2d4c98a3753325f88504c311be3" title="Create a physical connection to an Oracle database server. ">Open()</a> method </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01467">1467</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01510">1510</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="namespaceocilib.html#a325b20344734ebf632686066cea27b24">ocilib::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga1c74d8d264e9911b19810518567451b3">OCI_GetUserName()</a>.</p>
 
@@ -840,7 +909,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Return the current logged user password. </p>
 <dl class="section note"><dt>Note</dt><dd>The returned value is the value of the 'pwd' parameter of the <a class="el" href="classocilib_1_1_connection.html#a7cb9e2d4c98a3753325f88504c311be3" title="Create a physical connection to an Oracle database server. ">Open()</a> method </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01472">1472</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01515">1515</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="namespaceocilib.html#a325b20344734ebf632686066cea27b24">ocilib::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga23176f3b177958f3422888b1dc986194">OCI_GetPassword()</a>.</p>
 
@@ -872,7 +941,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Return the connected database server string version. </p>
 <dl class="section note"><dt>Note</dt><dd>The returned value is the server version banner displayed by SQL*PLUS when connected to a DB server </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01482">1482</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01525">1525</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="namespaceocilib.html#a325b20344734ebf632686066cea27b24">ocilib::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gab7016c85bd29c1fa9ba5d980da2b615c">OCI_GetVersionServer()</a>.</p>
 
@@ -904,7 +973,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Return the Oracle version supported by the connection. </p>
 <dl class="section note"><dt>Note</dt><dd>The supported version is the lower version between client and server: </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01477">1477</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01520">1520</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga6f61147801fce4b69edb4981ba4ea1b7">OCI_GetVersionConnection()</a>.</p>
 
@@ -942,7 +1011,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01502">1502</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01545">1545</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga3a98bd2c7fc31d9884309a16a07dd539">OCI_SetPassword()</a>.</p>
 
@@ -983,7 +1052,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dd>
 To untag a session, call <a class="el" href="classocilib_1_1_connection.html#a0219e7f6c011ca24f849687e17496339" title="Associate a tag to the given connection/session. ">SetSessionTag()</a> with an empty 'tag' parameter </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01512">1512</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01555">1555</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga0fb3f55bfe0ca869cac6f356f7da5dfe">OCI_SetSessionTag()</a>.</p>
 
@@ -1023,7 +1092,7 @@ To untag a session, call <a class="el" href="classocilib_1_1_connection.html#a02
 <dl class="section note"><dt>Note</dt><dd>The current transaction (if any) is automatically stopped but the newly assigned is not started or resumed</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Do not set a transaction to a XA connection or a connection retrieved from a session pool </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01522">1522</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01565">1565</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gacd5bcb0f0894ffcafcb6dfee5e850f5a">OCI_SetTransaction()</a>.</p>
 
@@ -1091,7 +1160,7 @@ To untag a session, call <a class="el" href="classocilib_1_1_connection.html#a02
 <dd>
 Conversions are performed by Oracle built-in functions whenever possible. For DATE, TIMESTAMP and numeric types, see documentation of Oracle SQL to_char() function for more details For BINARY_DOUBLE and BINARY_FLOAT, refer to the C Standard Library printf() family documentation </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01527">1527</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01570">1570</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gade18954504b0d40e981e683f00d39951">OCI_SetFormat()</a>.</p>
 
@@ -1130,7 +1199,7 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 </dl>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="classocilib_1_1_connection.html#a0d160d4250e24a9c4ca510eb1727b3dd" title="Set the format string for implicit string conversions of the given type. ">SetFormat()</a> for possible values </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01532">1532</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01575">1575</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="namespaceocilib.html#a325b20344734ebf632686066cea27b24">ocilib::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga4ed928994e00b49fe651b450d47baaf1">OCI_GetFormat()</a>.</p>
 
@@ -1194,7 +1263,7 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>If <a class="el" href="classocilib_1_1_connection.html#a43eb6879fc41ddc0dc790ed0793e2c47" title="Enable the server output. ">EnableServerOutput()</a> is not called, <a class="el" href="classocilib_1_1_connection.html#ac9acde1a22c2ad3bfd7c1aeea76c9d2c" title="Retrieve one line of the server buffer. ">GetServerOutput()</a> will return false </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01537">1537</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01580">1580</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_pl_sql.html#gaeff8f38ba15b9e757cec70d91e4ffe13">OCI_ServerEnableOutput()</a>.</p>
 
@@ -1226,7 +1295,7 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 <p>Disable the server output. </p>
 <dl class="section note"><dt>Note</dt><dd>After this call, <a class="el" href="classocilib_1_1_connection.html#ac9acde1a22c2ad3bfd7c1aeea76c9d2c" title="Retrieve one line of the server buffer. ">GetServerOutput()</a> will return false. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01542">1542</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01585">1585</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_pl_sql.html#ga0d3321a0abff0722baf6b2b7233f4cb5">OCI_ServerDisableOutput()</a>.</p>
 
@@ -1259,7 +1328,7 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 <p>Retrieve one line of the server buffer. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if a line has been retrieved otherwise false (server buffer is empty or all lines have been retrieved) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01547">1547</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01590">1590</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="namespaceocilib.html#a325b20344734ebf632686066cea27b24">ocilib::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_pl_sql.html#gaac2621ca13cc7a4e862ae8d93493f684">OCI_ServerGetOutput()</a>.</p>
 
@@ -1323,7 +1392,7 @@ Oracle limits the size of these traces content and thus OCILIB will truncate the
 <li>TraceDetail : 64 bytes </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01567">1567</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01610">1610</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gad7b3c1053b3324192089ab8289df3e57">OCI_SetTrace()</a>.</p>
 
@@ -1362,7 +1431,7 @@ Oracle limits the size of these traces content and thus OCILIB will truncate the
 </dl>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="classocilib_1_1_connection.html#a98d7c8767b911e2a386f664344a529b9" title="Set tracing information for the session. ">SetTrace()</a> for more details. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01572">1572</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01615">1615</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="namespaceocilib.html#a325b20344734ebf632686066cea27b24">ocilib::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga2744cf73d308f9d65f94fd695084ee76">OCI_GetTrace()</a>.</p>
 
@@ -1394,7 +1463,7 @@ Oracle limits the size of these traces content and thus OCILIB will truncate the
 <p>Return the Oracle server database name of the connected database/service name. </p>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01577">1577</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01620">1620</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="namespaceocilib.html#a325b20344734ebf632686066cea27b24">ocilib::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga98877db184e1d8d5bf50be1fb6906dc2">OCI_GetDBName()</a>.</p>
 
@@ -1426,7 +1495,7 @@ Oracle limits the size of these traces content and thus OCILIB will truncate the
 <p>Return the Oracle server Instance name of the connected database/service name. </p>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01582">1582</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01625">1625</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gac3ee48e0bfd6b606328bdbbd670cfdb0">OCI_GetInstanceName()</a>.</p>
 
@@ -1458,7 +1527,7 @@ Oracle limits the size of these traces content and thus OCILIB will truncate the
 <p>Return the Oracle server Service name of the connected database/service name. </p>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01587">1587</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01630">1630</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="namespaceocilib.html#a325b20344734ebf632686066cea27b24">ocilib::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gabf76c1f95bcfb75e8ce887c84642f14f">OCI_GetServiceName()</a>.</p>
 
@@ -1490,7 +1559,7 @@ Oracle limits the size of these traces content and thus OCILIB will truncate the
 <p>Return the Oracle server Hos name of the connected database/service name. </p>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01592">1592</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01635">1635</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gad34ea35e12ce6860ae2111e403ae0be5">OCI_GetServerName()</a>.</p>
 
@@ -1522,7 +1591,7 @@ Oracle limits the size of these traces content and thus OCILIB will truncate the
 <p>Return the Oracle server Domain name of the connected database/service name. </p>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01597">1597</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01640">1640</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, <a class="el" href="namespaceocilib.html#a325b20344734ebf632686066cea27b24">ocilib::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga0bf8783a356591ae8267c4ca08638c81">OCI_GetDomainName()</a>.</p>
 
@@ -1554,7 +1623,7 @@ Oracle limits the size of these traces content and thus OCILIB will truncate the
 <p>Return the date and time (<a class="el" href="classocilib_1_1_timestamp.html" title="Object identifying the SQL data type TIMESTAMP. ">Timestamp</a>) server instance start of the. </p>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01602">1602</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01645">1645</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gade7003071dbe1b3ff5bc36cbb2418c3a">OCI_GetInstanceStartTime()</a>.</p>
 
@@ -1587,7 +1656,7 @@ Oracle limits the size of these traces content and thus OCILIB will truncate the
 <dl class="section note"><dt>Note</dt><dd>Default value is 20 (value from Oracle Documentation)</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client 9.2 or above </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01607">1607</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01650">1650</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gabafb62291c1503ecff6ff4ee719a2ff1">OCI_GetStatementCacheSize()</a>.</p>
 
@@ -1626,7 +1695,7 @@ Oracle limits the size of these traces content and thus OCILIB will truncate the
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client 9.2 or above </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01612">1612</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01655">1655</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gaf6001f3ffc1e8537a4e02bbfe8549d3f">OCI_SetStatementCacheSize()</a>.</p>
 
@@ -1665,7 +1734,7 @@ Oracle limits the size of these traces content and thus OCILIB will truncate the
 <dd>
 Default is 0 (prefetching disabled) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01617">1617</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01660">1660</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gaf1026309c40b8419b2a6cd24d71d8090">OCI_GetDefaultLobPrefetchSize()</a>.</p>
 
@@ -1716,7 +1785,7 @@ LOBs prefetching is disabled by default</dd></dl>
 </ul>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01622">1622</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01665">1665</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga069d605439946b83a1fd930670bae710">OCI_SetDefaultLobPrefetchSize()</a>.</p>
 
@@ -1751,7 +1820,7 @@ LOBs prefetching is disabled by default</dd></dl>
 <dd>
 Return 0 if the client and server version are &lt; 12cR1 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01627">1627</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01670">1670</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga2d69a4abb692871b3378e3d97c74c59e">OCI_GetMaxCursors()</a>.</p>
 
@@ -1783,7 +1852,7 @@ Return 0 if the client and server version are &lt; 12cR1 </dd></dl>
 <p>Verify if the connection support TAF events. </p>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01632">1632</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01675">1675</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gaec581bccba93866adb0306d819bf355c">OCI_IsTAFCapable()</a>.</p>
 
@@ -1823,7 +1892,7 @@ Return 0 if the client and server version are &lt; 12cR1 </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See TAFHandlerProc documentation for more details</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01637">1637</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01680">1680</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga5cfa430f4621c35bae775409de0c6215">OCI_SetTAFHandler()</a>.</p>
 
@@ -1861,9 +1930,117 @@ Return 0 if the client and server version are &lt; 12cR1 </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01649">1649</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01692">1692</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gaeed5fe2da7af18c69585fbec9f63c951">OCI_SetUserData()</a>.</p>
+
+</div>
+</div>
+<a id="a6607849329f328582edbb2958ae651d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6607849329f328582edbb2958ae651d6">&#9670;&nbsp;</a></span>GetTimeout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int ocilib::Connection::GetTimeout </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classocilib_1_1_connection.html#a0aeff9065ffc4bb5890c52adc2efddc8">TimeoutType</a>&#160;</td>
+          <td class="paramname"><em>timeout</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the requested timeout value for OCI calls that require server round-trips to the given database. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timeout</td><td>- Type of timeout</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>: See <a class="el" href="classocilib_1_1_connection.html#ab6423c3a50332ad7a46de77da2e02a6e" title="Set a given timeout for OCI calls that require server round-trips to the given database. ">Connection::SetTimeout()</a> for more information</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The given timeout value if supported, otherwise 0 </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01697">1697</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#ga2fc44c0b2803a612b77f566c1a7cf787">OCI_GetTimeout()</a>.</p>
+
+</div>
+</div>
+<a id="ab6423c3a50332ad7a46de77da2e02a6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6423c3a50332ad7a46de77da2e02a6e">&#9670;&nbsp;</a></span>SetTimeout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ocilib::Connection::SetTimeout </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classocilib_1_1_connection.html#a0aeff9065ffc4bb5890c52adc2efddc8">TimeoutType</a>&#160;</td>
+          <td class="paramname"><em>timeout</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set a given timeout for OCI calls that require server round-trips to the given database. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timeout</td><td>- Type of timeout to set </td></tr>
+    <tr><td class="paramname">value</td><td>- Timeout in milliseconds</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>OCI client raises an timeout type related error when a given timeout is reached.</p>
+<dl class="section note"><dt>Note</dt><dd>To disable a given timeout, pass the value 0</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>OCI client is using the following precedence rules when applying timeouts:<ul>
+<li>1 - Timeout set using TimeoutCall (all other timeouts are discarded)</li>
+<li>2 - Timeouts set using TimeoutSend and/or TimeoutReceive</li>
+<li>3 - Timeouts set in sqlnet.ora file</li>
+</ul>
+</dd></dl>
+<p>Here is a summary:</p>
+<table class="doxtable">
+<tr>
+<th>FLAG </th><th>Min. Version </th><th>OCI Error raised </th><th>OCI Error description </th><th>sqlnet.ora equivalent  </th></tr>
+<tr>
+<td>TimeoutSend </td><td>OCI_12_1 </td><td>ORA-12608 </td><td>TNS: Send timeout occurred </td><td>SQLNET.SEND_TIMEOUT </td></tr>
+<tr>
+<td>TimeoutReceive </td><td>OCI_12_1 </td><td>ORA-12609 </td><td>TNS: Receive timeout occurred </td><td>SQLNET.RECV_TIMEOUT </td></tr>
+<tr>
+<td>TimeoutCall </td><td>OCI_18_1 </td><td>ORA-03136 </td><td>inbound connection timed out </td><td>&mdash; </td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l01702">1702</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceocilib.html#a95f71fef8791309138aa3ef23efb2911">ocilib::Check()</a>, and <a class="el" href="group___ocilib_c_api_connections.html#gaba3523c60736722aa61e1c245d92cb08">OCI_SetTimeout()</a>.</p>
 
 </div>
 </div>
@@ -1873,7 +2050,7 @@ Return 0 if the client and server version are &lt; 12cR1 </dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_connection.html">Connection</a></li>
-    <li class="footer">Generated on Thu Sep 13 2018 23:06:53 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Thu Nov 22 2018 10:18:00 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>
