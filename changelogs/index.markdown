@@ -21,8 +21,8 @@ _[2018-11-21 . version 4.6.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.
   * Enhanced Oracle 18c support     
   * Added network timeout management support        
   * Some C API and C++ API Bug fixes 
-  * Some C API and C++ API Bug fixes 
-
+  * Some C API and C++ changes
+  
 _[2018-09-13 . version 4.5.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.5.2.txt)_
 
   * Some C API and C++ API Bug fixes 
