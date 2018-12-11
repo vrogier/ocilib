@@ -6617,9 +6617,6 @@ private:
     template<typename M, class T, class U>
     void BindVector2(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, U subType, BindInfo::VectorType type);
 
-    template<class T>
-    unsigned int GetArraysize(BindInfo::VectorType type, std::vector<T> &values);
-
     template<typename T>
     unsigned int Fetch(T callback);
 

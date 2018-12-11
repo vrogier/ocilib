@@ -450,7 +450,7 @@ public:
 
 protected:
 
-    OCI_Statement *_pStatement;
+    const Statement& _statement;
     ostring _name;
     unsigned int _mode;
 };
@@ -463,13 +463,16 @@ public:
      virtual ~BindArray();
 
      template<class T>
-     void SetVector(std::vector<T> & vector, unsigned int elemSize);
-
+     void SetVector(std::vector<T> & vector, bool isPlSqlTable, unsigned int elemSize);
+  
      template<class T>
      typename BindResolver<T>::OutputType * GetData() const;
 
      void SetInData() override;
      void SetOutData() override;
+
+     unsigned int GetSize();
+     unsigned int GetSizeForBindCall();
 
 private:
 
@@ -481,6 +484,8 @@ private:
         virtual void SetInData() = 0;
         virtual void SetOutData() = 0;
         virtual ostring GetName() = 0;
+        virtual unsigned int GetSize() = 0;
+        virtual unsigned int GetSizeForBindCall() = 0;
     };
 
     template<class T>
@@ -492,11 +497,13 @@ private:
 		typedef std::vector<ObjectType> ObjectVector;
         typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
-        BindArrayObject(const Statement &statement, const ostring& name, ObjectVector &vector, unsigned int mode, unsigned int elemSize);
+        BindArrayObject(const Statement &statement, const ostring& name, ObjectVector &vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize);
         virtual ~BindArrayObject();
         void SetInData() override;
         void SetOutData() override;
         ostring GetName() override;
+        unsigned int GetSize() override;
+        unsigned int GetSizeForBindCall() override;
 
         operator ObjectVector & () const;
         operator NativeType * () const;
@@ -506,10 +513,11 @@ private:
         void AllocData();
         void FreeData() const;
 
-        OCI_Statement *_pStatement;
+        const Statement& _statement;
         ostring _name;
         ObjectVector& _vector;
         NativeType *_data;
+        bool _isPlSqlTable;
         unsigned int _mode;
         unsigned int _elemCount;
         unsigned int _elemSize;
@@ -584,7 +592,7 @@ public:
 private:
 
     std::vector<BindObject *> _bindObjects;
-    OCI_Statement * _pStatement;
+    const Statement& _statement;
 };
 
 }
