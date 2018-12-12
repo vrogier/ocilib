@@ -4630,12 +4630,12 @@ inline void BindArray::SetOutData()
     }
 }
 
-unsigned int BindArray::GetSize()
+inline unsigned int BindArray::GetSize()
 {
     return _object ? _object->GetSize() : _statement.GetBindArraySize();
 }
 
-unsigned int BindArray::GetSizeForBindCall()
+inline unsigned int BindArray::GetSizeForBindCall()
 {
     return _object ? _object->GetSizeForBindCall() : 0;
 }
