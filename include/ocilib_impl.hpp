@@ -4751,6 +4751,24 @@ void BindArray::BindArrayObject<T>::SetOutData()
 }
 
 template<>
+inline void BindArray::BindArrayObject<ostring>::SetOutData()
+{
+    std::vector<ostring>::iterator it, it_end;
+
+    OCI_Bind *pBind = Check(OCI_GetBind2(_statement, GetName().c_str()));
+
+    unsigned int index = 0;
+    unsigned int currElemCount = GetSize();
+
+    for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
+    {
+        otext *currData = _data + (_elemSize * sizeof(otext) * index);
+
+        (*it).assign(currData, currData + Check(OCI_BindGetDataSizeAtPos(pBind, index + 1)));
+    }
+}
+
+template<>
 inline void BindArray::BindArrayObject<Raw>::SetOutData()
 {
     std::vector<Raw>::iterator it, it_end;
