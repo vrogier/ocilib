@@ -507,6 +507,11 @@ Handle * HandleHolder<T>::GetHandle() const
 template<class T>
 void HandleHolder<T>::Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent)
 {
+    if (_smartHandle && _smartHandle->GetHandle() == handle)
+    {
+        return;
+    }
+
     Release();
 
     if (handle)
