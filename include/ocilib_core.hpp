@@ -484,6 +484,7 @@ private:
         virtual void SetInData() = 0;
         virtual void SetOutData() = 0;
         virtual ostring GetName() = 0;
+        virtual bool IsHandleObject() = 0;
         virtual unsigned int GetSize() = 0;
         virtual unsigned int GetSizeForBindCall() = 0;
     };
@@ -502,6 +503,7 @@ private:
         void SetInData() override;
         void SetOutData() override;
         ostring GetName() override;
+        bool IsHandleObject() override;
         unsigned int GetSize() override;
         unsigned int GetSizeForBindCall() override;
 

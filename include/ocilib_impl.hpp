@@ -64,11 +64,12 @@ typedef Long<Raw, LongBinary> Blong;
 * @brief Resolve a bind input / output types
 *
 */
-template<class I, class O>
+template<class I, class O, boolean B>
 struct BindResolverType
 {
     typedef I InputType;
     typedef O OutputType;
+    static const bool IsHandle = B;
 };
 
 /**
@@ -77,9 +78,17 @@ struct BindResolverType
 *
 */
 template<class T>
-struct BindResolverScalarType : BindResolverType<T, T> {};
+struct BindResolverScalarType : BindResolverType<T, T, false> {};
 
-template<> struct BindResolver<bool> : BindResolverType<bool, boolean>{};
+/**
+*
+* @brief Simplified resolver for handle types
+*
+*/
+template<class I, class O>
+struct BindResolverHandleType : BindResolverType<I, O, true> {};
+
+template<> struct BindResolver<bool> : BindResolverType<bool, boolean, false>{};
 template<> struct BindResolver<short> : BindResolverScalarType<short>{};
 template<> struct BindResolver<unsigned short> : BindResolverScalarType<unsigned short>{};
 template<> struct BindResolver<int> : BindResolverScalarType<int>{};
@@ -88,21 +97,21 @@ template<> struct BindResolver<big_int> : BindResolverScalarType<big_int>{};
 template<> struct BindResolver<big_uint> : BindResolverScalarType<big_uint>{};
 template<> struct BindResolver<float> : BindResolverScalarType<float>{};
 template<> struct BindResolver<double> : BindResolverScalarType<double>{};
-template<> struct BindResolver<ostring> : BindResolverType<ostring, otext>{};
-template<> struct BindResolver<Raw> : BindResolverType<ostring, unsigned char>{};
-template<> struct BindResolver<Number> : BindResolverType<Number, OCI_Number*>{};
-template<> struct BindResolver<Date> : BindResolverType<Date, OCI_Date*>{};
-template<> struct BindResolver<Timestamp> : BindResolverType<Timestamp, OCI_Timestamp*>{};
-template<> struct BindResolver<Interval> : BindResolverType<Interval, OCI_Interval*>{};
-template<> struct BindResolver<Clob> : BindResolverType<Clob, OCI_Lob*>{};
-template<> struct BindResolver<NClob> : BindResolverType<NClob, OCI_Lob*>{};
-template<> struct BindResolver<Blob> : BindResolverType<Blob, OCI_Lob*>{};
-template<> struct BindResolver<File> : BindResolverType<File, OCI_File*>{};
-template<> struct BindResolver<Clong> : BindResolverType<Clong, OCI_Long*>{};
-template<> struct BindResolver<Blong> : BindResolverType<Blong, OCI_Long*>{};
-template<> struct BindResolver<Reference> : BindResolverType<Reference, OCI_Ref*>{};
-template<> struct BindResolver<Object> : BindResolverType<Object, OCI_Object*>{};
-template<> struct BindResolver<Statement> : BindResolverType<Statement, OCI_Statement*>{};
+template<> struct BindResolver<ostring> : BindResolverType<ostring, otext, false>{};
+template<> struct BindResolver<Raw> : BindResolverType<ostring, unsigned char, false>{};
+template<> struct BindResolver<Number> : BindResolverHandleType<Number, OCI_Number*>{};
+template<> struct BindResolver<Date> : BindResolverHandleType<Date, OCI_Date*>{};
+template<> struct BindResolver<Timestamp> : BindResolverHandleType<Timestamp, OCI_Timestamp*>{};
+template<> struct BindResolver<Interval> : BindResolverHandleType<Interval, OCI_Interval*>{};
+template<> struct BindResolver<Clob> : BindResolverHandleType<Clob, OCI_Lob*>{};
+template<> struct BindResolver<NClob> : BindResolverHandleType<NClob, OCI_Lob*>{};
+template<> struct BindResolver<Blob> : BindResolverHandleType<Blob, OCI_Lob*>{};
+template<> struct BindResolver<File> : BindResolverHandleType<File, OCI_File*>{};
+template<> struct BindResolver<Clong> : BindResolverHandleType<Clong, OCI_Long*>{};
+template<> struct BindResolver<Blong> : BindResolverHandleType<Blong, OCI_Long*>{};
+template<> struct BindResolver<Reference> : BindResolverHandleType<Reference, OCI_Ref*>{};
+template<> struct BindResolver<Object> : BindResolverHandleType<Object, OCI_Object*>{};
+template<> struct BindResolver<Statement> : BindResolverHandleType<Statement, OCI_Statement*>{};
 
 /**
 * @brief Allow resolving a the C API numeric enumerated type from a C++ type
@@ -4621,7 +4630,8 @@ typename BindResolver<T>::OutputType * BindArray::GetData()  const
 
 inline void BindArray::SetInData()
 {
-    if (GetMode() & OCI_BDM_IN)
+
+    if (GetMode() & OCI_BDM_IN || _object->IsHandleObject())
     {
         _object->SetInData();
     }
@@ -4795,6 +4805,12 @@ template<class T>
 ostring BindArray::BindArrayObject<T>::GetName()
 {
     return _name;
+}
+
+template<class T>
+bool BindArray::BindArrayObject<T>::IsHandleObject()
+{
+    return BindResolver<T>::IsHandle;
 }
 
 template<class T>
