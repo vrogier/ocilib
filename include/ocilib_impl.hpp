@@ -183,12 +183,13 @@ inline unsigned int ComputeCharMaxSize(Environment::CharsetMode charsetMode)
     if (charsetMode == Environment::CharsetAnsi)
     {
 #ifdef _MSC_VER
+#pragma warning(push)
 #pragma warning(disable: 4996)
 #endif
         char *str = getenv("NLS_LANG");
 
 #ifdef _MSC_VER
-#pragma warning(default: 4996)
+#pragma warning(pop)
 #endif
 
         if (str)
