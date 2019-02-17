@@ -240,9 +240,8 @@ enum OracleVersionValues
     Oracle11gR1 = OCI_11_1,
     Oracle11gR2 = OCI_11_2,
     Oracle12cR1 = OCI_12_1,
-    Oracle18cR1 = OCI_18_1,
-    Oracle18cR2 = OCI_18_2,
-    Oracle18cR3 = OCI_18_3
+    Oracle18cR3 = OCI_18_3,
+    Oracle18cR4 = OCI_18_4
 };
 
 /**
