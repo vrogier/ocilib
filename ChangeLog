@@ -7,7 +7,6 @@
         - Issue #198: Compile Error with Oracle Client 12.2 and option OCI_ATTR_CALL_TIMEOUT
         - Issue #199: Compile warnings on Oracle Client 12.2
                 
-        
     * Fixes (C++ API)
     
         - Issue #182: Cannot bind a std::vector as a PL/SQL Table (v4.6.0 fixed the issue only for 1st element of the vector)
@@ -18,8 +17,12 @@
  
     * Miscellaneous:
   
-        - Updated compilers for MS Windows pre built binaries
+        - Updated compilers for MS Windows prebuilt binaries
             * VS2017 15.9.7 for 32/64 bit DLLs
+        - Prebuilt static libraries built with TDM-GCC (Code::Blocks projects) are not shipped anymore
+            * Recent TDM- GCC versions produces executables that links statically against winpthreads
+            * This implies requirements and restrictions that motivated to remove prebuilt libs from ocilib releases
+            * Users can compile them using the provided Code::Blocks project
      
 2018-11-21 Version 4.6.0 Vincent Rogier vince.rogier@ocilib.net
  
