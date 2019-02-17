@@ -195,7 +195,7 @@ inline unsigned int ComputeCharMaxSize(Environment::CharsetMode charsetMode)
         {
             std::string nlsLang = str;
 
-            for (int i = 0; i < nlsLang.size(); ++i)
+            for (size_t i = 0; i < nlsLang.size(); ++i)
             {
                 nlsLang[i] = static_cast<std::string::value_type>(toupper(nlsLang[i]));
             }
