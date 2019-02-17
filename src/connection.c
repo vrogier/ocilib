@@ -1912,11 +1912,11 @@ boolean OCI_API OCI_SetTimeout
                 OCI_RETVAL = OCI_STATUS;
             }
 
-         #if OCI_VERSION_COMPILE >= OCI_18_1
+         #if OCI_VERSION_COMPILE >= OCI_18_3
 
             case OCI_NTO_CALL:
             {
-                if (OCILib.version_runtime >= OCI_12_1)
+                if (OCILib.version_runtime >= OCI_18_3)
                 {
                     OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
                     OCI_RETVAL = OCI_STATUS;
@@ -1966,11 +1966,11 @@ unsigned int OCI_API OCI_GetTimeout
                 OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
             }
 
-        #if OCI_VERSION_COMPILE >= OCI_18_1
+        #if OCI_VERSION_COMPILE >= OCI_18_3
 
             case OCI_NTO_CALL:
             {
-                if (OCILib.version_runtime >= OCI_12_1)
+                if (OCILib.version_runtime >= OCI_18_3)
                 {
                     OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
                 }

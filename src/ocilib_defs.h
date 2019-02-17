@@ -41,10 +41,15 @@
 
 #else
 
-    #if defined(OCI_FNCODE_LOBGETCHUNKSIZE)  /* = OCI_18_3 */
+    #if defined(OCI_FNCODE_SERVERRELEASE2)  /* = OCI_18_3 */
 
         #define OCI_VERSION_COMPILE OCI_18_3
         #define OCI_VERSION_RUNTIME OCI_18_3
+
+    #elif defined(OCI_FNCODE_LOBGETCHUNKSIZE)  /* = OCI_12_2 */
+
+        #define OCI_VERSION_COMPILE OCI_12_2
+        #define OCI_VERSION_RUNTIME OCI_12_2
 
     #elif defined(OCI_FNCODE_BINDBYPOS2)  /* = OCI_12_1 */
 

@@ -1081,9 +1081,8 @@ typedef unsigned int big_uint;
 #define OCI_11_2                            1120
 #define OCI_12_1                            1210
 #define OCI_12_2                            1220
-#define OCI_18_1                            1810
-#define OCI_18_2                            1820
 #define OCI_18_3                            1830
+#define OCI_18_4                            1840
 
 /* versions extract macros */
 
