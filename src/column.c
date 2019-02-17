@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2018 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -261,6 +261,8 @@ boolean OCI_ColumnDescribe
                 col->props |=  OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL;
             }
 
+        #if OCI_VERSION_COMPILE >= OCI_18_3
+
             if (value & OCI_ATTR_COL_PROPERTY_IS_LPART)
             {
                 col->props |= OCI_CPF_IS_LPART;
@@ -270,6 +272,8 @@ boolean OCI_ColumnDescribe
             {
                 col->props |= OCI_CPF_IS_CONID;
             }
+
+        #endif 
         }
     }
 

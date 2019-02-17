@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2018 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     4
 #define OCILIB_MINOR_VERSION     6
-#define OCILIB_REVISION_VERSION  0
+#define OCILIB_REVISION_VERSION  1
 
 /* Import mode */
 
@@ -1081,9 +1081,8 @@ typedef unsigned int big_uint;
 #define OCI_11_2                            1120
 #define OCI_12_1                            1210
 #define OCI_12_2                            1220
-#define OCI_18_1                            1810
-#define OCI_18_2                            1820
 #define OCI_18_3                            1830
+#define OCI_18_4                            1840
 
 /* versions extract macros */
 

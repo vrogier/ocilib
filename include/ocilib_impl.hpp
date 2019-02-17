@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2018 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,11 +64,12 @@ typedef Long<Raw, LongBinary> Blong;
 * @brief Resolve a bind input / output types
 *
 */
-template<class I, class O>
+template<class I, class O, boolean B>
 struct BindResolverType
 {
     typedef I InputType;
     typedef O OutputType;
+    static const bool IsHandle = B;
 };
 
 /**
@@ -77,9 +78,17 @@ struct BindResolverType
 *
 */
 template<class T>
-struct BindResolverScalarType : BindResolverType<T, T> {};
+struct BindResolverScalarType : BindResolverType<T, T, false> {};
 
-template<> struct BindResolver<bool> : BindResolverType<bool, boolean>{};
+/**
+*
+* @brief Simplified resolver for handle types
+*
+*/
+template<class I, class O>
+struct BindResolverHandleType : BindResolverType<I, O, true> {};
+
+template<> struct BindResolver<bool> : BindResolverType<bool, boolean, false>{};
 template<> struct BindResolver<short> : BindResolverScalarType<short>{};
 template<> struct BindResolver<unsigned short> : BindResolverScalarType<unsigned short>{};
 template<> struct BindResolver<int> : BindResolverScalarType<int>{};
@@ -88,21 +97,21 @@ template<> struct BindResolver<big_int> : BindResolverScalarType<big_int>{};
 template<> struct BindResolver<big_uint> : BindResolverScalarType<big_uint>{};
 template<> struct BindResolver<float> : BindResolverScalarType<float>{};
 template<> struct BindResolver<double> : BindResolverScalarType<double>{};
-template<> struct BindResolver<ostring> : BindResolverType<ostring, otext>{};
-template<> struct BindResolver<Raw> : BindResolverType<ostring, unsigned char>{};
-template<> struct BindResolver<Number> : BindResolverType<Number, OCI_Number*>{};
-template<> struct BindResolver<Date> : BindResolverType<Date, OCI_Date*>{};
-template<> struct BindResolver<Timestamp> : BindResolverType<Timestamp, OCI_Timestamp*>{};
-template<> struct BindResolver<Interval> : BindResolverType<Interval, OCI_Interval*>{};
-template<> struct BindResolver<Clob> : BindResolverType<Clob, OCI_Lob*>{};
-template<> struct BindResolver<NClob> : BindResolverType<NClob, OCI_Lob*>{};
-template<> struct BindResolver<Blob> : BindResolverType<Blob, OCI_Lob*>{};
-template<> struct BindResolver<File> : BindResolverType<File, OCI_File*>{};
-template<> struct BindResolver<Clong> : BindResolverType<Clong, OCI_Long*>{};
-template<> struct BindResolver<Blong> : BindResolverType<Blong, OCI_Long*>{};
-template<> struct BindResolver<Reference> : BindResolverType<Reference, OCI_Ref*>{};
-template<> struct BindResolver<Object> : BindResolverType<Object, OCI_Object*>{};
-template<> struct BindResolver<Statement> : BindResolverType<Statement, OCI_Statement*>{};
+template<> struct BindResolver<ostring> : BindResolverType<ostring, otext, false>{};
+template<> struct BindResolver<Raw> : BindResolverType<ostring, unsigned char, false>{};
+template<> struct BindResolver<Number> : BindResolverHandleType<Number, OCI_Number*>{};
+template<> struct BindResolver<Date> : BindResolverHandleType<Date, OCI_Date*>{};
+template<> struct BindResolver<Timestamp> : BindResolverHandleType<Timestamp, OCI_Timestamp*>{};
+template<> struct BindResolver<Interval> : BindResolverHandleType<Interval, OCI_Interval*>{};
+template<> struct BindResolver<Clob> : BindResolverHandleType<Clob, OCI_Lob*>{};
+template<> struct BindResolver<NClob> : BindResolverHandleType<NClob, OCI_Lob*>{};
+template<> struct BindResolver<Blob> : BindResolverHandleType<Blob, OCI_Lob*>{};
+template<> struct BindResolver<File> : BindResolverHandleType<File, OCI_File*>{};
+template<> struct BindResolver<Clong> : BindResolverHandleType<Clong, OCI_Long*>{};
+template<> struct BindResolver<Blong> : BindResolverHandleType<Blong, OCI_Long*>{};
+template<> struct BindResolver<Reference> : BindResolverHandleType<Reference, OCI_Ref*>{};
+template<> struct BindResolver<Object> : BindResolverHandleType<Object, OCI_Object*>{};
+template<> struct BindResolver<Statement> : BindResolverHandleType<Statement, OCI_Statement*>{};
 
 /**
 * @brief Allow resolving a the C API numeric enumerated type from a C++ type
@@ -174,19 +183,20 @@ inline unsigned int ComputeCharMaxSize(Environment::CharsetMode charsetMode)
     if (charsetMode == Environment::CharsetAnsi)
     {
 #ifdef _MSC_VER
+#pragma warning(push)
 #pragma warning(disable: 4996)
 #endif
         char *str = getenv("NLS_LANG");
 
 #ifdef _MSC_VER
-#pragma warning(default: 4996)
+#pragma warning(pop)
 #endif
 
         if (str)
         {
             std::string nlsLang = str;
 
-            for (int i = 0; i < nlsLang.size(); ++i)
+            for (size_t i = 0; i < nlsLang.size(); ++i)
             {
                 nlsLang[i] = static_cast<std::string::value_type>(toupper(nlsLang[i]));
             }
@@ -507,6 +517,11 @@ Handle * HandleHolder<T>::GetHandle() const
 template<class T>
 void HandleHolder<T>::Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent)
 {
+    if (_smartHandle && _smartHandle->GetHandle() == handle)
+    {
+        return;
+    }
+
     Release();
 
     if (handle)
@@ -4565,7 +4580,7 @@ inline Raw Long<Raw, LongBinary>::GetContent() const
  * BindObject
  * --------------------------------------------------------------------------------------------- */
 
-inline BindObject::BindObject(const Statement &statement, const ostring& name, unsigned int mode) : _pStatement(statement), _name(name), _mode(mode)
+inline BindObject::BindObject(const Statement &statement, const ostring& name, unsigned int mode) : _statement(statement), _name(name), _mode(mode)
 {
 }
 
@@ -4580,7 +4595,7 @@ inline ostring BindObject::GetName() const
 
 inline Statement BindObject::GetStatement() const
 {
-    return Statement(_pStatement);
+    return _statement;
 }
 
 inline unsigned int BindObject::GetMode() const
@@ -4598,9 +4613,9 @@ inline BindArray::BindArray(const Statement &statement, const ostring& name, uns
 }
 
 template<class T>
-void BindArray::SetVector(std::vector<T> & vector, unsigned int elemSize)
+void BindArray::SetVector(std::vector<T> & vector, bool isPlSqlTable, unsigned int elemSize)
 {
-    _object = new BindArrayObject<T>(GetStatement(), GetName(), vector, GetMode(), elemSize);
+    _object = new BindArrayObject<T>(_statement, GetName(), vector, isPlSqlTable, GetMode(), elemSize);
 }
 
 inline BindArray::~BindArray()
@@ -4616,7 +4631,8 @@ typename BindResolver<T>::OutputType * BindArray::GetData()  const
 
 inline void BindArray::SetInData()
 {
-    if (GetMode() & OCI_BDM_IN)
+
+    if (GetMode() & OCI_BDM_IN || _object->IsHandleObject())
     {
         _object->SetInData();
     }
@@ -4630,9 +4646,19 @@ inline void BindArray::SetOutData()
     }
 }
 
+inline unsigned int BindArray::GetSize()
+{
+    return _object ? _object->GetSize() : _statement.GetBindArraySize();
+}
+
+inline unsigned int BindArray::GetSizeForBindCall()
+{
+    return _object ? _object->GetSizeForBindCall() : 0;
+}
+
 template<class T>
-BindArray::BindArrayObject<T>::BindArrayObject(const Statement &statement, const ostring& name, ObjectVector &vector, unsigned int mode, unsigned int elemSize)
-    : _pStatement(statement), _name(name), _vector(vector), _data(nullptr), _mode(mode), _elemCount(statement.GetBindArraySize()), _elemSize(elemSize)
+BindArray::BindArrayObject<T>::BindArrayObject(const Statement &statement, const ostring& name, ObjectVector &vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize)
+    : _statement(statement), _name(name), _vector(vector), _data(nullptr), _isPlSqlTable(isPlSqlTable), _mode(mode), _elemCount(GetSize()), _elemSize(elemSize)
 {
     AllocData();
 }
@@ -4679,7 +4705,7 @@ void BindArray::BindArrayObject<T>::SetInData()
     typename ObjectVector::iterator it, it_end;
 
     unsigned int index = 0;
-    unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
+    unsigned int currElemCount = GetSize();
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
@@ -4693,7 +4719,7 @@ inline void BindArray::BindArrayObject<ostring>::SetInData()
     std::vector<ostring>::iterator it, it_end;
 
     unsigned int index = 0;
-    unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
+    unsigned int currElemCount = GetSize();
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
@@ -4709,7 +4735,7 @@ inline void BindArray::BindArrayObject<Raw>::SetInData()
     std::vector<Raw>::iterator it, it_end;
 
     unsigned int index = 0;
-    unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
+    unsigned int currElemCount = GetSize();
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
@@ -4720,7 +4746,7 @@ inline void BindArray::BindArrayObject<Raw>::SetInData()
             memcpy(_data + (_elemSize * index), &value[0], value.size());
         }
 
-        OCI_BindSetDataSizeAtPos(OCI_GetBind2(_pStatement, GetName().c_str()), index + 1, static_cast<unsigned int>(value.size()));
+        OCI_BindSetDataSizeAtPos(OCI_GetBind2(_statement, GetName().c_str()), index + 1, static_cast<unsigned int>(value.size()));
     }
 }
 
@@ -4730,7 +4756,7 @@ void BindArray::BindArrayObject<T>::SetOutData()
     typename ObjectVector::iterator it, it_end;
 
     unsigned int index = 0;
-    unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
+    unsigned int currElemCount = GetSize();
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
@@ -4741,14 +4767,32 @@ void BindArray::BindArrayObject<T>::SetOutData()
 }
 
 template<>
+inline void BindArray::BindArrayObject<ostring>::SetOutData()
+{
+    std::vector<ostring>::iterator it, it_end;
+
+    OCI_Bind *pBind = Check(OCI_GetBind2(_statement, GetName().c_str()));
+
+    unsigned int index = 0;
+    unsigned int currElemCount = GetSize();
+
+    for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
+    {
+        otext *currData = _data + (_elemSize * sizeof(otext) * index);
+
+        (*it).assign(currData, currData + Check(OCI_BindGetDataSizeAtPos(pBind, index + 1)));
+    }
+}
+
+template<>
 inline void BindArray::BindArrayObject<Raw>::SetOutData()
 {
     std::vector<Raw>::iterator it, it_end;
 
-    OCI_Bind *pBind = Check(OCI_GetBind2(_pStatement, GetName().c_str()));
+    OCI_Bind *pBind = Check(OCI_GetBind2(_statement, GetName().c_str()));
 
     unsigned int index = 0;
-    unsigned int currElemCount = Check(OCI_BindArrayGetSize(_pStatement));
+    unsigned int currElemCount = GetSize();
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
@@ -4762,6 +4806,24 @@ template<class T>
 ostring BindArray::BindArrayObject<T>::GetName()
 {
     return _name;
+}
+
+template<class T>
+bool BindArray::BindArrayObject<T>::IsHandleObject()
+{
+    return BindResolver<T>::IsHandle;
+}
+
+template<class T>
+unsigned int BindArray::BindArrayObject<T>::GetSize()
+{
+    return _isPlSqlTable ? static_cast<unsigned int>(_vector.size()) : _statement.GetBindArraySize();
+}
+
+template<class T>
+unsigned int BindArray::BindArrayObject<T>::GetSizeForBindCall()
+{
+    return _isPlSqlTable ? static_cast<unsigned int>(_vector.size()) : 0;
 }
 
 template<class T>
@@ -4806,7 +4868,7 @@ void BindObjectAdaptor<T>::SetOutData()
 {
     if (GetMode() & OCI_BDM_OUT)
     {
-        size_t size = Check(OCI_BindGetDataSize(Check(OCI_GetBind2(_pStatement, _name.c_str()))));
+        size_t size = Check(OCI_BindGetDataSize(Check(OCI_GetBind2(_statement, _name.c_str()))));
 
         _object.assign(_data, _data + size);
     }
@@ -4899,7 +4961,7 @@ inline void BindTypeAdaptor<bool>::SetOutData()
  * BindsHolder
  * --------------------------------------------------------------------------------------------- */
 
-inline BindsHolder::BindsHolder(const Statement &statement) : _bindObjects(), _pStatement(statement)
+inline BindsHolder::BindsHolder(const Statement &statement) : _bindObjects(), _statement(statement)
 {
 
 }
@@ -4923,7 +4985,7 @@ inline void BindsHolder::Clear()
 
 inline void BindsHolder::AddBindObject(BindObject *bindObject)
 {
-    if (Check(OCI_IsRebindingAllowed(_pStatement)))
+    if (Check(OCI_IsRebindingAllowed(_statement)))
     {
         std::vector<BindObject *>::iterator it, it_end;
 
@@ -5227,9 +5289,9 @@ template<typename M, class T>
 void Statement::BindVector1(M &method, const ostring& name, std::vector<T> &values,  BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
-    bnd->SetVector<T>(values, sizeof(typename BindResolver<T>::OutputType));
+    bnd->SetVector<T>(values, type == BindInfo::AsPlSqlTable, sizeof(typename BindResolver<T>::OutputType));
 
-    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), GetArraysize(type, values));
+    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), bnd->GetSizeForBindCall());
 
     if (res)
     {
@@ -5249,9 +5311,9 @@ template<typename M, class T, class U>
 void Statement::BindVector2(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, U subType, BindInfo::VectorType type)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
-    bnd->SetVector<T>(values, sizeof(typename BindResolver<T>::OutputType));
+    bnd->SetVector<T>(values, type == BindInfo::AsPlSqlTable, sizeof(typename BindResolver<T>::OutputType));
 
-    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), subType, GetArraysize(type, values));
+    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), subType, bnd->GetSizeForBindCall());
 
     if (res)
     {
@@ -5265,12 +5327,6 @@ void Statement::BindVector2(M &method, const ostring& name, std::vector<T> &valu
     }
 
     Check(res);
-}
-
-template<class T>
-unsigned int Statement::GetArraysize(BindInfo::VectorType type, std::vector<T> &values)
-{
-    return type == BindInfo::AsPlSqlTable ? static_cast<unsigned int>(values.size()) : 0;
 }
 
 template<>
@@ -5639,9 +5695,9 @@ template<>
 inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vector<ostring> &values,  unsigned int maxSize, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
-    bnd->SetVector<ostring>(values, maxSize+1);
+    bnd->SetVector<ostring>(values, type == BindInfo::AsPlSqlTable, maxSize+1);
 
-    boolean res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring>(), maxSize, GetArraysize(type, values));
+    boolean res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring>(), maxSize, bnd->GetSizeForBindCall());
 
     if (res)
     {
@@ -5667,9 +5723,9 @@ template<>
 inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<Raw> &values, unsigned int maxSize, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
     BindArray * bnd = new BindArray(*this, name, mode);
-    bnd->SetVector<Raw>(values, maxSize);
+    bnd->SetVector<Raw>(values, type == BindInfo::AsPlSqlTable, maxSize);
 
-    boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw>(), maxSize, GetArraysize(type, values));
+    boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw>(), maxSize, bnd->GetSizeForBindCall());
 
     if (res)
     {

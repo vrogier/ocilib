@@ -3,7 +3,7 @@
 *
 * Website: http://www.ocilib.net
 *
-* Copyright (c) 2007-2018 Vincent ROGIER <vince.rogier@ocilib.net>
+* Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -1049,7 +1049,7 @@ void test_returning_array(void)
 
         ostring str;
         str += otext("Name");
-        str += ((i + 1) + '0');
+        str += static_cast<ostring::value_type>((i + 1) + '0');
         tab_str.push_back(str);
 
         tab_date.push_back(Date::SysDate());
@@ -1060,7 +1060,7 @@ void test_returning_array(void)
 
         ostring fileName;
         fileName += otext("File");
-        fileName += ((i + 1) + '0');
+        fileName += static_cast<ostring::value_type>((i + 1) + '0');
         File file(con, otext("Mydir"), fileName);
         tab_file.push_back(file);
     }

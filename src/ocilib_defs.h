@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2018 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,10 +41,15 @@
 
 #else
 
-    #if defined(OCI_FNCODE_LOBGETCHUNKSIZE)  /* = OCI_18_3 */
+    #if defined(OCI_FNCODE_SERVERRELEASE2)  /* = OCI_18_3 */
 
         #define OCI_VERSION_COMPILE OCI_18_3
         #define OCI_VERSION_RUNTIME OCI_18_3
+
+    #elif defined(OCI_FNCODE_LOBGETCHUNKSIZE)  /* = OCI_12_2 */
+
+        #define OCI_VERSION_COMPILE OCI_12_2
+        #define OCI_VERSION_RUNTIME OCI_12_2
 
     #elif defined(OCI_FNCODE_BINDBYPOS2)  /* = OCI_12_1 */
 
