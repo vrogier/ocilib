@@ -1069,26 +1069,30 @@ typedef unsigned int big_uint;
   #define boolean int
 #endif
 
-/* oracle OCI key versions*/
-
-#define OCI_8_0                             800
-#define OCI_8_1                             810
-#define OCI_9_0                             900
-#define OCI_9_2                             920
-#define OCI_10_1                            1010
-#define OCI_10_2                            1020
-#define OCI_11_1                            1110
-#define OCI_11_2                            1120
-#define OCI_12_1                            1210
-#define OCI_12_2                            1220
-#define OCI_18_3                            1830
-#define OCI_18_4                            1840
-
 /* versions extract macros */
 
 #define OCI_VER_MAJ(v)                      (unsigned int) ((v)/100)
 #define OCI_VER_MIN(v)                      (unsigned int) (((v)/10) - (((v)/100)*10))
 #define OCI_VER_REV(v)                      (unsigned int) ((v) - (((v)/10)*10))
+
+#define OCI_VER_MAKE(x, y, z)               ((x)*100 + (y)*10 + z)
+
+/* oracle OCI key versions*/
+
+#define OCI_8_0                             OCI_VER_MAKE( 8, 0, 0)
+#define OCI_8_1                             OCI_VER_MAKE( 8, 1, 0)
+#define OCI_9_0                             OCI_VER_MAKE( 9, 0, 0)
+#define OCI_9_2                             OCI_VER_MAKE( 9, 2, 0)
+#define OCI_10_1                            OCI_VER_MAKE(10, 1, 0)
+#define OCI_10_2                            OCI_VER_MAKE(10, 2, 0)
+#define OCI_11_1                            OCI_VER_MAKE(11, 1, 0)
+#define OCI_11_2                            OCI_VER_MAKE(11, 2, 0)
+#define OCI_12_1                            OCI_VER_MAKE(12, 1, 0)
+#define OCI_12_2                            OCI_VER_MAKE(12, 2, 0)
+#define OCI_18_1                            OCI_VER_MAKE(18, 1, 0)
+#define OCI_18_2                            OCI_VER_MAKE(18, 2, 0)
+#define OCI_18_3                            OCI_VER_MAKE(18, 3, 0)
+#define OCI_18_4                            OCI_VER_MAKE(18, 4, 0)
 
 /* OCILIB Error types */
 

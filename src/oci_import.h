@@ -287,6 +287,7 @@ extern XAOENV                       xaoEnv;
 extern OCILOBGETCONTENTTYPE         OCILobGetContentType;
 extern OCISTMTGETNEXTRESULT         OCIStmtGetNextResult;
 extern OCISERVERRELEASE2            OCIServerRelease2;
+extern OCISODAOPERKEYSSET           OCISodaOperKeysSet;
 
 #ifdef ORAXB8_DEFINED
 

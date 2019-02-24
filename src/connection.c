@@ -1313,9 +1313,9 @@ const otext * OCI_API OCI_GetVersionServer
         {    
             dbstr = OCI_StringGetOracleString(con->ver_str, &dbsize);
 
-         #if OCI_VERSION_COMPILE >= OCI_18_3
+         #if OCI_VERSION_COMPILE >= OCI_18_1
    
-            if (OCILib.version_runtime >= OCI_18_3)
+            if (OCILib.version_runtime >= OCI_18_1)
             {
                 OCI_EXEC(OCIServerRelease2((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX, &version, OCI_DEFAULT))
             }
@@ -1335,9 +1335,9 @@ const otext * OCI_API OCI_GetVersionServer
         {
             int ver_maj = 0, ver_min = 0, ver_rev = 0;
 
-        #if OCI_VERSION_COMPILE >= OCI_18_3
+        #if OCI_VERSION_COMPILE >= OCI_18_1
 
-            if (OCILib.version_runtime >= OCI_18_3)
+            if (OCILib.version_runtime >= OCI_18_1)
             {
                 ver_maj = OCI_SERVER_RELEASE_REL(version);
                 ver_min = OCI_SERVER_RELEASE_REL_UPD(version);
@@ -1912,11 +1912,11 @@ boolean OCI_API OCI_SetTimeout
                 OCI_RETVAL = OCI_STATUS;
             }
 
-         #if OCI_VERSION_COMPILE >= OCI_18_3
+         #if OCI_VERSION_COMPILE >= OCI_18_1
 
             case OCI_NTO_CALL:
             {
-                if (OCILib.version_runtime >= OCI_18_3)
+                if (OCILib.version_runtime >= OCI_18_1)
                 {
                     OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
                     OCI_RETVAL = OCI_STATUS;
@@ -1966,7 +1966,7 @@ unsigned int OCI_API OCI_GetTimeout
                 OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
             }
 
-        #if OCI_VERSION_COMPILE >= OCI_18_3
+        #if OCI_VERSION_COMPILE >= OCI_18_1
 
             case OCI_NTO_CALL:
             {

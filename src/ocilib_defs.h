@@ -41,67 +41,69 @@
 
 #else
 
-    #if defined(OCI_FNCODE_SERVERRELEASE2)  /* = OCI_18_3 */
+    #if defined(OCI_MAJOR_VERSION)  
+
+		#define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
+		#if OCI_VERSION_COMPILE == OCI_VER_MAKE(18, 0, 0)   /* Oracle headers not updated for Windows 18.3 release ! */
+			#undef  OCI_VERSION_COMPILE
+			#define OCI_VERSION_COMPILE OCI_18_3
+		#endif 
+
+    #elif defined(OCI_FNCODE_SODAOPERKEYSSET)  /* = OCI_18_3 */
 
         #define OCI_VERSION_COMPILE OCI_18_3
-        #define OCI_VERSION_RUNTIME OCI_18_3
+
+	#elif defined(OCI_FNCODE_SERVERRELEASE2)  /* = OCI_18_1 */
+
+		#define OCI_VERSION_COMPILE OCI_18_1
 
     #elif defined(OCI_FNCODE_LOBGETCHUNKSIZE)  /* = OCI_12_2 */
 
         #define OCI_VERSION_COMPILE OCI_12_2
-        #define OCI_VERSION_RUNTIME OCI_12_2
 
     #elif defined(OCI_FNCODE_BINDBYPOS2)  /* = OCI_12_1 */
 
         #define OCI_VERSION_COMPILE OCI_12_1
-        #define OCI_VERSION_RUNTIME OCI_12_1
 
     #elif defined(OCI_FNCODE_LOBGETCONTENTTYPE)  /* = OCI_11_2 */
 
         #define OCI_VERSION_COMPILE OCI_11_2
-        #define OCI_VERSION_RUNTIME OCI_11_2
 
     #elif defined(OCI_FNCODE_LOBGETOPT)        /* = OCI_11_1 */
 
         #define OCI_VERSION_COMPILE OCI_11_1
-        #define OCI_VERSION_RUNTIME OCI_11_1
 
     #elif defined(OCI_FNCODE_DBSHUTDOWN)       /* = OCI_10_2 */
 
         #define OCI_VERSION_COMPILE OCI_10_2
-        #define OCI_VERSION_RUNTIME OCI_10_2
 
     #elif defined(OCI_FNCODE_LOBREAD2)         /* = OCI_10_1 */
 
         #define OCI_VERSION_COMPILE OCI_10_1
-        #define OCI_VERSION_RUNTIME OCI_10_1
 
     #elif defined(OCI_FNCODE_STMTPREPARE2)     /* = OCI_9_2 */
 
         #define OCI_VERSION_COMPILE OCI_9_2
-        #define OCI_VERSION_RUNTIME OCI_9_2
 
     #elif defined(OCI_FNCODE_CPOOLCREATE)      /* = OCI_9_0 */
 
         #define OCI_VERSION_COMPILE OCI_9_0
-        #define OCI_VERSION_RUNTIME OCI_9_0
 
     #elif defined(OCIThreadHandle)             /* = OCI_8_1 */
 
         #define OCI_VERSION_COMPILE OCI_8_1
-        #define OCI_VERSION_RUNTIME OCI_8_1
 
     #elif defined(OCIEnv)                      /* = OCI_8_0 */
 
         #define OCI_VERSION_COMPILE OCI_8_0
-        #define OCI_VERSION_RUNTIME OCI_8_0
 
     #else                                      /* OCI_UNKNOWN */
 
         #define OCI_VERSION_COMPILE OCI_UNKNOWN
-        #define OCI_VERSION_RUNTIME OCI_UNKNOWN
 
     #endif
+
+	#define OCI_VERSION_RUNTIME OCI_VERSION_COMPILE
 
 #endif
 

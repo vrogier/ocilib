@@ -261,7 +261,7 @@ boolean OCI_ColumnDescribe
                 col->props |=  OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL;
             }
 
-        #if OCI_VERSION_COMPILE >= OCI_18_3
+        #if OCI_VERSION_COMPILE >= OCI_18_1
 
             if (value & OCI_ATTR_COL_PROPERTY_IS_LPART)
             {

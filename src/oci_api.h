@@ -2152,7 +2152,7 @@ typedef sword (*OCISTMTGETNEXTRESULT)
     ub4          mode
 );
 
-/* API introduced in 18.3 */
+/* API introduced in 18.1 */
 
 typedef sword(*OCISERVERRELEASE2)
 (
@@ -2165,6 +2165,17 @@ typedef sword(*OCISERVERRELEASE2)
     ub4          mode
 );
 
+/* API introduced in 18.3 */
+
+typedef sword(*OCISODAOPERKEYSSET)
+(
+	const void   *operhp, // should be OCISodaOperationOptions
+	OraText		**keysArray,
+	ub4		     *lengthsArray,
+	ub4           count,
+	OCIError     *errhp,
+	ub4			  mode
+);
 
 #endif /* OCILIB_OCI_API_H_INCLUDED */
 
