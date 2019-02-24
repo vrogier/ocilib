@@ -1032,6 +1032,10 @@ inline void Environment::Initialize(EnvironmentFlags mode, const ostring& libpat
 inline void Environment::Cleanup()
 {
     GetInstance().SelfCleanup();
+
+	Environment* handle = static_cast<Environment*>(OCI_GetUserData(nullptr));	
+	OCI_SetUserData(nullptr, handle);
+	delete handle;
 }
 
 inline Environment::EnvironmentFlags Environment::GetMode()
@@ -1246,9 +1250,16 @@ inline Handle * Environment::GetEnvironmentHandle()
 
 inline Environment& Environment::GetInstance()
 {
-    static Environment envHandle;
+	Environment* handle = static_cast<Environment*>(OCI_GetUserData(nullptr));
+	
+	if (handle == nullptr)
+	{
+		handle = new Environment;
 
-    return envHandle;
+		OCI_SetUserData(nullptr, handle);
+	}
+
+	return *handle;
 }
 
 inline Environment::Environment() : _locker(), _handle(), _handles(), _callbacks(), _mode(), _initialized(false)

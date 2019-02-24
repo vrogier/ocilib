@@ -987,9 +987,10 @@ public:
      * This function must be called before any other OCILIB library function.
      *
      * @warning
-     * It should be called <b>ONCE</b> per application
+     * - It should be called <b>ONCE</b> per application
+	 * - It is not thread safe
      *
-     * @warning
+     * @note
      * - The parameter 'libpath' is only used if OCILIB has been built with the option OCI_IMPORT_RUNTIME
      * - If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables
      *
@@ -1006,7 +1007,8 @@ public:
      * - It unloads the Oracle shared library if it has been dynamically loaded
      *
      * @warning
-     * It should be called <b>ONCE</b> per application
+     * - It should be called <b>ONCE</b> per application
+     * - It is not thread safe
      *
      */
     static void Cleanup();
