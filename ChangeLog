@@ -5,6 +5,10 @@
        - Fixed compile and run time Oracle version detection when Oracle version is >= 18.1
 	   - Added macro OCI_VER_MAKE to make an ocilib compliant oracle version from major, minor and revision versions (e.g. OCI_VER_MAKE(18,3,0) equals OCI_18_3)
 	   - Updated Oracle versions constants
+
+    * Fixes (C++ API)
+	
+       - Issue #197: Using C++ interface in multiple DLLs
  		   
 2019-02-17 Version 4.6.1 Vincent Rogier vince.rogier@ocilib.net
  
