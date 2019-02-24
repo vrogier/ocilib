@@ -1332,16 +1332,16 @@ boolean OCI_API OCI_Initialize
         LIB_SYMBOL(OCILib.lib_handle, "OCIServerRelease2", OCIServerRelease2,
                    OCISERVERRELEASE2);
 
-		LIB_SYMBOL(OCILib.lib_handle, "OCISodaOperKeysSet", OCISodaOperKeysSet,
-			OCISODAOPERKEYSSET);
+        LIB_SYMBOL(OCILib.lib_handle, "OCISodaOperKeysSet", OCISodaOperKeysSet,
+            OCISODAOPERKEYSSET);
 
         /* API Version checking */
 
-		if (OCISodaOperKeysSet)
-		{
-			OCILib.version_runtime = OCI_18_3;
-		}
-		else if (OCIServerRelease2)
+        if (OCISodaOperKeysSet)
+        {
+            OCILib.version_runtime = OCI_18_3;
+        }
+        else if (OCIServerRelease2)
         {
             OCILib.version_runtime = OCI_18_1;
         }

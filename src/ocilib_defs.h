@@ -43,19 +43,19 @@
 
     #if defined(OCI_MAJOR_VERSION)  
 
-		#define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
-		#if OCI_VERSION_COMPILE == OCI_VER_MAKE(18, 0, 0)   /* Oracle headers not updated for Windows 18.3 release ! */
-			#undef  OCI_VERSION_COMPILE
-			#define OCI_VERSION_COMPILE OCI_18_3
-		#endif 
+        #define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
+        #if OCI_VERSION_COMPILE == OCI_VER_MAKE(18, 0, 0)   /* Oracle headers not updated for Windows 18.3 release ! */
+            #undef  OCI_VERSION_COMPILE
+            #define OCI_VERSION_COMPILE OCI_18_3
+        #endif 
 
     #elif defined(OCI_FNCODE_SODAOPERKEYSSET)  /* = OCI_18_3 */
 
         #define OCI_VERSION_COMPILE OCI_18_3
 
-	#elif defined(OCI_FNCODE_SERVERRELEASE2)  /* = OCI_18_1 */
+    #elif defined(OCI_FNCODE_SERVERRELEASE2)  /* = OCI_18_1 */
 
-		#define OCI_VERSION_COMPILE OCI_18_1
+        #define OCI_VERSION_COMPILE OCI_18_1
 
     #elif defined(OCI_FNCODE_LOBGETCHUNKSIZE)  /* = OCI_12_2 */
 
@@ -103,7 +103,7 @@
 
     #endif
 
-	#define OCI_VERSION_RUNTIME OCI_VERSION_COMPILE
+    #define OCI_VERSION_RUNTIME OCI_VERSION_COMPILE
 
 #endif
 

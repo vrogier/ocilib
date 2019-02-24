@@ -117,7 +117,7 @@ OCI_TypeInfo * OCI_ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
     if (object && result->type == OCI_TIF_TYPE && !result->is_final)
     {
-        OCIRef	*ref = NULL;
+        OCIRef  *ref = NULL;
         OCIType *tdo = NULL;
 
         /* create a local REF to store a REF to the object real type */
@@ -430,10 +430,10 @@ boolean OCI_ObjectGetAttrInfo
         }
     }
 
-	if (*p_align > typinf->align)
-	{
-		typinf->align = *p_align;
-	}
+    if (*p_align > typinf->align)
+    {
+        typinf->align = *p_align;
+    }
 
 
     return TRUE;

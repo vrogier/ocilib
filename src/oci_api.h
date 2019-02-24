@@ -2169,12 +2169,12 @@ typedef sword(*OCISERVERRELEASE2)
 
 typedef sword(*OCISODAOPERKEYSSET)
 (
-	const void   *operhp, // should be OCISodaOperationOptions
-	OraText		**keysArray,
-	ub4		     *lengthsArray,
-	ub4           count,
-	OCIError     *errhp,
-	ub4			  mode
+    const void   *operhp, // should be OCISodaOperationOptions
+    OraText     **keysArray,
+    ub4          *lengthsArray,
+    ub4           count,
+    OCIError     *errhp,
+    ub4           mode
 );
 
 #endif /* OCILIB_OCI_API_H_INCLUDED */

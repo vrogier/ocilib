@@ -1081,12 +1081,12 @@ void * OCI_API OCI_GetUserData
     OCI_Connection *con
 )
 {
-	OCI_CALL_ENTER(void*, NULL)
-	OCI_CALL_CHECK_INITIALIZED()
+    OCI_CALL_ENTER(void*, NULL)
+    OCI_CALL_CHECK_INITIALIZED()
 
-	OCI_RETVAL = (void*) (con ? con->usrdata : OCILib.usrdata);
-	
-	OCI_CALL_EXIT()
+    OCI_RETVAL = (void*) (con ? con->usrdata : OCILib.usrdata);
+    
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1100,20 +1100,20 @@ boolean OCI_API OCI_SetUserData
 )
 {
     OCI_CALL_ENTER(boolean, FALSE)
-	OCI_CALL_CHECK_INITIALIZED()
+    OCI_CALL_CHECK_INITIALIZED()
 
-	if (con)
-	{
-		con->usrdata = data;
-	}
-	else
-	{
-		OCILib.usrdata = data;
-	}
+    if (con)
+    {
+        con->usrdata = data;
+    }
+    else
+    {
+        OCILib.usrdata = data;
+    }
 
-	OCI_RETVAL = TRUE;
+    OCI_RETVAL = TRUE;
 
-	OCI_CALL_EXIT()
+    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *

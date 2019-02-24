@@ -216,8 +216,8 @@ boolean OCI_ListClear
 
     while (item)
     {
-		OCI_Item *temp = item;
-		
+        OCI_Item *temp = item;
+        
         item = item->next;
 
         /* free data */

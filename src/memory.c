@@ -85,11 +85,11 @@ void * OCI_MemRealloc
     int    ptr_type,
     size_t block_size,
     size_t block_count,
-	boolean zero_fill
+    boolean zero_fill
 )
 {
     OCI_MemoryBlock * mem_block = NULL;
-	size_t size = 0;
+    size_t size = 0;
 
     if (ptr_mem)
     {
@@ -109,10 +109,10 @@ void * OCI_MemRealloc
 
             size_diff = (big_int) size - mem_block->size;
 
-			if (zero_fill)
-			{
+            if (zero_fill)
+            {
                 memset(((unsigned char *)mem_block) + mem_block->size, 0, size - mem_block->size);
-			}
+            }
 
             mem_block->type = ptr_type;
             mem_block->size = (unsigned int) size;
