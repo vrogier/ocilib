@@ -1341,7 +1341,7 @@ boolean OCI_API OCI_Initialize
 		{
 			OCILib.version_runtime = OCI_18_3;
 		}
-		if (OCIServerRelease2)
+		else if (OCIServerRelease2)
         {
             OCILib.version_runtime = OCI_18_1;
         }
