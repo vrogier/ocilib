@@ -1035,7 +1035,6 @@ inline void Environment::Cleanup()
 
 	Environment* handle = static_cast<Environment*>(OCI_GetUserData(nullptr));	
 	OCI_SetUserData(nullptr, handle);
-	delete handle;
 }
 
 inline Environment::EnvironmentFlags Environment::GetMode()
@@ -1251,15 +1250,16 @@ inline Handle * Environment::GetEnvironmentHandle()
 inline Environment& Environment::GetInstance()
 {
 	Environment* handle = static_cast<Environment*>(OCI_GetUserData(nullptr));
-	
-	if (handle == nullptr)
-	{
-		handle = new Environment;
+    if (handle != nullptr)
+    {
+        return *handle;
+    }
 
-		OCI_SetUserData(nullptr, handle);
-	}
+    static Environment environment;
 
-	return *handle;
+    OCI_SetUserData(nullptr,&environment);
+
+    return environment;
 }
 
 inline Environment::Environment() : _locker(), _handle(), _handles(), _callbacks(), _mode(), _initialized(false)
