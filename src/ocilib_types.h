@@ -220,6 +220,7 @@ struct OCI_Library
     big_uint             mem_bytes_oci;           /* allocated bytes by OCI client */
     big_uint             mem_bytes_lib;           /* allocated bytes by OCILIB */
     OCI_Mutex           *mem_mutex;               /* mutex for memory counters */
+	void                *usrdata;                 /* user data */
     boolean              env_vars[OCI_VARS_COUNT];/* specific environment variables */
 #ifdef OCI_IMPORT_RUNTIME
     LIB_HANDLE           lib_handle;              /* handle of runtime shared library */

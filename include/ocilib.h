@@ -2263,6 +2263,10 @@ OCI_EXPORT boolean OCI_API OCI_IsConnected
  *
  * @param con - Connection handle
  *
+ * @note
+ * Value NULL for parameter \p con is a valid value.
+ * It returns then previously stored data with global scope (program wide)
+ *
  */
 
 OCI_EXPORT void * OCI_API OCI_GetUserData
@@ -2276,6 +2280,10 @@ OCI_EXPORT void * OCI_API OCI_GetUserData
  *
  * @param con  - Connection handle
  * @param data - User data pointer
+ *
+ * @note
+ * Value NULL for parameter \p con is a valid value.
+ * It allows users to associate a pointer to user data with global scope (program wide)
  *
  * @return
  * TRUE on success otherwise FALSE
