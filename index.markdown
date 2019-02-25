@@ -21,7 +21,7 @@ The OCILIB library  :
   * encapsulates OCI (Oracle Call Interface)
   * is the most complete available OCI wrapper
 
-**OCILIB** is developed by [{site.ocilib_author}]({{site.baseurl}}/about/). Get the latest package, install and enjoy it !
+**OCILIB** is developed by [{{site.ocilib_author}}]({{site.baseurl}}/about/). Get the latest package, install and enjoy it !
   
 ## Latest version
 
