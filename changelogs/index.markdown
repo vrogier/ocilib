@@ -20,7 +20,7 @@ _[2019-02-25 . version 4.6.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.
 
   * Some C API and C++ API Bug fixes 
 
-_[2018-02-17 . version 4.6.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.6.1.txt)_
+_[2019-02-17 . version 4.6.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.6.1.txt)_
 
   * Some C API and C++ API Bug fixes 
 
