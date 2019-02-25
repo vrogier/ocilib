@@ -7,7 +7,7 @@ slug: download
 title: Download
 ---
 
-* Get the lastest package from GitHub :[version site.ocilib_current_release_version} ({site.ocilib_current_release_date})]({{site.projecturl}}/releases/)
+* Get the lastest package from GitHub :[version {{site.ocilib_current_release_version}} ({{site.ocilib_current_release_date}})]({{site.projecturl}}/releases/)
 
 ## Installation
 

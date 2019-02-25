@@ -7,7 +7,7 @@ slug: about
 title: About
 ---
 
-OCILIB has been designed, developed and maintained by me, [{site.ocilib_author}]({{site.meurl}}).
+OCILIB has been designed, developed and maintained by me, [{{site.ocilib_author}}]({{site.meurl}}).
 
 ## Quick OCILIB History
 
