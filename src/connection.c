@@ -1924,11 +1924,13 @@ boolean OCI_API OCI_SetTimeout
             {
                 OCI_SET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_SEND_TIMEOUT, con->svr, &timeout, sizeof(timeout))
                 OCI_RETVAL = OCI_STATUS;
+                break;
             }
             case OCI_NTO_RECEIVE:
             {
                 OCI_SET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
                 OCI_RETVAL = OCI_STATUS;
+                break;
             }
 
          #if OCI_VERSION_COMPILE >= OCI_18_1
@@ -1940,6 +1942,7 @@ boolean OCI_API OCI_SetTimeout
                     OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
                     OCI_RETVAL = OCI_STATUS;
                 }
+                break;
             }
 
         #endif
@@ -1979,10 +1982,12 @@ unsigned int OCI_API OCI_GetTimeout
             case OCI_NTO_SEND:
             {
                 OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_SEND_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+                break;
             }
             case OCI_NTO_RECEIVE:
             {
                 OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+                 break;
             }
 
         #if OCI_VERSION_COMPILE >= OCI_18_1
@@ -1993,6 +1998,7 @@ unsigned int OCI_API OCI_GetTimeout
                 {
                     OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
                 }
+                break;
             }
             
          #endif
