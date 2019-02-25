@@ -34,13 +34,13 @@ var classocilib_1_1_interval =
     [ "ToString", "classocilib_1_1_interval.html#acc2699ed25fcd74ae05e9fd1b7099dbc", null ],
     [ "Clone", "classocilib_1_1_interval.html#ae6f8d79b4b91733990aa3d0e821c8283", null ],
     [ "operator+", "classocilib_1_1_interval.html#a6e1860b8ab9b1ef74a7c4abc0acc08fe", null ],
-    [ "operator-", "classocilib_1_1_interval.html#a5303122cc85356b242f5a0e4c4e6fec8", null ],
+    [ "operator -", "classocilib_1_1_interval.html#ae91da6316bf9dc79f7761b0c712456e5", null ],
     [ "operator+=", "classocilib_1_1_interval.html#a0d543fb59b6ab3b23a4b48d9b48c6e65", null ],
-    [ "operator-=", "classocilib_1_1_interval.html#ac92ddd1c7e219f1d88af4abc8e58d43f", null ],
+    [ "operator -=", "classocilib_1_1_interval.html#aa54115f75aef7e733e58677e0df66034", null ],
     [ "operator==", "classocilib_1_1_interval.html#afffb1087b972ea5abcc93c032191cd34", null ],
-    [ "operator!=", "classocilib_1_1_interval.html#adfbb0ad26edbfd7d1adc58cb690cc47e", null ],
-    [ "operator>", "classocilib_1_1_interval.html#ada028a864d807d64edb22525752ffc05", null ],
+    [ "operator !=", "classocilib_1_1_interval.html#a4c06c56d4ebaaa3b6e36b69756568c95", null ],
+    [ "operator >", "classocilib_1_1_interval.html#a3f5cad3b19f3ffce36f24af871405fdc", null ],
     [ "operator<", "classocilib_1_1_interval.html#ada18914aa8e50ab69e23f9ed90466817", null ],
-    [ "operator>=", "classocilib_1_1_interval.html#aeb552620b3a4371a374fe33c10bf6579", null ],
+    [ "operator >=", "classocilib_1_1_interval.html#a6cfb6eb2dfcadea4f2c2501a3fb56dc4", null ],
     [ "operator<=", "classocilib_1_1_interval.html#aaf1436cda1f65466415a2f5f023ab48f", null ]
 ];

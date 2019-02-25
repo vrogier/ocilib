@@ -3,6 +3,7 @@ var namespaceocilib =
     [ "Agent", "classocilib_1_1_agent.html", "classocilib_1_1_agent" ],
     [ "BindInfo", "classocilib_1_1_bind_info.html", "classocilib_1_1_bind_info" ],
     [ "BindResolver", "structocilib_1_1_bind_resolver.html", null ],
+    [ "BindResolverHandleType", "structocilib_1_1_bind_resolver_handle_type.html", null ],
     [ "BindResolverScalarType", "structocilib_1_1_bind_resolver_scalar_type.html", null ],
     [ "BindResolverType", "structocilib_1_1_bind_resolver_type.html", null ],
     [ "Collection", "classocilib_1_1_collection.html", "classocilib_1_1_collection" ],

@@ -1,4 +1,4 @@
-var files =
+var files_dup =
 [
     [ "ocilib.h", "ocilib_8h_source.html", null ],
     [ "ocilib.hpp", "ocilib_8hpp_source.html", null ],

@@ -27,7 +27,7 @@ var classocilib_1_1_resultset =
     [ "IsColumnNull", "classocilib_1_1_resultset.html#a10ec4abace9d08ea72cb4d44887e58a3", null ],
     [ "GetStatement", "classocilib_1_1_resultset.html#ad063f85f57f68acfaeef99c69b8d2f97", null ],
     [ "operator++", "classocilib_1_1_resultset.html#ad96fe1831dd60ae505dcbe78a3368214", null ],
-    [ "operator--", "classocilib_1_1_resultset.html#af724c83953fce49057bbe1b6c1358d67", null ],
+    [ "operator --", "classocilib_1_1_resultset.html#ad445496e23864c056086767ce79910a3", null ],
     [ "operator+=", "classocilib_1_1_resultset.html#a9f02c0463f2a1da2ea89f5ab6b997bf8", null ],
-    [ "operator-=", "classocilib_1_1_resultset.html#ade4c653d797b63fe9ed5d9ef47f71732", null ]
+    [ "operator -=", "classocilib_1_1_resultset.html#a31411fe8bc9f74653d801b1f9a2e85f1", null ]
 ];

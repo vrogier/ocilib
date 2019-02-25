@@ -1,13 +1,13 @@
 ---
 author: admin
 comments: true
-date: 2018-09-13 10:00:00+01:00
+date: 2019-02-25 20:00:00+01:00
 layout: page
 slug: about
 title: About
 ---
 
-OCILIB has been designed, developed and maintained by me, [Vincent Rogier]({{site.meurl}}).
+OCILIB has been designed, developed and maintained by me, [{site.ocilib_author}]({{site.meurl}}).
 
 ## Quick OCILIB History
 
@@ -27,8 +27,8 @@ Few years later and thousand of hours spent on it, OCILIB had became the referen
   
 ## About me
 
-I'm French, 40 years old and live/work in France around Paris.
+I'm French and live/work in France around Paris.
 <br/>
-I'm the Principal Software Engineer at [Capsule Technologie](http://www.capsuletech.com), a [QualcommLife](http://www.QualcommLife.com) company.
+I'm the Principal Software Engineer at [Capsule Technologie](http://www.capsuletech.com), industry leader in connected health.
 <br/>
-Previously I was working as a Senior Software Engineer for a French company that develops computerized integrated food management systems for hospitals and health care institutions. I was in charge of the conception, the implementation and the packaging of our main software solution.
+Previously I was working as a Senior Software Engineer for a French company that develops computerized integrated food management systems for hospitals and health care institutions.

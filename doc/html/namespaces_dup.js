@@ -1,4 +1,4 @@
-var namespaces =
+var namespaces_dup =
 [
     [ "ocilib", "namespaceocilib.html", null ]
 ];

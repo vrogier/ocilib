@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2018-11-21 10:00:00+01:00
+date: 2019-02-25 20:00:00+01:00
 layout: page
 slug: home
 title: Home
@@ -21,11 +21,11 @@ The OCILIB library  :
   * encapsulates OCI (Oracle Call Interface)
   * is the most complete available OCI wrapper
 
-**OCILIB** is developed by [Vincent Rogier]({{site.baseurl}}/about/). Get the latest package, install and enjoy it !
+**OCILIB** is developed by [{site.ocilib_author}]({{site.baseurl}}/about/). Get the latest package, install and enjoy it !
   
 ## Latest version
 
-The latest version is [version 4.6.0 (2018-11-21)]({{site.projecturl}}/releases/)
+The latest version is [version {site.ocilib_current_release_version} ({site.ocilib_current_release_date})]({{site.projecturl}}/releases/)
 <br/>
 <br/>
 [![Build Status](https://img.shields.io/travis/vrogier/ocilib/master.svg)](https://travis-ci.org/vrogier/ocilib)

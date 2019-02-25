@@ -17,7 +17,8 @@ var NAVTREEINDEX7 =
 "ocilib__impl_8hpp_source.html":[4,0,3],
 "pages.html":[],
 "structocilib_1_1_bind_resolver.html":[3,0,0,2],
-"structocilib_1_1_bind_resolver_scalar_type.html":[3,0,0,3],
-"structocilib_1_1_bind_resolver_type.html":[3,0,0,4],
-"structocilib_1_1_numeric_type_resolver.html":[3,0,0,27]
+"structocilib_1_1_bind_resolver_handle_type.html":[3,0,0,3],
+"structocilib_1_1_bind_resolver_scalar_type.html":[3,0,0,4],
+"structocilib_1_1_bind_resolver_type.html":[3,0,0,5],
+"structocilib_1_1_numeric_type_resolver.html":[3,0,0,28]
 };

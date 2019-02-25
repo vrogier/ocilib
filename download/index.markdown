@@ -1,13 +1,13 @@
 ---
 author: admin
 comments: true
-date: 2018-11-21 10:00:00+01:00
+date: 2019-02-25 20:00:00+01:00
 layout: page
 slug: download
 title: Download
 ---
 
-* Get the lastest package from GitHub :[version 4.6.0 (2018-11-21)]({{site.projecturl}}/releases/)
+* Get the lastest package from GitHub :[version site.ocilib_current_release_version} ({site.ocilib_current_release_date})]({{site.projecturl}}/releases/)
 
 ## Installation
 

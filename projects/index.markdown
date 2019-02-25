@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2017-11-29 10:00:00+01:00
+date: 2019-02-25 20:00:00+01:00
 layout: page
 slug: projects
 title: Projects
