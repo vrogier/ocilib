@@ -1,5 +1,6 @@
 set feedback off
 set heading off
+set trim off
 set trimspool on
 set newpage none
 set linesize 200
@@ -8,9 +9,11 @@ set pagesize 0
 spool &1
 
 select 
-	'#define OCI_SFC_' || RPAD(regexp_replace(name, ' /-', '_'), 40, ' ') || '         ' || action
+	'#define OCI_SFC_' || RPAD(regexp_replace(name, '\*| |/|-', '_'), 32, ' ') || action
 from
 	audit_actions 
+where 
+	action > 0
 order by 
 	action;
 
@@ -27,11 +30,13 @@ spool &2
 
 select 'const OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] ='  from dual;
 select '{' from dual;
-
+select '    {OCI_UNKNOWN                             , OTEXT("UNKNOWN")                        },' from dual;
 select 
-    '    {OCI_SFC_' || RPAD(REPLACE(name, ' /-', '_'), 40, ' ') || ', TEXT("' || RPAD(name || '")', 40, ' ') ||  ' },'
+    '    {OCI_SFC_' || RPAD(regexp_replace(name, '\*| |/|-', '_'), 32, ' ') || ', OTEXT("' || RPAD(name || '")', 32, ' ') || ' },'
 from
 	audit_actions 
+where 
+	action > 0
 order by 
 	action;
 
