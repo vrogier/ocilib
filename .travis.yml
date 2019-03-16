@@ -30,6 +30,6 @@ addons:
       name: "vrogier/ocilib"
       description: "Build submitted via Travis CI"
     notification_email: vince.rogier@gmail.com
-    build_command_prepend: "touch configure.ac aclocal.m4 configure Makefile.am Makefile.in config.h.in; ./configure --with-oracle-import=runtime CFLAGS='-g -O2 -std=gnu99'"
+    build_command_prepend: "touch configure.ac aclocal.m4 configure Makefile.am Makefile.in config.h.in; ./configure --with-oracle-import=runtime"
     build_command:   "make"
     branch_pattern: master
