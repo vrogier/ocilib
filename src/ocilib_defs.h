@@ -559,7 +559,7 @@
 
 #endif
 
-#define OCI_SQLCMD_COUNT                126
+#define OCI_SQLCMD_COUNT                239
 
 #define OCI_FMT_COUNT                   6
 
