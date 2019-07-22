@@ -3,7 +3,7 @@
 #define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
 #include "gtest/gtest.h"
 
-#ifdef FALSE //_UNICODE
+#ifdef _UNICODE
 #define OCI_CHARSET_WIDE
 using ostring = std::wstring;
 #else

@@ -20,7 +20,7 @@ std::vector<unsigned int> IntervalTypes{ OCI_INTERVAL_DS, OCI_INTERVAL_YM };
 
 TEST_P(TestInterval, CreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itv = OCI_IntervalCreate(nullptr, GetParam());
     ASSERT_EQ(GetParam(), OCI_IntervalGetType(itv));
@@ -31,7 +31,7 @@ TEST_P(TestInterval, CreateAndFree)
 
 TEST_P(TestInterval, ArrayCreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itvs = OCI_IntervalArrayCreate(nullptr, GetParam(), ARRAY_SIZE);
     ASSERT_TRUE(nullptr != itvs);
@@ -48,7 +48,7 @@ TEST_P(TestInterval, ArrayCreateAndFree)
 
 TEST(TestInterval, AssignDaySecond)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
     const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
@@ -65,7 +65,7 @@ TEST(TestInterval, AssignDaySecond)
 
 TEST(TestInterval, AssignYearMonth)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
     const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
@@ -82,7 +82,7 @@ TEST(TestInterval, AssignYearMonth)
 
 TEST(TestInterval, CompareDaySecondInferiorSuperior)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
     const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
@@ -100,7 +100,7 @@ TEST(TestInterval, CompareDaySecondInferiorSuperior)
 
 TEST(TestInterval, CompareYearMonthInferiorSuperior)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
     const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
@@ -119,7 +119,7 @@ TEST(TestInterval, CompareYearMonthInferiorSuperior)
 
 TEST(TestInterval, CompareDaySecondEqual)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
     const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
@@ -136,7 +136,7 @@ TEST(TestInterval, CompareDaySecondEqual)
 
 TEST(TestInterval, CompareYearMonthEqual)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
     const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
@@ -153,7 +153,7 @@ TEST(TestInterval, CompareYearMonthEqual)
 
 TEST(TestInterval, FromTextDaySecond)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itv = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
     int day = 0, hour = 0, min = 0, sec = 0, msec = 0;
@@ -174,7 +174,7 @@ TEST(TestInterval, FromTextDaySecond)
 
 TEST(TestInterval, FromTextYearMonth)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itv = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
     int year = 0, month = 0;
@@ -194,7 +194,7 @@ TEST(TestInterval, ToTextDaySecond)
 {
     otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itv = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
 
@@ -212,7 +212,7 @@ TEST(TestInterval, ToTextDayYearMonth)
 {
     otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto itv = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
 
@@ -228,7 +228,7 @@ TEST(TestInterval, ToTextDayYearMonth)
 
 TEST(TestInterval, AddDaySecond)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     int day = 0, hour = 0, min = 0, sec = 0, msec = 0;
 
@@ -255,7 +255,7 @@ TEST(TestInterval, AddDaySecond)
 
 TEST(TestInterval, SubstractDaySecond)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     int day = 0, hour = 0, min = 0, sec = 0, msec = 0;
 
@@ -283,7 +283,7 @@ TEST(TestInterval, SubstractDaySecond)
 
 TEST(TestInterval, AdYearMonth)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     int year = 0, month = 0;
 
@@ -307,7 +307,7 @@ TEST(TestInterval, AdYearMonth)
 
 TEST(TestInterval, SubstractYearMonth)
 {
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     int year = 0, month = 0;
 

@@ -24,7 +24,7 @@ TEST(TestConnection, InvalidUser)
     Guard guard(context.Lock);
     context.Errs.clear();
 
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD_WRONG, OCI_SESSION_DEFAULT);
 
@@ -44,7 +44,7 @@ TEST(TestConnection, InvalidPassword)
     Guard guard(context.Lock);
     context.Errs.clear();
 
-    ASSERT_TRUE(OCI_Initialize(AddError, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD_WRONG, OCI_SESSION_DEFAULT);
 
