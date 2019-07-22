@@ -2,7 +2,7 @@
 
 TEST(TestDate, CreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date = OCI_DateCreate(nullptr);
     ASSERT_TRUE(nullptr != date);
@@ -13,7 +13,7 @@ TEST(TestDate, CreateAndFree)
 
 TEST(TestDate, ArrayCreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto dates = OCI_DateArrayCreate(nullptr, ARRAY_SIZE);
     ASSERT_TRUE(nullptr != dates);
@@ -29,7 +29,7 @@ TEST(TestDate, ArrayCreateAndFree)
 
 TEST(TestDate, Assign)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date1 = OCI_DateCreate(nullptr);
     const auto date2 = OCI_DateCreate(nullptr);
@@ -46,7 +46,7 @@ TEST(TestDate, Assign)
 
 TEST(TestDate, AddDays)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date1 = OCI_DateCreate(nullptr);
     const auto date2 = OCI_DateCreate(nullptr);
@@ -65,7 +65,7 @@ TEST(TestDate, AddDays)
 
 TEST(TestDate, AddMonths)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date1 = OCI_DateCreate(nullptr);
     const auto date2 = OCI_DateCreate(nullptr);
@@ -84,7 +84,7 @@ TEST(TestDate, AddMonths)
 
 TEST(TestDate, CompareInferior)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date1 = OCI_DateCreate(nullptr);
     const auto date2 = OCI_DateCreate(nullptr);
@@ -102,7 +102,7 @@ TEST(TestDate, CompareInferior)
 
 TEST(TestDate, CompareSuperior)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date1 = OCI_DateCreate(nullptr);
     const auto date2 = OCI_DateCreate(nullptr);
@@ -120,7 +120,7 @@ TEST(TestDate, CompareSuperior)
 
 TEST(TestDate, CompareEqual)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date1 = OCI_DateCreate(nullptr);
     const auto date2 = OCI_DateCreate(nullptr);
@@ -137,7 +137,7 @@ TEST(TestDate, CompareEqual)
 
 TEST(TestDate, DaysBetween)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date1 = OCI_DateCreate(nullptr);
     const auto date2 = OCI_DateCreate(nullptr);
@@ -155,7 +155,7 @@ TEST(TestDate, DaysBetween)
 
 TEST(TestDate, FromTextDefaultFormat)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date = OCI_DateCreate(nullptr);
     tm cdate {};
@@ -180,7 +180,7 @@ TEST(TestDate, ToTextDefaultFormat)
     otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
     const int year = 1978, month = 4, day = 13, hour = 20, min = 30, sec = 15;
 
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date = OCI_DateCreate(nullptr);
 
@@ -196,7 +196,7 @@ TEST(TestDate, ToTextDefaultFormat)
 
 TEST(TestDate, GetLastDay)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date = OCI_DateCreate(nullptr);
     int year = 0, month = 0, day = 0;
@@ -217,7 +217,7 @@ TEST(TestDate, GetLastDay)
 
 TEST(TestDate, GetNextDay)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date = OCI_DateCreate(nullptr);
     int year = 0, month = 0, day = 0;
@@ -237,7 +237,7 @@ TEST(TestDate, GetNextDay)
 
 TEST(TestDate, SetGetDateTime)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date = OCI_DateCreate(nullptr);
     int year = 1978, month = 4, day = 13, hour = 20, min = 30, sec = 15;
@@ -260,7 +260,7 @@ TEST(TestDate, SetGetDateTime)
 
 TEST(TestDate, DateFetch)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -285,7 +285,7 @@ TEST(TestDate, DateFetch)
 
 TEST(TestDate, DateBindInOut)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto date = OCI_DateCreate(nullptr);
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -311,7 +311,7 @@ TEST(TestDate, DateBindInOut)
 
 TEST(TestDate, DateBindRegister)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);

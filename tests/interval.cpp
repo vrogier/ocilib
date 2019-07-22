@@ -331,7 +331,7 @@ TEST(TestInterval, SubstractYearMonth)
 
 TEST(TestInterval, IntervalFetch)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -356,7 +356,7 @@ TEST(TestInterval, IntervalFetch)
 
 TEST(TestInterval, IntervalBindInOut)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto itv = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -383,7 +383,7 @@ TEST(TestInterval, IntervalBindInOut)
 
 TEST(TestInterval, IntervalBindRegister)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);

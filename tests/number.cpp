@@ -3,7 +3,7 @@
 template<typename T, int C>
 void SetAndGetValue(T value)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
     T value_in = value, value_out {};
@@ -20,7 +20,7 @@ void SetAndGetValue(T value)
 template<typename T, int C, typename F>
 void NumberOperation(T value1, T value2, T expected, F func)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
     T value{};
@@ -62,7 +62,7 @@ void DivideValue(T value1, T value2, T expected)
 
 TEST(TestNumber, CreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
     ASSERT_TRUE(nullptr != number);
@@ -73,7 +73,7 @@ TEST(TestNumber, CreateAndFree)
 
 TEST(TestNumber, ArrayCreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto numbers = OCI_NumberArrayCreate(nullptr, ARRAY_SIZE);
     ASSERT_TRUE(nullptr != numbers);
@@ -129,7 +129,7 @@ TEST(TestNumber, SetAndGetValueDouble)
 
 TEST(TestNumber, SetAndGetValueNumber)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
     
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -148,7 +148,7 @@ TEST(TestNumber, SetAndGetValueNumber)
 
 TEST(TestNumber, SetContent)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -167,7 +167,7 @@ TEST(TestNumber, SetContent)
 
 TEST(TestNumber, Assign)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -186,7 +186,7 @@ TEST(TestNumber, Assign)
 
 TEST(TestNumber, FromTextDefaultFormat)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
     int value_test = 123456789, value_out = 0;
@@ -206,7 +206,7 @@ TEST(TestNumber, ToTextDefaultFormat)
     otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
     int value_test = 123456789;
 
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
 
@@ -262,7 +262,7 @@ TEST(TestNumber, AddValueDouble)
 
 TEST(TestNumber, AddValueNumber)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -322,7 +322,7 @@ TEST(TestNumber, SubValueDouble)
 
 TEST(TestNumber, SubValueNumber)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -382,7 +382,7 @@ TEST(TestNumber, MultiplyValueDouble)
 
 TEST(TestNumber, MultiplyValueNumber)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -442,7 +442,7 @@ TEST(TestNumber, DivideValueDouble)
 
 TEST(TestNumber, DivideValueNumber)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -465,7 +465,7 @@ TEST(TestNumber, TestPositiveInfinity)
 {
     otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
  
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
     int value_test = 123456789, value_out = 0;
@@ -484,7 +484,7 @@ TEST(TestNumber, TestNegativeInfinity)
 {
     otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
     int value_test = 123456789, value_out = 0;
@@ -505,7 +505,7 @@ TEST(TestNumber, TestNegativeInfinity)
 
 TEST(TestNumber, Assign)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -524,7 +524,7 @@ TEST(TestNumber, Assign)
 
 TEST(TestNumber, AddDays)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -543,7 +543,7 @@ TEST(TestNumber, AddDays)
 
 TEST(TestNumber, AddMonths)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -562,7 +562,7 @@ TEST(TestNumber, AddMonths)
 
 TEST(TestNumber, CompareInferior)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -580,7 +580,7 @@ TEST(TestNumber, CompareInferior)
 
 TEST(TestNumber, CompareSuperior)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -598,7 +598,7 @@ TEST(TestNumber, CompareSuperior)
 
 TEST(TestNumber, DaysBettween)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number1 = OCI_NumberCreate(nullptr);
     const auto number2 = OCI_NumberCreate(nullptr);
@@ -617,7 +617,7 @@ TEST(TestNumber, DaysBettween)
 
 TEST(TestNumber, GetLastDay)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
     int year = 0, month = 0, day = 0;
@@ -636,7 +636,7 @@ TEST(TestNumber, GetLastDay)
 
 TEST(TestNumber, GetNextDay)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
     int year = 0, month = 0, day = 0;
@@ -655,7 +655,7 @@ TEST(TestNumber, GetNextDay)
 
 TEST(TestNumber, SetDateTime)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
     int year = 1978, month = 4, day = 13, hour = 20, min = 30, sec = 15;
@@ -678,7 +678,7 @@ TEST(TestNumber, SetDateTime)
 
 TEST(TestNumber, ArrayCreate)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto numbers = OCI_DateArrayCreate(nullptr, ARRAY_SIZE);
 
@@ -694,7 +694,7 @@ TEST(TestNumber, ArrayCreate)
 
 TEST(TestNumber, DateFetch)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -719,7 +719,7 @@ TEST(TestNumber, DateFetch)
 
 TEST(TestNumber, DateBindInOut)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);

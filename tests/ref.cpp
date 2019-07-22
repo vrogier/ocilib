@@ -1,8 +1,10 @@
 #include "ocilib_tests.h"
 
+// requires DDL from /demo/ref.sql
+
 TEST(TestRef, CreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"),  OCI_TIF_TYPE);
@@ -17,7 +19,7 @@ TEST(TestRef, CreateAndFree)
 
 TEST(TestRef, ArrayCreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
@@ -37,7 +39,7 @@ TEST(TestRef, ArrayCreateAndFree)
 
 TEST(TestRef, Assign)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -60,7 +62,7 @@ TEST(TestRef, Assign)
 
 TEST(TestRef, GetTypeInfo)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto tif  = OCI_TypeInfoGet(conn, OTEXT("vendor_t"),  OCI_TIF_TYPE);
@@ -74,7 +76,7 @@ TEST(TestRef, GetTypeInfo)
 
 TEST(TestRef, GetObjectFetch)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -96,7 +98,7 @@ TEST(TestRef, GetObjectFetch)
 
 TEST(TestRef, GetObjectNull)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"),  OCI_TIF_TYPE);
@@ -112,7 +114,7 @@ TEST(TestRef, GetObjectNull)
 
 TEST(TestRef, IsNullTrue)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"),  OCI_TIF_TYPE);
@@ -128,7 +130,7 @@ TEST(TestRef, IsNullTrue)
 
 TEST(TestRef, IsNullFalse)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -149,7 +151,7 @@ TEST(TestRef, IsNullFalse)
 
 TEST(TestRef, ToTextNotNull)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -174,7 +176,7 @@ TEST(TestRef, ToTextNotNull)
 
 TEST(TestRef, ToTextNull)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"),  OCI_TIF_TYPE);
@@ -193,7 +195,7 @@ TEST(TestRef, ToTextNull)
 
 TEST(TestRef, SetNullWhenNotNullWithoutPinningOject)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -215,7 +217,7 @@ TEST(TestRef, SetNullWhenNotNullWithoutPinningOject)
 
 TEST(TestRef, RefFetch)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -236,7 +238,7 @@ TEST(TestRef, RefFetch)
 
 TEST(TestRef, RefBindInOut)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -264,7 +266,7 @@ TEST(TestRef, RefBindInOut)
 
 TEST(TestRef, RefRegister)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -297,7 +299,7 @@ TEST(TestRef, RefRegister)
 
 TEST(TestRef, SetNullWhenNotNullWithPinningOject)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -321,7 +323,7 @@ TEST(TestRef, SetNullWhenNotNullWithPinningOject)
 
 TEST(TestRef, SetNullWhenNull)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"),  OCI_TIF_TYPE);
