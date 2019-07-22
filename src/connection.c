@@ -906,7 +906,6 @@ boolean OCI_ConnectionClose
     return TRUE;
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ConnectionCreateInternal
  * --------------------------------------------------------------------------------------------- */
@@ -935,6 +934,31 @@ OCI_Connection * OCI_ConnectionCreateInternal
     }
 
     return con;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ConnectionGetMinSupportedVersion
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_ConnectionGetMinSupportedVersion
+(
+    OCI_Connection *con
+)
+{
+    return (OCILib.version_runtime > con->ver_num) ? con->ver_num : OCILib.version_runtime;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_ConnectionIsVersionSupported
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_ConnectionIsVersionSupported
+(
+    OCI_Connection *con,
+    unsigned int    version
+)
+{
+    return OCI_ConnectionGetMinSupportedVersion(con) >= version;
 }
 
 /* ********************************************************************************************* *
@@ -1533,9 +1557,9 @@ unsigned int OCI_API OCI_GetVersionConnection
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
     /* return the minimum supported version */
+  
+    OCI_RETVAL = OCI_ConnectionGetMinSupportedVersion(con);
 
-    OCI_RETVAL = (OCILib.version_runtime > con->ver_num) ? con->ver_num : OCILib.version_runtime;
-    
     OCI_CALL_EXIT()
 }
 
@@ -2340,7 +2364,7 @@ unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
-    if (con->ver_num >= OCI_11_1)
+    if (OCI_ConnectionIsVersionSupported(con, OCI_11_1))
     {
         OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE, con->ses, &prefetch_size, NULL);
     }
@@ -2370,7 +2394,7 @@ boolean OCI_API OCI_SetDefaultLobPrefetchSize
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
-    if (con->ver_num >= OCI_11_1)
+    if (OCI_ConnectionIsVersionSupported(con, OCI_11_1))
     {
         OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE, con->ses, &prefetch_size, sizeof(prefetch_size));
     }
@@ -2403,7 +2427,7 @@ unsigned int OCI_API OCI_GetMaxCursors
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
-    if (con->ver_num >= OCI_12_1)
+    if (OCI_ConnectionIsVersionSupported(con, OCI_12_1))
     {
         OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_MAX_OPEN_CURSORS, con->ses, &max_cursors, NULL);
     }

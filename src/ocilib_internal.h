@@ -236,6 +236,17 @@ boolean OCI_ConnectionClose
     OCI_Connection *con
 );
 
+boolean OCI_ConnectionIsVersionSupported
+(
+    OCI_Connection *con,
+    unsigned int    version
+);
+
+boolean OCI_ConnectionGetMinSupportedVersion
+(
+    OCI_Connection *con
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * date.c
  * --------------------------------------------------------------------------------------------- */
