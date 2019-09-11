@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2019-02-25 20:00:00+01:00
+date: 2019-09-11 10:00:00+01:00
 layout: page
 slug: projects
 title: Projects
@@ -20,6 +20,7 @@ Here are some projects using OCILIB :
   * Used by Siemens IT Solutions & Services Finance
   * Used as Oracle underlying DB access layer in [Skyway AIMS](http://www.solari.it/) Solari’s Airport Information Management System
   * Used in [PlakView software](http://www.amesys.fr/), an image processing system used in the visual detection, identification and recognition of registration plates
+  * Used by [Turkish State Meteorological Service](www.mgm.gov.tr) for archiving 4 millions data samples per day from automatic weather stations and other sources (15 billions samples so far)
   * Used as Oracle underlying DB access layer in [Icinga](http://www.icinga.org), a popular open source monitoring system (Nagios fork)
   * Used as Oracle underlying DB access layer in [Merlin](http://www.op5.org/community/plugin-inventory/op5-projects/merlin), a Module for Effortless Redundancy and Load balancing In Nagios
   * Used in various applications and frameworks from worldwide IT consultant companies (India, China, America, Germany, ...) 
