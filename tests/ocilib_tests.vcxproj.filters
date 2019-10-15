@@ -22,6 +22,9 @@
     <ClCompile Include="lob.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="ReportedIssues.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
