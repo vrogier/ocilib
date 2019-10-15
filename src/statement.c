@@ -571,7 +571,7 @@ boolean OCI_BindCheckAll
             {
                 if (bnd->is_array)
                 {
-                    for (j = 0; j < bnd->buffer.count && OCI_STATUS; j++)
+                    for (j = 0; j < stmt->nb_iters && OCI_STATUS; j++)
                     {
                         OCI_STATUS = OCI_BindCheck(bnd, (ub1*)bnd->input, (ub1*)bnd->buffer.data, j);
                     }
@@ -621,7 +621,7 @@ boolean OCI_BindUpdateAll
             {
                 if (bnd->is_array)
                 {
-                    for (ub4 j = 0; j < bnd->buffer.count && OCI_STATUS; j++)
+                    for (ub4 j = 0; j < stmt->nb_iters && OCI_STATUS; j++)
                     {
                         OCI_STATUS = OCI_BindUpdate(bnd, (ub1*)bnd->buffer.data, (ub1*)bnd->input, j);
                     }
