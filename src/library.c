@@ -532,8 +532,8 @@ OCILOBWRITEAPPEND2           OCILobWriteAppend2           = NULL;
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ExternalSubTypeToSQLType
-* --------------------------------------------------------------------------------------------- */
+ * OCI_ExternalSubTypeToSQLType
+ * --------------------------------------------------------------------------------------------- */
 
 unsigned int OCI_ExternalSubTypeToSQLType
 (
@@ -620,8 +620,8 @@ unsigned int OCI_ExternalSubTypeToSQLType
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ExternalSubTypeToHandleType
-* --------------------------------------------------------------------------------------------- */
+ * OCI_ExternalSubTypeToHandleType
+ * --------------------------------------------------------------------------------------------- */
 
 unsigned int OCI_ExternalSubTypeToHandleType
 (
@@ -668,8 +668,8 @@ unsigned int OCI_ExternalSubTypeToHandleType
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_FreeObjectFromType
-* --------------------------------------------------------------------------------------------- */
+ * OCI_FreeObjectFromType
+ * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_FreeObjectFromType(void *obj, unsigned int type)
 {
@@ -795,8 +795,8 @@ void OCI_CallEnter
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_CallExit
-* --------------------------------------------------------------------------------------------- */
+ * OCI_CallExit
+ * --------------------------------------------------------------------------------------------- */
 
 void OCI_CallExit
 (
@@ -811,6 +811,49 @@ void OCI_CallExit
                                (ctx->call_err->type != OCI_UNKNOWN) &&
                                (!ctx->call_status || (OCI_ERR_WARNING == ctx->call_err->type && OCILib.warnings_on));
     } 
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_GetEnvironmentVariable
+ * 
+ * @note 
+ * Values are allocated with OCI_MemAlloc() and need to be freed by the caller using OCI_MemFree()
+ *
+ * --------------------------------------------------------------------------------------------- */
+
+char * OCI_GetEnvironmentVariable
+(
+    const char *name
+)
+{
+    char *value = getenv(name);
+
+    if (value)
+    {
+        value = ocistrdup(value);
+    }
+
+#if defined(_WINDOWS)
+
+    else
+    {
+        // Variables set using SetEnvironmentVariable() on Windows are not seen by MSVC implementation of getenv() !!
+        // Thus, let's check if they can be retrieved using GetEnvironmentVariable()   
+        unsigned int size = GetEnvironmentVariableA(name, NULL, 0);
+        if (size > 0)
+        {
+            value = OCI_MemAlloc(OCI_IPC_STRING, size, 1, TRUE);
+            size = GetEnvironmentVariableA(name, value, size);
+            if (size == 0)
+            {
+                OCI_MemFree(value);
+            }
+        }
+    }
+
+#endif 
+
+    return value;
 }
 
 /* ********************************************************************************************* *
@@ -877,16 +920,18 @@ boolean OCI_API OCI_Initialize
 
     for (i = 0; i < OCI_VARS_COUNT; i++)
     {
-        char *value = getenv(EnvironmentVarNames[i]);
+        char *value = OCI_GetEnvironmentVariable(EnvironmentVarNames[i]);
 
         OCILib.env_vars[i] = value && (ocistrcasecmp(value, OCI_VARS_TRUE_VALUE) == 0 || atoi(value) == 1);
+
+        OCI_FREE(value);
     }
 
     /* test for UTF8 environment */
 
     if (OCI_CHAR_ANSI == OCILib.charset)
     {
-        char *str = getenv("NLS_LANG");
+        char *str = OCI_GetEnvironmentVariable("NLS_LANG");
 
         if (str)
         {
@@ -894,12 +939,14 @@ boolean OCI_API OCI_Initialize
 
             strncat(nls_lang, str, OCI_SIZE_OBJ_NAME);
 
-            for (str = nls_lang; *str; str++)
+            for (char* ptr = nls_lang; *ptr; ptr++)
             {
-                *str = (char) toupper(*str);
+                *ptr = (char) toupper(*ptr);
             }
 
             OCILib.nls_utf8 = (NULL != strstr(nls_lang, "UTF8"));
+
+            OCI_FREE(str);
         }
     }
 
