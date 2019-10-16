@@ -1905,7 +1905,7 @@ typedef unsigned int big_uint;
  *  - when OCI_ErrorGetType() return OCI_ERR_ORACLE, OCI_ErrorGetOCICode() returns:
  *    - any ORA-XXXXXX error code. Refer to Oracle documentation
  *  - when OCI_ErrorGetType() return OCI_ERR_OCILIB, possible error code returned by OCI_ErrorGetInternalCode() 
- *    - OCI_ERR_LOADING_SHARED_LIB : OCILIB could not load oracle shared libraries at runtime (32/64bits mistmatch, wrong <lib_path>, missing MSVC runtime required by oci.dll (MS Windows)
+ *    - OCI_ERR_LOADING_SHARED_LIB : OCILIB could not load oracle shared libraries at runtime (32/64bits mistmatch, wrong \p lib_path, missing MSVC runtime required by oci.dll (MS Windows)
  *    - OCI_ERR_LOADING_SYMBOLS : the loaded shared library does not contain OCI symbols
  *    - OCI_ERR_NOT_AVAILABLE : OCILIb was built with OCI_CHARSET_WIDE and the oracle shared library dos not supports UTF16 (Oracle 8i)
  *    - OCI_ERR_CREATE_OCI_ENVIRONMENT: Oracle OCI environment initialization failed (in such cases, it is impossible to get the reason)
@@ -11754,7 +11754,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberSetContent
 * @param value  - pointer to value to set
 *
 * @note
-* Argument <param> type can be :
+* Argument \p param type can be :
 *
 * - OCI_NUM_SHORT     : value is a pointer to a signed short
 * - OCI_NUM_USHORT    : value is a pointer to an unsigned short
