@@ -1093,6 +1093,8 @@ typedef unsigned int big_uint;
 #define OCI_18_2                            OCI_VER_MAKE(18, 2, 0)
 #define OCI_18_3                            OCI_VER_MAKE(18, 3, 0)
 #define OCI_18_4                            OCI_VER_MAKE(18, 4, 0)
+#define OCI_18_5                            OCI_VER_MAKE(18, 5, 0) 
+#define OCI_19_3                            OCI_VER_MAKE(19, 3, 0)
 
 /* OCILIB Error types */
 
