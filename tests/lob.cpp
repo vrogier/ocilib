@@ -37,7 +37,7 @@ unsigned int GetBufferSize(unsigned int type)
 
 TEST_P(TestLob, CreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto lob = OCI_LobCreate(conn, GetParam());
@@ -52,7 +52,7 @@ TEST_P(TestLob, CreateAndFree)
 
 TEST_P(TestLob, ArrayCreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto lobs = OCI_LobArrayCreate(conn, GetParam(), ARRAY_SIZE);
@@ -71,7 +71,7 @@ TEST_P(TestLob, ArrayCreateAndFree)
 
 TEST_P(TestLob, AssignEmpty)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto lob1 = OCI_LobCreate(conn, GetParam());
@@ -87,7 +87,7 @@ TEST_P(TestLob, AssignEmpty)
 
 TEST_P(TestLob, AssignNotEmpty)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto lob1 = OCI_LobCreate(conn, GetParam());
@@ -112,7 +112,7 @@ TEST_P(TestLob, AssignNotEmpty)
 
 TEST_P(TestLob, SeekAndGetOffset)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     auto type = GetParam();
 
@@ -138,7 +138,7 @@ TEST_P(TestLob, SeekAndGetOffset)
     ASSERT_EQ(0, OCI_LobGetOffset(lob));
     
     ASSERT_TRUE(OCI_LobSeek(lob, 0, OCI_SEEK_END));
-    ASSERT_EQ(GetBufferOffset(type, size), OCI_LobGetOffset(lob));
+    ASSERT_EQ(GetBufferSize(type), OCI_LobGetOffset(lob));
 
     ASSERT_TRUE(OCI_LobFree(lob));
     ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -147,7 +147,7 @@ TEST_P(TestLob, SeekAndGetOffset)
 
 TEST_P(TestLob, Truncate)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     auto type = GetParam();
 

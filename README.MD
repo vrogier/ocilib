@@ -11,12 +11,12 @@ The OCILIB library :
 - offers a rich, full featured and easy to use API
 - runs on all Oracle platforms
 - is written in pure ISO C99 code with native ISO C Unicode support
-- provides also a C++ API written isn standard C++ 3 with support for some C++11 features
+- provides also a C++ API written in standard C++03 with support for some C++11 features
 - Enables high productivity
 - encapsulates OCI (Oracle Call Interface)
 - is the most complete available OCI wrapper
 
-OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy it !
+OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy it!
 
 ## 2. License
 
@@ -26,20 +26,20 @@ The source code is free source code licensed under **Apache License, Version 2.0
  
 - ISO C API
 - ISO C ++ API
-- Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
+- Full ANSI and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
 - Full 32/64 bits compatibility
-- Comptabile with all Oracle version >= 8i
+- Compatible with all Oracle version >= 8i
 - Automatic adaptation to the runtime Oracle client version
 - Runtime loading of Oracle libraries
-- Builtin error handling (global and thread context)
+- Built-in error handling (global and thread context)
 - Full support for SQL API and Object API
 - Full support for ALL Oracle SQL and PL/SQL datatypes (scalars, objects, refs, collections, ..)
 - Full support for PL/SQL (blocks, cursors, Index by Tables and Nested tables)
 - Support for non scalar datatype with trough library objects
 - Oracle Pooling (connections and sessions pools)
 - Oracle XA connectivity (X/Open Distributed Transaction Processing XA interface)
-- Oracle AQ (Advanded Queues)
-- Oracle TAF (Transparent Application Failover) and HA (High availabality) support
+- Oracle AQ (Advanced Queues)
+- Oracle TAF (Transparent Application Failover) and HA (High availability) support
 - Binding array Interface
 - Returning DML feature
 - Scrollable statements

@@ -34,130 +34,245 @@ const char * EnvironmentVarNames[OCI_VARS_COUNT] =
 
 const OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
 {
-    {OCI_SFC_CREATE_TABLE,             OTEXT("CREATE TABLE")                                         },
-    {OCI_SFC_SET_ROLE,                 OTEXT("SET ROLE")                                             },
-    {OCI_SFC_INSERT,                   OTEXT("INSERT")                                               },
-    {OCI_SFC_SELECT,                   OTEXT("SELECT")                                               },
-    {OCI_SFC_UPDATE,                   OTEXT("UPDATE")                                               },
-    {OCI_SFC_DROP_ROLE,                OTEXT("DROP ROLE")                                            },
-    {OCI_SFC_DROP_VIEW,                OTEXT("DROP VIEW")                                            },
-    {OCI_SFC_DROP_TABLE,               OTEXT("DROP TABLE")                                           },
-    {OCI_SFC_DELETE,                   OTEXT("DELETE")                                               },
-    {OCI_SFC_CREATE_VIEW,              OTEXT("CREATE VIEW")                                          },
-    {OCI_SFC_DROP_USER,                OTEXT("DROP USER")                                            },
-    {OCI_SFC_CREATE_ROLE,              OTEXT("CREATE ROLE")                                          },
-    {OCI_SFC_CREATE_SEQUENCE,          OTEXT("CREATE SEQUENCE")                                      },
-    {OCI_SFC_ALTER_SEQUENCE,           OTEXT("ALTER SEQUENCE")                                       },
-    {OCI_SFC_DROP_SEQUENCE,            OTEXT("DROP SEQUENCE")                                        },
-    {OCI_SFC_CREATE_SCHEMA,            OTEXT("CREATE SCHEMA")                                        },
-    {OCI_SFC_CREATE_CLUSTER,           OTEXT("CREATE CLUSTER")                                       },
-    {OCI_SFC_CREATE_USER,              OTEXT("CREATE USER")                                          },
-    {OCI_SFC_CREATE_INDEX,             OTEXT("CREATE INDEX")                                         },
-    {OCI_SFC_DROP_INDEX,               OTEXT("DROP INDEX")                                           },
-    {OCI_SFC_DROP_CLUSTER,             OTEXT("DROP CLUSTER")                                         },
-    {OCI_SFC_VALIDATE_INDEX,           OTEXT("VALIDATE INDEX")                                       },
-    {OCI_SFC_CREATE_PROCEDURE,         OTEXT("CREATE PROCEDURE")                                     },
-    {OCI_SFC_ALTER_PROCEDURE,          OTEXT("ALTER PROCEDURE")                                      },
-    {OCI_SFC_ALTER_TABLE,              OTEXT("ALTER TABLE")                                          },
-    {OCI_SFC_EXPLAIN,                  OTEXT("EXPLAIN")                                              },
-    {OCI_SFC_GRANT,                    OTEXT("GRANT")                                                },
-    {OCI_SFC_REVOKE,                   OTEXT("REVOKE")                                               },
-    {OCI_SFC_CREATE_SYNONYM,           OTEXT("CREATE SYNONYM")                                       },
-    {OCI_SFC_DROP_SYNONYM,             OTEXT("DROP SYNONYM")                                         },
-    {OCI_SFC_ALTER_SYSTEM_SWITCHLOG,   OTEXT("ALTER SYSTEM SWITCHLOG")                               },
-    {OCI_SFC_SET_TRANSACTION,          OTEXT("SET TRANSACTION")                                      },
-    {OCI_SFC_PLSQL_EXECUTE,            OTEXT("PL/SQL EXECUTE")                                       },
-    {OCI_SFC_LOCK,                     OTEXT("LOCK")                                                 },
-    {OCI_SFC_NOOP,                     OTEXT("NOOP")                                                 },
-    {OCI_SFC_RENAME,                   OTEXT("RENAME")                                               },
-    {OCI_SFC_COMMENT,                  OTEXT("COMMENT")                                              },
-    {OCI_SFC_AUDIT,                    OTEXT("AUDIT")                                                },
-    {OCI_SFC_NO_AUDIT,                 OTEXT("NO AUDIT")                                             },
-    {OCI_SFC_ALTER_INDEX,              OTEXT("ALTER INDEX")                                          },
-    {OCI_SFC_CREATE_EXTERNAL_DATABASE, OTEXT("CREATE EXTERNAL DATABASE")                             },
-    {OCI_SFC_DROP_EXTERNALDATABASE,    OTEXT("DROP EXTERNALDATABASE")                                },
-    {OCI_SFC_CREATE_DATABASE,          OTEXT("CREATE DATABASE")                                      },
-    {OCI_SFC_ALTER_DATABASE,           OTEXT("ALTER DATABASE")                                       },
-    {OCI_SFC_CREATE_ROLLBACK_SEGMENT,  OTEXT("CREATE ROLLBACK SEGMENT")                              },
-    {OCI_SFC_ALTER_ROLLBACK_SEGMENT,   OTEXT("ALTER ROLLBACK SEGMENT")                               },
-    {OCI_SFC_DROP_ROLLBACK_SEGMENT,    OTEXT("DROP ROLLBACK SEGMENT")                                },
-    {OCI_SFC_CREATE_TABLESPACE,        OTEXT("CREATE TABLESPACE")                                    },
-    {OCI_SFC_ALTER_TABLESPACE,         OTEXT("ALTER TABLESPACE")                                     },
-    {OCI_SFC_DROP_TABLESPACE,          OTEXT("DROP TABLESPACE")                                      },
-    {OCI_SFC_ALTER_SESSION,            OTEXT("ALTER SESSION")                                        },
-    {OCI_SFC_ALTER_USER,               OTEXT("ALTER USER")                                           },
-    {OCI_SFC_COMMIT_WORK,              OTEXT("COMMIT (WORK)")                                        },
-    {OCI_SFC_ROLLBACK,                 OTEXT("ROLLBACK")                                             },
-    {OCI_SFC_SAVEPOINT,                OTEXT("SAVEPOINT")                                            },
-    {OCI_SFC_CREATE_CONTROL_FILE,      OTEXT("CREATE CONTROL FILE")                                  },
-    {OCI_SFC_ALTER_TRACING,            OTEXT("ALTER TRACING")                                        },
-    {OCI_SFC_CREATE_TRIGGER,           OTEXT("CREATE TRIGGER")                                       },
-    {OCI_SFC_ALTER_TRIGGER,            OTEXT("ALTER TRIGGER")                                        },
-    {OCI_SFC_DROP_TRIGGER,             OTEXT("DROP TRIGGER")                                         },
-    {OCI_SFC_ANALYZE_TABLE,            OTEXT("ANALYZE TABLE")                                        },
-    {OCI_SFC_ANALYZE_INDEX,            OTEXT("ANALYZE INDEX")                                        },
-    {OCI_SFC_ANALYZE_CLUSTER,          OTEXT("ANALYZE CLUSTER")                                      },
-    {OCI_SFC_CREATE_PROFILE,           OTEXT("CREATE PROFILE")                                       },
-    {OCI_SFC_DROP_PROFILE,             OTEXT("DROP PROFILE")                                         },
-    {OCI_SFC_ALTER_PROFILE,            OTEXT("ALTER PROFILE")                                        },
-    {OCI_SFC_DROP_PROCEDURE,           OTEXT("DROP PROCEDURE")                                       },
-    {OCI_SFC_ALTER_RESOURCE_COST,      OTEXT("ALTER RESOURCE COST")                                  },
-    {OCI_SFC_CREATE_SNAPSHOT_LOG,      OTEXT("CREATE SNAPSHOT LOG")                                  },
-    {OCI_SFC_ALTER_SNAPSHOT_LOG,       OTEXT("ALTER SNAPSHOT LOG")                                   },
-    {OCI_SFC_DROP_SNAPSHOT_LOG,        OTEXT("DROP SNAPSHOT LOG")                                    },
-    {OCI_SFC_DROP_SUMMARY,             OTEXT("DROP SUMMARY")                                         },
-    {OCI_SFC_CREATE_SNAPSHOT,          OTEXT("CREATE SNAPSHOT")                                      },
-    {OCI_SFC_ALTER_SNAPSHOT,           OTEXT("ALTER SNAPSHOT")                                       },
-    {OCI_SFC_DROP_SNAPSHOT,            OTEXT("DROP SNAPSHOT")                                        },
-    {OCI_SFC_CREATE_TYPE,              OTEXT("CREATE TYPE")                                          },
-    {OCI_SFC_DROP_TYPE,                OTEXT("DROP TYPE")                                            },
-    {OCI_SFC_ALTER_ROLE,               OTEXT("ALTER ROLE")                                           },
-    {OCI_SFC_ALTER_TYPE,               OTEXT("ALTER TYPE")                                           },
-    {OCI_SFC_CREATE_TYPE_BODY,         OTEXT("CREATE TYPE BODY")                                     },
-    {OCI_SFC_ALTER_TYPE_BODY,          OTEXT("ALTER TYPE BODY")                                      },
-    {OCI_SFC_DROP_TYPE_BODY,           OTEXT("DROP TYPE BODY")                                       },
-    {OCI_SFC_DROP_LIBRARY,             OTEXT("DROP LIBRARY")                                         },
-    {OCI_SFC_TRUNCATE_TABLE,           OTEXT("TRUNCATE TABLE")                                       },
-    {OCI_SFC_TRUNCATE_CLUSTER,         OTEXT("TRUNCATE CLUSTER")                                     },
-    {OCI_SFC_CREATE_BITMAPFILE,        OTEXT("CREATE BITMAPFILE")                                    },
-    {OCI_SFC_ALTER_VIEW,               OTEXT("ALTER VIEW")                                           },
-    {OCI_SFC_DROP_BITMAPFILE,          OTEXT("DROP BITMAPFILE")                                      },
-    {OCI_SFC_SET_CONSTRAINTS,          OTEXT("SET CONSTRAINTS")                                      },
-    {OCI_SFC_CREATE_FUNCTION,          OTEXT("CREATE FUNCTION")                                      },
-    {OCI_SFC_ALTER_FUNCTION,           OTEXT("ALTER FUNCTION")                                       },
-    {OCI_SFC_DROP_FUNCTION,            OTEXT("DROP FUNCTION")                                        },
-    {OCI_SFC_CREATE_PACKAGE,           OTEXT("CREATE PACKAGE")                                       },
-    {OCI_SFC_ALTER_PACKAGE,            OTEXT("ALTER PACKAGE")                                        },
-    {OCI_SFC_DROP_PACKAGE,             OTEXT("DROP PACKAGE")                                         },
-    {OCI_SFC_CREATE_PACKAGE_BODY,      OTEXT("CREATE PACKAGE BODY")                                  },
-    {OCI_SFC_ALTER_PACKAGE_BODY,       OTEXT("ALTER PACKAGE BODY")                                   },
-    {OCI_SFC_DROP_PACKAGE_BODY,        OTEXT("DROP PACKAGE BODY")                                    },
-    {OCI_SFC_CREATE_DIRECTORY,         OTEXT("CREATE DIRECTORY")                                     },
-    {OCI_SFC_DROP_DIRECTORY,           OTEXT("DROP DIRECTORY")                                       },
-    {OCI_SFC_CREATE_LIBRARY,           OTEXT("CREATE LIBRARY")                                       },
-    {OCI_SFC_CREATE_JAVA,              OTEXT("CREATE JAVA")                                          },
-    {OCI_SFC_ALTER_JAVA,               OTEXT("ALTER JAVA")                                           },
-    {OCI_SFC_DROP_JAVA,                OTEXT("DROP JAVA")                                            },
-    {OCI_SFC_CREATE_OPERATOR,          OTEXT("CREATE OPERATOR")                                      },
-    {OCI_SFC_CREATE_INDEXTYPE,         OTEXT("CREATE INDEXTYPE")                                     },
-    {OCI_SFC_DROP_INDEXTYPE,           OTEXT("DROP INDEXTYPE")                                       },
-    {OCI_SFC_ALTER_INDEXTYPE,          OTEXT("ALTER INDEXTYPE")                                      },
-    {OCI_SFC_DROP_OPERATOR,            OTEXT("DROP OPERATOR")                                        },
-    {OCI_SFC_ASSOCIATE_STATISTICS,     OTEXT("ASSOCIATE STATISTICS")                                 },
-    {OCI_SFC_DISASSOCIATE_STATISTICS,  OTEXT("DISASSOCIATE STATISTICS")                              },
-    {OCI_SFC_CALL_METHOD,              OTEXT("CALL METHOD")                                          },
-    {OCI_SFC_CREATE_SUMMARY,           OTEXT("CREATE SUMMARY")                                       },
-    {OCI_SFC_ALTER_SUMMARY,            OTEXT("ALTER SUMMARY")                                        },
-    {OCI_SFC_CREATE_DIMENSION,         OTEXT("CREATE DIMENSION")                                     },
-    {OCI_SFC_ALTER_DIMENSION,          OTEXT("ALTER DIMENSION")                                      },
-    {OCI_SFC_DROP_DIMENSION,           OTEXT("DROP DIMENSION")                                       },
-    {OCI_SFC_CREATE_CONTEXT,           OTEXT("CREATE CONTEXT")                                       },
-    {OCI_SFC_DROP_CONTEXT,             OTEXT("DROP CONTEXT")                                         },
-    {OCI_SFC_ALTER_OUTLINE,            OTEXT("ALTER OUTLINE")                                        },
-    {OCI_SFC_CREATE_OUTLINE,           OTEXT("CREATE OUTLINE")                                       },
-    {OCI_SFC_DROP_OUTLINE,             OTEXT("DROP OUTLINE")                                         },
-    {OCI_SFC_UPDATE_INDEXES,           OTEXT("UPDATE INDEXES")                                       },
-    {OCI_SFC_ALTER_OPERATOR,           OTEXT("ALTER OPERATOR")                                       }
+    {OCI_UNKNOWN                             , OTEXT("UNKNOWN")                        },
+    {OCI_SFC_CREATE_TABLE                    , OTEXT("CREATE TABLE")                   },
+    {OCI_SFC_INSERT                          , OTEXT("INSERT")                         },
+    {OCI_SFC_SELECT                          , OTEXT("SELECT")                         },
+    {OCI_SFC_CREATE_CLUSTER                  , OTEXT("CREATE CLUSTER")                 },
+    {OCI_SFC_ALTER_CLUSTER                   , OTEXT("ALTER CLUSTER")                  },
+    {OCI_SFC_UPDATE                          , OTEXT("UPDATE")                         },
+    {OCI_SFC_DELETE                          , OTEXT("DELETE")                         },
+    {OCI_SFC_DROP_CLUSTER                    , OTEXT("DROP CLUSTER")                   },
+    {OCI_SFC_CREATE_INDEX                    , OTEXT("CREATE INDEX")                   },
+    {OCI_SFC_DROP_INDEX                      , OTEXT("DROP INDEX")                     },
+    {OCI_SFC_ALTER_INDEX                     , OTEXT("ALTER INDEX")                    },
+    {OCI_SFC_DROP_TABLE                      , OTEXT("DROP TABLE")                     },
+    {OCI_SFC_CREATE_SEQUENCE                 , OTEXT("CREATE SEQUENCE")                },
+    {OCI_SFC_ALTER_SEQUENCE                  , OTEXT("ALTER SEQUENCE")                 },
+    {OCI_SFC_ALTER_TABLE                     , OTEXT("ALTER TABLE")                    },
+    {OCI_SFC_DROP_SEQUENCE                   , OTEXT("DROP SEQUENCE")                  },
+    {OCI_SFC_GRANT_OBJECT                    , OTEXT("GRANT OBJECT")                   },
+    {OCI_SFC_REVOKE_OBJECT                   , OTEXT("REVOKE OBJECT")                  },
+    {OCI_SFC_CREATE_SYNONYM                  , OTEXT("CREATE SYNONYM")                 },
+    {OCI_SFC_DROP_SYNONYM                    , OTEXT("DROP SYNONYM")                   },
+    {OCI_SFC_CREATE_VIEW                     , OTEXT("CREATE VIEW")                    },
+    {OCI_SFC_DROP_VIEW                       , OTEXT("DROP VIEW")                      },
+    {OCI_SFC_VALIDATE_INDEX                  , OTEXT("VALIDATE INDEX")                 },
+    {OCI_SFC_CREATE_PROCEDURE                , OTEXT("CREATE PROCEDURE")               },
+    {OCI_SFC_ALTER_PROCEDURE                 , OTEXT("ALTER PROCEDURE")                },
+    {OCI_SFC_LOCK                            , OTEXT("LOCK")                           },
+    {OCI_SFC_NO_OP                           , OTEXT("NO-OP")                          },
+    {OCI_SFC_RENAME                          , OTEXT("RENAME")                         },
+    {OCI_SFC_COMMENT                         , OTEXT("COMMENT")                        },
+    {OCI_SFC_AUDIT_OBJECT                    , OTEXT("AUDIT OBJECT")                   },
+    {OCI_SFC_NOAUDIT_OBJECT                  , OTEXT("NOAUDIT OBJECT")                 },
+    {OCI_SFC_CREATE_DATABASE_LINK            , OTEXT("CREATE DATABASE LINK")           },
+    {OCI_SFC_DROP_DATABASE_LINK              , OTEXT("DROP DATABASE LINK")             },
+    {OCI_SFC_CREATE_DATABASE                 , OTEXT("CREATE DATABASE")                },
+    {OCI_SFC_ALTER_DATABASE                  , OTEXT("ALTER DATABASE")                 },
+    {OCI_SFC_CREATE_ROLLBACK_SEG             , OTEXT("CREATE ROLLBACK SEG")            },
+    {OCI_SFC_ALTER_ROLLBACK_SEG              , OTEXT("ALTER ROLLBACK SEG")             },
+    {OCI_SFC_DROP_ROLLBACK_SEG               , OTEXT("DROP ROLLBACK SEG")              },
+    {OCI_SFC_CREATE_TABLESPACE               , OTEXT("CREATE TABLESPACE")              },
+    {OCI_SFC_ALTER_TABLESPACE                , OTEXT("ALTER TABLESPACE")               },
+    {OCI_SFC_DROP_TABLESPACE                 , OTEXT("DROP TABLESPACE")                },
+    {OCI_SFC_ALTER_SESSION                   , OTEXT("ALTER SESSION")                  },
+    {OCI_SFC_ALTER_USER                      , OTEXT("ALTER USER")                     },
+    {OCI_SFC_COMMIT                          , OTEXT("COMMIT")                         },
+    {OCI_SFC_ROLLBACK                        , OTEXT("ROLLBACK")                       },
+    {OCI_SFC_SAVEPOINT                       , OTEXT("SAVEPOINT")                      },
+    {OCI_SFC_PL_SQL_EXECUTE                  , OTEXT("PL/SQL EXECUTE")                 },
+    {OCI_SFC_SET_TRANSACTION                 , OTEXT("SET TRANSACTION")                },
+    {OCI_SFC_ALTER_SYSTEM                    , OTEXT("ALTER SYSTEM")                   },
+    {OCI_SFC_EXPLAIN                         , OTEXT("EXPLAIN")                        },
+    {OCI_SFC_CREATE_USER                     , OTEXT("CREATE USER")                    },
+    {OCI_SFC_CREATE_ROLE                     , OTEXT("CREATE ROLE")                    },
+    {OCI_SFC_DROP_USER                       , OTEXT("DROP USER")                      },
+    {OCI_SFC_DROP_ROLE                       , OTEXT("DROP ROLE")                      },
+    {OCI_SFC_SET_ROLE                        , OTEXT("SET ROLE")                       },
+    {OCI_SFC_CREATE_SCHEMA                   , OTEXT("CREATE SCHEMA")                  },
+    {OCI_SFC_CREATE_CONTROL_FILE             , OTEXT("CREATE CONTROL FILE")            },
+    {OCI_SFC_ALTER_TRACING                   , OTEXT("ALTER TRACING")                  },
+    {OCI_SFC_CREATE_TRIGGER                  , OTEXT("CREATE TRIGGER")                 },
+    {OCI_SFC_ALTER_TRIGGER                   , OTEXT("ALTER TRIGGER")                  },
+    {OCI_SFC_DROP_TRIGGER                    , OTEXT("DROP TRIGGER")                   },
+    {OCI_SFC_ANALYZE_TABLE                   , OTEXT("ANALYZE TABLE")                  },
+    {OCI_SFC_ANALYZE_INDEX                   , OTEXT("ANALYZE INDEX")                  },
+    {OCI_SFC_ANALYZE_CLUSTER                 , OTEXT("ANALYZE CLUSTER")                },
+    {OCI_SFC_CREATE_PROFILE                  , OTEXT("CREATE PROFILE")                 },
+    {OCI_SFC_DROP_PROFILE                    , OTEXT("DROP PROFILE")                   },
+    {OCI_SFC_ALTER_PROFILE                   , OTEXT("ALTER PROFILE")                  },
+    {OCI_SFC_DROP_PROCEDURE                  , OTEXT("DROP PROCEDURE")                 },
+    {OCI_SFC_ALTER_RESOURCE_COST             , OTEXT("ALTER RESOURCE COST")            },
+    {OCI_SFC_CREATE_MATERIALIZED_VIEW_LOG    , OTEXT("CREATE MATERIALIZED VIEW LOG")   },
+    {OCI_SFC_ALTER_MATERIALIZED_VIEW_LOG     , OTEXT("ALTER MATERIALIZED VIEW LOG")    },
+    {OCI_SFC_DROP_MATERIALIZED_VIEW_LOG      , OTEXT("DROP MATERIALIZED VIEW LOG")     },
+    {OCI_SFC_CREATE_MATERIALIZED_VIEW        , OTEXT("CREATE MATERIALIZED VIEW")       },
+    {OCI_SFC_ALTER_MATERIALIZED_VIEW         , OTEXT("ALTER MATERIALIZED VIEW")        },
+    {OCI_SFC_DROP_MATERIALIZED_VIEW          , OTEXT("DROP MATERIALIZED VIEW")         },
+    {OCI_SFC_CREATE_TYPE                     , OTEXT("CREATE TYPE")                    },
+    {OCI_SFC_DROP_TYPE                       , OTEXT("DROP TYPE")                      },
+    {OCI_SFC_ALTER_ROLE                      , OTEXT("ALTER ROLE")                     },
+    {OCI_SFC_ALTER_TYPE                      , OTEXT("ALTER TYPE")                     },
+    {OCI_SFC_CREATE_TYPE_BODY                , OTEXT("CREATE TYPE BODY")               },
+    {OCI_SFC_ALTER_TYPE_BODY                 , OTEXT("ALTER TYPE BODY")                },
+    {OCI_SFC_DROP_TYPE_BODY                  , OTEXT("DROP TYPE BODY")                 },
+    {OCI_SFC_DROP_LIBRARY                    , OTEXT("DROP LIBRARY")                   },
+    {OCI_SFC_TRUNCATE_TABLE                  , OTEXT("TRUNCATE TABLE")                 },
+    {OCI_SFC_TRUNCATE_CLUSTER                , OTEXT("TRUNCATE CLUSTER")               },
+    {OCI_SFC_ALTER_VIEW                      , OTEXT("ALTER VIEW")                     },
+    {OCI_SFC_SET_CONSTRAINTS                 , OTEXT("SET CONSTRAINTS")                },
+    {OCI_SFC_CREATE_FUNCTION                 , OTEXT("CREATE FUNCTION")                },
+    {OCI_SFC_ALTER_FUNCTION                  , OTEXT("ALTER FUNCTION")                 },
+    {OCI_SFC_DROP_FUNCTION                   , OTEXT("DROP FUNCTION")                  },
+    {OCI_SFC_CREATE_PACKAGE                  , OTEXT("CREATE PACKAGE")                 },
+    {OCI_SFC_ALTER_PACKAGE                   , OTEXT("ALTER PACKAGE")                  },
+    {OCI_SFC_DROP_PACKAGE                    , OTEXT("DROP PACKAGE")                   },
+    {OCI_SFC_CREATE_PACKAGE_BODY             , OTEXT("CREATE PACKAGE BODY")            },
+    {OCI_SFC_ALTER_PACKAGE_BODY              , OTEXT("ALTER PACKAGE BODY")             },
+    {OCI_SFC_DROP_PACKAGE_BODY               , OTEXT("DROP PACKAGE BODY")              },
+    {OCI_SFC_LOGON                           , OTEXT("LOGON")                          },
+    {OCI_SFC_LOGOFF                          , OTEXT("LOGOFF")                         },
+    {OCI_SFC_LOGOFF_BY_CLEANUP               , OTEXT("LOGOFF BY CLEANUP")              },
+    {OCI_SFC_SESSION_REC                     , OTEXT("SESSION REC")                    },
+    {OCI_SFC_SYSTEM_AUDIT                    , OTEXT("SYSTEM AUDIT")                   },
+    {OCI_SFC_SYSTEM_NOAUDIT                  , OTEXT("SYSTEM NOAUDIT")                 },
+    {OCI_SFC_AUDIT_DEFAULT                   , OTEXT("AUDIT DEFAULT")                  },
+    {OCI_SFC_NOAUDIT_DEFAULT                 , OTEXT("NOAUDIT DEFAULT")                },
+    {OCI_SFC_SYSTEM_GRANT                    , OTEXT("SYSTEM GRANT")                   },
+    {OCI_SFC_SYSTEM_REVOKE                   , OTEXT("SYSTEM REVOKE")                  },
+    {OCI_SFC_CREATE_PUBLIC_SYNONYM           , OTEXT("CREATE PUBLIC SYNONYM")          },
+    {OCI_SFC_DROP_PUBLIC_SYNONYM             , OTEXT("DROP PUBLIC SYNONYM")            },
+    {OCI_SFC_CREATE_PUBLIC_DATABASE_LINK     , OTEXT("CREATE PUBLIC DATABASE LINK")    },
+    {OCI_SFC_DROP_PUBLIC_DATABASE_LINK       , OTEXT("DROP PUBLIC DATABASE LINK")      },
+    {OCI_SFC_GRANT_ROLE                      , OTEXT("GRANT ROLE")                     },
+    {OCI_SFC_REVOKE_ROLE                     , OTEXT("REVOKE ROLE")                    },
+    {OCI_SFC_EXECUTE_PROCEDURE               , OTEXT("EXECUTE PROCEDURE")              },
+    {OCI_SFC_USER_COMMENT                    , OTEXT("USER COMMENT")                   },
+    {OCI_SFC_ENABLE_TRIGGER                  , OTEXT("ENABLE TRIGGER")                 },
+    {OCI_SFC_DISABLE_TRIGGER                 , OTEXT("DISABLE TRIGGER")                },
+    {OCI_SFC_ENABLE_ALL_TRIGGERS             , OTEXT("ENABLE ALL TRIGGERS")            },
+    {OCI_SFC_DISABLE_ALL_TRIGGERS            , OTEXT("DISABLE ALL TRIGGERS")           },
+    {OCI_SFC_NETWORK_ERROR                   , OTEXT("NETWORK ERROR")                  },
+    {OCI_SFC_EXECUTE_TYPE                    , OTEXT("EXECUTE TYPE")                   },
+    {OCI_SFC_READ_DIRECTORY                  , OTEXT("READ DIRECTORY")                 },
+    {OCI_SFC_WRITE_DIRECTORY                 , OTEXT("WRITE DIRECTORY")                },
+    {OCI_SFC_FLASHBACK                       , OTEXT("FLASHBACK")                      },
+    {OCI_SFC_BECOME_USER                     , OTEXT("BECOME USER")                    },
+    {OCI_SFC_ALTER_MINING_MODEL              , OTEXT("ALTER MINING MODEL")             },
+    {OCI_SFC_SELECT_MINING_MODEL             , OTEXT("SELECT MINING MODEL")            },
+    {OCI_SFC_CREATE_MINING_MODEL             , OTEXT("CREATE MINING MODEL")            },
+    {OCI_SFC_ALTER_PUBLIC_SYNONYM            , OTEXT("ALTER PUBLIC SYNONYM")           },
+    {OCI_SFC_EXECUTE_DIRECTORY               , OTEXT("EXECUTE DIRECTORY")              },
+    {OCI_SFC_SQL_LOADER_DIRECT_PATH_LOAD     , OTEXT("SQL*LOADER DIRECT PATH LOAD")    },
+    {OCI_SFC_DATAPUMP_DIRECT_PATH_UNLOAD     , OTEXT("DATAPUMP DIRECT PATH UNLOAD")    },
+    {OCI_SFC_DATABASE_STARTUP                , OTEXT("DATABASE STARTUP")               },
+    {OCI_SFC_DATABASE_SHUTDOWN               , OTEXT("DATABASE SHUTDOWN")              },
+    {OCI_SFC_CREATE_SQL_TXLN_PROFILE         , OTEXT("CREATE SQL TXLN PROFILE")        },
+    {OCI_SFC_ALTER_SQL_TXLN_PROFILE          , OTEXT("ALTER SQL TXLN PROFILE")         },
+    {OCI_SFC_USE_SQL_TXLN_PROFILE            , OTEXT("USE SQL TXLN PROFILE")           },
+    {OCI_SFC_DROP_SQL_TXLN_PROFILE           , OTEXT("DROP SQL TXLN PROFILE")          },
+    {OCI_SFC_CREATE_MEASURE_FOLDER           , OTEXT("CREATE MEASURE FOLDER")          },
+    {OCI_SFC_ALTER_MEASURE_FOLDER            , OTEXT("ALTER MEASURE FOLDER")           },
+    {OCI_SFC_DROP_MEASURE_FOLDER             , OTEXT("DROP MEASURE FOLDER")            },
+    {OCI_SFC_CREATE_CUBE_BUILD_PROCESS       , OTEXT("CREATE CUBE BUILD PROCESS")      },
+    {OCI_SFC_ALTER_CUBE_BUILD_PROCESS        , OTEXT("ALTER CUBE BUILD PROCESS")       },
+    {OCI_SFC_DROP_CUBE_BUILD_PROCESS         , OTEXT("DROP CUBE BUILD PROCESS")        },
+    {OCI_SFC_CREATE_CUBE                     , OTEXT("CREATE CUBE")                    },
+    {OCI_SFC_ALTER_CUBE                      , OTEXT("ALTER CUBE")                     },
+    {OCI_SFC_DROP_CUBE                       , OTEXT("DROP CUBE")                      },
+    {OCI_SFC_CREATE_CUBE_DIMENSION           , OTEXT("CREATE CUBE DIMENSION")          },
+    {OCI_SFC_ALTER_CUBE_DIMENSION            , OTEXT("ALTER CUBE DIMENSION")           },
+    {OCI_SFC_DROP_CUBE_DIMENSION             , OTEXT("DROP CUBE DIMENSION")            },
+    {OCI_SFC_CREATE_DIRECTORY                , OTEXT("CREATE DIRECTORY")               },
+    {OCI_SFC_DROP_DIRECTORY                  , OTEXT("DROP DIRECTORY")                 },
+    {OCI_SFC_CREATE_LIBRARY                  , OTEXT("CREATE LIBRARY")                 },
+    {OCI_SFC_CREATE_JAVA                     , OTEXT("CREATE JAVA")                    },
+    {OCI_SFC_ALTER_JAVA                      , OTEXT("ALTER JAVA")                     },
+    {OCI_SFC_DROP_JAVA                       , OTEXT("DROP JAVA")                      },
+    {OCI_SFC_CREATE_OPERATOR                 , OTEXT("CREATE OPERATOR")                },
+    {OCI_SFC_CREATE_INDEXTYPE                , OTEXT("CREATE INDEXTYPE")               },
+    {OCI_SFC_DROP_INDEXTYPE                  , OTEXT("DROP INDEXTYPE")                 },
+    {OCI_SFC_ALTER_INDEXTYPE                 , OTEXT("ALTER INDEXTYPE")                },
+    {OCI_SFC_DROP_OPERATOR                   , OTEXT("DROP OPERATOR")                  },
+    {OCI_SFC_ASSOCIATE_STATISTICS            , OTEXT("ASSOCIATE STATISTICS")           },
+    {OCI_SFC_DISASSOCIATE_STATISTICS         , OTEXT("DISASSOCIATE STATISTICS")        },
+    {OCI_SFC_CALL_METHOD                     , OTEXT("CALL METHOD")                    },
+    {OCI_SFC_CREATE_SUMMARY                  , OTEXT("CREATE SUMMARY")                 },
+    {OCI_SFC_ALTER_SUMMARY                   , OTEXT("ALTER SUMMARY")                  },
+    {OCI_SFC_DROP_SUMMARY                    , OTEXT("DROP SUMMARY")                   },
+    {OCI_SFC_CREATE_DIMENSION                , OTEXT("CREATE DIMENSION")               },
+    {OCI_SFC_ALTER_DIMENSION                 , OTEXT("ALTER DIMENSION")                },
+    {OCI_SFC_DROP_DIMENSION                  , OTEXT("DROP DIMENSION")                 },
+    {OCI_SFC_CREATE_CONTEXT                  , OTEXT("CREATE CONTEXT")                 },
+    {OCI_SFC_DROP_CONTEXT                    , OTEXT("DROP CONTEXT")                   },
+    {OCI_SFC_ALTER_OUTLINE                   , OTEXT("ALTER OUTLINE")                  },
+    {OCI_SFC_CREATE_OUTLINE                  , OTEXT("CREATE OUTLINE")                 },
+    {OCI_SFC_DROP_OUTLINE                    , OTEXT("DROP OUTLINE")                   },
+    {OCI_SFC_UPDATE_INDEXES                  , OTEXT("UPDATE INDEXES")                 },
+    {OCI_SFC_ALTER_OPERATOR                  , OTEXT("ALTER OPERATOR")                 },
+    {OCI_SFC_CREATE_SPFILE                   , OTEXT("CREATE SPFILE")                  },
+    {OCI_SFC_CREATE_PFILE                    , OTEXT("CREATE PFILE")                   },
+    {OCI_SFC_MERGE                           , OTEXT("MERGE")                          },
+    {OCI_SFC_PASSWORD_CHANGE                 , OTEXT("PASSWORD CHANGE")                },
+    {OCI_SFC_ALTER_SYNONYM                   , OTEXT("ALTER SYNONYM")                  },
+    {OCI_SFC_ALTER_DISKGROUP                 , OTEXT("ALTER DISKGROUP")                },
+    {OCI_SFC_CREATE_DISKGROUP                , OTEXT("CREATE DISKGROUP")               },
+    {OCI_SFC_DROP_DISKGROUP                  , OTEXT("DROP DISKGROUP")                 },
+    {OCI_SFC_PURGE_RECYCLEBIN                , OTEXT("PURGE RECYCLEBIN")               },
+    {OCI_SFC_PURGE_DBA_RECYCLEBIN            , OTEXT("PURGE DBA_RECYCLEBIN")           },
+    {OCI_SFC_PURGE_TABLESPACE                , OTEXT("PURGE TABLESPACE")               },
+    {OCI_SFC_PURGE_TABLE                     , OTEXT("PURGE TABLE")                    },
+    {OCI_SFC_PURGE_INDEX                     , OTEXT("PURGE INDEX")                    },
+    {OCI_SFC_UNDROP_OBJECT                   , OTEXT("UNDROP OBJECT")                  },
+    {OCI_SFC_DROP_DATABASE                   , OTEXT("DROP DATABASE")                  },
+    {OCI_SFC_FLASHBACK_DATABASE              , OTEXT("FLASHBACK DATABASE")             },
+    {OCI_SFC_FLASHBACK_TABLE                 , OTEXT("FLASHBACK TABLE")                },
+    {OCI_SFC_CREATE_RESTORE_POINT            , OTEXT("CREATE RESTORE POINT")           },
+    {OCI_SFC_DROP_RESTORE_POINT              , OTEXT("DROP RESTORE POINT")             },
+    {OCI_SFC_PROXY_AUTHENTICATION_ONLY       , OTEXT("PROXY AUTHENTICATION ONLY")      },
+    {OCI_SFC_DECLARE_REWRITE_EQUIVALENCE     , OTEXT("DECLARE REWRITE EQUIVALENCE")    },
+    {OCI_SFC_ALTER_REWRITE_EQUIVALENCE       , OTEXT("ALTER REWRITE EQUIVALENCE")      },
+    {OCI_SFC_DROP_REWRITE_EQUIVALENCE        , OTEXT("DROP REWRITE EQUIVALENCE")       },
+    {OCI_SFC_CREATE_EDITION                  , OTEXT("CREATE EDITION")                 },
+    {OCI_SFC_ALTER_EDITION                   , OTEXT("ALTER EDITION")                  },
+    {OCI_SFC_DROP_EDITION                    , OTEXT("DROP EDITION")                   },
+    {OCI_SFC_DROP_ASSEMBLY                   , OTEXT("DROP ASSEMBLY")                  },
+    {OCI_SFC_CREATE_ASSEMBLY                 , OTEXT("CREATE ASSEMBLY")                },
+    {OCI_SFC_ALTER_ASSEMBLY                  , OTEXT("ALTER ASSEMBLY")                 },
+    {OCI_SFC_CREATE_FLASHBACK_ARCHIVE        , OTEXT("CREATE FLASHBACK ARCHIVE")       },
+    {OCI_SFC_ALTER_FLASHBACK_ARCHIVE         , OTEXT("ALTER FLASHBACK ARCHIVE")        },
+    {OCI_SFC_DROP_FLASHBACK_ARCHIVE          , OTEXT("DROP FLASHBACK ARCHIVE")         },
+    {OCI_SFC_DEBUG_CONNECT                   , OTEXT("DEBUG CONNECT")                  },
+    {OCI_SFC_DEBUG_PROCEDURE                 , OTEXT("DEBUG PROCEDURE")                },
+    {OCI_SFC_ALTER_DATABASE_LINK             , OTEXT("ALTER DATABASE LINK")            },
+    {OCI_SFC_CREATE_PLUGGABLE_DATABASE       , OTEXT("CREATE PLUGGABLE DATABASE")      },
+    {OCI_SFC_ALTER_PLUGGABLE_DATABASE        , OTEXT("ALTER PLUGGABLE DATABASE")       },
+    {OCI_SFC_DROP_PLUGGABLE_DATABASE         , OTEXT("DROP PLUGGABLE DATABASE")        },
+    {OCI_SFC_CREATE_AUDIT_POLICY             , OTEXT("CREATE AUDIT POLICY")            },
+    {OCI_SFC_ALTER_AUDIT_POLICY              , OTEXT("ALTER AUDIT POLICY")             },
+    {OCI_SFC_DROP_AUDIT_POLICY               , OTEXT("DROP AUDIT POLICY")              },
+    {OCI_SFC_CODE_BASED_GRANT                , OTEXT("CODE-BASED GRANT")               },
+    {OCI_SFC_CODE_BASED_REVOKE               , OTEXT("CODE-BASED REVOKE")              },
+    {OCI_SFC_CREATE_LOCKDOWN_PROFILE         , OTEXT("CREATE LOCKDOWN PROFILE")        },
+    {OCI_SFC_DROP_LOCKDOWN_PROFILE           , OTEXT("DROP LOCKDOWN PROFILE")          },
+    {OCI_SFC_ALTER_LOCKDOWN_PROFILE          , OTEXT("ALTER LOCKDOWN PROFILE")         },
+    {OCI_SFC_TRANSLATE_SQL                   , OTEXT("TRANSLATE SQL")                  },
+    {OCI_SFC_ADMINISTER_KEY_MANAGEMENT       , OTEXT("ADMINISTER KEY MANAGEMENT")      },
+    {OCI_SFC_CREATE_MATERIALIZED_ZONEMAP     , OTEXT("CREATE MATERIALIZED ZONEMAP")    },
+    {OCI_SFC_ALTER_MATERIALIZED_ZONEMAP      , OTEXT("ALTER MATERIALIZED ZONEMAP")     },
+    {OCI_SFC_DROP_MATERIALIZED_ZONEMAP       , OTEXT("DROP MATERIALIZED ZONEMAP")      },
+    {OCI_SFC_DROP_MINING_MODEL               , OTEXT("DROP MINING MODEL")              },
+    {OCI_SFC_CREATE_ATTRIBUTE_DIMENSION      , OTEXT("CREATE ATTRIBUTE DIMENSION")     },
+    {OCI_SFC_ALTER_ATTRIBUTE_DIMENSION       , OTEXT("ALTER ATTRIBUTE DIMENSION")      },
+    {OCI_SFC_DROP_ATTRIBUTE_DIMENSION        , OTEXT("DROP ATTRIBUTE DIMENSION")       },
+    {OCI_SFC_CREATE_HIERARCHY                , OTEXT("CREATE HIERARCHY")               },
+    {OCI_SFC_ALTER_HIERARCHY                 , OTEXT("ALTER HIERARCHY")                },
+    {OCI_SFC_DROP_HIERARCHY                  , OTEXT("DROP HIERARCHY")                 },
+    {OCI_SFC_CREATE_ANALYTIC_VIEW            , OTEXT("CREATE ANALYTIC VIEW")           },
+    {OCI_SFC_ALTER_ANALYTIC_VIEW             , OTEXT("ALTER ANALYTIC VIEW")            },
+    {OCI_SFC_DROP_ANALYTIC_VIEW              , OTEXT("DROP ANALYTIC VIEW")             },
+    {OCI_SFC_ALTER_PUBLIC_DATABASE_LINK      , OTEXT("ALTER PUBLIC DATABASE LINK")     }
 };
 
 static const unsigned int FormatTypeValues[] =
@@ -417,8 +532,8 @@ OCILOBWRITEAPPEND2           OCILobWriteAppend2           = NULL;
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ExternalSubTypeToSQLType
-* --------------------------------------------------------------------------------------------- */
+ * OCI_ExternalSubTypeToSQLType
+ * --------------------------------------------------------------------------------------------- */
 
 unsigned int OCI_ExternalSubTypeToSQLType
 (
@@ -505,8 +620,8 @@ unsigned int OCI_ExternalSubTypeToSQLType
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ExternalSubTypeToHandleType
-* --------------------------------------------------------------------------------------------- */
+ * OCI_ExternalSubTypeToHandleType
+ * --------------------------------------------------------------------------------------------- */
 
 unsigned int OCI_ExternalSubTypeToHandleType
 (
@@ -553,8 +668,8 @@ unsigned int OCI_ExternalSubTypeToHandleType
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_FreeObjectFromType
-* --------------------------------------------------------------------------------------------- */
+ * OCI_FreeObjectFromType
+ * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_FreeObjectFromType(void *obj, unsigned int type)
 {
@@ -680,8 +795,8 @@ void OCI_CallEnter
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_CallExit
-* --------------------------------------------------------------------------------------------- */
+ * OCI_CallExit
+ * --------------------------------------------------------------------------------------------- */
 
 void OCI_CallExit
 (
@@ -696,6 +811,49 @@ void OCI_CallExit
                                (ctx->call_err->type != OCI_UNKNOWN) &&
                                (!ctx->call_status || (OCI_ERR_WARNING == ctx->call_err->type && OCILib.warnings_on));
     } 
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_GetEnvironmentVariable
+ * 
+ * @note 
+ * Values are allocated with OCI_MemAlloc() and need to be freed by the caller using OCI_MemFree()
+ *
+ * --------------------------------------------------------------------------------------------- */
+
+char * OCI_GetEnvironmentVariable
+(
+    const char *name
+)
+{
+    char *value = getenv(name);
+
+    if (value)
+    {
+        value = ocistrdup(value);
+    }
+
+#if defined(_WINDOWS)
+
+    else
+    {
+        // Variables set using SetEnvironmentVariable() on Windows are not seen by MSVC implementation of getenv() !!
+        // Thus, let's check if they can be retrieved using GetEnvironmentVariable()   
+        unsigned int size = GetEnvironmentVariableA(name, NULL, 0);
+        if (size > 0)
+        {
+            value = OCI_MemAlloc(OCI_IPC_STRING, size, 1, TRUE);
+            size = GetEnvironmentVariableA(name, value, size);
+            if (size == 0)
+            {
+                OCI_MemFree(value);
+            }
+        }
+    }
+
+#endif 
+
+    return value;
 }
 
 /* ********************************************************************************************* *
@@ -762,16 +920,18 @@ boolean OCI_API OCI_Initialize
 
     for (i = 0; i < OCI_VARS_COUNT; i++)
     {
-        char *value = getenv(EnvironmentVarNames[i]);
+        char *value = OCI_GetEnvironmentVariable(EnvironmentVarNames[i]);
 
         OCILib.env_vars[i] = value && (ocistrcasecmp(value, OCI_VARS_TRUE_VALUE) == 0 || atoi(value) == 1);
+
+        OCI_FREE(value);
     }
 
     /* test for UTF8 environment */
 
     if (OCI_CHAR_ANSI == OCILib.charset)
     {
-        char *str = getenv("NLS_LANG");
+        char *str = OCI_GetEnvironmentVariable("NLS_LANG");
 
         if (str)
         {
@@ -779,12 +939,14 @@ boolean OCI_API OCI_Initialize
 
             strncat(nls_lang, str, OCI_SIZE_OBJ_NAME);
 
-            for (str = nls_lang; *str; str++)
+            for (char* ptr = nls_lang; *ptr; ptr++)
             {
-                *str = (char) toupper(*str);
+                *ptr = (char) toupper(*ptr);
             }
 
             OCILib.nls_utf8 = (NULL != strstr(nls_lang, "UTF8"));
+
+            OCI_FREE(str);
         }
     }
 

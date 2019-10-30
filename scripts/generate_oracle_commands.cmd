@@ -1,0 +1,1 @@
+sqlplus usr/pwd@db18c @generate_oracle_commands.sql oracle_commands_defines.txt oracle_commands_variables.txt

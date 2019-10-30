@@ -13,7 +13,7 @@ DESCRIPTION
 
 OCILIB is an open source and portable Oracle Driver that delivers really fast and reliable access to Oracle databases.
 
-The OCILIB library :
+The OCILIB library:
 
     * offers a rich, full featured and easy to use API
     * runs on all Oracle platforms
@@ -32,19 +32,19 @@ see VERSION file.
 FEATURES 
 ===========================================================================
    
-    * Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
+    * Full ANSI and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
     * Full 32/64 bits compatibility
-    * Comptabile with all Oracle version >= 8i
+    * Compatible with all Oracle version >= 8i
     * Automatic adaptation to the runtime Oracle client version
     * Runtime loading of Oracle libraries
-    * Builtin error handling (global and thread context)
+    * Built-in error handling (global and thread context)
     * Full support for SQL API and Object API
     * Full support for ALL Oracle SQL and PL/SQL datatypes (scalars, objects, refs, collections, ..)
     * Full support for PL/SQL (blocks, cursors, Index by Tables and Nested tables)
     * Support for non scalar datatype with trough library objects 
     * Oracle Pooling (connections and sessions pools)
     * Oracle XA connectivity (X/Open Distributed Transaction Processing XA interface)
-    * Oracle AQ (Advanded Queues)
+    * Oracle AQ (Advanced Queues)
     * Oracle TAF (Transparent Application Failover) and HA (High availabality) support 
     * Binding array Interface
     * Returning DML feature
@@ -63,7 +63,7 @@ FEATURES
 DOWNLOAD 
 ===========================================================================
 
-Available at :
+Available at:
 
 URL : http://www.ocilib.net
 
@@ -80,7 +80,7 @@ COMPATIBILITY
 ===========================================================================
 
 This current source is pure ISO C and should compile with any C90 Compliant compiler
-for ansi version and C99 for unicode versions.
+for ANSI version and C99 for Unicode versions.
  
  Validated Platforms (32/64bits): 
  

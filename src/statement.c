@@ -571,7 +571,7 @@ boolean OCI_BindCheckAll
             {
                 if (bnd->is_array)
                 {
-                    for (j = 0; j < bnd->buffer.count && OCI_STATUS; j++)
+                    for (j = 0; j < stmt->nb_iters && OCI_STATUS; j++)
                     {
                         OCI_STATUS = OCI_BindCheck(bnd, (ub1*)bnd->input, (ub1*)bnd->buffer.data, j);
                     }
@@ -621,7 +621,7 @@ boolean OCI_BindUpdateAll
             {
                 if (bnd->is_array)
                 {
-                    for (ub4 j = 0; j < bnd->buffer.count && OCI_STATUS; j++)
+                    for (ub4 j = 0; j < stmt->nb_iters && OCI_STATUS; j++)
                     {
                         OCI_STATUS = OCI_BindUpdate(bnd, (ub1*)bnd->buffer.data, (ub1*)bnd->input, j);
                     }
@@ -1115,7 +1115,7 @@ boolean OCI_API OCI_PrepareInternal
 
         #if OCI_VERSION_COMPILE >= OCI_12_2
 
-            if (stmt->con->ver_num >= OCI_12_2)
+            if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_12_2))
             {
                 mode |= OCI_PREP2_GET_SQL_ID;
             }
@@ -1285,7 +1285,7 @@ boolean OCI_API OCI_ExecuteInternal
 
     #if OCI_VERSION_COMPILE >= OCI_12_2
 
-            if (stmt->con->ver_num >= OCI_12_2)
+            if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_12_2))
             {
                 unsigned int size_id = 0;
 
@@ -2276,7 +2276,7 @@ boolean OCI_API OCI_BindDouble
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if ((OCILib.version_runtime >= OCI_10_1) && (stmt->con->ver_num >= OCI_10_1))
+    if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_10_1))
     {
         code = SQLT_BDOUBLE;
     }
@@ -2310,7 +2310,7 @@ boolean OCI_API OCI_BindArrayOfDoubles
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if ((OCILib.version_runtime >= OCI_10_1) && (stmt->con->ver_num >= OCI_10_1))
+    if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_10_1))
     {
         code = SQLT_BDOUBLE;
     }
@@ -2343,7 +2343,7 @@ boolean OCI_API OCI_BindFloat
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if ((OCILib.version_runtime >= OCI_10_1) && (stmt->con->ver_num >= OCI_10_1))
+    if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_10_1))
     {
         code = SQLT_BFLOAT;
     }
@@ -2377,7 +2377,7 @@ boolean OCI_API OCI_BindArrayOfFloats
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if ((OCILib.version_runtime >= OCI_10_1) && (stmt->con->ver_num >= OCI_10_1))
+    if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_10_1))
     {
         code = SQLT_BFLOAT;
     }

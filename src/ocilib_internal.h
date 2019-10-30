@@ -236,6 +236,17 @@ boolean OCI_ConnectionClose
     OCI_Connection *con
 );
 
+unsigned int OCI_ConnectionGetMinSupportedVersion
+(
+    OCI_Connection *con
+);
+
+boolean OCI_ConnectionIsVersionSupported
+(
+    OCI_Connection *con,
+    unsigned int    version
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * date.c
  * --------------------------------------------------------------------------------------------- */
@@ -665,6 +676,12 @@ boolean OCI_SetStringAttribute
     otext         **str,
     const otext    *value
 );
+
+char * OCI_GetEnvironmentVariable
+(
+    const char *name
+);
+
 
 /* --------------------------------------------------------------------------------------------- *
  * list.c

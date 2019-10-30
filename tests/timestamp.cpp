@@ -8,7 +8,7 @@ std::vector<unsigned int> TimestampTypes{ OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_T
 
 TEST_P(TestTimestamp, CreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto tmsp = OCI_TimestampCreate(nullptr, GetParam());
     ASSERT_EQ(GetParam(), OCI_TimestampGetType(tmsp));
@@ -19,7 +19,7 @@ TEST_P(TestTimestamp, CreateAndFree)
 
 TEST_P(TestTimestamp, ArrayCreateAndFree)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto tmsps = OCI_TimestampArrayCreate(nullptr, GetParam(), ARRAY_SIZE);
     ASSERT_TRUE(nullptr != tmsps);
@@ -36,7 +36,7 @@ TEST_P(TestTimestamp, ArrayCreateAndFree)
 
 TEST_P(TestTimestamp, Assign)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto tmsp1 = OCI_TimestampCreate(nullptr, GetParam());
     const auto tmsp2 = OCI_TimestampCreate(nullptr, GetParam());
@@ -53,7 +53,7 @@ TEST_P(TestTimestamp, Assign)
 
 TEST_P(TestTimestamp, CompareInferiorSuperior)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto tmsp1 = OCI_TimestampCreate(nullptr, GetParam());
     const auto tmsp2 = OCI_TimestampCreate(nullptr, GetParam());
@@ -72,7 +72,7 @@ TEST_P(TestTimestamp, CompareInferiorSuperior)
 
 TEST_P(TestTimestamp, CompareEqual)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto tmsp1 = OCI_TimestampCreate(nullptr, GetParam());
     const auto tmsp2 = OCI_TimestampCreate(nullptr, GetParam());
@@ -89,7 +89,7 @@ TEST_P(TestTimestamp, CompareEqual)
 
 TEST_P(TestTimestamp, FromTextDefaultFormat)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto tmsp = OCI_TimestampCreate(nullptr, GetParam());
     int year = 0, month = 0, day = 0, hour = 0, min = 0, sec = 0, msec = 0;
@@ -114,7 +114,7 @@ TEST_P(TestTimestamp, ToTextDefaultFormat)
 {
     otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto tmsp = OCI_TimestampCreate(nullptr, GetParam());
 
@@ -130,7 +130,7 @@ TEST_P(TestTimestamp, ToTextDefaultFormat)
 
 TEST_P(TestTimestamp, AddInterval)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto tmsp = OCI_TimestampCreate(nullptr, GetParam());
     const auto itv  = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
@@ -157,7 +157,7 @@ TEST_P(TestTimestamp, AddInterval)
 
 TEST_P(TestTimestamp, SubInterval)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto tmsp = OCI_TimestampCreate(nullptr, GetParam());
     const auto itv = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
@@ -184,7 +184,7 @@ TEST_P(TestTimestamp, SubInterval)
 
 TEST(TestTimestamp, TimestampFetch)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);
@@ -209,7 +209,7 @@ TEST(TestTimestamp, TimestampFetch)
 
 TEST_P(TestTimestamp, TimestampBindInOut)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto tmsp = OCI_TimestampCreate(nullptr, GetParam());
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -236,7 +236,7 @@ TEST_P(TestTimestamp, TimestampBindInOut)
 
 TEST(TestTimestamp, TimestampBindRegister)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, nullptr, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto stmt = OCI_StatementCreate(conn);

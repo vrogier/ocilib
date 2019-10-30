@@ -3,7 +3,7 @@
 #define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
 #include "gtest/gtest.h"
 
-#ifdef FALSE //_UNICODE
+#ifdef _UNICODE
 #define OCI_CHARSET_WIDE
 using ostring = std::wstring;
 #else
@@ -14,9 +14,10 @@ using ostring = std::string;
 #define OCI_API __stdcall
 #include "../include/ocilib.h"
 
-#define DBS OTEXT("db")
+#define DBS OTEXT("")
 #define USR OTEXT("usr")
 #define PWD OTEXT("pwd")
+#define HOME OTEXT("")
 #define PWD_WRONG OTEXT("pwd_wrong")
 #define ARRAY_SIZE 10
 #define NLS_LANGUAGE_SUNDAY_NAME OTEXT("Dimanche")
