@@ -6,7 +6,7 @@
         - Issue #213: Updated some version checks that were testing only for server version instead of testing both client and server versions
         - Issue #216: Re-calling OCI_BindArraySetSize() with a smaller value than previous assignment led to segfaults when statement has non scalar type binds
 	
-    * Miscellaneous (C API) :
+    * Miscellaneous (C API)
 	
 	    - Issue #212: Added possible error codes for OCI_Initialize() in the documentation
 		- Issue #215: Added a workaround to correctly retrieve environment variables set at runtime using SetEnvironmentVariable() on Windows 
@@ -42,7 +42,7 @@
         - Issue #192: Vectors of non scalar types binded as pure OUT binds are not updated after execution if vector element do not have their value set 
         - Issue #200: Compiler warning 4018 with 4.6.0
  
-    * Miscellaneous:
+    * Miscellaneous
   
         - Updated compilers for MS Windows prebuilt binaries
             * VS2017 15.9.7 for 32/64 bit DLLs
@@ -81,9 +81,9 @@
                 - C++ API: added functions  Connection::SetTimeout() and Connection::GetTimeout()
                 - C++ API: added Connection::TimeoutTypeValues enum
         
-         - C++ API: 
+        - C++ API
          
-             * Added Environment::GetCharMaxSize()
+            * Added Environment::GetCharMaxSize()
 
     * Fixes (C API)
 
@@ -95,7 +95,7 @@
         - Issue #181: Problem with utf-8 in LobNationalCharacter
         - Issue #182: Cannot bind a std::vector as a PL/SQL Table 
  
-   * Miscellaneous:
+    * Miscellaneous
 
         - Issue #180 : Added workaround for OCI bug related to prefetching with Oracle 9i clients
  
@@ -120,7 +120,7 @@
     
         - Issue #155: ocilib::Date::operator inverted operator >= and <=    
         
-    * Miscellaneous:
+    * Miscellaneous
 
         - Updated compilers for MS Windows pre built binaries
             * VS2017 15.8.3 for 32/64 bit DLLs
@@ -158,7 +158,7 @@
     
         - Issue #141: ocilib::Statement::Bind<ocilib::Raw, unsigned int>() accepts now empty ocilib::Raw
 
-    * Miscellaneous:
+    * Miscellaneous
 
         - OCILIB requires now C99 to be activated for compiling:
             * When using autotools (Unixes): Enforcing C99 compiler flags using AC_PROG_CC_STDC() macro
@@ -187,7 +187,7 @@
         - Issue #137: BINARY_DOUBLE and BINARY_FLOAT values could not be set or retrieved from OCI_Elem and OCI_Object
         - Issue #139: OCI_ErrorGetInternalCode() may report wrong OCI_ERR_* value
 
-    * Miscellaneous:
+    * Miscellaneous
 
         - Refactored internal numeric types conversions
         - Removed usage of deprecated symbols
@@ -216,7 +216,7 @@
         - Issue #121 : Updated magic numbers (positive and negative infinity) handling in OCI_NumberToString() and OCI_NumberFromString()
         - Issue #124 : OCI_DirPathSetColumn() might use a buffer to small to convert datetime/timestamp/interval values
 
-    * Miscellaneous:
+    * Miscellaneous
 
         - Visual studio solutions/projects updates and cleanup
 
@@ -340,7 +340,7 @@
             * Removed attempt to use move semantics 
             * It is currently causing memory leaks  and does not bring that much as C API handles are already handled using smart pointers
 
-    * Changes:
+    * Changes
         - Request #66: Increased value of OCI_BIND_MAX
             * Increased value of OCI_BIND_MAX from 1024 to 65535
             * Now Internal Arrays of OCI_Bind can grow and are reallocated by blocks of 128 binds
