@@ -1900,7 +1900,7 @@ const otext * OCI_API OCI_GetString
 
             if (OCI_STATUS)
             {
-                OCI_StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, bufsize, FALSE);
+                OCI_StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, def->buf.tmpsize, FALSE);
                 
                 OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
