@@ -27,7 +27,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.6.2</span>
+   &#160;<span id="projectnumber">4.6.3</span>
    </div>
   </td>
  </tr>
@@ -175,7 +175,20 @@ Functions</h2></td></tr>
 </dd>
 <dd>
 <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> should be called <b>ONCE</b> per application</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE (only with Oracle runtime loading mode if the oracle shared libraries can't be loaded or if OCI subsystem cannot be initialized) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE. Possible reasons for failures:<ul>
+<li>when <a class="el" href="group___ocilib_c_api_error_handling.html#ga66d447c8cd06ea3f841b439a1aac055b" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> return OCI_ERR_ORACLE, <a class="el" href="group___ocilib_c_api_error_handling.html#ga76fb68323de3574fb92a8027e8c4280e" title="Retrieve Oracle Error code from error handle.">OCI_ErrorGetOCICode()</a> returns:<ul>
+<li>any ORA-XXXXXX error code. Refer to Oracle documentation</li>
+</ul>
+</li>
+<li>when <a class="el" href="group___ocilib_c_api_error_handling.html#ga66d447c8cd06ea3f841b439a1aac055b" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> return OCI_ERR_OCILIB, possible error code returned by <a class="el" href="group___ocilib_c_api_error_handling.html#gaa59683a2cd8d8a5eb7d652fb153ff6c1" title="Retrieve Internal Error code from error handle.">OCI_ErrorGetInternalCode()</a><ul>
+<li>OCI_ERR_LOADING_SHARED_LIB : OCILIB could not load oracle shared libraries at runtime (32/64bits mistmatch, wrong <code>lib_path</code>, missing MSVC runtime required by oci.dll (MS Windows)</li>
+<li>OCI_ERR_LOADING_SYMBOLS : the loaded shared library does not contain OCI symbols</li>
+<li>OCI_ERR_NOT_AVAILABLE : OCILIb was built with OCI_CHARSET_WIDE and the oracle shared library dos not supports UTF16 (Oracle 8i)</li>
+<li>OCI_ERR_CREATE_OCI_ENVIRONMENT: Oracle OCI environment initialization failed (in such cases, it is impossible to get the reason) </li>
+</ul>
+</li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -461,7 +474,7 @@ OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_i
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Feb 25 2019 20:42:57 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Fri Nov 1 2019 13:16:34 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

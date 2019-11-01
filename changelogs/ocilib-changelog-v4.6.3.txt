@@ -1,0 +1,14 @@
+2019-11-01 Version 4.6.3 Vincent Rogier vince.rogier@ocilib.net
+
+    * Fixes (C API)
+	
+        - Issue #207: Updated Oracle command codes that were not accurate
+        - Issue #213: Updated some version checks that were testing only for server version instead of testing both client and server versions
+        - Issue #216: Re-calling OCI_BindArraySetSize() with a smaller value than previous assignment led to segfaults when statement has non scalar type binds
+        - Issue #220: Implicit conversion Clob issue in OCI_GetString() when using UTF8 encoding
+	
+    * Miscellaneous (C API)
+	
+	    - Issue #212: Added possible error codes for OCI_Initialize() in the documentation
+		- Issue #215: Added a workaround to correctly retrieve environment variables set at runtime using SetEnvironmentVariable() on Windows 
+

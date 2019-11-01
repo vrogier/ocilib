@@ -16,6 +16,10 @@ Click on a change log entry to see the full details.
 <br/>
 <br/>
 
+_[2019-11-01 . version 4.6.3]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.6.3.txt)_
+
+  * Some C API Bug fixes 
+
 _[2019-02-25 . version 4.6.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.6.2.txt)_
 
   * Some C API and C++ API Bug fixes 
