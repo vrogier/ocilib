@@ -10,5 +10,5 @@
     * Miscellaneous (C API)
 	
 	    - Issue #212: Added possible error codes for OCI_Initialize() in the documentation
-		- Issue #215: Added a workaround to correctly retrieve environment variables set at runtime using SetEnvironmentVariable() on Windows 
+	    - Issue #215: Added a workaround to correctly retrieve environment variables set at runtime using SetEnvironmentVariable() on Windows 
 
