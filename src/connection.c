@@ -560,6 +560,11 @@ void OCI_ConnectionLogonSessionPool
     OraText *dbstr_ret  = NULL;
     ub4      dbsize_ret = 0;
 
+    if (con->mode & OCI_SESSION_SYSDBA)
+    {
+        sess_mode |= OCI_SESSGET_SYSDBA;
+    }
+
     if (!OCI_STRING_VALID(con->pool->user) && !OCI_STRING_VALID(con->pool->pwd))
     {
         sess_mode |= OCI_SESSGET_CREDEXT;

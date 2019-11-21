@@ -3239,14 +3239,6 @@ OCI_EXPORT unsigned int OCI_API OCI_GetMaxCursors
  * and the number of back-end server processes will never be large enough to potentially
  * cause any scaling issue on the database, there is no need to use any pooling mechanism.
  *
- * @par Oracle 8i support
- *
- * Pooling has bee introduced in  :
- * - 9iR1 for connection pools
- * - 9iR2 for session pools
- * For Oracle 8i, OCILIB implements its own pooling mechanism in order to remain compatible
- * with older versions. But sessions pools then are handled as connection pools
- *
  * @par Example
  * @include pool.c
  *
@@ -3271,8 +3263,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetMaxCursors
  *
  * Possible values for parameter 'mode':
  * - OCI_SESSION_DEFAULT
- * - OCI_SESSION_SYSDAB
- * - OCI_SESSION_SYSOPER
+ * - OCI_SESSION_SYSDBA (session pools only)
  *
  * @note
  * External credentials are supported by supplying a null value for the 'user'

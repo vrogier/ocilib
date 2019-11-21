@@ -591,6 +591,7 @@ typedef struct OCIAQLisMsgProps OCIAQLisMsgProps;     /* AQ listen msg props */
 #define OCI_SESSGET_CREDPROXY  0x0008     /* SessionGet called in proxy mode */
 #define OCI_SESSGET_CREDEXT    0x0010
 #define OCI_SESSGET_SPOOL_MATCHANY 0x0020
+#define OCI_SESSGET_SYSDBA     0x0100    /* SessionGet with SYSDBA privileges */
 
 /*---------------------------------------------------------------------------*/
 /*------------------------ATTR Values for Session Pool-----------------------*/

@@ -274,7 +274,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
             {
                 ub4 sess_mode = OCI_DEFAULT;
                 
-                if (OCI_STRING_VALID(pool->user) && OCI_STRING_VALID(pool->pwd))
+                if (!(pool->mode & OCI_SESSION_SYSDBA) && OCI_STRING_VALID(pool->user) && OCI_STRING_VALID(pool->pwd))
                 {
                     sess_mode |= OCI_SPC_HOMOGENEOUS;
                 }
