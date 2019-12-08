@@ -1767,7 +1767,7 @@ boolean OCI_API OCI_Cleanup
     if (OCILib.key_errs)
     {        
         OCI_ThreadKey *key = OCILib.key_errs;
-        OCI_Error     *err = OCI_ErrorGet(FALSE);
+        OCI_Error     *err = OCI_ErrorGet(FALSE, FALSE);
 
         OCILib.key_errs = NULL;
 
@@ -1921,7 +1921,7 @@ OCI_Error * OCI_API OCI_GetLastError
 
     if (!OCILib.loaded || OCILib.env_mode & OCI_ENV_CONTEXT)
     {
-        err = OCI_ErrorGet(TRUE);
+        err = OCI_ErrorGet(TRUE, FALSE);
 
         if (err && (!err->raise))
         {

@@ -84,7 +84,8 @@ void OCI_ErrorReset
 
 OCI_Error * OCI_ErrorGet
 (
-    boolean check
+    boolean check,
+    boolean reset
 )
 {
     OCI_Error *err = NULL;
@@ -112,6 +113,12 @@ OCI_Error * OCI_ErrorGet
     if (check && err && err->active)
     {
         err = NULL;
+    }
+
+    // Reset error in case OCI_ENV_CONTEXT is no used
+    if (reset && err && err->depth == 0 && err->type != OCI_UNKNOWN)
+    {
+        OCI_ErrorReset(err);
     }
 
     return err;

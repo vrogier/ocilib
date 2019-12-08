@@ -523,15 +523,15 @@ boolean OCI_API OCI_CollToText
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
     OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    err = OCI_ErrorGet(TRUE);
+    err = OCI_ErrorGet(TRUE, TRUE);
 
     if (str)
     {
         *str = 0;
     }
 
-    len += OCI_StringAddToBuffer(str, len, coll->typinf->name, FALSE);
-    len += OCI_StringAddToBuffer(str, len, OTEXT("("), FALSE);
+    len += OCI_StringAddToBuffer(str, len, coll->typinf->name, (unsigned int) ostrlen(coll->typinf->name), FALSE);
+    len += OCI_StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
 
     const int n = OCI_CollGetSize(coll);
 
@@ -543,7 +543,7 @@ boolean OCI_API OCI_CollToText
 
         if (OCI_ElemIsNull(elem))
         {
-            len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, FALSE);
+            len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
         }
         else
         {
@@ -555,7 +555,8 @@ boolean OCI_API OCI_CollToText
             {
                 case OCI_CDT_TEXT:
                 {
-                    data  = (void *) OCI_ElemGetString(elem);
+                    data_size = OCIStringSize(OCILib.env, elem->handle);
+                    data      = (void *) OCI_ElemGetString(elem);
                     break;
                 }
                 case OCI_CDT_NUMERIC:
@@ -640,7 +641,7 @@ boolean OCI_API OCI_CollToText
                 }
                 else
                 {
-                    len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, FALSE);
+                    len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
                 }
                 OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
             }
@@ -648,13 +649,13 @@ boolean OCI_API OCI_CollToText
 
         if (OCI_STATUS && i < n)
         {
-            len += OCI_StringAddToBuffer(str, len, OTEXT(", "), FALSE);
+            len += OCI_StringAddToBuffer(str, len, OTEXT(", "), 2, FALSE);
         }
     }
 
     if (OCI_STATUS)
     {
-        len += OCI_StringAddToBuffer(str, len, OTEXT(")"), FALSE);
+        len += OCI_StringAddToBuffer(str, len, OTEXT(")"), 1, FALSE);
 
         *size = len;
     }

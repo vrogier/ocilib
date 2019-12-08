@@ -852,7 +852,7 @@ boolean OCI_ConnectionClose
 
     /* clear connection reference from current error object */
 
-    err = OCI_ErrorGet(FALSE);
+    err = OCI_ErrorGet(FALSE, FALSE);
 
     if (err && err->con == con)
     {

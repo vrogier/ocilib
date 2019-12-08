@@ -1807,6 +1807,7 @@ typedef unsigned int big_uint;
 
 #define OCI_SIZE_FORMAT                     64
 #define OCI_SIZE_BUFFER                     512
+#define OCI_SIZE_LARGE_BUFFER               ((64*1024)-1)
 #define OCI_SIZE_LONG                       ((64*1024)-1)
 #define OCI_SIZE_DATE                       45
 #define OCI_SIZE_TIMESTAMP                  54
@@ -1843,6 +1844,7 @@ typedef unsigned int big_uint;
 #define OCI_STRING_FALSE                    OTEXT("FALSE")
 #define OCI_STRING_TRUE_SIZE                4
 #define OCI_STRING_FALSE_SIZE               5
+#define OCI_STRING_NULL_SIZE                4
 
 #ifdef _WINDOWS
   #define OCI_CHAR_SLASH                    '\\'

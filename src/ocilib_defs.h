@@ -411,7 +411,7 @@
                                                                                 \
     if ((mode) & OCI_ENV_CONTEXT)                                               \
     {                                                                           \
-        ctx->call_err = OCI_ErrorGet(FALSE);                                    \
+        ctx->call_err = OCI_ErrorGet(FALSE, FALSE);                             \
         OCI_CallEnter(ctx);                                                     \
     }
 
@@ -438,9 +438,12 @@
     goto ExitCall;                                                              \
 
 #define OCI_CALL_CONTEXT_SET(c, s, e)                                           \
-    ctx->lib_con      = (c);                                                    \
-    ctx->lib_stmt     = (s);                                                    \
-    ctx->oci_err      = (e) ? (e) : OCILib.err;                                 \
+    if (OCILib.env_mode & OCI_ENV_CONTEXT)                                      \
+    {                                                                           \
+        ctx->lib_con      = (c);                                                \
+        ctx->lib_stmt     = (s);                                                \
+        ctx->oci_err      = (e) ? (e) : OCILib.err;                             \
+    }
 
 #define OCI_CALL_CONTEXT_SET_FROM_CONN(con)   OCI_CALL_CONTEXT_SET((con), NULL, ((con) ? (con)->err : OCILib.err))
 #define OCI_CALL_CONTEXT_SET_FROM_OBJ(obj)    OCI_CALL_CONTEXT_SET(((obj)->con), NULL, ((obj)->err))

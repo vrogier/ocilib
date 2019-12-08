@@ -228,7 +228,7 @@ OCI_Error * OCI_ExceptionGetError
     void
 )
 {
-    OCI_Error *err = OCI_ErrorGet(TRUE);
+    OCI_Error *err = OCI_ErrorGet(TRUE, FALSE);
 
     if (err)
     {

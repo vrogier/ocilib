@@ -368,5 +368,19 @@ boolean OCI_DefineDef
         }
     }
 
+#if OCI_VERSION_COMPILE >= OCI_11_1
+
+    if (OCI_ConnectionIsVersionSupported(def->rs->stmt->con, OCI_11_1))
+    {
+        if (OCI_CDT_LOB == def->col.datatype)
+        {
+            ub2 value = 1;
+
+            OCI_SET_ATTRIB(OCI_HTYPE_DEFINE, OCI_ATTR_LOBPREFETCH_LENGTH, def->buf.handle, &value, sizeof(value))
+        }
+    }
+
+#endif
+
     return OCI_STATUS;
 }

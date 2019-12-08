@@ -897,7 +897,7 @@ boolean OCI_StatementClose
 
     /* clear statement reference from current error object */
 
-    err = OCI_ErrorGet(FALSE);
+    err = OCI_ErrorGet(FALSE, FALSE);
 
     if (err && err->stmt == stmt)
     {

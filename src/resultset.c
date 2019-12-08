@@ -44,7 +44,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     index = OCI_GetDefineIndex(rs, name);                                                       \
     if (index > 0)                                                                              \
     {                                                                                           \
-        if (!ctx->call_err) ctx->call_err = OCI_ErrorGet(FALSE);                                \
+        if (!ctx->call_err) ctx->call_err = OCI_ErrorGet(FALSE, FALSE);                         \
         OCI_RETVAL = func(rs, (unsigned int) index);                                            \
         OCI_STATUS = !ctx->call_err->raise;                                                     \
     }                                                                                           \
@@ -70,7 +70,6 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     def = OCI_GetDefine(rs, index);                                                             \
     if (OCI_MATCHING_TYPE(def, lib_type))                                                       \
     {                                                                                           \
-        if (!ctx->call_err) ctx->call_err = OCI_ErrorGet(FALSE);                                \
         def->obj = OCI_RETVAL = func;                                                           \
         OCI_STATUS = (NULL != OCI_RETVAL);                                                      \
     }                                                                                           \
@@ -1758,7 +1757,7 @@ const otext * OCI_API OCI_GetString
         }
         else
         {
-            OCI_Error *err = OCI_ErrorGet(TRUE);
+            OCI_Error *err = OCI_ErrorGet(TRUE, TRUE);
 
             unsigned int bufsize = OCI_SIZE_TMP_CVT;
             unsigned int data_size = 0;

@@ -345,7 +345,8 @@ void OCI_ErrorReset
 
 OCI_Error * OCI_ErrorGet
 (
-    boolean check
+    boolean check,
+    boolean reset
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1160,6 +1161,7 @@ unsigned int OCI_StringAddToBuffer
     otext           *buffer,
     unsigned int     offset,
     const otext     *str,
+    unsigned int     length,
     boolean          check_quote
 );
 
