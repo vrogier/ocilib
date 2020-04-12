@@ -553,7 +553,10 @@ boolean OCI_BindCheckAll
         }
 
         if ((bnd->direction & OCI_BDM_IN) ||
-            (bnd->alloc && OCI_CDT_DATETIME != bnd->type && OCI_CDT_TEXT != bnd->type && OCI_CDT_NUMERIC != bnd->type))
+            (bnd->alloc && 
+             (OCI_CDT_DATETIME != bnd->type) &&
+             (OCI_CDT_TEXT != bnd->type) && 
+             (OCI_CDT_NUMERIC != bnd->type || SQLT_VNU == bnd->code)))
         {
             /* for strings, re-initialize length array with buffer default size */
 
@@ -571,7 +574,9 @@ boolean OCI_BindCheckAll
             {
                 if (bnd->is_array)
                 {
-                    for (j = 0; j < stmt->nb_iters && OCI_STATUS; j++)
+                    const ub4 count = OCI_IS_PLSQL_STMT(stmt->type) ? bnd->nbelem : stmt->nb_iters;
+
+                    for (j = 0; j < count && OCI_STATUS; j++)
                     {
                         OCI_STATUS = OCI_BindCheck(bnd, (ub1*)bnd->input, (ub1*)bnd->buffer.data, j);
                     }
@@ -621,7 +626,9 @@ boolean OCI_BindUpdateAll
             {
                 if (bnd->is_array)
                 {
-                    for (ub4 j = 0; j < stmt->nb_iters && OCI_STATUS; j++)
+                    const ub4 count = OCI_IS_PLSQL_STMT(stmt->type) ? bnd->nbelem : stmt->nb_iters;
+
+                    for (ub4 j = 0; j < count && OCI_STATUS; j++)
                     {
                         OCI_STATUS = OCI_BindUpdate(bnd, (ub1*)bnd->buffer.data, (ub1*)bnd->input, j);
                     }
