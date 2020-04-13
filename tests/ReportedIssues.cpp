@@ -68,6 +68,20 @@ TEST(ReportedIssues, Issue216)
     ASSERT_TRUE(OCI_Cleanup());
 }
 
+TEST(ReportedIssues, Issue222)
+{
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+    const auto pool = OCI_PoolCreate(DBS, USR, PWD, OCI_POOL_SESSION, OCI_SESSION_SYSDBA, 0, 1, 1);
+    ASSERT_NE(nullptr, pool);
+
+    const auto conn = OCI_PoolGetConnection(pool, nullptr);
+    ASSERT_NE(nullptr, conn);
+
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_PoolFree(pool));
+    ASSERT_TRUE(OCI_Cleanup());
+}
 
 TEST(ReportedIssues, Issue225)
 {
