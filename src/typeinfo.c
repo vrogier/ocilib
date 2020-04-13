@@ -284,7 +284,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                             OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_TYPECODE, param_type, &typinf->typecode, NULL)
                         }
 
-                        /* check if the type is a subtype derived from a supertype */
+                        /* check if the type is a subtype derived from a super type */
 
                         OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_IS_SUBTYPE, param_type, &ist, NULL)
 

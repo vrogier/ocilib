@@ -59,8 +59,7 @@ int OCI_GetDefineIndex
 
     if (!rs->map)
     {
-        /* create the map at the first call to OCI_Getxxxxx2() to save
-           time and memory when it's not needed */
+        /* create the map at the first call to save time and memory when it's not needed */
 
         rs->map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
 
@@ -68,7 +67,7 @@ int OCI_GetDefineIndex
         {
             for (ub4 i = 0; i < rs->nb_defs; i++)
             {
-                OCI_HashAddInt(rs->map, rs->defs[i].col.name, (i+1));
+                OCI_HashAddInt(rs->map, rs->defs[i].col.name, (int)(i + 1));
             }
         }
     }

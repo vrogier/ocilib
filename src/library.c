@@ -743,9 +743,9 @@ boolean OCI_KeyMapFree
 
     OCI_CHECK(NULL == OCILib.key_map, TRUE)
 
-    const int n = OCI_HashGetSize(OCILib.key_map);
+    const unsigned int n = OCI_HashGetSize(OCILib.key_map);
 
-    for (int i = 0; i < n; i++)
+    for (unsigned int i = 0; i < n; i++)
     {
         e = OCI_HashGetEntry(OCILib.key_map, i);
 
@@ -1810,7 +1810,7 @@ boolean OCI_API OCI_Cleanup
 
     if (OCILib.nb_hndlp > 0)
     {
-        OCI_ExceptionUnfreedData(OCI_HDLE_HANDLE, OCILib.nb_hndlp);
+        OCI_ExceptionUnfreedData(OCI_HDLE_HANDLE, (int) OCILib.nb_hndlp);
         res = FALSE;
     }
 
@@ -1818,7 +1818,7 @@ boolean OCI_API OCI_Cleanup
 
     if (OCILib.nb_descp > 0)
     {
-        OCI_ExceptionUnfreedData(OCI_HDLE_DESCRIPTOR, OCILib.nb_descp);
+        OCI_ExceptionUnfreedData(OCI_HDLE_DESCRIPTOR, (int) OCILib.nb_descp);
         res = FALSE;
     }
 
@@ -1826,7 +1826,7 @@ boolean OCI_API OCI_Cleanup
 
     if (OCILib.nb_objinst > 0)
     {
-        OCI_ExceptionUnfreedData(OCI_HDLE_OBJECT, OCILib.nb_objinst);
+        OCI_ExceptionUnfreedData(OCI_HDLE_OBJECT, (int) OCILib.nb_objinst);
         res = FALSE;
     }
 

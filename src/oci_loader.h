@@ -31,7 +31,7 @@
 
 #if defined(_WINDOWS)
 
-  #include <windows.h>
+  #include <Windows.h>
 
   #define LIB_HANDLE               HMODULE
   #define LIB_OPEN(l)              LoadLibraryA(l)

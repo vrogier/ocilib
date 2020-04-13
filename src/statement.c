@@ -49,7 +49,7 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
     }                                                               \
 
 #define SET_ARG_HANDLE(type, func, assign)                          \
-    type *src = func(rs, i), *dst = ( type *) va_arg(args, type *); \
+    type *src = func(rs, i), *dst = (type *) va_arg(args, type *);  \
     if (src && dst)                                                 \
     {                                                               \
         res = assign(dst, src);                                     \
@@ -86,9 +86,9 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
     OCI_RETVAL = OCI_STATUS;                                        \
     OCI_CALL_EXIT()                                                 \
 
-#define OCI_BIND_GET_SCALAR(s, t, i) bnd->is_array ? ((t *) (s)) + (i) : (t *) (s)
-#define OCI_BIND_GET_HANDLE(s, t, i) bnd->is_array ? ((t **) (s))[i] : (t *) (s)
-#define OCI_BIND_GET_BUFFER(d, t, i) (t *)((d) + (i) * sizeof(t))
+#define OCI_BIND_GET_SCALAR(s, t, i) (bnd->is_array ? ((t *) (s)) + (i) : (t *) (s))
+#define OCI_BIND_GET_HANDLE(s, t, i) (bnd->is_array ? ((t **) (s))[i] : (t *) (s))
+#define OCI_BIND_GET_BUFFER(d, t, i) ((t *)((d) + (i) * sizeof(t)))
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_BindGetInternalIndex
@@ -380,7 +380,7 @@ boolean OCI_BindCheck
         {
             if (OCILib.use_wide_char_conv)
             {
-                const int    max_chars  = bnd->size / sizeof(dbtext);
+                const int    max_chars  = (int) (bnd->size / sizeof(dbtext));
                 const size_t src_offset = index * max_chars * sizeof(otext);
                 const size_t dst_offset = index * max_chars * sizeof(dbtext);
 
@@ -494,7 +494,7 @@ boolean OCI_BindUpdate
     {
         if (OCILib.use_wide_char_conv)
         {
-            const int    max_chars  = bnd->size / sizeof(dbtext);
+            const int    max_chars  = (int) (bnd->size / sizeof(dbtext));
             const size_t src_offset = index * max_chars * sizeof(dbtext);
             const size_t dst_offset = index * max_chars * sizeof(otext);
 
@@ -1322,7 +1322,7 @@ boolean OCI_API OCI_ExecuteInternal
     {
         /* get parse error position type */
 
-        /* (one of the rare OCI call not enclosed with a OCI_CALLX macro ...) */
+        /* (one of the rare OCI call not enclosed with a OCI_CALL macro ...) */
 
         OCIAttrGet((dvoid *)stmt->stmt, (ub4)OCI_HTYPE_STMT,
                   (dvoid *)&stmt->err_pos, (ub4 *)NULL,
@@ -3520,7 +3520,7 @@ unsigned int OCI_API OCI_GetSqlErrorPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetAffecteddRows
+ * OCI_GetAffectedRows
  * --------------------------------------------------------------------------------------------- */
 
 unsigned int OCI_API OCI_GetAffectedRows

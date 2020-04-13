@@ -352,7 +352,7 @@ boolean OCI_API OCI_CollGetElem2
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+	OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     OCI_CALL_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
     OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
@@ -462,7 +462,7 @@ boolean OCI_API OCI_CollDeleteElem
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
+	OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
@@ -533,9 +533,9 @@ boolean OCI_API OCI_CollToText
     len += OCI_StringAddToBuffer(str, len, coll->typinf->name, (unsigned int) ostrlen(coll->typinf->name), FALSE);
     len += OCI_StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
 
-    const int n = OCI_CollGetSize(coll);
+    const unsigned int n = OCI_CollGetSize(coll);
 
-    for (int i = 1; i <= n && OCI_STATUS; i++)
+    for (unsigned int i = 1; i <= n && OCI_STATUS; i++)
     {
         OCI_Elem *elem = OCI_CollGetElem(coll, i);
 

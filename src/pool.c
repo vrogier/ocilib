@@ -224,7 +224,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
                 OCI_STATUS = OCI_HandleAlloc((dvoid *)OCILib.env, (dvoid **)(void *)&pool->authp, OCI_HTYPE_AUTHINFO);
 
-                /* set OCILIB's driver layer name attribute only for session pools here
+                /* set OCILIB driver layer name attribute only for session pools here
                     For standalone connections and connection pool this attribute is set
                     in OCI_ConnectionLogon() */
 

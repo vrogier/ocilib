@@ -455,7 +455,7 @@ void OCI_ConnectionLogonRegular
             OCI_StringReleaseOracleString(dbstr);
         }
 
-        /* set OCILIB's driver layer name attribute */
+        /* set OCILIB driver layer name attribute */
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 

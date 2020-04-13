@@ -692,7 +692,7 @@ boolean OCI_FetchCustom
             {
                 const int offset_save = offset;
 
-                offset      = offset - rs->row_fetched + rs->row_cur;
+                offset      = offset - (int) (rs->row_fetched + rs->row_cur);
                 rs->row_cur = 1;
 
                 res = OCI_FetchData(rs, mode, offset, err);
@@ -980,11 +980,11 @@ boolean OCI_API OCI_FetchPrev
 
                 if (rs->fetch_size > rs->row_abs)
                 {
-                    offset = 1 - rs->row_abs;
+                    offset = 1 - (int) rs->row_abs;
                 }
                 else
                 {
-                    offset = 1 - (rs->fetch_size + rs->row_fetched);
+                    offset = 1 - (int) (rs->fetch_size + rs->row_fetched);
                 }
 
                 OCI_RETVAL = OCI_FetchData(rs, OCI_SFD_RELATIVE, offset, &OCI_STATUS);
@@ -1186,7 +1186,7 @@ boolean OCI_API OCI_FetchSeek
     OCI_CALL_CHECK_ENUM_VALUE(rs->stmt->con, rs->stmt, mode, SeekModeValues, OTEXT("Fetch Seek Mode"))
     OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
 
-    OCI_RETVAL = OCI_FetchCustom(rs, mode, offset, &OCI_STATUS);
+    OCI_RETVAL = OCI_FetchCustom(rs, (int)mode, offset, &OCI_STATUS);
 
 #else
 
@@ -1398,7 +1398,7 @@ boolean OCI_API OCI_GetStruct
 
         size_t size = 0;
 
-        for (ub2 i = 1; i <= rs->nb_defs; i++)
+        for (ub4 i = 1; i <= rs->nb_defs; i++)
         {
             OCI_Define *def = &rs->defs[i - 1];
 
@@ -2508,7 +2508,7 @@ boolean OCI_API OCI_IsNull2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ResultsetGetStatment
+ * OCI_ResultsetGetStatement
  * --------------------------------------------------------------------------------------------- */
 
 OCI_Statement * OCI_API OCI_ResultsetGetStatement

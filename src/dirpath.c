@@ -937,7 +937,7 @@ unsigned int OCI_API OCI_DirPathLoad
 
     dp->nb_processed = 0;
 
-   /* reset errors variables as OCI_DirPathLoad() is not reentrant */
+   /* reset errors variables as OCI_DirPathLoad() is not re-entrant */
 
     dp->nb_err       = 0;
     dp->idx_err_col  = 0;

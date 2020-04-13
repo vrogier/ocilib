@@ -312,7 +312,7 @@ dbtext * OCI_StringGetOracleString
     }
     else
     {
-        len = (*size) / sizeof(otext);
+        len = (int) ((*size) / sizeof(otext));
     }
 
     if (OCILib.use_wide_char_conv)
@@ -329,7 +329,7 @@ dbtext * OCI_StringGetOracleString
         dst = (dbtext *) src;
     }
 
-    *size = len * sizeof(dbtext);
+    *size = (int) (len * sizeof(dbtext));
 
     return dst;
 }
@@ -651,8 +651,8 @@ unsigned int OCI_StringGetFromType
             {
                 if (data)
                 {
-                    otext* str_value        = (*(boolean*)data) ? OCI_STRING_TRUE : OCI_STRING_FALSE;
-                    unsigned int str_length = (*(boolean*)data) ? OCI_STRING_TRUE_SIZE : OCI_STRING_FALSE_SIZE;
+                    otext* str_value = (*(boolean*)data) ? OCI_STRING_TRUE : OCI_STRING_FALSE;
+                    const unsigned int str_length = (*(boolean*)data) ? OCI_STRING_TRUE_SIZE : OCI_STRING_FALSE_SIZE;
 
                     len += OCI_StringAddToBuffer(buffer, len, str_value, str_length, quote);
                 }
@@ -674,7 +674,7 @@ unsigned int OCI_StringGetFromType
 
             if (ptr)
             {
-                res = OCI_NumberToString(con, data, col->subtype, ptr, buffer_size, NULL);
+                res = OCI_NumberToString(con, data, col->subtype, ptr, (int) buffer_size, NULL);
             }    
             else
             {
@@ -691,7 +691,7 @@ unsigned int OCI_StringGetFromType
                 OCI_Date    *date = (OCI_Date*) data;
                 const otext *fmt  = OCI_GetFormat(con, OCI_FMT_DATE);
 
-                res = date ? OCI_DateToText(date, fmt, buffer_size, ptr) : FALSE;
+                res = date ? OCI_DateToText(date, fmt, (int) buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -708,7 +708,7 @@ unsigned int OCI_StringGetFromType
                 OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
                 const otext   *fmt = OCI_GetFormat(con, tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
 
-                 res = tmsp ? OCI_TimestampToText(tmsp, fmt, buffer_size, ptr, 0) : FALSE;
+                 res = tmsp ? OCI_TimestampToText(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
             }
             else
             {
@@ -774,7 +774,7 @@ unsigned int OCI_StringGetFromType
 
                     while (res)
                     {
-                        unsigned int bytes_requested = sizeof(lob_buf) - sizeof(otext);
+	                    const unsigned int bytes_requested = sizeof(lob_buf) - sizeof(otext);
                         unsigned int bytes_count = bytes_requested;
                         unsigned int char_count = 0;
 
@@ -941,8 +941,8 @@ unsigned int OCI_StringAddToBuffer
     boolean          check_quote
 )
 {
-    unsigned int  len_in   = length;
-    unsigned int  len_out  = 0;
+	const unsigned int  len_in = length;
+    unsigned int len_out  = 0;
 
     if (!str)
     {

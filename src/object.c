@@ -190,7 +190,7 @@ ub2 OCI_ObjectGetIndOffset
 
     OCI_CHECK(typinf == NULL, 0);
 
-    for (i = 0; i < index; i++)
+    for (i = 0; i < (int) index; i++)
     {
         if (OCI_CDT_OBJECT == typinf->cols[i].datatype)
         {
@@ -1245,7 +1245,7 @@ int OCI_API OCI_ObjectGetRaw
 
             memcpy(buffer, OCIRawPtr(obj->con->env, *value), (size_t) len);
 
-            OCI_RETVAL = len;
+            OCI_RETVAL = (int) len;
         }
     }
 
