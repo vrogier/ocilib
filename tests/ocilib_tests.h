@@ -3,12 +3,18 @@
 #define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
 #include "gtest/gtest.h"
 
+#include <array>
+#include <vector>
+#include <string>
+
 #ifdef _UNICODE
-#define OCI_CHARSET_WIDE
-using ostring = std::wstring;
+    #define OCI_CHARSET_WIDE
+    #define TO_STRING std::to_wstring
+    using ostring = std::wstring;
 #else
-#define OCI_CHARSET_ANSI
-using ostring = std::string; 
+    #define OCI_CHARSET_ANSI
+    #define TO_STRING std::to_string
+    using ostring = std::string;
 #endif
 
 #define OCI_API __stdcall
