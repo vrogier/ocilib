@@ -1,3 +1,17 @@
+2020-04-13 Version 4.6.4 Vincent Rogier vince.rogier@ocilib.net
+
+    * Fixes (C API)
+	
+        - Issue #222: Allow OCI_SESSION_SYSDBA for session pools
+        - Issue #225: Fixed some binding issues when statement is an anonymous PL/SQL block
+		- Issue #226: When NOT using OCI_ENV_CONTEXT environment flag, OCI_CollToText() andOCI_ObjectToText() failed if previous OCILIB call failed
+        - Issue #227: Enhanced performance when fetching Clobs as strings (for Oracle 11g and above)
+
+    * Miscellaneous (C API)
+	
+		- some performance improvements when converting Objects and Collections to strings
+		- some performance improvements when calling OCI_GetString() on non strings columns
+	
 2019-11-01 Version 4.6.3 Vincent Rogier vince.rogier@ocilib.net
 
     * Fixes (C API)
@@ -692,7 +706,7 @@
       - Collections:          
           - Added OCI_CollDeleteElem()
           - Added OCI_CollGetCount()     
-          - Added OCI_IterGetCurrent()
+          - Added OCI_IterGetCurrent()w
           - Fixed OCI_IterGetPrev() and OCI_IterGetNext() : Last error flag for OCI_GetLastError() was wrongly set if it returned FALSE 
           - Fixed OCI_ElemGetRaw() : possible segfault could happen
           - Fixed OCI_ElemSetNull() : it was not setting correctly the element indicator for collections of objects
