@@ -2762,37 +2762,40 @@ public:
     bool operator >= (const Number& other) const;
     bool operator <= (const Number& other) const;
 
-    template<class T>
+    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
     Number& operator = (const T &lhs);
 
-    template<class T>
+    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
     operator T() const;
 
-    template<class T>
+    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
     Number operator - (const T &value);
 
-    template<class T>
+    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
     Number operator + (const T &value);
 
-    template<class T>
+    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
     Number operator * (const T &value);
 
-    template<class T>
+    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
     Number operator / (const T &value);
 
-    template<class T>
+    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
     Number& operator += (const T &value);
 
-    template<class T>
+    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
     Number& operator -= (const T &value);
 
-    template<class T>
+    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
     Number& operator *= (const T &value);
 
-    template<class T>
+    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
     Number& operator /= (const T &value);
 
 private:
+
+    template<class T>
+    static void* GetNativeValue(const T& value);
 
     Number(OCI_Number *pNumber, Handle *parent = nullptr);
 

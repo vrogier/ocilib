@@ -42,30 +42,61 @@ namespace ocilib
 #if __cplusplus < CPP_11
     #if defined(__GNUC__)
         #if defined(__GXX_EXPERIMENTAL_CXX0X__)
-            #define HAVE_NULLPTR
-            #define HAVE_MOVE_SEMANTICS
-        #else
+            #define HAS_CXX
+            #define HAS_NULLPTR
+            #define HAS_MOVE_SEMANTICS
+       #else
             #define override
         #endif
     #elif defined(_MSC_VER)
         #if _MSC_VER >= 1600
-            #define HAVE_NULLPTR
-            #define HAVE_MOVE_SEMANTICS
+            #define HAS_CXX
+            #define HAS_NULLPTR
+            #define HAS_MOVE_SEMANTICS
         #else
             #define override
         #endif
     #endif
 #else
-    #define HAVE_NULLPTR
-    #define HAVE_MOVE_SEMANTICS
+    #define HAS_CXX
+    #define HAS_NULLPTR
+    #define HAS_MOVE_SEMANTICS
 #endif
 
 
 /* guessing if nullptr is supported */
 
-#ifndef HAVE_NULLPTR
+#ifndef HAS_NULLPTR
     #define nullptr 0
 #endif
+
+#ifdef HAS_CXX
+
+    template<bool B, class T = void>
+    using EnableIf  =  std::enable_if<B, T>;
+
+    template<class T, class U>
+    using IsSame = std::is_same<T, U>;
+
+#else
+
+    template<bool B, class T = void>
+    struct EnableIf {};
+
+    template<class T>
+    struct EnableIf<true, T> { typedef T type; };
+
+    template<bool B>
+    struct BoolConstant { static const bool value = B; };
+
+    template<class T, class U>
+    struct IsSame : BoolConstant<false> {};
+
+    template<class T>
+    struct IsSame<T, T> : BoolConstant<true> {};
+
+#endif
+
 
 #define ARG_NOT_USED(a) (a) = (a)
 
@@ -80,6 +111,7 @@ class Resultset;
 class Date;
 class Timestamp;
 class Interval;
+class Number;
 class TypeInfo;
 class Reference;
 class Object;
@@ -109,6 +141,20 @@ class Thread;
 class ThreadKey;
 class Mutex;
 class BindInfo;
+
+template<class T>
+struct SupportedNumeric
+{
+    typedef EnableIf<IsSame<T, short>::value ||
+        IsSame<T, unsigned short>::value ||
+        IsSame<T, int>::value ||
+        IsSame<T, unsigned int>::value ||
+        IsSame<T, big_int>::value ||
+        IsSame<T, big_uint>::value ||
+        IsSame<T, float>::value ||
+        IsSame<T, double>::value ||
+        IsSame<T, Number>::value> Type;
+};
 
 /**
 * @brief Internal usage.

@@ -1852,6 +1852,18 @@ inline Number Number::Clone() const
     return result;
 }
 
+template<class T>
+void* Number::GetNativeValue(const T& value)
+{
+    return reinterpret_cast<void*>(const_cast<T*>(&value));
+}
+
+template<>
+inline void* Number::GetNativeValue(const Number& value)
+{
+    return (reinterpret_cast<OCI_Number*>(Check(OCI_NumberGetContent(value))));
+}
+
 inline int Number::Compare(const Number& other) const
 {
     return Check(OCI_NumberCompare(*this, other));
@@ -1875,7 +1887,7 @@ Number& Number::SetValue(const T &value)
         Allocate();
     }
 
-    Check(OCI_NumberSetValue(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
+    Check(OCI_NumberSetValue(*this, NumericTypeResolver<T>::Value, GetNativeValue(value)));
 
     return *this;
 }
@@ -1883,25 +1895,25 @@ Number& Number::SetValue(const T &value)
 template<class T>
 void Number::Add(const T &value)
 {
-    Check(OCI_NumberAdd(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
+    Check(OCI_NumberAdd(*this, NumericTypeResolver<T>::Value, GetNativeValue(value)));
 }
 
 template<class T>
 void Number::Sub(const T &value)
 {
-    Check(OCI_NumberSub(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
+    Check(OCI_NumberSub(*this, NumericTypeResolver<T>::Value, GetNativeValue(value)));
 }
 
 template<class T>
 void Number::Multiply(const T &value)
 {
-    Check(OCI_NumberMultiply(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
+    Check(OCI_NumberMultiply(*this, NumericTypeResolver<T>::Value, GetNativeValue(value)));
 }
 
 template<class T>
 void Number::Divide(const T &value)
 {
-    Check(OCI_NumberDivide(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
+    Check(OCI_NumberDivide(*this, NumericTypeResolver<T>::Value, GetNativeValue(value)));
 }
 
 inline Number& Number::operator = (OCI_Number * &lhs)
@@ -1910,20 +1922,20 @@ inline Number& Number::operator = (OCI_Number * &lhs)
     return *this;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number& Number::operator = (const T &lhs)
 {
     SetValue<T>(lhs);
     return *this;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number::operator T() const
 {
     return GetValue<T>();
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number Number::operator + (const T &value)
 {
     Number result = Clone();
@@ -1931,7 +1943,7 @@ Number Number::operator + (const T &value)
     return result;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number Number::operator - (const T &value)
 {
     Number result = Clone();
@@ -1939,7 +1951,7 @@ Number Number::operator - (const T &value)
     return result;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number Number::operator * (const T &value)
 {
     Number result = Clone();
@@ -1947,7 +1959,7 @@ Number Number::operator * (const T &value)
     return result;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number Number::operator / (const T &value)
 {
     Number result = Clone();
@@ -1955,28 +1967,28 @@ Number Number::operator / (const T &value)
     return result;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number& Number::operator += (const T &value)
 {
     Add<T>(value);
     return *this;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number& Number::operator -= (const T &value)
 {
     Sub<T>(value);
     return *this;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number& Number::operator *= (const T &value)
 {
     Multiply<T>(value);
     return *this;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number& Number::operator /= (const T &value)
 {
     Divide<T>(value);
