@@ -4771,9 +4771,7 @@ void BindArray::BindArrayObject<T>::SetOutData()
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
-        T& object = *it;
-
-        object = static_cast<NativeType>(_data[index]);
+        *it = static_cast<NativeType&>(_data[index]);
     }
 }
 
@@ -4925,7 +4923,7 @@ void BindTypeAdaptor<T>::SetOutData()
 {
     if (GetMode() & OCI_BDM_OUT)
     {
-        _object = static_cast<T>(*_data);
+        _object = static_cast<T&>(*_data);
     }
 }
 
