@@ -26,6 +26,17 @@
  *
  */
 
+//
+// ReSharper inspection rules customization (mainly for C98 backward compatibility)
+//
+// ReSharper disable CppClassCanBeFinal
+// ReSharper disable CppUnusedIncludeDirective
+// ReSharper disable CppFunctionIsNotImplemented
+// ReSharper disable CppClangTidyReadabilityRedundantDeclaration
+// ReSharper disable CppClangTidyHicppSpecialMemberFunctions
+// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
+//
+
 #ifndef OCILIBCPP_H_INCLUDED
 #define OCILIBCPP_H_INCLUDED
 
@@ -65,7 +76,7 @@ namespace ocilib
  *  - Based on C++ and STL paradigms (Strong typing, templates, containers, RAII, exception handling, operators, stack objects)
  *  - Based on design patterns (RAII, delegation, reference counting, smart pointers, proxies, singleton)
  *  - No user dynamic object allocation required
- *  - The only dependences are : STL and OCILIB C API
+ *  - The only dependencies are : STL and OCILIB C API
  *
  * @par C++ language requirements
  * - The OCILIB C++ API requires only C++03 features.
@@ -96,7 +107,7 @@ namespace ocilib
  * @warning
  *  - OCILIB++ wraps the whole OCILIB C API.
  *  - Each C OCILIB object handle has its C++ class counter part.
- *  - The whole OCILIB C Documentation (concepts, use cases, features and functionalities) is still valid for OCILIB++
+ *  - The whole OCILIB C Documentation (concepts, use cases, features) is still valid for OCILIB++
  *
  * @}
  */
@@ -630,21 +641,25 @@ public:
     *  - The same content as GetMessage() but as using const char * type
     *
     */
-    const char *what() const throw() override;
+    const char *what() const noexcept override;
+
+    Exception(const Exception& other) noexcept;
+
+    Exception& operator = (const Exception &other) noexcept;
 
     /**
     * @brief
     * Virtual destructor required for deriving from std::exception
     *
     */
-    virtual ~Exception() throw ();
+    virtual ~Exception() noexcept;
 
 private:
 
-    Exception();
-    Exception(OCI_Error *err);
+    Exception() noexcept;
+    Exception(OCI_Error *err) noexcept;
 
-    std::string _what;
+    otext* _what;
     OCI_Statement *_pStatement;
     OCI_Connection *_pConnnection;
     unsigned int _row;
@@ -1367,10 +1382,10 @@ public:
      *
      * @param handle - Thread handle
      * @param func   - routine to execute
-     * @param args   - parameter to pass to the routine
+     * @param arg    - parameter to pass to the routine
      *
      */
-    static void Run(ThreadHandle handle, ThreadProc func, void *args);
+    static void Run(ThreadHandle handle, ThreadProc func, AnyPointer arg);
 
     /**
      * @brief
@@ -2390,25 +2405,25 @@ public:
      * - number of characters for CLOBs (Clob / NClob).
      *
      * @note
-     * Default is 0 (prefetching disabled)
+     * Default is 0 (pre-fetching disabled)
      *
      */
     unsigned int GetDefaultLobPrefetchSize() const;
 
     /**
      * @brief
-     * Enable or disable prefetching for all LOBs fetched in the connection
+     * Enable or disable pre-fetching for all LOBs fetched in the connection
      *
      * @param value - default prefetch buffer size
      *
      * @note
      * If parameter 'value':
-     * - is == 0, it disables prefetching for all LOBs fetched in the connection.
-     * - is >  0, it enables prefetching for all LOBs fetched in the connection
-     * and the given buffer size is used for prefetching LOBs
+     * - is == 0, it disables pre-fetching for all LOBs fetched in the connection.
+     * - is >  0, it enables pre-fetching for all LOBs fetched in the connection
+     * and the given buffer size is used for pre-fetching LOBs
      *
      * @note
-     * LOBs prefetching is disabled by default
+     * LOBs pre-fetching is disabled by default
      *
      * @warning
      * Requires Oracle Client AND Server 11gR1 or above.
@@ -2762,40 +2777,40 @@ public:
     bool operator >= (const Number& other) const;
     bool operator <= (const Number& other) const;
 
-    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
+    template<class T, typename SupportedNumeric<T>::Type::type* = nullptr>
     Number& operator = (const T &lhs);
 
-    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
+    template<class T, typename SupportedNumeric<T>::Type::type* = nullptr>
     operator T() const;
 
-    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
+    template<class T, typename SupportedNumeric<T>::Type::type* = nullptr>
     Number operator - (const T &value);
 
-    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
+    template<class T, typename SupportedNumeric<T>::Type::type* = nullptr>
     Number operator + (const T &value);
 
-    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
+    template<class T, typename SupportedNumeric<T>::Type::type* = nullptr>
     Number operator * (const T &value);
 
-    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
+    template<class T, typename SupportedNumeric<T>::Type::type* = nullptr>
     Number operator / (const T &value);
 
-    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
+    template<class T, typename SupportedNumeric<T>::Type::type* = nullptr>
     Number& operator += (const T &value);
 
-    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
+    template<class T, typename SupportedNumeric<T>::Type::type* = nullptr>
     Number& operator -= (const T &value);
 
-    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
+    template<class T, typename SupportedNumeric<T>::Type::type* = nullptr>
     Number& operator *= (const T &value);
 
-    template<class T, typename SupportedNumeric<T>::Type::type* = 0>
+    template<class T, typename SupportedNumeric<T>::Type::type* = nullptr>
     Number& operator /= (const T &value);
 
 private:
 
     template<class T>
-    static void* GetNativeValue(const T& value);
+    static AnyPointer GetNativeValue(const T& value);
 
     Number(OCI_Number *pNumber, Handle *parent = nullptr);
 
@@ -4375,7 +4390,7 @@ public:
     *
     * @note
     * - A call to Open() is not necessary to manipulate a Lob.
-    * - If a lob hasn't been opened explicitly, triggers are fired and
+    * - If a lob has not been opened explicitly, triggers are fired and
     *   indexes updated at every read/write/append operation
     *
     */
@@ -4803,7 +4818,7 @@ public:
     * @return
     *  - For table and views, it return a null TypeInfo object
     *  - For types:
-    *       - returns a valid Typeinfo object wrapping the parent super type
+    *       - returns a valid TypeInfo object wrapping the parent super type
     *       - returns a null TypeInfo object if the given type is NOT deriving from a base type
     *
     */
@@ -4987,7 +5002,7 @@ public:
     * return a string representation of the current object
     *
     */
-    ostring ToString() const;
+    ostring ToString() const override;
 
 private:
 
@@ -5103,7 +5118,7 @@ public:
 	CollectionElement();
 	CollectionElement(CollectionType *coll, unsigned int pos);
 	operator T() const;
-	CollectionElement& operator = (const ValueType& value);
+	CollectionElement& operator = (const ValueType& other);
 	CollectionElement& operator = (const CollectionElement& other);
 	bool IsNull() const;
 	void SetNull();
@@ -5142,6 +5157,7 @@ public:
 	CollectionIterator(const CollectionIterator& other);
 
 	CollectionIterator& operator = (const CollectionIterator& other);
+
 	CollectionIterator& operator += (difference_type value);
 	CollectionIterator& operator -= (difference_type value);
 
@@ -5157,7 +5173,7 @@ public:
 	CollectionIterator operator + (difference_type value);
 	CollectionIterator operator - (difference_type value);
 
-	difference_type operator - (const CollectionIterator &other);
+	difference_type operator - (const CollectionIterator & other);
 
 	bool operator == (const CollectionIterator& other);
 	bool operator != (const CollectionIterator& other);
@@ -5350,11 +5366,11 @@ public:
     * @brief
     * Append the given element value at the end of the collection
     *
-    * @param data - Value to add
+    * @param value - Value to add
     *
     *
     */
-    void Append(const T &data);
+    void Append(const T &value);
 
     /**
     * @brief
@@ -5431,7 +5447,7 @@ public:
     * Returns the element at a given position in the collection.
     *
     */
-    const CollectionElement<T> operator [] (unsigned int index) const;
+    CollectionElement<T> operator [](unsigned int index) const;
 
 private:
 
@@ -5507,7 +5523,7 @@ private:
 
 /**
  * @brief
- * Provides SQL bind informations
+ * Provides SQL bind information
  *
  * This class wraps the OCILIB object handle OCI_Bind and its related methods
  *
@@ -5592,8 +5608,8 @@ public:
     * - Interval
     *
     * @warning
-    * - The returned values must be casted to the matching C++ class GetType() property type.
-    * - For scalar numeric types, returned value must be casted to ocilib::NumericType.
+    * - Cast returned values to the matching C++ class GetType() property type.
+    * - For scalar numeric types, cast returned value to ocilib::NumericType values.
     * - For a non valid type, it returns 0.
     *
     */
@@ -5843,7 +5859,7 @@ public:
     * description of the select order only.
     * The command is not executed.
     * This call is only useful to retrieve information on the associated resultset
-    * Call GetResultet() after Describe() to access to SELECT list information
+    * Call GetResultset() after Describe() to access to SELECT list information
     *
     * @note
     * This call prepares the statement (internal call to Prepare()) and ask
@@ -6012,7 +6028,7 @@ public:
     *  - For DELETEs : number of rows deleted
     *
     * @note
-    * For SELECTs  statements, use GetRowCount() instead
+    * For SELECTs statements, use GetRowCount() instead
     *
     */
     unsigned int GetAffectedRows() const;
@@ -6602,7 +6618,7 @@ private:
 
     Statement(OCI_Statement *stmt, Handle *parent = nullptr);
 
-    BindsHolder *GetBindsHolder(bool allocate) const;
+    BindsHolder *GetBindsHolder(bool create) const;
 
     void ReleaseResultsets() const;
 
@@ -7018,7 +7034,7 @@ public:
         IsIdentity = OCI_CPF_IS_IDENTITY,
         /** Only valid when IsIdentity is set:
                - If set, means that the value is "ALWAYS GENERATED"
-               - Otherwise mens that the value is "GENERATED BY" */
+               - Otherwise means that the value is "GENERATED BY" */
         IsGeneratedAlways = OCI_CPF_IS_GEN_ALWAYS,
         /** Only valid when IsIdentity is set:
                - If set, means that the value is generated by default on NULL */
@@ -7086,7 +7102,7 @@ public:
     * - Interval
     *
     * @warning
-    * - The returned values must be casted to the matching C++ class GetType() property type.
+    * - Cast returned values to the matching C++ class GetType() property type.
     * - For a non valid type, it returns 0.
     *
     */
@@ -7277,7 +7293,7 @@ public:
     * If the database connection passed to Register()
     * has been closed by the time that the application calls
     * Unregister(), the library internally reconnects
-    * to the given database, performs the deregistration and then disconnects
+    * to the given database, performs the unregistration and then disconnects
     *
     */
     void Unregister();
@@ -8710,7 +8726,7 @@ public:
      * Oracle Streams - Advanced Queuing User's Guide for more details
      *
      * @warning
-     * This feature is only available from ORacle 10gR2.
+     * This feature is only available from Oracle 10gR2.
      * This function does nothing and returns TRUE is the server version is < Oracle 10gR2
      *
      * @note
