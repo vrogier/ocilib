@@ -27,7 +27,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.6.3</span>
+   &#160;<span id="projectnumber">4.6.4</span>
    </div>
   </td>
  </tr>
@@ -378,8 +378,8 @@ if stmt is NULL, the return value is OCI_UNKNOWN </dd></dl>
 <li>OCI_BAM_INTERNAL : bind variable are allocated internally</li>
 </ul>
 </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call has to be made after preparing a statement as <a class="el" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a> reset it by default to OCI_BAM_EXTERNAL. When calling an OCI_BindXXXX() call, this value is used and stored in the OCI_Bind object created during the bind call. Each bind can have is own allocation mode that is returned by <a class="el" href="group___ocilib_c_api_binding.html#gac2c4748f8f723885f5d80c959b095952" title="Get the allocaton mode of a bind handle.">OCI_BindGetAllocationMode()</a> <a class="el" href="group___ocilib_c_api_statement_control.html#ga3d36730fe81e7bdaef5d5bbb066265a6" title="Set the current bind allocation mode that will be used for subsequent binding calls.">OCI_SetBindAllocation()</a> can be called before each binding call if needed, resulting having some bind allocated externally and other ones internally.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Refer to the section "Binding variables and arrays" of the documention about allocation mode as OCI_BAM_INTERNAL is not compatible with all bind calls </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This call has to be made after preparing a statement as <a class="el" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a> reset it by default to OCI_BAM_EXTERNAL. When calling an OCI_BindXXXX() call, this value is used and stored in the OCI_Bind object created during the bind call. Each bind can have is own allocation mode that is returned by <a class="el" href="group___ocilib_c_api_binding.html#gac2c4748f8f723885f5d80c959b095952" title="Get the allocation mode of a bind handle.">OCI_BindGetAllocationMode()</a> <a class="el" href="group___ocilib_c_api_statement_control.html#ga3d36730fe81e7bdaef5d5bbb066265a6" title="Set the current bind allocation mode that will be used for subsequent binding calls.">OCI_SetBindAllocation()</a> can be called before each binding call if needed, resulting having some bind allocated externally and other ones internally.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Refer to the section "Binding variables and arrays" of the documentation about allocation mode as OCI_BAM_INTERNAL is not compatible with all bind calls </dd></dl>
 
 </div>
 </div>
@@ -751,7 +751,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 <ul>
 <li>OCI_LONG_EXPLICIT : LONGs are explicitly handled by OCI_Long type</li>
 <li><p class="startli">OCI_LONG_IMPLICIT : LONGs are implicitly mapped to string type in the limits of VARCHAR2 size capacity</p>
-<p class="startli">LONG RAWs can't be handled with OCI_LONG_IMPLICIT </p>
+<p class="startli">LONG RAWs cannot be handled with OCI_LONG_IMPLICIT </p>
 </li>
 </ul>
 
@@ -825,7 +825,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Nov 1 2019 13:16:35 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Sat Apr 18 2020 12:29:12 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

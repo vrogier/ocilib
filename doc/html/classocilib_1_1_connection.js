@@ -77,7 +77,7 @@ var classocilib_1_1_connection =
     [ "GetMaxCursors", "classocilib_1_1_connection.html#a2b142bdff73f7a55a6439f38343cea09", null ],
     [ "IsTAFCapable", "classocilib_1_1_connection.html#a823b6cc30418baae943fd29d2280418b", null ],
     [ "SetTAFHandler", "classocilib_1_1_connection.html#a6e83ffbf5d12d6fad2abc6c0ec72d5e7", null ],
-    [ "GetUserData", "classocilib_1_1_connection.html#a4758404a8195d8f32bf71a98f53d0a35", null ],
+    [ "GetUserData", "classocilib_1_1_connection.html#acd861d10260b82cd4a72049565f9291b", null ],
     [ "SetUserData", "classocilib_1_1_connection.html#a9a290370df27e4e843fc01fd1c9396ba", null ],
     [ "GetTimeout", "classocilib_1_1_connection.html#a6607849329f328582edbb2958ae651d6", null ],
     [ "SetTimeout", "classocilib_1_1_connection.html#ab6423c3a50332ad7a46de77da2e02a6e", null ]

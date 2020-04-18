@@ -41,4 +41,9 @@ You need to provide extra configure parameters when using Instant Clients - [see
   * Validated platforms : Windows, Linux, HP/UX, Solaris, AIX, Mac OS X, OpenVMS
   * Validated C compilers : Microsoft C compiler, GCC, MinGW, IMB XLC, LabView, various CCs
   * Validated C++ compilers : Microsoft C++ compiler, G++, Clang
-  * Validated Oracle versions : 8i, 9i, 10g, 11g, 12c, 18c
+  * Validated Oracle versions : 8i, 9i, 10g, 11g, 12c, 18c, 19c
+  
+Note: OCILIB is comptabile with:
+ *  - Any existing Oracle version from 8i
+ *  - Any future Oracle version
+ 

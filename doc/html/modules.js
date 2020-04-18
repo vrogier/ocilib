@@ -11,7 +11,7 @@ var modules =
     [ "Formatted functions", "group___ocilib_c_api_formatting.html", "group___ocilib_c_api_formatting" ],
     [ "Hash tables", "group___ocilib_c_api_hash_tables.html", "group___ocilib_c_api_hash_tables" ],
     [ "Threads and mutexes", "group___ocilib_c_api_threading.html", "group___ocilib_c_api_threading" ],
-    [ "Direct Path loading", "group___ocilib_c_apidirect_path.html", "group___ocilib_c_apidirect_path" ],
+    [ "Direct Path loading", "group___ocilib_c_api_direct_path.html", "group___ocilib_c_api_direct_path" ],
     [ "Oracle Advanced Queuing (A/Q)", "group___ocilib_c_api_advanced_queuing.html", "group___ocilib_c_api_advanced_queuing" ],
     [ "Database Change notifications (DCN or CQN)", "group___ocilib_c_api_subscriptions.html", "group___ocilib_c_api_subscriptions" ],
     [ "Remote Instance startup/shutdown", "group___ocilib_c_api_instances_management.html", "group___ocilib_c_api_instances_management" ],

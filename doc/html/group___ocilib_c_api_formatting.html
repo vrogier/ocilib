@@ -27,7 +27,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.6.3</span>
+   &#160;<span id="projectnumber">4.6.4</span>
    </div>
   </td>
  </tr>
@@ -439,10 +439,10 @@ This call prepares the statement (internal call to <a class="el" href="group___o
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This call sends the SELECT SQL order to the server for retrieving the description of the select order only. The command is not executed. This call is only useful to retrieve information on the associated resultset Call OCI_GetResultet() after <a class="el" href="group___ocilib_c_api_statements.html#ga420f21e4b00ce3e35ee15ed1e109ead1" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> to access to SELECT list information</dd>
+<dl class="section note"><dt>Note</dt><dd>This call sends the SELECT SQL order to the server for retrieving the description of the select order only. The command is not executed. This call is only useful to retrieve information on the associated resultset Call <a class="el" href="group___ocilib_c_api_fetching.html#gaf2a9e28b66a9538ba0ffb62bffb87c16" title="Retrieve the resultset handle from an executed statement.">OCI_GetResultset()</a> after <a class="el" href="group___ocilib_c_api_statements.html#ga420f21e4b00ce3e35ee15ed1e109ead1" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> to access to SELECT list information</dd>
 <dd>
-This call prepares the statement (internal call to <a class="el" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a>) and ask the Oracle server to describe the output SELECT list. <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> can be call after OCI_Desbribe() in order to execute the statement, which means that the server will parse, and describe again the SQL order.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Do not use OCI_Desbribe() unless you're only interested in the resultset information because the statement will be parsed again when executed and thus leading to unnecessary server round-trips and less performance</dd></dl>
+This call prepares the statement (internal call to <a class="el" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a>) and ask the Oracle server to describe the output SELECT list. <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> can be call after <a class="el" href="group___ocilib_c_api_statements.html#ga420f21e4b00ce3e35ee15ed1e109ead1" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> in order to execute the statement, which means that the server will parse, and describe again the SQL order.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="group___ocilib_c_api_statements.html#ga420f21e4b00ce3e35ee15ed1e109ead1" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> unless you're only interested in the resultset information because the statement will be parsed again when executed and thus leading to unnecessary server round-trips and less performance</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
@@ -452,7 +452,7 @@ This call prepares the statement (internal call to <a class="el" href="group___o
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Nov 1 2019 13:16:35 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Sat Apr 18 2020 12:29:12 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

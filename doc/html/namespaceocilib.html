@@ -27,7 +27,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.6.3</span>
+   &#160;<span id="projectnumber">4.6.4</span>
    </div>
   </td>
  </tr>
@@ -82,7 +82,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">AQ identified agent for messages delivery.  <a href="classocilib_1_1_agent.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_bind_info.html">BindInfo</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides SQL bind informations.  <a href="classocilib_1_1_bind_info.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides SQL bind information.  <a href="classocilib_1_1_bind_info.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structocilib_1_1_bind_resolver.html">BindResolver</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal usage. Allow resolving a native type used by C API from a C++ type in binding operations.  <a href="structocilib_1_1_bind_resolver.html#details">More...</a><br /></td></tr>
@@ -392,10 +392,10 @@ template&lt;class T &gt; </td></tr>
 <a class="el" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceocilib.html#a325b20344734ebf632686066cea27b24">MakeString</a> (const otext *result, int size=-1)</td></tr>
 <tr class="memdesc:a325b20344734ebf632686066cea27b24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal usage. Constructs a C++ string object from the given OCILIB string pointer. <br /></td></tr>
 <tr class="separator:a325b20344734ebf632686066cea27b24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef184e5987849b8ddf4e923ee839a964"><td class="memItemLeft" align="right" valign="top"><a id="aef184e5987849b8ddf4e923ee839a964"></a>
-<a class="el" href="namespaceocilib.html#a7a8f606db0b3fbbf7d814240c5f96178">Raw</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceocilib.html#aef184e5987849b8ddf4e923ee839a964">MakeRaw</a> (void *result, unsigned int size)</td></tr>
-<tr class="memdesc:aef184e5987849b8ddf4e923ee839a964"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal usage. Constructs a C++ Raw object from the given OCILIB raw buffer. <br /></td></tr>
-<tr class="separator:aef184e5987849b8ddf4e923ee839a964"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8a93a4132dbd7d017b6617cf17a7ff7"><td class="memItemLeft" align="right" valign="top"><a id="af8a93a4132dbd7d017b6617cf17a7ff7"></a>
+<a class="el" href="namespaceocilib.html#a7a8f606db0b3fbbf7d814240c5f96178">Raw</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceocilib.html#af8a93a4132dbd7d017b6617cf17a7ff7">MakeRaw</a> (<a class="el" href="namespaceocilib.html#aaad26690e8171c4564d66776987e1bd2">AnyPointer</a> result, unsigned int size)</td></tr>
+<tr class="memdesc:af8a93a4132dbd7d017b6617cf17a7ff7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal usage. Constructs a C++ Raw object from the given OCILIB raw buffer. <br /></td></tr>
+<tr class="separator:af8a93a4132dbd7d017b6617cf17a7ff7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa37cc04b91a786b3b407e0a4775fb2bc"><td class="memTemplParams" colspan="2"><a id="aa37cc04b91a786b3b407e0a4775fb2bc"></a>
 template&lt;class T &gt; </td></tr>
 <tr class="memitem:aa37cc04b91a786b3b407e0a4775fb2bc"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceocilib.html#aa37cc04b91a786b3b407e0a4775fb2bc">Check</a> (T result)</td></tr>
@@ -424,7 +424,7 @@ template&lt;class T &gt; </td></tr>
 </ul>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00160">160</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00171">171</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -443,7 +443,7 @@ template&lt;class T &gt; </td></tr>
 <p>Oracle Version. </p>
 <p>Possible values are DataTypeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00257">257</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00268">268</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -462,7 +462,7 @@ template&lt;class T &gt; </td></tr>
 <p><a class="el" href="classocilib_1_1_column.html" title="Encapsulate a Resultset column or object member properties.">Column</a> data type. </p>
 <p>Possible values are DataTypeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00303">303</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00314">314</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -481,7 +481,7 @@ template&lt;class T &gt; </td></tr>
 <p>Numeric data type. </p>
 <p>Possible values are NumericTypeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00339">339</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00350">350</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -500,7 +500,7 @@ template&lt;class T &gt; </td></tr>
 <p>Type of charsetForm. </p>
 <p>Possible values are CharsetFormValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00361">361</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00372">372</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -519,7 +519,7 @@ template&lt;class T &gt; </td></tr>
 <p>Type of Collation ID. </p>
 <p>Possible values are CollationIDValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00405">405</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00416">416</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -538,7 +538,7 @@ template&lt;class T &gt; </td></tr>
 <p>Seek Modes. </p>
 <p>Possible values are SeekModeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00430">430</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00441">441</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -557,7 +557,7 @@ template&lt;class T &gt; </td></tr>
 <p>Open Modes. </p>
 <p>Possible values are OpenModeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00452">452</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00463">463</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -576,7 +576,7 @@ template&lt;class T &gt; </td></tr>
 <p>Type of <a class="el" href="classocilib_1_1_lob.html" title="Object identifying the SQL data type LOB (CLOB, NCLOB and BLOB)">Lob</a>. </p>
 <p>Possible values are LobTypeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00476">476</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00487">487</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -595,7 +595,7 @@ template&lt;class T &gt; </td></tr>
 <p>Type of <a class="el" href="classocilib_1_1_long.html" title="Object identifying the SQL data type LONG.">Long</a>. </p>
 <p>Possible values are LongTypeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00498">498</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00509">509</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -614,7 +614,7 @@ template&lt;class T &gt; </td></tr>
 <p>Format type. </p>
 <p>Possible values are FormatTypeValues </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00526">526</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00537">537</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -633,7 +633,7 @@ template&lt;class T &gt; </td></tr>
 <p>Class handling CLOB oracle type. </p>
 <dl class="section note"><dt>Note</dt><dd>Length and size arguments / returned values are expressed in number of characters </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04463">4463</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04483">4483</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -652,7 +652,7 @@ template&lt;class T &gt; </td></tr>
 <p>Class handling NCLOB oracle type. </p>
 <dl class="section note"><dt>Note</dt><dd>Length and size arguments / returned values are expressed in number of characters </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04474">4474</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04494">4494</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -671,7 +671,7 @@ template&lt;class T &gt; </td></tr>
 <p>Class handling BLOB oracle type. </p>
 <dl class="section note"><dt>Note</dt><dd>Length and size arguments / returned values are expressed in number of bytes </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04485">4485</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l04505">4505</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -690,7 +690,7 @@ template&lt;class T &gt; </td></tr>
 <p>Class handling LONG oracle type. </p>
 <dl class="section note"><dt>Note</dt><dd>Length and size arguments / returned values are expressed in number of characters </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00049">49</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00079">79</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 </div>
 </div>
@@ -709,7 +709,7 @@ template&lt;class T &gt; </td></tr>
 <p>Class handling LONG RAW oracle type. </p>
 <dl class="section note"><dt>Note</dt><dd>Length and size arguments / returned values are expressed in number of bytes </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00060">60</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib__impl_8hpp_source.html#l00090">90</a> of file <a class="el" href="ocilib__impl_8hpp_source.html">ocilib_impl.hpp</a>.</p>
 
 </div>
 </div>
@@ -728,7 +728,7 @@ template&lt;class T &gt; </td></tr>
 
 <p>Oracle Version enumerated values. </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00232">232</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00243">243</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -776,7 +776,7 @@ template&lt;class T &gt; </td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00264">264</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00275">275</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -814,7 +814,7 @@ template&lt;class T &gt; </td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00310">310</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00321">321</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -838,7 +838,7 @@ template&lt;class T &gt; </td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00346">346</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00357">357</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -884,7 +884,7 @@ template&lt;class T &gt; </td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00368">368</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00379">379</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -910,7 +910,7 @@ template&lt;class T &gt; </td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00413">413</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00424">424</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -934,7 +934,7 @@ template&lt;class T &gt; </td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00437">437</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00448">448</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -952,7 +952,7 @@ template&lt;class T &gt; </td></tr>
 
 <p><a class="el" href="classocilib_1_1_lob.html" title="Object identifying the SQL data type LOB (CLOB, NCLOB and BLOB)">Lob</a> types enumerated values. </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00459">459</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00470">470</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -970,7 +970,7 @@ template&lt;class T &gt; </td></tr>
 
 <p><a class="el" href="classocilib_1_1_long.html" title="Object identifying the SQL data type LONG.">Long</a> types enumerated values. </p>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00483">483</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00494">494</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -1000,7 +1000,7 @@ template&lt;class T &gt; </td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00505">505</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ocilib_8hpp_source.html#l00516">516</a> of file <a class="el" href="ocilib_8hpp_source.html">ocilib.hpp</a>.</p>
 
 </div>
 </div>
@@ -1010,7 +1010,7 @@ template&lt;class T &gt; </td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li>
-    <li class="footer">Generated on Fri Nov 1 2019 13:16:35 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Sat Apr 18 2020 12:29:12 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

@@ -6,7 +6,7 @@ var classocilib_1_1_exception =
       [ "OcilibError", "classocilib_1_1_exception.html#a1c4917298b7dee8f7b0bcd5279bffb8ca7aa90bd6ce524a4a84ceb8a1e2dc9832", null ],
       [ "OracleWarning", "classocilib_1_1_exception.html#a1c4917298b7dee8f7b0bcd5279bffb8caaab61cccf5ae513931572515748156ad", null ]
     ] ],
-    [ "~Exception", "classocilib_1_1_exception.html#a5a9f6c690534edd884eac929b15e69e8", null ],
+    [ "~Exception", "classocilib_1_1_exception.html#aa190fa19d909203574f06513b638acd7", null ],
     [ "GetMessage", "classocilib_1_1_exception.html#a23ee359af658d3a068a0f5256ca16b55", null ],
     [ "GetType", "classocilib_1_1_exception.html#a96a5dcf8511d0d8fa30e9d98dab66f5a", null ],
     [ "GetOracleErrorCode", "classocilib_1_1_exception.html#a6cdb247ecc20e7e0f8815797669b8e97", null ],
@@ -14,6 +14,6 @@ var classocilib_1_1_exception =
     [ "GetStatement", "classocilib_1_1_exception.html#ad0feb150c8d52f3f5fd646e3e9c5435d", null ],
     [ "GetConnection", "classocilib_1_1_exception.html#aa27e74a7461709afabac83d71628a2d1", null ],
     [ "GetRow", "classocilib_1_1_exception.html#a8c06341ba16889cf92da380789fd8cd2", null ],
-    [ "what", "classocilib_1_1_exception.html#a6ace067c331ec12cdb7ef3b810e74068", null ],
+    [ "what", "classocilib_1_1_exception.html#a6453d51a1e16c5c563bf6e6c947edd25", null ],
     [ "Check", "classocilib_1_1_exception.html#ad3fde29600e69dd993abf5d317fc325c", null ]
 ];

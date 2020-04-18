@@ -16,6 +16,21 @@ Click on a change log entry to see the full details.
 <br/>
 <br/>
 
+_[2020-04-18 . version 4.6.4]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.6.4.txt)_
+
+    * Fixes (C API)
+        - Issue #222: Allow OCI_SESSION_SYSDBA for session pools
+        - Issue #225: Fixed some PL/SQL tables binding issues when statement is an anonymous PL/SQL block
+		- Issue #226: When NOT using OCI_ENV_CONTEXT environment flag, OCI_CollToText() andOCI_ObjectToText() failed if previous OCILIB call failed
+        - Issue #227: Enhanced performance when fetching Clobs as strings (for Oracle 11g and above)
+
+    * Miscellaneous (C API)
+		- Some performance improvements when converting Objects and Collections to strings
+		- Some performance improvements when calling OCI_GetString() on non strings columns
+	
+	* Miscellaneous (C++ API)	
+		- Enhanced Number class in C++ API
+  
 _[2019-11-01 . version 4.6.3]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.6.3.txt)_
 
   * Some C API Bug fixes 

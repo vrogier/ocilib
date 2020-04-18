@@ -21,7 +21,7 @@ var classocilib_1_1_collection =
     [ "Delete", "classocilib_1_1_collection.html#aec5b2e080fc4e2dd0e3985970112a3a6", null ],
     [ "Get", "classocilib_1_1_collection.html#abed1b12789d4c5c2aa7207306e363085", null ],
     [ "Set", "classocilib_1_1_collection.html#aa1930c8177492ad07588ab7713697357", null ],
-    [ "Append", "classocilib_1_1_collection.html#adc91a9c504940743b74a260b4aa8e4e4", null ],
+    [ "Append", "classocilib_1_1_collection.html#acde204d8ad241353fcfe3266b873af0d", null ],
     [ "GetTypeInfo", "classocilib_1_1_collection.html#ab2e2a127e65ad59e56f8d53819ae9e22", null ],
     [ "Clone", "classocilib_1_1_collection.html#a2785bbd657566b60c08b3994020c5dbe", null ],
     [ "ToString", "classocilib_1_1_collection.html#a3b8f999da093669938844052eedddc7e", null ],
@@ -30,5 +30,5 @@ var classocilib_1_1_collection =
     [ "end", "classocilib_1_1_collection.html#a3215cfffde412c23860c356f5777f0aa", null ],
     [ "end", "classocilib_1_1_collection.html#a8f84e0e1689a7407cca431273a57e019", null ],
     [ "operator []", "classocilib_1_1_collection.html#a837a8b6579140fa36097310a8396c6a1", null ],
-    [ "operator []", "classocilib_1_1_collection.html#a4b9d266d04ae050f4281fcb00e34dc7c", null ]
+    [ "operator []", "classocilib_1_1_collection.html#a62b14e959a6675f19732b5a0dbe5fc72", null ]
 ];
