@@ -44,6 +44,6 @@ You need to provide extra configure parameters when using Instant Clients - [see
   * Validated Oracle versions : 8i, 9i, 10g, 11g, 12c, 18c, 19c
   
 Note: OCILIB is comptabile with:
- *  - Any existing Oracle version from 8i
- *  - Any future Oracle version
+  * Any existing Oracle version from 8i
+  * Any future Oracle version
  
