@@ -951,7 +951,7 @@ void HandleHolder<T>::SmartHandle::DetachFromParent()
  * --------------------------------------------------------------------------------------------- */
 
 inline Exception::Exception() noexcept
-    : _what(),
+    : _what(nullptr),
     _pStatement(nullptr),
     _pConnnection(nullptr),
     _row(0),
@@ -963,7 +963,7 @@ inline Exception::Exception() noexcept
 }
 
 inline Exception::Exception(OCI_Error *err) noexcept
-    : _what(),
+    : _what(nullptr),
     _pStatement(OCI_ErrorGetStatement(err)),
     _pConnnection(OCI_ErrorGetConnection(err)),
     _row(OCI_ErrorGetRow(err)),
@@ -971,18 +971,17 @@ inline Exception::Exception(OCI_Error *err) noexcept
     _errLib(OCI_ErrorGetInternalCode(err)),
     _errOracle(OCI_ErrorGetOCICode(err))
 {
-    _what = ostrdup(OCI_ErrorGetString(err));
+    SetWhat(OCI_ErrorGetString(err));
 }
-
 
 inline Exception::Exception(const Exception& other) noexcept : Exception(nullptr)
 {
-    _what = ostrdup(other._what);
+    SetWhat(other._what);
 }
 
 inline Exception::~Exception() noexcept
 {
-    free(_what);
+    delete [] _what;
 }
 
 inline Exception& Exception::operator = (const Exception& other) noexcept
@@ -993,6 +992,21 @@ inline Exception& Exception::operator = (const Exception& other) noexcept
     }
 
     return *this;
+}
+
+inline void Exception::SetWhat(const otext* value) noexcept
+{
+    if (!value)
+    {
+        return;
+    }
+
+    const size_t len = ostrlen(value);
+    _what = new (std::nothrow) otext[len + 1];
+    if (_what)
+    {
+        memcpy(_what, value, (len + 1) * (sizeof(otext)));
+    }
 }
 
 inline const char * Exception::what() const noexcept

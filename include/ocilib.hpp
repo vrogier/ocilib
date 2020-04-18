@@ -659,6 +659,8 @@ private:
     Exception() noexcept;
     Exception(OCI_Error *err) noexcept;
 
+    void SetWhat(const otext* value) noexcept;
+
     otext* _what;
     OCI_Statement *_pStatement;
     OCI_Connection *_pConnnection;
