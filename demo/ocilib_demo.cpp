@@ -114,7 +114,7 @@ const int DirPathColumnCount = 3;
 struct Test
 {
     void(*proc)(void); /* test procedure */
-    int    execute;     /* do execute the procedure ? */
+    bool execute;      /* do execute the procedure ? */
 };
 
 // User translation of the test_table SQL tables rows
@@ -174,6 +174,8 @@ void test_scrollable_cursor(void);
 void test_collection(void);
 void test_ref(void);
 void test_directpath(void);
+void test_bigint(void);
+void test_number(void);
 
 Product CreateProductFromQuery(const Resultset &rs);
 bool FillProductFromQuery(const Resultset &rs, Product &p);
@@ -184,29 +186,31 @@ bool PrintProductFromObject(const Product &p);
 
 Test tab_test[] =
 {
-    { test_fetch, TRUE },
-    { test_fetch_translate, TRUE },
-    { test_foreach, TRUE },
-    { test_foreach_translate, TRUE },
-    { test_bind1, TRUE },
-    { test_bind2, TRUE },
-    { test_piecewise_insert, TRUE },
-    { test_piecewise_fetch, TRUE },
-    { test_lob, TRUE },
-    { test_nested_table, TRUE },
-    { test_ref_cursor, TRUE },
-    { test_plsql, TRUE },
-    { test_dates, TRUE },
-    { test_timestamp, TRUE },
-    { test_describe, TRUE },
-    { test_returning, TRUE },
-    { test_returning_array, TRUE },
-    { test_object_insert, TRUE },
-    { test_object_fetch, TRUE },
-    { test_scrollable_cursor, TRUE },
-    { test_collection, TRUE },
-    { test_ref, TRUE },
-    { test_directpath, TRUE }
+    { test_fetch, true },
+    { test_fetch_translate, true },
+    { test_foreach, true },
+    { test_foreach_translate, true },
+    { test_bind1, true },
+    { test_bind2, true },
+    { test_piecewise_insert, true },
+    { test_piecewise_fetch, true },
+    { test_lob, true },
+    { test_nested_table, true },
+    { test_ref_cursor, true },
+    { test_plsql, true },
+    { test_dates, true },
+    { test_timestamp, true },
+    { test_describe, true },
+    { test_returning, true },
+    { test_returning_array, true },
+    { test_object_insert, true },
+    { test_object_fetch, true },
+    { test_scrollable_cursor, true },
+    { test_collection, true },
+    { test_ref, true },
+    { test_directpath, true },
+    {test_bigint, true},
+    {test_number, true}
 };
 
 /* --------------------------------------------------------------------------------------------- *
@@ -282,7 +286,7 @@ int omain(int argc, oarg* argv[])
             if (tab_test[i].execute)
                 tab_test[i].proc();
         }
-
+        
         drop_tables();
         con.Close();
     }
@@ -473,24 +477,31 @@ void create_tables(void)
         otext("    val_lob  clob, ")
         otext("    val_file bfile ")
         otext(")")
-        );
+    );
 
     execute_ddl(otext("create table test_coll_varray ")
         otext("( ")
         otext("    departement number, ")
         otext("    employees   t_tab1_emp ")
         otext(")")
-        );
+    );
 
     execute_ddl(otext("create table test_coll_nested ")
         otext("( ")
         otext("    departement number, ")
         otext("    employees   t_tab2_emp ")
         otext(") nested table employees store as test_table_emp")
-        );
+    );
 
     execute_ddl(otext("create table test_directpath(val_int number(8,4), ")
         otext(" val_str varchar2(30), val_date date)"));
+
+    execute_ddl(otext("create type test_num_coll_t as varray(10) of number"));
+
+    execute_ddl(otext("create type test_num_t as object (value number)"));
+
+    execute_ddl(otext("create table test_number (value number)"));
+
 
     /* insert data into the demo tables */
     execute_ddl(otext("insert into test_fetch ")
@@ -522,6 +533,9 @@ void create_tables(void)
     execute_ddl(otext("insert into test_table_obj values(type_t(1, 'shoes'))"));
     execute_ddl(otext("insert into test_table_obj values(type_t(2, 'pen'))"));
 
+    execute_ddl(otext("insert into test_number values(3.14)"));
+    execute_ddl(otext("insert into test_number values(5.28)"));
+
     con.Commit();
 }
 
@@ -543,10 +557,15 @@ void drop_tables(void)
     execute_ddl(otext("drop table test_coll_nested"));
     execute_ddl(otext("drop table test_table_obj"));
     execute_ddl(otext("drop table test_directpath"));
-    execute_ddl(otext("drop type  test_t"));
-    execute_ddl(otext("drop type  type_t"));
-    execute_ddl(otext("drop type  t_tab1_emp"));
-    execute_ddl(otext("drop type  t_tab2_emp"));
+    execute_ddl(otext("drop table test_number"));
+
+    execute_ddl(otext("drop type test_t"));
+    execute_ddl(otext("drop type type_t"));
+    execute_ddl(otext("drop type t_tab1_emp"));
+    execute_ddl(otext("drop type t_tab2_emp"));
+    execute_ddl(otext("drop type test_num_coll_t"));
+    execute_ddl(otext("drop type test_num_t"));
+
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -883,7 +902,7 @@ void test_plsql(void)
         otext("   dbms_output.put_line('Second line'); ")
         otext("   dbms_output.put_line('Third  line'); ")
         otext("end;")
-        );
+    );
 
     ostring line;
     while (con.GetServerOutput(line))
@@ -1206,7 +1225,7 @@ void test_object_fetch(void)
 
         Raw raw = obj.Get<Raw>(otext("VAL_RAW"));
         raw.push_back(0);
-        ocout << otext(".... val_raw      : ") << reinterpret_cast<char *>(raw.data()) << oendl;
+        ocout << otext(".... val_raw      : ") << reinterpret_cast<char*>(raw.data()) << oendl;
 
         Object obj2 = obj.Get<Object>(otext("VAL_OBJ"));
         ocout << otext(".... val_obj.code : ") << obj2.Get<int>(otext("ID")) << oendl;
@@ -1456,5 +1475,97 @@ void test_directpath(void)
         dp.Finish();
 
         ocout << std::setw(4) << dp.GetRowCount() << otext(" row(s) loaded") << oendl;
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* test_bigint
+* --------------------------------------------------------------------------------------------- */
+
+void test_bigint(void)
+{
+    big_int value1 = 12345, value2 = 0;
+
+    ocout << otext("\n>>>>> TEST BINDING BIG INT \n\n");
+
+    Statement st(con);
+
+    st.Prepare(otext("begin :value2 := :value1 * :value1; end;"));
+    st.Bind(otext(":value1"), value1, BindInfo::In);
+    st.Bind(otext(":value2"), value2, BindInfo::Out);
+    st.ExecutePrepared();
+
+    ocout << value1 << " * " << value1 << " = " << value2 << oendl;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* test_number
+* --------------------------------------------------------------------------------------------- */
+
+void test_number()
+{
+    ocout << otext("\n>>>>> TEST ORACLE NUMBER \n\n");
+
+    TypeInfo tc(con, otext("test_num_coll_t"), TypeInfo::Type);
+    TypeInfo to(con, otext("test_num_t"), TypeInfo::Type);
+    Collection<Number> cl(tc);
+    Object ob(to);
+    Number nm;
+
+    Statement st(con);
+
+    // Testing fetching numbers (as number and using implicit conversion number to string)
+    st.Execute(otext("select value from test_number"));
+    Resultset rs = st.GetResultset();
+    while (rs.Next())
+    {
+        Number num = rs.Get<Number>(1);
+        ostring str = rs.Get<ostring>(1);
+
+        ocout << str << " - " << num << oendl;
+    }
+
+    // Testing binding external single number
+    nm = otext("1234.4321");
+    st.Prepare(otext("begin :1 := :1 *2 ; end;"));
+    st.Bind(otext(":1"), nm, BindInfo::InOut);
+    st.ExecutePrepared();
+    ocout << nm << oendl;
+
+    // Testing registering number for a returning into statement
+    st.Prepare(otext("update test_number set value  = value *2 returning value into :1"));
+    st.Register<Number>(otext(":1"));
+    st.ExecutePrepared();
+    rs = st.GetResultset();
+    while (rs.Next())
+    {
+        ocout << rs.Get<ostring>(1) << oendl;
+    }
+
+    // testing Collections
+    cl.Append(otext("1111.2222"));
+    cl.Append(otext("3333.4444"));
+
+    Collection<Number>::iterator it1 = cl.begin();
+    Collection<Number>::iterator it2 = cl.end();
+
+    for (; it1 != it2; ++it1)
+    {
+        ocout << static_cast<Number>(*it1) << oendl;
+    }
+
+    // Testing objects
+    nm = otext("5555.6666");
+    ocout << nm << oendl;
+    ob.Set(otext("value"), nm);
+    ocout << ob.Get<Number>(otext("value")) << oendl;
+
+    // Testing fetching infinite values to string
+    st.Execute(otext("SELECT utl_raw.cast_to_number('FF65'), utl_raw.cast_to_number('00') from dual"));
+    rs = st.GetResultset();
+    while (rs.Next())
+    {
+        ocout << otext("pos infinite = ") << rs.Get<ostring>(1) << oendl;
+        ocout << otext("neg infinite = ") << rs.Get<ostring>(2) << oendl;
     }
 }
