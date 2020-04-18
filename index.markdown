@@ -37,6 +37,10 @@ Github downloads: <img alt="Github downloads" src="https://img.shields.io/github
 <br/>
 SF.NET downloads: <img alt="SF.NET downloads" src="https://img.shields.io/sourceforge/dt/orclib.svg"/>
 <br/>
+<br/>
+Nuget &nbsp;downloads: <img alt="Nuget downloads" src="https://img.shields.io/nuget/dt/ocilib"/>
+<br/>
+<br/>
  
 ## Recent Posts
 
