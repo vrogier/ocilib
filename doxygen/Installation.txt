@@ -8,7 +8,11 @@
  *  - Platforms: Windows, HP/UX, Linux, Mac OS, Solaris, AIX
  *  - Architectures: 32/64bits
  *  - Compilers: GCC / MinGW, MS Compilers, IBM XLC, CCs, LabView
- *  - Oracle versions: 8i, 9i, 10g, 11g, 12c, 18c
+ *  - Oracle versions: 8i, 9i, 10g, 11g, 12c, 18c, 19c
+ *
+ * Note: OCILIB is comptabile with:
+ *  - Any existing Oracle version from 8i
+ *  - Any future Oracle version
  *
  * Please, contact the author if you have validated OCILIB on platforms or compilers not listed here.
  *

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,8 +59,7 @@ int OCI_GetDefineIndex
 
     if (!rs->map)
     {
-        /* create the map at the first call to OCI_Getxxxxx2() to save
-           time and memory when it's not needed */
+        /* create the map at the first call to save time and memory when it's not needed */
 
         rs->map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
 
@@ -68,7 +67,7 @@ int OCI_GetDefineIndex
         {
             for (ub4 i = 0; i < rs->nb_defs; i++)
             {
-                OCI_HashAddInt(rs->map, rs->defs[i].col.name, (i+1));
+                OCI_HashAddInt(rs->map, rs->defs[i].col.name, (int)(i + 1));
             }
         }
     }
@@ -367,6 +366,20 @@ boolean OCI_DefineDef
             OCI_SET_ATTRIB(OCI_HTYPE_DEFINE, OCI_ATTR_CHARSET_FORM, def->buf.handle, &csfrm, sizeof(csfrm))
         }
     }
+
+#if OCI_VERSION_COMPILE >= OCI_11_1
+
+    if (OCI_ConnectionIsVersionSupported(def->rs->stmt->con, OCI_11_1))
+    {
+        if (OCI_CDT_LOB == def->col.datatype)
+        {
+            ub2 value = 1;
+
+            OCI_SET_ATTRIB(OCI_HTYPE_DEFINE, OCI_ATTR_LOBPREFETCH_LENGTH, def->buf.handle, &value, sizeof(value))
+        }
+    }
+
+#endif
 
     return OCI_STATUS;
 }

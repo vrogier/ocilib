@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,8 @@ void OCI_ErrorReset
 
 OCI_Error * OCI_ErrorGet
 (
-    boolean check
+    boolean check,
+    boolean reset
 )
 {
     OCI_Error *err = NULL;
@@ -112,6 +113,12 @@ OCI_Error * OCI_ErrorGet
     if (check && err && err->active)
     {
         err = NULL;
+    }
+
+    // Reset error in case OCI_ENV_CONTEXT is no used
+    if (reset && err && err->depth == 0 && err->type != OCI_UNKNOWN)
+    {
+        OCI_ErrorReset(err);
     }
 
     return err;

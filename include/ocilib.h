@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
  * The OCILIB documentation intends to explain Oracle / OCI concepts
  * and is naturally based on the official Oracle OCI documentation. 
  * 
- * Some parts of OCILIB documentation may include some informations 
+ * Some parts of OCILIB documentation may include some information 
  * taken and adapted from the following Oracle documentations :
  *  - Oracle Call Interface Programmer's Guide
  *  - Oracle Streams - Advanced Queuing User's Guide
@@ -80,7 +80,7 @@ extern "C" {
   #ifdef boolean
     #undef boolean
   #endif
-  #include <windows.h>
+  #include <Windows.h>
   #ifdef boolean
     #undef boolean
   #endif
@@ -92,7 +92,7 @@ extern "C" {
 
 #define OCILIB_MAJOR_VERSION     4
 #define OCILIB_MINOR_VERSION     6
-#define OCILIB_REVISION_VERSION  3
+#define OCILIB_REVISION_VERSION  4
 
 /* Import mode */
 
@@ -185,7 +185,7 @@ extern "C" {
  * @par Unicode and ISO C
  *
  * Well, ISO C:
- * - doesn't know anything about Unicode.
+ * - does not know anything about Unicode.
  * - makes wide characters support tricky because wide character size is not defined and is freely adaptable by implementations.
  *
  * OCILIB uses char/wchar_t strings for both public interface and internal storage.
@@ -1075,7 +1075,7 @@ typedef unsigned int big_uint;
 #define OCI_VER_MIN(v)                      (unsigned int) (((v)/10) - (((v)/100)*10))
 #define OCI_VER_REV(v)                      (unsigned int) ((v) - (((v)/10)*10))
 
-#define OCI_VER_MAKE(x, y, z)               ((x)*100 + (y)*10 + z)
+#define OCI_VER_MAKE(x, y, z)               ((x)*100 + (y)*10 + (z))
 
 /* oracle OCI key versions*/
 
@@ -1807,6 +1807,7 @@ typedef unsigned int big_uint;
 
 #define OCI_SIZE_FORMAT                     64
 #define OCI_SIZE_BUFFER                     512
+#define OCI_SIZE_LARGE_BUFFER               ((64*1024)-1)
 #define OCI_SIZE_LONG                       ((64*1024)-1)
 #define OCI_SIZE_DATE                       45
 #define OCI_SIZE_TIMESTAMP                  54
@@ -1843,6 +1844,7 @@ typedef unsigned int big_uint;
 #define OCI_STRING_FALSE                    OTEXT("FALSE")
 #define OCI_STRING_TRUE_SIZE                4
 #define OCI_STRING_FALSE_SIZE               5
+#define OCI_STRING_NULL_SIZE                4
 
 #ifdef _WINDOWS
   #define OCI_CHAR_SLASH                    '\\'
@@ -1905,7 +1907,7 @@ typedef unsigned int big_uint;
  *  - when OCI_ErrorGetType() return OCI_ERR_ORACLE, OCI_ErrorGetOCICode() returns:
  *    - any ORA-XXXXXX error code. Refer to Oracle documentation
  *  - when OCI_ErrorGetType() return OCI_ERR_OCILIB, possible error code returned by OCI_ErrorGetInternalCode() 
- *    - OCI_ERR_LOADING_SHARED_LIB : OCILIB could not load oracle shared libraries at runtime (32/64bits mistmatch, wrong \p lib_path, missing MSVC runtime required by oci.dll (MS Windows)
+ *    - OCI_ERR_LOADING_SHARED_LIB : OCILIB could not load oracle shared libraries at runtime (32/64bits mismatch, wrong \p lib_path, missing MSVC runtime required by oci.dll (MS Windows)
  *    - OCI_ERR_LOADING_SYMBOLS : the loaded shared library does not contain OCI symbols
  *    - OCI_ERR_NOT_AVAILABLE : OCILIb was built with OCI_CHARSET_WIDE and the oracle shared library dos not supports UTF16 (Oracle 8i)
  *    - OCI_ERR_CREATE_OCI_ENVIRONMENT: Oracle OCI environment initialization failed (in such cases, it is impossible to get the reason)
@@ -3239,14 +3241,6 @@ OCI_EXPORT unsigned int OCI_API OCI_GetMaxCursors
  * and the number of back-end server processes will never be large enough to potentially
  * cause any scaling issue on the database, there is no need to use any pooling mechanism.
  *
- * @par Oracle 8i support
- *
- * Pooling has bee introduced in  :
- * - 9iR1 for connection pools
- * - 9iR2 for session pools
- * For Oracle 8i, OCILIB implements its own pooling mechanism in order to remain compatible
- * with older versions. But sessions pools then are handled as connection pools
- *
  * @par Example
  * @include pool.c
  *
@@ -3271,8 +3265,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetMaxCursors
  *
  * Possible values for parameter 'mode':
  * - OCI_SESSION_DEFAULT
- * - OCI_SESSION_SYSDAB
- * - OCI_SESSION_SYSOPER
+ * - OCI_SESSION_SYSDBA (session pools only)
  *
  * @note
  * External credentials are supported by supplying a null value for the 'user'
@@ -3997,12 +3990,12 @@ OCI_EXPORT boolean OCI_API OCI_Parse
  * @note
  * This call prepares the statement (internal call to OCI_Prepare()) and ask
  * the Oracle server to describe the output SELECT list.
- * OCI_Execute() can be called after OCI_Desbribe() in order to execute the
+ * OCI_Execute() can be called after OCI_Describe() in order to execute the
  * statement, which means that the server will parse, and describe again the SQL
  * order.
  *
  * @warning
- * Do not use OCI_Desbribe() unless you're only interested in the resultset
+ * Do not use OCI_Describe() unless you're only interested in the resultset
  * information because the statement will be parsed again when executed and thus
  * leading to unnecessary server round-trips and less performance
  *
@@ -6060,7 +6053,7 @@ boolean OCI_API OCI_BindSetCharsetForm
 
 /**
  * @brief
- * Get the allocaton mode of a bind handle
+ * Get the allocation mode of a bind handle
  *
  * @param bnd - Bind handle
  *
@@ -6069,7 +6062,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  *  - OCI_BAM_EXTERNAL : bind variable is allocated by user code
  *  - OCI_BAM_INTERNAL : bind variable is allocated internally
  *
- * return the allocaton mode on success otherwise OCI_UNKNWON
+ * return the allocation mode on success otherwise OCI_UNKNOWN
  *
  */
 
@@ -6266,7 +6259,7 @@ OCI_EXPORT OCI_Resultset * OCI_API OCI_GetResultset
  *
  * @note
  * This function has been introduced for releasing big resultsets when the
- * application wants to keep the statement alive and doesn't know when it
+ * application wants to keep the statement alive and does not know when it
  * will be destroyed.
  *
  * @return
@@ -6733,7 +6726,7 @@ OCI_EXPORT boolean OCI_API OCI_ColumnGetCharUsed
  *    - Otherwise, it is not an IDENTITY column
  * - OCI_CPF_IS_GEN_ALWAYS:
  *    - If set, means that the value is "ALWAYS GENERATED"
- *    - Otherwise mens that the value is "GENERATED BY"
+ *    - Otherwise means that the value is "GENERATED BY"
  * - OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL:
  *    - If set, means that the value is generated by default on NULL
  * - OCI_CPF_IS_LPART:
@@ -9990,7 +9983,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBindMode
  * OCI_SetBindAllocation() can be called before each binding call if needed, resulting having some bind allocated externally and other ones internally.
  *
  * @note
- * Refer to the section "Binding variables and arrays" of the documention about allocation mode as OCI_BAM_INTERNAL is not compatible with all bind calls
+ * Refer to the section "Binding variables and arrays" of the documentation about allocation mode as OCI_BAM_INTERNAL is not compatible with all bind calls
  * 
  */
 
@@ -10191,7 +10184,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetLongMaxSize
  * - OCI_LONG_IMPLICIT : LONGs are implicitly mapped to string type in the
  *   limits of VARCHAR2 size capacity
  *
- *  LONG RAWs can't be handled with OCI_LONG_IMPLICIT
+ *  LONG RAWs cannot be handled with OCI_LONG_IMPLICIT
  */
 
 OCI_EXPORT boolean OCI_API OCI_SetLongMode
@@ -10812,7 +10805,7 @@ OCI_EXPORT boolean OCI_API OCI_LobCopyFromFile
  *
  * @note
  * - A call to OCI_LobOpen is not necessary to manipulate a Lob.
- * - If a lob hasn't been opened explicitly, triggers are fired and
+ * - If a lob has not been opened explicitly, triggers are fired and
  *   indexes updated at every read/write/append operation
  *
  * @return
@@ -11224,7 +11217,7 @@ OCI_EXPORT boolean OCI_API OCI_FileExists
  *in
  * @note
  * - For local FILEs only
- * - Files fetched from resultset can't be assigned a new directory and name
+ * - Files fetched from resultset cannot be assigned a new directory and name
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -15206,18 +15199,18 @@ OCI_EXPORT boolean OCI_ParseFmt
  * description of the select order only.
  * The command is not executed.
  * This call is only useful to retrieve information on the associated resultset
- * Call OCI_GetResultet() after OCI_Describe() to access to SELECT list
+ * Call OCI_GetResultset() after OCI_Describe() to access to SELECT list
  * information
  *
  * @note
  * This call prepares the statement (internal call to OCI_Prepare()) and ask
  * the Oracle server to describe the output SELECT list.
- * OCI_Execute() can be call after OCI_Desbribe() in order to execute the
+ * OCI_Execute() can be call after OCI_Describe() in order to execute the
  * statement, which means that the server will parse, and describe again the SQL
  * order.
  *
  * @warning
- * Do not use OCI_Desbribe() unless you're only interested in the resultset
+ * Do not use OCI_Describe() unless you're only interested in the resultset
  * information because the statement will be parsed again when executed and thus
  * leading to unnecessary server round-trips and less performance
  *
@@ -15757,7 +15750,7 @@ OCI_EXPORT void * OCI_API OCI_ThreadKeyGetValue
  */
 
 /**
- * @defgroup OcilibCApidirectPath Direct Path loading
+ * @defgroup OcilibCApiDirectPath Direct Path loading
  * @{
  *
  * OCILIB (from version 3.2.0) support the OCI direct Path API.
@@ -15977,7 +15970,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetEntry
  * - OCI_DPR_COMPLETE : load has been successful
  * - OCI_DPR_ERROR    : an error happened while loading data
  * - OCI_DPR_FULL     : the internal stream is full
- * - OCI_DPR_PARTIAL  : a column hasn't been fully filled yet
+ * - OCI_DPR_PARTIAL  : a column has not been fully filled yet
  * - OCI_DPR_EMPTY    : no data was found to convert
  *
  * @note
@@ -16012,7 +16005,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathConvert
  * - OCI_DPR_COMPLETE : conversion has been successful
  * - OCI_DPR_ERROR    : an error happened while converting data
  * - OCI_DPR_FULL     : the internal stream is full
- * - OCI_DPR_PARTIAL  : a column hasn't been fully filled yet
+ * - OCI_DPR_PARTIAL  : a column has not been fully filled yet
  * - OCI_DPR_EMPTY    : no data was found to load
  *
  * @note
@@ -16376,7 +16369,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetRowCount
  * This function called after :
  *
  * - OCI_DirPathConvert(), returns the number of converted rows
- * - OCI_DirPathload(), returns the number of loaded rows
+ * - OCI_DirPathLoad(), returns the number of loaded rows
  *
  */
 
@@ -16512,7 +16505,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  *  - create, alter, drop, start, stop queues (OCI_QueueXXX calls)
  *
  * Note that the user connected to the database needs particular privileges to manipulate or
- * administrate queues (See Oracle Streams - Advanced Queuing User's Guide for more informations
+ * administrate queues (See Oracle Streams - Advanced Queuing User's Guide for more information
  * on these privileges)
  *
  * @par Example
@@ -18251,7 +18244,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableDrop
  *  Oracle Streams - Advanced Queuing User's Guide for more details
  *
  * @warning
- * This feature is only available from ORacle 10gR2.
+ * This feature is only available from Oracle 10gR2.
  * This function does nothing and returns TRUE is the server version is < Oracle 10gR2
  *
  * @note
@@ -18394,7 +18387,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
  *
  * @ @warning Port usage
  * All notifications are using the same port. 
- * Port numbe can be either:
+ * Port number can be either:
  *   - determined automatically by Oracle client once the first subscription had been created and can be retrieved using OCI_SubscriptionGetPort()
  *   - Set by the parameter 'port' during the first call to OCI_SubscriptionRegister(). In this case later calls can provide same port number or 0
  * 
@@ -18721,7 +18714,7 @@ OCI_EXPORT OCI_Subscription * OCI_API OCI_EventGetSubscription
  * @param start_flag - Start flags
  * @param spfile     - Client-side spfile to start up the database (optional)
  *
- * Possible values for parameter sess_mode :
+ * Possible values for parameter session mode :
  * - OCI_SESSION_SYSDBA
  * - OCI_SESSION_SYSOPER
  *
@@ -18774,7 +18767,7 @@ OCI_EXPORT boolean OCI_API OCI_DatabaseStartup
  *
  *
  * @warning
- * Possible values for parameter sess_mode :
+ * Possible values for parameter session mode :
  * - OCI_SESSION_SYSDBA
  * - OCI_SESSION_SYSOPER
  *

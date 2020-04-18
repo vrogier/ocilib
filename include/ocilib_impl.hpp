@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,29 @@
  *
  */
 
+//
+// ReSharper inspection rules customization (mainly for C98 backward compatibility)
+//
+// ReSharper disable CppUseAuto
+// ReSharper disable CppParameterMayBeConst
+// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
+// ReSharper disable CppClangTidyModernizeReturnBracedInitList
+// ReSharper disable CppClangTidyModernizePassByValue
+// ReSharper disable CppClangTidyHicppUseAuto
+// ReSharper disable CppClangTidyModernizeUseAuto
+// ReSharper disable CppClangTidyReadabilityInconsistentDeclarationParameterName
+// ReSharper disable CppClangTidyPerformanceUnnecessaryValueParam
+// ReSharper disable CppClangTidyHicppUseEqualsDefault
+// ReSharper disable CppClangTidyModernizeLoopConvert
+// ReSharper disable CppClangTidyModernizeUseEmplace
+// ReSharper disable CppClangTidyModernizeUseEqualsDefault
+// ReSharper disable CppClangTidyHicppUseEmplace
+// ReSharper disable CppClangTidyCertOop54Cpp
+// ReSharper disable CppClangTidyMiscMisplacedConst
+// ReSharper disable CppClangTidyBugproneUnhandledSelfAssignment
+//
+
+
 #pragma once
 
 #include <algorithm>
@@ -36,6 +59,13 @@ namespace ocilib
 /* ********************************************************************************************* *
  *                                         IMPLEMENTATION
  * ********************************************************************************************* */
+
+ /**
+ * Catch silently any exception thrown in the given expression
+ * Used for compliance with the standard (copy constructor, assignment operator, destructor)
+ *
+ */
+#define SILENT_CATCH(exp) try { exp; } catch (...) {}
 
 /**
 *
@@ -147,31 +177,11 @@ inline ostring MakeString(const otext *result, int size)
     return result ? (size >= 0 ? ostring(result, result + size) : ostring(result)) : ostring();
 }
 
-inline Raw MakeRaw(void *result, unsigned int size)
+inline Raw MakeRaw(AnyPointer result, unsigned int size)
 {
     unsigned char *ptr = static_cast<unsigned char *>(result);
 
     return (ptr && size > 0 ? Raw(ptr, ptr + size) : Raw());
-}
-
-template<class S, class C>
-void ConverString(S &dest, const C *src, size_t length)
-{
-    size_t i = 0;
-
-    dest.clear();
-
-    if (src)
-    {
-        dest.resize(length);
-
-        while (i < length)
-        {
-            dest[i] = static_cast<typename S::value_type>(src[i]);
-
-            ++i;
-        }
-    }
 }
 
 inline unsigned int ComputeCharMaxSize(Environment::CharsetMode charsetMode)
@@ -196,7 +206,7 @@ inline unsigned int ComputeCharMaxSize(Environment::CharsetMode charsetMode)
         {
             std::string nlsLang = str;
 
-            for (size_t i = 0; i < nlsLang.size(); ++i)
+            for (size_t i = 0, count = nlsLang.size(); i < count; ++i)
             {
                 nlsLang[i] = static_cast<std::string::value_type>(toupper(nlsLang[i]));
             }
@@ -216,7 +226,7 @@ inline unsigned int ComputeCharMaxSize(Environment::CharsetMode charsetMode)
  * --------------------------------------------------------------------------------------------- */
 
 template<class T>
-Enum<T>::Enum() : _value(0)
+Enum<T>::Enum() : _value(static_cast<T>(0))
 {
 }
 
@@ -289,6 +299,17 @@ Flags<T>::Flags(const Flags& other) : _flags(other._flags)
 template<class T>
 Flags<T>::Flags(unsigned int flag) : _flags(static_cast<T>(flag))
 {
+}
+
+template<class T>
+Flags<T>& Flags<T>::operator = (const Flags<T>& other) noexcept
+{
+    if (this != &other)
+    {
+        _flags = other._flags;
+    }
+
+    return *this;
 }
 
 template<class T>
@@ -433,19 +454,13 @@ ManagedBuffer<T>::ManagedBuffer(size_t size) : _buffer(new T[size]), _size(size)
     memset(_buffer, 0, sizeof(T) * _size);
 }
 template<typename T>
-ManagedBuffer<T>::~ManagedBuffer()
+ManagedBuffer<T>::~ManagedBuffer() noexcept
 {
     delete [] _buffer;
 }
 
 template<typename T>
-ManagedBuffer<T>::operator T* () const
-{
-    return  _buffer;
-}
-
-template<typename T>
-ManagedBuffer<T>::operator const T* () const
+ManagedBuffer<T>::operator T* ()
 {
     return  _buffer;
 }
@@ -466,15 +481,19 @@ HandleHolder<T>::HandleHolder(const HandleHolder &other) : _smartHandle(nullptr)
 }
 
 template<class T>
-HandleHolder<T>::~HandleHolder()
+HandleHolder<T>::~HandleHolder() noexcept
 {
-    Release();
+    SILENT_CATCH(Release())
 }
 
 template<class T>
-HandleHolder<T>& HandleHolder<T>::operator = (const HandleHolder<T> &other)
+HandleHolder<T>& HandleHolder<T>::operator= (const HandleHolder<T> &other) noexcept
 {
-    Acquire(other, nullptr, nullptr, other._smartHandle ? other._smartHandle->GetParent() : nullptr);
+    if (this != &other)
+    {
+        Handle* parent = other._smartHandle ? other._smartHandle->GetParent() : nullptr;
+        SILENT_CATCH(Acquire(other, nullptr, nullptr, parent))
+    }
     return *this;
 }
 
@@ -570,12 +589,12 @@ inline Locker::Locker() : _mutex(nullptr)
     SetAccessMode(false);
 }
 
-inline Locker::~Locker()
+inline Locker::~Locker() noexcept
 {
-    SetAccessMode(false);
+    SILENT_CATCH(SetAccessMode(false));
 }
 
-inline void Locker::SetAccessMode(bool threaded)
+inline void Locker::SetAccessMode(bool threaded) 
 {
     if (threaded && !_mutex)
     {
@@ -609,7 +628,7 @@ inline Lockable::Lockable() : _locker(nullptr)
 
 }
 
-inline Lockable::~Lockable()
+inline Lockable::~Lockable() noexcept
 {
 
 }
@@ -642,9 +661,9 @@ ConcurrentMap<K, V>::ConcurrentMap()
 }
 
 template<class K, class V>
-ConcurrentMap<K, V>::~ConcurrentMap()
+ConcurrentMap<K, V>::~ConcurrentMap() noexcept
 {
-    Clear();
+    SILENT_CATCH(Clear());
 }
 
 template<class K, class V>
@@ -691,7 +710,7 @@ template<class K, class V>
 size_t ConcurrentMap<K, V>::GetSize()
 {
     Lock();
-    size_t size = _map.size();
+    const size_t size = _map.size();
     Unlock();
 
     return size;
@@ -704,9 +723,9 @@ ConcurrentList<T>::ConcurrentList() : _list()
 }
 
 template<class T>
-ConcurrentList<T>::~ConcurrentList()
+ConcurrentList<T>::~ConcurrentList() noexcept
 {
-    Clear();
+    SILENT_CATCH(Clear())
 }
 
 template<class T>
@@ -737,7 +756,7 @@ template<class T>
 size_t ConcurrentList<T>::GetSize()
 {
     Lock();
-    size_t size = _list.size();
+    const size_t size = _list.size();
     Unlock();
 
     return size;
@@ -748,7 +767,7 @@ bool ConcurrentList<T>::Exists(const T &value)
 {
     Lock();
 
-	bool res = std::find(_list.begin(), _list.end(), value) != _list.end();
+	const bool res = std::find(_list.begin(), _list.end(), value) != _list.end();
 
     Unlock();
 
@@ -793,7 +812,7 @@ HandleHolder<T>::SmartHandle::SmartHandle
     HandleHolder *holder, T handle, HandleFreeFunc handleFreefunc,
     SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent
 )
-    : _holders(), _children(), _locker(), _handle(handle), _handleFreeFunc(handleFreefunc),
+    : _holders(), _handle(handle), _handleFreeFunc(handleFreefunc),
       _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr)
 {
     _locker.SetAccessMode((Environment::GetMode() & Environment::Threaded) == Environment::Threaded);
@@ -812,11 +831,14 @@ HandleHolder<T>::SmartHandle::SmartHandle
 }
 
 template<class T>
-HandleHolder<T>::SmartHandle::~SmartHandle()
+HandleHolder<T>::SmartHandle::~SmartHandle() noexcept
 {
-    boolean ret = TRUE;
-    boolean chk = FALSE;
+    SILENT_CATCH((Destroy()))
+}
 
+template<class T>
+void HandleHolder<T>::SmartHandle::Destroy()
+{
     if (_parent && _handle)
     {
         _parent->GetChildren().Remove(this);
@@ -837,13 +859,7 @@ HandleHolder<T>::SmartHandle::~SmartHandle()
 
     if (_handleFreeFunc && _handle)
     {
-        ret = _handleFreeFunc(_handle);
-        chk = TRUE;
-    }
-
-    if (chk)
-    {
-        Check(ret);
+        _handleFreeFunc(_handle);
     }
 }
 
@@ -934,8 +950,8 @@ void HandleHolder<T>::SmartHandle::DetachFromParent()
  * Exception
  * --------------------------------------------------------------------------------------------- */
 
-inline Exception::Exception()
-    : _what(),
+inline Exception::Exception() noexcept
+    : _what(nullptr),
     _pStatement(nullptr),
     _pConnnection(nullptr),
     _row(0),
@@ -946,13 +962,8 @@ inline Exception::Exception()
 
 }
 
-inline Exception::~Exception() throw ()
-{
-
-}
-
-inline Exception::Exception(OCI_Error *err)
-    : _what(),
+inline Exception::Exception(OCI_Error *err) noexcept
+    : _what(nullptr),
     _pStatement(OCI_ErrorGetStatement(err)),
     _pConnnection(OCI_ErrorGetConnection(err)),
     _row(OCI_ErrorGetRow(err)),
@@ -960,34 +971,54 @@ inline Exception::Exception(OCI_Error *err)
     _errLib(OCI_ErrorGetInternalCode(err)),
     _errOracle(OCI_ErrorGetOCICode(err))
 {
-    const otext *str = OCI_ErrorGetString(err);
+    SetWhat(OCI_ErrorGetString(err));
+}
 
-    if (str)
+inline Exception::Exception(const Exception& other) noexcept : Exception(nullptr)
+{
+    SetWhat(other._what);
+}
+
+inline Exception::~Exception() noexcept
+{
+    delete [] _what;
+}
+
+inline Exception& Exception::operator = (const Exception& other) noexcept
+{
+    if (this != &other)
     {
-        ConverString(_what, str, ostrlen(str));
+        _what = ostrdup(other._what);
+    }
+
+    return *this;
+}
+
+inline void Exception::SetWhat(const otext* value) noexcept
+{
+    if (!value)
+    {
+        return;
+    }
+
+    const size_t len = ostrlen(value);
+    _what = new (std::nothrow) otext[len + 1];
+    if (_what)
+    {
+        memcpy(_what, value, (len + 1) * (sizeof(otext)));
     }
 }
 
-inline const char * Exception::what() const throw()
+inline const char * Exception::what() const noexcept
 {
-    return _what.c_str();
+    return _what;
 }
 
 inline ostring Exception::GetMessage() const
 {
-    ostring message;
+    const otext* str = what();
 
-#ifdef OCI_CHARSET_WIDE
-
-    ConverString(message, _what.c_str(), _what.size());
-
-#else
-
-    message = _what;
-
-#endif
-
-    return message;
+    return str ? str : ostring{};
 }
 
 inline Exception::ExceptionType Exception::GetType() const
@@ -1145,12 +1176,12 @@ inline void Environment::SetHAHandler(HAHandlerProc handler)
 {
     Check(OCI_SetHAHandler(static_cast<POCI_HA_HANDLER>(handler != nullptr ? Environment::HAHandler : nullptr)));
 
-    Environment::SetUserCallback<HAHandlerProc>(GetEnvironmentHandle(), handler);
+    SetUserCallback<HAHandlerProc>(GetEnvironmentHandle(), handler);
 }
 
 inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp)
 {
-    HAHandlerProc handler = Environment::GetUserCallback<HAHandlerProc>(GetEnvironmentHandle());
+    const HAHandlerProc handler = GetUserCallback<HAHandlerProc>(GetEnvironmentHandle());
 
     if (handler)
     {
@@ -1168,7 +1199,7 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
 {
     unsigned int res = OCI_FOC_OK;
 
-    Connection::TAFHandlerProc handler = Environment::GetUserCallback<Connection::TAFHandlerProc>(Check(pConnection));
+    const Connection::TAFHandlerProc handler = GetUserCallback<Connection::TAFHandlerProc>(Check(pConnection));
 
     if (handler)
     {
@@ -1184,7 +1215,7 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
 
 inline void Environment::NotifyHandler(OCI_Event *pEvent)
 {
-    Subscription::NotifyHandlerProc handler = Environment::GetUserCallback<Subscription::NotifyHandlerProc>((Check(OCI_EventGetSubscription(pEvent))));
+    const Subscription::NotifyHandlerProc handler = GetUserCallback<Subscription::NotifyHandlerProc>((Check(OCI_EventGetSubscription(pEvent))));
 
     if (handler)
     {
@@ -1195,7 +1226,7 @@ inline void Environment::NotifyHandler(OCI_Event *pEvent)
 
 inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
 {
-    Dequeue::NotifyAQHandlerProc handler = Environment::GetUserCallback<Dequeue::NotifyAQHandlerProc>(Check(pDequeue));
+    const Dequeue::NotifyAQHandlerProc handler = GetUserCallback<Dequeue::NotifyAQHandlerProc>(Check(pDequeue));
 
     if (handler)
     {
@@ -1262,7 +1293,7 @@ inline Environment& Environment::GetInstance()
     return environment;
 }
 
-inline Environment::Environment() : _locker(), _handle(), _handles(), _callbacks(), _mode(), _initialized(false)
+inline Environment::Environment() : _charMaxSize(0), _initialized(false)
 {
 
 }
@@ -1311,19 +1342,19 @@ inline MutexHandle Mutex::Create()
     return Environment::GetInstance().Initialized() ? Check(OCI_MutexCreate()) : nullptr;
 }
 
-inline void Mutex::Destroy(MutexHandle mutex)
+inline void Mutex::Destroy(MutexHandle handle)
 {
-    Check(OCI_MutexFree(mutex));
+    Check(OCI_MutexFree(handle));
 }
 
-inline void Mutex::Acquire(MutexHandle mutex)
+inline void Mutex::Acquire(MutexHandle handle)
 {
-    Check(OCI_MutexAcquire(mutex));
+    Check(OCI_MutexAcquire(handle));
 }
 
-inline void Mutex::Release(MutexHandle mutex)
+inline void Mutex::Release(MutexHandle handle)
 {
-    Check(OCI_MutexRelease(mutex));
+    Check(OCI_MutexRelease(handle));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1340,9 +1371,9 @@ inline void Thread::Destroy(ThreadHandle handle)
     Check(OCI_ThreadFree(handle));
 }
 
-inline void Thread::Run(ThreadHandle handle, ThreadProc func, AnyPointer args)
+inline void Thread::Run(ThreadHandle handle, ThreadProc func, AnyPointer arg)
 {
-    Check(OCI_ThreadRun(handle, func, args));
+    Check(OCI_ThreadRun(handle, func, arg));
 }
 
 inline void Thread::Join(ThreadHandle handle)
@@ -1710,7 +1741,7 @@ inline void Connection::SetTAFHandler(TAFHandlerProc handler)
     Environment::SetUserCallback<Connection::TAFHandlerProc>(static_cast<OCI_Connection*>(*this), handler);
 }
 
-inline void* Connection::GetUserData()
+inline AnyPointer Connection::GetUserData()
 {
     return Check(OCI_GetUserData(*this));
 }
@@ -1817,16 +1848,16 @@ inline void Number::Allocate()
 
 inline void Number::FromString(const ostring& str, const ostring& format) const
 {
-    Check(OCI_NumberFromText(*this, str.c_str(), format.size() > 0 ? format.c_str() : Environment::GetFormat(FormatNumeric).c_str()));
+    Check(OCI_NumberFromText(*this, str.c_str(), format.empty() ? Environment::GetFormat(FormatNumeric).c_str() : format.c_str()));
 }
 
 inline ostring Number::ToString(const ostring& format) const
 {
     if (!IsNull())
     {
-        size_t size = OCI_SIZE_BUFFER;
+       const  size_t size = OCI_SIZE_BUFFER;
 
-        ManagedBuffer<otext> buffer(size + 1);
+        ManagedBuffer<otext> buffer(static_cast<size_t>(size + 1));
 
         Check(OCI_NumberToText(*this, format.c_str(), static_cast<int>(size), buffer));
 
@@ -1852,6 +1883,18 @@ inline Number Number::Clone() const
     return result;
 }
 
+template<class T>
+AnyPointer Number::GetNativeValue(const T& value)
+{
+    return reinterpret_cast<AnyPointer>(const_cast<T*>(&value));
+}
+
+template<>
+inline AnyPointer Number::GetNativeValue(const Number& value)
+{
+    return (reinterpret_cast<OCI_Number*>(Check(OCI_NumberGetContent(value))));
+}
+
 inline int Number::Compare(const Number& other) const
 {
     return Check(OCI_NumberCompare(*this, other));
@@ -1875,7 +1918,7 @@ Number& Number::SetValue(const T &value)
         Allocate();
     }
 
-    Check(OCI_NumberSetValue(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
+    Check(OCI_NumberSetValue(*this, NumericTypeResolver<T>::Value, GetNativeValue(value)));
 
     return *this;
 }
@@ -1883,25 +1926,25 @@ Number& Number::SetValue(const T &value)
 template<class T>
 void Number::Add(const T &value)
 {
-    Check(OCI_NumberAdd(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
+    Check(OCI_NumberAdd(*this, NumericTypeResolver<T>::Value, GetNativeValue(value)));
 }
 
 template<class T>
 void Number::Sub(const T &value)
 {
-    Check(OCI_NumberSub(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
+    Check(OCI_NumberSub(*this, NumericTypeResolver<T>::Value, GetNativeValue(value)));
 }
 
 template<class T>
 void Number::Multiply(const T &value)
 {
-    Check(OCI_NumberMultiply(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
+    Check(OCI_NumberMultiply(*this, NumericTypeResolver<T>::Value, GetNativeValue(value)));
 }
 
 template<class T>
 void Number::Divide(const T &value)
 {
-    Check(OCI_NumberDivide(*this, NumericTypeResolver<T>::Value, reinterpret_cast<void*>(const_cast<T*>(&value))));
+    Check(OCI_NumberDivide(*this, NumericTypeResolver<T>::Value, GetNativeValue(value)));
 }
 
 inline Number& Number::operator = (OCI_Number * &lhs)
@@ -1910,20 +1953,20 @@ inline Number& Number::operator = (OCI_Number * &lhs)
     return *this;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number& Number::operator = (const T &lhs)
 {
     SetValue<T>(lhs);
     return *this;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number::operator T() const
 {
     return GetValue<T>();
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number Number::operator + (const T &value)
 {
     Number result = Clone();
@@ -1931,7 +1974,7 @@ Number Number::operator + (const T &value)
     return result;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number Number::operator - (const T &value)
 {
     Number result = Clone();
@@ -1939,7 +1982,7 @@ Number Number::operator - (const T &value)
     return result;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number Number::operator * (const T &value)
 {
     Number result = Clone();
@@ -1947,7 +1990,7 @@ Number Number::operator * (const T &value)
     return result;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number Number::operator / (const T &value)
 {
     Number result = Clone();
@@ -1955,28 +1998,28 @@ Number Number::operator / (const T &value)
     return result;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number& Number::operator += (const T &value)
 {
     Add<T>(value);
     return *this;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number& Number::operator -= (const T &value)
 {
     Sub<T>(value);
     return *this;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number& Number::operator *= (const T &value)
 {
     Multiply<T>(value);
     return *this;
 }
 
-template<class T>
+template<class T, typename SupportedNumeric<T>::Type::type*>
 Number& Number::operator /= (const T &value)
 {
     Divide<T>(value);
@@ -2025,14 +2068,14 @@ inline bool Number::operator < (const Number& other) const
 
 inline bool Number::operator >= (const Number& other) const
 {
-    int res = Compare(other);
+    const int res = Compare(other);
 
     return res == 0 || res < 0;
 }
 
 inline bool Number::operator <= (const Number& other) const
 {
-    int res = Compare(other);
+    const int res = Compare(other);
 
     return res == 0 || res > 0;
 }
@@ -2277,16 +2320,16 @@ inline void Date::ChangeTimeZone(const ostring& tzSrc, const ostring& tzDst)
 
 inline void Date::FromString(const ostring& str, const ostring& format)
 {
-    Check(OCI_DateFromText(*this, str.c_str(), format.size() > 0 ? format.c_str() : Environment::GetFormat(FormatDate).c_str()));
+    Check(OCI_DateFromText(*this, str.c_str(), format.empty() ?  Environment::GetFormat(FormatDate).c_str() : format.c_str()));
 }
 
 inline ostring Date::ToString(const ostring& format) const
 {
     if (!IsNull())
     {
-        size_t size = OCI_SIZE_BUFFER;
+        const size_t size = OCI_SIZE_BUFFER;
 
-        ManagedBuffer<otext> buffer(size + 1);
+        ManagedBuffer<otext> buffer(static_cast<size_t>(size + 1));
 
         Check(OCI_DateToText(*this, format.c_str(), static_cast<int>(size), buffer));
 
@@ -2375,14 +2418,14 @@ inline bool Date::operator < (const Date& other) const
 
 inline bool Date::operator >= (const Date& other) const
 {
-    int res = Compare(other);
+    const int res = Compare(other);
 
     return res == 0 || res > 0;
 }
 
 inline bool Date::operator <= (const Date& other) const
 {
-    int res = Compare(other);
+    const int res = Compare(other);
 
     return res == 0 || res < 0;
 }
@@ -2588,9 +2631,9 @@ inline ostring Interval::ToString(int leadingPrecision, int fractionPrecision) c
 {
     if (!IsNull())
     {
-        size_t size = OCI_SIZE_BUFFER;
+        const size_t size = OCI_SIZE_BUFFER;
 
-        ManagedBuffer<otext> buffer(size + 1);
+        ManagedBuffer<otext> buffer(static_cast<size_t>(size + 1));
 
         Check(OCI_IntervalToText(*this, leadingPrecision, fractionPrecision, static_cast<int>(size), buffer));
 
@@ -2651,14 +2694,14 @@ inline bool Interval::operator < (const Interval& other) const
 
 inline bool Interval::operator >= (const Interval& other) const
 {
-    int res = Compare(other);
+    const int res = Compare(other);
 
     return (res == 0 || res < 0);
 }
 
 inline bool Interval::operator <= (const Interval& other) const
 {
-    int res = Compare(other);
+    const int res = Compare(other);
 
     return (res == 0 || res > 0);
 }
@@ -2886,9 +2929,9 @@ inline ostring Timestamp::GetTimeZone() const
 {
     if (GetType() != NoTimeZone)
     {
-        size_t size = OCI_SIZE_BUFFER;
+        const size_t size = OCI_SIZE_BUFFER;
 
-        ManagedBuffer<otext> buffer(size + 1);
+        ManagedBuffer<otext> buffer(static_cast<size_t>(size + 1));
 
         Check(OCI_TimestampGetTimeZoneName(*this, static_cast<int>(size), buffer) == TRUE);
 
@@ -2919,16 +2962,16 @@ inline Timestamp Timestamp::SysTimestamp(TimestampType type)
 
 inline void Timestamp::FromString(const ostring& data, const ostring& format)
 {
-    Check(OCI_TimestampFromText(*this, data.c_str(), format.size() > 0 ? format.c_str() : Environment::GetFormat(FormatTimestamp).c_str()));
+    Check(OCI_TimestampFromText(*this, data.c_str(), format.empty() ?  Environment::GetFormat(FormatTimestamp).c_str() : format.c_str()));
 }
 
 inline ostring Timestamp::ToString(const ostring& format, int precision = OCI_STRING_DEFAULT_PREC) const
 {
     if (!IsNull())
     {
-        size_t size = OCI_SIZE_BUFFER;
+        const size_t size = OCI_SIZE_BUFFER;
 
-        ManagedBuffer<otext> buffer(size + 1);
+        ManagedBuffer<otext> buffer(static_cast<size_t>(size + 1));
 
         Check(OCI_TimestampToText(*this, format.c_str(), static_cast<int>(size), buffer, precision));
 
@@ -3054,14 +3097,14 @@ inline bool Timestamp::operator < (const Timestamp& other) const
 
 inline bool Timestamp::operator >= (const Timestamp& other) const
 {
-    int res = Compare(other);
+    const int res = Compare(other);
 
     return (res == 0 || res < 0);
 }
 
 inline bool Timestamp::operator <= (const Timestamp& other) const
 {
-    int res = Compare(other);
+    const int res = Compare(other);
 
     return (res == 0 || res > 0);
 }
@@ -3090,7 +3133,7 @@ Lob<T, U>::Lob(OCI_Lob *pLob, Handle *parent)
 template<>
 inline ostring Lob<ostring, LobCharacter>::Read(unsigned int length)
 {
-    ManagedBuffer<otext> buffer(Environment::GetCharMaxSize() * (length + 1));
+    ManagedBuffer<otext> buffer(static_cast<size_t>(Environment::GetCharMaxSize() * (length + 1)));
 
     unsigned int charCount = length;
     unsigned int byteCount = 0;
@@ -3106,7 +3149,7 @@ inline ostring Lob<ostring, LobCharacter>::Read(unsigned int length)
 template<>
 inline ostring Lob<ostring, LobNationalCharacter>::Read(unsigned int length)
 {
-    ManagedBuffer<otext> buffer(Environment::GetCharMaxSize() * (length + 1));
+    ManagedBuffer<otext> buffer(static_cast<size_t>(Environment::GetCharMaxSize() * (length + 1)));
 
     unsigned int charCount = length;
     unsigned int byteCount = 0;
@@ -3133,18 +3176,19 @@ inline Raw Lob<Raw, LobBinary>::Read(unsigned int length)
 template<class T, int U>
 unsigned int Lob<T, U>::Write(const T& content)
 {
-    unsigned int res = 0;
-
-    if (content.size() > 0)
+    if (content.empty())
     {
-        unsigned int charCount = 0;
-        unsigned int byteCount = static_cast<unsigned int>(content.size() * sizeof(typename T::value_type));
-        AnyPointer buffer = static_cast<AnyPointer>(const_cast<typename T::value_type *>(&content[0]));
+        return 0;
+    }
 
-        if (Check(OCI_LobWrite2(*this, buffer, &charCount, &byteCount)))
-        {
-            res = U == LobBinary ? byteCount : charCount;
-        }
+    unsigned int res = 0;
+    unsigned int charCount = 0;
+    unsigned int byteCount = static_cast<unsigned int>(content.size() * sizeof(typename T::value_type));
+    const AnyPointer buffer = static_cast<AnyPointer>(const_cast<typename T::value_type *>(&content[0]));
+
+    if (Check(OCI_LobWrite2(*this, buffer, &charCount, &byteCount)))
+    {
+        res = U == LobBinary ? byteCount : charCount;
     }
 
     return res;
@@ -3159,14 +3203,14 @@ void Lob<T, U>::Append(const Lob& other)
 template<class T, int U>
 unsigned int Lob<T, U>::Append(const T& content)
 {
-    unsigned int res = 0;
-
-    if (content.size() > 0)
+    if (content.empty())
     {
-        Check(OCI_LobAppend(*this, static_cast<AnyPointer>(const_cast<typename T::value_type *>(&content[0])), static_cast<unsigned int>(content.size())));
+        return 0;
     }
 
-    return res;
+    const AnyPointer data = static_cast<AnyPointer>(const_cast<typename T::value_type*>(&content[0]));
+
+    return Check(OCI_LobAppend(*this, data, static_cast<unsigned int>(content.size())));
 }
 
 template<class T, int U>
@@ -3240,9 +3284,9 @@ big_uint Lob<T, U>::Erase(big_uint offset, big_uint length)
 }
 
 template<class T, int U>
-void Lob<T, U>::Copy(Lob &dest, big_uint offset, big_uint offsetDest, big_uint size) const
+void Lob<T, U>::Copy(Lob &dest, big_uint offset, big_uint offsetDest, big_uint length) const
 {
-    Check(OCI_LobCopy(dest, *this, offsetDest, offset, size));
+    Check(OCI_LobCopy(dest, *this, offsetDest, offset, length));
 }
 
 template<class T, int U>
@@ -3327,7 +3371,7 @@ inline File::File(OCI_File *pFile, Handle *parent)
 
 inline Raw File::Read(unsigned int size)
 {
-    ManagedBuffer<unsigned char> buffer(size + 1);
+    ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
     size = Check(OCI_FileRead(*this, static_cast<AnyPointer>(buffer), size));
 
@@ -3647,7 +3691,7 @@ inline Raw Object::Get<Raw>(const ostring& name) const
 {
     unsigned int size = Check(OCI_ObjectGetRawSize(*this, name.c_str()));
 
-    ManagedBuffer<unsigned char> buffer(size + 1);
+    ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
     size = static_cast<unsigned int>(Check(OCI_ObjectGetRaw(*this, name.c_str(), static_cast<AnyPointer>(buffer), size)));
 
@@ -3783,14 +3827,10 @@ inline void Object::Set<File>(const ostring& name, const File &value)
 template<>
 inline void Object::Set<Raw>(const ostring& name, const Raw &value)
 {
-    if (value.size() > 0)
-    {
-        Check(OCI_ObjectSetRaw(*this, name.c_str(), static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
-    }
-    else
-    {
-        Check(OCI_ObjectSetRaw(*this, name.c_str(), nullptr, 0));
-    }
+    const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
+
+    Check(OCI_ObjectSetRaw(*this, name.c_str(), data, static_cast<unsigned int>(value.size())));
+
 }
 
 template<class T>
@@ -3807,7 +3847,7 @@ inline ostring Object::ToString() const
 
         Check(OCI_ObjectToText(*this, &len, nullptr));
 
-        ManagedBuffer<otext> buffer(len + 1);
+        ManagedBuffer<otext> buffer(static_cast<size_t>(len + 1));
 
         Check(OCI_ObjectToText(*this, &len, buffer));
 
@@ -3869,9 +3909,9 @@ inline ostring Reference::ToString() const
 {
     if (!IsNull())
     {
-        unsigned int size = Check(OCI_RefGetHexSize(*this));
+        const unsigned int size = Check(OCI_RefGetHexSize(*this));
 
-        ManagedBuffer<otext> buffer(size + 1);
+        ManagedBuffer<otext> buffer(static_cast<size_t>(size + 1));
 
         Check(OCI_RefToText(*this, size, buffer));
 
@@ -4005,11 +4045,11 @@ T Collection<T>::Get(unsigned int index) const
 }
 
 template<class T>
-void Collection<T>::Set(unsigned int index, const T &data)
+void Collection<T>::Set(unsigned int index, const T & value)
 {
     OCI_Elem * elem = Check(OCI_CollGetElem(*this, index));
 
-    SetElem(elem, data);
+    SetElem(elem, value);
 
     Check(OCI_CollSetElem(*this, index, elem));
 }
@@ -4118,7 +4158,7 @@ inline Raw Collection<Raw>::GetElem(OCI_Elem *elem, Handle *parent)
 
     unsigned int size = Check(OCI_ElemGetRawSize(elem));
 
-    ManagedBuffer<unsigned char> buffer(size + 1);
+    ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
     size = Check(OCI_ElemGetRaw(elem, static_cast<AnyPointer>(buffer), size));
 
@@ -4253,14 +4293,9 @@ inline void Collection<ostring>::SetElem(OCI_Elem *elem, const ostring& value)
 template<>
 inline void Collection<Raw>::SetElem(OCI_Elem *elem, const Raw &value)
 {
-    if (value.size() > 0)
-    {
-        Check(OCI_ElemSetRaw(elem, static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
-    }
-    else
-    {
-        Check(OCI_ElemSetRaw(elem, nullptr, 0));
-    }
+    const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
+
+    Check(OCI_ElemSetRaw(elem, data, static_cast<unsigned int>(value.size())));
 }
 
 template<>
@@ -4332,7 +4367,7 @@ ostring Collection<T>::ToString() const
 
         Check(OCI_CollToText(*this, &len, nullptr));
 
-        ManagedBuffer<otext> buffer(len + 1);
+        ManagedBuffer<otext> buffer(static_cast<size_t>(len + 1));
 
         Check(OCI_CollToText(*this, &len, buffer));
 
@@ -4349,7 +4384,7 @@ CollectionElement<T> Collection<T>::operator [] (unsigned int index)
 }
 
 template<class T>
-const CollectionElement<T> Collection<T>::operator [] (unsigned int index) const
+CollectionElement<T> Collection<T>::operator [](unsigned int index) const
 {
     return  CollectionElement<T>(this, index);
 }
@@ -4375,8 +4410,11 @@ CollectionIterator<T>::CollectionIterator(const CollectionIterator& other) : _el
 template<class T>
 CollectionIterator<T>& CollectionIterator<T>::operator = (const CollectionIterator& other)
 {
-	_elem._pos  = other._elem._pos;
-	_elem._coll = other._elem._coll;
+    if (this != &other)
+    {
+        _elem._pos = other._elem._pos;
+        _elem._coll = other._elem._coll;
+    }
 
 	return *this;
 }
@@ -4450,9 +4488,9 @@ CollectionIterator<T> CollectionIterator<T>::operator - (difference_type value)
 }
 
 template<class T>
-typename CollectionIterator<T>::difference_type CollectionIterator<T>::operator - (const CollectionIterator &value)
+typename CollectionIterator<T>::difference_type CollectionIterator<T>::operator - (const CollectionIterator & other)
 {
-	return static_cast<difference_type>(_elem._pos - value._elem._pos);
+	return static_cast<difference_type>(_elem._pos - other._elem._pos);
 }
 
 template<class T>
@@ -4510,16 +4548,24 @@ CollectionElement<T>::operator T() const
 }
 
 template<class T>
-CollectionElement<T>& CollectionElement<T>::operator = (const ValueType& value)
+CollectionElement<T>& CollectionElement<T>::operator = (const ValueType& other)
 {
-    _coll->Set(_pos, value);
+    if (this != &other)
+    {
+        _coll->Set(_pos, other);
+    }
+
     return *this;
 }
 
 template<class T>
 CollectionElement<T>& CollectionElement<T>::operator = (const CollectionElement &other)
 {
-	_coll->Set(_pos, static_cast<T>(other));
+    if (this != &other)
+    {
+        _coll->Set(_pos, static_cast<T>(other));
+    }
+
 	return *this;
 }
 
@@ -4559,14 +4605,12 @@ Long<T, U>::Long(OCI_Long *pLong, Handle* parent)
 template<class T, int U>
 unsigned int Long<T, U>::Write(const T& content)
 {
-    unsigned int res = 0;
-
-    if (content.size() > 0)
+    if (content.empty())
     {
-        res = Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<typename T::value_type *>(&content[0])), static_cast<unsigned int>(content.size())));
+        return 0;
     }
 
-    return res;
+    return Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<typename T::value_type*>(&content[0])), static_cast<unsigned int>(content.size())));
 }
 
 template<class T, int U>
@@ -4595,7 +4639,7 @@ inline BindObject::BindObject(const Statement &statement, const ostring& name, u
 {
 }
 
-inline BindObject::~BindObject()
+inline BindObject::~BindObject() noexcept
 {
 }
 
@@ -4629,7 +4673,7 @@ void BindArray::SetVector(std::vector<T> & vector, bool isPlSqlTable, unsigned i
     _object = new BindArrayObject<T>(_statement, GetName(), vector, isPlSqlTable, GetMode(), elemSize);
 }
 
-inline BindArray::~BindArray()
+inline BindArray::~BindArray() noexcept
 {
     delete _object;
 }
@@ -4657,25 +4701,25 @@ inline void BindArray::SetOutData()
     }
 }
 
-inline unsigned int BindArray::GetSize()
+inline unsigned int BindArray::GetSize() const
 {
     return _object ? _object->GetSize() : _statement.GetBindArraySize();
 }
 
-inline unsigned int BindArray::GetSizeForBindCall()
+inline unsigned int BindArray::GetSizeForBindCall() const
 {
     return _object ? _object->GetSizeForBindCall() : 0;
 }
 
 template<class T>
-BindArray::BindArrayObject<T>::BindArrayObject(const Statement &statement, const ostring& name, ObjectVector &vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize)
-    : _statement(statement), _name(name), _vector(vector), _data(nullptr), _isPlSqlTable(isPlSqlTable), _mode(mode), _elemCount(GetSize()), _elemSize(elemSize)
+BindArray::BindArrayObject<T>::BindArrayObject(const Statement &statement, const ostring &name, ObjectVector &vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize)
+    : _statement(statement), _name(name), _vector(vector), _data(nullptr), _isPlSqlTable(isPlSqlTable), _mode(mode), _elemCount(BindArrayObject<T>::GetSize()), _elemSize(elemSize)
 {
     AllocData();
 }
 
 template<class T>
-BindArray::BindArrayObject<T>::~BindArrayObject()
+BindArray::BindArrayObject<T>::~BindArrayObject() noexcept
 {
     FreeData();
 }
@@ -4716,7 +4760,7 @@ void BindArray::BindArrayObject<T>::SetInData()
     typename ObjectVector::iterator it, it_end;
 
     unsigned int index = 0;
-    unsigned int currElemCount = GetSize();
+    const unsigned int currElemCount = GetSize();
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
@@ -4730,7 +4774,7 @@ inline void BindArray::BindArrayObject<ostring>::SetInData()
     std::vector<ostring>::iterator it, it_end;
 
     unsigned int index = 0;
-    unsigned int currElemCount = GetSize();
+    const unsigned int currElemCount = GetSize();
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
@@ -4746,13 +4790,13 @@ inline void BindArray::BindArrayObject<Raw>::SetInData()
     std::vector<Raw>::iterator it, it_end;
 
     unsigned int index = 0;
-    unsigned int currElemCount = GetSize();
+    const unsigned int currElemCount = GetSize();
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
         Raw & value = *it;
 
-        if (value.size() > 0)
+        if (!value.empty())
         {
             memcpy(_data + (_elemSize * index), &value[0], value.size());
         }
@@ -4767,13 +4811,11 @@ void BindArray::BindArrayObject<T>::SetOutData()
     typename ObjectVector::iterator it, it_end;
 
     unsigned int index = 0;
-    unsigned int currElemCount = GetSize();
+    const unsigned int currElemCount = GetSize();
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
-        T& object = *it;
-
-        object = static_cast<NativeType>(_data[index]);
+        *it = static_cast<NativeType&>(_data[index]);
     }
 }
 
@@ -4785,7 +4827,7 @@ inline void BindArray::BindArrayObject<ostring>::SetOutData()
     OCI_Bind *pBind = Check(OCI_GetBind2(_statement, GetName().c_str()));
 
     unsigned int index = 0;
-    unsigned int currElemCount = GetSize();
+    const unsigned int currElemCount = GetSize();
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
@@ -4803,7 +4845,7 @@ inline void BindArray::BindArrayObject<Raw>::SetOutData()
     OCI_Bind *pBind = Check(OCI_GetBind2(_statement, GetName().c_str()));
 
     unsigned int index = 0;
-    unsigned int currElemCount = GetSize();
+    const unsigned int currElemCount = GetSize();
 
     for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
     {
@@ -4814,25 +4856,25 @@ inline void BindArray::BindArrayObject<Raw>::SetOutData()
 }
 
 template<class T>
-ostring BindArray::BindArrayObject<T>::GetName()
+ostring BindArray::BindArrayObject<T>::GetName() const
 {
     return _name;
 }
 
 template<class T>
-bool BindArray::BindArrayObject<T>::IsHandleObject()
+bool BindArray::BindArrayObject<T>::IsHandleObject() const
 {
     return BindResolver<T>::IsHandle;
 }
 
 template<class T>
-unsigned int BindArray::BindArrayObject<T>::GetSize()
+unsigned int BindArray::BindArrayObject<T>::GetSize() const
 {
     return _isPlSqlTable ? static_cast<unsigned int>(_vector.size()) : _statement.GetBindArraySize();
 }
 
 template<class T>
-unsigned int BindArray::BindArrayObject<T>::GetSizeForBindCall()
+unsigned int BindArray::BindArrayObject<T>::GetSizeForBindCall() const
 {
     return _isPlSqlTable ? static_cast<unsigned int>(_vector.size()) : 0;
 }
@@ -4896,7 +4938,7 @@ BindObjectAdaptor<T>::BindObjectAdaptor(const Statement &statement, const ostrin
 }
 
 template<class T>
-BindObjectAdaptor<T>::~BindObjectAdaptor()
+BindObjectAdaptor<T>::~BindObjectAdaptor() noexcept
 {
     delete [] _data;
 }
@@ -4925,7 +4967,7 @@ void BindTypeAdaptor<T>::SetOutData()
 {
     if (GetMode() & OCI_BDM_OUT)
     {
-        _object = static_cast<T>(*_data);
+        _object = static_cast<T&>(*_data);
     }
 }
 
@@ -4939,7 +4981,7 @@ _data(new NativeType)
 }
 
 template<class T>
-BindTypeAdaptor<T>::~BindTypeAdaptor()
+BindTypeAdaptor<T>::~BindTypeAdaptor() noexcept
 {
     delete _data;
 }
@@ -4972,12 +5014,12 @@ inline void BindTypeAdaptor<bool>::SetOutData()
  * BindsHolder
  * --------------------------------------------------------------------------------------------- */
 
-inline BindsHolder::BindsHolder(const Statement &statement) : _bindObjects(), _statement(statement)
+inline BindsHolder::BindsHolder(const Statement &statement) : _statement(statement)
 {
 
 }
 
-inline BindsHolder::~BindsHolder()
+inline BindsHolder::~BindsHolder() noexcept
 {
     Clear();
 }
@@ -5302,7 +5344,7 @@ void Statement::BindVector1(M &method, const ostring& name, std::vector<T> &valu
     BindArray * bnd = new BindArray(*this, name, mode);
     bnd->SetVector<T>(values, type == BindInfo::AsPlSqlTable, sizeof(typename BindResolver<T>::OutputType));
 
-    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), bnd->GetSizeForBindCall());
+    const boolean res = method(*this, name.c_str(), bnd->GetData<T>(), bnd->GetSizeForBindCall());
 
     if (res)
     {
@@ -5324,7 +5366,7 @@ void Statement::BindVector2(M &method, const ostring& name, std::vector<T> &valu
     BindArray * bnd = new BindArray(*this, name, mode);
     bnd->SetVector<T>(values, type == BindInfo::AsPlSqlTable, sizeof(typename BindResolver<T>::OutputType));
 
-    boolean res = method(*this, name.c_str(), bnd->GetData<T>(), subType, bnd->GetSizeForBindCall());
+    const boolean res = method(*this, name.c_str(), bnd->GetData<T>(), subType, bnd->GetSizeForBindCall());
 
     if (res)
     {
@@ -5345,7 +5387,7 @@ inline void Statement::Bind<bool>(const ostring& name, bool &value, BindInfo::Bi
 {
     BindTypeAdaptor<bool> * bnd = new BindTypeAdaptor<bool>(*this, name, mode, value);
 
-    boolean res = OCI_BindBoolean(*this, name.c_str(), static_cast<boolean *>(*bnd));
+    const boolean res = OCI_BindBoolean(*this, name.c_str(), static_cast<boolean *>(*bnd));
 
     if (res)
     {
@@ -5513,7 +5555,7 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring 
 
     BindObjectAdaptor<ostring> * bnd = new BindObjectAdaptor<ostring>(*this, name, mode, value, maxSize + 1);
 
-    boolean res = OCI_BindString(*this, name.c_str(), static_cast<otext *>(*bnd), maxSize);
+    const boolean res = OCI_BindString(*this, name.c_str(), static_cast<otext *>(*bnd), maxSize);
 
     if (res)
     {
@@ -5547,7 +5589,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, Raw &value, 
 
     BindObjectAdaptor<Raw> * bnd = new BindObjectAdaptor<Raw>(*this, name, mode, value, maxSize);
 
-    boolean res = OCI_BindRaw(*this, name.c_str(), static_cast<unsigned char *>(*bnd), maxSize);
+    const boolean res = OCI_BindRaw(*this, name.c_str(), static_cast<unsigned char *>(*bnd), maxSize);
 
     if (res)
     {
@@ -5708,7 +5750,7 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vec
     BindArray * bnd = new BindArray(*this, name, mode);
     bnd->SetVector<ostring>(values, type == BindInfo::AsPlSqlTable, maxSize+1);
 
-    boolean res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring>(), maxSize, bnd->GetSizeForBindCall());
+    const boolean res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring>(), maxSize, bnd->GetSizeForBindCall());
 
     if (res)
     {
@@ -5736,7 +5778,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<
     BindArray * bnd = new BindArray(*this, name, mode);
     bnd->SetVector<Raw>(values, type == BindInfo::AsPlSqlTable, maxSize);
 
-    boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw>(), maxSize, bnd->GetSizeForBindCall());
+    const boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw>(), maxSize, bnd->GetSizeForBindCall());
 
     if (res)
     {
@@ -6363,7 +6405,7 @@ inline Raw Resultset::Get<Raw>(unsigned int index) const
 {
     unsigned int size = Check(OCI_GetDataLength(*this,index));
 
-    ManagedBuffer<unsigned char> buffer(size + 1);
+    ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
     size = Check(OCI_GetRaw(*this, index, static_cast<AnyPointer>(buffer), size));
 
@@ -6375,7 +6417,7 @@ inline Raw Resultset::Get<Raw>(const ostring& name) const
 {
     unsigned int size = Check(OCI_GetDataLength(*this, Check(OCI_GetColumnIndex(*this, name.c_str()))));
 
-    ManagedBuffer<unsigned char> buffer(size + 1);
+    ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
     size = Check(OCI_GetRaw2(*this, name.c_str(), static_cast<AnyPointer>(buffer), size));
 
@@ -6559,9 +6601,9 @@ inline ostring Column::GetSQLType() const
 
 inline ostring Column::GetFullSQLType() const
 {
-    unsigned int size = OCI_SIZE_BUFFER;
+    const unsigned int size = OCI_SIZE_BUFFER;
 
-    ManagedBuffer<otext> buffer(size + 1);
+    ManagedBuffer<otext> buffer(static_cast<size_t>(size + 1));
 
     Check(OCI_ColumnGetFullSQLType(*this, buffer, size));
 
@@ -6801,7 +6843,7 @@ inline Raw Message::GetPayload<Raw>()
 {
     unsigned int size = 0;
 
-    ManagedBuffer<unsigned char> buffer(size + 1);
+    ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
     Check(OCI_MsgGetRaw(*this, static_cast<AnyPointer>(buffer), &size));
 
@@ -6811,14 +6853,9 @@ inline Raw Message::GetPayload<Raw>()
 template<>
 inline void Message::SetPayload<Raw>(const Raw &value)
 {
-    if (value.size() > 0)
-    {
-        Check(OCI_MsgSetRaw(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
-    }
-    else
-    {
-        Check(OCI_MsgSetRaw(*this, nullptr, 0));
-    }
+    const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
+
+    Check(OCI_MsgSetRaw(*this, data, static_cast<unsigned int>(value.size())));
 }
 
 inline Date Message::GetEnqueueTime() const
@@ -6840,7 +6877,7 @@ inline Raw Message::GetID() const
 {
     unsigned int size = OCI_SIZE_BUFFER;
 
-    ManagedBuffer<unsigned char> buffer(size + 1);
+    ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
     Check(OCI_MsgGetID(*this, static_cast<AnyPointer>(buffer), &size));
 
@@ -6881,7 +6918,7 @@ inline Raw Message::GetOriginalID() const
 {
     unsigned int size = OCI_SIZE_BUFFER;
 
-    ManagedBuffer<unsigned char> buffer(size + 1);
+    ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
     Check(OCI_MsgGetOriginalID(*this, static_cast<AnyPointer>(buffer), &size));
 
@@ -6890,14 +6927,9 @@ inline Raw Message::GetOriginalID() const
 
 inline void Message::SetOriginalID(const Raw &value)
 {
-    if (value.size() > 0)
-    {
-        Check(OCI_MsgSetOriginalID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
-    }
-    else
-    {
-        Check(OCI_MsgSetOriginalID(*this, nullptr, 0));
-    }
+    const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
+
+    Check(OCI_MsgSetOriginalID(*this, data, static_cast<unsigned int>(value.size())));
 }
 
 inline ostring Message::GetCorrelation() const
@@ -6932,7 +6964,7 @@ inline void Message::SetSender(const Agent &agent)
 
 inline void Message::SetConsumers(std::vector<Agent> &agents)
 {
-    size_t size = agents.size();
+    const size_t size = agents.size();
     ManagedBuffer<OCI_Agent*> buffer(size);
 
     OCI_Agent ** pAgents = static_cast<OCI_Agent **>(buffer);
@@ -6983,7 +7015,7 @@ inline Raw Enqueue::GetRelativeMsgID() const
 {
     unsigned int size = OCI_SIZE_BUFFER;
 
-    ManagedBuffer<unsigned char> buffer(size + 1);
+    ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
     Check(OCI_EnqueueGetRelativeMsgID(*this, static_cast<AnyPointer>(buffer), &size));
 
@@ -6992,14 +7024,9 @@ inline Raw Enqueue::GetRelativeMsgID() const
 
 inline void Enqueue::SetRelativeMsgID(const Raw &value)
 {
-    if (value.size() > 0)
-    {
-        Check(OCI_EnqueueSetRelativeMsgID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
-    }
-    else
-    {
-        Check(OCI_EnqueueSetRelativeMsgID(*this, nullptr, 0));
-    }
+    const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
+
+    Check(OCI_EnqueueSetRelativeMsgID(*this, data, static_cast<unsigned int>(value.size())));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -7059,14 +7086,9 @@ inline Raw Dequeue::GetRelativeMsgID() const
 
 inline void Dequeue::SetRelativeMsgID(const Raw &value)
 {
-    if (value.size() > 0)
-    {
-        Check(OCI_DequeueSetRelativeMsgID(*this, static_cast<AnyPointer>(const_cast<Raw::value_type *>(&value[0])), static_cast<unsigned int>(value.size())));
-    }
-    else
-    {
-        Check(OCI_DequeueSetRelativeMsgID(*this, nullptr, 0));
-    }
+    const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
+
+    Check(OCI_DequeueSetRelativeMsgID(*this, data, static_cast<unsigned int>(value.size())));
 }
 
 inline Dequeue::DequeueVisibility Dequeue::GetVisibility() const
@@ -7111,7 +7133,7 @@ inline void Dequeue::SetWaitTime(int value)
 
 inline void Dequeue::SetAgents(std::vector<Agent> &agents)
 {
-    size_t size = agents.size();
+    const size_t size = agents.size();
     ManagedBuffer<OCI_Agent*> buffer(size);
 
     OCI_Agent ** pAgents = static_cast<OCI_Agent **>(buffer);

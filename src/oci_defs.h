@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@
  * DECLARATIONS REPRODUCED HERE ARE ORIGINALLY WRITTEN BY ORACLE CORPORATION
  *
  * THE AUTHOR OF OCILIB LIBRARY HAS NOT WRITTEN THE CONTENT OF THIS
- * FILE AND HAS PARTIALLY INTEGRATED SOME ORACLE OCI DEFINITONS TO 
+ * FILE AND HAS PARTIALLY INTEGRATED SOME ORACLE OCI DEFINITIONS TO 
  * ALLOW COMPILATION OF THIS OPEN SOURCE LIBRARY WITHOUT HAVING
  * ORACLE PRODUCTS INSTALLED ON DEVELOPMENT ENVIRONMENTS
  *
@@ -58,8 +58,8 @@
 #define SQLT_RID  11                                                /* rowid */
 #define SQLT_DAT  12                                /* date in oracle format */
 #define SQLT_VBI  15                                 /* binary in VCS format */
-#define SQLT_BFLOAT 21                                /* Native Binary float*/
-#define SQLT_BDOUBLE 22                             /* NAtive binary double */
+#define SQLT_BFLOAT 21                                 /* Native Binary float*/
+#define SQLT_BDOUBLE 22                              /* Native binary double */
 #define SQLT_BIN  23                                  /* binary data(DTYBIN) */
 #define SQLT_LBI  24                                          /* long binary */
 #define SQLT_UIN  68                                     /* unsigned integer */
@@ -114,7 +114,7 @@
 #define SQLCS_NCHAR    2                  /* for NCHAR, NCHAR VARYING, NCLOB */
 #define SQLCS_EXPLICIT 3   /* for CHAR, etc, with "CHARACTER SET ..." syntax */
 #define SQLCS_FLEXIBLE 4                 /* for PL/SQL "flexible" parameters */
-#define SQLCS_LIT_NULL 5      /* for typecheck of NULL and empty_clob() lits */
+#define SQLCS_LIT_NULL 5          /* for type check of NULL and empty_clob() */
 
 /*-----------------------------Handle Types----------------------------------*/
 /* handle types range from 1 - 49 */
@@ -270,7 +270,7 @@
 #define OCI_ATTR_SERVER_STATUS         143        /* state of the server hdl */
 #define OCI_ATTR_STATEMENT             144      /* statement txt in stmt hdl */
 
-#define OCI_ATTR_SUBSCR_RECPTPROTO     149         /* protocol for recepient */
+#define OCI_ATTR_SUBSCR_RECPTPROTO     149         /* protocol for recipient */
 
 #define OCI_ATTR_CURRENT_POSITION      164      /* for scrollable result sets*/
 #define OCI_ATTR_STMTCACHESIZE         176         /* size of the stmt cache */
@@ -386,10 +386,10 @@
 #define OCI_SUCCESS 0                      /* maps to SQL_SUCCESS of SAG CLI */
 #define OCI_SUCCESS_WITH_INFO 1             /* maps to SQL_SUCCESS_WITH_INFO */
 #define OCI_NO_DATA 100                               /* maps to SQL_NO_DATA */
-#define OCI_ERROR -1                                    /* maps to SQL_ERROR */
-#define OCI_INVALID_HANDLE -2                  /* maps to SQL_INVALID_HANDLE */
+#define OCI_ERROR (-1 )                                 /* maps to SQL_ERROR */
+#define OCI_INVALID_HANDLE (-2)                /* maps to SQL_INVALID_HANDLE */
 #define OCI_NEED_DATA 99                            /* maps to SQL_NEED_DATA */
-#define OCI_STILL_EXECUTING -3123                   /* OCI would block error */
+#define OCI_STILL_EXECUTING (-3123 )                 /* OCI would block error */
 
 /*---------------- Server Handle Attribute Values ---------------------------*/
 
@@ -397,7 +397,7 @@
 #define OCI_SERVER_NORMAL           0x1
 
 /*--------------------- User Callback Return Values -------------------------*/
-#define OCI_CONTINUE -24200    /* Continue with the body of the OCI function */
+#define OCI_CONTINUE (-24200)  /* Continue with the body of the OCI function */
 
 /*------------------------Attach Modes---------------------------------------*/
 
@@ -571,7 +571,7 @@ typedef struct OCIAQDeqOptions OCIAQDeqOptions;    /* AQ Dequeue Options hdl */
 typedef struct OCIAQMsgProperties OCIAQMsgProperties;  /* AQ Mesg Properties */
 typedef struct OCIAQAgent OCIAQAgent;                 /* AQ Agent descriptor */
 typedef struct OCIAQNfyDescriptor OCIAQNfyDescriptor;   /* AQ Nfy descriptor */
-typedef struct OCIAQSignature OCIAQSignature;                /* AQ Siganture */
+typedef struct OCIAQSignature OCIAQSignature;                /* AQ Signature */
 typedef struct OCIAQListenOpts OCIAQListenOpts;         /* AQ listen options */
 typedef struct OCIAQLisMsgProps OCIAQLisMsgProps;     /* AQ listen msg props */
 
@@ -591,12 +591,13 @@ typedef struct OCIAQLisMsgProps OCIAQLisMsgProps;     /* AQ listen msg props */
 #define OCI_SESSGET_CREDPROXY  0x0008     /* SessionGet called in proxy mode */
 #define OCI_SESSGET_CREDEXT    0x0010
 #define OCI_SESSGET_SPOOL_MATCHANY 0x0020
+#define OCI_SESSGET_SYSDBA     0x0100    /* SessionGet with SYSDBA privileges */
 
 /*---------------------------------------------------------------------------*/
 /*------------------------ATTR Values for Session Pool-----------------------*/
 /* Attribute values for OCI_ATTR_SPOOL_GETMODE */
 #define OCI_SPOOL_ATTRVAL_WAIT     0         /* block till you get a session */
-#define OCI_SPOOL_ATTRVAL_NOWAIT   1    /* error out if no session avaliable */
+#define OCI_SPOOL_ATTRVAL_NOWAIT   1    /* error out if no session available */
 #define OCI_SPOOL_ATTRVAL_FORCEGET 2  /* get session even if max is exceeded */
 
 /*---------------------------------------------------------------------------*/
@@ -874,8 +875,8 @@ typedef ub1 OCIObjectPropId;
 #define OCI_OBJECTPROP_LIFETIME 1       /* persistent or transient or value */
 #define OCI_OBJECTPROP_SCHEMA 2   /* schema name of table containing object */
 #define OCI_OBJECTPROP_TABLE 3     /* table name of table containing object */
-#define OCI_OBJECTPROP_PIN_DURATION 4             /* pin duartion of object */
-#define OCI_OBJECTPROP_ALLOC_DURATION 5         /* alloc duartion of object */
+#define OCI_OBJECTPROP_PIN_DURATION 4             /* pin duration of object */
+#define OCI_OBJECTPROP_ALLOC_DURATION 5         /* alloc duration of object */
 #define OCI_OBJECTPROP_LOCK 6                      /* lock status of object */
 #define OCI_OBJECTPROP_MARKSTATUS 7                /* mark status of object */
 #define OCI_OBJECTPROP_VIEW 8            /* is object a view object or not? */
@@ -1002,14 +1003,14 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_HA_STATUS_DOWN          0 /* valid values for OCI_ATTR_HA_STATUS */
 #define OCI_HA_STATUS_UP            1
 
-/*------------- Supported Values for protocol for recepient -----------------*/
+/*------------- Supported Values for protocol for recipient -----------------*/
 #define OCI_SUBSCR_PROTO_OCI                0                         /* oci */
 #define OCI_SUBSCR_PROTO_MAIL               1                        /* mail */
 #define OCI_SUBSCR_PROTO_SERVER             2                      /* server */
 #define OCI_SUBSCR_PROTO_HTTP               3                        /* http */
 #define OCI_SUBSCR_PROTO_MAX                4       /* max current protocols */
 
-/*------------- Supported Values for presentation for recepient -------------*/
+/*------------- Supported Values for presentation for recipient -------------*/
 #define OCI_SUBSCR_PRES_DEFAULT             0                     /* default */
 #define OCI_SUBSCR_PRES_XML                 1                         /* xml */
 #define OCI_SUBSCR_PRES_MAX                 2   /* max current presentations */
@@ -1018,7 +1019,7 @@ typedef uword OCIObjectMarkStatus;
 /* -------------------------- Implicit Result types ------------------------ */
 #define OCI_RESULT_TYPE_SELECT              1
 
-/*-------------- Flags coresponding to the column properties-----------------*/
+/*-------------- Flags corresponding to the column properties----------------*/
 #define OCI_ATTR_COL_PROPERTY_IS_IDENTITY           0x0000000000000001 
 #define OCI_ATTR_COL_PROPERTY_IS_GEN_ALWAYS         0x0000000000000002 
 #define OCI_ATTR_COL_PROPERTY_IS_GEN_BY_DEF_ON_NULL 0x0000000000000004 

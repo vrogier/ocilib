@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ typedef struct OCI_MemoryBlock OCI_MemoryBlock;
  * OCI_Item : Internal list entry.
  *
  * The library needs to manage internal list of objects in order to be able to
- * free them if the application doest not.
+ * free them if the application does not.
  *
  * @note
  * Internal lists are using mutexes for resource locking in multithreaded
@@ -237,7 +237,7 @@ typedef struct OCI_Library OCI_Library;
 struct OCI_Pool
 {
     void        *handle;        /* OCI pool handle */
-    void        *authp;         /* OCI authentification handle */
+    void        *authp;         /* OCI authentication handle */
     OCIError    *err;           /* OCI context handle */
     otext       *name;          /* pool name */
     otext       *db;            /* database */
@@ -767,7 +767,7 @@ struct OCI_Event
     unsigned int      objname_size;    /* altered object name size */
     otext            *rowid;           /* altered row id */
     unsigned int      rowid_size;      /* altered row id size */
-    otext            *dbname;          /* tdatabase name */
+    otext            *dbname;          /* database name */
     unsigned int      dbname_size;     /* database name size */
 };
 
@@ -785,7 +785,7 @@ struct OCI_Subscription
     otext           *name;           /* notification name */
     unsigned int     type;           /* notification type */
     POCI_NOTIFY      handler;        /* user callback */
-    ub4              timeout;        /* notification timetout */
+    ub4              timeout;        /* notification timeout */
     ub4              port;           /* port to use  */
     otext           *saved_db;       /* database for reconnection if needed */
     otext           *saved_user;     /* user for reconnection if needed */

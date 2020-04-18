@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -224,7 +224,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
 
                 OCI_STATUS = OCI_HandleAlloc((dvoid *)OCILib.env, (dvoid **)(void *)&pool->authp, OCI_HTYPE_AUTHINFO);
 
-                /* set OCILIB's driver layer name attribute only for session pools here
+                /* set OCILIB driver layer name attribute only for session pools here
                     For standalone connections and connection pool this attribute is set
                     in OCI_ConnectionLogon() */
 
@@ -274,7 +274,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
             {
                 ub4 sess_mode = OCI_DEFAULT;
                 
-                if (OCI_STRING_VALID(pool->user) && OCI_STRING_VALID(pool->pwd))
+                if (!(pool->mode & OCI_SESSION_SYSDBA) && OCI_STRING_VALID(pool->user) && OCI_STRING_VALID(pool->pwd))
                 {
                     sess_mode |= OCI_SPC_HOMOGENEOUS;
                 }

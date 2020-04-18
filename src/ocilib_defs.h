@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,7 +145,7 @@
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * DEfault environnement mode
+ * Default environment mode
  * --------------------------------------------------------------------------------------------- */
 
 #ifdef OCI_CHARSET_WIDE
@@ -239,7 +239,7 @@
 #define OCI_IPC_COUNT            (OCI_IPC_STATEMENT_ARRAY + 2)
 
 /* --------------------------------------------------------------------------------------------- *
- * Oracle conditionnal features
+ * Oracle conditional features
  * --------------------------------------------------------------------------------------------- */
 
 #define OCI_FEATURE_WIDE_USERDATA        1
@@ -389,7 +389,7 @@
 
 #define OCI_NOT_USED(p)                 (p) = (p);
 
-/* miscellaneaous */
+/* miscellaneous */
 
 #define OCI_NB_ARG_VERSION              3
 
@@ -411,7 +411,7 @@
                                                                                 \
     if ((mode) & OCI_ENV_CONTEXT)                                               \
     {                                                                           \
-        ctx->call_err = OCI_ErrorGet(FALSE);                                    \
+        ctx->call_err = OCI_ErrorGet(FALSE, FALSE);                             \
         OCI_CallEnter(ctx);                                                     \
     }
 

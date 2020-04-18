@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@
  * DECLARATIONS REPRODUCED HERE ARE ORIGINALLY WRITTEN BY ORACLE CORPORATION
  *
  * THE AUTHOR OF OCILIB LIBRARY HAS NOT WRITTEN THE CONTENT OF THIS
- * FILE AND HAS PARTIALLY INTEGRATED SOME ORACLE OCI DEFINITONS TO 
+ * FILE AND HAS PARTIALLY INTEGRATED SOME ORACLE OCI DEFINITIONS TO 
  * ALLOW COMPILATION OF THIS OPEN SOURCE LIBRARY WITHOUT HAVING
  * ORACLE PRODUCTS INSTALLED ON DEVELOPMENT ENVIRONMENTS
  *

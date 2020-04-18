@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -312,7 +312,7 @@ dbtext * OCI_StringGetOracleString
     }
     else
     {
-        len = (*size) / sizeof(otext);
+        len = (int) ((*size) / sizeof(otext));
     }
 
     if (OCILib.use_wide_char_conv)
@@ -329,7 +329,7 @@ dbtext * OCI_StringGetOracleString
         dst = (dbtext *) src;
     }
 
-    *size = len * sizeof(dbtext);
+    *size = (int) (len * sizeof(dbtext));
 
     return dst;
 }
@@ -620,8 +620,9 @@ unsigned int OCI_StringGetFromType
     boolean           quote
 )
 {
-    boolean      res = TRUE;
-    unsigned int len = 0;
+    boolean      res   = TRUE;
+    boolean      check = FALSE;
+    unsigned int len   = 0;
 
     /* if buffer is not null, then buffer_size must the > 0 */
 
@@ -629,7 +630,7 @@ unsigned int OCI_StringGetFromType
 
     if (quote && data)
     {
-        len = OCI_StringAddToBuffer(ptr, len, OTEXT("'"), FALSE); 
+        len = OCI_StringAddToBuffer(ptr, len, OTEXT("'"), 1, FALSE);
         if (ptr)
         {
             ptr++;
@@ -641,7 +642,7 @@ unsigned int OCI_StringGetFromType
     {
         case OCI_CDT_TEXT:
         {
-            len += OCI_StringAddToBuffer(buffer, len, (otext *) data, quote); 
+            len += OCI_StringAddToBuffer(buffer, len, (otext *) data, dbcharcount(data_size), quote);
             break;
         }
         case OCI_CDT_BOOLEAN:
@@ -650,7 +651,10 @@ unsigned int OCI_StringGetFromType
             {
                 if (data)
                 {
-                    len += OCI_StringAddToBuffer(buffer, len, (*(boolean*)data) ? OCI_STRING_TRUE : OCI_STRING_FALSE, quote);
+                    otext* str_value = (*(boolean*)data) ? OCI_STRING_TRUE : OCI_STRING_FALSE;
+                    const unsigned int str_length = (*(boolean*)data) ? OCI_STRING_TRUE_SIZE : OCI_STRING_FALSE_SIZE;
+
+                    len += OCI_StringAddToBuffer(buffer, len, str_value, str_length, quote);
                 }
                 else
                 {
@@ -666,9 +670,11 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_NUMERIC:
         {
+            check = TRUE;
+
             if (ptr)
             {
-                res = OCI_NumberToString(con, data, col->subtype, ptr, buffer_size, NULL);
+                res = OCI_NumberToString(con, data, col->subtype, ptr, (int) buffer_size, NULL);
             }    
             else
             {
@@ -678,12 +684,14 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_DATETIME:
         {
+            check = TRUE;
+
             if (ptr)
             {           
                 OCI_Date    *date = (OCI_Date*) data;
                 const otext *fmt  = OCI_GetFormat(con, OCI_FMT_DATE);
 
-                res = date ? OCI_DateToText(date, fmt, buffer_size, ptr) : FALSE;
+                res = date ? OCI_DateToText(date, fmt, (int) buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -693,12 +701,14 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_TIMESTAMP:
         {
+            check = TRUE;
+
             if (ptr)
             {
                 OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
                 const otext   *fmt = OCI_GetFormat(con, tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
 
-                 res = tmsp ? OCI_TimestampToText(tmsp, fmt, buffer_size, ptr, 0) : FALSE;
+                 res = tmsp ? OCI_TimestampToText(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
             }
             else
             {
@@ -708,6 +718,8 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_INTERVAL:
         {
+            check = TRUE;
+
             if (ptr)
             {
                 OCI_Interval *itv = (OCI_Interval * ) data;
@@ -728,7 +740,7 @@ unsigned int OCI_StringGetFromType
             {
                 if (OCI_CLONG == col->subtype)
                 {
-                    len = OCI_StringAddToBuffer(buffer, len, (otext*) OCI_LongGetBuffer(lg), quote);
+                    len = OCI_StringAddToBuffer(buffer, len, (otext*) OCI_LongGetBuffer(lg), OCI_LongGetSize(lg), quote);
                 }
                 else
                 {
@@ -758,28 +770,32 @@ unsigned int OCI_StringGetFromType
             {
                 if (ptr)
                 {
-                    unsigned char lob_buf[(OCI_SIZE_BUFFER + 1) * OCI_UTF8_BYTES_PER_CHAR];
+                    unsigned char lob_buf[OCI_SIZE_LARGE_BUFFER];
 
                     while (res)
                     {
-                        unsigned int bytes_count = OCI_SIZE_BUFFER * OCI_UTF8_BYTES_PER_CHAR;
+	                    const unsigned int bytes_requested = sizeof(lob_buf) - sizeof(otext);
+                        unsigned int bytes_count = bytes_requested;
                         unsigned int char_count = 0;
 
                         res = OCI_LobRead2(lob, lob_buf, &char_count, &bytes_count);
 
-                        if (bytes_count == 0)
+                        if (bytes_count > 0)
+                        {
+                            if (OCI_CLOB == lob->type)
+                            {
+                                len += OCI_StringAddToBuffer(buffer, len, (otext*)lob_buf, ocharcount(bytes_count), quote);
+                            }
+                            else
+                            {
+                                len += OCI_StringBinaryToString(lob_buf, bytes_count, ptr + len);
+                            }
+                        }
+
+                        if (bytes_count < bytes_requested)
                         {
                             // lob eof reached
                             break;
-                        }
-
-                        if (OCI_CLOB == lob->type)
-                        {
-                            len += OCI_StringAddToBuffer(buffer, len, (otext*)lob_buf, quote);
-                        }
-                        else
-                        {
-                            len += OCI_StringBinaryToString(lob_buf, bytes_count, ptr + len);
                         }
                     }
 
@@ -813,9 +829,9 @@ unsigned int OCI_StringGetFromType
                 const otext * dir  = OCI_FileGetDirectory(file);
                 const otext * name =  OCI_FileGetName(file);
 
-                len += OCI_StringAddToBuffer(buffer, len, dir, TRUE); 
-                len += OCI_StringAddToBuffer(buffer, len, OTEXT("/"), TRUE); 
-                len += OCI_StringAddToBuffer(buffer, len, name, TRUE); 
+                len += OCI_StringAddToBuffer(buffer, len, dir, (unsigned int) ostrlen(dir), TRUE);
+                len += OCI_StringAddToBuffer(buffer, len, OTEXT("/"), 1, TRUE);
+                len += OCI_StringAddToBuffer(buffer, len, name, (unsigned int) ostrlen(name), TRUE);
             }
             else
             {
@@ -827,6 +843,8 @@ unsigned int OCI_StringGetFromType
         }
         case OCI_CDT_REF:
         {
+            check = TRUE;
+
             if (ptr)
             {
                 OCI_Ref *ref = (OCI_Ref *) data;
@@ -862,7 +880,7 @@ unsigned int OCI_StringGetFromType
             quote = TRUE;
             if (stmt)
             {
-                len = OCI_StringAddToBuffer(buffer, len, stmt->sql, quote);
+                len = OCI_StringAddToBuffer(buffer, len, stmt->sql, (unsigned int) ostrlen(stmt->sql), quote);
             }
             else
             {
@@ -879,15 +897,15 @@ unsigned int OCI_StringGetFromType
 
     if (res)
     {
-        if (buffer && buffer_size > len)
+        if (buffer && check && buffer_size > len)
         {
-            /* the resulting string shall be computed as it was not known in advanded (e.g. numeric types) */
+            /* the resulting string shall be computed as it was not known in advance */
             len = (unsigned int) ostrlen(buffer);
         }
 
         if (quote && data)
         {
-            len += OCI_StringAddToBuffer(buffer, len, OTEXT("'"), FALSE); 
+            len += OCI_StringAddToBuffer(buffer, len, OTEXT("'"), 1, FALSE); 
         }
     }
     else
@@ -919,19 +937,18 @@ unsigned int OCI_StringAddToBuffer
     otext           *buffer,
     unsigned int     offset,
     const otext     *str,
+    unsigned int     length,
     boolean          check_quote
 )
 {
-    unsigned int  len_in   = 0;
-    unsigned int  len_out  = 0;
+	const unsigned int  len_in = length;
+    unsigned int len_out  = 0;
 
     if (!str)
     {
         return 0;
     }
 
-    len_in = (unsigned int) ostrlen(str);
-  
     if (check_quote)
     {
         if (buffer)

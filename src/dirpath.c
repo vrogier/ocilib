@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -937,7 +937,7 @@ unsigned int OCI_API OCI_DirPathLoad
 
     dp->nb_processed = 0;
 
-   /* reset errors variables as OCI_DirPathLoad() is not reentrant */
+   /* reset errors variables as OCI_DirPathLoad() is not re-entrant */
 
     dp->nb_err       = 0;
     dp->idx_err_col  = 0;

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ boolean OCI_ColumnGetAttrInfo
             }
             else if (type & OCI_NUM_BIGUINT)
             {
-                *p_size = sizeof(big_int);
+	            *p_size = sizeof(big_int);
             }
             else if (type & OCI_NUM_DOUBLE)
             {
@@ -1242,9 +1242,9 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
         {
 
         #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
-            OCI_RETVAL = osprintf(buffer, len, OTEXT("%lsCHAR(%i%ls)"),
+            OCI_RETVAL = osprintf(buffer, (int)len, OTEXT("%lsCHAR(%i%ls)"),
         #else
-            OCI_RETVAL = osprintf(buffer, len, OTEXT("%sCHAR(%i%s)"),
+            OCI_RETVAL = osprintf(buffer, (int)len, OTEXT("%sCHAR(%i%s)"),
         #endif
                             SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
                             (int) (col->charused ? col->charsize : col->size),
@@ -1261,7 +1261,7 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
             const otext *fmt = OTEXT("%sVARCHAR(%i%s)");
          #endif
 
-            OCI_RETVAL = osprintf(buffer, len, fmt, SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
+            OCI_RETVAL = osprintf(buffer, (int)len, fmt, SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
                                    (int) (col->charused ? col->charsize : col->size),
                                    col->charused &&  SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
             break;
@@ -1270,31 +1270,31 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
         {
             if (SCALE_FLOAT == col->scale && col->prec > 0)
             {
-                OCI_RETVAL = osprintf(buffer, len,  OTEXT("FLOAT(%i)"), col->prec);
+                OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("FLOAT(%i)"), col->prec);
             }
             else if (col->scale > 0 && col->prec > 0)
             {
-                OCI_RETVAL = osprintf(buffer, len,  OTEXT("NUMBER(%i,%i)"), (int) col->prec, (int) col->scale);
+                OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("NUMBER(%i,%i)"), (int) col->prec, (int) col->scale);
             }
             else if (col->prec > 0)
             {
-                OCI_RETVAL = osprintf(buffer, len,  OTEXT("NUMBER(%i)"), (int) col->prec);
+                OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("NUMBER(%i)"), (int) col->prec);
             }
             else
             {
-                OCI_RETVAL = osprintf(buffer, len,  OTEXT("NUMBER"));
+                OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("NUMBER"));
             }
 
             break;
         }
         case SQLT_INT:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("NUMBER"));
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("NUMBER"));
             break;
         }
         case SQLT_FLT:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("FLOAT(%i)"), (int) col->prec);
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("FLOAT(%i)"), (int) col->prec);
             break;
         }
 
@@ -1303,13 +1303,13 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
         case SQLT_BFLOAT:
         case SQLT_IBFLOAT:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("BINARY FLOAT"));
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("BINARY FLOAT"));
             break;
         }
         case SQLT_BDOUBLE:
         case SQLT_IBDOUBLE:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("BINARY DOUBLE"));
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("BINARY DOUBLE"));
             break;
         }
 
@@ -1317,60 +1317,60 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 
         case SQLT_LNG:
         {
-            OCI_RETVAL = osprintf(buffer, len, OTEXT("LONG"));
+            OCI_RETVAL = osprintf(buffer, (int)len, OTEXT("LONG"));
             break;
         }
         case SQLT_DAT:
         case SQLT_ODT:
         case SQLT_DATE:
         {
-            OCI_RETVAL = osprintf(buffer, len, OTEXT("DATE"));
+            OCI_RETVAL = osprintf(buffer, (int)len, OTEXT("DATE"));
             break;
         }
         case SQLT_RDD:
         case SQLT_RID:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("ROWID"));
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("ROWID"));
             break;
         }
         case SQLT_BIN:
         {
-            OCI_RETVAL = osprintf(buffer, len, OTEXT("RAW(%i)"), (int) col->size);
+            OCI_RETVAL = osprintf(buffer, (int)len, OTEXT("RAW(%i)"), (int) col->size);
             break;
         }
         case SQLT_LBI:
         {
-            OCI_RETVAL = osprintf(buffer, len, OTEXT("LONG RAW(%i)"), (int) col->size);
+            OCI_RETVAL = osprintf(buffer, (int)len, OTEXT("LONG RAW(%i)"), (int) col->size);
             break;
         }
         case SQLT_RSET:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("RESULTSET"));
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("RESULTSET"));
             break;
         }
         case SQLT_CUR:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("CURSOR"));
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("CURSOR"));
             break;
         }
         case SQLT_CLOB:
         {
-            OCI_RETVAL = osprintf(buffer, len, (col->subtype == OCI_NCLOB) ? OTEXT("NCLOB") : OTEXT("CLOB"));
+            OCI_RETVAL = osprintf(buffer, (int)len, (col->subtype == OCI_NCLOB) ? OTEXT("NCLOB") : OTEXT("CLOB"));
             break;
         }
         case SQLT_BLOB:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("BLOB"));
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("BLOB"));
             break;
         }
         case SQLT_BFILE:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("BINARY FILE LOB"));
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("BINARY FILE LOB"));
             break;
         }
         case SQLT_CFILE:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("CFILE"));
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("CFILE"));
             break;
         }
 
@@ -1378,28 +1378,28 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 
         case SQLT_TIMESTAMP:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("TIMESTAMP(%i)"), (int) col->prec);
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("TIMESTAMP(%i)"), (int) col->prec);
             break;
         }
         case SQLT_TIMESTAMP_TZ:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("TIMESTAMP(%i) WITH TIME ZONE"), (int) col->prec);
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("TIMESTAMP(%i) WITH TIME ZONE"), (int) col->prec);
             break;
         }
         case SQLT_TIMESTAMP_LTZ:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("TIMESTAMP(%i) WITH LOCAL TIME ZONE"), (int) col->prec);
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("TIMESTAMP(%i) WITH LOCAL TIME ZONE"), (int) col->prec);
             break;
         }
         case SQLT_INTERVAL_YM:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("INTERVAL(%i) YEAR TO MONTH(%i)"),
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("INTERVAL(%i) YEAR TO MONTH(%i)"),
                                   (int) col->prec, (int) col->prec2);
             break;
         }
         case SQLT_INTERVAL_DS:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("INTERVAL(%i) DAY TO SECOND(%i)"),
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("INTERVAL(%i) DAY TO SECOND(%i)"),
                                   (int) col->prec, (int) col->prec2);
             break;
         }
@@ -1408,7 +1408,7 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 
         case SQLT_REF:
         {
-            OCI_RETVAL = osprintf(buffer, len,  OTEXT("REF"));
+            OCI_RETVAL = osprintf(buffer, (int)len,  OTEXT("REF"));
             break;
         }
 
@@ -1424,11 +1424,11 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
             {
                 otext fullname[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
                 OCI_StringGetFullTypeName(col->typinf->schema, NULL, col->typinf->name, NULL, fullname, (sizeof(fullname) / sizeof(otext)) - 1);
-                OCI_RETVAL = osprintf(buffer, len, fullname);
+                OCI_RETVAL = osprintf(buffer, (int)len, fullname);
             }
             else
             {
-                OCI_RETVAL = osprintf(buffer, len, OTEXT("NAMED TYPE"));
+                OCI_RETVAL = osprintf(buffer, (int)len, OTEXT("NAMED TYPE"));
             }
             break;
         }
@@ -1438,32 +1438,32 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 
         case SQLT_BOL:
         {
-            OCI_RETVAL = osprintf(buffer, len, OTEXT("PL/SQL BOOLEAN"));
+            OCI_RETVAL = osprintf(buffer, (int)len, OTEXT("PL/SQL BOOLEAN"));
             break;
         }
 
         case SQLT_REC:
         case SQLT_UNDOCUMENTED_REC:
         {
-            OCI_RETVAL = osprintf(buffer, len, col->typinf ? col->typinf->name : OTEXT("PL/SQL RECORD"));
+            OCI_RETVAL = osprintf(buffer, (int)len, col->typinf ? col->typinf->name : OTEXT("PL/SQL RECORD"));
             break;
         }
 
         case SQLT_TAB:
         {
-            OCI_RETVAL = osprintf(buffer, len, col->typinf ? col->typinf->name : OTEXT("PL/SQL TABLE INDEX BY"));
+            OCI_RETVAL = osprintf(buffer, (int)len, col->typinf ? col->typinf->name : OTEXT("PL/SQL TABLE INDEX BY"));
             break;
         }
 
         case SQLT_UNDOCUMENTED_BIN_INTEGER:
         {
-            OCI_RETVAL = osprintf(buffer, len, OTEXT("PL/SQL BINARY INTEGER"));
+            OCI_RETVAL = osprintf(buffer, (int)len, OTEXT("PL/SQL BINARY INTEGER"));
             break;
         }
 
         case OCI_TYPECODE_PLS_INTEGER:
         {
-            OCI_RETVAL = osprintf(buffer, len, OTEXT("PL/SQL INTEGER"));
+            OCI_RETVAL = osprintf(buffer, (int)len, OTEXT("PL/SQL INTEGER"));
             break;
         }
 
@@ -1471,7 +1471,7 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 
         default:
         {
-            OCI_RETVAL = osprintf(buffer, len, OTEXT("?"));
+            OCI_RETVAL = osprintf(buffer, (int)len, OTEXT("?"));
             break;
         }
     }

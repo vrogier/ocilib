@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,18 @@
  *
  */
 
+//
+// ReSharper inspection rules customization (mainly for C98 backward compatibility)
+//
+// ReSharper disable CppClassCanBeFinal
+// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
+// ReSharper disable CppClangTidyHicppSpecialMemberFunctions
+// ReSharper disable CppClangTidyHicppUseEqualsDefault
+// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
+// ReSharper disable CppClangTidyModernizePassByValue
+// ReSharper disable CppClangTidyModernizeUseEqualsDefault
+//
+
 #pragma once
 
 #include <map>
@@ -42,30 +54,49 @@ namespace ocilib
 #if __cplusplus < CPP_11
     #if defined(__GNUC__)
         #if defined(__GXX_EXPERIMENTAL_CXX0X__)
-            #define HAVE_NULLPTR
-            #define HAVE_MOVE_SEMANTICS
-        #else
-            #define override
+            #define HAS_CXX
         #endif
     #elif defined(_MSC_VER)
         #if _MSC_VER >= 1600
-            #define HAVE_NULLPTR
-            #define HAVE_MOVE_SEMANTICS
-        #else
-            #define override
-        #endif
+            #define HAS_CXX
+       #endif
     #endif
 #else
-    #define HAVE_NULLPTR
-    #define HAVE_MOVE_SEMANTICS
+    #define HAS_CXX
 #endif
 
+#ifdef HAS_CXX
 
-/* guessing if nullptr is supported */
+    template<bool B, class T = void>
+    using EnableIf  =  std::enable_if<B, T>;
 
-#ifndef HAVE_NULLPTR
+    template<class T, class U>
+    using IsSame = std::is_same<T, U>;
+
+#else
+    
     #define nullptr 0
+
+    #define override
+    #define noexcept
+
+    template<bool B, class T = void>
+    struct EnableIf {};
+
+    template<class T>
+    struct EnableIf<true, T> { typedef T type; };
+
+    template<bool B>
+    struct BoolConstant { static const bool value = B; };
+
+    template<class T, class U>
+    struct IsSame : BoolConstant<false> {};
+
+    template<class T>
+    struct IsSame<T, T> : BoolConstant<true> {};
+
 #endif
+
 
 #define ARG_NOT_USED(a) (a) = (a)
 
@@ -80,6 +111,7 @@ class Resultset;
 class Date;
 class Timestamp;
 class Interval;
+class Number;
 class TypeInfo;
 class Reference;
 class Object;
@@ -110,6 +142,20 @@ class ThreadKey;
 class Mutex;
 class BindInfo;
 
+template<class T>
+struct SupportedNumeric
+{
+    typedef EnableIf<IsSame<T, short>::value ||
+        IsSame<T, unsigned short>::value ||
+        IsSame<T, int>::value ||
+        IsSame<T, unsigned int>::value ||
+        IsSame<T, big_int>::value ||
+        IsSame<T, big_uint>::value ||
+        IsSame<T, float>::value ||
+        IsSame<T, double>::value ||
+        IsSame<T, Number>::value> Type;
+};
+
 /**
 * @brief Internal usage.
 * Allow resolving a native type used by C API from a C++ type in binding operations
@@ -134,7 +180,7 @@ ostring MakeString(const otext *result, int size = -1);
 * @brief Internal usage.
 * Constructs a C++ Raw object from the given OCILIB raw buffer
 */
-Raw MakeRaw(void *result, unsigned int size);
+Raw MakeRaw(AnyPointer result, unsigned int size);
 
 /**
  * @brief
@@ -187,6 +233,9 @@ public:
     Flags();
     Flags(T flag);
     Flags(const Flags& other);
+
+    Flags& operator = (const Flags& other) noexcept;
+
     Flags operator~ () const;
 
     Flags operator | (T other) const;
@@ -227,10 +276,9 @@ public:
     ManagedBuffer(size_t size);
     ManagedBuffer(T *buffer, size_t size);
 
-    ~ManagedBuffer();
+    ~ManagedBuffer() noexcept;
 
-    operator T* () const;
-    operator const T* () const;
+    operator T* ();
 
 private:
 
@@ -243,7 +291,7 @@ class Locker
 public:
 
     Locker();
-    virtual ~Locker();
+    virtual ~Locker() noexcept;
 
     void Lock() const;
     void Unlock() const;
@@ -260,7 +308,7 @@ class Lockable
 public:
 
     Lockable();
-    virtual  ~Lockable();
+    virtual  ~Lockable() noexcept;
 
     void SetLocker(Locker *locker);
 
@@ -278,7 +326,7 @@ class ConcurrentMap : public Lockable
 public:
 
     ConcurrentMap();
-    virtual ~ConcurrentMap();
+    virtual ~ConcurrentMap() noexcept;
 
     void Remove(K key);
     V Get(K key);
@@ -298,7 +346,7 @@ class ConcurrentList : public Lockable
 public:
 
     ConcurrentList();
-    virtual ~ConcurrentList();
+    virtual ~ConcurrentList() noexcept;
 
     void Add(T value);
     void Remove(T value);
@@ -321,7 +369,7 @@ class Handle
 {
 public:
 
-    virtual ~Handle() {}
+    virtual ~Handle() noexcept {}
     virtual ConcurrentList<Handle *> & GetChildren() = 0;
     virtual void DetachFromHolders() = 0;
     virtual void DetachFromParent() = 0;
@@ -350,9 +398,9 @@ protected:
 
     HandleHolder(const HandleHolder &other);
 	HandleHolder();
-    ~HandleHolder();
+    ~HandleHolder() noexcept;
 
-    HandleHolder& operator= (const HandleHolder &other);
+    HandleHolder& operator= (const HandleHolder& other) noexcept;
 
     typedef boolean(OCI_API *HandleFreeFunc)(AnyPointer handle);
 
@@ -369,10 +417,12 @@ protected:
     public:
 
         SmartHandle(HandleHolder *holder, T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent);
-        virtual ~SmartHandle();
+        virtual ~SmartHandle() noexcept;
 
         void Acquire(HandleHolder *holder);
         void Release(HandleHolder *holder);
+
+        void Destroy();
 
         T GetHandle() const;
 
@@ -414,7 +464,7 @@ class Streamable
 {
 public:
 
-    virtual ~Streamable() {}
+    virtual ~Streamable() noexcept {}
 
     operator ostring() const
     {
@@ -437,7 +487,7 @@ public:
 
     BindObject(const Statement &statement, const ostring& name, unsigned int mode);
 
-    virtual ~BindObject();
+    virtual ~BindObject() noexcept;
 
     ostring GetName() const;
 
@@ -460,7 +510,7 @@ class BindArray : public BindObject
 public:
 
      BindArray(const Statement &statement, const ostring& name, unsigned int mode);
-     virtual ~BindArray();
+     virtual ~BindArray() noexcept;
 
      template<class T>
      void SetVector(std::vector<T> & vector, bool isPlSqlTable, unsigned int elemSize);
@@ -471,22 +521,21 @@ public:
      void SetInData() override;
      void SetOutData() override;
 
-     unsigned int GetSize();
-     unsigned int GetSizeForBindCall();
+     unsigned int GetSize() const;
+     unsigned int GetSizeForBindCall() const;
 
 private:
 
     class AbstractBindArrayObject
     {
     public:
-        AbstractBindArrayObject()  { }
-        virtual ~AbstractBindArrayObject()  { }
+        virtual ~AbstractBindArrayObject() {};
         virtual void SetInData() = 0;
         virtual void SetOutData() = 0;
-        virtual ostring GetName() = 0;
-        virtual bool IsHandleObject() = 0;
-        virtual unsigned int GetSize() = 0;
-        virtual unsigned int GetSizeForBindCall() = 0;
+        virtual ostring GetName() const = 0;
+        virtual bool IsHandleObject() const = 0;
+        virtual unsigned int GetSize() const = 0;
+        virtual unsigned int GetSizeForBindCall() const = 0;
     };
 
     template<class T>
@@ -498,14 +547,14 @@ private:
 		typedef std::vector<ObjectType> ObjectVector;
         typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
-        BindArrayObject(const Statement &statement, const ostring& name, ObjectVector &vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize);
-        virtual ~BindArrayObject();
+        BindArrayObject(const Statement &statement, const ostring &name, ObjectVector &vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize);
+        virtual ~BindArrayObject() noexcept;
         void SetInData() override;
         void SetOutData() override;
-        ostring GetName() override;
-        bool IsHandleObject() override;
-        unsigned int GetSize() override;
-        unsigned int GetSizeForBindCall() override;
+        ostring GetName()const  override;
+        bool IsHandleObject() const override;
+        unsigned int GetSize() const override;
+        unsigned int GetSizeForBindCall() const override;
 
         operator ObjectVector & () const;
         operator NativeType * () const;
@@ -544,7 +593,7 @@ public:
     void SetOutData() override;
 
     BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object, unsigned int size);
-    virtual ~BindObjectAdaptor();
+    virtual ~BindObjectAdaptor() noexcept;
 
 private:
 
@@ -569,7 +618,7 @@ public:
     void SetOutData() override;
 
     BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object);
-    virtual ~BindTypeAdaptor();
+    virtual ~BindTypeAdaptor() noexcept;
 
 private:
 
@@ -582,7 +631,7 @@ class BindsHolder
 public:
 
     BindsHolder(const Statement &statement);
-    ~BindsHolder();
+    ~BindsHolder() noexcept;
 
     void Clear();
 

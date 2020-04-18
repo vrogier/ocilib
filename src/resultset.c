@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     index = OCI_GetDefineIndex(rs, name);                                                       \
     if (index > 0)                                                                              \
     {                                                                                           \
-        if (!ctx->call_err) ctx->call_err = OCI_ErrorGet(FALSE);                                \
+        if (!ctx->call_err) ctx->call_err = OCI_ErrorGet(FALSE, FALSE);                         \
         OCI_RETVAL = func(rs, (unsigned int) index);                                            \
         OCI_STATUS = !ctx->call_err->raise;                                                     \
     }                                                                                           \
@@ -70,7 +70,6 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     def = OCI_GetDefine(rs, index);                                                             \
     if (OCI_MATCHING_TYPE(def, lib_type))                                                       \
     {                                                                                           \
-        if (!ctx->call_err) ctx->call_err = OCI_ErrorGet(FALSE);                                \
         def->obj = OCI_RETVAL = func;                                                           \
         OCI_STATUS = (NULL != OCI_RETVAL);                                                      \
     }                                                                                           \
@@ -693,7 +692,7 @@ boolean OCI_FetchCustom
             {
                 const int offset_save = offset;
 
-                offset      = offset - rs->row_fetched + rs->row_cur;
+                offset      = offset - (int) (rs->row_fetched + rs->row_cur);
                 rs->row_cur = 1;
 
                 res = OCI_FetchData(rs, mode, offset, err);
@@ -981,11 +980,11 @@ boolean OCI_API OCI_FetchPrev
 
                 if (rs->fetch_size > rs->row_abs)
                 {
-                    offset = 1 - rs->row_abs;
+                    offset = 1 - (int) rs->row_abs;
                 }
                 else
                 {
-                    offset = 1 - (rs->fetch_size + rs->row_fetched);
+                    offset = 1 - (int) (rs->fetch_size + rs->row_fetched);
                 }
 
                 OCI_RETVAL = OCI_FetchData(rs, OCI_SFD_RELATIVE, offset, &OCI_STATUS);
@@ -1187,7 +1186,7 @@ boolean OCI_API OCI_FetchSeek
     OCI_CALL_CHECK_ENUM_VALUE(rs->stmt->con, rs->stmt, mode, SeekModeValues, OTEXT("Fetch Seek Mode"))
     OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
 
-    OCI_RETVAL = OCI_FetchCustom(rs, mode, offset, &OCI_STATUS);
+    OCI_RETVAL = OCI_FetchCustom(rs, (int)mode, offset, &OCI_STATUS);
 
 #else
 
@@ -1399,7 +1398,7 @@ boolean OCI_API OCI_GetStruct
 
         size_t size = 0;
 
-        for (ub2 i = 1; i <= rs->nb_defs; i++)
+        for (ub4 i = 1; i <= rs->nb_defs; i++)
         {
             OCI_Define *def = &rs->defs[i - 1];
 
@@ -1758,7 +1757,7 @@ const otext * OCI_API OCI_GetString
         }
         else
         {
-            OCI_Error *err = OCI_ErrorGet(TRUE);
+            OCI_Error *err = OCI_ErrorGet(TRUE, TRUE);
 
             unsigned int bufsize = OCI_SIZE_TMP_CVT;
             unsigned int data_size = 0;
@@ -2509,7 +2508,7 @@ boolean OCI_API OCI_IsNull2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ResultsetGetStatment
+ * OCI_ResultsetGetStatement
  * --------------------------------------------------------------------------------------------- */
 
 OCI_Statement * OCI_API OCI_ResultsetGetStatement

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -190,7 +190,7 @@ ub2 OCI_ObjectGetIndOffset
 
     OCI_CHECK(typinf == NULL, 0);
 
-    for (i = 0; i < index; i++)
+    for (i = 0; i < (int) index; i++)
     {
         if (OCI_CDT_OBJECT == typinf->cols[i].datatype)
         {
@@ -1152,7 +1152,7 @@ const otext * OCI_API OCI_ObjectGetString
 
         if (index >= 0)
         {
-            OCI_Error   *err   = OCI_ErrorGet(TRUE);
+            OCI_Error   *err   = OCI_ErrorGet(TRUE, TRUE);
             OCIInd      *ind   = NULL;
             void        *value = NULL;
             unsigned int size  = 0;
@@ -1245,7 +1245,7 @@ int OCI_API OCI_ObjectGetRaw
 
             memcpy(buffer, OCIRawPtr(obj->con->env, *value), (size_t) len);
 
-            OCI_RETVAL = len;
+            OCI_RETVAL = (int) len;
         }
     }
 
@@ -2045,15 +2045,15 @@ boolean OCI_API OCI_ObjectToText
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
     OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
-    err = OCI_ErrorGet(TRUE);
+    err = OCI_ErrorGet(TRUE, TRUE);
 
     if (str)
     {
         *str = 0;
     }
 
-    len += OCI_StringAddToBuffer(str, len, obj->typinf->name, FALSE);
-    len += OCI_StringAddToBuffer(str, len, OTEXT("("), FALSE);
+    len += OCI_StringAddToBuffer(str, len, obj->typinf->name, (unsigned int) ostrlen(obj->typinf->name), FALSE);
+    len += OCI_StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
 
     for (int i = 0; i < obj->typinf->nb_cols && OCI_STATUS; i++)
     {
@@ -2062,7 +2062,7 @@ boolean OCI_API OCI_ObjectToText
 
         if (OCI_ObjectIsNull(obj, attr))
         {
-            len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, FALSE);
+            len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
         }
         else
         {
@@ -2074,7 +2074,18 @@ boolean OCI_API OCI_ObjectToText
             {
                 case OCI_CDT_TEXT:
                 {
-                    data  = (void *) OCI_ObjectGetString(obj, attr);
+                    OCIInd *ind = NULL;
+                    data = OCI_ObjectGetAttr(obj, i, &ind);
+
+                    if (data && ind && (OCI_IND_NULL != *ind))
+                    {
+                        data_size = OCIStringSize(OCILib.env, (*(OCIString **)data));
+                        data      = (void *)OCI_ObjectGetString(obj, attr);
+                    }
+                    else
+                    {
+                        data = NULL;
+                    }
                     break;
                 }
                 case OCI_CDT_BOOLEAN:
@@ -2101,6 +2112,10 @@ boolean OCI_API OCI_ObjectToText
                         data_size = OCIRawSize(obj->con->env, (*(OCIRaw **) data));
                         data      = OCIRawPtr(obj->con->env,  (*(OCIRaw **) data));
                     }
+                    else
+                    {
+                        data = NULL;
+                    }                
                     break;
                 }
                 case OCI_CDT_DATETIME:
@@ -2163,7 +2178,7 @@ boolean OCI_API OCI_ObjectToText
                 }
                 else
                 {
-                    len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, FALSE);
+                    len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
                 }
 
                 OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
@@ -2172,13 +2187,13 @@ boolean OCI_API OCI_ObjectToText
 
         if (OCI_STATUS && i < (obj->typinf->nb_cols-1))
         {
-            len += OCI_StringAddToBuffer(str, len, OTEXT(", "), quote);
+            len += OCI_StringAddToBuffer(str, len, OTEXT(", "), 2, quote);
         }
     }
 
     if (OCI_STATUS)
     {
-        len += OCI_StringAddToBuffer(str, len, OTEXT(")"), FALSE);
+        len += OCI_StringAddToBuffer(str, len, OTEXT(")"), 1, FALSE);
 
         *size = len;
     }

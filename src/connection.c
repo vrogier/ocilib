@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -455,7 +455,7 @@ void OCI_ConnectionLogonRegular
             OCI_StringReleaseOracleString(dbstr);
         }
 
-        /* set OCILIB's driver layer name attribute */
+        /* set OCILIB driver layer name attribute */
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
@@ -559,6 +559,11 @@ void OCI_ConnectionLogonSessionPool
     int      dbsize_tag = 0;
     OraText *dbstr_ret  = NULL;
     ub4      dbsize_ret = 0;
+
+    if (con->mode & OCI_SESSION_SYSDBA)
+    {
+        sess_mode |= OCI_SESSGET_SYSDBA;
+    }
 
     if (!OCI_STRING_VALID(con->pool->user) && !OCI_STRING_VALID(con->pool->pwd))
     {
@@ -847,7 +852,7 @@ boolean OCI_ConnectionClose
 
     /* clear connection reference from current error object */
 
-    err = OCI_ErrorGet(FALSE);
+    err = OCI_ErrorGet(FALSE, FALSE);
 
     if (err && err->con == con)
     {

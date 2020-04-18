@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2019 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -743,9 +743,9 @@ boolean OCI_KeyMapFree
 
     OCI_CHECK(NULL == OCILib.key_map, TRUE)
 
-    const int n = OCI_HashGetSize(OCILib.key_map);
+    const unsigned int n = OCI_HashGetSize(OCILib.key_map);
 
-    for (int i = 0; i < n; i++)
+    for (unsigned int i = 0; i < n; i++)
     {
         e = OCI_HashGetEntry(OCILib.key_map, i);
 
@@ -1767,7 +1767,7 @@ boolean OCI_API OCI_Cleanup
     if (OCILib.key_errs)
     {        
         OCI_ThreadKey *key = OCILib.key_errs;
-        OCI_Error     *err = OCI_ErrorGet(FALSE);
+        OCI_Error     *err = OCI_ErrorGet(FALSE, FALSE);
 
         OCILib.key_errs = NULL;
 
@@ -1810,7 +1810,7 @@ boolean OCI_API OCI_Cleanup
 
     if (OCILib.nb_hndlp > 0)
     {
-        OCI_ExceptionUnfreedData(OCI_HDLE_HANDLE, OCILib.nb_hndlp);
+        OCI_ExceptionUnfreedData(OCI_HDLE_HANDLE, (int) OCILib.nb_hndlp);
         res = FALSE;
     }
 
@@ -1818,7 +1818,7 @@ boolean OCI_API OCI_Cleanup
 
     if (OCILib.nb_descp > 0)
     {
-        OCI_ExceptionUnfreedData(OCI_HDLE_DESCRIPTOR, OCILib.nb_descp);
+        OCI_ExceptionUnfreedData(OCI_HDLE_DESCRIPTOR, (int) OCILib.nb_descp);
         res = FALSE;
     }
 
@@ -1826,7 +1826,7 @@ boolean OCI_API OCI_Cleanup
 
     if (OCILib.nb_objinst > 0)
     {
-        OCI_ExceptionUnfreedData(OCI_HDLE_OBJECT, OCILib.nb_objinst);
+        OCI_ExceptionUnfreedData(OCI_HDLE_OBJECT, (int) OCILib.nb_objinst);
         res = FALSE;
     }
 
@@ -1921,7 +1921,7 @@ OCI_Error * OCI_API OCI_GetLastError
 
     if (!OCILib.loaded || OCILib.env_mode & OCI_ENV_CONTEXT)
     {
-        err = OCI_ErrorGet(TRUE);
+        err = OCI_ErrorGet(TRUE, FALSE);
 
         if (err && (!err->raise))
         {
