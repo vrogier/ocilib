@@ -1,4 +1,4 @@
-2020-04-15 Version 4.6.4 Vincent Rogier vince.rogier@ocilib.net
+2020-04-18 Version 4.6.4 Vincent Rogier vince.rogier@ocilib.net
 
     * Fixes (C API)
 	
@@ -9,10 +9,26 @@
 
     * Miscellaneous (C API)
 	
-		- some performance improvements when converting Objects and Collections to strings
-		- some performance improvements when calling OCI_GetString() on non strings columns
-		- few minor changes in code for addressing some code analysis hints
+		- Some performance improvements when converting Objects and Collections to strings
+		- Some performance improvements when calling OCI_GetString() on non strings columns
+		- Minor changes in code for addressing some code analysis hints (clang, resharper)
 	
+	* Miscellaneous (C++ API)
+	
+		- Enhanced Number class in C++ API:
+			* Restrict arithmetic operations on supported types only
+			* Arithmetic operations are also now supported between Number objects
+		- Minor changes in code for addressing code analysis hints (clang, resharper)
+		- Updated C++ demo application
+    
+	* Miscellaneous
+  
+        - Updated documentation
+		- Updated all files Copyright to current year (2020)
+		- Updated compilers for MS Windows prebuilt binaries
+            * VS2019 16.5.3 for 32/64 bit DLLs	
+			* Still targeting vc141_xp toolset for backward compatibility
+			
 2019-11-01 Version 4.6.3 Vincent Rogier vince.rogier@ocilib.net
 
     * Fixes (C API)
