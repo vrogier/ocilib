@@ -55,33 +55,14 @@ namespace ocilib
     #if defined(__GNUC__)
         #if defined(__GXX_EXPERIMENTAL_CXX0X__)
             #define HAS_CXX
-            #define HAS_NULLPTR
-            #define HAS_MOVE_SEMANTICS
-       #else
-            #define override
-            #define noexcept
         #endif
     #elif defined(_MSC_VER)
         #if _MSC_VER >= 1600
             #define HAS_CXX
-            #define HAS_NULLPTR
-            #define HAS_MOVE_SEMANTICS
-        #else
-            #define override
-             #define noexcept
        #endif
     #endif
 #else
     #define HAS_CXX
-    #define HAS_NULLPTR
-    #define HAS_MOVE_SEMANTICS
-#endif
-
-
-/* guessing if nullptr is supported */
-
-#ifndef HAS_NULLPTR
-    #define nullptr 0
 #endif
 
 #ifdef HAS_CXX
@@ -93,6 +74,11 @@ namespace ocilib
     using IsSame = std::is_same<T, U>;
 
 #else
+    
+    #define nullptr 0
+
+    #define override
+    #define noexcept
 
     template<bool B, class T = void>
     struct EnableIf {};
