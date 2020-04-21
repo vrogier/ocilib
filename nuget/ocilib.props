@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'Unicode' and ('$(Platform)' == 'Win32' or '$(Platform)' == 'x86')">
+  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'Unicode' and '$(PlatformTarget)' == 'x86'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	  <PreprocessorDefinitions>OCI_API=__stdcall;OCI_CHARSET_WIDE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'Unicode' and ('$(Platform)' == 'Win64' or '$(Platform)' == 'x64')">
+  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'Unicode' and '$(PlatformTarget)' == 'x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	  <PreprocessorDefinitions>OCI_API=__stdcall;OCI_CHARSET_WIDE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and ('$(Platform)' == 'Win32' or '$(Platform)' == 'x86')">
+  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x86'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	  <PreprocessorDefinitions>OCI_API=__stdcall;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and ('$(Platform)' == 'Win64' or '$(Platform)' == 'x64')">
+  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	  <PreprocessorDefinitions>OCI_API=__stdcall;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'Unicode' and ('$(Platform)' == 'Win32' or '$(Platform)' == 'x86')">
+  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'Unicode' and '$(PlatformTarget)' == 'x86'">
     <Link>
       <AdditionalDependencies>ocilibw.lib;$(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'Unicode' and ('$(Platform)' == 'Win64' or '$(Platform)' == 'x64')">
+  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'Unicode' and '$(PlatformTarget)' == 'x64'">
     <Link>
       <AdditionalDependencies>ocilibw.lib;$(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and ('$(Platform)' == 'Win32' or '$(Platform)' == 'x86')">
+  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x86'">
     <Link>
       <AdditionalDependencies>ociliba.lib;$(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and ('$(Platform)' == 'Win64' or '$(Platform)' == 'x64')">
+  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x64'">
     <Link>
       <AdditionalDependencies>ociliba.lib;$(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

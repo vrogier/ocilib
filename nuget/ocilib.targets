@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="Ocilib_Copy_Dll_Wide_x86" BeforeTargets="PostBuildEvent;PrepareForRun" Condition="'$(CharacterSet)' == 'Unicode' and ('$(Platform)' == 'Win32' or '$(Platform)' == 'x86')">
+  <Target Name="Ocilib_Copy_Dll_Wide_x86" BeforeTargets="PostBuildEvent;PrepareForRun" Condition="'$(CharacterSet)' == 'Unicode' and '$(PlatformTarget)' == 'x86'">
     <ItemGroup>
       <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x86\ocilibw.dll" />
       <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x86\ocilibw.pdb" />
     </ItemGroup>
     <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(OutDir)" />
   </Target>
-  <Target Name="Ocilib_Copy_Dll_Wide_x64" BeforeTargets="PostBuildEvent;PrepareForRun" Condition="'$(CharacterSet)' == 'Unicode' and ('$(Platform)' == 'Win64' or '$(Platform)' == 'x64')">
+  <Target Name="Ocilib_Copy_Dll_Wide_x64" BeforeTargets="PostBuildEvent;PrepareForRun" Condition="'$(CharacterSet)' == 'Unicode' and '$(PlatformTarget)' == 'x64'">
     <ItemGroup>
       <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x64\ocilibw.dll" />
       <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x64\ocilibw.pdb" />
     </ItemGroup>
     <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(OutDir)" />
   </Target>
-   <Target Name="Ocilib_Copy_Dll_Ansi_x86" BeforeTargets="PostBuildEvent;PrepareForRun" Condition="'$(CharacterSet)' == 'MultiByte' and ('$(Platform)' == 'Win32' or '$(Platform)' == 'x86')">
+   <Target Name="Ocilib_Copy_Dll_Ansi_x86" BeforeTargets="PostBuildEvent;PrepareForRun" Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x86'">
     <ItemGroup>
       <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x86\ociliba.dll" />
 	  <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x86\ociliba.pdb" />
     </ItemGroup>
     <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(OutDir)" />
   </Target>
-  <Target Name="Ocilib_Copy_Dll_Ansi_x64" BeforeTargets="PostBuildEvent;PrepareForRun" Condition="'$(CharacterSet)' == 'MultiByte' and ('$(Platform)' == 'Win64' or '$(Platform)' == 'x64')">
+  <Target Name="Ocilib_Copy_Dll_Ansi_x64" BeforeTargets="PostBuildEvent;PrepareForRun" Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x64'">
     <ItemGroup>
       <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x64\ociliba.dll" />
       <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x64\ociliba.pdb" />
