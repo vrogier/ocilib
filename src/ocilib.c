@@ -413,3 +413,138 @@ boolean OCI_API OCI_CollToText
 {
     return CollToText(coll, size, str);
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * column
+ * --------------------------------------------------------------------------------------------- */
+
+const otext* OCI_API OCI_ColumnGetName
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetName(col);
+}
+
+unsigned int OCI_API OCI_ColumnGetType
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetType(col);
+}
+
+unsigned int OCI_API OCI_ColumnGetCharsetForm
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetCharsetForm(col);
+}
+
+unsigned int OCI_API OCI_ColumnGetSize
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetSize(col);
+}
+
+int OCI_API OCI_ColumnGetScale
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetScale(col);
+}
+
+int OCI_API OCI_ColumnGetPrecision
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetPrecision(col);
+}
+
+int OCI_API OCI_ColumnGetFractionalPrecision
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetFractionalPrecision(col);
+}
+
+int OCI_API OCI_ColumnGetLeadingPrecision
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetLeadingPrecision(col);
+}
+
+boolean OCI_API OCI_ColumnGetNullable
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetNullable(col);
+}
+
+boolean OCI_API OCI_ColumnGetCharUsed
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetCharUsed(col);
+}
+
+unsigned int OCI_API OCI_ColumnGetPropertyFlags
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetPropertyFlags(col);
+}
+
+unsigned int OCI_API OCI_ColumnGetCollationID
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetCollationID(col);
+}
+
+const otext* OCI_API OCI_ColumnGetSQLType
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetSQLType(col);
+}
+
+unsigned int OCI_API OCI_ColumnGetFullSQLType
+(
+    OCI_Column* col,
+    otext* buffer,
+    unsigned int len
+)
+{
+    return ColumnGetFullSQLType(col, buffer, len);
+}
+
+OCI_TypeInfo* OCI_API OCI_ColumnGetTypeInfo
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetTypeInfo(col);
+}
+
+unsigned int OCI_API OCI_ColumnGetSubType
+(
+    OCI_Column* col
+)
+{
+    return ColumnGetSubType(col);
+}
+

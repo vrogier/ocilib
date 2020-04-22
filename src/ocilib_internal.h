@@ -484,13 +484,16 @@ boolean CollToText
  * column.c
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ColumnMap
+boolean ColumnGetAttrInfo
 (
     OCI_Column    *col,
-    OCI_Statement *stmt
+    unsigned int   count,
+    unsigned int   index,
+    size_t        *p_size,
+    size_t        *p_align
 );
-
-boolean OCI_ColumnDescribe
+    
+boolean ColumnDescribe
 (
     OCI_Column     *col,
     OCI_Connection *con,
@@ -500,13 +503,92 @@ boolean OCI_ColumnDescribe
     int             ptype
 );
 
-boolean OCI_ColumnGetAttrInfo
+boolean ColumnMap
 (
     OCI_Column    *col,
-    unsigned int   count,
-    unsigned int   index,
-    size_t        *p_size,
-    size_t        *p_align
+    OCI_Statement *stmt
+);
+
+const otext* ColumnGetName
+(
+    OCI_Column* col
+);
+
+unsigned int ColumnGetType
+(
+    OCI_Column* col
+);
+
+unsigned int ColumnGetCharsetForm
+(
+    OCI_Column* col
+);
+
+unsigned int ColumnGetSize
+(
+    OCI_Column* col
+);
+
+int ColumnGetScale
+(
+    OCI_Column* col
+);
+
+int ColumnGetPrecision
+(
+    OCI_Column* col
+);
+
+int ColumnGetFractionalPrecision
+(
+    OCI_Column* col
+);
+
+int ColumnGetLeadingPrecision
+(
+    OCI_Column* col
+);
+
+boolean ColumnGetNullable
+(
+    OCI_Column* col
+);
+
+boolean ColumnGetCharUsed
+(
+    OCI_Column* col
+);
+
+unsigned int ColumnGetPropertyFlags
+(
+    OCI_Column* col
+);
+
+unsigned int ColumnGetCollationID
+(
+    OCI_Column* col
+);
+
+const otext* ColumnGetSQLType
+(
+    OCI_Column* col
+);
+
+unsigned int ColumnGetFullSQLType
+(
+    OCI_Column* col,
+    otext* buffer,
+    unsigned int len
+);
+
+OCI_TypeInfo* ColumnGetTypeInfo
+(
+    OCI_Column* col
+);
+
+unsigned int ColumnGetSubType
+(
+    OCI_Column* col
 );
 
 /* --------------------------------------------------------------------------------------------- *

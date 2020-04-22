@@ -457,8 +457,8 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                     {
                         for (ub2 i = 0; i < typinf->nb_cols; i++)
                         {
-                            OCI_STATUS = OCI_STATUS && OCI_ColumnDescribe(&typinf->cols[i], con, NULL, param_cols, i + 1, ptype);
-                            OCI_STATUS = OCI_STATUS && OCI_ColumnMap(&typinf->cols[i], NULL);
+                            OCI_STATUS = OCI_STATUS && ColumnDescribe(&typinf->cols[i], con, NULL, param_cols, i + 1, ptype);
+                            OCI_STATUS = OCI_STATUS && ColumnMap(&typinf->cols[i], NULL);
 
                             if (!OCI_STATUS)
                             {

@@ -25,10 +25,10 @@
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ColumnGetAttrInfo
+* ColumnGetAttrInfo
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ColumnGetAttrInfo
+boolean ColumnGetAttrInfo
 (
     OCI_Column    *col,
     unsigned int   count,
@@ -102,10 +102,10 @@ boolean OCI_ColumnGetAttrInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnDescribe
+ * ColumnDescribe
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ColumnDescribe
+boolean ColumnDescribe
 (
     OCI_Column     *col,
     OCI_Connection *con,
@@ -423,10 +423,10 @@ boolean OCI_ColumnDescribe
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnMap
+ * ColumnMap
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ColumnMap
+boolean ColumnMap
 (
     OCI_Column    *col,
     OCI_Statement *stmt
@@ -793,10 +793,10 @@ boolean OCI_ColumnMap
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetName
+ * ColumnGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_ColumnGetName
+const otext * ColumnGetName
 (
     OCI_Column *col
 )
@@ -805,10 +805,10 @@ const otext * OCI_API OCI_ColumnGetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetType
+ * ColumnGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ColumnGetType
+unsigned int ColumnGetType
 (
     OCI_Column *col
 )
@@ -817,10 +817,10 @@ unsigned int OCI_API OCI_ColumnGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetCharsetForm
+ * ColumnGetCharsetForm
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ColumnGetCharsetForm
+unsigned int ColumnGetCharsetForm
 (
     OCI_Column *col
 )
@@ -841,10 +841,10 @@ unsigned int OCI_API OCI_ColumnGetCharsetForm
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetSize
+ * ColumnGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ColumnGetSize
+unsigned int ColumnGetSize
 (
     OCI_Column *col
 )
@@ -867,10 +867,10 @@ unsigned int OCI_API OCI_ColumnGetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetScale
+ * ColumnGetScale
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_ColumnGetScale
+int ColumnGetScale
 (
     OCI_Column *col
 )
@@ -879,10 +879,10 @@ int OCI_API OCI_ColumnGetScale
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetPrecision
+ * ColumnGetPrecision
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_ColumnGetPrecision
+int ColumnGetPrecision
 (
     OCI_Column *col
 )
@@ -896,10 +896,10 @@ int OCI_API OCI_ColumnGetPrecision
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetFractionalPrecision
+ * ColumnGetFractionalPrecision
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_ColumnGetFractionalPrecision
+int ColumnGetFractionalPrecision
 (
     OCI_Column *col
 )
@@ -920,10 +920,10 @@ int OCI_API OCI_ColumnGetFractionalPrecision
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetLeadingPrecision
+ * ColumnGetLeadingPrecision
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_ColumnGetLeadingPrecision
+int ColumnGetLeadingPrecision
 (
     OCI_Column *col
 )
@@ -938,10 +938,10 @@ int OCI_API OCI_ColumnGetLeadingPrecision
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetNullable
+ * ColumnGetNullable
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ColumnGetNullable
+boolean ColumnGetNullable
 (
     OCI_Column *col
 )
@@ -955,10 +955,10 @@ boolean OCI_API OCI_ColumnGetNullable
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetCharUsed
+ * ColumnGetCharUsed
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ColumnGetCharUsed
+boolean ColumnGetCharUsed
 (
     OCI_Column *col
 )
@@ -967,10 +967,10 @@ boolean OCI_API OCI_ColumnGetCharUsed
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetPropertyFlags
+ * ColumnGetPropertyFlags
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ColumnGetPropertyFlags
+unsigned int ColumnGetPropertyFlags
 (
     OCI_Column *col
 )
@@ -982,7 +982,7 @@ unsigned int OCI_API OCI_ColumnGetPropertyFlags
 * OCI_ColumnGetCollationID
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ColumnGetCollationID
+unsigned int ColumnGetCollationID
 (
     OCI_Column *col
 )
@@ -991,10 +991,10 @@ unsigned int OCI_API OCI_ColumnGetCollationID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetSQLType
+ * ColumnGetSQLType
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_ColumnGetSQLType
+const otext * ColumnGetSQLType
 (
     OCI_Column *col
 )
@@ -1211,10 +1211,10 @@ const otext * OCI_API OCI_ColumnGetSQLType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetFullSQLType
+ * ColumnGetFullSQLType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ColumnGetFullSQLType
+unsigned int ColumnGetFullSQLType
 (
     OCI_Column  *col,
     otext       *buffer,
@@ -1480,10 +1480,10 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetTypeInfo
+ * ColumnGetTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
+OCI_TypeInfo * ColumnGetTypeInfo
 (
     OCI_Column *col
 )
@@ -1492,10 +1492,10 @@ OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ColumnGetSubType
+ * ColumnGetSubType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ColumnGetSubType
+unsigned int ColumnGetSubType
 (
     OCI_Column *col
 )

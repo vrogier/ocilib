@@ -147,13 +147,13 @@ OCI_Resultset * OCI_ResultsetCreate
 
                 /* get column description */
 
-                OCI_STATUS = OCI_ColumnDescribe(&def->col, rs->stmt->con,
-                                                 rs->stmt, rs->stmt->stmt,
-                                                 i + 1, OCI_DESC_RESULTSET);
+                OCI_STATUS = ColumnDescribe(&def->col, rs->stmt->con,
+                                            rs->stmt, rs->stmt->stmt,
+                                       i + 1, OCI_DESC_RESULTSET);
 
                 /* mapping to OCILIB internal types */
 
-                OCI_STATUS = OCI_STATUS && OCI_ColumnMap(&def->col, rs->stmt);
+                OCI_STATUS = OCI_STATUS && ColumnMap(&def->col, rs->stmt);
 
              #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
@@ -249,7 +249,7 @@ OCI_Resultset * OCI_ResultsetCreate
 
                 /* map column and allocation of internal buffers for resultset content **/
 
-                OCI_STATUS = OCI_ColumnMap(&def->col, rs->stmt) && OCI_DefineAlloc(def);
+                OCI_STATUS = ColumnMap(&def->col, rs->stmt) && OCI_DefineAlloc(def);
             }
         }
     }
@@ -1406,14 +1406,14 @@ boolean OCI_API OCI_GetStruct
 
             if (i == 1)
             {
-                OCI_ColumnGetAttrInfo(&def->col, rs->nb_defs, i - 1, &size1, &align);
+                ColumnGetAttrInfo(&def->col, rs->nb_defs, i - 1, &size1, &align);
             }
             else
             {
                 size1 = size2;
             }         
 
-            OCI_ColumnGetAttrInfo(&rs->defs[i].col, rs->nb_defs, i, &size2, &align);
+            ColumnGetAttrInfo(&rs->defs[i].col, rs->nb_defs, i, &size2, &align);
 
             size += size1;
 
