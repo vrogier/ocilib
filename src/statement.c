@@ -1122,7 +1122,7 @@ boolean OCI_API OCI_PrepareInternal
 
         #if OCI_VERSION_COMPILE >= OCI_12_2
 
-            if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_12_2))
+            if (ConnectionIsVersionSupported(stmt->con, OCI_12_2))
             {
                 mode |= OCI_PREP2_GET_SQL_ID;
             }
@@ -1292,7 +1292,7 @@ boolean OCI_API OCI_ExecuteInternal
 
     #if OCI_VERSION_COMPILE >= OCI_12_2
 
-            if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_12_2))
+            if (ConnectionIsVersionSupported(stmt->con, OCI_12_2))
             {
                 unsigned int size_id = 0;
 
@@ -2283,7 +2283,7 @@ boolean OCI_API OCI_BindDouble
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_10_1))
+    if (ConnectionIsVersionSupported(stmt->con, OCI_10_1))
     {
         code = SQLT_BDOUBLE;
     }
@@ -2317,7 +2317,7 @@ boolean OCI_API OCI_BindArrayOfDoubles
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_10_1))
+    if (ConnectionIsVersionSupported(stmt->con, OCI_10_1))
     {
         code = SQLT_BDOUBLE;
     }
@@ -2350,7 +2350,7 @@ boolean OCI_API OCI_BindFloat
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_10_1))
+    if (ConnectionIsVersionSupported(stmt->con, OCI_10_1))
     {
         code = SQLT_BFLOAT;
     }
@@ -2384,7 +2384,7 @@ boolean OCI_API OCI_BindArrayOfFloats
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCI_ConnectionIsVersionSupported(stmt->con, OCI_10_1))
+    if (ConnectionIsVersionSupported(stmt->con, OCI_10_1))
     {
         code = SQLT_BFLOAT;
     }

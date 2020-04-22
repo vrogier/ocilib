@@ -56,10 +56,10 @@ static const unsigned int TimeoutTypeValues[] =
     OCI_RETVAL = con->trace->prop[0] ? con->trace->prop : NULL;
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionDetachSubscriptions
+ * ConnectionDetachSubscriptions
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ConnectionDetachSubscriptions(OCI_Subscription *sub, OCI_Connection *con)
+void ConnectionDetachSubscriptions(OCI_Subscription *sub, OCI_Connection *con)
 {
     if (sub && (sub->con == con))
     {
@@ -72,10 +72,10 @@ void OCI_ConnectionDetachSubscriptions(OCI_Subscription *sub, OCI_Connection *co
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionAllocate
+ * ConnectionAllocate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_ConnectionAllocate
+OCI_Connection * ConnectionAllocate
 (
     OCI_Pool    *pool,
     const otext *db,
@@ -196,10 +196,10 @@ OCI_Connection * OCI_ConnectionAllocate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionDeallocate
+ * ConnectionDeallocate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ConnectionDeallocate
+boolean ConnectionDeallocate
 (
     OCI_Connection *con
 )
@@ -230,10 +230,10 @@ boolean OCI_ConnectionDeallocate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionAttach
+ * ConnectionAttach
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ConnectionAttach
+boolean ConnectionAttach
 (
     OCI_Connection *con
 )
@@ -288,10 +288,10 @@ boolean OCI_ConnectionAttach
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionDetach
+ * ConnectionDetach
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ConnectionDetach
+boolean ConnectionDetach
 (
     OCI_Connection *con
 )
@@ -327,10 +327,10 @@ boolean OCI_ConnectionDetach
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionLogonXA
+ * ConnectionLogonXA
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ConnectionLogonXA
+void ConnectionLogonXA
 (
     OCI_Context    *ctx,
     OCI_Connection *con
@@ -369,10 +369,10 @@ void OCI_ConnectionLogonXA
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionLogonRegular
+ * ConnectionLogonRegular
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ConnectionLogonRegular
+void ConnectionLogonRegular
 (
     OCI_Context    *ctx,
     OCI_Connection *con,
@@ -541,10 +541,10 @@ void OCI_ConnectionLogonRegular
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionLogonSessionPool
+ * ConnectionLogonSessionPool
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ConnectionLogonSessionPool
+void ConnectionLogonSessionPool
 (
     OCI_Context    *ctx,
     OCI_Connection *con,
@@ -602,10 +602,10 @@ void OCI_ConnectionLogonSessionPool
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionLogon
+ * ConnectionLogon
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ConnectionLogon
+boolean ConnectionLogon
 (
     OCI_Connection *con,
     const otext    *new_pwd,
@@ -630,7 +630,7 @@ boolean OCI_ConnectionLogon
 
     if (con->mode & OCI_SESSION_XA)
     {
-        OCI_ConnectionLogonXA(ctx, con);
+        ConnectionLogonXA(ctx, con);
     }
     else
 
@@ -640,7 +640,7 @@ boolean OCI_ConnectionLogon
 
     if (con->alloc_handles)
     {
-        OCI_ConnectionLogonRegular(ctx, con, new_pwd);
+        ConnectionLogonRegular(ctx, con, new_pwd);
     }
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
@@ -649,7 +649,7 @@ boolean OCI_ConnectionLogon
 
     else if (OCILib.version_runtime >= OCI_9_2)
     {
-        OCI_ConnectionLogonSessionPool(ctx, con, tag);
+        ConnectionLogonSessionPool(ctx, con, tag);
     }
 
 #endif
@@ -669,10 +669,10 @@ boolean OCI_ConnectionLogon
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionLogoffRegular
+ * ConnectionLogoffRegular
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ConnectionLogoffRegular
+void ConnectionLogoffRegular
 (
     OCI_Context    *ctx,
     OCI_Connection *con
@@ -705,10 +705,10 @@ void OCI_ConnectionLogoffRegular
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionLogoffSessionPool
+ * ConnectionLogoffSessionPool
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ConnectionLogoffSessionPool
+void ConnectionLogoffSessionPool
 (
     OCI_Context    *ctx,
     OCI_Connection *con
@@ -755,10 +755,10 @@ void OCI_ConnectionLogoffSessionPool
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionLogOff
+ * ConnectionLogOff
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ConnectionLogOff
+boolean ConnectionLogOff
 (
     OCI_Connection *con
 )
@@ -779,7 +779,7 @@ boolean OCI_ConnectionLogOff
 
     /* dissociate connection from existing subscriptions */
 
-    OCI_ListForEachWithParam(OCILib.subs, con, (POCI_LIST_FOR_EACH_WITH_PARAM) OCI_ConnectionDetachSubscriptions);
+    OCI_ListForEachWithParam(OCILib.subs, con, (POCI_LIST_FOR_EACH_WITH_PARAM) ConnectionDetachSubscriptions);
 
     /* free all statements */
 
@@ -812,7 +812,7 @@ boolean OCI_ConnectionLogOff
 
     if (con->alloc_handles)
     {
-        OCI_ConnectionLogoffRegular(ctx, con);
+        ConnectionLogoffRegular(ctx, con);
     }
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
@@ -821,7 +821,7 @@ boolean OCI_ConnectionLogOff
 
     else if (OCILib.version_runtime >= OCI_9_0)
     {
-        OCI_ConnectionLogoffSessionPool(ctx, con);
+        ConnectionLogoffSessionPool(ctx, con);
     }
 
 #endif
@@ -837,10 +837,10 @@ boolean OCI_ConnectionLogOff
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionClose
+ * ConnectionClose
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ConnectionClose
+boolean ConnectionClose
 (
     OCI_Connection *con
 )
@@ -865,9 +865,9 @@ boolean OCI_ConnectionClose
 
     /* log off and detach form server */
 
-    OCI_ConnectionLogOff(con);
-    OCI_ConnectionDetach(con);
-    OCI_ConnectionDeallocate(con);
+    ConnectionLogOff(con);
+    ConnectionDetach(con);
+    ConnectionDeallocate(con);
 
     /* free internal lists */
 
@@ -912,10 +912,10 @@ boolean OCI_ConnectionClose
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionCreateInternal
+ * ConnectionCreateInternal
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_ConnectionCreateInternal
+OCI_Connection * ConnectionCreateInternal
 (
     OCI_Pool    *pool,
     const otext *db,
@@ -927,11 +927,11 @@ OCI_Connection * OCI_ConnectionCreateInternal
 {
     /* create connection */
 
-    OCI_Connection *con = OCI_ConnectionAllocate(pool, db, user, pwd, mode);
+    OCI_Connection *con = ConnectionAllocate(pool, db, user, pwd, mode);
 
     if (con)
     {
-        if (!OCI_ConnectionAttach(con) || !OCI_ConnectionLogon(con, NULL, tag))
+        if (!ConnectionAttach(con) || !ConnectionLogon(con, NULL, tag))
         {
             OCI_ConnectionFree(con);
             con = NULL;
@@ -942,10 +942,10 @@ OCI_Connection * OCI_ConnectionCreateInternal
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionGetMinSupportedVersion
+ * ConnectionGetMinSupportedVersion
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_ConnectionGetMinSupportedVersion
+unsigned int ConnectionGetMinSupportedVersion
 (
     OCI_Connection *con
 )
@@ -954,16 +954,16 @@ unsigned int OCI_ConnectionGetMinSupportedVersion
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionIsVersionSupported
+ * ConnectionIsVersionSupported
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ConnectionIsVersionSupported
+boolean ConnectionIsVersionSupported
 (
     OCI_Connection *con,
     unsigned int    version
 )
 {
-    return OCI_ConnectionGetMinSupportedVersion(con) >= version;
+    return ConnectionGetMinSupportedVersion(con) >= version;
 }
 
 /* ********************************************************************************************* *
@@ -971,10 +971,10 @@ boolean OCI_ConnectionIsVersionSupported
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionCreate
+ * ConnectionCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_API OCI_ConnectionCreate
+OCI_Connection * ConnectionCreate
 (
     const otext *db,
     const otext *user,
@@ -986,17 +986,17 @@ OCI_Connection * OCI_API OCI_ConnectionCreate
     OCI_CALL_CHECK_INITIALIZED()
     OCI_CALL_CHECK_XA_ENABLED(mode)
 
-    OCI_RETVAL = OCI_ConnectionCreateInternal(NULL, db, user, pwd, mode, NULL);
+    OCI_RETVAL = ConnectionCreateInternal(NULL, db, user, pwd, mode, NULL);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ConnectionFree
+ * ConnectionFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ConnectionFree
+boolean ConnectionFree
 (
     OCI_Connection *con
 )
@@ -1005,7 +1005,7 @@ boolean OCI_API OCI_ConnectionFree
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_STATUS = OCI_ConnectionClose(con);
+    OCI_RETVAL = OCI_STATUS = ConnectionClose(con);
 
     OCI_ListRemove(OCILib.cons, con);
     OCI_FREE(con)
@@ -1014,10 +1014,10 @@ boolean OCI_API OCI_ConnectionFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Commit
+ * ConnectionCommit
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_Commit
+boolean ConnectionCommit
 (
     OCI_Connection *con
 )
@@ -1034,10 +1034,10 @@ boolean OCI_API OCI_Commit
  }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Rollback
+ * ConnectionRollback
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_Rollback
+boolean ConnectionRollback
 (
     OCI_Connection *con
 )
@@ -1054,10 +1054,10 @@ boolean OCI_API OCI_Rollback
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetAutoCommit
+ * ConnectionSetAutoCommit
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetAutoCommit
+boolean ConnectionSetAutoCommit
 (
     OCI_Connection *con,
     boolean         enable
@@ -1067,10 +1067,10 @@ boolean OCI_API OCI_SetAutoCommit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetAutoCommit
+ * ConnectionGetAutoCommit
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_GetAutoCommit
+boolean ConnectionGetAutoCommit
 (
     OCI_Connection *con
 )
@@ -1079,10 +1079,10 @@ boolean OCI_API OCI_GetAutoCommit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IsConnected
+ * ConnectionIsConnected
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IsConnected
+boolean ConnectionIsConnected
 (
     OCI_Connection *con
 )
@@ -1102,10 +1102,10 @@ boolean OCI_API OCI_IsConnected
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetUserData
+ * ConnectionGetUserData
  * --------------------------------------------------------------------------------------------- */
 
-void * OCI_API OCI_GetUserData
+void * ConnectionGetUserData
 (
     OCI_Connection *con
 )
@@ -1119,10 +1119,10 @@ void * OCI_API OCI_GetUserData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetSetData
+ * ConnectionSetSetData
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetUserData
+boolean ConnectionSetUserData
 (
     OCI_Connection *con,
     void           *data
@@ -1146,10 +1146,10 @@ boolean OCI_API OCI_SetUserData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetSessionTag
+ * ConnectionSetSessionTag
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetSessionTag
+boolean ConnectionSetSessionTag
 (
     OCI_Connection *con,
     const otext    *tag
@@ -1181,10 +1181,10 @@ boolean OCI_API OCI_SetSessionTag
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetSessionTag
+ * ConnectionGetSessionTag
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetSessionTag
+const otext * ConnectionGetSessionTag
 (
     OCI_Connection *con
 )
@@ -1193,10 +1193,10 @@ const otext * OCI_API OCI_GetSessionTag
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDatabase
+ * ConnectionGetDatabase
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetDatabase
+const otext * ConnectionGetDatabase
 (
     OCI_Connection *con
 )
@@ -1205,10 +1205,10 @@ const otext * OCI_API OCI_GetDatabase
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetUserName
+ * ConnectionGetUserName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetUserName
+const otext * ConnectionGetUserName
 (
     OCI_Connection *con
 )
@@ -1217,10 +1217,10 @@ const otext * OCI_API OCI_GetUserName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetPassword
+ * ConnectionGetPassword
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetPassword
+const otext * ConnectionGetPassword
 (
     OCI_Connection *con
 )
@@ -1229,10 +1229,10 @@ const otext * OCI_API OCI_GetPassword
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetPassword
+ * ConnectionSetPassword
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetPassword
+boolean ConnectionSetPassword
 (
     OCI_Connection *con,
     const otext    *password
@@ -1246,7 +1246,7 @@ boolean OCI_API OCI_SetPassword
 
     if (OCI_CONN_LOGGED != con->cstate)
     {
-        OCI_STATUS = OCI_ConnectionLogon(con, password, NULL);
+        OCI_STATUS = ConnectionLogon(con, password, NULL);
     }
     else
     {
@@ -1278,55 +1278,10 @@ boolean OCI_API OCI_SetPassword
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetUserPassword
+ * ConnectionGetSessionMode
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetUserPassword
-(
-    const otext *db,
-    const otext *user,
-    const otext *pwd,
-    const otext *new_pwd
-)
-{
-    OCI_Connection * con = NULL;
-
-    OCI_CALL_ENTER(boolean, FALSE)
-
-    /* let's be sure OCI_Initialize() has been called */
-
-    OCI_CALL_CHECK_INITIALIZED()
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, pwd)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, new_pwd)
-
-    con = OCI_ConnectionAllocate(NULL, db, user, pwd, OCI_AUTH);
-
-    if (con)
-    {
-        if (!OCI_ConnectionAttach(con) || !OCI_ConnectionLogon(con, new_pwd, NULL))
-        {
-            OCI_ConnectionFree(con);
-            con = NULL;
-        }
-    }
-
-    OCI_STATUS = (con != NULL);
-
-    if (OCI_STATUS)
-    {
-        OCI_ConnectionFree(con);
-    }
-
-    OCI_RETVAL = OCI_STATUS;
-
-    OCI_CALL_EXIT()
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_GetSessionMode
- * --------------------------------------------------------------------------------------------- */
-
-unsigned int OCI_API OCI_GetSessionMode
+unsigned int ConnectionGetSessionMode
 (
     OCI_Connection *con
 )
@@ -1335,10 +1290,10 @@ unsigned int OCI_API OCI_GetSessionMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetVersionServer
+ * ConnectionGetVersionServer
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetVersionServer
+const otext * ConnectionGetVersionServer
 (
     OCI_Connection *con
 )
@@ -1436,10 +1391,10 @@ const otext * OCI_API OCI_GetVersionServer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetServerMajorVersion
+ * ConnectionGetServerMajorVersion
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetServerMajorVersion
+unsigned int ConnectionGetServerMajorVersion
 (
     OCI_Connection *con
 )
@@ -1459,10 +1414,10 @@ unsigned int OCI_API OCI_GetServerMajorVersion
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetServerMinorVersion
+ * ConnectionGetServerMinorVersion
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetServerMinorVersion
+unsigned int ConnectionGetServerMinorVersion
 (
     OCI_Connection *con
 )
@@ -1482,10 +1437,10 @@ unsigned int OCI_API OCI_GetServerMinorVersion
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetServerRevisionVersion
+ * ConnectionGetServerRevisionVersion
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetServerRevisionVersion
+unsigned int ConnectionGetServerRevisionVersion
 (
     OCI_Connection *con
 )
@@ -1505,10 +1460,10 @@ unsigned int OCI_API OCI_GetServerRevisionVersion
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetTransaction
+ * ConnectionGetTransaction
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Transaction * OCI_API OCI_GetTransaction
+OCI_Transaction * ConnectionGetTransaction
 (
     OCI_Connection *con
 )
@@ -1517,10 +1472,10 @@ OCI_Transaction * OCI_API OCI_GetTransaction
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetTransaction
+ * ConnectionSetTransaction
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetTransaction
+boolean ConnectionSetTransaction
 (
     OCI_Connection  *con,
     OCI_Transaction *trans
@@ -1549,10 +1504,10 @@ boolean OCI_API OCI_SetTransaction
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetVersionConnection
+ * ConnectionGetVersionConnection
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetVersionConnection
+unsigned int ConnectionGetVersionConnection
 (
     OCI_Connection *con
 )
@@ -1563,16 +1518,16 @@ unsigned int OCI_API OCI_GetVersionConnection
 
     /* return the minimum supported version */
   
-    OCI_RETVAL = OCI_ConnectionGetMinSupportedVersion(con);
+    OCI_RETVAL = ConnectionGetMinSupportedVersion(con);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Break
+ * ConnectionBreak
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_Break
+boolean ConnectionBreak
 (
     OCI_Connection *con
 )
@@ -1589,10 +1544,10 @@ boolean OCI_API OCI_Break
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ServerEnableOutput
+ * ConnectionServerEnableOutput
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ServerEnableOutput
+boolean ConnectionServerEnableOutput
 (
     OCI_Connection *con,
     unsigned int    bufsize,
@@ -1685,10 +1640,10 @@ boolean OCI_API OCI_ServerEnableOutput
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ServerDisableOutput
+ * ConnectionServerDisableOutput
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ServerDisableOutput
+boolean ConnectionServerDisableOutput
 (
     OCI_Connection *con
 )
@@ -1717,10 +1672,10 @@ boolean OCI_API OCI_ServerDisableOutput
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ServerGetOutput
+ * ConnectionServerGetOutput
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_ServerGetOutput
+const otext * ConnectionServerGetOutput
 (
     OCI_Connection *con
 )
@@ -1750,10 +1705,10 @@ const otext * OCI_API OCI_ServerGetOutput
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetTrace
+ * ConnectionSetTrace
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetTrace
+boolean ConnectionSetTrace
 (
     OCI_Connection *con,
     unsigned int    trace,
@@ -1849,10 +1804,10 @@ boolean OCI_API OCI_SetTrace
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TraceGet
+ * ConnectionTraceGet
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetTrace
+const otext * ConnectionGetTrace
 (
     OCI_Connection *con,
     unsigned int    trace
@@ -1899,10 +1854,10 @@ const otext * OCI_API OCI_GetTrace
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Ping
+ * ConnectionPing
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_Ping
+boolean ConnectionPing
 (
     OCI_Connection *con
 )
@@ -1926,10 +1881,10 @@ boolean OCI_API OCI_Ping
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetTimeout
+ * ConnectionSetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetTimeout
+boolean ConnectionSetTimeout
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -1986,10 +1941,10 @@ boolean OCI_API OCI_SetTimeout
 
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetTimeout
+ * ConnectionGetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetTimeout
+unsigned int ConnectionGetTimeout
 (
     OCI_Connection *con,
     unsigned int    type
@@ -2043,10 +1998,10 @@ unsigned int OCI_API OCI_GetTimeout
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDBName
+ * ConnectionGetDBName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetDBName
+const otext * ConnectionGetDBName
 (
     OCI_Connection *con
 )
@@ -2072,10 +2027,10 @@ const otext * OCI_API OCI_GetDBName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetInstanceName
+ * ConnectionGetInstanceName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetInstanceName
+const otext * ConnectionGetInstanceName
 (
     OCI_Connection *con
 )
@@ -2101,10 +2056,10 @@ const otext * OCI_API OCI_GetInstanceName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetServiceName
+ * ConnectionGetServiceName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetServiceName
+const otext * ConnectionGetServiceName
 (
     OCI_Connection *con
 )
@@ -2130,10 +2085,10 @@ const otext * OCI_API OCI_GetServiceName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetServerName
+ * ConnectionGetServerName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetServerName
+const otext * ConnectionGetServerName
 (
     OCI_Connection *con
 )
@@ -2159,10 +2114,10 @@ const otext * OCI_API OCI_GetServerName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDomainName
+ * ConnectionGetDomainName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetDomainName
+const otext * ConnectionGetDomainName
 (
     OCI_Connection *con
 )
@@ -2188,10 +2143,10 @@ const otext * OCI_API OCI_GetDomainName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetInstanceStartTime
+ * ConnectionGetInstanceStartTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
+OCI_Timestamp * ConnectionGetInstanceStartTime
 (
     OCI_Connection *con
 )
@@ -2219,10 +2174,10 @@ OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IsTAFCapable
+ * ConnectionIsTAFCapable
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IsTAFCapable
+boolean ConnectionIsTAFCapable
 (
     OCI_Connection *con
 )
@@ -2248,10 +2203,10 @@ boolean OCI_API OCI_IsTAFCapable
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetTAFHandler
+ * ConnectionSetTAFHandler
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetTAFHandler
+boolean ConnectionSetTAFHandler
 (
     OCI_Connection  *con,
     POCI_TAF_HANDLER handler
@@ -2290,10 +2245,10 @@ boolean OCI_API OCI_SetTAFHandler
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetStatementCacheSize
+ * ConnectionGetStatementCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetStatementCacheSize
+unsigned int ConnectionGetStatementCacheSize
 (
     OCI_Connection  *con
 )
@@ -2319,10 +2274,10 @@ unsigned int OCI_API OCI_GetStatementCacheSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetStatementCacheSize
+ * ConnectionSetStatementCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetStatementCacheSize
+boolean ConnectionSetStatementCacheSize
 (
     OCI_Connection  *con,
     unsigned int     value
@@ -2353,10 +2308,10 @@ boolean OCI_API OCI_SetStatementCacheSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDefaultLobPrefetchSize
+ * ConnectionGetDefaultLobPrefetchSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
+unsigned int ConnectionGetDefaultLobPrefetchSize
 (
     OCI_Connection *con
 )
@@ -2369,7 +2324,7 @@ unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
-    if (OCI_ConnectionIsVersionSupported(con, OCI_11_1))
+    if (ConnectionIsVersionSupported(con, OCI_11_1))
     {
         OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE, con->ses, &prefetch_size, NULL);
     }
@@ -2382,10 +2337,10 @@ unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetDefaultLobPrefetchSize
+ * ConnectionSetDefaultLobPrefetchSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetDefaultLobPrefetchSize
+boolean ConnectionSetDefaultLobPrefetchSize
 (
     OCI_Connection *con,
     unsigned int     value
@@ -2399,7 +2354,7 @@ boolean OCI_API OCI_SetDefaultLobPrefetchSize
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
-    if (OCI_ConnectionIsVersionSupported(con, OCI_11_1))
+    if (ConnectionIsVersionSupported(con, OCI_11_1))
     {
         OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE, con->ses, &prefetch_size, sizeof(prefetch_size));
     }
@@ -2416,10 +2371,10 @@ boolean OCI_API OCI_SetDefaultLobPrefetchSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetMaxCursors
+ * ConnectionGetMaxCursors
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetMaxCursors
+unsigned int ConnectionGetMaxCursors
 (
     OCI_Connection *con
 )
@@ -2432,7 +2387,7 @@ unsigned int OCI_API OCI_GetMaxCursors
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
-    if (OCI_ConnectionIsVersionSupported(con, OCI_12_1))
+    if (ConnectionIsVersionSupported(con, OCI_12_1))
     {
         OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_MAX_OPEN_CURSORS, con->ses, &max_cursors, NULL);
     }
@@ -2445,18 +2400,17 @@ unsigned int OCI_API OCI_GetMaxCursors
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Immediate
+ * ConnectionExecuteImmediate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_Immediate
+boolean ConnectionExecuteImmediate
 (
     OCI_Connection *con,
     const otext    *sql,
-    ...
+    va_list         args
 )
 {
     OCI_Statement *stmt = NULL;
-    va_list args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
@@ -2476,11 +2430,7 @@ boolean OCI_Immediate
 
         if (OCI_STATUS && (OCI_CST_SELECT == OCI_GetStatementType(stmt)))
         {
-            va_start(args, sql);
-
             OCI_STATUS = OCI_FetchIntoUserVariables(stmt, args);
-
-            va_end(args);
         }
 
         OCI_StatementFree(stmt);
@@ -2492,17 +2442,19 @@ boolean OCI_Immediate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ImmediateFmt
+ * ConnectionExecuteImmediateFmt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ImmediateFmt
+boolean ConnectionExecuteImmediateFmt
 (
     OCI_Connection *con,
     const otext    *sql,
-    ...
+    va_list         args
 )
 {
     OCI_Statement  *stmt = NULL;
+
+    va_list args_save = args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
@@ -2515,15 +2467,10 @@ boolean OCI_ImmediateFmt
     if (OCI_STATUS)
     {
         int     size = 0;
-        va_list args;
 
         /* first, get buffer size */
 
-        va_start(args, sql);
-
         size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
-
-        va_end(args);
 
         if (size > 0)
         {
@@ -2537,9 +2484,7 @@ boolean OCI_ImmediateFmt
             {
                 /* format buffer */
 
-                va_start(args, sql);
-
-                if (OCI_ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
+                if (OCI_ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
                 {
                     /* prepare and execute SQL buffer */
 
@@ -2549,11 +2494,9 @@ boolean OCI_ImmediateFmt
 
                     if (OCI_STATUS && (OCI_CST_SELECT == OCI_GetStatementType(stmt)))
                     {
-                        OCI_STATUS = OCI_FetchIntoUserVariables(stmt, args);
+                        OCI_STATUS = OCI_FetchIntoUserVariables(stmt, args_save);
                     }
                 }
-
-                va_end(args);
 
                 OCI_FREE(sql_fmt)
             }

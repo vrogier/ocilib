@@ -595,7 +595,7 @@ unsigned int ColumnGetSubType
  * connection.c
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_ConnectionCreateInternal
+OCI_Connection * ConnectionCreateInternal
 (
     OCI_Pool    *pool,
     const otext *db,
@@ -605,20 +605,300 @@ OCI_Connection * OCI_ConnectionCreateInternal
     const otext *tag
 );
 
-boolean OCI_ConnectionClose
+OCI_Connection* ConnectionAllocate
+(
+    OCI_Pool* pool,
+    const otext* db,
+    const otext* user,
+    const otext* pwd,
+    unsigned int mode
+);
+
+boolean ConnectionAttach
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionLogon
+(
+    OCI_Connection* con,
+    const otext* new_pwd,
+    const otext* tag
+);
+
+boolean ConnectionClose
 (
     OCI_Connection *con
 );
 
-unsigned int OCI_ConnectionGetMinSupportedVersion
+unsigned int ConnectionGetMinSupportedVersion
 (
     OCI_Connection *con
 );
 
-boolean OCI_ConnectionIsVersionSupported
+boolean ConnectionIsVersionSupported
 (
     OCI_Connection *con,
     unsigned int    version
+);
+
+OCI_Connection* ConnectionCreate
+(
+    const otext* db,
+    const otext* user,
+    const otext* pwd,
+    unsigned int mode
+);
+
+boolean ConnectionFree
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionCommit
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionRollback
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionSetAutoCommit
+(
+    OCI_Connection* con,
+    boolean         enable
+);
+
+boolean ConnectionGetAutoCommit
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionIsConnected
+(
+    OCI_Connection* con
+);
+
+void* ConnectionGetUserData
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionSetUserData
+(
+    OCI_Connection* con,
+    void* data
+);
+
+boolean ConnectionSetSessionTag
+(
+    OCI_Connection* con,
+    const otext* tag
+);
+
+const otext* ConnectionGetSessionTag
+(
+    OCI_Connection* con
+);
+
+const otext* ConnectionGetDatabase
+(
+    OCI_Connection* con
+);
+
+const otext* ConnectionGetUserName
+(
+    OCI_Connection* con
+);
+
+const otext* ConnectionGetPassword
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionSetPassword
+(
+    OCI_Connection* con,
+    const otext* password
+);
+
+unsigned int ConnectionGetSessionMode
+(
+    OCI_Connection* con
+);
+
+const otext* ConnectionGetVersionServer
+(
+    OCI_Connection* con
+);
+
+unsigned int ConnectionGetServerMajorVersion
+(
+    OCI_Connection* con
+);
+
+unsigned int ConnectionGetServerMinorVersion
+(
+    OCI_Connection* con
+);
+
+unsigned int ConnectionGetServerRevisionVersion
+(
+    OCI_Connection* con
+);
+
+OCI_Transaction* ConnectionGetTransaction
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionSetTransaction
+(
+    OCI_Connection* con,
+    OCI_Transaction* trans
+);
+
+unsigned int ConnectionGetVersionConnection
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionBreak
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionServerEnableOutput
+(
+    OCI_Connection* con,
+    unsigned int    bufsize,
+    unsigned int    arrsize,
+    unsigned int    lnsize
+);
+
+boolean ConnectionServerDisableOutput
+(
+    OCI_Connection* con
+);
+
+const otext* ConnectionServerGetOutput
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionSetTrace
+(
+    OCI_Connection* con,
+    unsigned int    trace,
+    const otext* value
+);
+
+const otext* ConnectionGetTrace
+(
+    OCI_Connection* con,
+    unsigned int    trace
+);
+
+boolean ConnectionPing
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionSetTimeout
+(
+    OCI_Connection* con,
+    unsigned int    type,
+    unsigned int    value
+);
+
+unsigned int ConnectionGetTimeout
+(
+    OCI_Connection* con,
+    unsigned int    type
+);
+
+const otext* ConnectionGetDBName
+(
+    OCI_Connection* con
+);
+
+const otext* ConnectionGetInstanceName
+(
+    OCI_Connection* con
+);
+
+const otext* ConnectionGetServiceName
+(
+    OCI_Connection* con
+);
+
+const otext* ConnectionGetServerName
+(
+    OCI_Connection* con
+);
+
+const otext* ConnectionGetDomainName
+(
+    OCI_Connection* con
+);
+
+OCI_Timestamp* ConnectionGetInstanceStartTime
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionIsTAFCapable
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionSetTAFHandler
+(
+    OCI_Connection* con,
+    POCI_TAF_HANDLER handler
+);
+
+unsigned int ConnectionGetStatementCacheSize
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionSetStatementCacheSize
+(
+    OCI_Connection* con,
+    unsigned int     value
+);
+
+unsigned int ConnectionGetDefaultLobPrefetchSize
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionSetDefaultLobPrefetchSize
+(
+    OCI_Connection* con,
+    unsigned int     value
+);
+
+unsigned int ConnectionGetMaxCursors
+(
+    OCI_Connection* con
+);
+
+boolean ConnectionExecuteImmediate
+(
+    OCI_Connection* con,
+    const otext*    sql,
+    va_list         args
+);
+
+boolean ConnectionExecuteImmediateFmt
+(
+    OCI_Connection* con,
+    const otext*    sql,
+    va_list         args
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1057,6 +1337,13 @@ char * OCI_GetEnvironmentVariable
     const char *name
 );
 
+boolean SetUserPassword
+(
+    const otext* db,
+    const otext* user,
+    const otext* pwd,
+    const otext* new_pwd
+);
 
 /* --------------------------------------------------------------------------------------------- *
  * list.c

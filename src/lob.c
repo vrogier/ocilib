@@ -1311,7 +1311,7 @@ boolean OCI_API OCI_LobIsRemote
 
 #if OCI_VERSION_COMPILE >= OCI_12_2
 
-    if (OCI_ConnectionIsVersionSupported(lob->con, OCI_12_2))
+    if (ConnectionIsVersionSupported(lob->con, OCI_12_2))
     {
         OCI_GET_ATTRIB(OCI_DTYPE_LOB, OCI_ATTR_LOB_REMOTE, lob->handle, &OCI_RETVAL, sizeof(OCI_RETVAL))
     }

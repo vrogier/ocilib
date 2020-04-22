@@ -369,7 +369,7 @@ boolean OCI_DefineDef
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
-    if (OCI_ConnectionIsVersionSupported(def->rs->stmt->con, OCI_11_1))
+    if (ConnectionIsVersionSupported(def->rs->stmt->con, OCI_11_1))
     {
         if (OCI_CDT_LOB == def->col.datatype)
         {

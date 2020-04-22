@@ -548,3 +548,444 @@ unsigned int OCI_API OCI_ColumnGetSubType
     return ColumnGetSubType(col);
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * connection
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Connection * OCI_API OCI_ConnectionCreate
+(
+    const otext *db,
+    const otext *user,
+    const otext *pwd,
+    unsigned int mode
+)
+{
+    return ConnectionCreate(db, user, pwd, mode);
+}
+
+boolean OCI_API OCI_ConnectionFree
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionFree(con);
+}
+
+boolean OCI_API OCI_Commit
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionCommit(con);
+}
+
+boolean OCI_API OCI_Rollback
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionRollback(con);
+}
+
+boolean OCI_API OCI_SetAutoCommit
+(
+    OCI_Connection *con,
+    boolean         enable
+)
+{
+    return ConnectionSetAutoCommit(con, enable);
+}
+
+boolean OCI_API OCI_GetAutoCommit
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetAutoCommit(con);
+}
+
+boolean OCI_API OCI_IsConnected
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionIsConnected(con);
+}
+
+void * OCI_API OCI_GetUserData
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetUserData(con);
+}
+
+boolean OCI_API OCI_SetUserData
+(
+    OCI_Connection *con,
+    void           *data
+)
+{
+    return ConnectionSetUserData(con, data);
+}
+
+boolean OCI_API OCI_SetSessionTag
+(
+    OCI_Connection *con,
+    const otext    *tag
+)
+{
+    return ConnectionSetSessionTag(con, tag);
+}
+
+const otext * OCI_API OCI_GetSessionTag
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetSessionTag(con);
+}
+
+const otext * OCI_API OCI_GetDatabase
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetDatabase(con);
+}
+
+const otext * OCI_API OCI_GetUserName
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetUserName(con);
+}
+
+const otext * OCI_API OCI_GetPassword
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetPassword(con);
+}
+
+boolean OCI_API OCI_SetPassword
+(
+    OCI_Connection *con,
+    const otext    *password
+)
+{
+    return ConnectionSetPassword(con, password);
+}
+
+unsigned int OCI_API OCI_GetSessionMode
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetSessionMode(con);
+}
+
+const otext * OCI_API OCI_GetVersionServer
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetVersionServer(con);
+}
+
+unsigned int OCI_API OCI_GetServerMajorVersion
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetServerMajorVersion(con);
+}
+
+unsigned int OCI_API OCI_GetServerMinorVersion
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetServerMinorVersion(con);
+}
+
+unsigned int OCI_API OCI_GetServerRevisionVersion
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetServerRevisionVersion(con);
+}
+
+OCI_Transaction * OCI_API OCI_GetTransaction
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetTransaction(con);
+}
+
+boolean OCI_API OCI_SetTransaction
+(
+    OCI_Connection  *con,
+    OCI_Transaction *trans
+)
+{
+    return ConnectionSetTransaction(con, trans);
+}
+
+unsigned int OCI_API OCI_GetVersionConnection
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetVersionConnection(con);
+}
+
+boolean OCI_API OCI_Break
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionBreak(con);
+}
+
+boolean OCI_API OCI_ServerEnableOutput
+(
+    OCI_Connection *con,
+    unsigned int    bufsize,
+    unsigned int    arrsize,
+    unsigned int    lnsize
+)
+{
+    return ConnectionServerEnableOutput(con, bufsize, arrsize, lnsize);
+}
+
+boolean OCI_API OCI_ServerDisableOutput
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionServerDisableOutput(con);
+}
+
+const otext * OCI_API OCI_ServerGetOutput
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionServerGetOutput(con);
+}
+
+boolean OCI_API OCI_SetTrace
+(
+    OCI_Connection *con,
+    unsigned int    trace,
+    const otext    *value
+)
+{
+    return ConnectionSetTrace(con, trace, value);
+}
+
+const otext * OCI_API OCI_GetTrace
+(
+    OCI_Connection *con,
+    unsigned int    trace
+)
+{
+    return ConnectionGetTrace(con, trace);
+}
+
+boolean OCI_API OCI_Ping
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionPing(con);
+}
+
+boolean OCI_API OCI_SetTimeout
+(
+    OCI_Connection *con,
+    unsigned int    type,
+    unsigned int    value
+)
+{
+    return ConnectionSetTimeout(con, type, value);
+}
+
+unsigned int OCI_API OCI_GetTimeout
+(
+    OCI_Connection *con,
+    unsigned int    type
+)
+{
+    return ConnectionGetTimeout(con, type);
+}
+
+const otext * OCI_API OCI_GetDBName
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetDBName(con);
+}
+
+const otext * OCI_API OCI_GetInstanceName
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetInstanceName(con);
+}
+
+const otext * OCI_API OCI_GetServiceName
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetServiceName(con);
+}
+
+const otext * OCI_API OCI_GetServerName
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetServerName(con);
+}
+
+const otext * OCI_API OCI_GetDomainName
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetDomainName(con);
+}
+
+OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetInstanceStartTime(con);
+}
+
+boolean OCI_API OCI_IsTAFCapable
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionIsTAFCapable(con);
+}
+
+boolean OCI_API OCI_SetTAFHandler
+(
+    OCI_Connection  *con,
+    POCI_TAF_HANDLER handler
+)
+{
+    return ConnectionSetTAFHandler(con, handler);
+}
+
+unsigned int OCI_API OCI_GetStatementCacheSize
+(
+    OCI_Connection  *con
+)
+{
+    return ConnectionGetStatementCacheSize(con);
+}
+
+boolean OCI_API OCI_SetStatementCacheSize
+(
+    OCI_Connection  *con,
+    unsigned int     value
+)
+{
+    return ConnectionSetStatementCacheSize(con, value);
+}
+
+unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetDefaultLobPrefetchSize(con);
+}
+
+boolean OCI_API OCI_SetDefaultLobPrefetchSize
+(
+    OCI_Connection *con,
+    unsigned int    value
+)
+{
+    return ConnectionSetDefaultLobPrefetchSize(con, value);
+}
+
+unsigned int OCI_API OCI_GetMaxCursors
+(
+    OCI_Connection *con
+)
+{
+    return ConnectionGetMaxCursors(con);
+}
+
+boolean OCI_Immediate
+(
+    OCI_Connection *con,
+    const otext    *sql,
+    ...
+)
+{
+    boolean res = FALSE;
+    va_list args;
+
+    va_start(args, sql);
+    res = ConnectionExecuteImmediate(con, sql, args);
+    va_end(args);
+
+    return res;
+}
+
+boolean OCI_ImmediateFmt
+(
+    OCI_Connection *con,
+    const otext    *sql,
+    ...
+)
+{
+    boolean res = FALSE;
+    va_list args;
+
+    va_start(args, sql);
+    res =  ConnectionExecuteImmediateFmt(con, sql, args);
+    va_end(args);
+
+    return res;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+boolean OCI_API OCI_SetUserPassword
+(
+    const otext* db,
+    const otext* user,
+    const otext* pwd,
+    const otext* new_pwd
+)
+{
+    return SetUserPassword(db, user, pwd, new_pwd);
+}

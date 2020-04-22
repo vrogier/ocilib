@@ -190,7 +190,7 @@ boolean ColumnDescribe
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    if (OCI_ConnectionIsVersionSupported(con, OCI_9_2))
+    if (ConnectionIsVersionSupported(con, OCI_9_2))
     {
         OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_CHAR_USED, param, &col->charused, NULL)
     }
@@ -204,7 +204,7 @@ boolean ColumnDescribe
 
 #endif
 
-    if (OCI_ConnectionIsVersionSupported(con, OCI_9_0))
+    if (ConnectionIsVersionSupported(con, OCI_9_0))
     {
         /* fractional time precision for timestamps */
 
@@ -226,7 +226,7 @@ boolean ColumnDescribe
 
 #if OCI_VERSION_COMPILE >= OCI_12_2
 
-    if (OCI_ConnectionIsVersionSupported(con, OCI_12_2))
+    if (ConnectionIsVersionSupported(con, OCI_12_2))
     {
         if (OCI_DESC_RESULTSET == ptype)
         {
@@ -238,7 +238,7 @@ boolean ColumnDescribe
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
-    if (OCI_ConnectionIsVersionSupported(con, OCI_12_1))
+    if (ConnectionIsVersionSupported(con, OCI_12_1))
     {
         if (ptype < OCI_DESC_TYPE)
         {

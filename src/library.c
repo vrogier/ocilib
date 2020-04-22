@@ -1715,7 +1715,7 @@ boolean OCI_API OCI_Cleanup
 
     /* free all connections */
 
-    OCI_ListForEach(OCILib.cons, (POCI_LIST_FOR_EACH) OCI_ConnectionClose);
+    OCI_ListForEach(OCILib.cons, (POCI_LIST_FOR_EACH) ConnectionClose);
     OCI_ListClear(OCILib.cons);
 
     /* free all pools */
@@ -2288,6 +2288,52 @@ const otext * OCI_API OCI_GetFormat
     }
 
     call_retval = *value;
+
+    OCI_CALL_EXIT()
+}
+
+
+/* --------------------------------------------------------------------------------------------- *
+ * ConnectionSetUserPassword
+ * --------------------------------------------------------------------------------------------- */
+
+boolean SetUserPassword
+(
+    const otext* db,
+    const otext* user,
+    const otext* pwd,
+    const otext* new_pwd
+)
+{
+    OCI_Connection* con = NULL;
+
+    OCI_CALL_ENTER(boolean, FALSE)
+
+    /* let's be sure OCI_Initialize() has been called */
+
+    OCI_CALL_CHECK_INITIALIZED()
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, pwd)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, new_pwd)
+
+    con = ConnectionAllocate(NULL, db, user, pwd, OCI_AUTH);
+
+    if (con)
+    {
+        if (!ConnectionAttach(con) || !ConnectionLogon(con, new_pwd, NULL))
+        {
+            OCI_ConnectionFree(con);
+            con = NULL;
+        }
+    }
+
+    OCI_STATUS = (con != NULL);
+
+    if (OCI_STATUS)
+    {
+        ConnectionFree(con);
+    }
+
+    OCI_RETVAL = OCI_STATUS;
 
     OCI_CALL_EXIT()
 }

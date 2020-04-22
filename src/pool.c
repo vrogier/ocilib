@@ -383,7 +383,7 @@ OCI_Connection * OCI_API OCI_PoolGetConnection
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
     OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
-    OCI_RETVAL = OCI_ConnectionCreateInternal(pool, pool->db, pool->user, pool->pwd, pool->mode, tag);
+    OCI_RETVAL = ConnectionCreateInternal(pool, pool->db, pool->user, pool->pwd, pool->mode, tag);
 
     /* for regular connection pool, set the statement cache size to 
        retrieved connection */
