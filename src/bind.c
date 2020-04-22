@@ -554,7 +554,7 @@ boolean OCI_BindFree
     {
         if (bnd->is_array)
         {
-            res = OCI_ArrayFreeFromHandles(bnd->input);
+            res = ArrayFreeFromHandles(bnd->input);
         }
         else
         {
@@ -711,8 +711,8 @@ boolean OCI_BindAllocData
             }
         }
 
-        arr = OCI_ArrayCreate(bnd->stmt->con, bnd->buffer.count, bnd->type, bnd->subtype,
-                              elem_size, struct_size, handle_type, bnd->typinf);
+        arr = ArrayCreate(bnd->stmt->con, bnd->buffer.count, bnd->type, bnd->subtype,
+                  elem_size, struct_size, handle_type, bnd->typinf);
 
         if (arr)
         {

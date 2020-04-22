@@ -25,10 +25,10 @@
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_AgentInit
+ * AgentInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * OCI_AgentInit
+OCI_Agent * AgentInit
 (
     OCI_Connection *con,
     OCI_Agent      *agent,
@@ -92,10 +92,10 @@ OCI_Agent * OCI_AgentInit
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_AgentCreate
+ * AgentCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * OCI_API OCI_AgentCreate
+OCI_Agent * AgentCreate
 (
     OCI_Connection *con,
     const otext    *name,
@@ -106,17 +106,17 @@ OCI_Agent * OCI_API OCI_AgentCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_AgentInit(con, NULL, NULL, name, address);
+    OCI_RETVAL = AgentInit(con, NULL, NULL, name, address);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_AgentFree
+ * AgentFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_AgentFree
+boolean AgentFree
 (
     OCI_Agent *agent
 )
@@ -138,10 +138,10 @@ boolean OCI_API OCI_AgentFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_AgentGetName
+ * AgentGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_AgentGetName
+const otext * AgentGetName
 (
     OCI_Agent *agent
 )
@@ -164,10 +164,10 @@ const otext * OCI_API OCI_AgentGetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_AgentSetName
+ * AgentSetName
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_AgentSetName
+boolean AgentSetName
 (
     OCI_Agent   *agent,
     const otext *name
@@ -184,15 +184,14 @@ boolean OCI_API OCI_AgentSetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_AgentGetAddress
+ * AgentGetAddress
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_AgentGetAddress
+const otext * AgentGetAddress
 (
     OCI_Agent *agent
 )
 {
-    
     OCI_CALL_ENTER(otext *, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
     OCI_CALL_CONTEXT_SET_FROM_CONN(agent->con)
@@ -211,10 +210,10 @@ const otext * OCI_API OCI_AgentGetAddress
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_AgentSetAddress
+ * AgentSetAddress
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_AgentSetAddress
+boolean AgentSetAddress
 (
     OCI_Agent   *agent,
     const otext *address

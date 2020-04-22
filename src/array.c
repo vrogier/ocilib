@@ -28,29 +28,38 @@
     arr->tab_obj[i] = func;                                                 \
     ((void **)(arr->mem_handle))[i] = ((type *) arr->tab_obj[i])->handle;   \
 
- /* --------------------------------------------------------------------------------------------- *
- * OCI_ArrayFindAny
+/* --------------------------------------------------------------------------------------------- *
+ * ArrayFindAny
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ArrayFindAny(OCI_Array *arr, void**handles)
+boolean ArrayFindAny
+(
+    OCI_Array *arr,
+    void     **handles
+)
 {
     return arr && (arr->tab_obj == handles || arr->mem_struct == handles);
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ArrayFindObjects
+* ArrayFindObjects
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ArrayFindObjects(OCI_Array *arr, void**handles)
+boolean ArrayFindObjects
+(
+    OCI_Array *arr,
+    void     **handles
+)
+
 {
     return arr && arr->tab_obj == handles;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ArrayInit
+ * _ArrayInit
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ArrayInit
+boolean ArrayInit
 (
     OCI_Array    *arr,
     OCI_TypeInfo *typinf
@@ -134,10 +143,10 @@ boolean OCI_ArrayInit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ArrayClose
+ * ArrayClose
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ArrayClose
+boolean ArrayClose
 (
     OCI_Array *arr
 )
@@ -169,10 +178,10 @@ boolean OCI_ArrayClose
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ArrayCreate
+ * ArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Array * OCI_ArrayCreate
+OCI_Array * ArrayCreate
 (
     OCI_Connection *con,
     unsigned int    nb_elem,
@@ -225,7 +234,7 @@ OCI_Array * OCI_ArrayCreate
 
         if (OCI_STATUS && arr->tab_obj && arr->mem_handle)
         {
-            OCI_STATUS = OCI_ArrayInit(arr, typinf);
+            OCI_STATUS = ArrayInit(arr, typinf);
         }
     }
 
@@ -233,7 +242,7 @@ OCI_Array * OCI_ArrayCreate
 
     if (!OCI_STATUS)
     {
-        OCI_ArrayClose(arr);
+        ArrayClose(arr);
         OCI_FREE(arr)
     }
 
@@ -244,18 +253,18 @@ OCI_Array * OCI_ArrayCreate
  * OCI_ArrayFreeFromHandles
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ArrayFreeFromHandles
+boolean ArrayFreeFromHandles
 (
     void **handles
 )
 {
-    boolean    res  = FALSE;
-    OCI_Array *arr = OCI_ListFind(OCILib.arrs, (POCI_LIST_FIND) OCI_ArrayFindAny, handles);
+    boolean    res = FALSE;
+    OCI_Array *arr = OCI_ListFind(OCILib.arrs, (POCI_LIST_FIND) ArrayFindAny, handles);
 
     if (arr)
     {
         res = OCI_ListRemove(OCILib.arrs, arr);
-        OCI_ArrayClose(arr);
+       ArrayClose(arr);
         OCI_FREE(arr)
     }
 
@@ -263,16 +272,16 @@ boolean OCI_ArrayFreeFromHandles
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ArrayGetOCIHandlesFromHandles
+ * ArrayGetOCIHandlesFromHandles
  * --------------------------------------------------------------------------------------------- */
 
-void * OCI_ArrayGetOCIHandlesFromHandles
+void * ArrayGetOCIHandlesFromHandles
 (
     void **handles
 )
 {
     void      *ret = NULL;
-    OCI_Array *arr = OCI_ListFind(OCILib.arrs, (POCI_LIST_FIND)OCI_ArrayFindObjects, handles);
+    OCI_Array *arr = OCI_ListFind(OCILib.arrs, (POCI_LIST_FIND) ArrayFindObjects, handles);
 
     if (arr)
     {

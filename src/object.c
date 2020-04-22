@@ -846,7 +846,7 @@ OCI_Object ** OCI_API OCI_ObjectArrayCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0, sizeof(void *), sizeof(OCI_Object), 0, typinf);
+    arr = ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0, sizeof(void *), sizeof(OCI_Object), 0, typinf);
     OCI_STATUS = (NULL != arr);
 
     if (OCI_STATUS)
@@ -869,7 +869,7 @@ boolean OCI_API OCI_ObjectArrayFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, objs)
 
-    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **)objs);
+    OCI_RETVAL = OCI_STATUS = ArrayFreeFromHandles((void **)objs);
 
     OCI_CALL_EXIT()
 }

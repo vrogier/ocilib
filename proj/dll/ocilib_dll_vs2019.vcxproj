@@ -308,6 +308,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\ocilib.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="..\..\src\agent.c" />
     <ClCompile Include="..\..\src\array.c" />

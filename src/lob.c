@@ -184,7 +184,7 @@ OCI_Lob ** OCI_API OCI_LobArrayCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, LobTypeValues, OTEXT("Lob type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_LOB, type, sizeof(OCILobLocator *), sizeof(OCI_Lob), OCI_DTYPE_LOB, NULL);
+    arr = ArrayCreate(con, nbelem, OCI_CDT_LOB, type, sizeof(OCILobLocator *), sizeof(OCI_Lob), OCI_DTYPE_LOB, NULL);
     OCI_STATUS = (NULL != arr);
 
     if (OCI_STATUS)
@@ -207,7 +207,7 @@ boolean OCI_API OCI_LobArrayFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, lobs)
 
-    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **)lobs);
+    OCI_RETVAL = OCI_STATUS = ArrayFreeFromHandles((void **)lobs);
 
     OCI_CALL_EXIT()
 }

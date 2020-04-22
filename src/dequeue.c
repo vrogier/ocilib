@@ -183,7 +183,7 @@ OCI_Agent * OCI_API OCI_DequeueListen
 
         if (OCI_STATUS && handle && OCI_SUCCESSFUL(ret))
         {
-            OCI_RETVAL = dequeue->agent = OCI_AgentInit(dequeue->typinf->con, dequeue->agent, handle, NULL, NULL);
+            OCI_RETVAL = dequeue->agent = AgentInit(dequeue->typinf->con, dequeue->agent, handle, NULL, NULL);
         }
     }
 

@@ -1705,7 +1705,7 @@ boolean OCI_API OCI_Cleanup
 
     /* free all arrays */
 
-    OCI_ListForEach(OCILib.arrs, (POCI_LIST_FOR_EACH) OCI_ArrayClose);
+    OCI_ListForEach(OCILib.arrs, (POCI_LIST_FOR_EACH) ArrayClose);
     OCI_ListClear(OCILib.arrs);
 
     /* free all subscriptions */

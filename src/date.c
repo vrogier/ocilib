@@ -169,7 +169,7 @@ OCI_Date ** OCI_API OCI_DateArrayCreate
     OCI_CALL_CHECK_INITIALIZED()
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
+    arr = ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
     OCI_STATUS = (NULL != arr);
 
     if (OCI_STATUS)
@@ -192,7 +192,7 @@ boolean OCI_API OCI_DateArrayFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, dates)
  
-    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **)dates);
+    OCI_RETVAL = OCI_STATUS = ArrayFreeFromHandles((void **)dates);
 
     OCI_CALL_EXIT()
 }

@@ -180,9 +180,9 @@ OCI_Interval ** OCI_API OCI_IntervalArrayCreate
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type,
-                          sizeof(OCIInterval *), sizeof(OCI_Interval), 
-                          OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
+    arr = ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type,
+              sizeof(OCIInterval *), sizeof(OCI_Interval), 
+                      OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
 
     OCI_STATUS = (NULL != arr);
 
@@ -214,7 +214,7 @@ boolean OCI_API OCI_IntervalArrayFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, itvs)
 
-    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **)itvs);
+    OCI_RETVAL = OCI_STATUS = ArrayFreeFromHandles((void **)itvs);
 
     OCI_CALL_EXIT()
 }

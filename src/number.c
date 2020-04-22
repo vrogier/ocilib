@@ -589,7 +589,7 @@ OCI_Number ** OCI_API OCI_NumberArrayCreate
     OCI_CALL_ENTER(OCI_Number **, NULL)
     OCI_CALL_CHECK_INITIALIZED()
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_NUMERIC, OCI_NUM_NUMBER, sizeof(OCINumber), sizeof(OCI_Number), 0, NULL);
+    arr = ArrayCreate(con, nbelem, OCI_CDT_NUMERIC, OCI_NUM_NUMBER, sizeof(OCINumber), sizeof(OCI_Number), 0, NULL);
     OCI_STATUS = (NULL != arr);
 
     if (OCI_STATUS)
@@ -612,7 +612,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, numbmers)
 
-    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **)numbmers);
+    OCI_RETVAL = OCI_STATUS = ArrayFreeFromHandles((void **)numbmers);
 
     OCI_CALL_EXIT()
 }

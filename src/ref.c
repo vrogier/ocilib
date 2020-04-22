@@ -228,7 +228,7 @@ OCI_Ref ** OCI_API OCI_RefArrayCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, con)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_REF, 0, sizeof(OCIRef *), sizeof(OCI_Ref), 0, typinf);
+    arr = ArrayCreate(con, nbelem, OCI_CDT_REF, 0, sizeof(OCIRef *), sizeof(OCI_Ref), 0, typinf);
     OCI_STATUS = (NULL != arr);
 
     if (OCI_STATUS)
@@ -251,7 +251,7 @@ boolean OCI_API OCI_RefArrayFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, refs)
 
-    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **)refs);
+    OCI_RETVAL = OCI_STATUS = ArrayFreeFromHandles((void **)refs);
 
     OCI_CALL_EXIT()
 }

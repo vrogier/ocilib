@@ -34,10 +34,10 @@ extern "C"
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * agent.c
+ * agent
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * OCI_AgentInit
+OCI_Agent * AgentInit
 (
     OCI_Connection *con,
     OCI_Agent      *agent,
@@ -46,41 +46,87 @@ OCI_Agent * OCI_AgentInit
     const otext    *address
 );
 
+OCI_Agent* AgentCreate
+(
+    OCI_Connection* con,
+    const otext* name,
+    const otext* address
+);
+
+boolean AgentFree
+(
+    OCI_Agent* agent
+);
+
+const otext* AgentGetName
+(
+    OCI_Agent* agent
+);
+
+boolean AgentSetName
+(
+    OCI_Agent* agent,
+    const otext* name
+);
+
+const otext* AgentGetAddress
+(
+    OCI_Agent* agent
+);
+
+boolean AgentSetAddress
+(
+    OCI_Agent* agent,
+    const otext* address
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * array.c
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ArrayInit
+boolean ArrayFindAny
+(
+    OCI_Array *arr,
+    void     **handles
+);
+
+boolean ArrayFindObjects
+(
+    OCI_Array *arr,
+    void     **handles
+);
+
+boolean ArrayInit
 (
     OCI_Array    *arr,
     OCI_TypeInfo *typinf
 );
 
-boolean OCI_ArrayCleanup
+boolean ArrayClose
 (
-    OCI_Array *arr
+    OCI_Array* arr
 );
 
-OCI_Array * OCI_ArrayCreate
+OCI_Array* ArrayCreate
 (
-    OCI_Connection *con,
+    OCI_Connection* con,
     unsigned int    nb_elem,
     unsigned int    elem_type,
     unsigned int    elem_subtype,
     unsigned int    elem_size,
     unsigned int    struct_size,
     unsigned int    handle_type,
-    OCI_TypeInfo   *typinf
+    OCI_TypeInfo* typinf
 );
 
-boolean OCI_ArrayClose
+boolean ArrayFreeFromHandles
 (
-    OCI_Array *arr
+    void** handles
 );
 
-boolean OCI_ArrayFreeFromHandles
+void* ArrayGetOCIHandlesFromHandles
 (
-    void ** handles
+    void** handles
 );
 
 /* --------------------------------------------------------------------------------------------- *

@@ -195,9 +195,9 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
 
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, TimestampTypeValues, OTEXT("Timestamp type"))
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type,
-                          sizeof(OCIDateTime *), sizeof(OCI_Timestamp),
-                          OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type), NULL);
+    arr = ArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type,
+             sizeof(OCIDateTime *), sizeof(OCI_Timestamp),
+                      OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type), NULL);
 
     OCI_STATUS = (NULL != arr);
 
@@ -229,7 +229,7 @@ boolean OCI_API OCI_TimestampArrayFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, tmsps)
 
-    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **) tmsps);
+    OCI_RETVAL = OCI_STATUS = ArrayFreeFromHandles((void **) tmsps);
 
     OCI_CALL_EXIT()
 }

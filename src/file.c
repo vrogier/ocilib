@@ -240,7 +240,7 @@ OCI_File ** OCI_API OCI_FileArrayCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    arr = OCI_ArrayCreate(con, nbelem, OCI_CDT_FILE, type, sizeof(OCILobLocator *), sizeof(OCI_File), OCI_DTYPE_LOB, NULL);
+    arr = ArrayCreate(con, nbelem, OCI_CDT_FILE, type, sizeof(OCILobLocator *), sizeof(OCI_File), OCI_DTYPE_LOB, NULL);
     OCI_STATUS = (NULL != arr);
 
     if (arr)
@@ -263,7 +263,7 @@ boolean OCI_API OCI_FileArrayFree
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, files)
 
-    OCI_RETVAL = OCI_STATUS = OCI_ArrayFreeFromHandles((void **)files);
+    OCI_RETVAL = OCI_STATUS = ArrayFreeFromHandles((void **)files);
 
     OCI_CALL_EXIT()
 }

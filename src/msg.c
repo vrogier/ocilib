@@ -751,7 +751,7 @@ OCI_Agent * OCI_API OCI_MsgGetSender
 
     if (OCI_STATUS && handle)
     {
-        OCI_RETVAL = msg->sender = OCI_AgentInit(msg->typinf->con, msg->sender, handle, NULL, NULL);
+        OCI_RETVAL = msg->sender = AgentInit(msg->typinf->con, msg->sender, handle, NULL, NULL);
         OCI_STATUS = (NULL != OCI_RETVAL);
     }
 
