@@ -217,7 +217,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
             /* internal callback handler */
 
-            OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, sub->subhp, OCI_ProcNotifyChanges, 0)
+            OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, sub->subhp, ProcNotifyChanges, 0)
 
             #ifdef _MSC_VER
             #pragma warning(default: 4054)

@@ -278,9 +278,9 @@ void BindPerformBinding
                 (OCIBind *)bnd->buffer.handle, 
                 bnd->stmt->con->err, 
                 (dvoid *)bnd, 
-                OCI_ProcInBind, 
+                ProcInBind, 
                 (dvoid *)bnd, 
-                OCI_ProcOutBind
+                ProcOutBind
             )
         )
     }

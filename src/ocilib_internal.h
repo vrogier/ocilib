@@ -292,7 +292,7 @@ unsigned int BindGetAllocationMode
  * callback.c
  * --------------------------------------------------------------------------------------------- */
 
-sb4 OCI_ProcInBind
+sb4 ProcInBind
 (
     dvoid   *ictxp,
     OCIBind *bindp,
@@ -304,7 +304,7 @@ sb4 OCI_ProcInBind
     dvoid  **indp
 );
 
-sb4 OCI_ProcOutBind
+sb4 ProcOutBind
 (
     dvoid   *octxp,
     OCIBind *bindp,
@@ -317,7 +317,7 @@ sb4 OCI_ProcOutBind
     ub2    **rcodep
 );
 
-ub4 OCI_ProcNotifyChanges
+ub4 ProcNotifyChanges
 (
     void            *ctx,
     OCISubscription *subscrhp,
@@ -327,7 +327,7 @@ ub4 OCI_ProcNotifyChanges
     ub4              mode
 );
 
-ub4 OCI_ProcNotifyMessages
+ub4 ProcNotifyMessages
 (
     void            *ctx,
     OCISubscription *subscrhp,
@@ -337,7 +337,7 @@ ub4 OCI_ProcNotifyMessages
     ub4              mode
 );
 
-sb4 OCI_ProcFailOver
+sb4 ProcFailOver
 (
     dvoid *svchp,
     dvoid *envhp,
@@ -346,7 +346,7 @@ sb4 OCI_ProcFailOver
     ub4    fo_event
 );
 
-void OCI_ProcHAEvent
+void ProcHAEvent
 (
     dvoid     *evtctx,
     dvoid     *eventptr

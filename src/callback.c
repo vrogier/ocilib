@@ -33,10 +33,10 @@ typedef struct HAEventParams
 } HAEventParams;
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcInBind
+ * ProcInBind
  * --------------------------------------------------------------------------------------------- */
 
-sb4 OCI_ProcInBind
+sb4 ProcInBind
 (
     dvoid   *ictxp,
     OCIBind *bindp,
@@ -91,10 +91,10 @@ sb4 OCI_ProcInBind
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcOutBind
+ * ProcOutBind
  * --------------------------------------------------------------------------------------------- */
 
-sb4 OCI_ProcOutBind
+sb4 ProcOutBind
 (
     dvoid   *octxp,
     OCIBind *bindp,
@@ -202,10 +202,10 @@ sb4 OCI_ProcOutBind
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcNotifyMessages
+ * ProcNotifyMessages
  * --------------------------------------------------------------------------------------------- */
 
-ub4 OCI_ProcNotifyMessages
+ub4 ProcNotifyMessages
 (
     void            *ctx,
     OCISubscription *subscrhp,
@@ -231,10 +231,10 @@ ub4 OCI_ProcNotifyMessages
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcNotifyChanges
+ * ProcNotifyChanges
  * --------------------------------------------------------------------------------------------- */
 
-ub4 OCI_ProcNotifyChanges
+ub4 ProcNotifyChanges
 (
     void            *oci_ctx,
     OCISubscription *subscrhp,
@@ -428,10 +428,10 @@ ub4 OCI_ProcNotifyChanges
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcFailOver
+ * ProcFailOver
  * --------------------------------------------------------------------------------------------- */
 
-sb4 OCI_ProcFailOver
+sb4 ProcFailOver
 (
     dvoid *svchp,
     dvoid *envhp,
@@ -455,10 +455,10 @@ sb4 OCI_ProcFailOver
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ProcHAEventInvoke
+* ProcHAEventInvoke
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_ProcHAEventInvoke
+void ProcHAEventInvoke
 (
     OCI_Connection *con,
     HAEventParams * ha_params
@@ -481,10 +481,10 @@ void OCI_ProcHAEventInvoke
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcHAEvent
+ * ProcHAEvent
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ProcHAEvent
+void ProcHAEvent
 (
     dvoid     *evtctx,
     dvoid     *eventptr
@@ -531,7 +531,7 @@ void OCI_ProcHAEvent
 
             if (OCI_STATUS)
             {
-                OCI_ListForEachWithParam(OCILib.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM)OCI_ProcHAEventInvoke);
+                OCI_ListForEachWithParam(OCILib.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM) ProcHAEventInvoke);
             }
  
             OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT, (OCIEvent *)eventptr, &params.srvhp, NULL)

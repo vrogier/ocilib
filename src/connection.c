@@ -2275,7 +2275,7 @@ boolean OCI_API OCI_SetTAFHandler
 
         if (con->taf_handler)
         {
-            fo_struct.callback_function = (OCICallbackFailover) OCI_ProcFailOver;
+            fo_struct.callback_function = (OCICallbackFailover) ProcFailOver;
             fo_struct.fo_ctx            = (dvoid *) con;
         }
 

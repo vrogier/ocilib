@@ -2211,7 +2211,7 @@ boolean OCI_API OCI_SetHAHandler
 
     if (handler)
     {
-        callback = (void*) OCI_ProcHAEvent;
+        callback = (void*) ProcHAEvent;
     }
 
     OCI_SET_ATTRIB(OCI_HTYPE_ENV, OCI_ATTR_EVTCBK, OCILib.env, callback, 0)

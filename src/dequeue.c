@@ -786,7 +786,7 @@ boolean OCI_API  OCI_DequeueSubscribe
 
     /* internal callback handler */
 
-    OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, dequeue->subhp, OCI_ProcNotifyMessages, 0)
+    OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, dequeue->subhp, ProcNotifyMessages, 0)
 
     #ifdef _MSC_VER
     #pragma warning(default: 4054)
