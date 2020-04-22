@@ -160,7 +160,20 @@ void BindAddToStatement
     boolean       reused
 );
 
-OCI_Bind* BindCreate();
+OCI_Bind* BindCreate
+(
+    OCI_Context* ctx,
+    OCI_Statement* stmt,
+    void* data,
+    const otext* name,
+    unsigned int   mode,
+    ub4            size,
+    ub1            type,
+    unsigned int   code,
+    unsigned int   subtype,
+    OCI_TypeInfo* typinf,
+    unsigned int   nbelem
+);
 
 boolean BindFree
 (
