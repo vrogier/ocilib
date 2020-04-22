@@ -369,12 +369,115 @@ void ProcHAEvent
  * collection.c
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OCI_CollInit
+OCI_Coll * CollInit
 (
     OCI_Connection *con,
     OCI_Coll       *Coll,
     void           *handle,
     OCI_TypeInfo   *typeinf
+);
+
+OCI_Coll* CollCreate
+(
+    OCI_TypeInfo* typinf
+);
+
+boolean CollFree
+(
+    OCI_Coll* coll
+);
+
+OCI_Coll** CollArrayCreate
+(
+    OCI_Connection* con,
+    OCI_TypeInfo* typinf,
+    unsigned int    nbelem
+);
+
+boolean CollArrayFree
+(
+    OCI_Coll** colls
+);
+
+boolean CollAssign
+(
+    OCI_Coll* coll,
+    OCI_Coll* coll_src
+);
+
+unsigned int CollGetType
+(
+    OCI_Coll* coll
+);
+
+unsigned int CollGetMax
+(
+    OCI_Coll* coll
+);
+
+unsigned int CollGetSize
+(
+    OCI_Coll* coll
+);
+
+boolean CollTrim
+(
+    OCI_Coll* coll,
+    unsigned int  nb_elem
+);
+
+OCI_Elem* CollGetElem
+(
+    OCI_Coll* coll,
+    unsigned int index
+);
+
+boolean CollGetElem2
+(
+    OCI_Coll* coll,
+    unsigned int index,
+    OCI_Elem* elem
+);
+
+boolean CollSetElem
+(
+    OCI_Coll* coll,
+    unsigned int  index,
+    OCI_Elem* elem
+);
+
+boolean CollAppend
+(
+    OCI_Coll* coll,
+    OCI_Elem* elem
+);
+
+OCI_TypeInfo* CollGetTypeInfo
+(
+    OCI_Coll* coll
+);
+
+boolean CollClear
+(
+    OCI_Coll* coll
+);
+
+boolean CollDeleteElem
+(
+    OCI_Coll* coll,
+    unsigned int index
+);
+
+unsigned int CollGetCount
+(
+    OCI_Coll* coll
+);
+
+boolean CollToText
+(
+    OCI_Coll* coll,
+    unsigned int* size,
+    otext* str
 );
 
 /* --------------------------------------------------------------------------------------------- *

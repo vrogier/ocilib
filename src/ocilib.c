@@ -252,3 +252,164 @@ unsigned int OCI_API OCI_BindGetAllocationMode
 {
     return BindGetAllocationMode(bnd);
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * collection
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Coll * OCI_API OCI_CollCreate
+(
+    OCI_TypeInfo *typinf
+)
+{
+    return CollCreate(typinf);
+}
+
+boolean OCI_API OCI_CollFree
+(
+    OCI_Coll *coll
+)
+{
+    return CollFree(coll);
+}
+
+OCI_Coll ** OCI_API OCI_CollArrayCreate
+(
+    OCI_Connection *con,
+    OCI_TypeInfo   *typinf,
+    unsigned int    nbelem
+)
+{
+    return CollArrayCreate(con, typinf, nbelem);
+}
+
+boolean OCI_API OCI_CollArrayFree
+(
+    OCI_Coll **colls
+)
+{
+    return CollArrayFree(colls);
+}
+
+boolean OCI_API OCI_CollAssign
+(
+    OCI_Coll *coll,
+    OCI_Coll *coll_src
+)
+{
+    return CollAssign(coll, coll_src);
+}
+
+unsigned int OCI_API OCI_CollGetType
+(
+    OCI_Coll *coll
+)
+{
+    return CollGetType(coll);
+}
+
+unsigned int OCI_API OCI_CollGetMax
+(
+    OCI_Coll *coll
+)
+{
+    return CollGetMax(coll);
+}
+
+unsigned int OCI_API OCI_CollGetSize
+(
+    OCI_Coll *coll
+)
+{
+    return CollGetSize(coll);
+}
+
+boolean OCI_API OCI_CollTrim
+(
+    OCI_Coll     *coll,
+    unsigned int  nb_elem
+)
+{
+    return CollTrim(coll, nb_elem);
+}
+
+OCI_Elem * OCI_API OCI_CollGetElem
+(
+    OCI_Coll    *coll,
+    unsigned int index
+)
+{
+    return CollGetElem(coll, index);
+}
+
+boolean OCI_API OCI_CollGetElem2
+(
+    OCI_Coll    *coll,
+    unsigned int index,
+    OCI_Elem    *elem
+)
+{
+    return CollGetElem2(coll, index, elem);
+}
+
+boolean OCI_API OCI_CollSetElem
+(
+    OCI_Coll     *coll,
+    unsigned int  index,
+    OCI_Elem     *elem
+)
+{
+    return CollSetElem(coll, index, elem);
+}
+
+boolean OCI_API OCI_CollAppend
+(
+    OCI_Coll *coll,
+    OCI_Elem *elem
+)
+{
+    return CollAppend(coll, elem);
+}
+
+OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo
+(
+    OCI_Coll *coll
+)
+{
+    return CollGetTypeInfo(coll);
+}
+
+boolean OCI_API OCI_CollClear
+(
+    OCI_Coll *coll
+)
+{
+    return CollClear(coll);
+}
+
+boolean OCI_API OCI_CollDeleteElem
+(
+    OCI_Coll    *coll,
+    unsigned int index
+)
+{
+    return CollDeleteElem(coll, index);
+}
+
+unsigned int OCI_API OCI_CollGetCount
+(
+    OCI_Coll *coll
+)
+{
+    return CollGetCount(coll);
+}
+
+boolean OCI_API OCI_CollToText
+(
+    OCI_Coll     *coll,
+    unsigned int *size,
+    otext        *str
+)
+{
+    return CollToText(coll, size, str);
+}

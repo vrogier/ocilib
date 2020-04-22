@@ -2208,7 +2208,7 @@ OCI_Coll * OCI_API OCI_GetColl
     (
        rs, index, OCI_Coll *, NULL, OCI_CDT_COLLECTION,
 
-       OCI_CollInit(rs->stmt->con, (OCI_Coll *) def->obj, OCI_DefineGetData(def), def->col.typinf)
+       CollInit(rs->stmt->con, (OCI_Coll *) def->obj, OCI_DefineGetData(def), def->col.typinf)
     )
 }
 

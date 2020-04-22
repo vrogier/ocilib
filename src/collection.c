@@ -25,10 +25,10 @@
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollInit
+ * CollInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OCI_CollInit
+OCI_Coll * CollInit
 (
     OCI_Connection *con,
     OCI_Coll       *coll,
@@ -85,10 +85,10 @@ OCI_Coll * OCI_CollInit
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollCreate
+ * CollCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OCI_API OCI_CollCreate
+OCI_Coll * CollCreate
 (
     OCI_TypeInfo *typinf
 )
@@ -97,17 +97,17 @@ OCI_Coll * OCI_API OCI_CollCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
 
-    OCI_RETVAL = OCI_CollInit(typinf->con, NULL, NULL, typinf);
+    OCI_RETVAL = CollInit(typinf->con, NULL, NULL, typinf);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollFree
+ * CollFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollFree
+boolean CollFree
 (
     OCI_Coll *coll
 )
@@ -144,10 +144,10 @@ boolean OCI_API OCI_CollFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollArrayCreate
+ * CollArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll ** OCI_API OCI_CollArrayCreate
+OCI_Coll ** CollArrayCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -172,10 +172,10 @@ OCI_Coll ** OCI_API OCI_CollArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollArrayFree
+ * CollArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollArrayFree
+boolean CollArrayFree
 (
     OCI_Coll **colls
 )
@@ -189,10 +189,10 @@ boolean OCI_API OCI_CollArrayFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollAssign
+ * CollAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollAssign
+boolean CollAssign
 (
     OCI_Coll *coll,
     OCI_Coll *coll_src
@@ -212,10 +212,10 @@ boolean OCI_API OCI_CollAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollGetType
+ * CollGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_CollGetType
+unsigned int CollGetType
 (
     OCI_Coll *coll
 )
@@ -246,10 +246,10 @@ unsigned int OCI_API OCI_CollGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollGetMax
+ * CollGetMax
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_CollGetMax
+unsigned int CollGetMax
 (
     OCI_Coll *coll
 )
@@ -264,10 +264,10 @@ unsigned int OCI_API OCI_CollGetMax
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollGetSize
+ * CollGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_CollGetSize
+unsigned int CollGetSize
 (
     OCI_Coll *coll
 )
@@ -286,10 +286,10 @@ unsigned int OCI_API OCI_CollGetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollTrim
+ * CollTrim
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollTrim
+boolean CollTrim
 (
     OCI_Coll     *coll,
     unsigned int  nb_elem
@@ -308,10 +308,10 @@ boolean OCI_API OCI_CollTrim
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollGetElem
+ * CollGetElem
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OCI_API OCI_CollGetElem
+OCI_Elem * CollGetElem
 (
     OCI_Coll    *coll,
     unsigned int index
@@ -336,10 +336,10 @@ OCI_Elem * OCI_API OCI_CollGetElem
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollGetElem2
+ * CollGetElem2
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollGetElem2
+boolean CollGetElem2
 (
     OCI_Coll    *coll,
     unsigned int index,
@@ -374,10 +374,10 @@ boolean OCI_API OCI_CollGetElem2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollSetElem
+ * CollSetElem
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollSetElem
+boolean CollSetElem
 (
     OCI_Coll     *coll,
     unsigned int  index,
@@ -398,10 +398,10 @@ boolean OCI_API OCI_CollSetElem
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollAppend
+ * CollAppend
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollAppend
+boolean CollAppend
 (
     OCI_Coll *coll,
     OCI_Elem *elem
@@ -421,10 +421,10 @@ boolean OCI_API OCI_CollAppend
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollGetTypeInfo
+ * CollGetTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo
+OCI_TypeInfo * CollGetTypeInfo
 (
     OCI_Coll *coll
 )
@@ -433,10 +433,10 @@ OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollClear
+ * CollClear
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollClear
+boolean CollClear
 (
     OCI_Coll *coll
 )
@@ -451,10 +451,10 @@ boolean OCI_API OCI_CollClear
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollDeleteElem
+ * CollDeleteElem
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollDeleteElem
+boolean CollDeleteElem
 (
     OCI_Coll    *coll,
     unsigned int index
@@ -475,10 +475,10 @@ boolean OCI_API OCI_CollDeleteElem
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollGetCount
+ * CollGetCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_CollGetCount
+unsigned int CollGetCount
 (
     OCI_Coll *coll
 )
@@ -504,10 +504,10 @@ unsigned int OCI_API OCI_CollGetCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollToText
+ * CollToText
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_CollToText
+boolean CollToText
 (
     OCI_Coll     *coll,
     unsigned int *size,

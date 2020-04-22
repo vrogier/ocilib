@@ -754,7 +754,7 @@ OCI_Coll * OCI_API OCI_ElemGetColl
     (
         OCI_CDT_COLLECTION,
         OCI_Coll*,
-        OCI_CollInit(elem->con, (OCI_Coll *) elem->obj,  (OCIColl *) elem->handle, elem->typinf->cols[0].typinf)
+        CollInit(elem->con, (OCI_Coll *) elem->obj,  (OCIColl *) elem->handle, elem->typinf->cols[0].typinf)
     )
 }
 
@@ -1073,8 +1073,8 @@ boolean OCI_API OCI_ElemSetColl
     (
         OCI_CDT_COLLECTION,
         OCI_Coll*,
-        OCI_CollInit(elem->con, (OCI_Coll *) elem->obj, (OCIColl *) elem->handle, elem->typinf->cols[0].typinf),
-        OCI_CollAssign((OCI_Coll *) elem->obj, value)
+        CollInit(elem->con, (OCI_Coll *) elem->obj, (OCIColl *) elem->handle, elem->typinf->cols[0].typinf),
+        CollAssign((OCI_Coll *) elem->obj, value)
     )
 }
 

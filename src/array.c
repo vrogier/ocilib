@@ -128,7 +128,7 @@ boolean ArrayInit
             }
             case OCI_CDT_COLLECTION:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Coll, OCI_CollInit(arr->con, (OCI_Coll *) arr->tab_obj[i], handle, typinf))
+                OCI_ARRAY_INIT_HANDLE(OCI_Coll, CollInit(arr->con, (OCI_Coll *) arr->tab_obj[i], handle, typinf))
                 break;
             }
             case OCI_CDT_REF:

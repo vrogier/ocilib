@@ -1388,7 +1388,7 @@ OCI_Coll * OCI_API OCI_ObjectGetColl
         OCI_CDT_COLLECTION,
         OCI_Coll*,
         OCIColl*,
-        OCI_CollInit(obj->con, (OCI_Coll *) obj->objs[index], (OCIColl *) *value, obj->typinf->cols[index].typinf)
+        CollInit(obj->con, (OCI_Coll *) obj->objs[index], (OCIColl *) *value, obj->typinf->cols[index].typinf)
     )
 }
 
