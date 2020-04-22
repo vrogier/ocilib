@@ -31,10 +31,7 @@ static const unsigned int BindDirectionValues[] = { OCI_BDM_IN, OCI_BDM_OUT, OCI
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
-
-
-
-void  OCI_BindAllocateBuffers
+void BindAllocateBuffers
 (
     OCI_Context *ctx,
     OCI_Bind    *bnd,
@@ -127,16 +124,15 @@ void  OCI_BindAllocateBuffers
 
     if (!bnd->input && (OCI_BAM_INTERNAL == bnd->alloc_mode))
     {
-        OCI_STATUS = OCI_BindAllocData(bnd);
+        OCI_STATUS = BindAllocData(bnd);
     }
 
 }
-
 /* --------------------------------------------------------------------------------------------- *
-* OCI_BindCheckAvailability
+* BindCheckAvailability
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_BindCheckAvailability
+void BindCheckAvailability
 (
     OCI_Context   *ctx,
     OCI_Statement *stmt,
@@ -188,10 +184,10 @@ void OCI_BindCheckAvailability
 }
 
  /* --------------------------------------------------------------------------------------------- *
-  * OCI_BindPerformBinding
+  * BindPerformBinding
   * --------------------------------------------------------------------------------------------- */
 
-void OCI_BindPerformBinding
+void BindPerformBinding
 (
     OCI_Context  *ctx, 
     OCI_Bind     *bnd,
@@ -291,10 +287,10 @@ void OCI_BindPerformBinding
 }
 
  /* --------------------------------------------------------------------------------------------- *
-  * OCI_BindAddToStatement
+  * BindAddToStatement
   * --------------------------------------------------------------------------------------------- */
 
-void OCI_BindAddToStatement
+void BindAddToStatement
 (
     OCI_Bind     *bnd,
     unsigned int  mode,
@@ -325,10 +321,10 @@ void OCI_BindAddToStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindCreate
+ * BindCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Bind* OCI_BindCreate
+OCI_Bind* BindCreate
 (
     OCI_Context   *ctx,
     OCI_Statement *stmt,
@@ -402,7 +398,7 @@ OCI_Bind* OCI_BindCreate
 
     /* check if we can handle another bind */
 
-    OCI_BindCheckAvailability(ctx, stmt, mode, reused);
+    BindCheckAvailability(ctx, stmt, mode, reused);
 
     /* checks done */
 
@@ -472,7 +468,7 @@ OCI_Bind* OCI_BindCreate
         bnd->buffer.count   = nbelem;
         bnd->buffer.sizelen = sizeof(ub2);
 
-        OCI_BindAllocateBuffers(ctx, bnd, mode, reused, nballoc, nbelem, plsql_table);
+        BindAllocateBuffers(ctx, bnd, mode, reused, nballoc, nbelem, plsql_table);
           
         /* if we bind an OCI_Long or any output bind, we need to change the
            execution mode to provide data at execute time */
@@ -500,7 +496,7 @@ OCI_Bind* OCI_BindCreate
 
     if (OCI_STATUS)
     {
-        OCI_BindPerformBinding(ctx, bnd, mode, index, exec_mode, plsql_table);
+        BindPerformBinding(ctx, bnd, mode, index, exec_mode, plsql_table);
     }
 
     /* set charset form */
@@ -522,14 +518,14 @@ OCI_Bind* OCI_BindCreate
 
     if (OCI_STATUS)
     {
-        OCI_BindAddToStatement(bnd, mode, reused);
+        BindAddToStatement(bnd, mode, reused);
     }
 
     if (!OCI_STATUS)
     {
         if (bnd && (prev_index  == -1))
         {
-            OCI_BindFree(bnd);
+            BindFree(bnd);
             bnd = NULL;
         }
     }
@@ -538,10 +534,10 @@ OCI_Bind* OCI_BindCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindFree
+ * BindFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_BindFree
+boolean BindFree
 (
     OCI_Bind *bnd
 )
@@ -609,10 +605,10 @@ boolean OCI_BindFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindAllocData
+ * BindAllocData
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_BindAllocData
+boolean BindAllocData
 (
     OCI_Bind *bnd
 )
@@ -921,7 +917,7 @@ boolean OCI_BindAllocData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindSetNullIndicator
+ * BindSetNullIndicator
  * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_BindSetNullIndicator
@@ -946,10 +942,10 @@ boolean OCI_BindSetNullIndicator
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetName
+ * BindGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_BindGetName
+const otext * BindGetName
 (
     OCI_Bind *bnd
 )
@@ -958,10 +954,10 @@ const otext * OCI_API OCI_BindGetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetType
+ * BindGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_BindGetType
+unsigned int BindGetType
 (
     OCI_Bind *bnd
 )
@@ -970,10 +966,10 @@ unsigned int OCI_API OCI_BindGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetSubtype
+ * BindGetSubtype
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_BindGetSubtype
+unsigned int BindGetSubtype
 (
     OCI_Bind *bnd
 )
@@ -996,10 +992,10 @@ unsigned int OCI_API OCI_BindGetSubtype
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetDataCount
+ * BindGetDataCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_BindGetDataCount
+unsigned int BindGetDataCount
 (
     OCI_Bind *bnd
 )
@@ -1008,10 +1004,10 @@ unsigned int OCI_API OCI_BindGetDataCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetData
+ * BindGetData
  * --------------------------------------------------------------------------------------------- */
 
-void * OCI_API OCI_BindGetData
+void * BindGetData
 (
     OCI_Bind *bnd
 )
@@ -1020,10 +1016,10 @@ void * OCI_API OCI_BindGetData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetStatement
+ * BindGetStatement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * OCI_API OCI_BindGetStatement
+OCI_Statement * BindGetStatement
 (
     OCI_Bind *bnd
 )
@@ -1032,10 +1028,10 @@ OCI_Statement * OCI_API OCI_BindGetStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindSetDataSize
+ * BindSetDataSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindSetDataSize
+boolean BindSetDataSize
 (
     OCI_Bind    *bnd,
     unsigned int size
@@ -1045,10 +1041,10 @@ boolean OCI_API OCI_BindSetDataSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindSetDataSizeAtPos
+ * BindSetDataSizeAtPos
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindSetDataSizeAtPos
+boolean BindSetDataSizeAtPos
 (
     OCI_Bind    *bnd,
     unsigned int position,
@@ -1082,10 +1078,10 @@ boolean OCI_API OCI_BindSetDataSizeAtPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetDataSize
+ * BindGetDataSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_BindGetDataSize
+unsigned int BindGetDataSize
 (
     OCI_Bind *bnd
 )
@@ -1094,10 +1090,10 @@ unsigned int OCI_API OCI_BindGetDataSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetDataSizeAtPos
+ * BindGetDataSizeAtPos
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_BindGetDataSizeAtPos
+unsigned int BindGetDataSizeAtPos
 (
     OCI_Bind    *bnd,
     unsigned int position
@@ -1127,10 +1123,10 @@ unsigned int OCI_API OCI_BindGetDataSizeAtPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindSetNullAtPos
+ * BindSetNullAtPos
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindSetNullAtPos
+boolean BindSetNullAtPos
 (
     OCI_Bind    *bnd,
     unsigned int position
@@ -1147,10 +1143,10 @@ boolean OCI_API OCI_BindSetNullAtPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindSetNull
+ * BindSetNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindSetNull
+boolean BindSetNull
 (
     OCI_Bind *bnd
 )
@@ -1159,10 +1155,10 @@ boolean OCI_API OCI_BindSetNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindSetNotNullAtPos
+ * BindSetNotNullAtPos
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindSetNotNullAtPos
+boolean BindSetNotNullAtPos
 (
     OCI_Bind    *bnd,
     unsigned int position
@@ -1179,10 +1175,10 @@ boolean OCI_API OCI_BindSetNotNullAtPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindSetNotNull
+ * BindSetNotNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindSetNotNull
+boolean BindSetNotNull
 (
     OCI_Bind *bnd
 )
@@ -1191,10 +1187,10 @@ boolean OCI_API OCI_BindSetNotNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindIsNullAtPos
+ * BindIsNullAtPos
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindIsNullAtPos
+boolean BindIsNullAtPos
 (
     OCI_Bind    *bnd,
     unsigned int position
@@ -1214,10 +1210,10 @@ boolean OCI_API OCI_BindIsNullAtPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindIsNull
+ * BindIsNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindIsNull
+boolean BindIsNull
 (
     OCI_Bind *bnd
 )
@@ -1226,10 +1222,10 @@ boolean OCI_API OCI_BindIsNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindSetCharsetForm
+ * BindSetCharsetForm
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindSetCharsetForm
+boolean BindSetCharsetForm
 (
     OCI_Bind    *bnd,
     unsigned int csfrm
@@ -1260,10 +1256,10 @@ boolean OCI_API OCI_BindSetCharsetForm
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindSetDirection
+ * BindSetDirection
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindSetDirection
+boolean BindSetDirection
 (
     OCI_Bind    *bnd,
     unsigned int direction
@@ -1273,10 +1269,10 @@ boolean OCI_API OCI_BindSetDirection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetDirection
+ * BindGetDirection
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_BindGetDirection
+unsigned int BindGetDirection
 (
     OCI_Bind *bnd
 )
@@ -1285,10 +1281,10 @@ unsigned int OCI_API OCI_BindGetDirection
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_BindGetAllocationMode
+* BindGetAllocationMode
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_BindGetAllocationMode
+unsigned int BindGetAllocationMode
 (
     OCI_Bind *bnd
 )

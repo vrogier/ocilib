@@ -133,29 +133,159 @@ void* ArrayGetOCIHandlesFromHandles
  * bind.c
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Bind* OCI_BindCreate
+void BindAllocateBuffers();
+
+void BindCheckAvailability
 (
-    OCI_Context   *ctx,
-    OCI_Statement *stmt,
-    void          *data,
-    const otext   *name,
+    OCI_Context* ctx,
+    OCI_Statement* stmt,
     unsigned int   mode,
-    ub4            size,
-    ub1            type,
-    unsigned int   code,
-    unsigned int   subtype,
-    OCI_TypeInfo  *typinf,
-    unsigned int   nbelem
+    boolean        reused
 );
 
-boolean OCI_BindFree
+void BindPerformBinding
 (
-    OCI_Bind *bnd
+    OCI_Context* ctx,
+    OCI_Bind* bnd,
+    unsigned int  mode,
+    unsigned int  index,
+    unsigned int  exec_mode,
+    boolean       plsql_table
 );
 
-boolean OCI_BindAllocData
+void BindAddToStatement
 (
-    OCI_Bind *bnd
+    OCI_Bind* bnd,
+    unsigned int  mode,
+    boolean       reused
+);
+
+OCI_Bind* BindCreate();
+
+boolean BindFree
+(
+    OCI_Bind* bnd
+);
+
+boolean BindAllocData
+(
+    OCI_Bind* bnd
+);
+
+boolean BindSetNullIndicator
+(
+    OCI_Bind* bnd,
+    unsigned int position,
+    sb2          value
+);
+
+const otext* BindGetName
+(
+    OCI_Bind* bnd
+);
+
+unsigned int BindGetType
+(
+    OCI_Bind* bnd
+);
+
+unsigned int BindGetSubtype
+(
+    OCI_Bind* bnd
+);
+
+unsigned int BindGetDataCount
+(
+    OCI_Bind* bnd
+);
+
+void* BindGetData
+(
+    OCI_Bind* bnd
+);
+
+OCI_Statement* BindGetStatement
+(
+    OCI_Bind* bnd
+);
+
+boolean BindSetDataSize
+(
+    OCI_Bind* bnd,
+    unsigned int size
+);
+
+boolean BindSetDataSizeAtPos
+(
+    OCI_Bind* bnd,
+    unsigned int position,
+    unsigned int size
+);
+
+unsigned int BindGetDataSize
+(
+    OCI_Bind* bnd
+);
+
+unsigned int BindGetDataSizeAtPos
+(
+    OCI_Bind* bnd,
+    unsigned int position
+);
+
+boolean BindSetNullAtPos
+(
+    OCI_Bind* bnd,
+    unsigned int position
+);
+
+boolean BindSetNull
+(
+    OCI_Bind* bnd
+);
+
+boolean BindSetNotNullAtPos
+(
+    OCI_Bind* bnd,
+    unsigned int position
+);
+
+boolean BindSetNotNull
+(
+    OCI_Bind* bnd
+);
+
+boolean BindIsNullAtPos
+(
+    OCI_Bind* bnd,
+    unsigned int position
+);
+
+boolean BindIsNull
+(
+    OCI_Bind* bnd
+);
+
+boolean BindSetCharsetForm
+(
+    OCI_Bind *bnd,
+    unsigned int csfrm
+);
+
+boolean BindSetDirection
+(
+    OCI_Bind *bnd,
+    unsigned int direction
+);
+
+unsigned int BindGetDirection
+(
+    OCI_Bind* bnd
+);
+
+unsigned int BindGetAllocationMode
+(
+    OCI_Bind* bnd
 );
 
 /* --------------------------------------------------------------------------------------------- *

@@ -80,3 +80,175 @@ boolean OCI_API OCI_AgentSetAddress
  * array
  * --------------------------------------------------------------------------------------------- */
 
+ /* --------------------------------------------------------------------------------------------- *
+  * bind
+  * --------------------------------------------------------------------------------------------- */
+
+const otext* OCI_API OCI_BindGetName
+(
+    OCI_Bind* bnd
+)
+{
+    return BindGetName(bnd);
+}
+
+unsigned int OCI_API OCI_BindGetType
+(
+    OCI_Bind* bnd
+)
+{
+    return BindGetType(bnd);
+}
+
+unsigned int OCI_API OCI_BindGetSubtype
+(
+    OCI_Bind* bnd
+)
+{
+    return BindGetSubtype(bnd);
+}
+
+unsigned int OCI_API OCI_BindGetDataCount
+(
+    OCI_Bind* bnd
+)
+{
+    return BindGetDataCount(bnd);
+}
+
+void* OCI_API OCI_BindGetData
+(
+    OCI_Bind* bnd
+)
+{
+    return BindGetData(bnd);
+}
+
+OCI_Statement* OCI_API OCI_BindGetStatement
+(
+    OCI_Bind* bnd
+)
+{
+    return BindGetStatement(bnd);
+}
+
+boolean OCI_API OCI_BindSetDataSize
+(
+    OCI_Bind* bnd,
+    unsigned int size
+)
+{
+    return BindSetDataSize(bnd, size);
+}
+
+boolean OCI_API OCI_BindSetDataSizeAtPos
+(
+    OCI_Bind* bnd,
+    unsigned int position,
+    unsigned int size
+)
+{
+    return BindSetDataSizeAtPos(bnd, position, size);
+}
+
+unsigned int OCI_API OCI_BindGetDataSize
+(
+    OCI_Bind* bnd
+)
+{
+    return BindGetDataSize(bnd);
+}
+
+unsigned int OCI_API OCI_BindGetDataSizeAtPos
+(
+    OCI_Bind* bnd,
+    unsigned int position
+)
+{
+    return BindGetDataSizeAtPos(bnd, position);
+}
+
+boolean OCI_API OCI_BindSetNullAtPos
+(
+    OCI_Bind* bnd,
+    unsigned int position
+)
+{
+    return BindSetNullAtPos(bnd, position);
+}
+
+boolean OCI_API OCI_BindSetNull
+(
+    OCI_Bind* bnd
+)
+{
+    return BindSetNull(bnd);
+}
+
+boolean OCI_API OCI_BindSetNotNullAtPos
+(
+    OCI_Bind* bnd,
+    unsigned int position
+)
+{
+    return BindSetNotNullAtPos(bnd, position);
+}
+
+boolean OCI_API OCI_BindSetNotNull
+(
+    OCI_Bind* bnd
+)
+{
+    return BindSetNotNull(bnd);
+}
+
+boolean OCI_API OCI_BindIsNullAtPos
+(
+    OCI_Bind* bnd,
+    unsigned int position
+)
+{
+    return BindIsNullAtPos(bnd, position);
+}
+
+boolean OCI_API OCI_BindIsNull
+(
+    OCI_Bind* bnd
+)
+{
+    return BindIsNull(bnd);
+}
+
+boolean OCI_API OCI_BindSetCharsetForm
+(
+    OCI_Bind* bnd,
+    unsigned int csfrm
+)
+{
+    return BindSetCharsetForm(bnd, csfrm);
+}
+
+boolean OCI_API OCI_BindSetDirection
+(
+    OCI_Bind* bnd,
+    unsigned int direction
+)
+{
+    return BindSetDirection(bnd, direction);
+}
+
+unsigned int OCI_API OCI_BindGetDirection
+(
+    OCI_Bind* bnd
+)
+{
+    return BindGetDirection(bnd);
+}
+
+unsigned int OCI_API OCI_BindGetAllocationMode
+(
+    OCI_Bind* bnd
+)
+{
+    return BindGetAllocationMode(bnd);
+}

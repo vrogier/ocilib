@@ -56,10 +56,10 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
     }                                                               \
 
 #define OCI_BIND_DATA(...)                                              \
-    OCI_STATUS = OCI_BindCreate(ctx, stmt, data, name, OCI_BIND_INPUT, __VA_ARGS__) != NULL;  \
+    OCI_STATUS = BindCreate(ctx, stmt, data, name, OCI_BIND_INPUT, __VA_ARGS__) != NULL;  \
 
 #define OCI_REGISTER_DATA(...)                                          \
-    OCI_STATUS = OCI_BindCreate(ctx, stmt, NULL, name, OCI_BIND_OUTPUT, __VA_ARGS__) != NULL; \
+    OCI_STATUS = BindCreate(ctx, stmt, NULL, name, OCI_BIND_OUTPUT, __VA_ARGS__) != NULL; \
 
 
 #define OCI_BIND_CALL(type, check, ...)                             \
@@ -158,10 +158,10 @@ boolean OCI_BatchErrorClear
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindFreeAll
+ * OCI_StatementFreeAllBinds
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_BindFreeAll
+boolean OCI_StatementFreeAllBinds
 (
     OCI_Statement *stmt
 )
@@ -176,7 +176,7 @@ boolean OCI_BindFreeAll
     {
         for(i = 0; i < stmt->nb_ubinds; i++)
         {
-            OCI_BindFree(stmt->ubinds[i]);
+            BindFree(stmt->ubinds[i]);
         }
 
         OCI_FREE(stmt->ubinds)
@@ -188,7 +188,7 @@ boolean OCI_BindFreeAll
     {
         for(i = 0; i < stmt->nb_rbinds; i++)
         {
-            OCI_BindFree(stmt->rbinds[i]);
+            BindFree(stmt->rbinds[i]);
         }
 
         OCI_FREE(stmt->rbinds)
@@ -246,7 +246,7 @@ boolean OCI_StatementReset
 
     /* free in/out binds */
 
-    OCI_STATUS = OCI_STATUS && OCI_BindFreeAll(stmt);
+    OCI_STATUS = OCI_STATUS && OCI_StatementFreeAllBinds(stmt);
 
     /* free bind map */
 
