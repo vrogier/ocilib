@@ -128,7 +128,7 @@ boolean ArrayInit
             }
             case OCI_CDT_INTERVAL:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Interval, OCI_IntervalInit(arr->con, (OCI_Interval *) arr->tab_obj[i], (OCIInterval *) handle, arr->elem_subtype))
+                OCI_ARRAY_INIT_HANDLE(OCI_Interval, IntervalInit(arr->con, (OCI_Interval *) arr->tab_obj[i], (OCIInterval *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_OBJECT:

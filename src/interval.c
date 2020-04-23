@@ -18,25 +18,21 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
-
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "interval.h"
+#include "macro.h"
+#include "array.h"
+#include "string.h"
+#include "helpers.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 static const unsigned int IntervalTypeValues[] = { OCI_INTERVAL_YM, OCI_INTERVAL_DS };
 #endif
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- *                         OCI_Interval functions
+ * IntervalInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval * OCI_IntervalInit
+OCI_Interval * IntervalInit
 (
     OCI_Connection *con,
     OCI_Interval   *itv,
@@ -98,15 +94,11 @@ OCI_Interval * OCI_IntervalInit
     return itv;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalCreate
+ * IntervalCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval * OCI_API OCI_IntervalCreate
+OCI_Interval * IntervalCreate
 (
     OCI_Connection *con,
     unsigned int    type
@@ -121,17 +113,17 @@ OCI_Interval * OCI_API OCI_IntervalCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"));
 #endif
 
-    OCI_RETVAL = OCI_IntervalInit(con, NULL, NULL, type);
+    OCI_RETVAL = IntervalInit(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalFree
+ * IntervalFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalFree
+boolean IntervalFree
 (
     OCI_Interval *itv
 )
@@ -158,10 +150,10 @@ boolean OCI_API OCI_IntervalFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalArrayCreate
+ * IntervalArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval ** OCI_API OCI_IntervalArrayCreate
+OCI_Interval ** IntervalArrayCreate
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -203,10 +195,10 @@ OCI_Interval ** OCI_API OCI_IntervalArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalArrayFree
+ * IntervalArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalArrayFree
+boolean IntervalArrayFree
 (
     OCI_Interval **itvs
 )
@@ -220,10 +212,10 @@ boolean OCI_API OCI_IntervalArrayFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalGetType
+ * IntervalGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_IntervalGetType
+unsigned int IntervalGetType
 (
     OCI_Interval *itv
 )
@@ -232,10 +224,10 @@ unsigned int OCI_API OCI_IntervalGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalAssign
+ * IntervalAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalAssign
+boolean IntervalAssign
 (
     OCI_Interval *itv,
     OCI_Interval *itv_src
@@ -258,10 +250,10 @@ boolean OCI_API OCI_IntervalAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalCheck
+ * IntervalCheck
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_IntervalCheck
+int IntervalCheck
 (
     OCI_Interval *itv
 )
@@ -284,10 +276,10 @@ int OCI_API OCI_IntervalCheck
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalCompare
+ * IntervalCompare
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_IntervalCompare
+int IntervalCompare
 (
     OCI_Interval *itv,
     OCI_Interval *itv2
@@ -312,10 +304,10 @@ int OCI_API OCI_IntervalCompare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalFromText
+ * IntervalFromText
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalFromText
+boolean IntervalFromText
 (
     OCI_Interval *itv,
     const otext * str
@@ -345,10 +337,10 @@ boolean OCI_API OCI_IntervalFromText
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalToText
+ * IntervalToText
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalToText
+boolean IntervalToText
 (
     OCI_Interval *itv,
     int           leading_prec,
@@ -408,10 +400,10 @@ boolean OCI_API OCI_IntervalToText
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalFromTimeZone
+ * IntervalFromTimeZone
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalFromTimeZone
+boolean IntervalFromTimeZone
 (
     OCI_Interval *itv,
     const otext * str
@@ -441,10 +433,10 @@ boolean OCI_API OCI_IntervalFromTimeZone
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalGetDaySecond
+ * IntervalGetDaySecond
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalGetDaySecond
+boolean IntervalGetDaySecond
 (
     OCI_Interval *itv,
     int          *day,
@@ -493,10 +485,10 @@ boolean OCI_API OCI_IntervalGetDaySecond
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalGetYearMonth
+ * IntervalGetYearMonth
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalGetYearMonth
+boolean IntervalGetYearMonth
 (
     OCI_Interval *itv,
     int          *year,
@@ -524,10 +516,10 @@ boolean OCI_API OCI_IntervalGetYearMonth
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalSetDaySecond
+ * IntervalSetDaySecond
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalSetDaySecond
+boolean IntervalSetDaySecond
 (
     OCI_Interval *itv,
     int           day,
@@ -566,10 +558,10 @@ boolean OCI_API OCI_IntervalSetDaySecond
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalSetYearMonth
+ * IntervalSetYearMonth
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalSetYearMonth
+boolean IntervalSetYearMonth
 (
     OCI_Interval *itv,
     int           year,
@@ -597,10 +589,10 @@ boolean OCI_API OCI_IntervalSetYearMonth
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalAdd
+ * IntervalAdd
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalAdd
+boolean IntervalAdd
 (
     OCI_Interval *itv,
     OCI_Interval *itv2
@@ -623,10 +615,10 @@ boolean OCI_API OCI_IntervalAdd
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IntervalSubtract
+ * IntervalSubtract
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IntervalSubtract
+boolean IntervalSubtract
 (
     OCI_Interval *itv,
     OCI_Interval *itv2

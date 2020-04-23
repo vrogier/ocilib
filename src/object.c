@@ -1360,8 +1360,8 @@ OCI_Interval * OCI_API OCI_ObjectGetInterval
         OCI_CDT_INTERVAL,
         OCI_Interval*,
         OCIInterval *,
-        OCI_IntervalInit(obj->con, (OCI_Interval *) obj->objs[index],
-                         (OCIInterval *) *value, obj->typinf->cols[index].subtype)
+        IntervalInit(obj->con, (OCI_Interval *) obj->objs[index],
+                     (OCIInterval *) *value, obj->typinf->cols[index].subtype)
     )
 
 #else

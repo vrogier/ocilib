@@ -2143,8 +2143,8 @@ OCI_Interval * OCI_API OCI_GetInterval
     (
        rs, index, OCI_Interval *, NULL, OCI_CDT_INTERVAL,
 
-       OCI_IntervalInit(rs->stmt->con, (OCI_Interval *) def->obj,
-                        (OCIInterval *) DefineGetData(def), def->col.subtype)
+       IntervalInit(rs->stmt->con, (OCI_Interval *) def->obj,
+                    (OCIInterval *) DefineGetData(def), def->col.subtype)
     )
 }
 

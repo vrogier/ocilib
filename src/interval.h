@@ -21,6 +21,126 @@
 #ifndef OCILIB_INTERVAL_H_INCLUDED
 #define OCILIB_INTERVAL_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+OCI_Interval * IntervalInit
+(
+    OCI_Connection  *con,
+    OCI_Interval    *itv,
+    OCIInterval *buffer,
+    ub4          type
+);
+
+OCI_Interval * IntervalCreate
+(
+    OCI_Connection  *con,
+    unsigned int type
+);
+
+boolean IntervalFree
+(
+    OCI_Interval *itv
+);
+
+OCI_Interval ** IntervalArrayCreate
+(
+    OCI_Connection  *con,
+    unsigned int type,
+    unsigned int nbelem
+);
+
+boolean IntervalArrayFree
+(
+    OCI_Interval **itvs
+);
+
+unsigned int IntervalGetType
+(
+    OCI_Interval *itv
+);
+
+boolean IntervalAssign
+(
+    OCI_Interval *itv,
+    OCI_Interval *itv_src
+);
+
+int IntervalCheck
+(
+    OCI_Interval *itv
+);
+
+int IntervalCompare
+(
+    OCI_Interval *itv,
+    OCI_Interval *itv2
+);
+
+boolean IntervalFromText
+(
+    OCI_Interval     *itv,
+    const otext * str
+);
+
+boolean IntervalToText
+(
+    OCI_Interval *itv,
+    int       leading_prec,
+    int       fraction_prec,
+    int       size,
+    otext    *str
+);
+
+boolean IntervalFromTimeZone
+(
+    OCI_Interval     *itv,
+    const otext * str
+);
+
+boolean IntervalGetDaySecond
+(
+    OCI_Interval *itv,
+    int      *day,
+    int      *hour,
+    int      *min,
+    int      *sec,
+    int      *fsec
+);
+
+boolean IntervalGetYearMonth
+(
+    OCI_Interval *itv,
+    int      *year,
+    int      *month
+);
+
+boolean IntervalSetDaySecond
+(
+    OCI_Interval *itv,
+    int       day,
+    int       hour,
+    int       min,
+    int       sec,
+    int       fsec
+);
+
+boolean IntervalSetYearMonth
+(
+    OCI_Interval *itv,
+    int       year,
+    int       month
+);
+
+boolean IntervalAdd
+(
+    OCI_Interval *itv,
+    OCI_Interval *itv2
+);
+
+boolean IntervalSubtract
+(
+    OCI_Interval *itv,
+    OCI_Interval *itv2
+);
 
 #endif /* OCILIB_INTERVAL_H_INCLUDED */

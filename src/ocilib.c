@@ -2675,8 +2675,177 @@ OCI_HashEntry* OCI_API OCI_HashGetEntry
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * 
+ * interval
  * --------------------------------------------------------------------------------------------- */
+
+OCI_Interval* OCI_API OCI_IntervalCreate
+(
+    OCI_Connection* con,
+    unsigned int    type
+)
+{
+    CALL_IMPL(IntervalCreate, con, type)
+}
+
+boolean OCI_API OCI_IntervalFree
+(
+    OCI_Interval* itv
+)
+{
+    CALL_IMPL(IntervalFree, itv)
+}
+
+OCI_Interval** OCI_API OCI_IntervalArrayCreate
+(
+    OCI_Connection* con,
+    unsigned int    type,
+    unsigned int    nbelem
+)
+{
+    CALL_IMPL(IntervalArrayCreate, con, type, nbelem)
+}
+
+boolean OCI_API OCI_IntervalArrayFree
+(
+    OCI_Interval** itvs
+)
+{
+    CALL_IMPL(IntervalArrayFree, itvs)
+}
+
+unsigned int OCI_API OCI_IntervalGetType
+(
+    OCI_Interval* itv
+)
+{
+    CALL_IMPL(IntervalGetType, itv)
+}
+
+boolean OCI_API OCI_IntervalAssign
+(
+    OCI_Interval* itv,
+    OCI_Interval* itv_src
+)
+{
+    CALL_IMPL(IntervalAssign, itv, itv_src)
+}
+
+int OCI_API OCI_IntervalCheck
+(
+    OCI_Interval* itv
+)
+{
+    CALL_IMPL(IntervalCheck, itv)
+}
+
+int OCI_API OCI_IntervalCompare
+(
+    OCI_Interval* itv,
+    OCI_Interval* itv2
+)
+{
+    CALL_IMPL(IntervalCompare, itv, itv2)
+}
+
+boolean OCI_API OCI_IntervalFromText
+(
+    OCI_Interval* itv,
+    const otext* str
+)
+{
+    CALL_IMPL(IntervalFromText, itv, str)
+}
+
+boolean OCI_API OCI_IntervalToText
+(
+    OCI_Interval* itv,
+    int           leading_prec,
+    int           fraction_prec,
+    int           size,
+    otext* str
+)
+{
+    CALL_IMPL(IntervalToText, itv, leading_prec, fraction_prec, size, str)
+}
+
+boolean OCI_API OCI_IntervalFromTimeZone
+(
+    OCI_Interval* itv,
+    const otext* str
+)
+{
+    CALL_IMPL(IntervalFromTimeZone, itv, str)
+}
+
+boolean OCI_API OCI_IntervalGetDaySecond
+(
+    OCI_Interval* itv,
+    int* day,
+    int* hour,
+    int* min,
+    int* sec,
+    int* fsec
+)
+{
+    CALL_IMPL(IntervalGetDaySecond, itv, day, hour, min, sec, fsec)
+}
+
+boolean OCI_API OCI_IntervalGetYearMonth
+(
+    OCI_Interval* itv,
+    int* year,
+    int* month
+)
+{
+    CALL_IMPL(IntervalGetYearMonth, itv, year, month)
+}
+
+boolean OCI_API OCI_IntervalSetDaySecond
+(
+    OCI_Interval* itv,
+    int           day,
+    int           hour,
+    int           min,
+    int           sec,
+    int           fsec
+)
+{
+    CALL_IMPL(IntervalSetDaySecond, itv, day, hour, min, sec, fsec)
+}
+
+boolean OCI_API OCI_IntervalSetYearMonth
+(
+    OCI_Interval* itv,
+    int           year,
+    int           month
+)
+{
+    CALL_IMPL(IntervalSetYearMonth, itv, year, month)
+}
+
+boolean OCI_API OCI_IntervalAdd
+(
+    OCI_Interval* itv,
+    OCI_Interval* itv2
+)
+{
+    CALL_IMPL(IntervalAdd, itv, itv2)
+}
+
+boolean OCI_API OCI_IntervalSubtract
+(
+    OCI_Interval* itv,
+    OCI_Interval* itv2
+)
+{
+    CALL_IMPL(IntervalSubtract, itv, itv2)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * interval
+ * --------------------------------------------------------------------------------------------- */
+
+
 
 
 boolean OCI_API OCI_SetUserPassword

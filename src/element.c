@@ -674,7 +674,7 @@ OCI_Interval * ElemGetInterval
     (
         OCI_CDT_INTERVAL,
         OCI_Interval *,
-        OCI_IntervalInit(elem->con, (OCI_Interval *) elem->obj, (OCIInterval *) elem->handle, elem->typinf->cols[0].subtype)
+        IntervalInit(elem->con, (OCI_Interval *) elem->obj, (OCIInterval *) elem->handle, elem->typinf->cols[0].subtype)
     )
 #else
 
@@ -1058,8 +1058,8 @@ boolean ElemSetInterval
     ( 
         OCI_CDT_INTERVAL,
         OCI_Interval*,
-        OCI_IntervalInit(elem->con, (OCI_Interval *) elem->obj, (OCIInterval *) elem->handle, elem->typinf->cols[0].subtype),
-        OCI_IntervalAssign((OCI_Interval *) elem->obj, value)
+        IntervalInit(elem->con, (OCI_Interval *) elem->obj, (OCIInterval *) elem->handle, elem->typinf->cols[0].subtype),
+        IntervalAssign((OCI_Interval *) elem->obj, value)
     )
 
 #else
