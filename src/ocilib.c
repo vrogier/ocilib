@@ -3383,8 +3383,235 @@ void* OCI_API OCI_LongGetBuffer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  msg
  * --------------------------------------------------------------------------------------------- */
+
+OCI_Msg* OCI_API OCI_MsgCreate
+(
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(MsgCreate, typinf);
+}
+
+boolean OCI_API OCI_MsgFree
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgFree, msg);
+}
+
+boolean OCI_API OCI_MsgReset
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgReset, msg);
+}
+
+OCI_Object* OCI_API OCI_MsgGetObject
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgGetObject, msg);
+}
+
+boolean OCI_API OCI_MsgSetObject
+(
+    OCI_Msg* msg,
+    OCI_Object* obj
+)
+{
+    CALL_IMPL(MsgSetObject, msg, obj);
+}
+
+boolean OCI_API OCI_MsgGetRaw
+(
+    OCI_Msg* msg,
+    void* raw,
+    unsigned int* size
+)
+{
+    CALL_IMPL(MsgGetRaw, msg, raw, size);
+}
+
+boolean OCI_API OCI_MsgSetRaw
+(
+    OCI_Msg* msg,
+    const void* raw,
+    unsigned int size
+)
+{
+    CALL_IMPL(MsgSetRaw, msg, raw, size);
+}
+
+int OCI_API OCI_MsgGetAttemptCount
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgGetAttemptCount, msg);
+}
+
+int OCI_API OCI_MsgGetEnqueueDelay
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgGetEnqueueDelay, msg);
+}
+
+boolean OCI_API OCI_MsgSetEnqueueDelay
+(
+    OCI_Msg* msg,
+    int      value
+)
+{
+    CALL_IMPL(MsgSetEnqueueDelay, msg, value);
+}
+
+OCI_Date* OCI_API OCI_MsgGetEnqueueTime
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgGetEnqueueTime, msg);
+}
+
+int OCI_API OCI_MsgGetExpiration
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgGetExpiration, msg);
+}
+
+boolean OCI_API OCI_MsgSetExpiration
+(
+    OCI_Msg* msg,
+    int      value
+)
+{
+    CALL_IMPL(MsgSetExpiration, msg, value);
+}
+
+unsigned int OCI_API OCI_MsgGetState
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgGetState, msg);
+}
+
+int OCI_API OCI_MsgGetPriority
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgGetPriority, msg);
+}
+
+boolean OCI_API OCI_MsgSetPriority
+(
+    OCI_Msg* msg,
+    int      value
+)
+{
+    CALL_IMPL(MsgSetPriority, msg, value);
+}
+
+boolean OCI_API OCI_MsgGetID
+(
+    OCI_Msg* msg,
+    void* id,
+    unsigned int* len
+)
+{
+    CALL_IMPL(MsgGetID, msg, id, len);
+}
+
+boolean OCI_API OCI_MsgGetOriginalID
+(
+    OCI_Msg* msg,
+    void* id,
+    unsigned int* len
+)
+{
+    CALL_IMPL(MsgGetOriginalID, msg, id, len);
+}
+
+boolean OCI_API OCI_MsgSetOriginalID
+(
+    OCI_Msg* msg,
+    const void* id,
+    unsigned int len
+)
+{
+    CALL_IMPL(MsgSetOriginalID, msg, id, len);
+}
+
+OCI_Agent* OCI_API OCI_MsgGetSender
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgGetSender, msg);
+}
+
+boolean OCI_API OCI_MsgSetSender
+(
+    OCI_Msg* msg,
+    OCI_Agent* sender
+)
+{
+    CALL_IMPL(MsgSetSender, msg, sender);
+}
+
+boolean OCI_API OCI_MsgSetConsumers
+(
+    OCI_Msg* msg,
+    OCI_Agent** consumers,
+    unsigned int count
+)
+{
+    CALL_IMPL(MsgSetConsumers, msg, consumers, count);
+}
+
+const otext* OCI_API OCI_MsgGetCorrelation
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgGetCorrelation, msg);
+}
+
+boolean OCI_API OCI_MsgSetCorrelation
+(
+    OCI_Msg* msg,
+    const otext* correlation
+)
+{
+    CALL_IMPL(MsgSetCorrelation, msg, correlation);
+}
+
+const otext* OCI_API OCI_MsgGetExceptionQueue
+(
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(MsgGetExceptionQueue, msg);
+}
+
+boolean OCI_API OCI_MsgSetExceptionQueue
+(
+    OCI_Msg* msg,
+    const otext* queue
+)
+{
+    CALL_IMPL(MsgSetExceptionQueue, msg, queue);
+}
 
 /* --------------------------------------------------------------------------------------------- *
  *  long
