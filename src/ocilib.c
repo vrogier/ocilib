@@ -1397,6 +1397,228 @@ OCI_Agent * OCI_API OCI_DequeueListen
     CALL_IMPL(DequeueListen, dequeue, timeout)
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * dirpath
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_DirPath* OCI_API OCI_DirPathCreate
+(
+    OCI_TypeInfo* typinf,
+    const otext* partition,
+    unsigned int  nb_cols,
+    unsigned int  nb_rows
+)
+{
+    CALL_IMPL(DirPathCreate, typinf, partition, nb_cols, nb_rows)
+}
+
+boolean OCI_API OCI_DirPathFree
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathFree, dp)
+}
+
+boolean OCI_API OCI_DirPathSetColumn
+(
+    OCI_DirPath* dp,
+    unsigned int index,
+    const otext* name,
+    unsigned int maxsize,
+    const otext* format
+)
+{
+    CALL_IMPL(DirPathSetColumn, dp, index, name, maxsize, format)
+}
+
+boolean OCI_API OCI_DirPathPrepare
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathPrepare, dp)
+}
+
+boolean OCI_API OCI_DirPathSetEntry
+(
+    OCI_DirPath* dp,
+    unsigned int row,
+    unsigned int index,
+    void* value,
+    unsigned     size,
+    boolean      complete
+)
+{
+    CALL_IMPL(DirPathSetEntry, dp, row, index, value, size, complete)
+}
+
+unsigned int OCI_API OCI_DirPathConvert
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathConvert, dp)
+}
+
+unsigned int OCI_API OCI_DirPathLoad
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathLoad, dp)
+}
+
+boolean OCI_API OCI_DirPathReset
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathReset, dp)
+}
+
+boolean OCI_API OCI_DirPathFinish
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathFinish, dp)
+}
+
+boolean OCI_API OCI_DirPathAbort
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathAbort, dp)
+}
+
+boolean OCI_API OCI_DirPathSave
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathSave, dp)
+}
+
+boolean OCI_API OCI_DirPathFlushRow
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathFlushRow, dp)
+}
+
+boolean OCI_API OCI_DirPathSetCurrentRows
+(
+    OCI_DirPath* dp,
+    unsigned int nb_rows
+)
+{
+    CALL_IMPL(DirPathSetCurrentRows, dp, nb_rows)
+}
+
+unsigned int OCI_API OCI_DirPathGetCurrentRows
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathGetCurrentRows, dp)
+}
+
+unsigned int OCI_API OCI_DirPathGetMaxRows
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathGetMaxRows, dp)
+}
+
+boolean OCI_API OCI_DirPathSetDateFormat
+(
+    OCI_DirPath* dp,
+    const otext* format
+)
+{
+    CALL_IMPL(DirPathSetDateFormat, dp, format)
+}
+
+boolean OCI_API OCI_DirPathSetParallel
+(
+    OCI_DirPath* dp,
+    boolean      value
+)
+{
+    CALL_IMPL(DirPathSetParallel, dp, value)
+}
+
+boolean OCI_API OCI_DirPathSetNoLog
+(
+    OCI_DirPath* dp,
+    boolean      value
+)
+{
+    CALL_IMPL(DirPathSetNoLog, dp, value)
+}
+
+boolean OCI_API OCI_DirPathSetCacheSize
+(
+    OCI_DirPath* dp,
+    unsigned int size
+)
+{
+    CALL_IMPL(DirPathSetCacheSize, dp, size)
+}
+
+boolean OCI_API OCI_DirPathSetBufferSize
+(
+    OCI_DirPath* dp,
+    unsigned int size
+)
+{
+    CALL_IMPL(DirPathSetBufferSize, dp, size)
+}
+
+boolean OCI_API OCI_DirPathSetConvertMode
+(
+    OCI_DirPath* dp,
+    unsigned int mode
+)
+{
+    CALL_IMPL(DirPathSetConvertMode, dp, mode)
+}
+
+unsigned int OCI_API OCI_DirPathGetRowCount
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathGetRowCount, dp)
+}
+
+unsigned int OCI_API OCI_DirPathGetAffectedRows
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathGetAffectedRows, dp)
+}
+
+unsigned int OCI_API OCI_DirPathGetErrorColumn
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathGetErrorColumn, dp)
+}
+
+unsigned int OCI_API OCI_DirPathGetErrorRow
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(DirPathGetErrorRow, dp)
+}
 
 
 

@@ -18,23 +18,20 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "dirpath.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "macro.h"
+#include "memory.h"
+#include "number.h"
+#include "string.h"
 
 static const unsigned int ConversionModeValues[] = { OCI_DCM_DEFAULT, OCI_DCM_FORCE };
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathSetArray
+ * DirPathSetArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_DirPathSetArray
+boolean DirPathSetArray
 (
     OCI_DirPath *dp,
     ub4 row_from
@@ -95,10 +92,10 @@ boolean OCI_DirPathSetArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPahArrayToStream
+ * DirPahArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_DirPathArrayToStream
+unsigned int DirPathArrayToStream
 (
     OCI_DirPath *dp,
     ub4 row_from
@@ -187,10 +184,10 @@ unsigned int OCI_DirPathArrayToStream
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPahArrayToStream
+ * DirPahArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_DirPathLoadStream(OCI_DirPath *dp)
+unsigned int DirPathLoadStream(OCI_DirPath *dp)
 {       
     unsigned int res = OCI_DPR_COMPLETE;
     sword ret        = OCI_SUCCESS;
@@ -256,10 +253,10 @@ unsigned int OCI_DirPathLoadStream(OCI_DirPath *dp)
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathCreate
+ * DirPathCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_DirPath * OCI_API OCI_DirPathCreate
+OCI_DirPath * DirPathCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *partition,
@@ -367,10 +364,10 @@ OCI_DirPath * OCI_API OCI_DirPathCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathFree
+ * DirPathFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathFree
+boolean DirPathFree
 (
     OCI_DirPath *dp
 )
@@ -405,10 +402,10 @@ boolean OCI_API OCI_DirPathFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathSetColumn
+ * DirPathSetColumn
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetColumn
+boolean DirPathSetColumn
 (
     OCI_DirPath *dp,
     unsigned int index,
@@ -620,10 +617,10 @@ boolean OCI_API OCI_DirPathSetColumn
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathPrepare
+ * DirPathPrepare
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathPrepare
+boolean DirPathPrepare
 (
     OCI_DirPath *dp
 )
@@ -692,10 +689,10 @@ boolean OCI_API OCI_DirPathPrepare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathSetEntry
+ * DirPathSetEntry
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetEntry
+boolean DirPathSetEntry
 (
     OCI_DirPath *dp,
     unsigned int row,
@@ -804,10 +801,10 @@ boolean OCI_API OCI_DirPathSetEntry
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathReset
+ * DirPathReset
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathReset
+boolean DirPathReset
 (
     OCI_DirPath *dp
 )
@@ -838,10 +835,10 @@ boolean OCI_API OCI_DirPathReset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathConvert
+ * DirPathConvert
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathConvert
+unsigned int DirPathConvert
 (
     OCI_DirPath *dp
 )
@@ -878,11 +875,11 @@ unsigned int OCI_API OCI_DirPathConvert
 
     /* set array values */
 
-    if (OCI_STATUS && OCI_DirPathSetArray(dp, row_from))
+    if (OCI_STATUS && DirPathSetArray(dp, row_from))
     {
         /* try to convert values from array into stream */
 
-        dp->res_conv = OCI_DirPathArrayToStream(dp, row_from);
+        dp->res_conv = DirPathArrayToStream(dp, row_from);
 
         /* in case of conversion error, continue conversion in force mode
            other return from conversion */
@@ -899,13 +896,13 @@ unsigned int OCI_API OCI_DirPathConvert
 
                 /* set values again */
 
-                OCI_STATUS = OCI_DirPathSetArray(dp, row_from);
+                OCI_STATUS = DirPathSetArray(dp, row_from);
 
                 if (OCI_STATUS)
                 {
                      /* perform conversion again */
 
-                     dp->res_conv = OCI_DirPathArrayToStream(dp, row_from);
+                     dp->res_conv = DirPathArrayToStream(dp, row_from);
                 }
             }
         }
@@ -920,10 +917,10 @@ unsigned int OCI_API OCI_DirPathConvert
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathLoad
+ * DirPathLoad
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathLoad
+unsigned int DirPathLoad
 (
     OCI_DirPath *dp
 )
@@ -946,13 +943,13 @@ unsigned int OCI_API OCI_DirPathLoad
 
     /* load the stream */
 
-    dp->res_load = OCI_DirPathLoadStream(dp);
+    dp->res_load = DirPathLoadStream(dp);
 
     /* continue to load the stream while it returns an error */
 
     while (OCI_DPR_ERROR == dp->res_load)
     {
-        dp->res_load = OCI_DirPathLoadStream(dp);
+        dp->res_load = DirPathLoadStream(dp);
     }
 
     OCI_STATUS = OCI_STATUS && (OCI_DPR_COMPLETE == dp->res_load);
@@ -962,10 +959,10 @@ unsigned int OCI_API OCI_DirPathLoad
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathFinish
+ * DirPathFinish
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathFinish
+boolean DirPathFinish
 (
     OCI_DirPath *dp
 )
@@ -988,10 +985,10 @@ boolean OCI_API OCI_DirPathFinish
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathAbort
+ * DirPathAbort
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathAbort
+boolean DirPathAbort
 (
     OCI_DirPath *dp
 )
@@ -1014,10 +1011,10 @@ boolean OCI_API OCI_DirPathAbort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathSave
+ * DirPathSave
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSave
+boolean DirPathSave
 (
     OCI_DirPath *dp
 )
@@ -1035,10 +1032,10 @@ boolean OCI_API OCI_DirPathSave
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathFlushRow
+ * DirPathFlushRow
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathFlushRow
+boolean DirPathFlushRow
 (
     OCI_DirPath *dp
 )
@@ -1056,10 +1053,10 @@ boolean OCI_API OCI_DirPathFlushRow
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathSetCurrentRows
+ * DirPathSetCurrentRows
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetCurrentRows
+boolean DirPathSetCurrentRows
 (
     OCI_DirPath *dp,
     unsigned int nb_rows
@@ -1079,10 +1076,10 @@ boolean OCI_API OCI_DirPathSetCurrentRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathGetCurrentRows
+ * DirPathGetCurrentRows
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetCurrentRows
+unsigned int DirPathGetCurrentRows
 (
     OCI_DirPath *dp
 )
@@ -1091,10 +1088,10 @@ unsigned int OCI_API OCI_DirPathGetCurrentRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathGetMaxRows
+ * DirPathGetMaxRows
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetMaxRows
+unsigned int DirPathGetMaxRows
 (
     OCI_DirPath *dp
 )
@@ -1103,10 +1100,10 @@ unsigned int OCI_API OCI_DirPathGetMaxRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathSetDateFormat
+ * DirPathSetDateFormat
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetDateFormat
+boolean DirPathSetDateFormat
 (
     OCI_DirPath *dp,
     const otext *format
@@ -1133,10 +1130,10 @@ boolean OCI_API OCI_DirPathSetDateFormat
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathSetParallel
+ * DirPathSetParallel
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetParallel
+boolean DirPathSetParallel
 (
     OCI_DirPath *dp,
     boolean      value
@@ -1157,10 +1154,10 @@ boolean OCI_API OCI_DirPathSetParallel
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathSetNoLog
+ * DirPathSetNoLog
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetNoLog
+boolean DirPathSetNoLog
 (
     OCI_DirPath *dp,
     boolean      value
@@ -1181,10 +1178,10 @@ boolean OCI_API OCI_DirPathSetNoLog
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathSetCacheSize
+ * DirPathSetCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetCacheSize
+boolean DirPathSetCacheSize
 (
     OCI_DirPath *dp,
     unsigned int size
@@ -1217,10 +1214,10 @@ boolean OCI_API OCI_DirPathSetCacheSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathSetBufferSize
+ * DirPathSetBufferSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetBufferSize
+boolean DirPathSetBufferSize
 (
     OCI_DirPath *dp,
     unsigned int size
@@ -1241,10 +1238,10 @@ boolean OCI_API OCI_DirPathSetBufferSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathSetConvertMode
+ * DirPathSetConvertMode
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DirPathSetConvertMode
+boolean DirPathSetConvertMode
 (
     OCI_DirPath *dp,
     unsigned int mode
@@ -1264,10 +1261,10 @@ boolean OCI_API OCI_DirPathSetConvertMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathGetRowCount
+ * DirPathGetRowCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetRowCount
+unsigned int DirPathGetRowCount
 (
     OCI_DirPath *dp
 )
@@ -1276,10 +1273,10 @@ unsigned int OCI_API OCI_DirPathGetRowCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathGetAffectedRows
+ * DirPathGetAffectedRows
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetAffectedRows
+unsigned int DirPathGetAffectedRows
 (
     OCI_DirPath *dp
 )
@@ -1288,10 +1285,10 @@ unsigned int OCI_API OCI_DirPathGetAffectedRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathGetErrorColumn
+ * DirPathGetErrorColumn
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetErrorColumn
+unsigned int DirPathGetErrorColumn
 (
     OCI_DirPath *dp
 )
@@ -1309,10 +1306,10 @@ unsigned int OCI_API OCI_DirPathGetErrorColumn
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DirPathGetErrorRow
+ * DirPathGetErrorRow
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DirPathGetErrorRow
+unsigned int DirPathGetErrorRow
 (
     OCI_DirPath *dp
 )
