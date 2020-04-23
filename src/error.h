@@ -44,4 +44,40 @@ OCI_Error * ErrorGet
     boolean reset
 );
 
+const otext* ErrorGetString
+(
+    OCI_Error* err
+);
+
+unsigned int ErrorGetType
+(
+    OCI_Error* err
+);
+
+int ErrorGetOCICode
+(
+    OCI_Error* err
+);
+
+int ErrorGetInternalCode
+(
+    OCI_Error* err
+);
+
+OCI_Connection* ErrorGetConnection
+(
+    OCI_Error* err
+);
+
+OCI_Statement* ErrorGetStatement
+(
+    OCI_Error* err
+);
+
+unsigned int ErrorGetRow
+(
+    OCI_Error* err
+);
+
+
 #endif /* OCILIB_ERROR_H_INCLUDED */
