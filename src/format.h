@@ -21,6 +21,14 @@
 #ifndef OCILIB_FORMAT_H_INCLUDED
 #define OCILIB_FORMAT_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+int ParseSqlFmt
+(
+    OCI_Statement* stmt,
+    otext* buffer,
+    const otext* format,
+    va_list* pargs
+);
 
 #endif /* OCILIB_FORMAT_H_INCLUDED */

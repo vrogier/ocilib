@@ -1573,7 +1573,7 @@ boolean OCI_PrepareFmt
 
     va_start(args, sql);
 
-    const int size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
+    const int size = ParseSqlFmt(stmt, NULL, sql, &args);
 
     va_end(args);
 
@@ -1591,7 +1591,7 @@ boolean OCI_PrepareFmt
 
             va_start(args, sql);
 
-            if (OCI_ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
             {
                 /* parse buffer */
 
@@ -1631,7 +1631,7 @@ boolean OCI_ExecuteStmtFmt
 
     va_start(args, sql);
 
-   const int size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
+   const int size = ParseSqlFmt(stmt, NULL, sql, &args);
 
     va_end(args);
 
@@ -1649,7 +1649,7 @@ boolean OCI_ExecuteStmtFmt
 
             va_start(args, sql);
 
-            if (OCI_ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
             {
                 /* prepare and execute SQL buffer */
 
@@ -1689,7 +1689,7 @@ boolean OCI_ParseFmt
 
     va_start(args, sql);
 
-    const int size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
+    const int size = ParseSqlFmt(stmt, NULL, sql, &args);
 
     va_end(args);
 
@@ -1707,7 +1707,7 @@ boolean OCI_ParseFmt
 
             va_start(args, sql);
 
-            if (OCI_ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
             {
                 /* prepare and execute SQL buffer */
 
@@ -1747,7 +1747,7 @@ boolean OCI_DescribeFmt
 
     va_start(args, sql);
 
-    const int size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
+    const int size = ParseSqlFmt(stmt, NULL, sql, &args);
 
     va_end(args);
 
@@ -1765,7 +1765,7 @@ boolean OCI_DescribeFmt
 
             va_start(args, sql);
 
-            if (OCI_ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
             {
                 /* prepare and execute SQL buffer */
 

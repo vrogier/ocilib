@@ -2472,7 +2472,7 @@ boolean ConnectionExecuteImmediateFmt
 
         /* first, get buffer size */
 
-        size = OCI_ParseSqlFmt(stmt, NULL, sql, &args);
+        size = ParseSqlFmt(stmt, NULL, sql, &args);
 
         if (size > 0)
         {
@@ -2486,7 +2486,7 @@ boolean ConnectionExecuteImmediateFmt
             {
                 /* format buffer */
 
-                if (OCI_ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
+                if (ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
                 {
                     /* prepare and execute SQL buffer */
 

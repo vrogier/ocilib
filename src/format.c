@@ -18,17 +18,19 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "format.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "exception.h"
+#include "interval.h"
+#include "macro.h"
+#include "ref.h"
+#include "timestamp.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ParseSqlFmt
+ * ParseSqlFmt
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_ParseSqlFmt
+int ParseSqlFmt
 (
     OCI_Statement *stmt,
     otext         *buf,
