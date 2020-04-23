@@ -18,23 +18,19 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "long.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "macro.h"
+#include "memory.h"
+#include "string.h"
 
 static const unsigned int LongTypeValues[] = { OCI_CLONG, OCI_BLONG };
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LongInit
+ * LongInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Long * OCI_LongInit
+OCI_Long * LongInit
 (
     OCI_Statement *stmt,
     OCI_Long      *lg,
@@ -69,15 +65,11 @@ OCI_Long * OCI_LongInit
     return lg;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LongCreate
+ * LongCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Long * OCI_API OCI_LongCreate
+OCI_Long * LongCreate
 (
     OCI_Statement *stmt,
     unsigned int   type
@@ -88,17 +80,17 @@ OCI_Long * OCI_API OCI_LongCreate
     OCI_CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, LongTypeValues, OTEXT("Long Type"))
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_RETVAL = OCI_LongInit(stmt, NULL, NULL, type);
+    OCI_RETVAL = LongInit(stmt, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LongFree
+ * LongFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LongFree
+boolean LongFree
 (
     OCI_Long *lg
 )
@@ -117,10 +109,10 @@ boolean OCI_API OCI_LongFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LongGetType
+ * LongGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_LongGetType
+unsigned int LongGetType
 (
     OCI_Long *lg
 )
@@ -129,10 +121,10 @@ unsigned int OCI_API OCI_LongGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LongRead
+ * LongRead
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_LongRead
+unsigned int LongRead
 (
     OCI_Long    *lg,
     void        *buffer,
@@ -180,10 +172,10 @@ unsigned int OCI_API OCI_LongRead
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LongWrite
+ * LongWrite
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_LongWrite
+unsigned int LongWrite
 (
     OCI_Long    *lg,
     void        *buffer,
@@ -290,10 +282,10 @@ unsigned int OCI_API OCI_LongWrite
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LongGetSize
+ * LongGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_LongGetSize
+unsigned int LongGetSize
 (
     OCI_Long *lg
 )
@@ -313,10 +305,10 @@ unsigned int OCI_API OCI_LongGetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LongGetBuffer
+ * LongGetBuffer
  * --------------------------------------------------------------------------------------------- */
 
-void * OCI_API OCI_LongGetBuffer
+void * LongGetBuffer
 (
     OCI_Long *lg
 )

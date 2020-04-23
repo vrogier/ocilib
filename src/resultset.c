@@ -322,7 +322,7 @@ boolean OCI_FetchPieces
         {
             for (j = 0; j < def->buf.count; j++)
             {
-                def->buf.data[j] = OCI_LongInit(rs->stmt, (OCI_Long *)def->buf.data[j], def, def->col.subtype);
+                def->buf.data[j] = LongInit(rs->stmt, (OCI_Long *)def->buf.data[j], def, def->col.subtype);
             }
         }
     }
