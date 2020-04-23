@@ -23,33 +23,6 @@
 
 #include "types.h"
 
-void BindAllocateBuffers();
-
-void BindCheckAvailability
-(
-    OCI_Context* ctx,
-    OCI_Statement* stmt,
-    unsigned int   mode,
-    boolean        reused
-);
-
-void BindPerformBinding
-(
-    OCI_Context* ctx,
-    OCI_Bind* bnd,
-    unsigned int  mode,
-    unsigned int  index,
-    unsigned int  exec_mode,
-    boolean       plsql_table
-);
-
-void BindAddToStatement
-(
-    OCI_Bind* bnd,
-    unsigned int  mode,
-    boolean       reused
-);
-
 OCI_Bind* BindCreate
 (
     OCI_Context* ctx,

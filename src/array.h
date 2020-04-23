@@ -23,18 +23,6 @@
 
 #include "types.h"
 
-boolean ArrayFindAny
-(
-    OCI_Array *arr,
-    void     **handles
-);
-
-boolean ArrayFindObjects
-(
-    OCI_Array *arr,
-    void     **handles
-);
-
 boolean ArrayInit
 (
     OCI_Array    *arr,
