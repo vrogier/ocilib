@@ -350,7 +350,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                             default:
                             {
                                 OCI_STATUS = FALSE;
-                                OCI_ExceptionDatatypeNotSupported(con, NULL, typinf->typecode);
+                                ExceptionDatatypeNotSupported(con, NULL, typinf->typecode);
                                 break;
                             }
                         }
@@ -489,7 +489,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
         if ((type != OCI_UNKNOWN) && ((syn_typinf && syn_typinf->type != type) || (!syn_typinf && typinf->type != type)))
         {
-            OCI_ExceptionTypeInfoWrongType(con, name);
+            ExceptionTypeInfoWrongType(con, name);
 
             OCI_STATUS = FALSE;
         }

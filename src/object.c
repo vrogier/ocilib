@@ -625,7 +625,7 @@ int OCI_ObjectGetAttrIndex
 
     if (check && res == -1)
     {
-        OCI_ExceptionAttributeNotFound(obj->con, attr);
+        ExceptionAttributeNotFound(obj->con, attr);
     }
 
     return res;
@@ -757,7 +757,7 @@ boolean OCI_ObjectGetNumberInternal
 
     if (index == -1)
     {
-        OCI_ExceptionAttributeNotFound(obj->con, attr);
+        ExceptionAttributeNotFound(obj->con, attr);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -1196,7 +1196,7 @@ const otext * OCI_API OCI_ObjectGetString
 
     if (index == -1)
     {
-        OCI_ExceptionAttributeNotFound(obj->con, attr);
+        ExceptionAttributeNotFound(obj->con, attr);
     }
 
     OCI_CALL_EXIT()

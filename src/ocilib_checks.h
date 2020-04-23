@@ -28,20 +28,19 @@
 #define OCI_RETVAL          call_retval
 #define OCI_STATUS          ((ctx)->call_status)
 
-#define OCI_EXEC(fct)                                                          \
-    if (OCI_STATUS)                                                            \
-    {                                                                          \
-        OCI_STATUS = fct;                                                      \
-        if (OCI_FAILURE(OCI_STATUS))                                           \
-        {                                                                      \
-            OCI_STATUS = (OCI_SUCCESS_WITH_INFO == OCI_STATUS);                \
-            OCI_ExceptionOCI(ctx->oci_err, ctx->lib_con,                       \
-                             ctx->lib_stmt, OCI_STATUS);                       \
-        }                                                                      \
-        else                                                                   \
-        {                                                                      \
-           OCI_STATUS = TRUE;                                                  \
-        }                                                                      \
+#define OCI_EXEC(fct)                                                            \
+    if (OCI_STATUS)                                                              \
+    {                                                                            \
+        OCI_STATUS = fct;                                                        \
+        if (OCI_FAILURE(OCI_STATUS))                                             \
+        {                                                                        \
+            OCI_STATUS = (OCI_SUCCESS_WITH_INFO == OCI_STATUS);                  \
+            ExceptionOCI(ctx->oci_err, ctx->lib_con, ctx->lib_stmt, OCI_STATUS); \
+        }                                                                        \
+        else                                                                     \
+        {                                                                        \
+           OCI_STATUS = TRUE;                                                    \
+        }                                                                        \
     }
 
 
@@ -50,7 +49,7 @@
     OCI_EXEC                                                                                        \
     (                                                                                               \
         OCIAttrGet((void*) (handle), (ub4) (htype), (void*) (value),                                \
-                   (ub4*) (size), (ub4) (atype), (ctx)->oci_err)                                   \
+                   (ub4*) (size), (ub4) (atype), (ctx)->oci_err)                                    \
     )                                                                                               \
 
 #define OCI_SET_ATTRIB(htype, atype, handle, value, size)                                           \
@@ -97,7 +96,7 @@
                                                                                \
     if (!(ptr))                                                                \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNullPointer(type))                    \
+        OCI_RAISE_EXCEPTION(ExceptionNullPointer(type))                        \
     }
 
 /**
@@ -127,7 +126,7 @@
             (OCI_BAM_INTERNAL == (stmt)->bind_alloc_mode) &&                        \
             ((data) != NULL))                                                       \
         {                                                                           \
-            OCI_RAISE_EXCEPTION(OCI_ExceptionExternalBindingNotAllowed(stmt, name)) \
+            OCI_RAISE_EXCEPTION(ExceptionExternalBindingNotAllowed(stmt, name))     \
         }                                                                           \
                                                                                     \
         if ((ext_only_value) || OCI_BAM_EXTERNAL == (stmt)->bind_alloc_mode)        \
@@ -174,7 +173,7 @@
                                                                                \
     if (((v) < (b1)) || ((v) > (b2)))                                          \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionOutOfBounds((con), (v)))              \
+        OCI_RAISE_EXCEPTION(ExceptionOutOfBounds((con), (v)))                  \
     }
 
 /**
@@ -195,7 +194,7 @@
                                                                                \
     if ((v) < (m))                                                             \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionMinimumValue((con), (stmt), (m)))     \
+        OCI_RAISE_EXCEPTION(ExceptionMinimumValue((con), (stmt), (m)))         \
     }
 
 /**
@@ -214,7 +213,7 @@
                                                                                \
     if (!(exp))                                                                \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionTypeNotCompatible((con)))             \
+        OCI_RAISE_EXCEPTION(ExceptionTypeNotCompatible((con)))                 \
     }
 
 /* ********************************************************************************************* *
@@ -255,7 +254,7 @@
                                                                                \
     if ((((st)->status) & (v)) == 0)                                           \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionStatementState((st), v))              \
+        OCI_RAISE_EXCEPTION(ExceptionStatementState((st), v))                  \
     }                                                                          \
 
 
@@ -275,7 +274,7 @@
     if (((st)->nb_rbinds > 0) ||                                               \
         ((st)->exec_mode != OCI_STMT_SCROLLABLE_READONLY))                     \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionStatementNotScrollable(st))           \
+        OCI_RAISE_EXCEPTION(ExceptionStatementNotScrollable(st))               \
     }
 
 /**
@@ -295,7 +294,7 @@
                                                                                \
     if ((dp)->status != (v))                                                   \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionDirPathState((dp), (dp)->status))     \
+        OCI_RAISE_EXCEPTION(ExceptionDirPathState((dp), (dp)->status))         \
     }
 
 /* ********************************************************************************************* *
@@ -315,7 +314,7 @@
                                                                                \
     if (!OCILib.loaded)                                                        \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNotInitialized())                     \
+        OCI_RAISE_EXCEPTION(ExceptionNotInitialized())                         \
     }
 
 /**
@@ -335,7 +334,7 @@
                                                                                    \
     if (OCILib.version_runtime < (ver) || ((con) && (con)->ver_num < (ver)))       \
     {                                                                              \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(con, feat))                  \
+        OCI_RAISE_EXCEPTION(ExceptionNotAvailable(con, feat))                      \
     }
 
 /**
@@ -352,7 +351,7 @@
                                                                            \
     if (!(OCI_LIB_THREADED))                                               \
     {                                                                      \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNotMultithreaded())               \
+        OCI_RAISE_EXCEPTION(ExceptionNotMultithreaded())                   \
     }
 
 /**
@@ -429,7 +428,7 @@
                                                                                \
     if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable((dp)->con,               \
+        OCI_RAISE_EXCEPTION(ExceptionNotAvailable((dp)->con,                   \
                             OCI_FEATURE_STATEMENT_CACHING))                    \
     }
 
@@ -448,7 +447,7 @@
                                                                                \
     if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable((dp)->con,               \
+        OCI_RAISE_EXCEPTION(ExceptionNotAvailable((dp)->con,                   \
                             OCI_FEATURE_DIRPATH_DATE_CACHE)                    \
     }
 
@@ -465,7 +464,7 @@
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(NULL,                    \
+        OCI_RAISE_EXCEPTION(ExceptionNotAvailable(NULL,                        \
                             OCI_FEATURE_REMOTE_DBS_CONTROL))                   \
     }
 
@@ -482,7 +481,7 @@
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(NULL,                    \
+        OCI_RAISE_EXCEPTION(ExceptionNotAvailable(NULL,                        \
                             OCI_FEATURE_DATABASE_NOTIFY))                      \
     }
 
@@ -500,7 +499,7 @@
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(NULL,                    \
+        OCI_RAISE_EXCEPTION(ExceptionNotAvailable(NULL,                        \
                             OCI_FEATURE_HIGH_AVAILABILITY))                    \
     }
 
@@ -517,7 +516,7 @@
                                                                                \
     if ( ((mode) & OCI_SESSION_XA) && (!OCILib.use_xa) )                       \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_XA))   \
+        OCI_RAISE_EXCEPTION(ExceptionNotAvailable(NULL, OCI_FEATURE_XA))       \
     }
 
 #define OCI_CALL_CHECK_ENUM_VALUE(con, stmt, mode, values, name)               \
@@ -526,8 +525,8 @@
         for (; ii < nn; ii++) { if ((mode) == (values)[ii]) break; }           \
         if (ii >= nn)                                                          \
         {                                                                      \
-            OCI_RAISE_EXCEPTION(OCI_ExceptionArgInvalidValue(con, stmt,        \
-                                                             name, mode))      \
+            OCI_RAISE_EXCEPTION(ExceptionArgInvalidValue(con, stmt,            \
+                                                         name, mode))          \
         }                                                                      \
     }
 

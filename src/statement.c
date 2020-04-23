@@ -791,7 +791,7 @@ boolean OCI_FetchIntoUserVariables
                 }
                 default:
                 {
-                    OCI_ExceptionMappingArgument(stmt->con, stmt, type);
+                    ExceptionMappingArgument(stmt->con, stmt, type);
 
                     res = FALSE;
 
@@ -1254,7 +1254,7 @@ boolean OCI_API OCI_ExecuteInternal
 
     if (OCI_SUCCESS_WITH_INFO == status)
     {
-        OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt, TRUE);
+        ExceptionOCI(stmt->con->err, stmt->con, stmt, TRUE);
     }
 
     /* on batch mode, check if any error occurred */
@@ -1330,7 +1330,7 @@ boolean OCI_API OCI_ExecuteInternal
 
         /* raise exception */
 
-        OCI_ExceptionOCI(stmt->con->err, stmt->con, stmt, FALSE);
+        ExceptionOCI(stmt->con->err, stmt->con, stmt, FALSE);
     }
 
     return OCI_STATUS;
@@ -1805,7 +1805,7 @@ boolean OCI_API OCI_BindArraySetSize
 
     if ((stmt->nb_ubinds > 0) && (stmt->nb_iters_init < size))
     {
-        OCI_RAISE_EXCEPTION(OCI_ExceptionBindArraySize(stmt, stmt->nb_iters_init, stmt->nb_iters, size))
+        OCI_RAISE_EXCEPTION(ExceptionBindArraySize(stmt, stmt->nb_iters_init, stmt->nb_iters, size))
     }
     else
     {
@@ -2167,7 +2167,7 @@ boolean OCI_API OCI_BindString
                An invalid length passed to the function, we do not have a valid length to
                allocate internal array, thus we need to raise an exception */
 
-            OCI_RAISE_EXCEPTION(OCI_ExceptionMinimumValue(stmt->con, stmt, 1))
+            OCI_RAISE_EXCEPTION(ExceptionMinimumValue(stmt->con, stmt, 1))
         }
     }
 
@@ -2229,7 +2229,7 @@ boolean OCI_API OCI_BindRaw
         An invalid length passed to the function, we do not have a valid length to
         allocate internal array, thus we need to raise an exception */
 
-        OCI_RAISE_EXCEPTION(OCI_ExceptionMinimumValue(stmt->con, stmt, 1))
+        OCI_RAISE_EXCEPTION(ExceptionMinimumValue(stmt->con, stmt, 1))
     }
 
     OCI_BIND_DATA(len, OCI_CDT_RAW, SQLT_BIN, 0, NULL, 0)
@@ -3598,7 +3598,7 @@ OCI_Bind * OCI_API OCI_GetBind2
     }
     else
     {
-        OCI_RAISE_EXCEPTION(OCI_ExceptionItemNotFound(stmt->con, stmt, name, OCI_IPC_BIND))
+        OCI_RAISE_EXCEPTION(ExceptionItemNotFound(stmt->con, stmt, name, OCI_IPC_BIND))
     }
 
     OCI_CALL_EXIT()

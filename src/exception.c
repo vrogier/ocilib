@@ -215,15 +215,11 @@ static const otext * OCILib_HandleNames[OCI_HDLE_COUNT] =
     OTEXT("OCI Object handles")
 };
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionGetError
+ * ExceptionGetError
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Error * OCI_ExceptionGetError
+OCI_Error * ExceptionGetError
 (
     void
 )
@@ -238,10 +234,10 @@ OCI_Error * OCI_ExceptionGetError
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionRaise
+ * ExceptionRaise
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionRaise
+void ExceptionRaise
 (
     OCI_Error *err
 )
@@ -260,10 +256,10 @@ void OCI_ExceptionRaise
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionOCI
+ * ExceptionOCI
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionOCI
+void ExceptionOCI
 (
     OCIError       *p_err,
     OCI_Connection *con,
@@ -271,7 +267,7 @@ void OCI_ExceptionOCI
     boolean         warning
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -291,19 +287,19 @@ void OCI_ExceptionOCI
         OCI_StringReleaseOracleString(dbstr);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionNotInitialized
+ * ExceptionNotInitialized
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionNotInitialized
+void ExceptionNotInitialized
 (
     void
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -313,21 +309,21 @@ void OCI_ExceptionNotInitialized
         ostrncat(err->str,  OCILib_ErrorMsg[OCI_ERR_NOT_INITIALIZED], osizeof(err->str) - (size_t) 1);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionLoadingShareLib
+ * ExceptionLoadingShareLib
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionLoadingSharedLib
+void ExceptionLoadingSharedLib
 (
     void
 )
 {
 #ifdef OCI_IMPORT_RUNTIME
 
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -339,21 +335,21 @@ void OCI_ExceptionLoadingSharedLib
                 OCI_DL_NAME);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 
 #endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionLoadingSymbols
+ * ExceptionLoadingSymbols
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionLoadingSymbols
+void ExceptionLoadingSymbols
 (
     void
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -363,19 +359,19 @@ void OCI_ExceptionLoadingSymbols
         ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_LOADING_SYMBOLS], osizeof(err->str) - (size_t) 1);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionNotMultithreaded
+ * ExceptionNotMultithreaded
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionNotMultithreaded
+void ExceptionNotMultithreaded
 (
     void
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -385,19 +381,19 @@ void OCI_ExceptionNotMultithreaded
         ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_MULTITHREADED], osizeof(err->str) - (size_t) 1);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionNullPointer
+ * ExceptionNullPointer
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionNullPointer
+void ExceptionNullPointer
 (
     int type
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -409,14 +405,14 @@ void OCI_ExceptionNullPointer
                  OCILib_TypeNames[type+1]);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionMemory
+ * ExceptionMemory
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionMemory
+void ExceptionMemory
 (
     int             type,
     size_t          nb_bytes,
@@ -424,7 +420,7 @@ void OCI_ExceptionMemory
     OCI_Statement  *stmt
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -440,20 +436,20 @@ void OCI_ExceptionMemory
                  nb_bytes);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionNotAvailable
+ * ExceptionNotAvailable
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionNotAvailable
+void ExceptionNotAvailable
 (
     OCI_Connection *con,
     int             feature
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -467,21 +463,21 @@ void OCI_ExceptionNotAvailable
                  OCILib_OraFeatures[feature-1]);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionDatatypeNotSupported
+ * ExceptionDatatypeNotSupported
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionDatatypeNotSupported
+void ExceptionDatatypeNotSupported
 (
     OCI_Connection *con,
     OCI_Statement  *stmt,
     int             code
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -496,21 +492,21 @@ void OCI_ExceptionDatatypeNotSupported
                  code);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionParsingError
+ * ExceptionParsingError
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionParsingToken
+void ExceptionParsingToken
 (
     OCI_Connection *con,
     OCI_Statement  *stmt,
     otext           token
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -525,21 +521,21 @@ void OCI_ExceptionParsingToken
                  token);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionMappingArgument
+ * ExceptionMappingArgument
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionMappingArgument
+void ExceptionMappingArgument
 (
     OCI_Connection *con,
     OCI_Statement  *stmt,
     int             arg
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -554,20 +550,20 @@ void OCI_ExceptionMappingArgument
                  arg);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionOutOfBounds
+ * ExceptionOutOfBounds
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionOutOfBounds
+void ExceptionOutOfBounds
 (
     OCI_Connection *con,
     int             value
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -581,20 +577,20 @@ void OCI_ExceptionOutOfBounds
                  value);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
 * OCI_ExceptionUnfreedData
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionUnfreedData
+void ExceptionUnfreedData
 (
     int type_elem,
     int nb_elem
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -607,19 +603,19 @@ void OCI_ExceptionUnfreedData
                  nb_elem, OCILib_HandleNames[type_elem-1]);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionRuntimeLoading
+ * ExceptionRuntimeLoading
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionMaxBind
+void ExceptionMaxBind
 (
     OCI_Statement *stmt
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -638,20 +634,20 @@ void OCI_ExceptionMaxBind
                  OCI_BIND_MAX);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionAttributeNotFound
+ * ExceptionAttributeNotFound
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionAttributeNotFound
+void ExceptionAttributeNotFound
 (
     OCI_Connection *con,
     const otext    *attr
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -665,21 +661,21 @@ void OCI_ExceptionAttributeNotFound
                  attr);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionMinimumValue
+ * ExceptionMinimumValue
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionMinimumValue
+void ExceptionMinimumValue
 (
     OCI_Connection *con,
     OCI_Statement  *stmt,
     int             min
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -691,19 +687,19 @@ void OCI_ExceptionMinimumValue
         osprintf(err->str, osizeof(err->str) - (size_t) 1, OCILib_ErrorMsg[OCI_ERR_MIN_VALUE], min);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionTypeNotCompatible
+ * ExceptionTypeNotCompatible
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionTypeNotCompatible
+void ExceptionTypeNotCompatible
 (
     OCI_Connection *con
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -714,20 +710,20 @@ void OCI_ExceptionTypeNotCompatible
         ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_NOT_COMPATIBLE], osizeof(err->str) - (size_t) 1);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionStatementState
+ * ExceptionStatementState
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionStatementState
+void ExceptionStatementState
 (
     OCI_Statement *stmt,
     int            state
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -757,19 +753,19 @@ void OCI_ExceptionStatementState
                  OCILib_StmtStates[index].name);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionStatementNotScrollable
+ * ExceptionStatementNotScrollable
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionStatementNotScrollable
+void ExceptionStatementNotScrollable
 (
     OCI_Statement *stmt
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -786,20 +782,20 @@ void OCI_ExceptionStatementNotScrollable
 
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionBindAlreadyUsed
+ * ExceptionBindAlreadyUsed
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionBindAlreadyUsed
+void ExceptionBindAlreadyUsed
 (
     OCI_Statement *stmt,
     const otext  * bind
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -818,14 +814,14 @@ void OCI_ExceptionBindAlreadyUsed
                  bind);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionBindArraySize
+ * ExceptionBindArraySize
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionBindArraySize
+void ExceptionBindArraySize
 (
     OCI_Statement *stmt,
     unsigned int   maxsize,
@@ -833,7 +829,7 @@ void OCI_ExceptionBindArraySize
     unsigned int   newsize
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -852,21 +848,21 @@ void OCI_ExceptionBindArraySize
                  maxsize, cursize, newsize);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionDirPathColNotFound
+ * ExceptionDirPathColNotFound
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionDirPathColNotFound
+void ExceptionDirPathColNotFound
 (
     OCI_DirPath  *dp,
     const otext * column,
     const otext  *table
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -886,20 +882,20 @@ void OCI_ExceptionDirPathColNotFound
                   table);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionDirPathState
+ * ExceptionDirPathState
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionDirPathState
+void ExceptionDirPathState
 (
     OCI_DirPath *dp,
     int          state
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -918,19 +914,19 @@ void OCI_ExceptionDirPathState
                  OCILib_DirPathStates[state-1]);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionOCIEnvironment
+ * ExceptionOCIEnvironment
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionOCIEnvironment
+void ExceptionOCIEnvironment
 (
     void
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -940,20 +936,20 @@ void OCI_ExceptionOCIEnvironment
         ostrncat(err->str,  OCILib_ErrorMsg[OCI_ERR_CREATE_OCI_ENVIRONMENT], osizeof(err->str) - (size_t) 1);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionRebindBadDatatype
+ * ExceptionRebindBadDatatype
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionRebindBadDatatype
+void ExceptionRebindBadDatatype
 (
     OCI_Statement *stmt,
     const otext  * bind
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -972,20 +968,20 @@ void OCI_ExceptionRebindBadDatatype
                  bind);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExceptionTypeInfoWrongType
+ * ExceptionTypeInfoWrongType
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionTypeInfoWrongType
+void ExceptionTypeInfoWrongType
 (
     OCI_Connection *con,
     const otext  * name
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -1000,14 +996,14 @@ void OCI_ExceptionTypeInfoWrongType
                  name);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ExceptionItemNotFound
+* ExceptionItemNotFound
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionItemNotFound
+void ExceptionItemNotFound
 (
     OCI_Connection *con,
     OCI_Statement  *stmt,
@@ -1015,7 +1011,7 @@ void OCI_ExceptionItemNotFound
     unsigned int    type
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -1030,14 +1026,14 @@ void OCI_ExceptionItemNotFound
                  name, type);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ExceptionArgInvalidValue
+* ExceptionArgInvalidValue
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionArgInvalidValue
+void ExceptionArgInvalidValue
 (
     OCI_Connection *con,
     OCI_Statement  *stmt,
@@ -1045,7 +1041,7 @@ void OCI_ExceptionArgInvalidValue
     unsigned int    value
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -1060,19 +1056,19 @@ void OCI_ExceptionArgInvalidValue
                  name, value);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ExceptionEnvFromXaString
+* ExceptionEnvFromXaString
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionEnvFromXaString
+void ExceptionEnvFromXaString
 (
     const otext *value
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -1087,19 +1083,19 @@ void OCI_ExceptionEnvFromXaString
             value);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ExceptionConnFromXaString
+* ExceptionConnFromXaString
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionConnFromXaString
+void ExceptionConnFromXaString
 (
     const otext *value
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -1114,20 +1110,20 @@ void OCI_ExceptionConnFromXaString
             value);
     }
 
-    OCI_ExceptionRaise(err);
+    ExceptionRaise(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ExceptionExternalBindingNotAllowed
+* ExceptionExternalBindingNotAllowed
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_ExceptionExternalBindingNotAllowed
+void ExceptionExternalBindingNotAllowed
 (
     OCI_Statement *stmt,
     const otext   *bind
 )
 {
-    OCI_Error *err = OCI_ExceptionGetError();
+    OCI_Error *err = ExceptionGetError();
 
     if (err)
     {
@@ -1146,6 +1142,5 @@ void OCI_ExceptionExternalBindingNotAllowed
             bind);
     }
 
-    OCI_ExceptionRaise(err);
-
+    ExceptionRaise(err);
 }

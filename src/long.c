@@ -260,7 +260,7 @@ unsigned int OCI_API OCI_LongWrite
     {
         OCI_STATUS = (OCI_SUCCESS_WITH_INFO == code);
 
-        OCI_ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt, OCI_STATUS);
+        ExceptionOCI(lg->stmt->con->err, lg->stmt->con, lg->stmt, OCI_STATUS);
     }
 
     if (OCI_CLONG == lg->type)

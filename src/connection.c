@@ -167,7 +167,7 @@ OCI_Connection * ConnectionAllocate
 
                 if (NULL == con->env)
                 {
-                    OCI_ExceptionEnvFromXaString(con->db);
+                    ExceptionEnvFromXaString(con->db);
                 }
             }
             else
@@ -363,7 +363,7 @@ void ConnectionLogonXA
     if (NULL == con->ses)
     {
         OCI_STATUS = FALSE;
-        OCI_ExceptionConnFromXaString(con->db);
+        ExceptionConnFromXaString(con->db);
     }
 
     if (OCI_STATUS && dbstr_user)

@@ -1546,12 +1546,12 @@ boolean OCI_API OCI_Initialize
         else
         {
             LIB_CLOSE(OCILib.lib_handle);
-            OCI_RAISE_EXCEPTION(OCI_ExceptionLoadingSymbols())
+            OCI_RAISE_EXCEPTION(ExceptionLoadingSymbols())
         }
     }
     else
     {
-        OCI_RAISE_EXCEPTION(OCI_ExceptionLoadingSharedLib())
+        OCI_RAISE_EXCEPTION(ExceptionLoadingSharedLib())
     }
 
     #if defined(OCI_BIG_UINT_ENABLED)
@@ -1580,7 +1580,7 @@ boolean OCI_API OCI_Initialize
 
     if (OCILib.version_runtime < OCI_9_0)
     {
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNotAvailable(NULL, OCI_FEATURE_WIDE_USERDATA))
+        OCI_RAISE_EXCEPTION(ExceptionNotAvailable(NULL, OCI_FEATURE_WIDE_USERDATA))
     }
 
 #endif
@@ -1613,7 +1613,7 @@ boolean OCI_API OCI_Initialize
     }
     else
     {
-        OCI_RAISE_EXCEPTION(OCI_ExceptionOCIEnvironment())
+        OCI_RAISE_EXCEPTION(ExceptionOCIEnvironment())
     }
 
     /* on success, we need to initialize OCIThread object support */
@@ -1810,7 +1810,7 @@ boolean OCI_API OCI_Cleanup
 
     if (OCILib.nb_hndlp > 0)
     {
-        OCI_ExceptionUnfreedData(OCI_HDLE_HANDLE, (int) OCILib.nb_hndlp);
+        ExceptionUnfreedData(OCI_HDLE_HANDLE, (int) OCILib.nb_hndlp);
         res = FALSE;
     }
 
@@ -1818,7 +1818,7 @@ boolean OCI_API OCI_Cleanup
 
     if (OCILib.nb_descp > 0)
     {
-        OCI_ExceptionUnfreedData(OCI_HDLE_DESCRIPTOR, (int) OCILib.nb_descp);
+        ExceptionUnfreedData(OCI_HDLE_DESCRIPTOR, (int) OCILib.nb_descp);
         res = FALSE;
     }
 
@@ -1826,7 +1826,7 @@ boolean OCI_API OCI_Cleanup
 
     if (OCILib.nb_objinst > 0)
     {
-        OCI_ExceptionUnfreedData(OCI_HDLE_OBJECT, (int) OCILib.nb_objinst);
+        ExceptionUnfreedData(OCI_HDLE_OBJECT, (int) OCILib.nb_objinst);
         res = FALSE;
     }
 

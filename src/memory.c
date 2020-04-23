@@ -69,7 +69,7 @@ void * OCI_MemAlloc
     }
     else
     {
-        OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
+        ExceptionMemory(ptr_type, size, NULL, NULL);
     }
 
     return ((unsigned char *) mem_block) + sizeof(*mem_block);
@@ -123,7 +123,7 @@ void * OCI_MemRealloc
         { 
             OCI_MemFree(ptr_mem);
 
-            OCI_ExceptionMemory(ptr_type, size, NULL, NULL);
+            ExceptionMemory(ptr_type, size, NULL, NULL);
 
             mem_block = NULL;
         }

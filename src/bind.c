@@ -152,7 +152,7 @@ void BindCheckAvailability
         {
             if (stmt->nb_ubinds >= OCI_BIND_MAX)
             {
-                OCI_ExceptionMaxBind(stmt);
+                ExceptionMaxBind(stmt);
                 OCI_STATUS = FALSE;
             }
 
@@ -171,7 +171,7 @@ void BindCheckAvailability
         {
             if (stmt->nb_rbinds >= OCI_BIND_MAX)
             {
-                OCI_ExceptionMaxBind(stmt);
+                ExceptionMaxBind(stmt);
                 OCI_STATUS = FALSE;
             }
 
@@ -362,7 +362,7 @@ OCI_Bind* BindCreate
 
         if (index <= 0 || index > OCI_BIND_MAX)
         {
-            OCI_ExceptionOutOfBounds(stmt->con, index);
+            ExceptionOutOfBounds(stmt->con, index);
             OCI_STATUS = FALSE;
         }
     }
@@ -379,7 +379,7 @@ OCI_Bind* BindCreate
             {
                 if (!stmt->bind_reuse)
                 {
-                    OCI_ExceptionBindAlreadyUsed(stmt, name);
+                    ExceptionBindAlreadyUsed(stmt, name);
                     OCI_STATUS = FALSE;
                 }
                 else
@@ -388,7 +388,7 @@ OCI_Bind* BindCreate
 
                     if (bnd->type != type)
                     {
-                        OCI_ExceptionRebindBadDatatype(stmt, name);
+                        ExceptionRebindBadDatatype(stmt, name);
                         OCI_STATUS = FALSE;
                     }
                     else

@@ -443,12 +443,12 @@ boolean OCI_FetchPieces
 
         if (OCI_ERROR == rs->fetch_status)
         {
-            OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, FALSE);
+            ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, FALSE);
             OCI_STATUS = FALSE;
         }
         else if (OCI_SUCCESS_WITH_INFO == rs->fetch_status)
         {
-            OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, TRUE);
+            ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, TRUE);
             OCI_STATUS = TRUE;
         }
         else
@@ -579,12 +579,12 @@ boolean OCI_FetchData
     if (OCI_ERROR == rs->fetch_status)
     {
         /* failure */
-        OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, FALSE);
+        ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, FALSE);
         OCI_STATUS = FALSE;
     }
     else if (OCI_SUCCESS_WITH_INFO == rs->fetch_status)
     {
-        OCI_ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, TRUE);
+        ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, TRUE);
         OCI_STATUS = TRUE;
     }
     else if (OCI_NEED_DATA == rs->fetch_status)

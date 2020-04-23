@@ -754,7 +754,7 @@ boolean DateFromCTime
 
     if (!ptm && (t == (time_t) 0))
     {
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNullPointer(OCI_IPC_TM))
+        OCI_RAISE_EXCEPTION(ExceptionNullPointer(OCI_IPC_TM))
     }
 
     if (!ptm)
@@ -774,7 +774,7 @@ boolean DateFromCTime
     }
     else
     {
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNullPointer(OCI_IPC_TM))
+        OCI_RAISE_EXCEPTION(ExceptionNullPointer(OCI_IPC_TM))
     }
 
     OCI_RETVAL = TRUE;

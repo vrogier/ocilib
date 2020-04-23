@@ -328,7 +328,7 @@ boolean ElemGetNumberInternal
     }
     else
     {
-        OCI_ExceptionTypeNotCompatible(elem->con);
+        ExceptionTypeNotCompatible(elem->con);
         res = FALSE;
     }
 

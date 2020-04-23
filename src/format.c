@@ -373,7 +373,7 @@ int OCI_ParseSqlFmt
             }
             default:
             {
-                OCI_ExceptionParsingToken(stmt->con, stmt, *pf);
+                ExceptionParsingToken(stmt->con, stmt, *pf);
 
                 return 0;
             }

@@ -175,7 +175,7 @@ OCI_Agent * DequeueListen
 
             if (OCI_ERR_AQ_LISTEN_TIMEOUT != code)
             {
-                OCI_RAISE_EXCEPTION(OCI_ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE))
+                OCI_RAISE_EXCEPTION(ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE))
             }
         }
 
@@ -243,7 +243,7 @@ OCI_Msg * DequeueGet
 
             if (OCI_ERR_AQ_DEQUEUE_TIMEOUT != code)
             {
-                OCI_RAISE_EXCEPTION(OCI_ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE))
+                OCI_RAISE_EXCEPTION(ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE))
             }
         }
     }

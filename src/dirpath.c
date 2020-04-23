@@ -130,7 +130,7 @@ unsigned int DirPathArrayToStream
 
             if (OCI_DCM_DEFAULT == dp->cvt_mode)
             {
-                OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
+                ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
             }
             break;
         }
@@ -214,7 +214,7 @@ unsigned int DirPathLoadStream(OCI_DirPath *dp)
         {
             res = OCI_DPR_ERROR;
 
-            OCI_ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
+            ExceptionOCI(dp->con->err, dp->con, NULL, FALSE);
             break;
         }
         case OCI_NO_DATA:
@@ -444,7 +444,7 @@ boolean DirPathSetColumn
 
     if (i >= dp->typinf->nb_cols)
     {
-        OCI_RAISE_EXCEPTION(OCI_ExceptionDirPathColNotFound(dp, name, dp->typinf->name))
+        OCI_RAISE_EXCEPTION(ExceptionDirPathColNotFound(dp, name, dp->typinf->name))
     }
 
     /* set column information */
@@ -534,7 +534,7 @@ boolean DirPathSetColumn
             }
             default:
             {
-                OCI_RAISE_EXCEPTION(OCI_ExceptionDatatypeNotSupported(dp->con, NULL, col->libcode))
+                OCI_RAISE_EXCEPTION(ExceptionDatatypeNotSupported(dp->con, NULL, col->libcode))
             }
         }
     }

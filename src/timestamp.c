@@ -1074,7 +1074,7 @@ boolean OCI_API OCI_TimestampFromCTime
 
     if (!ptm)
     {
-        OCI_RAISE_EXCEPTION(OCI_ExceptionNullPointer(OCI_IPC_TM))
+        OCI_RAISE_EXCEPTION(ExceptionNullPointer(OCI_IPC_TM))
     }
 
     OCI_RETVAL = OCI_STATUS = OCI_TimestampConstruct(tmsp, ptm->tm_year + 1900,  ptm->tm_mon  + 1,
