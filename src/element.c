@@ -698,7 +698,7 @@ OCI_Lob * ElemGetLob
     (
         OCI_CDT_LOB, 
         OCI_Lob*,
-        OCI_LobInit(elem->con, (OCI_Lob *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype)
+        LobInit(elem->con, (OCI_Lob *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype)
     )
 }
 
@@ -1123,8 +1123,8 @@ boolean ElemSetLob
     (
         OCI_CDT_LOB,
         OCI_Lob*,
-        OCI_LobInit(elem->con, (OCI_Lob *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype),
-        OCI_LobAssign((OCI_Lob *) elem->obj, value)
+        LobInit(elem->con, (OCI_Lob *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype),
+        LobAssign((OCI_Lob *) elem->obj, value)
     )
 }
 

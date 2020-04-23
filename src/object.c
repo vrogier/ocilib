@@ -1427,7 +1427,7 @@ OCI_Lob * OCI_API OCI_ObjectGetLob
         OCI_CDT_LOB,
         OCI_Lob*,
         OCILobLocator*,
-        OCI_LobInit(obj->con, (OCI_Lob *) obj->objs[index], *value, obj->typinf->cols[index].subtype)
+        LobInit(obj->con, (OCI_Lob *) obj->objs[index], *value, obj->typinf->cols[index].subtype)
     )
 }
 

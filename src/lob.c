@@ -18,25 +18,22 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "lob.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "array.h"
+#include "macro.h"
+#include "memory.h"
+#include "string.h"
 
 static const unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
 static const unsigned int OpenModeValues[] = { OCI_LOB_READONLY, OCI_LOB_READWRITE };
 static const unsigned int LobTypeValues[]  = { OCI_CLOB, OCI_NCLOB, OCI_BLOB };
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobInit
+ * LobInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Lob * OCI_LobInit
+OCI_Lob * LobInit
 (
     OCI_Connection *con,
     OCI_Lob        *lob,
@@ -107,15 +104,11 @@ OCI_Lob * OCI_LobInit
     return lob;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobCreate
+ * LobCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Lob * OCI_API OCI_LobCreate
+OCI_Lob * LobCreate
 (
     OCI_Connection *con,
     unsigned int    type
@@ -126,17 +119,17 @@ OCI_Lob * OCI_API OCI_LobCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, LobTypeValues, OTEXT("Lob type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_LobInit(con, NULL, NULL, type);
+    OCI_RETVAL = LobInit(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobFree
+ * LobFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobFree
+boolean LobFree
 (
     OCI_Lob *lob
 )
@@ -167,10 +160,10 @@ boolean OCI_API OCI_LobFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobArrayCreate
+ * LobArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Lob ** OCI_API OCI_LobArrayCreate
+OCI_Lob ** LobArrayCreate
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -196,10 +189,10 @@ OCI_Lob ** OCI_API OCI_LobArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobArrayFree
+ * LobArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobArrayFree
+boolean LobArrayFree
 (
     OCI_Lob **lobs
 )
@@ -213,10 +206,10 @@ boolean OCI_API OCI_LobArrayFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobGetType
+ * LobGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_LobGetType
+unsigned int LobGetType
 (
     OCI_Lob *lob
 )
@@ -225,10 +218,10 @@ unsigned int OCI_API OCI_LobGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobSeek
+ * LobSeek
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobSeek
+boolean LobSeek
 (
     OCI_Lob     *lob,
     big_uint     offset,
@@ -279,10 +272,10 @@ boolean OCI_API OCI_LobSeek
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobGetOffset
+ * LobGetOffset
  * --------------------------------------------------------------------------------------------- */
 
-big_uint OCI_API OCI_LobGetOffset
+big_uint LobGetOffset
 (
     OCI_Lob *lob
 )
@@ -298,10 +291,10 @@ big_uint OCI_API OCI_LobGetOffset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobRead2
+ * LobRead2
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobRead2
+boolean LobRead2
 (
     OCI_Lob      *lob,
     void         *buffer,
@@ -425,10 +418,10 @@ boolean OCI_API OCI_LobRead2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobRead
+ * LobRead
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_LobRead
+unsigned int LobRead
 (
     OCI_Lob     *lob,
     void        *buffer,
@@ -459,10 +452,10 @@ unsigned int OCI_API OCI_LobRead
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobWrite
+ * LobWrite
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobWrite2
+boolean LobWrite2
 (
     OCI_Lob      *lob,
     void         *buffer,
@@ -602,10 +595,10 @@ boolean OCI_API OCI_LobWrite2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobWrite
+ * LobWrite
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_LobWrite
+unsigned int LobWrite
 (
     OCI_Lob     *lob,
     void        *buffer,
@@ -636,10 +629,10 @@ unsigned int OCI_API OCI_LobWrite
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobTruncate
+ * LobTruncate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobTruncate
+boolean LobTruncate
 (
     OCI_Lob *lob,
     big_uint size
@@ -678,10 +671,10 @@ boolean OCI_API OCI_LobTruncate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobErase
+ * LobErase
  * --------------------------------------------------------------------------------------------- */
 
-big_uint OCI_API OCI_LobErase
+big_uint LobErase
 (
     OCI_Lob *lob,
     big_uint offset,
@@ -724,10 +717,10 @@ big_uint OCI_API OCI_LobErase
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobGetLength
+ * LobGetLength
  * --------------------------------------------------------------------------------------------- */
 
-big_uint OCI_API OCI_LobGetLength
+big_uint LobGetLength
 (
     OCI_Lob *lob
 )
@@ -762,10 +755,10 @@ big_uint OCI_API OCI_LobGetLength
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobGetChunkSize
+ * LobGetChunkSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_LobGetChunkSize
+unsigned int LobGetChunkSize
 (
     OCI_Lob *lob
 )
@@ -784,10 +777,10 @@ unsigned int OCI_API OCI_LobGetChunkSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobCopy
+ * LobCopy
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobCopy
+boolean LobCopy
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src,
@@ -833,10 +826,10 @@ boolean OCI_API OCI_LobCopy
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobCopyFromFile
+ * LobCopyFromFile
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobCopyFromFile
+boolean LobCopyFromFile
 (
     OCI_Lob  *lob,
     OCI_File *file,
@@ -884,10 +877,10 @@ boolean OCI_API OCI_LobCopyFromFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobAppend2
+ * LobAppend2
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobAppend2
+boolean LobAppend2
 (
     OCI_Lob      *lob,
     void         *buffer,
@@ -1038,10 +1031,10 @@ boolean OCI_API OCI_LobAppend2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobAppend
+ * LobAppend
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_LobAppend
+unsigned int LobAppend
 (
     OCI_Lob     *lob,
     void        *buffer,
@@ -1072,10 +1065,10 @@ unsigned int OCI_API OCI_LobAppend
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobAppendLob
+ * LobAppendLob
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobAppendLob
+boolean LobAppendLob
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src
@@ -1099,10 +1092,10 @@ boolean OCI_API OCI_LobAppendLob
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobIsTemporary
+ * LobIsTemporary
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobIsTemporary
+boolean LobIsTemporary
 (
     OCI_Lob *lob
 )
@@ -1117,10 +1110,10 @@ boolean OCI_API OCI_LobIsTemporary
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobOpen
+ * LobOpen
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobOpen
+boolean LobOpen
 (
     OCI_Lob     *lob,
     unsigned int mode
@@ -1139,10 +1132,10 @@ boolean OCI_API OCI_LobOpen
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobClose
+ * LobClose
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobClose
+boolean LobClose
 (
     OCI_Lob *lob
 )
@@ -1159,10 +1152,10 @@ boolean OCI_API OCI_LobClose
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobIsEqual
+ * LobIsEqual
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobIsEqual
+boolean LobIsEqual
 (
     OCI_Lob *lob,
     OCI_Lob *lob2
@@ -1179,10 +1172,10 @@ boolean OCI_API OCI_LobIsEqual
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobAssign
+ * LobAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobAssign
+boolean LobAssign
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src
@@ -1208,10 +1201,10 @@ boolean OCI_API OCI_LobAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobGetMaxSize
+ * LobGetMaxSize
  * --------------------------------------------------------------------------------------------- */
 
-big_uint OCI_API OCI_LobGetMaxSize
+big_uint LobGetMaxSize
 (
     OCI_Lob *lob
 )
@@ -1237,10 +1230,10 @@ big_uint OCI_API OCI_LobGetMaxSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobFlush
+ * LobFlush
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobFlush
+boolean LobFlush
 (
     OCI_Lob *lob
 )
@@ -1257,10 +1250,10 @@ boolean OCI_API OCI_LobFlush
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobEnableBuffering
+ * LobEnableBuffering
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobEnableBuffering
+boolean LobEnableBuffering
 (
     OCI_Lob *lob,
     boolean  value
@@ -1285,10 +1278,10 @@ boolean OCI_API OCI_LobEnableBuffering
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_LobGetConnection
+* LobGetConnection
 * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_API OCI_LobGetConnection
+OCI_Connection * LobGetConnection
 (
     OCI_Lob *lob
 )
@@ -1297,10 +1290,10 @@ OCI_Connection * OCI_API OCI_LobGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_LobIsRemote
+* LobIsRemote
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_LobIsRemote
+boolean LobIsRemote
 (
     OCI_Lob *lob
 )

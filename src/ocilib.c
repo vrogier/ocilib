@@ -3036,3 +3036,288 @@ boolean OCI_API OCI_SetUserPassword
 {
     CALL_IMPL(SetUserPassword, db, user, pwd, new_pwd);
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * lob
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Lob* OCI_API OCI_LobCreate
+(
+    OCI_Connection* con,
+    unsigned int    type
+)
+{
+    CALL_IMPL(LobCreate, con, type);
+}
+
+boolean OCI_API OCI_LobFree
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(LobFree, lob);
+}
+
+OCI_Lob** OCI_API OCI_LobArrayCreate
+(
+    OCI_Connection* con,
+    unsigned int    type,
+    unsigned int    nbelem
+)
+{
+    CALL_IMPL(LobArrayCreate, con, type, nbelem);
+}
+
+boolean OCI_API OCI_LobArrayFree
+(
+    OCI_Lob** lobs
+)
+{
+    CALL_IMPL(LobArrayFree, lobs);
+}
+
+unsigned int OCI_API OCI_LobGetType
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(LobGetType, lob);
+}
+
+boolean OCI_API OCI_LobSeek
+(
+    OCI_Lob* lob,
+    big_uint     offset,
+    unsigned int mode
+)
+{
+    CALL_IMPL(LobSeek, lob, offset, mode);
+}
+
+big_uint OCI_API OCI_LobGetOffset
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(LobGetOffset, lob);
+}
+
+unsigned int OCI_API OCI_LobRead
+(
+    OCI_Lob* lob,
+    void* buffer,
+    unsigned int len
+)
+{
+    CALL_IMPL(LobRead, lob, buffer, len);
+}
+
+boolean OCI_API OCI_LobRead2
+(
+    OCI_Lob* lob,
+    void* buffer,
+    unsigned int* char_count,
+    unsigned int* byte_count
+)
+{
+    CALL_IMPL(LobRead2, lob, buffer, char_count, byte_count);
+}
+
+unsigned int OCI_API OCI_LobWrite
+(
+    OCI_Lob* lob,
+    void* buffer,
+    unsigned int len
+)
+{
+    CALL_IMPL(LobWrite, lob, buffer, len);
+}
+
+boolean OCI_API OCI_LobWrite2
+(
+    OCI_Lob* lob,
+    void* buffer,
+    unsigned int* char_count,
+    unsigned int* byte_count
+)
+{
+    CALL_IMPL(LobWrite2, lob, buffer, char_count, byte_count);
+}
+
+boolean OCI_API OCI_LobTruncate
+(
+    OCI_Lob* lob,
+    big_uint size
+)
+{
+    CALL_IMPL(LobTruncate, lob, size);
+}
+
+big_uint OCI_API OCI_LobGetLength
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(LobGetLength, lob);
+}
+
+unsigned int OCI_API OCI_LobGetChunkSize
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(LobGetChunkSize, lob);
+}
+
+big_uint OCI_API OCI_LobErase
+(
+    OCI_Lob* lob,
+    big_uint offset,
+    big_uint len
+)
+{
+    CALL_IMPL(LobErase, lob, offset, len);
+}
+
+unsigned int OCI_API OCI_LobAppend
+(
+    OCI_Lob* lob,
+    void* buffer,
+    unsigned int len
+)
+{
+    CALL_IMPL(LobAppend, lob, buffer, len);
+}
+
+boolean OCI_API OCI_LobAppend2
+(
+    OCI_Lob* lob,
+    void* buffer,
+    unsigned int* char_count,
+    unsigned int* byte_count
+)
+{
+    CALL_IMPL(LobAppend2, lob, buffer, char_count, byte_count);
+}
+
+boolean OCI_API OCI_LobAppendLob
+(
+    OCI_Lob* lob,
+    OCI_Lob* lob_src
+)
+{
+    CALL_IMPL(LobAppendLob, lob, lob_src);
+}
+
+boolean OCI_API OCI_LobIsTemporary
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(LobIsTemporary, lob);
+}
+
+boolean OCI_API OCI_LobCopy
+(
+    OCI_Lob* lob,
+    OCI_Lob* lob_src,
+    big_uint offset_dst,
+    big_uint offset_src,
+    big_uint count
+)
+{
+    CALL_IMPL(LobCopy, lob, lob_src, offset_dst, offset_src, count);
+}
+
+boolean OCI_API OCI_LobCopyFromFile
+(
+    OCI_Lob* lob,
+    OCI_File* file,
+    big_uint  offset_dst,
+    big_uint  offset_src,
+    big_uint  count
+)
+{
+    CALL_IMPL(LobCopyFromFile, lob, file, offset_dst, offset_src, count);
+}
+
+boolean OCI_API OCI_LobOpen
+(
+    OCI_Lob* lob,
+    unsigned int mode
+)
+{
+    CALL_IMPL(LobOpen, lob, mode);
+}
+
+boolean OCI_API OCI_LobClose
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(LobClose, lob);
+}
+
+boolean OCI_API OCI_LobIsEqual
+(
+    OCI_Lob* lob,
+    OCI_Lob* lob2
+)
+{
+    CALL_IMPL(LobIsEqual, lob, lob2);
+}
+
+boolean OCI_API OCI_LobAssign
+(
+    OCI_Lob* lob,
+    OCI_Lob* lob_src
+)
+{
+    CALL_IMPL(LobAssign, lob, lob_src);
+}
+
+big_uint OCI_API OCI_LobGetMaxSize
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(LobGetMaxSize, lob);
+}
+
+boolean OCI_API OCI_LobFlush
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(LobFlush, lob);
+}
+
+boolean OCI_API OCI_LobEnableBuffering
+(
+    OCI_Lob* lob,
+    boolean  value
+)
+{
+    CALL_IMPL(LobEnableBuffering, lob, value);
+}
+
+OCI_Connection* OCI_API OCI_LobGetConnection
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(LobGetConnection, lob);
+}
+
+boolean OCI_API OCI_LobIsRemote
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(LobIsRemote, lob);
+}
+
+
+ /* --------------------------------------------------------------------------------------------- *
+  * 
+  * --------------------------------------------------------------------------------------------- */

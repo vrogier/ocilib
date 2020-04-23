@@ -2302,9 +2302,9 @@ OCI_Lob * OCI_API OCI_GetLob
     (
        rs, index, OCI_Lob *, NULL, OCI_CDT_LOB,
 
-       OCI_LobInit(rs->stmt->con,(OCI_Lob *) def->obj,
-                   (OCILobLocator *) DefineGetData(def),
-                   def->col.subtype)
+       LobInit(rs->stmt->con,(OCI_Lob *) def->obj,
+               (OCILobLocator *) DefineGetData(def),
+               def->col.subtype)
     )
 }
 

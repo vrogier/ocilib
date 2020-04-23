@@ -113,7 +113,7 @@ boolean ArrayInit
             }
             case OCI_CDT_LOB:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Lob, OCI_LobInit(arr->con, (OCI_Lob *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
+                OCI_ARRAY_INIT_HANDLE(OCI_Lob, LobInit(arr->con, (OCI_Lob *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_FILE:
