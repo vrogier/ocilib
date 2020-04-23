@@ -18,25 +18,20 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "queue.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "macro.h"
+#include "statement.h"
 
 static unsigned int DeliveryModeValues[] = { OCI_APM_BUFFERED, OCI_APM_PERSISTENT, OCI_APM_ALL };
 static unsigned int GroupingModeValues[] = { OCI_AGM_NONE, OCI_AGM_TRANSACTIONNAL };
 static unsigned int QueueTypeValues[   ] = { OCI_AQT_NORMAL, OCI_AQT_EXCEPTION, OCI_AQT_NON_PERSISTENT };
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_QueueCreate
+    QueueCreate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_QueueCreate
+boolean QueueCreate
 (
     OCI_Connection *con,
     const otext    *queue_name,
@@ -105,10 +100,10 @@ boolean OCI_API OCI_QueueCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_QueueAlter
+ * QueueAlter
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_QueueAlter
+boolean QueueAlter
 (
     OCI_Connection *con,
     const otext    *queue_name,
@@ -161,10 +156,10 @@ boolean OCI_API OCI_QueueAlter
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_QueueDestroy
+ * QueueDrop
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_QueueDrop
+boolean QueueDrop
 (
     OCI_Connection *con,
     const otext    *queue_name
@@ -205,10 +200,10 @@ boolean OCI_API OCI_QueueDrop
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_QueueStart
+ * QueueStart
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_QueueStart
+boolean QueueStart
 (
     OCI_Connection *con,
     const otext    *queue_name,
@@ -264,10 +259,10 @@ boolean OCI_API OCI_QueueStart
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_QueueStop
+ * QueueStop
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_QueueStop
+boolean QueueStop
 (
     OCI_Connection *con,
     const otext    *queue_name,
@@ -330,10 +325,10 @@ boolean OCI_API OCI_QueueStop
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_QueueTableCreate
+ * QueueTableCreate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_QueueTableCreate
+boolean QueueTableCreate
 (
     OCI_Connection *con,
     const otext    *queue_table,
@@ -409,10 +404,10 @@ boolean OCI_API OCI_QueueTableCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_QueueTableAlter
+ * QueueTableAlter
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_QueueTableAlter
+boolean QueueTableAlter
 (
     OCI_Connection *con,
     const otext    *queue_table,
@@ -462,10 +457,10 @@ boolean OCI_API OCI_QueueTableAlter
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_QueueTableDrop
+ * QueueTableDrop
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_QueueTableDrop
+boolean QueueTableDrop
 (
     OCI_Connection *con,
     const otext    *queue_table,
@@ -514,10 +509,10 @@ boolean OCI_API OCI_QueueTableDrop
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_QueueTablePurge
+ * QueueTablePurge
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_QueueTablePurge
+boolean QueueTablePurge
 (
     OCI_Connection *con,
     const otext    *queue_table,
@@ -583,10 +578,10 @@ boolean OCI_API OCI_QueueTablePurge
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_QueueTableMigrate
+ * QueueTableMigrate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_QueueTableMigrate
+boolean QueueTableMigrate
 (
     OCI_Connection *con,
     const otext    *queue_table,

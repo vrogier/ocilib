@@ -4432,9 +4432,134 @@ boolean OCI_API OCI_PoolSetStatementCacheSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  queue
  * --------------------------------------------------------------------------------------------- */
 
+boolean OCI_API OCI_QueueCreate
+(
+    OCI_Connection* con,
+    const otext* queue_name,
+    const otext* queue_table,
+    unsigned int    queue_type,
+    unsigned int    max_retries,
+    unsigned int    retry_delay,
+    unsigned int    retention_time,
+    boolean         dependency_tracking,
+    const otext* comment
+)
+{
+    CALL_IMPL(QueueCreate, con, queue_name, queue_table, queue_type, max_retries, 
+              retry_delay, retention_time, dependency_tracking, comment);
+}
+
+boolean OCI_API OCI_QueueAlter
+(
+    OCI_Connection* con,
+    const otext* queue_name,
+    unsigned int    max_retries,
+    unsigned int    retry_delay,
+    unsigned int    retention_time,
+    const otext* comment
+)
+{
+    CALL_IMPL(QueueAlter, con, queue_name, max_retries, retry_delay, retention_time, comment);
+}
+
+boolean OCI_API OCI_QueueDrop
+(
+    OCI_Connection* con,
+    const otext* queue_name
+)
+{
+    CALL_IMPL(QueueDrop, con, queue_name) ;
+}
+
+boolean OCI_API OCI_QueueStart
+(
+    OCI_Connection* con,
+    const otext* queue_name,
+    boolean         enqueue,
+    boolean         dequeue
+)
+{
+    CALL_IMPL(QueueStart, con, queue_name, enqueue, dequeue);
+}
+
+boolean OCI_API OCI_QueueStop
+(
+    OCI_Connection* con,
+    const otext* queue_name,
+    boolean         enqueue,
+    boolean         dequeue,
+    boolean         wait
+)
+{
+    CALL_IMPL(QueueStop, con, queue_name, enqueue, dequeue, wait);
+}
+
+boolean OCI_API OCI_QueueTableCreate
+(
+    OCI_Connection* con,
+    const otext* queue_table,
+    const otext* queue_payload_type,
+    const otext* storage_clause,
+    const otext* sort_list,
+    boolean         multiple_consumers,
+    unsigned int    message_grouping,
+    const otext* comment,
+    unsigned int    primary_instance,
+    unsigned int    secondary_instance,
+    const otext* compatible
+)
+{
+    CALL_IMPL(QueueTableCreate, con, queue_table, queue_payload_type, storage_clause,
+              sort_list, multiple_consumers, message_grouping, comment, primary_instance,
+              secondary_instance, compatible);
+}
+
+boolean OCI_API OCI_QueueTableAlter
+(
+    OCI_Connection* con,
+    const otext* queue_table,
+    const otext* comment,
+    unsigned int    primary_instance,
+    unsigned int    secondary_instance
+)
+{
+    CALL_IMPL(QueueTableAlter, con, queue_table, queue_table, primary_instance, secondary_instance);
+}
+
+boolean OCI_API OCI_QueueTableDrop
+(
+    OCI_Connection* con,
+    const otext* queue_table,
+    boolean         force
+)
+{
+    CALL_IMPL(QueueTableDrop, con, queue_table, force);
+}
+
+boolean OCI_API OCI_QueueTablePurge
+(
+    OCI_Connection* con,
+    const otext* queue_table,
+    const otext* purge_condition,
+    boolean         block,
+    unsigned int    delivery_mode
+)
+{
+    CALL_IMPL(QueueTablePurge, con, queue_table, purge_condition, block, delivery_mode);
+}
+
+boolean OCI_API OCI_QueueTableMigrate
+(
+    OCI_Connection* con,
+    const otext* queue_table,
+    const otext* compatible
+)
+{
+    CALL_IMPL(QueueTableMigrate, con, queue_table, compatible);
+}
 
 /* --------------------------------------------------------------------------------------------- *
  *  long
