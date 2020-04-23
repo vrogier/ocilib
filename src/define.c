@@ -18,17 +18,17 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "define.h"
 
 /* ********************************************************************************************* *
  *                             PRIVATE FUNCTIONS
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDefine
+ * DefineGet
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Define * OCI_GetDefine
+OCI_Define * DefineGet
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -45,10 +45,10 @@ OCI_Define * OCI_GetDefine
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDefineIndex
+ * DefineGetIndex
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_GetDefineIndex
+int DefineGetIndex
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -100,10 +100,10 @@ int OCI_GetDefineIndex
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DefineGetData
+ * DefineGetData
  * --------------------------------------------------------------------------------------------- */
 
-void * OCI_DefineGetData
+void * DefineGetData
 (
     OCI_Define *def
 )
@@ -138,10 +138,10 @@ void * OCI_DefineGetData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DefineIsDataNotNull
+ * DefineIsDataNotNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_DefineIsDataNotNull
+boolean DefineIsDataNotNull
 (
     OCI_Define *def
 )
@@ -169,10 +169,10 @@ boolean OCI_DefineIsDataNotNull
 
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DefineGetNumber
+ * DefineGetNumber
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_DefineGetNumber
+boolean DefineGetNumber
 (
     OCI_Resultset *rs,
     unsigned int   index,
@@ -183,11 +183,11 @@ boolean OCI_DefineGetNumber
     OCI_Define *def = NULL;
     boolean     res = FALSE;
 
-    def = OCI_GetDefine(rs, index);
+    def = DefineGet(rs, index);
 
-    if (OCI_DefineIsDataNotNull(def))
+    if (DefineIsDataNotNull(def))
     {
-        void *data = OCI_DefineGetData(def);
+        void *data = DefineGetData(def);
 
         switch (def->col.datatype)
         {
@@ -208,10 +208,10 @@ boolean OCI_DefineGetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DefineAlloc
+ * DefineAlloc
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_DefineAlloc
+boolean DefineAlloc
 (
     OCI_Define *def
 )
@@ -294,10 +294,10 @@ boolean OCI_DefineAlloc
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DefineDef
+ * DefineDef
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_DefineDef
+boolean DefineDef
 (
     OCI_Define *def,
     ub4         position

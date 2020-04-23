@@ -31,7 +31,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
  * ********************************************************************************************* */
 
 #define OCI_MATCHING_TYPE(def, type) \
-    ((def) && OCI_DefineIsDataNotNull(def) && ((type) == (def)->col.datatype))
+    ((def) && DefineIsDataNotNull(def) && ((type) == (def)->col.datatype))
 
 
 #define OCI_GET_BY_NAME(rs, name, func, type, res)                                              \
@@ -41,7 +41,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)                                                    \
     OCI_CALL_CONTEXT_SET_FROM_STMT((rs)->stmt)                                                  \
     OCI_STATUS = FALSE;                                                                         \
-    index = OCI_GetDefineIndex(rs, name);                                                       \
+    index = DefineGetIndex(rs, name);                                                           \
     if (index > 0)                                                                              \
     {                                                                                           \
         if (!ctx->call_err) ctx->call_err = OCI_ErrorGet(FALSE, FALSE);                         \
@@ -56,7 +56,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                   \
     OCI_CALL_CHECK_BOUND((rs)->stmt->con, index, 1, (rs)->nb_defs)                              \
     OCI_CALL_CONTEXT_SET_FROM_STMT((rs)->stmt)                                                  \
-    OCI_STATUS = OCI_DefineGetNumber(rs, index, &OCI_RETVAL, num_type);                         \
+    OCI_STATUS = DefineGetNumber(rs, index, &OCI_RETVAL, num_type);                             \
     OCI_CALL_EXIT()
 
 
@@ -67,7 +67,7 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     OCI_CALL_CHECK_BOUND((rs)->stmt->con, index, 1, (rs)->nb_defs)                              \
     OCI_CALL_CONTEXT_SET_FROM_STMT((rs)->stmt)                                                  \
     OCI_STATUS = FALSE;                                                                         \
-    def = OCI_GetDefine(rs, index);                                                             \
+    def = DefineGet(rs, index);                                                                 \
     if (OCI_MATCHING_TYPE(def, lib_type))                                                       \
     {                                                                                           \
         def->obj = OCI_RETVAL = func;                                                           \
@@ -180,7 +180,7 @@ OCI_Resultset * OCI_ResultsetCreate
                     /* allocation of internal buffers for resultset content and
                        register OCILIB result buffers to OCI */
 
-                    OCI_STATUS = OCI_DefineAlloc(def) && OCI_DefineDef(def, i + 1);
+                    OCI_STATUS = DefineAlloc(def) && DefineDef(def, i + 1);
                 }
             }
         }
@@ -249,7 +249,7 @@ OCI_Resultset * OCI_ResultsetCreate
 
                 /* map column and allocation of internal buffers for resultset content **/
 
-                OCI_STATUS = ColumnMap(&def->col, rs->stmt) && OCI_DefineAlloc(def);
+                OCI_STATUS = ColumnMap(&def->col, rs->stmt) && DefineAlloc(def);
             }
         }
     }
@@ -1273,7 +1273,7 @@ OCI_Column * OCI_API OCI_GetColumn2
 
     OCI_STATUS = FALSE;
 
-    index = OCI_GetDefineIndex(rs, name);
+    index = DefineGetIndex(rs, name);
 
     if (index >= 0)
     {
@@ -1303,7 +1303,7 @@ unsigned int OCI_API OCI_GetColumnIndex
 
     OCI_STATUS = FALSE;
 
-    index = OCI_GetDefineIndex(rs, name);
+    index = DefineGetIndex(rs, name);
 
     if (index >= 0)
     {
@@ -1358,7 +1358,7 @@ boolean OCI_API OCI_SetStructNumericType2
 
     OCI_STATUS = FALSE;
 
-    index = OCI_GetDefineIndex(rs, name);
+    index = DefineGetIndex(rs, name);
 
     if (index >= 0)
     {
@@ -1402,7 +1402,7 @@ boolean OCI_API OCI_GetStruct
         {
             OCI_Define *def = &rs->defs[i - 1];
 
-            const boolean is_not_null = OCI_DefineIsDataNotNull(def);
+            const boolean is_not_null = DefineIsDataNotNull(def);
 
             if (i == 1)
             {
@@ -1433,7 +1433,7 @@ boolean OCI_API OCI_GetStruct
                             type = def->col.subtype;
                         }
 
-                        OCI_DefineGetNumber(rs, i, ptr, type);
+                        DefineGetNumber(rs, i, ptr, type);
 
                         break;
                     }
@@ -1444,7 +1444,7 @@ boolean OCI_API OCI_GetStruct
                     }
                     case OCI_CDT_RAW:
                     {
-                        *((void **) ptr) = OCI_DefineGetData(def);
+                        *((void **) ptr) = DefineGetData(def);
                         break;
                     }
                     case OCI_CDT_LONG:
@@ -1531,7 +1531,7 @@ OCI_Number * OCI_API OCI_GetNumber
     (
         rs, index, OCI_Number *, NULL, OCI_CDT_NUMERIC,
 
-        OCI_NumberInit(rs->stmt->con, (OCI_Number *) def->obj, (OCINumber *) OCI_DefineGetData(def))
+        OCI_NumberInit(rs->stmt->con, (OCI_Number *) def->obj, (OCINumber *) DefineGetData(def))
     )
 }
 
@@ -1723,9 +1723,9 @@ const otext * OCI_API OCI_GetString
 
     OCI_STATUS = FALSE;
 
-    def = OCI_GetDefine(rs, index);
+    def = DefineGet(rs, index);
 
-    if (def && OCI_DefineIsDataNotNull(def))
+    if (def && DefineIsDataNotNull(def))
     {
         void *data = NULL;
 
@@ -1733,7 +1733,7 @@ const otext * OCI_API OCI_GetString
 
         if (OCI_CDT_TEXT == def->col.datatype)
         {
-            OCI_RETVAL = (otext *)OCI_DefineGetData(def);
+            OCI_RETVAL = (otext *)DefineGetData(def);
 
             /* for long mapped to string, the zero terminal character is not
                 always added by Oracle ? or OCILIB issue ? Anyway we check the
@@ -1766,7 +1766,7 @@ const otext * OCI_API OCI_GetString
             {
             case OCI_CDT_NUMERIC:
             {
-                data = OCI_DefineGetData(def);
+                data = DefineGetData(def);
                 break;
             }
             case OCI_CDT_DATETIME:
@@ -1786,7 +1786,7 @@ const otext * OCI_API OCI_GetString
             }
             case OCI_CDT_RAW:
             {
-                data = OCI_DefineGetData(def);
+                data = DefineGetData(def);
                 data_size = ((ub2*)def->buf.lens)[def->rs->row_cur - 1];
                 break;
             }
@@ -1949,7 +1949,7 @@ unsigned int OCI_API OCI_GetRaw
 
     OCI_STATUS = TRUE;
 
-    def = OCI_GetDefine(rs, index);
+    def = DefineGet(rs, index);
 
     if (OCI_MATCHING_TYPE(def, OCI_CDT_RAW))
     {
@@ -1961,7 +1961,7 @@ unsigned int OCI_API OCI_GetRaw
         /* for RAWs, we copy the data in the destination buffer instead of
         returning internal buffer as we do for strings */
 
-        memcpy(buffer, OCI_DefineGetData(def), (size_t)OCI_RETVAL);
+        memcpy(buffer, DefineGetData(def), (size_t)OCI_RETVAL);
     }
 
     OCI_CALL_EXIT()
@@ -1990,10 +1990,10 @@ unsigned int OCI_API OCI_GetRaw2
 
     OCI_STATUS = FALSE;
 
-    index = OCI_GetDefineIndex(rs, name);
+    index = DefineGetIndex(rs, name);
     if (index > 0)
     {
-        def = OCI_GetDefine(rs, index);
+        def = DefineGet(rs, index);
 
         if (OCI_MATCHING_TYPE(def, OCI_CDT_RAW))
         {
@@ -2005,7 +2005,7 @@ unsigned int OCI_API OCI_GetRaw2
             /* for RAWs, we copy the data in the destination buffer instead of
             returning internal buffer as we do for strings */
 
-            memcpy(buffer, OCI_DefineGetData(def), (size_t)OCI_RETVAL);
+            memcpy(buffer, DefineGetData(def), (size_t)OCI_RETVAL);
         }
     }
 
@@ -2079,7 +2079,7 @@ OCI_Date * OCI_API OCI_GetDate
         rs, index, OCI_Date *, NULL, OCI_CDT_DATETIME,
 
         DateInit(rs->stmt->con, (OCI_Date *) def->obj,
-                 (OCIDate *) OCI_DefineGetData(def), FALSE,
+                 (OCIDate *)DefineGetData(def), FALSE,
                  (SQLT_DAT == def->col.libcode))
     )
 }
@@ -2112,7 +2112,7 @@ OCI_Timestamp * OCI_API OCI_GetTimestamp
         rs, index, OCI_Timestamp *, NULL, OCI_CDT_TIMESTAMP,
 
         OCI_TimestampInit(rs->stmt->con, (OCI_Timestamp *) def->obj,
-                         (OCIDateTime *) OCI_DefineGetData(def), def->col.subtype)
+                         (OCIDateTime *) DefineGetData(def), def->col.subtype)
     )
 }
 
@@ -2144,7 +2144,7 @@ OCI_Interval * OCI_API OCI_GetInterval
        rs, index, OCI_Interval *, NULL, OCI_CDT_INTERVAL,
 
        OCI_IntervalInit(rs->stmt->con, (OCI_Interval *) def->obj,
-                        (OCIInterval *) OCI_DefineGetData(def), def->col.subtype)
+                        (OCIInterval *) DefineGetData(def), def->col.subtype)
     )
 }
 
@@ -2176,7 +2176,7 @@ OCI_Object * OCI_API OCI_GetObject
        rs, index, OCI_Object *, NULL, OCI_CDT_OBJECT,
 
        OCI_ObjectInit(rs->stmt->con, (OCI_Object *) def->obj,
-                      OCI_DefineGetData(def), def->col.typinf,
+                      DefineGetData(def), def->col.typinf,
                       NULL, -1, TRUE)
     )
 }
@@ -2208,7 +2208,7 @@ OCI_Coll * OCI_API OCI_GetColl
     (
        rs, index, OCI_Coll *, NULL, OCI_CDT_COLLECTION,
 
-       CollInit(rs->stmt->con, (OCI_Coll *) def->obj, OCI_DefineGetData(def), def->col.typinf)
+       CollInit(rs->stmt->con, (OCI_Coll *) def->obj, DefineGetData(def), def->col.typinf)
     )
 }
 
@@ -2239,7 +2239,7 @@ OCI_Ref * OCI_API OCI_GetRef
     (
        rs, index, OCI_Ref *, NULL, OCI_CDT_REF,
 
-       OCI_RefInit(rs->stmt->con, def->col.typinf, (OCI_Ref *) def->obj, OCI_DefineGetData(def))
+       OCI_RefInit(rs->stmt->con, def->col.typinf, (OCI_Ref *) def->obj, DefineGetData(def))
     )
 }
 
@@ -2271,7 +2271,7 @@ OCI_Statement * OCI_API OCI_GetStatement
        rs, index, OCI_Statement *, NULL, OCI_CDT_CURSOR,
 
        OCI_StatementInit(rs->stmt->con,(OCI_Statement *) def->obj,
-                         (OCIStmt *) OCI_DefineGetData(def), TRUE, def->col.name)
+                         (OCIStmt *) DefineGetData(def), TRUE, def->col.name)
     )
 }
 
@@ -2303,7 +2303,7 @@ OCI_Lob * OCI_API OCI_GetLob
        rs, index, OCI_Lob *, NULL, OCI_CDT_LOB,
 
        OCI_LobInit(rs->stmt->con,(OCI_Lob *) def->obj,
-                   (OCILobLocator *) OCI_DefineGetData(def),
+                   (OCILobLocator *) DefineGetData(def),
                    def->col.subtype)
     )
 }
@@ -2336,7 +2336,7 @@ OCI_File * OCI_API OCI_GetFile
        rs, index, OCI_File *, NULL, OCI_CDT_FILE,
 
        OCI_FileInit(rs->stmt->con, (OCI_File *) def->obj,
-                   (OCILobLocator *) OCI_DefineGetData(def),
+                   (OCILobLocator *) DefineGetData(def),
                    def->col.subtype)
     )
 }
@@ -2368,7 +2368,7 @@ OCI_Long * OCI_API OCI_GetLong
     (
        rs, index, OCI_Long *, NULL, OCI_CDT_LONG,
 
-       (OCI_Long *) OCI_DefineGetData(def)
+       (OCI_Long *) DefineGetData(def)
     )
 }
 
@@ -2402,9 +2402,9 @@ unsigned int OCI_API OCI_GetDataSize
     OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
     OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
     
-    def = OCI_GetDefine(rs, index);
+    def = DefineGet(rs, index);
 
-    if (def && OCI_DefineIsDataNotNull(def))
+    if (def && DefineIsDataNotNull(def))
     {
         ub2* lens = (ub2 *)def->buf.lens;
 
@@ -2441,7 +2441,7 @@ unsigned int OCI_API OCI_GetDataSize2
 
     OCI_STATUS = FALSE;
 
-    index = OCI_GetDefineIndex(rs, name);
+    index = DefineGetIndex(rs, name);
 
     if (index >= 0)
     {
@@ -2469,10 +2469,10 @@ boolean OCI_API OCI_IsNull
     OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
     OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
 
-    def = OCI_GetDefine(rs, index);
+    def = DefineGet(rs, index);
 
     OCI_STATUS = (NULL != def);
-    OCI_RETVAL = !OCI_DefineIsDataNotNull(def);
+    OCI_RETVAL = !DefineIsDataNotNull(def);
 
     OCI_CALL_EXIT()
 }
@@ -2496,7 +2496,7 @@ boolean OCI_API OCI_IsNull2
 
     OCI_STATUS = FALSE;
 
-    index = OCI_GetDefineIndex(rs, name);
+    index = DefineGetIndex(rs, name);
 
     if (index >= 0)
     {
@@ -2538,7 +2538,7 @@ unsigned int OCI_API OCI_GetDataLength
 
     OCI_STATUS = FALSE;
 
-    def = OCI_GetDefine(rs, index);
+    def = DefineGet(rs, index);
 
     if (def && (rs->row_cur > 0))
     {

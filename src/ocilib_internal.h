@@ -37,6 +37,7 @@ extern "C"
 #include "column.h"
 #include "connection.h"
 #include "date.h"
+#include "define.h"
 #include "dequeue.h"
 #include "dirpath.h"
 #include "element.h"
@@ -71,52 +72,6 @@ extern "C"
 #include "timestamp.h"
 #include "transaction.h"
 #include "typeinfo.h"
-
-
-/* --------------------------------------------------------------------------------------------- *
- * define.c
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Define * OCI_GetDefine
-(
-    OCI_Resultset *rs,
-    unsigned int   index
-);
-
-int OCI_GetDefineIndex
-(
-    OCI_Resultset *rs,
-    const otext   *name
-);
-
-boolean OCI_DefineGetNumber
-(
-    OCI_Resultset *rs,
-    unsigned int   index,
-    void          *value,
-    uword          type
-);
-
-boolean OCI_DefineAlloc
-(
-    OCI_Define *def
-);
-
-boolean OCI_DefineDef
-(
-    OCI_Define *def,
-    ub4         position
-);
-
-void * OCI_DefineGetData
-(
-    OCI_Define *def
-);
-
-boolean OCI_DefineIsDataNotNull
-(
-    OCI_Define *def
-);
 
 /* --------------------------------------------------------------------------------------------- *
  * element.c

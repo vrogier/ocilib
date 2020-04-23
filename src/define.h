@@ -21,6 +21,48 @@
 #ifndef OCILIB_DEFINES_H_INCLUDED
 #define OCILIB_DEFINES_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+OCI_Define* DefineGet
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+);
+
+int DefineGetIndex
+(
+    OCI_Resultset* rs,
+    const otext* name
+);
+
+void* DefineGetData
+(
+    OCI_Define* def
+);
+
+boolean DefineIsDataNotNull
+(
+    OCI_Define* def
+);
+
+boolean DefineGetNumber
+(
+    OCI_Resultset* rs,
+    unsigned int   index,
+    void* value,
+    uword          type
+);
+
+boolean DefineAlloc
+(
+    OCI_Define* def
+);
+
+boolean DefineDef
+(
+    OCI_Define* def,
+    ub4         position
+);
+
 
 #endif /* OCILIB_DEFINES_H_INCLUDED */
