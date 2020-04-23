@@ -73,6 +73,8 @@ noinst_HEADERS=         \
     oci_loader.h        \
     oci_defs.h          \
     oci_api.h           \
+    helpers.h           \
+    macro.h             \
 	array.h             \
 	bind.h              \
 	callback.h     	    \
