@@ -18,7 +18,23 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "element.h"
+
+#include "collection.h"
+#include "date.h"
+#include "exception.h"
+#include "file.h"
+#include "helpers.h"
+#include "interval.h"
+#include "lob.h"
+#include "macro.h"
+#include "memory.h"
+#include "mutex.h"
+#include "number.h"
+#include "object.h"
+#include "ref.h"
+#include "string.h"
+#include "timestamp.h"
 
 #define OCI_ELEM_SET_VALUE(elemtype, type, func_init, func_assign)                    \
                                                                                       \
@@ -29,7 +45,7 @@
                                                                                       \
     if (!value)                                                                       \
     {                                                                                 \
-        OCI_STATUS = OCI_ElemSetNull(elem);                                           \
+        OCI_STATUS = ElemSetNull(elem);                                               \
     }                                                                                 \
     else                                                                              \
     {                                                                                 \
@@ -44,7 +60,7 @@
                                                                                       \
             if (OCI_STATUS)                                                           \
             {                                                                         \
-                OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);                      \
+                ElemSetNullIndicator(elem, OCI_IND_NOTNULL);                          \
                 (elem)->handle = ((type) (elem)->obj)->handle;                        \
             }                                                                         \
         }                                                                             \
@@ -86,8 +102,8 @@
     OCI_CALL_CHECK_COMPAT((elem)->con, OCI_CDT_NUMERIC == (elem)->typinf->cols[0].datatype)  \
     OCI_CALL_CONTEXT_SET_FROM_CONN((elem)->con)                                              \
                                                                                              \
-    OCI_STATUS = OCI_ElemGetNumberInternal(elem, (void *) (&OCI_RETVAL),                     \
-                                           (uword) (number_type));                           \
+    OCI_STATUS = ElemGetNumberInternal(elem, (void *) (&OCI_RETVAL),                         \
+                                       (uword) (number_type));                               \
                                                                                              \
     OCI_CALL_EXIT()
 
@@ -98,20 +114,16 @@
     OCI_CALL_CHECK_COMPAT((elem)->con, OCI_CDT_NUMERIC == (elem)->typinf->cols[0].datatype)  \
     OCI_CALL_CONTEXT_SET_FROM_CONN((elem)->con)                                              \
                                                                                              \
-    OCI_RETVAL = OCI_STATUS = OCI_ElemSetNumberInternal(elem, (void *) &(value),             \
+    OCI_RETVAL = OCI_STATUS = ElemSetNumberInternal(elem, (void *) &(value),                 \
                                                         (uword) (number_type));              \
                                                                                              \
     OCI_CALL_EXIT()
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ElemFreeAllocatedData
+* ElemFreeAllocatedData
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_ElemFreeAllocatedData
+void ElemFreeAllocatedData
 (
     OCI_Elem *elem
 )
@@ -131,10 +143,10 @@ void OCI_ElemFreeAllocatedData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemInit
+ * ElemInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OCI_ElemInit
+OCI_Elem * ElemInit
 (
     OCI_Connection *con,
     OCI_Elem       *elem,
@@ -153,7 +165,7 @@ OCI_Elem * OCI_ElemInit
         elem->con = con;
 
         // Free previously allocated data before reassign new one
-        OCI_ElemFreeAllocatedData(elem);
+        ElemFreeAllocatedData(elem);
 
         // Reset members
         elem->ind    = OCI_IND_NULL;
@@ -222,10 +234,10 @@ OCI_Elem * OCI_ElemInit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetNullIndicator
+ * ElemSetNullIndicator
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ElemSetNullIndicator
+boolean ElemSetNullIndicator
 (
     OCI_Elem *elem,
     OCIInd    value
@@ -263,10 +275,10 @@ boolean OCI_ElemSetNullIndicator
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetNumberInternal
+ * ElemSetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ElemSetNumberInternal
+boolean ElemSetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -279,17 +291,17 @@ boolean OCI_ElemSetNumberInternal
 
     if (res)
     {
-        OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
+        ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
     }
 
     return res;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetNumberInternal
+ * ElemGetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ElemGetNumberInternal
+boolean ElemGetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -328,10 +340,10 @@ boolean OCI_ElemGetNumberInternal
  * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemCreate
+ * ElemCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OCI_API OCI_ElemCreate
+OCI_Elem * ElemCreate
 (
     OCI_TypeInfo *typinf
 )
@@ -339,17 +351,17 @@ OCI_Elem * OCI_API OCI_ElemCreate
     OCI_CALL_ENTER(OCI_Elem*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
 
-    OCI_RETVAL = OCI_ElemInit(typinf->con, NULL, NULL, (OCIInd *)NULL, typinf);
+    OCI_RETVAL = ElemInit(typinf->con, NULL, NULL, (OCIInd *)NULL, typinf);
     OCI_STATUS = (NULL != OCI_RETVAL);
   
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemFree
+ * ElemFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemFree
+boolean ElemFree
 (
     OCI_Elem *elem
 )
@@ -374,7 +386,7 @@ boolean OCI_API OCI_ElemFree
         OCI_FreeObjectFromType(elem->obj, elem->typinf->cols[0].datatype);
     }
 
-    OCI_ElemFreeAllocatedData(elem);
+    ElemFreeAllocatedData(elem);
 
     OCI_FREE(elem->tmpbuf)
     OCI_FREE(elem)
@@ -385,10 +397,10 @@ boolean OCI_API OCI_ElemFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetBoolean
+ * ElemGetBoolean
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemGetBoolean
+boolean ElemGetBoolean
 (
     OCI_Elem *elem
 )
@@ -412,10 +424,10 @@ boolean OCI_API OCI_ElemGetBoolean
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetNumber
+ * ElemGetNumber
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number * OCI_API OCI_ElemGetNumber
+OCI_Number * ElemGetNumber
 (
     OCI_Elem *elem
 )
@@ -429,10 +441,10 @@ OCI_Number * OCI_API OCI_ElemGetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetShort
+ * ElemGetShort
  * --------------------------------------------------------------------------------------------- */
 
-short OCI_API OCI_ElemGetShort
+short ElemGetShort
 (
     OCI_Elem *elem
 )
@@ -441,10 +453,10 @@ short OCI_API OCI_ElemGetShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetUnsignedShort
+ * ElemGetUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
-unsigned short OCI_API OCI_ElemGetUnsignedShort
+unsigned short ElemGetUnsignedShort
 (
     OCI_Elem *elem
 )
@@ -453,10 +465,10 @@ unsigned short OCI_API OCI_ElemGetUnsignedShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetInt
+ * ElemGetInt
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_ElemGetInt
+int ElemGetInt
 (
     OCI_Elem *elem
 )
@@ -465,10 +477,10 @@ int OCI_API OCI_ElemGetInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetUnsignedInt
+ * ElemGetUnsignedInt
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ElemGetUnsignedInt
+unsigned int ElemGetUnsignedInt
 (
     OCI_Elem *elem
 )
@@ -477,10 +489,10 @@ unsigned int OCI_API OCI_ElemGetUnsignedInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetBigInt
+ * ElemGetBigInt
  * --------------------------------------------------------------------------------------------- */
 
-big_int OCI_API OCI_ElemGetBigInt
+big_int ElemGetBigInt
 (
     OCI_Elem *elem
 )
@@ -489,10 +501,10 @@ big_int OCI_API OCI_ElemGetBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetUnsignedBigInt
+ * ElemGetUnsignedBigInt
  * --------------------------------------------------------------------------------------------- */
 
-big_uint OCI_API OCI_ElemGetUnsignedBigInt
+big_uint ElemGetUnsignedBigInt
 (
     OCI_Elem *elem
 )
@@ -501,10 +513,10 @@ big_uint OCI_API OCI_ElemGetUnsignedBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetDouble
+ * ElemGetDouble
  * --------------------------------------------------------------------------------------------- */
 
-double OCI_API OCI_ElemGetDouble
+double ElemGetDouble
 (
     OCI_Elem *elem
 )
@@ -513,10 +525,10 @@ double OCI_API OCI_ElemGetDouble
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetFloat
+ * ElemGetFloat
  * --------------------------------------------------------------------------------------------- */
 
-float OCI_API OCI_ElemGetFloat
+float ElemGetFloat
 (
     OCI_Elem *elem
 )
@@ -525,10 +537,10 @@ float OCI_API OCI_ElemGetFloat
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetString
+ * ElemGetString
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_ElemGetString
+const otext * ElemGetString
 (
     OCI_Elem *elem
 )
@@ -547,10 +559,10 @@ const otext * OCI_API OCI_ElemGetString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetRaw
+ * ElemGetRaw
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ElemGetRaw
+unsigned int ElemGetRaw
 (
     OCI_Elem    *elem,
     void        *value,
@@ -584,7 +596,7 @@ unsigned int OCI_API OCI_ElemGetRaw
 * OCI_ElemGetRawSize
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ElemGetRawSize
+unsigned int ElemGetRawSize
 (
     OCI_Elem    *elem
 )
@@ -604,10 +616,10 @@ unsigned int OCI_API OCI_ElemGetRawSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetDate
+ * ElemGetDate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * OCI_API OCI_ElemGetDate
+OCI_Date * ElemGetDate
 (
     OCI_Elem *elem
 )
@@ -621,10 +633,10 @@ OCI_Date * OCI_API OCI_ElemGetDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetTimestamp
+ * ElemGetTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp * OCI_API OCI_ElemGetTimestamp
+OCI_Timestamp * ElemGetTimestamp
 (
     OCI_Elem *elem
 )
@@ -648,10 +660,10 @@ OCI_Timestamp * OCI_API OCI_ElemGetTimestamp
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetInterval
+ * ElemGetInterval
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval * OCI_API OCI_ElemGetInterval
+OCI_Interval * ElemGetInterval
 (
     OCI_Elem *elem
 )
@@ -674,10 +686,10 @@ OCI_Interval * OCI_API OCI_ElemGetInterval
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetLob
+ * ElemGetLob
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Lob * OCI_API OCI_ElemGetLob
+OCI_Lob * ElemGetLob
 (
     OCI_Elem *elem
 )
@@ -691,10 +703,10 @@ OCI_Lob * OCI_API OCI_ElemGetLob
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetFile
+ * ElemGetFile
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File * OCI_API OCI_ElemGetFile
+OCI_File * ElemGetFile
 (
     OCI_Elem *elem
 )
@@ -708,10 +720,10 @@ OCI_File * OCI_API OCI_ElemGetFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetRef
+ * ElemGetRef
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OCI_API OCI_ElemGetRef
+OCI_Ref * ElemGetRef
 (
     OCI_Elem *elem
 )
@@ -725,10 +737,10 @@ OCI_Ref * OCI_API OCI_ElemGetRef
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetObject
+ * ElemGetObject
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * OCI_API OCI_ElemGetObject
+OCI_Object * ElemGetObject
 (
     OCI_Elem *elem
 )
@@ -742,10 +754,10 @@ OCI_Object * OCI_API OCI_ElemGetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemGetColl
+ * ElemGetColl
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OCI_API OCI_ElemGetColl
+OCI_Coll * ElemGetColl
 (
     OCI_Elem *elem
 )
@@ -759,10 +771,10 @@ OCI_Coll * OCI_API OCI_ElemGetColl
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetBoolean
+ * ElemSetBoolean
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetBoolean
+boolean ElemSetBoolean
 (
     OCI_Elem *elem,
     boolean   value
@@ -779,7 +791,7 @@ boolean OCI_API OCI_ElemSetBoolean
  
         *data = value;
      
-        OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
+        ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -788,10 +800,10 @@ boolean OCI_API OCI_ElemSetBoolean
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetNumber
+ * ElemSetNumber
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetNumber
+boolean ElemSetNumber
 (
     OCI_Elem   *elem,
     OCI_Number *value
@@ -807,10 +819,10 @@ boolean OCI_API OCI_ElemSetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetShort
+ * ElemSetShort
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetShort
+boolean ElemSetShort
 (
     OCI_Elem *elem,
     short     value
@@ -820,10 +832,10 @@ boolean OCI_API OCI_ElemSetShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetUnsignedShort
+ * ElemSetUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetUnsignedShort
+boolean ElemSetUnsignedShort
 (
     OCI_Elem      *elem,
     unsigned short value
@@ -833,10 +845,10 @@ boolean OCI_API OCI_ElemSetUnsignedShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetInt
+ * ElemSetInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetInt
+boolean ElemSetInt
 (
     OCI_Elem *elem,
     int       value
@@ -846,10 +858,10 @@ boolean OCI_API OCI_ElemSetInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetUnsignedInt
+ * ElemSetUnsignedInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetUnsignedInt
+boolean ElemSetUnsignedInt
 (
     OCI_Elem    *elem,
     unsigned int value
@@ -859,10 +871,10 @@ boolean OCI_API OCI_ElemSetUnsignedInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetBigInt
+ * ElemSetBigInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetBigInt
+boolean ElemSetBigInt
 (
     OCI_Elem *elem,
     big_int   value
@@ -872,10 +884,10 @@ boolean OCI_API OCI_ElemSetBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetUnsignedBigInt
+ * ElemSetUnsignedBigInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetUnsignedBigInt
+boolean ElemSetUnsignedBigInt
 (
     OCI_Elem *elem,
     big_uint  value
@@ -885,10 +897,10 @@ boolean OCI_API OCI_ElemSetUnsignedBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetDouble
+ * ElemSetDouble
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetDouble
+boolean ElemSetDouble
 (
     OCI_Elem *elem,
     double    value
@@ -898,10 +910,10 @@ boolean OCI_API OCI_ElemSetDouble
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetFloat
+ * ElemSetFloat
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetFloat
+boolean ElemSetFloat
 (
     OCI_Elem *elem,
     float     value
@@ -911,10 +923,10 @@ boolean OCI_API OCI_ElemSetFloat
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetString
+ * ElemSetString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetString
+boolean ElemSetString
 (
     OCI_Elem    *elem,
     const otext *value
@@ -927,7 +939,7 @@ boolean OCI_API OCI_ElemSetString
 
     if (!value)
     {
-        OCI_STATUS = OCI_ElemSetNull(elem);
+        OCI_STATUS = ElemSetNull(elem);
     }
     else
     {
@@ -937,7 +949,7 @@ boolean OCI_API OCI_ElemSetString
 
         if (OCI_STATUS)
         {
-            OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
+            ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
         }
     }
 
@@ -947,10 +959,10 @@ boolean OCI_API OCI_ElemSetString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetRaw
+ * ElemSetRaw
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetRaw
+boolean ElemSetRaw
 (
     OCI_Elem    *elem,
     void       * value,
@@ -972,7 +984,7 @@ boolean OCI_API OCI_ElemSetRaw
 
         if (OCI_STATUS)
         {
-            OCI_ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
+            ElemSetNullIndicator(elem, OCI_IND_NOTNULL);
         }
     }
 
@@ -982,10 +994,10 @@ boolean OCI_API OCI_ElemSetRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetDate
+ * ElemSetDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetDate
+boolean ElemSetDate
 (
     OCI_Elem *elem,
     OCI_Date *value
@@ -1001,10 +1013,10 @@ boolean OCI_API OCI_ElemSetDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetTimestamp
+ * ElemSetTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetTimestamp
+boolean ElemSetTimestamp
 (
     OCI_Elem      *elem,
     OCI_Timestamp *value
@@ -1030,10 +1042,10 @@ boolean OCI_API OCI_ElemSetTimestamp
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetInterval
+ * ElemSetInterval
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetInterval
+boolean ElemSetInterval
 (
     OCI_Elem     *elem,
     OCI_Interval *value
@@ -1060,10 +1072,10 @@ boolean OCI_API OCI_ElemSetInterval
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetColl
+ * ElemSetColl
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetColl
+boolean ElemSetColl
 (
     OCI_Elem *elem,
     OCI_Coll *value
@@ -1079,10 +1091,10 @@ boolean OCI_API OCI_ElemSetColl
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetObject
+ * ElemSetObject
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetObject
+boolean ElemSetObject
 (
     OCI_Elem   *elem,
     OCI_Object *value
@@ -1098,10 +1110,10 @@ boolean OCI_API OCI_ElemSetObject
  }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetLob
+ * ElemSetLob
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetLob
+boolean ElemSetLob
 (
     OCI_Elem *elem,
     OCI_Lob  *value
@@ -1117,10 +1129,10 @@ boolean OCI_API OCI_ElemSetLob
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetFile
+ * ElemSetFile
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetFile
+boolean ElemSetFile
 (
     OCI_Elem *elem,
     OCI_File *value
@@ -1136,10 +1148,10 @@ boolean OCI_API OCI_ElemSetFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetRef
+ * ElemSetRef
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetRef
+boolean ElemSetRef
 (
     OCI_Elem *elem,
     OCI_Ref  *value
@@ -1155,10 +1167,10 @@ boolean OCI_API OCI_ElemSetRef
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemIsNull
+ * ElemIsNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemIsNull
+boolean ElemIsNull
 (
     OCI_Elem *elem
 )
@@ -1176,10 +1188,10 @@ boolean OCI_API OCI_ElemIsNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ElemSetNull
+ * ElemSetNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ElemSetNull
+boolean ElemSetNull
 (
     OCI_Elem *elem
 )
@@ -1188,7 +1200,7 @@ boolean OCI_API OCI_ElemSetNull
     OCI_CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
-    OCI_RETVAL = OCI_STATUS = OCI_ElemSetNullIndicator(elem, OCI_IND_NULL);
+    OCI_RETVAL = OCI_STATUS = ElemSetNullIndicator(elem, OCI_IND_NULL);
 
     OCI_CALL_EXIT()
 }

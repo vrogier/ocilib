@@ -326,7 +326,7 @@ OCI_Elem * CollGetElem
 
     if (OCI_STATUS && exists && data)
     {
-        OCI_RETVAL = coll->elem = OCI_ElemInit(coll->con, coll->elem, data, p_ind, coll->typinf);
+        OCI_RETVAL = coll->elem = ElemInit(coll->con, coll->elem, data, p_ind, coll->typinf);
     }
 
     OCI_CALL_EXIT()
@@ -357,12 +357,12 @@ boolean CollGetElem2
 
     if (OCI_STATUS && exists && data)
     {
-        elem = OCI_ElemInit(coll->con, elem, data, p_ind, coll->typinf);
+        elem = ElemInit(coll->con, elem, data, p_ind, coll->typinf);
         OCI_STATUS = (NULL != elem);
     }
     else
     {
-        OCI_STATUS = OCI_ElemSetNullIndicator(elem, OCI_IND_NULL);
+        OCI_STATUS = ElemSetNullIndicator(elem, OCI_IND_NULL);
     }
 
     OCI_RETVAL = OCI_STATUS;

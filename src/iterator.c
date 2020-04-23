@@ -58,7 +58,7 @@ OCI_Coll *coll
 
         if (OCI_STATUS)
         {
-            iter->elem = OCI_ElemInit(coll->con, iter->elem, NULL, (OCIInd *)NULL, coll->typinf);
+            iter->elem = ElemInit(coll->con, iter->elem, NULL, (OCIInd *)NULL, coll->typinf);
             OCI_STATUS = (NULL != iter->elem);
         }
     }
@@ -137,7 +137,7 @@ OCI_Elem * OCI_API OCI_IterGetNext
 
         if (OCI_STATUS && !iter->eoc)
         {
-            OCI_RETVAL = iter->elem = OCI_ElemInit(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+            OCI_RETVAL = iter->elem = ElemInit(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
 
             iter->dirty = FALSE;
             iter->boc   = FALSE;
@@ -169,7 +169,7 @@ OCI_Elem * OCI_API OCI_IterGetPrev
 
         if (OCI_STATUS && !iter->boc)
         {
-            OCI_RETVAL = iter->elem = OCI_ElemInit(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+            OCI_RETVAL = iter->elem = ElemInit(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
 
             iter->dirty = FALSE;
             iter->eoc   = FALSE;

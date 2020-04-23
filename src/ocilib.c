@@ -1620,6 +1620,393 @@ unsigned int OCI_API OCI_DirPathGetErrorRow
     CALL_IMPL(DirPathGetErrorRow, dp)
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * element
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Elem* OCI_API OCI_ElemCreate
+(
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(ElemCreate, typinf)
+}
+
+boolean OCI_API OCI_ElemFree
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemFree, elem)
+}
+
+boolean OCI_API OCI_ElemGetBoolean
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetBoolean, elem)
+}
+
+OCI_Number* OCI_API OCI_ElemGetNumber
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetNumber, elem)
+}
+
+short OCI_API OCI_ElemGetShort
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetShort, elem)
+}
+
+unsigned short OCI_API OCI_ElemGetUnsignedShort
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetUnsignedShort, elem)
+}
+
+int OCI_API OCI_ElemGetInt
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetInt, elem)
+}
+
+unsigned int OCI_API OCI_ElemGetUnsignedInt
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetUnsignedInt, elem)
+}
+
+big_int OCI_API OCI_ElemGetBigInt
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetBigInt, elem)
+}
+
+big_uint OCI_API OCI_ElemGetUnsignedBigInt
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetUnsignedBigInt, elem)
+}
+
+double OCI_API OCI_ElemGetDouble
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetDouble, elem)
+}
+
+float OCI_API OCI_ElemGetFloat
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetFloat, elem)
+}
+
+const otext* OCI_API OCI_ElemGetString
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetString, elem)
+}
+
+unsigned int OCI_API OCI_ElemGetRaw
+(
+    OCI_Elem* elem,
+    void* value,
+    unsigned int len
+)
+{
+    CALL_IMPL(ElemGetRaw, elem, value, len)
+}
+
+unsigned int OCI_API OCI_ElemGetRawSize
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetRawSize, elem)
+}
+
+OCI_Date* OCI_API OCI_ElemGetDate
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetDate, elem)
+}
+
+OCI_Timestamp* OCI_API OCI_ElemGetTimestamp
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetTimestamp, elem)
+}
+
+OCI_Interval* OCI_API OCI_ElemGetInterval
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetInterval, elem)
+}
+
+OCI_Lob* OCI_API OCI_ElemGetLob
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetLob, elem)
+}
+
+OCI_File* OCI_API OCI_ElemGetFile
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetFile, elem)
+}
+
+OCI_Ref* OCI_API OCI_ElemGetRef
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetRef, elem)
+}
+
+OCI_Object* OCI_API OCI_ElemGetObject
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetObject, elem)
+}
+
+OCI_Coll* OCI_API OCI_ElemGetColl
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemGetColl, elem)
+}
+
+boolean OCI_API OCI_ElemSetBoolean
+(
+    OCI_Elem* elem,
+    boolean   value
+)
+{
+    CALL_IMPL(ElemSetBoolean, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetNumber
+(
+    OCI_Elem* elem,
+    OCI_Number* value
+)
+{
+    CALL_IMPL(ElemSetNumber, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetShort
+(
+    OCI_Elem* elem,
+    short     value
+)
+{
+    CALL_IMPL(ElemSetShort, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetUnsignedShort
+(
+    OCI_Elem* elem,
+    unsigned short value
+)
+{
+    CALL_IMPL(ElemSetUnsignedShort, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetInt
+(
+    OCI_Elem* elem,
+    int       value
+)
+{
+    CALL_IMPL(ElemSetInt, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetUnsignedInt
+(
+    OCI_Elem* elem,
+    unsigned int value
+)
+{
+    CALL_IMPL(ElemSetUnsignedInt, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetBigInt
+(
+    OCI_Elem* elem,
+    big_int   value
+)
+{
+    CALL_IMPL(ElemSetBigInt, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetUnsignedBigInt
+(
+    OCI_Elem* elem,
+    big_uint  value
+)
+{
+    CALL_IMPL(ElemSetUnsignedBigInt, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetDouble
+(
+    OCI_Elem* elem,
+    double    value
+)
+{
+    CALL_IMPL(ElemSetDouble, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetFloat
+(
+    OCI_Elem* elem,
+    float     value
+)
+{
+    CALL_IMPL(ElemSetFloat, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetString
+(
+    OCI_Elem* elem,
+    const otext* value
+)
+{
+    CALL_IMPL(ElemSetString, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetRaw
+(
+    OCI_Elem* elem,
+    void* value,
+    unsigned int len
+)
+{
+    CALL_IMPL(ElemSetRaw, elem, value, len)
+}
+
+boolean OCI_API OCI_ElemSetDate
+(
+    OCI_Elem* elem,
+    OCI_Date* value
+)
+{
+    CALL_IMPL(ElemSetDate, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetTimestamp
+(
+    OCI_Elem* elem,
+    OCI_Timestamp* value
+)
+{
+    CALL_IMPL(ElemSetTimestamp, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetInterval
+(
+    OCI_Elem* elem,
+    OCI_Interval* value
+)
+{
+    CALL_IMPL(ElemSetInterval, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetColl
+(
+    OCI_Elem* elem,
+    OCI_Coll* value
+)
+{
+    CALL_IMPL(ElemSetColl, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetObject
+(
+    OCI_Elem* elem,
+    OCI_Object* value
+)
+{
+    CALL_IMPL(ElemSetObject, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetLob
+(
+    OCI_Elem* elem,
+    OCI_Lob* value
+)
+{
+    CALL_IMPL(ElemSetLob, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetFile
+(
+    OCI_Elem* elem,
+    OCI_File* value
+)
+{
+    CALL_IMPL(ElemSetFile, elem, value)
+}
+
+boolean OCI_API OCI_ElemSetRef
+(
+    OCI_Elem* elem,
+    OCI_Ref* value
+)
+{
+    CALL_IMPL(ElemSetRef, elem, value)
+}
+
+boolean OCI_API OCI_ElemIsNull
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemIsNull, elem)
+}
+
+boolean OCI_API OCI_ElemSetNull
+(
+    OCI_Elem* elem
+)
+{
+    CALL_IMPL(ElemSetNull, elem)
+}
+
 
 
 

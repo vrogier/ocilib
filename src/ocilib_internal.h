@@ -73,24 +73,6 @@ extern "C"
 #include "transaction.h"
 #include "typeinfo.h"
 
-/* --------------------------------------------------------------------------------------------- *
- * element.c
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Elem * OCI_ElemInit
-(
-    OCI_Connection *con,
-    OCI_Elem       *elem,
-    void           *handle,
-    OCIInd         *pind,
-    OCI_TypeInfo   *typeinf
-);
-
-boolean OCI_ElemSetNullIndicator
-(
-    OCI_Elem *elem,
-    OCIInd    value
-);
 
 /* --------------------------------------------------------------------------------------------- *
  * error.c
