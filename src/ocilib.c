@@ -2842,10 +2842,52 @@ boolean OCI_API OCI_IntervalSubtract
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * interval
+ * iterator
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Iter* OCI_API OCI_IterCreate
+(
+    OCI_Coll* coll
+)
+{
+    CALL_IMPL(IterCreate, coll)
+}
 
+boolean OCI_API OCI_IterFree
+(
+    OCI_Iter* iter
+)
+{
+    CALL_IMPL(IterFree, iter)
+}
+
+OCI_Elem* OCI_API OCI_IterGetNext
+(
+    OCI_Iter* iter
+)
+{
+    CALL_IMPL(IterGetNext, iter)
+}
+
+OCI_Elem* OCI_API OCI_IterGetPrev
+(
+    OCI_Iter* iter
+)
+{
+    CALL_IMPL(IterGetPrev, iter)
+}
+
+OCI_Elem* OCI_API OCI_IterGetCurrent
+(
+    OCI_Iter* iter
+)
+{
+    CALL_IMPL(IterGetCurrent, iter)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * 
+ * --------------------------------------------------------------------------------------------- */
 
 
 boolean OCI_API OCI_SetUserPassword

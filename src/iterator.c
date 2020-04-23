@@ -18,17 +18,15 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
-
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
+#include "iterator.h"
+#include "macro.h"
+#include "element.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IterCreate
+ * IterCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Iter * OCI_API OCI_IterCreate
+OCI_Iter * IterCreate
 (
 OCI_Coll *coll
 )
@@ -78,10 +76,10 @@ OCI_Coll *coll
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IterFree
+ * IterFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IterFree
+boolean IterFree
 (
     OCI_Iter *iter
 )
@@ -116,10 +114,10 @@ boolean OCI_API OCI_IterFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IterGetNext
+ * IterGetNext
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OCI_API OCI_IterGetNext
+OCI_Elem * IterGetNext
 (
     OCI_Iter *iter
 )
@@ -148,10 +146,10 @@ OCI_Elem * OCI_API OCI_IterGetNext
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IterGetPrev
+ * IterGetPrev
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OCI_API OCI_IterGetPrev
+OCI_Elem * IterGetPrev
 (
     OCI_Iter *iter
 )
@@ -180,10 +178,10 @@ OCI_Elem * OCI_API OCI_IterGetPrev
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IterGetCurrent
+ * IterGetCurrent
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OCI_API OCI_IterGetCurrent
+OCI_Elem * IterGetCurrent
 (
     OCI_Iter *iter
 )
