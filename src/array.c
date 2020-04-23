@@ -118,7 +118,7 @@ boolean ArrayInit
             }
             case OCI_CDT_FILE:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_File, OCI_FileInit(arr->con, (OCI_File *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
+                OCI_ARRAY_INIT_HANDLE(OCI_File, FileInit(arr->con, (OCI_File *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_TIMESTAMP:

@@ -1446,7 +1446,7 @@ OCI_File * OCI_API OCI_ObjectGetFile
         OCI_CDT_FILE,
         OCI_File *,
         OCILobLocator*,
-        OCI_FileInit(obj->con, (OCI_File *) obj->objs[index], *value, obj->typinf->cols[index].subtype)
+        FileInit(obj->con, (OCI_File *) obj->objs[index], *value, obj->typinf->cols[index].subtype)
     )
  }
 

@@ -2205,6 +2205,173 @@ OCI_Subscription* OCI_API OCI_EventGetSubscription
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * file
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_File* OCI_API OCI_FileCreate
+(
+    OCI_Connection* con,
+    unsigned int    type
+)
+{
+    CALL_IMPL(FileCreate, con, type)
+}
+
+boolean OCI_API OCI_FileFree
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(FileFree, file)
+}
+
+OCI_File** OCI_API OCI_FileArrayCreate
+(
+    OCI_Connection* con,
+    unsigned int    type,
+    unsigned int    nbelem
+)
+{
+    CALL_IMPL(FileArrayCreate, con, type, nbelem)
+}
+
+boolean OCI_API OCI_FileArrayFree
+(
+    OCI_File** files
+)
+{
+    CALL_IMPL(FileArrayFree, files)
+}
+
+unsigned int OCI_API OCI_FileGetType
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(FileGetType, file)
+}
+
+boolean OCI_API OCI_FileSeek
+(
+    OCI_File* file,
+    big_uint offset,
+    unsigned int mode
+)
+{
+    CALL_IMPL(FileSeek, file, offset, mode)
+}
+
+big_uint OCI_API OCI_FileGetOffset
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(FileGetOffset, file)
+}
+
+unsigned int OCI_API OCI_FileRead
+(
+    OCI_File* file,
+    void* buffer,
+    unsigned int len
+)
+{
+    CALL_IMPL(FileRead, file, buffer, len)
+}
+
+big_uint OCI_API OCI_FileGetSize
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(FileGetSize, file)
+}
+
+boolean OCI_API OCI_FileExists
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(FileExists, file)
+}
+
+boolean OCI_API OCI_FileSetName
+(
+    OCI_File* file,
+    const otext* dir,
+    const otext* name
+)
+{
+    CALL_IMPL(FileSetName, file, dir, name)
+}
+
+const otext* OCI_API OCI_FileGetDirectory
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(FileGetDirectory, file)
+}
+
+const otext* OCI_API OCI_FileGetName
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(FileGetName, file)
+}
+
+boolean OCI_API OCI_FileOpen
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(FileOpen, file)
+}
+
+boolean OCI_API OCI_FileIsOpen
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(FileIsOpen, file)
+}
+
+boolean OCI_API OCI_FileClose
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(FileClose, file)
+}
+
+boolean OCI_API OCI_FileIsEqual
+(
+    OCI_File* file,
+    OCI_File* file2
+)
+{
+    CALL_IMPL(FileIsEqual, file, file2)
+}
+
+boolean OCI_API OCI_FileAssign
+(
+    OCI_File* file,
+    OCI_File* file_src
+)
+{
+    CALL_IMPL(FileAssign, file, file_src)
+}
+
+OCI_Connection* OCI_API OCI_FileGetConnection
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(FileGetConnection, file)
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * 
  * --------------------------------------------------------------------------------------------- */
 

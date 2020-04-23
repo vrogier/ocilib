@@ -1842,7 +1842,7 @@ const otext * OCI_API OCI_GetString
                 {
                     bufsize = (unsigned int) ostrlen(OTEXT("/"));
 
-                    OCI_FileGetInfo(file);
+                    FileGetInfo(file);
 
                     bufsize += (unsigned int) (file->dir ? ostrlen(file->dir) : 0);
                     bufsize += (unsigned int) (file->name ? ostrlen(file->name) : 0);
@@ -2335,9 +2335,9 @@ OCI_File * OCI_API OCI_GetFile
     (
        rs, index, OCI_File *, NULL, OCI_CDT_FILE,
 
-       OCI_FileInit(rs->stmt->con, (OCI_File *) def->obj,
-                   (OCILobLocator *) DefineGetData(def),
-                   def->col.subtype)
+       FileInit(rs->stmt->con, (OCI_File *) def->obj,
+                (OCILobLocator *) DefineGetData(def),
+                def->col.subtype)
     )
 }
 

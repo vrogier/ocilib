@@ -18,24 +18,21 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "file.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "array.h"
+#include "macro.h"
+#include "memory.h"
+#include "string.h"
 
 static const unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
 static const unsigned int FileTypeValues[] = { OCI_CFILE, OCI_BFILE };
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileInit
+ * FileInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File * OCI_FileInit
+OCI_File * FileInit
 (
     OCI_Connection *con,
     OCI_File       *file,
@@ -93,10 +90,10 @@ OCI_File * OCI_FileInit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileGetInfo
+ * FileGetInfo
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_FileGetInfo
+boolean FileGetInfo
 (
     OCI_File *file
 )
@@ -165,15 +162,11 @@ boolean OCI_FileGetInfo
     return OCI_STATUS;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileCreate
+ * FileCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File * OCI_API OCI_FileCreate
+OCI_File * FileCreate
 (
     OCI_Connection *con,
     unsigned int    type
@@ -184,17 +177,17 @@ OCI_File * OCI_API OCI_FileCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_FileInit(con, NULL, NULL, type);
+    OCI_RETVAL = FileInit(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileFree
+ * FileFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FileFree
+boolean FileFree
 (
     OCI_File *file
 )
@@ -223,10 +216,10 @@ boolean OCI_API OCI_FileFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileArrayCreate
+ * FileArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File ** OCI_API OCI_FileArrayCreate
+OCI_File ** FileArrayCreate
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -252,10 +245,10 @@ OCI_File ** OCI_API OCI_FileArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileArrayFree
+ * FileArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FileArrayFree
+boolean FileArrayFree
 (
     OCI_File **files
 )
@@ -269,10 +262,10 @@ boolean OCI_API OCI_FileArrayFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileSeek
+ * FileSeek
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FileSeek
+boolean FileSeek
 (
     OCI_File    *file,
     big_uint     offset,
@@ -323,10 +316,10 @@ boolean OCI_API OCI_FileSeek
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileGetOffset
+ * FileGetOffset
  * --------------------------------------------------------------------------------------------- */
 
-big_uint OCI_API OCI_FileGetOffset
+big_uint FileGetOffset
 (
     OCI_File *file
 )
@@ -341,10 +334,10 @@ big_uint OCI_API OCI_FileGetOffset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileRead
+ * FileRead
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_FileRead
+unsigned int FileRead
 (
     OCI_File    *file,
     void        *buffer,
@@ -410,10 +403,10 @@ unsigned int OCI_API OCI_FileRead
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileGetType
+ * FileGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_FileGetType
+unsigned int FileGetType
 (
     OCI_File *file
 )
@@ -422,10 +415,10 @@ unsigned int OCI_API OCI_FileGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileGetSize
+ * FileGetSize
  * --------------------------------------------------------------------------------------------- */
 
-big_uint OCI_API OCI_FileGetSize
+big_uint FileGetSize
 (
     OCI_File *file
 )
@@ -463,7 +456,7 @@ big_uint OCI_API OCI_FileGetSize
  * OCI_LobFileExists
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FileExists
+boolean FileExists
 (
     OCI_File *file
 )
@@ -478,10 +471,10 @@ boolean OCI_API OCI_FileExists
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileSetName
+ * FileSetName
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FileSetName
+boolean FileSetName
 (
     OCI_File    *file,
     const otext *dir,
@@ -513,7 +506,7 @@ boolean OCI_API OCI_FileSetName
 
     if (OCI_STATUS)
     {
-        OCI_STATUS = OCI_FileGetInfo(file);
+        OCI_STATUS = FileGetInfo(file);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -522,10 +515,10 @@ boolean OCI_API OCI_FileSetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileGetDirectory
+ * FileGetDirectory
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_FileGetDirectory
+const otext * FileGetDirectory
 (
     OCI_File *file
 )
@@ -536,7 +529,7 @@ const otext * OCI_API OCI_FileGetDirectory
 
     if (!OCI_STRING_VALID(file->dir))
     {
-        OCI_STATUS = OCI_FileGetInfo(file);
+        OCI_STATUS = FileGetInfo(file);
     }
 
     OCI_RETVAL = file->dir;
@@ -545,10 +538,10 @@ const otext * OCI_API OCI_FileGetDirectory
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileGetName
+ * FileGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_FileGetName
+const otext * FileGetName
 (
     OCI_File *file
 )
@@ -559,7 +552,7 @@ const otext * OCI_API OCI_FileGetName
 
     if (!OCI_STRING_VALID(file->name))
     {
-        OCI_STATUS = OCI_FileGetInfo(file);
+        OCI_STATUS = FileGetInfo(file);
     }
 
     OCI_RETVAL = file->name;
@@ -568,10 +561,10 @@ const otext * OCI_API OCI_FileGetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileOpen
+ * FileOpen
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FileOpen
+boolean FileOpen
 (
     OCI_File *file
 )
@@ -596,7 +589,7 @@ boolean OCI_API OCI_FileOpen
  * OCI_LobFileIsOpen
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FileIsOpen
+boolean FileIsOpen
 (
     OCI_File *file
 )
@@ -611,10 +604,10 @@ boolean OCI_API OCI_FileIsOpen
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileClose
+ * FileClose
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FileClose
+boolean FileClose
 (
     OCI_File *file
 )
@@ -636,10 +629,10 @@ boolean OCI_API OCI_FileClose
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileIsEqual
+ * FileIsEqual
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FileIsEqual
+boolean FileIsEqual
 (
     OCI_File *file,
     OCI_File *file2
@@ -656,10 +649,10 @@ boolean OCI_API OCI_FileIsEqual
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FileAssign
+ * FileAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FileAssign
+boolean FileAssign
 (
     OCI_File *file,
     OCI_File *file_src
@@ -679,16 +672,16 @@ boolean OCI_API OCI_FileAssign
         OCI_EXEC(OCILobAssign(file->con->env, file->con->err, file_src->handle, &file->handle))
     }
 
-    OCI_RETVAL = OCI_STATUS = OCI_STATUS && OCI_FileGetInfo(file);
+    OCI_RETVAL = OCI_STATUS = OCI_STATUS && FileGetInfo(file);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_FileGetConnection
+* FileGetConnection
 * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_API OCI_FileGetConnection
+OCI_Connection * FileGetConnection
 (
     OCI_File *file
 )

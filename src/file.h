@@ -21,6 +21,125 @@
 #ifndef OCILIB_FILE_H_INCLUDED
 #define OCILIB_FILE_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+OCI_File * FileInit
+(
+    OCI_Connection    *con,
+    OCI_File          *file,
+    OCILobLocator *handle,
+    ub4            type
+);
+
+boolean FileGetInfo
+(
+    OCI_File* file
+);
+
+OCI_File * FileCreate
+(
+    OCI_Connection  *con,
+    unsigned int type
+);
+
+boolean FileFree
+(
+    OCI_File    *file
+);
+
+OCI_File ** FileArrayCreate
+(
+    OCI_Connection  *con,
+    unsigned int type,
+    unsigned int nbelem
+);
+
+boolean FileArrayFree
+(
+    OCI_File   **files
+);
+
+boolean FileSeek
+(
+    OCI_File        *file,
+    big_uint     offset,
+    unsigned int mode
+);
+
+big_uint FileGetOffset
+(
+    OCI_File    *file
+);
+
+unsigned int FileRead
+(
+    OCI_File        *file,
+    void        *buffer,
+    unsigned int len
+);
+
+unsigned int FileGetType
+(
+    OCI_File    *file
+);
+
+big_uint FileGetSize
+(
+    OCI_File    *file
+);
+
+boolean FileExists
+(
+    OCI_File    *file
+);
+
+boolean FileSetName
+(
+    OCI_File        *file,
+    const otext *dir,
+    const otext *name
+);
+
+const otext * FileGetDirectory
+(
+    OCI_File    *file
+);
+
+const otext * FileGetName
+(
+    OCI_File    *file
+);
+
+boolean FileOpen
+(
+    OCI_File    *file
+);
+
+boolean FileIsOpen
+(
+    OCI_File    *file
+);
+
+boolean FileClose
+(
+    OCI_File    *file
+);
+
+boolean FileIsEqual
+(
+    OCI_File    *file,
+    OCI_File    *file2
+);
+
+boolean FileAssign
+(
+    OCI_File    *file,
+    OCI_File    *file_src
+);
+
+OCI_Connection* FileGetConnection
+(
+    OCI_File* file
+);
 
 #endif /* OCILIB_FILE_H_INCLUDED */

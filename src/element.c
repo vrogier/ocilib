@@ -715,7 +715,7 @@ OCI_File * ElemGetFile
     (
         OCI_CDT_FILE,
         OCI_File*,
-        OCI_FileInit(elem->con, (OCI_File *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype)
+        FileInit(elem->con, (OCI_File *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype)
     )
 }
 
@@ -1142,8 +1142,8 @@ boolean ElemSetFile
     (
         OCI_CDT_FILE,
         OCI_File*,
-        OCI_FileInit(elem->con, (OCI_File *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype),
-        OCI_FileAssign((OCI_File *) elem->obj, value)
+        FileInit(elem->con, (OCI_File *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype),
+        FileAssign((OCI_File *) elem->obj, value)
     )
 }
 
