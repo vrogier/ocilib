@@ -3803,9 +3803,506 @@ int OCI_API OCI_NumberCompare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  object
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Object* OCI_API OCI_ObjectCreate
+(
+    OCI_Connection* con,
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(ObjectCreate, con, typinf);
+}
+
+boolean OCI_API OCI_ObjectFree
+(
+    OCI_Object* obj
+)
+{
+    CALL_IMPL(ObjectFree, obj);
+}
+
+OCI_Object** OCI_API OCI_ObjectArrayCreate
+(
+    OCI_Connection* con,
+    OCI_TypeInfo* typinf,
+    unsigned int    nbelem
+)
+{
+    CALL_IMPL(ObjectArrayCreate, con ,typinf, nbelem);
+}
+
+boolean OCI_API OCI_ObjectArrayFree
+(
+    OCI_Object** objs
+)
+{
+    CALL_IMPL(ObjectArrayFree, objs);
+}
+
+boolean OCI_API OCI_ObjectAssign
+(
+    OCI_Object* obj,
+    OCI_Object* obj_src
+)
+{
+    CALL_IMPL(ObjectAssign, obj, obj_src);
+}
+
+unsigned int OCI_API OCI_ObjectGetType
+(
+    OCI_Object* obj
+)
+{
+    CALL_IMPL(ObjectGetType, obj);
+}
+
+boolean OCI_API OCI_ObjectGetSelfRef
+(
+    OCI_Object* obj,
+    OCI_Ref* ref
+)
+{
+    CALL_IMPL(ObjectGetSelfRef, obj, ref);
+}
+
+OCI_TypeInfo* OCI_API OCI_ObjectGetTypeInfo
+(
+    OCI_Object* obj
+)
+{
+    CALL_IMPL(ObjectGetTypeInfo, obj);
+}
+
+boolean OCI_API OCI_ObjectGetBoolean
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetBoolean, obj, attr);
+}
+
+OCI_Number* OCI_API OCI_ObjectGetNumber
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetNumber, obj, attr);
+}
+
+short OCI_API OCI_ObjectGetShort
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetShort, obj, attr);
+}
+
+unsigned short OCI_API OCI_ObjectGetUnsignedShort
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetUnsignedShort, obj, attr);
+}
+
+int OCI_API OCI_ObjectGetInt
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetInt, obj, attr);
+}
+
+unsigned int OCI_API OCI_ObjectGetUnsignedInt
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetUnsignedInt, obj, attr);
+}
+
+big_int OCI_API OCI_ObjectGetBigInt
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetBigInt, obj, attr);
+}
+
+big_uint OCI_API OCI_ObjectGetUnsignedBigInt
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetUnsignedBigInt, obj, attr);
+}
+
+double OCI_API OCI_ObjectGetDouble
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetDouble, obj, attr);
+}
+
+float OCI_API OCI_ObjectGetFloat
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetFloat, obj, attr);
+}
+
+const otext* OCI_API OCI_ObjectGetString
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetString, obj, attr);
+}
+
+int OCI_API OCI_ObjectGetRaw
+(
+    OCI_Object* obj,
+    const otext* attr,
+    void* value,
+    unsigned int len
+)
+{
+    CALL_IMPL(ObjectGetRaw, obj, attr, value, len);
+}
+
+unsigned int OCI_API OCI_ObjectGetRawSize
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetRawSize, obj, attr);
+}
+
+OCI_Date* OCI_API OCI_ObjectGetDate
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetDate, obj, attr);
+}
+
+OCI_Timestamp* OCI_API OCI_ObjectGetTimestamp
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetTimestamp, obj, attr);
+}
+
+OCI_Interval* OCI_API OCI_ObjectGetInterval
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetInterval, obj, attr);
+}
+
+OCI_Coll* OCI_API OCI_ObjectGetColl
+(
+    OCI_Object* obj,
+    const otext* attr)
+{
+    CALL_IMPL(ObjectGetColl, obj, attr);
+}
+
+OCI_Ref* OCI_API OCI_ObjectGetRef
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetRef, obj, attr);
+}
+
+OCI_Object* OCI_API OCI_ObjectGetObject
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetObject, obj, attr);
+}
+
+OCI_Lob* OCI_API OCI_ObjectGetLob
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetLob, obj, attr);
+}
+
+OCI_File* OCI_API OCI_ObjectGetFile
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectGetFile, obj, attr);
+}
+
+boolean OCI_API OCI_ObjectSetBoolean
+(
+    OCI_Object* obj,
+    const otext* attr,
+    boolean      value
+)
+{
+    CALL_IMPL(ObjectSetBoolean, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetNumber
+(
+    OCI_Object* obj,
+    const otext* attr,
+    OCI_Number* value
+)
+{
+    CALL_IMPL(ObjectSetNumber, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetShort
+(
+    OCI_Object* obj,
+    const otext* attr,
+    short        value
+)
+{
+    CALL_IMPL(ObjectSetShort, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetUnsignedShort
+(
+    OCI_Object* obj,
+    const otext* attr,
+    unsigned short value
+)
+{
+    CALL_IMPL(ObjectSetUnsignedShort, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetInt
+(
+    OCI_Object* obj,
+    const otext* attr,
+    int          value
+)
+{
+    CALL_IMPL(ObjectSetInt, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetUnsignedInt
+(
+    OCI_Object* obj,
+    const otext* attr,
+    unsigned int value
+)
+{
+    CALL_IMPL(ObjectSetUnsignedInt, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetBigInt
+(
+    OCI_Object* obj,
+    const otext* attr,
+    big_int      value
+)
+{
+    CALL_IMPL(ObjectSetBigInt, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetUnsignedBigInt
+(
+    OCI_Object* obj,
+    const otext* attr,
+    big_uint     value
+)
+{
+    CALL_IMPL(ObjectSetUnsignedBigInt, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetDouble
+(
+    OCI_Object* obj,
+    const otext* attr,
+    double       value
+)
+{
+    CALL_IMPL(ObjectSetDouble, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetFloat
+(
+    OCI_Object* obj,
+    const otext* attr,
+    float        value
+)
+{
+    CALL_IMPL(ObjectSetFloat, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetString
+(
+    OCI_Object* obj,
+    const otext* attr,
+    const otext* value
+)
+{
+    CALL_IMPL(ObjectSetString, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetRaw
+(
+    OCI_Object* obj,
+    const otext* attr,
+    void* value,
+    unsigned int len
+)
+{
+    CALL_IMPL(ObjectSetRaw, obj, attr, value, len);
+}
+
+boolean OCI_API OCI_ObjectSetDate
+(
+    OCI_Object* obj,
+    const otext* attr,
+    OCI_Date* value
+)
+{
+    CALL_IMPL(ObjectSetDate, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetTimestamp
+(
+    OCI_Object* obj,
+    const otext* attr,
+    OCI_Timestamp* value
+)
+{
+    CALL_IMPL(ObjectSetTimestamp, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetInterval
+(
+    OCI_Object* obj,
+    const otext* attr,
+    OCI_Interval* value
+)
+{
+    CALL_IMPL(ObjectSetInterval, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetColl
+(
+    OCI_Object* obj,
+    const otext* attr,
+    OCI_Coll* value
+)
+{
+    CALL_IMPL(ObjectSetColl, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetObject
+(
+    OCI_Object* obj,
+    const otext* attr,
+    OCI_Object* value
+)
+{
+    CALL_IMPL(ObjectSetObject, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetLob
+(
+    OCI_Object* obj,
+    const otext* attr,
+    OCI_Lob* value
+)
+{
+    CALL_IMPL(ObjectSetLob, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetFile
+(
+    OCI_Object* obj,
+    const otext* attr,
+    OCI_File* value
+)
+{
+    CALL_IMPL(ObjectSetFile, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectSetRef
+(
+    OCI_Object* obj,
+    const otext* attr,
+    OCI_Ref* value
+)
+{
+    CALL_IMPL(ObjectSetRef, obj, attr, value);
+}
+
+boolean OCI_API OCI_ObjectIsNull
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectIsNull, obj, attr);
+}
+
+boolean OCI_API OCI_ObjectSetNull
+(
+    OCI_Object* obj,
+    const otext* attr
+)
+{
+    CALL_IMPL(ObjectSetNull, obj, attr);
+}
+
+boolean OCI_API OCI_ObjectGetStruct
+(
+    OCI_Object* obj,
+    void** pp_struct,
+    void** pp_ind
+)
+{
+    CALL_IMPL(ObjectGetStruct, obj, pp_struct, pp_ind);
+}
+
+boolean OCI_API OCI_ObjectToText
+(
+    OCI_Object* obj,
+    unsigned int* size,
+    otext* str
+)
+{
+    CALL_IMPL(ObjectToText, obj, size, str);
+}
 
 /* --------------------------------------------------------------------------------------------- *
  *  long

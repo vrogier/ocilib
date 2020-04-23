@@ -77,27 +77,6 @@ extern "C"
 
 
 
-/* --------------------------------------------------------------------------------------------- *
- * object.c
- * --------------------------------------------------------------------------------------------- */
-
-void OCI_ObjectGetUserStructSize
-(
-    OCI_TypeInfo *typinf,
-    size_t       *p_size,
-    size_t       *p_align
-);
-
-OCI_Object * OCI_ObjectInit
-(
-    OCI_Connection *con,
-    OCI_Object     *obj,
-    void           *handle,
-    OCI_TypeInfo   *typinf,
-    OCI_Object     *parent,
-    int             index,
-    boolean         reset
-);
 
 /* --------------------------------------------------------------------------------------------- *
  * pool.c

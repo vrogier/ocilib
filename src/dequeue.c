@@ -260,7 +260,7 @@ OCI_Msg * DequeueGet
             {
                 dequeue->msg->ind = *(OCIInd *) p_ind;
 
-                dequeue->msg->obj = OCI_ObjectInit(dequeue->typinf->con,
+                dequeue->msg->obj = ObjectInit(dequeue->typinf->con,
                                                    (OCI_Object *) dequeue->msg->obj,
                                                    dequeue->msg->payload, dequeue->typinf,
                                                    NULL, -1, TRUE);

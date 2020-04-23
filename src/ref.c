@@ -113,7 +113,7 @@ boolean OCI_RefPin
 
     if (OCI_STATUS)
     {
-        ref->obj = OCI_ObjectInit(ref->con, (OCI_Object *) ref->obj, obj_handle, ref->typinf, NULL, -1, TRUE);
+        ref->obj = ObjectInit(ref->con, (OCI_Object *) ref->obj, obj_handle, ref->typinf, NULL, -1, TRUE);
 
         OCI_STATUS = ref->pinned = (NULL != ref->obj);
     }

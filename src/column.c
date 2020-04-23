@@ -88,7 +88,7 @@ boolean ColumnGetAttrInfo
         }
         case OCI_CDT_OBJECT:
         {
-            OCI_ObjectGetUserStructSize(col->typinf, p_size, p_align);
+            ObjectGetUserStructSize(col->typinf, p_size, p_align);
             break;
         }
         default:

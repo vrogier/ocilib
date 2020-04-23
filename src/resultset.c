@@ -2175,9 +2175,9 @@ OCI_Object * OCI_API OCI_GetObject
     (
        rs, index, OCI_Object *, NULL, OCI_CDT_OBJECT,
 
-       OCI_ObjectInit(rs->stmt->con, (OCI_Object *) def->obj,
-                      DefineGetData(def), def->col.typinf,
-                      NULL, -1, TRUE)
+       ObjectInit(rs->stmt->con, (OCI_Object *) def->obj,
+                  DefineGetData(def), def->col.typinf,
+                  NULL, -1, TRUE)
     )
 }
 
