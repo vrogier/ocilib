@@ -268,7 +268,7 @@ ub4 ProcNotifyChanges
 
     /* get database that generated the notification */
 
-    OCI_GetStringAttribute(sub->con, desc, OCI_DTYPE_CHDES,    OCI_ATTR_CHDES_DBNAME, &sub->event.dbname, &sub->event.dbname_size);
+    StringGetAttribute(sub->con, desc, OCI_DTYPE_CHDES, OCI_ATTR_CHDES_DBNAME, &sub->event.dbname, &sub->event.dbname_size);
 
     /* get notification type */
 
@@ -349,7 +349,7 @@ ub4 ProcNotifyChanges
 
                 /* get table name */
 
-                OCI_GetStringAttribute(sub->con, *tbl_elem, OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_NAME, &sub->event.objname, &sub->event.objname_size);
+                StringGetAttribute(sub->con, *tbl_elem, OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_NAME, &sub->event.objname, &sub->event.objname_size);
 
                 /* get table modification type */
 
@@ -396,7 +396,7 @@ ub4 ProcNotifyChanges
 
                             /* get rowid  */
 
-                            OCI_GetStringAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_ROWID, &sub->event.rowid, &sub->event.rowid_size);
+                            StringGetAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_ROWID, &sub->event.rowid, &sub->event.rowid_size);
 
                             /* get opcode  */
                    

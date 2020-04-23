@@ -496,10 +496,10 @@ boolean OCI_StringFreeStringPtr
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetStringAttribute
+ * StringGetAttribute
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_GetStringAttribute
+boolean StringGetAttribute
 (
     OCI_Connection *con,
     void           *handle,
@@ -507,7 +507,6 @@ boolean OCI_GetStringAttribute
     unsigned int    attr,
     otext         **str,
     unsigned int   *size
-
 )
 {
     dbtext *dbstr  = NULL;
@@ -562,10 +561,10 @@ boolean OCI_GetStringAttribute
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetStringAttribute
+ * StringSetAttribute
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_SetStringAttribute
+boolean StringSetAttribute
 (
     OCI_Connection *con,
     void           *handle,

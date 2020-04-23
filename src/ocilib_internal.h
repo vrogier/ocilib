@@ -52,6 +52,7 @@ extern "C"
 #include "helpers.h"
 #include "interval.h"
 #include "iterator.h"
+#include "library.h"
 #include "list.h"
 #include "lob.h"
 #include "long.h"
@@ -73,76 +74,6 @@ extern "C"
 #include "timestamp.h"
 #include "transaction.h"
 #include "typeinfo.h"
-
-/* --------------------------------------------------------------------------------------------- *
- * library.c
- * --------------------------------------------------------------------------------------------- */
-
-void OCI_CallEnter
-(
-    OCI_Context *ctx
-);
-
-void OCI_CallExit
-(
-    OCI_Context *ctx
-);
-
-boolean OCI_KeyMapFree
-(
-    void
-);
-
-unsigned int OCI_ExternalSubTypeToSQLType
-(
-    unsigned int type,
-    unsigned int subtype
-);
-
-unsigned int OCI_ExternalSubTypeToHandleType
-(
-    unsigned int type,
-    unsigned int subtype
-);
-
-boolean OCI_FreeObjectFromType
-(
-    void         *obj,
-    unsigned int  type
-);
-
-boolean OCI_GetStringAttribute
-(
-    OCI_Connection *con,
-    void           *handle,
-    unsigned int    type,
-    unsigned int    attr,
-    otext         **str,
-    unsigned int   *size
-);
-
-boolean OCI_SetStringAttribute
-(
-    OCI_Connection *con,
-    void           *handle,
-    unsigned int    type,
-    unsigned int    attr,
-    otext         **str,
-    const otext    *value
-);
-
-char * OCI_GetEnvironmentVariable
-(
-    const char *name
-);
-
-boolean SetUserPassword
-(
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    const otext* new_pwd
-);
 
 /* --------------------------------------------------------------------------------------------- *
  * list.c

@@ -634,12 +634,12 @@ const otext * OCI_API OCI_MsgGetCorrelation
     {
         unsigned int size = 0;
         
-        OCI_STATUS = OCI_GetStringAttribute(msg->typinf->con,
-                                            msg->proph,
-                                            OCI_DTYPE_AQMSG_PROPERTIES,
-                                            OCI_ATTR_CORRELATION,
-                                            &msg->correlation,
-                                            &size);
+        OCI_STATUS = StringGetAttribute(msg->typinf->con,
+                                        msg->proph,
+                                        OCI_DTYPE_AQMSG_PROPERTIES,
+                                        OCI_ATTR_CORRELATION,
+                                        &msg->correlation,
+                                        &size);
     }
 
     OCI_RETVAL = msg->correlation;
@@ -661,12 +661,12 @@ boolean OCI_API OCI_MsgSetCorrelation
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
     OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
-    OCI_STATUS =  OCI_SetStringAttribute(msg->typinf->con,
-                                         msg->proph,
-                                         OCI_DTYPE_AQMSG_PROPERTIES,
-                                         OCI_ATTR_CORRELATION,
-                                         &msg->correlation,
-                                         correlation);
+    OCI_STATUS = StringSetAttribute(msg->typinf->con,
+                                    msg->proph,
+                                    OCI_DTYPE_AQMSG_PROPERTIES,
+                                    OCI_ATTR_CORRELATION,
+                                    &msg->correlation,
+                                    correlation);
 
     OCI_RETVAL = OCI_STATUS;
 
@@ -690,7 +690,7 @@ const otext * OCI_API OCI_MsgGetExceptionQueue
     {
         unsigned int size = 0;
         
-        OCI_STATUS = OCI_GetStringAttribute
+        OCI_STATUS = StringGetAttribute
                         (
                             msg->typinf->con,
                             msg->proph,
@@ -720,12 +720,12 @@ boolean OCI_API OCI_MsgSetExceptionQueue
     OCI_CALL_CHECK_PTR(OCI_IPC_MSG, msg)
     OCI_CALL_CONTEXT_SET_FROM_CONN(msg->typinf->con)
 
-    OCI_STATUS =  OCI_SetStringAttribute(msg->typinf->con,
-                                         msg->proph,
-                                         OCI_DTYPE_AQMSG_PROPERTIES,
-                                         OCI_ATTR_EXCEPTION_QUEUE,
-                                         &msg->except_queue,
-                                         queue);
+    OCI_STATUS = StringSetAttribute(msg->typinf->con,
+                                    msg->proph,
+                                    OCI_DTYPE_AQMSG_PROPERTIES,
+                                    OCI_ATTR_EXCEPTION_QUEUE,
+                                    &msg->except_queue,
+                                    queue);
 
     OCI_RETVAL = OCI_STATUS;
 

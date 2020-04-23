@@ -527,15 +527,11 @@ OCILOBWRITEAPPEND2           OCILobWriteAppend2           = NULL;
 
 #endif /* OCI_IMPORT_RUNTIME */
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExternalSubTypeToSQLType
+ * ExternalSubTypeToSQLType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_ExternalSubTypeToSQLType
+unsigned int ExternalSubTypeToSQLType
 (
     unsigned int type,
     unsigned int subtype
@@ -620,10 +616,10 @@ unsigned int OCI_ExternalSubTypeToSQLType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExternalSubTypeToHandleType
+ * ExternalSubTypeToHandleType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_ExternalSubTypeToHandleType
+unsigned int ExternalSubTypeToHandleType
 (
     unsigned int type,
     unsigned int subtype
@@ -668,10 +664,10 @@ unsigned int OCI_ExternalSubTypeToHandleType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FreeObjectFromType
+ * FreeObjectFromType
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_FreeObjectFromType(void *obj, unsigned int type)
+boolean FreeObjectFromType(void *obj, unsigned int type)
 {
     boolean res = FALSE;
 
@@ -728,10 +724,10 @@ boolean OCI_FreeObjectFromType(void *obj, unsigned int type)
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_KeyMapFree
+ * KeyMapFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_KeyMapFree
+boolean KeyMapFree
 (
     void
 )
@@ -775,10 +771,10 @@ boolean OCI_KeyMapFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CallEnter
+ * CallEnter
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_CallEnter
+void CallEnter
 (
     OCI_Context *ctx
 )
@@ -795,10 +791,10 @@ void OCI_CallEnter
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CallExit
+ * CallExit
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_CallExit
+void CallExit
 (
     OCI_Context *ctx
 )
@@ -814,14 +810,14 @@ void OCI_CallExit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetEnvironmentVariable
+ * GetEnvVariable
  * 
  * @note 
  * Values are allocated with OCI_MemAlloc() and need to be freed by the caller using OCI_MemFree()
  *
  * --------------------------------------------------------------------------------------------- */
 
-char * OCI_GetEnvironmentVariable
+char * GetEnvVariable
 (
     const char *name
 )
@@ -856,15 +852,11 @@ char * OCI_GetEnvironmentVariable
     return value;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Initialize
+ * Initialize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_Initialize
+boolean Initialize
 (
     POCI_ERROR   err_handler,
     const otext *lib_path,
@@ -920,7 +912,7 @@ boolean OCI_API OCI_Initialize
 
     for (i = 0; i < OCI_VARS_COUNT; i++)
     {
-        char *value = OCI_GetEnvironmentVariable(EnvironmentVarNames[i]);
+        char *value = GetEnvVariable(EnvironmentVarNames[i]);
 
         OCILib.env_vars[i] = value && (ocistrcasecmp(value, OCI_VARS_TRUE_VALUE) == 0 || atoi(value) == 1);
 
@@ -931,7 +923,7 @@ boolean OCI_API OCI_Initialize
 
     if (OCI_CHAR_ANSI == OCILib.charset)
     {
-        char *str = OCI_GetEnvironmentVariable("NLS_LANG");
+        char *str = GetEnvVariable("NLS_LANG");
 
         if (str)
         {
@@ -1692,10 +1684,10 @@ boolean OCI_API OCI_Initialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Cleanup
+ * Cleanup
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_Cleanup
+boolean Cleanup
 (
     void
 )
@@ -1725,7 +1717,7 @@ boolean OCI_API OCI_Cleanup
 
     /* free objects */
 
-    OCI_KeyMapFree();
+    KeyMapFree();
 
     OCI_ListFree(OCILib.cons);
     OCI_ListFree(OCILib.pools);
@@ -1836,10 +1828,10 @@ boolean OCI_API OCI_Cleanup
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetOCICompileVersion
+ * GetOCICompileVersion
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetOCICompileVersion
+unsigned int GetOCICompileVersion
 (
     void
 )
@@ -1848,10 +1840,10 @@ unsigned int OCI_API OCI_GetOCICompileVersion
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetOCIRuntimeVersion
+ * GetOCIRuntimeVersion
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetOCIRuntimeVersion
+unsigned int GetOCIRuntimeVersion
 (
     void
 )
@@ -1860,10 +1852,10 @@ unsigned int OCI_API OCI_GetOCIRuntimeVersion
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetImportMode
+ * GetImportMode
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetImportMode
+unsigned int GetImportMode
 (
     void
 )
@@ -1872,10 +1864,10 @@ unsigned int OCI_API OCI_GetImportMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetCharset
+ * GetCharset
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetCharset
+unsigned int GetCharset
 (
     void
 )
@@ -1884,10 +1876,10 @@ unsigned int OCI_API OCI_GetCharset
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_GetAllocatedBytes
+* GetAllocatedBytes
 * --------------------------------------------------------------------------------------------- */
 
-big_uint OCI_API OCI_GetAllocatedBytes
+big_uint GetAllocatedBytes
 (
     unsigned int mem_type
 )
@@ -1909,10 +1901,10 @@ big_uint OCI_API OCI_GetAllocatedBytes
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetLastError
+ * EnvironmentGetLastError
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Error * OCI_API OCI_GetLastError
+OCI_Error * EnvironmentGetLastError
 (
     void
 )
@@ -1933,10 +1925,10 @@ OCI_Error * OCI_API OCI_GetLastError
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnableWarnings
+ * EnableWarnings
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_EnableWarnings
+boolean EnableWarnings
 (
     boolean value
 )
@@ -1945,10 +1937,10 @@ boolean OCI_API OCI_EnableWarnings
  }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetErrorHandler
+ * SetErrorHandler
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetErrorHandler
+boolean SetErrorHandler
 (
     POCI_ERROR handler
 )
@@ -1957,10 +1949,10 @@ boolean OCI_API OCI_SetErrorHandler
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DatabaseStartup
+ * DatabaseStartup
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DatabaseStartup
+boolean DatabaseStartup
 (
     const otext *db,
     const otext *user,
@@ -2080,10 +2072,10 @@ boolean OCI_API OCI_DatabaseStartup
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DatabaseShutdown
+ * DatabaseShutdown
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DatabaseShutdown
+boolean DatabaseShutdown
 (
     const otext *db,
     const otext *user,
@@ -2185,10 +2177,10 @@ boolean OCI_API OCI_DatabaseShutdown
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetHAHandler
+ * SetHAHandler
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetHAHandler
+boolean SetHAHandler
 (
     POCI_HA_HANDLER  handler
 )
@@ -2237,10 +2229,10 @@ boolean OCI_API OCI_SetHAHandler
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_SetFormat
+* SetFormat
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetFormat
+boolean SetFormat
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -2265,10 +2257,10 @@ boolean OCI_API OCI_SetFormat
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_GetFormat
+* GetFormat
 * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetFormat
+const otext * GetFormat
 (
     OCI_Connection *con,
     unsigned int    type
@@ -2294,7 +2286,7 @@ const otext * OCI_API OCI_GetFormat
 
 
 /* --------------------------------------------------------------------------------------------- *
- * ConnectionSetUserPassword
+ * SetUserPassword
  * --------------------------------------------------------------------------------------------- */
 
 boolean SetUserPassword

@@ -300,11 +300,11 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                             /* get super type schema and name */
 
-                            OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
+                            OCI_STATUS = OCI_STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                               OCI_ATTR_SUPERTYPE_SCHEMA_NAME, 
                                                                               &sp_schema_name, &size_schema);
                     
-                            OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
+                            OCI_STATUS = OCI_STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                               OCI_ATTR_SUPERTYPE_NAME, 
                                                                               &sp_object_name, &size_object);
 
@@ -392,13 +392,13 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
                     /* get link schema, object and database link names */
 
-                    OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
+                    OCI_STATUS = OCI_STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                       OCI_ATTR_SCHEMA_NAME, &syn_schema_name, &size_schema);
                     
-                    OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
+                    OCI_STATUS = OCI_STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                       OCI_ATTR_NAME, &syn_object_name, &size_object);
  
-                    OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(con, param_root, OCI_DTYPE_PARAM,
+                    OCI_STATUS = OCI_STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                          OCI_ATTR_LINK, &syn_link_name, &size_link);
 
                     /* compute link full name */

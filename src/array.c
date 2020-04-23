@@ -169,7 +169,7 @@ boolean ArrayClose
 
         for (unsigned int i = 0; i < arr->nb_elem; i++)
         {
-            OCI_FreeObjectFromType(arr->tab_obj[i], arr->elem_type);
+            FreeObjectFromType(arr->tab_obj[i], arr->elem_type);
         }
     }
 

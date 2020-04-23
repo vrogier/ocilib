@@ -791,7 +791,7 @@ OCI_Resultset *rs
             }
             else
             {
-                OCI_FreeObjectFromType(def->obj, def->col.datatype);
+                FreeObjectFromType(def->obj, def->col.datatype);
             }
 
             def->obj = NULL;

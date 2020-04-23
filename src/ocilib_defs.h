@@ -412,14 +412,14 @@
     if ((mode) & OCI_ENV_CONTEXT)                                               \
     {                                                                           \
         ctx->call_err = ErrorGet(FALSE, FALSE);                                 \
-        OCI_CallEnter(ctx);                                                     \
+        CallEnter(ctx);                                                         \
     }
 
 #define OCI_CALL_CONTEXT_EXIT(mode)                                             \
                                                                                 \
     if ((mode) & OCI_ENV_CONTEXT)                                               \
     {                                                                           \
-        OCI_CallExit(ctx);                                                      \
+        CallExit(ctx);                                                          \
     }
 
 #define OCI_CALL_ENTER(type, value)                                             \

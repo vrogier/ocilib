@@ -2886,9 +2886,145 @@ OCI_Elem* OCI_API OCI_IterGetCurrent
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * 
+ * library
  * --------------------------------------------------------------------------------------------- */
 
+boolean OCI_API OCI_Initialize
+(
+    POCI_ERROR   err_handler,
+    const otext* lib_path,
+    unsigned int mode
+)
+{
+    CALL_IMPL(Initialize, err_handler, lib_path, mode)
+}
+
+boolean OCI_API OCI_Cleanup
+(
+    void
+)
+{
+    CALL_IMPL(Cleanup)
+}
+
+unsigned int OCI_API OCI_GetOCICompileVersion
+(
+    void
+)
+{
+    CALL_IMPL(GetOCICompileVersion)
+}
+
+unsigned int OCI_API OCI_GetOCIRuntimeVersion
+(
+    void
+)
+{
+    CALL_IMPL(GetOCIRuntimeVersion)
+}
+
+unsigned int OCI_API OCI_GetImportMode
+(
+    void
+)
+{
+    CALL_IMPL(GetImportMode)
+}
+
+unsigned int OCI_API OCI_GetCharset
+(
+    void
+)
+{
+    CALL_IMPL(GetCharset)
+}
+
+
+big_uint OCI_API OCI_GetAllocatedBytes
+(
+    unsigned int mem_type
+)
+{
+    CALL_IMPL(GetAllocatedBytes, mem_type)
+}
+
+OCI_Error* OCI_API OCI_GetLastError
+(
+    void
+)
+{
+    CALL_IMPL(EnvironmentGetLastError)
+}
+
+boolean OCI_API OCI_EnableWarnings
+(
+    boolean value
+)
+{
+    CALL_IMPL(EnableWarnings, value)
+}
+
+boolean OCI_API OCI_SetErrorHandler
+(
+    POCI_ERROR handler
+)
+{
+    CALL_IMPL(SetErrorHandler, handler)
+}
+
+boolean OCI_API OCI_DatabaseStartup
+(
+    const otext* db,
+    const otext* user,
+    const otext* pwd,
+    unsigned int sess_mode,
+    unsigned int start_mode,
+    unsigned int start_flag,
+    const otext* spfile
+)
+{
+    CALL_IMPL(DatabaseStartup, db, user, pwd, sess_mode, start_mode, start_flag, spfile)
+}
+
+boolean OCI_API OCI_DatabaseShutdown
+(
+    const otext* db,
+    const otext* user,
+    const otext* pwd,
+    unsigned int sess_mode,
+    unsigned int shut_mode,
+    unsigned int shut_flag
+)
+{
+    CALL_IMPL(DatabaseShutdown, db, user, pwd, sess_mode, shut_mode, shut_flag)
+}
+
+boolean OCI_API OCI_SetHAHandler
+(
+    POCI_HA_HANDLER  handler
+)
+{
+    CALL_IMPL(SetHAHandler, handler)
+}
+
+boolean OCI_API OCI_SetFormat
+(
+    OCI_Connection* con,
+    unsigned int    type,
+    const otext* format
+)
+{
+    CALL_IMPL(SetFormat, con, type, format)
+}
+
+const otext* OCI_API OCI_GetFormat
+(
+    OCI_Connection* con,
+    unsigned int    type
+)
+{
+    CALL_IMPL(GetFormat, con, type)
+}
 
 boolean OCI_API OCI_SetUserPassword
 (

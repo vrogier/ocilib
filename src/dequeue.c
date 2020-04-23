@@ -297,8 +297,8 @@ const otext * DequeueGetConsumer
     {
         unsigned int size = 0;
         
-        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                            OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, &size);
+        OCI_STATUS = StringGetAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
+                                        OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, &size);
     }
  
     OCI_RETVAL = dequeue->consumer;
@@ -320,8 +320,8 @@ boolean DequeueSetConsumer
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
     OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
-    OCI_RETVAL = OCI_STATUS = OCI_SetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                                     OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, consumer);
+    OCI_RETVAL = OCI_STATUS = StringSetAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
+                                                 OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, consumer);
     OCI_CALL_EXIT()
 }
 
@@ -343,8 +343,8 @@ const otext * DequeueGetCorrelation
     {
         unsigned int size = 0;
         
-        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                            OCI_ATTR_CORRELATION, &dequeue->pattern, &size);
+        OCI_STATUS = StringGetAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
+                                         OCI_ATTR_CORRELATION, &dequeue->pattern, &size);
     }
  
     OCI_RETVAL = dequeue->pattern;
@@ -366,8 +366,8 @@ boolean DequeueSetCorrelation
     OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
     OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
 
-    OCI_RETVAL = OCI_STATUS = OCI_SetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                                     OCI_ATTR_CORRELATION, &dequeue->pattern, pattern);
+    OCI_RETVAL = OCI_STATUS = StringSetAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
+                                                  OCI_ATTR_CORRELATION, &dequeue->pattern, pattern);
 
     OCI_CALL_EXIT()
 }

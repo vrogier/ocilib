@@ -64,7 +64,7 @@ OCI_Interval * IntervalInit
         {
             if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
             {
-                OCI_STATUS = OCI_DescriptorAlloc((dvoid  *)itv->env, (dvoid **)(void *)&itv->handle, (ub4)OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
+                OCI_STATUS = OCI_DescriptorAlloc((dvoid  *)itv->env, (dvoid **)(void *)&itv->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
 
                 itv->hstate = OCI_OBJECT_ALLOCATED;
             }
@@ -136,7 +136,7 @@ boolean IntervalFree
 
     if (OCI_OBJECT_ALLOCATED == itv->hstate)
     {
-        OCI_DescriptorFree((dvoid *)itv->handle, OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
+        OCI_DescriptorFree((dvoid *)itv->handle, ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
@@ -173,8 +173,8 @@ OCI_Interval ** IntervalArrayCreate
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type,
-              sizeof(OCIInterval *), sizeof(OCI_Interval), 
-                      OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
+                      sizeof(OCIInterval *), sizeof(OCI_Interval), 
+                      ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
 
     OCI_STATUS = (NULL != arr);
 

@@ -383,7 +383,7 @@ boolean ElemFree
             data->hstate = OCI_OBJECT_FETCHED_DIRTY;
         }
 
-        OCI_FreeObjectFromType(elem->obj, elem->typinf->cols[0].datatype);
+        FreeObjectFromType(elem->obj, elem->typinf->cols[0].datatype);
     }
 
     ElemFreeAllocatedData(elem);

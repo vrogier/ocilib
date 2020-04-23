@@ -2018,7 +2018,7 @@ const otext * ConnectionGetDBName
     {
         unsigned int size = 0;
         
-        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBNAME, &con->db_name, &size);
+        OCI_STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBNAME, &con->db_name, &size);
     }
 
 #endif
@@ -2047,7 +2047,7 @@ const otext * ConnectionGetInstanceName
     {
         unsigned int size = 0;
         
-        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_INSTNAME, &con->inst_name, &size);
+        OCI_STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_INSTNAME, &con->inst_name, &size);
     }
 
 #endif
@@ -2076,7 +2076,7 @@ const otext * ConnectionGetServiceName
     {
         unsigned int size = 0;
         
-        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_SERVICENAME, &con->service_name, &size);
+        OCI_STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_SERVICENAME, &con->service_name, &size);
     }
 
 #endif
@@ -2105,7 +2105,7 @@ const otext * ConnectionGetServerName
     {
         unsigned int size = 0;
         
-        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_HOSTNAME, &con->server_name, &size);
+        OCI_STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_HOSTNAME, &con->server_name, &size);
     }
 
 #endif
@@ -2134,7 +2134,7 @@ const otext * ConnectionGetDomainName
     {
         unsigned int size = 0;
         
-        OCI_STATUS = OCI_GetStringAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBDOMAIN, &con->domain_name, &size);
+        OCI_STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBDOMAIN, &con->domain_name, &size);
     }
 
 #endif

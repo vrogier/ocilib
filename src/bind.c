@@ -569,7 +569,7 @@ boolean BindFree
 
                     if (bnd->type == OCI_CDT_NUMERIC && bnd->subtype == OCI_NUM_NUMBER)
                     {
-                        OCI_FreeObjectFromType(bnd->input, bnd->type);
+                        FreeObjectFromType(bnd->input, bnd->type);
                     }
                     else
                     {
@@ -586,7 +586,7 @@ boolean BindFree
                 }
                 default:
                 {
-                    OCI_FreeObjectFromType(bnd->input, bnd->type);
+                    FreeObjectFromType(bnd->input, bnd->type);
                 }
             }
         }
@@ -678,14 +678,14 @@ boolean BindAllocData
             {
                 struct_size = sizeof(OCI_Timestamp);
                 elem_size   = sizeof(OCIDateTime *);
-                handle_type = OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, bnd->subtype);
+                handle_type = ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, bnd->subtype);
                 break;
             }
             case OCI_CDT_INTERVAL:
             {
                 struct_size = sizeof(OCI_Interval);
                 elem_size   = sizeof(OCIInterval *);
-                handle_type = OCI_ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, bnd->subtype);
+                handle_type = ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, bnd->subtype);
                 break;
             }
             case OCI_CDT_RAW:

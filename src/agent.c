@@ -153,8 +153,8 @@ const otext * AgentGetName
     {
         unsigned int size = 0;
         
-        OCI_STATUS = OCI_GetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
-                                            OCI_ATTR_AGENT_NAME,  &agent->name, &size);
+        OCI_STATUS = StringGetAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
+                                        OCI_ATTR_AGENT_NAME,  &agent->name, &size);
     }
 
     OCI_RETVAL = agent->name;
@@ -176,7 +176,7 @@ boolean AgentSetName
     OCI_CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
     OCI_CALL_CONTEXT_SET_FROM_CONN(agent->con)
 
-    OCI_STATUS = OCI_SetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_NAME, &agent->name, name);
+    OCI_STATUS = StringSetAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_NAME, &agent->name, name);
     OCI_RETVAL = OCI_STATUS;
 
     OCI_CALL_EXIT()
@@ -199,8 +199,8 @@ const otext * AgentGetAddress
     {
         unsigned int size = 0;
         
-        OCI_STATUS = OCI_GetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
-                                            OCI_ATTR_AGENT_ADDRESS, &agent->address, &size);
+        OCI_STATUS = StringGetAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
+                                        OCI_ATTR_AGENT_ADDRESS, &agent->address, &size);
     }
 
     OCI_RETVAL = agent->address;
@@ -222,7 +222,7 @@ boolean AgentSetAddress
     OCI_CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
     OCI_CALL_CONTEXT_SET_FROM_CONN(agent->con)
 
-    OCI_STATUS = OCI_SetStringAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_ADDRESS, &agent->address, address);
+    OCI_STATUS = StringSetAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_ADDRESS, &agent->address, address);
     OCI_RETVAL = OCI_STATUS;
     
     OCI_CALL_EXIT()

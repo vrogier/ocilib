@@ -76,7 +76,7 @@ OCI_Timestamp * OCI_TimestampInit
         {
             if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
             {
-                OCI_STATUS = OCI_DescriptorAlloc((dvoid  *)tmsp->env, (dvoid **)(void *)&tmsp->handle, (ub4)OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type));
+                OCI_STATUS = OCI_DescriptorAlloc((dvoid  *)tmsp->env, (dvoid **)(void *)&tmsp->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type));
                 tmsp->hstate = OCI_OBJECT_ALLOCATED;
             }
         }
@@ -159,7 +159,7 @@ boolean OCI_API OCI_TimestampFree
 
     if (OCI_OBJECT_ALLOCATED == tmsp->hstate)
     {
-        OCI_DescriptorFree((dvoid *)tmsp->handle, OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, tmsp->type));
+        OCI_DescriptorFree((dvoid *)tmsp->handle, ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, tmsp->type));
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
@@ -196,8 +196,8 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, TimestampTypeValues, OTEXT("Timestamp type"))
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type,
-             sizeof(OCIDateTime *), sizeof(OCI_Timestamp),
-                      OCI_ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type), NULL);
+                      sizeof(OCIDateTime *), sizeof(OCI_Timestamp),
+                      ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type), NULL);
 
     OCI_STATUS = (NULL != arr);
 

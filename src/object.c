@@ -150,8 +150,8 @@ OCI_TypeInfo * OCI_ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
                 OCI_EXEC(OCIDescribeAny(result->con->cxt, result->con->err, (dvoid *)tdo, 0, OCI_OTYPE_PTR, OCI_DEFAULT, OCI_PTYPE_UNK, descr))
                 OCI_GET_ATTRIB(OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM, descr, &param, NULL)
 
-                OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(result->con, param, OCI_DTYPE_PARAM, OCI_ATTR_SCHEMA_NAME, &schema_name, &size_schema);
-                OCI_STATUS = OCI_STATUS && OCI_GetStringAttribute(result->con, param, OCI_DTYPE_PARAM, OCI_ATTR_NAME, &object_name, &size_object);
+                OCI_STATUS = OCI_STATUS && StringGetAttribute(result->con, param, OCI_DTYPE_PARAM, OCI_ATTR_SCHEMA_NAME, &schema_name, &size_schema);
+                OCI_STATUS = OCI_STATUS && StringGetAttribute(result->con, param, OCI_DTYPE_PARAM, OCI_ATTR_NAME, &object_name, &size_object);
 
                 if (OCI_STATUS)
                 {
@@ -465,7 +465,7 @@ void OCI_ObjectReset
                 data->hstate =  OCI_OBJECT_FETCHED_DIRTY;
             }
 
-            OCI_FreeObjectFromType(obj->objs[i], obj->typinf->cols[i].datatype);
+            FreeObjectFromType(obj->objs[i], obj->typinf->cols[i].datatype);
             
             obj->objs[i] = NULL;
         }

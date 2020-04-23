@@ -21,8 +21,26 @@
 #ifndef OCILIB_STRING_H_INCLUDED
 #define OCILIB_STRING_H_INCLUDED
 
-#include "ocilib_types.h"
-#include "ocilib_checks.h"
+#include "types.h"
 
+boolean StringGetAttribute
+(
+    OCI_Connection* con,
+    void* handle,
+    unsigned int    type,
+    unsigned int    attr,
+    otext** str,
+    unsigned int* size
+);
+
+boolean StringSetAttribute
+(
+    OCI_Connection* con,
+    void* handle,
+    unsigned int    type,
+    unsigned int    attr,
+    otext** str,
+    const otext* value
+);
 
 #endif /* OCILIB_STRING_H_INCLUDED */

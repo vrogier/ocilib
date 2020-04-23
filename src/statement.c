@@ -1296,7 +1296,7 @@ boolean OCI_API OCI_ExecuteInternal
             {
                 unsigned int size_id = 0;
 
-                OCI_GetStringAttribute(stmt->con, stmt->stmt, OCI_HTYPE_STMT, OCI_ATTR_SQL_ID, &stmt->sql_id, &size_id);
+                StringGetAttribute(stmt->con, stmt->stmt, OCI_HTYPE_STMT, OCI_ATTR_SQL_ID, &stmt->sql_id, &size_id);
             }
 
     #endif
@@ -2452,7 +2452,7 @@ boolean OCI_API OCI_BindTimestamp
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_BIND_DATA(sizeof(OCIDateTime *), OCI_CDT_TIMESTAMP,
-                  OCI_ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, data->type),
+                  ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, data->type),
                   data->type, NULL, 0)
 
 #endif
@@ -2485,7 +2485,7 @@ boolean OCI_API OCI_BindArrayOfTimestamps
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     OCI_BIND_DATA(sizeof(OCIDateTime *), OCI_CDT_TIMESTAMP,
-                  OCI_ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type),
+                  ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type),
                   type, NULL, nbelem)
 
 #else
@@ -2520,7 +2520,7 @@ boolean OCI_API OCI_BindInterval
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_BIND_DATA(sizeof(OCIInterval *), OCI_CDT_INTERVAL,
-                  OCI_ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, data->type),
+                  ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, data->type),
                   data->type, NULL, 0)
 
 #else
@@ -2557,7 +2557,7 @@ boolean OCI_API OCI_BindArrayOfIntervals
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     OCI_BIND_DATA(sizeof(OCIInterval *), OCI_CDT_INTERVAL,
-                  OCI_ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type),
+                  ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type),
                   type, NULL, nbelem)
 
 #else
@@ -2630,7 +2630,7 @@ boolean OCI_API OCI_BindLob
     (
         OCI_IPC_LOB, 
         sizeof(OCILobLocator*), OCI_CDT_LOB,
-        OCI_ExternalSubTypeToSQLType(OCI_CDT_LOB, data->type),
+        ExternalSubTypeToSQLType(OCI_CDT_LOB, data->type),
         data->type, NULL, 0
     )
 }
@@ -2654,7 +2654,7 @@ boolean OCI_API OCI_BindArrayOfLobs
     OCI_CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, LobTypeValues, OTEXT("Lob type"))
 
     OCI_BIND_DATA(sizeof(OCILobLocator*), OCI_CDT_LOB,
-                  OCI_ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
+                  ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
                   type, NULL, nbelem)
 
     OCI_RETVAL = OCI_STATUS;
@@ -2677,7 +2677,7 @@ boolean OCI_API OCI_BindFile
     (
         OCI_IPC_FILE,
         sizeof(OCILobLocator*), OCI_CDT_FILE,
-        OCI_ExternalSubTypeToSQLType(OCI_CDT_FILE, data->type),
+        ExternalSubTypeToSQLType(OCI_CDT_FILE, data->type),
         data->type, NULL, 0
     )
 }
@@ -2701,7 +2701,7 @@ boolean OCI_API OCI_BindArrayOfFiles
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     OCI_BIND_DATA(sizeof(OCILobLocator*), OCI_CDT_FILE,
-                  OCI_ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
+                  ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
                   type, NULL, nbelem)
 
     OCI_RETVAL = OCI_STATUS;
@@ -2818,7 +2818,7 @@ boolean OCI_API OCI_BindLong
     (
         OCI_IPC_LONG, 
         size, OCI_CDT_LONG,
-        OCI_ExternalSubTypeToSQLType(OCI_CDT_LONG, data->type),
+        ExternalSubTypeToSQLType(OCI_CDT_LONG, data->type),
         data->type, NULL, 0
     )
 }
@@ -3043,7 +3043,7 @@ boolean OCI_API OCI_RegisterTimestamp
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     OCI_REGISTER_DATA(sizeof(OCIDateTime *), OCI_CDT_TIMESTAMP,
-                      OCI_ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type),
+                      ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type),
                       type, NULL, 0)
 
 #endif
@@ -3074,7 +3074,7 @@ boolean OCI_API OCI_RegisterInterval
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     OCI_REGISTER_DATA(sizeof(OCIInterval *), OCI_CDT_INTERVAL,
-                      OCI_ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type),
+                      ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type),
                       type, NULL, 0)
 
 #endif
@@ -3124,7 +3124,7 @@ boolean OCI_API OCI_RegisterLob
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     OCI_REGISTER_DATA(sizeof(OCILobLocator*), OCI_CDT_LOB,
-                      OCI_ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
+                      ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
                       type, NULL, 0)
 
     OCI_RETVAL = OCI_STATUS;
@@ -3149,7 +3149,7 @@ boolean OCI_API OCI_RegisterFile
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     OCI_REGISTER_DATA(sizeof(OCILobLocator*), OCI_CDT_FILE,
-                      OCI_ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
+                      ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
                       type, NULL, 0)
 
     OCI_RETVAL = OCI_STATUS;
