@@ -21,6 +21,30 @@
 #ifndef OCILIB_MUTEX_H_INCLUDED
 #define OCILIB_MUTEX_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+OCI_Mutex* MutexCreateInternal
+(
+    void
+);
+
+OCI_Mutex * MutexCreate
+(
+);
+
+boolean MutexFree
+(
+    OCI_Mutex   *mutex
+);
+
+boolean MutexAcquire
+(
+    OCI_Mutex   *mutex
+);
+
+boolean MutexRelease
+(
+    OCI_Mutex   *mutex
+);
 
 #endif /* OCILIB_MUTEX_H_INCLUDED */

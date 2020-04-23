@@ -99,7 +99,7 @@ OCI_List* ListCreate
 
         if (OCI_LIB_THREADED)
         {
-            list->mutex = OCI_MutexCreateInternal();
+            list->mutex = MutexCreateInternal();
 
             if (!list->mutex)
             {

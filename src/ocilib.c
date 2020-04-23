@@ -3614,9 +3614,40 @@ boolean OCI_API OCI_MsgSetExceptionQueue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  mutex
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Mutex* OCI_API OCI_MutexCreate
+(
+    void
+)
+{
+    CALL_IMPL(MutexCreate);
+}
+
+boolean OCI_API OCI_MutexFree
+(
+    OCI_Mutex* mutex
+)
+{
+    CALL_IMPL(MutexFree, mutex);
+}
+
+boolean OCI_API OCI_MutexAcquire
+(
+    OCI_Mutex* mutex
+)
+{
+    CALL_IMPL(MutexAcquire, mutex);
+}
+
+boolean OCI_API OCI_MutexRelease
+(
+    OCI_Mutex* mutex
+)
+{
+    CALL_IMPL(MutexRelease, mutex);
+}
 
 /* --------------------------------------------------------------------------------------------- *
  *  long

@@ -1618,7 +1618,7 @@ boolean Initialize
 
             OCI_STATUS = OCI_SUCCESSFUL(OCIThreadInit(OCILib.env, OCILib.err));
 
-            OCILib.mem_mutex = OCI_MutexCreateInternal();
+            OCILib.mem_mutex = MutexCreateInternal();
             OCI_STATUS = (NULL != OCILib.mem_mutex);
         }
 

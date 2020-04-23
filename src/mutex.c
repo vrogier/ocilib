@@ -18,17 +18,16 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "mutex.h"
 
-/* ********************************************************************************************* *
- *                            PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "macro.h"
+#include "memory.h"
 
-/* --------------------------------------------------------------------------------------------- *
- * OCI_MutexCreateInternal
- * --------------------------------------------------------------------------------------------- */
+ /* --------------------------------------------------------------------------------------------- *
+  * MutexCreateInternal
+  * --------------------------------------------------------------------------------------------- */
 
-OCI_Mutex * OCI_MutexCreateInternal
+OCI_Mutex * MutexCreateInternal
 (
     void
 )
@@ -61,15 +60,11 @@ OCI_Mutex * OCI_MutexCreateInternal
     return mutex;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_MutexCreate
+ * MutexCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Mutex * OCI_API OCI_MutexCreate
+OCI_Mutex * MutexCreate
 (
     void
 )
@@ -77,17 +72,17 @@ OCI_Mutex * OCI_API OCI_MutexCreate
     OCI_CALL_ENTER(OCI_Mutex*, NULL)
     OCI_CALL_CHECK_INITIALIZED()
 
-    OCI_RETVAL = OCI_MutexCreateInternal();
+    OCI_RETVAL = MutexCreateInternal();
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_MutexFree
+ * MutexFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MutexFree
+boolean MutexFree
 (
     OCI_Mutex *mutex
 )
@@ -120,10 +115,10 @@ boolean OCI_API OCI_MutexFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_MutexAcquire
+ * MutexAcquire
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MutexAcquire
+boolean MutexAcquire
 (
     OCI_Mutex *mutex
 )
@@ -140,10 +135,10 @@ boolean OCI_API OCI_MutexAcquire
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_MutexRelease
+ * MutexRelease
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_MutexRelease
+boolean MutexRelease
 (
     OCI_Mutex *mutex
 )
