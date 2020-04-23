@@ -21,6 +21,115 @@
 #ifndef OCILIB_HANDLE_H_INCLUDED
 #define OCILIB_HANDLE_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+const void * HandleGetEnvironment
+(
+);
+
+const void * HandleGetContext
+(
+    OCI_Connection *con
+);
+
+const void * HandleGetServer
+(
+    OCI_Connection *con
+);
+
+const void * HandleGetError
+(
+    OCI_Connection *con
+);
+
+const void * HandleGetSession
+(
+    OCI_Connection *con
+);
+
+const void * HandleGetTransaction
+(
+    OCI_Transaction *trans
+);
+
+const void * HandleGetStatement
+(
+    OCI_Statement *stmt
+);
+
+const void * HandleGetLob
+(
+    OCI_Lob     *lob
+);
+
+const void * HandleGetFile
+(
+    OCI_File    *file
+);
+
+const void * HandleGetDate
+(
+    OCI_Date    *date
+);
+
+const void * HandleGetTimestamp
+(
+    OCI_Timestamp *tmsp
+);
+
+const void * HandleGetInterval
+(
+    OCI_Interval *itv
+);
+
+const void * HandleGetObject
+(
+    OCI_Object  *obj
+);
+
+const void * HandleGetColl
+(
+    OCI_Coll *coll
+);
+
+const void * HandleGetRef
+(
+    OCI_Ref *ref
+);
+
+const void * HandleGetMutex
+(
+    OCI_Mutex   *mutex
+);
+
+const void * HandleGetThreadID
+(
+    OCI_Thread  *thread
+);
+
+const void * HandleGetThread
+(
+    OCI_Thread  *thread
+);
+
+const void * HandleGetDirPathCtx
+(
+    OCI_DirPath *dp
+);
+
+const void * HandleGetDirPathColArray
+(
+    OCI_DirPath *dp
+);
+
+const void * HandleGetDirPathStream
+(
+    OCI_DirPath *dp
+);
+
+const void * HandleGetSubscription
+(
+    OCI_Subscription *sub
+);
 
 #endif /* OCILIB_HANDLE_H_INCLUDED */

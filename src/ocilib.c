@@ -2372,7 +2372,188 @@ OCI_Connection* OCI_API OCI_FileGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * 
+ * handle
+ * --------------------------------------------------------------------------------------------- */
+
+
+const void* OCI_API OCI_HandleGetEnvironment
+(
+    void
+)
+{
+    CALL_IMPL(HandleGetEnvironment)
+}
+
+const void* OCI_API OCI_HandleGetContext
+(
+    OCI_Connection* con
+)
+{
+    CALL_IMPL(HandleGetContext, con)
+}
+
+const void* OCI_API OCI_HandleGetServer
+(
+    OCI_Connection* con
+)
+{
+    CALL_IMPL(HandleGetServer, con)
+}
+
+const void* OCI_API OCI_HandleGetError
+(
+    OCI_Connection* con
+)
+{
+    CALL_IMPL(HandleGetError, con)
+}
+
+const void* OCI_API OCI_HandleGetSession
+(
+    OCI_Connection* con
+)
+{
+    CALL_IMPL(HandleGetSession, con)
+}
+
+const void* OCI_API OCI_HandleGetTransaction
+(
+    OCI_Transaction* trans
+)
+{
+    CALL_IMPL(HandleGetTransaction, trans)
+}
+
+const void* OCI_API OCI_HandleGetStatement
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(HandleGetStatement, stmt)
+}
+
+const void* OCI_API OCI_HandleGetLob
+(
+    OCI_Lob* lob
+)
+{
+    CALL_IMPL(HandleGetLob, lob)
+}
+
+const void* OCI_API OCI_HandleGetFile
+(
+    OCI_File* file
+)
+{
+    CALL_IMPL(HandleGetFile, file)
+}
+
+const void* OCI_API OCI_HandleGetDate
+(
+    OCI_Date* date
+)
+{
+    CALL_IMPL(HandleGetDate, date)
+}
+
+const void* OCI_API OCI_HandleGetTimestamp
+(
+    OCI_Timestamp* tmsp
+)
+{
+    CALL_IMPL(HandleGetTimestamp, tmsp)
+}
+
+const void* OCI_API OCI_HandleGetInterval
+(
+    OCI_Interval* itv
+)
+{
+    CALL_IMPL(HandleGetInterval, itv)
+}
+
+const void* OCI_API OCI_HandleGetObject
+(
+    OCI_Object* obj
+)
+{
+    CALL_IMPL(HandleGetObject, obj)
+}
+
+const void* OCI_API OCI_HandleGetColl
+(
+    OCI_Coll* coll
+)
+{
+    CALL_IMPL(HandleGetColl, coll)
+}
+
+const void* OCI_API OCI_HandleGetRef
+(
+    OCI_Ref* ref
+)
+{
+    CALL_IMPL(HandleGetRef, ref)
+}
+
+const void* OCI_API OCI_HandleGetMutex
+(
+    OCI_Mutex* mutex
+)
+{
+    CALL_IMPL(HandleGetMutex, mutex)
+}
+
+const void* OCI_API OCI_HandleGetThreadID
+(
+    OCI_Thread* thread
+)
+{
+    CALL_IMPL(HandleGetThreadID, thread)
+}
+
+const void* OCI_API OCI_HandleGetThread
+(
+    OCI_Thread* thread
+)
+{
+    CALL_IMPL(HandleGetThread, thread)
+}
+
+const void* OCI_API OCI_HandleGetDirPathCtx
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(HandleGetDirPathCtx, dp)
+}
+
+const void* OCI_API OCI_HandleGetDirPathColArray
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(HandleGetDirPathColArray, dp)
+}
+
+const void* OCI_API OCI_HandleGetDirPathStream
+(
+    OCI_DirPath* dp
+)
+{
+    CALL_IMPL(HandleGetDirPathStream, dp)
+}
+
+const void* OCI_API OCI_HandleGetSubscription
+(
+    OCI_Subscription* sub
+)
+{
+    CALL_IMPL(HandleGetSubscription, sub)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * handle
  * --------------------------------------------------------------------------------------------- */
 
 
