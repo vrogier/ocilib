@@ -53,7 +53,7 @@ OCI_Agent * AgentInit
         {
             agent->hstate = OCI_OBJECT_ALLOCATED;
 
-            OCI_STATUS = OCI_DescriptorAlloc((dvoid *)agent->con->env, (dvoid **)&agent->handle, OCI_DTYPE_AQAGENT);
+            OCI_STATUS = MemDescriptorAlloc((dvoid *)agent->con->env, (dvoid **)&agent->handle, OCI_DTYPE_AQAGENT);
         }
         else
         {
@@ -126,7 +126,7 @@ boolean AgentFree
 
     if (OCI_OBJECT_ALLOCATED == agent->hstate)
     {
-        OCI_DescriptorFree((dvoid *) agent->handle, OCI_DTYPE_AQAGENT);
+        MemDescriptorFree((dvoid *) agent->handle, OCI_DTYPE_AQAGENT);
     }
 
     OCI_FREE(agent->address)

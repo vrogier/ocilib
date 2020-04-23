@@ -388,7 +388,7 @@ boolean OCI_FetchPieces
                 {
                     lg->maxsize = (lg->size + trailing_size + bufsize) * char_fact;
 
-                    lg->buffer = (ub1 *) OCI_MemRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER, (size_t) lg->maxsize, 1, TRUE);
+                    lg->buffer = (ub1 *) MemRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER, (size_t) lg->maxsize, 1, TRUE);
                 }
 
                 /* update piece info */
@@ -807,13 +807,13 @@ OCI_Resultset *rs
                 {
                     for (j = 0; j < def->buf.count; j++)
                     {
-                        OCI_HandleFree((dvoid *)def->buf.data[j], (ub4)def->col.handletype);
+                        MemHandleFree((dvoid *)def->buf.data[j], (ub4)def->col.handletype);
                     }
                 }
             }
             else
             {
-                OCI_DescriptorArrayFree((dvoid *)def->buf.data,  (ub4)def->col.handletype, (ub4)def->buf.count);
+                MemDescriptorArrayFree((dvoid *)def->buf.data,  (ub4)def->col.handletype, (ub4)def->buf.count);
             }
         }
 

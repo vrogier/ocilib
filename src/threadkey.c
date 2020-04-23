@@ -45,7 +45,7 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
     {
         /* allocate error handle */
 
-        OCI_STATUS = OCI_HandleAlloc(OCILib.env, (dvoid **)(void *)&key->err, OCI_HTYPE_ERROR);
+        OCI_STATUS = MemHandleAlloc(OCILib.env, (dvoid **)(void *)&key->err, OCI_HTYPE_ERROR);
 
         /* key initialization */
 
@@ -87,7 +87,7 @@ boolean OCI_ThreadKeyFree
 
     if (key->err)
     {
-        OCI_HandleFree(key->err, OCI_HTYPE_ERROR);
+        MemHandleFree(key->err, OCI_HTYPE_ERROR);
     }
 
     /* free key structure */

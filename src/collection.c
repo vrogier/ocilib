@@ -59,9 +59,9 @@ OCI_Coll * CollInit
 
             OCI_EXEC
             (
-                OCI_ObjectNew(coll->con->env, coll->con->err, coll->con->cxt,
-                              typinf->colcode, typinf->tdo, (void *) NULL,
-                              OCI_DURATION_SESSION, TRUE, (dvoid **) &coll->handle)
+                MemObjectNew(coll->con->env, coll->con->err, coll->con->cxt,
+                            typinf->colcode, typinf->tdo, (void *) NULL,
+                            OCI_DURATION_SESSION, TRUE, (dvoid **) &coll->handle)
             )
         }
         else
@@ -127,7 +127,7 @@ boolean CollFree
 
     if ((OCI_OBJECT_ALLOCATED == coll->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == coll->hstate))
     {
-        OCI_OCIObjectFree(coll->con->env, coll->typinf->con->err, coll->handle, OCI_DEFAULT);
+        MemObjectFree(coll->con->env, coll->typinf->con->err, coll->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != coll->hstate)

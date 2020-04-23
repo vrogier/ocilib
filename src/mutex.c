@@ -45,7 +45,7 @@ OCI_Mutex * OCI_MutexCreateInternal
     {
         /* allocate error handle */
 
-        OCI_STATUS = OCI_HandleAlloc(OCILib.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR);
+        OCI_STATUS = MemHandleAlloc(OCILib.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR);
 
         /* allocate mutex handle */
 
@@ -107,7 +107,7 @@ boolean OCI_API OCI_MutexFree
 
     if (mutex->err)
     {
-        OCI_HandleFree(mutex->err, OCI_HTYPE_ERROR);
+        MemHandleFree(mutex->err, OCI_HTYPE_ERROR);
     }
 
     /* free mutex structure */

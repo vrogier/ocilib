@@ -46,10 +46,10 @@
     }                                       \
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ListCreateItem
+ * ListCreateItem
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Item * OCI_ListCreateItem
+OCI_Item * ListCreateItem
 (
     int type,
     int size
@@ -59,13 +59,13 @@ OCI_Item * OCI_ListCreateItem
 
     /* allocate list item entry */
 
-    item = (OCI_Item *) OCI_MemAlloc(OCI_IPC_LIST_ITEM, sizeof(*item), (size_t) 1, TRUE);
+    item = (OCI_Item *) MemAlloc(OCI_IPC_LIST_ITEM, sizeof(*item), (size_t) 1, TRUE);
 
     if (item)
     {
         /* allocate item data buffer */
 
-        item->data = (void *) OCI_MemAlloc(type, (size_t) size, (size_t) 1, TRUE);
+        item->data = (void *) MemAlloc(type, (size_t) size, (size_t) 1, TRUE);
 
         if (!item->data)
         {
@@ -89,7 +89,7 @@ OCI_List* ListCreate
 
     /* allocate list */
 
-    list = (OCI_List *) OCI_MemAlloc(OCI_IPC_LIST, sizeof(*list), (size_t) 1, TRUE);
+    list = (OCI_List *) MemAlloc(OCI_IPC_LIST, sizeof(*list), (size_t) 1, TRUE);
 
     /* create a mutex on multi threaded environments */
 
@@ -151,7 +151,7 @@ void * ListAppend
 
     OCI_CHECK(NULL == list,  NULL);
 
-    item = OCI_ListCreateItem(list->type, size);
+    item = ListCreateItem(list->type, size);
 
     OCI_CHECK(NULL == item, FALSE)
 

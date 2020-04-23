@@ -293,7 +293,7 @@ OCI_DirPath * DirPathCreate
 
         /* allocates direct context handle */
 
-        OCI_STATUS = OCI_HandleAlloc((dvoid *)dp->con->env, (dvoid **) (void *) &dp->ctx, OCI_HTYPE_DIRPATH_CTX);
+        OCI_STATUS = MemHandleAlloc((dvoid *)dp->con->env, (dvoid **) (void *) &dp->ctx, OCI_HTYPE_DIRPATH_CTX);
 
         /* set table name attribute */
 
@@ -390,9 +390,9 @@ boolean DirPathFree
     OCI_FREE(dp->err_cols)
     OCI_FREE(dp->err_rows)
 
-    OCI_HandleFree(dp->strm, OCI_HTYPE_DIRPATH_STREAM);
-    OCI_HandleFree(dp->arr,  OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
-    OCI_HandleFree(dp->ctx,  OCI_HTYPE_DIRPATH_CTX);
+    MemHandleFree(dp->strm, OCI_HTYPE_DIRPATH_STREAM);
+    MemHandleFree(dp->arr,  OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
+    MemHandleFree(dp->ctx,  OCI_HTYPE_DIRPATH_CTX);
 
     OCI_FREE(dp)
 
@@ -636,11 +636,11 @@ boolean DirPathPrepare
 
     /* allocate column array handle */
 
-    OCI_STATUS = OCI_STATUS &&  OCI_HandleAlloc((dvoid *)dp->ctx, (dvoid **)(void *)&dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
+    OCI_STATUS = OCI_STATUS &&  MemHandleAlloc((dvoid *)dp->ctx, (dvoid **)(void *)&dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
 
     /* allocate stream handle */
 
-    OCI_STATUS = OCI_STATUS && OCI_HandleAlloc((dvoid *)dp->ctx, (dvoid **)(void *)&dp->strm, OCI_HTYPE_DIRPATH_STREAM);
+    OCI_STATUS = OCI_STATUS && MemHandleAlloc((dvoid *)dp->ctx, (dvoid **)(void *)&dp->strm, OCI_HTYPE_DIRPATH_STREAM);
 
     /* check the number of rows allocated */
 

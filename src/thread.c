@@ -68,7 +68,7 @@ OCI_Thread * OCI_API OCI_ThreadCreate
     {
         /* allocate error handle */
 
-        OCI_STATUS = OCI_HandleAlloc(OCILib.env, (dvoid **)(void *)&thread->err, OCI_HTYPE_ERROR);
+        OCI_STATUS = MemHandleAlloc(OCILib.env, (dvoid **)(void *)&thread->err, OCI_HTYPE_ERROR);
 
         /* allocate thread handle */
 
@@ -124,7 +124,7 @@ boolean OCI_API OCI_ThreadFree
 
     if (thread->err)
     {
-        OCI_HandleFree(thread->err, OCI_HTYPE_ERROR);
+        MemHandleFree(thread->err, OCI_HTYPE_ERROR);
     }
 
     /* free thread structure */

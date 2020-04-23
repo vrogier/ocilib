@@ -122,11 +122,11 @@ boolean OCI_StringRequestBuffer
 
     if (!*buffer)
     {
-       *buffer = (otext *) OCI_MemAlloc(OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
+       *buffer = (otext *) MemAlloc(OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
     }
     else if (*buffer_size < request_size)
     {
-        *buffer = (otext *) OCI_MemRealloc(*buffer, OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
+        *buffer = (otext *) MemRealloc(*buffer, OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
     }
 
     if (*buffer)
@@ -317,7 +317,7 @@ dbtext * OCI_StringGetOracleString
 
     if (OCILib.use_wide_char_conv)
     {
-        dst = (dbtext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(dbtext), len + 1, FALSE);
+        dst = (dbtext *) MemAlloc(OCI_IPC_STRING, sizeof(dbtext), len + 1, FALSE);
 
         if (dst)
         {
@@ -345,7 +345,7 @@ void OCI_StringReleaseOracleString
 {
     if (OCILib.use_wide_char_conv && str)
     {
-        OCI_MemFree(str);
+        MemFree(str);
     }
 }
 
@@ -378,7 +378,7 @@ otext* OCI_StringDuplicateFromOracleString
     int            len
 )
 {
-    otext *dst = (otext *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), len + 1, FALSE);
+    otext *dst = (otext *) MemAlloc(OCI_IPC_STRING, sizeof(otext), len + 1, FALSE);
 
     if (dst)
     {
@@ -419,11 +419,11 @@ otext * OCI_StringFromStringPtr
 
         if (!(*buffer))
         {
-            *buffer = OCI_MemAlloc(OCI_IPC_STRING, sizeof(otext), length + 1, FALSE);
+            *buffer = MemAlloc(OCI_IPC_STRING, sizeof(otext), length + 1, FALSE);
         }
         else if ((*buffer_size) < ((length + 1) * sizeof(otext)))
         {
-            *buffer = OCI_MemRealloc((void*)  *buffer, OCI_IPC_STRING, sizeof(otext), length + 1, FALSE);
+            *buffer = MemRealloc((void*)  *buffer, OCI_IPC_STRING, sizeof(otext), length + 1, FALSE);
         }
 
         if (*buffer)
@@ -1125,7 +1125,7 @@ char * ocistrdup
 {
     OCI_CHECK(NULL == src, NULL)
 
-    char *dst = (char *) OCI_MemAlloc(OCI_IPC_STRING, 1, strlen(src) + 1, 0);
+    char *dst = (char *) MemAlloc(OCI_IPC_STRING, 1, strlen(src) + 1, 0);
 
     if (dst)
     {
@@ -1203,7 +1203,7 @@ wchar_t * ociwcsdup
 {
     OCI_CHECK(NULL == src, NULL)
 
-    wchar_t *dst = (wchar_t *) OCI_MemAlloc(OCI_IPC_STRING, sizeof(wchar_t), wcslen(src) + 1, 0);
+    wchar_t *dst = (wchar_t *) MemAlloc(OCI_IPC_STRING, sizeof(wchar_t), wcslen(src) + 1, 0);
 
     if (dst)
     {

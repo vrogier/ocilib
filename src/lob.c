@@ -81,7 +81,7 @@ OCI_Lob * LobInit
             {
                 lob->hstate = OCI_OBJECT_ALLOCATED;
 
-                OCI_STATUS = OCI_DescriptorAlloc((dvoid  *)lob->con->env, (dvoid **)(void *)&lob->handle, OCI_DTYPE_LOB);
+                OCI_STATUS = MemDescriptorAlloc((dvoid  *)lob->con->env, (dvoid **)(void *)&lob->handle, OCI_DTYPE_LOB);
             }
 
             OCI_SET_ATTRIB(OCI_DTYPE_LOB, OCI_ATTR_LOBEMPTY, lob->handle, &empty, sizeof(empty))
@@ -146,7 +146,7 @@ boolean LobFree
 
     if (OCI_OBJECT_ALLOCATED == lob->hstate)
     {
-        OCI_DescriptorFree((dvoid *) lob->handle, (ub4) OCI_DTYPE_LOB);
+        MemDescriptorFree((dvoid *) lob->handle, (ub4) OCI_DTYPE_LOB);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != lob->hstate)

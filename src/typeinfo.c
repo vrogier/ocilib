@@ -181,7 +181,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
             typinf->struct_size = 0;
             typinf->align       = 0;
 
-            OCI_STATUS = OCI_HandleAlloc(typinf->con->env, (dvoid **)(void *)&dschp, OCI_HTYPE_DESCRIBE);
+            OCI_STATUS = MemHandleAlloc(typinf->con->env, (dvoid **)(void *)&dschp, OCI_HTYPE_DESCRIBE);
         }
 
         /* perform describe */
@@ -318,8 +318,8 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                          
                             /* free temporary strings */
 
-                            OCI_MemFree (sp_schema_name);
-                            OCI_MemFree (sp_object_name);
+                            MemFree (sp_schema_name);
+                            MemFree (sp_object_name);
 
                             OCI_STATUS = (NULL != typinf->parent_type);
                         }
@@ -411,9 +411,9 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
                          
                     /* free temporary strings */
 
-                    OCI_MemFree (syn_link_name);
-                    OCI_MemFree (syn_object_name);
-                    OCI_MemFree (syn_schema_name);
+                    MemFree (syn_link_name);
+                    MemFree(syn_object_name);
+                    MemFree(syn_schema_name);
                     
                     /* do we have a valid object ? */
 
@@ -477,7 +477,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 
     /* free describe handle */
 
-    OCI_HandleFree(dschp, OCI_HTYPE_DESCRIBE);
+    MemHandleFree(dschp, OCI_HTYPE_DESCRIBE);
 
     /* increment type info reference counter on success */
 

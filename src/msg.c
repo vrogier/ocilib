@@ -50,7 +50,7 @@ OCI_Msg * OCI_API OCI_MsgCreate
 
         /* allocate message properties descriptor */
 
-        OCI_STATUS = OCI_DescriptorAlloc((dvoid *)msg->typinf->con->env, (dvoid **)&msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
+        OCI_STATUS = MemDescriptorAlloc((dvoid *)msg->typinf->con->env, (dvoid **)&msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
 
         if (OCI_STATUS)
         {
@@ -128,8 +128,8 @@ boolean OCI_API OCI_MsgFree
     msg->id = NULL;
 
     /* free OCI descriptor */
-
-    OCI_DescriptorFree((dvoid *) msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
+    
+    MemDescriptorFree((dvoid *) msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
 
     OCI_FREE(msg)
 

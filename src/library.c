@@ -813,7 +813,7 @@ void CallExit
  * GetEnvVariable
  * 
  * @note 
- * Values are allocated with OCI_MemAlloc() and need to be freed by the caller using OCI_MemFree()
+ * Values are allocated with MemAlloc() and need to be freed by the caller using MemFree()
  *
  * --------------------------------------------------------------------------------------------- */
 
@@ -838,11 +838,11 @@ char * GetEnvVariable
         unsigned int size = GetEnvironmentVariableA(name, NULL, 0);
         if (size > 0)
         {
-            value = OCI_MemAlloc(OCI_IPC_STRING, size, 1, TRUE);
+            value = MemAlloc(OCI_IPC_STRING, size, 1, TRUE);
             size = GetEnvironmentVariableA(name, value, size);
             if (size == 0)
             {
-                OCI_MemFree(value);
+                MemFree(value);
             }
         }
     }
@@ -1593,15 +1593,15 @@ boolean Initialize
 
     OCI_STATUS = OCI_SUCCESSFUL(OCIEnvCreate(&OCILib.env, oci_mode,
                                                (dvoid *) &OCILib,
-                                               OCI_MemAllocOracleClient,
-                                               OCI_MemReallocOracleClient,
-                                               OCI_MemFreeOracleClient,
+                                               MemAllocOracleClient,
+                                               MemReallocOracleClient,
+                                               MemFreeOracleClient,
                                                (size_t) 0, (dvoid **) NULL));
 
     /*  allocate error handle */
     if (OCI_STATUS)
     {
-        OCI_STATUS = OCI_HandleAlloc((dvoid *)OCILib.env, (dvoid **) (void *) &OCILib.err, OCI_HTYPE_ERROR);
+        OCI_STATUS = MemHandleAlloc((dvoid *)OCILib.env, (dvoid **) (void *) &OCILib.err, OCI_HTYPE_ERROR);
     }
     else
     {
@@ -1739,7 +1739,7 @@ boolean Cleanup
     if (OCI_LIB_THREADED)
     {
         /* free the memory mutex. We set its reference in the library structure to NULL first otherwise
-           it would generate an OCI error when calling OCI_HandleAlloc() for freeing the mutex object error handle
+           it would generate an OCI error when calling MemHandleAlloc() for freeing the mutex object error handle
         */
 
         OCI_Mutex * mutex = OCILib.mem_mutex;
@@ -1776,12 +1776,12 @@ boolean Cleanup
 
     if (OCILib.err)
     {
-        OCI_HandleFree(OCILib.err, OCI_HTYPE_ERROR);
+        MemHandleFree(OCILib.err, OCI_HTYPE_ERROR);
     }
 
     /* close environment handle
        => direct OCIHandleFree() because this handle was not allocated
-       with OCI_HandleAlloc()
+       with MemHandleAlloc()
     */
 
     if (OCILib.env)
@@ -1989,7 +1989,7 @@ boolean DatabaseStartup
 
                 /* allocate administration handle */
 
-                OCI_STATUS = OCI_HandleAlloc((dvoid *)OCILib.env,  (dvoid **) (void *) &adm, OCI_HTYPE_ADMIN);
+                OCI_STATUS = MemHandleAlloc((dvoid *)OCILib.env,  (dvoid **) (void *) &adm, OCI_HTYPE_ADMIN);
 
                 /* set client file if provided */
 
@@ -2008,7 +2008,7 @@ boolean DatabaseStartup
 
             if (adm)
             {
-                OCI_HandleFree(OCILib.err, OCI_HTYPE_ADMIN);
+                MemHandleFree(OCILib.err, OCI_HTYPE_ADMIN);
             }
 
             /* disconnect */

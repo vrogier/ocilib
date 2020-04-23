@@ -271,12 +271,12 @@ boolean DefineAlloc
         {
             for (i = 0; (i < def->buf.count) && OCI_STATUS; i++)
             {
-                OCI_STATUS = OCI_HandleAlloc((dvoid  *)def->rs->stmt->con->env, (dvoid **) &(def->buf.data[i]), (ub4) def->col.handletype);
+                OCI_STATUS = MemHandleAlloc((dvoid  *)def->rs->stmt->con->env, (dvoid **) &(def->buf.data[i]), (ub4) def->col.handletype);
             }
         }
         else
         {
-            OCI_STATUS = OCI_DescriptorArrayAlloc((dvoid  *)def->rs->stmt->con->env, (dvoid **)def->buf.data, (ub4)def->col.handletype, (ub4)def->buf.count);
+            OCI_STATUS = MemDescriptorArrayAlloc((dvoid  *)def->rs->stmt->con->env, (dvoid **)def->buf.data, (ub4)def->col.handletype, (ub4)def->buf.count);
 
             if (OCI_STATUS && (OCI_CDT_LOB == def->col.datatype))
             {

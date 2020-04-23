@@ -381,7 +381,7 @@
 
 /* memory management helpers */
 
-#define OCI_FREE(ptr)                   { OCI_MemFree(ptr), (ptr) = NULL; }
+#define OCI_FREE(ptr)                   { MemFree(ptr), (ptr) = NULL; }
 
 /* indicator and nullity handlers */
 
@@ -511,7 +511,7 @@
                                                                                 \
     if (OCI_STATUS && !(ptr))                                                   \
     {                                                                           \
-        (ptr) = OCI_MemAlloc(type, size, (size_t) (count), TRUE);               \
+        (ptr) = MemAlloc(type, size, (size_t) (count), TRUE);                   \
                                                                                 \
         OCI_STATUS = (NULL != (ptr));                                           \
     }                                                                           \
@@ -522,12 +522,12 @@
     {                                                                           \
         if (!(ptr))                                                             \
         {                                                                       \
-            (ptr) = OCI_MemAlloc(type, size, (size_t) (requested), TRUE);       \
+            (ptr) = MemAlloc(type, size, (size_t) (requested), TRUE);           \
             if (ptr) (allocated) = (requested);                                 \
         }                                                                       \
         else if ((current) >= (allocated))                                      \
         {                                                                       \
-            (ptr) = OCI_MemRealloc(ptr, type, size, (size_t) (requested), TRUE);\
+            (ptr) = MemRealloc(ptr, type, size, (size_t) (requested), TRUE);\
             if (ptr) (allocated) = (requested);                                 \
         }                                                                       \
                                                                                 \

@@ -39,7 +39,7 @@ OCI_Transaction * trans
 
     if (trans->htr)
     {
-        OCI_HandleFree((dvoid *)trans->htr, OCI_HTYPE_TRANS);
+        MemHandleFree((dvoid *)trans->htr, OCI_HTYPE_TRANS);
     }
 
     if (trans->con->trs == trans)
@@ -86,7 +86,7 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
 
         /* allocate transaction handle */
 
-        OCI_STATUS = OCI_HandleAlloc((dvoid *)trans->con->env, (dvoid **)&trans->htr, OCI_HTYPE_TRANS);
+        OCI_STATUS = MemHandleAlloc((dvoid *)trans->con->env, (dvoid **)&trans->htr, OCI_HTYPE_TRANS);
 
         /* set XID attribute for global transaction */
 

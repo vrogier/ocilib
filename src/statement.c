@@ -273,14 +273,14 @@ boolean OCI_StatementReset
         #endif
 
             {
-                OCI_STATUS = OCI_HandleFree((dvoid *)stmt->stmt, OCI_HTYPE_STMT);
+                OCI_STATUS = MemHandleFree((dvoid *)stmt->stmt, OCI_HTYPE_STMT);
             }
 
             stmt->stmt = NULL;
         }
         else if (OCI_OBJECT_ALLOCATED_BIND_STMT == stmt->hstate)
         {
-            OCI_STATUS = OCI_HandleFree((dvoid *) stmt->stmt, OCI_HTYPE_STMT);
+            OCI_STATUS = MemHandleFree((dvoid *) stmt->stmt, OCI_HTYPE_STMT);
 
             stmt->stmt = NULL;
         }
@@ -546,7 +546,7 @@ boolean OCI_BindCheckAll
 
             /* allocate statement handle */
 
-            OCI_STATUS = OCI_HandleAlloc((dvoid *)bnd_stmt->con->env, (dvoid **)(void *)&bnd_stmt->stmt, OCI_HTYPE_STMT);
+            OCI_STATUS = MemHandleAlloc((dvoid *)bnd_stmt->con->env, (dvoid **)(void *)&bnd_stmt->stmt, OCI_HTYPE_STMT);
 
             OCI_STATUS = OCI_STATUS && OCI_SetPrefetchSize(stmt, stmt->prefetch_size);
             OCI_STATUS = OCI_STATUS && OCI_SetFetchSize(stmt, stmt->fetch_size);
@@ -1010,7 +1010,7 @@ boolean OCI_BatchErrorInit
         {
             /* allocate OCI error handle */
 
-            OCI_STATUS = OCI_HandleAlloc((dvoid  *)stmt->con->env, (dvoid **)(void *)&hndl, OCI_HTYPE_ERROR);
+            OCI_STATUS = MemHandleAlloc((dvoid  *)stmt->con->env, (dvoid **)(void *)&hndl, OCI_HTYPE_ERROR);
         }
 
         /* loop on the OCI errors to fill OCILIB error objects */
@@ -1067,7 +1067,7 @@ boolean OCI_BatchErrorInit
 
         if (hndl)
         {
-            OCI_HandleFree(hndl, OCI_HTYPE_ERROR);
+            MemHandleFree(hndl, OCI_HTYPE_ERROR);
         }
     }
 
@@ -1106,7 +1106,7 @@ boolean OCI_API OCI_PrepareInternal
         {
             /* allocate handle */
 
-            OCI_STATUS = OCI_HandleAlloc((dvoid *)stmt->con->env, (dvoid **)(void *)&stmt->stmt, OCI_HTYPE_STMT);
+            OCI_STATUS = MemHandleAlloc((dvoid *)stmt->con->env, (dvoid **)(void *)&stmt->stmt, OCI_HTYPE_STMT);
         }
     }
 

@@ -76,7 +76,7 @@ OCI_Timestamp * OCI_TimestampInit
         {
             if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
             {
-                OCI_STATUS = OCI_DescriptorAlloc((dvoid  *)tmsp->env, (dvoid **)(void *)&tmsp->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type));
+                OCI_STATUS = MemDescriptorAlloc((dvoid  *)tmsp->env, (dvoid **)(void *)&tmsp->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type));
                 tmsp->hstate = OCI_OBJECT_ALLOCATED;
             }
         }
@@ -159,7 +159,7 @@ boolean OCI_API OCI_TimestampFree
 
     if (OCI_OBJECT_ALLOCATED == tmsp->hstate)
     {
-        OCI_DescriptorFree((dvoid *)tmsp->handle, ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, tmsp->type));
+        MemDescriptorFree((dvoid *)tmsp->handle, ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, tmsp->type));
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)

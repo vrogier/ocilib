@@ -58,13 +58,13 @@ OCI_Ref * OCI_RefInit
 
             OCI_EXEC
             (
-                OCI_ObjectNew(ref->con->env, ref->con->err, ref->con->cxt,
-                              (OCITypeCode) SQLT_REF,
-                              (OCIType*) NULL,
-                              (dvoid *) NULL,
-                              (OCIDuration) OCI_DURATION_SESSION,
-                              (boolean) FALSE,
-                              (dvoid **) &ref->handle)
+                MemObjectNew(ref->con->env, ref->con->err, ref->con->cxt,
+                          (OCITypeCode) SQLT_REF,
+                          (OCIType*) NULL,
+                          (dvoid *) NULL,
+                          (OCIDuration) OCI_DURATION_SESSION,
+                          (boolean) FALSE,
+                          (dvoid **) &ref->handle)
             )
         }
         else
@@ -197,7 +197,7 @@ boolean OCI_API OCI_RefFree
 
     if ((OCI_OBJECT_ALLOCATED == ref->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == ref->hstate))
     {
-        OCI_OCIObjectFree(ref->con->env, ref->con->err, ref->handle, OCI_DEFAULT);
+        MemObjectFree(ref->con->env, ref->con->err, ref->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != ref->hstate)

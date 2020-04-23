@@ -60,7 +60,7 @@ OCI_Dequeue * DequeueCreate
 
         /* allocate dequeue options descriptor */
 
-        OCI_STATUS = OCI_DescriptorAlloc((dvoid *)dequeue->typinf->con->env, (dvoid **)&dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
+        OCI_STATUS = MemDescriptorAlloc((dvoid *)dequeue->typinf->con->env, (dvoid **)&dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
 
         /* create local message for OCI_DequeueGet() */
 
@@ -121,7 +121,7 @@ boolean DequeueFree
 
     /* free OCI descriptor */
 
-    OCI_DescriptorFree((dvoid *) dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
+    MemDescriptorFree((dvoid *) dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
 
     /* free data  */
 
@@ -696,7 +696,7 @@ boolean DequeueSubscribe
 
     /* allocate subscription handle */
 
-    OCI_STATUS = OCI_HandleAlloc(con->env, (dvoid **) (void *) &dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
+    OCI_STATUS = MemHandleAlloc(con->env, (dvoid **) (void *) &dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -840,7 +840,7 @@ boolean DequeueUnsubscribe
 
         /* free OCI handle */
 
-        OCI_HandleFree((dvoid *) dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
+        MemHandleFree((dvoid *) dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
 
         dequeue->subhp = NULL;
     }

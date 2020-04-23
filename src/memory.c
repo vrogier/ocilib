@@ -18,11 +18,9 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
-
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "exception.h"
+#include "memory.h"
+#include "mutex.h"
 
 #define OCI_MUTEXED_CALL(exp)               \
                                             \
@@ -38,11 +36,12 @@
        OCI_MutexRelease(OCILib.mem_mutex);  \
     }                                       \
 
+
 /* --------------------------------------------------------------------------------------------- *
- * OCI_MemAlloc
+ * MemAlloc
  * --------------------------------------------------------------------------------------------- */
 
-void * OCI_MemAlloc
+void * MemAlloc
 (
     int     ptr_type,
     size_t  block_size,
@@ -65,7 +64,7 @@ void * OCI_MemAlloc
         mem_block->type = ptr_type;
         mem_block->size = (unsigned int) size;
 
-        OCI_MemUpdateBytes(mem_block->type, mem_block->size);
+        MemUpdateBytes(mem_block->type, mem_block->size);
     }
     else
     {
@@ -76,10 +75,10 @@ void * OCI_MemAlloc
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_MemRealloc
+ * MemRealloc
  * --------------------------------------------------------------------------------------------- */
 
-void * OCI_MemRealloc
+void * MemRealloc
 (
     void * ptr_mem,
     int    ptr_type,
@@ -117,11 +116,11 @@ void * OCI_MemRealloc
             mem_block->type = ptr_type;
             mem_block->size = (unsigned int) size;
 
-            OCI_MemUpdateBytes(mem_block->type, size_diff);
+            MemUpdateBytes(mem_block->type, size_diff);
         }
         else if (ptr_mem)
         { 
-            OCI_MemFree(ptr_mem);
+            MemFree(ptr_mem);
 
             ExceptionMemory(ptr_type, size, NULL, NULL);
 
@@ -133,10 +132,10 @@ void * OCI_MemRealloc
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_MemFree
+ * MemFree
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_MemFree
+void MemFree
 (
     void * ptr_mem
 )
@@ -147,7 +146,7 @@ void OCI_MemFree
        
         if (mem_block)
         {
-            OCI_MemUpdateBytes(mem_block->type, (big_int) 0 - mem_block->size);
+            MemUpdateBytes(mem_block->type, (big_int) 0 - mem_block->size);
 
             free(mem_block);
         }
@@ -155,10 +154,10 @@ void OCI_MemFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_MemUpdateBytes
+* MemUpdateBytes
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_MemUpdateBytes
+void MemUpdateBytes
 (
     int type,
     big_int size
@@ -176,10 +175,10 @@ void OCI_MemUpdateBytes
 
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HandleAlloc
+ * MemHandleAlloc
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_HandleAlloc
+boolean MemHandleAlloc
 (
     CONST dvoid *parenth,
     dvoid      **hndlpp,
@@ -197,10 +196,10 @@ boolean OCI_HandleAlloc
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HandleFree
+ * MemHandleFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_HandleFree
+boolean MemHandleFree
 (
     dvoid *hndlp,
     ub4    type
@@ -219,10 +218,10 @@ boolean OCI_HandleFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DescriptorAlloc
+ * MemDescriptorAlloc
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_DescriptorAlloc
+boolean MemDescriptorAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
@@ -240,10 +239,10 @@ boolean OCI_DescriptorAlloc
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DescriptorArrayAlloc
+ * MemDescriptorArrayAlloc
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_DescriptorArrayAlloc
+boolean MemDescriptorArrayAlloc
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
@@ -280,10 +279,10 @@ boolean OCI_DescriptorArrayAlloc
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DescriptorFree
+ * MemDescriptorFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_DescriptorFree
+boolean MemDescriptorFree
 (
     dvoid *descp,
     ub4   type
@@ -302,10 +301,10 @@ boolean OCI_DescriptorFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DescriptorFree
+ * MemDescriptorFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_DescriptorArrayFree
+boolean MemDescriptorArrayFree
 (
     dvoid   **descp,
     ub4       type,
@@ -342,10 +341,10 @@ boolean OCI_DescriptorArrayFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ObjectNew
+ * MemObjectNew
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_ObjectNew
+sword MemObjectNew
 (
     OCIEnv          *env,
     OCIError        *err,
@@ -369,10 +368,10 @@ sword OCI_ObjectNew
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_OCIObjectFree
+ * MemObjectFree
  * --------------------------------------------------------------------------------------------- */
 
-sword OCI_OCIObjectFree
+sword MemObjectFree
 (
     OCIEnv   *env,
     OCIError *err,
@@ -393,10 +392,10 @@ sword OCI_OCIObjectFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_MemAllocOracleClient
+* MemAllocOracleClient
 * --------------------------------------------------------------------------------------------- */
 
-void * OCI_MemAllocOracleClient
+void * MemAllocOracleClient
 (
     void *ctxp, 
     size_t size
@@ -404,14 +403,14 @@ void * OCI_MemAllocOracleClient
 {
     OCI_NOT_USED(ctxp)
         
-    return OCI_MemAlloc(OCI_IPC_ORACLE, size, 1, FALSE);
+    return MemAlloc(OCI_IPC_ORACLE, size, 1, FALSE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_MemReallocOracleClient
+* MemReallocOracleClient
 * --------------------------------------------------------------------------------------------- */
 
-void * OCI_MemReallocOracleClient
+void * MemReallocOracleClient
 (
     void *ctxp, 
     void *memptr, 
@@ -420,14 +419,14 @@ void * OCI_MemReallocOracleClient
 {
     OCI_NOT_USED(ctxp)
         
-    return OCI_MemRealloc(memptr, OCI_IPC_ORACLE, newsize, 1, FALSE);
+    return MemRealloc(memptr, OCI_IPC_ORACLE, newsize, 1, FALSE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_MemFreeOracleClient
+* MemFreeOracleClient
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_MemFreeOracleClient
+void MemFreeOracleClient
 (
     void *ctxp,
     void *memptr
@@ -435,5 +434,5 @@ void OCI_MemFreeOracleClient
 {
     OCI_NOT_USED(ctxp)
 
-    OCI_MemFree(memptr);
+    MemFree(memptr);
 }

@@ -90,13 +90,13 @@ boolean OCI_SubscriptionClose
 
     /* free OCI handle */
 
-    OCI_HandleFree((dvoid *) sub->subhp, OCI_HTYPE_SUBSCRIPTION);
+    MemHandleFree((dvoid *) sub->subhp, OCI_HTYPE_SUBSCRIPTION);
 
     /* close error handle */
 
     if (sub->err)
     {
-        OCI_HandleFree(sub->err, OCI_HTYPE_ERROR);
+        MemHandleFree(sub->err, OCI_HTYPE_ERROR);
     }
 
 #endif
@@ -155,11 +155,11 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
     {
         /* allocate error handle */
 
-        OCI_STATUS = OCI_HandleAlloc(con->env, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR);
+        OCI_STATUS = MemHandleAlloc(con->env, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR);
 
         /* allocate subscription handle */
 
-        OCI_STATUS = OCI_STATUS && OCI_HandleAlloc(con->env, (dvoid **)(void *)&sub->subhp, OCI_HTYPE_SUBSCRIPTION);
+        OCI_STATUS = OCI_STATUS && MemHandleAlloc(con->env, (dvoid **)(void *)&sub->subhp, OCI_HTYPE_SUBSCRIPTION);
 
         if (OCI_STATUS)
         {

@@ -122,7 +122,7 @@ OCI_TypeInfo * OCI_ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
         /* create a local REF to store a REF to the object real type */
 
-        OCI_EXEC(OCI_ObjectNew(result->con->env, result->con->err, result->con->cxt, SQLT_REF, (OCIType *)0, NULL, OCI_DURATION_SESSION, 0, (void**)&ref))
+        OCI_EXEC(MemObjectNew(result->con->env, result->con->err, result->con->cxt, SQLT_REF, (OCIType *)0, NULL, OCI_DURATION_SESSION, 0, (void**)&ref))
         OCI_EXEC(OCIObjectGetTypeRef(result->con->env, result->con->err, (dvoid*)object, ref))
         OCI_EXEC(OCITypeByRef(result->con->env, result->con->err, ref, OCI_DURATION_SESSION, OCI_TYPEGET_HEADER, &tdo))
 
@@ -145,7 +145,7 @@ OCI_TypeInfo * OCI_ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
                 otext fullname[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
-                OCI_STATUS = OCI_HandleAlloc(result->con->env, (void**) &descr, OCI_HTYPE_DESCRIBE);
+                OCI_STATUS = MemHandleAlloc(result->con->env, (void**) &descr, OCI_HTYPE_DESCRIBE);
 
                 OCI_EXEC(OCIDescribeAny(result->con->cxt, result->con->err, (dvoid *)tdo, 0, OCI_OTYPE_PTR, OCI_DEFAULT, OCI_PTYPE_UNK, descr))
                 OCI_GET_ATTRIB(OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM, descr, &param, NULL)
@@ -164,13 +164,13 @@ OCI_TypeInfo * OCI_ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
                     result = OCI_TypeInfoGet(result->con, fullname, OCI_TIF_TYPE);
                 }
 
-                OCI_HandleFree(descr, OCI_HTYPE_DESCRIBE);
+                MemHandleFree(descr, OCI_HTYPE_DESCRIBE);
             }
         }
 
         /* free local REF */
 
-        OCI_OCIObjectFree(result->con->env, result->con->err, ref, OCI_DEFAULT);
+        MemObjectFree(result->con->env, result->con->err, ref, OCI_DEFAULT);
     }
 
     return result;
@@ -532,10 +532,10 @@ OCI_Object * OCI_ObjectInit
 
             OCI_EXEC
             (
-                OCI_ObjectNew(obj->con->env,  obj->con->err, obj->con->cxt,
-                              (OCITypeCode) obj->typinf->typecode, obj->typinf->tdo, (dvoid *) NULL,
-                              (OCIDuration) OCI_DURATION_SESSION, (boolean) TRUE,
-                              (dvoid **) &obj->handle)
+                MemObjectNew(obj->con->env,  obj->con->err, obj->con->cxt,
+                            (OCITypeCode) obj->typinf->typecode, obj->typinf->tdo, (dvoid *) NULL,
+                            (OCIDuration) OCI_DURATION_SESSION, (boolean) TRUE,
+                            (dvoid **) &obj->handle)
             )
         }
         else
@@ -815,7 +815,7 @@ boolean OCI_API OCI_ObjectFree
 
     if ((OCI_OBJECT_ALLOCATED == obj->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate))
     {
-        OCI_OCIObjectFree(obj->con->env, obj->con->err, obj->handle, OCI_DEFAULT);
+        MemObjectFree(obj->con->env, obj->con->err, obj->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != obj->hstate)

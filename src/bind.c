@@ -575,7 +575,7 @@ boolean BindFree
                     {
                         /* strings requiring otext / dbtext conversions and 64 bit integers */
 
-                        OCI_MemFree(bnd->input);
+                        MemFree(bnd->input);
 
                         if (bnd->alloc)
                         {
@@ -798,12 +798,12 @@ boolean BindAllocData
                 }
                 else if (SQLT_VNU == bnd->code)
                 {
-                    bnd->input       = (void **) OCI_MemAlloc(OCI_IPC_VOID, sizeof(big_int),   1, TRUE);
-                    bnd->buffer.data = (void **) OCI_MemAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
+                    bnd->input       = (void **) MemAlloc(OCI_IPC_VOID, sizeof(big_int),   1, TRUE);
+                    bnd->buffer.data = (void **) MemAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
                 }
                 else
                 {
-                    bnd->input       = (void **) OCI_MemAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
+                    bnd->input       = (void **) MemAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
                     bnd->buffer.data = (void **) bnd->input;
                 }
                 break;
@@ -823,12 +823,12 @@ boolean BindAllocData
             {
                 if (OCILib.use_wide_char_conv)
                 {
-                    bnd->buffer.data = (void **) OCI_MemAlloc(OCI_IPC_STRING, bnd->size * (sizeof(otext) / sizeof(dbtext)), 1, TRUE);
-                    bnd->input       = (void **) OCI_MemAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
+                    bnd->buffer.data = (void **) MemAlloc(OCI_IPC_STRING, bnd->size * (sizeof(otext) / sizeof(dbtext)), 1, TRUE);
+                    bnd->input       = (void **) MemAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
                 }
                 else
                 {
-                    bnd->buffer.data = (void **) OCI_MemAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
+                    bnd->buffer.data = (void **) MemAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
                     bnd->input       = (void **) bnd->buffer.data;
                 }
                 break;
@@ -879,7 +879,7 @@ boolean BindAllocData
             }
             case OCI_CDT_RAW:
             {
-                bnd->input       = (void **) OCI_MemAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
+                bnd->input       = (void **) MemAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
                 bnd->buffer.data = (void **) bnd->input;
                 break;
             }

@@ -183,7 +183,7 @@ OCI_Connection * ConnectionAllocate
 
         /*  allocate error handle */
 
-        OCI_STATUS = OCI_STATUS && OCI_HandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->err, OCI_HTYPE_ERROR);
+        OCI_STATUS = OCI_STATUS && MemHandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->err, OCI_HTYPE_ERROR);
     }
 
     /* update internal status */
@@ -217,14 +217,14 @@ boolean ConnectionDeallocate
 
     if (con->err)
     {
-        OCI_HandleFree((dvoid *) con->err, OCI_HTYPE_ERROR);
+        MemHandleFree((dvoid *) con->err, OCI_HTYPE_ERROR);
     }
 
     /* close server handle (if it had been allocated) in case of login error */
 
     if ((con->svr) && con->alloc_handles)
     {
-        OCI_HandleFree((dvoid *) con->svr, OCI_HTYPE_SERVER);
+        MemHandleFree((dvoid *) con->svr, OCI_HTYPE_SERVER);
     }
 
     con->cxt = NULL;
@@ -259,7 +259,7 @@ boolean ConnectionAttach
         dbtext *dbstr  = NULL;
         int     dbsize = -1;
 
-        OCI_STATUS = OCI_HandleAlloc((dvoid *) con->env, (dvoid **) (void *) &con->svr, OCI_HTYPE_SERVER);
+        OCI_STATUS = MemHandleAlloc((dvoid *) con->env, (dvoid **) (void *) &con->svr, OCI_HTYPE_SERVER);
 
         /* attach server handle to service name */
 
@@ -317,7 +317,7 @@ boolean ConnectionDetach
 
         /* close server handle */
 
-        OCI_HandleFree((dvoid *) con->svr, OCI_HTYPE_SERVER);
+        MemHandleFree((dvoid *) con->svr, OCI_HTYPE_SERVER);
 
         con->svr = NULL;
     }
@@ -387,11 +387,11 @@ void ConnectionLogonRegular
 {
     /* allocate session handle */
 
-    OCI_HandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->ses, OCI_HTYPE_SESSION);
+    MemHandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->ses, OCI_HTYPE_SESSION);
 
     /* allocate context handle */
 
-    OCI_HandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->cxt, OCI_HTYPE_SVCCTX);
+    MemHandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->cxt, OCI_HTYPE_SVCCTX);
 
     /* set context server attribute */
 
@@ -536,8 +536,8 @@ void ConnectionLogonRegular
             {
                 /* could not start session, must free the session and context handles */
 
-                OCI_HandleFree((dvoid *)con->ses, OCI_HTYPE_SESSION);
-                OCI_HandleFree((dvoid *)con->cxt, OCI_HTYPE_SVCCTX);
+                MemHandleFree((dvoid *)con->ses, OCI_HTYPE_SESSION);
+                MemHandleFree((dvoid *)con->cxt, OCI_HTYPE_SVCCTX);
 
                 con->ses = NULL;
                 con->cxt = NULL;
@@ -694,7 +694,7 @@ void ConnectionLogoffRegular
 
         if (con->ses)
         {
-            OCI_HandleFree((dvoid *) con->ses, OCI_HTYPE_SESSION);
+            MemHandleFree((dvoid *) con->ses, OCI_HTYPE_SESSION);
 
             con->ses = NULL;
         }
@@ -703,7 +703,7 @@ void ConnectionLogoffRegular
 
         if (con->cxt)
         {
-            OCI_HandleFree((dvoid *) con->cxt, OCI_HTYPE_SVCCTX);
+            MemHandleFree((dvoid *) con->cxt, OCI_HTYPE_SVCCTX);
 
             con->cxt = NULL;
         }

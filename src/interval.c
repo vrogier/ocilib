@@ -64,7 +64,7 @@ OCI_Interval * IntervalInit
         {
             if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
             {
-                OCI_STATUS = OCI_DescriptorAlloc((dvoid  *)itv->env, (dvoid **)(void *)&itv->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
+                OCI_STATUS = MemDescriptorAlloc((dvoid  *)itv->env, (dvoid **)(void *)&itv->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
 
                 itv->hstate = OCI_OBJECT_ALLOCATED;
             }
@@ -136,7 +136,7 @@ boolean IntervalFree
 
     if (OCI_OBJECT_ALLOCATED == itv->hstate)
     {
-        OCI_DescriptorFree((dvoid *)itv->handle, ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
+        MemDescriptorFree((dvoid *)itv->handle, ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)

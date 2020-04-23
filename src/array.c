@@ -177,7 +177,7 @@ boolean ArrayClose
 
     if (OCI_UNKNOWN != arr->handle_type)
     {
-        OCI_DescriptorArrayFree((dvoid **) arr->mem_handle, (ub4) arr->handle_type, (ub4) arr->nb_elem);
+        MemDescriptorArrayFree((dvoid **) arr->mem_handle, (ub4) arr->handle_type, (ub4) arr->nb_elem);
     }
 
     OCI_FREE(arr->mem_handle)
@@ -239,7 +239,7 @@ OCI_Array * ArrayCreate
 
         if (OCI_STATUS && handle_type != 0)
         {
-            OCI_STATUS = OCI_DescriptorArrayAlloc((dvoid  *)arr->env, (dvoid **)arr->mem_handle, (ub4)handle_type, (ub4)nb_elem);
+            OCI_STATUS = MemDescriptorArrayAlloc((dvoid  *)arr->env, (dvoid **)arr->mem_handle, (ub4)handle_type, (ub4)nb_elem);
         }
 
         if (OCI_STATUS && arr->tab_obj && arr->mem_handle)

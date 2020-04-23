@@ -70,7 +70,7 @@ OCI_File * FileInit
 
             file->hstate = OCI_OBJECT_ALLOCATED;
 
-            OCI_STATUS = OCI_DescriptorAlloc((dvoid *)file->con->env, (dvoid **)(void *)&file->handle, (ub4)OCI_DTYPE_LOB);
+            OCI_STATUS = MemDescriptorAlloc((dvoid *)file->con->env, (dvoid **)(void *)&file->handle, (ub4)OCI_DTYPE_LOB);
         }
         else if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
         {
@@ -202,7 +202,7 @@ boolean FileFree
 
     if (OCI_OBJECT_ALLOCATED == file->hstate)
     {
-        OCI_DescriptorFree((dvoid *) file->handle, (ub4) OCI_DTYPE_LOB);
+        MemDescriptorFree((dvoid *) file->handle, (ub4) OCI_DTYPE_LOB);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
