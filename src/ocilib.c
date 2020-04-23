@@ -4562,9 +4562,102 @@ boolean OCI_API OCI_QueueTableMigrate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  ref
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Ref* OCI_API OCI_RefCreate
+(
+    OCI_Connection* con,
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(RefCreate, con, typinf);
+}
+
+boolean OCI_API OCI_RefFree
+(
+    OCI_Ref* ref
+)
+{
+    CALL_IMPL(RefFree, ref);
+}
+
+OCI_Ref** OCI_API OCI_RefArrayCreate
+(
+    OCI_Connection* con,
+    OCI_TypeInfo* typinf,
+    unsigned int    nbelem
+)
+{
+    CALL_IMPL(RefArrayCreate, con, typinf, nbelem);
+}
+
+boolean OCI_API OCI_RefArrayFree
+(
+    OCI_Ref** refs
+)
+{
+    CALL_IMPL(RefArrayFree, refs);
+}
+
+boolean OCI_API OCI_RefAssign
+(
+    OCI_Ref* ref,
+    OCI_Ref* ref_src
+)
+{
+    CALL_IMPL(RefAssign, ref, ref_src);
+}
+
+OCI_TypeInfo* OCI_API OCI_RefGetTypeInfo
+(
+    OCI_Ref* ref
+)
+{
+    CALL_IMPL(RefGetTypeInfo, ref);
+}
+
+OCI_Object* OCI_API OCI_RefGetObject
+(
+    OCI_Ref* ref
+)
+{
+    CALL_IMPL(RefGetObject, ref);
+}
+
+boolean OCI_API OCI_RefIsNull
+(
+    OCI_Ref* ref
+)
+{
+    CALL_IMPL(RefIsNull, ref);
+}
+
+boolean OCI_API OCI_RefSetNull
+(
+    OCI_Ref* ref
+)
+{
+    CALL_IMPL(RefSetNull, ref);
+}
+
+unsigned int OCI_API OCI_RefGetHexSize
+(
+    OCI_Ref* ref
+)
+{
+    CALL_IMPL(RefGetHexSize, ref);
+}
+
+boolean OCI_API OCI_RefToText
+(
+    OCI_Ref* ref,
+    unsigned int size,
+    otext* str
+)
+{
+    CALL_IMPL(RefToText, ref, size, str);
+}
 
 /* --------------------------------------------------------------------------------------------- *
  *  long

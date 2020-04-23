@@ -143,7 +143,7 @@ boolean ArrayInit
             }
             case OCI_CDT_REF:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Ref, OCI_RefInit(arr->con, typinf, (OCI_Ref *) arr->tab_obj[i], handle))
+                OCI_ARRAY_INIT_HANDLE(OCI_Ref, RefInit(arr->con, typinf, (OCI_Ref *) arr->tab_obj[i], handle))
                 break;
             }
         }

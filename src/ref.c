@@ -18,17 +18,19 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "ref.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "array.h"
+#include "macro.h"
+#include "memory.h"
+#include "object.h"
+#include "string.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefInit
+ * RefInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OCI_RefInit
+OCI_Ref * RefInit
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -71,7 +73,7 @@ OCI_Ref * OCI_RefInit
         {
             ref->hstate = OCI_OBJECT_FETCHED_CLEAN;
 
-            OCI_RefUnpin(ref);
+            RefUnpin(ref);
         }
     }
 
@@ -87,10 +89,10 @@ OCI_Ref * OCI_RefInit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefPin
+ * RefPin
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_RefPin
+boolean RefPin
 (
     OCI_Ref *ref
 )
@@ -103,7 +105,7 @@ boolean OCI_RefPin
 
     OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con);
 
-    OCI_RefUnpin(ref);
+    RefUnpin(ref);
 
     OCI_EXEC
     (
@@ -122,10 +124,10 @@ boolean OCI_RefPin
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefUnpin
+ * RefUnpin
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_RefUnpin
+boolean RefUnpin
 (
     OCI_Ref *ref
 )
@@ -154,15 +156,11 @@ boolean OCI_RefUnpin
     return OCI_STATUS;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefCreate
+ * RefCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OCI_API OCI_RefCreate
+OCI_Ref * RefCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf
@@ -173,17 +171,17 @@ OCI_Ref * OCI_API OCI_RefCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_RefInit(con, typinf, NULL, NULL);
+    OCI_RETVAL = RefInit(con, typinf, NULL, NULL);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefFree
+ * RefFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefFree
+boolean RefFree
 (
     OCI_Ref *ref
 )
@@ -193,7 +191,7 @@ boolean OCI_API OCI_RefFree
     OCI_CALL_CHECK_OBJECT_FETCHED(ref)
     OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
-    OCI_RefUnpin(ref);
+    RefUnpin(ref);
 
     if ((OCI_OBJECT_ALLOCATED == ref->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == ref->hstate))
     {
@@ -211,10 +209,10 @@ boolean OCI_API OCI_RefFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefArrayCreate
+ * RefArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref ** OCI_API OCI_RefArrayCreate
+OCI_Ref ** RefArrayCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -240,10 +238,10 @@ OCI_Ref ** OCI_API OCI_RefArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefArrayFree
+ * RefArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefArrayFree
+boolean RefArrayFree
 (
     OCI_Ref **refs
 )
@@ -257,10 +255,10 @@ boolean OCI_API OCI_RefArrayFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefGetObject
+ * RefGetObject
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * OCI_API OCI_RefGetObject
+OCI_Object * RefGetObject
 (
     OCI_Ref *ref
 )
@@ -271,7 +269,7 @@ OCI_Object * OCI_API OCI_RefGetObject
 
     if (!OCI_RefIsNull(ref))
     {
-        OCI_STATUS = OCI_RefPin(ref);
+        OCI_STATUS = RefPin(ref);
 
         if (OCI_STATUS)
         {
@@ -283,10 +281,10 @@ OCI_Object * OCI_API OCI_RefGetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefAssign
+ * RefAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefAssign
+boolean RefAssign
 (
     OCI_Ref *ref,
     OCI_Ref *ref_src
@@ -318,10 +316,10 @@ boolean OCI_API OCI_RefAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefIsNull
+ * RefIsNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefIsNull
+boolean RefIsNull
 (
     OCI_Ref *ref
 )
@@ -336,10 +334,10 @@ boolean OCI_API OCI_RefIsNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefSetNull
+ * RefSetNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefSetNull
+boolean RefSetNull
 (
     OCI_Ref *ref
 )
@@ -348,7 +346,7 @@ boolean OCI_API OCI_RefSetNull
     OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
     OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
-    OCI_STATUS = OCI_RefUnpin(ref);
+    OCI_STATUS = RefUnpin(ref);
 
     if (OCI_STATUS)
     {
@@ -367,10 +365,10 @@ boolean OCI_API OCI_RefSetNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefToText
+ * RefToText
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RefToText
+boolean RefToText
 (
     OCI_Ref     *ref,
     unsigned int size,
@@ -406,10 +404,10 @@ boolean OCI_API OCI_RefToText
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RefGetHexSize
+ * RefGetHexSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_RefGetHexSize
+unsigned int RefGetHexSize
 (
     OCI_Ref *ref
 )
@@ -431,7 +429,7 @@ unsigned int OCI_API OCI_RefGetHexSize
  * OCI_CollRefGetTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * OCI_API OCI_RefGetTypeInfo
+OCI_TypeInfo * RefGetTypeInfo
 (
     OCI_Ref *ref
 )

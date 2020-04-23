@@ -732,7 +732,7 @@ OCI_Ref * ElemGetRef
     (
         OCI_CDT_REF,
         OCI_Ref*,
-        OCI_RefInit(elem->con, elem->typinf->cols[0].typinf, (OCI_Ref *) elem->obj, (OCIRef *) elem->handle)
+        RefInit(elem->con, elem->typinf->cols[0].typinf, (OCI_Ref *) elem->obj, (OCIRef *) elem->handle)
     )
 }
 
@@ -1161,8 +1161,8 @@ boolean ElemSetRef
     (
         OCI_CDT_REF,
         OCI_Ref*,
-        OCI_RefInit(elem->con, elem->typinf->cols[0].typinf, (OCI_Ref *) elem->obj, (OCIRef *) elem->handle),
-        OCI_RefAssign((OCI_Ref *) elem->obj, value)
+        RefInit(elem->con, elem->typinf->cols[0].typinf, (OCI_Ref *) elem->obj, (OCIRef *) elem->handle),
+        RefAssign((OCI_Ref *) elem->obj, value)
     )
 }
 

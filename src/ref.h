@@ -18,9 +18,89 @@
  * limitations under the License.
  */
  
+
 #ifndef OCILIB_REF_H_INCLUDED
 #define OCILIB_REF_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+OCI_Ref * RefInit
+(
+    OCI_Connection *con,
+    OCI_TypeInfo   *typinf,
+    OCI_Ref  *ref,
+    void       *handle
+);
+
+boolean RefPin
+(
+    OCI_Ref* ref
+);
+
+boolean RefUnpin
+(
+    OCI_Ref* ref
+);
+
+OCI_Ref * RefCreate
+(
+    OCI_Connection *con,
+    OCI_TypeInfo   *typinf
+);
+
+boolean RefFree
+(
+    OCI_Ref *ref
+);
+
+OCI_Ref ** RefArrayCreate
+(
+    OCI_Connection  *con,
+    OCI_TypeInfo    *typinf,
+    unsigned int nbelem
+);
+
+boolean RefArrayFree
+(
+    OCI_Ref **refs
+);
+
+OCI_Object * RefGetObject
+(
+    OCI_Ref *ref
+);
+
+boolean RefAssign
+(
+    OCI_Ref *ref,
+    OCI_Ref *ref_src
+);
+
+boolean RefIsNull
+(
+    OCI_Ref *ref
+);
+
+boolean RefSetNull
+(
+    OCI_Ref *ref
+);
+
+boolean RefToText
+(
+    OCI_Ref   *ref,
+    unsigned int size,
+    otext       *str
+);
+
+unsigned int RefGetHexSize
+(
+    OCI_Ref *ref
+);
+
+OCI_TypeInfo * RefGetTypeInfo
+(
+    OCI_Ref *ref
+);
 
 #endif /* OCILIB_REF_H_INCLUDED */

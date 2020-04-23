@@ -2239,7 +2239,7 @@ OCI_Ref * OCI_API OCI_GetRef
     (
        rs, index, OCI_Ref *, NULL, OCI_CDT_REF,
 
-       OCI_RefInit(rs->stmt->con, def->col.typinf, (OCI_Ref *) def->obj, DefineGetData(def))
+       RefInit(rs->stmt->con, def->col.typinf, (OCI_Ref *) def->obj, DefineGetData(def))
     )
 }
 

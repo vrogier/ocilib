@@ -1465,7 +1465,7 @@ OCI_Ref * ObjectGetRef
         OCI_CDT_REF,
         OCI_Ref*,
         OCIRef*,
-        OCI_RefInit(obj->con, NULL, (OCI_Ref *) obj->objs[index], *value)
+        RefInit(obj->con, NULL, (OCI_Ref *) obj->objs[index], *value)
     )
 }
 
