@@ -18,17 +18,16 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "threadkey.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "macro.h"
+#include "hash.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeyCreateInternal
+ * ThreadKeyCreateInternal
  * --------------------------------------------------------------------------------------------- */
 
-OCI_ThreadKey * OCI_ThreadKeyCreateInternal
+OCI_ThreadKey * ThreadKeyCreateInternal
 (
     POCI_THREADKEYDEST destfunc
 )
@@ -55,7 +54,7 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
 
         if (!OCI_STATUS)
         {
-            OCI_ThreadKeyFree(key);
+            ThreadKeyFree(key);
             key = NULL;
         }
     } 
@@ -64,10 +63,10 @@ OCI_ThreadKey * OCI_ThreadKeyCreateInternal
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeyFree
+ * ThreadKeyFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ThreadKeyFree
+boolean ThreadKeyFree
 (
     OCI_ThreadKey *key
 )
@@ -98,10 +97,10 @@ boolean OCI_ThreadKeyFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeySet
+ * ThreadKeySet
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ThreadKeySet
+boolean ThreadKeySet
 (
     OCI_ThreadKey *key,
     void          *value
@@ -117,10 +116,10 @@ boolean OCI_ThreadKeySet
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeyGet
+ * ThreadKeyGet
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ThreadKeyGet
+boolean ThreadKeyGet
 (
     OCI_ThreadKey* key,
     void         **value
@@ -135,15 +134,11 @@ boolean OCI_ThreadKeyGet
     return OCI_STATUS;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeyCreate
+ * ThreadKeyCreate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadKeyCreate
+boolean ThreadKeyCreate
 (
     const otext       *name,
     POCI_THREADKEYDEST destfunc
@@ -157,7 +152,7 @@ boolean OCI_API OCI_ThreadKeyCreate
 
     if (!OCILib.key_map)
     {
-        /* create the map at the first call to OCI_ThreadKeyCreate to save
+        /* create the map at the first call to ThreadKeyCreate to save
            time and memory when it's not needed */
 
         OCILib.key_map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_POINTER);
@@ -168,7 +163,7 @@ boolean OCI_API OCI_ThreadKeyCreate
 
     if (OCI_STATUS)
     {
-        key = OCI_ThreadKeyCreateInternal(destfunc);
+        key = ThreadKeyCreateInternal(destfunc);
         OCI_STATUS = (NULL != key);
        
         /* add key to internal key hash table */
@@ -180,7 +175,7 @@ boolean OCI_API OCI_ThreadKeyCreate
 
     if (!OCI_STATUS && key)
     {
-        OCI_ThreadKeyFree(key);
+        ThreadKeyFree(key);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -189,10 +184,10 @@ boolean OCI_API OCI_ThreadKeyCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeySetValue
+ * ThreadKeySetValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadKeySetValue
+boolean ThreadKeySetValue
 (
     const otext *name,
     void        *value
@@ -205,16 +200,16 @@ boolean OCI_API OCI_ThreadKeySetValue
 
     key = (OCI_ThreadKey *) OCI_HashGetPointer(OCILib.key_map, name);
 
-    OCI_RETVAL = OCI_STATUS = OCI_ThreadKeySet(key, value);
+    OCI_RETVAL = OCI_STATUS = ThreadKeySet(key, value);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeyGetValue
+ * ThreadKeyGetValue
  * --------------------------------------------------------------------------------------------- */
 
-void * OCI_API OCI_ThreadKeyGetValue
+void * ThreadKeyGetValue
 (
     const otext *name
 )
@@ -226,7 +221,7 @@ void * OCI_API OCI_ThreadKeyGetValue
 
     key = (OCI_ThreadKey *)OCI_HashGetPointer(OCILib.key_map, name);
 
-    OCI_STATUS = OCI_ThreadKeyGet(key, &OCI_RETVAL);
+    OCI_STATUS = ThreadKeyGet(key, &OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }

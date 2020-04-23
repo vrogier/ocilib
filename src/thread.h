@@ -21,6 +21,27 @@
 #ifndef OCILIB_THREAD_H_INCLUDED
 #define OCILIB_THREAD_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+OCI_Thread * ThreadCreate
+(
+);
+
+boolean ThreadFree
+(
+    OCI_Thread  *thread
+);
+
+boolean ThreadRun
+(
+    OCI_Thread       *thread,
+    POCI_THREAD proc,
+    void         *arg
+);
+
+boolean ThreadJoin
+(
+    OCI_Thread  *thread
+);
 
 #endif /* OCILIB_THREAD_H_INCLUDED */

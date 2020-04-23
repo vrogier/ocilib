@@ -18,17 +18,16 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "thread.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "macro.h"
+#include "memory.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadProc
+ * ThreadProc
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ThreadProc
+void ThreadProc
 (
     dvoid *arg
 )
@@ -41,15 +40,11 @@ void OCI_ThreadProc
     }
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadCreate
+ * ThreadCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Thread * OCI_API OCI_ThreadCreate
+OCI_Thread * ThreadCreate
 (
     void
 )
@@ -92,10 +87,10 @@ OCI_Thread * OCI_API OCI_ThreadCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadFree
+ * ThreadFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadFree
+boolean ThreadFree
 (
     OCI_Thread *thread
 )
@@ -137,10 +132,10 @@ boolean OCI_API OCI_ThreadFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadRun
+ * ThreadRun
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadRun
+boolean ThreadRun
 (
     OCI_Thread *thread,
     POCI_THREAD proc,
@@ -155,7 +150,7 @@ boolean OCI_API OCI_ThreadRun
     thread->proc = proc;
     thread->arg  = arg;
 
-    OCI_EXEC(OCIThreadCreate(OCILib.env, thread->err, OCI_ThreadProc, thread, thread->id, thread->handle))
+    OCI_EXEC(OCIThreadCreate(OCILib.env, thread->err, ThreadProc, thread, thread->id, thread->handle))
 
     OCI_RETVAL = OCI_STATUS;
 
@@ -163,10 +158,10 @@ boolean OCI_API OCI_ThreadRun
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadJoin
+ * ThreadJoin
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadJoin
+boolean ThreadJoin
 (
     OCI_Thread *thread
 )

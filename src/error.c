@@ -91,7 +91,7 @@ OCI_Error * ErrorGet
 
     if (OCILib.loaded && OCI_LIB_THREADED)
     {
-        if (OCI_ThreadKeyGet(OCILib.key_errs, (void **)(dvoid *)&err))
+        if (ThreadKeyGet(OCILib.key_errs, (void **)(dvoid *)&err))
         {
             if (!err)
             {
@@ -99,7 +99,7 @@ OCI_Error * ErrorGet
 
                 if (err)
                 {
-                    OCI_ThreadKeySet(OCILib.key_errs, err);
+                    ThreadKeySet(OCILib.key_errs, err);
                 }
             }
         }

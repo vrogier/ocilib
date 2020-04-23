@@ -21,6 +21,45 @@
 #ifndef OCILIB_THREADKEY_H_INCLUDED
 #define OCILIB_THREADKEY_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+OCI_ThreadKey* ThreadKeyCreateInternal
+(
+    POCI_THREADKEYDEST destfunc
+);
+
+boolean ThreadKeyCreate
+(
+    const otext* name,
+    POCI_THREADKEYDEST destfunc
+);
+
+boolean ThreadKeyFree
+(
+    OCI_ThreadKey* key
+);
+
+boolean ThreadKeySet
+(
+    OCI_ThreadKey* key,
+    void* value
+);
+
+boolean ThreadKeyGet
+(
+    OCI_ThreadKey* key,
+    void** value
+);
+
+boolean ThreadKeySetValue
+(
+    const otext *name,
+    void        *value
+);
+
+void * ThreadKeyGetValue
+(
+    const otext *name
+);
 
 #endif /* OCILIB_THREADKEY_H_INCLUDED */

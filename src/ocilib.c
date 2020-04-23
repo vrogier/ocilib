@@ -4683,11 +4683,69 @@ boolean OCI_API OCI_RefToText
  *  thread
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Thread* OCI_API OCI_ThreadCreate
+(
+    void
+)
+{
+    CALL_IMPL(ThreadCreate);
+}
+
+boolean OCI_API OCI_ThreadFree
+(
+    OCI_Thread* thread
+)
+{
+    CALL_IMPL(ThreadFree, thread);
+}
+
+boolean OCI_API OCI_ThreadRun
+(
+    OCI_Thread* thread,
+    POCI_THREAD proc,
+    void* arg
+)
+{
+    CALL_IMPL(ThreadRun, thread, proc, arg);
+}
+
+boolean OCI_API OCI_ThreadJoin
+(
+    OCI_Thread* thread
+)
+{
+    CALL_IMPL(ThreadJoin, thread);
+}
 
 /* --------------------------------------------------------------------------------------------- *
  *  threadkey
  * --------------------------------------------------------------------------------------------- */
 
+boolean OCI_API OCI_ThreadKeyCreate
+(
+    const otext* name,
+    POCI_THREADKEYDEST destfunc
+)
+{
+    CALL_IMPL(ThreadKeyCreate, name, destfunc);
+}
+
+boolean OCI_API OCI_ThreadKeySetValue
+(
+    const otext* name,
+    void* value
+)
+{
+    CALL_IMPL(ThreadKeySetValue, name, value);
+}
+
+void* OCI_API OCI_ThreadKeyGetValue
+(
+    const otext* name
+)
+{
+    CALL_IMPL(ThreadKeyGetValue, name);
+}
 
 /* --------------------------------------------------------------------------------------------- *
  *  transaction

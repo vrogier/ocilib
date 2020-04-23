@@ -751,7 +751,7 @@ boolean KeyMapFree
 
             while (v)
             {
-                if (!OCI_ThreadKeyFree((OCI_ThreadKey *) (v->value.p_void)))
+                if (!ThreadKeyFree((OCI_ThreadKey *) (v->value.p_void)))
                 {
                     nb_err++;
                 }
@@ -1626,7 +1626,7 @@ boolean Initialize
 
         if (OCI_STATUS)
         {
-            OCILib.key_errs = OCI_ThreadKeyCreateInternal((POCI_THREADKEYDEST) ErrorFree);
+            OCILib.key_errs = ThreadKeyCreateInternal((POCI_THREADKEYDEST) ErrorFree);
             OCI_STATUS = (NULL != OCILib.key_errs);
         }
 
@@ -1764,8 +1764,8 @@ boolean Cleanup
         OCILib.key_errs = NULL;
 
         ErrorFree(err);
-        OCI_ThreadKeySet(key, NULL);
-        OCI_ThreadKeyFree(key);
+        ThreadKeySet(key, NULL);
+        ThreadKeyFree(key);
     }
 
     /* set unloaded flag */
