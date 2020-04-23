@@ -262,7 +262,7 @@ ub4 ProcNotifyChanges
 
     OCI_CALL_CONTEXT_SET_FROM_ERR(sub->err)
 
-    OCI_EventReset(&sub->event);
+    EventReset(&sub->event);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 

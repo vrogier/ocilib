@@ -18,17 +18,15 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "event.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "macro.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EventReset
+ * EventReset
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_EventReset
+boolean EventReset
 (
     OCI_Event *event
 )
@@ -56,15 +54,11 @@ boolean OCI_EventReset
     return TRUE;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EventGetType
+ * EventGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_EventGetType
+unsigned int EventGetType
 (
     OCI_Event *event
 )
@@ -73,10 +67,10 @@ unsigned int OCI_API OCI_EventGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EventGetOperation
+ * EventGetOperation
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_EventGetOperation
+unsigned int EventGetOperation
 (
     OCI_Event *event
 )
@@ -85,10 +79,10 @@ unsigned int OCI_API OCI_EventGetOperation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EventGetDatabase
+ * EventGetDatabase
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_EventGetDatabase
+const otext * EventGetDatabase
 (
     OCI_Event *event
 )
@@ -97,10 +91,10 @@ const otext * OCI_API OCI_EventGetDatabase
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EventGetObject
+ * EventGetObject
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_EventGetObject
+const otext * EventGetObject
 (
     OCI_Event *event
 )
@@ -109,10 +103,10 @@ const otext * OCI_API OCI_EventGetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EventGetRowid
+ * EventGetRowid
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_EventGetRowid
+const otext * EventGetRowid
 (
     OCI_Event *event
 )
@@ -121,10 +115,10 @@ const otext * OCI_API OCI_EventGetRowid
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EventGetSubscription
+ * EventGetSubscription
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Subscription * OCI_API OCI_EventGetSubscription
+OCI_Subscription * EventGetSubscription
 (
     OCI_Event *event
 )

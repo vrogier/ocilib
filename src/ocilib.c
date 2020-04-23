@@ -2151,6 +2151,62 @@ unsigned int OCI_API OCI_ErrorGetRow
     CALL_IMPL(ErrorGetRow, err)
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * event
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int OCI_API OCI_EventGetType
+(
+    OCI_Event* event
+)
+{
+    CALL_IMPL(EventGetType, event)
+}
+
+
+unsigned int OCI_API OCI_EventGetOperation
+(
+    OCI_Event* event
+)
+{
+    CALL_IMPL(EventGetOperation, event)
+}
+
+const otext* OCI_API OCI_EventGetDatabase
+(
+    OCI_Event* event
+)
+{
+    CALL_IMPL(EventGetDatabase, event)
+}
+
+const otext* OCI_API OCI_EventGetObject
+(
+    OCI_Event* event
+)
+{
+    CALL_IMPL(EventGetObject, event)
+}
+
+const otext* OCI_API OCI_EventGetRowid
+(
+    OCI_Event* event
+)
+{
+    CALL_IMPL(EventGetRowid, event)
+}
+
+OCI_Subscription* OCI_API OCI_EventGetSubscription
+(
+    OCI_Event* event
+)
+{
+    CALL_IMPL(EventGetSubscription, event)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * 
+ * --------------------------------------------------------------------------------------------- */
 
 
 boolean OCI_API OCI_SetUserPassword

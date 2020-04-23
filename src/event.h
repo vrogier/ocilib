@@ -21,6 +21,41 @@
 #ifndef OCILIB_EVENT_H_INCLUDED
 #define OCILIB_EVENT_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+boolean EventReset
+(
+    OCI_Event   *evt
+);
+
+unsigned int EventGetType
+(
+    OCI_Event   *evt
+);
+
+unsigned int EventGetOperation
+(
+    OCI_Event   *evt
+);
+
+const otext * EventGetDatabase
+(
+    OCI_Event   *evt
+);
+
+const otext * EventGetObject
+(
+    OCI_Event   *evt
+);
+
+const otext * EventGetRowid
+(
+    OCI_Event   *evt
+);
+
+OCI_Subscription * EventGetSubscription
+(
+    OCI_Event   *evt
+);
 
 #endif /* OCILIB_EVENT_H_INCLUDED */
