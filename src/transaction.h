@@ -21,6 +21,59 @@
 #ifndef OCILIB_TRANSACTION_H_INCLUDED
 #define OCILIB_TRANSACTION_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+boolean TransactionClose
+(
+    OCI_Transaction * trans
+);
+
+OCI_Transaction * TransactionCreate
+(
+    OCI_Connection  *con,
+    unsigned int timeout,
+    unsigned int mode,
+    OCI_XID         *pxid
+);
+
+boolean TransactionFree
+(
+    OCI_Transaction * trans
+);
+
+boolean TransactionStart
+(
+    OCI_Transaction * trans
+);
+
+boolean TransactionStop
+(
+    OCI_Transaction * trans
+);
+
+boolean TransactionResume
+(
+    OCI_Transaction * trans
+);
+
+boolean TransactionPrepare
+(
+    OCI_Transaction * trans
+);
+
+boolean TransactionForget
+(
+    OCI_Transaction * trans
+);
+
+unsigned int TransactionGetMode
+(
+    OCI_Transaction * trans
+);
+
+unsigned int TransactionGetTimeout
+(
+    OCI_Transaction * trans
+);
 
 #endif /* OCILIB_TRANSACTION_H_INCLUDED */

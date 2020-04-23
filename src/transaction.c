@@ -18,17 +18,17 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "transaction.h"
 
-/* ********************************************************************************************* *
- *                            PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "connection.h"
+#include "list.h"
+#include "macro.h"
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_TransactionClose
+* TransactionClose
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_TransactionClose
+boolean TransactionClose
 (
 OCI_Transaction * trans
 )
@@ -50,15 +50,11 @@ OCI_Transaction * trans
     return res;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionCreate
+ * TransactionCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Transaction * OCI_API OCI_TransactionCreate
+OCI_Transaction * TransactionCreate
 (
     OCI_Connection *con,
     unsigned int    timeout,
@@ -113,10 +109,10 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionFree
+ * TransactionFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionFree
+boolean TransactionFree
 (
     OCI_Transaction * trans
 )
@@ -125,7 +121,7 @@ boolean OCI_API OCI_TransactionFree
     OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
     OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
 
-    OCI_STATUS = OCI_TransactionClose(trans);
+    OCI_STATUS = TransactionClose(trans);
 
     /* remove transaction from internal list */
 
@@ -139,10 +135,10 @@ boolean OCI_API OCI_TransactionFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionStart
+ * TransactionStart
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionStart
+boolean TransactionStart
 (
     OCI_Transaction * trans
 )
@@ -159,10 +155,10 @@ boolean OCI_API OCI_TransactionStart
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionStop
+ * TransactionStop
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionStop
+boolean TransactionStop
 (
     OCI_Transaction * trans
 )
@@ -188,10 +184,10 @@ boolean OCI_API OCI_TransactionStop
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionResume
+ * TransactionResume
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionResume
+boolean TransactionResume
 (
     OCI_Transaction * trans
 )
@@ -208,10 +204,10 @@ boolean OCI_API OCI_TransactionResume
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionPrepare
+ * TransactionPrepare
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionPrepare
+boolean TransactionPrepare
 (
     OCI_Transaction * trans
 )
@@ -228,10 +224,10 @@ boolean OCI_API OCI_TransactionPrepare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionForget
+ * TransactionForget
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionForget
+boolean TransactionForget
 (
     OCI_Transaction * trans
 )
@@ -248,10 +244,10 @@ boolean OCI_API OCI_TransactionForget
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionGetMode
+ * TransactionGetMode
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_TransactionGetMode
+unsigned int TransactionGetMode
 (
     OCI_Transaction * trans
 )
@@ -260,10 +256,10 @@ unsigned int OCI_API OCI_TransactionGetMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionGetTimeout
+ * TransactionGetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_TransactionGetTimeout
+unsigned int TransactionGetTimeout
 (
     OCI_Transaction * trans
 )

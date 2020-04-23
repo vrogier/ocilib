@@ -4660,25 +4660,116 @@ boolean OCI_API OCI_RefToText
 }
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  resultset
  * --------------------------------------------------------------------------------------------- */
 
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  statement
  * --------------------------------------------------------------------------------------------- */
 
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  string
  * --------------------------------------------------------------------------------------------- */
 
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  subscription
  * --------------------------------------------------------------------------------------------- */
 
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  thread
  * --------------------------------------------------------------------------------------------- */
+
+
+/* --------------------------------------------------------------------------------------------- *
+ *  threadkey
+ * --------------------------------------------------------------------------------------------- */
+
+
+/* --------------------------------------------------------------------------------------------- *
+ *  transaction
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Transaction* OCI_API OCI_TransactionCreate
+(
+    OCI_Connection* con,
+    unsigned int    timeout,
+    unsigned int    mode,
+    OCI_XID* pxid
+)
+{
+    CALL_IMPL(TransactionCreate, con, timeout, mode, pxid);
+}
+
+boolean OCI_API OCI_TransactionFree
+(
+    OCI_Transaction* trans
+)
+{
+    CALL_IMPL(TransactionFree, trans);
+}
+
+boolean OCI_API OCI_TransactionStart
+(
+    OCI_Transaction* trans
+)
+{
+    CALL_IMPL(TransactionStart, trans);
+}
+
+boolean OCI_API OCI_TransactionStop
+(
+    OCI_Transaction* trans
+)
+{
+    CALL_IMPL(TransactionStop, trans);
+}
+
+boolean OCI_API OCI_TransactionResume
+(
+    OCI_Transaction* trans
+)
+{
+    CALL_IMPL(TransactionResume, trans);
+}
+
+boolean OCI_API OCI_TransactionPrepare
+(
+    OCI_Transaction* trans
+)
+{
+    CALL_IMPL(TransactionPrepare, trans);
+}
+
+boolean OCI_API OCI_TransactionForget
+(
+    OCI_Transaction* trans
+)
+{
+    CALL_IMPL(TransactionForget, trans);
+}
+
+unsigned int OCI_API OCI_TransactionGetMode
+(
+    OCI_Transaction* trans
+)
+{
+    CALL_IMPL(TransactionGetMode, trans);
+}
+
+unsigned int OCI_API OCI_TransactionGetTimeout
+(
+    OCI_Transaction* trans
+)
+{
+    CALL_IMPL(TransactionGetTimeout, trans);
+}
+
+
+/* --------------------------------------------------------------------------------------------- *
+ *  typeinfo
+ * --------------------------------------------------------------------------------------------- */
+

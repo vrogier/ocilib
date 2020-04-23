@@ -799,7 +799,7 @@ boolean ConnectionLogOff
 
     /* free all transactions */
 
-    ListForEach(con->trsns, (POCI_LIST_FOR_EACH) OCI_TransactionClose);
+    ListForEach(con->trsns, (POCI_LIST_FOR_EACH) TransactionClose);
     ListClear(con->trsns);
 
     /* 1 - XA connection */
