@@ -520,7 +520,7 @@ boolean CollToText
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
     OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    err = OCI_ErrorGet(TRUE, TRUE);
+    err = ErrorGet(TRUE, TRUE);
 
     if (str)
     {

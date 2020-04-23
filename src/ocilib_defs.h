@@ -411,7 +411,7 @@
                                                                                 \
     if ((mode) & OCI_ENV_CONTEXT)                                               \
     {                                                                           \
-        ctx->call_err = OCI_ErrorGet(FALSE, FALSE);                             \
+        ctx->call_err = ErrorGet(FALSE, FALSE);                                 \
         OCI_CallEnter(ctx);                                                     \
     }
 

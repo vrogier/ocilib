@@ -787,7 +787,7 @@ void OCI_CallEnter
     {
         if (ctx->call_err->depth == 0 && ctx->call_err->type != OCI_UNKNOWN)
         {
-            OCI_ErrorReset(ctx->call_err);
+            ErrorReset(ctx->call_err);
         }
 
         ctx->call_err->depth++;
@@ -1634,7 +1634,7 @@ boolean OCI_API OCI_Initialize
 
         if (OCI_STATUS)
         {
-            OCILib.key_errs = OCI_ThreadKeyCreateInternal((POCI_THREADKEYDEST) OCI_ErrorFree);
+            OCILib.key_errs = OCI_ThreadKeyCreateInternal((POCI_THREADKEYDEST) ErrorFree);
             OCI_STATUS = (NULL != OCILib.key_errs);
         }
 
@@ -1767,11 +1767,11 @@ boolean OCI_API OCI_Cleanup
     if (OCILib.key_errs)
     {        
         OCI_ThreadKey *key = OCILib.key_errs;
-        OCI_Error     *err = OCI_ErrorGet(FALSE, FALSE);
+        OCI_Error     *err = ErrorGet(FALSE, FALSE);
 
         OCILib.key_errs = NULL;
 
-        OCI_ErrorFree(err);
+        ErrorFree(err);
         OCI_ThreadKeySet(key, NULL);
         OCI_ThreadKeyFree(key);
     }
@@ -1921,7 +1921,7 @@ OCI_Error * OCI_API OCI_GetLastError
 
     if (!OCILib.loaded || OCILib.env_mode & OCI_ENV_CONTEXT)
     {
-        err = OCI_ErrorGet(TRUE, FALSE);
+        err = ErrorGet(TRUE, FALSE);
 
         if (err && (!err->raise))
         {

@@ -21,6 +21,27 @@
 #ifndef OCILIB_ERROR_H_INCLUDED
 #define OCILIB_ERROR_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+OCI_Error * ErrorCreate
+(
+    void
+);
+
+void ErrorFree
+(
+    OCI_Error   *err
+);
+
+void ErrorReset
+(
+    OCI_Error   *err
+);
+
+OCI_Error * ErrorGet
+(
+    boolean check,
+    boolean reset
+);
 
 #endif /* OCILIB_ERROR_H_INCLUDED */

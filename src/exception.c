@@ -228,11 +228,11 @@ OCI_Error * OCI_ExceptionGetError
     void
 )
 {
-    OCI_Error *err = OCI_ErrorGet(TRUE, FALSE);
+    OCI_Error *err = ErrorGet(TRUE, FALSE);
 
     if (err)
     {
-        OCI_ErrorReset(err);
+        ErrorReset(err);
     }
     return err;
 }

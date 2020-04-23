@@ -2091,12 +2091,65 @@ boolean OCI_API OCI_EnqueueGetRelativeMsgID
     CALL_IMPL(EnqueueGetRelativeMsgID, enqueue, id, len)
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * error
+ * --------------------------------------------------------------------------------------------- */
 
+const otext* OCI_API OCI_ErrorGetString
+(
+    OCI_Error* err
+)
+{
+    CALL_IMPL(ErrorGetString, err)
+}
 
+unsigned int OCI_API OCI_ErrorGetType
+(
+    OCI_Error* err
+)
+{
+    CALL_IMPL(ErrorGetType, err)
+}
 
+int OCI_API OCI_ErrorGetOCICode
+(
+    OCI_Error* err
+)
+{
+    CALL_IMPL(ErrorGetOCICode, err)
+}
 
+int OCI_API OCI_ErrorGetInternalCode
+(
+    OCI_Error* err
+)
+{
+    CALL_IMPL(ErrorGetInternalCode, err)
+}
 
+OCI_Connection* OCI_API OCI_ErrorGetConnection
+(
+    OCI_Error* err
+)
+{
+    CALL_IMPL(ErrorGetConnection, err)
+}
 
+OCI_Statement* OCI_API OCI_ErrorGetStatement
+(
+    OCI_Error* err
+)
+{
+    CALL_IMPL(ErrorGetStatement, err)
+}
+
+unsigned int OCI_API OCI_ErrorGetRow
+(
+    OCI_Error* err
+)
+{
+    CALL_IMPL(ErrorGetRow, err)
+}
 
 
 

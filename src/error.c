@@ -18,17 +18,16 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "error.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "threadkey.h"
+#include "macro.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ErrorCreate
+ * ErrorCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Error * OCI_ErrorCreate
+OCI_Error * ErrorCreate
 (
     void
 )
@@ -37,10 +36,10 @@ OCI_Error * OCI_ErrorCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ErrorFree
+ * ErrorFree
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ErrorFree
+void ErrorFree
 (
     OCI_Error *err
 )
@@ -57,10 +56,10 @@ void OCI_ErrorFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ErrorReset
+ * ErrorReset
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ErrorReset
+void ErrorReset
 (
     OCI_Error *err
 )
@@ -79,10 +78,10 @@ void OCI_ErrorReset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ErrorGet
+ * ErrorGet
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Error * OCI_ErrorGet
+OCI_Error * ErrorGet
 (
     boolean check,
     boolean reset
@@ -96,7 +95,7 @@ OCI_Error * OCI_ErrorGet
         {
             if (!err)
             {
-                err = OCI_ErrorCreate();
+                err = ErrorCreate();
 
                 if (err)
                 {
@@ -118,21 +117,17 @@ OCI_Error * OCI_ErrorGet
     // Reset error in case OCI_ENV_CONTEXT is no used
     if (reset && err && err->depth == 0 && err->type != OCI_UNKNOWN)
     {
-        OCI_ErrorReset(err);
+        ErrorReset(err);
     }
 
     return err;
 }
 
-/* ********************************************************************************************* *
- *                             PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ErrorGetString
+ * ErrorGetString
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_ErrorGetString
+const otext * ErrorGetString
 (
     OCI_Error *err
 )
@@ -143,10 +138,10 @@ const otext * OCI_API OCI_ErrorGetString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ErrorGetType
+ * ErrorGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ErrorGetType
+unsigned int ErrorGetType
 (
     OCI_Error *err
 )
@@ -157,10 +152,10 @@ unsigned int OCI_API OCI_ErrorGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ErrorGetOCICode
+ * ErrorGetOCICode
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_ErrorGetOCICode
+int ErrorGetOCICode
 (
     OCI_Error *err
 )
@@ -171,10 +166,10 @@ int OCI_API OCI_ErrorGetOCICode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ErrorGetInternalCode
+ * ErrorGetInternalCode
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_ErrorGetInternalCode
+int ErrorGetInternalCode
 (
     OCI_Error *err
 )
@@ -185,10 +180,10 @@ int OCI_API OCI_ErrorGetInternalCode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ErrorGetConnection
+ * ErrorGetConnection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_API OCI_ErrorGetConnection
+OCI_Connection * ErrorGetConnection
 (
     OCI_Error *err
 )
@@ -199,10 +194,10 @@ OCI_Connection * OCI_API OCI_ErrorGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ErrorGetStatement
+ * ErrorGetStatement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * OCI_API OCI_ErrorGetStatement
+OCI_Statement * ErrorGetStatement
 (
     OCI_Error *err
 )
@@ -213,10 +208,10 @@ OCI_Statement * OCI_API OCI_ErrorGetStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ErrorGetRow
+ * ErrorGetRow
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_ErrorGetRow
+unsigned int ErrorGetRow
 (
     OCI_Error *err
 )

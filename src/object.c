@@ -1152,7 +1152,7 @@ const otext * OCI_API OCI_ObjectGetString
 
         if (index >= 0)
         {
-            OCI_Error   *err   = OCI_ErrorGet(TRUE, TRUE);
+            OCI_Error   *err   = ErrorGet(TRUE, TRUE);
             OCIInd      *ind   = NULL;
             void        *value = NULL;
             unsigned int size  = 0;
@@ -2045,7 +2045,7 @@ boolean OCI_API OCI_ObjectToText
     OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
     OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
-    err = OCI_ErrorGet(TRUE, TRUE);
+    err = ErrorGet(TRUE, TRUE);
 
     if (str)
     {
