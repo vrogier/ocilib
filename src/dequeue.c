@@ -18,25 +18,25 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "dequeue.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "agent.h"
+#include "callback.h"
+#include "macro.h"
+#include "memory.h"
+#include "msg.h"
+#include "object.h"
+#include "string.h"
 
 static const unsigned int NavigationModeValues[] = { OCI_ADN_FIRST_MSG, OCI_ADN_NEXT_MSG, OCI_ADN_NEXT_TRANSACTION };
 static const unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
 static const unsigned int DequeueModeValues[]    = { OCI_ADM_BROWSE, OCI_ADM_LOCKED, OCI_ADM_REMOVE, OCI_ADM_REMOVE_NODATA };
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueCreate
+ * DequeueCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Dequeue * OCI_API OCI_DequeueCreate
+OCI_Dequeue * DequeueCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *name
@@ -86,10 +86,10 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueFree
+ * DequeueFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueFree
+boolean DequeueFree
 (
     OCI_Dequeue *dequeue
 )
@@ -137,10 +137,10 @@ boolean OCI_API OCI_DequeueFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueListen
+ * DequeueListen
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * OCI_API OCI_DequeueListen
+OCI_Agent * DequeueListen
 (
     OCI_Dequeue *dequeue,
     int          timeout
@@ -191,10 +191,10 @@ OCI_Agent * OCI_API OCI_DequeueListen
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGet
+ * DequeueGet
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Msg * OCI_API OCI_DequeueGet
+OCI_Msg * DequeueGet
 (
     OCI_Dequeue *dequeue
 )
@@ -281,10 +281,10 @@ OCI_Msg * OCI_API OCI_DequeueGet
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetConsumerName
+ * DequeueGetConsumerName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_DequeueGetConsumer
+const otext * DequeueGetConsumer
 (
     OCI_Dequeue *dequeue
 )
@@ -307,10 +307,10 @@ const otext * OCI_API OCI_DequeueGetConsumer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetConsumerName
+ * DequeueSetConsumerName
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetConsumer
+boolean DequeueSetConsumer
 (
     OCI_Dequeue *dequeue,
     const otext *consumer
@@ -326,10 +326,10 @@ boolean OCI_API OCI_DequeueSetConsumer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetCorrelation
+ * DequeueGetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_DequeueGetCorrelation
+const otext * DequeueGetCorrelation
 (
     OCI_Dequeue *dequeue
 )
@@ -353,10 +353,10 @@ const otext * OCI_API OCI_DequeueGetCorrelation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetCorrelation
+ * DequeueSetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetCorrelation
+boolean DequeueSetCorrelation
 (
     OCI_Dequeue *dequeue,
     const otext *pattern
@@ -373,10 +373,10 @@ boolean OCI_API OCI_DequeueSetCorrelation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetRelativeMsgID
+ * DequeueGetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueGetRelativeMsgID
+boolean DequeueGetRelativeMsgID
 (
     OCI_Dequeue  *dequeue,
     void         *id,
@@ -413,10 +413,10 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetRelativeMsgID
+ * DequeueSetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetRelativeMsgID
+boolean DequeueSetRelativeMsgID
 (
     OCI_Dequeue  *dequeue,
     const void   *id,
@@ -439,10 +439,10 @@ boolean OCI_API OCI_DequeueSetRelativeMsgID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetVisibility
+ * DequeueGetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DequeueGetVisibility
+unsigned int DequeueGetVisibility
 (
     OCI_Dequeue *dequeue
 )
@@ -461,10 +461,10 @@ unsigned int OCI_API OCI_DequeueGetVisibility
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetVisibility
+ * DequeueSetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetVisibility
+boolean DequeueSetVisibility
 (
     OCI_Dequeue *dequeue,
     unsigned int visibility
@@ -485,10 +485,10 @@ boolean OCI_API OCI_DequeueSetVisibility
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetMode
+ * DequeueGetMode
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DequeueGetMode
+unsigned int DequeueGetMode
 (
     OCI_Dequeue *dequeue
 )
@@ -507,10 +507,10 @@ unsigned int OCI_API OCI_DequeueGetMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetMode
+ * DequeueSetMode
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetMode
+boolean DequeueSetMode
 (
     OCI_Dequeue *dequeue,
     unsigned int mode
@@ -531,10 +531,10 @@ boolean OCI_API OCI_DequeueSetMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetNavigation
+ * DequeueGetNavigation
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DequeueGetNavigation
+unsigned int DequeueGetNavigation
 (
     OCI_Dequeue *dequeue
 )
@@ -553,10 +553,10 @@ unsigned int OCI_API OCI_DequeueGetNavigation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetNavigation
+ * DequeueSetNavigation
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetNavigation
+boolean DequeueSetNavigation
 (
     OCI_Dequeue *dequeue,
     unsigned int position
@@ -577,10 +577,10 @@ boolean OCI_API OCI_DequeueSetNavigation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetWaitTime
+ * DequeueGetWaitTime
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_DequeueGetWaitTime
+int DequeueGetWaitTime
 (
     OCI_Dequeue *dequeue
 )
@@ -599,10 +599,10 @@ int OCI_API OCI_DequeueGetWaitTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetWaitTime
+ * DequeueSetWaitTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetWaitTime
+boolean DequeueSetWaitTime
 (
     OCI_Dequeue *dequeue,
     int          timeout
@@ -622,10 +622,10 @@ boolean OCI_API OCI_DequeueSetWaitTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetAgentList
+ * DequeueSetAgentList
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetAgentList
+boolean DequeueSetAgentList
 (
     OCI_Dequeue *dequeue,
     OCI_Agent  **consumers,
@@ -659,10 +659,10 @@ boolean OCI_API OCI_DequeueSetAgentList
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSubscribe
+ * DequeueSubscribe
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API  OCI_DequeueSubscribe
+boolean DequeueSubscribe
 (
     OCI_Dequeue    *dequeue,
     unsigned int    port,
@@ -813,10 +813,10 @@ boolean OCI_API  OCI_DequeueSubscribe
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueUnsubscribe
+ * DequeueUnsubscribe
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueUnsubscribe
+boolean DequeueUnsubscribe
 (
     OCI_Dequeue *dequeue
 )

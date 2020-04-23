@@ -1208,6 +1208,194 @@ boolean OCI_API OCI_DateFromCTime
     CALL_IMPL(DateFromCTime, date, ptm, t)
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * dequeue
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Dequeue * OCI_API OCI_DequeueCreate
+(
+    OCI_TypeInfo *typinf,
+    const otext  *name
+)
+{
+    CALL_IMPL(DequeueCreate,typinf, name)
+}
+
+boolean OCI_API OCI_DequeueFree
+(
+    OCI_Dequeue *dequeue
+)
+{
+    CALL_IMPL(DequeueFree, dequeue)
+}
+
+OCI_Msg * OCI_API OCI_DequeueGet
+(
+    OCI_Dequeue *dequeue
+)
+{
+    CALL_IMPL(DequeueGet, dequeue)
+}
+
+boolean OCI_API OCI_DequeueSubscribe
+(
+    OCI_Dequeue   *dequeue,
+    unsigned int   port,
+    unsigned int   timeout,
+    POCI_NOTIFY_AQ callback
+)
+{
+    CALL_IMPL(DequeueSubscribe, dequeue, port, timeout, callback)
+}
+
+boolean OCI_API OCI_DequeueUnsubscribe
+(
+    OCI_Dequeue *dequeue
+)
+{
+    CALL_IMPL(DequeueUnsubscribe, dequeue)
+}
+
+boolean OCI_API OCI_DequeueSetConsumer
+(
+    OCI_Dequeue *dequeue,
+    const otext *consumer
+)
+{
+    CALL_IMPL(DequeueSetConsumer, dequeue, consumer)
+}
+
+const otext * OCI_API OCI_DequeueGetConsumer
+(
+    OCI_Dequeue *dequeue
+)
+{
+    CALL_IMPL(DequeueGetConsumer, dequeue)
+}
+
+boolean OCI_API OCI_DequeueSetCorrelation
+(
+    OCI_Dequeue *dequeue,
+    const otext *pattern
+)
+{
+    CALL_IMPL(DequeueSetCorrelation, dequeue, pattern)
+}
+
+const otext * OCI_API OCI_DequeueGetCorrelation
+(
+    OCI_Dequeue *dequeue
+)
+{
+    CALL_IMPL(DequeueGetCorrelation, dequeue)
+}
+
+boolean OCI_API OCI_DequeueSetRelativeMsgID
+(
+    OCI_Dequeue *dequeue,
+    const void  *id,
+    unsigned int len
+)
+{
+    CALL_IMPL(DequeueSetRelativeMsgID, dequeue, id, len)
+}
+
+boolean OCI_API OCI_DequeueGetRelativeMsgID
+(
+    OCI_Dequeue  *dequeue,
+    void         *id,
+    unsigned int *len
+)
+{
+    CALL_IMPL(DequeueGetRelativeMsgID, dequeue, id , len)
+}
+
+boolean OCI_API OCI_DequeueSetVisibility
+(
+    OCI_Dequeue *dequeue,
+    unsigned int visibility
+)
+{
+    CALL_IMPL(DequeueSetVisibility, dequeue, visibility)
+}
+
+unsigned int OCI_API OCI_DequeueGetVisibility
+(
+    OCI_Dequeue *dequeue
+)
+{
+    CALL_IMPL(DequeueGetVisibility, dequeue)
+}
+
+boolean OCI_API OCI_DequeueSetMode
+(
+    OCI_Dequeue *dequeue,
+    unsigned int mode
+)
+{
+    CALL_IMPL(DequeueSetMode, dequeue, mode)
+}
+
+unsigned int OCI_API OCI_DequeueGetMode
+(
+    OCI_Dequeue *dequeue
+)
+{
+    CALL_IMPL(DequeueGetMode, dequeue)
+}
+
+boolean OCI_API OCI_DequeueSetNavigation
+(
+    OCI_Dequeue *dequeue,
+    unsigned int position
+)
+{
+    CALL_IMPL(DequeueSetNavigation, dequeue, position)
+}
+
+unsigned int OCI_API OCI_DequeueGetNavigation
+(
+    OCI_Dequeue *dequeue
+)
+{
+    CALL_IMPL(DequeueGetNavigation, dequeue)
+}
+
+boolean OCI_API OCI_DequeueSetWaitTime
+(
+    OCI_Dequeue *dequeue,
+    int          timeout
+)
+{
+    CALL_IMPL(DequeueSetWaitTime, dequeue, timeout)
+}
+
+int OCI_API OCI_DequeueGetWaitTime
+(
+    OCI_Dequeue *dequeue
+)
+{
+    CALL_IMPL(DequeueGetWaitTime, dequeue)
+}
+
+boolean OCI_API OCI_DequeueSetAgentList
+(
+    OCI_Dequeue *dequeue,
+    OCI_Agent  **consumers,
+    unsigned int count
+)
+{
+    CALL_IMPL(DequeueSetAgentList, dequeue, consumers, count)
+}
+
+OCI_Agent * OCI_API OCI_DequeueListen
+(
+    OCI_Dequeue *dequeue,
+    int          timeout
+)
+{
+    CALL_IMPL(DequeueListen, dequeue, timeout)
+}
 
 
 

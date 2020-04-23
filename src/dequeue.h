@@ -18,9 +18,131 @@
  * limitations under the License.
  */
  
-#ifndef OCILIB_DEUQUEUE_H_INCLUDED
-#define OCILIB_DEUQUEUE_H_INCLUDED
+#ifndef OCILIB_DEQUEUE_H_INCLUDED
+#define OCILIB_DEQUEUE_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
 
-#endif /* OCILIB_DEUQUEUE_H_INCLUDED */
+OCI_Dequeue * DequeueCreate
+(
+    OCI_TypeInfo    *typinf,
+    const otext *name
+);
+
+boolean DequeueFree
+(
+    OCI_Dequeue *dequeue
+);
+
+OCI_Agent * DequeueListen
+(
+    OCI_Dequeue *dequeue,
+    int      timeout
+);
+
+OCI_Msg * DequeueGet
+(
+    OCI_Dequeue *dequeue
+);
+
+const otext * DequeueGetConsumer
+(
+    OCI_Dequeue *dequeue
+);
+
+boolean DequeueSetConsumer
+(
+    OCI_Dequeue     *dequeue,
+    const otext *consumer
+);
+
+const otext * DequeueGetCorrelation
+(
+    OCI_Dequeue *dequeue
+);
+
+boolean DequeueSetCorrelation
+(
+    OCI_Dequeue     *dequeue,
+    const otext *pattern
+);
+
+boolean DequeueGetRelativeMsgID
+(
+    OCI_Dequeue      *dequeue,
+    void         *id,
+    unsigned int *len
+);
+
+boolean DequeueSetRelativeMsgID
+(
+    OCI_Dequeue     *dequeue,
+    const void  *id,
+    unsigned int len
+);
+
+unsigned int DequeueGetVisibility
+(
+    OCI_Dequeue *dequeue
+);
+
+boolean DequeueSetVisibility
+(
+    OCI_Dequeue     *dequeue,
+    unsigned int visibility
+);
+
+unsigned int DequeueGetMode
+(
+    OCI_Dequeue *dequeue
+);
+
+boolean DequeueSetMode
+(
+    OCI_Dequeue     *dequeue,
+    unsigned int mode
+);
+
+unsigned int DequeueGetNavigation
+(
+    OCI_Dequeue *dequeue
+);
+
+boolean DequeueSetNavigation
+(
+    OCI_Dequeue     *dequeue,
+    unsigned int position
+);
+
+int DequeueGetWaitTime
+(
+    OCI_Dequeue *dequeue
+);
+
+boolean DequeueSetWaitTime
+(
+    OCI_Dequeue *dequeue,
+    int      timeout
+);
+
+boolean DequeueSetAgentList
+(
+    OCI_Dequeue     *dequeue,
+    OCI_Agent      **consumers,
+    unsigned int count
+);
+
+boolean DequeueSubscribe
+(
+    OCI_Dequeue        *dequeue,
+    unsigned int    port,
+    unsigned int    timeout,
+    POCI_NOTIFY_AQ callback
+);
+
+boolean DequeueUnsubscribe
+(
+    OCI_Dequeue *dequeue
+);
+
+#endif /* OCILIB_DEQUEUE_H_INCLUDED */
