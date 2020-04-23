@@ -21,6 +21,85 @@
 #ifndef OCILIB_HASH_H_INCLUDED
 #define OCILIB_HASH_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+OCI_HashTable * HashCreate
+(
+    unsigned int size,
+    unsigned int type
+);
+
+boolean HashFree
+(
+    OCI_HashTable *table
+);
+
+unsigned int HashGetSize
+(
+    OCI_HashTable *table
+);
+
+unsigned int HashGetType
+(
+    OCI_HashTable *table
+);
+
+boolean HashAddString
+(
+    OCI_HashTable   *table,
+    const otext *key,
+    const otext *value
+);
+
+const otext * HashGetString
+(
+    OCI_HashTable   *table,
+    const otext *key
+);
+
+boolean HashAddInt
+(
+    OCI_HashTable   *table,
+    const otext *key,
+    int          value
+);
+
+int HashGetInt
+(
+    OCI_HashTable   *table,
+    const otext *key
+);
+
+boolean HashAddPointer
+(
+    OCI_HashTable   *table,
+    const otext *key,
+    void        *value
+);
+
+void * HashGetPointer
+(
+    OCI_HashTable   *table,
+    const otext *key
+);
+
+OCI_HashEntry * HashLookup
+(
+    OCI_HashTable   *table,
+    const otext *key,
+    boolean      create
+);
+
+OCI_HashValue * HashGetValue
+(
+    OCI_HashTable   *table,
+    const otext *key
+);
+
+OCI_HashEntry * HashGetEntry
+(
+    OCI_HashTable   *table,
+    unsigned int index
+);
 
 #endif /* OCILIB_HASH_H_INCLUDED */

@@ -18,24 +18,19 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "hash.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "macro.h"
+#include "memory.h"
+#include "string.h"
 
 static const unsigned int HashTypeValues[] = { OCI_HASH_STRING, OCI_HASH_INTEGER, OCI_HASH_POINTER };
 
-
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashCompute
+ * HashCompute
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_HashCompute
+unsigned int HashCompute
 (
     OCI_HashTable *table,
     const otext   *str
@@ -56,10 +51,10 @@ unsigned int OCI_HashCompute
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_HashAdd
+* HashAdd
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_HashAdd
+boolean HashAdd
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -120,15 +115,11 @@ boolean OCI_HashAdd
     return res;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashCreate
+ * HashCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_HashTable * OCI_API OCI_HashCreate
+OCI_HashTable * HashCreate
 (
     unsigned int size,
     unsigned int type
@@ -174,10 +165,10 @@ OCI_HashTable * OCI_API OCI_HashCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashFree
+ * HashFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_HashFree
+boolean HashFree
 (
     OCI_HashTable *table
 )
@@ -237,10 +228,10 @@ boolean OCI_API OCI_HashFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetSize
+ * HashGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_HashGetSize
+unsigned int HashGetSize
 (
     OCI_HashTable *table
 )
@@ -254,10 +245,10 @@ unsigned int OCI_API OCI_HashGetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetType
+ * HashGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_HashGetType
+unsigned int HashGetType
 (
     OCI_HashTable *table
 )
@@ -270,10 +261,10 @@ unsigned int OCI_API OCI_HashGetType
     OCI_CALL_EXIT()}
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetValue
+ * HashGetValue
  * --------------------------------------------------------------------------------------------- */
 
-OCI_HashValue * OCI_API OCI_HashGetValue
+OCI_HashValue * HashGetValue
 (
     OCI_HashTable *table,
     const otext   *key
@@ -295,10 +286,10 @@ OCI_HashValue * OCI_API OCI_HashGetValue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetEntry
+ * HashGetEntry
  * --------------------------------------------------------------------------------------------- */
 
-OCI_HashEntry * OCI_API OCI_HashGetEntry
+OCI_HashEntry * HashGetEntry
 (
     OCI_HashTable *table,
     unsigned int   index
@@ -316,10 +307,10 @@ OCI_HashEntry * OCI_API OCI_HashGetEntry
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetString
+ * HashGetString
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_HashGetString
+const otext * HashGetString
 (
     OCI_HashTable *table,
     const otext   *key
@@ -342,10 +333,10 @@ const otext * OCI_API OCI_HashGetString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetInt
+ * HashGetInt
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_HashGetInt
+int HashGetInt
 (
     OCI_HashTable *table,
     const otext   *key
@@ -368,10 +359,10 @@ int OCI_API OCI_HashGetInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashGetPointer
+ * HashGetPointer
  * --------------------------------------------------------------------------------------------- */
 
-void * OCI_API OCI_HashGetPointer
+void * HashGetPointer
 (
     OCI_HashTable *table,
     const otext   *key
@@ -394,10 +385,10 @@ void * OCI_API OCI_HashGetPointer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashAddString
+ * HashAddString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_HashAddString
+boolean HashAddString
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -412,16 +403,16 @@ boolean OCI_API OCI_HashAddString
 
     v.p_text = (otext *) value;
 
-    OCI_RETVAL = OCI_STATUS = OCI_HashAdd(table, key, v, OCI_HASH_STRING);
+    OCI_RETVAL = OCI_STATUS = HashAdd(table, key, v, OCI_HASH_STRING);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashAddInt
+ * HashAddInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_HashAddInt
+boolean HashAddInt
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -436,16 +427,16 @@ boolean OCI_API OCI_HashAddInt
 
     v.num = value;
 
-    OCI_RETVAL = OCI_STATUS = OCI_HashAdd(table, key, v, OCI_HASH_INTEGER);
+    OCI_RETVAL = OCI_STATUS = HashAdd(table, key, v, OCI_HASH_INTEGER);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashAddPointer
+ * HashAddPointer
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_HashAddPointer
+boolean HashAddPointer
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -460,16 +451,16 @@ boolean OCI_API OCI_HashAddPointer
 
     v.p_void = value;
 
-    OCI_RETVAL = OCI_STATUS = OCI_HashAdd(table, key, v, OCI_HASH_POINTER);
+    OCI_RETVAL = OCI_STATUS = HashAdd(table, key, v, OCI_HASH_POINTER);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_HashLookup
+ * HashLookup
  * --------------------------------------------------------------------------------------------- */
 
-OCI_HashEntry * OCI_API OCI_HashLookup
+OCI_HashEntry * HashLookup
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -482,7 +473,7 @@ OCI_HashEntry * OCI_API OCI_HashLookup
     OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, key)
 
-    const unsigned int i = OCI_HashCompute(table, key);
+    const unsigned int i = HashCompute(table, key);
 
     if (i < table->size)
     {

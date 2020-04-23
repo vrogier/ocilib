@@ -2553,7 +2553,129 @@ const void* OCI_API OCI_HandleGetSubscription
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * handle
+ * hash
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_HashTable* OCI_API OCI_HashCreate
+(
+    unsigned int size,
+    unsigned int type
+)
+{
+    CALL_IMPL(HashCreate, size, type)
+}
+
+boolean OCI_API OCI_HashFree
+(
+    OCI_HashTable* table
+)
+{
+    CALL_IMPL(HashFree, table)
+}
+
+unsigned int OCI_API OCI_HashGetSize
+(
+    OCI_HashTable* table
+)
+{
+    CALL_IMPL(HashGetSize, table)
+}
+
+unsigned int OCI_API OCI_HashGetType
+(
+    OCI_HashTable* table
+)
+{
+    CALL_IMPL(HashGetType, table)
+}
+
+boolean OCI_API OCI_HashAddString
+(
+    OCI_HashTable* table,
+    const otext* key,
+    const otext* value
+)
+{
+    CALL_IMPL(HashAddString, table, key, value)
+}
+
+const otext* OCI_API OCI_HashGetString
+(
+    OCI_HashTable* table,
+    const otext* key
+)
+{
+    CALL_IMPL(HashGetString, table, key)
+}
+
+boolean OCI_API OCI_HashAddInt
+(
+    OCI_HashTable* table,
+    const otext* key,
+    int value
+)
+{
+    CALL_IMPL(HashAddInt, table, key, value)
+}
+
+int OCI_API OCI_HashGetInt
+(
+    OCI_HashTable* table,
+    const otext* key
+)
+{
+    CALL_IMPL(HashGetInt, table, key)
+}
+
+boolean OCI_API OCI_HashAddPointer
+(
+    OCI_HashTable* table,
+    const otext* key,
+    void* value
+)
+{
+    CALL_IMPL(HashAddPointer, table, key, value)
+}
+
+void* OCI_API OCI_HashGetPointer
+(
+    OCI_HashTable* table,
+    const otext* key
+)
+{
+    CALL_IMPL(HashGetPointer, table, key)
+}
+
+OCI_HashEntry* OCI_API OCI_HashLookup
+(
+    OCI_HashTable* table,
+    const otext* key,
+    boolean create
+)
+{
+    CALL_IMPL(HashLookup, table, key, create)
+}
+
+OCI_HashValue* OCI_API OCI_HashGetValue
+(
+    OCI_HashTable* table,
+    const otext* key
+)
+{
+    CALL_IMPL(HashGetValue, table, key)
+}
+
+OCI_HashEntry* OCI_API OCI_HashGetEntry
+(
+    OCI_HashTable* table,
+    unsigned int   index
+)
+{
+    CALL_IMPL(HashGetEntry, table, index)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * 
  * --------------------------------------------------------------------------------------------- */
 
 
