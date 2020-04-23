@@ -21,6 +21,60 @@
 #ifndef OCILIB_ENQUEUE_H_INCLUDED
 #define OCILIB_ENQUEUE_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+OCI_Enqueue * EnqueueCreate
+(
+    OCI_TypeInfo    *typinf,
+    const otext *name
+);
+
+boolean EnqueueFree
+(
+    OCI_Enqueue *enqueue
+);
+
+boolean EnqueuePut
+(
+    OCI_Enqueue *enqueue,
+    OCI_Msg *msg
+);
+
+unsigned int EnqueueGetVisibility
+(
+    OCI_Enqueue *enqueue
+);
+
+boolean EnqueueSetVisibility
+(
+    OCI_Enqueue     *enqueue,
+    unsigned int visibility
+);
+
+unsigned int EnqueueGetSequenceDeviation
+(
+    OCI_Enqueue *enqueue
+);
+
+boolean EnqueueSetSequenceDeviation
+(
+    OCI_Enqueue     *enqueue,
+    unsigned int sequence
+);
+
+boolean EnqueueGetRelativeMsgID
+(
+    OCI_Enqueue      *enqueue,
+    void         *id,
+    unsigned int *len
+);
+
+boolean EnqueueSetRelativeMsgID
+(
+    OCI_Enqueue     *enqueue,
+    const void  *id,
+    unsigned int len
+);
 
 #endif /* OCILIB_ENQUEUE_H_INCLUDED */
+

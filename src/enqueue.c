@@ -18,24 +18,20 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "enqueue.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "macro.h"
+#include "memory.h"
+#include "string.h"
 
 static const unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
 static const unsigned int EnqueueModeValues[]    = { OCI_ASD_BEFORE, OCI_ASD_TOP };
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueueCreate
+ * EnqueueCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Enqueue * OCI_API OCI_EnqueueCreate
+OCI_Enqueue * EnqueueCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *name
@@ -77,10 +73,10 @@ OCI_Enqueue * OCI_API OCI_EnqueueCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueueFree
+ * EnqueueFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_EnqueueFree
+boolean EnqueueFree
 (
     OCI_Enqueue *enqueue
 )
@@ -102,10 +98,10 @@ boolean OCI_API OCI_EnqueueFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueuePut
+ * EnqueuePut
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_EnqueuePut
+boolean EnqueuePut
 (
     OCI_Enqueue *enqueue,
     OCI_Msg     *msg
@@ -157,10 +153,10 @@ boolean OCI_API OCI_EnqueuePut
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueueGetVisibility
+ * EnqueueGetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_EnqueueGetVisibility
+unsigned int EnqueueGetVisibility
 (
     OCI_Enqueue *enqueue
 )
@@ -179,10 +175,10 @@ unsigned int OCI_API OCI_EnqueueGetVisibility
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueueSetVisibility
+ * EnqueueSetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_EnqueueSetVisibility
+boolean EnqueueSetVisibility
 (
     OCI_Enqueue *enqueue,
     unsigned int visibility
@@ -203,10 +199,10 @@ boolean OCI_API OCI_EnqueueSetVisibility
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueueGetSequenceDeviation
+ * EnqueueGetSequenceDeviation
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
+unsigned int EnqueueGetSequenceDeviation
 (
     OCI_Enqueue *enqueue
 )
@@ -225,10 +221,10 @@ unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueueSetDeviation
+ * EnqueueSetDeviation
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_EnqueueSetSequenceDeviation
+boolean EnqueueSetSequenceDeviation
 (
     OCI_Enqueue *enqueue,
     unsigned int sequence
@@ -249,10 +245,10 @@ boolean OCI_API OCI_EnqueueSetSequenceDeviation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueueSetRelativeMsgID
+ * EnqueueSetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_EnqueueGetRelativeMsgID
+boolean EnqueueGetRelativeMsgID
 (
     OCI_Enqueue  *enqueue,
     void         *id,
@@ -291,10 +287,10 @@ boolean OCI_API OCI_EnqueueGetRelativeMsgID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_EnqueueSetRelativeMsgID
+ * EnqueueSetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_EnqueueSetRelativeMsgID
+boolean EnqueueSetRelativeMsgID
 (
     OCI_Enqueue  *enqueue,
     const void   *id,

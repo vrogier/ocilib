@@ -2007,6 +2007,89 @@ boolean OCI_API OCI_ElemSetNull
     CALL_IMPL(ElemSetNull, elem)
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * enqueue
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Enqueue* OCI_API OCI_EnqueueCreate
+(
+    OCI_TypeInfo* typinf,
+    const otext* name
+)
+{
+    CALL_IMPL(EnqueueCreate, typinf, name)
+}
+
+boolean OCI_API OCI_EnqueueFree
+(
+    OCI_Enqueue* enqueue
+)
+{
+    CALL_IMPL(EnqueueFree, enqueue)
+}
+
+boolean OCI_API OCI_EnqueuePut
+(
+    OCI_Enqueue* enqueue,
+    OCI_Msg* msg
+)
+{
+    CALL_IMPL(EnqueuePut, enqueue, msg)
+}
+
+boolean OCI_API OCI_EnqueueSetSequenceDeviation
+(
+    OCI_Enqueue* enqueue,
+    unsigned int sequence
+)
+{
+    CALL_IMPL(EnqueueSetSequenceDeviation, enqueue, sequence)
+}
+
+unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
+(
+    OCI_Enqueue* enqueue
+)
+{
+    CALL_IMPL(EnqueueGetSequenceDeviation, enqueue)
+}
+
+boolean OCI_API OCI_EnqueueSetVisibility
+(
+    OCI_Enqueue* enqueue,
+    unsigned int visibility
+)
+{
+    CALL_IMPL(EnqueueSetVisibility, enqueue, visibility)
+}
+
+unsigned int OCI_API OCI_EnqueueGetVisibility
+(
+    OCI_Enqueue* enqueue
+)
+{
+    CALL_IMPL(EnqueueGetVisibility, enqueue)
+}
+
+boolean OCI_API OCI_EnqueueSetRelativeMsgID
+(
+    OCI_Enqueue* enqueue,
+    const void* id,
+    unsigned int len
+)
+{
+    CALL_IMPL(EnqueueSetRelativeMsgID, enqueue, id, len)
+}
+
+boolean OCI_API OCI_EnqueueGetRelativeMsgID
+(
+    OCI_Enqueue* enqueue,
+    void* id,
+    unsigned int* len
+)
+{
+    CALL_IMPL(EnqueueGetRelativeMsgID, enqueue, id, len)
+}
 
 
 
