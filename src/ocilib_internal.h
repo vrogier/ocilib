@@ -76,69 +76,6 @@ extern "C"
 #include "typeinfo.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * list.c
- * --------------------------------------------------------------------------------------------- */
-
-OCI_List * OCI_ListCreate
-(
-    int type
-);
-
-boolean OCI_ListFree
-(
-    OCI_List *list
-);
-
-void * OCI_ListAppend
-(
-    OCI_List *list,
-    int       size
-);
-
-boolean OCI_ListClear
-(
-    OCI_List *list
-);
-
-typedef void (*POCI_LIST_FOR_EACH)(void *data);
-
-boolean OCI_ListForEach
-(
-    OCI_List          *list,
-    POCI_LIST_FOR_EACH proc
-);
-
-typedef void(*POCI_LIST_FOR_EACH_WITH_PARAM)(void *data, void *param);
-
-boolean OCI_ListForEachWithParam
-(
-    OCI_List          *list,
-    void              *param,
-    POCI_LIST_FOR_EACH_WITH_PARAM proc
-);
-
-boolean OCI_ListRemove
-(
-    OCI_List *list,
-    void     *data
-);
-
-boolean OCI_ListExists
-(
-    OCI_List *list,
-    void     *data
-);
-
-typedef boolean(*POCI_LIST_FIND)(void *data, void *param);
-
-void * OCI_ListFind
-(
-    OCI_List        *list,
-    POCI_LIST_FIND   proc,
-    void            *param
-);
-
-/* --------------------------------------------------------------------------------------------- *
  * lob.c
  * --------------------------------------------------------------------------------------------- */
 

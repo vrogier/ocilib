@@ -1634,7 +1634,7 @@ boolean Initialize
 
         if (OCI_STATUS)
         {
-            OCILib.cons = OCI_ListCreate(OCI_IPC_CONNECTION);
+            OCILib.cons = ListCreate(OCI_IPC_CONNECTION);
             OCI_STATUS = (NULL != OCILib.cons);
         }
 
@@ -1642,7 +1642,7 @@ boolean Initialize
 
         if (OCI_STATUS)
         {
-            OCILib.pools = OCI_ListCreate(OCI_IPC_POOL);
+            OCILib.pools = ListCreate(OCI_IPC_POOL);
             OCI_STATUS = (NULL != OCILib.pools);
         }
 
@@ -1652,7 +1652,7 @@ boolean Initialize
 
         if (OCI_STATUS)
         {
-            OCILib.subs = OCI_ListCreate(OCI_IPC_NOTIFY);
+            OCILib.subs = ListCreate(OCI_IPC_NOTIFY);
 
             OCI_STATUS = (NULL != OCILib.subs);
         }
@@ -1661,7 +1661,7 @@ boolean Initialize
 
         if (OCI_STATUS)
         {
-            OCILib.arrs = OCI_ListCreate(OCI_IPC_ARRAY);
+            OCILib.arrs = ListCreate(OCI_IPC_ARRAY);
             OCI_STATUS = (NULL != OCILib.arrs);
         }
     }
@@ -1697,32 +1697,32 @@ boolean Cleanup
 
     /* free all arrays */
 
-    OCI_ListForEach(OCILib.arrs, (POCI_LIST_FOR_EACH) ArrayClose);
-    OCI_ListClear(OCILib.arrs);
+    ListForEach(OCILib.arrs, (POCI_LIST_FOR_EACH) ArrayClose);
+    ListClear(OCILib.arrs);
 
     /* free all subscriptions */
 
-    OCI_ListForEach(OCILib.subs, (POCI_LIST_FOR_EACH) OCI_SubscriptionClose);
-    OCI_ListClear(OCILib.subs);
+    ListForEach(OCILib.subs, (POCI_LIST_FOR_EACH) OCI_SubscriptionClose);
+    ListClear(OCILib.subs);
 
     /* free all connections */
 
-    OCI_ListForEach(OCILib.cons, (POCI_LIST_FOR_EACH) ConnectionClose);
-    OCI_ListClear(OCILib.cons);
+    ListForEach(OCILib.cons, (POCI_LIST_FOR_EACH) ConnectionClose);
+    ListClear(OCILib.cons);
 
     /* free all pools */
 
-    OCI_ListForEach(OCILib.pools, (POCI_LIST_FOR_EACH) OCI_PoolClose);
-    OCI_ListClear(OCILib.pools);
+    ListForEach(OCILib.pools, (POCI_LIST_FOR_EACH) OCI_PoolClose);
+    ListClear(OCILib.pools);
 
     /* free objects */
 
     KeyMapFree();
 
-    OCI_ListFree(OCILib.cons);
-    OCI_ListFree(OCILib.pools);
-    OCI_ListFree(OCILib.subs);
-    OCI_ListFree(OCILib.arrs);
+    ListFree(OCILib.cons);
+    ListFree(OCILib.pools);
+    ListFree(OCILib.subs);
+    ListFree(OCILib.arrs);
 
     OCILib.cons    = NULL;
     OCILib.pools   = NULL;

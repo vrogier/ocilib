@@ -148,7 +148,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 
     /* create subscription object */
 
-    sub = OCI_ListAppend(OCILib.subs, sizeof(*sub));
+    sub = ListAppend(OCILib.subs, sizeof(*sub));
     OCI_STATUS = (NULL != sub);
 
     if (sub)
@@ -252,7 +252,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
     else if (sub)
     {
         OCI_SubscriptionClose(sub);
-        OCI_ListRemove(OCILib.subs, sub);
+        ListRemove(OCILib.subs, sub);
         OCI_FREE(sub)
     }
 
@@ -285,7 +285,7 @@ boolean OCI_API OCI_SubscriptionUnregister
 
     OCI_RETVAL = OCI_STATUS = OCI_SubscriptionClose(sub);
 
-    OCI_ListRemove(OCILib.subs, sub);
+    ListRemove(OCILib.subs, sub);
 
     OCI_FREE(sub);
 

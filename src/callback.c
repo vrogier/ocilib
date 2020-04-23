@@ -535,7 +535,7 @@ void ProcHAEvent
 
             if (OCI_STATUS)
             {
-                OCI_ListForEachWithParam(OCILib.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM) ProcHAEventInvoke);
+                ListForEachWithParam(OCILib.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM) ProcHAEventInvoke);
             }
  
             OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT, (OCIEvent *)eventptr, &params.srvhp, NULL)

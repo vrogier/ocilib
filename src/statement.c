@@ -1355,7 +1355,7 @@ OCI_Statement * OCI_API OCI_StatementCreate
 
     /* create statement object */
 
-    OCI_RETVAL = OCI_ListAppend(con->stmts, sizeof(*OCI_RETVAL));
+    OCI_RETVAL = ListAppend(con->stmts, sizeof(*OCI_RETVAL));
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     if (OCI_STATUS)
@@ -1388,7 +1388,7 @@ boolean OCI_API OCI_StatementFree
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     OCI_StatementClose(stmt);
-    OCI_ListRemove(stmt->con->stmts, stmt);
+    ListRemove(stmt->con->stmts, stmt);
 
     OCI_FREE(stmt)
 

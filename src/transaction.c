@@ -74,7 +74,7 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
 
     /* create transaction object */
 
-    trans = OCI_ListAppend(con->trsns, sizeof(*trans));
+    trans = ListAppend(con->trsns, sizeof(*trans));
     OCI_STATUS = (NULL != trans);
     
     if (OCI_STATUS)
@@ -129,7 +129,7 @@ boolean OCI_API OCI_TransactionFree
 
     /* remove transaction from internal list */
 
-    OCI_ListRemove(trans->con->trsns, trans);
+    ListRemove(trans->con->trsns, trans);
 
     OCI_FREE(trans)
 

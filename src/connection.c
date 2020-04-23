@@ -96,7 +96,7 @@ OCI_Connection * ConnectionAllocate
 
     /* create connection object */
 
-    con = OCI_ListAppend(OCILib.cons, sizeof(*con));
+    con = ListAppend(OCILib.cons, sizeof(*con));
     OCI_STATUS = (NULL != con);
 
     if (OCI_STATUS)
@@ -105,17 +105,17 @@ OCI_Connection * ConnectionAllocate
 
         /* create internal lists */
 
-        con->stmts = OCI_ListCreate(OCI_IPC_STATEMENT);
+        con->stmts = ListCreate(OCI_IPC_STATEMENT);
 
         if (OCI_STATUS)
         {
-            con->tinfs = OCI_ListCreate(OCI_IPC_TYPE_INFO);
+            con->tinfs = ListCreate(OCI_IPC_TYPE_INFO);
             OCI_STATUS = (NULL != con->tinfs);
         }
 
         if (OCI_STATUS)
         {
-            con->trsns = OCI_ListCreate(OCI_IPC_TRANSACTION);
+            con->trsns = ListCreate(OCI_IPC_TRANSACTION);
             OCI_STATUS = (NULL != con->trsns);
         }
 
@@ -785,22 +785,22 @@ boolean ConnectionLogOff
 
     /* dissociate connection from existing subscriptions */
 
-    OCI_ListForEachWithParam(OCILib.subs, con, (POCI_LIST_FOR_EACH_WITH_PARAM) ConnectionDetachSubscriptions);
+    ListForEachWithParam(OCILib.subs, con, (POCI_LIST_FOR_EACH_WITH_PARAM) ConnectionDetachSubscriptions);
 
     /* free all statements */
 
-    OCI_ListForEach(con->stmts, (POCI_LIST_FOR_EACH) OCI_StatementClose);
-    OCI_ListClear(con->stmts);
+    ListForEach(con->stmts, (POCI_LIST_FOR_EACH) OCI_StatementClose);
+    ListClear(con->stmts);
 
     /* free all type info objects */
 
-    OCI_ListForEach(con->tinfs, (POCI_LIST_FOR_EACH) OCI_TypeInfoClose);
-    OCI_ListClear(con->tinfs);
+    ListForEach(con->tinfs, (POCI_LIST_FOR_EACH) OCI_TypeInfoClose);
+    ListClear(con->tinfs);
 
     /* free all transactions */
 
-    OCI_ListForEach(con->trsns, (POCI_LIST_FOR_EACH) OCI_TransactionClose);
-    OCI_ListClear(con->trsns);
+    ListForEach(con->trsns, (POCI_LIST_FOR_EACH) OCI_TransactionClose);
+    ListClear(con->trsns);
 
     /* 1 - XA connection */
 
@@ -877,9 +877,9 @@ boolean ConnectionClose
 
     /* free internal lists */
 
-    OCI_ListFree(con->stmts);
-    OCI_ListFree(con->trsns);
-    OCI_ListFree(con->tinfs);
+    ListFree(con->stmts);
+    ListFree(con->trsns);
+    ListFree(con->tinfs);
 
     /* free strings */
 
@@ -1009,7 +1009,7 @@ boolean ConnectionFree
 
     OCI_RETVAL = OCI_STATUS = ConnectionClose(con);
 
-    OCI_ListRemove(OCILib.cons, con);
+    ListRemove(OCILib.cons, con);
     OCI_FREE(con)
 
     OCI_CALL_EXIT()

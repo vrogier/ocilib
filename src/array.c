@@ -210,7 +210,7 @@ OCI_Array * ArrayCreate
 
     /* create array object */
 
-    arr = OCI_ListAppend(OCILib.arrs, sizeof(*arr));
+    arr = ListAppend(OCILib.arrs, sizeof(*arr));
     OCI_STATUS = (NULL != arr);
 
     if (OCI_STATUS)
@@ -269,11 +269,11 @@ boolean ArrayFreeFromHandles
 )
 {
     boolean    res = FALSE;
-    OCI_Array *arr = OCI_ListFind(OCILib.arrs, (POCI_LIST_FIND) ArrayFindAny, handles);
+    OCI_Array *arr = ListFind(OCILib.arrs, (POCI_LIST_FIND) ArrayFindAny, handles);
 
     if (arr)
     {
-        res = OCI_ListRemove(OCILib.arrs, arr);
+        res = ListRemove(OCILib.arrs, arr);
        ArrayClose(arr);
         OCI_FREE(arr)
     }
@@ -291,7 +291,7 @@ void * ArrayGetOCIHandlesFromHandles
 )
 {
     void      *ret = NULL;
-    OCI_Array *arr = OCI_ListFind(OCILib.arrs, (POCI_LIST_FIND) ArrayFindObjects, handles);
+    OCI_Array *arr = ListFind(OCILib.arrs, (POCI_LIST_FIND) ArrayFindObjects, handles);
 
     if (arr)
     {

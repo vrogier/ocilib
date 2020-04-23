@@ -140,7 +140,7 @@ OCI_Pool * OCI_API OCI_PoolCreate
     
     /* create pool object */
 
-    pool = OCI_ListAppend(OCILib.pools, sizeof(*pool));
+    pool = ListAppend(OCILib.pools, sizeof(*pool));
     OCI_STATUS = (NULL != pool);
 
     if (OCI_STATUS)
@@ -360,7 +360,7 @@ boolean OCI_API OCI_PoolFree
 
     OCI_STATUS = OCI_PoolClose(pool);
 
-    OCI_ListRemove(OCILib.pools, pool);
+    ListRemove(OCILib.pools, pool);
 
     OCI_FREE(pool)
 

@@ -131,7 +131,7 @@ OCI_TypeInfo * OCI_ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
         if (tdo && tdo != result->tdo)
         {
             /* first try to find it in list */
-            const boolean found = OCI_ListExists(typinf->con->tinfs, tdo);
+            const boolean found = ListExists(typinf->con->tinfs, tdo);
 
             if (!found)
             {

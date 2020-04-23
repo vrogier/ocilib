@@ -18,8 +18,11 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "list.h"
 
+#include "macro.h"
+#include "memory.h"
+#include "mutex.h"
 
 #define LIST_FOR_EACH(exp) \
 \
@@ -41,11 +44,6 @@
             OCI_MutexRelease(list->mutex);  \
         }                                   \
     }                                       \
-
-
-/* ********************************************************************************************* *
- *                             LOCAL FUNCTIONS
- * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
  * OCI_ListCreateItem
@@ -78,15 +76,11 @@ OCI_Item * OCI_ListCreateItem
     return item;
 }
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ListCreate
+ * ListCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_List * OCI_ListCreate
+OCI_List* ListCreate
 (
     int type
 )
@@ -118,10 +112,10 @@ OCI_List * OCI_ListCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ListFree
+ * ListFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ListFree
+boolean ListFree
 (
     OCI_List *list
 )
@@ -130,7 +124,7 @@ boolean OCI_ListFree
 
     OCI_CHECK(NULL == list,  FALSE)
 
-    OCI_ListClear(list);
+    ListClear(list);
 
     if (list->mutex)
     {
@@ -143,10 +137,10 @@ boolean OCI_ListFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ListAppend
+ * ListAppend
  * --------------------------------------------------------------------------------------------- */
 
-void * OCI_ListAppend
+void * ListAppend
 (
     OCI_List *list,
     int       size
@@ -193,10 +187,10 @@ void * OCI_ListAppend
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ListClear
+ * ListClear
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ListClear
+boolean ListClear
 (
     OCI_List *list
 )
@@ -238,10 +232,10 @@ boolean OCI_ListClear
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ListForEach
+ * ListForEach
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ListForEach
+boolean ListForEach
 (
     OCI_List          *list,
     POCI_LIST_FOR_EACH proc
@@ -256,10 +250,10 @@ boolean OCI_ListForEach
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ListForEachWithParam
+* ListForEachWithParam
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ListForEachWithParam
+boolean ListForEachWithParam
 (
     OCI_List          *list,
     void              *param,
@@ -275,10 +269,10 @@ boolean OCI_ListForEachWithParam
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ListRemove
+ * ListRemove
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ListRemove
+boolean ListRemove
 (
     OCI_List *list,
     void     *data
@@ -340,10 +334,10 @@ boolean OCI_ListRemove
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ListExists
+* ListExists
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ListExists
+boolean ListExists
 (
     OCI_List *list,
     void     *data
@@ -366,10 +360,10 @@ boolean OCI_ListExists
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ListFind
+* ListFind
 * --------------------------------------------------------------------------------------------- */
 
-void * OCI_ListFind
+void * ListFind
 (
     OCI_List        *list,
     POCI_LIST_FIND   proc,

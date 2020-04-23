@@ -21,6 +21,67 @@
 #ifndef OCILIB_LIST_H_INCLUDED
 #define OCILIB_LIST_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+
+OCI_List* ListCreate
+(
+    int type
+);
+
+boolean ListFree
+(
+    OCI_List* list
+);
+
+void* ListAppend
+(
+    OCI_List* list,
+    int       size
+);
+
+boolean ListClear
+(
+    OCI_List* list
+);
+
+typedef void (*POCI_LIST_FOR_EACH)(void* data);
+
+boolean ListForEach
+(
+    OCI_List* list,
+    POCI_LIST_FOR_EACH proc
+);
+
+typedef void(*POCI_LIST_FOR_EACH_WITH_PARAM)(void* data, void* param);
+
+boolean ListForEachWithParam
+(
+    OCI_List* list,
+    void* param,
+    POCI_LIST_FOR_EACH_WITH_PARAM proc
+);
+
+boolean ListRemove
+(
+    OCI_List* list,
+    void* data
+);
+
+boolean ListExists
+(
+    OCI_List* list,
+    void* data
+);
+
+typedef boolean(*POCI_LIST_FIND)(void* data, void* param);
+
+void* ListFind
+(
+    OCI_List* list,
+    POCI_LIST_FIND   proc,
+    void* param
+);
+
 
 #endif /* OCILIB_LIST_H_INCLUDED */

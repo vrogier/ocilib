@@ -162,13 +162,13 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     find_params.name = obj_name;
     find_params.schema = obj_schema;
 
-    typinf = OCI_ListFind(con->tinfs, (POCI_LIST_FIND) OCI_TypeInfoFind, &find_params);
+    typinf = ListFind(con->tinfs, (POCI_LIST_FIND) OCI_TypeInfoFind, &find_params);
   
     /* Not found, so create type object */
 
     if (!typinf)
     {
-        typinf = OCI_ListAppend(con->tinfs, sizeof(OCI_TypeInfo));
+        typinf = ListAppend(con->tinfs, sizeof(OCI_TypeInfo));
         OCI_STATUS = (NULL != typinf);
 
         /* allocate describe handle */
@@ -528,7 +528,7 @@ boolean OCI_API OCI_TypeInfoFree
 
     if (typinf->refcount == 0)
     {
-        OCI_ListRemove(typinf->con->tinfs, typinf);
+        ListRemove(typinf->con->tinfs, typinf);
 
         OCI_TypeInfoClose(typinf);
 
