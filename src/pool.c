@@ -18,23 +18,20 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "pool.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "connection.h"
+#include "list.h"
+#include "macro.h"
+#include "string.h"
 
 static unsigned int PoolTypeValues[] = { OCI_POOL_CONNECTION, OCI_POOL_SESSION };
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolClose
+ * PoolClose
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_PoolClose
+boolean PoolClose
 (
     OCI_Pool *pool
 )
@@ -105,15 +102,11 @@ boolean OCI_PoolClose
     return OCI_STATUS;
 }
 
-/* ********************************************************************************************* *
- *                             PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolCreate
+ * PoolCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Pool * OCI_API OCI_PoolCreate
+OCI_Pool * PoolCreate
 (
     const otext *db,
     const otext *user,
@@ -346,10 +339,10 @@ OCI_Pool * OCI_API OCI_PoolCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolFree
+ * PoolFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_PoolFree
+boolean PoolFree
 (
     OCI_Pool *pool
 )
@@ -358,7 +351,7 @@ boolean OCI_API OCI_PoolFree
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
     OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
-    OCI_STATUS = OCI_PoolClose(pool);
+    OCI_STATUS = PoolClose(pool);
 
     ListRemove(OCILib.pools, pool);
 
@@ -370,10 +363,10 @@ boolean OCI_API OCI_PoolFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolGetConnection
+ * PoolGetConnection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_API OCI_PoolGetConnection
+OCI_Connection * PoolGetConnection
 (
     OCI_Pool    *pool,
     const otext *tag
@@ -405,10 +398,10 @@ OCI_Connection * OCI_API OCI_PoolGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolGetTimeout
+ * PoolGetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetTimeout
+unsigned int PoolGetTimeout
 (
     OCI_Pool *pool
 )
@@ -450,10 +443,10 @@ unsigned int OCI_API OCI_PoolGetTimeout
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolSetTimeout
+ * PoolSetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_PoolSetTimeout
+boolean PoolSetTimeout
 (
     OCI_Pool    *pool,
     unsigned int value
@@ -495,10 +488,10 @@ boolean OCI_API OCI_PoolSetTimeout
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolGetNoWait
+ * PoolGetNoWait
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_PoolGetNoWait
+boolean PoolGetNoWait
 (
     OCI_Pool *pool
 )
@@ -541,10 +534,10 @@ boolean OCI_API OCI_PoolGetNoWait
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolSetNoWait
+ * PoolSetNoWait
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_PoolSetNoWait
+boolean PoolSetNoWait
 (
     OCI_Pool *pool,
     boolean   value
@@ -589,10 +582,10 @@ boolean OCI_API OCI_PoolSetNoWait
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolGetBusyCount
+ * PoolGetBusyCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetBusyCount
+unsigned int PoolGetBusyCount
 (
     OCI_Pool *pool
 )
@@ -634,10 +627,10 @@ unsigned int OCI_API OCI_PoolGetBusyCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolGetOpenedCount
+ * PoolGetOpenedCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetOpenedCount
+unsigned int PoolGetOpenedCount
 (
     OCI_Pool *pool
 )
@@ -679,10 +672,10 @@ unsigned int OCI_API OCI_PoolGetOpenedCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolGetMin
+ * PoolGetMin
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetMin
+unsigned int PoolGetMin
 (
     OCI_Pool *pool
 )
@@ -691,10 +684,10 @@ unsigned int OCI_API OCI_PoolGetMin
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolGetMax
+ * PoolGetMax
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetMax
+unsigned int PoolGetMax
 (
     OCI_Pool *pool
 )
@@ -703,10 +696,10 @@ unsigned int OCI_API OCI_PoolGetMax
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolGetIncrement
+ * PoolGetIncrement
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetIncrement
+unsigned int PoolGetIncrement
 (
     OCI_Pool *pool
 )
@@ -715,10 +708,10 @@ unsigned int OCI_API OCI_PoolGetIncrement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolSetStatementCacheSize
+ * PoolSetStatementCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_PoolSetStatementCacheSize
+boolean PoolSetStatementCacheSize
 (
     OCI_Pool     *pool,
     unsigned int  value
@@ -753,10 +746,10 @@ boolean OCI_API OCI_PoolSetStatementCacheSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PoolGetStatementCacheSize
+ * PoolGetStatementCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_PoolGetStatementCacheSize
+unsigned int PoolGetStatementCacheSize
 (
     OCI_Pool *pool
 )

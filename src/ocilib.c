@@ -4305,9 +4305,131 @@ boolean OCI_API OCI_ObjectToText
 }
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  pool
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Pool* OCI_API OCI_PoolCreate
+(
+    const otext* db,
+    const otext* user,
+    const otext* pwd,
+    unsigned int type,
+    unsigned int mode,
+    unsigned int min_con,
+    unsigned int max_con,
+    unsigned int incr_con
+)
+{
+    CALL_IMPL(PoolCreate, db, user, pwd, type, mode, min_con, max_con, incr_con);
+}
+
+boolean OCI_API OCI_PoolFree
+(
+    OCI_Pool* pool
+)
+{
+    CALL_IMPL(PoolFree, pool);
+}
+
+OCI_Connection* OCI_API OCI_PoolGetConnection
+(
+    OCI_Pool* pool,
+    const otext* tag
+)
+{
+    CALL_IMPL(PoolGetConnection, pool, tag);
+}
+
+unsigned int OCI_API OCI_PoolGetTimeout
+(
+    OCI_Pool* pool
+)
+{
+    CALL_IMPL(PoolGetTimeout, pool);
+}
+
+boolean OCI_API OCI_PoolSetTimeout
+(
+    OCI_Pool* pool,
+    unsigned int value
+)
+{
+    CALL_IMPL(PoolSetTimeout, pool, value);
+}
+
+boolean OCI_API OCI_PoolGetNoWait
+(
+    OCI_Pool* pool
+)
+{
+    CALL_IMPL(PoolGetNoWait, pool);
+}
+
+boolean OCI_API OCI_PoolSetNoWait
+(
+    OCI_Pool* pool,
+    boolean   value
+)
+{
+    CALL_IMPL(PoolSetNoWait, pool, value);
+}
+
+unsigned int OCI_API OCI_PoolGetBusyCount
+(
+    OCI_Pool* pool
+)
+{
+    CALL_IMPL(PoolGetBusyCount, pool);
+}
+
+unsigned int OCI_API OCI_PoolGetOpenedCount
+(
+    OCI_Pool* pool
+)
+{
+    CALL_IMPL(PoolGetOpenedCount, pool);
+}
+
+unsigned int OCI_API OCI_PoolGetMin
+(
+    OCI_Pool* pool
+)
+{
+    CALL_IMPL(PoolGetMin, pool);
+}
+
+unsigned int OCI_API OCI_PoolGetMax
+(
+    OCI_Pool* pool
+)
+{
+    CALL_IMPL(PoolGetMax, pool);
+}
+
+unsigned int OCI_API OCI_PoolGetIncrement
+(
+    OCI_Pool* pool
+)
+{
+    CALL_IMPL(PoolGetIncrement, pool);
+}
+
+unsigned int OCI_API OCI_PoolGetStatementCacheSize
+(
+    OCI_Pool* pool
+)
+{
+    CALL_IMPL(PoolGetStatementCacheSize, pool);
+}
+
+boolean OCI_API OCI_PoolSetStatementCacheSize
+(
+    OCI_Pool* pool,
+    unsigned int value
+)
+{
+    CALL_IMPL(PoolSetStatementCacheSize, pool, value);
+}
 
 /* --------------------------------------------------------------------------------------------- *
  *  long

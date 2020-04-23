@@ -1712,7 +1712,7 @@ boolean Cleanup
 
     /* free all pools */
 
-    ListForEach(OCILib.pools, (POCI_LIST_FOR_EACH) OCI_PoolClose);
+    ListForEach(OCILib.pools, (POCI_LIST_FOR_EACH) PoolClose);
     ListClear(OCILib.pools);
 
     /* free objects */

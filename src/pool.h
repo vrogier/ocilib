@@ -21,6 +21,92 @@
 #ifndef OCILIB_POOL_H_INCLUDED
 #define OCILIB_POOL_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+boolean PoolClose
+(
+    OCI_Pool    *pool
+);
+
+OCI_Pool * PoolCreate
+(
+    const otext *db,
+    const otext *user,
+    const otext *pwd,
+    unsigned int type,
+    unsigned int mode,
+    unsigned int min_con,
+    unsigned int max_con,
+    unsigned int incr_con
+);
+
+boolean PoolFree
+(
+    OCI_Pool    *pool
+);
+
+OCI_Connection * PoolGetConnection
+(
+    OCI_Pool        *pool,
+    const otext *tag
+);
+
+unsigned int PoolGetTimeout
+(
+    OCI_Pool    *pool
+);
+
+boolean PoolSetTimeout
+(
+    OCI_Pool        *pool,
+    unsigned int value
+);
+
+boolean PoolGetNoWait
+(
+    OCI_Pool    *pool
+);
+
+boolean PoolSetNoWait
+(
+    OCI_Pool    *pool,
+    boolean  value
+);
+
+unsigned int PoolGetBusyCount
+(
+    OCI_Pool    *pool
+);
+
+unsigned int PoolGetOpenedCount
+(
+    OCI_Pool    *pool
+);
+
+unsigned int PoolGetMin
+(
+    OCI_Pool    *pool
+);
+
+unsigned int PoolGetMax
+(
+    OCI_Pool    *pool
+);
+
+unsigned int PoolGetIncrement
+(
+    OCI_Pool    *pool
+);
+
+boolean PoolSetStatementCacheSize
+(
+    OCI_Pool        *pool,
+    unsigned int value
+);
+
+unsigned int PoolGetStatementCacheSize
+(
+    OCI_Pool    *pool
+);
 
 #endif /* OCILIB_POOL_H_INCLUDED */
