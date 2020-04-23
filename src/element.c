@@ -616,7 +616,7 @@ OCI_Date * OCI_API OCI_ElemGetDate
     (
         OCI_CDT_DATETIME,
         OCI_Date *,
-        OCI_DateInit(elem->con, (OCI_Date *) elem->obj, (OCIDate *) elem->handle, FALSE, FALSE)
+        DateInit(elem->con, (OCI_Date *) elem->obj, (OCIDate *) elem->handle, FALSE, FALSE)
     )
 }
 
@@ -995,8 +995,8 @@ boolean OCI_API OCI_ElemSetDate
     (
         OCI_CDT_DATETIME,
         OCI_Date*,
-        OCI_DateInit(elem->con, (OCI_Date *) elem->obj, (OCIDate *) elem->handle, TRUE, FALSE),
-        OCI_DateAssign((OCI_Date *) elem->obj, value)
+        DateInit(elem->con, (OCI_Date *) elem->obj, (OCIDate *) elem->handle, TRUE, FALSE),
+        DateAssign((OCI_Date *) elem->obj, value)
     )
 }
 

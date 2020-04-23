@@ -18,18 +18,24 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "bind.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "array.h"
+#include "collection.h"
+#include "date.h"
+#include "file.h"
+#include "helpers.h"
+#include "interval.h"
+#include "lob.h"
+#include "macro.h"
+#include "memory.h"
+#include "number.h"
+#include "object.h"
+#include "ref.h"
+#include "timestamp.h"
 
 static const unsigned int CharsetFormValues[]   = { OCI_CSF_DEFAULT, OCI_CSF_NATIONAL };
 static const unsigned int BindDirectionValues[] = { OCI_BDM_IN, OCI_BDM_OUT, OCI_BDM_IN_OUT };
-
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
 
 void BindAllocateBuffers
 (
@@ -936,10 +942,6 @@ boolean OCI_BindSetNullIndicator
 
     return TRUE;
 }
-
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
  * BindGetName

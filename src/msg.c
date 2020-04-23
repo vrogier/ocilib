@@ -389,7 +389,7 @@ OCI_Date * OCI_API OCI_MsgGetEnqueueTime
 
     if (OCI_STATUS)
     {
-        OCI_RETVAL = msg->date = OCI_DateInit(msg->typinf->con, msg->date, &date, FALSE, FALSE);
+        OCI_RETVAL = msg->date = DateInit(msg->typinf->con, msg->date, &date, FALSE, FALSE);
         OCI_STATUS = (NULL != OCI_RETVAL);
     }
 

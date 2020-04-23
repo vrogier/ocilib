@@ -1309,7 +1309,7 @@ OCI_Date * OCI_API OCI_ObjectGetDate
         OCI_CDT_DATETIME,
         OCI_Date*,
         OCIDate,
-        OCI_DateInit(obj->con, (OCI_Date *) obj->objs[index], value, FALSE, FALSE)
+        DateInit(obj->con, (OCI_Date *) obj->objs[index], value, FALSE, FALSE)
     )
  }
 

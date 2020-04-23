@@ -18,11 +18,21 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
-
-/* ********************************************************************************************* *
- *                            PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "array.h"
+#include "collection.h"
+#include "date.h"
+#include "file.h"
+#include "helpers.h"
+#include "interval.h"
+#include "list.h"
+#include "lob.h"
+#include "macro.h"
+#include "memory.h"
+#include "mutex.h"
+#include "number.h"
+#include "object.h"
+#include "ref.h"
+#include "timestamp.h"
 
 #define OCI_ARRAY_INIT_HANDLE(type, func)                                   \
     arr->tab_obj[i] = func;                                                 \
@@ -98,7 +108,7 @@ boolean ArrayInit
             }
             case OCI_CDT_DATETIME:
             {
-                arr->tab_obj[i] = OCI_DateInit(arr->con, (OCI_Date *) arr->tab_obj[i], (OCIDate *) handle, FALSE, FALSE);
+                arr->tab_obj[i] = DateInit(arr->con, (OCI_Date *) arr->tab_obj[i], (OCIDate *) handle, FALSE, FALSE);
                 break;
             }
             case OCI_CDT_LOB:

@@ -18,11 +18,15 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "callback.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "event.h"
+#include "list.h"
+#include "macro.h"
+#include "mutex.h"
+#include "resultset.h"
+#include "string.h"
+#include "timestamp.h"
 
 typedef struct HAEventParams
 {

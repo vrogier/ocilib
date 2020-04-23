@@ -1,0 +1,71 @@
+/*
+ * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
+ *
+ * Website: http://www.ocilib.net
+ *
+ * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef OCILIB_ARRAY_H_INCLUDED
+#define OCILIB_ARRAY_H_INCLUDED
+
+#include "types.h"
+
+boolean ArrayFindAny
+(
+    OCI_Array *arr,
+    void     **handles
+);
+
+boolean ArrayFindObjects
+(
+    OCI_Array *arr,
+    void     **handles
+);
+
+boolean ArrayInit
+(
+    OCI_Array    *arr,
+    OCI_TypeInfo *typinf
+);
+
+boolean ArrayClose
+(
+    OCI_Array* arr
+);
+
+OCI_Array* ArrayCreate
+(
+    OCI_Connection* con,
+    unsigned int    nb_elem,
+    unsigned int    elem_type,
+    unsigned int    elem_subtype,
+    unsigned int    elem_size,
+    unsigned int    struct_size,
+    unsigned int    handle_type,
+    OCI_TypeInfo* typinf
+);
+
+boolean ArrayFreeFromHandles
+(
+    void** handles
+);
+
+void* ArrayGetOCIHandlesFromHandles
+(
+    void** handles
+);
+
+#endif /* OCILIB_ARRAY_H_INCLUDED */

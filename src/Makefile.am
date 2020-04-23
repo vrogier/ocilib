@@ -13,64 +13,109 @@ AM_CPPFLAGS= @ORACLE_INCLUDES@ -I$(top_srcdir)/include
 lib_LTLIBRARIES= libocilib.la
 
 libocilib_la_LIBADD= @ORACLE_LIBADD@ 
-libocilib_la_SOURCES=           \
-	array.c         \
-	bind.c          \
-	callback.c     	\
-	connection.c   	\
-	define.c   	\
-	exception.c  	\
-	handle.c    	\
-	iterator.c  	\
-	lob.c     	\
-	mutex.c   	\
-	resultset.c  	\
-	string.c     	\
-	timestamp.c  	\
-	collection.c  	\
-	pool.c    	\
-	element.c  	\
-	file.c       	\
-	hash.c      	\
-	library.c   	\
-	long.c    	\
-	number.c  	\
-	typeinfo.c     	\
-	thread.c     	\
-	transaction.c 	\
-	column.c      	\
-	date.c        	\
-	error.c    	\
-	format.c     	\
-	interval.c  	\
-	list.c      	\
-	memory.c  	\
-	object.c  	\
-	statement.c  	\
-	ref.c           \
-	threadkey.c     \
-	dirpath.c       \
-	event.c         \
-	subscription.c  \
-	agent.c         \
-	dequeue.c       \
-	enqueue.c       \
-	msg.c           \
-	queue.c
+libocilib_la_SOURCES=   \
+	array.c             \
+	bind.c              \
+	callback.c     	    \
+	connection.c   	    \
+	define.c            \
+	exception.c  	    \
+	handle.c    	    \
+	iterator.c  	    \
+	lob.c               \
+	mutex.c             \
+	resultset.c  	    \
+	string.c     	    \
+	timestamp.c  	    \
+	collection.c  	    \
+	pool.c              \
+	element.c           \
+	file.c       	    \
+	hash.c      	    \
+	library.c   	    \
+	long.c              \
+	number.c            \
+	typeinfo.c     	    \
+	thread.c     	    \
+	transaction.c 	    \
+	column.c      	    \
+	date.c        	    \
+	error.c             \
+	format.c     	    \
+	interval.c  	    \
+	list.c      	    \
+	memory.c  	        \
+    ocilib.c            \
+    object.c            \
+    statement.c         \
+    ref.c               \
+    threadkey.c         \
+    dirpath.c           \
+    event.c             \
+    subscription.c      \
+    agent.c             \
+    dequeue.c           \
+    enqueue.c           \
+    msg.c               \
+    queue.c
 
 libocilib_la_CFLAGS= -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 include_HEADERS= $(top_srcdir)/include/ocilib.h $(top_srcdir)/include/ocilib.hpp $(top_srcdir)/include/ocilib_core.hpp $(top_srcdir)/include/ocilib_impl.hpp
-noinst_HEADERS=  \
-	ocilib_internal.h \
-	ocilib_types.h \
-	ocilib_checks.h \
-	ocilib_defs.h \
-	oci_types.h \
-	oci_import.h \
-	oci_loader.h \
-	oci_defs.h \
-	oci_api.h 
-
+noinst_HEADERS=         \
+    ocilib_internal.h   \
+    ocilib_types.h      \
+    ocilib_checks.h     \
+    ocilib_defs.h       \
+    oci_types.h         \
+    oci_import.h        \
+    oci_loader.h        \
+    oci_defs.h          \
+    oci_api.h           \
+	array.h             \
+	bind.h              \
+	callback.h     	    \
+	connection.h   	    \
+	define.h            \
+	exception.h  	    \
+	handle.h    	    \
+	iterator.h  	    \
+	lob.h               \
+	mutex.h             \
+	resultset.h  	    \
+	string.h     	    \
+	timestamp.h  	    \
+	collection.h  	    \
+	pool.h              \
+	element.h           \
+	file.h       	    \
+	hash.h      	    \
+	library.h   	    \
+	long.h              \
+	number.h            \
+	typeinfo.h     	    \
+	thread.h     	    \
+	transaction.h 	    \
+	column.h      	    \
+	date.h        	    \
+	error.h             \
+	format.h     	    \
+	interval.h  	    \
+	list.h      	    \
+	memory.h  	        \
+    ocilib.h            \
+    object.h            \
+    statement.h         \
+    ref.h               \
+    threadkey.h         \
+    dirpath.h           \
+    event.h             \
+    subscription.h      \
+    agent.h             \
+    dequeue.h           \
+    enqueue.h           \
+    msg.h               \
+    queue.h
+    
 CLEANFILES = *~ 

@@ -18,17 +18,18 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
-
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "date.h"
+#include "macro.h"
+#include "connection.h"
+#include "array.h"
+#include "string.h"
+#include "library.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateInit
+ * DateInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * OCI_DateInit
+OCI_Date * DateInit
 (
     OCI_Connection *con,
     OCI_Date       *date,
@@ -101,15 +102,11 @@ OCI_Date * OCI_DateInit
     return date;
 }
 
-/* ********************************************************************************************* *
- *                             PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateCreate
+ * DateCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * OCI_API OCI_DateCreate
+OCI_Date * DateCreate
 (
     OCI_Connection *con
 )
@@ -118,17 +115,17 @@ OCI_Date * OCI_API OCI_DateCreate
     OCI_CALL_CHECK_INITIALIZED()
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_DateInit(con, NULL, NULL, TRUE, FALSE);
+    OCI_RETVAL = DateInit(con, NULL, NULL, TRUE, FALSE);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateFree
+ * DateFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateFree
+boolean DateFree
 (
     OCI_Date *date
 )
@@ -154,10 +151,10 @@ boolean OCI_API OCI_DateFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateArrayCreate
+ * DateArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date ** OCI_API OCI_DateArrayCreate
+OCI_Date ** DateArrayCreate
 (
     OCI_Connection *con,
     unsigned int    nbelem
@@ -181,10 +178,10 @@ OCI_Date ** OCI_API OCI_DateArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateArrayFree
+ * DateArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateArrayFree
+boolean DateArrayFree
 (
     OCI_Date **dates
 )
@@ -198,10 +195,10 @@ boolean OCI_API OCI_DateArrayFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateAddDays
+ * DateAddDays
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateAddDays
+boolean DateAddDays
 (
     OCI_Date *date,
     int       nb
@@ -219,10 +216,10 @@ boolean OCI_API OCI_DateAddDays
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateAddMonths
+ * DateAddMonths
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateAddMonths
+boolean DateAddMonths
 (
     OCI_Date *date,
     int       nb
@@ -240,10 +237,10 @@ boolean OCI_API OCI_DateAddMonths
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateAssign
+ * DateAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateAssign
+boolean DateAssign
 (
     OCI_Date *date,
     OCI_Date *date_src
@@ -262,10 +259,10 @@ boolean OCI_API OCI_DateAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateCheck
+ * DateCheck
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_DateCheck
+int DateCheck
 (
     OCI_Date *date
 )
@@ -284,10 +281,10 @@ int OCI_API OCI_DateCheck
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateCompare
+ * DateCompare
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_DateCompare
+int DateCompare
 (
     OCI_Date *date,
     OCI_Date *date2
@@ -308,10 +305,10 @@ int OCI_API OCI_DateCompare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateDaysBetween
+ * DateDaysBetween
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_DateDaysBetween
+int DateDaysBetween
 (
     OCI_Date *date,
     OCI_Date *date2
@@ -332,10 +329,10 @@ int OCI_API OCI_DateDaysBetween
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateFromText
+ * DateFromText
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateFromText
+boolean DateFromText
 (
     OCI_Date    *date,
     const otext *str,
@@ -377,10 +374,10 @@ boolean OCI_API OCI_DateFromText
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateGetDate
+ * DateGetDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateGetDate
+boolean DateGetDate
 (
     OCI_Date *date,
     int      *year,
@@ -411,10 +408,10 @@ boolean OCI_API OCI_DateGetDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateGetTime
+ * DateGetTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateGetTime
+boolean DateGetTime
 (
     OCI_Date *date,
     int      *hour,
@@ -445,10 +442,10 @@ boolean OCI_API OCI_DateGetTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateGetDateTime
+ * DateGetDateTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateGetDateTime
+boolean DateGetDateTime
 (
     OCI_Date *date,
     int      *year,
@@ -463,10 +460,10 @@ boolean OCI_API OCI_DateGetDateTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateLastDay
+ * DateLastDay
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateLastDay
+boolean DateLastDay
 (
     OCI_Date *date
 )
@@ -483,10 +480,10 @@ boolean OCI_API OCI_DateLastDay
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateNextDay
+ * DateNextDay
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateNextDay
+boolean DateNextDay
 (
     OCI_Date    *date,
     const otext *day
@@ -512,10 +509,10 @@ boolean OCI_API OCI_DateNextDay
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateSetDate
+ * DateSetDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateSetDate
+boolean DateSetDate
 (
     OCI_Date *date,
     int       year,
@@ -535,10 +532,10 @@ boolean OCI_API OCI_DateSetDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateSetTime
+ * DateSetTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateSetTime
+boolean DateSetTime
 (
     OCI_Date *date,
     int       hour,
@@ -558,10 +555,10 @@ boolean OCI_API OCI_DateSetTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateSetDateTime
+ * DateSetDateTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateSetDateTime
+boolean DateSetDateTime
 (
     OCI_Date *date,
     int       year,
@@ -576,10 +573,10 @@ boolean OCI_API OCI_DateSetDateTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateSysDate
+ * DateSysDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateSysDate
+boolean DateSysDate
 (
     OCI_Date *date
 )
@@ -596,10 +593,10 @@ boolean OCI_API OCI_DateSysDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateToText
+ * DateToText
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateToText
+boolean DateToText
 (
     OCI_Date    *date,
     const otext *fmt,
@@ -651,10 +648,10 @@ boolean OCI_API OCI_DateToText
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateZoneToZone
+ * DateZoneToZone
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateZoneToZone
+boolean DateZoneToZone
 (
     OCI_Date    *date,
     const otext *zone1,
@@ -692,10 +689,10 @@ boolean OCI_API OCI_DateZoneToZone
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateToCTime
+ * DateToCTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateToCTime
+boolean DateToCTime
 (
     OCI_Date  *date,
     struct tm *ptm,
@@ -741,10 +738,10 @@ boolean OCI_API OCI_DateToCTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DateFromCTime
+ * DateFromCTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DateFromCTime
+boolean DateFromCTime
 (
     OCI_Date  *date,
     struct tm *ptm,

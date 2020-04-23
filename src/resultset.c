@@ -2078,9 +2078,9 @@ OCI_Date * OCI_API OCI_GetDate
     (
         rs, index, OCI_Date *, NULL, OCI_CDT_DATETIME,
 
-        OCI_DateInit(rs->stmt->con, (OCI_Date *) def->obj,
-                     (OCIDate *) OCI_DefineGetData(def), FALSE,
-                     (SQLT_DAT == def->col.libcode))
+        DateInit(rs->stmt->con, (OCI_Date *) def->obj,
+                 (OCIDate *) OCI_DefineGetData(def), FALSE,
+                 (SQLT_DAT == def->col.libcode))
     )
 }
 

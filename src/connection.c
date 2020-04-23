@@ -18,11 +18,21 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "macro.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "bind.h"
+#include "connection.h"
+#include "callback.h"
+#include "error.h"
+#include "format.h"
+#include "list.h"
+#include "pool.h"
+#include "statement.h"
+#include "string.h"
+#include "subscription.h"
+#include "timestamp.h"
+#include "transaction.h"
+#include "typeinfo.h"
 
 static const unsigned int TraceTypeValues[] = 
 { 
@@ -39,10 +49,6 @@ static const unsigned int TimeoutTypeValues[] =
     OCI_NTO_RECEIVE,
     OCI_NTO_CALL
 };
-
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
 
 #define OCI_SET_TRACE(prop)                                              \
     con->trace->prop[0] = 0;                                             \
@@ -965,10 +971,6 @@ boolean ConnectionIsVersionSupported
 {
     return ConnectionGetMinSupportedVersion(con) >= version;
 }
-
-/* ********************************************************************************************* *
- *                             PUBLIC FUNCTIONS
- * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
  * ConnectionCreate
