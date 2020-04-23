@@ -361,7 +361,7 @@ boolean OCI_BindCheck
                 big_int   *src_bint = OCI_BIND_GET_SCALAR(src, big_int, index);
                 OCINumber *dst_num  = OCI_BIND_GET_BUFFER(dst, OCINumber, index);
 
-                OCI_STATUS = OCI_TranslateNumericValue(bnd->stmt->con, src_bint, bnd->subtype, dst_num, OCI_NUM_NUMBER);
+                OCI_STATUS = TranslateNumericValue(bnd->stmt->con, src_bint, bnd->subtype, dst_num, OCI_NUM_NUMBER);
             }
         }
         // OCI_Date binds
@@ -474,7 +474,7 @@ boolean OCI_BindUpdate
 
             if (dst_bint)
             {
-                OCI_STATUS = OCI_TranslateNumericValue(bnd->stmt->con, src_number, OCI_NUM_NUMBER, dst_bint, bnd->subtype);
+                OCI_STATUS = TranslateNumericValue(bnd->stmt->con, src_number, OCI_NUM_NUMBER, dst_bint, bnd->subtype);
             }
         }
     }

@@ -286,8 +286,8 @@ boolean ElemSetNumberInternal
 )
 {
     OCI_Column *col = &elem->typinf->cols[0];
-    const boolean res = OCI_TranslateNumericValue(elem->typinf->con, value, flag,
-                                                  elem->handle, col->subtype);
+    const boolean res = TranslateNumericValue(elem->typinf->con, value, flag,
+                                              elem->handle, col->subtype);
 
     if (res)
     {
@@ -320,11 +320,11 @@ boolean ElemGetNumberInternal
     else if (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)
     {
         OCI_Column *col = &elem->typinf->cols[0];
-        res = OCI_TranslateNumericValue(elem->typinf->con, elem->handle, col->subtype, value, flag);
+        res = TranslateNumericValue(elem->typinf->con, elem->handle, col->subtype, value, flag);
     }
     else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
     {
-        res = OCI_NumberFromString(elem->con, value, flag, OCI_ElemGetString(elem), NULL);
+        res = NumberFromString(elem->con, value, flag, OCI_ElemGetString(elem), NULL);
     }
     else
     {
@@ -436,7 +436,7 @@ OCI_Number * ElemGetNumber
     (
         OCI_CDT_NUMERIC,
         OCI_Number *,
-        OCI_NumberInit(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle)
+        NumberInit(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle)
     )
 }
 
@@ -813,8 +813,8 @@ boolean ElemSetNumber
     (
         OCI_CDT_NUMERIC,
         OCI_Number*,
-        OCI_NumberInit(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle),
-        OCI_NumberAssign((OCI_Number *) elem->obj, value)
+        NumberInit(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle),
+        NumberAssign((OCI_Number *) elem->obj, value)
     )
 }
 

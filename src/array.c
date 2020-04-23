@@ -102,7 +102,7 @@ boolean ArrayInit
             {
                 if (OCI_NUM_NUMBER == arr->elem_subtype)
                 {
-                    arr->tab_obj[i] = OCI_NumberInit(arr->con, (OCI_Number *) arr->tab_obj[i], (OCINumber *) handle);
+                    arr->tab_obj[i] = NumberInit(arr->con, (OCI_Number *) arr->tab_obj[i], (OCINumber *) handle);
                 }
                 break;
             }

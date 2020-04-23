@@ -673,7 +673,7 @@ unsigned int OCI_StringGetFromType
 
             if (ptr)
             {
-                res = OCI_NumberToString(con, data, col->subtype, ptr, (int) buffer_size, NULL);
+                res = NumberToString(con, data, col->subtype, ptr, (int) buffer_size, NULL);
             }    
             else
             {

@@ -1531,7 +1531,7 @@ OCI_Number * OCI_API OCI_GetNumber
     (
         rs, index, OCI_Number *, NULL, OCI_CDT_NUMERIC,
 
-        OCI_NumberInit(rs->stmt->con, (OCI_Number *) def->obj, (OCINumber *) DefineGetData(def))
+        NumberInit(rs->stmt->con, (OCI_Number *) def->obj, (OCINumber *) DefineGetData(def))
     )
 }
 

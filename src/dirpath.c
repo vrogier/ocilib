@@ -778,7 +778,7 @@ boolean DirPathSetEntry
 
                 OCINumber *num = (OCINumber *) data;
 
-                OCI_STATUS = OCI_NumberFromString(dp->con, num, OCI_NUM_NUMBER, (otext *)value, dpcol->format);
+                OCI_STATUS = NumberFromString(dp->con, num, OCI_NUM_NUMBER, (otext *)value, dpcol->format);
 
                 if (OCI_STATUS)
                 {

@@ -193,12 +193,12 @@ boolean DefineGetNumber
         {
             case OCI_CDT_NUMERIC:
             {
-                res = OCI_TranslateNumericValue(rs->stmt->con, data, def->col.subtype, value, type);
+                res = TranslateNumericValue(rs->stmt->con, data, def->col.subtype, value, type);
                 break;
             }
             case OCI_CDT_TEXT:
             {
-                res = OCI_NumberFromString(rs->stmt->con, value, type, (const otext *) data, NULL);
+                res = NumberFromString(rs->stmt->con, value, type, (const otext *) data, NULL);
                 break;
             }
         }

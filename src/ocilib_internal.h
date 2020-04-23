@@ -78,45 +78,6 @@ extern "C"
 
 
 /* --------------------------------------------------------------------------------------------- *
- * number.c
- * --------------------------------------------------------------------------------------------- */
-
-boolean OCI_TranslateNumericValue
-(
-    OCI_Connection *con,
-    void           *in_value,
-    uword           in_type,
-    void           *out_value,
-    uword           out_type
-);
-
-OCI_Number * OCI_NumberInit
-(
-    OCI_Connection  *con,
-    OCI_Number      *number,
-    OCINumber       *buffer
-);
-
-boolean OCI_NumberFromString
-(
-    OCI_Connection *con,
-    void           *out_value,
-    uword           type,
-    const otext    *in_value,
-    const otext   * fmt
-);
-
-boolean OCI_NumberToString
-(
-    OCI_Connection *con,
-    void           *number,
-    unsigned int    type,
-    otext          *out_value,
-    int             out_value_size,
-    const otext   * fmt
-);
-
-/* --------------------------------------------------------------------------------------------- *
  * object.c
  * --------------------------------------------------------------------------------------------- */
 

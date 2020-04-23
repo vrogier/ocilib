@@ -695,7 +695,7 @@ boolean OCI_ObjectSetNumberInternal
         void       *num = OCI_ObjectGetAttr(obj, index, &ind);
         OCI_Column *col = &obj->typinf->cols[index];
 
-        OCI_STATUS = OCI_TranslateNumericValue(obj->con, value, flag, num, col->subtype);
+        OCI_STATUS = TranslateNumericValue(obj->con, value, flag, num, col->subtype);
 
         if (OCI_STATUS)
         {
@@ -742,7 +742,7 @@ boolean OCI_ObjectGetNumberInternal
         {
             OCI_Column *col = &obj->typinf->cols[index];
 
-            OCI_STATUS = OCI_TranslateNumericValue(obj->con, ptr, col->subtype, value, flag);
+            OCI_STATUS = TranslateNumericValue(obj->con, ptr, col->subtype, value, flag);
         }
     }
     else
@@ -751,7 +751,7 @@ boolean OCI_ObjectGetNumberInternal
 
         if (index >= 0)
         {
-            OCI_STATUS = OCI_NumberFromString(obj->con, value, flag, OCI_ObjectGetString(obj, attr), NULL);
+            OCI_STATUS = NumberFromString(obj->con, value, flag, OCI_ObjectGetString(obj, attr), NULL);
         }
     }
 
@@ -964,7 +964,7 @@ OCI_Number * OCI_API OCI_ObjectGetNumber
         OCI_CDT_NUMERIC,
         OCI_Number*,
         OCINumber*,
-        OCI_NumberInit(obj->con, (OCI_Number *) obj->objs[index], (OCINumber *) value)
+        NumberInit(obj->con, (OCI_Number *) obj->objs[index], (OCINumber *) value)
     )
 }
 

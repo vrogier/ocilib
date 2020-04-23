@@ -20,10 +20,6 @@
 
 #include "ocilib_internal.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 typedef struct MagicNumber
 {
     unsigned char number[3];
@@ -47,8 +43,8 @@ static const MagicNumber MagicNumbers[] =
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)                                      \
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)                                           \
                                                                                     \
-    OCI_STATUS = OCI_TranslateNumericValue(number->con, value, type,                \
-                                           &src_num, OCI_NUM_NUMBER);               \
+    OCI_STATUS = TranslateNumericValue(number->con, value, type,                    \
+                                       &src_num, OCI_NUM_NUMBER);                   \
                                                                                     \
     OCI_EXEC(func(number->err, number->handle, &src_num, number->handle))           \
                                                                                     \
@@ -57,10 +53,10 @@ static const MagicNumber MagicNumbers[] =
 
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_GetNumericTypeSize
+* GetNumericTypeSize
 * --------------------------------------------------------------------------------------------- */
 
-uword OCI_GetNumericTypeSize
+uword GetNumericTypeSize
 (
     unsigned int type
 )
@@ -95,10 +91,10 @@ uword OCI_GetNumericTypeSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TranslateNumericValue
+ * TranslateNumericValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_TranslateNumericValue
+boolean TranslateNumericValue
 (
     OCI_Connection *con,
     void           *in_value,
@@ -113,8 +109,8 @@ boolean OCI_TranslateNumericValue
         - OCINumber to signed/unsigned integers, double, and float
     */
 
-    const uword in_size  = OCI_GetNumericTypeSize(in_type);
-    const uword out_size = OCI_GetNumericTypeSize(out_type);
+    const uword in_size  = GetNumericTypeSize(in_type);
+    const uword out_size = GetNumericTypeSize(out_type);
     const uword in_sign  = (in_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
     const uword out_sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
 
@@ -215,10 +211,10 @@ boolean OCI_TranslateNumericValue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberFromString
+ * NumberFromString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_NumberFromString
+boolean NumberFromString
 (
     OCI_Connection *con,
     void           *out_value,
@@ -322,7 +318,7 @@ boolean OCI_NumberFromString
             OCI_StringReleaseOracleString(dbstr2);
             OCI_StringReleaseOracleString(dbstr1);
 
-            OCI_STATUS = OCI_STATUS && OCI_TranslateNumericValue(con, &number, OCI_NUM_NUMBER, out_value, type);
+            OCI_STATUS = OCI_STATUS && TranslateNumericValue(con, &number, OCI_NUM_NUMBER, out_value, type);
         }
     }
 
@@ -330,10 +326,10 @@ boolean OCI_NumberFromString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberToString
+ * NumberToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_NumberToString
+boolean NumberToString
 (
     OCI_Connection *con,
     void           *number,
@@ -470,10 +466,10 @@ boolean OCI_NumberToString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberInit
+ * NumberInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number * OCI_NumberInit
+OCI_Number * NumberInit
 (
     OCI_Connection  *con,
     OCI_Number      *number,
@@ -522,15 +518,11 @@ OCI_Number * OCI_NumberInit
     return number;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberCreate
+ * NumberCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number * OCI_API OCI_NumberCreate
+OCI_Number * NumberCreate
 (
     OCI_Connection *con
 )
@@ -539,17 +531,17 @@ OCI_Number * OCI_API OCI_NumberCreate
     OCI_CALL_CHECK_INITIALIZED()
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_NumberInit(con, NULL, NULL);
+    OCI_RETVAL = NumberInit(con, NULL, NULL);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberAssign
+ * NumberAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_NumberFree
+boolean NumberFree
 (
     OCI_Number *number
 )
@@ -575,10 +567,10 @@ boolean OCI_API OCI_NumberFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberArrayCreate
+ * NumberArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number ** OCI_API OCI_NumberArrayCreate
+OCI_Number ** NumberArrayCreate
 (
     OCI_Connection *con,
     unsigned int    nbelem
@@ -601,10 +593,10 @@ OCI_Number ** OCI_API OCI_NumberArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberArrayFree
+ * NumberArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
+OCI_EXPORT boolean NumberArrayFree
 (
     OCI_Number **numbmers
 )
@@ -618,10 +610,10 @@ OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberAssign
+ * NumberAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_NumberAssign
+boolean NumberAssign
 (
     OCI_Number *number,
     OCI_Number *number_src
@@ -640,10 +632,10 @@ boolean OCI_API OCI_NumberAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberToText
+ * NumberToText
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_NumberToText
+boolean NumberToText
 (
     OCI_Number  *number,
     const otext *fmt,
@@ -655,16 +647,16 @@ boolean OCI_API OCI_NumberToText
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_NumberToString(number->con, number->handle, OCI_NUM_NUMBER, str, size, fmt);
+    OCI_RETVAL = NumberToString(number->con, number->handle, OCI_NUM_NUMBER, str, size, fmt);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberFromText
+ * NumberFromText
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_NumberFromText
+boolean NumberFromText
 (
     OCI_Number  *number,
     const otext *str,
@@ -675,16 +667,16 @@ boolean OCI_API OCI_NumberFromText
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_NumberFromString(number->con, number->handle, OCI_NUM_NUMBER, str, fmt);
+    OCI_RETVAL = NumberFromString(number->con, number->handle, OCI_NUM_NUMBER, str, fmt);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberGetContent
+ * NumberGetContent
  * --------------------------------------------------------------------------------------------- */
 
-unsigned char * OCI_API OCI_NumberGetContent
+unsigned char * NumberGetContent
 (
     OCI_Number *number
 )
@@ -702,10 +694,10 @@ unsigned char * OCI_API OCI_NumberGetContent
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberSetContent
+ * NumberSetContent
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_NumberSetContent
+boolean NumberSetContent
 (
     OCI_Number     *number,
     unsigned char  *content
@@ -727,10 +719,10 @@ boolean OCI_API OCI_NumberSetContent
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberSetValue
+ * NumberSetValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_NumberSetValue
+boolean NumberSetValue
 (
     OCI_Number     *number,
     unsigned int    type,
@@ -741,16 +733,16 @@ boolean OCI_API OCI_NumberSetValue
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_STATUS = OCI_TranslateNumericValue(number->con, value, type, number->handle, OCI_NUM_NUMBER);
+    OCI_RETVAL = OCI_STATUS = TranslateNumericValue(number->con, value, type, number->handle, OCI_NUM_NUMBER);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberGetValue
+ * NumberGetValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_NumberGetValue
+boolean NumberGetValue
 (
     OCI_Number     *number,
     unsigned int    type,
@@ -761,16 +753,16 @@ boolean OCI_API OCI_NumberGetValue
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_STATUS = OCI_TranslateNumericValue(number->con, number->handle, OCI_NUM_NUMBER, value, type);
+    OCI_RETVAL = OCI_STATUS = TranslateNumericValue(number->con, number->handle, OCI_NUM_NUMBER, value, type);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberAdd
+ * NumberAdd
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_NumberAdd
+boolean NumberAdd
 (
     OCI_Number     *number,
     unsigned int    type,
@@ -781,10 +773,10 @@ boolean OCI_API OCI_NumberAdd
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberSub
+ * NumberSub
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_NumberSub
+boolean NumberSub
 (
     OCI_Number     *number,
     unsigned int    type,
@@ -795,10 +787,10 @@ boolean OCI_API OCI_NumberSub
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberMultiply
+ * NumberMultiply
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_NumberMultiply
+boolean NumberMultiply
 (
     OCI_Number     *number,
     unsigned int    type,
@@ -809,10 +801,10 @@ boolean OCI_API OCI_NumberMultiply
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberDivide
+ * NumberDivide
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_NumberDivide
+boolean NumberDivide
 (
     OCI_Number     *number,
     unsigned int    type,
@@ -823,10 +815,10 @@ boolean OCI_API OCI_NumberDivide
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_NumberCompare
+ * NumberCompare
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_NumberCompare
+int NumberCompare
 (
     OCI_Number *number1,
     OCI_Number *number2

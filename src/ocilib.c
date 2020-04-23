@@ -3650,9 +3650,157 @@ boolean OCI_API OCI_MutexRelease
 }
 
 /* --------------------------------------------------------------------------------------------- *
- *  long
+ *  number
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Number* OCI_API OCI_NumberCreate
+(
+    OCI_Connection* con
+)
+{
+    CALL_IMPL(NumberCreate, con);
+}
+
+boolean OCI_API OCI_NumberFree
+(
+    OCI_Number* number
+)
+{
+    CALL_IMPL(NumberFree, number);
+}
+
+OCI_Number** OCI_API OCI_NumberArrayCreate
+(
+    OCI_Connection* con,
+    unsigned int    nbelem
+)
+{
+    CALL_IMPL(NumberArrayCreate, con, nbelem);
+}
+
+OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
+(
+    OCI_Number** numbmers
+)
+{
+    CALL_IMPL(NumberArrayFree, numbmers);
+}
+
+boolean OCI_API OCI_NumberAssign
+(
+    OCI_Number* number,
+    OCI_Number* number_src
+)
+{
+    CALL_IMPL(NumberAssign, number, number_src);
+}
+
+boolean OCI_API OCI_NumberToText
+(
+    OCI_Number* number,
+    const otext* fmt,
+    int          size,
+    otext* str
+)
+{
+    CALL_IMPL(NumberToText, number, fmt, size, str);
+}
+
+boolean OCI_API OCI_NumberFromText
+(
+    OCI_Number* number,
+    const otext* str,
+    const otext* fmt
+)
+{
+    CALL_IMPL(NumberFromText, number, str, fmt);
+}
+
+unsigned char* OCI_API OCI_NumberGetContent
+(
+    OCI_Number* number
+)
+{
+    CALL_IMPL(NumberGetContent, number);
+}
+
+boolean OCI_API OCI_NumberSetContent
+(
+    OCI_Number* number,
+    unsigned char* content
+)
+{
+    CALL_IMPL(NumberSetContent, number, content);
+}
+
+boolean OCI_API OCI_NumberSetValue
+(
+    OCI_Number* number,
+    unsigned int    type,
+    void* value
+)
+{
+    CALL_IMPL(NumberSetValue, number, type, value);
+}
+
+boolean OCI_API OCI_NumberGetValue
+(
+    OCI_Number* number,
+    unsigned int    type,
+    void* value
+)
+{
+    CALL_IMPL(NumberGetValue, number, type, value);
+}
+
+boolean OCI_API OCI_NumberAdd
+(
+    OCI_Number* number,
+    unsigned int    type,
+    void* value
+)
+{
+    CALL_IMPL(NumberAdd, number, type, value);
+}
+
+boolean OCI_API OCI_NumberSub
+(
+    OCI_Number* number,
+    unsigned int    type,
+    void* value
+)
+{
+    CALL_IMPL(NumberSub, number, type, value);
+}
+
+boolean OCI_API OCI_NumberMultiply
+(
+    OCI_Number* number,
+    unsigned int    type,
+    void* value
+)
+{
+    CALL_IMPL(NumberMultiply, number, type, value);
+}
+
+boolean OCI_API OCI_NumberDivide
+(
+    OCI_Number* number,
+    unsigned int    type,
+    void* value
+)
+{
+    CALL_IMPL(NumberDivide, number, type, value);
+}
+
+int OCI_API OCI_NumberCompare
+(
+    OCI_Number* number1,
+    OCI_Number* number2
+)
+{
+    CALL_IMPL(NumberCompare, number1, number2);
+}
 
 /* --------------------------------------------------------------------------------------------- *
  *  long
