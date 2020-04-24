@@ -18,7 +18,20 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "library.h"
+
+#include "array.h"
+#include "callback.h"
+#include "connection.h"
+#include "hash.h"
+#include "list.h"
+#include "error.h"
+#include "pool.h"
+#include "macro.h"
+#include "mutex.h"
+#include "string.h"
+#include "subscription.h"
+#include "threadkey.h"
 
 /* ********************************************************************************************* *
  *                             INTERNAL VARIABLES

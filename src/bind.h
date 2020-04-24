@@ -48,6 +48,12 @@ boolean BindAllocData
     OCI_Bind* bnd
 );
 
+int BindGetInternalIndex
+(
+    OCI_Statement* stmt,
+    const otext* name
+);
+
 boolean BindSetNullIndicator
 (
     OCI_Bind* bnd,

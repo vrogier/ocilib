@@ -20,6 +20,7 @@
 
 #include "column.h"
 
+#include "connection.h"
 #include "macro.h"
 #include "object.h"
 #include "string.h"

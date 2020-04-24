@@ -18,10 +18,14 @@
  * limitations under the License.
  */
  
- #ifndef OCILIB_MACRO_H_INCLUDED
+#ifndef OCILIB_MACRO_H_INCLUDED
 #define OCILIB_MACRO_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+#include "exception.h"
+#include "memory.h"
+#include "error.h"
+#include "library.h"
 #include "ocilib_checks.h"
 
 

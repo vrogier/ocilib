@@ -23,12 +23,6 @@
 
 #include "types.h"
 
-int StatementBindGetInternalIndex
-(
-    OCI_Statement* stmt,
-    const otext* name
-);
-
 boolean StatementFetchIntoUserVariables
 (
     OCI_Statement* stmt,

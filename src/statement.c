@@ -109,50 +109,6 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
 #define OCI_BIND_GET_BUFFER(d, t, i) ((t *)((d) + (i) * sizeof(t)))
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementBindGetInternalIndex
- * --------------------------------------------------------------------------------------------- */
-
-int StatementBindGetInternalIndex
-(
-    OCI_Statement *stmt,
-    const otext   *name
-)
-{
-    OCI_HashEntry *he = NULL;
-    int index         = -1;
-
-    if (stmt->map)
-    {
-        he = OCI_HashLookup(stmt->map, name, FALSE);
-
-        while (he)
-        {
-            /* no more entries or key matched => so we got it ! */
-
-            if (!he->next || ostrcasecmp(he->key, name) == 0)
-            {
-                /* in order to use the same map for user binds and
-                   register binds :
-                      - user binds are stored as positive values
-                      - registers binds are stored as negatives values
-                */
-
-                index = he->values->value.num;
-
-                if (index < 0)
-                {
-                    index = -index;
-                }
-
-                break;
-            }
-        }
-    }
-
-    return index;
-}
-
-/* --------------------------------------------------------------------------------------------- *
  * StatementBatchErrorClear
  * --------------------------------------------------------------------------------------------- */
 
@@ -3571,7 +3527,7 @@ OCI_Bind * StatementGetBind2
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    index = StatementBindGetInternalIndex(stmt, name);
+    index = BindGetInternalIndex(stmt, name);
 
     if (index > 0)
     {
@@ -3604,7 +3560,7 @@ unsigned int StatementGetBindIndex
 
     OCI_STATUS = FALSE;
 
-    index = StatementBindGetInternalIndex(stmt, name);
+    index = BindGetInternalIndex(stmt, name);
 
     if (index >= 0)
     {

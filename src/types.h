@@ -22,6 +22,5 @@
 #define OCILIB_TYPES_H_INCLUDED
 
 #include "ocilib_types.h"
-#include "ocilib_internal.h"
 
 #endif /* OCILIB_TYPES_H_INCLUDED */

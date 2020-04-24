@@ -21,6 +21,7 @@
 #include "lob.h"
 
 #include "array.h"
+#include "connection.h"
 #include "macro.h"
 #include "memory.h"
 #include "string.h"

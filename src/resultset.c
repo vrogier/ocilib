@@ -24,6 +24,7 @@
 #include "connection.h"
 
 #include "hash.h"
+#include "define.h"
 #include "error.h"
 #include "exception.h"
 #include "column.h"

@@ -18,7 +18,10 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "exception.h"
+
+#include "error.h"
+#include "string.h"
 
 /* ********************************************************************************************* *
  *                            STRINGS MESSAGES

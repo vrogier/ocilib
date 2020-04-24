@@ -18,7 +18,14 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "number.h"
+
+#include "macro.h"
+#include "array.h"
+#include "helpers.h"
+#include "connection.h"
+#include "string.h"
+#include "library.h"
 
 typedef struct MagicNumber
 {

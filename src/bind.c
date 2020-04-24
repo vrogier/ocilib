@@ -21,6 +21,7 @@
 #include "bind.h"
 
 #include "array.h"
+#include "callback.h"
 #include "collection.h"
 #include "date.h"
 #include "file.h"
@@ -32,6 +33,7 @@
 #include "number.h"
 #include "object.h"
 #include "ref.h"
+#include "string.h"
 #include "timestamp.h"
 
 static const unsigned int CharsetFormValues[]   = { OCI_CSF_DEFAULT, OCI_CSF_NATIONAL };
@@ -373,7 +375,7 @@ OCI_Bind* BindCreate
     {
         if (OCI_BIND_INPUT == mode)
         {
-            prev_index = StatementBindGetInternalIndex(stmt, name);
+            prev_index = BindGetInternalIndex(stmt, name);
 
             if (prev_index > 0)
             {
@@ -920,6 +922,50 @@ boolean BindAllocData
     }
 
     return (NULL != bnd->input);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * BindGetInternalIndex
+ * --------------------------------------------------------------------------------------------- */
+
+int BindGetInternalIndex
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    OCI_HashEntry* he = NULL;
+    int index = -1;
+
+    if (stmt->map)
+    {
+        he = OCI_HashLookup(stmt->map, name, FALSE);
+
+        while (he)
+        {
+            /* no more entries or key matched => so we got it ! */
+
+            if (!he->next || ostrcasecmp(he->key, name) == 0)
+            {
+                /* in order to use the same map for user binds and
+                   register binds :
+                      - user binds are stored as positive values
+                      - registers binds are stored as negatives values
+                */
+
+                index = he->values->value.num;
+
+                if (index < 0)
+                {
+                    index = -index;
+                }
+
+                break;
+            }
+        }
+    }
+
+    return index;
 }
 
 /* --------------------------------------------------------------------------------------------- *
