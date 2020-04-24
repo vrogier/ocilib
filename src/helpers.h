@@ -21,6 +21,6 @@
 #ifndef OCILIB_HELPERS_H_INCLUDED
 #define OCILIB_HELPERS_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
 
 #endif /* OCILIB_HELPERS_H_INCLUDED */

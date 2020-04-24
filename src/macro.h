@@ -26,7 +26,7 @@
 #include "memory.h"
 #include "error.h"
 #include "library.h"
-#include "ocilib_checks.h"
+#include "checks.h"
 
 
 #endif /* OCILIB_MACRO_H_INCLUDED */
