@@ -103,11 +103,6 @@ big_uint GetAllocatedBytes
     unsigned int mem_type
 );
 
-OCI_Error* EnvironmentGetLastError
-(
-    void
-);
-
 boolean EnableWarnings
 (
     boolean value

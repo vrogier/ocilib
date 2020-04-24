@@ -20,7 +20,7 @@
 
 #include "queue.h"
 
-#include "macro.h"
+#include "macros.h"
 #include "statement.h"
 
 static unsigned int DeliveryModeValues[] = { OCI_APM_BUFFERED, OCI_APM_PERSISTENT, OCI_APM_ALL };
@@ -46,18 +46,18 @@ boolean QueueCreate
 {
     OCI_Statement *st = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
-    OCI_CALL_CHECK_ENUM_VALUE(con, NULL, queue_type, QueueTypeValues, OTEXT("Queue type"))
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CHECK_ENUM_VALUE(con, NULL, queue_type, QueueTypeValues, OTEXT("Queue type"))
+    CTX_SET_FROM_CON(con)
 
     st = StatementCreate(con);
 
     if (st)
     {
-        OCI_STATUS = StatementPrepare
+        STATUS = StatementPrepare
                       (
                             st,
                             OTEXT("DECLARE ")
@@ -80,23 +80,23 @@ boolean QueueCreate
                             OTEXT("END; ")
                       );
 
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_name"), (otext *) queue_name, 0);
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *)  queue_table, 0);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":queue_type"),  &queue_type);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":max_retries"),  &max_retries);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":retry_delay"),  &retry_delay);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":retention_time"),  &retention_time);
-        OCI_STATUS = OCI_STATUS && StatementBindInt(st, OTEXT(":dependency_tracking"),  &dependency_tracking);
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":comment"), (otext *) (comment ? comment : OCI_STRING_EMPTY), 0);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":queue_name"), (otext *) queue_name, 0);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *)  queue_table, 0);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":queue_type"),  &queue_type);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":max_retries"),  &max_retries);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":retry_delay"),  &retry_delay);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":retention_time"),  &retention_time);
+        STATUS = STATUS && StatementBindInt(st, OTEXT(":dependency_tracking"),  &dependency_tracking);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":comment"), (otext *) (comment ? comment : OCI_STRING_EMPTY), 0);
 
-        OCI_STATUS = OCI_STATUS && StatementExecute(st);
+        STATUS = STATUS && StatementExecute(st);
 
         StatementFree(st);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -115,16 +115,16 @@ boolean QueueAlter
 {
     OCI_Statement *st = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CTX_SET_FROM_CON(con)
 
     st = StatementCreate(con);
 
     if (st)
     {
-        OCI_STATUS = StatementPrepare
+        STATUS = StatementPrepare
                     (
                         st,
                         OTEXT("BEGIN ")
@@ -139,20 +139,20 @@ boolean QueueAlter
                         OTEXT("END; ")
                     );
 
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":max_retries"),  &max_retries);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":retry_delay"),  &retry_delay);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":retention_time"),  &retention_time);
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":comment"), (otext *) (comment ? comment : OCI_STRING_EMPTY), 0);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":max_retries"),  &max_retries);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":retry_delay"),  &retry_delay);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":retention_time"),  &retention_time);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":comment"), (otext *) (comment ? comment : OCI_STRING_EMPTY), 0);
 
-        OCI_STATUS = OCI_STATUS && StatementExecute(st);
+        STATUS = STATUS && StatementExecute(st);
 
         StatementFree(st);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -167,16 +167,16 @@ boolean QueueDrop
 {
     OCI_Statement *st = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CTX_SET_FROM_CON(con)
 
     st = StatementCreate(con);
 
     if (st)
     {
-        OCI_STATUS = StatementPrepare
+        STATUS = StatementPrepare
                       (
                             st,
                             OTEXT("BEGIN ")
@@ -187,16 +187,16 @@ boolean QueueDrop
                             OTEXT("END; ")
                       );
 
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0);
 
-        OCI_STATUS = OCI_STATUS && StatementExecute(st);
+        STATUS = STATUS && StatementExecute(st);
 
         StatementFree(st);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -213,16 +213,16 @@ boolean QueueStart
 {
     OCI_Statement *st = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CTX_SET_FROM_CON(con)
 
     st = StatementCreate(con);
 
     if (st)
     {
-        OCI_STATUS = StatementPrepare
+        STATUS = StatementPrepare
                       (
                             st,
                             OTEXT("DECLARE ")
@@ -244,18 +244,18 @@ boolean QueueStart
                             OTEXT("END; ")
                       );
 
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0);
-        OCI_STATUS = OCI_STATUS && StatementBindInt(st, OTEXT(":enqueue"),  &enqueue);
-        OCI_STATUS = OCI_STATUS && StatementBindInt(st, OTEXT(":dequeue"),  &dequeue);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0);
+        STATUS = STATUS && StatementBindInt(st, OTEXT(":enqueue"),  &enqueue);
+        STATUS = STATUS && StatementBindInt(st, OTEXT(":dequeue"),  &dequeue);
 
-        OCI_STATUS = OCI_STATUS && StatementExecute(st);
+        STATUS = STATUS && StatementExecute(st);
 
         StatementFree(st);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -273,16 +273,16 @@ boolean QueueStop
 {
     OCI_Statement *st = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CTX_SET_FROM_CON(con)
 
     st = StatementCreate(con);
 
     if (st)
     {
-        OCI_STATUS = StatementPrepare
+        STATUS = StatementPrepare
                       (
                             st,
                             OTEXT("DECLARE ")
@@ -309,19 +309,19 @@ boolean QueueStop
                             OTEXT("END; ")
                       );
 
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0);
-        OCI_STATUS = OCI_STATUS && StatementBindInt(st, OTEXT(":enqueue"),  &enqueue);
-        OCI_STATUS = OCI_STATUS && StatementBindInt(st, OTEXT(":dequeue"),  &dequeue);
-        OCI_STATUS = OCI_STATUS && StatementBindInt(st, OTEXT(":wait"),  &wait);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0);
+        STATUS = STATUS && StatementBindInt(st, OTEXT(":enqueue"),  &enqueue);
+        STATUS = STATUS && StatementBindInt(st, OTEXT(":dequeue"),  &dequeue);
+        STATUS = STATUS && StatementBindInt(st, OTEXT(":wait"),  &wait);
 
-        OCI_STATUS = OCI_STATUS && StatementExecute(st);
+        STATUS = STATUS && StatementExecute(st);
 
         StatementFree(st);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -345,19 +345,19 @@ boolean QueueTableCreate
 {
     OCI_Statement *st = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
+    CALL_ENTER(boolean, FALSE)
 
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_payload_type)
-    OCI_CALL_CHECK_ENUM_VALUE(con, NULL, message_grouping, GroupingModeValues, OTEXT("Grouping mode"))
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CHECK_PTR(OCI_IPC_STRING, queue_payload_type)
+    CHECK_ENUM_VALUE(con, NULL, message_grouping, GroupingModeValues, OTEXT("Grouping mode"))
+    CTX_SET_FROM_CON(con)
 
     st = StatementCreate(con);
 
     if (st)
     {
-        OCI_STATUS = StatementPrepare
+        STATUS = StatementPrepare
                       (
                             st,
                             OTEXT("DECLARE ")
@@ -382,25 +382,25 @@ boolean QueueTableCreate
                             OTEXT("END; ")
                       );
 
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *) queue_table, 0);
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_payload_type"), (otext *) queue_payload_type, 0);
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":storage_clause"), (otext *) (storage_clause ? storage_clause : OCI_STRING_EMPTY), 0);
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":sort_list"), (otext *) (sort_list ? sort_list : OCI_STRING_EMPTY), 0);
-        OCI_STATUS = OCI_STATUS && StatementBindInt(st, OTEXT(":multiple_consumers"),  &multiple_consumers);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":message_grouping"),  &message_grouping);
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":comment"), (otext *)( comment ? comment : OCI_STRING_EMPTY), 0);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":primary_instance"),  &primary_instance);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":secondary_instance"),  &secondary_instance);
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":compatible"), (otext *) (compatible ? compatible : OCI_STRING_EMPTY), 0);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *) queue_table, 0);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":queue_payload_type"), (otext *) queue_payload_type, 0);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":storage_clause"), (otext *) (storage_clause ? storage_clause : OCI_STRING_EMPTY), 0);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":sort_list"), (otext *) (sort_list ? sort_list : OCI_STRING_EMPTY), 0);
+        STATUS = STATUS && StatementBindInt(st, OTEXT(":multiple_consumers"),  &multiple_consumers);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":message_grouping"),  &message_grouping);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":comment"), (otext *)( comment ? comment : OCI_STRING_EMPTY), 0);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":primary_instance"),  &primary_instance);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":secondary_instance"),  &secondary_instance);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":compatible"), (otext *) (compatible ? compatible : OCI_STRING_EMPTY), 0);
 
-        OCI_STATUS = OCI_STATUS && StatementExecute(st);
+        STATUS = STATUS && StatementExecute(st);
 
         StatementFree(st);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -418,16 +418,16 @@ boolean QueueTableAlter
 {
     OCI_Statement *st = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CTX_SET_FROM_CON(con)
 
     st = StatementCreate(con);
 
     if (st)
     {
-        OCI_STATUS = StatementPrepare
+        STATUS = StatementPrepare
                       (
                             st,
                             OTEXT("BEGIN ")
@@ -441,19 +441,19 @@ boolean QueueTableAlter
                             OTEXT("END; ")
                       );
 
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *)  queue_table, 0);
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":comment"),  (otext *) (comment ?  comment: OCI_STRING_EMPTY), 0);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":primary_instance"),  &primary_instance);
-        OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":secondary_instance"),  &secondary_instance);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *)  queue_table, 0);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":comment"),  (otext *) (comment ?  comment: OCI_STRING_EMPTY), 0);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":primary_instance"),  &primary_instance);
+        STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":secondary_instance"),  &secondary_instance);
 
-        OCI_STATUS = OCI_STATUS && StatementExecute(st);
+        STATUS = STATUS && StatementExecute(st);
 
         StatementFree(st);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -469,16 +469,16 @@ boolean QueueTableDrop
 {
     OCI_Statement *st = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CTX_SET_FROM_CON(con)
 
     st = StatementCreate(con);
 
     if (st)
     {
-        OCI_STATUS = StatementPrepare
+        STATUS = StatementPrepare
                       (
                             st,
                             OTEXT("DECLARE ")
@@ -495,17 +495,17 @@ boolean QueueTableDrop
                             OTEXT("END; ")
                       );
 
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0);
-        OCI_STATUS = OCI_STATUS && StatementBindInt(st, OTEXT(":force"), &force);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0);
+        STATUS = STATUS && StatementBindInt(st, OTEXT(":force"), &force);
 
-        OCI_STATUS = OCI_STATUS && StatementExecute(st);
+        STATUS = STATUS && StatementExecute(st);
 
         StatementFree(st);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -521,11 +521,11 @@ boolean QueueTablePurge
     unsigned int    delivery_mode
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
-    OCI_CALL_CHECK_ENUM_VALUE(con, NULL, delivery_mode, DeliveryModeValues, OTEXT("Delivery mode"))
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CHECK_ENUM_VALUE(con, NULL, delivery_mode, DeliveryModeValues, OTEXT("Delivery mode"))
+    CTX_SET_FROM_CON(con)
 
     if (con->ver_num >= OCI_10_1)
     {
@@ -535,7 +535,7 @@ boolean QueueTablePurge
 
         if (st)
         {
-            OCI_STATUS = StatementPrepare
+            STATUS = StatementPrepare
                           (
                                 st,
                                 OTEXT("DECLARE ")
@@ -556,25 +556,25 @@ boolean QueueTablePurge
                                 OTEXT("END; ")
                           );
 
-            OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0);
-            OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":purge_condition"),
+            STATUS = STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0);
+            STATUS = STATUS && StatementBindString(st, OTEXT(":purge_condition"),
                                                         (otext *) (purge_condition ? purge_condition : OCI_STRING_EMPTY), 0);
-            OCI_STATUS = OCI_STATUS && StatementBindInt(st, OTEXT(":block"), &block);
-            OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(st, OTEXT(":delivery_mode"), &delivery_mode);
+            STATUS = STATUS && StatementBindInt(st, OTEXT(":block"), &block);
+            STATUS = STATUS && StatementBindUnsignedInt(st, OTEXT(":delivery_mode"), &delivery_mode);
 
-            OCI_STATUS = OCI_STATUS && StatementExecute(st);
+            STATUS = STATUS && StatementExecute(st);
 
             StatementFree(st);
         }
 
-        OCI_RETVAL = OCI_STATUS;
+        RETVAL = STATUS;
     }
     else
     {
-        OCI_RETVAL = FALSE;
+        RETVAL = FALSE;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -590,17 +590,17 @@ boolean QueueTableMigrate
 {
     OCI_Statement *st = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, compatible)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CHECK_PTR(OCI_IPC_STRING, compatible)
+    CTX_SET_FROM_CON(con)
 
     st = StatementCreate(con);
 
     if (st)
     {
-        OCI_STATUS = StatementPrepare
+        STATUS = StatementPrepare
                       (
                             st,
                             OTEXT("BEGIN ")
@@ -612,15 +612,15 @@ boolean QueueTableMigrate
                             OTEXT("END;")
                       );
 
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0);
-        OCI_STATUS = OCI_STATUS && StatementBindString(st, OTEXT(":compatible"), (otext *)compatible, 0);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0);
+        STATUS = STATUS && StatementBindString(st, OTEXT(":compatible"), (otext *)compatible, 0);
 
-        OCI_STATUS = OCI_STATUS && StatementExecute(st);
+        STATUS = STATUS && StatementExecute(st);
 
         StatementFree(st);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }

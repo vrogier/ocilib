@@ -77,7 +77,6 @@ noinst_HEADERS=     \
     array.h         \
     bind.h          \
     callback.h      \
-    checks.h        \
     collection.h    \
     column.h        \
     connection.h    \
@@ -103,7 +102,7 @@ noinst_HEADERS=     \
     loader.h        \
     lob.h           \
     long.h          \
-    macro.h         \
+    macros.h        \
     memory.h        \
     message.h       \
     mutex.h         \

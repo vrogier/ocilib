@@ -28,7 +28,7 @@
 #include "interval.h"
 #include "list.h"
 #include "lob.h"
-#include "macro.h"
+#include "macros.h"
 #include "memory.h"
 #include "number.h"
 #include "reference.h"
@@ -36,69 +36,69 @@
 #include "timestamp.h"
 #include "typeinfo.h"
 
-#define OCI_OBJECT_SET_VALUE(datatype, type, func)                          \
+#define OBJECT_SET_VALUE(datatype, type, func)                              \
                                                                             \
-    OCI_CALL_ENTER(boolean, FALSE)                                          \
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)                                 \
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)                                \
+    CALL_ENTER(boolean, FALSE)                                              \
+    CHECK_PTR(OCI_IPC_OBJECT, obj)                                          \
+    CTX_SET_FROM_CON(obj->con)                                              \
                                                                             \
-    OCI_STATUS = FALSE;                                                     \
+    STATUS = FALSE;                                                         \
                                                                             \
     if (!value)                                                             \
     {                                                                       \
-        OCI_STATUS = ObjectSetNull(obj, attr);                              \
+        STATUS = ObjectSetNull(obj, attr);                                  \
     }                                                                       \
     else                                                                    \
     {                                                                       \
-        int index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE);          \
+        int index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE);     \
                                                                             \
         if (index >= 0)                                                     \
         {                                                                   \
             OCIInd  *ind  = NULL;                                           \
             type    *data = (type *)  ObjectGetAttr(obj, index, &ind);      \
                                                                             \
-            OCI_STATUS = TRUE;                                              \
+            STATUS = TRUE;                                                  \
                                                                             \
-            OCI_EXEC(func)                                                  \
+            EXEC(func)                                                      \
                                                                             \
-            if (OCI_STATUS)                                                 \
+            if (STATUS)                                                     \
             {                                                               \
                 *ind = OCI_IND_NOTNULL;                                     \
             }                                                               \
         }                                                                   \
     }                                                                       \
                                                                             \
-    OCI_RETVAL = OCI_STATUS;                                                \
-    OCI_CALL_EXIT()
+    RETVAL = STATUS;                                                        \
+    CALL_EXIT()
 
-#define OCI_OBJECT_GET_VALUE(datatype, object_type, type, func)             \
+#define OBJECT_GET_VALUE(datatype, object_type, type, func)                 \
                                                                             \
     int index = 0;                                                          \
                                                                             \
-    OCI_CALL_ENTER(object_type, NULL)                                       \
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)                                 \
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)                                \
+    CALL_ENTER(object_type, NULL)                                           \
+    CHECK_PTR(OCI_IPC_OBJECT, obj)                                          \
+    CTX_SET_FROM_CON(obj->con)                                              \
                                                                             \
-    OCI_STATUS = FALSE;                                                     \
+    STATUS = FALSE;                                                         \
                                                                             \
-    index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE);                  \
+    index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE);             \
     if (index >= 0)                                                         \
     {                                                                       \
         OCIInd *ind   = NULL;                                               \
         type   *value = NULL;                                               \
                                                                             \
-        OCI_STATUS = TRUE;                                                  \
+        STATUS = TRUE;                                                      \
                                                                             \
         value = (type *) ObjectGetAttr(obj, index, &ind);                   \
                                                                             \
         if (value && ind && (OCI_IND_NULL != *ind))                         \
         {                                                                   \
-            OCI_RETVAL = obj->objs[index] = func;                           \
-            OCI_STATUS = (NULL != OCI_RETVAL);                              \
+            RETVAL = obj->objs[index] = func;                               \
+            STATUS = (NULL != RETVAL);                                      \
         }                                                                   \
     }                                                                       \
                                                                             \
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 
 // pre declaration
 
@@ -110,14 +110,13 @@ boolean ObjectGetAttributeInfo
     size_t * p_align
 );
 
-
  /* --------------------------------------------------------------------------------------------- *
  * ObjectGetRealTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
 OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
     OCI_TypeInfo *result = typinf;
 
@@ -126,7 +125,7 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
         return result;
     }
 
-    OCI_CALL_CONTEXT_SET_FROM_CONN(result->con)
+    CTX_SET_FROM_CON(result->con)
 
     /* if the type is related to UTDs and is virtual (e.g. non final), we must find the real type of the instance */
 
@@ -137,9 +136,9 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
         /* create a local REF to store a REF to the object real type */
 
-        OCI_EXEC(MemoryAllocateObject(result->con->env, result->con->err, result->con->cxt, SQLT_REF, (OCIType *)0, NULL, OCI_DURATION_SESSION, 0, (void**)&ref))
-        OCI_EXEC(OCIObjectGetTypeRef(result->con->env, result->con->err, (dvoid*)object, ref))
-        OCI_EXEC(OCITypeByRef(result->con->env, result->con->err, ref, OCI_DURATION_SESSION, OCI_TYPEGET_HEADER, &tdo))
+        EXEC(MemoryAllocateObject(result->con->env, result->con->err, result->con->cxt, SQLT_REF, (OCIType *)0, NULL, OCI_DURATION_SESSION, 0, (void**)&ref))
+        EXEC(OCIObjectGetTypeRef(result->con->env, result->con->err, (dvoid*)object, ref))
+        EXEC(OCITypeByRef(result->con->env, result->con->err, ref, OCI_DURATION_SESSION, OCI_TYPEGET_HEADER, &tdo))
 
         /* the object instance type pointer is different only if the instance is from an inherited type */
 
@@ -160,15 +159,15 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
                 otext fullname[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
-                OCI_STATUS = MemoryAllocHandle(result->con->env, (void**) &descr, OCI_HTYPE_DESCRIBE);
+                STATUS = MemoryAllocHandle(result->con->env, (void**) &descr, OCI_HTYPE_DESCRIBE);
 
-                OCI_EXEC(OCIDescribeAny(result->con->cxt, result->con->err, (dvoid *)tdo, 0, OCI_OTYPE_PTR, OCI_DEFAULT, OCI_PTYPE_UNK, descr))
-                OCI_GET_ATTRIB(OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM, descr, &param, NULL)
+                EXEC(OCIDescribeAny(result->con->cxt, result->con->err, (dvoid *)tdo, 0, OCI_OTYPE_PTR, OCI_DEFAULT, OCI_PTYPE_UNK, descr))
+                ATTRIB_GET(OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM, descr, &param, NULL)
 
-                OCI_STATUS = OCI_STATUS && StringGetAttribute(result->con, param, OCI_DTYPE_PARAM, OCI_ATTR_SCHEMA_NAME, &schema_name, &size_schema);
-                OCI_STATUS = OCI_STATUS && StringGetAttribute(result->con, param, OCI_DTYPE_PARAM, OCI_ATTR_NAME, &object_name, &size_object);
+                STATUS = STATUS && StringGetAttribute(result->con, param, OCI_DTYPE_PARAM, OCI_ATTR_SCHEMA_NAME, &schema_name, &size_schema);
+                STATUS = STATUS && StringGetAttribute(result->con, param, OCI_DTYPE_PARAM, OCI_ATTR_NAME, &object_name, &size_object);
 
-                if (OCI_STATUS)
+                if (STATUS)
                 {
                     /* compute link full name */
 
@@ -203,7 +202,7 @@ ub2 ObjectGetIndOffset
 {
     ub2 i = 0, j = 1;
 
-    OCI_CHECK(typinf == NULL, 0);
+    CHECK(typinf == NULL, 0);
 
     for (i = 0; i < (int) index; i++)
     {
@@ -375,9 +374,9 @@ boolean ObjectGetAttributeInfo
     size_t       *p_align
 )
 {
-    OCI_CHECK(typinf  == NULL, 0);
-    OCI_CHECK(p_size  == NULL, 0);
-    OCI_CHECK(p_align == NULL, 0);
+    CHECK(typinf  == NULL, 0);
+    CHECK(p_size  == NULL, 0);
+    CHECK(p_align == NULL, 0);
 
 
     if (index >= typinf->nb_cols)
@@ -484,7 +483,7 @@ void ObjectReset
             obj->objs[i] = NULL;
         }
 
-        OCI_FREE(obj->tmpbufs[i])
+        FREE(obj->tmpbufs[i])
 
         obj->tmpsizes[i] = 0;
     }
@@ -507,16 +506,16 @@ OCI_Object * ObjectInitialize
 {
     OCI_TypeInfo *real_typinf = NULL;
     
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CTX_SET_FROM_CON(con)
 
     real_typinf = ObjectGetRealTypeInfo(typinf, handle);
-    OCI_STATUS = (NULL != real_typinf);
+    STATUS = (NULL != real_typinf);
 
-    OCI_ALLOCATE_DATA(OCI_IPC_OBJECT, obj, 1);
+    ALLOC_DATA(OCI_IPC_OBJECT, obj, 1);
 
-    if (OCI_STATUS)
+    if (STATUS)
     {      
         obj->con    = con;
         obj->handle = handle;
@@ -524,18 +523,18 @@ OCI_Object * ObjectInitialize
 
         if (real_typinf != typinf)
         {
-            OCI_FREE(obj->objs)
-            OCI_FREE(obj->tmpbufs)
-            OCI_FREE(obj->tmpsizes)
+            FREE(obj->objs)
+            FREE(obj->tmpbufs)
+            FREE(obj->tmpsizes)
         }
 
-        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpbufs, obj->typinf->nb_cols)
-        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpsizes, obj->typinf->nb_cols)
-        OCI_ALLOCATE_DATA(OCI_IPC_BUFF_ARRAY, obj->objs, obj->typinf->nb_cols)
+        ALLOC_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpbufs, obj->typinf->nb_cols)
+        ALLOC_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpsizes, obj->typinf->nb_cols)
+        ALLOC_DATA(OCI_IPC_BUFF_ARRAY, obj->objs, obj->typinf->nb_cols)
 
         ObjectReset(obj);
 
-        if (OCI_STATUS && (!obj->handle || (OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate)))
+        if (STATUS && (!obj->handle || (OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate)))
         {
             /* allocates handle for non fetched object */
 
@@ -544,7 +543,7 @@ OCI_Object * ObjectInitialize
                 obj->hstate = OCI_OBJECT_ALLOCATED;
             }
 
-            OCI_EXEC
+            EXEC
             (
                 MemoryAllocateObject(obj->con->env,  obj->con->err, obj->con->cxt,
                             (OCITypeCode) obj->typinf->typecode, obj->typinf->tdo, (dvoid *) NULL,
@@ -557,7 +556,7 @@ OCI_Object * ObjectInitialize
             obj->hstate = OCI_OBJECT_FETCHED_CLEAN;
         }
 
-        if (OCI_STATUS && (OCI_UNKNOWN == obj->type))
+        if (STATUS && (OCI_UNKNOWN == obj->type))
         {
             ub4 size = sizeof(obj->type);
 
@@ -579,11 +578,11 @@ OCI_Object * ObjectInitialize
             }
         }
 
-        if (OCI_STATUS && (reset || !obj->tab_ind))
+        if (STATUS && (reset || !obj->tab_ind))
         {
             if (!parent)
             {
-                OCI_EXEC
+                EXEC
                 (
                     OCIObjectGetInd(obj->con->env, obj->con->err,
                                     (dvoid *) obj->handle,
@@ -600,7 +599,7 @@ OCI_Object * ObjectInitialize
 
     /* check for failure */
 
-    if (!OCI_STATUS && obj)
+    if (!STATUS && obj)
     {
         ObjectFree(obj);
         obj = NULL;
@@ -623,8 +622,8 @@ int ObjectGetAttributeIndex
 {
     int res = -1;
 
-    OCI_CHECK(obj  == NULL, res)
-    OCI_CHECK(attr == NULL, res);
+    CHECK(obj  == NULL, res)
+    CHECK(attr == NULL, res);
 
     for (ub2 i = 0; i < obj->typinf->nb_cols; i++)
     {
@@ -660,8 +659,8 @@ void * ObjectGetAttr
     size_t size   = 0;
     size_t align  = 0;
 
-    OCI_CHECK(obj  == NULL, NULL)
-    OCI_CHECK(pind == NULL, NULL)
+    CHECK(obj  == NULL, NULL)
+    CHECK(pind == NULL, NULL)
 
     if (obj->typinf->struct_size == 0)
     {
@@ -694,12 +693,12 @@ boolean ObjectSetNumberInternal
 {
     int index   = 0;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_STRING, attr)
+    CTX_SET_FROM_CON(obj->con)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_NUMERIC, TRUE);
 
@@ -709,17 +708,17 @@ boolean ObjectSetNumberInternal
         void       *num = ObjectGetAttr(obj, index, &ind);
         OCI_Column *col = &obj->typinf->cols[index];
 
-        OCI_STATUS = NumberTranslateValue(obj->con, value, flag, num, col->subtype);
+        STATUS = NumberTranslateValue(obj->con, value, flag, num, col->subtype);
 
-        if (OCI_STATUS)
+        if (STATUS)
         {
             *ind = OCI_IND_NOTNULL;
         }
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -736,12 +735,12 @@ boolean ObjectGetNumberInternal
 {
     int index   = 0;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_STRING, attr)
+    CTX_SET_FROM_CON(obj->con)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_NUMERIC, FALSE);
 
@@ -756,7 +755,7 @@ boolean ObjectGetNumberInternal
         {
             OCI_Column *col = &obj->typinf->cols[index];
 
-            OCI_STATUS = NumberTranslateValue(obj->con, ptr, col->subtype, value, flag);
+            STATUS = NumberTranslateValue(obj->con, ptr, col->subtype, value, flag);
         }
     }
     else
@@ -765,7 +764,7 @@ boolean ObjectGetNumberInternal
 
         if (index >= 0)
         {
-            OCI_STATUS = NumberFromStringInternal(obj->con, value, flag, ObjectGetString(obj, attr), NULL);
+            STATUS = NumberFromStringInternal(obj->con, value, flag, ObjectGetString(obj, attr), NULL);
         }
     }
 
@@ -774,9 +773,9 @@ boolean ObjectGetNumberInternal
         ExceptionAttributeNotFound(obj->con, attr);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -789,15 +788,15 @@ OCI_Object * ObjectCreate
     OCI_TypeInfo   *typinf
 )
 {
-    OCI_CALL_ENTER(OCI_Object *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(OCI_Object *, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CTX_SET_FROM_CON(con)
 
-    OCI_RETVAL = ObjectInitialize(con, NULL, NULL, typinf, NULL, -1, TRUE);
-    OCI_STATUS = (NULL != OCI_RETVAL);
+    RETVAL = ObjectInitialize(con, NULL, NULL, typinf, NULL, -1, TRUE);
+    STATUS = (NULL != RETVAL);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -809,19 +808,19 @@ boolean ObjectFree
     OCI_Object *obj
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_OBJECT_FETCHED(obj)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_OBJECT_FETCHED(obj)
+    CTX_SET_FROM_CON(obj->con)
 
     /* if the object has sub-objects that have been fetched, we need to free
        these objects */
 
     ObjectReset(obj);
 
-    OCI_FREE(obj->objs)
-    OCI_FREE(obj->tmpbufs)
-    OCI_FREE(obj->tmpsizes)
+    FREE(obj->objs)
+    FREE(obj->tmpbufs)
+    FREE(obj->tmpsizes)
 
     if ((OCI_OBJECT_ALLOCATED == obj->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate))
     {
@@ -830,12 +829,12 @@ boolean ObjectFree
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != obj->hstate)
     {
-        OCI_FREE(obj)
+        FREE(obj)
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -851,20 +850,20 @@ OCI_Object ** ObjectCreateArray
 {
     OCI_Array *arr = NULL;
 
-    OCI_CALL_ENTER(OCI_Object **, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(OCI_Object **, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CTX_SET_FROM_CON(con)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0, sizeof(void *), sizeof(OCI_Object), 0, typinf);
-    OCI_STATUS = (NULL != arr);
+    STATUS = (NULL != arr);
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
-        OCI_RETVAL = (OCI_Object **) arr->tab_obj;
+        RETVAL = (OCI_Object **) arr->tab_obj;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -876,12 +875,12 @@ boolean ObjectFreeArray
     OCI_Object **objs
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, objs)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_ARRAY, objs)
 
-    OCI_RETVAL = OCI_STATUS = ArrayFreeFromHandles((void **)objs);
+    RETVAL = STATUS = ArrayFreeFromHandles((void **)objs);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -894,13 +893,13 @@ boolean ObjectAssign
     OCI_Object *obj_src
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj_src);
-    OCI_CALL_CHECK_COMPAT(obj->con, obj->typinf->tdo == obj_src->typinf->tdo)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_OBJECT, obj_src);
+    CHECK_COMPAT(obj->con, obj->typinf->tdo == obj_src->typinf->tdo)
+    CTX_SET_FROM_CON(obj->con)
 
-    OCI_EXEC
+    EXEC
     (
         OCIObjectCopy(obj->con->env, obj->con->err, obj->con->cxt,
                       obj_src->handle, (obj_src->tab_ind + obj_src->idx_ind),
@@ -908,16 +907,16 @@ boolean ObjectAssign
                       obj->typinf->tdo, OCI_DURATION_SESSION, OCI_DEFAULT)
     )
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         obj->typinf = obj_src->typinf;
 
         ObjectReset(obj);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -932,12 +931,12 @@ boolean ObjectGetBoolean
 {
     int index = -1;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_STRING, attr)
+    CTX_SET_FROM_CON(obj->con)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
 
@@ -946,17 +945,17 @@ boolean ObjectGetBoolean
         OCIInd *ind = NULL;
         boolean *value = NULL;
 
-        OCI_STATUS = TRUE;
+        STATUS = TRUE;
 
         value = (boolean *)ObjectGetAttr(obj, index, &ind);
 
         if (value && ind && (OCI_IND_NULL != *ind))
         {
-            OCI_RETVAL = *value;
+            RETVAL = *value;
         }
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -969,7 +968,7 @@ OCI_Number * ObjectGetNumber
     const otext *attr
 )
 {
-    OCI_OBJECT_GET_VALUE
+    OBJECT_GET_VALUE
     (
         OCI_CDT_NUMERIC,
         OCI_Number*,
@@ -1126,12 +1125,12 @@ const otext * ObjectGetString
 {
     int index = -1;
 
-    OCI_CALL_ENTER(const otext *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(const otext *, NULL)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_STRING, attr)
+    CTX_SET_FROM_CON(obj->con)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_TEXT, FALSE);
 
@@ -1140,7 +1139,7 @@ const otext * ObjectGetString
         OCIInd *ind       = NULL;
         OCIString **value = NULL;
 
-        OCI_STATUS = TRUE;
+        STATUS = TRUE;
 
         value = (OCIString **) ObjectGetAttr(obj, index, &ind);
 
@@ -1148,11 +1147,11 @@ const otext * ObjectGetString
         {
             if (OCILib.use_wide_char_conv)
             {
-                OCI_RETVAL = StringFromStringPtr(obj->con->env, *value, &obj->tmpbufs[index], &obj->tmpsizes[index]);
+                RETVAL = StringFromStringPtr(obj->con->env, *value, &obj->tmpbufs[index], &obj->tmpsizes[index]);
             }
             else
             {
-                OCI_RETVAL = (otext *)OCIStringPtr(obj->con->env, *value);
+                RETVAL = (otext *)OCIStringPtr(obj->con->env, *value);
             }
         }
     }
@@ -1168,7 +1167,7 @@ const otext * ObjectGetString
             unsigned int size  = 0;
             unsigned int len   = 0;
 
-            OCI_STATUS = TRUE;
+            STATUS = TRUE;
 
             value = ObjectGetAttr(obj, index, &ind);
 
@@ -1183,21 +1182,21 @@ const otext * ObjectGetString
             }
 
             len = StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, NULL, 0, FALSE);
-            OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
+            STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
-            if (OCI_STATUS && len > 0)
+            if (STATUS && len > 0)
             {
-                OCI_STATUS = StringRequestBuffer(&obj->tmpbufs[index], &obj->tmpsizes[index], len);
+                STATUS = StringRequestBuffer(&obj->tmpbufs[index], &obj->tmpsizes[index], len);
 
-                if (OCI_STATUS)
+                if (STATUS)
                 {
                     const unsigned int real_tmpsize = StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbufs[index], obj->tmpsizes[index], FALSE);
                 
-                    OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
+                    STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
-                    if (OCI_STATUS && real_tmpsize > 0)
+                    if (STATUS && real_tmpsize > 0)
                     {
-                        OCI_RETVAL = obj->tmpbufs[index];
+                        RETVAL = obj->tmpbufs[index];
                     }
                 }
             }
@@ -1209,7 +1208,7 @@ const otext * ObjectGetString
         ExceptionAttributeNotFound(obj->con, attr);
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1226,12 +1225,12 @@ int ObjectGetRaw
 {
     int index = -1;
 
-    OCI_CALL_ENTER(int, 0);
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(int, 0);
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_STRING, attr)
+    CTX_SET_FROM_CON(obj->con)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_RAW, TRUE);
 
@@ -1240,7 +1239,7 @@ int ObjectGetRaw
         OCIInd *ind    = NULL;
         OCIRaw **value = NULL;
 
-        OCI_STATUS = TRUE;
+        STATUS = TRUE;
 
         value = (OCIRaw **) ObjectGetAttr(obj, index, &ind);
 
@@ -1255,11 +1254,11 @@ int ObjectGetRaw
 
             memcpy(buffer, OCIRawPtr(obj->con->env, *value), (size_t) len);
 
-            OCI_RETVAL = (int) len;
+            RETVAL = (int) len;
         }
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1275,12 +1274,12 @@ unsigned int ObjectGetRawSize
     ub4 raw_len = 0;
     int index = -1;
 
-    OCI_CALL_ENTER(unsigned int, 0)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(unsigned int, 0)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_STRING, attr)
+    CTX_SET_FROM_CON(obj->con)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_RAW, TRUE);
 
@@ -1289,7 +1288,7 @@ unsigned int ObjectGetRawSize
         OCIInd *ind = NULL;
         OCIRaw **value = NULL;
 
-        OCI_STATUS = TRUE;
+        STATUS = TRUE;
 
         value = (OCIRaw **)ObjectGetAttr(obj, index, &ind);
 
@@ -1299,9 +1298,9 @@ unsigned int ObjectGetRawSize
         }
     }
 
-    OCI_RETVAL = raw_len;
+    RETVAL = raw_len;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1314,7 +1313,7 @@ OCI_Date * ObjectGetDate
     const otext *attr
 )
 {
-    OCI_OBJECT_GET_VALUE
+    OBJECT_GET_VALUE
     (
         OCI_CDT_DATETIME,
         OCI_Date*,
@@ -1335,7 +1334,7 @@ OCI_Timestamp * ObjectGetTimestamp
 {
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_OBJECT_GET_VALUE
+    OBJECT_GET_VALUE
     (
         OCI_CDT_TIMESTAMP,
         OCI_Timestamp*,
@@ -1346,9 +1345,9 @@ OCI_Timestamp * ObjectGetTimestamp
 
 #else
 
-    OCI_CALL_ENTER( OCI_Timestamp *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_EXIT()
+    CALL_ENTER( OCI_Timestamp *, NULL)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_EXIT()
 
 #endif
 }
@@ -1365,7 +1364,7 @@ OCI_Interval * ObjectGetInterval
 {
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_OBJECT_GET_VALUE
+    OBJECT_GET_VALUE
         (
         OCI_CDT_INTERVAL,
         OCI_Interval*,
@@ -1376,9 +1375,9 @@ OCI_Interval * ObjectGetInterval
 
 #else
 
-    OCI_CALL_ENTER(OCI_Interval *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_EXIT()
+    CALL_ENTER(OCI_Interval *, NULL)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_EXIT()
 
 #endif
 }
@@ -1393,7 +1392,7 @@ OCI_Coll * ObjectGetColl
     const otext *attr
 )
 {
-    OCI_OBJECT_GET_VALUE
+    OBJECT_GET_VALUE
     (
         OCI_CDT_COLLECTION,
         OCI_Coll*,
@@ -1412,7 +1411,7 @@ OCI_Object * ObjectGetObject
     const otext *attr
 )
 {
-    OCI_OBJECT_GET_VALUE
+    OBJECT_GET_VALUE
     (
         OCI_CDT_OBJECT,
         OCI_Object*,
@@ -1432,7 +1431,7 @@ OCI_Lob * ObjectGetLob
     const otext *attr
 )
 {
-    OCI_OBJECT_GET_VALUE
+    OBJECT_GET_VALUE
     (
         OCI_CDT_LOB,
         OCI_Lob*,
@@ -1451,7 +1450,7 @@ OCI_File * ObjectGetFile
     const otext *attr
 )
 {
-    OCI_OBJECT_GET_VALUE
+    OBJECT_GET_VALUE
     (
         OCI_CDT_FILE,
         OCI_File *,
@@ -1470,7 +1469,7 @@ OCI_Ref * ObjectGetReference
     const otext *attr
 )
 {
-    OCI_OBJECT_GET_VALUE
+    OBJECT_GET_VALUE
     (
         OCI_CDT_REF,
         OCI_Ref*,
@@ -1490,12 +1489,12 @@ boolean ObjectSetBoolean
     boolean      value
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_STRING, attr)
+    CTX_SET_FROM_CON(obj->con)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     const int index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
 
@@ -1509,13 +1508,13 @@ boolean ObjectSetBoolean
             *data = value;
             *ind = OCI_IND_NOTNULL;
 
-            OCI_STATUS = TRUE;
+            STATUS = TRUE;
         }
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1529,7 +1528,7 @@ boolean ObjectSetNumber
     OCI_Number  *value
 )
 {
-    OCI_OBJECT_SET_VALUE
+    OBJECT_SET_VALUE
     (
         OCI_CDT_NUMERIC,
         OCINumber,
@@ -1660,16 +1659,16 @@ boolean ObjectSetString
     const otext *value
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_STRING, attr)
+    CTX_SET_FROM_CON(obj->con)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     if (!value)
     {
-        OCI_STATUS = ObjectSetNull(obj, attr);
+        STATUS = ObjectSetNull(obj, attr);
     }
     else
     {
@@ -1680,18 +1679,18 @@ boolean ObjectSetString
             OCIInd *ind      = NULL;
             OCIString **data = (OCIString **) ObjectGetAttr(obj, index, &ind);
 
-            OCI_STATUS = StringToStringPtr(obj->con->env, data, obj->con->err, value);
+            STATUS = StringToStringPtr(obj->con->env, data, obj->con->err, value);
 
-            if (OCI_STATUS)
+            if (STATUS)
             {
                 *ind = OCI_IND_NOTNULL;
             }
         }
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1706,7 +1705,7 @@ boolean ObjectSetRaw
     unsigned int len
 )
 {
-    OCI_OBJECT_SET_VALUE
+    OBJECT_SET_VALUE
     (
         OCI_CDT_RAW,
         OCIRaw*,
@@ -1725,7 +1724,7 @@ boolean ObjectSetDate
     OCI_Date    *value
 )
 {
-    OCI_OBJECT_SET_VALUE
+    OBJECT_SET_VALUE
     (
         OCI_CDT_DATETIME,
         OCIDate,
@@ -1746,7 +1745,7 @@ boolean ObjectSetTimestamp
 {
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_OBJECT_SET_VALUE
+    OBJECT_SET_VALUE
     (
         OCI_CDT_TIMESTAMP,
         OCIDateTime*,
@@ -1755,9 +1754,9 @@ boolean ObjectSetTimestamp
 
 #else
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_EXIT()
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_EXIT()
 
 #endif
 }
@@ -1775,7 +1774,7 @@ boolean ObjectSetInterval
 {
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_OBJECT_SET_VALUE
+    OBJECT_SET_VALUE
     (
         OCI_CDT_INTERVAL,
         OCIInterval*,
@@ -1784,9 +1783,9 @@ boolean ObjectSetInterval
 
 #else
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_EXIT()
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_EXIT()
 
 #endif
 }
@@ -1802,7 +1801,7 @@ boolean ObjectSetColl
     OCI_Coll    *value
 )
 {
-    OCI_OBJECT_SET_VALUE
+    OBJECT_SET_VALUE
     (
         OCI_CDT_COLLECTION,
         OCIColl*,
@@ -1821,7 +1820,7 @@ boolean ObjectSetObject
     OCI_Object  *value
 )
 {
-    OCI_OBJECT_SET_VALUE
+    OBJECT_SET_VALUE
     (
         OCI_CDT_OBJECT,
         void,
@@ -1843,7 +1842,7 @@ boolean ObjectSetLob
     OCI_Lob     *value
 )
 {
-    OCI_OBJECT_SET_VALUE
+    OBJECT_SET_VALUE
     (
         OCI_CDT_LOB,
         OCILobLocator*,
@@ -1862,7 +1861,7 @@ boolean ObjectSetFile
     OCI_File    *value
 )
 {
-    OCI_OBJECT_SET_VALUE
+    OBJECT_SET_VALUE
     (
         OCI_CDT_FILE,
         OCILobLocator*,
@@ -1881,7 +1880,7 @@ boolean ObjectSetReference
     OCI_Ref     *value
 )
 {
-    OCI_OBJECT_SET_VALUE
+    OBJECT_SET_VALUE
     (
         OCI_CDT_REF,
         OCIRef*,
@@ -1899,10 +1898,10 @@ boolean ObjectSetNull
     const otext *attr
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_STRING, attr)
+    CTX_SET_FROM_CON(obj->con)
 
     const int index = ObjectGetAttributeIndex(obj, attr, -1, TRUE);
 
@@ -1912,12 +1911,12 @@ boolean ObjectSetNull
 
         obj->tab_ind[ind_index] = OCI_IND_NULL;
 
-        OCI_STATUS = TRUE;
+        STATUS = TRUE;
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1932,10 +1931,10 @@ boolean ObjectIsNull
 {
     int index   = 0;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_STRING, attr)
+    CTX_SET_FROM_CON(obj->con)
 
     index = ObjectGetAttributeIndex(obj, attr, -1, TRUE);
 
@@ -1943,12 +1942,12 @@ boolean ObjectIsNull
     {
         const int ind_index = obj->idx_ind + ObjectGetIndOffset(obj->typinf, index);
 
-        OCI_RETVAL = (OCI_IND_NOTNULL != obj->tab_ind[ind_index]);
+        RETVAL = (OCI_IND_NOTNULL != obj->tab_ind[ind_index]);
 
-        OCI_STATUS = TRUE;
+        STATUS = TRUE;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1960,7 +1959,7 @@ OCI_TypeInfo * ObjectGetTypeInfo
     OCI_Object *obj
 )
 {
-    OCI_GET_PROP(OCI_TypeInfo*, NULL, OCI_IPC_OBJECT, obj, typinf, obj->con, NULL, obj->con->err)
+    GET_PROP(OCI_TypeInfo*, NULL, OCI_IPC_OBJECT, obj, typinf, obj->con, NULL, obj->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1972,7 +1971,7 @@ unsigned int ObjectGetType
     OCI_Object *obj
 )
 {
-    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_OBJECT, obj, type, obj->con, NULL, obj->con->err)
+    GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_OBJECT, obj, type, obj->con, NULL, obj->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1985,23 +1984,23 @@ boolean ObjectGetSelfRef
     OCI_Ref    *ref
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
-    OCI_CALL_CHECK_COMPAT(obj->con, obj->typinf->tdo == ref->typinf->tdo)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_REF, ref)
+    CHECK_COMPAT(obj->con, obj->typinf->tdo == ref->typinf->tdo)
+    CTX_SET_FROM_CON(obj->con)
 
-    OCI_EXEC(OCIObjectGetObjectRef(obj->con->env, obj->con->err, obj->handle, ref->handle))
+    EXEC(OCIObjectGetObjectRef(obj->con->env, obj->con->err, obj->handle, ref->handle))
 
-    if (!OCI_STATUS && ref->obj)
+    if (!STATUS && ref->obj)
     {
         ObjectFree(ref->obj);
         ref->obj = NULL;
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2015,9 +2014,9 @@ boolean ObjectGetStruct
     void      **pp_ind
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CTX_SET_FROM_CON(obj->con)
 
     if (pp_struct)
     {
@@ -2029,9 +2028,9 @@ boolean ObjectGetStruct
         *pp_ind = (void *) obj->tab_ind;
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2050,10 +2049,10 @@ boolean ObjectToString
     boolean      quote = TRUE;
     unsigned int len   = 0;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
-    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, size)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CHECK_PTR(OCI_IPC_VOID, size)
+    CTX_SET_FROM_CON(obj->con)
 
     err = ErrorGet(TRUE, TRUE);
 
@@ -2065,7 +2064,7 @@ boolean ObjectToString
     len += StringAddToBuffer(str, len, obj->typinf->name, (unsigned int) ostrlen(obj->typinf->name), FALSE);
     len += StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
 
-    for (int i = 0; i < obj->typinf->nb_cols && OCI_STATUS; i++)
+    for (int i = 0; i < obj->typinf->nb_cols && STATUS; i++)
     {
         attr  = obj->typinf->cols[i].name;
         quote = TRUE;
@@ -2171,9 +2170,9 @@ boolean ObjectToString
                 }
             }
 
-            OCI_STATUS = (NULL != data || OCI_CDT_TEXT == data_type) && (NULL == err || !err->raise);
+            STATUS = (NULL != data || OCI_CDT_TEXT == data_type) && (NULL == err || !err->raise);
 
-            if (OCI_STATUS)
+            if (STATUS)
             {
                 otext *tmpbuf = str;
 
@@ -2191,17 +2190,17 @@ boolean ObjectToString
                     len += StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
                 }
 
-                OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
+                STATUS = (NULL == err || OCI_UNKNOWN == err->type);
             }
         }
 
-        if (OCI_STATUS && i < (obj->typinf->nb_cols-1))
+        if (STATUS && i < (obj->typinf->nb_cols-1))
         {
             len += StringAddToBuffer(str, len, OTEXT(", "), 2, quote);
         }
     }
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         len += StringAddToBuffer(str, len, OTEXT(")"), 1, FALSE);
 
@@ -2217,8 +2216,8 @@ boolean ObjectToString
         }
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 

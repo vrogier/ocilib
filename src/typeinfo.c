@@ -22,7 +22,7 @@
 
 #include "column.h"
 #include "list.h"
-#include "macro.h"
+#include "macros.h"
 #include "memory.h"
 #include "strings.h"
 
@@ -58,17 +58,17 @@ boolean TypeInfoDispose
     OCI_TypeInfo *typinf
 )
 {
-    OCI_CHECK(NULL == typinf, FALSE);
+    CHECK(NULL == typinf, FALSE);
 
     for (ub2 i = 0; i < typinf->nb_cols; i++)
     {
-        OCI_FREE(typinf->cols[i].name)
+        FREE(typinf->cols[i].name)
     }
 
-    OCI_FREE(typinf->cols)
-    OCI_FREE(typinf->name)
-    OCI_FREE(typinf->schema)
-    OCI_FREE(typinf->offsets)
+    FREE(typinf->cols)
+    FREE(typinf->name)
+    FREE(typinf->schema)
+    FREE(typinf->offsets)
 
     return TRUE;
 }
@@ -102,11 +102,11 @@ OCI_TypeInfo * TypeInfoGet
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
     otext obj_name[OCI_SIZE_OBJ_NAME + 1];
 
-    OCI_CALL_ENTER(OCI_TypeInfo*, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, TypeInfoTypeValues, OTEXT("Type"))
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(OCI_TypeInfo*, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_ENUM_VALUE(con, NULL, type, TypeInfoTypeValues, OTEXT("Type"))
+    CTX_SET_FROM_CON(con)
 
     obj_schema[0] = 0;
     obj_name[0]   = 0;
@@ -163,11 +163,11 @@ OCI_TypeInfo * TypeInfoGet
     if (!typinf)
     {
         typinf = ListAppend(con->tinfs, sizeof(OCI_TypeInfo));
-        OCI_STATUS = (NULL != typinf);
+        STATUS = (NULL != typinf);
 
         /* allocate describe handle */
 
-        if (OCI_STATUS)
+        if (STATUS)
         {
             typinf->con         = con;
             typinf->name        = ostrdup(obj_name);
@@ -175,12 +175,12 @@ OCI_TypeInfo * TypeInfoGet
             typinf->struct_size = 0;
             typinf->align       = 0;
 
-            OCI_STATUS = MemoryAllocHandle(typinf->con->env, (dvoid **)(void *)&dschp, OCI_HTYPE_DESCRIBE);
+            STATUS = MemoryAllocHandle(typinf->con->env, (dvoid **)(void *)&dschp, OCI_HTYPE_DESCRIBE);
         }
 
         /* perform describe */
 
-        if (OCI_STATUS)
+        if (STATUS)
         {
             otext buffer[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
@@ -193,7 +193,7 @@ OCI_TypeInfo * TypeInfoGet
 
             /* compute full object name */
 
-            if (OCI_STRING_VALID(typinf->schema))
+            if (IS_STRING_VALID(typinf->schema))
             {
                 str = ostrncat(buffer, typinf->schema, max_chars);
                 max_chars -= ostrlen(typinf->schema);
@@ -208,11 +208,11 @@ OCI_TypeInfo * TypeInfoGet
 
             /* set public scope to include synonyms */
                 
-            OCI_SET_ATTRIB(OCI_HTYPE_DESCRIBE, OCI_ATTR_DESC_PUBLIC, dschp, &pbsp, sizeof(pbsp))
+            ATTRIB_SET(OCI_HTYPE_DESCRIBE, OCI_ATTR_DESC_PUBLIC, dschp, &pbsp, sizeof(pbsp))
  
             /* describe call */
 
-            OCI_EXEC
+            EXEC
             (
                 OCIDescribeAny(con->cxt, con->err, (dvoid *) dbstr1,
                                (ub4) dbsize1, OCI_OTYPE_NAME,
@@ -223,17 +223,17 @@ OCI_TypeInfo * TypeInfoGet
 
             /* get parameter handle */
                 
-            OCI_GET_ATTRIB(OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM, dschp, &param_root, NULL)
+            ATTRIB_GET(OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM, dschp, &param_root, NULL)
           
             /* get describe type */
 
-            OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_PTYPE, param_root, &desc_type, NULL)
+            ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_PTYPE, param_root, &desc_type, NULL)
         }
 
         /* on successful describe call, retrieve all information about the object 
            if it is not a synonym */
 
-        if (OCI_STATUS)
+        if (STATUS)
         {
             switch (desc_type)
             {
@@ -244,15 +244,15 @@ OCI_TypeInfo * TypeInfoGet
                     ub1 ist = 0; // Is Sub Type 
                     OCIRef *ref = NULL;
                     
-                    OCI_STATUS = (OCI_TIF_TYPE == type);
+                    STATUS = (OCI_TIF_TYPE == type);
 
-                    if (OCI_STATUS)
+                    if (STATUS)
                     {
                         typinf->type = OCI_TIF_TYPE;
 
                         if (OCI_PTYPE_LIST == desc_type)
                         {
-                            OCI_EXEC(OCIParamGet((dvoid *)param_root, OCI_DTYPE_PARAM, con->err, (void**)&param_type, (ub4)0))
+                            EXEC(OCIParamGet((dvoid *)param_root, OCI_DTYPE_PARAM, con->err, (void**)&param_type, (ub4)0))
                         }
                         else
                         {
@@ -261,26 +261,26 @@ OCI_TypeInfo * TypeInfoGet
 
                         /* get the object type descriptor */
 
-                        OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_REF_TDO, param_type, &ref, NULL)
+                        ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_REF_TDO, param_type, &ref, NULL)
 
-                        OCI_EXEC(OCITypeByRef(typinf->con->env, con->err, ref, OCI_DURATION_SESSION, OCI_TYPEGET_ALL, &typinf->tdo))
+                        EXEC(OCITypeByRef(typinf->con->env, con->err, ref, OCI_DURATION_SESSION, OCI_TYPEGET_ALL, &typinf->tdo))
 
                         /* check if the type is not final, e.g. can be inherited */
 
-                        OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_IS_FINAL_TYPE, param_type, &typinf->is_final, NULL)
+                        ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_IS_FINAL_TYPE, param_type, &typinf->is_final, NULL)
 
                         /* check if it's system predefined type if order to avoid the next call that is not allowed on system types */
 
-                        OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_IS_PREDEFINED_TYPE, param_type, &pdt, NULL)
+                        ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_IS_PREDEFINED_TYPE, param_type, &pdt, NULL)
 
                         if (!pdt)
                         {
-                            OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_TYPECODE, param_type, &typinf->typecode, NULL)
+                            ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_TYPECODE, param_type, &typinf->typecode, NULL)
                         }
 
                         /* check if the type is a subtype derived from a super type */
 
-                        OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_IS_SUBTYPE, param_type, &ist, NULL)
+                        ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_IS_SUBTYPE, param_type, &ist, NULL)
 
                         if (ist)
                         {
@@ -294,11 +294,11 @@ OCI_TypeInfo * TypeInfoGet
 
                             /* get super type schema and name */
 
-                            OCI_STATUS = OCI_STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
+                            STATUS = STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                               OCI_ATTR_SUPERTYPE_SCHEMA_NAME, 
                                                                               &sp_schema_name, &size_schema);
                     
-                            OCI_STATUS = OCI_STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
+                            STATUS = STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                               OCI_ATTR_SUPERTYPE_NAME, 
                                                                               &sp_object_name, &size_object);
 
@@ -315,7 +315,7 @@ OCI_TypeInfo * TypeInfoGet
                             MemoryFree (sp_schema_name);
                             MemoryFree (sp_object_name);
 
-                            OCI_STATUS = (NULL != typinf->parent_type);
+                            STATUS = (NULL != typinf->parent_type);
                         }
 
                         switch (typinf->typecode)
@@ -338,12 +338,12 @@ OCI_TypeInfo * TypeInfoGet
                                 ptype      = OCI_DESC_COLLECTION;
                                 param_cols = param_type;
 
-                                OCI_GET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_COLLECTION_TYPECODE, param_type, &typinf->colcode, NULL)
+                                ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_COLLECTION_TYPECODE, param_type, &typinf->colcode, NULL)
                                 break;
                             }  
                             default:
                             {
-                                OCI_STATUS = FALSE;
+                                STATUS = FALSE;
                                 ExceptionDatatypeNotSupported(con, NULL, typinf->typecode);
                                 break;
                             }
@@ -358,10 +358,10 @@ OCI_TypeInfo * TypeInfoGet
                 case OCI_PTYPE_TABLE_ALIAS:
             #endif
                 {
-                    OCI_STATUS = (((OCI_TIF_TABLE == type) && (OCI_PTYPE_VIEW != desc_type)) ||
+                    STATUS = (((OCI_TIF_TABLE == type) && (OCI_PTYPE_VIEW != desc_type)) ||
                                   ((OCI_TIF_VIEW  == type) && (OCI_PTYPE_VIEW == desc_type)));
  
-                    if (OCI_STATUS)
+                    if (STATUS)
                     {
                         typinf->type = (OCI_PTYPE_VIEW == desc_type ? OCI_TIF_VIEW : OCI_TIF_TABLE);
                         attr_type    = OCI_ATTR_LIST_COLUMNS;
@@ -386,13 +386,13 @@ OCI_TypeInfo * TypeInfoGet
 
                     /* get link schema, object and database link names */
 
-                    OCI_STATUS = OCI_STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
+                    STATUS = STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                       OCI_ATTR_SCHEMA_NAME, &syn_schema_name, &size_schema);
                     
-                    OCI_STATUS = OCI_STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
+                    STATUS = STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                       OCI_ATTR_NAME, &syn_object_name, &size_object);
  
-                    OCI_STATUS = OCI_STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
+                    STATUS = STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
                                                                          OCI_ATTR_LINK, &syn_link_name, &size_link);
 
                     /* compute link full name */
@@ -411,7 +411,7 @@ OCI_TypeInfo * TypeInfoGet
                     
                     /* do we have a valid object ? */
 
-                    OCI_STATUS = (NULL != syn_typinf);
+                    STATUS = (NULL != syn_typinf);
 
                     break;
                 }
@@ -419,22 +419,22 @@ OCI_TypeInfo * TypeInfoGet
 
             /*  did we handle a supported object other than a synonym */
 
-            if (OCI_STATUS && (OCI_UNKNOWN != ptype))
+            if (STATUS && (OCI_UNKNOWN != ptype))
             {
                 /* retrieve the columns parameter if not already retrieved */
                 if (param_list)
                 {
-                    OCI_GET_ATTRIB(OCI_DTYPE_PARAM, attr_type, param_list, &param_cols, NULL)
-                    OCI_GET_ATTRIB(OCI_DTYPE_PARAM, num_type, param_list, &typinf->nb_cols, NULL)
+                    ATTRIB_GET(OCI_DTYPE_PARAM, attr_type, param_list, &param_cols, NULL)
+                    ATTRIB_GET(OCI_DTYPE_PARAM, num_type, param_list, &typinf->nb_cols, NULL)
                 }
 
                 /* allocates memory for cached offsets */
 
                 if (typinf->nb_cols > 0)
                 {
-                    OCI_ALLOCATE_DATA(OCI_IPC_ARRAY, typinf->offsets, typinf->nb_cols)
+                    ALLOC_DATA(OCI_IPC_ARRAY, typinf->offsets, typinf->nb_cols)
 
-                    if (OCI_STATUS)
+                    if (STATUS)
                     {
                         memset(typinf->offsets, -1, sizeof(*typinf->offsets) * typinf->nb_cols);
                     }
@@ -444,17 +444,17 @@ OCI_TypeInfo * TypeInfoGet
 
                 if (typinf->nb_cols > 0)
                 {
-                    OCI_ALLOCATE_DATA(OCI_IPC_COLUMN, typinf->cols, typinf->nb_cols)
+                    ALLOC_DATA(OCI_IPC_COLUMN, typinf->cols, typinf->nb_cols)
 
                     /* describe children */
-                    if (OCI_STATUS)
+                    if (STATUS)
                     {
                         for (ub2 i = 0; i < typinf->nb_cols; i++)
                         {
-                            OCI_STATUS = OCI_STATUS && ColumnRetrieveInfo(&typinf->cols[i], con, NULL, param_cols, i + 1, ptype);
-                            OCI_STATUS = OCI_STATUS && ColumnMapInfo(&typinf->cols[i], NULL);
+                            STATUS = STATUS && ColumnRetrieveInfo(&typinf->cols[i], con, NULL, param_cols, i + 1, ptype);
+                            STATUS = STATUS && ColumnMapInfo(&typinf->cols[i], NULL);
 
-                            if (!OCI_STATUS)
+                            if (!STATUS)
                             {
                                 break;
                             }
@@ -462,7 +462,7 @@ OCI_TypeInfo * TypeInfoGet
                     }
                     else
                     {
-                        OCI_STATUS = FALSE;
+                        STATUS = FALSE;
                     }
                 }
             }
@@ -475,7 +475,7 @@ OCI_TypeInfo * TypeInfoGet
 
     /* increment type info reference counter on success */
 
-    if (typinf && OCI_STATUS)
+    if (typinf && STATUS)
     {
         typinf->refcount++;
 
@@ -485,24 +485,24 @@ OCI_TypeInfo * TypeInfoGet
         {
             ExceptionTypeInfoWrongType(con, name);
 
-            OCI_STATUS = FALSE;
+            STATUS = FALSE;
         }
     }
         
     /* handle errors */
 
-    if (!OCI_STATUS || syn_typinf)
+    if (!STATUS || syn_typinf)
     {
         TypeInfoFree(typinf);
     }
 
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
-        OCI_RETVAL = syn_typinf ? syn_typinf : typinf;
+        RETVAL = syn_typinf ? syn_typinf : typinf;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -514,9 +514,9 @@ boolean TypeInfoFree
     OCI_TypeInfo *typinf
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CTX_SET_FROM_CON(typinf->con)
 
     typinf->refcount--;
 
@@ -526,12 +526,12 @@ boolean TypeInfoFree
 
         TypeInfoDispose(typinf);
 
-        OCI_FREE(typinf)
+        FREE(typinf)
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -543,7 +543,7 @@ unsigned int TypeInfoGetType
     OCI_TypeInfo *typinf
 )
 {
-    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_TYPE_INFO, typinf, type, typinf->con, NULL, typinf->con->err)
+    GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_TYPE_INFO, typinf, type, typinf->con, NULL, typinf->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -555,7 +555,7 @@ OCI_Connection * TypeInfoGetConnection
     OCI_TypeInfo *typinf
 )
 {
-    OCI_GET_PROP(OCI_Connection*, NULL, OCI_IPC_TYPE_INFO, typinf, con, typinf->con, NULL, typinf->con->err)
+    GET_PROP(OCI_Connection*, NULL, OCI_IPC_TYPE_INFO, typinf, con, typinf->con, NULL, typinf->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -567,7 +567,7 @@ unsigned int TypeInfoGetColumnCount
     OCI_TypeInfo *typinf
 )
 {
-    OCI_GET_PROP(unsigned int, 0, OCI_IPC_TYPE_INFO, typinf, nb_cols, typinf->con, NULL, typinf->con->err)
+    GET_PROP(unsigned int, 0, OCI_IPC_TYPE_INFO, typinf, nb_cols, typinf->con, NULL, typinf->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -580,14 +580,14 @@ OCI_Column * TypeInfoGetColumn
     unsigned int  index
 )
 {
-    OCI_CALL_ENTER(OCI_Column *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CALL_CHECK_BOUND(typinf->con, index, 1,  typinf->nb_cols)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
+    CALL_ENTER(OCI_Column *, NULL)
+    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CHECK_BOUND(typinf->con, index, 1,  typinf->nb_cols)
+    CTX_SET_FROM_CON(typinf->con)
 
-    OCI_RETVAL = &(typinf->cols[index - 1]);
+    RETVAL = &(typinf->cols[index - 1]);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -599,7 +599,7 @@ const otext * TypeInfoGetName
     OCI_TypeInfo *typinf
 )
 {
-    OCI_GET_PROP(const otext*, NULL, OCI_IPC_TYPE_INFO, typinf, name, typinf->con, NULL, typinf->con->err)
+    GET_PROP(const otext*, NULL, OCI_IPC_TYPE_INFO, typinf, name, typinf->con, NULL, typinf->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -611,7 +611,7 @@ boolean TypeInfoIsFinalType
     OCI_TypeInfo *typinf
 )
 {
-    OCI_GET_PROP(boolean, TRUE, OCI_IPC_TYPE_INFO, typinf, is_final, typinf->con, NULL, typinf->con->err)
+    GET_PROP(boolean, TRUE, OCI_IPC_TYPE_INFO, typinf, is_final, typinf->con, NULL, typinf->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -623,5 +623,5 @@ OCI_TypeInfo* TypeInfoGetSuperType
     OCI_TypeInfo *typinf
 )
 {
-    OCI_GET_PROP(OCI_TypeInfo*, NULL, OCI_IPC_TYPE_INFO, typinf, parent_type, typinf->con, NULL, typinf->con->err)
+    GET_PROP(OCI_TypeInfo*, NULL, OCI_IPC_TYPE_INFO, typinf, parent_type, typinf->con, NULL, typinf->con->err)
 }

@@ -22,7 +22,7 @@
 
 #include "exception.h"
 #include "interval.h"
-#include "macro.h"
+#include "macros.h"
 #include "number.h"
 #include "reference.h"
 #include "timestamp.h"
@@ -45,7 +45,7 @@ int FormatParseSql
     otext *pb       = buf;
     const otext *pf = format;
 
-    OCI_CHECK(NULL == format, 0);
+    CHECK(NULL == format, 0);
 
     for (; *pf; pf++)
     {
@@ -83,7 +83,7 @@ int FormatParseSql
             {
                 const otext *str = (const otext *) va_arg(*pargs, const otext *);
 
-                if (OCI_STRING_VALID(str))
+                if (IS_STRING_VALID(str))
                 {
                     len = (int) ostrlen(str);
 

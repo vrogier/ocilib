@@ -20,7 +20,7 @@
 
 #include "list.h"
 
-#include "macro.h"
+#include "macros.h"
 #include "memory.h"
 #include "mutex.h"
 
@@ -69,7 +69,7 @@ OCI_Item * ListCreateItem
 
         if (!item->data)
         {
-            OCI_FREE(item)
+            FREE(item)
         }
     }
 
@@ -97,13 +97,13 @@ OCI_List* ListCreate
     {
         list->type = type;
 
-        if (OCI_LIB_THREADED)
+        if (LIB_THREADED)
         {
             list->mutex = MutexCreateInternal();
 
             if (!list->mutex)
             {
-                OCI_FREE(list)
+                FREE(list)
             }
         }
     }
@@ -122,7 +122,7 @@ boolean ListFree
 {
     boolean res = TRUE;
 
-    OCI_CHECK(NULL == list,  FALSE)
+    CHECK(NULL == list,  FALSE)
 
     ListClear(list);
 
@@ -131,7 +131,7 @@ boolean ListFree
         res = MutexFree(list->mutex);
     }
 
-    OCI_FREE(list)
+    FREE(list)
 
     return res;
 }
@@ -149,11 +149,11 @@ void * ListAppend
     OCI_Item *item = NULL;
     OCI_Item *temp = NULL;
 
-    OCI_CHECK(NULL == list,  NULL);
+    CHECK(NULL == list,  NULL);
 
     item = ListCreateItem(list->type, size);
 
-    OCI_CHECK(NULL == item, FALSE)
+    CHECK(NULL == item, FALSE)
 
     if (list->mutex)
     {
@@ -197,7 +197,7 @@ boolean ListClear
 {
     OCI_Item *item = NULL;
 
-    OCI_CHECK(NULL == list,  FALSE)
+    CHECK(NULL == list,  FALSE)
 
     if (list->mutex)
     {
@@ -216,8 +216,8 @@ boolean ListClear
 
         /* free data */
 
-        OCI_FREE(temp->data)
-        OCI_FREE(temp)
+        FREE(temp->data)
+        FREE(temp)
     }
 
     list->head  = NULL;
@@ -241,8 +241,8 @@ boolean ListForEach
     POCI_LIST_FOR_EACH proc
 )
 {
-    OCI_CHECK(NULL == list, FALSE)
-    OCI_CHECK(NULL == proc, FALSE)
+    CHECK(NULL == list, FALSE)
+    CHECK(NULL == proc, FALSE)
 
     LIST_FOR_EACH(proc(item->data))
 
@@ -260,8 +260,8 @@ boolean ListForEachWithParam
     POCI_LIST_FOR_EACH_WITH_PARAM proc
 )
 {
-    OCI_CHECK(NULL == list, FALSE)
-    OCI_CHECK(NULL == proc, FALSE)
+    CHECK(NULL == list, FALSE)
+    CHECK(NULL == proc, FALSE)
 
     LIST_FOR_EACH(proc(item->data, param))
 
@@ -282,8 +282,8 @@ boolean ListRemove
     OCI_Item *item  = NULL;
     OCI_Item *temp  = NULL;
 
-    OCI_CHECK(NULL == list,  FALSE)
-    OCI_CHECK(NULL == data, FALSE)
+    CHECK(NULL == list,  FALSE)
+    CHECK(NULL == data, FALSE)
 
     if (list->mutex)
     {
@@ -311,7 +311,7 @@ boolean ListRemove
                 list->head = item->next;
             }
 
-            OCI_FREE(item)
+            FREE(item)
 
             break;
         }
@@ -345,7 +345,7 @@ boolean ListExists
 {
     boolean found = FALSE;
 
-    OCI_CHECK(NULL == list, FALSE)
+    CHECK(NULL == list, FALSE)
 
     LIST_FOR_EACH
     (
@@ -372,8 +372,8 @@ void * ListFind
 {
     void * result = NULL;
 
-    OCI_CHECK(NULL == list, NULL)
-    OCI_CHECK(NULL == proc, NULL)
+    CHECK(NULL == list, NULL)
+    CHECK(NULL == proc, NULL)
 
     LIST_FOR_EACH
     (

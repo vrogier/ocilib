@@ -310,19 +310,10 @@
     <ClInclude Include="..\..\include\ocilib.h">
       <Filter>Headers %28Public%29</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\checks.h">
-      <Filter>Headers %28Core%29</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\defs.h">
       <Filter>Headers %28Core%29</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\helpers.h">
-      <Filter>Headers %28Core%29</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\loader.h">
-      <Filter>Headers %28Core%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\macro.h">
       <Filter>Headers %28Core%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\import.h">
@@ -333,6 +324,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\reference.h">
       <Filter>Headers %28Private%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\macros.h">
+      <Filter>Headers %28Core%29</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

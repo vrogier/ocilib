@@ -25,7 +25,7 @@
 #include "error.h"
 #include "format.h"
 #include "list.h"
-#include "macro.h"
+#include "macros.h"
 #include "statement.h"
 #include "strings.h"
 #include "timestamp.h"
@@ -48,7 +48,7 @@ static const unsigned int TimeoutTypeValues[] =
     OCI_NTO_CALL
 };
 
-#define OCI_SET_TRACE(prop)                                              \
+#define SET_TRACE(prop)                                                  \
     con->trace->prop[0] = 0;                                             \
     if (value)                                                           \
     {                                                                    \
@@ -56,8 +56,8 @@ static const unsigned int TimeoutTypeValues[] =
         str = con->trace->prop;                                          \
     }
 
-#define OCI_GET_TRACE(prop)                                              \
-    OCI_RETVAL = con->trace->prop[0] ? con->trace->prop : NULL;
+#define GET_TRACE(prop)                                                 \
+    RETVAL = con->trace->prop[0] ? con->trace->prop : NULL;
 
 /* --------------------------------------------------------------------------------------------- *
  * ConnectionDetachSubscriptions
@@ -90,14 +90,14 @@ OCI_Connection * ConnectionAllocate
 {
     OCI_Connection *con  = NULL;
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
     /* create connection object */
 
     con = ListAppend(OCILib.cons, sizeof(*con));
-    OCI_STATUS = (NULL != con);
+    STATUS = (NULL != con);
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         con->alloc_handles = (0 == (mode & OCI_SESSION_XA));
 
@@ -105,21 +105,21 @@ OCI_Connection * ConnectionAllocate
 
         con->stmts = ListCreate(OCI_IPC_STATEMENT);
 
-        if (OCI_STATUS)
+        if (STATUS)
         {
             con->tinfs = ListCreate(OCI_IPC_TYPE_INFO);
-            OCI_STATUS = (NULL != con->tinfs);
+            STATUS = (NULL != con->tinfs);
         }
 
-        if (OCI_STATUS)
+        if (STATUS)
         {
             con->trsns = ListCreate(OCI_IPC_TRANSACTION);
-            OCI_STATUS = (NULL != con->trsns);
+            STATUS = (NULL != con->trsns);
         }
 
         /* set attributes */
 
-        if (OCI_STATUS)
+        if (STATUS)
         {
             con->mode     = mode;
             con->pool     = pool;
@@ -156,7 +156,7 @@ OCI_Connection * ConnectionAllocate
 
                 memset(dbname, 0, sizeof(dbname));
 
-                if (OCI_STRING_VALID(con->db))
+                if (IS_STRING_VALID(con->db))
                 {
                     StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));
                 }
@@ -176,17 +176,17 @@ OCI_Connection * ConnectionAllocate
                 con->env = OCILib.env;
             }
 
-            OCI_STATUS = (NULL != con->env);
+            STATUS = (NULL != con->env);
         }
 
         /*  allocate error handle */
 
-        OCI_STATUS = OCI_STATUS && MemoryAllocHandle((dvoid *)con->env, (dvoid **)(void *)&con->err, OCI_HTYPE_ERROR);
+        STATUS = STATUS && MemoryAllocHandle((dvoid *)con->env, (dvoid **)(void *)&con->err, OCI_HTYPE_ERROR);
     }
 
     /* update internal status */
 
-    if (OCI_STATUS && con)
+    if (STATUS && con)
     {
         con->cstate = OCI_CONN_ALLOCATED;
     }
@@ -208,8 +208,8 @@ boolean ConnectionDeallocate
     OCI_Connection *con
 )
 {
-    OCI_CHECK(NULL == con, FALSE)
-    OCI_CHECK(con->cstate != OCI_CONN_ALLOCATED, FALSE)
+    CHECK(NULL == con, FALSE)
+    CHECK(con->cstate != OCI_CONN_ALLOCATED, FALSE)
 
     /* close error handle */
 
@@ -242,12 +242,12 @@ boolean ConnectionAttach
     OCI_Connection *con
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == con, FALSE)
-    OCI_CHECK(con->cstate != OCI_CONN_ALLOCATED, FALSE)
+    CHECK(NULL == con, FALSE)
+    CHECK(con->cstate != OCI_CONN_ALLOCATED, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con);
+    CTX_SET_FROM_CON(con);
 
     /* allocate server handle for non session pooled connection */
 
@@ -257,7 +257,7 @@ boolean ConnectionAttach
         dbtext *dbstr  = NULL;
         int     dbsize = -1;
 
-        OCI_STATUS = MemoryAllocHandle((dvoid *) con->env, (dvoid **) (void *) &con->svr, OCI_HTYPE_SERVER);
+        STATUS = MemoryAllocHandle((dvoid *) con->env, (dvoid **) (void *) &con->svr, OCI_HTYPE_SERVER);
 
         /* attach server handle to service name */
 
@@ -276,19 +276,19 @@ boolean ConnectionAttach
             dbstr = StringGetDBString(con->db, &dbsize);
         }
 
-        OCI_EXEC(OCIServerAttach(con->svr, con->err, (OraText *)dbstr, (sb4)dbsize, cmode));
+        EXEC(OCIServerAttach(con->svr, con->err, (OraText *)dbstr, (sb4)dbsize, cmode));
 
         StringReleaseDBString(dbstr);
     }
 
     /* handle errors */
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         con->cstate = OCI_CONN_ATTACHED;
     }
 
-    return OCI_STATUS;
+    return STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -300,18 +300,18 @@ boolean ConnectionDetach
     OCI_Connection *con
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == con, FALSE)
-    OCI_CHECK(con->cstate != OCI_CONN_ATTACHED, FALSE)
+    CHECK(NULL == con, FALSE)
+    CHECK(con->cstate != OCI_CONN_ATTACHED, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con);
+    CTX_SET_FROM_CON(con);
 
     if (con->alloc_handles && con->svr)
     {
         /* detach from the oracle server */
 
-        OCI_EXEC(OCIServerDetach(con->svr, con->err, OCI_DEFAULT));
+        EXEC(OCIServerDetach(con->svr, con->err, OCI_DEFAULT));
 
         /* close server handle */
 
@@ -322,12 +322,12 @@ boolean ConnectionDetach
 
     /* update internal status */
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         con->cstate = OCI_CONN_ALLOCATED;
     }
 
-    return OCI_STATUS;
+    return STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -346,27 +346,27 @@ void ConnectionLogonXA
 
     memset(dbname, 0, sizeof(dbname));
 
-    if (OCI_STRING_VALID(con->db))
+    if (IS_STRING_VALID(con->db))
     {
         StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));
     }
 
     con->cxt = xaoSvcCtx((OraText *) (dbname[0] ? dbname : NULL ));
-    OCI_STATUS = (NULL != con->cxt);
+    STATUS = (NULL != con->cxt);
 
-    OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL)
-    OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL)
-    OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, &dbstr_user, &dbsize_user)
+    ATTRIB_GET(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL)
+    ATTRIB_GET(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL)
+    ATTRIB_GET(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, &dbstr_user, &dbsize_user)
 
     if (NULL == con->ses)
     {
-        OCI_STATUS = FALSE;
+        STATUS = FALSE;
         ExceptionConnFromXaString(con->db);
     }
 
-    if (OCI_STATUS && dbstr_user)
+    if (STATUS && dbstr_user)
     {
-        OCI_FREE(con->user)
+        FREE(con->user)
 
         con->user = StringDuplicateFromDBString(dbstr_user, dbcharcount(dbsize_user));
     }
@@ -393,11 +393,11 @@ void ConnectionLogonRegular
 
     /* set context server attribute */
 
-    OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, con->svr, sizeof(con->svr));
+    ATTRIB_SET(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, con->svr, sizeof(con->svr));
 
     /* modify user password if needed */
 
-    if (OCI_STRING_VALID(new_pwd))
+    if (IS_STRING_VALID(new_pwd))
     {
         int dbsize1 = -1;
         int dbsize2 = -1;
@@ -411,9 +411,9 @@ void ConnectionLogonRegular
         dbstr2 = StringGetDBString(con->pwd, &dbsize2);
         dbstr3 = StringGetDBString(new_pwd, &dbsize3);
 
-        OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, con->ses, sizeof(con->ses));
+        ATTRIB_SET(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, con->ses, sizeof(con->ses));
 
-        OCI_EXEC
+        EXEC
         (
             OCIPasswordChange(con->cxt, con->err, (OraText *)dbstr1, (ub4)dbsize1,
                               (OraText *)dbstr2, (ub4)dbsize2,
@@ -424,9 +424,9 @@ void ConnectionLogonRegular
         StringReleaseDBString(dbstr2);
         StringReleaseDBString(dbstr3);
 
-        if (OCI_STATUS)
+        if (STATUS)
         {
-            OCI_FREE(con->pwd)
+            FREE(con->pwd)
             con->pwd = ostrdup(new_pwd);
         }
     }
@@ -437,24 +437,24 @@ void ConnectionLogonRegular
 
         /* set session login attribute */
 
-        if (OCI_STATUS && OCI_STRING_VALID(con->user))
+        if (STATUS && IS_STRING_VALID(con->user))
         {
             dbsize = -1;
             dbstr  = StringGetDBString(con->user, &dbsize);
 
-            OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, dbstr, dbsize);
+            ATTRIB_SET(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, dbstr, dbsize);
 
             StringReleaseDBString(dbstr);
         }
 
         /* set session password attribute */
 
-        if (OCI_STATUS && OCI_STRING_VALID(con->pwd))
+        if (STATUS && IS_STRING_VALID(con->pwd))
         {
             dbsize = -1;
             dbstr  = StringGetDBString(con->pwd, &dbsize);
 
-            OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_PASSWORD, con->ses, dbstr, dbsize);
+            ATTRIB_SET(OCI_HTYPE_SESSION, OCI_ATTR_PASSWORD, con->ses, dbstr, dbsize);
 
             StringReleaseDBString(dbstr);
         }
@@ -463,7 +463,7 @@ void ConnectionLogonRegular
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
-        if (OCI_STATUS && (OCILib.version_runtime >= OCI_11_1))
+        if (STATUS && (OCILib.version_runtime >= OCI_11_1))
         {
             otext driver_version[OCI_SIZE_FORMAT];
 
@@ -478,7 +478,7 @@ void ConnectionLogonRegular
             dbsize = -1;
             dbstr = StringGetDBString(driver_version, &dbsize);
 
-            OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_DRIVER_NAME, con->ses, dbstr, dbsize);
+            ATTRIB_SET(OCI_HTYPE_SESSION, OCI_ATTR_DRIVER_NAME, con->ses, dbstr, dbsize);
 
             StringReleaseDBString(dbstr);
         }
@@ -487,12 +487,12 @@ void ConnectionLogonRegular
 
         /* start session */
 
-        if (OCI_STATUS)
+        if (STATUS)
         {
             ub4 credt = OCI_CRED_RDBMS;
             ub4 mode  = con->mode;
 
-            if (!OCI_STRING_VALID(con->user) && !OCI_STRING_VALID(con->pwd))
+            if (!IS_STRING_VALID(con->user) && !IS_STRING_VALID(con->pwd))
             {
                 credt = OCI_CRED_EXT;
             }
@@ -510,11 +510,11 @@ void ConnectionLogonRegular
 
             /* start session */
 
-            OCI_EXEC(OCISessionBegin(con->cxt, con->err, con->ses, credt, mode));
+            EXEC(OCISessionBegin(con->cxt, con->err, con->ses, credt, mode));
 
-            OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, con->ses, sizeof(con->ses));
+            ATTRIB_SET(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, con->ses, sizeof(con->ses));
 
-            if (OCI_STATUS)
+            if (STATUS)
             {
                 if (!(con->mode & OCI_PRELIM_AUTH))
                 {
@@ -526,7 +526,7 @@ void ConnectionLogonRegular
                     {
                         /* start transaction */
 
-                        OCI_STATUS = TransactionStart(trs);
+                        STATUS = TransactionStart(trs);
                     }
                 }
             }
@@ -569,24 +569,24 @@ void ConnectionLogonSessionPool
         sess_mode |= OCI_SESSGET_SYSDBA;
     }
 
-    if (!OCI_STRING_VALID(con->pool->user) && !OCI_STRING_VALID(con->pool->pwd))
+    if (!IS_STRING_VALID(con->pool->user) && !IS_STRING_VALID(con->pool->pwd))
     {
         sess_mode |= OCI_SESSGET_CREDEXT;
     }
 
-    if (OCI_STRING_VALID(con->pool->name))
+    if (IS_STRING_VALID(con->pool->name))
     {
         dbsize = -1;
         dbstr  = StringGetDBString(con->pool->name, &dbsize);
     }
 
-    if (OCI_STRING_VALID(tag))
+    if (IS_STRING_VALID(tag))
     {
         dbsize_tag = -1;
         dbstr_tag  = StringGetDBString(tag, &dbsize_tag);
     }
 
-    OCI_EXEC
+    EXEC
     (
         OCISessionGet(con->env, con->err, &con->cxt, NULL,
                       (OraText  *)dbstr, (ub4)dbsize, (OraText *)dbstr_tag, dbsize_tag,
@@ -596,10 +596,10 @@ void ConnectionLogonSessionPool
     StringReleaseDBString(dbstr);
     StringReleaseDBString(dbstr_tag);
 
-    OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL)
-    OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL)
+    ATTRIB_GET(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL)
+    ATTRIB_GET(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL)
 
-    if (OCI_STATUS && found)
+    if (STATUS && found)
     {
         ConnectionSetSessionTag(con, tag);
     }
@@ -616,11 +616,11 @@ boolean ConnectionLogon
     const otext    *tag
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == con, FALSE)
+    CHECK(NULL == con, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con);
+    CTX_SET_FROM_CON(con);
 
 #if OCI_VERSION_COMPILE < OCI_9_2
 
@@ -660,7 +660,7 @@ boolean ConnectionLogon
 
     /* check for success */
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         /* get server version */
 
@@ -669,7 +669,7 @@ boolean ConnectionLogon
         con->cstate = OCI_CONN_LOGGED;
     }
 
-    return OCI_STATUS;
+    return STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -686,7 +686,7 @@ void ConnectionLogoffRegular
 
     if  (con->cxt && con->err && con->ses)
     {
-        OCI_EXEC(OCISessionEnd(con->cxt, con->err, con->ses, (ub4)OCI_DEFAULT));
+        EXEC(OCISessionEnd(con->cxt, con->err, con->ses, (ub4)OCI_DEFAULT));
 
         /* close session handle */
 
@@ -746,7 +746,7 @@ void ConnectionLogoffSessionPool
             mode   = OCI_SESSRLS_RETAG;
         }
 
-        OCI_EXEC(OCISessionRelease(con->cxt, con->err, (OraText*)dbstr, (ub4)dbsize, mode));
+        EXEC(OCISessionRelease(con->cxt, con->err, (OraText*)dbstr, (ub4)dbsize, mode));
  
         StringReleaseDBString(dbstr);
 
@@ -767,12 +767,12 @@ boolean ConnectionLogOff
     OCI_Connection *con
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == con, FALSE)
-    OCI_CHECK(con->cstate != OCI_CONN_LOGGED, FALSE)
+    CHECK(NULL == con, FALSE)
+    CHECK(con->cstate != OCI_CONN_LOGGED, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con);
+    CTX_SET_FROM_CON(con);
 
     /* close opened files */
 
@@ -832,12 +832,12 @@ boolean ConnectionLogOff
 
     /* update internal status */
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         con->cstate = OCI_CONN_ATTACHED;
     }
 
-    return OCI_STATUS;
+    return STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -852,7 +852,7 @@ boolean ConnectionDispose
     OCI_Error   *err = NULL;
     unsigned int i   = 0;
 
-    OCI_CHECK(NULL == con, FALSE)
+    CHECK(NULL == con, FALSE)
 
     /* clear connection reference from current error object */
 
@@ -883,24 +883,24 @@ boolean ConnectionDispose
 
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
-        OCI_FREE(con->formats[i])
+        FREE(con->formats[i])
     }
 
-    OCI_FREE(con->ver_str)
-    OCI_FREE(con->sess_tag)
-    OCI_FREE(con->db_name)
-    OCI_FREE(con->inst_name)
-    OCI_FREE(con->service_name)
-    OCI_FREE(con->server_name)
-    OCI_FREE(con->db_name)
-    OCI_FREE(con->domain_name)
-    OCI_FREE(con->trace)
+    FREE(con->ver_str)
+    FREE(con->sess_tag)
+    FREE(con->db_name)
+    FREE(con->inst_name)
+    FREE(con->service_name)
+    FREE(con->server_name)
+    FREE(con->db_name)
+    FREE(con->domain_name)
+    FREE(con->trace)
 
     if (!con->pool)
     {
-        OCI_FREE(con->db)
-        OCI_FREE(con->user)
-        OCI_FREE(con->pwd)
+        FREE(con->db)
+        FREE(con->user)
+        FREE(con->pwd)
     }
 
     if (con->inst_startup)
@@ -982,14 +982,14 @@ OCI_Connection * ConnectionCreate
     unsigned int mode
 )
 {
-    OCI_CALL_ENTER(OCI_Connection *, NULL)
-    OCI_CALL_CHECK_INITIALIZED()
-    OCI_CALL_CHECK_XA_ENABLED(mode)
+    CALL_ENTER(OCI_Connection *, NULL)
+    CHECK_INITIALIZED()
+    CHECK_XA_ENABLED(mode)
 
-    OCI_RETVAL = ConnectionCreateInternal(NULL, db, user, pwd, mode, NULL);
-    OCI_STATUS = (NULL != OCI_RETVAL);
+    RETVAL = ConnectionCreateInternal(NULL, db, user, pwd, mode, NULL);
+    STATUS = (NULL != RETVAL);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1001,16 +1001,16 @@ boolean ConnectionFree
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
-    OCI_RETVAL = OCI_STATUS = ConnectionDispose(con);
+    RETVAL = STATUS = ConnectionDispose(con);
 
     ListRemove(OCILib.cons, con);
-    OCI_FREE(con)
+    FREE(con)
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1022,15 +1022,15 @@ boolean ConnectionCommit
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
-    OCI_EXEC(OCITransCommit(con->cxt, con->err, (ub4)OCI_DEFAULT));
+    EXEC(OCITransCommit(con->cxt, con->err, (ub4)OCI_DEFAULT));
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
  }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1042,15 +1042,15 @@ boolean ConnectionRollback
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
-    OCI_EXEC(OCITransRollback(con->cxt, con->err, (ub4)OCI_DEFAULT));
+    EXEC(OCITransRollback(con->cxt, con->err, (ub4)OCI_DEFAULT));
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1063,7 +1063,7 @@ boolean ConnectionSetAutoCommit
     boolean         enable
 )
 {
-    OCI_SET_PROP(boolean, OCI_IPC_CONNECTION, con, autocom, enable, con, NULL, con->err)
+    SET_PROP(boolean, OCI_IPC_CONNECTION, con, autocom, enable, con, NULL, con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1075,7 +1075,7 @@ boolean ConnectionGetAutoCommit
     OCI_Connection *con
 )
 {
-    OCI_GET_PROP(boolean, FALSE, OCI_IPC_CONNECTION, con, autocom, con, NULL, con->err)
+    GET_PROP(boolean, FALSE, OCI_IPC_CONNECTION, con, autocom, con, NULL, con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1090,15 +1090,15 @@ boolean ConnectionIsConnected
     ub4 status  = 0;
     ub4 size    = (ub4) sizeof(status);
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
-    OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_SERVER_STATUS, con->svr, &status, &size)
+    ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_SERVER_STATUS, con->svr, &status, &size)
 
-    OCI_RETVAL = (status == OCI_SERVER_NORMAL);
+    RETVAL = (status == OCI_SERVER_NORMAL);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1110,12 +1110,12 @@ void * ConnectionGetUserData
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(void*, NULL)
-    OCI_CALL_CHECK_INITIALIZED()
+    CALL_ENTER(void*, NULL)
+    CHECK_INITIALIZED()
 
-    OCI_RETVAL = (void*) (con ? con->usrdata : OCILib.usrdata);
+    RETVAL = (void*) (con ? con->usrdata : OCILib.usrdata);
     
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1128,8 +1128,8 @@ boolean ConnectionSetUserData
     void           *data
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_INITIALIZED()
+    CALL_ENTER(boolean, FALSE)
+    CHECK_INITIALIZED()
 
     if (con)
     {
@@ -1140,9 +1140,9 @@ boolean ConnectionSetUserData
         OCILib.usrdata = data;
     }
 
-    OCI_RETVAL = TRUE;
+    RETVAL = TRUE;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1155,18 +1155,18 @@ boolean ConnectionSetSessionTag
     const otext    *tag
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
-    OCI_FREE(con->sess_tag)
+    FREE(con->sess_tag)
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
     if (tag && con->pool && (OCI_HTYPE_SPOOL == con->pool->htype))
     {
         con->sess_tag = ostrdup(tag);
-        OCI_STATUS = (NULL != con->sess_tag);
+        STATUS = (NULL != con->sess_tag);
     }
 
 #else
@@ -1175,9 +1175,9 @@ boolean ConnectionSetSessionTag
 
 #endif
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1189,7 +1189,7 @@ const otext * ConnectionGetSessionTag
     OCI_Connection *con
 )
 {
-    OCI_GET_PROP(const otext*, NULL, OCI_IPC_CONNECTION, con, sess_tag, con, NULL, con->err)
+    GET_PROP(const otext*, NULL, OCI_IPC_CONNECTION, con, sess_tag, con, NULL, con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1201,7 +1201,7 @@ const otext * ConnectionGetConnectionString
     OCI_Connection *con
 )
 {
-    OCI_GET_PROP(const otext*, NULL, OCI_IPC_CONNECTION, con, db, con, NULL, con->err)
+    GET_PROP(const otext*, NULL, OCI_IPC_CONNECTION, con, db, con, NULL, con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1213,7 +1213,7 @@ const otext * ConnectionGetUserName
     OCI_Connection *con
 )
 {
-    OCI_GET_PROP(const otext*, NULL, OCI_IPC_CONNECTION, con, user, con, NULL, con->err)
+    GET_PROP(const otext*, NULL, OCI_IPC_CONNECTION, con, user, con, NULL, con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1225,7 +1225,7 @@ const otext * ConnectionGetPassword
     OCI_Connection *con
 )
 {
-    OCI_GET_PROP(const otext*, NULL, OCI_IPC_CONNECTION, con, pwd, con, NULL, con->err)
+    GET_PROP(const otext*, NULL, OCI_IPC_CONNECTION, con, pwd, con, NULL, con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1238,15 +1238,15 @@ boolean ConnectionSetPassword
     const otext    *password
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
+    CALL_ENTER(boolean, FALSE)
 
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, password)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, password)
+    CTX_SET_FROM_CON(con)
 
     if (OCI_CONN_LOGGED != con->cstate)
     {
-        OCI_STATUS = ConnectionLogon(con, password, NULL);
+        STATUS = ConnectionLogon(con, password, NULL);
     }
     else
     {
@@ -1258,7 +1258,7 @@ boolean ConnectionSetPassword
         dbtext *dbstr2 = StringGetDBString(con->pwd, &dbsize2);
         dbtext *dbstr3 = StringGetDBString(password, &dbsize3);
 
-        OCI_EXEC
+        EXEC
         (
             OCIPasswordChange(con->cxt, con->err,
                               (OraText *) dbstr1, (ub4) dbsize1,
@@ -1272,9 +1272,9 @@ boolean ConnectionSetPassword
         StringReleaseDBString(dbstr3);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1286,7 +1286,7 @@ unsigned int ConnectionGetSessionMode
     OCI_Connection *con
 )
 {
-    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_CONNECTION, con, mode, con, NULL, con->err)
+    GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_CONNECTION, con, mode, con, NULL, con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1298,9 +1298,9 @@ const otext * ConnectionGetServerVersion
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(const otext *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(const otext *, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
     /* no version available in preliminary authentication mode */
 
@@ -1310,9 +1310,9 @@ const otext * ConnectionGetServerVersion
         dbtext *dbstr   = NULL;
         ub4     version = 0;
 
-        OCI_ALLOCATE_DATA(OCI_IPC_STRING, con->ver_str, OCI_SIZE_BUFFER + 1)
+        ALLOC_DATA(OCI_IPC_STRING, con->ver_str, OCI_SIZE_BUFFER + 1)
 
-        if (OCI_STATUS)
+        if (STATUS)
         {    
             dbstr = StringGetDBString(con->ver_str, &dbsize);
 
@@ -1320,21 +1320,21 @@ const otext * ConnectionGetServerVersion
    
             if (OCILib.version_runtime >= OCI_18_1)
             {
-                OCI_EXEC(OCIServerRelease2((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX, &version, OCI_DEFAULT))
+                EXEC(OCIServerRelease2((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX, &version, OCI_DEFAULT))
             }
             else
 
         #endif
             
             {
-                OCI_EXEC(OCIServerVersion((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX))
+                EXEC(OCIServerVersion((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX))
             }
 
             StringCopyDBStringToNativeString(dbstr, con->ver_str, dbcharcount(dbsize));
             StringReleaseDBString(dbstr);            
         }
 
-        if (OCI_STATUS)
+        if (STATUS)
         {
             int ver_maj = 0, ver_min = 0, ver_rev = 0;
 
@@ -1366,7 +1366,7 @@ const otext * ConnectionGetServerVersion
                         (*(p + (size_t) 1) != 0) &&
                         (*(p + (size_t) 1) == OTEXT('.') || (*(p + (size_t) 2) == OTEXT('.') )))
                     {
-                        if (OCI_NB_ARG_VERSION == osscanf(p, OTEXT("%d.%d.%d"),
+                        if (NB_ARG_VERSION == osscanf(p, OTEXT("%d.%d.%d"),
                                                             (int *) &ver_maj,
                                                             (int *) &ver_min,
                                                             (int *) &ver_rev))
@@ -1381,13 +1381,13 @@ const otext * ConnectionGetServerVersion
         }
         else
         {
-            OCI_FREE(con->ver_str)
+            FREE(con->ver_str)
         }
     }
 
-    OCI_RETVAL = (const otext*)con->ver_str;
+    RETVAL = (const otext*)con->ver_str;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1399,18 +1399,18 @@ unsigned int ConnectionGetServerMajorVersion
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(unsigned int, OCI_UNKNOWN)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
     if (OCI_UNKNOWN == con->ver_num)
     {
         ConnectionGetServerVersion(con);
     }
 
-    OCI_RETVAL = (unsigned int) OCI_VER_MAJ(con->ver_num);
+    RETVAL = (unsigned int) OCI_VER_MAJ(con->ver_num);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1422,18 +1422,18 @@ unsigned int ConnectionGetServerMinorVersion
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(unsigned int, OCI_UNKNOWN)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
     if (OCI_UNKNOWN == con->ver_num)
     {
         ConnectionGetServerVersion(con);
     }
 
-    OCI_RETVAL = (unsigned int) OCI_VER_MIN(con->ver_num);
+    RETVAL = (unsigned int) OCI_VER_MIN(con->ver_num);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1445,18 +1445,18 @@ unsigned int ConnectionGetServerRevisionVersion
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(unsigned int, OCI_UNKNOWN)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
     if (OCI_UNKNOWN == con->ver_num)
     {
         ConnectionGetServerVersion(con);
     }
 
-    OCI_RETVAL = (unsigned int) OCI_VER_REV(con->ver_num);
+    RETVAL = (unsigned int) OCI_VER_REV(con->ver_num);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1468,7 +1468,7 @@ OCI_Transaction * ConnectionGetTransaction
     OCI_Connection *con
 )
 {
-    OCI_GET_PROP(OCI_Transaction*, NULL, OCI_IPC_CONNECTION, con, trs, con, NULL, con->err)
+    GET_PROP(OCI_Transaction*, NULL, OCI_IPC_CONNECTION, con, trs, con, NULL, con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1481,26 +1481,26 @@ boolean ConnectionSetTransaction
     OCI_Transaction *trans
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
+    CTX_SET_FROM_CON(con)
 
     if (con->trs)
     {
-        OCI_STATUS = TransactionStop(con->trs);
+        STATUS = TransactionStop(con->trs);
     }
 
-    OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_TRANS, con->cxt, trans->htr, sizeof(trans->htr));
+    ATTRIB_SET(OCI_HTYPE_SVCCTX, OCI_ATTR_TRANS, con->cxt, trans->htr, sizeof(trans->htr));
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         con->trs = trans;
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1512,15 +1512,15 @@ unsigned int ConnectionGetVersion
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(unsigned int, OCI_UNKNOWN)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
     /* return the minimum supported version */
   
-    OCI_RETVAL = ConnectionGetMinSupportedVersion(con);
+    RETVAL = ConnectionGetMinSupportedVersion(con);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1532,15 +1532,15 @@ boolean ConnectionBreak
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
-    OCI_EXEC(OCIBreak((dvoid *) con->cxt, con->err))
+    EXEC(OCIBreak((dvoid *) con->cxt, con->err))
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1555,17 +1555,17 @@ boolean ConnectionEnableServerOutput
     unsigned int    lnsize
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
     /* initialize the output buffer on server side */
 
-    OCI_ALLOCATE_DATA(OCI_IPC_SERVER_OUPUT, con->svopt, 1)
+    ALLOC_DATA(OCI_IPC_SERVER_OUPUT, con->svopt, 1)
 
     /* allocation internal buffer if needed */
 
-    if (OCI_STATUS && !con->svopt->arrbuf)
+    if (STATUS && !con->svopt->arrbuf)
     {
         const unsigned int charsize = sizeof(otext);
 
@@ -1585,58 +1585,58 @@ boolean ConnectionEnableServerOutput
 
         /* allocate internal string (line) array */
 
-        OCI_ALLOCATE_BUFFER(OCI_IPC_STRING, con->svopt->arrbuf, (con->svopt->lnsize + 1) * charsize, con->svopt->arrsize)
+        ALLOC_BUFFER(OCI_IPC_STRING, con->svopt->arrbuf, (con->svopt->lnsize + 1) * charsize, con->svopt->arrsize)
     }
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         if (!con->svopt->stmt)
         {
             con->svopt->stmt = StatementCreate(con);
-            OCI_STATUS = (NULL != con->svopt->stmt);
+            STATUS = (NULL != con->svopt->stmt);
         }
 
         if (con->svopt->stmt)
         {
             /* enable server output */
 
-            OCI_STATUS = StatementPrepare(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.ENABLE(:n); END;"));
+            STATUS = StatementPrepare(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.ENABLE(:n); END;"));
 
-            OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(con->svopt->stmt, OTEXT(":n"), &bufsize);
+            STATUS = STATUS && StatementBindUnsignedInt(con->svopt->stmt, OTEXT(":n"), &bufsize);
 
             if (0 == bufsize)
             {
-                OCI_STATUS = OCI_STATUS && BindSetNull(StatementGetBind(con->svopt->stmt, 1));
+                STATUS = STATUS && BindSetNull(StatementGetBind(con->svopt->stmt, 1));
             }
 
-            OCI_STATUS = OCI_STATUS && StatementExecute(con->svopt->stmt);
+            STATUS = STATUS && StatementExecute(con->svopt->stmt);
 
             /* prepare the retrieval statement call */
 
-            if (OCI_STATUS)
+            if (STATUS)
             {
                 con->svopt->cursize = con->svopt->arrsize;
             }
 
-            OCI_STATUS = OCI_STATUS && StatementPrepare(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.GET_LINES(:s, :i); END;"));
+            STATUS = STATUS && StatementPrepare(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.GET_LINES(:s, :i); END;"));
 
-            OCI_STATUS = OCI_STATUS && StatementBindArrayOfStrings(con->svopt->stmt, OTEXT(":s"),
+            STATUS = STATUS && StatementBindArrayOfStrings(con->svopt->stmt, OTEXT(":s"),
                                                                   (otext *) con->svopt->arrbuf,
                                                                   con->svopt->lnsize,
                                                                   con->svopt->arrsize);
 
-            OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(con->svopt->stmt, OTEXT(":i"), &con->svopt->cursize);
+            STATUS = STATUS && StatementBindUnsignedInt(con->svopt->stmt, OTEXT(":i"), &con->svopt->cursize);
         }
     }
 
-    if (!OCI_STATUS)
+    if (!STATUS)
     {
        ConnectionDisableServerOutput(con);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1648,13 +1648,13 @@ boolean ConnectionDisableServerOutput
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
     if (con->svopt)
     {
-        OCI_STATUS = StatementExecuteStmt(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.DISABLE(); END;"));
+        STATUS = StatementExecuteStmt(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.DISABLE(); END;"));
 
         if (con->svopt->stmt)
         {
@@ -1662,13 +1662,13 @@ boolean ConnectionDisableServerOutput
             con->svopt->stmt = NULL;
         }
 
-        OCI_FREE(con->svopt->arrbuf)
-        OCI_FREE(con->svopt)
+        FREE(con->svopt->arrbuf)
+        FREE(con->svopt)
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1680,28 +1680,28 @@ const otext * ConnectionGetServerOutput
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(const otext *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(const otext *, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
     if (con->svopt)
     {
         if (0 == con->svopt->curpos || con->svopt->curpos >= con->svopt->cursize)
         {
             con->svopt->cursize = con->svopt->arrsize;
-            OCI_STATUS = StatementExecute(con->svopt->stmt);
+            STATUS = StatementExecute(con->svopt->stmt);
             con->svopt->curpos = 0;
         }
 
-        if (OCI_STATUS && (con->svopt->cursize > 0))
+        if (STATUS && (con->svopt->cursize > 0))
         {
             const unsigned int charsize = sizeof(otext);
 
-            OCI_RETVAL = (const otext*)(con->svopt->arrbuf + (size_t)(((con->svopt->lnsize + 1) * charsize) * con->svopt->curpos++));
+            RETVAL = (const otext*)(con->svopt->arrbuf + (size_t)(((con->svopt->lnsize + 1) * charsize) * con->svopt->curpos++));
         }
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1718,14 +1718,14 @@ boolean ConnectionSetTrace
     const otext *str = NULL;
     ub4 attrib = OCI_UNKNOWN;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_ENUM_VALUE(con, NULL, trace, TraceTypeValues, OTEXT("Trace Type"))
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_ENUM_VALUE(con, NULL, trace, TraceTypeValues, OTEXT("Trace Type"))
+    CTX_SET_FROM_CON(con)
 
     /* allocate trace info structure only if trace functions are used */
 
-    OCI_ALLOCATE_DATA(OCI_IPC_TRACE_INFO, con->trace, 1)
+    ALLOC_DATA(OCI_IPC_TRACE_INFO, con->trace, 1)
 
     /* set trace properties */
 
@@ -1738,7 +1738,7 @@ boolean ConnectionSetTrace
             #if OCI_VERSION_COMPILE >= OCI_10_1
                 attrib = OCI_ATTR_CLIENT_IDENTIFIER;
             #endif
-                OCI_SET_TRACE(identifier)
+                SET_TRACE(identifier)
                 break;
             }
             case OCI_TRC_MODULE:
@@ -1746,7 +1746,7 @@ boolean ConnectionSetTrace
             #if OCI_VERSION_COMPILE >= OCI_10_1
                 attrib = OCI_ATTR_MODULE;
             #endif
-                OCI_SET_TRACE(module)
+                SET_TRACE(module)
                 break;
             }
             case OCI_TRC_ACTION:
@@ -1754,7 +1754,7 @@ boolean ConnectionSetTrace
             #if OCI_VERSION_COMPILE >= OCI_10_1
                 attrib = OCI_ATTR_ACTION;
             #endif
-                OCI_SET_TRACE(action)
+                SET_TRACE(action)
                 break;
             }
             case OCI_TRC_DETAIL:
@@ -1762,7 +1762,7 @@ boolean ConnectionSetTrace
             #if OCI_VERSION_COMPILE >= OCI_10_1
                 attrib = OCI_ATTR_CLIENT_INFO;
             #endif
-                OCI_SET_TRACE(info)
+                SET_TRACE(info)
                 break;
             }
             case OCI_TRC_OPERATION:
@@ -1770,7 +1770,7 @@ boolean ConnectionSetTrace
 #if OCI_VERSION_COMPILE >= OCI_12_1
                 attrib = OCI_ATTR_DBOP;
 #endif
-                OCI_SET_TRACE(operation)
+                SET_TRACE(operation)
            break;
             }
         }
@@ -1780,7 +1780,7 @@ boolean ConnectionSetTrace
 
     /* On success, we give the value to Oracle to record it in system views */
 
-    if (OCI_STATUS && attrib != OCI_UNKNOWN)
+    if (STATUS && attrib != OCI_UNKNOWN)
     {
         dbtext *dbstr  = NULL;
         int     dbsize = 0;
@@ -1791,16 +1791,16 @@ boolean ConnectionSetTrace
             dbstr  = StringGetDBString(str, &dbsize);
         }
 
-        OCI_SET_ATTRIB(OCI_HTYPE_SESSION, attrib, con->ses, dbstr, dbsize);
+        ATTRIB_SET(OCI_HTYPE_SESSION, attrib, con->ses, dbstr, dbsize);
 
         StringReleaseDBString(dbstr);
     }
 
 #endif
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1813,10 +1813,10 @@ const otext * ConnectionGetTrace
     unsigned int    trace
 )
 {
-    OCI_CALL_ENTER(const otext *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_ENUM_VALUE(con, NULL, trace, TraceTypeValues, OTEXT("Trace Type"))
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(const otext *, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_ENUM_VALUE(con, NULL, trace, TraceTypeValues, OTEXT("Trace Type"))
+    CTX_SET_FROM_CON(con)
 
     if (con->trace)
     {
@@ -1824,33 +1824,33 @@ const otext * ConnectionGetTrace
         {
             case OCI_TRC_IDENTITY:
             {
-                OCI_GET_TRACE(identifier)
+                GET_TRACE(identifier)
                 break;
             }
             case OCI_TRC_MODULE:
             {
-                OCI_GET_TRACE(module)
+                GET_TRACE(module)
                 break;
             }
             case OCI_TRC_ACTION:
             {
-                OCI_GET_TRACE(action)
+                GET_TRACE(action)
                 break;
             }
             case OCI_TRC_DETAIL:
             {
-                OCI_GET_TRACE(info)
+                GET_TRACE(info)
                 break;
             }
             case OCI_TRC_OPERATION:
             {
-                OCI_GET_TRACE(operation)
+                GET_TRACE(operation)
                 break;
             }
         }
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1862,22 +1862,22 @@ boolean ConnectionPing
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(boolean , FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean , FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     if (OCILib.version_runtime >= OCI_10_2)
     {
-        OCI_EXEC(OCIPing(con->cxt, con->err, (ub4)OCI_DEFAULT))
+        EXEC(OCIPing(con->cxt, con->err, (ub4)OCI_DEFAULT))
 
-        OCI_RETVAL = OCI_STATUS;
+        RETVAL = STATUS;
     }
 
 #endif
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1893,10 +1893,10 @@ boolean ConnectionSetTimeout
 {
     ub4 timeout = value;
 
-    OCI_CALL_ENTER(boolean , FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_ENUM_VALUE(con, FALSE, type, TimeoutTypeValues, OTEXT("timeout type"))
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean , FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_ENUM_VALUE(con, FALSE, type, TimeoutTypeValues, OTEXT("timeout type"))
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -1906,14 +1906,14 @@ boolean ConnectionSetTimeout
         {
             case OCI_NTO_SEND:
             {
-                OCI_SET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_SEND_TIMEOUT, con->svr, &timeout, sizeof(timeout))
-                OCI_RETVAL = OCI_STATUS;
+                ATTRIB_SET(OCI_HTYPE_SERVER, OCI_ATTR_SEND_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+                RETVAL = STATUS;
                 break;
             }
             case OCI_NTO_RECEIVE:
             {
-                OCI_SET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
-                OCI_RETVAL = OCI_STATUS;
+                ATTRIB_SET(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+                RETVAL = STATUS;
                 break;
             }
 
@@ -1923,8 +1923,8 @@ boolean ConnectionSetTimeout
             {
                 if (OCILib.version_runtime >= OCI_18_1)
                 {
-                    OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
-                    OCI_RETVAL = OCI_STATUS;
+                    ATTRIB_SET(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
+                    RETVAL = STATUS;
                 }
                 break;
             }
@@ -1936,7 +1936,7 @@ boolean ConnectionSetTimeout
 
 #endif
 
-    OCI_CALL_EXIT()    
+    CALL_EXIT()    
 }
 
 
@@ -1952,10 +1952,10 @@ unsigned int ConnectionGetTimeout
 {
     ub4 timeout = 0;
 
-    OCI_CALL_ENTER(unsigned int, 0)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_ENUM_VALUE(con, 0, type, TimeoutTypeValues, OTEXT("timeout type"))
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(unsigned int, 0)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_ENUM_VALUE(con, 0, type, TimeoutTypeValues, OTEXT("timeout type"))
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -1965,12 +1965,12 @@ unsigned int ConnectionGetTimeout
         {
             case OCI_NTO_SEND:
             {
-                OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_SEND_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+                ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_SEND_TIMEOUT, con->svr, &timeout, sizeof(timeout))
                 break;
             }
             case OCI_NTO_RECEIVE:
             {
-                OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
+                ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT, con->svr, &timeout, sizeof(timeout))
                  break;
             }
 
@@ -1980,7 +1980,7 @@ unsigned int ConnectionGetTimeout
             {
                 if (OCILib.version_runtime >= OCI_18_3)
                 {
-                    OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
+                    ATTRIB_GET(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
                 }
                 break;
             }
@@ -1992,9 +1992,9 @@ unsigned int ConnectionGetTimeout
 
 #endif
 
-    OCI_RETVAL = timeout;
+    RETVAL = timeout;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2006,9 +2006,9 @@ const otext * ConnectionGetDatabaseName
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(const otext *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(const otext *, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2016,14 +2016,14 @@ const otext * ConnectionGetDatabaseName
     {
         unsigned int size = 0;
         
-        OCI_STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBNAME, &con->db_name, &size);
+        STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBNAME, &con->db_name, &size);
     }
 
 #endif
 
-    OCI_RETVAL = (const otext *) con->db_name;
+    RETVAL = (const otext *) con->db_name;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2035,9 +2035,9 @@ const otext * ConnectionGetInstanceName
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(const otext *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(const otext *, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2045,14 +2045,14 @@ const otext * ConnectionGetInstanceName
     {
         unsigned int size = 0;
         
-        OCI_STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_INSTNAME, &con->inst_name, &size);
+        STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_INSTNAME, &con->inst_name, &size);
     }
 
 #endif
 
-    OCI_RETVAL = (const otext *)con->inst_name;
+    RETVAL = (const otext *)con->inst_name;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2064,9 +2064,9 @@ const otext * ConnectionGetServiceName
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(const otext *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(const otext *, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2074,14 +2074,14 @@ const otext * ConnectionGetServiceName
     {
         unsigned int size = 0;
         
-        OCI_STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_SERVICENAME, &con->service_name, &size);
+        STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_SERVICENAME, &con->service_name, &size);
     }
 
 #endif
 
-    OCI_RETVAL = (const otext *)con->service_name;
+    RETVAL = (const otext *)con->service_name;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2093,9 +2093,9 @@ const otext * ConnectionGetServerName
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(const otext *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(const otext *, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2103,14 +2103,14 @@ const otext * ConnectionGetServerName
     {
         unsigned int size = 0;
         
-        OCI_STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_HOSTNAME, &con->server_name, &size);
+        STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_HOSTNAME, &con->server_name, &size);
     }
 
 #endif
 
-    OCI_RETVAL = (const otext *)con->server_name;
+    RETVAL = (const otext *)con->server_name;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2122,9 +2122,9 @@ const otext * ConnectionGetDomainName
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(const otext *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(const otext *, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2132,14 +2132,14 @@ const otext * ConnectionGetDomainName
     {
         unsigned int size = 0;
         
-        OCI_STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBDOMAIN, &con->domain_name, &size);
+        STATUS = StringGetAttribute(con, con->svr, OCI_HTYPE_SERVER, OCI_ATTR_DBDOMAIN, &con->domain_name, &size);
     }
 
 #endif
 
-    OCI_RETVAL = (const otext *)con->domain_name;
+    RETVAL = (const otext *)con->domain_name;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2151,9 +2151,9 @@ OCI_Timestamp * ConnectionGetInstanceStartTime
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(OCI_Timestamp*, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(OCI_Timestamp*, NULL)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2161,16 +2161,16 @@ OCI_Timestamp * ConnectionGetInstanceStartTime
     {
         OCIDateTime *handle = NULL;
 
-        OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_INSTSTARTTIME, con->svr, &handle, NULL);
+        ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_INSTSTARTTIME, con->svr, &handle, NULL);
         con->inst_startup = TimestampInitialize(con, NULL, handle, OCI_TIMESTAMP);
-        OCI_STATUS = OCI_STATUS && (NULL != con->inst_startup);
+        STATUS = STATUS && (NULL != con->inst_startup);
     }
 
 #endif
 
-    OCI_RETVAL = con->inst_startup;
+    RETVAL = con->inst_startup;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2184,22 +2184,22 @@ boolean ConnectionIsTAFCapable
 {
     boolean value = FALSE;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     if (OCILib.version_runtime >= OCI_10_2)
     {
-        OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_TAF_ENABLED, con->svr, &value, NULL);
+        ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_TAF_ENABLED, con->svr, &value, NULL);
     }
 
 #endif
 
-    OCI_RETVAL = value;
+    RETVAL = value;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2212,15 +2212,15 @@ boolean ConnectionSetTAFHandler
     POCI_TAF_HANDLER handler
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
-    OCI_RETVAL = ConnectionIsTAFCapable(con);
+    RETVAL = ConnectionIsTAFCapable(con);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    if (OCI_RETVAL && OCILib.version_runtime >= OCI_10_2)
+    if (RETVAL && OCILib.version_runtime >= OCI_10_2)
     {
         OCIFocbkStruct fo_struct;
 
@@ -2234,14 +2234,14 @@ boolean ConnectionSetTAFHandler
             fo_struct.fo_ctx            = (dvoid *) con;
         }
 
-        OCI_SET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_FOCBK, con->svr, &fo_struct, 0);
+        ATTRIB_SET(OCI_HTYPE_SERVER, OCI_ATTR_FOCBK, con->svr, &fo_struct, 0);
     }
 
 #endif
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2255,22 +2255,22 @@ unsigned int ConnectionGetStatementCacheSize
 {
     ub4 cache_size = 0;
 
-    OCI_CALL_ENTER(unsigned int, 0)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(unsigned int, 0)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
     if (OCILib.version_runtime >= OCI_9_2)
     {
-        OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_STMTCACHESIZE, con->cxt, &cache_size, NULL);
+        ATTRIB_GET(OCI_HTYPE_SVCCTX, OCI_ATTR_STMTCACHESIZE, con->cxt, &cache_size, NULL);
     }
 
 #endif
 
-    OCI_RETVAL = cache_size;
+    RETVAL = cache_size;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2285,15 +2285,15 @@ boolean ConnectionSetStatementCacheSize
 {
     ub4 cache_size = value;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
     if (OCILib.version_runtime >= OCI_9_2)
     {
-        OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_STMTCACHESIZE, con->cxt, &cache_size, sizeof(cache_size));
+        ATTRIB_SET(OCI_HTYPE_SVCCTX, OCI_ATTR_STMTCACHESIZE, con->cxt, &cache_size, sizeof(cache_size));
     }
 
 #else
@@ -2302,9 +2302,9 @@ boolean ConnectionSetStatementCacheSize
 
 #endif
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2318,22 +2318,22 @@ unsigned int ConnectionGetDefaultLobPrefetchSize
 {
     ub4 prefetch_size = 0;
 
-    OCI_CALL_ENTER(unsigned int, 0)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(unsigned int, 0)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
     if (ConnectionIsVersionSupported(con, OCI_11_1))
     {
-        OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE, con->ses, &prefetch_size, NULL);
+        ATTRIB_GET(OCI_HTYPE_SESSION, OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE, con->ses, &prefetch_size, NULL);
     }
 
 #endif
 
-    OCI_RETVAL = prefetch_size;
+    RETVAL = prefetch_size;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2348,15 +2348,15 @@ boolean ConnectionSetDefaultLobPrefetchSize
 {
     ub4 prefetch_size = value;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
     if (ConnectionIsVersionSupported(con, OCI_11_1))
     {
-        OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE, con->ses, &prefetch_size, sizeof(prefetch_size));
+        ATTRIB_SET(OCI_HTYPE_SESSION, OCI_ATTR_DEFAULT_LOBPREFETCH_SIZE, con->ses, &prefetch_size, sizeof(prefetch_size));
     }
 
 #else
@@ -2365,9 +2365,9 @@ boolean ConnectionSetDefaultLobPrefetchSize
 
 #endif
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2381,22 +2381,22 @@ unsigned int ConnectionGetMaxCursors
 {
     ub4 max_cursors = 0;
 
-    OCI_CALL_ENTER(unsigned int, 0)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(unsigned int, 0)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CTX_SET_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
     if (ConnectionIsVersionSupported(con, OCI_12_1))
     {
-        OCI_GET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_MAX_OPEN_CURSORS, con->ses, &max_cursors, NULL);
+        ATTRIB_GET(OCI_HTYPE_SESSION, OCI_ATTR_MAX_OPEN_CURSORS, con->ses, &max_cursors, NULL);
     }
 
 #endif
 
-    OCI_RETVAL = max_cursors;
+    RETVAL = max_cursors;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2412,33 +2412,33 @@ boolean ConnectionExecuteImmediate
 {
     OCI_Statement *stmt = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, sql)
+    CTX_SET_FROM_CON(con)
 
     /* First, execute SQL */
 
     stmt = StatementCreate(con);
-    OCI_STATUS = (NULL != stmt);
+    STATUS = (NULL != stmt);
     
-    if (OCI_STATUS)
+    if (STATUS)
     {
-        OCI_STATUS = StatementExecuteStmt(stmt, sql);
+        STATUS = StatementExecuteStmt(stmt, sql);
 
         /* get resultset and set up variables */
 
-        if (OCI_STATUS && (OCI_CST_SELECT == StatementGetStatementType(stmt)))
+        if (STATUS && (OCI_CST_SELECT == StatementGetStatementType(stmt)))
         {
-            OCI_STATUS = StatementFetchIntoUserVariables(stmt, args);
+            STATUS = StatementFetchIntoUserVariables(stmt, args);
         }
 
         StatementFree(stmt);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2457,18 +2457,18 @@ boolean ConnectionExecuteImmediateFmt
     va_list first_pass_args;
     va_list second_pass_args;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, sql)
+    CTX_SET_FROM_CON(con)
 
     va_copy(first_pass_args, args);
     va_copy(second_pass_args, args);
 
     stmt = StatementCreate(con);
-    OCI_STATUS = (NULL != stmt);
+    STATUS = (NULL != stmt);
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         int     size = 0;
 
@@ -2482,9 +2482,9 @@ boolean ConnectionExecuteImmediateFmt
 
             otext  *sql_fmt = NULL;
 
-            OCI_ALLOCATE_DATA(OCI_IPC_STRING, sql_fmt, size + 1)
+            ALLOC_DATA(OCI_IPC_STRING, sql_fmt, size + 1)
     
-            if (OCI_STATUS)
+            if (STATUS)
             {
                 /* format buffer */
 
@@ -2492,28 +2492,28 @@ boolean ConnectionExecuteImmediateFmt
                 {
                     /* prepare and execute SQL buffer */
 
-                    OCI_STATUS = StatementPrepareInternal(stmt, sql_fmt) && StatementExecuteInternal(stmt, OCI_DEFAULT);
+                    STATUS = StatementPrepareInternal(stmt, sql_fmt) && StatementExecuteInternal(stmt, OCI_DEFAULT);
 
                     /* get resultset and set up variables */
 
-                    if (OCI_STATUS && (OCI_CST_SELECT == StatementGetStatementType(stmt)))
+                    if (STATUS && (OCI_CST_SELECT == StatementGetStatementType(stmt)))
                     {
-                        OCI_STATUS = StatementFetchIntoUserVariables(stmt, second_pass_args);
+                        STATUS = StatementFetchIntoUserVariables(stmt, second_pass_args);
                     }
                 }
 
-                OCI_FREE(sql_fmt)
+                FREE(sql_fmt)
             }
         }
 
         StatementFree(stmt);
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
     va_end(first_pass_args);
     va_end(second_pass_args);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 

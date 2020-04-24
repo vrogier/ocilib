@@ -20,7 +20,7 @@
 
 #include "mutex.h"
 
-#include "macro.h"
+#include "macros.h"
 #include "memory.h"
 
  /* --------------------------------------------------------------------------------------------- *
@@ -34,24 +34,24 @@ OCI_Mutex * MutexCreateInternal
 {
     OCI_Mutex *mutex = NULL;
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)        
+    DECLARE_CTX(TRUE)        
 
     /* allocate mutex structure */
 
-    OCI_ALLOCATE_DATA(OCI_IPC_MUTEX, mutex, 1)
+    ALLOC_DATA(OCI_IPC_MUTEX, mutex, 1)
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         /* allocate error handle */
 
-        OCI_STATUS = MemoryAllocHandle(OCILib.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR);
+        STATUS = MemoryAllocHandle(OCILib.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR);
 
         /* allocate mutex handle */
 
-        OCI_EXEC(OCIThreadMutexInit(OCILib.env, mutex->err, &mutex->handle))
+        EXEC(OCIThreadMutexInit(OCILib.env, mutex->err, &mutex->handle))
     }
 
-    if (!OCI_STATUS && mutex)
+    if (!STATUS && mutex)
     {
         MutexFree(mutex);
         mutex = NULL;
@@ -69,13 +69,13 @@ OCI_Mutex * MutexCreate
     void
 )
 {
-    OCI_CALL_ENTER(OCI_Mutex*, NULL)
-    OCI_CALL_CHECK_INITIALIZED()
+    CALL_ENTER(OCI_Mutex*, NULL)
+    CHECK_INITIALIZED()
 
-    OCI_RETVAL = MutexCreateInternal();
-    OCI_STATUS = (NULL != OCI_RETVAL);
+    RETVAL = MutexCreateInternal();
+    STATUS = (NULL != RETVAL);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -87,15 +87,15 @@ boolean MutexFree
     OCI_Mutex *mutex
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(mutex->err)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    CTX_SET_FROM_ERR(mutex->err)
 
     /* close mutex handle */
 
     if (mutex->handle)
     {
-        OCI_EXEC(OCIThreadMutexDestroy(OCILib.env, mutex->err, &mutex->handle))
+        EXEC(OCIThreadMutexDestroy(OCILib.env, mutex->err, &mutex->handle))
     }
 
     /* close error handle */
@@ -107,11 +107,11 @@ boolean MutexFree
 
     /* free mutex structure */
 
-    OCI_FREE(mutex)
+    FREE(mutex)
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
     
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -123,15 +123,15 @@ boolean MutexAcquire
     OCI_Mutex *mutex
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(mutex->err)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    CTX_SET_FROM_ERR(mutex->err)
 
-    OCI_EXEC(OCIThreadMutexAcquire(OCILib.env, mutex->err, mutex->handle))
+    EXEC(OCIThreadMutexAcquire(OCILib.env, mutex->err, mutex->handle))
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -143,13 +143,13 @@ boolean MutexRelease
     OCI_Mutex *mutex
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(mutex->err)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    CTX_SET_FROM_ERR(mutex->err)
 
-    OCI_EXEC(OCIThreadMutexRelease(OCILib.env, mutex->err, mutex->handle))
+    EXEC(OCIThreadMutexRelease(OCILib.env, mutex->err, mutex->handle))
  
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }

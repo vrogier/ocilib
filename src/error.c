@@ -20,7 +20,7 @@
 
 #include "error.h"
 
-#include "macro.h"
+#include "macros.h"
 #include "threadkey.h"
 
 /* --------------------------------------------------------------------------------------------- *
@@ -89,7 +89,7 @@ OCI_Error * ErrorGet
 {
     OCI_Error *err = NULL;
 
-    if (OCILib.loaded && OCI_LIB_THREADED)
+    if (OCILib.loaded && LIB_THREADED)
     {
         if (ThreadKeyGet(OCILib.key_errs, (void **)(dvoid *)&err))
         {
@@ -132,7 +132,7 @@ const otext * ErrorGetString
     OCI_Error *err
 )
 {
-    OCI_CHECK(NULL == err, NULL);
+    CHECK(NULL == err, NULL);
 
     return err->str;
 }
@@ -146,7 +146,7 @@ unsigned int ErrorGetType
     OCI_Error *err
 )
 {
-    OCI_CHECK(NULL == err, OCI_UNKNOWN);
+    CHECK(NULL == err, OCI_UNKNOWN);
 
     return err->type;
 }
@@ -160,7 +160,7 @@ int ErrorGetOCICode
     OCI_Error *err
 )
 {
-    OCI_CHECK(NULL == err, OCI_UNKNOWN);
+    CHECK(NULL == err, OCI_UNKNOWN);
 
     return (int) err->sqlcode;
 }
@@ -174,7 +174,7 @@ int ErrorGetInternalCode
     OCI_Error *err
 )
 {
-    OCI_CHECK(NULL == err, 0);
+    CHECK(NULL == err, 0);
 
     return err->libcode;
 }
@@ -188,7 +188,7 @@ OCI_Connection * ErrorGetConnection
     OCI_Error *err
 )
 {
-    OCI_CHECK(NULL == err, NULL);
+    CHECK(NULL == err, NULL);
 
     return err->con;
 }
@@ -202,7 +202,7 @@ OCI_Statement * ErrorGetStatement
     OCI_Error *err
 )
 {
-    OCI_CHECK(NULL == err, NULL);
+    CHECK(NULL == err, NULL);
 
     return err->stmt;
 }
@@ -216,7 +216,7 @@ unsigned int ErrorGetRow
     OCI_Error *err
 )
 {
-    OCI_CHECK(NULL == err, 0);
+    CHECK(NULL == err, 0);
 
     return err->row;
 }

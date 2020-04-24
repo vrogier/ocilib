@@ -24,7 +24,7 @@
 #include "exception.h"
 #include "mutex.h"
 
-#define OCI_MUTEXED_CALL(exp)               \
+#define MUTEXED_CALL(exp)                   \
                                             \
     if (OCILib.mem_mutex)                   \
     {                                       \
@@ -50,11 +50,11 @@ void MemoryUpdateBytes
 {
     if (OCI_IPC_ORACLE == type)
     {
-        OCI_MUTEXED_CALL(OCILib.mem_bytes_oci += size)
+        MUTEXED_CALL(OCILib.mem_bytes_oci += size)
     }
     else
     {
-        OCI_MUTEXED_CALL(OCILib.mem_bytes_lib += size)
+        MUTEXED_CALL(OCILib.mem_bytes_lib += size)
     }
 }
 
@@ -189,7 +189,7 @@ boolean MemoryAllocHandle
 
     if (OCI_SUCCESSFUL(ret))
     {
-        OCI_MUTEXED_CALL(OCILib.nb_hndlp++)
+        MUTEXED_CALL(OCILib.nb_hndlp++)
     }
 
     return OCI_SUCCESSFUL(ret);
@@ -209,7 +209,7 @@ boolean MemoryFreeHandle
 
     if (hndlp)
     {
-        OCI_MUTEXED_CALL(OCILib.nb_hndlp--)
+        MUTEXED_CALL(OCILib.nb_hndlp--)
 
         ret = OCIHandleFree(hndlp, type);
     }
@@ -232,7 +232,7 @@ boolean MemoryAllocDescriptor
 
     if (OCI_SUCCESSFUL(ret))
     {
-        OCI_MUTEXED_CALL(OCILib.nb_descp++)
+        MUTEXED_CALL(OCILib.nb_descp++)
     }
 
     return OCI_SUCCESSFUL(ret);
@@ -272,7 +272,7 @@ boolean MemoryAllocDescriptorArray
 
     if (OCI_SUCCESSFUL(ret))
     {
-        OCI_MUTEXED_CALL(OCILib.nb_descp += nb_elem)
+        MUTEXED_CALL(OCILib.nb_descp += nb_elem)
     }
 
     return OCI_SUCCESSFUL(ret);
@@ -292,7 +292,7 @@ boolean MemoryFreeDescriptor
 
     if (descp)
     {
-        OCI_MUTEXED_CALL(OCILib.nb_descp--)
+        MUTEXED_CALL(OCILib.nb_descp--)
 
         ret = OCIDescriptorFree(descp, type);
     }
@@ -334,7 +334,7 @@ boolean MemoryFreeDescriptorArray
             }
         }
 
-        OCI_MUTEXED_CALL(OCILib.nb_descp -= nb_elem)
+        MUTEXED_CALL(OCILib.nb_descp -= nb_elem)
     }
 
     return OCI_SUCCESSFUL(ret);
@@ -361,7 +361,7 @@ sword MemoryAllocateObject
 
     if (OCI_SUCCESSFUL(ret))
     {
-        OCI_MUTEXED_CALL(OCILib.nb_objinst++)
+        MUTEXED_CALL(OCILib.nb_objinst++)
     }
 
     return ret;
@@ -383,7 +383,7 @@ sword MemoryFreeObject
 
     if (instance)
     {
-        OCI_MUTEXED_CALL(OCILib.nb_objinst--)
+        MUTEXED_CALL(OCILib.nb_objinst--)
 
         ret = OCIObjectFree(env, err, instance, flags);
     }

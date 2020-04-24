@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 
+#include "ocilib.h"
+
 #include "agent.h"
 #include "array.h"
 #include "bind.h"

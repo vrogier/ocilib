@@ -366,7 +366,6 @@
     <ClInclude Include="..\..\src\array.h" />
     <ClInclude Include="..\..\src\bind.h" />
     <ClInclude Include="..\..\src\callback.h" />
-    <ClInclude Include="..\..\src\checks.h" />
     <ClInclude Include="..\..\src\collection.h" />
     <ClInclude Include="..\..\src\column.h" />
     <ClInclude Include="..\..\src\connection.h" />
@@ -384,7 +383,6 @@
     <ClInclude Include="..\..\src\format.h" />
     <ClInclude Include="..\..\src\handle.h" />
     <ClInclude Include="..\..\src\hash.h" />
-    <ClInclude Include="..\..\src\helpers.h" />
     <ClInclude Include="..\..\src\import.h" />
     <ClInclude Include="..\..\src\interval.h" />
     <ClInclude Include="..\..\src\iterator.h" />
@@ -393,7 +391,7 @@
     <ClInclude Include="..\..\src\loader.h" />
     <ClInclude Include="..\..\src\lob.h" />
     <ClInclude Include="..\..\src\long.h" />
-    <ClInclude Include="..\..\src\macro.h" />
+    <ClInclude Include="..\..\src\macros.h" />
     <ClInclude Include="..\..\src\memory.h" />
     <ClInclude Include="..\..\src\message.h" />
     <ClInclude Include="..\..\src\mutex.h" />

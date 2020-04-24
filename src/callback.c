@@ -22,7 +22,7 @@
 
 #include "event.h"
 #include "list.h"
-#include "macro.h"
+#include "macros.h"
 #include "resultset.h"
 #include "strings.h"
 #include "timestamp.h"
@@ -64,8 +64,8 @@ sb4 CallbackInBind
 
     /* check objects and bounds */
 
-    OCI_CHECK(NULL == bnd, OCI_ERROR)
-    OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR)
+    CHECK(NULL == bnd, OCI_ERROR)
+    CHECK(iter >= bnd->buffer.count, OCI_ERROR)
 
     /* indicators must be set to -1 depending on data type,
        so let's do it for all */
@@ -115,7 +115,7 @@ sb4 CallbackOutBind
     OCI_Resultset *rs   = NULL;
     ub4            rows = 0;
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
     /* those checks may be not necessary but they keep away compilers warning
        away if the warning level is set to maximum !
@@ -125,10 +125,10 @@ sb4 CallbackOutBind
 
     /* check objects and bounds */
 
-    OCI_CHECK(NULL == bnd, OCI_ERROR)
-    OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR)
+    CHECK(NULL == bnd, OCI_ERROR)
+    CHECK(iter >= bnd->buffer.count, OCI_ERROR)
 
-    OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
+    CTX_SET_FROM_STMT(bnd->stmt)
 
     /* update statement status */
 
@@ -143,15 +143,15 @@ sb4 CallbackOutBind
 
         /* allocate resultset handles array */
 
-        OCI_ALLOCATE_DATA(OCI_IPC_RESULTSET_ARRAY, bnd->stmt->rsts, bnd->stmt->nb_rs)
+        ALLOC_DATA(OCI_IPC_RESULTSET_ARRAY, bnd->stmt->rsts, bnd->stmt->nb_rs)
 
         /* create resultset as needed */
 
-        if (OCI_STATUS && !bnd->stmt->rsts[iter])
+        if (STATUS && !bnd->stmt->rsts[iter])
         {
-            OCI_GET_ATTRIB(OCI_HTYPE_BIND, OCI_ATTR_ROWS_RETURNED, bnd->buffer.handle, &rows, NULL)
+            ATTRIB_GET(OCI_HTYPE_BIND, OCI_ATTR_ROWS_RETURNED, bnd->buffer.handle, &rows, NULL)
 
-            if (OCI_STATUS)
+            if (STATUS)
             {
                 bnd->stmt->rsts[iter] = ResultsetCreate(bnd->stmt, rows);
 
@@ -163,15 +163,15 @@ sb4 CallbackOutBind
         }
     }
 
-    OCI_CHECK(NULL == bnd->stmt->rsts, OCI_ERROR)
+    CHECK(NULL == bnd->stmt->rsts, OCI_ERROR)
 
     rs = bnd->stmt->rsts[iter];
 
-    OCI_CHECK(NULL == rs, OCI_ERROR)
+    CHECK(NULL == rs, OCI_ERROR)
 
     /* Let's Oracle update its buffers */
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         /* update pointers contents */
 
@@ -201,7 +201,7 @@ sb4 CallbackOutBind
         *rcodep = (ub2   *) NULL;
     }
 
-    return (OCI_STATUS ? OCI_CONTINUE : OCI_ERROR);
+    return (STATUS ? OCI_CONTINUE : OCI_ERROR);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -226,7 +226,7 @@ ub4 CallbackNotifyMessages
     OCI_NOT_USED(subscrhp)
     OCI_NOT_USED(desc)
 
-    OCI_CHECK(NULL == dequeue, OCI_SUCCESS)
+    CHECK(NULL == dequeue, OCI_SUCCESS)
   
     dequeue->callback(dequeue);
     
@@ -250,16 +250,16 @@ ub4 CallbackNotifyChanges
     OCI_Subscription *sub = (OCI_Subscription *)oci_ctx;
     ub4 type = 0;
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
     OCI_NOT_USED(paylen)
     OCI_NOT_USED(payload)
     OCI_NOT_USED(mode)
     OCI_NOT_USED(subscrhp)
 
-    OCI_CHECK(NULL == sub, OCI_SUCCESS)
+    CHECK(NULL == sub, OCI_SUCCESS)
 
-    OCI_CALL_CONTEXT_SET_FROM_ERR(sub->err)
+    CTX_SET_FROM_ERR(sub->err)
 
     EventReset(&sub->event);
 
@@ -271,7 +271,7 @@ ub4 CallbackNotifyChanges
 
     /* get notification type */
 
-    OCI_GET_ATTRIB(OCI_DTYPE_CHDES, OCI_ATTR_CHDES_NFYTYPE, desc, &type, NULL)
+    ATTRIB_GET(OCI_DTYPE_CHDES, OCI_ATTR_CHDES_NFYTYPE, desc, &type, NULL)
 
     switch(type)
     {
@@ -312,7 +312,7 @@ ub4 CallbackNotifyChanges
 
         /* get collection of modified tables */
 
-        OCI_GET_ATTRIB(OCI_DTYPE_CHDES, OCI_ATTR_CHDES_TABLE_CHANGES, desc, &tables, NULL)
+        ATTRIB_GET(OCI_DTYPE_CHDES, OCI_ATTR_CHDES_TABLE_CHANGES, desc, &tables, NULL)
 
         if (tables)
         {
@@ -324,7 +324,7 @@ ub4 CallbackNotifyChanges
 
             /* get number of tables in the collection */
 
-            OCI_EXEC(OCICollSize(sub->env, sub->err, tables, &nb_tables))
+            EXEC(OCICollSize(sub->env, sub->err, tables, &nb_tables))
 
             for (sb4 i = 0; i < nb_tables; i++)
             {
@@ -344,7 +344,7 @@ ub4 CallbackNotifyChanges
 
                 /* get table element */
 
-                OCI_EXEC(OCICollGetElem(sub->env, sub->err,  tables, i, &tbl_exist, (dvoid**) (dvoid*) &tbl_elem, (dvoid**) &tbl_ind))
+                EXEC(OCICollGetElem(sub->env, sub->err,  tables, i, &tbl_exist, (dvoid**) (dvoid*) &tbl_elem, (dvoid**) &tbl_ind))
 
                 /* get table name */
 
@@ -352,7 +352,7 @@ ub4 CallbackNotifyChanges
 
                 /* get table modification type */
 
-                OCI_GET_ATTRIB(OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_OPFLAGS, *tbl_elem, &sub->event.op, NULL)
+                ATTRIB_GET(OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_OPFLAGS, *tbl_elem, &sub->event.op, NULL)
 
                 sub->event.op = sub->event.op & (~OCI_OPCODE_ALLROWS);
                 sub->event.op = sub->event.op & (~OCI_OPCODE_ALLOPS);
@@ -365,7 +365,7 @@ ub4 CallbackNotifyChanges
 
                     /* get collection of modified rows */
 
-                    OCI_GET_ATTRIB(OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_ROW_CHANGES, *tbl_elem, &rows, NULL)
+                    ATTRIB_GET(OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_ROW_CHANGES, *tbl_elem, &rows, NULL)
 
                     if (rows)
                     {
@@ -375,7 +375,7 @@ ub4 CallbackNotifyChanges
 
                         /* get number of rows */
 
-                        OCI_EXEC(OCICollSize(sub->env, sub->err, rows, &nb_rows))
+                        EXEC(OCICollSize(sub->env, sub->err, rows, &nb_rows))
 
                         for (sb4 j = 0; j < nb_rows; j++)
                         {
@@ -388,7 +388,7 @@ ub4 CallbackNotifyChanges
 
                             /* get row element */
 
-                            OCI_EXEC
+                            EXEC
                             (
                                 OCICollGetElem(sub->env, sub->err, rows, j, &row_exist, (dvoid**) (dvoid*) &row_elem, (dvoid**) &row_ind)
                             )
@@ -399,7 +399,7 @@ ub4 CallbackNotifyChanges
 
                             /* get opcode  */
                    
-                            OCI_GET_ATTRIB(OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_OPFLAGS, *row_elem, &sub->event.op, NULL)
+                            ATTRIB_GET(OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_OPFLAGS, *row_elem, &sub->event.op, NULL)
 
                             sub->handler(&sub->event);
                         }
@@ -493,7 +493,7 @@ void CallbackHAEvent
     dvoid     *eventptr
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
     OCI_NOT_USED(evtctx)
 
@@ -510,9 +510,9 @@ void CallbackHAEvent
 
         memset(&params, 0, sizeof(params));
 
-        OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVFIRST, (OCIEvent *)eventptr, &params.srvhp, NULL)
+        ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVFIRST, (OCIEvent *)eventptr, &params.srvhp, NULL)
 
-        while (OCI_STATUS && params.srvhp)
+        while (STATUS && params.srvhp)
         {   
             params.dthp   = NULL;
             params.event  = OCI_HA_STATUS_DOWN;
@@ -520,24 +520,24 @@ void CallbackHAEvent
 
             /* get event timestamp */
 
-            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_TIMESTAMP, params.srvhp, &params.dthp, NULL)
+            ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_HA_TIMESTAMP, params.srvhp, &params.dthp, NULL)
 
             /* get status */
 
-            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_STATUS, params.srvhp, &params.event, NULL)
+            ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_HA_STATUS, params.srvhp, &params.event, NULL)
 
             /* get source */
 
-            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SOURCE, params.srvhp, &params.source, NULL)
+            ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_HA_SOURCE, params.srvhp, &params.source, NULL)
 
             /* notify all related connections */
 
-            if (OCI_STATUS)
+            if (STATUS)
             {
                 ListForEachWithParam(OCILib.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM) ProcHAEventInvoke);
             }
  
-            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT, (OCIEvent *)eventptr, &params.srvhp, NULL)
+            ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT, (OCIEvent *)eventptr, &params.srvhp, NULL)
         }
     }
 

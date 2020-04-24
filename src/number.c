@@ -22,7 +22,7 @@
 
 #include "array.h"
 #include "library.h"
-#include "macro.h"
+#include "macros.h"
 #include "strings.h"
 
 typedef struct MagicNumber
@@ -37,24 +37,24 @@ static const MagicNumber MagicNumbers[] =
     { { 1,   0,   0 }, OTEXT("-~") }
 };
 
-#define OCI_MAGIC_NUMBER_COUNT 2
+#define MAGIC_NUMBER_COUNT 2
 
 
-#define OCI_NUMBER_OPERATION(func)                                                  \
-                                                                                    \
-    OCINumber src_num = { {0} };                                                    \
-                                                                                    \
-    OCI_CALL_ENTER(boolean, FALSE)                                                  \
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)                                      \
-    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)                                           \
-                                                                                    \
-    OCI_STATUS = NumberTranslateValue(number->con, value, type,                     \
-                                       &src_num, OCI_NUM_NUMBER);                   \
-                                                                                    \
-    OCI_EXEC(func(number->err, number->handle, &src_num, number->handle))           \
-                                                                                    \
-    OCI_RETVAL = OCI_STATUS;                                                        \
-    OCI_CALL_EXIT()                                                                 \
+#define NUMBER_OPERATION(func)                                                  \
+                                                                                \
+    OCINumber src_num = { {0} };                                                \
+                                                                                \
+    CALL_ENTER(boolean, FALSE)                                                  \
+    CHECK_PTR(OCI_IPC_NUMBER, number)                                           \
+    CTX_SET_FROM_OBJ(number)                                                    \
+                                                                                \
+    STATUS = NumberTranslateValue(number->con, value, type,                     \
+                                       &src_num, OCI_NUM_NUMBER);               \
+                                                                                \
+    EXEC(func(number->err, number->handle, &src_num, number->handle))           \
+                                                                                \
+    RETVAL = STATUS;                                                            \
+    CALL_EXIT()                                                                 \
 
 
 /* --------------------------------------------------------------------------------------------- *
@@ -122,12 +122,12 @@ boolean NumberTranslateValue
     OCINumber tmp;
     memset(&tmp, 0, sizeof(tmp));
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == in_value, FALSE)
-    OCI_CHECK(NULL == out_value, FALSE)
+    CHECK(NULL == in_value, FALSE)
+    CHECK(NULL == out_value, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CTX_SET_FROM_CON(con)
 
     if (in_type == out_type)
     {
@@ -142,13 +142,13 @@ boolean NumberTranslateValue
         {
             /* OCINumber to double / float */
 
-            OCI_EXEC(OCINumberToReal(ctx->oci_err, in_value, out_size, out_value))
+            EXEC(OCINumberToReal(ctx->oci_err, in_value, out_size, out_value))
         }
         else
         {
             /* OCINumber to integers */
 
-            OCI_EXEC(OCINumberToInt(ctx->oci_err, in_value, out_size, out_sign, out_value))
+            EXEC(OCINumberToInt(ctx->oci_err, in_value, out_size, out_sign, out_value))
         }
     }
     else if (in_type & OCI_NUM_DOUBLE || in_type & OCI_NUM_FLOAT)
@@ -157,7 +157,7 @@ boolean NumberTranslateValue
         {
             /* double / float to OCINumber */
 
-            OCI_EXEC(OCINumberFromReal(ctx->oci_err, in_value, in_size, (OCINumber *)out_value))
+            EXEC(OCINumberFromReal(ctx->oci_err, in_value, in_size, (OCINumber *)out_value))
         }
         else  if (out_type & OCI_NUM_DOUBLE || out_type & OCI_NUM_FLOAT)
         {
@@ -184,13 +184,13 @@ boolean NumberTranslateValue
         {
             /* double / float to integers */
 
-            OCI_EXEC(OCINumberFromReal(ctx->oci_err, in_value, in_size, (OCINumber *)&tmp))
-            OCI_EXEC(OCINumberToInt(ctx->oci_err, &tmp, out_size, out_sign, out_value))
+            EXEC(OCINumberFromReal(ctx->oci_err, in_value, in_size, (OCINumber *)&tmp))
+            EXEC(OCINumberToInt(ctx->oci_err, &tmp, out_size, out_sign, out_value))
         }
     }
     else
     {
-        OCI_EXEC(OCINumberFromInt(ctx->oci_err, in_value, in_size, in_sign, (OCINumber *)&tmp))
+        EXEC(OCINumberFromInt(ctx->oci_err, in_value, in_size, in_sign, (OCINumber *)&tmp))
             
         if (out_type == OCI_NUM_NUMBER)
         {
@@ -202,17 +202,17 @@ boolean NumberTranslateValue
         {
             /* integers to double / float */
 
-            OCI_EXEC(OCINumberToReal(ctx->oci_err, &tmp, out_size, out_value))
+            EXEC(OCINumberToReal(ctx->oci_err, &tmp, out_size, out_value))
         }
         else
         {    
             /* only for conversions between integers with different sizes or sign */
 
-            OCI_EXEC(OCINumberToInt(ctx->oci_err, &tmp, out_size, out_sign, out_value))
+            EXEC(OCINumberToInt(ctx->oci_err, &tmp, out_size, out_sign, out_value))
         }
     }
 
-    return OCI_STATUS;
+    return STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -230,12 +230,12 @@ boolean NumberFromStringInternal
 {
     boolean done = FALSE;
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == out_value, FALSE)
-    OCI_CHECK(NULL == in_value, FALSE)
+    CHECK(NULL == out_value, FALSE)
+    CHECK(NULL == in_value, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CTX_SET_FROM_CON(con)
 
     /* For binary types, perform a C based conversion */
 
@@ -243,12 +243,12 @@ boolean NumberFromStringInternal
     {
         if (type & OCI_NUM_SHORT)
         {
-            OCI_STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_SHORT, (short *)out_value) == 1);
+            STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_SHORT, (short *)out_value) == 1);
             done = TRUE;
         }
         else if (type & OCI_NUM_INT)
         {
-            OCI_STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_INT, (int *)out_value) == 1);
+            STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_INT, (int *)out_value) == 1);
             done = TRUE;
         }
 
@@ -265,12 +265,12 @@ boolean NumberFromStringInternal
 
             if (type & OCI_NUM_DOUBLE)
             {
-                OCI_STATUS = (osscanf(in_value, tmp_fmt, (double *)out_value) == 1);
+                STATUS = (osscanf(in_value, tmp_fmt, (double *)out_value) == 1);
                 done = TRUE;
             }
             else if (type & OCI_NUM_FLOAT)
             {
-                OCI_STATUS = (osscanf(in_value, tmp_fmt, (float *)out_value) == 1);
+                STATUS = (osscanf(in_value, tmp_fmt, (float *)out_value) == 1);
                 done = TRUE;
             }
         }
@@ -283,7 +283,7 @@ boolean NumberFromStringInternal
 
     if (!done)
     {
-        for (int i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
+        for (int i = 0; i < MAGIC_NUMBER_COUNT; i++)
         {
             const MagicNumber *mag_num = &MagicNumbers[i];
 
@@ -291,7 +291,7 @@ boolean NumberFromStringInternal
             {
                 memset(out_value, 0, sizeof(OCINumber));
                 memcpy(out_value, mag_num->number, mag_num->number[0] + 1);
-                OCI_STATUS = done = TRUE;
+                STATUS = done = TRUE;
                 break;
             }
         }
@@ -314,7 +314,7 @@ boolean NumberFromStringInternal
 
             memset(&number, 0, sizeof(number));
 
-            OCI_EXEC
+            EXEC
             (
                 OCINumberFromText(ctx->oci_err, (oratext *) dbstr1, (ub4) dbsize1, (oratext *) dbstr2,
                                    (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
@@ -323,11 +323,11 @@ boolean NumberFromStringInternal
             StringReleaseDBString(dbstr2);
             StringReleaseDBString(dbstr1);
 
-            OCI_STATUS = OCI_STATUS && NumberTranslateValue(con, &number, OCI_NUM_NUMBER, out_value, type);
+            STATUS = STATUS && NumberTranslateValue(con, &number, OCI_NUM_NUMBER, out_value, type);
         }
     }
 
-    return OCI_STATUS;
+    return STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -346,12 +346,12 @@ boolean NumberToStringInternal
 {
     boolean   done = FALSE;
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == out_value, FALSE)
-    OCI_CHECK(NULL == number, FALSE)
+    CHECK(NULL == out_value, FALSE)
+    CHECK(NULL == number, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CTX_SET_FROM_CON(con)
 
     out_value[0] = 0;
 
@@ -414,14 +414,14 @@ boolean NumberToStringInternal
 
     if (!done)
     {
-        for (int i = 0; i < OCI_MAGIC_NUMBER_COUNT; i++)
+        for (int i = 0; i < MAGIC_NUMBER_COUNT; i++)
         {
             const MagicNumber *mag_num = &MagicNumbers[i];
 
             if (memcmp(number, mag_num->number, mag_num->number[0] + 1) == 0)
             {
                 ostrcpy(out_value, mag_num->name);
-                OCI_STATUS = done = TRUE;
+                STATUS = done = TRUE;
                 break;
             }
         }
@@ -441,7 +441,7 @@ boolean NumberToStringInternal
             dbstr1 = StringGetDBString(out_value, &dbsize1);
             dbstr2 = StringGetDBString(fmt, &dbsize2);
 
-            OCI_EXEC
+            EXEC
             (
                 OCINumberToText(ctx->oci_err, (OCINumber *)number, (oratext *)dbstr2,
                                 (ub4)dbsize2, (oratext *)NULL, (ub4)0,
@@ -467,7 +467,7 @@ boolean NumberToStringInternal
         }
     }
 
-    return OCI_STATUS;
+    return STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -481,12 +481,12 @@ OCI_Number * NumberInitialize
     OCINumber       *buffer
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    DECLARE_CTX(TRUE)
+    CTX_SET_FROM_CON(con)
 
-    OCI_ALLOCATE_DATA(OCI_IPC_NUMBER, number, 1);
+    ALLOC_DATA(OCI_IPC_NUMBER, number, 1);
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         number->con = con;
         number->handle = buffer;
@@ -503,7 +503,7 @@ OCI_Number * NumberInitialize
             if (OCI_OBJECT_ALLOCATED_ARRAY != number->hstate)
             {
                 number->hstate = OCI_OBJECT_ALLOCATED;
-                OCI_ALLOCATE_DATA(OCI_IPC_ARRAY, number->handle, 1)
+                ALLOC_DATA(OCI_IPC_ARRAY, number->handle, 1)
             }
         }
         else
@@ -514,7 +514,7 @@ OCI_Number * NumberInitialize
 
     /* check for failure */
 
-    if (!OCI_STATUS && number)
+    if (!STATUS && number)
     {
         NumberFree(number);
         number = NULL;
@@ -532,14 +532,14 @@ OCI_Number * NumberCreate
     OCI_Connection *con
 )
 {
-    OCI_CALL_ENTER(OCI_Number*, NULL)
-    OCI_CALL_CHECK_INITIALIZED()
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    CALL_ENTER(OCI_Number*, NULL)
+    CHECK_INITIALIZED()
+    CTX_SET_FROM_CON(con)
 
-    OCI_RETVAL = NumberInitialize(con, NULL, NULL);
-    OCI_STATUS = (NULL != OCI_RETVAL);
+    RETVAL = NumberInitialize(con, NULL, NULL);
+    STATUS = (NULL != RETVAL);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -551,24 +551,24 @@ boolean NumberFree
     OCI_Number *number
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CHECK_OBJECT_FETCHED(number);
-    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_NUMBER, number)
+    CHECK_OBJECT_FETCHED(number);
+    CTX_SET_FROM_OBJ(number)
 
     if (OCI_OBJECT_ALLOCATED == number->hstate)
     {
-        OCI_FREE(number->handle)
+        FREE(number->handle)
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != number->hstate)
     {
-        OCI_FREE(number)
+        FREE(number)
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -583,18 +583,18 @@ OCI_Number ** NumberCreateArray
 {
     OCI_Array *arr = NULL;
 
-    OCI_CALL_ENTER(OCI_Number **, NULL)
-    OCI_CALL_CHECK_INITIALIZED()
+    CALL_ENTER(OCI_Number **, NULL)
+    CHECK_INITIALIZED()
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_NUMERIC, OCI_NUM_NUMBER, sizeof(OCINumber), sizeof(OCI_Number), 0, NULL);
-    OCI_STATUS = (NULL != arr);
+    STATUS = (NULL != arr);
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
-        OCI_RETVAL = (OCI_Number **)arr->tab_obj;
+        RETVAL = (OCI_Number **)arr->tab_obj;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -606,12 +606,12 @@ boolean NumberFreeArray
     OCI_Number **numbmers
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_ARRAY, numbmers)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_ARRAY, numbmers)
 
-    OCI_RETVAL = OCI_STATUS = ArrayFreeFromHandles((void **)numbmers);
+    RETVAL = STATUS = ArrayFreeFromHandles((void **)numbmers);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -624,16 +624,16 @@ boolean NumberAssign
     OCI_Number *number_src
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number_src)
-    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_NUMBER, number)
+    CHECK_PTR(OCI_IPC_NUMBER, number_src)
+    CTX_SET_FROM_OBJ(number)
 
-    OCI_EXEC(OCINumberAssign(number->err, number_src->handle, number->handle))
+    EXEC(OCINumberAssign(number->err, number_src->handle, number->handle))
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -648,13 +648,13 @@ boolean NumberToString
     otext       *str
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_NUMBER, number)
+    CTX_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = NumberToStringInternal(number->con, number->handle, OCI_NUM_NUMBER, str, size, fmt);
+    RETVAL = NumberToStringInternal(number->con, number->handle, OCI_NUM_NUMBER, str, size, fmt);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -668,13 +668,13 @@ boolean NumberFromString
     const otext *fmt
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_NUMBER, number)
+    CTX_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = NumberFromStringInternal(number->con, number->handle, OCI_NUM_NUMBER, str, fmt);
+    RETVAL = NumberFromStringInternal(number->con, number->handle, OCI_NUM_NUMBER, str, fmt);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -686,16 +686,16 @@ unsigned char * NumberGetContent
     OCI_Number *number
 )
 {
-    OCI_CALL_ENTER(unsigned char *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
+    CALL_ENTER(unsigned char *, NULL)
+    CHECK_PTR(OCI_IPC_NUMBER, number)
+    CTX_SET_FROM_OBJ(number)
 
     if (number->handle)
     {
-        OCI_RETVAL = number->handle->OCINumberPart;
+        RETVAL = number->handle->OCINumberPart;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -708,19 +708,19 @@ boolean NumberSetContent
     unsigned char  *content
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, content)
-    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_NUMBER, number)
+    CHECK_PTR(OCI_IPC_VOID, content)
+    CTX_SET_FROM_OBJ(number)
 
     if (number->handle)
     {
         memcpy(number->handle->OCINumberPart, content, sizeof(number->handle->OCINumberPart));
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -734,13 +734,13 @@ boolean NumberSetValue
     void           *value
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_NUMBER, number)
+    CTX_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_STATUS = NumberTranslateValue(number->con, value, type, number->handle, OCI_NUM_NUMBER);
+    RETVAL = STATUS = NumberTranslateValue(number->con, value, type, number->handle, OCI_NUM_NUMBER);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -754,13 +754,13 @@ boolean NumberGetValue
     void           *value
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
-    OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_NUMBER, number)
+    CTX_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_STATUS = NumberTranslateValue(number->con, number->handle, OCI_NUM_NUMBER, value, type);
+    RETVAL = STATUS = NumberTranslateValue(number->con, number->handle, OCI_NUM_NUMBER, value, type);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -774,7 +774,7 @@ boolean NumberAdd
     void           *value
 )
 {
-    OCI_NUMBER_OPERATION(OCINumberAdd)
+    NUMBER_OPERATION(OCINumberAdd)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -788,7 +788,7 @@ boolean NumberSub
     void           *value
 )
 {
-    OCI_NUMBER_OPERATION(OCINumberSub)
+    NUMBER_OPERATION(OCINumberSub)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -802,7 +802,7 @@ boolean NumberMultiply
     void           *value
 )
 {
-    OCI_NUMBER_OPERATION(OCINumberMul)
+    NUMBER_OPERATION(OCINumberMul)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -816,7 +816,7 @@ boolean NumberDivide
     void           *value
 )
 {
-    OCI_NUMBER_OPERATION(OCINumberDiv)
+    NUMBER_OPERATION(OCINumberDiv)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -831,16 +831,16 @@ int NumberCompare
 {
     sword value = OCI_ERROR;
 
-    OCI_CALL_ENTER(int, value)
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number1)
-    OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number2)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(number1->con)
+    CALL_ENTER(int, value)
+    CHECK_PTR(OCI_IPC_NUMBER, number1)
+    CHECK_PTR(OCI_IPC_NUMBER, number2)
+    CTX_SET_FROM_CON(number1->con)
 
-    OCI_EXEC(OCINumberCmp(number1->err, number1->handle, number2->handle, &value))
+    EXEC(OCINumberCmp(number1->err, number1->handle, number2->handle, &value))
 
-    OCI_RETVAL = (int) value;
+    RETVAL = (int) value;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 

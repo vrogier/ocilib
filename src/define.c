@@ -22,7 +22,7 @@
 
 #include "connection.h"
 #include "hash.h"
-#include "macro.h"
+#include "macros.h"
 #include "number.h"
 
 /* --------------------------------------------------------------------------------------------- *
@@ -75,7 +75,7 @@ int DefineGetIndex
 
     /* check out we got our map object */
 
-    OCI_CHECK(NULL == rs->map, -1);
+    CHECK(NULL == rs->map, -1);
 
     he = HashLookup(rs->map, name, FALSE);
 
@@ -109,9 +109,9 @@ void * DefineGetData
     OCI_Define *def
 )
 {
-    OCI_CHECK(NULL == def, NULL);
-    OCI_CHECK(NULL == def->rs, NULL);
-    OCI_CHECK(def->rs->row_cur < 1, NULL);
+    CHECK(NULL == def, NULL);
+    CHECK(NULL == def->rs, NULL);
+    CHECK(def->rs->row_cur < 1, NULL);
 
     switch (def->col.datatype)
     {
@@ -219,35 +219,35 @@ boolean DefineAlloc
 {
     ub4 i;
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == def, FALSE)
+    CHECK(NULL == def, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_STMT(def->rs->stmt)
+    CTX_SET_FROM_STMT(def->rs->stmt)
 
     /* Allocate indicators */
 
-    OCI_ALLOCATE_DATA(OCI_IPC_INDICATOR_ARRAY, def->buf.inds, def->buf.count);
+    ALLOC_DATA(OCI_IPC_INDICATOR_ARRAY, def->buf.inds, def->buf.count);
 
     if (SQLT_NTY == def->col.sqlcode)
     {
-        OCI_ALLOCATE_DATA(OCI_IPC_INDICATOR_ARRAY, def->buf.obj_inds, def->buf.count);
+        ALLOC_DATA(OCI_IPC_INDICATOR_ARRAY, def->buf.obj_inds, def->buf.count);
     }
 
     /* Allocate row data sizes array */
 
-    OCI_ALLOCATE_BUFFER(OCI_IPC_LEN_ARRAY, def->buf.lens, def->buf.sizelen, def->buf.count)
+    ALLOC_BUFFER(OCI_IPC_LEN_ARRAY, def->buf.lens, def->buf.sizelen, def->buf.count)
 
     /* initialize length array with buffer default size.
        But, Oracle uses different sizes for static fetch and callback fetch....*/
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         /* Allocate buffer array */
 
         const ub4 bufsize = (ub4)(OCI_CDT_LONG == def->col.datatype ? sizeof(OCI_Long *) : def->col.bufsize);
 
-        OCI_ALLOCATE_BUFFER(OCI_IPC_BUFF_ARRAY, def->buf.data, bufsize, def->buf.count)
+        ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, def->buf.data, bufsize, def->buf.count)
 
         /* Allocate buffer length array */
 
@@ -255,43 +255,43 @@ boolean DefineAlloc
         {
             if (def->buf.sizelen == (int) sizeof(ub2))
             {
-                OCI_ARRAY_SET_AT(def->buf.lens, ub2, i, def->col.bufsize)
+                ARRAY_SET_AT(def->buf.lens, ub2, i, def->col.bufsize)
             }
             else if (def->buf.sizelen == (int) sizeof(ub4))
             {
-                OCI_ARRAY_SET_AT(def->buf.lens, ub4, i, def->col.bufsize)
+                ARRAY_SET_AT(def->buf.lens, ub4, i, def->col.bufsize)
             }
         }
     }
 
     /* Allocate descriptor for cursor, lob and file, interval and timestamp */
 
-    if (OCI_STATUS && OCI_UNKNOWN != def->col.handletype)
+    if (STATUS && OCI_UNKNOWN != def->col.handletype)
     {
         if (OCI_CDT_CURSOR == def->col.datatype)
         {
-            for (i = 0; (i < def->buf.count) && OCI_STATUS; i++)
+            for (i = 0; (i < def->buf.count) && STATUS; i++)
             {
-                OCI_STATUS = MemoryAllocHandle((dvoid  *)def->rs->stmt->con->env, (dvoid **) &(def->buf.data[i]), (ub4) def->col.handletype);
+                STATUS = MemoryAllocHandle((dvoid  *)def->rs->stmt->con->env, (dvoid **) &(def->buf.data[i]), (ub4) def->col.handletype);
             }
         }
         else
         {
-            OCI_STATUS = MemoryAllocDescriptorArray((dvoid  *)def->rs->stmt->con->env, (dvoid **)def->buf.data, (ub4)def->col.handletype, (ub4)def->buf.count);
+            STATUS = MemoryAllocDescriptorArray((dvoid  *)def->rs->stmt->con->env, (dvoid **)def->buf.data, (ub4)def->col.handletype, (ub4)def->buf.count);
 
-            if (OCI_STATUS && (OCI_CDT_LOB == def->col.datatype))
+            if (STATUS && (OCI_CDT_LOB == def->col.datatype))
             {
                 ub4 empty = 0;
 
-                for (i = 0; (i < def->buf.count) && OCI_STATUS; i++)
+                for (i = 0; (i < def->buf.count) && STATUS; i++)
                 {
-                    OCI_SET_ATTRIB(def->col.handletype, OCI_ATTR_LOBEMPTY, def->buf.data[i], &empty, sizeof(empty))
+                    ATTRIB_SET(def->col.handletype, OCI_ATTR_LOBEMPTY, def->buf.data[i], &empty, sizeof(empty))
                 }
             }
         }
     }
 
-    return OCI_STATUS;
+    return STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -306,11 +306,11 @@ boolean DefineDef
 {
     ub2 mode = OCI_DEFAULT;
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == def, FALSE)
+    CHECK(NULL == def, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_STMT(def->rs->stmt)
+    CTX_SET_FROM_STMT(def->rs->stmt)
 
     /*check define mode for long columns */
 
@@ -321,7 +321,7 @@ boolean DefineDef
 
     /* oracle defining */
 
-    OCI_EXEC
+    EXEC
     (
         OCIDefineByPos(
                         def->rs->stmt->stmt,
@@ -340,7 +340,7 @@ boolean DefineDef
 
     if (SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode)
     {
-        OCI_EXEC
+        EXEC
         (
             OCIDefineObject(
                                 (OCIDefine *)def->buf.handle,
@@ -364,7 +364,7 @@ boolean DefineDef
         {
             ub1 csfrm = SQLCS_NCHAR;
 
-            OCI_SET_ATTRIB(OCI_HTYPE_DEFINE, OCI_ATTR_CHARSET_FORM, def->buf.handle, &csfrm, sizeof(csfrm))
+            ATTRIB_SET(OCI_HTYPE_DEFINE, OCI_ATTR_CHARSET_FORM, def->buf.handle, &csfrm, sizeof(csfrm))
         }
     }
 
@@ -376,11 +376,11 @@ boolean DefineDef
         {
             ub2 value = 1;
 
-            OCI_SET_ATTRIB(OCI_HTYPE_DEFINE, OCI_ATTR_LOBPREFETCH_LENGTH, def->buf.handle, &value, sizeof(value))
+            ATTRIB_SET(OCI_HTYPE_DEFINE, OCI_ATTR_LOBPREFETCH_LENGTH, def->buf.handle, &value, sizeof(value))
         }
     }
 
 #endif
 
-    return OCI_STATUS;
+    return STATUS;
 }

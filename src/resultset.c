@@ -31,7 +31,7 @@
 #include "interval.h"
 #include "lob.h"
 #include "long.h"
-#include "macro.h"
+#include "macros.h"
 #include "memory.h"
 #include "number.h"
 #include "object.h"
@@ -42,50 +42,54 @@
 
 static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
 
-#define OCI_MATCHING_TYPE(def, type) \
+#define MATCHING_TYPE(def, type)                                                   \
+                                                                                   \
     ((def) && DefineIsDataNotNull(def) && ((type) == (def)->col.datatype))
 
 
-#define OCI_GET_BY_NAME(rs, name, func, type, res)                                              \
-    int index = -1;                                                                             \
-    OCI_CALL_ENTER(type, res)                                                                   \
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                   \
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)                                                    \
-    OCI_CALL_CONTEXT_SET_FROM_STMT((rs)->stmt)                                                  \
-    OCI_STATUS = FALSE;                                                                         \
-    index = DefineGetIndex(rs, name);                                                           \
-    if (index > 0)                                                                              \
-    {                                                                                           \
-        if (!ctx->call_err) ctx->call_err = ErrorGet(FALSE, FALSE);                             \
-        OCI_RETVAL = func(rs, (unsigned int) index);                                            \
-        OCI_STATUS = !ctx->call_err->raise;                                                     \
-    }                                                                                           \
-    OCI_CALL_EXIT()
+#define GET_BY_NAME(rs, name, func, type, res)                                     \
+                                                                                   \
+    int index = -1;                                                                \
+    CALL_ENTER(type, res)                                                          \
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)                                               \
+    CHECK_PTR(OCI_IPC_STRING, name)                                                \
+    CTX_SET_FROM_STMT((rs)->stmt)                                                  \
+    STATUS = FALSE;                                                                \
+    index = DefineGetIndex(rs, name);                                              \
+    if (index > 0)                                                                 \
+    {                                                                              \
+        if (!ctx->call_err) ctx->call_err = ErrorGet(FALSE, FALSE);                \
+        RETVAL = func(rs, (unsigned int) index);                                   \
+        STATUS = !ctx->call_err->raise;                                            \
+    }                                                                              \
+    CALL_EXIT()
 
 
-#define OCI_GET_NUMBER(rs, index, num_type, type, res)                                          \
-    OCI_CALL_ENTER(type, res)                                                                   \
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                   \
-    OCI_CALL_CHECK_BOUND((rs)->stmt->con, index, 1, (rs)->nb_defs)                              \
-    OCI_CALL_CONTEXT_SET_FROM_STMT((rs)->stmt)                                                  \
-    OCI_STATUS = DefineGetNumber(rs, index, &OCI_RETVAL, num_type);                             \
-    OCI_CALL_EXIT()
+#define GET_NUMBER(rs, index, num_type, type, res)                                 \
+                                                                                   \
+    CALL_ENTER(type, res)                                                          \
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)                                               \
+    CHECK_BOUND((rs)->stmt->con, index, 1, (rs)->nb_defs)                          \
+    CTX_SET_FROM_STMT((rs)->stmt)                                                  \
+    STATUS = DefineGetNumber(rs, index, &RETVAL, num_type);                        \
+    CALL_EXIT()
 
 
-#define OCI_GET_HANDLE(rs, index, type, res, lib_type, func)                                    \
-    OCI_Define *def = NULL;                                                                     \
-    OCI_CALL_ENTER(type, res)                                                                   \
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                   \
-    OCI_CALL_CHECK_BOUND((rs)->stmt->con, index, 1, (rs)->nb_defs)                              \
-    OCI_CALL_CONTEXT_SET_FROM_STMT((rs)->stmt)                                                  \
-    OCI_STATUS = FALSE;                                                                         \
-    def = DefineGet(rs, index);                                                                 \
-    if (OCI_MATCHING_TYPE(def, lib_type))                                                       \
-    {                                                                                           \
-        def->obj = OCI_RETVAL = func;                                                           \
-        OCI_STATUS = (NULL != OCI_RETVAL);                                                      \
-    }                                                                                           \
-    OCI_CALL_EXIT()
+#define GET_HANDLE(rs, index, type, res, lib_type, func)                           \
+                                                                                   \
+    OCI_Define *def = NULL;                                                        \
+    CALL_ENTER(type, res)                                                          \
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)                                               \
+    CHECK_BOUND((rs)->stmt->con, index, 1, (rs)->nb_defs)                          \
+    CTX_SET_FROM_STMT((rs)->stmt)                                                  \
+    STATUS = FALSE;                                                                \
+    def = DefineGet(rs, index);                                                    \
+    if (MATCHING_TYPE(def, lib_type))                                              \
+    {                                                                              \
+        def->obj = RETVAL = func;                                                  \
+        STATUS = (NULL != RETVAL);                                                 \
+    }                                                                              \
+    CALL_EXIT()
 
 /* --------------------------------------------------------------------------------------------- *
  * ResultsetCreate
@@ -99,19 +103,19 @@ OCI_Resultset * ResultsetCreate
 {
     OCI_Resultset* rs = NULL;
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
         
-    OCI_CHECK(stmt == NULL, NULL)
+    CHECK(stmt == NULL, NULL)
 
-    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
+    CTX_SET_FROM_STMT(stmt)
 
     /* allocate resultset structure */
 
-    OCI_ALLOCATE_DATA(OCI_IPC_RESULTSET, rs, 1)
+    ALLOC_DATA(OCI_IPC_RESULTSET, rs, 1)
 
     /* set attributes */
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         ub4     nb  = 0;
         ub4     i;
@@ -129,7 +133,7 @@ OCI_Resultset * ResultsetCreate
 
         if (OCI_CST_SELECT == stmt->type)
         {
-            OCI_GET_ATTRIB(OCI_HTYPE_STMT, OCI_ATTR_PARAM_COUNT, stmt->stmt, &nb, NULL)
+            ATTRIB_GET(OCI_HTYPE_STMT, OCI_ATTR_PARAM_COUNT, stmt->stmt, &nb, NULL)
         }
         else
         {
@@ -138,15 +142,15 @@ OCI_Resultset * ResultsetCreate
 
         /* allocate columns array */
 
-        OCI_ALLOCATE_DATA(OCI_IPC_DEFINE, rs->defs, nb)
+        ALLOC_DATA(OCI_IPC_DEFINE, rs->defs, nb)
 
         /* describe select list */
 
-        if (OCI_STATUS && (OCI_CST_SELECT == stmt->type))
+        if (STATUS && (OCI_CST_SELECT == stmt->type))
         {
             /* Compute columns information */
 
-            for (i = 0; (i < nb) && OCI_STATUS; i++)
+            for (i = 0; (i < nb) && STATUS; i++)
             {
                 OCI_Define *def = &rs->defs[i];
 
@@ -159,13 +163,13 @@ OCI_Resultset * ResultsetCreate
 
                 /* get column description */
 
-                OCI_STATUS = ColumnRetrieveInfo(&def->col, rs->stmt->con,
+                STATUS = ColumnRetrieveInfo(&def->col, rs->stmt->con,
                                             rs->stmt, rs->stmt->stmt,
                                        i + 1, OCI_DESC_RESULTSET);
 
                 /* mapping to OCILIB internal types */
 
-                OCI_STATUS = OCI_STATUS && ColumnMapInfo(&def->col, rs->stmt);
+                STATUS = STATUS && ColumnMapInfo(&def->col, rs->stmt);
 
              #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
@@ -183,16 +187,16 @@ OCI_Resultset * ResultsetCreate
 
             /* allocation internal buffers if needed */
 
-            if (OCI_STATUS && !(rs->stmt->exec_mode & OCI_DESCRIBE_ONLY) && !(rs->stmt->exec_mode & OCI_PARSE_ONLY))
+            if (STATUS && !(rs->stmt->exec_mode & OCI_DESCRIBE_ONLY) && !(rs->stmt->exec_mode & OCI_PARSE_ONLY))
             {
-                for (i = 0; (i < nb) && OCI_STATUS; i++)
+                for (i = 0; (i < nb) && STATUS; i++)
                 {
                     OCI_Define *def = &rs->defs[i];
 
                     /* allocation of internal buffers for resultset content and
                        register OCILIB result buffers to OCI */
 
-                    OCI_STATUS = DefineAlloc(def) && DefineDef(def, i + 1);
+                    STATUS = DefineAlloc(def) && DefineDef(def, i + 1);
                 }
             }
         }
@@ -261,12 +265,12 @@ OCI_Resultset * ResultsetCreate
 
                 /* map column and allocation of internal buffers for resultset content **/
 
-                OCI_STATUS = ColumnMapInfo(&def->col, rs->stmt) && DefineAlloc(def);
+                STATUS = ColumnMapInfo(&def->col, rs->stmt) && DefineAlloc(def);
             }
         }
     }
 
-    if (!OCI_STATUS && rs)
+    if (!STATUS && rs)
     {
         ResultsetFree(rs);
         rs = NULL;
@@ -284,7 +288,7 @@ boolean ResultsetExpandStrings
     OCI_Resultset *rs
 )
 {
-    OCI_CHECK(NULL == rs, FALSE)
+    CHECK(NULL == rs, FALSE)
 
     for (ub4 i = 0; i < rs->nb_defs; i++)
     {
@@ -317,11 +321,11 @@ boolean FetchPieces
     ub1 in_out;
     ub4 i, j;
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == rs, FALSE)
+    CHECK(NULL == rs, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt);
+    CTX_SET_FROM_STMT(rs->stmt);
 
     /* reset long objects */
 
@@ -340,7 +344,7 @@ boolean FetchPieces
 
     /* dynamic fetch */
 
-    while (OCI_STATUS && (OCI_NEED_DATA == rs->fetch_status))
+    while (STATUS && (OCI_NEED_DATA == rs->fetch_status))
     {
         ub1   piece  = OCI_NEXT_PIECE;
         ub4   iter   = 0;
@@ -348,11 +352,11 @@ boolean FetchPieces
 
         /* get piece information */
 
-        OCI_EXEC(OCIStmtGetPieceInfo(rs->stmt->stmt, rs->stmt->con->err, &handle,  &type, &in_out, &iter, &dx, &piece))
+        EXEC(OCIStmtGetPieceInfo(rs->stmt->stmt, rs->stmt->con->err, &handle,  &type, &in_out, &iter, &dx, &piece))
 
         /* search for the given column */
 
-        for (i = 0; OCI_STATUS && (i < rs->nb_defs); i++)
+        for (i = 0; STATUS && (i < rs->nb_defs); i++)
         {
             OCI_Define *def = &(rs->defs[i]);
 
@@ -393,7 +397,7 @@ boolean FetchPieces
                 {
                     lg->maxsize = bufsize;
 
-                    OCI_ALLOCATE_DATA(OCI_IPC_LONG_BUFFER, lg->buffer, lg->maxsize)
+                    ALLOC_DATA(OCI_IPC_LONG_BUFFER, lg->buffer, lg->maxsize)
                 }
                 else if ((lg->size*char_fact) >= (lg->maxsize - trailing_size))
                 {
@@ -404,7 +408,7 @@ boolean FetchPieces
 
                 /* update piece info */
 
-                if (OCI_STATUS)
+                if (STATUS)
                 {
                     lg->piecesize = bufsize;
 
@@ -415,7 +419,7 @@ boolean FetchPieces
                         lg->piecesize -= (ub4) sizeof(dbtext);
                     }
 
-                    OCI_EXEC
+                    EXEC
                     (
                         OCIStmtSetPieceInfo((dvoid *) handle,
                                             (ub4) OCI_HTYPE_DEFINE,
@@ -455,12 +459,12 @@ boolean FetchPieces
         if (OCI_ERROR == rs->fetch_status)
         {
             ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, FALSE);
-            OCI_STATUS = FALSE;
+            STATUS = FALSE;
         }
         else if (OCI_SUCCESS_WITH_INFO == rs->fetch_status)
         {
             ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, TRUE);
-            OCI_STATUS = TRUE;
+            STATUS = TRUE;
         }
         else
         {
@@ -511,7 +515,7 @@ boolean FetchPieces
         }
     }
 
-    return OCI_STATUS;
+    return STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -520,7 +524,7 @@ boolean FetchPieces
 
 boolean ClearFetchedObjectInstances(OCI_Resultset *rs)
 {
-    OCI_CHECK(NULL == rs, FALSE)
+    CHECK(NULL == rs, FALSE)
 
     for (ub4 i = 0; i < rs->nb_defs; i++)
     {
@@ -554,11 +558,11 @@ boolean FetchData
     boolean       *success
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == rs, FALSE)
+    CHECK(NULL == rs, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt);
+    CTX_SET_FROM_STMT(rs->stmt);
 
     /* let's initialize the success flag to FALSE until the process completes */
 
@@ -591,17 +595,17 @@ boolean FetchData
     {
         /* failure */
         ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, FALSE);
-        OCI_STATUS = FALSE;
+        STATUS = FALSE;
     }
     else if (OCI_SUCCESS_WITH_INFO == rs->fetch_status)
     {
         ExceptionOCI(rs->stmt->con->err, rs->stmt->con, rs->stmt, TRUE);
-        OCI_STATUS = TRUE;
+        STATUS = TRUE;
     }
     else if (OCI_NEED_DATA == rs->fetch_status)
     {
         /* need to do a piecewise fetch */
-        OCI_STATUS = FetchPieces(rs);
+        STATUS = FetchPieces(rs);
     }
 
     /* check string buffer for Unicode builds that need buffer expansion */
@@ -613,13 +617,13 @@ boolean FetchData
 
     /* check for success */
 
-    OCI_STATUS = (OCI_STATUS && ((OCI_SUCCESS           == rs->fetch_status) ||
+    STATUS = (STATUS && ((OCI_SUCCESS           == rs->fetch_status) ||
                                  (OCI_NO_DATA           == rs->fetch_status) ||
                                  (OCI_SUCCESS_WITH_INFO == rs->fetch_status)));
 
     /* update internal fetch status and variables */
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         ub4 row_count   = 0;
         ub4 row_fetched = 0;
@@ -628,8 +632,8 @@ boolean FetchData
 
         if (OCI_SFM_SCROLLABLE == rs->stmt->exec_mode)
         {
-            OCI_GET_ATTRIB(OCI_HTYPE_STMT, OCI_ATTR_CURRENT_POSITION, rs->stmt->stmt, &row_count, NULL)
-            OCI_GET_ATTRIB(OCI_HTYPE_STMT, OCI_ATTR_ROWS_FETCHED, rs->stmt->stmt, &row_fetched, NULL)
+            ATTRIB_GET(OCI_HTYPE_STMT, OCI_ATTR_CURRENT_POSITION, rs->stmt->stmt, &row_count, NULL)
+            ATTRIB_GET(OCI_HTYPE_STMT, OCI_ATTR_ROWS_FETCHED, rs->stmt->stmt, &row_fetched, NULL)
         }
         else
 
@@ -668,11 +672,11 @@ boolean FetchData
                 rs->bof = TRUE;
             }
 
-            OCI_STATUS = FALSE;
+            STATUS = FALSE;
         }
     }
 
-    return OCI_STATUS;
+    return STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -781,7 +785,7 @@ OCI_Resultset *rs
 {
     ub4 j;
 
-    OCI_CHECK(NULL == rs, FALSE)
+    CHECK(NULL == rs, FALSE)
 
     for (ub4 i = 0; i < rs->nb_defs; i++)
     {
@@ -798,7 +802,7 @@ OCI_Resultset *rs
             if (OCI_CDT_CURSOR == def->col.datatype)
             {
                 StatementDispose((OCI_Statement *)def->obj);
-                OCI_FREE(def->obj)
+                FREE(def->obj)
             }
             else
             {
@@ -849,15 +853,15 @@ OCI_Resultset *rs
 
         /* free column pointers */
 
-        OCI_FREE(def->col.name)
+        FREE(def->col.name)
 
         /* free buffer pointers */
 
-        OCI_FREE(def->buf.data)
-        OCI_FREE(def->buf.inds)
-        OCI_FREE(def->buf.obj_inds)
-        OCI_FREE(def->buf.lens)
-        OCI_FREE(def->buf.tmpbuf)
+        FREE(def->buf.data)
+        FREE(def->buf.inds)
+        FREE(def->buf.obj_inds)
+        FREE(def->buf.lens)
+        FREE(def->buf.tmpbuf)
     }
 
     /* free column map */
@@ -869,9 +873,9 @@ OCI_Resultset *rs
 
     /* free defines (column array) */
 
-    OCI_FREE(rs->defs)
+    FREE(rs->defs)
 
-    OCI_FREE(rs)
+    FREE(rs)
 
     return TRUE;
 }
@@ -885,19 +889,19 @@ boolean ResultsetFetchPrev
     OCI_Resultset *rs
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
-    OCI_CALL_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
+    CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
+    CTX_SET_FROM_STMT(rs->stmt)
 
     if (!rs->bof)
     {
-        OCI_RETVAL = TRUE;
+        RETVAL = TRUE;
 
         if (rs->row_cur == 1)
         {
@@ -918,9 +922,9 @@ boolean ResultsetFetchPrev
                     offset = 1 - (int) (rs->fetch_size + rs->row_fetched);
                 }
 
-                OCI_RETVAL = FetchData(rs, OCI_SFD_RELATIVE, offset, &OCI_STATUS);
+                RETVAL = FetchData(rs, OCI_SFD_RELATIVE, offset, &STATUS);
 
-                if (OCI_RETVAL)
+                if (RETVAL)
                 {
                     if (rs->fetch_size > rs->row_abs)
                     {
@@ -943,12 +947,12 @@ boolean ResultsetFetchPrev
 
         rs->eof = FALSE;
 
-        OCI_RETVAL = OCI_RETVAL && !rs->bof;
+        RETVAL = RETVAL && !rs->bof;
     }
 
 #endif
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -960,14 +964,14 @@ boolean ResultsetFetchNext
     OCI_Resultset *rs
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
+    CTX_SET_FROM_STMT(rs->stmt)
 
     if (!rs->eof)
     {
-        OCI_RETVAL = TRUE;
+        RETVAL = TRUE;
 
         if (rs->stmt->nb_rbinds == 0)
         {
@@ -981,9 +985,9 @@ boolean ResultsetFetchNext
                 }
                 else
                 {
-                    OCI_RETVAL = FetchData(rs, OCI_SFD_NEXT, 0, &OCI_STATUS);
+                    RETVAL = FetchData(rs, OCI_SFD_NEXT, 0, &STATUS);
 
-                    if (OCI_RETVAL)
+                    if (RETVAL)
                     {
                         rs->bof     = FALSE;
                         rs->row_cur = 1;
@@ -1023,10 +1027,10 @@ boolean ResultsetFetchNext
             }
         }
 
-        OCI_RETVAL = OCI_RETVAL && !rs->eof;
+        RETVAL = RETVAL && !rs->eof;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1038,15 +1042,15 @@ boolean ResultsetFetchFirst
     OCI_Resultset *rs
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
-    OCI_CALL_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
+    CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
+    CTX_SET_FROM_STMT(rs->stmt)
 
     rs->bof = FALSE;
     rs->eof = FALSE;
@@ -1054,11 +1058,11 @@ boolean ResultsetFetchFirst
     rs->row_abs = 1;
     rs->row_cur = 1;
 
-    OCI_RETVAL = (FetchData(rs, OCI_SFD_FIRST, 0, &OCI_STATUS) && !rs->bof);
+    RETVAL = (FetchData(rs, OCI_SFD_FIRST, 0, &STATUS) && !rs->bof);
 
 #endif
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1070,15 +1074,15 @@ boolean ResultsetFetchLast
     OCI_Resultset *rs
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
-    OCI_CALL_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
+    CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
+    CTX_SET_FROM_STMT(rs->stmt)
 
     rs->bof = FALSE;
     rs->eof = FALSE;
@@ -1086,13 +1090,13 @@ boolean ResultsetFetchLast
     rs->row_abs = 0;
     rs->row_cur = 1;
 
-    OCI_RETVAL = (FetchData(rs, OCI_SFD_LAST, 0, &OCI_STATUS) && !rs->eof);
+    RETVAL = (FetchData(rs, OCI_SFD_LAST, 0, &STATUS) && !rs->eof);
 
     rs->row_abs = rs->row_count;
 
 #endif
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1106,18 +1110,18 @@ boolean ResultsetFetchSeek
     int            offset
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
-    OCI_CALL_CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_STMT_STATUS(rs->stmt, OCI_STMT_EXECUTED)
+    CHECK_SCROLLABLE_CURSOR_ENABLED(rs->stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    OCI_CALL_CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
-    OCI_CALL_CHECK_ENUM_VALUE(rs->stmt->con, rs->stmt, mode, SeekModeValues, OTEXT("Fetch Seek Mode"))
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
+    CHECK_ENUM_VALUE(rs->stmt->con, rs->stmt, mode, SeekModeValues, OTEXT("Fetch Seek Mode"))
+    CTX_SET_FROM_STMT(rs->stmt)
 
-    OCI_RETVAL = FetchCustom(rs, (int)mode, offset, &OCI_STATUS);
+    RETVAL = FetchCustom(rs, (int)mode, offset, &STATUS);
 
 #else
 
@@ -1126,7 +1130,7 @@ boolean ResultsetFetchSeek
 
 #endif
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1138,7 +1142,7 @@ unsigned int ResultsetGetRowCount
     OCI_Resultset *rs
 )
 {
-    OCI_GET_PROP(unsigned int, 0, OCI_IPC_RESULTSET, rs, row_count, rs->stmt->con, rs->stmt, rs->stmt->con->err)
+    GET_PROP(unsigned int, 0, OCI_IPC_RESULTSET, rs, row_count, rs->stmt->con, rs->stmt, rs->stmt->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1150,7 +1154,7 @@ unsigned int ResultsetGetCurrentRow
     OCI_Resultset *rs
 )
 {
-    OCI_GET_PROP(unsigned int, 0, OCI_IPC_RESULTSET, rs, row_abs, rs->stmt->con, rs->stmt, rs->stmt->con->err)
+    GET_PROP(unsigned int, 0, OCI_IPC_RESULTSET, rs, row_abs, rs->stmt->con, rs->stmt, rs->stmt->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1162,7 +1166,7 @@ unsigned int ResultsetGetColumnCount
     OCI_Resultset *rs
 )
 {
-    OCI_GET_PROP(unsigned int, 0, OCI_IPC_RESULTSET, rs, nb_defs, rs->stmt->con, rs->stmt, rs->stmt->con->err)
+    GET_PROP(unsigned int, 0, OCI_IPC_RESULTSET, rs, nb_defs, rs->stmt->con, rs->stmt, rs->stmt->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1175,14 +1179,14 @@ OCI_Column * ResultsetGetColumn
     unsigned int   index
 )
 {
-    OCI_CALL_ENTER(OCI_Column*, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(OCI_Column*, NULL)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
+    CTX_SET_FROM_STMT(rs->stmt)
 
-    OCI_RETVAL = &rs->defs[index - 1].col;
+    RETVAL = &rs->defs[index - 1].col;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1197,22 +1201,22 @@ OCI_Column * ResultsetGetColumn2
 {
     int index = -1;
 
-    OCI_CALL_ENTER(OCI_Column*, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(OCI_Column*, NULL)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_PTR(OCI_IPC_STRING, name)
+    CTX_SET_FROM_STMT(rs->stmt)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = DefineGetIndex(rs, name);
 
     if (index >= 0)
     {
-        OCI_RETVAL = &rs->defs[index - 1].col;
-        OCI_STATUS = TRUE;
+        RETVAL = &rs->defs[index - 1].col;
+        STATUS = TRUE;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1227,22 +1231,22 @@ unsigned int ResultsetGetColumnIndex
 {
     int index = -1;
 
-    OCI_CALL_ENTER(unsigned int, 0)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(unsigned int, 0)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_PTR(OCI_IPC_STRING, name)
+    CTX_SET_FROM_STMT(rs->stmt)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = DefineGetIndex(rs, name);
 
     if (index >= 0)
     {
-        OCI_RETVAL = (unsigned int) index;
-        OCI_STATUS = TRUE;
+        RETVAL = (unsigned int) index;
+        STATUS = TRUE;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1256,17 +1260,17 @@ boolean ResultsetSetStructNumericType
     unsigned int   type
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_BOUND(rs->stmt->con, index,  1,  rs->nb_defs)
-    OCI_CALL_CHECK_COMPAT(rs->stmt->con, OCI_CDT_NUMERIC == rs->defs[index - 1].col.datatype);
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_BOUND(rs->stmt->con, index,  1,  rs->nb_defs)
+    CHECK_COMPAT(rs->stmt->con, OCI_CDT_NUMERIC == rs->defs[index - 1].col.datatype);
+    CTX_SET_FROM_STMT(rs->stmt)
 
     rs->defs[index-1].col.struct_subtype = (ub2) type;
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1282,21 +1286,21 @@ boolean ResultsetSetStructNumericType2
 {
     int index = -1;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_PTR(OCI_IPC_STRING, name)
+    CTX_SET_FROM_STMT(rs->stmt)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = DefineGetIndex(rs, name);
 
     if (index >= 0)
     {
-        OCI_RETVAL = OCI_STATUS = ResultsetSetStructNumericType(rs, (unsigned int)index, type);
+        RETVAL = STATUS = ResultsetSetStructNumericType(rs, (unsigned int)index, type);
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1313,10 +1317,10 @@ boolean ResultsetGetStruct
     char *ptr     = NULL;
     boolean *inds = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, row_struct)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_PTR(OCI_IPC_VOID, row_struct)
+    CTX_SET_FROM_STMT(rs->stmt)
 
     ptr  = (char    *) row_struct;
     inds = (boolean *) row_struct_ind;
@@ -1443,9 +1447,9 @@ boolean ResultsetGetStruct
         }
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1458,7 +1462,7 @@ OCI_Number * ResultsetGetNumber
     unsigned int   index
 )
 {
-    OCI_GET_HANDLE
+    GET_HANDLE
     (
         rs, index, OCI_Number *, NULL, OCI_CDT_NUMERIC,
 
@@ -1476,7 +1480,7 @@ OCI_Number * ResultsetGetNumber2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetNumber, OCI_Number *, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetNumber, OCI_Number *, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1489,7 +1493,7 @@ short ResultsetGetShort
     unsigned int   index
 )
 {
-    OCI_GET_NUMBER(rs, index, OCI_NUM_SHORT, short, 0)
+    GET_NUMBER(rs, index, OCI_NUM_SHORT, short, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1502,7 +1506,7 @@ short ResultsetGetShort2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetShort, short, 0)
+    GET_BY_NAME(rs, name, ResultsetGetShort, short, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1515,7 +1519,7 @@ unsigned short ResultsetGetUnsignedShort
     unsigned int   index
 )
 {
-    OCI_GET_NUMBER(rs, index, OCI_NUM_USHORT, unsigned short, 0)
+    GET_NUMBER(rs, index, OCI_NUM_USHORT, unsigned short, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1528,7 +1532,7 @@ unsigned short ResultsetGetUnsignedShort2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetUnsignedShort, unsigned short, 0)
+    GET_BY_NAME(rs, name, ResultsetGetUnsignedShort, unsigned short, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1541,7 +1545,7 @@ int ResultsetGetInt
     unsigned int   index
 )
 {
-    OCI_GET_NUMBER(rs, index, OCI_NUM_INT, int, 0)
+    GET_NUMBER(rs, index, OCI_NUM_INT, int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1554,7 +1558,7 @@ int ResultsetGetInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetInt, int, 0)
+    GET_BY_NAME(rs, name, ResultsetGetInt, int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1567,7 +1571,7 @@ unsigned int ResultsetGetUnsignedInt
     unsigned int   index
 )
 {
-    OCI_GET_NUMBER(rs, index, OCI_NUM_UINT, unsigned int, 0)
+    GET_NUMBER(rs, index, OCI_NUM_UINT, unsigned int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1580,7 +1584,7 @@ unsigned int ResultsetGetUnsignedInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetUnsignedInt, unsigned int, 0)
+    GET_BY_NAME(rs, name, ResultsetGetUnsignedInt, unsigned int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1593,7 +1597,7 @@ big_int ResultsetGetBigInt
     unsigned int   index
 )
 {
-    OCI_GET_NUMBER(rs, index, OCI_NUM_BIGINT, big_int, 0)
+    GET_NUMBER(rs, index, OCI_NUM_BIGINT, big_int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1606,7 +1610,7 @@ big_int ResultsetGetBigInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetBigInt, big_int, 0)
+    GET_BY_NAME(rs, name, ResultsetGetBigInt, big_int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1619,7 +1623,7 @@ big_uint ResultsetGetUnsignedBigInt
     unsigned int   index
 )
 {
-    OCI_GET_NUMBER(rs, index, OCI_NUM_BIGUINT, big_uint, 0)
+    GET_NUMBER(rs, index, OCI_NUM_BIGUINT, big_uint, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1632,7 +1636,7 @@ big_uint ResultsetGetUnsignedBigInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetUnsignedBigInt, big_uint, 0)
+    GET_BY_NAME(rs, name, ResultsetGetUnsignedBigInt, big_uint, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1647,12 +1651,12 @@ const otext * ResultsetGetString
 {
     OCI_Define *def = NULL;
 
-    OCI_CALL_ENTER(otext *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(otext *, NULL)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
+    CTX_SET_FROM_STMT(rs->stmt)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     def = DefineGet(rs, index);
 
@@ -1660,11 +1664,11 @@ const otext * ResultsetGetString
     {
         void *data = NULL;
 
-        OCI_STATUS = TRUE;
+        STATUS = TRUE;
 
         if (OCI_CDT_TEXT == def->col.datatype)
         {
-            OCI_RETVAL = (otext *)DefineGetData(def);
+            RETVAL = (otext *)DefineGetData(def);
 
             /* for long mapped to string, the zero terminal character is not
                 always added by Oracle ? or OCILIB issue ? Anyway we check the
@@ -1674,7 +1678,7 @@ const otext * ResultsetGetString
             {
                 ub2* lens = (ub2 *)def->buf.lens;
 
-                OCI_RETVAL[lens[rs->row_cur - 1]] = 0;
+                RETVAL[lens[rs->row_cur - 1]] = 0;
             }
         }
         else if ((OCI_CDT_LONG == def->col.datatype) && (OCI_CLONG == def->col.subtype))
@@ -1683,7 +1687,7 @@ const otext * ResultsetGetString
 
             if (lg)
             {
-                OCI_RETVAL = (otext *)LongGetBuffer(lg);
+                RETVAL = (otext *)LongGetBuffer(lg);
             }
         }
         else
@@ -1788,7 +1792,7 @@ const otext * ResultsetGetString
 
                 if (obj)
                 {
-                    OCI_STATUS = ObjectToString(obj, &bufsize, NULL);
+                    STATUS = ObjectToString(obj, &bufsize, NULL);
                 }
 
                 data = obj;
@@ -1800,7 +1804,7 @@ const otext * ResultsetGetString
 
                 if (coll)
                 {
-                    OCI_STATUS = CollectionToString(coll, &bufsize, NULL);
+                    STATUS = CollectionToString(coll, &bufsize, NULL);
                 }
 
                 data = coll;
@@ -1824,25 +1828,25 @@ const otext * ResultsetGetString
             }
             }
 
-            OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
+            STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
-            OCI_STATUS = OCI_STATUS && StringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, bufsize);
+            STATUS = STATUS && StringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, bufsize);
 
-            if (OCI_STATUS)
+            if (STATUS)
             {
                 StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, def->buf.tmpsize, FALSE);
                 
-                OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
+                STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
-                if (OCI_STATUS)
+                if (STATUS)
                 {
-                    OCI_RETVAL = def->buf.tmpbuf;
+                    RETVAL = def->buf.tmpbuf;
                 }
             }
         }
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1855,7 +1859,7 @@ const otext * ResultsetGetString2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetString, const otext *, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetString, const otext *, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1872,30 +1876,30 @@ unsigned int ResultsetGetRaw
 {
     OCI_Define *def = NULL;
 
-    OCI_CALL_ENTER(unsigned int, 0)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, buffer);
-    OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(unsigned int, 0)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_PTR(OCI_IPC_VOID, buffer);
+    CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
+    CTX_SET_FROM_STMT(rs->stmt)
 
-    OCI_STATUS = TRUE;
+    STATUS = TRUE;
 
     def = DefineGet(rs, index);
 
-    if (OCI_MATCHING_TYPE(def, OCI_CDT_RAW))
+    if (MATCHING_TYPE(def, OCI_CDT_RAW))
     {
         unsigned int size = (unsigned int)(ub2)((ub2*)def->buf.lens)[def->rs->row_cur - 1];
 
-        OCI_RETVAL = size < len ? size : len;
-        OCI_STATUS = TRUE;
+        RETVAL = size < len ? size : len;
+        STATUS = TRUE;
 
         /* for RAWs, we copy the data in the destination buffer instead of
         returning internal buffer as we do for strings */
 
-        memcpy(buffer, DefineGetData(def), (size_t)OCI_RETVAL);
+        memcpy(buffer, DefineGetData(def), (size_t)RETVAL);
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1913,34 +1917,34 @@ unsigned int ResultsetGetRaw2
     OCI_Define *def = NULL;
     int index = -1;
 
-    OCI_CALL_ENTER(unsigned int, 0)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, buffer)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(unsigned int, 0)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_PTR(OCI_IPC_VOID, buffer)
+    CHECK_PTR(OCI_IPC_STRING, name)
+    CTX_SET_FROM_STMT(rs->stmt)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = DefineGetIndex(rs, name);
     if (index > 0)
     {
         def = DefineGet(rs, index);
 
-        if (OCI_MATCHING_TYPE(def, OCI_CDT_RAW))
+        if (MATCHING_TYPE(def, OCI_CDT_RAW))
         {
             unsigned int size = (unsigned int)(ub2)((ub2*)def->buf.lens)[def->rs->row_cur - 1];
 
-            OCI_RETVAL = size < len ? size : len;
-            OCI_STATUS = TRUE;
+            RETVAL = size < len ? size : len;
+            STATUS = TRUE;
 
             /* for RAWs, we copy the data in the destination buffer instead of
             returning internal buffer as we do for strings */
 
-            memcpy(buffer, DefineGetData(def), (size_t)OCI_RETVAL);
+            memcpy(buffer, DefineGetData(def), (size_t)RETVAL);
         }
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1953,7 +1957,7 @@ double ResultsetGetDouble
     unsigned int   index
 )
 {
-    OCI_GET_NUMBER(rs, index, OCI_NUM_DOUBLE, double, 0.0)
+    GET_NUMBER(rs, index, OCI_NUM_DOUBLE, double, 0.0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1966,7 +1970,7 @@ double ResultsetGetDouble2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetDouble, double, 0.0)
+    GET_BY_NAME(rs, name, ResultsetGetDouble, double, 0.0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1979,7 +1983,7 @@ float ResultsetGetFloat
     unsigned int   index
 )
 {
-    OCI_GET_NUMBER(rs, index, OCI_NUM_FLOAT, float, 0.0f)
+    GET_NUMBER(rs, index, OCI_NUM_FLOAT, float, 0.0f)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1992,7 +1996,7 @@ float ResultsetGetFloat2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetFloat, float, 0.0f)
+    GET_BY_NAME(rs, name, ResultsetGetFloat, float, 0.0f)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2005,7 +2009,7 @@ OCI_Date * ResultsetGetDate
     unsigned int   index
 )
 {
-    OCI_GET_HANDLE
+    GET_HANDLE
     (
         rs, index, OCI_Date *, NULL, OCI_CDT_DATETIME,
 
@@ -2025,7 +2029,7 @@ OCI_Date * ResultsetGetDate2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetDate, OCI_Date *, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetDate, OCI_Date *, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2038,7 +2042,7 @@ OCI_Timestamp * ResultsetGetTimestamp
     unsigned int   index
 )
 {
-    OCI_GET_HANDLE
+    GET_HANDLE
     (
         rs, index, OCI_Timestamp *, NULL, OCI_CDT_TIMESTAMP,
 
@@ -2057,7 +2061,7 @@ OCI_Timestamp * ResultsetGetTimestamp2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetTimestamp, OCI_Timestamp*, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetTimestamp, OCI_Timestamp*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2070,7 +2074,7 @@ OCI_Interval * ResultsetGetInterval
     unsigned int   index
 )
 {
-    OCI_GET_HANDLE
+    GET_HANDLE
     (
        rs, index, OCI_Interval *, NULL, OCI_CDT_INTERVAL,
 
@@ -2089,7 +2093,7 @@ OCI_Interval * ResultsetGetInterval2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetInterval, OCI_Interval*, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetInterval, OCI_Interval*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2102,7 +2106,7 @@ OCI_Object * ResultsetGetObject
     unsigned int   index
 )
 {
-    OCI_GET_HANDLE
+    GET_HANDLE
     (
        rs, index, OCI_Object *, NULL, OCI_CDT_OBJECT,
 
@@ -2122,7 +2126,7 @@ OCI_Object * ResultsetGetObject2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetObject, OCI_Object*, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetObject, OCI_Object*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2135,7 +2139,7 @@ OCI_Coll * ResultsetGetColl
     unsigned int   index
 )
 {
-    OCI_GET_HANDLE
+    GET_HANDLE
     (
        rs, index, OCI_Coll *, NULL, OCI_CDT_COLLECTION,
 
@@ -2153,7 +2157,7 @@ OCI_Coll * ResultsetGetColl2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetColl, OCI_Coll*, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetColl, OCI_Coll*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2166,7 +2170,7 @@ OCI_Ref * ResultsetGetReference
     unsigned int   index
 )
 {
-    OCI_GET_HANDLE
+    GET_HANDLE
     (
        rs, index, OCI_Ref *, NULL, OCI_CDT_REF,
 
@@ -2184,7 +2188,7 @@ OCI_Ref * ResultsetGetReference2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetReference, OCI_Ref*, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetReference, OCI_Ref*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2197,7 +2201,7 @@ OCI_Statement * ResultsetGetStatement
     unsigned int   index
 )
 {
-    OCI_GET_HANDLE
+    GET_HANDLE
     (
        rs, index, OCI_Statement *, NULL, OCI_CDT_CURSOR,
 
@@ -2216,7 +2220,7 @@ OCI_Statement * ResultsetGetStatement2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetStatement, OCI_Statement*, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetStatement, OCI_Statement*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2229,7 +2233,7 @@ OCI_Lob * ResultsetGetLob
     unsigned int   index
 )
 {
-    OCI_GET_HANDLE
+    GET_HANDLE
     (
        rs, index, OCI_Lob *, NULL, OCI_CDT_LOB,
 
@@ -2249,7 +2253,7 @@ OCI_Lob * ResultsetGetLob2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetLob, OCI_Lob*, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetLob, OCI_Lob*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2262,7 +2266,7 @@ OCI_File * ResultsetGetFile
     unsigned int   index
 )
 {
-    OCI_GET_HANDLE
+    GET_HANDLE
     (
        rs, index, OCI_File *, NULL, OCI_CDT_FILE,
 
@@ -2282,7 +2286,7 @@ OCI_File * ResultsetGetFile2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetFile, OCI_File*, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetFile, OCI_File*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2295,7 +2299,7 @@ OCI_Long * ResultsetGetLong
     unsigned int   index
 )
 {
-    OCI_GET_HANDLE
+    GET_HANDLE
     (
        rs, index, OCI_Long *, NULL, OCI_CDT_LONG,
 
@@ -2313,7 +2317,7 @@ OCI_Long * ResultsetGetLong2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetLong, OCI_Long*, NULL)
+    GET_BY_NAME(rs, name, ResultsetGetLong, OCI_Long*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2328,10 +2332,10 @@ unsigned int ResultsetGetDataSize
 {
     OCI_Define *def = NULL;
 
-    OCI_CALL_ENTER(unsigned int, 0)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(unsigned int, 0)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
+    CTX_SET_FROM_STMT(rs->stmt)
     
     def = DefineGet(rs, index);
 
@@ -2341,16 +2345,16 @@ unsigned int ResultsetGetDataSize
 
         if (lens)
         {
-            OCI_RETVAL = lens[rs->row_cur - 1];
+            RETVAL = lens[rs->row_cur - 1];
 
             if (OCI_CDT_TEXT == def->col.datatype)
             {
-                OCI_RETVAL /= sizeof(otext);
+                RETVAL /= sizeof(otext);
             }
         }
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2365,22 +2369,22 @@ unsigned int ResultsetGetDataSize2
 {
     int index = -1;
 
-    OCI_CALL_ENTER(unsigned int, 0)        
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(unsigned int, 0)        
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_PTR(OCI_IPC_STRING, name)
+    CTX_SET_FROM_STMT(rs->stmt)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = DefineGetIndex(rs, name);
 
     if (index >= 0)
     {
-        OCI_RETVAL = ResultsetGetDataSize(rs, (unsigned int)index);
-        OCI_STATUS = TRUE;
+        RETVAL = ResultsetGetDataSize(rs, (unsigned int)index);
+        STATUS = TRUE;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2395,17 +2399,17 @@ boolean ResultsetIsNull
 {
     OCI_Define *def = NULL;
 
-    OCI_CALL_ENTER(boolean, TRUE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(boolean, TRUE)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
+    CTX_SET_FROM_STMT(rs->stmt)
 
     def = DefineGet(rs, index);
 
-    OCI_STATUS = (NULL != def);
-    OCI_RETVAL = !DefineIsDataNotNull(def);
+    STATUS = (NULL != def);
+    RETVAL = !DefineIsDataNotNull(def);
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2420,22 +2424,22 @@ boolean ResultsetIsNull2
 {
     int index = -1;
 
-    OCI_CALL_ENTER(boolean, TRUE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(boolean, TRUE)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_PTR(OCI_IPC_STRING, name)
+    CTX_SET_FROM_STMT(rs->stmt)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     index = DefineGetIndex(rs, name);
 
     if (index >= 0)
     {
-        OCI_RETVAL = ResultsetIsNull(rs, (unsigned int)index);
-        OCI_STATUS = TRUE;
+        RETVAL = ResultsetIsNull(rs, (unsigned int)index);
+        STATUS = TRUE;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2447,7 +2451,7 @@ OCI_Statement * ResultsetResultsetGetStatement
     OCI_Resultset *rs
 )
 {
-    OCI_GET_PROP(OCI_Statement *, NULL, OCI_IPC_RESULTSET, rs, stmt, rs->stmt->con, rs->stmt, rs->stmt->con->err)
+    GET_PROP(OCI_Statement *, NULL, OCI_IPC_RESULTSET, rs, stmt, rs->stmt->con, rs->stmt, rs->stmt->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2462,20 +2466,20 @@ unsigned int ResultsetGetDataLength
 {
     OCI_Define *def = NULL;
 
-    OCI_CALL_ENTER(unsigned int, 0)
-    OCI_CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    OCI_CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
+    CALL_ENTER(unsigned int, 0)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
+    CTX_SET_FROM_STMT(rs->stmt)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     def = DefineGet(rs, index);
 
     if (def && (rs->row_cur > 0))
     {
-        OCI_RETVAL = (unsigned int)((ub2 *)def->buf.lens)[rs->row_cur - 1];
-        OCI_STATUS = TRUE;
+        RETVAL = (unsigned int)((ub2 *)def->buf.lens)[rs->row_cur - 1];
+        STATUS = TRUE;
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }

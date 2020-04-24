@@ -20,7 +20,7 @@
 
 #include "handle.h"
 
-#include "macro.h"
+#include "macros.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * HandleGetEnvironment
@@ -31,12 +31,12 @@ const void * HandleGetEnvironment
     void
 )
 {
-    OCI_CALL_ENTER(const void *, NULL)
-    OCI_CALL_CHECK_INITIALIZED()
+    CALL_ENTER(const void *, NULL)
+    CHECK_INITIALIZED()
 
-    OCI_RETVAL = OCILib.env;
+    RETVAL = OCILib.env;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -48,7 +48,7 @@ const void * HandleGetContext
     OCI_Connection *con
 )
 {
-    OCI_GET_PROP(const void*, NULL, OCI_IPC_CONNECTION, con, cxt, NULL, NULL, NULL)
+    GET_PROP(const void*, NULL, OCI_IPC_CONNECTION, con, cxt, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -60,7 +60,7 @@ const void * HandleGetServer
     OCI_Connection *con
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_CONNECTION, con, svr, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_CONNECTION, con, svr, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -72,7 +72,7 @@ const void * HandleGetError
     OCI_Connection *con
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_CONNECTION, con, err, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_CONNECTION, con, err, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -84,7 +84,7 @@ const void * HandleGetSession
     OCI_Connection *con
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_CONNECTION, con, ses, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_CONNECTION, con, ses, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -96,7 +96,7 @@ const void * HandleGetTransaction
     OCI_Transaction *trans
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_TRANSACTION, trans, htr, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_TRANSACTION, trans, htr, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -108,7 +108,7 @@ const void * HandleGetStatement
     OCI_Statement *stmt
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_STATEMENT, stmt, stmt, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_STATEMENT, stmt, stmt, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -120,7 +120,7 @@ const void * HandleGetLob
     OCI_Lob *lob
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_LOB, lob, handle, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_LOB, lob, handle, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -132,7 +132,7 @@ const void * HandleGetFile
     OCI_File *file
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_FILE, file, handle, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_FILE, file, handle, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -144,7 +144,7 @@ const void * HandleGetDate
     OCI_Date *date
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_DATE, date, handle, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_DATE, date, handle, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -156,7 +156,7 @@ const void * HandleGetTimestamp
     OCI_Timestamp *tmsp
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_TIMESTAMP, tmsp, handle, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_TIMESTAMP, tmsp, handle, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -168,7 +168,7 @@ const void * HandleGetInterval
     OCI_Interval *itv
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_INTERVAL, itv, handle, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_INTERVAL, itv, handle, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -180,7 +180,7 @@ const void * HandleGetObject
     OCI_Object *obj
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_OBJECT, obj, handle, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_OBJECT, obj, handle, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -192,7 +192,7 @@ const void * HandleGetColl
     OCI_Coll *coll
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_COLLECTION, coll, handle, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_COLLECTION, coll, handle, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -204,7 +204,7 @@ const void * HandleGetReference
     OCI_Ref *ref
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_REF, ref, handle, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_REF, ref, handle, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -216,7 +216,7 @@ const void * HandleGetMutex
     OCI_Mutex *mutex
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_MUTEX, mutex, handle, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_MUTEX, mutex, handle, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -228,7 +228,7 @@ const void * HandleGetThreadID
     OCI_Thread *thread
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_THREAD, thread, id, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_THREAD, thread, id, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -240,7 +240,7 @@ const void * HandleGetThread
     OCI_Thread *thread
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_THREAD, thread, handle, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_THREAD, thread, handle, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -252,7 +252,7 @@ const void * HandleGetDirPathCtx
     OCI_DirPath *dp
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_DIRPATH, dp, ctx, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_DIRPATH, dp, ctx, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -264,7 +264,7 @@ const void * HandleGetDirPathColArray
     OCI_DirPath *dp
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_DIRPATH, dp, arr, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_DIRPATH, dp, arr, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -276,7 +276,7 @@ const void * HandleGetDirPathStream
     OCI_DirPath *dp
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_DIRPATH, dp, strm, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_DIRPATH, dp, strm, NULL, NULL, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -288,5 +288,5 @@ const void * HandleGetSubscription
     OCI_Subscription *sub
 )
 {
-    OCI_GET_PROP(const void *, NULL, OCI_IPC_NOTIFY, sub, subhp, NULL, NULL, NULL)
+    GET_PROP(const void *, NULL, OCI_IPC_NOTIFY, sub, subhp, NULL, NULL, NULL)
 }

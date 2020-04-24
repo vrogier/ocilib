@@ -26,7 +26,7 @@
 #include "interval.h"
 #include "list.h"
 #include "lob.h"
-#include "macro.h"
+#include "macros.h"
 #include "memory.h"
 #include "number.h"
 #include "object.h"
@@ -82,7 +82,7 @@ boolean ArrayInitialize
         {
             handle = &(((OCIDate *)(arr->mem_handle))[i]);
         }
-        else if (OCI_IS_OCI_NUMBER(arr->elem_type, arr->elem_subtype))
+        else if (IS_OCI_NUMBER(arr->elem_type, arr->elem_subtype))
         {
             handle = &(((OCINumber *)(arr->mem_handle))[i]);
         }
@@ -160,9 +160,9 @@ boolean ArrayDispose
     OCI_Array *arr
 )
 {
-    OCI_CHECK(NULL == arr, FALSE)
+    CHECK(NULL == arr, FALSE)
 
-    if (OCI_IS_OCILIB_OBJECT(arr->elem_type, arr->elem_subtype))
+    if (IS_OCILIB_OBJECT(arr->elem_type, arr->elem_subtype))
     {
         /* Cleanup OCILIB Objects */
 
@@ -179,9 +179,9 @@ boolean ArrayDispose
         MemoryFreeDescriptorArray((dvoid **) arr->mem_handle, (ub4) arr->handle_type, (ub4) arr->nb_elem);
     }
 
-    OCI_FREE(arr->mem_handle)
-    OCI_FREE(arr->mem_struct)
-    OCI_FREE(arr->tab_obj)
+    FREE(arr->mem_handle)
+    FREE(arr->mem_struct)
+    FREE(arr->tab_obj)
 
     return TRUE;
 }
@@ -204,15 +204,15 @@ OCI_Array * ArrayCreate
 {   
     OCI_Array *arr = NULL;
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    DECLARE_CTX(TRUE)
+    CTX_SET_FROM_CON(con)
 
     /* create array object */
 
     arr = ListAppend(OCILib.arrs, sizeof(*arr));
-    OCI_STATUS = (NULL != arr);
+    STATUS = (NULL != arr);
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         arr->con          = con;
         arr->err          = con ? con->err : OCILib.err;
@@ -226,33 +226,33 @@ OCI_Array * ArrayCreate
 
         /* allocate buffers */
 
-        if (OCI_IS_OCILIB_OBJECT(arr->elem_type, arr->elem_subtype))
+        if (IS_OCILIB_OBJECT(arr->elem_type, arr->elem_subtype))
         {
-            OCI_ALLOCATE_DATA(OCI_IPC_VOID, arr->tab_obj, nb_elem)
+            ALLOC_DATA(OCI_IPC_VOID, arr->tab_obj, nb_elem)
         }
 
-        OCI_ALLOCATE_BUFFER(OCI_IPC_VOID, arr->mem_handle, elem_size, nb_elem)
-        OCI_ALLOCATE_BUFFER(OCI_IPC_VOID, arr->mem_struct, struct_size, nb_elem)
+        ALLOC_BUFFER(OCI_IPC_VOID, arr->mem_handle, elem_size, nb_elem)
+        ALLOC_BUFFER(OCI_IPC_VOID, arr->mem_struct, struct_size, nb_elem)
 
         /* allocate OCI handle descriptors */
 
-        if (OCI_STATUS && handle_type != 0)
+        if (STATUS && handle_type != 0)
         {
-            OCI_STATUS = MemoryAllocDescriptorArray((dvoid  *)arr->env, (dvoid **)arr->mem_handle, (ub4)handle_type, (ub4)nb_elem);
+            STATUS = MemoryAllocDescriptorArray((dvoid  *)arr->env, (dvoid **)arr->mem_handle, (ub4)handle_type, (ub4)nb_elem);
         }
 
-        if (OCI_STATUS && arr->tab_obj && arr->mem_handle)
+        if (STATUS && arr->tab_obj && arr->mem_handle)
         {
-            OCI_STATUS = ArrayInitialize(arr, typinf);
+            STATUS = ArrayInitialize(arr, typinf);
         }
     }
 
     /* check for failure */
 
-    if (!OCI_STATUS)
+    if (!STATUS)
     {
         ArrayDispose(arr);
-        OCI_FREE(arr)
+        FREE(arr)
     }
 
     return arr;
@@ -274,7 +274,7 @@ boolean ArrayFreeFromHandles
     {
         res = ListRemove(OCILib.arrs, arr);
        ArrayDispose(arr);
-        OCI_FREE(arr)
+        FREE(arr)
     }
 
     return res;

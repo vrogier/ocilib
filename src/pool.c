@@ -22,7 +22,7 @@
 
 #include "connection.h"
 #include "list.h"
-#include "macro.h"
+#include "macros.h"
 #include "strings.h"
 
 static unsigned int PoolTypeValues[] = { OCI_POOL_CONNECTION, OCI_POOL_SESSION };
@@ -36,11 +36,11 @@ boolean PoolDispose
     OCI_Pool *pool
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    DECLARE_CTX(TRUE)
 
-    OCI_CHECK(NULL == pool, FALSE)
+    CHECK(NULL == pool, FALSE)
 
-    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err);
+    CTX_SET_FROM_ERR(pool->err);
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -52,14 +52,14 @@ boolean PoolDispose
         {
             if (OCI_HTYPE_CPOOL == pool->htype)
             {
-               OCI_EXEC(OCIConnectionPoolDestroy((OCICPool *) pool->handle, pool->err, (ub4) OCI_DEFAULT))
+               EXEC(OCIConnectionPoolDestroy((OCICPool *) pool->handle, pool->err, (ub4) OCI_DEFAULT))
             }
 
         #if OCI_VERSION_COMPILE >= OCI_9_2
 
             else
             {
-                OCI_EXEC(OCISessionPoolDestroy((OCISPool *) pool->handle, pool->err, (ub4) OCI_SPD_FORCE))
+                EXEC(OCISessionPoolDestroy((OCISPool *) pool->handle, pool->err, (ub4) OCI_SPD_FORCE))
             }
 
         #endif
@@ -94,12 +94,12 @@ boolean PoolDispose
 
     /* free strings */
 
-    OCI_FREE(pool->name)
-    OCI_FREE(pool->db)
-    OCI_FREE(pool->user)
-    OCI_FREE(pool->pwd)
+    FREE(pool->name)
+    FREE(pool->db)
+    FREE(pool->user)
+    FREE(pool->pwd)
 
-    return OCI_STATUS;
+    return STATUS;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -120,12 +120,12 @@ OCI_Pool * PoolCreate
 {
     OCI_Pool *pool = NULL;
 
-    OCI_CALL_ENTER(OCI_Pool*, NULL)
-    OCI_CALL_CHECK_INITIALIZED()
-    OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, type, PoolTypeValues, OTEXT("Pool Type"))
-    OCI_CALL_CHECK_MIN(NULL, NULL, max_con, 1)
+    CALL_ENTER(OCI_Pool*, NULL)
+    CHECK_INITIALIZED()
+    CHECK_ENUM_VALUE(NULL, NULL, type, PoolTypeValues, OTEXT("Pool Type"))
+    CHECK_MIN(NULL, NULL, max_con, 1)
 
-    OCI_STATUS = FALSE;
+    STATUS = FALSE;
 
     /* make sure that we do not have a XA session flag */
     
@@ -134,9 +134,9 @@ OCI_Pool * PoolCreate
     /* create pool object */
 
     pool = ListAppend(OCILib.pools, sizeof(*pool));
-    OCI_STATUS = (NULL != pool);
+    STATUS = (NULL != pool);
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         pool->mode = mode;
         pool->min  = min_con;
@@ -156,7 +156,7 @@ OCI_Pool * PoolCreate
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         if (OCI_POOL_CONNECTION == type)
         {
@@ -184,17 +184,17 @@ OCI_Pool * PoolCreate
 
         /* allocate error handle */
 
-        OCI_STATUS = OCI_STATUS && MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->err, OCI_HTYPE_ERROR);
+        STATUS = STATUS && MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->err, OCI_HTYPE_ERROR);
 
         /* allocate pool handle */
 
-        OCI_STATUS = OCI_STATUS && MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->handle, (ub4)pool->htype);
+        STATUS = STATUS && MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->handle, (ub4)pool->htype);
 
         /* allocate authentication handle only if needed */
 
    #if OCI_VERSION_COMPILE >= OCI_11_1
 
-        if (OCI_STATUS)
+        if (STATUS)
         {       
             if ((OCI_HTYPE_SPOOL == pool->htype) && (OCILib.version_runtime >= OCI_11_1))
             {
@@ -215,19 +215,19 @@ OCI_Pool * PoolCreate
 
                 /* allocate authentication handle */
 
-                OCI_STATUS = MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->authp, OCI_HTYPE_AUTHINFO);
+                STATUS = MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->authp, OCI_HTYPE_AUTHINFO);
 
                 /* set OCILIB driver layer name attribute only for session pools here
                     For standalone connections and connection pool this attribute is set
                     in OCI_ConnectionLogon() */
 
-                OCI_SET_ATTRIB(OCI_HTYPE_AUTHINFO, OCI_ATTR_DRIVER_NAME, pool->authp, dbstr, dbsize)
+                ATTRIB_SET(OCI_HTYPE_AUTHINFO, OCI_ATTR_DRIVER_NAME, pool->authp, dbstr, dbsize)
                 
                 StringReleaseDBString(dbstr);
 
                 /* set authentication handle on the session pool */
 
-                OCI_SET_ATTRIB(OCI_HTYPE_SPOOL, OCI_ATTR_SPOOL_AUTH, pool->handle, pool->authp, sizeof(pool->authp))
+                ATTRIB_SET(OCI_HTYPE_SPOOL, OCI_ATTR_SPOOL_AUTH, pool->handle, pool->authp, sizeof(pool->authp))
             }
         }
 
@@ -235,7 +235,7 @@ OCI_Pool * PoolCreate
 
         /* create the pool */
 
-        if (OCI_STATUS)
+        if (STATUS)
         {
             dbtext *dbstr_user  = NULL;
             dbtext *dbstr_pwd   = NULL;
@@ -248,7 +248,7 @@ OCI_Pool * PoolCreate
 
             if (OCI_HTYPE_CPOOL == pool->htype)
             {
-                OCI_EXEC
+                EXEC
                 (
                     OCIConnectionPoolCreate(OCILib.env, pool->err, (OCICPool *) pool->handle,
                                             (OraText **) (dvoid *) &dbstr_name,
@@ -267,12 +267,12 @@ OCI_Pool * PoolCreate
             {
                 ub4 sess_mode = OCI_DEFAULT;
                 
-                if (!(pool->mode & OCI_SESSION_SYSDBA) && OCI_STRING_VALID(pool->user) && OCI_STRING_VALID(pool->pwd))
+                if (!(pool->mode & OCI_SESSION_SYSDBA) && IS_STRING_VALID(pool->user) && IS_STRING_VALID(pool->pwd))
                 {
                     sess_mode |= OCI_SPC_HOMOGENEOUS;
                 }
 
-                OCI_EXEC
+                EXEC
                 (
                     OCISessionPoolCreate(OCILib.env, pool->err, (OCISPool *) pool->handle,
                                          (OraText **) (dvoid *) &dbstr_name,
@@ -292,11 +292,11 @@ OCI_Pool * PoolCreate
             StringReleaseDBString(dbstr_pwd);
         }
 
-        if (OCI_STATUS && dbstr_name)
+        if (STATUS && dbstr_name)
         {
             pool->name = StringDuplicateFromDBString(dbstr_name, dbcharcount(dbsize_name));
 
-            OCI_STATUS = (NULL != pool->name);
+            STATUS = (NULL != pool->name);
         }
     }
 
@@ -305,7 +305,7 @@ OCI_Pool * PoolCreate
     /* on success, we allocate internal OCI connection objects for pool
        minimum size */
 
-    if (OCI_STATUS)
+    if (STATUS)
     {     
 
     #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -326,16 +326,16 @@ OCI_Pool * PoolCreate
 
     }
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
-        OCI_RETVAL = pool;
+        RETVAL = pool;
     }
     else if (pool)
     {
         PoolFree(pool);
     }
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -347,19 +347,19 @@ boolean PoolFree
     OCI_Pool *pool
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_POOL, pool)
+    CTX_SET_FROM_ERR(pool->err)
 
-    OCI_STATUS = PoolDispose(pool);
+    STATUS = PoolDispose(pool);
 
     ListRemove(OCILib.pools, pool);
 
-    OCI_FREE(pool)
+    FREE(pool)
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -372,29 +372,29 @@ OCI_Connection * PoolGetConnection
     const otext *tag
 )
 {
-    OCI_CALL_ENTER(OCI_Connection*, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
+    CALL_ENTER(OCI_Connection*, NULL)
+    CHECK_PTR(OCI_IPC_POOL, pool)
+    CTX_SET_FROM_ERR(pool->err)
 
-    OCI_RETVAL = ConnectionCreateInternal(pool, pool->db, pool->user, pool->pwd, pool->mode, tag);
+    RETVAL = ConnectionCreateInternal(pool, pool->db, pool->user, pool->pwd, pool->mode, tag);
 
     /* for regular connection pool, set the statement cache size to 
        retrieved connection */
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCI_RETVAL)
+    if (RETVAL)
     {
         const unsigned int cache_size = PoolGetStatementCacheSize(pool);
 
-        ConnectionSetStatementCacheSize(OCI_RETVAL, cache_size);
+        ConnectionSetStatementCacheSize(RETVAL, cache_size);
     }
 
 #endif
 
-    OCI_STATUS = (NULL != OCI_RETVAL);
+    STATUS = (NULL != RETVAL);
     
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -408,9 +408,9 @@ unsigned int PoolGetTimeout
 {
     ub4 value = 0;
 
-    OCI_CALL_ENTER(unsigned int, value)
-    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
+    CALL_ENTER(unsigned int, value)
+    CHECK_PTR(OCI_IPC_POOL, pool)
+    CTX_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -432,14 +432,14 @@ unsigned int PoolGetTimeout
 
     #endif
 
-        OCI_GET_ATTRIB(pool->htype, attr, pool->handle, &value, NULL)
+        ATTRIB_GET(pool->htype, attr, pool->handle, &value, NULL)
     }
 
 #endif
 
-    OCI_RETVAL = (unsigned int)value;
+    RETVAL = (unsigned int)value;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -452,9 +452,9 @@ boolean PoolSetTimeout
     unsigned int value
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_POOL, pool)
+    CTX_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -477,14 +477,14 @@ boolean PoolSetTimeout
 
     #endif
 
-        OCI_SET_ATTRIB(pool->htype, attr, pool->handle, &timeout, sizeof(timeout))
+        ATTRIB_SET(pool->htype, attr, pool->handle, &timeout, sizeof(timeout))
     }
 
 #endif
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -498,9 +498,9 @@ boolean PoolGetNoWait
 {
     ub1 value = 0;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_POOL, pool)
+    CTX_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -523,14 +523,14 @@ boolean PoolGetNoWait
 
     #endif
 
-        OCI_GET_ATTRIB(pool->htype, attr, pool->handle, &value, NULL)
+        ATTRIB_GET(pool->htype, attr, pool->handle, &value, NULL)
     }
 
 #endif
 
-    OCI_RETVAL = (boolean)value;
+    RETVAL = (boolean)value;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -543,9 +543,9 @@ boolean PoolSetNoWait
     boolean   value
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_POOL, pool)
+    CTX_SET_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -571,14 +571,14 @@ boolean PoolSetNoWait
 
    #endif
 
-        OCI_SET_ATTRIB(pool->htype, attr, pool->handle, &nowait, sizeof(nowait))
+        ATTRIB_SET(pool->htype, attr, pool->handle, &nowait, sizeof(nowait))
     }
 
 #endif
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -592,9 +592,9 @@ unsigned int PoolGetBusyCount
 {
     ub4 value = 0;
 
-    OCI_CALL_ENTER(unsigned int, value)
-    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
+    CALL_ENTER(unsigned int, value)
+    CHECK_PTR(OCI_IPC_POOL, pool)
+    CTX_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -616,14 +616,14 @@ unsigned int PoolGetBusyCount
 
     #endif
 
-        OCI_GET_ATTRIB(pool->htype, attr, pool->handle, &value, NULL)
+        ATTRIB_GET(pool->htype, attr, pool->handle, &value, NULL)
     }
 
 #endif
 
-    OCI_RETVAL = value;
+    RETVAL = value;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -637,9 +637,9 @@ unsigned int PoolGetOpenedCount
 {
     ub4 value = 0;
 
-    OCI_CALL_ENTER(unsigned int, value)
-    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
+    CALL_ENTER(unsigned int, value)
+    CHECK_PTR(OCI_IPC_POOL, pool)
+    CTX_SET_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -661,14 +661,14 @@ unsigned int PoolGetOpenedCount
 
     #endif
 
-        OCI_GET_ATTRIB(pool->htype, attr, pool->handle, &value, NULL)
+        ATTRIB_GET(pool->htype, attr, pool->handle, &value, NULL)
     }
 
 #endif
 
-    OCI_RETVAL = value;
+    RETVAL = value;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -680,7 +680,7 @@ unsigned int PoolGetMin
     OCI_Pool *pool
 )
 {
-    OCI_GET_PROP(unsigned int, 0, OCI_IPC_POOL, pool, min, NULL, NULL, pool->err)
+    GET_PROP(unsigned int, 0, OCI_IPC_POOL, pool, min, NULL, NULL, pool->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -692,7 +692,7 @@ unsigned int PoolGetMax
     OCI_Pool *pool
 )
 {
-    OCI_GET_PROP(unsigned int, 0, OCI_IPC_POOL, pool, max, NULL, NULL, pool->err)
+    GET_PROP(unsigned int, 0, OCI_IPC_POOL, pool, max, NULL, NULL, pool->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -704,7 +704,7 @@ unsigned int PoolGetIncrement
     OCI_Pool *pool
 )
 {
-    OCI_GET_PROP(unsigned int, 0, OCI_IPC_POOL, pool, incr, NULL, NULL, pool->err)
+    GET_PROP(unsigned int, 0, OCI_IPC_POOL, pool, incr, NULL, NULL, pool->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -719,9 +719,9 @@ boolean PoolSetStatementCacheSize
 {
     ub4 cache_size = value;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
+    CALL_ENTER(boolean, FALSE)
+    CHECK_PTR(OCI_IPC_POOL, pool)
+    CTX_SET_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -729,20 +729,20 @@ boolean PoolSetStatementCacheSize
     {
         if (OCI_HTYPE_SPOOL == pool->htype)
         {
-            OCI_SET_ATTRIB(pool->htype, OCI_ATTR_SPOOL_STMTCACHESIZE, pool->handle, &cache_size, sizeof(cache_size))
+            ATTRIB_SET(pool->htype, OCI_ATTR_SPOOL_STMTCACHESIZE, pool->handle, &cache_size, sizeof(cache_size))
         }
     }
 
 #endif
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
         pool->cache_size = cache_size;
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    RETVAL = STATUS;
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -756,9 +756,9 @@ unsigned int PoolGetStatementCacheSize
 {
     ub4 cache_size = 0;
 
-    OCI_CALL_ENTER(unsigned int, cache_size)
-    OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
-    OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
+    CALL_ENTER(unsigned int, cache_size)
+    CHECK_PTR(OCI_IPC_POOL, pool)
+    CTX_SET_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -766,14 +766,14 @@ unsigned int PoolGetStatementCacheSize
     {
         if (OCI_HTYPE_SPOOL == pool->htype)
         {
-            OCI_GET_ATTRIB(pool->htype, OCI_ATTR_SPOOL_STMTCACHESIZE, pool->handle, &cache_size, NULL)
+            ATTRIB_GET(pool->htype, OCI_ATTR_SPOOL_STMTCACHESIZE, pool->handle, &cache_size, NULL)
         }
         else
         {
             cache_size = pool->cache_size;
         }
         
-        if (OCI_STATUS)
+        if (STATUS)
         {
             pool->cache_size = cache_size;
         }
@@ -785,11 +785,11 @@ unsigned int PoolGetStatementCacheSize
 
 #endif
 
-    if (OCI_STATUS)
+    if (STATUS)
     {
-        OCI_RETVAL = pool->cache_size;
+        RETVAL = pool->cache_size;
    } 
 
-    OCI_CALL_EXIT()
+    CALL_EXIT()
 }
 
