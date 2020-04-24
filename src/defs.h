@@ -21,8 +21,8 @@
 #ifndef OCILIB_DEFS_H_INCLUDED
 #define OCILIB_DEFS_H_INCLUDED
 
-#include "ocilib.h"
 #include "import.h"
+#include "ocilib.h"
 
 /* ********************************************************************************************* *
                            ORACLE VERSION DETECTION
