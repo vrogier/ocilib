@@ -10,6 +10,9 @@
     <Filter Include="Resources">
       <UniqueIdentifier>{0229706c-26ac-4bfe-ad5a-ae631239b6a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers %28OCI%29">
+      <UniqueIdentifier>{5a204776-f9e7-466f-b517-238e40b57bdb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="main.rc">
@@ -303,6 +306,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\strings.h">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\oci\api.h">
+      <Filter>Headers %28OCI%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\oci\defs.h">
+      <Filter>Headers %28OCI%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\oci\types.h">
+      <Filter>Headers %28OCI%29</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

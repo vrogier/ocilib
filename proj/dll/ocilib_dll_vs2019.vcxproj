@@ -395,6 +395,9 @@
     <ClInclude Include="..\..\src\mutex.h" />
     <ClInclude Include="..\..\src\number.h" />
     <ClInclude Include="..\..\src\object.h" />
+    <ClInclude Include="..\..\src\oci\api.h" />
+    <ClInclude Include="..\..\src\oci\defs.h" />
+    <ClInclude Include="..\..\src\oci\types.h" />
     <ClInclude Include="..\..\src\pool.h" />
     <ClInclude Include="..\..\src\queue.h" />
     <ClInclude Include="..\..\src\ref.h" />
