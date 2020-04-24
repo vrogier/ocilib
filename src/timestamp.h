@@ -19,8 +19,177 @@
  */
  
 #ifndef OCILIB_TIMESTAMP_H_INCLUDED
-#define OCILIB_TIMESTAMP_H_INCLUDED
+#define OCILIB_TIMESTAMP_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+OCI_Timestamp * TimestampInit
+(
+    OCI_Connection  *con,
+    OCI_Timestamp   *tmsp,
+    OCIDateTime *buffer,
+    ub4          type
+);
+
+OCI_Timestamp * TimestampCreate
+(
+    OCI_Connection  *con,
+    unsigned int type
+);
+
+boolean TimestampFree
+(
+    OCI_Timestamp *tmsp
+);
+
+OCI_Timestamp ** TimestampArrayCreate
+(
+    OCI_Connection  *con,
+    unsigned int type,
+    unsigned int nbelem
+);
+
+boolean TimestampArrayFree
+(
+    OCI_Timestamp **tmsps
+);
+
+unsigned int TimestampGetType
+(
+    OCI_Timestamp *tmsp
+);
+
+boolean TimestampAssign
+(
+    OCI_Timestamp *tmsp,
+    OCI_Timestamp *tmsp_src
+);
+
+int TimestampCheck
+(
+    OCI_Timestamp *tmsp
+);
+
+int TimestampCompare
+(
+    OCI_Timestamp *tmsp,
+    OCI_Timestamp *tmsp2
+);
+
+boolean TimestampConstruct
+(
+    OCI_Timestamp   *tmsp,
+    int          year,
+    int          month,
+    int          day,
+    int          hour,
+    int          min,
+    int          sec,
+    int          fsec,
+    const otext *time_zone
+);
+
+boolean TimestampConvert
+(
+    OCI_Timestamp *tmsp,
+    OCI_Timestamp *tmsp_src
+);
+
+boolean TimestampFromText
+(
+    OCI_Timestamp   *tmsp,
+    const otext *str,
+    const otext *fmt
+);
+
+boolean TimestampToText
+(
+    OCI_Timestamp   *tmsp,
+    const otext *fmt,
+    int          size,
+    otext       *str,
+    int          precision
+);
+
+boolean TimestampGetDate
+(
+    OCI_Timestamp *tmsp,
+    int       *year,
+    int       *month,
+    int       *day
+);
+
+boolean TimestampGetTime
+(
+    OCI_Timestamp *tmsp,
+    int       *hour,
+    int       *min,
+    int       *sec,
+    int       *fsec
+);
+
+boolean TimestampGetDateTime
+(
+    OCI_Timestamp *tmsp,
+    int       *year,
+    int       *month,
+    int       *day,
+    int       *hour,
+    int       *min,
+    int       *sec,
+    int       *fsec
+);
+
+boolean TimestampGetTimeZoneName
+(
+    OCI_Timestamp *tmsp,
+    int        size,
+    otext     *str
+);
+
+boolean TimestampGetTimeZoneOffset
+(
+    OCI_Timestamp *tmsp,
+    int       *hour,
+    int       *min
+);
+
+boolean TimestampIntervalAdd
+(
+    OCI_Timestamp *tmsp,
+    OCI_Interval  *itv
+);
+
+boolean TimestampIntervalSub
+(
+    OCI_Timestamp *tmsp,
+    OCI_Interval  *itv
+);
+
+boolean TimestampSubtract
+(
+    OCI_Timestamp *tmsp,
+    OCI_Timestamp *tmsp2,
+    OCI_Interval  *itv
+);
+
+boolean TimestampSysTimestamp
+(
+    OCI_Timestamp *tmsp
+);
+
+boolean TimestampToCTime
+(
+    OCI_Timestamp *tmsp,
+    struct tm *ptm,
+    time_t    *pt
+);
+
+boolean TimestampFromCTime
+(
+    OCI_Timestamp *tmsp,
+    struct tm *ptm,
+    time_t     t
+);
 
 #endif /* OCILIB_TIMESTAMP_H_INCLUDED */

@@ -123,7 +123,7 @@ boolean ArrayInit
             }
             case OCI_CDT_TIMESTAMP:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Timestamp, OCI_TimestampInit(arr->con, (OCI_Timestamp *) arr->tab_obj[i], (OCIDateTime *) handle, arr->elem_subtype))
+                OCI_ARRAY_INIT_HANDLE(OCI_Timestamp, TimestampInit(arr->con, (OCI_Timestamp *) arr->tab_obj[i], (OCIDateTime *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_INTERVAL:

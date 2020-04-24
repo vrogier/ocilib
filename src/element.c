@@ -647,7 +647,7 @@ OCI_Timestamp * ElemGetTimestamp
     (
         OCI_CDT_TIMESTAMP,
         OCI_Timestamp *,
-        OCI_TimestampInit(elem->con, (OCI_Timestamp *) elem->obj, (OCIDateTime *) elem->handle, elem->typinf->cols[0].subtype)
+        TimestampInit(elem->con, (OCI_Timestamp *) elem->obj, (OCIDateTime *) elem->handle, elem->typinf->cols[0].subtype)
     )
 
 #else
@@ -1028,8 +1028,8 @@ boolean ElemSetTimestamp
     (
         OCI_CDT_TIMESTAMP, 
         OCI_Timestamp*,
-        OCI_TimestampInit(elem->con, (OCI_Timestamp *) elem->obj, (OCIDateTime *) elem->handle,  elem->typinf->cols[0].subtype),
-        OCI_TimestampAssign((OCI_Timestamp *) elem->obj, value)
+        TimestampInit(elem->con, (OCI_Timestamp *) elem->obj, (OCIDateTime *) elem->handle,  elem->typinf->cols[0].subtype),
+        TimestampAssign((OCI_Timestamp *) elem->obj, value)
     )
 
 #else

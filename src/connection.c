@@ -2164,7 +2164,7 @@ OCI_Timestamp * ConnectionGetInstanceStartTime
         OCIDateTime *handle = NULL;
 
         OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_INSTSTARTTIME, con->svr, &handle, NULL);
-        con->inst_startup = OCI_TimestampInit(con, NULL, handle, OCI_TIMESTAMP);
+        con->inst_startup = TimestampInit(con, NULL, handle, OCI_TIMESTAMP);
         OCI_STATUS = OCI_STATUS && (NULL != con->inst_startup);
     }
 

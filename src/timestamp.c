@@ -18,25 +18,23 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "timestamp.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "macro.h"
+#include "connection.h"
+#include "array.h"
+#include "string.h"
+#include "helpers.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 static unsigned int TimestampTypeValues[] = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
 #endif
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampInit
+ * TimestampInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp * OCI_TimestampInit
+OCI_Timestamp * TimestampInit
 (
     OCI_Connection *con,
     OCI_Timestamp  *tmsp,
@@ -104,15 +102,11 @@ OCI_Timestamp * OCI_TimestampInit
     return tmsp;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampCreate
+ * TimestampCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp * OCI_API OCI_TimestampCreate
+OCI_Timestamp * TimestampCreate
 (
     OCI_Connection *con,
     unsigned int    type
@@ -127,7 +121,7 @@ OCI_Timestamp * OCI_API OCI_TimestampCreate
 
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, TimestampTypeValues, OTEXT("Timestamp type"))
 
-    OCI_RETVAL = OCI_TimestampInit(con, NULL, NULL, type);
+    OCI_RETVAL = TimestampInit(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
 #else
@@ -140,10 +134,10 @@ OCI_Timestamp * OCI_API OCI_TimestampCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampFree
+ * TimestampFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampFree
+boolean TimestampFree
 (
     OCI_Timestamp *tmsp
 )
@@ -175,10 +169,10 @@ boolean OCI_API OCI_TimestampFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampArrayCreate
+ * TimestampArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
+OCI_Timestamp ** TimestampArrayCreate
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -218,10 +212,10 @@ OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampArrayFree
+ * TimestampArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampArrayFree
+boolean TimestampArrayFree
 (
     OCI_Timestamp **tmsps
 )
@@ -235,10 +229,10 @@ boolean OCI_API OCI_TimestampArrayFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampGetType
+ * TimestampGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_TimestampGetType
+unsigned int TimestampGetType
 (
     OCI_Timestamp *tmsp
 )
@@ -250,7 +244,7 @@ unsigned int OCI_API OCI_TimestampGetType
  * OCI_DateZoneToZone
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampAssign
+boolean TimestampAssign
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp_src
@@ -312,10 +306,10 @@ boolean OCI_API OCI_TimestampAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampCheck
+ * TimestampCheck
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_TimestampCheck
+int TimestampCheck
 (
     OCI_Timestamp *tmsp
 )
@@ -339,10 +333,10 @@ int OCI_API OCI_TimestampCheck
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampCompare
+ * TimestampCompare
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_TimestampCompare
+int TimestampCompare
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp2
@@ -368,10 +362,10 @@ int OCI_API OCI_TimestampCompare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampConstruct
+ * TimestampConstruct
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampConstruct
+boolean TimestampConstruct
 (
     OCI_Timestamp *tmsp,
     int            year,
@@ -420,10 +414,10 @@ boolean OCI_API OCI_TimestampConstruct
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampConvert
+ * TimestampConvert
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampConvert
+boolean TimestampConvert
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp_src
@@ -447,10 +441,10 @@ boolean OCI_API OCI_TimestampConvert
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampFromText
+ * TimestampFromText
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampFromText
+boolean TimestampFromText
 (
     OCI_Timestamp *tmsp,
     const otext   *str,
@@ -505,10 +499,10 @@ boolean OCI_API OCI_TimestampFromText
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampToText
+ * TimestampToText
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampToText
+boolean TimestampToText
 (
     OCI_Timestamp *tmsp,
     const otext   *fmt,
@@ -577,10 +571,10 @@ boolean OCI_API OCI_TimestampToText
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampGetDate
+ * TimestampGetDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampGetDate
+boolean TimestampGetDate
 (
     OCI_Timestamp *tmsp,
     int           *year,
@@ -625,10 +619,10 @@ boolean OCI_API OCI_TimestampGetDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampGetTime
+ * TimestampGetTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampGetTime
+boolean TimestampGetTime
 (
     OCI_Timestamp *tmsp,
     int           *hour,
@@ -684,10 +678,10 @@ boolean OCI_API OCI_TimestampGetTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampGetDateTime
+ * TimestampGetDateTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampGetDateTime
+boolean TimestampGetDateTime
 (
     OCI_Timestamp *tmsp,
     int           *year,
@@ -704,10 +698,10 @@ boolean OCI_API OCI_TimestampGetDateTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampGetTimeZoneName
+ * TimestampGetTimeZoneName
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampGetTimeZoneName
+boolean TimestampGetTimeZoneName
 (
     OCI_Timestamp *tmsp,
     int            size,
@@ -751,10 +745,10 @@ boolean OCI_API OCI_TimestampGetTimeZoneName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampGetTimeZoneOffset
+ * TimestampGetTimeZoneOffset
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampGetTimeZoneOffset
+boolean TimestampGetTimeZoneOffset
 (
     OCI_Timestamp *tmsp,
     int           *hour,
@@ -790,10 +784,10 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampIntervalAdd
+ * TimestampIntervalAdd
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampIntervalAdd
+boolean TimestampIntervalAdd
 (
     OCI_Timestamp *tmsp,
     OCI_Interval  *itv
@@ -848,10 +842,10 @@ boolean OCI_API OCI_TimestampIntervalAdd
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampIntervalSub
+ * TimestampIntervalSub
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampIntervalSub
+boolean TimestampIntervalSub
 (
     OCI_Timestamp *tmsp,
     OCI_Interval  *itv
@@ -906,10 +900,10 @@ boolean OCI_API OCI_TimestampIntervalSub
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampSubtract
+ * TimestampSubtract
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampSubtract
+boolean TimestampSubtract
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp2,
@@ -936,10 +930,10 @@ boolean OCI_API OCI_TimestampSubtract
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampSysTimestamp
+ * TimestampSysTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampSysTimestamp
+boolean TimestampSysTimestamp
 (
     OCI_Timestamp *tmsp
 )
@@ -998,10 +992,10 @@ boolean OCI_API OCI_TimestampSysTimestamp
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampToCTime
+ * TimestampToCTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampToCTime
+boolean TimestampToCTime
 (
     OCI_Timestamp *tmsp,
     struct tm     *ptm,
@@ -1052,10 +1046,10 @@ boolean OCI_API OCI_TimestampToCTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TimestampFromCTime
+ * TimestampFromCTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TimestampFromCTime
+boolean TimestampFromCTime
 (
     OCI_Timestamp *tmsp,
     struct tm     *ptm,

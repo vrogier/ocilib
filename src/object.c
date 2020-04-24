@@ -1330,8 +1330,8 @@ OCI_Timestamp * ObjectGetTimestamp
         OCI_CDT_TIMESTAMP,
         OCI_Timestamp*,
         OCIDateTime*,
-        OCI_TimestampInit(obj->con, (OCI_Timestamp *) obj->objs[index],
-                          (OCIDateTime *) *value, obj->typinf->cols[index].subtype)
+        TimestampInit(obj->con, (OCI_Timestamp *) obj->objs[index],
+                     (OCIDateTime *) *value, obj->typinf->cols[index].subtype)
     )
 
 #else

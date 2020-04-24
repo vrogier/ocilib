@@ -472,7 +472,7 @@ void ProcHAEventInvoke
 
     if (con && (con->svr == ha_params->srvhp))
     {
-        tmsp = OCI_TimestampInit(NULL, tmsp, ha_params->dthp, OCI_TIMESTAMP);
+        tmsp = TimestampInit(NULL, tmsp, ha_params->dthp, OCI_TIMESTAMP);
 
         OCILib.ha_handler(con, (unsigned int)ha_params->source, (unsigned int)ha_params->event, tmsp);
     }

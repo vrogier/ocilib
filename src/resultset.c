@@ -2111,8 +2111,8 @@ OCI_Timestamp * OCI_API OCI_GetTimestamp
     (
         rs, index, OCI_Timestamp *, NULL, OCI_CDT_TIMESTAMP,
 
-        OCI_TimestampInit(rs->stmt->con, (OCI_Timestamp *) def->obj,
-                         (OCIDateTime *) DefineGetData(def), def->col.subtype)
+        TimestampInit(rs->stmt->con, (OCI_Timestamp *) def->obj,
+                      (OCIDateTime *) DefineGetData(def), def->col.subtype)
     )
 }
 

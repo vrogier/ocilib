@@ -4741,6 +4741,240 @@ OCI_Connection* OCI_API OCI_SubscriptionGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * timstamp
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Timestamp* OCI_API OCI_TimestampCreate
+(
+    OCI_Connection* con,
+    unsigned int    type
+)
+{
+    CALL_IMPL(TimestampCreate, con, type);
+}
+
+boolean OCI_API OCI_TimestampFree
+(
+    OCI_Timestamp* tmsp
+)
+{
+    CALL_IMPL(TimestampFree, tmsp);
+}
+
+OCI_Timestamp** OCI_API OCI_TimestampArrayCreate
+(
+    OCI_Connection* con,
+    unsigned int    type,
+    unsigned int    nbelem
+)
+{
+    CALL_IMPL(TimestampArrayCreate, con, type, nbelem);
+}
+
+boolean OCI_API OCI_TimestampArrayFree
+(
+    OCI_Timestamp** tmsps
+)
+{
+    CALL_IMPL(TimestampArrayFree, tmsps);
+}
+
+unsigned int OCI_API OCI_TimestampGetType
+(
+    OCI_Timestamp* tmsp
+)
+{
+    CALL_IMPL(TimestampGetType, tmsp);
+}
+
+boolean OCI_API OCI_TimestampAssign
+(
+    OCI_Timestamp* tmsp,
+    OCI_Timestamp* tmsp_src
+)
+{
+    CALL_IMPL(TimestampAssign, tmsp, tmsp_src);
+}
+
+int OCI_API OCI_TimestampCheck
+(
+    OCI_Timestamp* tmsp
+)
+{
+    CALL_IMPL(TimestampCheck, tmsp);
+}
+
+int OCI_API OCI_TimestampCompare
+(
+    OCI_Timestamp* tmsp,
+    OCI_Timestamp* tmsp2
+)
+{
+    CALL_IMPL(TimestampCompare, tmsp, tmsp2);
+}
+
+boolean OCI_API OCI_TimestampConstruct
+(
+    OCI_Timestamp* tmsp,
+    int            year,
+    int            month,
+    int            day,
+    int            hour,
+    int            min,
+    int            sec,
+    int            fsec,
+    const otext* time_zone
+)
+{
+    CALL_IMPL(TimestampConstruct, tmsp, year, month, day, hour, min, sec,fsec, time_zone);
+}
+
+boolean OCI_API OCI_TimestampConvert
+(
+    OCI_Timestamp* tmsp,
+    OCI_Timestamp* tmsp_src
+)
+{
+    CALL_IMPL(TimestampConvert, tmsp, tmsp_src);
+}
+
+boolean OCI_API OCI_TimestampFromText
+(
+    OCI_Timestamp* tmsp,
+    const otext* str,
+    const otext* fmt
+)
+{
+    CALL_IMPL(TimestampFromText, tmsp, str, fmt);
+}
+
+boolean OCI_API OCI_TimestampToText
+(
+    OCI_Timestamp* tmsp,
+    const otext* fmt,
+    int            size,
+    otext* str,
+    int            precision
+)
+{
+    CALL_IMPL(TimestampToText, tmsp, fmt, size, str, precision);
+}
+
+boolean OCI_API OCI_TimestampGetDate
+(
+    OCI_Timestamp* tmsp,
+    int* year,
+    int* month,
+    int* day
+)
+{
+    CALL_IMPL(TimestampGetDate, tmsp, year, month, day);
+}
+
+boolean OCI_API OCI_TimestampGetTime
+(
+    OCI_Timestamp* tmsp,
+    int* hour,
+    int* min,
+    int* sec,
+    int* fsec
+)
+{
+    CALL_IMPL(TimestampGetTime, tmsp, hour, min, sec, fsec);
+}
+
+boolean OCI_API OCI_TimestampGetDateTime
+(
+    OCI_Timestamp* tmsp,
+    int* year,
+    int* month,
+    int* day,
+    int* hour,
+    int* min,
+    int* sec,
+    int* fsec
+)
+{
+    CALL_IMPL(TimestampGetDateTime, tmsp, year, month, day, hour, min, sec, fsec);
+}
+
+boolean OCI_API OCI_TimestampGetTimeZoneName
+(
+    OCI_Timestamp* tmsp,
+    int            size,
+    otext* str
+)
+{
+    CALL_IMPL(TimestampGetTimeZoneName, tmsp, size, str);
+}
+
+boolean OCI_API OCI_TimestampGetTimeZoneOffset
+(
+    OCI_Timestamp* tmsp,
+    int* hour,
+    int* min
+)
+{
+    CALL_IMPL(TimestampGetTimeZoneOffset, tmsp, hour,min);
+}
+
+boolean OCI_API OCI_TimestampIntervalAdd
+(
+    OCI_Timestamp* tmsp,
+    OCI_Interval* itv
+)
+{
+    CALL_IMPL(TimestampIntervalAdd, tmsp, itv);
+}
+
+boolean OCI_API OCI_TimestampIntervalSub
+(
+    OCI_Timestamp* tmsp,
+    OCI_Interval* itv
+)
+{
+    CALL_IMPL(TimestampIntervalSub, tmsp, itv);
+}
+
+boolean OCI_API OCI_TimestampSubtract
+(
+    OCI_Timestamp* tmsp,
+    OCI_Timestamp* tmsp2,
+    OCI_Interval* itv
+)
+{
+    CALL_IMPL(TimestampSubtract, tmsp, tmsp2, itv);
+}
+
+boolean OCI_API OCI_TimestampSysTimestamp
+(
+    OCI_Timestamp* tmsp
+)
+{
+    CALL_IMPL(TimestampSysTimestamp, tmsp);
+}
+
+boolean OCI_API OCI_TimestampToCTime
+(
+    OCI_Timestamp* tmsp,
+    struct tm* ptm,
+    time_t* pt
+)
+{
+    CALL_IMPL(TimestampToCTime, tmsp, ptm, pt);
+}
+
+boolean OCI_API OCI_TimestampFromCTime
+(
+    OCI_Timestamp* tmsp,
+    struct tm* ptm,
+    time_t t
+)
+{
+    CALL_IMPL(TimestampFromCTime, tmsp, ptm, t);
+}
+
+/* --------------------------------------------------------------------------------------------- *
  *  thread
  * --------------------------------------------------------------------------------------------- */
 
