@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#include "msg.h"
+#include "message.h"
 
 #include "agent.h"
 #include "date.h"

@@ -24,7 +24,7 @@
 #include "callback.h"
 #include "macro.h"
 #include "memory.h"
-#include "msg.h"
+#include "message.h"
 #include "object.h"
 #include "strings.h"
 

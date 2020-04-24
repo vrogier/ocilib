@@ -36,7 +36,7 @@
 #include "number.h"
 #include "object.h"
 #include "pool.h"
-#include "ref.h"
+#include "reference.h"
 #include "statement.h"
 #include "strings.h"
 #include "subscription.h"

@@ -68,7 +68,7 @@
 #include "long.h"
 #include "number.h"
 #include "object.h"
-#include "ref.h"
+#include "reference.h"
 #include "timestamp.h"
 
 OCI_Resultset* ResultsetCreate
