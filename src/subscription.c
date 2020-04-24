@@ -18,17 +18,22 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "subscription.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "callback.h"
+#include "connection.h"
+#include "list.h"
+#include "macro.h"
+#include "memory.h"
+#include "mutex.h"
+#include "string.h"
+#include "statement.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SubscriptionClose
+ * SubscriptionClose
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_SubscriptionClose
+boolean SubscriptionClose
 (
     OCI_Subscription *sub
 )
@@ -117,15 +122,11 @@ boolean OCI_SubscriptionClose
     return OCI_STATUS;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SubscriptionRegister
+ * SubscriptionRegister
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Subscription * OCI_API OCI_SubscriptionRegister
+OCI_Subscription * SubscriptionRegister
 (
     OCI_Connection *con,
     const otext    *name,
@@ -251,7 +252,7 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
     } 
     else if (sub)
     {
-        OCI_SubscriptionClose(sub);
+        SubscriptionClose(sub);
         ListRemove(OCILib.subs, sub);
         OCI_FREE(sub)
     }
@@ -271,10 +272,10 @@ OCI_Subscription * OCI_API OCI_SubscriptionRegister
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SubscriptionUnregister
+ * SubscriptionUnregister
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SubscriptionUnregister
+boolean SubscriptionUnregister
 (
     OCI_Subscription *sub
 )
@@ -283,7 +284,7 @@ boolean OCI_API OCI_SubscriptionUnregister
     OCI_CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
     OCI_CALL_CONTEXT_SET(sub->con, NULL, sub->err)
 
-    OCI_RETVAL = OCI_STATUS = OCI_SubscriptionClose(sub);
+    OCI_RETVAL = OCI_STATUS = SubscriptionClose(sub);
 
     ListRemove(OCILib.subs, sub);
 
@@ -293,10 +294,10 @@ boolean OCI_API OCI_SubscriptionUnregister
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SubscriptionAddStatement
+ * SubscriptionAddStatement
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SubscriptionAddStatement
+boolean SubscriptionAddStatement
 (
     OCI_Subscription *sub,
     OCI_Statement    *stmt
@@ -328,10 +329,10 @@ boolean OCI_API OCI_SubscriptionAddStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SubscriptionGetName
+ * SubscriptionGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_SubscriptionGetName
+const otext * SubscriptionGetName
 (
     OCI_Subscription *sub
 )
@@ -340,10 +341,10 @@ const otext * OCI_API OCI_SubscriptionGetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SubscriptionGetPort
+ * SubscriptionGetPort
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_SubscriptionGetPort
+unsigned int SubscriptionGetPort
 (
     OCI_Subscription *sub
 )
@@ -352,10 +353,10 @@ unsigned int OCI_API OCI_SubscriptionGetPort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SubscriptionGetTimeout
+ * SubscriptionGetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_SubscriptionGetTimeout
+unsigned int SubscriptionGetTimeout
 (
     OCI_Subscription *sub
 )
@@ -364,10 +365,10 @@ unsigned int OCI_API OCI_SubscriptionGetTimeout
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SubscriptionGetConnection
+ * SubscriptionGetConnection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_API OCI_SubscriptionGetConnection
+OCI_Connection * SubscriptionGetConnection
 (
     OCI_Subscription *sub
 )

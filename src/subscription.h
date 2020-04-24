@@ -21,6 +21,57 @@
 #ifndef OCILIB_SUBSCRIPTION_H_INCLUDED
 #define OCILIB_SUBSCRIPTION_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+boolean SubscriptionClose
+(
+    OCI_Subscription *sub
+);
+
+boolean SubscriptionDetachConnection
+(
+    OCI_Connection *con
+);
+
+OCI_Subscription * SubscriptionRegister
+(
+    OCI_Connection   *con,
+    const otext  *name,
+    unsigned int  type,
+    POCI_NOTIFY handler,
+    unsigned int  port,
+    unsigned int  timeout
+);
+
+boolean SubscriptionUnregister
+(
+    OCI_Subscription *sub
+);
+
+boolean SubscriptionAddStatement
+(
+    OCI_Subscription *sub,
+    OCI_Statement    *stmt
+);
+
+const otext * SubscriptionGetName
+(
+    OCI_Subscription *sub
+);
+
+unsigned int SubscriptionGetPort
+(
+    OCI_Subscription *sub
+);
+
+unsigned int SubscriptionGetTimeout
+(
+    OCI_Subscription *sub
+);
+
+OCI_Connection * SubscriptionGetConnection
+(
+    OCI_Subscription *sub
+);
 
 #endif /* OCILIB_SUBSCRIPTION_H_INCLUDED */

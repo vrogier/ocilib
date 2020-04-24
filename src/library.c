@@ -1702,7 +1702,7 @@ boolean Cleanup
 
     /* free all subscriptions */
 
-    ListForEach(OCILib.subs, (POCI_LIST_FOR_EACH) OCI_SubscriptionClose);
+    ListForEach(OCILib.subs, (POCI_LIST_FOR_EACH) SubscriptionClose);
     ListClear(OCILib.subs);
 
     /* free all connections */

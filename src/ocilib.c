@@ -4678,6 +4678,67 @@ boolean OCI_API OCI_RefToText
  *  subscription
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Subscription* OCI_API OCI_SubscriptionRegister
+(
+    OCI_Connection* con,
+    const otext* name,
+    unsigned int    type,
+    POCI_NOTIFY     handler,
+    unsigned int    port,
+    unsigned int    timeout
+)
+{
+    CALL_IMPL(SubscriptionRegister, con, name, type, handler, port, timeout);
+}
+
+boolean OCI_API OCI_SubscriptionUnregister
+(
+    OCI_Subscription* sub
+)
+{
+    CALL_IMPL(SubscriptionUnregister, sub);
+}
+
+boolean OCI_API OCI_SubscriptionAddStatement
+(
+    OCI_Subscription* sub,
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(SubscriptionAddStatement, sub, stmt);
+}
+
+const otext* OCI_API OCI_SubscriptionGetName
+(
+    OCI_Subscription* sub
+)
+{
+    CALL_IMPL(SubscriptionGetName, sub);
+}
+
+unsigned int OCI_API OCI_SubscriptionGetPort
+(
+    OCI_Subscription* sub
+)
+{
+    CALL_IMPL(SubscriptionGetPort, sub);
+}
+
+unsigned int OCI_API OCI_SubscriptionGetTimeout
+(
+    OCI_Subscription* sub
+)
+{
+    CALL_IMPL(SubscriptionGetTimeout, sub);
+}
+
+OCI_Connection* OCI_API OCI_SubscriptionGetConnection
+(
+    OCI_Subscription* sub
+)
+{
+    CALL_IMPL(SubscriptionGetConnection, sub);
+}
 
 /* --------------------------------------------------------------------------------------------- *
  *  thread
