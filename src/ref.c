@@ -24,7 +24,7 @@
 #include "macro.h"
 #include "memory.h"
 #include "object.h"
-#include "string.h"
+#include "strings.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * RefInit

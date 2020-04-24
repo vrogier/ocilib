@@ -26,7 +26,7 @@
 #include "memory.h"
 #include "msg.h"
 #include "object.h"
-#include "string.h"
+#include "strings.h"
 
 static const unsigned int NavigationModeValues[] = { OCI_ADN_FIRST_MSG, OCI_ADN_NEXT_MSG, OCI_ADN_NEXT_TRANSACTION };
 static const unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };

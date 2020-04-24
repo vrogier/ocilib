@@ -31,7 +31,7 @@
 #include "macro.h"
 #include "memory.h"
 #include "resultset.h"
-#include "string.h"
+#include "strings.h"
 #include "helpers.h"
 
 #include "collection.h"

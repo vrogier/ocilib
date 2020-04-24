@@ -33,7 +33,7 @@
 #include "number.h"
 #include "object.h"
 #include "ref.h"
-#include "string.h"
+#include "strings.h"
 #include "timestamp.h"
 
 static const unsigned int CharsetFormValues[]   = { OCI_CSF_DEFAULT, OCI_CSF_NATIONAL };

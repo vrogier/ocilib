@@ -26,7 +26,7 @@
 #include "list.h"
 #include "macro.h"
 #include "memory.h"
-#include "string.h"
+#include "strings.h"
 
 #include "collection.h"
 #include "date.h"

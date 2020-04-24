@@ -22,7 +22,7 @@
 
 #include "macro.h"
 #include "memory.h"
-#include "string.h"
+#include "strings.h"
 
 static const unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
 static const unsigned int EnqueueModeValues[]    = { OCI_ASD_BEFORE, OCI_ASD_TOP };

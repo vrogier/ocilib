@@ -128,9 +128,6 @@
     <ClCompile Include="..\..\src\statement.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\string.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\subscription.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -147,6 +144,9 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\typeinfo.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\strings.c">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -277,9 +277,6 @@
     <ClInclude Include="..\..\src\statement.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\string.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\subscription.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -302,6 +299,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\ocilib.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\strings.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -28,7 +28,7 @@
 #include "list.h"
 #include "pool.h"
 #include "statement.h"
-#include "string.h"
+#include "strings.h"
 #include "subscription.h"
 #include "timestamp.h"
 #include "transaction.h"

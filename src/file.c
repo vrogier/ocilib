@@ -23,7 +23,7 @@
 #include "array.h"
 #include "macro.h"
 #include "memory.h"
-#include "string.h"
+#include "strings.h"
 
 static const unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
 static const unsigned int FileTypeValues[] = { OCI_CFILE, OCI_BFILE };

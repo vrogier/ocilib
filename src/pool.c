@@ -23,7 +23,7 @@
 #include "connection.h"
 #include "list.h"
 #include "macro.h"
-#include "string.h"
+#include "strings.h"
 
 static unsigned int PoolTypeValues[] = { OCI_POOL_CONNECTION, OCI_POOL_SESSION };
 

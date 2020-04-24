@@ -24,7 +24,7 @@
 #include "date.h"
 #include "memory.h"
 #include "macro.h"
-#include "string.h"
+#include "strings.h"
 #include "object.h"
 
 /* --------------------------------------------------------------------------------------------- *

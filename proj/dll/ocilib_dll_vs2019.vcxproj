@@ -348,7 +348,7 @@
     <ClCompile Include="..\..\src\ref.c" />
     <ClCompile Include="..\..\src\resultset.c" />
     <ClCompile Include="..\..\src\statement.c" />
-    <ClCompile Include="..\..\src\string.c" />
+    <ClCompile Include="..\..\src\strings.c" />
     <ClCompile Include="..\..\src\subscription.c" />
     <ClCompile Include="..\..\src\thread.c" />
     <ClCompile Include="..\..\src\threadkey.c" />
@@ -400,7 +400,7 @@
     <ClInclude Include="..\..\src\ref.h" />
     <ClInclude Include="..\..\src\resultset.h" />
     <ClInclude Include="..\..\src\statement.h" />
-    <ClInclude Include="..\..\src\string.h" />
+    <ClInclude Include="..\..\src\strings.h" />
     <ClInclude Include="..\..\src\subscription.h" />
     <ClInclude Include="..\..\src\thread.h" />
     <ClInclude Include="..\..\src\threadkey.h" />

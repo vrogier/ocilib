@@ -21,7 +21,7 @@
 #include "exception.h"
 
 #include "error.h"
-#include "string.h"
+#include "strings.h"
 
 /* ********************************************************************************************* *
  *                            STRINGS MESSAGES

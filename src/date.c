@@ -22,7 +22,7 @@
 #include "macro.h"
 #include "connection.h"
 #include "array.h"
-#include "string.h"
+#include "strings.h"
 #include "library.h"
 
 /* --------------------------------------------------------------------------------------------- *

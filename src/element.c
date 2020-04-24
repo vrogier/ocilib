@@ -33,7 +33,7 @@
 #include "number.h"
 #include "object.h"
 #include "ref.h"
-#include "string.h"
+#include "strings.h"
 #include "timestamp.h"
 
 #define OCI_ELEM_SET_VALUE(elemtype, type, func_init, func_assign)                    \

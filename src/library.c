@@ -29,7 +29,7 @@
 #include "pool.h"
 #include "macro.h"
 #include "mutex.h"
-#include "string.h"
+#include "strings.h"
 #include "subscription.h"
 #include "threadkey.h"
 

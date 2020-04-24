@@ -23,7 +23,7 @@
 #include "connection.h"
 #include "macro.h"
 #include "object.h"
-#include "string.h"
+#include "strings.h"
 #include "typeinfo.h"
 
 /* --------------------------------------------------------------------------------------------- *

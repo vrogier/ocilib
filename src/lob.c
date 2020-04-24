@@ -24,7 +24,7 @@
 #include "connection.h"
 #include "macro.h"
 #include "memory.h"
-#include "string.h"
+#include "strings.h"
 
 static const unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
 static const unsigned int OpenModeValues[] = { OCI_LOB_READONLY, OCI_LOB_READWRITE };

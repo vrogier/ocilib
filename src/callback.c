@@ -25,7 +25,7 @@
 #include "macro.h"
 #include "mutex.h"
 #include "resultset.h"
-#include "string.h"
+#include "strings.h"
 #include "timestamp.h"
 
 typedef struct HAEventParams

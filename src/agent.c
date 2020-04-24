@@ -21,7 +21,7 @@
 #include "agent.h"
 
 #include "macro.h"
-#include "string.h"
+#include "strings.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * AgentInit

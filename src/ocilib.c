@@ -56,7 +56,7 @@
 #include "ref.h"
 #include "resultset.h"
 #include "statement.h"
-#include "string.h"
+#include "strings.h"
 #include "subscription.h"
 #include "thread.h"
 #include "threadkey.h"

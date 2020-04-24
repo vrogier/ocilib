@@ -23,7 +23,7 @@
 #include "array.h"
 #include "element.h"
 #include "macro.h"
-#include "string.h"
+#include "strings.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * CollInit

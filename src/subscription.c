@@ -26,7 +26,7 @@
 #include "macro.h"
 #include "memory.h"
 #include "mutex.h"
-#include "string.h"
+#include "strings.h"
 #include "statement.h"
 
 /* --------------------------------------------------------------------------------------------- *

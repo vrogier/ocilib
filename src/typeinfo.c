@@ -24,7 +24,7 @@
 #include "list.h"
 #include "macro.h"
 #include "memory.h"
-#include "string.h"
+#include "strings.h"
 
 static unsigned int TypeInfoTypeValues[] = { OCI_TIF_TABLE, OCI_TIF_VIEW, OCI_TIF_TYPE };
 

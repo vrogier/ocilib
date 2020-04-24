@@ -22,7 +22,7 @@
 
 #include "macro.h"
 #include "memory.h"
-#include "string.h"
+#include "strings.h"
 
 static const unsigned int HashTypeValues[] = { OCI_HASH_STRING, OCI_HASH_INTEGER, OCI_HASH_POINTER };
 

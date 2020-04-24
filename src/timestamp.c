@@ -23,7 +23,7 @@
 #include "macro.h"
 #include "connection.h"
 #include "array.h"
-#include "string.h"
+#include "strings.h"
 #include "helpers.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0

@@ -24,7 +24,7 @@
 #include "array.h"
 #include "helpers.h"
 #include "connection.h"
-#include "string.h"
+#include "strings.h"
 #include "library.h"
 
 typedef struct MagicNumber

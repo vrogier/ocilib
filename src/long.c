@@ -22,7 +22,7 @@
 
 #include "macro.h"
 #include "memory.h"
-#include "string.h"
+#include "strings.h"
 
 static const unsigned int LongTypeValues[] = { OCI_CLONG, OCI_BLONG };
 

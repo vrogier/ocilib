@@ -23,7 +23,7 @@
 #include "macro.h"
 #include "memory.h"
 #include "number.h"
-#include "string.h"
+#include "strings.h"
 
 static const unsigned int ConversionModeValues[] = { OCI_DCM_DEFAULT, OCI_DCM_FORCE };
 
