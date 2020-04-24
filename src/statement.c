@@ -1531,13 +1531,16 @@ boolean StatementPrepareFmt
     va_list args
 )
 {
-    va_list first_pass_args = args;
-    va_list second_pass_args = args;
+    va_list first_pass_args;
+    va_list second_pass_args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
+
+    va_copy(first_pass_args, args);
+    va_copy(second_pass_args, args);
 
     /* first, get buffer size */
 
@@ -1568,6 +1571,9 @@ boolean StatementPrepareFmt
 
     OCI_RETVAL = OCI_STATUS;
 
+    va_end(first_pass_args);
+    va_end(second_pass_args);
+
     OCI_CALL_EXIT()
 }
 
@@ -1582,13 +1588,16 @@ boolean StatementExecuteStmtFmt
     va_list args
 )
 {
-    va_list first_pass_args = args;
-    va_list second_pass_args = args;
+    va_list first_pass_args;
+    va_list second_pass_args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
+
+    va_copy(first_pass_args, args);
+    va_copy(second_pass_args, args);
 
     /* first, get buffer size */
 
@@ -1619,6 +1628,9 @@ boolean StatementExecuteStmtFmt
 
     OCI_RETVAL = OCI_STATUS;
 
+    va_end(first_pass_args);
+    va_end(second_pass_args);
+
     OCI_CALL_EXIT()
 }
 
@@ -1633,13 +1645,16 @@ boolean StatementParseFmt
     va_list args
 )
 {
-    va_list first_pass_args = args;
-    va_list second_pass_args = args;
+    va_list first_pass_args;
+    va_list second_pass_args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
+
+    va_copy(first_pass_args, args);
+    va_copy(second_pass_args, args);
 
     /* first, get buffer size */
 
@@ -1670,6 +1685,9 @@ boolean StatementParseFmt
 
     OCI_RETVAL = OCI_STATUS;
 
+    va_end(first_pass_args);
+    va_end(second_pass_args);
+
     OCI_CALL_EXIT()
 }
 
@@ -1684,13 +1702,16 @@ boolean StatementDescribeFmt
     va_list args
 )
 {
-    va_list first_pass_args = args;
-    va_list second_pass_args = args;
+    va_list first_pass_args;
+    va_list second_pass_args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
+
+    va_copy(first_pass_args, args);
+    va_copy(second_pass_args, args);
 
     /* first, get buffer size */
 
@@ -1720,6 +1741,9 @@ boolean StatementDescribeFmt
     }
 
     OCI_RETVAL = OCI_STATUS;
+
+    va_end(first_pass_args);
+    va_end(second_pass_args);
 
     OCI_CALL_EXIT()
 }

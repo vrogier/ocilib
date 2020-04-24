@@ -2456,13 +2456,16 @@ boolean ConnectionExecuteImmediateFmt
 {
     OCI_Statement  *stmt = NULL;
 
-    va_list first_pass_args = args;
-    va_list second_pass_args = args;
+    va_list first_pass_args;
+    va_list second_pass_args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+
+    va_copy(first_pass_args, args);
+    va_copy(second_pass_args, args);
 
     stmt = OCI_StatementCreate(con);
     OCI_STATUS = (NULL != stmt);
@@ -2509,6 +2512,9 @@ boolean ConnectionExecuteImmediateFmt
     }
 
     OCI_RETVAL = OCI_STATUS;
+
+    va_end(first_pass_args);
+    va_end(second_pass_args);
 
     OCI_CALL_EXIT()
 }
